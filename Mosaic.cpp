@@ -457,7 +457,7 @@ void nsMosaic::CMosaic::MosaicCreate() {
    for (i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++){
       for (int j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++){
          for (int k=0; k<numberNeighbor; k++) {
-            COORD coordNeighbor = m_Mosaic[i][j]->GetNeighborCoord(k);
+            const COORD &coordNeighbor = m_Mosaic[i][j]->GetNeighborCoord(k);
             if (coordNeighbor != INCORRECT_COORD)
                   ppLinkNeighbor[k] = m_Mosaic[coordNeighbor.X][coordNeighbor.Y];
             else  ppLinkNeighbor[k] = NULL;

@@ -165,7 +165,7 @@ namespace nsCell {
       void  LockNeighbor();
       void  SetNeighborLink(CBase *const *const ppLinkNeighbor, int numberNeighbor);
       int   GetNeighborNumber() const; // определить количество соседей
-      COORD GetNeighborCoord(int index) const;
+      const COORD &GetNeighborCoord(int index) const;
       COORD GetCoord() const;       // X и Y €чейки
       POINT GetCenterPixel() const; // координата центра фигуры (в пиксел€х)
       virtual bool PointInRegion(const POINT &point) const; // принадлежат ли эти экранные координаты €чейке

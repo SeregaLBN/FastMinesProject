@@ -147,7 +147,7 @@ void nsCell::CBase::SetNeighborLink(CBase *const *const ppLinkNeighbor, int numb
       m_ppLinkNeighbor[i] = ppLinkNeighbor[i];
 }
 
-COORD nsCell::CBase::GetNeighborCoord(int index) const {
+const COORD &nsCell::CBase::GetNeighborCoord(int index) const {
    return (index<m_iNeighborNumber) ? m_pNeighbor[index] : INCORRECT_COORD;
 }
 

@@ -261,7 +261,8 @@ namespace nsMosaic {
       void        SetGame(EMosaic mosaic, const SIZE& newSizeMosaic, int numberMines, const CStorageMines *pStorageCoordMines); // установить мозаику заданного размера и с определЄнным количеством мин (координаты мин могут задаватьс€ с помощью "’ранилища ћин")
       void        SetMosaic(EMosaic); // установить новую мозаику
       EMosaic     GetMosaic() const; // узнать тип мозаики
-      const nsCell::CBase* GetCell(int x, int y) const {return m_Mosaic[x][y];} // доступ к заданной €чейке
+      const nsCell::CBase* GetCell(int x, int y      ) const {return m_Mosaic[x][y];          } // доступ к заданной €чейке
+      const nsCell::CBase* GetCell(const COORD &coord) const {return GetCell(coord.X,coord.Y);}
 
       int     GetMines()      const {return m_SerializeData.m_iMines;} // количество мин
       int     GetArea()       const {return m_SerializeData.m_iArea;} // площадь €чеек

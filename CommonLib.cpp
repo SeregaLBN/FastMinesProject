@@ -2,7 +2,7 @@
 // File name: CommonLib.cpp
 // Author: Sergey Krivulya (Ceргей Кpивуля) - KSerg
 // e-mail: Sergey_Krivulya@UkrPost.Net
-// Date: 25 10 2004
+// Date: 12 11 2004
 //
 // Description: Функции общего назначения
 ////////////////////////////////////////////////////////////////////////////////
@@ -599,10 +599,10 @@ int rand(int maxDiapason) {
    return int(float(maxDiapason+1)*rand()/(RAND_MAX+1));
 }
 
-CString MemCopyAsString(LPCVOID pBuf, size_t size, TCHAR chSeparatorEOL) {
+CString MemCopyAsString(LPCVOID pData, size_t iSize, TCHAR chSeparatorEOL) {
    CString strData;
-   if (pBuf && size) {
-      size_t newSize = size+sizeof(TCHAR); // + EOL
+   if (pData && iSize) {
+      size_t newSize = iSize+sizeof(TCHAR); // + EOL
       if (sizeof(TCHAR) == sizeof(WCHAR)) {
          if (newSize&1) {
             newSize += 1; // округляю до чётного числа битов
@@ -612,7 +612,7 @@ CString MemCopyAsString(LPCVOID pBuf, size_t size, TCHAR chSeparatorEOL) {
       size_t sizeLen = newSize/sizeof(TCHAR)-1;
       if (sizeLen>0) szData[sizeLen-1] = TEXT('\0'); // нужно, если было округление
       szData[sizeLen] = TEXT('\0'); // EOL
-      memcpy(szData, pBuf, size);
+      memcpy(szData, pData, iSize);
       if (chSeparatorEOL) {
          for (size_t i=0; i<sizeLen; i++) {
             TCHAR *pCh = &szData[i];
@@ -625,6 +625,16 @@ CString MemCopyAsString(LPCVOID pBuf, size_t size, TCHAR chSeparatorEOL) {
       delete [] (BYTE*)szData;
    }
    return strData;
+}
+
+
+CString MemCopyAsHex(LPCVOID pData, size_t iSize, BOOL bUsePrefix)
+{
+   CString strRes;
+   for (size_t i=0; i<iSize; i++) {
+      strRes += ::Format(bUsePrefix ? TEXT("0x%02X") : TEXT("%02X"), ((BYTE*)pData)[i]);
+   }
+   return strRes;
 }
 
 void BeepSpeaker(DWORD dwFreq, DWORD dwDuration)
@@ -697,6 +707,24 @@ bool COSVersion::IsWinNT() {
 bool COSVersion::IsWin9598Me() {
    static bool bRes = ((m_vi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) && (m_vi.dwMajorVersion == 4)/* && (m_vi.dwMinorVersion == 0)*/);
    return bRes;
+}
+
+SYSTEMTIME GetSystemTime() {
+   SYSTEMTIME  SysTime = {0,0,0,0,0,0,0,0};
+   ::GetSystemTime(&SysTime);
+   return SysTime;
+}
+
+SYSTEMTIME FileTimeToSystemTime(const FILETIME &FileTime) {
+   SYSTEMTIME  SysTime = {0,0,0,0,0,0,0,0};
+   BOOL bRes = ::FileTimeToSystemTime(&FileTime, &SysTime);
+   return SysTime;
+}
+
+FILETIME SystemTimeToFileTime(const SYSTEMTIME &SysTime) {
+   FILETIME  FileTime = {0,0};
+   BOOL bRes = ::SystemTimeToFileTime(&SysTime, &FileTime);
+   return FileTime;
 }
 
 // Проверь свои знания C++

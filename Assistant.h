@@ -23,12 +23,12 @@ class CAssistant;
 namespace nsMosaic {
 
 #define JOB_RESULT bool
-typedef std::vector<bool*> V_pbool;
+typedef std::vector<bool*> V_pBool;
 
 struct CClickData {
    COORD m_CoordCell;
    bool  m_bIsLeft;
-   nsCell::EClose m_Close; // for right click only
+   nsCell::EClose m_Close; // only for right click
    float m_fProbability;
    COORD m_PrbltCell;
    CClickData():
@@ -41,6 +41,8 @@ struct CClickData {
 
 class CAssistant {
 private:
+   typedef std::set<int> SET_Int;
+
    CMosaic &m_Mosaic;
    // ни в одном из этих множеств нет одинаковых данных
    // множества открытых €чеек с ненулевым весом
@@ -49,12 +51,12 @@ private:
    nsCell::SET_cpBase m_SetForAnalyse;  // множество открытых €чеек кликанье на которых ни к чему не приведЄт (€чейка имеет неоткрытых соседей)
    nsCell::SET_cpBase m_SetCloseNoFlag; // множество закрытых €чеек без флажков
 
-   nsCell::SET_cpBase m_SetCnF2; // setCnF.size() == n
-   std::set<int> m_SetTable;     // 0..2^n
+   nsCell::SET_cpBase m_SetCnF2;      // setCnF.size() == n
+   SET_Int m_SetPossibleCombinations; // 0..2^n
 
    int m_iMineNoFLag;
    bool m_bSequentialMove;
-   V_pbool m_VTableSM; // vector "SequentialMove" // вектор векторов значений перебираемых флажков
+   V_pBool m_VTableSM; // vector "SequentialMove" // вектор векторов значений перебираемых флажков
    int m_iRow, m_iCol;
 private:
    inline bool TestCombination(const int, const nsCell::CBase*, const nsCell::CBase*) const;
@@ -66,17 +68,18 @@ private:
 public:
    JOB_RESULT FindCell(OUT CClickData&);
 
-   void InitForNewGame(); // переинициализаци€ данных перед новой игрой
+   void InitForNewGame(); // переинициализаци€ данных дл€ новой игры
    void ClickEnd(const nsCell::CClickReportContext &ClickReportContext);
 
    CAssistant(CMosaic& mosaic): m_Mosaic(mosaic), m_bSequentialMove(false) {}
   ~CAssistant() {DeleteTableSM();}
    //void Print();
 
-   void         ResetSequentialMove() {m_bSequentialMove = false;}
-   bool            IsSequentialMove() {return m_bSequentialMove;}
-   JOB_RESULT AllOkToSequentialMove();
-   void              SequentialMove(CClickData&);
+   void       SequentialMoveReset() {m_bSequentialMove = false;}
+   bool     IsSequentialMoveProcessed() {return m_bSequentialMove;}
+   JOB_RESULT SequentialMoveCanBegin();
+   void       SequentialMove(CClickData&);
+
    void Assistant_Job();
 };
 

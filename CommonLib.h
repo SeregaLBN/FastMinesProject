@@ -2,7 +2,7 @@
 // File name: CommonLib.h
 // Author: Sergey Krivulya (Ceргей Кpивуля) - KSerg
 // e-mail: Sergey_Krivulya@UkrPost.Net
-// Date: 25 10 2004
+// Date: 12 11 2004
 //
 // Description: Функции общего назначения.
 ////////////////////////////////////////////////////////////////////////////////
@@ -252,7 +252,8 @@ HBITMAP CreateMask(HBITMAP hBmp,
 
 int rand(int maxDiapason); // генерирует случайное число от 0 до maxDiapason, ВКЛЮЧАЯ верхнюю границу
 
-CString MemCopyAsString(LPCVOID pBuf, size_t size, TCHAR chSeparatorEOL = TEXT('\n'));
+CString MemCopyAsString(LPCVOID pData, size_t iSize, TCHAR chSeparatorEOL = TEXT('\n'));
+CString MemCopyAsHex   (LPCVOID pData, size_t iSize, BOOL bUsePrefix = TRUE);
 
 void BeepSpeaker(DWORD dwFreq = 500, DWORD dwDuration = 0x25);
 
@@ -267,4 +268,9 @@ public:
    static bool IsWinNT();
    static bool IsWin9598Me();
 };
+
+SYSTEMTIME GetSystemTime();
+SYSTEMTIME FileTimeToSystemTime(const FILETIME   &FileTime);
+FILETIME   SystemTimeToFileTime(const SYSTEMTIME &SysTime);
+
 #endif // __FILE__LIB__
