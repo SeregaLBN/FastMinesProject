@@ -1,0 +1,967 @@
+////////////////////////////////////////////////////////////////////////////////
+//                               FastMines project
+//                                                   (C) Sergey Krivulya (KSerg)
+// resource file name: "FastMines.rc"
+////////////////////////////////////////////////////////////////////////////////
+
+#include ".\Preproc.h"
+#include <commctrl.h>
+#include <winuser.h>
+#include <winnt.h>
+#include ".\ID_resource.h"
+#include ".\FigureName.h"
+
+////////////////////////////////////////////////////////////////////////////////
+//                                 main menu
+////////////////////////////////////////////////////////////////////////////////
+FastMinesMenu MENU {
+   POPUP "&Game" {
+      MENUITEM "&New Game\tF2"   , ID_MENU_GAME_NEW_GAME
+      MENUITEM SEPARATOR
+      MENUITEM "&Beginner\t1"    , ID_MENU_GAME_BEGINNER
+      MENUITEM "&Amateur\t2"     , ID_MENU_GAME_AMATEUR
+      MENUITEM "&Professional\t3", ID_MENU_GAME_PROFESSIONAL
+      MENUITEM "C&razy\t4"       , ID_MENU_GAME_CRAZY
+      MENUITEM "&Custom...\t5"   , ID_MENU_GAME_CUSTOM
+      MENUITEM SEPARATOR
+      MENUITEM "&Players...\t~"  , ID_MENU_GAME_SELECTPLAYER
+      MENUITEM SEPARATOR
+      MENUITEM "&Exit"           , ID_MENU_GAME_EXIT
+   }
+   POPUP "&Mosaics" {
+      POPUP "&Triangle\tNum3" {
+         MENUITEM MenuMosaicName00, ID_MENU_FIGURE_TRIANGLE1
+         MENUITEM MenuMosaicName01, ID_MENU_FIGURE_TRIANGLE2
+         MENUITEM MenuMosaicName02, ID_MENU_FIGURE_TRIANGLE3
+         MENUITEM MenuMosaicName03, ID_MENU_FIGURE_TRIANGLE4
+      }
+      POPUP "&Quadrilaterals\tNum4" {
+         MENUITEM MenuMosaicName04, ID_MENU_FIGURE_SQUARE1
+         MENUITEM MenuMosaicName05, ID_MENU_FIGURE_SQUARE2
+         MENUITEM MenuMosaicName06, ID_MENU_FIGURE_PARQUET1
+         MENUITEM MenuMosaicName07, ID_MENU_FIGURE_PARQUET2
+         MENUITEM MenuMosaicName08, ID_MENU_FIGURE_TRAPEZOID1
+         MENUITEM MenuMosaicName09, ID_MENU_FIGURE_TRAPEZOID2
+         MENUITEM MenuMosaicName10, ID_MENU_FIGURE_TRAPEZOID3
+         MENUITEM MenuMosaicName11, ID_MENU_FIGURE_RHOMBUS
+         MENUITEM MenuMosaicName12, ID_MENU_FIGURE_QUADRANGLE1
+      }
+      POPUP "&Pentagons\tNum5" {
+         MENUITEM MenuMosaicName13, ID_MENU_FIGURE_PENTAGON
+         MENUITEM MenuMosaicName14, ID_MENU_FIGURE_PENTAGONT5
+         MENUITEM MenuMosaicName15, ID_MENU_FIGURE_PENTAGONT10
+      }
+      POPUP "&Hexagons\tNum6" {
+         MENUITEM MenuMosaicName16, ID_MENU_FIGURE_HEXAGON
+      }
+      POPUP "&Other\tNum7" {
+         MENUITEM MenuMosaicName17, ID_MENU_FIGURE_TRSQ
+         MENUITEM MenuMosaicName18, ID_MENU_FIGURE_TRSQ2
+         MENUITEM MenuMosaicName19, ID_MENU_FIGURE_SQTRHEX
+      }
+   }
+   POPUP "&Options" {
+      MENUITEM "Minimal field size\tNum/"  , ID_KEY_AREA_MIN
+      MENUITEM "Maximal field size\tNum*"  , ID_KEY_AREA_MAX
+      MENUITEM "Increase field size\tNum+", ID_KEY_AREA_INCREMENT
+      MENUITEM "Decrease field size\tNum-", ID_KEY_AREA_DECREMENT
+      MENUITEM SEPARATOR
+      POPUP "&Skin" {
+         POPUP "&Load" {
+            MENUITEM "Default", ID_MENU_OPTIONS_SKIN_LOAD0
+         }
+         MENUITEM "&Save"  , ID_MENU_OPTIONS_SKIN_SAVE
+         MENUITEM "&Change\tF8", ID_MENU_OPTIONS_SKIN_CHANGE
+      }
+      MENUITEM SEPARATOR
+      POPUP "&Assistant" {
+         MENUITEM "Assistant on      \tA" , ID_MENU_OPTIONS_ASSISTANT_ONOFF
+         MENUITEM "Options...        \tF5", ID_MENU_OPTIONS_ASSISTANT_OPTIONS
+         MENUITEM "Suggest left click\tH" , ID_MENU_OPTIONS_ASSISTANT_SUGGEST
+      }
+      MENUITEM SEPARATOR
+      MENUITEM "&Use '?'"          , ID_MENU_OPTIONS_UNKNOWN
+      MENUITEM SEPARATOR
+      MENUITEM "&Show toolbar\tF10", ID_MENU_OPTIONS_TOOLBAR
+      MENUITEM "&Show menu\tF11"   , ID_MENU_OPTIONS_MENU
+      MENUITEM "&Show caption\tF12", ID_MENU_OPTIONS_CAPTION
+      MENUITEM SEPARATOR
+      MENUITEM "Minimize to tray"  , ID_MENU_OPTIONS_TRAY
+   }
+   POPUP "&Help" {
+      MENUITEM "&Campions  \tF3", ID_MENU_HELP_CAMPIONS
+      MENUITEM "&Statistics\tF4", ID_MENU_HELP_STATISTICS
+      MENUITEM SEPARATOR
+      MENUITEM "&Registration", ID_MENU_HELP_REGISTRATION
+      MENUITEM SEPARATOR
+      MENUITEM "&About\tF1"   , ID_MENU_HELP_ABOUT
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//                             main accelerators
+////////////////////////////////////////////////////////////////////////////////
+FastMinesAccelerators ACCELERATORS {
+   0x31, ID_MENU_GAME_BEGINNER    , VIRTKEY, NOINVERT
+   0x32, ID_MENU_GAME_AMATEUR     , VIRTKEY, NOINVERT
+   0x33, ID_MENU_GAME_PROFESSIONAL, VIRTKEY, NOINVERT
+   0x34, ID_MENU_GAME_CRAZY       , VIRTKEY, NOINVERT
+   0x35, ID_MENU_GAME_CUSTOM      , VIRTKEY, NOINVERT
+
+   VK_NUMPAD0, ID_KEY_NUM0, VIRTKEY, NOINVERT
+   VK_NUMPAD1, ID_KEY_NUM1, VIRTKEY, NOINVERT
+   VK_NUMPAD2, ID_KEY_NUM2, VIRTKEY, NOINVERT
+   VK_NUMPAD3, ID_KEY_NUM3, VIRTKEY, NOINVERT
+   VK_NUMPAD4, ID_KEY_NUM4, VIRTKEY, NOINVERT
+   VK_NUMPAD5, ID_KEY_NUM5, VIRTKEY, NOINVERT
+   VK_NUMPAD6, ID_KEY_NUM6, VIRTKEY, NOINVERT
+   VK_NUMPAD7, ID_KEY_NUM7, VIRTKEY, NOINVERT
+   VK_NUMPAD8, ID_KEY_NUM8, VIRTKEY, NOINVERT
+   VK_NUMPAD9, ID_KEY_NUM9, VIRTKEY, NOINVERT
+
+   0xC0  , ID_MENU_GAME_SELECTPLAYER        , VIRTKEY, NOINVERT // key "`" or "~"
+   VK_F1 , ID_MENU_HELP_ABOUT               , VIRTKEY, NOINVERT
+   VK_F2 , ID_MENU_GAME_NEW_GAME            , VIRTKEY, NOINVERT
+   VK_F3 , ID_MENU_HELP_CAMPIONS            , VIRTKEY, NOINVERT
+   VK_F4 , ID_MENU_HELP_STATISTICS          , VIRTKEY, NOINVERT
+   VK_F5 , ID_MENU_OPTIONS_ASSISTANT_OPTIONS, VIRTKEY, NOINVERT
+   VK_F7 , ID_MENU_OPTIONS_SKIN_LOAD        , VIRTKEY, NOINVERT
+   VK_F8 , ID_MENU_OPTIONS_SKIN_CHANGE      , VIRTKEY, NOINVERT
+   VK_F10, ID_MENU_OPTIONS_TOOLBAR          , VIRTKEY, NOINVERT
+   VK_F11, ID_MENU_OPTIONS_MENU             , VIRTKEY, NOINVERT
+   VK_F12, ID_MENU_OPTIONS_CAPTION          , VIRTKEY, NOINVERT
+
+
+   0x41, ID_MENU_OPTIONS_ASSISTANT_ONOFF  , VIRTKEY, NOINVERT // key "A"
+   0x48, ID_MENU_OPTIONS_ASSISTANT_SUGGEST, VIRTKEY, NOINVERT // key "H"
+
+   VK_ESCAPE, ID_MINIMIZE            , VIRTKEY, NOINVERT
+   VK_PAUSE , ID_BUTTON_PAUSE        , VIRTKEY, NOINVERT
+   0x50     , ID_BUTTON_PAUSE        , VIRTKEY, NOINVERT // key "P"
+
+   0xBB       , ID_KEY_AREA_INCREMENT, VIRTKEY, NOINVERT // key "+" and "="
+   0xBD       , ID_KEY_AREA_DECREMENT, VIRTKEY, NOINVERT // key "-" and "_"
+   VK_ADD     , ID_KEY_AREA_INCREMENT, VIRTKEY, NOINVERT
+   VK_SUBTRACT, ID_KEY_AREA_DECREMENT, VIRTKEY, NOINVERT
+   VK_MULTIPLY, ID_KEY_AREA_MAX      , VIRTKEY, NOINVERT
+   VK_DIVIDE  , ID_KEY_AREA_MIN      , VIRTKEY, NOINVERT
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//                                   bitmap
+////////////////////////////////////////////////////////////////////////////////
+#ifdef MINE_IS_BITMAP
+Mine   BITMAP Image\Mine.bmp
+#endif // MINE_IS_BITMAP
+
+#ifdef FLAG_IS_BITMAP
+Flag   BITMAP Image\Flag.bmp
+#endif // FLAG_IS_BITMAP
+
+#ifdef PAUSE_IS_BITMAP
+//Pause BITMAP Image\SeriousSam.bmp
+Pause BITMAP Image\Face.bmp
+#endif // PAUSE_IS_BITMAP
+
+////////////////////////////////////////////////////////////////////////////////
+//                      application-defined resource (raw data) 
+////////////////////////////////////////////////////////////////////////////////
+#ifdef PAUSE_IS_ENHMETAFILE
+Pause RCDATA Image\Face.emf
+#endif // PAUSE_IS_ENHMETAFILE
+
+#ifdef MINE_IS_ENHMETAFILE
+Mine  RCDATA Image\Mine.emf
+#endif // MINE_IS_ENHMETAFILE
+
+#ifdef FLAG_IS_ENHMETAFILE
+Flag  RCDATA Image\Flag.emf
+#endif // FLAG_IS_ENHMETAFILE
+
+////////////////////////////////////////////////////////////////////////////////
+//                                     icon
+////////////////////////////////////////////////////////////////////////////////
+iconPROJECT ICON Image\project.ico
+
+New0   ICON Image\new0.ico
+New1   ICON Image\new1.ico
+New2   ICON Image\new2.ico
+New3   ICON Image\new3.ico
+Pause0 ICON Image\pause0.ico
+Pause1 ICON Image\pause1.ico
+Pause2 ICON Image\pause2.ico
+Pause3 ICON Image\pause3.ico
+//Flag  ICON Image\flag.ico
+//Mine  ICON Image\mine.ico
+//Pause ICON Image\SeriousSam.ico
+
+//Mail ICON Image\mail.ico
+
+icon_FieldSquare1     ICON Image\FieldSquare1.ico
+icon_FieldSquare2     ICON Image\FieldSquare2.ico
+icon_FieldTriangle1   ICON Image\FieldTriangle1.ico
+icon_FieldTriangle2   ICON Image\FieldTriangle2.ico
+icon_FieldTriangle3   ICON Image\FieldTriangle3.ico
+icon_FieldTriangle4   ICON Image\FieldTriangle4.ico
+icon_FieldPentagon    ICON Image\FieldPentagon.ico
+icon_FieldPentagonT5  ICON Image\FieldPentagonT5.ico
+icon_FieldPentagonT10 ICON Image\FieldPentagonT10.ico
+icon_FieldHexagon     ICON Image\FieldHexagon.ico
+icon_FieldParquet1    ICON Image\FieldParquet1.ico
+icon_FieldParquet2    ICON Image\FieldParquet2.ico
+icon_FieldTrSq        ICON Image\FieldTrSq.ico
+icon_FieldTrSq2       ICON Image\FieldTrSq2.ico
+icon_FieldSqTrHex     ICON Image\FieldSqTrHex.ico
+icon_FieldTrapezoid1  ICON Image\FieldTrapezoid1.ico
+icon_FieldTrapezoid2  ICON Image\FieldTrapezoid2.ico
+icon_FieldTrapezoid3  ICON Image\FieldTrapezoid3.ico
+icon_FieldRhombus     ICON Image\FieldRhombus.ico
+icon_FieldQuadrangle1 ICON Image\FieldQuadrangle1.ico
+icon_FieldNull        ICON Image\FieldNull.ico
+
+////////////////////////////////////////////////////////////////////////////////
+//                                   dialog
+////////////////////////////////////////////////////////////////////////////////
+ProductNameDialog DIALOG 42,4,33,8
+STYLE WS_CHILD | WS_VISIBLE
+FONT 14, "MS Sans Serif"
+{
+    LTEXT "FastMines",ID_DIALOG_ABOUT_PRODUCTNAME,0,0,33,8
+}
+
+AboutDialog DIALOG 0,0,191,136
+CAPTION "About"
+STYLE WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | DS_MODALFRAME | DS_CENTER
+FONT 8, "MS Sans Serif"
+{
+CONTROL
+   ID_VERSIONINFO_VERSION4,
+   ID_DIALOG_ABOUT_VERSION,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX,
+   63,25,90,8
+CONTROL
+   "Copyright © KSerg",
+   ID_DIALOG_ABOUT_COPYRIGHT,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX,
+   75,36,64,8
+CONTROL
+ //"Comments -  free software",
+   "Comments -  ShareWare",
+   ID_DIALOG_ABOUT_COMMENTS,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX,
+   64,48,85,8
+CONTROL
+   "Comments: e-mail",
+   ID_DIALOG_ABOUT_RESPONSE,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX,
+   16,61,58,8
+CONTROL
+   " Serg_Krivulja@UkrPost.net",
+   ID_DIALOG_ABOUT_UKRPOST,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX | SS_NOTIFY | SS_SUNKEN,
+   79,60,92,10
+CONTROL
+   " Serg_Krivulja@Yahoo.com",
+   ID_DIALOG_ABOUT_YAHOO,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX | SS_NOTIFY | SS_SUNKEN,
+   79,70,92,10
+CONTROL
+   "ICQ",
+   ID_DIALOG_ABOUT_ICQ,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX,
+   58,81,18,8
+CONTROL
+   "72099167",
+   ID_DIALOG_ABOUT_ICQADDRESS,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX,
+   79,81,34,8
+CONTROL
+   "netmail",
+   ID_DIALOG_ABOUT_FIDO,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX,
+   47,91,25,8
+CONTROL
+   " 2:463/444:271",
+   ID_DIALOG_ABOUT_FIDOADDRESS,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX | SS_NOTIFY | SS_SUNKEN,
+   79,90,52,10
+CONTROL
+   "FastMines site:",
+   ID_DIALOG_ABOUT_FMSITE,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX,
+   22,101,50,8
+CONTROL
+   " http://kserg77.chat.ru",
+   ID_DIALOG_ABOUT_SITE,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX | SS_NOTIFY | SS_SUNKEN,
+   79,100,76,10
+CONTROL
+   "",
+   ID_DIALOG_ABOUT_GROUPBOX,
+   BUTTON,
+   WS_CHILD | WS_VISIBLE | BS_GROUPBOX,
+   6,1,178,112
+DEFPUSHBUTTON
+   "Ok",
+   IDOK,
+   74,117,50,16
+CONTROL
+   "iconProject",
+   ID_DIALOG_ABOUT_ICON,
+   STATIC,
+   SS_ICON | WS_CHILD | WS_VISIBLE | SS_REALSIZEIMAGE, //| SS_CENTERIMAGE 
+   23,23,40,40
+//ICON
+//   "Mail",
+//   ID_DIALOG_ABOUT_ICON_MAIL,
+//   14,75,20,20,
+//   SS_REALSIZEIMAGE
+}
+
+#ifdef USE_INFO_DIALOG
+InfoDialog DIALOG 0,0,130,200
+CAPTION "Info"
+STYLE WS_POPUP | WS_VISIBLE | DS_3DLOOK | WS_SIZEBOX //| WS_SYSMENU | WS_DISABLED
+FONT 8, "MS Sans Serif"
+{
+CONTROL "", 
+   ID_DIALOG_INFO_EDIT,
+   EDIT,
+   WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_LEFT | ES_MULTILINE | ES_READONLY,
+   0,0,130,200
+}
+#endif // USE_INFO_DIALOG
+
+StatisticsOrChampionsDialog DIALOG 0,0,155,204
+CAPTION "Statistics or Champions"
+STYLE WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | DS_MODALFRAME | DS_CENTER | WS_SIZEBOX
+FONT 10, "MS Sans Serif"
+{
+CONTROL
+   "TabControl",
+   ID_DIALOG_STATISTICSorCHAMPIONS_TABCONTROL,
+   WC_TABCONTROL,
+   WS_GROUP | WS_TABSTOP | WS_CHILD | WS_VISIBLE,// | TCS_OWNERDRAWFIXED,
+   0,0,155,172
+CONTROL
+   "Beginner",
+   ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_BEGINNER,
+   BUTTON,
+   WS_GROUP | WS_TABSTOP | WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | BS_PUSHLIKE,
+   1,173,76,15
+CONTROL
+   "Amateur",
+   ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_AMATEUR,
+   BUTTON,
+   WS_TABSTOP | WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | BS_PUSHLIKE,
+   1,189,76,15
+CONTROL
+   "Professional",
+   ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_PROFESSIONAL,
+   BUTTON,
+   WS_TABSTOP | WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | BS_PUSHLIKE,
+   79,173,76,15
+CONTROL
+   "Crazy",
+   ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_CRAZY,
+   BUTTON,
+   WS_TABSTOP | WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | BS_PUSHLIKE,
+   79,189,76,15
+}
+
+InputText DIALOG 0, 0, 155, 119
+CAPTION "InputText"
+STYLE WS_POPUP | WS_CAPTION | WS_SYSMENU | DS_MODALFRAME | DS_CENTER
+FONT 8, "MS Sans Serif"
+{
+CONTROL
+   "Ok",
+   IDOK,
+   BUTTON,
+   WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+   98,98,50,14//98,37,50,14
+CONTROL
+   "Text:",
+   ID_DIALOG_INPUTTEXT_STATIC_TEXT,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX,
+   7,7,54,8
+CONTROL
+   "",
+   ID_DIALOG_INPUTTEXT_EDIT_TEXT,
+   EDIT,
+   WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP | ES_AUTOHSCROLL | ES_LEFT,
+   7,17,141,14
+CONTROL
+   "Password:",
+   ID_DIALOG_INPUTTEXT_STATIC_PASSWORD,
+   STATIC,
+   SS_SIMPLE | SS_NOPREFIX | WS_CHILD | WS_VISIBLE,
+   7, 36, 54, 8 
+CONTROL
+   "",
+   ID_DIALOG_INPUTTEXT_EDIT_PASSWORD,
+   EDIT, ES_LEFT | ES_PASSWORD | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP,
+   7, 47, 141, 14 
+CONTROL
+   "Confirmation:",
+   ID_DIALOG_INPUTTEXT_STATIC_CONFIRMATION,
+   STATIC,
+   SS_SIMPLE | SS_NOPREFIX | WS_CHILD | WS_VISIBLE,
+   7, 66, 54, 8 
+CONTROL
+   "",
+   ID_DIALOG_INPUTTEXT_EDIT_CONFIRMATION,
+   EDIT,
+   ES_LEFT | ES_PASSWORD | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP,
+   7, 76, 141, 14 
+}
+
+SelectPlayer DIALOG 0, 0, 211, 162
+CAPTION "Player Administration"
+STYLE WS_POPUP | WS_CAPTION | WS_SYSMENU | DS_MODALFRAME | DS_CENTER
+FONT 8, "MS Sans Serif"
+{
+CONTROL
+   "Select Player",
+   IDOK,
+   BUTTON,
+   WS_GROUP | WS_TABSTOP | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+   150,7,54,14
+CONTROL
+   "New Player",
+   ID_DIALOG_SELECTPLAYER_BUTTON_NEWPLAYER,
+   BUTTON,
+   WS_TABSTOP | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+   150,31,54,14
+CONTROL
+   "New Password",
+   ID_DIALOG_SELECTPLAYER_BUTTON_NEWPASSWORD,
+   BUTTON,
+   WS_TABSTOP | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+   150,55,54,14
+CONTROL
+   "Rename",
+   ID_DIALOG_SELECTPLAYER_BUTTON_RENAME,
+   BUTTON,
+   WS_TABSTOP | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+   150,79,54,14
+CONTROL
+   "Remove",
+   ID_DIALOG_SELECTPLAYER_BUTTON_REMOVE,
+   BUTTON,
+   WS_TABSTOP | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+   150,103,54,14
+CONTROL
+   "Cancel",
+   IDCANCEL,
+   BUTTON,
+   WS_TABSTOP | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+   150,128,54,14
+CONTROL
+   "Window autoloading",
+   ID_DIALOG_SELECTPLAYER_BUTTONCHECK_AUTOSTART,
+   BUTTON,
+   BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   31,147,79,10 
+}
+
+SelectFigure DIALOG 0, 0, 120, 103
+CAPTION "Select mosaic"
+STYLE WS_POPUP | WS_CAPTION | WS_SYSMENU | DS_MODALFRAME | DS_CENTER
+FONT 8, "MS Sans Serif"
+{
+CONTROL
+   "Mosaic number:",
+   ID_DIALOG_SELECTFIGURE_STATIC_NUMBER,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX,
+   7,6,54,8
+CONTROL
+   "",
+   ID_DIALOG_SELECTFIGURE_EDIT,
+   EDIT,
+   WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP | ES_AUTOHSCROLL | ES_LEFT | ES_NUMBER,
+   7,17,106,14
+CONTROL
+   "",
+   ID_DIALOG_SELECTFIGURE_SPIN,
+   UPDOWN_CLASS,
+   WS_CHILD | WS_VISIBLE | WS_BORDER | UDS_ALIGNRIGHT | UDS_ARROWKEYS | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_NOTHOUSANDS,
+   71,4,12,12
+CONTROL
+   "Mosaic name:",
+   ID_DIALOG_SELECTFIGURE_STATIC_NAME,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX,
+   7,39,54,8
+CONTROL
+   "",
+   ID_DIALOG_SELECTFIGURE_COMBOBOX,
+   COMBOBOX,
+   WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP | CBS_DROPDOWNLIST,
+   7,50,105,80
+CONTROL
+   "",
+   IDOK,
+   BUTTON,
+   WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON | BS_ICON,
+   39,71,41,25
+}
+
+RegistrationForm DIALOG 0, 0, 155, 100
+CAPTION "Registration form"
+STYLE WS_POPUP | WS_CAPTION | WS_SYSMENU | DS_MODALFRAME | DS_CENTER
+FONT 8, "MS Sans Serif"
+{
+CONTROL
+   "Ok",
+   IDOK,
+   BUTTON,
+   WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON,
+   99,81,50,14
+CONTROL
+   "Registration name:",
+   ID_DIALOG_REGFORM_STATIC_LOGIN,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX,
+   7,7,65,8
+CONTROL
+   "Registration key:",
+   ID_DIALOG_REGFORM_STATIC_PASSWORD,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX,
+   7,36,65,8
+CONTROL
+   "",
+   ID_DIALOG_REGFORM_EDIT_LOGIN,
+   EDIT,
+   WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP | ES_AUTOHSCROLL | ES_LEFT,
+   7,17,141,14
+CONTROL
+   "",
+   ID_DIALOG_REGFORM_EDIT_PASSWORD,
+   EDIT,
+   WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP | ES_AUTOVSCROLL | ES_MULTILINE,// | ES_UPPERCASE,
+   7,46,141,29
+#ifdef DEBUG_REGISTRATION
+CONTROL
+   "CreateLogin",
+   ID_DIALOG_REGFORM_BUTTON_CREATELOGIN,
+   BUTTON,
+   WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+   95,34,53,10
+CONTROL
+   "CreatePassword",
+   ID_DIALOG_REGFORM_BUTTON_CREATEPASSWORD,
+   BUTTON,
+   WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+   95,4,53,10
+#endif // DEBUG_REGISTRATION
+}
+
+CustomSkillLevel DIALOG 0,0,178,87
+CAPTION "Custom skill level"
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | DS_CENTER
+FONT 8, "MS Sans Serif"
+{
+CONTROL
+   "Ok",
+   IDOK,
+   BUTTON,
+   WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_DEFPUSHBUTTON,
+   126,70,50,14
+CONTROL
+   "",
+   ID_DIALOG_CUSTOMSKILL_GROUPBOX,
+   BUTTON,
+   WS_CHILD | WS_VISIBLE | BS_GROUPBOX,
+   3,0,172,66
+CONTROL
+   "Size X (width)  =",
+   ID_DIALOG_CUSTOMSKILL_STATIC_X,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX,
+   19,11,52,8
+CONTROL
+   "Size Y (height) =",
+   ID_DIALOG_CUSTOMSKILL_STATIC_Y,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX,
+   18,30,52,8
+CONTROL
+   "Number of Mines =",
+   ID_DIALOG_CUSTOMSKILL_STATIC_MINE,
+   STATIC,
+   WS_CHILD | WS_VISIBLE | SS_GRAYFRAME | SS_SIMPLE | SS_NOPREFIX,
+   10,49,60,8
+CONTROL
+   "",
+   ID_DIALOG_CUSTOMSKILL_EDIT_X,
+   EDIT,
+   WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP | ES_AUTOHSCROLL | ES_LEFT | ES_NUMBER,
+   73,9,40,12
+CONTROL
+   "",
+   ID_DIALOG_CUSTOMSKILL_SPIN_X,
+   UPDOWN_CLASS,
+   WS_CHILD | WS_VISIBLE | WS_BORDER | UDS_ALIGNRIGHT | UDS_ARROWKEYS | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_NOTHOUSANDS,
+   113,9,12,12
+CONTROL
+   "",
+   ID_DIALOG_CUSTOMSKILL_EDIT_Y,
+   EDIT,
+   WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP | ES_AUTOHSCROLL | ES_LEFT | ES_NUMBER,
+   73,28,40,12
+CONTROL
+   "",
+   ID_DIALOG_CUSTOMSKILL_SPIN_Y,
+   UPDOWN_CLASS,
+   WS_CHILD | WS_VISIBLE | WS_BORDER | UDS_ALIGNRIGHT | UDS_ARROWKEYS | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_NOTHOUSANDS,
+   113,28,12,12
+CONTROL
+   "",
+   ID_DIALOG_CUSTOMSKILL_EDIT_MINE,
+   EDIT,
+   WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP | ES_AUTOHSCROLL | ES_LEFT | ES_NUMBER,
+   73,47,40,12
+CONTROL
+   "",
+   ID_DIALOG_CUSTOMSKILL_SPIN_MINE,
+   UPDOWN_CLASS,
+   WS_CHILD | WS_VISIBLE | WS_BORDER | UDS_ALIGNRIGHT | UDS_ARROWKEYS | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_NOTHOUSANDS,
+   113,47,12,12
+CONTROL
+   "Full Screen ( current cell size )",
+   ID_DIALOG_CUSTOMSKILL_FULLSCREEN1,
+   BUTTON,
+   WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE,
+   124,5,49,28
+CONTROL
+   "Full Screen ( minimal cell size )",
+   ID_DIALOG_CUSTOMSKILL_FULLSCREEN2,
+   BUTTON,
+   WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX | BS_MULTILINE,
+   124,36,49,28
+CONTROL
+   "Cancel",
+   IDCANCEL,
+   BUTTON,
+   WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON,
+   3,70,50,14
+}
+
+SelectSkinDialog DIALOG 0, 0, 158, 118
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | DS_CENTER
+CAPTION "Change skin"
+FONT 8, "MS Sans Serif"
+{
+CONTROL
+   "OK",
+   IDOK,
+   BUTTON,
+   BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   92, 98, 50, 14 
+CONTROL
+   "'Mine' image",
+   ID_DIALOG_SELECTSKIN_BUTTON_IMAGE_MINE,
+   BUTTON,
+   BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   6, 4, 70, 15 
+CONTROL
+   "'Flag' image",
+   ID_DIALOG_SELECTSKIN_BUTTON_IMAGE_FLAG,
+   BUTTON,
+   BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   82, 4, 70, 15 
+CONTROL
+   "'Pause' image",
+   ID_DIALOG_SELECTSKIN_BUTTON_IMAGE_PAUSE,
+   BUTTON,
+   BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   6, 22, 70, 15 
+CONTROL
+   "Background image",
+   ID_DIALOG_SELECTSKIN_BUTTON_IMAGE_BCKGRND,
+   BUTTON,
+   BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   82, 22, 70, 15 
+CONTROL
+   "'Pause' button",
+   ID_DIALOG_SELECTSKIN_BUTTON_IMAGE_BTNPAUSE,
+   BUTTON,
+   BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   6, 40, 70, 15 
+CONTROL
+   "Background color",
+   ID_DIALOG_SELECTSKIN_BUTTON_COLOR_BCKGRND,
+   BUTTON,
+   BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   82, 40, 70, 15 
+CONTROL
+   "'Game' button",
+   ID_DIALOG_SELECTSKIN_BUTTON_IMAGE_BTNNEW,
+   BUTTON,
+   BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   6, 58, 70, 15 
+CONTROL
+   "Border color/width",
+   ID_DIALOG_SELECTSKIN_BUTTON_BORDER,
+   BUTTON,
+   BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   82, 58, 70, 15 
+CONTROL
+   "Font Type",
+   ID_DIALOG_SELECTSKIN_BUTTON_TYPE_FONT,
+   BUTTON,
+   BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   6, 76, 70, 15 
+CONTROL
+   "Character Colors",
+   ID_DIALOG_SELECTSKIN_BUTTON_COLOR_TEXT,
+   BUTTON,
+   BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   82, 76, 70, 15 
+CONTROL
+   "Cancel",
+   IDCANCEL,
+   BUTTON,
+   BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   16, 98, 50, 14 
+}
+
+ChangeSkinDialog DIALOG 0, 0, 257, 132
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | DS_CENTER
+CAPTION "Image"
+FONT 8, "MS Sans Serif"
+{
+CONTROL
+   "",
+   ID_DIALOG_CHANGESKIN_BUTTON_FRAME,
+   STATIC,
+   SS_ETCHEDFRAME | WS_CHILD | WS_VISIBLE,
+   7, 7, 155, 98 
+CONTROL
+   "Select...",
+   ID_DIALOG_CHANGESKIN_BUTTON_SELECT,
+   BUTTON,
+   BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   170, 7, 80, 15 
+CONTROL
+   "Select...",
+   ID_DIALOG_CHANGESKIN_BUTTON_SELECT2,
+   BUTTON,
+   BS_PUSHBUTTON | WS_CHILD | WS_TABSTOP,
+   170, 27, 80, 15 
+CONTROL
+   "Transparent",
+   ID_DIALOG_CHANGESKIN_BUTTON_TRANSPARENTorSETALL,
+   BUTTON,
+   BS_AUTOCHECKBOX | BS_MULTILINE | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   170, 21, 80, 22
+CONTROL
+   "Placement",//"Размещение",
+   ID_DIALOG_CHANGESKIN_BUTTON_PLACE,
+   BUTTON,
+   BS_GROUPBOX | WS_CHILD | WS_VISIBLE,
+   170, 42, 80, 63 
+CONTROL
+   "Center",
+   ID_DIALOG_CHANGESKIN_BUTTON_CENTER,
+   BUTTON,
+   BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE,
+   177, 57, 37, 10 
+CONTROL
+   "Stretch",//"Растянуть",
+   ID_DIALOG_CHANGESKIN_BUTTON_DILATE,
+   BUTTON,
+   BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE,
+   177, 71, 51, 10 
+CONTROL
+   "Tile",//"Рядом",
+   ID_DIALOG_CHANGESKIN_BUTTON_ALONGSIDE,
+   BUTTON,
+   BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE,
+   177, 87, 38, 10 
+CONTROL
+   "Width =",
+   ID_DIALOG_CHANGESKIN_STATIC_WIDHT,
+   STATIC,
+   SS_SIMPLE | SS_NOPREFIX | WS_CHILD | WS_VISIBLE,
+   171, 56, 26, 8 
+CONTROL
+   "",
+   ID_DIALOG_CHANGESKIN_EDIT_WIDHT,
+   EDIT,
+   ES_LEFT | ES_AUTOHSCROLL | ES_NUMBER | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP,
+   201, 55, 36, 12 
+CONTROL
+   "",
+   ID_DIALOG_CHANGESKIN_SPIN_WIDHT,
+   UPDOWN_CLASS,
+   UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | WS_CHILD | WS_VISIBLE | WS_BORDER,
+   237, 55, 12, 12 
+CONTROL
+   "OK",
+   IDOK,
+   BUTTON,
+   BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   215, 111, 35, 14 
+CONTROL
+   "Cancel",
+   IDCANCEL,
+   BUTTON,
+   BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   170, 111, 35, 14 
+CONTROL
+   "Reset to default",
+   ID_DIALOG_CHANGESKIN_BUTTON_RESET,
+   BUTTON,
+   BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   7, 111, 155, 14 
+}
+
+AssistantDialog DIALOG 0, 0, 221, 125
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | DS_CENTER
+CAPTION "Assistant Options"
+FONT 8, "MS Sans Serif"
+{
+CONTROL
+   "OK",
+   IDOK,
+   BUTTON,
+   BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   166, 104, 50, 14
+CONTROL
+   "Launch after\nif no response from user" // "Launch after X milliseconds if no response from user"
+ //"Включаться при\nбездействии юзера через",
+   ID_DIALOG_ASSISTANT_STATIC_UNACTIVE,
+   STATIC,
+   SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP,
+   12, 10, 90, 16
+CONTROL
+   "",
+   ID_DIALOG_ASSISTANT_EDIT_UNACTIVE,
+   EDIT,
+   ES_LEFT | ES_AUTOHSCROLL | ES_NUMBER | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP,
+   107, 10, 40, 14
+CONTROL
+  "Spin1",
+   ID_DIALOG_ASSISTANT_SPIN_UNACTIVE,
+   UPDOWN_CLASS,
+   UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | WS_CHILD | WS_VISIBLE,
+   143, 12, 11, 14
+CONTROL
+   "milliseconds",
+   ID_DIALOG_ASSISTANT_STATIC_MILISEC1,
+   STATIC,
+   SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP,
+   153, 13, 46, 8
+CONTROL
+   "Assistant work frequency:",
+   ID_DIALOG_ASSISTANT_STATIC_JOB,
+   STATIC,
+   SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP,
+   12, 31, 90, 8
+CONTROL
+   "",
+   ID_DIALOG_ASSISTANT_EDIT_JOB,
+   EDIT,
+   ES_LEFT | ES_AUTOHSCROLL | ES_NUMBER | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP,
+   107, 28, 40, 14
+CONTROL
+   "Spin2",
+   ID_DIALOG_ASSISTANT_SPIN_JOB,
+   UPDOWN_CLASS,
+   UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | WS_CHILD | WS_VISIBLE,
+   145, 29, 11, 14
+CONTROL
+   "milliseconds",
+   ID_DIALOG_ASSISTANT_STATIC_MILISEC2,
+   STATIC,
+   SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP,
+   153, 31, 46, 8
+CONTROL
+   "Launch new game automatically",
+   ID_DIALOG_ASSISTANT_CHECKBOX_AUTOSTART,
+   BUTTON,
+   BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   12, 48, 200, 8
+CONTROL
+   "Stop if there are no definitely safe moves"//"Остановить, когда нет однозначного следующего хода",
+   ID_DIALOG_ASSISTANT_CHECKBOX_STOPJOB,
+   BUTTON,
+   BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   12, 61, 200, 8
+CONTROL
+   "Ignore pause",
+   ID_DIALOG_ASSISTANT_CHECKBOX_IGNOREPAUSE,
+   BUTTON,
+   BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   12, 73, 200, 8
+CONTROL
+   "Virtual click beep",
+   ID_DIALOG_ASSISTANT_CHECKBOX_BEEPCLICK,
+   BUTTON,
+   BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+   12, 85, 200, 10
+CONTROL
+   "",
+   ID_DIALOG_ASSISTANT_BUTTON_FRAME,
+   STATIC,
+   SS_ETCHEDFRAME | WS_CHILD | WS_VISIBLE,
+   5, 5, 210, 93
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//                                    version
+////////////////////////////////////////////////////////////////////////////////
+
+1 VERSIONINFO
+FILEVERSION    ID_VERSIONINFO_VERSION1
+PRODUCTVERSION ID_VERSIONINFO_VERSION1
+FILEOS 0x4
+FILETYPE 0x1
+{
+BLOCK "StringFileInfo"
+{
+   BLOCK "042204E3"
+   {
+      VALUE "CompanyName"        , "Serg Krivulya (KSerg)"
+      VALUE "ProductName"        , "FastMines"
+      VALUE "FileVersion"        , ID_VERSIONINFO_VERSION2
+      VALUE "ProductVersion"     , ID_VERSIONINFO_VERSION5
+      VALUE "FileDescription"    , "The ultimate offspring of good old Minesweeper!"
+      VALUE "LegalCopyright"     , "Copyright © KSerg 2003"
+      // прочие сведенья
+      VALUE "InternalName"       , "FastMines"
+      VALUE "OriginalFilename"   , "FastMines2.exe"
+      VALUE "Author"             , "Serg Krivulya (KSerg)"
+      VALUE "Creation"           , "MVC++ 5.0, WinAPI"
+      VALUE "Comments"           , "ShareWare"
+      VALUE "e-mail"             , "Serg_Krivulja@UkrPost.net"
+      VALUE "e-mail"             , "Serg_Krivulja@Yahoo.com"
+      VALUE "ICQ UIN"            , "72099167"
+      VALUE "netmail"            , "2:463/444:271"
+    //VALUE "Programm site"      , "http://fastmines.softdepia.com"
+      VALUE "Programm site (rus)", "http://kserg77.chat.ru"
+   }
+}
+
+BLOCK "VarFileInfo"
+{
+   VALUE "Translation", 0x0422 0x04E3
+}
+}
