@@ -101,7 +101,8 @@ void nsCell::CBase::VerifyNeighbor(const SIZE &sizeField) {
       if ((m_pNeighbor[i].X >= sizeField.cx) ||
           (m_pNeighbor[i].Y >= sizeField.cy) ||
           (m_pNeighbor[i].X < 0) ||
-          (m_pNeighbor[i].Y < 0)) {
+          (m_pNeighbor[i].Y < 0))
+      {
          m_pNeighbor[i] = INCORRECT_COORD;
       }
 }

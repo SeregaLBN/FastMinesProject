@@ -41,7 +41,7 @@ inline void Delete(nsCell::SET_cpBase&, const nsCell::CBase*);
 //                              implementation
 ////////////////////////////////////////////////////////////////////////////////
 
-JOB_RESULT CAssistant::FindCell(CClickData& click) {
+JOB_RESULT CAssistant::FindCell(OUT CClickData& click) {
    if (!m_SetForOpen.empty()) {
       click.m_CoordCell = (*m_SetForOpen.begin())->GetCoord();
       click.m_bIsLeft = true;
@@ -51,10 +51,10 @@ JOB_RESULT CAssistant::FindCell(CClickData& click) {
          click.m_bIsLeft = true;
       } else {
          if (!m_SetForAnalyse.empty()) {
-            //SetCursor(LoadCursor(ghInstance, IDC_WAIT));
+            //::SetCursor(LoadCursor(ghInstance, IDC_WAIT));
             if (!Analyse(click)) // работа была прервана
                return JOB_ABORT;
-            //SetCursor(LoadCursor(ghInstance, IDC_ARROW));
+            //::SetCursor(LoadCursor(ghInstance, IDC_ARROW));
 /**
             g_Logger.Put(CLogger::LL_DEBUG, TEXT("coord = %i"), click.m_CoordCell);
             if (click.m_CoordCell != INCORRECT_COORD) {
@@ -70,10 +70,10 @@ JOB_RESULT CAssistant::FindCell(CClickData& click) {
    return JOB_SUCCESS;
 }
 
-const nsCell::CBase* cellAnalyseSave;
-const nsCell::CBase* cellInfluenceSave;
+//const nsCell::CBase* cellAnalyseSave;
+//const nsCell::CBase* cellInfluenceSave;
 
-JOB_RESULT CAssistant::Analyse(CClickData& click) {
+JOB_RESULT CAssistant::Analyse(OUT CClickData& click) {
    const int numberNeighbor = m_Mosaic.GetNeighborNumber();
 /*
    g_Logger.Put(CLogger::LL_DEBUG, TEXT("------------------"));
@@ -92,8 +92,10 @@ JOB_RESULT CAssistant::Analyse(CClickData& click) {
          if (coordNeighbor == INCORRECT_COORD) continue;
          const nsCell::CBase* cell = m_Mosaic.GetCell(coordNeighbor.X,coordNeighbor.Y);
          if ((cell->Cell_GetStatus() == nsCell::_Close) &&
-            (cell->Cell_GetClose () != nsCell::_Flag))
+             (cell->Cell_GetClose () != nsCell::_Flag))
+         {
             setCnF.insert(cell);
+         }
       }
 
       // ѕройтись по всему множ. setCnF.
@@ -105,7 +107,9 @@ JOB_RESULT CAssistant::Analyse(CClickData& click) {
             const nsCell::CBase* cell = m_Mosaic.GetCell(coordNeighbor.X,coordNeighbor.Y);
             if ((cell->Cell_GetStatus() == nsCell::_Open) &&
                 (cell != (*cellAnalyse)))
+            {
                setInfluence.insert(cell);
+            }
          }
       }
 
@@ -133,7 +137,7 @@ JOB_RESULT CAssistant::Analyse(CClickData& click) {
    return JOB_SUCCESS;
 }
 
-JOB_RESULT CAssistant::Analyse2Cell(const nsCell::CBase* cellAnalyse, const nsCell::CBase* cellInfluence, CClickData& click) {
+JOB_RESULT CAssistant::Analyse2Cell(const nsCell::CBase* cellAnalyse, const nsCell::CBase* cellInfluence, OUT CClickData& click) {
    m_SetCnF2.clear();
    const int numberNeighbor = m_Mosaic.GetCell(0,0)->GetNeighborNumber();
    // ƒл€ cellAnalyse (пройд€ по всем сосед€м) добавить все
@@ -144,7 +148,9 @@ JOB_RESULT CAssistant::Analyse2Cell(const nsCell::CBase* cellAnalyse, const nsCe
       const nsCell::CBase* cell = m_Mosaic.GetCell(coordNeighbor.X,coordNeighbor.Y);
       if ((cell->Cell_GetStatus() == nsCell::_Close) &&
           (cell->Cell_GetClose () != nsCell::_Flag))
+      {
          m_SetCnF2.insert(cell);
+      }
    }
    // ƒл€ cellInfluence (пройд€ по всем сосед€м) добавить все
    // соседние закрытые €чейки без флагов в множество m_SetCnF2
@@ -154,16 +160,18 @@ JOB_RESULT CAssistant::Analyse2Cell(const nsCell::CBase* cellAnalyse, const nsCe
       const nsCell::CBase* cell = m_Mosaic.GetCell(coordNeighbor.X,coordNeighbor.Y);
       if ((cell->Cell_GetStatus() == nsCell::_Close) &&
           (cell->Cell_GetClose () != nsCell::_Flag))
+      {
          m_SetCnF2.insert(cell);
+      }
    }
 
-   int n = ((m_SetCnF2.size()==0) ? (2<<(m_SetCnF2.size()-1)) : 1); // pow(2, m_SetCnF2.size());
+   int iMaxCombination = 1<<m_SetCnF2.size(); // pow(2, m_SetCnF2.size());
    m_SetTable.clear();
-   for (k=0; k<n; k++) {
-      if (WAIT_TIMEOUT == WaitForSingleObject(hEventJob, 0)) {
+   for (k=0; k<iMaxCombination; k++) {
+      if (WAIT_TIMEOUT == ::WaitForSingleObject(hEventJob, 0)) {
          return JOB_ABORT; // работа была прервана
       }
-      if (TestVariant(k, numberNeighbor, cellAnalyse, cellInfluence))
+      if (TestCombination(k, cellAnalyse, cellInfluence))
          m_SetTable.insert(k);
    }
 
@@ -172,7 +180,7 @@ JOB_RESULT CAssistant::Analyse2Cell(const nsCell::CBase* cellAnalyse, const nsCe
          int i = 0;
          const float size = m_SetTable.size();
          for (nsCell::SET_cpBase::const_iterator q=m_SetCnF2.begin(); q!=m_SetCnF2.end(); i++, q++) {
-            int mask = ((i==0) ? (2<<(i-1)) : 1); // pow(2,i);
+            int mask = 1<<i; // pow(2,i);
             int count = 0; // счЄтчик нулей
             for (std::set<int>::const_iterator p=m_SetTable.begin(); p!=m_SetTable.end(); p++) {
                if (!(mask&(*p)))
@@ -183,8 +191,8 @@ JOB_RESULT CAssistant::Analyse2Cell(const nsCell::CBase* cellAnalyse, const nsCe
                click.m_fProbability = probability;
                click.m_PrbltCell = (*q)->GetCoord();
 
-               cellAnalyseSave   = cellAnalyse; // for debug
-               cellInfluenceSave = cellInfluence; // for debug
+               //cellAnalyseSave   = cellAnalyse; // for debug
+               //cellInfluenceSave = cellInfluence; // for debug
             }
          }
          if(click.m_fProbability + 0.001 >= 1.0) {
@@ -208,7 +216,7 @@ JOB_RESULT CAssistant::Analyse2Cell(const nsCell::CBase* cellAnalyse, const nsCe
          /**/
       }
       {
-         int resultTable = n-1;
+         int resultTable = iMaxCombination-1;
          for (std::set<int>::const_iterator p=m_SetTable.begin(); p!=m_SetTable.end(); p++) {
             resultTable &= *p;
          }
@@ -226,10 +234,11 @@ JOB_RESULT CAssistant::Analyse2Cell(const nsCell::CBase* cellAnalyse, const nsCe
 }
 
 
-inline bool CAssistant::TestVariant(const int variant, const int numberNeighbor, const nsCell::CBase* cellAnalyse, const nsCell::CBase* cellInfluence) const {
+inline bool CAssistant::TestCombination(const int iCombination, const nsCell::CBase* cellAnalyse, const nsCell::CBase* cellInfluence) const {
+   const int numberNeighbor = m_Mosaic.GetCell(0,0)->GetNeighborNumber();
    int i=1;
    for (nsCell::SET_cpBase::const_iterator p=m_SetCnF2.begin(); p!=m_SetCnF2.end(); p++, i=i<<1) {
-      (*p)->SetPresumeFlag(!!(i & variant)); // предполагаемый флажок
+      (*p)->SetPresumeFlag(!!(i & iCombination)); // предполагаемый флажок
    }
 
    int numberFlag = 0;
@@ -269,12 +278,12 @@ void CAssistant::InitForNewGame() {
 void CAssistant::ClickEnd(const nsCell::CClickReportContext &ClickReportContext) {
    const int numberNeighbor = m_Mosaic.GetCell(0,0)->GetNeighborNumber();
 
-   // јнализ множества setOpenNil
+   // јнализ множества m_SetOpenNil
    if (!ClickReportContext.m_SetOpenNil.empty())
       for (nsCell::SET_cpBase::const_iterator p=ClickReportContext.m_SetOpenNil.begin(); p!=ClickReportContext.m_SetOpenNil.end(); p++)
-         Delete(m_SetCloseNoFlag, *p);
+         nsMosaic::Delete(m_SetCloseNoFlag, *p);
 
-   // јнализ множества setOpen
+   // јнализ множества m_SetOpen
    if (!ClickReportContext.m_SetOpen.empty()) {
       for (nsCell::SET_cpBase::const_iterator p =ClickReportContext.m_SetOpen.begin();
                                               p!=ClickReportContext.m_SetOpen.end(); p++)
@@ -293,11 +302,11 @@ void CAssistant::ClickEnd(const nsCell::CClickReportContext &ClickReportContext)
          m_SetForOpen   .insert(*p);
          m_SetForFlag   .insert(*p);
          m_SetForAnalyse.insert(*p);
-         Delete(m_SetCloseNoFlag, *p);
+         nsMosaic::Delete(m_SetCloseNoFlag, *p);
       }
    }
 
-   // јнализ множества setFlag
+   // јнализ множества m_SetFlag
    if (!ClickReportContext.m_SetFlag.empty()) {
       for (nsCell::SET_cpBase::const_iterator p=ClickReportContext.m_SetFlag.begin(); p!=ClickReportContext.m_SetFlag.end(); p++) {
          for (int k=0; k<numberNeighbor; k++) {
@@ -310,10 +319,10 @@ void CAssistant::ClickEnd(const nsCell::CClickReportContext &ClickReportContext)
             m_SetForFlag   .insert(cell);
             m_SetForAnalyse.insert(cell);
          }
-         if ((*p)->Cell_GetClose() == nsCell::_Flag)
-            Delete(m_SetCloseNoFlag, *p);
-         else
-            m_SetCloseNoFlag.insert(*p);
+         //if ((*p)->Cell_GetClose() == nsCell::_Flag)
+            nsMosaic::Delete(m_SetCloseNoFlag, *p);
+         //else
+         //   m_SetCloseNoFlag.insert(*p);
       }
    }
 
@@ -333,7 +342,7 @@ void CAssistant::ClickEnd(const nsCell::CClickReportContext &ClickReportContext)
                else closeN++;
          }
 
-         if ((!closeN) ||                                       // 2. ”далить €чейки, у которых все закрытые соседи имеют флажки;
+         if ((!closeN) ||                                              // 2. ”далить €чейки, у которых все закрытые соседи имеют флажки;
              ((*p)->Cell_GetOpen() != (nsCell::EOpen)(closeF+closeN))) // 1. ”далить €чейки, у вес которых вес не равен кол-ву закрытых соседей.
          {
             //g_Logger.Put(CLogger::LL_DEBUG, TEXT("m_SetForFlag del cell=[%i,%i]"), (*p)->GetCoord().X, (*p)->GetCoord().Y);
@@ -361,7 +370,7 @@ void CAssistant::ClickEnd(const nsCell::CClickReportContext &ClickReportContext)
                     closeF++;
                else closeN++;
          }
-         if ((!closeN) ||                              // 1. ”далить €чейки, у которых все закрытые соседи имеют флажки
+         if ((!closeN) ||                                     // 1. ”далить €чейки, у которых все закрытые соседи имеют флажки
              ((*p)->Cell_GetOpen() != (nsCell::EOpen)closeF)) // 2. ”далить €чейки, у которых вес не равен кол-ву закрытых соседей с флажками
          {
             //g_Logger.Pur(TEXT("m_SetForOpen del cell=[%i,%i]"), (*p)->GetCoord().X, (*p)->GetCoord().Y);
@@ -389,7 +398,7 @@ void CAssistant::ClickEnd(const nsCell::CClickReportContext &ClickReportContext)
                     closeF++;
                else closeN++;
          }
-         if ((!closeN) ||                                       // 1. ”далить €чейки, у которых все закрытые соседи имеют флажки
+         if ((!closeN) ||                                              // 1. ”далить €чейки, у которых все закрытые соседи имеют флажки
              ((*p)->Cell_GetOpen() == (nsCell::EOpen) closeF) ||       // 2. ”далить €чейки, у которых вес равен кол-ву закрытых соседей с флажками
              ((*p)->Cell_GetOpen() == (nsCell::EOpen)(closeF+closeN))) // 3. ”далить €чейки, у вес которых вес равен кол-ву закрытых соседей.
          {
@@ -424,7 +433,7 @@ void CAssistant::DeleteTableSM() {
 }
 
 JOB_RESULT CAssistant::AddNextVectors(const int cDepth, bool* vec) {
-   if (WAIT_TIMEOUT == WaitForSingleObject(hEventJob, 0)) {
+   if (WAIT_TIMEOUT == ::WaitForSingleObject(hEventJob, 0)) {
       return JOB_ABORT; // работа была прервана
    }
    const int size = m_SetCloseNoFlag.size();
@@ -452,7 +461,7 @@ JOB_RESULT CAssistant::AnalyseVector(const bool* vector) {
    const int numberNeighbor = m_Mosaic.GetCell(0,0)->GetNeighborNumber();
    bool result = true;
    for (nsCell::SET_cpBase::const_iterator p=m_SetForAnalyse.begin(); p!=m_SetForAnalyse.end(); p++) {
-      if (WAIT_TIMEOUT == WaitForSingleObject(hEventJob, 0)) {
+      if (WAIT_TIMEOUT == ::WaitForSingleObject(hEventJob, 0)) {
          return JOB_ABORT; // работа была прервана
       }
       int closeF = 0; // кол-во закрытых соседей с флажками
@@ -617,11 +626,11 @@ inline bool Insert(MM_cpTB& mm, const nsCell::CBase* cellAnalyse, const nsCell::
    return true;
 }
 
-inline void Delete(nsCell::SET_cpBase& m_SetCloseNoFlag, const nsCell::CBase* cell4Del) {
-   if (!m_SetCloseNoFlag.empty()) {
-      nsCell::SET_cpBase::const_iterator I = m_SetCloseNoFlag.find(cell4Del);
-      if (I != m_SetCloseNoFlag.end()) {
-         m_SetCloseNoFlag.erase(*I);
+inline void Delete(nsCell::SET_cpBase& set, const nsCell::CBase* cell4Del) {
+   if (!set.empty()) {
+      nsCell::SET_cpBase::const_iterator I = set.find(cell4Del);
+      if (I != set.end()) {
+         set.erase(*I);
       }
    }
 }

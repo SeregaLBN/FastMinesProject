@@ -57,14 +57,14 @@ private:
    V_pbool m_VTableSM; // vector "SequentialMove" // вектор векторов значений перебираемых флажков
    int m_iRow, m_iCol;
 private:
-   inline bool TestVariant(const int, const int, const nsCell::CBase*, const nsCell::CBase*) const;
-   JOB_RESULT Analyse2Cell(const nsCell::CBase*, const nsCell::CBase*, CClickData&);
-   JOB_RESULT Analyse(CClickData&);
+   inline bool TestCombination(const int, const nsCell::CBase*, const nsCell::CBase*) const;
+   JOB_RESULT Analyse2Cell(const nsCell::CBase*, const nsCell::CBase*, OUT CClickData&);
+   JOB_RESULT Analyse(OUT CClickData&);
    JOB_RESULT AddNextVectors(const int, bool*);
    JOB_RESULT AnalyseVector(const bool*);
    void DeleteTableSM();
 public:
-   JOB_RESULT FindCell(CClickData&);
+   JOB_RESULT FindCell(OUT CClickData&);
 
    void InitForNewGame(); // переинициализация данных перед новой игрой
    void ClickEnd(const nsCell::CClickReportContext &ClickReportContext);
