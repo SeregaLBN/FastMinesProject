@@ -92,7 +92,7 @@ void nsMosaic::LoadDefaultImageBckgrnd(HINSTANCE hInstance, CImage &ImgBckgrnd) 
 ////////////////////////////////////////////////////////////////////////////////
 LRESULT nsMosaic::CMosaic::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
    //g_Logger.PutMsg(CLogger::LL_DEBUG, TEXT(""), msg);
-   CMosaic *const This = (CMosaic *)GetWindowLong(hwnd, GWL_USERDATA);
+   CMosaic *const This = (CMosaic*)::GetWindowUserData(hwnd);
    if (This) {
       switch(msg){
       HANDLE_MSG(hwnd, WM_PAINT        , This->OnPaint);
@@ -139,7 +139,7 @@ BOOL nsMosaic::CMosaic::Create(HWND hWindowParent, int id) {
    if (!m_hWnd) {
       return FALSE;
    }
-   SetWindowLong(m_hWnd, GWL_USERDATA, (LONG)this);
+   ::SetWindowUserData(m_hWnd, (LONG)this);
 
    //
    m_GContext.m_hDCWnd   = GetWindowDC(m_hWnd);

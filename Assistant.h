@@ -6,8 +6,8 @@
 // Описание класса CAssistant
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __FILE__CASSISTANT__
-#define __FILE__CASSISTANT__
+#ifndef __FILE__ASSISTANT__
+#define __FILE__ASSISTANT__
 
 #pragma warning(disable:4786) // identifier was truncated to '255' characters in the debug information
 #include <vector>
@@ -80,4 +80,4 @@ public:
 
 }; // namespace nsMosaic
 
-#endif // __FILE__CASSISTANT__
+#endif // __FILE__ASSISTANT__

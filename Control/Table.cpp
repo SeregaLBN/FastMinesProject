@@ -19,7 +19,7 @@ const TCHAR CTable::SZ_CLASS_WND[] = TEXT("ClassWndFastMinesTable");
 const POINT CTable::INVALID_CELL = {-1,-1};
 
 LRESULT CALLBACK CTable::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-   CTable *const This = (CTable*)GetWindowLong(hWnd, GWL_USERDATA);
+   CTable *const This = (CTable*)::GetWindowUserData(hWnd);
    if (This)
       switch(msg){
       case WM_GETDLGCODE:
@@ -124,7 +124,7 @@ void CTable::Create(const HWND hParent, const int id) {
       WS_GROUP | WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | WS_HSCROLL,// | WS_DLGFRAME,
       CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
       m_hWndParent, HMENU(id), ghInstance, NULL);
-   SetWindowLong(m_hWnd, GWL_USERDATA, (LONG)this);
+   ::SetWindowUserData(m_hWnd, (LONG)this);
    SetRowNumber(11);
    SetColNumber(6);
 
@@ -454,9 +454,9 @@ void CTable::SetVisibleCell(const int indexCol, const int indexRow) { // сделать
 // WM_PAINT
 #define DrawCell { \
    const POINT cellPoint = {i,j}; \
-   MoveToEx(hCDC, cellRect.left , cellRect.bottom-1, NULL); \
-   LineTo  (hCDC, cellRect.left , cellRect.top); \
-   LineTo  (hCDC, cellRect.right, cellRect.top); \
+   ::MoveToEx(hCDC, cellRect.left , cellRect.bottom-1, NULL); \
+   ::LineTo  (hCDC, cellRect.left , cellRect.top); \
+   ::LineTo  (hCDC, cellRect.right, cellRect.top); \
    RECT rectText = {cellRect.left+2+4, cellRect.top+2, cellRect.right-1, cellRect.bottom-1}; \
    if (m_Data[i][j]->m_pImage) { \
       const int m = min(rectText.right-rectText.left, rectText.bottom-rectText.top); \
@@ -467,12 +467,12 @@ void CTable::SetVisibleCell(const int indexCol, const int indexRow) { // сделать
    if (!m_Data[i][j]->m_strText.IsEmpty()) { \
       COLORREF oldTextColor; \
       if ((cellPoint == m_CurrentCell) && m_bSelect) { \
-         oldTextColor = SetTextColor(hCDC, GetSysColor(COLOR_HIGHLIGHTTEXT)); \
+         oldTextColor = ::SetTextColor(hCDC, GetSysColor(COLOR_HIGHLIGHTTEXT)); \
       } \
-      DrawText(hCDC, m_Data[i][j]->m_strText, \
+      ::DrawText(hCDC, m_Data[i][j]->m_strText, \
           -1, &rectText, m_Data[i][j]->m_uFormatText); \
       if ((cellPoint == m_CurrentCell) && m_bSelect) { \
-         SetTextColor(hCDC, oldTextColor); \
+         ::SetTextColor(hCDC, oldTextColor); \
       } \
    } \
 }
@@ -480,41 +480,36 @@ void CTable::SetVisibleCell(const int indexCol, const int indexRow) { // сделать
 #define DrawCellField { \
    if (cellPoint == m_CurrentCell) { \
       if (m_bSelect) { \
-         const HBRUSH hBrushNew = CreateSolidBrush(GetSysColor(COLOR_HIGHLIGHT)); \
-         const HBRUSH hBrushOld = (HBRUSH)SelectObject(hCDC, hBrushNew); \
-         Rectangle(hCDC, cellRect.left, cellRect.top, cellRect.right+1, cellRect.bottom+1); \
-         SelectObject(hCDC, hBrushOld); \
-         DeleteObject(hBrushNew); \
+         const HBRUSH hBrushNew = ::GetSysColorBrush(COLOR_HIGHLIGHT); \
+         const HBRUSH hBrushOld = (HBRUSH)::SelectObject(hCDC, hBrushNew); \
+         ::Rectangle(hCDC, cellRect.left, cellRect.top, cellRect.right+1, cellRect.bottom+1); \
+         ::SelectObject(hCDC, hBrushOld); \
       } else { \
          const HPEN hPenNew = ::CreatePen(PS_DOT, 1, (m_colorBk == CLR_INVALID) ? ::GetSysColor(COLOR_BTNFACE) : m_colorBk); \
-         const HPEN hPenOld = (HPEN)SelectObject(hCDC, hPenNew); \
-         MoveToEx(hCDC, cellRect.left +1, cellRect.top   +1, NULL); \
-         LineTo  (hCDC, cellRect.left +1, cellRect.bottom-1); \
-         LineTo  (hCDC, cellRect.right-1, cellRect.bottom-1); \
-         LineTo  (hCDC, cellRect.right-1, cellRect.top   +1); \
-         LineTo  (hCDC, cellRect.left +1, cellRect.top   +1); \
-         SelectObject(hCDC, hPenOld); \
-         DeleteObject(hPenNew); \
+         const HPEN hPenOld = (HPEN)::SelectObject(hCDC, hPenNew); \
+         ::MoveToEx(hCDC, cellRect.left +1, cellRect.top   +1, NULL); \
+         ::LineTo  (hCDC, cellRect.left +1, cellRect.bottom-1); \
+         ::LineTo  (hCDC, cellRect.right-1, cellRect.bottom-1); \
+         ::LineTo  (hCDC, cellRect.right-1, cellRect.top   +1); \
+         ::LineTo  (hCDC, cellRect.left +1, cellRect.top   +1); \
+         ::SelectObject(hCDC, hPenOld); \
+         ::DeleteObject(hPenNew); \
       } \
    } \
    DrawCell; \
 }
 
 #define DrawCellCaption { \
-   Rectangle(hCDC, cellRect.left, cellRect.top, cellRect.right+1, cellRect.bottom+1); \
+   ::Rectangle(hCDC, cellRect.left, cellRect.top, cellRect.right+1, cellRect.bottom+1); \
    { \
-      const HPEN hPenB = CreatePen(PS_SOLID, 1, 0); \
-      const HPEN hPenW = CreatePen(PS_SOLID, 1, 0xFFFFFF); \
-      const HBRUSH hPenOld = (HBRUSH)SelectObject(hCDC, hPenW); \
-      MoveToEx(hCDC, cellRect.left +1, cellRect.bottom-1, NULL); \
-      LineTo  (hCDC, cellRect.left +1, cellRect.top   +1); \
-      LineTo  (hCDC, cellRect.right-1, cellRect.top   +1); \
-      SelectObject(hCDC, hPenB); \
-      LineTo  (hCDC, cellRect.right-1, cellRect.bottom-1); \
-      LineTo  (hCDC, cellRect.left +1, cellRect.bottom-1); \
-      SelectObject(hCDC, hPenOld); \
-      DeleteObject(hPenB); \
-      DeleteObject(hPenW); \
+      const HPEN hPenOld = (HPEN)::SelectObject(hCDC, ::GetStockObject(WHITE_PEN)); \
+      ::MoveToEx(hCDC, cellRect.left +1, cellRect.bottom-1, NULL); \
+      ::LineTo  (hCDC, cellRect.left +1, cellRect.top   +1); \
+      ::LineTo  (hCDC, cellRect.right-1, cellRect.top   +1); \
+      ::SelectObject(hCDC, ::GetStockObject(BLACK_PEN)); \
+      ::LineTo  (hCDC, cellRect.right-1, cellRect.bottom-1); \
+      ::LineTo  (hCDC, cellRect.left +1, cellRect.bottom-1); \
+      ::SelectObject(hCDC, hPenOld); \
    } \
    DrawCell;\
 }
@@ -541,16 +536,15 @@ void CTable::OnPaint(HWND hWnd) const {
    const x = GetScrollPos(hWnd, SB_HORZ);
    const y = GetScrollPos(hWnd, SB_VERT);
    { // фон
-      const HBRUSH hBrushNew = CreateSolidBrush(GetSysColor(COLOR_WINDOW));
-      const HBRUSH hBrushOld = (HBRUSH)SelectObject(hCDC, hBrushNew);
-      PatBlt(hCDC, 0,0, clientRect.right, clientRect.bottom, PATCOPY);
-      SelectObject(hCDC, hBrushOld);
-      DeleteObject(hBrushNew);
+      const HBRUSH hBrushNew = ::GetSysColorBrush(COLOR_WINDOW);
+      const HBRUSH hBrushOld = (HBRUSH)::SelectObject(hCDC, hBrushNew);
+      ::PatBlt(hCDC, 0,0, clientRect.right, clientRect.bottom, PATCOPY);
+      ::SelectObject(hCDC, hBrushOld);
    }
    { // вывод данных на ...
       const HPEN hPenNew = ::CreatePen(PS_SOLID, 1, (m_colorBk == CLR_INVALID) ? ::GetSysColor(COLOR_BTNFACE) : m_colorBk);
-      const HPEN hPenOld = (HPEN)SelectObject(hCDC, hPenNew);
-      const int oldBkMode = SetBkMode(hCDC, TRANSPARENT); // вывод текста на прозрачном фоне
+      const HPEN hPenOld = (HPEN)::SelectObject(hCDC, hPenNew);
+      const int oldBkMode = ::SetBkMode(hCDC, TRANSPARENT); // вывод текста на прозрачном фоне
       const LOGFONT Font = {8,0,0,0,
                             FW_NORMAL,//FW_BOLD,//
                             0,0,0,
@@ -560,8 +554,8 @@ void CTable::OnPaint(HWND hWnd) const {
                             DEFAULT_QUALITY,
                             DEFAULT_PITCH | FF_DONTCARE,
                             TEXT("MS Sans Serif")};// TEXT("Times New Roman")
-      const HFONT hFont = CreateFontIndirect(&Font);
-      const HFONT hFontOld = (HFONT)SelectObject(hCDC, hFont);
+      const HFONT hFont = ::CreateFontIndirect(&Font);
+      const HFONT hFontOld = (HFONT)::SelectObject(hCDC, hFont);
       { // ... на нестaтичном поле
          for (int i=m_iStaticCol; i<m_ColW.size(); i++)
             for (int j=m_iStaticRow; j<m_RowH.size(); j++) {
@@ -571,8 +565,8 @@ void CTable::OnPaint(HWND hWnd) const {
          }
       }
       { // ... на стaтичном поле
-         const HBRUSH hBrushNew = CreateSolidBrush((m_colorBk == CLR_INVALID) ? ::GetSysColor(COLOR_BTNFACE) : m_colorBk);
-         const HBRUSH hBrushOld = (HBRUSH)SelectObject(hCDC, hBrushNew);
+         const HBRUSH hBrushNew = ((m_colorBk == CLR_INVALID) || (m_colorBk == ::GetSysColor(COLOR_BTNFACE))) ? ::GetSysColorBrush(COLOR_BTNFACE) : ::CreateSolidBrush(m_colorBk);
+         const HBRUSH hBrushOld = (HBRUSH)::SelectObject(hCDC, hBrushNew);
          { // верхний заголовок
             for (int i=m_iStaticCol; i<m_ColW.size(); i++)
                for (int j=0; j<min(m_iStaticRow, m_RowH.size()); j++) {
@@ -594,29 +588,29 @@ void CTable::OnPaint(HWND hWnd) const {
                   DrawCellCaption;
                }
          }/**/
-         SelectObject(hCDC, hBrushOld);
-         DeleteObject(hBrushNew);
+         ::SelectObject(hCDC, hBrushOld);
+         ::DeleteObject(hBrushNew);
       }
-      MoveToEx(hCDC, -x+Width(m_ColW.size()), -y+0, NULL);
-      LineTo  (hCDC, -x+Width(m_ColW.size()), -y+Height(m_RowH.size()));
-      LineTo  (hCDC, -x-1                   , -y+Height(m_RowH.size()));
-      SelectObject(hCDC, hPenOld);
-      DeleteObject(hPenNew);
-      SetBkMode(hCDC, oldBkMode);
-      SelectObject(hCDC, hFontOld);
-      DeleteObject(hFont);
+      ::MoveToEx(hCDC, -x+Width(m_ColW.size()), -y+0, NULL);
+      ::LineTo  (hCDC, -x+Width(m_ColW.size()), -y+Height(m_RowH.size()));
+      ::LineTo  (hCDC, -x-1                   , -y+Height(m_RowH.size()));
+      ::SelectObject(hCDC, hPenOld);
+      ::DeleteObject(hPenNew);
+      ::SetBkMode(hCDC, oldBkMode);
+      ::SelectObject(hCDC, hFontOld);
+      ::DeleteObject(hFont);
    }
-   BitBlt(hODC, PaintStruct.rcPaint.left,
-                PaintStruct.rcPaint.top,
-                PaintStruct.rcPaint.right -PaintStruct.rcPaint.left,
-                PaintStruct.rcPaint.bottom-PaintStruct.rcPaint.top,
-          hCDC, PaintStruct.rcPaint.left,
-                PaintStruct.rcPaint.top,
-          SRCCOPY);
-   SelectObject(hCDC, hBmpOld);
-   DeleteObject(hBmpNew);
-   DeleteDC(hCDC);
-   EndPaint(hWnd, &PaintStruct);
+   ::BitBlt(hODC, PaintStruct.rcPaint.left,
+                  PaintStruct.rcPaint.top,
+                  PaintStruct.rcPaint.right -PaintStruct.rcPaint.left,
+                  PaintStruct.rcPaint.bottom-PaintStruct.rcPaint.top,
+            hCDC, PaintStruct.rcPaint.left,
+                  PaintStruct.rcPaint.top,
+            SRCCOPY);
+   ::SelectObject(hCDC, hBmpOld);
+   ::DeleteObject(hBmpNew);
+   ::DeleteDC(hCDC);
+   ::EndPaint(hWnd, &PaintStruct);
    DrawHScroll();
    DrawVScroll();
 }
@@ -642,12 +636,12 @@ void CTable::OnLButtonDown(HWND hWnd, BOOL fDoubleClick, int x, int y, UINT keyF
 
 // WM_LBUTTONUP
 void CTable::OnLButtonUp(HWND hWnd, int x, int y, UINT keyFlags) {
-   ReleaseCapture();
+   ::ReleaseCapture();
 }
 
 // WM_RBUTTONDOWN & WM_RBUTTONDBLCLK
 void CTable::OnRButtonDown(HWND hWnd, BOOL fDoubleClick, int x, int y, UINT keyFlags) {
-   SetFocus(m_hWnd);
+   ::SetFocus(m_hWnd);
 }
 
 // WM_SIZE
@@ -661,7 +655,7 @@ void CTable::OnSize(HWND hWnd, UINT state, int cx, int cy) {
 // WM_HSCROLL
 void CTable::OnHScroll(HWND hWnd, HWND hwndCtl, UINT code, int pos) {
    SCROLLINFO scInfo = {sizeof(SCROLLINFO), SIF_RANGE | SIF_PAGE | SIF_POS};
-   GetScrollInfo(hWnd, SB_HORZ, &scInfo);
+   ::GetScrollInfo(hWnd, SB_HORZ, &scInfo);
    switch (code) {
    case SB_TOP          : scInfo.nPos = scInfo.nMin; break;
    case SB_BOTTOM       : scInfo.nPos = scInfo.nMax; break;
@@ -674,16 +668,16 @@ void CTable::OnHScroll(HWND hWnd, HWND hwndCtl, UINT code, int pos) {
    case SB_ENDSCROLL    : break;
    }
    scInfo.fMask = SIF_POS;
-   SetScrollInfo(hWnd, SB_HORZ, &scInfo, TRUE);
-   RECT clientRect = GetClientRect(hWnd);
+   ::SetScrollInfo(hWnd, SB_HORZ, &scInfo, TRUE);
+   RECT clientRect = ::GetClientRect(hWnd);
    const RECT invalidateRect = {Width(m_iStaticCol), 0, clientRect.right, clientRect.bottom};
-   InvalidateRect(m_hWnd, &invalidateRect, FALSE);
+   ::InvalidateRect(m_hWnd, &invalidateRect, FALSE);
 }
 
 // WM_VSCROLL
 void CTable::OnVScroll(HWND hWnd, HWND hwndCtl, UINT code, int pos) {
    SCROLLINFO scInfo = {sizeof(SCROLLINFO), SIF_RANGE | SIF_PAGE | SIF_POS};
-   GetScrollInfo(hWnd, SB_VERT, &scInfo);
+   ::GetScrollInfo(hWnd, SB_VERT, &scInfo);
    switch (code) {
    case SB_TOP          : scInfo.nPos = scInfo.nMin; break;
    case SB_BOTTOM       : scInfo.nPos = scInfo.nMax; break;
@@ -696,10 +690,10 @@ void CTable::OnVScroll(HWND hWnd, HWND hwndCtl, UINT code, int pos) {
    case SB_ENDSCROLL    : break;
    }
    scInfo.fMask = SIF_POS;
-   SetScrollInfo(hWnd, SB_VERT, &scInfo, TRUE);
-   RECT clientRect = GetClientRect(hWnd);
+   ::SetScrollInfo(hWnd, SB_VERT, &scInfo, TRUE);
+   RECT clientRect = ::GetClientRect(hWnd);
    const RECT invalidateRect = {0, Height(m_iStaticRow), clientRect.right, clientRect.bottom};
-   InvalidateRect(m_hWnd, &invalidateRect, FALSE);
+   ::InvalidateRect(m_hWnd, &invalidateRect, FALSE);
 }
 
 // WM_ERASEBKGND

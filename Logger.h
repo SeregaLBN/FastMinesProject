@@ -2,7 +2,7 @@
 // File name: Logger.h
 // Author: Sergey Krivulya (Ceргей Кpивуля) - KSerg
 // e-mail: Sergey_Krivulya@UkrPost.Net
-// Date: 21 09 2004
+// Date: 29 09 2004
 //
 ////////////////////////////////////////////////////////////////////////////////
 

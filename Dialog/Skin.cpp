@@ -122,7 +122,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
  //HANDLE_MSG(hDlg, WM_PAINT     , OnPaint);
    HANDLE_MSG(hDlg, WM_ERASEBKGND, OnEraseBkgnd);
 #endif // REPLACEBKCOLORFROMFILLWINDOW
-   HANDLE_WM_CTLCOLOR(hDlg);
+   HANDLE_WM_EX_CTLCOLOR(hDlg, Skin);
    }
    return FALSE;
 }
@@ -573,7 +573,7 @@ void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
       case skinImageBckgrnd : AcceptImage(true); break;
       case skinBorder       : SendDlgItemMessage(hDlg, ID_DIALOG_CHANGESKIN_SPIN_WIDHT, UDM_SETPOS, 0L, Skin.m_Border.m_iWidth); break;
       case skinColorBckgrnd : SendDlgItemMessage(hDlg, ID_DIALOG_CHANGESKIN_BUTTON_TRANSPARENTorSETALL, BM_SETCHECK, (WPARAM)(Skin.m_bToAll ? BST_CHECKED : BST_UNCHECKED), 0L);
-                              InvalidateRect(hWndField, NULL, TRUE);
+                              InvalidateRect(hDlg, NULL, TRUE);
                               break;
       }
       InvalidateRect(hWndField, NULL, TRUE);
@@ -612,8 +612,10 @@ void OnPaint(HWND hwnd) {
 
 // WM_ERASEBKGND
 BOOL OnEraseBkgnd(HWND hwnd, HDC hdc) {
-   if (!Skin.m_bToAll)
+   if (!Skin.m_bToAll) {
+      //return nsEraseBk::OnEraseBkgnd(hwnd, hdc, ::GetSysColor(COLOR_BTNFACE));
       return FALSE; // DefWindowProc(hwnd, WM_ERASEBKGND, (WPARAM)hdc, 0L); // 
+   }
    return nsEraseBk::OnEraseBkgnd(hwnd, hdc, Skin.m_colorBk);
 }
 #endif // REPLACEBKCOLORFROMFILLWINDOW
@@ -858,7 +860,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam){
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
    HANDLE_MSG(hDlg, WM_ERASEBKGND, OnEraseBkgnd);
 #endif // REPLACEBKCOLORFROMFILLWINDOW
-   HANDLE_WM_CTLCOLOR(hDlg);
+   HANDLE_WM_EX_CTLCOLOR(hDlg, gpFM2Proj->GetSkin());
    }
    return FALSE;
 }

@@ -384,8 +384,6 @@ void CFastMines2Project::Create(LPCTSTR szFileName) {
    Menu_ChangeLanguage(); // т.к. меню мозаик у мен€ MFT_OWNERDRAW, то вызов этой ф-ции должен быть после ReloadMosaicMenu()
 
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
-   m_BtnNew  .SetBkColor(m_Serialize.m_Skin.m_colorBk);
-   m_BtnPause.SetBkColor(m_Serialize.m_Skin.m_colorBk);
 #else
    //ReplaceFunction_GetSysColor     (ghInstance);
    //ReplaceFunction_GetSysColorBrush(ghInstance);
@@ -1461,6 +1459,9 @@ void CFastMines2Project::ApplySkin() {
       SetClassLong(m_hWndTop, GCL_HBRBACKGROUND, (LONG)GetSysColorBrush(COLOR_BTNFACE));
       SetClassLong(m_hWnd   , GCL_HBRBACKGROUND, (LONG)GetSysColorBrush(COLOR_BTNFACE));
    }
+
+   m_BtnNew  .SetBkColor(m_Serialize.m_Skin.m_bToAll ? m_Serialize.m_Skin.m_colorBk : CLR_INVALID /**::GetSysColor(COLOR_BTNFACE)/**/);
+   m_BtnPause.SetBkColor(m_Serialize.m_Skin.m_bToAll ? m_Serialize.m_Skin.m_colorBk : CLR_INVALID /**::GetSysColor(COLOR_BTNFACE)/**/);
 #endif // REPLACEBKCOLORFROMFILLWINDOW
 
    {
@@ -1475,6 +1476,7 @@ void CFastMines2Project::ApplySkin() {
    }
 
    BOOL bRes = InvalidateRect(m_hWnd, NULL, TRUE);
+   bRes = InvalidateRect(m_hWndTop, NULL, TRUE); // ???
  //InvalidateRect(m_Mosaic.GetHandle(), NULL, TRUE);
  //SetCursor(LoadCursor(NULL, IDC_ARROW));
 }

@@ -142,7 +142,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam){
  //HANDLE_MSG(hDlg, WM_PAINT     , OnPaint);
    HANDLE_MSG(hDlg, WM_ERASEBKGND, OnEraseBkgnd);
 #endif // REPLACEBKCOLORFROMFILLWINDOW
-   HANDLE_WM_CTLCOLOR(hDlg);
+   HANDLE_WM_EX_CTLCOLOR(hDlg, gpFM2Proj->GetSkin());
    }
    return FALSE;
 }

@@ -328,7 +328,7 @@ bool CLang::RestoreDefaultLanguage() {
    CLang::m_StrArr[IDS__CAPTION_BUTTON_MENU] = TEXT("Menu");
 
    Finalisation();
-   SaveLanguage(TEXT("english_default.lng"));
+   //SaveLanguage(TEXT("english_default.lng"));
 
    return true;
 }

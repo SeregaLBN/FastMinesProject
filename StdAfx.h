@@ -15,6 +15,7 @@
    #pragma comment(linker, "/ENTRY:WinMainCRTStartup")
 #endif // UNICODE
 
+#define _WIN32_WINDOWS 0x0410
 #define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 
 #include <Windows.h>

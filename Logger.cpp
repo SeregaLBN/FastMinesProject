@@ -2,7 +2,7 @@
 // File name: Logger.cpp
 // Author: Sergey Krivulya (Ceргей Кpивуля) - KSerg
 // e-mail: Sergey_Krivulya@UkrPost.Net
-// Date: 21 09 2004
+// Date: 02 10 2004
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -359,7 +359,7 @@ CString CLogger::PutHResult(eLogLevel logLevel, LPCTSTR szStr, HRESULT hRes) {
 
 #define BEGIN_CASE_ERRCODE                    switch(dwErrCode) {
 #define CASE_ERRCODE(Code, Name, Description) case Code: strRes = (bDescription ? TEXT(Description) : TEXT(Name)); break;
-#define END_CASE_ERRCODE                      default: if (extInfo == info_NotDatail) strRes = TEXT("Unknown Error");  }
+#define END_CASE_ERRCODE                      default: break; }
 
 CString CLogger::ErrorCode(DWORD dwErrCode, eInfoExt extInfo, bool bDescription) {
    CString strRes;
@@ -2444,6 +2444,9 @@ CString CLogger::ErrorCode(DWORD dwErrCode, eInfoExt extInfo, bool bDescription)
       }
    }
 #endif // MICROSOFT_SDK_FEBRUARY_2003
+   if (strRes.IsEmpty() && (dwErrCode > 0x80000000)) {
+      strRes = CLogger::HResult(dwErrCode, bDescription);
+   }
    if (strRes.IsEmpty()) {
       if (bDescription) {
          strRes = TEXT("Unknown Error.");
@@ -2487,7 +2490,7 @@ CString CLogger::ErrorCode(DWORD dwErrCode, eInfoExt extInfo, bool bDescription)
 
 #define BEGIN_CASE_HRESULT                    switch(hRes) {
 #define CASE_HRESULT(hRes, Name, MessageText) case hRes: strRes = (bDescription ? TEXT(MessageText) : TEXT(Name)); break;
-#define END_CASE_HRESULT                      default: strRes += TEXT("Unknown HRESULT "); }
+#define END_CASE_HRESULT                      default: { if (bDescription) {strRes += TEXT("Unknown HRESULT "); } else {strRes.Format(TEXT("0x%08X"), hRes);}}}
 
 CString CLogger::HResult(HRESULT hRes, bool bDescription) {
    CString strRes;
@@ -4107,6 +4110,7 @@ CString CLogger::WinHTTPCallbackStatusRequestError_Description(DWORD dwValue) {
 CString CLogger::WindowMessage(UINT msg) {
    CString strRes;
    switch (msg) {
+   // Window Messages
    case WM_NULL                  : strRes = TEXT("WM_NULL"                  ); break;
    case WM_CREATE                : strRes = TEXT("WM_CREATE"                ); break;
    case WM_DESTROY               : strRes = TEXT("WM_DESTROY"               ); break;
@@ -4162,7 +4166,6 @@ CString CLogger::WindowMessage(UINT msg) {
    case WM_POWER                 : strRes = TEXT("WM_POWER"                 ); break;
    case WM_COPYDATA              : strRes = TEXT("WM_COPYDATA"              ); break;
    case WM_CANCELJOURNAL         : strRes = TEXT("WM_CANCELJOURNAL"         ); break;
-#if(WINVER >= 0x0400)
    case WM_NOTIFY                : strRes = TEXT("WM_NOTIFY"                ); break;
    case WM_INPUTLANGCHANGEREQUEST: strRes = TEXT("WM_INPUTLANGCHANGEREQUEST"); break;
    case WM_INPUTLANGCHANGE       : strRes = TEXT("WM_INPUTLANGCHANGE"       ); break;
@@ -4176,7 +4179,6 @@ CString CLogger::WindowMessage(UINT msg) {
    case WM_DISPLAYCHANGE         : strRes = TEXT("WM_DISPLAYCHANGE"         ); break;
    case WM_GETICON               : strRes = TEXT("WM_GETICON"               ); break;
    case WM_SETICON               : strRes = TEXT("WM_SETICON"               ); break;
-#endif /* WINVER >= 0x0400 */
    case WM_NCCREATE              : strRes = TEXT("WM_NCCREATE"              ); break;
    case WM_NCDESTROY             : strRes = TEXT("WM_NCDESTROY"             ); break;
    case WM_NCCALCSIZE            : strRes = TEXT("WM_NCCALCSIZE"            ); break;
@@ -4204,11 +4206,9 @@ CString CLogger::WindowMessage(UINT msg) {
    case WM_SYSCHAR               : strRes = TEXT("WM_SYSCHAR"               ); break;
    case WM_SYSDEADCHAR           : strRes = TEXT("WM_SYSDEADCHAR"           ); break;
    case WM_KEYLAST               : strRes = TEXT("WM_KEYLAST"               ); break;
-#if(WINVER >= 0x0400)
    case WM_IME_STARTCOMPOSITION  : strRes = TEXT("WM_IME_STARTCOMPOSITION"  ); break;
    case WM_IME_ENDCOMPOSITION    : strRes = TEXT("WM_IME_ENDCOMPOSITION"    ); break;
    case WM_IME_COMPOSITION       : strRes = TEXT("WM_IME_COMPOSITION"       ); break;
-#endif /* WINVER >= 0x0400 */
    case WM_INITDIALOG            : strRes = TEXT("WM_INITDIALOG"            ); break;
    case WM_COMMAND               : strRes = TEXT("WM_COMMAND"               ); break;
    case WM_SYSCOMMAND            : strRes = TEXT("WM_SYSCOMMAND"            ); break;
@@ -4221,11 +4221,11 @@ CString CLogger::WindowMessage(UINT msg) {
    case WM_MENUCHAR              : strRes = TEXT("WM_MENUCHAR"              ); break;
    case WM_ENTERIDLE             : strRes = TEXT("WM_ENTERIDLE"             ); break;
 #if (WINVER >= 0x0500)
-   case WM_MENURBUTTONUP         : strRes = TEXT("WM_MENURBUTTONUP"  ); break;
-   case WM_MENUDRAG              : strRes = TEXT("WM_MENUDRAG"       ); break;
-   case WM_MENUGETOBJECT         : strRes = TEXT("WM_MENUGETOBJECT"  ); break;
-   case WM_UNINITMENUPOPUP       : strRes = TEXT("WM_UNINITMENUPOPUP"); break;
-   case WM_MENUCOMMAND           : strRes = TEXT("WM_MENUCOMMAND"    ); break;
+   case WM_MENURBUTTONUP         : strRes = TEXT("WM_MENURBUTTONUP"         ); break;
+   case WM_MENUDRAG              : strRes = TEXT("WM_MENUDRAG"              ); break;
+   case WM_MENUGETOBJECT         : strRes = TEXT("WM_MENUGETOBJECT"         ); break;
+   case WM_UNINITMENUPOPUP       : strRes = TEXT("WM_UNINITMENUPOPUP"       ); break;
+   case WM_MENUCOMMAND           : strRes = TEXT("WM_MENUCOMMAND"           ); break;
 #endif /* WINVER >= 0x0500 */
 #ifdef __AFX_H__
    case WM_CTLCOLOR              : strRes = TEXT("WM_CTLCOLOR"              ); break;
@@ -4247,13 +4247,12 @@ CString CLogger::WindowMessage(UINT msg) {
    case WM_MBUTTONDOWN           : strRes = TEXT("WM_MBUTTONDOWN"           ); break;
    case WM_MBUTTONUP             : strRes = TEXT("WM_MBUTTONUP"             ); break;
    case WM_MBUTTONDBLCLK         : strRes = TEXT("WM_MBUTTONDBLCLK"         ); break;
-#if(_WIN32_WINNT >= 0x0400)
+#if (_WIN32_WINNT >= 0x0400) || (_WIN32_WINDOWS > 0x0400)
    case WM_MOUSEWHEEL            : strRes = TEXT("WM_MOUSEWHEEL"            ); break;
-#endif /* _WIN32_WINNT >= 0x0400 */
+#endif
    case WM_PARENTNOTIFY          : strRes = TEXT("WM_PARENTNOTIFY"          ); break;
    case WM_ENTERMENULOOP         : strRes = TEXT("WM_ENTERMENULOOP"         ); break;
    case WM_EXITMENULOOP          : strRes = TEXT("WM_EXITMENULOOP"          ); break;
-#if(WINVER >= 0x0400)
    case WM_NEXTMENU              : strRes = TEXT("WM_NEXTMENU"              ); break;
    case WM_SIZING                : strRes = TEXT("WM_SIZING"                ); break;
    case WM_CAPTURECHANGED        : strRes = TEXT("WM_CAPTURECHANGED"        ); break;
@@ -4268,7 +4267,6 @@ CString CLogger::WindowMessage(UINT msg) {
    case WM_IME_CHAR              : strRes = TEXT("WM_IME_CHAR"              ); break;
    case WM_IME_KEYDOWN           : strRes = TEXT("WM_IME_KEYDOWN"           ); break;
    case WM_IME_KEYUP             : strRes = TEXT("WM_IME_KEYUP"             ); break;
-#endif /* WINVER >= 0x0400 */
    case WM_MDICREATE             : strRes = TEXT("WM_MDICREATE"             ); break;
    case WM_MDIDESTROY            : strRes = TEXT("WM_MDIDESTROY"            ); break;
    case WM_MDIACTIVATE           : strRes = TEXT("WM_MDIACTIVATE"           ); break;
@@ -4307,36 +4305,118 @@ CString CLogger::WindowMessage(UINT msg) {
    case WM_PALETTEISCHANGING     : strRes = TEXT("WM_PALETTEISCHANGING"     ); break;
    case WM_PALETTECHANGED        : strRes = TEXT("WM_PALETTECHANGED"        ); break;
    case WM_HOTKEY                : strRes = TEXT("WM_HOTKEY"                ); break;
-#if(WINVER >= 0x0400)
    case WM_PRINT                 : strRes = TEXT("WM_PRINT"                 ); break;
    case WM_PRINTCLIENT           : strRes = TEXT("WM_PRINTCLIENT"           ); break;
    case WM_HANDHELDFIRST         : strRes = TEXT("WM_HANDHELDFIRST"         ); break;
    case WM_HANDHELDLAST          : strRes = TEXT("WM_HANDHELDLAST"          ); break;
    case WM_AFXFIRST              : strRes = TEXT("WM_AFXFIRST"              ); break;
    case WM_AFXLAST               : strRes = TEXT("WM_AFXLAST"               ); break;
-#endif /* WINVER >= 0x0400 */
    case WM_PENWINFIRST           : strRes = TEXT("WM_PENWINFIRST"           ); break;
    case WM_PENWINLAST            : strRes = TEXT("WM_PENWINLAST"            ); break;
-#if(WINVER >= 0x0400)
    case WM_APP                   : strRes = TEXT("WM_APP"                   ); break;
-#endif /* WINVER >= 0x0400 */
    case WM_USER                  : strRes = TEXT("WM_USER"                  ); break;
  //case 0x20A                    : strRes = TEXT("mouse_scrolling"          ); break;
+
+   // Button Control Messages
+   case BM_GETCHECK              : strRes = TEXT("BM_GETCHECK"              ); break;
+   case BM_SETCHECK              : strRes = TEXT("BM_SETCHECK"              ); break;
+   case BM_GETSTATE              : strRes = TEXT("BM_GETSTATE"              ); break;
+   case BM_SETSTATE              : strRes = TEXT("BM_SETSTATE"              ); break;
+   case BM_SETSTYLE              : strRes = TEXT("BM_SETSTYLE"              ); break;
+   case BM_CLICK                 : strRes = TEXT("BM_CLICK   "              ); break;
+   case BM_GETIMAGE              : strRes = TEXT("BM_GETIMAGE"              ); break;
+   case BM_SETIMAGE              : strRes = TEXT("BM_SETIMAGE"              ); break;
+
+   // Edit Control Messages
+   case EM_GETSEL               : strRes = TEXT("EM_GETSEL"                 ); break;
+   case EM_SETSEL               : strRes = TEXT("EM_SETSEL"                 ); break;
+   case EM_GETRECT              : strRes = TEXT("EM_GETRECT"                ); break;
+   case EM_SETRECT              : strRes = TEXT("EM_SETRECT"                ); break;
+   case EM_SETRECTNP            : strRes = TEXT("EM_SETRECTNP"              ); break;
+   case EM_SCROLL               : strRes = TEXT("EM_SCROLL"                 ); break;
+   case EM_LINESCROLL           : strRes = TEXT("EM_LINESCROLL"             ); break;
+   case EM_SCROLLCARET          : strRes = TEXT("EM_SCROLLCARET"            ); break;
+   case EM_GETMODIFY            : strRes = TEXT("EM_GETMODIFY"              ); break;
+   case EM_SETMODIFY            : strRes = TEXT("EM_SETMODIFY"              ); break;
+   case EM_GETLINECOUNT         : strRes = TEXT("EM_GETLINECOUNT"           ); break;
+   case EM_LINEINDEX            : strRes = TEXT("EM_LINEINDEX"              ); break;
+   case EM_SETHANDLE            : strRes = TEXT("EM_SETHANDLE"              ); break;
+   case EM_GETHANDLE            : strRes = TEXT("EM_GETHANDLE"              ); break;
+   case EM_GETTHUMB             : strRes = TEXT("EM_GETTHUMB"               ); break;
+   case EM_LINELENGTH           : strRes = TEXT("EM_LINELENGTH"             ); break;
+   case EM_REPLACESEL           : strRes = TEXT("EM_REPLACESEL"             ); break;
+   case EM_GETLINE              : strRes = TEXT("EM_GETLINE"                ); break;
+   case EM_LIMITTEXT            : strRes = TEXT("EM_[SET]LIMITTEXT"         ); break;
+   case EM_CANUNDO              : strRes = TEXT("EM_CANUNDO"                ); break;
+   case EM_UNDO                 : strRes = TEXT("EM_UNDO"                   ); break;
+   case EM_FMTLINES             : strRes = TEXT("EM_FMTLINES"               ); break;
+   case EM_LINEFROMCHAR         : strRes = TEXT("EM_LINEFROMCHAR"           ); break;
+   case EM_SETTABSTOPS          : strRes = TEXT("EM_SETTABSTOPS"            ); break;
+   case EM_SETPASSWORDCHAR      : strRes = TEXT("EM_SETPASSWORDCHAR"        ); break;
+   case EM_EMPTYUNDOBUFFER      : strRes = TEXT("EM_EMPTYUNDOBUFFER"        ); break;
+   case EM_GETFIRSTVISIBLELINE  : strRes = TEXT("EM_GETFIRSTVISIBLELINE"    ); break;
+   case EM_SETREADONLY          : strRes = TEXT("EM_SETREADONLY"            ); break;
+   case EM_SETWORDBREAKPROC     : strRes = TEXT("EM_SETWORDBREAKPROC"       ); break;
+   case EM_GETWORDBREAKPROC     : strRes = TEXT("EM_GETWORDBREAKPROC"       ); break;
+   case EM_GETPASSWORDCHAR      : strRes = TEXT("EM_GETPASSWORDCHAR"        ); break;
+   case EM_SETMARGINS           : strRes = TEXT("EM_SETMARGINS"             ); break;
+   case EM_GETMARGINS           : strRes = TEXT("EM_GETMARGINS"             ); break;
+ //case EM_SETLIMITTEXT         : strRes = TEXT("EM_SETLIMITTEXT"           ); break;
+   case EM_GETLIMITTEXT         : strRes = TEXT("EM_GETLIMITTEXT"           ); break;
+   case EM_POSFROMCHAR          : strRes = TEXT("EM_POSFROMCHAR"            ); break;
+   case EM_CHARFROMPOS          : strRes = TEXT("EM_CHARFROMPOS"            ); break;
+#if(WINVER >= 0x0500)
+   case EM_SETIMESTATUS         : strRes = TEXT("EM_SETIMESTATUS"           ); break;
+   case EM_GETIMESTATUS         : strRes = TEXT("EM_GETIMESTATUS"           ); break;
+#endif /* WINVER >= 0x0500 */
+
+   // Static Control Mesages
+   case STM_SETICON             : strRes = TEXT("STM_SETICON"               ); break;
+   case STM_GETICON             : strRes = TEXT("STM_GETICON"               ); break;
+   case STM_SETIMAGE            : strRes = TEXT("STM_SETIMAGE"              ); break;
+   case STM_GETIMAGE            : strRes = TEXT("STM_GETIMAGE"              ); break;
+
+   // Scroll bar messages
+   case SBM_SETPOS              : strRes = TEXT("SBM_SETPOS"                ); break;
+   case SBM_GETPOS              : strRes = TEXT("SBM_GETPOS"                ); break;
+   case SBM_SETRANGE            : strRes = TEXT("SBM_SETRANGE"              ); break;
+   case SBM_SETRANGEREDRAW      : strRes = TEXT("SBM_SETRANGEREDRAW"        ); break;
+   case SBM_GETRANGE            : strRes = TEXT("SBM_GETRANGE"              ); break;
+   case SBM_ENABLE_ARROWS       : strRes = TEXT("SBM_ENABLE_ARROWS"         ); break;
+   case SBM_SETSCROLLINFO       : strRes = TEXT("SBM_SETSCROLLINFO"         ); break;
+   case SBM_GETSCROLLINFO       : strRes = TEXT("SBM_GETSCROLLINFO"         ); break;
+#if(_WIN32_WINNT >= 0x0501)
+   case SBM_GETSCROLLBARINFO    : strRes = TEXT("SBM_GETSCROLLBARINFO"      ); break;
+#endif /* _WIN32_WINNT >= 0x0501 */
    }
+
    if (strRes.IsEmpty()) {
-#if(WINVER >= 0x0400)
       if ((msg>WM_HANDHELDFIRST) && (msg<WM_HANDHELDLAST)) {
          strRes.Format(TEXT("WM_HANDHELDFIRST+%d"), msg-WM_HANDHELDFIRST);
       } else
       if ((msg>WM_AFXFIRST) && (msg<WM_AFXLAST)) {
          strRes.Format(TEXT("WM_AFXFIRST+%d"), msg-WM_AFXFIRST);
       } else
-#endif /* WINVER >= 0x0400 */
-      if ((msg>WM_PENWINFIRST) && (msg<WM_PENWINFIRST)) {
-         strRes.Format(TEXT("WM_PENWINFIRST+%d"), msg-WM_PENWINLAST);
+      if ((msg>WM_PENWINFIRST) && (msg<WM_PENWINLAST)) {
+         strRes.Format(TEXT("WM_PENWINFIRST+%d"), msg-WM_PENWINFIRST);
       } else
-      {
-         strRes.Format(TEXT("0x%04X"), msg);
+      if ((msg>WM_APP) && (msg<=0xBFFF)) { // Messages reserved for future use by Windows.
+         strRes.Format(TEXT("WM_APP+%d"), msg-WM_APP);
+         //strRes += TEXT(" Unknown application private message");
+      }
+   }
+   if (strRes.IsEmpty()) {
+      if ((msg>=0) && (msg<WM_USER)) { // Messages reserved for use by Windows.
+         strRes = TEXT("Unknown window message");
+      } else
+      if ((msg>=WM_USER) && (msg<=0x7FFF)) { // Integer messages for use by private window classes.
+         strRes = TEXT("Unknown user message");
+      } else
+      if ((msg>=0xC000) && (msg<=0xFFFF)) { // String messages for use by applications.
+         strRes = TEXT("Unknown string message");
+      } else
+      if (msg>0xFFFF) { // Reserved by Windows for future use.
+         strRes = TEXT("Unknown reserved message");
       }
    }
    return strRes;
@@ -6088,7 +6168,7 @@ CString CLogger::WindowStyle(HWND hWnd) {
    if (lStyle &  DS_MODALFRAME   ) ADD_STYLE("DS_MODALFRAME"   );
    if (lStyle &  DS_NOIDLEMSG    ) ADD_STYLE("DS_NOIDLEMSG"    );
    if (lStyle &  DS_SETFOREGROUND) ADD_STYLE("DS_SETFOREGROUND");
-#if (WINVER >= 0x0400)
+
    if (lStyle &  DS_3DLOOK       ) ADD_STYLE("DS_3DLOOK"       );
    if (lStyle &  DS_FIXEDSYS     ) ADD_STYLE("DS_FIXEDSYS"     );
    if (lStyle &  DS_NOFAILCREATE ) ADD_STYLE("DS_NOFAILCREATE" );
@@ -6096,7 +6176,6 @@ CString CLogger::WindowStyle(HWND hWnd) {
    if (lStyle &  DS_CENTER       ) ADD_STYLE("DS_CENTER"       );
    if (lStyle &  DS_CENTERMOUSE  ) ADD_STYLE("DS_CENTERMOUSE"  );
    if (lStyle &  DS_CONTEXTHELP  ) ADD_STYLE("DS_CONTEXTHELP"  );
-#endif
 
    // Window Styles
    if (lStyle & WS_OVERLAPPED  ) ADD_STYLE("WS_OVERLAPPED"  );
@@ -6145,7 +6224,7 @@ CString CLogger::WindowStyleEx(HWND hWnd) {
    if (lStyleEx & WS_EX_TOPMOST       ) ADD_STYLEEX("WS_EX_TOPMOST"       );
    if (lStyleEx & WS_EX_ACCEPTFILES   ) ADD_STYLEEX("WS_EX_ACCEPTFILES"   );
    if (lStyleEx & WS_EX_TRANSPARENT   ) ADD_STYLEEX("WS_EX_TRANSPARENT"   );
-#if (WINVER >= 0x0400)
+
    if (lStyleEx & WS_EX_MDICHILD      ) ADD_STYLEEX("WS_EX_MDICHILD"      );
    if (lStyleEx & WS_EX_TOOLWINDOW    ) ADD_STYLEEX("WS_EX_TOOLWINDOW"    );
    if (lStyleEx & WS_EX_WINDOWEDGE    ) ADD_STYLEEX("WS_EX_WINDOWEDGE"    );
@@ -6165,7 +6244,6 @@ CString CLogger::WindowStyleEx(HWND hWnd) {
 
    //#define WS_EX_OVERLAPPEDWINDOW (WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE)
    //#define WS_EX_PALETTEWINDOW    (WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST)
-#endif
 #undef ADD_STYLEEX
 
    strRes = (LPCTSTR)strRes+3;

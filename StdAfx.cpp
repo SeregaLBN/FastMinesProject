@@ -8,7 +8,7 @@
       #else
          CLogger::LL_INFO,
       #endif
-         TEXT("FastMines_Log.txt")
+         TEXT("___FastMines_Log.txt")
    );
 #endif
 

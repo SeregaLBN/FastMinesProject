@@ -17,10 +17,11 @@ extern HINSTANCE ghInstance;
 const TCHAR CButtonImageCheck::SZ_CLASS_WND[] = TEXT("ClassWndFastMinesButtonImageCheck");
 
 LRESULT CALLBACK CButtonImageCheck::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-   CButtonImageCheck* const This = (CButtonImageCheck*)GetWindowLong(hWnd, GWL_USERDATA);
+   CButtonImageCheck* const This = (CButtonImageCheck*)GetWindowUserData(hWnd);
    if (This) {
       switch(msg){
       HANDLE_MSG(hWnd, WM_PAINT      , This->OnPaint);
+      HANDLE_MSG(hWnd, WM_ERASEBKGND , This->OnEraseBkgnd);
       HANDLE_MSG(hWnd, WM_LBUTTONUP  , This->OnLButtonUp);
       HANDLE_MSG(hWnd, WM_LBUTTONDOWN, This->OnLButtonDown);
       HANDLE_MSG(hWnd, WM_MOUSEMOVE  , This->OnMouseMove);
@@ -42,7 +43,7 @@ CButtonImageCheck::CButtonImageCheck():
    m_bCheck(false)
 {
    static BOOL bInit =
-   RegClass(
+   ::RegClass(
       0,                               // UINT    style
       WndProc,                         // WNDPROC lpfnWndProc
       0,                               // int     cbClsExtra
@@ -63,7 +64,7 @@ void CButtonImageCheck::Create(const HWND hParent, const int id) {
       WS_CHILD | WS_VISIBLE,
       CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
       m_hWndParent, HMENU(id), ghInstance, NULL);
-   SetWindowLong(m_hWnd, GWL_USERDATA, (LONG)this);
+   ::SetWindowUserData(m_hWnd, (LONG)this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -73,17 +74,8 @@ void CButtonImageCheck::Create(const HWND hParent, const int id) {
 void CButtonImageCheck::OnPaint(HWND hWnd) const {
    PAINTSTRUCT PaintStruct;
    HDC hDC = BeginPaint(hWnd, &PaintStruct);
- //ValidateRect(hWnd, NULL);
- //SendMessage(hWnd, WM_ERASEBKGND, (WPARAM)hDC, 0L);
    {
       RECTEX Rect = ::GetClientRect(hWnd);
-      /**/
-      HBRUSH hBrushNew = ::CreateSolidBrush(
-         (m_colorBk == CLR_INVALID) ? ::GetSysColor(COLOR_BTNFACE) : m_colorBk
-      );
-      HBRUSH hBrushOld = (HBRUSH)SelectObject(hDC, hBrushNew);
-      PatBlt(hDC, 0,0, Rect.right, Rect.bottom, PATCOPY);
-      /**/
       Rect.left   += 2+!!m_bDown;
       Rect.top    += 2+!!m_bDown;
       Rect.right  -= 2-!!m_bDown;
@@ -93,7 +85,7 @@ void CButtonImageCheck::OnPaint(HWND hWnd) const {
 
       Rect = ::GetClientRect(hWnd);
 
-      HPEN hPenNew1 = CreatePen(PS_SOLID, 2, (m_bDown || m_bCheck) ? 0x00FFFFFF : 0);
+      HPEN hPenNew1 = ::CreatePen(PS_SOLID, 2, (m_bDown || m_bCheck) ? 0x00FFFFFF : 0);
       HPEN hPenOld = (HPEN)SelectObject(hDC, hPenNew1);
       MoveToEx(hDC, Rect.right-1, Rect.top   +1, NULL);
       LineTo  (hDC, Rect.right-1, Rect.bottom-1);
@@ -105,9 +97,7 @@ void CButtonImageCheck::OnPaint(HWND hWnd) const {
       LineTo  (hDC, Rect.left +1, Rect.top   +1);
       LineTo  (hDC, Rect.right-2, Rect.top   +1);
 
-      SelectObject(hDC, hBrushOld);
       SelectObject(hDC, hPenOld);
-      DeleteObject(hBrushNew);
       DeleteObject(hPenNew1);
       DeleteObject(hPenNew2);
    }

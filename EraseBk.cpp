@@ -3,16 +3,15 @@
 //                                                   (C) Sergey Krivulya (KSerg)
 // file name: "EraseBk.h"
 //
-// Ф-ции для заливки фоновым цветом окон
+// Ф-ции заливки окон фоновым цветом
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "StdAfx.h"
 #include "EraseBk.h"
-#include "FastMines2.h"
 ////////////////////////////////////////////////////////////////////////////////
 //                             global variables
 ////////////////////////////////////////////////////////////////////////////////
-extern CFastMines2Project *gpFM2Proj;
+//extern CFastMines2Project *gpFM2Proj;
 extern HINSTANCE ghInstance;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,18 +26,18 @@ namespace nsEraseBk {
 // WM_CTLCOLORDLG
 // WM_CTLCOLORSCROLLBAR
 // WM_CTLCOLORSTATIC
-HBRUSH OnCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type) {
+HBRUSH OnCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type, const CSkin &Skin) {
    if (CTLCOLOR_SCROLLBAR == type)
       MessageBeep(0);
-   if (gpFM2Proj && gpFM2Proj->GetSkin().m_bToAll) {
+   if (Skin.m_bToAll) {
       static HBRUSH hBrush = NULL;
       static COLORREF oldBkColor = CLR_INVALID; // invalid color
       //SetBkMode(hdc, TRANSPARENT); // вывод текста на прозрачном фоне
-      SetBkColor(hdc, gpFM2Proj->GetSkin().m_colorBk);
-      if (oldBkColor != gpFM2Proj->GetSkin().m_colorBk) {
+      SetBkColor(hdc, Skin.m_colorBk);
+      if (oldBkColor != Skin.m_colorBk) {
          DeleteObject(hBrush);
-         hBrush = CreateSolidBrush(oldBkColor = gpFM2Proj->GetSkin().m_colorBk);
-       //hBrush = CreateHatchBrush(HS_DIAGCROSS, oldBkColor = gpFM2Proj->GetSkin().m_colorBk);
+         hBrush = CreateSolidBrush(oldBkColor = Skin.m_colorBk);
+       //hBrush = CreateHatchBrush(HS_DIAGCROSS, oldBkColor = Skin.m_colorBk);
       }
       return hBrush;
    }
@@ -120,13 +119,12 @@ void FillWnd(HWND hwnd, COLORREF bkColor, bool client, const RECT& fillRect) {
 
 // WM_ERASEBKGND
 BOOL OnEraseBkgnd(HWND hwnd, HDC hdc, COLORREF colorBk) {
-   HBRUSH hBrushNew = CreateSolidBrush(colorBk);
-   HBRUSH hBrushOld = (HBRUSH)SelectObject(hdc, hBrushNew);
-   RECT Rect;
-   GetClientRect(hwnd, &Rect);
-   PatBlt(hdc, 0,0, Rect.right, Rect.bottom, PATCOPY);
-   SelectObject(hdc, hBrushOld);
-   DeleteObject(hBrushNew);
+   HBRUSH hBrushNew = ::CreateSolidBrush(colorBk);
+   HBRUSH hBrushOld = (HBRUSH)::SelectObject(hdc, hBrushNew);
+   RECTEX Rect = ::GetClientRect(hwnd);
+   ::PatBlt(hdc, 0,0, Rect.right, Rect.bottom, PATCOPY);
+   ::SelectObject(hdc, hBrushOld);
+   ::DeleteObject(hBrushNew);
    return TRUE;
 }
 
@@ -209,7 +207,7 @@ BOOL ReplaceIATEntryInOneMod(PCSTR szCalleeModName, PVOID pfnCurrent, PVOID pfnN
    // If we get to here, the function is not in the caller's import section
    return  FALSE;
 }
-
+/*
 typedef DWORD (WINAPI* PF_GetSysColor)(int);
 PF_GetSysColor pfGetSysColor = GetSysColor;
 DWORD WINAPI MyGetSysColor (int nIndex) {
@@ -233,7 +231,7 @@ HBRUSH WINAPI MyGetSysColorBrush (int nIndex) {
    }
    return pfGetSysColorBrush(nIndex);
 }
-
+*/
 typedef FARPROC (WINAPI* PF_GetProcAddress)(HMODULE, LPCSTR);
 PF_GetProcAddress pfGetProcAddress = GetProcAddress;
 FARPROC WINAPI MyGetProcAddress (HMODULE hModule, LPCSTR lpProcName) {

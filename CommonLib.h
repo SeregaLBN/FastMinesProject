@@ -206,6 +206,7 @@ SIZEEX GetClientSize(HWND hWnd);
 
 POINTEX GetCursorPos();
 
+CString GetClassName     (HWND);
 WNDPROC GetWindowProc    (HWND);
 WNDPROC SetWindowProc    (HWND, WNDPROC pWndProc);
 //DWORD GetWindowStyle   (HWND); // определено в 'WindowsX.h'

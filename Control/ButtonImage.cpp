@@ -17,10 +17,11 @@ extern HINSTANCE ghInstance;
 const TCHAR CButtonImage::SZ_CLASS_WND[] = TEXT("ClassWndFastMinesButtonImage");
 
 LRESULT CALLBACK CButtonImage::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-   CButtonImage *const This = (CButtonImage*)GetWindowLong(hWnd, GWL_USERDATA);
+   CButtonImage *const This = (CButtonImage*)::GetWindowUserData(hWnd);
    if (This) {
       switch(msg){
       HANDLE_MSG(hWnd, WM_PAINT      , This->OnPaint);
+      HANDLE_MSG(hWnd, WM_ERASEBKGND , This->OnEraseBkgnd);
       HANDLE_MSG(hWnd, WM_LBUTTONUP  , This->OnLButtonUp);
       HANDLE_MSG(hWnd, WM_LBUTTONDOWN, This->OnLButtonDown);
       HANDLE_MSG(hWnd, WM_MOUSEMOVE  , This->OnMouseMove);
@@ -33,14 +34,16 @@ LRESULT CALLBACK CButtonImage::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
 
 CButtonImage::CButtonImage():
    m_colorBk   (CLR_INVALID),
+   m_hBrush    (NULL),
    m_bDown     (false),
    m_pImage    (NULL),
    m_hWnd      (NULL),
    m_hWndParent(NULL),
    m_iIdControl(0)
 {
+   SetBkColor(m_colorBk);
    static BOOL bInit =
-   RegClass(
+   ::RegClass(
       0,                               // UINT    style
       WndProc,                         // WNDPROC lpfnWndProc
       0,                               // int     cbClsExtra
@@ -54,6 +57,10 @@ CButtonImage::CButtonImage():
    );
 }
 
+CButtonImage::~CButtonImage() {
+   ::DeleteObject(m_hBrush);
+}
+
 void CButtonImage::Create(HWND hParent, int id) {
    m_hWndParent = hParent;
    m_iIdControl = id;
@@ -61,31 +68,44 @@ void CButtonImage::Create(HWND hParent, int id) {
       WS_CHILD | WS_VISIBLE,
       CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
       m_hWndParent, HMENU(id), ghInstance, NULL);
-   SetWindowLong(m_hWnd, GWL_USERDATA, (LONG)this);
+   ::SetWindowUserData(m_hWnd, (LONG)this);
 }
 
 void CButtonImage::SetBkColor(COLORREF colorBk) {
    m_colorBk = colorBk;
+
+   ::DeleteObject(m_hBrush);
+   if ((m_colorBk == CLR_INVALID) ||
+       (m_colorBk == ::GetSysColor(COLOR_BTNFACE))
+      )
+   {
+      m_hBrush = ::GetSysColorBrush(COLOR_BTNFACE);
+   } else {
+      m_hBrush = ::CreateSolidBrush(m_colorBk );
+   }
+
    ::InvalidateRect(m_hWnd, NULL, TRUE);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //                         обработчики сообщений
 ////////////////////////////////////////////////////////////////////////////////
+
+// WM_ERASEBKGND
+BOOL CButtonImage::OnEraseBkgnd(HWND hWnd, HDC hDC) {
+   RECTEX Rect = ::GetClientRect(hWnd);
+   HBRUSH hBrushOld = (HBRUSH)::SelectObject(hDC, m_hBrush);
+   ::PatBlt(hDC, 0,0, Rect.right, Rect.bottom, PATCOPY);
+   ::SelectObject(hDC, hBrushOld);
+   return TRUE;
+}
+
 // WM_PAINT
 void CButtonImage::OnPaint(HWND hWnd) const {
    PAINTSTRUCT PaintStruct;
    HDC hDC = BeginPaint(hWnd, &PaintStruct);
- //ValidateRect(hWnd, NULL);
- //SendMessage(hWnd, WM_ERASEBKGND, (WPARAM)hDC, 0L);
    {
       RECTEX Rect = ::GetClientRect(hWnd);
-      HBRUSH hBrushNew = ::CreateSolidBrush(
-         (m_colorBk == CLR_INVALID) ? ::GetSysColor(COLOR_BTNFACE) : m_colorBk
-      );
-      HBRUSH hBrushOld = (HBRUSH)SelectObject(hDC, hBrushNew);
-      ::PatBlt(hDC, 0,0, Rect.right, Rect.bottom, PATCOPY);
-      /**/
       Rect.left   += 2+!!m_bDown;
       Rect.top    += 2+!!m_bDown;
       Rect.right  -= 2-!!m_bDown;
@@ -107,9 +127,7 @@ void CButtonImage::OnPaint(HWND hWnd) const {
       LineTo  (hDC, Rect.left +1, Rect.top   +1);
       LineTo  (hDC, Rect.right-2, Rect.top   +1);
 
-      SelectObject(hDC, hBrushOld);
       SelectObject(hDC, hPenOld);
-      DeleteObject(hBrushNew);
       DeleteObject(hPenNew1);
       DeleteObject(hPenNew2);
    }

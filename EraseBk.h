@@ -12,9 +12,10 @@
    #include <Windows.h>
 #endif
 #include "CommonLib.h"
+#include "FastMines2.h"
 
 namespace nsEraseBk {
-   HBRUSH OnCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type);
+   HBRUSH OnCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type, const CSkin &Skin);
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
    const RECT errorRect = {0,0,0,0};
 
@@ -27,26 +28,19 @@ namespace nsEraseBk {
    BOOL ReplaceFunctions();
 }
 
-//#define HANDLE_WM_CTLCOLOR(hwnd)
-#define HANDLE_WM_CTLCOLOR(hwnd) \
-   HANDLE_MSG(hwnd, WM_CTLCOLORMSGBOX   , nsEraseBk::OnCtlColor);     \
- /*HANDLE_MSG(hwnd, WM_CTLCOLOREDIT     , nsEraseBk::OnCtlColor);/**/ \
- /*HANDLE_MSG(hwnd, WM_CTLCOLORLISTBOX  , nsEraseBk::OnCtlColor);/**/ \
-   HANDLE_MSG(hwnd, WM_CTLCOLORBTN      , nsEraseBk::OnCtlColor);     \
-   HANDLE_MSG(hwnd, WM_CTLCOLORDLG      , nsEraseBk::OnCtlColor);     \
-   HANDLE_MSG(hwnd, WM_CTLCOLORSCROLLBAR, nsEraseBk::OnCtlColor);     \
-   HANDLE_MSG(hwnd, WM_CTLCOLORSTATIC   , nsEraseBk::OnCtlColor)
+#define HANDLE_WM_EX_CTLCOLOR(hwnd, skin) \
+   HANDLE_MSG_EX(hwnd, WM_CTLCOLORMSGBOX   , nsEraseBk::OnCtlColor, skin );     \
+ /*HANDLE_MSG_EX(hwnd, WM_CTLCOLOREDIT     , nsEraseBk::OnCtlColor, skin );/**/ \
+ /*HANDLE_MSG_EX(hwnd, WM_CTLCOLORLISTBOX  , nsEraseBk::OnCtlColor, skin );/**/ \
+   HANDLE_MSG_EX(hwnd, WM_CTLCOLORBTN      , nsEraseBk::OnCtlColor, skin );     \
+   HANDLE_MSG_EX(hwnd, WM_CTLCOLORDLG      , nsEraseBk::OnCtlColor, skin );     \
+   HANDLE_MSG_EX(hwnd, WM_CTLCOLORSCROLLBAR, nsEraseBk::OnCtlColor, skin );     \
+   HANDLE_MSG_EX(hwnd, WM_CTLCOLORSTATIC   , nsEraseBk::OnCtlColor, skin )
 
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
 ////////////////////////////////////////////////////////////////////////////////
 //                   Overdetermination Windows Procedure
 ////////////////////////////////////////////////////////////////////////////////
-
-#if (_MSC_VER==1100)
-   #define CALL_WND_PROC FARPROC // MsVC++ 6
-#else
-   #define CALL_WND_PROC WNDPROC // MsVC++ 5
-#endif
 
 #define WNDPROC_OVER(name, Skin)   \
 WNDPROC defWndProc_##name;  \
@@ -57,7 +51,7 @@ LRESULT CALLBACK newWndProc_##name(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
          return nsEraseBk::OnEraseBkgnd(hwnd, (HDC)wParam, Skin.m_colorBk);  \
       }  \
    }*/  \
-   return CallWindowProc((CALL_WND_PROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \
+   return CallWindowProc((WNDPROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \
 }
 
 #define WNDPROC_STATIC(name, Skin)   \
@@ -65,12 +59,12 @@ WNDPROC defWndProc_##name;  \
 LRESULT CALLBACK newWndProc_##name(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {  \
    switch (msg) { \
    case WM_PAINT: \
-      CallWindowProc((CALL_WND_PROC)defWndProc_##name, hwnd, msg, wParam, lParam); \
+      CallWindowProc((WNDPROC)defWndProc_##name, hwnd, msg, wParam, lParam); \
       if (Skin.m_bToAll)  \
          nsEraseBk::FillWnd(hwnd, Skin.m_colorBk); \
       return 0;   \
    }  \
-   return CallWindowProc((CALL_WND_PROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \
+   return CallWindowProc((WNDPROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \
 }
 
 #define WNDPROC_BUTTON(name, hDlg, Skin)   \
@@ -78,7 +72,7 @@ WNDPROC defWndProc_##name; \
 LRESULT CALLBACK newWndProc_##name(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {   \
    switch (msg) { \
    case WM_MOUSEMOVE:   \
-      CallWindowProc((CALL_WND_PROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \
+      CallWindowProc((WNDPROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \
       {  if ((Skin.m_bToAll) && (wParam & MK_LBUTTON)) {  \
             /*POINT cursorPos = {LOWORD(lParam), HIWORD(lParam)}; */ \
             POINTEX cursorPos = ::GetCursorPos();   \
@@ -99,12 +93,12 @@ LRESULT CALLBACK newWndProc_##name(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
    case WM_LBUTTONUP:   \
    case BM_SETCHECK: \
    case WM_SETTEXT: \
-      CallWindowProc((CALL_WND_PROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \
+      CallWindowProc((WNDPROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \
       if (Skin.m_bToAll)  \
          nsEraseBk::FillWnd(hwnd, Skin.m_colorBk); \
       return 0;   \
    }  \
-   return CallWindowProc((CALL_WND_PROC)defWndProc_##name, hwnd, msg, wParam, lParam);  \
+   return CallWindowProc((WNDPROC)defWndProc_##name, hwnd, msg, wParam, lParam);  \
 }
 
 #define WNDPROC_BUTTON_LOG(name, hDlg, Skin)   \
@@ -113,7 +107,7 @@ LRESULT CALLBACK newWndProc_##name(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
    g_Logger.PutMsg(TEXT(""), msg); \
    switch (msg) { \
    case WM_MOUSEMOVE:   \
-      CallWindowProc((CALL_WND_PROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \
+      CallWindowProc((WNDPROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \
       {  if ((Skin.m_bToAll) && (wParam & MK_LBUTTON)) {  \
             /*POINT cursorPos = {LOWORD(lParam), HIWORD(lParam)}; */ \
             POINTEX cursorPos = ::GetCursorPos();   \
@@ -133,12 +127,12 @@ LRESULT CALLBACK newWndProc_##name(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
    case WM_LBUTTONDOWN: \
    case WM_LBUTTONUP:   \
    case BM_SETCHECK: \
-      CallWindowProc((CALL_WND_PROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \
+      CallWindowProc((WNDPROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \
       if (Skin.m_bToAll)  \
          nsEraseBk::FillWnd(hwnd, Skin.m_colorBk); \
       return 0;   \
    }  \
-   return CallWindowProc((CALL_WND_PROC)defWndProc_##name, hwnd, msg, wParam, lParam);  \
+   return CallWindowProc((WNDPROC)defWndProc_##name, hwnd, msg, wParam, lParam);  \
 }
 
 #define SETNEWWNDPROC(hwnd, name) defWndProc_##name = (WNDPROC)SetWindowLong(GetDlgItem(hwnd, name), GWL_WNDPROC, (LONG)newWndProc_##name)

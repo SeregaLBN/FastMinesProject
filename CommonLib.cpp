@@ -336,6 +336,26 @@ POINTEX GetCursorPos() {
    return ::GetCursorPos(&pointCur) ? pointCur : POINTEX();
 }
 
+CString GetClassName(HWND hWnd) {
+   CString strClassName;
+   int iSize = 16;
+   int iRes = 0;
+   bool bAgain = true;
+   do {
+      TCHAR *szClassName = new TCHAR[iSize = iSize<<1]; szClassName[0] = 0;
+      iRes = ::GetClassName(hWnd, szClassName, iSize);
+      if ((iRes == 0) || ((iSize-1) > iRes))
+      {
+         if (iRes != 0) {
+            strClassName = szClassName;
+         }
+         bAgain = false;
+      }
+      delete [] szClassName;
+   } while (bAgain);
+   return strClassName;
+}
+
 WNDPROC GetWindowProc(HWND hWnd) {
    return (WNDPROC)::GetWindowLong(hWnd, GWL_WNDPROC);
 }
@@ -571,6 +591,7 @@ HBITMAP CreateMask(HBITMAP hBmp, COLORREF transparentColor) {
 int rand(int maxDiapason) {
    if (maxDiapason < 1) return 0;
    static bool bInitRandom = (srand((unsigned)time(NULL)), true);
+   return rand()%(maxDiapason+1);
    return int(float(maxDiapason+1)*rand()/(RAND_MAX+1));
 }
 

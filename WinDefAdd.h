@@ -15,8 +15,6 @@
  * My Window Messages
  */
 
-#define MK_ASSISTANT 0x0100 // my Key State Mask for Mouse Messages
-
 #define WM_NOTIFYICON            (WM_USER+1)
 #define WM_MOSAIC_ADJUSTAREA     (WM_USER+2)
 #define WM_MOSAIC_CLICK          (WM_USER+3) // мозаика уведомляет родительское окно о том, что на ней (мозаике) был произведён клик
@@ -26,7 +24,21 @@
 #define WM_MOSAIC_GAMEEND        (WM_USER+7) // мозаика уведомляет родительское окно о конце игры
 #define WM_MOSAIC_PAUSE          (WM_USER+8) // мозаика уведомляет родительское окно о изменении состояния паузы
 
+#define MK_ASSISTANT 0x0100 // my Key State Mask for Mouse Messages
+
 /****** My Message crackers ****************************************************/
+
+#define HANDLE_MSG_EX(hwnd, message, fn, skin)    \
+    case (message): return HANDLE_EX_##message((hwnd), (wParam), (lParam), (fn), skin)
+
+/* HBRUSH OnCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type, const CSkin &Skin) */
+#define HANDLE_EX_WM_CTLCOLORMSGBOX(   hwnd, wParam, lParam, fn, skin) (LRESULT)(DWORD)(UINT)(HBRUSH)(fn)((hwnd), (HDC)(wParam), (HWND)(lParam), CTLCOLOR_MSGBOX   , skin)
+#define HANDLE_EX_WM_CTLCOLOREDIT(     hwnd, wParam, lParam, fn, skin) (LRESULT)(DWORD)(UINT)(HBRUSH)(fn)((hwnd), (HDC)(wParam), (HWND)(lParam), CTLCOLOR_EDIT     , skin)
+#define HANDLE_EX_WM_CTLCOLORLISTBOX(  hwnd, wParam, lParam, fn, skin) (LRESULT)(DWORD)(UINT)(HBRUSH)(fn)((hwnd), (HDC)(wParam), (HWND)(lParam), CTLCOLOR_LISTBOX  , skin)
+#define HANDLE_EX_WM_CTLCOLORBTN(      hwnd, wParam, lParam, fn, skin) (LRESULT)(DWORD)(UINT)(HBRUSH)(fn)((hwnd), (HDC)(wParam), (HWND)(lParam), CTLCOLOR_BTN      , skin)
+#define HANDLE_EX_WM_CTLCOLORDLG(      hwnd, wParam, lParam, fn, skin) (LRESULT)(DWORD)(UINT)(HBRUSH)(fn)((hwnd), (HDC)(wParam), (HWND)(lParam), CTLCOLOR_DLG      , skin)
+#define HANDLE_EX_WM_CTLCOLORSCROLLBAR(hwnd, wParam, lParam, fn, skin) (LRESULT)(DWORD)(UINT)(HBRUSH)(fn)((hwnd), (HDC)(wParam), (HWND)(lParam), CTLCOLOR_SCROLLBAR, skin)
+#define HANDLE_EX_WM_CTLCOLORSTATIC(   hwnd, wParam, lParam, fn, skin) (LRESULT)(DWORD)(UINT)(HBRUSH)(fn)((hwnd), (HDC)(wParam), (HWND)(lParam), CTLCOLOR_STATIC   , skin)
 
 /* void Cls_OnNotifyIcon(HWND hwnd, UINT notifyMsg) */
 #define HANDLE_WM_NOTIFYICON(hwnd, wParam, lParam, fn) \

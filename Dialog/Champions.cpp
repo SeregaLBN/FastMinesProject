@@ -116,6 +116,10 @@ BOOL OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
       SetWindowText(GetDlgItem(hwnd, ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_AMATEUR     ), CLang::m_StrArr[IDS__MENU_GAME__AMATEUR     ]);
       SetWindowText(GetDlgItem(hwnd, ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_PROFESSIONAL), CLang::m_StrArr[IDS__MENU_GAME__PROFESSIONAL]);
       SetWindowText(GetDlgItem(hwnd, ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_CRAZY       ), CLang::m_StrArr[IDS__MENU_GAME__CRAZY       ]);
+      //ShowWindow(GetDlgItem(hwnd, ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_BEGINNER    ), SW_HIDE);
+      //ShowWindow(GetDlgItem(hwnd, ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_AMATEUR     ), SW_HIDE);
+      //ShowWindow(GetDlgItem(hwnd, ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_PROFESSIONAL), SW_HIDE);
+      //ShowWindow(GetDlgItem(hwnd, ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_CRAZY       ), SW_HIDE);
    }
 
    SetWindowLong(hDlg, GWL_STYLE, WS_SIZEBOX ^ GetWindowLong(hDlg, GWL_STYLE));
@@ -239,6 +243,20 @@ void OnClose(HWND hwnd){
 }
 
 BOOL CALLBACK DialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
+/**
+#ifdef _DEBUG
+   switch (msg){
+   case WM_SETCURSOR:
+   case WM_NCHITTEST:
+   case WM_MOUSEMOVE:
+   case WM_NCMOUSEMOVE:
+   case WM_NCACTIVATE:
+      break;
+   default:
+      g_Logger.PutMsg(CLogger::LL_DEBUG, TEXT(""), msg);
+   }
+#endif // _DEBUG
+/**/
    switch (msg){
    HANDLE_MSG(hDlg, WM_INITDIALOG, OnInitDialog);
    HANDLE_MSG(hDlg, WM_COMMAND   , OnCommand);
@@ -247,7 +265,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
    HANDLE_MSG(hDlg, WM_ERASEBKGND, OnEraseBkgnd);
 #endif // REPLACEBKCOLORFROMFILLWINDOW
    HANDLE_MSG(hDlg, WM_CLOSE     , OnClose);
-   HANDLE_WM_CTLCOLOR(hDlg);
+   HANDLE_WM_EX_CTLCOLOR(hDlg, gpFM2Proj->GetSkin());
    case WM_NOTIFY:
       OnNotify(hDlg, (int)wParam, (LPNMHDR)lParam);
    }
