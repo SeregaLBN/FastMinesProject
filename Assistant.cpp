@@ -255,18 +255,18 @@ inline bool CAssistant::TestVariant(const int variant, const int numberNeighbor,
    return true;
 }
 
-void CAssistant::GameNew() {
-   m_SetForOpen    .clear();
-   m_SetForFlag    .clear();
-   m_SetForAnalyse .clear();
-   m_SetCloseNoFlag.clear();
+void CAssistant::InitForNewGame() {
+   if (!m_SetForOpen    .empty()) {m_SetForOpen    .clear();}
+   if (!m_SetForFlag    .empty()) {m_SetForFlag    .clear();}
+   if (!m_SetForAnalyse .empty()) {m_SetForAnalyse .clear();}
+   if (!m_SetCloseNoFlag.empty()) {m_SetCloseNoFlag.clear();}
    for (int i = 0; i < m_Mosaic.GetSize().cx; i++)
       for (int j = 0; j < m_Mosaic.GetSize().cy; j++)
          m_SetCloseNoFlag.insert(m_Mosaic.GetCell(i,j));
    m_bSequentialMove = false;
 }
 
-void CAssistant::ClickEnd(nsCell::CClickReportContext ClickReportContext) {
+void CAssistant::ClickEnd(const nsCell::CClickReportContext &ClickReportContext) {
    const int numberNeighbor = m_Mosaic.GetCell(0,0)->GetNeighborNumber();
 
    // Анализ множества setOpenNil
@@ -276,8 +276,11 @@ void CAssistant::ClickEnd(nsCell::CClickReportContext ClickReportContext) {
 
    // Анализ множества setOpen
    if (!ClickReportContext.m_SetOpen.empty()) {
-      for (nsCell::SET_cpBase::const_iterator p=ClickReportContext.m_SetOpen.begin(); p!=ClickReportContext.m_SetOpen.end(); p++) {
+      for (nsCell::SET_cpBase::const_iterator p =ClickReportContext.m_SetOpen.begin();
+                                              p!=ClickReportContext.m_SetOpen.end(); p++)
+      {
          for (int k=0; k<numberNeighbor; k++) {
+            //g_Logger.Put(CLogger::LL_DEBUG, TEXT("p=0x%08X; k=%d"), (*p), k);
             COORD coordNeighbor = (*p)->GetNeighborCoord(k);
             if (coordNeighbor == INCORRECT_COORD) continue;
             const nsCell::CBase* cell = m_Mosaic.GetCell(coordNeighbor.X,coordNeighbor.Y);
@@ -615,10 +618,12 @@ inline bool Insert(MM_cpTB& mm, const nsCell::CBase* cellAnalyse, const nsCell::
 }
 
 inline void Delete(nsCell::SET_cpBase& m_SetCloseNoFlag, const nsCell::CBase* cell4Del) {
-   if (m_SetCloseNoFlag.empty()) return;
-   nsCell::SET_cpBase::const_iterator I = m_SetCloseNoFlag.find(cell4Del);
-   if (I == m_SetCloseNoFlag.end()) return;
-   m_SetCloseNoFlag.erase(*I);
+   if (!m_SetCloseNoFlag.empty()) {
+      nsCell::SET_cpBase::const_iterator I = m_SetCloseNoFlag.find(cell4Del);
+      if (I != m_SetCloseNoFlag.end()) {
+         m_SetCloseNoFlag.erase(*I);
+      }
+   }
 }
 
 }; // namespace nsMosaic

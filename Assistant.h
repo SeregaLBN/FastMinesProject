@@ -66,8 +66,8 @@ private:
 public:
    JOB_RESULT FindCell(CClickData&);
 
-   void GameNew();
-   void ClickEnd(nsCell::CClickReportContext ClickReportContext);
+   void InitForNewGame(); // переинициализаци€ данных перед новой игрой
+   void ClickEnd(const nsCell::CClickReportContext &ClickReportContext);
 
    CAssistant(CMosaic& mosaic): m_Mosaic(mosaic), m_bSequentialMove(false) {}
   ~CAssistant() {DeleteTableSM();}

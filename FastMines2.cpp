@@ -881,13 +881,13 @@ void CFastMines2Project::OnCommand(HWND, int id, HWND hwndCtl, UINT codeNotify){
 // WM_ACTIVATE
 void CFastMines2Project::OnActivate(HWND, UINT state, HWND hwndActDeact, BOOL fMinimized){
    FORWARD_WM_ACTIVATE(m_hWnd, state, hwndActDeact, fMinimized, DefWindowProc);
-//#ifndef _DEBUG
+#ifndef _DEBUG
    if (state == WA_INACTIVE) {
       SetWindowPos(m_hWnd, HWND_BOTTOM , 0,0,0,0, SWP_NOSIZE | SWP_NOMOVE);
    } else {
       SetWindowPos(m_hWnd, HWND_TOPMOST, 0,0,0,0, SWP_NOSIZE | SWP_NOMOVE);
    }
-//#endif
+#endif
    if ((state == WA_INACTIVE) ||
        (fMinimized != false))
       m_Mosaic.SetPause(true);

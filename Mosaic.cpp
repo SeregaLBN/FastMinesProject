@@ -113,26 +113,27 @@ LRESULT nsMosaic::CMosaic::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       case WM_ERASEBKGND: return -1;
       }
    }
-   return DefWindowProc(hwnd, msg, wParam, lParam);
+   return ::DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
 // constructor
 nsMosaic::CMosaic::CMosaic():
    m_hWndParent(NULL),
    m_idControl (0),
-   m_iOldMines (1)
+   m_iOldMines (1),
+   m_pAssistant(NULL)
 {
-   RegClass(
-      CS_DBLCLKS,                      // UINT    style
-      WndProc,                         // WNDPROC lpfnWndProc
-      0,                               // int     cbClsExtra
-      0,                               // int     cbWndExtra
-      ghInstance,                      // HANDLE  c_hInstance
-      (HICON)0,                        // HICON   hIcon
-      LoadCursor(NULL, IDC_ARROW),     // HCURSOR hCursor
-      GetSysColorBrush(COLOR_BTNFACE), // HBRUSH  hbrBackground
-      NULL,                            // LPCTSTR lpszMenuName
-      SZ_CLASS_WND                     // LPCTSTR lpszClassName
+   static BOOL bRes = ::RegClass(
+      CS_DBLCLKS,                        // UINT    style
+      CMosaic::WndProc,                  // WNDPROC lpfnWndProc
+      0,                                 // int     cbClsExtra
+      0,                                 // int     cbWndExtra
+      ghInstance,                        // HANDLE  c_hInstance
+      NULL,                              // HICON   hIcon
+      ::LoadCursor(NULL, IDC_ARROW),     // HCURSOR hCursor
+      ::GetSysColorBrush(COLOR_BTNFACE), // HBRUSH  hbrBackground
+      NULL,                              // LPCTSTR lpszMenuName
+      SZ_CLASS_WND                       // LPCTSTR lpszClassName
    );
 }
 
@@ -140,7 +141,7 @@ BOOL nsMosaic::CMosaic::Create(HWND hWindowParent, int id) {
    m_hWndParent = hWindowParent;
    m_idControl  = id;
 
-   m_hWnd = CreateWindow(SZ_CLASS_WND, NULL,
+   m_hWnd = ::CreateWindow(SZ_CLASS_WND, NULL,
       WS_CHILD | WS_VISIBLE,
       CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
       m_hWndParent, (HMENU)0, ghInstance, NULL);
@@ -150,13 +151,13 @@ BOOL nsMosaic::CMosaic::Create(HWND hWindowParent, int id) {
    ::SetWindowUserData(m_hWnd, (LONG)this);
 
    //
-   m_GContext.m_hDCWnd   = GetWindowDC(m_hWnd);
-   m_GContext.m_hDCDst   = CreateCompatibleDC(m_GContext.m_hDCWnd);//m_GContext.m_hDCWnd;//
-   m_GContext.m_hDCBck   = CreateCompatibleDC(m_GContext.m_hDCWnd);
-   m_GContext.m_hDCTmp   = CreateCompatibleDC(m_GContext.m_hDCWnd);
-   m_GContext.m_hDCPause = CreateCompatibleDC(m_GContext.m_hDCWnd);
-   SetBkMode (m_GContext.m_hDCTmp, TRANSPARENT); // вывод текста на прозрачном фоне
- //SetBkColor(m_GContext.m_hDCTmp, RGB(255, 255, 255));
+   m_GContext.m_hDCWnd   = ::GetWindowDC(m_hWnd);
+   m_GContext.m_hDCDst   = ::CreateCompatibleDC(m_GContext.m_hDCWnd);//m_GContext.m_hDCWnd;//
+   m_GContext.m_hDCBck   = ::CreateCompatibleDC(m_GContext.m_hDCWnd);
+   m_GContext.m_hDCTmp   = ::CreateCompatibleDC(m_GContext.m_hDCWnd);
+   m_GContext.m_hDCPause = ::CreateCompatibleDC(m_GContext.m_hDCWnd);
+   ::SetBkMode (m_GContext.m_hDCTmp, TRANSPARENT); // вывод текста на прозрачном фоне
+ //::SetBkColor(m_GContext.m_hDCTmp, RGB(255, 255, 255));
    m_GContext.m_hPenShadow = NULL;
    m_GContext.m_hPenLight  = NULL;
    m_GContext.m_hBrush     = NULL;
@@ -171,30 +172,33 @@ BOOL nsMosaic::CMosaic::Create(HWND hWindowParent, int id) {
 
    SetClasureToMosaic();
    SetBorder(m_GContext.m_Border);
-   SetBrush(m_GContext.m_colorBk);
+   SetBrush (m_GContext.m_colorBk);
 
    m_GameStatus = gsEnd;
    m_bPause = false;
-   MosaicCreate();
+
    m_pAssistant = new CAssistant(*this);
+   MosaicCreate();
 
    return TRUE;
 }
 
 // destructor
 nsMosaic::CMosaic::~CMosaic(){
-   delete m_pAssistant; m_pAssistant = NULL;
+   if (m_pAssistant) {
+      delete m_pAssistant; m_pAssistant = NULL;
+   }
 
    MosaicDestroy(m_SerializeData.m_SizeMosaic);
    //m_Mosaic.~vector();
-   DeleteDC(m_GContext.m_hDCDst);
-   DeleteDC(m_GContext.m_hDCBck);
-   DeleteDC(m_GContext.m_hDCTmp);
-   ReleaseDC(m_hWnd, m_GContext.m_hDCWnd);
-   DeleteObject(m_GContext.m_hBrush);
-   DeleteObject(m_GContext.m_hPenShadow);
-   DeleteObject(m_GContext.m_hPenLight);
-   DeleteObject(m_GContext.m_hFont);
+   ::DeleteDC(m_GContext.m_hDCDst);
+   ::DeleteDC(m_GContext.m_hDCBck);
+   ::DeleteDC(m_GContext.m_hDCTmp);
+   ::ReleaseDC(m_hWnd, m_GContext.m_hDCWnd);
+   ::DeleteObject(m_GContext.m_hBrush);
+   ::DeleteObject(m_GContext.m_hPenShadow);
+   ::DeleteObject(m_GContext.m_hPenLight);
+   ::DeleteObject(m_GContext.m_hFont);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -207,64 +211,64 @@ void nsMosaic::CMosaic::OnPaint(HWND hwnd){
       //if (!qqq++) return;
    }
 
-   DefWindowProc(hwnd, WM_PAINT, 0L, 0L); // это чтобы не писать обработчик WM_PAINT как принято - BeginPaint ... EndPaint
+   ::DefWindowProc(hwnd, WM_PAINT, 0L, 0L); // это чтобы не писать обработчик WM_PAINT как принято - BeginPaint ... EndPaint
 
    if (m_bPause) {
       if (!m_GContext.m_isRefreshPause) { // restore bitmap
-         BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
-                m_GContext.m_hDCPause, 0, 0, SRCCOPY);
+         ::BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
+                  m_GContext.m_hDCPause, 0, 0, SRCCOPY);
          return;
       }
-      PatBlt(m_GContext.m_hDCPause, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy, PATCOPY);
+      ::PatBlt(m_GContext.m_hDCPause, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy, PATCOPY);
       RECT Rect = {0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy};
-      SetCursor(LoadCursor(NULL, IDC_WAIT));
+      ::SetCursor(::LoadCursor(NULL, IDC_WAIT));
       m_GContext.m_ImgPause.DrawPlace(m_GContext.m_hDCPause, &Rect);
-      SetCursor(LoadCursor(NULL, IDC_ARROW));
-      BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
-             m_GContext.m_hDCPause, 0, 0, SRCCOPY);
-    //SelectObject(m_GContext.m_hDCWnd, m_GContext.m_hBrush); // востанавливаю фоновый цвет паузы
+      ::SetCursor(::LoadCursor(NULL, IDC_ARROW));
+      ::BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
+               m_GContext.m_hDCPause, 0, 0, SRCCOPY);
+    //::SelectObject(m_GContext.m_hDCWnd, m_GContext.m_hBrush); // востанавливаю фоновый цвет паузы
       m_GContext.m_isRefreshPause = false;
       return;
    }
 
    if (!m_GContext.m_isRefreshMosaic) { // restore bitmap
-      BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
-             m_GContext.m_hDCDst, 0, 0, SRCCOPY);
+      ::BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
+               m_GContext.m_hDCDst, 0, 0, SRCCOPY);
       return;
    }
 
-   SetCursor(LoadCursor(NULL, IDC_WAIT));
+   ::SetCursor(::LoadCursor(NULL, IDC_WAIT));
    // background color
-   PatBlt(m_GContext.m_hDCDst, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy, PATCOPY);
-   PatBlt(m_GContext.m_hDCBck, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy, PATCOPY);
+   ::PatBlt(m_GContext.m_hDCDst, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy, PATCOPY);
+   ::PatBlt(m_GContext.m_hDCBck, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy, PATCOPY);
    // background image
    {
       RECT Rect = {0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy};
       m_GContext.m_ImgBckgrnd.DrawPlace(m_GContext.m_hDCBck, &Rect);
    }
-   BitBlt(m_GContext.m_hDCTmp, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy, m_GContext.m_hDCBck, 0,0, SRCCOPY);
-   //BitBlt(m_GContext.m_hDCDst, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy, m_GContext.m_hDCBck, 0,0, SRCCOPY);
+   ::BitBlt(m_GContext.m_hDCTmp, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy, m_GContext.m_hDCBck, 0,0, SRCCOPY);
+ //::BitBlt(m_GContext.m_hDCDst, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy, m_GContext.m_hDCBck, 0,0, SRCCOPY);
    // paint cells
    for (int i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++)
       for (int j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++)
          m_Mosaic[i][j]->Paint();
-   BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
-          m_GContext.m_hDCDst, 0, 0, SRCCOPY);
-   SetCursor(LoadCursor(NULL, IDC_ARROW));
+   ::BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
+            m_GContext.m_hDCDst, 0, 0, SRCCOPY);
+   ::SetCursor(::LoadCursor(NULL, IDC_ARROW));
    m_GContext.m_isRefreshMosaic = false;
 }
 
 // WM_LBUTTONDOWN & WM_LBUTTONDBLCLK
 void nsMosaic::CMosaic::OnLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags){
-   //DefWindowProc(hwnd, fDoubleClick ? WM_LBUTTONDBLCLK : WM_LBUTTONDOWN, (WPARAM)keyFlags, MAKELPARAM(x,y));
+   //::DefWindowProc(hwnd, fDoubleClick ? WM_LBUTTONDBLCLK : WM_LBUTTONDOWN, (WPARAM)keyFlags, MAKELPARAM(x,y));
    if (m_GameStatus == gsEnd) return;
    if (GetPause()) return;
-   SetCapture(hwnd);
+   ::SetCapture(hwnd);
    m_CoordDown = WinToArray(x,y);
    if (m_CoordDown.X < 0) return;
-   FORWARD_WM_MOSAIC_CLICK(m_hWndParent, keyFlags, TRUE, TRUE, SendMessage);
+   FORWARD_WM_MOSAIC_CLICK(m_hWndParent, keyFlags, TRUE, TRUE, ::SendMessage);
    if (m_GameStatus == gsCreateGame) {
-      if (m_Mosaic[m_CoordDown.X][m_CoordDown.Y]->Cell_GetOpen() != nsCell::_Mine) {
+      if(m_Mosaic[m_CoordDown.X][m_CoordDown.Y]->Cell_GetOpen() != nsCell::_Mine) {
          m_Mosaic[m_CoordDown.X][m_CoordDown.Y]->Cell_SetStatus(nsCell::_Open, NULL);
          m_Mosaic[m_CoordDown.X][m_CoordDown.Y]->Cell_SetMine();
          m_SerializeData.m_iMines++;
@@ -275,27 +279,30 @@ void nsMosaic::CMosaic::OnLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y
          m_RepositoryMines.Del(m_CoordDown);
       }
       m_Mosaic[m_CoordDown.X][m_CoordDown.Y]->Paint();
-      FORWARD_WM_MOSAIC_CHANGECOUNTERS(m_hWndParent, PostMessage);
+      FORWARD_WM_MOSAIC_CHANGECOUNTERS(m_hWndParent, ::PostMessage);
    } else {
       m_Mosaic[m_CoordDown.X][m_CoordDown.Y]->LButtonDown();
    }
-   BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
-          m_GContext.m_hDCDst, 0, 0, SRCCOPY);
+   ::BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
+            m_GContext.m_hDCDst, 0, 0, SRCCOPY);
 }
 
 // WM_LBUTTONUP
 void nsMosaic::CMosaic::OnLButtonUp(HWND hwnd, int x, int y, UINT keyFlags){
-   //DefWindowProc(hwnd, WM_LBUTTONUP, (WPARAM)keyFlags, MAKELPARAM(x,y));
+   //::DefWindowProc(hwnd, WM_LBUTTONUP, (WPARAM)keyFlags, MAKELPARAM(x,y));
    if (m_GameStatus == gsEnd) return;
    if (GetPause()) return;
-   ReleaseCapture();
+   ::ReleaseCapture();
    if (m_CoordDown.X < 0) return;
-   FORWARD_WM_MOSAIC_CLICK(m_hWndParent, keyFlags, TRUE, FALSE, SendMessage);
+   FORWARD_WM_MOSAIC_CLICK(m_hWndParent, keyFlags, TRUE, FALSE, ::SendMessage);
    if (m_GameStatus == gsCreateGame) return;
    COORD upCoord = WinToArray(x,y);
    if ((m_GameStatus == gsReady) &&
        (upCoord == m_CoordDown)) GameBegin(m_CoordDown);
-   nsCell::CClickReportContext ClickReportContext;
+   static nsCell::CClickReportContext ClickReportContext;
+   ClickReportContext.m_SetFlag   .clear();
+   ClickReportContext.m_SetOpen   .clear();
+   ClickReportContext.m_SetOpenNil.clear();
    const CLeftUpReturn result =
       m_Mosaic[m_CoordDown.X][m_CoordDown.Y]->LButtonUp(upCoord==m_CoordDown, &ClickReportContext);
    m_iCountOpen    += result.m_iCountOpen;
@@ -303,12 +310,12 @@ void nsMosaic::CMosaic::OnLButtonUp(HWND hwnd, int x, int y, UINT keyFlags){
    m_iCountUnknown += result.m_iCountUnknown;
    if (result.m_iCountOpen || result.m_iCountFlag || result.m_iCountUnknown) { // клик со смыслом (были изменения на поле)
       m_iCountClick++;
-      if (keyFlags != MK_ASSISTANT) {   // клик пришёл не от робота
+      if (keyFlags != MK_ASSISTANT) { // клик пришёл не от робота
          m_PlayInfo |= piPlayerUser;  // юзер играл
          //gAssistant.ResetSequentialMove(); // окончить перебор флажков, если он был...
       }
    }
-   FORWARD_WM_MOSAIC_CHANGECOUNTERS(m_hWndParent, SendMessage);
+   FORWARD_WM_MOSAIC_CHANGECOUNTERS(m_hWndParent, ::SendMessage);
    if (result.m_bEndGame) {
       GameEnd(result.m_bVictory);
    } else {
@@ -317,23 +324,25 @@ void nsMosaic::CMosaic::OnLButtonUp(HWND hwnd, int x, int y, UINT keyFlags){
       } else {
          VerifyFlag();
          if (m_GameStatus != gsEnd) {
-            m_pAssistant->ClickEnd(ClickReportContext);
+            if (m_pAssistant) {
+               m_pAssistant->ClickEnd(ClickReportContext);
+            }
          }
       }
    }
 
-   BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
-          m_GContext.m_hDCDst, 0, 0, SRCCOPY);
+   ::BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
+            m_GContext.m_hDCDst, 0, 0, SRCCOPY);
 }
 
 // WM_RBUTTONDOWN & WM_RBUTTONDBLCLK
 void nsMosaic::CMosaic::OnRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags){
-   //DefWindowProc(hwnd, fDoubleClick ? WM_RBUTTONDBLCLK : WM_RBUTTONDOWN, (WPARAM)keyFlags, MAKELPARAM(x,y));
+   //::DefWindowProc(hwnd, fDoubleClick ? WM_RBUTTONDBLCLK : WM_RBUTTONDOWN, (WPARAM)keyFlags, MAKELPARAM(x,y));
    if (m_GameStatus == gsEnd) {
       if (!fDoubleClick)
          GameNew();
       else {
-         MessageBeep(0);
+         ::MessageBeep(0);
       }
       return;
    }
@@ -345,7 +354,10 @@ void nsMosaic::CMosaic::OnRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y
    }
    COORD coord = WinToArray(x,y);
    if (coord.X < 0) return;
-   nsCell::CClickReportContext ClickReportContext;
+   static nsCell::CClickReportContext ClickReportContext;
+   ClickReportContext.m_SetFlag   .clear();
+   ClickReportContext.m_SetOpen   .clear();
+   ClickReportContext.m_SetOpenNil.clear();
    nsCell::EClose setClose;
    if (LOWORD(keyFlags) == MK_ASSISTANT) { // клик пришёл от робота
       m_PlayInfo |= piPlayerAssistant; // робот играл
@@ -368,13 +380,15 @@ void nsMosaic::CMosaic::OnRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y
    }
    m_iCountFlag    += result.m_iCountFlag;
    m_iCountUnknown += result.m_iCountUnknown;
-   FORWARD_WM_MOSAIC_CHANGECOUNTERS(m_hWndParent, SendMessage);
+   FORWARD_WM_MOSAIC_CHANGECOUNTERS(m_hWndParent, ::SendMessage);
    VerifyFlag();
    if (m_GameStatus != gsEnd) {
-      m_pAssistant->ClickEnd(ClickReportContext);
+      if (m_pAssistant) {
+         m_pAssistant->ClickEnd(ClickReportContext);
+      }
    }
-   BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
-          m_GContext.m_hDCDst, 0, 0, SRCCOPY);
+   ::BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
+            m_GContext.m_hDCDst, 0, 0, SRCCOPY);
 }
 
 // WM_SIZE
@@ -382,13 +396,13 @@ void nsMosaic::CMosaic::OnSize(HWND hwnd, UINT state, int cx, int cy) {
    if ((m_GContext.m_SizeBitmap.cx != cx) || (m_GContext.m_SizeBitmap.cy != cy)) {
       m_GContext.m_SizeBitmap.cx = cx;
       m_GContext.m_SizeBitmap.cy = cy;
-      DeleteObject(SelectObject(m_GContext.m_hDCDst  , CreateCompatibleBitmap(m_GContext.m_hDCWnd, m_GContext.m_SizeBitmap.cx,m_GContext.m_SizeBitmap.cy)));
-      DeleteObject(SelectObject(m_GContext.m_hDCBck  , CreateCompatibleBitmap(m_GContext.m_hDCWnd, m_GContext.m_SizeBitmap.cx,m_GContext.m_SizeBitmap.cy)));
-      DeleteObject(SelectObject(m_GContext.m_hDCTmp  , CreateCompatibleBitmap(m_GContext.m_hDCWnd, m_GContext.m_SizeBitmap.cx,m_GContext.m_SizeBitmap.cy)));
-      DeleteObject(SelectObject(m_GContext.m_hDCPause, CreateCompatibleBitmap(m_GContext.m_hDCWnd, m_GContext.m_SizeBitmap.cx,m_GContext.m_SizeBitmap.cy)));
+      ::DeleteObject(::SelectObject(m_GContext.m_hDCDst  , ::CreateCompatibleBitmap(m_GContext.m_hDCWnd, m_GContext.m_SizeBitmap.cx,m_GContext.m_SizeBitmap.cy)));
+      ::DeleteObject(::SelectObject(m_GContext.m_hDCBck  , ::CreateCompatibleBitmap(m_GContext.m_hDCWnd, m_GContext.m_SizeBitmap.cx,m_GContext.m_SizeBitmap.cy)));
+      ::DeleteObject(::SelectObject(m_GContext.m_hDCTmp  , ::CreateCompatibleBitmap(m_GContext.m_hDCWnd, m_GContext.m_SizeBitmap.cx,m_GContext.m_SizeBitmap.cy)));
+      ::DeleteObject(::SelectObject(m_GContext.m_hDCPause, ::CreateCompatibleBitmap(m_GContext.m_hDCWnd, m_GContext.m_SizeBitmap.cx,m_GContext.m_SizeBitmap.cy)));
    }
    m_GContext.m_isRefreshMosaic = m_GContext.m_isRefreshPause = true;
-   //FORWARD_WM_SIZE(hwnd, state, cx, cy, DefWindowProc);
+   //FORWARD_WM_SIZE(hwnd, state, cx, cy, ::DefWindowProc);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -412,27 +426,29 @@ void nsMosaic::CMosaic::MosaicCreate() {
       for (int j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++){
          COORD coord = {i,j};
          switch (m_SerializeData.m_Mosaic) {
-         case mosaicTriangle1  : m_Mosaic[i][j] = new nsCell::CTriangle1  (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicTriangle2  : m_Mosaic[i][j] = new nsCell::CTriangle2  (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicTriangle3  : m_Mosaic[i][j] = new nsCell::CTriangle3  (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicTriangle4  : m_Mosaic[i][j] = new nsCell::CTriangle4  (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicSquare1    : m_Mosaic[i][j] = new nsCell::CSquare1    (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicSquare2    : m_Mosaic[i][j] = new nsCell::CSquare2    (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicParquet1   : m_Mosaic[i][j] = new nsCell::CParquet1   (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicParquet2   : m_Mosaic[i][j] = new nsCell::CParquet2   (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicTrapezoid1 : m_Mosaic[i][j] = new nsCell::CTrapezoid1 (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicTrapezoid2 : m_Mosaic[i][j] = new nsCell::CTrapezoid2 (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicTrapezoid3 : m_Mosaic[i][j] = new nsCell::CTrapezoid3 (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicRhombus1   : m_Mosaic[i][j] = new nsCell::CRhombus1   (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicQuadrangle1: m_Mosaic[i][j] = new nsCell::CQuadrangle1(coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicPentagonT24: m_Mosaic[i][j] = new nsCell::CPentagonT24(coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicPentagonT5 : m_Mosaic[i][j] = new nsCell::CPentagonT5 (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicPentagonT10: m_Mosaic[i][j] = new nsCell::CPentagonT10(coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicHexagon1   : m_Mosaic[i][j] = new nsCell::CHexagon1   (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicTrSq1      : m_Mosaic[i][j] = new nsCell::CTrSq1      (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicTrSq2      : m_Mosaic[i][j] = new nsCell::CTrSq2      (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         case mosaicSqTrHex    : m_Mosaic[i][j] = new nsCell::CSqTrHex    (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
-         default /*mosaicNil*/ : m_Mosaic[i][j] = new nsCell::CBase       (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext,0,0,0); break;
+#define CASE_MOSAIC(name) case mosaic##name: m_Mosaic[i][j] = new nsCell::C##name(coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break
+         CASE_MOSAIC(Triangle1  );
+         CASE_MOSAIC(Triangle2  );
+         CASE_MOSAIC(Triangle3  );
+         CASE_MOSAIC(Triangle4  );
+         CASE_MOSAIC(Square1    );
+         CASE_MOSAIC(Square2    );
+         CASE_MOSAIC(Parquet1   );
+         CASE_MOSAIC(Parquet2   );
+         CASE_MOSAIC(Trapezoid1 );
+         CASE_MOSAIC(Trapezoid2 );
+         CASE_MOSAIC(Trapezoid3 );
+         CASE_MOSAIC(Rhombus1   );
+         CASE_MOSAIC(Quadrangle1);
+         CASE_MOSAIC(PentagonT24);
+         CASE_MOSAIC(PentagonT5 );
+         CASE_MOSAIC(PentagonT10);
+         CASE_MOSAIC(Hexagon1   );
+         CASE_MOSAIC(TrSq1      );
+         CASE_MOSAIC(TrSq2      );
+         CASE_MOSAIC(SqTrHex    );
+         default /*mosaicNil*/ : m_Mosaic[i][j] = new nsCell::CBase(coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext,0,0,0); break;
+#undef CASE_MOSAIC
          }
       }
    }
@@ -451,8 +467,8 @@ void nsMosaic::CMosaic::MosaicCreate() {
    }
    delete [] ppLinkNeighbor;
 
-   SendMessage(m_hWndParent, WM_SIZE, 0L, 0L);
-   FORWARD_WM_MOSAIC_ADJUSTAREA(m_hWndParent, SendMessage);
+   ::SendMessage(m_hWndParent, WM_SIZE, 0L, 0L);
+   FORWARD_WM_MOSAIC_ADJUSTAREA(m_hWndParent, ::SendMessage);
 
    SetPause(false);
    m_GameStatus = gsEnd;
@@ -475,21 +491,25 @@ void nsMosaic::CMosaic::GameNew() {
       }
    }
    //g_Logger.ClearEdit();
-   FORWARD_WM_MOSAIC_GAMENEW(m_hWndParent, SendMessage);
+   FORWARD_WM_MOSAIC_GAMENEW(m_hWndParent, ::SendMessage);
    //EnableWindow(m_hWnd, true); // enable all cell
 
    SetPause((m_GameStatus = gsReady, false));
 
    m_iCountTimer = m_iCountClick = m_iCountFlag = m_iCountOpen = m_iCountUnknown = 0;
    m_GContext.m_isRefreshMosaic = m_GContext.m_isRefreshPause = true;
-   FORWARD_WM_MOSAIC_CHANGECOUNTERS(m_hWndParent, SendMessage);
+   FORWARD_WM_MOSAIC_CHANGECOUNTERS(m_hWndParent, ::SendMessage);
 
    for (int i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++)
       for (int j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++)
          m_Mosaic[i][j]->Reset();
 
-   InvalidateRect(m_hWnd, NULL, FALSE);
+   ::InvalidateRect(m_hWnd, NULL, FALSE);
    m_PlayInfo = piPlayerUnknown; // пока не знаю кто играл
+
+   if (m_pAssistant) {
+      m_pAssistant->InitForNewGame();
+   }
 }
 
 void nsMosaic::CMosaic::GameBegin(COORD firstClick) {
@@ -498,7 +518,7 @@ void nsMosaic::CMosaic::GameBegin(COORD firstClick) {
 
    SetPause((m_GameStatus = gsPlay, false));
 
-   FORWARD_WM_MOSAIC_GAMEBEGIN(m_hWndParent, SendMessage);
+   FORWARD_WM_MOSAIC_GAMEBEGIN(m_hWndParent, ::SendMessage);
 
    // set mines
    if (m_RepositoryMines.GetSize()) {
@@ -539,7 +559,7 @@ void nsMosaic::CMosaic::GameCreate() {
          m_iOldMines = m_SerializeData.m_iMines;
       m_SerializeData.m_iMines = 0;
       m_GameStatus = gsCreateGame;
-      FORWARD_WM_MOSAIC_CHANGECOUNTERS(m_hWndParent, PostMessage);
+      FORWARD_WM_MOSAIC_CHANGECOUNTERS(m_hWndParent, ::PostMessage);
    }
 }
 
@@ -551,8 +571,7 @@ void nsMosaic::CMosaic::GameEnd(bool Victory) {
    SetPause((m_GameStatus = gsEnd, false));
    // открыть оставшeеся
    {
-      nsCell::CClickReportContext ClickReportContext;
-      SetCursor(LoadCursor(NULL, IDC_WAIT));
+      ::SetCursor(::LoadCursor(NULL, IDC_WAIT));
       if (Victory) {
          for (i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++)
             for (j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++) {
@@ -577,12 +596,12 @@ void nsMosaic::CMosaic::GameEnd(bool Victory) {
                   else m_Mosaic[i][j]->Cell_SetStatus(nsCell::_Open , NULL);
                   m_Mosaic[i][j]->Paint();
                }
-      SetCursor(LoadCursor(NULL, IDC_ARROW));
+      ::SetCursor(::LoadCursor(NULL, IDC_ARROW));
    }
-   MessageBeep(0);
+   ::MessageBeep(0);
 
-   FORWARD_WM_MOSAIC_CHANGECOUNTERS(m_hWndParent, PostMessage);
-   FORWARD_WM_MOSAIC_GAMEEND       (m_hWndParent, PostMessage);
+   FORWARD_WM_MOSAIC_CHANGECOUNTERS(m_hWndParent, ::PostMessage);
+   FORWARD_WM_MOSAIC_GAMEEND       (m_hWndParent, ::PostMessage);
 }
 
 inline void nsMosaic::CMosaic::VerifyFlag() {
@@ -608,7 +627,7 @@ inline void nsMosaic::CMosaic::VerifyFlag() {
 }
 
 void nsMosaic::CMosaic::SetPause(bool newPause) {
-   FORWARD_WM_MOSAIC_PAUSE(m_hWndParent, PostMessage);
+   FORWARD_WM_MOSAIC_PAUSE(m_hWndParent, ::PostMessage);
    if (!(m_GameStatus == gsPlay)) {
       KillTimer(m_hWnd, (UINT)this);
       return;
@@ -619,7 +638,7 @@ void nsMosaic::CMosaic::SetPause(bool newPause) {
    } else {
       SetTimer(m_hWnd, (UINT)this, 1000, (TIMERPROC)TimerProc);
    }
-   InvalidateRect(m_hWnd, NULL, FALSE);
+   ::InvalidateRect(m_hWnd, NULL, FALSE);
    //EnableWindow(m_hWnd, !m_bPause);
 }
 
@@ -692,7 +711,7 @@ nsMosaic::ESkillLevel nsMosaic::CMosaic::GetSkillLevel() const {
 void nsMosaic::CMosaic::TimerProc(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime) {
    CMosaic* const This = (CMosaic*)idEvent;
    This->m_iCountTimer++;
-   FORWARD_WM_MOSAIC_CHANGECOUNTERS(This->m_hWndParent, SendMessage);
+   FORWARD_WM_MOSAIC_CHANGECOUNTERS(This->m_hWndParent, ::SendMessage);
 }
 
 COORD nsMosaic::CMosaic::WinToArray(int x, int y) const { // преобразовать экранные координаты в координаты m_Mosaic'a
@@ -714,77 +733,81 @@ void nsMosaic::CMosaic::SetArea(int newArea) {
       for (int j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++)
          m_Mosaic[i][j]->SetPoint(m_SerializeData.m_iArea);
    SetDCFont();
-   SendMessage(m_hWndParent, WM_SIZE, 0L, 0L);
-   InvalidateRect(m_hWnd, NULL, FALSE);
+   ::SendMessage(m_hWndParent, WM_SIZE, 0L, 0L);
+   ::InvalidateRect(m_hWnd, NULL, FALSE);
 }
 
 void nsMosaic::CMosaic::SetClasureToMosaic() {
    switch (m_SerializeData.m_Mosaic) {
-   case mosaicTriangle1  : GetSizeWindow = nsCell::CTriangle1  ::GetSizeInPixel; break;
-   case mosaicTriangle2  : GetSizeWindow = nsCell::CTriangle2  ::GetSizeInPixel; break;
-   case mosaicTriangle3  : GetSizeWindow = nsCell::CTriangle3  ::GetSizeInPixel; break;
-   case mosaicTriangle4  : GetSizeWindow = nsCell::CTriangle4  ::GetSizeInPixel; break;
-   case mosaicSquare1    : GetSizeWindow = nsCell::CSquare1    ::GetSizeInPixel; break;
-   case mosaicSquare2    : GetSizeWindow = nsCell::CSquare2    ::GetSizeInPixel; break;
-   case mosaicParquet1   : GetSizeWindow = nsCell::CParquet1   ::GetSizeInPixel; break;
-   case mosaicParquet2   : GetSizeWindow = nsCell::CParquet2   ::GetSizeInPixel; break;
-   case mosaicTrapezoid1 : GetSizeWindow = nsCell::CTrapezoid1 ::GetSizeInPixel; break;
-   case mosaicTrapezoid2 : GetSizeWindow = nsCell::CTrapezoid2 ::GetSizeInPixel; break;
-   case mosaicTrapezoid3 : GetSizeWindow = nsCell::CTrapezoid3 ::GetSizeInPixel; break;
-   case mosaicRhombus1   : GetSizeWindow = nsCell::CRhombus1   ::GetSizeInPixel; break;
-   case mosaicQuadrangle1: GetSizeWindow = nsCell::CQuadrangle1::GetSizeInPixel; break;
-   case mosaicPentagonT24: GetSizeWindow = nsCell::CPentagonT24::GetSizeInPixel; break;
-   case mosaicPentagonT5 : GetSizeWindow = nsCell::CPentagonT5 ::GetSizeInPixel; break;
-   case mosaicPentagonT10: GetSizeWindow = nsCell::CPentagonT10::GetSizeInPixel; break;
-   case mosaicHexagon1   : GetSizeWindow = nsCell::CHexagon1   ::GetSizeInPixel; break;
-   case mosaicTrSq1      : GetSizeWindow = nsCell::CTrSq1      ::GetSizeInPixel; break;
-   case mosaicTrSq2      : GetSizeWindow = nsCell::CTrSq2      ::GetSizeInPixel; break;
-   case mosaicSqTrHex    : GetSizeWindow = nsCell::CSqTrHex    ::GetSizeInPixel; break;
-   default /*mosaicNil*/ : GetSizeWindow = nsCell::CBase       ::GetSizeInPixel; break;
+#define CASE_MOSAIC(name) case mosaic##name: GetSizeWindow = nsCell::C##name::GetSizeInPixel; break
+   CASE_MOSAIC(Triangle1  );
+   CASE_MOSAIC(Triangle2  );
+   CASE_MOSAIC(Triangle3  );
+   CASE_MOSAIC(Triangle4  );
+   CASE_MOSAIC(Square1    );
+   CASE_MOSAIC(Square2    );
+   CASE_MOSAIC(Parquet1   );
+   CASE_MOSAIC(Parquet2   );
+   CASE_MOSAIC(Trapezoid1 );
+   CASE_MOSAIC(Trapezoid2 );
+   CASE_MOSAIC(Trapezoid3 );
+   CASE_MOSAIC(Rhombus1   );
+   CASE_MOSAIC(Quadrangle1);
+   CASE_MOSAIC(PentagonT24);
+   CASE_MOSAIC(PentagonT5 );
+   CASE_MOSAIC(PentagonT10);
+   CASE_MOSAIC(Hexagon1   );
+   CASE_MOSAIC(TrSq1      );
+   CASE_MOSAIC(TrSq2      );
+   CASE_MOSAIC(SqTrHex    );
+   default /*mosaicNil*/: GetSizeWindow = nsCell::CBase::GetSizeInPixel; break;
+#undef CASE_MOSAIC
    }
 
    switch (m_SerializeData.m_Mosaic) {
-   case mosaicTriangle1  : GetSizeInscribedSquare = nsCell::CTriangle1  ::SizeInscribedSquare; break;
-   case mosaicTriangle2  : GetSizeInscribedSquare = nsCell::CTriangle2  ::SizeInscribedSquare; break;
-   case mosaicTriangle3  : GetSizeInscribedSquare = nsCell::CTriangle3  ::SizeInscribedSquare; break;
-   case mosaicTriangle4  : GetSizeInscribedSquare = nsCell::CTriangle4  ::SizeInscribedSquare; break;
-   case mosaicSquare1    : GetSizeInscribedSquare = nsCell::CSquare1    ::SizeInscribedSquare; break;
-   case mosaicSquare2    : GetSizeInscribedSquare = nsCell::CSquare2    ::SizeInscribedSquare; break;
-   case mosaicParquet1   : GetSizeInscribedSquare = nsCell::CParquet1   ::SizeInscribedSquare; break;
-   case mosaicParquet2   : GetSizeInscribedSquare = nsCell::CParquet2   ::SizeInscribedSquare; break;
-   case mosaicTrapezoid1 : GetSizeInscribedSquare = nsCell::CTrapezoid1 ::SizeInscribedSquare; break;
-   case mosaicTrapezoid2 : GetSizeInscribedSquare = nsCell::CTrapezoid2 ::SizeInscribedSquare; break;
-   case mosaicTrapezoid3 : GetSizeInscribedSquare = nsCell::CTrapezoid3 ::SizeInscribedSquare; break;
-   case mosaicRhombus1   : GetSizeInscribedSquare = nsCell::CRhombus1   ::SizeInscribedSquare; break;
-   case mosaicQuadrangle1: GetSizeInscribedSquare = nsCell::CQuadrangle1::SizeInscribedSquare; break;
-   case mosaicPentagonT24: GetSizeInscribedSquare = nsCell::CPentagonT24::SizeInscribedSquare; break;
-   case mosaicPentagonT5 : GetSizeInscribedSquare = nsCell::CPentagonT5 ::SizeInscribedSquare; break;
-   case mosaicPentagonT10: GetSizeInscribedSquare = nsCell::CPentagonT10::SizeInscribedSquare; break;
-   case mosaicHexagon1   : GetSizeInscribedSquare = nsCell::CHexagon1   ::SizeInscribedSquare; break;
-   case mosaicTrSq1      : GetSizeInscribedSquare = nsCell::CTrSq1      ::SizeInscribedSquare; break;
-   case mosaicTrSq2      : GetSizeInscribedSquare = nsCell::CTrSq2      ::SizeInscribedSquare; break;
-   case mosaicSqTrHex    : GetSizeInscribedSquare = nsCell::CSqTrHex    ::SizeInscribedSquare; break;
-   default /*mosaicNil*/ : GetSizeInscribedSquare = nsCell::CBase       ::SizeInscribedSquare; break;
+#define CASE_MOSAIC(name) case mosaic##name: GetSizeInscribedSquare = nsCell::C##name::SizeInscribedSquare; break
+   CASE_MOSAIC(Triangle1  );
+   CASE_MOSAIC(Triangle2  );
+   CASE_MOSAIC(Triangle3  );
+   CASE_MOSAIC(Triangle4  );
+   CASE_MOSAIC(Square1    );
+   CASE_MOSAIC(Square2    );
+   CASE_MOSAIC(Parquet1   );
+   CASE_MOSAIC(Parquet2   );
+   CASE_MOSAIC(Trapezoid1 );
+   CASE_MOSAIC(Trapezoid2 );
+   CASE_MOSAIC(Trapezoid3 );
+   CASE_MOSAIC(Rhombus1   );
+   CASE_MOSAIC(Quadrangle1);
+   CASE_MOSAIC(PentagonT24);
+   CASE_MOSAIC(PentagonT5 );
+   CASE_MOSAIC(PentagonT10);
+   CASE_MOSAIC(Hexagon1   );
+   CASE_MOSAIC(TrSq1      );
+   CASE_MOSAIC(TrSq2      );
+   CASE_MOSAIC(SqTrHex    );
+   default /*mosaicNil*/: GetSizeInscribedSquare = nsCell::CBase::SizeInscribedSquare; break;
+#undef CASE_MOSAIC
    }
    SetDCFont();
 }
 
 inline void nsMosaic::CMosaic::SetBrush(COLORREF colorSolidBrush) {
-   DeleteObject(m_GContext.m_hBrush);
-   m_GContext.m_hBrush = CreateSolidBrush(colorSolidBrush);
+   ::DeleteObject(m_GContext.m_hBrush);
+   m_GContext.m_hBrush = ::CreateSolidBrush(colorSolidBrush);
    m_GContext.m_colorBk = colorSolidBrush;
-   DeleteObject(SelectObject(m_GContext.m_hDCDst  , m_GContext.m_hBrush)); // ???
-   DeleteObject(SelectObject(m_GContext.m_hDCBck  , m_GContext.m_hBrush)); // ???
-   DeleteObject(SelectObject(m_GContext.m_hDCPause, m_GContext.m_hBrush)); // ???
+   ::DeleteObject(::SelectObject(m_GContext.m_hDCDst  , m_GContext.m_hBrush)); // ???
+   ::DeleteObject(::SelectObject(m_GContext.m_hDCBck  , m_GContext.m_hBrush)); // ???
+   ::DeleteObject(::SelectObject(m_GContext.m_hDCPause, m_GContext.m_hBrush)); // ???
    m_GContext.m_ImgPause  .SetBrush(m_GContext.m_hBrush);
    m_GContext.m_ImgBckgrnd.SetBrush(m_GContext.m_hBrush);
 }
 
 inline void nsMosaic::CMosaic::SetDCFont() {
    m_GContext.m_Font.lfHeight = GetSizeInscribedSquare(m_SerializeData.m_iArea, m_GContext.m_Border.m_iWidth);
-   m_GContext.m_hFont = CreateFontIndirect(&m_GContext.m_Font);
-   //DeleteObject(SelectObject(m_GContext.m_hDCWnd, m_GContext.m_hFont));
-   DeleteObject(SelectObject(m_GContext.m_hDCTmp, m_GContext.m_hFont));
+   m_GContext.m_hFont = ::CreateFontIndirect(&m_GContext.m_Font);
+   //::DeleteObject(::SelectObject(m_GContext.m_hDCWnd, m_GContext.m_hFont));
+   ::DeleteObject(::SelectObject(m_GContext.m_hDCTmp, m_GContext.m_hFont));
 }
 
 inline void nsMosaic::CMosaic::SetFont(const LOGFONT& newFont) {
@@ -801,10 +824,10 @@ inline void nsMosaic::CMosaic::SetBorder(const nsCell::CBorder& newBorder) {
    if (&(m_GContext.m_Border) != &newBorder) {
       m_GContext.m_Border = newBorder; // @TODO - пересмотреть...
    }
-   DeleteObject(m_GContext.m_hPenShadow);
-   m_GContext.m_hPenShadow = CreatePen(PS_SOLID, 2*newBorder.m_iWidth, newBorder.m_colorShadow); // Shadow pen
-   DeleteObject(m_GContext.m_hPenLight);
-   m_GContext.m_hPenLight  = CreatePen(PS_SOLID, 2*newBorder.m_iWidth, newBorder.m_colorLight ); // Light pen
+   ::DeleteObject(m_GContext.m_hPenShadow);
+   m_GContext.m_hPenShadow = ::CreatePen(PS_SOLID, 2*newBorder.m_iWidth, newBorder.m_colorShadow); // Shadow pen
+   ::DeleteObject(m_GContext.m_hPenLight);
+   m_GContext.m_hPenLight  = ::CreatePen(PS_SOLID, 2*newBorder.m_iWidth, newBorder.m_colorLight ); // Light pen
    if(oldWidth != newBorder.m_iWidth) {
       if (!m_Mosaic.empty())
          for (int i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++)
@@ -829,31 +852,32 @@ void nsMosaic::CMosaic::ApplySkin(const CSkinMosaic& newSkin) {
    APPLY_IMAGE(Flag   );
    APPLY_IMAGE(Pause  );
    APPLY_IMAGE(Bckgrnd);
+#undef APPLY_IMAGE
 
    m_GContext.m_isRefreshMosaic = m_GContext.m_isRefreshPause = true;
-   SetFont            (newSkin.m_Font      );
-   SetCellColorText   (newSkin.m_ColorText );
-   SetBorder          (newSkin.m_Border    );
-   SetBrush           (newSkin.m_colorBk   );
+   SetFont         (newSkin.m_Font     );
+   SetCellColorText(newSkin.m_ColorText);
+   SetBorder       (newSkin.m_Border   );
+   SetBrush        (newSkin.m_colorBk  );
 }
 
 BOOL nsMosaic::CMosaic::SerializeIn(HANDLE hFile) {
    // read .ini file
    DWORD dwNOBR = 0;
-   BOOL result =
-      ReadFile(hFile, &m_SerializeData, sizeof(m_SerializeData), &dwNOBR, NULL) &&
+   BOOL bResult =
+      ::ReadFile(hFile, &m_SerializeData, sizeof(m_SerializeData), &dwNOBR, NULL) &&
       (sizeof(m_SerializeData) == dwNOBR);
-   if (result) {
+   if (bResult) {
       SetClasureToMosaic();
       MosaicCreate();
    }
-   return result;
+   return bResult;
 }
 
 BOOL nsMosaic::CMosaic::SerializeOut(HANDLE hFile) const {
    // write .ini file
    DWORD dwNOBW = 0;
    return
-      WriteFile(hFile, &m_SerializeData, sizeof(m_SerializeData), &dwNOBW, NULL) &&
+      ::WriteFile(hFile, &m_SerializeData, sizeof(m_SerializeData), &dwNOBW, NULL) &&
       (sizeof(m_SerializeData) == dwNOBW);
 }
