@@ -4,14 +4,15 @@
 // file name: "About.h"
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef FILE_ABOUT
-#define FILE_ABOUT
+#ifndef __FILE__ABOUT__
+#define __FILE__ABOUT__
 
-#include "..\Preproc.h"
-#include <windows.h>
+#ifndef __AFX_H__
+   #include <Windows.h>
+#endif
 
 namespace nsAbout {
    BOOL CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
 }
 
-#endif // FILE_ABOUT
+#endif // __FILE__ABOUT__

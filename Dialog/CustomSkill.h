@@ -4,14 +4,17 @@
 // file name: "CustomSkill.h"
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef FILE_CUSTOMSKILL
-#define FILE_CUSTOMSKILL
+#ifndef __FILE__CUSTOMSKILL__
+#define __FILE__CUSTOMSKILL__
 
-#include "..\Preproc.h"
-#include <windows.h>
+#ifndef __AFX_H__
+   #include <Windows.h>
+#endif
 
 namespace nsCustomSkill {
    BOOL CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
+   extern int   curMines;
+   extern COORD curSizeMosaic;
 }
 
-#endif // FILE_CUSTOMSKILL
+#endif // __FILE__CUSTOMSKILL__

@@ -4,21 +4,21 @@
 // file name: "PlayerName.h"
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef FILE_PLAYERNAME
-#define FILE_PLAYERNAME
+#ifndef __FILE__PLAYERNAME__
+#define __FILE__PLAYERNAME__
 
-#include "..\Preproc.h"
-#include <windows.h>
-#include <tchar.h>
+#ifndef __AFX_H__
+   #include <Windows.h>
+#endif
 
 namespace nsPlayerName {
    extern bool firstLoad;
 
-   const int maxPlayerNameLength = 20;
-   const int maxPasswordLength = 20;
-   const TCHAR szRobotNameDefault [maxPlayerNameLength] = TEXT("Assistant");
+   const int MAX_PLAYER_NAME_LENGTH = 20;
+   const int MAX_PASSWORD_LENGTH    = 20;
+   const TCHAR SZ_ASSISTANT_NAME_DEFAULT[MAX_PLAYER_NAME_LENGTH] = TEXT("Assistant");
 
    BOOL CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
 }
 
-#endif // FILE_PLAYERNAME
+#endif // __FILE__PLAYERNAME__

@@ -4,40 +4,41 @@
 // file name: "Statistics.h"
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef FILE_STATISTICS
-#define FILE_STATISTICS
+#ifndef __FILE__STATISTICS__
+#define __FILE__STATISTICS__
 
-#include "..\Preproc.h"
-#include <windows.h>
-#include "..\TcMosaic.h"
-#include ".\PlayerName.h"
+#ifndef __AFX_H__
+   #include <Windows.h>
+#endif
+#include "PlayerName.h"
+#include "../Mosaic.h"
 
 namespace nsStatistics {
-   struct TsSttstcSubRecord {
+   struct CSttstcSubRecord {
       DWORD
-         GameNumber, // количество сыграных игр
-         GameWin,    // количество выиграных игр
-         OpenField,  // суммарное число открытых €чеек - вывожу средний процент открыти€ пол€
-         PlayTime,   // суммарное врем€ игр - вывожу сколько всреднем игрок провЄл времени за данной игрой
-         ClickCount; // суммарное число кликов - вывожу среднее число кликов в данной игре
-      TsSttstcSubRecord():
-         GameNumber(0),
-         GameWin   (0),
-         OpenField (0),
-         PlayTime  (0),
-         ClickCount(0) {};
+         m_dwGameNumber, // количество сыграных игр
+         m_dwGameWin,    // количество выиграных игр
+         m_dwOpenField,  // суммарное число открытых €чеек - вывожу средний процент открыти€ пол€
+         m_dwPlayTime,   // суммарное врем€ игр - вывожу сколько всреднем игрок провЄл времени за данной игрой
+         m_dwClickCount; // суммарное число кликов - вывожу среднее число кликов в данной игре
+      CSttstcSubRecord():
+         m_dwGameNumber(0),
+         m_dwGameWin   (0),
+         m_dwOpenField (0),
+         m_dwPlayTime  (0),
+         m_dwClickCount(0) {};
    };
-   TsSttstcSubRecord operator+=(TsSttstcSubRecord&, const TsSttstcSubRecord&);
-   struct TsSttstcRecord {
-      TCHAR             playerName[nsPlayerName::maxPlayerNameLength];
-      TCHAR             password  [nsPlayerName::maxPasswordLength];
-      TsSttstcSubRecord record [figureNil][skillLevelCustom];
-      TsSttstcRecord() {playerName[0]=TEXT('\0');
-                        password  [0]=TEXT('\0');};
+   CSttstcSubRecord operator+=(CSttstcSubRecord&, const CSttstcSubRecord&);
+   struct CSttstcRecord {
+      TCHAR            m_szPlayerName[nsPlayerName::MAX_PLAYER_NAME_LENGTH];
+      TCHAR            m_szPassword  [nsPlayerName::MAX_PASSWORD_LENGTH];
+      CSttstcSubRecord m_Record [nsMosaic::mosaicNil][nsMosaic::skillLevelCustom];
+      CSttstcRecord() {m_szPlayerName[0]=TEXT('\0');
+                       m_szPassword  [0]=TEXT('\0');};
    };
 
    BOOL CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
-   void InsertResult(const TsSttstcSubRecord& insertRecord, const TeFigure& figure, const TeSkillLevel& skill, const TCHAR* playerName);
+   void InsertResult(const CSttstcSubRecord& insertRecord, const nsMosaic::EMosaic &mosaic, const nsMosaic::ESkillLevel &skill, const TCHAR* szPlayerName);
    int NumberPlayers();
    LPCTSTR GetPlayers(const int index);
    int  FindName   (LPCTSTR szPlayerName);
@@ -47,4 +48,4 @@ namespace nsStatistics {
    bool GetPassword(LPCTSTR szPlayerName   , LPTSTR  szPassword);
 }
 
-#endif // FILE_STATISTICS
+#endif // __FILE__STATISTICS__

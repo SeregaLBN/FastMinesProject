@@ -4,16 +4,17 @@
 // file name: "Champions.h"
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef FILE_CHAMPIONS
-#define FILE_CHAMPIONS
+#ifndef __FILE__CHAMPIONS__
+#define __FILE__CHAMPIONS__
 
-#include "..\Preproc.h"
-#include <windows.h>
-#include "..\TcMosaic.h"
+#ifndef __AFX_H__
+   #include <Windows.h>
+#endif
+#include "../Mosaic.h"
 
 namespace nsChampions {
    BOOL CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
-   void SaveResult(const TeFigure, const TeSkillLevel, const int, LPCTSTR szName);
+   void SaveResult(const nsMosaic::EMosaic mosaic, const nsMosaic::ESkillLevel skill, const int time, LPCTSTR szName);
 }
 
-#endif // FILE_CHAMPIONS
+#endif // __FILE__CHAMPIONS__

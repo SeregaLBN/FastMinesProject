@@ -1,0 +1,208 @@
+0=FastMines
+1=Ok
+2=Cancel
+3=Error
+4=Information
+
+5=sec.
+6=seconds
+7=milliseconds
+8=max
+
+9=Mines
+10=Time
+
+11=Victory
+12=Defeat
+
+13=Can't create INI file
+14=Can't read INI file
+15=Can't write INI file
+16=INI file - version error
+
+17=Load FastMines Game
+18=Save FastMines Game
+19=FastMines file
+20=Can't create FMS file
+21=Can't read FMS file
+22=Can't write FMS file
+23=FMS file - version error
+
+24=Restore last game?
+25=Question
+
+30=Triangle 60°-60°-60°
+31=Triangle 60°-60°-60° (offset)
+32=Triangle 45°-90°-45°
+33=Triangle 30°-30°-120°
+34=Square 1
+35=Square 2 (offset)
+36=Rectangle 1 (Parquet 'Herring-bone')
+37=Rectangle 2
+38=Trapezoid 1
+39=Trapezoid 2
+40=Trapezoid 3
+41=Rhombus
+42=Quadrilateral 120°-90°-60°-90°
+43=Pentagon (type 2 and 4)
+44=Pentagon (type 5)
+45=Pentagon (type 10)
+46=Hexagon
+47=Square-Triangle 1
+48=Square-Triangle 2
+49=Square-Triangle-Hexagon
+50=!!! Invalid name !!!
+
+100=Custom skill level
+101=Size X (width) = 
+102=Size Y (height) = 
+103=Number of Mines = 
+104=Full Screen\n( current cell size )
+105=Full Screen\n( minimal cell size )
+
+120=About
+121=Version
+122=Copyright
+123=Comments - FreeWare
+124=Comments: e-mail
+125=FastMines site:
+
+140=Player Administration
+141=Select Player
+142=New Player
+143=New Password
+144=Rename
+145=Remove
+146=Window autoloading
+147=Players
+148=Enter password
+149=Enter name:
+150=Enter new Name
+151=New name:
+152=Sorry, this name is used by a virtual!
+153=Invalid name
+154=Password not confirmed!
+155=Sorry, this is a virtual player!
+156=Incorrect password
+157=Password:
+158=Confirmation:
+
+170=Change skin
+171=Transparent
+172=Image...
+173=Font...
+174=Apply to all windows
+175=Color...
+176=Light  color...
+177=Shadow color...
+178=All images
+179=Open image
+180='Mine' image
+181='Flag' image
+182='Pause' image
+183='Pause' button
+184='Game' button
+185=Background image
+186=Background color
+187=Border color/width
+188=Character Colors
+189=Font Type
+190=Reset to default
+191=Placement
+192=Center
+193=Stretch
+194=Tile
+195=Width =
+
+210=Save Skin
+211=File name
+212=File exists. Overwrite?
+213=File copying
+214=Can't create file
+215=Can't load file
+216=Can't write file
+217=SKN file - version error
+218=The default skin has been restored
+
+230=Assistant Options
+231=Launch after\nif no response from user
+232=Assistant work frequency:
+233=Launch new game automatically
+234=Stop if there are no definitely safe moves
+235=Ignore pause
+236=Virtual click beep
+
+250=Select mosaic
+251=Mosaic number:
+252=Mosaic name:
+
+270=Champions
+271=Player name
+272=Game time
+273=Can't create Champions file
+274=Can't load Champions file
+275=Can't write Champions file
+276=BST file – version error
+
+280=Statistics
+281=Player name
+282=Number of games
+283=Games won
+284=Open
+285=Averaged game time
+286=Averaged number of clicks
+287=Can't create Statistics file
+288=Can't load Statistics file
+289=Can't write Statistics file
+290=STC file - version error
+291=STC file - data error
+
+500=&Game
+501=&New Game
+502=&Beginner
+503=&Amateur
+504=&Professional
+505=C&razy
+506=&Custom...
+507=Create Game
+508=Save Game
+509=Open Game
+510=&Players...
+511=&Exit
+
+520=&Mosaics
+521=&Triangle
+522=&Quadrilaterals
+523=&Pentagons
+524=&Hexagons
+525=&Other
+
+530=&Options
+531=Always maximal size
+532=Maximal mosaic size
+533=Minimal mosaic size
+534=Increase mosaic size
+535=Decrease mosaic size
+536=&Skin
+537=&Load
+538=Default
+539=&Save
+540=&Change
+541=Language
+542=English
+543=&Use '?'
+544=&Show toolbar
+545=&Show menu
+546=&Show caption
+547=Minimize to tray
+
+560=&Help
+561=&Campions
+562=&Statistics
+563=&Assistant
+564=Assistant on
+565=Options...
+566=Suggest left click
+567=&About
+
+580=Menu

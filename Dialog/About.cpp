@@ -4,17 +4,22 @@
 // file name: "About.cpp"
 // обработка диалогового окна "About"
 ////////////////////////////////////////////////////////////////////////////////
-#include ".\About.h"
-#include <windowsx.h>
-#include "..\ID_resource.h"
-#include "..\TcMosaic.h"
-#include "..\EraseBk.h"
-#include ".\Registration.h"
+
+#include "StdAfx.h"
+#include "About.h"
+#include <WindowsX.h>
+#include <ShellApi.h>
+#include "../ID_resource.h"
+#include "../Image.h"
+#include "../Control/ButtonImageCheck.h"
+#include "../EraseBk.h"
+#include "../Lang.h"
+#include "../FastMines2.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 //                             global variables
 ////////////////////////////////////////////////////////////////////////////////
-extern TcMosaic* gpMosaic;
+extern CFastMines2Project *gpFM2Proj;
 extern HINSTANCE ghInstance;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,24 +27,28 @@ extern HINSTANCE ghInstance;
 ////////////////////////////////////////////////////////////////////////////////
 namespace nsAbout {
 
-HWND hDlg;
+HWND           hDlg;
+CButtonImageCheck *pBtnProj;
+CImage            *pImgProj;
+//CButtonImage *pBtnMail;
+//CImage       *pImgMail;
+bool check;
 
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
-WNDPROC_STATIC(ID_DIALOG_ABOUT_PRODUCTNAME, gpMosaic->GetSkin())
-WNDPROC_STATIC(ID_DIALOG_ABOUT_VERSION    , gpMosaic->GetSkin())
-WNDPROC_STATIC(ID_DIALOG_ABOUT_COPYRIGHT  , gpMosaic->GetSkin())
-WNDPROC_STATIC(ID_DIALOG_ABOUT_COMMENTS   , gpMosaic->GetSkin())
-WNDPROC_STATIC(ID_DIALOG_ABOUT_RESPONSE   , gpMosaic->GetSkin())
-WNDPROC_STATIC(ID_DIALOG_ABOUT_ICQ        , gpMosaic->GetSkin())
-WNDPROC_STATIC(ID_DIALOG_ABOUT_ICQADDRESS , gpMosaic->GetSkin())
-WNDPROC_STATIC(ID_DIALOG_ABOUT_FIDO       , gpMosaic->GetSkin())
-WNDPROC_STATIC(ID_DIALOG_ABOUT_FIDOADDRESS, gpMosaic->GetSkin())
-WNDPROC_STATIC(ID_DIALOG_ABOUT_FMSITE     , gpMosaic->GetSkin())
-WNDPROC_STATIC(ID_DIALOG_ABOUT_UKRPOST    , gpMosaic->GetSkin())
-WNDPROC_STATIC(ID_DIALOG_ABOUT_YAHOO      , gpMosaic->GetSkin())
-WNDPROC_STATIC(ID_DIALOG_ABOUT_SITE       , gpMosaic->GetSkin())
-WNDPROC_STATIC(ID_DIALOG_ABOUT_ICON       , gpMosaic->GetSkin())
-WNDPROC_BUTTON(IDOK, hDlg                 , gpMosaic->GetSkin())
+WNDPROC_STATIC(ID_DIALOG_ABOUT_PRODUCTNAME, gpFM2Proj->GetSkin())
+WNDPROC_STATIC(ID_DIALOG_ABOUT_VERSION    , gpFM2Proj->GetSkin())
+WNDPROC_STATIC(ID_DIALOG_ABOUT_COPYRIGHT  , gpFM2Proj->GetSkin())
+WNDPROC_STATIC(ID_DIALOG_ABOUT_COMMENTS   , gpFM2Proj->GetSkin())
+WNDPROC_STATIC(ID_DIALOG_ABOUT_RESPONSE   , gpFM2Proj->GetSkin())
+WNDPROC_STATIC(ID_DIALOG_ABOUT_ICQ        , gpFM2Proj->GetSkin())
+WNDPROC_STATIC(ID_DIALOG_ABOUT_ICQADDRESS , gpFM2Proj->GetSkin())
+WNDPROC_STATIC(ID_DIALOG_ABOUT_FIDO       , gpFM2Proj->GetSkin())
+WNDPROC_STATIC(ID_DIALOG_ABOUT_FIDOADDRESS, gpFM2Proj->GetSkin())
+WNDPROC_STATIC(ID_DIALOG_ABOUT_FMSITE     , gpFM2Proj->GetSkin())
+WNDPROC_STATIC(ID_DIALOG_ABOUT_UKRPOST    , gpFM2Proj->GetSkin())
+WNDPROC_STATIC(ID_DIALOG_ABOUT_SITE       , gpFM2Proj->GetSkin())
+WNDPROC_STATIC(ID_DIALOG_ABOUT_ICON_PROJ  , gpFM2Proj->GetSkin())
+WNDPROC_BUTTON(IDOK, hDlg                 , gpFM2Proj->GetSkin())
 #endif // REPLACEBKCOLORFROMFILLWINDOW
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,15 +66,37 @@ inline BOOL ProductNameDialog(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 // WM_INITDIALOG
-BOOL Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
-   CreateDialog(ghInstance, TEXT("ProductNameDialog"), hwnd, (DLGPROC)ProductNameDialog);
+BOOL OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+   HWND hWndProduct = CreateDialog(ghInstance, TEXT("ProductNameDialog"), hwnd, (DLGPROC)ProductNameDialog);
 
-   if (nsRegistration::isRegister(NULL, NULL))
-      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_ABOUT_COMMENTS), TEXT("            Registered"));
-   else
-      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_ABOUT_COMMENTS), TEXT("           Unregistered"));
+   {
+      SetWindowText(GetDlgItem(hwnd, IDOK    ), CLang::m_StrArr[IDS__OK    ]);
+      SetWindowText(GetDlgItem(hwnd, IDCANCEL), CLang::m_StrArr[IDS__CANCEL]);
+      SetWindowText(hwnd, CLang::m_StrArr[IDS__DIALOG_ABOUT]);
+
+      SetWindowText(GetDlgItem(hWndProduct, ID_DIALOG_ABOUT_PRODUCTNAME), CLang::m_StrArr[IDS__LOGO]);
+
+      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_ABOUT_VERSION  ), CLang::m_StrArr[IDS__DIALOG_ABOUT__VERSION  ]+ TEXT(" ") + TEXT(ID_VERSIONINFO_VERSION4));
+      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_ABOUT_COPYRIGHT), CLang::m_StrArr[IDS__DIALOG_ABOUT__COPYRIGHT]+ TEXT("  © - Sergey Krivulya (KSerg)"));
+      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_ABOUT_COMMENTS ), CLang::m_StrArr[IDS__DIALOG_ABOUT__COMMEMTS ]);
+      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_ABOUT_RESPONSE ), CLang::m_StrArr[IDS__DIALOG_ABOUT__RESPONSE ]);
+      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_ABOUT_FMSITE   ), CLang::m_StrArr[IDS__DIALOG_ABOUT__SITE     ]);
+   }
 
    hDlg = hwnd;
+
+   pBtnProj = new CButtonImageCheck;
+ //pBtnMail = new CButtonImage;
+   pBtnProj->Create(hDlg, ID_DIALOG_ABOUT_ICON_PROJ);
+ //pBtnMail->Create(hDlg, ID_DIALOG_ABOUT_ICON_MAIL);
+   MoveWindow(pBtnProj->GetHandle(), 25,25,2+1.5f*32,2+1.5f*32, TRUE);
+ //MoveWindow(pBtnMail->GetHandle(), 82,98,2+30     ,2+30     , TRUE);
+   pImgProj = new CImage;
+ //pImgMail = new CImage;
+   pImgProj->LoadResource(ghInstance, TEXT("iconPROJECT"), imageIcon);
+ //pImgMail->LoadResource(ghInstance, TEXT("Mail"       ), imageIcon);
+   SendMessage(pBtnProj->GetHandle(), BM_SETIMAGE, IMAGE_ICON, (LPARAM)pImgProj);
+ //SendMessage(pBtnMail->GetHandle(), BM_SETIMAGE, IMAGE_ICON, (LPARAM)pImgMail);
 
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
    SETNEWWNDPROC(hwnd, ID_DIALOG_ABOUT_VERSION    );
@@ -74,33 +105,40 @@ BOOL Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
    SETNEWWNDPROC(hwnd, ID_DIALOG_ABOUT_RESPONSE   );
    SETNEWWNDPROC(hwnd, ID_DIALOG_ABOUT_ICQ        );
    SETNEWWNDPROC(hwnd, ID_DIALOG_ABOUT_ICQADDRESS );
-   SETNEWWNDPROC(hwnd, ID_DIALOG_ABOUT_FIDO       );
-   SETNEWWNDPROC(hwnd, ID_DIALOG_ABOUT_FIDOADDRESS);
    SETNEWWNDPROC(hwnd, ID_DIALOG_ABOUT_FMSITE     );
    SETNEWWNDPROC(hwnd, ID_DIALOG_ABOUT_UKRPOST    );
-   SETNEWWNDPROC(hwnd, ID_DIALOG_ABOUT_YAHOO      );
    SETNEWWNDPROC(hwnd, ID_DIALOG_ABOUT_SITE       );
-   SETNEWWNDPROC(hwnd, ID_DIALOG_ABOUT_ICON       );
+   SETNEWWNDPROC(hwnd, ID_DIALOG_ABOUT_ICON_PROJ  );
    SETNEWWNDPROC(hwnd, IDOK);
+   pBtnProj->SetBkColor(gpFM2Proj->GetSkin().m_colorBk);
+ //pBtnMail->SetBkColor(gpFM2Proj->GetSkin().m_colorBk);
 #endif // REPLACEBKCOLORFROMFILLWINDOW
 
    return TRUE;
 }
 
 // WM_COMMAND
-void Cls_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
+void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
    switch (id) {
+   case ID_DIALOG_ABOUT_ICON_MAIL:
    case ID_DIALOG_ABOUT_UKRPOST:
-      ShellExecute(hwnd, TEXT("open"), TEXT("mailto:Serg_Krivulja@UkrPost.net"), NULL, NULL, SW_RESTORE);
-      return;
-   case ID_DIALOG_ABOUT_YAHOO:
-      ShellExecute(hwnd, TEXT("open"), TEXT("mailto:Serg_Krivulja@Yahoo.com"), NULL, NULL, SW_RESTORE);
-      return;
-   case ID_DIALOG_ABOUT_FIDOADDRESS:
-      ShellExecute(hwnd, TEXT("open"), TEXT("mailto:Krivulja.Serg@p271.f444.n463.z2.fidonet.org"), NULL, NULL, SW_RESTORE);
+      if (codeNotify == STN_CLICKED)
+         ShellExecute(hwnd, TEXT("open"), TEXT("mailto:Serg_Krivulja@UkrPost.net?subject=FastMines"), NULL, NULL, SW_RESTORE);
       return;
    case ID_DIALOG_ABOUT_SITE:
-      ShellExecute(hwnd, TEXT("open"), TEXT("http://kserg77.chat.ru"), NULL, NULL, SW_RESTORE);
+      if (codeNotify == STN_CLICKED)
+         ShellExecute(hwnd, TEXT("open"), TEXT("http://kserg77.chat.ru"), NULL, NULL, SW_RESTORE);
+      return;
+   case ID_DIALOG_ABOUT_ICON_PROJ:
+      if (codeNotify == BN_CLICKED) {
+         if (pBtnProj->IsChecked()) {
+            SendMessage(pBtnProj->GetHandle(), BM_SETCHECK, (WPARAM)BST_UNCHECKED, 0L);
+            SendMessage(pBtnProj->GetHandle(), BM_SETIMAGE, IMAGE_ICON, (LPARAM)pImgProj);
+         } else {
+            SendMessage(pBtnProj->GetHandle(), BM_SETCHECK, (WPARAM)BST_CHECKED  , 0L);
+            SendMessage(pBtnProj->GetHandle(), BM_SETIMAGE, IMAGE_ICON, (LPARAM)gpFM2Proj->GetImageBtnNew(3));
+         }
+      }
       return;
    case IDCANCEL:
    case IDOK:
@@ -110,34 +148,38 @@ void Cls_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 }
 
 // WM_CLOSE
-void Cls_OnClose(HWND hwnd){
+void OnClose(HWND hwnd){
+   delete pImgProj;
+ //delete pImgMail;
+   delete pBtnProj;
+ //delete pBtnMail;
    EndDialog(hwnd, 0);
 }
 
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
 // WM_PAINT
-void Cls_OnPaint(HWND hwnd){
+void OnPaint(HWND hwnd){
    DefWindowProc(hwnd, WM_PAINT, 0L, 0L);
-   if (gpMosaic->GetSkin().toAll)
-      nsEraseBk::FillWnd(hwnd, gpMosaic->GetSkin().colorBk, false);
+   if (gpFM2Proj->GetSkin().m_bToAll)
+      nsEraseBk::FillWnd(hwnd, gpFM2Proj->GetSkin().m_colorBk, false);
 }
 
 // WM_ERASEBKGND
-BOOL Cls_OnEraseBkgnd(HWND hwnd, HDC hdc) {
-   if (!gpMosaic->GetSkin().toAll)
+BOOL OnEraseBkgnd(HWND hwnd, HDC hdc) {
+   if (!gpFM2Proj->GetSkin().m_bToAll)
       return FALSE; // DefWindowProc(hwnd, WM_ERASEBKGND, (WPARAM)hdc, 0L);
-   return nsEraseBk::Cls_OnEraseBkgnd(hwnd, hdc, gpMosaic->GetSkin().colorBk);
+   return nsEraseBk::OnEraseBkgnd(hwnd, hdc, gpFM2Proj->GetSkin().m_colorBk);
 }
 #endif // REPLACEBKCOLORFROMFILLWINDOW
 
 BOOL CALLBACK DialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam){
    switch (msg){
-   HANDLE_MSG(hDlg, WM_INITDIALOG, Cls_OnInitDialog);
-   HANDLE_MSG(hDlg, WM_COMMAND   , Cls_OnCommand);
-   HANDLE_MSG(hDlg, WM_CLOSE     , Cls_OnClose);
+   HANDLE_MSG(hDlg, WM_INITDIALOG, OnInitDialog);
+   HANDLE_MSG(hDlg, WM_COMMAND   , OnCommand);
+   HANDLE_MSG(hDlg, WM_CLOSE     , OnClose);
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
- //HANDLE_MSG(hDlg, WM_PAINT     , Cls_OnPaint);
-   HANDLE_MSG(hDlg, WM_ERASEBKGND, Cls_OnEraseBkgnd);
+ //HANDLE_MSG(hDlg, WM_PAINT     , OnPaint);
+   HANDLE_MSG(hDlg, WM_ERASEBKGND, OnEraseBkgnd);
 #endif // REPLACEBKCOLORFROMFILLWINDOW
    HANDLE_WM_CTLCOLOR(hDlg);
    }

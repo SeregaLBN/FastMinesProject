@@ -4,7 +4,7 @@
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
 
-CFG=FastMines2 - Win32 Debug
+CFG=FastMines2 - Win32 Debug Unicode
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
@@ -13,11 +13,13 @@ CFG=FastMines2 - Win32 Debug
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "FastMines2.mak" CFG="FastMines2 - Win32 Debug"
+!MESSAGE NMAKE /f "FastMines2.mak" CFG="FastMines2 - Win32 Debug Unicode"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
+!MESSAGE "FastMines2 - Win32 Release Unicode" (based on "Win32 (x86) Application")
 !MESSAGE "FastMines2 - Win32 Release" (based on "Win32 (x86) Application")
+!MESSAGE "FastMines2 - Win32 Debug Unicode" (based on "Win32 (x86) Application")
 !MESSAGE "FastMines2 - Win32 Debug" (based on "Win32 (x86) Application")
 !MESSAGE 
 
@@ -29,7 +31,34 @@ CPP=cl.exe
 MTL=midl.exe
 RSC=rc.exe
 
-!IF  "$(CFG)" == "FastMines2 - Win32 Release"
+!IF  "$(CFG)" == "FastMines2 - Win32 Release Unicode"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "Release_U"
+# PROP BASE Intermediate_Dir "Release_U"
+# PROP BASE Ignore_Export_Lib 0
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "Release_U"
+# PROP Intermediate_Dir "Release_U"
+# PROP Ignore_Export_Lib 0
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "UNICODE" /D "_UNICODE" /FR /Yu"stdafx.h" /FD /c
+# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
+# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
+# ADD BASE RSC /l 0x422 /d "NDEBUG"
+# ADD RSC /l 0x422 /d "NDEBUG"
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LINK32=link.exe
+# ADD BASE LINK32 user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib comctl32.lib /nologo /subsystem:windows /machine:I386
+# ADD LINK32 user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib comctl32.lib /nologo /version:2.20 /subsystem:windows /machine:I386
+
+!ELSEIF  "$(CFG)" == "FastMines2 - Win32 Release"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
@@ -42,10 +71,10 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /FR /YX /FD /c
-# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
-# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
+# ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /Yu"stdafx.h" /FD /c
+# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
+# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x422 /d "NDEBUG"
 # ADD RSC /l 0x422 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -53,7 +82,34 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib comctl32.lib /nologo /subsystem:windows /machine:I386
+# ADD LINK32 user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib comctl32.lib /nologo /version:2.20 /subsystem:windows /machine:I386
+
+!ELSEIF  "$(CFG)" == "FastMines2 - Win32 Debug Unicode"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 1
+# PROP BASE Output_Dir "Debug_U"
+# PROP BASE Intermediate_Dir "Debug_U"
+# PROP BASE Ignore_Export_Lib 0
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 1
+# PROP Output_Dir "Debug_U"
+# PROP Intermediate_Dir "Debug_U"
+# PROP Ignore_Export_Lib 0
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "UNICODE" /D "_UNICODE" /Yu"stdafx.h" /FD /GZ /c
+# ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
+# ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
+# ADD BASE RSC /l 0x422 /d "_DEBUG"
+# ADD RSC /l 0x422 /d "_DEBUG"
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LINK32=link.exe
+# ADD BASE LINK32 user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib comctl32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
+# ADD LINK32 user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib comctl32.lib /nologo /version:2.20 /subsystem:windows /debug /machine:I386 /pdbtype:sept
 
 !ELSEIF  "$(CFG)" == "FastMines2 - Win32 Debug"
 
@@ -68,201 +124,197 @@ LINK32=link.exe
 # PROP Intermediate_Dir "Debug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /FR /YX /FD /c
-# ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o "NUL" /win32
-# ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o "NUL" /win32
+# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /FR /Yu"stdafx.h" /FD /GZ /c
+# ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
+# ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x422 /d "_DEBUG"
 # ADD RSC /l 0x422 /d "_DEBUG"
-# SUBTRACT RSC /x
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
-# SUBTRACT BSC32 /nologo
+# ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib comctl32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# SUBTRACT LINK32 /pdb:none
+# ADD LINK32 user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib comctl32.lib /nologo /version:2.20 /subsystem:windows /debug /machine:I386 /pdbtype:sept
 
 !ENDIF 
 
 # Begin Target
 
+# Name "FastMines2 - Win32 Release Unicode"
 # Name "FastMines2 - Win32 Release"
+# Name "FastMines2 - Win32 Debug Unicode"
 # Name "FastMines2 - Win32 Debug"
-# Begin Group "Figure"
+# Begin Group "Mosaic"
 
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\Figure\TcBase.cpp
+SOURCE=.\Mosaic\Base.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcBase.h
+SOURCE=.\Mosaic\Base.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcHexagon.cpp
+SOURCE=.\Mosaic\Hexagon1.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcHexagon.h
+SOURCE=.\Mosaic\Hexagon1.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcParquet1.cpp
+SOURCE=.\Mosaic\Parquet1.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcParquet1.h
+SOURCE=.\Mosaic\Parquet1.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcParquet2.cpp
+SOURCE=.\Mosaic\Parquet2.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcParquet2.h
+SOURCE=.\Mosaic\Parquet2.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcPentagon.cpp
+SOURCE=.\Mosaic\PentagonT10.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcPentagon.h
+SOURCE=.\Mosaic\PentagonT10.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcPentagonT10.cpp
+SOURCE=.\Mosaic\PentagonT24.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcPentagonT10.h
+SOURCE=.\Mosaic\PentagonT24.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcPentagonT5.cpp
+SOURCE=.\Mosaic\PentagonT5.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcPentagonT5.h
+SOURCE=.\Mosaic\PentagonT5.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcQuadrangle1.cpp
+SOURCE=.\Mosaic\Quadrangle1.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcQuadrangle1.h
+SOURCE=.\Mosaic\Quadrangle1.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcRhombus.cpp
+SOURCE=.\Mosaic\Rhombus1.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcRhombus.h
+SOURCE=.\Mosaic\Rhombus1.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcSqTrHex.cpp
+SOURCE=.\Mosaic\SqTrHex.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcSqTrHex.h
+SOURCE=.\Mosaic\SqTrHex.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcSquare1.cpp
+SOURCE=.\Mosaic\Square1.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcSquare1.h
+SOURCE=.\Mosaic\Square1.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcSquare2.cpp
+SOURCE=.\Mosaic\Square2.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcSquare2.h
+SOURCE=.\Mosaic\Square2.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTrapezoid1.cpp
+SOURCE=.\Mosaic\Trapezoid1.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTrapezoid1.h
+SOURCE=.\Mosaic\Trapezoid1.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTrapezoid2.cpp
+SOURCE=.\Mosaic\Trapezoid2.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTrapezoid2.h
+SOURCE=.\Mosaic\Trapezoid2.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTrapezoid3.cpp
+SOURCE=.\Mosaic\Trapezoid3.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTrapezoid3.h
+SOURCE=.\Mosaic\Trapezoid3.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTriangle1.cpp
+SOURCE=.\Mosaic\Triangle1.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTriangle1.h
+SOURCE=.\Mosaic\Triangle1.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTriangle2.cpp
+SOURCE=.\Mosaic\Triangle2.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTriangle2.h
+SOURCE=.\Mosaic\Triangle2.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTriangle3.cpp
+SOURCE=.\Mosaic\Triangle3.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTriangle3.h
+SOURCE=.\Mosaic\Triangle3.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTriangle4.cpp
+SOURCE=.\Mosaic\Triangle4.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTriangle4.h
+SOURCE=.\Mosaic\Triangle4.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTrSq.cpp
+SOURCE=.\Mosaic\TrSq1.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTrSq.h
+SOURCE=.\Mosaic\TrSq1.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTrSq2.cpp
+SOURCE=.\Mosaic\TrSq2.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Figure\TcTrSq2.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Figure\TcVirtual.h
+SOURCE=.\Mosaic\TrSq2.h
 # End Source File
 # End Group
 # Begin Group "Dialog"
@@ -278,11 +330,11 @@ SOURCE=.\Dialog\About.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Dialog\Assistant.cpp
+SOURCE=.\Dialog\AssistantDlg.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Dialog\Assistant.h
+SOURCE=.\Dialog\AssistantDlg.h
 # End Source File
 # Begin Source File
 
@@ -302,14 +354,6 @@ SOURCE=.\Dialog\CustomSkill.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Dialog\Info.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Dialog\Info.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\Dialog\PlayerName.cpp
 # End Source File
 # Begin Source File
@@ -318,19 +362,11 @@ SOURCE=.\Dialog\PlayerName.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Dialog\Registration.cpp
+SOURCE=.\Dialog\SelectMosaic.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Dialog\Registration.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Dialog\SelectFigure.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Dialog\SelectFigure.h
+SOURCE=.\Dialog\SelectMosaic.h
 # End Source File
 # Begin Source File
 
@@ -349,9 +385,65 @@ SOURCE=.\Dialog\Statistics.cpp
 SOURCE=.\Dialog\Statistics.h
 # End Source File
 # End Group
+# Begin Group "Control"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\Control\ButtonImage.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Control\ButtonImage.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Control\ButtonImageCheck.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Control\ButtonImageCheck.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Control\CaptionButton.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Control\CaptionButton.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Control\MenuItem.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Control\MenuItem.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Control\Table.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Control\Table.h
+# End Source File
+# End Group
 # Begin Group "Others"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\CommonLib.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CommonLib.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CStringKS.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\EraseBk.cpp
@@ -362,53 +454,85 @@ SOURCE=.\EraseBk.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\FigureName.h
+SOURCE=.\Image.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Lib.cpp
+SOURCE=.\Image.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Lib.h
+SOURCE=.\Lang.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\TcImage.cpp
+SOURCE=.\Lang.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\TcImage.h
+SOURCE=.\Logger.cpp
+
+!IF  "$(CFG)" == "FastMines2 - Win32 Release Unicode"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "FastMines2 - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "FastMines2 - Win32 Debug Unicode"
+
+!ELSEIF  "$(CFG)" == "FastMines2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\Logger.h
+
+!IF  "$(CFG)" == "FastMines2 - Win32 Release Unicode"
+
+# PROP BASE Exclude_From_Build 1
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "FastMines2 - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "FastMines2 - Win32 Debug Unicode"
+
+!ELSEIF  "$(CFG)" == "FastMines2 - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\OldVersion.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\StorageMines.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\StorageMines.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WinDefAdd.h
 # End Source File
 # End Group
-# Begin Group "Control"
-
-# PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\Control\TcButtonImage.cpp
+SOURCE=.\Assistant.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Control\TcButtonImage.h
+SOURCE=.\Assistant.h
 # End Source File
-# Begin Source File
-
-SOURCE=.\Control\TcButtonImageCheck.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Control\TcButtonImageCheck.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Control\TcTable.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Control\TcTable.h
-# End Source File
-# End Group
 # Begin Source File
 
 SOURCE=.\FastMines.rc
@@ -419,7 +543,19 @@ SOURCE=.\FastMines2.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\FastMines2.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ID_resource.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Mosaic.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Mosaic.h
 # End Source File
 # Begin Source File
 
@@ -427,19 +563,12 @@ SOURCE=.\Preproc.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\TcMosaic.cpp
+SOURCE=.\StdAfx.cpp
+# ADD CPP /Yc"stdafx.h"
 # End Source File
 # Begin Source File
 
-SOURCE=.\TcMosaic.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\TcRobot.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\TcRobot.h
+SOURCE=.\StdAfx.h
 # End Source File
 # End Target
 # End Project

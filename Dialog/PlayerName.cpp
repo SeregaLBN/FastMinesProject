@@ -4,19 +4,21 @@
 // file name: "PlayerName.cpp"
 // обработка диалогового окна "Players Administration"
 ////////////////////////////////////////////////////////////////////////////////
-#include ".\PlayerName.h"
-#include <windowsx.h>
-#include "..\ID_resource.h"
-#include "..\TcMosaic.h"
-#include "..\EraseBk.h"
-#include ".\Statistics.h"
-#include "..\Control\TcTable.h"
-#include ".\Info.h"
+
+#include "StdAfx.h"
+#include "PlayerName.h"
+#include <WindowsX.h>
+#include "Statistics.h"
+#include "../ID_resource.h"
+#include "../EraseBk.h"
+#include "../Lang.h"
+#include "../FastMines2.h"
+#include "../Control/Table.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 //                             global variables
 ////////////////////////////////////////////////////////////////////////////////
-extern TcMosaic* gpMosaic;
+extern CFastMines2Project *gpFM2Proj;
 extern HINSTANCE ghInstance;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +27,7 @@ extern HINSTANCE ghInstance;
 namespace nsPlayerName {
 
 HWND hDlg;
-TcTable* pTable;
+CTable* pTable;
 bool firstLoad = false;
 bool closeWnd  = true;
 
@@ -43,50 +45,56 @@ namespace nsPlayerNameOperation {
    //                            types & variables
    ////////////////////////////////////////////////////////////////////////////////
    HWND hDlg;
-   TCHAR szPlayerName[maxPlayerNameLength];
-   TCHAR szPassword  [maxPasswordLength];
+   TCHAR szPlayerName[MAX_PLAYER_NAME_LENGTH];
+   TCHAR szPassword  [MAX_PASSWORD_LENGTH];
    int resultDlg;
 
    ////////////////////////////////////////////////////////////////////////////////
    //                           forward declaration
    ////////////////////////////////////////////////////////////////////////////////
 
-   BOOL Cls_OnInitDialog(HWND, HWND, LPARAM);    // WM_INITDIALOG
-   void Cls_OnCommand   (HWND, int, HWND, UINT); // WM_COMMAND
-   void Cls_OnClose     (HWND);                  // WM_CLOSE
+   BOOL OnInitDialog(HWND, HWND, LPARAM);    // WM_INITDIALOG
+   void OnCommand   (HWND, int, HWND, UINT); // WM_COMMAND
+   void OnClose     (HWND);                  // WM_CLOSE
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
-   BOOL Cls_OnEraseBkgnd(HWND, HDC);             // WM_ERASEBKGND
+   BOOL OnEraseBkgnd(HWND, HDC);             // WM_ERASEBKGND
 #endif // REPLACEBKCOLORFROMFILLWINDOW
    ////////////////////////////////////////////////////////////////////////////////
    //                              implementation
    ////////////////////////////////////////////////////////////////////////////////
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
-   WNDPROC_STATIC(ID_DIALOG_INPUTTEXT_EDIT_TEXT          , gpMosaic->GetSkin())
-   WNDPROC_STATIC(ID_DIALOG_INPUTTEXT_EDIT_PASSWORD      , gpMosaic->GetSkin())
-   WNDPROC_STATIC(ID_DIALOG_INPUTTEXT_EDIT_CONFIRMATION  , gpMosaic->GetSkin())
-   WNDPROC_STATIC(ID_DIALOG_INPUTTEXT_STATIC_TEXT        , gpMosaic->GetSkin())
-   WNDPROC_STATIC(ID_DIALOG_INPUTTEXT_STATIC_PASSWORD    , gpMosaic->GetSkin())
-   WNDPROC_STATIC(ID_DIALOG_INPUTTEXT_STATIC_CONFIRMATION, gpMosaic->GetSkin())
-   WNDPROC_BUTTON(IDOK                             , hDlg, gpMosaic->GetSkin())
+   WNDPROC_STATIC(ID_DIALOG_INPUTTEXT_EDIT_TEXT          , gpFM2Proj->GetSkin())
+   WNDPROC_STATIC(ID_DIALOG_INPUTTEXT_EDIT_PASSWORD      , gpFM2Proj->GetSkin())
+   WNDPROC_STATIC(ID_DIALOG_INPUTTEXT_EDIT_CONFIRMATION  , gpFM2Proj->GetSkin())
+   WNDPROC_STATIC(ID_DIALOG_INPUTTEXT_STATIC_TEXT        , gpFM2Proj->GetSkin())
+   WNDPROC_STATIC(ID_DIALOG_INPUTTEXT_STATIC_PASSWORD    , gpFM2Proj->GetSkin())
+   WNDPROC_STATIC(ID_DIALOG_INPUTTEXT_STATIC_CONFIRMATION, gpFM2Proj->GetSkin())
+   WNDPROC_BUTTON(IDOK                             , hDlg, gpFM2Proj->GetSkin())
 #endif // REPLACEBKCOLORFROMFILLWINDOW
 
    BOOL CALLBACK DialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam){
       switch (msg){
-      HANDLE_MSG(hDlg, WM_INITDIALOG, Cls_OnInitDialog);
-      HANDLE_MSG(hDlg, WM_COMMAND   , Cls_OnCommand);
+      HANDLE_MSG(hDlg, WM_INITDIALOG, OnInitDialog);
+      HANDLE_MSG(hDlg, WM_COMMAND   , OnCommand);
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
-      HANDLE_MSG(hDlg, WM_ERASEBKGND, Cls_OnEraseBkgnd);
+      HANDLE_MSG(hDlg, WM_ERASEBKGND, OnEraseBkgnd);
 #endif // REPLACEBKCOLORFROMFILLWINDOW
-      HANDLE_MSG(hDlg, WM_CLOSE     , Cls_OnClose);
+      HANDLE_MSG(hDlg, WM_CLOSE     , OnClose);
       HANDLE_WM_CTLCOLOR(hDlg);
       }
       return FALSE;
    }
 
    // WM_INITDIALOG
-   BOOL Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+   BOOL OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
       hDlg = hwnd;
       resultDlg = IDCANCEL;
+
+   {
+      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_STATIC_PASSWORD    ), CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__PASSWORD    ]);
+      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_STATIC_CONFIRMATION), CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__CONFIRMATION]);
+      SetWindowText(GetDlgItem(hwnd, IDCANCEL                               ), CLang::m_StrArr[IDS__CANCEL                           ]);
+   }
 
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
     //SETNEWWNDPROC(hwnd, ID_DIALOG_INPUTTEXT_EDIT_TEXT          );
@@ -100,7 +108,7 @@ namespace nsPlayerNameOperation {
 
       switch (OperationAtPlayer) {
       case ePlayerSelect:
-         SetWindowText(hwnd, TEXT("Enter password"));
+         SetWindowText(hwnd, CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__ENTER_PASSWORD]);
          ShowWindow(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_STATIC_TEXT        ), SW_HIDE);
          ShowWindow(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_STATIC_CONFIRMATION), SW_HIDE);
          ShowWindow(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_TEXT          ), SW_HIDE);
@@ -109,46 +117,44 @@ namespace nsPlayerNameOperation {
          MoveWindow(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_PASSWORD  ), 11,28,212,23, FALSE);
          MoveWindow(GetDlgItem(hwnd, IDOK), 150, 60, 74, 24, FALSE);
          {
-            RECT rect = {0,0,241,116};
-            const POINT sizeScreen = {GetSystemMetrics(SM_CXSCREEN),
-                                      GetSystemMetrics(SM_CYSCREEN)};
+            RECTEX rect(0,0,241,116);
+            const SIZE sizeScreen = GetScreenSize();
             MoveWindow(hwnd,
-               sizeScreen.x/2 - (rect.right -rect.left)/2,
-               sizeScreen.y/2 - (rect.bottom-rect.top )/2,
-               rect.right -rect.left,
-               rect.bottom-rect.top,
+               sizeScreen.cx/2 - rect.width ()/2,
+               sizeScreen.cy/2 - rect.height()/2,
+               rect.width (),
+               rect.height(),
                FALSE);
          }
          break;
       case ePlayerNewPassword:
-         SetWindowText(hwnd, TEXT("New password"));
+         SetWindowText(hwnd, CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__NEWPASSWORD]);
          ShowWindow(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_STATIC_TEXT), SW_HIDE);
          ShowWindow(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_TEXT  ), SW_HIDE);
-         MoveWindow(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_STATIC_PASSWORD    ), 11,11, 80,13, FALSE);
+         MoveWindow(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_STATIC_PASSWORD    ), 11,11,212,13, FALSE);
          MoveWindow(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_PASSWORD      ), 11,28,212,23, FALSE);
-         MoveWindow(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_STATIC_CONFIRMATION), 11,58, 80,13, FALSE);
+         MoveWindow(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_STATIC_CONFIRMATION), 11,58,212,13, FALSE);
          MoveWindow(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_CONFIRMATION  ), 11,80,212,23, FALSE);
          MoveWindow(GetDlgItem(hwnd, IDOK), 150, 113, 74, 24, FALSE);
          {
-            RECT rect = {0,0,241,170};
-            const POINT sizeScreen = {GetSystemMetrics(SM_CXSCREEN),
-                                      GetSystemMetrics(SM_CYSCREEN)};
+            RECTEX rect(0,0,241,170);
+            const SIZE sizeScreen = GetScreenSize();
             MoveWindow(hwnd,
-               sizeScreen.x/2 - (rect.right -rect.left)/2,
-               sizeScreen.y/2 - (rect.bottom-rect.top )/2,
-               rect.right -rect.left,
-               rect.bottom-rect.top,
+               sizeScreen.cx/2 - rect.width ()/2,
+               sizeScreen.cy/2 - rect.height()/2,
+               rect.width (),
+               rect.height(),
                FALSE);
          }
          break;
       case ePlayerNew:
-         SetWindowText(hwnd, TEXT("New player"));
-         SetWindowText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_STATIC_TEXT), TEXT("Enter name:"));
+         SetWindowText(hwnd, CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__NEWPLAYER]);
+         SetWindowText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_STATIC_TEXT), CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__ENTER_NAME]);
          EnableWindow(GetDlgItem(hwnd, IDOK), FALSE);
          break;
       case ePlayerRename:
-         SetWindowText(hwnd, TEXT("Enter new Name"));
-         SetWindowText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_STATIC_TEXT), TEXT("New name:"));
+         SetWindowText(hwnd, CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__ENTER_NEW_NAME]);
+         SetWindowText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_STATIC_TEXT), CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__NEW_NAME]);
          ShowWindow(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_STATIC_PASSWORD    ), SW_HIDE);
          ShowWindow(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_STATIC_CONFIRMATION), SW_HIDE);
          ShowWindow(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_PASSWORD      ), SW_HIDE);
@@ -157,56 +163,61 @@ namespace nsPlayerNameOperation {
          EnableWindow(GetDlgItem(hwnd, IDOK), FALSE);
          MoveWindow(GetDlgItem(hwnd, IDOK), 150, 60, 74, 24, FALSE);
          {
-            RECT rect = {0,0,241,116};
-            const POINT sizeScreen = {GetSystemMetrics(SM_CXSCREEN),
-                                      GetSystemMetrics(SM_CYSCREEN)};
+            RECTEX rect(0,0,241,116);
+            const SIZE sizeScreen = GetScreenSize();
             MoveWindow(hwnd,
-               sizeScreen.x/2 - (rect.right -rect.left)/2,
-               sizeScreen.y/2 - (rect.bottom-rect.top )/2,
-               rect.right -rect.left,
-               rect.bottom-rect.top,
+               sizeScreen.cx/2 - rect.width ()/2,
+               sizeScreen.cy/2 - rect.height()/2,
+               rect.width (),
+               rect.height(),
                FALSE);
          }
          break;
       }
 
-      Edit_LimitText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_TEXT        ), maxPlayerNameLength-1);
-      Edit_LimitText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_PASSWORD    ), maxPasswordLength  -1);
-      Edit_LimitText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_CONFIRMATION), maxPasswordLength  -1);
+      Edit_LimitText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_TEXT        ), MAX_PLAYER_NAME_LENGTH-1);
+      Edit_LimitText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_PASSWORD    ), MAX_PASSWORD_LENGTH   -1);
+      Edit_LimitText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_CONFIRMATION), MAX_PASSWORD_LENGTH   -1);
       return TRUE;
    }
 
    // WM_COMMAND
-   void Cls_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
+   void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
       switch (id) {
       case ID_DIALOG_INPUTTEXT_EDIT_TEXT:
          switch (codeNotify) {
          case EN_CHANGE:
-            GetWindowText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_TEXT), szPlayerName, maxPlayerNameLength);
+            GetWindowText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_TEXT), szPlayerName, MAX_PLAYER_NAME_LENGTH);
             EnableWindow(GetDlgItem(hwnd, IDOK), szPlayerName[0] && (0>nsStatistics::FindName(szPlayerName)));
             break;
          }
          return;
       case IDOK:
-         TCHAR szPassword2[maxPasswordLength];
+         TCHAR szPassword2[MAX_PASSWORD_LENGTH];
          switch (OperationAtPlayer) {
          case ePlayerNew:
          case ePlayerRename:
-            if (!lstrcmpi(szPlayerName, szRobotNameDefault)) {
-               MessageBox(hwnd, TEXT("Sorry, this name is used by a virtual!"), TEXT("Invalid name"), MB_OK | MB_ICONERROR);
+            if (!lstrcmpi(szPlayerName, SZ_ASSISTANT_NAME_DEFAULT)) {
+               MessageBox(hwnd,
+                  CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__CANT_USE_VIRT_NAME],
+                  CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__INVALID_NAME],
+                  MB_OK | MB_ICONERROR);
                return;
             }
             if (OperationAtPlayer == ePlayerRename) break;
          case ePlayerNewPassword:
-            GetWindowText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_PASSWORD    ), szPassword , maxPasswordLength);
-            GetWindowText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_CONFIRMATION), szPassword2, maxPasswordLength);
-            if (_tcscmp(szPassword, szPassword2)) {
-               MessageBox(hwnd, TEXT("Password not confirmed!"), TEXT("Error"), MB_OK | MB_ICONERROR);
+            GetWindowText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_PASSWORD    ), szPassword , MAX_PASSWORD_LENGTH);
+            GetWindowText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_CONFIRMATION), szPassword2, MAX_PASSWORD_LENGTH);
+            if (lstrcmp(szPassword, szPassword2)) {
+               MessageBox(hwnd,
+                  CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__PASSWORD_NOT_CONFIRMED],
+                  CLang::m_StrArr[IDS__ERROR],
+                  MB_OK | MB_ICONERROR);
                return;
             }
             break;
          case ePlayerSelect:
-            GetWindowText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_PASSWORD    ), szPassword , maxPasswordLength);
+            GetWindowText(GetDlgItem(hwnd, ID_DIALOG_INPUTTEXT_EDIT_PASSWORD), szPassword , MAX_PASSWORD_LENGTH);
             break;
          }
       case IDCANCEL:
@@ -218,28 +229,28 @@ namespace nsPlayerNameOperation {
 
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
    // WM_ERASEBKGND
-   BOOL Cls_OnEraseBkgnd(HWND hwnd, HDC hdc) {
-      if (!gpMosaic->GetSkin().toAll)
+   BOOL OnEraseBkgnd(HWND hwnd, HDC hdc) {
+      if (!gpFM2Proj->GetSkin().m_bToAll)
          return FALSE; // DefWindowProc(hwnd, WM_ERASEBKGND, (WPARAM)hdc, 0L);
-      return nsEraseBk::Cls_OnEraseBkgnd(hwnd, hdc, gpMosaic->GetSkin().colorBk);
+      return nsEraseBk::OnEraseBkgnd(hwnd, hdc, gpFM2Proj->GetSkin().m_colorBk);
    }
 #endif // REPLACEBKCOLORFROMFILLWINDOW
 
    // WM_CLOSE
-   void Cls_OnClose(HWND hwnd){
+   void OnClose(HWND hwnd){
       EndDialog(hwnd, resultDlg);
    }
 
 } // nsPlayerNameOperation
 
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
-WNDPROC_BUTTON(ID_DIALOG_SELECTPLAYER_BUTTON_NEWPLAYER     , hDlg, gpMosaic->GetSkin())
-WNDPROC_BUTTON(ID_DIALOG_SELECTPLAYER_BUTTON_NEWPASSWORD   , hDlg, gpMosaic->GetSkin())
-WNDPROC_BUTTON(ID_DIALOG_SELECTPLAYER_BUTTON_RENAME        , hDlg, gpMosaic->GetSkin())
-WNDPROC_BUTTON(ID_DIALOG_SELECTPLAYER_BUTTON_REMOVE        , hDlg, gpMosaic->GetSkin())
-WNDPROC_BUTTON(IDOK                                        , hDlg, gpMosaic->GetSkin())
-WNDPROC_BUTTON(IDCANCEL                                    , hDlg, gpMosaic->GetSkin())
-WNDPROC_BUTTON(ID_DIALOG_SELECTPLAYER_BUTTONCHECK_AUTOSTART, hDlg, gpMosaic->GetSkin())
+WNDPROC_BUTTON(ID_DIALOG_SELECTPLAYER_BUTTON_NEWPLAYER     , hDlg, gpFM2Proj->GetSkin())
+WNDPROC_BUTTON(ID_DIALOG_SELECTPLAYER_BUTTON_NEWPASSWORD   , hDlg, gpFM2Proj->GetSkin())
+WNDPROC_BUTTON(ID_DIALOG_SELECTPLAYER_BUTTON_RENAME        , hDlg, gpFM2Proj->GetSkin())
+WNDPROC_BUTTON(ID_DIALOG_SELECTPLAYER_BUTTON_REMOVE        , hDlg, gpFM2Proj->GetSkin())
+WNDPROC_BUTTON(IDOK                                        , hDlg, gpFM2Proj->GetSkin())
+WNDPROC_BUTTON(IDCANCEL                                    , hDlg, gpFM2Proj->GetSkin())
+WNDPROC_BUTTON(ID_DIALOG_SELECTPLAYER_BUTTONCHECK_AUTOSTART, hDlg, gpFM2Proj->GetSkin())
 #endif // REPLACEBKCOLORFROMFILLWINDOW
 
 inline void MoveTable() {
@@ -254,7 +265,7 @@ inline void MoveTable() {
 inline void LoadTable() {
    pTable->SetColNumber(1);
    pTable->SetRowNumber(max(7+1,nsStatistics::NumberPlayers()+1));
-   pTable->SetText(0,0, TEXT("Players"));
+   pTable->SetText(0,0, CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__TABLE]);
    {
       for (int j=1; j<pTable->GetRowNumber(); j++) {
          pTable->SetText (0, j, TEXT(""));
@@ -264,20 +275,32 @@ inline void LoadTable() {
          pTable->SetText      (0, j+1, nsStatistics::GetPlayers(j));
          pTable->SetFormatText(0, j+1, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
       }
-      int index = nsStatistics::FindName(gpMosaic->GetPlayerName());
+      int index = nsStatistics::FindName(gpFM2Proj->GetPlayerName());
       if (index>=0)
          pTable->SetCurrentCell(0, index+1, true);
       else
          pTable->SetCurrentCell(0,1);
-      index = nsStatistics::FindName(nsPlayerName::szRobotNameDefault);
+      index = nsStatistics::FindName(nsPlayerName::SZ_ASSISTANT_NAME_DEFAULT);
       if (index>=0)
-         pTable->SetImage(0, index+1, gpMosaic->GetImageBtnPause(3));
+         pTable->SetImage(0, index+1, gpFM2Proj->GetImageBtnPause(3));
    }
 }
 
 // WM_INITDIALOG
-BOOL Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+BOOL OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
    hDlg = hwnd;
+
+   {
+      SetWindowText(hwnd, CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER]);
+
+      SetWindowText(GetDlgItem(hwnd, IDOK                                        ), CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__SELECT     ]);
+      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_SELECTPLAYER_BUTTON_NEWPLAYER     ), CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__NEWPLAYER  ]);
+      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_SELECTPLAYER_BUTTON_NEWPASSWORD   ), CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__NEWPASSWORD]);
+      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_SELECTPLAYER_BUTTON_RENAME        ), CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__RENAME     ]);
+      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_SELECTPLAYER_BUTTON_REMOVE        ), CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__REMOVE     ]);
+      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_SELECTPLAYER_BUTTONCHECK_AUTOSTART), CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__AUTOSTART  ]);
+      SetWindowText(GetDlgItem(hwnd, IDCANCEL                                    ), CLang::m_StrArr[IDS__CANCEL                          ]);
+   }
 
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
    SETNEWWNDPROC(hwnd, ID_DIALOG_SELECTPLAYER_BUTTON_NEWPLAYER     );
@@ -289,16 +312,16 @@ BOOL Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
    SETNEWWNDPROC(hwnd, ID_DIALOG_SELECTPLAYER_BUTTONCHECK_AUTOSTART);
 #endif // REPLACEBKCOLORFROMFILLWINDOW
 
-   pTable = new TcTable;
+   pTable = new CTable;
    pTable->Create(hDlg, ID_DIALOG_SELECTPLAYER_TABLE);
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
-   pTable->SetColor(gpMosaic->GetSkin().toAll, gpMosaic->GetSkin().colorBk);
+   pTable->SetBkColor(gpFM2Proj->GetSkin().m_colorBk);
 #endif // REPLACEBKCOLORFROMFILLWINDOW
    LoadTable();
    MoveTable();
 
-   Button_SetCheck(GetDlgItem(hwnd, ID_DIALOG_SELECTPLAYER_BUTTONCHECK_AUTOSTART), gpMosaic->GetAutoloadAdmin() ? BST_CHECKED : BST_UNCHECKED);
-   
+   Button_SetCheck(GetDlgItem(hwnd, ID_DIALOG_SELECTPLAYER_BUTTONCHECK_AUTOSTART), gpFM2Proj->GetAutoloadAdmin() ? BST_CHECKED : BST_UNCHECKED);
+
    if (firstLoad) {
       closeWnd = false;
       SetWindowLong(hwnd, GWL_STYLE, WS_SYSMENU ^ GetWindowLong(hwnd, GWL_STYLE));
@@ -315,27 +338,34 @@ bool VerifyPassword() {
       FORWARD_WM_COMMAND(hDlg, ID_DIALOG_SELECTPLAYER_BUTTON_NEWPLAYER, hDlg, 0, PostMessage);
       return false;
    }
-   if (!lstrcmpi(pTable->GetCurrentText(), szRobotNameDefault)) {
-      MessageBox(hDlg, TEXT("Sorry, this is a virtual player!"), TEXT("Error"), MB_OK | MB_ICONERROR);
+   if (!lstrcmpi(pTable->GetCurrentText(), SZ_ASSISTANT_NAME_DEFAULT)) {
+      MessageBox(hDlg,
+         CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__THIS_VIRTUAL_PLAYER],
+         CLang::m_StrArr[IDS__ERROR],
+         MB_OK | MB_ICONERROR);
       return false;
    }
-   TCHAR szPassword[maxPasswordLength]; szPassword[0] = TEXT('\0');
+   TCHAR szPassword[MAX_PASSWORD_LENGTH] = {0};
    nsStatistics::GetPassword(pTable->GetCurrentText(), szPassword);
    if (szPassword[0]) {
       OperationAtPlayer = ePlayerSelect;
       if (IDOK == DialogBox(ghInstance, TEXT("InputText"), hDlg, (DLGPROC)nsPlayerNameOperation::DialogProc)) {
-         if (_tcscmp(nsPlayerNameOperation::szPassword, szPassword)) {
-            MessageBox(hDlg, TEXT("Incorrect password"), TEXT("Error"), MB_OK | MB_ICONERROR);
+         if (lstrcmp(nsPlayerNameOperation::szPassword, szPassword)) {
+            MessageBox(hDlg,
+               CLang::m_StrArr[IDS__DIALOG_SELECTPLAYER__INCORRECT_PASSWORD],
+               CLang::m_StrArr[IDS__ERROR],
+               MB_OK | MB_ICONERROR);
             return false;
          }
          return true;
-      } else return false;
+      } else
+         return false;
    }
    return true;
 }
 
 // WM_COMMAND
-void Cls_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
+void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
    switch (id) {
    case ID_DIALOG_SELECTPLAYER_TABLE:
       switch (codeNotify) {
@@ -346,6 +376,13 @@ void Cls_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
    case ID_DIALOG_SELECTPLAYER_BUTTON_REMOVE:
       if (!pTable->GetCurrentText()[0]) return;
       if (VerifyPassword()) {
+         if (!lstrcmp(pTable->GetCurrentText(), gpFM2Proj->GetPlayerName())) {
+            // если удаляется текущий игрок то надо будет обязательно выбрать др. игрока
+            closeWnd = false;
+            SetWindowLong(hwnd, GWL_STYLE, WS_SYSMENU ^ GetWindowLong(hwnd, GWL_STYLE));
+            EnableWindow(GetDlgItem(hwnd, IDCANCEL), FALSE);
+            DrawMenuBar(hwnd);
+         }
          nsStatistics::Remove(pTable->GetCurrentText());
          LoadTable();
          MoveTable();
@@ -355,10 +392,10 @@ void Cls_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
       if (!pTable->GetCurrentText()[0]) return;
       if (VerifyPassword()) {
          OperationAtPlayer = ePlayerRename;
-         _tcscpy(nsPlayerNameOperation::szPlayerName, pTable->GetCurrentText());
+         lstrcpy(nsPlayerNameOperation::szPlayerName, pTable->GetCurrentText());
          if (IDOK == DialogBox(ghInstance, TEXT("InputText"), hwnd, (DLGPROC)nsPlayerNameOperation::DialogProc)) {
-            if (!_tcscmp(pTable->GetCurrentText(), gpMosaic->GetPlayerName()))
-               gpMosaic->SetPlayerName(nsPlayerNameOperation::szPlayerName);
+            if (!lstrcmp(pTable->GetCurrentText(), gpFM2Proj->GetPlayerName()))
+               gpFM2Proj->SetPlayerName(nsPlayerNameOperation::szPlayerName);
             nsStatistics::Rename(pTable->GetCurrentText(), nsPlayerNameOperation::szPlayerName);
             pTable->SetText(0, pTable->GetCurrentCell().y, nsPlayerNameOperation::szPlayerName);
          }
@@ -377,11 +414,11 @@ void Cls_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
    case ID_DIALOG_SELECTPLAYER_BUTTON_NEWPLAYER:
       OperationAtPlayer = ePlayerNew;
       if (IDOK == DialogBox(ghInstance, TEXT("InputText"), hwnd, (DLGPROC)nsPlayerNameOperation::DialogProc)) {
-         nsStatistics::TsSttstcSubRecord statisticsResult;
+         nsStatistics::CSttstcSubRecord statisticsResult;
          nsStatistics::InsertResult(
             statisticsResult,
-            figureTriangle1,    // неважно какая фигура
-            skillLevelBeginner, // неважно какой уровень
+            nsMosaic::mosaicTriangle1,    // неважно какая фигура
+            nsMosaic::skillLevelBeginner, // неважно какой уровень
             nsPlayerNameOperation::szPlayerName
          );
          LoadTable();
@@ -392,8 +429,8 @@ void Cls_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
       return;
    case IDOK:
       if (!VerifyPassword()) return;
-      gpMosaic->SetPlayerName(pTable->GetCurrentText());
-      closeWnd  = true;
+      gpFM2Proj->SetPlayerName(pTable->GetCurrentText());
+      closeWnd = true;
    case IDCANCEL:
       SendMessage(hwnd, WM_CLOSE, 0L, 0L);
       return;
@@ -402,22 +439,22 @@ void Cls_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
 // WM_PAINT
-void Cls_OnPaint(HWND hwnd){
+void OnPaint(HWND hwnd){
    DefWindowProc(hwnd, WM_PAINT, 0L, 0L);
-   if (gpMosaic->GetSkin().toAll)
-      nsEraseBk::FillWnd(hwnd, gpMosaic->GetSkin().colorBk, false);
+   if (gpFM2Proj->GetSkin().m_bToAll)
+      nsEraseBk::FillWnd(hwnd, gpFM2Proj->GetSkin().m_colorBk, false);
 }
 
 // WM_ERASEBKGND
-BOOL Cls_OnEraseBkgnd(HWND hwnd, HDC hdc) {
-   if (!gpMosaic->GetSkin().toAll)
+BOOL OnEraseBkgnd(HWND hwnd, HDC hdc) {
+   if (!gpFM2Proj->GetSkin().m_bToAll)
       return FALSE; // DefWindowProc(hwnd, WM_ERASEBKGND, (WPARAM)hdc, 0L);
-   return nsEraseBk::Cls_OnEraseBkgnd(hwnd, hdc, gpMosaic->GetSkin().colorBk);
+   return nsEraseBk::OnEraseBkgnd(hwnd, hdc, gpFM2Proj->GetSkin().m_colorBk);
 }
 #endif // REPLACEBKCOLORFROMFILLWINDOW
 
 // WM_CLOSE
-void Cls_OnClose(HWND hwnd){
+void OnClose(HWND hwnd){
    if (!closeWnd) return;
    closeWnd  = true;
    firstLoad = false;
@@ -426,15 +463,15 @@ void Cls_OnClose(HWND hwnd){
 }
 
 BOOL CALLBACK DialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam){
-   //nsInfo::AddValue(TEXT("msg PlayerName = 0x"), msg, 16);
+   //g_Logger.PutMsg(TEXT("msg PlayerName "), msg);
    switch (msg){
-   HANDLE_MSG(hDlg, WM_INITDIALOG, Cls_OnInitDialog);
-   HANDLE_MSG(hDlg, WM_COMMAND   , Cls_OnCommand);
+   HANDLE_MSG(hDlg, WM_INITDIALOG, OnInitDialog);
+   HANDLE_MSG(hDlg, WM_COMMAND   , OnCommand);
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
- //HANDLE_MSG(hDlg, WM_PAINT     , Cls_OnPaint);
-   HANDLE_MSG(hDlg, WM_ERASEBKGND, Cls_OnEraseBkgnd);
+ //HANDLE_MSG(hDlg, WM_PAINT     , OnPaint);
+   HANDLE_MSG(hDlg, WM_ERASEBKGND, OnEraseBkgnd);
 #endif // REPLACEBKCOLORFROMFILLWINDOW
-   HANDLE_MSG(hDlg, WM_CLOSE     , Cls_OnClose);
+   HANDLE_MSG(hDlg, WM_CLOSE     , OnClose);
    HANDLE_WM_CTLCOLOR(hDlg);
    case WM_USER+1:
       SetFocus(pTable->GetHandle());

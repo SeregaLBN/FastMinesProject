@@ -5,23 +5,24 @@
 // обработка диалогового окна "Champions"
 ////////////////////////////////////////////////////////////////////////////////
 
-#include ".\Champions.h"
-#include <windowsx.h>
-#include <commctrl.h>
-#include <tchar.h>
-#include "..\ID_resource.h"
-#include "..\Lib.h"
-#include "..\EraseBk.h"
-#include ".\PlayerName.h"
-#include ".\SelectFigure.h"
-#include "..\Control\TcTable.h"
+#include "StdAfx.h"
+#include "Champions.h"
+#include <WindowsX.h>
+#include <CommCtrl.h>
+#include "PlayerName.h"
+#include "../ID_resource.h"
+#include "../CommonLib.h"
+#include "../EraseBk.h"
+#include "../Control/Table.h"
+#include "../Lang.h"
+#include "../OldVersion.h"
+#include "../FastMines2.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 //                             global variables
 ////////////////////////////////////////////////////////////////////////////////
-extern TcMosaic* gpMosaic;
+extern CFastMines2Project *gpFM2Proj;
 extern HINSTANCE ghInstance;
-extern HWND ghWnd;
 
 ////////////////////////////////////////////////////////////////////////////////
 //                          implementation namespace
@@ -30,71 +31,46 @@ namespace nsChampions {
 ////////////////////////////////////////////////////////////////////////////////
 //                            types & constants
 ////////////////////////////////////////////////////////////////////////////////
-#define MAX_INTEGER 0x7FFFFFFF
-
-struct TsChmpnRecord {
-   TCHAR name[nsPlayerName::maxPlayerNameLength];
-   int  time;
-   TsChmpnRecord() {
-      name[0] = TEXT('\0');
-      time = MAX_INTEGER;
+struct CChmpnRecord {
+   TCHAR m_szName[nsPlayerName::MAX_PLAYER_NAME_LENGTH];
+   int  m_iTime;
+   CChmpnRecord() {
+      m_szName[0] = TEXT('\0');
+      m_iTime = MAX_INTEGER;
    };
 };
 
-struct TsFileChmpn {
-   TCHAR szVersion[chDIMOF(TEXT(ID_VERSIONINFO_VERSION3))];
-   TsChmpnRecord data[figureNil][skillLevelCustom][10];
+struct CFileChmpn {
+   TCHAR m_szVersion[chDIMOF(TEXT(ID_VERSIONINFO_VERSION3))];
+   CChmpnRecord m_Data[nsMosaic::mosaicNil][nsMosaic::skillLevelCustom][10];
+   CFileChmpn() {
+      lstrcpy(m_szVersion, TEXT(ID_VERSIONINFO_VERSION3));
+   }
 };
 
-struct TsChmpnRecord_ver200 {
-   char name[20];
-   int  time;
-};
+const TC_ITEM TC_Item[nsMosaic::mosaicNil] = {
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicTriangle1  },
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicTriangle2  },
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicTriangle3  },
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicTriangle4  },
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicSquare1    },
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicSquare2    },
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicParquet1   },
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicParquet2   },
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicTrapezoid1 },
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicTrapezoid2 },
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicTrapezoid3 },
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicRhombus1   },
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicQuadrangle1},
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicPentagonT24},
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicPentagonT5 },
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicPentagonT10},
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicHexagon1   },
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicTrSq1      },
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicTrSq2      },
+   {TCIF_IMAGE, 0,0, NULL, 0, nsMosaic::mosaicSqTrHex    }};
 
-enum TeFigure_v200 {
-   figure_v200_Square1,
-   figure_v200_Square2,
-   figure_v200_Triangle1,
-   figure_v200_Triangle2,
-   figure_v200_Hexagon,
-   figure_v200_Pentagon,
-   figure_v200_PentagonT10,
-   figure_v200_Parquet1,
-   figure_v200_Parquet2,
-   figure_v200_TrSq,
-   figure_v200_SqTrHex,
-   figure_v200_Trapezoid,
-   figure_v200_Rhombus,
-   figure_v200_Nil
-};
-
-struct TsFileChmpn_ver200 {
-   TsChmpnRecord_ver200 data[figure_v200_Nil][skillLevelCustom][10];
-};
-
-const TC_ITEM TC_Item[figureNil] = {
-   {TCIF_IMAGE, 0,0, NULL, 0, figureTriangle1  },
-   {TCIF_IMAGE, 0,0, NULL, 0, figureTriangle2  },
-   {TCIF_IMAGE, 0,0, NULL, 0, figureTriangle3  },
-   {TCIF_IMAGE, 0,0, NULL, 0, figureTriangle4  },
-   {TCIF_IMAGE, 0,0, NULL, 0, figureSquare1    },
-   {TCIF_IMAGE, 0,0, NULL, 0, figureSquare2    },
-   {TCIF_IMAGE, 0,0, NULL, 0, figureParquet1   },
-   {TCIF_IMAGE, 0,0, NULL, 0, figureParquet2   },
-   {TCIF_IMAGE, 0,0, NULL, 0, figureTrapezoid1 },
-   {TCIF_IMAGE, 0,0, NULL, 0, figureTrapezoid2 },
-   {TCIF_IMAGE, 0,0, NULL, 0, figureTrapezoid3 },
-   {TCIF_IMAGE, 0,0, NULL, 0, figureRhombus    },
-   {TCIF_IMAGE, 0,0, NULL, 0, figureQuadrangle1},
-   {TCIF_IMAGE, 0,0, NULL, 0, figurePentagon   },
-   {TCIF_IMAGE, 0,0, NULL, 0, figurePentagonT5 },
-   {TCIF_IMAGE, 0,0, NULL, 0, figurePentagonT10},
-   {TCIF_IMAGE, 0,0, NULL, 0, figureHexagon    },
-   {TCIF_IMAGE, 0,0, NULL, 0, figureTrSq       },
-   {TCIF_IMAGE, 0,0, NULL, 0, figureTrSq2      },
-   {TCIF_IMAGE, 0,0, NULL, 0, figureSqTrHex    }};
-
-const TCHAR szCFileName[] = TEXT("Mines.bst");   
+const TCHAR SZ_FILE_NAME_CHAMPIONS[] = TEXT("Mines.bst");
 
 ////////////////////////////////////////////////////////////////////////////////
 //                       global variables this namespaces
@@ -102,19 +78,18 @@ const TCHAR szCFileName[] = TEXT("Mines.bst");
 HWND hDlg = NULL;
 HWND hTabCtrl;
 HIMAGELIST hImageList;
-HICON hIconField[figureNil];
-TeSkillLevel localSkillLevel;
-TeFigure     localFigure;
-TsFileChmpn  file;
-TcTable*     pTable;
+nsMosaic::ESkillLevel localSkillLevel;
+nsMosaic::EMosaic     localMosaic;
+CFileChmpn  FileChmpn;
+CTable*     pTable;
 int indexPlayer = -1;
 
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
-WNDPROC_BUTTON(ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_BEGINNER    , hDlg    , gpMosaic->GetSkin())
-WNDPROC_BUTTON(ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_AMATEUR     , hDlg    , gpMosaic->GetSkin())
-WNDPROC_BUTTON(ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_PROFESSIONAL, hDlg    , gpMosaic->GetSkin())
-WNDPROC_BUTTON(ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_CRAZY       , hDlg    , gpMosaic->GetSkin())
-WNDPROC_STATIC(ID_DIALOG_STATISTICSorCHAMPIONS_TABCONTROL         ,           gpMosaic->GetSkin())
+WNDPROC_BUTTON(ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_BEGINNER    , hDlg, gpFM2Proj->GetSkin())
+WNDPROC_BUTTON(ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_AMATEUR     , hDlg, gpFM2Proj->GetSkin())
+WNDPROC_BUTTON(ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_PROFESSIONAL, hDlg, gpFM2Proj->GetSkin())
+WNDPROC_BUTTON(ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_CRAZY       , hDlg, gpFM2Proj->GetSkin())
+WNDPROC_STATIC(ID_DIALOG_STATISTICSorCHAMPIONS_TABCONTROL         ,       gpFM2Proj->GetSkin())
 #endif // REPLACEBKCOLORFROMFILLWINDOW
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -129,16 +104,19 @@ void SaveFile();
 ////////////////////////////////////////////////////////////////////////////////
 
 inline void SetCaption() {
-   TCHAR caption[64+9+3];
-   _tcscpy(caption, TEXT("Champions"));
-   _tcscat(caption, TEXT(" - "));
-   _tcscat(caption, nsSelectFigure::MosaicName[localFigure]);
-   SetWindowText(hDlg, caption);
+   SetWindowText(hDlg, CLang::m_StrArr[IDS__CHAMPIONS] + TEXT(" - ") + CLang::m_StrArr[IDS__MOSAIC_NAME_00+localMosaic]);
 }
 
 // WM_INITDIALOG
-BOOL Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
+BOOL OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
    hDlg = hwnd;
+
+   {
+      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_BEGINNER    ), CLang::m_StrArr[IDS__MENU_GAME__BEGINNER    ]);
+      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_AMATEUR     ), CLang::m_StrArr[IDS__MENU_GAME__AMATEUR     ]);
+      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_PROFESSIONAL), CLang::m_StrArr[IDS__MENU_GAME__PROFESSIONAL]);
+      SetWindowText(GetDlgItem(hwnd, ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_CRAZY       ), CLang::m_StrArr[IDS__MENU_GAME__CRAZY       ]);
+   }
 
    SetWindowLong(hDlg, GWL_STYLE, WS_SIZEBOX ^ GetWindowLong(hDlg, GWL_STYLE));
    DrawMenuBar(hwnd);
@@ -151,56 +129,36 @@ BOOL Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
    SETNEWWNDPROC(hwnd, ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_CRAZY       );
 #endif // REPLACEBKCOLORFROMFILLWINDOW
 
-   hIconField[figureTriangle1  ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTriangle1"  ), IMAGE_ICON, 0,0,0);
-   hIconField[figureTriangle2  ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTriangle2"  ), IMAGE_ICON, 0,0,0);
-   hIconField[figureTriangle3  ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTriangle3"  ), IMAGE_ICON, 0,0,0);
-   hIconField[figureTriangle4  ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTriangle4"  ), IMAGE_ICON, 0,0,0);
-   hIconField[figureSquare1    ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldSquare1"    ), IMAGE_ICON, 0,0,0);
-   hIconField[figureSquare2    ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldSquare2"    ), IMAGE_ICON, 0,0,0);
-   hIconField[figureParquet1   ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldParquet1"   ), IMAGE_ICON, 0,0,0);
-   hIconField[figureParquet2   ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldParquet2"   ), IMAGE_ICON, 0,0,0);
-   hIconField[figureTrapezoid1 ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTrapezoid1" ), IMAGE_ICON, 0,0,0);
-   hIconField[figureTrapezoid2 ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTrapezoid2" ), IMAGE_ICON, 0,0,0);
-   hIconField[figureTrapezoid3 ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTrapezoid3" ), IMAGE_ICON, 0,0,0);
-   hIconField[figureRhombus    ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldRhombus"    ), IMAGE_ICON, 0,0,0);
-   hIconField[figureQuadrangle1] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldQuadrangle1"), IMAGE_ICON, 0,0,0);
-   hIconField[figurePentagon   ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldPentagon"   ), IMAGE_ICON, 0,0,0);
-   hIconField[figurePentagonT5 ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldPentagonT5" ), IMAGE_ICON, 0,0,0);
-   hIconField[figurePentagonT10] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldPentagonT10"), IMAGE_ICON, 0,0,0);
-   hIconField[figureHexagon    ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldHexagon"    ), IMAGE_ICON, 0,0,0);
-   hIconField[figureTrSq       ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTrSq"       ), IMAGE_ICON, 0,0,0);
-   hIconField[figureTrSq2      ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTrSq2"      ), IMAGE_ICON, 0,0,0);
-   hIconField[figureSqTrHex    ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldSqTrHex"    ), IMAGE_ICON, 0,0,0);
-
-   hImageList = ImageList_Create(48,32, ILC_MASK, figureNil, 1);
-   for (int i=0; i<figureNil; i++)
-      ImageList_AddIcon(hImageList, hIconField[i]);
+   hImageList = ImageList_Create(32,32, ILC_MASK, nsMosaic::mosaicNil, 1);
+   for (int i=0; i<nsMosaic::mosaicNil; i++) {
+      ImageList_AddIcon(hImageList, CFastMines2Project::GetIconMosaic((nsMosaic::EMosaic)i));
+   }
 
    hTabCtrl = GetDlgItem(hwnd, ID_DIALOG_STATISTICSorCHAMPIONS_TABCONTROL);
    TabCtrl_SetImageList(hTabCtrl, hImageList);
-   for (i=0; i<figureNil; i++)
+   for (i=0; i<nsMosaic::mosaicNil; i++)
       TabCtrl_InsertItem(hTabCtrl, i, &TC_Item[i]);
 
-   localSkillLevel = gpMosaic->GetSkillLevel();
-   if (localSkillLevel == skillLevelCustom) localSkillLevel = skillLevelBeginner;
+   localSkillLevel = gpFM2Proj->GetSkillLevel();
+   if (localSkillLevel == nsMosaic::skillLevelCustom) localSkillLevel = nsMosaic::skillLevelBeginner;
    PostMessage(
       GetDlgItem(hwnd, ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_BEGINNER + localSkillLevel),
       BM_SETCHECK,
       (WPARAM) BST_CHECKED,
       0);
-   localFigure = gpMosaic->GetFigure();
-   TabCtrl_SetCurSel(hTabCtrl, localFigure);
+   localMosaic = gpFM2Proj->GetMosaic();
+   TabCtrl_SetCurSel(hTabCtrl, localMosaic);
 
-   pTable = new TcTable;
+   pTable = new CTable;
  //pTable->SetDefaultHeight(17);
    pTable->Create(hTabCtrl, ID_DIALOG_STATISTICSorCHAMPIONS_TABLE);
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
-   pTable->SetColor(gpMosaic->GetSkin().toAll, gpMosaic->GetSkin().colorBk);
+   pTable->SetBkColor(gpFM2Proj->GetSkin().m_colorBk);
 #endif // REPLACEBKCOLORFROMFILLWINDOW
    pTable->SetColNumber(2);
    pTable->SetRowNumber(11);
-   pTable->SetText(0,0, TEXT("Player name"));
-   pTable->SetText(1,0, TEXT("Game time"));
+   pTable->SetText(0,0, CLang::m_StrArr[IDS__CHAMPIONS__PLAYER_NAME]);
+   pTable->SetText(1,0, CLang::m_StrArr[IDS__CHAMPIONS__GAME_TIME  ]);
    pTable->SetColWidth(0, 200);
    pTable->SetColWidth(1, 100);
    ShowWindow(pTable->GetHandle(), SW_HIDE);
@@ -218,26 +176,26 @@ BOOL Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
 }
 
 // WM_COMMAND
-void Cls_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
+void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
    switch (id) {
    case ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_BEGINNER:
-      if (localSkillLevel == skillLevelBeginner) break;
-      localSkillLevel = skillLevelBeginner;
+      if (localSkillLevel == nsMosaic::skillLevelBeginner) break;
+      localSkillLevel = nsMosaic::skillLevelBeginner;
       ShowPage();
       break;
    case ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_AMATEUR:
-      if (localSkillLevel == skillLevelAmateur) break;
-      localSkillLevel = skillLevelAmateur;
+      if (localSkillLevel == nsMosaic::skillLevelAmateur) break;
+      localSkillLevel = nsMosaic::skillLevelAmateur;
       ShowPage();
       break;
    case ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_PROFESSIONAL:
-      if (localSkillLevel == skillLevelProfessional) break;
-      localSkillLevel = skillLevelProfessional;
+      if (localSkillLevel == nsMosaic::skillLevelProfessional) break;
+      localSkillLevel = nsMosaic::skillLevelProfessional;
       ShowPage();
       break;
    case ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_CRAZY:
-      if (localSkillLevel == skillLevelCrazy) break;
-      localSkillLevel = skillLevelCrazy;
+      if (localSkillLevel == nsMosaic::skillLevelCrazy) break;
+      localSkillLevel = nsMosaic::skillLevelCrazy;
       ShowPage();
       break;
    case IDOK:
@@ -248,10 +206,10 @@ void Cls_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
 }
 
 // WM_NOTIFY
-void Cls_OnNotify(HWND hwnd, int idCtrl, LPNMHDR pNMHdr) {
+void OnNotify(HWND hwnd, int idCtrl, LPNMHDR pNMHdr) {
    switch (pNMHdr->code) {
    case TCN_SELCHANGE:
-      localFigure = (TeFigure)TabCtrl_GetCurSel(hTabCtrl); 
+      localMosaic = (nsMosaic::EMosaic)TabCtrl_GetCurSel(hTabCtrl);
       ShowPage();
       SetCaption();
       break;
@@ -260,40 +218,38 @@ void Cls_OnNotify(HWND hwnd, int idCtrl, LPNMHDR pNMHdr) {
 
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
 // WM_PAINT
-void Cls_OnPaint(HWND hwnd){
+void OnPaint(HWND hwnd){
    DefWindowProc(hwnd, WM_PAINT, 0L, 0L);
-   if (gpMosaic->GetSkin().toAll)
-      nsEraseBk::FillWnd(hwnd, gpMosaic->GetSkin().colorBk, false);
+   if (gpFM2Proj->GetSkin().m_bToAll)
+      nsEraseBk::FillWnd(hwnd, gpFM2Proj->GetSkin().m_colorBk, false);
 }
 
 // WM_ERASEBKGND
-BOOL Cls_OnEraseBkgnd(HWND hwnd, HDC hdc) {
-   if (!gpMosaic->GetSkin().toAll)
+BOOL OnEraseBkgnd(HWND hwnd, HDC hdc) {
+   if (!gpFM2Proj->GetSkin().m_bToAll)
       return FALSE; // DefWindowProc(hwnd, WM_ERASEBKGND, (WPARAM)hdc, 0L);
-   return nsEraseBk::Cls_OnEraseBkgnd(hwnd, hdc, gpMosaic->GetSkin().colorBk);
+   return nsEraseBk::OnEraseBkgnd(hwnd, hdc, gpFM2Proj->GetSkin().m_colorBk);
 }
 #endif // REPLACEBKCOLORFROMFILLWINDOW
 
 // WM_CLOSE
-void Cls_OnClose(HWND hwnd){
-   for (int i=0; i<figureNil; i++)
-      DeleteObject(hIconField[i]);
+void OnClose(HWND hwnd){
    ImageList_Destroy(hImageList);
    EndDialog(hwnd, 0);
 }
 
 BOOL CALLBACK DialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
    switch (msg){
-   HANDLE_MSG(hDlg, WM_INITDIALOG, Cls_OnInitDialog);
-   HANDLE_MSG(hDlg, WM_COMMAND   , Cls_OnCommand);
+   HANDLE_MSG(hDlg, WM_INITDIALOG, OnInitDialog);
+   HANDLE_MSG(hDlg, WM_COMMAND   , OnCommand);
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
- //HANDLE_MSG(hDlg, WM_PAINT     , Cls_OnPaint);
-   HANDLE_MSG(hDlg, WM_ERASEBKGND, Cls_OnEraseBkgnd);
+ //HANDLE_MSG(hDlg, WM_PAINT     , OnPaint);
+   HANDLE_MSG(hDlg, WM_ERASEBKGND, OnEraseBkgnd);
 #endif // REPLACEBKCOLORFROMFILLWINDOW
-   HANDLE_MSG(hDlg, WM_CLOSE     , Cls_OnClose);
+   HANDLE_MSG(hDlg, WM_CLOSE     , OnClose);
    HANDLE_WM_CTLCOLOR(hDlg);
    case WM_NOTIFY:
-      Cls_OnNotify(hDlg, (int)wParam, (LPNMHDR)lParam);
+      OnNotify(hDlg, (int)wParam, (LPNMHDR)lParam);
    }
    return FALSE;
 }
@@ -305,145 +261,287 @@ void ShowPage() {
       pTable->SetCurrentCell(0, 1+indexPlayer, true);
       indexPlayer = -1;
    }
-   TCHAR buf[16];
    for (int i=0; i<10; i++) {
       pTable->SetText (0, i+1, TEXT(""));
       pTable->SetText (1, i+1, TEXT(""));
       pTable->SetImage(0, i+1, NULL);
    }
    for (i=0; i<10; i++) {
-      if (file.data[localFigure][localSkillLevel][i].time == MAX_INTEGER) break;
-      if (!lstrcmpi(file.data[localFigure][localSkillLevel][i].name, nsPlayerName::szRobotNameDefault))
-         pTable->SetImage(0, i+1, gpMosaic->GetImageBtnPause(3));
-      pTable->SetText(0, i+1, file.data[localFigure][localSkillLevel][i].name);
-      _stprintf(buf, TEXT("%d sec.\0"), file.data[localFigure][localSkillLevel][i].time);
-      pTable->SetText(1, i+1, buf);
+      if (FileChmpn.m_Data[localMosaic][localSkillLevel][i].m_iTime == MAX_INTEGER) break;
+      if (!lstrcmpi(FileChmpn.m_Data[localMosaic][localSkillLevel][i].m_szName, nsPlayerName::SZ_ASSISTANT_NAME_DEFAULT))
+         pTable->SetImage(0, i+1, gpFM2Proj->GetImageBtnPause(3));
+      pTable->SetText(0, i+1, FileChmpn.m_Data[localMosaic][localSkillLevel][i].m_szName);
+      CString strTimeGame;
+      strTimeGame.Format(TEXT("%d %s"), FileChmpn.m_Data[localMosaic][localSkillLevel][i].m_iTime, (LPCTSTR)CLang::m_StrArr[IDS__SEC]);
+      pTable->SetText(1, i+1, strTimeGame);
    }
 }
 
-inline void CleanFileChampions(TsFileChmpn &file) {
-   memset(&file, 0, sizeof(file));
-   _tcscpy(file.szVersion, TEXT(ID_VERSIONINFO_VERSION3));
-   for (int i=0; i<figureNil; i++)
-      for (int j=0; j<skillLevelCustom; j++)
+inline void CleanFileChampions(CFileChmpn &localFile) {
+   memset(&localFile, 0, sizeof(CFileChmpn));
+   lstrcpy(localFile.m_szVersion, TEXT(ID_VERSIONINFO_VERSION3));
+   for (int i=0; i<nsMosaic::mosaicNil; i++)
+      for (int j=0; j<nsMosaic::skillLevelCustom; j++)
          for (int k=0; k<10; k++) {
-            file.data[i][j][k].name[0] = TEXT('\0');
-            file.data[i][j][k].time = MAX_INTEGER;
+            localFile.m_Data[i][j][k].m_szName[0] = TEXT('\0');
+            localFile.m_Data[i][j][k].m_iTime = MAX_INTEGER;
          }
 }
 
-BOOL ConvertFileVersion(const DWORD sizeFile, HANDLE hFile, TsFileChmpn &file) {
+#ifndef UNICODE
+BOOL Convert(HANDLE hFile, CFileChmpn &localFile) {
    //return FALSE;
-/**/
    DWORD dwPointer = SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
    if (dwPointer) return FALSE;
 
-   CleanFileChampions(file);
+   CleanFileChampions(localFile);
 
-   BOOL result = FALSE;
-   DWORD dwNOBR;
-   switch (sizeFile) {
-   case sizeof(TsFileChmpn_ver200):
+   BOOL bResult = FALSE;
+   DWORD dwNOBR = 0;
+   const DWORD dwSizeFile = GetFileSize(hFile, NULL);
+   switch (dwSizeFile) {
+   case sizeof(nsVer210::CFileChmpn):
       {
-         TsFileChmpn_ver200 file_v200;
-         result = ReadFile(hFile, &file_v200, sizeFile, &dwNOBR, NULL);
-         if (result) {
-            if (sizeFile != dwNOBR) return FALSE;
-            // all Ok - convert from v200 to v210
+         nsVer210::CFileChmpn FileChmpn_v210;
+         bResult = (
+            ReadFile(hFile, &FileChmpn_v210, dwSizeFile, &dwNOBR, NULL) &&
+            (dwSizeFile == dwNOBR) &&
+            (0 == strcmp(FileChmpn_v210.m_szVersion, ID_VERSIONINFO_VERSION3_v210))
+         );
+         if (bResult) {
+            bResult &= (
+               nsMosaic::skillLevelBeginner     == nsVer210::skillLevelBeginner     &&
+               nsMosaic::skillLevelAmateur      == nsVer210::skillLevelAmateur      &&
+               nsMosaic::skillLevelProfessional == nsVer210::skillLevelProfessional &&
+               nsMosaic::skillLevelCrazy        == nsVer210::skillLevelCrazy        &&
+
+               placeCenter  == nsVer210::placeCenter  &&
+               placeStretch == nsVer210::placeStretch &&
+               placeTile    == nsVer210::placeTile    &&
+
+               nsCell::_Nil  == nsVer210::_Nil  &&
+               nsCell::_1    == nsVer210::_1  &&
+               nsCell::_2    == nsVer210::_2  &&
+               nsCell::_3    == nsVer210::_3  &&
+               nsCell::_4    == nsVer210::_4  &&
+               nsCell::_5    == nsVer210::_5  &&
+               nsCell::_6    == nsVer210::_6  &&
+               nsCell::_7    == nsVer210::_7  &&
+               nsCell::_8    == nsVer210::_8  &&
+               nsCell::_9    == nsVer210::_9  &&
+               nsCell::_10   == nsVer210::_10 &&
+               nsCell::_11   == nsVer210::_11 &&
+               nsCell::_12   == nsVer210::_12 &&
+               nsCell::_13   == nsVer210::_13 &&
+               nsCell::_14   == nsVer210::_14 &&
+               nsCell::_15   == nsVer210::_15 &&
+               nsCell::_16   == nsVer210::_16 &&
+               nsCell::_17   == nsVer210::_17 &&
+               nsCell::_18   == nsVer210::_18 &&
+               nsCell::_19   == nsVer210::_19 &&
+               nsCell::_20   == nsVer210::_20 &&
+               nsCell::_21   == nsVer210::_21 &&
+               nsCell::_Mine == nsVer210::_Mine &&
+
+               nsCell::_Unknown == nsVer210::_Unknown &&
+               nsCell::_Clear   == nsVer210::_Clear &&
+               nsCell::_Flag    == nsVer210::_Flag
+            );
+         #ifdef _DEBUG
+            if (!bResult) {
+               ::MessageBox_AbortProcess(TEXT("Ќадо переделать ф-цию"));
+            }
+         #endif // _DEBUG
+         }
+         if (bResult) {
+            // all Ok - convert from v210
             int j, k;
-            // figure_v200_Square1
-            for (j=0; j<skillLevelCustom; j++)
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  _tcscpy(file.data[figureSquare1][j][k].name,  file_v200.data[figure_v200_Square1][j][k].name);
-                          file.data[figureSquare1][j][k].time = file_v200.data[figure_v200_Square1][j][k].time;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Triangle1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTriangle1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Triangle1][j][k].m_iTime;
                }
-            // figure_v200_Square2
-            for (j=0; j<skillLevelCustom; j++)
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  _tcscpy(file.data[figureSquare2][j][k].name,  file_v200.data[figure_v200_Square2][j][k].name);
-                          file.data[figureSquare2][j][k].time = file_v200.data[figure_v200_Square2][j][k].time;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle2][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Triangle2][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTriangle2][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Triangle2][j][k].m_iTime;
                }
-            // figure_v200_Triangle1
-            for (j=0; j<skillLevelCustom; j++)
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  _tcscpy(file.data[figureTriangle1][j][k].name,  file_v200.data[figure_v200_Triangle1][j][k].name);
-                          file.data[figureTriangle1][j][k].time = file_v200.data[figure_v200_Triangle1][j][k].time;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle3][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Triangle3][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTriangle3][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Triangle3][j][k].m_iTime;
                }
-            // figure_v200_Triangle2
-            for (j=0; j<skillLevelCustom; j++)
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  _tcscpy(file.data[figureTriangle2][j][k].name,  file_v200.data[figure_v200_Triangle2][j][k].name);
-                          file.data[figureTriangle2][j][k].time = file_v200.data[figure_v200_Triangle2][j][k].time;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle4][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Triangle4][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTriangle4][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Triangle4][j][k].m_iTime;
                }
-            // figure_v200_Hexagon
-            for (j=0; j<skillLevelCustom; j++)
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  _tcscpy(file.data[figureHexagon][j][k].name,  file_v200.data[figure_v200_Hexagon][j][k].name);
-                          file.data[figureHexagon][j][k].time = file_v200.data[figure_v200_Hexagon][j][k].time;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSquare1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Square1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicSquare1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Square1][j][k].m_iTime;
                }
-            // figure_v200_Pentagon
-            for (j=0; j<skillLevelCustom; j++)
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  _tcscpy(file.data[figurePentagon][j][k].name,  file_v200.data[figure_v200_Pentagon][j][k].name);
-                          file.data[figurePentagon][j][k].time = file_v200.data[figure_v200_Pentagon][j][k].time;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSquare2][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Square2][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicSquare2][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Square2][j][k].m_iTime;
                }
-            // figure_v200_PentagonT10
-            for (j=0; j<skillLevelCustom; j++)
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  _tcscpy(file.data[figurePentagonT10][j][k].name,  file_v200.data[figure_v200_PentagonT10][j][k].name);
-                          file.data[figurePentagonT10][j][k].time = file_v200.data[figure_v200_PentagonT10][j][k].time;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicParquet1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Parquet1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicParquet1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Parquet1][j][k].m_iTime;
                }
-            // figure_v200_Parquet1
-            for (j=0; j<skillLevelCustom; j++)
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  _tcscpy(file.data[figureParquet1][j][k].name,  file_v200.data[figure_v200_Parquet1][j][k].name);
-                          file.data[figureParquet1][j][k].time = file_v200.data[figure_v200_Parquet1][j][k].time;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicParquet2][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Parquet2][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicParquet2][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Parquet2][j][k].m_iTime;
                }
-            // figure_v200_Parquet2
-            for (j=0; j<skillLevelCustom; j++)
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  _tcscpy(file.data[figureParquet2][j][k].name,  file_v200.data[figure_v200_Parquet2][j][k].name);
-                          file.data[figureParquet2][j][k].time = file_v200.data[figure_v200_Parquet2][j][k].time;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrapezoid1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Trapezoid1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTrapezoid1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Trapezoid1][j][k].m_iTime;
                }
-            // figure_v200_TrSq
-            for (j=0; j<skillLevelCustom; j++)
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  _tcscpy(file.data[figureTrSq][j][k].name,  file_v200.data[figure_v200_TrSq][j][k].name);
-                          file.data[figureTrSq][j][k].time = file_v200.data[figure_v200_TrSq][j][k].time;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrapezoid2][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Trapezoid2][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTrapezoid2][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Trapezoid2][j][k].m_iTime;
                }
-            // figure_v200_SqTrHex
-            for (j=0; j<skillLevelCustom; j++)
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  _tcscpy(file.data[figureSqTrHex][j][k].name,  file_v200.data[figure_v200_SqTrHex][j][k].name);
-                          file.data[figureSqTrHex][j][k].time = file_v200.data[figure_v200_SqTrHex][j][k].time;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrapezoid3][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Trapezoid3][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTrapezoid3][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Trapezoid3][j][k].m_iTime;
                }
-            // figure_v200_Trapezoid
-            for (j=0; j<skillLevelCustom; j++)
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  _tcscpy(file.data[figureTrapezoid1][j][k].name,  file_v200.data[figure_v200_Trapezoid][j][k].name);
-                          file.data[figureTrapezoid1][j][k].time = file_v200.data[figure_v200_Trapezoid][j][k].time;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicRhombus1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Rhombus][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicRhombus1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Rhombus][j][k].m_iTime;
                }
-            // figure_v200_Rhombus
-            for (j=0; j<skillLevelCustom; j++)
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  _tcscpy(file.data[figureRhombus][j][k].name,  file_v200.data[figure_v200_Rhombus][j][k].name);
-                          file.data[figureRhombus][j][k].time = file_v200.data[figure_v200_Rhombus][j][k].time;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicQuadrangle1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Quadrangle1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicQuadrangle1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Quadrangle1][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicPentagonT24][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Pentagon][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicPentagonT24][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Pentagon][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicPentagonT5][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_PentagonT5][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicPentagonT5][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_PentagonT5][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicPentagonT10][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_PentagonT10][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicPentagonT10][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_PentagonT10][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicHexagon1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Hexagon][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicHexagon1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Hexagon][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrSq1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_TrSq][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTrSq1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_TrSq][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrSq2][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_TrSq2][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTrSq2][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_TrSq2][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSqTrHex][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_SqTrHex][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicSqTrHex][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_SqTrHex][j][k].m_iTime;
+               }
+         }
+      }
+      break;
+   case sizeof(nsVer200::CFileChmpn):
+      {
+         nsVer200::CFileChmpn FileChmpn_v200;
+         bResult = ReadFile(hFile, &FileChmpn_v200, dwSizeFile, &dwNOBR, NULL) && (dwSizeFile == dwNOBR);
+         if (bResult) {
+            // all Ok - convert from v200
+            int j, k;
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSquare1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Square1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicSquare1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Square1][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSquare2][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Square2][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicSquare2][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Square2][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Triangle1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTriangle1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Triangle1][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle2][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Triangle2][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTriangle2][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Triangle2][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicHexagon1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Hexagon1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicHexagon1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Hexagon1][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicPentagonT24][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_PentagonT24][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicPentagonT24][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_PentagonT24][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicPentagonT10][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_PentagonT10][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicPentagonT10][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_PentagonT10][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicParquet1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Parquet1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicParquet1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Parquet1][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicParquet2][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Parquet2][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicParquet2][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Parquet2][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrSq1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_TrSq1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTrSq1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_TrSq1][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSqTrHex][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_SqTrHex][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicSqTrHex][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_SqTrHex][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrapezoid1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Trapezoid][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTrapezoid1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Trapezoid][j][k].m_iTime;
+               }
+            for (j=0; j<nsMosaic::skillLevelCustom; j++)
+               for (k=0; k<10; k++) {
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicRhombus1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Rhombus1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicRhombus1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Rhombus1][j][k].m_iTime;
                }
          }
       }
       break;
    } // end switch
-   return result;
-/**/
+   return bResult;
 }
+#endif // UNICODE
 
 void LoadFile() {
-   TCHAR szPath[MAX_PATH];
-   GetModuleFileName(ghInstance, szPath, MAX_PATH);
-   DelFileFromFullPath(szPath);
-   _tcscat(szPath, szCFileName);
    HANDLE hFile = CreateFile(
-      szPath,
+      GetModuleDir(ghInstance) + SZ_FILE_NAME_CHAMPIONS,
       GENERIC_READ,
       0,
       NULL,
@@ -451,42 +549,48 @@ void LoadFile() {
       FILE_ATTRIBUTE_NORMAL,
       NULL
    );
-   BOOL result = FALSE;
    if (hFile != INVALID_HANDLE_VALUE) {
-      const DWORD sizeFile = GetFileSize(hFile, NULL);
-      if (sizeFile != 0xFFFFFFFF) {
-         switch (sizeFile) {
-         case sizeof(TsFileChmpn):
-            DWORD dwNOBR;
-            result = ReadFile(hFile, &file, sizeof(file), &dwNOBR, NULL);
-            if (result && (sizeof(file) == dwNOBR)) {
-               if (_tcscmp(file.szVersion, TEXT(ID_VERSIONINFO_VERSION3)))
-                  result = ConvertFileVersion(sizeFile, hFile, file); // old ver. -> new ver.
-               if (!result)
-                  MessageBox(ghWnd, TEXT("BST file Ц version error"), TEXT("Information"), MB_ICONINFORMATION | MB_OK);
-            } else
-               MessageBox(ghWnd, TEXT("Can't load Champions file"), TEXT("Error"), MB_ICONSTOP | MB_OK);
+      const DWORD dwSizeFile = GetFileSize(hFile, NULL);
+      DWORD dwNOBR = 0;
+      if (dwSizeFile == 0xFFFFFFFF) {
+         MessageBox(gpFM2Proj->GetHandle(), CLang::m_StrArr[IDS__CHAMPIONS__ERROR_READ], CLang::m_StrArr[IDS__ERROR], MB_ICONSTOP | MB_OK);
+      } else {
+         switch (dwSizeFile) {
+         case sizeof(CFileChmpn):
+            if (!ReadFile(hFile, &FileChmpn, sizeof(CFileChmpn), &dwNOBR, NULL) ||
+                (sizeof(CFileChmpn) != dwNOBR)
+               )
+            {
+               CleanFileChampions(FileChmpn);
+               MessageBox(gpFM2Proj->GetHandle(), CLang::m_StrArr[IDS__CHAMPIONS__ERROR_READ], CLang::m_StrArr[IDS__ERROR], MB_ICONSTOP | MB_OK);
+            } else {
+               if (lstrcmp(FileChmpn.m_szVersion, TEXT(ID_VERSIONINFO_VERSION3))) {
+            #ifndef UNICODE
+                  goto switch_default;
+            #else
+                  NULL;
+            #endif // UNICODE
+               }
+            }
             break;
          default:
-            result = ConvertFileVersion(sizeFile, hFile, file); // old ver. -> new ver.
-            if (!result)
-               MessageBox(ghWnd, TEXT("BST file Ц version error"), TEXT("Information"), MB_ICONINFORMATION | MB_OK);
+      #ifndef UNICODE
+  switch_default:
+            if (!Convert(hFile, FileChmpn)) { // old ver. -> new ver.
+               CleanFileChampions(FileChmpn);
+               MessageBox(gpFM2Proj->GetHandle(), CLang::m_StrArr[IDS__CHAMPIONS__ERROR_VERSION], CLang::m_StrArr[IDS__INFORMATION], MB_ICONINFORMATION | MB_OK);
+            }
+      #endif // UNICODE
+            break;
          }
-      } else
-         MessageBox(ghWnd, TEXT("Can't load Champions file"), TEXT("Error"), MB_ICONSTOP | MB_OK);
+      }
       CloseHandle(hFile);
    }
-   if (!result)
-      CleanFileChampions(file);
 }
 
 void SaveFile() {
-   TCHAR szPath[MAX_PATH];
-   GetModuleFileName(ghInstance, szPath, MAX_PATH);
-   DelFileFromFullPath(szPath);
-   _tcscat(szPath, szCFileName);
    HANDLE hFile = CreateFile(
-      szPath,
+      GetModuleDir(ghInstance) + SZ_FILE_NAME_CHAMPIONS,
       GENERIC_WRITE,
       0,
       NULL,
@@ -494,44 +598,47 @@ void SaveFile() {
       FILE_ATTRIBUTE_NORMAL,
       NULL
    );
-   if (hFile != INVALID_HANDLE_VALUE) {
-      DWORD dwNOBW;
-      BOOL result = WriteFile(hFile, &file,
-          sizeof(file), &dwNOBW, NULL);
-      if (result && (sizeof(file) != dwNOBW)) result = FALSE;
-      if (!result) MessageBox(ghWnd, TEXT("Can't write Champions file"), TEXT("Error"), MB_ICONSTOP | MB_OK);
+   if (hFile == INVALID_HANDLE_VALUE) {
+      MessageBox(gpFM2Proj->GetHandle(), CLang::m_StrArr[IDS__CHAMPIONS__ERROR_CREATE], CLang::m_StrArr[IDS__ERROR], MB_ICONSTOP | MB_OK);
+   } else {
+      DWORD dwNOBW = 0;
+      if (!WriteFile(hFile, &FileChmpn, sizeof(CFileChmpn), &dwNOBW, NULL) ||
+          (sizeof(CFileChmpn) != dwNOBW)
+         )
+      {
+         MessageBox(gpFM2Proj->GetHandle(), CLang::m_StrArr[IDS__CHAMPIONS__ERROR_WRITE], CLang::m_StrArr[IDS__ERROR], MB_ICONSTOP | MB_OK);
+      }
       CloseHandle(hFile);
-   } else
-      MessageBox(ghWnd, TEXT("Can't create Champions file"), TEXT("Error"), MB_ICONSTOP | MB_OK);
+   }
 }
 
-int InsertRecord(const TeFigure& figure, const TeSkillLevel& skill, const TsChmpnRecord& newRecord) {
+int InsertRecord(const nsMosaic::EMosaic& mosaic, const nsMosaic::ESkillLevel& skill, const CChmpnRecord& newRecord) {
    int j = 9;
    do {
-      if(file.data[figure][skill][j-1].time > newRecord.time) {
-         file.data[figure][skill][j] = file.data[figure][skill][j-1];
+      if(FileChmpn.m_Data[mosaic][skill][j-1].m_iTime > newRecord.m_iTime) {
+         FileChmpn.m_Data[mosaic][skill][j] = FileChmpn.m_Data[mosaic][skill][j-1];
       } else {
-         file.data[figure][skill][j] = newRecord;
+         FileChmpn.m_Data[mosaic][skill][j] = newRecord;
          break;
       }
       j--;
-   } while  (j != 0);
-   if (j == 0) file.data[figure][skill][j] = newRecord;
+   } while(j != 0);
+   if (j == 0) FileChmpn.m_Data[mosaic][skill][j] = newRecord;
    return j;
 }
 
-void SaveResult(const TeFigure figure, const TeSkillLevel skill, const int time, LPCTSTR szName) {
-   if (skill == skillLevelCustom) return;
+void SaveResult(const nsMosaic::EMosaic mosaic, const nsMosaic::ESkillLevel skill, const int time, LPCTSTR szName) {
+   if (skill == nsMosaic::skillLevelCustom) return;
    LoadFile();
-   if (file.data[figure][skill][9].time <= time) return;
-   TsChmpnRecord newRecord;
-   newRecord.time = time;
-   _tcscpy(newRecord.name, szName);
-   const int index = InsertRecord(figure, skill, newRecord);
+   if (FileChmpn.m_Data[mosaic][skill][9].m_iTime <= time) return;
+   CChmpnRecord newRecord;
+   newRecord.m_iTime = time;
+   lstrcpy(newRecord.m_szName, szName);
+   const int index = InsertRecord(mosaic, skill, newRecord);
    SaveFile();
-   if (lstrcmpi(szName, nsPlayerName::szRobotNameDefault)) {
+   if (lstrcmpi(szName, nsPlayerName::SZ_ASSISTANT_NAME_DEFAULT)) {
       indexPlayer = index;
-      DialogBox(ghInstance, TEXT("StatisticsOrChampionsDialog"), ghWnd, (DLGPROC)nsChampions::DialogProc);
+      DialogBox(ghInstance, TEXT("StatisticsOrChampionsDialog"), gpFM2Proj->GetHandle(), (DLGPROC)nsChampions::DialogProc);
    }
 }
 
