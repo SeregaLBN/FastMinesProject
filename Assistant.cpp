@@ -266,23 +266,17 @@ void CAssistant::GameNew() {
    m_bSequentialMove = false;
 }
 
-void CAssistant::ClickBegin() {
-   nsCell::CBase::m_SetOpenNil.clear();
-   nsCell::CBase::m_SetOpen   .clear();
-   nsCell::CBase::m_SetFlag   .clear();
-}
-
-void CAssistant::ClickEnd() {
+void CAssistant::ClickEnd(nsCell::CClickReportContext ClickReportContext) {
    const int numberNeighbor = m_Mosaic.GetCell(0,0)->GetNeighborNumber();
 
    // Анализ множества setOpenNil
-   if (!nsCell::CBase::m_SetOpenNil.empty())
-      for (nsCell::SET_cpBase::const_iterator p=nsCell::CBase::m_SetOpenNil.begin(); p!=nsCell::CBase::m_SetOpenNil.end(); p++)
+   if (!ClickReportContext.m_SetOpenNil.empty())
+      for (nsCell::SET_cpBase::const_iterator p=ClickReportContext.m_SetOpenNil.begin(); p!=ClickReportContext.m_SetOpenNil.end(); p++)
          Delete(m_SetCloseNoFlag, *p);
 
    // Анализ множества setOpen
-   if (!nsCell::CBase::m_SetOpen.empty()) {
-      for (nsCell::SET_cpBase::const_iterator p=nsCell::CBase::m_SetOpen.begin(); p!=nsCell::CBase::m_SetOpen.end(); p++) {
+   if (!ClickReportContext.m_SetOpen.empty()) {
+      for (nsCell::SET_cpBase::const_iterator p=ClickReportContext.m_SetOpen.begin(); p!=ClickReportContext.m_SetOpen.end(); p++) {
          for (int k=0; k<numberNeighbor; k++) {
             COORD coordNeighbor = (*p)->GetNeighborCoord(k);
             if (coordNeighbor == INCORRECT_COORD) continue;
@@ -301,8 +295,8 @@ void CAssistant::ClickEnd() {
    }
 
    // Анализ множества setFlag
-   if (!nsCell::CBase::m_SetFlag.empty()) {
-      for (nsCell::SET_cpBase::const_iterator p=nsCell::CBase::m_SetFlag.begin(); p!=nsCell::CBase::m_SetFlag.end(); p++) {
+   if (!ClickReportContext.m_SetFlag.empty()) {
+      for (nsCell::SET_cpBase::const_iterator p=ClickReportContext.m_SetFlag.begin(); p!=ClickReportContext.m_SetFlag.end(); p++) {
          for (int k=0; k<numberNeighbor; k++) {
             COORD coordNeighbor = (*p)->GetNeighborCoord(k);
             if (coordNeighbor == INCORRECT_COORD) continue;

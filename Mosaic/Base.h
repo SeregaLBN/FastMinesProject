@@ -105,14 +105,15 @@ namespace nsCell {
       {}
    };
 
+   struct CClickReportContext {
+      SET_cpBase m_SetOpenNil; // множество ячеек (нулевых  ) открытых           при последнем клике
+      SET_cpBase m_SetOpen;    // множество ячеек (ненулевых) открытых           при последнем клике
+      SET_cpBase m_SetFlag;    // множество ячеек с флажками  снятых/уставленных при последнем клике
+   };
+
    class CBase {
    private:
       mutable bool m_bPresumeFlag;
-   public:
-      static SET_cpBase m_SetOpenNil; // множество ячеек (нулевых  ) открытых           при последнем клике
-      static SET_cpBase m_SetOpen;    // множество ячеек (ненулевых) открытых           при последнем клике
-      static SET_cpBase m_SetFlag;    // множество ячеек с флажками  снятых/уставленных при последнем клике
-
    protected:
       static float m_a;  // базовая величина фигуры (обычно это размер одной из сторон фигуры)
       static float m_sq; // размер квадрата, вписанного в фигуру
@@ -145,12 +146,12 @@ namespace nsCell {
       void Lock();
    public:
       void    Cell_SetDown(bool bDown);
-      void    Cell_SetStatus(EStatus Status);
+      void    Cell_SetStatus(EStatus Status, CClickReportContext *pClickRepContext);
       EStatus Cell_GetStatus() const;
       void    Cell_DefineValue();
       bool    Cell_SetMine();
       EOpen   Cell_GetOpen() const;
-      void    Cell_SetClose(EClose Close);
+      void    Cell_SetClose(EClose Close, CClickReportContext *pClickRepContext);
       EClose  Cell_GetClose() const;
 
      ~CBase();
@@ -172,8 +173,8 @@ namespace nsCell {
       void Reset();
       virtual void Paint() const;
       void             LButtonDown();
-      CLeftUpReturn    LButtonUp  (bool isMy);
-      CRightDownReturn RButtonDown(EClose Close);
+      CLeftUpReturn    LButtonUp  (bool isMy   , CClickReportContext *pClickRepContext);
+      CRightDownReturn RButtonDown(EClose Close, CClickReportContext *pClickRepContext);
 
       void SetPresumeFlag(bool bValue) const {       m_bPresumeFlag = bValue;}
       bool GetPresumeFlag()            const {return m_bPresumeFlag;         }

@@ -85,12 +85,13 @@ struct CFileGame {
 HINSTANCE           ghInstance;
 CFastMines2Project *gpFM2Proj;
 
-DWORD WINAPI ChildThread(PVOID);
+//DWORD WINAPI ChildThread(PVOID);
 #define ID_EVENT_TIMER_INACTION 1 // id события таймера, первого   срабатывания при бездействии юзера для старта робота
 #define ID_EVENT_TIMER_JOB      2 // id события таймера, следующих срабатываний при бездействии юзера
 HANDLE hEventJob;//, hEventJobEnd;
 HANDLE hEventSetCursorBegin, hEventSetCursorEnd;
-bool bOpenCellAssistant;
+
+//bool bOpenCellAssistant;
 ////////////////////////////////////////////////////////////////////////////////
 //                              implementation
 ////////////////////////////////////////////////////////////////////////////////
@@ -182,13 +183,11 @@ LRESULT CALLBACK WndProcProject(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
    case WM_NCMOUSEMOVE:
    case WM_NCHITTEST:
       break;
-   case 0x020A:
-      g_Logger.Put(CLogger::LL_DEBUG, TEXT("wParam=0x%08X, lParam=0x%08X"), wParam, lParam);
    default:
       g_Logger.PutMsg(CLogger::LL_DEBUG, TEXT("Proj: "), msg);
       break;
    }
-/**/
+/**
 
    static bool inMenu = false;
    switch(msg){
@@ -197,7 +196,7 @@ LRESULT CALLBACK WndProcProject(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
    }
 
    if (inMenu) {
-      gpFM2Proj->ResetTimerAssistant();
+      gpFM2Proj->ResetAssistant();
    } else
       switch(msg){
       case WM_TIMER:
@@ -219,12 +218,12 @@ LRESULT CALLBACK WndProcProject(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
          case WM_COMMAND:
             if (LOWORD(wParam) == ID_MENU_HELP_ASSISTANT_SUGGEST) {
                SetEvent(hEventSetCursorBegin); // next message must by WM_SETCURSOR
-               //gpFM2Proj->ResetTimerAssistant();
+               //gpFM2Proj->ResetAssistant();
             }
             break;
          case WM_KEYUP:
             if ((int)wParam != 0x48)
-               gpFM2Proj->ResetTimerAssistant();
+               gpFM2Proj->ResetAssistant();
             break;
       } /// end: if press key for suggest
       case WM_SETCURSOR:
@@ -236,9 +235,9 @@ LRESULT CALLBACK WndProcProject(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
       //nsInfo::AddValue(TEXT("msg (project) = 0x"), msg, 16);
    #endif // USE_INFO_DIALOG
       default:
-         gpFM2Proj->ResetTimerAssistant();
+         gpFM2Proj->ResetAssistant();
       }
-
+/**/
 #ifdef REPLACEBKCOLORFROMFILLWINDOW
    static bool f = false;
    LRESULT result;
@@ -250,7 +249,7 @@ LRESULT CALLBACK WndProcProject(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
  //HANDLE_MSG(hwnd, WM_NCLBUTTONUP      , gpFM2Proj->OnNCLButtonUp);
  //HANDLE_MSG(hwnd, WM_ERASEBKGND       , gpFM2Proj->OnEraseBkgnd);
    HANDLE_MSG(hwnd, WM_CREATE           , gpFM2Proj->OnCreate);
-   HANDLE_MSG(hwnd, WM_TIMER            , gpFM2Proj->ProjectOnTimer);
+ //HANDLE_MSG(hwnd, WM_TIMER            , gpFM2Proj->ProjectOnTimer);
    HANDLE_MSG(hwnd, WM_MOVE             , gpFM2Proj->OnMove);
    HANDLE_MSG(hwnd, WM_SIZE             , gpFM2Proj->OnSize);
  //HANDLE_MSG(hwnd, WM_WINDOWPOSCHANGING, gpFM2Proj->OnWindowPosChanging);
@@ -292,6 +291,8 @@ LRESULT CALLBACK WndProcProject(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
    HANDLE_MSG(hwnd, WM_MOSAIC_GAMEBEGIN     , gpFM2Proj->OnMosaicGameBegin     );
    HANDLE_MSG(hwnd, WM_MOSAIC_GAMEEND       , gpFM2Proj->OnMosaicGameEnd       );
    HANDLE_MSG(hwnd, WM_MOSAIC_PAUSE         , gpFM2Proj->OnMosaicPause         );
+
+   HANDLE_MSG(hwnd, WM_MOUSEWHEEL           , gpFM2Proj->OnMouseWheel          );
    }
    return DefWindowProc(hwnd, msg, wParam, lParam);
 }
@@ -315,7 +316,6 @@ LRESULT CALLBACK WndProcTop(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 //                               CFastMines2Project
 ////////////////////////////////////////////////////////////////////////////////
 CFastMines2Project::CFastMines2Project() :
-   m_Assistant(m_Mosaic),
    m_pCaptionButton(NULL)
 {
 }
@@ -401,7 +401,7 @@ void CFastMines2Project::Create(LPCTSTR szFileName) {
    // загружаю в меню список всех найденых языковых файлов
    CLang     ::LoadMenuList(HSUBMENU_LANGUAGE); // надо вызвать до того как уберётся меню
 
-   /**/
+   /**
    {
       hEventJob    = CreateEvent(NULL, TRUE, FALSE, NULL);
     //hEventJobEnd = CreateEvent(NULL, TRUE, TRUE , NULL);
@@ -624,6 +624,7 @@ void CFastMines2Project::OnGetMinMaxInfo(HWND, LPMINMAXINFO lpMinMaxInfo) {
 
 // WM_COMMAND
 void CFastMines2Project::OnCommand(HWND, int id, HWND hwndCtl, UINT codeNotify){
+   //g_Logger.Put(CLogger::LL_DEBUG, TEXT("OnCommand: id=%d; hwndCtl=0x%08X; codeNotify=%d"), id, hwndCtl, codeNotify);
    switch (id){
    // menu File
    case ID_MENU_GAME_NEW_GAME:
@@ -789,12 +790,12 @@ void CFastMines2Project::OnCommand(HWND, int id, HWND hwndCtl, UINT codeNotify){
       DialogBox(ghInstance, TEXT("StatisticsOrChampionsDialog"), m_hWnd, (DLGPROC)nsStatistics::DialogProc);
       return;
    case ID_MENU_HELP_ASSISTANT_ONOFF:
-      m_Serialize.m_AssistantInfo.m_bUse = !m_Serialize.m_AssistantInfo.m_bUse;
+      //m_Serialize.m_AssistantInfo.m_bUse = !m_Serialize.m_AssistantInfo.m_bUse;
       Apply_UseAssistant();
       return;
    case ID_MENU_HELP_ASSISTANT_SUGGEST:
-      bOpenCellAssistant = false;
-      SetEvent(hEventJob);
+      //bOpenCellAssistant = false;
+      //SetEvent(hEventJob);
       return;
    case ID_MENU_HELP_ASSISTANT_OPTIONS:
       DialogBox(ghInstance, TEXT("AssistantDialog"), m_hWnd, (DLGPROC)nsAssistant::DialogProc);
@@ -880,12 +881,13 @@ void CFastMines2Project::OnCommand(HWND, int id, HWND hwndCtl, UINT codeNotify){
 // WM_ACTIVATE
 void CFastMines2Project::OnActivate(HWND, UINT state, HWND hwndActDeact, BOOL fMinimized){
    FORWARD_WM_ACTIVATE(m_hWnd, state, hwndActDeact, fMinimized, DefWindowProc);
-#ifndef _DEBUG
-   if (state == WA_INACTIVE)
+//#ifndef _DEBUG
+   if (state == WA_INACTIVE) {
       SetWindowPos(m_hWnd, HWND_BOTTOM , 0,0,0,0, SWP_NOSIZE | SWP_NOMOVE);
-   else
+   } else {
       SetWindowPos(m_hWnd, HWND_TOPMOST, 0,0,0,0, SWP_NOSIZE | SWP_NOMOVE);
-#endif
+   }
+//#endif
    if ((state == WA_INACTIVE) ||
        (fMinimized != false))
       m_Mosaic.SetPause(true);
@@ -1110,6 +1112,19 @@ void CFastMines2Project::OnMosaicPause(HWND) {
    }
 }
 
+#ifndef WHEEL_DELTA
+   #define WHEEL_DELTA       120       /* Value for rolling one detent */
+#endif
+
+// WM_MOUSEWHEEL
+void CFastMines2Project::OnMouseWheel(HWND hWnd, WORD fwKeys, short zDelta, short xPos, short yPos) {
+   //g_Logger.Put(CLogger::LL_DEBUG, TEXT("OnMouseWheel: fwKeys=0x%04X, zDelta=%d, xPos=%d, yPos=%d"),  fwKeys, zDelta, xPos, yPos);
+   //const int k = abs(zDelta)/WHEEL_DELTA;
+   //for (int i=0; i<k; i++)
+   {
+      FORWARD_WM_COMMAND(hWnd, (zDelta > 0) ? ID_KEY_AREA_INCREMENT : ID_KEY_AREA_DECREMENT, NULL, 0, PostMessage);
+   }
+}
 ////////////////////////////////////////////////////////////////////////////////
 //                     обработчики сообщений hPnlTop
 ////////////////////////////////////////////////////////////////////////////////
@@ -1415,8 +1430,8 @@ inline void CFastMines2Project::Apply_ShowCaption() {
 }
 
 inline void CFastMines2Project::Apply_UseAssistant() {
-   CheckMenuItem(HSUBMENU_ASSISTANT, ID_MENU_HELP_ASSISTANT_ONOFF,
-      m_Serialize.m_AssistantInfo.m_bUse ? MF_CHECKED : MF_UNCHECKED);
+   //CheckMenuItem(HSUBMENU_ASSISTANT, ID_MENU_HELP_ASSISTANT_ONOFF,
+   //   m_Serialize.m_AssistantInfo.m_bUse ? MF_CHECKED : MF_UNCHECKED);
 }
 
 inline void CFastMines2Project::Apply_UseUnknown() {
@@ -1835,7 +1850,7 @@ void CFastMines2Project::Menu_ChangeLanguage() {
    // change Caption
    OnMosaicChangeCounters(m_hWnd);
 }
-
+/*
 // WM_TIMER
 void CFastMines2Project::ProjectOnTimer(HWND hwnd, UINT id) {
    switch (id) {
@@ -1863,8 +1878,8 @@ void CFastMines2Project::ProjectOnTimer(HWND hwnd, UINT id) {
       SetEvent(hEventJob);
    }
 }
-
-inline void CFastMines2Project::ResetTimerAssistant() {
+/**
+inline void CFastMines2Project::ResetAssistant() {
    ResetEvent(hEventJob);
 
    KillTimer(m_hWnd, ID_EVENT_TIMER_JOB     );
@@ -1972,7 +1987,7 @@ DWORD WINAPI ChildThread(PVOID pvParam) {
    }
    return 0;
 }
-
+/**/
 VOID CFastMines2Project::OnClickCaptionButton(LPVOID pParam) {
    CFastMines2Project *This = (CFastMines2Project*)pParam;
    FORWARD_WM_COMMAND(This->m_hWnd, ID_MENU_OPTIONS_SHOW_MENU, NULL, 0, ::SendMessage);

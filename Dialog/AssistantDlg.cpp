@@ -2,7 +2,7 @@
 //                               FastMines project
 //                                                   (C) Sergey Krivulya (KSerg)
 // file name: "AssistantDlg.cpp"
-// обработка диалогового окна "Assistant Options"
+// обработка диалогового окна "AssistantInfo Options"
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "StdAfx.h"
@@ -25,7 +25,7 @@ extern CFastMines2Project *gpFM2Proj;
 namespace nsAssistant {
 
 HWND hDlg;
-CAssistantInfo Assistant; // здесь таймауты задаются в миллисекундах
+nsMosaic::CAssistantInfo AssistantInfo; // здесь таймауты задаются в миллисекундах
 const WORD maxTimeoutUnactive = 3600; // в секундах! max = 32767 == 0x7FFF
 const WORD minTimeoutUnactive = 1;    // в секундах!
 const WORD maxTimeoutJob      = 5000; // в милисекундах!
@@ -82,17 +82,17 @@ BOOL OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
    SETNEWWNDPROC(hwnd, IDOK);
 #endif // REPLACEBKCOLORFROMFILLWINDOW
 
-   Assistant = gpFM2Proj->GetAssistant();
+   AssistantInfo = gpFM2Proj->GetAssistantInfo();
 
    SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_SPIN_UNACTIVE, UDM_SETRANGE, 0L, MAKELPARAM(maxTimeoutUnactive, minTimeoutUnactive));
-   SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_SPIN_UNACTIVE, UDM_SETPOS  , 0L, Assistant.m_iTimeoutUnactive/100); // из миллисекунд в секунды
+   SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_SPIN_UNACTIVE, UDM_SETPOS  , 0L, AssistantInfo.m_iTimeoutUnactive/100); // из миллисекунд в секунды
    SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_SPIN_JOB     , UDM_SETRANGE, 0L, MAKELPARAM(maxTimeoutJob, minTimeoutJob));
-   SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_SPIN_JOB     , UDM_SETPOS  , 0L, Assistant.m_iTimeoutJob);
+   SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_SPIN_JOB     , UDM_SETPOS  , 0L, AssistantInfo.m_iTimeoutJob);
 
-   SendDlgItemMessage(hDlg, ID_DIALOG_ASSISTANT_CHECKBOX_AUTOSTART  , BM_SETCHECK, (WPARAM)(Assistant.m_bAutoStart   ? BST_CHECKED : BST_UNCHECKED), (LPARAM)0);
-   SendDlgItemMessage(hDlg, ID_DIALOG_ASSISTANT_CHECKBOX_STOPJOB    , BM_SETCHECK, (WPARAM)(Assistant.m_bStopJob     ? BST_CHECKED : BST_UNCHECKED), (LPARAM)0);
-   SendDlgItemMessage(hDlg, ID_DIALOG_ASSISTANT_CHECKBOX_IGNOREPAUSE, BM_SETCHECK, (WPARAM)(Assistant.m_bIgnorePause ? BST_CHECKED : BST_UNCHECKED), (LPARAM)0);
-   SendDlgItemMessage(hDlg, ID_DIALOG_ASSISTANT_CHECKBOX_BEEPCLICK  , BM_SETCHECK, (WPARAM)(Assistant.m_bBeep        ? BST_CHECKED : BST_UNCHECKED), (LPARAM)0);
+   SendDlgItemMessage(hDlg, ID_DIALOG_ASSISTANT_CHECKBOX_AUTOSTART  , BM_SETCHECK, (WPARAM)(AssistantInfo.m_bAutoStart   ? BST_CHECKED : BST_UNCHECKED), (LPARAM)0);
+   SendDlgItemMessage(hDlg, ID_DIALOG_ASSISTANT_CHECKBOX_STOPJOB    , BM_SETCHECK, (WPARAM)(AssistantInfo.m_bStopJob     ? BST_CHECKED : BST_UNCHECKED), (LPARAM)0);
+   SendDlgItemMessage(hDlg, ID_DIALOG_ASSISTANT_CHECKBOX_IGNOREPAUSE, BM_SETCHECK, (WPARAM)(AssistantInfo.m_bIgnorePause ? BST_CHECKED : BST_UNCHECKED), (LPARAM)0);
+   SendDlgItemMessage(hDlg, ID_DIALOG_ASSISTANT_CHECKBOX_BEEPCLICK  , BM_SETCHECK, (WPARAM)(AssistantInfo.m_bBeep        ? BST_CHECKED : BST_UNCHECKED), (LPARAM)0);
 
    return TRUE;
 }
@@ -107,25 +107,25 @@ void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
             iTimeoutUnactive  -= 0x10000;
             SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_SPIN_UNACTIVE, UDM_SETPOS, 0L, iTimeoutUnactive);
          }
-         Assistant.m_iTimeoutUnactive = iTimeoutUnactive*100; // из секунд в миллисекунды
+         AssistantInfo.m_iTimeoutUnactive = iTimeoutUnactive*100; // из секунд в миллисекунды
       }
       return;
    case ID_DIALOG_ASSISTANT_EDIT_JOB:
       if (codeNotify == EN_CHANGE) {
-         Assistant.m_iTimeoutJob = SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_SPIN_JOB, UDM_GETPOS, 0L, 0L);
-         if(Assistant.m_iTimeoutJob > maxTimeoutJob) {
-            Assistant.m_iTimeoutJob -= 0x10000;
-            SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_SPIN_JOB, UDM_SETPOS, 0L, Assistant.m_iTimeoutJob);
+         AssistantInfo.m_iTimeoutJob = SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_SPIN_JOB, UDM_GETPOS, 0L, 0L);
+         if(AssistantInfo.m_iTimeoutJob > maxTimeoutJob) {
+            AssistantInfo.m_iTimeoutJob -= 0x10000;
+            SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_SPIN_JOB, UDM_SETPOS, 0L, AssistantInfo.m_iTimeoutJob);
          }
       }
       return;
    case IDOK:
-      Assistant.m_bAutoStart   = (BST_CHECKED == SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_CHECKBOX_AUTOSTART  , BM_GETCHECK, 0L, 0L));
-      Assistant.m_bStopJob     = (BST_CHECKED == SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_CHECKBOX_STOPJOB    , BM_GETCHECK, 0L, 0L));
-      Assistant.m_bIgnorePause = (BST_CHECKED == SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_CHECKBOX_IGNOREPAUSE, BM_GETCHECK, 0L, 0L));
-      Assistant.m_bBeep        = (BST_CHECKED == SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_CHECKBOX_BEEPCLICK  , BM_GETCHECK, 0L, 0L));
+      AssistantInfo.m_bAutoStart   = (BST_CHECKED == SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_CHECKBOX_AUTOSTART  , BM_GETCHECK, 0L, 0L));
+      AssistantInfo.m_bStopJob     = (BST_CHECKED == SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_CHECKBOX_STOPJOB    , BM_GETCHECK, 0L, 0L));
+      AssistantInfo.m_bIgnorePause = (BST_CHECKED == SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_CHECKBOX_IGNOREPAUSE, BM_GETCHECK, 0L, 0L));
+      AssistantInfo.m_bBeep        = (BST_CHECKED == SendDlgItemMessage(hwnd, ID_DIALOG_ASSISTANT_CHECKBOX_BEEPCLICK  , BM_GETCHECK, 0L, 0L));
 
-      gpFM2Proj->SetAssistant(Assistant);
+      gpFM2Proj->SetAssistantInfo(AssistantInfo);
       SendMessage(hwnd, WM_CLOSE, 0L, 0L);
       return;
    case IDCANCEL:

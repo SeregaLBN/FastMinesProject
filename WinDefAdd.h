@@ -87,3 +87,9 @@
     ((fn)((hwnd)), 0L)
 #define FORWARD_WM_MOSAIC_PAUSE(hwnd, fn) \
     (void)(fn)((hwnd), WM_MOSAIC_PAUSE, 0L, 0L)
+
+/* void Cls_OnMouseWheel(HWND hwnd, WORD fwKeys, short zDelta, short xPos, short yPos) */
+#define HANDLE_WM_MOUSEWHEEL(hwnd, wParam, lParam, fn) \
+    ((fn)((hwnd), LOWORD(wParam), (short)HIWORD(wParam), (short)LOWORD(lParam), (short)HIWORD(lParam)), 0L)
+#define FORWARD_WM_MOUSEWHEEL(hwnd, fwKeys, zDelta, xPos, yPos, fn) \
+    (void)(fn)((hwnd), WM_MOUSEWHEEL, MAKEWPARAM((fwKeys), (zDelta)), MAKELPARAM((xPos), (yPos)))

@@ -2,7 +2,7 @@
 // File name: CommonLib.cpp
 // Author: Sergey Krivulya (Ceргей Кpивуля) - KSerg
 // e-mail: Sergey_Krivulya@UkrPost.Net
-// Date: 11 09 2004
+// Date: 25 10 2004
 //
 // Description: Функции общего назначения
 ////////////////////////////////////////////////////////////////////////////////
@@ -553,15 +553,19 @@ SIZEEX SizeBitmap(HWND hWnd, BOOL bClientRect) {
    return bClientRect ? ::GetClientSize(hWnd) : ::GetWindowSize(hWnd);
 }
 
-HBITMAP CreateBitmap(SIZE size) {
+HBITMAP CreateBitmap(int iWidth, int iHeight) {
    HWND hWnd = ::GetDesktopWindow();
    HDC hDC = ::GetDC(hWnd);
-   HBITMAP hBmp = ::CreateCompatibleBitmap(hDC, size.cx, size.cy);
+   HBITMAP hBmp = ::CreateCompatibleBitmap(hDC, iWidth, iHeight);
    ::ReleaseDC(hWnd, hDC);
    return hBmp;
 }
 
-HBITMAP CreateMask(SIZE sizeBmp) {
+HBITMAP CreateBitmap(const SIZE &size) {
+   return ::CreateBitmap(size.cx, size.cy);
+}
+
+HBITMAP CreateMask(const SIZE &sizeBmp) {
    return ::CreateBitmap(sizeBmp.cx, sizeBmp.cy, 1, 1, NULL);
 }
 
@@ -668,6 +672,31 @@ CString Format(LPCTSTR szFormat, ...) {
    strResult.FormatV(szFormat, arglist);
    va_end(arglist);
    return strResult;
+}
+
+OSVERSIONINFO GetVersionEx() {
+   OSVERSIONINFO vi = {sizeof(OSVERSIONINFO), 0,0,0,0,{0}};
+   BOOL bRes = ::GetVersionEx(&vi);
+   if (!bRes) memset(&vi,0,sizeof(OSVERSIONINFO));
+   return vi;
+}
+
+OSVERSIONINFO COSVersion::m_vi = GetVersionEx();
+bool COSVersion::IsWinXP() {
+   static bool bRes = ((m_vi.dwPlatformId == VER_PLATFORM_WIN32_NT) && (m_vi.dwMajorVersion == 5) && (m_vi.dwMinorVersion == 1));
+   return bRes;
+}
+bool COSVersion::IsWin2000() {
+   static bool bRes = ((m_vi.dwPlatformId == VER_PLATFORM_WIN32_NT) && (m_vi.dwMajorVersion == 5) && (m_vi.dwMinorVersion == 0));
+   return bRes;
+}
+bool COSVersion::IsWinNT() {
+   static bool bRes = ((m_vi.dwPlatformId == VER_PLATFORM_WIN32_NT) && ((m_vi.dwMajorVersion == 4) || (m_vi.dwMajorVersion == 3))/* && (m_vi.dwMinorVersion == 0)*/);
+   return bRes;
+}
+bool COSVersion::IsWin9598Me() {
+   static bool bRes = ((m_vi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) && (m_vi.dwMajorVersion == 4)/* && (m_vi.dwMinorVersion == 0)*/);
+   return bRes;
 }
 
 // Проверь свои знания C++

@@ -14,11 +14,8 @@
 //                               local init
 ////////////////////////////////////////////////////////////////////////////////
 
-float              nsCell::CBase::m_a; // размер одной из сторон фигуры
-float              nsCell::CBase::m_sq;
-nsCell::SET_cpBase nsCell::CBase::m_SetOpenNil;
-nsCell::SET_cpBase nsCell::CBase::m_SetOpen;
-nsCell::SET_cpBase nsCell::CBase::m_SetFlag;
+float nsCell::CBase::m_a; // размер одной из сторон фигуры
+float nsCell::CBase::m_sq;
 
 ////////////////////////////////////////////////////////////////////////////////
 //                               static function
@@ -41,12 +38,14 @@ void nsCell::CBase::Cell_SetDown(bool bDown) {
    m_bDown = bDown;
 }
 
-void nsCell::CBase::Cell_SetStatus(EStatus Status) {
-   if (Status == _Open){
-      if (m_Cell.m_Open == _Nil)
-         m_SetOpenNil.insert(this);
-      else
-         m_SetOpen.insert(this);
+void nsCell::CBase::Cell_SetStatus(EStatus Status, CClickReportContext *pClickRepContext) {
+   if (pClickRepContext) {
+      if (Status == _Open) {
+         if (m_Cell.m_Open == _Nil)
+            pClickRepContext->m_SetOpenNil.insert(this);
+         else
+            pClickRepContext->m_SetOpen.insert(this);
+      }
    }
    m_Cell.m_Status = Status;
 }
@@ -76,11 +75,13 @@ nsCell::EOpen nsCell::CBase::Cell_GetOpen() const {
    return m_Cell.m_Open;
 }
 
-void nsCell::CBase::Cell_SetClose(EClose Close) {
-   if ((         Close == _Flag) || // если устанавливаю флажок
-       (m_Cell.m_Close == _Flag))   // если снимаю флажок
-   {
-      m_SetFlag.insert(this);
+void nsCell::CBase::Cell_SetClose(EClose Close, CClickReportContext *pClickRepContext) {
+   if (pClickRepContext) {
+      if ((         Close == _Flag) || // если устанавливаю флажок
+          (m_Cell.m_Close == _Flag))   // если снимаю флажок
+      {
+         pClickRepContext->m_SetFlag.insert(this);
+      }
    }
    m_Cell.m_Close = Close;
 }
@@ -245,7 +246,7 @@ void nsCell::CBase::LButtonDown() {
       }
 }
 
-CLeftUpReturn nsCell::CBase::LButtonUp(bool isMy) {
+CLeftUpReturn nsCell::CBase::LButtonUp(bool isMy, CClickReportContext *pClickRepContext) {
    CLeftUpReturn result = {0, 0, 0, false, false};
 
    if (m_Cell.m_Close == _Flag) return result;
@@ -267,7 +268,7 @@ CLeftUpReturn nsCell::CBase::LButtonUp(bool isMy) {
       } else {
          result.m_iCountUnknown += (m_Cell.m_Close == _Unknown) ? -1 : 0;
          result.m_iCountOpen++;
-         Cell_SetStatus(_Open);
+         Cell_SetStatus(_Open, pClickRepContext);
          m_bDown = true;
          Paint();
       }
@@ -292,7 +293,7 @@ CLeftUpReturn nsCell::CBase::LButtonUp(bool isMy) {
              (m_ppLinkNeighbor[i]->Cell_GetClose()  == _Flag)) continue;
          result.m_iCountUnknown += (m_ppLinkNeighbor[i]->Cell_GetClose() == _Unknown) ? -1 : 0;
          result.m_iCountFlag++;
-         m_ppLinkNeighbor[i]->Cell_SetClose(_Flag);
+         m_ppLinkNeighbor[i]->Cell_SetClose(_Flag, pClickRepContext);
          m_ppLinkNeighbor[i]->Paint();
       }
    if (!isMy) return result;
@@ -305,10 +306,10 @@ CLeftUpReturn nsCell::CBase::LButtonUp(bool isMy) {
          result.m_iCountUnknown += (m_ppLinkNeighbor[i]->Cell_GetClose() == _Unknown) ? -1 : 0;
          result.m_iCountOpen++;
          m_ppLinkNeighbor[i]->Cell_SetDown(true);
-         m_ppLinkNeighbor[i]->Cell_SetStatus(_Open);
+         m_ppLinkNeighbor[i]->Cell_SetStatus(_Open, pClickRepContext);
          m_ppLinkNeighbor[i]->Paint();
          if (m_ppLinkNeighbor[i]->Cell_GetOpen() == _Nil) {
-            const CLeftUpReturn result2 = m_ppLinkNeighbor[i]->LButtonUp(true);
+            const CLeftUpReturn result2 = m_ppLinkNeighbor[i]->LButtonUp(true, pClickRepContext);
             result.m_iCountFlag    += result2.m_iCountFlag;
             result.m_iCountOpen    += result2.m_iCountOpen;
             result.m_iCountUnknown += result2.m_iCountUnknown;
@@ -330,7 +331,7 @@ CLeftUpReturn nsCell::CBase::LButtonUp(bool isMy) {
    return result;
 }
 
-CRightDownReturn nsCell::CBase::RButtonDown(EClose Close) {
+CRightDownReturn nsCell::CBase::RButtonDown(EClose Close, CClickReportContext *pClickRepContext) {
    CRightDownReturn result = {0,0};
 
    if ((m_Cell.m_Status == _Open) || m_bDown) return result;
@@ -340,21 +341,21 @@ CRightDownReturn nsCell::CBase::RButtonDown(EClose Close) {
          case _Flag:    result.m_iCountFlag    = +1;  break;
          case _Unknown: result.m_iCountUnknown = +1;
       }
-      if (m_Cell.m_Close != Close) Cell_SetClose(Close);
+      if (m_Cell.m_Close != Close) Cell_SetClose(Close, pClickRepContext);
       break;
    case _Flag:
       switch (Close) {
          case _Unknown: result.m_iCountUnknown = +1;
          case _Clear:   result.m_iCountFlag    = -1;
       }
-      if (m_Cell.m_Close != Close) Cell_SetClose(Close);
+      if (m_Cell.m_Close != Close) Cell_SetClose(Close, pClickRepContext);
       break;
    case _Unknown:
       switch (Close) {
          case _Flag:    result.m_iCountFlag    = +1;
          case _Clear:   result.m_iCountUnknown = -1;
       }
-      if (m_Cell.m_Close != Close) Cell_SetClose(Close);
+      if (m_Cell.m_Close != Close) Cell_SetClose(Close, pClickRepContext);
    }
    Paint();
    return result;

@@ -37,7 +37,6 @@
 #include "CommonLib.h"
 #include "Lang.h"
 #include "Image.h"
-#include "EraseBk.h"
 
 #ifdef _DEBUG
    #include "Logger.h"

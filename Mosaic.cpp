@@ -91,7 +91,15 @@ void nsMosaic::LoadDefaultImageBckgrnd(HINSTANCE hInstance, CImage &ImgBckgrnd) 
 //                              implementation
 ////////////////////////////////////////////////////////////////////////////////
 LRESULT nsMosaic::CMosaic::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-   //g_Logger.PutMsg(CLogger::LL_DEBUG, TEXT(""), msg);
+   /**
+   switch (msg) {
+   case WM_MOUSEMOVE:
+   case WM_NCHITTEST:
+   case WM_SETCURSOR:
+      break;
+   default:
+      g_Logger.PutMsg(CLogger::LL_DEBUG, TEXT("CMosaic"), msg);
+   }/**/
    CMosaic *const This = (CMosaic*)::GetWindowUserData(hwnd);
    if (This) {
       switch(msg){
@@ -168,11 +176,15 @@ BOOL nsMosaic::CMosaic::Create(HWND hWindowParent, int id) {
    m_GameStatus = gsEnd;
    m_bPause = false;
    MosaicCreate();
+   m_pAssistant = new CAssistant(*this);
+
    return TRUE;
 }
 
 // destructor
 nsMosaic::CMosaic::~CMosaic(){
+   delete m_pAssistant; m_pAssistant = NULL;
+
    MosaicDestroy(m_SerializeData.m_SizeMosaic);
    //m_Mosaic.~vector();
    DeleteDC(m_GContext.m_hDCDst);
@@ -253,7 +265,7 @@ void nsMosaic::CMosaic::OnLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y
    FORWARD_WM_MOSAIC_CLICK(m_hWndParent, keyFlags, TRUE, TRUE, SendMessage);
    if (m_GameStatus == gsCreateGame) {
       if (m_Mosaic[m_CoordDown.X][m_CoordDown.Y]->Cell_GetOpen() != nsCell::_Mine) {
-         m_Mosaic[m_CoordDown.X][m_CoordDown.Y]->Cell_SetStatus(nsCell::_Open);
+         m_Mosaic[m_CoordDown.X][m_CoordDown.Y]->Cell_SetStatus(nsCell::_Open, NULL);
          m_Mosaic[m_CoordDown.X][m_CoordDown.Y]->Cell_SetMine();
          m_SerializeData.m_iMines++;
          m_RepositoryMines.Add(m_CoordDown);
@@ -283,8 +295,9 @@ void nsMosaic::CMosaic::OnLButtonUp(HWND hwnd, int x, int y, UINT keyFlags){
    COORD upCoord = WinToArray(x,y);
    if ((m_GameStatus == gsReady) &&
        (upCoord == m_CoordDown)) GameBegin(m_CoordDown);
+   nsCell::CClickReportContext ClickReportContext;
    const CLeftUpReturn result =
-      m_Mosaic[m_CoordDown.X][m_CoordDown.Y]->LButtonUp(upCoord==m_CoordDown);
+      m_Mosaic[m_CoordDown.X][m_CoordDown.Y]->LButtonUp(upCoord==m_CoordDown, &ClickReportContext);
    m_iCountOpen    += result.m_iCountOpen;
    m_iCountFlag    += result.m_iCountFlag;
    m_iCountUnknown += result.m_iCountUnknown;
@@ -296,13 +309,19 @@ void nsMosaic::CMosaic::OnLButtonUp(HWND hwnd, int x, int y, UINT keyFlags){
       }
    }
    FORWARD_WM_MOSAIC_CHANGECOUNTERS(m_hWndParent, SendMessage);
-   if (result.m_bEndGame)
+   if (result.m_bEndGame) {
       GameEnd(result.m_bVictory);
-   else
-      if (m_iCountOpen+m_SerializeData.m_iMines == m_SerializeData.m_SizeMosaic.cx*m_SerializeData.m_SizeMosaic.cy)
+   } else {
+      if (m_iCountOpen+m_SerializeData.m_iMines == m_SerializeData.m_SizeMosaic.cx*m_SerializeData.m_SizeMosaic.cy) {
          GameEnd(true);
-      else
+      } else {
          VerifyFlag();
+         if (m_GameStatus != gsEnd) {
+            m_pAssistant->ClickEnd(ClickReportContext);
+         }
+      }
+   }
+
    BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
           m_GContext.m_hDCDst, 0, 0, SRCCOPY);
 }
@@ -326,6 +345,7 @@ void nsMosaic::CMosaic::OnRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y
    }
    COORD coord = WinToArray(x,y);
    if (coord.X < 0) return;
+   nsCell::CClickReportContext ClickReportContext;
    nsCell::EClose setClose;
    if (LOWORD(keyFlags) == MK_ASSISTANT) { // клик пришёл от робота
       m_PlayInfo |= piPlayerAssistant; // робот играл
@@ -338,7 +358,7 @@ void nsMosaic::CMosaic::OnRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y
       case nsCell::_Unknown: setClose = nsCell::_Clear;
       }
    }
-   const CRightDownReturn result = m_Mosaic[coord.X][coord.Y]->RButtonDown(setClose);
+   const CRightDownReturn result = m_Mosaic[coord.X][coord.Y]->RButtonDown(setClose, &ClickReportContext);
    if (result.m_iCountFlag || result.m_iCountUnknown) { // клик со смыслом (были изменения на поле)
       m_iCountClick++;
       if (LOWORD(keyFlags) != MK_ASSISTANT) { // клик пришёл не от робота
@@ -350,6 +370,9 @@ void nsMosaic::CMosaic::OnRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y
    m_iCountUnknown += result.m_iCountUnknown;
    FORWARD_WM_MOSAIC_CHANGECOUNTERS(m_hWndParent, SendMessage);
    VerifyFlag();
+   if (m_GameStatus != gsEnd) {
+      m_pAssistant->ClickEnd(ClickReportContext);
+   }
    BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
           m_GContext.m_hDCDst, 0, 0, SRCCOPY);
 }
@@ -528,32 +551,33 @@ void nsMosaic::CMosaic::GameEnd(bool Victory) {
    SetPause((m_GameStatus = gsEnd, false));
    // открыть оставшeеся
    {
-   SetCursor(LoadCursor(NULL, IDC_WAIT));
-   if (Victory) {
-      for (i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++)
-         for (j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++) {
-            if (m_Mosaic[i][j]->Cell_GetStatus() == nsCell::_Close) {
-               if(m_Mosaic[i][j]->Cell_GetOpen() == nsCell::_Mine)
-                  m_Mosaic[i][j]->Cell_SetClose(nsCell::_Flag);
-               else {
-                  m_Mosaic[i][j]->Cell_SetStatus(nsCell::_Open);
-                  m_Mosaic[i][j]->Cell_SetDown(true);
+      nsCell::CClickReportContext ClickReportContext;
+      SetCursor(LoadCursor(NULL, IDC_WAIT));
+      if (Victory) {
+         for (i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++)
+            for (j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++) {
+               if (m_Mosaic[i][j]->Cell_GetStatus() == nsCell::_Close) {
+                  if(m_Mosaic[i][j]->Cell_GetOpen() == nsCell::_Mine)
+                     m_Mosaic[i][j]->Cell_SetClose(nsCell::_Flag , NULL);
+                  else {
+                     m_Mosaic[i][j]->Cell_SetStatus(nsCell::_Open, NULL);
+                     m_Mosaic[i][j]->Cell_SetDown(true);
+                  }
+                  m_Mosaic[i][j]->Paint();
                }
-               m_Mosaic[i][j]->Paint();
             }
-         }
-      m_iCountFlag = m_SerializeData.m_iMines;
-   } else
-      for (i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++)
-         for (j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++)
-            if (m_Mosaic[i][j]->Cell_GetStatus() == nsCell::_Close) {
-               if ((m_Mosaic[i][j]->Cell_GetClose() == nsCell::_Flag) &&
-                   (m_Mosaic[i][j]->Cell_GetOpen()  == nsCell::_Mine))
-                    m_Mosaic[i][j]->Cell_SetStatus(nsCell::_Close);
-               else m_Mosaic[i][j]->Cell_SetStatus(nsCell::_Open);
-               m_Mosaic[i][j]->Paint();
-            }
-   SetCursor(LoadCursor(NULL, IDC_ARROW));
+         m_iCountFlag = m_SerializeData.m_iMines;
+      } else
+         for (i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++)
+            for (j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++)
+               if (m_Mosaic[i][j]->Cell_GetStatus() == nsCell::_Close) {
+                  if ((m_Mosaic[i][j]->Cell_GetClose() == nsCell::_Flag) &&
+                      (m_Mosaic[i][j]->Cell_GetOpen()  == nsCell::_Mine))
+                       m_Mosaic[i][j]->Cell_SetStatus(nsCell::_Close, NULL);
+                  else m_Mosaic[i][j]->Cell_SetStatus(nsCell::_Open , NULL);
+                  m_Mosaic[i][j]->Paint();
+               }
+      SetCursor(LoadCursor(NULL, IDC_ARROW));
    }
    MessageBeep(0);
 

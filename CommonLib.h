@@ -2,13 +2,17 @@
 // File name: CommonLib.h
 // Author: Sergey Krivulya (Ceргей Кpивуля) - KSerg
 // e-mail: Sergey_Krivulya@UkrPost.Net
-// Date: 15 09 2004
+// Date: 25 10 2004
 //
 // Description: Функции общего назначения.
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifndef __FILE__LIB__
 #define __FILE__LIB__
+
+#if _MSC_VER > 1000
+   #pragma once
+#endif // _MSC_VER > 1000
 
 #ifndef __AFX_H__
    #include <Windows.h>
@@ -240,9 +244,11 @@ SIZEEX SizeBitmap(HWND hWnd, BOOL bClientRect = FALSE); // размер битмапы у окна
 SIZEEX SizeBitmap(HDC hCDC); // only for compatible device context
 SIZEEX SizeBitmap(HBITMAP hBmp); // hBmp не должен быть связан с контекстом устройства
 
-HBITMAP CreateBitmap(SIZE size);  // create compatible bitmap at desktop
-HBITMAP CreateMask(SIZE sizeBmp); // create monohrome bitmap
-HBITMAP CreateMask(HBITMAP hBmp, COLORREF transparentColor = CLR_INVALID); // create monohrome bitmap from color bitmap
+HBITMAP CreateBitmap(int iWidth, int iHeight);  // create compatible bitmap at desktop
+HBITMAP CreateBitmap(const SIZE &size);         // create compatible bitmap at desktop
+HBITMAP CreateMask(const SIZE &sizeBmp);        // create monohrome bitmap
+HBITMAP CreateMask(HBITMAP hBmp,
+      COLORREF transparentColor = CLR_INVALID); // create monohrome bitmap from color bitmap
 
 int rand(int maxDiapason); // генерирует случайное число от 0 до maxDiapason, ВКЛЮЧАЯ верхнюю границу
 
@@ -252,4 +258,13 @@ void BeepSpeaker(DWORD dwFreq = 500, DWORD dwDuration = 0x25);
 
 CString Format(LPCTSTR szFormat, ...);
 
+class COSVersion {
+private:
+   static OSVERSIONINFO m_vi;
+public:
+   static bool IsWinXP();
+   static bool IsWin2000();
+   static bool IsWinNT();
+   static bool IsWin9598Me();
+};
 #endif // __FILE__LIB__

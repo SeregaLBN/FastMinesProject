@@ -17,6 +17,11 @@
 #include "StorageMines.h"
 
 namespace nsMosaic {
+   class CMosaic;
+}
+#include "Assistant.h"
+
+namespace nsMosaic {
 
    ////////////////////////////////////////////////////////////////////////////////
    //                            types & constants
@@ -74,12 +79,31 @@ namespace nsMosaic {
    float GetPercentMine (ESkillLevel, EMosaic); // процент мин на заданном уровне сложности для заданной фигуры
    int DefineNumberMines(ESkillLevel, EMosaic, const SIZE&);
 
+   struct CAssistantInfo {
+      bool m_bUse;             // on/off m_Assistant
+      int  m_iTimeoutUnactive; // таймаут (в миллисекундах) первого срабатывания ассистента (через сколько срабатывать ассистенту при бездействии пользователя)
+      int  m_iTimeoutJob;      // таймаут (в миллисекундах) следующих срабатываний ассистента
+      bool m_bAutoStart;       // autostart new game ?
+      bool m_bStopJob;         // останавливать когда нет однозначного следующего хода ?
+      bool m_bIgnorePause;     // ignore Pause in game ?
+      bool m_bBeep;            // MessageBeep by virtual click ?
+      CAssistantInfo():
+         m_bUse            (true),
+         m_iTimeoutUnactive(10000),
+         m_iTimeoutJob     (100),
+         m_bAutoStart      (true),
+         m_bStopJob        (false),
+         m_bIgnorePause    (true),
+         m_bBeep           (true) {}
+   };
+
    struct CSerialize {
       SIZE    m_SizeMosaic; // размер поля (в ячейках)
       int     m_iArea;      // площадь
       EMosaic m_Mosaic;     // из каких фигур состоит мозаика поля
       int     m_iMines;     // кол-во мин на поле
       bool    m_useUnknown;
+      CAssistantInfo m_AssistantInfo;
       CSerialize():
          m_SizeMosaic(SIZE_MOSAIC[skillLevelBeginner]),
          m_iArea     (2000),
@@ -181,13 +205,13 @@ namespace nsMosaic {
 
       CGraphicContextEx m_GContext;
 
-      nsMosaic::CSerialize m_SerializeData; // информация для сохранения
+      CSerialize m_SerializeData; // информация для сохранения
       COORD m_CoordDown;      // координаты ячейки на которой было нажато (но не обязательно что отпущено)
       bool  m_bPause;
-                              //          GameNew()     GameBegin()     GameEnd()     GameNew()
-                              //   time      |              |               |            |
-                              //  ------->   | gsCreateGame |               |            |
-      nsMosaic::EGameStatus m_GameStatus; // |  or gsReady  |     gsPlay    |   gsEnd    |
+                                //          GameNew()     GameBegin()     GameEnd()     GameNew()
+                                //   time      |              |               |            |
+                                //  ------->   | gsCreateGame |               |            |
+      EGameStatus m_GameStatus; //             |  or gsReady  |     gsPlay    |   gsEnd    |
 
       BYTE m_PlayInfo; // 1. Kто играл ? юзер и/или робот?    2. Play from file or created game?
 
@@ -199,6 +223,7 @@ namespace nsMosaic {
 
       int m_iOldMines;     // кол-во мин на поле до создания игры. Используется когда игра была создана, но ни одной мины не проставлено.
       CStorageMines m_RepositoryMines; // для load'a - координаты ячеек с минами
+      CAssistant *m_pAssistant;
    private:
       void MosaicDestroy(const SIZE&);
 
@@ -247,7 +272,7 @@ namespace nsMosaic {
 
       HWND GetHandle() const {return m_hWnd;}
 
-      void ApplySkin(const nsMosaic::CSkinMosaic& newSkin);
+      void ApplySkin(const CSkinMosaic& newSkin);
 
       void SetPause(bool);
       bool GetPause()      const {return m_bPause;}
@@ -272,6 +297,8 @@ namespace nsMosaic {
       BOOL Create(HWND hWindowParent, int id);
       BOOL SerializeIn (HANDLE hFile);
       BOOL SerializeOut(HANDLE hFile) const;
+      void                  SetAssistantInfo(  const CAssistantInfo &newAssistantInfo) {m_SerializeData.m_AssistantInfo = newAssistantInfo;}
+      const CAssistantInfo& GetAssistantInfo() const {return m_SerializeData.m_AssistantInfo;}
    };
 
 } // namespace nsMosaic

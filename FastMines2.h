@@ -14,7 +14,6 @@
 #include "CommonLib.h"
 #include "Image.h"
 #include "Mosaic.h"
-#include "Assistant.h"
 #include "./Dialog/PlayerName.h"
 #include "./Control/ButtonImage.h"
 #include "./Control/ButtonImageCheck.h"
@@ -29,30 +28,11 @@ struct CSkin: public nsMosaic::CSkinMosaic {
    CSkin(): m_bToAll(false) {}
 };
 
-struct CAssistantInfo {
-   bool m_bUse;             // on/off m_Assistant
-   int  m_iTimeoutUnactive; // таймаут (в миллисекундах) первого срабатывания ассистента (через сколько срабатывать ассистенту при бездействии пользователя)
-   int  m_iTimeoutJob;      // таймаут (в миллисекундах) следующих срабатываний ассистента
-   bool m_bAutoStart;       // autostart new game ?
-   bool m_bStopJob;         // останавливать когда нет однозначного следующего хода ?
-   bool m_bIgnorePause;     // ignore Pause in game ?
-   bool m_bBeep;            // MessageBeep by virtual click ?
-   CAssistantInfo():
-      m_bUse            (true),
-      m_iTimeoutUnactive(10000),
-      m_iTimeoutJob     (100),
-      m_bAutoStart      (true),
-      m_bStopJob        (false),
-      m_bIgnorePause    (true),
-      m_bBeep           (true) {}
-};
-
 #define MAX_LANGUAGE_LENGTH 128 // max значение имени языка. Фактически - имя файла языка
 struct CSerializeProj {
    TCHAR m_szVersion[chDIMOF(TEXT(ID_VERSIONINFO_VERSION3))];
    CSkin m_Skin;
    TCHAR m_szPlayerName[nsPlayerName::MAX_PLAYER_NAME_LENGTH]; // текущий игрок
-   CAssistantInfo m_AssistantInfo;
    bool m_bAlwaysMaxSize;
    bool m_bToTray;
    bool m_bShowToolbar;
@@ -78,7 +58,6 @@ struct CSerializeProj {
 class CFastMines2Project {
 private:
    nsMosaic::CMosaic m_Mosaic;
-   nsMosaic::CAssistant  m_Assistant;
    HWND     m_hWnd, m_hWndTop, m_hWndEdtCount, m_hWndEdtTimer;
    HMENU    m_hMenu;
    HICON    m_hIconProject;
@@ -92,47 +71,47 @@ private:
 
    friend LRESULT CALLBACK WndProcProject(HWND, UINT, WPARAM, LPARAM);
    friend LRESULT CALLBACK WndProcTop    (HWND, UINT, WPARAM, LPARAM);
-   friend DWORD WINAPI ChildThread(PVOID);
+//   friend DWORD WINAPI ChildThread(PVOID);
 
    void TrayMessage(UINT, const TCHAR*);
 
-   BOOL OnCreate           (HWND, LPCREATESTRUCT);          // WM_CREATE
-   void OnDestroy          (HWND);                          // WM_DESTROY
-   void OnActivate         (HWND, UINT, HWND, BOOL);        // WM_ACTIVATE
-   void OnMove             (HWND, int, int);                // WM_MOVE
-   void OnSize             (HWND, UINT, int,  int);         // WM_SIZE
-   void OnSysCommand       (HWND, UINT, int,  int);         // WM_SYSCOMMAND (SC_MAXIMIZE)
-   void OnCommand          (HWND, int , HWND, UINT);        // WM_COMMAND
-   void OnGetMinMaxInfo    (HWND, LPMINMAXINFO);            // WM_GETMINMAXINFO
-   void OnSysKey           (HWND, UINT, BOOL, int, UINT);   // WM_SYSKEYUP
-   void OnKey              (HWND, UINT, BOOL, int, UINT);   // WM_KEYUP
-   void OnNCLButtonDown    (HWND, BOOL, int, int, UINT);    // WM_NCLBUTTONDOWN
-   void OnNCLButtonUp      (HWND, int, int, UINT);          // WM_NCLBUTTONUP
-   BOOL OnWindowPosChanging(HWND, LPWINDOWPOS);             // WM_WINDOWPOSCHANGING
-   void OnWindowPosChanged (HWND, const LPWINDOWPOS);       // WM_WINDOWPOSCHANGED
-   void OnMeasureItem      (HWND, MEASUREITEMSTRUCT*);      // WM_MEASUREITEM
-   void OnDrawItem         (HWND, const DRAWITEMSTRUCT*);   // WM_DRAWITEM
+   BOOL OnCreate           (HWND, LPCREATESTRUCT);                // WM_CREATE
+   void OnDestroy          (HWND);                                // WM_DESTROY
+   void OnActivate         (HWND, UINT, HWND, BOOL);              // WM_ACTIVATE
+   void OnMove             (HWND, int, int);                      // WM_MOVE
+   void OnSize             (HWND, UINT, int,  int);               // WM_SIZE
+   void OnSysCommand       (HWND, UINT, int,  int);               // WM_SYSCOMMAND (SC_MAXIMIZE)
+   void OnCommand          (HWND, int , HWND, UINT);              // WM_COMMAND
+   void OnGetMinMaxInfo    (HWND, LPMINMAXINFO);                  // WM_GETMINMAXINFO
+   void OnSysKey           (HWND, UINT, BOOL, int, UINT);         // WM_SYSKEYUP
+   void OnKey              (HWND, UINT, BOOL, int, UINT);         // WM_KEYUP
+   void OnNCLButtonDown    (HWND, BOOL, int, int, UINT);          // WM_NCLBUTTONDOWN
+   void OnNCLButtonUp      (HWND, int, int, UINT);                // WM_NCLBUTTONUP
+   BOOL OnWindowPosChanging(HWND, LPWINDOWPOS);                   // WM_WINDOWPOSCHANGING
+   void OnWindowPosChanged (HWND, const LPWINDOWPOS);             // WM_WINDOWPOSCHANGED
+   void OnMeasureItem      (HWND, MEASUREITEMSTRUCT*);            // WM_MEASUREITEM
+   void OnDrawItem         (HWND, const DRAWITEMSTRUCT*);         // WM_DRAWITEM
    #ifdef REPLACEBKCOLORFROMFILLWINDOW
-   void OnMenuSelect       (HWND, HMENU, int, HMENU, UINT); // WM_MENUSELECT
-   void OnPaint            (HWND);                          // WM_PAINT
+   void OnMenuSelect       (HWND, HMENU, int, HMENU, UINT);       // WM_MENUSELECT
+   void OnPaint            (HWND);                                // WM_PAINT
    #endif // REPLACEBKCOLORFROMFILLWINDOW
-   void OnNotifyIcon       (HWND, UINT);                    // WM_NOTIFYICON
+   void OnNotifyIcon       (HWND, UINT);                          // WM_NOTIFYICON
    #ifdef REPLACEBKCOLORFROMFILLWINDOW
-   BOOL OnEraseBkgnd       (HWND, HDC); // WM_ERASEBKGND
+   BOOL OnEraseBkgnd       (HWND, HDC);                           // WM_ERASEBKGND
    #endif // REPLACEBKCOLORFROMFILLWINDOW
-   void OnMosaicAdjustArea    (HWND);                   // WM_MOSAIC_ADJUSTAREA
-   void OnMosaicClick         (HWND, UINT, BOOL, BOOL); // WM_MOSAIC_CLICK
-   void OnMosaicChangeCounters(HWND);                   // WM_MOSAIC_CHANGECOUNTERS
-   void OnMosaicGameNew       (HWND);                   // WM_MOSAIC_GAMENEW
-   void OnMosaicGameBegin     (HWND);                   // WM_MOSAIC_GAMEBEGIN
-   void OnMosaicGameEnd       (HWND);                   // WM_MOSAIC_GAMEEND
-   void OnMosaicPause         (HWND);                   // WM_MOSAIC_PAUSE
+   void OnMosaicAdjustArea    (HWND);                             // WM_MOSAIC_ADJUSTAREA
+   void OnMosaicClick         (HWND, UINT, BOOL, BOOL);           // WM_MOSAIC_CLICK
+   void OnMosaicChangeCounters(HWND);                             // WM_MOSAIC_CHANGECOUNTERS
+   void OnMosaicGameNew       (HWND);                             // WM_MOSAIC_GAMENEW
+   void OnMosaicGameBegin     (HWND);                             // WM_MOSAIC_GAMEBEGIN
+   void OnMosaicGameEnd       (HWND);                             // WM_MOSAIC_GAMEEND
+   void OnMosaicPause         (HWND);                             // WM_MOSAIC_PAUSE
+   void OnMouseWheel          (HWND, WORD, short, short, short);  // WM_MOUSEWHEEL
 
-   void ProjectOnTimer(HWND hwnd, UINT id); // WM_TIMER
-   void ResetTimerAssistant();
-   void Assistant_Job();
+   //void ProjectOnTimer(HWND hwnd, UINT id);                       // WM_TIMER
+   //void ResetAssistant();
 
-   void TopOnCommand      (HWND, int, HWND, UINT);      // WM_COMMAND
+   void TopOnCommand      (HWND, int, HWND, UINT);                // WM_COMMAND
 
    int GetMaximalArea() const;
    bool AreaIncrement();
@@ -162,8 +141,8 @@ public:
    HWND GetHandle() const {return m_hWnd;}
    void Create(LPCTSTR szFileName = NULL);
 
-   void                  SetAssistant    (  const CAssistantInfo &newAssistantInfo) {m_Serialize.m_AssistantInfo = newAssistantInfo;}
-   const CAssistantInfo& GetAssistant    () const {return m_Serialize.m_AssistantInfo;}
+   void                            SetAssistantInfo(  const nsMosaic::CAssistantInfo  &newAssistantInfo) {m_Mosaic.SetAssistantInfo(newAssistantInfo);}
+   const nsMosaic::CAssistantInfo& GetAssistantInfo() const {return m_Mosaic.GetAssistantInfo();}
    const CSkin&          GetSkin         () const {return m_Serialize.m_Skin;}
    void                  SetSkin         (  const CSkin &newSkin) {m_Serialize.m_Skin = newSkin; ApplySkin();}
    bool                  GetAutoloadAdmin() const {return m_Serialize.m_bAutoloadAdmin;}

@@ -15,7 +15,9 @@
 #ifndef __AFX_H__
    #include <Windows.h>
 #endif
-#include "./Mosaic/Base.h"
+#include "Mosaic/Base.h"
+
+class CAssistant;
 #include "Mosaic.h"
 
 namespace nsMosaic {
@@ -39,7 +41,7 @@ struct CClickData {
 
 class CAssistant {
 private:
-   CMosaic& m_Mosaic;
+   CMosaic &m_Mosaic;
    // ни в одном из этих множеств нет одинаковых данных
    // множества открытых ячеек с ненулевым весом
    nsCell::SET_cpBase m_SetForOpen;     // множество открытых ячеек кликанье на которых приведёт к открытию вокруг них ячеек
@@ -65,8 +67,7 @@ public:
    JOB_RESULT FindCell(CClickData&);
 
    void GameNew();
-   void ClickBegin();
-   void ClickEnd();
+   void ClickEnd(nsCell::CClickReportContext ClickReportContext);
 
    CAssistant(CMosaic& mosaic): m_Mosaic(mosaic), m_bSequentialMove(false) {}
   ~CAssistant() {DeleteTableSM();}
@@ -76,6 +77,7 @@ public:
    bool            IsSequentialMove() {return m_bSequentialMove;}
    JOB_RESULT AllOkToSequentialMove();
    void              SequentialMove(CClickData&);
+   void Assistant_Job();
 };
 
 }; // namespace nsMosaic
