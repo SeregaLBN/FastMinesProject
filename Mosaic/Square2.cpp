@@ -13,15 +13,15 @@
 //                               static function
 ////////////////////////////////////////////////////////////////////////////////
 
-SIZE nsCell::CSquare2::GetSizeInPixel(const COORD &sizeField, int area) {
-   m_a = sqrt(area); // размер стороны квадрата
-   SIZE result = {sizeField.X * m_a + m_a/2,
-                  sizeField.Y * m_a        };
+SIZE nsCell::CSquare2::GetSizeInPixel(const SIZE &sizeField, int iArea) {
+   m_a = sqrt(iArea); // размер стороны квадрата
+   SIZE result = {sizeField.cx * m_a + m_a/2,
+                  sizeField.cy * m_a        };
    return result;
 }
 
-int nsCell::CSquare2::SizeInscribedSquare(int area, int borderWidth) {
-   m_sq = sqrt(area)-2*borderWidth;
+int nsCell::CSquare2::SizeInscribedSquare(int iArea, int iBorderWidth) {
+   m_sq = sqrt(iArea)-2*iBorderWidth;
    return m_sq;
 }
 
@@ -29,13 +29,13 @@ int nsCell::CSquare2::SizeInscribedSquare(int area, int borderWidth) {
 //                               virtual function
 ////////////////////////////////////////////////////////////////////////////////
 
-nsCell::CSquare2::CSquare2(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext)
-   : CBase(Coord, sizeField, area, gContext,
+nsCell::CSquare2::CSquare2(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext)
+   : CBase(Coord, sizeField, iArea, gContext,
            6, 4,
            Coord.Y&1 // 0..1
           )
 {
-   SetPoint(area);
+   SetPoint(iArea);
    // определяю координаты соседей
    m_pNeighbor[0].X = m_Coord.X-(m_iDirection?1:0); m_pNeighbor[0].Y = m_Coord.Y-1;
    m_pNeighbor[1].X = m_Coord.X+(m_iDirection?0:1); m_pNeighbor[1].Y = m_Coord.Y-1;
@@ -53,9 +53,9 @@ bool nsCell::CSquare2::PointInRegion(const POINT &point) const {
    return true;
 }
 
-void nsCell::CSquare2::SetPoint(int area) {
+void nsCell::CSquare2::SetPoint(int iArea) {
    if (m_Coord.X==0 && m_Coord.Y==0) {
-      m_a  = sqrt(area); // размер стороны квадрата
+      m_a  = sqrt(iArea); // размер стороны квадрата
       m_sq = m_a-2*m_GContext.m_Border.m_iWidth;      // размер квадрата, вписанного в квадрат
    }
 

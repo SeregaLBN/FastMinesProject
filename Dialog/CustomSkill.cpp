@@ -34,10 +34,10 @@ HMENU hMenu;
 int mustFree;
 
 const
-COORD minSizeMosaic = {5, 5};//{1, 1};//
-COORD curSizeMosaic;
-COORD maxSizeMosaic_minSizeCell; // максимальный размер поля при минимальном размере ячеек
-COORD maxSizeMosaic_curSizeCell; // максимальный размер поля при текущем     размере ячеек
+SIZE minSizeMosaic = {5, 5};//{1, 1};//
+SIZE curSizeMosaic;
+SIZE maxSizeMosaic_minSizeCell; // максимальный размер поля при минимальном размере ячеек
+SIZE maxSizeMosaic_curSizeCell; // максимальный размер поля при текущем     размере ячеек
 
 const
 int minMines = 1;
@@ -109,30 +109,30 @@ BOOL OnInitDialog(HWND hWnd, HWND hwndFocus, LPARAM lParam) {
 
    maxSizeMosaic_curSizeCell = maxSizeMosaic_minSizeCell = gpFM2Proj->GetSizeMosaic();
 
-   maxSizeMosaic_curSizeCell.X++;
-   while (gpFM2Proj->GetSize(maxSizeMosaic_curSizeCell, gpFM2Proj->GetArea()  ).cx <= sizeScreen.cx) maxSizeMosaic_curSizeCell.X++;
-   maxSizeMosaic_curSizeCell.X--;
-   maxSizeMosaic_curSizeCell.Y++;
-   while (gpFM2Proj->GetSize(maxSizeMosaic_curSizeCell, gpFM2Proj->GetArea()  ).cy <= sizeScreen.cy) maxSizeMosaic_curSizeCell.Y++;
-   maxSizeMosaic_curSizeCell.Y--;
+   maxSizeMosaic_curSizeCell.cx++;
+   while (gpFM2Proj->GetSize(maxSizeMosaic_curSizeCell, gpFM2Proj->GetArea()  ).cx <= sizeScreen.cx) maxSizeMosaic_curSizeCell.cx++;
+   maxSizeMosaic_curSizeCell.cx--;
+   maxSizeMosaic_curSizeCell.cy++;
+   while (gpFM2Proj->GetSize(maxSizeMosaic_curSizeCell, gpFM2Proj->GetArea()  ).cy <= sizeScreen.cy) maxSizeMosaic_curSizeCell.cy++;
+   maxSizeMosaic_curSizeCell.cy--;
 
-   maxSizeMosaic_minSizeCell.X++;
-   while (gpFM2Proj->GetSize(maxSizeMosaic_minSizeCell, nsMosaic::AREA_MINIMUM).cx <= sizeScreen.cx) maxSizeMosaic_minSizeCell.X++;
-   maxSizeMosaic_minSizeCell.X--;
-   maxSizeMosaic_minSizeCell.Y++;
-   while (gpFM2Proj->GetSize(maxSizeMosaic_minSizeCell, nsMosaic::AREA_MINIMUM).cy <= sizeScreen.cy) maxSizeMosaic_minSizeCell.Y++;
-   maxSizeMosaic_minSizeCell.Y--;
+   maxSizeMosaic_minSizeCell.cx++;
+   while (gpFM2Proj->GetSize(maxSizeMosaic_minSizeCell, nsMosaic::AREA_MINIMUM).cx <= sizeScreen.cx) maxSizeMosaic_minSizeCell.cx++;
+   maxSizeMosaic_minSizeCell.cx--;
+   maxSizeMosaic_minSizeCell.cy++;
+   while (gpFM2Proj->GetSize(maxSizeMosaic_minSizeCell, nsMosaic::AREA_MINIMUM).cy <= sizeScreen.cy) maxSizeMosaic_minSizeCell.cy++;
+   maxSizeMosaic_minSizeCell.cy--;
 
    curMines     = gpFM2Proj->GetMines();
    curSizeMosaic = gpFM2Proj->GetSizeMosaic();
    mustFree = gpFM2Proj->GetMosaicNeighborNumber()+1;
-   maxMines = curSizeMosaic.X*curSizeMosaic.Y-mustFree;
+   maxMines = curSizeMosaic.cx*curSizeMosaic.cy-mustFree;
    SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_MINE, UDM_SETRANGE, 0L, MAKELPARAM(maxMines, minMines));
    SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_MINE, UDM_SETPOS  , 0L, curMines);
-   SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_X   , UDM_SETRANGE, 0L, MAKELPARAM(maxSizeMosaic_minSizeCell.X, minSizeMosaic.X));
-   SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_Y   , UDM_SETRANGE, 0L, MAKELPARAM(maxSizeMosaic_minSizeCell.Y, minSizeMosaic.Y));
-   SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_X   , UDM_SETPOS  , 0L, curSizeMosaic.X);
-   SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_Y   , UDM_SETPOS  , 0L, curSizeMosaic.Y);
+   SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_X   , UDM_SETRANGE, 0L, MAKELPARAM(maxSizeMosaic_minSizeCell.cx, minSizeMosaic.cx));
+   SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_Y   , UDM_SETRANGE, 0L, MAKELPARAM(maxSizeMosaic_minSizeCell.cy, minSizeMosaic.cy));
+   SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_X   , UDM_SETPOS  , 0L, curSizeMosaic.cx);
+   SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_Y   , UDM_SETPOS  , 0L, curSizeMosaic.cy);
 
    hMenu = CreatePopupMenu();
    CreateMenuItem(hMenu, (LPTSTR)(LPCTSTR)CLang::m_StrArr[IDS__MENU_GAME__BEGINNER    ], 0, ID_MENU_GAME_BEGINNER    , NULL, FALSE, MFT_STRING);
@@ -151,12 +151,12 @@ void OnCommand(HWND hWnd, int id, HWND hwndCtl, UINT codeNotify) {
    case ID_DIALOG_CUSTOMSKILL_EDIT_X:
       if (codeNotify == EN_CHANGE) {
          LONG lX = SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_X, UDM_GETPOS, 0L, 0L);
-         if (lX > maxSizeMosaic_minSizeCell.X) {
+         if (lX > maxSizeMosaic_minSizeCell.cx) {
             lX -= 0x10000;
             SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_X, UDM_SETPOS, 0L, lX);
          }
-         curSizeMosaic.X = lX;
-         maxMines = curSizeMosaic.X*curSizeMosaic.Y-mustFree;
+         curSizeMosaic.cx = lX;
+         maxMines = curSizeMosaic.cx*curSizeMosaic.cy-mustFree;
          SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_MINE, UDM_SETRANGE, 0L, MAKELPARAM(maxMines, minMines));
          if (curMines > maxMines)
             SendMessage(hWnd, WM_COMMAND, MAKEWPARAM(ID_DIALOG_CUSTOMSKILL_EDIT_MINE, EN_CHANGE), 0L);
@@ -165,12 +165,12 @@ void OnCommand(HWND hWnd, int id, HWND hwndCtl, UINT codeNotify) {
    case ID_DIALOG_CUSTOMSKILL_EDIT_Y:
       if (codeNotify == EN_CHANGE) {
          LONG lY = SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_Y, UDM_GETPOS, 0L, 0L);
-         if (lY > maxSizeMosaic_minSizeCell.Y) {
+         if (lY > maxSizeMosaic_minSizeCell.cy) {
             lY -= 0x10000;
             SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_Y, UDM_SETPOS, 0L, lY);
          }
-         curSizeMosaic.Y = lY;
-         maxMines = curSizeMosaic.X*curSizeMosaic.Y-mustFree;
+         curSizeMosaic.cy = lY;
+         maxMines = curSizeMosaic.cx*curSizeMosaic.cy-mustFree;
          SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_MINE, UDM_SETRANGE, 0L, MAKELPARAM(maxMines, minMines));
          if (curMines > maxMines)
             SendMessage(hWnd, WM_COMMAND, MAKEWPARAM(ID_DIALOG_CUSTOMSKILL_EDIT_MINE, EN_CHANGE), 0L);
@@ -187,8 +187,8 @@ void OnCommand(HWND hWnd, int id, HWND hwndCtl, UINT codeNotify) {
       return;
    case ID_DIALOG_CUSTOMSKILL_FULLSCREEN1:
       if (BST_CHECKED == SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_FULLSCREEN1, BM_GETCHECK, 0L, 0L)) {
-         SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_X, UDM_SETPOS, 0L, maxSizeMosaic_curSizeCell.X);
-         SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_Y, UDM_SETPOS, 0L, maxSizeMosaic_curSizeCell.Y);
+         SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_X, UDM_SETPOS, 0L, maxSizeMosaic_curSizeCell.cx);
+         SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_Y, UDM_SETPOS, 0L, maxSizeMosaic_curSizeCell.cy);
          EnableWindow(GetDlgItem(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_X), false);
          EnableWindow(GetDlgItem(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_Y), false);
          EnableWindow(GetDlgItem(hWnd, ID_DIALOG_CUSTOMSKILL_EDIT_X), false);
@@ -203,8 +203,8 @@ void OnCommand(HWND hWnd, int id, HWND hwndCtl, UINT codeNotify) {
       return;
    case ID_DIALOG_CUSTOMSKILL_FULLSCREEN2:
       if (BST_CHECKED == SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_FULLSCREEN2, BM_GETCHECK, 0L, 0L)) {
-         SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_X, UDM_SETPOS, 0L, maxSizeMosaic_minSizeCell.X);
-         SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_Y, UDM_SETPOS, 0L, maxSizeMosaic_minSizeCell.Y);
+         SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_X, UDM_SETPOS, 0L, maxSizeMosaic_minSizeCell.cx);
+         SendDlgItemMessage(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_Y, UDM_SETPOS, 0L, maxSizeMosaic_minSizeCell.cy);
          EnableWindow(GetDlgItem(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_X), false);
          EnableWindow(GetDlgItem(hWnd, ID_DIALOG_CUSTOMSKILL_SPIN_Y), false);
          EnableWindow(GetDlgItem(hWnd, ID_DIALOG_CUSTOMSKILL_EDIT_X), false);

@@ -20,16 +20,16 @@ float nsCell::CPentagonT24::m_c;
 //                               static function
 ////////////////////////////////////////////////////////////////////////////////
 
-SIZE nsCell::CPentagonT24::GetSizeInPixel(const COORD &sizeField, int area) {
-   m_a = sqrt(area); // базова€ величина п€тиугольника
+SIZE nsCell::CPentagonT24::GetSizeInPixel(const SIZE &sizeField, int iArea) {
+   m_a = sqrt(iArea); // базова€ величина п€тиугольника
    m_b = m_a*6/11;
-   SIZE result = {m_b + sizeField.X*m_a,
-                  m_b + sizeField.Y*m_a};
+   SIZE result = {m_b + sizeField.cx*m_a,
+                  m_b + sizeField.cy*m_a};
    return result;
 }
 
-int nsCell::CPentagonT24::SizeInscribedSquare(int area, int borderWidth) {
-   m_sq = sqrt(area)*8/11-(borderWidth+borderWidth/SIN135a)/SQRT2;
+int nsCell::CPentagonT24::SizeInscribedSquare(int iArea, int iBorderWidth) {
+   m_sq = sqrt(iArea)*8/11-(iBorderWidth+iBorderWidth/SIN135a)/SQRT2;
    return m_sq;
 }
 
@@ -37,13 +37,13 @@ int nsCell::CPentagonT24::SizeInscribedSquare(int area, int borderWidth) {
 //                               virtual function
 ////////////////////////////////////////////////////////////////////////////////
 
-nsCell::CPentagonT24::CPentagonT24(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext)
-   : CBase(Coord, sizeField, area, gContext,
+nsCell::CPentagonT24::CPentagonT24(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext)
+   : CBase(Coord, sizeField, iArea, gContext,
            7, 5,
            ((Coord.Y&1)<<1) + (Coord.X&1) // 0..3
           )
 {
-   SetPoint(area);
+   SetPoint(iArea);
    // определ€ю координаты соседей
    switch (m_iDirection) {
    case 0:  m_pNeighbor[0].X = m_Coord.X-1; m_pNeighbor[0].Y = m_Coord.Y-1;
@@ -78,9 +78,9 @@ nsCell::CPentagonT24::CPentagonT24(const COORD &Coord, const COORD &sizeField, i
    VerifyNeighbor(sizeField);
 }
 
-void nsCell::CPentagonT24::SetPoint(int area) {
+void nsCell::CPentagonT24::SetPoint(int iArea) {
    if (m_Coord.X==0 && m_Coord.Y==0) {
-      m_a = sqrt(area); // базова€ величина п€тиугольника
+      m_a = sqrt(iArea); // базова€ величина п€тиугольника
       m_b = m_a*6/11;
       m_c = m_b/2;
       m_sq = m_a*8/11-(m_GContext.m_Border.m_iWidth+m_GContext.m_Border.m_iWidth/SIN135a)/SQRT2;

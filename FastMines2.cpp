@@ -69,12 +69,12 @@ const TCHAR SZ_FILE_NAME_INIT  [] = TEXT("Mines.ini");
 struct CFileGame {
    TCHAR             m_szVersion[chDIMOF(TEXT(ID_VERSIONINFO_VERSION3))];
    nsMosaic::EMosaic m_eMosaic;
-   COORD             m_SizeMosaic;
+   SIZE              m_SizeMosaic;
    UINT              m_iMines;
    CFileGame():
       m_eMosaic(nsMosaic::mosaicSquare1),
       m_iMines(1)
-   { m_SizeMosaic.X = m_SizeMosaic.Y = 1;
+   { m_SizeMosaic.cx = m_SizeMosaic.cy = 1;
      lstrcpy(m_szVersion, TEXT(ID_VERSIONINFO_VERSION3));
    }
 };
@@ -1080,7 +1080,7 @@ void CFastMines2Project::OnMosaicGameEnd(HWND) {
       statisticsResult.m_dwGameNumber = 1;
       statisticsResult.m_dwGameWin    = victory;
       statisticsResult.m_dwOpenField  = victory ?
-                                       GetSizeMosaic().X*GetSizeMosaic().Y-DefineNumberMines():
+                                       GetSizeMosaic().cx*GetSizeMosaic().cy-DefineNumberMines():
                                        m_Mosaic.GetCountOpen();
       statisticsResult.m_dwPlayTime   = victory ? m_Mosaic.GetCountTimer() : 0;
       statisticsResult.m_dwClickCount = victory ? m_Mosaic.GetCountClick() : 0;
@@ -1616,8 +1616,8 @@ void CFastMines2Project::GameSave() {
          } else {
             UINT countMines = 0;
             BOOL bBreak = FALSE;
-            for (int i=0; !bBreak && (i<fileGame.m_SizeMosaic.X); i++)
-               for (int j=0; !bBreak && (j<fileGame.m_SizeMosaic.Y); j++) {
+            for (int i=0; !bBreak && (i<fileGame.m_SizeMosaic.cx); i++)
+               for (int j=0; !bBreak && (j<fileGame.m_SizeMosaic.cy); j++) {
                   const nsCell::CBase *pCell = m_Mosaic.GetCell(i,j);
                   if (pCell->Cell_GetOpen() == nsCell::_Mine) {
                      COORD cellMines = {i,j};
@@ -1916,8 +1916,8 @@ inline void CFastMines2Project::Assistant_Job() {
             #endif // USE_INFO_DIALOG
             } else {
                do {
-                  click.m_CoordCell.X = rand(GetSizeMosaic().X-1);
-                  click.m_CoordCell.Y = rand(GetSizeMosaic().Y-1);
+                  click.m_CoordCell.X = rand(GetSizeMosaic().cx-1);
+                  click.m_CoordCell.Y = rand(GetSizeMosaic().cy-1);
                } while ((m_Mosaic.GetCell(click.m_CoordCell.X,click.m_CoordCell.Y)->Cell_GetStatus() == nsCell::_Open) ||
                         (m_Mosaic.GetCell(click.m_CoordCell.X,click.m_CoordCell.Y)->Cell_GetClose()  == nsCell::_Flag));
             }

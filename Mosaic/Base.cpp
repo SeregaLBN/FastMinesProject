@@ -24,12 +24,12 @@ nsCell::SET_cpBase nsCell::CBase::m_SetFlag;
 //                               static function
 ////////////////////////////////////////////////////////////////////////////////
 
-SIZE nsCell::CBase::GetSizeInPixel(const COORD &sizeField, int area) {
+SIZE nsCell::CBase::GetSizeInPixel(const SIZE &sizeField, int iArea) {
    SIZE result = {200, 100};
    return result;
 }
 
-int nsCell::CBase::SizeInscribedSquare(int area, int borderWidth) {
+int nsCell::CBase::SizeInscribedSquare(int iArea, int iBorderWidth) {
    return 7; // говорят, 7 счастливое число... :)
 }
 
@@ -95,10 +95,10 @@ nsCell::CBase::~CBase() {
    delete [] m_pRegion;
 }
 
-void nsCell::CBase::VerifyNeighbor(const COORD &sizeField) {
+void nsCell::CBase::VerifyNeighbor(const SIZE &sizeField) {
    for (int i=0; i<m_iNeighborNumber; i++)
-      if ((m_pNeighbor[i].X >= sizeField.X) ||
-          (m_pNeighbor[i].Y >= sizeField.Y) ||
+      if ((m_pNeighbor[i].X >= sizeField.cx) ||
+          (m_pNeighbor[i].Y >= sizeField.cy) ||
           (m_pNeighbor[i].X < 0) ||
           (m_pNeighbor[i].Y < 0)) {
          m_pNeighbor[i] = INCORRECT_COORD;
@@ -107,8 +107,8 @@ void nsCell::CBase::VerifyNeighbor(const COORD &sizeField) {
 
 nsCell::CBase::CBase(
    const COORD &Coord,
-   const COORD &sizeField,
-   int area,
+   const SIZE &sizeField,
+   int iArea,
    const CGraphicContext &gContext,
    int iNeighborNumber,
    int iVertexNumber,
@@ -167,7 +167,7 @@ inline bool nsCell::CBase::PointInRegion(const POINT &point) const { // принадле
    return PointInPolygon(point, m_pRegion, m_iVertexNumber);
 }
 
-void nsCell::CBase::SetPoint(int area) {
+void nsCell::CBase::SetPoint(int iArea) {
 }
 
 void nsCell::CBase::Reset() {

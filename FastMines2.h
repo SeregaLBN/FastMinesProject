@@ -170,18 +170,18 @@ public:
    LPCTSTR               GetPlayerName   () const {return m_Serialize.m_szPlayerName;}
    void                  SetPlayerName(LPCTSTR);
 
-   SIZE                  GetSize(const COORD &sizeMosaic, int area) const {return GetSize(m_Mosaic.GetSizeWindow(   sizeMosaic  , area));}   // размер окна проекта при заданном размере мозаики(в ячейках) и при указанной площади ячейки
-   SIZE                  GetSize(int area)                          const {return GetSize(m_Mosaic.GetSizeWindow(GetSizeMosaic(), area));}   // размер окна проекта при текущем  размере мозаики(в ячейках) и при указанной площади ячейки
+   SIZE                  GetSize(const SIZE &sizeMosaic, int iArea) const {return GetSize(m_Mosaic.GetSizeWindow(   sizeMosaic  , iArea));}   // размер окна проекта при заданном размере мозаики(в ячейках) и при указанной площади ячейки
+   SIZE                  GetSize(int iArea)                         const {return GetSize(m_Mosaic.GetSizeWindow(GetSizeMosaic(), iArea));}   // размер окна проекта при текущем  размере мозаики(в ячейках) и при указанной площади ячейки
    SIZE                  GetSize(const SIZE  &sizeMosaicInPixel)    const;                                                                   // размер окна проекта при указанном размере окна мозаики(в пикселях)
    SIZE                  GetSize()                                  const {return GetSize(GetSizeMosaicWindow());}                           // размер окна проекта при текущих значениях размера мозаики(в ячейках) и площади ячейки
-   COORD                 GetSizeMosaic          () const {return m_Mosaic.GetSize();}
+   SIZE                  GetSizeMosaic          () const {return m_Mosaic.GetSize();}
    SIZE                  GetSizeMosaicWindow    () const {return m_Mosaic.GetSizeWindow(GetSizeMosaic(), GetArea());}
    int                   GetArea                () const {return m_Mosaic.GetArea();}
    int                   GetMines               () const {return m_Mosaic.GetMines();}
    int                   GetMosaicNeighborNumber() const {return m_Mosaic.GetNeighborNumber();}
    nsMosaic::ESkillLevel GetSkillLevel          () const {return m_Mosaic.GetSkillLevel();}
    nsMosaic::EMosaic     GetMosaic              () const {return m_Mosaic.GetMosaic();}
-   int DefineNumberMines(nsMosaic::ESkillLevel skill, const COORD &sizeMosaic) const {return nsMosaic::DefineNumberMines(skill, m_Mosaic.GetMosaic(), sizeMosaic);};
+   int DefineNumberMines(nsMosaic::ESkillLevel skill, const SIZE &sizeMosaic) const {return nsMosaic::DefineNumberMines(skill, m_Mosaic.GetMosaic(), sizeMosaic);};
    int DefineNumberMines() const {return nsMosaic::DefineNumberMines(GetSkillLevel(), m_Mosaic.GetMosaic(), GetSizeMosaic());};
 
    const CImage* GetImageBtnNew  (int pos) const {return &m_ImgBtnNew  [pos];}

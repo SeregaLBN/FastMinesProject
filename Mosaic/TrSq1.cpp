@@ -23,23 +23,23 @@ float nsCell::CTrSq1::m_k;
 //                               static function
 ////////////////////////////////////////////////////////////////////////////////
 
-SIZE nsCell::CTrSq1::GetSizeInPixel(const COORD &sizeField, int area) {
-   m_a = sqrt(3*area/(1+SQRT3/2)); // размер стороны треугольника и квадрата
+SIZE nsCell::CTrSq1::GetSizeInPixel(const SIZE &sizeField, int iArea) {
+   m_a = sqrt(3*iArea/(1+SQRT3/2)); // размер стороны треугольника и квадрата
    m_n = m_a*SIN75;
    m_m = m_a*SIN15;
    m_b = m_n+m_m;
    m_k = m_n-m_m;
 
-   SIZE result = {m_b+m_n*((sizeField.X-1+2)/3)+
-                      m_k*((sizeField.X-1+1)/3)+
-                      m_m*((sizeField.X-1+0)/3),
-                  m_b+m_n* (sizeField.Y-1)};
+   SIZE result = {m_b+m_n*((sizeField.cx-1+2)/3)+
+                      m_k*((sizeField.cx-1+1)/3)+
+                      m_m*((sizeField.cx-1+0)/3),
+                  m_b+m_n* (sizeField.cy-1)};
    return result;
 }
 
-int nsCell::CTrSq1::SizeInscribedSquare(int area, int borderWidth) {
-   m_a = sqrt(3*area/(1+SQRT3/2)); // размер стороны треугольника и квадрата
-   m_sq = (m_a*SQRT3-borderWidth*6)/(4*SIN75);
+int nsCell::CTrSq1::SizeInscribedSquare(int iArea, int iBorderWidth) {
+   m_a = sqrt(3*iArea/(1+SQRT3/2)); // размер стороны треугольника и квадрата
+   m_sq = (m_a*SQRT3-iBorderWidth*6)/(4*SIN75);
    return m_sq;
 }
 
@@ -47,13 +47,13 @@ int nsCell::CTrSq1::SizeInscribedSquare(int area, int borderWidth) {
 //                               virtual function
 ////////////////////////////////////////////////////////////////////////////////
 
-nsCell::CTrSq1::CTrSq1(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext)
-   : CBase(Coord, sizeField, area, gContext,
+nsCell::CTrSq1::CTrSq1(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext)
+   : CBase(Coord, sizeField, iArea, gContext,
            12, 4,
            (Coord.Y&1)*3+(Coord.X%3) // 0..5
           )
 {
-   SetPoint(area);
+   SetPoint(iArea);
    // определяю координаты соседей
    switch (m_iDirection) {
    case 0:  m_pNeighbor[ 0].X = m_Coord.X-2;   m_pNeighbor[ 0].Y = m_Coord.Y-1;
@@ -145,9 +145,9 @@ bool nsCell::CTrSq1::PointInRegion(const POINT &point) const { // принадлежат ли
       return PointInPolygon(point, m_pRegion, 3);
 }
 
-void nsCell::CTrSq1::SetPoint(int area) {
+void nsCell::CTrSq1::SetPoint(int iArea) {
    if (m_Coord.X==0 && m_Coord.Y==0) {
-      m_a = sqrt(3*area/(1+SQRT3/2)); // размер стороны треугольника и квадрата
+      m_a = sqrt(3*iArea/(1+SQRT3/2)); // размер стороны треугольника и квадрата
       m_n = m_a*SIN75;
       m_m = m_a*SIN15;
       m_b = m_n+m_m;

@@ -18,12 +18,12 @@ namespace nsCell {
 
 class CSquare2: public CBase {
 public:
-   static SIZE GetSizeInPixel(const COORD &sizeField, int area);
-   static int SizeInscribedSquare(int area, int borderWidth);
+   static SIZE GetSizeInPixel(const SIZE &sizeField, int iArea);
+   static int SizeInscribedSquare(int iArea, int iBorderWidth);
 public:
-   CSquare2(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext);
+   CSquare2(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext);
    bool PointInRegion(const POINT &point) const; // принадлежат ли эти экранные координаты ячейке
-   void SetPoint(int area); // определить координаты точек из которых состоит фигура
+   void SetPoint(int iArea); // определить координаты точек из которых состоит фигура
    void Paint() const;
 };
 

@@ -376,103 +376,103 @@ BOOL Convert(HANDLE hFile, CFileChmpn &localFile) {
             int j, k;
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Triangle1][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicTriangle1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Triangle1][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicTriangle1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTriangle1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicTriangle1][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle2][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Triangle2][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicTriangle2][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Triangle2][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle2][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicTriangle2][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTriangle2][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicTriangle2][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle3][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Triangle3][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicTriangle3][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Triangle3][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle3][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicTriangle3][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTriangle3][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicTriangle3][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle4][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Triangle4][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicTriangle4][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Triangle4][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle4][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicTriangle4][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTriangle4][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicTriangle4][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSquare1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Square1][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicSquare1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Square1][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSquare1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicSquare1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicSquare1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicSquare1][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSquare2][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Square2][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicSquare2][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Square2][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSquare2][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicSquare2][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicSquare2][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicSquare2][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicParquet1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Parquet1][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicParquet1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Parquet1][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicParquet1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicParquet1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicParquet1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicParquet1][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicParquet2][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Parquet2][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicParquet2][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Parquet2][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicParquet2][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicParquet2][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicParquet2][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicParquet2][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrapezoid1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Trapezoid1][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicTrapezoid1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Trapezoid1][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrapezoid1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicTrapezoid1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTrapezoid1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicTrapezoid1][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrapezoid2][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Trapezoid2][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicTrapezoid2][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Trapezoid2][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrapezoid2][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicTrapezoid2][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTrapezoid2][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicTrapezoid2][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrapezoid3][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Trapezoid3][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicTrapezoid3][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Trapezoid3][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrapezoid3][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicTrapezoid3][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTrapezoid3][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicTrapezoid3][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicRhombus1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Rhombus][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicRhombus1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Rhombus][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicRhombus1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicRhombus1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicRhombus1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicRhombus1][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicQuadrangle1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Quadrangle1][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicQuadrangle1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Quadrangle1][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicQuadrangle1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicQuadrangle1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicQuadrangle1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicQuadrangle1][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicPentagonT24][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Pentagon][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicPentagonT24][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Pentagon][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicPentagonT24][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicPentagonT24][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicPentagonT24][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicPentagonT24][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicPentagonT5][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_PentagonT5][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicPentagonT5][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_PentagonT5][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicPentagonT5][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicPentagonT5][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicPentagonT5][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicPentagonT5][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicPentagonT10][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_PentagonT10][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicPentagonT10][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_PentagonT10][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicPentagonT10][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicPentagonT10][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicPentagonT10][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicPentagonT10][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicHexagon1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_Hexagon][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicHexagon1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_Hexagon][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicHexagon1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicHexagon1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicHexagon1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicHexagon1][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrSq1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_TrSq][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicTrSq1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_TrSq][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrSq1][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicTrSq1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTrSq1][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicTrSq1][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrSq2][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_TrSq2][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicTrSq2][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_TrSq2][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrSq2][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicTrSq2][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTrSq2][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicTrSq2][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSqTrHex][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaic_SqTrHex][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicSqTrHex][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaic_SqTrHex][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSqTrHex][j][k].m_szName, FileChmpn_v210.m_Data[nsVer210::mosaicSqTrHex][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicSqTrHex][j][k].m_iTime = FileChmpn_v210.m_Data[nsVer210::mosaicSqTrHex][j][k].m_iTime;
                }
          }
       }
@@ -486,68 +486,68 @@ BOOL Convert(HANDLE hFile, CFileChmpn &localFile) {
             int j, k;
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSquare1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Square1][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicSquare1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Square1][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSquare1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaicSquare1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicSquare1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaicSquare1][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSquare2][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Square2][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicSquare2][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Square2][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSquare2][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaicSquare2][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicSquare2][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaicSquare2][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Triangle1][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicTriangle1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Triangle1][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaicTriangle1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTriangle1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaicTriangle1][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle2][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Triangle2][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicTriangle2][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Triangle2][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTriangle2][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaicTriangle2][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTriangle2][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaicTriangle2][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicHexagon1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Hexagon1][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicHexagon1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Hexagon1][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicHexagon1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaicHexagon1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicHexagon1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaicHexagon1][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicPentagonT24][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_PentagonT24][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicPentagonT24][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_PentagonT24][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicPentagonT24][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaicPentagonT24][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicPentagonT24][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaicPentagonT24][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicPentagonT10][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_PentagonT10][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicPentagonT10][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_PentagonT10][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicPentagonT10][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaicPentagonT10][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicPentagonT10][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaicPentagonT10][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicParquet1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Parquet1][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicParquet1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Parquet1][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicParquet1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaicParquet1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicParquet1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaicParquet1][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicParquet2][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Parquet2][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicParquet2][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Parquet2][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicParquet2][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaicParquet2][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicParquet2][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaicParquet2][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrSq1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_TrSq1][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicTrSq1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_TrSq1][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrSq1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaicTrSq1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTrSq1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaicTrSq1][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSqTrHex][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_SqTrHex][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicSqTrHex][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_SqTrHex][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicSqTrHex][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaicSqTrHex][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicSqTrHex][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaicSqTrHex][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrapezoid1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Trapezoid][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicTrapezoid1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Trapezoid][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicTrapezoid1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaicTrapezoid][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicTrapezoid1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaicTrapezoid][j][k].m_iTime;
                }
             for (j=0; j<nsMosaic::skillLevelCustom; j++)
                for (k=0; k<10; k++) {
-                  lstrcpy(localFile.m_Data[nsMosaic::mosaicRhombus1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaic_Rhombus1][j][k].m_szName);
-                          localFile.m_Data[nsMosaic::mosaicRhombus1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaic_Rhombus1][j][k].m_iTime;
+                  lstrcpy(localFile.m_Data[nsMosaic::mosaicRhombus1][j][k].m_szName, FileChmpn_v200.m_Data[nsVer200::mosaicRhombus1][j][k].m_szName);
+                          localFile.m_Data[nsMosaic::mosaicRhombus1][j][k].m_iTime = FileChmpn_v200.m_Data[nsVer200::mosaicRhombus1][j][k].m_iTime;
                }
          }
       }

@@ -16,6 +16,7 @@
 #include "../Lang.h"
 #include "../Control/Table.h"
 #include "../FastMines2.h"
+#include "../OldVersion.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 //                             global variables
@@ -56,11 +57,14 @@ const TCHAR SZ_FILE_NAME_STATISTICS[] = TEXT("Mines.stc");
 
 class CStatistics {
 private:
-   mutable std::vector<CSttstcRecord*> m_Players;
-   mutable bool m_bInit;
+   std::vector<CSttstcRecord*> m_Players;
+   bool m_bInit;
 private:
    int AddRecord(LPCTSTR);
-   void Init() const;
+   void Init();
+#ifndef UNICODE
+   BOOL Conversion(HANDLE hFile);
+#endif // UNICODE
 public:
    CStatistics(): m_bInit(false) {};
   ~CStatistics();
@@ -68,9 +72,9 @@ public:
    void Insert(const CSttstcSubRecord&, const nsMosaic::EMosaic&, const nsMosaic::ESkillLevel&, LPCTSTR playerName);
    int NumberPlayers() const; // количество игроков
    const CSttstcRecord& GetData(const int index) const;
-   bool SetPassword (const int index, LPCTSTR szNewPassword);
-   bool RenamePlayer(const int index, LPCTSTR szNewName);
-   bool RemovePlayer(const int index);
+   bool SetPassword (int index, LPCTSTR szNewPassword);
+   bool RenamePlayer(int index, LPCTSTR szNewName);
+   bool RemovePlayer(int index);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -114,7 +118,7 @@ CSttstcSubRecord operator+=(CSttstcSubRecord& sr1, const CSttstcSubRecord& sr2) 
 //                         implementation - CStatistics
 ////////////////////////////////////////////////////////////////////////////////
 inline int CStatistics::FindName(LPCTSTR playerName) const {
-   if (!m_bInit) Init();
+   if (!m_bInit) const_cast<CStatistics*>(this)->Init();
    for (int i=0; i<m_Players.size(); i++) {
     //if (!_tcscmp (m_Players[i]->m_szPlayerName, playerName))
       if (!lstrcmpi(m_Players[i]->m_szPlayerName, playerName))
@@ -131,7 +135,7 @@ inline int CStatistics::AddRecord(LPCTSTR playerName) {
    return m_Players.size()-1; // индекс вставленного (нового) элемента
 };
 
-inline void CStatistics::Init() const {
+inline void CStatistics::Init() {
    m_bInit = true;
    // load data from file
    CString strPath(GetModuleDir(ghInstance) + SZ_FILE_NAME_STATISTICS);
@@ -156,7 +160,11 @@ inline void CStatistics::Init() const {
             strError = CLang::m_StrArr[IDS__STATISTICS__ERROR_DATA]; // слишком мало данных в файле
          } else {
             if (lstrcmp(TEXT(ID_VERSIONINFO_VERSION3), szVersion)) {
+#ifndef UNICODE
+               Conversion(hFile);
+#else
                strError = CLang::m_StrArr[IDS__STATISTICS__ERROR_VERSION];
+#endif // UNICODE
             } else {
                const DWORD dwSizeDataCode = GetFileSize(hFile, NULL)-dwNOBR; // размер данных без заголовка
                if (dwSizeDataCode > 0) {
@@ -259,7 +267,7 @@ inline CStatistics::~CStatistics() {
    m_Players.clear();
 };
 
-inline void CStatistics::Insert(const CSttstcSubRecord& insertRecord, const nsMosaic::EMosaic& mosaic, const nsMosaic::ESkillLevel& skill, LPCTSTR playerName) {
+inline void CStatistics::Insert(const CSttstcSubRecord &insertRecord, const nsMosaic::EMosaic &mosaic, const nsMosaic::ESkillLevel &skill, LPCTSTR playerName) {
    if (!m_bInit) Init();
    int index = FindName(playerName);
    if (index < 0) index = AddRecord(playerName);
@@ -267,36 +275,126 @@ inline void CStatistics::Insert(const CSttstcSubRecord& insertRecord, const nsMo
 };
 
 inline int CStatistics::NumberPlayers() const {
-   if (!m_bInit) Init();
+   if (!m_bInit) const_cast<CStatistics*>(this)->Init();
    return m_Players.size();
 };
 
 inline const CSttstcRecord& CStatistics::GetData(const int index) const {
-   if (!m_bInit) Init();
+   if (!m_bInit) const_cast<CStatistics*>(this)->Init();
    return *m_Players[index];
 };
 
-bool CStatistics::SetPassword(const int index, LPCTSTR szNewPassword) {
+bool CStatistics::SetPassword(int index, LPCTSTR szNewPassword) {
    if (!m_bInit) Init();
    if ((index<0) || (index >= m_Players.size())) return false;
    lstrcpy(m_Players[index]->m_szPassword, szNewPassword);
    return true;
 }
 
-bool CStatistics::RenamePlayer(const int index, LPCTSTR szNewName) {
+bool CStatistics::RenamePlayer(int index, LPCTSTR szNewName) {
    if (!m_bInit) Init();
    if ((index<0) || (index >= m_Players.size())) return false;
    lstrcpy(m_Players[index]->m_szPlayerName, szNewName);
    return true;
 }
 
-bool CStatistics::RemovePlayer(const int index) {
+bool CStatistics::RemovePlayer(int index) {
    if (!m_bInit) Init();
    if ((index<0) || (index >= m_Players.size())) return false;
    delete m_Players[index];
    m_Players.erase(std::find(m_Players.begin(), m_Players.end(), m_Players[index]));
    return true;
 }
+
+#ifndef UNICODE
+BOOL CStatistics::Conversion(HANDLE hFile) {
+   CString strError;
+   ::SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
+
+   // считываю заголовок файла
+   DWORD dwNOBR;
+   CHAR szVersion[chDIMOF(ID_VERSIONINFO_VERSION3_v210)];
+   if (!ReadFile(hFile, szVersion, sizeof(ID_VERSIONINFO_VERSION3_v210), &dwNOBR, NULL)) {
+      strError = CLang::m_StrArr[IDS__STATISTICS__ERROR_READ];
+   } else {
+      if (sizeof(ID_VERSIONINFO_VERSION3_v210) != dwNOBR) {
+         strError = CLang::m_StrArr[IDS__STATISTICS__ERROR_DATA]; // слишком мало данных в файле
+      } else {
+         if (lstrcmpA(ID_VERSIONINFO_VERSION3_v210, szVersion)) {
+            strError = CLang::m_StrArr[IDS__STATISTICS__ERROR_VERSION];
+         } else {
+            // считываю данные (по частям - по одному игроку)
+            const DWORD dwSizeData = ::GetFileSize(hFile, NULL)-dwNOBR; // размер данных без заголовка
+            nsVer210::CSttstcFile StcFile;
+            for (int i=0; i<dwSizeData/sizeof(nsVer210::CSttstcFile); i++) {
+               if (!ReadFile(hFile, &StcFile, sizeof(nsVer210::CSttstcFile), &dwNOBR, NULL) ||
+                   (sizeof(nsVer210::CSttstcFile) != dwNOBR) 
+                  )
+               {
+                  strError = CLang::m_StrArr[IDS__STATISTICS__ERROR_READ]; // ошибка чтения
+                  break;
+               } else {
+                  DWORD dwVerifyByteCRC = 0;
+                  for (int j=0; j<sizeof(nsVer210::CSttstcRecord)/sizeof(DWORD); j++) {
+                     *((DWORD*)(&StcFile.m_DataStc)+j) ^= *((DWORD*)(&StcFile.m_DataBad)+j); // размаскирую данные
+                     dwVerifyByteCRC                   ^= *((DWORD*)(&StcFile.m_DataStc)+j); // пересчёт CRC
+                     dwVerifyByteCRC                   ^= *((DWORD*)(&StcFile.m_DataBad)+j); // пересчёт CRC
+                  }
+                  if (dwVerifyByteCRC != StcFile.m_dwCRC) { // cравнениe CRC
+                     strError = CLang::m_StrArr[IDS__STATISTICS__ERROR_DATA]; // CRC несовпало - ошибка
+                     break;
+                  }
+                  const size_t k = m_Players.size();
+                  m_Players.push_back(new CSttstcRecord); // создаю новую запись
+                  // копирую в новую запись данные игрока из файла
+                  memcpy(m_Players[k]->m_szPlayerName, (LPCTSTR)CString(StcFile.m_DataStc.m_szPlayerName), min(nsPlayerName::MAX_PLAYER_NAME_LENGTH, nsVer210::MAX_PLAYER_NAME_LENGTH)+1);
+                  memcpy(m_Players[k]->m_szPassword  , (LPCTSTR)CString(StcFile.m_DataStc.m_szPassword  ), min(nsPlayerName::MAX_PASSWORD_LENGTH   , nsVer210::MAX_PASSWORD_LENGTH   )+1);
+#define REPLACE_MOSAIC_SKILLLEVEL(mosaicName, skillLevel) \
+                  m_Players[k]->m_Record[nsMosaic::mosaicName][nsMosaic::skillLevel].m_dwGameNumber = StcFile.m_DataStc.m_Record[nsVer210::mosaicName][nsVer210::skillLevel].m_dwGameNumber; \
+                  m_Players[k]->m_Record[nsMosaic::mosaicName][nsMosaic::skillLevel].m_dwGameWin    = StcFile.m_DataStc.m_Record[nsVer210::mosaicName][nsVer210::skillLevel].m_dwGameWin   ; \
+                  m_Players[k]->m_Record[nsMosaic::mosaicName][nsMosaic::skillLevel].m_dwOpenField  = StcFile.m_DataStc.m_Record[nsVer210::mosaicName][nsVer210::skillLevel].m_dwOpenField ; \
+                  m_Players[k]->m_Record[nsMosaic::mosaicName][nsMosaic::skillLevel].m_dwPlayTime   = StcFile.m_DataStc.m_Record[nsVer210::mosaicName][nsVer210::skillLevel].m_dwPlayTime  ; \
+                  m_Players[k]->m_Record[nsMosaic::mosaicName][nsMosaic::skillLevel].m_dwClickCount = StcFile.m_DataStc.m_Record[nsVer210::mosaicName][nsVer210::skillLevel].m_dwClickCount
+#define REPLACE_MOSAIC(mosaicName) \
+                  REPLACE_MOSAIC_SKILLLEVEL(mosaicName, skillLevelBeginner    ); \
+                  REPLACE_MOSAIC_SKILLLEVEL(mosaicName, skillLevelAmateur     ); \
+                  REPLACE_MOSAIC_SKILLLEVEL(mosaicName, skillLevelProfessional); \
+                  REPLACE_MOSAIC_SKILLLEVEL(mosaicName, skillLevelCrazy       )
+
+                  REPLACE_MOSAIC(mosaicTriangle1   );
+                  REPLACE_MOSAIC(mosaicTriangle2   );
+                  REPLACE_MOSAIC(mosaicTriangle3   );
+                  REPLACE_MOSAIC(mosaicTriangle4   );
+                  REPLACE_MOSAIC(mosaicSquare1     );
+                  REPLACE_MOSAIC(mosaicSquare2     );
+                  REPLACE_MOSAIC(mosaicParquet1    );
+                  REPLACE_MOSAIC(mosaicParquet2    );
+                  REPLACE_MOSAIC(mosaicTrapezoid1  );
+                  REPLACE_MOSAIC(mosaicTrapezoid2  );
+                  REPLACE_MOSAIC(mosaicTrapezoid3  );
+                  REPLACE_MOSAIC(mosaicRhombus1    );
+                  REPLACE_MOSAIC(mosaicQuadrangle1 );
+                  REPLACE_MOSAIC(mosaicPentagonT24 );
+                  REPLACE_MOSAIC(mosaicPentagonT5  );
+                  REPLACE_MOSAIC(mosaicPentagonT10 );
+                  REPLACE_MOSAIC(mosaicHexagon1    );
+                  REPLACE_MOSAIC(mosaicTrSq1       );
+                  REPLACE_MOSAIC(mosaicTrSq2       );
+                  REPLACE_MOSAIC(mosaicSqTrHex     );
+               }
+            }
+            if (dwSizeData%sizeof(nsVer210::CSttstcFile)) {
+               strError = CLang::m_StrArr[IDS__STATISTICS__ERROR_DATA]; // лишние данные ???
+            }
+         }
+      }
+   }
+   if (!strError.IsEmpty()) {
+      ::MessageBox(gpFM2Proj->GetHandle(), strError, CLang::m_StrArr[IDS__ERROR], MB_ICONERROR | MB_OK);
+   }
+   return strError.IsEmpty();
+}
+#endif // UNICODE
 
 ////////////////////////////////////////////////////////////////////////////////
 //                        implementation - dialog function
@@ -506,7 +604,7 @@ void ShowPage() {
       pTable->SetText(1, i+1, strBuf);
       strBuf.Format(TEXT("%d / %.3f%%"), rec.m_dwGameWin, ((float)rec.m_dwGameWin/(float)gameNumber)*100.f);
       pTable->SetText(2, i+1, strBuf);
-      strBuf.Format(TEXT("%.3f%%"), ((float)rec.m_dwOpenField /(float)gameNumber)*100.f/(float)(nsMosaic::SIZE_MOSAIC[localSkillLevel].X*nsMosaic::SIZE_MOSAIC[localSkillLevel].Y));
+      strBuf.Format(TEXT("%.3f%%"), ((float)rec.m_dwOpenField /(float)gameNumber)*100.f/(float)(nsMosaic::SIZE_MOSAIC[localSkillLevel].cx*nsMosaic::SIZE_MOSAIC[localSkillLevel].cy));
       pTable->SetText(3, i+1, strBuf);
       if (rec.m_dwPlayTime)
          strBuf.Format(TEXT("%.3f %s"),  (float)rec.m_dwPlayTime/(float)rec.m_dwGameWin, (LPCTSTR)CLang::m_StrArr[IDS__SEC]);

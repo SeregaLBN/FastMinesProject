@@ -59,10 +59,10 @@ namespace nsMosaic {
       skillLevelCustom  //  всегда последняя в перечислении !!!
    };
 
-   const COORD SIZE_MOSAIC[skillLevelCustom] = {{10, 10},  // Beginner
-                                                {20, 15},  // Amateur
-                                                {30, 20},  // Professional
-                                                {45, 25}}; // Crazy
+   const SIZE SIZE_MOSAIC[skillLevelCustom] = {{10, 10},  // Beginner
+                                               {20, 15},  // Amateur
+                                               {30, 20},  // Professional
+                                               {45, 25}}; // Crazy
 
    const int AREA_MINIMUM = 230;//245;
 
@@ -72,10 +72,10 @@ namespace nsMosaic {
    void LoadDefaultImageBckgrnd(HINSTANCE, CImage&);
 
    float GetPercentMine (ESkillLevel, EMosaic); // процент мин на заданном уровне сложности для заданной фигуры
-   int DefineNumberMines(ESkillLevel, EMosaic, const COORD&);
+   int DefineNumberMines(ESkillLevel, EMosaic, const SIZE&);
 
    struct CSerialize {
-      COORD   m_SizeMosaic; // размер поля (в ячейках)
+      SIZE    m_SizeMosaic; // размер поля (в ячейках)
       int     m_iArea;      // площадь
       EMosaic m_Mosaic;     // из каких фигур состоит мозаика поля
       int     m_iMines;     // кол-во мин на поле
@@ -200,7 +200,7 @@ namespace nsMosaic {
       int m_iOldMines;     // кол-во мин на поле до создания игры. Используется когда игра была создана, но ни одной мины не проставлено.
       CStorageMines m_RepositoryMines; // для load'a - координаты ячеек с минами
    private:
-      void MosaicDestroy(const COORD&);
+      void MosaicDestroy(const SIZE&);
 
       void GameBegin(COORD);
       void GameEnd(bool);
@@ -232,8 +232,8 @@ namespace nsMosaic {
 
       ESkillLevel GetSkillLevel() const; // узнать уровень сложности
       void        SetSkillLevel(ESkillLevel); // установить преопределённый уровень сложности
-      void        SetSkillLevelCustom(const COORD& newSizeMosaic, int numberMines); // установить выборочный уровень сложности, задав размер мозаики и количество мин
-      void        SetGame(EMosaic mosaic, const COORD& newSizeMosaic, int numberMines, const CStorageMines *pStorageCoordMines); // установить мозаику заданного размера и с определённым количеством мин (координаты мин могут задаваться с помощью "Хранилища Мин")
+      void        SetSkillLevelCustom(const SIZE& newSizeMosaic, int numberMines); // установить выборочный уровень сложности, задав размер мозаики и количество мин
+      void        SetGame(EMosaic mosaic, const SIZE& newSizeMosaic, int numberMines, const CStorageMines *pStorageCoordMines); // установить мозаику заданного размера и с определённым количеством мин (координаты мин могут задаваться с помощью "Хранилища Мин")
       void        SetMosaic(EMosaic); // установить новую мозаику
       EMosaic     GetMosaic() const; // узнать тип мозаики
       const nsCell::CBase* GetCell(int x, int y) const {return m_Mosaic[x][y];} // доступ к заданной ячейке
@@ -241,8 +241,8 @@ namespace nsMosaic {
       int     GetMines()      const {return m_SerializeData.m_iMines;} // количество мин
       int     GetArea()       const {return m_SerializeData.m_iArea;} // площадь ячеек
       void    SetArea(int newArea); // установить новую площадь ячеек
-      SIZE  (*GetSizeWindow) (const COORD& sizeField, int area);            // размер в пикселях
-      COORD   GetSize()       const {return m_SerializeData.m_SizeMosaic;} // размер в ячейках
+      SIZE  (*GetSizeWindow) (const SIZE& sizeField, int area);            // размер в пикселях
+      SIZE    GetSize()       const {return m_SerializeData.m_SizeMosaic;} // размер в ячейках
       int     GetNeighborNumber() const {return m_Mosaic[0][0]->GetNeighborNumber();} // узнать количество соседей для текущей мозаики
 
       HWND GetHandle() const {return m_hWnd;}

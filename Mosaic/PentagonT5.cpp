@@ -19,35 +19,35 @@ float nsCell::CPentagonT5::m_h;
 //                               static function
 ////////////////////////////////////////////////////////////////////////////////
 
-SIZE nsCell::CPentagonT5::GetSizeInPixel(const COORD &sizeField, int area) {
-   m_a = 2*sqrt(area/SQRT147);
+SIZE nsCell::CPentagonT5::GetSizeInPixel(const SIZE &sizeField, int iArea) {
+   m_a = 2*sqrt(iArea/SQRT147);
    m_h = m_a*SQRT3/2;
-   SIZE result = {m_a*3.5f + m_a*2.0f*((sizeField.X+13)/14) +
-                             m_a     *((sizeField.X+12)/14) +
-                             m_a*1.5f*((sizeField.X+11)/14) +
-                             m_a*2.0f*((sizeField.X+10)/14) +
-                             m_a     *((sizeField.X+ 9)/14) +
-                             m_a*1.5f*((sizeField.X+ 8)/14) +
-                             m_a*2.0f*((sizeField.X+ 7)/14) +
-                             m_a     *((sizeField.X+ 6)/14) +
-                             m_a*1.5f*((sizeField.X+ 5)/14) +
-                             m_a*2.0f*((sizeField.X+ 4)/14) +
-                             m_a     *((sizeField.X+ 3)/14) +
-                             m_a*2.0f*((sizeField.X+ 2)/14) +
-                             m_a     *((sizeField.X+ 1)/14) +
-                             m_a*1.5f*((sizeField.X+ 0)/14),
-                  m_h*5 +    m_h*2   *((sizeField.Y+ 5)/ 6) +
-                             m_h*2   *((sizeField.Y+ 4)/ 6) +
-                             m_h*2   *((sizeField.Y+ 3)/ 6) +
-                             m_h*3   *((sizeField.Y+ 2)/ 6) +
-                             m_h*2   *((sizeField.Y+ 1)/ 6) +
-                             m_h*3   *((sizeField.Y+ 0)/ 6)};
+   SIZE result = {m_a*3.5f + m_a*2.0f*((sizeField.cx+13)/14) +
+                             m_a     *((sizeField.cx+12)/14) +
+                             m_a*1.5f*((sizeField.cx+11)/14) +
+                             m_a*2.0f*((sizeField.cx+10)/14) +
+                             m_a     *((sizeField.cx+ 9)/14) +
+                             m_a*1.5f*((sizeField.cx+ 8)/14) +
+                             m_a*2.0f*((sizeField.cx+ 7)/14) +
+                             m_a     *((sizeField.cx+ 6)/14) +
+                             m_a*1.5f*((sizeField.cx+ 5)/14) +
+                             m_a*2.0f*((sizeField.cx+ 4)/14) +
+                             m_a     *((sizeField.cx+ 3)/14) +
+                             m_a*2.0f*((sizeField.cx+ 2)/14) +
+                             m_a     *((sizeField.cx+ 1)/14) +
+                             m_a*1.5f*((sizeField.cx+ 0)/14),
+                  m_h*5 +    m_h*2   *((sizeField.cy+ 5)/ 6) +
+                             m_h*2   *((sizeField.cy+ 4)/ 6) +
+                             m_h*2   *((sizeField.cy+ 3)/ 6) +
+                             m_h*3   *((sizeField.cy+ 2)/ 6) +
+                             m_h*2   *((sizeField.cy+ 1)/ 6) +
+                             m_h*3   *((sizeField.cy+ 0)/ 6)};
    return result;
 }
 
-int nsCell::CPentagonT5::SizeInscribedSquare(int area, int borderWidth) {
-   m_a = 2*sqrt(area/SQRT147);
-   m_sq = (m_a*2*SQRT3-4*borderWidth)/(SQRT3+1);
+int nsCell::CPentagonT5::SizeInscribedSquare(int iArea, int iBorderWidth) {
+   m_a = 2*sqrt(iArea/SQRT147);
+   m_sq = (m_a*2*SQRT3-4*iBorderWidth)/(SQRT3+1);
    return m_sq;
 }
 
@@ -55,13 +55,13 @@ int nsCell::CPentagonT5::SizeInscribedSquare(int area, int borderWidth) {
 //                               virtual function
 ////////////////////////////////////////////////////////////////////////////////
 
-nsCell::CPentagonT5::CPentagonT5(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext)
-   : CBase(Coord, sizeField, area, gContext,
+nsCell::CPentagonT5::CPentagonT5(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext)
+   : CBase(Coord, sizeField, iArea, gContext,
            8, 5,
            (Coord.Y%6)*14 + (Coord.X%14) // 0..83
           )
 {
-   SetPoint(area);
+   SetPoint(iArea);
    // определяю координаты соседей
    switch (m_iDirection) {
    case 0:
@@ -439,9 +439,9 @@ nsCell::CPentagonT5::CPentagonT5(const COORD &Coord, const COORD &sizeField, int
    VerifyNeighbor(sizeField);
 }
 
-void nsCell::CPentagonT5::SetPoint(int area) {
+void nsCell::CPentagonT5::SetPoint(int iArea) {
    if (m_Coord.X==0 && m_Coord.Y==0) {
-      m_a = 2*sqrt(area/SQRT147);
+      m_a = 2*sqrt(iArea/SQRT147);
       m_h = m_a*SQRT3/2;
       m_sq = (m_a*2*SQRT3-4*m_GContext.m_Border.m_iWidth)/(SQRT3+1);
    }

@@ -13,16 +13,16 @@
 //                               static function
 ////////////////////////////////////////////////////////////////////////////////
 
-SIZE nsCell::CParquet2::GetSizeInPixel(const COORD &sizeField, int area) {
-   m_a = (int)sqrt(area)/2; // размер стороны вписанного квадрата
-   SIZE result = {m_a*(sizeField.X*2+2),
-                  m_a*(sizeField.Y*2+2)};
+SIZE nsCell::CParquet2::GetSizeInPixel(const SIZE &sizeField, int iArea) {
+   m_a = (int)sqrt(iArea)/2; // размер стороны вписанного квадрата
+   SIZE result = {m_a*(sizeField.cx*2+2),
+                  m_a*(sizeField.cy*2+2)};
    return result;
 }
 
-int nsCell::CParquet2::SizeInscribedSquare(int area, int borderWidth) {
-   m_a = (int)sqrt(area)/2;
-   m_sq = (m_a-borderWidth*SQRT2);
+int nsCell::CParquet2::SizeInscribedSquare(int iArea, int iBorderWidth) {
+   m_a = (int)sqrt(iArea)/2;
+   m_sq = (m_a-iBorderWidth*SQRT2);
    return m_sq;
 }
 
@@ -30,12 +30,12 @@ int nsCell::CParquet2::SizeInscribedSquare(int area, int borderWidth) {
 //                               virtual function
 ////////////////////////////////////////////////////////////////////////////////
 
-nsCell::CParquet2::CParquet2(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext)
-   : CBase(Coord, sizeField, area, gContext, 7, 4,
+nsCell::CParquet2::CParquet2(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext)
+   : CBase(Coord, sizeField, iArea, gContext, 7, 4,
            ((Coord.Y&1)<<1) + (Coord.X&1) // 0..3
           )
 {
-   SetPoint(area);
+   SetPoint(iArea);
    // определяю координаты соседей
    switch (m_iDirection) {
    case 0:  m_pNeighbor[0].X = m_Coord.X-1; m_pNeighbor[0].Y = m_Coord.Y-1;
@@ -70,9 +70,9 @@ nsCell::CParquet2::CParquet2(const COORD &Coord, const COORD &sizeField, int are
    VerifyNeighbor(sizeField);
 }
 
-void nsCell::CParquet2::SetPoint(int area) {
+void nsCell::CParquet2::SetPoint(int iArea) {
    if (m_Coord.X==0 && m_Coord.Y==0) {
-      m_a = (int)sqrt(area)/2; // размер стороны вписанного квадрата
+      m_a = (int)sqrt(iArea)/2; // размер стороны вписанного квадрата
       m_sq = (m_a-m_GContext.m_Border.m_iWidth*SQRT2);
    }
 

@@ -21,21 +21,21 @@ float nsCell::CTriangle4::m_r;
 //                               static function
 ////////////////////////////////////////////////////////////////////////////////
 
-SIZE nsCell::CTriangle4::GetSizeInPixel(const COORD &sizeField, int area) {
-   m_a = sqrt(area*SQRT48);
+SIZE nsCell::CTriangle4::GetSizeInPixel(const SIZE &sizeField, int iArea) {
+   m_a = sqrt(iArea*SQRT48);
    m_b = m_a/2;
    m_R = m_a/SQRT3;
    m_r = m_R/2;
 
-   SIZE result = {m_b + m_b*((sizeField.X+2)/3)+
-                        m_b*((sizeField.X+0)/3),
-                  (m_R+m_r)*((sizeField.Y+1)/2)};
+   SIZE result = {m_b + m_b*((sizeField.cx+2)/3)+
+                        m_b*((sizeField.cx+0)/3),
+                  (m_R+m_r)*((sizeField.cy+1)/2)};
    return result;
 }
 
-int nsCell::CTriangle4::SizeInscribedSquare(int area, int borderWidth) {
-   m_a = sqrt(area*SQRT48);
-   m_sq = (m_a-borderWidth*2/TAN15)/(SQRT3+3);
+int nsCell::CTriangle4::SizeInscribedSquare(int iArea, int iBorderWidth) {
+   m_a = sqrt(iArea*SQRT48);
+   m_sq = (m_a-iBorderWidth*2/TAN15)/(SQRT3+3);
    return m_sq;
 }
 
@@ -43,13 +43,13 @@ int nsCell::CTriangle4::SizeInscribedSquare(int area, int borderWidth) {
 //                               virtual function
 ////////////////////////////////////////////////////////////////////////////////
 
-nsCell::CTriangle4::CTriangle4(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext)
-   : CBase(Coord, sizeField, area, gContext,
+nsCell::CTriangle4::CTriangle4(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext)
+   : CBase(Coord, sizeField, iArea, gContext,
            21, 3,
            (Coord.Y&3)*3+(Coord.X%3) // 0..11
           )
 {
-   SetPoint(area);
+   SetPoint(iArea);
    // определяю координаты соседей
    switch (m_iDirection) {
    case  0:
@@ -332,9 +332,9 @@ nsCell::CTriangle4::CTriangle4(const COORD &Coord, const COORD &sizeField, int a
    VerifyNeighbor(sizeField);
 }
 
-void nsCell::CTriangle4::SetPoint(int area) {
+void nsCell::CTriangle4::SetPoint(int iArea) {
    if (m_Coord.X==0 && m_Coord.Y==0) {
-      m_a = sqrt(area*SQRT48);
+      m_a = sqrt(iArea*SQRT48);
       m_b = m_a/2;
       m_R = m_a/SQRT3;
       m_r = m_R/2;

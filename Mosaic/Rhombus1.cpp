@@ -21,21 +21,21 @@ float nsCell::CRhombus1::m_c;
 //                               static function
 ////////////////////////////////////////////////////////////////////////////////
 
-SIZE nsCell::CRhombus1::GetSizeInPixel(const COORD &sizeField, int area) {
-   m_a = sqrt(area*2/SQRT3);
+SIZE nsCell::CRhombus1::GetSizeInPixel(const SIZE &sizeField, int iArea) {
+   m_a = sqrt(iArea*2/SQRT3);
    m_r = m_a*SQRT3/2;
    m_c = m_a/2;
 
-   SIZE result = {m_c +  m_a     *((sizeField.X+2)/3) +
-                        (m_a+m_c)*((sizeField.X+1)/3) +
-                             m_c *((sizeField.X+0)/3),
-                             m_r * (sizeField.Y+1)};
+   SIZE result = {m_c +  m_a     *((sizeField.cx+2)/3) +
+                        (m_a+m_c)*((sizeField.cx+1)/3) +
+                             m_c *((sizeField.cx+0)/3),
+                             m_r * (sizeField.cy+1)};
    return result;
 }
 
-int nsCell::CRhombus1::SizeInscribedSquare(int area, int borderWidth) {
-   m_a  = sqrt(area*2/SQRT3);
-   m_sq = (m_a*SQRT3-borderWidth*4)/(1+SQRT3);
+int nsCell::CRhombus1::SizeInscribedSquare(int iArea, int iBorderWidth) {
+   m_a  = sqrt(iArea*2/SQRT3);
+   m_sq = (m_a*SQRT3-iBorderWidth*4)/(1+SQRT3);
    return m_sq;
 }
 
@@ -43,13 +43,13 @@ int nsCell::CRhombus1::SizeInscribedSquare(int area, int borderWidth) {
 //                               virtual function
 ////////////////////////////////////////////////////////////////////////////////
 
-nsCell::CRhombus1::CRhombus1(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext)
-   : CBase(Coord, sizeField, area, gContext,
+nsCell::CRhombus1::CRhombus1(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext)
+   : CBase(Coord, sizeField, iArea, gContext,
            10, 4,
            (Coord.Y&1)*3+(Coord.X%3) // 0..5
           )
 {
-   SetPoint(area);
+   SetPoint(iArea);
    // определяю координаты соседей
    switch (m_iDirection) {
    case  0:
@@ -128,9 +128,9 @@ nsCell::CRhombus1::CRhombus1(const COORD &Coord, const COORD &sizeField, int are
    VerifyNeighbor(sizeField);
 }
 
-void nsCell::CRhombus1::SetPoint(int area) {
+void nsCell::CRhombus1::SetPoint(int iArea) {
    if (m_Coord.X==0 && m_Coord.Y==0) {
-      m_a = sqrt(area*2/SQRT3);
+      m_a = sqrt(iArea*2/SQRT3);
       m_h = m_a*SQRT3;
       m_r = m_h/2;
       m_c = m_a/2;

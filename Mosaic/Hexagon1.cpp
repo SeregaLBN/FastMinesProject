@@ -20,16 +20,16 @@ float nsCell::CHexagon1::m_h; // высота шестиугольника
 //                               static function
 ////////////////////////////////////////////////////////////////////////////////
 
-SIZE nsCell::CHexagon1::GetSizeInPixel(const COORD &sizeField, int area) {
-   m_a = sqrt(2*area/SQRT27); // размер стороны шестиугольника
-   SIZE result = {(sizeField.X      + 0.5f)*m_a*SQRT3,
-                  (sizeField.Y*1.5f + 0.5f)*m_a};
+SIZE nsCell::CHexagon1::GetSizeInPixel(const SIZE &sizeField, int iArea) {
+   m_a = sqrt(2*iArea/SQRT27); // размер стороны шестиугольника
+   SIZE result = {(sizeField.cx      + 0.5f)*m_a*SQRT3,
+                  (sizeField.cy*1.5f + 0.5f)*m_a};
    return result;
 }
 
-int nsCell::CHexagon1::SizeInscribedSquare(int area, int borderWidth) {
-   m_a = sqrt(2*area/SQRT27); // размер стороны шестиугольника
-   m_sq = 2*(m_a*SQRT3-borderWidth*2)/(1+SQRT3);
+int nsCell::CHexagon1::SizeInscribedSquare(int iArea, int iBorderWidth) {
+   m_a = sqrt(2*iArea/SQRT27); // размер стороны шестиугольника
+   m_sq = 2*(m_a*SQRT3-iBorderWidth*2)/(1+SQRT3);
    return m_sq;
 }
 
@@ -37,13 +37,13 @@ int nsCell::CHexagon1::SizeInscribedSquare(int area, int borderWidth) {
 //                               virtual function
 ////////////////////////////////////////////////////////////////////////////////
 
-nsCell::CHexagon1::CHexagon1(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext)
-   : CBase(Coord, sizeField, area, gContext,
+nsCell::CHexagon1::CHexagon1(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext)
+   : CBase(Coord, sizeField, iArea, gContext,
            6, 6,
            Coord.Y&1 // 0..1
           )
 {
-   SetPoint(area);
+   SetPoint(iArea);
    // определ€ю координаты соседей
    m_pNeighbor[0].X = m_iDirection ? m_Coord.X   : m_Coord.X-1;
    m_pNeighbor[0].Y = m_Coord.Y-1;
@@ -60,9 +60,9 @@ nsCell::CHexagon1::CHexagon1(const COORD &Coord, const COORD &sizeField, int are
    VerifyNeighbor(sizeField);
 }
 
-void nsCell::CHexagon1::SetPoint(int area) {
+void nsCell::CHexagon1::SetPoint(int iArea) {
    if (m_Coord.X==0 && m_Coord.Y==0) {
-      m_a = sqrt(2*area/SQRT27);                        // размер стороны шестиугольника
+      m_a = sqrt(2*iArea/SQRT27);                        // размер стороны шестиугольника
       m_b = m_a*SQRT3;                                  // ширина шестиугольника
       m_h = m_a*2;                                      // высота шестиугольника
       m_sq = 2*(m_a*SQRT3-m_GContext.m_Border.m_iWidth*2)/(1+SQRT3); // размер квадрата, вписанного в шестиугольник

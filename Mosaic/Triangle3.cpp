@@ -19,16 +19,16 @@ float nsCell::CTriangle3::m_b;
 //                               static function
 ////////////////////////////////////////////////////////////////////////////////
 
-SIZE nsCell::CTriangle3::GetSizeInPixel(const COORD &sizeField, int area) {
-   m_a = 2*sqrt(area);
-   SIZE result = {m_a*((sizeField.X+1)>>1),
-                  m_a*((sizeField.Y+1)>>1)};
+SIZE nsCell::CTriangle3::GetSizeInPixel(const SIZE &sizeField, int iArea) {
+   m_a = 2*sqrt(iArea);
+   SIZE result = {m_a*((sizeField.cx+1)>>1),
+                  m_a*((sizeField.cy+1)>>1)};
    return result;
 }
 
-int nsCell::CTriangle3::SizeInscribedSquare(int area, int borderWidth) {
-   m_a = 2*sqrt(area);
-   m_sq = (m_a-borderWidth*2/TAN45_2)/3;
+int nsCell::CTriangle3::SizeInscribedSquare(int iArea, int iBorderWidth) {
+   m_a = 2*sqrt(iArea);
+   m_sq = (m_a-iBorderWidth*2/TAN45_2)/3;
    return m_sq;
 }
 
@@ -36,13 +36,13 @@ int nsCell::CTriangle3::SizeInscribedSquare(int area, int borderWidth) {
 //                               virtual function
 ////////////////////////////////////////////////////////////////////////////////
 
-nsCell::CTriangle3::CTriangle3(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext)
-   : CBase(Coord, sizeField, area, gContext,
+nsCell::CTriangle3::CTriangle3(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext)
+   : CBase(Coord, sizeField, iArea, gContext,
            14, 3,
            ((Coord.Y&1)<<1)+(Coord.X&1) // 0..3
           )
 {
-   SetPoint(area);
+   SetPoint(iArea);
    // определяю координаты соседей
    switch (m_iDirection) {
    case  0:
@@ -113,9 +113,9 @@ nsCell::CTriangle3::CTriangle3(const COORD &Coord, const COORD &sizeField, int a
    VerifyNeighbor(sizeField);
 }
 
-void nsCell::CTriangle3::SetPoint(int area) {
+void nsCell::CTriangle3::SetPoint(int iArea) {
    if (m_Coord.X==0 && m_Coord.Y==0) {
-      m_a = sqrt(area)*2;
+      m_a = sqrt(iArea)*2;
       m_b = m_a/2;
       m_sq = (m_a-m_GContext.m_Border.m_iWidth*2/TAN45_2)/3;
    }

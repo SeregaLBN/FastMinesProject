@@ -13,8 +13,8 @@
 
 namespace nsCustomSkill {
    BOOL CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
-   extern int   curMines;
-   extern COORD curSizeMosaic;
+   extern int  curMines;
+   extern SIZE curSizeMosaic;
 }
 
 #endif // __FILE__CUSTOMSKILL__

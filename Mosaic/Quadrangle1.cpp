@@ -25,24 +25,24 @@ float nsCell::CQuadrangle1::m_Zy;
 //                               static function
 ////////////////////////////////////////////////////////////////////////////////
 
-SIZE nsCell::CQuadrangle1::GetSizeInPixel(const COORD &sizeField, int area) {
-   m_a = sqrt(area/SQRT3)*2;
+SIZE nsCell::CQuadrangle1::GetSizeInPixel(const SIZE &sizeField, int iArea) {
+   m_a = sqrt(iArea/SQRT3)*2;
    m_b = m_a/2;
    m_h = m_b*SQRT3;
  //m_n = m_a*0.75f;
    m_m = m_h/2;
 
-   SIZE result = {m_m + m_m*((sizeField.X+2)/3)+
-                        m_h*((sizeField.X+1)/3)+
-                        m_m*((sizeField.X+0)/3),
-                  m_b + m_b*((sizeField.Y+1)/2)+
-                        m_a*((sizeField.Y+0)/2)};
+   SIZE result = {m_m + m_m*((sizeField.cx+2)/3)+
+                        m_h*((sizeField.cx+1)/3)+
+                        m_m*((sizeField.cx+0)/3),
+                  m_b + m_b*((sizeField.cy+1)/2)+
+                        m_a*((sizeField.cy+0)/2)};
    return result;
 }
 
-int nsCell::CQuadrangle1::SizeInscribedSquare(int area, int borderWidth) {
-   m_a = sqrt(area/SQRT3)*2;
-   m_sq = (m_a*SQRT3-2*borderWidth*(1+SQRT3))/(SQRT3+2); // размер квадрата, вписанного в трапецию
+int nsCell::CQuadrangle1::SizeInscribedSquare(int iArea, int iBorderWidth) {
+   m_a = sqrt(iArea/SQRT3)*2;
+   m_sq = (m_a*SQRT3-2*iBorderWidth*(1+SQRT3))/(SQRT3+2); // размер квадрата, вписанного в трапецию
    return m_sq;
 }
 
@@ -50,13 +50,13 @@ int nsCell::CQuadrangle1::SizeInscribedSquare(int area, int borderWidth) {
 //                               virtual function
 ////////////////////////////////////////////////////////////////////////////////
 
-nsCell::CQuadrangle1::CQuadrangle1(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext)
-   : CBase(Coord, sizeField, area, gContext,
+nsCell::CQuadrangle1::CQuadrangle1(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext)
+   : CBase(Coord, sizeField, iArea, gContext,
            9, 4,
            (Coord.Y&3)*3+(Coord.X%3) // 0..11
           )
 {
-   SetPoint(area);
+   SetPoint(iArea);
    // определяю координаты соседей
    switch (m_iDirection) {
    case  0:
@@ -195,9 +195,9 @@ nsCell::CQuadrangle1::CQuadrangle1(const COORD &Coord, const COORD &sizeField, i
    VerifyNeighbor(sizeField);
 }
 
-void nsCell::CQuadrangle1::SetPoint(int area) {
+void nsCell::CQuadrangle1::SetPoint(int iArea) {
    if (m_Coord.X==0 && m_Coord.Y==0) {
-      m_a = sqrt(area/SQRT3)*2;
+      m_a = sqrt(iArea/SQRT3)*2;
       m_b = m_a/2;
       m_h = m_b*SQRT3;
       m_n = m_a*0.75f;

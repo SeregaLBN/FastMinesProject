@@ -20,21 +20,21 @@ float nsCell::CSqTrHex::m_h; // высота треугольника
 //                               static function
 ////////////////////////////////////////////////////////////////////////////////
 
-SIZE nsCell::CSqTrHex::GetSizeInPixel(const COORD &sizeField, int area) {
-   m_a = sqrt(area/(0.5f+1/SQRT3));
+SIZE nsCell::CSqTrHex::GetSizeInPixel(const SIZE &sizeField, int iArea) {
+   m_a = sqrt(iArea/(0.5f+1/SQRT3));
    m_h = m_a*SQRT3/2;
 
-   SIZE result = {m_a/2+m_h + m_a/2*((sizeField.X+2)/3) +
-                                m_h*((sizeField.X+1)/3) +
-                        (m_a/2+m_h)*((sizeField.X+0)/3),
-                  m_a/2       + m_h*((sizeField.Y+1)/2)+
-                            m_a*3/2*((sizeField.Y+0)/2)};
+   SIZE result = {m_a/2+m_h + m_a/2*((sizeField.cx+2)/3) +
+                                m_h*((sizeField.cx+1)/3) +
+                        (m_a/2+m_h)*((sizeField.cx+0)/3),
+                  m_a/2       + m_h*((sizeField.cy+1)/2)+
+                            m_a*3/2*((sizeField.cy+0)/2)};
    return result;
 }
 
-int nsCell::CSqTrHex::SizeInscribedSquare(int area, int borderWidth) {
-   m_a = sqrt(area/(0.5f+1/SQRT3));
-   m_sq = (m_a*SQRT3-borderWidth*6)/(SQRT3+2);
+int nsCell::CSqTrHex::SizeInscribedSquare(int iArea, int iBorderWidth) {
+   m_a = sqrt(iArea/(0.5f+1/SQRT3));
+   m_sq = (m_a*SQRT3-iBorderWidth*6)/(SQRT3+2);
    return m_sq;
 }
 
@@ -42,13 +42,13 @@ int nsCell::CSqTrHex::SizeInscribedSquare(int area, int borderWidth) {
 //                               virtual function
 ////////////////////////////////////////////////////////////////////////////////
 
-nsCell::CSqTrHex::CSqTrHex(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext)
-   : CBase(Coord, sizeField, area, gContext,
+nsCell::CSqTrHex::CSqTrHex(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext)
+   : CBase(Coord, sizeField, iArea, gContext,
            12, 6,
            (Coord.Y&3)*3+(Coord.X%3) // 0..11
           )
 {
-   SetPoint(area);
+   SetPoint(iArea);
    // определяю координаты соседей
    switch (m_iDirection) {
    case  0:
@@ -241,9 +241,9 @@ bool nsCell::CSqTrHex::PointInRegion(const POINT &point) const { // принадлежат 
    return false;
 }
 
-void nsCell::CSqTrHex::SetPoint(int area) {
+void nsCell::CSqTrHex::SetPoint(int iArea) {
    if (m_Coord.X==0 && m_Coord.Y==0) {
-      m_a = sqrt(area/(0.5f+1/SQRT3));
+      m_a = sqrt(iArea/(0.5f+1/SQRT3));
       m_h = m_a*SQRT3/2;
       m_sq = (m_a*SQRT3-m_GContext.m_Border.m_iWidth*6)/(SQRT3+2);
    }

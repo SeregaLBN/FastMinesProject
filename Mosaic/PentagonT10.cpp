@@ -13,20 +13,20 @@
 //                               static function
 ////////////////////////////////////////////////////////////////////////////////
 
-SIZE nsCell::CPentagonT10::GetSizeInPixel(const COORD &sizeField, int area) {
-   m_a = sqrt(area/7.f);
+SIZE nsCell::CPentagonT10::GetSizeInPixel(const SIZE &sizeField, int iArea) {
+   m_a = sqrt(iArea/7.f);
    SIZE result = {2*m_a +
-                  5*m_a*((sizeField.X+1)/2) +
-                    m_a*((sizeField.X+0)/2),
+                  5*m_a*((sizeField.cx+1)/2) +
+                    m_a*((sizeField.cx+0)/2),
                   2*m_a +
-                  3*m_a*((sizeField.Y+2)/3) +
-                  3*m_a*((sizeField.Y+1)/3) +
-                    m_a*((sizeField.Y+0)/3)};
+                  3*m_a*((sizeField.cy+2)/3) +
+                  3*m_a*((sizeField.cy+1)/3) +
+                    m_a*((sizeField.cy+0)/3)};
    return result;
 }
 
-int nsCell::CPentagonT10::SizeInscribedSquare(int area, int borderWidth) {
-   m_sq = 2*(sqrt(area/7.f)-borderWidth);
+int nsCell::CPentagonT10::SizeInscribedSquare(int iArea, int iBorderWidth) {
+   m_sq = 2*(sqrt(iArea/7.f)-iBorderWidth);
    return m_sq;
 }
 
@@ -34,12 +34,12 @@ int nsCell::CPentagonT10::SizeInscribedSquare(int area, int borderWidth) {
 //                               virtual function
 ////////////////////////////////////////////////////////////////////////////////
 
-nsCell::CPentagonT10::CPentagonT10(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext)
-   : CBase(Coord, sizeField, area, gContext, 7, 5,
+nsCell::CPentagonT10::CPentagonT10(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext)
+   : CBase(Coord, sizeField, iArea, gContext, 7, 5,
            ((Coord.Y%6)<<1) + (Coord.X&1) // 0..11
           )
 {
-   SetPoint(area);
+   SetPoint(iArea);
    // определяю координаты соседей
    switch (m_iDirection) {
    case  0:
@@ -154,9 +154,9 @@ nsCell::CPentagonT10::CPentagonT10(const COORD &Coord, const COORD &sizeField, i
    VerifyNeighbor(sizeField);
 }
 
-void nsCell::CPentagonT10::SetPoint(int area) {
+void nsCell::CPentagonT10::SetPoint(int iArea) {
    if (m_Coord.X==0 && m_Coord.Y==0) {
-      m_a = sqrt(area/7.f);
+      m_a = sqrt(iArea/7.f);
       m_sq = 2*(m_a-m_GContext.m_Border.m_iWidth);
    }
 

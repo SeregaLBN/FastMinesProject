@@ -22,22 +22,22 @@ float nsCell::CTrapezoid3::m_r; // высота трапеции
 //                               static function
 ////////////////////////////////////////////////////////////////////////////////
 
-SIZE nsCell::CTrapezoid3::GetSizeInPixel(const COORD &sizeField, int area) {
-   m_a = sqrt(area/SQRT27)*2; // меньшая сторона трапеции (верх и стороны)
+SIZE nsCell::CTrapezoid3::GetSizeInPixel(const SIZE &sizeField, int iArea) {
+   m_a = sqrt(iArea/SQRT27)*2; // меньшая сторона трапеции (верх и стороны)
    m_b = m_a*2;
  //m_c = m_a/2;
    m_R = m_a*SQRT3;
  //m_r = m_R/2;
 
-   SIZE result = {      m_R*((sizeField.X+1)/2),
-                  m_a + m_b*((sizeField.Y+1)/2)+
-                        m_a*((sizeField.Y+0)/2)};
+   SIZE result = {      m_R*((sizeField.cx+1)/2),
+                  m_a + m_b*((sizeField.cy+1)/2)+
+                        m_a*((sizeField.cy+0)/2)};
    return result;
 }
 
-int nsCell::CTrapezoid3::SizeInscribedSquare(int area, int borderWidth) {
-   m_a = 2*sqrt(area/SQRT27);       // меньшая сторона трапеции (верх и стороны)
-   m_sq = (m_a*SQRT3-4*borderWidth)/(1+SQRT3); // размер квадрата, вписанного в трапецию
+int nsCell::CTrapezoid3::SizeInscribedSquare(int iArea, int iBorderWidth) {
+   m_a = 2*sqrt(iArea/SQRT27);       // меньшая сторона трапеции (верх и стороны)
+   m_sq = (m_a*SQRT3-4*iBorderWidth)/(1+SQRT3); // размер квадрата, вписанного в трапецию
    return m_sq;
 }
 
@@ -45,13 +45,13 @@ int nsCell::CTrapezoid3::SizeInscribedSquare(int area, int borderWidth) {
 //                               virtual function
 ////////////////////////////////////////////////////////////////////////////////
 
-nsCell::CTrapezoid3::CTrapezoid3(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext)
-   : CBase(Coord, sizeField, area, gContext,
+nsCell::CTrapezoid3::CTrapezoid3(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext)
+   : CBase(Coord, sizeField, iArea, gContext,
             11, 4,
             ((Coord.Y&3)<<2)+(Coord.X&3) // 0..15
            )
 {
-   SetPoint(area);
+   SetPoint(iArea);
    // определяю координаты соседей
    switch (m_iDirection) {
    case  0:
@@ -266,9 +266,9 @@ nsCell::CTrapezoid3::CTrapezoid3(const COORD &Coord, const COORD &sizeField, int
    VerifyNeighbor(sizeField);
 }
 
-void nsCell::CTrapezoid3::SetPoint(int area) {
+void nsCell::CTrapezoid3::SetPoint(int iArea) {
    if (m_Coord.X==0 && m_Coord.Y==0) {
-      m_a = 2*sqrt(area/SQRT27);
+      m_a = 2*sqrt(iArea/SQRT27);
       m_b = m_a*2;
       m_c = m_a/2;
       m_R = m_a*SQRT3;

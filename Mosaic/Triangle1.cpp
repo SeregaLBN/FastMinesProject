@@ -20,17 +20,17 @@ float nsCell::CTriangle1::m_h;
 //                               static function
 ////////////////////////////////////////////////////////////////////////////////
 
-SIZE nsCell::CTriangle1::GetSizeInPixel(const COORD &sizeField, int area) {
-   m_b = sqrt(area/SQRT3);
+SIZE nsCell::CTriangle1::GetSizeInPixel(const SIZE &sizeField, int iArea) {
+   m_b = sqrt(iArea/SQRT3);
    m_h = m_b*SQRT3;
-   SIZE result = {m_b*(sizeField.X+1),
-                  m_h*(sizeField.Y+0)};
+   SIZE result = {m_b*(sizeField.cx+1),
+                  m_h*(sizeField.cy+0)};
    return result;
 }
 
-int nsCell::CTriangle1::SizeInscribedSquare(int area, int borderWidth) {
-   m_a = 2*sqrt(area/SQRT3); // размер стороны треугольника
-   m_sq = (m_a*SQRT3-6*borderWidth)/(SQRT3+2);
+int nsCell::CTriangle1::SizeInscribedSquare(int iArea, int iBorderWidth) {
+   m_a = 2*sqrt(iArea/SQRT3); // размер стороны треугольника
+   m_sq = (m_a*SQRT3-6*iBorderWidth)/(SQRT3+2);
    return m_sq;
 }
 
@@ -38,13 +38,13 @@ int nsCell::CTriangle1::SizeInscribedSquare(int area, int borderWidth) {
 //                               virtual function
 ////////////////////////////////////////////////////////////////////////////////
 
-nsCell::CTriangle1::CTriangle1(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext)
-   : CBase(Coord, sizeField, area, gContext,
+nsCell::CTriangle1::CTriangle1(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext)
+   : CBase(Coord, sizeField, iArea, gContext,
             12, 3,
             ((Coord.Y&1)<<1)+(Coord.X&1) // 0..3
            )
 {
-   SetPoint(area);
+   SetPoint(iArea);
    // определ€ю координаты соседей
    switch (m_iDirection) {
    case 0: case 3:
@@ -79,9 +79,9 @@ nsCell::CTriangle1::CTriangle1(const COORD &Coord, const COORD &sizeField, int a
    VerifyNeighbor(sizeField);
 }
 
-void nsCell::CTriangle1::SetPoint(int area) {
+void nsCell::CTriangle1::SetPoint(int iArea) {
    if (m_Coord.X==0 && m_Coord.Y==0) {
-      m_a = 2*sqrt(area/SQRT3);
+      m_a = 2*sqrt(iArea/SQRT3);
       m_b = m_a/2;
       m_h = m_b*SQRT3;
       m_sq = (m_h*2-6*m_GContext.m_Border.m_iWidth)/(SQRT3+2);

@@ -260,8 +260,8 @@ void CAssistant::GameNew() {
    m_SetForFlag    .clear();
    m_SetForAnalyse .clear();
    m_SetCloseNoFlag.clear();
-   for (int i = 0; i < m_Mosaic.GetSize().X; i++)
-      for (int j = 0; j < m_Mosaic.GetSize().Y; j++)
+   for (int i = 0; i < m_Mosaic.GetSize().cx; i++)
+      for (int j = 0; j < m_Mosaic.GetSize().cy; j++)
          m_SetCloseNoFlag.insert(m_Mosaic.GetCell(i,j));
    m_bSequentialMove = false;
 }
@@ -511,7 +511,7 @@ JOB_RESULT CAssistant::AllOkToSequentialMove() { // проверка условий дл€ начала 
 
    // провер€ю услови€ дл€ старта перебора флажков
    if (!m_Mosaic.GetGameStatusIsPlay()) return JOB_SUCCESS; // услови€ не выполнены (флаг m_bSequentialMove непроставлен)
-   const float percent = 0.01f*m_Mosaic.GetSize().X*m_Mosaic.GetSize().Y;
+   const float percent = 0.01f*m_Mosaic.GetSize().cx*m_Mosaic.GetSize().cy;
 
    //g_Logger.Put(CLogger::LL_DEBUG, TEXT("m_SetCloseNoFlag.size() = %i"), size);
    //g_Logger.Put(CLogger::LL_DEBUG, TEXT("closeNumber = %i"), closeNumber);

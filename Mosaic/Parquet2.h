@@ -18,11 +18,11 @@ namespace nsCell {
 
 class CParquet2: public CBase {
 public:
-   static SIZE GetSizeInPixel(const COORD &sizeField, int area);
-   static int SizeInscribedSquare(int area, int borderWidth);
+   static SIZE GetSizeInPixel(const SIZE &sizeField, int iArea);
+   static int SizeInscribedSquare(int iArea, int iBorderWidth);
 public:
-   CParquet2(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext);
-   void SetPoint(int area); // определить координаты точек из которых состоит фигура
+   CParquet2(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext);
+   void SetPoint(int iArea); // определить координаты точек из которых состоит фигура
    void Paint() const;
 };
 

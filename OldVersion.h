@@ -22,20 +22,20 @@ namespace nsVer200 {
    };
 
    enum EMosaic {
-      mosaic_Square1,
-      mosaic_Square2,
-      mosaic_Triangle1,
-      mosaic_Triangle2,
-      mosaic_Hexagon1,
-      mosaic_PentagonT24,
-      mosaic_PentagonT10,
-      mosaic_Parquet1,
-      mosaic_Parquet2,
-      mosaic_TrSq1,
-      mosaic_SqTrHex,
-      mosaic_Trapezoid,
-      mosaic_Rhombus1,
-      mosaic_Nil
+      mosaicSquare1,
+      mosaicSquare2,
+      mosaicTriangle1,
+      mosaicTriangle2,
+      mosaicHexagon1,
+      mosaicPentagonT24,
+      mosaicPentagonT10,
+      mosaicParquet1,
+      mosaicParquet2,
+      mosaicTrSq1,
+      mosaicSqTrHex,
+      mosaicTrapezoid,
+      mosaicRhombus1,
+      mosaicNil
    };
 
    enum ESkillLevel {
@@ -47,7 +47,7 @@ namespace nsVer200 {
    };
 
    struct CFileChmpn {
-      CChmpnRecord m_Data[mosaic_Nil][skillLevelCustom][10];
+      CChmpnRecord m_Data[mosaicNil][skillLevelCustom][10];
    };
 } // namespace ver200
 
@@ -65,32 +65,32 @@ namespace nsVer210 {
 
    enum EMosaic {
       // Triangle
-      mosaic_Triangle1,
-      mosaic_Triangle2,
-      mosaic_Triangle3,
-      mosaic_Triangle4,
+      mosaicTriangle1,
+      mosaicTriangle2,
+      mosaicTriangle3,
+      mosaicTriangle4,
       // Quadrangle
-      mosaic_Square1,
-      mosaic_Square2,
-      mosaic_Parquet1,
-      mosaic_Parquet2,
-      mosaic_Trapezoid1,
-      mosaic_Trapezoid2,
-      mosaic_Trapezoid3,
-      mosaic_Rhombus,
-      mosaic_Quadrangle1,
+      mosaicSquare1,
+      mosaicSquare2,
+      mosaicParquet1,
+      mosaicParquet2,
+      mosaicTrapezoid1,
+      mosaicTrapezoid2,
+      mosaicTrapezoid3,
+      mosaicRhombus1,
+      mosaicQuadrangle1,
       // Pentagon
-      mosaic_Pentagon,
-      mosaic_PentagonT5,
-      mosaic_PentagonT10,
+      mosaicPentagonT24,
+      mosaicPentagonT5,
+      mosaicPentagonT10,
       // Hexagon
-      mosaic_Hexagon,
+      mosaicHexagon1,
       // Other
-      mosaic_TrSq,
-      mosaic_TrSq2,
-      mosaic_SqTrHex,
+      mosaicTrSq1,
+      mosaicTrSq2,
+      mosaicSqTrHex,
       //
-      mosaic_Nil  //  всегда последн€€ в перечислении !!!
+      mosaicNil  //  всегда последн€€ в перечислении !!!
    };
 
    enum ESkillLevel {
@@ -103,7 +103,7 @@ namespace nsVer210 {
 
    struct CFileChmpn {
       char m_szVersion[chDIMOF(TEXT(ID_VERSIONINFO_VERSION3_v210))];
-      CChmpnRecord m_Data[mosaic_Nil][skillLevelCustom][10];
+      CChmpnRecord m_Data[mosaicNil][skillLevelCustom][10];
       CFileChmpn() {
          strcpy(m_szVersion, ID_VERSIONINFO_VERSION3_v210);
       }
@@ -144,6 +144,29 @@ namespace nsVer210 {
          strcpy(m_szVersion, ID_VERSIONINFO_VERSION3_v210);
       }
    };
+
+   const int MAX_PLAYER_NAME_LENGTH = 20;
+   const int MAX_PASSWORD_LENGTH    = 20;
+
+   struct CSttstcSubRecord {
+      DWORD
+         m_dwGameNumber, // количество сыграных игр
+         m_dwGameWin,    // количество выиграных игр
+         m_dwOpenField,  // суммарное число открытых €чеек - вывожу средний процент открыти€ пол€
+         m_dwPlayTime,   // суммарное врем€ игр - вывожу сколько всреднем игрок провЄл времени за данной игрой
+         m_dwClickCount; // суммарное число кликов - вывожу среднее число кликов в данной игре
+   };
+   struct CSttstcRecord {
+      CHAR             m_szPlayerName[MAX_PLAYER_NAME_LENGTH];
+      CHAR             m_szPassword  [MAX_PASSWORD_LENGTH   ];
+      CSttstcSubRecord m_Record[mosaicNil][skillLevelCustom];
+   };
+   struct CSttstcFile {
+      CSttstcRecord m_DataStc; // данные об отдельном игроке
+      CSttstcRecord m_DataBad; // мусор
+      DWORD m_dwCRC;
+   };
+
 } // namespace ver210
 
 #endif // __FILE__OLDVERSION__

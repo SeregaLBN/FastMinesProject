@@ -32,7 +32,7 @@ namespace nsStatistics {
    struct CSttstcRecord {
       TCHAR            m_szPlayerName[nsPlayerName::MAX_PLAYER_NAME_LENGTH];
       TCHAR            m_szPassword  [nsPlayerName::MAX_PASSWORD_LENGTH];
-      CSttstcSubRecord m_Record [nsMosaic::mosaicNil][nsMosaic::skillLevelCustom];
+      CSttstcSubRecord m_Record[nsMosaic::mosaicNil][nsMosaic::skillLevelCustom];
       CSttstcRecord() {m_szPlayerName[0]=TEXT('\0');
                        m_szPassword  [0]=TEXT('\0');};
    };

@@ -117,8 +117,8 @@ namespace nsCell {
       static float m_a;  // базовая величина фигуры (обычно это размер одной из сторон фигуры)
       static float m_sq; // размер квадрата, вписанного в фигуру
    public:
-      static SIZE GetSizeInPixel(const COORD &sizeField, int area);
-      static int SizeInscribedSquare(int area, int borderWidth); // по площади ячейки определить размер вписанного в фигуру квадрата
+      static SIZE GetSizeInPixel(const SIZE &sizeField, int iArea);
+      static int SizeInscribedSquare(int iArea, int iBorderWidth); // по площади ячейки определить размер вписанного в фигуру квадрата
    protected:
       COORD m_Coord;
       RECT  m_Square;    // вписанный в фигуру квадрат - область в которую выводится изображение/текст
@@ -140,7 +140,7 @@ namespace nsCell {
    private:
       CBase **m_ppLinkNeighbor;
    protected:
-      void VerifyNeighbor(const COORD& sizeField);
+      void VerifyNeighbor(const SIZE& sizeField);
    private:
       void Lock();
    public:
@@ -155,8 +155,8 @@ namespace nsCell {
 
      ~CBase();
       CBase(const COORD &Coord,
-            const COORD &sizeField,
-            int area,
+            const SIZE &sizeField,
+            int iArea,
             const CGraphicContext &gContext,
             int iNeighborNumber,
             int iVertexNumber,
@@ -168,7 +168,7 @@ namespace nsCell {
       COORD GetCoord() const;       // X и Y ячейки
       POINT GetCenterPixel() const; // координата центра фигуры (в пикселях)
       virtual bool PointInRegion(const POINT &point) const; // принадлежат ли эти экранные координаты ячейке
-      virtual void SetPoint(int area); // определить координаты точек из которых состоит фигура
+      virtual void SetPoint(int iArea); // определить координаты точек из которых состоит фигура
       void Reset();
       virtual void Paint() const;
       void             LButtonDown();

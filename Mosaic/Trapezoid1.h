@@ -23,11 +23,11 @@ private:
    static float m_R;  // -   диагональ трапеции
    static float m_r;  // -   высота трапеции
 public:
-   static SIZE GetSizeInPixel(const COORD &sizeField, int area);
-   static int SizeInscribedSquare(int area, int borderWidth);
+   static SIZE GetSizeInPixel(const SIZE &sizeField, int iArea);
+   static int SizeInscribedSquare(int iArea, int iBorderWidth);
 public:
-   CTrapezoid1(const COORD &Coord, const COORD &sizeField, int area, const CGraphicContext &gContext);
-   void SetPoint(int area); // определить координаты точек из которых состоит фигура
+   CTrapezoid1(const COORD &Coord, const SIZE &sizeField, int iArea, const CGraphicContext &gContext);
+   void SetPoint(int iArea); // определить координаты точек из которых состоит фигура
    void Paint() const;
 };
 

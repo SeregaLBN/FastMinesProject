@@ -75,11 +75,11 @@ float nsMosaic::GetPercentMine(const ESkillLevel skill, const EMosaic mosaic) { 
 #undef PERCENT
 }
 
-int nsMosaic::DefineNumberMines(ESkillLevel skill, EMosaic mosaic, const COORD& sizeMosaic) {
+int nsMosaic::DefineNumberMines(ESkillLevel skill, EMosaic mosaic, const SIZE& sizeMosaic) {
    if (skill == skillLevelCustom)
       return 0; // error
-   return sizeMosaic.X *
-          sizeMosaic.Y * GetPercentMine(skill, mosaic) / 100;
+   return sizeMosaic.cx *
+          sizeMosaic.cy * GetPercentMine(skill, mosaic) / 100;
 }
 
 void nsMosaic::LoadDefaultImageMine   (HINSTANCE hInstance, CImage &ImgMine   ) {ImgMine   .LoadResource(hInstance , TEXT("Mine" ), imageBitmap     ); ImgMine   .SetTransparent(true); ImgMine   .SetPlace(placeStretch);}
@@ -233,8 +233,8 @@ void nsMosaic::CMosaic::OnPaint(HWND hwnd){
    BitBlt(m_GContext.m_hDCTmp, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy, m_GContext.m_hDCBck, 0,0, SRCCOPY);
    //BitBlt(m_GContext.m_hDCDst, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy, m_GContext.m_hDCBck, 0,0, SRCCOPY);
    // paint cells
-   for (int i = 0; i < m_SerializeData.m_SizeMosaic.X; i++)
-      for (int j = 0; j < m_SerializeData.m_SizeMosaic.Y; j++)
+   for (int i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++)
+      for (int j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++)
          m_Mosaic[i][j]->Paint();
    BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
           m_GContext.m_hDCDst, 0, 0, SRCCOPY);
@@ -299,7 +299,7 @@ void nsMosaic::CMosaic::OnLButtonUp(HWND hwnd, int x, int y, UINT keyFlags){
    if (result.m_bEndGame)
       GameEnd(result.m_bVictory);
    else
-      if (m_iCountOpen+m_SerializeData.m_iMines == m_SerializeData.m_SizeMosaic.X*m_SerializeData.m_SizeMosaic.Y)
+      if (m_iCountOpen+m_SerializeData.m_iMines == m_SerializeData.m_SizeMosaic.cx*m_SerializeData.m_SizeMosaic.cy)
          GameEnd(true);
       else
          VerifyFlag();
@@ -371,10 +371,10 @@ void nsMosaic::CMosaic::OnSize(HWND hwnd, UINT state, int cx, int cy) {
 ////////////////////////////////////////////////////////////////////////////////
 //                             other function
 ////////////////////////////////////////////////////////////////////////////////
-void nsMosaic::CMosaic::MosaicDestroy(const COORD& SizeMosaic) {
+void nsMosaic::CMosaic::MosaicDestroy(const SIZE& SizeMosaic) {
    //delete [] m_Mosaic;
-   for (int i = 0; i < SizeMosaic.X; i++)
-      for (int j = 0; j < SizeMosaic.Y; j++) {
+   for (int i = 0; i < SizeMosaic.cx; i++)
+      for (int j = 0; j < SizeMosaic.cy; j++) {
          //m_Mosaic[i][j]->~TcBase();
          //g_Logger.Put(CLogger::LL_DEBUG, TEXT("delete [%i,%i]"),i,j);
          delete m_Mosaic[i][j];
@@ -382,11 +382,11 @@ void nsMosaic::CMosaic::MosaicDestroy(const COORD& SizeMosaic) {
 }
 
 void nsMosaic::CMosaic::MosaicCreate() {
-   //m_Mosaic = new TCell[m_SerializeData.m_SizeMosaic.X*m_SerializeData.m_SizeMosaic.Y];
-   m_Mosaic.resize(m_SerializeData.m_SizeMosaic.X);
-   for (int i = 0; i < m_SerializeData.m_SizeMosaic.X; i++){
-      m_Mosaic[i].resize(m_SerializeData.m_SizeMosaic.Y);
-      for (int j = 0; j < m_SerializeData.m_SizeMosaic.Y; j++){
+   //m_Mosaic = new TCell[m_SerializeData.m_SizeMosaic.cx*m_SerializeData.m_SizeMosaic.cy];
+   m_Mosaic.resize(m_SerializeData.m_SizeMosaic.cx);
+   for (int i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++){
+      m_Mosaic[i].resize(m_SerializeData.m_SizeMosaic.cy);
+      for (int j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++){
          COORD coord = {i,j};
          switch (m_SerializeData.m_Mosaic) {
          case mosaicTriangle1  : m_Mosaic[i][j] = new nsCell::CTriangle1  (coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
@@ -415,8 +415,8 @@ void nsMosaic::CMosaic::MosaicCreate() {
    }
    int numberNeighbor = GetNeighborNumber();
    nsCell::CBase**const ppLinkNeighbor = new nsCell::CBase*[numberNeighbor];
-   for (i = 0; i < m_SerializeData.m_SizeMosaic.X; i++){
-      for (int j = 0; j < m_SerializeData.m_SizeMosaic.Y; j++){
+   for (i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++){
+      for (int j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++){
          for (int k=0; k<numberNeighbor; k++) {
             COORD coordNeighbor = m_Mosaic[i][j]->GetNeighborCoord(k);
             if (coordNeighbor != INCORRECT_COORD)
@@ -461,8 +461,8 @@ void nsMosaic::CMosaic::GameNew() {
    m_GContext.m_isRefreshMosaic = m_GContext.m_isRefreshPause = true;
    FORWARD_WM_MOSAIC_CHANGECOUNTERS(m_hWndParent, SendMessage);
 
-   for (int i = 0; i < m_SerializeData.m_SizeMosaic.X; i++)
-      for (int j = 0; j < m_SerializeData.m_SizeMosaic.Y; j++)
+   for (int i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++)
+      for (int j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++)
          m_Mosaic[i][j]->Reset();
 
    InvalidateRect(m_hWnd, NULL, FALSE);
@@ -496,15 +496,15 @@ void nsMosaic::CMosaic::GameBegin(COORD firstClick) {
       m_Mosaic[firstClick.X][firstClick.Y]->LockNeighbor(); // запрещаю установку мин у соседей и у себя
       count = 0;
       do {
-         i = rand(m_SerializeData.m_SizeMosaic.X-1);
-         j = rand(m_SerializeData.m_SizeMosaic.Y-1);
+         i = rand(m_SerializeData.m_SizeMosaic.cx-1);
+         j = rand(m_SerializeData.m_SizeMosaic.cy-1);
          if (m_Mosaic[i][j]->Cell_SetMine())
             count++;
       } while (count < m_SerializeData.m_iMines);
    }
    // set other CellOpen and set all Caption
-   for (i = 0; i < m_SerializeData.m_SizeMosaic.X; i++)
-      for (j = 0; j < m_SerializeData.m_SizeMosaic.Y; j++)
+   for (i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++)
+      for (j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++)
          m_Mosaic[i][j]->Cell_DefineValue();
 }
 
@@ -530,8 +530,8 @@ void nsMosaic::CMosaic::GameEnd(bool Victory) {
    {
    SetCursor(LoadCursor(NULL, IDC_WAIT));
    if (Victory) {
-      for (i = 0; i < m_SerializeData.m_SizeMosaic.X; i++)
-         for (j = 0; j < m_SerializeData.m_SizeMosaic.Y; j++) {
+      for (i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++)
+         for (j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++) {
             if (m_Mosaic[i][j]->Cell_GetStatus() == nsCell::_Close) {
                if(m_Mosaic[i][j]->Cell_GetOpen() == nsCell::_Mine)
                   m_Mosaic[i][j]->Cell_SetClose(nsCell::_Flag);
@@ -544,8 +544,8 @@ void nsMosaic::CMosaic::GameEnd(bool Victory) {
          }
       m_iCountFlag = m_SerializeData.m_iMines;
    } else
-      for (i = 0; i < m_SerializeData.m_SizeMosaic.X; i++)
-         for (j = 0; j < m_SerializeData.m_SizeMosaic.Y; j++)
+      for (i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++)
+         for (j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++)
             if (m_Mosaic[i][j]->Cell_GetStatus() == nsCell::_Close) {
                if ((m_Mosaic[i][j]->Cell_GetClose() == nsCell::_Flag) &&
                    (m_Mosaic[i][j]->Cell_GetOpen()  == nsCell::_Mine))
@@ -564,16 +564,16 @@ void nsMosaic::CMosaic::GameEnd(bool Victory) {
 inline void nsMosaic::CMosaic::VerifyFlag() {
    if (m_GameStatus == gsEnd) return;
    if (m_SerializeData.m_iMines == m_iCountFlag) {
-      for (int i=0; i < m_SerializeData.m_SizeMosaic.X; i++)
-         for (int j=0; j < m_SerializeData.m_SizeMosaic.Y; j++)
+      for (int i=0; i < m_SerializeData.m_SizeMosaic.cx; i++)
+         for (int j=0; j < m_SerializeData.m_SizeMosaic.cy; j++)
             if ((m_Mosaic[i][j]->Cell_GetClose() == nsCell::_Flag) &&
                 (m_Mosaic[i][j]->Cell_GetOpen () != nsCell::_Mine))
                return; // неверно проставленный флажок - на выход
       GameEnd(true);
    } else
       if (m_SerializeData.m_iMines == m_iCountFlag+m_iCountUnknown) {
-         for (int i=0; i < m_SerializeData.m_SizeMosaic.X; i++)
-            for (int j=0; j < m_SerializeData.m_SizeMosaic.Y; j++)
+         for (int i=0; i < m_SerializeData.m_SizeMosaic.cx; i++)
+            for (int j=0; j < m_SerializeData.m_SizeMosaic.cy; j++)
                if (((m_Mosaic[i][j]->Cell_GetClose() == nsCell::_Unknown) ||
                     (m_Mosaic[i][j]->Cell_GetClose() == nsCell::_Flag)) &&
                    ( m_Mosaic[i][j]->Cell_GetOpen () != nsCell::_Mine))
@@ -610,7 +610,7 @@ void nsMosaic::CMosaic::SetMosaic(EMosaic mosaic) {
    m_SerializeData.m_Mosaic = mosaic;
    SetClasureToMosaic();
    if (skill == skillLevelCustom) { // skill level для НОВОЙ фигуры!!!
-      int maxMines = m_SerializeData.m_SizeMosaic.X*m_SerializeData.m_SizeMosaic.Y-(GetNeighborNumber()+1);
+      int maxMines = m_SerializeData.m_SizeMosaic.cx*m_SerializeData.m_SizeMosaic.cy-(GetNeighborNumber()+1);
       if(m_SerializeData.m_iMines > maxMines) {
          m_SerializeData.m_iMines = maxMines;
       }
@@ -620,13 +620,13 @@ void nsMosaic::CMosaic::SetMosaic(EMosaic mosaic) {
    MosaicCreate();
 }
 
-void nsMosaic::CMosaic::SetGame(EMosaic mosaic, const COORD& newSizeMosaic, int numberMines, const CStorageMines *pStorageCoordMines) {
+void nsMosaic::CMosaic::SetGame(EMosaic mosaic, const SIZE& newSizeMosaic, int numberMines, const CStorageMines *pStorageCoordMines) {
    SetMosaic(mosaic);
    SetSkillLevelCustom(newSizeMosaic, numberMines);
    m_RepositoryMines = *pStorageCoordMines;
 }
 
-void nsMosaic::CMosaic::SetSkillLevelCustom(const COORD& newSizeMosaic, int numberMines) {
+void nsMosaic::CMosaic::SetSkillLevelCustom(const SIZE& newSizeMosaic, int numberMines) {
    if ((m_SerializeData.m_SizeMosaic == newSizeMosaic) &&
        (m_SerializeData.m_iMines      == numberMines)) return;
    MosaicDestroy(m_SerializeData.m_SizeMosaic);
@@ -673,8 +673,8 @@ void nsMosaic::CMosaic::TimerProc(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTi
 
 COORD nsMosaic::CMosaic::WinToArray(int x, int y) const { // преобразовать экранные координаты в координаты m_Mosaic'a
    COORD result = INCORRECT_COORD;
-   for (int i = 0; i < m_SerializeData.m_SizeMosaic.X; i++)
-      for (int j = 0; j < m_SerializeData.m_SizeMosaic.Y; j++)
+   for (int i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++)
+      for (int j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++)
          if (m_Mosaic[i][j]->PointInRegion(POINTEX(x,y))) {
             result = m_Mosaic[i][j]->GetCoord();
             return result;
@@ -686,8 +686,8 @@ void nsMosaic::CMosaic::SetArea(int newArea) {
    if (m_SerializeData.m_iArea == newArea) return;
    m_SerializeData.m_iArea = newArea;
 
-   for (int i = 0; i < m_SerializeData.m_SizeMosaic.X; i++)
-      for (int j = 0; j < m_SerializeData.m_SizeMosaic.Y; j++)
+   for (int i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++)
+      for (int j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++)
          m_Mosaic[i][j]->SetPoint(m_SerializeData.m_iArea);
    SetDCFont();
    SendMessage(m_hWndParent, WM_SIZE, 0L, 0L);
@@ -783,8 +783,8 @@ inline void nsMosaic::CMosaic::SetBorder(const nsCell::CBorder& newBorder) {
    m_GContext.m_hPenLight  = CreatePen(PS_SOLID, 2*newBorder.m_iWidth, newBorder.m_colorLight ); // Light pen
    if(oldWidth != newBorder.m_iWidth) {
       if (!m_Mosaic.empty())
-         for (int i = 0; i < m_SerializeData.m_SizeMosaic.X; i++)
-            for (int j = 0; j < m_SerializeData.m_SizeMosaic.Y; j++)
+         for (int i = 0; i < m_SerializeData.m_SizeMosaic.cx; i++)
+            for (int j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++)
                m_Mosaic[i][j]->SetPoint(m_SerializeData.m_iArea); // вообщето надо пересчитать только nsCell::CBase::square (т.е. те точки которые зависят от ширины пера w)
       SetDCFont();
    }
