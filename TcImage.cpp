@@ -27,8 +27,8 @@ inline HBITMAP CreateMask(HBITMAP hBmp, COLORREF transparentColor = -1) {
 
 	HDC hDC_Dst = CreateCompatibleDC(NULL);
 	HDC hDC_Src = CreateCompatibleDC(NULL);
-	HBITMAP hBmpSaveSrc = SelectObject(hDC_Src, hBmp);
-	HBITMAP hBmpSaveDst = SelectObject(hDC_Dst, hBmpMask);
+	HGDIOBJ hBmpSaveSrc = SelectObject(hDC_Src, hBmp);
+	HGDIOBJ hBmpSaveDst = SelectObject(hDC_Dst, hBmpMask);
 
    COLORREF oldBkColor = SetBkColor(hDC_Src, (transparentColor == -1) ? GetPixel(hDC_Src, 0, 0) : transparentColor);
 	BitBlt(hDC_Dst, 0,0, bmp.bmWidth, bmp.bmHeight, hDC_Src, 0, 0, NOTSRCCOPY);
@@ -52,7 +52,7 @@ void DrawMaskedBitmap(HDC hDC, HBITMAP hBmp,
 
 	HDC hCDC = CreateCompatibleDC(NULL);
    HBITMAP hBmpMask = CreateMask(hBmp, transparentColor);
-	HBITMAP hOldBmp  = SelectObject(hCDC, hBmp);
+	HGDIOBJ hOldBmp  = SelectObject(hCDC, hBmp);
 	StretchBlt(hDC, xD, yD, wD, hD, hCDC, 0, 0, wS, hS, DSx);
 	SelectObject(hCDC, hBmpMask);
 	StretchBlt(hDC, xD, yD, wD, hD, hCDC, 0, 0, wS, hS, DSna);
@@ -109,7 +109,7 @@ void TcImage::DrawImage(const HDC hDC, const RECT* pRect) const {
    case imageIcon:
       DrawIconEx(hDC,
          pRect->left, pRect->top,
-         hImage,
+         (HICON)hImage,
          pRect->right  - pRect->left,
          pRect->bottom - pRect->top,
          0,
@@ -119,7 +119,7 @@ void TcImage::DrawImage(const HDC hDC, const RECT* pRect) const {
    case imageMetafile:
       break;
    case imageEnhMetafile:
-      PlayEnhMetaFile(hDC, hImage, pRect);  
+      PlayEnhMetaFile(hDC, (HENHMETAFILE)hImage, pRect);  
       break;
    }
 }
@@ -165,7 +165,7 @@ void TcImage::ZoomImage(POINT& sizeZoomNew) const {
    case imageBitmap:
       {
          HDC hCDC = CreateCompatibleDC(NULL);
-         HBITMAP hBmpOld = SelectObject(hCDC, hImage);
+         HGDIOBJ hBmpOld = SelectObject(hCDC, hImage);
          COLORREF transparentColor = GetPixel(hCDC, 0, 0);
          DeleteObject(SelectObject(hDCZoom, CreateCompatibleBitmap(hCDC, sizeZoom.x, sizeZoom.y)));//CopyImage(hImage, IMAGE_BITMAP, sizeZoom.x, sizeZoom.y, LR_COPYRETURNORG)));//
          SetStretchBltMode(hDCZoom, COLORONCOLOR); // for Win2K
@@ -308,7 +308,7 @@ POINT TcImage::GetSizeImage() {
       break;
    case imageIcon:
       ICONINFO iconInfo;
-      if (!GetIconInfo(hImage, &iconInfo)) break;
+      if (!GetIconInfo((HICON)hImage, &iconInfo)) break;
       result.x = iconInfo.xHotspot<<1;
       result.y = iconInfo.yHotspot<<1;
       break;
@@ -316,7 +316,7 @@ POINT TcImage::GetSizeImage() {
       break;
    case imageEnhMetafile:
       ENHMETAHEADER EnhMetaHeader;
-      GetEnhMetaFileHeader(hImage, sizeof(ENHMETAHEADER), &EnhMetaHeader);
+      GetEnhMetaFileHeader((HENHMETAFILE)hImage, sizeof(ENHMETAHEADER), &EnhMetaHeader);
       result.x = EnhMetaHeader.rclBounds.right  - EnhMetaHeader.rclBounds.left;//EnhMetaHeader.szlDevice.cx;
       result.y = EnhMetaHeader.rclBounds.bottom - EnhMetaHeader.rclBounds.top; //EnhMetaHeader.szlDevice.cy;
       break;
@@ -332,12 +332,12 @@ BOOL TcImage::DeleteHandleImage() {
       result = DeleteObject(hImage);
       break;
    case imageIcon:
-      result = DestroyIcon(hImage);
+      result = DestroyIcon((HICON)hImage);
       break;
    case imageMetafile:
       break;
    case imageEnhMetafile:
-      result = DeleteEnhMetaFile(hImage);
+      result = DeleteEnhMetaFile((HENHMETAFILE)hImage);
       break;
    case imageUnknown:
       result = FALSE;

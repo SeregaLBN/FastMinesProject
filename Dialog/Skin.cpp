@@ -490,7 +490,7 @@ void Cls_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
             CHOOSECOLOR sChooseColor;
             sChooseColor.lStructSize  = sizeof(CHOOSECOLOR);
             sChooseColor.hwndOwner    = hDlg;
-            sChooseColor.hInstance    = ghInstance;
+            sChooseColor.hInstance    = (HWND)ghInstance;
             sChooseColor.rgbResult    = *pSkinColor;
             sChooseColor.lpCustColors = custColors;
             sChooseColor.Flags        = CC_RGBINIT | CC_FULLOPEN | CC_SOLIDCOLOR;
@@ -662,7 +662,7 @@ LRESULT CALLBACK FieldWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPar
          //ReleaseDC(GetDesktopWindow(), hCDC);
 
          const HDC hCDC = CreateCompatibleDC(NULL);
-         const HBITMAP hOldBmp = SelectObject(hCDC, hBmp);
+         const HGDIOBJ hOldBmp = SelectObject(hCDC, hBmp);
          {
             HBRUSH hBrushNew;
             switch (skinName) {
@@ -675,7 +675,7 @@ LRESULT CALLBACK FieldWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPar
             default:
                hBrushNew = CreateSolidBrush(Skin.colorBk);
             }
-            const HBRUSH hBrushOld = SelectObject(hCDC, hBrushNew);
+            const HGDIOBJ hBrushOld = SelectObject(hCDC, hBrushNew);
             PatBlt(hCDC, 0,0, Rect.right,Rect.bottom, PATCOPY);
             SelectObject(hCDC, hBrushOld);
             DeleteObject(hBrushNew);
@@ -701,7 +701,7 @@ LRESULT CALLBACK FieldWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPar
                                    {(int) c   ,(int)(c+a  )},
                                    {(int)(c-h),(int)(c+a/2)},
                                    {(int)(c-h),(int)(c-a/2)}};
-               const HPEN hPenOld = SelectObject(hCDC, CreatePen(PS_SOLID, 4*Skin.Border.width, Skin.Border.shadow));
+               const HGDIOBJ hPenOld = SelectObject(hCDC, CreatePen(PS_SOLID, 4*Skin.Border.width, Skin.Border.shadow));
                MoveToEx(hCDC, p[0].x, p[0].y, NULL);
                LineTo  (hCDC, p[1].x, p[1].y);
                LineTo  (hCDC, p[2].x, p[2].y);
@@ -723,7 +723,7 @@ LRESULT CALLBACK FieldWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPar
                SetBkMode   (hCDC, TRANSPARENT);
                GetClientRect(hWnd, &Rect);
                Skin.Font.lfHeight = Rect.bottom;
-               const HFONT hFontOld = SelectObject(hCDC, CreateFontIndirect(&Skin.Font));
+               const HGDIOBJ hFontOld = SelectObject(hCDC, CreateFontIndirect(&Skin.Font));
                TCHAR str[3] = {TEXT('\0'), TEXT('\0'), TEXT('\0')};
                if (val) {
                   str[0] = nsFigure::CCaptionOpen [val][0];
@@ -747,7 +747,7 @@ LRESULT CALLBACK FieldWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPar
                SetTextColor(hCDC, RGB(0, 0, 0));
 
                GetClientRect(hWnd, &Rect);
-               HFONT hFontOld;
+               HGDIOBJ hFontOld;
                Skin.Font.lfHeight = 0;
                do {
                   Skin.Font.lfHeight++;

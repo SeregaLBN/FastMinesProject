@@ -44,7 +44,7 @@ BOOL RegClass(
     WNDPROC lpfnWndProc,
     int     cbClsExtra,
     int     cbWndExtra,
-    HANDLE  hInstance,
+    HINSTANCE hInstance,
     HICON   hIcon,
     HCURSOR hCursor,
     HBRUSH  hbrBackground, 

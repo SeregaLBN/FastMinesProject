@@ -41,10 +41,10 @@ public:
    static SET_cpTB setOpen;    // множество €чеек (ненулевых) открытых           при последнем клике
    static SET_cpTB setFlag;    // множество €чеек с флажками  сн€тых/уставленных при последнем клике
 
-   static HANDLE  hDC;
-   static HANDLE  hCDC;
-   static HANDLE  hPenBlack;
-   static HANDLE  hPenWhite;
+   static HDC     hDC;
+   static HDC     hCDC;
+   static HPEN    hPenBlack;
+   static HPEN    hPenWhite;
  //static int     w; // pen width
    static TcImage * pImageMine;
    static TcImage * pImageFlag;

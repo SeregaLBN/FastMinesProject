@@ -90,7 +90,7 @@ void TcButtonImage::Cls_OnPaint(HWND hwnd) const {
 #endif // REPLACEBKCOLORFROMFILLWINDOW
          GetSysColor(COLOR_BTNFACE)
       );
-      HBRUSH hBrushOld = SelectObject(hDC, hBrushNew);
+      HGDIOBJ hBrushOld = SelectObject(hDC, hBrushNew);
       PatBlt(hDC, 0,0, Rect.right, Rect.bottom, PATCOPY);
       /**/
       Rect.left   += 2+!!down;
@@ -103,7 +103,7 @@ void TcButtonImage::Cls_OnPaint(HWND hwnd) const {
       GetClientRect(hwnd, &Rect);
 
       HPEN hPenNew1 = CreatePen(PS_SOLID, 2, down ? 0x00FFFFFF : 0);
-      HPEN hPenOld = SelectObject(hDC, hPenNew1);
+      HGDIOBJ hPenOld = SelectObject(hDC, hPenNew1);
       MoveToEx(hDC, Rect.right-1, Rect.top   +1, NULL);
       LineTo  (hDC, Rect.right-1, Rect.bottom-1);
       LineTo  (hDC, Rect.left +1, Rect.bottom-1);

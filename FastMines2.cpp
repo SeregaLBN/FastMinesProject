@@ -250,7 +250,7 @@ int WINAPI _tWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszC
       hEventSetCursorEnd   = CreateEvent(NULL, FALSE, FALSE, NULL);
    }
    {
-      HANDLE hTreadParent;// = GetCurrentThread();
+      HANDLE hTreadParent = GetCurrentThread();
       BOOL res = 
       DuplicateHandle(GetCurrentProcess(),
                       GetCurrentThread(),
@@ -545,7 +545,11 @@ void Cls_ProjectOnTimer(HWND hwnd, UINT id) {
       if (gpMosaic->GetAssistant().autoStart) {
          if (!gpMosaic->GetGameRun()) gpMosaic->GameNew();
       } else {
-         if (!gpMosaic->GetGameRun() && !gpMosaic->IsFieldEnabled()) return;
+         if (!gpMosaic->GetGameRun()) {
+            if (!gpMosaic->IsFieldEnabled()) {
+               return;
+            }
+         }
       }
       if (gpMosaic->GetPause()) {
          if (gpMosaic->GetAssistant().ignorePause)
@@ -1032,7 +1036,11 @@ inline void Robot_Job() {
          if (gRobot.isSequentialMove()) {       // выполнять ли перебор флажков?
             gRobot.SequentialMove(click);       // да, выполнять - начать перебор флажков
          } else {
-            if (gpMosaic->GetGameRun() && gpMosaic->GetAssistant().stopJob && bOpenCellRobot) {
+            if (gpMosaic->GetGameRun() &&
+                gpMosaic->GetAssistant().stopJob &&
+                bOpenCellRobot
+               )
+            {
                IMAGE_JOB_RESET;
                return; // останавливать когда нет однозначного следующего хода
             }

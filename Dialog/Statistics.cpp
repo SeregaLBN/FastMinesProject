@@ -307,26 +307,26 @@ BOOL Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam) {
    SETNEWWNDPROC(hwnd, ID_DIALOG_STATISTICSorCHAMPIONS_BUTTON_CRAZY       );
 #endif // REPLACEBKCOLORFROMFILLWINDOW
 
-   hIconField[figureTriangle1  ] = LoadImage(ghInstance, TEXT("icon_FieldTriangle1"  ), IMAGE_ICON, 0,0,0);
-   hIconField[figureTriangle2  ] = LoadImage(ghInstance, TEXT("icon_FieldTriangle2"  ), IMAGE_ICON, 0,0,0);
-   hIconField[figureTriangle3  ] = LoadImage(ghInstance, TEXT("icon_FieldTriangle3"  ), IMAGE_ICON, 0,0,0);
-   hIconField[figureTriangle4  ] = LoadImage(ghInstance, TEXT("icon_FieldTriangle4"  ), IMAGE_ICON, 0,0,0);
-   hIconField[figureSquare1    ] = LoadImage(ghInstance, TEXT("icon_FieldSquare1"    ), IMAGE_ICON, 0,0,0);
-   hIconField[figureSquare2    ] = LoadImage(ghInstance, TEXT("icon_FieldSquare2"    ), IMAGE_ICON, 0,0,0);
-   hIconField[figureParquet1   ] = LoadImage(ghInstance, TEXT("icon_FieldParquet1"   ), IMAGE_ICON, 0,0,0);
-   hIconField[figureParquet2   ] = LoadImage(ghInstance, TEXT("icon_FieldParquet2"   ), IMAGE_ICON, 0,0,0);
-   hIconField[figureTrapezoid1 ] = LoadImage(ghInstance, TEXT("icon_FieldTrapezoid1" ), IMAGE_ICON, 0,0,0);
-   hIconField[figureTrapezoid2 ] = LoadImage(ghInstance, TEXT("icon_FieldTrapezoid2" ), IMAGE_ICON, 0,0,0);
-   hIconField[figureTrapezoid3 ] = LoadImage(ghInstance, TEXT("icon_FieldTrapezoid3" ), IMAGE_ICON, 0,0,0);
-   hIconField[figureRhombus    ] = LoadImage(ghInstance, TEXT("icon_FieldRhombus"    ), IMAGE_ICON, 0,0,0);
-   hIconField[figureQuadrangle1] = LoadImage(ghInstance, TEXT("icon_FieldQuadrangle1"), IMAGE_ICON, 0,0,0);
-   hIconField[figurePentagon   ] = LoadImage(ghInstance, TEXT("icon_FieldPentagon"   ), IMAGE_ICON, 0,0,0);
-   hIconField[figurePentagonT5 ] = LoadImage(ghInstance, TEXT("icon_FieldPentagonT5" ), IMAGE_ICON, 0,0,0);
-   hIconField[figurePentagonT10] = LoadImage(ghInstance, TEXT("icon_FieldPentagonT10"), IMAGE_ICON, 0,0,0);
-   hIconField[figureHexagon    ] = LoadImage(ghInstance, TEXT("icon_FieldHexagon"    ), IMAGE_ICON, 0,0,0);
-   hIconField[figureTrSq       ] = LoadImage(ghInstance, TEXT("icon_FieldTrSq"       ), IMAGE_ICON, 0,0,0);
-   hIconField[figureTrSq2      ] = LoadImage(ghInstance, TEXT("icon_FieldTrSq2"      ), IMAGE_ICON, 0,0,0);
-   hIconField[figureSqTrHex    ] = LoadImage(ghInstance, TEXT("icon_FieldSqTrHex"    ), IMAGE_ICON, 0,0,0);
+   hIconField[figureTriangle1  ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTriangle1"  ), IMAGE_ICON, 0,0,0);
+   hIconField[figureTriangle2  ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTriangle2"  ), IMAGE_ICON, 0,0,0);
+   hIconField[figureTriangle3  ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTriangle3"  ), IMAGE_ICON, 0,0,0);
+   hIconField[figureTriangle4  ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTriangle4"  ), IMAGE_ICON, 0,0,0);
+   hIconField[figureSquare1    ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldSquare1"    ), IMAGE_ICON, 0,0,0);
+   hIconField[figureSquare2    ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldSquare2"    ), IMAGE_ICON, 0,0,0);
+   hIconField[figureParquet1   ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldParquet1"   ), IMAGE_ICON, 0,0,0);
+   hIconField[figureParquet2   ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldParquet2"   ), IMAGE_ICON, 0,0,0);
+   hIconField[figureTrapezoid1 ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTrapezoid1" ), IMAGE_ICON, 0,0,0);
+   hIconField[figureTrapezoid2 ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTrapezoid2" ), IMAGE_ICON, 0,0,0);
+   hIconField[figureTrapezoid3 ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTrapezoid3" ), IMAGE_ICON, 0,0,0);
+   hIconField[figureRhombus    ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldRhombus"    ), IMAGE_ICON, 0,0,0);
+   hIconField[figureQuadrangle1] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldQuadrangle1"), IMAGE_ICON, 0,0,0);
+   hIconField[figurePentagon   ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldPentagon"   ), IMAGE_ICON, 0,0,0);
+   hIconField[figurePentagonT5 ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldPentagonT5" ), IMAGE_ICON, 0,0,0);
+   hIconField[figurePentagonT10] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldPentagonT10"), IMAGE_ICON, 0,0,0);
+   hIconField[figureHexagon    ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldHexagon"    ), IMAGE_ICON, 0,0,0);
+   hIconField[figureTrSq       ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTrSq"       ), IMAGE_ICON, 0,0,0);
+   hIconField[figureTrSq2      ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldTrSq2"      ), IMAGE_ICON, 0,0,0);
+   hIconField[figureSqTrHex    ] = (HICON)LoadImage(ghInstance, TEXT("icon_FieldSqTrHex"    ), IMAGE_ICON, 0,0,0);
 
    hImageList = ImageList_Create(48,32, ILC_MASK, figureNil, 1);
    for (int i=0; i<figureNil; i++)

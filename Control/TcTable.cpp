@@ -499,14 +499,14 @@ void TcTable::SetVisibleCell(const int indexCol, const int indexRow) { // сделат
 #define DrawCellField { \
    if (cellPoint == currentCell) { \
       if (select) { \
-         const HBRUSH hBrushNew = CreateSolidBrush(GetSysColor(COLOR_HIGHLIGHT)); \
-         const HBRUSH hBrushOld = SelectObject(hCDC, hBrushNew); \
+         const HBRUSH  hBrushNew = CreateSolidBrush(GetSysColor(COLOR_HIGHLIGHT)); \
+         const HGDIOBJ hBrushOld = SelectObject(hCDC, hBrushNew); \
          Rectangle(hCDC, cellRect.left, cellRect.top, cellRect.right+1, cellRect.bottom+1); \
          SelectObject(hCDC, hBrushOld); \
          DeleteObject(hBrushNew); \
       } else { \
-         const HPEN hPenNew = CreatePen(PS_DOT, 1, IFTOALL GetSysColor(COLOR_BTNFACE)); \
-         const HPEN hPenOld = SelectObject(hCDC, hPenNew); \
+         const HPEN    hPenNew = CreatePen(PS_DOT, 1, IFTOALL GetSysColor(COLOR_BTNFACE)); \
+         const HGDIOBJ hPenOld = SelectObject(hCDC, hPenNew); \
          MoveToEx(hCDC, cellRect.left +1, cellRect.top   +1, NULL); \
          LineTo  (hCDC, cellRect.left +1, cellRect.bottom-1); \
          LineTo  (hCDC, cellRect.right-1, cellRect.bottom-1); \
@@ -524,7 +524,7 @@ void TcTable::SetVisibleCell(const int indexCol, const int indexRow) { // сделат
    { \
       const HPEN hPenB = CreatePen(PS_SOLID, 1, 0); \
       const HPEN hPenW = CreatePen(PS_SOLID, 1, 0xFFFFFF); \
-      const HBRUSH hPenOld = SelectObject(hCDC, hPenW); \
+      const HGDIOBJ hPenOld = SelectObject(hCDC, hPenW); \
       MoveToEx(hCDC, cellRect.left +1, cellRect.bottom-1, NULL); \
       LineTo  (hCDC, cellRect.left +1, cellRect.top   +1); \
       LineTo  (hCDC, cellRect.right-1, cellRect.top   +1); \
@@ -556,19 +556,19 @@ void TcTable::Cls_OnPaint(HWND hwnd) const {
    const HDC hCDC = CreateCompatibleDC(hODC);
    RECT clientRect; GetClientRect(hwnd, &clientRect);
    const HBITMAP hBmpNew = CreateCompatibleBitmap(hODC, clientRect.right, clientRect.bottom);
-   const HBITMAP hBmpOld = SelectObject(hCDC, hBmpNew);
+   const HGDIOBJ hBmpOld = SelectObject(hCDC, hBmpNew);
    const x = GetScrollPos(hwnd, SB_HORZ);
    const y = GetScrollPos(hwnd, SB_VERT);
    { // фон
       const HBRUSH hBrushNew = CreateSolidBrush(GetSysColor(COLOR_WINDOW));
-      const HBRUSH hBrushOld = SelectObject(hCDC, hBrushNew);
+      const HGDIOBJ hBrushOld = SelectObject(hCDC, hBrushNew);
       PatBlt(hCDC, 0,0, clientRect.right, clientRect.bottom, PATCOPY);
       SelectObject(hCDC, hBrushOld);
       DeleteObject(hBrushNew);
    }
    { // вывод данных на ...
       const HPEN hPenNew = CreatePen(PS_SOLID, 1, IFTOALL GetSysColor(COLOR_BTNFACE));
-      const HPEN hPenOld = SelectObject(hCDC, hPenNew);
+      const HGDIOBJ hPenOld = SelectObject(hCDC, hPenNew);
       const int oldBkMode = SetBkMode(hCDC, TRANSPARENT); // вывод текста на прозрачном фоне
       const LOGFONT Font = {8,0,0,0,
                             FW_NORMAL,//FW_BOLD,//
@@ -580,7 +580,7 @@ void TcTable::Cls_OnPaint(HWND hwnd) const {
                             DEFAULT_PITCH | FF_DONTCARE,
                             TEXT("MS Sans Serif")};// TEXT("Times New Roman")
       const HFONT hFont = CreateFontIndirect(&Font);
-      const HFONT hFontOld = SelectObject(hCDC, hFont);
+      const HGDIOBJ hFontOld = SelectObject(hCDC, hFont);
       { // ... на нестaтичном поле
          for (int i=staticCol; i<colW.size(); i++)
             for (int j=staticRow; j<rowH.size(); j++) {
@@ -590,8 +590,8 @@ void TcTable::Cls_OnPaint(HWND hwnd) const {
          }
       }
       { // ... на стaтичном поле
-         const HBRUSH hBrushNew = CreateSolidBrush(IFTOALL GetSysColor(COLOR_BTNFACE));
-         const HBRUSH hBrushOld = SelectObject(hCDC, hBrushNew);
+         const HBRUSH  hBrushNew = CreateSolidBrush(IFTOALL GetSysColor(COLOR_BTNFACE));
+         const HGDIOBJ hBrushOld = SelectObject(hCDC, hBrushNew);
          { // верхний заголовок
             for (int i=staticCol; i<colW.size(); i++)
                for (int j=0; j<min(staticRow, rowH.size()); j++) {

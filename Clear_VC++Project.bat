@@ -5,6 +5,6 @@ del *.ncb
 del *.opt
 del *.plg
 rem del *.dsw
-del *.tmp
+del resource.h
 
 cls

@@ -106,9 +106,9 @@ void FillWnd(HWND hwnd, COLORREF bkColor, bool client, RECT fillRect) {
    HDC hCDC = CreateCompatibleDC(hDC);
    HBITMAP hBmp  = CreateCompatibleBitmap(hDC, size.x, size.y);
    HBITMAP hBmp2 = CreateCompatibleBitmap(hDC, size.x, size.y);
-   HBITMAP hBmpOld = SelectObject(hCDC, hBmp);
+   HGDIOBJ hBmpOld = SelectObject(hCDC, hBmp);
    HBRUSH hBrushNew = CreateSolidBrush(bkColor);
-   HBRUSH hBrushOld = SelectObject(hCDC, hBrushNew);
+   HGDIOBJ hBrushOld = SelectObject(hCDC, hBrushNew);
 
    BitBlt(hCDC, 0,0, size.x, size.y,
           hDC , offset.x,offset.y, SRCCOPY);
@@ -131,7 +131,7 @@ void FillWnd(HWND hwnd, COLORREF bkColor, bool client, RECT fillRect) {
 // WM_ERASEBKGND
 BOOL Cls_OnEraseBkgnd(HWND hwnd, HDC hdc, COLORREF colorBk) {
    HBRUSH hBrushNew = CreateSolidBrush(colorBk);
-   HBRUSH hBrushOld = SelectObject(hdc, hBrushNew);
+   HGDIOBJ hBrushOld = SelectObject(hdc, hBrushNew);
    RECT Rect;
    GetClientRect(hwnd, &Rect);
    PatBlt(hdc, 0,0, Rect.right, Rect.bottom, PATCOPY);

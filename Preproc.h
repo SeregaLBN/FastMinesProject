@@ -7,6 +7,11 @@
 #ifndef FILE_PREPROCESSOR
 #define FILE_PREPROCESSOR
 
+#pragma warning(disable:4786) // identifier was truncated to '255' characters in the debug information
+#pragma warning(disable:4244) // conversion from 'double' to 'float', possible loss of data
+#pragma warning(disable:4018) // signed/unsigned mismatch
+#pragma warning(disable:4005) // macro redefinition
+
 //#define UNICODE
 #ifdef UNICODE
    #define _UNICODE

@@ -352,7 +352,7 @@ void TcRobot::ClickEnd() {
             //nsInfo::AddValue(TEXT("setForFlag del cell: y = "), (*p)->GetCoord().y, 10);
             //nsInfo::AddString(TEXT("------------------"));
          #endif // USE_INFO_DIALOG
-            setForFlag.erase(p);
+            setForFlag.erase(*p);
             isBreak = false;
             break; // loop for
          }
@@ -383,7 +383,7 @@ void TcRobot::ClickEnd() {
             //nsInfo::AddValue(TEXT("setForOpen del cell: y = "), (*p)->GetCoord().y, 10);
             //nsInfo::AddString(TEXT("------------------"));
          #endif // USE_INFO_DIALOG
-            setForOpen.erase(p);
+            setForOpen.erase(*p);
             isBreak = false;
             break; // loop for
          }
@@ -415,7 +415,7 @@ void TcRobot::ClickEnd() {
             //nsInfo::AddValue(TEXT("setForAnalyse del cell: y = "), (*p)->GetCoord().y, 10);
             //nsInfo::AddString(TEXT("------------------"));
          #endif // USE_INFO_DIALOG
-            setForAnalyse.erase(p);
+            setForAnalyse.erase(*p);
             isBreak = false;
             break; // loop for
          }
@@ -643,5 +643,5 @@ inline void Delete(SET_cpTB& setCloseNoFlag, const TB* cell4Del) {
    if (setCloseNoFlag.empty()) return;
    SET_cpTB::const_iterator I = setCloseNoFlag.find(cell4Del);
    if (I == setCloseNoFlag.end()) return;
-   setCloseNoFlag.erase(I);
+   setCloseNoFlag.erase(*I);
 }

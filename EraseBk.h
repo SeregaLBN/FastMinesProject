@@ -48,7 +48,7 @@ LRESULT CALLBACK newWndProc_##name(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
          return nsEraseBk::Cls_OnEraseBkgnd(hwnd, (HDC)wParam, Skin.colorBk);  \
       }  \
    }*/  \
-   return CallWindowProc((FARPROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \
+   return CallWindowProc(defWndProc_##name, hwnd, msg, wParam, lParam);   \
 }
 
 #define WNDPROC_STATIC(name, Skin)   \
@@ -56,12 +56,12 @@ WNDPROC defWndProc_##name;  \
 LRESULT CALLBACK newWndProc_##name(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {  \
    switch (msg) { \
    case WM_PAINT: \
-      CallWindowProc((FARPROC)defWndProc_##name, hwnd, msg, wParam, lParam); \
+      CallWindowProc(defWndProc_##name, hwnd, msg, wParam, lParam); \
       if (Skin.toAll)  \
          nsEraseBk::FillWnd(hwnd, Skin.colorBk); \
       return 0;   \
    }  \
-   return CallWindowProc((FARPROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \
+   return CallWindowProc(defWndProc_##name, hwnd, msg, wParam, lParam);   \
 }
 
 #define WNDPROC_BUTTON(name, hDlg, Skin)   \
@@ -69,7 +69,7 @@ WNDPROC defWndProc_##name; \
 LRESULT CALLBACK newWndProc_##name(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {   \
    switch (msg) { \
    case WM_MOUSEMOVE:   \
-      CallWindowProc((FARPROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \
+      CallWindowProc(defWndProc_##name, hwnd, msg, wParam, lParam);   \
       {  if ((Skin.toAll) && (wParam & MK_LBUTTON)) {  \
             POINT cursorPos = {LOWORD(lParam), HIWORD(lParam)};  \
             GetCursorPos(&cursorPos);  \
@@ -99,12 +99,12 @@ LRESULT CALLBACK newWndProc_##name(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
    case WM_LBUTTONDOWN: \
    case WM_LBUTTONUP:   \
    case BM_SETCHECK: \
-      CallWindowProc((FARPROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \
+      CallWindowProc(defWndProc_##name, hwnd, msg, wParam, lParam);   \
       if (Skin.toAll)  \
          nsEraseBk::FillWnd(hwnd, Skin.colorBk); \
       return 0;   \
    }  \
-   return CallWindowProc((FARPROC)defWndProc_##name, hwnd, msg, wParam, lParam);  \
+   return CallWindowProc(defWndProc_##name, hwnd, msg, wParam, lParam);  \
 }
 
 #define SETNEWWNDPROC(hwnd, name) defWndProc_##name = (WNDPROC)SetWindowLong(GetDlgItem(hwnd, name), GWL_WNDPROC, (LONG)newWndProc_##name)
