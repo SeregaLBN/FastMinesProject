@@ -88,8 +88,21 @@
 #define FORWARD_WM_MOSAIC_PAUSE(hwnd, fn) \
     (void)(fn)((hwnd), WM_MOSAIC_PAUSE, 0L, 0L)
 
-/* void Cls_OnMouseWheel(HWND hwnd, WORD fwKeys, short zDelta, short xPos, short yPos) */
+
+#ifndef WM_MOUSEWHEEL
+   #define WM_MOUSEWHEEL 0x020A
+#endif
+#ifdef HANDLE_WM_MOUSEWHEEL   
+   // В инклюдах 'чистой' VC++6 макроса HANDLE_WM_MOUSEWHEEL и FORWARD_WM_MOUSEWHEEL нет.
+   // Он появился в <WindowsX.h>, в какой-то из MS SDK...
+   // Да и то макрос FORWARD_WM_MOUSEWHEEL определён с ошибкой.
+   // Поэтому пользуюсь своими.
+   #undef HANDLE_WM_MOUSEWHEEL
+   #undef FORWARD_WM_MOUSEWHEEL
+#endif // HANDLE_WM_MOUSEWHEEL
+
+/* void Cls_OnMouseWheel(HWND hwnd, int xPos, int yPos, int zDelta, WORD fwKeys) */
 #define HANDLE_WM_MOUSEWHEEL(hwnd, wParam, lParam, fn) \
-    ((fn)((hwnd), LOWORD(wParam), (short)HIWORD(wParam), (short)LOWORD(lParam), (short)HIWORD(lParam)), 0L)
-#define FORWARD_WM_MOUSEWHEEL(hwnd, fwKeys, zDelta, xPos, yPos, fn) \
+    ((fn)((hwnd), (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam), (int)(short)HIWORD(wParam), (UINT)(short)LOWORD(wParam)), 0L)
+#define FORWARD_WM_MOUSEWHEEL(hwnd, xPos, yPos, zDelta, fwKeys, fn) \
     (void)(fn)((hwnd), WM_MOUSEWHEEL, MAKEWPARAM((fwKeys), (zDelta)), MAKELPARAM((xPos), (yPos)))

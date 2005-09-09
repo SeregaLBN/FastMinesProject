@@ -11,7 +11,7 @@
 #include <CommCtrl.h>
 #include "PlayerName.h"
 #include "../ID_resource.h"
-#include "../CommonLib.h"
+#include "CommonLib.h"
 #include "../EraseBk.h"
 #include "../Control/Table.h"
 #include "../Lang.h"
@@ -253,7 +253,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
    case WM_NCACTIVATE:
       break;
    default:
-      g_Logger.PutMsg(CLogger::LL_DEBUG, TEXT(""), msg);
+      g_Log.PutMsg(CLogger::LL_DEBUG, TEXT(""), msg);
    }
 #endif // _DEBUG
 /**/

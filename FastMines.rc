@@ -90,7 +90,7 @@ FastMinesMenu MENU {
       MENUITEM "Minimize to tray"  , ID_MENU_OPTIONS_TO_TRAY
    }
    POPUP "&Help" {
-      MENUITEM "&Campions  \tF3", ID_MENU_HELP_CAMPIONS
+      MENUITEM "&Champions\tF3" , ID_MENU_HELP_CHAMPIONS
       MENUITEM "&Statistics\tF4", ID_MENU_HELP_STATISTICS
       MENUITEM SEPARATOR
       POPUP "&Assistant" {
@@ -132,7 +132,7 @@ FastMinesAccelerators ACCELERATORS {
    0xC0  , ID_MENU_GAME_SELECTPLAYER     , VIRTKEY, NOINVERT // key "`" or "~"
    VK_F1 , ID_MENU_HELP_ABOUT            , VIRTKEY, NOINVERT
    VK_F2 , ID_MENU_GAME_NEW_GAME         , VIRTKEY, NOINVERT
-   VK_F3 , ID_MENU_HELP_CAMPIONS         , VIRTKEY, NOINVERT
+   VK_F3 , ID_MENU_HELP_CHAMPIONS        , VIRTKEY, NOINVERT
    VK_F4 , ID_MENU_HELP_STATISTICS       , VIRTKEY, NOINVERT
    VK_F5 , ID_MENU_HELP_ASSISTANT_OPTIONS, VIRTKEY, NOINVERT
    VK_F7 , ID_MENU_OPTIONS_SKIN_LOAD     , VIRTKEY, NOINVERT
@@ -650,18 +650,16 @@ BLOCK "StringFileInfo"
       VALUE "FileVersion"        , ID_VERSIONINFO_VERSION2
       VALUE "ProductVersion"     , ID_VERSIONINFO_VERSION5
       VALUE "FileDescription"    , "The ultimate offspring of good old Minesweeper!"
-      VALUE "LegalCopyright"     , "Copyright © KSerg 2004"
+      VALUE "LegalCopyright"     , "Copyright © KSerg 2003-2005"
       // прочие сведенья
       VALUE "InternalName"       , "FastMines"
       VALUE "OriginalFilename"   , "FastMines2.exe"
       VALUE "Author"             , "Serg Krivulya (KSerg)"
-      VALUE "Creation"           , "MVC++ 5.0, WinAPI"
+      VALUE "Creation"           , "MVC++ 6.0, WinAPI"
       VALUE "Comments"           , "ShareWare"
-      VALUE "e-mail"             , "Serg_Krivulja@UkrPost.net"
       VALUE "e-mail"             , "Sergey_Krivulya@UkrPost.net"
       VALUE "ICQ UIN"            , "72099167"
       VALUE "netmail"            , "2:463/444:271"
-    //VALUE "Programm site"      , "http://fastmines.softdepia.com"
       VALUE "Programm site (rus)", "http://kserg77.chat.ru"
    }
 }

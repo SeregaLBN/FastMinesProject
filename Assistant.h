@@ -40,9 +40,23 @@ struct CClickData {
 };
 
 class CAssistant {
+public:
+   struct COptions{
+      bool m_bStopJob; // останавливать когда нет однозначного следующего хода ?
+      COptions() : m_bStopJob(false) {}
+   };
 private:
+   struct CSync {
+      HANDLE m_hEventDestroyOwner;
+      HANDLE m_hEventJob;
+      HANDLE m_hThread;
+      CSync() : m_hEventDestroyOwner(NULL), m_hEventJob(NULL), m_hThread(NULL) {}
+     ~CSync() { ::CloseHandle(m_hEventDestroyOwner); m_hEventDestroyOwner = NULL;
+                ::CloseHandle(m_hEventJob); m_hEventJob = NULL; }
+   } m_Sync;
    typedef std::set<int> SET_Int;
 
+   CAssistant::COptions m_Options;
    CMosaic &m_Mosaic;
    // ни в одном из этих множеств нет одинаковых данных
    // множества открытых ячеек с ненулевым весом
@@ -71,7 +85,7 @@ public:
    void InitForNewGame(); // переинициализация данных для новой игры
    void ClickEnd(const nsCell::CClickReportContext &ClickReportContext);
 
-   CAssistant(CMosaic& mosaic): m_Mosaic(mosaic), m_bSequentialMove(false) {}
+   CAssistant(CMosaic& mosaic, HANDLE hEventDestroyOwner);
   ~CAssistant() {DeleteTableSM();}
    //void Print();
 
@@ -80,7 +94,10 @@ public:
    JOB_RESULT SequentialMoveCanBegin();
    void       SequentialMove(CClickData&);
 
-   void Assistant_Job();
+   void Work();
+
+   static DWORD WINAPI ThreadStatic(PVOID pvParam) { return ((CAssistant*)pvParam)->Thread(); }
+   DWORD Thread();
 };
 
 }; // namespace nsMosaic

@@ -2,13 +2,13 @@
 // File name: CommonLib.h
 // Author: Sergey Krivulya (Ceргей  pивул€) - KSerg
 // e-mail: Sergey_Krivulya@UkrPost.Net
-// Date: 12 11 2004
+// Date: 2005 06 26
 //
 // Description: ‘ункции общего назначени€.
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __FILE__LIB__
-#define __FILE__LIB__
+#ifndef __FILE__KSERG_COMMON_LIB__
+#define __FILE__KSERG_COMMON_LIB__
 
 #if _MSC_VER > 1000
    #pragma once
@@ -19,6 +19,7 @@
    #include "CStringKS.h"
 #endif
 #include <WindowsX.h>
+#include <ShlObj.h>
 
 #define chDIMOF(Array) (sizeof(Array) / sizeof(Array[0])) // количество элементов в массиве
 
@@ -209,6 +210,8 @@ RECTEX GetClientRect(HWND hWnd);
 SIZEEX GetClientSize(HWND hWnd);
 
 POINTEX GetCursorPos();
+void ShowCursor();
+void HideCursor();
 
 CString GetClassName     (HWND);
 WNDPROC GetWindowProc    (HWND);
@@ -224,8 +227,19 @@ BOOL SetMenuText(HMENU hMenu, UINT uItem, BOOL bByPosition, LPCTSTR szNewText);
 
 SIZEEX GetScreenSize();
 
+CString SelectFile(BOOL bOpenDialog, HWND hWndOwner, LPCTSTR szDefSelectedFile = NULL, LPCTSTR szDefExt = NULL, LPCTSTR szFilter = _T("All files (*.*)\0*.*\0\0"), LPCTSTR szTitle = NULL, LPCTSTR szInitialDir = NULL, DWORD dwFlags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_LONGNAMES | OFN_PATHMUSTEXIST);
+CString SelectFolder(
+   HWND hwndOwner  = NULL,                      // родительское окно дл€ диалога
+   LPCTSTR szTitle = _T("Open folder"),      // текст на окне
+   DWORD dwFlags   = BIF_BROWSEFORCOMPUTER | BIF_DONTGOBELOWDOMAIN | BIF_EDITBOX,
+   int nFolder     = /** /CSIDL_DRIVES/**/-1/**/); // если -1 - то вызов стандартного диалога выбора папки
+                                             // иначе спецпапка - see CSIDL_... (func SHGetSpecialFolderLocation)
+
+
+DWORD   GetFileSize(LPCTSTR szFileName); // размер файла
 CString GetFileDir (LPCTSTR szPathAlongWithFileName); // возвращает только путь к файлу без имени файла (путь с наклонной чертой в конце)
 CString GetFileName(LPCTSTR szPathAlongWithFileName); // возвращает только им€ файла без пути
+CString GetFileVersion(LPCTSTR szFilename);
 BOOL PathExist(LPCTSTR szPath);
 BOOL FileExist(LPCTSTR szPath);
 CString GetMenuString(HMENU hMenu, UINT uIDItem, UINT uFlag);
@@ -236,10 +250,12 @@ CString GetWindowText(HWND hWnd);
 CString GetComputerName();
 CString GetUserName();
 
+CString GetCurrentDirectory();
 CString GetSystemDirectory();
 CString GetWindowsDirectory();
 CString GetTempPath();
 
+SIZEEX SizeIcon(HICON hIcon);
 SIZEEX SizeBitmap(HWND hWnd, BOOL bClientRect = FALSE); // размер битмапы у окна
 SIZEEX SizeBitmap(HDC hCDC); // only for compatible device context
 SIZEEX SizeBitmap(HBITMAP hBmp); // hBmp не должен быть св€зан с контекстом устройства
@@ -253,24 +269,92 @@ HBITMAP CreateMask(HBITMAP hBmp,
 int rand(int maxDiapason); // генерирует случайное число от 0 до maxDiapason, ¬ Ћё„јя верхнюю границу
 
 CString MemCopyAsString(LPCVOID pData, size_t iSize, TCHAR chSeparatorEOL = TEXT('\n'));
-CString MemCopyAsHex   (LPCVOID pData, size_t iSize, BOOL bUsePrefix = TRUE);
+CString MemCopyAsHex   (LPCVOID pData, size_t iSize, BOOL bUsePrefix = FALSE, LPCTSTR szSeparator = NULL);
 
 void BeepSpeaker(DWORD dwFreq = 500, DWORD dwDuration = 0x25);
 
 CString Format(LPCTSTR szFormat, ...);
+#ifndef _UNICODE
+   CString AnsiToOem(LPCTSTR);
+   CString OemToAnsi(LPCTSTR);
+#endif // _UNICODE
 
 class COSVersion {
 private:
-   static OSVERSIONINFO m_vi;
+   OSVERSIONINFO m_vi;
 public:
-   static bool IsWinXP();
-   static bool IsWin2000();
-   static bool IsWinNT();
-   static bool IsWin9598Me();
+   COSVersion() {
+      m_vi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+      BOOL bRes = ::GetVersionEx(&m_vi);
+      if (!bRes) memset(&m_vi,0,sizeof(OSVERSIONINFO));
+   }
+   bool IsWinXP()       const {return ((m_vi.dwPlatformId == VER_PLATFORM_WIN32_NT) && (m_vi.dwMajorVersion == 5) && (m_vi.dwMinorVersion == 1));}
+   bool IsWin2000()     const {return ((m_vi.dwPlatformId == VER_PLATFORM_WIN32_NT) && (m_vi.dwMajorVersion == 5) && (m_vi.dwMinorVersion == 0));}
+   bool IsWinNT()       const {return ((m_vi.dwPlatformId == VER_PLATFORM_WIN32_NT) && ((m_vi.dwMajorVersion == 4) || (m_vi.dwMajorVersion == 3))/* && (m_vi.dwMinorVersion == 0)*/);}
+   bool IsWin9598Me()   const {return ((m_vi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) && (m_vi.dwMajorVersion == 4)/* && (m_vi.dwMinorVersion == 0)*/);}
 };
 
 SYSTEMTIME GetSystemTime();
+FILETIME   GetSystemTimeAsFileTime();
 SYSTEMTIME FileTimeToSystemTime(const FILETIME   &FileTime);
 FILETIME   SystemTimeToFileTime(const SYSTEMTIME &SysTime);
 
-#endif // __FILE__LIB__
+BOOL BitBlt    (HDC, const RECT&, HDC, const SIZE&, DWORD);
+BOOL BitBlt    (HDC, const RECT&, HDC, /* ={0,0} */ DWORD);
+BOOL BitBlt    (HDC, const SIZE&, HDC, const SIZE&, DWORD);
+BOOL BitBlt    (HDC, const SIZE&, HDC, /* ={0,0} */ DWORD);
+BOOL StretchBlt(HDC, const RECT&, HDC, const RECT&, DWORD);
+BOOL StretchBlt(HDC, const RECT&, HDC, const SIZE&, DWORD);
+BOOL StretchBlt(HDC, const SIZE&, HDC, const SIZE&, DWORD);
+
+class CRegistry {
+public:
+   // read methods
+   static CString GetString(IN HKEY hKey, IN LPCTSTR szParameter                      , OUT PDWORD pdwErrCode = NULL);
+   static DWORD   GetDWord (IN HKEY hKey, IN LPCTSTR szParameter                      , OUT PDWORD pdwErrCode = NULL);
+   // write methods
+   static DWORD   SetString(IN HKEY hKey, IN LPCTSTR szParameter, IN LPCTSTR szValue); // return error code
+   static DWORD   SetDWord (IN HKEY hKey, IN LPCTSTR szParameter, IN DWORD   dwValue); // return error code
+
+   // read methods
+   static CString GetString(IN LPCTSTR szKeyName                                      , OUT PDWORD pdwErrCode = NULL); // example - "HKEY_CURRENT_USER\\SOFTWARE\\strParam"
+   static DWORD   GetDWord (IN LPCTSTR szKeyName                                      , OUT PDWORD pdwErrCode = NULL); // example - "HKEY_CURRENT_USER\\SOFTWARE\\dwParam"
+   // write methods
+   static DWORD   SetString(IN LPCTSTR szKeyName, IN LPCTSTR szValue                ); // example - "HKEY_CURRENT_USER\\SOFTWARE\\strParam", "value"     , return error code
+   static DWORD   SetDWord (IN LPCTSTR szKeyName, IN DWORD   dwValue                ); // example - "HKEY_CURRENT_USER\\SOFTWARE\\dwParam", 123          , return error code
+
+   // find methods
+   static CString GetSubKeyName(IN HKEY hKey        , IN int iIndex                   , OUT PDWORD pdwErrCode = NULL);
+   static CString GetSubKeyName(IN LPCTSTR szKeyName, IN int iIndex                   , OUT PDWORD pdwErrCode = NULL); // example - "HKEY_CURRENT_USER\\SOFTWARE", 1  or  "HKEY_CURRENT_USER\\SOFTWARE\\", 1
+   static CString GetValueName (IN HKEY hKey        , IN int iIndex, OUT DWORD &dwType, OUT PDWORD pdwErrCode = NULL);
+   static CString GetValueName (IN LPCTSTR szKeyName, IN int iIndex, OUT DWORD &dwType, OUT PDWORD pdwErrCode = NULL); // example - "HKEY_CURRENT_USER\\SOFTWARE", 1  or  "HKEY_CURRENT_USER\\SOFTWARE\\", 1
+};
+
+CString MIMEType2FileType(LPCTSTR szMIMEType);
+CString FileType2MIMEType(LPCTSTR szFileType);
+
+CString Replace(IN const CString &str, IN LPCTSTR szOld, IN LPCTSTR szNew);
+CString Replace(IN const CString &str, IN TCHAR    cOld, IN TCHAR    cNew);
+
+CString GetIPAdress();
+CString GetHostName();
+
+LPVOID GetResource( // возвращаю указатель на данные ресурса
+   IN HINSTANCE hInstance,
+   IN LPCTSTR szResourceName,
+   IN LPCTSTR szResourceType,
+   OUT DWORD &dwSize,
+   OUT PDWORD pdwErrCode = NULL
+);
+BOOL SaveResourceAsFile( // читаю из ресурсов и сохран€ю в файл если его ещЄ нет
+   IN HINSTANCE hInstance,
+   IN LPCTSTR szFileName,
+   IN LPCTSTR szResourceName,
+   IN LPCTSTR szResourceType,
+   OUT PDWORD pdwErrCode = NULL
+);
+
+CString GUID2String(IN REFGUID guid);
+BOOL    String2GUID(IN LPCTSTR szGUID, OUT GUID &guid); // example - {00000000-0000-0000-C000-000000000046} to IID_IUnknown
+
+#endif // __FILE__KSERG_COMMON_LIB__

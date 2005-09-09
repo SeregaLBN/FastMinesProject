@@ -8,7 +8,7 @@
 
 #include "StdAfx.h"
 #include "TrSq2.h"
-#include "../CommonLib.h"
+#include "CommonLib.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 //                               local init

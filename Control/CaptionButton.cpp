@@ -7,7 +7,7 @@
 
 #include "StdAfx.h"
 #include "CaptionButton.h"
-#include "../CommonLib.h"
+#include "CommonLib.h"
 //#include "../Logger.h"
 
 #ifdef __AFX_H__

@@ -196,6 +196,11 @@ namespace nsMosaic {
 
    class CMosaic {
    private:
+      struct CSync {
+         HANDLE m_hEventDestroy;
+         CSync() { m_hEventDestroy = ::CreateEvent(NULL, FALSE, FALSE, NULL); }
+         ~CSync() { ::CloseHandle(m_hEventDestroy); m_hEventDestroy = NULL; }
+      } m_Sync;
       const static TCHAR SZ_CLASS_WND[];
       std::vector<std::vector<nsCell::CBase* > > m_Mosaic;
 

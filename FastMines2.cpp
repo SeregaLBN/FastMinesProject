@@ -85,6 +85,23 @@ struct CFileGame {
 HINSTANCE           ghInstance;
 CFastMines2Project *gpFM2Proj;
 
+#ifdef _DEBUG
+   CLogger g_Log(
+      #ifdef _DEBUG
+         CLogger::LL_DEBUG,                  // eLogLevel logLevel
+      #else
+         CLogger::LL_INFO,                   // eLogLevel logLevel
+      #endif
+         TEXT("___FastMines.Log.txt"),       // LPCTSTR szFileName
+         NULL,                               // LPCTSTR szUserHint
+         NULL,                               // ISequentialStream *pStream
+         false,                              // BOOL bShowDate
+         true,                               // BOOL bShowTime
+         true,                               // BOOL bShowLogLevel
+         true                                // BOOL bShowThreadId
+   );
+#endif
+
 //DWORD WINAPI ChildThread(PVOID);
 #define ID_EVENT_TIMER_INACTION 1 // id события таймера, первого   срабатывания при бездействии юзера для старта робота
 #define ID_EVENT_TIMER_JOB      2 // id события таймера, следующих срабатываний при бездействии юзера
@@ -155,16 +172,16 @@ int WINAPI _tWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszC
       WS_OVERLAPPED | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
       100, 100, 500, 300, NULL, (HMENU)0, hInstance, NULL );
 
-   ShowWindow(m_hWnd, nCmdShow);
+   ShowWindow(hWnd, nCmdShow);
 
    {
-      static CMosaic m_Mosaic;
-      m_Mosaic.Create(m_hWnd, ID_MOSAIC);
-      ShowWindow(m_Mosaic.GetHandle(), SW_SHOW);
+      static nsMosaic::CMosaic Mosaic;
+      Mosaic.Create(hWnd, ID_MOSAIC);
+      ShowWindow(Mosaic.GetHandle(), SW_SHOW);
 
       SIZE sizeScreen = GetScreenSize();
-      MoveWindow(m_hWnd, 0,0, sizeScreen.cx, sizeScreen.cy, TRUE);
-      MoveWindow(m_Mosaic.GetHandle(), 0,0, sizeScreen.cx, sizeScreen.cy, TRUE);
+      MoveWindow(hWnd, 0,0, sizeScreen.cx, sizeScreen.cy, TRUE);
+      MoveWindow(Mosaic.GetHandle(), 0,0, sizeScreen.cx, sizeScreen.cy, TRUE);
    }
 
    MSG msg;
@@ -184,7 +201,7 @@ LRESULT CALLBACK WndProcProject(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
    case WM_NCHITTEST:
       break;
    default:
-      g_Logger.PutMsg(CLogger::LL_DEBUG, TEXT("Proj: "), msg);
+      g_Log.PutMsg(CLogger::LL_DEBUG, TEXT("Proj: "), msg);
       break;
    }
 /**
@@ -458,7 +475,7 @@ BOOL CFastMines2Project::OnCreate(HWND handleWindow, LPCREATESTRUCT lpCreateStru
 
 // WM_WINDOWPOSCHANGING
 BOOL CFastMines2Project::OnWindowPosChanging(HWND, LPWINDOWPOS lpwpos) {
-   //g_Logger.Put(CLogger::LL_DEBUG, TEXT("flags = 0x08X"), lpwpos->flags);
+   //g_Log.Put(CLogger::LL_DEBUG, TEXT("flags = 0x08X"), lpwpos->flags);
    if ((lpwpos->flags != (SWP_NOOWNERZORDER | SWP_NOACTIVATE | SWP_NOZORDER)) &&
        (lpwpos->flags !=  SWP_NOSIZE))
       return FORWARD_WM_WINDOWPOSCHANGING(m_hWnd, lpwpos, DefWindowProc);
@@ -584,7 +601,7 @@ void CFastMines2Project::OnDestroy(HWND){
 // WM_NCLBUTTONDOWN
 void CFastMines2Project::OnNCLButtonDown(HWND, BOOL fDoubleClick, int x, int y, UINT codeHitTest) {
 #ifdef _DEBUG
-   g_Logger.Put(CLogger::LL_DEBUG, fDoubleClick ? TEXT("WM_NCLBUTTONDBLCLK") : TEXT("WM_NCLBUTTONDOWN"));
+   g_Log.Put(CLogger::LL_DEBUG, fDoubleClick ? TEXT("WM_NCLBUTTONDBLCLK") : TEXT("WM_NCLBUTTONDOWN"));
 #endif
    FORWARD_WM_NCLBUTTONDOWN(m_hWnd, fDoubleClick, x, y, codeHitTest, DefWindowProc);
 }
@@ -592,7 +609,7 @@ void CFastMines2Project::OnNCLButtonDown(HWND, BOOL fDoubleClick, int x, int y, 
 // WM_NCLBUTTONUP
 void CFastMines2Project::OnNCLButtonUp(HWND, int x, int y, UINT codeHitTest) {
 #ifdef _DEBUG
-   g_Logger.Put(CLogger::LL_DEBUG, TEXT("WM_NCLBUTTONUP"));
+   g_Log.Put(CLogger::LL_DEBUG, TEXT("WM_NCLBUTTONUP"));
 #endif
    FORWARD_WM_NCLBUTTONUP(m_hWnd, x, y, codeHitTest, DefWindowProc);
 }
@@ -600,7 +617,7 @@ void CFastMines2Project::OnNCLButtonUp(HWND, int x, int y, UINT codeHitTest) {
 // WM_SYSCOMMAND
 void CFastMines2Project::OnSysCommand(HWND, UINT cmd, int x, int y) {
 #ifdef _DEBUG
-   g_Logger.Put(CLogger::LL_DEBUG, TEXT("cmd (WM_SYSCOMMAND) = 0x%08X"), cmd);
+   //g_Log.PutF(CLogger::LL_DEBUG, TEXT("cmd (WM_SYSCOMMAND) = 0x%08X"), cmd);
 #endif
    switch (cmd) {
    case SC_MAXIMIZE:
@@ -624,7 +641,7 @@ void CFastMines2Project::OnGetMinMaxInfo(HWND, LPMINMAXINFO lpMinMaxInfo) {
 
 // WM_COMMAND
 void CFastMines2Project::OnCommand(HWND, int id, HWND hwndCtl, UINT codeNotify){
-   //g_Logger.Put(CLogger::LL_DEBUG, TEXT("OnCommand: id=%d; hwndCtl=0x%08X; codeNotify=%d"), id, hwndCtl, codeNotify);
+   //g_Log.Put(CLogger::LL_DEBUG, TEXT("OnCommand: id=%d; hwndCtl=0x%08X; codeNotify=%d"), id, hwndCtl, codeNotify);
    switch (id){
    // menu File
    case ID_MENU_GAME_NEW_GAME:
@@ -783,7 +800,7 @@ void CFastMines2Project::OnCommand(HWND, int id, HWND hwndCtl, UINT codeNotify){
       }
       return;
    // menu Help
-   case ID_MENU_HELP_CAMPIONS:
+   case ID_MENU_HELP_CHAMPIONS:
       DialogBox(ghInstance, TEXT("StatisticsOrChampionsDialog"), m_hWnd, (DLGPROC)nsChampions::DialogProc);
       return;
    case ID_MENU_HELP_STATISTICS:
@@ -849,12 +866,12 @@ void CFastMines2Project::OnCommand(HWND, int id, HWND hwndCtl, UINT codeNotify){
       }
 /**
        {
-          g_Logger.Put(CLogger::LL_DEBUG, TEXT("SM_CXHSCROLL = %i"), GetSystemMetrics(SM_CXHSCROLL));
-          g_Logger.Put(CLogger::LL_DEBUG, TEXT("SM_CYHSCROLL = %i"), GetSystemMetrics(SM_CYHSCROLL));
-          g_Logger.Put(CLogger::LL_DEBUG, TEXT("SM_CXHTHUMB  = %i"), GetSystemMetrics(SM_CXHTHUMB ));
-          g_Logger.Put(CLogger::LL_DEBUG, TEXT("SM_CXVSCROLL = %i"), GetSystemMetrics(SM_CXVSCROLL));
-          g_Logger.Put(CLogger::LL_DEBUG, TEXT("SM_CYVSCROLL = %i"), GetSystemMetrics(SM_CYVSCROLL));
-          g_Logger.Put(CLogger::LL_DEBUG, TEXT("SM_CYVTHUMB  = %i"), GetSystemMetrics(SM_CYVTHUMB ));
+          g_Log.Put(CLogger::LL_DEBUG, TEXT("SM_CXHSCROLL = %i"), GetSystemMetrics(SM_CXHSCROLL));
+          g_Log.Put(CLogger::LL_DEBUG, TEXT("SM_CYHSCROLL = %i"), GetSystemMetrics(SM_CYHSCROLL));
+          g_Log.Put(CLogger::LL_DEBUG, TEXT("SM_CXHTHUMB  = %i"), GetSystemMetrics(SM_CXHTHUMB ));
+          g_Log.Put(CLogger::LL_DEBUG, TEXT("SM_CXVSCROLL = %i"), GetSystemMetrics(SM_CXVSCROLL));
+          g_Log.Put(CLogger::LL_DEBUG, TEXT("SM_CYVSCROLL = %i"), GetSystemMetrics(SM_CYVSCROLL));
+          g_Log.Put(CLogger::LL_DEBUG, TEXT("SM_CYVTHUMB  = %i"), GetSystemMetrics(SM_CYVTHUMB ));
         }
 /**/
        break;
@@ -1117,8 +1134,8 @@ void CFastMines2Project::OnMosaicPause(HWND) {
 #endif
 
 // WM_MOUSEWHEEL
-void CFastMines2Project::OnMouseWheel(HWND hWnd, WORD fwKeys, short zDelta, short xPos, short yPos) {
-   //g_Logger.Put(CLogger::LL_DEBUG, TEXT("OnMouseWheel: fwKeys=0x%04X, zDelta=%d, xPos=%d, yPos=%d"),  fwKeys, zDelta, xPos, yPos);
+void CFastMines2Project::OnMouseWheel(HWND hWnd, int xPos, int yPos, int zDelta, WORD fwKeys) {
+   //g_Log.Put(CLogger::LL_DEBUG, TEXT("OnMouseWheel: fwKeys=0x%04X, zDelta=%d, xPos=%d, yPos=%d"),  fwKeys, zDelta, xPos, yPos);
    //const int k = abs(zDelta)/WHEEL_DELTA;
    //for (int i=0; i<k; i++)
    {
@@ -1139,7 +1156,7 @@ BOOL CFastMines2Project::OnEraseBkgnd(HWND hwnd, HDC hdc) {
 
 // WM_COMMAND
 void CFastMines2Project::TopOnCommand(HWND, int id, HWND hwndCtl, UINT codeNotify){
-   //g_Logger.Put(CLogger::LL_DEBUG, TEXT("TopOnCommand: id = 0x%08X"), id);
+   //g_Log.Put(CLogger::LL_DEBUG, TEXT("TopOnCommand: id = 0x%08X"), id);
    //FORWARD_WM_COMMAND(m_hWndTop, id, hwndCtl, codeNotify, DefWindowProc);
    switch (id){
    case ID_EDITCONTROL_COUNT:
@@ -1292,7 +1309,7 @@ BOOL CFastMines2Project::SerializeIn() {
    // read init file
 
    HANDLE hFile = INVALID_HANDLE_VALUE;
-   hFile = CreateFile(
+   hFile = ::CreateFile(
       GetModuleDir(ghInstance) + SZ_FILE_NAME_INIT,
       GENERIC_READ,
       0,
@@ -1308,16 +1325,16 @@ BOOL CFastMines2Project::SerializeIn() {
       //MessageBox(m_hWnd, CLang::m_StrArr[IDS__INI_FILE__ERROR_CREATE], CLang::m_StrArr[IDS__ERROR], MB_ICONSTOP | MB_OK);
    } else {
       DWORD dwNOBR;
-      if (!ReadFile(hFile, &m_Serialize, sizeof(m_Serialize), &dwNOBR, NULL) ||
+      if (!::ReadFile(hFile, &m_Serialize, sizeof(m_Serialize), &dwNOBR, NULL) ||
           (sizeof(m_Serialize) != dwNOBR)
          )
       {
          m_Serialize = CSerializeProj();
-         MessageBox(m_hWnd, CLang::m_StrArr[IDS__INI_FILE__ERROR_READ], CLang::m_StrArr[IDS__ERROR], MB_ICONSTOP | MB_OK);
+         ::MessageBox(m_hWnd, CLang::m_StrArr[IDS__INI_FILE__ERROR_READ], CLang::m_StrArr[IDS__ERROR], MB_ICONSTOP | MB_OK);
       } else {
          if (lstrcmp(m_Serialize.m_szVersion, TEXT(ID_VERSIONINFO_VERSION3))) {
             m_Serialize = CSerializeProj();
-            MessageBox(m_hWnd, CLang::m_StrArr[IDS__INI_FILE__ERROR_VERSION], CLang::m_StrArr[IDS__INFORMATION], MB_ICONINFORMATION | MB_OK);
+            ::MessageBox(m_hWnd, CLang::m_StrArr[IDS__INI_FILE__ERROR_VERSION], CLang::m_StrArr[IDS__INFORMATION], MB_ICONINFORMATION | MB_OK);
          } else {
             bResult = m_Mosaic.SerializeIn(hFile);
          }
@@ -1325,7 +1342,7 @@ BOOL CFastMines2Project::SerializeIn() {
    }
 
    if (hFile != INVALID_HANDLE_VALUE)
-      CloseHandle(hFile);
+      ::CloseHandle(hFile);
 
    Apply_ShowToolbar();
    Apply_ShowMenu();
@@ -1345,7 +1362,7 @@ BOOL CFastMines2Project::SerializeOut() const {
    // write init file
 
    HANDLE hFile = INVALID_HANDLE_VALUE;
-   hFile = CreateFile(
+   hFile = ::CreateFile(
       GetModuleDir(ghInstance) + SZ_FILE_NAME_INIT,
       GENERIC_WRITE,
       0,
@@ -1356,21 +1373,21 @@ BOOL CFastMines2Project::SerializeOut() const {
    );
    BOOL bResult = FALSE;
    if (hFile == INVALID_HANDLE_VALUE) {
-      MessageBox(m_hWnd, CLang::m_StrArr[IDS__INI_FILE__ERROR_CREATE], CLang::m_StrArr[IDS__ERROR], MB_ICONSTOP | MB_OK);
+      ::MessageBox(m_hWnd, CLang::m_StrArr[IDS__INI_FILE__ERROR_CREATE], CLang::m_StrArr[IDS__ERROR], MB_ICONSTOP | MB_OK);
    } else {
       DWORD dwNOBW = 0;
-      if (!WriteFile(hFile, &m_Serialize, sizeof(m_Serialize), &dwNOBW, NULL) ||
+      if (!::WriteFile(hFile, &m_Serialize, sizeof(m_Serialize), &dwNOBW, NULL) ||
           (sizeof(m_Serialize) != dwNOBW)
          )
       {
-         MessageBox(m_hWnd, CLang::m_StrArr[IDS__INI_FILE__ERROR_WRITE], CLang::m_StrArr[IDS__ERROR], MB_ICONSTOP | MB_OK);
+         ::MessageBox(m_hWnd, CLang::m_StrArr[IDS__INI_FILE__ERROR_WRITE], CLang::m_StrArr[IDS__ERROR], MB_ICONSTOP | MB_OK);
       } else {
          bResult = m_Mosaic.SerializeOut(hFile);
       }
    }
 
    if (hFile != INVALID_HANDLE_VALUE)
-      CloseHandle(hFile);
+      ::CloseHandle(hFile);
 
    return bResult;
 }
@@ -1422,7 +1439,7 @@ inline void CFastMines2Project::Apply_ShowCaption() {
    CheckMenuItem(GetSubMenu(m_hMenu, 2), ID_MENU_OPTIONS_SHOW_CAPTION,
       m_Serialize.m_bShowCaption ? MF_CHECKED : MF_UNCHECKED);
    SetWindowLong(m_hWnd, GWL_STYLE, m_Serialize.m_bShowCaption ? WS_CAPTION_SHOW : WS_CAPTION_HIDE);
-   //g_Logger.ClearEdit();
+   //g_Log.ClearEdit();
    ShowWindow(m_hWnd, SW_SHOW);
    DrawMenuBar(m_hWnd);
    if (m_Serialize.m_bAlwaysMaxSize) AreaMax();
@@ -1575,35 +1592,17 @@ void CFastMines2Project::ReloadMosaicMenu(HMENU m_hMenu) const {
 }
 
 void CFastMines2Project::GameSave() {
-   OPENFILENAME OpenFileName;
-   OpenFileName.lStructSize = sizeof(OPENFILENAME);
-   OpenFileName.hwndOwner   = m_hWnd;
-   OpenFileName.hInstance   = ghInstance;
-   TCHAR szFilter[128];
-   lstrcpy(szFilter, CLang::m_StrArr[IDS__FASTMINES_EXTENSIONS_FILE]);
    TCHAR szFilter2[] = TEXT(" (*.fms)\0*.fms\0\0");
-   memcpy(szFilter+lstrlen(szFilter), szFilter2, chDIMOF(szFilter2)*sizeof(TCHAR));
-   OpenFileName.lpstrFilter = szFilter;
-   OpenFileName.lpstrCustomFilter = NULL;
- //OpenFileName.nMaxCustFilter;
-   OpenFileName.nFilterIndex   = 0;
-   TCHAR file[MAX_PATH] = TEXT("\0");
-   OpenFileName.lpstrFile      = file;
-   OpenFileName.nMaxFile       = MAX_PATH;
-   OpenFileName.lpstrFileTitle = NULL;
- //OpenFileName.nMaxFileTitle;
-   TCHAR dir[MAX_PATH]; GetCurrentDirectory(MAX_PATH, dir);
-   OpenFileName.lpstrInitialDir = dir;
-   OpenFileName.lpstrTitle      = CLang::m_StrArr[IDS__SAVE_FASTMINES_GAME];
-   OpenFileName.Flags           = OFN_EXPLORER | OFN_OVERWRITEPROMPT |/*OFN_FILEMUSTEXIST | */OFN_HIDEREADONLY | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
- //OpenFileName.nFileOffset;
- //OpenFileName.nFileExtension;
-   TCHAR szExt[] = TEXT("fms");
-   OpenFileName.lpstrDefExt = szExt;
- //OpenFileName.lCustData;
- //OpenFileName.lpfnHook;
- //OpenFileName.lpTemplateName;
-   if (GetSaveFileName(&OpenFileName)) {
+   TCHAR *szFilter = new TCHAR [CLang::m_StrArr[IDS__FASTMINES_EXTENSIONS_FILE].GetLength() + (sizeof(szFilter2)>>(sizeof(TCHAR)-1))];
+   lstrcpy(szFilter, CLang::m_StrArr[IDS__FASTMINES_EXTENSIONS_FILE]);
+   memcpy(szFilter+lstrlen(szFilter), szFilter2, sizeof(szFilter2));
+   CString strFileName = ::SelectFile(FALSE, m_hWnd, _T("newSave"), _T("fms"),
+      szFilter,
+      CLang::m_StrArr[IDS__SAVE_FASTMINES_GAME],
+      (LPCTSTR)::GetCurrentDirectory(),
+      OFN_EXPLORER | OFN_OVERWRITEPROMPT |/*OFN_FILEMUSTEXIST | */OFN_HIDEREADONLY | OFN_LONGNAMES | OFN_PATHMUSTEXIST);
+   delete [] szFilter; szFilter = NULL;
+   if (!strFileName.IsEmpty()) {
       CFileGame fileGame;
       fileGame.m_eMosaic    = GetMosaic();
       fileGame.m_SizeMosaic = GetSizeMosaic();
@@ -1611,7 +1610,7 @@ void CFastMines2Project::GameSave() {
 
       HANDLE hFile = INVALID_HANDLE_VALUE;
       hFile = CreateFile(
-         OpenFileName.lpstrFile,
+         strFileName,
          GENERIC_WRITE,
          0,
          NULL,
@@ -1655,42 +1654,24 @@ void CFastMines2Project::GameSave() {
 }
 
 void CFastMines2Project::GameLoad(LPCTSTR szFileName) {
-   OPENFILENAME OpenFileName;
-
-   TCHAR szFilter[128];
-   lstrcpy(szFilter, CLang::m_StrArr[IDS__FASTMINES_EXTENSIONS_FILE]);
-   TCHAR szFilter2[] = TEXT(" (*.fms)\0*.fms\0\0");
-   memcpy(szFilter+lstrlen(szFilter), szFilter2, chDIMOF(szFilter2)*sizeof(TCHAR));
+   CString strFileName;
    if (!szFileName) {
-      OpenFileName.lStructSize = sizeof(OPENFILENAME);
-      OpenFileName.hwndOwner   = m_hWnd;
-      OpenFileName.hInstance   = ghInstance;
-      OpenFileName.lpstrFilter = szFilter;
-      OpenFileName.lpstrCustomFilter = NULL;
-    //OpenFileName.nMaxCustFilter;
-      OpenFileName.nFilterIndex   = 0;
-      TCHAR file[MAX_PATH] = TEXT("\0");
-      OpenFileName.lpstrFile      = file;
-      OpenFileName.nMaxFile       = MAX_PATH;
-      OpenFileName.lpstrFileTitle = NULL;
-    //OpenFileName.nMaxFileTitle;
-      TCHAR dir[MAX_PATH]; GetCurrentDirectory(MAX_PATH, dir);
-      OpenFileName.lpstrInitialDir = dir;
-      OpenFileName.lpstrTitle      = CLang::m_StrArr[IDS__LOAD_FASTMINES_GAME];
-      OpenFileName.Flags           = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
-    //OpenFileName.nFileOffset;
-    //OpenFileName.nFileExtension;
-      OpenFileName.lpstrDefExt = NULL;
-    //OpenFileName.lCustData;
-    //OpenFileName.lpfnHook;
-    //OpenFileName.lpTemplateName;
+      TCHAR szFilter2[] = TEXT(" (*.fms)\0*.fms\0\0");
+      TCHAR *szFilter = new TCHAR [CLang::m_StrArr[IDS__FASTMINES_EXTENSIONS_FILE].GetLength() + (sizeof(szFilter2)>>(sizeof(TCHAR)-1))];
+      lstrcpy(szFilter, CLang::m_StrArr[IDS__FASTMINES_EXTENSIONS_FILE]);
+      memcpy(szFilter+lstrlen(szFilter), szFilter2, sizeof(szFilter2));
+      strFileName = ::SelectFile(TRUE, m_hWnd, NULL, NULL,
+         szFilter,
+         CLang::m_StrArr[IDS__LOAD_FASTMINES_GAME],
+         (LPCTSTR)::GetCurrentDirectory());
+      delete [] szFilter; szFilter = NULL;
    }
-   if (szFileName || GetOpenFileName(&OpenFileName)) {
+   if (szFileName || !strFileName.IsEmpty()) {
       CFileGame fileGame;
 
       HANDLE hFile = INVALID_HANDLE_VALUE;
       hFile = CreateFile(
-         szFileName ? szFileName : OpenFileName.lpstrFile,
+         szFileName ? szFileName : strFileName,
          GENERIC_READ,
          0,
          NULL,
@@ -1722,7 +1703,7 @@ void CFastMines2Project::GameLoad(LPCTSTR szFileName) {
                   {
                      bBreak = TRUE;
                      MessageBox(m_hWnd, CLang::m_StrArr[IDS__FMS_FILE__ERROR_READ], CLang::m_StrArr[IDS__ERROR], MB_ICONSTOP | MB_OK);
-                     //g_Logger.GetLastError(CLogger::LL_ERROR, TEXT("CFastMines2Project::GameSave: ReadFile: "), ::GetLastError());
+                     //g_Log.GetLastError(CLogger::LL_ERROR, TEXT("CFastMines2Project::GameSave: ReadFile: "), ::GetLastError());
                   }
                }
                if (!bBreak) {
@@ -1833,7 +1814,7 @@ void CFastMines2Project::Menu_ChangeLanguage() {
    // menu Help
    hSubMenu = GetSubMenu(m_hMenu, 3);
    SetMenuText(hSubMenu, 3                      , TRUE , (CLang::m_StrArr[IDS__MENU_HELP__ASSISTANT ] + TEXT("")    ));
-   SetMenuText(hSubMenu, ID_MENU_HELP_CAMPIONS  , FALSE, (CLang::m_StrArr[IDS__MENU_HELP__CAMPIONS  ] + TEXT("\tF3")));
+   SetMenuText(hSubMenu, ID_MENU_HELP_CHAMPIONS , FALSE, (CLang::m_StrArr[IDS__MENU_HELP__CHAMPIONS ] + TEXT("\tF3")));
    SetMenuText(hSubMenu, ID_MENU_HELP_STATISTICS, FALSE, (CLang::m_StrArr[IDS__MENU_HELP__STATISTICS] + TEXT("\tF4")));
    SetMenuText(hSubMenu, ID_MENU_HELP_ABOUT     , FALSE, (CLang::m_StrArr[IDS__MENU_HELP__ABOUT     ] + TEXT("\tF1")));
 

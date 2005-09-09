@@ -7,10 +7,10 @@
 #include "StdAfx.h"
 #include <TChar.h>
 #ifndef __AFX_H__
-   #include "../CStringKS.h"
+   #include "CStringKS.h"
 #endif
 #include "MenuItem.h"
-#include "../CommonLib.h"
+#include "CommonLib.h"
 
 UINT CMenuItem::m_uMaxWidthText = 0;
 

@@ -2,7 +2,8 @@
 // File name: Logger.h
 // Author: Sergey Krivulya (Ceргей Кpивуля) - KSerg
 // e-mail: Sergey_Krivulya@UkrPost.Net
-// Date: 29 09 2004
+// ICQ: 72099167
+// Date: 2005 08 31
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -10,32 +11,42 @@
 #define __FILE__LOGGER__
 
 #if _MSC_VER > 1000
-#pragma once
+   #pragma once
 #endif // _MSC_VER > 1000
 
 #ifndef __AFX_H__
    #include <Windows.h>
-   #include "CStringKS.h"
 #endif
-
-#define ERROR_WINHTTP_PROXY_AUTH_REQUIRED 12185
 
 #ifdef LOGGER_DLL_EXPORT
       #define LOGGER_API __declspec(dllexport)
 #else
    #ifdef LOGGER_DLL_IMPORT
       #define LOGGER_API __declspec(dllimport)
+
+      #ifdef _DEBUG
+         #ifdef UNICODE
+            #pragma comment(lib, "LoggerUD.lib")
+            #pragma message("   Adding LoggerUD.lib - Logger Unicode Debug library\n")
+         #else
+            #pragma comment(lib, "LoggerD.lib")
+            #pragma message("   Adding LoggerD.lib - Logger Debug library\n")
+         #endif
+      #else
+         #ifdef UNICODE
+            #pragma comment(lib, "LoggerU.lib")
+            #pragma message("   Adding LoggerU.lib - Logger Unicode Release library\n")
+         #else
+            #pragma comment(lib, "Logger.lib")
+            #pragma message("   Adding Logger.lib - Logger Release library\n")
+         #endif
+      #endif
    #else
       #define LOGGER_API
    #endif
 #endif
 
-#ifdef TERMINAL
-   #define NET_LOG_LEVEL__ERROR TEXT("ERROR")
-   #define NET_LOG_LEVEL__WARN  TEXT("WARN" )
-   #define NET_LOG_LEVEL__INFO  TEXT("INFO" )
-   #define NET_LOG_LEVEL__DEBUG TEXT("DEBUG")
-#endif // TERMINAL
+#define LOG_PUT(pLogger, funcName, logLevel) if ((pLogger) && (CLogger::logLevel <= (pLogger)->GetLogLevel())) (pLogger)->funcName(CLogger::logLevel
 
 class LOGGER_API CLogger
 {
@@ -47,125 +58,131 @@ public:
    };
 
    enum eLogLevel {
-      LL_ERROR   = 1,
-      LL_WARNING = 2,
-      LL_INFO    = 4,
-      LL_DEBUG   = 8
+      LL_FATAL   = 0x01,
+      LL_ERROR   = 0x02,
+      LL_WARNING = 0x04,
+      LL_INFO    = 0x08,
+      LL_DEBUG   = 0x10
    };
 
-private:
-   CString m_strFile;
-   CString m_strBuf;
+protected:
+   CString m_strFile, m_strUserHint;
+   HANDLE m_hFile;
    CRITICAL_SECTION m_cs;
    eLogLevel m_LL;
-   bool m_bShowDate;
-   bool m_bShowTime;
-   bool m_bShowLogLevel;
-   bool m_bShowThreadId;
-   bool m_bWriteToFile;
-#ifdef __AFX_H__
-   bool m_bWriteToTrace;
-#endif //__AFX_H__
+   ISequentialStream *m_pStream;
+   BOOL m_bShowDate;
+   BOOL m_bShowTime;
+   BOOL m_bShowLogLevel;
+   BOOL m_bShowThreadId;
+   BOOL m_bUnicodeWrite; // писать в файл/поток в UNICODE
+   BOOL m_bShowTimeFromFirstMessage; // отображать время прошедшее от начала первого сообщения в лог
+   FILETIME m_ftFirstMessage;
 
-   void PutToFile(LPCTSTR szStr);
-
-#ifdef TERMINAL
-   CString m_strRequestURL;
-   CString m_strLoggerName;
-   CString m_strKey;
-   CString m_strServerLogin;
-   CString m_strServerPass;
-
-   void PutRequest(LPCTSTR szLogLevel, LPCTSTR szLogMessage);
-#endif // TERMINAL
-
-   static CString Interfaces(IUnknown *pInterface, REFIID riid, CString strSeparator); // см. в public'е Interfaces и QueryInterfaces
-   static CString ErrorCode(DWORD dwErrCode, eInfoExt extInfo, bool bDescription); // Возвращаю или описание ошибки или строковое представление ошибки
-   static CString HResult(HRESULT hRes, bool bDescription); // Возвращаю или описание HRESULT'a или его строковое представление
+private:
+   static CString GUIDs(IUnknown *pInterface, const GUID *pguid, BOOL bFromRegistry, LPCTSTR szSeparator); // см. в public'е GUIDs() и QueryInterfaces()
+   static CString ErrorCode(DWORD dwErrCode, eInfoExt extInfo, BOOL bDescription); // Возвращаю или описание ошибки или строковое представление ошибки
+   static CString HResult(HRESULT hRes, BOOL bDescription); // Возвращаю или описание HRESULT'a или его строковое представление
 
 public:
 	CLogger(
-      eLogLevel logLevel   = LL_DEBUG,
-      LPCTSTR szFileName   = NULL,
-      bool bShowDate       = false,
-      bool bShowTime       = true,
-      bool bShowLogLevel   = false,
-      bool bShowThreadId   = false
-#ifdef TERMINAL
-      ,
-      LPCTSTR szRequestURL  = NULL,
-      LPCTSTR szLoggerName  = NULL,
-      LPCTSTR szKey         = NULL,
-      LPCTSTR szServerLogin = NULL,
-      LPCTSTR szServerPass  = NULL
-#endif // TERMINAL
+      eLogLevel logLevel,
+      LPCTSTR szFileName,         // maybe NULL
+      LPCTSTR szUserHint,         // maybe NULL (max - 16 char)
+      ISequentialStream *pStream, // maybe NULL
+      BOOL bShowDate,
+      BOOL bShowTime,
+      BOOL bShowLogLevel,
+      BOOL bShowThreadId,
+      BOOL bUnicodeWrite,
+      BOOL bShowTimeFromFirstMessage
+   );
+	CLogger(
+      eLogLevel logLevel,
+      LPCTSTR szFileName,         // maybe NULL
+      LPCTSTR szUserHint,         // maybe NULL (max - 16 char)
+      ISequentialStream *pStream, // maybe NULL
+      BOOL bShowDate,
+      BOOL bShowTime,
+      BOOL bShowLogLevel,
+      BOOL bShowThreadId
    );
 	~CLogger();
 
-#ifdef TERMINAL
-   void SendError  (LPCTSTR szMessage) { PutRequest(NET_LOG_LEVEL__ERROR, szMessage); }
-   void SendWarning(LPCTSTR szMessage) { PutRequest(NET_LOG_LEVEL__WARN , szMessage); }
-   void SendInfo   (LPCTSTR szMessage) { PutRequest(NET_LOG_LEVEL__INFO , szMessage); }
-   void SendDebug  (LPCTSTR szMessage) { PutRequest(NET_LOG_LEVEL__DEBUG, szMessage); }
-#endif // TERMINAL
+   void ShowDate                (BOOL bShow);
+   void ShowTime                (BOOL bShow);
+   void ShowTimeFromFirstMessage(BOOL bShow); // отображать время прошедшее от начала первого сообщения в лог
+   void ShowLogLevel            (BOOL bShow);
+   void ShowThreadId            (BOOL bShow);
 
-   CString GetFileName() const {return m_strFile;}
+   eLogLevel GetLogLevel() const;
+   BOOL      SetLogLevel(eLogLevel logLevel);
 
-   void ShowDate    (bool bShowDate    ) {m_bShowDate     = bShowDate    ;}
-   void ShowTime    (bool bShowTime    ) {m_bShowTime     = bShowTime    ;}
-   void ShowLogLevel(bool bShowLogLevel) {m_bShowLogLevel = bShowLogLevel;}
-   void ShowThreadId(bool bShowThreadId) {m_bShowThreadId = bShowThreadId;}
+   CString GetFileName() const;
+   BOOL    SetFileName(IN LPCTSTR szFileName); // для прекращения вывода данных в файл надо передать NULL
 
-   void      SetLogLevel(eLogLevel logLevel) {m_LL = logLevel;}
-   eLogLevel GetLogLevel() const {return m_LL;}
+   CString GetUserHint() const;
+   BOOL    SetUserHint(IN LPCTSTR szUserHint); // для прекращения вывода UserHint надо передать NULL
 
-   void SetNewFileName(LPCTSTR szFileName);
-   BOOL WriteToFile (bool bWrite);
-#ifdef __AFX_H__
-   void WriteToTrace(bool bWrite);
-#endif //__AFX_H__
+   BOOL GetStream(OUT ISequentialStream **ppStream);
+   BOOL SetStream(IN  ISequentialStream  * pStream); // для прекращения вывода данных в поток надо передать NULL
 
-   CString Put          (eLogLevel logLevel, LPCTSTR szStr, ...) {va_list argList; va_start(argList, szStr); PutV(logLevel, szStr, argList); va_end(argList); return m_strBuf;}
-   CString PutV         (eLogLevel logLevel, LPCTSTR szStr, va_list argList);
-   CString PutMsg       (eLogLevel logLevel, LPCTSTR szStr, UINT msg);
-   CString PutInterface (eLogLevel logLevel, LPCTSTR szStr, REFIID riid, CString strSeparator = TEXT("\t"));
-   CString FindInterface(eLogLevel logLevel, LPCTSTR szStr, IUnknown *pInterface, CString strSeparator = TEXT("\t"));
-   CString GetLastError (eLogLevel logLevel, LPCTSTR szStr, DWORD dwErrCode = ::GetLastError(), eInfoExt extInfo = info_NotDatail);
-   CString PutHResult   (eLogLevel logLevel, LPCTSTR szStr, HRESULT hRes);
+   void SetUnicodeWrite(IN BOOL bUnicodeWrite);
+   BOOL GetUnicodeWrite() const;
 
+   CString Put               (IN eLogLevel logLevel, IN LPCTSTR szStr, ...);
+   CString PutV              (IN eLogLevel logLevel, IN LPCTSTR szStr, IN va_list argList);
+   CString PutWindowMessage  (IN eLogLevel logLevel, IN LPCTSTR szStr, IN UINT msg);
+   CString PutGUIDs          (IN eLogLevel logLevel, IN LPCTSTR szStr, IN REFGUID guid        , BOOL bFromRegistry, IN LPCTSTR szSeparator = TEXT(", "), IN LPCTSTR szLeft = TEXT("["), IN LPCTSTR szRight = TEXT("]"));
+   CString PutQueryInterfaces(IN eLogLevel logLevel, IN LPCTSTR szStr, IN IUnknown *pInterface, BOOL bFromRegistry, IN LPCTSTR szSeparator = TEXT(", "), IN LPCTSTR szLeft = TEXT("["), IN LPCTSTR szRight = TEXT("]"));
+   CString PutInterfaceID    (IN eLogLevel logLevel, IN LPCTSTR szStr, IN REFIID riid);
+   CString PutErrorCode      (IN eLogLevel logLevel, IN LPCTSTR szStr, IN DWORD dwErrCode = ::GetLastError(), IN eInfoExt extInfo = info_NotDatail);
+   CString PutHResult        (IN eLogLevel logLevel, IN LPCTSTR szStr, IN HRESULT hRes);
 
    ////////////////////////////////////////////////////////
    // Статические ф-ции преобразования чего-либо в его строковой представление
    ////////////////////////////////////////////////////////
 
-   static CString WindowMessage(UINT  msg); // Window Message to string
-   static CString WindowStyle  (HWND hWnd); // Window Styles to string
-   static CString WindowStyleEx(HWND hWnd); // Extended Window Styles to string
+   static CString WindowMessage(UINT msg);         // Window Message to string
+   static CString WindowStyle  (HWND hWnd);        // Window Styles to string
+   static CString WindowStyle  (DWORD dwStyle, LPCTSTR szClassName = NULL); // Window Styles to string
+   static CString WindowStyleEx(HWND hWnd);        // Extended Window Styles to string
+   static CString WindowStyleEx(DWORD dwStyleEx);  // Extended Window Styles to string
+   static CString SetWindowPos (UINT flags);       // SetWindowPos Flags to string
+   static CString DialogCode   (int iCode);        // Dialog Code to string (see WM_GETDLGCODE)
+   static CString ButtonState  (int iState);       // State of the button to string (see BM_GETSTATE)
 
-   static CString      Interfaces(REFIID riid         , CString strSeparator = TEXT("\t")) { return CLogger::Interfaces(NULL      , riid        , strSeparator); } // COM interface ID to string
-   static CString QueryInterfaces(IUnknown *pInterface, CString strSeparator = TEXT("\t")) { return CLogger::Interfaces(pInterface, IID_IUnknown, strSeparator); } // Возвращаю строку содержащую GUIDы всех интерфейсов, которые можно получить с помощью pInterface->QueryInterface(..)
+   static CString GUIDs          (REFGUID guid        , BOOL bFromRegistry, LPCTSTR szSeparator = TEXT(", ")) { return CLogger::GUIDs(NULL      , &guid, bFromRegistry, szSeparator); } // Возвращаю строковое представление CLSIDа и/или интерфейса, равных указанному GUIDу.
+   static CString QueryInterfaces(IUnknown *pInterface, BOOL bFromRegistry, LPCTSTR szSeparator = TEXT(", ")) { return CLogger::GUIDs(pInterface,  NULL, bFromRegistry, szSeparator); } // Возвращаю строковое представление интерфейсов, которые можно получить из указанного pInterface (с помощью pInterface->QueryInterface(..))
+   static CString ProgID     (REFCLSID clsid); // Возвращаю программный идентификатор CLSIDа в виде LibraryName.CoClassName.Version, найденное в реестре. Мой аналог ProgIDFromCLSID.
+   static CString InterfaceID(REFIID     iid); // Возвращаю строковое представление интерфейса, найденное в реестре.
 
    static CString ErrorCode            (DWORD dwErrCode = ::GetLastError(), eInfoExt extInfo = info_NotDatail) { return CLogger::ErrorCode(dwErrCode, extInfo, false); } // Возвращаю строковое представление ошибки
    static CString ErrorCode_Description(DWORD dwErrCode = ::GetLastError(), eInfoExt extInfo = info_NotDatail) { return CLogger::ErrorCode(dwErrCode, extInfo, true ); } // Возвращаю описание ошибки
+   static HRESULT ErrorCode2HResult    (DWORD dwErrCode = ::GetLastError()) {return HRESULT_FROM_WIN32(dwErrCode);}
 
    static CString HResult            (HRESULT hRes) { return CLogger::HResult(hRes, false); } // Возвращаю строковое представление HRESULT'a
    static CString HResult_Description(HRESULT hRes) { return CLogger::HResult(hRes, true ); } // Возвращаю описание HRESULT'a
 
-   static CString QueryInfoFlag_WinInetApi(IN DWORD dwOption);              // convert HTTP Query  flag to string,   for detail see IWinInetHttpInfo::QueryInfo
-   static CString QueryOption(IN DWORD dwOption);                           // convert QUERYOPTION to string     ,   for detail see IWinInetInfo::QueryOption
-   static CString SystemTime(const SYSTEMTIME &st, bool bDate, bool bTime); // convert to string as YYYY.MM.DD HH:MM:SS,MS
-   static CString BindFlag(IN DWORD dwBINDF);                               // convert BINDF      flag to string
-   static CString BindStatusCallbackFlag(IN WORD grfBSCF);                  // convert BSCF       flag to string
+   static CString QueryInfoFlag           (IN DWORD dwOption);              // convert WinInetApi HTTP Query flag to string, for detail see IWinInetHttpInfo::QueryInfo
+   static CString QueryOption             (IN DWORD dwOption);              // convert QUERYOPTION to string, for detail see IWinInetInfo::QueryOption or IInternetProtocolInfo::QueryInfo Method
+   static CString ParseAction             (IN DWORD dwParseAction);         // convert PARSEACTION to string, for detail see IInternetProtocolInfo::ParseUrl Method
+   static CString InternetCombineUrlFlags (IN DWORD dwCombineFlags);        // convert ICU_xxx flag to string, for detail see InternetCanonicalizeUrl or InternetCombineUrl or InternetCrackUrl or InternetCreateUrl or IInternetProtocolInfo::CombineUrl Method
+   static CString SystemTime(const SYSTEMTIME &st, BOOL bDate, BOOL bTime); // convert to string as YYYY.MM.DD HH:MM:SS,MS
+   static CString BindFlag(IN DWORD dwBINDF);                               // convert BINDF flag to string
+   static CString BindStatusCallbackFlag(IN WORD grfBSCF);                  // convert BSCF flag to string
    static CString BindString(IN ULONG ulStringType);                        // convert BINDSTRING to string
    static CString BindStatus(IN ULONG ulStatusCode);                        // convert BINDSTATUS to string
 
-   static CString StringArray(IN LPCOLESTR const *const ppwzStr, IN ULONG uSize, CString strLeft = TEXT("["), CString strRight = TEXT("]"), CString strSeparator = TEXT(", ")); // convert string array to string as   [string1], [string2], [string3], ... [stringN]
+   static CString StringArray(IN LPCOLESTR const *const ppwzStr, IN ULONG uSize, LPCTSTR szLeft = TEXT("["), LPCTSTR szRight = TEXT("]"), LPCTSTR szSeparator = TEXT(", ")); // convert string array to string as   [string1], [string2], [string3], ... [stringN]
 
    static CString InternetStatusCallback(DWORD dwInternetStatus, eInfoExt info); // convert Internet status callback flag to string
    static CString WinHTTPCallbackStatusRequestError            (DWORD dwValue);  //
    static CString WinHTTPCallbackStatusRequestError_Description(DWORD dwValue);  //
 
-   static HRESULT ErrorCode2HResult(DWORD dwErrCode = ::GetLastError()) {return HRESULT_FROM_WIN32(dwErrCode);}
+   static CString PrinterStatus    (DWORD dwStatus);
+   static CString PrinterAttributes(DWORD dwAttributes);
+   static CString PrinterJobStatus (DWORD dwJobStatus);
 };
 
 // Keycode Constants

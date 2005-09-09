@@ -11,7 +11,7 @@
 #include <vector>
 #ifndef __AFX_H__
    #include <Windows.h>
-   #include "../CStringKS.h"
+   #include "CStringKS.h"
 #endif
 #include "../Image.h"
 

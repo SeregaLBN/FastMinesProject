@@ -113,7 +113,7 @@ WNDPROC_STATIC(ID_DIALOG_CHANGESKIN_SPIN_TEXT                 ,       Skin)
 
 BOOL CALLBACK DialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
    //return FALSE;
-   //g_Logger.PutMsg(TEXT("Skin: "), msg);
+   //g_Log.PutMsg(TEXT("Skin: "), msg);
    switch (msg){
    HANDLE_MSG(hDlg, WM_INITDIALOG, OnInitDialog);
    HANDLE_MSG(hDlg, WM_COMMAND   , OnCommand);
@@ -434,39 +434,17 @@ void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify) {
       case skinImageBtnNew  :
       case skinImageBtnPause:
       case skinImageBckgrnd : {
-            OPENFILENAME OpenFileName;
-            OpenFileName.lStructSize = sizeof(OPENFILENAME);
-            OpenFileName.hwndOwner   = hDlg;
-            OpenFileName.hInstance   = ghInstance;
-            TCHAR szFilter[256];
-            lstrcpy(szFilter, CLang::m_StrArr[IDS__DIALOG_CHANGESKIN__OPENFILENAME_FILTER_ALL_IMAGES]);
             TCHAR szFilter2[] = TEXT("\0*.bmp;*.ico;*.emf;\0Windows Bitmap (*.bmp)\0*.bmp\0Icon (*.ico)\0*.ico\0Enhanced Metafile (*.emf)\0*.emf\0\0");//Windows Metafile (*.wmf)\0*.wmf\0\0");// *.wmf;\n
-            memcpy(szFilter+lstrlen(szFilter), szFilter2, chDIMOF(szFilter2));
-            OpenFileName.lpstrFilter = szFilter;
-            OpenFileName.lpstrCustomFilter = NULL;
-          //OpenFileName.nMaxCustFilter;
-            OpenFileName.nFilterIndex   = 0;
-            TCHAR szFile[MAX_PATH] = {0};
-            lstrcpy(szFile, GetFileName(pImageData->m_szPath));
-            OpenFileName.lpstrFile      = szFile;
-            OpenFileName.nMaxFile       = MAX_PATH;
-            OpenFileName.lpstrFileTitle = NULL;
-          //OpenFileName.nMaxFileTitle;
-            TCHAR szDir[MAX_PATH] = {0};
-            if (pImageData->m_szPath && pImageData->m_szPath[0])
-               lstrcpy(szDir, GetFileDir(pImageData->m_szPath));
-            else GetCurrentDirectory(MAX_PATH, szDir);
-            OpenFileName.lpstrInitialDir = szDir;
-            OpenFileName.lpstrTitle      = CLang::m_StrArr[IDS__DIALOG_CHANGESKIN__OPENFILENAME_TITLE_OPEN_IMAGE];
-            OpenFileName.Flags           = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_LONGNAMES | OFN_PATHMUSTEXIST;
-          //OpenFileName.nFileOffset;
-          //OpenFileName.nFileExtension;
-            OpenFileName.lpstrDefExt = NULL;
-          //OpenFileName.lCustData;
-          //OpenFileName.lpfnHook;
-          //OpenFileName.lpTemplateName;
-            if (GetOpenFileName(&OpenFileName)) {
-               lstrcpy(pImageData->m_szPath, OpenFileName.lpstrFile);
+            TCHAR *szFilter = new TCHAR [CLang::m_StrArr[IDS__DIALOG_CHANGESKIN__OPENFILENAME_FILTER_ALL_IMAGES].GetLength() + (sizeof(szFilter2)>>(sizeof(TCHAR)-1))];
+            lstrcpy(szFilter, CLang::m_StrArr[IDS__DIALOG_CHANGESKIN__OPENFILENAME_FILTER_ALL_IMAGES]);
+            memcpy(szFilter+lstrlen(szFilter), szFilter2, sizeof(szFilter2));
+            CString strFileName = ::SelectFile(TRUE, hDlg, GetFileName(pImageData->m_szPath), NULL,
+               szFilter,
+               CLang::m_StrArr[IDS__DIALOG_CHANGESKIN__OPENFILENAME_TITLE_OPEN_IMAGE],
+               (pImageData->m_szPath && pImageData->m_szPath[0]) ? pImageData->m_szPath : (LPCTSTR)::GetCurrentDirectory());
+            delete [] szFilter; szFilter = NULL;
+            if (!strFileName.IsEmpty()) {
+               lstrcpy(pImageData->m_szPath, strFileName);
                AcceptImage(false);
             }
          }

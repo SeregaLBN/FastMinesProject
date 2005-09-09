@@ -215,7 +215,7 @@ bool CLang::RestoreDefaultLanguage() {
    CLang::m_StrArr[IDS__DIALOG_CHANGESKIN__BUTTON_COLOR                  ] = TEXT("Color...");
    CLang::m_StrArr[IDS__DIALOG_CHANGESKIN__BUTTON_LIGHT_COLOR            ] = TEXT("Light  color...");
    CLang::m_StrArr[IDS__DIALOG_CHANGESKIN__BUTTON_SHADOW_COLOR           ] = TEXT("Shadow color...");
-   CLang::m_StrArr[IDS__DIALOG_CHANGESKIN__OPENFILENAME_FILTER_ALL_IMAGES] = TEXT("All images");
+   CLang::m_StrArr[IDS__DIALOG_CHANGESKIN__OPENFILENAME_FILTER_ALL_IMAGES] = TEXT("All supported images");
    CLang::m_StrArr[IDS__DIALOG_CHANGESKIN__OPENFILENAME_TITLE_OPEN_IMAGE ] = TEXT("Open image");
    CLang::m_StrArr[IDS__DIALOG_CHANGESKIN__CHECKBUTTON_IMAGE_MINE        ] = TEXT("'Mine' image");
    CLang::m_StrArr[IDS__DIALOG_CHANGESKIN__CHECKBUTTON_IMAGE_FLAG        ] = TEXT("'Flag' image");
@@ -317,7 +317,7 @@ bool CLang::RestoreDefaultLanguage() {
    CLang::m_StrArr[IDS__MENU_OPTIONS__TO_TRAY           ] = TEXT("Minimize to tray");
 
    CLang::m_StrArr[IDS__MENU_HELP                    ] = TEXT("&Help");
-   CLang::m_StrArr[IDS__MENU_HELP__CAMPIONS          ] = TEXT("&Campions");
+   CLang::m_StrArr[IDS__MENU_HELP__CHAMPIONS         ] = TEXT("&Champions");
    CLang::m_StrArr[IDS__MENU_HELP__STATISTICS        ] = TEXT("&Statistics");
    CLang::m_StrArr[IDS__MENU_HELP__ASSISTANT         ] = TEXT("&Assistant");
    CLang::m_StrArr[IDS__MENU_HELP__ASSISTANT__ONOFF  ] = TEXT("Assistant on");

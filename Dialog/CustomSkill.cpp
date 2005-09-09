@@ -311,7 +311,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
    case WM_ENTERIDLE:
       break;
    default:
-      g_Logger.PutMsg(CLogger::LL_DEBUG, TEXT("   About Dlg: DialogProc:"), msg);
+      g_Log.PutWindowMessage(CLogger::LL_DEBUG, TEXT("   About Dlg: DialogProc:"), msg);
    }
 #endif
    switch (msg){

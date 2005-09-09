@@ -104,7 +104,7 @@ LRESULT CALLBACK newWndProc_##name(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 #define WNDPROC_BUTTON_LOG(name, hDlg, Skin)   \
 WNDPROC defWndProc_##name; \
 LRESULT CALLBACK newWndProc_##name(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {   \
-   g_Logger.PutMsg(TEXT(""), msg); \
+   g_Log.PutMsg(TEXT(""), msg); \
    switch (msg) { \
    case WM_MOUSEMOVE:   \
       CallWindowProc((WNDPROC)defWndProc_##name, hwnd, msg, wParam, lParam);   \

@@ -7,7 +7,7 @@
 #include "StdAfx.h"
 #include <WindowsX.h>
 #include "ButtonImage.h"
-#include "../CommonLib.h"
+#include "CommonLib.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 //                             global variables

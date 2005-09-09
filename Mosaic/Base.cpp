@@ -8,7 +8,7 @@
 
 #include "StdAfx.h"
 #include "Base.h"
-#include "../CommonLib.h"
+#include "CommonLib.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 //                               local init

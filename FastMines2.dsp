@@ -434,15 +434,15 @@ SOURCE=.\Control\Table.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\CommonLib.cpp
+SOURCE=..\..\__MyLib__\CommonLib.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\CommonLib.h
+SOURCE=..\..\__MyLib__\CommonLib.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\CStringKS.h
+SOURCE=..\..\__MyLib__\CStringKS.h
 # End Source File
 # Begin Source File
 
@@ -470,43 +470,11 @@ SOURCE=.\Lang.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Logger.cpp
-
-!IF  "$(CFG)" == "FastMines2 - Win32 Release Unicode"
-
-# PROP BASE Exclude_From_Build 1
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "FastMines2 - Win32 Release"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "FastMines2 - Win32 Debug Unicode"
-
-!ELSEIF  "$(CFG)" == "FastMines2 - Win32 Debug"
-
-!ENDIF 
-
+SOURCE=..\..\__MyLib__\Logger.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Logger.h
-
-!IF  "$(CFG)" == "FastMines2 - Win32 Release Unicode"
-
-# PROP BASE Exclude_From_Build 1
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "FastMines2 - Win32 Release"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "FastMines2 - Win32 Debug Unicode"
-
-!ELSEIF  "$(CFG)" == "FastMines2 - Win32 Debug"
-
-!ENDIF 
-
+SOURCE=..\..\__MyLib__\Logger.h
 # End Source File
 # Begin Source File
 
@@ -556,6 +524,126 @@ SOURCE=.\Mosaic.cpp
 # Begin Source File
 
 SOURCE=.\Mosaic.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicHexagon1.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicNull.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicParquet1.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicParquet2.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicPentagonT10.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicPentagonT24.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicPentagonT5.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicQuadrangle1.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicRhombus1.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicSqTrHex.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicSquare1.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicSquare2.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicTrapezoid1.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicTrapezoid2.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicTrapezoid3.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicTriangle1.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicTriangle2.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicTriangle3.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicTriangle4.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicTrSq1.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\MosaicTrSq2.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\new0.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\new1.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\new2.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\new3.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\pause0.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\pause1.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\pause2.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\pause3.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\Image\project.ico
 # End Source File
 # Begin Source File
 

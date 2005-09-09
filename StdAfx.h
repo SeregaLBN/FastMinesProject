@@ -17,6 +17,8 @@
 
 #define _WIN32_WINDOWS 0x0410
 #define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
+//#define MICROSOFT_SDK_FEBRUARY_2003                     // установлено Microsoft SDK за February 2003
+//#define HEADERS_AND_LIBRARIES_FOR_INTERNET_EXPLORER_5_5 // установлены Headers and Libraries for Internet Explorer 5.5
 
 #include <Windows.h>
 #include <WindowsX.h>
@@ -40,7 +42,7 @@
 
 #ifdef _DEBUG
    #include "Logger.h"
-   extern CLogger g_Logger;
+   extern CLogger g_Log;
 #endif
 
 #endif // __FILE__STDAFX_H__FASTMINES_PROJECT__

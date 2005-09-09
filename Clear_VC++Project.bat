@@ -4,6 +4,6 @@ del *.aps
 del *.ncb
 del *.opt
 del *.plg
-del *.dsw
+rem del *.dsw
 
 cls

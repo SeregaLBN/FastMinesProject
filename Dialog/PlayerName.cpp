@@ -463,7 +463,7 @@ void OnClose(HWND hwnd){
 }
 
 BOOL CALLBACK DialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam){
-   //g_Logger.PutMsg(TEXT("msg PlayerName "), msg);
+   //g_Log.PutMsg(TEXT("msg PlayerName "), msg);
    switch (msg){
    HANDLE_MSG(hDlg, WM_INITDIALOG, OnInitDialog);
    HANDLE_MSG(hDlg, WM_COMMAND   , OnCommand);

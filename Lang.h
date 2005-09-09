@@ -234,7 +234,7 @@ private:
 #define IDS__MENU_OPTIONS__TO_TRAY            547
 
 #define IDS__MENU_HELP                     560
-#define IDS__MENU_HELP__CAMPIONS           561
+#define IDS__MENU_HELP__CHAMPIONS          561
 #define IDS__MENU_HELP__STATISTICS         562
 #define IDS__MENU_HELP__ASSISTANT          563
 #define IDS__MENU_HELP__ASSISTANT__ONOFF   564

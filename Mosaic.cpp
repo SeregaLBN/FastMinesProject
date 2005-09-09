@@ -90,7 +90,7 @@ void nsMosaic::LoadDefaultImageBckgrnd(HINSTANCE hInstance, CImage &ImgBckgrnd) 
 ////////////////////////////////////////////////////////////////////////////////
 //                              implementation
 ////////////////////////////////////////////////////////////////////////////////
-LRESULT nsMosaic::CMosaic::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+LRESULT nsMosaic::CMosaic::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
    /**
    switch (msg) {
    case WM_MOUSEMOVE:
@@ -98,22 +98,22 @@ LRESULT nsMosaic::CMosaic::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
    case WM_SETCURSOR:
       break;
    default:
-      g_Logger.PutMsg(CLogger::LL_DEBUG, TEXT("CMosaic"), msg);
+      g_Log.PutMsg(CLogger::LL_DEBUG, TEXT("CMosaic"), msg);
    }/**/
-   CMosaic *const This = (CMosaic*)::GetWindowUserData(hwnd);
+   CMosaic *const This = (CMosaic*)::GetWindowUserData(hWnd);
    if (This) {
       switch(msg){
-      HANDLE_MSG(hwnd, WM_PAINT        , This->OnPaint);
-      HANDLE_MSG(hwnd, WM_LBUTTONUP    , This->OnLButtonUp);
-      HANDLE_MSG(hwnd, WM_LBUTTONDOWN  , This->OnLButtonDown);
-      HANDLE_MSG(hwnd, WM_LBUTTONDBLCLK, This->OnLButtonDown);
-      HANDLE_MSG(hwnd, WM_RBUTTONDOWN  , This->OnRButtonDown);
-      HANDLE_MSG(hwnd, WM_RBUTTONDBLCLK, This->OnRButtonDown);
-      HANDLE_MSG(hwnd, WM_SIZE         , This->OnSize);
+      HANDLE_MSG(hWnd, WM_PAINT        , This->OnPaint);
+      HANDLE_MSG(hWnd, WM_LBUTTONUP    , This->OnLButtonUp);
+      HANDLE_MSG(hWnd, WM_LBUTTONDOWN  , This->OnLButtonDown);
+      HANDLE_MSG(hWnd, WM_LBUTTONDBLCLK, This->OnLButtonDown);
+      HANDLE_MSG(hWnd, WM_RBUTTONDOWN  , This->OnRButtonDown);
+      HANDLE_MSG(hWnd, WM_RBUTTONDBLCLK, This->OnRButtonDown);
+      HANDLE_MSG(hWnd, WM_SIZE         , This->OnSize);
       case WM_ERASEBKGND: return -1;
       }
    }
-   return ::DefWindowProc(hwnd, msg, wParam, lParam);
+   return ::DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
 // constructor
@@ -177,7 +177,7 @@ BOOL nsMosaic::CMosaic::Create(HWND hWindowParent, int id) {
    m_GameStatus = gsEnd;
    m_bPause = false;
 
-   m_pAssistant = new CAssistant(*this);
+   m_pAssistant = new CAssistant(*this, m_Sync.m_hEventDestroy);
    MosaicCreate();
 
    return TRUE;
@@ -413,7 +413,7 @@ void nsMosaic::CMosaic::MosaicDestroy(const SIZE& SizeMosaic) {
    for (int i = 0; i < SizeMosaic.cx; i++)
       for (int j = 0; j < SizeMosaic.cy; j++) {
          //m_Mosaic[i][j]->~TcBase();
-         //g_Logger.Put(CLogger::LL_DEBUG, TEXT("delete [%i,%i]"),i,j);
+         //g_Log.Put(CLogger::LL_DEBUG, TEXT("delete [%i,%i]"),i,j);
          delete m_Mosaic[i][j];
       }
 }
@@ -426,27 +426,27 @@ void nsMosaic::CMosaic::MosaicCreate() {
       for (int j = 0; j < m_SerializeData.m_SizeMosaic.cy; j++){
          COORD coord = {i,j};
          switch (m_SerializeData.m_Mosaic) {
-#define CASE_MOSAIC(name) case mosaic##name: m_Mosaic[i][j] = new nsCell::C##name(coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break
-         CASE_MOSAIC(Triangle1  );
-         CASE_MOSAIC(Triangle2  );
-         CASE_MOSAIC(Triangle3  );
-         CASE_MOSAIC(Triangle4  );
-         CASE_MOSAIC(Square1    );
-         CASE_MOSAIC(Square2    );
-         CASE_MOSAIC(Parquet1   );
-         CASE_MOSAIC(Parquet2   );
-         CASE_MOSAIC(Trapezoid1 );
-         CASE_MOSAIC(Trapezoid2 );
-         CASE_MOSAIC(Trapezoid3 );
-         CASE_MOSAIC(Rhombus1   );
-         CASE_MOSAIC(Quadrangle1);
-         CASE_MOSAIC(PentagonT24);
-         CASE_MOSAIC(PentagonT5 );
-         CASE_MOSAIC(PentagonT10);
-         CASE_MOSAIC(Hexagon1   );
-         CASE_MOSAIC(TrSq1      );
-         CASE_MOSAIC(TrSq2      );
-         CASE_MOSAIC(SqTrHex    );
+#define CASE_MOSAIC(name) case mosaic##name: m_Mosaic[i][j] = new nsCell::C##name(coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext); break;
+         CASE_MOSAIC(Triangle1  )
+         CASE_MOSAIC(Triangle2  )
+         CASE_MOSAIC(Triangle3  )
+         CASE_MOSAIC(Triangle4  )
+         CASE_MOSAIC(Square1    )
+         CASE_MOSAIC(Square2    )
+         CASE_MOSAIC(Parquet1   )
+         CASE_MOSAIC(Parquet2   )
+         CASE_MOSAIC(Trapezoid1 )
+         CASE_MOSAIC(Trapezoid2 )
+         CASE_MOSAIC(Trapezoid3 )
+         CASE_MOSAIC(Rhombus1   )
+         CASE_MOSAIC(Quadrangle1)
+         CASE_MOSAIC(PentagonT24)
+         CASE_MOSAIC(PentagonT5 )
+         CASE_MOSAIC(PentagonT10)
+         CASE_MOSAIC(Hexagon1   )
+         CASE_MOSAIC(TrSq1      )
+         CASE_MOSAIC(TrSq2      )
+         CASE_MOSAIC(SqTrHex    )
          default /*mosaicNil*/ : m_Mosaic[i][j] = new nsCell::CBase(coord, m_SerializeData.m_SizeMosaic, m_SerializeData.m_iArea, m_GContext,0,0,0); break;
 #undef CASE_MOSAIC
          }
@@ -490,7 +490,7 @@ void nsMosaic::CMosaic::GameNew() {
          SetPause(false);
       }
    }
-   //g_Logger.ClearEdit();
+   //g_Log.ClearEdit();
    FORWARD_WM_MOSAIC_GAMENEW(m_hWndParent, ::SendMessage);
    //EnableWindow(m_hWnd, true); // enable all cell
 
@@ -739,53 +739,53 @@ void nsMosaic::CMosaic::SetArea(int newArea) {
 
 void nsMosaic::CMosaic::SetClasureToMosaic() {
    switch (m_SerializeData.m_Mosaic) {
-#define CASE_MOSAIC(name) case mosaic##name: GetSizeWindow = nsCell::C##name::GetSizeInPixel; break
-   CASE_MOSAIC(Triangle1  );
-   CASE_MOSAIC(Triangle2  );
-   CASE_MOSAIC(Triangle3  );
-   CASE_MOSAIC(Triangle4  );
-   CASE_MOSAIC(Square1    );
-   CASE_MOSAIC(Square2    );
-   CASE_MOSAIC(Parquet1   );
-   CASE_MOSAIC(Parquet2   );
-   CASE_MOSAIC(Trapezoid1 );
-   CASE_MOSAIC(Trapezoid2 );
-   CASE_MOSAIC(Trapezoid3 );
-   CASE_MOSAIC(Rhombus1   );
-   CASE_MOSAIC(Quadrangle1);
-   CASE_MOSAIC(PentagonT24);
-   CASE_MOSAIC(PentagonT5 );
-   CASE_MOSAIC(PentagonT10);
-   CASE_MOSAIC(Hexagon1   );
-   CASE_MOSAIC(TrSq1      );
-   CASE_MOSAIC(TrSq2      );
-   CASE_MOSAIC(SqTrHex    );
+#define CASE_MOSAIC(name) case mosaic##name: GetSizeWindow = nsCell::C##name::GetSizeInPixel; break;
+   CASE_MOSAIC(Triangle1  )
+   CASE_MOSAIC(Triangle2  )
+   CASE_MOSAIC(Triangle3  )
+   CASE_MOSAIC(Triangle4  )
+   CASE_MOSAIC(Square1    )
+   CASE_MOSAIC(Square2    )
+   CASE_MOSAIC(Parquet1   )
+   CASE_MOSAIC(Parquet2   )
+   CASE_MOSAIC(Trapezoid1 )
+   CASE_MOSAIC(Trapezoid2 )
+   CASE_MOSAIC(Trapezoid3 )
+   CASE_MOSAIC(Rhombus1   )
+   CASE_MOSAIC(Quadrangle1)
+   CASE_MOSAIC(PentagonT24)
+   CASE_MOSAIC(PentagonT5 )
+   CASE_MOSAIC(PentagonT10)
+   CASE_MOSAIC(Hexagon1   )
+   CASE_MOSAIC(TrSq1      )
+   CASE_MOSAIC(TrSq2      )
+   CASE_MOSAIC(SqTrHex    )
    default /*mosaicNil*/: GetSizeWindow = nsCell::CBase::GetSizeInPixel; break;
 #undef CASE_MOSAIC
    }
 
    switch (m_SerializeData.m_Mosaic) {
-#define CASE_MOSAIC(name) case mosaic##name: GetSizeInscribedSquare = nsCell::C##name::SizeInscribedSquare; break
-   CASE_MOSAIC(Triangle1  );
-   CASE_MOSAIC(Triangle2  );
-   CASE_MOSAIC(Triangle3  );
-   CASE_MOSAIC(Triangle4  );
-   CASE_MOSAIC(Square1    );
-   CASE_MOSAIC(Square2    );
-   CASE_MOSAIC(Parquet1   );
-   CASE_MOSAIC(Parquet2   );
-   CASE_MOSAIC(Trapezoid1 );
-   CASE_MOSAIC(Trapezoid2 );
-   CASE_MOSAIC(Trapezoid3 );
-   CASE_MOSAIC(Rhombus1   );
-   CASE_MOSAIC(Quadrangle1);
-   CASE_MOSAIC(PentagonT24);
-   CASE_MOSAIC(PentagonT5 );
-   CASE_MOSAIC(PentagonT10);
-   CASE_MOSAIC(Hexagon1   );
-   CASE_MOSAIC(TrSq1      );
-   CASE_MOSAIC(TrSq2      );
-   CASE_MOSAIC(SqTrHex    );
+#define CASE_MOSAIC(name) case mosaic##name: GetSizeInscribedSquare = nsCell::C##name::SizeInscribedSquare; break;
+   CASE_MOSAIC(Triangle1  )
+   CASE_MOSAIC(Triangle2  )
+   CASE_MOSAIC(Triangle3  )
+   CASE_MOSAIC(Triangle4  )
+   CASE_MOSAIC(Square1    )
+   CASE_MOSAIC(Square2    )
+   CASE_MOSAIC(Parquet1   )
+   CASE_MOSAIC(Parquet2   )
+   CASE_MOSAIC(Trapezoid1 )
+   CASE_MOSAIC(Trapezoid2 )
+   CASE_MOSAIC(Trapezoid3 )
+   CASE_MOSAIC(Rhombus1   )
+   CASE_MOSAIC(Quadrangle1)
+   CASE_MOSAIC(PentagonT24)
+   CASE_MOSAIC(PentagonT5 )
+   CASE_MOSAIC(PentagonT10)
+   CASE_MOSAIC(Hexagon1   )
+   CASE_MOSAIC(TrSq1      )
+   CASE_MOSAIC(TrSq2      )
+   CASE_MOSAIC(SqTrHex    )
    default /*mosaicNil*/: GetSizeInscribedSquare = nsCell::CBase::SizeInscribedSquare; break;
 #undef CASE_MOSAIC
    }

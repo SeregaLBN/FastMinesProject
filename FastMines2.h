@@ -106,9 +106,9 @@ private:
    void OnMosaicGameBegin     (HWND);                             // WM_MOSAIC_GAMEBEGIN
    void OnMosaicGameEnd       (HWND);                             // WM_MOSAIC_GAMEEND
    void OnMosaicPause         (HWND);                             // WM_MOSAIC_PAUSE
-   void OnMouseWheel          (HWND, WORD, short, short, short);  // WM_MOUSEWHEEL
+   void OnMouseWheel          (HWND, int, int, int, WORD);        // WM_MOUSEWHEEL
 
-   //void ProjectOnTimer(HWND hwnd, UINT id);                       // WM_TIMER
+   //void ProjectOnTimer(HWND hwnd, UINT id);                     // WM_TIMER
    //void ResetAssistant();
 
    void TopOnCommand      (HWND, int, HWND, UINT);                // WM_COMMAND

@@ -56,12 +56,12 @@ JOB_RESULT CAssistant::FindCell(OUT CClickData &Click) {
                return JOB_ABORT;
             //::SetCursor(LoadCursor(ghInstance, IDC_ARROW));
 /**
-            g_Logger.Put(CLogger::LL_DEBUG, TEXT("coord = %i"), Click.m_CoordCell);
+            g_Log.Put(CLogger::LL_DEBUG, TEXT("coord = %i"), Click.m_CoordCell);
             if (Click.m_CoordCell != INCORRECT_COORD) {
                if (Click.m_bIsLeft)
-                  g_Logger.Put(CLogger::LL_DEBUG, TEXT("coord for left  cliсk"));
+                  g_Log.Put(CLogger::LL_DEBUG, TEXT("coord for left  cliсk"));
                else
-                  g_Logger.Put(CLogger::LL_DEBUG, TEXT("coord for right cliсk"));
+                  g_Log.Put(CLogger::LL_DEBUG, TEXT("coord for right cliсk"));
             }
 /**/
          }
@@ -76,7 +76,7 @@ JOB_RESULT CAssistant::FindCell(OUT CClickData &Click) {
 JOB_RESULT CAssistant::Analyse(OUT CClickData &Click) {
    const int iNumberNeighbor = m_Mosaic.GetNeighborNumber();
 /*
-   g_Logger.Put(CLogger::LL_DEBUG, TEXT("------------------"));
+   g_Log.Put(CLogger::LL_DEBUG, TEXT("------------------"));
 */
    MM_cpTB mmPair; // проанализированные пары
 
@@ -130,8 +130,8 @@ JOB_RESULT CAssistant::Analyse(OUT CClickData &Click) {
       }
    }
    //if (Click.m_CoordCell == INCORRECT_COORD) {
-   //   g_Logger.Put(CLogger::LL_DEBUG, TEXT("coord cellAnalyse   = [%i,%i]"), cellAnalyseSave  ->GetCoord().X, cellAnalyseSave  ->GetCoord().Y);
-   //   g_Logger.Put(CLogger::LL_DEBUG, TEXT("coord cellInfluence = [%i,%i]"), cellInfluenceSave->GetCoord().X, cellInfluenceSave->GetCoord().Y);
+   //   g_Log.Put(CLogger::LL_DEBUG, TEXT("coord cellAnalyse   = [%i,%i]"), cellAnalyseSave  ->GetCoord().X, cellAnalyseSave  ->GetCoord().Y);
+   //   g_Log.Put(CLogger::LL_DEBUG, TEXT("coord cellInfluence = [%i,%i]"), cellInfluenceSave->GetCoord().X, cellInfluenceSave->GetCoord().Y);
    //}
    // все €чейки уже выбирались, но безрезультатно
    return JOB_SUCCESS;
@@ -318,7 +318,7 @@ void CAssistant::ClickEnd(const nsCell::CClickReportContext &ClickReportContext)
                                               p!=ClickReportContext.m_SetOpen.end(); p++)
       {
          for (int k=0; k<iNumberNeighbor; k++) {
-            //g_Logger.Put(CLogger::LL_DEBUG, TEXT("p=0x%08X; k=%d"), (*p), k);
+            //g_Log.Put(CLogger::LL_DEBUG, TEXT("p=0x%08X; k=%d"), (*p), k);
             const COORD &coordNeighbor = (*p)->GetNeighborCoord(k);
             if (coordNeighbor == INCORRECT_COORD) continue;
             const nsCell::CBase* cell = m_Mosaic.GetCell(coordNeighbor);
@@ -374,8 +374,8 @@ void CAssistant::ClickEnd(const nsCell::CClickReportContext &ClickReportContext)
          if ((!iCloseN) ||                                              // 2. ”далить €чейки, у которых все закрытые соседи имеют флажки;
              ((*p)->Cell_GetOpen() != (nsCell::EOpen)(iCloseF+iCloseN))) // 1. ”далить €чейки, у вес которых вес не равен кол-ву закрытых соседей.
          {
-            //g_Logger.Put(CLogger::LL_DEBUG, TEXT("m_SetForFlag del cell=[%i,%i]"), (*p)->GetCoord().X, (*p)->GetCoord().Y);
-            //g_Logger.Put(CLogger::LL_DEBUG, TEXT("------------------"));
+            //g_Log.Put(CLogger::LL_DEBUG, TEXT("m_SetForFlag del cell=[%i,%i]"), (*p)->GetCoord().X, (*p)->GetCoord().Y);
+            //g_Log.Put(CLogger::LL_DEBUG, TEXT("------------------"));
             m_SetForFlag.erase(*p);
             isBreak = false;
             break; // loop for
@@ -402,8 +402,8 @@ void CAssistant::ClickEnd(const nsCell::CClickReportContext &ClickReportContext)
          if ((!iCloseN) ||                                     // 1. ”далить €чейки, у которых все закрытые соседи имеют флажки
              ((*p)->Cell_GetOpen() != (nsCell::EOpen)iCloseF)) // 2. ”далить €чейки, у которых вес не равен кол-ву закрытых соседей с флажками
          {
-            //g_Logger.Pur(TEXT("m_SetForOpen del cell=[%i,%i]"), (*p)->GetCoord().X, (*p)->GetCoord().Y);
-            //g_Logger.Put(CLogger::LL_DEBUG, TEXT("------------------"));
+            //g_Log.Pur(TEXT("m_SetForOpen del cell=[%i,%i]"), (*p)->GetCoord().X, (*p)->GetCoord().Y);
+            //g_Log.Put(CLogger::LL_DEBUG, TEXT("------------------"));
             m_SetForOpen.erase(*p);
             isBreak = false;
             break; // loop for
@@ -431,8 +431,8 @@ void CAssistant::ClickEnd(const nsCell::CClickReportContext &ClickReportContext)
              ((*p)->Cell_GetOpen() == (nsCell::EOpen) iCloseF) ||       // 2. ”далить €чейки, у которых вес равен кол-ву закрытых соседей с флажками
              ((*p)->Cell_GetOpen() == (nsCell::EOpen)(iCloseF+iCloseN))) // 3. ”далить €чейки, у вес которых вес равен кол-ву закрытых соседей.
          {
-            //g_Logger.Put(CLogger::LL_DEBUG, TEXT("m_SetForAnalyse del cell=[%i,%i]"), (*p)->GetCoord().X, (*p)->GetCoord().Y);
-            //g_Logger.Put(CLogger::LL_DEBUG, TEXT("------------------"));
+            //g_Log.Put(CLogger::LL_DEBUG, TEXT("m_SetForAnalyse del cell=[%i,%i]"), (*p)->GetCoord().X, (*p)->GetCoord().Y);
+            //g_Log.Put(CLogger::LL_DEBUG, TEXT("------------------"));
             m_SetForAnalyse.erase(*p);
             isBreak = false;
             break; // loop for
@@ -448,11 +448,11 @@ void CAssistant::ClickEnd(const nsCell::CClickReportContext &ClickReportContext)
    // 4. ћножество m_SetCloseNoFlag - это множество закрытых €чеек без флажков.
    // Ќи в одном из этих множест нет одинаковых данных
 
-   //g_Logger.Put(CLogger::LL_DEBUG, TEXT("m_SetForOpen    size = %i"), m_SetForOpen   .size());
-   //g_Logger.Put(CLogger::LL_DEBUG, TEXT("m_SetForFlag    size = %i"), m_SetForFlag   .size());
-   //g_Logger.Put(CLogger::LL_DEBUG, TEXT("m_SetForAnalyse size = %i"), m_SetForAnalyse.size());
-   //g_Logger.Put(CLogger::LL_DEBUG, TEXT("------------------"));
-   //g_Logger.Put(CLogger::LL_DEBUG, TEXT("------------------"));
+   //g_Log.Put(CLogger::LL_DEBUG, TEXT("m_SetForOpen    size = %i"), m_SetForOpen   .size());
+   //g_Log.Put(CLogger::LL_DEBUG, TEXT("m_SetForFlag    size = %i"), m_SetForFlag   .size());
+   //g_Log.Put(CLogger::LL_DEBUG, TEXT("m_SetForAnalyse size = %i"), m_SetForAnalyse.size());
+   //g_Log.Put(CLogger::LL_DEBUG, TEXT("------------------"));
+   //g_Log.Put(CLogger::LL_DEBUG, TEXT("------------------"));
 }
 
 void CAssistant::DeleteTableSM() {
@@ -530,7 +530,7 @@ JOB_RESULT CAssistant::AnalyseVector(const bool *pbVector) {
          TCHAR *strVal = new TCHAR[iSize+1]; strVal[iSize] = TEXT('\0');
          for (int i=0; i<sizeArr; i++)
             strVal[i] = pbVector[i] ? TEXT('1') : TEXT('0');
-         g_Logger.Put(CLogger::LL_DEBUG, TEXT("ignore %s"), strVal);
+         g_Log.Put(CLogger::LL_DEBUG, TEXT("ignore %s"), strVal);
          delete [] strVal;
       }
 /**/
@@ -549,8 +549,8 @@ JOB_RESULT CAssistant::SequentialMoveCanBegin() { // проверка условий дл€ начала
    if (!m_Mosaic.GetGameStatusIsPlay()) return JOB_SUCCESS; // услови€ не выполнены (флаг m_bSequentialMove непроставлен)
    const float fPercent = 0.01f*m_Mosaic.GetSize().cx*m_Mosaic.GetSize().cy;
 
-   //g_Logger.Put(CLogger::LL_DEBUG, TEXT("m_SetCloseNoFlag.size() = %i"), iSize);
-   //g_Logger.Put(CLogger::LL_DEBUG, TEXT("closeNumber = %i"), closeNumber);
+   //g_Log.Put(CLogger::LL_DEBUG, TEXT("m_SetCloseNoFlag.size() = %i"), iSize);
+   //g_Log.Put(CLogger::LL_DEBUG, TEXT("closeNumber = %i"), closeNumber);
 
    /**
    if ((iSize > fPercent) || (iSize > 16)) {
@@ -567,7 +567,7 @@ JOB_RESULT CAssistant::SequentialMoveCanBegin() { // проверка условий дл€ начала
    DeleteTableSM(); // удал€ю всЄ старое...
 
 #ifdef _DEBUG
-   g_Logger.Put(CLogger::LL_DEBUG, TEXT("iSize = %i"), iSize);
+   g_Log.Put(CLogger::LL_DEBUG, TEXT("iSize = %i"), iSize);
 #endif
 
    bool *pbVector = new bool[iSize];
@@ -584,15 +584,15 @@ JOB_RESULT CAssistant::SequentialMoveCanBegin() { // проверка условий дл€ начала
    }
    delete [] pbVector;
 /**
-   g_Logger.Put(CLogger::LL_DEBUG, TEXT("-------"));
+   g_Log.Put(CLogger::LL_DEBUG, TEXT("-------"));
    for (V_pBool::const_iterator I=m_VTableSM.begin(); I!=m_VTableSM.end(); I++) {
       TCHAR *strVal = new TCHAR[iSize+1]; strVal[iSize] = TEXT('\0');
       for (int i=0; i<sizeArr; i++)
          strVal[i] = (*I)[i] ? TEXT('1') : TEXT('0');
-      g_Logger.Put(CLogger::LL_DEBUG, TEXT("bit Ok %s"), strVal);
+      g_Log.Put(CLogger::LL_DEBUG, TEXT("bit Ok %s"), strVal);
       delete [] strVal;
    }
-   g_Logger.Put(CLogger::LL_DEBUG, TEXT("-------"));
+   g_Log.Put(CLogger::LL_DEBUG, TEXT("-------"));
 /**/
    m_bSequentialMove = true; // готов к началу перебора флажков
    m_iRow = m_iCol = 0;
@@ -627,9 +627,9 @@ void CAssistant::SequentialMove(CClickData &Click) {
 /*
 void CAssistant::Print() {
    for (nsCell::SET_cpBase::const_iterator p=m_SetCloseNoFlag.begin(); p!=m_SetCloseNoFlag.end(); p++)
-      g_Logger.Put(CLogger::LL_DEBUG, TEXT("coord = [%i,%i]"), (*p)->GetCoord().X, (*p)->GetCoord().Y);
-   g_Logger.Put(CLogger::LL_DEBUG, TEXT("size = %i"), m_SetCloseNoFlag.size());
-   g_Logger.Put(CLogger::LL_DEBUG, TEXT("------------"));
+      g_Log.Put(CLogger::LL_DEBUG, TEXT("coord = [%i,%i]"), (*p)->GetCoord().X, (*p)->GetCoord().Y);
+   g_Log.Put(CLogger::LL_DEBUG, TEXT("size = %i"), m_SetCloseNoFlag.size());
+   g_Log.Put(CLogger::LL_DEBUG, TEXT("------------"));
 }
 */
 
@@ -651,8 +651,8 @@ inline bool Insert(MM_cpTB& mm, const nsCell::CBase *cellAnalyse, const nsCell::
  //mm.insert(std::make_pair(cellAnalyse  , cellInfluence));
  //mm.insert(std::make_pair(cellInfluence, cellAnalyse  ));
 /*
-   g_Logger.Put(CLogger::LL_DEBUG, TEXT("mm.insert: [%i,%i] [%i,%i]"), cellAnalyse->GetCoord().X, cellAnalyse->GetCoord().Y, cellInfluence->GetCoord().X, cellInfluence->GetCoord().Y);
- //g_Logger.Put(CLogger::LL_DEBUG, TEXT("mm.size = %i"), mm.size());
+   g_Log.Put(CLogger::LL_DEBUG, TEXT("mm.insert: [%i,%i] [%i,%i]"), cellAnalyse->GetCoord().X, cellAnalyse->GetCoord().Y, cellInfluence->GetCoord().X, cellInfluence->GetCoord().Y);
+ //g_Log.Put(CLogger::LL_DEBUG, TEXT("mm.size = %i"), mm.size());
 */
    return true;
 }
@@ -804,5 +804,115 @@ DWORD WINAPI ChildThread(PVOID pvParam) {
    return 0;
 }
 /**/
+
+void CAssistant::Work() {
+   static COORD lastClick = INCORRECT_COORD;
+   //if (lastClick != INCORRECT_COORD) IMAGE_JOB_SET;
+   nsMosaic::CClickData click;
+   if (IsSequentialMoveProcessed()) { // выполн€етс€ ли перебор флажков?
+      SequentialMove(click); // да, выполн€етс€ - продолжить перебор флажков
+   } else {
+      if (!FindCell(click)) { // найти €чейку дл€ клика
+         //IMAGE_JOB_RESET;
+         return; // работа была прервана
+      }
+      if (click.m_CoordCell == INCORRECT_COORD) {
+         if (!SequentialMoveCanBegin()) { // проверка условий дл€ начала перебора флажков
+            //IMAGE_JOB_RESET;
+            return; // работа была прервана
+         }
+         if (IsSequentialMoveProcessed()) {       // выполн€ть ли перебор флажков?
+            SequentialMove(click);       // да, выполн€ть - начать перебор флажков
+         } else {
+            if (m_Mosaic.GetGameStatusIsPlay() &&
+                m_Options.m_bStopJob &&
+                bOpenCellAssistant
+               )
+            {
+               IMAGE_JOB_RESET;
+               return; // останавливать когда нет однозначного следующего хода
+            }
+            if (click.m_fProbability >= 0.5) { // веро€тность больше 50%
+               click.m_CoordCell = click.m_PrbltCell;
+            #ifdef USE_INFO_DIALOG
+               //nsInfo::AddValue(TEXT("coord probability = "), click.m_CoordCell, 10);
+               //nsInfo::AddValue(TEXT("      probability = "), click.m_fProbability);
+            #endif // USE_INFO_DIALOG
+            } else {
+               do {
+                  click.m_CoordCell.X = rand(GetSizeMosaic().cx-1);
+                  click.m_CoordCell.Y = rand(GetSizeMosaic().cy-1);
+               } while ((m_Mosaic.GetCell(click.m_CoordCell)->Cell_GetStatus() == nsCell::_Open) ||
+                        (m_Mosaic.GetCell(click.m_CoordCell)->Cell_GetClose()  == nsCell::_Flag));
+            }
+         }
+      }
+   }
+   lastClick = click.m_CoordCell;
+   IMAGE_JOB_RESET;
+   const POINT coordCenter = m_Mosaic.GetCell(click.m_CoordCell)->GetCenterPixel();
+
+   { // set cursor to new position
+      POINT coordCursor = ::ClientToScreen(m_Mosaic.GetHandle(), coordCenter);
+
+      SetEvent(hEventSetCursorBegin);
+
+      SetCursorPos(coordCursor.x, coordCursor.y);
+
+      WaitForSingleObject(hEventSetCursorEnd, INFINITE);
+      SetEvent(hEventSetCursorBegin); // ???
+
+   }
+   if (bOpenCellAssistant) {
+      if (GetAssistant().m_bBeep) MessageBeep(0);
+      if (click.m_bIsLeft) {
+         FORWARD_WM_LBUTTONDOWN(m_Mosaic.GetHandle(), FALSE, coordCenter.x, coordCenter.y, MK_ASSISTANT, SendMessage);
+         FORWARD_WM_LBUTTONUP  (m_Mosaic.GetHandle(),        coordCenter.x, coordCenter.y, MK_ASSISTANT, SendMessage);
+      } else {
+         FORWARD_WM_RBUTTONDOWN(m_Mosaic.GetHandle(), FALSE, coordCenter.x, coordCenter.y, MAKEWPARAM(MK_ASSISTANT, click.m_Close), SendMessage);
+      }
+   }
+}
+
+DWORD CAssistant::Thread() {
+   m_Sync.m_hEventJob = ::CreateEvent(NULL, FALSE, FALSE, NULL);
+
+   BOOL bLoop = TRUE;
+   do {
+      const HANDLE pHandles[2]= {m_Sync.m_hEventJob, m_Sync.m_hEventDestroyOwner};
+
+      switch (::WaitForMultipleObjects(2, pHandles, FALSE, INFINITE)) {
+      case WAIT_OBJECT_0:
+         //ResetEvent(hEventJobEnd);
+         //try {
+            Work();
+         //}catch(...){}
+         //SetEvent(hEventJobEnd);
+         //ResetEvent(hEventJob);
+         break;
+      case WAIT_OBJECT_0+1:
+         bLoop = FALSE;
+         break;
+      case WAIT_TIMEOUT:
+      case WAIT_FAILED:
+         break;
+      }
+   } while(bLoop);
+
+   return 0;
+}
+
+CAssistant::CAssistant(CMosaic& mosaic, HANDLE hEventDestroyOwner) :
+   m_Mosaic(mosaic),
+   m_bSequentialMove(false)
+{
+   BOOL bRes = ::DuplicateHandle(::GetCurrentProcess(),
+                                 hEventDestroyOwner,
+                                 ::GetCurrentProcess(),
+                                 &m_Sync.m_hEventDestroyOwner,
+                                 0, FALSE, DUPLICATE_SAME_ACCESS);
+   DWORD dwThreadID = 0;
+   m_Sync.m_hThread = chBEGINTHREADEX(NULL, 0, ThreadStatic, this, 0, &dwThreadID);
+}
 
 }; // namespace nsMosaic

@@ -11,7 +11,7 @@
 #include <CommCtrl.h>
 #include <algorithm>
 #include "../ID_resource.h"
-#include "../CommonLib.h"
+#include "CommonLib.h"
 #include "../EraseBk.h"
 #include "../Lang.h"
 #include "../Control/Table.h"

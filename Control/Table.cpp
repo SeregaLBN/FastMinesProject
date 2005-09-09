@@ -7,7 +7,7 @@
 #include "StdAfx.h"
 #include <WindowsX.h>
 #include "Table.h"
-#include "../CommonLib.h"
+#include "CommonLib.h"
 #include "../EraseBk.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ LRESULT CALLBACK CTable::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
    if (This)
       switch(msg){
       case WM_GETDLGCODE:
-         //g_Logger.Put(CLogger::LL_DEBUG, "msg WM_GETDLGCODE: keyState = 0x%08X", keyState, 2);
+         //g_Log.Put(CLogger::LL_DEBUG, "msg WM_GETDLGCODE: keyState = 0x%08X", keyState, 2);
          if (GetKeyState(VK_SPACE) & 0x80000000) {
             static int count = 0;
             if (++count == 10) FORWARD_WM_KEYUP(hWnd, VK_SPACE, count = 0, 0, SendMessage);
@@ -705,7 +705,7 @@ BOOL CTable::OnEraseBkgnd(HWND hWnd, HDC hdc) {
 
 // WM_KEYDOWN & WM_KEYUP
 void CTable::OnKey(HWND hWnd, UINT vk, BOOL fDown, int cRepeat, UINT flags) {
-   //g_Logger.Put(CLogger::LL_DEBUG, "vk = 0x%08X", vk);
+   //g_Log.Put(CLogger::LL_DEBUG, "vk = 0x%08X", vk);
    if (fDown) return;
    switch (vk) {
    case VK_LEFT  : SetCurrentCell(m_CurrentCell.x-1, m_CurrentCell.y  ); break;
