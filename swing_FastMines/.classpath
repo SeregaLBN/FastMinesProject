@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="lib"/>
+	<classpathentry kind="src" path="src/swing"/>
+	<classpathentry kind="src" path="mosaic"/>
+	<classpathentry kind="src" path="data"/>
+	<classpathentry kind="src" path="ui_desktop"/>
+	<classpathentry excluding="**/*~*" including="*.gif|*.jpeg|*.jpg|*.png" kind="src" output="res" path="res"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

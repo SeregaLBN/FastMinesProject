@@ -1,0 +1,117 @@
+package ua.ksn.swing.utils;
+
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.net.URL;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
+/** вспомогательный класс для преобразований картинок */
+public class ImgUtils {
+
+	/** загрузить картинку из локальных ресурсов */
+	public static Image getImage(String resName) {
+		URL url = ImgUtils.class.getResource("/"+resName);
+		if (url != null)
+			return Toolkit.getDefaultToolkit().createImage(url);
+		return null;
+//		String classPath = System.getProperties().getProperty("java.class.path");
+//		if (classPath.toLowerCase().endsWith(".jar")) {
+//		    JarResources jar = new JarResources(classPath);
+//		    return Toolkit.getDefaultToolkit().createImage(jar.getResource(resName));
+//		} else
+//			try {
+//				return Toolkit.getDefaultToolkit().getImage(
+//						new File(classPath +
+//								System.getProperties().getProperty("file.separator") +
+//								resName).toURI().toURL());
+//			} catch (MalformedURLException ex) {
+//				ex.printStackTrace();
+//				throw new RuntimeException(ex);
+//			}
+	}
+	/** загрузить картинку из локальных ресурсов */
+	public static ImageIcon getImageIcon(String resName) {
+		return toImgIco(getImage(resName));
+	}
+	/** convert Image -> ImageIcon */
+	public static ImageIcon toImgIco(Image img) {
+		if (img == null) return null;
+		return new ImageIcon(img);
+	}
+	/** convert and change size Image -> ImageIcon */
+	public static ImageIcon toImgIco(Image img, int newWidth, int newHeight) {
+		if (img == null) return null;
+		return new ImageIcon(img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH));
+	}
+	/** change size ImageIcon */
+	public static ImageIcon zoom(ImageIcon img, int newWidth, int newHeight) {
+		if (img == null) return null;
+		return toImgIco(img.getImage(), newWidth, newHeight);
+	}
+
+	/** convert Icon -> Image */
+	public static Image toImg(Icon ico) {
+	    if (ico instanceof ImageIcon)
+	        return ((ImageIcon) ico).getImage();
+
+        BufferedImage img = new BufferedImage(ico.getIconWidth(), ico.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics g = img.createGraphics();
+        ico.paintIcon(null, g, 0, 0);
+        g.dispose();
+        return img;
+	}
+
+	public static Image rotate(Image inputImage, double degrees) {
+		BufferedImage sourceBI = new BufferedImage(
+				inputImage.getWidth(null),
+				inputImage.getHeight(null),
+				BufferedImage.TYPE_INT_ARGB);
+
+	    Graphics2D g = (Graphics2D) sourceBI.getGraphics();
+	    g.drawImage(inputImage, 0, 0, null);
+
+	    AffineTransform at = new AffineTransform();
+
+	    // scale image
+//	    at.scale(1.0, 1.0);
+
+	    // rotate around image center
+	    at.rotate(degrees * Math.PI / 180.0, sourceBI.getWidth() / 2.0, sourceBI.getHeight() / 2.0);
+//	    at.rotate(degrees * Math.PI / 180.0, 0, 0);
+
+	    // translate to make sure the rotation doesn't cut off any image data
+//	    AffineTransform translationTransform = findTranslation(at, sourceBI);
+//	    at.preConcatenate(translationTransform);
+
+	    // instantiate and apply affine transformation filter
+	    BufferedImageOp bio;
+	    bio = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+
+	    return bio.filter(sourceBI, null);
+	}
+
+//	/** find proper translations to keep rotated image correctly displayed */
+//	private static AffineTransform findTranslation(AffineTransform at, BufferedImage bi) {
+//		java.awt.geom.Point2D p2din, p2dout;
+//
+//		p2din = new java.awt.geom.Point2D.Double(0.0, 0.0);
+//		p2dout = at.transform(p2din, null);
+//		double ytrans = p2dout.getY();
+//
+//		p2din = new java.awt.geom.Point2D.Double(0, bi.getHeight());
+//		p2dout = at.transform(p2din, null);
+//		double xtrans = p2dout.getX();
+//
+//		AffineTransform tat = new AffineTransform();
+//		tat.translate(-xtrans, -ytrans);
+//		return tat;
+//	}
+}

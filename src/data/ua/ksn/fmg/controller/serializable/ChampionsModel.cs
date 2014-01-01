@@ -1,0 +1,358 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.IO;
+using ua.ksn.fmg.controller.Event;
+using ua.ksn.fmg.controller.types;
+using ua.ksn.fmg.model.mosaics;
+using System.Text;
+using ua.ksn.crypt;
+
+namespace ua.ksn.fmg.controller.serializable {
+
+/// <summary>хранилище чемпионов</summary>
+public class ChampionsModel : IExternalizable {
+   private readonly long version;
+
+   private const int MAX_SIZE = 10;
+
+   class Record : IExternalizable, IComparable<Record> {
+      public Guid userId;
+      public String userName;
+      public long playTime = long.MaxValue;
+
+      public Record() {}
+      public Record(User user, long playTime) {
+         this.userId = user.Guid;
+         this.userName = user.Name;
+         this.playTime  = playTime;
+      }
+
+      public void readExternal(BinaryReader input) {
+         userId = new Guid(input.ReadString());
+         userName = input.ReadString();
+         playTime = input.ReadInt64();
+      }
+      public void writeExternal(BinaryWriter output) {
+         output.Write(userId.ToString());
+         output.Write(userName);
+         output.Write((Int64)playTime);
+      }
+
+      public override String ToString() {
+         return userName;
+      }
+
+      public int CompareTo(Record o) {
+         long thisVal = this.playTime;
+         long anotherVal = o.playTime;
+         return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
+      }
+   }
+
+   private List<ChampionsModel.Record>[,] champions = new List<ChampionsModel.Record>[ Enum.GetValues(typeof(EMosaic)).Length, Enum.GetValues(typeof(ESkillLevel)).Length-1];
+
+   public void OnPlayerChanged(PlayersModel players, PlayerModelEvent e) {
+      if (e.getType() == PlayerModelEvent.UPDATE) {
+         // если был UPDATE, то это, возможно что, было переименование пользователя...
+         // в этом случае переименовываю его имя и в чемпионах
+         User user = players.getUser(e.getPos());
+         foreach (EMosaic mosaic in Enum.GetValues(typeof(EMosaic)))
+            foreach (ESkillLevel eSkill in Enum.GetValues(typeof(ESkillLevel)))
+               if (eSkill != ESkillLevel.eCustom) {
+                  IList<ChampionsModel.Record> list = champions[mosaic.ordinal(), eSkill.ordinal()];
+                  bool isChanged = false;
+                  foreach (Record record in list)
+                     if ((user.Guid == record.userId) && !user.Name.Equals(record.userName))
+                     {
+                        record.userName = user.Name;
+                        isChanged = true;
+                     }
+                  if (isChanged)
+                     fireChanged(new ChampionModelEvent(mosaic, eSkill, ChampionModelEvent.POS_ALL, ChampionModelEvent.UPDATE));
+               }
+      }
+   }
+   public ChampionsModel(long version, PlayersModel players) {
+      this.version = version;
+      if (players != null)
+         players.OnPlayerChanged += OnPlayerChanged;
+
+      foreach (EMosaic mosaic in Enum.GetValues(typeof(EMosaic)))
+         foreach (ESkillLevel eSkill in Enum.GetValues(typeof(ESkillLevel)))
+            if (eSkill != ESkillLevel.eCustom)
+               champions[mosaic.ordinal(), eSkill.ordinal()] = new List<ChampionsModel.Record>(MAX_SIZE);
+   }
+
+   public int add(User user, long playTime, EMosaic mosaic, ESkillLevel eSkill) {
+      if (eSkill == ESkillLevel.eCustom)
+         return -1;
+
+      List<ChampionsModel.Record> list = champions[mosaic.ordinal(), eSkill.ordinal()];
+      Record newRecord = new Record(user, playTime); 
+      list.Add(newRecord);
+
+      list.Sort();
+
+      int pos = list.IndexOf(newRecord);
+      if (pos == -1)
+         throw new Exception("Where??");
+
+      if (list.Count > MAX_SIZE)
+         list = list.Take(MAX_SIZE).ToList();
+
+      fireChanged(new ChampionModelEvent(mosaic, eSkill, ChampionModelEvent.POS_ALL, ChampionModelEvent.UPDATE));
+      if (pos < MAX_SIZE) {
+         fireChanged(new ChampionModelEvent(mosaic, eSkill, pos, ChampionModelEvent.INSERT));
+         return pos;
+      }
+      return -1;
+   }
+
+   public void writeExternal(BinaryWriter output) {
+      foreach (EMosaic mosaic in Enum.GetValues(typeof(EMosaic)))
+         foreach (ESkillLevel eSkill in Enum.GetValues(typeof(ESkillLevel)))
+            if (eSkill != ESkillLevel.eCustom) {
+               IList<ChampionsModel.Record> list = champions[mosaic.ordinal(), eSkill.ordinal()];
+               output.Write(list.Count);
+               foreach (Record record in list)
+                  record.writeExternal(output);
+            }
+   }
+
+   public void readExternal(BinaryReader input) {
+      setDefaults();
+      foreach (EMosaic mosaic in Enum.GetValues(typeof(EMosaic)))
+         foreach (ESkillLevel eSkill in Enum.GetValues(typeof(ESkillLevel)))
+            if (eSkill != ESkillLevel.eCustom) {
+               IList<ChampionsModel.Record> list = champions[mosaic.ordinal(), eSkill.ordinal()];
+               int size = input.ReadInt32();
+               for (int i=0; i<size; i++) {
+                  Record record = new Record();
+                  record.readExternal(input);
+                  list.Add(record);
+               }
+               fireChanged(new ChampionModelEvent(mosaic, eSkill, ChampionModelEvent.POS_ALL, ChampionModelEvent.INSERT));
+            }
+   }
+
+   private void setDefaults() {
+      foreach (EMosaic mosaic in Enum.GetValues(typeof(EMosaic)))
+         foreach (ESkillLevel eSkill in Enum.GetValues(typeof(ESkillLevel)))
+            if (eSkill != ESkillLevel.eCustom) {
+               IList<ChampionsModel.Record> list = champions[mosaic.ordinal(), eSkill.ordinal()];
+               list.Clear();
+               fireChanged(new ChampionModelEvent(mosaic, eSkill, ChampionModelEvent.POS_ALL, ChampionModelEvent.DELETE));
+            }
+   }
+
+#if WINDOWS_RT
+   // Load BST data from file
+   // return <b>true</b> - successful read; <b>false</b> - not exist or fail read, and set to defaults
+   public async System.Threading.Tasks.Task<bool> Load() {
+      var files = await Windows.Storage.ApplicationData.Current.LocalFolder.GetFilesAsync(Windows.Storage.Search.CommonFileQuery.OrderByName);
+      var file = files.FirstOrDefault(x => x.Name == ChampFile);
+      if (file == null) {
+         setDefaults();
+         return false;
+      }
+
+      //file = await Windows.Storage.ApplicationData.Current.LocalFolder.CreateFileAsync(StcFile, Windows.Storage.CreationCollisionOption.OpenIfExists);
+      try {
+         // 1. read from file
+         var content = await Windows.Storage.FileIO.ReadBufferAsync(file);
+         byte[] data;
+         using (Stream stream = (await file.OpenReadAsync()).AsStreamForRead()) {
+            using (BinaryReader input = new BinaryReader(stream, Encoding.UTF8)) {
+               if (input.ReadInt64() != version)
+                  throw new Exception("Invalid file data - unknown version");
+               data = new byte[input.ReadInt32()];
+               int read = 0;
+               do {
+                  int curr = input.Read(data, read, data.Length - read);
+                  if (curr == -1)
+                     break;
+                  read += curr;
+               } while (read < data.Length);
+               if (read != data.Length)
+                  throw new IOException("Invalid data length. Ожидалось " + data.Length + " байт, а прочитано " + read + " байт.");
+            }
+         }
+
+         // 2. decrypt data
+         data = new TripleDESOperations() {
+            Algorithm = Windows.Security.Cryptography.Core.SymmetricAlgorithmNames.TripleDesCbcPkcs7,
+            InitVector = new byte[8],
+            SecurityKeyStr = version.ToString(),
+            Data = data
+         }.Decrypt();
+
+         // 3. deserializable object
+         using (Stream stream = new MemoryStream()) {
+            stream.Write(data, 0, data.Length);
+            using (BinaryReader input = new BinaryReader(stream)) {
+               this.readExternal(input);
+            }
+         }
+
+         return true;
+      } catch (Exception ex) {
+         System.Diagnostics.Debug.WriteLine(ex.Message);
+         setDefaults();
+         return false;
+      }
+   }
+
+   public async void Save() {
+      // 1. serializable object
+      using (Stream stream = new MemoryStream()) {
+         using (BinaryWriter output = new BinaryWriter(stream, Encoding.UTF8)) {
+            this.writeExternal(output);
+         }
+
+         // 2. crypt data
+         byte[] noCryptedData = new byte[stream.Length];
+         stream.Position = 0;
+         var readed = await stream.ReadAsync(noCryptedData, 0, noCryptedData.Length);
+         if (readed != noCryptedData.Length)
+            throw new Exception("Not readed saved data");
+         byte[] cryptData = new TripleDESOperations() {
+            Algorithm = Windows.Security.Cryptography.Core.SymmetricAlgorithmNames.TripleDesCbcPkcs7,
+            InitVector = new byte[8],
+            SecurityKeyStr = version.ToString(),
+            Data = noCryptedData
+         }.Encrypt();
+
+         // 3. write to file
+         var file = await Windows.Storage.ApplicationData.Current.LocalFolder.CreateFileAsync(ChampFile, Windows.Storage.CreationCollisionOption.ReplaceExisting);
+         using (var streamFile = await file.OpenStreamForWriteAsync()) {
+            using (BinaryWriter output = new BinaryWriter(stream, Encoding.UTF8)) {
+               output.Write(version); // save version and decrypt key
+               int len = cryptData.Length;
+               output.Write(len);
+               output.Write(cryptData);
+            }
+         }
+      }
+   }
+#elif WINDOWS_FORMS
+   ///**
+   // * Load BST data from file
+   // * @return <b>true</b> - successful read; <b>false</b> - not exist or fail read, and set to defaults
+   // */
+   //public boolean Load() {
+   //   File file = getChampFile();
+   //   if (!file.exists()) {
+   //      setDefaults();
+   //      return false;
+   //   }
+
+   //   try {
+   //      // 1. read from file
+   //      ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+   //      if (in.readLong() != version)
+   //         throw new RuntimeException("Invalid file data - unknown version");
+   //      byte[] data = new byte[in.readInt()];
+   //      int read = 0;
+   //      do {
+   //         int curr = in.read(data, read, data.length-read);
+   //         if (curr == -1)
+   //            break;
+   //         read += curr;
+   //      } while(read < data.length);
+   //      if (read != data.length)
+   //         throw new IOException("Invalid data length. Ожидалось " + data.length + " байт, а прочитано " + read + " байт.");
+   //      in.close();
+
+   //      // 2. decrypt data
+   //      try {
+   //         data = new Simple3DES(Long.toString(version)).decrypt(data);
+   //      } catch (Exception ex) {
+   //         throw new RuntimeException(ex);
+   //      }
+
+   //      // 3. deserializable object
+   //      in = new ObjectInputStream(new ByteArrayInputStream(data));
+   //      this.readExternal(in);
+
+   //      in.close();
+
+   //      return true;
+   //   } catch (Exception ex) {
+   //      ex.printStackTrace();
+   //      setDefaults();
+   //      return false;
+   //   }
+   //}
+
+   //public void Save() throws FileNotFoundException, IOException {
+   //   // 1. serializable object
+   //   ByteArrayOutputStream byteRaw = new ByteArrayOutputStream();
+   //   ObjectOutputStream out = new ObjectOutputStream(byteRaw);
+   //   this.writeExternal(out);
+   //   out.flush();
+
+   //   // 2. crypt data
+   //   byte[] cryptData;
+   //   try {
+   //      cryptData = new Simple3DES(Long.toString(version)).encrypt(byteRaw.toByteArray());
+   //   } catch (Exception ex) {
+   //      throw new RuntimeException(ex);
+   //   }
+
+   //   // 3. write to file
+   //   out = new ObjectOutputStream(new FileOutputStream(getChampFile()));
+   //   out.writeLong(version); // save version and decrypt key
+   //   int len = cryptData.length;
+   //   out.writeInt(len);
+   //   out.write(cryptData);
+
+   //   out.flush();
+   //   out.close();
+   //}
+#else
+   public bool Load()...
+   public void Save()...
+#endif
+
+   public static string ChampFile { get { return "Mines.bst"; } }
+
+   public event ChampionModelEvent.OnChanged OnChampionChanged = delegate {};
+   private void fireChanged(ChampionModelEvent e) {
+      OnChampionChanged(this, e);
+   }
+
+   public String getUserName(int index, EMosaic mosaic, ESkillLevel eSkill) {
+      if (eSkill == ESkillLevel.eCustom)
+         throw new ArgumentException("Invalid input data - " + eSkill);
+      return champions[mosaic.ordinal(), eSkill.ordinal()][index].userName;
+   }
+   public long getUserPlayTime(int index, EMosaic mosaic, ESkillLevel eSkill) {
+      if (eSkill == ESkillLevel.eCustom)
+         throw new ArgumentException("Invalid input data - " + eSkill);
+      return champions[mosaic.ordinal(), eSkill.ordinal()][index].playTime;
+   }
+   public int getUsersCount(EMosaic mosaic, ESkillLevel eSkill) {
+      if (eSkill == ESkillLevel.eCustom)
+         throw new ArgumentException("Invalid input data - " + eSkill);
+      return champions[mosaic.ordinal(), eSkill.ordinal()].Count;
+   }
+
+   /** Найдёт позицию лучшего результата указанного пользователя */
+   public int getPos(Guid userId, EMosaic mosaic, ESkillLevel eSkill) {
+      if (userId == null)
+         return -1;
+      if (eSkill == ESkillLevel.eCustom)
+         throw new ArgumentException("Invalid input data - " + eSkill);
+
+      IList<ChampionsModel.Record> list = champions[mosaic.ordinal(), eSkill.ordinal()];
+      int pos = 0;
+      foreach (Record record in list) {
+         if (record.userId.Equals(userId))
+            return pos;
+         pos++;
+      }
+      return -1;
+   }
+}
+}
