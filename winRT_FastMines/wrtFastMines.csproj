@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -213,67 +213,67 @@
     <Compile Include="..\src\lib\ua\ksn\crypt\DES.cs">
       <Link>src\lib\ua\ksn\crypt\DES.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Hexagon1.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Hexagon1.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Hexagon1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Parquet1.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Parquet1.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Parquet1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Parquet2.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Parquet2.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Parquet2.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\PenrousePeriodic1.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\PenrousePeriodic1.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\PenrousePeriodic1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\PentagonT10.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\PentagonT10.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\PentagonT10.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\PentagonT24.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\PentagonT24.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\PentagonT24.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\PentagonT5.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\PentagonT5.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\PentagonT5.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Quadrangle1.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Quadrangle1.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Quadrangle1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Rhombus1.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Rhombus1.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Rhombus1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\SqTrHex.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\SqTrHex.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\SqTrHex.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Square1.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Square1.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Square1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Square2.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Square2.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Square2.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Trapezoid1.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Trapezoid1.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Trapezoid1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Trapezoid2.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Trapezoid2.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Trapezoid2.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Trapezoid3.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Trapezoid3.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Trapezoid3.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle1.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle1.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle2.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle2.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle2.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle3.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle3.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle3.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle4.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle4.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle4.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq1.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq1.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq2.cs" >
+    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq2.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq2.cs</Link>
     </Compile>
   </ItemGroup>
@@ -286,6 +286,7 @@
     <None Include="..\res\Backgrpound\Face~.vsd">
       <Link>res\Backgrpound\Face~.vsd</Link>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\res\ToolBarButton\newNormal.png">
@@ -596,7 +597,11 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="WriteableBitmapEx.WinRT">
+      <HintPath>..\packages\WriteableBitmapEx.1.0.8.0\lib\NetCore45\WriteableBitmapEx.WinRT.dll</HintPath>
+    </Reference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>
   </PropertyGroup>

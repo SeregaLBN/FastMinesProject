@@ -52,12 +52,27 @@ namespace FastMines.Data {
 		public string Subtitle { get; set; }
 		public string Description { get; set; }
 
-		private ImageSource _image = null;
+      private WriteableBitmap _image = null;
 		private String _imagePath = null;
-		public ImageSource Image {
+		public WriteableBitmap Image {
 			get {
 				if (this._image == null && this._imagePath != null) {
-					this._image = new BitmapImage(new Uri(FmDataCommon._baseUri, this._imagePath));
+					//this._image = new BitmapImage(new Uri(FmDataCommon._baseUri, this._imagePath));
+               this._image = BitmapFactory.New(1024, 1024);
+
+               using (var ctx = _image.GetBitmapContext()) {
+                  int[] points = new int[] { 10, 10, 10, 200, 200, 200, 200, 10 };
+                  var clr = 0xFF << 24;//unchecked((int)0xFF000000);
+                  _image.FillPolygon(points, clr);
+                  //_image.DrawRectangle(10, 10, 200, 200, clr);
+                  clr |= 0xFFFFFF;
+                  _image.DrawLine(10, 10, 200, 200, clr);
+                  int wbmp = _image.PixelWidth, hbmp = _image.PixelHeight;
+                  WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, 10, 10, 10, 200, clr);
+                  WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, 10, 200, 200, 200, clr);
+                  WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, 200, 200, 200, 10, clr);
+                  WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, 200, 10, 10, 10, clr);
+               }
 				}
 				return this._image;
 			}
