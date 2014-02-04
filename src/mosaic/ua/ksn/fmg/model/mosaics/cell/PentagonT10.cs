@@ -331,16 +331,16 @@ public class PentagonT10 : BaseCell {
 		return 2;
 	}
 
-	public override Color getBackgroundFillColor(int fillMode, Color defaultColor, IDictionary<int, Color> repositoryColor) {
+	public override Color getBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
 		if (fillMode == Attr.getMaxBackgroundFillModeValue())
 		{
 			switch (getDirection()) {
-			case  2: case  3: case  4: case  5: return repositoryColor[0];
-			case  8: case  9: case 10: case 11: return repositoryColor[1];
-			case  1: case  7: return repositoryColor[2];
-			case  0: case  6: return repositoryColor[3];
+			case  2: case  3: case  4: case  5: return repositoryColor(0);
+			case  8: case  9: case 10: case 11: return repositoryColor(1);
+			case  1: case  7: return repositoryColor(2);
+			case  0: case  6: return repositoryColor(3);
 //			default:
-//				return repositoryColor.get(-1);
+//				return repositoryColor(-1);
 			}
 		}
 		return base.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);

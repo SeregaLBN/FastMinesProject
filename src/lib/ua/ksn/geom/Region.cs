@@ -15,7 +15,7 @@ public class Region {
    public Point getPoint(int index) { return points[index]; }
    public void setPoint(int index, int x, int y) { points[index].x = x; points[index].y = y; }
 
-   public int getCountPoints() { return points.Length; }
+   public int CountPoints { get { return points.Length; } }
 
    public Rect getBounds() {
       int minX = points[0].x, maxX = points[0].x;

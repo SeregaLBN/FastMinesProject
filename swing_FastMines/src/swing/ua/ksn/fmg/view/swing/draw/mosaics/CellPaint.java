@@ -96,7 +96,7 @@ public class CellPaint {
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, renderingHintKeyAntialiasingOld);
 
 		// debug - визуально провер€ю верность вписанного квадрата (провер€ть при ширине пера около 21)
-//		Rect rcInner = getRcInner();
+//		Rect rcInner = cell.getRcInner(gContext.getPenBorder().getWidth());
 //		g.setColor(Color.MAGENTA);
 //		g.drawRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
 	}
@@ -175,7 +175,7 @@ public class CellPaint {
 
 	private ua.ksn.Color _defaultBkColor;
 	/** ÷вет заливки €чейки по-умолчанию. «ависит от текущего UI манагера */
-	protected ua.ksn.Color getBackgroundFillColor_Default() {
+	private ua.ksn.Color getDefaultBackgroundFillColor() {
 		if (_defaultBkColor == null) {
 			UIDefaults uiDef = UIManager.getDefaults();
 	
@@ -216,7 +216,7 @@ public class CellPaint {
 			return;
 		g.setColor(Cast.toColor(cell.getBackgroundFillColor(
 				gContext.getBackgroundFill().getMode(),
-				getBackgroundFillColor_Default(),
+				getDefaultBackgroundFillColor(),
 				gContext.getBackgroundFill().getColors()
 				)));
 		g.fillPolygon(Cast.toPolygon(cell.getRegion()));

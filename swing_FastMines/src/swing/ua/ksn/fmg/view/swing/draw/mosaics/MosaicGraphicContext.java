@@ -18,7 +18,7 @@ public class MosaicGraphicContext extends GraphicContext {
 	private ImageIcon imgBckgrnd;
 
 	public MosaicGraphicContext(JComponent owner) {
-		super(owner);
+		super(owner, false);
 	}
 
 	public Font getFont() {

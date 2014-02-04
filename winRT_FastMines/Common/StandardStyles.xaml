@@ -613,7 +613,6 @@
     </Style>
     -->
 
-    <!--
     <Style x:Key="WorldAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="WorldAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="World"/>
@@ -725,6 +724,7 @@
         <Setter Property="Content" Value="&#xE13D;"/>
     </Style>
 
+    <!--
     -->
 
     <!--
@@ -1821,6 +1821,9 @@
         <Setter Property="ChildrenTransitions">
             <Setter.Value>
                 <TransitionCollection>
+                    <!--
+                    <PaneThemeTransition/>
+                    -->
                     <EntranceThemeTransition/>
                 </TransitionCollection>
             </Setter.Value>

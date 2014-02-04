@@ -655,25 +655,25 @@ public class PentagonT5 : BaseCell {
 		return 3;
 	}
 
-	public override Color getBackgroundFillColor(int fillMode, Color defaultColor, IDictionary<int, Color> repositoryColor) {
+	public override Color getBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
 		if (fillMode == Attr.getMaxBackgroundFillModeValue())
 		{
 			// подсвечиваю 'ромашку'
 			switch (getDirection()) {
-			case  0: case  1: case  2: case 14: case 15: case 16: return repositoryColor[0];
-			case  3: case  4: case  5: case 17: case 18: case 19: return repositoryColor[1];
-			case  6: case  7: case  8: case 20: case 21: case 22: return repositoryColor[2];
-			case  9: case 10: case 11: case 23: case 24: case 25: return repositoryColor[3];
-			case 12: case 13: case 27: case 26: case 40: case 41: return repositoryColor[4];
-			case 28: case 29: case 30: case 42: case 43: case 44: return repositoryColor[5];
-			case 31: case 32: case 33: case 45: case 46: case 47: return repositoryColor[6];
-			case 34: case 35: case 36: case 48: case 49: case 50: return repositoryColor[7];
-			case 37: case 38: case 39: case 51: case 52: case 53: return repositoryColor[8];
-			case 54: case 55: case 69: case 67: case 68: case 83: return repositoryColor[9];
-			case 56: case 57: case 58: case 70: case 71: case 72: return repositoryColor[10];
-			case 59: case 60: case 61: case 73: case 74: case 75: return repositoryColor[11];
-			case 62: case 63: case 64: case 76: case 77: case 78: return repositoryColor[12];
-			case 65: case 66: case 82: case 79: case 80: case 81: return repositoryColor[13];
+			case  0: case  1: case  2: case 14: case 15: case 16: return repositoryColor(0);
+			case  3: case  4: case  5: case 17: case 18: case 19: return repositoryColor(1);
+			case  6: case  7: case  8: case 20: case 21: case 22: return repositoryColor(2);
+			case  9: case 10: case 11: case 23: case 24: case 25: return repositoryColor(3);
+			case 12: case 13: case 27: case 26: case 40: case 41: return repositoryColor(4);
+			case 28: case 29: case 30: case 42: case 43: case 44: return repositoryColor(5);
+			case 31: case 32: case 33: case 45: case 46: case 47: return repositoryColor(6);
+			case 34: case 35: case 36: case 48: case 49: case 50: return repositoryColor(7);
+			case 37: case 38: case 39: case 51: case 52: case 53: return repositoryColor(8);
+			case 54: case 55: case 69: case 67: case 68: case 83: return repositoryColor(9);
+			case 56: case 57: case 58: case 70: case 71: case 72: return repositoryColor(10);
+			case 59: case 60: case 61: case 73: case 74: case 75: return repositoryColor(11);
+			case 62: case 63: case 64: case 76: case 77: case 78: return repositoryColor(12);
+			case 65: case 66: case 82: case 79: case 80: case 81: return repositoryColor(13);
 //			default:
 //				return repositoryColor.get(-1);
 			}
@@ -685,21 +685,21 @@ public class PentagonT5 : BaseCell {
 			case  1: case  0: case 14:
 			case 13: case 12: case 26: case 38: case 37: case 51: case 63: case 62: case 76:
 			case  7: case  6: case 20: case 32: case 31: case 45: case 57: case 56: case 70:
-				return repositoryColor[0];
+				return repositoryColor(0);
 			case  2: case 16: case 15:
 			case 27: case 41: case 40: case 39: case 53: case 52: case 64: case 78: case 77:
 			case  8: case 22: case 21: case 33: case 47: case 46: case 58: case 72: case 71:
-				return repositoryColor[1];
+				return repositoryColor(1);
 			case  4: case  3: case 17:
 			case 29: case 28: case 42: case 55: case 54: case 67: case 66: case 65: case 79:
 			case 10: case  9: case 23: case 35: case 34: case 48: case 60: case 59: case 73:
-				return repositoryColor[2];
+				return repositoryColor(2);
 			case  5: case 19: case 18:
 			case 30: case 44: case 43: case 69: case 83: case 68: case 82: case 81: case 80:
 			case 11: case 25: case 24: case 36: case 50: case 49: case 61: case 75: case 74:
-				return repositoryColor[3];
+				return repositoryColor(3);
 //			default:
-//				return repositoryColor.get(-1);
+//				return repositoryColor(-1);
 			}
 		}
 		return base.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);

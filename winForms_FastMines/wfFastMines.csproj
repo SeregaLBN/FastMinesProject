@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -224,17 +224,17 @@
     <Content Include="..\res\Logo\StoreLogo_50x50.png">
       <Link>res\Logo\StoreLogo_50x50.png</Link>
     </Content>
-    <Content Include="..\res\Backgrpound\~Pause.png">
-      <Link>res\Backgrpound\~Pause.png</Link>
+    <Content Include="..\res\Background\~Pause.png">
+      <Link>res\Background\~Pause.png</Link>
     </Content>
-    <Content Include="..\res\Backgrpound\DarkGray.png">
-      <Link>res\Backgrpound\DarkGray.png</Link>
+    <Content Include="..\res\Background\DarkGray.png">
+      <Link>res\Background\DarkGray.png</Link>
     </Content>
-    <Content Include="..\res\Backgrpound\LightGray.png">
-      <Link>res\Backgrpound\LightGray.png</Link>
+    <Content Include="..\res\Background\LightGray.png">
+      <Link>res\Background\LightGray.png</Link>
     </Content>
-    <Content Include="..\res\Backgrpound\MediumGray.png">
-      <Link>res\Backgrpound\MediumGray.png</Link>
+    <Content Include="..\res\Background\MediumGray.png">
+      <Link>res\Background\MediumGray.png</Link>
     </Content>
     <Content Include="..\res\CellState\~Flag.png">
       <Link>res\CellState\~Flag.png</Link>

@@ -120,14 +120,14 @@ public class Square1 : BaseCell {
 
 	public override int getShiftPointBorderIndex() { return 2; }
 
-	public override Color getBackgroundFillColor(int fillMode, Color defaultColor, IDictionary<int, Color> repositoryColor) {
+	public override Color getBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
 		switch (fillMode) {
 		default:
 			return base.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);
 		case 1: // перекрываю базовый на основе direction
 			int pos = (-getCoord().x + getCoord().y) % ((Attr.GetHashCode() & 0x3)+fillMode);
 //			System.out.println(pos);
-			return repositoryColor[pos];
+			return repositoryColor(pos);
 		}
 	}
 }

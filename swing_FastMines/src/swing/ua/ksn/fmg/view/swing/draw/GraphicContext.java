@@ -31,10 +31,11 @@ public class GraphicContext  {
 
 	private ColorText colorText;
 	protected PenBorder penBorder;
-	private boolean iconicMode;
+	private final boolean iconicMode;
 
-	public GraphicContext(JComponent owner) {
+	public GraphicContext(JComponent owner, boolean iconicMode) {
 		this.owner = owner;
+		this.iconicMode = iconicMode;
 	}
 
 	public ImageIcon getImgMine() {
@@ -136,8 +137,5 @@ public class GraphicContext  {
 
 	public boolean isIconicMode() {
 		return iconicMode;
-	}
-	public void setIconicMode(boolean iconicMode) {
-		this.iconicMode = iconicMode;
 	}
 }

@@ -187,6 +187,9 @@
     <Compile Include="..\src\ui_desktop\ua\ksn\fmg\view\draw\PenBorder.cs">
       <Link>src\ui_desktop\ua\ksn\fmg\view\draw\PenBorder.cs</Link>
     </Compile>
+    <Compile Include="DataModel\FmDataItem.cs" />
+    <Compile Include="DataModel\FmDataGroup.cs" />
+    <Compile Include="DataModel\FmDataCommon.cs" />
     <Compile Include="GroupedItemsPage.xaml.cs">
       <DependentUpon>GroupedItemsPage.xaml</DependentUpon>
     </Compile>
@@ -276,6 +279,10 @@
     <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq2.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq2.cs</Link>
     </Compile>
+    <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\BitmapFont.cs" />
+    <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\GraphicContext.cs" />
+    <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\mosaics\CellPaint.cs" />
+    <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\MosaicsImg.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -283,8 +290,8 @@
     </AppxManifest>
     <None Include="Common\ReadMe.txt" />
     <None Include="FastMines_TemporaryKey.pfx" />
-    <None Include="..\res\Backgrpound\Face~.vsd">
-      <Link>res\Backgrpound\Face~.vsd</Link>
+    <None Include="..\res\Background\Face~.vsd">
+      <Link>res\Background\Face~.vsd</Link>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
@@ -364,17 +371,20 @@
     <Content Include="..\res\Logo\StoreLogo_50x50.png">
       <Link>res\Logo\StoreLogo_50x50.png</Link>
     </Content>
-    <Content Include="..\res\Backgrpound\~Pause.png">
-      <Link>res\Backgrpound\~Pause.png</Link>
+    <Content Include="..\res\Background\~Pause.png">
+      <Link>res\Background\~Pause.png</Link>
     </Content>
-    <Content Include="..\res\Backgrpound\DarkGray.png">
-      <Link>res\Backgrpound\DarkGray.png</Link>
+    <Content Include="..\res\Background\DarkGray.png">
+      <Link>res\Background\DarkGray.png</Link>
     </Content>
-    <Content Include="..\res\Backgrpound\LightGray.png">
-      <Link>res\Backgrpound\LightGray.png</Link>
+    <Content Include="..\res\Font\NirmalaUI_30.png">
+      <Link>res\Font\NirmalaUI_30.png</Link>
     </Content>
-    <Content Include="..\res\Backgrpound\MediumGray.png">
-      <Link>res\Backgrpound\MediumGray.png</Link>
+    <Content Include="..\res\Background\LightGray.png">
+      <Link>res\Background\LightGray.png</Link>
+    </Content>
+    <Content Include="..\res\Background\MediumGray.png">
+      <Link>res\Background\MediumGray.png</Link>
     </Content>
     <Content Include="..\res\CellState\~Flag.png">
       <Link>res\CellState\~Flag.png</Link>
@@ -574,6 +584,9 @@
     <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\CellFactory.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\CellFactory.cs</Link>
     </Compile>
+    <Content Include="..\res\Font\NirmalaUI_30.xml">
+      <Link>res\Font\NirmalaUI_30.xml</Link>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

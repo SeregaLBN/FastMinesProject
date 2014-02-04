@@ -257,14 +257,14 @@ public class Rhombus1 : BaseCell {
 
 	public override int getShiftPointBorderIndex() { return 2; }
 
-	public override Color getBackgroundFillColor(int fillMode, Color defaultColor, IDictionary<int, Color> repositoryColor) {
+	public override Color getBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
 		if (fillMode == Attr.getMaxBackgroundFillModeValue()) {
 			switch ((getCoord().y%4)*3+(getCoord().x%3)) { // почти как вычисление direction...
 			// подсвечиваю 4 группы, составл€ющие кажда€ шестигранник из 3х ромбов
-			case 0: case  1: case  3: return repositoryColor[0];
-			case 2: case  4: case  5: return repositoryColor[1];
-			case 6: case  7: case  9: return repositoryColor[2];
-			case 8: case 10: case 11: return repositoryColor[3];
+			case 0: case  1: case  3: return repositoryColor(0);
+			case 2: case  4: case  5: return repositoryColor(1);
+			case 6: case  7: case  9: return repositoryColor(2);
+			case 8: case 10: case 11: return repositoryColor(3);
 			}
 		}
 		return base.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);

@@ -441,7 +441,7 @@ public abstract class BaseCell {
    /// * координаты €чейки
    /// * направлени€ €чейки
    /// * ... - как придумает дочерний класс </summary>
-   public virtual Color getBackgroundFillColor(int fillMode, Color defaultColor, IDictionary<int, Color> repositoryColor) {
+   public virtual Color getBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
       switch (fillMode) {
       default:
          System.Diagnostics.Debug.Assert(false,this.GetType()+".getBackgroundFillColor: fillMode="+fillMode+":  добавь цветовую обработку дл€ этого режима!");
@@ -472,7 +472,7 @@ public abstract class BaseCell {
             return new Color(_r,_g,_b);
          }
       case 1:
-         return repositoryColor[getDirection()];
+         return repositoryColor(getDirection());
       case 2:
          {
             // подсветить каждую i-тую строку c шагом div
@@ -480,7 +480,7 @@ public abstract class BaseCell {
             int div = 5;
             int tmp1 = getCoord().x % div;
             int tmp2 = (getCoord().y-tmp1) % div;
-            return repositoryColor[(((tmp1 + tmp2) % div) == i) ? 0 : 1 ];
+            return repositoryColor((((tmp1 + tmp2) % div) == i) ? 0 : 1 );
          }
       case 3:
          {
@@ -489,7 +489,7 @@ public abstract class BaseCell {
             int div = 4;
             int tmp1 = getCoord().x % div;
             int tmp2 = (getCoord().y+tmp1) % div;
-            return repositoryColor[(((tmp1 + tmp2) % div) == i) ? 0 : 1 ];
+            return repositoryColor((((tmp1 + tmp2) % div) == i) ? 0 : 1 );
          }
       case 4:
          {
@@ -498,7 +498,7 @@ public abstract class BaseCell {
             int div = 5;
             int tmp1 = getCoord().x % div;
             int tmp2 = (getCoord().y+tmp1) % div;
-            return repositoryColor[(((tmp1 + tmp2) % div) == i) ? 0 : 1 ];
+            return repositoryColor((((tmp1 + tmp2) % div) == i) ? 0 : 1);
          }
       case 5:
          {
@@ -506,20 +506,20 @@ public abstract class BaseCell {
             int div = 15;
             int tmp1 = getCoord().x % div;
             int tmp2 = (getCoord().y+tmp1) % div;
-            return repositoryColor[(tmp1 + tmp2) % div];
+            return repositoryColor((tmp1 + tmp2) % div);
          }
       case 6:
          {
             int div = 4;
-            return repositoryColor[((getCoord().x%div + getCoord().y%div) == div) ? 0 : 1];
+            return repositoryColor(((getCoord().x % div + getCoord().y % div) == div) ? 0 : 1);
          }
       case 7: case 8: case 9:
-         return repositoryColor[getCoord().x % (-5+fillMode)];
+         return repositoryColor(getCoord().x % (-5 + fillMode));
       case 10: case 11: case 12:
-         return repositoryColor[getCoord().y % (-8+fillMode)];
+         return repositoryColor(getCoord().y % (-8 + fillMode));
       case 13: case 14: case 15:
       case 16: case 17: case 18:
-         return repositoryColor[getCoord().x % (-fillMode) - fillMode + getCoord().y % (+fillMode)];
+         return repositoryColor(getCoord().x % (-fillMode) - fillMode + getCoord().y % (+fillMode));
       }
    }
 
