@@ -24,7 +24,7 @@ public class MosaicsImg implements Icon {
 	private final int area;
 
 	static {
-		gContext = new GraphicContext(null, true);
+		gContext = new GraphicContext(null, true, new Size(0,0));
 		gContext.getPenBorder().setWidth(2);
 		gContext.getPenBorder().setColorLight(gContext.getPenBorder().getColorShadow());
 	}
@@ -42,14 +42,19 @@ public class MosaicsImg implements Icon {
 	}
 	
 	public int getIconWidth() {
-		return attr.CalcOwnerSize(sizeField, area).width;
+		return attr.CalcOwnerSize(sizeField, area).width+gContext.getBound().width*2;
 	}
 
 	public int getIconHeight() {
-		return attr.CalcOwnerSize(sizeField, area).height;
+		return attr.CalcOwnerSize(sizeField, area).height+gContext.getBound().height*2;
 	}
 
 	public void paintIcon(Component c, Graphics g, int x, int y) {
+//		if (false) {
+//			Size pixelSize = attr.CalcOwnerSize(sizeField, area);
+//			g.setColor(java.awt.Color.ORANGE);
+//			g.fillRect(0, 0, pixelSize.width+gContext.getBound().width*2, pixelSize.height+gContext.getBound().height*2);
+//		}
 		for (BaseCell cell: arrCell)
 			gInfo.paint(cell, g);
 	}

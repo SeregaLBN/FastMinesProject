@@ -34,8 +34,8 @@ public class CellFactory {
 		try {
 			String className = getPackageName() + ".cell." + mosaicType.getMosaicClassName() + "$Attr"+mosaicType.getMosaicClassName();
 			@SuppressWarnings("unchecked")
-			Class<? extends BaseCell.BaseAttribute> cellClass = (Class<? extends BaseCell.BaseAttribute>)Class.forName(className);
-			Constructor<? extends BaseCell.BaseAttribute> constructor = cellClass.getConstructor(int.class); //(Constructor<? extends BaseAttribute>) cellClass.getConstructors()[0]; // 
+			Class<? extends BaseCell.BaseAttribute> cellAttrClass = (Class<? extends BaseCell.BaseAttribute>)Class.forName(className);
+			Constructor<? extends BaseCell.BaseAttribute> constructor = cellAttrClass.getConstructor(int.class); //(Constructor<? extends BaseAttribute>) cellClass.getConstructors()[0]; // 
 			BaseCell.BaseAttribute attr = constructor.newInstance(area);
 			return attr;
 		} catch (Exception ex) {

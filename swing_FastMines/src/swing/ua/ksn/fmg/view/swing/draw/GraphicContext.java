@@ -10,6 +10,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import ua.ksn.Color;
+import ua.ksn.geom.Size;
 import ua.ksn.fmg.view.draw.ColorText;
 import ua.ksn.fmg.view.draw.PenBorder;
 
@@ -32,10 +33,12 @@ public class GraphicContext  {
 	private ColorText colorText;
 	protected PenBorder penBorder;
 	private final boolean iconicMode;
+	private final Size bound;
 
-	public GraphicContext(JComponent owner, boolean iconicMode) {
+	public GraphicContext(JComponent owner, boolean iconicMode, Size bound) {
 		this.owner = owner;
 		this.iconicMode = iconicMode;
+		this.bound = bound;
 	}
 
 	public ImageIcon getImgMine() {
@@ -137,5 +140,9 @@ public class GraphicContext  {
 
 	public boolean isIconicMode() {
 		return iconicMode;
+	}
+
+	public Size getBound() {
+		return bound;
 	}
 }

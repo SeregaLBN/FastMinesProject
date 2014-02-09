@@ -58,7 +58,7 @@ public abstract class Mosaic {
       }
       get {
          if (_cellAttr == null)
-            _cellAttr = CellFactory.createAttributeInstance(Cells.MosaicType, Area);
+            _cellAttr = CellFactory.CreateAttributeInstance(Cells.MosaicType, Area);
          return _cellAttr;
       }
    }
@@ -118,7 +118,7 @@ public abstract class Mosaic {
             matrix = new List<BaseCell>(size.width*size.height);
             for (int i=0; i < size.width; i++)
                for (int j=0; j < size.height; j++) {
-                  BaseCell cell = CellFactory.createCellInstance(attr, mosaicType, new Coord(i, j));
+                  BaseCell cell = CellFactory.CreateCellInstance(attr, mosaicType, new Coord(i, j));
                   matrix.Add(/*i*size.height + j, */cell);
                   attr.OnChangeArea += cell.OnPropertyAreaChange; // подписываю новые €чейки на уведомлени€ атрибута (изменение a -> перерасчЄт координат)
                }

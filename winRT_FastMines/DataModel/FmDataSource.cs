@@ -1,17 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using Windows.ApplicationModel.Resources.Core;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using ua.ksn.fmg.model.mosaics;
 
 // The data model defined by this file serves as a representative example of a strongly-typed

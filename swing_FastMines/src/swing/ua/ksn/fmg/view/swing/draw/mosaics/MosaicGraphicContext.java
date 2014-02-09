@@ -7,6 +7,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 
+import ua.ksn.geom.Size;
 import ua.ksn.fmg.view.swing.draw.GraphicContext;
 
 public class MosaicGraphicContext extends GraphicContext {
@@ -18,7 +19,7 @@ public class MosaicGraphicContext extends GraphicContext {
 	private ImageIcon imgBckgrnd;
 
 	public MosaicGraphicContext(JComponent owner) {
-		super(owner, false);
+		super(owner, false, new Size(0,0));
 	}
 
 	public Font getFont() {

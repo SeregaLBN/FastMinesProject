@@ -23,6 +23,8 @@ import ua.ksn.fmg.model.mosaics.cell.BaseCell;
 import ua.ksn.fmg.view.swing.draw.GraphicContext;
 import ua.ksn.geom.Point;
 import ua.ksn.geom.Rect;
+import ua.ksn.geom.Region;
+import ua.ksn.geom.Size;
 import ua.ksn.swing.geom.Cast;
 
 /**
@@ -56,7 +58,7 @@ public class CellPaint {
 			Shape shapeOld = g2d.getClip();
 
 			// ограничиваю рисование только границами своей фигуры
-			g2d.setClip(Cast.toPolygon(cell.getRegion()));
+			g2d.setClip(Cast.toPolygon(Region.moveXY(cell.getRegion(), gContext.getBound())));
 
 			// all paint
 			this.paintComponent(cell, g);
@@ -103,9 +105,10 @@ public class CellPaint {
 
 	/** draw border lines */
 	public void paintBorderLines(BaseCell cell, Graphics g) {
+		Size bound = gContext.getBound();
 		if (gContext.isIconicMode()) {
 			g.setColor(Cast.toColor(cell.getState().isDown() ? gContext.getPenBorder().getColorLight() : gContext.getPenBorder().getColorShadow()));
-			g.drawPolygon(Cast.toPolygon(cell.getRegion()));
+			g.drawPolygon(Cast.toPolygon(Region.moveXY(cell.getRegion(), bound)));
 		} else {
 			g.setColor(Cast.toColor(cell.getState().isDown() ? gContext.getPenBorder().getColorLight()  : gContext.getPenBorder().getColorShadow()));
 			int s = cell.getShiftPointBorderIndex();
@@ -115,7 +118,7 @@ public class CellPaint {
 				Point p2 = (i != (v-1)) ? cell.getRegion().getPoint(i+1) : cell.getRegion().getPoint(0);
 				if (i==s)
 					g.setColor(Cast.toColor(cell.getState().isDown() ? gContext.getPenBorder().getColorShadow(): gContext.getPenBorder().getColorLight()));
-				g.drawLine(p1.x, p1.y, p2.x, p2.y);
+				g.drawLine(p1.x+bound.width, p1.y+bound.height, p2.x+bound.width, p2.y+bound.height);
 			}
 		}
 	}
@@ -123,6 +126,7 @@ public class CellPaint {
 	/** @see javax.swing.JComponent.paintComponent */
 	public void paintComponent(BaseCell cell, Graphics g) {
 		Color colorOld = g.getColor();
+		Size bound = gContext.getBound();
 
 		paintComponentBackground(cell, g);
 
@@ -135,13 +139,13 @@ public class CellPaint {
 			(cell.getState().getStatus() == EState._Close) &&
 			(cell.getState().getClose() == EClose._Flag))
 		{
-			gContext.getImgFlag().paintIcon(gContext.getOwner(), g, rcInner.x, rcInner.y);
+			gContext.getImgFlag().paintIcon(gContext.getOwner(), g, rcInner.x+bound.width, rcInner.y+bound.height);
 		} else
 		if ((gContext.getImgMine() != null) &&
 			(cell.getState().getStatus() == EState._Open ) &&
 			(cell.getState().getOpen() == EOpen._Mine))
 		{
-			gContext.getImgMine().paintIcon(gContext.getOwner(), g, rcInner.x, rcInner.y);
+			gContext.getImgMine().paintIcon(gContext.getOwner(), g, rcInner.x+bound.width, rcInner.y+bound.height);
 		} else
 		// output text
 		{
@@ -157,6 +161,7 @@ public class CellPaint {
 			}
 			if ((szCaption != null) && (szCaption.length() > 0))
 			{
+				rcInner.moveXY(bound);
 				if (cell.getState().isDown())
 					rcInner.moveXY(1, 1);
 				DrawText(g, szCaption, Cast.toRect(rcInner));
@@ -212,14 +217,14 @@ public class CellPaint {
 
 	/** залить ячейку нужным цветом */
 	protected void paintComponentBackground(BaseCell cell, Graphics g) {
-		if (gContext.isIconicMode()) // когда русуется иконка, а не игровое поле, - делаю попроще...
-			return;
+//		if (gContext.isIconicMode()) // когда русуется иконка, а не игровое поле, - делаю попроще...
+//			return;
 		g.setColor(Cast.toColor(cell.getBackgroundFillColor(
 				gContext.getBackgroundFill().getMode(),
 				getDefaultBackgroundFillColor(),
 				gContext.getBackgroundFill().getColors()
 				)));
-		g.fillPolygon(Cast.toPolygon(cell.getRegion()));
+		g.fillPolygon(Cast.toPolygon(Region.moveXY(cell.getRegion(), gContext.getBound())));
 	}
 
 	private static Rectangle2D getStringBounds(String text, Font font) {

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using ua.ksn.geom;
 using ua.ksn.fmg.view.draw;
 
 namespace ua.ksn.fmg.view.win_rt.draw {
@@ -11,9 +11,11 @@ namespace ua.ksn.fmg.view.win_rt.draw {
       private ColorText colorText;
       protected PenBorder penBorder;
       private readonly bool iconicMode;
+      private readonly Size _bound;
 
-      public GraphicContext(bool iconicMode) {
+      public GraphicContext(bool iconicMode, Size bound) {
          this.iconicMode = iconicMode;
+         _bound = bound;
       }
 
       public WriteableBitmap ImgMine {
@@ -102,5 +104,6 @@ namespace ua.ksn.fmg.view.win_rt.draw {
       }
 
       public bool IconicMode { get { return iconicMode; } }
+      public Size Bound { get { return _bound; } }
    }
 }

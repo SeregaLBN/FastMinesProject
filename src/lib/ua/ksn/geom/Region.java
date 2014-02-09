@@ -82,4 +82,26 @@ public class Region {
 		sb.append('}');
     	return sb.toString();
     }
+	
+	@Override
+	public Region clone() {
+		int cnt = getCountPoints();
+		Region clon = new Region(cnt);
+		for (int i=0; i<cnt; i++) {
+			Point p = this.getPoint(i);
+			clon.setPoint(i, p.x, p.y);
+		}
+		return clon;
+	}
+
+	public static Region moveXY(Region self, Size bound) {
+		if (bound.width == 0 && bound.height == 0)
+			return self;
+		Region res = self.clone();
+		for (int i=0; i<res.getCountPoints(); i++) {
+			res.points[i].x = res.points[i].x + bound.width;
+			res.points[i].y = res.points[i].y + bound.height;
+		}
+		return res;
+	}
 }

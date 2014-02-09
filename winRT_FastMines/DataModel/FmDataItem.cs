@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using Windows.ApplicationModel.Resources.Core;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI;
 using ua.ksn.fmg.model.mosaics;
 using ua.ksn.fmg.view.win_rt.res.img;
 
@@ -45,7 +34,7 @@ namespace FastMines.Data {
          get {
             if (this._image == null)
                try {
-                  this._image = new MosaicsImg(EMosaicEx.fromIndex(this.UniqueId), false).Image;
+                  this._image = new MosaicsImg(EMosaicEx.fromIndex(this.UniqueId), true).Image;
                } catch (Exception ex) {
                   System.Diagnostics.Debug.Assert(true, ex.Message);
                   int maxX  = 1024, maxY = 1024;

@@ -21,13 +21,13 @@ namespace ua.ksn.fmg.controller.types {
       /// skill level coefficient
       /// коэффициент уровн€ сложности в зависимости от типа мозаики - чем больше, тем сложнее
       /// </summary>
-      private static IDictionary<EMosaic, double> mosaicCoefficient;
+      private static readonly IDictionary<EMosaic, double> mosaicCoefficient;
       static ESkillLevelEx() {
          var values = Enum.GetValues(typeof(EMosaic));
          mosaicCoefficient = new Dictionary<EMosaic, double>(values.Length);
-         int area = 200; // пох
+         const int area = 200; // пох
          foreach (EMosaic mosaicType in values) {
-            BaseCell.BaseAttribute attr = CellFactory.createAttributeInstance(mosaicType, area);
+            BaseCell.BaseAttribute attr = CellFactory.CreateAttributeInstance(mosaicType, area);
 
             // variant 1 - сложность в зависимости от кол-ва пересечений €чеек в одной точке
             //			mosaicCoefficient.put(mosaicType, attr.getVertexIntersection());
@@ -53,7 +53,7 @@ namespace ua.ksn.fmg.controller.types {
       }
 
       /** коэффициент уровн€ сложности */
-      private static double getCoefficient(this ESkillLevel self) {
+      private static double GetCoefficient(this ESkillLevel self) {
          // variant 1
          //		switch (self) {
          //		case eBeginner: return 0.6;
@@ -99,10 +99,10 @@ namespace ua.ksn.fmg.controller.types {
          if (self == ESkillLevel.eCustom)
             throw new Exception("ƒл€ уровн€ сложности '" + self + "' кол-во мин задаЄтс€ €вно, а не расчитываетс€...");
 
-         return (int)(customSizeMosaic.width * customSizeMosaic.height * getCoefficient(self) / mosaicCoefficient[eMosaic]);
+         return (int)(customSizeMosaic.width * customSizeMosaic.height * GetCoefficient(self) / mosaicCoefficient[eMosaic]);
       }
 
-      public static String getDescription(this ESkillLevel self) {
+      public static String GetDescription(this ESkillLevel self) {
          switch (self) {
          case ESkillLevel.eProfi: return "Professional";
          default: return self.ToString().Substring(1);
