@@ -1,3 +1,4 @@
+using System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Media.Imaging;
 using ua.ksn.fmg.model.mosaics.cell;
@@ -17,15 +18,26 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
       public CellPaint(GraphicContext gContext)
       {
          this.gContext = gContext;
-         DefaultBackgroundFillColor = new UISettings().UIElementColor(UIElementType.Background).Cast();
+         DefaultBackgroundFillColor = new UISettings().UIElementColor(UIElementType.ButtonFace).Cast();
       }
 
       private const string DRAW_FONT_NAME = "NirmalaUI";
       private const int DRAW_FONT_SIZE = 30;
 
-      static CellPaint()
+      //static CellPaint()
+      private bool _registerFont;
+      private void RegisterFont()
       {
-         BitmapFont.RegisterFont(DRAW_FONT_NAME, DRAW_FONT_SIZE);
+         if (_registerFont) return;
+         try
+         {
+            BitmapFont.RegisterFont(DRAW_FONT_NAME, DRAW_FONT_SIZE);
+            _registerFont = true;
+         }
+         catch (Exception ex)
+         {
+            System.Diagnostics.Debug.Assert(false, ex.Message);
+         }
       }
 
       public void Paint(BaseCell cell, WriteableBitmap bmp)
@@ -53,7 +65,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
       /// <summary> draw border lines </summary>
       public void PaintBorderLines(BaseCell cell, WriteableBitmap bmp) {
          if (gContext.IconicMode) {
-            bmp.DrawPolyline(RegionAsXyxyxySequence(cell.getRegion()), (Windows.UI.Color)(cell.State.Down ? gContext.PenBorder.ColorLight : gContext.PenBorder.ColorShadow));
+            bmp.DrawPolyline(RegionAsXyxyxySequence(gContext.Bound, cell.getRegion()), (Windows.UI.Color)(cell.State.Down ? gContext.PenBorder.ColorLight : gContext.PenBorder.ColorShadow));
          } else {
             var color = cell.State.Down ? gContext.PenBorder.ColorLight : gContext.PenBorder.ColorShadow;
             var s = cell.getShiftPointBorderIndex();
@@ -63,7 +75,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
                var p2 = (i != (v - 1)) ? cell.getRegion().getPoint(i + 1) : cell.getRegion().getPoint(0);
                if (i == s)
                   color = cell.State.Down ? gContext.PenBorder.ColorShadow : gContext.PenBorder.ColorLight;
-               bmp.DrawLine(p1.x, p1.y, p2.x, p2.y, (Windows.UI.Color)color);
+               bmp.DrawLine(p1.x + gContext.Bound.width, p1.y + gContext.Bound.height, p2.x + gContext.Bound.width, p2.y + gContext.Bound.height, (Windows.UI.Color)color);
             }
          }
       }
@@ -72,7 +84,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
       {
          PaintComponentBackground(cell, bmp);
 
-         var rcInner = cell.getRcInner(gContext.PenBorder.Width);
+         var rcInner = cell.getRcInner(gContext.PenBorder.Width).moveXY(gContext.Bound);
 
          // output Pictures
          if ((gContext.ImgFlag != null) &&
@@ -94,7 +106,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
             bmp.Blit(destRc, srcImg, srcRc);
          }
          else
-            // output text
+         // output text
          {
             string szCaption;
             Color txtColor;
@@ -114,6 +126,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
             {
                if (cell.State.Down)
                   rcInner.moveXY(1, 1);
+               RegisterFont();
                bmp.DrawString(szCaption, rcInner.left(), rcInner.top(), DRAW_FONT_NAME, DRAW_FONT_SIZE,
                   (Windows.UI.Color) txtColor);
             }
@@ -126,29 +139,29 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
       /// <summary> залить ячейку нужным цветом </summary>
       protected void PaintComponentBackground(BaseCell cell, WriteableBitmap bmp)
       {
-         if (gContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
-            return;
+         //if (gContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
+         //   return;
          var color = cell.getBackgroundFillColor(
             gContext.BkFill.Mode,
             DefaultBackgroundFillColor,
             gContext.BkFill.getColor
             );
-         bmp.FillPolygon(RegionAsXyxyxySequence(cell.getRegion()), (Windows.UI.Color) color);
+         bmp.FillPolygon(RegionAsXyxyxySequence(gContext.Bound, cell.getRegion()), (Windows.UI.Color) color);
       }
 
-      private static int[] RegionAsXyxyxySequence(Region region)
+      private static int[] RegionAsXyxyxySequence(Size bound, Region region)
       {
          var points = new int[region.CountPoints * 2 + 2];
          int i;
          for (i=0; i < region.CountPoints; i++) {
             var point = region.getPoint(i);
-            points[i * 2] = point.x;
-            points[i * 2 + 1] = point.y;
+            points[i * 2] = point.x + bound.width;
+            points[i * 2 + 1] = point.y + bound.height;
          }
          { // Add the first point also at the end of the array if the line should be closed.
             var point = region.getPoint(0);
-            points[i*2 + 0] = point.x;
-            points[i*2 + 1] = point.y;
+            points[i * 2 + 0] = point.x + bound.width;
+            points[i * 2 + 1] = point.y + bound.height;
          }
          return points;
       }

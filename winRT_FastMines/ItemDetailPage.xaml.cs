@@ -64,5 +64,10 @@ namespace FastMines
             var selectedItem = (FmDataItem)this.flipView.SelectedItem;
             pageState["SelectedItem"] = selectedItem.UniqueId;
         }
+
+       private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+       {
+          this.Frame.Navigate(typeof(MosaicPage), this);
+       }
     }
 }

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Foundation;
+using Windows.Storage;
+using Windows.Storage.Search;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace ua.ksn.fmg.view.win_rt.draw
@@ -28,15 +31,29 @@ namespace ua.ksn.fmg.view.win_rt.draw
 
       private static readonly Dictionary<string, List<FontInfo>> Fonts = new Dictionary<string, List<FontInfo>>();
 
+      public static async Task<object> xxxxx()
+      {
+         var folder = await StorageFolder.GetFolderFromPathAsync("res/Font/");
+         var files = await folder.GetFilesAsync(CommonFileQuery.OrderByName);
+         var file = files.ToArray();
+         if (file != null) {
+            //do stuff
+         }
+         return new int();
+      }
+
       public static void RegisterFont(string name, params int[] sizes)
       {
+        // var ddd = xxxxx().Result;
          foreach (var size in sizes)
          {
             var fontFile = name + "_" + size + ".png";
             var fontMetricsFile = name + "_" + size + ".xml";
 
-            var baseUri = new Uri("ms-appx:///");
-            var image = new WriteableBitmap(1, 1).FromContent(new Uri(baseUri, fontFile)).Result;
+            var uri = new Uri("ms-appx:///res/Font/" + fontFile);
+            var bmpImg = new BitmapImage(uri);
+            var imageT = BitmapFactory.New(bmpImg.PixelWidth, bmpImg.PixelHeight).FromContent(uri);
+            var image = imageT.Result;
             var metrics = XDocument.Load(fontMetricsFile);
             var dict = (from c in metrics.Root.Elements()
                let key = (char) ((int) c.Attribute("key"))

@@ -75,7 +75,9 @@
                                     </Paragraph>
                                     <Paragraph LineStackingStrategy="MaxHeight">
                                         <InlineUIContainer>
-                                            <Image x:Name="image" MaxHeight="480" Margin="0,20,0,10" Stretch="Uniform" Source="{Binding Image}" AutomationProperties.Name="{Binding Title}"/>
+                                            <Button Click="ButtonBase_OnClick" >
+                                                <Image x:Name="image" MaxHeight="480" Margin="0,0,0,0" Stretch="Uniform" Source="{Binding Image}" AutomationProperties.Name="{Binding Title}"/>
+                                            </Button>
                                         </InlineUIContainer>
                                     </Paragraph>
                                     <Paragraph>

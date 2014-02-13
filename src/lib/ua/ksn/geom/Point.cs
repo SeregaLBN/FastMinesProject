@@ -24,5 +24,11 @@ public struct Point {
    public override string ToString() {
       return "[x=" + x + ", y=" + y + "]";
    }
+
+#if WINDOWS_RT
+   public static explicit operator Windows.Foundation.Point(Point self) { return new Windows.Foundation.Point() { X = self.x, Y = self.y }; }
+#elif WINDOWS_FORMS
+      ...
+#endif
 }
 }
