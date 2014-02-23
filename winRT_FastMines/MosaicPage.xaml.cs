@@ -28,7 +28,9 @@ namespace FastMines {
       public MosaicPage() {
          this.InitializeComponent();
 
-         _mosaic = new MosaicExt(ContentRoot, new ua.ksn.geom.Size(10, 10), EMosaic.eMosaicPentagonT24, 5, 300);
+         _mosaic = new MosaicExt(new ua.ksn.geom.Size(10, 10), EMosaic.eMosaicPentagonT24, 5, 3000);
+         ContentRoot.Children.Add(_mosaic.Container);
+         _mosaic.Repaint();
       }
 
       /// <summary>

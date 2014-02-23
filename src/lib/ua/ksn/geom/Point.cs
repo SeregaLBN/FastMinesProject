@@ -1,7 +1,7 @@
 namespace ua.ksn.geom {
 
 public struct Point {
-   public int x,y;
+   public int x, y;
 
    //public Point() { x=y=0; }
    public Point(int x, int y) { this.x = x; this.y = y; }
@@ -25,8 +25,15 @@ public struct Point {
       return "[x=" + x + ", y=" + y + "]";
    }
 
+   public Point Move(Size s) { return Move(s.width, s.height); }
+   public Point Move(int w, int h) {
+      x += w;
+      y += h;
+      return this;
+   }
+
 #if WINDOWS_RT
-   public static explicit operator Windows.Foundation.Point(Point self) { return new Windows.Foundation.Point() { X = self.x, Y = self.y }; }
+   public static explicit operator Windows.Foundation.Point(Point self) { return new Windows.Foundation.Point{ X = self.x, Y = self.y }; }
 #elif WINDOWS_FORMS
       ...
 #endif

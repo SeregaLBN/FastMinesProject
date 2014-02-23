@@ -286,6 +286,7 @@
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\BitmapFont.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\GraphicContext.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\mosaics\CellPaint.cs" />
+    <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\mosaics\MosaicGraphicContext.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\MosaicsImg.cs" />
   </ItemGroup>
   <ItemGroup>

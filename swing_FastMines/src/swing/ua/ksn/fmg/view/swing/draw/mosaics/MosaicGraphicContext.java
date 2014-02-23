@@ -1,7 +1,6 @@
 package ua.ksn.fmg.view.swing.draw.mosaics;
 
 import java.awt.Color;
-import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -11,47 +10,13 @@ import ua.ksn.geom.Size;
 import ua.ksn.fmg.view.swing.draw.GraphicContext;
 
 public class MosaicGraphicContext extends GraphicContext {
-	public static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 10);
 	public static final Color COLOR_BTNFACE = Color.GRAY;
 
-	private Font   	  font;
 	private Color  	  colorBk;
 	private ImageIcon imgBckgrnd;
 
 	public MosaicGraphicContext(JComponent owner) {
 		super(owner, false, new Size(0,0));
-	}
-
-	public Font getFont() {
-		if (font == null)
-			setFont(DEFAULT_FONT);
-		return font;
-	}
-	private void setRawFont(Font font) {
-		Object old = this.font;
-		this.font = font;
-		propertyChanges.firePropertyChange("GraphicContext_font", old, font);
-	}
-	public void setFont(Font newFont) {
-		if (font != null) {
-			if (font.getName().equals(newFont.getName()) &&
-				(font.getStyle() == newFont.getStyle()) &&
-				(font.getSize() == newFont.getSize()))
-				return;
-	
-			int heightNeed = font.getSize();
-			int heightBad = newFont.getSize();
-			if (heightNeed != heightBad)
-				newFont = new Font(newFont.getName(), newFont.getStyle(), heightNeed);
-		}
-		setRawFont(newFont);
-	}
-	public void setFontSize(int size) {
-//		size = 9; // debug
-		Font fnt = getFont();
-		if (fnt.getSize() == size)
-			return;
-		setRawFont(new Font(fnt.getName(), fnt.getStyle(), size));
 	}
 
 	public Color getColorBk() {

@@ -7,8 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-        <Canvas x:Name="ContentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}" Margin="5,5,5,5">
-        </Canvas>
+    <Grid x:Name="ContentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+        <!--Canvas x:Name="ContentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}" Margin="5,5,5,5">
+        </Canvas-->
     </Grid>
 </Page>

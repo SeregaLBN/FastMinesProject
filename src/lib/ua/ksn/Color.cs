@@ -12,6 +12,7 @@ namespace ua.ksn {
       public static readonly Color AQUA    = new Color(0xFF00FFFF);
       public static readonly Color TEAL    = new Color(0xFF008080);
       public static readonly Color MAGENTA = new Color(255, 0, 255);
+      public static readonly Color GRAY    = new Color(128, 128, 128);
 
       public byte R,G,B,A;
 

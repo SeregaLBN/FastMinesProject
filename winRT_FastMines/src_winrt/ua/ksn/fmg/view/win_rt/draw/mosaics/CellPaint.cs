@@ -1,5 +1,11 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Shapes;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using ua.ksn.fmg.model.mosaics.cell;
 using ua.ksn.fmg.model.mosaics;
@@ -14,30 +20,60 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
    public class CellPaint
    {
       protected GraphicContext gContext;
+      private IDictionary<Color, SolidColorBrush> _brushCacheMap;
+      private IList<FontFamily> _fontFamilies;
+      private bool _registerBmpFont;
+      private const string DRAW_BMP_FONT_NAME = "NirmalaUI";
+      private const int DRAW_BMP_FONT_SIZE = 30;
+
 
       public CellPaint(GraphicContext gContext)
       {
          this.gContext = gContext;
          DefaultBackgroundFillColor = new UISettings().UIElementColor(UIElementType.ButtonFace).Cast();
+         _brushCacheMap = new Dictionary<Color, SolidColorBrush>();
+         _fontFamilies = new List<FontFamily>(1);
       }
 
-      private const string DRAW_FONT_NAME = "NirmalaUI";
-      private const int DRAW_FONT_SIZE = 30;
+      /// <summary> find cached solid brush. if not exist - create it </summary>
+      private SolidColorBrush FindBrush(Color clr) {
+         if (!_brushCacheMap.ContainsKey(clr))
+            _brushCacheMap.Add(clr, new SolidColorBrush((Windows.UI.Color)clr));
+         return _brushCacheMap[clr];
+      }
+      private Brush BrushBorderShadow {
+         get { return FindBrush(gContext.PenBorder.ColorShadow); }
+      }
+      private Brush BrushBorderLight {
+         get { return FindBrush(gContext.PenBorder.ColorLight); }
+      }
 
-      //static CellPaint()
-      private bool _registerFont;
+      /// <summary> find cached font. if not exist - create it </summary>
+      private FontFamily FindFontFamily(string fontName) {
+         var res = _fontFamilies.FirstOrDefault(x => x.Source == fontName);
+         if (res == null)
+            _fontFamilies.Add(res = new FontFamily(fontName));
+         return res;
+      }
+
       private void RegisterFont()
       {
-         if (_registerFont) return;
+         if (_registerBmpFont) return;
          try
          {
-            BitmapFont.RegisterFont(DRAW_FONT_NAME, DRAW_FONT_SIZE);
-            _registerFont = true;
+            BitmapFont.RegisterFont(DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE);
+            _registerBmpFont = true;
          }
          catch (Exception ex)
          {
             System.Diagnostics.Debug.Assert(false, ex.Message);
          }
+      }
+
+      public void Paint(BaseCell cell, Tuple<Polygon, TextBlock, Image> binder) {
+         // all paint
+         PaintComponent(cell, binder);
+         PaintBorder(cell, binder);
       }
 
       public void Paint(BaseCell cell, WriteableBitmap bmp)
@@ -62,6 +98,18 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
          //bmp.DrawRectangle(rcInner.x, rcInner.y, rcInner.right(), rcInner.bottom(), (Windows.UI.Color)Color.MAGENTA);
       }
 
+      public void PaintBorder(BaseCell cell, Tuple<Polygon, TextBlock, Image> binder) {
+         // TODO set pen width
+         //... = gContext.PenBorder.Width;
+
+         // draw lines
+         PaintBorderLines(cell, binder);
+
+         // debug - визуально провер€ю верность вписанного квадрата (провер€ть при ширине пера около 21)
+         //var rcInner = cell.getRcInner(gContext.PenBorder.Width);
+         //bmp.DrawRectangle(rcInner.x, rcInner.y, rcInner.right(), rcInner.bottom(), (Windows.UI.Color)Color.MAGENTA);
+      }
+
       /// <summary> draw border lines </summary>
       public void PaintBorderLines(BaseCell cell, WriteableBitmap bmp) {
          if (gContext.IconicMode) {
@@ -72,40 +120,69 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
             var v = cell.Attr.getVertexNumber(cell.getDirection());
             for (var i=0; i < v; i++) {
                var p1 = cell.getRegion().getPoint(i);
+               p1.Move(gContext.Bound);
                var p2 = (i != (v - 1)) ? cell.getRegion().getPoint(i + 1) : cell.getRegion().getPoint(0);
+               p2.Move(gContext.Bound);
                if (i == s)
                   color = cell.State.Down ? gContext.PenBorder.ColorShadow : gContext.PenBorder.ColorLight;
-               bmp.DrawLine(p1.x + gContext.Bound.width, p1.y + gContext.Bound.height, p2.x + gContext.Bound.width, p2.y + gContext.Bound.height, (Windows.UI.Color)color);
+               bmp.DrawLine(p1.x, p1.y, p2.x, p2.y, (Windows.UI.Color)color);
             }
          }
+      }
+
+      /// <summary> draw border lines </summary>
+      public void PaintBorderLines(BaseCell cell, Tuple<Polygon, TextBlock, Image> binder)
+      {
+         var poly = binder.Item1;
+
+         if (poly.Points == null)
+            poly.Points = new PointCollection();
+         { //  check vertex
+            var cnt = cell.getRegion().CountPoints;
+            var d = (poly.Points.Count != cnt);
+            if (d)
+               poly.Points.Clear();
+            for (var p = 0; p < cnt; p++) {
+               var point = cell.getRegion().getPoint(p);
+               point.Move(gContext.Bound);
+               if (d)
+                  poly.Points.Add((Windows.Foundation.Point) point);
+               else
+                  poly.Points[p] = (Windows.Foundation.Point) point;
+            }
+         }
+         poly.StrokeThickness = gContext.PenBorder.Width;
+         poly.Stroke = cell.State.Down ? BrushBorderLight : BrushBorderShadow;
+         // TODO граница региона должна быть двухцветной...
       }
 
       private void PaintComponent(BaseCell cell, WriteableBitmap bmp)
       {
          PaintComponentBackground(cell, bmp);
 
-         var rcInner = cell.getRcInner(gContext.PenBorder.Width).moveXY(gContext.Bound);
+         var rcInner = cell.getRcInner(gContext.PenBorder.Width);
+         rcInner.moveXY(gContext.Bound);
 
-         // output Pictures
+         WriteableBitmap srcImg = null;
          if ((gContext.ImgFlag != null) &&
              (cell.State.Status == EState._Close) &&
              (cell.State.Close == EClose._Flag))
          {
-            var destRc = (Windows.Foundation.Rect) rcInner;
-            var srcImg = gContext.ImgFlag;
-            var srcRc = new Windows.Foundation.Rect(0, 0, srcImg.PixelWidth, srcImg.PixelHeight);
-            bmp.Blit(destRc, srcImg, srcRc);
+            srcImg = gContext.ImgFlag;
          }
          else if ((gContext.ImgMine != null) &&
                   (cell.State.Status == EState._Open) &&
                   (cell.State.Open == EOpen._Mine))
          {
-            var destRc = (Windows.Foundation.Rect) rcInner;
-            var srcImg = gContext.ImgMine;
+            srcImg = gContext.ImgMine;
+         }
+
+         // output Pictures
+         if (srcImg != null) {
+            var destRc = (Windows.Foundation.Rect)rcInner;
             var srcRc = new Windows.Foundation.Rect(0, 0, srcImg.PixelWidth, srcImg.PixelHeight);
             bmp.Blit(destRc, srcImg, srcRc);
-         }
-         else
+         } else
          // output text
          {
             string szCaption;
@@ -122,13 +199,74 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
                txtColor = gContext.ColorText.getColorOpen((int) cell.State.Open.Ordinal());
                szCaption = cell.State.Open.toCaption();
             }
-            if (!string.IsNullOrEmpty(szCaption))
+            if (!string.IsNullOrWhiteSpace(szCaption))
             {
                if (cell.State.Down)
                   rcInner.moveXY(1, 1);
                RegisterFont();
-               bmp.DrawString(szCaption, rcInner.left(), rcInner.top(), DRAW_FONT_NAME, DRAW_FONT_SIZE,
+               bmp.DrawString(szCaption, rcInner.left(), rcInner.top(), DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE,
                   (Windows.UI.Color) txtColor);
+            }
+         }
+      }
+
+      private void PaintComponent(BaseCell cell, Tuple<Polygon, TextBlock, Image> binder) {
+         PaintComponentBackground(cell, binder);
+
+         var rcInner = cell.getRcInner(gContext.PenBorder.Width);
+         rcInner.moveXY(gContext.Bound);
+         var txt = binder.Item2;
+         var image = binder.Item3;
+
+         ImageSource srcImg = null;
+         if ((gContext.ImgFlag != null) &&
+             (cell.State.Status == EState._Close) &&
+             (cell.State.Close == EClose._Flag)) {
+            srcImg = gContext.ImgFlag;
+         } else if ((gContext.ImgMine != null) &&
+                    (cell.State.Status == EState._Open) &&
+                    (cell.State.Open == EOpen._Mine)) {
+            srcImg = gContext.ImgMine;
+         }
+
+         // output Pictures
+         if (srcImg != null) {
+            image.Source = srcImg;
+            image.Stretch = Stretch.UniformToFill;
+            image.Width = rcInner.width;
+            image.Height = rcInner.height;
+            Canvas.SetLeft(image, rcInner.left());
+            Canvas.SetTop(image, rcInner.top());
+            Canvas.SetZIndex(image, 3);
+            image.Visibility = Visibility.Visible;
+            txt.Visibility = Visibility.Collapsed;
+         } else
+         // output text
+         {
+            image.Visibility = Visibility.Collapsed;
+            string szCaption;
+            Color txtColor;
+            if (cell.State.Status == EState._Close) {
+               txtColor = gContext.ColorText.getColorClose((int)cell.State.Close.Ordinal());
+               szCaption = cell.State.Close.toCaption();
+               //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
+               //szCaption = ""+cell.getDirection(); // debug
+            } else {
+               txtColor = gContext.ColorText.getColorOpen((int)cell.State.Open.Ordinal());
+               szCaption = cell.State.Open.toCaption();
+            }
+            if (!string.IsNullOrWhiteSpace(szCaption)) {
+               if (cell.State.Down)
+                  rcInner.moveXY(1, 1);
+               txt.Text = szCaption;
+               txt.FontFamily = FindFontFamily(gContext.FontFamilyName);
+               txt.FontStyle = gContext.FontStyle;
+               txt.FontSize = gContext.FontSize;
+               txt.Foreground = FindBrush(txtColor);
+               Canvas.SetLeft(txt, rcInner.left());
+               Canvas.SetTop(txt, rcInner.top());
+               Canvas.SetZIndex(txt, 2);
+               txt.Visibility = Visibility.Visible;
             }
          }
       }
@@ -149,19 +287,35 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
          bmp.FillPolygon(RegionAsXyxyxySequence(gContext.Bound, cell.getRegion()), (Windows.UI.Color) color);
       }
 
+      /// <summary> залить €чейку нужным цветом </summary>
+      protected void PaintComponentBackground(BaseCell cell, Tuple<Polygon, TextBlock, Image> binder) {
+         Color clr;
+         if (gContext.IconicMode) // когда русуетс€ иконка, а не игровое поле, - делаю попроще...
+            clr = DefaultBackgroundFillColor; // TODO ??? мож прозрачное..
+         else
+            clr = cell.getBackgroundFillColor(
+               gContext.BkFill.Mode,
+               DefaultBackgroundFillColor,
+               gContext.BkFill.getColor
+               );
+         binder.Item1.Fill = FindBrush(clr);;
+      }
+
       private static int[] RegionAsXyxyxySequence(Size bound, Region region)
       {
          var points = new int[region.CountPoints * 2 + 2];
          int i;
          for (i=0; i < region.CountPoints; i++) {
             var point = region.getPoint(i);
-            points[i * 2] = point.x + bound.width;
-            points[i * 2 + 1] = point.y + bound.height;
+            point.Move(bound);
+            points[i * 2] = point.x;
+            points[i * 2 + 1] = point.y;
          }
          { // Add the first point also at the end of the array if the line should be closed.
             var point = region.getPoint(0);
-            points[i * 2 + 0] = point.x + bound.width;
-            points[i * 2 + 1] = point.y + bound.height;
+            point.Move(bound);
+            points[i * 2 + 0] = point.x;
+            points[i * 2 + 1] = point.y;
          }
          return points;
       }

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text;
 
 namespace ua.ksn.geom {
@@ -46,13 +47,13 @@ public class Region {
             continue;
          if (points[i].y < y && points[j].y < y)
             continue;
-         if (Math.Max(points[i].y, points[j].y) == y)
+         if (Math.Abs(Math.Max(points[i].y, points[j].y) - y) < 0.001)
             count++;
          else
-            if (Math.Min(points[i].y, points[j].y) == y)
+            if (Math.Abs(Math.Min(points[i].y, points[j].y) - y) < 0.001)
                continue;
             else {
-               double t = (double)(y - points[i].y) / (points[j].y - points[i].y);
+               double t = (y - points[i].y) / (points[j].y - points[i].y);
                if (t > 0 && t < 1 && points[i].x + t * (points[j].x - points[i].x) >= x)
                   count++;
             }
@@ -63,15 +64,12 @@ public class Region {
    public override bool Equals(Object other) {
       if (this == other)
          return true;
-      Region o = other as Region;
+      var o = other as Region;
       if (o == null)
          return false;
       if (points.Length != o.points.Length)
          return false;
-      for (int i=0; i < points.Length; i++)
-         if (points[i] != o.points[i])
-            return false;
-      return true;
+      return !points.Where((p, i) => p != o.points[i]).Any();
    }
 
    public override int GetHashCode() {

@@ -1,5 +1,6 @@
 package ua.ksn.fmg.view.swing.draw;
 
+import java.awt.Font;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
@@ -15,6 +16,8 @@ import ua.ksn.fmg.view.draw.ColorText;
 import ua.ksn.fmg.view.draw.PenBorder;
 
 public class GraphicContext  {
+	public static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 10);
+
 	protected PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
 	/**  подписаться на уведомления изменений свойств GraphicContext */
 	public void addPropertyChangeListener(PropertyChangeListener l) {
@@ -32,6 +35,7 @@ public class GraphicContext  {
 
 	private ColorText colorText;
 	protected PenBorder penBorder;
+	private Font   	  font;
 	private final boolean iconicMode;
 	private final Size bound;
 
@@ -144,5 +148,37 @@ public class GraphicContext  {
 
 	public Size getBound() {
 		return bound;
+	}
+
+	public Font getFont() {
+		if (font == null)
+			setFont(DEFAULT_FONT);
+		return font;
+	}
+	private void setRawFont(Font font) {
+		Object old = this.font;
+		this.font = font;
+		propertyChanges.firePropertyChange("GraphicContext_font", old, font);
+	}
+	public void setFont(Font newFont) {
+		if (font != null) {
+			if (font.getName().equals(newFont.getName()) &&
+				(font.getStyle() == newFont.getStyle()) &&
+				(font.getSize() == newFont.getSize()))
+				return;
+	
+			int heightNeed = font.getSize();
+			int heightBad = newFont.getSize();
+			if (heightNeed != heightBad)
+				newFont = new Font(newFont.getName(), newFont.getStyle(), heightNeed);
+		}
+		setRawFont(newFont);
+	}
+	public void setFontSize(int size) {
+//		size = 9; // debug
+		Font fnt = getFont();
+		if (fnt.getSize() == size)
+			return;
+		setRawFont(new Font(fnt.getName(), fnt.getStyle(), size));
 	}
 }
