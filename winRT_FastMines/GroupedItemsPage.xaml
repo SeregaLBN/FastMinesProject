@@ -55,7 +55,7 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource ResourceKey=AppBarButtonStyle}" AutomationProperties.Name="Пымпа" />
+                    <Button Style="{StaticResource ResourceKey=AppBarButtonStyle}" AutomationProperties.Name="Пымпа" Click="ButtonBase_OnClick" />
                     <Button Style="{StaticResource PageAppBarButtonStyle}" />
                     <Button Style="{StaticResource VideoChatAppBarButtonStyle}" />
                 </StackPanel>

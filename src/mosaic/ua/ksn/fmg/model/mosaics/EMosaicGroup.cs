@@ -65,7 +65,7 @@ public static class EMosaicGroupEx {
 	/// </summary>
 	/// <param name="self"></param>
 	/// <returns></returns>
-	public static String getDescription(this EMosaicGroup self) {
+	public static String GetDescription(this EMosaicGroup self) {
 		return self.ToString().Substring(1);
 	}
 }

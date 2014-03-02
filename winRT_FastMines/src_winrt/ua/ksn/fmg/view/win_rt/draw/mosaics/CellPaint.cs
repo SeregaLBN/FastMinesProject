@@ -10,6 +10,8 @@ using Windows.UI.Xaml.Media.Imaging;
 using ua.ksn.fmg.model.mosaics.cell;
 using ua.ksn.fmg.model.mosaics;
 using ua.ksn.geom;
+using System.Threading.Tasks;
+using Windows.ApplicationModel;
 
 namespace ua.ksn.fmg.view.win_rt.draw.mosaics
 {
@@ -22,13 +24,17 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
       protected GraphicContext gContext;
       private IDictionary<Color, SolidColorBrush> _brushCacheMap;
       private IList<FontFamily> _fontFamilies;
-      private bool _registerBmpFont;
-      private const string DRAW_BMP_FONT_NAME = "NirmalaUI";
-      private const int DRAW_BMP_FONT_SIZE = 30;
+      public const string DRAW_BMP_FONT_NAME = "NirmalaUI";
+      public const int DRAW_BMP_FONT_SIZE = 30;
 
+
+      public static async Task<bool> RegisterFont() {
+         return await BitmapFont.RegisterFont(DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE);
+      }
 
       public CellPaint(GraphicContext gContext)
       {
+         //BitmapFont.RegisterFont(DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE);
          this.gContext = gContext;
          DefaultBackgroundFillColor = new UISettings().UIElementColor(UIElementType.ButtonFace).Cast();
          _brushCacheMap = new Dictionary<Color, SolidColorBrush>();
@@ -54,20 +60,6 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
          if (res == null)
             _fontFamilies.Add(res = new FontFamily(fontName));
          return res;
-      }
-
-      private void RegisterFont()
-      {
-         if (_registerBmpFont) return;
-         try
-         {
-            BitmapFont.RegisterFont(DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE);
-            _registerBmpFont = true;
-         }
-         catch (Exception ex)
-         {
-            System.Diagnostics.Debug.Assert(false, ex.Message);
-         }
       }
 
       public void Paint(BaseCell cell, Tuple<Polygon, TextBlock, Image> binder) {
@@ -190,7 +182,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
             if (cell.State.Status == EState._Close)
             {
                txtColor = gContext.ColorText.getColorClose((int) cell.State.Close.Ordinal());
-               szCaption = cell.State.Close.toCaption();
+               szCaption = cell.State.Close.ToCaption();
                //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
                //szCaption = ""+cell.getDirection(); // debug
             }
@@ -199,13 +191,11 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
                txtColor = gContext.ColorText.getColorOpen((int) cell.State.Open.Ordinal());
                szCaption = cell.State.Open.toCaption();
             }
-            if (!string.IsNullOrWhiteSpace(szCaption))
-            {
+            if (!string.IsNullOrWhiteSpace(szCaption)) {
                if (cell.State.Down)
                   rcInner.moveXY(1, 1);
-               RegisterFont();
                bmp.DrawString(szCaption, rcInner.left(), rcInner.top(), DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE,
-                  (Windows.UI.Color) txtColor);
+                  (Windows.UI.Color)txtColor);
             }
          }
       }
@@ -248,7 +238,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
             Color txtColor;
             if (cell.State.Status == EState._Close) {
                txtColor = gContext.ColorText.getColorClose((int)cell.State.Close.Ordinal());
-               szCaption = cell.State.Close.toCaption();
+               szCaption = cell.State.Close.ToCaption();
                //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
                //szCaption = ""+cell.getDirection(); // debug
             } else {

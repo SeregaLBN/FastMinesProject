@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Foundation;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Search;
+using Windows.Storage.Streams;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
+using System.Runtime.InteropServices.WindowsRuntime;
+using ua.ksn.win_rt.utils;
 
 namespace ua.ksn.fmg.view.win_rt.draw
 {
@@ -31,18 +38,7 @@ namespace ua.ksn.fmg.view.win_rt.draw
 
       private static readonly Dictionary<string, List<FontInfo>> Fonts = new Dictionary<string, List<FontInfo>>();
 
-      public static async Task<object> xxxxx()
-      {
-         var folder = await StorageFolder.GetFolderFromPathAsync("res/Font/");
-         var files = await folder.GetFilesAsync(CommonFileQuery.OrderByName);
-         var file = files.ToArray();
-         if (file != null) {
-            //do stuff
-         }
-         return new int();
-      }
-
-      public static void RegisterFont(string name, params int[] sizes)
+      public static async Task<bool> RegisterFont(string name, params int[] sizes)
       {
         // var ddd = xxxxx().Result;
          foreach (var size in sizes)
@@ -50,11 +46,17 @@ namespace ua.ksn.fmg.view.win_rt.draw
             var fontFile = name + "_" + size + ".png";
             var fontMetricsFile = name + "_" + size + ".xml";
 
-            var uri = new Uri("ms-appx:///res/Font/" + fontFile);
-            var bmpImg = new BitmapImage(uri);
-            var imageT = BitmapFactory.New(bmpImg.PixelWidth, bmpImg.PixelHeight).FromContent(uri);
-            var image = imageT.Result;
-            var metrics = XDocument.Load(fontMetricsFile);
+            var uri = new Uri("ms-appx:///res/Font/" + fontFile); // ms-appx:///res/Font/NirmalaUI_30.png
+            var image = await ImgUtils.GetImage(uri);
+//#if DEBUG
+//            try {
+//               image = image.Clone(); // test
+//            }
+//            catch (Exception ex) {
+//               return false;
+//            }
+//#endif
+            var metrics = XDocument.Load("./res/Font/" + fontMetricsFile);
             var dict = (from c in metrics.Root.Elements()
                let key = (char) ((int) c.Attribute("key"))
                let rect =
@@ -69,6 +71,7 @@ namespace ua.ksn.fmg.view.win_rt.draw
             else
                Fonts.Add(name, new List<FontInfo> {fontInfo});
          }
+         return true;
       }
 
       private static FontInfo GetNearestFont(string fontName, int size)
@@ -88,9 +91,7 @@ namespace ua.ksn.fmg.view.win_rt.draw
          return new Size(letters.Sum(x => x.Width*scale), letters.Max(x => x.Height*scale));
       }
 
-      public static void DrawString(this WriteableBitmap bmp, string text, int x, int y, string fontName, int size,
-         Windows.UI.Color color)
-      {
+      public static void DrawString(this WriteableBitmap bmp, string text, int x, int y, string fontName, int size, Windows.UI.Color color) {
          var font = GetNearestFont(fontName, size);
 
          //var letters = text.Select(f => font.Metrics[f]).ToArray();
@@ -99,10 +100,15 @@ namespace ua.ksn.fmg.view.win_rt.draw
          var scale = (double) size/font.Size;
 
          double destX = x;
+         var imgSrc = font.Image;
          foreach (var letter in letters)
          {
             var destRect = new Rect(destX, y, letter.Width*scale, letter.Height*scale);
-            bmp.Blit(destRect, font.Image, letter, color, WriteableBitmapExtensions.BlendMode.Alpha);
+            using (bmp.GetBitmapContext(ReadWriteMode.ReadWrite)) {
+               using (imgSrc.GetBitmapContext(ReadWriteMode.ReadOnly)) {
+                  bmp.Blit(destRect, imgSrc, letter);//, color, WriteableBitmapExtensions.BlendMode.Alpha);
+               }
+            }
             destX += destRect.Width;
          }
       }

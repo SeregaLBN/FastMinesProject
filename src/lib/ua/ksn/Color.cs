@@ -1,7 +1,7 @@
 namespace ua.ksn {
 
    public struct Color {
-      public static readonly Color BLACK   = new Color();
+      public static readonly Color BLACK   = new Color(0xFF000000);
       public static readonly Color WHITE   = new Color { R = 0xFF, G = 0xFF, B = 0xFF };
       public static readonly Color RED     = new Color { R = 0xFF };
       public static readonly Color BLUE    = new Color { B = 0xFF };

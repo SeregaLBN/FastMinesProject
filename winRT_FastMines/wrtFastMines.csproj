@@ -287,7 +287,12 @@
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\GraphicContext.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\mosaics\CellPaint.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\mosaics\MosaicGraphicContext.cs" />
+    <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\BackgroundPause.cs" />
+    <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\Flag.cs" />
+    <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\Mine.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\MosaicsImg.cs" />
+    <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\Resources.cs" />
+    <Compile Include="src_winrt\ua\ksn\win_rt\utils\ImgUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -620,8 +625,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="WriteableBitmapEx.WinRT">
-      <HintPath>..\packages\WriteableBitmapEx.1.0.8.0\lib\NetCore45\WriteableBitmapEx.WinRT.dll</HintPath>
+    <Reference Include="WriteableBitmapEx.WinRT, Version=1.0.10.0, Culture=neutral, PublicKeyToken=50375ca6144f1c69, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\WriteableBitmapEx.1.0.10.0\lib\NetCore45\WriteableBitmapEx.WinRT.dll</HintPath>
     </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">

@@ -139,7 +139,7 @@ public final class Resources {
 
 	public ImageIcon getImgMosaicGroup(EMosaicGroup key) {
 		if (imgsMosaicGroup == null) {
-			imgsMosaicGroup = new HashMap<EMosaicGroup, ImageIcon>(5);
+			imgsMosaicGroup = new HashMap<EMosaicGroup, ImageIcon>(EMosaicGroup.values().length);
 
 			for (EMosaicGroup val: EMosaicGroup.values())
 				imgsMosaicGroup.put(val, getImageIcon("MosaicGroup/" + val.getDescription() + ".png"));

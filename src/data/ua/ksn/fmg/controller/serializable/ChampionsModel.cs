@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
+using System.Text;
 using System.Collections.Generic;
 using System.IO;
 using ua.ksn.fmg.controller.Event;
 using ua.ksn.fmg.controller.types;
 using ua.ksn.fmg.model.mosaics;
-using System.Text;
 using ua.ksn.crypt;
 
 namespace ua.ksn.fmg.controller.serializable {

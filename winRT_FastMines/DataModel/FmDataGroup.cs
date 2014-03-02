@@ -16,9 +16,9 @@ namespace FastMines.Data {
    /// </summary>
    public class FmDataGroup : FmDataCommon {
       public FmDataGroup(EMosaicGroup eMosaicGroup)
-         : base(eMosaicGroup.getIndex(), eMosaicGroup.getDescription(), "res/MosaicGroup/" + eMosaicGroup.getDescription() + ".png") {
+         : base(eMosaicGroup.getIndex(), eMosaicGroup.GetDescription(), "res/MosaicGroup/" + eMosaicGroup.GetDescription() + ".png") {
          Items.CollectionChanged += ItemsCollectionChanged;
-         this.Subtitle = "Subtitle group " + eMosaicGroup.getDescription();
+         this.Subtitle = "Subtitle group " + eMosaicGroup.GetDescription();
          this.Description = "Description group...";
       }
 

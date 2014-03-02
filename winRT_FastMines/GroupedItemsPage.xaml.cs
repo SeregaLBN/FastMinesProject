@@ -12,6 +12,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using FastMines.Data;
+using ua.ksn.fmg.view.win_rt.draw;
+using ua.ksn.fmg.view.win_rt.draw.mosaics;
 
 // The Grouped Items Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234231
 
@@ -21,8 +23,13 @@ namespace FastMines {
 	/// </summary>
 	public sealed partial class GroupedItemsPage : FastMines.Common.LayoutAwarePage {
 		public GroupedItemsPage() {
-			this.InitializeComponent();
+			InitializeComponentAsync();
 		}
+
+	   public async void InitializeComponentAsync() {
+         await CellPaint.RegisterFont();
+         this.InitializeComponent();
+	   }
 
 		/// <summary>
 		/// Populates the page with content passed during navigation.  Any saved state is also
@@ -33,8 +40,8 @@ namespace FastMines {
 		/// </param>
 		/// <param name="pageState">A dictionary of state preserved by this page during an earlier
 		/// session.  This will be null the first time a page is visited.</param>
-		protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState) {
-			this.DefaultViewModel["Groups_bindDataSource"] = FmDataSource.AllGroups;
+		protected async override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState) {
+         this.DefaultViewModel["Groups_bindDataSource"] = FmDataSource.AllGroups;
 		}
 
 		/// <summary>
@@ -63,5 +70,9 @@ namespace FastMines {
 			var itemId = ((FmDataItem)e.ClickedItem).UniqueId;
 			this.Frame.Navigate(typeof(ItemDetailPage), itemId);
 		}
+
+	   private void ButtonBase_OnClick(object sender, RoutedEventArgs e) {
+	      throw new NotImplementedException();
+	   }
 	}
 }

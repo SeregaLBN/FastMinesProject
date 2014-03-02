@@ -43,7 +43,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       }
 
       private WriteableBitmap _image;
-      public ImageSource Image {
+      public WriteableBitmap Image {
          get {
             if (_image == null) {
                var pixelSize = attr.CalcOwnerSize(sizeField, area);

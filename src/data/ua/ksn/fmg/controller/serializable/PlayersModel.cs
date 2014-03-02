@@ -8,7 +8,6 @@ using ua.ksn.fmg.controller.Event;
 //using ua.ksn.crypt.Simple3DES;
 using ua.ksn.fmg.controller.types;
 using ua.ksn.fmg.model.mosaics;
-using System.Reflection;
 
 
 namespace ua.ksn.fmg.controller.serializable {

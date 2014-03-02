@@ -111,7 +111,7 @@ public static class EMosaicEx {
    /// <param name="self"></param>
    /// <param name="small"></param>
    /// <returns></returns>
-   public static String getDescription(this EMosaic self, bool small) {
+   public static String GetDescription(this EMosaic self, bool small) {
       if (small)
          return self.ToString().Substring(7);
 
@@ -148,13 +148,13 @@ public static class EMosaicEx {
    public static List<String> getDescriptionValues() {
       List<String> res = new List<String>(Enum.GetValues(typeof(EMosaic)).Length);
       foreach (EMosaic type in Enum.GetValues(typeof(EMosaic)))
-         res.Add(type.getDescription(false));
+         res.Add(type.GetDescription(false));
       return res;
    }
 
    public static EMosaic? fromDescription(String description) {
       foreach (EMosaic type in Enum.GetValues(typeof(EMosaic)))
-         if (type.getDescription(false).Equals(description))
+         if (type.GetDescription(false).Equals(description))
             return type;
       return null;
    }

@@ -2,6 +2,7 @@
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using ua.ksn.fmg.model.mosaics;
+using ua.ksn.fmg.view.win_rt.draw.mosaics;
 using ua.ksn.fmg.view.win_rt.res.img;
 
 // The data model defined by this file serves as a representative example of a strongly-typed
@@ -18,9 +19,9 @@ namespace FastMines.Data {
    /// </summary>
    public class FmDataItem : FmDataCommon {
       public FmDataItem(EMosaic eMosaic, FmDataGroup group)
-         : base(eMosaic.getIndex(), eMosaic.getDescription(false), "res/Mosaic/32x32/" + eMosaic.getDescription(true) + ".png") {
+         : base(eMosaic.getIndex(), eMosaic.GetDescription(false), "res/Mosaic/32x32/" + eMosaic.GetDescription(true) + ".png") {
          this._group = group;
-         this.Subtitle = "Subtitle item " + eMosaic.getDescription(false);
+         this.Subtitle = "Subtitle item " + eMosaic.GetDescription(false);
          this.Description = "Description item ...";
       }
 
