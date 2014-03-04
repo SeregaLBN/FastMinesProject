@@ -1,31 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Foundation;
-using Windows.Graphics.Imaging;
-using Windows.Storage;
-using Windows.Storage.Search;
-using Windows.Storage.Streams;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
-using System.Runtime.InteropServices.WindowsRuntime;
 using ua.ksn.win_rt.utils;
 
-namespace ua.ksn.fmg.view.win_rt.draw
-{
+namespace ua.ksn.fmg.view.win_rt.draw {
    /// <summary>
    ///  http://stackoverflow.com/questions/5666772/how-can-i-render-text-on-a-writeablebitmap-on-a-background-thread-in-windows-ph
    /// </summary>
-   public static class BitmapFont
-   {
-      private class FontInfo
-      {
-         public FontInfo(WriteableBitmap image, Dictionary<char, Rect> metrics, int size)
-         {
+   public static class BitmapFont {
+      private class FontInfo {
+         public FontInfo(WriteableBitmap image, Dictionary<char, Rect> metrics, int size) {
             Image = image;
             Metrics = metrics;
             Size = size;
@@ -38,24 +26,13 @@ namespace ua.ksn.fmg.view.win_rt.draw
 
       private static readonly Dictionary<string, List<FontInfo>> Fonts = new Dictionary<string, List<FontInfo>>();
 
-      public static async Task<bool> RegisterFont(string name, params int[] sizes)
-      {
-        // var ddd = xxxxx().Result;
-         foreach (var size in sizes)
-         {
+      public static async Task<bool> RegisterFont(string name, params int[] sizes) {
+         foreach (var size in sizes) {
             var fontFile = name + "_" + size + ".png";
             var fontMetricsFile = name + "_" + size + ".xml";
 
             var uri = new Uri("ms-appx:///res/Font/" + fontFile); // ms-appx:///res/Font/NirmalaUI_30.png
             var image = await ImgUtils.GetImage(uri);
-//#if DEBUG
-//            try {
-//               image = image.Clone(); // test
-//            }
-//            catch (Exception ex) {
-//               return false;
-//            }
-//#endif
             var metrics = XDocument.Load("./res/Font/" + fontMetricsFile);
             var dict = (from c in metrics.Root.Elements()
                let key = (char) ((int) c.Attribute("key"))
@@ -74,13 +51,11 @@ namespace ua.ksn.fmg.view.win_rt.draw
          return true;
       }
 
-      private static FontInfo GetNearestFont(string fontName, int size)
-      {
+      private static FontInfo GetNearestFont(string fontName, int size) {
          return Fonts[fontName].OrderBy(x => Math.Abs(x.Size - size)).First();
       }
 
-      public static Size MeasureString(string text, string fontName, int size)
-      {
+      public static Size MeasureString(string text, string fontName, int size) {
          var font = GetNearestFont(fontName, size);
 
          var scale = (double) size/font.Size;
@@ -91,25 +66,31 @@ namespace ua.ksn.fmg.view.win_rt.draw
          return new Size(letters.Sum(x => x.Width*scale), letters.Max(x => x.Height*scale));
       }
 
-      public static void DrawString(this WriteableBitmap bmp, string text, int x, int y, string fontName, int size, Windows.UI.Color color) {
+      public static void DrawString(this WriteableBitmap bmp, string text, Rect rcInto, string fontName, int size, Windows.UI.Color color) {
          var font = GetNearestFont(fontName, size);
 
          //var letters = text.Select(f => font.Metrics[f]).ToArray();
-         var letters = from char c in text select font.Metrics[c];
+         var letters = (from char c in text select font.Metrics[c]).ToList();
+         var txtW = letters.Sum(x => x.Width);
+         var txtH = letters.Max(x => x.Height);
 
-         var scale = (double) size/font.Size;
+         var scale = Math.Min(rcInto.Width/txtW, rcInto.Height/txtH);
 
-         double destX = x;
+         var dstX = rcInto.Left + (rcInto.Width - txtW*scale)/2;
+         var dstY = rcInto.Top + (rcInto.Height - txtH*scale)/2;
+
          var imgSrc = font.Image;
-         foreach (var letter in letters)
-         {
-            var destRect = new Rect(destX, y, letter.Width*scale, letter.Height*scale);
-            using (bmp.GetBitmapContext(ReadWriteMode.ReadWrite)) {
-               using (imgSrc.GetBitmapContext(ReadWriteMode.ReadOnly)) {
-                  bmp.Blit(destRect, imgSrc, letter);//, color, WriteableBitmapExtensions.BlendMode.Alpha);
-               }
-            }
-            destX += destRect.Width;
+         var msk = new WriteableBitmap(imgSrc.PixelWidth, imgSrc.PixelHeight);
+         msk.FillRectangle(0, 0, msk.PixelWidth, msk.PixelHeight, color);
+         foreach (var letter in letters) {
+            var rcDst = new Rect(dstX, dstY, letter.Width*scale, letter.Height*scale);
+            //bmp.Blit(rcDst, imgSrc, letter, (Windows.UI.Color)Color.MAGENTA, WriteableBitmapExtensions.BlendMode.Alpha);
+            //bmp.Blit(rcDst, imgSrc, letter, WriteableBitmapExtensions.BlendMode.Alpha);
+
+            // see http://adamkinney.wordpress.com/2010/01/09/image-blitting-in-silverlight-with-writeablebitmapex/
+            msk.Blit(letter, imgSrc, letter, WriteableBitmapExtensions.BlendMode.Mask);
+            bmp.Blit(rcDst, msk, letter, WriteableBitmapExtensions.BlendMode.Alpha);
+            dstX += rcDst.Width;
          }
       }
    }

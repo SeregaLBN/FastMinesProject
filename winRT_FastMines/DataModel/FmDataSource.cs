@@ -36,13 +36,13 @@ namespace FastMines.Data {
          }
       }
 
-      public static FmDataGroup GetGroup(int uniqueId) {
+      public static FmDataGroup GetGroup(EMosaicGroup uniqueId) {
          // Simple linear search is acceptable for small data sets
          var matches = AllGroups.Where((group) => (group.UniqueId == uniqueId));
          return matches.FirstOrDefault();
       }
 
-      public static FmDataItem GetItem(int uniqueId) {
+      public static FmDataItem GetItem(EMosaic uniqueId) {
          // Simple linear search is acceptable for small data sets
          var matches = AllGroups.SelectMany(group => group.Items).Where((item) => (item.UniqueId == uniqueId));
          return matches.FirstOrDefault();

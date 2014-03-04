@@ -1,17 +1,18 @@
 namespace ua.ksn {
 
    public struct Color {
+      public static readonly Color TRANSPARENT = new Color(0,255,255,255);
       public static readonly Color BLACK   = new Color(0xFF000000);
-      public static readonly Color WHITE   = new Color { R = 0xFF, G = 0xFF, B = 0xFF };
-      public static readonly Color RED     = new Color { R = 0xFF };
-      public static readonly Color BLUE    = new Color { B = 0xFF };
-      public static readonly Color GREEN   = new Color { G = 0xFF };
+      public static readonly Color WHITE   = new Color { A = 0xFF, R = 0xFF, G = 0xFF, B = 0xFF };
+      public static readonly Color RED     = new Color { A = 0xFF, R = 0xFF };
+      public static readonly Color BLUE    = new Color { A = 0xFF, B = 0xFF };
+      public static readonly Color GREEN   = new Color { A = 0xFF, G = 0xFF };
       public static readonly Color NAVY    = new Color(0xFF000080);
       public static readonly Color MAROON  = new Color(0xFF800000);
       public static readonly Color OLIVE   = new Color(0xFF808000);
       public static readonly Color AQUA    = new Color(0xFF00FFFF);
       public static readonly Color TEAL    = new Color(0xFF008080);
-      public static readonly Color MAGENTA = new Color(255, 0, 255);
+      public static readonly Color MAGENTA = new Color(255, 0, 255); // FUCHSIA
       public static readonly Color GRAY    = new Color(128, 128, 128);
 
       public byte R,G,B,A;
@@ -42,17 +43,12 @@ namespace ua.ksn {
       public override string ToString() {
          return string.Format("argb={0:X2}{1:X2}{2:X2}{3:X2}", A, R, G, B);
       }
-
-#if WINDOWS_RT
-      public static explicit operator Windows.UI.Color(Color self) { return new Windows.UI.Color() { A = self.A, B = self.B, G = self.G, R = self.R }; }
-#elif WINDOWS_FORMS
-      ...
-#endif
    }
 
    public static class ColorExt {
 #if WINDOWS_RT
-      public static Color Cast(this Windows.UI.Color self) { return new Color(self.R, self.G, self.B, self.A); }
+      public static Color ToFmColor(this Windows.UI.Color self) { return new Color(self.R, self.G, self.B, self.A); }
+      public static Windows.UI.Color ToWinColor(this Color self) { return new Windows.UI.Color { A = self.A, B = self.B, G = self.G, R = self.R }; }
 #elif WINDOWS_FORMS
       ...
 #endif

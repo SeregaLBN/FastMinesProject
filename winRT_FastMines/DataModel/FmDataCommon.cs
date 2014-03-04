@@ -14,10 +14,10 @@ namespace FastMines.Data {
    /// Base class for <see cref="FmDataItem"/> and <see cref="FmDataGroup"/> that defines properties common to both.
    /// </summary>
    [Windows.Foundation.Metadata.WebHostHidden]
-   public abstract class FmDataCommon : FastMines.Common.BindableBase {
+   public abstract class FmDataCommon<T> : FastMines.Common.BindableBase {
       private static Uri _baseUri = new Uri("ms-appx:///");
 
-      public FmDataCommon(int uniqueId, String title, String imagePath) {
+      public FmDataCommon(T uniqueId, String title, String imagePath) {
          this._uniqueId = uniqueId;
          this._title = title;
          this._imagePath = imagePath;
@@ -26,8 +26,8 @@ namespace FastMines.Data {
          Description = "Description...";
       }
 
-      private int _uniqueId = 0;
-      public int UniqueId {
+      private T _uniqueId;
+      public virtual T UniqueId {
          get { return this._uniqueId; }
          set { this.SetProperty(ref this._uniqueId, value); }
       }
@@ -46,7 +46,7 @@ namespace FastMines.Data {
       public virtual ImageSource Image {
          get {
             if (this._image == null && this._imagePath != null)
-               this._image = new BitmapImage(new Uri(FmDataCommon._baseUri, this._imagePath));
+               this._image = new BitmapImage(new Uri(FmDataCommon<T>._baseUri, this._imagePath));
             return this._image;
          }
 

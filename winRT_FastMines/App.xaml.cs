@@ -1,4 +1,5 @@
-﻿using FastMines.Common;
+﻿using System.Threading.Tasks;
+using FastMines.Common;
 
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using ua.ksn.fmg.view.win_rt.draw.mosaics;
 
 // The Grid App template is documented at http://go.microsoft.com/fwlink/?LinkId=234226
 
@@ -23,6 +25,11 @@ namespace FastMines {
    /// Provides application-specific behavior to supplement the default Application class.
    /// </summary>
    sealed partial class App : Application {
+
+      private async Task<bool> RegisterResource() {
+         return await CellPaint.RegisterFont();
+      }
+
       /// <summary>
       /// Initializes the singleton Application object.  This is the first line of authored code
       /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -71,6 +78,7 @@ namespace FastMines {
       /// </summary>
       /// <param name="args">Details about the launch request and process.</param>
       protected override async void OnLaunched(LaunchActivatedEventArgs args) {
+         await RegisterResource();
          Frame rootFrame = Window.Current.Content as Frame;
 
          // Do not repeat app initialization when the Window already has content, just ensure that the window is active

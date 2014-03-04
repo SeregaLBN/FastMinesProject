@@ -17,7 +17,7 @@ namespace ua.ksn.fmg.view.swing.draw.mosaics {
          //_colorBk = Color.BLACK;
          //_colorBk = new UISettings().UIElementColor(UIElementType.Window).Cast(); // Panel background
 
-         var clr = new UISettings().UIElementColor(UIElementType.Window).Cast(); // Panel background
+         var clr = new UISettings().UIElementColor(UIElementType.Window).ToFmColor(); // Panel background
          const float perc = 0.40f; // делаю темнее
          var r = (int) (clr.R - clr.R*perc);
          var g = (int) (clr.G - clr.G*perc);

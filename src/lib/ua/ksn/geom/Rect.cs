@@ -126,17 +126,12 @@ namespace ua.ksn.geom {
       public override String ToString() {
          return "x=" + x + "; y=" + y + "; w=" + width + "; h=" + height;
       }
-
-#if WINDOWS_RT
-      public static explicit operator Windows.Foundation.Rect(Rect self) { return new Windows.Foundation.Rect(self.x, self.y, self.width, self.height); }
-#elif WINDOWS_FORMS
-      ...
-#endif
    }
 
    public static class RectExt {
 #if WINDOWS_RT
-      public static Rect Cast(this Windows.Foundation.Rect self) { return new Rect((int)self.X, (int)self.Y, (int)self.Width, (int)self.Height); }
+      public static Rect ToFmRect(this Windows.Foundation.Rect self) { return new Rect((int)self.X, (int)self.Y, (int)self.Width, (int)self.Height); }
+      public static Windows.Foundation.Rect ToWinRect(this Rect self) { return new Windows.Foundation.Rect(self.x, self.y, self.width, self.height); }
 #elif WINDOWS_FORMS
       ...
 #endif

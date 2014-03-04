@@ -17,9 +17,9 @@ namespace FastMines.Data {
    /// <summary>
    /// Generic item data model.
    /// </summary>
-   public class FmDataItem : FmDataCommon {
+   public class FmDataItem : FmDataCommon<EMosaic> {
       public FmDataItem(EMosaic eMosaic, FmDataGroup group)
-         : base(eMosaic.getIndex(), eMosaic.GetDescription(false), "res/Mosaic/32x32/" + eMosaic.GetDescription(true) + ".png") {
+         : base(eMosaic, eMosaic.GetDescription(false), "res/Mosaic/32x32/" + eMosaic.GetDescription(true) + ".png") {
          this._group = group;
          this.Subtitle = "Subtitle item " + eMosaic.GetDescription(false);
          this.Description = "Description item ...";
@@ -35,7 +35,7 @@ namespace FastMines.Data {
          get {
             if (this._image == null)
                try {
-                  this._image = new MosaicsImg(EMosaicEx.fromIndex(this.UniqueId), true).Image;
+                  this._image = new MosaicsImg(this.UniqueId, true).Image;
                } catch (Exception ex) {
                   System.Diagnostics.Debug.Assert(true, ex.Message);
                   int maxX  = 1024, maxY = 1024;

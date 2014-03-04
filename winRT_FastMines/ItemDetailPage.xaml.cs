@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using ua.ksn.fmg.model.mosaics;
 
 // The Item Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234232
 
@@ -47,7 +48,7 @@ namespace FastMines
             }
 
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
-            var item = FmDataSource.GetItem((int)navigationParameter);
+            var item = FmDataSource.GetItem((EMosaic)navigationParameter);
             this.DefaultViewModel["Group"] = item.Group;
             this.DefaultViewModel["Items"] = item.Group.Items;
             this.flipView.SelectedItem = item;

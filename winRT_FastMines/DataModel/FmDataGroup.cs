@@ -14,9 +14,9 @@ namespace FastMines.Data {
    /// <summary>
    /// Generic group data model.
    /// </summary>
-   public class FmDataGroup : FmDataCommon {
+   public class FmDataGroup : FmDataCommon<EMosaicGroup> {
       public FmDataGroup(EMosaicGroup eMosaicGroup)
-         : base(eMosaicGroup.getIndex(), eMosaicGroup.GetDescription(), "res/MosaicGroup/" + eMosaicGroup.GetDescription() + ".png") {
+         : base(eMosaicGroup, eMosaicGroup.GetDescription(), "res/MosaicGroup/" + eMosaicGroup.GetDescription() + ".png") {
          Items.CollectionChanged += ItemsCollectionChanged;
          this.Subtitle = "Subtitle group " + eMosaicGroup.GetDescription();
          this.Description = "Description group...";

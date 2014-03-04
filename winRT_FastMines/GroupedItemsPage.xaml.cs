@@ -23,11 +23,6 @@ namespace FastMines {
 	/// </summary>
 	public sealed partial class GroupedItemsPage : FastMines.Common.LayoutAwarePage {
 		public GroupedItemsPage() {
-			InitializeComponentAsync();
-		}
-
-	   public async void InitializeComponentAsync() {
-         await CellPaint.RegisterFont();
          this.InitializeComponent();
 	   }
 
@@ -40,7 +35,7 @@ namespace FastMines {
 		/// </param>
 		/// <param name="pageState">A dictionary of state preserved by this page during an earlier
 		/// session.  This will be null the first time a page is visited.</param>
-		protected async override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState) {
+		protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState) {
          this.DefaultViewModel["Groups_bindDataSource"] = FmDataSource.AllGroups;
 		}
 

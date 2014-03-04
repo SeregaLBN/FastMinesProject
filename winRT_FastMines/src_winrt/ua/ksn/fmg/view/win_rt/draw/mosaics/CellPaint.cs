@@ -36,7 +36,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
       {
          //BitmapFont.RegisterFont(DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE);
          this.gContext = gContext;
-         DefaultBackgroundFillColor = new UISettings().UIElementColor(UIElementType.ButtonFace).Cast();
+         DefaultBackgroundFillColor = new UISettings().UIElementColor(UIElementType.ButtonFace).ToFmColor();
          _brushCacheMap = new Dictionary<Color, SolidColorBrush>();
          _fontFamilies = new List<FontFamily>(1);
       }
@@ -44,7 +44,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
       /// <summary> find cached solid brush. if not exist - create it </summary>
       private SolidColorBrush FindBrush(Color clr) {
          if (!_brushCacheMap.ContainsKey(clr))
-            _brushCacheMap.Add(clr, new SolidColorBrush((Windows.UI.Color)clr));
+            _brushCacheMap.Add(clr, new SolidColorBrush(clr.ToWinColor()));
          return _brushCacheMap[clr];
       }
       private Brush BrushBorderShadow {
@@ -105,7 +105,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
       /// <summary> draw border lines </summary>
       public void PaintBorderLines(BaseCell cell, WriteableBitmap bmp) {
          if (gContext.IconicMode) {
-            bmp.DrawPolyline(RegionAsXyxyxySequence(gContext.Bound, cell.getRegion()), (Windows.UI.Color)(cell.State.Down ? gContext.PenBorder.ColorLight : gContext.PenBorder.ColorShadow));
+            bmp.DrawPolyline(RegionAsXyxyxySequence(gContext.Bound, cell.getRegion()), (cell.State.Down ? gContext.PenBorder.ColorLight : gContext.PenBorder.ColorShadow).ToWinColor());
          } else {
             var color = cell.State.Down ? gContext.PenBorder.ColorLight : gContext.PenBorder.ColorShadow;
             var s = cell.getShiftPointBorderIndex();
@@ -117,7 +117,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
                p2.Move(gContext.Bound);
                if (i == s)
                   color = cell.State.Down ? gContext.PenBorder.ColorShadow : gContext.PenBorder.ColorLight;
-               bmp.DrawLine(p1.x, p1.y, p2.x, p2.y, (Windows.UI.Color)color);
+               bmp.DrawLine(p1.x, p1.y, p2.x, p2.y, color.ToWinColor());
             }
          }
       }
@@ -138,9 +138,9 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
                var point = cell.getRegion().getPoint(p);
                point.Move(gContext.Bound);
                if (d)
-                  poly.Points.Add((Windows.Foundation.Point) point);
+                  poly.Points.Add(point.ToWinPoint());
                else
-                  poly.Points[p] = (Windows.Foundation.Point) point;
+                  poly.Points[p] = point.ToWinPoint();
             }
          }
          poly.StrokeThickness = gContext.PenBorder.Width;
@@ -171,7 +171,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
 
          // output Pictures
          if (srcImg != null) {
-            var destRc = (Windows.Foundation.Rect)rcInner;
+            var destRc = rcInner.ToWinRect();
             var srcRc = new Windows.Foundation.Rect(0, 0, srcImg.PixelWidth, srcImg.PixelHeight);
             bmp.Blit(destRc, srcImg, srcRc);
          } else
@@ -194,8 +194,20 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
             if (!string.IsNullOrWhiteSpace(szCaption)) {
                if (cell.State.Down)
                   rcInner.moveXY(1, 1);
-               bmp.DrawString(szCaption, rcInner.left(), rcInner.top(), DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE,
-                  (Windows.UI.Color)txtColor);
+               //{ // debug
+               //   var rnd = Windows.Security.Cryptography.CryptographicBuffer.GenerateRandomNumber();
+               //   switch (rnd % 7) {
+               //   case 0: txtColor = Color.BLUE; break;
+               //   case 1: txtColor = Color.MAGENTA; break;
+               //   case 2: txtColor = Color.MAROON; break;
+               //   case 3: txtColor = Color.NAVY; break;
+               //   case 4: txtColor = Color.OLIVE; break;
+               //   case 5: txtColor = Color.TEAL; break;
+               //   case 6: txtColor = Color.AQUA; break;
+               //   }
+               //}
+               bmp.DrawString(szCaption, rcInner.ToWinRect(), DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE, txtColor.ToWinColor());
+               //bmp.DrawRectangle(rcInner.left(), rcInner.top(), rcInner.right(), rcInner.bottom(), Color.RED.ToWinColor()); // debug
             }
          }
       }
@@ -274,7 +286,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
             DefaultBackgroundFillColor,
             gContext.BkFill.getColor
             );
-         bmp.FillPolygon(RegionAsXyxyxySequence(gContext.Bound, cell.getRegion()), (Windows.UI.Color) color);
+         bmp.FillPolygon(RegionAsXyxyxySequence(gContext.Bound, cell.getRegion()), color.ToWinColor());
       }
 
       /// <summary> залить €чейку нужным цветом </summary>
@@ -288,7 +300,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
                DefaultBackgroundFillColor,
                gContext.BkFill.getColor
                );
-         binder.Item1.Fill = FindBrush(clr);;
+         binder.Item1.Fill = FindBrush(clr);
       }
 
       private static int[] RegionAsXyxyxySequence(Size bound, Region region)

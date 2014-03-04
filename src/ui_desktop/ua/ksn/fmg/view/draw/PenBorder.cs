@@ -51,14 +51,22 @@ public class PenBorder {
       }
    }
 
-   public override bool Equals(object obj) {
-      PenBorder penObj = obj as PenBorder;
-      if (penObj == null)
-         return false;
-
-      return (width == penObj.width)
-            && colorShadow.Equals(penObj.colorShadow)
-            && colorLight.Equals(penObj.colorLight);
+   public override int GetHashCode() {
+      unchecked {
+         int hashCode = colorShadow.GetHashCode();
+         hashCode = (hashCode * 397) ^ colorLight.GetHashCode();
+         hashCode = (hashCode * 397) ^ width;
+         return hashCode;
+      }
+   }
+   protected bool Equals(PenBorder other) {
+      return (width == other.width)
+            && colorShadow.Equals(other.colorShadow)
+            && colorLight.Equals(other.colorLight);
+   }
+   public override bool Equals(object other) {
+      var penObj = other as PenBorder;
+      return (penObj != null) && Equals(penObj);
    }
 }
 }

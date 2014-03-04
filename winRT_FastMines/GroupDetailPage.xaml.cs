@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using ua.ksn.fmg.model.mosaics;
 
 // The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229
 
@@ -41,7 +42,7 @@ namespace FastMines
         protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
-            var group = FmDataSource.GetGroup((int)navigationParameter);
+            var group = FmDataSource.GetGroup((EMosaicGroup)navigationParameter);
             this.DefaultViewModel["Group"] = group;
             this.DefaultViewModel["Items"] = group.Items;
         }

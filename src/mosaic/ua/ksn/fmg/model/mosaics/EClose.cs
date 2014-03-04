@@ -10,7 +10,7 @@ namespace ua.ksn.fmg.model.mosaics {
       public static string ToCaption(this EClose self) {
          switch (self) {
          case EClose._Unknown: return "?";
-         case EClose._Clear  : return "X";//string.Empty;
+         case EClose._Clear  : return string.Empty;
          case EClose._Flag   : return "F";
          }
          return null;
