@@ -69,8 +69,7 @@ namespace FastMines.Common
                     // Listen to the window directly so focus isn't required
                     Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated +=
                         CoreDispatcher_AcceleratorKeyActivated;
-                    Window.Current.CoreWindow.PointerPressed +=
-                        this.CoreWindow_PointerPressed;
+                    Window.Current.CoreWindow.PointerPressed += this.CoreWindow_PointerPressed;
                 }
             };
 
@@ -80,8 +79,7 @@ namespace FastMines.Common
                 this.StopLayoutUpdates(sender, e);
                 Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -=
                     CoreDispatcher_AcceleratorKeyActivated;
-                Window.Current.CoreWindow.PointerPressed -=
-                    this.CoreWindow_PointerPressed;
+                Window.Current.CoreWindow.PointerPressed -= this.CoreWindow_PointerPressed;
             };
         }
 
@@ -196,8 +194,7 @@ namespace FastMines.Common
         /// </summary>
         /// <param name="sender">Instance that triggered the event.</param>
         /// <param name="args">Event data describing the conditions that led to the event.</param>
-        private void CoreWindow_PointerPressed(CoreWindow sender,
-            PointerEventArgs args)
+        private void CoreWindow_PointerPressed(CoreWindow sender, PointerEventArgs args)
         {
             var properties = args.CurrentPoint.Properties;
 

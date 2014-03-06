@@ -194,18 +194,20 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
             if (!string.IsNullOrWhiteSpace(szCaption)) {
                if (cell.State.Down)
                   rcInner.moveXY(1, 1);
-               //{ // debug
-               //   var rnd = Windows.Security.Cryptography.CryptographicBuffer.GenerateRandomNumber();
-               //   switch (rnd % 7) {
-               //   case 0: txtColor = Color.BLUE; break;
-               //   case 1: txtColor = Color.MAGENTA; break;
-               //   case 2: txtColor = Color.MAROON; break;
-               //   case 3: txtColor = Color.NAVY; break;
-               //   case 4: txtColor = Color.OLIVE; break;
-               //   case 5: txtColor = Color.TEAL; break;
-               //   case 6: txtColor = Color.AQUA; break;
-               //   }
-               //}
+#if DEBUG
+               { // debug
+                  var rnd = Windows.Security.Cryptography.CryptographicBuffer.GenerateRandomNumber();
+                  switch (rnd % 7) {
+                  case 0: txtColor = Color.BLUE; break;
+                  case 1: txtColor = Color.MAGENTA; break;
+                  case 2: txtColor = Color.MAROON; break;
+                  case 3: txtColor = Color.NAVY; break;
+                  case 4: txtColor = Color.OLIVE; break;
+                  case 5: txtColor = Color.TEAL; break;
+                  case 6: txtColor = Color.AQUA; break;
+                  }
+               }
+#endif
                bmp.DrawString(szCaption, rcInner.ToWinRect(), DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE, txtColor.ToWinColor());
                //bmp.DrawRectangle(rcInner.left(), rcInner.top(), rcInner.right(), rcInner.bottom(), Color.RED.ToWinColor()); // debug
             }
