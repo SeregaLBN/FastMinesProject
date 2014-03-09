@@ -11,9 +11,9 @@ public struct Size {
    public static bool operator ==(Size s1, Size s2) { return (s1.width == s2.width) && (s1.height == s2.height); }
 
    public override bool Equals(object other) {
-      if (!(other is Size))
+      if (ReferenceEquals(null, other))
          return false;
-      return this == (Size)other;
+      return (other is Size) && (this == (Size)other);
    }
    public override int GetHashCode() {
       int sum = width + height;

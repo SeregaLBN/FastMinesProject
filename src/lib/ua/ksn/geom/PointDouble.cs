@@ -13,9 +13,9 @@ public struct PointDouble {
    public static bool operator ==(PointDouble p1, PointDouble p2) { return (p1.x == p2.x) && (p1.y == p2.y); }
 
    public override bool Equals(object other) {
-      if (!(other is PointDouble))
+      if (ReferenceEquals(null, other))
          return false;
-      return this == (PointDouble)other;
+      return (other is PointDouble) && (this == (PointDouble)other);
    }
    public override int GetHashCode() {
       long bits = BitConverter.DoubleToInt64Bits(x);

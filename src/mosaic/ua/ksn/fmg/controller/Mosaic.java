@@ -22,8 +22,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ua.ksn.fmg.controller;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,8 +52,6 @@ public abstract class Mosaic {
 		return getCells().getSize();
 	}
 
-	/** площадь одной €чейки */
-	protected int _area = -1;
 	public static final int AREA_MINIMUM = 230;
 	/** использовать ли флажок на поле */
 	private boolean _useUnknown = true;
@@ -66,72 +62,71 @@ public abstract class Mosaic {
 			return;
 		if (newValue != null)
 			throw new IllegalArgumentException("Bad argument - support only null value!");
-		this.removePropertyChangeListener(_cellAttr);
 		_cellAttr = null;
 	}
 	public BaseCell.BaseAttribute getCellAttr() {
-		if (_cellAttr == null) {
+		if (_cellAttr == null)
 			_cellAttr = CellFactory.createAttributeInstance(getCells().getMosaicType(), getArea());
-
-			this.addPropertyChangeListener(_cellAttr); // атрибут зависит от мозаики (изменение area -> пересчитать attr.abcdeh)
-		}
 		return _cellAttr;
 	}
 
 	/** матрица €чеек пол€ мозаики */
 	protected class MatrixCells implements BaseCell.IMatrixCells {
 		/** матрица List &lt; List &lt; BaseCell &gt; &gt; , представленна€(развЄрнута) в виде вектора */
-		protected List<BaseCell> matrix = new ArrayList<BaseCell>(0);
+		protected List<BaseCell> _matrix = new ArrayList<BaseCell>(0);
 		/** размер пол€ в €чейках */
-		protected Size size = new Size(0, 0);
+		protected Size _size = new Size(0, 0);
 		/** из каких фигур состоит мозаика пол€ */
-		protected EMosaic mosaicType = EMosaic.eMosaicSquare1;
+		protected EMosaic _mosaicType = EMosaic.eMosaicSquare1;
 		/** кол-во мин на поле */
-		protected int minesCount = 1;
+		protected int _minesCount = 1;
 		/** кол-во мин на поле до создани€ игры. »спользуетс€ когда игра была создана, но ни одной мины не проставлено. */
-		protected int oldMinesCount = 1;
+		protected int _oldMinesCount = 1;
 
 //		public void setSize(Size newSizeField          ) { setParams(newSizeField, null, null ); } 
 //		public void setMosaicType(EMosaic newMosaicType) { setParams(null, newMosaicType, null); }
 		public void setMinesCount(int newMinesCount    ) { setParams(null, null, newMinesCount); }
 		public void setParams(Size newSizeField, EMosaic newMosaicType, Integer newMinesCount) {
-			EMosaic oldMosaicType = this.mosaicType;
-			boolean newMosaciType = (newMosaicType != this.mosaicType);
+			EMosaic oldMosaicType = this._mosaicType;
+			boolean newMosaciType = (newMosaicType != this._mosaicType);
 			boolean recreateMatrix =
-				((newSizeField  != null) && !newSizeField.equals(this.size)) ||
+				((newSizeField  != null) && !newSizeField.equals(this._size)) ||
 				((newMosaicType != null) && newMosaciType);
 
+			int saveArea = getArea();
 			if (newSizeField != null)
-				this.size = newSizeField;
+				this._size = newSizeField;
 			if (newMosaicType != null)
-				if (this.mosaicType != newMosaicType) {
-					this.mosaicType = newMosaicType;
+				if (this._mosaicType != newMosaicType) {
+					this._mosaicType = newMosaicType;
 					setCellAttr(null);
 				}
 			if (newMinesCount != null) {
 				if (newMinesCount == 0)
-					this.oldMinesCount = this.minesCount;
-				this.minesCount = newMinesCount;
+					this._oldMinesCount = this._minesCount;
+				this._minesCount = newMinesCount;
 			}
-			minesCount = Math.max(1, Math.min(minesCount, GetMaxMines(this.size)));
+			_minesCount = Math.max(1, Math.min(_minesCount, GetMaxMines(this._size)));
+			if (saveArea != getArea())
+				setArea(saveArea);
 
 			if (recreateMatrix) {
 				BaseCell.BaseAttribute attr = getCellAttr();
 
 				// отписываю старые €чейки от уведомлений атрибута
-				for (BaseCell cell: matrix)
+				for (BaseCell cell: _matrix)
 					attr.removePropertyChangeListener(cell);
 
-				matrix.clear();
-				matrix = new ArrayList<BaseCell>(size.width*size.height);
-				for (int i=0; i < size.width; i++)
-					for (int j=0; j < size.height; j++) {
-						BaseCell cell = CellFactory.createCellInstance(attr, mosaicType, new Coord(i, j));
-						matrix.add(i*size.height + j, cell);
+				_matrix.clear();
+				_matrix = new ArrayList<BaseCell>(_size.width*_size.height);
+				for (int i=0; i < _size.width; i++)
+					for (int j=0; j < _size.height; j++) {
+						BaseCell cell = CellFactory.createCellInstance(attr, _mosaicType, new Coord(i, j));
+						_matrix.add(i*_size.height + j, cell);
 						attr.addPropertyChangeListener(cell); // подписываю новые €чейки на уведомлени€ атрибута (изменение a -> перерасчЄт координат)
 					}
 
-				for (BaseCell cell: matrix)
+				for (BaseCell cell: _matrix)
 					cell.IdentifyNeighbors(this);
 			}
 
@@ -152,16 +147,16 @@ public abstract class Mosaic {
 					OnError("ѕроблемы с установкой мин... :(");
 			}
 			// set other CellOpen and set all Caption
-			for (BaseCell cell: matrix)
+			for (BaseCell cell: _matrix)
 				cell.getState().CalcOpenState();
 		}
 		/** arrange Mines - set random mines */
 		public void setMines_random(Coord firstClickCoord) {
-			if (minesCount == 0)
-				minesCount = oldMinesCount;
+			if (_minesCount == 0)
+				_minesCount = _oldMinesCount;
 			
 			BaseCell firstClickCell = getCell(firstClickCoord);
-			List<BaseCell> matrixClone = new ArrayList<BaseCell>(matrix);
+			List<BaseCell> matrixClone = new ArrayList<BaseCell>(_matrix);
 			matrixClone.remove(firstClickCell); // исключаю на которой кликал юзер
 			matrixClone.removeAll(Arrays.asList(firstClickCell.getNeighbors())); // и их соседей
 			int count = 0;
@@ -170,7 +165,7 @@ public abstract class Mosaic {
 				int len = matrixClone.size();
 				if (len == 0) {
 					OnError("ээээ..... лажа......\r\n«ахотели установить больше мин чем возможно");
-					minesCount = count;
+					_minesCount = count;
 					break;
 				}
 				int i = rand.nextInt(len);
@@ -180,35 +175,35 @@ public abstract class Mosaic {
 					matrixClone.remove(cellToSetMines);
 				} else
 					OnError("ћины должны всегда устанавливатьс€...");
-			} while (count < minesCount);
+			} while (count < _minesCount);
 
 			// set other CellOpen and set all Caption
-			for (BaseCell cell: matrix)
+			for (BaseCell cell: _matrix)
 				cell.getState().CalcOpenState();
 		}
 
 		/** размер пол€ в €чейках */
 		@Override
-		public Size getSize() { return new Size(size); } // return clone
+		public Size getSize() { return new Size(_size); } // return clone
 		/** узнать тип мозаики */
-		public EMosaic getMosaicType() { return mosaicType; }
+		public EMosaic getMosaicType() { return _mosaicType; }
 		/** кол-во мин */
-		public int getMinesCount() { return minesCount; }
+		public int getMinesCount() { return _minesCount; }
 
 		public List<BaseCell> getAll() {
-			return matrix;
+			return _matrix;
 		}
 
 		public int getCountOpen() {
 			int cnt = 0;
-			for (BaseCell cell: matrix)
+			for (BaseCell cell: _matrix)
 				if (cell.getState().getStatus() == EState._Open)
 					cnt++;
 			return cnt;
 		}
 		public int getCountFlag() {
 			int cnt = 0;
-			for (BaseCell cell: matrix)
+			for (BaseCell cell: _matrix)
 				if ((cell.getState().getStatus() == EState._Close) &&
 					(cell.getState().getClose() == EClose._Flag))
 						cnt++;
@@ -216,7 +211,7 @@ public abstract class Mosaic {
 		}
 		public int getCountUnknown() {
 			int cnt = 0;
-			for (BaseCell cell: matrix)
+			for (BaseCell cell: _matrix)
 				if ((cell.getState().getStatus() == EState._Close) &&
 					(cell.getState().getClose() == EClose._Unknown))
 						cnt++;
@@ -224,7 +219,7 @@ public abstract class Mosaic {
 		}
 		
 		/** доступ к заданной €чейке */
-		public BaseCell getCell(int x, int y) { return matrix.get(x*size.height + y); }
+		public BaseCell getCell(int x, int y) { return _matrix.get(x*_size.height + y); }
 		/** доступ к заданной €чейке */
 		@Override
 		public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
@@ -293,21 +288,6 @@ public abstract class Mosaic {
 	}
 	private void setRepositoryMines(List<Coord> repositoryMines) {
 		this._repositoryMines = repositoryMines;
-	}
-
-	private PropertyChangeSupport _propertyChanges;
-	private PropertyChangeSupport getPropertyChangeSupport() {
-		if (_propertyChanges == null)
-			_propertyChanges = new PropertyChangeSupport(this);
-		return _propertyChanges;
-	}
-	/**  подписатьс€ на уведомлени€ изменений свойств мозаики */
-	public void addPropertyChangeListener(PropertyChangeListener l) {
-		getPropertyChangeSupport().addPropertyChangeListener(l);
-	}
-	/**  отписатьс€ от уведомлений изменений свойств мозаики */
-	public void removePropertyChangeListener(PropertyChangeListener l) {
-		getPropertyChangeSupport().removePropertyChangeListener(l);
 	}
 
 	protected static class MosaicListeners {
@@ -633,17 +613,21 @@ public abstract class Mosaic {
 	public EMosaic getMosaicType() { return getCells().getMosaicType(); }
 	/** площадь €чеек */
 	public int getArea() {
-		if (_area < AREA_MINIMUM)
-			setArea(AREA_MINIMUM);
-		return _area;
+		if (_cellAttr == null)
+			return AREA_MINIMUM;
+		int area = getCellAttr().getArea();
+		if (area < AREA_MINIMUM) {
+			area = AREA_MINIMUM;
+			getCellAttr().setArea(AREA_MINIMUM);
+		}
+		return area;
 	}
 	/** установить новую площадь €чеек */
 	public void setArea(int newArea)  {
-		if (this._area == Math.max(AREA_MINIMUM, newArea)) return;
-		int oldArea = _area;
-		this._area = Math.max(AREA_MINIMUM, newArea);
+		int oldArea = getCellAttr().getArea();
+		if (oldArea == Math.max(AREA_MINIMUM, newArea)) return;
+		getCellAttr().setArea(Math.max(AREA_MINIMUM, newArea));
 
-		getPropertyChangeSupport().firePropertyChange("Mosaic_area", oldArea, this._area);
 		getMosaicListeners().fireOnChangeArea(new MosaicEvent.ChangeAreaEvent(this, oldArea));
 	}
 	public void setUseUnknown(boolean val) { _useUnknown = val; }

@@ -21,7 +21,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ////////////////////////////////////////////////////////////////////////////////
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using ua.ksn.fmg.Event.click;
 using ua.ksn.geom;
 
@@ -51,26 +51,20 @@ public abstract class BaseCell {
     * <br> (Полные данные о конкретной мозаике) <br>
     * Доопределаяется наследниками BaseCell
     */
-   public abstract class BaseAttribute {
-      public delegate void OnChangeAreaProperty(object sender, int oldArea, int newArea);
-
-      /// <summary>На это подписаны все наследники BaseCell: при изменении A - надо пересчить все координаты точек</summary>
-      public event OnChangeAreaProperty OnChangeArea = delegate {};
+   public abstract class BaseAttribute : FastMines.Common.BindableBase {
+      /// На PropertyChanged это подписаны все наследники BaseCell: при изменении A - надо пересчить все координаты точек
 
       public BaseAttribute(int area) {
          Area = area;
       }
 
       /// <summary>площадь ячейки/фигуры</summary>
-      private int area;
+      private int _area;
+
       /// <summary>площадь ячейки/фигуры</summary>
       public int Area {
-         get { return area; }
-         set {
-            int old = this.area;
-            this.area = value;
-            OnChangeArea(this, old, value);
-         }
+         get { return _area; }
+         set { this.SetProperty(ref this._area, value); }
       }
 
       /// <summary>пересчитать размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
@@ -108,11 +102,6 @@ public abstract class BaseCell {
 
       /// <summary>Для рисование иконки: минимальный размер поля, по которому будет визуально ясно, что это за мозаика...</summary>
       public abstract Size sizeIcoField(bool smallSize);
-
-      //// TODO мож избавиться от делегатов.. и устанавливать напрямую? 
-      //public void OnPropertyAreaChange(object sender, int oldArea, int newArea) {
-      //   Area = newArea;
-      //}
    }
 
    private readonly BaseAttribute attr;
@@ -523,8 +512,9 @@ public abstract class BaseCell {
       }
    }
 
-   public void OnPropertyAreaChange(object sender, int oldArea, int newArea) {
-      CalcRegion();
+   public void OnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+      if ("Area".Equals(e.PropertyName))
+         CalcRegion();
    }
 }
 }

@@ -11,9 +11,9 @@ public struct Point {
    public static bool operator ==(Point p1, Point p2) { return (p1.x == p2.x) && (p1.y == p2.y); }
 
    public override bool Equals(object other) {
-      if (!(other is Point))
+      if (ReferenceEquals(null, other))
          return false;
-      return this == (Point)other;
+      return (other is Point) && (this == (Point)other);
    }
 
    public override int GetHashCode() {

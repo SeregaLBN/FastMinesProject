@@ -1,7 +1,7 @@
 namespace ua.ksn.geom {
 
 public struct Coord {
-   public static readonly Coord INCORRECT_COORD = new Coord(-1, -1); // null
+   public static readonly Coord INCORRECT_COORD = new Coord(-1234, -9876); // null
 
    public int x, y;
    //public Coord() { x=y=0; }
@@ -12,9 +12,9 @@ public struct Coord {
    public static bool operator ==(Coord c1, Coord c2) { return (c1.x == c2.x) && (c1.y == c2.y); }
 
    public override bool Equals(object other) {
-      if (!(other is Coord))
+      if (ReferenceEquals(null, other))
          return false;
-      return this == (Coord)other;
+      return (other is Coord) && (this == (Coord)other);
    }
    public override int GetHashCode() {
       int sum = x + y;

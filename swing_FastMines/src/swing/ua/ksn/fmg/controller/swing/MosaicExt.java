@@ -34,7 +34,10 @@ import ua.ksn.geom.Size;
 import ua.ksn.swing.geom.Cast;
 
 public class MosaicExt extends Mosaic implements PropertyChangeListener {
+	private MosaicGraphicContext _gContext;
+	private CellPaint _cellPaint;
 	private JPanel _container;
+	private MosaicMouseListeners _mosaicMouseListener;
 	private static final boolean _DEBUG = true;
 
 	public MosaicExt() {
@@ -116,17 +119,14 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 		}
 		@Override
 		public void setParams(Size newSizeField, EMosaic newMosaicType, Integer newMinesCount) {
-			if (newMosaicType != null)
-				if (this.mosaicType != newMosaicType) {
-					_cellPaint = null;
-				}
+			if (this._mosaicType != newMosaicType)
+				_cellPaint = null;
 			
 			super.setParams(newSizeField, newMosaicType, newMinesCount);
 	
 			getContainer().repaint();
 			getContainer().revalidate();
 		}
-
 	}
 
 	@Override
@@ -136,8 +136,6 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 		return _cells;
 	}
 
-	private MosaicGraphicContext _gContext;
-	private CellPaint _cellPaint;
 	public MosaicGraphicContext getGraphicContext() {
 		if (_gContext == null) {
 			_gContext = new MosaicGraphicContext(getContainer());
@@ -146,6 +144,7 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 		}
 		return _gContext;
 	}
+
 	public CellPaint getCellPaint() {
 		if (_cellPaint == null)
 			_cellPaint = new CellPaint(getGraphicContext());
@@ -198,9 +197,10 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 
 	@Override
 	public void setArea(int newArea)  {
-		int old = this._area;
+		int oldVal = this.getArea();
 		super.setArea(newArea);
-		if (old != this._area) {
+		int newVal = this.getArea();
+		if (oldVal != newVal) {
 			// см. комент - сноску 1
 			changeFontSize(getGraphicContext().getPenBorder(), newArea);
 	//		getContainer().repaint(); // вызовится неявно: area->gContext.font->this.repaint
@@ -255,7 +255,7 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 		@Override
 		public void focusGained(FocusEvent e) {}
 	}
-	private MosaicMouseListeners _mosaicMouseListener;
+
 	public MosaicMouseListeners getMosaicMouseListeners() {
 		if (_mosaicMouseListener == null)
 			_mosaicMouseListener = new MosaicMouseListeners();

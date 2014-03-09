@@ -31,11 +31,10 @@ namespace ua.ksn {
       public static bool operator !=(Color c1, Color c2) { return (c1.A != c2.A) || (c1.R != c2.R) || (c1.G != c2.G) || (c1.B != c2.B); }
       public static bool operator ==(Color c1, Color c2) { return (c1.A == c2.A) && (c1.R == c2.R) && (c1.G == c2.G) && (c1.B == c2.B); }
 
-      public bool Equals(Color clr) { return (clr.A == A) && (clr.R == R) && (clr.G == G) && (clr.B == B); }
       public override bool Equals(object o) {
-         if (!(o is Color))
+         if (ReferenceEquals(null, o))
             return false;
-         return Equals((Color)o);
+         return (o is Color) && (this == (Color)o);
       }
 
       public override int GetHashCode() { return (A << 24) | (R << 16) | (G << 8) | B; }

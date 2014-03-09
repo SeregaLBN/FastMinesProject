@@ -1683,14 +1683,16 @@ public class PenrousePeriodic1 : BaseCell {
     		break;
     	}
 
-    	{ // debug check
+#if DEBUG
+      { // debug check
     		int i=0;
     		for (; i<neighborCoord.Length; i++)
-    			if (neighborCoord[i] == Coord.INCORRECT_COORD)
+            if (neighborCoord[i] == Coord.INCORRECT_COORD)
     				break;
     		if (i != Attr.getNeighborNumber(direction))
     			throw new Exception("Исправь AttrPenrousePeriodic1.getNeighborNumber("+direction+")...");
     	}
+#endif
 
 //    	for (int i=0; i<neighborCoord.length; i++)
 //    		if (neighborCoord[i] == null)

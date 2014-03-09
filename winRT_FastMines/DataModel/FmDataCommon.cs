@@ -50,16 +50,18 @@ namespace FastMines.Data {
             return this._image;
          }
 
-         set {
-            this._imagePath = null;
-            this.SetProperty(ref this._image, value);
-         }
+         //set {
+         //   this._imagePath = null;
+         //   this.SetProperty(ref this._image, value);
+         //}
       }
 
-      public void SetImage(String path) {
-         this._image = null;
-         this._imagePath = path;
-         this.OnPropertyChanged("Image");
+      public string ImagePath {
+         get { return this._imagePath; }
+         set {
+            this._image = null;
+            this.SetProperty(ref this._imagePath, value);
+         }
       }
 
       public override string ToString() {

@@ -64,7 +64,7 @@ public abstract class BaseCell implements PropertyChangeListener {
 	 * <br> (ѕолные данные о конкретной мозаике) <br>
 	 * ƒоопредела€етс€ наследниками BaseCell
 	 */
-	public static abstract class BaseAttribute implements PropertyChangeListener {
+	public static abstract class BaseAttribute {
 		/**
 		 * Ќа это подписаны:
 		 *  <li> все наследники BaseCell: при изменении A - надо пересчить все координаты точек
@@ -88,10 +88,10 @@ public abstract class BaseCell implements PropertyChangeListener {
 		private int area;
 
 		/** площадь €чейки/фигуры */
-		protected void setArea(int area) {
+		public void setArea(int area) {
 			int old = this.area;
 			this.area = area;
-			propertyChanges.firePropertyChange("CellAttribute_area", old, area);
+			propertyChanges.firePropertyChange("Area", old, area);
 		}
 		/** площадь €чейки/фигуры */
 		public int getArea() { return area; }
@@ -132,16 +132,6 @@ public abstract class BaseCell implements PropertyChangeListener {
 
 		/** ƒл€ рисование иконки: минимальный размер пол€, по которому будет визуально €сно, что это за мозаика... */
 		public abstract Size sizeIcoField(boolean smallSize);
-
-		@Override
-		// TODO мож избавитьс€ от PropertyChangeListener.. и устанавливать напр€мую?
-		public void propertyChange(PropertyChangeEvent evt) {
-//			System.out.println("BaseAttribute.propertyChange: PropertyName is '" + evt.getPropertyName() + "'");
-			if ("Mosaic_area".equals(evt.getPropertyName())) {
-				int newArea = (Integer)evt.getNewValue();
-				setArea(newArea);
-			}
-		}
 	}
 
 	private final BaseAttribute attr;
@@ -560,7 +550,7 @@ public abstract class BaseCell implements PropertyChangeListener {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if ("CellAttribute_area".equals(evt.getPropertyName()))
+		if ("Area".equals(evt.getPropertyName()))
 		{
 			CalcRegion();
 

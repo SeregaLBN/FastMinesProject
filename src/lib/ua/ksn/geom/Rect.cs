@@ -114,9 +114,9 @@ namespace ua.ksn.geom {
       public static bool operator ==(Rect r1, Rect r2) { return (r1.x == r2.x) && (r1.y == r2.y) && (r1.width == r2.width) && (r1.height == r2.height); }
 
       public override bool Equals(Object other) {
-         if (!(other is Rect))
+         if (ReferenceEquals(null, other))
             return false;
-         return (this == (Rect)other);
+         return (other is Rect) && (this == (Rect)other);
       }
 
       public override int GetHashCode() {

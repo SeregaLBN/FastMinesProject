@@ -19,8 +19,12 @@ public class Coord {
 			return true;
 		if (!(other instanceof Coord))
 			return false;
-		Coord c = (Coord)other;
-		return (x == c.x) && (y == c.y);
+		return equals((Coord)other);
+    }
+    public boolean equals(Coord other) {
+		if (null == other)
+			return true;
+		return (x == other.x) && (y == other.y);
     }
 	@Override
     public int hashCode() {

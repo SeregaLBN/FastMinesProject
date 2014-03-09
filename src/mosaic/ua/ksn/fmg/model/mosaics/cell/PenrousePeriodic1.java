@@ -1706,7 +1706,7 @@ public class PenrousePeriodic1 extends BaseCell {
     	{ // debug check
     		int i=0;
     		for (; i<neighborCoord.length; i++)
-    			if (neighborCoord[i] == Coord.INCORRECT_COORD)
+    			if (neighborCoord[i] == Coord.INCORRECT_COORD) // check reference equals!
     				break;
     		if (i != getAttr().getNeighborNumber(direction))
     			throw new RuntimeException("Исправь AttrPenrousePeriodic1.getNeighborNumber("+direction+")...");

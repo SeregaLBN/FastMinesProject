@@ -59,9 +59,9 @@ namespace FastMines.Data {
                }
             return base.Image;
          }
-         set {
-            base.Image = value;
-         }
+         //set {
+         //   base.Image = value;
+         //}
       }
    }
 }

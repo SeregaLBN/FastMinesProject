@@ -13,9 +13,9 @@ public struct SizeDouble {
    public static bool operator ==(SizeDouble s1, SizeDouble s2) { return (s1.width == s2.width) && (s1.height == s2.height); }
 
    public override bool Equals(object other) {
-      if (!(other is SizeDouble))
+      if (ReferenceEquals(null, other))
          return false;
-      return this == (SizeDouble)other;
+      return (other is SizeDouble) && (this == (SizeDouble)other);
    }
    public override int GetHashCode() {
       long bits = BitConverter.DoubleToInt64Bits(width);

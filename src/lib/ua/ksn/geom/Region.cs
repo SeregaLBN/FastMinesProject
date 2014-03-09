@@ -62,8 +62,10 @@ public class Region {
    }
 
    public override bool Equals(Object other) {
-      if (this == other)
+      if (ReferenceEquals(this, other))
          return true;
+      if (ReferenceEquals(null, other))
+         return false;
       var o = other as Region;
       if (o == null)
          return false;
