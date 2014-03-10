@@ -435,7 +435,7 @@ public abstract class BaseCell {
       default:
          System.Diagnostics.Debug.Assert(false,this.GetType()+".getBackgroundFillColor: fillMode="+fillMode+":  добавь цветовую обработку для этого режима!");
          //break;// !!! без break'а
-         return getBackgroundFillColor(0, defaultColor, repositoryColor);
+         goto case 0;
       case 0:
          Color clr = defaultColor;
          { // для Down и Нажатого состояний делаю фон чуть и чуть-чуть темнее...

@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
-using FastMines.Common;
-
-using System;
+﻿using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Windows.System;
+using Windows.UI.Core;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using FastMines.Common;
 using ua.ksn.fmg.view.win_rt.draw.mosaics;
 
 // The Grid App template is documented at http://go.microsoft.com/fwlink/?LinkId=234226
@@ -26,8 +27,8 @@ namespace FastMines {
    /// </summary>
    sealed partial class App : Application {
 
-      private async Task<bool> RegisterResource() {
-         return await CellPaint.RegisterFont();
+      private async Task RegisterResource() {
+         await CellPaint.RegisterFont();
       }
 
       /// <summary>
@@ -41,17 +42,25 @@ namespace FastMines {
 #if DEBUG
          var testString = "Hello World! Чпунтику привет!";
          var bs = System.Text.Encoding.UTF8.GetBytes(testString);
-         var text2 = Windows.Security.Cryptography.CryptographicBuffer.ConvertBinaryToString(Windows.Security.Cryptography.BinaryStringEncoding.Utf8, System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeBufferExtensions.AsBuffer(bs));
+         var text2 =
+            Windows.Security.Cryptography.CryptographicBuffer.ConvertBinaryToString(
+               Windows.Security.Cryptography.BinaryStringEncoding.Utf8,
+               System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeBufferExtensions.AsBuffer(bs));
          System.Diagnostics.Debug.Assert(testString == text2);
 
-         var omg = Windows.Security.Cryptography.CryptographicBuffer.EncodeToHexString(System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeBufferExtensions.AsBuffer(new byte[] { 0x01, 0x02, 0x1d, 0x55, 0xFF }));
+         var omg =
+            Windows.Security.Cryptography.CryptographicBuffer.EncodeToHexString(
+               System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeBufferExtensions.AsBuffer(new byte[]
+               {0x01, 0x02, 0x1d, 0x55, 0xFF}));
 
-         { // 3DES
+         {
+            // 3DES
             {
                var secKey = "super-puper mega Password";
-               var tdes1 = new ua.ksn.crypt.TripleDESOperations() { SecurityKeyStr = secKey, DataStr = testString };
+               var tdes1 = new ua.ksn.crypt.TripleDESOperations() {SecurityKeyStr = secKey, DataStr = testString};
                var encrypted = tdes1.EncryptB64();
-               var decrypted = new ua.ksn.crypt.TripleDESOperations() { SecurityKeyStr = secKey, DataB64 = encrypted }.DecryptStr();
+               var decrypted =
+                  new ua.ksn.crypt.TripleDESOperations() {SecurityKeyStr = secKey, DataB64 = encrypted}.DecryptStr();
                System.Diagnostics.Debug.Assert(decrypted == testString, "Triple DES failed!");
             }
             //{
@@ -78,6 +87,7 @@ namespace FastMines {
       /// </summary>
       /// <param name="args">Details about the launch request and process.</param>
       protected override async void OnLaunched(LaunchActivatedEventArgs args) {
+         Window.Current.CoreWindow.KeyDown += AppOnKeyDown;
          await RegisterResource();
          Frame rootFrame = Window.Current.Content as Frame;
 
@@ -92,7 +102,8 @@ namespace FastMines {
                // Restore the saved session state only when appropriate
                try {
                   await SuspensionManager.RestoreAsync();
-               } catch (SuspensionManagerException ex) {
+               }
+               catch (SuspensionManagerException ex) {
                   //Something went wrong restoring state.
                   //Assume there is no state and continue
                   System.Diagnostics.Debug.Assert(false, ex.ToString());
@@ -105,7 +116,7 @@ namespace FastMines {
          if (rootFrame.Content == null) {
             // When the navigation stack isn't restored navigate to the first page,
             // configuring the new page by passing required information as a navigation parameter
-            if (!rootFrame.Navigate(typeof(GroupedItemsPage), "AllGroups")) {
+            if (!rootFrame.Navigate(typeof (GroupedItemsPage), "AllGroups")) {
                throw new Exception("Failed to create initial page");
             }
          }
@@ -124,6 +135,20 @@ namespace FastMines {
          var deferral = e.SuspendingOperation.GetDeferral();
          await SuspensionManager.SaveAsync();
          deferral.Complete();
+      }
+
+      private static void AppOnKeyDown(CoreWindow sender, KeyEventArgs args) {
+         var frame = (Frame) Windows.UI.Xaml.Window.Current.Content;
+         //var page = (Windows.UI.Xaml.Controls.Page)frame.Content;
+         switch (args.VirtualKey) {
+            //case VirtualKey.GoBack:
+            case VirtualKey.Back:
+               if (frame != null && frame.CanGoBack) {
+                  args.Handled = true;
+                  frame.GoBack();
+               }
+               break;
+         }
       }
    }
 }

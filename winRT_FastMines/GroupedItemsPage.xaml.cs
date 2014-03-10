@@ -25,6 +25,7 @@ namespace FastMines {
       public GroupedItemsPage() {
          // modify to http://stackoverflow.com/questions/15435023/add-dynamically-an-image-in-xaml-in-a-canvas
          this.InitializeComponent();
+         this.Loaded += PageOnLoaded;
       }
 
       /// <summary>
@@ -68,8 +69,19 @@ namespace FastMines {
          this.Frame.Navigate(typeof(MosaicPage), eMosaic);
       }
 
-      private void ButtonBase_OnClick(object sender, RoutedEventArgs e) {
+      private async void ButtonBase_OnClick(object sender, RoutedEventArgs e) {
+         //await FmDataSource.ReloadImages();
          throw new NotImplementedException();
       }
+
+      private bool _forceReload = true;
+      private async void PageOnLoaded(object sender, RoutedEventArgs e) {
+         var dt = DateTime.Now;
+         await FmDataSource.ReloadImages(_forceReload);
+         var diff = (DateTime.Now - dt).TotalMilliseconds;
+         if (_forceReload)
+            _forceReload = diff < 800; // for next call
+      }
+
    }
 }

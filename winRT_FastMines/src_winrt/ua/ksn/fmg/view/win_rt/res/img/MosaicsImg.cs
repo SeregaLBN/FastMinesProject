@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Windows.UI.Xaml.Media;
+using System.Threading.Tasks;
 using Windows.UI.Xaml.Media.Imaging;
 using ua.ksn.geom;
 using ua.ksn.fmg.model.mosaics;
@@ -14,51 +14,75 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
    /// картинка поля конкретной мозаики. Используется для меню, кнопок, etc... 
    /// </summary>
    public class MosaicsImg {
-      private readonly BaseCell.BaseAttribute attr;
-      private readonly CellPaint gInfo;
-      private readonly List<BaseCell> arrCell;
-      private readonly static GraphicContext gContext;
-	   private readonly Size sizeField;
-      private readonly int area;
+      private const bool _randomCellBkColor = true;
+      private const bool _fillBkColor = true;
+
+      private readonly BaseCell.BaseAttribute _attr;
+      private readonly CellPaint _gInfo;
+      private readonly List<BaseCell> _arrCell;
+      private static readonly GraphicContext GContext;
+      private readonly Size _sizeField;
+      private readonly int _area;
 
       static MosaicsImg() {
-         gContext = new GraphicContext(true, new Size(7,7));
-         gContext.PenBorder.Width = 2;
-         gContext.PenBorder.ColorLight = gContext.PenBorder.ColorShadow;
+         GContext = new GraphicContext(true, new Size(7, 7));
+         GContext.PenBorder.Width = 2;
+         GContext.PenBorder.ColorLight = GContext.PenBorder.ColorShadow;
       }
 
-      public MosaicsImg(EMosaic mosaicType, bool smallIco) : this(mosaicType, smallIco, 3000) { }
+      public MosaicsImg(EMosaic mosaicType, bool smallIco) : this(mosaicType, smallIco, 3000) {}
+
       public MosaicsImg(EMosaic mosaicType, bool smallIco, int area) {
-         this.area = area;
-         attr = CellFactory.CreateAttributeInstance(mosaicType, area);
-         arrCell = new List<BaseCell>();
-         gInfo = new CellPaint(gContext);
-         sizeField = attr.sizeIcoField(smallIco);
-         for (int i=0; i < sizeField.width; i++)
-            for (int j=0; j < sizeField.height; j++)
-               arrCell.Add(CellFactory.CreateCellInstance(attr, mosaicType, new Coord(i, j)));
+         this._area = area;
+         _attr = CellFactory.CreateAttributeInstance(mosaicType, area);
+         _arrCell = new List<BaseCell>();
+         _gInfo = new CellPaint(GContext);
+         _sizeField = _attr.sizeIcoField(smallIco);
 #if DEBUG
-         gContext.BkFill.Mode = 1 + new Random().Next(attr.getMaxBackgroundFillModeValue());
+         // visual test drawig...
+         //_sizeField.height += 5;
+         //_sizeField.width += 5;
 #endif
+         for (int i = 0; i < _sizeField.width; i++)
+            for (int j = 0; j < _sizeField.height; j++)
+               _arrCell.Add(CellFactory.CreateCellInstance(_attr, mosaicType, new Coord(i, j)));
+         if (_randomCellBkColor)
+            GContext.BkFill.Mode = 1 + new Random().Next(_attr.getMaxBackgroundFillModeValue());
       }
 
       private WriteableBitmap _image;
-      public WriteableBitmap Image {
-         get {
+
+      private static Windows.Foundation.IAsyncAction ExecuteOnUIThread(Windows.UI.Core.DispatchedHandler action) {
+         return Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, action);
+      }
+
+      /// <summary> Create annnd draw mosaic bitmap </summary>
+      public async Task<WriteableBitmap> CreateImage() {
+         {
             if (_image == null) {
-               var pixelSize = attr.CalcOwnerSize(sizeField, area);
-               _image = BitmapFactory.New(pixelSize.width + gContext.Bound.width * 2, pixelSize.height + gContext.Bound.height * 2);
-#if DEBUG
-               var points = new[] { 0, 0,
-                  pixelSize.width + gContext.Bound.width*2, 0,
-                  pixelSize.width + gContext.Bound.width*2, pixelSize.height + gContext.Bound.height*2,
-                  0, pixelSize.height + gContext.Bound.height*2,
-                  0, 0 };
-               _image.FillPolygon(points, Windows.UI.Color.FromArgb(0xFF, 0xff, 0x8c, 0x00)); // debug
-#endif
-               
-               foreach (var cell in arrCell)
-                  gInfo.Paint(cell, _image);
+               WriteableBitmap bmp = null;
+               //_image = await Task<WriteableBitmap>.Factory.StartNew(() => { // :(   Exception from HRESULT 0x8001010E RPC_E_WRONG_THREAD
+               await ExecuteOnUIThread(() => {
+                  var pixelSize = _attr.CalcOwnerSize(_sizeField, _area);
+                  var w = pixelSize.width + GContext.Bound.width * 2;
+                  var h = pixelSize.height + GContext.Bound.height * 2;
+                  bmp = BitmapFactory.New(w, h);
+                  if (_fillBkColor) {
+                     var points = new[] {
+                        0, 0,
+                        w, 0,
+                        w, h,
+                        0, h,
+                        0, 0
+                     };
+                     bmp.FillPolygon(points, Windows.UI.Color.FromArgb(0xFF, 0xff, 0x8c, 0x00)); // debug
+                  }
+
+                  foreach (var cell in _arrCell)
+                     _gInfo.Paint(cell, bmp);
+               });
+
+               this._image = bmp;
             }
             return this._image;
          }

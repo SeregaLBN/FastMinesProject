@@ -160,8 +160,8 @@ namespace ua.ksn.fmg.controller.win_rt {
       }
 
       public override async Task GameNew() {
-         var rnd = Windows.Security.Cryptography.CryptographicBuffer.GenerateRandomNumber();
-         var mode = 1 + rnd%CellFactory.CreateAttributeInstance(MosaicType, Area).getMaxBackgroundFillModeValue();
+         var mode = 1 + new Random().Next(CellFactory.CreateAttributeInstance(MosaicType, Area).getMaxBackgroundFillModeValue());
+         //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
          GraphicContext.BkFill.Mode = (int) mode;
          await base.GameNew();
          Repaint();

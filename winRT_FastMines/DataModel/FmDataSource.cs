@@ -1,6 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using Windows.UI.Xaml.Media.Imaging;
 using ua.ksn.fmg.model.mosaics;
 
 // The data model defined by this file serves as a representative example of a strongly-typed
@@ -46,6 +49,12 @@ namespace FastMines.Data {
          // Simple linear search is acceptable for small data sets
          var matches = AllGroups.SelectMany(group => group.Items).Where((item) => (item.UniqueId == uniqueId));
          return matches.FirstOrDefault();
+      }
+
+      public static async Task ReloadImages(bool forceReload) {
+         foreach (var fmItem in AllGroups.SelectMany(fmDataGroup => fmDataGroup.Items))
+            if (forceReload || !(fmItem.Image is WriteableBitmap))
+               fmItem.Image = await FmDataItem.CreateImage(fmItem.UniqueId);
       }
    }
 }

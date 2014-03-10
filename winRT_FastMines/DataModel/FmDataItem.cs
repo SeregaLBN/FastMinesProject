@@ -4,6 +4,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using ua.ksn.fmg.model.mosaics;
 using ua.ksn.fmg.view.win_rt.draw.mosaics;
 using ua.ksn.fmg.view.win_rt.res.img;
+using System.Threading.Tasks;
 
 // The data model defined by this file serves as a representative example of a strongly-typed
 // model that supports notification when members are added, removed, or modified.  The property
@@ -31,37 +32,31 @@ namespace FastMines.Data {
          set { this.SetProperty(ref this._group, value); }
       }
 
-      public override ImageSource Image {
-         get {
-            if (this._image == null)
-               try {
-                  this._image = new MosaicsImg(this.UniqueId, true).Image;
-               } catch (Exception ex) {
-                  System.Diagnostics.Debug.Assert(true, ex.Message);
-                  int maxX  = 1024, maxY = 1024;
-                  var image = BitmapFactory.New(maxX, maxY);
-
-                  using (var ctx = image.GetBitmapContext()) {
-                     int[] points = new int[] { 10, 10, 10, maxY, maxX, maxY, maxX, 10 };
-                     var clr = 0xFF << 24;//unchecked((int)0xFF000000);
-                     image.FillPolygon(points, Windows.UI.Color.FromArgb(0xFF, 0xFF, 0, 0));
-                     //image.DrawRectangle(10, 10, maxX, maxY, clr);
-                     clr |= 0xFFFFFF;
-                     image.DrawLine(10, 10, 200, 200, clr);
-                     int wbmp = image.PixelWidth, hbmp = image.PixelHeight;
-                     WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, 10, 10, 10, maxY, clr);
-                     WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, 10, maxY, maxY, maxY, clr);
-                     WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, maxX, maxY, maxX, 10, clr);
-                     WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, maxX, 10, 10, 10, clr);
-
-                     this._image = image;
-                  }
-               }
-            return base.Image;
+      public static async Task<WriteableBitmap> CreateImage(EMosaic eMosaic) {
+         try {
+            return await new MosaicsImg(eMosaic, true).CreateImage();
          }
-         //set {
-         //   base.Image = value;
-         //}
+         catch (Exception ex) {
+            System.Diagnostics.Debug.Assert(true, ex.Message);
+            int maxX = 1024, maxY = 1024;
+            var image = BitmapFactory.New(maxX, maxY);
+
+            using (var ctx = image.GetBitmapContext()) {
+               int[] points = new int[] {10, 10, 10, maxY, maxX, maxY, maxX, 10};
+               var clr = 0xFF << 24; //unchecked((int)0xFF000000);
+               image.FillPolygon(points, Windows.UI.Color.FromArgb(0xFF, 0xFF, 0, 0));
+               //image.DrawRectangle(10, 10, maxX, maxY, clr);
+               clr |= 0xFFFFFF;
+               image.DrawLine(10, 10, 200, 200, clr);
+               int wbmp = image.PixelWidth, hbmp = image.PixelHeight;
+               WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, 10, 10, 10, maxY, clr);
+               WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, 10, maxY, maxY, maxY, clr);
+               WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, maxX, maxY, maxX, 10, clr);
+               WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, maxX, 10, 10, 10, clr);
+
+               return image;
+            }
+         }
       }
    }
 }

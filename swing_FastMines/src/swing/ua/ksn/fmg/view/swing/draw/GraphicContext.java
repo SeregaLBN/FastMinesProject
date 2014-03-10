@@ -28,11 +28,10 @@ public class GraphicContext  {
 		propertyChanges.removePropertyChangeListener(l);
 	}
 
-	private ImageIcon imgMine, imgFlag;
-	
 	/** TODO: Mosaic field - нуна избавиться... */
 	private JComponent owner;
 
+	private ImageIcon imgMine, imgFlag;
 	private ColorText colorText;
 	protected PenBorder penBorder;
 	private Font   	  font;

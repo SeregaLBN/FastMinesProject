@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -7,11 +8,9 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
+using ua.ksn.geom;
 using ua.ksn.fmg.model.mosaics.cell;
 using ua.ksn.fmg.model.mosaics;
-using ua.ksn.geom;
-using System.Threading.Tasks;
-using Windows.ApplicationModel;
 
 namespace ua.ksn.fmg.view.win_rt.draw.mosaics
 {
@@ -28,8 +27,8 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
       public const int DRAW_BMP_FONT_SIZE = 30;
 
 
-      public static async Task<bool> RegisterFont() {
-         return await BitmapFont.RegisterFont(DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE);
+      public static async Task RegisterFont() {
+         await BitmapFont.RegisterFont(DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE);
       }
 
       public CellPaint(GraphicContext gContext)
@@ -194,20 +193,20 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
             if (!string.IsNullOrWhiteSpace(szCaption)) {
                if (cell.State.Down)
                   rcInner.moveXY(1, 1);
-#if DEBUG
-               { // debug
-                  var rnd = Windows.Security.Cryptography.CryptographicBuffer.GenerateRandomNumber();
-                  switch (rnd % 7) {
-                  case 0: txtColor = Color.BLUE; break;
-                  case 1: txtColor = Color.MAGENTA; break;
-                  case 2: txtColor = Color.MAROON; break;
-                  case 3: txtColor = Color.NAVY; break;
-                  case 4: txtColor = Color.OLIVE; break;
-                  case 5: txtColor = Color.TEAL; break;
-                  case 6: txtColor = Color.AQUA; break;
-                  }
-               }
-#endif
+//#if DEBUG
+//               { // debug
+//                  var rnd = Windows.Security.Cryptography.CryptographicBuffer.GenerateRandomNumber();
+//                  switch (rnd % 7) {
+//                  case 0: txtColor = Color.BLUE; break;
+//                  case 1: txtColor = Color.MAGENTA; break;
+//                  case 2: txtColor = Color.MAROON; break;
+//                  case 3: txtColor = Color.NAVY; break;
+//                  case 4: txtColor = Color.OLIVE; break;
+//                  case 5: txtColor = Color.TEAL; break;
+//                  case 6: txtColor = Color.AQUA; break;
+//                  }
+//               }
+//#endif
                bmp.DrawString(szCaption, rcInner.ToWinRect(), DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE, txtColor.ToWinColor());
                //bmp.DrawRectangle(rcInner.left(), rcInner.top(), rcInner.right(), rcInner.bottom(), Color.RED.ToWinColor()); // debug
             }
@@ -302,6 +301,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
                DefaultBackgroundFillColor,
                gContext.BkFill.getColor
                );
+         System.Diagnostics.Debug.WriteLine("cell=[{0}, {1}]: fillClr = {2}; fillMode={3}", cell.getCoord().x, cell.getCoord().y, clr, gContext.BkFill.Mode);
          binder.Item1.Fill = FindBrush(clr);
       }
 

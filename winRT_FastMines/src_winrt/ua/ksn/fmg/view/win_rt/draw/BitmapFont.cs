@@ -26,7 +26,7 @@ namespace ua.ksn.fmg.view.win_rt.draw {
 
       private static readonly Dictionary<string, List<FontInfo>> Fonts = new Dictionary<string, List<FontInfo>>();
 
-      public static async Task<bool> RegisterFont(string name, params int[] sizes) {
+      public static async Task RegisterFont(string name, params int[] sizes) {
          foreach (var size in sizes) {
             var fontFile = name + "_" + size + ".png";
             var fontMetricsFile = name + "_" + size + ".xml";
@@ -48,7 +48,6 @@ namespace ua.ksn.fmg.view.win_rt.draw {
             else
                Fonts.Add(name, new List<FontInfo> {fontInfo});
          }
-         return true;
       }
 
       private static FontInfo GetNearestFont(string fontName, int size) {

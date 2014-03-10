@@ -11,9 +11,9 @@ namespace ua.ksn.fmg.view.win_rt.draw {
       private WriteableBitmap _imgMine, _imgFlag;
       private ColorText _colorText;
       private string _fontFamilyName;
+      protected PenBorder _penBorder;
       private FontStyle _fontStyle = FontStyle.Normal;
       private int _fontSize = 10;
-      protected PenBorder _penBorder;
 
       private readonly bool _iconicMode;
       private readonly Size _bound;
