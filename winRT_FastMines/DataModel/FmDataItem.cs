@@ -26,7 +26,9 @@ namespace FastMines.Data {
          this.Description = "Description item ...";
       }
 
+      private static WriteableBitmap _failedImage;
       private FmDataGroup _group;
+
       public FmDataGroup Group {
          get { return this._group; }
          set { this.SetProperty(ref this._group, value); }
@@ -38,6 +40,13 @@ namespace FastMines.Data {
          }
          catch (Exception ex) {
             System.Diagnostics.Debug.Assert(true, ex.Message);
+            return FailedImage();
+         }
+      }
+
+      // TODO переделать...
+      private static WriteableBitmap FailedImage() {
+         if (null == _failedImage) {
             int maxX = 1024, maxY = 1024;
             var image = BitmapFactory.New(maxX, maxY);
 
@@ -54,8 +63,25 @@ namespace FastMines.Data {
                WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, maxX, maxY, maxX, 10, clr);
                WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, maxX, 10, 10, 10, clr);
 
-               return image;
+               _failedImage = image;
             }
+         }
+         return _failedImage;
+      }
+
+      public override ImageSource Image {
+         get {
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+               try {
+                  _image = CreateImage(UniqueId).Result;
+               }
+               catch {
+                  _image = FailedImage();
+               }
+            return base.Image;
+         }
+         set {
+            base.Image = value;
          }
       }
    }

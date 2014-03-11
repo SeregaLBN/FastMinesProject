@@ -192,7 +192,7 @@ public static class EMosaicEx {
       case EMosaic.eMosaicTrSq2            : return 71;
       case EMosaic.eMosaicSqTrHex          : return 72;
       }
-      System.Diagnostics.Debug.WriteLine("ua.ksn.fmg.types.getFastCode.getFastCode: Mosaic '" + self.ToString() + "' not implemented");
+      System.Diagnostics.Debug.Assert(false, "ua.ksn.fmg.types.getFastCode.getFastCode: Mosaic '" + self + "' not implemented");
       return 0;
    }
 

@@ -69,12 +69,12 @@ namespace FastMines {
          this.Frame.Navigate(typeof(MosaicPage), eMosaic);
       }
 
-      private async void ButtonBase_OnClick(object sender, RoutedEventArgs e) {
+      private void ButtonBase_OnClick(object sender, RoutedEventArgs e) {
          //await FmDataSource.ReloadImages();
          throw new NotImplementedException();
       }
 
-      private bool _forceReload = true;
+      private static bool _forceReload = true;
       private async void PageOnLoaded(object sender, RoutedEventArgs e) {
          var dt = DateTime.Now;
          await FmDataSource.ReloadImages(_forceReload);

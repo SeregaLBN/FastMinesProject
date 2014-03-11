@@ -64,22 +64,11 @@ namespace FastMines {
          }
       }
 
-      public void OnKeyDown(CoreWindow sender, KeyEventArgs args) {
-         switch (args.VirtualKey) {
-            //case VirtualKey.GoBack:
-            case VirtualKey.Back:
-               GoBack(args);
-               break;
-         }
-      }
-
       private void MosaicPage_OnLoaded(object sender, RoutedEventArgs e) {
          Window.Current.CoreWindow.PointerPressed += OnPointerPressed;
-         Window.Current.CoreWindow.KeyDown += OnKeyDown;
       }
 
       private void MosaicPage_OnUnloaded(object sender, RoutedEventArgs e) {
-         Window.Current.CoreWindow.KeyDown -= OnKeyDown;
          Window.Current.CoreWindow.PointerPressed -= OnPointerPressed;
       }
    }
