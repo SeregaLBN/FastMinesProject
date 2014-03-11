@@ -56,7 +56,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
          return Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, action);
       }
 
-      /// <summary> Create annnd draw mosaic bitmap </summary>
+      /// <summary> Create and draw mosaic bitmap </summary>
       public async Task<WriteableBitmap> CreateImage() {
          {
             if (_image == null) {
@@ -75,7 +75,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
                         0, h,
                         0, 0
                      };
-                     bmp.FillPolygon(points, Windows.UI.Color.FromArgb(0xFF, 0xff, 0x8c, 0x00)); // debug
+                     bmp.FillPolygon(points, Windows.UI.Color.FromArgb(0xFF, 0xff, 0x8c, 0x00));
                   }
 
                   foreach (var cell in _arrCell)

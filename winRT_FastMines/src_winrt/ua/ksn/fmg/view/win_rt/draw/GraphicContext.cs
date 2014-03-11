@@ -18,6 +18,8 @@ namespace ua.ksn.fmg.view.win_rt.draw {
       private readonly bool _iconicMode;
       private readonly Size _bound;
 
+      private static readonly Random Rand = new Random();
+
       public GraphicContext(bool iconicMode, Size bound) {
          this._iconicMode = iconicMode;
          _bound = bound;
@@ -84,16 +86,27 @@ namespace ua.ksn.fmg.view.win_rt.draw {
                return _colors;
             }
          }
+
          public Color getColor(int index) {
             if (_colors.ContainsKey(index))
                return _colors[index];
 
-            int basic = 120; // от заданной границы светлости буду создавать новый цвет
-            Random rand = new Random();
-            int r = basic + rand.Next(0xFF - basic);
-            int g = basic + rand.Next(0xFF - basic);
-            int b = basic + rand.Next(0xFF - basic);
-            var res = new Color((byte)r, (byte)g, (byte)b);
+            const int basic = 120; // от заданной границы светлости буду создавать новый цвет
+#if WINDOWS_RT
+            //var rnd = Windows.Security.Cryptography.CryptographicBuffer.GenerateRandomNumber();
+            var rnd = Rand.Next();
+            var r = basic + ((rnd & 0xFF) >> 0)%(0xFF - basic);
+            var g = basic + ((rnd & 0xFF00) >> 8)%(0xFF - basic);
+            var b = basic + ((rnd & 0xFF0000) >> 16)%(0xFF - basic);
+#else
+            var r = basic + _rand.Next(0xFF - basic);
+            var g = basic + _rand.Next(0xFF - basic);
+            var b = basic + _rand.Next(0xFF - basic);
+#endif
+            System.Diagnostics.Debug.Assert(r < 256);
+            System.Diagnostics.Debug.Assert(g < 256);
+            System.Diagnostics.Debug.Assert(b < 256);
+            var res = new Color((byte) r, (byte) g, (byte) b);
             Colors.Add(index, res);
             return res;
          }

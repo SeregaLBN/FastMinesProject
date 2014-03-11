@@ -21,7 +21,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
    public class CellPaint
    {
       protected GraphicContext gContext;
-      private IDictionary<Color, SolidColorBrush> _brushCacheMap;
+      private IDictionary<Color, Brush> _brushCacheMap;
       private IList<FontFamily> _fontFamilies;
       public const string DRAW_BMP_FONT_NAME = "NirmalaUI";
       public const int DRAW_BMP_FONT_SIZE = 30;
@@ -36,12 +36,12 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
          //BitmapFont.RegisterFont(DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE);
          this.gContext = gContext;
          DefaultBackgroundFillColor = new UISettings().UIElementColor(UIElementType.ButtonFace).ToFmColor();
-         _brushCacheMap = new Dictionary<Color, SolidColorBrush>();
+         _brushCacheMap = new Dictionary<Color, Brush>();
          _fontFamilies = new List<FontFamily>(1);
       }
 
       /// <summary> find cached solid brush. if not exist - create it </summary>
-      private SolidColorBrush FindBrush(Color clr) {
+      private Brush FindBrush(Color clr) {
          if (!_brushCacheMap.ContainsKey(clr))
             _brushCacheMap.Add(clr, new SolidColorBrush(clr.ToWinColor()));
          return _brushCacheMap[clr];
