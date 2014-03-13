@@ -1,9 +1,8 @@
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Media.Imaging;
 using ua.ksn.geom;
-using ua.ksn.fmg.view.win_rt.draw;
 
-namespace ua.ksn.fmg.view.swing.draw.mosaics {
+namespace ua.ksn.fmg.view.win_rt.draw.mosaics {
 
    public class MosaicGraphicContext : GraphicContext {
       public static readonly Color COLOR_BTNFACE = Color.GRAY;

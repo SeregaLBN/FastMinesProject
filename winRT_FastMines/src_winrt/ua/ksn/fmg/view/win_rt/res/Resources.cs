@@ -159,7 +159,7 @@ namespace ua.ksn.fmg.view.win_rt.res {
                   await GetImage("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + val.GetDescription(true) + ".png");
                   // сначала из ресурсов
                if (imgMosaic == null) // иначе - своя картинка из кода
-                  imgMosaic = await new MosaicsImg(val, true).CreateImage();
+                  imgMosaic = await new MosaicsImg(val, true).GetImage();
                imgsMosaic.Add(val, imgMosaic);
             }
          }

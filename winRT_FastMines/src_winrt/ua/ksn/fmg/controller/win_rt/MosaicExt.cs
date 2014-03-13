@@ -1,22 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.ComponentModel;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Windows.UI;
 using Windows.UI.Popups;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 using ua.ksn.geom;
 using ua.ksn.fmg.model.mosaics;
 using ua.ksn.fmg.model.mosaics.cell;
+using ua.ksn.fmg.view.draw;
 using ua.ksn.fmg.view.win_rt.draw;
 using ua.ksn.fmg.view.win_rt.draw.mosaics;
-using ua.ksn.fmg.view.swing.draw.mosaics;
-using System.ComponentModel;
-using ua.ksn.fmg.view.draw;
 
 namespace ua.ksn.fmg.controller.win_rt {
    public class MosaicExt : Mosaic {
@@ -109,10 +104,6 @@ namespace ua.ksn.fmg.controller.win_rt {
       }
 
       public void Repaint() {
-         RepaintComponent(true);
-      }
-
-      private void RepaintComponent(bool areaChanged) {
          if (!XamlBinder.Any()) // TODO избавиться
             return;
          var sizeMosaic = base.Cells.Size;

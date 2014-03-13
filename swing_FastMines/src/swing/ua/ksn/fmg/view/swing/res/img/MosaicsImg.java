@@ -40,15 +40,18 @@ public class MosaicsImg implements Icon {
 			for (int j=0; j<sizeField.height; j++)
 				arrCell.add(CellFactory.createCellInstance(attr, mosaicType, new Coord(i,j)));
 	}
-	
+
+	@Override
 	public int getIconWidth() {
 		return attr.CalcOwnerSize(sizeField, area).width+gContext.getBound().width*2;
 	}
 
+	@Override
 	public int getIconHeight() {
 		return attr.CalcOwnerSize(sizeField, area).height+gContext.getBound().height*2;
 	}
 
+	@Override
 	public void paintIcon(Component c, Graphics g, int x, int y) {
 //		if (false) {
 //			Size pixelSize = attr.CalcOwnerSize(sizeField, area);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Windows.System.Threading;
 using Windows.UI.Xaml.Media.Imaging;
 using ua.ksn.geom;
 using ua.ksn.fmg.model.mosaics;
@@ -20,15 +21,10 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       private readonly BaseCell.BaseAttribute _attr;
       private readonly CellPaint _gInfo;
       private readonly List<BaseCell> _arrCell;
-      private static readonly GraphicContext GContext;
+      private readonly GraphicContext _gContext;
       private readonly Size _sizeField;
       private readonly int _area;
-
-      static MosaicsImg() {
-         GContext = new GraphicContext(true, new Size(7, 7));
-         GContext.PenBorder.Width = 2;
-         GContext.PenBorder.ColorLight = GContext.PenBorder.ColorShadow;
-      }
+      private static readonly Random _random = new Random();
 
       public MosaicsImg(EMosaic mosaicType, bool smallIco) : this(mosaicType, smallIco, 3000) {}
 
@@ -36,18 +32,24 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
          this._area = area;
          _attr = CellFactory.CreateAttributeInstance(mosaicType, area);
          _arrCell = new List<BaseCell>();
-         _gInfo = new CellPaint(GContext);
+
+         _gContext = new GraphicContext(true, new Size(7, 7));
+         _gContext.PenBorder.Width = 2;
+         _gContext.PenBorder.ColorLight = _gContext.PenBorder.ColorShadow;
+         if (_randomCellBkColor)
+            _gContext.BkFill.Mode = 1 + _random.Next(_attr.getMaxBackgroundFillModeValue());
+
+         _gInfo = new CellPaint(_gContext);
+
          _sizeField = _attr.sizeIcoField(smallIco);
 #if DEBUG
          // visual test drawig...
-         //_sizeField.height += 5;
-         //_sizeField.width += 5;
+         _sizeField.height += _random.Next() & 3;
+         _sizeField.width += _random.Next() & 3;
 #endif
          for (int i = 0; i < _sizeField.width; i++)
             for (int j = 0; j < _sizeField.height; j++)
                _arrCell.Add(CellFactory.CreateCellInstance(_attr, mosaicType, new Coord(i, j)));
-         if (_randomCellBkColor)
-            GContext.BkFill.Mode = 1 + new Random().Next(_attr.getMaxBackgroundFillModeValue());
       }
 
       private WriteableBitmap _image;
@@ -56,17 +58,16 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
          return Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, action);
       }
 
-      /// <summary> Create and draw mosaic bitmap </summary>
-      public async Task<WriteableBitmap> CreateImage() {
+      /// <summary> return painted mosaic bitmap </summary>
+      public async Task<WriteableBitmap> GetImage() {
          {
             if (_image == null) {
+               var pixelSize = _attr.CalcOwnerSize(_sizeField, _area);
+               var w = pixelSize.width + _gContext.Bound.width*2;
+               var h = pixelSize.height + _gContext.Bound.height*2;
+
                WriteableBitmap bmp = null;
-               //_image = await Task<WriteableBitmap>.Factory.StartNew(() => { // :(   Exception from HRESULT 0x8001010E RPC_E_WRONG_THREAD
-               await ExecuteOnUIThread(() => {
-                  var pixelSize = _attr.CalcOwnerSize(_sizeField, _area);
-                  var w = pixelSize.width + GContext.Bound.width * 2;
-                  var h = pixelSize.height + GContext.Bound.height * 2;
-                  bmp = BitmapFactory.New(w, h);
+               var funcFillBk = new Action(() => {
                   if (_fillBkColor) {
                      var points = new[] {
                         0, 0,
@@ -77,11 +78,42 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
                      };
                      bmp.FillPolygon(points, Windows.UI.Color.FromArgb(0xFF, 0xff, 0x8c, 0x00));
                   }
+               });
+
+#if false
+               bmp = BitmapFactory.New(w, h);
+               ThreadPool.RunAsync(async delegate {
+                  await ExecuteOnUIThread(funcFillBk.Invoke);
+                  foreach (var cell in _arrCell)
+                     ExecuteOnUIThread(() => _gInfo.Paint(cell, bmp));
+               });
+#elif false
+               await ThreadPool.RunAsync(async delegate {
+                  await ExecuteOnUIThread(() => { bmp = BitmapFactory.New(w, h); });
+                  ExecuteOnUIThread(funcFillBk.Invoke);
+                  foreach (var cell in _arrCell)
+                     ExecuteOnUIThread(() => _gInfo.Paint(cell, bmp));
+               });
+#elif false
+               await ExecuteOnUIThread(() => {
+                  bmp = BitmapFactory.New(w, h);
+                  funcFillBk.Invoke();
 
                   foreach (var cell in _arrCell)
                      _gInfo.Paint(cell, bmp);
                });
+#elif true
+               await ExecuteOnUIThread(() => {
+                  bmp = BitmapFactory.New(w, h);
+                  funcFillBk.Invoke();
 
+                  foreach (var cell in _arrCell)
+                     new Task(async () => {
+                        //await Task.Delay(TimeSpan.FromMilliseconds(0));
+                        await ExecuteOnUIThread(() => _gInfo.Paint(cell, bmp));
+                     }).Start();
+               });
+#endif
                this._image = bmp;
             }
             return this._image;

@@ -3,8 +3,10 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using ua.ksn.fmg.model.mosaics;
 using ua.ksn.fmg.view.win_rt.draw.mosaics;
+using ua.ksn.fmg.view.win_rt.res;
 using ua.ksn.fmg.view.win_rt.res.img;
 using System.Threading.Tasks;
+using ua.ksn;
 
 // The data model defined by this file serves as a representative example of a strongly-typed
 // model that supports notification when members are added, removed, or modified.  The property
@@ -36,16 +38,17 @@ namespace FastMines.Data {
 
       public static async Task<WriteableBitmap> CreateImage(EMosaic eMosaic) {
          try {
-            return await new MosaicsImg(eMosaic, true).CreateImage();
+            return await new MosaicsImg(eMosaic, true).GetImage();
+            //return await Resources.GetImgMosaic(eMosaic, true);
          }
          catch (Exception ex) {
             System.Diagnostics.Debug.Assert(true, ex.Message);
-            return FailedImage();
+            return GetFailedImage();
          }
       }
 
       // TODO переделать...
-      private static WriteableBitmap FailedImage() {
+      private static WriteableBitmap GetFailedImage() {
          if (null == _failedImage) {
             int maxX = 1024, maxY = 1024;
             var image = BitmapFactory.New(maxX, maxY);
@@ -53,7 +56,10 @@ namespace FastMines.Data {
             using (var ctx = image.GetBitmapContext()) {
                int[] points = new int[] {10, 10, 10, maxY, maxX, maxY, maxX, 10};
                var clr = 0xFF << 24; //unchecked((int)0xFF000000);
-               image.FillPolygon(points, Windows.UI.Color.FromArgb(0xFF, 0xFF, 0, 0));
+               image.FillPolygon(points,
+                  Windows.ApplicationModel.DesignMode.DesignModeEnabled
+                     ? Color.GREEN.ToWinColor()
+                     : Color.RED.ToWinColor());
                //image.DrawRectangle(10, 10, maxX, maxY, clr);
                clr |= 0xFFFFFF;
                image.DrawLine(10, 10, 200, 200, clr);
@@ -76,7 +82,7 @@ namespace FastMines.Data {
                   _image = CreateImage(UniqueId).Result;
                }
                catch {
-                  _image = FailedImage();
+                  //_image = GetFailedImage();
                }
             return base.Image;
          }
