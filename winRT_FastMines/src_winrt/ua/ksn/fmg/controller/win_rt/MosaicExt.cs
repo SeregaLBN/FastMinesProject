@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.UI.Popups;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
 using ua.ksn.geom;
@@ -23,9 +24,8 @@ namespace ua.ksn.fmg.controller.win_rt {
       public MosaicExt() {}
 
       public MosaicExt(Size sizeField, EMosaic mosaicType, int minesCount, int area) :
-         base(sizeField, mosaicType, minesCount, area) {
-         BindXamlToMosaic();
-      }
+         base(sizeField, mosaicType, minesCount, area)
+      {}
 
       private void BindXamlToMosaic() {
          var sizeMosaic = Cells.Size;
@@ -68,7 +68,13 @@ namespace ua.ksn.fmg.controller.win_rt {
       }
 
       public Panel Container {
-         get { return _container ?? (_container = new Canvas()); }
+         get {
+            if (_container == null) {
+               _container = new Canvas();
+               BindXamlToMosaic();
+            }
+            return _container;
+         }
       }
 
       protected override MatrixCells Cells {
@@ -94,7 +100,7 @@ namespace ua.ksn.fmg.controller.win_rt {
          get { return _xamlBinder ?? (_xamlBinder = new Dictionary<BaseCell, Tuple<Polygon, TextBlock, Image>>()); }
       }
 
-      protected override void NeedRepaint(BaseCell cell) {
+      protected override void Repaint(BaseCell cell) {
          if (!XamlBinder.Any()) // TODO избавиться
             return;
          if (cell == null)
@@ -106,6 +112,15 @@ namespace ua.ksn.fmg.controller.win_rt {
       public void Repaint() {
          if (!XamlBinder.Any()) // TODO избавиться
             return;
+
+         { // paint background
+            var bkb = Container.Background as SolidColorBrush;
+            var bkc = GraphicContext.ColorBk.ToWinColor();
+            if ((bkb == null) || (bkb.Color != bkc))
+               Container.Background = new SolidColorBrush(bkc);
+         }
+
+         // paint all cells
          var sizeMosaic = base.Cells.Size;
          for (var i = 0; i < sizeMosaic.width; i++)
             for (var j = 0; j < sizeMosaic.height; j++) {

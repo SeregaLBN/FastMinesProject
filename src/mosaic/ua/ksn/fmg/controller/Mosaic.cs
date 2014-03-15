@@ -267,28 +267,28 @@ public abstract class Mosaic {
       }
    }
 
-   private event OnClick onClick = delegate {};
-   private event OnChangeCounters onChangeCounters = delegate { };
-   private event OnChangeGameStatus onChangeGameStatus = delegate { };
-   private event OnChangeArea onChangeArea = delegate { };
-   private event OnChangeMosaicType onChangeMosaicType = delegate { };
+   public event OnClickEvent OnClick = delegate { };
+   public event OnChangeCountersEvent OnChangeCounters = delegate { };
+   public event OnChangeGameStatusEvent OnChangeGameStatus = delegate { };
+   public event OnChangeAreaEvent OnChangeArea = delegate { };
+   public event OnChangeMosaicTypeEvent OnChangeMosaicType = delegate { };
 
    /// <summary>уведомить о клике на мозаике</summary>
-   public void fireOnClick(bool leftClick, bool down) { onClick(this, leftClick, down); }
-   public void fireOnChangeCounters() { onChangeCounters(this); }
+   private void fireOnClick(bool leftClick, bool down) { OnClick(this, leftClick, down); }
+   private void fireOnChangeCounters() { OnChangeCounters(this); }
    /// <summary>уведомить об изменении статуса игры (нова€ игра, начало игры, конец игры)</summary>
-   public void fireOnChangeGameStatus(EGameStatus oldValue) { onChangeGameStatus(this, oldValue); }
+   private void fireOnChangeGameStatus(EGameStatus oldValue) { OnChangeGameStatus(this, oldValue); }
    /// <summary>уведомить о изменении размера площади у €чейки</summary>
-   public void fireOnChangeArea(int oldArea) { onChangeArea(this, oldArea); }
+   private void fireOnChangeArea(int oldArea) { OnChangeArea(this, oldArea); }
    /// <summary>уведомить о изменении размера площади у €чейки</summary>
-   public void fireOnChangeMosaicType(EMosaic oldMosaic) { onChangeMosaicType(this, oldMosaic); }
+   private void fireOnChangeMosaicType(EMosaic oldMosaic) { OnChangeMosaicType(this, oldMosaic); }
 
    /// <summary>перерисовать €чейку; если null - перерисовать всЄ поле </summary>
-   protected abstract void NeedRepaint(BaseCell cell);
+   protected abstract void Repaint(BaseCell cell);
    
    /// <summary>Ќачать игру, т.к. произошЄл первый клик на поле</summary>
    protected virtual void GameBegin(Coord firstClick) {
-      NeedRepaint(null);
+      Repaint(null);
 
       GameStatus = EGameStatus.eGSPlay;
 
@@ -326,7 +326,7 @@ public abstract class Mosaic {
                      cell.State.setStatus(EState._Open, null);
                   }
                }
-               NeedRepaint(cell);
+               Repaint(cell);
             } else {
                realCountOpen++;
             }
@@ -379,12 +379,12 @@ public abstract class Mosaic {
             Cells.MinesCount = Cells.MinesCount-1;
             RepositoryMines.Remove(coordLDown);
          }
-         NeedRepaint(cell);
+         Repaint(cell);
       } else {
          LeftDownResult result = cell.LButtonDown();
          if ((result != null) && (result.needRepaint != null))
             foreach (BaseCell cellToRepaint in result.needRepaint)
-               NeedRepaint(cellToRepaint);
+               Repaint(cellToRepaint);
       }
    }
 
@@ -406,7 +406,7 @@ public abstract class Mosaic {
       LeftUpResult result = getCell(CoordDown).LButtonUp(coordLUp.Equals(CoordDown), clickReportContext);
       if (result.needRepaint != null)
          foreach (BaseCell cellToRepaint in result.needRepaint)
-            NeedRepaint(cellToRepaint);
+            Repaint(cellToRepaint);
       if ((result.countOpen > 0) || (result.countFlag > 0) || (result.countUnknown > 0)) { // клик со смыслом (были изменени€ на поле)
          IncrementCountClick();
          PlayInfo = EPlayInfo.ePlayerUser;  // юзер играл
@@ -451,7 +451,7 @@ public abstract class Mosaic {
       ClickReportContext clickReportContext = new ClickReportContext();
       RightDownReturn result = cell.RButtonDown(eClose, clickReportContext);
       if (result.needRepaint)
-         NeedRepaint(cell);
+         Repaint(cell);
       if ((result.countFlag>0) || (result.countUnknown>0)) { // клик со смыслом (были изменени€ на поле)
          IncrementCountClick();
          PlayInfo = EPlayInfo.ePlayerUser; // то считаю что юзер играл

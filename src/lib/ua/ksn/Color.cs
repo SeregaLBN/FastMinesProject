@@ -50,6 +50,8 @@ namespace ua.ksn {
       public static Windows.UI.Color ToWinColor(this Color self) { return new Windows.UI.Color { A = self.A, B = self.B, G = self.G, R = self.R }; }
 #elif WINDOWS_FORMS
       ...
+#else
+      ...
 #endif
    }
 }

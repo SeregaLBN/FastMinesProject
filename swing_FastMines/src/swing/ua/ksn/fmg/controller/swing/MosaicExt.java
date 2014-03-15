@@ -47,8 +47,7 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 		super(sizeField, mosaicType, minesCount, area);
 	}
 
-	public JPanel getSwingPanel() { return getContainer(); }
-	protected JPanel getContainer() {
+	public JPanel getContainer() {
 		if (_container == null) {
 			_container = new JPanel() {
 				private static final long serialVersionUID = 1L;
@@ -152,7 +151,7 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 	}
 
 	@Override
-	protected void NeedRepaint(BaseCell cell) {
+	protected void Repaint(BaseCell cell) {
 		if (cell == null)
 			getContainer().repaint();
 		else
@@ -299,7 +298,7 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
-		frame.add((new MosaicExt()).getSwingPanel());
+		frame.add((new MosaicExt()).getContainer());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);

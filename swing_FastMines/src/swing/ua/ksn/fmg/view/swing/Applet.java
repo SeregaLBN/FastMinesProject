@@ -8,7 +8,7 @@ public class Applet extends JApplet {
 	private static final long serialVersionUID = -8406501303115617115L;
 	
 	public void init() {
-		setContentPane((new MosaicExt().getSwingPanel()));
+		setContentPane((new MosaicExt().getContainer()));
 	}
 
 }

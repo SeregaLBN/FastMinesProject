@@ -353,11 +353,11 @@ public abstract class Mosaic {
 	}
 
 	/** перерисовать ячейку; если null - перерисовать всё поле */
-	protected abstract void NeedRepaint(BaseCell cell);
+	protected abstract void Repaint(BaseCell cell);
 	
 	/** Начать игру, т.к. произошёл первый клик на поле */
 	protected void GameBegin(Coord firstClick) {
-		NeedRepaint(null);
+		Repaint(null);
 
 		setGameStatus(EGameStatus.eGSPlay);
 
@@ -393,7 +393,7 @@ public abstract class Mosaic {
 							cell.getState().setStatus(EState._Open, null);
 						}
 					}
-					NeedRepaint(cell);
+					Repaint(cell);
 				}
 //			::SetCursor(::LoadCursor(NULL, IDC_ARROW));
 		}
@@ -444,12 +444,12 @@ public abstract class Mosaic {
 				getCells().setMinesCount(getCells().getMinesCount()-1);
 				getRepositoryMines().remove(coordLDown);
 			}
-			NeedRepaint(cell);
+			Repaint(cell);
 		} else {
 			LeftDownResult result = cell.LButtonDown();
 			if ((result != null) && (result.needRepaint != null))
 				for (BaseCell cellToRepaint : result.needRepaint)
-					NeedRepaint(cellToRepaint);
+					Repaint(cellToRepaint);
 		}
 	}
 
@@ -471,7 +471,7 @@ public abstract class Mosaic {
 		LeftUpResult result = getCell(getCoordDown()).LButtonUp(coordLUp.equals(getCoordDown()), clickReportContext);
 		if (result.needRepaint != null)
 			for (BaseCell cellToRepaint : result.needRepaint)
-				NeedRepaint(cellToRepaint);
+				Repaint(cellToRepaint);
 		if ((result.countOpen > 0) || (result.countFlag > 0) || (result.countUnknown > 0)) { // клик со смыслом (были изменения на поле)
 			incrementCountClick();
 			setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
@@ -516,7 +516,7 @@ public abstract class Mosaic {
 		ClickReportContext clickReportContext = new ClickReportContext();
 		RightDownReturn result = cell.RButtonDown(eClose, clickReportContext);
 		if (result.needRepaint)
-			NeedRepaint(cell);
+			Repaint(cell);
 		if ((result.countFlag>0) || (result.countUnknown>0)) { // клик со смыслом (были изменения на поле)
 			incrementCountClick();
 			setPlayInfo(EPlayInfo.ePlayerUser); // то считаю что юзер играл

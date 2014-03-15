@@ -287,6 +287,7 @@
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\GraphicContext.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\mosaics\CellPaint.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\mosaics\MosaicGraphicContext.cs" />
+    <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\MosaicPageInitParam.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\BackgroundPause.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\Flag.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\Mine.cs" />

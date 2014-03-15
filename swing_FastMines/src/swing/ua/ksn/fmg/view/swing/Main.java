@@ -123,7 +123,7 @@ public class Main extends JFrame  {
 	private SelectMosaicDlg _selectMosaicDialog;
 	private CustomSkillDlg  _customSkillDialog;
 
-	public ManageDlg getPlayerManageDlg() {
+	private ManageDlg getPlayerManageDlg() {
 		if (_playerManageDialog == null)
 			_playerManageDialog = new ManageDlg(this, false, getPlayers());
 		return _playerManageDialog;
@@ -528,7 +528,7 @@ public class Main extends JFrame  {
 		@Override
 		public Dimension getPreferredSize() {
 			Dimension dim = super.getPreferredSize();
-			dim.width = getMosaic().getSwingPanel().getPreferredSize().width;
+			dim.width = getMosaic().getContainer().getPreferredSize().width;
 			return dim;
 		}
 	}
@@ -716,7 +716,7 @@ public class Main extends JFrame  {
 		@Override
 		public Dimension getPreferredSize() {
 //			return super.getPreferredSize();
-			return getMosaic().getSwingPanel().getPreferredSize();
+			return getMosaic().getContainer().getPreferredSize();
 		}
 
 		/** кэшированная картинка */
@@ -778,7 +778,7 @@ public class Main extends JFrame  {
 			} else
 				centerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0,0));
 
-			centerPanel.add(getMosaic().getSwingPanel());
+			centerPanel.add(getMosaic().getContainer());
 			centerPanel.add(getPausePanel());
 		}
 		return contentPane;
@@ -1202,12 +1202,12 @@ public class Main extends JFrame  {
 			getTimerGame().restart();
 
 			getPausePanel().setVisible(false);
-			getMosaic().getSwingPanel().setVisible(true);
-			getMosaic().getSwingPanel().requestFocusInWindow();
+			getMosaic().getContainer().setVisible(true);
+			getMosaic().getContainer().requestFocusInWindow();
 		} else {
 			getTimerGame().stop();
 
-			getMosaic().getSwingPanel().setVisible(false);
+			getMosaic().getContainer().setVisible(false);
 			getPausePanel().setVisible(true);
 			getRootPane().requestFocusInWindow(); // ! иначе на компонентах нат фокуса, и mouse wheel не пашет...
 		}
@@ -1370,7 +1370,7 @@ public class Main extends JFrame  {
 //			return dummy;
 		}
 
-		Dimension currSizeMosaicInPixel = getMosaic().getSwingPanel().getSize();
+		Dimension currSizeMosaicInPixel = getMosaic().getContainer().getSize();
 		return new Size(
 				sizeWin.width  + (sizeMosaicInPixel.width  - currSizeMosaicInPixel.width),
 				sizeWin.height + (sizeMosaicInPixel.height - currSizeMosaicInPixel.height));
@@ -1642,7 +1642,7 @@ public class Main extends JFrame  {
 //	}
 
 	boolean isPaused() {
-		return !getMosaic().getSwingPanel().isVisible();
+		return !getMosaic().getContainer().isVisible();
 	}
 	boolean isMenuEvent(ActionEvent e) {
 		Object src = e.getSource();
@@ -1687,14 +1687,14 @@ public class Main extends JFrame  {
 		private Action gameNewAction;
 		public Action getGameNewAction() {
 			if (gameNewAction == null)
-				gameNewAction =  new AbstractAction() {
+				gameNewAction = new AbstractAction() {
 					private static final long serialVersionUID = 1L;
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						Main.this.GameNew(e);
 					}
 				};
-	
+
 			return gameNewAction;
 		}
 
@@ -1712,7 +1712,7 @@ public class Main extends JFrame  {
 						}
 					});
 			}
-	
+
 			return skillLevelActions.get(key);
 		}
 
@@ -1730,7 +1730,7 @@ public class Main extends JFrame  {
 						}
 					});
 			}
-	
+
 			return mosaicAction.get(key);
 		}
 
@@ -1745,7 +1745,7 @@ public class Main extends JFrame  {
 								!Main.this.getPlayerManageDlg().isVisible());
 					}
 				};
-	
+
 			return playerManageAction;
 		}
 
@@ -1759,7 +1759,7 @@ public class Main extends JFrame  {
 						Main.this.OnClose();
 					}
 				};
-	
+
 			return gameExitAction;
 		}
 
@@ -1788,7 +1788,7 @@ public class Main extends JFrame  {
 						Main.this.iconify();
 					}
 				};
-	
+
 			return minimizedAction;
 		}
 
@@ -1802,7 +1802,7 @@ public class Main extends JFrame  {
 						Main.this.toCenterScreen();
 					}
 				};
-	
+
 			return centerScreenAction;
 		}
 

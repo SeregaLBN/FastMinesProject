@@ -12,6 +12,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using FastMines.Data;
+using ua.ksn.fmg.controller.types;
+using ua.ksn.fmg.view.win_rt;
 using ua.ksn.fmg.view.win_rt.draw;
 using ua.ksn.fmg.view.win_rt.draw.mosaics;
 
@@ -66,7 +68,11 @@ namespace FastMines {
          // by passing required information as a navigation parameter
          var eMosaic = ((FmDataItem)e.ClickedItem).UniqueId;
          //this.Frame.Navigate(typeof(ItemDetailPage), eMosaic);
-         this.Frame.Navigate(typeof(MosaicPage), eMosaic);
+         this.Frame.Navigate(typeof(MosaicPage), new MosaicPageInitParam {
+            MosaicTypes = eMosaic,
+            MinesCount = FmDataSource.MinesCount = FmDataSource.SkillLevel.GetNumberMines(eMosaic),
+            SizeField = FmDataSource.SizeField = FmDataSource.SkillLevel.DefaultSize()
+         });
       }
 
       private void ButtonBase_OnClick(object sender, RoutedEventArgs e) {

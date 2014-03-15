@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Media.Imaging;
+using ua.ksn.fmg.controller.types;
 using ua.ksn.fmg.model.mosaics;
 
 // The data model defined by this file serves as a representative example of a strongly-typed
@@ -41,13 +42,13 @@ namespace FastMines.Data {
 
       public static FmDataGroup GetGroup(EMosaicGroup uniqueId) {
          // Simple linear search is acceptable for small data sets
-         var matches = AllGroups.Where((group) => (group.UniqueId == uniqueId));
+         var matches = AllGroups.Where(group => (group.UniqueId == uniqueId));
          return matches.FirstOrDefault();
       }
 
       public static FmDataItem GetItem(EMosaic uniqueId) {
          // Simple linear search is acceptable for small data sets
-         var matches = AllGroups.SelectMany(group => group.Items).Where((item) => (item.UniqueId == uniqueId));
+         var matches = AllGroups.SelectMany(group => group.Items).Where(item => (item.UniqueId == uniqueId));
          return matches.FirstOrDefault();
       }
 
@@ -56,5 +57,9 @@ namespace FastMines.Data {
             if (forceReload || !(fmItem.Image is WriteableBitmap))
                fmItem.Image = await FmDataItem.CreateImage(fmItem.UniqueId);
       }
+
+      public static ESkillLevel SkillLevel { get; set; }
+      public static ua.ksn.geom.Size SizeField { get; set; }
+      public static int MinesCount { get; set; }
    }
 }
