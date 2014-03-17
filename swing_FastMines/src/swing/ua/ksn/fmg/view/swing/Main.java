@@ -1376,24 +1376,57 @@ public class Main extends JFrame  {
 				sizeWin.height + (sizeMosaicInPixel.height - currSizeMosaicInPixel.height));
 	}
 
+	/**
+	 * Поиск больше-меньше
+	 * @param baseMin - стартовое значение для поиска
+	 * @param baseDelta - начало дельты приращения
+	 * @param func - ф-ция сравнения
+	 * @return что найдено
+	 */
+	static int Finder(int baseMin, int baseDelta, Comparable<Integer> func) {
+		double res = baseMin;
+		double d = baseDelta;
+		boolean deltaUp = true, lastSmall = true;
+		do {
+			if (deltaUp)
+				d *= 2;
+			else
+				d /= 2;
+
+			if (lastSmall)
+				res += d;
+			else
+				res -= d;
+
+			int z = func.compareTo((int)res);
+			if (z == 0)
+				return (int)res;
+			lastSmall = (z < 0);
+			deltaUp = deltaUp && lastSmall;
+		} while(d > 1);
+		return (int)res;
+	}
+
 	/** узнаю мах размер площади ячеек мозаики, при котором окно проекта вмещается в текущее разрешение экрана
 	 * @param mosaicSizeField - интересуемый размер поля мозаики
 	 * @return макс площадь ячейки
 	 */
-	int CalcMaxArea(Size mosaicSizeField) {
-		Size sizeScreen = Cast.toSize(Toolkit.getDefaultToolkit().getScreenSize());
-		int result = Mosaic.AREA_MINIMUM;
-		result++;
-		Size sizeMosaic = getMosaic().CalcWindowSize(mosaicSizeField, result);
-		Size sizeWnd = CalcSize(sizeMosaic);
-		while ((sizeWnd.width <= sizeScreen.width) &&
-			   (sizeWnd.height <= sizeScreen.height)) {
-			result++;
-			sizeMosaic = getMosaic().CalcWindowSize(mosaicSizeField, result);
-			sizeWnd = CalcSize(sizeMosaic);
-		}
-		result--;
-		return result;
+	int CalcMaxArea(final Size mosaicSizeField) {
+		final Size sizeScreen = Cast.toSize(Toolkit.getDefaultToolkit().getScreenSize());
+		return Finder(Mosaic.AREA_MINIMUM, Mosaic.AREA_MINIMUM, new Comparable<Integer>() {
+			@Override
+			public int compareTo(Integer area) {
+				Size sizeMosaic = getMosaic().CalcWindowSize(mosaicSizeField, area);
+				Size sizeWnd = CalcSize(sizeMosaic);
+				if ((sizeWnd.width == sizeScreen.width) &&
+				   (sizeWnd.height == sizeScreen.height))
+				  return 0;
+				if ((sizeWnd.width <= sizeScreen.width) &&
+					(sizeWnd.height <= sizeScreen.height))
+					return -1;
+				return +1;
+			}
+		});
 	}
 
 	/**
@@ -1401,30 +1434,35 @@ public class Main extends JFrame  {
 	 * @param area - интересуемая площадь ячеек мозаики
 	 * @return max размер поля мозаики
 	 */
-	public Size CalcMaxMosaicSize(int area) {
-		Size sizeScreen = Cast.toSize(Toolkit.getDefaultToolkit().getScreenSize());
-		Size result = new Size(1, 1);
-
-		result.width++;
-		Size sizeMosaic = getMosaic().CalcWindowSize(result, area);
-		Size sizeWnd = CalcSize(sizeMosaic);
-		while (sizeWnd.width <= sizeScreen.width) {
-			result.width++;
-			sizeMosaic = getMosaic().CalcWindowSize(result, area);
-			sizeWnd = CalcSize(sizeMosaic);
-		}
-		result.width--;
-
-		result.height++;
-		sizeMosaic = getMosaic().CalcWindowSize(result, area);
-		sizeWnd = CalcSize(sizeMosaic);
-		while (sizeWnd.height <= sizeScreen.height) {
-			result.height++;
-			sizeMosaic = getMosaic().CalcWindowSize(result, area);
-			sizeWnd = CalcSize(sizeMosaic);
-		}
-		result.height--;
-
+	public Size CalcMaxMosaicSize(final int area) {
+		final Size sizeScreen = Cast.toSize(Toolkit.getDefaultToolkit().getScreenSize());
+		final Size result = new Size();
+		Finder(1, 10, new Comparable<Integer>() {
+			@Override
+			public int compareTo(Integer newWidth) {
+				result.width = newWidth;
+				Size sizeMosaic = getMosaic().CalcWindowSize(result, area);
+				Size sizeWnd = CalcSize(sizeMosaic);
+				if (sizeWnd.width == sizeScreen.width)
+					return 0;
+				if (sizeWnd.width <= sizeScreen.width)
+					return -1;
+				return +1;
+			}
+		});
+		Finder(1, 10, new Comparable<Integer>() {
+			@Override
+			public int compareTo(Integer newHeight) {
+				result.height = newHeight;
+				Size sizeMosaic = getMosaic().CalcWindowSize(result, area);
+				Size sizeWnd = CalcSize(sizeMosaic);
+				if (sizeWnd.width == sizeScreen.height)
+					return 0;
+				if (sizeWnd.height <= sizeScreen.height)
+					return -1;
+				return +1;
+			}
+		});
 		return result;
 	}
 

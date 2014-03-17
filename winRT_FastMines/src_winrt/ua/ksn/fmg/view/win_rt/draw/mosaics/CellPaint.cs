@@ -301,7 +301,6 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
                DefaultBackgroundFillColor,
                gContext.BkFill.getColor
                );
-         System.Diagnostics.Debug.WriteLine("cell=[{0}, {1}]: fillClr = {2}; fillMode={3}", cell.getCoord().x, cell.getCoord().y, clr, gContext.BkFill.Mode);
          binder.Item1.Fill = FindBrush(clr);
       }
 
