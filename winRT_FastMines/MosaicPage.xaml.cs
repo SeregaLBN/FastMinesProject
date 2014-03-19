@@ -50,6 +50,11 @@ namespace FastMines {
          this.SizeChanged += MosaicPage_SizeChanged;
 
          //this.PointerWheelChanged += MosaicPage_PointerWheelChanged; // see OnPointerWheelChanged
+
+         if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) {
+            Mosaic = new MosaicExt(new Size(10,10), EMosaic.eMosaicRhombus1, 3, 1500);
+            Mosaic.Repaint();
+         }
       }
 
       private static Windows.Foundation.IAsyncAction ExecuteOnUIThread(Windows.UI.Core.DispatchedHandler action, CoreDispatcherPriority priority) {
@@ -101,10 +106,10 @@ namespace FastMines {
 #if DEBUG
             throw new InvalidOperationException();
 #else
-            currSizeMosaicInPixel = ContentRoot.RenderSize.ToFmSize();
+            currSizeMosaicInPixel = gridMosaic.RenderSize.ToFmSize();
             if ((currSizeMosaicInPixel.height == 0) && (currSizeMosaicInPixel.width == 0)) {
-               currSizeMosaicInPixel.width = sizeWin.width - (int)(ContentRoot.Margin.Left + ContentRoot.Margin.Right);
-               currSizeMosaicInPixel.height = sizeWin.height - (int)(ContentRoot.Margin.Top + ContentRoot.Margin.Bottom);
+               currSizeMosaicInPixel.width = sizeWin.width - (int)(gridMosaic.Margin.Left + gridMosaic.Margin.Right);
+               currSizeMosaicInPixel.height = sizeWin.height - (int)(gridMosaic.Margin.Top + gridMosaic.Margin.Bottom);
             }
 #endif
          }
@@ -244,9 +249,10 @@ namespace FastMines {
 
       }
 
-      private void GoBack(ICoreWindowEventArgs args) {
+      private void GoBack(ICoreWindowEventArgs args = null) {
          if (this.Frame != null && this.Frame.CanGoBack) {
-            args.Handled = true;
+            if (args != null)
+               args.Handled = true;
             this.Frame.GoBack();
          }
       }
@@ -281,6 +287,20 @@ namespace FastMines {
             AreaInc();
          else
             AreaDec();
+      }
+
+      private void ButtonBase_OnClickZoomIn(object sender, RoutedEventArgs e) {
+         AreaInc();
+      }
+      private void ButtonBase_OnClickZoomOut(object sender, RoutedEventArgs e) {
+         AreaDec();
+      }
+
+      private void OnClickBttnBack(object sender, RoutedEventArgs e) {
+         GoBack(null);
+      }
+      private void OnClickBttnNewGame(object sender, RoutedEventArgs e) {
+         Mosaic.GameNew();
       }
    }
 }

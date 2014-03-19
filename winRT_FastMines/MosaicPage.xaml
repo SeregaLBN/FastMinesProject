@@ -7,8 +7,40 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid x:Name="ContentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}" _Margin="90, 17, 17, 17">
+    <Grid x:Name="ContentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}" >
         <!--Canvas x:Name="ContentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}" Margin="5,5,5,5">
         </Canvas-->
     </Grid>
+
+
+    <!-- ======= BEGIN test top/bottom Applications Bars ======= -->
+    <Page.TopAppBar>
+        <AppBar x:Name="topAppBar" Padding="10, 0, 10,0" >
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="bttnBack" Style="{StaticResource BackAppBarButtonStyle}" Click="OnClickBttnBack"/>
+                <Button x:Name="bttnNewGame" Style="{StaticResource RefreshAppBarButtonStyle}" AutomationProperties.Name="New Game" Click="OnClickBttnNewGame"/>
+            </StackPanel>
+        </AppBar>
+    </Page.TopAppBar>
+    <Page.BottomAppBar>
+        <AppBar x:Name="bottomAppBar" Padding="10, 0, 10,0" IsSticky="False" >
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <Button Style="{StaticResource ResourceKey=AppBarButtonStyle}" AutomationProperties.Name="Пымпа" />
+                    <Button Style="{StaticResource PageAppBarButtonStyle}" />
+                    <Button Style="{StaticResource VideoChatAppBarButtonStyle}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <!--Button Style="{StaticResource ZoomInAppBarButtonStyle}" Click="ButtonBase_OnClickZoomIn"/>
+                    <Button Style="{StaticResource ZoomOutAppBarButtonStyle}" Click="ButtonBase_OnClickZoomOut"/-->
+                    <Button Style="{StaticResource ShowResultsAppBarButtonStyle}" />
+                </StackPanel>
+            </Grid>
+        </AppBar>
+    </Page.BottomAppBar>
+    <!-- ======= END test top/bottom Applications Bars ======= -->
 </Page>
