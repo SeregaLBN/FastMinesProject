@@ -578,17 +578,19 @@ public abstract class Mosaic {
       get { return _useUnknown; }
    }
 
-   /// <summary>Максимальное кол-во мин при указанном размере поля</summary>
+   /// <summary> Максимальное кол-во мин при указанном размере поля </summary>
    public int GetMaxMines(Size sizeFld) {
       int iMustFreeCell = NeighborNumber+1;
       int iMaxMines = sizeFld.width*sizeFld.height-iMustFreeCell;
       return Math.Max(1, iMaxMines);
    }
-   /// <summary>Максимальное кол-во мин при  текущем  размере поля</summary>
+   /// <summary> Максимальное кол-во мин при  текущем  размере поля </summary>
    public int GetMaxMines() { return GetMaxMines(SizeField); }
-   /// <summary>размер в пикселях</summary>
+   /// <summary> размер в пикселях для указанных параметров </summary>
    public Size CalcWindowSize(Size sizeField, int area) { return CellAttr.CalcOwnerSize(sizeField, area); }
-   /// <summary>узнать количество соседей для текущей мозаики</summary>
+   /// <summary> размер в пикселях </summary>
+   public Size WindowSize { get { return CalcWindowSize(SizeField, Area); }}
+   /// <summary> узнать количество соседей для текущей мозаики </summary>
    public int NeighborNumber { get { return CellAttr.getNeighborNumber(); } }
 
    /// <summary>сколько ещё осталось открыть мин</summary>

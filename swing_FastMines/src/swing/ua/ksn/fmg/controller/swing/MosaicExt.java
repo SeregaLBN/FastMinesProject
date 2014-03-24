@@ -60,40 +60,21 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 						g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 					}
 
-//					if (!gContext.isRefreshMosaic()) { // restore bitmap
-////						::BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
-////								m_GContext.m_hDCDst, 0, 0, SRCCOPY);
-//						return;
-//					}
-
-//					::SetCursor(::LoadCursor(NULL, IDC_WAIT));
 					// background color
 					Rectangle rcFill = g.getClipBounds();
 					g.setColor(getGraphicContext().getColorBk());
 					g.fillRect(rcFill.x, rcFill.y, rcFill.width, rcFill.height);
 
-					// background image
-					{
-//						RECT Rect = {0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy};
-//						m_GContext.m_ImgBckgrnd.Draw(m_GContext.m_hDCBck, Rect);
-					}
-//					::BitBlt(m_GContext.m_hDCTmp, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy, m_GContext.m_hDCBck, 0,0, SRCCOPY);
-////					::BitBlt(m_GContext.m_hDCDst, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy, m_GContext.m_hDCBck, 0,0, SRCCOPY);
 					// paint cells
 					g.setFont(getGraphicContext().getFont());
 					for (BaseCell cell: getCells().getAll())
 						if (cell.getRcOuter().Intersects(Cast.toRect(g.getClipBounds()))) // redraw only when needed - when the cells and update region intersect
 							getCellPaint().paint(cell, g);
-
-//					::BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
-//							m_GContext.m_hDCDst, 0, 0, SRCCOPY);
-//					::SetCursor(::LoadCursor(NULL, IDC_ARROW));
-//					m_GContext.m_isRefreshMosaic = false;
 				}
 
 			    @Override
 			    public Dimension getPreferredSize() {
-			    	Size size = CalcWindowSize(getSizeField(), getArea());
+			    	Size size = getWindowSize();
 			    	size.height++;
 			    	size.width++;
 //			    	System.out.println("Mosaic::getPreferredSize: size="+size);

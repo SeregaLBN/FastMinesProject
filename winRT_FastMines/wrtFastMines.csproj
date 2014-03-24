@@ -598,6 +598,21 @@
     <Content Include="..\res\Font\NirmalaUI_30.xml">
       <Link>res\Font\NirmalaUI_30.xml</Link>
     </Content>
+    <Content Include="..\res\Skill\skillWhite.ico">
+      <Link>res\Skill\skillWhite.ico</Link>
+    </Content>
+    <Content Include="..\res\Skill\skillWhite1.png">
+      <Link>res\Skill\skillWhite1.png</Link>
+    </Content>
+    <Content Include="..\res\Skill\skillWhite2.png">
+      <Link>res\Skill\skillWhite2.png</Link>
+    </Content>
+    <Content Include="..\res\Skill\skillWhite3.png">
+      <Link>res\Skill\skillWhite3.png</Link>
+    </Content>
+    <Content Include="..\res\Skill\skillWhite4.png">
+      <Link>res\Skill\skillWhite4.png</Link>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

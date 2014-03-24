@@ -608,6 +608,18 @@
     </Style>
     -->
 
+    <Style x:Key="PathBasedAppBarButtonStyle" BasedOn="{StaticResource AppBarButtonStyle}" TargetType="ButtonBase">
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Path Width="20" Height="20" Stretch="Uniform"
+                          Fill="{Binding Path=Foreground, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                          Data="{Binding Path=Content, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="WorldAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="WorldAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="World"/>
@@ -733,7 +745,9 @@
         <Setter Property="AutomationProperties.AutomationId" Value="BackButton"/>
         <Setter Property="AutomationProperties.Name" Value="Back"/>
         <Setter Property="AutomationProperties.ItemType" Value="Navigation Button"/>
-        <Setter Property="Content" Value="&#xE0C4;"/>
+        <Setter Property="Content" Value="&#xE0D5;"/>
+        <!--Setter Property="Content" Value="&#xE0A9;"/-->
+        <!--Setter Property="Content" Value="&#xE0C4;"/-->
     </Style>
     <!--
     -->

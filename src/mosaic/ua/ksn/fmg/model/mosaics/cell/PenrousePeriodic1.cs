@@ -22,7 +22,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using System.Collections.Generic;
 using ua.ksn.geom;
  
 namespace ua.ksn.fmg.model.mosaics.cell {
@@ -1808,7 +1807,7 @@ public class PenrousePeriodic1 : BaseCell {
          goto case 98;
 		case  98:
 			top += c;
-         goto case 98;
+         goto case 81;
 		case  81: case  97:
 			top += fc;
          goto case 92;

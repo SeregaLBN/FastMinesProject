@@ -79,18 +79,50 @@ namespace FastMines {
                throw new Exception("Mosaic already initialized 8[ ]");
             Mosaic = new MosaicExt(initParam.SizeField, initParam.MosaicTypes, initParam.MinesCount, 0);
             ContentRoot.Children.Add(Mosaic.Container);
-            Mosaic.Repaint();
-            Mosaic.Container.SizeChanged += delegate { Mosaic.Area = CalcMaxArea(initParam.SizeField); };
+
             Mosaic.OnClick += Mosaic_OnClick;
             Mosaic.OnChangeGameStatus += Mosaic_OnChangeGameStatus;
             Mosaic.OnChangeCounters += Mosaic_OnChangeCounters;
             Mosaic.OnChangeArea += Mosaic_OnChangeArea;
             Mosaic.OnChangeMosaicType += Mosaic_OnChangeMosaicType;
+
+            Mosaic.Area = CalcOptimalArea(initParam.SizeField);
+            //Mosaic.Repaint();
          }, CoreDispatcherPriority.Normal, false);
+      }
+
+      /// <summary> Поменять игру на новый уровень сложности </summary>
+      void SetGame(ESkillLevel skill) {
+         //if (isPaused())
+         //   ChangePause(e);
+
+         int numberMines;
+         Size sizeFld;
+         if (skill == ESkillLevel.eCustom) {
+            //System.out.println("... dialog box 'Select custom skill level...' ");
+            //getCustomSkillDialog().setVisible(!getCustomSkillDialog().isVisible());
+            return;
+         } else {
+            numberMines = skill.GetNumberMines(Mosaic.MosaicType);
+            sizeFld = skill.DefaultSize();
+         }
+
+         Mosaic.setParams(sizeFld, Mosaic.MosaicType, numberMines);
+
+         //if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected()) {
+         //   AreaMax();
+         //   RecheckLocation(false, false);
+         //} else
+            RecheckLocation(true, true);
+
+         //if (!isMenuEvent(e))
+         //   RecheckSelectedMenuSkillLevel();
       }
 
       /// <summary> узнать размер окна проекта при указанном размере окна мозаики </summary>
       Size CalcSize(Size sizeMosaicInPixel) {
+         return sizeMosaicInPixel;
+
          var sizeWin = this.RenderSize.ToFmSize();
          if ((sizeWin.height == 0) && (sizeWin.width == 0) /* && !this.IsVisible*/ ) {
 #if DEBUG
@@ -101,6 +133,7 @@ namespace FastMines {
 #endif
          }
 
+         //var currSizeMosaicInPixel = Mosaic.WindowSize;
          var currSizeMosaicInPixel = Mosaic.Container.RenderSize.ToFmSize();
          if ((currSizeMosaicInPixel.height == 0) && (currSizeMosaicInPixel.width == 0)) {
 #if DEBUG
@@ -148,38 +181,46 @@ namespace FastMines {
          return (int)res;
       }
 
-      /// <summary> узнаю мах размер площади ячеек мозаики, при котором окно проекта вмещается в текущее разрешение экрана </summary>
+      /// <summary> узнаю мах размер площади ячеек мозаики, при котором ... удобно... </summary>
       /// <param name="mosaicSizeField">интересуемый размер поля мозаики</param>
       /// <returns>макс площадь ячейки</returns>
       private int CalcMaxArea(Size mosaicSizeField) {
-         var sizeScreen = Window.Current.Bounds.ToFmRect().size();
+         var sizePage = Window.Current.Bounds;
+         return (int) (sizePage.Width/3 * sizePage.Height/3);
+      }
+
+      /// <summary> узнаю мах размер площади ячеек мозаики, при котором вся мозаика помещается на странице </summary>
+      /// <param name="mosaicSizeField">интересуемый размер поля мозаики</param>
+      /// <returns>макс площадь ячейки</returns>
+      private int CalcOptimalArea(Size mosaicSizeField) {
+         var sizePage = Window.Current.Bounds.ToFmRect().size();
          return Finder(ua.ksn.fmg.controller.Mosaic.AREA_MINIMUM, ua.ksn.fmg.controller.Mosaic.AREA_MINIMUM,
             area => {
                var sizeMosaic = Mosaic.CalcWindowSize(mosaicSizeField, area);
                var sizeWnd = CalcSize(sizeMosaic);
-               if ((sizeWnd.width == sizeScreen.width) &&
-                   (sizeWnd.height == sizeScreen.height))
+               if ((sizeWnd.width == sizePage.width) &&
+                   (sizeWnd.height == sizePage.height))
                   return 0;
-               if ((sizeWnd.width <= sizeScreen.width) &&
-                   (sizeWnd.height <= sizeScreen.height))
+               if ((sizeWnd.width <= sizePage.width) &&
+                   (sizeWnd.height <= sizePage.height))
                   return -1;
                return +1;
             });
       }
 
-      /// <summary> узнаю max размер поля мозаики, при котором окно проекта вмещается в текущее разрешение экрана </summary>
+      /// <summary> узнаю max размер поля мозаики, при котором вся мозаика помещается на странице </summary>
       /// <param name="area">интересуемая площадь ячеек мозаики</param>
       /// <returns>max размер поля мозаики</returns>
       public Size CalcMaxMosaicSize(int area) {
-         var sizeScreen = Window.Current.Bounds.ToFmRect().size();
+         var sizePage = Window.Current.Bounds.ToFmRect().size();
          var result = new Size();
          Finder(1, 10, newWidth => {
             result.width = newWidth;
             var sizeMosaic = Mosaic.CalcWindowSize(result, area);
             var sizeWnd = CalcSize(sizeMosaic);
-            if (sizeWnd.width == sizeScreen.width)
+            if (sizeWnd.width == sizePage.width)
                return 0;
-            if (sizeWnd.width <= sizeScreen.width)
+            if (sizeWnd.width <= sizePage.width)
                return -1;
             return +1;
          });
@@ -187,13 +228,23 @@ namespace FastMines {
             result.height = newHeight;
             var sizeMosaic = Mosaic.CalcWindowSize(result, area);
             var sizeWnd = CalcSize(sizeMosaic);
-            if (sizeWnd.width == sizeScreen.height)
+            if (sizeWnd.width == sizePage.height)
                return 0;
-            if (sizeWnd.height <= sizeScreen.height)
+            if (sizeWnd.height <= sizePage.height)
                return -1;
             return +1;
          });
          return result;
+      }
+
+      /// <summary> проверить что находится в рамках экрана	</summary>
+      /// <param name="checkArea">заодно проверить что влазит в текущее разрешение экрана</param>
+      private void RecheckLocation(bool checkArea, bool pack) {
+         if (checkArea) {
+            var maxArea = CalcMaxArea(Mosaic.SizeField);
+            if (maxArea < Area)
+               Area = maxArea;
+         }
       }
 
       int Area { get
@@ -212,13 +263,13 @@ namespace FastMines {
       }
 
       /// <summary> Zoom + </summary>
-      void AreaInc() {
-         Area = (int)(Area * 1.05);
+      void AreaInc(double zoomPower = 1.3) {
+         Area = (int)(Area * 1.01 * zoomPower);
       }
 
       /// <summary> Zoom - </summary>
-      void AreaDec() {
-         Area = (int)(Area * 0.95);
+      void AreaDec(double zoomPower = 1.3) {
+         Area = (int)(Area * 0.99 / zoomPower);
       }
 
       /// <summary> Zoom minimum </summary>
@@ -274,19 +325,33 @@ namespace FastMines {
       private void Mosaic_OnChangeCounters(Mosaic source) {}
       private void Mosaic_OnChangeArea(Mosaic source, int oldArea) {
          //ChangeSizeImagesMineFlag();
+
+         var sizeWinMosaic = Mosaic.WindowSize;
+         var sizePage = Window.Current.Bounds;
+         var m = ContentRoot.Margin;
+         m.Left = (sizePage.Width - sizeWinMosaic.width) / 2;
+         m.Top = (sizePage.Height - sizeWinMosaic.height) / 2;
+         ContentRoot.Margin = m;
       }
       private void Mosaic_OnChangeMosaicType(Mosaic source, EMosaic oldMosaic) {
          (source as MosaicExt).ChangeFontSize();
          //ChangeSizeImagesMineFlag();
       }
 
+      private static double? _baseWheelDelta;
       protected override void OnPointerWheelChanged(PointerRoutedEventArgs e) {
          base.OnPointerWheelChanged(e);
          //e.Handled = true;
-         if (e.GetCurrentPoint(this).Properties.MouseWheelDelta > 0)
-            AreaInc();
+         var wheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
+         if (!_baseWheelDelta.HasValue)
+            _baseWheelDelta = Math.Abs(wheelDelta);
+
+         var wheelPower = 1 + ((Math.Abs(wheelDelta)/_baseWheelDelta.Value) - 1)/10;
+
+         if (wheelDelta > 0)
+            AreaInc(wheelPower);
          else
-            AreaDec();
+            AreaDec(wheelPower);
       }
 
       private void ButtonBase_OnClickZoomIn(object sender, RoutedEventArgs e) {
@@ -301,6 +366,19 @@ namespace FastMines {
       }
       private void OnClickBttnNewGame(object sender, RoutedEventArgs e) {
          Mosaic.GameNew();
+      }
+
+      private void OnClickBttnSkillBeginner(object sender, RoutedEventArgs e) {
+         SetGame(ESkillLevel.eBeginner);
+      }
+      private void OnClickBttnSkillAmateur(object sender, RoutedEventArgs e) {
+         SetGame(ESkillLevel.eAmateur);
+      }
+      private void OnClickBttnSkillProfi(object sender, RoutedEventArgs e) {
+         SetGame(ESkillLevel.eProfi);
+      }
+      private void OnClickBttnSkillCrazy(object sender, RoutedEventArgs e) {
+         SetGame(ESkillLevel.eCrazy);
       }
    }
 }

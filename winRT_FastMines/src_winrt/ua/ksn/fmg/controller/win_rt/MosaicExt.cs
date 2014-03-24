@@ -28,6 +28,8 @@ namespace ua.ksn.fmg.controller.win_rt {
       {}
 
       private void BindXamlToMosaic() {
+         Container.Children.Clear();
+         XamlBinder.Clear();
          var sizeMosaic = Cells.Size;
          for (var i = 0; i < sizeMosaic.width; i++)
             for (var j = 0; j < sizeMosaic.height; j++) {
@@ -60,7 +62,10 @@ namespace ua.ksn.fmg.controller.win_rt {
             if (this._mosaicType != newMosaicType)
                mosaic._cellPaint = null;
 
+            var rebind = (newSizeField != this.Size);
             base.setParams(newSizeField, newMosaicType, newMinesCount);
+            if (rebind)
+               mosaic.BindXamlToMosaic();
 
             mosaic.Repaint();
             //mosaic.Container.InvalidateArrange(); // Revalidate();
@@ -68,13 +73,7 @@ namespace ua.ksn.fmg.controller.win_rt {
       }
 
       public Panel Container {
-         get {
-            if (_container == null) {
-               _container = new Canvas();
-               BindXamlToMosaic();
-            }
-            return _container;
-         }
+         get { return _container ?? (_container = new Canvas()); }
       }
 
       protected override MatrixCells Cells {

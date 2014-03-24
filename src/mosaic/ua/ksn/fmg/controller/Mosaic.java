@@ -641,8 +641,10 @@ public abstract class Mosaic {
 	}
 	/** Максимальное кол-во мин при  текущем  размере поля */
 	public int GetMaxMines() { return GetMaxMines(getSizeField()); }
-	/** размер в пикселях */
+	/** размер в пикселях для указанных параметров */
 	public Size CalcWindowSize(Size sizeField, int area) { return getCellAttr().CalcOwnerSize(sizeField, area); }
+	/** размер в пикселях */
+	public Size getWindowSize() { return CalcWindowSize(getSizeField(), getArea()); }
 	/** узнать количество соседей для текущей мозаики */
 	public int GetNeighborNumber() { return getCellAttr().getNeighborNumber(); }
 

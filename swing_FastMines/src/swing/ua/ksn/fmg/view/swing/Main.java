@@ -1370,7 +1370,7 @@ public class Main extends JFrame  {
 //			return dummy;
 		}
 
-		Dimension currSizeMosaicInPixel = getMosaic().getContainer().getSize();
+		Size currSizeMosaicInPixel = getMosaic().getWindowSize();
 		return new Size(
 				sizeWin.width  + (sizeMosaicInPixel.width  - currSizeMosaicInPixel.width),
 				sizeWin.height + (sizeMosaicInPixel.height - currSizeMosaicInPixel.height));
