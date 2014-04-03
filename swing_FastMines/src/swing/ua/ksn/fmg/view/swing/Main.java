@@ -881,9 +881,8 @@ public class Main extends JFrame  {
 				}
 			this.setUndecorated(!spm.getShowElement(EShowElement.eCaption));
 
-			if (mosaic != null)
-				System.err.println("Mosaic already initialized 8[ ]");
-			mosaic = new MosaicExt(spm.getSizeField(), spm.getMosaicType(), spm.getMinesCount(), spm.getArea());
+			getMosaic().setParams(spm.getSizeField(), spm.getMosaicType(), spm.getMinesCount());
+			getMosaic().setArea(spm.getArea());
 
 			setActiveUserId(spm.getActiveUserId());
 			getPlayerManageDlg().setDoNotAskStartupChecked(spm.isDoNotAskStartup());

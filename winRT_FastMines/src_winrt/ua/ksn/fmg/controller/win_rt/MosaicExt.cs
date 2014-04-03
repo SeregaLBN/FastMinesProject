@@ -62,7 +62,9 @@ namespace ua.ksn.fmg.controller.win_rt {
             if (this._mosaicType != newMosaicType)
                mosaic._cellPaint = null;
 
-            var rebind = (newSizeField != this.Size);
+            var rebind = (this.Size != newSizeField) ||
+                         (this.MosaicType != newMosaicType) ||
+                         (this.MinesCount != newMinesCount);
             base.setParams(newSizeField, newMosaicType, newMinesCount);
             if (rebind)
                mosaic.BindXamlToMosaic();
@@ -100,8 +102,6 @@ namespace ua.ksn.fmg.controller.win_rt {
       }
 
       protected override void Repaint(BaseCell cell) {
-         if (!XamlBinder.Any()) // TODO избавиться
-            return;
          if (cell == null)
             Repaint();
          else
@@ -109,9 +109,6 @@ namespace ua.ksn.fmg.controller.win_rt {
       }
 
       public void Repaint() {
-         if (!XamlBinder.Any()) // TODO избавиться
-            return;
-
          { // paint background
             var bkb = Container.Background as SolidColorBrush;
             var bkc = GraphicContext.ColorBk.ToWinColor();

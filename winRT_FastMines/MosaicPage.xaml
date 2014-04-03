@@ -5,9 +5,10 @@
     xmlns:local="using:FastMines"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Background="Coral">
 
-    <Grid x:Name="ContentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}" >
+    <Grid x:Name="ContentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}"  Margin="3">
         <!--Canvas x:Name="ContentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}" Margin="5,5,5,5">
         </Canvas-->
     </Grid>
@@ -49,22 +50,22 @@
                 <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
                     <!--Button Style="{StaticResource ZoomInAppBarButtonStyle}" Click="ButtonBase_OnClickZoomIn"/>
                     <Button Style="{StaticResource ZoomOutAppBarButtonStyle}" Click="ButtonBase_OnClickZoomOut"/-->
-                    <Button x:Name="SkillBeginner" AutomationProperties.Name="Beginner" Style="{StaticResource AppBarButtonStyle}" Click="OnClickBttnSkillBeginner">
+                    <Button x:Name="bttnSkillBeginner" AutomationProperties.Name="Beginner" Style="{StaticResource AppBarButtonStyle}" Click="OnClickBttnSkillBeginner">
                         <Button.Content>
                             <Image Source="/res/Skill/skillWhite1.png"/>
                         </Button.Content>
                     </Button>
-                    <Button x:Name="SkillAmateur" AutomationProperties.Name="Amateur" Style="{StaticResource AppBarButtonStyle}" Click="OnClickBttnSkillAmateur">
+                    <Button x:Name="bttnSkillAmateur" AutomationProperties.Name="Amateur" Style="{StaticResource AppBarButtonStyle}" Click="OnClickBttnSkillAmateur">
                         <Button.Content>
                             <Image Source="/res/Skill/skillWhite2.png"/>
                         </Button.Content>
                     </Button>
-                    <Button x:Name="SkillProfi" AutomationProperties.Name="Profi" Style="{StaticResource AppBarButtonStyle}" Click="OnClickBttnSkillProfi">
+                    <Button x:Name="bttnSkillProfi" AutomationProperties.Name="Profi" Style="{StaticResource AppBarButtonStyle}" Click="OnClickBttnSkillProfi">
                         <Button.Content>
                             <Image Source="/res/Skill/skillWhite3.png"/>
                         </Button.Content>
                     </Button>
-                    <Button x:Name="SkillCrazy" AutomationProperties.Name="Crazy" Style="{StaticResource AppBarButtonStyle}" Click="OnClickBttnSkillCrazy">
+                    <Button x:Name="bttnSkillCrazy" AutomationProperties.Name="Crazy" Style="{StaticResource AppBarButtonStyle}" Click="OnClickBttnSkillCrazy">
                         <Button.Content>
                             <Image Source="res/Skill/skillWhite4.png"/>
                         </Button.Content>
