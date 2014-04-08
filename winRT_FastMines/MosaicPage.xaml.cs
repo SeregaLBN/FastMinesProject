@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -39,15 +41,17 @@ namespace FastMines {
       public MosaicPage() {
          this.InitializeComponent();
 
-         this.SizeChanged += MosaicPage_SizeChanged;
-         //this.PointerMoved += MosaicPage_OnPointerMoved;
+         this.Loaded += OnPageLoaded;
+         this.Unloaded += OnPageUnloaded;
+         this.SizeChanged += OnPageSizeChanged;
+         //this.PointerMoved += OnPagePointerMoved;
          this.ManipulationMode =
             ManipulationModes.TranslateX |
             ManipulationModes.TranslateY |
             ManipulationModes.Rotate |
             ManipulationModes.Scale |
             ManipulationModes.TranslateInertia;
-         this.Tapped += MosaicPage_OnTapped;
+         this.Tapped += OnPageTapped;
 
          if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) {
             MosaicField.setParams(new Size(10, 10), EMosaic.eMosaicRhombus1, 3);
@@ -76,9 +80,9 @@ namespace FastMines {
          // if () // TODO: check if no tablet
          {
             ToolTipService.SetToolTip(bttnNewGame, new ToolTip {Content = "F2"});
-            ToolTipService.SetToolTip(bttnSkillAmateur, new ToolTip {Content = "1"});
-            ToolTipService.SetToolTip(bttnSkillBeginner, new ToolTip {Content = "2"});
-            ToolTipService.SetToolTip(bttnSkillCrazy, new ToolTip {Content = "3"});
+            ToolTipService.SetToolTip(bttnSkillBeginner, new ToolTip {Content = "1"});
+            ToolTipService.SetToolTip(bttnSkillAmateur, new ToolTip { Content = "2" });
+            ToolTipService.SetToolTip(bttnSkillCrazy, new ToolTip { Content = "3" });
             ToolTipService.SetToolTip(bttnSkillProfi, new ToolTip {Content = "4"});
          }
       }
@@ -272,7 +276,15 @@ namespace FastMines {
             this.Frame.GoBack();
       }
 
-      private void MosaicPage_SizeChanged(object sender, RoutedEventArgs e) {
+      private void OnPageLoaded(object sender, RoutedEventArgs e) {
+         Window.Current.CoreWindow.KeyUp += OnKeyUp_CoreWindow;
+      }
+
+      private void OnPageUnloaded(object sender, RoutedEventArgs e) {
+         Window.Current.CoreWindow.KeyUp -= OnKeyUp_CoreWindow;
+      }
+
+      private void OnPageSizeChanged(object sender, RoutedEventArgs e) {
          MosaicField.Area = CalcOptimalArea(MosaicField.SizeField);
       }
 
@@ -314,7 +326,7 @@ namespace FastMines {
          base.OnPointerWheelChanged(e);
       }
 
-      private void MosaicPage_OnPointerMoved(object sender, PointerRoutedEventArgs e) {
+      private void OnPagePointerMoved(object sender, PointerRoutedEventArgs e) {
          var ptr = e.Pointer;
          if (!ptr.IsInContact)
             return;
@@ -335,7 +347,7 @@ namespace FastMines {
          }
       }
 
-      private void MosaicPage_OnTapped(object sender, TappedRoutedEventArgs e) {
+      private void OnPageTapped(object sender, TappedRoutedEventArgs e) {
          Debug.WriteLine("OnTapped: ");
       }
 
@@ -363,50 +375,60 @@ namespace FastMines {
             else
                AreaDec(2 + ev.Delta.Scale);
          } else {
+            var margin = MosaicField.Container.Margin;
             var deltaTrans = ev.Delta.Translation;
+            var applyDelta = true;
 #region Compound motion
             if (_turnX)
                deltaTrans.X *= -1;
             if (_turnY)
                deltaTrans.Y *= -1;
 
+            if (ev.IsInertial) {
+               deltaTrans.X *= 0.05;
+               deltaTrans.Y *= 0.05;
+            }
+
             const int minIndent = 30;
             var sizeWinMosaic = MosaicField.WindowSize;
-            var sizePage = Window.Current.Bounds;
-            var margin = MosaicField.Container.Margin;
-
-            if ((margin.Left + sizeWinMosaic.width + deltaTrans.X) < (sizePage.Left + minIndent)) {
+            var sizePage = Window.Current.Bounds.ToFmRect().toSize();
+            if ((margin.Left + sizeWinMosaic.width + deltaTrans.X) < minIndent) {
                // правый край мозаики пересёк левую сторону страницы/экрана
                if (ev.IsInertial)
                   _turnX = !_turnX; // разворачиавю по оси X
                else
-                  margin.Left = sizePage.Left + minIndent - sizeWinMosaic.width; // привязываю к левой стороне страницы/экрана
-            }
-            if ((margin.Left + deltaTrans.X) > (sizePage.Right - minIndent)) {
+                  margin.Left = minIndent - sizeWinMosaic.width; // привязываю к левой стороне страницы/экрана
+               applyDelta = ev.IsInertial;
+            } else
+            if ((margin.Left + deltaTrans.X) > (sizePage.width - minIndent)) {
                // левый край мозаики пересёк правую сторону страницы/экрана
                if (ev.IsInertial)
                   _turnX = !_turnX; // разворачиавю по оси X
                else
-                  margin.Left = sizePage.Right - minIndent; // привязываю к правой стороне страницы/экрана
+                  margin.Left = sizePage.width - minIndent; // привязываю к правой стороне страницы/экрана
+               applyDelta = ev.IsInertial;
             }
-            if ((margin.Top + sizeWinMosaic.height + deltaTrans.Y) < (sizePage.Top + minIndent)) {
+            if ((margin.Top + sizeWinMosaic.height + deltaTrans.Y) < minIndent) {
                // нижний край мозаики пересёк верхнюю сторону страницы/экрана
                if (ev.IsInertial)
                   _turnY = !_turnY; // разворачиавю по оси Y
                else
-                  margin.Top = sizePage.Top + minIndent - sizeWinMosaic.height; // привязываю к верхней стороне страницы/экрана
+                  margin.Top = minIndent - sizeWinMosaic.height; // привязываю к верхней стороне страницы/экрана
+               applyDelta = ev.IsInertial;
             }
-            if ((margin.Top + deltaTrans.Y) > (sizePage.Bottom - minIndent)) {
+            if ((margin.Top + deltaTrans.Y) > (sizePage.height - minIndent)) {
                // вержний край мозаики пересёк нижнюю сторону страницы/экрана
                if (ev.IsInertial)
                   _turnY = !_turnY; // разворачиавю по оси Y
                else
-                  margin.Top = sizePage.Bottom - minIndent; // привязываю к нижней стороне страницы/экрана
+                  margin.Top = sizePage.height - minIndent; // привязываю к нижней стороне страницы/экрана
+               applyDelta = ev.IsInertial;
             }
 #endregion
-            margin.Left += deltaTrans.X;
-            margin.Top += deltaTrans.Y;
-
+            if (applyDelta) {
+               margin.Left += deltaTrans.X;
+               margin.Top += deltaTrans.Y;
+            }
             MosaicField.Container.Margin = margin;
          }
          base.OnManipulationDelta(ev);
@@ -440,6 +462,38 @@ namespace FastMines {
          Debug.WriteLine("< OnPointerPressed: ");
       }
 
+      protected override async void OnKeyUp(KeyRoutedEventArgs e)
+      {
+         Debug.WriteLine("> vrtOnKeyUp: ");
+         base.OnKeyUp(e);
+         Debug.WriteLine("< vrtOnKeyUp: ");
+      }
+      private async void OnKeyUp_CoreWindow(CoreWindow win, KeyEventArgs e) {
+         Debug.WriteLine("< OnKeyUp_CoreWindow: ");
+         switch (e.VirtualKey) {
+            case VirtualKey.F2:
+               e.Handled = true;
+               await MosaicField.GameNew();
+               break;
+            case VirtualKey.Number1:
+               SetGame(ESkillLevel.eBeginner);
+               e.Handled = true;
+               break;
+            case VirtualKey.Number2:
+               SetGame(ESkillLevel.eAmateur);
+               e.Handled = true;
+               break;
+            case VirtualKey.Number3:
+               SetGame(ESkillLevel.eProfi);
+               e.Handled = true;
+               break;
+            case VirtualKey.Number4:
+               SetGame(ESkillLevel.eCrazy);
+               e.Handled = true;
+               break;
+         }
+         Debug.WriteLine("> OnKeyUp_CoreWindow: ");
+      }
 
       private void ButtonBase_OnClickZoomIn(object sender, RoutedEventArgs e) {
          AreaInc();
