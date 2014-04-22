@@ -67,7 +67,7 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 
 					// paint cells
 					g.setFont(getGraphicContext().getFont());
-					for (BaseCell cell: getCells().getAll())
+					for (BaseCell cell: _matrix)
 						if (cell.getRcOuter().Intersects(Cast.toRect(g.getClipBounds()))) // redraw only when needed - when the cells and update region intersect
 							getCellPaint().paint(cell, g);
 				}
@@ -89,31 +89,24 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 		}
 		return _container;
 	}
-	protected class MatrixCellsExt extends MatrixCells {
-		@Override
-		protected void OnError(String msg) {
-			if (_DEBUG)
-				JOptionPane.showMessageDialog(getContainer(), msg, "Error", JOptionPane.QUESTION_MESSAGE, null);
-			else
-				super.OnError(msg);
-		}
-		@Override
-		public void setParams(Size newSizeField, EMosaic newMosaicType, Integer newMinesCount) {
-			if (this._mosaicType != newMosaicType)
-				_cellPaint = null;
-			
-			super.setParams(newSizeField, newMosaicType, newMinesCount);
-	
-			getContainer().repaint();
-			getContainer().revalidate();
-		}
+
+	@Override
+	protected void OnError(String msg) {
+		if (_DEBUG)
+			JOptionPane.showMessageDialog(getContainer(), msg, "Error", JOptionPane.QUESTION_MESSAGE, null);
+		else
+			super.OnError(msg);
 	}
 
 	@Override
-	protected MatrixCells getCells() {
-		if (_cells == null)
-			_cells = new MatrixCellsExt();
-		return _cells;
+	public void setParams(Size newSizeField, EMosaic newMosaicType, Integer newMinesCount) {
+		if (this._mosaicType != newMosaicType)
+			_cellPaint = null;
+		
+		super.setParams(newSizeField, newMosaicType, newMinesCount);
+
+		getContainer().repaint();
+		getContainer().revalidate();
 	}
 
 	public MosaicGraphicContext getGraphicContext() {
@@ -150,7 +143,7 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 	private Coord CursorPointToMosaicCoord(Point point) {
 //		long l1 = System.currentTimeMillis();
 //		try {
-			for (BaseCell cell: getCells().getAll())
+			for (BaseCell cell: _matrix)
 				//if (cell.getRcOuter().contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
 					if (cell.PointInRegion(Cast.toPoint(point)))
 						return cell.getCoord();

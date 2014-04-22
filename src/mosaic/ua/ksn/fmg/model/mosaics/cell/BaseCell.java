@@ -259,7 +259,7 @@ public abstract class BaseCell implements PropertyChangeListener {
 	/** матрица €чеек пол€ мозаики */
 	public static interface IMatrixCells {
 		/** размер пол€ */
-		Size getSize();
+		Size getSizeField();
 
 		/** доступ к заданной €чейке */
 		BaseCell getCell(Coord coord);
@@ -276,8 +276,8 @@ public abstract class BaseCell implements PropertyChangeListener {
 		// провер€ю что они не вылезли за размеры
 		for (int i=0; i<neighborCoord.length; i++)
 			if (neighborCoord[i] != Coord.INCORRECT_COORD)
-				if ((neighborCoord[i].x >= matrix.getSize().width) ||
-					(neighborCoord[i].y >= matrix.getSize().height) ||
+				if ((neighborCoord[i].x >= matrix.getSizeField().width) ||
+					(neighborCoord[i].y >= matrix.getSizeField().height) ||
 					(neighborCoord[i].x < 0) ||
 					(neighborCoord[i].y < 0))
 				{

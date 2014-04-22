@@ -34,19 +34,36 @@ using ua.ksn.fmg.Event.click;
 namespace ua.ksn.fmg.controller {
 
 /// <summary> Mosaic field: класс окна мозаики поля </summary>
-public abstract class Mosaic {
+public abstract class Mosaic : BaseCell.IMatrixCells {
 
-   /// <summary> размер поля в ячейках </summary>
-   /// <returns></returns>
-   public Size SizeField { get {
-      return Cells.Size;
-   }}
+#region Members
 
    public const int AREA_MINIMUM = 230;
+
+   /// <summary>матрица List &lt; List &lt; BaseCell &gt; &gt; , представленная(развёрнута) в виде вектора</summary>
+   protected IList<BaseCell> _matrix = new List<BaseCell>(0);
+   /// <summary>размер поля в ячейках</summary>
+   protected Size _size = new Size(0, 0);
+   /// <summary>из каких фигур состоит мозаика поля</summary>
+   protected EMosaic _mosaicType = EMosaic.eMosaicSquare1;
+   /// <summary>кол-во мин на поле</summary>
+   protected int _minesCount = 1;
+   /// <summary>кол-во мин на поле до создания игры. Используется когда игра была создана, но ни одной мины не проставлено.</summary>
+   protected int _oldMinesCount = 1;
+
+   private EGameStatus _gameStatus = EGameStatus.eGSEnd;
+   private EPlayInfo _playInfo = EPlayInfo.ePlayerUnknown;
+   private int _countClick;
+
+   /// <summary>для load'a - координаты ячеек с минами</summary>
+   private IList<Coord> _repositoryMines;
+
    /// <summary>использовать ли флажок на поле</summary>
    private bool _useUnknown = true;
 
    private BaseCell.BaseAttribute _cellAttr;
+#endregion
+
    public BaseCell.BaseAttribute CellAttr {
       private set {
          if (_cellAttr == null)
@@ -57,174 +74,162 @@ public abstract class Mosaic {
       }
       get {
          if (_cellAttr == null)
-            _cellAttr = CellFactory.CreateAttributeInstance(Cells.MosaicType, Area);
+            _cellAttr = CellFactory.CreateAttributeInstance(MosaicType, Area);
          return _cellAttr;
       }
    }
 
-   /// <summary>матрица ячеек поля мозаики</summary>
-   protected class MatrixCells : BaseCell.IMatrixCells {
-      protected readonly Mosaic _mosaic;
-      /// <summary>матрица List &lt; List &lt; BaseCell &gt; &gt; , представленная(развёрнута) в виде вектора</summary>
-      protected IList<BaseCell> _matrix = new List<BaseCell>(0);
-      /// <summary>размер поля в ячейках</summary>
-      protected Size _size = new Size(0, 0);
-      /// <summary>из каких фигур состоит мозаика поля</summary>
-      protected EMosaic _mosaicType = EMosaic.eMosaicSquare1;
-      /// <summary>кол-во мин на поле</summary>
-      protected int _minesCount = 1;
-      /// <summary>кол-во мин на поле до создания игры. Используется когда игра была создана, но ни одной мины не проставлено.</summary>
-      protected int _oldMinesCount = 1;
+   /// <summary> размер поля в ячейках </summary>
+   public Size SizeField { get { return _size; } set { setParams(value, null, null); } }
 
-      public MatrixCells(Mosaic owner) { _mosaic = owner; }
+   /// <summary>тип мозаики</summary>
+   public EMosaic MosaicType { get { return _mosaicType; } set { setParams(null, value, null); } }
 
-      /// <summary>размер поля в ячейках</summary>
-      public Size Size { get { return _size; } set { setParams(value, null, null); } }
-      /// <summary>тип мозаики</summary>
-      public EMosaic MosaicType { get { return _mosaicType; } set { setParams(null, value, null); } }
-      /// <summary>кол-во мин</summary>
-      public int MinesCount { get { return _minesCount; } set { setParams(null, null, value); } }
+   /// <summary>кол-во мин</summary>
+   public int MinesCount { get { return _minesCount; } set { setParams(null, null, value); } }
 
-      public virtual void setParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
+   /// <summary>установить мозаику заданного размера, типа  и с определённым количеством мин (координаты мин могут задаваться с помощью "Хранилища Мин")</summary>
+   public virtual void setParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount, List<Coord> storageCoordMines) {
+      try {
+         //repositoryMines.Reset();
+         if ((MosaicType == newMosaicType) &&
+            SizeField.Equals(newSizeField) &&
+            (MinesCount == newMinesCount))
+         {
+            return;
+         }
+
          var oldMosaicType = this._mosaicType;
-         bool newMosaciType = (newMosaicType != this._mosaicType);
-         bool recreateMatrix = 
-            ((newSizeField  != null) && !newSizeField.Equals(this._size)) ||
-            ((newMosaicType != null) && newMosaciType);
+         var isNewMosaic = (newMosaicType != null) && (newMosaicType != this._mosaicType);
+         var isNewSizeFld = ((newSizeField != null) && !this._size.Equals(newSizeField));
 
-         var saveArea = _mosaic.Area;
-         if (newSizeField != null)
+         var saveArea = Area;
+         if (isNewSizeFld) {
+            CoordDown = Coord.INCORRECT_COORD; // чтобы небыло IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
             this._size = newSizeField.GetValueOrDefault();
-         if (newMosaicType != null)
-            if (this._mosaicType != newMosaicType) {
-               this._mosaicType = newMosaicType.GetValueOrDefault();
-               _mosaic.CellAttr = null;
-            }
+         }
+         if (isNewMosaic) {
+            this._mosaicType = newMosaicType.GetValueOrDefault();
+            CellAttr = null;
+         }
          if (newMinesCount != null) {
             if (newMinesCount == 0)
                this._oldMinesCount = this._minesCount;
             this._minesCount = newMinesCount.GetValueOrDefault();
          }
-         _minesCount = Math.Max(1, Math.Min(_minesCount, _mosaic.GetMaxMines(this._size)));
-         if (saveArea != _mosaic.Area)
-            _mosaic.Area = saveArea;
+         _minesCount = Math.Max(1, Math.Min(_minesCount, GetMaxMines(this._size)));
+         if (saveArea != Area)
+            Area = saveArea;
 
-         if (recreateMatrix) {
-            BaseCell.BaseAttribute attr = _mosaic.CellAttr;
+         if (isNewMosaic || isNewSizeFld) {
+            var attr = CellAttr;
 
-            // отписываю старые ячейки от уведомлений атрибута
-            foreach (BaseCell cell in _matrix)
+            foreach (var cell in _matrix)
+               // отписываю старые ячейки от уведомлений атрибута
                attr.PropertyChanged -= cell.OnPropertyChanged;
 
             _matrix.Clear();
             _matrix = new List<BaseCell>(_size.width*_size.height);
-            for (int i=0; i < _size.width; i++)
-               for (int j=0; j < _size.height; j++) {
-                  BaseCell cell = CellFactory.CreateCellInstance(attr, _mosaicType, new Coord(i, j));
-                  _matrix.Add(/*i*size.height + j, */cell);
-                  attr.PropertyChanged += cell.OnPropertyChanged; // подписываю новые ячейки на уведомления атрибута (изменение a -> перерасчёт координат)
+            for (var i = 0; i < _size.width; i++)
+               for (var j = 0; j < _size.height; j++) {
+                  var cell = CellFactory.CreateCellInstance(attr, _mosaicType, new Coord(i, j));
+                  _matrix.Add( /*i*size.height + j, */cell);
+
+                  // подписываю новые ячейки на уведомления атрибута (изменение a -> перерасчёт координат)
+                  attr.PropertyChanged += cell.OnPropertyChanged;
                }
 
-            foreach (BaseCell cell in _matrix)
+            foreach (var cell in _matrix)
                cell.IdentifyNeighbors(this);
          }
 
-         _mosaic.fireOnChangeCounters();
-         if (newMosaciType)
-            _mosaic.fireOnChangeMosaicType(oldMosaicType);
+         fireOnChangeCounters();
+         if (isNewMosaic)
+            fireOnChangeMosaicType(oldMosaicType);
+      } finally {
+         if ((storageCoordMines == null) || (storageCoordMines.Count == 0))
+            RepositoryMines.Clear();
+         else
+            RepositoryMines = storageCoordMines;
+         //GameStatus = EGameStatus.eGSEnd;
+         GameNew();
       }
+   }
 
-      protected virtual void OnError(String msg) {
-         System.Diagnostics.Debug.WriteLine(msg);
+   /// <summary>установить мозаику заданного размера, типа и с определённым количеством мин</summary>
+   public virtual void setParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
+      setParams(newSizeField, newMosaicType, newMinesCount, null);
+   }
+
+   protected virtual void OnError(String msg) {
+      System.Diagnostics.Debug.WriteLine(msg);
 #if WINDOWS_RT
 #elif WINDOWS_FORMS
-         System.Console.Error(msg);
+      System.Console.Error(msg);
 #else
-         ...
+      ...
 #endif
-      }
+   }
 
-      /// <summary>arrange Mines</summary>
-      public void setMines_LoadRepository(IList<Coord> repository) {
-         foreach (Coord c in repository) {
-            bool suc = getCell(c).State.SetMine();
-            if (!suc)
-               OnError("Проблемы с установкой мин... :(");
-         }
-         // set other CellOpen and set all Caption
-         foreach (BaseCell cell in _matrix)
-            cell.State.CalcOpenState();
+   /// <summary>arrange Mines</summary>
+   public void setMines_LoadRepository(IList<Coord> repository) {
+      foreach (Coord c in repository) {
+         bool suc = getCell(c).State.SetMine();
+         if (!suc)
+            OnError("Проблемы с установкой мин... :(");
       }
-      /// <summary>arrange Mines - set random mines</summary>
-      public void setMines_random(Coord firstClickCoord) {
-         if (_minesCount == 0)
-            _minesCount = _oldMinesCount;
+      // set other CellOpen and set all Caption
+      foreach (BaseCell cell in _matrix)
+         cell.State.CalcOpenState();
+   }
+   /// <summary>arrange Mines - set random mines</summary>
+   public void setMines_random(Coord firstClickCoord) {
+      if (_minesCount == 0)
+         _minesCount = _oldMinesCount;
          
-         BaseCell firstClickCell = getCell(firstClickCoord);
-         var firstClickNeighbors = firstClickCell.Neighbors;
-         List<BaseCell> matrixClone = new List<BaseCell>(_matrix);
-         matrixClone.Remove(firstClickCell); // исключаю на которой кликал юзер
-         matrixClone.RemoveAll( x => firstClickNeighbors.Contains(x) ); // и их соседей
-         int count = 0;
-         Random rand = new Random();
-         do {
-            int len = matrixClone.Count;
-            if (len == 0) {
-               OnError("ээээ..... лажа......\r\nЗахотели установить больше мин чем возможно");
-               _minesCount = count;
-               break;
-            }
-            int i = rand.Next(len);
-            BaseCell cellToSetMines = matrixClone[i];
-            if (cellToSetMines.State.SetMine()) {
-               count++;
-               matrixClone.Remove(cellToSetMines);
-            } else
-               OnError("Мины должны всегда устанавливаться...");
-         } while (count < _minesCount);
+      BaseCell firstClickCell = getCell(firstClickCoord);
+      var firstClickNeighbors = firstClickCell.Neighbors;
+      List<BaseCell> matrixClone = new List<BaseCell>(_matrix);
+      matrixClone.Remove(firstClickCell); // исключаю на которой кликал юзер
+      matrixClone.RemoveAll( x => firstClickNeighbors.Contains(x) ); // и их соседей
+      int count = 0;
+      Random rand = new Random();
+      do {
+         int len = matrixClone.Count;
+         if (len == 0) {
+            OnError("ээээ..... лажа......\r\nЗахотели установить больше мин чем возможно");
+            _minesCount = count;
+            break;
+         }
+         int i = rand.Next(len);
+         BaseCell cellToSetMines = matrixClone[i];
+         if (cellToSetMines.State.SetMine()) {
+            count++;
+            matrixClone.Remove(cellToSetMines);
+         } else
+            OnError("Мины должны всегда устанавливаться...");
+      } while (count < _minesCount);
 
-         // set other CellOpen and set all Caption
-         foreach (BaseCell cell in _matrix)
-            cell.State.CalcOpenState();
-      }
+      // set other CellOpen and set all Caption
+      foreach (BaseCell cell in _matrix)
+         cell.State.CalcOpenState();
+   }
 
-      public IList<BaseCell> All {
-         get { return _matrix; }
-      }
+   public int CountOpen { get { return _matrix.Count(x => x.State.Status == EState._Open); } }
+   public int CountFlag { get { return _matrix.Count(x => (x.State.Status == EState._Close) && (x.State.Close == EClose._Flag)); } }
+   public int CountUnknown { get { return _matrix.Count(x => (x.State.Status == EState._Close) && (x.State.Close == EClose._Unknown)); } }
 
-      public int CountOpen {
-         get { return _matrix.Where(x => x.State.Status == EState._Open).Count(); }
-      }
-      public int CountFlag {
-         get { return _matrix.Where(x => (x.State.Status == EState._Close) && (x.State.Close == EClose._Flag)).Count(); }
-      }
-      public int CountUnknown {
-         get { return _matrix.Where(x => (x.State.Status == EState._Close) && (x.State.Close == EClose._Unknown)).Count(); }
-      }
+   /// <summary>сколько ещё осталось открыть мин</summary>
+   public int CountMinesLeft { get { return MinesCount - CountFlag; } }
+   public int CountClick { get { return _countClick; } private set { _countClick = value; fireOnChangeCounters(); } }
       
-      /// <summary>доступ к заданной ячейке</summary>
-      public BaseCell getCell(int x, int y) { return _matrix[x*_size.height + y]; }
-      /// <summary>доступ к заданной ячейке</summary>
-      public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
-   }
-   protected MatrixCells _cells;
-   /// <summary>матрица ячеек</summary>
-   protected virtual MatrixCells Cells { get {
-      if (_cells == null)
-         _cells = new MatrixCells(this);
-      return _cells;
-   }}
+   /// <summary> доступ к заданной ячейке </summary>
+   public BaseCell getCell(int x, int y) { return _matrix[x*_size.height + y]; }
+   /// <summary> доступ к заданной ячейке </summary>
+   public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
 
-   /// <summary>координаты ячейки на которой было нажато (но не обязательно что отпущено)</summary>
-   private Coord _coordDown;
-   protected Coord CoordDown {
-      set { _coordDown = value; }
-      get {
-         if (_coordDown == null)
-            _coordDown = Coord.INCORRECT_COORD;
-         return _coordDown;
-      }
-   }
+   /// <summary> координаты ячейки на которой было нажато (но не обязательно что отпущено) </summary>
+   protected Coord CoordDown { get; set; }
 
    /**
     *<br> Этапы игры:
@@ -240,22 +245,16 @@ public abstract class Mosaic {
     *<br>     Так сделал только лишь потому, чтобы первый клик выполнялся не на мине. Естественно
     *<br>     это не относится к случаю, когда игра была создана пользователем или считана из файла.
     */
-   private EGameStatus _gameStatus = EGameStatus.eGSEnd;
    public EGameStatus GameStatus {
       get { return _gameStatus; }
       set { var old = _gameStatus; _gameStatus = value; fireOnChangeGameStatus(old); }
    }
 
-   private EPlayInfo _playInfo = EPlayInfo.ePlayerUnknown;
    public EPlayInfo PlayInfo {
       get { return _playInfo; }
       set { _playInfo = EPlayInfoEx.setPlayInfo(_playInfo, value); }
    }
 
-   private int _countClick;
-
-   /// <summary>для load'a - координаты ячеек с минами</summary>
-   private IList<Coord> _repositoryMines;
    private IList<Coord> RepositoryMines {
       get {
          if (_repositoryMines == null)
@@ -295,9 +294,9 @@ public abstract class Mosaic {
       // set mines
       if (RepositoryMines.Count != 0) {
          PlayInfo = EPlayInfo.ePlayIgnor;
-         Cells.setMines_LoadRepository(RepositoryMines);
+         setMines_LoadRepository(RepositoryMines);
       } else {
-         Cells.setMines_random(firstClick);
+         setMines_random(firstClick);
       }
    }
 
@@ -308,7 +307,7 @@ public abstract class Mosaic {
       int realCountOpen = 0;
       { // открыть оставшeеся
 //         ::SetCursor(::LoadCursor(NULL, IDC_WAIT));
-         foreach (BaseCell cell in Cells.All)
+         foreach (BaseCell cell in _matrix)
             if (cell.State.Status == EState._Close) {
                if (victory) {
                   if (cell.State.Open == EOpen._Mine)
@@ -340,15 +339,15 @@ public abstract class Mosaic {
 
    private void VerifyFlag() {
       if (GameStatus == EGameStatus.eGSEnd) return;
-      if (Cells.MinesCount == Cells.CountFlag) {
-         foreach (BaseCell cell in Cells.All)
+      if (MinesCount == CountFlag) {
+         foreach (BaseCell cell in _matrix)
             if ((cell.State.Close == EClose._Flag) &&
                (cell.State.Open != EOpen._Mine))
                return; // неверно проставленный флажок - на выход
          GameEnd(true);
       } else
-         if (Cells.MinesCount == (Cells.CountFlag + Cells.CountUnknown)) {
-            foreach (BaseCell cell in Cells.All)
+         if (MinesCount == (CountFlag + CountUnknown)) {
+            foreach (BaseCell cell in _matrix)
                if (((cell.State.Close == EClose._Unknown) ||
                   ( cell.State.Close == EClose._Flag)) &&
                   ( cell.State.Open != EOpen._Mine))
@@ -372,11 +371,11 @@ public abstract class Mosaic {
          if (cell.State.Open != EOpen._Mine) {
             cell.State.setStatus(EState._Open, null);
             cell.State.SetMine();
-            Cells.MinesCount = Cells.MinesCount+1;
+            MinesCount = MinesCount+1;
             RepositoryMines.Add(coordLDown);
          } else {
             cell.Reset();
-            Cells.MinesCount = Cells.MinesCount-1;
+            MinesCount = MinesCount-1;
             RepositoryMines.Remove(coordLDown);
          }
          Repaint(cell);
@@ -408,7 +407,7 @@ public abstract class Mosaic {
          foreach (BaseCell cellToRepaint in result.needRepaint)
             Repaint(cellToRepaint);
       if ((result.countOpen > 0) || (result.countFlag > 0) || (result.countUnknown > 0)) { // клик со смыслом (были изменения на поле)
-         IncrementCountClick();
+         CountClick++;
          PlayInfo = EPlayInfo.ePlayerUser;  // юзер играл
          fireOnChangeCounters();
       }
@@ -416,8 +415,8 @@ public abstract class Mosaic {
       if (result.endGame) {
          GameEnd(result.victory);
       } else {
-         Size sizeField = Cells.Size;
-         if ((Cells.CountOpen + Cells.MinesCount) == sizeField.width*sizeField.height) {
+         Size sizeField = SizeField;
+         if ((CountOpen + MinesCount) == sizeField.width*sizeField.height) {
             GameEnd(true);
          } else {
             VerifyFlag();
@@ -453,7 +452,7 @@ public abstract class Mosaic {
       if (result.needRepaint)
          Repaint(cell);
       if ((result.countFlag>0) || (result.countUnknown>0)) { // клик со смыслом (были изменения на поле)
-         IncrementCountClick();
+         CountClick++;
          PlayInfo = EPlayInfo.ePlayerUser; // то считаю что юзер играл
          fireOnChangeCounters();
       }
@@ -496,10 +495,10 @@ public abstract class Mosaic {
                RepositoryMines.Clear();
          }
 
-      foreach (BaseCell cell in Cells.All)
+      foreach (BaseCell cell in _matrix)
          cell.Reset();
 
-      ResetCountClick();
+      CountClick = 0;
 
       GameStatus = EGameStatus.eGSReady;
       PlayInfo = EPlayInfo.ePlayerUnknown; // пока не знаю кто будет играть
@@ -509,50 +508,12 @@ public abstract class Mosaic {
    public void GameCreate() {
       GameNew();
       if (RepositoryMines.Count == 0) {
-         Cells.MinesCount = 0;
+         MinesCount = 0;
          GameStatus = EGameStatus.eGSCreateGame;
          fireOnChangeCounters();
       }
    }
 
-   /// <summary>установить мозаику заданного размера, типа и с определённым количеством мин</summary>
-   public void setParams(Size sizeField, EMosaic mosaicType, int minesCount) {
-      setParams(sizeField, mosaicType, minesCount, null);
-   }
-
-   /// <summary>установить мозаику заданного размера, типа  и с определённым количеством мин (координаты мин могут задаваться с помощью "Хранилища Мин")</summary>
-   public void setParams(Size sizeField, EMosaic mosaicType, int minesCount, List<Coord> storageCoordMines)
-   {
-      //repositoryMines.Reset();
-      if ((Cells.MosaicType == mosaicType) &&
-         Cells.Size.Equals(sizeField) &&
-         (Cells.MinesCount == minesCount))
-      {
-         GameNew();
-         return;
-      }
-
-      CoordDown = Coord.INCORRECT_COORD; // чтобы небыло IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
-
-      Cells.setParams(sizeField, mosaicType, minesCount);
-      if ((storageCoordMines == null) || (storageCoordMines.Count == 0))
-         RepositoryMines.Clear();
-      else
-         RepositoryMines = storageCoordMines;
-      //GameStatus = EGameStatus.eGSEnd;
-      GameNew();
-   }
-
-   /// <summary>доступ к заданной ячейке</summary>
-   public BaseCell getCell(int x, int y) { return Cells.getCell(x, y); }
-   /// <summary>доступ к заданной ячейке</summary>
-   public BaseCell getCell(Coord coord) { return Cells.getCell(coord); }
-//   private void setCell(Coord coord, BaseCell cell) { mosaic.get(coord.x).set(coord.y, cell); }
-
-   /// <summary>количество мин</summary>
-   public int MinesCount { get { return Cells.MinesCount; } }
-   /// <summary>узнать тип мозаики</summary>
-   public EMosaic MosaicType { get { return Cells.MosaicType; } }
    /// <summary>площадь ячеек</summary>
    public virtual int Area {
       get {
@@ -593,12 +554,6 @@ public abstract class Mosaic {
    /// <summary> узнать количество соседей для текущей мозаики </summary>
    public int NeighborNumber { get { return CellAttr.getNeighborNumber(); } }
 
-   /// <summary>сколько ещё осталось открыть мин</summary>
-   public int CountMinesLeft { get { return Cells.MinesCount - Cells.CountFlag; } }
-   public int CountClick { get { return _countClick; } }
-   private void ResetCountClick()     { _countClick=0; fireOnChangeCounters();}
-   private void IncrementCountClick() { _countClick++; fireOnChangeCounters(); }
-   public int CountOpen { get { return Cells.CountOpen; } }
    /// <summary>действительно лишь когда gameStatus == gsEnd</summary>
    public bool IsVictory {
       get {
@@ -618,7 +573,7 @@ public abstract class Mosaic {
    public IList<Coord> StorageMines {
       get {
          IList<Coord> repositoryMines = new List<Coord>();
-         foreach (BaseCell cell in Cells.All)
+         foreach (BaseCell cell in _matrix)
             if (cell.State.Open == EOpen._Mine)
                repositoryMines.Add(cell.getCoord());
          return repositoryMines;

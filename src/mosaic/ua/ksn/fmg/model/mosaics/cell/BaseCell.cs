@@ -224,7 +224,7 @@ public abstract class BaseCell {
    /// <summary>матрица €чеек пол€ мозаики</summary>
    public interface IMatrixCells {
       /// <summary>размер пол€</summary>
-      Size Size { get; }
+      Size SizeField { get; }
 
       /// <summary>доступ к заданной €чейке</summary>
       BaseCell getCell(Coord coord);
@@ -240,8 +240,8 @@ public abstract class BaseCell {
       // провер€ю что они не вылезли за размеры
       for (int i=0; i<neighborCoord.Length; i++)
          if (neighborCoord[i] != Coord.INCORRECT_COORD)
-            if ((neighborCoord[i].x >= matrix.Size.width) ||
-               (neighborCoord[i].y >= matrix.Size.height) ||
+            if ((neighborCoord[i].x >= matrix.SizeField.width) ||
+               (neighborCoord[i].y >= matrix.SizeField.height) ||
                (neighborCoord[i].x < 0) ||
                (neighborCoord[i].y < 0))
             {

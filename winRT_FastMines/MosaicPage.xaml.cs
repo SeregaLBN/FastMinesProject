@@ -359,15 +359,23 @@ namespace FastMines {
 
       private bool _turnX;
       private bool _turnY;
+      private DateTime _dtInertiaStarting;
+
       protected override void OnManipulationStarted(ManipulationStartedRoutedEventArgs e) {
-         _turnX = _turnY = false;
          Debug.WriteLine("> OnManipulationStarted");
+         _turnX = _turnY = false;
+         _dtInertiaStarting = DateTime.MinValue;
          base.OnManipulationStarted(e);
          Debug.WriteLine("< OnManipulationStarted");
       }
 
+      protected override void OnManipulationInertiaStarting(ManipulationInertiaStartingRoutedEventArgs e) {
+         _dtInertiaStarting = DateTime.Now;
+         base.OnManipulationInertiaStarting(e);
+      }
+
       protected override void OnManipulationDelta(ManipulationDeltaRoutedEventArgs ev) {
-         Debug.WriteLine("> OnManipulationDelta: " + ev.Delta.Scale);
+         Debug.WriteLine("> OnManipulationDelta: Scale={0}; Expansion={1}, Rotation={2}", ev.Delta.Scale, ev.Delta.Expansion, ev.Delta.Rotation);
          ev.Handled = true;
          if (Math.Abs(1 - ev.Delta.Scale) > 0.009) {
             if (ev.Delta.Scale > 0)
@@ -385,8 +393,11 @@ namespace FastMines {
                deltaTrans.Y *= -1;
 
             if (ev.IsInertial) {
-               deltaTrans.X *= 0.05;
-               deltaTrans.Y *= 0.05;
+               //var сoefFading = Math.Max(0.05, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
+               var сoefFading = Math.Max(0, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
+               Debug.WriteLine("  OnManipulationDelta: inertial coeff fading = " + сoefFading);
+               deltaTrans.X *= сoefFading;
+               deltaTrans.Y *= сoefFading;
             }
 
             const int minIndent = 30;
@@ -415,7 +426,7 @@ namespace FastMines {
                else
                   margin.Top = minIndent - sizeWinMosaic.height; // привязываю к верхней стороне страницы/экрана
                applyDelta = ev.IsInertial;
-            }
+            } else
             if ((margin.Top + deltaTrans.Y) > (sizePage.height - minIndent)) {
                // вержний край мозаики пересёк нижнюю сторону страницы/экрана
                if (ev.IsInertial)
@@ -493,13 +504,6 @@ namespace FastMines {
                break;
          }
          Debug.WriteLine("> OnKeyUp_CoreWindow: ");
-      }
-
-      private void ButtonBase_OnClickZoomIn(object sender, RoutedEventArgs e) {
-         AreaInc();
-      }
-      private void ButtonBase_OnClickZoomOut(object sender, RoutedEventArgs e) {
-         AreaDec();
       }
 
       private void OnClickBttnBack(object sender, RoutedEventArgs e) {

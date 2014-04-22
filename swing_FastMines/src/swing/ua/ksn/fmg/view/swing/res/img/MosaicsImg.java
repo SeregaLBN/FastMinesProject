@@ -21,7 +21,6 @@ public class MosaicsImg implements Icon {
 	private final List<BaseCell> arrCell;
 	private final static GraphicContext gContext;
 	private final Size sizeField;
-	private final int area;
 
 	static {
 		gContext = new GraphicContext(null, true, new Size(0,0));
@@ -31,7 +30,6 @@ public class MosaicsImg implements Icon {
 
 	public MosaicsImg(EMosaic mosaicType, boolean smallIco) { this(mosaicType, smallIco, 300); }
 	public MosaicsImg(EMosaic mosaicType, boolean smallIco, int area) {
-		this.area = area;
 		attr = CellFactory.createAttributeInstance(mosaicType, area);
 		arrCell = new ArrayList<BaseCell>();
 		gInfo = new CellPaint(gContext);
@@ -43,12 +41,12 @@ public class MosaicsImg implements Icon {
 
 	@Override
 	public int getIconWidth() {
-		return attr.CalcOwnerSize(sizeField, area).width+gContext.getBound().width*2;
+		return attr.CalcOwnerSize(sizeField, attr.getArea()).width+gContext.getBound().width*2;
 	}
 
 	@Override
 	public int getIconHeight() {
-		return attr.CalcOwnerSize(sizeField, area).height+gContext.getBound().height*2;
+		return attr.CalcOwnerSize(sizeField, attr.getArea()).height+gContext.getBound().height*2;
 	}
 
 	@Override

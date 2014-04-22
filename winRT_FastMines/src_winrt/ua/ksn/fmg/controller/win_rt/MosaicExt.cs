@@ -30,7 +30,7 @@ namespace ua.ksn.fmg.controller.win_rt {
       private void BindXamlToMosaic() {
          Container.Children.Clear();
          XamlBinder.Clear();
-         var sizeMosaic = Cells.Size;
+         var sizeMosaic = SizeField;
          for (var i = 0; i < sizeMosaic.width; i++)
             for (var j = 0; j < sizeMosaic.height; j++) {
                var cell = base.getCell(i, j);
@@ -44,42 +44,31 @@ namespace ua.ksn.fmg.controller.win_rt {
             }
       }
 
-      protected class MatrixCellsExt : MatrixCells {
-         public MatrixCellsExt(Mosaic mosaic) : base(mosaic) {}
-
-         protected override void OnError(string msg) {
+      protected override void OnError(string msg) {
 #if DEBUG
-            System.Diagnostics.Debug.Assert(false, msg);
+         System.Diagnostics.Debug.Assert(false, msg);
 #else
-				base.OnError(msg);
+			base.OnError(msg);
 #endif
-         }
+      }
 
-         public override void setParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
-            var mosaic = _mosaic as MosaicExt;
-            System.Diagnostics.Debug.Assert(mosaic != null);
+      public override void setParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
+         if (this._mosaicType != newMosaicType)
+            _cellPaint = null;
 
-            if (this._mosaicType != newMosaicType)
-               mosaic._cellPaint = null;
+         var rebind = (this.SizeField != newSizeField) ||
+                        (this.MosaicType != newMosaicType) ||
+                        (this.MinesCount != newMinesCount);
+         base.setParams(newSizeField, newMosaicType, newMinesCount);
+         if (rebind)
+            BindXamlToMosaic();
 
-            var rebind = (this.Size != newSizeField) ||
-                         (this.MosaicType != newMosaicType) ||
-                         (this.MinesCount != newMinesCount);
-            base.setParams(newSizeField, newMosaicType, newMinesCount);
-            if (rebind)
-               mosaic.BindXamlToMosaic();
-
-            mosaic.Repaint();
-            //mosaic.Container.InvalidateArrange(); // Revalidate();
-         }
+         Repaint();
+         //Container.InvalidateArrange(); // Revalidate();
       }
 
       public Panel Container {
          get { return _container ?? (_container = new Canvas()); }
-      }
-
-      protected override MatrixCells Cells {
-         get { return _cells ?? (_cells = new MatrixCellsExt(this)); }
       }
 
       public MosaicGraphicContext GraphicContext {
@@ -117,7 +106,7 @@ namespace ua.ksn.fmg.controller.win_rt {
          }
 
          // paint all cells
-         var sizeMosaic = base.Cells.Size;
+         var sizeMosaic = SizeField;
          for (var i = 0; i < sizeMosaic.width; i++)
             for (var j = 0; j < sizeMosaic.height; j++) {
                var cell = base.getCell(i, j);

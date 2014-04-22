@@ -23,13 +23,11 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       private readonly List<BaseCell> _arrCell;
       private readonly GraphicContext _gContext;
       private readonly Size _sizeField;
-      private readonly int _area;
       private static readonly Random _random = new Random();
 
       public MosaicsImg(EMosaic mosaicType, bool smallIco) : this(mosaicType, smallIco, 3000) {}
 
       public MosaicsImg(EMosaic mosaicType, bool smallIco, int area) {
-         this._area = area;
          _attr = CellFactory.CreateAttributeInstance(mosaicType, area);
          _arrCell = new List<BaseCell>();
 
@@ -62,7 +60,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       public async Task<WriteableBitmap> GetImage() {
          {
             if (_image == null) {
-               var pixelSize = _attr.CalcOwnerSize(_sizeField, _area);
+               var pixelSize = _attr.CalcOwnerSize(_sizeField, _attr.Area);
                var w = pixelSize.width + _gContext.Bound.width*2;
                var h = pixelSize.height + _gContext.Bound.height*2;
 
