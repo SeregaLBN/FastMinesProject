@@ -29,10 +29,10 @@ namespace FastMines {
                ContentRoot.Children.Add(_mosaic.Container);
 
                _mosaic.OnClick += Mosaic_OnClick;
-               _mosaic.OnChangeGameStatus += Mosaic_OnChangeGameStatus;
-               _mosaic.OnChangeCounters += Mosaic_OnChangeCounters;
-               _mosaic.OnChangeArea += Mosaic_OnChangeArea;
-               _mosaic.OnChangeMosaicType += Mosaic_OnChangeMosaicType;
+               _mosaic.OnChangedGameStatus += Mosaic_OnChangedGameStatus;
+               _mosaic.OnChangedCounters += Mosaic_OnChangedCounters;
+               _mosaic.OnChangedArea += Mosaic_OnChangedArea;
+               _mosaic.OnChangedMosaicType += Mosaic_OnChangedMosaicType;
             }
             return _mosaic;
          }
@@ -289,9 +289,9 @@ namespace FastMines {
       }
 
       private void Mosaic_OnClick(Mosaic source, bool leftClick, bool down) { }
-      private void Mosaic_OnChangeGameStatus(Mosaic source, EGameStatus oldValue) {}
-      private void Mosaic_OnChangeCounters(Mosaic source) {}
-      private void Mosaic_OnChangeArea(Mosaic source, int oldArea) {
+      private void Mosaic_OnChangedGameStatus(Mosaic source, EGameStatus oldValue) {}
+      private void Mosaic_OnChangedCounters(Mosaic source) {}
+      private void Mosaic_OnChangedArea(Mosaic source, int oldArea) {
          //ChangeSizeImagesMineFlag();
 
          var sizeWinMosaic = MosaicField.WindowSize;
@@ -303,7 +303,7 @@ namespace FastMines {
 
          //MosaicField.Container.Margin = new Thickness();
       }
-      private void Mosaic_OnChangeMosaicType(Mosaic source, EMosaic oldMosaic) {
+      private void Mosaic_OnChangedMosaicType(Mosaic source, EMosaic oldMosaic) {
          (source as MosaicExt).ChangeFontSize();
          //ChangeSizeImagesMineFlag();
       }

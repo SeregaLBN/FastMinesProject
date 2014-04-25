@@ -2,6 +2,7 @@ package ua.ksn.fmg.controller.event;
 
 import java.util.EventObject;
 
+import ua.ksn.geom.Size;
 import ua.ksn.fmg.controller.Mosaic;
 import ua.ksn.fmg.controller.types.EGameStatus;
 import ua.ksn.fmg.model.mosaics.EMosaic;
@@ -33,19 +34,19 @@ public class MosaicEvent extends EventObject {
 
 	}
 
-	public static class ChangeCountersEvent extends MosaicEvent {
+	public static class ChangedCountersEvent extends MosaicEvent {
 		private static final long serialVersionUID = 1L;
 
-		public ChangeCountersEvent(Mosaic source) {
+		public ChangedCountersEvent(Mosaic source) {
 			super(source);
 		}
 	}
 
-	public static class ChangeGameStatusEvent extends MosaicEvent {
+	public static class ChangedGameStatusEvent extends MosaicEvent {
 		private static final long serialVersionUID = 1L;
 		EGameStatus oldGameStatus;
 
-		public ChangeGameStatusEvent(Mosaic source, EGameStatus oldGameStatus) {
+		public ChangedGameStatusEvent(Mosaic source, EGameStatus oldGameStatus) {
 			super(source);
 			this.oldGameStatus = oldGameStatus;
 		}
@@ -55,11 +56,11 @@ public class MosaicEvent extends EventObject {
 		}
 	}
 
-	public static class ChangeAreaEvent extends MosaicEvent {
+	public static class ChangedAreaEvent extends MosaicEvent {
 		private static final long serialVersionUID = 1L;
 		int oldArea;
 
-		public ChangeAreaEvent(Mosaic source, int oldArea) {
+		public ChangedAreaEvent(Mosaic source, int oldArea) {
 			super(source);
 			this.oldArea = oldArea;
 		}
@@ -69,17 +70,31 @@ public class MosaicEvent extends EventObject {
 		}
 	}
 
-	public static class ChangeMosaicTypeEvent extends MosaicEvent {
+	public static class ChangedMosaicTypeEvent extends MosaicEvent {
 		private static final long serialVersionUID = 1L;
 		EMosaic oldMosaic;
 
-		public ChangeMosaicTypeEvent(Mosaic source, EMosaic oldMosaic) {
+		public ChangedMosaicTypeEvent(Mosaic source, EMosaic oldMosaic) {
 			super(source);
 			this.oldMosaic = oldMosaic;
 		}
 	
 		public EMosaic getOldMosaic() {
 			return oldMosaic;
+		}
+	}
+
+	public static class ChangedMosaicSizeEvent extends MosaicEvent {
+		private static final long serialVersionUID = 1L;
+		Size oldSize;
+
+		public ChangedMosaicSizeEvent(Mosaic source, Size oldSize) {
+			super(source);
+			this.oldSize = oldSize;
+		}
+	
+		public Size getOldSize() {
+			return oldSize;
 		}
 	}
 

@@ -925,7 +925,7 @@ public class Main extends JFrame  {
 		this.setIconImage(getResources().getImgLogo());
 
 		getMosaic().addMosaicListener(this.getHandlers().getMosaicListener());
-//		this.getHandlers().getMosaicListener().OnChangeArea(new MosaicEvent(getMosaic())); // TODO: это нужно только тогда, когда нет десериализации
+//		this.getHandlers().getMosaicListener().OnChangedArea(new MosaicEvent(getMosaic())); // TODO: это нужно только тогда, когда нет десериализации
 		getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaic().getCountMinesLeft()));
 		getToolbar().getEdtTimePlay().setText("0");
 
@@ -1906,7 +1906,7 @@ public class Main extends JFrame  {
 					}
 					
 					@Override
-					public void OnChangeGameStatus(MosaicEvent.ChangeGameStatusEvent e) {
+					public void OnChangedGameStatus(MosaicEvent.ChangedGameStatusEvent e) {
 						getToolbar().getBtnPause().setEnabled(getMosaic().getGameStatus() == EGameStatus.eGSPlay);
 //						System.out.println("OnChangeGameStatus: " + e.getSource().getGameStatus());
 						switch (e.getSource().getGameStatus()) {
@@ -1944,21 +1944,26 @@ public class Main extends JFrame  {
 					}
 					
 					@Override
-					public void OnChangeCounters(MosaicEvent.ChangeCountersEvent e) {
+					public void OnChangedCounters(MosaicEvent.ChangedCountersEvent e) {
 						Main.this.getToolbar().getEdtMinesLeft().setText(
 								Integer.toString(e.getSource().getCountMinesLeft()));
 						Main.this.getStatusBar().setClickCount(e.getSource().getCountClick());
 					}
 
 					@Override
-					public void OnChangeArea(MosaicEvent.ChangeAreaEvent e) {
+					public void OnChangedArea(MosaicEvent.ChangedAreaEvent e) {
 						Main.this.ChangeSizeImagesMineFlag();
 					}
 
 					@Override
-					public void OnChangeMosaicType(MosaicEvent.ChangeMosaicTypeEvent e) {
+					public void OnChangedMosaicType(MosaicEvent.ChangedMosaicTypeEvent e) {
 						((MosaicExt)e.getSource()).changeFontSize();
 						Main.this.ChangeSizeImagesMineFlag();
+					}
+
+					@Override
+					public void OnChangedMosaicSize(MosaicEvent.ChangedMosaicSizeEvent e) {
+						// ...
 					}
 			};
 	
@@ -2326,7 +2331,7 @@ public class Main extends JFrame  {
 	}
 
 	/** —охранить чемпиона && ”становить статистику */
-	public void setStatisticAndChampion(MosaicEvent.ChangeGameStatusEvent e) {
+	public void setStatisticAndChampion(MosaicEvent.ChangedGameStatusEvent e) {
 		Mosaic mosaic = e.getSource();
 		if (mosaic.getGameStatus() != EGameStatus.eGSEnd)
 			throw new RuntimeException("Invalid method state call");

@@ -108,6 +108,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 			}
 
 			EMosaic oldMosaicType = this._mosaicType;
+			Size oldMosaicSize = this._size;
 			boolean isNewMosaic = (newMosaicType != null) && (newMosaicType != this._mosaicType);
 			boolean isNewSizeFld = (newSizeField != null) && !newSizeField.equals(this._size);
 
@@ -149,9 +150,11 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 					cell.IdentifyNeighbors(this);
 			}
 
-			getMosaicListeners().fireOnChangeCounters(new MosaicEvent.ChangeCountersEvent(Mosaic.this));
+			getMosaicListeners().fireOnChangedCounters(new MosaicEvent.ChangedCountersEvent(Mosaic.this));
 			if (isNewMosaic)
-				getMosaicListeners().fireOnChangeMosaicType(new MosaicEvent.ChangeMosaicTypeEvent(Mosaic.this, oldMosaicType));
+				getMosaicListeners().fireOnChangedMosaicType(new MosaicEvent.ChangedMosaicTypeEvent(Mosaic.this, oldMosaicType));
+			if (isNewSizeFld)
+				getMosaicListeners().fireOnChangedMosaicSize(new MosaicEvent.ChangedMosaicSizeEvent(Mosaic.this, oldMosaicSize));
 		} finally {
 			if ((storageCoordMines == null) || storageCoordMines.isEmpty())
 				getRepositoryMines().clear();
@@ -242,7 +245,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 	/** сколько ещё осталось открыть мин */
 	public int getCountMinesLeft() { return getMinesCount() - getCountFlag(); }
 	public int getCountClick()  { return _countClick; }
-	public void setCountClick(int clickCount)  { _countClick=clickCount; getMosaicListeners().fireOnChangeCounters(new MosaicEvent.ChangeCountersEvent(this)); }
+	public void setCountClick(int clickCount)  { _countClick=clickCount; getMosaicListeners().fireOnChangedCounters(new MosaicEvent.ChangedCountersEvent(this)); }
 
 	/** доступ к заданной ячейке */
 	public BaseCell getCell(int x, int y) { return _matrix.get(x*_size.height + y); }
@@ -281,7 +284,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 	public void setGameStatus(EGameStatus newStatus) {
 		EGameStatus old = _gameStatus; 
 		_gameStatus = newStatus;
-		getMosaicListeners().fireOnChangeGameStatus(new MosaicEvent.ChangeGameStatusEvent(this, old));
+		getMosaicListeners().fireOnChangedGameStatus(new MosaicEvent.ChangedGameStatusEvent(this, old));
 	}
 
 	public EPlayInfo getPlayInfo() {
@@ -329,24 +332,29 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 				l.OnClick(e);
 		}
 		/** уведомление: изменено кол-во открытых ячеек / флагов / кликов / ... */
-		public void fireOnChangeCounters(MosaicEvent.ChangeCountersEvent e) {
+		public void fireOnChangedCounters(MosaicEvent.ChangedCountersEvent e) {
 			for (MosaicListener l: getListeners())
-				l.OnChangeCounters(e);
+				l.OnChangedCounters(e);
 		}
 		/** уведомить об изменении статуса игры (новая игра, начало игры, конец игры) */
-		public void fireOnChangeGameStatus(MosaicEvent.ChangeGameStatusEvent e) {
+		public void fireOnChangedGameStatus(MosaicEvent.ChangedGameStatusEvent e) {
 			for (MosaicListener l: getListeners())
-				l.OnChangeGameStatus(e);
+				l.OnChangedGameStatus(e);
 		}
-		/** уведомить о изменении размера площади у ячейки */
-		public void fireOnChangeArea(MosaicEvent.ChangeAreaEvent e) {
+		/** уведомить об изменении размера площади у ячейки */
+		public void fireOnChangedArea(MosaicEvent.ChangedAreaEvent e) {
 			for (MosaicListener l: getListeners())
-				l.OnChangeArea(e);
+				l.OnChangedArea(e);
 		}
-		/** уведомить о изменении размера площади у ячейки */
-		public void fireOnChangeMosaicType(MosaicEvent.ChangeMosaicTypeEvent e) {
+		/** уведомить об изменении размера площади у ячейки */
+		public void fireOnChangedMosaicType(MosaicEvent.ChangedMosaicTypeEvent e) {
 			for (MosaicListener l: getListeners())
-				l.OnChangeMosaicType(e);
+				l.OnChangedMosaicType(e);
+		}
+		/** уведомить об изменении размера мозаики */
+		public void fireOnChangedMosaicSize(MosaicEvent.ChangedMosaicSizeEvent e) {
+			for (MosaicListener l: getListeners())
+				l.OnChangedMosaicSize(e);
 		}
 	}
 	private MosaicListeners _mosaicListeners;
@@ -412,7 +420,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		//BeepSpeaker();
 
 		setGameStatus(EGameStatus.eGSEnd);
-		getMosaicListeners().fireOnChangeCounters(new MosaicEvent.ChangeCountersEvent(this));
+		getMosaicListeners().fireOnChangedCounters(new MosaicEvent.ChangedCountersEvent(this));
 	}
 
 	private void VerifyFlag() {
@@ -487,7 +495,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		if ((result.countOpen > 0) || (result.countFlag > 0) || (result.countUnknown > 0)) { // клик со смыслом (были изменения на поле)
 			setCountClick(getCountClick()+1);
 			setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
-			getMosaicListeners().fireOnChangeCounters(new MosaicEvent.ChangeCountersEvent(this));
+			getMosaicListeners().fireOnChangedCounters(new MosaicEvent.ChangedCountersEvent(this));
 		}
 
 		if (result.endGame) {
@@ -532,7 +540,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		if ((result.countFlag>0) || (result.countUnknown>0)) { // клик со смыслом (были изменения на поле)
 			setCountClick(getCountClick()+1);
 			setPlayInfo(EPlayInfo.ePlayerUser); // то считаю что юзер играл
-			getMosaicListeners().fireOnChangeCounters(new MosaicEvent.ChangeCountersEvent(this));
+			getMosaicListeners().fireOnChangedCounters(new MosaicEvent.ChangedCountersEvent(this));
 		}
 
 		VerifyFlag();
@@ -582,7 +590,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		if (getRepositoryMines().isEmpty()) {
 			setMinesCount(0);
 			setGameStatus(EGameStatus.eGSCreateGame);
-			getMosaicListeners().fireOnChangeCounters(new MosaicEvent.ChangeCountersEvent(this));
+			getMosaicListeners().fireOnChangedCounters(new MosaicEvent.ChangedCountersEvent(this));
 		}
 	}
 
@@ -603,7 +611,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		if (oldArea == Math.max(AREA_MINIMUM, newArea)) return;
 		getCellAttr().setArea(Math.max(AREA_MINIMUM, newArea));
 
-		getMosaicListeners().fireOnChangeArea(new MosaicEvent.ChangeAreaEvent(this, oldArea));
+		getMosaicListeners().fireOnChangedArea(new MosaicEvent.ChangedAreaEvent(this, oldArea));
 	}
 	public void setUseUnknown(boolean val) { _useUnknown = val; }
 	public boolean getUseUnknown() { return _useUnknown; }

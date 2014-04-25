@@ -100,6 +100,7 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
          }
 
          var oldMosaicType = this._mosaicType;
+         var oldMosaicSize = this._size;
          var isNewMosaic = (newMosaicType != null) && (newMosaicType != this._mosaicType);
          var isNewSizeFld = ((newSizeField != null) && !this._size.Equals(newSizeField));
 
@@ -143,9 +144,11 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
                cell.IdentifyNeighbors(this);
          }
 
-         fireOnChangeCounters();
+         fireOnChangedCounters();
          if (isNewMosaic)
-            fireOnChangeMosaicType(oldMosaicType);
+            fireOnChangedMosaicType(oldMosaicType);
+         if (isNewSizeFld)
+            fireOnChangedMosaicSize(oldMosaicSize);
       } finally {
          if ((storageCoordMines == null) || (storageCoordMines.Count == 0))
             RepositoryMines.Clear();
@@ -221,7 +224,7 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
 
    /// <summary>сколько ещё осталось открыть мин</summary>
    public int CountMinesLeft { get { return MinesCount - CountFlag; } }
-   public int CountClick { get { return _countClick; } private set { _countClick = value; fireOnChangeCounters(); } }
+   public int CountClick { get { return _countClick; } private set { _countClick = value; fireOnChangedCounters(); } }
       
    /// <summary> доступ к заданной ячейке </summary>
    public BaseCell getCell(int x, int y) { return _matrix[x*_size.height + y]; }
@@ -247,7 +250,7 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
     */
    public EGameStatus GameStatus {
       get { return _gameStatus; }
-      set { var old = _gameStatus; _gameStatus = value; fireOnChangeGameStatus(old); }
+      set { var old = _gameStatus; _gameStatus = value; fireOnChangedGameStatus(old); }
    }
 
    public EPlayInfo PlayInfo {
@@ -267,20 +270,23 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
    }
 
    public event OnClickEvent OnClick = delegate { };
-   public event OnChangeCountersEvent OnChangeCounters = delegate { };
-   public event OnChangeGameStatusEvent OnChangeGameStatus = delegate { };
-   public event OnChangeAreaEvent OnChangeArea = delegate { };
-   public event OnChangeMosaicTypeEvent OnChangeMosaicType = delegate { };
+   public event OnChangedCountersEvent OnChangedCounters = delegate { };
+   public event OnChangedGameStatusEvent OnChangedGameStatus = delegate { };
+   public event OnChangedAreaEvent OnChangedArea = delegate { };
+   public event OnChangedMosaicTypeEvent OnChangedMosaicType = delegate { };
+   public event OnChangedMosaicSizeEvent OnChangedMosaicSize = delegate { };
 
-   /// <summary>уведомить о клике на мозаике</summary>
+   /// <summary> уведомить о клике на мозаике </summary>
    private void fireOnClick(bool leftClick, bool down) { OnClick(this, leftClick, down); }
-   private void fireOnChangeCounters() { OnChangeCounters(this); }
-   /// <summary>уведомить об изменении статуса игры (новая игра, начало игры, конец игры)</summary>
-   private void fireOnChangeGameStatus(EGameStatus oldValue) { OnChangeGameStatus(this, oldValue); }
-   /// <summary>уведомить о изменении размера площади у ячейки</summary>
-   private void fireOnChangeArea(int oldArea) { OnChangeArea(this, oldArea); }
-   /// <summary>уведомить о изменении размера площади у ячейки</summary>
-   private void fireOnChangeMosaicType(EMosaic oldMosaic) { OnChangeMosaicType(this, oldMosaic); }
+   private void fireOnChangedCounters() { OnChangedCounters(this); }
+   /// <summary> уведомить об изменении статуса игры (новая игра, начало игры, конец игры) </summary>
+   private void fireOnChangedGameStatus(EGameStatus oldValue) { OnChangedGameStatus(this, oldValue); }
+   /// <summary> уведомить об изменении размера площади у ячейки </summary>
+   private void fireOnChangedArea(int oldArea) { OnChangedArea(this, oldArea); }
+   /// <summary> уведомить об изменении размера площади у ячейки </summary>
+   private void fireOnChangedMosaicType(EMosaic oldMosaic) { OnChangedMosaicType(this, oldMosaic); }
+   /// <summary> уведомить об изменении размера мозаики </summary>
+   private void fireOnChangedMosaicSize(Size oldSize) { OnChangedMosaicSize(this, oldSize); }
 
    /// <summary>перерисовать ячейку; если null - перерисовать всё поле </summary>
    protected abstract void Repaint(BaseCell cell);
@@ -334,7 +340,7 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
       //BeepSpeaker();
 
       GameStatus = EGameStatus.eGSEnd;
-      fireOnChangeCounters();
+      fireOnChangedCounters();
    }
 
    private void VerifyFlag() {
@@ -409,7 +415,7 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
       if ((result.countOpen > 0) || (result.countFlag > 0) || (result.countUnknown > 0)) { // клик со смыслом (были изменения на поле)
          CountClick++;
          PlayInfo = EPlayInfo.ePlayerUser;  // юзер играл
-         fireOnChangeCounters();
+         fireOnChangedCounters();
       }
 
       if (result.endGame) {
@@ -454,7 +460,7 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
       if ((result.countFlag>0) || (result.countUnknown>0)) { // клик со смыслом (были изменения на поле)
          CountClick++;
          PlayInfo = EPlayInfo.ePlayerUser; // то считаю что юзер играл
-         fireOnChangeCounters();
+         fireOnChangedCounters();
       }
 
       VerifyFlag();
@@ -510,7 +516,7 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
       if (RepositoryMines.Count == 0) {
          MinesCount = 0;
          GameStatus = EGameStatus.eGSCreateGame;
-         fireOnChangeCounters();
+         fireOnChangedCounters();
       }
    }
 
@@ -531,7 +537,7 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
          if (oldArea == Math.Max(AREA_MINIMUM, value))
             return;
          CellAttr.Area = Math.Max(AREA_MINIMUM, value);
-         fireOnChangeArea(oldArea);
+         fireOnChangedArea(oldArea);
       }
    }
    public bool UseUnknown {

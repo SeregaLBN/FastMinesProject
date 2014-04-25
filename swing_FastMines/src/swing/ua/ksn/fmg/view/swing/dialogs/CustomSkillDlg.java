@@ -221,13 +221,15 @@ public class CustomSkillDlg extends JDialog {
 				@Override
 				public void OnClick(MosaicEvent.ClickEvent e) {}
 				@Override
-				public void OnChangeMosaicType(MosaicEvent.ChangeMosaicTypeEvent e) { if (CustomSkillDlg.this.isVisible()) CustomSkillDlg.this.OnChangeMosaicType(); }
+				public void OnChangedMosaicType(MosaicEvent.ChangedMosaicTypeEvent e) { if (CustomSkillDlg.this.isVisible()) CustomSkillDlg.this.OnChangeMosaicType(); }
 				@Override
-				public void OnChangeGameStatus(MosaicEvent.ChangeGameStatusEvent e) {}
+				public void OnChangedGameStatus(MosaicEvent.ChangedGameStatusEvent e) {}
 				@Override
-				public void OnChangeCounters(MosaicEvent.ChangeCountersEvent e) {}
+				public void OnChangedCounters(MosaicEvent.ChangedCountersEvent e) {}
 				@Override
-				public void OnChangeArea(MosaicEvent.ChangeAreaEvent e) { if (radioFullScreenCurrSizeArea.isSelected()) radioGroup.clearSelection(); }
+				public void OnChangedArea(MosaicEvent.ChangedAreaEvent e) { if (radioFullScreenCurrSizeArea.isSelected()) radioGroup.clearSelection(); }
+				@Override
+				public void OnChangedMosaicSize(MosaicEvent.ChangedMosaicSizeEvent e) {  }
 			});
 	}
 
