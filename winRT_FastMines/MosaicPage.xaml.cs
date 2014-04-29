@@ -13,6 +13,8 @@ using ua.ksn.fmg.model.mosaics;
 using ua.ksn.fmg.view.win_rt;
 using ua.ksn.fmg.controller;
 using ua.ksn.fmg.controller.types;
+using System.Threading.Tasks;
+using Windows.System.Threading;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace FastMines {
@@ -54,28 +56,30 @@ namespace FastMines {
          this.Tapped += OnPageTapped;
 
          if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) {
-            MosaicField.setParams(new Size(10, 10), EMosaic.eMosaicRhombus1, 3);
-            MosaicField.Area = 1500;
-            MosaicField.Repaint();
+            InvokeLater(async () => {
+               await MosaicField.SetParams(new Size(10, 10), EMosaic.eMosaicRhombus1, 3);
+               MosaicField.Area = 1500;
+               MosaicField.Repaint();
+            }, CoreDispatcherPriority.High, true);
          }
       }
 
-      //private static Windows.Foundation.IAsyncAction ExecuteOnUIThread(Windows.UI.Core.DispatchedHandler action, CoreDispatcherPriority priority) {
-      //   return Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(priority, action);
-      //}
+      private static Windows.Foundation.IAsyncAction ExecuteOnUIThread(DispatchedHandler action, CoreDispatcherPriority priority) {
+         return Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(priority, action);
+      }
 
-      //private static Windows.Foundation.IAsyncAction InvokeLater(DispatchedHandler action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal, bool bAwait = false) {
-      //   return bAwait
-      //      ? ThreadPool.RunAsync(async delegate { await ExecuteOnUIThread(action, priority); }, (WorkItemPriority)priority)
-      //      : ThreadPool.RunAsync(delegate { ExecuteOnUIThread(action, priority); }, (WorkItemPriority)priority);
-      //}
+      private static Windows.Foundation.IAsyncAction InvokeLater(DispatchedHandler action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal, bool bAwait = false) {
+         return bAwait
+            ? ThreadPool.RunAsync(async delegate { await ExecuteOnUIThread(action, priority); }, (WorkItemPriority)priority)
+            : ThreadPool.RunAsync(delegate { ExecuteOnUIThread(action, priority); }, (WorkItemPriority)priority);
+      }
 
-      protected override void OnNavigatedTo(NavigationEventArgs e) {
+      protected override async void OnNavigatedTo(NavigationEventArgs e) {
          base.OnNavigatedTo(e);
 
          var initParam = e.Parameter as MosaicPageInitParam;
-         System.Diagnostics.Debug.Assert(initParam != null);
-         MosaicField.setParams(initParam.SizeField, initParam.MosaicTypes, initParam.MinesCount);
+         Debug.Assert(initParam != null);
+         await MosaicField.SetParams(initParam.SizeField, initParam.MosaicTypes, initParam.MinesCount);
 
          // if () // TODO: check if no tablet
          {
@@ -88,7 +92,7 @@ namespace FastMines {
       }
 
       /// <summary> Поменять игру на новый уровень сложности </summary>
-      void SetGame(ESkillLevel skill) {
+      async Task SetGame(ESkillLevel skill) {
          //if (isPaused())
          //   ChangePause(e);
 
@@ -103,7 +107,7 @@ namespace FastMines {
             sizeFld = skill.DefaultSize();
          }
 
-         MosaicField.setParams(sizeFld, MosaicField.MosaicType, numberMines);
+         await MosaicField.SetParams(sizeFld, MosaicField.MosaicType, numberMines);
 
          //if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected()) {
          //   AreaMax();
@@ -473,7 +477,7 @@ namespace FastMines {
          Debug.WriteLine("< OnPointerPressed: ");
       }
 
-      protected override async void OnKeyUp(KeyRoutedEventArgs e)
+      protected override void OnKeyUp(KeyRoutedEventArgs e)
       {
          Debug.WriteLine("> vrtOnKeyUp: ");
          base.OnKeyUp(e);
@@ -487,19 +491,19 @@ namespace FastMines {
                await MosaicField.GameNew();
                break;
             case VirtualKey.Number1:
-               SetGame(ESkillLevel.eBeginner);
+               await SetGame(ESkillLevel.eBeginner);
                e.Handled = true;
                break;
             case VirtualKey.Number2:
-               SetGame(ESkillLevel.eAmateur);
+               await SetGame(ESkillLevel.eAmateur);
                e.Handled = true;
                break;
             case VirtualKey.Number3:
-               SetGame(ESkillLevel.eProfi);
+               await SetGame(ESkillLevel.eProfi);
                e.Handled = true;
                break;
             case VirtualKey.Number4:
-               SetGame(ESkillLevel.eCrazy);
+               await SetGame(ESkillLevel.eCrazy);
                e.Handled = true;
                break;
          }
@@ -513,17 +517,17 @@ namespace FastMines {
          await MosaicField.GameNew();
       }
 
-      private void OnClickBttnSkillBeginner(object sender, RoutedEventArgs e) {
-         SetGame(ESkillLevel.eBeginner);
+      private async void OnClickBttnSkillBeginner(object sender, RoutedEventArgs e) {
+         await SetGame(ESkillLevel.eBeginner);
       }
-      private void OnClickBttnSkillAmateur(object sender, RoutedEventArgs e) {
-         SetGame(ESkillLevel.eAmateur);
+      private async void OnClickBttnSkillAmateur(object sender, RoutedEventArgs e) {
+         await SetGame(ESkillLevel.eAmateur);
       }
-      private void OnClickBttnSkillProfi(object sender, RoutedEventArgs e) {
-         SetGame(ESkillLevel.eProfi);
+      private async void OnClickBttnSkillProfi(object sender, RoutedEventArgs e) {
+         await SetGame(ESkillLevel.eProfi);
       }
-      private void OnClickBttnSkillCrazy(object sender, RoutedEventArgs e) {
-         SetGame(ESkillLevel.eCrazy);
+      private async void OnClickBttnSkillCrazy(object sender, RoutedEventArgs e) {
+         await SetGame(ESkillLevel.eCrazy);
       }
    }
 }

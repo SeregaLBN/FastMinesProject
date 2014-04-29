@@ -27,9 +27,13 @@ namespace ua.ksn.fmg.controller.win_rt {
          base(sizeField, mosaicType, minesCount, area)
       {}
 
-      private void BindXamlToMosaic() {
+      private void UnbindXaml() {
          Container.Children.Clear();
          XamlBinder.Clear();
+      }
+
+      private void BindXamlToMosaic() {
+         UnbindXaml();
          var sizeMosaic = SizeField;
          for (var i = 0; i < sizeMosaic.width; i++)
             for (var j = 0; j < sizeMosaic.height; j++) {
@@ -52,14 +56,16 @@ namespace ua.ksn.fmg.controller.win_rt {
 #endif
       }
 
-      public override void setParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
+      public override async Task SetParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
          if (this._mosaicType != newMosaicType)
             _cellPaint = null;
 
          var rebind = (this.SizeField != newSizeField) ||
                         (this.MosaicType != newMosaicType) ||
                         (this.MinesCount != newMinesCount);
-         base.setParams(newSizeField, newMosaicType, newMinesCount);
+         if (rebind)
+            UnbindXaml();
+         await base.SetParams(newSizeField, newMosaicType, newMinesCount);
          if (rebind)
             BindXamlToMosaic();
 
@@ -98,6 +104,9 @@ namespace ua.ksn.fmg.controller.win_rt {
       }
 
       public void Repaint() {
+         if (!XamlBinder.Any())
+            return;
+
          { // paint background
             var bkb = Container.Background as SolidColorBrush;
             var bkc = GraphicContext.ColorBk.ToWinColor();

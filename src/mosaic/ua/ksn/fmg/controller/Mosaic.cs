@@ -80,25 +80,23 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
    }
 
    /// <summary> размер пол€ в €чейках </summary>
-   public Size SizeField { get { return _size; } set { setParams(value, null, null); } }
+   public Size SizeField { get { return _size; } /* set { SetParams(value, null, null); } */ }
+   //public async void SetSizeField(Size value) { await SetParams(value, null, null); }
 
-   /// <summary>тип мозаики</summary>
-   public EMosaic MosaicType { get { return _mosaicType; } set { setParams(null, value, null); } }
+   /// <summary> тип мозаики </summary>
+   public EMosaic MosaicType { get { return _mosaicType; } /* set { SetParams(null, value, null); } */ }
+   //public async void SetMosaicType(EMosaic value) { await SetParams(null, value, null); }
 
-   /// <summary>кол-во мин</summary>
-   public int MinesCount { get { return _minesCount; } set { setParams(null, null, value); } }
+   /// <summary> кол-во мин </summary>
+   public int MinesCount { get { return _minesCount; } /* set { SetParams(null, null, value); } */ }
+   public async Task SetMinesCount(int value) { await SetParams(null, null, value); }
 
-   /// <summary>установить мозаику заданного размера, типа  и с определЄнным количеством мин (координаты мин могут задаватьс€ с помощью "’ранилища ћин")</summary>
-   public virtual void setParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount, List<Coord> storageCoordMines) {
-      try {
-         //repositoryMines.Reset();
-         if ((MosaicType == newMosaicType) &&
-            SizeField.Equals(newSizeField) &&
-            (MinesCount == newMinesCount))
-         {
-            return;
-         }
-
+   /// <summary> установить мозаику заданного размера, типа  и с определЄнным количеством мин (координаты мин могут задаватьс€ с помощью "’ранилища ћин") </summary>
+   public virtual async Task SetParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount, List<Coord> storageCoordMines) {
+      //repositoryMines.Reset();
+      var res = (MosaicType != newMosaicType) || !SizeField.Equals(newSizeField) || (MinesCount != newMinesCount);
+      if (res)
+      {
          var oldMosaicType = this._mosaicType;
          var oldMosaicSize = this._size;
          var isNewMosaic = (newMosaicType != null) && (newMosaicType != this._mosaicType);
@@ -149,19 +147,18 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
             fireOnChangedMosaicType(oldMosaicType);
          if (isNewSizeFld)
             fireOnChangedMosaicSize(oldMosaicSize);
-      } finally {
-         if ((storageCoordMines == null) || (storageCoordMines.Count == 0))
-            RepositoryMines.Clear();
-         else
-            RepositoryMines = storageCoordMines;
-         //GameStatus = EGameStatus.eGSEnd;
-         GameNew();
       }
+      if ((storageCoordMines == null) || (storageCoordMines.Count == 0))
+         RepositoryMines.Clear();
+      else
+         RepositoryMines = storageCoordMines;
+      //GameStatus = EGameStatus.eGSEnd;
+      await GameNew();
    }
 
    /// <summary>установить мозаику заданного размера, типа и с определЄнным количеством мин</summary>
-   public virtual void setParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
-      setParams(newSizeField, newMosaicType, newMinesCount, null);
+   public virtual async Task SetParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
+      await SetParams(newSizeField, newMosaicType, newMinesCount, null);
    }
 
    protected virtual void OnError(String msg) {
@@ -363,7 +360,7 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
       return;
    }
 
-   protected void OnLeftButtonDown(Coord coordLDown) {
+   protected async void OnLeftButtonDown(Coord coordLDown) {
       CoordDown = Coord.INCORRECT_COORD;
       if (GameStatus == EGameStatus.eGSEnd)
          return;
@@ -377,11 +374,11 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
          if (cell.State.Open != EOpen._Mine) {
             cell.State.setStatus(EState._Open, null);
             cell.State.SetMine();
-            MinesCount = MinesCount+1;
+            await SetMinesCount(MinesCount+1);
             RepositoryMines.Add(coordLDown);
          } else {
             cell.Reset();
-            MinesCount = MinesCount-1;
+            await SetMinesCount(MinesCount-1);
             RepositoryMines.Remove(coordLDown);
          }
          Repaint(cell);
@@ -430,9 +427,9 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
       }
    }
 
-   protected void OnRightButtonDown(Coord coordRDown) {
+   protected async void OnRightButtonDown(Coord coordRDown) {
       if (GameStatus == EGameStatus.eGSEnd) {
-         GameNew();
+         await GameNew();
          return;
       }
       if (GameStatus == EGameStatus.eGSReady)
@@ -473,7 +470,7 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
       fireOnClick(false, false);
    }
 
-   protected virtual async System.Threading.Tasks.Task<bool> RequestToUser_RestoreLastGame() {
+   protected virtual async Task<bool> RequestToUser_RestoreLastGame() {
       //  need override in child class
       var msg = "Restore last game?";
       System.Diagnostics.Debug.WriteLine(msg);
@@ -488,7 +485,7 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
    }
 
    /// <summary>ѕодготовитьс€ к началу игры - сбросить все €чейки</summary>
-   public virtual async System.Threading.Tasks.Task GameNew() {
+   public virtual async Task GameNew() {
 //      System.out.println("Mosaic::GameNew()");
 
       if (GameStatus == EGameStatus.eGSReady)
@@ -511,10 +508,10 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
    }
 
    /// <summary>создать игру игроком - он сам расставит мины</summary>
-   public void GameCreate() {
-      GameNew();
+   public async Task GameCreate() {
+      await GameNew();
       if (RepositoryMines.Count == 0) {
-         MinesCount = 0;
+         await SetMinesCount(0);
          GameStatus = EGameStatus.eGSCreateGame;
          fireOnChangedCounters();
       }
@@ -569,11 +566,11 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
 
    /// <summary>Mosaic field: класс окна мозаики пол€</summary>
    public Mosaic() {
-      initialize();
+      Initialize();
    }
    /// <summary>Mosaic field: класс окна мозаики пол€</summary>
    public Mosaic(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
-      initialize(sizeField, mosaicType, minesCount, area);
+      Initialize(sizeField, mosaicType, minesCount, area);
    }
 
    public IList<Coord> StorageMines {
@@ -586,13 +583,13 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
       }
    }
 
-   protected void initialize() {
-      initialize(new Size(10, 10),
+   protected void Initialize() {
+      Initialize(new Size(10, 10),
             EMosaic.eMosaicSquare1,//EMosaic.eMosaicPenrousePeriodic1, // 
             15, AREA_MINIMUM*10);
    }
-   protected void initialize(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
-      setParams(sizeField, mosaicType, minesCount);
+   protected async void Initialize(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
+      await SetParams(sizeField, mosaicType, minesCount);
       Area = area; // ...провера на валидность есть только при установке из класса Main. “ак что, не нуна тут задавать громадные велечины.
    }
 }
