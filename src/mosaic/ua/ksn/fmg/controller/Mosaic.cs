@@ -584,9 +584,9 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
    }
 
    protected void Initialize() {
-      Initialize(new Size(10, 10),
-            EMosaic.eMosaicSquare1,//EMosaic.eMosaicPenrousePeriodic1, // 
-            15, AREA_MINIMUM*10);
+      Initialize(new Size(5, 5),
+            EMosaic.eMosaicPenrousePeriodic1,
+            1, AREA_MINIMUM);
    }
    protected async void Initialize(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
       await SetParams(sizeField, mosaicType, minesCount);
