@@ -1,8 +1,12 @@
 using System;
+using System.Linq;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
+using FastMines.Common;
 using ua.ksn.win_rt.utils;
 using ua.ksn.fmg.model.mosaics;
 using ua.ksn.fmg.view.win_rt.res.img;
@@ -12,10 +16,10 @@ namespace ua.ksn.fmg.view.win_rt.res {
    /// <summary> Мультимедиа ресурсы программы </summary>
    public static class Resources {
 
-      private static WriteableBitmap imgLogo;
+      private static WriteableBitmap _imgLogo;
 
-      private static WriteableBitmap imgFlag, imgMine;
-      private static WriteableBitmap imgPause;
+      private static WriteableBitmap _imgFlag, _imgMine;
+      private static WriteableBitmap _imgPause;
 
       public enum EBtnNewGameState {
          eNormal,
@@ -53,11 +57,11 @@ namespace ua.ksn.fmg.view.win_rt.res {
          return self.ToString().Substring(1);
       }
 
-      private static Dictionary<EBtnNewGameState, WriteableBitmap> imgsBtnNew;
-      private static Dictionary<EBtnPauseState, WriteableBitmap> imgsBtnPause;
-      private static Dictionary<EMosaicGroup, WriteableBitmap> imgsMosaicGroup;
-      private static Dictionary<EMosaic, WriteableBitmap> imgsMosaicSmall, imgsMosaicWide;
-      private static Dictionary<CultureInfo, WriteableBitmap> imgsLang;
+      private static Dictionary<EBtnNewGameState, WriteableBitmap> _imgsBtnNew;
+      private static Dictionary<EBtnPauseState, WriteableBitmap> _imgsBtnPause;
+      private static Dictionary<EMosaicGroup, WriteableBitmap> _imgsMosaicGroup;
+      private static Dictionary<EMosaic, WriteableBitmap> _imgsMosaicSmall, _imgsMosaicWide;
+      private static Dictionary<CultureInfo, WriteableBitmap> _imgsLang;
 
       private static async Task<WriteableBitmap> GetImage(string path) {
          var img = await ImgUtils.GetImage(new Uri("ms-appx:///res/" + path));
@@ -67,47 +71,47 @@ namespace ua.ksn.fmg.view.win_rt.res {
       }
 
       public static async Task<WriteableBitmap> GetImgLogo() {
-         if (imgLogo == null)
-            imgLogo = await GetImage("Logo/Logo_128x128.png");
-         return imgLogo;
+         if (_imgLogo == null)
+            _imgLogo = await GetImage("Logo/Logo_128x128.png");
+         return _imgLogo;
       }
 
       public static async Task<WriteableBitmap> GetImgFlag(int width, int height) {
-         if (imgFlag == null) {
-            imgFlag = await GetImage("CellState/Flag.png"); // сначала из ресурсов
-            if (imgFlag == null)
-               imgFlag = new Flag().Image; // иначе - своя картинка из кода
+         if (_imgFlag == null) {
+            _imgFlag = await GetImage("CellState/Flag.png"); // сначала из ресурсов
+            if (_imgFlag == null)
+               _imgFlag = new Flag().Image; // иначе - своя картинка из кода
          }
-         return ImgUtils.Zoom(imgFlag, width, height);
+         return ImgUtils.Zoom(_imgFlag, width, height);
       }
 
       public static async Task<WriteableBitmap> GetImgMine(int width, int height) {
-         if (imgMine == null) {
-            imgMine = await GetImage("CellState/Mine.png"); // сначала из ресурсов
-            if (imgMine == null)
-               imgMine = new Mine().Image; // иначе - своя картинка из кода
+         if (_imgMine == null) {
+            _imgMine = await GetImage("CellState/Mine.png"); // сначала из ресурсов
+            if (_imgMine == null)
+               _imgMine = new Mine().Image; // иначе - своя картинка из кода
          }
-         return ImgUtils.Zoom(imgMine, width, height);
+         return ImgUtils.Zoom(_imgMine, width, height);
       }
 
       public static async Task<WriteableBitmap> GetImgPause() {
-         if (imgPause == null) {
-            imgPause = await GetImage("Background/Pause.png"); // сначала из ресурсов
-            if (imgPause == null)
-               imgPause = new BackgroundPause().Image; // иначе - своя картинка из кода
+         if (_imgPause == null) {
+            _imgPause = await GetImage("Background/Pause.png"); // сначала из ресурсов
+            if (_imgPause == null)
+               _imgPause = new BackgroundPause().Image; // иначе - своя картинка из кода
          }
-         return imgPause;
+         return _imgPause;
       }
 
       public static async Task<WriteableBitmap> GetImgBtnNew(EBtnNewGameState key) {
-         if (imgsBtnNew == null) {
-            imgsBtnNew =
+         if (_imgsBtnNew == null) {
+            _imgsBtnNew =
                new Dictionary<EBtnNewGameState, WriteableBitmap>(Enum.GetValues(typeof (EBtnNewGameState)).Length);
 
             foreach (EBtnNewGameState val in Enum.GetValues(typeof (EBtnNewGameState)))
-               imgsBtnNew.Add(val, await GetImage("ToolBarButton/new" + val.GetDescription() + ".png"));
+               _imgsBtnNew.Add(val, await GetImage("ToolBarButton/new" + val.GetDescription() + ".png"));
          }
-         return imgsBtnNew[key];
+         return _imgsBtnNew[key];
       }
 
 //	public static WriteableBitmap getImgBtnNew(EBtnNewGameState key, int newWidth, int newHeight) {
@@ -117,14 +121,14 @@ namespace ua.ksn.fmg.view.win_rt.res {
 //	}
 
       public static async Task<WriteableBitmap> GetImgBtnPause(EBtnPauseState key) {
-         if (imgsBtnPause == null) {
-            imgsBtnPause =
+         if (_imgsBtnPause == null) {
+            _imgsBtnPause =
                new Dictionary<EBtnPauseState, WriteableBitmap>(Enum.GetValues(typeof (EBtnPauseState)).Length);
 
             foreach (EBtnPauseState val in Enum.GetValues(typeof (EBtnPauseState)))
-               imgsBtnPause.Add(val, await GetImage("ToolBarButton/pause" + val.GetDescription() + ".png"));
+               _imgsBtnPause.Add(val, await GetImage("ToolBarButton/pause" + val.GetDescription() + ".png"));
          }
-         return imgsBtnPause[key];
+         return _imgsBtnPause[key];
       }
 
 //	public static WriteableBitmap getImgBtnPause(EPauseState key, int newWidth, int newHeight) {
@@ -134,13 +138,13 @@ namespace ua.ksn.fmg.view.win_rt.res {
 //	}
 
       public static async Task<WriteableBitmap> GetImgMosaicGroup(EMosaicGroup key) {
-         if (imgsMosaicGroup == null) {
-            imgsMosaicGroup = new Dictionary<EMosaicGroup, WriteableBitmap>(Enum.GetValues(typeof (EMosaicGroup)).Length);
+         if (_imgsMosaicGroup == null) {
+            _imgsMosaicGroup = new Dictionary<EMosaicGroup, WriteableBitmap>(Enum.GetValues(typeof(EMosaicGroup)).Length);
 
             foreach (EMosaicGroup val in Enum.GetValues(typeof (EMosaicGroup)))
-               imgsMosaicGroup.Add(val, await GetImage("MosaicGroup/" + val.GetDescription() + ".png"));
+               _imgsMosaicGroup.Add(val, await GetImage("MosaicGroup/" + val.GetDescription() + ".png"));
          }
-         return imgsMosaicGroup[key];
+         return _imgsMosaicGroup[key];
       }
 
       public static async Task<WriteableBitmap> GetImgMosaicGroup(EMosaicGroup key, int newWidth, int newHeight) {
@@ -149,32 +153,45 @@ namespace ua.ksn.fmg.view.win_rt.res {
          return ImgUtils.Zoom(original, newWidth, newHeight);
       }
 
-      public static async Task<WriteableBitmap> GetImgMosaic(EMosaic key, bool smallIco) {
-         Dictionary<EMosaic, WriteableBitmap> imgsMosaic = smallIco ? imgsMosaicSmall : imgsMosaicWide;
-         if (imgsMosaic == null) {
-            imgsMosaic = new Dictionary<EMosaic, WriteableBitmap>(Enum.GetValues(typeof (EMosaic)).Length);
-
-            foreach (EMosaic val in Enum.GetValues(typeof (EMosaic))) {
-               WriteableBitmap imgMosaic =
-                  await GetImage("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + val.GetDescription(true) + ".png");
-                  // сначала из ресурсов
-               if (imgMosaic == null) // иначе - своя картинка из кода
-                  imgMosaic = await new MosaicsImg(val, true).GetImage();
-               imgsMosaic.Add(val, imgMosaic);
-            }
+      public static WriteableBitmap GetImgMosaic(EMosaic key, bool smallIco, Action<WriteableBitmap> imageSetter) {
+         if (smallIco) {
+            if (_imgsMosaicSmall == null)
+               _imgsMosaicSmall = new Dictionary<EMosaic, WriteableBitmap>(Enum.GetValues(typeof (EMosaic)).Length);
+         } else {
+            if (_imgsMosaicWide == null)
+               _imgsMosaicWide = new Dictionary<EMosaic, WriteableBitmap>(Enum.GetValues(typeof (EMosaic)).Length);
          }
-         return imgsMosaic[key];
+         var imgsMosaic = smallIco ? _imgsMosaicSmall : _imgsMosaicWide;
+
+         if (imgsMosaic.ContainsKey(key))
+            return imgsMosaic[key];
+
+         try {
+            // 1. Сразу отадаю пустую картинку (1x1)
+            var img = new WriteableBitmap(1, 1);
+            imgsMosaic.Add(key, img);
+            return img;
+         } finally {
+            // 2. и начинаю грузить картинку с файла...
+            AsyncRunner.InvokeLater(async () => {
+               imageSetter(await GetImage("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + key.GetDescription(true) + ".png")); // сначала из ресурсов
+
+               // 3. ... а потом  -  и самостоятельная отрисовка
+               AsyncRunner.InvokeLater(async () => imageSetter(await new MosaicsImg(key, smallIco).GetImage()), CoreDispatcherPriority.Low); // своя картинка из кода
+            }, CoreDispatcherPriority.High);
+         }
       }
 
-      public static async Task<WriteableBitmap> GetImgMosaic(EMosaic key, bool smallIco, int newWidth, int newHeight) {
-         var original = await GetImgMosaic(key, smallIco);
-         if (original == null) return null;
-         return ImgUtils.Zoom(original, newWidth, newHeight);
-      }
+      //public static async Task<WriteableBitmap> GetImgMosaic(EMosaic key, bool smallIco, int newWidth, int newHeight) {
+      //   var original = await GetImgMosaic(key, smallIco);
+      //   if (original == null)
+      //      return null;
+      //   return ImgUtils.Zoom(original, newWidth, newHeight);
+      //}
 
       public static async Task<Dictionary<CultureInfo, WriteableBitmap>> getImgsLang() {
-         if (imgsLang == null) {
-            imgsLang = new Dictionary<CultureInfo, WriteableBitmap>(4);
+         if (_imgsLang == null) {
+            _imgsLang = new Dictionary<CultureInfo, WriteableBitmap>(4);
 
             WriteableBitmap imgEng = await GetImage("Lang/English.png");
             WriteableBitmap imgUkr = await GetImage("Lang/Ukrainian.png");
@@ -184,16 +201,16 @@ namespace ua.ksn.fmg.view.win_rt.res {
                var locale = new CultureInfo(lang);
 
                if (lang == "EN")
-                  imgsLang.Add(locale, imgEng);
+                  _imgsLang.Add(locale, imgEng);
                else if ("GBR" == locale.EnglishName)
-                  imgsLang.Add(locale, imgEng);
+                  _imgsLang.Add(locale, imgEng);
                else if ("UKR" == locale.EnglishName)
-                  imgsLang.Add(locale, imgUkr);
+                  _imgsLang.Add(locale, imgUkr);
                else if ("RUS" == locale.EnglishName)
-                  imgsLang.Add(locale, imgRus);
+                  _imgsLang.Add(locale, imgRus);
             }
          }
-         return imgsLang;
+         return _imgsLang;
       }
    }
 }

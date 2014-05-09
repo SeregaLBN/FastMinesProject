@@ -52,12 +52,6 @@ namespace FastMines.Data {
          return matches.FirstOrDefault();
       }
 
-      public static async Task ReloadImages(bool forceReload) {
-         foreach (var fmItem in AllGroups.SelectMany(fmDataGroup => fmDataGroup.Items))
-            if (forceReload || !(fmItem.Image is WriteableBitmap))
-               fmItem.Image = await FmDataItem.CreateImage(fmItem.UniqueId);
-      }
-
       public static ESkillLevel SkillLevel { get; set; }
       public static ua.ksn.geom.Size SizeField { get; set; }
       public static int MinesCount { get; set; }

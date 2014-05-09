@@ -80,13 +80,7 @@ namespace FastMines {
          throw new NotImplementedException();
       }
 
-      private static bool _forceReload = true;
       private async void PageOnLoaded(object sender, RoutedEventArgs e) {
-         var dt = DateTime.Now;
-         await FmDataSource.ReloadImages(_forceReload);
-         var diff = (DateTime.Now - dt).TotalMilliseconds;
-         if (_forceReload)
-            _forceReload = diff < 800; // for next call
       }
 
    }

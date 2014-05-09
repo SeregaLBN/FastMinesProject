@@ -15,6 +15,7 @@ using ua.ksn.fmg.model.mosaics;
 using ua.ksn.fmg.view.win_rt;
 using ua.ksn.fmg.controller;
 using ua.ksn.fmg.controller.types;
+using FastMines.Common;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace FastMines {
@@ -60,22 +61,12 @@ namespace FastMines {
          this.Tapped += OnPageTapped;
 
          if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) {
-            InvokeLater(async () => {
+            AsyncRunner.InvokeLater(async () => {
                await MosaicField.SetParams(new Size(10, 10), EMosaic.eMosaicRhombus1, 3);
                MosaicField.Area = 1500;
                MosaicField.Repaint();
             }, CoreDispatcherPriority.High, true);
          }
-      }
-
-      private static Windows.Foundation.IAsyncAction ExecuteOnUIThread(DispatchedHandler action, CoreDispatcherPriority priority) {
-         return Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(priority, action);
-      }
-
-      private static Windows.Foundation.IAsyncAction InvokeLater(DispatchedHandler action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal, bool bAwait = false) {
-         return bAwait
-            ? ThreadPool.RunAsync(async delegate { await ExecuteOnUIThread(action, priority); }, (WorkItemPriority)priority)
-            : ThreadPool.RunAsync(delegate { ExecuteOnUIThread(action, priority); }, (WorkItemPriority)priority);
       }
 
       protected override async void OnNavigatedTo(NavigationEventArgs e) {

@@ -108,5 +108,34 @@ namespace ua.ksn.win_rt.utils {
       public static ImageSource Rotate(ImageSource inputImage, double degrees) {
          throw new NotImplementedException();
       }
+
+      private static WriteableBitmap _failedImage;
+      // TODO переделать...
+      private static WriteableBitmap GetFailedImage() {
+         if (null == _failedImage) {
+            int maxX = 1024, maxY = 1024;
+            var image = BitmapFactory.New(maxX, maxY);
+
+            using (var ctx = image.GetBitmapContext()) {
+               int[] points = new int[] { 10, 10, 10, maxY, maxX, maxY, maxX, 10 };
+               var clr = 0xFF << 24; //unchecked((int)0xFF000000);
+               image.FillPolygon(points,
+                  Windows.ApplicationModel.DesignMode.DesignModeEnabled
+                     ? Color.GREEN.ToWinColor()
+                     : Color.RED.ToWinColor());
+               //image.DrawRectangle(10, 10, maxX, maxY, clr);
+               clr |= 0xFFFFFF;
+               image.DrawLine(10, 10, 200, 200, clr);
+               int wbmp = image.PixelWidth, hbmp = image.PixelHeight;
+               WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, 10, 10, 10, maxY, clr);
+               WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, 10, maxY, maxY, maxY, clr);
+               WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, maxX, maxY, maxX, 10, clr);
+               WriteableBitmapExtensions.DrawLine(ctx, wbmp, hbmp, maxX, 10, 10, 10, clr);
+
+               _failedImage = image;
+            }
+         }
+         return _failedImage;
+      }
    }
 }

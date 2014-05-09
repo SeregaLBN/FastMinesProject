@@ -153,16 +153,23 @@ public final class Resources {
 	}
 
 	public ImageIcon getImgMosaic(EMosaic key, boolean smallIco) {
+		if (smallIco) {
+			if (imgsMosaicSmall != null)
+				return imgsMosaicSmall.get(key);
+			imgsMosaicSmall = new HashMap<EMosaic, ImageIcon>(EMosaic.values().length);
+		} else {
+			if (imgsMosaicWide != null)
+				return imgsMosaicWide.get(key);
+			imgsMosaicWide = new HashMap<EMosaic, ImageIcon>(EMosaic.values().length);
+		}
 		Map<EMosaic, ImageIcon> imgsMosaic = smallIco ? imgsMosaicSmall : imgsMosaicWide;
-		if (imgsMosaic == null) {
-			imgsMosaic = new HashMap<EMosaic, ImageIcon>(EMosaic.values().length);
+		imgsMosaic = new HashMap<EMosaic, ImageIcon>(EMosaic.values().length);
 
-			for (EMosaic val: EMosaic.values()) {
-				ImageIcon imgMosaic = getImageIcon("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + val.getDescription(true)+".png"); // сначала из ресурсов
-				if (imgMosaic == null) // иначе - своя картинка из кода
-					imgMosaic = ImgUtils.toImgIco(ImgUtils.toImg(new MosaicsImg(val, true)));
-				imgsMosaic.put(val, imgMosaic);
-			}
+		for (EMosaic val: EMosaic.values()) {
+			ImageIcon imgMosaic = getImageIcon("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + val.getDescription(true)+".png"); // сначала из ресурсов
+			if (imgMosaic == null) // иначе - своя картинка из кода
+				imgMosaic = ImgUtils.toImgIco(ImgUtils.toImg(new MosaicsImg(val, smallIco)));
+			imgsMosaic.put(val, imgMosaic);
 		}
 		return imgsMosaic.get(key);
 	}

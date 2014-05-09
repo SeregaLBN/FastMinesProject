@@ -17,10 +17,14 @@ namespace FastMines.Data {
    public abstract class FmDataCommon<T> : FastMines.Common.BindableBase {
       private static Uri _baseUri = new Uri("ms-appx:///");
 
-      public FmDataCommon(T uniqueId, String title, String imagePath) {
+      public FmDataCommon(T uniqueId, String title, string relativeUri)
+         : this(uniqueId, title, new BitmapImage(new Uri(_baseUri, relativeUri)))
+      {}
+
+      public FmDataCommon(T uniqueId, String title, ImageSource image) {
          this._uniqueId = uniqueId;
          this._title = title;
-         this._imagePath = imagePath;
+         this._image = image;
 
          Subtitle = "Subtitle...";
          Description = "Description...";
@@ -41,27 +45,10 @@ namespace FastMines.Data {
       public string Subtitle { get; set; }
       public string Description { get; set; }
 
-      protected ImageSource _image = null;
-      private String _imagePath = null;
+      private ImageSource _image = null;
       public virtual ImageSource Image {
-         get {
-            if (this._image == null && this._imagePath != null)
-               this._image = new BitmapImage(new Uri(FmDataCommon<T>._baseUri, this._imagePath));
-            return this._image;
-         }
-
-         set {
-            this._imagePath = null;
-            this.SetProperty(ref this._image, value);
-         }
-      }
-
-      public string ImagePath {
-         get { return this._imagePath; }
-         set {
-            this.SetProperty(ref this._image, null);
-            this.SetProperty(ref this._imagePath, value);
-         }
+         get { return this._image; }
+         set { this.SetProperty(ref this._image, value); }
       }
 
       public override string ToString() {
