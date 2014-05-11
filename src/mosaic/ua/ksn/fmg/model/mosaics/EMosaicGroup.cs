@@ -13,7 +13,18 @@ public enum EMosaicGroup {
 
 public static class EMosaicGroupEx {
 
-	public static EMosaicGroup fromIndex(int index) {
+   public static int VertexCount(this EMosaicGroup self) {
+      switch (self) {
+      case EMosaicGroup.eTriangles: return 3;
+      case EMosaicGroup.eQuadrangles: return 4;
+      case EMosaicGroup.ePentagons: return 5;
+      case EMosaicGroup.eHexagons: return 6;
+      case EMosaicGroup.eOthers: return 3 + new Random().Next() & 3;
+      }
+      throw new ArgumentException("Invalid paramenter value " + self);
+   }
+
+   public static EMosaicGroup fromIndex(int index) {
 		return (EMosaicGroup)index;
 		//foreach (EMosaicGroup item in Enum.GetValues(typeof(EMosaicGroup)))
 		//    if ((int)item == index)

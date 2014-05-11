@@ -30,10 +30,9 @@ namespace FastMines.Data {
          Description = "Description...";
       }
 
-      private T _uniqueId;
+      private readonly T _uniqueId;
       public virtual T UniqueId {
          get { return this._uniqueId; }
-         set { this.SetProperty(ref this._uniqueId, value); }
       }
 
       private string _title = string.Empty;

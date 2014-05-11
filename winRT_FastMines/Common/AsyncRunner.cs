@@ -5,7 +5,7 @@ using Windows.UI.Core;
 
 namespace FastMines.Common {
    public static class AsyncRunner {
-      private static IAsyncAction ExecuteOnUIThread(DispatchedHandler action, CoreDispatcherPriority priority) {
+      public static IAsyncAction ExecuteOnUIThread(DispatchedHandler action, CoreDispatcherPriority priority) {
          return Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(priority, action);
       }
 

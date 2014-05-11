@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using Windows.UI.Xaml.Media;
 using ua.ksn.fmg.model.mosaics;
+using ua.ksn.fmg.view.win_rt.res;
 
 // The data model defined by this file serves as a representative example of a strongly-typed
 // model that supports notification when members are added, removed, or modified.  The property
@@ -8,18 +10,16 @@ using ua.ksn.fmg.model.mosaics;
 //
 // Applications may use this model as a starting point and build on it, or discard it entirely and
 // replace it with something appropriate to their needs.
-
 namespace FastMines.Data {
 
-   /// <summary>
-   /// Generic group data model.
-   /// </summary>
+   /// <summary> Generic group data model. </summary>
    public class FmDataGroup : FmDataCommon<EMosaicGroup> {
       public FmDataGroup(EMosaicGroup eMosaicGroup)
-         : base(eMosaicGroup, eMosaicGroup.GetDescription(), "res/MosaicGroup/" + eMosaicGroup.GetDescription() + ".png") {
+         : base(eMosaicGroup, eMosaicGroup.GetDescription(), (ImageSource) null) {
          Items.CollectionChanged += ItemsCollectionChanged;
          this.Subtitle = "Subtitle group " + eMosaicGroup.GetDescription();
          this.Description = "Description group...";
+         Resources.OnImageChangedMosaicGroup += (newImg, eMosaicGroup2) => { if (eMosaicGroup == eMosaicGroup2) Image = newImg; };
       }
 
       private void ItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) {
@@ -81,6 +81,10 @@ namespace FastMines.Data {
       private ObservableCollection<FmDataItem> _topItem = new ObservableCollection<FmDataItem>();
       public ObservableCollection<FmDataItem> TopItems {
          get { return this._topItem; }
+      }
+
+      public override ImageSource Image {
+         get { return base.Image ?? (base.Image = Resources.GetImgMosaicGroup(UniqueId)); }
       }
    }
 }

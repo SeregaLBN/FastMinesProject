@@ -292,6 +292,7 @@
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\BackgroundPause.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\Flag.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\Mine.cs" />
+    <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\MosaicsGroupImg.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\MosaicsImg.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\Resources.cs" />
     <Compile Include="src_winrt\ua\ksn\win_rt\utils\ImgUtils.cs" />
@@ -475,9 +476,6 @@
     </Content>
     <Content Include="..\res\Mosaic\48x32\PenrousePeriodic1.ico">
       <Link>res\Mosaic\48x32\PenrousePeriodic1.ico</Link>
-    </Content>
-    <Content Include="..\res\Mosaic\48x32\PenrousePeriodic1_32bit.ico">
-      <Link>res\Mosaic\48x32\PenrousePeriodic1_32bit.ico</Link>
     </Content>
     <Content Include="..\res\Mosaic\48x32\Hexagon1.png">
       <Link>res\Mosaic\48x32\Hexagon1.png</Link>

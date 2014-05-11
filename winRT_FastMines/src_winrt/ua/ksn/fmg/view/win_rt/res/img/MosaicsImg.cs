@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Windows.System.Threading;
 using Windows.UI.Xaml.Media.Imaging;
 using ua.ksn.geom;
 using ua.ksn.fmg.model.mosaics;
@@ -53,7 +52,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       private WriteableBitmap _image;
 
       private static Windows.Foundation.IAsyncAction ExecuteOnUIThread(Windows.UI.Core.DispatchedHandler action) {
-         return Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, action);
+         return FastMines.Common.AsyncRunner.ExecuteOnUIThread(action, Windows.UI.Core.CoreDispatcherPriority.Low);
       }
 
       /// <summary> return painted mosaic bitmap </summary>
