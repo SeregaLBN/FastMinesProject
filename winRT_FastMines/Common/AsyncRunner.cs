@@ -1,18 +1,17 @@
-﻿using System;
-using Windows.Foundation;
-using Windows.System.Threading;
+﻿using Windows.Foundation;
 using Windows.UI.Core;
 
 namespace FastMines.Common {
    public static class AsyncRunner {
-      public static IAsyncAction ExecuteOnUIThread(DispatchedHandler action, CoreDispatcherPriority priority) {
+      /// <summary> ExecuteOnUIThread </summary>
+      public static IAsyncAction InvokeLater(DispatchedHandler action, CoreDispatcherPriority priority) {
          return Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(priority, action);
       }
 
-      public static IAsyncAction InvokeLater(DispatchedHandler action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal, bool bAwait = false) {
-         return bAwait
-            ? ThreadPool.RunAsync(async delegate { await ExecuteOnUIThread(action, priority); }, (WorkItemPriority)priority)
-            : ThreadPool.RunAsync(delegate { ExecuteOnUIThread(action, priority); }, (WorkItemPriority)priority);
-      }
+      //public static IAsyncAction InvokeLater(DispatchedHandler action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal, bool bAwait = false) {
+      //   return bAwait
+      //      ? Windows.System.Threading.ThreadPool.RunAsync(async delegate { await ExecuteOnUIThread(action, priority); }, (Windows.System.Threading.WorkItemPriority)priority)
+      //      : Windows.System.Threading.ThreadPool.RunAsync(delegate { ExecuteOnUIThread(action, priority); }, (Windows.System.Threading.WorkItemPriority)priority);
+      //}
    }
 }

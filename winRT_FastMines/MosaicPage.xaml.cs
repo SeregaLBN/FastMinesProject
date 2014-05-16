@@ -65,7 +65,7 @@ namespace FastMines {
                await MosaicField.SetParams(new Size(10, 10), EMosaic.eMosaicRhombus1, 3);
                MosaicField.Area = 1500;
                MosaicField.Repaint();
-            }, CoreDispatcherPriority.High, true);
+            }, CoreDispatcherPriority.High);
          }
       }
 

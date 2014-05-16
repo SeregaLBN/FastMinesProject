@@ -13,13 +13,13 @@ public enum EMosaicGroup {
 
 public static class EMosaicGroupEx {
 
-   public static int VertexCount(this EMosaicGroup self) {
+   public static int VertexCount(this EMosaicGroup self, int defaultValue = 7) {
       switch (self) {
       case EMosaicGroup.eTriangles: return 3;
       case EMosaicGroup.eQuadrangles: return 4;
       case EMosaicGroup.ePentagons: return 5;
       case EMosaicGroup.eHexagons: return 6;
-      case EMosaicGroup.eOthers: return 3 + new Random().Next() & 3;
+      case EMosaicGroup.eOthers: return defaultValue; // 3 + new Random().Next() & 3;
       }
       throw new ArgumentException("Invalid paramenter value " + self);
    }

@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
 using ua.ksn.geom;
 using ua.ksn.fmg.model.mosaics;
 using ua.ksn.fmg.model.mosaics.cell;
 using ua.ksn.fmg.view.win_rt.draw;
 using ua.ksn.fmg.view.win_rt.draw.mosaics;
+using FastMines.Common;
 
 namespace ua.ksn.fmg.view.win_rt.res.img {
 
@@ -50,10 +52,6 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       }
 
       private WriteableBitmap _image;
-
-      private static Windows.Foundation.IAsyncAction ExecuteOnUIThread(Windows.UI.Core.DispatchedHandler action) {
-         return FastMines.Common.AsyncRunner.ExecuteOnUIThread(action, Windows.UI.Core.CoreDispatcherPriority.Low);
-      }
 
       /// <summary> return painted mosaic bitmap </summary>
       public async Task<WriteableBitmap> GetImage() {
@@ -100,16 +98,16 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
                      _gInfo.Paint(cell, bmp);
                });
 #elif true
-               await ExecuteOnUIThread(() => {
+               await AsyncRunner.InvokeLater(() => {
                   bmp = BitmapFactory.New(w, h);
                   funcFillBk.Invoke();
 
                   foreach (var cell in _arrCell)
                      new Task(async () => {
                         //await Task.Delay(TimeSpan.FromMilliseconds(0));
-                        await ExecuteOnUIThread(() => _gInfo.Paint(cell, bmp));
+                        await AsyncRunner.InvokeLater(() => _gInfo.Paint(cell, bmp), CoreDispatcherPriority.Low);
                      }).Start();
-               });
+               }, CoreDispatcherPriority.Low);
 #endif
                this._image = bmp;
             }
