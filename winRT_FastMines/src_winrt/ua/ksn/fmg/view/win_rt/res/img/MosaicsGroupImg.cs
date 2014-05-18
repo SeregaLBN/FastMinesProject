@@ -23,14 +23,15 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       private readonly Rect[] _limits;
       private readonly Random _random = new Random();
       public WriteableBitmap Image { get; private set; }
-      public bool Loop { get; set; }
+      public bool Animate { get; set; }
+      private DispatcherTimer _timer;
       //private double _rotate;
 
       public ImageChanged OnImageChanged = delegate { };
 
-      public MosaicsGroupImg(EMosaicGroup group, bool loop) {
+      public MosaicsGroupImg(EMosaicGroup group, bool animate) {
          _eMosaicGroup = group;
-         Loop = loop;
+         Animate = animate;
 
          switch (_eMosaicGroup) {
             case EMosaicGroup.eTriangles:
@@ -158,9 +159,10 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       private void NextIteration() {
          var bmp = new WriteableBitmap((int)W, (int)H);
 
-         bmp.FillPolygon(new[] { 0, 0, (int)W, 0, (int)W, (int)H, 0, (int)H, 0, 0 }, Windows.UI.Color.FromArgb(0xFF, 0xff, 0x8c, 0x00));
+         bmp.FillPolygon(new[] {0, 0, (int) W, 0, (int) W, (int) H, 0, (int) H, 0, 0},
+            Windows.UI.Color.FromArgb(0xFF, 0xff, 0x8c, 0x00));
 
-         if (Loop) {
+         if (Animate) {
             var i = _random.Next()%_eMosaicGroup.VertexCount(8);
             if (((_random.Next()%2) == 1)) {
                _points[i].X += ((_random.Next()%2) == 1) ? offsetX : -offsetX;
@@ -182,7 +184,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
 #if DEBUG
          var clrBk = Windows.UI.Color.FromArgb(128, 0x0F, 0xFF, 0x00);
          foreach (var rc in _limits)
-            bmp.DrawRectangle((int)rc.Left, (int)rc.Top, (int)rc.Right, (int)rc.Bottom, clrBk);
+            bmp.DrawRectangle((int) rc.Left, (int) rc.Top, (int) rc.Right, (int) rc.Bottom, clrBk);
 #endif
 
          //bmp = bmp.RotateFree(_rotate);
@@ -193,17 +195,16 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
          Image = bmp;
          OnImageChanged(bmp, _eMosaicGroup);
 
-         if (!Loop)
-            return;
-
-         var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
-         timer.Tick += delegate {
-            timer.Stop();
-
-            //NextIteration();
-            AsyncRunner.InvokeLater(NextIteration, CoreDispatcherPriority.Low);
-         };
-         timer.Start();
+         if (_timer == null) {
+            _timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(100)};
+            _timer.Tick += delegate {
+               if (Animate) {
+                  //NextIteration();
+                  AsyncRunner.InvokeLater(NextIteration, CoreDispatcherPriority.Low);
+               }
+            };
+            _timer.Start();
+         }
       }
 
       private static int[] PointsAsXyxyxySequence(IList<Point> coords) {
@@ -223,7 +224,8 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       }
 
       public void Dispose() {
-         Loop = false;
+         _timer.Stop();
+         Animate = false;
       }
    }
 }
