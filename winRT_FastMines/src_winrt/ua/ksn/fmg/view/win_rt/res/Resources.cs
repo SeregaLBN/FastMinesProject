@@ -60,7 +60,7 @@ namespace ua.ksn.fmg.view.win_rt.res {
 
       private static Dictionary<EBtnNewGameState, WriteableBitmap> _imgsBtnNew;
       private static Dictionary<EBtnPauseState, WriteableBitmap> _imgsBtnPause;
-      private static Dictionary<EMosaicGroup, WriteableBitmap> _imgsMosaicGroup;
+      private static Dictionary<EMosaicGroup, MosaicsGroupImg> _imgsMosaicGroup;
       private static Dictionary<EMosaic, WriteableBitmap> _imgsMosaicSmall, _imgsMosaicWide;
       private static Dictionary<CultureInfo, WriteableBitmap> _imgsLang;
 
@@ -144,33 +144,42 @@ namespace ua.ksn.fmg.view.win_rt.res {
 
       public static WriteableBitmap GetImgMosaicGroup(EMosaicGroup key) {
          if (_imgsMosaicGroup == null)
-            _imgsMosaicGroup = new Dictionary<EMosaicGroup, WriteableBitmap>(Enum.GetValues(typeof(EMosaicGroup)).Length);
+            _imgsMosaicGroup = new Dictionary<EMosaicGroup, MosaicsGroupImg>(Enum.GetValues(typeof(EMosaicGroup)).Length);
 
-         if (_imgsMosaicGroup.ContainsKey(key))
-            return _imgsMosaicGroup[key];
+         if (_imgsMosaicGroup.ContainsKey(key)) {
+            var img = _imgsMosaicGroup[key];
+            img.Animate = true;
+            return img.Image;
+         }
 
          try {
             // 1. —разу отдаю пустую картинку (1x1)
-            _imgsMosaicGroup.Add(key, _imgDummy1x1);
             return _imgDummy1x1;
          } finally {
             // 2. и начинаю грузить картинку с файла...
             AsyncRunner.InvokeLater(async () => {
-               var img = _imgsMosaicGroup[key] = await GetImage("MosaicGroup/" + key.GetDescription() + ".png"); // сначала из ресурсов
-               OnImageChangedMosaicGroup(img, key);
+               // сначала из ресурсов
+               OnImageChangedMosaicGroup(await GetImage("MosaicGroup/" + key.GetDescription() + ".png"), key);
 
                // 3. ... а потом  -  и самосто€тельна€ отрисовка
                AsyncRunner.InvokeLater(() => {
                   var mgImg = new MosaicsGroupImg(key, true);
                   mgImg.OnImageChanged += delegate(WriteableBitmap newImg, EMosaicGroup key2) {
                      System.Diagnostics.Debug.Assert(key2 == key);
-                     _imgsMosaicGroup[key] = newImg;
+                     _imgsMosaicGroup[key] = mgImg;
                      OnImageChangedMosaicGroup(newImg, key);
                   };
                   OnImageChangedMosaicGroup(mgImg.Image, key);
                }, CoreDispatcherPriority.Low);
             }, CoreDispatcherPriority.High);
          }
+      }
+
+      public static void ImgMosaicGroupPlay(EMosaicGroup key, bool animate) {
+         if (!_imgsMosaicGroup.ContainsKey(key))
+            return;
+         var img = _imgsMosaicGroup[key];
+         img.Animate = animate;
       }
 
       //public static async Task<WriteableBitmap> GetImgMosaicGroup(EMosaicGroup key, int newWidth, int newHeight) {

@@ -24,8 +24,12 @@ namespace FastMines {
    /// within the group.
    /// </summary>
    public sealed partial class GroupDetailPage : FastMines.Common.LayoutAwarePage {
+      private EMosaicGroup _group;
       public GroupDetailPage() {
          this.InitializeComponent();
+
+         this.Loaded += delegate { ua.ksn.fmg.view.win_rt.res.Resources.ImgMosaicGroupPlay(_group, true); };
+         this.Unloaded += delegate { ua.ksn.fmg.view.win_rt.res.Resources.ImgMosaicGroupPlay(_group, false); };
       }
 
       /// <summary>
@@ -40,6 +44,7 @@ namespace FastMines {
       protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState) {
          // TODO: Create an appropriate data model for your problem domain to replace the sample data
          var group = FmDataSource.GetGroup((EMosaicGroup) navigationParameter);
+         _group = group.UniqueId;
          this.DefaultViewModel["Group"] = group;
          this.DefaultViewModel["Items"] = group.Items;
       }
