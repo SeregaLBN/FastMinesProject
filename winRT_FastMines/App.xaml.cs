@@ -143,9 +143,15 @@ namespace FastMines {
          switch (args.VirtualKey) {
             case (VirtualKey) 166: // VirtualKey.GoBack:
             case VirtualKey.Back:
-               if (frame != null && frame.CanGoBack) {
-                  args.Handled = true;
-                  frame.GoBack();
+               if (frame != null) {
+                  if (frame.CanGoBack) {
+                     args.Handled = true;
+                     frame.GoBack();
+                  } else {
+                     if (frame.Content is GroupedItemsPage) {
+                        App.Current.Exit();
+                     }
+                  }
                }
                break;
          }
