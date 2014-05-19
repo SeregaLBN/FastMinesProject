@@ -285,7 +285,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
          var color = cell.getBackgroundFillColor(
             gContext.BkFill.Mode,
             DefaultBackgroundFillColor,
-            gContext.BkFill.getColor
+            gContext.BkFill.GetColor
             );
          bmp.FillPolygon(RegionAsXyxyxySequence(gContext.Bound, cell.getRegion()), color.ToWinColor());
       }
@@ -299,7 +299,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
             clr = cell.getBackgroundFillColor(
                gContext.BkFill.Mode,
                DefaultBackgroundFillColor,
-               gContext.BkFill.getColor
+               gContext.BkFill.GetColor
                );
          binder.Item1.Fill = FindBrush(clr);
       }

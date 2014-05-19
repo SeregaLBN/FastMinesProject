@@ -53,7 +53,7 @@
             <GridView.Header>
                 <StackPanel Width="480" Margin="0,4,14,0">
                     <TextBlock Text="{Binding Subtitle}" Margin="0,0,18,20" Style="{StaticResource SubheaderTextStyle}" MaxHeight="60"/>
-                    <Image Source="{Binding Image}" Height="400" Margin="0,0,18,20" Stretch="Fill" AutomationProperties.Name="{Binding Title}"/>
+                    <Image Source="{Binding Image}" Height="400" Margin="0,0,18,20" Stretch="Fill" AutomationProperties.Name="{Binding Title}" Tapped="GroupImage_OnTapped" DoubleTapped="GroupImage_OnDoubleTapped"/>
                     <TextBlock Text="{Binding Description}" Margin="0,0,18,0" Style="{StaticResource BodyTextStyle}"/>
                 </StackPanel>
             </GridView.Header>

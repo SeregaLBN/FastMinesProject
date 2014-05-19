@@ -11,12 +11,16 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
    public delegate void ImageChanged(WriteableBitmap newImg, EMosaicGroup eMosaicGroup);
 
    public class MosaicsGroupImg : IDisposable {
+      internal struct Color16 {
+         public const UInt16 MaxColorValue = 0xFFFF;
+         public UInt16 R, G, B;
+      }
       private static readonly double W = Window.Current.Bounds.Width / 3;
       private static readonly double H = Window.Current.Bounds.Height / 5;
-      private static readonly double dx = W / 10; // 10%
-      private static readonly double dy = H / 10; // 10%
-      private static readonly double offsetX = W * 1 / 100; // 3%
-      private static readonly double offsetY = H * 1 / 100; // 3%
+      private static readonly double Dx = W / 10; // 10%
+      private static readonly double Dy = H / 10; // 10%
+      private static readonly double OffsetX = W * 1 / 100; // 1%
+      private static readonly double OffsetY = H * 1 / 100; // 1%
 
       private readonly EMosaicGroup _eMosaicGroup;
       private readonly Point[] _points;
@@ -24,31 +28,45 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       private readonly Random _random = new Random();
       public WriteableBitmap Image { get; private set; }
       public bool Animate { get; set; }
+      public bool Dance { get; set; }
       private DispatcherTimer _timer;
       //private double _rotate;
+      private Color16 _fillColor;
 
       public ImageChanged OnImageChanged = delegate { };
+
+      /// <summary> ËÒÔÓÎ¸ÁÓ‚‡Ú¸ ‰Îˇ ÏË„‡¯ÍË Ó‰ËÌ Í‡Ì‡Î (R ËÎË G ËÎË B), ËÎË ‚ÒÂ (Ë R Ë G Ë B) </summary>
+      private const bool Any—hannel = true;
+      private int _channel;
 
       public MosaicsGroupImg(EMosaicGroup group, bool animate) {
          _eMosaicGroup = group;
          Animate = animate;
+         _fillColor = new Color16 {
+            R = Convert.ToUInt16(_random.Next(Color16.MaxColorValue)),
+            G = Convert.ToUInt16(_random.Next(Color16.MaxColorValue)),
+            B = Convert.ToUInt16(_random.Next(Color16.MaxColorValue))
+         };
+         if (Any—hannel)
+            _channel = Next—hannel();
 
+      #region Make Coords
          switch (_eMosaicGroup) {
             case EMosaicGroup.eTriangles:
-               _points = new[] {new Point(dx, H - dy), new Point(W/2, dy), new Point(W - dx, H - dy)};
+               _points = new[] {new Point(Dx, H - Dy), new Point(W/2, Dy), new Point(W - Dx, H - Dy)};
                _limits = new[] {
-                  new Rect(new Point(0, H/2 + dy), new Point(W/2 - dx, H)),
-                  new Rect(new Point(W/2 - 2*dx, 0), new Point(W/2 + 2*dx, H/2 - dy)),
-                  new Rect(new Point(W/2 + dx, H/2 + dy), new Point(W, H))
+                  new Rect(new Point(0, H/2 + Dy), new Point(W/2 - Dx, H)),
+                  new Rect(new Point(W/2 - 2*Dx, 0), new Point(W/2 + 2*Dx, H/2 - Dy)),
+                  new Rect(new Point(W/2 + Dx, H/2 + Dy), new Point(W, H))
                };
                break;
             case EMosaicGroup.eQuadrangles:
-               _points = new[] {new Point(dx, dy), new Point(W - dx, dy), new Point(W - dx, H - dy), new Point(dx, H - dy)};
+               _points = new[] {new Point(Dx, Dy), new Point(W - Dx, Dy), new Point(W - Dx, H - Dy), new Point(Dx, H - Dy)};
                _limits = new[] {
-                  new Rect(new Point(0, 0), new Point(W/2 - dx, H/2 - dy)),
-                  new Rect(new Point(W/2 + dx, 0), new Point(W, H/2 - dy)),
-                  new Rect(new Point(W/2 + dx, H/2 + dy), new Point(W, H)),
-                  new Rect(new Point(0, H/2 + dy), new Point(W/2 - dx, H))
+                  new Rect(new Point(0, 0), new Point(W/2 - Dx, H/2 - Dy)),
+                  new Rect(new Point(W/2 + Dx, 0), new Point(W, H/2 - Dy)),
+                  new Rect(new Point(W/2 + Dx, H/2 + Dy), new Point(W, H)),
+                  new Rect(new Point(0, H/2 + Dy), new Point(W/2 - Dx, H))
                };
                break;
             case EMosaicGroup.ePentagons:
@@ -152,6 +170,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
                System.Diagnostics.Debug.Assert(false, "TODO...");
                break;
          }
+      #endregion
 
          NextIteration();
       }
@@ -162,18 +181,35 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
          bmp.FillPolygon(new[] {0, 0, (int) W, 0, (int) W, (int) H, 0, (int) H, 0, 0},
             Windows.UI.Color.FromArgb(0xFF, 0xff, 0x8c, 0x00));
 
-         if (Animate) {
+         if (Dance) {
             var i = _random.Next()%_eMosaicGroup.VertexCount(8);
             if (((_random.Next()%2) == 1)) {
-               _points[i].X += ((_random.Next()%2) == 1) ? offsetX : -offsetX;
+               _points[i].X += ((_random.Next()%2) == 1) ? OffsetX : -OffsetX;
                _points[i].X = Math.Min(Math.Max(_points[i].X, _limits[i].Left), _limits[i].Right);
             } else {
-               _points[i].Y += ((_random.Next()%2) == 1) ? offsetY : -offsetY;
+               _points[i].Y += ((_random.Next()%2) == 1) ? OffsetY : -OffsetY;
                _points[i].Y = Math.Min(Math.Max(_points[i].Y, _limits[i].Top), _limits[i].Bottom);
             }
          }
 
-         bmp.FillPolygon(PointsAsXyxyxySequence(_points), Windows.UI.Colors.Red);
+         if (Animate) {
+            Func<UInt16, UInt16> funcAddRandomBit = (val) => (UInt16)((((_random.Next() & 1) == 1) ? 0x0000 : 0x8000) | (val >> 1));
+            switch (Any—hannel ? _channel : Next—hannel()) {
+            case 0: _fillColor.R = funcAddRandomBit(_fillColor.R); break;
+            case 1: _fillColor.G = funcAddRandomBit(_fillColor.G); break;
+            case 2: _fillColor.B = funcAddRandomBit(_fillColor.B); break;
+            }
+         }
+         Func<double, byte> funcCast_UInt16_to_Byte = (val) => (byte)(byte.MaxValue * val / Color16.MaxColorValue);
+         var fillColor =
+            new Color {
+               R = funcCast_UInt16_to_Byte(_fillColor.R),
+               G = funcCast_UInt16_to_Byte(_fillColor.G),
+               B = funcCast_UInt16_to_Byte(_fillColor.B),
+               A = byte.MaxValue
+            }.Attenuate(160).ToWinColor();
+
+         bmp.FillPolygon(PointsAsXyxyxySequence(_points), fillColor);
 
          for (var i = 0; i < _points.Length; i++) {
             var p1 = _points[i];
@@ -181,11 +217,11 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
             bmp.DrawLineAa((int) p1.X, (int) p1.Y, (int) p2.X, (int) p2.Y, Windows.UI.Colors.Red);
          }
 
-#if DEBUG
-         var clrBk = Windows.UI.Color.FromArgb(128, 0x0F, 0xFF, 0x00);
-         foreach (var rc in _limits)
-            bmp.DrawRectangle((int) rc.Left, (int) rc.Top, (int) rc.Right, (int) rc.Bottom, clrBk);
-#endif
+//#if DEBUG
+//         var clrBk = Windows.UI.Color.FromArgb(128, 0x0F, 0xFF, 0x00);
+//         foreach (var rc in _limits)
+//            bmp.DrawRectangle((int) rc.Left, (int) rc.Top, (int) rc.Right, (int) rc.Bottom, clrBk);
+//#endif
 
          //bmp = bmp.RotateFree(_rotate);
          //_rotate += .4;
@@ -198,7 +234,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
          if (_timer == null) {
             _timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(100)};
             _timer.Tick += delegate {
-               if (Animate) {
+               if (Animate || Dance) {
                   //NextIteration();
                   AsyncRunner.InvokeLater(NextIteration, CoreDispatcherPriority.Low);
                }
@@ -226,6 +262,12 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       public void Dispose() {
          _timer.Stop();
          Animate = false;
+         Dance = false;
+      }
+
+      private int Next—hannel() {
+         var i = _random.Next();
+         return (i % 3);
       }
    }
 }

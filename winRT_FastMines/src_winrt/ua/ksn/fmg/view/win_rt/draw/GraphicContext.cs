@@ -87,26 +87,18 @@ namespace ua.ksn.fmg.view.win_rt.draw {
             }
          }
 
-         public Color getColor(int index) {
+         public Color GetColor(int index) {
             if (_colors.ContainsKey(index))
                return _colors[index];
 
-            const int basic = 120; // от заданной границы светлости буду создавать новый цвет
-#if WINDOWS_RT
             //var rnd = Windows.Security.Cryptography.CryptographicBuffer.GenerateRandomNumber();
             var rnd = Rand.Next();
-            var r = basic + ((rnd & 0xFF) >> 0)%(0xFF - basic);
-            var g = basic + ((rnd & 0xFF00) >> 8)%(0xFF - basic);
-            var b = basic + ((rnd & 0xFF0000) >> 16)%(0xFF - basic);
-#else
-            var r = basic + _rand.Next(0xFF - basic);
-            var g = basic + _rand.Next(0xFF - basic);
-            var b = basic + _rand.Next(0xFF - basic);
-#endif
-            System.Diagnostics.Debug.Assert(r < 256);
-            System.Diagnostics.Debug.Assert(g < 256);
-            System.Diagnostics.Debug.Assert(b < 256);
-            var res = new Color((byte) r, (byte) g, (byte) b);
+            var res = new Color {
+               R = (byte) ((rnd & 0xFF) >> 0),
+               G = (byte) ((rnd & 0xFF00) >> 8),
+               B = (byte) ((rnd & 0xFF0000) >> 16),
+               A = 255
+            }.Attenuate();
             Colors.Add(index, res);
             return res;
          }

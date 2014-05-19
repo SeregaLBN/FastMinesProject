@@ -25,11 +25,14 @@ namespace FastMines {
    /// </summary>
    public sealed partial class GroupDetailPage : FastMines.Common.LayoutAwarePage {
       private EMosaicGroup _group;
+      private bool _animateImg = true;
+      private bool _danceImg = false;
+
       public GroupDetailPage() {
          this.InitializeComponent();
 
-         this.Loaded += delegate { ua.ksn.fmg.view.win_rt.res.Resources.ImgMosaicGroupPlay(_group, true); };
-         this.Unloaded += delegate { ua.ksn.fmg.view.win_rt.res.Resources.ImgMosaicGroupPlay(_group, false); };
+         this.Loaded += delegate { ua.ksn.fmg.view.win_rt.res.Resources.ImgMosaicGroupPlay(_group, _animateImg, _danceImg); };
+         this.Unloaded += delegate { ua.ksn.fmg.view.win_rt.res.Resources.ImgMosaicGroupPlay(_group, false, false); };
       }
 
       /// <summary>
@@ -65,6 +68,16 @@ namespace FastMines {
             MinesCount = FmDataSource.MinesCount = FmDataSource.SkillLevel.GetNumberMines(eMosaic),
             SizeField = FmDataSource.SizeField = FmDataSource.SkillLevel.DefaultSize()
          });
+      }
+
+      private void GroupImage_OnTapped(object sender, TappedRoutedEventArgs e) {
+         _danceImg = !_danceImg;
+         ua.ksn.fmg.view.win_rt.res.Resources.ImgMosaicGroupPlay(_group, _animateImg, _danceImg);
+      }
+
+      private void GroupImage_OnDoubleTapped(object sender, DoubleTappedRoutedEventArgs e) {
+         _animateImg = !_animateImg;
+         ua.ksn.fmg.view.win_rt.res.Resources.ImgMosaicGroupPlay(_group, _animateImg, _danceImg);
       }
    }
 }

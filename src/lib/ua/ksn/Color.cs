@@ -45,6 +45,21 @@ namespace ua.ksn {
    }
 
    public static class ColorExt {
+      /// <summary> —м€гчить цвет </summary>
+      /// <param name="clr"></param>
+      /// <param name="basic"> от заданной границы светлости буду создавать новый цвет </param>
+      /// <param name="withAlphaChanel"></param>
+      /// <returns></returns>
+      public static Color Attenuate(this Color clr, int basic = 120, bool withAlphaChanel = false) {
+         System.Diagnostics.Debug.Assert(basic >= 0 && basic < 0xFF);
+         return new Color {
+            R = (byte) (basic + clr.R%(0xFF - basic)),
+            G = (byte) (basic + clr.G%(0xFF - basic)),
+            B = (byte) (basic + clr.B%(0xFF - basic)),
+            A = withAlphaChanel ? (byte) (basic + clr.A%(0xFF - basic)) : clr.A
+         };
+      }
+
 #if WINDOWS_RT
       public static Color ToFmColor(this Windows.UI.Color self) { return new Color(self.R, self.G, self.B, self.A); }
       public static Windows.UI.Color ToWinColor(this Color self) { return new Windows.UI.Color { A = self.A, B = self.B, G = self.G, R = self.R }; }

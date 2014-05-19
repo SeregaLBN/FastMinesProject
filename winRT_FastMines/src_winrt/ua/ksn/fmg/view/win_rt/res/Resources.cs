@@ -175,11 +175,12 @@ namespace ua.ksn.fmg.view.win_rt.res {
          }
       }
 
-      public static void ImgMosaicGroupPlay(EMosaicGroup key, bool animate) {
+      public static void ImgMosaicGroupPlay(EMosaicGroup key, bool animate, bool dance) {
          if (!_imgsMosaicGroup.ContainsKey(key))
             return;
          var img = _imgsMosaicGroup[key];
          img.Animate = animate;
+         img.Dance = dance;
       }
 
       //public static async Task<WriteableBitmap> GetImgMosaicGroup(EMosaicGroup key, int newWidth, int newHeight) {
