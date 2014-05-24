@@ -18,8 +18,9 @@ BOOL SaveBitmap(HBITMAP hBmp, LPCTSTR szBmpFile, BOOL bReplaceFile = TRUE);
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+   const float margin = 10;
    const float zoom = 10;
-   SIZE size = {200*zoom, 200*zoom};
+   const SIZE size = {200*zoom+2*margin, 200*zoom+2*margin};
    HBITMAP hBmp = CreateBitmap(size.cx, size.cy, 0xFFFFFF);
 
    HDC hCDC = ::GetDC(NULL);   _ASSERT_EXPR(hCDC, L"GetDC");
@@ -31,74 +32,73 @@ int _tmain(int argc, _TCHAR* argv[])
    { // draw star
       const int iPenWidth = 17;
 
-      COLORREF clrs[] = {0xFF0000, 0xFFD800, 0x4CFF00, 0x00FF90, 0x0094FF, 0x4800FF, 0xB200FF, 0xFF006E};
-      POINT rays[] = { // owner rays points
-         {100.0000*zoom, 200.0000*zoom},
-         {170.7107*zoom,  29.2893*zoom},
-         {  0.0000*zoom, 100.0000*zoom},
-         {170.7107*zoom, 170.7107*zoom},
-         {100.0000*zoom,   0.0000*zoom},
-         { 29.2893*zoom, 170.7107*zoom},
-         {200.0000*zoom, 100.0000*zoom},
-         { 29.2893*zoom,  29.2893*zoom}};
-      POINT inn[] = { // inner octahedron
-         {100.0346*zoom, 141.4070*zoom},
-         {129.3408*zoom,  70.7320*zoom},
-         { 58.5800*zoom, 100.0000*zoom},
-         {129.2500*zoom, 129.2500*zoom},
-         { 99.9011*zoom,  58.5377*zoom},
-         { 70.7233*zoom, 129.3198*zoom},
-         {141.4167*zoom, 100.0000*zoom},
-         { 70.7500*zoom,  70.7500*zoom}};
-      POINT oct[] = { // central octahedron
-         {120.7053*zoom, 149.9897*zoom},
-         {120.7269*zoom,  50.0007*zoom},
-         { 50.0034*zoom, 120.7137*zoom},
-         {150.0000*zoom, 120.6950*zoom},
-         { 79.3120*zoom,  50.0007*zoom},
-         { 79.2624*zoom, 149.9727*zoom},
-         {150.0000*zoom,  79.2737*zoom},
-         { 50.0034*zoom,  79.3093*zoom}};
+      const COLORREF clrs[] = {0xFF0000, 0xFFD800, 0x4CFF00, 0x00FF90, 0x0094FF, 0x4800FF, 0xB200FF, 0xFF006E};
+      const POINT rays[] = { // owner rays points
+         {margin+100.0000*zoom, margin+200.0000*zoom},
+         {margin+170.7107*zoom, margin+ 29.2893*zoom},
+         {margin+  0.0000*zoom, margin+100.0000*zoom},
+         {margin+170.7107*zoom, margin+170.7107*zoom},
+         {margin+100.0000*zoom, margin+  0.0000*zoom},
+         {margin+ 29.2893*zoom, margin+170.7107*zoom},
+         {margin+200.0000*zoom, margin+100.0000*zoom},
+         {margin+ 29.2893*zoom, margin+ 29.2893*zoom}};
+      const POINT inn[] = { // inner octahedron
+         {margin+100.0346*zoom, margin+141.4070*zoom},
+         {margin+129.3408*zoom, margin+ 70.7320*zoom},
+         {margin+ 58.5800*zoom, margin+100.0000*zoom},
+         {margin+129.2500*zoom, margin+129.2500*zoom},
+         {margin+ 99.9011*zoom, margin+ 58.5377*zoom},
+         {margin+ 70.7233*zoom, margin+129.3198*zoom},
+         {margin+141.4167*zoom, margin+100.0000*zoom},
+         {margin+ 70.7500*zoom, margin+ 70.7500*zoom}};
+      const POINT oct[] = { // central octahedron
+         {margin+120.7053*zoom, margin+149.9897*zoom},
+         {margin+120.7269*zoom, margin+ 50.0007*zoom},
+         {margin+ 50.0034*zoom, margin+120.7137*zoom},
+         {margin+150.0000*zoom, margin+120.6950*zoom},
+         {margin+ 79.3120*zoom, margin+ 50.0007*zoom},
+         {margin+ 79.2624*zoom, margin+149.9727*zoom},
+         {margin+150.0000*zoom, margin+ 79.2737*zoom},
+         {margin+ 50.0034*zoom, margin+ 79.3093*zoom}};
 
+      // paint owner gradient rays
       for (int i=0; i<8; i++) {
-         // gradient
          TRIVERTEX vert[] = {
             {
-               rays[i].x,         // LONG    x;
-               rays[i].y,         // LONG    y;
-               toClr16(clrs[(i+1)%8], 0),  // COLOR16 Red;   0x0000..0xff00
-               toClr16(clrs[(i+1)%8], 1),  // COLOR16 Green;
-               toClr16(clrs[(i+1)%8], 2),  // COLOR16 Blue;
-               0x0000                // COLOR16 Alpha;
+               rays[i].x,                 // LONG    x;
+               rays[i].y,                 // LONG    y;
+               toClr16(clrs[(i+1)%8], 0), // COLOR16 Red;   0x0000..0xff00
+               toClr16(clrs[(i+1)%8], 1), // COLOR16 Green;
+               toClr16(clrs[(i+1)%8], 2), // COLOR16 Blue;
+               0x0000                     // COLOR16 Alpha;
             }, {
-               oct[i].x,         // LONG    x;
-               oct[i].y,         // LONG    y;   
-               toClr16(clrs[(i+3)%8], 0),  // COLOR16 Red;   0x0000..0xff00
-               toClr16(clrs[(i+3)%8], 1),  // COLOR16 Green;
-               toClr16(clrs[(i+3)%8], 2),  // COLOR16 Blue;
-               0x0000                // COLOR16 Alpha;
+               oct[i].x,                  // LONG    x;
+               oct[i].y,                  // LONG    y;   
+               toClr16(clrs[(i+3)%8], 0), // COLOR16 Red;   0x0000..0xff00
+               toClr16(clrs[(i+3)%8], 1), // COLOR16 Green;
+               toClr16(clrs[(i+3)%8], 2), // COLOR16 Blue;
+               0x0000                     // COLOR16 Alpha;
             }, {
-               inn[i].x,         // LONG    x;
-               inn[i].y,         // LONG    y;   
-               toClr16(clrs[(i+6)%8], 0),  // COLOR16 Red;   0x0000..0xff00
-               toClr16(clrs[(i+6)%8], 1),  // COLOR16 Green;
-               toClr16(clrs[(i+6)%8], 2),  // COLOR16 Blue;
-               0x0000                // COLOR16 Alpha;
+               inn[i].x,                  // LONG    x;
+               inn[i].y,                  // LONG    y;   
+               toClr16(clrs[(i+6)%8], 0), // COLOR16 Red;   0x0000..0xff00
+               toClr16(clrs[(i+6)%8], 1), // COLOR16 Green;
+               toClr16(clrs[(i+6)%8], 2), // COLOR16 Blue;
+               0x0000                     // COLOR16 Alpha;
             }, {
-               oct[(i+5)%8].x,         // LONG    x;
-               oct[(i+5)%8].y,         // LONG    y;   
-               toClr16(clrs[(i+0)%8], 0),  // COLOR16 Red;   0x0000..0xff00
-               toClr16(clrs[(i+0)%8], 1),  // COLOR16 Green;
-               toClr16(clrs[(i+0)%8], 2),  // COLOR16 Blue;
-               0x0000                // COLOR16 Alpha;
+               oct[(i+5)%8].x,            // LONG    x;
+               oct[(i+5)%8].y,            // LONG    y;   
+               toClr16(clrs[(i+0)%8], 0), // COLOR16 Red;   0x0000..0xff00
+               toClr16(clrs[(i+0)%8], 1), // COLOR16 Green;
+               toClr16(clrs[(i+0)%8], 2), // COLOR16 Blue;
+               0x0000                     // COLOR16 Alpha;
             }
          };
-         GRADIENT_TRIANGLE gTri1[] = {{1, 0, 3}, {3, 2, 1}};
-         GRADIENT_TRIANGLE gTri2[] = {{0, 1, 2}, {0, 3, 2}};
-         BOOL bRes = ::GradientFill(hDC, vert, 4, &gTri1, 2, GRADIENT_FILL_TRIANGLE); _ASSERT(bRes);
-         bRes = ::GradientFill(hDC, vert, 4, &gTri2, 2, GRADIENT_FILL_TRIANGLE); _ASSERT(bRes); 
+         GRADIENT_TRIANGLE gTri[] = {{0, 1, 2}, {0, 3, 2}};
+         BOOL bRes = ::GradientFill(hDC, vert, 4, &gTri, 2, GRADIENT_FILL_TRIANGLE); _ASSERT(bRes);
       }
 
+      // paint strar perimeter
       //::MoveToEx(hDC, rays[7].x, rays[7].y, NULL);
       //for (int i=0; i<8; i++) {
       //   HPEN hPen = ::CreatePen(PS_SOLID, iPenWidth, clrs[i]);   _ASSERT_EXPR(hPen, L"CreatePen");
@@ -107,6 +107,36 @@ int _tmain(int argc, _TCHAR* argv[])
       //   BOOL bRes = DeletePen(hPen);   _ASSERT_EXPR(bRes, L"DeletePen");
       //   hPenTmp = SelectPen(hDC, hPenTmp);   _ASSERT_EXPR(hPenTmp==hPen, L"released SelectPen");
       //}
+
+      // paint inner gradient triangles
+      for (int i=0; i<8; i++) {
+         TRIVERTEX vert[] = {
+            {
+               inn[(i+0)%8].x,            // LONG    x;
+               inn[(i+0)%8].y,            // LONG    y;
+               toClr16(clrs[(i+6)%8], 0), // COLOR16 Red;   0x0000..0xff00
+               toClr16(clrs[(i+6)%8], 1), // COLOR16 Green;
+               toClr16(clrs[(i+6)%8], 2), // COLOR16 Blue;
+               0x0000                     // COLOR16 Alpha;
+            }, {
+               inn[(i+3)%8].x,            // LONG    x;
+               inn[(i+3)%8].y,            // LONG    y;   
+               toClr16(clrs[(i+6)%8], 0), // COLOR16 Red;   0x0000..0xff00
+               toClr16(clrs[(i+6)%8], 1), // COLOR16 Green;
+               toClr16(clrs[(i+6)%8], 2), // COLOR16 Blue;
+               0x0000                     // COLOR16 Alpha;
+            }, {
+               size.cx/2,  // LONG    x;
+               size.cx/2,  // LONG    y;   
+               (i&1)?0:0xFF00,     // COLOR16 Red;   0x0000..0xff00
+               (i&1)?0:0xFF00,     // COLOR16 Green;
+               (i&1)?0:0xFF00,     // COLOR16 Blue;
+               0x0000      // COLOR16 Alpha;
+            }
+         };
+         GRADIENT_TRIANGLE gTri1[] = {{0, 1, 2}};
+         BOOL bRes = ::GradientFill(hDC, vert, 3, &gTri1, 1, GRADIENT_FILL_TRIANGLE); _ASSERT(bRes);
+      }
    }
 
    hBmpDummy = SelectBitmap(hDC, hBmpDummy);   _ASSERT_EXPR(hBmpDummy==hBmp, L"released SelectBitmap");
