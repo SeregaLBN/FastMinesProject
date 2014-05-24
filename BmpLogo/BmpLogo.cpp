@@ -18,7 +18,7 @@ BOOL SaveBitmap(HBITMAP hBmp, LPCTSTR szBmpFile, BOOL bReplaceFile = TRUE);
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-   float zoom = 10;
+   const float zoom = 10;
    SIZE size = {200*zoom, 200*zoom};
    HBITMAP hBmp = CreateBitmap(size.cx, size.cy, 0xFFFFFF);
 
@@ -32,7 +32,7 @@ int _tmain(int argc, _TCHAR* argv[])
       const int iPenWidth = 17;
 
       COLORREF clrs[] = {0xFF0000, 0xFFD800, 0x4CFF00, 0x00FF90, 0x0094FF, 0x4800FF, 0xB200FF, 0xFF006E};
-      POINT pnts[] = {
+      POINT rays[] = { // owner rays points
          {100.0000*zoom, 200.0000*zoom},
          {170.7107*zoom,  29.2893*zoom},
          {  0.0000*zoom, 100.0000*zoom},
@@ -41,57 +41,72 @@ int _tmain(int argc, _TCHAR* argv[])
          { 29.2893*zoom, 170.7107*zoom},
          {200.0000*zoom, 100.0000*zoom},
          { 29.2893*zoom,  29.2893*zoom}};
-      POINT rays[][4] = {
-         {  pnts[7],
-            { 49.9810*zoom,  79.2435*zoom},
-            { 70.7259*zoom,  70.7259*zoom},
-            { 79.3000*zoom,  50.0371*zoom}},
-         };
-      ::MoveToEx(hDC, pnts[7].x, pnts[7].y, NULL);
+      POINT inn[] = { // inner octahedron
+         {100.0346*zoom, 141.4070*zoom},
+         {129.3408*zoom,  70.7320*zoom},
+         { 58.5800*zoom, 100.0000*zoom},
+         {129.2500*zoom, 129.2500*zoom},
+         { 99.9011*zoom,  58.5377*zoom},
+         { 70.7233*zoom, 129.3198*zoom},
+         {141.4167*zoom, 100.0000*zoom},
+         { 70.7500*zoom,  70.7500*zoom}};
+      POINT oct[] = { // central octahedron
+         {120.7053*zoom, 149.9897*zoom},
+         {120.7269*zoom,  50.0007*zoom},
+         { 50.0034*zoom, 120.7137*zoom},
+         {150.0000*zoom, 120.6950*zoom},
+         { 79.3120*zoom,  50.0007*zoom},
+         { 79.2624*zoom, 149.9727*zoom},
+         {150.0000*zoom,  79.2737*zoom},
+         { 50.0034*zoom,  79.3093*zoom}};
+
       for (int i=0; i<8; i++) {
-         HPEN hPen = ::CreatePen(PS_SOLID, iPenWidth, clrs[i]);   _ASSERT_EXPR(hPen, L"CreatePen");
-         HPEN hPenTmp = SelectPen(hDC, hPen);   _ASSERT_EXPR(hPenTmp, L"SelectPen");
-         ::LineTo(hDC, pnts[i].x, pnts[i].y);
-         BOOL bRes = DeletePen(hPen);   _ASSERT_EXPR(bRes, L"DeletePen");
-         hPenTmp = SelectPen(hDC, hPenTmp);   _ASSERT_EXPR(hPenTmp==hPen, L"released SelectPen");
+         // gradient
+         TRIVERTEX vert[] = {
+            {
+               rays[i].x,         // LONG    x;
+               rays[i].y,         // LONG    y;
+               toClr16(clrs[(i+1)%8], 0),  // COLOR16 Red;   0x0000..0xff00
+               toClr16(clrs[(i+1)%8], 1),  // COLOR16 Green;
+               toClr16(clrs[(i+1)%8], 2),  // COLOR16 Blue;
+               0x0000                // COLOR16 Alpha;
+            }, {
+               oct[i].x,         // LONG    x;
+               oct[i].y,         // LONG    y;   
+               toClr16(clrs[(i+3)%8], 0),  // COLOR16 Red;   0x0000..0xff00
+               toClr16(clrs[(i+3)%8], 1),  // COLOR16 Green;
+               toClr16(clrs[(i+3)%8], 2),  // COLOR16 Blue;
+               0x0000                // COLOR16 Alpha;
+            }, {
+               inn[i].x,         // LONG    x;
+               inn[i].y,         // LONG    y;   
+               toClr16(clrs[(i+6)%8], 0),  // COLOR16 Red;   0x0000..0xff00
+               toClr16(clrs[(i+6)%8], 1),  // COLOR16 Green;
+               toClr16(clrs[(i+6)%8], 2),  // COLOR16 Blue;
+               0x0000                // COLOR16 Alpha;
+            }, {
+               oct[(i+5)%8].x,         // LONG    x;
+               oct[(i+5)%8].y,         // LONG    y;   
+               toClr16(clrs[(i+0)%8], 0),  // COLOR16 Red;   0x0000..0xff00
+               toClr16(clrs[(i+0)%8], 1),  // COLOR16 Green;
+               toClr16(clrs[(i+0)%8], 2),  // COLOR16 Blue;
+               0x0000                // COLOR16 Alpha;
+            }
+         };
+         GRADIENT_TRIANGLE gTri1[] = {{1, 0, 3}, {3, 2, 1}};
+         GRADIENT_TRIANGLE gTri2[] = {{0, 1, 2}, {0, 3, 2}};
+         BOOL bRes = ::GradientFill(hDC, vert, 4, &gTri1, 2, GRADIENT_FILL_TRIANGLE); _ASSERT(bRes);
+         bRes = ::GradientFill(hDC, vert, 4, &gTri2, 2, GRADIENT_FILL_TRIANGLE); _ASSERT(bRes); 
       }
 
-      // gradient
-      TRIVERTEX vert[] = {
-         {
-            rays[0][0].x,         // LONG    x;
-            rays[0][0].y,         // LONG    y;
-            toClr16(clrs[0], 0),  // COLOR16 Red;   0x0000..0xff00
-            toClr16(clrs[0], 1),  // COLOR16 Green;
-            toClr16(clrs[0], 2),  // COLOR16 Blue;
-            0x0000                // COLOR16 Alpha;
-         }, {
-            rays[0][1].x,         // LONG    x;
-            rays[0][1].y,         // LONG    y;   
-            toClr16(clrs[2], 0),  // COLOR16 Red;   0x0000..0xff00
-            toClr16(clrs[2], 1),  // COLOR16 Green;
-            toClr16(clrs[2], 2),  // COLOR16 Blue;
-            0x0000                // COLOR16 Alpha;
-         }, {
-            rays[0][2].x,         // LONG    x;
-            rays[0][2].y,         // LONG    y;   
-            toClr16(clrs[5], 0),  // COLOR16 Red;   0x0000..0xff00
-            toClr16(clrs[5], 1),  // COLOR16 Green;
-            toClr16(clrs[5], 2),  // COLOR16 Blue;
-            0x0000                // COLOR16 Alpha;
-         }, {
-            rays[0][3].x,         // LONG    x;
-            rays[0][3].y,         // LONG    y;   
-            toClr16(clrs[7], 0),  // COLOR16 Red;   0x0000..0xff00
-            toClr16(clrs[7], 1),  // COLOR16 Green;
-            toClr16(clrs[7], 2),  // COLOR16 Blue;
-            0x0000                // COLOR16 Alpha;
-         }
-      };
-      GRADIENT_TRIANGLE gTri1[] = {{1, 0, 3}, {3, 2, 1}};
-      GRADIENT_TRIANGLE gTri2[] = {{0, 1, 2}, {0, 3, 2}};
-      BOOL bRes = ::GradientFill(hDC, vert, 4, &gTri1, 2, GRADIENT_FILL_TRIANGLE); _ASSERT(bRes);
-      bRes = ::GradientFill(hDC, vert, 4, &gTri2, 2, GRADIENT_FILL_TRIANGLE); _ASSERT(bRes);
+      //::MoveToEx(hDC, rays[7].x, rays[7].y, NULL);
+      //for (int i=0; i<8; i++) {
+      //   HPEN hPen = ::CreatePen(PS_SOLID, iPenWidth, clrs[i]);   _ASSERT_EXPR(hPen, L"CreatePen");
+      //   HPEN hPenTmp = SelectPen(hDC, hPen);   _ASSERT_EXPR(hPenTmp, L"SelectPen");
+      //   ::LineTo(hDC, rays[i].x, rays[i].y);
+      //   BOOL bRes = DeletePen(hPen);   _ASSERT_EXPR(bRes, L"DeletePen");
+      //   hPenTmp = SelectPen(hDC, hPenTmp);   _ASSERT_EXPR(hPenTmp==hPen, L"released SelectPen");
+      //}
    }
 
    hBmpDummy = SelectBitmap(hDC, hBmpDummy);   _ASSERT_EXPR(hBmpDummy==hBmp, L"released SelectBitmap");
