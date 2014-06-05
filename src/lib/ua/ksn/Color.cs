@@ -1,3 +1,5 @@
+using System;
+
 namespace ua.ksn {
 
    public struct Color {
@@ -45,6 +47,16 @@ namespace ua.ksn {
    }
 
    public static class ColorExt {
+      public static Color RandomColor(Random rnd) {
+         var next = rnd.Next();
+         return new Color {
+            R = (byte) ((next & 0xFF) >> 0),
+            G = (byte) ((next & 0xFF00) >> 8),
+            B = (byte) ((next & 0xFF0000) >> 16),
+            A = 255
+         };
+      }
+
       /// <summary> Смягчить цвет </summary>
       /// <param name="clr"></param>
       /// <param name="basic"> от заданной границы светлости буду создавать новый цвет </param>
@@ -57,6 +69,17 @@ namespace ua.ksn {
             G = (byte) (basic + clr.G%(0xFF - basic)),
             B = (byte) (basic + clr.B%(0xFF - basic)),
             A = withAlphaChanel ? (byte) (basic + clr.A%(0xFF - basic)) : clr.A
+         };
+      }
+
+      /// <summary> Затемнить цвет </summary>
+      public static Color Bedraggle(this Color clr, int basic = 120, bool withAlphaChanel = false) {
+         System.Diagnostics.Debug.Assert(basic >= 0 && basic < 0xFF);
+         return new Color {
+            R = (byte)(/*basic + */clr.R % (0xFF - basic)),
+            G = (byte)(/*basic + */clr.G % (0xFF - basic)),
+            B = (byte)(/*basic + */clr.B % (0xFF - basic)),
+            A = withAlphaChanel ? (byte)(/*basic + */clr.A % (0xFF - basic)) : clr.A
          };
       }
 

@@ -1,8 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
 using ua.ksn.fmg.model.mosaics;
 using ua.ksn.fmg.view.win_rt.res;
+using ua.ksn.fmg.view.win_rt.res.img;
+using FastMines.Common;
 
 // The data model defined by this file serves as a representative example of a strongly-typed
 // model that supports notification when members are added, removed, or modified.  The property
@@ -14,12 +17,15 @@ namespace FastMines.Data {
 
    /// <summary> Generic group data model. </summary>
    public class FmDataGroup : FmDataCommon<EMosaicGroup> {
+      private MosaicsGroupImg _mosaicsGroupImg;
+
       public FmDataGroup(EMosaicGroup eMosaicGroup)
          : base(eMosaicGroup, eMosaicGroup.GetDescription(), (ImageSource) null) {
          Items.CollectionChanged += ItemsCollectionChanged;
          this.Subtitle = "Subtitle group " + eMosaicGroup.GetDescription();
          this.Description = "Description group...";
-         Resources.OnImageChangedMosaicGroup += (newImg, eMosaicGroup2) => { if (eMosaicGroup == eMosaicGroup2) Image = newImg; };
+
+         AsyncRunner.InvokeLater(async () => { base.Image = await Resources.GetImgMosaicGroupPng(eMosaicGroup); }, CoreDispatcherPriority.High);
       }
 
       private void ItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) {
@@ -84,7 +90,21 @@ namespace FastMines.Data {
       }
 
       public override ImageSource Image {
-         get { return base.Image ?? (base.Image = Resources.GetImgMosaicGroup(UniqueId)); }
+         get {
+            if (_mosaicsGroupImg == null)
+               AsyncRunner.InvokeLater(() => { base.Image = MosaicGroupImage.Image; }, CoreDispatcherPriority.Low);
+            return base.Image;
+         }
+      }
+
+      public MosaicsGroupImg MosaicGroupImage {
+         get {
+            if (_mosaicsGroupImg == null) {
+               _mosaicsGroupImg = Resources.GetImgMosaicGroup(UniqueId);
+               base.Image = _mosaicsGroupImg.Image;
+            }
+            return _mosaicsGroupImg;
+         }
       }
    }
 }

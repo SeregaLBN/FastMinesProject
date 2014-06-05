@@ -72,11 +72,6 @@ public class Triangle1 extends BaseCell {
 			return (CalcH(area)*2 - 6*w)/(SQRT3+2);
 			//return (CalcA(area)*SQRT3 - 6*w)/(SQRT3+2);
 		}
-
-		@Override
-		public Size sizeIcoField(boolean smallSize) {
-			return new Size(3, smallSize ? 2 : 3);
-		}
 	}
 
 	public Triangle1(AttrTriangle1 attr, Coord coord) {

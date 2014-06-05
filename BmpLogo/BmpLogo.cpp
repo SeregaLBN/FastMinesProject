@@ -98,7 +98,7 @@ int _tmain(int argc, _TCHAR* argv[])
          BOOL bRes = ::GradientFill(hDC, vert, 4, &gTri, 2, GRADIENT_FILL_TRIANGLE); _ASSERT(bRes);
       }
 
-      // paint strar perimeter
+      // paint star perimeter
       //::MoveToEx(hDC, rays[7].x, rays[7].y, NULL);
       //for (int i=0; i<8; i++) {
       //   HPEN hPen = ::CreatePen(PS_SOLID, iPenWidth, clrs[i]);   _ASSERT_EXPR(hPen, L"CreatePen");

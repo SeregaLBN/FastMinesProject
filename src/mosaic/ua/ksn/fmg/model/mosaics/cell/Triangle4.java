@@ -85,11 +85,6 @@ public class Triangle4 extends BaseCell {
 //		public int getMaxBackgroundFillModeValue() {
 //			return super.getMaxBackgroundFillModeValue()+1;
 //		}
-
-		@Override
-		public Size sizeIcoField(boolean smallSize) {
-			return new Size(4, smallSize ? 4 : 5);
-		}
 	}
 
 	public Triangle4(AttrTriangle4 attr, Coord coord) {

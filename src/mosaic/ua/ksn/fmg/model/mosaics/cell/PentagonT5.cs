@@ -125,10 +125,6 @@ public class PentagonT5 : BaseCell {
 			return base.getMaxBackgroundFillModeValue()+2;
 //			return 1;
 		}
-
-		public override Size sizeIcoField(bool smallSize) {
-			return new Size(3, smallSize ? 2 : 3);
-		}
 	}
 
 	public PentagonT5(AttrPentagonT5 attr, Coord coord)

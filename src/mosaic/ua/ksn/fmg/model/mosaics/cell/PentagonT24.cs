@@ -59,10 +59,6 @@ public class PentagonT24 : BaseCell {
 			double w = borderWidth/2.0;
 			return CalcA(area)*8/11-(w+w/SIN135a) / SQRT2;
 		}
-
-		public override Size sizeIcoField(bool smallSize) {
-			return new Size(2, smallSize ? 2 : 3);
-		}
 	}
 
 	public PentagonT24(AttrPentagonT24 attr, Coord coord)

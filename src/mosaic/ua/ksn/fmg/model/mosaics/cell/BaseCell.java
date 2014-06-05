@@ -43,6 +43,7 @@ import ua.ksn.geom.Point;
 
 /** Базовый класс фигуры-ячейки */
 public abstract class BaseCell implements PropertyChangeListener {
+
 	public static final double SQRT2   = java.lang.Math.sqrt(2.);
 	public static final double SQRT3   = java.lang.Math.sqrt(3.);
 	public static final double SQRT27  = java.lang.Math.sqrt(27.);
@@ -130,8 +131,93 @@ public abstract class BaseCell implements PropertyChangeListener {
 			return 18;
 		}
 
-		/** Для рисование иконки: минимальный размер поля, по которому будет визуально ясно, что это за мозаика... */
-		public abstract Size sizeIcoField(boolean smallSize);
+		/**
+		 * Поиск больше-меньше
+		 * @param baseMin - стартовое значение для поиска
+		 * @param baseDelta - начало дельты приращения
+		 * @param func - ф-ция сравнения
+		 * @return что найдено
+		 */
+		static int Finder(int baseMin, int baseDelta, Comparable<Integer> func) {
+			double res = baseMin;
+			double d = baseDelta;
+			boolean deltaUp = true, lastSmall = true;
+			do {
+				if (deltaUp)
+					d *= 2;
+				else
+					d /= 2;
+
+				if (lastSmall)
+					res += d;
+				else
+					res -= d;
+
+				int z = func.compareTo((int)res);
+				if (z == 0)
+					return (int)res;
+				lastSmall = (z < 0);
+				deltaUp = deltaUp && lastSmall;
+			} while(d > 1);
+			return (int)res;
+		}
+
+		/** узнаю мах размер площади ячеек мозаики, при котором окно проекта вмещается в заданную область
+		 * @param mosaicSizeField - интересуемый размер (в ячейках) поля мозаики
+		 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
+		 * @return макс площадь ячейки
+		 */
+		public int CalcMaxArea(int minStartArea, final Size mosaicSizeField, final Size sizeClient) {
+			return Finder(minStartArea, 53, new Comparable<Integer>() {
+				@Override
+				public int compareTo(Integer area) {
+					Size sizeWnd = CalcOwnerSize(mosaicSizeField, area);
+					if ((sizeWnd.width == sizeClient.width) &&
+					   (sizeWnd.height == sizeClient.height))
+					  return 0;
+					if ((sizeWnd.width <= sizeClient.width) &&
+						(sizeWnd.height <= sizeClient.height))
+						return -1;
+					return +1;
+				}
+			});
+		}
+
+		/**
+		 * узнаю max размер поля мозаики, при котором окно проекта вмещается в в заданную область
+		 * @param area - интересуемая площадь ячеек мозаики
+		 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
+		 * @return max размер поля мозаики
+		 */
+		public Size CalcMaxMosaicSize(final int area, final Size sizeClient) {
+			final Size result = new Size();
+			Finder(1, 10, new Comparable<Integer>() {
+				@Override
+				public int compareTo(Integer newWidth) {
+					result.width = newWidth;
+					Size sizeWnd = CalcOwnerSize(result, area);
+					if (sizeWnd.width == sizeClient.width)
+						return 0;
+					if (sizeWnd.width <= sizeClient.width)
+						return -1;
+					return +1;
+				}
+			});
+			Finder(1, 10, new Comparable<Integer>() {
+				@Override
+				public int compareTo(Integer newHeight) {
+					result.height = newHeight;
+					Size sizeWnd = CalcOwnerSize(result, area);
+					if (sizeWnd.width == sizeClient.height)
+						return 0;
+					if (sizeWnd.height <= sizeClient.height)
+						return -1;
+					return +1;
+				}
+			});
+			return result;
+		}
+
 	}
 
 	private final BaseAttribute attr;

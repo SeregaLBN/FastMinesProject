@@ -69,11 +69,6 @@ public class Square1 extends BaseCell {
 			double w = borderWidth/2.;
 			return CalcA(area)-2*w;
 		}
-
-		@Override
-		public Size sizeIcoField(boolean smallSize) {
-			return new Size(smallSize ? 2 : 3, smallSize ? 2 : 3);
-		}
 	}
 
 	public Square1(AttrSquare1 attr, Coord coord) {

@@ -2,6 +2,7 @@ package ua.ksn.fmg.model.mosaics;
 
 import java.util.ArrayList;
 import java.util.List;
+import ua.ksn.geom.Size;
 
 /* Перечень мозаик */
 
@@ -175,8 +176,37 @@ public enum EMosaic {
 		return null;
 	}
 
-
 	public String getMosaicClassName() {
 		return this.toString().substring(7);
+	}
+
+	/** Для рисование иконки: минимальный размер поля, по которому будет визуально ясно, что это за мозаика... */
+	public Size sizeIcoField(boolean smallSize) {
+		Size res = new Size();
+		switch (this) {
+		case eMosaicTriangle1        : res.width = 3; res.height = smallSize ? 2 : 3; break;
+		case eMosaicTriangle2        : res.width = 3; res.height = smallSize ? 2 : 3; break;
+		case eMosaicTriangle3        : res.width = 2; res.height = smallSize ? 2 : 3; break;
+		case eMosaicTriangle4        : res.width = 4; res.height = smallSize ? 4 : 5; break;
+		case eMosaicSquare1          : res.width = smallSize ? 2 : 3; res.height = smallSize ? 2 : 3; break;
+		case eMosaicSquare2          : res.width = 2; res.height = smallSize ? 2 : 3; break;
+		case eMosaicParquet1         : res.width = 2; res.height = smallSize ? 2 : 3; break;
+		case eMosaicParquet2         : res.width = 2; res.height = smallSize ? 2 : 3; break;
+		case eMosaicTrapezoid1       : res.width = 2; res.height = smallSize ? 2 : 3; break;
+		case eMosaicTrapezoid2       : res.width = 2; res.height = smallSize ? 2 : 3; break;
+		case eMosaicTrapezoid3       : res.width = 4; res.height = smallSize ? 2 : 3; break;
+		case eMosaicRhombus1         : res.width = 3; res.height = smallSize ? 2 : 3; break;
+		case eMosaicQuadrangle1      : res.width = 3; res.height = smallSize ? 2 : 3; break;
+		case eMosaicPenrousePeriodic1: res.width = 3; res.height = smallSize ? 3 : 4; break;
+		case eMosaicPentagonT24      : res.width = 2; res.height = smallSize ? 2 : 3; break;
+		case eMosaicPentagonT5       : res.width = 3; res.height = smallSize ? 2 : 3; break;
+		case eMosaicPentagonT10      : res.width = 3; res.height = smallSize ? 2 : 3; break;
+		case eMosaicHexagon1         : res.width = 2; res.height = smallSize ? 2 : 3; break;
+		case eMosaicTrSq1            : res.width = 4; res.height = smallSize ? 4 : 5; break;
+		case eMosaicTrSq2            : res.width = 4; res.height = smallSize ? 4 : 5; break;
+		case eMosaicSqTrHex          : res.width = 4; res.height = smallSize ? 4 : 5; break;
+		}
+		System.err.println("EMosaic.SizeIcoField: Mosaic '" + this + "' not implemented");
+		return res;
 	}
 }

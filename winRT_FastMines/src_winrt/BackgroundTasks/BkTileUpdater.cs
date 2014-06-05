@@ -1,0 +1,141 @@
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.UI.Notifications;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.Data.Xml.Dom;
+using Windows.ApplicationModel.Background;
+using ua.ksn;
+using ua.ksn.geom;
+using ua.ksn.fmg.model.mosaics;
+using ua.ksn.fmg.view.win_rt.res;
+
+namespace FastMines.BackgroundTasks {
+   public class BkTileUpdater : IBackgroundTask {
+      private static readonly Random _random = new Random();
+
+      public async void Run(IBackgroundTaskInstance taskInstance) {
+         // Get a deferral, to prevent the task from closing prematurely while asynchronous code is still running.
+         BackgroundTaskDeferral deferral = taskInstance.GetDeferral();
+
+         // Update the live tile with the feed items.
+         await UpdateTiles();
+
+         // Inform the system that the task is finished.
+         deferral.Complete();
+      }
+
+      private async Task UpdateTiles() {
+         // Create a tile update manager for the specified syndication feed.
+         var updater = TileUpdateManager.CreateTileUpdaterForApplication();
+         updater.Clear(); // disable tile - set as default
+
+         updater.EnableNotificationQueue(true);
+
+         var xml = await GetXmlString();
+         var tile = CreateNotification(xml);
+         TileUpdateManager.CreateTileUpdaterForApplication().Update(tile);
+      }
+
+      /// <summary> msdn.microsoft.com/en-us/library/windows/apps/hh761491.aspx </summary>
+      public static async Task<string> GetXmlString() {
+         try {
+            return await GetImagePath(false, 75, 75); // test one save to file
+            return string.Format(@"<tile>
+ <visual version='2'>
+    <binding template='TileSquare150x150Image' fallback='TileSquareImage'>
+      <image id='1' src='{0}' alt='FastMines'/>
+    </binding>  
+    <binding template='TileWide310x150Image' fallback='TileWideImage'>
+      <image id='1' src='{1}' alt='mineswepper'/>
+    </binding>  
+    <binding template='TileWide310x150ImageCollection' fallback='TileWideImageCollection'>
+      <image id='1' src='{2}' alt='FastMines'/>
+      <image id='2' src='{3}' alt='small image, row 1, column 1'/>
+      <image id='3' src='{4}' alt='small image, row 1, column 2'/>
+      <image id='4' src='{5}' alt='small image, row 2, column 1'/>
+      <image id='5' src='{6}' alt='small image, row 2, column 2'/>
+    </binding>  
+    <binding template='TileSquare310x310Image'>
+      <image id='1' src='{7}' alt='alt text'/>
+    </binding>  
+    <binding template='TileSquare310x310ImageCollection'>
+      <image id='1' src='{8}' alt='FastMines'/>
+      <image id='2' src='{9}' alt='small image 1 (left)'/>
+      <image id='3' src='{10}' alt='small image 2 (left center)'/>
+      <image id='4' src='{11}' alt='small image 3 (right center)'/>
+      <image id='5' src='{12}' alt='small image 4 (right)'/>
+    </binding>  
+    <binding template='TileSquare71x71Image'>
+      <image id='1' src='{13}' alt='FastMines'/>
+    </binding>  
+</visual>
+</tile>", await GetImagePath(true, 150, 150),
+        await GetImagePath(true, 310, 150),
+        await GetImagePath(true, 160, 150), await GetImagePath(false, 75, 75), await GetImagePath(false, 75, 75), await GetImagePath(false, 75, 75), await GetImagePath(false, 75, 75),
+        await GetImagePath(true, 310, 310),
+        await GetImagePath(true, 310, 233), await GetImagePath(false, 77, 77), await GetImagePath(false, 77, 77), await GetImagePath(false, 77, 77), await GetImagePath(false, 77, 77),
+        await GetImagePath(true, 71, 71));
+
+         } catch (Exception ex) {
+            System.Diagnostics.Debug.Assert(false, ex.Message);
+            return string.Format(@"<tile>
+  <visual>
+    <binding template='TileSquareBlock'>
+      <text id='1'>{0}</text>
+      <text id='2'>{1}</text>
+    </binding> 
+    <binding template='TileWideText03'>
+      <text id='1'>{0}: {1}</text>
+    </binding>  
+  </visual>
+</tile>", ex.GetType().Name, WebUtility.UrlEncode(ex.Message));
+         }
+      }
+
+      private static TileNotification CreateNotification(string xml) {
+         var xmlDocument = new XmlDocument();
+         xmlDocument.LoadXml(xml);
+         return new TileNotification(xmlDocument);
+      }
+
+      public static async Task<string> GetImagePath(bool primary, int w, int h) {
+         StorageFile storageFile;
+         if (primary) {
+            var clr = Resources.DefaultBkColor;
+            //switch (_random.Next() % 3) {
+            //case 0: clr = clr.ToFmColor().Attenuate().ToWinColor(); break;
+            //case 1: clr = clr.ToFmColor().Bedraggle().ToWinColor(); break;
+            //}
+            const uint margin = 2u;
+            var loopMix = (_random.Next() % 8);
+            var bmp = Resources.GetImgLogo(new Size(w, h), clr, (uint) loopMix, margin);
+            storageFile = await SaveToFileLogo(bmp);
+         } else {
+            var mosaicType = EMosaicEx.fromOrdinal(_random.Next() % Enum.GetValues(typeof(EMosaic)).Length);
+            var clr = ColorExt.RandomColor(_random).Attenuate();
+            var sizeField = mosaicType.SizeIcoField(true);
+            var area = CellFactory.CreateAttributeInstance(mosaicType, 0).CalcOptimalArea(50, sizeField, new Size(w,h));
+            var img = Resources.GetImgMosaic(mosaicType, sizeField, area, clr.ToWinColor(), new Size(3, 3));
+            var bmp = img.GetImage(false);
+            storageFile = await SaveToFileMosaic(w + "x" + h, bmp, mosaicType);
+         }
+         return "ms-appdata:///temp/" + storageFile.DisplayName;
+      }
+
+      public static async Task<StorageFile> SaveToFileLogo(WriteableBitmap writeableBitmap) {
+         return await SaveToFile("logo", writeableBitmap);
+      }
+      public static async Task<StorageFile> SaveToFileMosaic(string filePrefix, WriteableBitmap writeableBitmap, EMosaic mosaicType) {
+         return await SaveToFile(filePrefix + "_" + mosaicType.getMosaicClassName(), writeableBitmap);
+      }
+      public static async Task<StorageFile> SaveToFile(string filePrefix, WriteableBitmap writeableBitmap) {
+         return await writeableBitmap.SaveToFile(
+            string.Format("{0}_{1}x{2}.png",
+               filePrefix,
+               writeableBitmap.PixelWidth, writeableBitmap.PixelHeight),
+               ApplicationData.Current.TemporaryFolder);
+      }
+   }
+}

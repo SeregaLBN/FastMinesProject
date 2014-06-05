@@ -123,89 +123,12 @@ namespace FastMines {
          return sizeMosaicInPixel;
       }
 
-      /// <summary> Поиск больше-меньше </summary>
-      /// <param name="baseMin">стартовое значение для поиска</param>
-      /// <param name="baseDelta">начало дельты приращения</param>
-      /// <param name="comparable">ф-ция сравнения</param>
-      /// <returns>что найдено</returns>
-      private static int Finder(int baseMin, int baseDelta, Func<int, int> comparable) {
-         double res = baseMin;
-         double d = baseDelta;
-         bool deltaUp = true, lastSmall = true;
-         do {
-            if (deltaUp)
-               d *= 2;
-            else
-               d /= 2;
-
-            if (lastSmall)
-               res += d;
-            else
-               res -= d;
-
-            int z = comparable((int)res);
-            if (z == 0)
-               return (int)res;
-            lastSmall = (z < 0);
-            deltaUp = deltaUp && lastSmall;
-         } while (d > 1);
-         return (int)res;
-      }
-
       /// <summary> узнаю мах размер площади ячеек мозаики, при котором ... удобно... </summary>
       /// <param name="mosaicSizeField">интересуемый размер поля мозаики</param>
       /// <returns>макс площадь ячейки</returns>
       private int CalcMaxArea(Size mosaicSizeField) {
          var sizePage = Window.Current.Bounds;
          return (int) (sizePage.Width/3 * sizePage.Height/3);
-      }
-
-      /// <summary> узнаю мах размер площади ячеек мозаики, при котором вся мозаика помещается на странице </summary>
-      /// <param name="mosaicSizeField">интересуемый размер поля мозаики</param>
-      /// <returns>макс площадь ячейки</returns>
-      private int CalcOptimalArea(Size mosaicSizeField) {
-         var sizePage = Window.Current.Bounds.ToFmRect().size();
-         return Finder(ua.ksn.fmg.controller.Mosaic.AREA_MINIMUM, ua.ksn.fmg.controller.Mosaic.AREA_MINIMUM,
-            area => {
-               var sizeMosaic = MosaicField.CalcWindowSize(mosaicSizeField, area);
-               var sizeWnd = CalcSize(sizeMosaic);
-               if ((sizeWnd.width == sizePage.width) &&
-                   (sizeWnd.height == sizePage.height))
-                  return 0;
-               if ((sizeWnd.width <= sizePage.width) &&
-                   (sizeWnd.height <= sizePage.height))
-                  return -1;
-               return +1;
-            });
-      }
-
-      /// <summary> узнаю max размер поля мозаики, при котором вся мозаика помещается на странице </summary>
-      /// <param name="area">интересуемая площадь ячеек мозаики</param>
-      /// <returns>max размер поля мозаики</returns>
-      public Size CalcMaxMosaicSize(int area) {
-         var sizePage = Window.Current.Bounds.ToFmRect().size(); // Window.Current.Content.RenderSize
-         var result = new Size();
-         Finder(1, 10, newWidth => {
-            result.width = newWidth;
-            var sizeMosaic = MosaicField.CalcWindowSize(result, area);
-            var sizeWnd = CalcSize(sizeMosaic);
-            if (sizeWnd.width == sizePage.width)
-               return 0;
-            if (sizeWnd.width <= sizePage.width)
-               return -1;
-            return +1;
-         });
-         Finder(1, 10, newHeight => {
-            result.height = newHeight;
-            var sizeMosaic = MosaicField.CalcWindowSize(result, area);
-            var sizeWnd = CalcSize(sizeMosaic);
-            if (sizeWnd.width == sizePage.height)
-               return 0;
-            if (sizeWnd.height <= sizePage.height)
-               return -1;
-            return +1;
-         });
-         return result;
       }
 
       /// <summary> проверить что находится в рамках экрана	</summary>
@@ -260,7 +183,8 @@ namespace FastMines {
       }
 
       void AreaOptimal() {
-         Area = CalcOptimalArea(MosaicField.SizeField);
+         var sizePage = Window.Current.Bounds.ToFmRect().size();
+         Area = MosaicField.CellAttr.CalcOptimalArea(Mosaic.AREA_MINIMUM, MosaicField.SizeField, sizePage);
       }
 
 

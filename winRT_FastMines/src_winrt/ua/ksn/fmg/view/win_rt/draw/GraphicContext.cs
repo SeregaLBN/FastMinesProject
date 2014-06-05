@@ -91,14 +91,7 @@ namespace ua.ksn.fmg.view.win_rt.draw {
             if (_colors.ContainsKey(index))
                return _colors[index];
 
-            //var rnd = Windows.Security.Cryptography.CryptographicBuffer.GenerateRandomNumber();
-            var rnd = Rand.Next();
-            var res = new Color {
-               R = (byte) ((rnd & 0xFF) >> 0),
-               G = (byte) ((rnd & 0xFF00) >> 8),
-               B = (byte) ((rnd & 0xFF0000) >> 16),
-               A = 255
-            }.Attenuate();
+            var res = ColorExt.RandomColor(Rand).Attenuate();
             Colors.Add(index, res);
             return res;
          }

@@ -82,6 +82,7 @@ import ua.ksn.fmg.controller.types.ESkillLevel;
 import ua.ksn.fmg.controller.types.User;
 import ua.ksn.fmg.model.mosaics.EMosaic;
 import ua.ksn.fmg.model.mosaics.EMosaicGroup;
+import ua.ksn.fmg.model.mosaics.cell.BaseCell;
 import ua.ksn.fmg.view.draw.EShowElement;
 import ua.ksn.fmg.view.draw.EZoomInterface;
 import ua.ksn.fmg.view.swing.dialogs.AboutDlg;
@@ -1359,10 +1360,27 @@ public class Main extends JFrame  {
 	}
 
 	/** узнать размер окна проекта при указанном размере окна мозаики */
-	Size CalcSize(Size sizeMosaicInPixel) {
-		Dimension sizeWin = this.getSize();
+	Dimension CalcSize(Size sizeMosaicInPixel) {
+		Dimension currSizeWin = this.getSize();
 
-		if ((sizeWin.height == 0) && (sizeWin.width == 0) && !this.isVisible()) {
+		if ((currSizeWin.height == 0) && (currSizeWin.width == 0) && !this.isVisible()) {
+			throw new RuntimeException("Invalid method call.  Нельзя высчитать размер окна, когда оно даже не выведено на экран...");
+//			Dimension dummy = Toolkit.getDefaultToolkit().getScreenSize(); // заглушка
+//			dummy.height++; dummy.width++;
+//			return dummy;
+		}
+
+		Size currSizeMosaicInPixel = getMosaic().getWindowSize();
+		return new Dimension(
+				sizeMosaicInPixel.width  + (currSizeWin.width  - currSizeMosaicInPixel.width),
+				sizeMosaicInPixel.height + (currSizeWin.height - currSizeMosaicInPixel.height));
+	}
+
+	/** узнать размер окна мозаики при указанном размере окна проекта */
+	Size CalcMosaicWindowSize(Dimension sizeWindow) {
+		Dimension currSizeWin = this.getSize();
+
+		if ((currSizeWin.height == 0) && (currSizeWin.width == 0) && !this.isVisible()) {
 			throw new RuntimeException("Invalid method call.  Нельзя высчитать размер окна, когда оно даже не выведено на экран...");
 //			Dimension dummy = Toolkit.getDefaultToolkit().getScreenSize(); // заглушка
 //			dummy.height++; dummy.width++;
@@ -1371,61 +1389,17 @@ public class Main extends JFrame  {
 
 		Size currSizeMosaicInPixel = getMosaic().getWindowSize();
 		return new Size(
-				sizeWin.width  + (sizeMosaicInPixel.width  - currSizeMosaicInPixel.width),
-				sizeWin.height + (sizeMosaicInPixel.height - currSizeMosaicInPixel.height));
-	}
-
-	/**
-	 * Поиск больше-меньше
-	 * @param baseMin - стартовое значение для поиска
-	 * @param baseDelta - начало дельты приращения
-	 * @param func - ф-ция сравнения
-	 * @return что найдено
-	 */
-	static int Finder(int baseMin, int baseDelta, Comparable<Integer> func) {
-		double res = baseMin;
-		double d = baseDelta;
-		boolean deltaUp = true, lastSmall = true;
-		do {
-			if (deltaUp)
-				d *= 2;
-			else
-				d /= 2;
-
-			if (lastSmall)
-				res += d;
-			else
-				res -= d;
-
-			int z = func.compareTo((int)res);
-			if (z == 0)
-				return (int)res;
-			lastSmall = (z < 0);
-			deltaUp = deltaUp && lastSmall;
-		} while(d > 1);
-		return (int)res;
+				sizeWindow.width  - (currSizeWin.width  - currSizeMosaicInPixel.width),
+				sizeWindow.height - (currSizeWin.height - currSizeMosaicInPixel.height));
 	}
 
 	/** узнаю мах размер площади ячеек мозаики, при котором окно проекта вмещается в текущее разрешение экрана
 	 * @param mosaicSizeField - интересуемый размер поля мозаики
 	 * @return макс площадь ячейки
 	 */
-	int CalcMaxArea(final Size mosaicSizeField) {
-		final Size sizeScreen = Cast.toSize(Toolkit.getDefaultToolkit().getScreenSize());
-		return Finder(Mosaic.AREA_MINIMUM, Mosaic.AREA_MINIMUM, new Comparable<Integer>() {
-			@Override
-			public int compareTo(Integer area) {
-				Size sizeMosaic = getMosaic().CalcWindowSize(mosaicSizeField, area);
-				Size sizeWnd = CalcSize(sizeMosaic);
-				if ((sizeWnd.width == sizeScreen.width) &&
-				   (sizeWnd.height == sizeScreen.height))
-				  return 0;
-				if ((sizeWnd.width <= sizeScreen.width) &&
-					(sizeWnd.height <= sizeScreen.height))
-					return -1;
-				return +1;
-			}
-		});
+	int CalcMaxArea(Size mosaicSizeField) {
+		Size sizeMosaic = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
+		return getMosaic().getCellAttr().CalcMaxArea(Mosaic.AREA_MINIMUM, mosaicSizeField, sizeMosaic);
 	}
 
 	/**
@@ -1433,36 +1407,9 @@ public class Main extends JFrame  {
 	 * @param area - интересуемая площадь ячеек мозаики
 	 * @return max размер поля мозаики
 	 */
-	public Size CalcMaxMosaicSize(final int area) {
-		final Size sizeScreen = Cast.toSize(Toolkit.getDefaultToolkit().getScreenSize());
-		final Size result = new Size();
-		Finder(1, 10, new Comparable<Integer>() {
-			@Override
-			public int compareTo(Integer newWidth) {
-				result.width = newWidth;
-				Size sizeMosaic = getMosaic().CalcWindowSize(result, area);
-				Size sizeWnd = CalcSize(sizeMosaic);
-				if (sizeWnd.width == sizeScreen.width)
-					return 0;
-				if (sizeWnd.width <= sizeScreen.width)
-					return -1;
-				return +1;
-			}
-		});
-		Finder(1, 10, new Comparable<Integer>() {
-			@Override
-			public int compareTo(Integer newHeight) {
-				result.height = newHeight;
-				Size sizeMosaic = getMosaic().CalcWindowSize(result, area);
-				Size sizeWnd = CalcSize(sizeMosaic);
-				if (sizeWnd.width == sizeScreen.height)
-					return 0;
-				if (sizeWnd.height <= sizeScreen.height)
-					return -1;
-				return +1;
-			}
-		});
-		return result;
+	public Size CalcMaxMosaicSize(int area) {
+		Size sizeMosaic = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
+		return getMosaic().getCellAttr().CalcMaxMosaicSize(area, sizeMosaic);
 	}
 
 	/**

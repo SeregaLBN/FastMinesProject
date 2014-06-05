@@ -79,10 +79,6 @@ public class Quadrangle1 : BaseCell {
 			double w = borderWidth/2.0;
 			return (CalcA(area)*SQRT3 - w*2*(1+SQRT3))/(SQRT3+2);
 		}
-
-		public override Size sizeIcoField(bool smallSize) {
-			return new Size(3, smallSize ? 2 : 3);
-		}
 	}
 
 	public Quadrangle1(AttrQuadrangle1 attr, Coord coord)

@@ -8,7 +8,6 @@ using ua.ksn.fmg.model.mosaics;
 using FastMines.Common;
 
 namespace ua.ksn.fmg.view.win_rt.res.img {
-   public delegate void ImageChanged(WriteableBitmap newImg, EMosaicGroup eMosaicGroup);
 
    public class MosaicsGroupImg : IDisposable {
       internal struct Color16 {
@@ -32,8 +31,6 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       private DispatcherTimer _timer;
       //private double _rotate;
       private Color16 _fillColor;
-
-      public ImageChanged OnImageChanged = delegate { };
 
       /// <summary> использовать для мигашки один канал (R или G или B), или все (и R и G и B) </summary>
       private const bool AnyСhannel = true;
@@ -228,8 +225,12 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
          //if (_rotate > 360)
          //   _rotate -= 360;
 
-         Image = bmp;
-         OnImageChanged(bmp, _eMosaicGroup);
+         if (Image == null)
+            Image = bmp;
+         else {
+            var rc = new Rect(0, 0, W, H);
+            Image.Blit(rc, bmp, rc);
+         }
 
          if (_timer == null) {
             _timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(100)};

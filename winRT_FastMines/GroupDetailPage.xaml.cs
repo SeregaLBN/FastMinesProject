@@ -24,15 +24,20 @@ namespace FastMines {
    /// within the group.
    /// </summary>
    public sealed partial class GroupDetailPage : FastMines.Common.LayoutAwarePage {
-      private EMosaicGroup _group;
-      private bool _animateImg = true;
-      private bool _danceImg = false;
+      private EMosaicGroup _mosaicGroup;
 
       public GroupDetailPage() {
          this.InitializeComponent();
 
-         this.Loaded += delegate { ua.ksn.fmg.view.win_rt.res.Resources.ImgMosaicGroupPlay(_group, _animateImg, _danceImg); };
-         this.Unloaded += delegate { ua.ksn.fmg.view.win_rt.res.Resources.ImgMosaicGroupPlay(_group, false, false); };
+         this.Loaded += delegate {
+            var img = FmDataSource.GetGroup(_mosaicGroup).MosaicGroupImage;
+            img.Animate = true;
+            img.Dance = false;
+         };
+         this.Unloaded += delegate {
+            var img = FmDataSource.GetGroup(_mosaicGroup).MosaicGroupImage;
+            img.Animate = img.Dance = false;
+         };
       }
 
       /// <summary>
@@ -46,8 +51,8 @@ namespace FastMines {
       /// session.  This will be null the first time a page is visited.</param>
       protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState) {
          // TODO: Create an appropriate data model for your problem domain to replace the sample data
-         var group = FmDataSource.GetGroup((EMosaicGroup) navigationParameter);
-         _group = group.UniqueId;
+         _mosaicGroup = (EMosaicGroup) navigationParameter;
+         var group = FmDataSource.GetGroup(_mosaicGroup);
          this.DefaultViewModel["Group"] = group;
          this.DefaultViewModel["Items"] = group.Items;
       }
@@ -71,13 +76,13 @@ namespace FastMines {
       }
 
       private void GroupImage_OnTapped(object sender, TappedRoutedEventArgs e) {
-         _danceImg = !_danceImg;
-         ua.ksn.fmg.view.win_rt.res.Resources.ImgMosaicGroupPlay(_group, _animateImg, _danceImg);
+         var img = FmDataSource.GetGroup(_mosaicGroup).MosaicGroupImage;
+         img.Dance = !img.Dance;
       }
 
       private void GroupImage_OnDoubleTapped(object sender, DoubleTappedRoutedEventArgs e) {
-         _animateImg = !_animateImg;
-         ua.ksn.fmg.view.win_rt.res.Resources.ImgMosaicGroupPlay(_group, _animateImg, _danceImg);
+         var img = FmDataSource.GetGroup(_mosaicGroup).MosaicGroupImage;
+         img.Animate = !img.Animate;
       }
    }
 }

@@ -194,10 +194,6 @@ public class PenrousePeriodic1 : BaseCell {
 			return CalcA(area)/SIN99 * SIN36 / SQRT2;
 		}
 
-		public override Size sizeIcoField(bool smallSize) {
-			return new Size(3, smallSize ? 3 : 4);
-		}
-
 		public override int getMaxBackgroundFillModeValue() {
 			return base.getMaxBackgroundFillModeValue() + 2;
 		}

@@ -72,11 +72,6 @@ public class Hexagon1 extends BaseCell {
 			double w = borderWidth/2.;
 			return 2*(CalcB(area) - 2*w)/(SQRT3+1);
 		}
-
-		@Override
-		public Size sizeIcoField(boolean smallSize) {
-			return new Size(2, smallSize ? 2 : 3);
-		}
 	}
 
 	public Hexagon1(AttrHexagon1 attr, Coord coord) {

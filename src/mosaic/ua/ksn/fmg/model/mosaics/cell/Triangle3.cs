@@ -59,10 +59,6 @@ public class Triangle3 : BaseCell {
 			double w = borderWidth/2.0;
 			return (CalcA(area) - w*2 / TAN45_2 ) / 3; 
 		}
-
-		public override Size sizeIcoField(bool smallSize) {
-			return new Size(2, smallSize ? 2 : 3);
-		}
 	}
 
 	public Triangle3(AttrTriangle3 attr, Coord coord)

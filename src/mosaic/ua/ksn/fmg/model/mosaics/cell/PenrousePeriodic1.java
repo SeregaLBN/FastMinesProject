@@ -212,11 +212,6 @@ public class PenrousePeriodic1 extends BaseCell {
 		}
 
 		@Override
-		public Size sizeIcoField(boolean smallSize) {
-			return new Size(3, smallSize ? 3 : 4);
-		}
-
-		@Override
 		public int getMaxBackgroundFillModeValue() {
 			return super.getMaxBackgroundFillModeValue() + 2;
 		}

@@ -104,10 +104,6 @@ public class Trapezoid3 : BaseCell {
 			double w = borderWidth/2.0;
 			return (CalcA(area)*SQRT3 - w*4)/(SQRT3+1);
 		}
-
-		public override Size sizeIcoField(bool smallSize) {
-			return new Size(4, smallSize ? 2 : 3);
-		}
 	}
 
 	public Trapezoid3(AttrTrapezoid3 attr, Coord coord)

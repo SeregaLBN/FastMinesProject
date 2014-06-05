@@ -97,10 +97,6 @@ public class SqTrHex : BaseCell {
 			double w = borderWidth/2.0;
 			return (CalcA(area)*SQRT3 - w*6) / (2+SQRT3); 
 		}
-
-		public override Size sizeIcoField(bool smallSize) {
-			return new Size(4, smallSize ? 4 : 5);
-		}
 	}
 
 	public SqTrHex(AttrSqTrHex attr, Coord coord)

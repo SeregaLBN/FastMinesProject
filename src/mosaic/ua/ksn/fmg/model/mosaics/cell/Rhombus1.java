@@ -90,11 +90,6 @@ public class Rhombus1 extends BaseCell {
 		public int getMaxBackgroundFillModeValue() {
 			return super.getMaxBackgroundFillModeValue()+1;
 		}
-
-		@Override
-		public Size sizeIcoField(boolean smallSize) {
-			return new Size(3, smallSize ? 2 : 3);
-		}
 	}
 
 	public Rhombus1(AttrRhombus1 attr, Coord coord) {

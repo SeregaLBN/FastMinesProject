@@ -33,7 +33,7 @@ public class MosaicsImg implements Icon {
 		attr = CellFactory.createAttributeInstance(mosaicType, area);
 		arrCell = new ArrayList<BaseCell>();
 		gInfo = new CellPaint(gContext);
-		sizeField = attr.sizeIcoField(smallIco);
+		sizeField = mosaicType.sizeIcoField(smallIco);
 		for (int i=0; i<sizeField.width; i++)
 			for (int j=0; j<sizeField.height; j++)
 				arrCell.add(CellFactory.createCellInstance(attr, mosaicType, new Coord(i,j)));

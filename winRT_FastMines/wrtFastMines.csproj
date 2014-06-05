@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -283,6 +283,7 @@
     <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq2.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq2.cs</Link>
     </Compile>
+    <Compile Include="src_winrt\BackgroundTasks\BkTileUpdater.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\controller\win_rt\MosaicExt.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\BitmapFont.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\GraphicContext.cs" />
@@ -290,6 +291,7 @@
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\mosaics\MosaicGraphicContext.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\MosaicPageInitParam.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\BackgroundPause.cs" />
+    <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\Logo.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\Flag.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\Mine.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\res\img\MosaicsGroupImg.cs" />
@@ -598,6 +600,15 @@
       <Link>res\Skill\skillWhite4.png</Link>
     </Content>
     <Content Include="read_me.txt" />
+    <Content Include="..\res\Logo\Badge\Logo.scale-100.png">
+      <Link>res\Logo\Badge\Logo.scale-100.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\Badge\Logo.scale-140.png">
+      <Link>res\Logo\Badge\Logo.scale-140.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\Badge\Logo.scale-180.png">
+      <Link>res\Logo\Badge\Logo.scale-180.png</Link>
+    </Content>
     <Content Include="..\res\Logo\Tile\Logo.scale-100.png">
       <Link>res\Logo\Tile\Logo.scale-100.png</Link>
     </Content>
@@ -640,14 +651,30 @@
     <Content Include="..\res\Logo\StoreTile\Logo.scale-180.png">
       <Link>res\Logo\StoreTile\Logo.scale-180.png</Link>
     </Content>
-    <Content Include="..\res\Logo\SmallTile\Logo.scale-100.png"><Link>res\Logo\SmallTile\Logo.scale-100.png</Link></Content>
-    <Content Include="..\res\Logo\SmallTile\Logo.scale-140.png"><Link>res\Logo\SmallTile\Logo.scale-140.png</Link></Content>
-    <Content Include="..\res\Logo\SmallTile\Logo.scale-180.png"><Link>res\Logo\SmallTile\Logo.scale-180.png</Link></Content>
-    <Content Include="..\res\Logo\SmallTile\Logo.scale-80.png"><Link>res\Logo\SmallTile\Logo.scale-80.png</Link></Content>
-    <Content Include="..\res\Logo\SmallTile\Logo.targetsize-16.png"  ><Link>res\Logo\SmallTile\Logo.targetsize-16.png</Link></Content>
-    <Content Include="..\res\Logo\SmallTile\Logo.targetsize-256.png" ><Link>res\Logo\SmallTile\Logo.targetsize-256.png</Link></Content>
-    <Content Include="..\res\Logo\SmallTile\Logo.targetsize-32.png"  ><Link>res\Logo\SmallTile\Logo.targetsize-32.png</Link></Content>
-    <Content Include="..\res\Logo\SmallTile\Logo.targetsize-48.png"  ><Link>res\Logo\SmallTile\Logo.targetsize-48.png</Link></Content>
+    <Content Include="..\res\Logo\SmallTile\Logo.scale-100.png">
+      <Link>res\Logo\SmallTile\Logo.scale-100.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SmallTile\Logo.scale-140.png">
+      <Link>res\Logo\SmallTile\Logo.scale-140.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SmallTile\Logo.scale-180.png">
+      <Link>res\Logo\SmallTile\Logo.scale-180.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SmallTile\Logo.scale-80.png">
+      <Link>res\Logo\SmallTile\Logo.scale-80.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SmallTile\Logo.targetsize-16.png">
+      <Link>res\Logo\SmallTile\Logo.targetsize-16.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SmallTile\Logo.targetsize-256.png">
+      <Link>res\Logo\SmallTile\Logo.targetsize-256.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SmallTile\Logo.targetsize-32.png">
+      <Link>res\Logo\SmallTile\Logo.targetsize-32.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SmallTile\Logo.targetsize-48.png">
+      <Link>res\Logo\SmallTile\Logo.targetsize-48.png</Link>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

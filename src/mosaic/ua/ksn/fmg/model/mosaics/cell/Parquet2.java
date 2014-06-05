@@ -69,11 +69,6 @@ public class Parquet2 extends BaseCell {
 			double w = borderWidth/2.;
 			return CalcA(area)-w*SQRT2;
 		}
-
-		@Override
-		public Size sizeIcoField(boolean smallSize) {
-			return new Size(2, smallSize ? 2 : 3);
-		}
 	}
 
 	public Parquet2(AttrParquet2 attr, Coord coord) {

@@ -10,8 +10,8 @@ namespace FastMines.Common {
 
       //public static IAsyncAction InvokeLater(DispatchedHandler action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal, bool bAwait = false) {
       //   return bAwait
-      //      ? Windows.System.Threading.ThreadPool.RunAsync(async delegate { await ExecuteOnUIThread(action, priority); }, (Windows.System.Threading.WorkItemPriority)priority)
-      //      : Windows.System.Threading.ThreadPool.RunAsync(delegate { ExecuteOnUIThread(action, priority); }, (Windows.System.Threading.WorkItemPriority)priority);
+      //      ? Windows.System.Threading.ThreadPool.RunAsync(async delegate { await InvokeLater(action, priority); }, (Windows.System.Threading.WorkItemPriority)priority)
+      //      : Windows.System.Threading.ThreadPool.RunAsync(delegate { InvokeLater(action, priority); }, (Windows.System.Threading.WorkItemPriority)priority);
       //}
    }
 }

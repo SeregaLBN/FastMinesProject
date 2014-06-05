@@ -127,11 +127,6 @@ public class TrSq2 extends BaseCell {
 			double w = borderWidth/2.;
 			return (CalcA(area)*SQRT3 - w*6) / (2+SQRT3) - 1; 
 		}
-
-		@Override
-		public Size sizeIcoField(boolean smallSize) {
-			return new Size(4, smallSize ? 4 : 5);
-		}
 	}
 
 	public TrSq2(AttrTrSq2 attr, Coord coord) {

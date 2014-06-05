@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Windows.System;
+using Windows.System.Threading;
 using Windows.UI.Core;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -18,6 +19,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using FastMines.Common;
 using ua.ksn.fmg.view.win_rt.draw.mosaics;
+using FastMines.BackgroundTasks;
 
 // The Grid App template is documented at http://go.microsoft.com/fwlink/?LinkId=234226
 
@@ -122,6 +124,14 @@ namespace FastMines {
          }
          // Ensure the current window is active
          Window.Current.Activate();
+
+#if DEBUG
+         //{
+         //   AsyncRunner.InvokeLater(async () => {
+         //      await BkTileUpdater.GetXmlString();
+         //   }, CoreDispatcherPriority.High);
+         //}
+#endif
       }
 
       /// <summary>
