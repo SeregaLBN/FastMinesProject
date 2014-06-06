@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Data.Xml.Dom;
 using Windows.ApplicationModel.Background;
 using ua.ksn;
-using ua.ksn.geom;
 using ua.ksn.fmg.model.mosaics;
 using ua.ksn.fmg.view.win_rt.res;
+using Size = ua.ksn.geom.Size;
 
 namespace FastMines.BackgroundTasks {
    public class BkTileUpdater : IBackgroundTask {
@@ -41,7 +43,7 @@ namespace FastMines.BackgroundTasks {
       /// <summary> msdn.microsoft.com/en-us/library/windows/apps/hh761491.aspx </summary>
       public static async Task<string> GetXmlString() {
          try {
-            return await GetImagePath(false, 75, 75); // test one save to file
+            //return await GetImagePath(false, 75, 75); // test one save to file
             return string.Format(@"<tile>
  <visual version='2'>
     <binding template='TileSquare150x150Image' fallback='TileSquareImage'>
@@ -110,14 +112,24 @@ namespace FastMines.BackgroundTasks {
             //}
             const uint margin = 2u;
             var loopMix = (_random.Next() % 8);
-            var bmp = Resources.GetImgLogo(new Size(w, h), clr, (uint) loopMix, margin);
+            var z = Math.Min(w, h);
+            var bmp = Resources.GetImgLogo(new Size(z, z), clr, (uint)loopMix, margin);
+            if (w != h) {
+               var bk = new WriteableBitmap(w, h);
+               bk.FillRectangle(0, 0, w, h, bmp.GetPixel(0, 0));
+               var offsetX = (w - z)/2;
+               var offsetY = (h - z)/2;
+               bk.Blit(new Point(offsetX, offsetY), bmp, new Rect(0, 0, z, z), Colors.White, WriteableBitmapExtensions.BlendMode.None);
+               bmp = bk;
+            }
             storageFile = await SaveToFileLogo(bmp);
          } else {
             var mosaicType = EMosaicEx.fromOrdinal(_random.Next() % Enum.GetValues(typeof(EMosaic)).Length);
             var clr = ColorExt.RandomColor(_random).Attenuate();
             var sizeField = mosaicType.SizeIcoField(true);
-            var area = CellFactory.CreateAttributeInstance(mosaicType, 0).CalcOptimalArea(50, sizeField, new Size(w,h));
-            var img = Resources.GetImgMosaic(mosaicType, sizeField, area, clr.ToWinColor(), new Size(3, 3));
+            const int bound = 3;
+            var area = CellFactory.CreateAttributeInstance(mosaicType, 0).CalcOptimalArea(250, sizeField, new Size(w - bound*2, h - bound*2));
+            var img = Resources.GetImgMosaic(mosaicType, sizeField, area, clr.ToWinColor(), new Size(bound, bound));
             var bmp = img.GetImage(false);
             storageFile = await SaveToFileMosaic(w + "x" + h, bmp, mosaicType);
          }

@@ -1,21 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using FastMines.Data;
 using ua.ksn.fmg.controller.types;
 using ua.ksn.fmg.view.win_rt;
-using ua.ksn.fmg.view.win_rt.draw;
-using ua.ksn.fmg.view.win_rt.draw.mosaics;
 
 // The Grouped Items Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234231
 
@@ -27,7 +16,7 @@ namespace FastMines {
       public GroupedItemsPage() {
          // modify to http://stackoverflow.com/questions/15435023/add-dynamically-an-image-in-xaml-in-a-canvas
          this.InitializeComponent();
-         this.Loaded += PageOnLoaded;
+         //this.Loaded += PageOnLoaded;
       }
 
       /// <summary>
@@ -80,8 +69,7 @@ namespace FastMines {
          throw new NotImplementedException();
       }
 
-      private async void PageOnLoaded(object sender, RoutedEventArgs e) {
-      }
-
+      //private void PageOnLoaded(object sender, RoutedEventArgs e) {
+      //}
    }
 }

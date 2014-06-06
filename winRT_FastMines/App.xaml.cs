@@ -1,25 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Windows.System;
-using Windows.System.Threading;
 using Windows.UI.Core;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.ApplicationModel.Background;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using FastMines.Common;
 using ua.ksn.fmg.view.win_rt.draw.mosaics;
-using FastMines.BackgroundTasks;
 
 // The Grid App template is documented at http://go.microsoft.com/fwlink/?LinkId=234226
 
@@ -132,6 +121,8 @@ namespace FastMines {
          //   }, CoreDispatcherPriority.High);
          //}
 #endif
+
+         AsyncRunner.InvokeLater(RegisterBackgroundTask, CoreDispatcherPriority.Normal);
       }
 
       /// <summary>
@@ -166,5 +157,31 @@ namespace FastMines {
                break;
          }
       }
+
+      private async void RegisterBackgroundTask() {
+         try {
+            var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
+            if (backgroundAccessStatus == BackgroundAccessStatus.AllowedMayUseActiveRealTimeConnectivity ||
+                backgroundAccessStatus == BackgroundAccessStatus.AllowedWithAlwaysOnRealTimeConnectivity) {
+               foreach (var task in BackgroundTaskRegistration.AllTasks) {
+                  if (task.Value.Name == taskName) {
+                     task.Value.Unregister(true);
+                  }
+               }
+
+               var taskBuilder = new BackgroundTaskBuilder();
+               taskBuilder.Name = taskName;
+               taskBuilder.TaskEntryPoint = taskEntryPoint;
+               taskBuilder.SetTrigger(new TimeTrigger(15, false));
+               var registration = taskBuilder.Register();
+               System.Diagnostics.Debug.WriteLine(registration.TaskId);
+            }
+         } catch (Exception ex) {
+            System.Diagnostics.Debug.Assert(false, ex.Message.GetType().Name + ": " + ex.Message);
+         }
+      }
+
+      private const string taskName = "BkTileUpdater";
+      private const string taskEntryPoint = "FastMines.BackgroundTasks.BkTileUpdater";
    }
 }

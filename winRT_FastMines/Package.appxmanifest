@@ -16,10 +16,17 @@
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="FastMines.App">
       <VisualElements DisplayName="FastMines" Logo="res\Logo\Tile\Logo.png" SmallLogo="res\Logo\SmallTile\Logo.png" Description="FastMines" ForegroundText="light" BackgroundColor="#FF8C00">
-        <!--LockScreen Notification="badge" BadgeLogo="res\Logo\Badge\Logo.png" /-->
+        <LockScreen Notification="badgeAndTileText" BadgeLogo="res\Logo\Badge\Logo.png" />
         <DefaultTile ShowName="allLogos" WideLogo="res\Logo\WideTile\Logo.png" />
         <SplashScreen Image="res\Logo\SplashScreen\Logo.png" />
       </VisualElements>
+      <Extensions>
+        <Extension Category="windows.backgroundTasks" EntryPoint="FastMines.BackgroundTasks.BkTileUpdater">
+          <BackgroundTasks>
+            <Task Type="timer" />
+          </BackgroundTasks>
+        </Extension>
+      </Extensions>
     </Application>
   </Applications>
 </Package>
