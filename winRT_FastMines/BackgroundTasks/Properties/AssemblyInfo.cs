@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("FastMines")]
-[assembly: AssemblyDescription("Minesweeper clone")]
+[assembly: AssemblyTitle("FastMines BackgroundTasks")]
+[assembly: AssemblyDescription("Tiles setter")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Sergey Krivulya (SeregaLBN aka KSerg)")]
 [assembly: AssemblyProduct("FastMines")]

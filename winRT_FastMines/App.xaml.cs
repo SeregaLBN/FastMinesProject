@@ -4,7 +4,6 @@ using Windows.System;
 using Windows.UI.Core;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.Background;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using FastMines.Common;
@@ -114,15 +113,7 @@ namespace FastMines {
          // Ensure the current window is active
          Window.Current.Activate();
 
-#if DEBUG
-         //{
-         //   AsyncRunner.InvokeLater(async () => {
-         //      await BkTileUpdater.GetXmlString();
-         //   }, CoreDispatcherPriority.High);
-         //}
-#endif
-
-         AsyncRunner.InvokeLater(RegisterBackgroundTask, CoreDispatcherPriority.Normal);
+         AsyncRunner.InvokeLater(TileHelper.RegisterBackgroundTask, CoreDispatcherPriority.Low);
       }
 
       /// <summary>
@@ -157,31 +148,5 @@ namespace FastMines {
                break;
          }
       }
-
-      private async void RegisterBackgroundTask() {
-         try {
-            var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
-            if (backgroundAccessStatus == BackgroundAccessStatus.AllowedMayUseActiveRealTimeConnectivity ||
-                backgroundAccessStatus == BackgroundAccessStatus.AllowedWithAlwaysOnRealTimeConnectivity) {
-               foreach (var task in BackgroundTaskRegistration.AllTasks) {
-                  if (task.Value.Name == taskName) {
-                     task.Value.Unregister(true);
-                  }
-               }
-
-               var taskBuilder = new BackgroundTaskBuilder();
-               taskBuilder.Name = taskName;
-               taskBuilder.TaskEntryPoint = taskEntryPoint;
-               taskBuilder.SetTrigger(new TimeTrigger(15, false));
-               var registration = taskBuilder.Register();
-               System.Diagnostics.Debug.WriteLine(registration.TaskId);
-            }
-         } catch (Exception ex) {
-            System.Diagnostics.Debug.Assert(false, ex.Message.GetType().Name + ": " + ex.Message);
-         }
-      }
-
-      private const string taskName = "BkTileUpdater";
-      private const string taskEntryPoint = "FastMines.BackgroundTasks.BkTileUpdater";
    }
 }

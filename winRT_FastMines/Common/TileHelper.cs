@@ -3,45 +3,51 @@ using System.Net;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.UI;
-using Windows.UI.Notifications;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.Data.Xml.Dom;
 using Windows.ApplicationModel.Background;
 using ua.ksn;
 using ua.ksn.fmg.model.mosaics;
 using ua.ksn.fmg.view.win_rt.res;
 using Size = ua.ksn.geom.Size;
 
-namespace FastMines.BackgroundTasks {
-   public class BkTileUpdater : IBackgroundTask {
-      private static readonly Random _random = new Random();
+namespace FastMines {
+   public class TileHelper {
+      private static readonly Random Random = new Random();
+      private static readonly string TaskName = typeof(BackgroundTasks.TileUpdater).Name;
+      private static readonly string TaskEntryPoint = typeof(BackgroundTasks.TileUpdater).FullName;
 
-      public async void Run(IBackgroundTaskInstance taskInstance) {
-         // Get a deferral, to prevent the task from closing prematurely while asynchronous code is still running.
-         BackgroundTaskDeferral deferral = taskInstance.GetDeferral();
+      public static async void RegisterBackgroundTask() {
+         try {
+            await TileXmlMaker();
 
-         // Update the live tile with the feed items.
-         await UpdateTiles();
+            var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
+            if (backgroundAccessStatus == BackgroundAccessStatus.AllowedMayUseActiveRealTimeConnectivity ||
+                backgroundAccessStatus == BackgroundAccessStatus.AllowedWithAlwaysOnRealTimeConnectivity) {
+               foreach (var task in BackgroundTaskRegistration.AllTasks) {
+                  //if (task.Value.Name == taskName)
+                     task.Value.Unregister(true);
+               }
 
-         // Inform the system that the task is finished.
-         deferral.Complete();
+               var taskBuilder = new BackgroundTaskBuilder {Name = TaskName, TaskEntryPoint = TaskEntryPoint};
+               taskBuilder.SetTrigger(new TimeTrigger(15, false));
+               var registration = taskBuilder.Register();
+               System.Diagnostics.Debug.WriteLine(registration.TaskId);
+            }
+         } catch (Exception ex) {
+            System.Diagnostics.Debug.Assert(false, ex.Message.GetType().Name + ": " + ex.Message);
+         }
       }
 
-      private async Task UpdateTiles() {
-         // Create a tile update manager for the specified syndication feed.
-         var updater = TileUpdateManager.CreateTileUpdaterForApplication();
-         updater.Clear(); // disable tile - set as default
-
-         updater.EnableNotificationQueue(true);
-
+      private static async Task TileXmlMaker() {
          var xml = await GetXmlString();
-         var tile = CreateNotification(xml);
-         TileUpdateManager.CreateTileUpdaterForApplication().Update(tile);
+         var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("tiles.xml", CreationCollisionOption.ReplaceExisting);
+         await FileIO.WriteTextAsync(file, xml, UnicodeEncoding.Utf8);
       }
 
       /// <summary> msdn.microsoft.com/en-us/library/windows/apps/hh761491.aspx </summary>
-      public static async Task<string> GetXmlString() {
+      private static async Task<string> GetXmlString() {
          try {
             //return await GetImagePath(false, 75, 75); // test one save to file
             return string.Format(@"<tile>
@@ -96,13 +102,7 @@ namespace FastMines.BackgroundTasks {
          }
       }
 
-      private static TileNotification CreateNotification(string xml) {
-         var xmlDocument = new XmlDocument();
-         xmlDocument.LoadXml(xml);
-         return new TileNotification(xmlDocument);
-      }
-
-      public static async Task<string> GetImagePath(bool primary, int w, int h) {
+      private static async Task<string> GetImagePath(bool primary, int w, int h) {
          StorageFile storageFile;
          if (primary) {
             var clr = Resources.DefaultBkColor;
@@ -111,7 +111,7 @@ namespace FastMines.BackgroundTasks {
             //case 1: clr = clr.ToFmColor().Bedraggle().ToWinColor(); break;
             //}
             const uint margin = 2u;
-            var loopMix = (_random.Next() % 8);
+            var loopMix = (Random.Next() % 8);
             var z = Math.Min(w, h);
             var bmp = Resources.GetImgLogo(new Size(z, z), clr, (uint)loopMix, margin);
             if (w != h) {
@@ -124,25 +124,25 @@ namespace FastMines.BackgroundTasks {
             }
             storageFile = await SaveToFileLogo(bmp);
          } else {
-            var mosaicType = EMosaicEx.fromOrdinal(_random.Next() % Enum.GetValues(typeof(EMosaic)).Length);
-            var clr = ColorExt.RandomColor(_random).Attenuate();
+            var mosaicType = EMosaicEx.fromOrdinal(Random.Next() % Enum.GetValues(typeof(EMosaic)).Length);
+            var clr = ColorExt.RandomColor(Random).Attenuate();
             var sizeField = mosaicType.SizeIcoField(true);
             const int bound = 3;
             var area = CellFactory.CreateAttributeInstance(mosaicType, 0).CalcOptimalArea(250, sizeField, new Size(w - bound*2, h - bound*2));
             var img = Resources.GetImgMosaic(mosaicType, sizeField, area, clr.ToWinColor(), new Size(bound, bound));
             var bmp = img.GetImage(false);
-            storageFile = await SaveToFileMosaic(w + "x" + h, bmp, mosaicType);
+            storageFile = await SaveToFileMosaic(/*w + "x" + h, */bmp, mosaicType);
          }
          return "ms-appdata:///temp/" + storageFile.DisplayName;
       }
 
-      public static async Task<StorageFile> SaveToFileLogo(WriteableBitmap writeableBitmap) {
+      private static async Task<StorageFile> SaveToFileLogo(WriteableBitmap writeableBitmap) {
          return await SaveToFile("logo", writeableBitmap);
       }
-      public static async Task<StorageFile> SaveToFileMosaic(string filePrefix, WriteableBitmap writeableBitmap, EMosaic mosaicType) {
-         return await SaveToFile(filePrefix + "_" + mosaicType.getMosaicClassName(), writeableBitmap);
+      private static async Task<StorageFile> SaveToFileMosaic(/*string filePrefix, */WriteableBitmap writeableBitmap, EMosaic mosaicType) {
+         return await SaveToFile(/*filePrefix + "_" + */mosaicType.getMosaicClassName(), writeableBitmap);
       }
-      public static async Task<StorageFile> SaveToFile(string filePrefix, WriteableBitmap writeableBitmap) {
+      private static async Task<StorageFile> SaveToFile(string filePrefix, WriteableBitmap writeableBitmap) {
          return await writeableBitmap.SaveToFile(
             string.Format("{0}_{1}x{2}.png",
                filePrefix,

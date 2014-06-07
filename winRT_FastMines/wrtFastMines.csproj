@@ -283,7 +283,7 @@
     <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq2.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq2.cs</Link>
     </Compile>
-    <Compile Include="src_winrt\BackgroundTasks\BkTileUpdater.cs" />
+    <Compile Include="Common\TileHelper.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\controller\win_rt\MosaicExt.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\BitmapFont.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\GraphicContext.cs" />
@@ -707,6 +707,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WriteableBitmapEx.1.0.12.0\lib\NetCore45\WriteableBitmapEx.WinRT.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="BackgroundTasks\BackgroundTasks.csproj">
+      <Project>{4f75c36e-7157-449f-9686-dea20f83bbdb}</Project>
+      <Name>BackgroundTasks</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>

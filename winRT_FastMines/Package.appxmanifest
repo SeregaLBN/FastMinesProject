@@ -21,7 +21,7 @@
         <SplashScreen Image="res\Logo\SplashScreen\Logo.png" />
       </VisualElements>
       <Extensions>
-        <Extension Category="windows.backgroundTasks" EntryPoint="FastMines.BackgroundTasks.BkTileUpdater">
+        <Extension Category="windows.backgroundTasks" EntryPoint="BackgroundTasks.FastMinesTileUpdater">
           <BackgroundTasks>
             <Task Type="timer" />
           </BackgroundTasks>

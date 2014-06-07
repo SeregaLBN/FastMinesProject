@@ -244,8 +244,10 @@ public static class EMosaicEx {
       case EMosaic.eMosaicTrSq1            : res.width = 4; res.height = smallSize ? 4 : 5; break;
       case EMosaic.eMosaicTrSq2            : res.width = 4; res.height = smallSize ? 4 : 5; break;
       case EMosaic.eMosaicSqTrHex          : res.width = 4; res.height = smallSize ? 4 : 5; break;
+      default:
+         System.Diagnostics.Debug.Assert(false, "EMosaicEx.SizeIcoField: Mosaic '" + self + "' not implemented");
+         break;
       }
-      System.Diagnostics.Debug.Assert(false, "EMosaicEx.SizeIcoField: Mosaic '" + self + "' not implemented");
       return res;
    }
 }

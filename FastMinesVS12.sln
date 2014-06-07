@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wrtFastMines", "winRT_FastM
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BmpLogo", "BmpLogo\BmpLogo.vcxproj", "{709C5B80-F59C-4E4C-AED6-6CDEBA3D8E9C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackgroundTasks", "winRT_FastMines\BackgroundTasks\BackgroundTasks.csproj", "{4F75C36E-7157-449F-9686-DEA20F83BBDB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +62,26 @@ Global
 		{709C5B80-F59C-4E4C-AED6-6CDEBA3D8E9C}.Release|x86.ActiveCfg = Release|Win32
 		{709C5B80-F59C-4E4C-AED6-6CDEBA3D8E9C}.Release|x86.Build.0 = Release|Win32
 		{709C5B80-F59C-4E4C-AED6-6CDEBA3D8E9C}.Release|x86.Deploy.0 = Release|Win32
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Debug|ARM.ActiveCfg = Debug|ARM
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Debug|ARM.Build.0 = Debug|ARM
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Debug|Win32.ActiveCfg = Debug|x86
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Debug|Win32.Build.0 = Debug|x86
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Debug|x64.ActiveCfg = Debug|x64
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Debug|x64.Build.0 = Debug|x64
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Debug|x86.ActiveCfg = Debug|x86
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Debug|x86.Build.0 = Debug|x86
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Release|ARM.ActiveCfg = Release|ARM
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Release|ARM.Build.0 = Release|ARM
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Release|Win32.ActiveCfg = Release|x86
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Release|Win32.Build.0 = Release|x86
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Release|x64.ActiveCfg = Release|x64
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Release|x64.Build.0 = Release|x64
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Release|x86.ActiveCfg = Release|x86
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
