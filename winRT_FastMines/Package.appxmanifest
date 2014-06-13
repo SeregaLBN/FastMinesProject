@@ -1,25 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-  <Identity Name="SeregaLBN.FastMines" Publisher="CN=Serega" Version="1.0.0.0" />
+<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
+  <Identity Name="SeregaLBN.FastMines" Publisher="CN=Serega" Version="1.1.0.0" />
   <Properties>
     <DisplayName>FastMines</DisplayName>
     <PublisherDisplayName>Serega</PublisherDisplayName>
     <Logo>res\Logo\StoreTile\Logo.png</Logo>
   </Properties>
   <Prerequisites>
-    <OSMinVersion>6.2.1</OSMinVersion>
-    <OSMaxVersionTested>6.2.1</OSMaxVersionTested>
+    <OSMinVersion>6.3.0</OSMinVersion>
+    <OSMaxVersionTested>6.3.0</OSMaxVersionTested>
   </Prerequisites>
   <Resources>
     <Resource Language="x-generate" />
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="FastMines.App">
-      <VisualElements DisplayName="FastMines" Logo="res\Logo\Tile\Logo.png" SmallLogo="res\Logo\SmallTile\Logo.png" Description="FastMines" ForegroundText="light" BackgroundColor="#FF8C00">
-        <LockScreen Notification="badgeAndTileText" BadgeLogo="res\Logo\Badge\Logo.png" />
-        <DefaultTile ShowName="allLogos" WideLogo="res\Logo\WideTile\Logo.png" />
-        <SplashScreen Image="res\Logo\SplashScreen\Logo.png" />
-      </VisualElements>
       <Extensions>
         <Extension Category="windows.backgroundTasks" EntryPoint="BackgroundTasks.FastMinesTileUpdater">
           <BackgroundTasks>
@@ -27,6 +22,17 @@
           </BackgroundTasks>
         </Extension>
       </Extensions>
+      <m2:VisualElements DisplayName="FastMines" Description="FastMines" BackgroundColor="#FF8C00" ForegroundText="dark" Square150x150Logo="res\Logo\Tile\Logo.png" Square30x30Logo="res\Logo\SmallTile\Logo.png">
+        <m2:DefaultTile Wide310x150Logo="res\Logo\WideTile\Logo.png" Square70x70Logo="res\Logo\TileSq70\Logo.png" Square310x310Logo="res\Logo\TileSq310\Logo.png" ShortName="FastMines" DefaultSize="wide310x150Logo">
+          <m2:ShowNameOnTiles>
+            <m2:ShowOn Tile="square150x150Logo" />
+            <m2:ShowOn Tile="wide310x150Logo" />
+            <m2:ShowOn Tile="square310x310Logo" />
+          </m2:ShowNameOnTiles>
+        </m2:DefaultTile>
+        <m2:LockScreen Notification="badgeAndTileText" BadgeLogo="res\Logo\Badge\Logo.png" />
+        <m2:SplashScreen Image="res\Logo\SplashScreen\Logo.png" BackgroundColor="#FF8C00" />
+      </m2:VisualElements>
     </Application>
   </Applications>
 </Package>
