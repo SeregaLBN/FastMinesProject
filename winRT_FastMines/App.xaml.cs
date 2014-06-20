@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Imaging;
 using FastMines.Common;
 using ua.ksn.fmg.view.win_rt.draw.mosaics;
 

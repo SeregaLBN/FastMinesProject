@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -11,43 +13,50 @@ using ua.ksn;
 using ua.ksn.fmg.model.mosaics;
 using ua.ksn.fmg.view.win_rt.res;
 using Size = ua.ksn.geom.Size;
+using BackgroundTasks;
 
 namespace FastMines {
-   public class TileHelper {
+   public static class TileHelper {
       private static readonly Random Random = new Random();
-      private static readonly string TaskName = typeof(BackgroundTasks.TileUpdater).Name;
-      private static readonly string TaskEntryPoint = typeof(BackgroundTasks.TileUpdater).FullName;
+      private static readonly string TaskName = typeof(BackgroundTasks.FastMinesTileUpdater).Name;
+      private static readonly string TaskEntryPoint = typeof(BackgroundTasks.FastMinesTileUpdater).FullName;
 
       public static async void RegisterBackgroundTask() {
          try {
-            await TileXmlMaker();
-
             var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
             if (backgroundAccessStatus == BackgroundAccessStatus.AllowedMayUseActiveRealTimeConnectivity ||
-                backgroundAccessStatus == BackgroundAccessStatus.AllowedWithAlwaysOnRealTimeConnectivity) {
-               foreach (var task in BackgroundTaskRegistration.AllTasks) {
-                  //if (task.Value.Name == taskName)
+                backgroundAccessStatus == BackgroundAccessStatus.AllowedWithAlwaysOnRealTimeConnectivity)
+            {
+               await RemakeXmlAnew();
+
+               var allTasks = BackgroundTaskRegistration.AllTasks.ToList();
+               foreach (var task in allTasks)
+                  if (task.Value.Name == TaskName)
                      task.Value.Unregister(true);
-               }
 
                var taskBuilder = new BackgroundTaskBuilder {Name = TaskName, TaskEntryPoint = TaskEntryPoint};
                taskBuilder.SetTrigger(new TimeTrigger(15, false));
                var registration = taskBuilder.Register();
                System.Diagnostics.Debug.WriteLine(registration.TaskId);
+               registration.Completed += OnBackgroundTaskCompleted;
             }
          } catch (Exception ex) {
             System.Diagnostics.Debug.Assert(false, ex.Message.GetType().Name + ": " + ex.Message);
          }
       }
 
-      private static async Task TileXmlMaker() {
-         var xml = await GetXmlString();
-         var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("tiles.xml", CreationCollisionOption.ReplaceExisting);
+      private static async Task MakeXml(int part) {
+         var xml = await GetXmlString(part);
+         if (string.IsNullOrEmpty(xml))
+            return;
+         var file = await FastMinesTileUpdater.Location.CreateFileAsync(FastMinesTileUpdater.GetXmlFileName(part), CreationCollisionOption.ReplaceExisting);
          await FileIO.WriteTextAsync(file, xml, UnicodeEncoding.Utf8);
       }
 
-      /// <summary> msdn.microsoft.com/en-us/library/windows/apps/hh761491.aspx </summary>
-      private static async Task<string> GetXmlString() {
+      /// <summary> msdn.microsoft.com/en-us/library/windows/apps/hh761491.aspx
+      /// msdn.microsoft.com/en-us/library/windows/apps/dn632423.aspx
+      /// </summary>
+      private static async Task<string> GetXmlString(int part) {
          try {
             //return await GetImagePath(false, 75, 75); // test one save to file
             return string.Format(@"<tile>
@@ -55,56 +64,38 @@ namespace FastMines {
     <binding template='TileSquare150x150Image' fallback='TileSquareImage'>
       <image id='1' src='{0}' alt='FastMines'/>
     </binding>  
-    <binding template='TileWide310x150Image' fallback='TileWideImage'>
-      <image id='1' src='{1}' alt='mineswepper'/>
-    </binding>  
     <binding template='TileWide310x150ImageCollection' fallback='TileWideImageCollection'>
-      <image id='1' src='{2}' alt='FastMines'/>
-      <image id='2' src='{3}' alt='small image, row 1, column 1'/>
-      <image id='3' src='{4}' alt='small image, row 1, column 2'/>
-      <image id='4' src='{5}' alt='small image, row 2, column 1'/>
-      <image id='5' src='{6}' alt='small image, row 2, column 2'/>
-    </binding>  
-    <binding template='TileSquare310x310Image'>
-      <image id='1' src='{7}' alt='alt text'/>
-    </binding>  
+      <image id='1' src='{1}' alt='FastMines'/>
+      <image id='2' src='{2}' alt='small image, row 1, column 1'/>
+      <image id='3' src='{3}' alt='small image, row 1, column 2'/>
+      <image id='4' src='{4}' alt='small image, row 2, column 1'/>
+      <image id='5' src='{5}' alt='small image, row 2, column 2'/>
+    </binding>
     <binding template='TileSquare310x310ImageCollection'>
-      <image id='1' src='{8}' alt='FastMines'/>
-      <image id='2' src='{9}' alt='small image 1 (left)'/>
-      <image id='3' src='{10}' alt='small image 2 (left center)'/>
-      <image id='4' src='{11}' alt='small image 3 (right center)'/>
-      <image id='5' src='{12}' alt='small image 4 (right)'/>
-    </binding>  
+      <image id='1' src='{6}' alt='FastMines'/>
+      <image id='2' src='{7}' alt='small image 1 (left)'/>
+      <image id='3' src='{8}' alt='small image 2 (left center)'/>
+      <image id='4' src='{9}' alt='small image 3 (right center)'/>
+      <image id='5' src='{10}' alt='small image 4 (right)'/>
+    </binding>
     <binding template='TileSquare71x71Image'>
-      <image id='1' src='{13}' alt='FastMines'/>
+      <image id='1' src='{11}' alt='FastMines'/>
     </binding>  
 </visual>
-</tile>", await GetImagePath(true, 150, 150),
-        await GetImagePath(true, 310, 150),
-        await GetImagePath(true, 160, 150), await GetImagePath(false, 75, 75), await GetImagePath(false, 75, 75), await GetImagePath(false, 75, 75), await GetImagePath(false, 75, 75),
-        await GetImagePath(true, 310, 310),
-        await GetImagePath(true, 310, 233), await GetImagePath(false, 77, 77), await GetImagePath(false, 77, 77), await GetImagePath(false, 77, 77), await GetImagePath(false, 77, 77),
-        await GetImagePath(true, 71, 71));
-
+</tile>", await GetImagePath(part, 1, 150, 150),
+            await GetImagePath(part, 1, 160, 150), await GetImagePath(part, 0, 75, 75), await GetImagePath(part, 0, 75, 75), await GetImagePath(part, 0, 75, 75), await GetImagePath(part, 0, 75, 75),
+            await GetImagePath(part, 2, 310, 233), await GetImagePath(part, 0, 77, 77), await GetImagePath(part, 0, 77, 77), await GetImagePath(part, 0, 77, 77), await GetImagePath(part, 0, 77, 77),
+            await GetImagePath(part, 1, 71, 71));
          } catch (Exception ex) {
             System.Diagnostics.Debug.Assert(false, ex.Message);
-            return string.Format(@"<tile>
-  <visual>
-    <binding template='TileSquareBlock'>
-      <text id='1'>{0}</text>
-      <text id='2'>{1}</text>
-    </binding> 
-    <binding template='TileWideText03'>
-      <text id='1'>{0}: {1}</text>
-    </binding>  
-  </visual>
-</tile>", ex.GetType().Name, WebUtility.UrlEncode(ex.Message));
          }
+         return null;
       }
 
-      private static async Task<string> GetImagePath(bool primary, int w, int h) {
+      private static async Task<string> GetImagePath(int part, int primary, int w, int h) {
          StorageFile storageFile;
-         if (primary) {
+         if (primary != 0) {
+#if false
             var clr = Resources.DefaultBkColor;
             //switch (_random.Next() % 3) {
             //case 0: clr = clr.ToFmColor().Attenuate().ToWinColor(); break;
@@ -122,32 +113,153 @@ namespace FastMines {
                bk.Blit(new Point(offsetX, offsetY), bmp, new Rect(0, 0, z, z), Colors.White, WriteableBitmapExtensions.BlendMode.None);
                bmp = bk;
             }
-            storageFile = await SaveToFileLogo(bmp);
+            storageFile = await SaveToFileLogo(part, bmp);
+#elif false
+            var bmp = new WriteableBitmap(w, h);
+            var img1 = CreateRandomMosaicImage(w/2, h/2);
+            var img2 = CreateRandomMosaicImage(w/2, h/2);
+            var img3 = CreateRandomMosaicImage(w/2, h/2);
+            var bmp1 = img1.Item2;
+            var bmp2 = img2.Item2;
+            var bmp3 = img3.Item2;
+            bmp.Blit(new Rect(0, 0, bmp1.PixelWidth, bmp1.PixelHeight), bmp1, new Rect(0, 0, bmp1.PixelWidth, bmp1.PixelHeight));
+            bmp.DrawRectangle(0, 0-1, bmp1.PixelWidth, bmp1.PixelHeight, Colors.Black);
+            bmp.Blit(new Rect(w-bmp2.PixelWidth, h-bmp2.PixelHeight, bmp2.PixelWidth, bmp2.PixelHeight), bmp2, new Rect(0, 0, bmp2.PixelWidth, bmp2.PixelHeight));
+            bmp.DrawRectangle(w-bmp2.PixelWidth, h-bmp2.PixelHeight-1, w, h, Colors.Black);
+            bmp.Blit(new Rect(w-bmp3.PixelWidth, 0, bmp3.PixelWidth, bmp3.PixelHeight), bmp3, new Rect(0, 0, bmp3.PixelWidth, bmp3.PixelHeight));
+            bmp.DrawRectangle(w-bmp3.PixelWidth, 0-1, w, bmp3.PixelHeight, Colors.Black);
+            storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */bmp, "Combi"+img1.Item1.getIndex()+img2.Item1.getIndex()+img3.Item1.getIndex());
+#else
+            var bmp = new WriteableBitmap(w, h);
+
+            {
+               var bmpLogo = await (
+                  (primary==2)
+                     ? Resources.GetImgLogoPng()
+                     : Resources.GetImgLogoPng("Tile", 140));
+               var rcLogoRegion = new Rect {
+                  X = 0, Y = 0,
+                  Width  = w,
+                  Height = h
+               };
+               if (primary==2) {
+                  if (part==1) {
+                     rcLogoRegion.X = w/2;
+                     rcLogoRegion.Width /= 2;
+                  }
+                  if (part==2) {
+                     rcLogoRegion.Y = h/2;
+                     rcLogoRegion.Height /= 2;
+                  }
+                  if (part==3 || part==4) {
+                     rcLogoRegion.Width /= 2;
+                  }
+               }
+
+               var rcDestLogo = new Rect {
+                  X = rcLogoRegion.X + Math.Max(0, (rcLogoRegion.Width-rcLogoRegion.Height)/2),
+                  Y = rcLogoRegion.Y + Math.Max(0, (rcLogoRegion.Height-rcLogoRegion.Width)/2),
+                  Width = Math.Min(rcLogoRegion.Width, rcLogoRegion.Height),
+                  Height = Math.Min(rcLogoRegion.Width, rcLogoRegion.Height)
+               };
+               bmp.Blit(rcDestLogo, bmpLogo, new Rect(0, 0, bmpLogo.PixelWidth, bmpLogo.PixelHeight));
+            }
+
+            var img1 = CreateRandomMosaicImage(w/2, h/2);
+            var img2 = CreateRandomMosaicImage(w/2, h/2);
+            var img3 = CreateRandomMosaicImage(w/2, h/2);
+            var bmp1 = img1.Item2;
+            var bmp2 = img2.Item2;
+            var bmp3 = img3.Item2;
+            if (part==1 || part==2)
+               bmp.Blit(new Rect(0, 0, w/2, h/2), bmp1, new Rect(0, 0, bmp1.PixelWidth, bmp1.PixelHeight));
+            if (part==2 || part==3)
+               bmp.Blit(new Rect(w/2, 0, w/2, h/2), bmp2, new Rect(0, 0, bmp2.PixelWidth, bmp2.PixelHeight));
+            if (part==3 || part==4)
+               bmp.Blit(new Rect(w/2, h/2, w/2, h/2), bmp3, new Rect(0, 0, bmp3.PixelWidth, bmp3.PixelHeight));
+
+            storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */bmp, "Combi"+img1.Item1.getIndex()+img2.Item1.getIndex()+img3.Item1.getIndex());
+#endif
          } else {
-            var mosaicType = EMosaicEx.fromOrdinal(Random.Next() % Enum.GetValues(typeof(EMosaic)).Length);
-            var clr = ColorExt.RandomColor(Random).Attenuate();
-            var sizeField = mosaicType.SizeIcoField(true);
-            const int bound = 3;
-            var area = CellFactory.CreateAttributeInstance(mosaicType, 0).CalcOptimalArea(250, sizeField, new Size(w - bound*2, h - bound*2));
-            var img = Resources.GetImgMosaic(mosaicType, sizeField, area, clr.ToWinColor(), new Size(bound, bound));
-            var bmp = img.GetImage(false);
-            storageFile = await SaveToFileMosaic(/*w + "x" + h, */bmp, mosaicType);
+            var img = CreateRandomMosaicImage(w, h);
+            storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */img.Item2, img.Item1);
          }
-         return "ms-appdata:///temp/" + storageFile.DisplayName;
+         return "ms-appdata:///local/" + storageFile.DisplayName;
       }
 
-      private static async Task<StorageFile> SaveToFileLogo(WriteableBitmap writeableBitmap) {
-         return await SaveToFile("logo", writeableBitmap);
+      private static Tuple<EMosaic, WriteableBitmap> CreateRandomMosaicImage(int w, int h) {
+         var mosaicType = EMosaicEx.fromOrdinal(Random.Next() % Enum.GetValues(typeof(EMosaic)).Length);
+         var bkClr = ColorExt.RandomColor(Random).Attenuate().ToWinColor();
+         var sizeField = mosaicType.SizeIcoField(true);
+         sizeField.height += Random.Next()%3;
+         sizeField.width += Random.Next()%2;
+         const int bound = 3;
+         var area = CellFactory.CreateAttributeInstance(mosaicType, 0).CalcOptimalArea(250, sizeField, new Size(w - bound*2, h - bound*2));
+         var img = Resources.GetImgMosaic(mosaicType, sizeField, area, bkClr, new Size(bound, bound));
+         var bmp = img.GetImage(false);
+         if ((bmp.PixelWidth==w) && (bmp.PixelHeight==h))
+            return new Tuple<EMosaic, WriteableBitmap>(mosaicType, bmp);
+         var bmpOut = new WriteableBitmap(w, h);
+         bmpOut.FillRectangle(0, 0, w, h, bkClr);
+         bmpOut.Blit(
+            new Rect(
+                  Math.Max(0, (w-bmp.PixelWidth)/2),
+                  Math.Max(0, (h-bmp.PixelHeight)/2),
+                  bmp.PixelWidth,
+                  bmp.PixelHeight),
+            bmp,
+            new Rect(
+               0, 0,
+               bmp.PixelWidth, bmp.PixelHeight));
+         return new Tuple<EMosaic, WriteableBitmap>(mosaicType, bmpOut);
       }
-      private static async Task<StorageFile> SaveToFileMosaic(/*string filePrefix, */WriteableBitmap writeableBitmap, EMosaic mosaicType) {
-         return await SaveToFile(/*filePrefix + "_" + */mosaicType.getMosaicClassName(), writeableBitmap);
+
+      private static async Task<StorageFile> SaveToFileLogo(int part, WriteableBitmap writeableBitmap) {
+         return await SaveToFile(part, "logo", writeableBitmap);
       }
-      private static async Task<StorageFile> SaveToFile(string filePrefix, WriteableBitmap writeableBitmap) {
+      private static async Task<StorageFile> SaveToFileMosaic(int part, /*string filePrefix, */WriteableBitmap writeableBitmap, EMosaic mosaicType) {
+         return await SaveToFileMosaic(part, writeableBitmap, mosaicType.getMosaicClassName());
+      }
+      private static async Task<StorageFile> SaveToFileMosaic(int part, /*string filePrefix, */WriteableBitmap writeableBitmap, string fileDescript) {
+         return await SaveToFile(part, /*filePrefix + "_" + */fileDescript, writeableBitmap);
+      }
+      private static async Task<StorageFile> SaveToFile(int part, string filePrefix, WriteableBitmap writeableBitmap) {
          return await writeableBitmap.SaveToFile(
-            string.Format("{0}_{1}x{2}.png",
+            string.Format("{0}_{1}_{2}x{3}.png",
+               part,
                filePrefix,
                writeableBitmap.PixelWidth, writeableBitmap.PixelHeight),
-               ApplicationData.Current.TemporaryFolder);
+               FastMinesTileUpdater.Location);
+      }
+
+      public async static void OnBackgroundTaskCompleted(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args) {
+         //await RemakeXmlAnew();
+      }
+
+      private async static Task RemakeXmlAnew() {
+         // claen obsolete png files
+         for (var i=0; i<5; i++) {
+            var xml = await FastMinesTileUpdater.GetXmlString(i);
+            if (string.IsNullOrEmpty(xml))
+               continue;
+            // ms-appdata:///local/*.png
+            var rgx = new Regex(@"ms-appdata:///local/(?<filePng>.+\.png)");
+            foreach (var match in rgx.Matches(xml).Cast<Match>()) {
+               var filePng = match.Groups["filePng"].Value;
+               if (null == await FastMinesTileUpdater.Location.TryGetItemAsync(filePng))
+                  continue; // file doesn't exist
+               try {
+                  var file = await FastMinesTileUpdater.Location.GetFileAsync(filePng);
+                  await file.DeleteAsync();
+               } catch (Exception ex) {
+                  System.Diagnostics.Debug.WriteLine(string.Format("TileHelper::RemakeXmlAnew: {0}: {1}", ex.GetType().Name, ex.Message));
+                  System.Diagnostics.Debug.Assert(false, ex.Message);
+               }
+            }
+         }
+
+         for (var i=0; i<5; i++)
+            await MakeXml(i);
       }
    }
 }

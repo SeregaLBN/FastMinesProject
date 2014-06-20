@@ -76,9 +76,10 @@ namespace ua.ksn.fmg.view.win_rt.res {
          return img;
       }
 
-      public static async Task<WriteableBitmap> GetImgLogoPng() {
+      public static async Task<WriteableBitmap> GetImgLogoPng(string subdir = "Tile", int scale = 100) {
          if (_imgLogoPng == null)
-            _imgLogoPng = await GetImage("Logo/Logo_128x128.png");
+            //_imgLogoPng = await GetImage("Logo/Logo_128x128.png");
+            _imgLogoPng = await GetImage(string.Format("Logo/{0}/Logo.scale-{1}.png", subdir, scale));
          return _imgLogoPng;
       }
 

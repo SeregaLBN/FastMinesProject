@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
 using Windows.ApplicationModel.Background;
 
 namespace BackgroundTasks {
-   public sealed class TileUpdater : IBackgroundTask {
+    /// <summary> http://msdn.microsoft.com/en-us/library/windows/apps/xaml/jj991805.aspx </summary>
+   public sealed class FastMinesTileUpdater : IBackgroundTask {
 
       public async void Run(IBackgroundTaskInstance taskInstance) {
          // Get a deferral, to prevent the task from closing prematurely while asynchronous code is still running.
@@ -21,27 +24,37 @@ namespace BackgroundTasks {
       }
 
       private async Task UpdateTiles() {
-         var xml = await GetXmlString();
-         if (string.IsNullOrEmpty(xml))
-            return;
-
          // Create a tile update manager for the specified syndication feed.
          var updater = TileUpdateManager.CreateTileUpdaterForApplication();
          updater.Clear(); // disable tile - set as default
-
          updater.EnableNotificationQueue(true);
 
-         var tile = CreateNotification(xml);
-         TileUpdateManager.CreateTileUpdaterForApplication().Update(tile);
+         for (var i = 0; i < 5; i++) {
+            var xml = await GetXmlStringImpl(i);
+            if (string.IsNullOrEmpty(xml))
+               continue;
+
+            var tile = CreateNotification(xml);
+            //tile.ExpirationTime = DateTime.Now + TimeSpan.FromSeconds(10); // DateTimeOffset.UtcNow.AddSeconds(10);
+            //tile.ExpirationTime = DateTime.UtcNow.AddSeconds(i*10);
+            //tile.ExpirationTime = DateTime.UtcNow.AddHours(i).AddMinutes(15);
+            tile.Tag = i.ToString();
+            updater.Update(tile);
+            //updater.StartPeriodicUpdate(new Uri(), PeriodicUpdateRecurrence.HalfHour);
+         }
       }
 
-      /// <summary> msdn.microsoft.com/en-us/library/windows/apps/hh761491.aspx </summary>
-      private async Task<string> GetXmlString() {
+      public static IAsyncOperation<string> GetXmlString(int part) { return GetXmlStringImpl(part).AsAsyncOperation(); }
+      private static async Task<string> GetXmlStringImpl(int part) {
          try {
-            var file = await ApplicationData.Current.TemporaryFolder.GetFileAsync("tiles.xml");
+            var xmlFileName = GetXmlFileName(part);
+            if (null == await FastMinesTileUpdater.Location.TryGetItemAsync(xmlFileName))
+               return null; // file doesn't exist
+            var file = await Location.GetFileAsync(xmlFileName);
             return await FileIO.ReadTextAsync(file);
-         }
-         catch (FileNotFoundException) {
+         } catch (Exception ex) {
+            System.Diagnostics.Debug.WriteLine(string.Format("FastMinesTileUpdater::GetXmlStringHelper: {0}: {1}", ex.GetType().Name, ex.Message));
+            System.Diagnostics.Debug.Assert(false, ex.Message);
             return null;
          }
       }
@@ -51,5 +64,9 @@ namespace BackgroundTasks {
          xmlDocument.LoadXml(xml);
          return new TileNotification(xmlDocument);
       }
+
+      public static StorageFolder Location { get { return ApplicationData.Current.LocalFolder; } }
+
+      public static string GetXmlFileName(int part) { return string.Format("tiles_{0}.xml", part); }
    }
 }

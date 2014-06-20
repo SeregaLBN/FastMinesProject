@@ -24,6 +24,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       private readonly Size _sizeField;
       private readonly Windows.UI.Color _bkColor;
       private static readonly Random _random = new Random();
+      private WriteableBitmap _image;
 
       public MosaicsImg(EMosaic mosaicType, bool smallIco, int area, Windows.UI.Color bkColor, Size bound) : this(mosaicType, mosaicType.SizeIcoField(smallIco), area, bkColor, bound) { }
 
@@ -45,8 +46,6 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
             for (var j = 0; j < _sizeField.height; j++)
                _arrCell.Add(CellFactory.CreateCellInstance(_attr, mosaicType, new Coord(i, j)));
       }
-
-      private WriteableBitmap _image;
 
       /// <summary> Return painted mosaic bitmap </summary>
       /// <param name="drawLater">== true Сама картинка возвращается сразу.

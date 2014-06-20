@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -191,6 +191,7 @@
       <Link>src\ui_desktop\ua\ksn\fmg\view\draw\PenBorder.cs</Link>
     </Compile>
     <Compile Include="Common\AsyncRunner.cs" />
+    <Compile Include="Common\TileHelper.cs" />
     <Compile Include="DataModel\FmDataItem.cs" />
     <Compile Include="DataModel\FmDataGroup.cs" />
     <Compile Include="DataModel\FmDataCommon.cs" />
@@ -286,7 +287,6 @@
     <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq2.cs">
       <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq2.cs</Link>
     </Compile>
-    <Compile Include="Common\TileHelper.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\controller\win_rt\MosaicExt.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\BitmapFont.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\GraphicContext.cs" />
@@ -678,28 +678,28 @@
     <Content Include="..\res\Logo\SmallTile\Logo.targetsize-48.png">
       <Link>res\Logo\SmallTile\Logo.targetsize-48.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq310\Logo.scale-100.png" >
+    <Content Include="..\res\Logo\TileSq310\Logo.scale-100.png">
       <Link>res\Logo\TileSq310\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq310\Logo.scale-140.png" >
+    <Content Include="..\res\Logo\TileSq310\Logo.scale-140.png">
       <Link>res\Logo\TileSq310\Logo.scale-140.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq310\Logo.scale-180.png" >
+    <Content Include="..\res\Logo\TileSq310\Logo.scale-180.png">
       <Link>res\Logo\TileSq310\Logo.scale-180.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq310\Logo.scale-80.png" >
+    <Content Include="..\res\Logo\TileSq310\Logo.scale-80.png">
       <Link>res\Logo\TileSq310\Logo.scale-80.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq70\Logo.scale-100.png" >
+    <Content Include="..\res\Logo\TileSq70\Logo.scale-100.png">
       <Link>res\Logo\TileSq70\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq70\Logo.scale-140.png" >
+    <Content Include="..\res\Logo\TileSq70\Logo.scale-140.png">
       <Link>res\Logo\TileSq70\Logo.scale-140.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq70\Logo.scale-180.png" >
+    <Content Include="..\res\Logo\TileSq70\Logo.scale-180.png">
       <Link>res\Logo\TileSq70\Logo.scale-180.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq70\Logo.scale-80.png" >
+    <Content Include="..\res\Logo\TileSq70\Logo.scale-80.png">
       <Link>res\Logo\TileSq70\Logo.scale-80.png</Link>
     </Content>
   </ItemGroup>

@@ -91,10 +91,10 @@ public static class EMosaicEx {
       throw new ArgumentException("Index not found");
    }
    public static EMosaic fromOrdinal(int ordinal) {
-      var values = Enum.GetValues(typeof(EMosaic));
+      var values = Enum.GetValues(typeof(EMosaic)).Cast<EMosaic>().ToArray();
       if ((ordinal < 0) || (ordinal >= values.Length))
          throw new ArgumentOutOfRangeException("Invalid ordinal");
-      return ((IList<EMosaic>)values)[ordinal];
+      return values[ordinal];
    }
 
    public static EMosaic fromIndex(int index) {
