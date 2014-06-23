@@ -134,6 +134,15 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 	}
 	
 	@Override
+	public void GameNew() {
+		getGraphicContext().getBackgroundFill().setMode(
+				1 + new Random().nextInt(
+						CellFactory.createAttributeInstance(getMosaicType(), getArea()).getMaxBackgroundFillModeValue()));
+		super.GameNew();
+		getContainer().repaint();
+	}
+
+	@Override
 	protected void GameBegin(Coord firstClick) {
 		getGraphicContext().getBackgroundFill().setMode(0);
 		super.GameBegin(firstClick);
@@ -157,15 +166,6 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 	protected boolean RequestToUser_RestoreLastGame() {
 		int iRes = JOptionPane.showOptionDialog(getContainer(), "Restore last game?", "Question", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 		return (iRes == JOptionPane.NO_OPTION);
-	}
-
-	@Override
-	public void GameNew() {
-		getGraphicContext().getBackgroundFill().setMode(
-				1 + new Random().nextInt(
-						CellFactory.createAttributeInstance(getMosaicType(), getArea()).getMaxBackgroundFillModeValue()));
-		super.GameNew();
-		getContainer().repaint();
 	}
 
 	@Override

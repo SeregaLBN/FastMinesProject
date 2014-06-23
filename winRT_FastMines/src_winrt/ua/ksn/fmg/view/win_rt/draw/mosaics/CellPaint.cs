@@ -125,7 +125,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
       public void PaintBorderLines(BaseCell cell, Tuple<Polygon, TextBlock, Image> binder)
       {
          var poly = binder.Item1;
-
+#if true
          if (poly.Points == null)
             poly.Points = new PointCollection();
          { //  check vertex
@@ -142,6 +142,18 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
                   poly.Points[p] = point.ToWinPoint();
             }
          }
+#else
+         var points = new PointCollection();
+         { //  check vertex
+            var region = cell.getRegion();
+            for (var p = 0; p < region.CountPoints; p++) {
+               var point = region.getPoint(p);
+               point.Move(gContext.Bound);
+               points.Add(point.ToWinPoint());
+            }
+         }
+         poly.Points = points;
+#endif
          poly.StrokeThickness = gContext.PenBorder.Width;
          poly.Stroke = cell.State.Down ? BrushBorderLight : BrushBorderShadow;
          // TODO граница региона должна быть двухцветной...

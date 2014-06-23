@@ -58,7 +58,6 @@ namespace FastMines {
             ManipulationModes.Rotate |
             ManipulationModes.Scale |
             ManipulationModes.TranslateInertia;
-         this.Tapped += OnPageTapped;
 
          if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) {
             AsyncRunner.InvokeLater(async () => {
@@ -304,8 +303,37 @@ namespace FastMines {
          }
       }
 
-      private void OnPageTapped(object sender, TappedRoutedEventArgs e) {
-         Debug.WriteLine("OnTapped: ");
+      protected override void OnTapped(TappedRoutedEventArgs e) {
+         Debug.WriteLine("> OnTapped: ");
+         base.OnTapped(e);
+
+         var margin = MosaicField.Container.Margin;
+         var pos = e.GetPosition(this);
+         if ((pos.X >= margin.Left) && (pos.Y >= margin.Top)) {
+            var point = pos.ToFmRect().Move(-(int)margin.Left, -(int)margin.Top);
+            var winSize = _mosaic.WindowSize;
+            if ((point.x <= winSize.width) && (point.y <= winSize.height)) {
+               _mosaic.MousePressed(point, true, false);
+               e.Handled = true;
+            }
+         }
+         Debug.WriteLine("< OnTapped: ");
+      }
+      protected override void OnRightTapped(RightTappedRoutedEventArgs e) {
+         Debug.WriteLine("> OnRightTapped: ");
+         base.OnRightTapped(e);
+
+         var margin = MosaicField.Container.Margin;
+         var pos = e.GetPosition(this);
+         if ((pos.X >= margin.Left) && (pos.Y >= margin.Top)) {
+            var point = pos.ToFmRect().Move(-(int)margin.Left, -(int)margin.Top);
+            var winSize = _mosaic.WindowSize;
+            if ((point.x <= winSize.width) && (point.y <= winSize.height)) {
+               _mosaic.MousePressed(point, false, true);
+               e.Handled = true;
+            }
+         }
+         Debug.WriteLine("< OnRightTapped: ");
       }
 
       protected override void OnManipulationStarting(ManipulationStartingRoutedEventArgs e) {

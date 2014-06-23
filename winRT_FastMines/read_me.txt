@@ -1,3 +1,3 @@
 Desktop WinRT project
 
-Platform: Windows RT (Windows 8) 
+Platform: Windows RT (Windows 8.1)

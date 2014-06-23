@@ -48,6 +48,10 @@ namespace ua.ksn.fmg.controller.win_rt {
             }
       }
 
+      public Panel Container {
+         get { return _container ?? (_container = new Canvas()); }
+      }
+
       protected override void OnError(string msg) {
 #if DEBUG
          System.Diagnostics.Debug.Assert(false, msg);
@@ -71,10 +75,6 @@ namespace ua.ksn.fmg.controller.win_rt {
 
          Repaint();
          //Container.InvalidateArrange(); // Revalidate();
-      }
-
-      public Panel Container {
-         get { return _container ?? (_container = new Canvas()); }
       }
 
       public MosaicGraphicContext GraphicContext {
@@ -103,24 +103,42 @@ namespace ua.ksn.fmg.controller.win_rt {
             CellPaint.Paint(cell, XamlBinder[cell]);
       }
 
+      private bool _alreadyPainted;
       public void Repaint() {
          if (!XamlBinder.Any())
             return;
 
-         { // paint background
-            var bkb = Container.Background as SolidColorBrush;
-            var bkc = GraphicContext.ColorBk.ToWinColor();
-            if ((bkb == null) || (bkb.Color != bkc))
-               Container.Background = new SolidColorBrush(bkc);
-         }
+         if (_alreadyPainted)
+            return;
 
-         // paint all cells
-         var sizeMosaic = SizeField;
-         for (var i = 0; i < sizeMosaic.width; i++)
-            for (var j = 0; j < sizeMosaic.height; j++) {
-               var cell = base.getCell(i, j);
-               CellPaint.Paint(cell, XamlBinder[cell]);
+         try {
+            _alreadyPainted = true;
+
+            { // paint background
+               var bkb = Container.Background as SolidColorBrush;
+               var bkc = GraphicContext.ColorBk.ToWinColor();
+               if ((bkb == null) || (bkb.Color != bkc))
+                  Container.Background = new SolidColorBrush(bkc);
             }
+
+            // paint all cells
+            var sizeMosaic = SizeField;
+            for (var i = 0; i < sizeMosaic.width; i++)
+               for (var j = 0; j < sizeMosaic.height; j++) {
+                  var cell = base.getCell(i, j);
+                  CellPaint.Paint(cell, XamlBinder[cell]);
+               }
+         } finally {
+            _alreadyPainted = false;
+         }
+      }
+
+      public override async Task GameNew() {
+         var mode = 1 + new Random().Next(CellFactory.CreateAttributeInstance(MosaicType, Area).getMaxBackgroundFillModeValue());
+         //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
+         GraphicContext.BkFill.Mode = (int)mode;
+         await base.GameNew();
+         Repaint();
       }
 
       protected override void GameBegin(Coord firstClick) {
@@ -130,7 +148,11 @@ namespace ua.ksn.fmg.controller.win_rt {
 
       /// <summary> преобразовать экранные координаты в координаты mosaic'a </summary>
       private Coord CursorPointToMosaicCoord(Point point) {
-         throw new NotImplementedException();
+         foreach (var cell in _matrix)
+            //if (cell.getRcOuter().contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
+               if (cell.PointInRegion(point))
+                  return cell.getCoord();
+         return Coord.INCORRECT_COORD;
       }
 
       protected override async Task<bool> RequestToUser_RestoreLastGame() {
@@ -159,50 +181,41 @@ namespace ua.ksn.fmg.controller.win_rt {
          }
       }
 
-      public override async Task GameNew() {
-         var mode = 1 + new Random().Next(CellFactory.CreateAttributeInstance(MosaicType, Area).getMaxBackgroundFillModeValue());
-         //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
-         GraphicContext.BkFill.Mode = (int) mode;
-         await base.GameNew();
-         Repaint();
+      public void MousePressed(Point clickPoint, bool isLeftMouseButton, bool isRightMouseButton) {
+         if (isLeftMouseButton)
+            OnLeftButtonDown(CursorPointToMosaicCoord(clickPoint));
+         else
+            if (isRightMouseButton)
+               OnRightButtonDown(CursorPointToMosaicCoord(clickPoint));
       }
 
-   
-	    public void MousePressed(Point clickPoint, bool isLeftMouseButton, bool isRightMouseButton) {
-			if (isLeftMouseButton)
-				OnLeftButtonDown(CursorPointToMosaicCoord(clickPoint));
-			else
-			if (isRightMouseButton)
-				OnRightButtonDown(CursorPointToMosaicCoord(clickPoint));
-		}
-
-		public void MouseReleased(Point clickPoint, bool isLeftMouseButton, bool isRightMouseButton) {
-			if (isLeftMouseButton) {
+      public void MouseReleased(Point clickPoint, bool isLeftMouseButton, bool isRightMouseButton) {
+         if (isLeftMouseButton) {
             var frame = (Frame)Windows.UI.Xaml.Window.Current.Content;
             var page = (Windows.UI.Xaml.Controls.Page)frame.Content;
-	    		var rootFrameActive = _container.Parent == page;
-	    		if (rootFrameActive)
-	    			OnLeftButtonUp(CursorPointToMosaicCoord(clickPoint));
-			} else
-			if (isRightMouseButton)
-            OnRightButtonUp(/*CursorPointToMosaicCoord(clickPoint)*/);
-	    }
+            var rootFrameActive = _container.Parent == page;
+            if (rootFrameActive)
+               OnLeftButtonUp(CursorPointToMosaicCoord(clickPoint));
+         } else
+            if (isRightMouseButton)
+               OnRightButtonUp(/*CursorPointToMosaicCoord(clickPoint)*/);
+      }
 
-		public void MouseFocusLost() {
+      public void MouseFocusLost() {
          //System.Diagnostics.Debug.WriteLine("Mosaic::MosaicFocusLost: ");
-			if (CoordDown != Coord.INCORRECT_COORD)
-				OnLeftButtonUp(Coord.INCORRECT_COORD);
-		}
+         if (CoordDown != Coord.INCORRECT_COORD)
+            OnLeftButtonUp(Coord.INCORRECT_COORD);
+      }
 
       private void OnPropertyChange(object sender, PropertyChangedEventArgs e) {
-		   if ((sender is GraphicContext) && "PenBorder".Equals(e.PropertyName)) {
-			   // см. комент - сноску 1
-		      var gc = sender as GraphicContext;
-			   ChangeFontSize(gc.PenBorder, Area);
-		   }
+         if ((sender is GraphicContext) && "PenBorder".Equals(e.PropertyName)) {
+            // см. комент - сноску 1
+            var gc = sender as GraphicContext;
+            ChangeFontSize(gc.PenBorder, Area);
+         }
 
-		   if (sender is GraphicContext)
-			   Repaint();
+         if (sender is GraphicContext)
+            Repaint();
       }
 
       /// <summary> пересчитать и установить новую высоту шрифта </summary>

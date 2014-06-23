@@ -82,7 +82,6 @@ import ua.ksn.fmg.controller.types.ESkillLevel;
 import ua.ksn.fmg.controller.types.User;
 import ua.ksn.fmg.model.mosaics.EMosaic;
 import ua.ksn.fmg.model.mosaics.EMosaicGroup;
-import ua.ksn.fmg.model.mosaics.cell.BaseCell;
 import ua.ksn.fmg.view.draw.EShowElement;
 import ua.ksn.fmg.view.draw.EZoomInterface;
 import ua.ksn.fmg.view.swing.dialogs.AboutDlg;

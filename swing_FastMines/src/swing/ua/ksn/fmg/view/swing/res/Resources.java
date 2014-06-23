@@ -163,7 +163,6 @@ public final class Resources {
 			imgsMosaicWide = new HashMap<EMosaic, ImageIcon>(EMosaic.values().length);
 		}
 		Map<EMosaic, ImageIcon> imgsMosaic = smallIco ? imgsMosaicSmall : imgsMosaicWide;
-		imgsMosaic = new HashMap<EMosaic, ImageIcon>(EMosaic.values().length);
 
 		for (EMosaic val: EMosaic.values()) {
 			ImageIcon imgMosaic = getImageIcon("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + val.getDescription(true)+".png"); // сначала из ресурсов
