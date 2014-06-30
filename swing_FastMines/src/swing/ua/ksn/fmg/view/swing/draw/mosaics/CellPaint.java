@@ -106,18 +106,19 @@ public class CellPaint {
 	/** draw border lines */
 	public void paintBorderLines(BaseCell cell, Graphics g) {
 		Size bound = gContext.getBound();
+		boolean down = cell.getState().isDown() || (cell.getState().getStatus() == EState._Open);
 		if (gContext.isIconicMode()) {
-			g.setColor(Cast.toColor(cell.getState().isDown() ? gContext.getPenBorder().getColorLight() : gContext.getPenBorder().getColorShadow()));
+			g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorLight() : gContext.getPenBorder().getColorShadow()));
 			g.drawPolygon(Cast.toPolygon(Region.moveXY(cell.getRegion(), bound)));
 		} else {
-			g.setColor(Cast.toColor(cell.getState().isDown() ? gContext.getPenBorder().getColorLight()  : gContext.getPenBorder().getColorShadow()));
+			g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorLight()  : gContext.getPenBorder().getColorShadow()));
 			int s = cell.getShiftPointBorderIndex();
 			int v = cell.getAttr().getVertexNumber(cell.getDirection());
 			for (int i=0; i<v; i++) {
 				Point p1 = cell.getRegion().getPoint(i);
 				Point p2 = (i != (v-1)) ? cell.getRegion().getPoint(i+1) : cell.getRegion().getPoint(0);
 				if (i==s)
-					g.setColor(Cast.toColor(cell.getState().isDown() ? gContext.getPenBorder().getColorShadow(): gContext.getPenBorder().getColorLight()));
+					g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorShadow(): gContext.getPenBorder().getColorLight()));
 				g.drawLine(p1.x+bound.width, p1.y+bound.height, p2.x+bound.width, p2.y+bound.height);
 			}
 		}

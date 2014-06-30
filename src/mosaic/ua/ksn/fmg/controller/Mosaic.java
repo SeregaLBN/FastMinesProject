@@ -443,13 +443,12 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		return;
 	}
 
-	protected void OnLeftButtonDown(Coord coordLDown) {
+	protected boolean OnLeftButtonDown(Coord coordLDown) {
 		setCoordDown(Coord.INCORRECT_COORD);
 		if (getGameStatus() == EGameStatus.eGSEnd)
-			return;
+			return false;
 		if (coordLDown.equals(Coord.INCORRECT_COORD))
-			return;
-		getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, true, true));
+			return false;
 
 		setCoordDown(coordLDown);
 		BaseCell cell = getCell(coordLDown);
@@ -471,57 +470,66 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 				for (BaseCell cellToRepaint : result.needRepaint)
 					Repaint(cellToRepaint);
 		}
+		getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, cell, true, true));
+		return true;
 	}
 
-	protected void OnLeftButtonUp(Coord coordLUp) {
-		if (getGameStatus() == EGameStatus.eGSEnd)
-			return;
-		if (getCoordDown().equals(Coord.INCORRECT_COORD))
-			return;
-		getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, true, false));
-		if (getGameStatus() == EGameStatus.eGSCreateGame)
-			return;
-
-//		System.out.println("OnLeftButtonUp: coordLUp="+coordLUp);
-		if ((getGameStatus() == EGameStatus.eGSReady) && coordLUp.equals(getCoordDown()))
-		{
-			GameBegin(getCoordDown());
-		}
-		ClickReportContext clickReportContext = new ClickReportContext();
-		LeftUpResult result = getCell(getCoordDown()).LButtonUp(coordLUp.equals(getCoordDown()), clickReportContext);
-		if (result.needRepaint != null)
-			for (BaseCell cellToRepaint : result.needRepaint)
-				Repaint(cellToRepaint);
-		if ((result.countOpen > 0) || (result.countFlag > 0) || (result.countUnknown > 0)) { // клик со смыслом (были изменения на поле)
-			setCountClick(getCountClick()+1);
-			setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
-			getMosaicListeners().fireOnChangedCounters(new MosaicEvent.ChangedCountersEvent(this));
-		}
-
-		if (result.endGame) {
-			GameEnd(result.victory);
-		} else {
-			Size sizeField = getSizeField();
-			if ((getCountOpen() + getMinesCount()) == sizeField.width*sizeField.height) {
-				GameEnd(true);
-			} else {
-				VerifyFlag();
+	protected boolean OnLeftButtonUp(Coord coordLUp) {
+		try {
+			if (getGameStatus() == EGameStatus.eGSEnd)
+				return false;
+			if (getCoordDown().equals(Coord.INCORRECT_COORD))
+				return false;
+			if (getGameStatus() == EGameStatus.eGSCreateGame)
+				return false;
+	
+	//		System.out.println("OnLeftButtonUp: coordLUp="+coordLUp);
+			if ((getGameStatus() == EGameStatus.eGSReady) && coordLUp.equals(getCoordDown()))
+			{
+				GameBegin(getCoordDown());
 			}
+			boolean res = false;
+			ClickReportContext clickReportContext = new ClickReportContext();
+			BaseCell cell = getCell(getCoordDown());
+			LeftUpResult result = cell.LButtonUp(coordLUp.equals(getCoordDown()), clickReportContext);
+			if (result.needRepaint != null)
+				for (BaseCell cellToRepaint : result.needRepaint)
+					Repaint(cellToRepaint);
+			res = (result.countOpen > 0) || (result.countFlag > 0) || (result.countUnknown > 0); // клик со смыслом (были изменения на поле) 
+			if (res) {
+				setCountClick(getCountClick()+1);
+				setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
+				getMosaicListeners().fireOnChangedCounters(new MosaicEvent.ChangedCountersEvent(this));
+			}
+	
+			if (result.endGame) {
+				GameEnd(result.victory);
+			} else {
+				Size sizeField = getSizeField();
+				if ((getCountOpen() + getMinesCount()) == sizeField.width*sizeField.height) {
+					GameEnd(true);
+				} else {
+					VerifyFlag();
+				}
+			}
+			getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, cell, true, false));
+			return res;
+		} finally {
+			setCoordDown(Coord.INCORRECT_COORD);
 		}
 	}
 
-	protected void OnRightButtonDown(Coord coordRDown) {
+	protected boolean OnRightButtonDown(Coord coordRDown) {
 		if (getGameStatus() == EGameStatus.eGSEnd) {
 			GameNew();
-			return;
+			return true;
 		}
 		if (getGameStatus() == EGameStatus.eGSReady)
-			return;
+			return false;
 		if (getGameStatus() == EGameStatus.eGSCreateGame)
-			return;
+			return false;
 		if (coordRDown.equals(Coord.INCORRECT_COORD))
-			return;
-		getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, false, true));
+			return false;
 
 		EClose eClose;
 		BaseCell cell = getCell(coordRDown);
@@ -537,7 +545,8 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		RightDownReturn result = cell.RButtonDown(eClose, clickReportContext);
 		if (result.needRepaint)
 			Repaint(cell);
-		if ((result.countFlag>0) || (result.countUnknown>0)) { // клик со смыслом (были изменения на поле)
+		boolean res = (result.countFlag>0) || (result.countUnknown>0); // клик со смыслом (были изменения на поле)
+		if (res) {
 			setCountClick(getCountClick()+1);
 			setPlayInfo(EPlayInfo.ePlayerUser); // то считаю что юзер играл
 			getMosaicListeners().fireOnChangedCounters(new MosaicEvent.ChangedCountersEvent(this));
@@ -549,11 +558,13 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		}
 //		::BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
 //				m_GContext.m_hDCDst, 0, 0, SRCCOPY);
-
+		getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, cell, false, true));
+		return res;
 	}
 
-	protected void OnRightButtonUp(/*Coord coordRUp*/) {
-		getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, false, false));
+	protected boolean OnRightButtonUp(/*Coord coordRUp*/) {
+		getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, null, false, false));
+		return false;
 	}
 
 	protected boolean RequestToUser_RestoreLastGame() {

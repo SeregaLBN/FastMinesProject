@@ -274,7 +274,7 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
    public event OnChangedMosaicSizeEvent OnChangedMosaicSize = delegate { };
 
    /// <summary> уведомить о клике на мозаике </summary>
-   private void fireOnClick(bool leftClick, bool down) { OnClick(this, leftClick, down); }
+   private void fireOnClick(BaseCell cell, bool leftClick, bool down) { OnClick(this, cell, leftClick, down); }
    private void fireOnChangedCounters() { OnChangedCounters(this); }
    /// <summary> уведомить об изменении статуса игры (новая игра, начало игры, конец игры) </summary>
    private void fireOnChangedGameStatus(EGameStatus oldValue) { OnChangedGameStatus(this, oldValue); }
@@ -360,16 +360,15 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
       return;
    }
 
-   protected async void OnLeftButtonDown(Coord coordLDown) {
+   protected async Task<bool> OnLeftButtonDown(Coord coordLDown) {
       CoordDown = Coord.INCORRECT_COORD;
       if (GameStatus == EGameStatus.eGSEnd)
-         return;
+         return false;
       if (coordLDown.Equals(Coord.INCORRECT_COORD))
-         return;
-      fireOnClick(true, true);
+         return false;
 
       CoordDown = coordLDown;
-      BaseCell cell = getCell(coordLDown);
+      var cell = getCell(coordLDown);
       if (GameStatus == EGameStatus.eGSCreateGame) {
          if (cell.State.Open != EOpen._Mine) {
             cell.State.setStatus(EState._Open, null);
@@ -383,65 +382,73 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
          }
          Repaint(cell);
       } else {
-         LeftDownResult result = cell.LButtonDown();
+         var result = cell.LButtonDown();
          if ((result != null) && (result.needRepaint != null))
             foreach (BaseCell cellToRepaint in result.needRepaint)
                Repaint(cellToRepaint);
       }
+      fireOnClick(cell, true, true);
+      return true;
    }
 
-   protected void OnLeftButtonUp(Coord coordLUp) {
-      if (GameStatus == EGameStatus.eGSEnd)
-         return;
-      if (CoordDown.Equals(Coord.INCORRECT_COORD))
-         return;
-      fireOnClick(true, false);
-      if (GameStatus == EGameStatus.eGSCreateGame)
-         return;
+   protected Boolean OnLeftButtonUp(Coord coordLUp) {
+      try {
+         if (GameStatus == EGameStatus.eGSEnd)
+            return false;
+         if (CoordDown == Coord.INCORRECT_COORD)
+            return false;
+         if (GameStatus == EGameStatus.eGSCreateGame)
+            return false;
 
-//      System.out.println("OnLeftButtonUp: coordLUp="+coordLUp);
-      if ((GameStatus == EGameStatus.eGSReady) && coordLUp.Equals(CoordDown))
-      {
-         GameBegin(CoordDown);
-      }
-      ClickReportContext clickReportContext = new ClickReportContext();
-      LeftUpResult result = getCell(CoordDown).LButtonUp(coordLUp.Equals(CoordDown), clickReportContext);
-      if (result.needRepaint != null)
-         foreach (BaseCell cellToRepaint in result.needRepaint)
-            Repaint(cellToRepaint);
-      if ((result.countOpen > 0) || (result.countFlag > 0) || (result.countUnknown > 0)) { // клик со смыслом (были изменения на поле)
-         CountClick++;
-         PlayInfo = EPlayInfo.ePlayerUser;  // юзер играл
-         fireOnChangedCounters();
-      }
-
-      if (result.endGame) {
-         GameEnd(result.victory);
-      } else {
-         Size sizeField = SizeField;
-         if ((CountOpen + MinesCount) == sizeField.width*sizeField.height) {
-            GameEnd(true);
-         } else {
-            VerifyFlag();
+   //      System.out.println("OnLeftButtonUp: coordLUp="+coordLUp);
+         if ((GameStatus == EGameStatus.eGSReady) && coordLUp.Equals(CoordDown))
+         {
+            GameBegin(CoordDown);
          }
+         var clickReportContext = new ClickReportContext();
+         var cell = getCell(CoordDown);
+         var result = cell.LButtonUp(coordLUp.Equals(CoordDown), clickReportContext);
+         if (result.needRepaint != null)
+            foreach (BaseCell cellToRepaint in result.needRepaint)
+               Repaint(cellToRepaint);
+         var res = (result.countOpen > 0) || (result.countFlag > 0) || (result.countUnknown > 0); // клик со смыслом (были изменения на поле)
+         if (res) {
+            CountClick++;
+            PlayInfo = EPlayInfo.ePlayerUser;  // юзер играл
+            fireOnChangedCounters();
+         }
+
+         if (result.endGame) {
+            GameEnd(result.victory);
+         } else {
+            Size sizeField = SizeField;
+            if ((CountOpen + MinesCount) == sizeField.width*sizeField.height) {
+               GameEnd(true);
+            } else {
+               VerifyFlag();
+            }
+         }
+         fireOnClick(cell, true, false);
+         return res;
+      } finally {
+         CoordDown = Coord.INCORRECT_COORD;
       }
    }
 
-   protected async void OnRightButtonDown(Coord coordRDown) {
+   protected async Task<bool> OnRightButtonDown(Coord coordRDown) {
       if (GameStatus == EGameStatus.eGSEnd) {
          await GameNew();
-         return;
+         return true;
       }
       if (GameStatus == EGameStatus.eGSReady)
-         return;
+         return false;
       if (GameStatus == EGameStatus.eGSCreateGame)
-         return;
+         return false;
       if (coordRDown.Equals(Coord.INCORRECT_COORD))
-         return;
-      fireOnClick(false, true);
+         return false;
 
       EClose eClose;
-      BaseCell cell = getCell(coordRDown);
+      var cell = getCell(coordRDown);
       switch (cell.State.Close) {
       case EClose._Clear: eClose = EClose._Flag; break;
       case EClose._Flag : eClose = UseUnknown ? EClose._Unknown : EClose._Clear; break;
@@ -450,11 +457,12 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
          eClose = EClose._Clear;
          break;
       }
-      ClickReportContext clickReportContext = new ClickReportContext();
-      RightDownReturn result = cell.RButtonDown(eClose, clickReportContext);
+      var clickReportContext = new ClickReportContext();
+      var result = cell.RButtonDown(eClose, clickReportContext);
       if (result.needRepaint)
          Repaint(cell);
-      if ((result.countFlag>0) || (result.countUnknown>0)) { // клик со смыслом (были изменения на поле)
+      var res = (result.countFlag > 0) || (result.countUnknown > 0); // клик со смыслом (были изменения на поле)
+      if (res) {
          CountClick++;
          PlayInfo = EPlayInfo.ePlayerUser; // то считаю что юзер играл
          fireOnChangedCounters();
@@ -464,10 +472,13 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
       if (GameStatus != EGameStatus.eGSEnd) {
          //...
       }
+      fireOnClick(cell, false, true);
+      return res;
    }
 
-   protected void OnRightButtonUp(/*Coord coordRUp*/) {
-      fireOnClick(false, false);
+   protected bool OnRightButtonUp(/*Coord coordRUp*/) {
+      fireOnClick(null, false, false);
+      return false;
    }
 
    protected virtual async Task<bool> RequestToUser_RestoreLastGame() {

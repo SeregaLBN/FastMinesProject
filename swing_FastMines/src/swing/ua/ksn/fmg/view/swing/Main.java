@@ -1841,7 +1841,7 @@ public class Main extends JFrame  {
 					@Override
 					public void OnClick(MosaicEvent.ClickEvent e) {
 //						System.out.println("OnMosaicClick: down=" + e.isDown() + "; leftClick=" + e.isLeftClick());
-						if (e.isLeftClick()) {
+						if (e.isLeftClick() && (e.getSource().getGameStatus() == EGameStatus.eGSPlay)) {
 							Icon img = Main.this.getResources().getImgBtnNew(
 									e.isDown() ?
 										EBtnNewGameState.eNormalMosaic :

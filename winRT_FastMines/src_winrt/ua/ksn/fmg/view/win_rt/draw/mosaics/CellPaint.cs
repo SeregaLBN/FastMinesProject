@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Windows.Devices.SmartCards;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -103,10 +104,11 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
 
       /// <summary> draw border lines </summary>
       public void PaintBorderLines(BaseCell cell, WriteableBitmap bmp) {
+         var down = cell.State.Down || (cell.State.Status == EState._Open);
          if (gContext.IconicMode) {
-            bmp.DrawPolyline(RegionAsXyxyxySequence(gContext.Bound, cell.getRegion()), (cell.State.Down ? gContext.PenBorder.ColorLight : gContext.PenBorder.ColorShadow).ToWinColor());
+            bmp.DrawPolyline(RegionAsXyxyxySequence(gContext.Bound, cell.getRegion()), (down ? gContext.PenBorder.ColorLight : gContext.PenBorder.ColorShadow).ToWinColor());
          } else {
-            var color = cell.State.Down ? gContext.PenBorder.ColorLight : gContext.PenBorder.ColorShadow;
+            var color = down ? gContext.PenBorder.ColorLight : gContext.PenBorder.ColorShadow;
             var s = cell.getShiftPointBorderIndex();
             var v = cell.Attr.getVertexNumber(cell.getDirection());
             for (var i=0; i < v; i++) {
@@ -115,7 +117,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
                var p2 = (i != (v - 1)) ? cell.getRegion().getPoint(i + 1) : cell.getRegion().getPoint(0);
                p2.Move(gContext.Bound);
                if (i == s)
-                  color = cell.State.Down ? gContext.PenBorder.ColorShadow : gContext.PenBorder.ColorLight;
+                  color = down ? gContext.PenBorder.ColorShadow : gContext.PenBorder.ColorLight;
                bmp.DrawLine(p1.x, p1.y, p2.x, p2.y, color.ToWinColor());
             }
          }
@@ -154,8 +156,11 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
          }
          poly.Points = points;
 #endif
-         poly.StrokeThickness = gContext.PenBorder.Width;
-         poly.Stroke = cell.State.Down ? BrushBorderLight : BrushBorderShadow;
+         var open = (cell.State.Status == EState._Open);
+         var down = cell.State.Down || open;
+         poly.StrokeThickness = open ? (gContext.PenBorder.Width * 2) : gContext.PenBorder.Width;
+         poly.Stroke = down ? BrushBorderLight : BrushBorderShadow;
+         Canvas.SetZIndex(poly, open ? 1 : down ? 3 : 2);
          // TODO граница региона должна быть двухцветной...
       }
 
@@ -252,7 +257,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
             image.Height = rcInner.height;
             Canvas.SetLeft(image, rcInner.left());
             Canvas.SetTop(image, rcInner.top());
-            Canvas.SetZIndex(image, 3);
+            Canvas.SetZIndex(image, 5);
             image.Visibility = Visibility.Visible;
             txt.Visibility = Visibility.Collapsed;
          } else
@@ -280,7 +285,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
                txt.Foreground = FindBrush(txtColor);
                Canvas.SetLeft(txt, rcInner.left());
                Canvas.SetTop(txt, rcInner.top());
-               Canvas.SetZIndex(txt, 2);
+               Canvas.SetZIndex(txt, 4);
                txt.Visibility = Visibility.Visible;
             }
          }

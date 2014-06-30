@@ -6,6 +6,7 @@ import ua.ksn.geom.Size;
 import ua.ksn.fmg.controller.Mosaic;
 import ua.ksn.fmg.controller.types.EGameStatus;
 import ua.ksn.fmg.model.mosaics.EMosaic;
+import ua.ksn.fmg.model.mosaics.cell.BaseCell;
 
 public class MosaicEvent extends EventObject {
 	private static final long serialVersionUID = 1L;
@@ -16,11 +17,13 @@ public class MosaicEvent extends EventObject {
 
 	public static class ClickEvent extends MosaicEvent {
 		private static final long serialVersionUID = 1L;
+		BaseCell cell;
 		boolean leftClick;
 		boolean down;
 
-		public ClickEvent(Mosaic source, boolean leftClick, boolean down) {
+		public ClickEvent(Mosaic source, BaseCell clickedCell, boolean leftClick, boolean down) {
 			super(source);
+			this.cell = clickedCell;
 			this.leftClick  = leftClick;
 			this.down = down;
 		}
@@ -31,7 +34,9 @@ public class MosaicEvent extends EventObject {
 		public boolean isDown() {
 			return down;
 		}
-
+		public BaseCell getCell() {
+			return cell;
+		}
 	}
 
 	public static class ChangedCountersEvent extends MosaicEvent {

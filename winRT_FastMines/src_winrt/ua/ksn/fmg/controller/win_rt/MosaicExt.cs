@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.UI.Popups;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
@@ -149,7 +150,7 @@ namespace ua.ksn.fmg.controller.win_rt {
       /// <summary> преобразовать экранные координаты в координаты mosaic'a </summary>
       private Coord CursorPointToMosaicCoord(Point point) {
          foreach (var cell in _matrix)
-            //if (cell.getRcOuter().contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
+            //if (cell.getRcOuter().Contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
                if (cell.PointInRegion(point))
                   return cell.getCoord();
          return Coord.INCORRECT_COORD;
@@ -181,30 +182,23 @@ namespace ua.ksn.fmg.controller.win_rt {
          }
       }
 
-      public void MousePressed(Point clickPoint, bool isLeftMouseButton, bool isRightMouseButton) {
+      public async Task<bool> MousePressed(Point clickPoint, bool isLeftMouseButton) {
          if (isLeftMouseButton)
-            OnLeftButtonDown(CursorPointToMosaicCoord(clickPoint));
-         else
-            if (isRightMouseButton)
-               OnRightButtonDown(CursorPointToMosaicCoord(clickPoint));
+            return await OnLeftButtonDown(CursorPointToMosaicCoord(clickPoint));
+         return await OnRightButtonDown(CursorPointToMosaicCoord(clickPoint));
       }
 
-      public void MouseReleased(Point clickPoint, bool isLeftMouseButton, bool isRightMouseButton) {
-         if (isLeftMouseButton) {
-            var frame = (Frame)Windows.UI.Xaml.Window.Current.Content;
-            var page = (Windows.UI.Xaml.Controls.Page)frame.Content;
-            var rootFrameActive = _container.Parent == page;
-            if (rootFrameActive)
-               OnLeftButtonUp(CursorPointToMosaicCoord(clickPoint));
-         } else
-            if (isRightMouseButton)
-               OnRightButtonUp(/*CursorPointToMosaicCoord(clickPoint)*/);
+      public bool MouseReleased(Point clickPoint, bool isLeftMouseButton) {
+         if (isLeftMouseButton)
+            return OnLeftButtonUp(CursorPointToMosaicCoord(clickPoint));
+         return OnRightButtonUp(/*CursorPointToMosaicCoord(clickPoint)*/);
       }
 
-      public void MouseFocusLost() {
+      public bool MouseFocusLost() {
          //System.Diagnostics.Debug.WriteLine("Mosaic::MosaicFocusLost: ");
          if (CoordDown != Coord.INCORRECT_COORD)
-            OnLeftButtonUp(Coord.INCORRECT_COORD);
+            return OnLeftButtonUp(Coord.INCORRECT_COORD);
+         return false;
       }
 
       private void OnPropertyChange(object sender, PropertyChangedEventArgs e) {

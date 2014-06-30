@@ -110,6 +110,10 @@ namespace ua.ksn.geom {
          return ((x >= rc.x) || (x < rc.right())) && ((y >= rc.y) || (y < rc.bottom()));
       }
 
+      public bool Contains(Point point) {
+         return (point.x >= left()) && (point.x < right()) && (point.y >= top()) && (point.y < bottom());
+      }
+
       public static bool operator !=(Rect r1, Rect r2) { return (r1.x != r2.x) || (r1.y != r2.y) || (r1.width != r2.width) || (r1.height != r2.height); }
       public static bool operator ==(Rect r1, Rect r2) { return (r1.x == r2.x) && (r1.y == r2.y) && (r1.width == r2.width) && (r1.height == r2.height); }
 

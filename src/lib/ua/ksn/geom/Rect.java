@@ -117,6 +117,10 @@ public class Rect
 		return ((x >= rc.x) || (x < rc.right())) && ((y >= rc.y) || (y < rc.bottom()));
 	}
 
+	public boolean Contains(Point point) {
+		return (point.x >= left()) && (point.x < right()) && (point.y >= top()) && (point.y < bottom());
+	}
+
 	@Override
     public boolean equals(Object other) {
 		if (this == other)

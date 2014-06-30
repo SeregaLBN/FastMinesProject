@@ -1,12 +1,13 @@
 using ua.ksn.geom;
 using ua.ksn.fmg.controller.types;
 using ua.ksn.fmg.model.mosaics;
+using ua.ksn.fmg.model.mosaics.cell;
 
 // ƒелегаты, дл€ уведомлений от мозаики
 namespace ua.ksn.fmg.controller.Event {
 
    /// <summary> уведомление о том, что на мозаике был произведЄн клик </summary>
-   public delegate void OnClickEvent(Mosaic source, bool leftClick, bool down);
+   public delegate void OnClickEvent(Mosaic source, BaseCell clickedCell, bool leftClick, bool down);
 
    /// <summary> изменено кол-во открытых €чеек / флагов / кликов / ... на мозаике </summary>
    public delegate void OnChangedCountersEvent(Mosaic source);

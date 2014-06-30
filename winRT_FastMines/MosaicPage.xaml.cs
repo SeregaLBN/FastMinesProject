@@ -2,19 +2,20 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.System;
-using Windows.System.Threading;
 using Windows.UI.Core;
+using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using Windows.Devices.Input;
 using ua.ksn.geom;
-using ua.ksn.fmg.controller.win_rt;
 using ua.ksn.fmg.model.mosaics;
+using ua.ksn.fmg.model.mosaics.cell;
 using ua.ksn.fmg.view.win_rt;
 using ua.ksn.fmg.controller;
 using ua.ksn.fmg.controller.types;
+using ua.ksn.fmg.controller.win_rt;
 using FastMines.Common;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -27,6 +28,7 @@ namespace FastMines {
       private const int MinIndent = 30;
 
       private MosaicExt _mosaic;
+      private BaseCell _tmpClickedCell;
 
       public MosaicExt MosaicField {
          get {
@@ -215,7 +217,9 @@ namespace FastMines {
          AreaOptimal();
       }
 
-      private void Mosaic_OnClick(Mosaic source, bool leftClick, bool down) { }
+      private void Mosaic_OnClick(Mosaic source, BaseCell clickedCell, bool leftClick, bool down) {
+         _tmpClickedCell = (leftClick && down) ? clickedCell : null;
+      }
       private void Mosaic_OnChangedGameStatus(Mosaic source, EGameStatus oldValue) {}
       private void Mosaic_OnChangedCounters(Mosaic source) {}
       private void Mosaic_OnChangedArea(Mosaic source, int oldArea) {
@@ -303,37 +307,73 @@ namespace FastMines {
          }
       }
 
-      protected override void OnTapped(TappedRoutedEventArgs e) {
+      async Task<bool> OnClick(Windows.Foundation.Point pos, bool leftClick, bool downHandling, bool upHandling) {
+         var margin = MosaicField.Container.Margin;
+         //if ((pos.X >= margin.Left) && (pos.Y >= margin.Top)) {
+         var point = pos.ToFmRect().Move(-(int)margin.Left, -(int)margin.Top);
+         //   var winSize = MosaicField.WindowSize;
+         //   if ((point.x <= winSize.width) && (point.y <= winSize.height)) {
+               downHandling = downHandling && await MosaicField.MousePressed(point, leftClick);
+               upHandling = upHandling && MosaicField.MouseReleased(point, leftClick);
+               return upHandling || downHandling;
+         //   }
+         //}
+         //return false;
+      }
+
+      protected override async void OnTapped(TappedRoutedEventArgs e) {
+         if (e.PointerDeviceType == PointerDeviceType.Mouse)
+            return;
+
          Debug.WriteLine("> OnTapped: ");
          base.OnTapped(e);
-
-         var margin = MosaicField.Container.Margin;
-         var pos = e.GetPosition(this);
-         if ((pos.X >= margin.Left) && (pos.Y >= margin.Top)) {
-            var point = pos.ToFmRect().Move(-(int)margin.Left, -(int)margin.Top);
-            var winSize = _mosaic.WindowSize;
-            if ((point.x <= winSize.width) && (point.y <= winSize.height)) {
-               _mosaic.MousePressed(point, true, false);
-               e.Handled = true;
-            }
-         }
+         e.Handled = await OnClick(e.GetPosition(this), true, true, true);
          Debug.WriteLine("< OnTapped: ");
       }
-      protected override void OnRightTapped(RightTappedRoutedEventArgs e) {
+
+      protected override async void OnRightTapped(RightTappedRoutedEventArgs e) {
+         if (e.PointerDeviceType == PointerDeviceType.Mouse)
+            return;
+
          Debug.WriteLine("> OnRightTapped: ");
          base.OnRightTapped(e);
+         e.Handled = await OnClick(e.GetPosition(this), false, true, true);
+         Debug.WriteLine("< OnRightTapped: ");
+      }
 
-         var margin = MosaicField.Container.Margin;
-         var pos = e.GetPosition(this);
-         if ((pos.X >= margin.Left) && (pos.Y >= margin.Top)) {
-            var point = pos.ToFmRect().Move(-(int)margin.Left, -(int)margin.Top);
-            var winSize = _mosaic.WindowSize;
-            if ((point.x <= winSize.width) && (point.y <= winSize.height)) {
-               _mosaic.MousePressed(point, false, true);
-               e.Handled = true;
+
+      protected override async void OnPointerPressed(PointerRoutedEventArgs ev) {
+         Debug.WriteLine("> OnPointerPressed: ");
+         base.OnPointerPressed(ev);
+
+         var pointerPoint = ev.GetCurrentPoint(this);
+         var props = pointerPoint.Properties;
+         // Ignore button chords with the left, right, and middle buttons
+         if (!props.IsLeftButtonPressed && !props.IsRightButtonPressed && !props.IsMiddleButtonPressed) {
+            // If back or foward are pressed (but not both) navigate appropriately
+            var backPressed = props.IsXButton1Pressed;
+            if (backPressed) {
+               ev.Handled = true;
+               GoBack();
             }
          }
-         Debug.WriteLine("< OnRightTapped: ");
+
+         if (!ev.Handled && ev.GetCurrentPoint(this).PointerDevice.PointerDeviceType == PointerDeviceType.Mouse) {
+            ev.Handled = await OnClick(pointerPoint.Position, props.IsLeftButtonPressed, true, false);
+            Debug.WriteLine("  OnPointerPressed: ev.Handled = " + ev.Handled);
+         }
+         Debug.WriteLine("< OnPointerPressed: ");
+      }
+
+      protected override async void OnPointerReleased(PointerRoutedEventArgs ev) {
+         Debug.WriteLine("> OnPointerReleased: ");
+         base.OnPointerReleased(ev);
+         if (ev.GetCurrentPoint(this).PointerDevice.PointerDeviceType == PointerDeviceType.Mouse) {
+            var pointerPoint = ev.GetCurrentPoint(this);
+            ev.Handled = await OnClick(pointerPoint.Position, pointerPoint.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased, false, true);
+            Debug.WriteLine("  OnPointerReleased: ev.Handled = " + ev.Handled);
+         }
+         Debug.WriteLine("< OnPointerReleased: ");
       }
 
       protected override void OnManipulationStarting(ManipulationStartingRoutedEventArgs e) {
@@ -363,73 +403,95 @@ namespace FastMines {
          Debug.WriteLine("> OnManipulationDelta: Scale={0}; Expansion={1}, Rotation={2}", ev.Delta.Scale, ev.Delta.Expansion, ev.Delta.Rotation);
          ev.Handled = true;
          if (Math.Abs(1 - ev.Delta.Scale) > 0.009) {
+#region scale / zoom
             if (ev.Delta.Scale > 0)
                AreaInc(ev.Delta.Scale, ev.Position);
             else
                AreaDec(2 + ev.Delta.Scale, ev.Position);
+#endregion
          } else {
+#region drag
+            var needDrag = true;
             var margin = MosaicField.Container.Margin;
-            var deltaTrans = ev.Delta.Translation;
-            var applyDelta = true;
-#region Compound motion
-            if (_turnX)
-               deltaTrans.X *= -1;
-            if (_turnY)
-               deltaTrans.Y *= -1;
-
-            if (ev.IsInertial) {
-               //var сoefFading = Math.Max(0.05, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
-               var сoefFading = Math.Max(0, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
-               Debug.WriteLine("  OnManipulationDelta: inertial coeff fading = " + сoefFading);
-               deltaTrans.X *= сoefFading;
-               deltaTrans.Y *= сoefFading;
-            }
-
-            var sizeWinMosaic = MosaicField.WindowSize;
-            var sizePage = Window.Current.Bounds.ToFmRect().toSize();
-            if ((margin.Left + sizeWinMosaic.width + deltaTrans.X) < MinIndent) {
-               // правый край мозаики пересёк левую сторону страницы/экрана
-               if (ev.IsInertial)
-                  _turnX = !_turnX; // разворачиавю по оси X
-               else
-                  margin.Left = MinIndent - sizeWinMosaic.width; // привязываю к левой стороне страницы/экрана
-               applyDelta = ev.IsInertial;
-            } else
-            if ((margin.Left + deltaTrans.X) > (sizePage.width - MinIndent)) {
-               // левый край мозаики пересёк правую сторону страницы/экрана
-               if (ev.IsInertial)
-                  _turnX = !_turnX; // разворачиавю по оси X
-               else
-                  margin.Left = sizePage.width - MinIndent; // привязываю к правой стороне страницы/экрана
-               applyDelta = ev.IsInertial;
-            }
-            if ((margin.Top + sizeWinMosaic.height + deltaTrans.Y) < MinIndent) {
-               // нижний край мозаики пересёк верхнюю сторону страницы/экрана
-               if (ev.IsInertial)
-                  _turnY = !_turnY; // разворачиавю по оси Y
-               else
-                  margin.Top = MinIndent - sizeWinMosaic.height; // привязываю к верхней стороне страницы/экрана
-               applyDelta = ev.IsInertial;
-            } else
-            if ((margin.Top + deltaTrans.Y) > (sizePage.height - MinIndent)) {
-               // вержний край мозаики пересёк нижнюю сторону страницы/экрана
-               if (ev.IsInertial)
-                  _turnY = !_turnY; // разворачиавю по оси Y
-               else
-                  margin.Top = sizePage.height - MinIndent; // привязываю к нижней стороне страницы/экрана
-               applyDelta = ev.IsInertial;
+#region check possibility dragging
+            if ((ev.PointerDeviceType == PointerDeviceType.Mouse) && (_tmpClickedCell != null)) {
+               var noMarginPoint = new Windows.Foundation.Point(ev.Position.X - margin.Left, ev.Position.Y - margin.Top);
+               //var inCellRegion = _tmpClickedCell.PointInRegion(noMarginPoint.ToFmRect());
+               //this.ContentRoot.Background = new SolidColorBrush(inCellRegion ? Colors.Aquamarine : Colors.DeepPink);
+               var rcOuter = _tmpClickedCell.getRcOuter();
+               var sizePage = Window.Current.Bounds.ToFmRect().toSize();
+               var delta = Math.Min(sizePage.width/20, sizePage.height/20);
+               rcOuter.moveXY(-delta, -delta);
+               rcOuter.width  += delta*2;
+               rcOuter.height += delta*2;
+               needDrag = !rcOuter.Contains(noMarginPoint.ToFmRect());
             }
 #endregion
-            if (applyDelta) {
-               margin.Left += deltaTrans.X;
-               margin.Top += deltaTrans.Y;
-            }
+
+            if (needDrag) {
+               var deltaTrans = ev.Delta.Translation;
+               var applyDelta = true;
+#region Compound motion
+               if (_turnX)
+                  deltaTrans.X *= -1;
+               if (_turnY)
+                  deltaTrans.Y *= -1;
+
+               if (ev.IsInertial) {
+                  //var coefFading = Math.Max(0.05, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
+                  var coefFading = Math.Max(0, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
+                  Debug.WriteLine("  OnManipulationDelta: inertial coeff fading = " + coefFading);
+                  deltaTrans.X *= coefFading;
+                  deltaTrans.Y *= coefFading;
+               }
+
+               var sizeWinMosaic = MosaicField.WindowSize;
+               var sizePage = Window.Current.Bounds.ToFmRect().toSize();
+               if ((margin.Left + sizeWinMosaic.width + deltaTrans.X) < MinIndent) {
+                  // правый край мозаики пересёк левую сторону страницы/экрана
+                  if (ev.IsInertial)
+                     _turnX = !_turnX; // разворачиавю по оси X
+                  else
+                     margin.Left = MinIndent - sizeWinMosaic.width; // привязываю к левой стороне страницы/экрана
+                  applyDelta = ev.IsInertial;
+               } else
+               if ((margin.Left + deltaTrans.X) > (sizePage.width - MinIndent)) {
+                  // левый край мозаики пересёк правую сторону страницы/экрана
+                  if (ev.IsInertial)
+                     _turnX = !_turnX; // разворачиавю по оси X
+                  else
+                     margin.Left = sizePage.width - MinIndent; // привязываю к правой стороне страницы/экрана
+                  applyDelta = ev.IsInertial;
+               }
+               if ((margin.Top + sizeWinMosaic.height + deltaTrans.Y) < MinIndent) {
+                  // нижний край мозаики пересёк верхнюю сторону страницы/экрана
+                  if (ev.IsInertial)
+                     _turnY = !_turnY; // разворачиавю по оси Y
+                  else
+                     margin.Top = MinIndent - sizeWinMosaic.height; // привязываю к верхней стороне страницы/экрана
+                  applyDelta = ev.IsInertial;
+               } else
+               if ((margin.Top + deltaTrans.Y) > (sizePage.height - MinIndent)) {
+                  // вержний край мозаики пересёк нижнюю сторону страницы/экрана
+                  if (ev.IsInertial)
+                     _turnY = !_turnY; // разворачиавю по оси Y
+                  else
+                     margin.Top = sizePage.height - MinIndent; // привязываю к нижней стороне страницы/экрана
+                  applyDelta = ev.IsInertial;
+               }
+#endregion
+               if (applyDelta) {
+                  margin.Left += deltaTrans.X;
+                  margin.Top += deltaTrans.Y;
+               }
 #if DEBUG
-            var tmp = margin;
-            margin = CheckMosaicMargin(margin, sizeWinMosaic);
-            System.Diagnostics.Debug.Assert(tmp == margin);
+               var tmp = margin;
+               margin = CheckMosaicMargin(margin, sizeWinMosaic);
+               System.Diagnostics.Debug.Assert(tmp == margin);
 #endif
-            MosaicField.Container.Margin = margin;
+               MosaicField.Container.Margin = margin;
+            }
+#endregion
          }
          base.OnManipulationDelta(ev);
          Debug.WriteLine("< OnManipulationDelta");
@@ -446,26 +508,9 @@ namespace FastMines {
 #endif
          //e.Handled = true;
          base.OnManipulationCompleted(e);
+         MosaicField.MouseFocusLost();
          Debug.WriteLine("< OnManipulationCompleted");
       }
-
-      protected override void OnPointerPressed(PointerRoutedEventArgs ev) {
-         Debug.WriteLine("> OnPointerPressed: ");
-         var props = ev.GetCurrentPoint(this).Properties;
-
-         // Ignore button chords with the left, right, and middle buttons
-         if (!props.IsLeftButtonPressed && !props.IsRightButtonPressed && !props.IsMiddleButtonPressed) {
-            // If back or foward are pressed (but not both) navigate appropriately
-            var backPressed = props.IsXButton1Pressed;
-            if (backPressed) {
-               ev.Handled = true;
-               GoBack();
-            }
-         }
-         base.OnPointerPressed(ev);
-         Debug.WriteLine("< OnPointerPressed: ");
-      }
-
       protected override void OnKeyUp(KeyRoutedEventArgs e) {
          Debug.WriteLine("> OnKeyUp: virtKey=" + e.Key);
          base.OnKeyUp(e);
