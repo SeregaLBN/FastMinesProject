@@ -275,18 +275,24 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
                txtColor = gContext.ColorText.getColorOpen((int)cell.State.Open.Ordinal());
                szCaption = cell.State.Open.toCaption();
             }
-            if (!string.IsNullOrWhiteSpace(szCaption)) {
+            if (string.IsNullOrWhiteSpace(szCaption)) {
+               txt.Visibility = Visibility.Collapsed;
+            } else {
+               txt.Visibility = Visibility.Visible;
+
                if (cell.State.Down)
-                  rcInner.moveXY(1, 1);
+                  rcInner.moveXY(gContext.PenBorder.Width, gContext.PenBorder.Width);
                txt.Text = szCaption;
+               txt.TextAlignment = TextAlignment.Center;
                txt.FontFamily = FindFontFamily(gContext.FontFamilyName);
                txt.FontStyle = gContext.FontStyle;
                txt.FontSize = gContext.FontSize;
                txt.Foreground = FindBrush(txtColor);
                Canvas.SetLeft(txt, rcInner.left());
                Canvas.SetTop(txt, rcInner.top());
+               txt.Width = rcInner.width;
+               txt.Height = rcInner.height;
                Canvas.SetZIndex(txt, 4);
-               txt.Visibility = Visibility.Visible;
             }
          }
       }

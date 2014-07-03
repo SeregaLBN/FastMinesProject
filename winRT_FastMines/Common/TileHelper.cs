@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.UI;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.ApplicationModel.Background;
 using ua.ksn;

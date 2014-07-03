@@ -34,7 +34,7 @@ namespace ua.ksn.fmg.controller.win_rt {
       }
 
       private void BindXamlToMosaic() {
-         UnbindXaml();
+         //UnbindXaml();
          var sizeMosaic = SizeField;
          for (var i = 0; i < sizeMosaic.width; i++)
             for (var j = 0; j < sizeMosaic.height; j++) {
