@@ -148,7 +148,7 @@ public class Trapezoid3 extends BaseCell {
     		neighborCoord[ 7] = new Coord(coord.x+1, coord.y+1);
     		neighborCoord[ 8] = new Coord(coord.x-2, coord.y+2);
     		neighborCoord[ 9] = new Coord(coord.x  , coord.y+2);
-    		neighborCoord[10] = Coord.INCORRECT_COORD;
+    		neighborCoord[10] = null;
     		break;
     	case 1:
     		neighborCoord[ 0] = new Coord(coord.x  , coord.y-2);
@@ -174,7 +174,7 @@ public class Trapezoid3 extends BaseCell {
     		neighborCoord[ 7] =
     		neighborCoord[ 8] =
     		neighborCoord[ 9] =
-    		neighborCoord[10] = Coord.INCORRECT_COORD;
+    		neighborCoord[10] = null;
     		break;
     	case 3:
     		neighborCoord[ 0] = new Coord(coord.x-2, coord.y-2);
@@ -213,7 +213,7 @@ public class Trapezoid3 extends BaseCell {
     		neighborCoord[ 7] =
     		neighborCoord[ 8] =
     		neighborCoord[ 9] =
-    		neighborCoord[10] = Coord.INCORRECT_COORD;
+    		neighborCoord[10] = null;
     		break;
     	case 6:
     		neighborCoord[ 0] = new Coord(coord.x  , coord.y-1);
@@ -239,7 +239,7 @@ public class Trapezoid3 extends BaseCell {
     		neighborCoord[ 7] = new Coord(coord.x+1, coord.y  );
     		neighborCoord[ 8] = new Coord(coord.x-1, coord.y+1);
     		neighborCoord[ 9] = new Coord(coord.x+1, coord.y+1);
-    		neighborCoord[10] = Coord.INCORRECT_COORD;
+    		neighborCoord[10] = null;
     		break;
     	case 8:
     		neighborCoord[ 0] = new Coord(coord.x  , coord.y-2);
@@ -265,7 +265,7 @@ public class Trapezoid3 extends BaseCell {
     		neighborCoord[ 7] = new Coord(coord.x+2, coord.y+1);
     		neighborCoord[ 8] = new Coord(coord.x  , coord.y+2);
     		neighborCoord[ 9] = new Coord(coord.x+2, coord.y+2);
-    		neighborCoord[10] = Coord.INCORRECT_COORD;
+    		neighborCoord[10] = null;
     		break;
     	case 10:
     		neighborCoord[ 0] = new Coord(coord.x+2, coord.y-2);
@@ -291,7 +291,7 @@ public class Trapezoid3 extends BaseCell {
     		neighborCoord[ 7] =
     		neighborCoord[ 8] =
     		neighborCoord[ 9] =
-    		neighborCoord[10] = Coord.INCORRECT_COORD;
+    		neighborCoord[10] = null;
     		break;
     	case 12:
     		neighborCoord[ 0] = new Coord(coord.x-2, coord.y-1);
@@ -304,7 +304,7 @@ public class Trapezoid3 extends BaseCell {
     		neighborCoord[ 7] =
     		neighborCoord[ 8] =
     		neighborCoord[ 9] =
-    		neighborCoord[10] = Coord.INCORRECT_COORD;
+    		neighborCoord[10] = null;
     		break;
     	case 13:
     		neighborCoord[ 0] = new Coord(coord.x-2, coord.y-1);
@@ -330,7 +330,7 @@ public class Trapezoid3 extends BaseCell {
     		neighborCoord[ 7] = new Coord(coord.x+1, coord.y  );
     		neighborCoord[ 8] = new Coord(coord.x-1, coord.y+1);
     		neighborCoord[ 9] = new Coord(coord.x+1, coord.y+1);
-    		neighborCoord[10] = Coord.INCORRECT_COORD;
+    		neighborCoord[10] = null;
     		break;
     	case 15:
     		neighborCoord[ 0] = new Coord(coord.x-2, coord.y-1);

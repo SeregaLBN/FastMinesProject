@@ -79,8 +79,8 @@ public class Trapezoid2 : BaseCell {
 		get { return (AttrTrapezoid2) base.Attr; }
 	}
 
-	protected override Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[Attr.getNeighborNumber()];
+	protected override Coord?[] GetCoordsNeighbor() {
+		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
 
 		// определяю координаты соседей
     	switch (direction) {

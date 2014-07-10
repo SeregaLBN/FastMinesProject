@@ -85,8 +85,8 @@ public class Rhombus1 : BaseCell {
 		get { return (AttrRhombus1) base.Attr; }
 	}
 
-	protected override Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[Attr.getNeighborNumber()];
+	protected override Coord?[] GetCoordsNeighbor() {
+		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
 
 		// определяю координаты соседей
     	switch (direction) {

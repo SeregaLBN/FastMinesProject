@@ -63,8 +63,8 @@ public class Square1 : BaseCell {
 		get { return (AttrSquare1) base.Attr; }
 	}
 
-	protected override Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[Attr.getNeighborNumber()];
+	protected override Coord?[] GetCoordsNeighbor() {
+      var neighborCoord = new Coord?[Attr.getNeighborNumber()];
 
 		// определяю координаты соседей
     	neighborCoord[0] = new Coord(coord.x-1, coord.y-1);

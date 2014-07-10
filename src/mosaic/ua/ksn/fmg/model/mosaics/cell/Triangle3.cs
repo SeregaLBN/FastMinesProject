@@ -71,8 +71,8 @@ public class Triangle3 : BaseCell {
 		get { return (AttrTriangle3) base.Attr; }
 	}
 
-	protected override Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[Attr.getNeighborNumber()];
+	protected override Coord?[] GetCoordsNeighbor() {
+		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
 
 		// определяю координаты соседей
     	switch (direction) {

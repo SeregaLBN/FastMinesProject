@@ -142,18 +142,18 @@ namespace ua.ksn.fmg.controller.win_rt {
          Repaint();
       }
 
-      protected override void GameBegin(Coord firstClick) {
+      protected override void GameBegin(BaseCell firstClickCell) {
          GraphicContext.BkFill.Mode = 0;
-         base.GameBegin(firstClick);
+         base.GameBegin(firstClickCell);
       }
 
-      /// <summary> преобразовать экранные координаты в координаты mosaic'a </summary>
-      private Coord CursorPointToMosaicCoord(Point point) {
+      /// <summary> преобразовать экранные координаты в ячейку поля мозаики </summary>
+      private BaseCell CursorPointToCell(Point point) {
          foreach (var cell in _matrix)
             //if (cell.getRcOuter().Contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
                if (cell.PointInRegion(point))
-                  return cell.getCoord();
-         return Coord.INCORRECT_COORD;
+                  return cell;
+         return null;
       }
 
       protected override async Task<bool> RequestToUser_RestoreLastGame() {
@@ -184,21 +184,24 @@ namespace ua.ksn.fmg.controller.win_rt {
 
       public async Task<bool> MousePressed(Point clickPoint, bool isLeftMouseButton) {
          if (isLeftMouseButton)
-            return await OnLeftButtonDown(CursorPointToMosaicCoord(clickPoint));
-         return await OnRightButtonDown(CursorPointToMosaicCoord(clickPoint));
+            return await OnLeftButtonDown(CursorPointToCell(clickPoint));
+         return await OnRightButtonDown(CursorPointToCell(clickPoint));
       }
 
       public bool MouseReleased(Point clickPoint, bool isLeftMouseButton) {
          if (isLeftMouseButton)
-            return OnLeftButtonUp(CursorPointToMosaicCoord(clickPoint));
-         return OnRightButtonUp(/*CursorPointToMosaicCoord(clickPoint)*/);
+            return OnLeftButtonUp(CursorPointToCell(clickPoint));
+         return OnRightButtonUp(/*CursorPointToCell(clickPoint)*/);
       }
 
       public bool MouseFocusLost() {
          //System.Diagnostics.Debug.WriteLine("Mosaic::MosaicFocusLost: ");
-         if (CoordDown != Coord.INCORRECT_COORD)
-            return OnLeftButtonUp(Coord.INCORRECT_COORD);
-         return false;
+         if (CellDown == null)
+            return false;
+         if (CellDown.State.Down)
+            return OnLeftButtonUp(null);
+         else
+            return OnRightButtonUp();
       }
 
       private void OnPropertyChange(object sender, PropertyChangedEventArgs e) {

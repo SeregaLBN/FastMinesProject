@@ -29,7 +29,6 @@ import ua.ksn.fmg.view.draw.PenBorder;
 import ua.ksn.fmg.view.swing.draw.GraphicContext;
 import ua.ksn.fmg.view.swing.draw.mosaics.CellPaint;
 import ua.ksn.fmg.view.swing.draw.mosaics.MosaicGraphicContext;
-import ua.ksn.geom.Coord;
 import ua.ksn.geom.Size;
 import ua.ksn.swing.geom.Cast;
 
@@ -143,22 +142,23 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 	}
 
 	@Override
-	protected void GameBegin(Coord firstClick) {
+	protected void GameBegin(BaseCell firstClickCell) {
 		getGraphicContext().getBackgroundFill().setMode(0);
-		super.GameBegin(firstClick);
+		super.GameBegin(firstClickCell);
 	}
 
-	/** преобразовать экранные координаты в координаты mosaic'a */
-	private Coord CursorPointToMosaicCoord(Point point) {
+	/** преобразовать экранные координаты в ячейку поля мозаики */
+	private BaseCell CursorPointToCell(Point point) {
 //		long l1 = System.currentTimeMillis();
 //		try {
+		    ua.ksn.geom.Point p = Cast.toPoint(point);
 			for (BaseCell cell: _matrix)
 				//if (cell.getRcOuter().contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
-					if (cell.PointInRegion(Cast.toPoint(point)))
-						return cell.getCoord();
-			return Coord.INCORRECT_COORD;
+					if (cell.PointInRegion(p))
+						return cell;
+			return null;
 //		} finally {
-//			System.out.println("Mosaic::CursorPointToMosaicCoord: find cell: " + (System.currentTimeMillis()-l1) + "ms.");
+//			System.out.println("Mosaic::CursorPointToCell: find cell: " + (System.currentTimeMillis()-l1) + "ms.");
 //		}
 	}
 
@@ -188,10 +188,10 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 		@Override
 	    public void mousePressed(MouseEvent e) {
 			if (SwingUtilities.isLeftMouseButton(e))
-				OnLeftButtonDown(CursorPointToMosaicCoord(e.getPoint()));
+				OnLeftButtonDown(CursorPointToCell(e.getPoint()));
 			else
 			if (SwingUtilities.isRightMouseButton(e))
-				OnRightButtonDown(CursorPointToMosaicCoord(e.getPoint()));
+				OnRightButtonDown(CursorPointToCell(e.getPoint()));
 		}
 
 		@Override
@@ -205,10 +205,10 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 	    			rootFrameActive = ((Window)rootFrame).isActive(); 
 
 	    		if (rootFrameActive)
-	    			OnLeftButtonUp(CursorPointToMosaicCoord(e.getPoint()));
+	    			OnLeftButtonUp(CursorPointToCell(e.getPoint()));
 			} else
 			if (SwingUtilities.isRightMouseButton(e))
-	    		OnRightButtonUp(/*CursorPointToMosaicCoord(e.getPoint())*/);
+	    		OnRightButtonUp(/*CursorPointToCell(e.getPoint())*/);
 	    }
 
 		@Override
@@ -222,8 +222,13 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 		@Override
 		public void focusLost(FocusEvent e) {
 //			System.out.println("Mosaic::MosaicMouseListeners::focusLost: " + e);
-			if (!MosaicExt.this.getCoordDown().equals(Coord.INCORRECT_COORD))
-				MosaicExt.this.OnLeftButtonUp(Coord.INCORRECT_COORD);
+			BaseCell cell = MosaicExt.this.getCellDown();
+			if (cell == null)
+				return;
+			if (cell.getState().isDown())
+				MosaicExt.this.OnLeftButtonUp(null);
+			else
+				MosaicExt.this.OnRightButtonUp();
 		}
 		@Override
 		public void focusGained(FocusEvent e) {}

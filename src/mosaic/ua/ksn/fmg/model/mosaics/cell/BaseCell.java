@@ -361,18 +361,18 @@ public abstract class BaseCell implements PropertyChangeListener {
 
 		// проверяю что они не вылезли за размеры
 		for (int i=0; i<neighborCoord.length; i++)
-			if (neighborCoord[i] != Coord.INCORRECT_COORD)
+			if (neighborCoord[i] != null)
 				if ((neighborCoord[i].x >= matrix.getSizeField().width) ||
 					(neighborCoord[i].y >= matrix.getSizeField().height) ||
 					(neighborCoord[i].x < 0) ||
 					(neighborCoord[i].y < 0))
 				{
-					neighborCoord[i] = Coord.INCORRECT_COORD;
+					neighborCoord[i] = null;
 				}
 		// по координатам получаю множество соседних обьектов-ячеек
 		neighbors = new BaseCell[attr.getNeighborNumber()];
 		for (int i=0; i<neighborCoord.length; i++)
-			if (neighborCoord[i] != Coord.INCORRECT_COORD)
+			if (neighborCoord[i] != null)
 				neighbors[i] = matrix.getCell(neighborCoord[i]);
 	}
 

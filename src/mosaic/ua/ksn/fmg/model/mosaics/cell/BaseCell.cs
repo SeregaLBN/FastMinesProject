@@ -293,7 +293,7 @@ public abstract class BaseCell {
    /// Coord[] neighborCoord = new Coord[attr.getNeighborNumber()];
    /// <br>... потомки должны определить координаты соседей
    /// </summary>
-   protected abstract Coord[] GetCoordsNeighbor();
+   protected abstract Coord?[] GetCoordsNeighbor();
 
    /// <summary>матрица ячеек поля мозаики</summary>
    public interface IMatrixCells {
@@ -307,25 +307,25 @@ public abstract class BaseCell {
    /// вызывать после изменений размера поля или типа мозаики</summary>
    public void IdentifyNeighbors(IMatrixCells matrix) {
       // получаю координаты соседних ячеек
-      Coord[] neighborCoord = GetCoordsNeighbor();
+      var neighborCoord = GetCoordsNeighbor();
       if (neighborCoord.Length != attr.getNeighborNumber())
          throw new Exception("neighborCoord.Length != GetNeighborNumber()");
 
       // проверяю что они не вылезли за размеры
       for (int i=0; i<neighborCoord.Length; i++)
-         if (neighborCoord[i] != Coord.INCORRECT_COORD)
-            if ((neighborCoord[i].x >= matrix.SizeField.width) ||
-               (neighborCoord[i].y >= matrix.SizeField.height) ||
-               (neighborCoord[i].x < 0) ||
-               (neighborCoord[i].y < 0))
+         if (neighborCoord[i] != null)
+            if ((neighborCoord[i].Value.x >= matrix.SizeField.width) ||
+               (neighborCoord[i].Value.y >= matrix.SizeField.height) ||
+               (neighborCoord[i].Value.x < 0) ||
+               (neighborCoord[i].Value.y < 0))
             {
-               neighborCoord[i] = Coord.INCORRECT_COORD;
+               neighborCoord[i] = null;
             }
       // по координатам получаю множество соседних обьектов-ячеек
       neighbors = new BaseCell[attr.getNeighborNumber()];
       for (int i=0; i<neighborCoord.Length; i++)
-         if (neighborCoord[i] != Coord.INCORRECT_COORD)
-            neighbors[i] = matrix.getCell(neighborCoord[i]);
+         if (neighborCoord[i] != null)
+            neighbors[i] = matrix.getCell(neighborCoord[i].Value);
    }
 
    public Coord getCoord() { return coord; }

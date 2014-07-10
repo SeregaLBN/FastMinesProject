@@ -114,7 +114,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 
 			int saveArea = getArea();
 			if (isNewSizeFld) {
-				setCoordDown(Coord.INCORRECT_COORD); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
+				setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
 				this._size = newSizeField;
 			}
 			if (isNewMosaic) {
@@ -187,11 +187,10 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 			cell.getState().CalcOpenState();
 	}
 	/** arrange Mines - set random mines */
-	public void setMines_random(Coord firstClickCoord) {
+	public void setMines_random(BaseCell firstClickCell) {
 		if (_minesCount == 0)
 			_minesCount = _oldMinesCount;
 		
-		BaseCell firstClickCell = getCell(firstClickCoord);
 		List<BaseCell> matrixClone = new ArrayList<BaseCell>(_matrix);
 		matrixClone.remove(firstClickCell); // исключаю на которой кликал юзер
 		matrixClone.removeAll(Arrays.asList(firstClickCell.getNeighbors())); // и их соседей
@@ -253,14 +252,11 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 	@Override
 	public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
 
-	/** координаты ячейки на которой было нажато (но не обязательно что отпущено) */
-	private Coord _coordDown;
-	protected void setCoordDown(Coord coord) { _coordDown = coord; }
-	protected Coord getCoordDown() {
-		if (_coordDown == null)
-			_coordDown = Coord.INCORRECT_COORD;
-		return _coordDown;
-	}
+	private BaseCell _cellDown;
+	/** ячейка на которой было нажато (но не обязательно что отпущено) */
+	public BaseCell getCellDown() { return _cellDown; }
+	/** ячейка на которой было нажато (но не обязательно что отпущено) */
+	public void setCellDown(BaseCell cellDown) { _cellDown = cellDown; }
 
 	/**
 	 *<br> Этапы игры:
@@ -376,7 +372,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 	protected abstract void Repaint(BaseCell cell);
 	
 	/** Начать игру, т.к. произошёл первый клик на поле */
-	protected void GameBegin(Coord firstClick) {
+	protected void GameBegin(BaseCell firstClickCell) {
 		Repaint(null);
 
 		setGameStatus(EGameStatus.eGSPlay);
@@ -386,7 +382,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 			setPlayInfo(EPlayInfo.ePlayIgnor);
 			setMines_LoadRepository(getRepositoryMines());
 		} else {
-			setMines_random(firstClick);
+			setMines_random(firstClickCell);
 		}
 	}
 
@@ -443,59 +439,57 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		return;
 	}
 
-	protected boolean OnLeftButtonDown(Coord coordLDown) {
-		setCoordDown(Coord.INCORRECT_COORD);
+	protected boolean OnLeftButtonDown(BaseCell cellLeftDown) {
+		setCellDown(null);
 		if (getGameStatus() == EGameStatus.eGSEnd)
 			return false;
-		if (coordLDown.equals(Coord.INCORRECT_COORD))
+		if (cellLeftDown == null)
 			return false;
 
-		setCoordDown(coordLDown);
-		BaseCell cell = getCell(coordLDown);
+		setCellDown(cellLeftDown);
 		if (getGameStatus() == EGameStatus.eGSCreateGame) {
-			if (cell.getState().getOpen() != EOpen._Mine) {
-				cell.getState().setStatus(EState._Open, null);
-				cell.getState().SetMine();
+			if (cellLeftDown.getState().getOpen() != EOpen._Mine) {
+				cellLeftDown.getState().setStatus(EState._Open, null);
+				cellLeftDown.getState().SetMine();
 				setMinesCount(getMinesCount()+1);
-				getRepositoryMines().add(coordLDown);
+				getRepositoryMines().add(cellLeftDown.getCoord());
 			} else {
-				cell.Reset();
+				cellLeftDown.Reset();
 				setMinesCount(getMinesCount()-1);
-				getRepositoryMines().remove(coordLDown);
+				getRepositoryMines().remove(cellLeftDown.getCoord());
 			}
-			Repaint(cell);
+			Repaint(cellLeftDown);
 		} else {
-			LeftDownResult result = cell.LButtonDown();
+			LeftDownResult result = cellLeftDown.LButtonDown();
 			if ((result != null) && (result.needRepaint != null))
 				for (BaseCell cellToRepaint : result.needRepaint)
 					Repaint(cellToRepaint);
 		}
-		getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, cell, true, true));
+		getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, cellLeftDown, true, true));
 		return true;
 	}
 
-	protected boolean OnLeftButtonUp(Coord coordLUp) {
+	protected boolean OnLeftButtonUp(BaseCell cellLeftUp) {
 		try {
 			if (getGameStatus() == EGameStatus.eGSEnd)
 				return false;
-			if (getCoordDown().equals(Coord.INCORRECT_COORD))
+			BaseCell cell = getCellDown(); 
+			if (cell == null)
 				return false;
 			if (getGameStatus() == EGameStatus.eGSCreateGame)
 				return false;
 	
 	//		System.out.println("OnLeftButtonUp: coordLUp="+coordLUp);
-			if ((getGameStatus() == EGameStatus.eGSReady) && coordLUp.equals(getCoordDown()))
+			if ((getGameStatus() == EGameStatus.eGSReady) && (cell == cellLeftUp))
 			{
-				GameBegin(getCoordDown());
+				GameBegin(cell);
 			}
-			boolean res = false;
 			ClickReportContext clickReportContext = new ClickReportContext();
-			BaseCell cell = getCell(getCoordDown());
-			LeftUpResult result = cell.LButtonUp(coordLUp.equals(getCoordDown()), clickReportContext);
+			LeftUpResult result = cell.LButtonUp(cell == cellLeftUp, clickReportContext);
 			if (result.needRepaint != null)
 				for (BaseCell cellToRepaint : result.needRepaint)
 					Repaint(cellToRepaint);
-			res = (result.countOpen > 0) || (result.countFlag > 0) || (result.countUnknown > 0); // клик со смыслом (были изменения на поле) 
+			boolean res = (result.countOpen > 0) || (result.countFlag > 0) || (result.countUnknown > 0); // клик со смыслом (были изменения на поле) 
 			if (res) {
 				setCountClick(getCountClick()+1);
 				setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
@@ -515,11 +509,12 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 			getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, cell, true, false));
 			return res;
 		} finally {
-			setCoordDown(Coord.INCORRECT_COORD);
+			setCellDown(null);
 		}
 	}
 
-	protected boolean OnRightButtonDown(Coord coordRDown) {
+	protected boolean OnRightButtonDown(BaseCell cellRightDown) {
+		setCellDown(null);
 		if (getGameStatus() == EGameStatus.eGSEnd) {
 			GameNew();
 			return true;
@@ -528,12 +523,12 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 			return false;
 		if (getGameStatus() == EGameStatus.eGSCreateGame)
 			return false;
-		if (coordRDown.equals(Coord.INCORRECT_COORD))
+		if (cellRightDown == null)
 			return false;
 
+		setCellDown(cellRightDown);
 		EClose eClose;
-		BaseCell cell = getCell(coordRDown);
-		switch (cell.getState().getClose()) {
+		switch (cellRightDown.getState().getClose()) {
 		case _Clear  : eClose = EClose._Flag; break;
 		case _Flag   : eClose = getUseUnknown() ? EClose._Unknown : EClose._Clear; break;
 		default: // fix: The local variable eClose may not have been initialized
@@ -542,9 +537,9 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 			break;
 		}
 		ClickReportContext clickReportContext = new ClickReportContext();
-		RightDownReturn result = cell.RButtonDown(eClose, clickReportContext);
+		RightDownReturn result = cellRightDown.RButtonDown(eClose, clickReportContext);
 		if (result.needRepaint)
-			Repaint(cell);
+			Repaint(cellRightDown);
 		boolean res = (result.countFlag>0) || (result.countUnknown>0); // клик со смыслом (были изменения на поле)
 		if (res) {
 			setCountClick(getCountClick()+1);
@@ -556,15 +551,20 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		if (getGameStatus() != EGameStatus.eGSEnd) {
 			//...
 		}
-//		::BitBlt(m_GContext.m_hDCWnd, 0, 0, m_GContext.m_SizeBitmap.cx, m_GContext.m_SizeBitmap.cy,
-//				m_GContext.m_hDCDst, 0, 0, SRCCOPY);
-		getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, cell, false, true));
+		getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, cellRightDown, false, true));
 		return res;
 	}
 
-	protected boolean OnRightButtonUp(/*Coord coordRUp*/) {
-		getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, null, false, false));
-		return false;
+	protected boolean OnRightButtonUp(/*BaseCell cellRightUp*/) {
+		try {
+			BaseCell cell = getCellDown(); 
+			if (cell == null)
+				return false;
+			getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, cell, false, false));
+			return true;
+		} finally {
+			setCellDown(null);
+		}
 	}
 
 	protected boolean RequestToUser_RestoreLastGame() {

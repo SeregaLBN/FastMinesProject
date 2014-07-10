@@ -209,10 +209,10 @@ public class PenrousePeriodic1 : BaseCell {
 		get { return (AttrPenrousePeriodic1) base.Attr; }
 	}
 
-	protected override Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[Attr.getNeighborNumber()];
+	protected override Coord?[] GetCoordsNeighbor() {
+		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
     	for (int i=0; i<neighborCoord.Length; i++)
-			neighborCoord[i] = Coord.INCORRECT_COORD;
+			neighborCoord[i] = null;
 
 		// определ€ю координаты соседей
     	switch (direction) {
@@ -1682,7 +1682,7 @@ public class PenrousePeriodic1 : BaseCell {
       { // debug check
     		int i=0;
     		for (; i<neighborCoord.Length; i++)
-            if (neighborCoord[i] == Coord.INCORRECT_COORD)
+            if (neighborCoord[i] == null)
     				break;
     		if (i != Attr.getNeighborNumber(direction))
     			throw new Exception("»справь AttrPenrousePeriodic1.getNeighborNumber("+direction+")...");
@@ -1691,7 +1691,7 @@ public class PenrousePeriodic1 : BaseCell {
 
 //    	for (int i=0; i<neighborCoord.length; i++)
 //    		if (neighborCoord[i] == null)
-//    			neighborCoord[i] = Coord.INCORRECT_COORD;
+//    			neighborCoord[i] = null;
 
 		return neighborCoord;
 	}

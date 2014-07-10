@@ -82,8 +82,8 @@ public class Triangle4 : BaseCell {
 		get { return (AttrTriangle4) base.Attr; }
 	}
 
-	protected override Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[Attr.getNeighborNumber()];
+	protected override Coord?[] GetCoordsNeighbor() {
+		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
 
 		// определяю координаты соседей
 		switch (direction) {

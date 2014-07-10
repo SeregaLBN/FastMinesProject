@@ -96,8 +96,8 @@ public class TrSq1 : BaseCell {
 		get { return (AttrTrSq1) base.Attr; }
 	}
 
-	protected override Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[Attr.getNeighborNumber()];
+	protected override Coord?[] GetCoordsNeighbor() {
+		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
 
 		// определяю координаты соседей
     	switch (direction) {
@@ -127,7 +127,7 @@ public class TrSq1 : BaseCell {
     		neighborCoord[ 8] = new Coord(coord.x  , coord.y+1);
     		neighborCoord[ 9] =
     		neighborCoord[10] =
-    		neighborCoord[11] = Coord.INCORRECT_COORD;
+    		neighborCoord[11] = null;
     		break;
     	case 2:
     		neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
@@ -141,7 +141,7 @@ public class TrSq1 : BaseCell {
     		neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
     		neighborCoord[ 9] =  
     		neighborCoord[10] =
-    		neighborCoord[11] = Coord.INCORRECT_COORD;
+    		neighborCoord[11] = null;
     		break;
     	case 3:
     		neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
@@ -155,7 +155,7 @@ public class TrSq1 : BaseCell {
     		neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
     		neighborCoord[ 9] =
     		neighborCoord[10] =
-    		neighborCoord[11] = Coord.INCORRECT_COORD;
+    		neighborCoord[11] = null;
     		break;
     	case 4:
     		neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
@@ -183,7 +183,7 @@ public class TrSq1 : BaseCell {
     		neighborCoord[ 8] = new Coord(coord.x+2, coord.y+1);
     		neighborCoord[ 9] =
     		neighborCoord[10] =
-    		neighborCoord[11] = Coord.INCORRECT_COORD;
+    		neighborCoord[11] = null;
     		break;
     	}
 

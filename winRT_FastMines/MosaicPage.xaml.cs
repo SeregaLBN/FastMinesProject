@@ -26,10 +26,13 @@ namespace FastMines {
    public sealed partial class MosaicPage : Page {
       /// <summary> мин отступ от краев экрана для мозаики </summary>
       private const int MinIndent = 30;
-      private const bool TouchAsMouse = !false;
 
       private MosaicExt _mosaic;
-      private BaseCell _tmpClickedCell;
+      private ClickInfo _lastClickedCell = new ClickInfo();
+      private bool _manipulationStarted;
+      private bool _turnX;
+      private bool _turnY;
+      private DateTime _dtInertiaStarting;
 
       public MosaicExt MosaicField {
          get {
@@ -54,7 +57,6 @@ namespace FastMines {
          this.Loaded += OnPageLoaded;
          this.Unloaded += OnPageUnloaded;
          this.SizeChanged += OnPageSizeChanged;
-         //this.PointerMoved += OnPagePointerMoved;
          this.ManipulationMode =
             ManipulationModes.TranslateX |
             ManipulationModes.TranslateY |
@@ -71,14 +73,21 @@ namespace FastMines {
          }
       }
 
-      public static void DebugWriteLine(string format, params object[] args) {
 #if DEBUG
-         if (args==null || args.Length==0)
-            Debug.WriteLine("[{0}]   {1}", DateTime.Now.ToString("HH:mm:ss.fff"), format);
-         else
-            Debug.WriteLine("[{0}]   {1}", DateTime.Now.ToString("HH:mm:ss.fff"), string.Format(format, args));
-#endif
+      //[System.Runtime.InteropServices.DllImport("Kernel32.dll")]
+      //public static extern uint GetCurrentThreadId();
+      public static void Log(string format, params object[] args) {
+         if (args.Length > 0)
+            format = string.Format(format, args);
+         var thr = Task.CurrentId.HasValue
+            ? string.Format("{0}-T{1}", Environment.CurrentManagedThreadId, Task.CurrentId.Value)
+            : Environment.CurrentManagedThreadId.ToString();
+         //GetCurrentThreadId()
+         Debug.WriteLine("[{0}]  Th={1}  {2}", DateTime.Now.ToString("HH:mm:ss.fff"), thr, format);
       }
+#else 
+      public static void Log(string format, params object[] args) {}
+#endif
 
       protected override async void OnNavigatedTo(NavigationEventArgs e) {
          base.OnNavigatedTo(e);
@@ -228,12 +237,22 @@ namespace FastMines {
       }
 
       private void Mosaic_OnClick(Mosaic source, BaseCell clickedCell, bool leftClick, bool down) {
-         _tmpClickedCell = (leftClick && down) ? clickedCell : null;
+         if (clickedCell == null)
+            clickedCell = null;
+         _lastClickedCell.Cell = clickedCell;
+         _lastClickedCell.IsLeft = leftClick;
+         _lastClickedCell.Released = !down;
       }
-      private void Mosaic_OnChangedGameStatus(Mosaic source, EGameStatus oldValue) {}
+
+      private void Mosaic_OnChangedGameStatus(Mosaic source, EGameStatus oldValue) {
+         if (source.GameStatus == EGameStatus.eGSEnd) {
+            //this.bottomAppBar.Focus(FocusState.Programmatic);
+            bottomAppBar.IsOpen = true;
+         }
+      }
       private void Mosaic_OnChangedCounters(Mosaic source) {}
       private void Mosaic_OnChangedArea(Mosaic source, int oldArea) {
-         DebugWriteLine("Mosaic_OnChangedArea");
+         Log("Mosaic_OnChangedArea");
          Debug.Assert(ReferenceEquals(MosaicField, source));
          //ChangeSizeImagesMineFlag();
 
@@ -267,20 +286,20 @@ namespace FastMines {
          MosaicField.Container.Margin = m;
       }
       private void Mosaic_OnChangedMosaicType(Mosaic source, EMosaic oldMosaic) {
-         DebugWriteLine("Mosaic_OnChangedMosaicType");
+         Log("Mosaic_OnChangedMosaicType");
          Debug.Assert(ReferenceEquals(MosaicField, source));
          (source as MosaicExt).ChangeFontSize();
          //ChangeSizeImagesMineFlag();
       }
 
       private void Mosaic_OnChangedMosaicSize(Mosaic source, Size oldSize) {
-         DebugWriteLine("Mosaic_OnChangedMosaicSize");
+         Log("Mosaic_OnChangedMosaicSize");
          Debug.Assert(ReferenceEquals(MosaicField, source));
       }
 
       private static double? _baseWheelDelta;
       protected override void OnPointerWheelChanged(PointerRoutedEventArgs e) {
-         //DebugWriteLine("virt_OnPointerWheelChanged");
+         //Log("virt_OnPointerWheelChanged");
          var wheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
          if (!_baseWheelDelta.HasValue)
             _baseWheelDelta = Math.Abs(wheelDelta);
@@ -294,27 +313,6 @@ namespace FastMines {
 
          e.Handled = true;
          base.OnPointerWheelChanged(e);
-      }
-
-      private void OnPagePointerMoved(object sender, PointerRoutedEventArgs e) {
-         var ptr = e.Pointer;
-         if (!ptr.IsInContact)
-            return;
-         DebugWriteLine("OnPointerMoved: " + e.Pointer.PointerDeviceType);
-         if (ptr.PointerDeviceType == PointerDeviceType.Mouse) {
-            var ptrPt = e.GetCurrentPoint(this);
-            if (ptrPt.Properties.IsLeftButtonPressed) {
-               //eventLog.Text += "\nLeft button: " + ptrPt.PointerId;
-            }
-            if (ptrPt.Properties.IsMiddleButtonPressed) {
-               //eventLog.Text += "\nWheel button: " + ptrPt.PointerId;
-            }
-            if (ptrPt.Properties.IsRightButtonPressed) {
-               //eventLog.Text += "\nRight button: " + ptrPt.PointerId;
-            }
-            //DebugWriteLine("cursorPos=[{0}]; ContactRect=[{1}; {2}]", ptrPt.RawPosition, ptrPt.Properties.ContactRect, ptrPt.Properties.ContactRectRaw);
-            //DebugWriteLine(" ContactRect=[{0}; {1}]", ptrPt.Properties.ContactRect, ptrPt.Properties.ContactRectRaw);
-         }
       }
 
       async Task<bool> OnClick(Windows.Foundation.Point pos, bool leftClick, bool downHandling, bool upHandling) {
@@ -331,31 +329,31 @@ namespace FastMines {
          //return false;
       }
 
-      protected override async void OnTapped(TappedRoutedEventArgs e) {
-         DebugWriteLine("> OnTapped: ");
-         base.OnTapped(e);
+      protected override async void OnTapped(TappedRoutedEventArgs ev) {
+         Log("> OnTapped: ");
+         base.OnTapped(ev);
 
-         if (!TouchAsMouse && (e.PointerDeviceType != PointerDeviceType.Mouse)) {
-            //e.Handled = await OnClick(e.GetPosition(this), true, true, true);
-            var down = await OnClick(e.GetPosition(this), true, true, false);
-            Task.Run(async () => await Task.Delay(100)).
-               ContinueWith(async (c) => await AsyncRunner.InvokeLater(async () => {
-                  await OnClick(e.GetPosition(this), true, false, true);
-               }, CoreDispatcherPriority.Low));
-            e.Handled = down;
+         if (!_manipulationStarted)
+            ev.Handled = await OnClick(ev.GetPosition(this), true, false, true);
+
+         Log("< OnTapped: ev.Handled = " + ev.Handled);
+      }
+
+      protected override async void OnRightTapped(RightTappedRoutedEventArgs ev) {
+         Log("> OnRightTapped: ");
+         base.OnRightTapped(ev);
+
+         if (!_manipulationStarted) {
+            var pos = ev.GetPosition(this);
+            System.Diagnostics.Debug.Assert(_lastClickedCell != null);
+            ev.Handled = await OnClick(pos, false, true, true);
          }
-         DebugWriteLine("< OnTapped: ");
-      }
 
-      protected override void OnRightTapped(RightTappedRoutedEventArgs e) {
-         DebugWriteLine("> OnRightTapped: ");
-         base.OnRightTapped(e);
-         DebugWriteLine("< OnRightTapped: ");
+         Log("< OnRightTapped: ev.Handled = " + ev.Handled);
       }
-
 
       protected override async void OnPointerPressed(PointerRoutedEventArgs ev) {
-         DebugWriteLine("> OnPointerPressed: ");
+         Log("> OnPointerPressed: ");
          base.OnPointerPressed(ev);
 
          var pointerPoint = ev.GetCurrentPoint(this);
@@ -370,40 +368,36 @@ namespace FastMines {
             }
          }
 
-         if (!ev.Handled && (TouchAsMouse || ev.GetCurrentPoint(this).PointerDevice.PointerDeviceType == PointerDeviceType.Mouse)) {
+         if (!ev.Handled)
             ev.Handled = await OnClick(pointerPoint.Position, props.IsLeftButtonPressed, true, false);
-            DebugWriteLine("  OnPointerPressed: ev.Handled = " + ev.Handled);
-         }
-         DebugWriteLine("< OnPointerPressed: ");
+
+         Log("< OnPointerPressed: ev.Handled = " + ev.Handled);
       }
 
       protected override async void OnPointerReleased(PointerRoutedEventArgs ev) {
-         DebugWriteLine("> OnPointerReleased: ");
+         Log("> OnPointerReleased: ");
          base.OnPointerReleased(ev);
-         if (TouchAsMouse || (ev.GetCurrentPoint(this).PointerDevice.PointerDeviceType == PointerDeviceType.Mouse)) {
+         if (_manipulationStarted) {
             var pointerPoint = ev.GetCurrentPoint(this);
             ev.Handled = await OnClick(pointerPoint.Position, pointerPoint.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased, false, true);
-            DebugWriteLine("  OnPointerReleased: ev.Handled = " + ev.Handled);
          }
-         DebugWriteLine("< OnPointerReleased: ");
+         Log("< OnPointerReleased: ev.Handled = " + ev.Handled);
       }
 
       protected override void OnManipulationStarting(ManipulationStartingRoutedEventArgs e) {
-         DebugWriteLine("> OnManipulationStarting");
+         Log("> OnManipulationStarting");
          base.OnManipulationStarting(e);
-         DebugWriteLine("> OnManipulationStarting");
+         _manipulationStarted = false;
+         Log("< OnManipulationStarting");
       }
 
-      private bool _turnX;
-      private bool _turnY;
-      private DateTime _dtInertiaStarting;
-
       protected override void OnManipulationStarted(ManipulationStartedRoutedEventArgs e) {
-         DebugWriteLine("> OnManipulationStarted");
+         Log("> OnManipulationStarted");
          _turnX = _turnY = false;
          _dtInertiaStarting = DateTime.MinValue;
          base.OnManipulationStarted(e);
-         DebugWriteLine("< OnManipulationStarted");
+         _manipulationStarted = true;
+         Log("< OnManipulationStarted");
       }
 
       protected override void OnManipulationInertiaStarting(ManipulationInertiaStartingRoutedEventArgs e) {
@@ -412,7 +406,7 @@ namespace FastMines {
       }
 
       protected override void OnManipulationDelta(ManipulationDeltaRoutedEventArgs ev) {
-         DebugWriteLine("> OnManipulationDelta: Scale={0}; Expansion={1}, Rotation={2}", ev.Delta.Scale, ev.Delta.Expansion, ev.Delta.Rotation);
+         Log("> OnManipulationDelta: Scale={0}; Expansion={1}, Rotation={2}", ev.Delta.Scale, ev.Delta.Expansion, ev.Delta.Rotation);
          ev.Handled = true;
          if (Math.Abs(1 - ev.Delta.Scale) > 0.009) {
 #region scale / zoom
@@ -426,11 +420,12 @@ namespace FastMines {
             var needDrag = true;
             var margin = MosaicField.Container.Margin;
 #region check possibility dragging
-            if ((ev.PointerDeviceType == PointerDeviceType.Mouse) && (_tmpClickedCell != null)) {
+            if (_lastClickedCell.Cell != null)
+            {
                var noMarginPoint = new Windows.Foundation.Point(ev.Position.X - margin.Left, ev.Position.Y - margin.Top);
                //var inCellRegion = _tmpClickedCell.PointInRegion(noMarginPoint.ToFmRect());
                //this.ContentRoot.Background = new SolidColorBrush(inCellRegion ? Colors.Aquamarine : Colors.DeepPink);
-               var rcOuter = _tmpClickedCell.getRcOuter();
+               var rcOuter = _lastClickedCell.Cell.getRcOuter();
                var sizePage = Window.Current.Bounds.ToFmRect().toSize();
                var delta = Math.Min(sizePage.width/20, sizePage.height/20);
                rcOuter.moveXY(-delta, -delta);
@@ -452,7 +447,7 @@ namespace FastMines {
                if (ev.IsInertial) {
                   //var coefFading = Math.Max(0.05, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
                   var coefFading = Math.Max(0, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
-                  DebugWriteLine("  OnManipulationDelta: inertial coeff fading = " + coefFading);
+                  Log("  OnManipulationDelta: inertial coeff fading = " + coefFading);
                   deltaTrans.X *= coefFading;
                   deltaTrans.Y *= coefFading;
                }
@@ -506,7 +501,7 @@ namespace FastMines {
 #endregion
          }
          base.OnManipulationDelta(ev);
-         DebugWriteLine("< OnManipulationDelta");
+         Log("< OnManipulationDelta");
       }
 
       protected override void OnManipulationCompleted(ManipulationCompletedRoutedEventArgs e) {
@@ -514,23 +509,23 @@ namespace FastMines {
          var pnt1 = this.TransformToVisual(MosaicField.Container).TransformPoint(e.Position);
          //var pnt2 = ContentRoot.TransformToVisual(Mosaic.Container).TransformPoint(e.Position);
          //var content = Window.Current.Content;
-         DebugWriteLine("> OnManipulationCompleted: Pos=[{0} / {1}]; Container=[{2}]; Cumulative.Translation=[{3}]",
+         Log("> OnManipulationCompleted: Pos=[{0} / {1}]; Container=[{2}]; Cumulative.Translation=[{3}]",
             e.Position, pnt1, (e.Container == null) ? "null" : e.Container.GetType().ToString(),
             e.Cumulative.Translation);
 #endif
          //e.Handled = true;
          base.OnManipulationCompleted(e);
          MosaicField.MouseFocusLost();
-         DebugWriteLine("< OnManipulationCompleted");
+         Log("< OnManipulationCompleted");
       }
       protected override void OnKeyUp(KeyRoutedEventArgs e) {
-         DebugWriteLine("> OnKeyUp: virtKey=" + e.Key);
+         Log("> OnKeyUp: virtKey=" + e.Key);
          base.OnKeyUp(e);
-         DebugWriteLine("< OnKeyUp: ");
+         Log("< OnKeyUp: ");
       }
 
       private async void OnKeyUp_CoreWindow(CoreWindow win, KeyEventArgs e) {
-         //DebugWriteLine("< OnKeyUp_CoreWindow: virtKey="+e.VirtualKey);
+         //Log("< OnKeyUp_CoreWindow: virtKey="+e.VirtualKey);
          e.Handled = true;
          switch (e.VirtualKey) {
             case VirtualKey.F2:
@@ -560,7 +555,7 @@ namespace FastMines {
                e.Handled = false;
                break;
          }
-         //DebugWriteLine("> OnKeyUp_CoreWindow: ");
+         //Log("> OnKeyUp_CoreWindow: ");
       }
 
       private void OnClickBttnBack(object sender, RoutedEventArgs e) {
@@ -609,5 +604,11 @@ namespace FastMines {
 
          return margin;
       }
+   }
+
+   class ClickInfo {
+      public BaseCell Cell { get; set; }
+      public bool IsLeft { get; set; }
+      public bool Released { get; set; }
    }
 }

@@ -1,8 +1,6 @@
 namespace ua.ksn.geom {
 
 public struct Coord {
-   public static readonly Coord INCORRECT_COORD = new Coord(-1234, -9876); // null
-
    public int x, y;
    //public Coord() { x=y=0; }
    public Coord(int x, int y) { this.x = x; this.y = y; }

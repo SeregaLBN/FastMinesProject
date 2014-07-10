@@ -232,7 +232,7 @@ public class PenrousePeriodic1 extends BaseCell {
 	protected Coord[] GetCoordsNeighbor() {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
     	for (int i=0; i<neighborCoord.length; i++)
-			neighborCoord[i] = Coord.INCORRECT_COORD;
+			neighborCoord[i] = null;
 
 		// определ€ю координаты соседей
     	switch (direction) {
@@ -1701,7 +1701,7 @@ public class PenrousePeriodic1 extends BaseCell {
     	{ // debug check
     		int i=0;
     		for (; i<neighborCoord.length; i++)
-    			if (neighborCoord[i] == Coord.INCORRECT_COORD) // check reference equals!
+    			if (neighborCoord[i] == null)
     				break;
     		if (i != getAttr().getNeighborNumber(direction))
     			throw new RuntimeException("»справь AttrPenrousePeriodic1.getNeighborNumber("+direction+")...");

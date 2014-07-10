@@ -174,7 +174,7 @@ public class TrSq2 extends BaseCell {
 			neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
 			neighborCoord[ 9] =
 			neighborCoord[10] =
-			neighborCoord[11] = Coord.INCORRECT_COORD;
+			neighborCoord[11] = null;
 			break;
 		case 2:
 		case 23:
@@ -189,7 +189,7 @@ public class TrSq2 extends BaseCell {
 			neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
 			neighborCoord[ 9] =
 			neighborCoord[10] =
-			neighborCoord[11] = Coord.INCORRECT_COORD;
+			neighborCoord[11] = null;
 			break;
 		case 3:
 		case 18:
@@ -219,7 +219,7 @@ public class TrSq2 extends BaseCell {
 			neighborCoord[ 8] = new Coord(coord.x+1, coord.y+2);
 			neighborCoord[ 9] =
 			neighborCoord[10] =
-			neighborCoord[11] = Coord.INCORRECT_COORD;
+			neighborCoord[11] = null;
 			break;
 		case 5:
 		case 20:
@@ -234,7 +234,7 @@ public class TrSq2 extends BaseCell {
 			neighborCoord[ 8] = new Coord(coord.x  , coord.y+2);
 			neighborCoord[ 9] =
 			neighborCoord[10] =
-			neighborCoord[11] = Coord.INCORRECT_COORD;
+			neighborCoord[11] = null;
 			break;
 		case 6:
 		case 27:
@@ -249,7 +249,7 @@ public class TrSq2 extends BaseCell {
 			neighborCoord[ 8] = new Coord(coord.x+2, coord.y+1);
 			neighborCoord[ 9] =
 			neighborCoord[10] =
-			neighborCoord[11] = Coord.INCORRECT_COORD;
+			neighborCoord[11] = null;
 			break;
 		case 7:
 		case 28:
@@ -279,7 +279,7 @@ public class TrSq2 extends BaseCell {
 			neighborCoord[ 8] = new Coord(coord.x+1, coord.y  );
 			neighborCoord[ 9] =
 			neighborCoord[10] =
-			neighborCoord[11] = Coord.INCORRECT_COORD;
+			neighborCoord[11] = null;
 			break;
 		case 9:
 		case 24:
@@ -294,7 +294,7 @@ public class TrSq2 extends BaseCell {
 			neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
 			neighborCoord[ 9] =
 			neighborCoord[10] =
-			neighborCoord[11] = Coord.INCORRECT_COORD;
+			neighborCoord[11] = null;
 			break;
 		case 10:
 		case 25:
@@ -324,7 +324,7 @@ public class TrSq2 extends BaseCell {
 			neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
 			neighborCoord[ 9] =
 			neighborCoord[10] =
-			neighborCoord[11] = Coord.INCORRECT_COORD;
+			neighborCoord[11] = null;
 			break;
 		case 12:
 		case 33:
@@ -339,7 +339,7 @@ public class TrSq2 extends BaseCell {
 			neighborCoord[ 8] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[ 9] =
 			neighborCoord[10] =
-			neighborCoord[11] = Coord.INCORRECT_COORD;
+			neighborCoord[11] = null;
 			break;
 		case 13:
 		case 34:
@@ -354,7 +354,7 @@ public class TrSq2 extends BaseCell {
 			neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
 			neighborCoord[ 9] =
 			neighborCoord[10] =
-			neighborCoord[11] = Coord.INCORRECT_COORD;
+			neighborCoord[11] = null;
 			break;
 		case 14:
 		case 35:
@@ -384,7 +384,7 @@ public class TrSq2 extends BaseCell {
 			neighborCoord[ 8] = new Coord(coord.x-1, coord.y+2);
 			neighborCoord[ 9] =
 			neighborCoord[10] =
-			neighborCoord[11] = Coord.INCORRECT_COORD;
+			neighborCoord[11] = null;
 			break;
 		case 16:
 		case 31:
@@ -399,7 +399,7 @@ public class TrSq2 extends BaseCell {
 			neighborCoord[ 8] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[ 9] =
 			neighborCoord[10] =
-			neighborCoord[11] = Coord.INCORRECT_COORD;
+			neighborCoord[11] = null;
 			break;
 		case 17:
 		case 32:

@@ -1,8 +1,6 @@
 package ua.ksn.geom;
 
 public class Coord {
-	public static final Coord INCORRECT_COORD = new Coord(-1, -1); // null
-
 	public int x,y;
 	public Coord() { x=y=0; }
 	public Coord(int x, int y) { this.x=x; this.y=y; }
@@ -23,7 +21,7 @@ public class Coord {
     }
     public boolean equals(Coord other) {
 		if (null == other)
-			return true;
+			return false;
 		return (x == other.x) && (y == other.y);
     }
 	@Override

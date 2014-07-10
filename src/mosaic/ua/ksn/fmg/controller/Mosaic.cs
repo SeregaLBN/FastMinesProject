@@ -104,7 +104,7 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
 
          var saveArea = Area;
          if (isNewSizeFld) {
-            CoordDown = Coord.INCORRECT_COORD; // чтобы небыло IndexOutOfBoundsException при уменьшении размера пол€ когда удерживаетс€ клик на поле...
+            CellDown = null; // чтобы небыло IndexOutOfBoundsException при уменьшении размера пол€ когда удерживаетс€ клик на поле...
             this._size = newSizeField.GetValueOrDefault();
          }
          if (isNewMosaic) {
@@ -183,11 +183,10 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
          cell.State.CalcOpenState();
    }
    /// <summary>arrange Mines - set random mines</summary>
-   public void setMines_random(Coord firstClickCoord) {
+   public void setMines_random(BaseCell firstClickCell) {
       if (_minesCount == 0)
          _minesCount = _oldMinesCount;
          
-      BaseCell firstClickCell = getCell(firstClickCoord);
       var firstClickNeighbors = firstClickCell.Neighbors;
       List<BaseCell> matrixClone = new List<BaseCell>(_matrix);
       matrixClone.Remove(firstClickCell); // исключаю на которой кликал юзер
@@ -228,8 +227,8 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
    /// <summary> доступ к заданной €чейке </summary>
    public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
 
-   /// <summary> координаты €чейки на которой было нажато (но не об€зательно что отпущено) </summary>
-   protected Coord CoordDown { get; set; }
+   /// <summary> €чейка на которой было нажато (но не об€зательно что отпущено) </summary>
+   protected BaseCell CellDown { get; set; }
 
    /**
     *<br> Ётапы игры:
@@ -289,7 +288,7 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
    protected abstract void Repaint(BaseCell cell);
    
    /// <summary>Ќачать игру, т.к. произошЄл первый клик на поле</summary>
-   protected virtual void GameBegin(Coord firstClick) {
+   protected virtual void GameBegin(BaseCell firstClickCell) {
       Repaint(null);
 
       GameStatus = EGameStatus.eGSPlay;
@@ -299,7 +298,7 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
          PlayInfo = EPlayInfo.ePlayIgnor;
          setMines_LoadRepository(RepositoryMines);
       } else {
-         setMines_random(firstClick);
+         setMines_random(firstClickCell);
       }
    }
 
@@ -360,54 +359,53 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
       return;
    }
 
-   protected async Task<bool> OnLeftButtonDown(Coord coordLDown) {
-      CoordDown = Coord.INCORRECT_COORD;
+   protected async Task<bool> OnLeftButtonDown(BaseCell cellLeftDown) {
+      CellDown = null;
       if (GameStatus == EGameStatus.eGSEnd)
          return false;
-      if (coordLDown.Equals(Coord.INCORRECT_COORD))
+      if (cellLeftDown == null)
          return false;
 
-      CoordDown = coordLDown;
-      var cell = getCell(coordLDown);
+      CellDown = cellLeftDown;
       if (GameStatus == EGameStatus.eGSCreateGame) {
-         if (cell.State.Open != EOpen._Mine) {
-            cell.State.setStatus(EState._Open, null);
-            cell.State.SetMine();
+         if (cellLeftDown.State.Open != EOpen._Mine) {
+            cellLeftDown.State.setStatus(EState._Open, null);
+            cellLeftDown.State.SetMine();
             await SetMinesCount(MinesCount+1);
-            RepositoryMines.Add(coordLDown);
+            RepositoryMines.Add(cellLeftDown.getCoord());
          } else {
-            cell.Reset();
+            cellLeftDown.Reset();
             await SetMinesCount(MinesCount-1);
-            RepositoryMines.Remove(coordLDown);
+            RepositoryMines.Remove(cellLeftDown.getCoord());
          }
-         Repaint(cell);
+         Repaint(cellLeftDown);
       } else {
-         var result = cell.LButtonDown();
+         var result = cellLeftDown.LButtonDown();
          if ((result != null) && (result.needRepaint != null))
-            foreach (BaseCell cellToRepaint in result.needRepaint)
+            foreach (var cellToRepaint in result.needRepaint)
                Repaint(cellToRepaint);
       }
-      fireOnClick(cell, true, true);
+      fireOnClick(cellLeftDown, true, true);
       return true;
    }
 
-   protected Boolean OnLeftButtonUp(Coord coordLUp) {
+   protected bool OnLeftButtonUp(BaseCell cellLeftUp) {
       try {
          if (GameStatus == EGameStatus.eGSEnd)
             return false;
-         if (CoordDown == Coord.INCORRECT_COORD)
+         if (CellDown == null)
             return false;
          if (GameStatus == EGameStatus.eGSCreateGame)
             return false;
 
    //      System.out.println("OnLeftButtonUp: coordLUp="+coordLUp);
-         if ((GameStatus == EGameStatus.eGSReady) && coordLUp.Equals(CoordDown))
+         if ((GameStatus == EGameStatus.eGSReady) && (CellDown == cellLeftUp))
          {
-            GameBegin(CoordDown);
+            GameBegin(CellDown);
          }
          var clickReportContext = new ClickReportContext();
-         var cell = getCell(CoordDown);
-         var result = cell.LButtonUp(coordLUp.Equals(CoordDown), clickReportContext);
+         var cell = CellDown;
+         var result = cell.LButtonUp(CellDown == cellLeftUp, clickReportContext);
          if (result.needRepaint != null)
             foreach (BaseCell cellToRepaint in result.needRepaint)
                Repaint(cellToRepaint);
@@ -431,11 +429,11 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
          fireOnClick(cell, true, false);
          return res;
       } finally {
-         CoordDown = Coord.INCORRECT_COORD;
+         CellDown = null;
       }
    }
 
-   protected async Task<bool> OnRightButtonDown(Coord coordRDown) {
+   protected async Task<bool> OnRightButtonDown(BaseCell cellRightDown) {
       if (GameStatus == EGameStatus.eGSEnd) {
          await GameNew();
          return true;
@@ -444,12 +442,12 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
          return false;
       if (GameStatus == EGameStatus.eGSCreateGame)
          return false;
-      if (coordRDown.Equals(Coord.INCORRECT_COORD))
+      if (cellRightDown == null)
          return false;
 
+      CellDown = cellRightDown;
       EClose eClose;
-      var cell = getCell(coordRDown);
-      switch (cell.State.Close) {
+      switch (cellRightDown.State.Close) {
       case EClose._Clear: eClose = EClose._Flag; break;
       case EClose._Flag : eClose = UseUnknown ? EClose._Unknown : EClose._Clear; break;
       default:
@@ -458,9 +456,9 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
          break;
       }
       var clickReportContext = new ClickReportContext();
-      var result = cell.RButtonDown(eClose, clickReportContext);
+      var result = cellRightDown.RButtonDown(eClose, clickReportContext);
       if (result.needRepaint)
-         Repaint(cell);
+         Repaint(cellRightDown);
       var res = (result.countFlag > 0) || (result.countUnknown > 0); // клик со смыслом (были изменени€ на поле)
       if (res) {
          CountClick++;
@@ -472,13 +470,20 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
       if (GameStatus != EGameStatus.eGSEnd) {
          //...
       }
-      fireOnClick(cell, false, true);
+      fireOnClick(cellRightDown, false, true);
       return res;
    }
 
-   protected bool OnRightButtonUp(/*Coord coordRUp*/) {
-      fireOnClick(null, false, false);
-      return false;
+   protected bool OnRightButtonUp() {
+      try {
+         var cell = CellDown;
+         if (cell == null)
+            return false;
+         fireOnClick(cell, false, false);
+         return true;
+      } finally {
+         CellDown = null;
+      }
    }
 
    protected virtual async Task<bool> RequestToUser_RestoreLastGame() {
