@@ -3,17 +3,20 @@ using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
+using FastMines.Common;
 using ua.ksn.geom;
 using ua.ksn.fmg.model.mosaics;
 using ua.ksn.fmg.model.mosaics.cell;
 using ua.ksn.fmg.view.draw;
 using ua.ksn.fmg.view.win_rt.draw;
 using ua.ksn.fmg.view.win_rt.draw.mosaics;
+using Log = FastMines.Common.LoggerSimple;
 
 namespace ua.ksn.fmg.controller.win_rt {
    public class MosaicExt : Mosaic {
@@ -66,8 +69,8 @@ namespace ua.ksn.fmg.controller.win_rt {
             _cellPaint = null;
 
          var rebind = (this.SizeField != newSizeField) ||
-                        (this.MosaicType != newMosaicType) ||
-                        (this.MinesCount != newMinesCount);
+                      (this.MosaicType != newMosaicType) ||
+                      (this.MinesCount != newMinesCount);
          if (rebind)
             UnbindXaml();
          await base.SetParams(newSizeField, newMosaicType, newMinesCount);
@@ -183,25 +186,30 @@ namespace ua.ksn.fmg.controller.win_rt {
       }
 
       public async Task<bool> MousePressed(Point clickPoint, bool isLeftMouseButton) {
-         if (isLeftMouseButton)
-            return await OnLeftButtonDown(CursorPointToCell(clickPoint));
-         return await OnRightButtonDown(CursorPointToCell(clickPoint));
+         using (new Tracer("MosaicExt::MousePressed", "isLeftMouseButton="+isLeftMouseButton)) {
+            return isLeftMouseButton
+               ? await OnLeftButtonDown(CursorPointToCell(clickPoint))
+               : await OnRightButtonDown(CursorPointToCell(clickPoint));
+         }
       }
 
       public bool MouseReleased(Point clickPoint, bool isLeftMouseButton) {
-         if (isLeftMouseButton)
-            return OnLeftButtonUp(CursorPointToCell(clickPoint));
-         return OnRightButtonUp(/*CursorPointToCell(clickPoint)*/);
+         using (new Tracer("MosaicExt::MouseReleased", "isLeftMouseButton="+isLeftMouseButton)) {
+            return isLeftMouseButton
+               ? OnLeftButtonUp(CursorPointToCell(clickPoint))
+               : OnRightButtonUp(/*CursorPointToCell(clickPoint)*/);
+         }
       }
 
       public bool MouseFocusLost() {
-         //System.Diagnostics.Debug.WriteLine("Mosaic::MosaicFocusLost: ");
-         if (CellDown == null)
-            return false;
-         if (CellDown.State.Down)
-            return OnLeftButtonUp(null);
-         else
-            return OnRightButtonUp();
+         using (new Tracer("MosaicExt::MouseFocusLost")) {
+            if (CellDown == null)
+               return false;
+            if (CellDown.State.Down)
+               return OnLeftButtonUp(null);
+            else
+               return OnRightButtonUp();
+         }
       }
 
       private void OnPropertyChange(object sender, PropertyChangedEventArgs e) {

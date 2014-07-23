@@ -2,13 +2,13 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.System;
+using Windows.Devices.Input;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
-using Windows.Devices.Input;
 using ua.ksn.geom;
 using ua.ksn.fmg.model.mosaics;
 using ua.ksn.fmg.model.mosaics.cell;
@@ -17,6 +17,7 @@ using ua.ksn.fmg.controller;
 using ua.ksn.fmg.controller.types;
 using ua.ksn.fmg.controller.win_rt;
 using FastMines.Common;
+using Log = FastMines.Common.LoggerSimple;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace FastMines {
@@ -28,11 +29,13 @@ namespace FastMines {
       private const int MinIndent = 30;
 
       private MosaicExt _mosaic;
-      private ClickInfo _lastClickedCell = new ClickInfo();
+      private readonly ClickInfo _clickInfo = new ClickInfo();
       private bool _manipulationStarted;
       private bool _turnX;
       private bool _turnY;
       private DateTime _dtInertiaStarting;
+      private Windows.Foundation.Point? _mouseDevicePosition_AreaChanging = null;
+      private static double? _baseWheelDelta;
 
       public MosaicExt MosaicField {
          get {
@@ -73,22 +76,6 @@ namespace FastMines {
          }
       }
 
-#if DEBUG
-      //[System.Runtime.InteropServices.DllImport("Kernel32.dll")]
-      //public static extern uint GetCurrentThreadId();
-      public static void Log(string format, params object[] args) {
-         if (args.Length > 0)
-            format = string.Format(format, args);
-         var thr = Task.CurrentId.HasValue
-            ? string.Format("{0}-T{1}", Environment.CurrentManagedThreadId, Task.CurrentId.Value)
-            : Environment.CurrentManagedThreadId.ToString();
-         //GetCurrentThreadId()
-         Debug.WriteLine("[{0}]  Th={1}  {2}", DateTime.Now.ToString("HH:mm:ss.fff"), thr, format);
-      }
-#else 
-      public static void Log(string format, params object[] args) {}
-#endif
-
       protected override async void OnNavigatedTo(NavigationEventArgs e) {
          base.OnNavigatedTo(e);
 
@@ -115,7 +102,7 @@ namespace FastMines {
          Size sizeFld;
          if (skill == ESkillLevel.eCustom) {
             //System.out.println("... dialog box 'Select custom skill level...' ");
-            //getCustomSkillDialog().setVisible(!getCustomSkillDialog().isVisible());
+            //getCustomSkillDiaLog.Put().setVisible(!getCustomSkillDiaLog.Put().isVisible());
             return;
          } else {
             numberMines = skill.GetNumberMines(MosaicField.MosaicType);
@@ -161,7 +148,6 @@ namespace FastMines {
          }
       }
 
-      private Windows.Foundation.Point? _mouseDevicePosition_AreaChanging = null;
       int Area { get
          {
             return MosaicField.Area;
@@ -237,11 +223,9 @@ namespace FastMines {
       }
 
       private void Mosaic_OnClick(Mosaic source, BaseCell clickedCell, bool leftClick, bool down) {
-         if (clickedCell == null)
-            clickedCell = null;
-         _lastClickedCell.Cell = clickedCell;
-         _lastClickedCell.IsLeft = leftClick;
-         _lastClickedCell.Released = !down;
+         _clickInfo.Cell = clickedCell;
+         _clickInfo.IsLeft = leftClick;
+         _clickInfo.Released = !down;
       }
 
       private void Mosaic_OnChangedGameStatus(Mosaic source, EGameStatus oldValue) {
@@ -252,67 +236,70 @@ namespace FastMines {
       }
       private void Mosaic_OnChangedCounters(Mosaic source) {}
       private void Mosaic_OnChangedArea(Mosaic source, int oldArea) {
-         Log("Mosaic_OnChangedArea");
-         Debug.Assert(ReferenceEquals(MosaicField, source));
-         //ChangeSizeImagesMineFlag();
+         using (new Tracer("Mosaic_OnChangedArea")) {
+            Debug.Assert(ReferenceEquals(MosaicField, source));
+            //ChangeSizeImagesMineFlag();
 
-         //MosaicField.Container.Margin = new Thickness();
+            //MosaicField.Container.Margin = new Thickness();
 
-         var m = MosaicField.Container.Margin;
-         if (_mouseDevicePosition_AreaChanging.HasValue) {
-            var devicePos = _mouseDevicePosition_AreaChanging.Value;
+            var m = MosaicField.Container.Margin;
+            if (_mouseDevicePosition_AreaChanging.HasValue) {
+               var devicePos = _mouseDevicePosition_AreaChanging.Value;
 
-            var oldWinSize = MosaicField.CalcWindowSize(MosaicField.SizeField, oldArea);
-            var newWinSize = MosaicField.CalcWindowSize(MosaicField.SizeField, Area);
+               var oldWinSize = MosaicField.CalcWindowSize(MosaicField.SizeField, oldArea);
+               var newWinSize = MosaicField.CalcWindowSize(MosaicField.SizeField, Area);
 
-            // точка над игровым полем со старой площадью ячеек
-            var point = new PointDouble(devicePos.X - m.Left, devicePos.Y - m.Top);
-            var percent = new Tuple<double, double>(point.x*100/oldWinSize.width, point.y*100/oldWinSize.height);
+               // точка над игровым полем со старой площадью ячеек
+               var point = new PointDouble(devicePos.X - m.Left, devicePos.Y - m.Top);
+               var percent = new Tuple<double, double>(point.x*100/oldWinSize.width, point.y*100/oldWinSize.height);
 
-            // таже точка над игровым полем, но с учётом zoom'а (новой площади)
-            point = new PointDouble(newWinSize.width*percent.Item1/100, newWinSize.height*percent.Item2/100);
+               // таже точка над игровым полем, но с учётом zoom'а (новой площади)
+               point = new PointDouble(newWinSize.width*percent.Item1/100, newWinSize.height*percent.Item2/100);
 
-            // смещаю игровое поле так, чтобы точка была на том же месте экрана
-            m.Left = devicePos.X - point.x;
-            m.Top = devicePos.Y - point.y;
+               // смещаю игровое поле так, чтобы точка была на том же месте экрана
+               m.Left = devicePos.X - point.x;
+               m.Top = devicePos.Y - point.y;
 
-            m = CheckMosaicMargin(m, newWinSize);
-         } else {
-            var sizeWinMosaic = MosaicField.WindowSize;
-            var sizePage = Window.Current.Bounds;
-            m.Left = (sizePage.Width - sizeWinMosaic.width)/2;
-            m.Top = (sizePage.Height - sizeWinMosaic.height)/2;
+               m = CheckMosaicMargin(m, newWinSize);
+            } else {
+               var sizeWinMosaic = MosaicField.WindowSize;
+               var sizePage = Window.Current.Bounds;
+               m.Left = (sizePage.Width - sizeWinMosaic.width)/2;
+               m.Top = (sizePage.Height - sizeWinMosaic.height)/2;
+            }
+            MosaicField.Container.Margin = m;
          }
-         MosaicField.Container.Margin = m;
       }
       private void Mosaic_OnChangedMosaicType(Mosaic source, EMosaic oldMosaic) {
-         Log("Mosaic_OnChangedMosaicType");
-         Debug.Assert(ReferenceEquals(MosaicField, source));
-         (source as MosaicExt).ChangeFontSize();
-         //ChangeSizeImagesMineFlag();
+         using (new Tracer("Mosaic_OnChangedMosaicType")) {
+            Debug.Assert(ReferenceEquals(MosaicField, source));
+            (source as MosaicExt).ChangeFontSize();
+            //ChangeSizeImagesMineFlag();
+         }
       }
 
       private void Mosaic_OnChangedMosaicSize(Mosaic source, Size oldSize) {
-         Log("Mosaic_OnChangedMosaicSize");
-         Debug.Assert(ReferenceEquals(MosaicField, source));
+         using (new Tracer("Mosaic_OnChangedMosaicSize")) {
+            Debug.Assert(ReferenceEquals(MosaicField, source));
+         }
       }
 
-      private static double? _baseWheelDelta;
-      protected override void OnPointerWheelChanged(PointerRoutedEventArgs e) {
-         //Log("virt_OnPointerWheelChanged");
-         var wheelDelta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
+      protected override void OnPointerWheelChanged(PointerRoutedEventArgs ev) {
+         //using (new Tracer("OnPointerWheelChanged")) {
+         var wheelDelta = ev.GetCurrentPoint(this).Properties.MouseWheelDelta;
          if (!_baseWheelDelta.HasValue)
             _baseWheelDelta = Math.Abs(wheelDelta);
 
          var wheelPower = 1 + ((Math.Abs(wheelDelta)/_baseWheelDelta.Value) - 1)/10;
 
          if (wheelDelta > 0)
-            AreaInc(wheelPower, e.GetCurrentPoint(null).Position);
+            AreaInc(wheelPower, ev.GetCurrentPoint(null).Position);
          else
-            AreaDec(wheelPower, e.GetCurrentPoint(null).Position);
+            AreaDec(wheelPower, ev.GetCurrentPoint(null).Position);
 
-         e.Handled = true;
-         base.OnPointerWheelChanged(e);
+         ev.Handled = true;
+         base.OnPointerWheelChanged(ev);
+         //}
       }
 
       async Task<bool> OnClick(Windows.Foundation.Point pos, bool leftClick, bool downHandling, bool upHandling) {
@@ -321,213 +308,245 @@ namespace FastMines {
          var point = pos.ToFmRect().Move(-(int)margin.Left, -(int)margin.Top);
          //   var winSize = MosaicField.WindowSize;
          //   if ((point.x <= winSize.width) && (point.y <= winSize.height)) {
-               downHandling = downHandling && await MosaicField.MousePressed(point, leftClick);
-               upHandling = upHandling && MosaicField.MouseReleased(point, leftClick);
-               return upHandling || downHandling;
+            var handled = false;
+            if (downHandling) {
+               var h = _clickInfo.DownHandled = await MosaicField.MousePressed(point, leftClick);
+               handled |= h;
+            }
+            if (upHandling) {
+               var h = _clickInfo.UpHandled = MosaicField.MouseReleased(point, leftClick);
+               handled |= h;
+            }
+            return handled;
          //   }
          //}
          //return false;
       }
 
       protected override async void OnTapped(TappedRoutedEventArgs ev) {
-         Log("> OnTapped: ");
-         base.OnTapped(ev);
-
-         if (!_manipulationStarted)
-            ev.Handled = await OnClick(ev.GetPosition(this), true, false, true);
-
-         Log("< OnTapped: ev.Handled = " + ev.Handled);
+         using (new Tracer("OnTapped", () => string.Format("ev.Handled = " + ev.Handled))) {
+            //if (!_manipulationStarted) {
+            if (ev.PointerDeviceType != PointerDeviceType.Mouse) {
+               ev.Handled = await OnClick(ev.GetPosition(this), true, false, true);
+            }
+            if (!ev.Handled)
+               base.OnTapped(ev);
+         }
       }
 
       protected override async void OnRightTapped(RightTappedRoutedEventArgs ev) {
-         Log("> OnRightTapped: ");
-         base.OnRightTapped(ev);
+         using (new Tracer("OnRightTapped", () => string.Format("ev.Handled = " + ev.Handled))) {
+            if (ev.PointerDeviceType == PointerDeviceType.Mouse)
+               ev.Handled = _clickInfo.DownHandled || _clickInfo.UpHandled; // TODO: для избежания появления appBar'ов при установке '?'
+            else if (!_manipulationStarted) {
+               //var pos = ev.GetPosition(this);
+               //System.Diagnostics.Debug.Assert(_clickInfo != null);
+               //ev.Handled = await OnClick(pos, false, true, true);
+            }
 
-         if (!_manipulationStarted) {
-            var pos = ev.GetPosition(this);
-            System.Diagnostics.Debug.Assert(_lastClickedCell != null);
-            ev.Handled = await OnClick(pos, false, true, true);
+            if (!ev.Handled)
+               base.OnRightTapped(ev);
+
          }
-
-         Log("< OnRightTapped: ev.Handled = " + ev.Handled);
       }
 
       protected override async void OnPointerPressed(PointerRoutedEventArgs ev) {
-         Log("> OnPointerPressed: ");
-         base.OnPointerPressed(ev);
+         using (new Tracer("OnPointerPressed", () => string.Format("ev.Handled = " + ev.Handled))) {
 
-         var pointerPoint = ev.GetCurrentPoint(this);
-         var props = pointerPoint.Properties;
-         // Ignore button chords with the left, right, and middle buttons
-         if (!props.IsLeftButtonPressed && !props.IsRightButtonPressed && !props.IsMiddleButtonPressed) {
-            // If back or foward are pressed (but not both) navigate appropriately
-            var backPressed = props.IsXButton1Pressed;
-            if (backPressed) {
-               ev.Handled = true;
-               GoBack();
+            var pointerPoint = ev.GetCurrentPoint(this);
+            //_clickInfo.PointerDevice = pointerPoint.PointerDevice.PointerDeviceType;
+            var props = pointerPoint.Properties;
+            // Ignore button chords with the left, right, and middle buttons
+            if (!props.IsLeftButtonPressed && !props.IsRightButtonPressed && !props.IsMiddleButtonPressed) {
+               // If back or foward are pressed (but not both) navigate appropriately
+               var backPressed = props.IsXButton1Pressed;
+               if (backPressed) {
+                  ev.Handled = true;
+                  GoBack();
+               }
             }
+
+            if (!ev.Handled)
+               ev.Handled = await OnClick(pointerPoint.Position, props.IsLeftButtonPressed, true, false);
+
+            _clickInfo.DownHandled = ev.Handled;
+            if (!ev.Handled)
+               base.OnPointerPressed(ev);
+
          }
-
-         if (!ev.Handled)
-            ev.Handled = await OnClick(pointerPoint.Position, props.IsLeftButtonPressed, true, false);
-
-         Log("< OnPointerPressed: ev.Handled = " + ev.Handled);
       }
 
       protected override async void OnPointerReleased(PointerRoutedEventArgs ev) {
-         Log("> OnPointerReleased: ");
-         base.OnPointerReleased(ev);
-         if (_manipulationStarted) {
+         using (new Tracer("OnPointerReleased", "_manipulationStarted = " + _manipulationStarted, () => string.Format("ev.Handled = " + ev.Handled))) {
             var pointerPoint = ev.GetCurrentPoint(this);
-            ev.Handled = await OnClick(pointerPoint.Position, pointerPoint.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased, false, true);
+            //if (_manipulationStarted)
+            if (ev.Pointer.PointerDeviceType == PointerDeviceType.Mouse) {
+               var isLeftClick = (pointerPoint.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased);
+               var isRightClick = (pointerPoint.Properties.PointerUpdateKind == PointerUpdateKind.RightButtonReleased);
+               Debug.Assert(isLeftClick != isRightClick);
+               ev.Handled = await OnClick(pointerPoint.Position, isLeftClick, false, true);
+            } else {
+               AsyncRunner.InvokeLater(async () => {
+                  if (!_clickInfo.Released)
+                     //ev.Handled = 
+                     await OnClick(pointerPoint.Position, true, false, true);
+               }, CoreDispatcherPriority.High);
+            }
+
+            _clickInfo.UpHandled = ev.Handled;
+            if (!ev.Handled)
+               base.OnPointerReleased(ev);
+
          }
-         Log("< OnPointerReleased: ev.Handled = " + ev.Handled);
       }
 
-      protected override void OnManipulationStarting(ManipulationStartingRoutedEventArgs e) {
-         Log("> OnManipulationStarting");
-         base.OnManipulationStarting(e);
-         _manipulationStarted = false;
-         Log("< OnManipulationStarting");
+      protected override void OnManipulationStarting(ManipulationStartingRoutedEventArgs ev) {
+         using (new Tracer("OnManipulationStarting")) {
+            base.OnManipulationStarting(ev);
+            _manipulationStarted = false;
+         }
       }
 
-      protected override void OnManipulationStarted(ManipulationStartedRoutedEventArgs e) {
-         Log("> OnManipulationStarted");
-         _turnX = _turnY = false;
-         _dtInertiaStarting = DateTime.MinValue;
-         base.OnManipulationStarted(e);
-         _manipulationStarted = true;
-         Log("< OnManipulationStarted");
+      protected override void OnManipulationStarted(ManipulationStartedRoutedEventArgs ev) {
+         using (new Tracer("OnManipulationStarted")) {
+            _turnX = _turnY = false;
+            _dtInertiaStarting = DateTime.MinValue;
+            base.OnManipulationStarted(ev);
+            _manipulationStarted = true;
+         }
       }
 
-      protected override void OnManipulationInertiaStarting(ManipulationInertiaStartingRoutedEventArgs e) {
+      protected override void OnManipulationInertiaStarting(ManipulationInertiaStartingRoutedEventArgs ev) {
          _dtInertiaStarting = DateTime.Now;
-         base.OnManipulationInertiaStarting(e);
+         base.OnManipulationInertiaStarting(ev);
       }
 
       protected override void OnManipulationDelta(ManipulationDeltaRoutedEventArgs ev) {
-         Log("> OnManipulationDelta: Scale={0}; Expansion={1}, Rotation={2}", ev.Delta.Scale, ev.Delta.Expansion, ev.Delta.Rotation);
-         ev.Handled = true;
-         if (Math.Abs(1 - ev.Delta.Scale) > 0.009) {
+         using (var tracer = new Tracer("OnManipulationDelta", string.Format("Scale={0}; Expansion={1}, Rotation={2}", ev.Delta.Scale, ev.Delta.Expansion, ev.Delta.Rotation))) {
+            ev.Handled = true;
+            if (Math.Abs(1 - ev.Delta.Scale) > 0.009) {
 #region scale / zoom
-            if (ev.Delta.Scale > 0)
-               AreaInc(ev.Delta.Scale, ev.Position);
-            else
-               AreaDec(2 + ev.Delta.Scale, ev.Position);
+               if (ev.Delta.Scale > 0)
+                  AreaInc(ev.Delta.Scale, ev.Position);
+               else
+                  AreaDec(2 + ev.Delta.Scale, ev.Position);
 #endregion
-         } else {
+            } else {
 #region drag
-            var needDrag = true;
-            var margin = MosaicField.Container.Margin;
+               var needDrag = true;
+               var margin = MosaicField.Container.Margin;
 #region check possibility dragging
-            if (_lastClickedCell.Cell != null)
-            {
-               var noMarginPoint = new Windows.Foundation.Point(ev.Position.X - margin.Left, ev.Position.Y - margin.Top);
-               //var inCellRegion = _tmpClickedCell.PointInRegion(noMarginPoint.ToFmRect());
-               //this.ContentRoot.Background = new SolidColorBrush(inCellRegion ? Colors.Aquamarine : Colors.DeepPink);
-               var rcOuter = _lastClickedCell.Cell.getRcOuter();
-               var sizePage = Window.Current.Bounds.ToFmRect().toSize();
-               var delta = Math.Min(sizePage.width/20, sizePage.height/20);
-               rcOuter.moveXY(-delta, -delta);
-               rcOuter.width  += delta*2;
-               rcOuter.height += delta*2;
-               needDrag = !rcOuter.Contains(noMarginPoint.ToFmRect());
-            }
-#endregion
-
-            if (needDrag) {
-               var deltaTrans = ev.Delta.Translation;
-               var applyDelta = true;
-#region Compound motion
-               if (_turnX)
-                  deltaTrans.X *= -1;
-               if (_turnY)
-                  deltaTrans.Y *= -1;
-
-               if (ev.IsInertial) {
-                  //var coefFading = Math.Max(0.05, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
-                  var coefFading = Math.Max(0, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
-                  Log("  OnManipulationDelta: inertial coeff fading = " + coefFading);
-                  deltaTrans.X *= coefFading;
-                  deltaTrans.Y *= coefFading;
-               }
-
-               var sizeWinMosaic = MosaicField.WindowSize;
-               var sizePage = Window.Current.Bounds.ToFmRect().toSize();
-               if ((margin.Left + sizeWinMosaic.width + deltaTrans.X) < MinIndent) {
-                  // правый край мозаики пересёк левую сторону страницы/экрана
-                  if (ev.IsInertial)
-                     _turnX = !_turnX; // разворачиавю по оси X
-                  else
-                     margin.Left = MinIndent - sizeWinMosaic.width; // привязываю к левой стороне страницы/экрана
-                  applyDelta = ev.IsInertial;
-               } else
-               if ((margin.Left + deltaTrans.X) > (sizePage.width - MinIndent)) {
-                  // левый край мозаики пересёк правую сторону страницы/экрана
-                  if (ev.IsInertial)
-                     _turnX = !_turnX; // разворачиавю по оси X
-                  else
-                     margin.Left = sizePage.width - MinIndent; // привязываю к правой стороне страницы/экрана
-                  applyDelta = ev.IsInertial;
-               }
-               if ((margin.Top + sizeWinMosaic.height + deltaTrans.Y) < MinIndent) {
-                  // нижний край мозаики пересёк верхнюю сторону страницы/экрана
-                  if (ev.IsInertial)
-                     _turnY = !_turnY; // разворачиавю по оси Y
-                  else
-                     margin.Top = MinIndent - sizeWinMosaic.height; // привязываю к верхней стороне страницы/экрана
-                  applyDelta = ev.IsInertial;
-               } else
-               if ((margin.Top + deltaTrans.Y) > (sizePage.height - MinIndent)) {
-                  // вержний край мозаики пересёк нижнюю сторону страницы/экрана
-                  if (ev.IsInertial)
-                     _turnY = !_turnY; // разворачиавю по оси Y
-                  else
-                     margin.Top = sizePage.height - MinIndent; // привязываю к нижней стороне страницы/экрана
-                  applyDelta = ev.IsInertial;
+               if (_clickInfo.Cell != null)
+               {
+                  var noMarginPoint = new Windows.Foundation.Point(ev.Position.X - margin.Left, ev.Position.Y - margin.Top);
+                  //var inCellRegion = _tmpClickedCell.PointInRegion(noMarginPoint.ToFmRect());
+                  //this.ContentRoot.Background = new SolidColorBrush(inCellRegion ? Colors.Aquamarine : Colors.DeepPink);
+                  var rcOuter = _clickInfo.Cell.getRcOuter();
+                  var sizePage = Window.Current.Bounds.ToFmRect().toSize();
+                  var delta = Math.Min(sizePage.width/20, sizePage.height/20);
+                  rcOuter.moveXY(-delta, -delta);
+                  rcOuter.width  += delta*2;
+                  rcOuter.height += delta*2;
+                  needDrag = !rcOuter.Contains(noMarginPoint.ToFmRect());
                }
 #endregion
-               if (applyDelta) {
-                  margin.Left += deltaTrans.X;
-                  margin.Top += deltaTrans.Y;
-               }
+
+               if (needDrag) {
+                  var deltaTrans = ev.Delta.Translation;
+                  var applyDelta = true;
+ #region Compound motion
+                  if (_turnX)
+                     deltaTrans.X *= -1;
+                  if (_turnY)
+                     deltaTrans.Y *= -1;
+
+                  if (ev.IsInertial) {
+                     //var coefFading = Math.Max(0.05, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
+                     var coefFading = Math.Max(0, 1 - 0.32 * (DateTime.Now - _dtInertiaStarting).TotalSeconds);
+                     tracer.Put("inertial coeff fading = " + coefFading);
+                     deltaTrans.X *= coefFading;
+                     deltaTrans.Y *= coefFading;
+                  }
+
+                  var sizeWinMosaic = MosaicField.WindowSize;
+                  var sizePage = Window.Current.Bounds.ToFmRect().toSize();
+                  if ((margin.Left + sizeWinMosaic.width + deltaTrans.X) < MinIndent) {
+                     // правый край мозаики пересёк левую сторону страницы/экрана
+                     if (ev.IsInertial)
+                        _turnX = !_turnX; // разворачиавю по оси X
+                     else
+                        margin.Left = MinIndent - sizeWinMosaic.width; // привязываю к левой стороне страницы/экрана
+                     applyDelta = ev.IsInertial;
+                  } else
+                  if ((margin.Left + deltaTrans.X) > (sizePage.width - MinIndent)) {
+                     // левый край мозаики пересёк правую сторону страницы/экрана
+                     if (ev.IsInertial)
+                        _turnX = !_turnX; // разворачиавю по оси X
+                     else
+                        margin.Left = sizePage.width - MinIndent; // привязываю к правой стороне страницы/экрана
+                     applyDelta = ev.IsInertial;
+                  }
+                  if ((margin.Top + sizeWinMosaic.height + deltaTrans.Y) < MinIndent) {
+                     // нижний край мозаики пересёк верхнюю сторону страницы/экрана
+                     if (ev.IsInertial)
+                        _turnY = !_turnY; // разворачиавю по оси Y
+                     else
+                        margin.Top = MinIndent - sizeWinMosaic.height; // привязываю к верхней стороне страницы/экрана
+                     applyDelta = ev.IsInertial;
+                  } else
+                  if ((margin.Top + deltaTrans.Y) > (sizePage.height - MinIndent)) {
+                     // вержний край мозаики пересёк нижнюю сторону страницы/экрана
+                     if (ev.IsInertial)
+                        _turnY = !_turnY; // разворачиавю по оси Y
+                     else
+                        margin.Top = sizePage.height - MinIndent; // привязываю к нижней стороне страницы/экрана
+                     applyDelta = ev.IsInertial;
+                  }
+#endregion
+                  if (applyDelta) {
+                     margin.Left += deltaTrans.X;
+                     margin.Top += deltaTrans.Y;
+                  }
 #if DEBUG
-               var tmp = margin;
-               margin = CheckMosaicMargin(margin, sizeWinMosaic);
-               System.Diagnostics.Debug.Assert(tmp == margin);
+                  var tmp = margin;
+                  margin = CheckMosaicMargin(margin, sizeWinMosaic);
+                  System.Diagnostics.Debug.Assert(tmp == margin);
 #endif
-               MosaicField.Container.Margin = margin;
-            }
+                  MosaicField.Container.Margin = margin;
+               }
 #endregion
+            }
+            base.OnManipulationDelta(ev);
          }
-         base.OnManipulationDelta(ev);
-         Log("< OnManipulationDelta");
       }
 
-      protected override void OnManipulationCompleted(ManipulationCompletedRoutedEventArgs e) {
+      protected override void OnManipulationCompleted(ManipulationCompletedRoutedEventArgs ev) {
 #if DEBUG
-         var pnt1 = this.TransformToVisual(MosaicField.Container).TransformPoint(e.Position);
-         //var pnt2 = ContentRoot.TransformToVisual(Mosaic.Container).TransformPoint(e.Position);
-         //var content = Window.Current.Content;
-         Log("> OnManipulationCompleted: Pos=[{0} / {1}]; Container=[{2}]; Cumulative.Translation=[{3}]",
-            e.Position, pnt1, (e.Container == null) ? "null" : e.Container.GetType().ToString(),
-            e.Cumulative.Translation);
+         var pnt1 = this.TransformToVisual(MosaicField.Container).TransformPoint(ev.Position);
+#else
+         var pnt1 = new Windows.Foundation.Point();
 #endif
-         //e.Handled = true;
-         base.OnManipulationCompleted(e);
-         MosaicField.MouseFocusLost();
-         Log("< OnManipulationCompleted");
+         //var pnt2 = ContentRoot.TransformToVisual(Mosaic.Container).TransformPoint(ev.Position);
+         //var content = Window.Current.Content;
+         using (new Tracer("OnManipulationCompleted", string.Format("Pos=[{0} / {1}]; Container=[{2}]; Cumulative.Translation=[{3}]",
+            ev.Position, pnt1, (ev.Container == null) ? "null" : ev.Container.GetType().ToString(),
+            ev.Cumulative.Translation)))
+         {
+            //e.Handled = true;
+            base.OnManipulationCompleted(ev);
+            MosaicField.MouseFocusLost();
+         }
       }
-      protected override void OnKeyUp(KeyRoutedEventArgs e) {
-         Log("> OnKeyUp: virtKey=" + e.Key);
-         base.OnKeyUp(e);
-         Log("< OnKeyUp: ");
+      protected override void OnKeyUp(KeyRoutedEventArgs ev) {
+         using (new Tracer("OnKeyUp", "virtKey=" + ev.Key)) {
+            base.OnKeyUp(ev);
+         }
       }
 
-      private async void OnKeyUp_CoreWindow(CoreWindow win, KeyEventArgs e) {
-         //Log("< OnKeyUp_CoreWindow: virtKey="+e.VirtualKey);
-         e.Handled = true;
-         switch (e.VirtualKey) {
+      private async void OnKeyUp_CoreWindow(CoreWindow win, KeyEventArgs ev) {
+         //using (new Tracer("OnKeyUp_CoreWindow", "virtKey=" + ev.Key)) {
+         ev.Handled = true;
+         switch (ev.VirtualKey) {
             case VirtualKey.F2:
                await MosaicField.GameNew();
                break;
@@ -552,29 +571,31 @@ namespace FastMines {
                AreaDec();
                break;
             default:
-               e.Handled = false;
+               ev.Handled = false;
                break;
          }
-         //Log("> OnKeyUp_CoreWindow: ");
+         //}
       }
 
-      private void OnClickBttnBack(object sender, RoutedEventArgs e) {
+      private void OnClickBttnBack(object sender, RoutedEventArgs ev) {
          GoBack();
       }
-      private async void OnClickBttnNewGame(object sender, RoutedEventArgs e) {
+      private async void OnClickBttnNewGame(object sender, RoutedEventArgs ev) {
+         topAppBar.IsOpen = false;
+         bottomAppBar.IsOpen = false;
          await MosaicField.GameNew();
       }
 
-      private async void OnClickBttnSkillBeginner(object sender, RoutedEventArgs e) {
+      private async void OnClickBttnSkillBeginner(object sender, RoutedEventArgs ev) {
          await SetGame(ESkillLevel.eBeginner);
       }
-      private async void OnClickBttnSkillAmateur(object sender, RoutedEventArgs e) {
+      private async void OnClickBttnSkillAmateur(object sender, RoutedEventArgs ev) {
          await SetGame(ESkillLevel.eAmateur);
       }
-      private async void OnClickBttnSkillProfi(object sender, RoutedEventArgs e) {
+      private async void OnClickBttnSkillProfi(object sender, RoutedEventArgs ev) {
          await SetGame(ESkillLevel.eProfi);
       }
-      private async void OnClickBttnSkillCrazy(object sender, RoutedEventArgs e) {
+      private async void OnClickBttnSkillCrazy(object sender, RoutedEventArgs ev) {
          await SetGame(ESkillLevel.eCrazy);
       }
 
@@ -610,5 +631,8 @@ namespace FastMines {
       public BaseCell Cell { get; set; }
       public bool IsLeft { get; set; }
       public bool Released { get; set; }
+      public bool DownHandled { get; set; }
+      public bool UpHandled { get; set; }
+      //public PointerDeviceType PointerDevice { get; set; }
    }
 }

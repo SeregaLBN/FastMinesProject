@@ -191,6 +191,7 @@
       <Link>src\ui_desktop\ua\ksn\fmg\view\draw\PenBorder.cs</Link>
     </Compile>
     <Compile Include="Common\AsyncRunner.cs" />
+    <Compile Include="Common\LoggerSimple.cs" />
     <Compile Include="Common\TileHelper.cs" />
     <Compile Include="DataModel\FmDataItem.cs" />
     <Compile Include="DataModel\FmDataGroup.cs" />
