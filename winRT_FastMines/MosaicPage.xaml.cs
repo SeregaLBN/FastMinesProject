@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.System;
 using Windows.Devices.Input;
 using Windows.UI.Core;
@@ -18,6 +19,7 @@ using ua.ksn.fmg.controller.types;
 using ua.ksn.fmg.controller.win_rt;
 using FastMines.Common;
 using Log = FastMines.Common.LoggerSimple;
+using Size = ua.ksn.geom.Size;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace FastMines {
@@ -339,9 +341,13 @@ namespace FastMines {
             if (ev.PointerDeviceType == PointerDeviceType.Mouse)
                ev.Handled = _clickInfo.DownHandled || _clickInfo.UpHandled; // TODO: для избежания появления appBar'ов при установке '?'
             else if (!_manipulationStarted) {
-               //var pos = ev.GetPosition(this);
-               //System.Diagnostics.Debug.Assert(_clickInfo != null);
-               //ev.Handled = await OnClick(pos, false, true, true);
+
+               // 1. release left clisn in invalid coord
+               await OnClick(new Windows.Foundation.Point(-1, -1), true, false, true);
+
+               // 2. make right click - up & down
+               var pos = ev.GetPosition(this);
+               ev.Handled = await OnClick(pos, false, true, true);
             }
 
             if (!ev.Handled)
@@ -387,9 +393,10 @@ namespace FastMines {
                ev.Handled = await OnClick(pointerPoint.Position, isLeftClick, false, true);
             } else {
                AsyncRunner.InvokeLater(async () => {
-                  if (!_clickInfo.Released)
-                     //ev.Handled = 
+                  if (!_clickInfo.Released) {
+                     Log.Put("ã OnPointerReleased: forced left release click...");
                      await OnClick(pointerPoint.Position, true, false, true);
+                  }
                }, CoreDispatcherPriority.High);
             }
 
@@ -630,6 +637,7 @@ namespace FastMines {
    class ClickInfo {
       public BaseCell Cell { get; set; }
       public bool IsLeft { get; set; }
+      /// <summary> pressed or released </summary>
       public bool Released { get; set; }
       public bool DownHandled { get; set; }
       public bool UpHandled { get; set; }
