@@ -23,7 +23,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       public double ZoomY { get; set; }
       public uint Margin { get; set; }
 
-      private Color[] _clrs = {
+      public readonly Color[] Palette = {
          new Color(0xFFFF0000), new Color(0xFFFFD800), new Color(0xFF4CFF00), new Color(0xFF00FF90),
          new Color(0xFF0094FF), new Color(0xFF4800FF), new Color(0xFFB200FF), new Color(0xFFFF006E)
       };
@@ -34,15 +34,15 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       }
 
       public void MixLoopColor(uint loop) {
-         var copy = _clrs.ToList();
-         for (var i = 0; i < _clrs.Length; i++)
-            _clrs[i] = copy[(int) ((i + loop)%8)];
+         var copy = Palette.ToList();
+         for (var i = 0; i < Palette.Length; i++)
+            Palette[i] = copy[(int)((i + loop)%8)];
       }
 
       public WriteableBitmap Image {
          get {
             if (_img != null)
-               return _img; 
+               return _img;
 
             var size = new Size((int) (DefaultWidht*ZoomX+2*Margin), (int) (DefaultHeight*ZoomY+2*Margin));
             var bmp = BitmapFactory.New(size.width, size.height);
@@ -85,8 +85,8 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
                      (int) oct[i].x, (int) oct[i].y,
                      (int) inn[i].x, (int) inn[i].y,
                      (int) oct[(i+5)%8].x, (int) oct[(i+5)%8].y,
-                     //clrs[(i+0)%8].Bedraggle().ToWinColor()
-                     _clrs[i].Bedraggle().ToWinColor()
+                     //Palette[(i+0)%8].Bedraggle().ToWinColor()
+                     Palette[i].Bedraggle().ToWinColor()
                   );
                }
 
@@ -94,7 +94,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
                for (var i=0; i<8; i++) {
                   var p1 = rays[(i + 7)%8];
                   var p2 = rays[i];
-                  bmp.DrawLineAa((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y, _clrs[i].ToWinColor());
+                  bmp.DrawLineAa((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y, Palette[i].ToWinColor());
                }
 
                // paint inner gradient triangles
@@ -104,8 +104,8 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
                      (int) inn[(i + 3)%8].x, (int) inn[(i + 3)%8].y,
                      size.width/2, size.height/2,
                      ((i & 1) == 0)
-                        ? _clrs[(i + 6)%8].Attenuate().ToWinColor()
-                        : _clrs[(i + 6)%8].ToWinColor());
+                        ? Palette[(i + 6)%8].Attenuate().ToWinColor()
+                        : Palette[(i + 6)%8].ToWinColor());
                }
             }
 

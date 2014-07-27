@@ -7,37 +7,50 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       private readonly WriteableBitmap _bmp;
 
       public Mine() {
-         int w = 25, h = 25;
+#if true
+         var img = new Logo {
+            BkColor = new Color(0x00000000).ToWinColor(),
+            Margin = 10,
+            ZoomX = 0.7,
+            ZoomY = 0.7
+         };
+         for (var i = 0; i<img.Palette.Length; i++)
+            img.Palette[i] = img.Palette[i].Bedraggle(200);
+         //img.MixLoopColor(mixLoop);
+         _bmp = img.Image; // иначе - своя картинка из кода
+#else
+         const int w = 25;
+         const int h = 25;
          var pixels = new uint[w*h];
 
          // fill background to transparent color
-         for (int i = 0; i < pixels.Length; i++)
-            pixels[i] = 0x00112233; // aarrggbb
+         for (var i = 0; i < pixels.Length; i++)
+            pixels[i] = 0x00000000; // aarrggbb
 
          // paint image
 
          // центральное тело
-         for (int x = 7; x < 18; x++)
-            for (int y = 7; y < 18; y++)
+         for (var x = 7; x < 18; x++)
+            for (var y = 7; y < 18; y++)
                pixels[y*w + x] = 0xFF000000;
 
          // белая точка
-         for (int x = 9; x < 11; x++)
-            for (int y = 9; y < 11; y++)
+         for (var x = 9; x < 11; x++)
+            for (var y = 9; y < 11; y++)
                pixels[y*w + x] = 0xFFFFFFFF;
 
          // лучи
-         for (int x = 11; x < 14; x++)
-            for (int y = 3; y < 7; y++)
+         for (var x = 11; x < 14; x++)
+            for (var y = 3; y < 7; y++)
                pixels[y*w + x] = 0xFF000000;
-         for (int x = 18; x < 22; x++)
-            for (int y = 11; y < 14; y++)
+         for (var x = 18; x < 22; x++)
+            for (var y = 11; y < 14; y++)
                pixels[y*w + x] = 0xFF000000;
-         for (int x = 11; x < 14; x++)
-            for (int y = 18; y < 22; y++)
+         for (var x = 11; x < 14; x++)
+            for (var y = 18; y < 22; y++)
                pixels[y*w + x] = 0xFF000000;
-         for (int x = 3; x < 7; x++)
-            for (int y = 11; y < 14; y++)
+         for (var x = 3; x < 7; x++)
+            for (var y = 11; y < 14; y++)
                pixels[y*w + x] = 0xFF000000;
 
          // кончики лучей
@@ -74,54 +87,55 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
          pixels[13*w + 2] = 0x56000000;
 
          // точки по диагонали
-         for (int x = 5; x < 7; x++)
-            for (int y = 5; y < 7; y++)
+         for (var x = 5; x < 7; x++)
+            for (var y = 5; y < 7; y++)
                pixels[y*w + x] = 0xBB000000;
-         for (int x = 18; x < 20; x++)
-            for (int y = 5; y < 7; y++)
+         for (var x = 18; x < 20; x++)
+            for (var y = 5; y < 7; y++)
                pixels[y*w + x] = 0xBB000000;
-         for (int x = 5; x < 7; x++)
-            for (int y = 18; y < 20; y++)
+         for (var x = 5; x < 7; x++)
+            for (var y = 18; y < 20; y++)
                pixels[y*w + x] = 0xBB000000;
-         for (int x = 18; x < 20; x++)
-            for (int y = 18; y < 20; y++)
+         for (var x = 18; x < 20; x++)
+            for (var y = 18; y < 20; y++)
                pixels[y*w + x] = 0xBB000000;
 
          // точки 'под' лучами
-         for (int x = 9; x < 11; x++)
-            for (int y = 5; y < 7; y++)
+         for (var x = 9; x < 11; x++)
+            for (var y = 5; y < 7; y++)
                pixels[y*w + x] = 0x56000000;
-         for (int x = 14; x < 16; x++)
-            for (int y = 5; y < 7; y++)
+         for (var x = 14; x < 16; x++)
+            for (var y = 5; y < 7; y++)
                pixels[y*w + x] = 0x56000000;
-         for (int x = 18; x < 20; x++)
-            for (int y = 9; y < 11; y++)
+         for (var x = 18; x < 20; x++)
+            for (var y = 9; y < 11; y++)
                pixels[y*w + x] = 0x56000000;
-         for (int x = 18; x < 20; x++)
-            for (int y = 14; y < 16; y++)
+         for (var x = 18; x < 20; x++)
+            for (var y = 14; y < 16; y++)
                pixels[y*w + x] = 0x56000000;
-         for (int x = 14; x < 16; x++)
-            for (int y = 18; y < 20; y++)
+         for (var x = 14; x < 16; x++)
+            for (var y = 18; y < 20; y++)
                pixels[y*w + x] = 0x56000000;
-         for (int x = 9; x < 11; x++)
-            for (int y = 18; y < 20; y++)
+         for (var x = 9; x < 11; x++)
+            for (var y = 18; y < 20; y++)
                pixels[y*w + x] = 0x56000000;
-         for (int x = 5; x < 7; x++)
-            for (int y = 14; y < 16; y++)
+         for (var x = 5; x < 7; x++)
+            for (var y = 14; y < 16; y++)
                pixels[y*w + x] = 0x56000000;
-         for (int x = 5; x < 7; x++)
-            for (int y = 9; y < 11; y++)
+         for (var x = 5; x < 7; x++)
+            for (var y = 9; y < 11; y++)
                pixels[y*w + x] = 0x56000000;
 
          var pix2 = new byte[pixels.Length*4];
          for (var i = 0; i < pixels.Length; i++) {
             var p = pixels[i];
-            pix2[i*4 + 3] = (byte) ((p & 0x000000FF) >> 0);
-            pix2[i*4 + 2] = (byte) ((p & 0x0000FF00) >> 8);
-            pix2[i*4 + 1] = (byte) ((p & 0x00FF0000) >> 16);
-            pix2[i*4 + 0] = (byte) ((p & 0xFF000000) >> 24);
+            pix2[i*4 + 0] = (byte) ((p & 0x000000FF) >> 0);
+            pix2[i*4 + 1] = (byte) ((p & 0x0000FF00) >> 8);
+            pix2[i*4 + 2] = (byte) ((p & 0x00FF0000) >> 16);
+            pix2[i*4 + 3] = (byte) ((p & 0xFF000000) >> 24);
          }
-         _bmp = _bmp.FromByteArray(pix2);
+         _bmp = new WriteableBitmap(w, h).FromByteArray(pix2);
+#endif
       }
 
       public WriteableBitmap Image {

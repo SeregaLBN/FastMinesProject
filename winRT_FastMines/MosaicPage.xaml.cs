@@ -93,6 +93,7 @@ namespace FastMines {
             ToolTipService.SetToolTip(bttnSkillCrazy, new ToolTip { Content = "3" });
             ToolTipService.SetToolTip(bttnSkillProfi, new ToolTip {Content = "4"});
          }
+         MosaicField.GraphicContext.ImgMine = await ua.ksn.fmg.view.win_rt.res.Resources.GetImgMine(-1, -1);
       }
 
       /// <summary> Поменять игру на новый уровень сложности </summary>

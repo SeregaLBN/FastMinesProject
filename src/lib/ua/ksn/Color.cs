@@ -75,12 +75,18 @@ namespace ua.ksn {
       /// <summary> Затемнить цвет </summary>
       public static Color Bedraggle(this Color clr, int basic = 120, bool withAlphaChanel = false) {
          System.Diagnostics.Debug.Assert(basic >= 0 && basic < 0xFF);
+#if false
+         var tmp = new Color((byte) (0xFF - clr.R), (byte) (0xFF - clr.G), (byte) (0xFF - clr.B), (byte) (0xFF - clr.A));
+         tmp = tmp.Attenuate(basic, withAlphaChanel);
+         return new Color((byte)(0xFF - tmp.R), (byte)(0xFF - tmp.G), (byte)(0xFF - tmp.B), (byte)(0xFF - tmp.A));
+#else
          return new Color {
             R = (byte)(/*basic + */clr.R % (0xFF - basic)),
             G = (byte)(/*basic + */clr.G % (0xFF - basic)),
             B = (byte)(/*basic + */clr.B % (0xFF - basic)),
             A = withAlphaChanel ? (byte)(/*basic + */clr.A % (0xFF - basic)) : clr.A
          };
+#endif
       }
 
 #if WINDOWS_RT
