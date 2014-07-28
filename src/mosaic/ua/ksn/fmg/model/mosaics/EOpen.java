@@ -9,7 +9,9 @@ public enum EOpen {
     	switch (eOpen) {
     	case _Nil: return "";
     	default: return String.valueOf(eOpen.ordinal());
-    	case _Mine: return "M";
+    	case _Mine:
+    		return "M";
+//    		return "\u2699"; // Шестерня: Gear
     	}
     }
     public final String toCaption() { return toCaption(this); }

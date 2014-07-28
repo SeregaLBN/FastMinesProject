@@ -99,22 +99,22 @@ namespace ua.ksn.fmg.view.win_rt.res {
          return _imgLogos[key] = imgLogo.Image;
       }
 
-      public static async Task<WriteableBitmap> GetImgFlag(int width, int height) {
+      public static async Task<WriteableBitmap> GetImgFlag() {
          if (_imgFlag == null) {
             _imgFlag = await GetImage("CellState/Flag.png"); // сначала из ресурсов
             if (_imgFlag == null)
                _imgFlag = new Flag().Image; // иначе - своя картинка из кода
          }
-         return ImgUtils.Zoom(_imgFlag, width, height);
+         return _imgFlag;
       }
 
-      public static async Task<WriteableBitmap> GetImgMine(int width, int height) {
+      public static async Task<WriteableBitmap> GetImgMine() {
          if (_imgMine == null) {
             _imgMine = await GetImage("CellState/Mine.png"); // сначала из ресурсов
             if (_imgMine == null)
                _imgMine = new Mine().Image; // иначе - своя картинка из кода
          }
-         return ImgUtils.Zoom(_imgMine, width, height);
+         return _imgMine;
       }
 
       public static async Task<WriteableBitmap> GetImgPause() {
@@ -137,12 +137,6 @@ namespace ua.ksn.fmg.view.win_rt.res {
          return _imgsBtnNew[key];
       }
 
-//	public static WriteableBitmap getImgBtnNew(EBtnNewGameState key, int newWidth, int newHeight) {
-//		ImageIcon original = getImgBtnNew(key);
-//		if (original == null) return null;
-//		return ImgUtils.toIco(original.getImage(), newWidth, newHeight);
-//	}
-
       public static async Task<WriteableBitmap> GetImgBtnPause(EBtnPauseState key) {
          if (_imgsBtnPause == null) {
             _imgsBtnPause =
@@ -153,12 +147,6 @@ namespace ua.ksn.fmg.view.win_rt.res {
          }
          return _imgsBtnPause[key];
       }
-
-//	public static WriteableBitmap getImgBtnPause(EPauseState key, int newWidth, int newHeight) {
-//		ImageIcon original = getImgBtnPause(key);
-//		if (original == null) return null;
-//		return ImgUtils.toIco(original.getImage(), newWidth, newHeight);
-//	}
 
       /// <summary> из ресурсов </summary>
       public async static Task<WriteableBitmap> GetImgMosaicGroupPng(EMosaicGroup key) {
@@ -177,12 +165,6 @@ namespace ua.ksn.fmg.view.win_rt.res {
             return _imgsMosaicGroup[key];
          return _imgsMosaicGroup[key] = new MosaicsGroupImg(key, true);
       }
-
-      //public static async Task<WriteableBitmap> GetImgMosaicGroup(EMosaicGroup key, int newWidth, int newHeight) {
-      //   var original = await GetImgMosaicGroup(key);
-      //   if (original == null) return null;
-      //   return ImgUtils.Zoom(original, newWidth, newHeight);
-      //}
 
       /// <summary> из ресурсов </summary>
       public static async Task<WriteableBitmap> GetImgMosaicPng(EMosaic mosaicType, bool smallIco) {
@@ -203,13 +185,6 @@ namespace ua.ksn.fmg.view.win_rt.res {
             return _imgsMosaic[key];
          return _imgsMosaic[key] = new MosaicsImg(mosaicType, sizeField, area, bkColor, bound);
       }
-
-      //public static async Task<WriteableBitmap> GetImgMosaic(EMosaic key, bool smallIco, int newWidth, int newHeight) {
-      //   var original = await GetImgMosaic(key, smallIco);
-      //   if (original == null)
-      //      return null;
-      //   return ImgUtils.Zoom(original, newWidth, newHeight);
-      //}
 
       public static async Task<Dictionary<CultureInfo, WriteableBitmap>> getImgsLang() {
          if (_imgsLang == null) {

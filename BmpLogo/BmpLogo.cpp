@@ -32,7 +32,7 @@ int _tmain(int argc, _TCHAR* argv[])
    { // draw star
       const int iPenWidth = 17;
 
-      const COLORREF clrs[] = {0xFF0000, 0xFFD800, 0x4CFF00, 0x00FF90, 0x0094FF, 0x4800FF, 0xB200FF, 0xFF006E};
+      const COLORREF palette[] = {0xFF0000, 0xFFD800, 0x4CFF00, 0x00FF90, 0x0094FF, 0x4800FF, 0xB200FF, 0xFF006E};
       const POINT rays[] = { // owner rays points
          {margin+100.0000*zoom, margin+200.0000*zoom},
          {margin+170.7107*zoom, margin+ 29.2893*zoom},
@@ -67,30 +67,30 @@ int _tmain(int argc, _TCHAR* argv[])
             {
                rays[i].x,                 // LONG    x;
                rays[i].y,                 // LONG    y;
-               toClr16(clrs[(i+1)%8], 0), // COLOR16 Red;   0x0000..0xff00
-               toClr16(clrs[(i+1)%8], 1), // COLOR16 Green;
-               toClr16(clrs[(i+1)%8], 2), // COLOR16 Blue;
+               toClr16(palette[(i+1)%8], 0), // COLOR16 Red;   0x0000..0xff00
+               toClr16(palette[(i+1)%8], 1), // COLOR16 Green;
+               toClr16(palette[(i+1)%8], 2), // COLOR16 Blue;
                0x0000                     // COLOR16 Alpha;
             }, {
                oct[i].x,                  // LONG    x;
                oct[i].y,                  // LONG    y;   
-               toClr16(clrs[(i+3)%8], 0), // COLOR16 Red;   0x0000..0xff00
-               toClr16(clrs[(i+3)%8], 1), // COLOR16 Green;
-               toClr16(clrs[(i+3)%8], 2), // COLOR16 Blue;
+               toClr16(palette[(i+3)%8], 0), // COLOR16 Red;   0x0000..0xff00
+               toClr16(palette[(i+3)%8], 1), // COLOR16 Green;
+               toClr16(palette[(i+3)%8], 2), // COLOR16 Blue;
                0x0000                     // COLOR16 Alpha;
             }, {
                inn[i].x,                  // LONG    x;
                inn[i].y,                  // LONG    y;   
-               toClr16(clrs[(i+6)%8], 0), // COLOR16 Red;   0x0000..0xff00
-               toClr16(clrs[(i+6)%8], 1), // COLOR16 Green;
-               toClr16(clrs[(i+6)%8], 2), // COLOR16 Blue;
+               toClr16(palette[(i+6)%8], 0), // COLOR16 Red;   0x0000..0xff00
+               toClr16(palette[(i+6)%8], 1), // COLOR16 Green;
+               toClr16(palette[(i+6)%8], 2), // COLOR16 Blue;
                0x0000                     // COLOR16 Alpha;
             }, {
                oct[(i+5)%8].x,            // LONG    x;
                oct[(i+5)%8].y,            // LONG    y;   
-               toClr16(clrs[(i+0)%8], 0), // COLOR16 Red;   0x0000..0xff00
-               toClr16(clrs[(i+0)%8], 1), // COLOR16 Green;
-               toClr16(clrs[(i+0)%8], 2), // COLOR16 Blue;
+               toClr16(palette[(i+0)%8], 0), // COLOR16 Red;   0x0000..0xff00
+               toClr16(palette[(i+0)%8], 1), // COLOR16 Green;
+               toClr16(palette[(i+0)%8], 2), // COLOR16 Blue;
                0x0000                     // COLOR16 Alpha;
             }
          };
@@ -101,7 +101,7 @@ int _tmain(int argc, _TCHAR* argv[])
       // paint star perimeter
       //::MoveToEx(hDC, rays[7].x, rays[7].y, NULL);
       //for (int i=0; i<8; i++) {
-      //   HPEN hPen = ::CreatePen(PS_SOLID, iPenWidth, clrs[i]);   _ASSERT_EXPR(hPen, L"CreatePen");
+      //   HPEN hPen = ::CreatePen(PS_SOLID, iPenWidth, palette[i]);   _ASSERT_EXPR(hPen, L"CreatePen");
       //   HPEN hPenTmp = SelectPen(hDC, hPen);   _ASSERT_EXPR(hPenTmp, L"SelectPen");
       //   ::LineTo(hDC, rays[i].x, rays[i].y);
       //   BOOL bRes = DeletePen(hPen);   _ASSERT_EXPR(bRes, L"DeletePen");
@@ -114,16 +114,16 @@ int _tmain(int argc, _TCHAR* argv[])
             {
                inn[(i+0)%8].x,            // LONG    x;
                inn[(i+0)%8].y,            // LONG    y;
-               toClr16(clrs[(i+6)%8], 0), // COLOR16 Red;   0x0000..0xff00
-               toClr16(clrs[(i+6)%8], 1), // COLOR16 Green;
-               toClr16(clrs[(i+6)%8], 2), // COLOR16 Blue;
+               toClr16(palette[(i+6)%8], 0), // COLOR16 Red;   0x0000..0xff00
+               toClr16(palette[(i+6)%8], 1), // COLOR16 Green;
+               toClr16(palette[(i+6)%8], 2), // COLOR16 Blue;
                0x0000                     // COLOR16 Alpha;
             }, {
                inn[(i+3)%8].x,            // LONG    x;
                inn[(i+3)%8].y,            // LONG    y;   
-               toClr16(clrs[(i+6)%8], 0), // COLOR16 Red;   0x0000..0xff00
-               toClr16(clrs[(i+6)%8], 1), // COLOR16 Green;
-               toClr16(clrs[(i+6)%8], 2), // COLOR16 Blue;
+               toClr16(palette[(i+6)%8], 0), // COLOR16 Red;   0x0000..0xff00
+               toClr16(palette[(i+6)%8], 1), // COLOR16 Green;
+               toClr16(palette[(i+6)%8], 2), // COLOR16 Blue;
                0x0000                     // COLOR16 Alpha;
             }, {
                size.cx/2,  // LONG    x;

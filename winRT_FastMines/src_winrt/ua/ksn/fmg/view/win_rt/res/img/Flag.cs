@@ -13,7 +13,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
 
          // fill background to transparent color
          for (int i = 0; i < pixels.Length; i++)
-            pixels[i] = 0x00112233; // aarrggbb
+            pixels[i] = 0x00000000; // aarrggbb
 
          // paint image
 
@@ -42,12 +42,12 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
          var pix2 = new byte[pixels.Length*4];
          for (var i = 0; i < pixels.Length; i++) {
             var p = pixels[i];
-            pix2[i*4 + 3] = (byte) ((p & 0x000000FF) >> 0);
-            pix2[i*4 + 2] = (byte) ((p & 0x0000FF00) >> 8);
-            pix2[i*4 + 1] = (byte) ((p & 0x00FF0000) >> 16);
-            pix2[i*4 + 0] = (byte) ((p & 0xFF000000) >> 24);
+            pix2[i*4 + 0] = (byte)((p & 0x000000FF) >> 0);
+            pix2[i*4 + 1] = (byte)((p & 0x0000FF00) >> 8);
+            pix2[i*4 + 2] = (byte)((p & 0x00FF0000) >> 16);
+            pix2[i*4 + 3] = (byte)((p & 0xFF000000) >> 24);
          }
-         _bmp = _bmp.FromByteArray(pix2);
+         _bmp = new WriteableBitmap(w, h).FromByteArray(pix2);
       }
 
       public WriteableBitmap Image {
