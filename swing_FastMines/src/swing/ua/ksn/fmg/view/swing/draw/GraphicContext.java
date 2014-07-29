@@ -120,12 +120,10 @@ public class GraphicContext  {
 					public Color get(Object key) {
 						Color res = super.get(key);
 						if (res == null) {
-							final int base = 120; // от заданной границы светлости буду создавать новый цвет
 							Random rand = new Random();
-							int r = base + rand.nextInt(0xFF-base);
-							int g = base + rand.nextInt(0xFF-base);
-							int b = base + rand.nextInt(0xFF-base);
-							res = new Color((byte)r,(byte)g,(byte)b);
+							res = new Color((byte)rand.nextInt(0xFF),
+									(byte)rand.nextInt(0xFF),
+									(byte)rand.nextInt(0xFF)).Attenuate();
 							super.put((Integer)key, res);
 						}
 						return res;

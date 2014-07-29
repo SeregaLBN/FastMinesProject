@@ -12,6 +12,7 @@ import ua.ksn.fmg.model.mosaics.EMosaicGroup;
 import ua.ksn.fmg.view.swing.res.img.BackgroundPause;
 import ua.ksn.fmg.view.swing.res.img.Flag;
 import ua.ksn.fmg.view.swing.res.img.Mine;
+import ua.ksn.fmg.view.swing.res.img.MineOld;
 import ua.ksn.fmg.view.swing.res.img.MosaicsImg;
 import ua.ksn.swing.utils.ImgUtils;
 
@@ -73,7 +74,7 @@ public final class Resources {
 	private ImageIcon getImageIcon(String path) {
 		ImageIcon img = ImgUtils.getImageIcon("res/"+path);
 		if (img == null)
-			img = ImgUtils.getImageIcon (path);
+			img = ImgUtils.getImageIcon(path);
 		return img;
 	}
 
@@ -94,7 +95,11 @@ public final class Resources {
 		if (imgMine == null) {
 			imgMine = getImageIcon("CellState/Mine.png"); // сначала из ресурсов
 			if (imgMine == null)
-				imgMine = ImgUtils.toImgIco(new Mine()); // иначе - своя картинка из кода
+				// иначе - своя картинка из кода
+//				if (!false)
+//					imgMine = ImgUtils.toImgIco(new MineOld());
+//				else
+					imgMine = ImgUtils.toImgIco(ImgUtils.toImg(new Mine()));
 		}
 		return ImgUtils.zoom(imgMine, width, height);
 	}

@@ -69,4 +69,45 @@ public class Color {
 	public void setB(byte b) { this.b = b; }
 	public byte getA() { return a; }
 	public void setA(byte a) { this.a = a; }
+
+	/**
+	 * Смягчить цвет
+	 * @param clr
+	 * @param basic - от заданной границы светлости буду создавать новый цвет
+	 * @param withAlphaChanel
+	 * @return
+	 */
+    public Color Attenuate(int basic /* = 120 */, boolean withAlphaChanel /* = false */) {
+    	if (basic < 0 || basic >= 0xFF)
+    		throw new IllegalArgumentException();
+        return new Color(
+           (byte) (basic + (0xFF & this.r)%(0xFF - basic)),
+           (byte) (basic + (0xFF & this.g)%(0xFF - basic)),
+           (byte) (basic + (0xFF & this.b)%(0xFF - basic)),
+           withAlphaChanel ? (byte) (basic + (0xFF & this.a)%(0xFF - basic)) : this.a
+        );
+    }
+    public Color Attenuate() { return this.Attenuate(120, false); }
+
+    /**
+     * Затемнить цвет
+     */
+    public Color Bedraggle(int basic /* = 120 */, boolean withAlphaChanel /* = false */) {
+    	if (basic < 0 || basic >= 0xFF)
+    		throw new IllegalArgumentException();
+//    	if (false) {
+//			Color tmp = new Color((byte) (0xFF - (0xFF & this.r)), (byte) (0xFF - (0xFF & this.g)), (byte) (0xFF - (0xFF & this.b)), (byte) (0xFF - (0xFF & this.a)));
+//			tmp = tmp.Attenuate(basic, withAlphaChanel);
+//			return new Color((byte)(0xFF - (0xFF & tmp.r)), (byte)(0xFF - (0xFF & tmp.g)), (byte)(0xFF - (0xFF & tmp.b)), (byte)(0xFF - (0xFF & tmp.a)));
+//    	} else
+    	{
+    		return new Color(
+    				(byte)(/*basic + */(0xFF & this.r) % (0xFF - basic)),
+    				(byte)(/*basic + */(0xFF & this.g) % (0xFF - basic)),
+    				(byte)(/*basic + */(0xFF & this.b) % (0xFF - basic)),
+    				withAlphaChanel ? (byte)(/*basic + */(0xFF & this.a) % (0xFF - basic)) : this.a);
+    	}
+    }
+    public Color Bedraggle() { return this.Bedraggle(120, false); }
+
 }

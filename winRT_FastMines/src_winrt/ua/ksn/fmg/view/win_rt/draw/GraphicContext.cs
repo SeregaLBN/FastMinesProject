@@ -62,7 +62,7 @@ namespace ua.ksn.fmg.view.win_rt.draw {
          private int _mode = 0;
 
          /// <summary> кэшированные цвета фона €чеек </summary>
-         private IDictionary<int, Color> _colors;
+         private readonly IDictionary<int, Color> _colors = new Dictionary<int, Color>();
 
          /// <summary> режим заливки фона €чеек:
          /// 0 - цвет заливки фона по-умолчанию
@@ -72,27 +72,19 @@ namespace ua.ksn.fmg.view.win_rt.draw {
             get { return _mode; }
             set {
                this._mode = value;
-               Colors.Clear();
+               _colors.Clear();
             }
          }
 
          /// <summary> кэшированные цвета фона €чеек
          /// Ќет цвета? - создастьс€ с нужной интенсивностью! */
          /// </summary>
-         public IDictionary<int, Color> Colors {
-            get {
-               if (_colors == null)
-                  _colors = new Dictionary<int, Color>();
-               return _colors;
-            }
-         }
-
          public Color GetColor(int index) {
             if (_colors.ContainsKey(index))
                return _colors[index];
 
             var res = ColorExt.RandomColor(Rand).Attenuate();
-            Colors.Add(index, res);
+            _colors.Add(index, res);
             return res;
          }
       }
