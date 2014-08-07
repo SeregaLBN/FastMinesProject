@@ -12,7 +12,6 @@ import ua.ksn.fmg.model.mosaics.EMosaicGroup;
 import ua.ksn.fmg.view.swing.res.img.BackgroundPause;
 import ua.ksn.fmg.view.swing.res.img.Flag;
 import ua.ksn.fmg.view.swing.res.img.Mine;
-import ua.ksn.fmg.view.swing.res.img.MineOld;
 import ua.ksn.fmg.view.swing.res.img.MosaicsImg;
 import ua.ksn.swing.utils.ImgUtils;
 
@@ -87,7 +86,11 @@ public final class Resources {
 		if (imgFlag == null) {
 			imgFlag = getImageIcon("CellState/Flag.png"); // сначала из ресурсов
 			if (imgFlag == null)
-				imgFlag = ImgUtils.toImgIco(new Flag()); // иначе - своя картинка из кода
+				// иначе - своя картинка из кода
+//				if (!true)
+//					imgFlag = ImgUtils.toImgIco(new FlagOld());
+//				else
+					imgFlag  = ImgUtils.toImgIco(ImgUtils.toImg(new Flag()));
 		}
 		return ImgUtils.zoom(imgFlag, width, height);
 	}

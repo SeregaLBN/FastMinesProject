@@ -79,28 +79,26 @@ public class CellPaint {
 //			return;
 //		}
 
-		Graphics2D g2d = (Graphics2D) g;
+		Graphics2D g2 = (Graphics2D) g;
 		// save
-		Stroke strokeOld = g2d.getStroke();
-		//RenderingHints rendHintsOld = g2d.getRenderingHints();
-		Object renderingHintKeyAntialiasingOld = g2d.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+		Stroke strokeOld = g2.getStroke();
+		Object oldValAntialiasing = g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
 
 		// set my custom params
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // TODO для релиза сменить на VALUE_ANTIALIAS_ON 
-		g2d.setStroke(new BasicStroke(gContext.getPenBorder().getWidth())); // TODO глянуть расширенные параметры конструктора пера
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // TODO для релиза сменить на VALUE_ANTIALIAS_ON 
+		g2.setStroke(new BasicStroke(gContext.getPenBorder().getWidth())); // TODO глянуть расширенные параметры конструктора пера
 
 		// draw lines
 		paintBorderLines(cell, g);
-
-		// restore
-		g2d.setStroke(strokeOld);
-//		g2d.setRenderingHints(rendHintsOld);
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, renderingHintKeyAntialiasingOld);
 
 		// debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
 //		Rect rcInner = cell.getRcInner(gContext.getPenBorder().getWidth());
 //		g.setColor(Color.MAGENTA);
 //		g.drawRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
+
+		// restore
+		g2.setStroke(strokeOld);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, oldValAntialiasing);
 	}
 
 	/** draw border lines */

@@ -1,4 +1,4 @@
-// BmpLogo.cpp : Defines the entry point for the console application.
+// BmpLogo.cpp : Fast Mines logo
 //
 
 #include "tchar.h"
@@ -99,14 +99,13 @@ int _tmain(int argc, _TCHAR* argv[])
       }
 
       // paint star perimeter
+      //HPEN hPen = ::CreatePen(PS_SOLID, iPenWidth, palette[i]);   _ASSERT_EXPR(hPen, L"CreatePen");
+      //HPEN hPenTmp = SelectPen(hDC, hPen);   _ASSERT_EXPR(hPenTmp, L"SelectPen");
       //::MoveToEx(hDC, rays[7].x, rays[7].y, NULL);
-      //for (int i=0; i<8; i++) {
-      //   HPEN hPen = ::CreatePen(PS_SOLID, iPenWidth, palette[i]);   _ASSERT_EXPR(hPen, L"CreatePen");
-      //   HPEN hPenTmp = SelectPen(hDC, hPen);   _ASSERT_EXPR(hPenTmp, L"SelectPen");
+      //for (int i=0; i<8; i++)
       //   ::LineTo(hDC, rays[i].x, rays[i].y);
-      //   BOOL bRes = DeletePen(hPen);   _ASSERT_EXPR(bRes, L"DeletePen");
-      //   hPenTmp = SelectPen(hDC, hPenTmp);   _ASSERT_EXPR(hPenTmp==hPen, L"released SelectPen");
-      //}
+      //BOOL bRes = DeletePen(hPen);   _ASSERT_EXPR(bRes, L"DeletePen");
+      //hPenTmp = SelectPen(hDC, hPenTmp);   _ASSERT_EXPR(hPenTmp==hPen, L"released SelectPen");
 
       // paint inner gradient triangles
       for (int i=0; i<8; i++) {

@@ -1,1 +1,30 @@
-package ua.ksn.fmg.view.swing.res.img;import java.awt.Color;import java.awt.BasicStroke;import java.awt.Component;import java.awt.Graphics;import java.awt.Graphics2D;import javax.swing.Icon;/** картинка для фоновой паузы */public class BackgroundPause implements Icon {	public int getIconWidth() {		return 1000;	}	public int getIconHeight() {		return 1000;	}	public void paintIcon(Component c, Graphics g, int x, int y) {//		// fill background (only transparent color)//		g.setColor(new Color(0x00123456, true));//		g.fillRect(0, 0, getIconWidth(), getIconHeight());		// тело смайла		g.setColor(new Color(0x00FFE600));		g.fillOval(5, 5, getIconWidth()-10, getIconHeight()-10);		// глаза		g.setColor(new Color(0x00000000));		g.fillOval(330, 150, 98, 296);		g.fillOval(570, 150, 98, 296);		// smile		Graphics2D g2d = (Graphics2D) g;		g2d.setStroke(new BasicStroke(14, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));		g.drawArc(103, -133, 795, 1003, 207, 126);		// ямочки на щеках		g.drawArc(90, 580, 180, 180, 85, 57);		g.drawArc(730, 580, 180, 180, 38, 57);	}}
+package ua.ksn.fmg.view.swing.res.img;
+
+import java.awt.Component;
+import java.awt.Graphics;
+
+import javax.swing.Icon;
+
+/** картинка для фоновой паузы */
+public class BackgroundPause implements Icon {
+	private Logo _logo;
+
+	public BackgroundPause() {
+		_logo = new Logo(true);
+		_logo.setMargin(10);
+		_logo.setZoomX(2.7);
+		_logo.setZoomY(2.7);
+	}
+
+	public int getIconWidth() {
+		return _logo.getIconWidth();
+	}
+
+	public int getIconHeight() {
+		return _logo.getIconHeight();
+	}
+
+	public void paintIcon(Component c, Graphics g, int x, int y) {
+		_logo.paintIcon(c, g, x, y);
+	}
+}
