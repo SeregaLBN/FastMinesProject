@@ -12,13 +12,11 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       private WriteableBitmap _img;
 
       public Logo() {
-         BkColor = Colors.White;
          ZoomX = 1;
          ZoomY = 1;
          Margin = 3;
       }
 
-      public Windows.UI.Color BkColor { get; set; }
       public double ZoomX { get; set; }
       public double ZoomY { get; set; }
       public uint Margin { get; set; }
@@ -46,8 +44,6 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
 
             var size = new Size((int) (DefaultWidht*ZoomX+2*Margin), (int) (DefaultHeight*ZoomY+2*Margin));
             var bmp = BitmapFactory.New(size.width, size.height);
-
-            bmp.FillRectangle(0, 0, size.width, size.height, BkColor);
 
             { // draw star
                var rays = new [] { // owner rays points

@@ -20,7 +20,7 @@ namespace ua.ksn.fmg.view.win_rt.res {
       public static readonly Windows.UI.Color DefaultBkColor = Windows.UI.Color.FromArgb(0xFF, 0xff, 0x8c, 0x00);
 
       private static WriteableBitmap _imgLogoPng;
-      private static Dictionary<Tuple<Size, Windows.UI.Color, uint, uint>, WriteableBitmap> _imgLogos;
+      private static Dictionary<Tuple<Size, uint, uint>, WriteableBitmap> _imgLogos;
 
       private static WriteableBitmap _imgFlag, _imgMine;
       private static WriteableBitmap _imgPause;
@@ -83,14 +83,13 @@ namespace ua.ksn.fmg.view.win_rt.res {
          return _imgLogoPng;
       }
 
-      public static WriteableBitmap GetImgLogo(Size sizeImage, Windows.UI.Color bkColor, uint loopMix = 0, uint margin = 3) {
+      public static WriteableBitmap GetImgLogo(Size sizeImage, uint loopMix = 0, uint margin = 3) {
          if (_imgLogos == null)
-            _imgLogos = new Dictionary<Tuple<Size, Windows.UI.Color, uint, uint>, WriteableBitmap>();
-         var key = new Tuple<Size, Windows.UI.Color, uint, uint>(sizeImage, bkColor, loopMix, margin);
+            _imgLogos = new Dictionary<Tuple<Size, uint, uint>, WriteableBitmap>();
+         var key = new Tuple<Size, uint, uint>(sizeImage, loopMix, margin);
          if (_imgLogos.ContainsKey(key))
             return _imgLogos[key];
          var imgLogo = new Logo {
-            BkColor = bkColor,
             Margin = margin,
             ZoomX = Logo.CalcZoom(sizeImage.width, margin),
             ZoomY = Logo.CalcZoom(sizeImage.height, margin)

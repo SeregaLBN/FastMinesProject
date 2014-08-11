@@ -106,7 +106,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
       public void PaintBorderLines(BaseCell cell, WriteableBitmap bmp) {
          var down = cell.State.Down || (cell.State.Status == EState._Open);
          if (gContext.IconicMode) {
-            bmp.DrawPolyline(RegionAsXyxyxySequence(gContext.Bound, cell.getRegion()), (down ? gContext.PenBorder.ColorLight : gContext.PenBorder.ColorShadow).ToWinColor());
+            bmp.DrawPolyline(cell.getRegion().RegionAsXyxyxySequence(gContext.Bound, true), (down ? gContext.PenBorder.ColorLight : gContext.PenBorder.ColorShadow).ToWinColor());
          } else {
             var color = down ? gContext.PenBorder.ColorLight : gContext.PenBorder.ColorShadow;
             var s = cell.getShiftPointBorderIndex();
@@ -241,7 +241,8 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
          ImageSource srcImg = null;
          if ((gContext.ImgFlag != null) &&
              (cell.State.Status == EState._Close) &&
-             (cell.State.Close == EClose._Flag)) {
+             (cell.State.Close == EClose._Flag))
+         {
             srcImg = gContext.ImgFlag;
          } else if ((gContext.ImgMine != null) &&
                     (cell.State.Status == EState._Open) &&
@@ -310,7 +311,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
             DefaultBackgroundFillColor,
             gContext.BkFill.GetColor
             );
-         bmp.FillPolygon(RegionAsXyxyxySequence(gContext.Bound, cell.getRegion()), color.ToWinColor());
+         bmp.FillPolygon(cell.getRegion().RegionAsXyxyxySequence(gContext.Bound, true), color.ToWinColor());
       }
 
       /// <summary> залить €чейку нужным цветом </summary>
@@ -325,25 +326,6 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
                gContext.BkFill.GetColor
                );
          binder.Item1.Fill = FindBrush(clr);
-      }
-
-      private static int[] RegionAsXyxyxySequence(Size bound, Region region)
-      {
-         var points = new int[region.CountPoints * 2 + 2];
-         int i;
-         for (i=0; i < region.CountPoints; i++) {
-            var point = region.getPoint(i);
-            point.Move(bound);
-            points[i * 2] = point.x;
-            points[i * 2 + 1] = point.y;
-         }
-         { // Add the first point also at the end of the array if the line should be closed.
-            var point = region.getPoint(0);
-            point.Move(bound);
-            points[i * 2 + 0] = point.x;
-            points[i * 2 + 1] = point.y;
-         }
-         return points;
       }
    }
 }

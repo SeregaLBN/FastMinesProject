@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -95,5 +96,45 @@ public class Region {
       sb.Append('}');
       return sb.ToString();
    }
+}
+
+public static class RegionExt {
+   public static int[] RegionAsXyxyxySequence(this Region region, Size bound, bool firstToLast) {
+      var points = new int[region.CountPoints*2 + (firstToLast ? 2 : 0)];
+      int i;
+      for (i = 0; i < region.CountPoints; i++) {
+         var point = region.getPoint(i);
+         point.Move(bound);
+         points[i*2 + 0] = point.x;
+         points[i*2 + 1] = point.y;
+      }
+      if (firstToLast) {
+         // Add the first point also at the end of the array if the line should be closed.
+         var point = region.getPoint(0);
+         point.Move(bound);
+         points[i*2 + 0] = point.x;
+         points[i*2 + 1] = point.y;
+      }
+      return points;
+   }
+
+#if WINDOWS_RT
+   public static int[] PointsAsXyxyxySequence(IList<Windows.Foundation.Point> coords, bool firstToLast) {
+      var points = new int[coords.Count*2 + (firstToLast ? 2 : 0)];
+      int i;
+      for (i = 0; i < coords.Count; i++) {
+         var point = coords[i];
+         points[i*2 + 0] = (int)point.X;
+         points[i*2 + 1] = (int)point.Y;
+      }
+      if (firstToLast) {
+         // Add the first point also at the end of the array if the line should be closed.
+         var point = coords[0];
+         points[i*2 + 0] = (int)point.X;
+         points[i*2 + 1] = (int)point.Y;
+      }
+      return points;
+   }
+#endif
 }
 }

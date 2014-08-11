@@ -9,7 +9,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       public Mine() {
 #if true
          var img = new Logo {
-            BkColor = new Color(0x00000000).ToWinColor(),
+            //BkColor = new Color(0x00000000).ToWinColor(),
             Margin = 10,
             ZoomX = 0.7,
             ZoomY = 0.7

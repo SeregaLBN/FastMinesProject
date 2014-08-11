@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 using ua.ksn.fmg.model.mosaics;
 using FastMines.Common;
+using ua.ksn.geom;
+using Point = Windows.Foundation.Point;
+using Rect = Windows.Foundation.Rect;
 
 namespace ua.ksn.fmg.view.win_rt.res.img {
 
@@ -206,7 +208,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
                A = byte.MaxValue
             }.Attenuate(160).ToWinColor();
 
-         bmp.FillPolygon(PointsAsXyxyxySequence(_points), fillColor);
+         bmp.FillPolygon(RegionExt.PointsAsXyxyxySequence(_points, true), fillColor);
 
          for (var i = 0; i < _points.Length; i++) {
             var p1 = _points[i];
@@ -242,22 +244,6 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
             };
             _timer.Start();
          }
-      }
-
-      private static int[] PointsAsXyxyxySequence(IList<Point> coords) {
-         var points = new int[coords.Count * 2 + 2];
-         int i;
-         for (i = 0; i < coords.Count; i++) {
-            var point = coords[i];
-            points[i * 2] = (int) point.X;
-            points[i * 2 + 1] = (int) point.Y;
-         }
-         { // Add the first point also at the end of the array if the line should be closed.
-            var point = coords[0];
-            points[i * 2 + 0] = (int)point.X;
-            points[i * 2 + 1] = (int)point.Y;
-         }
-         return points;
       }
 
       public void Dispose() {
