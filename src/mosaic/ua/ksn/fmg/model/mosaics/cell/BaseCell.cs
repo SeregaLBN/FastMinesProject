@@ -511,29 +511,16 @@ public abstract class BaseCell {
          //break;// !!! без break'а
          goto case 0;
       case 0:
-         Color clr = defaultColor;
-         { // для Down и Нажатого состояний делаю фон чуть и чуть-чуть темнее...
-            float perc;
-            bool failGame = false;
+         if ((state.Status == EState._Open) && (state.Open == EOpen._Mine) && state.Down)
+            return Color.Red.Brighter(0.05); // game ower: игра завершена - клик на мине
+         if ((state.Status == EState._Open) && (state.Open != EOpen._Mine) && (state.Close == EClose._Flag))
+            return Color.Magenta.Brighter(0.3); // game ower: игра завершена - не верно проставлен флаг (на ячейке с цифрой)
 
-            if (state.Status == EState._Close)
-               if (state.Down)
-                  perc = .15f;
-               else
-                  perc = 0.0f;
-            else {
-               failGame = (state.Open == EOpen._Mine) && state.Down;
-               perc = state.Down ? .25f : 0.0f;
-            }
-   
-            if (failGame)
-               return Color.RED;
+          // для Down и Нажатого состояний делаю фон чуть и чуть-чуть темнее...
+         if (state.Down)
+            return defaultColor.Darker((state.Status == EState._Close) ? 0.15 : 0.25);
+         return defaultColor;
 
-            byte _r = (byte) (clr.R - clr.R * perc);
-            byte _g = (byte) (clr.G - clr.G * perc);
-            byte _b = (byte) (clr.B - clr.B * perc);
-            return new Color(_r,_g,_b);
-         }
       case 1:
          return repositoryColor(getDirection());
       case 2:

@@ -1,16 +1,20 @@
 package ua.ksn;
 
+import java.util.Random;
+
 public class Color {
-	public static final Color Black  = new Color(0xFF000000);
-	public static final Color White  = new Color(0xFFFFFFFF);
-	public static final Color Navy   = new Color(0xFF000080);
-	public static final Color Green  = new Color(0xFF008000);
-	public static final Color Red    = new Color(0xFFFF0000);
-	public static final Color Maroon = new Color(0xFF800000);
-	public static final Color Blue   = new Color(0xFF0000FF);
-	public static final Color Olive  = new Color(0xFF808000);
-	public static final Color Aqua   = new Color(0xFF00FFFF);
-	public static final Color Teal   = new Color(0xFF008080);
+	public static final Color Black   = new Color(0xFF000000);
+	public static final Color White   = new Color(0xFFFFFFFF);
+	public static final Color Navy    = new Color(0xFF000080);
+	public static final Color Green   = new Color(0xFF008000);
+	public static final Color Red     = new Color(0xFFFF0000);
+	public static final Color Maroon  = new Color(0xFF800000);
+	public static final Color Blue    = new Color(0xFF0000FF);
+	public static final Color Olive   = new Color(0xFF808000);
+	public static final Color Aqua    = new Color(0xFF00FFFF);
+	public static final Color Teal    = new Color(0xFF008080);
+	public static final Color Magenta = new Color(255, 0, 255); // Fuchsia
+	public static final Color Gray    = new Color(128, 128, 128);
 
 	protected byte r,g,b,a;
 	
@@ -70,6 +74,13 @@ public class Color {
 	public byte getA() { return a; }
 	public void setA(byte a) { this.a = a; }
 
+	public static Color RandomColor(Random rnd) {
+		return new Color(
+			(byte)rnd.nextInt(0xFF),
+			(byte)rnd.nextInt(0xFF),
+			(byte)rnd.nextInt(0xFF));
+	}
+
 	/**
 	 * Смягчить цвет
 	 * @param clr
@@ -77,37 +88,42 @@ public class Color {
 	 * @param withAlphaChanel
 	 * @return
 	 */
-    public Color Attenuate(int basic /* = 120 */, boolean withAlphaChanel /* = false */) {
-    	if (basic < 0 || basic >= 0xFF)
-    		throw new IllegalArgumentException();
-        return new Color(
-           (byte) (basic + (0xFF & this.r)%(0xFF - basic)),
-           (byte) (basic + (0xFF & this.g)%(0xFF - basic)),
-           (byte) (basic + (0xFF & this.b)%(0xFF - basic)),
-           withAlphaChanel ? (byte) (basic + (0xFF & this.a)%(0xFF - basic)) : this.a
-        );
-    }
-    public Color Attenuate() { return this.Attenuate(120, false); }
+	public Color attenuate(int basic /* = 120 */) {
+		if (basic < 0 || basic >= 0xFF)
+			throw new IllegalArgumentException();
+		return new Color(
+			(byte) (basic + (0xFF & this.r)%(0xFF - basic)),
+			(byte) (basic + (0xFF & this.g)%(0xFF - basic)),
+			(byte) (basic + (0xFF & this.b)%(0xFF - basic)),
+			this.a
+	);
+	}
+	public Color attenuate() { return this.attenuate(120); }
 
-    /**
-     * Затемнить цвет
-     */
-    public Color Bedraggle(int basic /* = 120 */, boolean withAlphaChanel /* = false */) {
-    	if (basic < 0 || basic >= 0xFF)
-    		throw new IllegalArgumentException();
-//    	if (false) {
-//			Color tmp = new Color((byte) (0xFF - (0xFF & this.r)), (byte) (0xFF - (0xFF & this.g)), (byte) (0xFF - (0xFF & this.b)), (byte) (0xFF - (0xFF & this.a)));
-//			tmp = tmp.Attenuate(basic, withAlphaChanel);
-//			return new Color((byte)(0xFF - (0xFF & tmp.r)), (byte)(0xFF - (0xFF & tmp.g)), (byte)(0xFF - (0xFF & tmp.b)), (byte)(0xFF - (0xFF & tmp.a)));
-//    	} else
-    	{
-    		return new Color(
-    				(byte)(/*basic + */(0xFF & this.r) % (0xFF - basic)),
-    				(byte)(/*basic + */(0xFF & this.g) % (0xFF - basic)),
-    				(byte)(/*basic + */(0xFF & this.b) % (0xFF - basic)),
-    				withAlphaChanel ? (byte)(/*basic + */(0xFF & this.a) % (0xFF - basic)) : this.a);
-    	}
-    }
-    public Color Bedraggle() { return this.Bedraggle(120, false); }
+	/**
+	 * Creates brighter version of this Color
+	 * @param percent - 0.0 - as is; 1 - WHITE
+	 * @return
+	 */
+	public Color brighter(double percent) {
+		Color tmp = new Color((byte)(0xFF - (0xFF & this.r)), (byte)(0xFF - (0xFF & this.g)), (byte)(0xFF - (0xFF & this.b)), this.a);
+		tmp = tmp.darker(percent);
+		return new Color((byte)(0xFF - (0xFF & tmp.r)), (byte)(0xFF - (0xFF & tmp.g)), (byte)(0xFF - (0xFF & tmp.b)), tmp.a);
+	}
+	public Color brighter() { return this.brighter(0.7); }
 
+	/**
+	 * Creates darker version of this Color
+	 * @param percent - 0.0 - as is; 1 - BLACK
+	 * @return
+	 */
+	public Color darker(double percent) {
+		double tmp = 1 - Math.min(1, Math.max(0, percent));
+		return new Color(
+			(byte)((0xFF & this.r)*tmp),
+			(byte)((0xFF & this.g)*tmp),
+			(byte)((0xFF & this.b)*tmp),
+			this.a);
+	}
+	public Color darker() { return darker(0.7); }
 }

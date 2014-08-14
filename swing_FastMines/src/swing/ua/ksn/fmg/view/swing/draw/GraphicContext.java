@@ -120,10 +120,7 @@ public class GraphicContext  {
 					public Color get(Object key) {
 						Color res = super.get(key);
 						if (res == null) {
-							Random rand = new Random();
-							res = new Color((byte)rand.nextInt(0xFF),
-									(byte)rand.nextInt(0xFF),
-									(byte)rand.nextInt(0xFF)).Attenuate();
+							res = Color.RandomColor(new Random()).attenuate();
 							super.put((Integer)key, res);
 						}
 						return res;

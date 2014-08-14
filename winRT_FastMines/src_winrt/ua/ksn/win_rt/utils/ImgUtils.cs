@@ -123,8 +123,8 @@ namespace ua.ksn.win_rt.utils {
                var clr = 0xFF << 24; //unchecked((int)0xFF000000);
                image.FillPolygon(points,
                   Windows.ApplicationModel.DesignMode.DesignModeEnabled
-                     ? Color.GREEN.ToWinColor()
-                     : Color.RED.ToWinColor());
+                     ? Color.Green.ToWinColor()
+                     : Color.Red.ToWinColor());
                //image.DrawRectangle(10, 10, maxX, maxY, clr);
                clr |= 0xFFFFFF;
                image.DrawLine(10, 10, 200, 200, clr);

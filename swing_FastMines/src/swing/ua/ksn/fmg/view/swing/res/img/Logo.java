@@ -138,7 +138,7 @@ public class Logo implements Icon {
 //						(int)inn[i].y
 //					}, 3);
 			} else {
-				g.setColor(Cast.toColor(Cast.toColor(Palette[i]).Bedraggle()));
+				g.setColor(Cast.toColor(Cast.toColor(Palette[i]).darker()));
 				g.fillPolygon(new int [] {
 						(int)rays[i].x,
 						(int)oct[i].x,
@@ -170,8 +170,8 @@ public class Logo implements Icon {
 						center, ((i&1)==0) ? Color.BLACK : Color.WHITE));
 			else
 				g.setColor(((i & 1) == 0)
-						? Cast.toColor(Cast.toColor(Palette[(i + 6)%8]).Attenuate())
-						: Palette[(i + 6)%8]);
+						? Cast.toColor(Cast.toColor(Palette[(i + 6)%8]).brighter())
+						: Cast.toColor(Cast.toColor(Palette[(i + 6)%8]).darker()));
 			g.fillPolygon(new int [] {
 					(int)inn[(i + 0)%8].x,
 					(int)inn[(i + 3)%8].x,

@@ -5,7 +5,7 @@ using ua.ksn.geom;
 namespace ua.ksn.fmg.view.win_rt.draw.mosaics {
 
    public class MosaicGraphicContext : GraphicContext {
-      public static readonly Color COLOR_BTNFACE = Color.GRAY;
+      public static readonly Color COLOR_BTNFACE = Color.Gray;
 
       private Color _colorBk;
       private WriteableBitmap _imgBckgrnd;

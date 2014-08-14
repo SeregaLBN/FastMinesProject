@@ -3,19 +3,19 @@ using System;
 namespace ua.ksn {
 
    public struct Color {
-      public static readonly Color TRANSPARENT = new Color(0,255,255,255);
-      public static readonly Color BLACK   = new Color(0xFF000000);
-      public static readonly Color WHITE   = new Color { A = 0xFF, R = 0xFF, G = 0xFF, B = 0xFF };
-      public static readonly Color RED     = new Color { A = 0xFF, R = 0xFF };
-      public static readonly Color BLUE    = new Color { A = 0xFF, B = 0xFF };
-      public static readonly Color GREEN   = new Color { A = 0xFF, G = 0xFF };
-      public static readonly Color NAVY    = new Color(0xFF000080);
-      public static readonly Color MAROON  = new Color(0xFF800000);
-      public static readonly Color OLIVE   = new Color(0xFF808000);
-      public static readonly Color AQUA    = new Color(0xFF00FFFF);
-      public static readonly Color TEAL    = new Color(0xFF008080);
-      public static readonly Color MAGENTA = new Color(255, 0, 255); // FUCHSIA
-      public static readonly Color GRAY    = new Color(128, 128, 128);
+      public static readonly Color Transparent = new Color(0,255,255,255);
+      public static readonly Color Black   = new Color(0xFF000000);
+      public static readonly Color White   = new Color { A = 0xFF, R = 0xFF, G = 0xFF, B = 0xFF };
+      public static readonly Color Red     = new Color { A = 0xFF, R = 0xFF };
+      public static readonly Color Blue    = new Color { A = 0xFF, B = 0xFF };
+      public static readonly Color Green   = new Color { A = 0xFF, G = 0xFF };
+      public static readonly Color Navy    = new Color(0xFF000080);
+      public static readonly Color Maroon  = new Color(0xFF800000);
+      public static readonly Color Olive   = new Color(0xFF808000);
+      public static readonly Color Aqua    = new Color(0xFF00FFFF);
+      public static readonly Color Teal    = new Color(0xFF008080);
+      public static readonly Color Magenta = new Color(255, 0, 255); // FUCHSIA
+      public static readonly Color Gray    = new Color(128, 128, 128);
 
       public byte R,G,B,A;
 
@@ -23,7 +23,7 @@ namespace ua.ksn {
       public Color(byte r, byte g, byte b) { R = r; G = g; B = b; A = 0xFF; }
       public Color(ulong aarrggbb) {
          if (aarrggbb > 0xFFFFFFFF)
-            throw new System.ArgumentException("Value incorrect");
+            throw new ArgumentException("Value incorrect");
          A = (byte)((aarrggbb & 0xFF000000) >> 24);
          R = (byte)((aarrggbb & 0xFF0000) >> 16);
          G = (byte)((aarrggbb & 0xFF00) >> 8);
@@ -53,40 +53,44 @@ namespace ua.ksn {
             R = (byte) ((next & 0xFF) >> 0),
             G = (byte) ((next & 0xFF00) >> 8),
             B = (byte) ((next & 0xFF0000) >> 16),
-            A = 255
-         };
+            A = 255};
       }
 
       /// <summary> Смягчить цвет </summary>
       /// <param name="clr"></param>
       /// <param name="basic"> от заданной границы светлости буду создавать новый цвет </param>
-      /// <param name="withAlphaChanel"></param>
       /// <returns></returns>
-      public static Color Attenuate(this Color clr, int basic = 120, bool withAlphaChanel = false) {
+      public static Color Attenuate(this Color clr, int basic = 120) {
          System.Diagnostics.Debug.Assert(basic >= 0 && basic < 0xFF);
          return new Color {
             R = (byte) (basic + clr.R%(0xFF - basic)),
             G = (byte) (basic + clr.G%(0xFF - basic)),
             B = (byte) (basic + clr.B%(0xFF - basic)),
-            A = withAlphaChanel ? (byte) (basic + clr.A%(0xFF - basic)) : clr.A
+            A = clr.A
          };
       }
 
-      /// <summary> Затемнить цвет </summary>
-      public static Color Bedraggle(this Color clr, int basic = 120, bool withAlphaChanel = false) {
-         System.Diagnostics.Debug.Assert(basic >= 0 && basic < 0xFF);
-#if false
-         var tmp = new Color((byte) (0xFF - clr.R), (byte) (0xFF - clr.G), (byte) (0xFF - clr.B), (byte) (0xFF - clr.A));
-         tmp = tmp.Attenuate(basic, withAlphaChanel);
-         return new Color((byte)(0xFF - tmp.R), (byte)(0xFF - tmp.G), (byte)(0xFF - tmp.B), (byte)(0xFF - tmp.A));
-#else
-         return new Color {
-            R = (byte)(/*basic + */clr.R % (0xFF - basic)),
-            G = (byte)(/*basic + */clr.G % (0xFF - basic)),
-            B = (byte)(/*basic + */clr.B % (0xFF - basic)),
-            A = withAlphaChanel ? (byte)(/*basic + */clr.A % (0xFF - basic)) : clr.A
-         };
-#endif
+      /// <summary> Creates brighter version of this Color </summary>
+      /// <param name="clr">from</param>
+      /// <param name="percent">0.0 - as is; 1 - WHITE</param>
+      /// <returns></returns>
+      public static Color Brighter(this Color clr, double percent = 0.7) {
+         var tmp = new Color((byte)(0xFF - clr.R), (byte)(0xFF - clr.G), (byte)(0xFF - clr.B), clr.A);
+         tmp = tmp.Darker(percent);
+         return new Color((byte)(0xFF - tmp.R), (byte)(0xFF - tmp.G), (byte)(0xFF - tmp.B), tmp.A);
+      }
+
+      /// <summary> Creates darker version of this Color </summary>
+      /// <param name="clr">from</param>
+      /// <param name="percent">0.0 - as is; 1 - BLACK</param>
+      /// <returns></returns>
+      public static Color Darker(this Color clr, double percent = 0.7) {
+         var tmp = 1 - Math.Min(1, Math.Max(0, percent));
+         return new Color(
+            (byte)(clr.R*tmp), // (byte)Math.Min(clr.R*tmp, byte.MaxValue),
+            (byte)(clr.G*tmp), // (byte)Math.Min(clr.G*tmp, byte.MaxValue),
+            (byte)(clr.B*tmp), // (byte)Math.Min(clr.B*tmp, byte.MaxValue),
+            clr.A);
       }
 
 #if WINDOWS_RT

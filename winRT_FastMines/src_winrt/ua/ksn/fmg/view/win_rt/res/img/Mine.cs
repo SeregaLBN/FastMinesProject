@@ -15,7 +15,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
             ZoomY = 0.7
          };
          for (var i = 0; i<img.Palette.Length; i++)
-            img.Palette[i] = img.Palette[i].Bedraggle(200);
+            img.Palette[i] = img.Palette[i].Darker(0.5);
          //img.MixLoopColor(mixLoop);
          _bmp = img.Image; // иначе - своя картинка из кода
 #else

@@ -13,7 +13,7 @@ public class PenBorder {
    private int width;
 
    public PenBorder() :
-      this(Color.BLACK, Color.WHITE, 3)
+      this(Color.Black, Color.White, 3)
       //this(Color.GREEN, Color.RED, 1)
    {}
    public PenBorder(

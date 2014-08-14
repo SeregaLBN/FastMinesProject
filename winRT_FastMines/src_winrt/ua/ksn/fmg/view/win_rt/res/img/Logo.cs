@@ -81,8 +81,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
                      (int) oct[i].x, (int) oct[i].y,
                      (int) inn[i].x, (int) inn[i].y,
                      (int) oct[(i+5)%8].x, (int) oct[(i+5)%8].y,
-                     //Palette[(i+0)%8].Bedraggle().ToWinColor()
-                     Palette[i].Bedraggle().ToWinColor()
+                     Palette[i].Darker().ToWinColor()
                   );
                }
 
@@ -100,8 +99,8 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
                      (int) inn[(i + 3)%8].x, (int) inn[(i + 3)%8].y,
                      size.width/2, size.height/2,
                      ((i & 1) == 0)
-                        ? Palette[(i + 6)%8].Attenuate().ToWinColor()
-                        : Palette[(i + 6)%8].ToWinColor());
+                        ? Palette[(i + 6)%8].Brighter().ToWinColor()
+                        : Palette[(i + 6)%8].Darker().ToWinColor());
                }
             }
 

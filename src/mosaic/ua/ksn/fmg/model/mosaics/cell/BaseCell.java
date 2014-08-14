@@ -556,29 +556,16 @@ public abstract class BaseCell implements PropertyChangeListener {
 			System.err.println(getClass().getSimpleName()+".getBackgroundFillColor: fillMode="+fillMode+":  добавь цветовую обработку для этого режима!");
 			//break;// !!! без break'а
 		case 0:
-			Color clr = defaultColor;
-			{ // для Down и Нажатого состояний делаю фон чуть и чуть-чуть темнее...
-				float perc;
-				boolean failGame = false;
+			if ((getState().getStatus() == EState._Open) && (getState().getOpen() == EOpen._Mine) && getState().isDown())
+				return Color.Red.brighter(0.05); // game ower: игра завершена - клик на мине
+			if ((getState().getStatus() == EState._Open) && (getState().getOpen() != EOpen._Mine) && (getState().getClose() == EClose._Flag))
+				return Color.Magenta.brighter(0.3); // game ower: игра завершена - не верно проставлен флаг (на ячейке с цифрой)
 
-				if (getState().getStatus() == EState._Close)
-					if (getState().isDown())
-						perc = .15f;
-					else
-						perc = 0.f;
-				else {
-					failGame = (getState().getOpen() == EOpen._Mine) && getState().isDown();
-					perc = getState().isDown() ? .25f : 0.f;
-				}
-	
-				if (failGame)
-					return Color.Red;
+			// для Down и Нажатого состояний делаю фон чуть и чуть-чуть темнее...
+			if (getState().isDown())
+				return defaultColor.darker((getState().getStatus() == EState._Close) ? 0.15 : 0.25);
+			return defaultColor;
 
-				byte _r = (byte) (clr.getR() - clr.getR() * perc);
-				byte _g = (byte) (clr.getG() - clr.getG() * perc);
-				byte _b = (byte) (clr.getB() - clr.getB() * perc);
-				return new Color(_r,_g,_b);
-			}
 		case 1:
 			return repositoryColor.get(getDirection());
 		case 2:

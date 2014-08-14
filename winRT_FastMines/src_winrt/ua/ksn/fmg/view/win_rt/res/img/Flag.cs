@@ -33,10 +33,10 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
             };
 
             //bmp.DrawLineAa((int) p[0].X, (int) p[0].Y, (int) p[2].X, (int) p[2].Y, Color.BLACK.ToWinColor());
-            bmp.DrawLineAa((int) p[0].X, (int) p[0].Y, (int) p[1].X, (int) p[1].Y, Color.BLACK.ToWinColor());
+            bmp.DrawLineAa((int) p[0].X, (int) p[0].Y, (int) p[1].X, (int) p[1].Y, Color.Black.ToWinColor());
 
             const float tension = 0.5f;
-            var clrCurve = Color.RED.ToWinColor();
+            var clrCurve = Color.Red.ToWinColor();
             bmp.DrawCurve(
                RegionExt.PointsAsXyxyxySequence(new[] {
                   p[3],
