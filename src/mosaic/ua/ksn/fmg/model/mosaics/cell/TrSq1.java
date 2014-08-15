@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "TrSq1.java"
 //
-// Реализация класса TrSq1 - мозаика из 4х треугольников и 2х квадратов
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° TrSq1 - РјРѕР·Р°РёРєР° РёР· 4С… С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ Рё 2С… РєРІР°РґСЂР°С‚РѕРІ
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ import ua.ksn.geom.Rect;
 import ua.ksn.geom.Size;
 
 /**
- * Комбинация. Мозаика из 4х треугольников и 2х квадратов 
+ * РљРѕРјР±РёРЅР°С†РёСЏ. РњРѕР·Р°РёРєР° РёР· 4С… С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ Рё 2С… РєРІР°РґСЂР°С‚РѕРІ 
  * @see BaseCell
  **/
 public class TrSq1 extends BaseCell {
@@ -115,7 +115,7 @@ public class TrSq1 extends BaseCell {
 	protected Coord[] GetCoordsNeighbor() {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	switch (direction) {
     	case 0:
     		neighborCoord[ 0] = new Coord(coord.x-2, coord.y-1);
@@ -272,7 +272,7 @@ public class TrSq1 extends BaseCell {
 
 		double ksw1 = k/2-sq2-w/SQRT2;
 		double ksw2 = k/2+sq2+w/SQRT2;
-		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° РІРїРёСЃР°РЅРЅРѕРіРѕ РІ С„РёРіСѓСЂСѓ РєРІР°РґСЂР°С‚Р° (РЅРµ СЃРѕРІРїР°РґР°РµС‚ СЃ С†РµРЅС‚СЂРѕРј С„РёРіСѓСЂС‹)
 		switch (direction) {
 		case 0:  center.x = oX - b/2;    center.y = oY - k/2;    break;
 		case 1:  center.x = oX + ksw1;   center.y = oY - ksw2;   break;

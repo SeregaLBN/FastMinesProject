@@ -2,28 +2,28 @@ package ua.ksn.swing.utils;
 
 import javax.swing.*;
 
-/** Класс для удобной работы с блочным расположением */
+/** РљР»Р°СЃСЃ РґР»СЏ СѓРґРѕР±РЅРѕР№ СЂР°Р±РѕС‚С‹ СЃ Р±Р»РѕС‡РЅС‹Рј СЂР°СЃРїРѕР»РѕР¶РµРЅРёРµРј */
 public class BoxLayoutUtils {
-	// задает единое выравнивание по оси X для группы компонентов
+	// Р·Р°РґР°РµС‚ РµРґРёРЅРѕРµ РІС‹СЂР°РІРЅРёРІР°РЅРёРµ РїРѕ РѕСЃРё X РґР»СЏ РіСЂСѓРїРїС‹ РєРѕРјРїРѕРЅРµРЅС‚РѕРІ
 	public static void setGroupAlignmentX(JComponent[] cs, float alignment) {
 		for (int i = 0; i < cs.length; i++)
 			cs[i].setAlignmentX(alignment);
 	}
 
-	// задает единое выравнивание по оси Y для группы компонентов
+	// Р·Р°РґР°РµС‚ РµРґРёРЅРѕРµ РІС‹СЂР°РІРЅРёРІР°РЅРёРµ РїРѕ РѕСЃРё Y РґР»СЏ РіСЂСѓРїРїС‹ РєРѕРјРїРѕРЅРµРЅС‚РѕРІ
 	public static void setGroupAlignmentY(JComponent[] cs, float alignment) {
 		for (int i = 0; i < cs.length; i++)
 			cs[i].setAlignmentY(alignment);
 	}
 
-	// возвращает панель с установленным вертикальным блочным расположением
+	// РІРѕР·РІСЂР°С‰Р°РµС‚ РїР°РЅРµР»СЊ СЃ СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹Рј РІРµСЂС‚РёРєР°Р»СЊРЅС‹Рј Р±Р»РѕС‡РЅС‹Рј СЂР°СЃРїРѕР»РѕР¶РµРЅРёРµРј
 	public static JPanel createVerticalPanel() {
 		JPanel p = new JPanel();
 		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
 		return p;
 	}
 
-	// возвращает панель с установленным горизонтальным блочным расположением
+	// РІРѕР·РІСЂР°С‰Р°РµС‚ РїР°РЅРµР»СЊ СЃ СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹Рј РіРѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅС‹Рј Р±Р»РѕС‡РЅС‹Рј СЂР°СЃРїРѕР»РѕР¶РµРЅРёРµРј
 	public static JPanel createHorizontalPanel() {
 		JPanel p = new JPanel();
 		p.setLayout(new BoxLayout(p, BoxLayout.X_AXIS));

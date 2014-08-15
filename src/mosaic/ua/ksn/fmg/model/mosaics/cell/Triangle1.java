@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Triangle1.java"
 //
-// Реализация класса Triangle1 - равносторонний треугольник (вариант поля №1)
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° Triangle1 - СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРє (РІР°СЂРёР°РЅС‚ РїРѕР»СЏ в„–1)
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ import ua.ksn.geom.Rect;
 import ua.ksn.geom.Size;
 
 /**
- * Треугольник. Вариант 1 - равносторонний, классика 
+ * РўСЂРµСѓРіРѕР»СЊРЅРёРє. Р’Р°СЂРёР°РЅС‚ 1 - СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№, РєР»Р°СЃСЃРёРєР° 
  * @see BaseCell
  **/
 public class Triangle1 extends BaseCell {
@@ -61,10 +61,10 @@ public class Triangle1 extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(2, 2); }
 		@Override
-		protected double CalcA(int area) { return CalcB(area) * 2.f; } // размер стороны треугольника
-		/** пол стороны треугольника */
+		protected double CalcA(int area) { return CalcB(area) * 2.f; } // СЂР°Р·РјРµСЂ СЃС‚РѕСЂРѕРЅС‹ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР°
+		/** РїРѕР» СЃС‚РѕСЂРѕРЅС‹ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР° */
 		protected double CalcB(int area) { return Math.sqrt(area/SQRT3); }
-		/** высота треугольника */
+		/** РІС‹СЃРѕС‚Р° С‚СЂРµСѓРіРѕР»СЊРЅРёРєР° */
 		protected double CalcH(int area) { return CalcB(area) * SQRT3; }
 		@Override
 		public double CalcSq(int area, int borderWidth) {
@@ -89,7 +89,7 @@ public class Triangle1 extends BaseCell {
 	protected Coord[] GetCoordsNeighbor() {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	switch (direction) {
     	case 0: case 3:
     		neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
@@ -167,7 +167,7 @@ public class Triangle1 extends BaseCell {
 		double sq = attr.CalcSq(area, borderWidth);
 		double w = borderWidth/2.;
 
-		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° РІРїРёСЃР°РЅРЅРѕРіРѕ РІ С„РёРіСѓСЂСѓ РєРІР°РґСЂР°С‚Р° (РЅРµ СЃРѕРІРїР°РґР°РµС‚ СЃ С†РµРЅС‚СЂРѕРј С„РёРіСѓСЂС‹)
 		switch (direction) {
 		case 0: case 3:
 			center.x = region.getPoint(2).x + b;

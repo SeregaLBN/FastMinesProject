@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Trapezoid3.java"
 //
-// Реализация класса Trapezoid3 - 8 трапеций, складывающихся в шестигранник
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° Trapezoid3 - 8 С‚СЂР°РїРµС†РёР№, СЃРєР»Р°РґС‹РІР°СЋС‰РёС…СЃСЏ РІ С€РµСЃС‚РёРіСЂР°РЅРЅРёРє
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ import ua.ksn.geom.Rect;
 import ua.ksn.geom.Size;
 
 /**
- * Trapezoid3 - 8 трапеций, складывающихся в шестигранник
+ * Trapezoid3 - 8 С‚СЂР°РїРµС†РёР№, СЃРєР»Р°РґС‹РІР°СЋС‰РёС…СЃСЏ РІ С€РµСЃС‚РёРіСЂР°РЅРЅРёРє
  * @see BaseCell
  **/
 public class Trapezoid3 extends BaseCell {
@@ -97,7 +97,7 @@ public class Trapezoid3 extends BaseCell {
 			    		sum += (6+6+4+3)/4.;
 						break;
 					default:
-						throw new RuntimeException("Забыл case #" + dir);
+						throw new RuntimeException("Р—Р°Р±С‹Р» case #" + dir);
 					}
 				vertexIntersection = sum / cntDirection;
 //				System.out.println("Trapezoid3::getVertexNeighbor == " + vertexIntersection);
@@ -135,7 +135,7 @@ public class Trapezoid3 extends BaseCell {
 	protected Coord[] GetCoordsNeighbor() {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	switch (direction) {
     	case 0:
     		neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
@@ -360,7 +360,7 @@ public class Trapezoid3 extends BaseCell {
 		double R = attr.CalcROut(area);
 		double r = attr.CalcRIn(area);
 
-		// определение координат точек фигуры
+		// РѕРїСЂРµРґРµР»РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ С‚РѕС‡РµРє С„РёРіСѓСЂС‹
 		double oX = (R*2)*(coord.x/4) + R; // offset X
 		double oY = (a*6)*(coord.y/4) + a + b; // offset Y
 
@@ -480,7 +480,7 @@ public class Trapezoid3 extends BaseCell {
 		double oX = (R*2)*(coord.x/4) + R; // offset X
 		double oY = (a*6)*(coord.y/4) + a + b; // offset Y
 
-		PointDouble center = new PointDouble(); // координата центра квадрата
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° С†РµРЅС‚СЂР° РєРІР°РґСЂР°С‚Р°
 		switch (direction) {
 		case 0:  center.x = oX - r*1.50; center.y = oY - a;      break;
 		case 1:  center.x = oX - r*0.75; center.y = oY - c*4.25; break;

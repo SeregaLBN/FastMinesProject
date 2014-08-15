@@ -68,7 +68,7 @@ public class ManageTblModel implements TableModel {
 		
 		String name = (String)aValue;
 
-		// имя должно быть уникальным
+		// РёРјСЏ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ СѓРЅРёРєР°Р»СЊРЅС‹Рј
 		for (int i=0; i<players.size(); i++) {
 			if (i == rowIndex)
 				continue;

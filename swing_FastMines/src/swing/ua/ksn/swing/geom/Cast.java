@@ -9,7 +9,7 @@ import ua.ksn.geom.Region;
 import ua.ksn.geom.Size;
 
 /**
- * Приведение типов от платформонезависемых читых Java классов ua.ksn.geom.* к библиотечным SWING/AWT классам java.awt.*\java.swing.*
+ * РџСЂРёРІРµРґРµРЅРёРµ С‚РёРїРѕРІ РѕС‚ РїР»Р°С‚С„РѕСЂРјРѕРЅРµР·Р°РІРёСЃРµРјС‹С… С‡РёС‚С‹С… Java РєР»Р°СЃСЃРѕРІ ua.ksn.geom.* Рє Р±РёР±Р»РёРѕС‚РµС‡РЅС‹Рј SWING/AWT РєР»Р°СЃСЃР°Рј java.awt.*\java.swing.*
  * @author SeregaLBN
  *
  */

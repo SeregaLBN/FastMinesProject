@@ -14,7 +14,7 @@ import ua.ksn.fmg.view.swing.model.ReportTableModel;
 import ua.ksn.fmg.view.swing.model.StaticsticTblModel;
 import ua.ksn.fmg.view.swing.res.Resources;
 
-/** Диалог отображения статистики пользователя */
+/** Р”РёР°Р»РѕРі РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ СЃС‚Р°С‚РёСЃС‚РёРєРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ */
 public class StatisticDlg extends ReportDlg {
 	private static final long serialVersionUID = 1L;
 
@@ -30,7 +30,7 @@ public class StatisticDlg extends ReportDlg {
 		setTitle("Statistics - " + getSelectedMosaicType().getDescription(false));
 		super.UpdateModel(eSkill);
 
-		// выделяю рядок текущего пользователя
+		// РІС‹РґРµР»СЏСЋ СЂСЏРґРѕРє С‚РµРєСѓС‰РµРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 		try {
 			User user = (parent == null) ? null : parent.getActiveUser();
 			int pos = (user == null) ? -1 : players.indexOf(user);
@@ -55,7 +55,7 @@ public class StatisticDlg extends ReportDlg {
 		return super.getTableCellHorizontalAlignment(row, column);
 	}
 
-	// тестовый метод для проверки диалогового окна
+	// С‚РµСЃС‚РѕРІС‹Р№ РјРµС‚РѕРґ РґР»СЏ РїСЂРѕРІРµСЂРєРё РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР°
 	public static void main(String[] args) {
 		PlayersModel players = new PlayersModel(Main.serialVersionUID);
 		players.Load();

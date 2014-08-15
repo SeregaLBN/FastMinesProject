@@ -26,7 +26,7 @@ public class MosaicGraphicContext extends GraphicContext {
 //			setColorBk(UIManager.getDefaults().getColor("Panel.background"));
 
 			Color clr = UIManager.getDefaults().getColor("Panel.background");
-			float perc = 0.40f; // делаю темнее
+			float perc = 0.40f; // РґРµР»Р°СЋ С‚РµРјРЅРµРµ
 			int _r = (int) (clr.getRed  () - clr.getRed  () * perc);
 			int _g = (int) (clr.getGreen() - clr.getGreen() * perc);
 			int _b = (int) (clr.getBlue () - clr.getBlue () * perc);

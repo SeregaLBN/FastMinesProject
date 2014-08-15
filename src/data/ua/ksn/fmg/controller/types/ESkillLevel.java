@@ -16,18 +16,18 @@ public enum ESkillLevel {
 	eCrazy,
 	eCustom;
 
-	/** коэффициент уровня сложности в зависимости от типа мозаики - чем больше, тем сложнее */
+	/** РєРѕСЌС„С„РёС†РёРµРЅС‚ СѓСЂРѕРІРЅСЏ СЃР»РѕР¶РЅРѕСЃС‚Рё РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ С‚РёРїР° РјРѕР·Р°РёРєРё - С‡РµРј Р±РѕР»СЊС€Рµ, С‚РµРј СЃР»РѕР¶РЅРµРµ */
 	private static final Map<EMosaic, Double> mosaicCoefficient; // skill level coefficient
 	static {
 		mosaicCoefficient = new HashMap<EMosaic, Double>(EMosaic.values().length);
-		final int area = 200; // пох
+		final int area = 200; // РїРѕС…
 		for (EMosaic mosaicType : EMosaic.values()) {
 			BaseCell.BaseAttribute attr = CellFactory.createAttributeInstance(mosaicType, area);
 
-			// variant 1 - сложность в зависимости от кол-ва пересечений ячеек в одной точке
+			// variant 1 - СЃР»РѕР¶РЅРѕСЃС‚СЊ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РєРѕР»-РІР° РїРµСЂРµСЃРµС‡РµРЅРёР№ СЏС‡РµРµРє РІ РѕРґРЅРѕР№ С‚РѕС‡РєРµ
 //			mosaicCoefficient.put(mosaicType, attr.getVertexIntersection());
 
-			// variant 2 - сложность в зависимости от кол-ва соседних ячеек
+			// variant 2 - СЃР»РѕР¶РЅРѕСЃС‚СЊ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РєРѕР»-РІР° СЃРѕСЃРµРґРЅРёС… СЏС‡РµРµРє
 			int cntDir = attr.GetDirectionCount();
 			int neighbors = 0;
 			for (int i=0; i<cntDir; i++)
@@ -47,7 +47,7 @@ public enum ESkillLevel {
 //		System.exit(0);
 	}
 
-	/** коэффициент уровня сложности */
+	/** РєРѕСЌС„С„РёС†РёРµРЅС‚ СѓСЂРѕРІРЅСЏ СЃР»РѕР¶РЅРѕСЃС‚Рё */
 	private double getCoefficient() {
 		// variant 1
 //		switch (this) {
@@ -64,10 +64,10 @@ public enum ESkillLevel {
 		case eCrazy   : return 1.9982222222222221;
 		default: break;
 		}
-		throw new RuntimeException("Invalid method call. Для уровня сложности '"+this+"' нет коэффициента сложности.");
+		throw new RuntimeException("Invalid method call. Р”Р»СЏ СѓСЂРѕРІРЅСЏ СЃР»РѕР¶РЅРѕСЃС‚Рё '"+this+"' РЅРµС‚ РєРѕСЌС„С„РёС†РёРµРЅС‚Р° СЃР»РѕР¶РЅРѕСЃС‚Рё.");
 	}
 
-	/** размеры полей */
+	/** СЂР°Р·РјРµСЂС‹ РїРѕР»РµР№ */
 	public Size DefaultSize() {
 		switch (this) {
 		case eBeginner: return new Size(10, 10); // 15
@@ -76,20 +76,20 @@ public enum ESkillLevel {
 		case eCrazy   : return new Size(45, 25); // 281
 		default: break;
 		}
-		throw new RuntimeException("Invalid method call. Для уровня сложности '"+this+"' нет размера поля по-умолчанию.");
+		throw new RuntimeException("Invalid method call. Р”Р»СЏ СѓСЂРѕРІРЅСЏ СЃР»РѕР¶РЅРѕСЃС‚Рё '"+this+"' РЅРµС‚ СЂР°Р·РјРµСЂР° РїРѕР»СЏ РїРѕ-СѓРјРѕР»С‡Р°РЅРёСЋ.");
 	}
 
-	/** Узнать кол-во мин на размере поля по-умолчанию */
+	/** РЈР·РЅР°С‚СЊ РєРѕР»-РІРѕ РјРёРЅ РЅР° СЂР°Р·РјРµСЂРµ РїРѕР»СЏ РїРѕ-СѓРјРѕР»С‡Р°РЅРёСЋ */
 	public int GetNumberMines(EMosaic eMosaic) {
 		return GetNumberMines(eMosaic, this.DefaultSize());
 	}
 
-	/** Узнать кол-во мин на заданном размере поля */
+	/** РЈР·РЅР°С‚СЊ РєРѕР»-РІРѕ РјРёРЅ РЅР° Р·Р°РґР°РЅРЅРѕРј СЂР°Р·РјРµСЂРµ РїРѕР»СЏ */
 	public int GetNumberMines(EMosaic eMosaic, Size customSizeMosaic) {
 		if (customSizeMosaic == null)
 			throw new IllegalArgumentException("customSizeMosaic must be not null");
 		if (this == eCustom)
-			throw new RuntimeException("Для уровня сложности '"+this+"' кол-во мин задаётся явно, а не расчитывается...");
+			throw new RuntimeException("Р”Р»СЏ СѓСЂРѕРІРЅСЏ СЃР»РѕР¶РЅРѕСЃС‚Рё '"+this+"' РєРѕР»-РІРѕ РјРёРЅ Р·Р°РґР°С‘С‚СЃСЏ СЏРІРЅРѕ, Р° РЅРµ СЂР°СЃС‡РёС‚С‹РІР°РµС‚СЃСЏ...");
 
 		return (int) (customSizeMosaic.width * customSizeMosaic.height * getCoefficient() / mosaicCoefficient.get(eMosaic));
 	}

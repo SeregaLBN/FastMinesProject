@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "PentagonT10.java"
 //
-// Реализация класса PentagonT10 - 5-ти угольник, тип №10
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° PentagonT10 - 5-С‚Рё СѓРіРѕР»СЊРЅРёРє, С‚РёРї в„–10
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ import ua.ksn.geom.Rect;
 import ua.ksn.geom.Size;
 
 /**
- * Пятиугольник. Тип №10
+ * РџСЏС‚РёСѓРіРѕР»СЊРЅРёРє. РўРёРї в„–10
  * @see BaseCell
  **/
 public class PentagonT10 extends BaseCell {
@@ -103,7 +103,7 @@ public class PentagonT10 extends BaseCell {
 						sum += 16./5.;
 						break;
 					default:
-						throw new RuntimeException("Забыл case #" + dir);
+						throw new RuntimeException("Р—Р°Р±С‹Р» case #" + dir);
 					}
 				vertexIntersection = sum / cntDirection;
 //				System.out.println("PentagonT10::getVertexNeighbor == " + vertexIntersection);
@@ -143,7 +143,7 @@ public class PentagonT10 extends BaseCell {
 	protected Coord[] GetCoordsNeighbor() {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
 		switch (direction) {
 		case 0:
 			neighborCoord[0] = new Coord(coord.x  , coord.y-1);
@@ -324,7 +324,7 @@ public class PentagonT10 extends BaseCell {
 		double sq = attr.CalcSq(attr.getArea(), borderWidth);
 		double sq2 = sq/2;
 
-		PointDouble center = new PointDouble(); // координата центра квадрата
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° С†РµРЅС‚СЂР° РєРІР°РґСЂР°С‚Р°
 		switch (direction) {
 		case 0: case  3: case 7: case  8: center.x = region.getPoint(2).x; center.y = region.getPoint(1).y; break;
 		case 1: case  4: case 6: case 10: 

@@ -14,7 +14,7 @@ import ua.ksn.fmg.view.swing.draw.mosaics.CellPaint;
 import ua.ksn.geom.Coord;
 import ua.ksn.geom.Size;
 
-/** картинка поля конкретной мозаики. Используется для меню, кнопок, etc... */
+/** РєР°СЂС‚РёРЅРєР° РїРѕР»СЏ РєРѕРЅРєСЂРµС‚РЅРѕР№ РјРѕР·Р°РёРєРё. РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РјРµРЅСЋ, РєРЅРѕРїРѕРє, etc... */
 public class MosaicsImg implements Icon {
 	private final BaseCell.BaseAttribute attr;
 	private final CellPaint gInfo;

@@ -88,7 +88,7 @@ public class SelectMosaicDlg extends JDialog {
 
 		this.setResizable(false);
 		CreateComponents();
-		// задаю предпочтительный размер
+		// Р·Р°РґР°СЋ РїСЂРµРґРїРѕС‡С‚РёС‚РµР»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ
 		pack();
 		this.setLocationRelativeTo(parent);
 	}
@@ -105,7 +105,7 @@ public class SelectMosaicDlg extends JDialog {
 //			public void run() {
 //				System.out.println(spin.getValue());
 				JTextField txtField = ((JSpinner.DefaultEditor)spin.getEditor()).getTextField();
-				txtField.setText(spin.getValue().toString()); // TODO хз... иначе select не работет :(
+				txtField.setText(spin.getValue().toString()); // TODO С…Р·... РёРЅР°С‡Рµ select РЅРµ СЂР°Р±РѕС‚РµС‚ :(
 //				System.out.println(txtField.getText());
 				txtField.select(1, 2);
 
@@ -119,12 +119,12 @@ public class SelectMosaicDlg extends JDialog {
 		this.setVisible(true);
 	}
 
-	// создаю панели с нужным расположением
+	// СЃРѕР·РґР°СЋ РїР°РЅРµР»Рё СЃ РЅСѓР¶РЅС‹Рј СЂР°СЃРїРѕР»РѕР¶РµРЅРёРµРј
 	private void CreateComponents() {
-		// 1. Создаю панель, которая будет содержать все остальные элементы и панели расположения
+		// 1. РЎРѕР·РґР°СЋ РїР°РЅРµР»СЊ, РєРѕС‚РѕСЂР°СЏ Р±СѓРґРµС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ РІСЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹ Рё РїР°РЅРµР»Рё СЂР°СЃРїРѕР»РѕР¶РµРЅРёСЏ
 		Box boxCenter = Box.createVerticalBox();
-		// Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов. 
-		// использую пустую рамку 
+		// Р§С‚РѕР±С‹ РёРЅС‚РµСЂС„РµР№СЃ РѕС‚РІРµС‡Р°Р» С‚СЂРµР±РѕРІР°РЅРёСЏРј Java, РЅРµРѕР±С…РѕРґРёРјРѕ РѕС‚РґРµР»РёС‚СЊ РµРіРѕ СЃРѕРґРµСЂР¶РёРјРѕРµ РѕС‚ РіСЂР°РЅРёС† РѕРєРЅР° РЅР° 12 РїРёРєСЃРµР»РѕРІ. 
+		// РёСЃРїРѕР»СЊР·СѓСЋ РїСѓСЃС‚СѓСЋ СЂР°РјРєСѓ 
 		boxCenter.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
 //		boxCenter.setBorder(
 //				new javax.swing.border.CompoundBorder(
@@ -139,7 +139,7 @@ public class SelectMosaicDlg extends JDialog {
 		spin = new JSpinner(new SpinnerDiapasonModel( EMosaic.getFastCodeValues() ));
 		spin.setToolTipText("Fast code mosaic");
 
-		// отслеживаю изменения в редакторе, ...
+		// РѕС‚СЃР»РµР¶РёРІР°СЋ РёР·РјРµРЅРµРЅРёСЏ РІ СЂРµРґР°РєС‚РѕСЂРµ, ...
 		JTextField txtField = ((JSpinner.DefaultEditor)spin.getEditor()).getTextField();
 //		txtField.getDocument().addDocumentListener(new DocumentListener() {
 //			@Override
@@ -159,7 +159,7 @@ public class SelectMosaicDlg extends JDialog {
 				return res;
 			}
 		});
-		// ... а не в самой модели spin'а
+		// ... Р° РЅРµ РІ СЃР°РјРѕР№ РјРѕРґРµР»Рё spin'Р°
 //		spin.addChangeListener(new ChangeListener() {
 //			@Override
 //			public void stateChanged(ChangeEvent e) { OnChangeMosaicNumber(); }
@@ -179,7 +179,7 @@ public class SelectMosaicDlg extends JDialog {
 
 		cmbxMosaicTypes = new JComboBox<Object>(EMosaic.getDescriptionValues().toArray());
 //		cmbxMosaicTypes.setPrototypeDisplayValue("aaaaaaaaaaaa");
-		// слушатель смены выбранного элемента
+		// СЃР»СѓС€Р°С‚РµР»СЊ СЃРјРµРЅС‹ РІС‹Р±СЂР°РЅРЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°
 		cmbxMosaicTypes.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) { OnChangeMosaicType(e); }
@@ -236,14 +236,14 @@ public class SelectMosaicDlg extends JDialog {
 //		boxCenter.add(cmbxMosaicTypes);
 //		GuiTools.makeSameWidth(new JComponent[] {boxLine, lbl2, cmbxMosaicTypes});
 
-		// добавляю расположение в центр окна
+		// РґРѕР±Р°РІР»СЏСЋ СЂР°СЃРїРѕР»РѕР¶РµРЅРёРµ РІ С†РµРЅС‚СЂ РѕРєРЅР°
 		getContentPane().add(boxCenter, BorderLayout.CENTER);
 	}
 
 	private void OnChangeMosaicType(ItemEvent e) {
-		// выясняю, что случилось
+		// РІС‹СЏСЃРЅСЏСЋ, С‡С‚Рѕ СЃР»СѓС‡РёР»РѕСЃСЊ
 		if ( e.getStateChange() == ItemEvent.SELECTED ) {
-			// показываю выбранный номер
+			// РїРѕРєР°Р·С‹РІР°СЋ РІС‹Р±СЂР°РЅРЅС‹Р№ РЅРѕРјРµСЂ
 			final EMosaic item = EMosaic.fromDescription(e.getItem().toString());
 //			System.out.println(item);
 			final int groupNumber = item.getFastCode();
@@ -304,7 +304,7 @@ public class SelectMosaicDlg extends JDialog {
 		OnClose();
 	}
 	private void OnClose() {
-		// при выходе из диалогового окна - освобождаю ресурсы
+		// РїСЂРё РІС‹С…РѕРґРµ РёР· РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР° - РѕСЃРІРѕР±РѕР¶РґР°СЋ СЂРµСЃСѓСЂСЃС‹
 		dispose();
 //		System.exit(0);
 	}
@@ -312,16 +312,16 @@ public class SelectMosaicDlg extends JDialog {
 		EMosaic item = EMosaic.fromDescription(cmbxMosaicTypes.getSelectedItem().toString());
 		return item;
 	}
-	/** данные не из модели, а из редактора */
+	/** РґР°РЅРЅС‹Рµ РЅРµ РёР· РјРѕРґРµР»Рё, Р° РёР· СЂРµРґР°РєС‚РѕСЂР° */
 	private String getMosaicNumber() {
-		//return spin.getValue().toString(); // из SpinnerNumberModel
+		//return spin.getValue().toString(); // РёР· SpinnerNumberModel
 
-		// я же хочу то что редактируется руцями в editor'е (до нажатия Enter'а на editbox'e)
+		// СЏ Р¶Рµ С…РѕС‡Сѓ С‚Рѕ С‡С‚Рѕ СЂРµРґР°РєС‚РёСЂСѓРµС‚СЃСЏ СЂСѓС†СЏРјРё РІ editor'Рµ (РґРѕ РЅР°Р¶Р°С‚РёСЏ Enter'Р° РЅР° editbox'e)
 		JTextField txtField = ((JSpinner.DefaultEditor)spin.getEditor()).getTextField();
 		return txtField.getText(); 
 	}
 
-	// тестовый метод для проверки диалогового окна
+	// С‚РµСЃС‚РѕРІС‹Р№ РјРµС‚РѕРґ РґР»СЏ РїСЂРѕРІРµСЂРєРё РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР°
 	public static void main(String[] args) {
 		SelectMosaicDlg sm = new SelectMosaicDlg(null, true);
 		sm.startSelect(EMosaicGroup.eQuadrangles);

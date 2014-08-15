@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "PenrousePeriodic1.java"
 //
-// Реализация класса PenrousePeriodic1 - один из вариантов периодической мозаики Пенроуза (ромбы 72°-108° & 36°- 144°)
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° PenrousePeriodic1 - РѕРґРёРЅ РёР· РІР°СЂРёР°РЅС‚РѕРІ РїРµСЂРёРѕРґРёС‡РµСЃРєРѕР№ РјРѕР·Р°РёРєРё РџРµРЅСЂРѕСѓР·Р° (СЂРѕРјР±С‹ 72В°-108В° & 36В°- 144В°)
 // Copyright (C) 2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ import ua.ksn.geom.Rect;
 import ua.ksn.geom.Size;
 
 /**
- * PenrousePeriodic1 - один из вариантов периодической мозаики Пенроуза (ромбы 72°-108° & 36°- 144°)
+ * PenrousePeriodic1 - РѕРґРёРЅ РёР· РІР°СЂРёР°РЅС‚РѕРІ РїРµСЂРёРѕРґРёС‡РµСЃРєРѕР№ РјРѕР·Р°РёРєРё РџРµРЅСЂРѕСѓР·Р° (СЂРѕРјР±С‹ 72В°-108В° & 36В°- 144В°)
  * @see BaseCell
  **/
 public class PenrousePeriodic1 extends BaseCell {
@@ -79,8 +79,8 @@ public class PenrousePeriodic1 extends BaseCell {
 					      h*((sizeField.height+ 1)/14) +
 					      e*((sizeField.height+ 0)/14)));
 
-			// когда размер поля мал...
-			if (sizeField.height < 14) { // ...нужно вычислять не только по общей формуле, а и убрать остатки по ширине...
+			// РєРѕРіРґР° СЂР°Р·РјРµСЂ РїРѕР»СЏ РјР°Р»...
+			if (sizeField.height < 14) { // ...РЅСѓР¶РЅРѕ РІС‹С‡РёСЃР»СЏС‚СЊ РЅРµ С‚РѕР»СЊРєРѕ РїРѕ РѕР±С‰РµР№ С„РѕСЂРјСѓР»Рµ, Р° Рё СѓР±СЂР°С‚СЊ РѕСЃС‚Р°С‚РєРё РїРѕ С€РёСЂРёРЅРµ...
 				if ((sizeField.width % 9) == 7)
 					if (sizeField.height < 7)
 						result.width -= g-z;
@@ -100,7 +100,7 @@ public class PenrousePeriodic1 extends BaseCell {
 					if (sizeField.height < 5)
 						result.width -= z;
 			}
-			if (sizeField.width < 5) { // .. и высоте
+			if (sizeField.width < 5) { // .. Рё РІС‹СЃРѕС‚Рµ
 				if ((sizeField.height % 14) == 0) {
 					if (sizeField.width < 4)
 						result.height -= h;
@@ -169,7 +169,7 @@ public class PenrousePeriodic1 extends BaseCell {
 
 	    	default:
 	    		throw new IllegalArgumentException("Invalid value direction=" + direction);
-				//throw new RuntimeException("Забыл case #" + direction);
+				//throw new RuntimeException("Р—Р°Р±С‹Р» case #" + direction);
 	    	}
 		}
 		@Override
@@ -185,8 +185,8 @@ public class PenrousePeriodic1 extends BaseCell {
 				int sum = 0;
 				for (int dir=0; dir<cntDirection; dir++)
 					sum += getNeighborNumber(dir) +
-						4 + // соседние фигуры, которые граничат с гранями this, участвуют в подсчёте два раза... 
-						4; // ...сама this участвует подсчёте все 4 раза
+						4 + // СЃРѕСЃРµРґРЅРёРµ С„РёРіСѓСЂС‹, РєРѕС‚РѕСЂС‹Рµ РіСЂР°РЅРёС‡Р°С‚ СЃ РіСЂР°РЅСЏРјРё this, СѓС‡Р°СЃС‚РІСѓСЋС‚ РІ РїРѕРґСЃС‡С‘С‚Рµ РґРІР° СЂР°Р·Р°... 
+						4; // ...СЃР°РјР° this СѓС‡Р°СЃС‚РІСѓРµС‚ РїРѕРґСЃС‡С‘С‚Рµ РІСЃРµ 4 СЂР°Р·Р°
 				vertexIntersection = ((double)sum) / getVertexNumber() / cntDirection;
 //				System.out.println("PenrousePeriodic1::getVertexgetVertexNeighbor == " + vertexIntersection);
 			}
@@ -234,7 +234,7 @@ public class PenrousePeriodic1 extends BaseCell {
     	for (int i=0; i<neighborCoord.length; i++)
 			neighborCoord[i] = null;
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	switch (direction) {
     	case 0:
     		neighborCoord[ 0] = new Coord(coord.x-2, coord.y  );
@@ -1704,7 +1704,7 @@ public class PenrousePeriodic1 extends BaseCell {
     			if (neighborCoord[i] == null)
     				break;
     		if (i != getAttr().getNeighborNumber(direction))
-    			throw new RuntimeException("Исправь AttrPenrousePeriodic1.getNeighborNumber("+direction+")...");
+    			throw new RuntimeException("РСЃРїСЂР°РІСЊ AttrPenrousePeriodic1.getNeighborNumber("+direction+")...");
     	}
 
 //    	for (int i=0; i<neighborCoord.length; i++)
@@ -1732,7 +1732,7 @@ public class PenrousePeriodic1 extends BaseCell {
 		double periodicX = (coord.x/ 9)*(4*k + 2*g);
 		double periodicY = (coord.y/14)*(10*h + 6*f + 2*c + a);//4*f + 13*h + e);
 
-		// координаты верхнего левого угла прямоугольника описавающего фигуру
+		// РєРѕРѕСЂРґРёРЅР°С‚С‹ РІРµСЂС…РЅРµРіРѕ Р»РµРІРѕРіРѕ СѓРіР»Р° РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР° РѕРїРёСЃР°РІР°СЋС‰РµРіРѕ С„РёРіСѓСЂСѓ
 		double left = .0, top = 0.;
 
 		switch (direction) {
@@ -1772,7 +1772,7 @@ public class PenrousePeriodic1 extends BaseCell {
 			left += periodicX;
 			break;
 		default:
-			throw new RuntimeException("Забыл left case #" + direction);
+			throw new RuntimeException("Р—Р°Р±С‹Р» left case #" + direction);
 		}
 
 		double fc = f-c;
@@ -1847,7 +1847,7 @@ public class PenrousePeriodic1 extends BaseCell {
 			top += periodicY;
 			break;
 		default:
-			throw new RuntimeException("Забыл top case #" + direction);
+			throw new RuntimeException("Р—Р°Р±С‹Р» top case #" + direction);
 		}
 
 		switch (direction) {
@@ -1919,7 +1919,7 @@ public class PenrousePeriodic1 extends BaseCell {
 			region.setPoint(3, (int)(left    ), (int)(top    ));
 			break;
 		default:
-			throw new RuntimeException("Забыл case #" + direction);
+			throw new RuntimeException("Р—Р°Р±С‹Р» case #" + direction);
 		}
 	}
 
@@ -1931,7 +1931,7 @@ public class PenrousePeriodic1 extends BaseCell {
 		double sq  = attr.CalcSq(area, borderWidth);
 		double sq2 = sq/2;
 
-		PointDouble center = new PointDouble(); // координата центра квадрата
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° С†РµРЅС‚СЂР° РєРІР°РґСЂР°С‚Р°
 		center.x = (region.getPoint(0).x+region.getPoint(2).x) / 2.;
 
 		switch (direction) {
@@ -1958,7 +1958,7 @@ public class PenrousePeriodic1 extends BaseCell {
 			center.y = (region.getPoint(0).y+region.getPoint(2).y) / 2.;
 			break;
 		default:
-			throw new RuntimeException("Забыл case #" + direction);
+			throw new RuntimeException("Р—Р°Р±С‹Р» case #" + direction);
 		}
 
 		Rect square = new Rect();
@@ -2011,7 +2011,7 @@ public class PenrousePeriodic1 extends BaseCell {
 			case  88: case  90: case  94: case  95: case 100: case 103: case 114: case 115: case 108:
 				return repositoryColor.get(9);
 			default:
-				throw new RuntimeException("Забыл case #" + getDirection());
+				throw new RuntimeException("Р—Р°Р±С‹Р» case #" + getDirection());
 			}
 		} else
 		if (fillMode == (getAttr().getMaxBackgroundFillModeValue()-1))
@@ -2053,7 +2053,7 @@ public class PenrousePeriodic1 extends BaseCell {
 				return repositoryColor.get(5);
 
 			default:
-				throw new RuntimeException("Забыл case #" + getDirection());
+				throw new RuntimeException("Р—Р°Р±С‹Р» case #" + getDirection());
 			}
 		}
 		return super.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);

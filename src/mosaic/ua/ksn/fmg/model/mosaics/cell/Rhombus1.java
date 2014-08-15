@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Rhombus1.java"
 //
-// Реализация класса Rhombus1 - 3 ромба, составляющие равносторонний шестиугольник
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° Rhombus1 - 3 СЂРѕРјР±Р°, СЃРѕСЃС‚Р°РІР»СЏСЋС‰РёРµ СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№ С€РµСЃС‚РёСѓРіРѕР»СЊРЅРёРє
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ import ua.ksn.geom.Rect;
 import ua.ksn.geom.Size;
 
 /**
- * Rhombus1 - 3 ромба, составляющие равносторонний шестиугольник
+ * Rhombus1 - 3 СЂРѕРјР±Р°, СЃРѕСЃС‚Р°РІР»СЏСЋС‰РёРµ СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№ С€РµСЃС‚РёСѓРіРѕР»СЊРЅРёРє
  * @see BaseCell
  **/
 public class Rhombus1 extends BaseCell {
@@ -107,7 +107,7 @@ public class Rhombus1 extends BaseCell {
 	protected Coord[] GetCoordsNeighbor() {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	switch (direction) {
     	case 0:
     		neighborCoord[ 0] = new Coord(coord.x+1, coord.y-2);
@@ -195,7 +195,7 @@ public class Rhombus1 extends BaseCell {
 		double h = attr.CalcH(area);
 		double r = attr.CalcR(area);
 
-		// определение координат точек фигуры
+		// РѕРїСЂРµРґРµР»РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ С‚РѕС‡РµРє С„РёРіСѓСЂС‹
 		double oX = a*(coord.x/3*3+1)+c; // offset X
 		double oY = h*(coord.y/2)    +h; // offset Y
 
@@ -254,7 +254,7 @@ public class Rhombus1 extends BaseCell {
 		double oX = a*(coord.x/3*3+1)+c; // offset X
 		double oY = h*(coord.y/2)    +h; // offset Y
 
-		PointDouble center = new PointDouble(); // координата центра квадрата
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° С†РµРЅС‚СЂР° РєРІР°РґСЂР°С‚Р°
 		switch (direction) {
 		case 0: center.x = oX - c*1.5; center.y = oY - r*1.5; break;
 		case 1: center.x = oX;         center.y = oY - r;     break;
@@ -278,8 +278,8 @@ public class Rhombus1 extends BaseCell {
 	@Override
 	public Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
 		if (fillMode == getAttr().getMaxBackgroundFillModeValue()) {
-			switch ((getCoord().y%4)*3+(getCoord().x%3)) { // почти как вычисление direction...
-			// подсвечиваю 4 группы, составляющие каждая шестигранник из 3х ромбов
+			switch ((getCoord().y%4)*3+(getCoord().x%3)) { // РїРѕС‡С‚Рё РєР°Рє РІС‹С‡РёСЃР»РµРЅРёРµ direction...
+			// РїРѕРґСЃРІРµС‡РёРІР°СЋ 4 РіСЂСѓРїРїС‹, СЃРѕСЃС‚Р°РІР»СЏСЋС‰РёРµ РєР°Р¶РґР°СЏ С€РµСЃС‚РёРіСЂР°РЅРЅРёРє РёР· 3С… СЂРѕРјР±РѕРІ
 			case 0: case  1: case  3: return repositoryColor.get(0);
 			case 2: case  4: case  5: return repositoryColor.get(1);
 			case 6: case  7: case  9: return repositoryColor.get(2);

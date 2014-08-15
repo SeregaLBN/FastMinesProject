@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FMG project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "BaseCell.java"
 //
-// Реализация базового класса BaseCell
+// Р РµР°Р»РёР·Р°С†РёСЏ Р±Р°Р·РѕРІРѕРіРѕ РєР»Р°СЃСЃР° BaseCell
 // Copyright (C) 2010-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@ import ua.ksn.geom.Region;
 import ua.ksn.geom.Size;
 import ua.ksn.geom.Point;
 
-/** Базовый класс фигуры-ячейки */
+/** Р‘Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ С„РёРіСѓСЂС‹-СЏС‡РµР№РєРё */
 public abstract class BaseCell implements PropertyChangeListener {
 
 	public static final double SQRT2   = java.lang.Math.sqrt(2.);
@@ -61,21 +61,21 @@ public abstract class BaseCell implements PropertyChangeListener {
 	public static final double SIN135a = java.lang.Math.sin(java.lang.Math.PI/180.*135.-java.lang.Math.atan(8./3));
 
 	/**
-	 * Контекст/метаданные, описывающий общие хар-ки для каждого из экземпялров BaseCell.
-	 * <br> (Полные данные о конкретной мозаике) <br>
-	 * Доопределаяется наследниками BaseCell
+	 * РљРѕРЅС‚РµРєСЃС‚/РјРµС‚Р°РґР°РЅРЅС‹Рµ, РѕРїРёСЃС‹РІР°СЋС‰РёР№ РѕР±С‰РёРµ С…Р°СЂ-РєРё РґР»СЏ РєР°Р¶РґРѕРіРѕ РёР· СЌРєР·РµРјРїСЏР»СЂРѕРІ BaseCell.
+	 * <br> (РџРѕР»РЅС‹Рµ РґР°РЅРЅС‹Рµ Рѕ РєРѕРЅРєСЂРµС‚РЅРѕР№ РјРѕР·Р°РёРєРµ) <br>
+	 * Р”РѕРѕРїСЂРµРґРµР»Р°СЏРµС‚СЃСЏ РЅР°СЃР»РµРґРЅРёРєР°РјРё BaseCell
 	 */
 	public static abstract class BaseAttribute {
 		/**
-		 * На это подписаны:
-		 *  <li> все наследники BaseCell: при изменении A - надо пересчить все координаты точек
+		 * РќР° СЌС‚Рѕ РїРѕРґРїРёСЃР°РЅС‹:
+		 *  <li> РІСЃРµ РЅР°СЃР»РµРґРЅРёРєРё BaseCell: РїСЂРё РёР·РјРµРЅРµРЅРёРё A - РЅР°РґРѕ РїРµСЂРµСЃС‡РёС‚СЊ РІСЃРµ РєРѕРѕСЂРґРёРЅР°С‚С‹ С‚РѕС‡РµРє
 		 */
 		private PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
-		/**  подписаться на уведомления изменений атрибута */
+		/**  РїРѕРґРїРёСЃР°С‚СЊСЃСЏ РЅР° СѓРІРµРґРѕРјР»РµРЅРёСЏ РёР·РјРµРЅРµРЅРёР№ Р°С‚СЂРёР±СѓС‚Р° */
 		public void addPropertyChangeListener(PropertyChangeListener l) {
 			propertyChanges.addPropertyChangeListener(l);
 		}
-		/**  отписаться от уведомлений изменений атрибута */
+		/**  РѕС‚РїРёСЃР°С‚СЊСЃСЏ РѕС‚ СѓРІРµРґРѕРјР»РµРЅРёР№ РёР·РјРµРЅРµРЅРёР№ Р°С‚СЂРёР±СѓС‚Р° */
 		public void removePropertyChangeListener(PropertyChangeListener l) {
 			propertyChanges.removePropertyChangeListener(l);
 		}
@@ -85,58 +85,58 @@ public abstract class BaseCell implements PropertyChangeListener {
 			setArea(area);
 		}
 
-		/** площадь ячейки/фигуры */
+		/** РїР»РѕС‰Р°РґСЊ СЏС‡РµР№РєРё/С„РёРіСѓСЂС‹ */
 		private int area;
 
-		/** площадь ячейки/фигуры */
+		/** РїР»РѕС‰Р°РґСЊ СЏС‡РµР№РєРё/С„РёРіСѓСЂС‹ */
 		public void setArea(int area) {
 			int old = this.area;
 			this.area = area;
 			propertyChanges.firePropertyChange("Area", old, area);
 		}
-		/** площадь ячейки/фигуры */
+		/** РїР»РѕС‰Р°РґСЊ СЏС‡РµР№РєРё/С„РёРіСѓСЂС‹ */
 		public int getArea() { return area; }
 
-		/** пересчитать размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
-		 * на основе заданных параметров */
+		/** РїРµСЂРµСЃС‡РёС‚Р°С‚СЊ СЂР°Р·РјРµСЂ РєРІР°РґСЂР°С‚Р°, РІРїРёСЃР°РЅРЅРѕРіРѕ РІ С„РёРіСѓСЂСѓ - РѕР±Р»Р°СЃС‚СЊ РєСѓРґР° РІС‹РІРѕРґРёС‚СЊСЃСЏ РёР·РѕР±СЂР°Р¶РµРЅРёРµ/С‚РµРєСЃС‚
+		 * РЅР° РѕСЃРЅРѕРІРµ Р·Р°РґР°РЅРЅС‹С… РїР°СЂР°РјРµС‚СЂРѕРІ */
 		public abstract double CalcSq(int area, int borderWidth);
 
-		/** пересчитать значение A (базовая величина фигуры - обычно это размер одной из сторон фигуры) по заданной площади фигуры */
+		/** РїРµСЂРµСЃС‡РёС‚Р°С‚СЊ Р·РЅР°С‡РµРЅРёРµ A (Р±Р°Р·РѕРІР°СЏ РІРµР»РёС‡РёРЅР° С„РёРіСѓСЂС‹ - РѕР±С‹С‡РЅРѕ СЌС‚Рѕ СЂР°Р·РјРµСЂ РѕРґРЅРѕР№ РёР· СЃС‚РѕСЂРѕРЅ С„РёРіСѓСЂС‹) РїРѕ Р·Р°РґР°РЅРЅРѕР№ РїР»РѕС‰Р°РґРё С„РёРіСѓСЂС‹ */
 		protected abstract double CalcA(int area);
 
 		/** get parent container (owner window) size in pixels */
 		public abstract Size CalcOwnerSize(Size sizeField, int area);
 
-		/** размер поля из группы ячеек состоящих из разных direction */
+		/** СЂР°Р·РјРµСЂ РїРѕР»СЏ РёР· РіСЂСѓРїРїС‹ СЏС‡РµРµРє СЃРѕСЃС‚РѕСЏС‰РёС… РёР· СЂР°Р·РЅС‹С… direction */
 		public abstract Size GetDirectionSizeField();
-		/** кол-во direction'ов, которые знает данный тип мозаики */
+		/** РєРѕР»-РІРѕ direction'РѕРІ, РєРѕС‚РѕСЂС‹Рµ Р·РЅР°РµС‚ РґР°РЅРЅС‹Р№ С‚РёРї РјРѕР·Р°РёРєРё */
 		public int GetDirectionCount() { Size s = GetDirectionSizeField(); return s.width*s.height; }
 
-		/** кол-во соседей (максимум) */
+		/** РєРѕР»-РІРѕ СЃРѕСЃРµРґРµР№ (РјР°РєСЃРёРјСѓРј) */
 		public abstract int getNeighborNumber();
-		/** кол-во соседей у ячейки конкретной направленности */
+		/** РєРѕР»-РІРѕ СЃРѕСЃРµРґРµР№ Сѓ СЏС‡РµР№РєРё РєРѕРЅРєСЂРµС‚РЅРѕР№ РЅР°РїСЂР°РІР»РµРЅРЅРѕСЃС‚Рё */
 		public abstract int getNeighborNumber(int direction);
-		/** из скольки точек/вершин состоит фигура (максимум) */
+		/** РёР· СЃРєРѕР»СЊРєРё С‚РѕС‡РµРє/РІРµСЂС€РёРЅ СЃРѕСЃС‚РѕРёС‚ С„РёРіСѓСЂР° (РјР°РєСЃРёРјСѓРј) */
 		public abstract int getVertexNumber();
-		/** из скольки точек/вершин состоит фигура конкретной направленности */
+		/** РёР· СЃРєРѕР»СЊРєРё С‚РѕС‡РµРє/РІРµСЂС€РёРЅ СЃРѕСЃС‚РѕРёС‚ С„РёРіСѓСЂР° РєРѕРЅРєСЂРµС‚РЅРѕР№ РЅР°РїСЂР°РІР»РµРЅРЅРѕСЃС‚Рё */
 		public abstract int getVertexNumber(int direction);
-		/** сколько фигур пересекается в одной точке (в среднем) */
+		/** СЃРєРѕР»СЊРєРѕ С„РёРіСѓСЂ РїРµСЂРµСЃРµРєР°РµС‚СЃСЏ РІ РѕРґРЅРѕР№ С‚РѕС‡РєРµ (РІ СЃСЂРµРґРЅРµРј) */
 		public abstract double getVertexIntersection(); 
 
-		/** макс кол-во режимов заливки фона, которые знает данный тип мозаики
-		 * (знает ф-ция BaseCell::getBackgroundFillColor() или её наследующая)
-		 * (Не считая режима заливки цветом фона по-умолчанию...)
+		/** РјР°РєСЃ РєРѕР»-РІРѕ СЂРµР¶РёРјРѕРІ Р·Р°Р»РёРІРєРё С„РѕРЅР°, РєРѕС‚РѕСЂС‹Рµ Р·РЅР°РµС‚ РґР°РЅРЅС‹Р№ С‚РёРї РјРѕР·Р°РёРєРё
+		 * (Р·РЅР°РµС‚ С„-С†РёСЏ BaseCell::getBackgroundFillColor() РёР»Рё РµС‘ РЅР°СЃР»РµРґСѓСЋС‰Р°СЏ)
+		 * (РќРµ СЃС‡РёС‚Р°СЏ СЂРµР¶РёРјР° Р·Р°Р»РёРІРєРё С†РІРµС‚РѕРј С„РѕРЅР° РїРѕ-СѓРјРѕР»С‡Р°РЅРёСЋ...)
 		 */
 		public int getMaxBackgroundFillModeValue() {
 			return 18;
 		}
 
 		/**
-		 * Поиск больше-меньше
-		 * @param baseMin - стартовое значение для поиска
-		 * @param baseDelta - начало дельты приращения
-		 * @param func - ф-ция сравнения
-		 * @return что найдено
+		 * РџРѕРёСЃРє Р±РѕР»СЊС€Рµ-РјРµРЅСЊС€Рµ
+		 * @param baseMin - СЃС‚Р°СЂС‚РѕРІРѕРµ Р·РЅР°С‡РµРЅРёРµ РґР»СЏ РїРѕРёСЃРєР°
+		 * @param baseDelta - РЅР°С‡Р°Р»Рѕ РґРµР»СЊС‚С‹ РїСЂРёСЂР°С‰РµРЅРёСЏ
+		 * @param func - С„-С†РёСЏ СЃСЂР°РІРЅРµРЅРёСЏ
+		 * @return С‡С‚Рѕ РЅР°Р№РґРµРЅРѕ
 		 */
 		static int Finder(int baseMin, int baseDelta, Comparable<Integer> func) {
 			double res = baseMin;
@@ -162,10 +162,10 @@ public abstract class BaseCell implements PropertyChangeListener {
 			return (int)res;
 		}
 
-		/** узнаю мах размер площади ячеек мозаики, при котором окно проекта вмещается в заданную область
-		 * @param mosaicSizeField - интересуемый размер (в ячейках) поля мозаики
-		 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
-		 * @return макс площадь ячейки
+		/** СѓР·РЅР°СЋ РјР°С… СЂР°Р·РјРµСЂ РїР»РѕС‰Р°РґРё СЏС‡РµРµРє РјРѕР·Р°РёРєРё, РїСЂРё РєРѕС‚РѕСЂРѕРј РѕРєРЅРѕ РїСЂРѕРµРєС‚Р° РІРјРµС‰Р°РµС‚СЃСЏ РІ Р·Р°РґР°РЅРЅСѓСЋ РѕР±Р»Р°СЃС‚СЊ
+		 * @param mosaicSizeField - РёРЅС‚РµСЂРµСЃСѓРµРјС‹Р№ СЂР°Р·РјРµСЂ (РІ СЏС‡РµР№РєР°С…) РїРѕР»СЏ РјРѕР·Р°РёРєРё
+		 * @param sizeClient - СЂР°Р·РјРµСЂ РѕРєРЅР°/РѕР±Р»Р°СЃС‚Рё (РІ РїРёРєСЃРµР»СЏС…) РІ РєРѕС‚РѕСЂСѓСЋ РґРѕР»Р¶РЅР° РІРїРёСЃР°С‚СЊСЃСЏ РјРѕР·Р°РёРєР°
+		 * @return РјР°РєСЃ РїР»РѕС‰Р°РґСЊ СЏС‡РµР№РєРё
 		 */
 		public int CalcMaxArea(int minStartArea, final Size mosaicSizeField, final Size sizeClient) {
 			return Finder(minStartArea, 53, new Comparable<Integer>() {
@@ -184,10 +184,10 @@ public abstract class BaseCell implements PropertyChangeListener {
 		}
 
 		/**
-		 * узнаю max размер поля мозаики, при котором окно проекта вмещается в в заданную область
-		 * @param area - интересуемая площадь ячеек мозаики
-		 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
-		 * @return max размер поля мозаики
+		 * СѓР·РЅР°СЋ max СЂР°Р·РјРµСЂ РїРѕР»СЏ РјРѕР·Р°РёРєРё, РїСЂРё РєРѕС‚РѕСЂРѕРј РѕРєРЅРѕ РїСЂРѕРµРєС‚Р° РІРјРµС‰Р°РµС‚СЃСЏ РІ РІ Р·Р°РґР°РЅРЅСѓСЋ РѕР±Р»Р°СЃС‚СЊ
+		 * @param area - РёРЅС‚РµСЂРµСЃСѓРµРјР°СЏ РїР»РѕС‰Р°РґСЊ СЏС‡РµРµРє РјРѕР·Р°РёРєРё
+		 * @param sizeClient - СЂР°Р·РјРµСЂ РѕРєРЅР°/РѕР±Р»Р°СЃС‚Рё (РІ РїРёРєСЃРµР»СЏС…) РІ РєРѕС‚РѕСЂСѓСЋ РґРѕР»Р¶РЅР° РІРїРёСЃР°С‚СЊСЃСЏ РјРѕР·Р°РёРєР°
+		 * @return max СЂР°Р·РјРµСЂ РїРѕР»СЏ РјРѕР·Р°РёРєРё
 		 */
 		public Size CalcMaxMosaicSize(final int area, final Size sizeClient) {
 			final Size result = new Size();
@@ -229,23 +229,23 @@ public abstract class BaseCell implements PropertyChangeListener {
 
 //    CellContext cellContext;
 	protected Coord coord;
-	/** направление - 'третья координата' ячейки */
+	/** РЅР°РїСЂР°РІР»РµРЅРёРµ - 'С‚СЂРµС‚СЊСЏ РєРѕРѕСЂРґРёРЅР°С‚Р°' СЏС‡РµР№РєРё */
 	protected int direction;
 
-	/** вписанный в фигуру квадрат - область в которую выводится изображение/текст */
+	/** РІРїРёСЃР°РЅРЅС‹Р№ РІ С„РёРіСѓСЂСѓ РєРІР°РґСЂР°С‚ - РѕР±Р»Р°СЃС‚СЊ РІ РєРѕС‚РѕСЂСѓСЋ РІС‹РІРѕРґРёС‚СЃСЏ РёР·РѕР±СЂР°Р¶РµРЅРёРµ/С‚РµРєСЃС‚ */
 	public abstract Rect getRcInner(int borderWidth);
-	/** вернёт прямоугольник в который вписана фигура ячейки */
+	/** РІРµСЂРЅС‘С‚ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє РІ РєРѕС‚РѕСЂС‹Р№ РІРїРёСЃР°РЅР° С„РёРіСѓСЂР° СЏС‡РµР№РєРё */
 	public Rect getRcOuter() {
 		Rect rcOuter = region.getBounds();
-		rcOuter.height++; rcOuter.width++; // чтобы при repaint'е захватило и крайние границы
+		rcOuter.height++; rcOuter.width++; // С‡С‚РѕР±С‹ РїСЂРё repaint'Рµ Р·Р°С…РІР°С‚РёР»Рѕ Рё РєСЂР°Р№РЅРёРµ РіСЂР°РЅРёС†С‹
 		return rcOuter;
 	}
 
-	/** соседние ячейки - с которыми граничит this */
+	/** СЃРѕСЃРµРґРЅРёРµ СЏС‡РµР№РєРё - СЃ РєРѕС‚РѕСЂС‹РјРё РіСЂР°РЅРёС‡РёС‚ this */
 	private BaseCell[] neighbors;
 	public BaseCell[] getNeighbors() { return neighbors; }
 	
-	/** массив координат точек из которых состоит фигура */
+	/** РјР°СЃСЃРёРІ РєРѕРѕСЂРґРёРЅР°С‚ С‚РѕС‡РµРє РёР· РєРѕС‚РѕСЂС‹С… СЃРѕСЃС‚РѕРёС‚ С„РёРіСѓСЂР° */
 	protected Region region;
 
 	public class StateCell {
@@ -254,7 +254,7 @@ public abstract class BaseCell implements PropertyChangeListener {
 		private EOpen   open;   // _Nil, _1, ... _21, _Mine
 		private EClose  close;  // _Unknown, _Clear, _Flag
 		// } end union
-		/** Нажата? Не путать с open! - ячейка может быть нажата, но ещё не открыта. Важно только для ф-ции прорисовки */
+		/** РќР°Р¶Р°С‚Р°? РќРµ РїСѓС‚Р°С‚СЊ СЃ open! - СЏС‡РµР№РєР° РјРѕР¶РµС‚ Р±С‹С‚СЊ РЅР°Р¶Р°С‚Р°, РЅРѕ РµС‰С‘ РЅРµ РѕС‚РєСЂС‹С‚Р°. Р’Р°Р¶РЅРѕ С‚РѕР»СЊРєРѕ РґР»СЏ С„-С†РёРё РїСЂРѕСЂРёСЃРѕРІРєРё */
 		private boolean down;
 
 	    public void setDown(boolean bDown) { this.down = bDown; }
@@ -271,10 +271,10 @@ public abstract class BaseCell implements PropertyChangeListener {
 	    public EState getStatus() { return status; }
 	    public void CalcOpenState() {
 	    	if (this.open == EOpen._Mine) return;
-	    	// подсчитать у соседей число мин и установить значение
+	    	// РїРѕРґСЃС‡РёС‚Р°С‚СЊ Сѓ СЃРѕСЃРµРґРµР№ С‡РёСЃР»Рѕ РјРёРЅ Рё СѓСЃС‚Р°РЅРѕРІРёС‚СЊ Р·РЅР°С‡РµРЅРёРµ
 	    	int count = 0;
 	    	for (int i=0; i<neighbors.length; i++) {
-	    		if (neighbors[i] == null) continue; // существует ли сосед?
+	    		if (neighbors[i] == null) continue; // СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё СЃРѕСЃРµРґ?
 	    		if (neighbors[i].getState().getOpen() == EOpen._Mine) count++;
 	    	}
 	    	this.open = EOpen.class.getEnumConstants()[count];
@@ -287,8 +287,8 @@ public abstract class BaseCell implements PropertyChangeListener {
 	    public EOpen getOpen() { return this.open; }
 	    public void setClose(EClose close, ClickReportContext clickRepContext) {
 	    	if (clickRepContext != null)
-	    		if ((     close == EClose._Flag) || // если устанавливаю флажок
-	    			(this.close == EClose._Flag))   // если снимаю флажок
+	    		if ((     close == EClose._Flag) || // РµСЃР»Рё СѓСЃС‚Р°РЅР°РІР»РёРІР°СЋ С„Р»Р°Р¶РѕРє
+	    			(this.close == EClose._Flag))   // РµСЃР»Рё СЃРЅРёРјР°СЋ С„Р»Р°Р¶РѕРє
 	    		{
 	    			clickRepContext.setFlag.add(BaseCell.this);
 	    		}
@@ -305,14 +305,14 @@ public abstract class BaseCell implements PropertyChangeListener {
 	    }
 	}
 	private StateCell state;
-	/** запретить установку мины на данную ячейку */
+	/** Р·Р°РїСЂРµС‚РёС‚СЊ СѓСЃС‚Р°РЅРѕРІРєСѓ РјРёРЅС‹ РЅР° РґР°РЅРЅСѓСЋ СЏС‡РµР№РєСѓ */
 	private boolean lockMine;
 
 	public void LockNeighborMines() {
 		lockMine = true;
-		// запретить установку мин у соседей,
+		// Р·Р°РїСЂРµС‚РёС‚СЊ СѓСЃС‚Р°РЅРѕРІРєСѓ РјРёРЅ Сѓ СЃРѕСЃРµРґРµР№,
 		for (int i=0; i<neighbors.length; i++) {
-			if (neighbors[i] == null) continue; // существует ли сосед?
+			if (neighbors[i] == null) continue; // СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё СЃРѕСЃРµРґ?
 			neighbors[i].lockMine = true;
 		}
 	}
@@ -337,29 +337,29 @@ public abstract class BaseCell implements PropertyChangeListener {
 
 	/**
 	 * Coord[] neighborCoord = new Coord[attr.getNeighborNumber()];
-	 * <br>... потомки должны определить координаты соседей
+	 * <br>... РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РѕРїСЂРµРґРµР»РёС‚СЊ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
 	 * @return neighborCoord
 	 */
 	protected abstract Coord[] GetCoordsNeighbor();
 
-	/** матрица ячеек поля мозаики */
+	/** РјР°С‚СЂРёС†Р° СЏС‡РµРµРє РїРѕР»СЏ РјРѕР·Р°РёРєРё */
 	public static interface IMatrixCells {
-		/** размер поля */
+		/** СЂР°Р·РјРµСЂ РїРѕР»СЏ */
 		Size getSizeField();
 
-		/** доступ к заданной ячейке */
+		/** РґРѕСЃС‚СѓРї Рє Р·Р°РґР°РЅРЅРѕР№ СЏС‡РµР№РєРµ */
 		BaseCell getCell(Coord coord);
 	}
-	/** для this определить ячейки-соседей, и проверить валидность их координат
-	 * <br> вызывать после изменений размера поля или типа мозаики
+	/** РґР»СЏ this РѕРїСЂРµРґРµР»РёС‚СЊ СЏС‡РµР№РєРё-СЃРѕСЃРµРґРµР№, Рё РїСЂРѕРІРµСЂРёС‚СЊ РІР°Р»РёРґРЅРѕСЃС‚СЊ РёС… РєРѕРѕСЂРґРёРЅР°С‚
+	 * <br> РІС‹Р·С‹РІР°С‚СЊ РїРѕСЃР»Рµ РёР·РјРµРЅРµРЅРёР№ СЂР°Р·РјРµСЂР° РїРѕР»СЏ РёР»Рё С‚РёРїР° РјРѕР·Р°РёРєРё
 	 **/
 	public final void IdentifyNeighbors(IMatrixCells matrix) {
-		// получаю координаты соседних ячеек
+		// РїРѕР»СѓС‡Р°СЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРЅРёС… СЏС‡РµРµРє
 		Coord[] neighborCoord = GetCoordsNeighbor();
 		if (neighborCoord.length != attr.getNeighborNumber())
 			throw new RuntimeException("neighborCoord.length != GetNeighborNumber()");
 
-		// проверяю что они не вылезли за размеры
+		// РїСЂРѕРІРµСЂСЏСЋ С‡С‚Рѕ РѕРЅРё РЅРµ РІС‹Р»РµР·Р»Рё Р·Р° СЂР°Р·РјРµСЂС‹
 		for (int i=0; i<neighborCoord.length; i++)
 			if (neighborCoord[i] != null)
 				if ((neighborCoord[i].x >= matrix.getSizeField().width) ||
@@ -369,7 +369,7 @@ public abstract class BaseCell implements PropertyChangeListener {
 				{
 					neighborCoord[i] = null;
 				}
-		// по координатам получаю множество соседних обьектов-ячеек
+		// РїРѕ РєРѕРѕСЂРґРёРЅР°С‚Р°Рј РїРѕР»СѓС‡Р°СЋ РјРЅРѕР¶РµСЃС‚РІРѕ СЃРѕСЃРµРґРЅРёС… РѕР±СЊРµРєС‚РѕРІ-СЏС‡РµРµРє
 		neighbors = new BaseCell[attr.getNeighborNumber()];
 		for (int i=0; i<neighborCoord.length; i++)
 			if (neighborCoord[i] != null)
@@ -378,15 +378,15 @@ public abstract class BaseCell implements PropertyChangeListener {
 
 	public Coord getCoord() { return coord; }
 	public int getDirection() { return direction; }
-	/** координата центра фигуры (в пикселях) */
+	/** РєРѕРѕСЂРґРёРЅР°С‚Р° С†РµРЅС‚СЂР° С„РёРіСѓСЂС‹ (РІ РїРёРєСЃРµР»СЏС…) */
 	public Point getCenter() { return getRcInner(1).center(); }
 
-	/** принадлежат ли эти экранные координаты ячейке */
+	/** РїСЂРёРЅР°РґР»РµР¶Р°С‚ Р»Рё СЌС‚Рё СЌРєСЂР°РЅРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЏС‡РµР№РєРµ */
 	public boolean PointInRegion(Point point) { return region.Contains(point); }
 
 	public Region getRegion() { return region; }
 
-	/** определить координаты точек из которых состоит фигура */
+	/** РѕРїСЂРµРґРµР»РёС‚СЊ РєРѕРѕСЂРґРёРЅР°С‚С‹ С‚РѕС‡РµРє РёР· РєРѕС‚РѕСЂС‹С… СЃРѕСЃС‚РѕРёС‚ С„РёРіСѓСЂР° */
 	protected abstract void CalcRegion();
 
 	public void Reset() {
@@ -408,10 +408,10 @@ public abstract class BaseCell implements PropertyChangeListener {
 		}
 
 		LeftDownResult result = null;
-		// эффект нажатости для неоткрытых соседей
+		// СЌС„С„РµРєС‚ РЅР°Р¶Р°С‚РѕСЃС‚Рё РґР»СЏ РЅРµРѕС‚РєСЂС‹С‚С‹С… СЃРѕСЃРµРґРµР№
 		if ((state.getStatus() == EState._Open) && (state.getOpen() != EOpen._Nil))
 			for (int i=0; i<neighbors.length; i++) {
-				if (neighbors[i] == null) continue; // существует ли сосед?
+				if (neighbors[i] == null) continue; // СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё СЃРѕСЃРµРґ?
 				if ((neighbors[i].state.getStatus() == EState._Open) ||
 					(neighbors[i].state.getClose()  == EClose._Flag)) continue;
 				neighbors[i].state.setDown(true);
@@ -425,16 +425,16 @@ public abstract class BaseCell implements PropertyChangeListener {
 		LeftUpResult result = new LeftUpResult(0, 0, 0, false, false);
 
 		if (state.getClose() == EClose._Flag) return result;
-		// избавится от эффекта нажатости
+		// РёР·Р±Р°РІРёС‚СЃСЏ РѕС‚ СЌС„С„РµРєС‚Р° РЅР°Р¶Р°С‚РѕСЃС‚Рё
 		if ((state.getStatus() == EState._Open) && (state.getOpen() != EOpen._Nil))
 			for (int i=0; i<neighbors.length; i++) {
-				if (neighbors[i] == null) continue; // существует ли сосед?
+				if (neighbors[i] == null) continue; // СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё СЃРѕСЃРµРґ?
 				if ((neighbors[i].state.getStatus() == EState._Open) ||
 					(neighbors[i].state.getClose()  == EClose._Flag)) continue;
 				neighbors[i].state.setDown(false);
 				result.addToRepaint(neighbors[i]);
 			}
-		// Открыть закрытую ячейку на которой нажали
+		// РћС‚РєСЂС‹С‚СЊ Р·Р°РєСЂС‹С‚СѓСЋ СЏС‡РµР№РєСѓ РЅР° РєРѕС‚РѕСЂРѕР№ РЅР°Р¶Р°Р»Рё
 		if (state.getStatus() == EState._Close)
 			if (!isMy) {
 				state.setDown(false);
@@ -448,22 +448,22 @@ public abstract class BaseCell implements PropertyChangeListener {
 				result.addToRepaint(this);
 			}
 
-		// ! В этой точке ячейка уже открыта
-		// Подсчитываю кол-во установленных вокруг флагов и не открытых ячеек
+		// ! Р’ СЌС‚РѕР№ С‚РѕС‡РєРµ СЏС‡РµР№РєР° СѓР¶Рµ РѕС‚РєСЂС‹С‚Р°
+		// РџРѕРґСЃС‡РёС‚С‹РІР°СЋ РєРѕР»-РІРѕ СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹С… РІРѕРєСЂСѓРі С„Р»Р°РіРѕРІ Рё РЅРµ РѕС‚РєСЂС‹С‚С‹С… СЏС‡РµРµРє
 		int countFlags = 0;
 		int countClear = 0;
 		if (state.getOpen() != EOpen._Nil)
 			for (int i=0; i<neighbors.length; i++) {
-				if (neighbors[i] == null) continue; // существует ли сосед?
+				if (neighbors[i] == null) continue; // СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё СЃРѕСЃРµРґ?
 				if (neighbors[i].state.getStatus() == EState._Open) continue;
 				if (neighbors[i].state.getClose()  == EClose._Flag)
 					countFlags++;
 				else countClear++;
 			}
-		// оставшимся установить флаги
+		// РѕСЃС‚Р°РІС€РёРјСЃСЏ СѓСЃС‚Р°РЅРѕРІРёС‚СЊ С„Р»Р°РіРё
 		if ((state.getOpen() != EOpen._Nil) && ((countFlags+countClear) == state.getOpen().ordinal()))
 			for (int i=0; i<neighbors.length; i++) {
-				if (neighbors[i] == null) continue; // существует ли сосед?
+				if (neighbors[i] == null) continue; // СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё СЃРѕСЃРµРґ?
 				if ((neighbors[i].state.getStatus() == EState._Open) ||
 					(neighbors[i].state.getClose()  == EClose._Flag)) continue;
 				result.countUnknown += (neighbors[i].state.getClose() == EClose._Unknown) ? -1 : 0;
@@ -472,10 +472,10 @@ public abstract class BaseCell implements PropertyChangeListener {
 				result.addToRepaint(neighbors[i]);
 			}
 		if (!isMy) return result;
-		// открыть оставшиеся
+		// РѕС‚РєСЂС‹С‚СЊ РѕСЃС‚Р°РІС€РёРµСЃСЏ
 		if ((countFlags+result.countFlag) == state.getOpen().ordinal())
 			for (int i=0; i<neighbors.length; i++) {
-				if (neighbors[i] == null) continue; // существует ли сосед?
+				if (neighbors[i] == null) continue; // СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё СЃРѕСЃРµРґ?
 				if ((neighbors[i].state.getStatus() == EState._Open) ||
 					(neighbors[i].state.getClose()  == EClose._Flag)) continue;
 				result.countUnknown += (neighbors[i].state.getClose() == EClose._Unknown) ? -1 : 0;
@@ -544,24 +544,24 @@ public abstract class BaseCell implements PropertyChangeListener {
 		return result;
 	}
 
-	/** <ul> Вернуть цвет заливки ячеки в зависимости от
-	 * <li> режима заливки фона ячеек
-	 * <li> координаты ячейки
-	 * <li> направления ячейки
-	 * <li> ... - как придумает дочерний класс
+	/** <ul> Р’РµСЂРЅСѓС‚СЊ С†РІРµС‚ Р·Р°Р»РёРІРєРё СЏС‡РµРєРё РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚
+	 * <li> СЂРµР¶РёРјР° Р·Р°Р»РёРІРєРё С„РѕРЅР° СЏС‡РµРµРє
+	 * <li> РєРѕРѕСЂРґРёРЅР°С‚С‹ СЏС‡РµР№РєРё
+	 * <li> РЅР°РїСЂР°РІР»РµРЅРёСЏ СЏС‡РµР№РєРё
+	 * <li> ... - РєР°Рє РїСЂРёРґСѓРјР°РµС‚ РґРѕС‡РµСЂРЅРёР№ РєР»Р°СЃСЃ
 	 */
 	public Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
 		switch (fillMode) {
 		default:
-			System.err.println(getClass().getSimpleName()+".getBackgroundFillColor: fillMode="+fillMode+":  добавь цветовую обработку для этого режима!");
-			//break;// !!! без break'а
+			System.err.println(getClass().getSimpleName()+".getBackgroundFillColor: fillMode="+fillMode+":  РґРѕР±Р°РІСЊ С†РІРµС‚РѕРІСѓСЋ РѕР±СЂР°Р±РѕС‚РєСѓ РґР»СЏ СЌС‚РѕРіРѕ СЂРµР¶РёРјР°!");
+			//break;// !!! Р±РµР· break'Р°
 		case 0:
 			if ((getState().getStatus() == EState._Open) && (getState().getOpen() == EOpen._Mine) && getState().isDown())
-				return Color.Red.brighter(0.05); // game ower: игра завершена - клик на мине
+				return Color.Red.brighter(0.05); // game ower: РёРіСЂР° Р·Р°РІРµСЂС€РµРЅР° - РєР»РёРє РЅР° РјРёРЅРµ
 			if ((getState().getStatus() == EState._Open) && (getState().getOpen() != EOpen._Mine) && (getState().getClose() == EClose._Flag))
-				return Color.Magenta.brighter(0.3); // game ower: игра завершена - не верно проставлен флаг (на ячейке с цифрой)
+				return Color.Magenta.brighter(0.3); // game ower: РёРіСЂР° Р·Р°РІРµСЂС€РµРЅР° - РЅРµ РІРµСЂРЅРѕ РїСЂРѕСЃС‚Р°РІР»РµРЅ С„Р»Р°Рі (РЅР° СЏС‡РµР№РєРµ СЃ С†РёС„СЂРѕР№)
 
-			// для Down и Нажатого состояний делаю фон чуть и чуть-чуть темнее...
+			// РґР»СЏ Down Рё РќР°Р¶Р°С‚РѕРіРѕ СЃРѕСЃС‚РѕСЏРЅРёР№ РґРµР»Р°СЋ С„РѕРЅ С‡СѓС‚СЊ Рё С‡СѓС‚СЊ-С‡СѓС‚СЊ С‚РµРјРЅРµРµ...
 			if (getState().isDown())
 				return defaultColor.darker((getState().getStatus() == EState._Close) ? 0.15 : 0.25);
 			return defaultColor;
@@ -570,7 +570,7 @@ public abstract class BaseCell implements PropertyChangeListener {
 			return repositoryColor.get(getDirection());
 		case 2:
 			{
-				// подсветить каждую i-тую строку c шагом div
+				// РїРѕРґСЃРІРµС‚РёС‚СЊ РєР°Р¶РґСѓСЋ i-С‚СѓСЋ СЃС‚СЂРѕРєСѓ c С€Р°РіРѕРј div
 				final int i = 2;
 				final int div = 5;
 				int tmp1 = getCoord().x % div;
@@ -579,7 +579,7 @@ public abstract class BaseCell implements PropertyChangeListener {
 			}
 		case 3:
 			{
-				// дуршлаг
+				// РґСѓСЂС€Р»Р°Рі
 				final int i = 3;
 				final int div = 4;
 				int tmp1 = getCoord().x % div;
@@ -588,7 +588,7 @@ public abstract class BaseCell implements PropertyChangeListener {
 			}
 		case 4:
 			{
-				// ход конём
+				// С…РѕРґ РєРѕРЅС‘Рј
 				final int i = 3;
 				final int div = 5;
 				int tmp1 = getCoord().x % div;
@@ -597,7 +597,7 @@ public abstract class BaseCell implements PropertyChangeListener {
 			}
 		case 5:
 			{
-				// волны
+				// РІРѕР»РЅС‹
 				final int div = 15;
 				int tmp1 = getCoord().x % div;
 				int tmp2 = (getCoord().y+tmp1) % div;
@@ -627,10 +627,10 @@ public abstract class BaseCell implements PropertyChangeListener {
 		{
 			CalcRegion();
 
-//			region.invalidate(); // сбрасываю region.bounds, для того чтобы в теле getRcOuter() мог
-//			// вызывать AWT'ешный region.getBounds(). Иначе, после изменения площади,
-//			// вызов getRcOuter() (через вызов region.getBounds() ) будет возвращать
-//			// закешированое значение, и как следствие - глюки при перерисовке Mosaic (после изменения площади)...
+//			region.invalidate(); // СЃР±СЂР°СЃС‹РІР°СЋ region.bounds, РґР»СЏ С‚РѕРіРѕ С‡С‚РѕР±С‹ РІ С‚РµР»Рµ getRcOuter() РјРѕРі
+//			// РІС‹Р·С‹РІР°С‚СЊ AWT'РµС€РЅС‹Р№ region.getBounds(). РРЅР°С‡Рµ, РїРѕСЃР»Рµ РёР·РјРµРЅРµРЅРёСЏ РїР»РѕС‰Р°РґРё,
+//			// РІС‹Р·РѕРІ getRcOuter() (С‡РµСЂРµР· РІС‹Р·РѕРІ region.getBounds() ) Р±СѓРґРµС‚ РІРѕР·РІСЂР°С‰Р°С‚СЊ
+//			// Р·Р°РєРµС€РёСЂРѕРІР°РЅРѕРµ Р·РЅР°С‡РµРЅРёРµ, Рё РєР°Рє СЃР»РµРґСЃС‚РІРёРµ - РіР»СЋРєРё РїСЂРё РїРµСЂРµСЂРёСЃРѕРІРєРµ Mosaic (РїРѕСЃР»Рµ РёР·РјРµРЅРµРЅРёСЏ РїР»РѕС‰Р°РґРё)...
 		}
 	}
 }

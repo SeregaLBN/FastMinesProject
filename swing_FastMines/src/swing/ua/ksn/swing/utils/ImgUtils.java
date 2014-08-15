@@ -13,10 +13,10 @@ import java.net.URL;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-/** вспомогательный класс для преобразований картинок */
+/** РІСЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Р№ РєР»Р°СЃСЃ РґР»СЏ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёР№ РєР°СЂС‚РёРЅРѕРє */
 public class ImgUtils {
 
-	/** загрузить картинку из локальных ресурсов */
+	/** Р·Р°РіСЂСѓР·РёС‚СЊ РєР°СЂС‚РёРЅРєСѓ РёР· Р»РѕРєР°Р»СЊРЅС‹С… СЂРµСЃСѓСЂСЃРѕРІ */
 	public static Image getImage(String resName) {
 		URL url = ImgUtils.class.getResource("/"+resName);
 		if (url != null)
@@ -37,7 +37,7 @@ public class ImgUtils {
 //				throw new RuntimeException(ex);
 //			}
 	}
-	/** загрузить картинку из локальных ресурсов */
+	/** Р·Р°РіСЂСѓР·РёС‚СЊ РєР°СЂС‚РёРЅРєСѓ РёР· Р»РѕРєР°Р»СЊРЅС‹С… СЂРµСЃСѓСЂСЃРѕРІ */
 	public static ImageIcon getImageIcon(String resName) {
 		return toImgIco(getImage(resName));
 	}

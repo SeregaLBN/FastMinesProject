@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Square1.java"
 //
-// Описание класса Square1 - квадрат (классический вариант поля)
+// РћРїРёСЃР°РЅРёРµ РєР»Р°СЃСЃР° Square1 - РєРІР°РґСЂР°С‚ (РєР»Р°СЃСЃРёС‡РµСЃРєРёР№ РІР°СЂРёР°РЅС‚ РїРѕР»СЏ)
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ import ua.ksn.geom.Size;
 import ua.ksn.geom.Point;
 
 /**
- * Квадрат. Вариант 1
+ * РљРІР°РґСЂР°С‚. Р’Р°СЂРёР°РЅС‚ 1
  * @see BaseCell
  **/
 public class Square1 extends BaseCell {
@@ -43,7 +43,7 @@ public class Square1 extends BaseCell {
 
 		@Override
 		public Size CalcOwnerSize(Size sizeField, int area) {
-			double a = CalcA(area); // размер стороны квадрата
+			double a = CalcA(area); // СЂР°Р·РјРµСЂ СЃС‚РѕСЂРѕРЅС‹ РєРІР°РґСЂР°С‚Р°
 			Size result = new Size(
 					(int)(sizeField.width * a),
 					(int)(sizeField.height * a));
@@ -84,7 +84,7 @@ public class Square1 extends BaseCell {
 	protected Coord[] GetCoordsNeighbor() {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
 		neighborCoord[1] = new Coord(coord.x  , coord.y-1);
 		neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
@@ -143,7 +143,7 @@ public class Square1 extends BaseCell {
 		switch (fillMode) {
 		default:
 			return super.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);
-		case 1: // перекрываю базовый на основе direction
+		case 1: // РїРµСЂРµРєСЂС‹РІР°СЋ Р±Р°Р·РѕРІС‹Р№ РЅР° РѕСЃРЅРѕРІРµ direction
 			int pos = (-getCoord().x + getCoord().y) % ((getAttr().hashCode() & 0x3)+fillMode);
 //			System.out.println(pos);
 			return repositoryColor.get(pos);

@@ -12,7 +12,7 @@ import ua.ksn.fmg.view.swing.model.ChampionTblModel;
 import ua.ksn.fmg.view.swing.model.ReportTableModel;
 import ua.ksn.fmg.view.swing.res.Resources;
 
-/** Диалог отображения чемпионов */
+/** Р”РёР°Р»РѕРі РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ С‡РµРјРїРёРѕРЅРѕРІ */
 public class ChampionDlg extends ReportDlg {
 	private static final long serialVersionUID = 1L;
 
@@ -41,7 +41,7 @@ public class ChampionDlg extends ReportDlg {
 		return super.getTableCellHorizontalAlignment(row, column);
 	}
 
-	// тестовый метод для проверки диалогового окна
+	// С‚РµСЃС‚РѕРІС‹Р№ РјРµС‚РѕРґ РґР»СЏ РїСЂРѕРІРµСЂРєРё РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР°
 	public static void main(String[] args) {
 		ChampionsModel champions = new ChampionsModel(Main.serialVersionUID, null);
 		champions.Load();
@@ -57,9 +57,9 @@ public class ChampionDlg extends ReportDlg {
 	protected boolean isOneLineSkillLevelButtons() { return false; }
 
 	public void ShowData(ESkillLevel eSkill, EMosaic eMosaic) {
-		// найдёт позицию первого вхождения пользователя...
+		// РЅР°Р№РґС‘С‚ РїРѕР·РёС†РёСЋ РїРµСЂРІРѕРіРѕ РІС…РѕР¶РґРµРЅРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ...
 		int pos = champions.getPos((parent==null) ? null : parent.getActiveUserId(), eMosaic, eSkill);
-		// ...на этой позиции и фокусируюсь
+		// ...РЅР° СЌС‚РѕР№ РїРѕР·РёС†РёРё Рё С„РѕРєСѓСЃРёСЂСѓСЋСЃСЊ
 		super.ShowData(eSkill, eMosaic, pos);
 	}
 }

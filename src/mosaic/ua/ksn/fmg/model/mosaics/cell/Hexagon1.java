@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Hexagon1.java"
 //
-// Реализация класса Hexagon1 - правильный 6-ти угольник (сота)
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° Hexagon1 - РїСЂР°РІРёР»СЊРЅС‹Р№ 6-С‚Рё СѓРіРѕР»СЊРЅРёРє (СЃРѕС‚Р°)
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ import ua.ksn.geom.Rect;
 import ua.ksn.geom.Size;
 
 /**
- * Шестиугольник 
+ * РЁРµСЃС‚РёСѓРіРѕР»СЊРЅРёРє 
  * @see BaseCell
  **/
 public class Hexagon1 extends BaseCell {
@@ -65,7 +65,7 @@ public class Hexagon1 extends BaseCell {
 		public Size GetDirectionSizeField() { return new Size(1, 2); }
 		@Override
 		protected double CalcA(int area) { return Math.sqrt(2*area/SQRT27); }
-		/** пол стороны треугольника */
+		/** РїРѕР» СЃС‚РѕСЂРѕРЅС‹ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР° */
 		protected double CalcB(int area) { return CalcA(area)*SQRT3; }
 		@Override
 		public double CalcSq(int area, int borderWidth) {
@@ -89,7 +89,7 @@ public class Hexagon1 extends BaseCell {
 	protected Coord[] GetCoordsNeighbor() {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	neighborCoord[0] = new Coord(coord.x-(direction^1), coord.y-1);
 		neighborCoord[1] = new Coord(coord.x+ direction   , coord.y-1);
 		neighborCoord[2] = new Coord(coord.x-1            , coord.y);
@@ -141,7 +141,7 @@ public class Hexagon1 extends BaseCell {
 		double oX = (coord.x+1)*b;      // offset X
 		double oY = (coord.y+1-direction)*a*1.5; // offset Y
 
-		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° РІРїРёСЃР°РЅРЅРѕРіРѕ РІ С„РёРіСѓСЂСѓ РєРІР°РґСЂР°С‚Р° (РЅРµ СЃРѕРІРїР°РґР°РµС‚ СЃ С†РµРЅС‚СЂРѕРј С„РёРіСѓСЂС‹)
 		switch (direction) {
 		case 0: center.x = oX - b/2; center.y = oY - a/2; break;
 		case 1: center.x = oX;       center.y = oY + a;   break;

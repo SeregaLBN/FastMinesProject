@@ -38,7 +38,7 @@ import ua.ksn.fmg.view.swing.Main;
 import ua.ksn.fmg.view.swing.model.ManageTblModel;
 import ua.ksn.swing.utils.GuiTools;
 
-/** Диалог управления пользователями */
+/** Р”РёР°Р»РѕРі СѓРїСЂР°РІР»РµРЅРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРјРё */
 public class ManageDlg extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private static String DEFAULT_CAPTION = "Users manage";
@@ -73,7 +73,7 @@ public class ManageDlg extends JDialog {
 		this.setResizable(!false);
 		CreateComponents();
 
-		// задаю предпочтительный размер
+		// Р·Р°РґР°СЋ РїСЂРµРґРїРѕС‡С‚РёС‚РµР»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ
 		pack();
 		this.setLocationRelativeTo(parent);
 	}
@@ -100,7 +100,7 @@ public class ManageDlg extends JDialog {
 		OnClose();
 	}
 	private void OnClose() {
-		// при выходе из диалогового окна - освобождаю ресурсы
+		// РїСЂРё РІС‹С…РѕРґРµ РёР· РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР° - РѕСЃРІРѕР±РѕР¶РґР°СЋ СЂРµСЃСѓСЂСЃС‹
 		dispose();
 	}
 
@@ -141,13 +141,13 @@ public class ManageDlg extends JDialog {
 			players.removePlayer(players.getUser(rowIndex).getGuid());
 	}
 
-	/** создаю панели с нужным расположением */
+	/** СЃРѕР·РґР°СЋ РїР°РЅРµР»Рё СЃ РЅСѓР¶РЅС‹Рј СЂР°СЃРїРѕР»РѕР¶РµРЅРёРµРј */
 	private void CreateComponents() {
-		// 1. Центральная панель
+		// 1. Р¦РµРЅС‚СЂР°Р»СЊРЅР°СЏ РїР°РЅРµР»СЊ
 		Box boxCenter = Box.createVerticalBox();
 		{
-			// Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов. 
-			// использую пустую рамку 
+			// Р§С‚РѕР±С‹ РёРЅС‚РµСЂС„РµР№СЃ РѕС‚РІРµС‡Р°Р» С‚СЂРµР±РѕРІР°РЅРёСЏРј Java, РЅРµРѕР±С…РѕРґРёРјРѕ РѕС‚РґРµР»РёС‚СЊ РµРіРѕ СЃРѕРґРµСЂР¶РёРјРѕРµ РѕС‚ РіСЂР°РЅРёС† РѕРєРЅР° РЅР° 12 РїРёРєСЃРµР»РѕРІ. 
+			// РёСЃРїРѕР»СЊР·СѓСЋ РїСѓСЃС‚СѓСЋ СЂР°РјРєСѓ 
 			boxCenter.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
 
 			table = new JTable(new ManageTblModel(players)) {
@@ -156,7 +156,7 @@ public class ManageDlg extends JDialog {
 				public TableCellRenderer getCellRenderer(int row, int column) {
 					TableCellRenderer rend = super.getCellRenderer(row, column);
 					if (rend instanceof JLabel) {
-						// выравнивание текста в ячеке
+						// РІС‹СЂР°РІРЅРёРІР°РЅРёРµ С‚РµРєСЃС‚Р° РІ СЏС‡РµРєРµ
 						((JLabel)rend).setHorizontalAlignment(JLabel.LEFT);
 //						((JLabel)rend).setVerticalAlignment(SwingConstants.TOP);
 					}
@@ -164,10 +164,10 @@ public class ManageDlg extends JDialog {
 				}
 			};
 
-//			// выравниваю текст заголовка таблицы по центру
-//			// TODO Хоть текст и выравнивается, но сами ячейки заголовка таблицы уже выглядят хуже чем
-//			//      в оригинальном рендере (особо заметно под Маком).
-//			//      Т.е. DefaultTableCellRenderer выглядит паршиво, а как достать орининальный рендер заголовка - хз 
+//			// РІС‹СЂР°РІРЅРёРІР°СЋ С‚РµРєСЃС‚ Р·Р°РіРѕР»РѕРІРєР° С‚Р°Р±Р»РёС†С‹ РїРѕ С†РµРЅС‚СЂСѓ
+//			// TODO РҐРѕС‚СЊ С‚РµРєСЃС‚ Рё РІС‹СЂР°РІРЅРёРІР°РµС‚СЃСЏ, РЅРѕ СЃР°РјРё СЏС‡РµР№РєРё Р·Р°РіРѕР»РѕРІРєР° С‚Р°Р±Р»РёС†С‹ СѓР¶Рµ РІС‹РіР»СЏРґСЏС‚ С…СѓР¶Рµ С‡РµРј
+//			//      РІ РѕСЂРёРіРёРЅР°Р»СЊРЅРѕРј СЂРµРЅРґРµСЂРµ (РѕСЃРѕР±Рѕ Р·Р°РјРµС‚РЅРѕ РїРѕРґ РњР°РєРѕРј).
+//			//      Рў.Рµ. DefaultTableCellRenderer РІС‹РіР»СЏРґРёС‚ РїР°СЂС€РёРІРѕ, Р° РєР°Рє РґРѕСЃС‚Р°С‚СЊ РѕСЂРёРЅРёРЅР°Р»СЊРЅС‹Р№ СЂРµРЅРґРµСЂ Р·Р°РіРѕР»РѕРІРєР° - С…Р· 
 //			table.getColumnModel().getColumn(0).setHeaderRenderer(new javax.swing.table.DefaultTableCellRenderer() {
 //				private static final long serialVersionUID = 1L;
 //				@Override
@@ -257,7 +257,7 @@ public class ManageDlg extends JDialog {
 			boxCenter.add(doNotAskStartup = new JCheckBox("Do not ask at startup", true));
 		}
 
-		// 2. Панель кнопок слева
+		// 2. РџР°РЅРµР»СЊ РєРЅРѕРїРѕРє СЃР»РµРІР°
 		JComponent panelLeft = Box.createVerticalBox();//new JPanel(new GridLayout(0, 1, 0, 12));
 		{
 			panelLeft.setBorder(BorderFactory.createEmptyBorder(12,0,12,12));
@@ -303,13 +303,13 @@ public class ManageDlg extends JDialog {
 			GuiTools.makeSameWidth(new Component[] {btnNp, btnCancel, btnOk});
 		}
 
-		// добавляю расположение в центр окна
+		// РґРѕР±Р°РІР»СЏСЋ СЂР°СЃРїРѕР»РѕР¶РµРЅРёРµ РІ С†РµРЅС‚СЂ РѕРєРЅР°
 		getContentPane().add(boxCenter, BorderLayout.CENTER);
-		// ряд кнопок слева
+		// СЂСЏРґ РєРЅРѕРїРѕРє СЃР»РµРІР°
 		getContentPane().add(panelLeft, BorderLayout.EAST);
 	}
 
-	// тестовый метод для проверки диалогового окна
+	// С‚РµСЃС‚РѕРІС‹Р№ РјРµС‚РѕРґ РґР»СЏ РїСЂРѕРІРµСЂРєРё РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР°
 	public static void main(String[] args) {
 		try {
 			PlayersModel players = new PlayersModel(Main.serialVersionUID);

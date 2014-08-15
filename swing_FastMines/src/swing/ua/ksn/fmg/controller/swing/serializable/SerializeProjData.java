@@ -19,7 +19,7 @@ import ua.ksn.fmg.view.swing.Main;
 import ua.ksn.geom.Size;
 import ua.ksn.geom.Point;
 
-/** Данные проекта, записываемые/считываемые в/из файл(а) */
+/** Р”Р°РЅРЅС‹Рµ РїСЂРѕРµРєС‚Р°, Р·Р°РїРёСЃС‹РІР°РµРјС‹Рµ/СЃС‡РёС‚С‹РІР°РµРјС‹Рµ РІ/РёР· С„Р°Р№Р»(Р°) */
 public class SerializeProjData implements Externalizable {
 	private static final long version = Main.serialVersionUID;
 

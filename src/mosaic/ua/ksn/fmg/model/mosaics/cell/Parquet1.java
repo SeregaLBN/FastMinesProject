@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Parquet1.java"
 //
-// Реализация класса Parquet1 - паркет в елку (herring-bone parquet)
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° Parquet1 - РїР°СЂРєРµС‚ РІ РµР»РєСѓ (herring-bone parquet)
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ import ua.ksn.geom.Rect;
 import ua.ksn.geom.Size;
 
 /**
- * Паркет в елку
+ * РџР°СЂРєРµС‚ РІ РµР»РєСѓ
  * @see BaseCell
  **/
 public class Parquet1 extends BaseCell {
@@ -86,7 +86,7 @@ public class Parquet1 extends BaseCell {
 	protected Coord[] GetCoordsNeighbor() {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	boolean bdir = (direction != 0);
     	neighborCoord[0] = new Coord(bdir ? coord.x  : coord.x-1, coord.y-1);
 		neighborCoord[1] = new Coord(bdir ? coord.x-1: coord.x  , bdir ? coord.y  : coord.y-1);

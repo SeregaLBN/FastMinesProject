@@ -5,14 +5,14 @@ import java.beans.PropertyChangeSupport;
 
 import ua.ksn.Color;
 
-/** Характеристики кисти у рамки ячейки */
+/** РҐР°СЂР°РєС‚РµСЂРёСЃС‚РёРєРё РєРёСЃС‚Рё Сѓ СЂР°РјРєРё СЏС‡РµР№РєРё */
 public class PenBorder {
 	private PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
-	/**  подписаться на уведомления изменений PenBorder */
+	/**  РїРѕРґРїРёСЃР°С‚СЊСЃСЏ РЅР° СѓРІРµРґРѕРјР»РµРЅРёСЏ РёР·РјРµРЅРµРЅРёР№ PenBorder */
 	public void addPropertyChangeListener(PropertyChangeListener l) {
 		propertyChanges.addPropertyChangeListener(l);
 	}
-	/**  отписаться от уведомлений изменений PenBorder */
+	/**  РѕС‚РїРёСЃР°С‚СЊСЃСЏ РѕС‚ СѓРІРµРґРѕРјР»РµРЅРёР№ РёР·РјРµРЅРµРЅРёР№ PenBorder */
 	public void removePropertyChangeListener(PropertyChangeListener l) {
 		propertyChanges.removePropertyChangeListener(l);
 	}

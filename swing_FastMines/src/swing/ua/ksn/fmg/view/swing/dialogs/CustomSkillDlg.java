@@ -83,18 +83,18 @@ public class CustomSkillDlg extends JDialog {
 
 		this.setResizable(false);
 		CreateComponents();
-		// задаю предпочтительный размер
+		// Р·Р°РґР°СЋ РїСЂРµРґРїРѕС‡С‚РёС‚РµР»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ
 		pack();
 		this.setLocationRelativeTo(parent);
 	}
 
-	// создаю панели с нужным расположением
+	// СЃРѕР·РґР°СЋ РїР°РЅРµР»Рё СЃ РЅСѓР¶РЅС‹Рј СЂР°СЃРїРѕР»РѕР¶РµРЅРёРµРј
 	private void CreateComponents() {
-		// 1. Создаю панель, которая будет содержать все остальные элементы и панели расположения
+		// 1. РЎРѕР·РґР°СЋ РїР°РЅРµР»СЊ, РєРѕС‚РѕСЂР°СЏ Р±СѓРґРµС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ РІСЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹ Рё РїР°РЅРµР»Рё СЂР°СЃРїРѕР»РѕР¶РµРЅРёСЏ
 		Box boxCenter = Box.createHorizontalBox();
 		Box boxBottom = Box.createHorizontalBox();
-		// Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов. 
-		// использую пустую рамку 
+		// Р§С‚РѕР±С‹ РёРЅС‚РµСЂС„РµР№СЃ РѕС‚РІРµС‡Р°Р» С‚СЂРµР±РѕРІР°РЅРёСЏРј Java, РЅРµРѕР±С…РѕРґРёРјРѕ РѕС‚РґРµР»РёС‚СЊ РµРіРѕ СЃРѕРґРµСЂР¶РёРјРѕРµ РѕС‚ РіСЂР°РЅРёС† РѕРєРЅР° РЅР° 12 РїРёРєСЃРµР»РѕРІ. 
+		// РёСЃРїРѕР»СЊР·СѓСЋ РїСѓСЃС‚СѓСЋ СЂР°РјРєСѓ 
 		boxBottom.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
 //		boxCenter.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
 		boxCenter.setBorder(
@@ -115,7 +115,7 @@ public class CustomSkillDlg extends JDialog {
 		spinMines = new JSpinner();
 		spinMines.setToolTipText("Mines count");
 
-		// отслеживаю изменения
+		// РѕС‚СЃР»РµР¶РёРІР°СЋ РёР·РјРµРЅРµРЅРёСЏ
 		ChangeListener changeSizeListener = new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) { OnChangeSizeField(); }
@@ -123,7 +123,7 @@ public class CustomSkillDlg extends JDialog {
 		spinX.addChangeListener(changeSizeListener);
 		spinY.addChangeListener(changeSizeListener);
 
-//		// отслеживаю изменения также и в редакторе
+//		// РѕС‚СЃР»РµР¶РёРІР°СЋ РёР·РјРµРЅРµРЅРёСЏ С‚Р°РєР¶Рµ Рё РІ СЂРµРґР°РєС‚РѕСЂРµ
 //		((JSpinner.DefaultEditor)spinX    .getEditor()).getTextField().getDocument().addDocumentListener(new SpinNumberDocListener(spinX    ));
 //		((JSpinner.DefaultEditor)spinY    .getEditor()).getTextField().getDocument().addDocumentListener(new SpinNumberDocListener(spinY    ));
 //		((JSpinner.DefaultEditor)spinMines.getEditor()).getTextField().getDocument().addDocumentListener(new SpinNumberDocListener(spinMines));
@@ -212,7 +212,7 @@ public class CustomSkillDlg extends JDialog {
 		boxCenter.add(Box.createHorizontalStrut(5)); 
 		boxCenter.add(panel4Radio);
 
-		// добавляю расположение в центр окна и внизу
+		// РґРѕР±Р°РІР»СЏСЋ СЂР°СЃРїРѕР»РѕР¶РµРЅРёРµ РІ С†РµРЅС‚СЂ РѕРєРЅР° Рё РІРЅРёР·Сѓ
 		getContentPane().add(boxCenter, BorderLayout.CENTER);
 		getContentPane().add(boxBottom, BorderLayout.SOUTH);
 
@@ -291,12 +291,12 @@ public class CustomSkillDlg extends JDialog {
 		OnClose();
 	}
 	private void OnClose() {
-		// при выходе из диалогового окна - освобождаю ресурсы
+		// РїСЂРё РІС‹С…РѕРґРµ РёР· РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР° - РѕСЃРІРѕР±РѕР¶РґР°СЋ СЂРµСЃСѓСЂСЃС‹
 		dispose();
 //		System.exit(0);
 	}
 
-	// тестовый метод для проверки диалогового окна
+	// С‚РµСЃС‚РѕРІС‹Р№ РјРµС‚РѕРґ РґР»СЏ РїСЂРѕРІРµСЂРєРё РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР°
 	public static void main(String[] args) {
 		CustomSkillDlg sm = new CustomSkillDlg(null, true);
 		sm.setVisible(true);
@@ -305,7 +305,7 @@ public class CustomSkillDlg extends JDialog {
 	private int getNeighborNumber() {
 		if (parent == null)
 			return 21;
-		final int area = 200; // пох
+		final int area = 200; // РїРѕС…
 		BaseCell.BaseAttribute attr = CellFactory.createAttributeInstance(parent.getMosaic().getMosaicType(), area);
 		return attr.getNeighborNumber() + 1; // +thisCell
 	}

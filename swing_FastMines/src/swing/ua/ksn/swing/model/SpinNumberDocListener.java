@@ -7,12 +7,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-/** Не даю возможность вводить в JSpinner значения вне пределов его SpinnerNumberModel */
+/** РќРµ РґР°СЋ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РІРІРѕРґРёС‚СЊ РІ JSpinner Р·РЅР°С‡РµРЅРёСЏ РІРЅРµ РїСЂРµРґРµР»РѕРІ РµРіРѕ SpinnerNumberModel */
 public class SpinNumberDocListener implements DocumentListener {
 
 	private JSpinner spin;
 
-	/** Не даю возможность вводить в JSpinner значения вне пределов его SpinnerNumberModel */
+	/** РќРµ РґР°СЋ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РІРІРѕРґРёС‚СЊ РІ JSpinner Р·РЅР°С‡РµРЅРёСЏ РІРЅРµ РїСЂРµРґРµР»РѕРІ РµРіРѕ SpinnerNumberModel */
 	public SpinNumberDocListener(JSpinner ownerSpin) {
 		this.spin = ownerSpin;
 	}

@@ -9,11 +9,11 @@ import ua.ksn.fmg.model.mosaics.EOpen;
 
 public class ColorText {
 	private PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
-	/**  подписаться на уведомления изменений ColorText */
+	/**  РїРѕРґРїРёСЃР°С‚СЊСЃСЏ РЅР° СѓРІРµРґРѕРјР»РµРЅРёСЏ РёР·РјРµРЅРµРЅРёР№ ColorText */
 	public void addPropertyChangeListener(PropertyChangeListener l) {
 		propertyChanges.addPropertyChangeListener(l);
 	}
-	/**  отписаться от уведомлений изменений ColorText */
+	/**  РѕС‚РїРёСЃР°С‚СЊСЃСЏ РѕС‚ СѓРІРµРґРѕРјР»РµРЅРёР№ РёР·РјРµРЅРµРЅРёР№ ColorText */
 	public void removeChangeListener(PropertyChangeListener l) {
 		propertyChanges.removePropertyChangeListener(l);
 	}

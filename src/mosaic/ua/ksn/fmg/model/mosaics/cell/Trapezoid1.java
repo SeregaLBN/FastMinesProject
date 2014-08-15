@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Trapezoid1.java"
 //
-// Реализация класса Trapezoid1 - 3 трапеции, составляющие равносторонний треугольник
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° Trapezoid1 - 3 С‚СЂР°РїРµС†РёРё, СЃРѕСЃС‚Р°РІР»СЏСЋС‰РёРµ СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРє
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ import ua.ksn.geom.Rect;
 import ua.ksn.geom.Size;
 
 /**
- * Trapezoid1 - 3 трапеции, составляющие равносторонний треугольник
+ * Trapezoid1 - 3 С‚СЂР°РїРµС†РёРё, СЃРѕСЃС‚Р°РІР»СЏСЋС‰РёРµ СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРє
  * @see BaseCell
  **/
 public class Trapezoid1 extends BaseCell {
@@ -96,7 +96,7 @@ public class Trapezoid1 extends BaseCell {
 	protected Coord[] GetCoordsNeighbor() {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	switch (direction) {
     	case 0:
     		neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
@@ -233,7 +233,7 @@ public class Trapezoid1 extends BaseCell {
 		double R = attr.CalcROut(area);
 		double r = attr.CalcRIn(area);
 
-		// определение координат точек фигуры
+		// РѕРїСЂРµРґРµР»РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ С‚РѕС‡РµРє С„РёРіСѓСЂС‹
 		double oX = (a+b)*(coord.x/3) + b; // offset X
 		double oY = (R+r)*(coord.y/4*2+1); // offset Y
 
@@ -329,7 +329,7 @@ public class Trapezoid1 extends BaseCell {
 		double oX = (a+b)*(coord.x/3) + b; // offset X
 		double oY = (R+r)*(coord.y/4*2+1); // offset Y
 
-		PointDouble center = new PointDouble(); // координата центра квадрата
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° С†РµРЅС‚СЂР° РєРІР°РґСЂР°С‚Р°
 		switch (direction) {
 		case 0:  center.x = oX - c*1.25; center.y = oY - r*1.75; break;
 		case 1:  center.x = oX + c*0.75; center.y = oY - r*2.25; break;

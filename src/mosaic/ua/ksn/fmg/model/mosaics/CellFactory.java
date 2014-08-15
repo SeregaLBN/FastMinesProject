@@ -5,7 +5,7 @@ import java.lang.reflect.Constructor;
 import ua.ksn.fmg.model.mosaics.cell.BaseCell;
 import ua.ksn.geom.Coord;
 
-/** Фабрика для создания экземпляров класса ячеек и их атрибутов */
+/** Р¤Р°Р±СЂРёРєР° РґР»СЏ СЃРѕР·РґР°РЅРёСЏ СЌРєР·РµРјРїР»СЏСЂРѕРІ РєР»Р°СЃСЃР° СЏС‡РµРµРє Рё РёС… Р°С‚СЂРёР±СѓС‚РѕРІ */
 public class CellFactory {
 	private static final String getPackageName() {
 		Package pkg = CellFactory.class.getPackage();
@@ -21,7 +21,7 @@ public class CellFactory {
 		return name;
 	}
 
-	/** Создать экземпляр атрибута для конкретного типа мозаики */
+	/** РЎРѕР·РґР°С‚СЊ СЌРєР·РµРјРїР»СЏСЂ Р°С‚СЂРёР±СѓС‚Р° РґР»СЏ РєРѕРЅРєСЂРµС‚РЅРѕРіРѕ С‚РёРїР° РјРѕР·Р°РёРєРё */
 	public static final BaseCell.BaseAttribute createAttributeInstance(EMosaic mosaicType, int area) {
 //		switch (mosaicType) {
 //		case eMosaicTriangle1  : return new Triangle1.AttrTriangle1(area);
@@ -45,7 +45,7 @@ public class CellFactory {
 		}
 	}
 
-	/** Создать экземпляр ячейки для конкретного типа мозаики */
+	/** РЎРѕР·РґР°С‚СЊ СЌРєР·РµРјРїР»СЏСЂ СЏС‡РµР№РєРё РґР»СЏ РєРѕРЅРєСЂРµС‚РЅРѕРіРѕ С‚РёРїР° РјРѕР·Р°РёРєРё */
 	public static final BaseCell createCellInstance(BaseCell.BaseAttribute attr, EMosaic mosaicType, Coord coord)
 	{
 //		switch (mosaicType) {

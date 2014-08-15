@@ -26,7 +26,7 @@ import ua.ksn.fmg.controller.types.ESkillLevel;
 import ua.ksn.fmg.controller.types.User;
 import ua.ksn.fmg.model.mosaics.EMosaic;
 
-/** хранилище чемпионов */
+/** С…СЂР°РЅРёР»РёС‰Рµ С‡РµРјРїРёРѕРЅРѕРІ */
 public class ChampionsModel implements Externalizable {
 	//private static final long version = Main.serialVersionUID;
 	private final long version;
@@ -81,8 +81,8 @@ public class ChampionsModel implements Externalizable {
 				@Override
 				public void playerChanged(PlayerModelEvent e) {
 					if (e.getType() == PlayerModelEvent.UPDATE) {
-						// если был UPDATE, то это, возможно что, было переименование пользователя...
-						// в этом случае переименовываю его имя и в чемпионах
+						// РµСЃР»Рё Р±С‹Р» UPDATE, С‚Рѕ СЌС‚Рѕ, РІРѕР·РјРѕР¶РЅРѕ С‡С‚Рѕ, Р±С‹Р»Рѕ РїРµСЂРµРёРјРµРЅРѕРІР°РЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ...
+						// РІ СЌС‚РѕРј СЃР»СѓС‡Р°Рµ РїРµСЂРµРёРјРµРЅРѕРІС‹РІР°СЋ РµРіРѕ РёРјСЏ Рё РІ С‡РµРјРїРёРѕРЅР°С…
 						User user = players.getUser(e.getPos());
 						for (EMosaic mosaic : EMosaic.values())
 							for (ESkillLevel eSkill : ESkillLevel.values())
@@ -198,7 +198,7 @@ public class ChampionsModel implements Externalizable {
 				read += curr;
 			} while(read < data.length);
 			if (read != data.length)
-				throw new IOException("Invalid data length. Ожидалось " + data.length + " байт, а прочитано " + read + " байт.");
+				throw new IOException("Invalid data length. РћР¶РёРґР°Р»РѕСЃСЊ " + data.length + " Р±Р°Р№С‚, Р° РїСЂРѕС‡РёС‚Р°РЅРѕ " + read + " Р±Р°Р№С‚.");
 			in.close();
 
 			// 2. decrypt data
@@ -280,7 +280,7 @@ public class ChampionsModel implements Externalizable {
 		return champions[mosaic.ordinal()][eSkill.ordinal()].size();
 	}
 
-	/** Найдёт позицию лучшего результата указанного пользователя */
+	/** РќР°Р№РґС‘С‚ РїРѕР·РёС†РёСЋ Р»СѓС‡С€РµРіРѕ СЂРµР·СѓР»СЊС‚Р°С‚Р° СѓРєР°Р·Р°РЅРЅРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ */
 	public int getPos(UUID userId, EMosaic mosaic, ESkillLevel eSkill) {
 		if (userId == null)
 			return -1;

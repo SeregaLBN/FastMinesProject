@@ -53,7 +53,7 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 				
 				@Override
 				protected void paintComponent(Graphics g) {
-//					super.paintComponent(g); // ::DefWindowProc(hwnd, WM_PAINT, 0L, 0L); // это чтобы не писать обработчик WM_PAINT как принято - BeginPaint ... EndPaint
+//					super.paintComponent(g); // ::DefWindowProc(hwnd, WM_PAINT, 0L, 0L); // СЌС‚Рѕ С‡С‚РѕР±С‹ РЅРµ РїРёСЃР°С‚СЊ РѕР±СЂР°Р±РѕС‚С‡РёРє WM_PAINT РєР°Рє РїСЂРёРЅСЏС‚Рѕ - BeginPaint ... EndPaint
 					{
 						Graphics2D g2d = (Graphics2D) g;
 						g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -112,7 +112,7 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 		if (_gContext == null) {
 			_gContext = new MosaicGraphicContext(getContainer());
 //			changeFontSize(_gContext.getPenBorder(), getArea());
-			_gContext.addPropertyChangeListener(this); // изменение контекста -> перерисовка мозаики
+			_gContext.addPropertyChangeListener(this); // РёР·РјРµРЅРµРЅРёРµ РєРѕРЅС‚РµРєСЃС‚Р° -> РїРµСЂРµСЂРёСЃРѕРІРєР° РјРѕР·Р°РёРєРё
 		}
 		return _gContext;
 	}
@@ -147,13 +147,13 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 		super.GameBegin(firstClickCell);
 	}
 
-	/** преобразовать экранные координаты в ячейку поля мозаики */
+	/** РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ СЌРєСЂР°РЅРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ РІ СЏС‡РµР№РєСѓ РїРѕР»СЏ РјРѕР·Р°РёРєРё */
 	private BaseCell CursorPointToCell(Point point) {
 //		long l1 = System.currentTimeMillis();
 //		try {
 		    ua.ksn.geom.Point p = Cast.toPoint(point);
 			for (BaseCell cell: _matrix)
-				//if (cell.getRcOuter().contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
+				//if (cell.getRcOuter().contains(point)) // РїРѕС….. - С‚РѕСЂРјРѕР·РѕРІ РЅРµС‚..  (РёР·РјРµСЂРёС‚СЊ РІСЂРµРјСЏ РЅР° РјР°РєСЃ СЂР°Р·РјРµСЂР°С… РїРѕР»СЏ...) РІ РїСЂРёРЅС†РёРїРµ, РїСЂРѕРІРµСЂРєР° РЅРµ РЅСѓР¶РЅР°СЏ...
 					if (cell.PointInRegion(p))
 						return cell;
 			return null;
@@ -174,9 +174,9 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 		super.setArea(newArea);
 		int newVal = this.getArea();
 		if (oldVal != newVal) {
-			// см. комент - сноску 1
+			// СЃРј. РєРѕРјРµРЅС‚ - СЃРЅРѕСЃРєСѓ 1
 			changeFontSize(getGraphicContext().getPenBorder(), newArea);
-	//		getContainer().repaint(); // вызовится неявно: area->gContext.font->this.repaint
+	//		getContainer().repaint(); // РІС‹Р·РѕРІРёС‚СЃСЏ РЅРµСЏРІРЅРѕ: area->gContext.font->this.repaint
 			getContainer().revalidate();
 		}
 	}
@@ -197,8 +197,8 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (SwingUtilities.isLeftMouseButton(e)) {
-	    		// Получаю этот эвент на отпускание клавиши даже тогда, когда окно проги неактивно..
-	    		// Избегаю срабатывания onClick'a
+	    		// РџРѕР»СѓС‡Р°СЋ СЌС‚РѕС‚ СЌРІРµРЅС‚ РЅР° РѕС‚РїСѓСЃРєР°РЅРёРµ РєР»Р°РІРёС€Рё РґР°Р¶Рµ С‚РѕРіРґР°, РєРѕРіРґР° РѕРєРЅРѕ РїСЂРѕРіРё РЅРµР°РєС‚РёРІРЅРѕ..
+	    		// РР·Р±РµРіР°СЋ СЃСЂР°Р±Р°С‚С‹РІР°РЅРёСЏ onClick'a
 	    		Component rootFrame = SwingUtilities.getRoot((Component) e.getSource());
 	    		boolean rootFrameActive = true;
 	    		if (rootFrame instanceof Window)
@@ -241,7 +241,7 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 	}
 
 	protected void initialize(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
-		this.getContainer().setFocusable(true); // иначе не будет срабатывать FocusListener
+		this.getContainer().setFocusable(true); // РёРЅР°С‡Рµ РЅРµ Р±СѓРґРµС‚ СЃСЂР°Р±Р°С‚С‹РІР°С‚СЊ FocusListener
 
 		this.getContainer().addMouseListener(getMosaicMouseListeners());
 		this.getContainer().addMouseMotionListener(getMosaicMouseListeners());
@@ -255,7 +255,7 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if ("GraphicContext_penBorder".equals(evt.getPropertyName())) {
-			// см. комент - сноску 1
+			// СЃРј. РєРѕРјРµРЅС‚ - СЃРЅРѕСЃРєСѓ 1
 			PenBorder penBorder = (PenBorder) evt.getNewValue();
 			changeFontSize(penBorder, getArea());
 		}
@@ -266,9 +266,9 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 			getContainer().repaint();
 	}
 
-    /** пересчитать и установить новую высоту шрифта */
+    /** РїРµСЂРµСЃС‡РёС‚Р°С‚СЊ Рё СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РЅРѕРІСѓСЋ РІС‹СЃРѕС‚Сѓ С€СЂРёС„С‚Р° */
     public void changeFontSize() { changeFontSize(getGraphicContext().getPenBorder(), getArea()); }
-    /** пересчитать и установить новую высоту шрифта */
+    /** РїРµСЂРµСЃС‡РёС‚Р°С‚СЊ Рё СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РЅРѕРІСѓСЋ РІС‹СЃРѕС‚Сѓ С€СЂРёС„С‚Р° */
     private void changeFontSize(PenBorder penBorder, int area) {
 		getGraphicContext().setFontSize(
 				(int) getCellAttr().CalcSq(
@@ -284,43 +284,43 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 	}
 }
 /**
- * Сноски
+ * РЎРЅРѕСЃРєРё
  * ======
  *
  *
- *  1. Зависимости объектов:
+ *  1. Р—Р°РІРёСЃРёРјРѕСЃС‚Рё РѕР±СЉРµРєС‚РѕРІ:
  *  ------------------------
  *    Mosaic:
- *      * меняю area (площать ячейки):
- *        - перерасчёт величин (базовая сторона, высота, etc) фигуры (из @BaseCell$BaseAttribute)
- *          ( @BaseCell$BaseAttribute слушает Mosaic_area)
- *        - перерасчёт высоты шрифта - запрашиваю @BaseCell$BaseAttribute размер вписанного квадрата, а далее SetSizeFont для @MosaicGraphicContext
- *          (из @Mosaic.setArea узнаю @BaseCell$BaseAttribute.InSquare и устанавливаю новую высоту шрифта)
- *        - полная перерисовка мозаики
- *      * меняю тип мозаики:
- *        - т.к. меняется размер вписанного в ячейку квадрата, то явным вызовом fireOnChangeMosaicType меняю в @Main класе (в слушателе @MosaicListener.OnChangeMosaicType) :
- *           - перерасчёт высоту шрифта
- *           - перерасчёт размер картинок мины и флага
+ *      * РјРµРЅСЏСЋ area (РїР»РѕС‰Р°С‚СЊ СЏС‡РµР№РєРё):
+ *        - РїРµСЂРµСЂР°СЃС‡С‘С‚ РІРµР»РёС‡РёРЅ (Р±Р°Р·РѕРІР°СЏ СЃС‚РѕСЂРѕРЅР°, РІС‹СЃРѕС‚Р°, etc) С„РёРіСѓСЂС‹ (РёР· @BaseCell$BaseAttribute)
+ *          ( @BaseCell$BaseAttribute СЃР»СѓС€Р°РµС‚ Mosaic_area)
+ *        - РїРµСЂРµСЂР°СЃС‡С‘С‚ РІС‹СЃРѕС‚С‹ С€СЂРёС„С‚Р° - Р·Р°РїСЂР°С€РёРІР°СЋ @BaseCell$BaseAttribute СЂР°Р·РјРµСЂ РІРїРёСЃР°РЅРЅРѕРіРѕ РєРІР°РґСЂР°С‚Р°, Р° РґР°Р»РµРµ SetSizeFont РґР»СЏ @MosaicGraphicContext
+ *          (РёР· @Mosaic.setArea СѓР·РЅР°СЋ @BaseCell$BaseAttribute.InSquare Рё СѓСЃС‚Р°РЅР°РІР»РёРІР°СЋ РЅРѕРІСѓСЋ РІС‹СЃРѕС‚Сѓ С€СЂРёС„С‚Р°)
+ *        - РїРѕР»РЅР°СЏ РїРµСЂРµСЂРёСЃРѕРІРєР° РјРѕР·Р°РёРєРё
+ *      * РјРµРЅСЏСЋ С‚РёРї РјРѕР·Р°РёРєРё:
+ *        - С‚.Рє. РјРµРЅСЏРµС‚СЃСЏ СЂР°Р·РјРµСЂ РІРїРёСЃР°РЅРЅРѕРіРѕ РІ СЏС‡РµР№РєСѓ РєРІР°РґСЂР°С‚Р°, С‚Рѕ СЏРІРЅС‹Рј РІС‹Р·РѕРІРѕРј fireOnChangeMosaicType РјРµРЅСЏСЋ РІ @Main РєР»Р°СЃРµ (РІ СЃР»СѓС€Р°С‚РµР»Рµ @MosaicListener.OnChangeMosaicType) :
+ *           - РїРµСЂРµСЂР°СЃС‡С‘С‚ РІС‹СЃРѕС‚Сѓ С€СЂРёС„С‚Р°
+ *           - РїРµСЂРµСЂР°СЃС‡С‘С‚ СЂР°Р·РјРµСЂ РєР°СЂС‚РёРЅРѕРє РјРёРЅС‹ Рё С„Р»Р°РіР°
  *
- *    Граф контекст:
- *      * меняю любой параметр:
- *        - полная перерисовка мозаики
- *          ( @Mosaic слушает @MosaicGraphicContext)
- *      * меняю ширину пера:
- *        - перерасчёт высоты шрифта - по текущей area запрашиваю @BaseCell$BaseAttribute размер вписанного квадрата, а далее SetSizeFont для @MosaicGraphicContext
- *           ( @Mosaic слушает @MosaicGraphicContext.ширина_пера)
- *          (тут, изменение ширины пера, опосредственно (через мозаику), меняет др параметр @MosaicGraphicContext - шрифт)
+ *    Р“СЂР°С„ РєРѕРЅС‚РµРєСЃС‚:
+ *      * РјРµРЅСЏСЋ Р»СЋР±РѕР№ РїР°СЂР°РјРµС‚СЂ:
+ *        - РїРѕР»РЅР°СЏ РїРµСЂРµСЂРёСЃРѕРІРєР° РјРѕР·Р°РёРєРё
+ *          ( @Mosaic СЃР»СѓС€Р°РµС‚ @MosaicGraphicContext)
+ *      * РјРµРЅСЏСЋ С€РёСЂРёРЅСѓ РїРµСЂР°:
+ *        - РїРµСЂРµСЂР°СЃС‡С‘С‚ РІС‹СЃРѕС‚С‹ С€СЂРёС„С‚Р° - РїРѕ С‚РµРєСѓС‰РµР№ area Р·Р°РїСЂР°С€РёРІР°СЋ @BaseCell$BaseAttribute СЂР°Р·РјРµСЂ РІРїРёСЃР°РЅРЅРѕРіРѕ РєРІР°РґСЂР°С‚Р°, Р° РґР°Р»РµРµ SetSizeFont РґР»СЏ @MosaicGraphicContext
+ *           ( @Mosaic СЃР»СѓС€Р°РµС‚ @MosaicGraphicContext.С€РёСЂРёРЅР°_РїРµСЂР°)
+ *          (С‚СѓС‚, РёР·РјРµРЅРµРЅРёРµ С€РёСЂРёРЅС‹ РїРµСЂР°, РѕРїРѕСЃСЂРµРґСЃС‚РІРµРЅРЅРѕ (С‡РµСЂРµР· РјРѕР·Р°РёРєСѓ), РјРµРЅСЏРµС‚ РґСЂ РїР°СЂР°РјРµС‚СЂ @MosaicGraphicContext - С€СЂРёС„С‚)
  *
  *    BaseAttr:
- *      * меняю любую величину (базовая сторона, высота, etc) фигуры
- *        - перерасчёт координат всех ячеек фигуры
- *          ( @BaseCell слушает @BaseCell$BaseAttribute)
+ *      * РјРµРЅСЏСЋ Р»СЋР±СѓСЋ РІРµР»РёС‡РёРЅСѓ (Р±Р°Р·РѕРІР°СЏ СЃС‚РѕСЂРѕРЅР°, РІС‹СЃРѕС‚Р°, etc) С„РёРіСѓСЂС‹
+ *        - РїРµСЂРµСЂР°СЃС‡С‘С‚ РєРѕРѕСЂРґРёРЅР°С‚ РІСЃРµС… СЏС‡РµРµРє С„РёРіСѓСЂС‹
+ *          ( @BaseCell СЃР»СѓС€Р°РµС‚ @BaseCell$BaseAttribute)
  *
- *   Т.е., в целом, имею след слушателей:
- *     - @Mosaic слушает @MosaicGraphicContext
- *     - @BaseCell$BaseAttribute слушает @Mosaic - свойство Mosaic_area
- *     - @BaseCell слушает @BaseCell$BaseAttribute
+ *   Рў.Рµ., РІ С†РµР»РѕРј, РёРјРµСЋ СЃР»РµРґ СЃР»СѓС€Р°С‚РµР»РµР№:
+ *     - @Mosaic СЃР»СѓС€Р°РµС‚ @MosaicGraphicContext
+ *     - @BaseCell$BaseAttribute СЃР»СѓС€Р°РµС‚ @Mosaic - СЃРІРѕР№СЃС‚РІРѕ Mosaic_area
+ *     - @BaseCell СЃР»СѓС€Р°РµС‚ @BaseCell$BaseAttribute
  *
- *     - ну и отдельный для @Main - @MosaicListener 
+ *     - РЅСѓ Рё РѕС‚РґРµР»СЊРЅС‹Р№ РґР»СЏ @Main - @MosaicListener 
  *
  **/

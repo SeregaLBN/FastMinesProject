@@ -1,9 +1,9 @@
 package ua.ksn.geom;
 
 /**
- * Перенесённый из C++ класс
- * поэтому назвы методов непривычные
- * @TODO: в дальнейшем - рефакторнуть
+ * РџРµСЂРµРЅРµСЃС‘РЅРЅС‹Р№ РёР· C++ РєР»Р°СЃСЃ
+ * РїРѕСЌС‚РѕРјСѓ РЅР°Р·РІС‹ РјРµС‚РѕРґРѕРІ РЅРµРїСЂРёРІС‹С‡РЅС‹Рµ
+ * @TODO: РІ РґР°Р»СЊРЅРµР№С€РµРј - СЂРµС„Р°РєС‚РѕСЂРЅСѓС‚СЊ
  *
  * @author SeregaLBN
  */
@@ -11,17 +11,17 @@ public class Rect
 {
 	public int x,y,width,height;
 
-	// Перемещение прямоугольника по X и/или Y (без изменений размеров прямоугольника)
+	// РџРµСЂРµРјРµС‰РµРЅРёРµ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР° РїРѕ X Рё/РёР»Рё Y (Р±РµР· РёР·РјРµРЅРµРЅРёР№ СЂР°Р·РјРµСЂРѕРІ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР°)
 	public Rect moveX(int dx)          { this.x += dx; return this; }
 	public Rect moveY(int dy)          { this.y += dy; return this; }
 	public Rect moveXY(int dx, int dy) { moveX(dx); return moveY(dy); }
 	public Rect moveXY(Size s)    { return moveXY(s.width, s.height); }
 
-	// Выравнивание прямоугольника (без изменений размеров прямоугольника)
-	public Rect alignLeft  (int l)         { this.x = l;             return this; } // выровнять прямоугольник по левой   стороне к заданному значению
-	public Rect alignRight (int r)         { this.x = r-this.width;  return this; } // выровнять прямоугольник по правой  стороне к заданному значению
-	public Rect alignTop   (int t)         { this.y = t;             return this; } // выровнять прямоугольник по верхней стороне к заданному значению
-	public Rect alignBottom(int b)         { this.y = b-this.height; return this; } // выровнять прямоугольник по нижней  стороне к заданному значению
+	// Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР° (Р±РµР· РёР·РјРµРЅРµРЅРёР№ СЂР°Р·РјРµСЂРѕРІ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР°)
+	public Rect alignLeft  (int l)         { this.x = l;             return this; } // РІС‹СЂРѕРІРЅСЏС‚СЊ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє РїРѕ Р»РµРІРѕР№   СЃС‚РѕСЂРѕРЅРµ Рє Р·Р°РґР°РЅРЅРѕРјСѓ Р·РЅР°С‡РµРЅРёСЋ
+	public Rect alignRight (int r)         { this.x = r-this.width;  return this; } // РІС‹СЂРѕРІРЅСЏС‚СЊ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє РїРѕ РїСЂР°РІРѕР№  СЃС‚РѕСЂРѕРЅРµ Рє Р·Р°РґР°РЅРЅРѕРјСѓ Р·РЅР°С‡РµРЅРёСЋ
+	public Rect alignTop   (int t)         { this.y = t;             return this; } // РІС‹СЂРѕРІРЅСЏС‚СЊ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє РїРѕ РІРµСЂС…РЅРµР№ СЃС‚РѕСЂРѕРЅРµ Рє Р·Р°РґР°РЅРЅРѕРјСѓ Р·РЅР°С‡РµРЅРёСЋ
+	public Rect alignBottom(int b)         { this.y = b-this.height; return this; } // РІС‹СЂРѕРІРЅСЏС‚СЊ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє РїРѕ РЅРёР¶РЅРµР№  СЃС‚РѕСЂРѕРЅРµ Рє Р·Р°РґР°РЅРЅРѕРјСѓ Р·РЅР°С‡РµРЅРёСЋ
 	public Rect alignLT    (int x, int y) { alignLeft (x); return alignTop   (y); }
 	public Rect alignRT    (int x, int y) { alignRight(x); return alignTop   (y); }
 	public Rect alignLB    (int x, int y) { alignLeft (x); return alignBottom(y); }
@@ -31,9 +31,9 @@ public class Rect
 	public Rect alignLB    (Point p) { return alignLB(p.x, p.y); }
 	public Rect alignRB    (Point p) { return alignRB(p.x, p.y); }
 
-	public Rect alignCenter(Point c) { return alignCenter(c.x, c.y); }   // совместить центр прямоугольника с заданной точкой центра
-	public Rect alignCenter(Rect  r) { return alignCenter(r.center()); } // совместить центр прямоугольника с центром заданного прямоугольника
-	public Rect alignCenter(int x, int y) { Point c = this.center(); return moveXY(x-c.x, y-c.y); } // совместить центр прямоугольника с заданнымм координатами
+	public Rect alignCenter(Point c) { return alignCenter(c.x, c.y); }   // СЃРѕРІРјРµСЃС‚РёС‚СЊ С†РµРЅС‚СЂ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР° СЃ Р·Р°РґР°РЅРЅРѕР№ С‚РѕС‡РєРѕР№ С†РµРЅС‚СЂР°
+	public Rect alignCenter(Rect  r) { return alignCenter(r.center()); } // СЃРѕРІРјРµСЃС‚РёС‚СЊ С†РµРЅС‚СЂ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР° СЃ С†РµРЅС‚СЂРѕРј Р·Р°РґР°РЅРЅРѕРіРѕ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР°
+	public Rect alignCenter(int x, int y) { Point c = this.center(); return moveXY(x-c.x, y-c.y); } // СЃРѕРІРјРµСЃС‚РёС‚СЊ С†РµРЅС‚СЂ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР° СЃ Р·Р°РґР°РЅРЅС‹РјРј РєРѕРѕСЂРґРёРЅР°С‚Р°РјРё
 
 	// get/set metods
 	public int left  () { return x; }
@@ -62,9 +62,9 @@ public class Rect
 	public Rect PointRB(Point pRB) { return PointRB(pRB.x, pRB.y); }
 
 	public Point center()             { return new Point(x+(width>>>1), y+(height>>>1)); }
-	public Rect  center(Point c)      { return alignCenter( c ); } // совместить центр прямоугольника с заданной точкой центра
-	public Rect  center(Rect  r)      { return alignCenter( r ); } // совместить центр прямоугольника с центром заданного прямоугольника
-	public Rect  center(int x, int y) { return alignCenter(x,y); } // совместить центр прямоугольника с заданными координатами
+	public Rect  center(Point c)      { return alignCenter( c ); } // СЃРѕРІРјРµСЃС‚РёС‚СЊ С†РµРЅС‚СЂ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР° СЃ Р·Р°РґР°РЅРЅРѕР№ С‚РѕС‡РєРѕР№ С†РµРЅС‚СЂР°
+	public Rect  center(Rect  r)      { return alignCenter( r ); } // СЃРѕРІРјРµСЃС‚РёС‚СЊ С†РµРЅС‚СЂ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР° СЃ С†РµРЅС‚СЂРѕРј Р·Р°РґР°РЅРЅРѕРіРѕ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР°
+	public Rect  center(int x, int y) { return alignCenter(x,y); } // СЃРѕРІРјРµСЃС‚РёС‚СЊ С†РµРЅС‚СЂ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР° СЃ Р·Р°РґР°РЅРЅС‹РјРё РєРѕРѕСЂРґРёРЅР°С‚Р°РјРё
 	public Size  size()            { return new Size(width, height); }
 	public Rect  size(Size s) { width(s.width); return height(s.height); }
 
@@ -78,13 +78,13 @@ public class Rect
 	public Rect(int width, int height)      { this.x =    this.y = 0; this.width = width;      this.height = height; }
 	public Rect()                           { this.x =    this.y = 0; this.width = 0;          this.height = 0; }
 
-	/** Найти равномерно вписанный Rect */
+	/** РќР°Р№С‚Рё СЂР°РІРЅРѕРјРµСЂРЅРѕ РІРїРёСЃР°РЅРЅС‹Р№ Rect */
 	public static Rect CalcInnerRect(Size sizeInner, Size sizeOutward)
 	{
-		// Есть размер (sizeOutward) внешнего прямоугольника и
-		// размер (sizeInner) прямоугольника который должен быть равномерно вписан
-		// во внешний прямоугольник, т.е. кторый должен быть или увеличен или уменьшен.
-		// Относительные координаты этого вписаного прямоугольника и находятся.
+		// Р•СЃС‚СЊ СЂР°Р·РјРµСЂ (sizeOutward) РІРЅРµС€РЅРµРіРѕ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР° Рё
+		// СЂР°Р·РјРµСЂ (sizeInner) РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР° РєРѕС‚РѕСЂС‹Р№ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЂР°РІРЅРѕРјРµСЂРЅРѕ РІРїРёСЃР°РЅ
+		// РІРѕ РІРЅРµС€РЅРёР№ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє, С‚.Рµ. РєС‚РѕСЂС‹Р№ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РёР»Рё СѓРІРµР»РёС‡РµРЅ РёР»Рё СѓРјРµРЅСЊС€РµРЅ.
+		// РћС‚РЅРѕСЃРёС‚РµР»СЊРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЌС‚РѕРіРѕ РІРїРёСЃР°РЅРѕРіРѕ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР° Рё РЅР°С…РѕРґСЏС‚СЃСЏ.
 		float percent = java.lang.Math.min(
 				(float)sizeOutward.width / sizeInner.width,
 				(float)sizeOutward.height / sizeInner.height);

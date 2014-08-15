@@ -102,13 +102,13 @@ abstract class ReportDlg extends JDialog {
 //		preferredSize.width = Toolkit.getDefaultToolkit().getScreenSize().width-100;
 //		this.setPreferredSize(preferredSize);
 //		this.setVisible(true);
-		// задаю предпочтительный размер
+		// Р·Р°РґР°СЋ РїСЂРµРґРїРѕС‡С‚РёС‚РµР»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ
 		pack();
 		this.setLocationRelativeTo(parent);
 	}
 
 	private void OnClose() {
-		// при выходе из диалогового окна - освобождаю ресурсы
+		// РїСЂРё РІС‹С…РѕРґРµ РёР· РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР° - РѕСЃРІРѕР±РѕР¶РґР°СЋ СЂРµСЃСѓСЂСЃС‹
 		rotateTimer.stop();
 		dispose();
 //		System.exit(0);
@@ -118,13 +118,13 @@ abstract class ReportDlg extends JDialog {
 		return new Dimension(450, 100);
 	}
 
-	/** создаю панели с нужным расположением */
+	/** СЃРѕР·РґР°СЋ РїР°РЅРµР»Рё СЃ РЅСѓР¶РЅС‹Рј СЂР°СЃРїРѕР»РѕР¶РµРЅРёРµРј */
 	private void CreateComponents() {
-		// 1. Создаю панель, которая будет содержать все остальные элементы и панели расположения
+		// 1. РЎРѕР·РґР°СЋ РїР°РЅРµР»СЊ, РєРѕС‚РѕСЂР°СЏ Р±СѓРґРµС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ РІСЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹ Рё РїР°РЅРµР»Рё СЂР°СЃРїРѕР»РѕР¶РµРЅРёСЏ
 		tabPanel = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 		{
-			// Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов. 
-			// использую пустую рамку 
+			// Р§С‚РѕР±С‹ РёРЅС‚РµСЂС„РµР№СЃ РѕС‚РІРµС‡Р°Р» С‚СЂРµР±РѕРІР°РЅРёСЏРј Java, РЅРµРѕР±С…РѕРґРёРјРѕ РѕС‚РґРµР»РёС‚СЊ РµРіРѕ СЃРѕРґРµСЂР¶РёРјРѕРµ РѕС‚ РіСЂР°РЅРёС† РѕРєРЅР° РЅР° 12 РїРёРєСЃРµР»РѕРІ. 
+			// РёСЃРїРѕР»СЊР·СѓСЋ РїСѓСЃС‚СѓСЋ СЂР°РјРєСѓ 
 			tabPanel.setBorder(BorderFactory.createEmptyBorder(12,12,2,12));
 
 			for (EMosaic eMosaic: EMosaic.values()) {
@@ -134,7 +134,7 @@ abstract class ReportDlg extends JDialog {
 				scrollPanes.put(eMosaic, scroll);
 			}
 
-			// таблички создаю динамически - когда юзер выберет конкретную вкладку. См. getSelectedTable()
+			// С‚Р°Р±Р»РёС‡РєРё СЃРѕР·РґР°СЋ РґРёРЅР°РјРёС‡РµСЃРєРё - РєРѕРіРґР° СЋР·РµСЂ РІС‹Р±РµСЂРµС‚ РєРѕРЅРєСЂРµС‚РЅСѓСЋ РІРєР»Р°РґРєСѓ. РЎРј. getSelectedTable()
 
 			tabPanel.addChangeListener(new ChangeListener() {
 				@Override
@@ -144,7 +144,7 @@ abstract class ReportDlg extends JDialog {
 			});
 		}
 
-		// 2. Панель кнопок снизу
+		// 2. РџР°РЅРµР»СЊ РєРЅРѕРїРѕРє СЃРЅРёР·Сѓ
 		JPanel panelBottom = new JPanel(new GridLayout(0, isOneLineSkillLevelButtons() ? 4:2, 2, 2));
 		{
 			panelBottom.setBorder(BorderFactory.createEmptyBorder(2,12,12,12));
@@ -164,9 +164,9 @@ abstract class ReportDlg extends JDialog {
 			}
 		}
 
-		// добавляю расположение в центр окна
+		// РґРѕР±Р°РІР»СЏСЋ СЂР°СЃРїРѕР»РѕР¶РµРЅРёРµ РІ С†РµРЅС‚СЂ РѕРєРЅР°
 		getContentPane().add(tabPanel, BorderLayout.CENTER);
-		// ряд кнопок внизу
+		// СЂСЏРґ РєРЅРѕРїРѕРє РІРЅРёР·Сѓ
 		getContentPane().add(panelBottom, BorderLayout.SOUTH);
 	}
 
@@ -182,7 +182,7 @@ abstract class ReportDlg extends JDialog {
 		UpdateModel(getSelectedSkillLevel());
 	}
 
-	// тестовый метод для проверки диалогового окна
+	// С‚РµСЃС‚РѕРІС‹Р№ РјРµС‚РѕРґ РґР»СЏ РїСЂРѕРІРµСЂРєРё РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР°
 	public static void main(String[] args) {
 		new ReportDlg(null, true) {
 			private static final long serialVersionUID = 1L; }
@@ -190,10 +190,10 @@ abstract class ReportDlg extends JDialog {
 	}
 
 	/**
-	 * Отобразить интресуемые данные
+	 * РћС‚РѕР±СЂР°Р·РёС‚СЊ РёРЅС‚СЂРµСЃСѓРµРјС‹Рµ РґР°РЅРЅС‹Рµ
 	 * @param eSkill
 	 * @param eMosaic
-	 * @param pos - позиция строки в табличке, которую выделить
+	 * @param pos - РїРѕР·РёС†РёСЏ СЃС‚СЂРѕРєРё РІ С‚Р°Р±Р»РёС‡РєРµ, РєРѕС‚РѕСЂСѓСЋ РІС‹РґРµР»РёС‚СЊ
 	 */
 	public void ShowData(ESkillLevel eSkill, EMosaic eMosaic, int pos) {
 		if (eSkill == ESkillLevel.eCustom)
@@ -220,13 +220,13 @@ abstract class ReportDlg extends JDialog {
 		return (ReportTableModel)getSelectedTable().getModel();
 	}
 
-	/** Вернёт табличку из выбраной вкладки */
+	/** Р’РµСЂРЅС‘С‚ С‚Р°Р±Р»РёС‡РєСѓ РёР· РІС‹Р±СЂР°РЅРѕР№ РІРєР»Р°РґРєРё */
 	protected JTable getSelectedTable() {
 		int pos = tabPanel.getSelectedIndex();
 		EMosaic eMosaic = EMosaic.fromOrdinal(pos);
 		JScrollPane scroll = scrollPanes.get(eMosaic);
 
-		// Проверяю если ли таблица? Если нет - создаю...
+		// РџСЂРѕРІРµСЂСЏСЋ РµСЃР»Рё Р»Рё С‚Р°Р±Р»РёС†Р°? Р•СЃР»Рё РЅРµС‚ - СЃРѕР·РґР°СЋ...
 		Component cmpnt = scroll.getViewport().getView();
 		JTable table = (cmpnt != null) ? (JTable) cmpnt : createTable(eMosaic, scroll);
 		return table;
@@ -258,7 +258,7 @@ abstract class ReportDlg extends JDialog {
 		EMosaic mosaicType = getSelectedMosaicType();
 		int i = mosaicType.ordinal();
 		Icon icon = getResources().getImgMosaic(mosaicType, false);
-		// TODO кэшировать картинки??? - жрёт память
+		// TODO РєСЌС€РёСЂРѕРІР°С‚СЊ РєР°СЂС‚РёРЅРєРё??? - Р¶СЂС‘С‚ РїР°РјСЏС‚СЊ
 		icon = ImgUtils.toImgIco(ImgUtils.rotate(ImgUtils.toImg(icon), roteteAngle[i]), imgSize,imgSize);
 
 		roteteAngle[i] = roteteAngle[i] + 1.2;
@@ -271,7 +271,7 @@ abstract class ReportDlg extends JDialog {
 	protected ReportTableModel createTableModel(EMosaic eMosaic) {
 		return new ReportTableModel(eMosaic) {};
 	}
-	/** создаю табличку сразу добавляя её к JScrollPane */
+	/** СЃРѕР·РґР°СЋ С‚Р°Р±Р»РёС‡РєСѓ СЃСЂР°Р·Сѓ РґРѕР±Р°РІР»СЏСЏ РµС‘ Рє JScrollPane */
 	protected JTable createTable(EMosaic eMosaic, JScrollPane owner) {
 		JTable table = new JTable(createTableModel(eMosaic)) {
 			private static final long serialVersionUID = 1L;
@@ -279,7 +279,7 @@ abstract class ReportDlg extends JDialog {
 			public TableCellRenderer getCellRenderer(int row, int column) {
 				TableCellRenderer rend = super.getCellRenderer(row, column);
 				if (rend instanceof JLabel) {
-					// выравнивание текста в ячеке
+					// РІС‹СЂР°РІРЅРёРІР°РЅРёРµ С‚РµРєСЃС‚Р° РІ СЏС‡РµРєРµ
 					((JLabel)rend).setHorizontalAlignment(getTableCellHorizontalAlignment(row, column));
 //					((JLabel)rend).setVerticalAlignment(SwingConstants.TOP);
 				}
@@ -293,13 +293,13 @@ abstract class ReportDlg extends JDialog {
 		table.getTableHeader().setPreferredSize(new Dimension(owner.getWidth(), getTableHeaderHeigt()));
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 //		((JTextArea)table.getEditorComponent()).setEditable(false);
-//		table.getCellEditor().stopCellEditing();// // TODO непашет ??
+//		table.getCellEditor().stopCellEditing();// // TODO РЅРµРїР°С€РµС‚ ??
 //		System.out.println(table.getModel()); // javax.swing.table.DefaultTableModel
 
-//		// выравниваю текст заголовков таблицы по центру
-//		// TODO Хоть текст и выравнивается, но сами ячейки заголовка таблицы уже выглядят хуже чем
-//		//      в оригинальном рендере (особо заметно под Маком).
-//		//      Т.е. DefaultTableCellRenderer выглядит паршиво, а как достать орининальный рендер заголовка - хз 
+//		// РІС‹СЂР°РІРЅРёРІР°СЋ С‚РµРєСЃС‚ Р·Р°РіРѕР»РѕРІРєРѕРІ С‚Р°Р±Р»РёС†С‹ РїРѕ С†РµРЅС‚СЂСѓ
+//		// TODO РҐРѕС‚СЊ С‚РµРєСЃС‚ Рё РІС‹СЂР°РІРЅРёРІР°РµС‚СЃСЏ, РЅРѕ СЃР°РјРё СЏС‡РµР№РєРё Р·Р°РіРѕР»РѕРІРєР° С‚Р°Р±Р»РёС†С‹ СѓР¶Рµ РІС‹РіР»СЏРґСЏС‚ С…СѓР¶Рµ С‡РµРј
+//		//      РІ РѕСЂРёРіРёРЅР°Р»СЊРЅРѕРј СЂРµРЅРґРµСЂРµ (РѕСЃРѕР±Рѕ Р·Р°РјРµС‚РЅРѕ РїРѕРґ РњР°РєРѕРј).
+//		//      Рў.Рµ. DefaultTableCellRenderer РІС‹РіР»СЏРґРёС‚ РїР°СЂС€РёРІРѕ, Р° РєР°Рє РґРѕСЃС‚Р°С‚СЊ РѕСЂРёРЅРёРЅР°Р»СЊРЅС‹Р№ СЂРµРЅРґРµСЂ Р·Р°РіРѕР»РѕРІРєР° - С…Р· 
 //		//System.out.println(table.getColumnModel().getColumn(0).getHeaderRenderer()); // print null... hmmm
 //		javax.swing.table.TableColumnModel tableColumnModel = table.getColumnModel();
 //		for (int i=0; i<tableColumnModel.getColumnCount(); i++)
@@ -321,7 +321,7 @@ abstract class ReportDlg extends JDialog {
 	}
 
 	DefaultTableCellRenderer defaultTableCellRenderer = new CustomHeaderTableCellRenderer();
-	/** для выравнивани текста заголовков таблицы по центру */
+	/** РґР»СЏ РІС‹СЂР°РІРЅРёРІР°РЅРё С‚РµРєСЃС‚Р° Р·Р°РіРѕР»РѕРІРєРѕРІ С‚Р°Р±Р»РёС†С‹ РїРѕ С†РµРЅС‚СЂСѓ */
 	class CustomHeaderTableCellRenderer extends DefaultTableCellRenderer {
 		private static final long serialVersionUID = 1L;
 		@Override

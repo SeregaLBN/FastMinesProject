@@ -4,18 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import ua.ksn.geom.Size;
 
-/* Перечень мозаик */
+/* РџРµСЂРµС‡РµРЅСЊ РјРѕР·Р°РёРє */
 
-/** тип мозаики */
+/** С‚РёРї РјРѕР·Р°РёРєРё */
 public enum EMosaic {
 	// ============== Triangles ==============
-	/** Triangle 60°-60°-60° */
+	/** Triangle 60В°-60В°-60В° */
 	eMosaicTriangle1            (300),
-	/** Triangle 60°-60°-60° (offset) */
+	/** Triangle 60В°-60В°-60В° (offset) */
 	eMosaicTriangle2            (301),
-	/** Triangle 45°-90°-45° */
+	/** Triangle 45В°-90В°-45В° */
 	eMosaicTriangle3            (302),
-	/** Triangle 30°-30°-120° */
+	/** Triangle 30В°-30В°-120В° */
 	eMosaicTriangle4            (303),
 
 	// ============== Quadrangles ==============
@@ -23,22 +23,22 @@ public enum EMosaic {
 	eMosaicSquare1              (400),
 	/** Square 2 (offset) */
 	eMosaicSquare2              (401),
-	/** Parquet №1 - 'Herring-bone' - Паркет в елку */
+	/** Parquet в„–1 - 'Herring-bone' - РџР°СЂРєРµС‚ РІ РµР»РєСѓ */
 	eMosaicParquet1             (402),
-	/** Parquet №2 */
+	/** Parquet в„–2 */
 	eMosaicParquet2             (403),
-	/** Trapezoid 1 - 3 трапеции, составляющие равносторонний треугольник*/
+	/** Trapezoid 1 - 3 С‚СЂР°РїРµС†РёРё, СЃРѕСЃС‚Р°РІР»СЏСЋС‰РёРµ СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРє*/
 	eMosaicTrapezoid1           (404),
-	/** Trapezoid 2 - 3 трапеции, составляющие равносторонний треугольник*/
+	/** Trapezoid 2 - 3 С‚СЂР°РїРµС†РёРё, СЃРѕСЃС‚Р°РІР»СЏСЋС‰РёРµ СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРє*/
 	eMosaicTrapezoid2           (405),
-	/** Trapezoid 3 - 8 трапеций, складывающихся в шестигранник*/
+	/** Trapezoid 3 - 8 С‚СЂР°РїРµС†РёР№, СЃРєР»Р°РґС‹РІР°СЋС‰РёС…СЃСЏ РІ С€РµСЃС‚РёРіСЂР°РЅРЅРёРє*/
 	eMosaicTrapezoid3           (406),
 	/** Rhombus */
 	eMosaicRhombus1             (407),
-	/** Quadrilateral 120°-90°-60°-90° */
+	/** Quadrilateral 120В°-90В°-60В°-90В° */
 	eMosaicQuadrangle1          (408),
 	/**
-	 * Penrose tilings (rombus 72°-108° & 36°- 144°) - one of the periodic variations.
+	 * Penrose tilings (rombus 72В°-108В° & 36В°- 144В°) - one of the periodic variations.
 	 * <li><a href="http://ru.wikipedia.org/wiki/%D0%9C%D0%BE%D0%B7%D0%B0%D0%B8%D0%BA%D0%B0_%D0%9F%D0%B5%D0%BD%D1%80%D0%BE%D1%83%D0%B7%D0%B0">ru wiki</>
 	 * <li><a href="http://en.wikipedia.org/wiki/Penrose_tiling">en wiki</>
 	 */
@@ -83,16 +83,16 @@ public enum EMosaic {
 	}
 	public int getIndex() { return index; }
 
-	/** Описание для пользователя */
+	/** РћРїРёСЃР°РЅРёРµ РґР»СЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ */
 	public String getDescription(boolean small) {
 		if (small)
 			return this.toString().substring(7);
 
 		switch (this) {
-		case eMosaicTriangle1        : return "Triangle 60°-60°-60°";
-		case eMosaicTriangle2        : return "Triangle 60°-60°-60° (offset)";
-		case eMosaicTriangle3        : return "Triangle 45°-90°-45°";
-		case eMosaicTriangle4        : return "Triangle 30°-30°-120°";
+		case eMosaicTriangle1        : return "Triangle 60В°-60В°-60В°";
+		case eMosaicTriangle2        : return "Triangle 60В°-60В°-60В° (offset)";
+		case eMosaicTriangle3        : return "Triangle 45В°-90В°-45В°";
+		case eMosaicTriangle4        : return "Triangle 30В°-30В°-120В°";
 		case eMosaicSquare1          : return "Square 1";
 		case eMosaicSquare2          : return "Square 2 (offset)";
 		case eMosaicParquet1         : return "Rectangle 1 (Parquet 'Herring-bone')";
@@ -101,8 +101,8 @@ public enum EMosaic {
 		case eMosaicTrapezoid2       : return "Trapezoid 2";
 		case eMosaicTrapezoid3       : return "Trapezoid 3";
 		case eMosaicRhombus1         : return "Rhombus";
-		case eMosaicQuadrangle1      : return "Quadrilateral 120°-90°-60°-90°";
-		case eMosaicPenrousePeriodic1: return "Penrose periodic tilings";// (rombus 72°-108° & 36°- 144°)";
+		case eMosaicQuadrangle1      : return "Quadrilateral 120В°-90В°-60В°-90В°";
+		case eMosaicPenrousePeriodic1: return "Penrose periodic tilings";// (rombus 72В°-108В° & 36В°- 144В°)";
 		case eMosaicPentagonT24      : return "Pentagon (type 2 and 4)";
 		case eMosaicPentagonT5       : return "Pentagon (type 5)";
 		case eMosaicPentagonT10      : return "Pentagon (type 10)";
@@ -113,7 +113,7 @@ public enum EMosaic {
 		}
 		return getClass().getName()+".getDescription: Mosaic '" + this.toString() + "' not implemented";
 	}
-	/** Перечень описаний мозаик */
+	/** РџРµСЂРµС‡РµРЅСЊ РѕРїРёСЃР°РЅРёР№ РјРѕР·Р°РёРє */
 	public static List<String> getDescriptionValues() {
 		List<String> res = new ArrayList<String>(EMosaic.values().length);
 		for (EMosaic type: EMosaic.values())
@@ -127,13 +127,13 @@ public enum EMosaic {
 		return null;
 	}
 
-	/** 'Быстрый' код - уникальный номер мозаики для быстрого ввода.
-	 * <ul> Идея:
-	 * <li> треугольники начинаются с цифры 3
-	 * <li> четырёхугольники - с цифры 4
-	 * <li> пятиугольники - с цифры 5
-	 * <li> шестиугольники - с цифры 6
-	 * <li> прочие - с цифры 7
+	/** 'Р‘С‹СЃС‚СЂС‹Р№' РєРѕРґ - СѓРЅРёРєР°Р»СЊРЅС‹Р№ РЅРѕРјРµСЂ РјРѕР·Р°РёРєРё РґР»СЏ Р±С‹СЃС‚СЂРѕРіРѕ РІРІРѕРґР°.
+	 * <ul> РРґРµСЏ:
+	 * <li> С‚СЂРµСѓРіРѕР»СЊРЅРёРєРё РЅР°С‡РёРЅР°СЋС‚СЃСЏ СЃ С†РёС„СЂС‹ 3
+	 * <li> С‡РµС‚С‹СЂС‘С…СѓРіРѕР»СЊРЅРёРєРё - СЃ С†РёС„СЂС‹ 4
+	 * <li> РїСЏС‚РёСѓРіРѕР»СЊРЅРёРєРё - СЃ С†РёС„СЂС‹ 5
+	 * <li> С€РµСЃС‚РёСѓРіРѕР»СЊРЅРёРєРё - СЃ С†РёС„СЂС‹ 6
+	 * <li> РїСЂРѕС‡РёРµ - СЃ С†РёС„СЂС‹ 7
 	 */
 	public int getFastCode() {
 		switch (this) {
@@ -162,7 +162,7 @@ public enum EMosaic {
 		System.err.println(getClass().getName()+".getFastCode: Mosaic '" + this.toString() + "' not implemented");
 		return 0;
 	}
-	/** Перечень 'быстрых' кодов */
+	/** РџРµСЂРµС‡РµРЅСЊ 'Р±С‹СЃС‚СЂС‹С…' РєРѕРґРѕРІ */
 	public static List<Integer> getFastCodeValues() {
 		List<Integer> res = new ArrayList<Integer>(EMosaic.values().length);
 		for (EMosaic val: EMosaic.values())
@@ -180,7 +180,7 @@ public enum EMosaic {
 		return this.toString().substring(7);
 	}
 
-	/** Для рисование иконки: минимальный размер поля, по которому будет визуально ясно, что это за мозаика... */
+	/** Р”Р»СЏ СЂРёСЃРѕРІР°РЅРёРµ РёРєРѕРЅРєРё: РјРёРЅРёРјР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ РїРѕР»СЏ, РїРѕ РєРѕС‚РѕСЂРѕРјСѓ Р±СѓРґРµС‚ РІРёР·СѓР°Р»СЊРЅРѕ СЏСЃРЅРѕ, С‡С‚Рѕ СЌС‚Рѕ Р·Р° РјРѕР·Р°РёРєР°... */
 	public Size sizeIcoField(boolean smallSize) {
 		Size res = new Size();
 		switch (this) {

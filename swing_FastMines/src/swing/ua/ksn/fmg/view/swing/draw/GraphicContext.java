@@ -19,16 +19,16 @@ public class GraphicContext  {
 	public static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 10);
 
 	protected PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
-	/**  подписаться на уведомления изменений свойств GraphicContext */
+	/**  РїРѕРґРїРёСЃР°С‚СЊСЃСЏ РЅР° СѓРІРµРґРѕРјР»РµРЅРёСЏ РёР·РјРµРЅРµРЅРёР№ СЃРІРѕР№СЃС‚РІ GraphicContext */
 	public void addPropertyChangeListener(PropertyChangeListener l) {
 		propertyChanges.addPropertyChangeListener(l);
 	}
-	/**  отписаться от уведомлений изменений свойств GraphicContext */
+	/**  РѕС‚РїРёСЃР°С‚СЊСЃСЏ РѕС‚ СѓРІРµРґРѕРјР»РµРЅРёР№ РёР·РјРµРЅРµРЅРёР№ СЃРІРѕР№СЃС‚РІ GraphicContext */
 	public void removePropertyChangeListener(PropertyChangeListener l) {
 		propertyChanges.removePropertyChangeListener(l);
 	}
 
-	/** TODO: Mosaic field - нуна избавиться... */
+	/** TODO: Mosaic field - РЅСѓРЅР° РёР·Р±Р°РІРёС‚СЊСЃСЏ... */
 	private JComponent owner;
 
 	private ImageIcon imgMine, imgFlag;
@@ -87,30 +87,30 @@ public class GraphicContext  {
 		return owner;
 	}
 
-	/** всё что относиться к заливке фоном ячееек */
+	/** РІСЃС‘ С‡С‚Рѕ РѕС‚РЅРѕСЃРёС‚СЊСЃСЏ Рє Р·Р°Р»РёРІРєРµ С„РѕРЅРѕРј СЏС‡РµРµРµРє */
 	public class BackgroundFill {
-		/** режим заливки фона ячеек */
+		/** СЂРµР¶РёРј Р·Р°Р»РёРІРєРё С„РѕРЅР° СЏС‡РµРµРє */
 		private int mode = 0;
-		/** кэшированные цвета фона ячеек */
+		/** РєСЌС€РёСЂРѕРІР°РЅРЅС‹Рµ С†РІРµС‚Р° С„РѕРЅР° СЏС‡РµРµРє */
 		private Map<Integer, Color> colors;
 
-		/** режим заливки фона ячеек */
+		/** СЂРµР¶РёРј Р·Р°Р»РёРІРєРё С„РѕРЅР° СЏС‡РµРµРє */
 		public int getMode() {
 			return mode;
 		}
 		/**
-		/* режим заливки фона ячеек
+		/* СЂРµР¶РёРј Р·Р°Р»РёРІРєРё С„РѕРЅР° СЏС‡РµРµРє
 		 * @param mode
-		 *  <li> 0 - цвет заливки фона по-умолчанию
-		 *  <li> not 0 - радуга %)
+		 *  <li> 0 - С†РІРµС‚ Р·Р°Р»РёРІРєРё С„РѕРЅР° РїРѕ-СѓРјРѕР»С‡Р°РЅРёСЋ
+		 *  <li> not 0 - СЂР°РґСѓРіР° %)
 		 */
 		public void setMode(int newFillMode) {
 			this.mode = newFillMode;
 			getColors().clear();
 		}
 
-		/** кэшированные цвета фона ячеек
-		/** <br/> Нет цвета? - создасться с нужной интенсивностью! */
+		/** РєСЌС€РёСЂРѕРІР°РЅРЅС‹Рµ С†РІРµС‚Р° С„РѕРЅР° СЏС‡РµРµРє
+		/** <br/> РќРµС‚ С†РІРµС‚Р°? - СЃРѕР·РґР°СЃС‚СЊСЃСЏ СЃ РЅСѓР¶РЅРѕР№ РёРЅС‚РµРЅСЃРёРІРЅРѕСЃС‚СЊСЋ! */
 		public Map<Integer, Color> getColors() {
 			if (colors == null)
 				colors = new HashMap<Integer, Color>() {

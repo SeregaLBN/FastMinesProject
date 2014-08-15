@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Mosaic.java"
 //
-// реализация алгоритма Мозаики состоящей из ячеек
+// СЂРµР°Р»РёР·Р°С†РёСЏ Р°Р»РіРѕСЂРёС‚РјР° РњРѕР·Р°РёРєРё СЃРѕСЃС‚РѕСЏС‰РµР№ РёР· СЏС‡РµРµРє
 // Copyright (C) 2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -44,30 +44,30 @@ import ua.ksn.fmg.model.mosaics.cell.BaseCell;
 import ua.ksn.geom.Coord;
 import ua.ksn.geom.Size;
 
-/** Mosaic field: класс окна мозаики поля */
+/** Mosaic field: РєР»Р°СЃСЃ РѕРєРЅР° РјРѕР·Р°РёРєРё РїРѕР»СЏ */
 public abstract class Mosaic implements BaseCell.IMatrixCells {
 
 	public static final int AREA_MINIMUM = 230;
 
-	/** матрица List &lt; List &lt; BaseCell &gt; &gt; , представленная(развёрнута) в виде вектора */
+	/** РјР°С‚СЂРёС†Р° List &lt; List &lt; BaseCell &gt; &gt; , РїСЂРµРґСЃС‚Р°РІР»РµРЅРЅР°СЏ(СЂР°Р·РІС‘СЂРЅСѓС‚Р°) РІ РІРёРґРµ РІРµРєС‚РѕСЂР° */
 	protected List<BaseCell> _matrix = new ArrayList<BaseCell>(0);
-	/** размер поля в ячейках */
+	/** СЂР°Р·РјРµСЂ РїРѕР»СЏ РІ СЏС‡РµР№РєР°С… */
 	protected Size _size = new Size(0, 0);
-	/** из каких фигур состоит мозаика поля */
+	/** РёР· РєР°РєРёС… С„РёРіСѓСЂ СЃРѕСЃС‚РѕРёС‚ РјРѕР·Р°РёРєР° РїРѕР»СЏ */
 	protected EMosaic _mosaicType = EMosaic.eMosaicSquare1;
-	/** кол-во мин на поле */
+	/** РєРѕР»-РІРѕ РјРёРЅ РЅР° РїРѕР»Рµ */
 	protected int _minesCount = 1;
-	/** кол-во мин на поле до создания игры. Используется когда игра была создана, но ни одной мины не проставлено. */
+	/** РєРѕР»-РІРѕ РјРёРЅ РЅР° РїРѕР»Рµ РґРѕ СЃРѕР·РґР°РЅРёСЏ РёРіСЂС‹. РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РєРѕРіРґР° РёРіСЂР° Р±С‹Р»Р° СЃРѕР·РґР°РЅР°, РЅРѕ РЅРё РѕРґРЅРѕР№ РјРёРЅС‹ РЅРµ РїСЂРѕСЃС‚Р°РІР»РµРЅРѕ. */
 	protected int _oldMinesCount = 1;
 
 	private EGameStatus _gameStatus;
 	private EPlayInfo _playInfo;
 	private int _countClick;
 
-	/** для load'a - координаты ячеек с минами */
+	/** РґР»СЏ load'a - РєРѕРѕСЂРґРёРЅР°С‚С‹ СЏС‡РµРµРє СЃ РјРёРЅР°РјРё */
 	private List<Coord> _repositoryMines;
 
-	/** использовать ли флажок на поле */
+	/** РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ Р»Рё С„Р»Р°Р¶РѕРє РЅР° РїРѕР»Рµ */
 	private boolean _useUnknown = true;
 
 	private BaseCell.BaseAttribute _cellAttr;
@@ -84,19 +84,19 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		return _cellAttr;
 	}
 
-	/** размер поля в ячейках */
+	/** СЂР°Р·РјРµСЂ РїРѕР»СЏ РІ СЏС‡РµР№РєР°С… */
 	@Override
 	public Size getSizeField() { return new Size(_size); } // return clone
-	/** узнать тип мозаики */
+	/** СѓР·РЅР°С‚СЊ С‚РёРї РјРѕР·Р°РёРєРё */
 	public EMosaic getMosaicType() { return _mosaicType; }
-	/** количество мин */
+	/** РєРѕР»РёС‡РµСЃС‚РІРѕ РјРёРЅ */
 	public int getMinesCount() { return _minesCount; }
 
 //		public void setSize(Size newSizeField          ) { setParams(newSizeField, null, null ); } 
 //		public void setMosaicType(EMosaic newMosaicType) { setParams(null, newMosaicType, null); }
 	public void setMinesCount(int newMinesCount    ) { setParams(null, null, newMinesCount); }
 
-	/** установить мозаику заданного размера, типа  и с определённым количеством мин (координаты мин могут задаваться с помощью "Хранилища Мин") */
+	/** СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РјРѕР·Р°РёРєСѓ Р·Р°РґР°РЅРЅРѕРіРѕ СЂР°Р·РјРµСЂР°, С‚РёРїР°  Рё СЃ РѕРїСЂРµРґРµР»С‘РЅРЅС‹Рј РєРѕР»РёС‡РµСЃС‚РІРѕРј РјРёРЅ (РєРѕРѕСЂРґРёРЅР°С‚С‹ РјРёРЅ РјРѕРіСѓС‚ Р·Р°РґР°РІР°С‚СЊСЃСЏ СЃ РїРѕРјРѕС‰СЊСЋ "РҐСЂР°РЅРёР»РёС‰Р° РњРёРЅ") */
 	public void setParams(Size newSizeField, EMosaic newMosaicType, Integer newMinesCount, List<Coord> storageCoordMines) {
 		try {
 			//repositoryMines.Reset();
@@ -114,7 +114,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 
 			int saveArea = getArea();
 			if (isNewSizeFld) {
-				setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
+				setCellDown(null); // С‡С‚РѕР±С‹ РЅРµ Р±С‹Р»Рѕ IndexOutOfBoundsException РїСЂРё СѓРјРµРЅСЊС€РµРЅРёРё СЂР°Р·РјРµСЂР° РїРѕР»СЏ РєРѕРіРґР° СѓРґРµСЂР¶РёРІР°РµС‚СЃСЏ РєР»РёРє РЅР° РїРѕР»Рµ...
 				this._size = newSizeField;
 			}
 			if (isNewMosaic) {
@@ -134,7 +134,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 				BaseCell.BaseAttribute attr = getCellAttr();
 
 				for (BaseCell cell: _matrix)
-					// отписываю старые ячейки от уведомлений атрибута
+					// РѕС‚РїРёСЃС‹РІР°СЋ СЃС‚Р°СЂС‹Рµ СЏС‡РµР№РєРё РѕС‚ СѓРІРµРґРѕРјР»РµРЅРёР№ Р°С‚СЂРёР±СѓС‚Р°
 					attr.removePropertyChangeListener(cell);
 
 				_matrix.clear();
@@ -143,7 +143,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 					for (int j=0; j < _size.height; j++) {
 						BaseCell cell = CellFactory.createCellInstance(attr, _mosaicType, new Coord(i, j));
 						_matrix.add(i*_size.height + j, cell);
-						attr.addPropertyChangeListener(cell); // подписываю новые ячейки на уведомления атрибута (изменение a -> перерасчёт координат)
+						attr.addPropertyChangeListener(cell); // РїРѕРґРїРёСЃС‹РІР°СЋ РЅРѕРІС‹Рµ СЏС‡РµР№РєРё РЅР° СѓРІРµРґРѕРјР»РµРЅРёСЏ Р°С‚СЂРёР±СѓС‚Р° (РёР·РјРµРЅРµРЅРёРµ a -> РїРµСЂРµСЂР°СЃС‡С‘С‚ РєРѕРѕСЂРґРёРЅР°С‚)
 					}
 	
 				for (BaseCell cell: _matrix)
@@ -165,7 +165,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		}
 	}
 
-	/** установить мозаику заданного размера, типа и с определённым количеством мин */
+	/** СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РјРѕР·Р°РёРєСѓ Р·Р°РґР°РЅРЅРѕРіРѕ СЂР°Р·РјРµСЂР°, С‚РёРїР° Рё СЃ РѕРїСЂРµРґРµР»С‘РЅРЅС‹Рј РєРѕР»РёС‡РµСЃС‚РІРѕРј РјРёРЅ */
 	public void setParams(Size sizeField, EMosaic mosaicType, Integer minesCount)
 	{
 		setParams(sizeField, mosaicType, minesCount, null);
@@ -180,7 +180,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		for (Coord c: repository) {
 			boolean suc = getCell(c).getState().SetMine();
 			if (!suc)
-				OnError("Проблемы с установкой мин... :(");
+				OnError("РџСЂРѕР±Р»РµРјС‹ СЃ СѓСЃС‚Р°РЅРѕРІРєРѕР№ РјРёРЅ... :(");
 		}
 		// set other CellOpen and set all Caption
 		for (BaseCell cell: _matrix)
@@ -192,14 +192,14 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 			_minesCount = _oldMinesCount;
 		
 		List<BaseCell> matrixClone = new ArrayList<BaseCell>(_matrix);
-		matrixClone.remove(firstClickCell); // исключаю на которой кликал юзер
-		matrixClone.removeAll(Arrays.asList(firstClickCell.getNeighbors())); // и их соседей
+		matrixClone.remove(firstClickCell); // РёСЃРєР»СЋС‡Р°СЋ РЅР° РєРѕС‚РѕСЂРѕР№ РєР»РёРєР°Р» СЋР·РµСЂ
+		matrixClone.removeAll(Arrays.asList(firstClickCell.getNeighbors())); // Рё РёС… СЃРѕСЃРµРґРµР№
 		int count = 0;
 		Random rand = new Random();
 		do {
 			int len = matrixClone.size();
 			if (len == 0) {
-				OnError("ээээ..... лажа......\r\nЗахотели установить больше мин чем возможно");
+				OnError("СЌСЌСЌСЌ..... Р»Р°Р¶Р°......\r\nР—Р°С…РѕС‚РµР»Рё СѓСЃС‚Р°РЅРѕРІРёС‚СЊ Р±РѕР»СЊС€Рµ РјРёРЅ С‡РµРј РІРѕР·РјРѕР¶РЅРѕ");
 				_minesCount = count;
 				break;
 			}
@@ -209,7 +209,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 				count++;
 				matrixClone.remove(cellToSetMines);
 			} else
-				OnError("Мины должны всегда устанавливаться...");
+				OnError("РњРёРЅС‹ РґРѕР»Р¶РЅС‹ РІСЃРµРіРґР° СѓСЃС‚Р°РЅР°РІР»РёРІР°С‚СЊСЃСЏ...");
 		} while (count < _minesCount);
 
 		// set other CellOpen and set all Caption
@@ -241,25 +241,25 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		return cnt;
 	}
 	
-	/** сколько ещё осталось открыть мин */
+	/** СЃРєРѕР»СЊРєРѕ РµС‰С‘ РѕСЃС‚Р°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ РјРёРЅ */
 	public int getCountMinesLeft() { return getMinesCount() - getCountFlag(); }
 	public int getCountClick()  { return _countClick; }
 	public void setCountClick(int clickCount)  { _countClick=clickCount; getMosaicListeners().fireOnChangedCounters(new MosaicEvent.ChangedCountersEvent(this)); }
 
-	/** доступ к заданной ячейке */
+	/** РґРѕСЃС‚СѓРї Рє Р·Р°РґР°РЅРЅРѕР№ СЏС‡РµР№РєРµ */
 	public BaseCell getCell(int x, int y) { return _matrix.get(x*_size.height + y); }
-	/** доступ к заданной ячейке */
+	/** РґРѕСЃС‚СѓРї Рє Р·Р°РґР°РЅРЅРѕР№ СЏС‡РµР№РєРµ */
 	@Override
 	public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
 
 	private BaseCell _cellDown;
-	/** ячейка на которой было нажато (но не обязательно что отпущено) */
+	/** СЏС‡РµР№РєР° РЅР° РєРѕС‚РѕСЂРѕР№ Р±С‹Р»Рѕ РЅР°Р¶Р°С‚Рѕ (РЅРѕ РЅРµ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ С‡С‚Рѕ РѕС‚РїСѓС‰РµРЅРѕ) */
 	public BaseCell getCellDown() { return _cellDown; }
-	/** ячейка на которой было нажато (но не обязательно что отпущено) */
+	/** СЏС‡РµР№РєР° РЅР° РєРѕС‚РѕСЂРѕР№ Р±С‹Р»Рѕ РЅР°Р¶Р°С‚Рѕ (РЅРѕ РЅРµ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ С‡С‚Рѕ РѕС‚РїСѓС‰РµРЅРѕ) */
 	public void setCellDown(BaseCell cellDown) { _cellDown = cellDown; }
 
 	/**
-	 *<br> Этапы игры:
+	 *<br> Р­С‚Р°РїС‹ РёРіСЂС‹:
 	 *<br>           GameNew()      GameBegin()     GameEnd()      GameNew()
 	 *<br>    time      |               |               |             |
 	 *<br>  -------->   | eGSCreateGame |               |             |
@@ -268,9 +268,9 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 	 *<br>
 	 *<br> @see ua.ksn.fmg.types.EGameStatus
 	 *<br>
-	 *<br> PS: При этапе gsReady поле чисто - мин нет! Мины расставляются только после первого клика
-	 *<br>     Так сделал только лишь потому, чтобы первый клик выполнялся не на мине. Естественно
-	 *<br>     это не относится к случаю, когда игра была создана пользователем или считана из файла.
+	 *<br> PS: РџСЂРё СЌС‚Р°РїРµ gsReady РїРѕР»Рµ С‡РёСЃС‚Рѕ - РјРёРЅ РЅРµС‚! РњРёРЅС‹ СЂР°СЃСЃС‚Р°РІР»СЏСЋС‚СЃСЏ С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ РїРµСЂРІРѕРіРѕ РєР»РёРєР°
+	 *<br>     РўР°Рє СЃРґРµР»Р°Р» С‚РѕР»СЊРєРѕ Р»РёС€СЊ РїРѕС‚РѕРјСѓ, С‡С‚РѕР±С‹ РїРµСЂРІС‹Р№ РєР»РёРє РІС‹РїРѕР»РЅСЏР»СЃСЏ РЅРµ РЅР° РјРёРЅРµ. Р•СЃС‚РµСЃС‚РІРµРЅРЅРѕ
+	 *<br>     СЌС‚Рѕ РЅРµ РѕС‚РЅРѕСЃРёС‚СЃСЏ Рє СЃР»СѓС‡Р°СЋ, РєРѕРіРґР° РёРіСЂР° Р±С‹Р»Р° СЃРѕР·РґР°РЅР° РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј РёР»Рё СЃС‡РёС‚Р°РЅР° РёР· С„Р°Р№Р»Р°.
 	 */
 	public EGameStatus getGameStatus() {
 		if (_gameStatus == null)
@@ -322,32 +322,32 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 //			listeners2.remove(MosaicListener.class, l);
 		}
 
-		/** уведомить о клике на мозаике */
+		/** СѓРІРµРґРѕРјРёС‚СЊ Рѕ РєР»РёРєРµ РЅР° РјРѕР·Р°РёРєРµ */
 		public void fireOnClick(MosaicEvent.ClickEvent e) {
 			for (MosaicListener l: getListeners())
 				l.OnClick(e);
 		}
-		/** уведомление: изменено кол-во открытых ячеек / флагов / кликов / ... */
+		/** СѓРІРµРґРѕРјР»РµРЅРёРµ: РёР·РјРµРЅРµРЅРѕ РєРѕР»-РІРѕ РѕС‚РєСЂС‹С‚С‹С… СЏС‡РµРµРє / С„Р»Р°РіРѕРІ / РєР»РёРєРѕРІ / ... */
 		public void fireOnChangedCounters(MosaicEvent.ChangedCountersEvent e) {
 			for (MosaicListener l: getListeners())
 				l.OnChangedCounters(e);
 		}
-		/** уведомить об изменении статуса игры (новая игра, начало игры, конец игры) */
+		/** СѓРІРµРґРѕРјРёС‚СЊ РѕР± РёР·РјРµРЅРµРЅРёРё СЃС‚Р°С‚СѓСЃР° РёРіСЂС‹ (РЅРѕРІР°СЏ РёРіСЂР°, РЅР°С‡Р°Р»Рѕ РёРіСЂС‹, РєРѕРЅРµС† РёРіСЂС‹) */
 		public void fireOnChangedGameStatus(MosaicEvent.ChangedGameStatusEvent e) {
 			for (MosaicListener l: getListeners())
 				l.OnChangedGameStatus(e);
 		}
-		/** уведомить об изменении размера площади у ячейки */
+		/** СѓРІРµРґРѕРјРёС‚СЊ РѕР± РёР·РјРµРЅРµРЅРёРё СЂР°Р·РјРµСЂР° РїР»РѕС‰Р°РґРё Сѓ СЏС‡РµР№РєРё */
 		public void fireOnChangedArea(MosaicEvent.ChangedAreaEvent e) {
 			for (MosaicListener l: getListeners())
 				l.OnChangedArea(e);
 		}
-		/** уведомить об изменении размера площади у ячейки */
+		/** СѓРІРµРґРѕРјРёС‚СЊ РѕР± РёР·РјРµРЅРµРЅРёРё СЂР°Р·РјРµСЂР° РїР»РѕС‰Р°РґРё Сѓ СЏС‡РµР№РєРё */
 		public void fireOnChangedMosaicType(MosaicEvent.ChangedMosaicTypeEvent e) {
 			for (MosaicListener l: getListeners())
 				l.OnChangedMosaicType(e);
 		}
-		/** уведомить об изменении размера мозаики */
+		/** СѓРІРµРґРѕРјРёС‚СЊ РѕР± РёР·РјРµРЅРµРЅРёРё СЂР°Р·РјРµСЂР° РјРѕР·Р°РёРєРё */
 		public void fireOnChangedMosaicSize(MosaicEvent.ChangedMosaicSizeEvent e) {
 			for (MosaicListener l: getListeners())
 				l.OnChangedMosaicSize(e);
@@ -359,19 +359,19 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 			_mosaicListeners = new MosaicListeners();
 		return _mosaicListeners;
 	}
-	/**  подписаться на уведомления изменений мозаики */
+	/**  РїРѕРґРїРёСЃР°С‚СЊСЃСЏ РЅР° СѓРІРµРґРѕРјР»РµРЅРёСЏ РёР·РјРµРЅРµРЅРёР№ РјРѕР·Р°РёРєРё */
 	public void addMosaicListener(MosaicListener listener) {
 		getMosaicListeners().add(listener);
 	}
-	/**  отписаться от уведомлений изменений мозаики */
+	/**  РѕС‚РїРёСЃР°С‚СЊСЃСЏ РѕС‚ СѓРІРµРґРѕРјР»РµРЅРёР№ РёР·РјРµРЅРµРЅРёР№ РјРѕР·Р°РёРєРё */
 	public void removeMosaicListener(MosaicListener listener) {
 		getMosaicListeners().remove(listener);
 	}
 
-	/** перерисовать ячейку; если null - перерисовать всё поле */
+	/** РїРµСЂРµСЂРёСЃРѕРІР°С‚СЊ СЏС‡РµР№РєСѓ; РµСЃР»Рё null - РїРµСЂРµСЂРёСЃРѕРІР°С‚СЊ РІСЃС‘ РїРѕР»Рµ */
 	protected abstract void Repaint(BaseCell cell);
 	
-	/** Начать игру, т.к. произошёл первый клик на поле */
+	/** РќР°С‡Р°С‚СЊ РёРіСЂСѓ, С‚.Рє. РїСЂРѕРёР·РѕС€С‘Р» РїРµСЂРІС‹Р№ РєР»РёРє РЅР° РїРѕР»Рµ */
 	protected void GameBegin(BaseCell firstClickCell) {
 		Repaint(null);
 
@@ -386,11 +386,11 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		}
 	}
 
-	/** Завершить игру */
+	/** Р—Р°РІРµСЂС€РёС‚СЊ РёРіСЂСѓ */
 	private void GameEnd(boolean victory) {
 		if (getGameStatus() == EGameStatus.eGSEnd) return;
 
-		{ // открыть оставшeеся
+		{ // РѕС‚РєСЂС‹С‚СЊ РѕСЃС‚Р°РІС€eРµСЃСЏ
 //			::SetCursor(::LoadCursor(NULL, IDC_WAIT));
 			for (BaseCell cell: _matrix)
 				if (cell.getState().getStatus() == EState._Close) {
@@ -425,7 +425,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 			for (BaseCell cell: _matrix)
 				if ((cell.getState().getClose() == EClose._Flag) &&
 					(cell.getState().getOpen() != EOpen._Mine))
-					return; // неверно проставленный флажок - на выход
+					return; // РЅРµРІРµСЂРЅРѕ РїСЂРѕСЃС‚Р°РІР»РµРЅРЅС‹Р№ С„Р»Р°Р¶РѕРє - РЅР° РІС‹С…РѕРґ
 			GameEnd(true);
 		} else
 			if (getMinesCount() == (getCountFlag() + getCountUnknown())) {
@@ -433,7 +433,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 					if (((cell.getState().getClose() == EClose._Unknown) ||
 						( cell.getState().getClose() == EClose._Flag)) &&
 						( cell.getState().getOpen() != EOpen._Mine))
-						return; // неверно проставленный флажок или '?'- на выход
+						return; // РЅРµРІРµСЂРЅРѕ РїСЂРѕСЃС‚Р°РІР»РµРЅРЅС‹Р№ С„Р»Р°Р¶РѕРє РёР»Рё '?'- РЅР° РІС‹С…РѕРґ
 				GameEnd(true);
 			}
 		return;
@@ -489,10 +489,10 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 			if (result.needRepaint != null)
 				for (BaseCell cellToRepaint : result.needRepaint)
 					Repaint(cellToRepaint);
-			boolean res = (result.countOpen > 0) || (result.countFlag > 0) || (result.countUnknown > 0); // клик со смыслом (были изменения на поле) 
+			boolean res = (result.countOpen > 0) || (result.countFlag > 0) || (result.countUnknown > 0); // РєР»РёРє СЃРѕ СЃРјС‹СЃР»РѕРј (Р±С‹Р»Рё РёР·РјРµРЅРµРЅРёСЏ РЅР° РїРѕР»Рµ) 
 			if (res) {
 				setCountClick(getCountClick()+1);
-				setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
+				setPlayInfo(EPlayInfo.ePlayerUser);  // СЋР·РµСЂ РёРіСЂР°Р»
 				getMosaicListeners().fireOnChangedCounters(new MosaicEvent.ChangedCountersEvent(this));
 			}
 	
@@ -540,10 +540,10 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		RightDownReturn result = cellRightDown.RButtonDown(eClose, clickReportContext);
 		if (result.needRepaint)
 			Repaint(cellRightDown);
-		boolean res = (result.countFlag>0) || (result.countUnknown>0); // клик со смыслом (были изменения на поле)
+		boolean res = (result.countFlag>0) || (result.countUnknown>0); // РєР»РёРє СЃРѕ СЃРјС‹СЃР»РѕРј (Р±С‹Р»Рё РёР·РјРµРЅРµРЅРёСЏ РЅР° РїРѕР»Рµ)
 		if (res) {
 			setCountClick(getCountClick()+1);
-			setPlayInfo(EPlayInfo.ePlayerUser); // то считаю что юзер играл
+			setPlayInfo(EPlayInfo.ePlayerUser); // С‚Рѕ СЃС‡РёС‚Р°СЋ С‡С‚Рѕ СЋР·РµСЂ РёРіСЂР°Р»
 			getMosaicListeners().fireOnChangedCounters(new MosaicEvent.ChangedCountersEvent(this));
 		}
 
@@ -572,7 +572,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		System.out.println("Restore last game?");
 		return false;
 	}
-	/** Подготовиться к началу игры - сбросить все ячейки */
+	/** РџРѕРґРіРѕС‚РѕРІРёС‚СЊСЃСЏ Рє РЅР°С‡Р°Р»Сѓ РёРіСЂС‹ - СЃР±СЂРѕСЃРёС‚СЊ РІСЃРµ СЏС‡РµР№РєРё */
 	public void GameNew() {
 //		System.out.println("Mosaic::GameNew()");
 
@@ -592,10 +592,10 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		setCountClick(0);
 
 		setGameStatus(EGameStatus.eGSReady);
-		setPlayInfo(EPlayInfo.ePlayerUnknown); // пока не знаю кто будет играть
+		setPlayInfo(EPlayInfo.ePlayerUnknown); // РїРѕРєР° РЅРµ Р·РЅР°СЋ РєС‚Рѕ Р±СѓРґРµС‚ РёРіСЂР°С‚СЊ
 	}
 
-	/** создать игру игроком - он сам расставит мины */
+	/** СЃРѕР·РґР°С‚СЊ РёРіСЂСѓ РёРіСЂРѕРєРѕРј - РѕРЅ СЃР°Рј СЂР°СЃСЃС‚Р°РІРёС‚ РјРёРЅС‹ */
 	public void GameCreate() {
 		GameNew();
 		if (getRepositoryMines().isEmpty()) {
@@ -605,7 +605,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		}
 	}
 
-	/** площадь ячеек */
+	/** РїР»РѕС‰Р°РґСЊ СЏС‡РµРµРє */
 	public int getArea() {
 		if (_cellAttr == null)
 			return AREA_MINIMUM;
@@ -616,7 +616,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 		}
 		return area;
 	}
-	/** установить новую площадь ячеек */
+	/** СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РЅРѕРІСѓСЋ РїР»РѕС‰Р°РґСЊ СЏС‡РµРµРє */
 	public void setArea(int newArea)  {
 		int oldArea = getCellAttr().getArea();
 		if (oldArea == Math.max(AREA_MINIMUM, newArea)) return;
@@ -627,31 +627,31 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 	public void setUseUnknown(boolean val) { _useUnknown = val; }
 	public boolean getUseUnknown() { return _useUnknown; }
 
-	/** Максимальное кол-во мин при указанном размере поля */
+	/** РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»-РІРѕ РјРёРЅ РїСЂРё СѓРєР°Р·Р°РЅРЅРѕРј СЂР°Р·РјРµСЂРµ РїРѕР»СЏ */
 	public int GetMaxMines(Size sizeFld) {
 		int iMustFreeCell = GetNeighborNumber()+1;
 		int iMaxMines = sizeFld.width*sizeFld.height-iMustFreeCell;
 		return Math.max(1, iMaxMines);
 	}
-	/** Максимальное кол-во мин при  текущем  размере поля */
+	/** РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»-РІРѕ РјРёРЅ РїСЂРё  С‚РµРєСѓС‰РµРј  СЂР°Р·РјРµСЂРµ РїРѕР»СЏ */
 	public int GetMaxMines() { return GetMaxMines(getSizeField()); }
-	/** размер в пикселях для указанных параметров */
+	/** СЂР°Р·РјРµСЂ РІ РїРёРєСЃРµР»СЏС… РґР»СЏ СѓРєР°Р·Р°РЅРЅС‹С… РїР°СЂР°РјРµС‚СЂРѕРІ */
 	public Size CalcWindowSize(Size sizeField, int area) { return getCellAttr().CalcOwnerSize(sizeField, area); }
-	/** размер в пикселях */
+	/** СЂР°Р·РјРµСЂ РІ РїРёРєСЃРµР»СЏС… */
 	public Size getWindowSize() { return CalcWindowSize(getSizeField(), getArea()); }
-	/** узнать количество соседей для текущей мозаики */
+	/** СѓР·РЅР°С‚СЊ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРѕСЃРµРґРµР№ РґР»СЏ С‚РµРєСѓС‰РµР№ РјРѕР·Р°РёРєРё */
 	public int GetNeighborNumber() { return getCellAttr().getNeighborNumber(); }
 
-	/** действительно лишь когда gameStatus == gsEnd */
+	/** РґРµР№СЃС‚РІРёС‚РµР»СЊРЅРѕ Р»РёС€СЊ РєРѕРіРґР° gameStatus == gsEnd */
 	public boolean isVictory() {
 		return (getGameStatus() == EGameStatus.eGSEnd) && (0 == getCountMinesLeft());
 	}
 
-	/** Mosaic field: класс окна мозаики поля */
+	/** Mosaic field: РєР»Р°СЃСЃ РѕРєРЅР° РјРѕР·Р°РёРєРё РїРѕР»СЏ */
 	public Mosaic() {
 		initialize();
 	}
-	/** Mosaic field: класс окна мозаики поля */
+	/** Mosaic field: РєР»Р°СЃСЃ РѕРєРЅР° РјРѕР·Р°РёРєРё РїРѕР»СЏ */
 	public Mosaic(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
 		initialize(sizeField, mosaicType, minesCount, area);
 	}
@@ -671,6 +671,6 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 	}
 	protected void initialize(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
 		setParams(sizeField, mosaicType, minesCount);
-		setArea(area); // ...провера на валидность есть только при установке из класса Main. Так что, не нуна тут задавать громадные велечины.
+		setArea(area); // ...РїСЂРѕРІРµСЂР° РЅР° РІР°Р»РёРґРЅРѕСЃС‚СЊ РµСЃС‚СЊ С‚РѕР»СЊРєРѕ РїСЂРё СѓСЃС‚Р°РЅРѕРІРєРµ РёР· РєР»Р°СЃСЃР° Main. РўР°Рє С‡С‚Рѕ, РЅРµ РЅСѓРЅР° С‚СѓС‚ Р·Р°РґР°РІР°С‚СЊ РіСЂРѕРјР°РґРЅС‹Рµ РІРµР»РµС‡РёРЅС‹.
 	}
 }

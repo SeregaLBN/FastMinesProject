@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Square2.java"
 //
-// Реализация класса Square2 - квадрат (перекошенный вариант поля)
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° Square2 - РєРІР°РґСЂР°С‚ (РїРµСЂРµРєРѕС€РµРЅРЅС‹Р№ РІР°СЂРёР°РЅС‚ РїРѕР»СЏ)
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ import ua.ksn.geom.Size;
 import ua.ksn.geom.Point;
 
 /**
- * Квадрат. Вариант 2 - сдвинутые ряды
+ * РљРІР°РґСЂР°С‚. Р’Р°СЂРёР°РЅС‚ 2 - СЃРґРІРёРЅСѓС‚С‹Рµ СЂСЏРґС‹
  * @see BaseCell
  **/
 public class Square2 extends BaseCell {
@@ -40,7 +40,7 @@ public class Square2 extends BaseCell {
 
 		@Override
 		public Size CalcOwnerSize(Size sizeField, int area) {
-			double a = CalcA(area); // размер стороны квадрата
+			double a = CalcA(area); // СЂР°Р·РјРµСЂ СЃС‚РѕСЂРѕРЅС‹ РєРІР°РґСЂР°С‚Р°
 			Size result = new Size(
 					(int)(sizeField.width * a + a/2),
 					(int)(sizeField.height * a));
@@ -83,7 +83,7 @@ public class Square2 extends BaseCell {
 	protected Coord[] GetCoordsNeighbor() {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	neighborCoord[0] = new Coord(coord.x- direction   , coord.y-1);
 		neighborCoord[1] = new Coord(coord.x+(direction^1), coord.y-1);
 		neighborCoord[2] = new Coord(coord.x-1            , coord.y);

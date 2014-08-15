@@ -23,7 +23,7 @@ import ua.ksn.fmg.controller.types.ESkillLevel;
 import ua.ksn.fmg.controller.types.User;
 import ua.ksn.fmg.model.mosaics.EMosaic;
 
-/** хранилище пользователей и их игровой статистики */
+/** С…СЂР°РЅРёР»РёС‰Рµ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ Рё РёС… РёРіСЂРѕРІРѕР№ СЃС‚Р°С‚РёСЃС‚РёРєРё */
 public class PlayersModel implements Externalizable {
 	//private static final long version = Main.serialVersionUID;
 	private final long version;
@@ -117,14 +117,14 @@ public class PlayersModel implements Externalizable {
 	}
 
 	/**
-	 * Установить статистику для игрока
-	 * @param userId - идентификатор игрока
-	 * @param mosaic - на какой мозаике
-	 * @param skill - на каком уровне сложности
-	 * @param victory - выиграл ли?
-	 * @param countOpenField - кол-во открытых ячеек
-	 * @param playTime - время игры
-	 * @param clickCount - кол-во кликов
+	 * РЈСЃС‚Р°РЅРѕРІРёС‚СЊ СЃС‚Р°С‚РёСЃС‚РёРєСѓ РґР»СЏ РёРіСЂРѕРєР°
+	 * @param userId - РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РёРіСЂРѕРєР°
+	 * @param mosaic - РЅР° РєР°РєРѕР№ РјРѕР·Р°РёРєРµ
+	 * @param skill - РЅР° РєР°РєРѕРј СѓСЂРѕРІРЅРµ СЃР»РѕР¶РЅРѕСЃС‚Рё
+	 * @param victory - РІС‹РёРіСЂР°Р» Р»Рё?
+	 * @param countOpenField - РєРѕР»-РІРѕ РѕС‚РєСЂС‹С‚С‹С… СЏС‡РµРµРє
+	 * @param playTime - РІСЂРµРјСЏ РёРіСЂС‹
+	 * @param clickCount - РєРѕР»-РІРѕ РєР»РёРєРѕРІ
 	 */
 	public void setStatistic(UUID userId, EMosaic mosaic, ESkillLevel skill, boolean victory, long countOpenField, long playTime, long clickCount) {
 		if (skill == ESkillLevel.eCustom)
@@ -235,7 +235,7 @@ public class PlayersModel implements Externalizable {
 				read += curr;
 			} while(read < data.length);
 			if (read != data.length)
-				throw new IOException("Invalid data length. Ожидалось " + data.length + " байт, а прочитано " + read + " байт.");
+				throw new IOException("Invalid data length. РћР¶РёРґР°Р»РѕСЃСЊ " + data.length + " Р±Р°Р№С‚, Р° РїСЂРѕС‡РёС‚Р°РЅРѕ " + read + " Р±Р°Р№С‚.");
 			in.close();
 
 			// 2. decrypt data

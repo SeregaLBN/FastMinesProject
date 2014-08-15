@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "SqTrHex.java"
 //
-// Реализация класса SqTrHex - мозаика из 6Square 4Triangle 2Hexagon
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° SqTrHex - РјРѕР·Р°РёРєР° РёР· 6Square 4Triangle 2Hexagon
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ import ua.ksn.geom.Rect;
 import ua.ksn.geom.Size;
 
 /**
- * Комбинация. мозаика из 6Square 4Triangle 2Hexagon
+ * РљРѕРјР±РёРЅР°С†РёСЏ. РјРѕР·Р°РёРєР° РёР· 6Square 4Triangle 2Hexagon
  * @see BaseCell
  **/
 public class SqTrHex extends BaseCell {
@@ -128,7 +128,7 @@ public class SqTrHex extends BaseCell {
 	protected Coord[] GetCoordsNeighbor() {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
 		switch (direction) {
 		case 0:
 			neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
@@ -412,7 +412,7 @@ public class SqTrHex extends BaseCell {
 
 		PointDouble o = getOffest();
 
-		PointDouble center = new PointDouble(); // координата центра вписанного в фигуру квадрата
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° С†РµРЅС‚СЂР° РІРїРёСЃР°РЅРЅРѕРіРѕ РІ С„РёРіСѓСЂСѓ РєРІР°РґСЂР°С‚Р°
 		switch (direction) {
 		case  0: center.x = o.x -  b-h;    center.y = o.y - a-b-w-sq2;   break;
 		case  1: center.x = o.x - (b+h)/2; center.y = o.y - a-b-(b+h)/2; break;

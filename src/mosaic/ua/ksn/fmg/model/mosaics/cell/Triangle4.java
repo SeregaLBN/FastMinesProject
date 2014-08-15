@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Triangle4.java"
 //
-// Реализация класса Triangle4 - треугольник 30°-30°-120°
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° Triangle4 - С‚СЂРµСѓРіРѕР»СЊРЅРёРє 30В°-30В°-120В°
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ import ua.ksn.geom.Rect;
 import ua.ksn.geom.Size;
 
 /**
- * Треугольник. Вариант 4 - треугольник 30°-30°-120°
+ * РўСЂРµСѓРіРѕР»СЊРЅРёРє. Р’Р°СЂРёР°РЅС‚ 4 - С‚СЂРµСѓРіРѕР»СЊРЅРёРє 30В°-30В°-120В°
  * @see BaseCell
  **/
 public class Triangle4 extends BaseCell {
@@ -102,7 +102,7 @@ public class Triangle4 extends BaseCell {
 	protected Coord[] GetCoordsNeighbor() {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
 		switch (direction) {
 		case 0:
 			neighborCoord[ 0] = new Coord(coord.x-1, coord.y-2);
@@ -394,7 +394,7 @@ public class Triangle4 extends BaseCell {
 		double R = attr.CalcROut(area);
 		double r = attr.CalcRIn(area);
 
-		// определение координат точек фигуры
+		// РѕРїСЂРµРґРµР»РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ С‚РѕС‡РµРє С„РёРіСѓСЂС‹
 		double oX =  (coord.x/3)*a + b;      // offset X
 		double oY = ((coord.y/4)*2+1)*(R+r); // offset Y
 
@@ -472,7 +472,7 @@ public class Triangle4 extends BaseCell {
 		double sq2w  = sq2+w;
 		double sq2w3 = sq2+w/SQRT3;
 
-		PointDouble center = new PointDouble(); // координата центра квадрата
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° С†РµРЅС‚СЂР° РєРІР°РґСЂР°С‚Р°
 		switch (direction) {
 		case 0: case 10:
 			center.x = region.getPoint(1).x - sq2w;
@@ -520,8 +520,8 @@ public class Triangle4 extends BaseCell {
 //	protected Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
 ////		if (fillMode == getAttr().getMaxBackgroundFillModeValue())
 //		{
-//			switch ((getCoord().y&3)*3+(getCoord().x%6)) { // почти как вычисление direction...
-//			// подсвечиваю звёзду
+//			switch ((getCoord().y&3)*3+(getCoord().x%6)) { // РїРѕС‡С‚Рё РєР°Рє РІС‹С‡РёСЃР»РµРЅРёРµ direction...
+//			// РїРѕРґСЃРІРµС‡РёРІР°СЋ Р·РІС‘Р·РґСѓ
 //			case 1: case  3: case  4: case  5:
 //				return repositoryColor.get(0);
 //			case 6: return Color.red;

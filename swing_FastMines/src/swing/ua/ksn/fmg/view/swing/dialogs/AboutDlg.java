@@ -66,23 +66,23 @@ public class AboutDlg extends JDialog {
 
 		this.setResizable(false);
 		CreateComponents();
-		// задаю предпочтительный размер
+		// Р·Р°РґР°СЋ РїСЂРµРґРїРѕС‡С‚РёС‚РµР»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ
 		pack();
 		this.setLocationRelativeTo(parent);
 	}
 
 	private void OnClose() {
-		// при выходе из диалогового окна - освобождаю ресурсы
+		// РїСЂРё РІС‹С…РѕРґРµ РёР· РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР° - РѕСЃРІРѕР±РѕР¶РґР°СЋ СЂРµСЃСѓСЂСЃС‹
 		dispose();
 //		System.exit(0);
 	}
 
-	// создаю панели с нужным расположением
+	// СЃРѕР·РґР°СЋ РїР°РЅРµР»Рё СЃ РЅСѓР¶РЅС‹Рј СЂР°СЃРїРѕР»РѕР¶РµРЅРёРµРј
 	private void CreateComponents() {
-		// 1. Создаю панель, которая будет содержать все остальные элементы и панели расположения
+		// 1. РЎРѕР·РґР°СЋ РїР°РЅРµР»СЊ, РєРѕС‚РѕСЂР°СЏ Р±СѓРґРµС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ РІСЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹ Рё РїР°РЅРµР»Рё СЂР°СЃРїРѕР»РѕР¶РµРЅРёСЏ
 		Box boxCenter = Box.createVerticalBox();
-		// Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов. 
-		// использую пустую рамку 
+		// Р§С‚РѕР±С‹ РёРЅС‚РµСЂС„РµР№СЃ РѕС‚РІРµС‡Р°Р» С‚СЂРµР±РѕРІР°РЅРёСЏРј Java, РЅРµРѕР±С…РѕРґРёРјРѕ РѕС‚РґРµР»РёС‚СЊ РµРіРѕ СЃРѕРґРµСЂР¶РёРјРѕРµ РѕС‚ РіСЂР°РЅРёС† РѕРєРЅР° РЅР° 12 РїРёРєСЃРµР»РѕРІ. 
+		// РёСЃРїРѕР»СЊР·СѓСЋ РїСѓСЃС‚СѓСЋ СЂР°РјРєСѓ 
 		//boxCenter.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
 		boxCenter.setBorder(
 				new CompoundBorder(
@@ -92,40 +92,40 @@ public class AboutDlg extends JDialog {
 								BorderFactory.createEmptyBorder(12,12,12,12))));
 
 
-		// 2. Поочередно создаются "полосы", на которые был разбит интерфейс
-		// а) ряд для Иконки, НазвыПроги, версии, авторства и лицензии
+		// 2. РџРѕРѕС‡РµСЂРµРґРЅРѕ СЃРѕР·РґР°СЋС‚СЃСЏ "РїРѕР»РѕСЃС‹", РЅР° РєРѕС‚РѕСЂС‹Рµ Р±С‹Р» СЂР°Р·Р±РёС‚ РёРЅС‚РµСЂС„РµР№СЃ
+		// Р°) СЂСЏРґ РґР»СЏ РРєРѕРЅРєРё, РќР°Р·РІС‹РџСЂРѕРіРё, РІРµСЂСЃРёРё, Р°РІС‚РѕСЂСЃС‚РІР° Рё Р»РёС†РµРЅР·РёРё
 		Box firstLine = Box.createHorizontalBox();
 		{ 
 //			firstLine.setBorder(GuiTools.getDummyBorder(Color.RED));
 
-			// слева - кнопка иконки
+			// СЃР»РµРІР° - РєРЅРѕРїРєР° РёРєРѕРЅРєРё
 			JComponent logo = CreatePanelLogo();
 			logo.setAlignmentY(Component.TOP_ALIGNMENT);
 			firstLine.add(logo);
 
 			firstLine.add(Box.createHorizontalStrut(5));
 
-			// справа - в отдельных стороках тексты НазвыПроги, версии, авторства и лицензии
+			// СЃРїСЂР°РІР° - РІ РѕС‚РґРµР»СЊРЅС‹С… СЃС‚РѕСЂРѕРєР°С… С‚РµРєСЃС‚С‹ РќР°Р·РІС‹РџСЂРѕРіРё, РІРµСЂСЃРёРё, Р°РІС‚РѕСЂСЃС‚РІР° Рё Р»РёС†РµРЅР·РёРё
 			JComponent title = CreatePanelTitle();
 			title.setAlignmentY(Component.TOP_ALIGNMENT);
 			firstLine.add(title);
 		}
-		// б) вторая строка - контакты
+		// Р±) РІС‚РѕСЂР°СЏ СЃС‚СЂРѕРєР° - РєРѕРЅС‚Р°РєС‚С‹
 		JComponent secondLine = CreatePanelContatcs();
 
-		// 4. Окончательный "сбор" полос в интерфейс
+		// 4. РћРєРѕРЅС‡Р°С‚РµР»СЊРЅС‹Р№ "СЃР±РѕСЂ" РїРѕР»РѕСЃ РІ РёРЅС‚РµСЂС„РµР№СЃ
 		boxCenter.add(firstLine);
 		boxCenter.add(Box.createVerticalStrut(12));
 		boxCenter.add(secondLine);
 		boxCenter.add(Box.createVerticalStrut(12));
 
-		// добавляю расположение в центр окна
+		// РґРѕР±Р°РІР»СЏСЋ СЂР°СЃРїРѕР»РѕР¶РµРЅРёРµ РІ С†РµРЅС‚СЂ РѕРєРЅР°
 		getContentPane().add(boxCenter, BorderLayout.CENTER);
-		// ряд кнопок внизу
+		// СЂСЏРґ РєРЅРѕРїРѕРє РІРЅРёР·Сѓ
 		getContentPane().add(CreatePanelOk(), BorderLayout.SOUTH);
 	}
 	
-	/** логотип */
+	/** Р»РѕРіРѕС‚РёРї */
 	private JComponent CreatePanelLogo() {
 		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
 //		panel.setBorder(BorderFactory.createTitledBorder("Logos"));// getDefaultBorder());
@@ -142,7 +142,7 @@ public class AboutDlg extends JDialog {
 		panel.add(btnLogo);
 		return panel;
 	}
-	/** тексты НазвыПроги, версии, авторства и лицензии */
+	/** С‚РµРєСЃС‚С‹ РќР°Р·РІС‹РџСЂРѕРіРё, РІРµСЂСЃРёРё, Р°РІС‚РѕСЂСЃС‚РІР° Рё Р»РёС†РµРЅР·РёРё */
 	private JComponent CreatePanelTitle() {
 		Box panel = Box.createVerticalBox(); 
 //		panel.setBorder(BorderFactory.createTitledBorder("titles"));// getDefaultBorder());
@@ -151,12 +151,12 @@ public class AboutDlg extends JDialog {
 		JLabel lblTitle = new JLabel("<html><body " +
 //				"bgcolor='#FEEF98'" +
 				"><font size=6 color=dark face='serif'><center width='"+htmpWidth+"'>FastMines" ); // arial verdana
-		/* Универсальные семейства шрифтов:
-		 *     serif — шрифты с засечками (антиквенные), типа Times;
-		 *     sans-serif — рубленные шрифты (шрифты без засечек или гротески), типичный представитель — Arial;
-		 *     cursive — курсивные шрифты;
-		 *     fantasy — декоративные шрифты;
-		 *     monospace — моноширинные шрифты, ширина каждого символа в таком семействе одинакова (шрифт Courier).
+		/* РЈРЅРёРІРµСЂСЃР°Р»СЊРЅС‹Рµ СЃРµРјРµР№СЃС‚РІР° С€СЂРёС„С‚РѕРІ:
+		 *     serif вЂ” С€СЂРёС„С‚С‹ СЃ Р·Р°СЃРµС‡РєР°РјРё (Р°РЅС‚РёРєРІРµРЅРЅС‹Рµ), С‚РёРїР° Times;
+		 *     sans-serif вЂ” СЂСѓР±Р»РµРЅРЅС‹Рµ С€СЂРёС„С‚С‹ (С€СЂРёС„С‚С‹ Р±РµР· Р·Р°СЃРµС‡РµРє РёР»Рё РіСЂРѕС‚РµСЃРєРё), С‚РёРїРёС‡РЅС‹Р№ РїСЂРµРґСЃС‚Р°РІРёС‚РµР»СЊ вЂ” Arial;
+		 *     cursive вЂ” РєСѓСЂСЃРёРІРЅС‹Рµ С€СЂРёС„С‚С‹;
+		 *     fantasy вЂ” РґРµРєРѕСЂР°С‚РёРІРЅС‹Рµ С€СЂРёС„С‚С‹;
+		 *     monospace вЂ” РјРѕРЅРѕС€РёСЂРёРЅРЅС‹Рµ С€СЂРёС„С‚С‹, С€РёСЂРёРЅР° РєР°Р¶РґРѕРіРѕ СЃРёРјРІРѕР»Р° РІ С‚Р°РєРѕРј СЃРµРјРµР№СЃС‚РІРµ РѕРґРёРЅР°РєРѕРІР° (С€СЂРёС„С‚ Courier).
 		 **/
 		lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);;
 //		lblTitle.setBorder(BorderFactory.createEtchedBorder());
@@ -193,7 +193,7 @@ public class AboutDlg extends JDialog {
 
 		return panel;
 	}
-	/** контакты */
+	/** РєРѕРЅС‚Р°РєС‚С‹ */
 	private JComponent CreatePanelContatcs() {
 		Border customBorder = new CompoundBorder(
 				new EtchedBorder(EtchedBorder.RAISED), //BorderFactory.createBevelBorder(BevelBorder.RAISED),
@@ -250,7 +250,7 @@ public class AboutDlg extends JDialog {
 
 		return panel;
 	}
-	/** кнопка Ок */
+	/** РєРЅРѕРїРєР° РћРє */
 	private JComponent CreatePanelOk() {
 		JPanel panel = new JPanel( new FlowLayout(FlowLayout.CENTER, 12, 12) );
 //		panel.setBorder(GuiTools.getDummyBorder(Color.LIGHT_GRAY));
@@ -260,7 +260,7 @@ public class AboutDlg extends JDialog {
 		margin.left = margin.right = 12; margin.top = margin.bottom = 2;
 		ok.setMargin(margin);
 
-		// стандартный вид для кнопок
+		// СЃС‚Р°РЅРґР°СЂС‚РЅС‹Р№ РІРёРґ РґР»СЏ РєРЅРѕРїРѕРє
 //		createRecommendedMargin(new JButton[] { ok } );
 
 		ok.addActionListener(new ActionListener() {
@@ -273,7 +273,7 @@ public class AboutDlg extends JDialog {
 		return panel;
 	}
 	
-	// тестовый метод для проверки диалогового окна
+	// С‚РµСЃС‚РѕРІС‹Р№ РјРµС‚РѕРґ РґР»СЏ РїСЂРѕРІРµСЂРєРё РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР°
 	public static void main(String[] args) {
 		new AboutDlg(null, true).setVisible(true);
 	}

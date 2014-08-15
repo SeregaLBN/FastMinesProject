@@ -100,7 +100,7 @@ import ua.ksn.swing.geom.Cast;
 import ua.ksn.swing.utils.GuiTools;
 import ua.ksn.swing.utils.ImgUtils;
 
-/** Главное окно программы */
+/** Р“Р»Р°РІРЅРѕРµ РѕРєРЅРѕ РїСЂРѕРіСЂР°РјРјС‹ */
 public class Main extends JFrame  {
 	public static final long serialVersionUID = 7923652871481566227L;
 
@@ -517,8 +517,8 @@ public class Main extends JFrame  {
 
 //			this.setToolTipText("main menu");
 
-			// меняю вход в меню с F10 на Alt
-			// TODO проверить нуна ли это делать не под виндами...
+			// РјРµРЅСЏСЋ РІС…РѕРґ РІ РјРµРЅСЋ СЃ F10 РЅР° Alt
+			// TODO РїСЂРѕРІРµСЂРёС‚СЊ РЅСѓРЅР° Р»Рё СЌС‚Рѕ РґРµР»Р°С‚СЊ РЅРµ РїРѕРґ РІРёРЅРґР°РјРё...
 			InputMap menuBarInputMap = this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 			Object keyBind = menuBarInputMap.get(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0));
 			menuBarInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "none");
@@ -567,7 +567,7 @@ public class Main extends JFrame  {
 			@Override
 			public Insets getInsets() {
 				Insets ins = super.getInsets();
-				// иначе не виден текст (если нет картинки)
+				// РёРЅР°С‡Рµ РЅРµ РІРёРґРµРЅ С‚РµРєСЃС‚ (РµСЃР»Рё РЅРµС‚ РєР°СЂС‚РёРЅРєРё)
 				ins.bottom=ins.left=ins.right=ins.top = 0;
 				return ins;
 			}
@@ -600,7 +600,7 @@ public class Main extends JFrame  {
 			@Override
 			public Insets getInsets() {
 				Insets ins = super.getInsets();
-				// иначе не виден текст (если нет картинки)
+				// РёРЅР°С‡Рµ РЅРµ РІРёРґРµРЅ С‚РµРєСЃС‚ (РµСЃР»Рё РЅРµС‚ РєР°СЂС‚РёРЅРєРё)
 				ins.bottom=ins.left=ins.right=ins.top = 0;
 				return ins;
 			}
@@ -719,7 +719,7 @@ public class Main extends JFrame  {
 			return getMosaic().getContainer().getPreferredSize();
 		}
 
-		/** кэшированная картинка */
+		/** РєСЌС€РёСЂРѕРІР°РЅРЅР°СЏ РєР°СЂС‚РёРЅРєР° */
 		private ImageIcon cachedImg;
 		public ImageIcon getCachedImg(ImageIcon img) {
 			if (cachedImg == null)
@@ -794,7 +794,7 @@ public class Main extends JFrame  {
 			toolbar = new Toolbar();
 		return toolbar;
 	}
-	/** мозаика */
+	/** РјРѕР·Р°РёРєР° */
 	public MosaicExt getMosaic() {
 		if (mosaic == null)
 			mosaic = new MosaicExt();
@@ -925,7 +925,7 @@ public class Main extends JFrame  {
 		this.setIconImage(getResources().getImgLogo());
 
 		getMosaic().addMosaicListener(this.getHandlers().getMosaicListener());
-//		this.getHandlers().getMosaicListener().OnChangedArea(new MosaicEvent(getMosaic())); // TODO: это нужно только тогда, когда нет десериализации
+//		this.getHandlers().getMosaicListener().OnChangedArea(new MosaicEvent(getMosaic())); // TODO: СЌС‚Рѕ РЅСѓР¶РЅРѕ С‚РѕР»СЊРєРѕ С‚РѕРіРґР°, РєРѕРіРґР° РЅРµС‚ РґРµСЃРµСЂРёР°Р»РёР·Р°С†РёРё
 		getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaic().getCountMinesLeft()));
 		getToolbar().getEdtTimePlay().setText("0");
 
@@ -984,12 +984,12 @@ public class Main extends JFrame  {
 			SwingUtilities.invokeLater(new Runnable() { @Override public void run() { Main.this.setLocation(startLocation);  RecheckLocation(true, !true); } });
 	}
 
-	/** Выставить верный bullet для меню мозаики */
+	/** Р’С‹СЃС‚Р°РІРёС‚СЊ РІРµСЂРЅС‹Р№ bullet РґР»СЏ РјРµРЅСЋ РјРѕР·Р°РёРєРё */
 	void RecheckSelectedMenuMosaicType() {
 		getMenu().getMosaics().getMenuItemMosaic(getMosaic().getMosaicType()).setSelected(true);
 	}
 
-	/** Выставить верный bullet (menu.setSelected) для меню skillLevel'a */
+	/** Р’С‹СЃС‚Р°РІРёС‚СЊ РІРµСЂРЅС‹Р№ bullet (menu.setSelected) РґР»СЏ РјРµРЅСЋ skillLevel'a */
 	void RecheckSelectedMenuSkillLevel() {
 		getMenu().getGame().getMenuItemSkillLevel(getSkillLevel()).setSelected(true);
 	}
@@ -1097,7 +1097,7 @@ public class Main extends JFrame  {
 		public static final int getMnemonic_Mosaic(EMosaic key) { return VK_NULL; }
 }
 
-	/** прочие комбинации клавиш (не из меню) */
+	/** РїСЂРѕС‡РёРµ РєРѕРјР±РёРЅР°С†РёРё РєР»Р°РІРёС€ (РЅРµ РёР· РјРµРЅСЋ) */
 	void CustomKeyBinding() {
 		if (getRootPane().getInputMap().size() == 0) {
 			// on ESC key iconic frame
@@ -1208,7 +1208,7 @@ public class Main extends JFrame  {
 
 			getMosaic().getContainer().setVisible(false);
 			getPausePanel().setVisible(true);
-			getRootPane().requestFocusInWindow(); // ! иначе на компонентах нат фокуса, и mouse wheel не пашет...
+			getRootPane().requestFocusInWindow(); // ! РёРЅР°С‡Рµ РЅР° РєРѕРјРїРѕРЅРµРЅС‚Р°С… РЅР°С‚ С„РѕРєСѓСЃР°, Рё mouse wheel РЅРµ РїР°С€РµС‚...
 		}
 //		System.out.println("< FMG::ChangePause: " + KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() );
 	}
@@ -1257,19 +1257,19 @@ public class Main extends JFrame  {
 			ex.printStackTrace();
 		}
 
-		getStatisticDialog().CleanResource(); // без этого не завершиться java поцесс (под виндой глядел)
-		getChampionDialog().CleanResource(); // без этого не завершиться java поцесс (под виндой глядел)
+		getStatisticDialog().CleanResource(); // Р±РµР· СЌС‚РѕРіРѕ РЅРµ Р·Р°РІРµСЂС€РёС‚СЊСЃСЏ java РїРѕС†РµСЃСЃ (РїРѕРґ РІРёРЅРґРѕР№ РіР»СЏРґРµР»)
+		getChampionDialog().CleanResource(); // Р±РµР· СЌС‚РѕРіРѕ РЅРµ Р·Р°РІРµСЂС€РёС‚СЊСЃСЏ java РїРѕС†РµСЃСЃ (РїРѕРґ РІРёРЅРґРѕР№ РіР»СЏРґРµР»)
 
 //		setVisible(false);
 		dispose();
 //		System.exit(0);
 	}
 
-	/** Попытаться установить новый размер на мозаику (при возможности, сохраняя ESkillLevel) */
+	/** РџРѕРїС‹С‚Р°С‚СЊСЃСЏ СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РЅРѕРІС‹Р№ СЂР°Р·РјРµСЂ РЅР° РјРѕР·Р°РёРєСѓ (РїСЂРё РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё, СЃРѕС…СЂР°РЅСЏСЏ ESkillLevel) */
 	boolean setMosaicSizeField(Size newSize) {
 		//System.out.println("setMosaicSizeField: newSize=" + newSize);
 
-		// 1. Проверяю валидность нового размера
+		// 1. РџСЂРѕРІРµСЂСЏСЋ РІР°Р»РёРґРЅРѕСЃС‚СЊ РЅРѕРІРѕРіРѕ СЂР°Р·РјРµСЂР°
 		if ((newSize.width < 1) || (newSize.height < 1)) {
 			Beep();
 			return false;
@@ -1280,7 +1280,7 @@ public class Main extends JFrame  {
 			return false;
 		}
 
-		// 2. Устанавливаю новый размер
+		// 2. РЈСЃС‚Р°РЅР°РІР»РёРІР°СЋ РЅРѕРІС‹Р№ СЂР°Р·РјРµСЂ
 		EMosaic mosaicType = getMosaic().getMosaicType();
 		int numberMines;
 		ESkillLevel skill = getSkillLevel();
@@ -1297,7 +1297,7 @@ public class Main extends JFrame  {
 		return true;
 	}
 
-	/** Поменять игру на новую мозаику */
+	/** РџРѕРјРµРЅСЏС‚СЊ РёРіСЂСѓ РЅР° РЅРѕРІСѓСЋ РјРѕР·Р°РёРєСѓ */
 	public void SetGame(EMosaic mosaicType, ActionEvent e) {
 		if (isPaused())
 			ChangePause(e);
@@ -1318,7 +1318,7 @@ public class Main extends JFrame  {
 		RecheckLocation(true, true);
 	}
 
-	/** Поменять игру на новый размер & кол-во мин */
+	/** РџРѕРјРµРЅСЏС‚СЊ РёРіСЂСѓ РЅР° РЅРѕРІС‹Р№ СЂР°Р·РјРµСЂ & РєРѕР»-РІРѕ РјРёРЅ */
 	public void SetGame(Size sizeField, int numberMines) {
 		if (isPaused())
 			ChangePause(new AWTEvent(this, 0) { private static final long serialVersionUID = 1L; });
@@ -1330,7 +1330,7 @@ public class Main extends JFrame  {
 		RecheckLocation(true, true);
 	}
 
-	/** Поменять игру на новый уровень сложности */
+	/** РџРѕРјРµРЅСЏС‚СЊ РёРіСЂСѓ РЅР° РЅРѕРІС‹Р№ СѓСЂРѕРІРµРЅСЊ СЃР»РѕР¶РЅРѕСЃС‚Рё */
 	void SetGame(ESkillLevel skill, ActionEvent e) {
 		if (isPaused())
 			ChangePause(e);
@@ -1358,13 +1358,13 @@ public class Main extends JFrame  {
 			RecheckSelectedMenuSkillLevel();
 	}
 
-	/** узнать размер окна проекта при указанном размере окна мозаики */
+	/** СѓР·РЅР°С‚СЊ СЂР°Р·РјРµСЂ РѕРєРЅР° РїСЂРѕРµРєС‚Р° РїСЂРё СѓРєР°Р·Р°РЅРЅРѕРј СЂР°Р·РјРµСЂРµ РѕРєРЅР° РјРѕР·Р°РёРєРё */
 	Dimension CalcSize(Size sizeMosaicInPixel) {
 		Dimension currSizeWin = this.getSize();
 
 		if ((currSizeWin.height == 0) && (currSizeWin.width == 0) && !this.isVisible()) {
-			throw new RuntimeException("Invalid method call.  Нельзя высчитать размер окна, когда оно даже не выведено на экран...");
-//			Dimension dummy = Toolkit.getDefaultToolkit().getScreenSize(); // заглушка
+			throw new RuntimeException("Invalid method call.  РќРµР»СЊР·СЏ РІС‹СЃС‡РёС‚Р°С‚СЊ СЂР°Р·РјРµСЂ РѕРєРЅР°, РєРѕРіРґР° РѕРЅРѕ РґР°Р¶Рµ РЅРµ РІС‹РІРµРґРµРЅРѕ РЅР° СЌРєСЂР°РЅ...");
+//			Dimension dummy = Toolkit.getDefaultToolkit().getScreenSize(); // Р·Р°РіР»СѓС€РєР°
 //			dummy.height++; dummy.width++;
 //			return dummy;
 		}
@@ -1375,13 +1375,13 @@ public class Main extends JFrame  {
 				sizeMosaicInPixel.height + (currSizeWin.height - currSizeMosaicInPixel.height));
 	}
 
-	/** узнать размер окна мозаики при указанном размере окна проекта */
+	/** СѓР·РЅР°С‚СЊ СЂР°Р·РјРµСЂ РѕРєРЅР° РјРѕР·Р°РёРєРё РїСЂРё СѓРєР°Р·Р°РЅРЅРѕРј СЂР°Р·РјРµСЂРµ РѕРєРЅР° РїСЂРѕРµРєС‚Р° */
 	Size CalcMosaicWindowSize(Dimension sizeWindow) {
 		Dimension currSizeWin = this.getSize();
 
 		if ((currSizeWin.height == 0) && (currSizeWin.width == 0) && !this.isVisible()) {
-			throw new RuntimeException("Invalid method call.  Нельзя высчитать размер окна, когда оно даже не выведено на экран...");
-//			Dimension dummy = Toolkit.getDefaultToolkit().getScreenSize(); // заглушка
+			throw new RuntimeException("Invalid method call.  РќРµР»СЊР·СЏ РІС‹СЃС‡РёС‚Р°С‚СЊ СЂР°Р·РјРµСЂ РѕРєРЅР°, РєРѕРіРґР° РѕРЅРѕ РґР°Р¶Рµ РЅРµ РІС‹РІРµРґРµРЅРѕ РЅР° СЌРєСЂР°РЅ...");
+//			Dimension dummy = Toolkit.getDefaultToolkit().getScreenSize(); // Р·Р°РіР»СѓС€РєР°
 //			dummy.height++; dummy.width++;
 //			return dummy;
 		}
@@ -1392,9 +1392,9 @@ public class Main extends JFrame  {
 				sizeWindow.height - (currSizeWin.height - currSizeMosaicInPixel.height));
 	}
 
-	/** узнаю мах размер площади ячеек мозаики, при котором окно проекта вмещается в текущее разрешение экрана
-	 * @param mosaicSizeField - интересуемый размер поля мозаики
-	 * @return макс площадь ячейки
+	/** СѓР·РЅР°СЋ РјР°С… СЂР°Р·РјРµСЂ РїР»РѕС‰Р°РґРё СЏС‡РµРµРє РјРѕР·Р°РёРєРё, РїСЂРё РєРѕС‚РѕСЂРѕРј РѕРєРЅРѕ РїСЂРѕРµРєС‚Р° РІРјРµС‰Р°РµС‚СЃСЏ РІ С‚РµРєСѓС‰РµРµ СЂР°Р·СЂРµС€РµРЅРёРµ СЌРєСЂР°РЅР°
+	 * @param mosaicSizeField - РёРЅС‚РµСЂРµСЃСѓРµРјС‹Р№ СЂР°Р·РјРµСЂ РїРѕР»СЏ РјРѕР·Р°РёРєРё
+	 * @return РјР°РєСЃ РїР»РѕС‰Р°РґСЊ СЏС‡РµР№РєРё
 	 */
 	int CalcMaxArea(Size mosaicSizeField) {
 		Size sizeMosaic = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
@@ -1402,9 +1402,9 @@ public class Main extends JFrame  {
 	}
 
 	/**
-	 * узнаю max размер поля мозаики, при котором окно проекта вмещается в текущее разрешение экрана
-	 * @param area - интересуемая площадь ячеек мозаики
-	 * @return max размер поля мозаики
+	 * СѓР·РЅР°СЋ max СЂР°Р·РјРµСЂ РїРѕР»СЏ РјРѕР·Р°РёРєРё, РїСЂРё РєРѕС‚РѕСЂРѕРј РѕРєРЅРѕ РїСЂРѕРµРєС‚Р° РІРјРµС‰Р°РµС‚СЃСЏ РІ С‚РµРєСѓС‰РµРµ СЂР°Р·СЂРµС€РµРЅРёРµ СЌРєСЂР°РЅР°
+	 * @param area - РёРЅС‚РµСЂРµСЃСѓРµРјР°СЏ РїР»РѕС‰Р°РґСЊ СЏС‡РµРµРє РјРѕР·Р°РёРєРё
+	 * @return max СЂР°Р·РјРµСЂ РїРѕР»СЏ РјРѕР·Р°РёРєРё
 	 */
 	public Size CalcMaxMosaicSize(int area) {
 		Size sizeMosaic = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
@@ -1412,8 +1412,8 @@ public class Main extends JFrame  {
 	}
 
 	/**
-	 * проверить что находится в рамках экрана	
-	 * @param checkArea - заодно проверить что влазит в текущее разрешение экрана
+	 * РїСЂРѕРІРµСЂРёС‚СЊ С‡С‚Рѕ РЅР°С…РѕРґРёС‚СЃСЏ РІ СЂР°РјРєР°С… СЌРєСЂР°РЅР°	
+	 * @param checkArea - Р·Р°РѕРґРЅРѕ РїСЂРѕРІРµСЂРёС‚СЊ С‡С‚Рѕ РІР»Р°Р·РёС‚ РІ С‚РµРєСѓС‰РµРµ СЂР°Р·СЂРµС€РµРЅРёРµ СЌРєСЂР°РЅР°
 	 * @param pack - call this.pack();
 	 */
 	void RecheckLocation(boolean checkArea, boolean pack) {
@@ -1432,7 +1432,7 @@ public class Main extends JFrame  {
 			this.setBounds(newBounds);
 		}
 
-		SwingUtilities.invokeLater(new Runnable() { // спецом для Ubuntu Gnome
+		SwingUtilities.invokeLater(new Runnable() { // СЃРїРµС†РѕРј РґР»СЏ Ubuntu Gnome
 			@Override
 			public void run() {
 				Dimension sizeScreen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -1481,13 +1481,13 @@ public class Main extends JFrame  {
 		setArea(maxArea);
 
 //		{
-//			// Если до вызова AreaMax() меню окна распологалось в две строки, то после
-//			// отработки этой ф-ции меню будет в одну строку, т.е., последующий вызов
-//			// GetMaximalArea() будет возвращать ещё бОльший результат.
-//			// Поэтому надо снова установить максимальное значение плошади ячеек.
+//			// Р•СЃР»Рё РґРѕ РІС‹Р·РѕРІР° AreaMax() РјРµРЅСЋ РѕРєРЅР° СЂР°СЃРїРѕР»РѕРіР°Р»РѕСЃСЊ РІ РґРІРµ СЃС‚СЂРѕРєРё, С‚Рѕ РїРѕСЃР»Рµ
+//			// РѕС‚СЂР°Р±РѕС‚РєРё СЌС‚РѕР№ С„-С†РёРё РјРµРЅСЋ Р±СѓРґРµС‚ РІ РѕРґРЅСѓ СЃС‚СЂРѕРєСѓ, С‚.Рµ., РїРѕСЃР»РµРґСѓСЋС‰РёР№ РІС‹Р·РѕРІ
+//			// GetMaximalArea() Р±СѓРґРµС‚ РІРѕР·РІСЂР°С‰Р°С‚СЊ РµС‰С‘ Р±РћР»СЊС€РёР№ СЂРµР·СѓР»СЊС‚Р°С‚.
+//			// РџРѕСЌС‚РѕРјСѓ РЅР°РґРѕ СЃРЅРѕРІР° СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ РїР»РѕС€Р°РґРё СЏС‡РµРµРє.
 //			if (maxArea < CalcMaxArea())
-//				AreaMax(); // меню было в две  строки
-//			else;          // меню было в одну строку
+//				AreaMax(); // РјРµРЅСЋ Р±С‹Р»Рѕ РІ РґРІРµ  СЃС‚СЂРѕРєРё
+//			else;          // РјРµРЅСЋ Р±С‹Р»Рѕ РІ РѕРґРЅСѓ СЃС‚СЂРѕРєСѓ
 //		}
 	}
 	/** Zoom always maximum */
@@ -1561,8 +1561,8 @@ public class Main extends JFrame  {
 				for (EShowElement val: EShowElement.values())
 					mapShow.put(val, new Boolean(getMenu().getOptions().getShowElement(val).isSelected()));
 
-				// вызов this.dispose(); приводит к потере фокуса, т.е, когда идёт игра, - к срабатыванию паузы
-				// т.е. нужно позже снять паузу...
+				// РІС‹Р·РѕРІ this.dispose(); РїСЂРёРІРѕРґРёС‚ Рє РїРѕС‚РµСЂРµ С„РѕРєСѓСЃР°, С‚.Рµ, РєРѕРіРґР° РёРґС‘С‚ РёРіСЂР°, - Рє СЃСЂР°Р±Р°С‚С‹РІР°РЅРёСЋ РїР°СѓР·С‹
+				// С‚.Рµ. РЅСѓР¶РЅРѕ РїРѕР·Р¶Рµ СЃРЅСЏС‚СЊ РїР°СѓР·Сѓ...
 				final boolean isNotPaused = (getMosaic().getGameStatus() == EGameStatus.eGSPlay) && !isPaused();
 //				if (this.isDisplayable())
 					this.dispose();
@@ -1665,7 +1665,7 @@ public class Main extends JFrame  {
 			handlers = new Handlers();
 		return handlers;
 	}
-	/** В обработчиках минимум логики. Вся логика в соотв Main.this.ZZZ функциях... */
+	/** Р’ РѕР±СЂР°Р±РѕС‚С‡РёРєР°С… РјРёРЅРёРјСѓРј Р»РѕРіРёРєРё. Р’СЃСЏ Р»РѕРіРёРєР° РІ СЃРѕРѕС‚РІ Main.this.ZZZ С„СѓРЅРєС†РёСЏС…... */
 	class Handlers {
 		private Action gameNewAction;
 		public Action getGameNewAction() {
@@ -1747,7 +1747,7 @@ public class Main extends JFrame  {
 		}
 
 		private Action pauseAction;
-		/** Action на нажатие кнопки/клавиши паузы */
+		/** Action РЅР° РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё/РєР»Р°РІРёС€Рё РїР°СѓР·С‹ */
 		public Action getPauseAction() {
 			if (pauseAction == null)
 				pauseAction = new AbstractAction() {
@@ -1882,7 +1882,7 @@ public class Main extends JFrame  {
 									Main.this.getToolbar().getBtnNew().setIcon(img);
 
 								if (Main.this.getSkillLevel() != ESkillLevel.eCustom)
-									// сохраняю статистику и чемпиона
+									// СЃРѕС…СЂР°РЅСЏСЋ СЃС‚Р°С‚РёСЃС‚РёРєСѓ Рё С‡РµРјРїРёРѕРЅР°
 									Main.this.setStatisticAndChampion(e);
 							}
 							break;
@@ -2167,14 +2167,14 @@ public class Main extends JFrame  {
 		}
 	}
 
-	/** переустанавливаю заного размер мины/флага для мозаики */
+	/** РїРµСЂРµСѓСЃС‚Р°РЅР°РІР»РёРІР°СЋ Р·Р°РЅРѕРіРѕ СЂР°Р·РјРµСЂ РјРёРЅС‹/С„Р»Р°РіР° РґР»СЏ РјРѕР·Р°РёРєРё */
 	private void ChangeSizeImagesMineFlag() {
 		MosaicExt m = getMosaic();
 		GraphicContext gc = m.getGraphicContext();
 		int sq = (int)m.getCellAttr().CalcSq(m.getArea(), gc.getPenBorder().getWidth());
 		if (sq <= 0) {
-			System.err.println("Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");
-			sq = 3; // ат балды...
+			System.err.println("Error: СЃР»РёС€РєРѕРј С‚РѕР»СЃС‚РѕРµ РїРµСЂРѕ! РќРµС‚ РѕР±Р»Р°СЃС‚Рё РґР»СЏ РІС‹РІРѕРґР° РєР°СЂС‚РёРЅРёРєРё С„Р»Р°РіР°/РјРёРЅС‹...");
+			sq = 3; // Р°С‚ Р±Р°Р»РґС‹...
 		}
 		gc.setImgFlag(getResources().getImgFlag(sq, sq));
 		gc.setImgMine(getResources().getImgMine(sq, sq));
@@ -2265,7 +2265,7 @@ public class Main extends JFrame  {
 			return activeUserId;
 		return null;
 	}
-	/** Единоразовые callback методы, вызывамые после выбора и установки текущего юзера */
+	/** Р•РґРёРЅРѕСЂР°Р·РѕРІС‹Рµ callback РјРµС‚РѕРґС‹, РІС‹Р·С‹РІР°РјС‹Рµ РїРѕСЃР»Рµ РІС‹Р±РѕСЂР° Рё СѓСЃС‚Р°РЅРѕРІРєРё С‚РµРєСѓС‰РµРіРѕ СЋР·РµСЂР° */
 	private List<ActionToUser> oneTimeSelectActiveUserActions = new ArrayList<ActionToUser>();
 	public void setActiveUserId(UUID userId) {
 		if (getPlayers().isExist(userId)) {
@@ -2276,16 +2276,16 @@ public class Main extends JFrame  {
 		oneTimeSelectActiveUserActions.clear();
 	}
 
-	/** Сохранить чемпиона && Установить статистику */
+	/** РЎРѕС…СЂР°РЅРёС‚СЊ С‡РµРјРїРёРѕРЅР° && РЈСЃС‚Р°РЅРѕРІРёС‚СЊ СЃС‚Р°С‚РёСЃС‚РёРєСѓ */
 	public void setStatisticAndChampion(MosaicEvent.ChangedGameStatusEvent e) {
 		Mosaic mosaic = e.getSource();
 		if (mosaic.getGameStatus() != EGameStatus.eGSEnd)
 			throw new RuntimeException("Invalid method state call");
 
-		// сохраняю все нужные данные
+		// СЃРѕС…СЂР°РЅСЏСЋ РІСЃРµ РЅСѓР¶РЅС‹Рµ РґР°РЅРЅС‹Рµ
 		final boolean victory = mosaic.isVictory();
 		if (!victory && (getActiveUserId() == null))
-			return; // не напрягаю игрока окном выбора пользователя, пока он не выиграет разок...
+			return; // РЅРµ РЅР°РїСЂСЏРіР°СЋ РёРіСЂРѕРєР° РѕРєРЅРѕРј РІС‹Р±РѕСЂР° РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ, РїРѕРєР° РѕРЅ РЅРµ РІС‹РёРіСЂР°РµС‚ СЂР°Р·РѕРє...
 
 		final ESkillLevel eSkill = Main.this.getSkillLevel();
 		if (eSkill == ESkillLevel.eCustom)
@@ -2296,18 +2296,18 @@ public class Main extends JFrame  {
 		final long playTime = Long.parseLong(Main.this.getToolbar().getEdtTimePlay().getText());
 		final long clickCount = mosaic.getCountClick();
 
-		// логика сохранения...
+		// Р»РѕРіРёРєР° СЃРѕС…СЂР°РЅРµРЅРёСЏ...
 		ActionToUser onActionToUser = new ActionToUser() {
 			@Override
 			public void applyToUser(UUID userId) {
 				if (userId != null) {
-					// ...статистики
+					// ...СЃС‚Р°С‚РёСЃС‚РёРєРё
 					getPlayers().setStatistic(userId, eMosaic, eSkill, victory, realCountOpen, playTime, clickCount);
 					if (getStatisticDialog().isVisible())
-						// если окно открыто - сфокусируюсь на нужной закладке/скилле и пользователе
+						// РµСЃР»Рё РѕРєРЅРѕ РѕС‚РєСЂС‹С‚Рѕ - СЃС„РѕРєСѓСЃРёСЂСѓСЋСЃСЊ РЅР° РЅСѓР¶РЅРѕР№ Р·Р°РєР»Р°РґРєРµ/СЃРєРёР»Р»Рµ Рё РїРѕР»СЊР·РѕРІР°С‚РµР»Рµ
 						getStatisticDialog().ShowData(eSkill, eMosaic);
 
-					// ...чемпиона
+					// ...С‡РµРјРїРёРѕРЅР°
 					if (victory) {
 						User user = Main.this.getPlayers().getUser(userId);
 						int pos = Main.this.getChampions().add(user, playTime, eMosaic, eSkill);
@@ -2318,18 +2318,18 @@ public class Main extends JFrame  {
 			}
 		};
 
-		// вызываю логику: 
+		// РІС‹Р·С‹РІР°СЋ Р»РѕРіРёРєСѓ: 
 		if (getActiveUserId() != null) {
-			// 1. явно
+			// 1. СЏРІРЅРѕ
 			onActionToUser.applyToUser(getActiveUserId());
 		} else {
-			// 2. или неявно, после дожидания выбора текущего пользователя
+			// 2. РёР»Рё РЅРµСЏРІРЅРѕ, РїРѕСЃР»Рµ РґРѕР¶РёРґР°РЅРёСЏ РІС‹Р±РѕСЂР° С‚РµРєСѓС‰РµРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 			oneTimeSelectActiveUserActions.add(onActionToUser);
 			getPlayerManageDlg().setVisible(true);
 		}
 	}
 
-	/** Aктивный (текущий) пользователь. Может быть null, если ещё не выбран. */
+	/** AРєС‚РёРІРЅС‹Р№ (С‚РµРєСѓС‰РёР№) РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ. РњРѕР¶РµС‚ Р±С‹С‚СЊ null, РµСЃР»Рё РµС‰С‘ РЅРµ РІС‹Р±СЂР°РЅ. */
 	public User getActiveUser() {
 		UUID userId = getActiveUserId();
 		if (userId == null)

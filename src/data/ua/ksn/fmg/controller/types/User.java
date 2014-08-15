@@ -7,11 +7,11 @@ import java.io.ObjectOutput;
 import java.util.UUID;
 
 public class User implements Externalizable {
-	/** неизменный id пользователя */
+	/** РЅРµРёР·РјРµРЅРЅС‹Р№ id РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ */
 	private UUID  guid;
-	/** юзер может менять и имя ... */
+	/** СЋР·РµСЂ РјРѕР¶РµС‚ РјРµРЅСЏС‚СЊ Рё РёРјСЏ ... */
 	private String name;
-	/** ... и пароль */
+	/** ... Рё РїР°СЂРѕР»СЊ */
 	private String password;
 	public String imgAvatar;
 

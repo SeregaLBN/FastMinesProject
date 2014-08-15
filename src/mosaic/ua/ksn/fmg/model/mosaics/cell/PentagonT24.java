@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      Â© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "PentagonT24.java"
 //
-// Ðåàëèçàöèÿ êëàññà PentagonT24 - ðàâíîñòîðîííèé 5-òè óãîëüíèê, òèï ¹2 è ¹4
+// Ð ÐµÐ°Ð»Ð¸Ð·Ð°Ñ†Ð¸Ñ ÐºÐ»Ð°ÑÑÐ° PentagonT24 - Ñ€Ð°Ð²Ð½Ð¾ÑÑ‚Ð¾Ñ€Ð¾Ð½Ð½Ð¸Ð¹ 5-Ñ‚Ð¸ ÑƒÐ³Ð¾Ð»ÑŒÐ½Ð¸Ðº, Ñ‚Ð¸Ð¿ â„–2 Ð¸ â„–4
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ import ua.ksn.geom.Rect;
 import ua.ksn.geom.Size;
 
 /**
- * Ïÿòèóãîëüíèê. Òèï ¹2 è ¹4 - ðàâíîñòîðîííèé
+ * ÐŸÑÑ‚Ð¸ÑƒÐ³Ð¾Ð»ÑŒÐ½Ð¸Ðº. Ð¢Ð¸Ð¿ â„–2 Ð¸ â„–4 - Ñ€Ð°Ð²Ð½Ð¾ÑÑ‚Ð¾Ñ€Ð¾Ð½Ð½Ð¸Ð¹
  * @see BaseCell
  **/
 public class PentagonT24 extends BaseCell {
@@ -89,7 +89,7 @@ public class PentagonT24 extends BaseCell {
 	protected Coord[] GetCoordsNeighbor() {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
 
-		// îïðåäåëÿþ êîîðäèíàòû ñîñåäåé
+		// Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÑÑŽ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ ÑÐ¾ÑÐµÐ´ÐµÐ¹
 		switch (direction) {
 		case 0:
 			neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
@@ -140,7 +140,7 @@ public class PentagonT24 extends BaseCell {
 		double b = attr.CalcB(area);
 		double c = attr.CalcC(area);
 
-		// îïðåäåëåíèå êîîðäèíàò òî÷åê ôèãóðû
+		// Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÐµÐ½Ð¸Ðµ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚ Ñ‚Ð¾Ñ‡ÐµÐº Ñ„Ð¸Ð³ÑƒÑ€Ñ‹
 		double oX = a*((coord.x>>1)<<1); // offset X
 		double oY = a*((coord.y>>1)<<1); // offset Y
 		switch (direction) {

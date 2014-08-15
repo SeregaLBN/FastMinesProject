@@ -57,7 +57,7 @@ public class CellPaint {
 			// save
 			Shape shapeOld = g2d.getClip();
 
-			// ограничиваю рисование только границами своей фигуры
+			// РѕРіСЂР°РЅРёС‡РёРІР°СЋ СЂРёСЃРѕРІР°РЅРёРµ С‚РѕР»СЊРєРѕ РіСЂР°РЅРёС†Р°РјРё СЃРІРѕРµР№ С„РёРіСѓСЂС‹
 			g2d.setClip(Cast.toPolygon(Region.moveXY(cell.getRegion(), gContext.getBound())));
 
 			// all paint
@@ -85,13 +85,13 @@ public class CellPaint {
 		Object oldValAntialiasing = g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
 
 		// set my custom params
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // TODO для релиза сменить на VALUE_ANTIALIAS_ON 
-		g2.setStroke(new BasicStroke(gContext.getPenBorder().getWidth())); // TODO глянуть расширенные параметры конструктора пера
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // TODO РґР»СЏ СЂРµР»РёР·Р° СЃРјРµРЅРёС‚СЊ РЅР° VALUE_ANTIALIAS_ON 
+		g2.setStroke(new BasicStroke(gContext.getPenBorder().getWidth())); // TODO РіР»СЏРЅСѓС‚СЊ СЂР°СЃС€РёСЂРµРЅРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РїРµСЂР°
 
 		// draw lines
 		paintBorderLines(cell, g);
 
-		// debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
+		// debug - РІРёР·СѓР°Р»СЊРЅРѕ РїСЂРѕРІРµСЂСЏСЋ РІРµСЂРЅРѕСЃС‚СЊ РІРїРёСЃР°РЅРЅРѕРіРѕ РєРІР°РґСЂР°С‚Р° (РїСЂРѕРІРµСЂСЏС‚СЊ РїСЂРё С€РёСЂРёРЅРµ РїРµСЂР° РѕРєРѕР»Рѕ 21)
 //		Rect rcInner = cell.getRcInner(gContext.getPenBorder().getWidth());
 //		g.setColor(Color.MAGENTA);
 //		g.drawRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
@@ -178,12 +178,12 @@ public class CellPaint {
 	}
 
 	private ua.ksn.Color _defaultBkColor;
-	/** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера */
+	/** Р¦РІРµС‚ Р·Р°Р»РёРІРєРё СЏС‡РµР№РєРё РїРѕ-СѓРјРѕР»С‡Р°РЅРёСЋ. Р—Р°РІРёСЃРёС‚ РѕС‚ С‚РµРєСѓС‰РµРіРѕ UI РјР°РЅР°РіРµСЂР° */
 	private ua.ksn.Color getDefaultBackgroundFillColor() {
 		if (_defaultBkColor == null) {
 			UIDefaults uiDef = UIManager.getDefaults();
 	
-			if (gContext.isIconicMode()) // когда русуется иконка, а не игровое поле, - делаю попроще...
+			if (gContext.isIconicMode()) // РєРѕРіРґР° СЂСѓСЃСѓРµС‚СЃСЏ РёРєРѕРЅРєР°, Р° РЅРµ РёРіСЂРѕРІРѕРµ РїРѕР»Рµ, - РґРµР»Р°СЋ РїРѕРїСЂРѕС‰Рµ...
 				_defaultBkColor = Cast.toColor(uiDef.getColor("Panel.background"));
 			else {
 				String key = "Panel.background"; // "ToggleButton.light"; // "Button.light"; // 
@@ -214,9 +214,9 @@ public class CellPaint {
 		return _defaultBkColor;
 	}
 
-	/** залить ячейку нужным цветом */
+	/** Р·Р°Р»РёС‚СЊ СЏС‡РµР№РєСѓ РЅСѓР¶РЅС‹Рј С†РІРµС‚РѕРј */
 	protected void paintComponentBackground(BaseCell cell, Graphics g) {
-//		if (gContext.isIconicMode()) // когда русуется иконка, а не игровое поле, - делаю попроще...
+//		if (gContext.isIconicMode()) // РєРѕРіРґР° СЂСѓСЃСѓРµС‚СЃСЏ РёРєРѕРЅРєР°, Р° РЅРµ РёРіСЂРѕРІРѕРµ РїРѕР»Рµ, - РґРµР»Р°СЋ РїРѕРїСЂРѕС‰Рµ...
 //			return;
 		g.setColor(Cast.toColor(cell.getBackgroundFillColor(
 				gContext.getBackgroundFill().getMode(),

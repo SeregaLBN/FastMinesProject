@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "PentagonT5.java"
 //
-// Реализация класса PentagonT5 - 5-ти угольник, тип №5
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° PentagonT5 - 5-С‚Рё СѓРіРѕР»СЊРЅРёРє, С‚РёРї в„–5
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ import ua.ksn.geom.Rect;
 import ua.ksn.geom.Size;
 
 /**
- * Пятиугольник. Тип №5
+ * РџСЏС‚РёСѓРіРѕР»СЊРЅРёРє. РўРёРї в„–5
  * @see BaseCell
  **/
 public class PentagonT5 extends BaseCell {
@@ -69,8 +69,8 @@ public class PentagonT5 extends BaseCell {
 					      h*2  *((sizeField.height+ 1)/ 6) +
 					      h*3  *((sizeField.height+ 0)/ 6)));
 
-			// когда размер поля мал...
-			if (sizeField.width < 14) { // ...нужно вычислять не только по общей формуле, а и убрать остатки снизу..
+			// РєРѕРіРґР° СЂР°Р·РјРµСЂ РїРѕР»СЏ РјР°Р»...
+			if (sizeField.width < 14) { // ...РЅСѓР¶РЅРѕ РІС‹С‡РёСЃР»СЏС‚СЊ РЅРµ С‚РѕР»СЊРєРѕ РїРѕ РѕР±С‰РµР№ С„РѕСЂРјСѓР»Рµ, Р° Рё СѓР±СЂР°С‚СЊ РѕСЃС‚Р°С‚РєРё СЃРЅРёР·Сѓ..
 				if ((sizeField.height & 1) == 0) {
 					if (sizeField.width < 11) result.height -= h;
 					if (sizeField.width <  8) result.height -= h;
@@ -84,7 +84,7 @@ public class PentagonT5 extends BaseCell {
 				if ((sizeField.height+5)%6 == 0) // y == 1 7 13 ..
 					if (sizeField.width < 13) result.height -= h;
 			}
-			if (sizeField.height < 5) { // .. и справа
+			if (sizeField.height < 5) { // .. Рё СЃРїСЂР°РІР°
 				switch (sizeField.height) {
 				case 1:
 					switch (sizeField.width % 14) {
@@ -159,7 +159,7 @@ public class PentagonT5 extends BaseCell {
 	protected Coord[] GetCoordsNeighbor() {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
 		switch (direction) {
 		case 0:
 			neighborCoord[0] = new Coord(coord.x-2, coord.y-2);
@@ -543,7 +543,7 @@ public class PentagonT5 extends BaseCell {
 		double a = attr.CalcA(area);
 		double h = attr.CalcH(area);
 
-		// определение координат точек фигуры
+		// РѕРїСЂРµРґРµР»РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ С‚РѕС‡РµРє С„РёРіСѓСЂС‹
 		double oX = a*21*(coord.x/14); // offset X
 		double oY = h*14*(coord.y/6);  // offset Y
 		switch (direction) {
@@ -618,7 +618,7 @@ public class PentagonT5 extends BaseCell {
 		double sq  = getAttr().CalcSq(area, borderWidth);
 		double sq2 = sq/2;
 
-		// определение координат точек фигуры
+		// РѕРїСЂРµРґРµР»РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ С‚РѕС‡РµРє С„РёРіСѓСЂС‹
 		double oX = a*21*(coord.x/14); // offset X
 		double oY = h*14*(coord.y/6);  // offset Y
 		switch (direction) {
@@ -638,7 +638,7 @@ public class PentagonT5 extends BaseCell {
 		case 65: case 66: case 82: case 79: case 80: case 81: oX += a*19.0; oY += h*16; break;
 		}
 
-		PointDouble center = new PointDouble(); // координата центра квадрата
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° С†РµРЅС‚СЂР° РєРІР°РґСЂР°С‚Р°
 		switch (direction) {
 		case  0: case  3: case  6: case  9: case 12: case 28: case 31:
 		case 34: case 37: case 54: case 56: case 59: case 62: case 65: center.x = oX - a*1.5;  center.y = oY - h;   break;
@@ -677,7 +677,7 @@ public class PentagonT5 extends BaseCell {
 	public Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
 		if (fillMode == getAttr().getMaxBackgroundFillModeValue())
 		{
-			// подсвечиваю 'ромашку'
+			// РїРѕРґСЃРІРµС‡РёРІР°СЋ 'СЂРѕРјР°С€РєСѓ'
 			switch (getDirection()) {
 			case  0: case  1: case  2: case 14: case 15: case 16: return repositoryColor.get(0);
 			case  3: case  4: case  5: case 17: case 18: case 19: return repositoryColor.get(1);
@@ -699,7 +699,7 @@ public class PentagonT5 extends BaseCell {
 		} else
 		if (fillMode == (getAttr().getMaxBackgroundFillModeValue()-1))
 		{
-			// подсвечиваю обратную 'диагональку'
+			// РїРѕРґСЃРІРµС‡РёРІР°СЋ РѕР±СЂР°С‚РЅСѓСЋ 'РґРёР°РіРѕРЅР°Р»СЊРєСѓ'
 			switch (getDirection()) {
 			case  1: case  0: case 14:
 			case 13: case 12: case 26: case 38: case 37: case 51: case 63: case 62: case 76:

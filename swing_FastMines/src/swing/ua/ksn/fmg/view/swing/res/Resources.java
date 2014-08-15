@@ -15,7 +15,7 @@ import ua.ksn.fmg.view.swing.res.img.Mine;
 import ua.ksn.fmg.view.swing.res.img.MosaicsImg;
 import ua.ksn.swing.utils.ImgUtils;
 
-/** Мультимедиа ресурсы программы */
+/** РњСѓР»СЊС‚РёРјРµРґРёР° СЂРµСЃСѓСЂСЃС‹ РїСЂРѕРіСЂР°РјРјС‹ */
 public final class Resources {
 
 	private Image imgLogo;
@@ -50,7 +50,7 @@ public final class Resources {
 		eRollover,
 		eRolloverSelected,
 
-		/** типа ход ассистента - задел на будущее */
+		/** С‚РёРїР° С…РѕРґ Р°СЃСЃРёСЃС‚РµРЅС‚Р° - Р·Р°РґРµР» РЅР° Р±СѓРґСѓС‰РµРµ */
 		eAssistant;
 
 		public String getDescription() {
@@ -84,33 +84,27 @@ public final class Resources {
 	}
 	public ImageIcon getImgFlag(int width, int height) {
 		if (imgFlag == null) {
-			imgFlag = getImageIcon("CellState/Flag.png"); // сначала из ресурсов
+			imgFlag = getImageIcon("CellState/Flag.png"); // СЃРЅР°С‡Р°Р»Р° РёР· СЂРµСЃСѓСЂСЃРѕРІ
 			if (imgFlag == null)
-				// иначе - своя картинка из кода
-//				if (!true)
-//					imgFlag = ImgUtils.toImgIco(new FlagOld());
-//				else
-					imgFlag  = ImgUtils.toImgIco(ImgUtils.toImg(new Flag()));
+				// РёРЅР°С‡Рµ - СЃРІРѕСЏ РєР°СЂС‚РёРЅРєР° РёР· РєРѕРґР°
+				imgFlag = ImgUtils.toImgIco(new Flag());
 		}
 		return ImgUtils.zoom(imgFlag, width, height);
 	}
 	public ImageIcon getImgMine(int width, int height) {
 		if (imgMine == null) {
-			imgMine = getImageIcon("CellState/Mine.png"); // сначала из ресурсов
+			imgMine = getImageIcon("CellState/Mine.png"); // СЃРЅР°С‡Р°Р»Р° РёР· СЂРµСЃСѓСЂСЃРѕРІ
 			if (imgMine == null)
-				// иначе - своя картинка из кода
-//				if (!false)
-//					imgMine = ImgUtils.toImgIco(new MineOld());
-//				else
-					imgMine = ImgUtils.toImgIco(ImgUtils.toImg(new Mine()));
+				// РёРЅР°С‡Рµ - СЃРІРѕСЏ РєР°СЂС‚РёРЅРєР° РёР· РєРѕРґР°
+				imgMine = ImgUtils.toImgIco(new Mine());
 		}
 		return ImgUtils.zoom(imgMine, width, height);
 	}
 	public ImageIcon getImgPause() {
 		if (imgPause == null) {
-			imgPause = getImageIcon("Background/Pause.png"); // сначала из ресурсов
+			imgPause = getImageIcon("Background/Pause.png"); // СЃРЅР°С‡Р°Р»Р° РёР· СЂРµСЃСѓСЂСЃРѕРІ
 			if (imgPause == null)
-				imgPause = ImgUtils.toImgIco(ImgUtils.toImg(new BackgroundPause())); // иначе - своя картинка из кода
+				imgPause = ImgUtils.toImgIco(ImgUtils.toImg(new BackgroundPause())); // РёРЅР°С‡Рµ - СЃРІРѕСЏ РєР°СЂС‚РёРЅРєР° РёР· РєРѕРґР°
 		}
 		return imgPause;
 	}
@@ -173,8 +167,8 @@ public final class Resources {
 		Map<EMosaic, ImageIcon> imgsMosaic = smallIco ? imgsMosaicSmall : imgsMosaicWide;
 
 		for (EMosaic val: EMosaic.values()) {
-			ImageIcon imgMosaic = getImageIcon("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + val.getDescription(true)+".png"); // сначала из ресурсов
-			if (imgMosaic == null) // иначе - своя картинка из кода
+			ImageIcon imgMosaic = getImageIcon("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + val.getDescription(true)+".png"); // СЃРЅР°С‡Р°Р»Р° РёР· СЂРµСЃСѓСЂСЃРѕРІ
+			if (imgMosaic == null) // РёРЅР°С‡Рµ - СЃРІРѕСЏ РєР°СЂС‚РёРЅРєР° РёР· РєРѕРґР°
 				imgMosaic = ImgUtils.toImgIco(ImgUtils.toImg(new MosaicsImg(val, smallIco)));
 			imgsMosaic.put(val, imgMosaic);
 		}

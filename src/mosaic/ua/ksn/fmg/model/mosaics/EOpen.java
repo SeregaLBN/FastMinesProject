@@ -11,7 +11,7 @@ public enum EOpen {
     	default: return String.valueOf(eOpen.ordinal());
     	case _Mine:
     		return "M";
-//    		return "\u2699"; // Шестерня: Gear
+//    		return "\u2699"; // РЁРµСЃС‚РµСЂРЅСЏ: Gear
     	}
     }
     public final String toCaption() { return toCaption(this); }

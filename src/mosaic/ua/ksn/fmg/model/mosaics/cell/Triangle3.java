@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Triangle3.java"
 //
-// Реализация класса Triangle3 - треугольник 45°-90°-45°
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° Triangle3 - С‚СЂРµСѓРіРѕР»СЊРЅРёРє 45В°-90В°-45В°
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ import ua.ksn.geom.Rect;
 import ua.ksn.geom.Size;
 
 /**
- * Треугольник. Вариант 3 - треугольник 45°-90°-45°(квадрат разделённый на 4 части) 
+ * РўСЂРµСѓРіРѕР»СЊРЅРёРє. Р’Р°СЂРёР°РЅС‚ 3 - С‚СЂРµСѓРіРѕР»СЊРЅРёРє 45В°-90В°-45В°(РєРІР°РґСЂР°С‚ СЂР°Р·РґРµР»С‘РЅРЅС‹Р№ РЅР° 4 С‡Р°СЃС‚Рё) 
  * @see BaseCell
  **/
 public class Triangle3 extends BaseCell {
@@ -66,7 +66,7 @@ public class Triangle3 extends BaseCell {
 		public Size GetDirectionSizeField() { return new Size(2, 2); }
 		@Override
 		protected double CalcA(int area) { return 2*CalcB(area); }
-		/** пол стороны треугольника */
+		/** РїРѕР» СЃС‚РѕСЂРѕРЅС‹ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР° */
 		protected double CalcB(int area) { return Math.sqrt(area); }
 		@Override
 		public double CalcSq(int area, int borderWidth) {
@@ -90,7 +90,7 @@ public class Triangle3 extends BaseCell {
 	protected Coord[] GetCoordsNeighbor() {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	switch (direction) {
     	case 0:
     		neighborCoord[ 0] = new Coord(coord.x-1, coord.y-2);
@@ -202,7 +202,7 @@ public class Triangle3 extends BaseCell {
 		double sq = attr.CalcSq(area, borderWidth);
 		double w = borderWidth/2.;
 
-		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° РІРїРёСЃР°РЅРЅРѕРіРѕ РІ С„РёРіСѓСЂСѓ РєРІР°РґСЂР°С‚Р° (РЅРµ СЃРѕРІРїР°РґР°РµС‚ СЃ С†РµРЅС‚СЂРѕРј С„РёРіСѓСЂС‹)
 		switch (direction) {
 		case 0:
 			center.x = region.getPoint(1).x;

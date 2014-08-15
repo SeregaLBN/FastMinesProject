@@ -45,25 +45,25 @@ public class LoginDlg extends JDialog {
 			public void windowClosing(WindowEvent we) { LoginDlg.this.OnCancel(new ActionEvent(we.getSource(), we.getID(), "windowClosing")); }
 		});
 
-		// добавляем расположение в центр окна
+		// РґРѕР±Р°РІР»СЏРµРј СЂР°СЃРїРѕР»РѕР¶РµРЅРёРµ РІ С†РµРЅС‚СЂ РѕРєРЅР°
 		getContentPane().add(CreateComponents(username, usePassword));
 	
-		// задаем предпочтительный размер
+		// Р·Р°РґР°РµРј РїСЂРµРґРїРѕС‡С‚РёС‚РµР»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ
 		pack();
 		this.setLocationRelativeTo(parent);
 	}
 
-	/** этот метод будет возвращать панель с созданным расположением */
+	/** СЌС‚РѕС‚ РјРµС‚РѕРґ Р±СѓРґРµС‚ РІРѕР·РІСЂР°С‰Р°С‚СЊ РїР°РЅРµР»СЊ СЃ СЃРѕР·РґР°РЅРЅС‹Рј СЂР°СЃРїРѕР»РѕР¶РµРЅРёРµРј */
 	private JComponent CreateComponents(String username, boolean usePassword) {
-		// 1. Создается панель, которая будет содержать все остальные элементы и панели расположения
+		// 1. РЎРѕР·РґР°РµС‚СЃСЏ РїР°РЅРµР»СЊ, РєРѕС‚РѕСЂР°СЏ Р±СѓРґРµС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ РІСЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹ Рё РїР°РЅРµР»Рё СЂР°СЃРїРѕР»РѕР¶РµРЅРёСЏ
 		Box main = Box.createVerticalBox();
 
-		// Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов.
-		// Для этого использую пустую рамку
+		// Р§С‚РѕР±С‹ РёРЅС‚РµСЂС„РµР№СЃ РѕС‚РІРµС‡Р°Р» С‚СЂРµР±РѕРІР°РЅРёСЏРј Java, РЅРµРѕР±С…РѕРґРёРјРѕ РѕС‚РґРµР»РёС‚СЊ РµРіРѕ СЃРѕРґРµСЂР¶РёРјРѕРµ РѕС‚ РіСЂР°РЅРёС† РѕРєРЅР° РЅР° 12 РїРёРєСЃРµР»РѕРІ.
+		// Р”Р»СЏ СЌС‚РѕРіРѕ РёСЃРїРѕР»СЊР·СѓСЋ РїСѓСЃС‚СѓСЋ СЂР°РјРєСѓ
 		main.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-		// 2. создаю "полосы", на которые был разбит интерфейс на этапе анализа
-		// а) первое текстовое поле и надпись к нему
+		// 2. СЃРѕР·РґР°СЋ "РїРѕР»РѕСЃС‹", РЅР° РєРѕС‚РѕСЂС‹Рµ Р±С‹Р» СЂР°Р·Р±РёС‚ РёРЅС‚РµСЂС„РµР№СЃ РЅР° СЌС‚Р°РїРµ Р°РЅР°Р»РёР·Р°
+		// Р°) РїРµСЂРІРѕРµ С‚РµРєСЃС‚РѕРІРѕРµ РїРѕР»Рµ Рё РЅР°РґРїРёСЃСЊ Рє РЅРµРјСѓ
 		Box name = Box.createHorizontalBox();
 
 		JLabel nameLabel = new JLabel("Name:");
@@ -75,7 +75,7 @@ public class LoginDlg extends JDialog {
 		if (username != null)
 			nameField.setEditable(false);
 
-		// б) второе текстовое поле и надпись к нему
+		// Р±) РІС‚РѕСЂРѕРµ С‚РµРєСЃС‚РѕРІРѕРµ РїРѕР»Рµ Рё РЅР°РґРїРёСЃСЊ Рє РЅРµРјСѓ
 		Box password = Box.createHorizontalBox();
 		JLabel passwrdLabel = new JLabel("Password:");
 		password.add(passwrdLabel);
@@ -83,7 +83,7 @@ public class LoginDlg extends JDialog {
 		passwrdField = new JTextField(15);
 		password.add(passwrdField);
 
-		// в) ряд кнопок
+		// РІ) СЂСЏРґ РєРЅРѕРїРѕРє
 		JPanel flow = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 		JPanel grid = new JPanel(new GridLayout(1, 2, 5, 0));
 		JButton ok = new JButton("Ok");
@@ -106,20 +106,20 @@ public class LoginDlg extends JDialog {
 			}
 		});
 
-		// 3. действия по выравниванию компонентов, уточнению их размеров, приданию одинаковых размеров
-		// а) согласованное выравнивание вложенных панелей
+		// 3. РґРµР№СЃС‚РІРёСЏ РїРѕ РІС‹СЂР°РІРЅРёРІР°РЅРёСЋ РєРѕРјРїРѕРЅРµРЅС‚РѕРІ, СѓС‚РѕС‡РЅРµРЅРёСЋ РёС… СЂР°Р·РјРµСЂРѕРІ, РїСЂРёРґР°РЅРёСЋ РѕРґРёРЅР°РєРѕРІС‹С… СЂР°Р·РјРµСЂРѕРІ
+		// Р°) СЃРѕРіР»Р°СЃРѕРІР°РЅРЅРѕРµ РІС‹СЂР°РІРЅРёРІР°РЅРёРµ РІР»РѕР¶РµРЅРЅС‹С… РїР°РЅРµР»РµР№
 		BoxLayoutUtils.setGroupAlignmentX(new JComponent[] { name, password, main, flow }, Component.LEFT_ALIGNMENT);
-		// б) центральное выравнивание надписей и текстовых полей
+		// Р±) С†РµРЅС‚СЂР°Р»СЊРЅРѕРµ РІС‹СЂР°РІРЅРёРІР°РЅРёРµ РЅР°РґРїРёСЃРµР№ Рё С‚РµРєСЃС‚РѕРІС‹С… РїРѕР»РµР№
 		BoxLayoutUtils.setGroupAlignmentY(new JComponent[] { nameField, passwrdField, nameLabel, passwrdLabel }, Component.CENTER_ALIGNMENT);
-		// в) одинаковые размеры надписей к текстовым полям
+		// РІ) РѕРґРёРЅР°РєРѕРІС‹Рµ СЂР°Р·РјРµСЂС‹ РЅР°РґРїРёСЃРµР№ Рє С‚РµРєСЃС‚РѕРІС‹Рј РїРѕР»СЏРј
 		GuiTools.makeSameWidth(new Component[] { nameLabel, passwrdLabel });
-		// г) стандартный вид для кнопок
+		// Рі) СЃС‚Р°РЅРґР°СЂС‚РЅС‹Р№ РІРёРґ РґР»СЏ РєРЅРѕРїРѕРє
 		GuiTools.createRecommendedMargin(new JButton[] { ok, cancel });
-		// д) устранение "бесконечной" высоты текстовых полей
+		// Рґ) СѓСЃС‚СЂР°РЅРµРЅРёРµ "Р±РµСЃРєРѕРЅРµС‡РЅРѕР№" РІС‹СЃРѕС‚С‹ С‚РµРєСЃС‚РѕРІС‹С… РїРѕР»РµР№
 		GuiTools.fixTextFieldSize(nameField);
 		GuiTools.fixTextFieldSize(passwrdField);
 
-		// 4. сбор полос в интерфейс
+		// 4. СЃР±РѕСЂ РїРѕР»РѕСЃ РІ РёРЅС‚РµСЂС„РµР№СЃ
 		main.add(name);
 		main.add(Box.createVerticalStrut(12));
 		main.add(password);
@@ -132,11 +132,11 @@ public class LoginDlg extends JDialog {
 			qwe.setVisible(false);
 		}
 
-		// готово
+		// РіРѕС‚РѕРІРѕ
 		return main;
 	}
 
-	/** тестовый метод для проверки диалогового окна */
+	/** С‚РµСЃС‚РѕРІС‹Р№ РјРµС‚РѕРґ РґР»СЏ РїСЂРѕРІРµСЂРєРё РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР° */
 	public static void main(String[] args) {
 		LoginDlg dlg = new LoginDlg(null, true, "aasd", true);
 		dlg.setVisible(true);
@@ -157,7 +157,7 @@ public class LoginDlg extends JDialog {
 		OnClose();
 	}
 	private void OnClose() {
-		// при выходе из диалогового окна - освобождаю ресурсы
+		// РїСЂРё РІС‹С…РѕРґРµ РёР· РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР° - РѕСЃРІРѕР±РѕР¶РґР°СЋ СЂРµСЃСѓСЂСЃС‹
 		dispose();
 		//System.exit(0);
 	}
