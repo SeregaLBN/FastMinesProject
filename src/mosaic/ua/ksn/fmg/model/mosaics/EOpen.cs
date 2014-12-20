@@ -1,3 +1,5 @@
+using System;
+
 namespace ua.ksn.fmg.model.mosaics {
    public enum EOpen {
       _Nil,
@@ -6,6 +8,9 @@ namespace ua.ksn.fmg.model.mosaics {
    }
 
    public static class EOpenEx {
+      private static readonly EOpen[] EOpenValues = (EOpen[])Enum.GetValues(typeof(EOpen));
+      public static EOpen[] GetValues() { return EOpenValues; }
+
       public static uint Ordinal(this EOpen self) { return (uint)self; }
 
       public static string toCaption(this EOpen self) {

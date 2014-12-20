@@ -21,6 +21,10 @@ namespace ua.ksn.win_rt.utils {
          return await LoadBitmap(uri);
       }
 
+      public static BitmapImage GetImageSync(Uri uri) {
+         return new BitmapImage(uri);
+      }
+
       /// <summary> загрузить картинку из локальных ресурсов </summary>
       private static async Task<WriteableBitmap> LoadBitmap(Uri uri) {
          try {

@@ -50,17 +50,17 @@ public class ChampionsModel : IExternalizable {
       }
    }
 
-   private List<ChampionsModel.Record>[,] champions = new List<ChampionsModel.Record>[ Enum.GetValues(typeof(EMosaic)).Length, Enum.GetValues(typeof(ESkillLevel)).Length-1];
+   private List<ChampionsModel.Record>[,] champions = new List<ChampionsModel.Record>[EMosaicEx.GetValues().Length, ESkillLevelEx.GetValues().Length - 1];
 
    public void OnPlayerChanged(PlayersModel players, PlayerModelEvent e) {
       if (e.getType() == PlayerModelEvent.UPDATE) {
          // если был UPDATE, то это, возможно что, было переименование пользователя...
          // в этом случае переименовываю его имя и в чемпионах
          User user = players.getUser(e.getPos());
-         foreach (EMosaic mosaic in Enum.GetValues(typeof(EMosaic)))
-            foreach (ESkillLevel eSkill in Enum.GetValues(typeof(ESkillLevel)))
+         foreach (var mosaic in EMosaicEx.GetValues())
+            foreach (var eSkill in ESkillLevelEx.GetValues())
                if (eSkill != ESkillLevel.eCustom) {
-                  IList<ChampionsModel.Record> list = champions[mosaic.ordinal(), eSkill.ordinal()];
+                  IList<ChampionsModel.Record> list = champions[mosaic.Ordinal(), eSkill.Ordinal()];
                   bool isChanged = false;
                   foreach (Record record in list)
                      if ((user.Guid == record.userId) && !user.Name.Equals(record.userName))
@@ -78,17 +78,17 @@ public class ChampionsModel : IExternalizable {
       if (players != null)
          players.OnPlayerChanged += OnPlayerChanged;
 
-      foreach (EMosaic mosaic in Enum.GetValues(typeof(EMosaic)))
-         foreach (ESkillLevel eSkill in Enum.GetValues(typeof(ESkillLevel)))
+      foreach (var mosaic in EMosaicEx.GetValues())
+         foreach (var eSkill in ESkillLevelEx.GetValues())
             if (eSkill != ESkillLevel.eCustom)
-               champions[mosaic.ordinal(), eSkill.ordinal()] = new List<ChampionsModel.Record>(MAX_SIZE);
+               champions[mosaic.Ordinal(), eSkill.Ordinal()] = new List<ChampionsModel.Record>(MAX_SIZE);
    }
 
    public int add(User user, long playTime, EMosaic mosaic, ESkillLevel eSkill) {
       if (eSkill == ESkillLevel.eCustom)
          return -1;
 
-      List<ChampionsModel.Record> list = champions[mosaic.ordinal(), eSkill.ordinal()];
+      List<ChampionsModel.Record> list = champions[mosaic.Ordinal(), eSkill.Ordinal()];
       Record newRecord = new Record(user, playTime); 
       list.Add(newRecord);
 
@@ -110,10 +110,10 @@ public class ChampionsModel : IExternalizable {
    }
 
    public void writeExternal(BinaryWriter output) {
-      foreach (EMosaic mosaic in Enum.GetValues(typeof(EMosaic)))
-         foreach (ESkillLevel eSkill in Enum.GetValues(typeof(ESkillLevel)))
+      foreach (var mosaic in EMosaicEx.GetValues())
+         foreach (var eSkill in ESkillLevelEx.GetValues())
             if (eSkill != ESkillLevel.eCustom) {
-               IList<ChampionsModel.Record> list = champions[mosaic.ordinal(), eSkill.ordinal()];
+               IList<ChampionsModel.Record> list = champions[mosaic.Ordinal(), eSkill.Ordinal()];
                output.Write(list.Count);
                foreach (Record record in list)
                   record.writeExternal(output);
@@ -122,10 +122,10 @@ public class ChampionsModel : IExternalizable {
 
    public void readExternal(BinaryReader input) {
       setDefaults();
-      foreach (EMosaic mosaic in Enum.GetValues(typeof(EMosaic)))
-         foreach (ESkillLevel eSkill in Enum.GetValues(typeof(ESkillLevel)))
+      foreach (var mosaic in EMosaicEx.GetValues())
+         foreach (var eSkill in ESkillLevelEx.GetValues())
             if (eSkill != ESkillLevel.eCustom) {
-               IList<ChampionsModel.Record> list = champions[mosaic.ordinal(), eSkill.ordinal()];
+               IList<ChampionsModel.Record> list = champions[mosaic.Ordinal(), eSkill.Ordinal()];
                int size = input.ReadInt32();
                for (int i=0; i<size; i++) {
                   Record record = new Record();
@@ -137,10 +137,10 @@ public class ChampionsModel : IExternalizable {
    }
 
    private void setDefaults() {
-      foreach (EMosaic mosaic in Enum.GetValues(typeof(EMosaic)))
-         foreach (ESkillLevel eSkill in Enum.GetValues(typeof(ESkillLevel)))
+      foreach (var mosaic in EMosaicEx.GetValues())
+         foreach (var eSkill in ESkillLevelEx.GetValues())
             if (eSkill != ESkillLevel.eCustom) {
-               IList<ChampionsModel.Record> list = champions[mosaic.ordinal(), eSkill.ordinal()];
+               IList<ChampionsModel.Record> list = champions[mosaic.Ordinal(), eSkill.Ordinal()];
                list.Clear();
                fireChanged(new ChampionModelEvent(mosaic, eSkill, ChampionModelEvent.POS_ALL, ChampionModelEvent.DELETE));
             }
@@ -325,17 +325,17 @@ public class ChampionsModel : IExternalizable {
    public String getUserName(int index, EMosaic mosaic, ESkillLevel eSkill) {
       if (eSkill == ESkillLevel.eCustom)
          throw new ArgumentException("Invalid input data - " + eSkill);
-      return champions[mosaic.ordinal(), eSkill.ordinal()][index].userName;
+      return champions[mosaic.Ordinal(), eSkill.Ordinal()][index].userName;
    }
    public long getUserPlayTime(int index, EMosaic mosaic, ESkillLevel eSkill) {
       if (eSkill == ESkillLevel.eCustom)
          throw new ArgumentException("Invalid input data - " + eSkill);
-      return champions[mosaic.ordinal(), eSkill.ordinal()][index].playTime;
+      return champions[mosaic.Ordinal(), eSkill.Ordinal()][index].playTime;
    }
    public int getUsersCount(EMosaic mosaic, ESkillLevel eSkill) {
       if (eSkill == ESkillLevel.eCustom)
          throw new ArgumentException("Invalid input data - " + eSkill);
-      return champions[mosaic.ordinal(), eSkill.ordinal()].Count;
+      return champions[mosaic.Ordinal(), eSkill.Ordinal()].Count;
    }
 
    /** Найдёт позицию лучшего результата указанного пользователя */
@@ -345,7 +345,7 @@ public class ChampionsModel : IExternalizable {
       if (eSkill == ESkillLevel.eCustom)
          throw new ArgumentException("Invalid input data - " + eSkill);
 
-      IList<ChampionsModel.Record> list = champions[mosaic.ordinal(), eSkill.ordinal()];
+      IList<ChampionsModel.Record> list = champions[mosaic.Ordinal(), eSkill.Ordinal()];
       int pos = 0;
       foreach (Record record in list) {
          if (record.userId.Equals(userId))

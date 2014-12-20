@@ -176,7 +176,7 @@ namespace FastMines {
             if (part==3 || part==4)
                bmp.Blit(new Rect(w/2, h/2, w/2, h/2), bmp3, new Rect(0, 0, bmp3.PixelWidth, bmp3.PixelHeight));
 
-            storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */bmp, "Combi"+img1.Item1.getIndex()+img2.Item1.getIndex()+img3.Item1.getIndex());
+            storageFile = await SaveToFileMosaic(part, /*w + "x" + h, */bmp, "Combi"+img1.Item1.GetIndex()+img2.Item1.GetIndex()+img3.Item1.GetIndex());
 #endif
          } else {
             var img = CreateRandomMosaicImage(w, h);
@@ -186,7 +186,7 @@ namespace FastMines {
       }
 
       private static Tuple<EMosaic, WriteableBitmap> CreateRandomMosaicImage(int w, int h) {
-         var mosaicType = EMosaicEx.fromOrdinal(Random.Next() % Enum.GetValues(typeof(EMosaic)).Length);
+         var mosaicType = EMosaicEx.FromOrdinal(Random.Next() % EMosaicEx.GetValues().Length);
          var bkClr = ColorExt.RandomColor(Random).Attenuate().ToWinColor();
          var sizeField = mosaicType.SizeIcoField(true);
          sizeField.height += Random.Next()%3;
@@ -216,7 +216,7 @@ namespace FastMines {
          return await SaveToFile(part, "logo", writeableBitmap);
       }
       private static async Task<StorageFile> SaveToFileMosaic(int part, /*string filePrefix, */WriteableBitmap writeableBitmap, EMosaic mosaicType) {
-         return await SaveToFileMosaic(part, writeableBitmap, mosaicType.getMosaicClassName());
+         return await SaveToFileMosaic(part, writeableBitmap, mosaicType.GetMosaicClassName());
       }
       private static async Task<StorageFile> SaveToFileMosaic(int part, /*string filePrefix, */WriteableBitmap writeableBitmap, string fileDescript) {
          return await SaveToFile(part, /*filePrefix + "_" + */fileDescript, writeableBitmap);

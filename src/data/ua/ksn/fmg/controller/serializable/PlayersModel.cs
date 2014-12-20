@@ -21,26 +21,26 @@ public class PlayersModel : IExternalizable {
 
    private class Record : IExternalizable {
       public User user;
-      public StatisticCounts[,] statistics = new StatisticCounts[Enum.GetValues(typeof(EMosaic)).Length, Enum.GetValues(typeof(ESkillLevel)).Length-1];
+      public StatisticCounts[,] statistics = new StatisticCounts[EMosaicEx.GetValues().Length, ESkillLevelEx.GetValues().Length - 1];
 
       /// <summary>new User</summary>
        public Record(User user) {
          this.user = user;
-         foreach (EMosaic mosaic in Enum.GetValues(typeof(EMosaic)))
-            foreach (ESkillLevel skill in Enum.GetValues(typeof(ESkillLevel)))
+         foreach (var mosaic in EMosaicEx.GetValues())
+            foreach (var skill in ESkillLevelEx.GetValues())
                if (skill == ESkillLevel.eCustom)
                   continue;
                else
-                  statistics[mosaic.ordinal(), skill.ordinal()] = new StatisticCounts();
+                  statistics[mosaic.Ordinal(), skill.Ordinal()] = new StatisticCounts();
       }
       /// <summary>from file</summary>
       public Record(BinaryReader input) {
-         foreach (EMosaic mosaic in Enum.GetValues(typeof(EMosaic)))
-            foreach (ESkillLevel skill in Enum.GetValues(typeof(ESkillLevel)))
+         foreach (var mosaic in EMosaicEx.GetValues())
+            foreach (var skill in ESkillLevelEx.GetValues())
                if (skill == ESkillLevel.eCustom)
                   continue;
                else
-                  statistics[mosaic.ordinal(), skill.ordinal()] = new StatisticCounts();
+                  statistics[mosaic.Ordinal(), skill.Ordinal()] = new StatisticCounts();
          readExternal(input);
       }
 
@@ -112,7 +112,7 @@ public class PlayersModel : IExternalizable {
       if (rec == null)
          throw new ArgumentException("User " + userId + " not exist");
 
-      StatisticCounts subRec = rec.statistics[mosaic.ordinal(), skill.ordinal()];
+      StatisticCounts subRec = rec.statistics[mosaic.Ordinal(), skill.Ordinal()];
       subRec.gameNumber++;
       subRec.gameWin    += victory ? 1:0;
       subRec.openField  += countOpenField;
@@ -148,7 +148,7 @@ public class PlayersModel : IExternalizable {
       if (rec == null)
          throw new ArgumentException("User " + userId + " not exist");
 
-      return rec.statistics[mosaic.ordinal(), skillLevel.ordinal()].clone();
+      return rec.statistics[mosaic.Ordinal(), skillLevel.Ordinal()].clone();
    }
    public int getPos(Guid userId) {
       if (userId == null)

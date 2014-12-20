@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using ua.ksn.fmg.model.mosaics;
@@ -16,6 +17,8 @@ namespace ua.ksn.fmg.controller.types {
    }
 
    public static class ESkillLevelEx {
+      private static readonly ESkillLevel[] ESkillLevelValues = (ESkillLevel[])Enum.GetValues(typeof(ESkillLevel));
+      public static ESkillLevel[] GetValues() { return ESkillLevelValues; }
 
       /// <summary>
       /// skill level coefficient
@@ -23,7 +26,7 @@ namespace ua.ksn.fmg.controller.types {
       /// </summary>
       private static readonly IDictionary<EMosaic, double> mosaicCoefficient;
       static ESkillLevelEx() {
-         var values = Enum.GetValues(typeof(EMosaic));
+         var values = EMosaicEx.GetValues();
          mosaicCoefficient = new Dictionary<EMosaic, double>(values.Length);
          const int area = 200; // пох
          foreach (EMosaic mosaicType in values) {
@@ -109,18 +112,19 @@ namespace ua.ksn.fmg.controller.types {
          }
       }
 
-      public static int ordinal(this ESkillLevel self) {
-         var values = Enum.GetValues(typeof(ESkillLevel));
-         for (var i=0; i < values.Length; i++)
-            if (((IList<ESkillLevel>)values)[i] == self)
+      public static int Ordinal(this ESkillLevel self) {
+         var values = GetValues();
+         for (var i = 0; i < values.Length; i++)
+            if (values[i] == self)
                return i;
          throw new ArgumentException("Index not found");
       }
-      public static ESkillLevel fromOrdinal(this ESkillLevel self, int ordinal) {
-         var values = Enum.GetValues(typeof(EMosaic));
+
+      public static ESkillLevel FromOrdinal(int ordinal) {
+         var values = GetValues();
          if ((ordinal < 0) || (ordinal >= values.Length))
             throw new IndexOutOfRangeException("Invalid ordinal");
-         return (ESkillLevel)((IList)values)[ordinal];
+         return values[ordinal];
       }
    }
 

@@ -12,6 +12,8 @@ public enum EMosaicGroup {
 }
 
 public static class EMosaicGroupEx {
+   private static readonly EMosaicGroup[] EMosaicGroupValues = (EMosaicGroup[])Enum.GetValues(typeof(EMosaicGroup));
+   public static EMosaicGroup[] GetValues() { return EMosaicGroupValues; }
 
    public static int VertexCount(this EMosaicGroup self, int defaultValue = 7) {
       switch (self) {
@@ -26,7 +28,7 @@ public static class EMosaicGroupEx {
 
    public static EMosaicGroup fromIndex(int index) {
 		return (EMosaicGroup)index;
-		//foreach (EMosaicGroup item in Enum.GetValues(typeof(EMosaicGroup)))
+      //foreach (EMosaicGroup item in EMosaicGroupValues)
 		//    if ((int)item == index)
 		//        return item;
 		//throw new ArgumentException("Invalid paramenter value " + index);
@@ -34,7 +36,7 @@ public static class EMosaicGroupEx {
 	public static int getIndex(this EMosaicGroup self) { return (int)self; }
 
 	public static List<EMosaic> getBind(this EMosaicGroup self) {
-		List<EMosaic> mosaics = new List<EMosaic>();
+		var mosaics = new List<EMosaic>();
 		switch (self) {
 		case EMosaicGroup.eTriangles:
 			mosaics.Add(EMosaic.eMosaicTriangle1);

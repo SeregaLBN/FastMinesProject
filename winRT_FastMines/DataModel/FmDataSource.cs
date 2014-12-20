@@ -28,11 +28,10 @@ namespace FastMines.Data {
          get {
             if (_allGroups == null) {
                _allGroups = new ObservableCollection<FmDataGroup>();
-               foreach (EMosaicGroup itemGroup in Enum.GetValues(typeof(EMosaicGroup))) {
+               foreach (var itemGroup in EMosaicGroupEx.GetValues()) {
                   var dataGroup = new FmDataGroup(itemGroup);
-                  foreach (EMosaic item in itemGroup.getBind()) {
+                  foreach (var item in itemGroup.getBind())
                      dataGroup.Items.Add(new FmDataItem(item, dataGroup));
-                  }
                   _allGroups.Add(dataGroup);
                }
             }
@@ -42,14 +41,12 @@ namespace FastMines.Data {
 
       public static FmDataGroup GetGroup(EMosaicGroup uniqueId) {
          // Simple linear search is acceptable for small data sets
-         var matches = AllGroups.Where(group => (group.UniqueId == uniqueId));
-         return matches.FirstOrDefault();
+         return AllGroups.First(group => (group.UniqueId == uniqueId));
       }
 
       public static FmDataItem GetItem(EMosaic uniqueId) {
          // Simple linear search is acceptable for small data sets
-         var matches = AllGroups.SelectMany(group => group.Items).Where(item => (item.UniqueId == uniqueId));
-         return matches.FirstOrDefault();
+         return AllGroups.SelectMany(group => group.Items).First(item => (item.UniqueId == uniqueId));
       }
 
       public static ESkillLevel SkillLevel { get; set; }

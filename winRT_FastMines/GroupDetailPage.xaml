@@ -16,7 +16,7 @@
         <!-- Collection of items displayed by this page -->
         <CollectionViewSource
             x:Name="itemsViewSource"
-            Source="{Binding Items}"
+            Source="{Binding Items_bindDataSource}"
             d:Source="{Binding AllGroups[0].Items, Source={d:DesignInstance Type=data:FmDataSource, IsDesignTimeCreatable=True}}"/>
     </Page.Resources>
 
@@ -27,7 +27,7 @@
     -->
     <Grid
         Style="{StaticResource LayoutRootStyle}"
-        DataContext="{Binding Group}"
+        DataContext="{Binding Group_bindDataSource}"
         d:DataContext="{Binding AllGroups[0], Source={d:DesignInstance Type=data:FmDataSource, IsDesignTimeCreatable=True}}">
 
         <Grid.RowDefinitions>

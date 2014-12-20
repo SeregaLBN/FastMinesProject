@@ -48,11 +48,11 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
       }
 
       /// <summary> Return painted mosaic bitmap </summary>
-      /// <param name="drawLater">== true Сама картинка возвращается сразу.
+      /// <param name="drawAsync">== true Сама картинка возвращается сразу.
       /// Но вот её отрисовка - в фоне.
       /// Ф-ция без ключевого слова async, т.к. результат есть DependencyObject, т.е. владелец может сам отслеживать отрисовку...</param>
       /// <returns></returns>
-      public WriteableBitmap GetImage(bool drawLater) {
+      public WriteableBitmap GetImage(bool drawAsync) {
          if (_image != null)
             return _image;
 
@@ -60,32 +60,26 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
          var w = pixelSize.width + _gContext.Bound.width*2;
          var h = pixelSize.height + _gContext.Bound.height*2;
 
-         _image = BitmapFactory.New(w, h);
-         var funcFillBk = new Action(() => _image.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, _bkColor));
+         _image = BitmapFactory.New(w, h); // new WriteableBitmap(w, h); // 
+         Action funcFillBk = () => _image.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, _bkColor);
 
-         if (!drawLater) {
+         if (!drawAsync) {
+            // sync draw
             funcFillBk();
             foreach (var cell in _arrCell)
                _gInfo.Paint(cell, _image);
          } else {
-            if ((DateTime.Now.DayOfYear & 1)==0)
-               // variant 1
-               AsyncRunner.InvokeLater(() => {
-                  funcFillBk.Invoke();
-                  foreach (var cell in _arrCell) {
-                     var tmp = cell;
-                     AsyncRunner.InvokeLater(() => _gInfo.Paint(tmp, _image), ((_random.Next() & 1) == 0) ? CoreDispatcherPriority.Low : CoreDispatcherPriority.Normal);
-                  }
-               }, CoreDispatcherPriority.Normal);
-            else
-               // variant 2
-               AsyncRunner.InvokeLater(() => {
-                  funcFillBk.Invoke();
-                  foreach (var cell in _arrCell) {
-                     var tmp = cell;
-                     AsyncRunner.InvokeLater(() => _gInfo.Paint(tmp, _image), CoreDispatcherPriority.Low);
-                  }
-               }, CoreDispatcherPriority.Low);
+            // async draw
+            AsyncRunner.InvokeLater(() => {
+               funcFillBk();
+               foreach (var cell in _arrCell) {
+                  var tmp = cell;
+                  AsyncRunner.InvokeLater(() => _gInfo.Paint(tmp, _image),
+                     ((_random.Next() & 1) == 0)
+                        ? CoreDispatcherPriority.Low
+                        : CoreDispatcherPriority.Normal);
+               }
+            }, CoreDispatcherPriority.Normal);
          }
          return _image;
       }

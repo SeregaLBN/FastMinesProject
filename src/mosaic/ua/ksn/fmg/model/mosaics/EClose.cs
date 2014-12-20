@@ -1,3 +1,5 @@
+using System;
+
 namespace ua.ksn.fmg.model.mosaics {
 
    public enum EClose {
@@ -7,7 +9,11 @@ namespace ua.ksn.fmg.model.mosaics {
    }
 
    public static class ECloseEx {
-      public static uint Ordinal(this EClose self) {
+      private static readonly EClose[] ECloseValues = (EClose[])Enum.GetValues(typeof(EClose));
+      public static EClose[] GetValues() { return ECloseValues; }
+
+      public static uint Ordinal(this EClose self)
+      {
          return (uint) self;
       }
 

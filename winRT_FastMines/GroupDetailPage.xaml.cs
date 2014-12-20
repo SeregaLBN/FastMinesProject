@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -15,6 +16,7 @@ using FastMines.Data;
 using ua.ksn.fmg.controller.types;
 using ua.ksn.fmg.model.mosaics;
 using ua.ksn.fmg.view.win_rt;
+using FastMines.Common;
 
 // The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229
 
@@ -53,8 +55,8 @@ namespace FastMines {
          // TODO: Create an appropriate data model for your problem domain to replace the sample data
          _mosaicGroup = (EMosaicGroup) navigationParameter;
          var group = FmDataSource.GetGroup(_mosaicGroup);
-         this.DefaultViewModel["Group"] = group;
-         this.DefaultViewModel["Items"] = group.Items;
+         this.DefaultViewModel["Group_bindDataSource"] = group;
+         this.DefaultViewModel["Items_bindDataSource"] = group.Items;
       }
 
       /// <summary>

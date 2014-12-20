@@ -197,14 +197,14 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
             Color txtColor;
             if (cell.State.Status == EState._Close)
             {
-               txtColor = gContext.ColorText.getColorClose((int) cell.State.Close.Ordinal());
+               txtColor = gContext.ColorText.GetColorClose((int) cell.State.Close.Ordinal());
                szCaption = cell.State.Close.ToCaption();
                //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
                //szCaption = ""+cell.getDirection(); // debug
             }
             else
             {
-               txtColor = gContext.ColorText.getColorOpen((int) cell.State.Open.Ordinal());
+               txtColor = gContext.ColorText.GetColorOpen((int) cell.State.Open.Ordinal());
                szCaption = cell.State.Open.toCaption();
             }
             if (!string.IsNullOrWhiteSpace(szCaption)) {
@@ -268,12 +268,12 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
             string szCaption;
             Color txtColor;
             if (cell.State.Status == EState._Close) {
-               txtColor = gContext.ColorText.getColorClose((int)cell.State.Close.Ordinal());
+               txtColor = gContext.ColorText.GetColorClose((int)cell.State.Close.Ordinal());
                szCaption = cell.State.Close.ToCaption();
                //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
                //szCaption = ""+cell.getDirection(); // debug
             } else {
-               txtColor = gContext.ColorText.getColorOpen((int)cell.State.Open.Ordinal());
+               txtColor = gContext.ColorText.GetColorOpen((int)cell.State.Open.Ordinal());
                szCaption = cell.State.Open.toCaption();
             }
             if (string.IsNullOrWhiteSpace(szCaption)) {

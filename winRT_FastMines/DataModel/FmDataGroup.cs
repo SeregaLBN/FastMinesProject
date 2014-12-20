@@ -20,12 +20,18 @@ namespace FastMines.Data {
       private MosaicsGroupImg _mosaicsGroupImg;
 
       public FmDataGroup(EMosaicGroup eMosaicGroup)
-         : base(eMosaicGroup, eMosaicGroup.GetDescription(), (ImageSource) null) {
+         : base(eMosaicGroup, eMosaicGroup.GetDescription(), (ImageSource) null)
+      {
          Items.CollectionChanged += ItemsCollectionChanged;
          this.Subtitle = "Subtitle group " + eMosaicGroup.GetDescription();
          this.Description = "Description group...";
 
-         AsyncRunner.InvokeLater(async () => { base.Image = await Resources.GetImgMosaicGroupPng(eMosaicGroup); }, CoreDispatcherPriority.High);
+         if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) {
+            var seeXxxPageXamlInViewDesigner = MosaicGroupImage;
+            System.Diagnostics.Debug.WriteLine(seeXxxPageXamlInViewDesigner.ToString());
+         } else
+            AsyncRunner.InvokeLater(async () => { base.Image = await Resources.GetImgMosaicGroupPng(eMosaicGroup); },
+               CoreDispatcherPriority.High);
       }
 
       private void ItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) {

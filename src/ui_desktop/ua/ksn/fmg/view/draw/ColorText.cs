@@ -8,66 +8,66 @@ namespace ua.ksn.fmg.view.draw {
    public class ColorText {
       public event ColorPropertyChange OnColorPropertyChange = delegate { };
 
-      private Color[] colorOpen;
-      private Color[] colorClose;
+      private readonly Color[] _colorOpen;
+      private readonly Color[] _colorClose;
 
       public ColorText() {
-         colorOpen = new Color[Enum.GetValues(typeof(EOpen)).Length];
-         colorClose = new Color[Enum.GetValues(typeof(EClose)).Length];
+         _colorOpen = new Color[EOpenEx.GetValues().Length];
+         _colorClose = new Color[ECloseEx.GetValues().Length];
 
-         foreach (EOpen eOpen in Enum.GetValues(typeof(EOpen)))
+         foreach (var eOpen in EOpenEx.GetValues())
             switch (eOpen) {
-            case EOpen._Nil: colorOpen[eOpen.Ordinal()] = Color.Black; break;
-            case EOpen._1: colorOpen[eOpen.Ordinal()] = Color.Navy; break;
-            case EOpen._2: colorOpen[eOpen.Ordinal()] = Color.Green; break;
-            case EOpen._3: colorOpen[eOpen.Ordinal()] = Color.Red; break;
-            case EOpen._4: colorOpen[eOpen.Ordinal()] = Color.Maroon; break;
-            case EOpen._5: colorOpen[eOpen.Ordinal()] = Color.Blue; break;
-            case EOpen._6: colorOpen[eOpen.Ordinal()] = Color.Black; break;
-            case EOpen._7: colorOpen[eOpen.Ordinal()] = Color.Olive; break;
-            case EOpen._8: colorOpen[eOpen.Ordinal()] = Color.Aqua; break;
-            case EOpen._9: colorOpen[eOpen.Ordinal()] = Color.Navy; break;
-            case EOpen._10: colorOpen[eOpen.Ordinal()] = Color.Green; break;
-            case EOpen._11: colorOpen[eOpen.Ordinal()] = Color.Red; break;
-            case EOpen._12: colorOpen[eOpen.Ordinal()] = Color.Maroon; break;
-            case EOpen._13: colorOpen[eOpen.Ordinal()] = Color.Navy; break;
-            case EOpen._14: colorOpen[eOpen.Ordinal()] = Color.Green; break;
-            case EOpen._15: colorOpen[eOpen.Ordinal()] = Color.Red; break;
-            case EOpen._16: colorOpen[eOpen.Ordinal()] = Color.Maroon; break;
-            case EOpen._17: colorOpen[eOpen.Ordinal()] = Color.Blue; break;
-            case EOpen._18: colorOpen[eOpen.Ordinal()] = Color.Black; break;
-            case EOpen._19: colorOpen[eOpen.Ordinal()] = Color.Olive; break;
-            case EOpen._20: colorOpen[eOpen.Ordinal()] = Color.Aqua; break;
-            case EOpen._21: colorOpen[eOpen.Ordinal()] = Color.Navy; break;
-            case EOpen._Mine: colorOpen[eOpen.Ordinal()] = Color.Black; break;
+            case EOpen._Nil : _colorOpen[eOpen.Ordinal()] = Color.Black; break;
+            case EOpen._1   : _colorOpen[eOpen.Ordinal()] = Color.Navy; break;
+            case EOpen._2   : _colorOpen[eOpen.Ordinal()] = Color.Green; break;
+            case EOpen._3   : _colorOpen[eOpen.Ordinal()] = Color.Red; break;
+            case EOpen._4   : _colorOpen[eOpen.Ordinal()] = Color.Maroon; break;
+            case EOpen._5   : _colorOpen[eOpen.Ordinal()] = Color.Blue; break;
+            case EOpen._6   : _colorOpen[eOpen.Ordinal()] = Color.Black; break;
+            case EOpen._7   : _colorOpen[eOpen.Ordinal()] = Color.Olive; break;
+            case EOpen._8   : _colorOpen[eOpen.Ordinal()] = Color.Aqua; break;
+            case EOpen._9   : _colorOpen[eOpen.Ordinal()] = Color.Navy; break;
+            case EOpen._10  : _colorOpen[eOpen.Ordinal()] = Color.Green; break;
+            case EOpen._11  : _colorOpen[eOpen.Ordinal()] = Color.Red; break;
+            case EOpen._12  : _colorOpen[eOpen.Ordinal()] = Color.Maroon; break;
+            case EOpen._13  : _colorOpen[eOpen.Ordinal()] = Color.Navy; break;
+            case EOpen._14  : _colorOpen[eOpen.Ordinal()] = Color.Green; break;
+            case EOpen._15  : _colorOpen[eOpen.Ordinal()] = Color.Red; break;
+            case EOpen._16  : _colorOpen[eOpen.Ordinal()] = Color.Maroon; break;
+            case EOpen._17  : _colorOpen[eOpen.Ordinal()] = Color.Blue; break;
+            case EOpen._18  : _colorOpen[eOpen.Ordinal()] = Color.Black; break;
+            case EOpen._19  : _colorOpen[eOpen.Ordinal()] = Color.Olive; break;
+            case EOpen._20  : _colorOpen[eOpen.Ordinal()] = Color.Aqua; break;
+            case EOpen._21  : _colorOpen[eOpen.Ordinal()] = Color.Navy; break;
+            case EOpen._Mine: _colorOpen[eOpen.Ordinal()] = Color.Black; break;
             default: throw new Exception("add EOpen value");
             }
 
-         foreach (EClose eClose in Enum.GetValues(typeof(EClose)))
+         foreach (var eClose in ECloseEx.GetValues())
             switch (eClose) {
-            case EClose._Unknown: colorClose[eClose.Ordinal()] = Color.Teal; break;
-            case EClose._Clear: colorClose[eClose.Ordinal()] = Color.Black; break;
-            case EClose._Flag: colorClose[eClose.Ordinal()] = Color.Red; break;
+            case EClose._Unknown: _colorClose[eClose.Ordinal()] = Color.Teal; break;
+            case EClose._Clear  : _colorClose[eClose.Ordinal()] = Color.Black; break;
+            case EClose._Flag   : _colorClose[eClose.Ordinal()] = Color.Red; break;
             default: throw new Exception("add EClose value");
             }
       }
-      public Color getColorOpen(int i) {
-         return colorOpen[i];
+      public Color GetColorOpen(int i) {
+         return _colorOpen[i];
       }
 
-      public void setColorOpen(int i, Color colorOpen) {
-         Color old = colorOpen;
-         this.colorOpen[i] = colorOpen;
+      public void SetColorOpen(int i, Color colorOpen) {
+         var old = colorOpen;
+         _colorOpen[i] = colorOpen;
          OnColorPropertyChange(this, "ColorText_colorOpen" + i, old, colorOpen);
       }
 
-      public Color getColorClose(int i) {
-         return colorClose[i];
+      public Color GetColorClose(int i) {
+         return _colorClose[i];
       }
 
-      public void setColorClose(int i, Color colorClose) {
-         Color old = colorClose;
-         this.colorClose[i] = colorClose;
+      public void SetColorClose(int i, Color colorClose) {
+         var old = colorClose;
+         _colorClose[i] = colorClose;
          OnColorPropertyChange(this, "ColorText_colorClose" + i, old, colorClose);
       }
    }

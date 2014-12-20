@@ -19,7 +19,7 @@ public static class CellFactory {
 //		throw new Exception("Unknown type "+mosaicType);
 
       try {
-         var className = GetPackageName() + ".cell." + mosaicType.getMosaicClassName() + "+Attr"+mosaicType.getMosaicClassName();
+         var className = GetPackageName() + ".cell." + mosaicType.GetMosaicClassName() + "+Attr"+mosaicType.GetMosaicClassName();
          var cellAttrClass = Type.GetType(className);
          object[] args = { area };
          var attr = (BaseCell.BaseAttribute)Activator.CreateInstance(cellAttrClass, args);
@@ -42,7 +42,7 @@ public static class CellFactory {
 //		throw new RuntimeException("Unknown type "+mosaicType);
 
       try {
-         var className = GetPackageName() + ".cell." + mosaicType.getMosaicClassName();
+         var className = GetPackageName() + ".cell." + mosaicType.GetMosaicClassName();
          var cellClass = Type.GetType(className);
          object[] args = { attr, coord };
          var cell = (BaseCell)Activator.CreateInstance(cellClass, args);

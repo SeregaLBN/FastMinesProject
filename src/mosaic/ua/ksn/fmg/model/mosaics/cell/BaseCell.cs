@@ -231,7 +231,7 @@ public abstract class BaseCell {
              if (owner.neighbors[i] == null) continue; // существует ли сосед?
              if (owner.neighbors[i].state.open == EOpen._Mine) count++;
           }
-          this.open = (EOpen)Enum.GetValues(typeof(EOpen)).GetValue(count);
+          this.open = EOpenEx.GetValues()[count];
        }
        public bool SetMine() {
           if (owner.lockMine || (this.open == EOpen._Mine)) return false;

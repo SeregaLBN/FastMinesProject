@@ -83,28 +83,29 @@ public enum EMosaic {
 }
 
 public static class EMosaicEx {
-   public static int ordinal(this EMosaic self) {
-      var values = Enum.GetValues(typeof(EMosaic));
-      for (var i=0; i < values.Length; i++)
-         if (((IList<EMosaic>)values)[i] == self)
+   private static readonly EMosaic[] EMosaicValues = (EMosaic[])Enum.GetValues(typeof(EMosaic));
+   public static EMosaic[] GetValues() { return EMosaicValues; }
+
+   public static int Ordinal(this EMosaic self) {
+      var values = GetValues();
+      for (var i = 0; i < values.Length; i++)
+         if (values[i] == self)
             return i;
       throw new ArgumentException("Index not found");
    }
-   public static EMosaic fromOrdinal(int ordinal) {
-      var values = Enum.GetValues(typeof(EMosaic)).Cast<EMosaic>().ToArray();
+
+   public static EMosaic FromOrdinal(int ordinal) {
+      var values = GetValues();
       if ((ordinal < 0) || (ordinal >= values.Length))
-         throw new ArgumentOutOfRangeException("Invalid ordinal");
+         throw new ArgumentOutOfRangeException("ordinal", "Invalid value " + ordinal);
       return values[ordinal];
    }
 
-   public static EMosaic fromIndex(int index) {
+   public static EMosaic FromIndex(int index) {
         return (EMosaic)index;
-        //foreach (EMosaic item in Enum.GetValues(typeof(EMosaic)))
-        //    if ((int)item == index)
-        //        return item;
-        //throw new ArgumentException("Invalid paramenter value " + index);
    }
-   public static int getIndex(this EMosaic self) { return (int)self; }
+
+   public static int GetIndex(this EMosaic self) { return (int)self; }
 
    /// <summary>
    /// Описание для пользователя
@@ -139,24 +140,20 @@ public static class EMosaicEx {
       case EMosaic.eMosaicTrSq2            : return "Square-Triangle 2";
       case EMosaic.eMosaicSqTrHex          : return "Square-Triangle-Hexagon";
       }
-      return "EMosaicEx.GetDescription: Mosaic '" + self.ToString() + "' not implemented";
+      return "EMosaicEx.GetDescription: Mosaic '" + self + "' not implemented";
    }
 
    /// <summary>
    /// Перечень описаний мозаик
    /// </summary>
    /// <returns></returns>
-   public static List<String> getDescriptionValues() {
-      List<String> res = new List<String>(Enum.GetValues(typeof(EMosaic)).Length);
-      foreach (EMosaic type in Enum.GetValues(typeof(EMosaic)))
-         res.Add(type.GetDescription(false));
-      return res;
+   public static IEnumerable<string> GetDescriptionValues() {
+      return GetValues().Select(x => x.GetDescription(false));
    }
 
-   public static EMosaic? fromDescription(String description) {
-      foreach (EMosaic type in Enum.GetValues(typeof(EMosaic)))
-         if (type.GetDescription(false).Equals(description))
-            return type;
+   public static EMosaic? FromDescription(string description) {
+      foreach (var type in GetValues().Where(type => type.GetDescription(false).Equals(description)))
+         return type;
       return null;
    }
 
@@ -169,7 +166,7 @@ public static class EMosaicEx {
    /// <li> шестиугольники - с цифры 6
    /// <li> прочие - с цифры 7
    /// </summary>
-   public static int getFastCode(this EMosaic self) {
+   public static int GetFastCode(this EMosaic self) {
       switch (self) {
       case EMosaic.eMosaicTriangle1        : return 30;
       case EMosaic.eMosaicTriangle2        : return 31;
@@ -201,21 +198,17 @@ public static class EMosaicEx {
    /// Перечень 'быстрых' кодов
    /// </summary>
    /// <returns></returns>
-   public static List<int> getFastCodeValues() {
-      List<int> res = new List<int>(Enum.GetValues(typeof(EMosaic)).Length);
-      foreach (EMosaic val in Enum.GetValues(typeof(EMosaic)))
-         res.Add(val.getFastCode());
-      return res;
+   public static IEnumerable<int> GetFastCodeValues() {
+      return GetValues().Select(x => x.GetFastCode());
    }
 
-   public static EMosaic? fromFastCode(int fastCode) {
-      foreach (EMosaic type in Enum.GetValues(typeof(EMosaic)))
-         if (fastCode == type.getFastCode())
-            return type;
+   public static EMosaic? FromFastCode(int fastCode) {
+      foreach (var type in GetValues().Where(type => fastCode == type.GetFastCode()))
+         return type;
       return null;
    }
 
-   public static String getMosaicClassName(this EMosaic self) {
+   public static String GetMosaicClassName(this EMosaic self) {
       return self.ToString().Substring(7);
    }
 

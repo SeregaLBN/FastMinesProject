@@ -3,28 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace FastMines.Common {
-   // TODO http://stackoverflow.com/questions/7677854/notifypropertychanged-event-where-event-args-contain-the-old-value
-
-   public interface INotifyPropertyChangedEx : INotifyPropertyChanged {
-      event PropertyChangedExEventHandler PropertyChangedEx;
-   }
-
-   public delegate void PropertyChangedExEventHandler(object sender, PropertyChangedExEventArgs e);
-
-   public class PropertyChangedExEventArgs : PropertyChangedEventArgs {
-      public object OldValue { get; private set; }
-      public object NewValue { get; private set; }
-
-      public PropertyChangedExEventArgs(string propertyName, object oldValue, object newValue)
-         : base(propertyName) {
-         OldValue = oldValue;
-         NewValue = newValue;
-      }
-   }
-
-   /// <summary>
-   /// Implementation of <see cref="INotifyPropertyChanged"/> to simplify models.
-   /// </summary>
+   /// <summary> Implementation of <see cref="INotifyPropertyChanged"/> to simplify models. </summary>
    [Windows.Foundation.Metadata.WebHostHidden]
    public abstract class BindableBase : INotifyPropertyChangedEx {
 
@@ -64,7 +43,7 @@ namespace FastMines.Common {
       /// value is optional and can be provided automatically when invoked from compilers
       /// that support <see cref="CallerMemberNameAttribute"/>.</param>
       protected void OnPropertyChanged<T>(T oldValue, T newValue, [CallerMemberName] string propertyName = null) {
-         var eventHandlerEx = this.PropertyChanged;
+         var eventHandlerEx = this.PropertyChangedEx;
          if (eventHandlerEx != null)
             eventHandlerEx(this, new PropertyChangedExEventArgs(propertyName, oldValue, newValue));
          var eventHandler = this.PropertyChanged;

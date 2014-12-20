@@ -70,11 +70,15 @@ namespace ua.ksn.fmg.view.win_rt.res {
       private static Dictionary<CultureInfo, WriteableBitmap> _imgsLang;
 
       private static async Task<WriteableBitmap> GetImage(string path) {
-         var img = await ImgUtils.GetImage(new Uri("ms-appx:///res/" + path));
-         if (img == null)
-            img = await ImgUtils.GetImage(new Uri("ms-appx:///" + path));
-         return img;
+         return await ImgUtils.GetImage(new Uri("ms-appx:///res/" + path)) ??
+                await ImgUtils.GetImage(new Uri("ms-appx:///" + path));
       }
+
+      private static BitmapImage GetImageSync(string path) {
+         return ImgUtils.GetImageSync(new Uri("ms-appx:///res/" + path)) ??
+                ImgUtils.GetImageSync(new Uri("ms-appx:///" + path));
+      }
+
 
       public static async Task<WriteableBitmap> GetImgLogoPng(string subdir = "Tile", int scale = 100) {
          if (_imgLogoPng == null)
@@ -127,10 +131,10 @@ namespace ua.ksn.fmg.view.win_rt.res {
 
       public static async Task<WriteableBitmap> GetImgBtnNew(EBtnNewGameState key) {
          if (_imgsBtnNew == null) {
-            _imgsBtnNew =
-               new Dictionary<EBtnNewGameState, WriteableBitmap>(Enum.GetValues(typeof (EBtnNewGameState)).Length);
+            var vals = Enum.GetValues(typeof (EBtnNewGameState));
+            _imgsBtnNew = new Dictionary<EBtnNewGameState, WriteableBitmap>(vals.Length);
 
-            foreach (EBtnNewGameState val in Enum.GetValues(typeof (EBtnNewGameState)))
+            foreach (EBtnNewGameState val in vals)
                _imgsBtnNew.Add(val, await GetImage("ToolBarButton/new" + val.GetDescription() + ".png"));
          }
          return _imgsBtnNew[key];
@@ -138,10 +142,10 @@ namespace ua.ksn.fmg.view.win_rt.res {
 
       public static async Task<WriteableBitmap> GetImgBtnPause(EBtnPauseState key) {
          if (_imgsBtnPause == null) {
-            _imgsBtnPause =
-               new Dictionary<EBtnPauseState, WriteableBitmap>(Enum.GetValues(typeof (EBtnPauseState)).Length);
+            var vals = Enum.GetValues(typeof(EBtnPauseState));
+            _imgsBtnPause = new Dictionary<EBtnPauseState, WriteableBitmap>(vals.Length);
 
-            foreach (EBtnPauseState val in Enum.GetValues(typeof (EBtnPauseState)))
+            foreach (EBtnPauseState val in vals)
                _imgsBtnPause.Add(val, await GetImage("ToolBarButton/pause" + val.GetDescription() + ".png"));
          }
          return _imgsBtnPause[key];
@@ -150,7 +154,7 @@ namespace ua.ksn.fmg.view.win_rt.res {
       /// <summary> из ресурсов </summary>
       public async static Task<WriteableBitmap> GetImgMosaicGroupPng(EMosaicGroup key) {
          if (_imgsMosaicGroupPng == null)
-            _imgsMosaicGroupPng = new Dictionary<EMosaicGroup, WriteableBitmap>(Enum.GetValues(typeof(EMosaicGroup)).Length);
+            _imgsMosaicGroupPng = new Dictionary<EMosaicGroup, WriteableBitmap>(EMosaicGroupEx.GetValues().Length);
          if (_imgsMosaicGroupPng.ContainsKey(key))
             return _imgsMosaicGroupPng[key];
          return _imgsMosaicGroupPng[key] = await GetImage("MosaicGroup/" + key.GetDescription() + ".png");
@@ -159,7 +163,7 @@ namespace ua.ksn.fmg.view.win_rt.res {
       /// <summary> самостоятельная отрисовка </summary>
       public static MosaicsGroupImg GetImgMosaicGroup(EMosaicGroup key) {
          if (_imgsMosaicGroup == null)
-            _imgsMosaicGroup = new Dictionary<EMosaicGroup, MosaicsGroupImg>(Enum.GetValues(typeof(EMosaicGroup)).Length);
+            _imgsMosaicGroup = new Dictionary<EMosaicGroup, MosaicsGroupImg>(EMosaicGroupEx.GetValues().Length);
          if (_imgsMosaicGroup.ContainsKey(key))
             return _imgsMosaicGroup[key];
          return _imgsMosaicGroup[key] = new MosaicsGroupImg(key, true);
@@ -168,17 +172,22 @@ namespace ua.ksn.fmg.view.win_rt.res {
       /// <summary> из ресурсов </summary>
       public static async Task<WriteableBitmap> GetImgMosaicPng(EMosaic mosaicType, bool smallIco) {
          if (_imgsMosaicPng == null)
-            _imgsMosaicPng = new Dictionary<Tuple<EMosaic, bool>, WriteableBitmap>(Enum.GetValues(typeof (EMosaic)).Length);
+            _imgsMosaicPng = new Dictionary<Tuple<EMosaic, bool>, WriteableBitmap>(EMosaicEx.GetValues().Length);
          var key = new Tuple<EMosaic, bool>(mosaicType, smallIco);
          if (_imgsMosaicPng.ContainsKey(key))
             return _imgsMosaicPng[key];
          return _imgsMosaicPng[key] = await GetImage("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.GetDescription(true) + ".png");
       }
 
+      public static BitmapImage GetImgMosaicPngSync(EMosaic mosaicType, bool smallIco)
+      {
+         return GetImageSync("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.GetDescription(true) + ".png");
+      }
+
       /// <summary> самостоятельная отрисовка </summary>
       public static MosaicsImg GetImgMosaic(EMosaic mosaicType, Size sizeField, int area, Windows.UI.Color bkColor, Size bound) {
          if (_imgsMosaic == null)
-            _imgsMosaic = new Dictionary<Tuple<EMosaic, Size, int, Windows.UI.Color, Size>, MosaicsImg>(Enum.GetValues(typeof(EMosaic)).Length);
+            _imgsMosaic = new Dictionary<Tuple<EMosaic, Size, int, Windows.UI.Color, Size>, MosaicsImg>(EMosaicEx.GetValues().Length);
          var key = new Tuple<EMosaic, Size, int, Windows.UI.Color, Size>(mosaicType, sizeField, area, bkColor, bound);
          if (_imgsMosaic.ContainsKey(key))
             return _imgsMosaic[key];
