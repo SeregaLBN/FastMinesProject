@@ -27,6 +27,23 @@ namespace FastMines.Data {
       public static ObservableCollection<FmDataGroup> AllGroups {
          get {
             if (_allGroups == null) {
+#if !test
+               var groups = EMosaicGroupEx.GetValues().Select(x => new FmDataGroup(x));
+               if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+                  groups = groups.OrderBy(x => Guid.NewGuid()); // random sort
+
+               _allGroups = new ObservableCollection<FmDataGroup>();
+               foreach (var g in groups)
+               {
+                  _allGroups.Add(g);
+                  var gTmp = g;
+                  var items = g.UniqueId.GetBind().Select(x => new FmDataItem(x, gTmp));
+                  if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+                     items = items.OrderBy(x => Guid.NewGuid()); // random sort
+                  foreach (var i in items)
+                     g.Items.Add(i);
+               }
+#else
                _allGroups = new ObservableCollection<FmDataGroup>();
                foreach (var itemGroup in EMosaicGroupEx.GetValues()) {
                   var dataGroup = new FmDataGroup(itemGroup);
@@ -34,6 +51,7 @@ namespace FastMines.Data {
                      dataGroup.Items.Add(new FmDataItem(item, dataGroup));
                   _allGroups.Add(dataGroup);
                }
+#endif
             }
             return _allGroups;
          }

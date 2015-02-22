@@ -344,7 +344,7 @@ namespace FastMines {
                ev.Handled = _clickInfo.DownHandled || _clickInfo.UpHandled; // TODO: для избежания появления appBar'ов при установке '?'
             else if (!_manipulationStarted) {
 
-               // 1. release left clisn in invalid coord
+               // 1. release left click in invalid coord
                await OnClick(new Windows.Foundation.Point(-1, -1), true, false, true);
 
                // 2. make right click - up & down

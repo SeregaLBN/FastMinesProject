@@ -13,7 +13,7 @@ namespace ua.ksn.fmg.model.mosaics {
 
       public static uint Ordinal(this EOpen self) { return (uint)self; }
 
-      public static string toCaption(this EOpen self) {
+      public static string ToCaption(this EOpen self) {
          switch (self) {
          case EOpen._Nil:
             return string.Empty;

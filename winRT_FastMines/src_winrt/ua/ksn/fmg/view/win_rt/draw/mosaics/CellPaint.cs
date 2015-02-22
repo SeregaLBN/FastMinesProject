@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Windows.Devices.SmartCards;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -10,8 +9,8 @@ using Windows.UI.Xaml.Shapes;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using ua.ksn.geom;
-using ua.ksn.fmg.model.mosaics.cell;
 using ua.ksn.fmg.model.mosaics;
+using ua.ksn.fmg.model.mosaics.cell;
 
 namespace ua.ksn.fmg.view.win_rt.draw.mosaics
 {
@@ -205,7 +204,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
             else
             {
                txtColor = gContext.ColorText.GetColorOpen((int) cell.State.Open.Ordinal());
-               szCaption = cell.State.Open.toCaption();
+               szCaption = cell.State.Open.ToCaption();
             }
             if (!string.IsNullOrWhiteSpace(szCaption)) {
                if (cell.State.Down)
@@ -274,7 +273,7 @@ namespace ua.ksn.fmg.view.win_rt.draw.mosaics
                //szCaption = ""+cell.getDirection(); // debug
             } else {
                txtColor = gContext.ColorText.GetColorOpen((int)cell.State.Open.Ordinal());
-               szCaption = cell.State.Open.toCaption();
+               szCaption = cell.State.Open.ToCaption();
             }
             if (string.IsNullOrWhiteSpace(szCaption)) {
                txt.Visibility = Visibility.Collapsed;
