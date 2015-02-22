@@ -6,3 +6,5 @@ xxx_FastMines - каталоги конкретной языковой реализации, под конкретную UI платф
  * winForms_FastMines - C# desktop Windows Forms application
  * winRT_FastMines - C# desktop/tablet Windows RT application
  * ...   
+
+BmpLogo - Win32 C++ proj (generate logo project - raw bitmap)

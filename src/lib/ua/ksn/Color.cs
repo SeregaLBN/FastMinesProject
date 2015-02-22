@@ -5,17 +5,17 @@ namespace ua.ksn {
    public struct Color {
       public static readonly Color Transparent = new Color(0,255,255,255);
       public static readonly Color Black   = new Color(0xFF000000);
-      public static readonly Color White   = new Color { A = 0xFF, R = 0xFF, G = 0xFF, B = 0xFF };
-      public static readonly Color Red     = new Color { A = 0xFF, R = 0xFF };
-      public static readonly Color Blue    = new Color { A = 0xFF, B = 0xFF };
-      public static readonly Color Green   = new Color { A = 0xFF, G = 0xFF };
+      public static readonly Color White   = new Color(0xFFFFFFFF);
       public static readonly Color Navy    = new Color(0xFF000080);
+      public static readonly Color Green   = new Color(0xFF008000);
+      public static readonly Color Red     = new Color(0xFFFF0000);
       public static readonly Color Maroon  = new Color(0xFF800000);
+      public static readonly Color Blue    = new Color(0xFF0000FF);
       public static readonly Color Olive   = new Color(0xFF808000);
       public static readonly Color Aqua    = new Color(0xFF00FFFF);
       public static readonly Color Teal    = new Color(0xFF008080);
-      public static readonly Color Magenta = new Color(255, 0, 255); // FUCHSIA
-      public static readonly Color Gray    = new Color(128, 128, 128);
+      public static readonly Color Magenta = new Color(0xFFFF00FF); // Fuchsia
+      public static readonly Color Gray    = new Color(0xFF808080);
 
       public byte R,G,B,A;
 

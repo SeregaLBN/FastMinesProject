@@ -13,8 +13,8 @@ public class Color {
 	public static final Color Olive   = new Color(0xFF808000);
 	public static final Color Aqua    = new Color(0xFF00FFFF);
 	public static final Color Teal    = new Color(0xFF008080);
-	public static final Color Magenta = new Color(255, 0, 255); // Fuchsia
-	public static final Color Gray    = new Color(128, 128, 128);
+	public static final Color Magenta = new Color(0xFFFF00FF); // Fuchsia
+	public static final Color Gray    = new Color(0xFF808080);
 
 	protected byte r,g,b,a;
 	
