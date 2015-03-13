@@ -61,8 +61,6 @@ public class Trapezoid1 extends BaseCell {
 		@Override
 		public int getNeighborNumber(int direction) { return 8; }
 		@Override
-		public int getVertexNumber() { return 4; }
-		@Override
 		public int getVertexNumber(int direction) { return 4; }
 		@Override
 		public double getVertexIntersection() { return 3.6; } // (3+3+3+3+6)/5.

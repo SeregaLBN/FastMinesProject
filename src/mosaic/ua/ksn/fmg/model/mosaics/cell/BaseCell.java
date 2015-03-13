@@ -116,8 +116,6 @@ public abstract class BaseCell implements PropertyChangeListener {
 		public abstract int getNeighborNumber();
 		/** кол-во соседей у ячейки конкретной направленности */
 		public abstract int getNeighborNumber(int direction);
-		/** из скольки точек/вершин состоит фигура (максимум) */
-		public abstract int getVertexNumber();
 		/** из скольки точек/вершин состоит фигура конкретной направленности */
 		public abstract int getVertexNumber(int direction);
 		/** сколько фигур пересекается в одной точке (в среднем) */

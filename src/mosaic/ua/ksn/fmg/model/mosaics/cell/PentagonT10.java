@@ -84,8 +84,6 @@ public class PentagonT10 extends BaseCell {
 			}
 		}
 		@Override
-		public int getVertexNumber() { return 5; }
-		@Override
 		public int getVertexNumber(int direction) { return 5; }
 
 		static double vertexIntersection = 0.;

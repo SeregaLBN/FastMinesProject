@@ -74,8 +74,6 @@ public class Trapezoid3 extends BaseCell {
 	    	}
 		}
 		@Override
-		public int getVertexNumber() { return 4; }
-		@Override
 		public int getVertexNumber(int direction) { return 4; }
 
 		static double vertexIntersection = 0.;

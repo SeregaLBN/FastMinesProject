@@ -53,8 +53,6 @@ public class Triangle1 extends BaseCell {
 		@Override
 		public int getNeighborNumber(int direction) { return 12; }
 		@Override
-		public int getVertexNumber() { return 3; }
-		@Override
 		public int getVertexNumber(int direction) { return 3; }
 		@Override
 		public double getVertexIntersection() { return 6; }

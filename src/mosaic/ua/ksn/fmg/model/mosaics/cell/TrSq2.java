@@ -96,8 +96,6 @@ public class TrSq2 extends BaseCell {
 			}
 		}
 		@Override
-		public int getVertexNumber() { return 4; }
-		@Override
 		public int getVertexNumber(int direction) {
 			switch (direction) {
 			case  0: case  3: case  7: case 10:

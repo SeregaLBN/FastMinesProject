@@ -88,8 +88,6 @@ public class SqTrHex extends BaseCell {
 		 	}
 		}
 		@Override
-		public int getVertexNumber() { return 6; }
-		@Override
 		public int getVertexNumber(int direction) {
 			switch (direction) {
 			case  0: case  2: case  6: case  7: return 3;

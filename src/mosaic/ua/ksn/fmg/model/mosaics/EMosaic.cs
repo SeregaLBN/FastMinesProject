@@ -11,7 +11,7 @@ namespace ua.ksn.fmg.model.mosaics {
 public enum EMosaic {
    // ============== Triangles ==============
    /// <summary> Triangle 60°-60°-60° </summary>
-    eMosaicTriangle1           = (300),
+   eMosaicTriangle1           = (300),
 
    /// <summary> Triangle 60°-60°-60° (offset) </summary>
    eMosaicTriangle2           = (301),
