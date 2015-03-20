@@ -37,6 +37,7 @@ public class Triangle4 extends BaseCell {
 		/** original */
 		eUnrealMode,
 		eMeanMode,
+		eOptimalMode,
 		eSimpeMode
 	}
 	public static class AttrTriangle4 extends BaseAttribute {
@@ -44,7 +45,7 @@ public class Triangle4 extends BaseCell {
 			super(area);
 		}
 
-		private final static ComplexityMode Mode = ComplexityMode.eMeanMode;
+		private final static ComplexityMode Mode = ComplexityMode.eOptimalMode; // TODO: check others to view...
 
 		@Override
 		public Size CalcOwnerSize(Size sizeField, int area) {
@@ -58,6 +59,7 @@ public class Triangle4 extends BaseCell {
 
 			switch (Mode) {
 			case eUnrealMode:
+			case eOptimalMode:
 				// none  ...
 				break;
 			case eMeanMode:
@@ -92,11 +94,12 @@ public class Triangle4 extends BaseCell {
 		}
 	
 		@Override
-		public int getNeighborNumber() {
+		public int getNeighborNumber(boolean max) {
 			switch(Mode) {
-			case eUnrealMode: return 21;
-			case eMeanMode  : return 7;
-			case eSimpeMode : return 3;
+			case eUnrealMode : return 21;
+			case eMeanMode   : return max ?  7 : 3;
+			case eOptimalMode: return max ?  7 : 6;
+			case eSimpeMode  : return 3 ;
 			}
 			throw new RuntimeException();
 		}
@@ -104,12 +107,21 @@ public class Triangle4 extends BaseCell {
 		public int getNeighborNumber(int direction) {
 			if (Mode == ComplexityMode.eMeanMode) {
 				switch(direction) {
-				case 2: case 11: return 7;
-				case 1: case 5: case 8: case 10: return 5;
-				default: return 3;
+				case 2: case 11:                                 return 7;
+				case 1: case 5: case 8: case 10:                 return 5;
+				case 0: case 3: case 4: case 6 : case 7: case 9: return 3;
+				default: throw new RuntimeException();
 				}
 			} else
-				return getNeighborNumber();
+			if (Mode == ComplexityMode.eOptimalMode) {
+				switch(direction) {
+				case 4: case 5: case 9: case 10:  return 6;
+				case 0: case 1: case 2: case 3:
+				case 6: case 7: case 8: case 11:  return 7;
+				default: throw new RuntimeException();
+				}
+			} else
+				return getNeighborNumber(true);
 		}
 		@Override
 		public int getVertexNumber(int direction) {
@@ -129,18 +141,21 @@ public class Triangle4 extends BaseCell {
 				case 10: return 4;
 				case 2:
 				case 11: return 3;
+				default: throw new RuntimeException();
 				}
-				break;
-			case eSimpeMode: return 5;
+				//break;
+			case eOptimalMode: return 4;
+			case eSimpeMode  : return 5;
 			}
 			throw new RuntimeException();
 		}
 		@Override
 		public double getVertexIntersection() {
 			switch(Mode) {
-			case eSimpeMode : return 2.2; // (2+2+2+2+3)/5.
-			case eUnrealMode: return 9.; // (12+12+3)/3.
-			case eMeanMode  : return 2.62777777778;
+			case eUnrealMode : return 9.;   // (12+12+3)/3.
+			case eSimpeMode  : return 2.2;  // (2+2+2+2+3)/5.
+			case eOptimalMode: return 3.25; // (6+3+2+2)/4.
+			case eMeanMode   : return 2.62777777778;
 				// ( (2+2+2+2+3)/ getVertexNumber(0 or 3 or 4 or 6 or 7 or 9) * 6шт  +
 			    //   ( 2+2+3+4 )/ getVertexNumber(1 or 5 or 8 or 10) * 4шт  +
 			    //   (  3+4+4  )/ getVertexNumber(2 or 11) * 2шт ) / 12шт
@@ -190,7 +205,7 @@ public class Triangle4 extends BaseCell {
 
 	@Override
 	protected Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
+		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
 
 		// определяю координаты соседей
 		switch (AttrTriangle4.Mode) {
@@ -554,6 +569,114 @@ public class Triangle4 extends BaseCell {
 				break;
 			}
 			break;
+		case eOptimalMode:
+			switch (direction) {
+			case 0:
+				neighborCoord[0] = new Coord(coord.x+1, coord.y-2);
+				neighborCoord[1] = new Coord(coord.x+1, coord.y-1);
+				neighborCoord[2] = new Coord(coord.x+2, coord.y-1);
+				neighborCoord[3] = new Coord(coord.x-1, coord.y  );
+				neighborCoord[4] = new Coord(coord.x-1, coord.y+1);
+				neighborCoord[5] = new Coord(coord.x  , coord.y+1);
+				neighborCoord[6] = new Coord(coord.x+1, coord.y+1);
+				break;
+			case 1:
+				neighborCoord[0] = new Coord(coord.x+1, coord.y  );
+				neighborCoord[1] = new Coord(coord.x-1, coord.y+1);
+				neighborCoord[2] = new Coord(coord.x  , coord.y+1);
+				neighborCoord[3] = new Coord(coord.x+1, coord.y+1);
+				neighborCoord[4] = new Coord(coord.x+1, coord.y+2);
+				neighborCoord[5] = new Coord(coord.x+2, coord.y+2);
+				neighborCoord[6] = new Coord(coord.x+2, coord.y+3);
+				break;
+			case 2:
+				neighborCoord[0] = new Coord(coord.x+2, coord.y-2);
+				neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+				neighborCoord[2] = new Coord(coord.x+2, coord.y-1);
+				neighborCoord[3] = new Coord(coord.x+3, coord.y-1);
+				neighborCoord[4] = new Coord(coord.x-1, coord.y  );
+				neighborCoord[5] = new Coord(coord.x+1, coord.y  );
+				neighborCoord[6] = new Coord(coord.x  , coord.y+1);
+				break;
+			case 3:
+				neighborCoord[0] = new Coord(coord.x  , coord.y-1);
+				neighborCoord[1] = new Coord(coord.x+1, coord.y-1);
+				neighborCoord[2] = new Coord(coord.x+1, coord.y  );
+				neighborCoord[3] = new Coord(coord.x  , coord.y+1);
+				neighborCoord[4] = new Coord(coord.x+2, coord.y+1);
+				neighborCoord[5] = new Coord(coord.x+3, coord.y+1);
+				neighborCoord[6] = new Coord(coord.x+3, coord.y+2);
+				break;
+			case 4:
+				neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
+				neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+				neighborCoord[2] = new Coord(coord.x-1, coord.y  );
+				neighborCoord[3] = new Coord(coord.x+1, coord.y+1);
+				neighborCoord[4] = new Coord(coord.x+2, coord.y+1);
+				neighborCoord[5] = new Coord(coord.x+2, coord.y+2);
+				break;
+			case 5:
+				neighborCoord[0] = new Coord(coord.x+2, coord.y-3);
+				neighborCoord[1] = new Coord(coord.x+2, coord.y-2);
+				neighborCoord[2] = new Coord(coord.x+3, coord.y-2);
+				neighborCoord[3] = new Coord(coord.x-1, coord.y-1);
+				neighborCoord[4] = new Coord(coord.x  , coord.y-1);
+				neighborCoord[5] = new Coord(coord.x+1, coord.y-1);
+				break;
+			case 6:
+				neighborCoord[0] = new Coord(coord.x-2, coord.y-2);
+				neighborCoord[1] = new Coord(coord.x-3, coord.y-1);
+				neighborCoord[2] = new Coord(coord.x-2, coord.y-1);
+				neighborCoord[3] = new Coord(coord.x  , coord.y-1);
+				neighborCoord[4] = new Coord(coord.x-1, coord.y  );
+				neighborCoord[5] = new Coord(coord.x+1, coord.y  );
+				neighborCoord[6] = new Coord(coord.x  , coord.y+1);
+				break;
+			case 7:
+				neighborCoord[0] = new Coord(coord.x-1, coord.y  );
+				neighborCoord[1] = new Coord(coord.x-1, coord.y+1);
+				neighborCoord[2] = new Coord(coord.x  , coord.y+1);
+				neighborCoord[3] = new Coord(coord.x+1, coord.y+1);
+				neighborCoord[4] = new Coord(coord.x-2, coord.y+2);
+				neighborCoord[5] = new Coord(coord.x-1, coord.y+2);
+				neighborCoord[6] = new Coord(coord.x-2, coord.y+3);
+				break;
+			case 8:
+				neighborCoord[0] = new Coord(coord.x-1, coord.y-2);
+				neighborCoord[1] = new Coord(coord.x-2, coord.y-1);
+				neighborCoord[2] = new Coord(coord.x-1, coord.y-1);
+				neighborCoord[3] = new Coord(coord.x+1, coord.y  );
+				neighborCoord[4] = new Coord(coord.x-1, coord.y+1);
+				neighborCoord[5] = new Coord(coord.x  , coord.y+1);
+				neighborCoord[6] = new Coord(coord.x+1, coord.y+1);
+				break;
+			case 9:
+				neighborCoord[0] = new Coord(coord.x-2, coord.y-3);
+				neighborCoord[1] = new Coord(coord.x-3, coord.y-2);
+				neighborCoord[2] = new Coord(coord.x-2, coord.y-2);
+				neighborCoord[3] = new Coord(coord.x-1, coord.y-1);
+				neighborCoord[4] = new Coord(coord.x  , coord.y-1);
+				neighborCoord[5] = new Coord(coord.x+1, coord.y-1);
+				break;
+			case 10:
+				neighborCoord[0] = new Coord(coord.x  , coord.y-1);
+				neighborCoord[1] = new Coord(coord.x+1, coord.y-1);
+				neighborCoord[2] = new Coord(coord.x+1, coord.y  );
+				neighborCoord[3] = new Coord(coord.x-2, coord.y+1);
+				neighborCoord[4] = new Coord(coord.x-1, coord.y+1);
+				neighborCoord[5] = new Coord(coord.x-2, coord.y+2);
+				break;
+			case 11:
+				neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
+				neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+				neighborCoord[2] = new Coord(coord.x-1, coord.y  );
+				neighborCoord[3] = new Coord(coord.x-3, coord.y+1);
+				neighborCoord[4] = new Coord(coord.x-2, coord.y+1);
+				neighborCoord[5] = new Coord(coord.x  , coord.y+1);
+				neighborCoord[6] = new Coord(coord.x-3, coord.y+2);
+				break;
+			}
+			break;
 		case eSimpeMode:
 			switch (direction) {
 			case 0:
@@ -638,10 +761,237 @@ public class Triangle4 extends BaseCell {
 		// определение координат точек фигуры
 		double oX =  (coord.x/3)*a + b;      // offset X
 		double oY = ((coord.y/4)*2+1)*(R+r); // offset Y
-		if (AttrTriangle4.Mode != ComplexityMode.eUnrealMode)
+		switch (AttrTriangle4.Mode) {
+		case eUnrealMode:
+		case eOptimalMode:
+			break;
+		case eMeanMode:
+		case eSimpeMode:
 			oX -= u;
+			break;
+		}
 
 		switch (AttrTriangle4.Mode) {
+		case eUnrealMode:
+			switch (direction) {
+			case 0:
+				region.setPoint(1, (int)(oX    ), (int)(oY - r  ));
+				region.setPoint(0, (int)(oX    ), (int)(oY - R-r));
+				region.setPoint(2, (int)(oX - b), (int)(oY      ));
+				break;
+			case 1:
+				region.setPoint(0, (int)(oX + b), (int)(oY - R  ));
+				region.setPoint(1, (int)(oX + b), (int)(oY      ));
+				region.setPoint(2, (int)(oX    ), (int)(oY - R-r));
+				break;
+			case 2:
+				region.setPoint(0, (int)(oX + a), (int)(oY - R-r));
+				region.setPoint(1, (int)(oX + b), (int)(oY - R  ));
+				region.setPoint(2, (int)(oX    ), (int)(oY - R-r));
+				break;
+			case 3:
+				region.setPoint(0, (int)(oX + b), (int)(oY      ));
+				region.setPoint(1, (int)(oX - b), (int)(oY      ));
+				region.setPoint(2, (int)(oX    ), (int)(oY - r  ));
+				break;
+			case 4:
+				region.setPoint(0, (int)(oX    ), (int)(oY - R-r));
+				region.setPoint(1, (int)(oX + b), (int)(oY      ));
+				region.setPoint(2, (int)(oX    ), (int)(oY - r  ));
+				break;
+			case 5:
+				region.setPoint(0, (int)(oX + a), (int)(oY - R-r));
+				region.setPoint(1, (int)(oX + b), (int)(oY      ));
+				region.setPoint(2, (int)(oX + b), (int)(oY - R  ));
+				break;
+			case 6:
+				region.setPoint(0, (int)(oX + b), (int)(oY      ));
+				region.setPoint(1, (int)(oX    ), (int)(oY + r  ));
+				region.setPoint(2, (int)(oX - b), (int)(oY      ));
+				break;
+			case 7:
+				region.setPoint(0, (int)(oX + b), (int)(oY      ));
+				region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
+				region.setPoint(2, (int)(oX    ), (int)(oY + r  ));
+				break;
+			case 8:
+				region.setPoint(0, (int)(oX + b), (int)(oY      ));
+				region.setPoint(1, (int)(oX + a), (int)(oY + R+r));
+				region.setPoint(2, (int)(oX + b), (int)(oY + R  ));
+				break;
+			case 9:
+				region.setPoint(0, (int)(oX    ), (int)(oY + r  ));
+				region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
+				region.setPoint(2, (int)(oX - b), (int)(oY      ));
+				break;
+			case 10:
+				region.setPoint(0, (int)(oX + b), (int)(oY      ));
+				region.setPoint(1, (int)(oX + b), (int)(oY + R  ));
+				region.setPoint(2, (int)(oX    ), (int)(oY + R+r));
+				break;
+			case 11:
+				region.setPoint(0, (int)(oX + a), (int)(oY + R+r));
+				region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
+				region.setPoint(2, (int)(oX + b), (int)(oY + R  ));
+				break;
+			}
+			break;
+		case eMeanMode:
+			switch (direction) {
+			case 0:
+				region.setPoint(0, (int)(oX    ), (int)(oY-R-r+s));
+				region.setPoint(1, (int)(oX    ), (int)(oY - r  ));
+				region.setPoint(2, (int)(oX-b+c), (int)(oY - u  ));
+				region.setPoint(3, (int)(oX-b+u), (int)(oY - c  ));
+				region.setPoint(4, (int)(oX - u), (int)(oY-R-r+c));
+				break;
+			case 1:
+				region.setPoint(0, (int)(oX + b), (int)(oY - R  ));
+				region.setPoint(1, (int)(oX + b), (int)(oY      ));
+				region.setPoint(2, (int)(oX + u), (int)(oY-R-r+c));
+				region.setPoint(3, (int)(oX + c), (int)(oY-R-r+u));
+				break;
+			case 2:
+				region.setPoint(0, (int)(oX + a), (int)(oY - R-r));
+				region.setPoint(1, (int)(oX + b), (int)(oY - R  ));
+				region.setPoint(2, (int)(oX    ), (int)(oY - R-r));
+				break;
+			case 3:
+				region.setPoint(0, (int)(oX+b-s), (int)(oY      ));
+				region.setPoint(1, (int)(oX-b+s), (int)(oY      ));
+				region.setPoint(2, (int)(oX-b+c), (int)(oY - u  ));
+				region.setPoint(3, (int)(oX    ), (int)(oY - r  ));
+				region.setPoint(4, (int)(oX+b-c), (int)(oY - u  ));
+				break;
+			case 4:
+				region.setPoint(0, (int)(oX + u), (int)(oY-R-r+c));
+				region.setPoint(1, (int)(oX+b-u), (int)(oY - c  ));
+				region.setPoint(2, (int)(oX+b-c), (int)(oY - u  ));
+				region.setPoint(3, (int)(oX    ), (int)(oY - r  ));
+				region.setPoint(4, (int)(oX    ), (int)(oY-R-r+s));
+				break;
+			case 5:
+				region.setPoint(0, (int)(oX+a-u), (int)(oY-R-r+c));
+				region.setPoint(1, (int)(oX + b), (int)(oY      ));
+				region.setPoint(2, (int)(oX + b), (int)(oY - R  ));
+				region.setPoint(3, (int)(oX+a-c), (int)(oY-R-r+u));
+				break;
+			case 6:
+				region.setPoint(0, (int)(oX+b-c), (int)(oY + u  ));
+				region.setPoint(1, (int)(oX    ), (int)(oY + r  ));
+				region.setPoint(2, (int)(oX-b+c), (int)(oY + u  ));
+				region.setPoint(3, (int)(oX-b+s), (int)(oY      ));
+				region.setPoint(4, (int)(oX+b-s), (int)(oY      ));
+				break;
+			case 7:
+				region.setPoint(0, (int)(oX+b-u), (int)(oY + c  ));
+				region.setPoint(1, (int)(oX + u), (int)(oY+R+r-c));
+				region.setPoint(2, (int)(oX    ), (int)(oY+R+r-s));
+				region.setPoint(3, (int)(oX    ), (int)(oY + r  ));
+				region.setPoint(4, (int)(oX+b-c), (int)(oY + u  ));
+				break;
+			case 8:
+				region.setPoint(0, (int)(oX + b), (int)(oY      ));
+				region.setPoint(1, (int)(oX+a-u), (int)(oY+R+r-c));
+				region.setPoint(2, (int)(oX+a-c), (int)(oY+R+r-u));
+				region.setPoint(3, (int)(oX + b), (int)(oY + R  ));
+				break;
+			case 9:
+				region.setPoint(0, (int)(oX    ), (int)(oY + r  ));
+				region.setPoint(1, (int)(oX    ), (int)(oY+R+r-s));
+				region.setPoint(2, (int)(oX - u), (int)(oY+R+r-c));
+				region.setPoint(3, (int)(oX-b+u), (int)(oY + c  ));
+				region.setPoint(4, (int)(oX-b+c), (int)(oY + u  ));
+				break;
+			case 10:
+				region.setPoint(0, (int)(oX + b), (int)(oY      ));
+				region.setPoint(1, (int)(oX + b), (int)(oY + R  ));
+				region.setPoint(2, (int)(oX + c), (int)(oY+R+r-u));
+				region.setPoint(3, (int)(oX + u), (int)(oY+R+r-c));
+				break;
+			case 11:
+				region.setPoint(0, (int)(oX + a), (int)(oY + R+r));
+				region.setPoint(2, (int)(oX + b), (int)(oY + R  ));
+				region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
+				break;
+			}
+			break;
+		case eOptimalMode:
+			switch (direction) {
+			case 0:
+				region.setPoint(0, (int)(oX    ), (int)(oY - R-r));
+				region.setPoint(1, (int)(oX    ), (int)(oY - r  ));
+				region.setPoint(2, (int)(oX-b+c), (int)(oY - u  ));
+				region.setPoint(3, (int)(oX-b+u), (int)(oY - c  ));
+				break;
+			case 1:
+				region.setPoint(0, (int)(oX + b), (int)(oY - R  ));
+				region.setPoint(1, (int)(oX + b), (int)(oY      ));
+				region.setPoint(2, (int)(oX + u), (int)(oY-R-r+c));
+				region.setPoint(3, (int)(oX + c), (int)(oY-R-r+u));
+				break;
+			case 2:
+				region.setPoint(0, (int)(oX + a), (int)(oY -R -r));
+				region.setPoint(1, (int)(oX + b), (int)(oY - R  ));
+				region.setPoint(2, (int)(oX + c), (int)(oY-R-r+u));
+				region.setPoint(3, (int)(oX + s), (int)(oY -R -r));
+				break;
+			case 3:
+				region.setPoint(0, (int)(oX+b  ), (int)(oY      ));
+				region.setPoint(1, (int)(oX-b+s), (int)(oY      ));
+				region.setPoint(2, (int)(oX-b+c), (int)(oY - u  ));
+				region.setPoint(3, (int)(oX    ), (int)(oY - r  ));
+				break;
+			case 4:
+				region.setPoint(0, (int)(oX + u), (int)(oY-R-r+c));
+				region.setPoint(1, (int)(oX + b), (int)(oY      ));
+				region.setPoint(2, (int)(oX    ), (int)(oY - r  ));
+				region.setPoint(3, (int)(oX    ), (int)(oY-R-r+s));
+				break;
+			case 5:
+				region.setPoint(0, (int)(oX+a  ), (int)(oY - R-r));
+				region.setPoint(1, (int)(oX+b+u), (int)(oY - c  ));
+				region.setPoint(2, (int)(oX + b), (int)(oY - s  ));
+				region.setPoint(3, (int)(oX + b), (int)(oY - R  ));
+				break;
+			case 6:
+				region.setPoint(0, (int)(oX+b-c), (int)(oY + u  ));
+				region.setPoint(1, (int)(oX    ), (int)(oY + r  ));
+				region.setPoint(2, (int)(oX-b  ), (int)(oY      ));
+				region.setPoint(3, (int)(oX+b-s), (int)(oY      ));
+				break;
+			case 7:
+				region.setPoint(0, (int)(oX+b-u), (int)(oY + c  ));
+				region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
+				region.setPoint(2, (int)(oX    ), (int)(oY + r  ));
+				region.setPoint(3, (int)(oX+b-c), (int)(oY + u  ));
+				break;
+			case 8:
+				region.setPoint(0, (int)(oX + b), (int)(oY      ));
+				region.setPoint(1, (int)(oX+a-u), (int)(oY+R+r-c));
+				region.setPoint(2, (int)(oX+a-c), (int)(oY+R+r-u));
+				region.setPoint(3, (int)(oX + b), (int)(oY + R  ));
+				break;
+			case 9:
+				region.setPoint(0, (int)(oX    ), (int)(oY + r  ));
+				region.setPoint(1, (int)(oX    ), (int)(oY+R+r-s));
+				region.setPoint(2, (int)(oX - u), (int)(oY+R+r-c));
+				region.setPoint(3, (int)(oX - b), (int)(oY      ));
+				break;
+			case 10:
+				region.setPoint(0, (int)(oX + b), (int)(oY + s  ));
+				region.setPoint(1, (int)(oX + b), (int)(oY + R  ));
+				region.setPoint(2, (int)(oX    ), (int)(oY+R+r  ));
+				region.setPoint(3, (int)(oX+b-u), (int)(oY + c  ));
+				break;
+			case 11:
+				region.setPoint(0, (int)(oX+a-c), (int)(oY+R+r-u));
+				region.setPoint(1, (int)(oX+a-s), (int)(oY + R+r));
+				region.setPoint(2, (int)(oX    ), (int)(oY + R+r));
+				region.setPoint(3, (int)(oX + b), (int)(oY + R  ));
+				break;
+			}
+			break;
 		case eSimpeMode:
 			switch (direction) {
 			case 0:
@@ -730,150 +1080,6 @@ public class Triangle4 extends BaseCell {
 				break;
 			}
 			break;
-		case eMeanMode:
-			switch (direction) {
-			case 0:
-				region.setPoint(0, (int)(oX    ), (int)(oY-R-r+s));
-				region.setPoint(1, (int)(oX    ), (int)(oY - r  ));
-				region.setPoint(2, (int)(oX-b+c), (int)(oY - u  ));
-				region.setPoint(3, (int)(oX-b+u), (int)(oY - c  ));
-				region.setPoint(4, (int)(oX - u), (int)(oY-R-r+c));
-				break;
-			case 1:
-				region.setPoint(0, (int)(oX + b), (int)(oY - R  ));
-				region.setPoint(1, (int)(oX + b), (int)(oY      ));
-				region.setPoint(2, (int)(oX + u), (int)(oY-R-r+c));
-				region.setPoint(3, (int)(oX + c), (int)(oY-R-r+u));
-				break;
-			case 2:
-				region.setPoint(0, (int)(oX + a), (int)(oY - R-r));
-				region.setPoint(1, (int)(oX + b), (int)(oY - R  ));
-				region.setPoint(2, (int)(oX    ), (int)(oY - R-r));
-				break;
-			case 3:
-				region.setPoint(0, (int)(oX+b-s), (int)(oY      ));
-				region.setPoint(1, (int)(oX-b+s), (int)(oY      ));
-				region.setPoint(2, (int)(oX-b+c), (int)(oY - u  ));
-				region.setPoint(3, (int)(oX    ), (int)(oY - r  ));
-				region.setPoint(4, (int)(oX+b-c), (int)(oY - u  ));
-				break;
-			case 4:
-				region.setPoint(0, (int)(oX + u), (int)(oY-R-r+c));
-				region.setPoint(1, (int)(oX+b-u), (int)(oY - c  ));
-				region.setPoint(2, (int)(oX+b-c), (int)(oY - u  ));
-				region.setPoint(3, (int)(oX    ), (int)(oY - r  ));
-				region.setPoint(4, (int)(oX    ), (int)(oY-R-r+s));
-				break;
-			case 5:
-				region.setPoint(0, (int)(oX+a-u), (int)(oY-R-r+c));
-				region.setPoint(1, (int)(oX + b), (int)(oY      ));
-				region.setPoint(2, (int)(oX + b), (int)(oY - R  ));
-				region.setPoint(3, (int)(oX+a-c), (int)(oY-R-r+u));
-				break;
-			case 6:
-				region.setPoint(0, (int)(oX+b-c), (int)(oY + u  ));
-				region.setPoint(1, (int)(oX    ), (int)(oY + r  ));
-				region.setPoint(2, (int)(oX-b+c), (int)(oY + u  ));
-				region.setPoint(3, (int)(oX-b+s), (int)(oY      ));
-				region.setPoint(4, (int)(oX+b-s), (int)(oY      ));
-				break;
-			case 7:
-				region.setPoint(0, (int)(oX+b-u), (int)(oY + c  ));
-				region.setPoint(1, (int)(oX + u), (int)(oY+R+r-c));
-				region.setPoint(2, (int)(oX    ), (int)(oY+R+r-s));
-				region.setPoint(3, (int)(oX    ), (int)(oY + r  ));
-				region.setPoint(4, (int)(oX+b-c), (int)(oY + u  ));
-				break;
-			case 8:
-				region.setPoint(0, (int)(oX + b), (int)(oY      ));
-				region.setPoint(1, (int)(oX+a-u), (int)(oY+R+r-c));
-				region.setPoint(2, (int)(oX+a-c), (int)(oY+R+r-u));
-				region.setPoint(3, (int)(oX + b), (int)(oY + R  ));
-				break;
-			case 9:
-				region.setPoint(0, (int)(oX    ), (int)(oY + r  ));
-				region.setPoint(1, (int)(oX    ), (int)(oY+R+r-s));
-				region.setPoint(2, (int)(oX - u), (int)(oY+R+r-c));
-				region.setPoint(3, (int)(oX-b+u), (int)(oY + c  ));
-				region.setPoint(4, (int)(oX-b+c), (int)(oY + u  ));
-				break;
-			case 10:
-				region.setPoint(0, (int)(oX + b), (int)(oY      ));
-				region.setPoint(1, (int)(oX + b), (int)(oY + R  ));
-				region.setPoint(2, (int)(oX + c), (int)(oY+R+r-u));
-				region.setPoint(3, (int)(oX + u), (int)(oY+R+r-c));
-				break;
-			case 11:
-				region.setPoint(0, (int)(oX + a), (int)(oY + R+r));
-				region.setPoint(2, (int)(oX + b), (int)(oY + R  ));
-				region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
-				break;
-			}
-			break;
-		case eUnrealMode:
-			switch (direction) {
-			case 0:
-				region.setPoint(1, (int)(oX    ), (int)(oY - r  ));
-				region.setPoint(0, (int)(oX    ), (int)(oY - R-r));
-				region.setPoint(2, (int)(oX - b), (int)(oY      ));
-				break;
-			case 1:
-				region.setPoint(0, (int)(oX + b), (int)(oY - R  ));
-				region.setPoint(1, (int)(oX + b), (int)(oY      ));
-				region.setPoint(2, (int)(oX    ), (int)(oY - R-r));
-				break;
-			case 2:
-				region.setPoint(0, (int)(oX + a), (int)(oY - R-r));
-				region.setPoint(1, (int)(oX + b), (int)(oY - R  ));
-				region.setPoint(2, (int)(oX    ), (int)(oY - R-r));
-				break;
-			case 3:
-				region.setPoint(0, (int)(oX + b), (int)(oY      ));
-				region.setPoint(1, (int)(oX - b), (int)(oY      ));
-				region.setPoint(2, (int)(oX    ), (int)(oY - r  ));
-				break;
-			case 4:
-				region.setPoint(0, (int)(oX    ), (int)(oY - R-r));
-				region.setPoint(1, (int)(oX + b), (int)(oY      ));
-				region.setPoint(2, (int)(oX    ), (int)(oY - r  ));
-				break;
-			case 5:
-				region.setPoint(0, (int)(oX + a), (int)(oY - R-r));
-				region.setPoint(1, (int)(oX + b), (int)(oY      ));
-				region.setPoint(2, (int)(oX + b), (int)(oY - R  ));
-				break;
-			case 6:
-				region.setPoint(0, (int)(oX + b), (int)(oY      ));
-				region.setPoint(1, (int)(oX    ), (int)(oY + r  ));
-				region.setPoint(2, (int)(oX - b), (int)(oY      ));
-				break;
-			case 7:
-				region.setPoint(0, (int)(oX + b), (int)(oY      ));
-				region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
-				region.setPoint(2, (int)(oX    ), (int)(oY + r  ));
-				break;
-			case 8:
-				region.setPoint(0, (int)(oX + b), (int)(oY      ));
-				region.setPoint(1, (int)(oX + a), (int)(oY + R+r));
-				region.setPoint(2, (int)(oX + b), (int)(oY + R  ));
-				break;
-			case 9:
-				region.setPoint(0, (int)(oX    ), (int)(oY + r  ));
-				region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
-				region.setPoint(2, (int)(oX - b), (int)(oY      ));
-				break;
-			case 10:
-				region.setPoint(0, (int)(oX + b), (int)(oY      ));
-				region.setPoint(1, (int)(oX + b), (int)(oY + R  ));
-				region.setPoint(2, (int)(oX    ), (int)(oY + R+r));
-				break;
-			case 11:
-				region.setPoint(0, (int)(oX + a), (int)(oY + R+r));
-				region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
-				region.setPoint(2, (int)(oX + b), (int)(oY + R  ));
-				break;
-			}
-			break;
 		}
 	}
 
@@ -900,31 +1106,48 @@ public class Triangle4 extends BaseCell {
 		case 2: case 6:
 			center.x = region.getPoint(1).x;
 			switch (AttrTriangle4.Mode) {
-			case eUnrealMode: center.y = region.getPoint(                 0    ).y + sq2w; break;
-			case eMeanMode  : center.y = region.getPoint((direction==2) ? 0 : 4).y + sq2w; break;
-			case eSimpeMode : center.y = region.getPoint(                     4).y + sq2w; break;
+			case eUnrealMode : center.y = region.getPoint(                 0    ).y + sq2w; break;
+			case eOptimalMode: center.y = region.getPoint(                   3  ).y + sq2w; break;
+			case eMeanMode   : center.y = region.getPoint((direction==2) ? 0 : 4).y + sq2w; break;
+			case eSimpeMode  : center.y = region.getPoint(                     4).y + sq2w; break;
 			}
 			break;
 		case 3: case 11:
 			switch (AttrTriangle4.Mode) {
-			case eUnrealMode: center.x = region.getPoint(                     2).x; break;
-			case eMeanMode  : center.x = region.getPoint((direction==3) ? 3 : 2).x; break;
-			case eSimpeMode : center.x = region.getPoint(                 3    ).x; break;
+			case eUnrealMode : center.x = region.getPoint(                     2).x; break;
+			case eMeanMode   : center.x = region.getPoint((direction==3) ? 3 : 2).x; break;
+			case eOptimalMode: center.x = region.getPoint(                 3    ).x; break;
+			case eSimpeMode  : center.x = region.getPoint(                 3    ).x; break;
 			}
-			center.y = region.getPoint(0).y - sq2w;
+			center.y = region.getPoint(1).y - sq2w;
 			break;
 		case 4: case 8:
-			center.x = region.getPoint((AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? 3 : 2).x + sq2w;
-			center.y = region.getPoint((AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? 3 : 2).y - sq2w3;
+			switch (AttrTriangle4.Mode) {
+			case eUnrealMode:
+				center.x = region.getPoint(2).x + sq2w;
+				center.y = region.getPoint(2).y - sq2w3;
+				break;
+			case eOptimalMode:
+				center.x = region.getPoint(3).x + sq2w;
+				center.y = region.getPoint((direction==4) ? 2 : 3).y - sq2w3;
+				break;
+			case eMeanMode  :
+			case eSimpeMode :
+				center.x = region.getPoint(3).x + sq2w;
+				center.y = region.getPoint(3).y - sq2w3;
+				break;
+			}
 			break;
 		case 5: case 7:
 			switch (AttrTriangle4.Mode) {
-			case eUnrealMode: center.x = region.getPoint(                 2    ).x + sq2w;
-			                  center.y = region.getPoint(                 2    ).y + sq2w3; break;
-			case eMeanMode  : center.x = region.getPoint((direction==5) ? 2 : 3).x + sq2w;
-			                  center.y = region.getPoint((direction==5) ? 2 : 3).y + sq2w3; break;
-			case eSimpeMode : center.x = region.getPoint(                     3).x + sq2w;
-			                  center.y = region.getPoint(                     3).y + sq2w3; break;
+			case eUnrealMode : center.x = region.getPoint(                 2    ).x + sq2w;
+			                   center.y = region.getPoint(                 2    ).y + sq2w3; break;
+			case eMeanMode   : center.x = region.getPoint((direction==5) ? 2 : 3).x + sq2w;
+			                   center.y = region.getPoint((direction==5) ? 2 : 3).y + sq2w3; break;
+			case eOptimalMode: center.x = region.getPoint((direction!=5) ? 2 : 3).x + sq2w;
+			                   center.y = region.getPoint((direction!=5) ? 2 : 3).y + sq2w3; break;
+			case eSimpeMode  : center.x = region.getPoint(                     3).x + sq2w;
+			                   center.y = region.getPoint(                     3).y + sq2w3; break;
 			}
 			break;
 		}
@@ -951,6 +1174,12 @@ public class Triangle4 extends BaseCell {
 			case 4: case 8: return 3;
 			default: return 2;
 			}
+		case eOptimalMode:
+			switch (direction) {
+			case 1: case 3: case 5: case 7: return 1;
+			case 8: return 3;
+			case 9: case 11: default: return 2;
+			}
 		case eSimpeMode:
 			switch (direction) {
 			case 1: case 2: case 3: case 5: case 7: case 9: case 11: return 2;
@@ -959,6 +1188,13 @@ public class Triangle4 extends BaseCell {
 		}
 		throw new RuntimeException();
 	}
+
+//	@Override
+//	public Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
+//		int zx = getCoord().x / getAttr().GetDirectionSizeField().width +1;
+//		int zy = (getCoord().y+0) / getAttr().GetDirectionSizeField().height +1;
+//		return repositoryColor.get(zx*zy);
+//	}
 
 //	@Override
 //	protected Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {

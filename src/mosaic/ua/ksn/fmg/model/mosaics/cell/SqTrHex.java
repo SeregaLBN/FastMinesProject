@@ -76,7 +76,7 @@ public class SqTrHex extends BaseCell {
 		}
 	
 		@Override
-		public int getNeighborNumber() { return 12; }
+		public int getNeighborNumber(boolean max) { return max ? 12 : 6; }
 		@Override
 		public int getNeighborNumber(int direction) {
 			switch (direction) {
@@ -124,7 +124,7 @@ public class SqTrHex extends BaseCell {
 
 	@Override
 	protected Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
+		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
 
 		// определяю координаты соседей
 		switch (direction) {

@@ -73,7 +73,7 @@ public class PentagonT10 extends BaseCell {
 		}
 	
 		@Override
-		public int getNeighborNumber() { return 7; }
+		public int getNeighborNumber(boolean max) { return max ? 7 : 6; }
 		@Override
 		public int getNeighborNumber(int direction) {
 			switch (direction) {
@@ -139,7 +139,7 @@ public class PentagonT10 extends BaseCell {
 
 	@Override
 	protected Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
+		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
 
 		// определяю координаты соседей
 		switch (direction) {

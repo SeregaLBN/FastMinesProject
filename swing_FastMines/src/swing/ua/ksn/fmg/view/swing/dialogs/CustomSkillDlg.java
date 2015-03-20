@@ -307,7 +307,7 @@ public class CustomSkillDlg extends JDialog {
 			return 21;
 		final int area = 200; // пох
 		BaseCell.BaseAttribute attr = CellFactory.createAttributeInstance(parent.getMosaic().getMosaicType(), area);
-		return attr.getNeighborNumber() + 1; // +thisCell
+		return attr.getNeighborNumber(true) + 1; // +thisCell
 	}
 
 	private void RecalcModelValueXY(boolean isFullScreen, boolean isFullScreenAtCurrArea) {

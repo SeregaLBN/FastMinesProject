@@ -136,7 +136,7 @@ public class PenrousePeriodic1 extends BaseCell {
 		}
 	
 		@Override
-		public int getNeighborNumber() { return 12; }
+		public int getNeighborNumber(boolean max) { return max ? 12 : 7; }
 		@Override
 		public int getNeighborNumber(int direction) {
 	    	switch (direction) {
@@ -228,7 +228,7 @@ public class PenrousePeriodic1 extends BaseCell {
 
 	@Override
 	protected Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
+		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
     	for (int i=0; i<neighborCoord.length; i++)
 			neighborCoord[i] = null;
 
