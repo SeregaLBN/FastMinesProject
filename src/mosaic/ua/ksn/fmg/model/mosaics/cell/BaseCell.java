@@ -26,6 +26,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import ua.ksn.Color;
 import ua.ksn.fmg.event.click.ClickReportContext;
@@ -113,7 +114,10 @@ public abstract class BaseCell implements PropertyChangeListener {
 		public int GetDirectionCount() { Size s = GetDirectionSizeField(); return s.width*s.height; }
 
 		/** кол-во соседей (максимум или минимум) */
-		public abstract int getNeighborNumber(boolean max);
+		public int getNeighborNumber(boolean max) {
+			IntStream str = IntStream.range(0, GetDirectionCount()).map(d -> getNeighborNumber(d));
+			return (max ? str.max() : str.min()).getAsInt();
+		}
 		/** кол-во соседей у ячейки конкретной направленности */
 		public abstract int getNeighborNumber(int direction);
 		/** из скольки точек/вершин состоит фигура конкретной направленности */

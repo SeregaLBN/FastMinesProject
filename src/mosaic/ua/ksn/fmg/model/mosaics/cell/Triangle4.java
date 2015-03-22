@@ -121,7 +121,7 @@ public class Triangle4 extends BaseCell {
 				default: throw new RuntimeException();
 				}
 			} else
-				return getNeighborNumber(true);
+				return getNeighborNumber(true /* || false */); // no matter
 		}
 		@Override
 		public int getVertexNumber(int direction) {
@@ -179,7 +179,7 @@ public class Triangle4 extends BaseCell {
 		protected double CalcROut(int area) { return CalcA(area)/SQRT3; }
 		protected double CalcRIn (int area) { return CalcROut(area)/2; }
 		//private double __snip  = 2.3456789 + new java.util.Random(java.util.UUID.randomUUID().hashCode()).nextInt(15);
-		protected double CalcSnip(int area) { return CalcA(area)/(4.3456789 /*__snip*/); }
+		protected double CalcSnip(int area) { return CalcA(area)/(/*12*/6.789012345 /*__snip*/); }
 		@Override
 		public double CalcSq(int area, int borderWidth) {
 			double w = borderWidth/2.;
