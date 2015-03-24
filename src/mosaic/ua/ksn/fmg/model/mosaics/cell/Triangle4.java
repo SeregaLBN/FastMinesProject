@@ -99,9 +99,9 @@ public class Triangle4 extends BaseCell {
 			case eUnrealMode : return 21;
 			case eMeanMode   : return max ?  7 : 3;
 			case eOptimalMode: return max ?  7 : 6;
-			case eSimpeMode  : return 3 ;
+			case eSimpeMode  : return 3;
+			default: throw new RuntimeException("Unknown Mode==" + Mode);
 			}
-			throw new RuntimeException();
 		}
 		@Override
 		public int getNeighborNumber(int direction) {
@@ -110,18 +110,18 @@ public class Triangle4 extends BaseCell {
 				case 2: case 11:                                 return 7;
 				case 1: case 5: case 8: case 10:                 return 5;
 				case 0: case 3: case 4: case 6 : case 7: case 9: return 3;
-				default: throw new RuntimeException();
+				default: throw new RuntimeException("Unknown direction==" + direction);
 				}
-			} else
+			}
 			if (Mode == ComplexityMode.eOptimalMode) {
 				switch(direction) {
 				case 4: case 5: case 9: case 10:  return 6;
 				case 0: case 1: case 2: case 3:
 				case 6: case 7: case 8: case 11:  return 7;
-				default: throw new RuntimeException();
+				default: throw new RuntimeException("Unknown direction==" + direction);
 				}
-			} else
-				return getNeighborNumber(true /* || false */); // no matter
+			}
+			return getNeighborNumber(true /* || false */); // no matter
 		}
 		@Override
 		public int getVertexNumber(int direction) {
@@ -129,25 +129,15 @@ public class Triangle4 extends BaseCell {
 			case eUnrealMode: return 3;
 			case eMeanMode:
 				switch(direction) {
-				case 0:
-				case 3:
-				case 4:
-				case 6:
-				case 7:
-				case 9: return 5;
-				case 1:
-				case 5:
-				case 8:
-				case 10: return 4;
-				case 2:
-				case 11: return 3;
-				default: throw new RuntimeException();
+				case 0: case 3: case 4: case 6: case 7: case 9: return 5;
+				case 1: case 5: case 8: case 10:                return 4;
+				case 2: case 11:                                return 3;
+				default: throw new RuntimeException("Unknown direction==" + direction);
 				}
-				//break;
 			case eOptimalMode: return 4;
 			case eSimpeMode  : return 5;
+			default: throw new RuntimeException("Unknown Mode==" + Mode);
 			}
-			throw new RuntimeException();
 		}
 		@Override
 		public double getVertexIntersection() {
@@ -168,8 +158,8 @@ public class Triangle4 extends BaseCell {
 			    // 11*(3/30. + 1/12. + 1/18.)
 			    // http://www.google.com/search?q=11*%283/30.+%2B+1/12.+%2B+1/18.%29
 			    //  2.62777777778
+			default: throw new RuntimeException("Unknown Mode==" + Mode);
 			}
-			throw new RuntimeException();
 		}
 		@Override
 		public Size GetDirectionSizeField() { return new Size(3, 4); }
@@ -185,11 +175,6 @@ public class Triangle4 extends BaseCell {
 			double w = borderWidth/2.;
 			return (CalcA(area)-w*2/TAN15)/(SQRT3+3);
 		}
-
-//		@Override
-//		public int getMaxBackgroundFillModeValue() {
-//			return super.getMaxBackgroundFillModeValue()+1;
-//		}
 	}
 
 	public Triangle4(AttrTriangle4 attr, Coord coord) {
@@ -775,8 +760,8 @@ public class Triangle4 extends BaseCell {
 		case eUnrealMode:
 			switch (direction) {
 			case 0:
-				region.setPoint(1, (int)(oX    ), (int)(oY - r  ));
 				region.setPoint(0, (int)(oX    ), (int)(oY - R-r));
+				region.setPoint(1, (int)(oX    ), (int)(oY - r  ));
 				region.setPoint(2, (int)(oX - b), (int)(oY      ));
 				break;
 			case 1:
@@ -1107,8 +1092,8 @@ public class Triangle4 extends BaseCell {
 			center.x = region.getPoint(1).x;
 			switch (AttrTriangle4.Mode) {
 			case eUnrealMode : center.y = region.getPoint(                 0    ).y + sq2w; break;
-			case eOptimalMode: center.y = region.getPoint(                   3  ).y + sq2w; break;
 			case eMeanMode   : center.y = region.getPoint((direction==2) ? 0 : 4).y + sq2w; break;
+			case eOptimalMode: center.y = region.getPoint(                   3  ).y + sq2w; break;
 			case eSimpeMode  : center.y = region.getPoint(                     4).y + sq2w; break;
 			}
 			break;
@@ -1178,36 +1163,14 @@ public class Triangle4 extends BaseCell {
 			switch (direction) {
 			case 1: case 3: case 5: case 7: return 1;
 			case 8: return 3;
-			case 9: case 11: default: return 2;
+			default: return 2;
 			}
 		case eSimpeMode:
 			switch (direction) {
 			case 1: case 2: case 3: case 5: case 7: case 9: case 11: return 2;
 			default: return 3;
 			}
+		default: throw new RuntimeException("Unknown Mode==" + AttrTriangle4.Mode);
 		}
-		throw new RuntimeException();
 	}
-
-//	@Override
-//	public Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
-//		int zx = getCoord().x / getAttr().GetDirectionSizeField().width +1;
-//		int zy = (getCoord().y+0) / getAttr().GetDirectionSizeField().height +1;
-//		return repositoryColor.get(zx*zy);
-//	}
-
-//	@Override
-//	protected Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
-////		if (fillMode == getAttr().getMaxBackgroundFillModeValue())
-//		{
-//			switch ((getCoord().y&3)*3+(getCoord().x%6)) { // почти как вычисление direction...
-//			// подсвечиваю звёзду
-//			case 1: case  3: case  4: case  5:
-//				return repositoryColor.get(0);
-//			case 6: return Color.red;
-//			default:
-//				return repositoryColor.get(1);
-//			}
-//		}
-//	}
 }

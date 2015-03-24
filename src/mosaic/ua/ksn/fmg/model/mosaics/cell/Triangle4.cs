@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      ¬© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Triangle4.java"
 //
-// –Â‡ÎËÁ‡ˆËˇ ÍÎ‡ÒÒ‡ Triangle4 - ÚÂÛ„ÓÎ¸ÌËÍ 30∞-30∞-120∞
+// –†–µ–∞–ª–∏–∑–∞—Ü–∏—è –∫–ª–∞—Å—Å–∞ Triangle4 - —Ç—Ä–µ—É–≥–æ–ª—å–Ω–∏–∫ 30¬∞-30¬∞-120¬∞
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -26,488 +26,1152 @@ using ua.ksn.geom;
  
 namespace ua.ksn.fmg.model.mosaics.cell {
 
-/// <summary> “ÂÛ„ÓÎ¸ÌËÍ. ¬‡Ë‡ÌÚ 4 - ÚÂÛ„ÓÎ¸ÌËÍ 30∞-30∞-120∞ </summary>
+/// <summary> –¢—Ä–µ—É–≥–æ–ª—å–Ω–∏–∫. –í–∞—Ä–∏–∞–Ω—Ç 4 - —Ç—Ä–µ—É–≥–æ–ª—å–Ω–∏–∫ 30¬∞-30¬∞-120¬∞ </summary>
 public class Triangle4 : BaseCell {
-	public class AttrTriangle4 : BaseAttribute {
-		public AttrTriangle4(int area)
-			: base(area)
+   public enum ComplexityMode {
+      /** original */
+      eUnrealMode,
+      eMeanMode,
+      eOptimalMode,
+      eSimpeMode
+   }
+
+   public class AttrTriangle4 : BaseAttribute {
+      public AttrTriangle4(int area)
+         : base(area)
       {}
 
-		public override Size CalcOwnerSize(Size sizeField, int area) {
-			double b = CalcB(area);
-			double r = CalcRIn(area);
-			double R = CalcROut(area);
-			Size result = new Size(
-					(int)( b+b *((sizeField.width+2)/3) +
-					         b *((sizeField.width+0)/3)),
-					(int)((R+r)*((sizeField.height+1)/2)));
+      public static readonly ComplexityMode Mode = ComplexityMode.eOptimalMode; // TODO: check others to view...
 
-			if (sizeField.width == 1)
-				if ((sizeField.height % 4) == 3)
-					result.height -= (int)R;
-			if (sizeField.height == 1)
-				if ((sizeField.width % 3) == 1)
-					result.width -= (int)b;
+      public override Size CalcOwnerSize(Size sizeField, int area) {
+         double b = CalcB(area);
+         double r = CalcRIn(area);
+         double R = CalcROut(area);
+         Size result = new Size(
+               (int)( b+b *((sizeField.width+2)/3) +
+                        b *((sizeField.width+0)/3)),
+               (int)((R+r)*((sizeField.height+1)/2)));
 
-			return result;
-		}
-	
-		public override int getNeighborNumber() { return 21; }
-		public override int getNeighborNumber(int direction) { return 21; }
-		public override int getVertexNumber() { return 3; }
-		public override int getVertexNumber(int direction) { return 3; }
-		public override double getVertexIntersection() { return 9.0; } // (12+12+3)/3.
-		public override Size GetDirectionSizeField() { return new Size(3, 4); }
-		public override double CalcA   (int area) { return Math.Sqrt(area*SQRT48); }
-		public double CalcB   (int area) { return CalcA(area)/2; }
-		public double CalcROut(int area) { return CalcA(area)/SQRT3; }
-		public double CalcRIn (int area) { return CalcROut(area)/2; }
-		public override double CalcSq(int area, int borderWidth) {
-			double w = borderWidth/2.0;
-			return (CalcA(area)-w*2/TAN15)/(SQRT3+3);
-		}
+         switch (Mode) {
+         case ComplexityMode.eUnrealMode:
+         case ComplexityMode.eOptimalMode:
+            // none  ...
+            break;
+         case ComplexityMode.eMeanMode:
+         case ComplexityMode.eSimpeMode: {
+               double u = CalcSnip(area) / 2; // Snip * cos60
+               double c = u * SQRT3; // Snip * cos30
+               switch (sizeField.width % 3) {
+               case 0: result.width -= (int)(u + u); break;
+               case 1: result.width -= (int)(u + c); break;
+               case 2: result.width -= (int)u; break;
+               }
+               if (Mode == ComplexityMode.eMeanMode) {
+                  if ((sizeField.height % 4) == 3)
+                     result.height -= (int)u;
+               } else {
+                  if ((sizeField.height & 1) == 1)
+                     result.height -= (int)u;
+               }
+            }
+            break;
+         }
 
-//		public override int getMaxBackgroundFillModeValue() {
-//			return base.getMaxBackgroundFillModeValue()+1;
-//		}
-	}
+         if (sizeField.width == 1)
+            if ((sizeField.height % 4) == 3)
+               result.height -= (int)R;
+         if (sizeField.height == 1)
+            if ((sizeField.width % 3) == 1)
+               result.width -= (int)b;
 
-	public Triangle4(AttrTriangle4 attr, Coord coord)
-		: base(attr, coord,
-				(coord.y&3)*3+(coord.x%3) // 0..11
-			)
-	{}
+         return result;
+      }
 
-	private AttrTriangle4 Attr {
-		get { return (AttrTriangle4) base.Attr; }
-	}
+      public override int getNeighborNumber(bool max) {
+         switch (Mode) {
+         case ComplexityMode.eUnrealMode : return 21;
+         case ComplexityMode.eMeanMode   : return max ? 7 : 3;
+         case ComplexityMode.eOptimalMode: return max ? 7 : 6;
+         case ComplexityMode.eSimpeMode  : return 3;
+         default: throw new InvalidOperationException("Unknown Mode==" + Mode);
+         }
+      }
+      public override int getNeighborNumber(int direction) {
+         if (Mode == ComplexityMode.eMeanMode) {
+            switch (direction) {
+            case 2: case 11:                                 return 7;
+            case 1: case 5: case 8: case 10:                 return 5;
+            case 0: case 3: case 4: case 6 : case 7: case 9: return 3;
+            default: throw new InvalidOperationException("Unknown direction==" + direction);
+            }
+         }
+         if (Mode == ComplexityMode.eOptimalMode) {
+            switch(direction) {
+            case 4: case 5: case 9: case 10:  return 6;
+            case 0: case 1: case 2: case 3:
+            case 6: case 7: case 8: case 11:  return 7;
+            default: throw new InvalidOperationException("Unknown direction==" + direction);
+            }
+         }
+         return getNeighborNumber(true /* || false */); // no matter
+      }
 
-	protected override Coord?[] GetCoordsNeighbor() {
-		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
+      public override int getVertexNumber(int direction) {
+         switch (Mode) {
+         case ComplexityMode.eUnrealMode: return 3;
+         case ComplexityMode.eMeanMode:
+            switch (direction) {
+            case 0: case 3: case 4: case 6: case 7: case 9: return 5;
+            case 1: case 5: case 8: case 10:                return 4;
+            case 2: case 11:                                return 3;
+            default: throw new InvalidOperationException("Unknown direction==" + direction);
+            }
+         case ComplexityMode.eOptimalMode: return 4;
+         case ComplexityMode.eSimpeMode  : return 5;
+         default: throw new InvalidOperationException("Unknown Mode==" + Mode);
+         }
+      }
 
-		// ÓÔÂ‰ÂÎˇ˛ ÍÓÓ‰ËÌ‡Ú˚ ÒÓÒÂ‰ÂÈ
-		switch (direction) {
-		case 0:
-			neighborCoord[ 0] = new Coord(coord.x-1, coord.y-2);
-			neighborCoord[ 1] = new Coord(coord.x+1, coord.y-2);
-			neighborCoord[ 2] = new Coord(coord.x-1, coord.y-1);
-			neighborCoord[ 3] = new Coord(coord.x  , coord.y-1);
-			neighborCoord[ 4] = new Coord(coord.x+1, coord.y-1);
-			neighborCoord[ 5] = new Coord(coord.x+2, coord.y-1);
-			neighborCoord[ 6] = new Coord(coord.x-2, coord.y  );
-			neighborCoord[ 7] = new Coord(coord.x-1, coord.y  );
-			neighborCoord[ 8] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[ 9] = new Coord(coord.x+2, coord.y  );
-			neighborCoord[10] = new Coord(coord.x-3, coord.y+1);
-			neighborCoord[11] = new Coord(coord.x-2, coord.y+1);
-			neighborCoord[12] = new Coord(coord.x-1, coord.y+1);
-			neighborCoord[13] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[14] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[15] = new Coord(coord.x-3, coord.y+2);
-			neighborCoord[16] = new Coord(coord.x-2, coord.y+2);
-			neighborCoord[17] = new Coord(coord.x-1, coord.y+2);
-			neighborCoord[18] = new Coord(coord.x  , coord.y+2);
-			neighborCoord[19] = new Coord(coord.x-2, coord.y+3);
-			neighborCoord[20] = new Coord(coord.x  , coord.y+3);
-			break;
-		case 1:
-			neighborCoord[ 0] = new Coord(coord.x-2, coord.y-2);
-			neighborCoord[ 1] = new Coord(coord.x  , coord.y-2);
-			neighborCoord[ 2] = new Coord(coord.x-2, coord.y-1);
-			neighborCoord[ 3] = new Coord(coord.x-1, coord.y-1);
-			neighborCoord[ 4] = new Coord(coord.x  , coord.y-1);
-			neighborCoord[ 5] = new Coord(coord.x+1, coord.y-1);
-			neighborCoord[ 6] = new Coord(coord.x-2, coord.y  );
-			neighborCoord[ 7] = new Coord(coord.x-1, coord.y  );
-			neighborCoord[ 8] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[ 9] = new Coord(coord.x+2, coord.y  );
-			neighborCoord[10] = new Coord(coord.x-2, coord.y+1);
-			neighborCoord[11] = new Coord(coord.x-1, coord.y+1);
-			neighborCoord[12] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[13] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[14] = new Coord(coord.x+2, coord.y+1);
-			neighborCoord[15] = new Coord(coord.x-1, coord.y+2);
-			neighborCoord[16] = new Coord(coord.x  , coord.y+2);
-			neighborCoord[17] = new Coord(coord.x+1, coord.y+2);
-			neighborCoord[18] = new Coord(coord.x+2, coord.y+2);
-			neighborCoord[19] = new Coord(coord.x  , coord.y+3);
-			neighborCoord[20] = new Coord(coord.x+2, coord.y+3);
-			break;
-		case 2:
-			neighborCoord[ 0] = new Coord(coord.x-3, coord.y-2);
-			neighborCoord[ 1] = new Coord(coord.x-1, coord.y-2);
-			neighborCoord[ 2] = new Coord(coord.x  , coord.y-2);
-			neighborCoord[ 3] = new Coord(coord.x+2, coord.y-2);
-			neighborCoord[ 4] = new Coord(coord.x-3, coord.y-1);
-			neighborCoord[ 5] = new Coord(coord.x-2, coord.y-1);
-			neighborCoord[ 6] = new Coord(coord.x-1, coord.y-1);
-			neighborCoord[ 7] = new Coord(coord.x  , coord.y-1);
-			neighborCoord[ 8] = new Coord(coord.x+1, coord.y-1);
-			neighborCoord[ 9] = new Coord(coord.x+2, coord.y-1);
-			neighborCoord[10] = new Coord(coord.x+3, coord.y-1);
-			neighborCoord[11] = new Coord(coord.x-3, coord.y  );
-			neighborCoord[12] = new Coord(coord.x-2, coord.y  );
-			neighborCoord[13] = new Coord(coord.x-1, coord.y  );
-			neighborCoord[14] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[15] = new Coord(coord.x+2, coord.y  );
-			neighborCoord[16] = new Coord(coord.x+3, coord.y  );
-			neighborCoord[17] = new Coord(coord.x-3, coord.y+1);
-			neighborCoord[18] = new Coord(coord.x-1, coord.y+1);
-			neighborCoord[19] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[20] = new Coord(coord.x+2, coord.y+1);
-			break;
-		case 3:
-			neighborCoord[ 0] = new Coord(coord.x-2, coord.y-1);
-			neighborCoord[ 1] = new Coord(coord.x  , coord.y-1);
-			neighborCoord[ 2] = new Coord(coord.x+1, coord.y-1);
-			neighborCoord[ 3] = new Coord(coord.x+3, coord.y-1);
-			neighborCoord[ 4] = new Coord(coord.x-3, coord.y  );
-			neighborCoord[ 5] = new Coord(coord.x-2, coord.y  );
-			neighborCoord[ 6] = new Coord(coord.x-1, coord.y  );
-			neighborCoord[ 7] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[ 8] = new Coord(coord.x+2, coord.y  );
-			neighborCoord[ 9] = new Coord(coord.x+3, coord.y  );
-			neighborCoord[10] = new Coord(coord.x-3, coord.y+1);
-			neighborCoord[11] = new Coord(coord.x-2, coord.y+1);
-			neighborCoord[12] = new Coord(coord.x-1, coord.y+1);
-			neighborCoord[13] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[14] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[15] = new Coord(coord.x+2, coord.y+1);
-			neighborCoord[16] = new Coord(coord.x+3, coord.y+1);
-			neighborCoord[17] = new Coord(coord.x-2, coord.y+2);
-			neighborCoord[18] = new Coord(coord.x  , coord.y+2);
-			neighborCoord[19] = new Coord(coord.x+1, coord.y+2);
-			neighborCoord[20] = new Coord(coord.x+3, coord.y+2);
-			break;
-		case 4:
-			neighborCoord[ 0] = new Coord(coord.x-2, coord.y-3);
-			neighborCoord[ 1] = new Coord(coord.x  , coord.y-3);
-			neighborCoord[ 2] = new Coord(coord.x-2, coord.y-2);
-			neighborCoord[ 3] = new Coord(coord.x-1, coord.y-2);
-			neighborCoord[ 4] = new Coord(coord.x  , coord.y-2);
-			neighborCoord[ 5] = new Coord(coord.x+1, coord.y-2);
-			neighborCoord[ 6] = new Coord(coord.x-2, coord.y-1);
-			neighborCoord[ 7] = new Coord(coord.x-1, coord.y-1);
-			neighborCoord[ 8] = new Coord(coord.x  , coord.y-1);
-			neighborCoord[ 9] = new Coord(coord.x+1, coord.y-1);
-			neighborCoord[10] = new Coord(coord.x+2, coord.y-1);
-			neighborCoord[11] = new Coord(coord.x-2, coord.y  );
-			neighborCoord[12] = new Coord(coord.x-1, coord.y  );
-			neighborCoord[13] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[14] = new Coord(coord.x+2, coord.y  );
-			neighborCoord[15] = new Coord(coord.x-1, coord.y+1);
-			neighborCoord[16] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[17] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[18] = new Coord(coord.x+2, coord.y+1);
-			neighborCoord[19] = new Coord(coord.x  , coord.y+2);
-			neighborCoord[20] = new Coord(coord.x+2, coord.y+2);
-			break;
-		case 5:
-			neighborCoord[ 0] = new Coord(coord.x  , coord.y-3);
-			neighborCoord[ 1] = new Coord(coord.x+2, coord.y-3);
-			neighborCoord[ 2] = new Coord(coord.x  , coord.y-2);
-			neighborCoord[ 3] = new Coord(coord.x+1, coord.y-2);
-			neighborCoord[ 4] = new Coord(coord.x+2, coord.y-2);
-			neighborCoord[ 5] = new Coord(coord.x+3, coord.y-2);
-			neighborCoord[ 6] = new Coord(coord.x-1, coord.y-1);
-			neighborCoord[ 7] = new Coord(coord.x  , coord.y-1);
-			neighborCoord[ 8] = new Coord(coord.x+1, coord.y-1);
-			neighborCoord[ 9] = new Coord(coord.x+2, coord.y-1);
-			neighborCoord[10] = new Coord(coord.x+3, coord.y-1);
-			neighborCoord[11] = new Coord(coord.x-2, coord.y  );
-			neighborCoord[12] = new Coord(coord.x-1, coord.y  );
-			neighborCoord[13] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[14] = new Coord(coord.x+2, coord.y  );
-			neighborCoord[15] = new Coord(coord.x-2, coord.y+1);
-			neighborCoord[16] = new Coord(coord.x-1, coord.y+1);
-			neighborCoord[17] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[18] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[19] = new Coord(coord.x-1, coord.y+2);
-			neighborCoord[20] = new Coord(coord.x+1, coord.y+2);
-			break;
-		case 6:
-			neighborCoord[ 0] = new Coord(coord.x-2, coord.y-2);
-			neighborCoord[ 1] = new Coord(coord.x  , coord.y-2);
-			neighborCoord[ 2] = new Coord(coord.x+1, coord.y-2);
-			neighborCoord[ 3] = new Coord(coord.x+3, coord.y-2);
-			neighborCoord[ 4] = new Coord(coord.x-3, coord.y-1);
-			neighborCoord[ 5] = new Coord(coord.x-2, coord.y-1);
-			neighborCoord[ 6] = new Coord(coord.x-1, coord.y-1);
-			neighborCoord[ 7] = new Coord(coord.x  , coord.y-1);
-			neighborCoord[ 8] = new Coord(coord.x+1, coord.y-1);
-			neighborCoord[ 9] = new Coord(coord.x+2, coord.y-1);
-			neighborCoord[10] = new Coord(coord.x+3, coord.y-1);
-			neighborCoord[11] = new Coord(coord.x-3, coord.y  );
-			neighborCoord[12] = new Coord(coord.x-2, coord.y  );
-			neighborCoord[13] = new Coord(coord.x-1, coord.y  );
-			neighborCoord[14] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[15] = new Coord(coord.x+2, coord.y  );
-			neighborCoord[16] = new Coord(coord.x+3, coord.y  );
-			neighborCoord[17] = new Coord(coord.x-2, coord.y+1);
-			neighborCoord[18] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[19] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[20] = new Coord(coord.x+3, coord.y+1);
-			break;
-		case 7:
-			neighborCoord[ 0] = new Coord(coord.x  , coord.y-2);
-			neighborCoord[ 1] = new Coord(coord.x+2, coord.y-2);
-			neighborCoord[ 2] = new Coord(coord.x-1, coord.y-1);
-			neighborCoord[ 3] = new Coord(coord.x  , coord.y-1);
-			neighborCoord[ 4] = new Coord(coord.x+1, coord.y-1);
-			neighborCoord[ 5] = new Coord(coord.x+2, coord.y-1);
-			neighborCoord[ 6] = new Coord(coord.x-2, coord.y  );
-			neighborCoord[ 7] = new Coord(coord.x-1, coord.y  );
-			neighborCoord[ 8] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[ 9] = new Coord(coord.x+2, coord.y  );
-			neighborCoord[10] = new Coord(coord.x-2, coord.y+1);
-			neighborCoord[11] = new Coord(coord.x-1, coord.y+1);
-			neighborCoord[12] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[13] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[14] = new Coord(coord.x+2, coord.y+1);
-			neighborCoord[15] = new Coord(coord.x-2, coord.y+2);
-			neighborCoord[16] = new Coord(coord.x-1, coord.y+2);
-			neighborCoord[17] = new Coord(coord.x  , coord.y+2);
-			neighborCoord[18] = new Coord(coord.x+1, coord.y+2);
-			neighborCoord[19] = new Coord(coord.x-2, coord.y+3);
-			neighborCoord[20] = new Coord(coord.x  , coord.y+3);
-			break;
-		case 8:
-			neighborCoord[ 0] = new Coord(coord.x-1, coord.y-2);
-			neighborCoord[ 1] = new Coord(coord.x+1, coord.y-2);
-			neighborCoord[ 2] = new Coord(coord.x-2, coord.y-1);
-			neighborCoord[ 3] = new Coord(coord.x-1, coord.y-1);
-			neighborCoord[ 4] = new Coord(coord.x  , coord.y-1);
-			neighborCoord[ 5] = new Coord(coord.x+1, coord.y-1);
-			neighborCoord[ 6] = new Coord(coord.x-2, coord.y  );
-			neighborCoord[ 7] = new Coord(coord.x-1, coord.y  );
-			neighborCoord[ 8] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[ 9] = new Coord(coord.x+2, coord.y  );
-			neighborCoord[10] = new Coord(coord.x-1, coord.y+1);
-			neighborCoord[11] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[12] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[13] = new Coord(coord.x+2, coord.y+1);
-			neighborCoord[14] = new Coord(coord.x+3, coord.y+1);
-			neighborCoord[15] = new Coord(coord.x  , coord.y+2);
-			neighborCoord[16] = new Coord(coord.x+1, coord.y+2);
-			neighborCoord[17] = new Coord(coord.x+2, coord.y+2);
-			neighborCoord[18] = new Coord(coord.x+3, coord.y+2);
-			neighborCoord[19] = new Coord(coord.x  , coord.y+3);
-			neighborCoord[20] = new Coord(coord.x+2, coord.y+3);
-			break;
-		case 9:
-			neighborCoord[ 0] = new Coord(coord.x-2, coord.y-3);
-			neighborCoord[ 1] = new Coord(coord.x  , coord.y-3);
-			neighborCoord[ 2] = new Coord(coord.x-3, coord.y-2);
-			neighborCoord[ 3] = new Coord(coord.x-2, coord.y-2);
-			neighborCoord[ 4] = new Coord(coord.x-1, coord.y-2);
-			neighborCoord[ 5] = new Coord(coord.x  , coord.y-2);
-			neighborCoord[ 6] = new Coord(coord.x-3, coord.y-1);
-			neighborCoord[ 7] = new Coord(coord.x-2, coord.y-1);
-			neighborCoord[ 8] = new Coord(coord.x-1, coord.y-1);
-			neighborCoord[ 9] = new Coord(coord.x  , coord.y-1);
-			neighborCoord[10] = new Coord(coord.x+1, coord.y-1);
-			neighborCoord[11] = new Coord(coord.x-2, coord.y  );
-			neighborCoord[12] = new Coord(coord.x-1, coord.y  );
-			neighborCoord[13] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[14] = new Coord(coord.x+2, coord.y  );
-			neighborCoord[15] = new Coord(coord.x-1, coord.y+1);
-			neighborCoord[16] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[17] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[18] = new Coord(coord.x+2, coord.y+1);
-			neighborCoord[19] = new Coord(coord.x-1, coord.y+2);
-			neighborCoord[20] = new Coord(coord.x+1, coord.y+2);
-			break;
-		case 10:
-			neighborCoord[ 0] = new Coord(coord.x  , coord.y-3);
-			neighborCoord[ 1] = new Coord(coord.x+2, coord.y-3);
-			neighborCoord[ 2] = new Coord(coord.x-1, coord.y-2);
-			neighborCoord[ 3] = new Coord(coord.x  , coord.y-2);
-			neighborCoord[ 4] = new Coord(coord.x+1, coord.y-2);
-			neighborCoord[ 5] = new Coord(coord.x+2, coord.y-2);
-			neighborCoord[ 6] = new Coord(coord.x-2, coord.y-1);
-			neighborCoord[ 7] = new Coord(coord.x-1, coord.y-1);
-			neighborCoord[ 8] = new Coord(coord.x  , coord.y-1);
-			neighborCoord[ 9] = new Coord(coord.x+1, coord.y-1);
-			neighborCoord[10] = new Coord(coord.x+2, coord.y-1);
-			neighborCoord[11] = new Coord(coord.x-2, coord.y  );
-			neighborCoord[12] = new Coord(coord.x-1, coord.y  );
-			neighborCoord[13] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[14] = new Coord(coord.x+2, coord.y  );
-			neighborCoord[15] = new Coord(coord.x-2, coord.y+1);
-			neighborCoord[16] = new Coord(coord.x-1, coord.y+1);
-			neighborCoord[17] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[18] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[19] = new Coord(coord.x-2, coord.y+2);
-			neighborCoord[20] = new Coord(coord.x  , coord.y+2);
-			break;
-		case 11:
-			neighborCoord[ 0] = new Coord(coord.x-3, coord.y-1);
-			neighborCoord[ 1] = new Coord(coord.x-1, coord.y-1);
-			neighborCoord[ 2] = new Coord(coord.x  , coord.y-1);
-			neighborCoord[ 3] = new Coord(coord.x+2, coord.y-1);
-			neighborCoord[ 4] = new Coord(coord.x-3, coord.y  );
-			neighborCoord[ 5] = new Coord(coord.x-2, coord.y  );
-			neighborCoord[ 6] = new Coord(coord.x-1, coord.y  );
-			neighborCoord[ 7] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[ 8] = new Coord(coord.x+2, coord.y  );
-			neighborCoord[ 9] = new Coord(coord.x+3, coord.y  );
-			neighborCoord[10] = new Coord(coord.x-3, coord.y+1);
-			neighborCoord[11] = new Coord(coord.x-2, coord.y+1);
-			neighborCoord[12] = new Coord(coord.x-1, coord.y+1);
-			neighborCoord[13] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[14] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[15] = new Coord(coord.x+2, coord.y+1);
-			neighborCoord[16] = new Coord(coord.x+3, coord.y+1);
-			neighborCoord[17] = new Coord(coord.x-3, coord.y+2);
-			neighborCoord[18] = new Coord(coord.x-1, coord.y+2);
-			neighborCoord[19] = new Coord(coord.x  , coord.y+2);
-			neighborCoord[20] = new Coord(coord.x+2, coord.y+2);
-			break;
-		}
+      public override double getVertexIntersection() {
+         switch (Mode) {
+         case ComplexityMode.eUnrealMode : return 9.0; // (12+12+3)/3.
+         case ComplexityMode.eSimpeMode  : return 2.2; // (2+2+2+2+3)/5.
+         case ComplexityMode.eOptimalMode: return 3.25; // (6+3+2+2)/4.
+         case ComplexityMode.eMeanMode   : return 2.62777777778;
+            // ( (2+2+2+2+3)/ getVertexNumber(0 or 3 or 4 or 6 or 7 or 9) * 6—à—Ç  +
+            //   ( 2+2+3+4 )/ getVertexNumber(1 or 5 or 8 or 10) * 4—à—Ç  +
+            //   (  3+4+4  )/ getVertexNumber(2 or 11) * 2—à—Ç ) / 12—à—Ç
+            //
+            // ((2+2+2+2+3)/5.*6 + (2+2+3+4)/4.*4 + (3+4+4)/3.*2 ) / 12
+            // (11/5.*6 + 11/4.*4 + 11/3.*2) / 12
+            // 11*2*(1/5.*3 + 1/4.*2 + 1/3.) / 12
+            // 11*2*(3/5. + 1/2. + 1/3.) / 12
+            // 11*(3/5. + 1/2. + 1/3.) / 6
+            // 11*(3/30. + 1/12. + 1/18.)
+            // http://www.google.com/search?q=11*%283/30.+%2B+1/12.+%2B+1/18.%29
+            //  2.62777777778
+         default: throw new InvalidOperationException("Unknown Mode==" + Mode);
+         }
+      }
 
-		return neighborCoord;
-	}
+      public override Size GetDirectionSizeField() { return new Size(3, 4); }
+      public override double CalcA   (int area) { return Math.Sqrt(area*SQRT48); }
+      public double CalcB   (int area) { return CalcA(area)/2; }
+      public double CalcROut(int area) { return CalcA(area)/SQRT3; }
+      public double CalcRIn (int area) { return CalcROut(area)/2; }
+      //private double __snip  = 2.3456789 + new Random(Guid.NewGuid().GetHashCode()).Next(15);
+      public double CalcSnip(int area) { return CalcA(area) / (/*12*/6.789012345 /*__snip*/); }
+      public override double CalcSq(int area, int borderWidth) {
+         double w = borderWidth/2.0;
+         return (CalcA(area)-w*2/TAN15)/(SQRT3+3);
+      }
+   }
 
-	protected override void CalcRegion() {
-		AttrTriangle4 attr = Attr;
-		int area = attr.Area;
-		double a = attr.CalcA(area);
-		double b = attr.CalcB(area);
-		double R = attr.CalcROut(area);
-		double r = attr.CalcRIn(area);
+   public Triangle4(AttrTriangle4 attr, Coord coord)
+      : base(attr, coord,
+            (coord.y&3)*3+(coord.x%3) // 0..11
+         )
+   {}
 
-		// ÓÔÂ‰ÂÎÂÌËÂ ÍÓÓ‰ËÌ‡Ú ÚÓ˜ÂÍ ÙË„Û˚
-		double oX =  (coord.x/3)*a + b;      // offset X
-		double oY = ((coord.y/4)*2+1)*(R+r); // offset Y
+   private AttrTriangle4 Attr {
+      get { return (AttrTriangle4) base.Attr; }
+   }
 
-		switch (direction) {
-		case 0:
-			region.setPoint(2, (int)(oX - b), (int)(oY      ));
-			region.setPoint(1, (int)(oX    ), (int)(oY - r  ));
-			region.setPoint(0, (int)(oX    ), (int)(oY - R-r));
-			break;
-		case 1:
-			region.setPoint(0, (int)(oX + b), (int)(oY - R  ));
-			region.setPoint(2, (int)(oX    ), (int)(oY - R-r));
-			region.setPoint(1, (int)(oX + b), (int)(oY      ));
-			break;
-		case 2:
-			region.setPoint(2, (int)(oX    ), (int)(oY - R-r));
-			region.setPoint(1, (int)(oX + b), (int)(oY - R  ));
-			region.setPoint(0, (int)(oX + a), (int)(oY - R-r));
-			break;
-		case 3:
-			region.setPoint(0, (int)(oX + b), (int)(oY      ));
-			region.setPoint(2, (int)(oX    ), (int)(oY - r  ));
-			region.setPoint(1, (int)(oX - b), (int)(oY      ));
-			break;
-		case 4:
-			region.setPoint(2, (int)(oX    ), (int)(oY - r  ));
-			region.setPoint(1, (int)(oX + b), (int)(oY      ));
-			region.setPoint(0, (int)(oX    ), (int)(oY - R-r));
-			break;
-		case 5:
-			region.setPoint(0, (int)(oX + a), (int)(oY - R-r));
-			region.setPoint(2, (int)(oX + b), (int)(oY - R  ));
-			region.setPoint(1, (int)(oX + b), (int)(oY      ));
-			break;
-		case 6:
-			region.setPoint(2, (int)(oX - b), (int)(oY      ));
-			region.setPoint(1, (int)(oX    ), (int)(oY + r  ));
-			region.setPoint(0, (int)(oX + b), (int)(oY      ));
-			break;
-		case 7:
-			region.setPoint(0, (int)(oX + b), (int)(oY      ));
-			region.setPoint(2, (int)(oX    ), (int)(oY + r  ));
-			region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
-			break;
-		case 8:
-			region.setPoint(2, (int)(oX + b), (int)(oY + R  ));
-			region.setPoint(1, (int)(oX + a), (int)(oY + R+r));
-			region.setPoint(0, (int)(oX + b), (int)(oY      ));
-			break;
-		case 9:
-			region.setPoint(0, (int)(oX    ), (int)(oY + r  ));
-			region.setPoint(2, (int)(oX - b), (int)(oY      ));
-			region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
-			break;
-		case 10:
-			region.setPoint(2, (int)(oX    ), (int)(oY + R+r));
-			region.setPoint(1, (int)(oX + b), (int)(oY + R  ));
-			region.setPoint(0, (int)(oX + b), (int)(oY      ));
-			break;
-		case 11:
-			region.setPoint(0, (int)(oX + a), (int)(oY + R+r));
-			region.setPoint(2, (int)(oX + b), (int)(oY + R  ));
-			region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
-			break;
-		}
-	}
+   protected override Coord?[] GetCoordsNeighbor() {
+      var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
-	public override Rect getRcInner(int borderWidth) {
-		AttrTriangle4 attr = Attr;
-		int area = attr.Area;
-		double w = borderWidth/2.0;
-		double sq    = attr.CalcSq(area, borderWidth);
-		double sq2   = sq/2;
-		double sq2w  = sq2+w;
-		double sq2w3 = sq2+w/SQRT3;
+      // –æ–ø—Ä–µ–¥–µ–ª—è—é –∫–æ–æ—Ä–¥–∏–Ω–∞—Ç—ã —Å–æ—Å–µ–¥–µ–π
+      switch (AttrTriangle4.Mode) {
+      case ComplexityMode.eUnrealMode:
+         #region
+         switch (direction) {
+         case 0:
+            neighborCoord[ 0] = new Coord(coord.x-1, coord.y-2);
+            neighborCoord[ 1] = new Coord(coord.x+1, coord.y-2);
+            neighborCoord[ 2] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[ 3] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[ 4] = new Coord(coord.x+1, coord.y-1);
+            neighborCoord[ 5] = new Coord(coord.x+2, coord.y-1);
+            neighborCoord[ 6] = new Coord(coord.x-2, coord.y  );
+            neighborCoord[ 7] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[ 8] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[ 9] = new Coord(coord.x+2, coord.y  );
+            neighborCoord[10] = new Coord(coord.x-3, coord.y+1);
+            neighborCoord[11] = new Coord(coord.x-2, coord.y+1);
+            neighborCoord[12] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[13] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[14] = new Coord(coord.x+1, coord.y+1);
+            neighborCoord[15] = new Coord(coord.x-3, coord.y+2);
+            neighborCoord[16] = new Coord(coord.x-2, coord.y+2);
+            neighborCoord[17] = new Coord(coord.x-1, coord.y+2);
+            neighborCoord[18] = new Coord(coord.x  , coord.y+2);
+            neighborCoord[19] = new Coord(coord.x-2, coord.y+3);
+            neighborCoord[20] = new Coord(coord.x  , coord.y+3);
+            break;
+         case 1:
+            neighborCoord[ 0] = new Coord(coord.x-2, coord.y-2);
+            neighborCoord[ 1] = new Coord(coord.x  , coord.y-2);
+            neighborCoord[ 2] = new Coord(coord.x-2, coord.y-1);
+            neighborCoord[ 3] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[ 4] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[ 5] = new Coord(coord.x+1, coord.y-1);
+            neighborCoord[ 6] = new Coord(coord.x-2, coord.y  );
+            neighborCoord[ 7] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[ 8] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[ 9] = new Coord(coord.x+2, coord.y  );
+            neighborCoord[10] = new Coord(coord.x-2, coord.y+1);
+            neighborCoord[11] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[12] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[13] = new Coord(coord.x+1, coord.y+1);
+            neighborCoord[14] = new Coord(coord.x+2, coord.y+1);
+            neighborCoord[15] = new Coord(coord.x-1, coord.y+2);
+            neighborCoord[16] = new Coord(coord.x  , coord.y+2);
+            neighborCoord[17] = new Coord(coord.x+1, coord.y+2);
+            neighborCoord[18] = new Coord(coord.x+2, coord.y+2);
+            neighborCoord[19] = new Coord(coord.x  , coord.y+3);
+            neighborCoord[20] = new Coord(coord.x+2, coord.y+3);
+            break;
+         case 2:
+            neighborCoord[ 0] = new Coord(coord.x-3, coord.y-2);
+            neighborCoord[ 1] = new Coord(coord.x-1, coord.y-2);
+            neighborCoord[ 2] = new Coord(coord.x  , coord.y-2);
+            neighborCoord[ 3] = new Coord(coord.x+2, coord.y-2);
+            neighborCoord[ 4] = new Coord(coord.x-3, coord.y-1);
+            neighborCoord[ 5] = new Coord(coord.x-2, coord.y-1);
+            neighborCoord[ 6] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[ 7] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[ 8] = new Coord(coord.x+1, coord.y-1);
+            neighborCoord[ 9] = new Coord(coord.x+2, coord.y-1);
+            neighborCoord[10] = new Coord(coord.x+3, coord.y-1);
+            neighborCoord[11] = new Coord(coord.x-3, coord.y  );
+            neighborCoord[12] = new Coord(coord.x-2, coord.y  );
+            neighborCoord[13] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[14] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[15] = new Coord(coord.x+2, coord.y  );
+            neighborCoord[16] = new Coord(coord.x+3, coord.y  );
+            neighborCoord[17] = new Coord(coord.x-3, coord.y+1);
+            neighborCoord[18] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[19] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[20] = new Coord(coord.x+2, coord.y+1);
+            break;
+         case 3:
+            neighborCoord[ 0] = new Coord(coord.x-2, coord.y-1);
+            neighborCoord[ 1] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[ 2] = new Coord(coord.x+1, coord.y-1);
+            neighborCoord[ 3] = new Coord(coord.x+3, coord.y-1);
+            neighborCoord[ 4] = new Coord(coord.x-3, coord.y  );
+            neighborCoord[ 5] = new Coord(coord.x-2, coord.y  );
+            neighborCoord[ 6] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[ 7] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[ 8] = new Coord(coord.x+2, coord.y  );
+            neighborCoord[ 9] = new Coord(coord.x+3, coord.y  );
+            neighborCoord[10] = new Coord(coord.x-3, coord.y+1);
+            neighborCoord[11] = new Coord(coord.x-2, coord.y+1);
+            neighborCoord[12] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[13] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[14] = new Coord(coord.x+1, coord.y+1);
+            neighborCoord[15] = new Coord(coord.x+2, coord.y+1);
+            neighborCoord[16] = new Coord(coord.x+3, coord.y+1);
+            neighborCoord[17] = new Coord(coord.x-2, coord.y+2);
+            neighborCoord[18] = new Coord(coord.x  , coord.y+2);
+            neighborCoord[19] = new Coord(coord.x+1, coord.y+2);
+            neighborCoord[20] = new Coord(coord.x+3, coord.y+2);
+            break;
+         case 4:
+            neighborCoord[ 0] = new Coord(coord.x-2, coord.y-3);
+            neighborCoord[ 1] = new Coord(coord.x  , coord.y-3);
+            neighborCoord[ 2] = new Coord(coord.x-2, coord.y-2);
+            neighborCoord[ 3] = new Coord(coord.x-1, coord.y-2);
+            neighborCoord[ 4] = new Coord(coord.x  , coord.y-2);
+            neighborCoord[ 5] = new Coord(coord.x+1, coord.y-2);
+            neighborCoord[ 6] = new Coord(coord.x-2, coord.y-1);
+            neighborCoord[ 7] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[ 8] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[ 9] = new Coord(coord.x+1, coord.y-1);
+            neighborCoord[10] = new Coord(coord.x+2, coord.y-1);
+            neighborCoord[11] = new Coord(coord.x-2, coord.y  );
+            neighborCoord[12] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[13] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[14] = new Coord(coord.x+2, coord.y  );
+            neighborCoord[15] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[16] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[17] = new Coord(coord.x+1, coord.y+1);
+            neighborCoord[18] = new Coord(coord.x+2, coord.y+1);
+            neighborCoord[19] = new Coord(coord.x  , coord.y+2);
+            neighborCoord[20] = new Coord(coord.x+2, coord.y+2);
+            break;
+         case 5:
+            neighborCoord[ 0] = new Coord(coord.x  , coord.y-3);
+            neighborCoord[ 1] = new Coord(coord.x+2, coord.y-3);
+            neighborCoord[ 2] = new Coord(coord.x  , coord.y-2);
+            neighborCoord[ 3] = new Coord(coord.x+1, coord.y-2);
+            neighborCoord[ 4] = new Coord(coord.x+2, coord.y-2);
+            neighborCoord[ 5] = new Coord(coord.x+3, coord.y-2);
+            neighborCoord[ 6] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[ 7] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[ 8] = new Coord(coord.x+1, coord.y-1);
+            neighborCoord[ 9] = new Coord(coord.x+2, coord.y-1);
+            neighborCoord[10] = new Coord(coord.x+3, coord.y-1);
+            neighborCoord[11] = new Coord(coord.x-2, coord.y  );
+            neighborCoord[12] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[13] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[14] = new Coord(coord.x+2, coord.y  );
+            neighborCoord[15] = new Coord(coord.x-2, coord.y+1);
+            neighborCoord[16] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[17] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[18] = new Coord(coord.x+1, coord.y+1);
+            neighborCoord[19] = new Coord(coord.x-1, coord.y+2);
+            neighborCoord[20] = new Coord(coord.x+1, coord.y+2);
+            break;
+         case 6:
+            neighborCoord[ 0] = new Coord(coord.x-2, coord.y-2);
+            neighborCoord[ 1] = new Coord(coord.x  , coord.y-2);
+            neighborCoord[ 2] = new Coord(coord.x+1, coord.y-2);
+            neighborCoord[ 3] = new Coord(coord.x+3, coord.y-2);
+            neighborCoord[ 4] = new Coord(coord.x-3, coord.y-1);
+            neighborCoord[ 5] = new Coord(coord.x-2, coord.y-1);
+            neighborCoord[ 6] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[ 7] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[ 8] = new Coord(coord.x+1, coord.y-1);
+            neighborCoord[ 9] = new Coord(coord.x+2, coord.y-1);
+            neighborCoord[10] = new Coord(coord.x+3, coord.y-1);
+            neighborCoord[11] = new Coord(coord.x-3, coord.y  );
+            neighborCoord[12] = new Coord(coord.x-2, coord.y  );
+            neighborCoord[13] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[14] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[15] = new Coord(coord.x+2, coord.y  );
+            neighborCoord[16] = new Coord(coord.x+3, coord.y  );
+            neighborCoord[17] = new Coord(coord.x-2, coord.y+1);
+            neighborCoord[18] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[19] = new Coord(coord.x+1, coord.y+1);
+            neighborCoord[20] = new Coord(coord.x+3, coord.y+1);
+            break;
+         case 7:
+            neighborCoord[ 0] = new Coord(coord.x  , coord.y-2);
+            neighborCoord[ 1] = new Coord(coord.x+2, coord.y-2);
+            neighborCoord[ 2] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[ 3] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[ 4] = new Coord(coord.x+1, coord.y-1);
+            neighborCoord[ 5] = new Coord(coord.x+2, coord.y-1);
+            neighborCoord[ 6] = new Coord(coord.x-2, coord.y  );
+            neighborCoord[ 7] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[ 8] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[ 9] = new Coord(coord.x+2, coord.y  );
+            neighborCoord[10] = new Coord(coord.x-2, coord.y+1);
+            neighborCoord[11] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[12] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[13] = new Coord(coord.x+1, coord.y+1);
+            neighborCoord[14] = new Coord(coord.x+2, coord.y+1);
+            neighborCoord[15] = new Coord(coord.x-2, coord.y+2);
+            neighborCoord[16] = new Coord(coord.x-1, coord.y+2);
+            neighborCoord[17] = new Coord(coord.x  , coord.y+2);
+            neighborCoord[18] = new Coord(coord.x+1, coord.y+2);
+            neighborCoord[19] = new Coord(coord.x-2, coord.y+3);
+            neighborCoord[20] = new Coord(coord.x  , coord.y+3);
+            break;
+         case 8:
+            neighborCoord[ 0] = new Coord(coord.x-1, coord.y-2);
+            neighborCoord[ 1] = new Coord(coord.x+1, coord.y-2);
+            neighborCoord[ 2] = new Coord(coord.x-2, coord.y-1);
+            neighborCoord[ 3] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[ 4] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[ 5] = new Coord(coord.x+1, coord.y-1);
+            neighborCoord[ 6] = new Coord(coord.x-2, coord.y  );
+            neighborCoord[ 7] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[ 8] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[ 9] = new Coord(coord.x+2, coord.y  );
+            neighborCoord[10] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[11] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[12] = new Coord(coord.x+1, coord.y+1);
+            neighborCoord[13] = new Coord(coord.x+2, coord.y+1);
+            neighborCoord[14] = new Coord(coord.x+3, coord.y+1);
+            neighborCoord[15] = new Coord(coord.x  , coord.y+2);
+            neighborCoord[16] = new Coord(coord.x+1, coord.y+2);
+            neighborCoord[17] = new Coord(coord.x+2, coord.y+2);
+            neighborCoord[18] = new Coord(coord.x+3, coord.y+2);
+            neighborCoord[19] = new Coord(coord.x  , coord.y+3);
+            neighborCoord[20] = new Coord(coord.x+2, coord.y+3);
+            break;
+         case 9:
+            neighborCoord[ 0] = new Coord(coord.x-2, coord.y-3);
+            neighborCoord[ 1] = new Coord(coord.x  , coord.y-3);
+            neighborCoord[ 2] = new Coord(coord.x-3, coord.y-2);
+            neighborCoord[ 3] = new Coord(coord.x-2, coord.y-2);
+            neighborCoord[ 4] = new Coord(coord.x-1, coord.y-2);
+            neighborCoord[ 5] = new Coord(coord.x  , coord.y-2);
+            neighborCoord[ 6] = new Coord(coord.x-3, coord.y-1);
+            neighborCoord[ 7] = new Coord(coord.x-2, coord.y-1);
+            neighborCoord[ 8] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[ 9] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[10] = new Coord(coord.x+1, coord.y-1);
+            neighborCoord[11] = new Coord(coord.x-2, coord.y  );
+            neighborCoord[12] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[13] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[14] = new Coord(coord.x+2, coord.y  );
+            neighborCoord[15] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[16] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[17] = new Coord(coord.x+1, coord.y+1);
+            neighborCoord[18] = new Coord(coord.x+2, coord.y+1);
+            neighborCoord[19] = new Coord(coord.x-1, coord.y+2);
+            neighborCoord[20] = new Coord(coord.x+1, coord.y+2);
+            break;
+         case 10:
+            neighborCoord[ 0] = new Coord(coord.x  , coord.y-3);
+            neighborCoord[ 1] = new Coord(coord.x+2, coord.y-3);
+            neighborCoord[ 2] = new Coord(coord.x-1, coord.y-2);
+            neighborCoord[ 3] = new Coord(coord.x  , coord.y-2);
+            neighborCoord[ 4] = new Coord(coord.x+1, coord.y-2);
+            neighborCoord[ 5] = new Coord(coord.x+2, coord.y-2);
+            neighborCoord[ 6] = new Coord(coord.x-2, coord.y-1);
+            neighborCoord[ 7] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[ 8] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[ 9] = new Coord(coord.x+1, coord.y-1);
+            neighborCoord[10] = new Coord(coord.x+2, coord.y-1);
+            neighborCoord[11] = new Coord(coord.x-2, coord.y  );
+            neighborCoord[12] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[13] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[14] = new Coord(coord.x+2, coord.y  );
+            neighborCoord[15] = new Coord(coord.x-2, coord.y+1);
+            neighborCoord[16] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[17] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[18] = new Coord(coord.x+1, coord.y+1);
+            neighborCoord[19] = new Coord(coord.x-2, coord.y+2);
+            neighborCoord[20] = new Coord(coord.x  , coord.y+2);
+            break;
+         case 11:
+            neighborCoord[ 0] = new Coord(coord.x-3, coord.y-1);
+            neighborCoord[ 1] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[ 2] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[ 3] = new Coord(coord.x+2, coord.y-1);
+            neighborCoord[ 4] = new Coord(coord.x-3, coord.y  );
+            neighborCoord[ 5] = new Coord(coord.x-2, coord.y  );
+            neighborCoord[ 6] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[ 7] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[ 8] = new Coord(coord.x+2, coord.y  );
+            neighborCoord[ 9] = new Coord(coord.x+3, coord.y  );
+            neighborCoord[10] = new Coord(coord.x-3, coord.y+1);
+            neighborCoord[11] = new Coord(coord.x-2, coord.y+1);
+            neighborCoord[12] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[13] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[14] = new Coord(coord.x+1, coord.y+1);
+            neighborCoord[15] = new Coord(coord.x+2, coord.y+1);
+            neighborCoord[16] = new Coord(coord.x+3, coord.y+1);
+            neighborCoord[17] = new Coord(coord.x-3, coord.y+2);
+            neighborCoord[18] = new Coord(coord.x-1, coord.y+2);
+            neighborCoord[19] = new Coord(coord.x  , coord.y+2);
+            neighborCoord[20] = new Coord(coord.x+2, coord.y+2);
+            break;
+         }
+         #endregion
+         break;
+      case ComplexityMode.eMeanMode:
+         #region
+         switch (direction) {
+         case 0:
+            neighborCoord[0] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[1] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[2] = new Coord(coord.x+1, coord.y+1);
+            break;
+         case 1:
+            neighborCoord[0] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[1] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[2] = new Coord(coord.x+1, coord.y+1);
+            neighborCoord[3] = new Coord(coord.x+1, coord.y+2);
+            neighborCoord[4] = new Coord(coord.x  , coord.y+3);
+            break;
+         case 2:
+            neighborCoord[0] = new Coord(coord.x-3, coord.y-1);
+            neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[2] = new Coord(coord.x+3, coord.y-1);
+            neighborCoord[3] = new Coord(coord.x-3, coord.y  );
+            neighborCoord[4] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[5] = new Coord(coord.x+3, coord.y  );
+            neighborCoord[6] = new Coord(coord.x  , coord.y+1);
+            break;
+         case 3:
+            neighborCoord[0] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[1] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[2] = new Coord(coord.x  , coord.y+1);
+            break;
+         case 4:
+            neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[2] = new Coord(coord.x-1, coord.y  );
+            break;
+         case 5:
+            neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
+            neighborCoord[3] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[4] = new Coord(coord.x-1, coord.y+2);
+            break;
+         case 6:
+            neighborCoord[0] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[1] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[2] = new Coord(coord.x  , coord.y+1);
+            break;
+         case 7:
+            neighborCoord[0] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[1] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[2] = new Coord(coord.x  , coord.y+1);
+            break;
+         case 8:
+            neighborCoord[0] = new Coord(coord.x-1, coord.y-2);
+            neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[2] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[3] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[4] = new Coord(coord.x+1, coord.y+1);
+            break;
+         case 9:
+            neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
+            break;
+         case 10:
+            neighborCoord[0] = new Coord(coord.x  , coord.y-3);
+            neighborCoord[1] = new Coord(coord.x+1, coord.y-2);
+            neighborCoord[2] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[3] = new Coord(coord.x+1, coord.y-1);
+            neighborCoord[4] = new Coord(coord.x+1, coord.y  );
+            break;
+         case 11:
+            neighborCoord[0] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[1] = new Coord(coord.x-3, coord.y  );
+            neighborCoord[2] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[3] = new Coord(coord.x+3, coord.y  );
+            neighborCoord[4] = new Coord(coord.x-3, coord.y+1);
+            neighborCoord[5] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[6] = new Coord(coord.x+3, coord.y+1);
+            break;
+         }
+         #endregion
+         break;
+      case ComplexityMode.eOptimalMode:
+         #region
+         switch (direction) {
+         case 0:
+               neighborCoord[0] = new Coord(coord.x+1, coord.y-2);
+               neighborCoord[1] = new Coord(coord.x+1, coord.y-1);
+               neighborCoord[2] = new Coord(coord.x+2, coord.y-1);
+               neighborCoord[3] = new Coord(coord.x-1, coord.y  );
+               neighborCoord[4] = new Coord(coord.x-1, coord.y+1);
+               neighborCoord[5] = new Coord(coord.x  , coord.y+1);
+               neighborCoord[6] = new Coord(coord.x+1, coord.y+1);
+               break;
+         case 1:
+               neighborCoord[0] = new Coord(coord.x+1, coord.y  );
+               neighborCoord[1] = new Coord(coord.x-1, coord.y+1);
+               neighborCoord[2] = new Coord(coord.x  , coord.y+1);
+               neighborCoord[3] = new Coord(coord.x+1, coord.y+1);
+               neighborCoord[4] = new Coord(coord.x+1, coord.y+2);
+               neighborCoord[5] = new Coord(coord.x+2, coord.y+2);
+               neighborCoord[6] = new Coord(coord.x+2, coord.y+3);
+               break;
+         case 2:
+               neighborCoord[0] = new Coord(coord.x+2, coord.y-2);
+               neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+               neighborCoord[2] = new Coord(coord.x+2, coord.y-1);
+               neighborCoord[3] = new Coord(coord.x+3, coord.y-1);
+               neighborCoord[4] = new Coord(coord.x-1, coord.y  );
+               neighborCoord[5] = new Coord(coord.x+1, coord.y  );
+               neighborCoord[6] = new Coord(coord.x  , coord.y+1);
+               break;
+         case 3:
+               neighborCoord[0] = new Coord(coord.x  , coord.y-1);
+               neighborCoord[1] = new Coord(coord.x+1, coord.y-1);
+               neighborCoord[2] = new Coord(coord.x+1, coord.y  );
+               neighborCoord[3] = new Coord(coord.x  , coord.y+1);
+               neighborCoord[4] = new Coord(coord.x+2, coord.y+1);
+               neighborCoord[5] = new Coord(coord.x+3, coord.y+1);
+               neighborCoord[6] = new Coord(coord.x+3, coord.y+2);
+               break;
+         case 4:
+               neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
+               neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+               neighborCoord[2] = new Coord(coord.x-1, coord.y  );
+               neighborCoord[3] = new Coord(coord.x+1, coord.y+1);
+               neighborCoord[4] = new Coord(coord.x+2, coord.y+1);
+               neighborCoord[5] = new Coord(coord.x+2, coord.y+2);
+               break;
+         case 5:
+               neighborCoord[0] = new Coord(coord.x+2, coord.y-3);
+               neighborCoord[1] = new Coord(coord.x+2, coord.y-2);
+               neighborCoord[2] = new Coord(coord.x+3, coord.y-2);
+               neighborCoord[3] = new Coord(coord.x-1, coord.y-1);
+               neighborCoord[4] = new Coord(coord.x  , coord.y-1);
+               neighborCoord[5] = new Coord(coord.x+1, coord.y-1);
+               break;
+         case 6:
+               neighborCoord[0] = new Coord(coord.x-2, coord.y-2);
+               neighborCoord[1] = new Coord(coord.x-3, coord.y-1);
+               neighborCoord[2] = new Coord(coord.x-2, coord.y-1);
+               neighborCoord[3] = new Coord(coord.x  , coord.y-1);
+               neighborCoord[4] = new Coord(coord.x-1, coord.y  );
+               neighborCoord[5] = new Coord(coord.x+1, coord.y  );
+               neighborCoord[6] = new Coord(coord.x  , coord.y+1);
+               break;
+         case 7:
+               neighborCoord[0] = new Coord(coord.x-1, coord.y  );
+               neighborCoord[1] = new Coord(coord.x-1, coord.y+1);
+               neighborCoord[2] = new Coord(coord.x  , coord.y+1);
+               neighborCoord[3] = new Coord(coord.x+1, coord.y+1);
+               neighborCoord[4] = new Coord(coord.x-2, coord.y+2);
+               neighborCoord[5] = new Coord(coord.x-1, coord.y+2);
+               neighborCoord[6] = new Coord(coord.x-2, coord.y+3);
+               break;
+         case 8:
+               neighborCoord[0] = new Coord(coord.x-1, coord.y-2);
+               neighborCoord[1] = new Coord(coord.x-2, coord.y-1);
+               neighborCoord[2] = new Coord(coord.x-1, coord.y-1);
+               neighborCoord[3] = new Coord(coord.x+1, coord.y  );
+               neighborCoord[4] = new Coord(coord.x-1, coord.y+1);
+               neighborCoord[5] = new Coord(coord.x  , coord.y+1);
+               neighborCoord[6] = new Coord(coord.x+1, coord.y+1);
+               break;
+         case 9:
+               neighborCoord[0] = new Coord(coord.x-2, coord.y-3);
+               neighborCoord[1] = new Coord(coord.x-3, coord.y-2);
+               neighborCoord[2] = new Coord(coord.x-2, coord.y-2);
+               neighborCoord[3] = new Coord(coord.x-1, coord.y-1);
+               neighborCoord[4] = new Coord(coord.x  , coord.y-1);
+               neighborCoord[5] = new Coord(coord.x+1, coord.y-1);
+               break;
+         case 10:
+               neighborCoord[0] = new Coord(coord.x  , coord.y-1);
+               neighborCoord[1] = new Coord(coord.x+1, coord.y-1);
+               neighborCoord[2] = new Coord(coord.x+1, coord.y  );
+               neighborCoord[3] = new Coord(coord.x-2, coord.y+1);
+               neighborCoord[4] = new Coord(coord.x-1, coord.y+1);
+               neighborCoord[5] = new Coord(coord.x-2, coord.y+2);
+               break;
+         case 11:
+               neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
+               neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+               neighborCoord[2] = new Coord(coord.x-1, coord.y  );
+               neighborCoord[3] = new Coord(coord.x-3, coord.y+1);
+               neighborCoord[4] = new Coord(coord.x-2, coord.y+1);
+               neighborCoord[5] = new Coord(coord.x  , coord.y+1);
+               neighborCoord[6] = new Coord(coord.x-3, coord.y+2);
+               break;
+         }
+         #endregion
+         break;
+      case ComplexityMode.eSimpeMode:
+         #region
+         switch (direction) {
+         case 0:
+            neighborCoord[0] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[1] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[2] = new Coord(coord.x+1, coord.y+1);
+            break;
+         case 1:
+            neighborCoord[0] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[1] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[2] = new Coord(coord.x+1, coord.y+1);
+            break;
+         case 2:
+            neighborCoord[0] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[1] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[2] = new Coord(coord.x  , coord.y+1);
+            break;
+         case 3:
+            neighborCoord[0] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[1] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[2] = new Coord(coord.x  , coord.y+1);
+            break;
+         case 4:
+            neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[2] = new Coord(coord.x-1, coord.y  );
+            break;
+         case 5:
+            neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
+            break;
+         case 6:
+            neighborCoord[0] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[1] = new Coord(coord.x+1, coord.y  );
+            neighborCoord[2] = new Coord(coord.x  , coord.y+1);
+            break;
+         case 7:
+            neighborCoord[0] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[1] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[2] = new Coord(coord.x  , coord.y+1);
+            break;
+         case 8:
+            neighborCoord[0] = new Coord(coord.x-1, coord.y+1);
+            neighborCoord[1] = new Coord(coord.x  , coord.y+1);
+            neighborCoord[2] = new Coord(coord.x+1, coord.y+1);
+            break;
+         case 9:
+            neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
+            neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
+            break;
+         case 10:
+            neighborCoord[0] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[1] = new Coord(coord.x+1, coord.y-1);
+            neighborCoord[2] = new Coord(coord.x+1, coord.y  );
+            break;
+         case 11:
+            neighborCoord[0] = new Coord(coord.x  , coord.y-1);
+            neighborCoord[1] = new Coord(coord.x-1, coord.y  );
+            neighborCoord[2] = new Coord(coord.x  , coord.y+1);
+            break;
+         }
+         #endregion
+         break;
+      }
+      return neighborCoord;
+   }
 
-		PointDouble center = new PointDouble(); // ÍÓÓ‰ËÌ‡Ú‡ ˆÂÌÚ‡ Í‚‡‰‡Ú‡
-		switch (direction) {
-		case 0: case 10:
-			center.x = region.getPoint(1).x - sq2w;
-			center.y = region.getPoint(1).y - sq2w3;
-			break;
-		case 1: case 9:
-			center.x = region.getPoint(0).x - sq2w;
-			center.y = region.getPoint(0).y + sq2w3;
-			break;
-		case 2: case 6:
-			center.x = region.getPoint(1).x;
-			center.y = region.getPoint(0).y + sq2w;
-			break;
-		case 3: case 11:
-			center.x = region.getPoint(2).x;
-			center.y = region.getPoint(0).y - sq2w;
-			break;
-		case 4: case 8:
-			center.x = region.getPoint(2).x + sq2w;
-			center.y = region.getPoint(2).y - sq2w3;
-			break;
-		case 5: case 7:
-			center.x = region.getPoint(2).x + sq2w;
-			center.y = region.getPoint(2).y + sq2w3;
-			break;
-		}
+   protected override void CalcRegion() {
+      AttrTriangle4 attr = Attr;
+      int area = attr.Area;
+      double a = attr.CalcA(area);
+      double b = attr.CalcB(area);
+      double R = attr.CalcROut(area);
+      double r = attr.CalcRIn(area);
+      double s = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? attr.CalcSnip(area) : 0;
+      double c = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2*SQRT3 : 0; // s * cos30
+      double u = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2 : 0; // s * cos60
 
-		Rect square = new Rect();
-		square.x = (int) (center.x - sq2);
-		square.y = (int) (center.y - sq2);
-		square.width =
-		square.height = (int) sq;
-		return square;
-	}
+      // –æ–ø—Ä–µ–¥–µ–ª–µ–Ω–∏–µ –∫–æ–æ—Ä–¥–∏–Ω–∞—Ç —Ç–æ—á–µ–∫ —Ñ–∏–≥—É—Ä—ã
+      double oX =  (coord.x/3)*a + b;      // offset X
+      double oY = ((coord.y/4)*2+1)*(R+r); // offset Y
+      switch (AttrTriangle4.Mode) {
+      case ComplexityMode.eUnrealMode:
+      case ComplexityMode.eOptimalMode:
+         break;
+      case ComplexityMode.eMeanMode:
+      case ComplexityMode.eSimpeMode:
+         oX -= u;
+         break;
+      }
 
-	public override int getShiftPointBorderIndex() {
-		switch (direction) {
-		case 1: case 3: case 5: case 7: case 9: case 11: return 1;
-		}
-		return 2;
-	}
+      switch (AttrTriangle4.Mode) {
+      case ComplexityMode.eUnrealMode:
+         #region
+         switch (direction) {
+         case 0:
+            region.setPoint(0, (int)(oX    ), (int)(oY - R-r));
+            region.setPoint(1, (int)(oX    ), (int)(oY - r  ));
+            region.setPoint(2, (int)(oX - b), (int)(oY      ));
+            break;
+         case 1:
+            region.setPoint(0, (int)(oX + b), (int)(oY - R  ));
+            region.setPoint(1, (int)(oX + b), (int)(oY      ));
+            region.setPoint(2, (int)(oX    ), (int)(oY - R-r));
+            break;
+         case 2:
+            region.setPoint(0, (int)(oX + a), (int)(oY - R-r));
+            region.setPoint(1, (int)(oX + b), (int)(oY - R  ));
+            region.setPoint(2, (int)(oX    ), (int)(oY - R-r));
+            break;
+         case 3:
+            region.setPoint(0, (int)(oX + b), (int)(oY      ));
+            region.setPoint(1, (int)(oX - b), (int)(oY      ));
+            region.setPoint(2, (int)(oX    ), (int)(oY - r  ));
+            break;
+         case 4:
+            region.setPoint(0, (int)(oX    ), (int)(oY - R-r));
+            region.setPoint(1, (int)(oX + b), (int)(oY      ));
+            region.setPoint(2, (int)(oX    ), (int)(oY - r  ));
+            break;
+         case 5:
+            region.setPoint(0, (int)(oX + a), (int)(oY - R-r));
+            region.setPoint(1, (int)(oX + b), (int)(oY      ));
+            region.setPoint(2, (int)(oX + b), (int)(oY - R  ));
+            break;
+         case 6:
+            region.setPoint(0, (int)(oX + b), (int)(oY      ));
+            region.setPoint(1, (int)(oX    ), (int)(oY + r  ));
+            region.setPoint(2, (int)(oX - b), (int)(oY      ));
+            break;
+         case 7:
+            region.setPoint(0, (int)(oX + b), (int)(oY      ));
+            region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
+            region.setPoint(2, (int)(oX    ), (int)(oY + r  ));
+            break;
+         case 8:
+            region.setPoint(0, (int)(oX + b), (int)(oY      ));
+            region.setPoint(1, (int)(oX + a), (int)(oY + R+r));
+            region.setPoint(2, (int)(oX + b), (int)(oY + R  ));
+            break;
+         case 9:
+            region.setPoint(0, (int)(oX    ), (int)(oY + r  ));
+            region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
+            region.setPoint(2, (int)(oX - b), (int)(oY      ));
+            break;
+         case 10:
+            region.setPoint(0, (int)(oX + b), (int)(oY      ));
+            region.setPoint(1, (int)(oX + b), (int)(oY + R  ));
+            region.setPoint(2, (int)(oX    ), (int)(oY + R+r));
+            break;
+         case 11:
+            region.setPoint(0, (int)(oX + a), (int)(oY + R+r));
+            region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
+            region.setPoint(2, (int)(oX + b), (int)(oY + R  ));
+            break;
+         }
+         #endregion
+         break;
+      case ComplexityMode.eMeanMode:
+         #region
+         switch (direction) {
+         case 0:
+            region.setPoint(0, (int)(oX    ), (int)(oY-R-r+s));
+            region.setPoint(1, (int)(oX    ), (int)(oY - r  ));
+            region.setPoint(2, (int)(oX-b+c), (int)(oY - u  ));
+            region.setPoint(3, (int)(oX-b+u), (int)(oY - c  ));
+            region.setPoint(4, (int)(oX - u), (int)(oY-R-r+c));
+            break;
+         case 1:
+            region.setPoint(0, (int)(oX + b), (int)(oY - R  ));
+            region.setPoint(1, (int)(oX + b), (int)(oY      ));
+            region.setPoint(2, (int)(oX + u), (int)(oY-R-r+c));
+            region.setPoint(3, (int)(oX + c), (int)(oY-R-r+u));
+            break;
+         case 2:
+            region.setPoint(0, (int)(oX + a), (int)(oY - R-r));
+            region.setPoint(1, (int)(oX + b), (int)(oY - R  ));
+            region.setPoint(2, (int)(oX    ), (int)(oY - R-r));
+            break;
+         case 3:
+            region.setPoint(0, (int)(oX+b-s), (int)(oY      ));
+            region.setPoint(1, (int)(oX-b+s), (int)(oY      ));
+            region.setPoint(2, (int)(oX-b+c), (int)(oY - u  ));
+            region.setPoint(3, (int)(oX    ), (int)(oY - r  ));
+            region.setPoint(4, (int)(oX+b-c), (int)(oY - u  ));
+            break;
+         case 4:
+            region.setPoint(0, (int)(oX + u), (int)(oY-R-r+c));
+            region.setPoint(1, (int)(oX+b-u), (int)(oY - c  ));
+            region.setPoint(2, (int)(oX+b-c), (int)(oY - u  ));
+            region.setPoint(3, (int)(oX    ), (int)(oY - r  ));
+            region.setPoint(4, (int)(oX    ), (int)(oY-R-r+s));
+            break;
+         case 5:
+            region.setPoint(0, (int)(oX+a-u), (int)(oY-R-r+c));
+            region.setPoint(1, (int)(oX + b), (int)(oY      ));
+            region.setPoint(2, (int)(oX + b), (int)(oY - R  ));
+            region.setPoint(3, (int)(oX+a-c), (int)(oY-R-r+u));
+            break;
+         case 6:
+            region.setPoint(0, (int)(oX+b-c), (int)(oY + u  ));
+            region.setPoint(1, (int)(oX    ), (int)(oY + r  ));
+            region.setPoint(2, (int)(oX-b+c), (int)(oY + u  ));
+            region.setPoint(3, (int)(oX-b+s), (int)(oY      ));
+            region.setPoint(4, (int)(oX+b-s), (int)(oY      ));
+            break;
+         case 7:
+            region.setPoint(0, (int)(oX+b-u), (int)(oY + c  ));
+            region.setPoint(1, (int)(oX + u), (int)(oY+R+r-c));
+            region.setPoint(2, (int)(oX    ), (int)(oY+R+r-s));
+            region.setPoint(3, (int)(oX    ), (int)(oY + r  ));
+            region.setPoint(4, (int)(oX+b-c), (int)(oY + u  ));
+            break;
+         case 8:
+            region.setPoint(0, (int)(oX + b), (int)(oY      ));
+            region.setPoint(1, (int)(oX+a-u), (int)(oY+R+r-c));
+            region.setPoint(2, (int)(oX+a-c), (int)(oY+R+r-u));
+            region.setPoint(3, (int)(oX + b), (int)(oY + R  ));
+            break;
+         case 9:
+            region.setPoint(0, (int)(oX    ), (int)(oY + r  ));
+            region.setPoint(1, (int)(oX    ), (int)(oY+R+r-s));
+            region.setPoint(2, (int)(oX - u), (int)(oY+R+r-c));
+            region.setPoint(3, (int)(oX-b+u), (int)(oY + c  ));
+            region.setPoint(4, (int)(oX-b+c), (int)(oY + u  ));
+            break;
+         case 10:
+            region.setPoint(0, (int)(oX + b), (int)(oY      ));
+            region.setPoint(1, (int)(oX + b), (int)(oY + R  ));
+            region.setPoint(2, (int)(oX + c), (int)(oY+R+r-u));
+            region.setPoint(3, (int)(oX + u), (int)(oY+R+r-c));
+            break;
+         case 11:
+            region.setPoint(0, (int)(oX + a), (int)(oY + R+r));
+            region.setPoint(2, (int)(oX + b), (int)(oY + R  ));
+            region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
+            break;
+         }
+         #endregion
+         break;
+      case ComplexityMode.eOptimalMode:
+         #region
+         switch (direction) {
+         case 0:
+            region.setPoint(0, (int)(oX    ), (int)(oY - R-r));
+            region.setPoint(1, (int)(oX    ), (int)(oY - r  ));
+            region.setPoint(2, (int)(oX-b+c), (int)(oY - u  ));
+            region.setPoint(3, (int)(oX-b+u), (int)(oY - c  ));
+            break;
+         case 1:
+            region.setPoint(0, (int)(oX + b), (int)(oY - R  ));
+            region.setPoint(1, (int)(oX + b), (int)(oY      ));
+            region.setPoint(2, (int)(oX + u), (int)(oY-R-r+c));
+            region.setPoint(3, (int)(oX + c), (int)(oY-R-r+u));
+            break;
+         case 2:
+            region.setPoint(0, (int)(oX + a), (int)(oY -R -r));
+            region.setPoint(1, (int)(oX + b), (int)(oY - R  ));
+            region.setPoint(2, (int)(oX + c), (int)(oY-R-r+u));
+            region.setPoint(3, (int)(oX + s), (int)(oY -R -r));
+            break;
+         case 3:
+            region.setPoint(0, (int)(oX+b  ), (int)(oY      ));
+            region.setPoint(1, (int)(oX-b+s), (int)(oY      ));
+            region.setPoint(2, (int)(oX-b+c), (int)(oY - u  ));
+            region.setPoint(3, (int)(oX    ), (int)(oY - r  ));
+            break;
+         case 4:
+            region.setPoint(0, (int)(oX + u), (int)(oY-R-r+c));
+            region.setPoint(1, (int)(oX + b), (int)(oY      ));
+            region.setPoint(2, (int)(oX    ), (int)(oY - r  ));
+            region.setPoint(3, (int)(oX    ), (int)(oY-R-r+s));
+            break;
+         case 5:
+            region.setPoint(0, (int)(oX+a  ), (int)(oY - R-r));
+            region.setPoint(1, (int)(oX+b+u), (int)(oY - c  ));
+            region.setPoint(2, (int)(oX + b), (int)(oY - s  ));
+            region.setPoint(3, (int)(oX + b), (int)(oY - R  ));
+            break;
+         case 6:
+            region.setPoint(0, (int)(oX+b-c), (int)(oY + u  ));
+            region.setPoint(1, (int)(oX    ), (int)(oY + r  ));
+            region.setPoint(2, (int)(oX-b  ), (int)(oY      ));
+            region.setPoint(3, (int)(oX+b-s), (int)(oY      ));
+            break;
+         case 7:
+            region.setPoint(0, (int)(oX+b-u), (int)(oY + c  ));
+            region.setPoint(1, (int)(oX    ), (int)(oY + R+r));
+            region.setPoint(2, (int)(oX    ), (int)(oY + r  ));
+            region.setPoint(3, (int)(oX+b-c), (int)(oY + u  ));
+            break;
+         case 8:
+            region.setPoint(0, (int)(oX + b), (int)(oY      ));
+            region.setPoint(1, (int)(oX+a-u), (int)(oY+R+r-c));
+            region.setPoint(2, (int)(oX+a-c), (int)(oY+R+r-u));
+            region.setPoint(3, (int)(oX + b), (int)(oY + R  ));
+            break;
+         case 9:
+            region.setPoint(0, (int)(oX    ), (int)(oY + r  ));
+            region.setPoint(1, (int)(oX    ), (int)(oY+R+r-s));
+            region.setPoint(2, (int)(oX - u), (int)(oY+R+r-c));
+            region.setPoint(3, (int)(oX - b), (int)(oY      ));
+            break;
+         case 10:
+            region.setPoint(0, (int)(oX + b), (int)(oY + s  ));
+            region.setPoint(1, (int)(oX + b), (int)(oY + R  ));
+            region.setPoint(2, (int)(oX    ), (int)(oY+R+r  ));
+            region.setPoint(3, (int)(oX+b-u), (int)(oY + c  ));
+            break;
+         case 11:
+            region.setPoint(0, (int)(oX+a-c), (int)(oY+R+r-u));
+            region.setPoint(1, (int)(oX+a-s), (int)(oY + R+r));
+            region.setPoint(2, (int)(oX    ), (int)(oY + R+r));
+            region.setPoint(3, (int)(oX + b), (int)(oY + R  ));
+            break;
+         }
+         #endregion
+         break;
+      case ComplexityMode.eSimpeMode:
+         #region
+         switch (direction) {
+         case 0:
+            region.setPoint(0, (int)(oX    ), (int)(oY-R-r+s));
+            region.setPoint(1, (int)(oX    ), (int)(oY - r  ));
+            region.setPoint(2, (int)(oX-b+c), (int)(oY - u  ));
+            region.setPoint(3, (int)(oX-b+u), (int)(oY - c  ));
+            region.setPoint(4, (int)(oX - u), (int)(oY-R-r+c));
+            break;
+         case 1:
+            region.setPoint(0, (int)(oX + b), (int)(oY - R  ));
+            region.setPoint(1, (int)(oX + b), (int)(oY - s  ));
+            region.setPoint(2, (int)(oX+b-u), (int)(oY - c  ));
+            region.setPoint(3, (int)(oX + u), (int)(oY-R-r+c));
+            region.setPoint(4, (int)(oX + c), (int)(oY-R-r+u));
+            break;
+         case 2:
+            region.setPoint(0, (int)(oX+a-c), (int)(oY-R-r+u));
+            region.setPoint(1, (int)(oX + b), (int)(oY - R  ));
+            region.setPoint(2, (int)(oX + c), (int)(oY-R-r+u));
+            region.setPoint(3, (int)(oX + s), (int)(oY -R -r));
+            region.setPoint(4, (int)(oX+a-s), (int)(oY -R -r));
+            break;
+         case 3:
+            region.setPoint(0, (int)(oX+b-s), (int)(oY      ));
+            region.setPoint(1, (int)(oX-b+s), (int)(oY      ));
+            region.setPoint(2, (int)(oX-b+c), (int)(oY - u  ));
+            region.setPoint(3, (int)(oX    ), (int)(oY - r  ));
+            region.setPoint(4, (int)(oX+b-c), (int)(oY - u  ));
+            break;
+         case 4:
+            region.setPoint(0, (int)(oX + u), (int)(oY-R-r+c));
+            region.setPoint(1, (int)(oX+b-u), (int)(oY - c  ));
+            region.setPoint(2, (int)(oX+b-c), (int)(oY - u  ));
+            region.setPoint(3, (int)(oX    ), (int)(oY - r  ));
+            region.setPoint(4, (int)(oX    ), (int)(oY-R-r+s));
+            break;
+         case 5:
+            region.setPoint(0, (int)(oX+a-u), (int)(oY-R-r+c));
+            region.setPoint(1, (int)(oX+b+u), (int)(oY - c  ));
+            region.setPoint(2, (int)(oX + b), (int)(oY - s  ));
+            region.setPoint(3, (int)(oX + b), (int)(oY - R  ));
+            region.setPoint(4, (int)(oX+a-c), (int)(oY-R-r+u));
+            break;
+         case 6:
+            region.setPoint(0, (int)(oX+b-c), (int)(oY + u  ));
+            region.setPoint(1, (int)(oX    ), (int)(oY + r  ));
+            region.setPoint(2, (int)(oX-b+c), (int)(oY + u  ));
+            region.setPoint(3, (int)(oX-b+s), (int)(oY      ));
+            region.setPoint(4, (int)(oX+b-s), (int)(oY      ));
+            break;
+         case 7:
+            region.setPoint(0, (int)(oX+b-u), (int)(oY + c  ));
+            region.setPoint(1, (int)(oX + u), (int)(oY+R+r-c));
+            region.setPoint(2, (int)(oX    ), (int)(oY+R+r-s));
+            region.setPoint(3, (int)(oX    ), (int)(oY + r  ));
+            region.setPoint(4, (int)(oX+b-c), (int)(oY + u  ));
+            break;
+         case 8:
+            region.setPoint(0, (int)(oX+b+u), (int)(oY + c  ));
+            region.setPoint(1, (int)(oX+a-u), (int)(oY+R+r-c));
+            region.setPoint(2, (int)(oX+a-c), (int)(oY+R+r-u));
+            region.setPoint(3, (int)(oX + b), (int)(oY + R  ));
+            region.setPoint(4, (int)(oX + b), (int)(oY + s  ));
+            break;
+         case 9:
+            region.setPoint(0, (int)(oX    ), (int)(oY + r  ));
+            region.setPoint(1, (int)(oX    ), (int)(oY+R+r-s));
+            region.setPoint(2, (int)(oX - u), (int)(oY+R+r-c));
+            region.setPoint(3, (int)(oX-b+u), (int)(oY + c  ));
+            region.setPoint(4, (int)(oX-b+c), (int)(oY + u  ));
+            break;
+         case 10:
+            region.setPoint(0, (int)(oX + b), (int)(oY + s  ));
+            region.setPoint(1, (int)(oX + b), (int)(oY + R  ));
+            region.setPoint(2, (int)(oX + c), (int)(oY+R+r-u));
+            region.setPoint(3, (int)(oX + u), (int)(oY+R+r-c));
+            region.setPoint(4, (int)(oX+b-u), (int)(oY + c  ));
+            break;
+         case 11:
+            region.setPoint(0, (int)(oX+a-s), (int)(oY + R+r));
+            region.setPoint(1, (int)(oX + s), (int)(oY + R+r));
+            region.setPoint(2, (int)(oX + c), (int)(oY+R+r-u));
+            region.setPoint(3, (int)(oX + b), (int)(oY + R  ));
+            region.setPoint(4, (int)(oX+a-c), (int)(oY+R+r-u));
+            break;
+         }
+         #endregion
+         break;
+      }
+   }
 
-//	protected override Color getBackgroundFillColor(int fillMode, Color defaultColor, Dictionary<int, Color> repositoryColor) {
-////		if (fillMode == Attr.getMaxBackgroundFillModeValue())
-//		{
-//			switch ((getCoord().y&3)*3+(getCoord().x%6)) { // ÔÓ˜ÚË Í‡Í ‚˚˜ËÒÎÂÌËÂ direction...
-//			// ÔÓ‰Ò‚Â˜Ë‚‡˛ Á‚∏Á‰Û
-//			case 1: case  3: case  4: case  5:
-//				return repositoryColor[0];
-//			case 6: return Color.red;
-//			default:
-//				return repositoryColor[1];
-//			}
-//		}
-//	}
+   public override Rect getRcInner(int borderWidth) {
+      AttrTriangle4 attr = Attr;
+      int area = attr.Area;
+      double w = borderWidth/2.0;
+      double sq    = attr.CalcSq(area, borderWidth);
+      double sq2   = sq/2;
+      double sq2w  = sq2+w;
+      double sq2w3 = sq2+w/SQRT3;
+
+      PointDouble center = new PointDouble(); // –∫–æ–æ—Ä–¥–∏–Ω–∞—Ç–∞ —Ü–µ–Ω—Ç—Ä–∞ –∫–≤–∞–¥—Ä–∞—Ç–∞
+      switch (direction) {
+      case 0: case 10:
+         center.x = region.getPoint(1).x - sq2w;
+         center.y = region.getPoint(1).y - sq2w3;
+         break;
+      case 1: case 9:
+         center.x = region.getPoint(0).x - sq2w;
+         center.y = region.getPoint(0).y + sq2w3;
+         break;
+      case 2: case 6:
+         center.x = region.getPoint(1).x;
+         switch (AttrTriangle4.Mode) {
+         case ComplexityMode.eUnrealMode : center.y = region.getPoint(                 0    ).y + sq2w; break;
+         case ComplexityMode.eMeanMode   : center.y = region.getPoint((direction==2) ? 0 : 4).y + sq2w; break;
+         case ComplexityMode.eOptimalMode: center.y = region.getPoint(                   3  ).y + sq2w; break;
+         case ComplexityMode.eSimpeMode  : center.y = region.getPoint(                     4).y + sq2w; break;
+         }
+         break;
+      case 3: case 11:
+         switch (AttrTriangle4.Mode) {
+         case ComplexityMode.eUnrealMode : center.x = region.getPoint(                     2).x; break;
+         case ComplexityMode.eMeanMode   : center.x = region.getPoint((direction==3) ? 3 : 2).x; break;
+         case ComplexityMode.eOptimalMode: center.x = region.getPoint(                 3    ).x; break;
+         case ComplexityMode.eSimpeMode  : center.x = region.getPoint(                 3    ).x; break;
+         }
+         center.y = region.getPoint(1).y - sq2w;
+         break;
+      case 4: case 8:
+         switch (AttrTriangle4.Mode) {
+         case ComplexityMode.eUnrealMode:
+            center.x = region.getPoint(2).x + sq2w;
+            center.y = region.getPoint(2).y - sq2w3;
+            break;
+         case ComplexityMode.eOptimalMode:
+            center.x = region.getPoint(3).x + sq2w;
+            center.y = region.getPoint((direction==4) ? 2 : 3).y - sq2w3;
+            break;
+         case ComplexityMode.eMeanMode  :
+         case ComplexityMode.eSimpeMode :
+            center.x = region.getPoint(3).x + sq2w;
+            center.y = region.getPoint(3).y - sq2w3;
+            break;
+         }
+         break;
+      case 5: case 7:
+         switch (AttrTriangle4.Mode) {
+         case ComplexityMode.eUnrealMode : center.x = region.getPoint(                 2    ).x + sq2w;
+                                           center.y = region.getPoint(                 2    ).y + sq2w3; break;
+         case ComplexityMode.eMeanMode   : center.x = region.getPoint((direction==5) ? 2 : 3).x + sq2w;
+                                           center.y = region.getPoint((direction==5) ? 2 : 3).y + sq2w3; break;
+         case ComplexityMode.eOptimalMode: center.x = region.getPoint((direction!=5) ? 2 : 3).x + sq2w;
+                                           center.y = region.getPoint((direction!=5) ? 2 : 3).y + sq2w3; break;
+         case ComplexityMode.eSimpeMode  : center.x = region.getPoint(                     3).x + sq2w;
+                                           center.y = region.getPoint(                     3).y + sq2w3; break;
+         }
+         break;
+      }
+
+      Rect square = new Rect();
+      square.x = (int) (center.x - sq2);
+      square.y = (int) (center.y - sq2);
+      square.width =
+      square.height = (int) sq;
+      return square;
+   }
+
+   public override int getShiftPointBorderIndex() {
+      switch (AttrTriangle4.Mode) {
+      case ComplexityMode.eUnrealMode:
+         switch (direction) {
+         case 1: case 3: case 5: case 7: case 9: case 11: return 1;
+         default: return 2;
+         }
+      case ComplexityMode.eMeanMode:
+         switch (direction) {
+         case 1: case 3: case 5: case 7: case 9: case 11: return 1;
+         case 4: case 8: return 3;
+         default: return 2;
+         }
+      case ComplexityMode.eOptimalMode:
+         switch (direction) {
+         case 1: case 3: case 5: case 7: return 1;
+         case 8: return 3;
+         default: return 2;
+         }
+      case ComplexityMode.eSimpeMode:
+         switch (direction) {
+         case 1: case 2: case 3: case 5: case 7: case 9: case 11: return 2;
+         default: return 3;
+         }
+      default: throw new InvalidOperationException("Unknown Mode==" + AttrTriangle4.Mode);
+      }
+   }
 }
 }

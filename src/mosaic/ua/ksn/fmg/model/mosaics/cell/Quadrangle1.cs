@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Quadrangle1.java"
 //
-// Реализация класса Quadrangle1 - четырёхугольник 120°-90°-60°-90°
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° Quadrangle1 - С‡РµС‚С‹СЂС‘С…СѓРіРѕР»СЊРЅРёРє 120В°-90В°-60В°-90В°
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ using ua.ksn.geom;
  
 namespace ua.ksn.fmg.model.mosaics.cell {
 
-/// <summary> Quadrangle1 - четырёхугольник 120°-90°-60°-90° </summary>
+/// <summary> Quadrangle1 - С‡РµС‚С‹СЂС‘С…СѓРіРѕР»СЊРЅРёРє 120В°-90В°-60В°-90В° </summary>
 public class Quadrangle1 : BaseCell {
 	public class AttrQuadrangle1 : BaseAttribute {
 		public AttrQuadrangle1(int area)
@@ -60,10 +60,9 @@ public class Quadrangle1 : BaseCell {
 
 			return result;
 		}
-	
-		public override int getNeighborNumber() { return 9; }
+
+      public override int getNeighborNumber(bool max) { return 9; }
 		public override int getNeighborNumber(int direction) { return 9; }
-		public override int getVertexNumber() { return 4; }
 		public override int getVertexNumber(int direction) { return 4; }
 		public override double getVertexIntersection() { return 4.25; } // (3+4+4+6)/4.
 		public override Size GetDirectionSizeField() { return new Size(3, 4); }
@@ -92,9 +91,9 @@ public class Quadrangle1 : BaseCell {
 	}
 
 	protected override Coord?[] GetCoordsNeighbor() {
-		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
+      var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	switch (direction) {
     	case 0:
     		neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
@@ -242,7 +241,7 @@ public class Quadrangle1 : BaseCell {
 		double n = attr.CalcN(area);
 		double m = attr.CalcM(area);
 
-		// определение координат точек фигуры
+		// РѕРїСЂРµРґРµР»РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ С‚РѕС‡РµРє С„РёРіСѓСЂС‹
 		double oX = (h*2)*(coord.x/3) + h+m; // offset X
 		double oY = (a*3)*(coord.y/4) + a+n; // offset Y
 
@@ -340,7 +339,7 @@ public class Quadrangle1 : BaseCell {
 		double oX = (h*2)*(coord.x/3) + h+m; // offset X
 		double oY = (a*3)*(coord.y/4) + a+n; // offset Y
 
-		PointDouble center = new PointDouble(); // координата центра квадрата
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° С†РµРЅС‚СЂР° РєРІР°РґСЂР°С‚Р°
 		switch (direction) {
 		case 0:  center.x = oX - h-m+zx; center.y = oY - n-b+zy; break;
 		case 1:  center.x = oX - m;      center.y = oY - n-a+z ; break;

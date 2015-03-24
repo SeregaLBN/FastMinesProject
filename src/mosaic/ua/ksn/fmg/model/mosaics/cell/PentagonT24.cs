@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "PentagonT24.java"
 //
-// Реализация класса PentagonT24 - равносторонний 5-ти угольник, тип №2 и №4
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° PentagonT24 - СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№ 5-С‚Рё СѓРіРѕР»СЊРЅРёРє, С‚РёРї в„–2 Рё в„–4
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ using ua.ksn.geom;
  
 namespace ua.ksn.fmg.model.mosaics.cell {
 
-/// <summary> Пятиугольник. Тип №2 и №4 - равносторонний </summary>
+/// <summary> РџСЏС‚РёСѓРіРѕР»СЊРЅРёРє. РўРёРї в„–2 Рё в„–4 - СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№ </summary>
 public class PentagonT24 : BaseCell {
 	public class AttrPentagonT24 : BaseAttribute {
 		public AttrPentagonT24(int area)
@@ -45,10 +45,9 @@ public class PentagonT24 : BaseCell {
 
 				return result;
 		}
-	
-		public override int getNeighborNumber() { return 7; }
+
+      public override int getNeighborNumber(bool max) { return 7; }
 		public override int getNeighborNumber(int direction) { return 7; }
-		public override int getVertexNumber() { return 5; }
 		public override int getVertexNumber(int direction) { return 5; }
 		public override double getVertexIntersection() { return 3.4; } // (3+3+3+4+4)/5.
 		public override Size GetDirectionSizeField() { return new Size(2, 2); }
@@ -72,9 +71,9 @@ public class PentagonT24 : BaseCell {
 	}
 
 	protected override Coord?[] GetCoordsNeighbor() {
-		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
+      var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
 		switch (direction) {
 		case 0:
 			neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
@@ -124,7 +123,7 @@ public class PentagonT24 : BaseCell {
 		double b = attr.CalcB(area);
 		double c = attr.CalcC(area);
 
-		// определение координат точек фигуры
+		// РѕРїСЂРµРґРµР»РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ С‚РѕС‡РµРє С„РёРіСѓСЂС‹
 		double oX = a*((coord.x>>1)<<1); // offset X
 		double oY = a*((coord.y>>1)<<1); // offset Y
 		switch (direction) {

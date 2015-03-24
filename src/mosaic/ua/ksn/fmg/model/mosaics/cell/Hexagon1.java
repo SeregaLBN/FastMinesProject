@@ -88,7 +88,7 @@ public class Hexagon1 extends BaseCell {
 		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
 
 		// определяю координаты соседей
-    	neighborCoord[0] = new Coord(coord.x-(direction^1), coord.y-1);
+		neighborCoord[0] = new Coord(coord.x-(direction^1), coord.y-1);
 		neighborCoord[1] = new Coord(coord.x+ direction   , coord.y-1);
 		neighborCoord[2] = new Coord(coord.x-1            , coord.y);
 		neighborCoord[3] = new Coord(coord.x+1            , coord.y);

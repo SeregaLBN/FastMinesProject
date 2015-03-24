@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "TrSq1.java"
 //
-// Реализация класса TrSq1 - мозаика из 4х треугольников и 2х квадратов
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° TrSq1 - РјРѕР·Р°РёРєР° РёР· 4С… С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ Рё 2С… РєРІР°РґСЂР°С‚РѕРІ
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ using ua.ksn.geom;
  
 namespace ua.ksn.fmg.model.mosaics.cell {
 
-/// <summary> Комбинация. Мозаика из 4х треугольников и 2х квадратов </summary>
+/// <summary> РљРѕРјР±РёРЅР°С†РёСЏ. РњРѕР·Р°РёРєР° РёР· 4С… С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ Рё 2С… РєРІР°РґСЂР°С‚РѕРІ </summary>
 public class TrSq1 : BaseCell {
 	public class AttrTrSq1 : BaseAttribute {
 		public AttrTrSq1(int area)
@@ -55,7 +55,7 @@ public class TrSq1 : BaseCell {
 			return result;
 		}
 	
-		public override int getNeighborNumber() { return 12; }
+		public override int getNeighborNumber(bool max) { return max ? 12 : 9; }
 		public override int getNeighborNumber(int direction) {
 	    	switch (direction) {
 	    	case 1: case 2: case 3: case 5: return 9;
@@ -64,7 +64,6 @@ public class TrSq1 : BaseCell {
 	    		throw new ArgumentException("Invalid value direction=" + direction);
 	    	}
 		}
-		public override int getVertexNumber() { return 4; }
 		public override int getVertexNumber(int direction) {
 			switch (direction) {
 			case 1: case 2: case 3: case 5: return 3;
@@ -97,9 +96,9 @@ public class TrSq1 : BaseCell {
 	}
 
 	protected override Coord?[] GetCoordsNeighbor() {
-		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
+      var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	switch (direction) {
     	case 0:
     		neighborCoord[ 0] = new Coord(coord.x-2, coord.y-1);
@@ -254,7 +253,7 @@ public class TrSq1 : BaseCell {
 
 		double ksw1 = k/2-sq2-w/SQRT2;
 		double ksw2 = k/2+sq2+w/SQRT2;
-		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° РІРїРёСЃР°РЅРЅРѕРіРѕ РІ С„РёРіСѓСЂСѓ РєРІР°РґСЂР°С‚Р° (РЅРµ СЃРѕРІРїР°РґР°РµС‚ СЃ С†РµРЅС‚СЂРѕРј С„РёРіСѓСЂС‹)
 		switch (direction) {
 		case 0:  center.x = oX - b/2;    center.y = oY - k/2;    break;
 		case 1:  center.x = oX + ksw1;   center.y = oY - ksw2;   break;

@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Trapezoid2.java"
 //
-// Реализация класса Trapezoid2 - 3 трапеции, составляющие равносторонний треугольник
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° Trapezoid2 - 3 С‚СЂР°РїРµС†РёРё, СЃРѕСЃС‚Р°РІР»СЏСЋС‰РёРµ СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРє
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ using ua.ksn.geom;
  
 namespace ua.ksn.fmg.model.mosaics.cell {
 
-/// <summary> Trapezoid2 - 3 трапеции, составляющие равносторонний треугольник </summary>
+/// <summary> Trapezoid2 - 3 С‚СЂР°РїРµС†РёРё, СЃРѕСЃС‚Р°РІР»СЏСЋС‰РёРµ СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРє </summary>
 public class Trapezoid2 : BaseCell {
 	public class AttrTrapezoid2 : BaseAttribute {
 		public AttrTrapezoid2(int area)
@@ -51,10 +51,9 @@ public class Trapezoid2 : BaseCell {
 
 			return result;
 		}
-	
-		public override int getNeighborNumber() { return 9; }
+
+      public override int getNeighborNumber(bool max) { return 9; }
 		public override int getNeighborNumber(int direction) { return 9; }
-		public override int getVertexNumber() { return 4; }
 		public override int getVertexNumber(int direction) { return 4; }
 		public override double getVertexIntersection() { return 4.25; } // (6+4+4+3)/4.
 		public override Size GetDirectionSizeField() { return new Size(3, 4); }
@@ -80,9 +79,9 @@ public class Trapezoid2 : BaseCell {
 	}
 
 	protected override Coord?[] GetCoordsNeighbor() {
-		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
+      var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	switch (direction) {
     	case 0:
     		neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
@@ -230,7 +229,7 @@ public class Trapezoid2 : BaseCell {
 		double R = attr.CalcROut(area);
 		double r = attr.CalcRIn(area);
 
-		// определение координат точек фигуры
+		// РѕРїСЂРµРґРµР»РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ С‚РѕС‡РµРє С„РёРіСѓСЂС‹
 		double oX = (a+b)*(coord.x/3) + b; // offset X
 		double oY = (R+r)*(coord.y/4*2+1); // offset Y
 
@@ -325,7 +324,7 @@ public class Trapezoid2 : BaseCell {
 		double oX = (a+b)*(coord.x/3) + b; // offset X
 		double oY = (R+r)*(coord.y/4*2+1); // offset Y
 
-		PointDouble center = new PointDouble(); // координата центра квадрата
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° С†РµРЅС‚СЂР° РєРІР°РґСЂР°С‚Р°
 		switch (direction) {
 		case 0:  center.x = oX - c*1.25; center.y = oY - r*1.75; break;
 		case 1:  center.x = oX + c;      center.y = oY - r*2.50; break;

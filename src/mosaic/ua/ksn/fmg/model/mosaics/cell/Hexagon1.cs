@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Hexagon1.java"
 //
-// Реализация класса Hexagon1 - правильный 6-ти угольник (сота)
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° Hexagon1 - РїСЂР°РІРёР»СЊРЅС‹Р№ 6-С‚Рё СѓРіРѕР»СЊРЅРёРє (СЃРѕС‚Р°)
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ using ua.ksn.geom;
  
 namespace ua.ksn.fmg.model.mosaics.cell {
 
-/// <summary> Шестиугольник </summary>
+/// <summary> РЁРµСЃС‚РёСѓРіРѕР»СЊРЅРёРє </summary>
 public class Hexagon1 : BaseCell {
 	public class AttrHexagon1 : BaseAttribute {
 		public AttrHexagon1(int area)
@@ -45,14 +45,13 @@ public class Hexagon1 : BaseCell {
 			return result;
 		}
 	
-		public override int getNeighborNumber() { return 6; }
+		public override int getNeighborNumber(bool max) { return 6; }
 		public override int getNeighborNumber(int direction) { return 6; }
-		public override int getVertexNumber() { return 6; }
 		public override int getVertexNumber(int direction) { return 6; }
 		public override double getVertexIntersection() { return 3; }
 		public override Size GetDirectionSizeField() { return new Size(1, 2); }
 		public override double CalcA(int area) { return Math.Sqrt(2*area/SQRT27); }
-		/// <summary> пол стороны треугольника </summary>
+		/// <summary> РїРѕР» СЃС‚РѕСЂРѕРЅС‹ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР° </summary>
 		public double CalcB(int area) { return CalcA(area)*SQRT3; }
 		public override double CalcSq(int area, int borderWidth) {
 			double w = borderWidth/2.0;
@@ -71,10 +70,10 @@ public class Hexagon1 : BaseCell {
 	}
 
 	protected override Coord?[] GetCoordsNeighbor() {
-		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
+		var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
-		// определяю координаты соседей
-    	neighborCoord[0] = new Coord(coord.x-(direction^1), coord.y-1);
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
+		neighborCoord[0] = new Coord(coord.x-(direction^1), coord.y-1);
 		neighborCoord[1] = new Coord(coord.x+ direction   , coord.y-1);
 		neighborCoord[2] = new Coord(coord.x-1            , coord.y);
 		neighborCoord[3] = new Coord(coord.x+1            , coord.y);
@@ -123,7 +122,7 @@ public class Hexagon1 : BaseCell {
 		double oX = (coord.x+1)*b;      // offset X
 		double oY = (coord.y+1-direction)*a*1.5; // offset Y
 
-		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° РІРїРёСЃР°РЅРЅРѕРіРѕ РІ С„РёРіСѓСЂСѓ РєРІР°РґСЂР°С‚Р° (РЅРµ СЃРѕРІРїР°РґР°РµС‚ СЃ С†РµРЅС‚СЂРѕРј С„РёРіСѓСЂС‹)
 		switch (direction) {
 		case 0: center.x = oX - b/2; center.y = oY - a/2; break;
 		case 1: center.x = oX;       center.y = oY + a;   break;

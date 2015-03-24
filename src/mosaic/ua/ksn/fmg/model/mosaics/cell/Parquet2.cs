@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Parquet2.java"
 //
-// Реализация класса Parquet2 - ещё один паркет
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° Parquet2 - РµС‰С‘ РѕРґРёРЅ РїР°СЂРєРµС‚
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ using ua.ksn.geom;
  
 namespace ua.ksn.fmg.model.mosaics.cell {
 
-/// <summary> Паркет. Вариант №2 </summary>
+/// <summary> РџР°СЂРєРµС‚. Р’Р°СЂРёР°РЅС‚ в„–2 </summary>
 public class Parquet2 : BaseCell {
 	public class AttrParquet2 : BaseAttribute {
 		public AttrParquet2(int area)
@@ -44,10 +44,9 @@ public class Parquet2 : BaseCell {
 
 			return result;
 		}
-	
-		public override int getNeighborNumber() { return 7; }
+
+      public override int getNeighborNumber(bool max) { return 7; }
 		public override int getNeighborNumber(int direction) { return 7; }
-		public override int getVertexNumber() { return 4; }
 		public override int getVertexNumber(int direction) { return 4; }
 		public override double getVertexIntersection() { return 3.5; } // (4+4+3+3) / 4
 		public override Size GetDirectionSizeField() { return new Size(2, 2); }
@@ -69,9 +68,9 @@ public class Parquet2 : BaseCell {
 	}
 
 	protected override Coord?[] GetCoordsNeighbor() {
-		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
+		var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	switch (direction) {
     	case 0:
     		neighborCoord[0] = new Coord(coord.x-1, coord.y-1);

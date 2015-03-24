@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Rhombus1.java"
 //
-// Реализация класса Rhombus1 - 3 ромба, составляющие равносторонний шестиугольник
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° Rhombus1 - 3 СЂРѕРјР±Р°, СЃРѕСЃС‚Р°РІР»СЏСЋС‰РёРµ СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№ С€РµСЃС‚РёСѓРіРѕР»СЊРЅРёРє
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ using ua.ksn.geom;
  
 namespace ua.ksn.fmg.model.mosaics.cell {
 
-/// <summary> Rhombus1 - 3 ромба, составляющие равносторонний шестиугольник </summary>
+/// <summary> Rhombus1 - 3 СЂРѕРјР±Р°, СЃРѕСЃС‚Р°РІР»СЏСЋС‰РёРµ СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№ С€РµСЃС‚РёСѓРіРѕР»СЊРЅРёРє </summary>
 public class Rhombus1 : BaseCell {
 	public class AttrRhombus1 : BaseAttribute {
 		public AttrRhombus1(int area)
@@ -54,10 +54,9 @@ public class Rhombus1 : BaseCell {
 
 			return result;
 		}
-	
-		public override int getNeighborNumber() { return 10; }
+
+      public override int getNeighborNumber(bool max) { return 10; }
 		public override int getNeighborNumber(int direction) { return 10; }
-		public override int getVertexNumber() { return 4; }
 		public override int getVertexNumber(int direction) { return 4; }
 		public override double getVertexIntersection() { return 4.5; } // (3+3+6+6)/4.
 		public override Size GetDirectionSizeField() { return new Size(3, 2); }
@@ -86,9 +85,9 @@ public class Rhombus1 : BaseCell {
 	}
 
 	protected override Coord?[] GetCoordsNeighbor() {
-		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
+      var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	switch (direction) {
     	case 0:
     		neighborCoord[ 0] = new Coord(coord.x+1, coord.y-2);
@@ -175,7 +174,7 @@ public class Rhombus1 : BaseCell {
 		double h = attr.CalcH(area);
 		double r = attr.CalcR(area);
 
-		// определение координат точек фигуры
+		// РѕРїСЂРµРґРµР»РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ С‚РѕС‡РµРє С„РёРіСѓСЂС‹
 		double oX = a*(coord.x/3*3+1)+c; // offset X
 		double oY = h*(coord.y/2)    +h; // offset Y
 
@@ -233,7 +232,7 @@ public class Rhombus1 : BaseCell {
 		double oX = a*(coord.x/3*3+1)+c; // offset X
 		double oY = h*(coord.y/2)    +h; // offset Y
 
-		PointDouble center = new PointDouble(); // координата центра квадрата
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° С†РµРЅС‚СЂР° РєРІР°РґСЂР°С‚Р°
 		switch (direction) {
 		case 0: center.x = oX - c*1.5; center.y = oY - r*1.5; break;
 		case 1: center.x = oX;         center.y = oY - r;     break;
@@ -255,8 +254,8 @@ public class Rhombus1 : BaseCell {
 
 	public override Color getBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
 		if (fillMode == Attr.getMaxBackgroundFillModeValue()) {
-			switch ((getCoord().y%4)*3+(getCoord().x%3)) { // почти как вычисление direction...
-			// подсвечиваю 4 группы, составляющие каждая шестигранник из 3х ромбов
+			switch ((getCoord().y%4)*3+(getCoord().x%3)) { // РїРѕС‡С‚Рё РєР°Рє РІС‹С‡РёСЃР»РµРЅРёРµ direction...
+			// РїРѕРґСЃРІРµС‡РёРІР°СЋ 4 РіСЂСѓРїРїС‹, СЃРѕСЃС‚Р°РІР»СЏСЋС‰РёРµ РєР°Р¶РґР°СЏ С€РµСЃС‚РёРіСЂР°РЅРЅРёРє РёР· 3С… СЂРѕРјР±РѕРІ
 			case 0: case  1: case  3: return repositoryColor(0);
 			case 2: case  4: case  5: return repositoryColor(1);
 			case 6: case  7: case  9: return repositoryColor(2);
