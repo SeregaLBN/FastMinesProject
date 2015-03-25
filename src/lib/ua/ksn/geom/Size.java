@@ -27,6 +27,6 @@ public class Size {
     }
 	@Override
     public String toString() {
-    	return super.toString() + "[width="+width+", height="+height+"]";
+    	return super.toString() + "[w="+width+", h="+height+"]";
     }
 }

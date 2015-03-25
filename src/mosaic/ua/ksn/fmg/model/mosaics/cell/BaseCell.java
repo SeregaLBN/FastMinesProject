@@ -26,6 +26,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import ua.ksn.Color;
 import ua.ksn.fmg.event.click.ClickReportContext;
@@ -112,15 +113,16 @@ public abstract class BaseCell implements PropertyChangeListener {
 		/** кол-во direction'ов, которые знает данный тип мозаики */
 		public int GetDirectionCount() { Size s = GetDirectionSizeField(); return s.width*s.height; }
 
-		/** кол-во соседей (максимум) */
-		public abstract int getNeighborNumber();
+		/** кол-во соседей (максимум или минимум) */
+		public int getNeighborNumber(boolean max) {
+			IntStream str = IntStream.range(0, GetDirectionCount()).map(d -> getNeighborNumber(d));
+			return (max ? str.max() : str.min()).getAsInt();
+		}
 		/** кол-во соседей у ячейки конкретной направленности */
 		public abstract int getNeighborNumber(int direction);
-		/** из скольки точек/вершин состоит фигура (максимум) */
-		public abstract int getVertexNumber();
 		/** из скольки точек/вершин состоит фигура конкретной направленности */
 		public abstract int getVertexNumber(int direction);
-		/** сколько фигур пересекается в одной точке (в среднем) */
+		/** сколько фигур пересекается в одной вершине (в среднем) */
 		public abstract double getVertexIntersection(); 
 
 		/** макс кол-во режимов заливки фона, которые знает данный тип мозаики
@@ -128,7 +130,7 @@ public abstract class BaseCell implements PropertyChangeListener {
 		 * (Не считая режима заливки цветом фона по-умолчанию...)
 		 */
 		public int getMaxBackgroundFillModeValue() {
-			return 18;
+			return 19;
 		}
 
 		/**
@@ -356,7 +358,7 @@ public abstract class BaseCell implements PropertyChangeListener {
 	public final void IdentifyNeighbors(IMatrixCells matrix) {
 		// получаю координаты соседних ячеек
 		Coord[] neighborCoord = GetCoordsNeighbor();
-		if (neighborCoord.length != attr.getNeighborNumber())
+		if (neighborCoord.length != attr.getNeighborNumber(true))
 			throw new RuntimeException("neighborCoord.length != GetNeighborNumber()");
 
 		// проверяю что они не вылезли за размеры
@@ -370,7 +372,7 @@ public abstract class BaseCell implements PropertyChangeListener {
 					neighborCoord[i] = null;
 				}
 		// по координатам получаю множество соседних обьектов-ячеек
-		neighbors = new BaseCell[attr.getNeighborNumber()];
+		neighbors = new BaseCell[attr.getNeighborNumber(true)];
 		for (int i=0; i<neighborCoord.length; i++)
 			if (neighborCoord[i] != null)
 				neighbors[i] = matrix.getCell(neighborCoord[i]);
@@ -615,6 +617,11 @@ public abstract class BaseCell implements PropertyChangeListener {
 		case 13: case 14: case 15:
 		case 16: case 17: case 18:
 			return repositoryColor.get(getCoord().x % (-fillMode) - fillMode + getCoord().y % (+fillMode));
+		case 19:
+			// подсветить direction
+			int zx = getCoord().x / getAttr().GetDirectionSizeField().width +1;
+			int zy = getCoord().y / getAttr().GetDirectionSizeField().height +1;
+			return repositoryColor.get(zx*zy);
 		}
 	}
 

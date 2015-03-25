@@ -53,11 +53,9 @@ public class Triangle3 extends BaseCell {
 		}
 	
 		@Override
-		public int getNeighborNumber() { return 14; }
+		public int getNeighborNumber(boolean max) { return 14; }
 		@Override
 		public int getNeighborNumber(int direction) { return 14; }
-		@Override
-		public int getVertexNumber() { return 3; }
 		@Override
 		public int getVertexNumber(int direction) { return 3; }
 		@Override
@@ -88,7 +86,7 @@ public class Triangle3 extends BaseCell {
 
 	@Override
 	protected Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
+		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
 
 		// определяю координаты соседей
     	switch (direction) {

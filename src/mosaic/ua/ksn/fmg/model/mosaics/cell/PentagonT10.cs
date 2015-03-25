@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "PentagonT10.java"
 //
-// Реализация класса PentagonT10 - 5-ти угольник, тип №10
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° PentagonT10 - 5-С‚Рё СѓРіРѕР»СЊРЅРёРє, С‚РёРї в„–10
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ using ua.ksn.geom;
  
 namespace ua.ksn.fmg.model.mosaics.cell {
 
-/// <summary> Пятиугольник. Тип №10 </summary>
+/// <summary> РџСЏС‚РёСѓРіРѕР»СЊРЅРёРє. РўРёРї в„–10 </summary>
 public class PentagonT10 : BaseCell {
 	public class AttrPentagonT10 : BaseAttribute {
 		public AttrPentagonT10(int area)
@@ -63,8 +63,8 @@ public class PentagonT10 : BaseCell {
 
 			return result;
 		}
-	
-		public override int getNeighborNumber() { return 7; }
+
+      public override int getNeighborNumber(bool max) { return max ? 7 : 6; }
 		public override int getNeighborNumber(int direction) {
 			switch (direction) {
 			case 0: case 1: case 6: case 7: return 7;                              
@@ -73,7 +73,6 @@ public class PentagonT10 : BaseCell {
 				throw new ArgumentException("Invalid value direction=" + direction);
 			}
 		}
-		public override int getVertexNumber() { return 5; }
 		public override int getVertexNumber(int direction) { return 5; }
 
 		static double vertexIntersection = 0.0;
@@ -90,7 +89,7 @@ public class PentagonT10 : BaseCell {
 						sum += 16.0/5.0;
 						break;
 					default:
-						throw new Exception("Забыл case #" + dir);
+						throw new Exception("Р—Р°Р±С‹Р» case #" + dir);
 					}
 				vertexIntersection = sum / cntDirection;
 //				System.out.println("PentagonT10::getVertexNeighbor == " + vertexIntersection);
@@ -122,9 +121,9 @@ public class PentagonT10 : BaseCell {
 	}
 
 	protected override Coord?[] GetCoordsNeighbor() {
-		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
+		var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
 		switch (direction) {
 		case 0:
 			neighborCoord[0] = new Coord(coord.x  , coord.y-1);
@@ -303,7 +302,7 @@ public class PentagonT10 : BaseCell {
 		double sq = attr.CalcSq(attr.Area, borderWidth);
 		double sq2 = sq/2;
 
-		PointDouble center = new PointDouble(); // координата центра квадрата
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° С†РµРЅС‚СЂР° РєРІР°РґСЂР°С‚Р°
 		switch (direction) {
 		case 0: case  3: case 7: case  8: center.x = region.getPoint(2).x; center.y = region.getPoint(1).y; break;
 		case 1: case  4: case 6: case 10: 

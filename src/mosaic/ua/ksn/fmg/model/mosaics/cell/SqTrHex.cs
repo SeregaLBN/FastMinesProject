@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "SqTrHex.java"
 //
-// Реализация класса SqTrHex - мозаика из 6Square 4Triangle 2Hexagon
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° SqTrHex - РјРѕР·Р°РёРєР° РёР· 6Square 4Triangle 2Hexagon
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ using ua.ksn.geom;
  
 namespace ua.ksn.fmg.model.mosaics.cell {
 
-/// <summary> Комбинация. мозаика из 6Square 4Triangle 2Hexagon </summary>
+/// <summary> РљРѕРјР±РёРЅР°С†РёСЏ. РјРѕР·Р°РёРєР° РёР· 6Square 4Triangle 2Hexagon </summary>
 public class SqTrHex : BaseCell {
 	public class AttrSqTrHex : BaseAttribute {
 		public AttrSqTrHex(int area)
@@ -68,8 +68,8 @@ public class SqTrHex : BaseCell {
 
 			return result;
 		}
-	
-		public override int getNeighborNumber() { return 12; }
+
+      public override int getNeighborNumber(bool max) { return max ? 12 : 6; }
 		public override int getNeighborNumber(int direction) {
 			switch (direction) {
 			case  0: case  2: case  6: case  7: return 6;
@@ -79,7 +79,6 @@ public class SqTrHex : BaseCell {
 				throw new ArgumentException("Invalid value direction="+direction);
 		 	}
 		}
-		public override int getVertexNumber() { return 6; }
 		public override int getVertexNumber(int direction) {
 			switch (direction) {
 			case  0: case  2: case  6: case  7: return 3;
@@ -110,9 +109,9 @@ public class SqTrHex : BaseCell {
 	}
 
 	protected override Coord?[] GetCoordsNeighbor() {
-		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
+      var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
 		switch (direction) {
 		case 0:
 			neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
@@ -394,7 +393,7 @@ public class SqTrHex : BaseCell {
 
 		PointDouble o = getOffest();
 
-		PointDouble center = new PointDouble(); // координата центра вписанного в фигуру квадрата
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° С†РµРЅС‚СЂР° РІРїРёСЃР°РЅРЅРѕРіРѕ РІ С„РёРіСѓСЂСѓ РєРІР°РґСЂР°С‚Р°
 		switch (direction) {
 		case  0: center.x = o.x -  b-h;    center.y = o.y - a-b-w-sq2;   break;
 		case  1: center.x = o.x - (b+h)/2; center.y = o.y - a-b-(b+h)/2; break;

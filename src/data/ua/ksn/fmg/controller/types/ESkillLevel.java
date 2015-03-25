@@ -28,12 +28,19 @@ public enum ESkillLevel {
 //			mosaicCoefficient.put(mosaicType, attr.getVertexIntersection());
 
 			// variant 2 - сложность в зависимости от кол-ва соседних ячеек
-			int cntDir = attr.GetDirectionCount();
-			int neighbors = 0;
-			for (int i=0; i<cntDir; i++)
-				neighbors += attr.getNeighborNumber(i);
-			mosaicCoefficient.put(mosaicType, ((double)neighbors)/cntDir);
+//			int cntDir = attr.GetDirectionCount();
+//			int neighbors = 0;
+//			for (int i=0; i<cntDir; i++)
+//				neighbors += attr.getNeighborNumber(i);
+//			mosaicCoefficient.put(mosaicType, ((double)neighbors)/cntDir);
 
+			// variant 3 - сложность в зависимости от кол-ва соседних ячеек и кол-ва точек пересечения
+//			int cntDir = attr.GetDirectionCount();
+//			int totalNeighbors = java.util.stream.IntStream.range(0, cntDir).reduce(0, (accum, i) -> accum+attr.getNeighborNumber(i));
+//			double neighbors = ((double)totalNeighbors)/cntDir;
+			double neighbors = (double)attr.getNeighborNumber(false);
+			mosaicCoefficient.put(mosaicType, attr.getVertexIntersection()/neighbors);
+			
 //			System.out.println(attr.getClass().getSimpleName() + ": " + mosaicCoefficient.get(mosaicType));
 		}
 
@@ -46,7 +53,15 @@ public enum ESkillLevel {
 
 //		System.exit(0);
 	}
-
+/*
+			Sq1  Tring2	    PentT5  Trapez1   Pent24   Tring1		
+Neighbor	  8     8          8       8        7        12       
+VertexInter   4     3.75      3.6     3.6      3.4       6       
+eBeginner    15
+eAmateur     54
+eProfi      126
+eCrazy      281
+*/
 	/** коэффициент уровня сложности */
 	private double getCoefficient() {
 		// variant 1
@@ -56,12 +71,22 @@ public enum ESkillLevel {
 //		case eProfi   : return 0.84;
 //		case eCrazy   : return 0.9991111111111111;
 //		}
+
 		// variant 2
+//		switch (this) {
+//		case eBeginner: return 1.2;
+//		case eAmateur : return 1.44;
+//		case eProfi   : return 1.68;
+//		case eCrazy   : return 1.9982222222222221;
+//		default: break;
+//		}
+
+		// variant 3
 		switch (this) {
-		case eBeginner: return 1.2;
-		case eAmateur : return 1.44;
-		case eProfi   : return 1.68;
-		case eCrazy   : return 1.9982222222222221;
+		case eBeginner: return 0.075;
+		case eAmateur : return 0.09;
+		case eProfi   : return 0.105;
+		case eCrazy   : return 0.12488888888888888;
 		default: break;
 		}
 		throw new RuntimeException("Invalid method call. Для уровня сложности '"+this+"' нет коэффициента сложности.");

@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Triangle2.java"
 //
-// Реализация класса Triangle2 - равносторонний треугольник (вариант поля №2 - ёлочкой)
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° Triangle2 - СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРє (РІР°СЂРёР°РЅС‚ РїРѕР»СЏ в„–2 - С‘Р»РѕС‡РєРѕР№)
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ using ua.ksn.geom;
  
 namespace ua.ksn.fmg.model.mosaics.cell {
 
-/// <summary> Треугольник. Вариант 2 - равносторонний, ёлочкой </summary>
+/// <summary> РўСЂРµСѓРіРѕР»СЊРЅРёРє. Р’Р°СЂРёР°РЅС‚ 2 - СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№, С‘Р»РѕС‡РєРѕР№ </summary>
 public class Triangle2 : BaseCell {
 	public class AttrTriangle2 : BaseAttribute {
 		public AttrTriangle2(int area)
@@ -41,17 +41,16 @@ public class Triangle2 : BaseCell {
 					(int)(h * (sizeField.height+0)));
 			return result;
 		}
-	
-		public override int getNeighborNumber() { return 8; }
+
+      public override int getNeighborNumber(bool max) { return 8; }
 		public override int getNeighborNumber(int direction) { return 8; }
-		public override int getVertexNumber() { return 3; }
 		public override int getVertexNumber(int direction) { return 3; }
 		public override double getVertexIntersection() { return 3.75; } // (4+4+4+3)/4.
 		public override Size GetDirectionSizeField() { return new Size(2, 1); }
-		public override double CalcA(int area) { return CalcB(area) * 2.0f; } // размер стороны треугольника
-		/// <summary> </summary> пол стороны треугольника */
+		public override double CalcA(int area) { return CalcB(area) * 2.0f; } // СЂР°Р·РјРµСЂ СЃС‚РѕСЂРѕРЅС‹ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР°
+		/// <summary> </summary> РїРѕР» СЃС‚РѕСЂРѕРЅС‹ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР° */
 		public double CalcB(int area) { return Math.Sqrt(area/SQRT3); }
-		/// <summary> </summary> высота треугольника */
+		/// <summary> </summary> РІС‹СЃРѕС‚Р° С‚СЂРµСѓРіРѕР»СЊРЅРёРєР° */
 		public double CalcH(int area) { return CalcB(area) * SQRT3; }
 		public override double CalcSq(int area, int borderWidth) {
 			double w = borderWidth/2.0;
@@ -70,9 +69,9 @@ public class Triangle2 : BaseCell {
 	}
 
 	protected override Coord?[] GetCoordsNeighbor() {
-      var neighborCoord = new Coord?[Attr.getNeighborNumber()];
+      var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	switch (direction) {
     	case 0: case 3:
     		neighborCoord[ 0] = new Coord(coord.x  , coord.y-1);
@@ -130,7 +129,7 @@ public class Triangle2 : BaseCell {
 		double sq = attr.CalcSq(area, borderWidth);
 		double w = borderWidth/2.0;
 
-		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° РІРїРёСЃР°РЅРЅРѕРіРѕ РІ С„РёРіСѓСЂСѓ РєРІР°РґСЂР°С‚Р° (РЅРµ СЃРѕРІРїР°РґР°РµС‚ СЃ С†РµРЅС‚СЂРѕРј С„РёРіСѓСЂС‹)
 		switch (direction) {
 		case 0:
 			center.x = region.getPoint(2).x + b;

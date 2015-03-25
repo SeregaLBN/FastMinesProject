@@ -57,11 +57,9 @@ public class Trapezoid1 extends BaseCell {
 		}
 	
 		@Override
-		public int getNeighborNumber() { return 8; }
+		public int getNeighborNumber(boolean max) { return 8; }
 		@Override
 		public int getNeighborNumber(int direction) { return 8; }
-		@Override
-		public int getVertexNumber() { return 4; }
 		@Override
 		public int getVertexNumber(int direction) { return 4; }
 		@Override
@@ -94,7 +92,7 @@ public class Trapezoid1 extends BaseCell {
 
 	@Override
 	protected Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
+		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
 
 		// определяю координаты соседей
     	switch (direction) {

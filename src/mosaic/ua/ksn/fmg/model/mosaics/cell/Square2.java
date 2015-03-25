@@ -48,11 +48,9 @@ public class Square2 extends BaseCell {
 		}
 	
 		@Override
-		public int getNeighborNumber() { return 6; }
+		public int getNeighborNumber(boolean max) { return 6; }
 		@Override
 		public int getNeighborNumber(int direction) { return 6; }
-		@Override
-		public int getVertexNumber() { return 4; }
 		@Override
 		public int getVertexNumber(int direction) { return 4; }
 		@Override
@@ -81,7 +79,7 @@ public class Square2 extends BaseCell {
 
 	@Override
 	protected Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
+		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
 
 		// определяю координаты соседей
     	neighborCoord[0] = new Coord(coord.x- direction   , coord.y-1);

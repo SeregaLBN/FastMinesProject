@@ -62,7 +62,7 @@ public class TrSq1 extends BaseCell {
 		}
 	
 		@Override
-		public int getNeighborNumber() { return 12; }
+		public int getNeighborNumber(boolean max) { return max ? 12 : 9; }
 		@Override
 		public int getNeighborNumber(int direction) {
 	    	switch (direction) {
@@ -72,8 +72,6 @@ public class TrSq1 extends BaseCell {
 	    		throw new IllegalArgumentException("Invalid value direction=" + direction);
 	    	}
 		}
-		@Override
-		public int getVertexNumber() { return 4; }
 		@Override
 		public int getVertexNumber(int direction) {
 			switch (direction) {
@@ -113,7 +111,7 @@ public class TrSq1 extends BaseCell {
 
 	@Override
 	protected Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
+		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
 
 		// определяю координаты соседей
     	switch (direction) {

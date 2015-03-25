@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Square1.java"
 //
-// Описание класса Square1 - квадрат (классический вариант поля)
+// РћРїРёСЃР°РЅРёРµ РєР»Р°СЃСЃР° Square1 - РєРІР°РґСЂР°С‚ (РєР»Р°СЃСЃРёС‡РµСЃРєРёР№ РІР°СЂРёР°РЅС‚ РїРѕР»СЏ)
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -22,12 +22,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using System.Collections.Generic;
 using ua.ksn.geom;
  
 namespace ua.ksn.fmg.model.mosaics.cell {
 
-/// <summary> Квадрат. Вариант 1 </summary>
+/// <summary> РљРІР°РґСЂР°С‚. Р’Р°СЂРёР°РЅС‚ 1 </summary>
 public class Square1 : BaseCell {
 	public class AttrSquare1 : BaseAttribute {
 		public AttrSquare1(int area)
@@ -35,16 +34,15 @@ public class Square1 : BaseCell {
       {}
 
 		public override Size CalcOwnerSize(Size sizeField, int area) {
-			double a = CalcA(area); // размер стороны квадрата
+			double a = CalcA(area); // СЂР°Р·РјРµСЂ СЃС‚РѕСЂРѕРЅС‹ РєРІР°РґСЂР°С‚Р°
 			Size result = new Size(
 					(int)(sizeField.width * a),
 					(int)(sizeField.height * a));
 			return result;
 		}
-	
-		public override int getNeighborNumber() { return 8; }
+
+      public override int getNeighborNumber(bool max) { return 8; }
 		public override int getNeighborNumber(int direction) { return 8; }
-		public override int getVertexNumber() { return 4; }
 		public override int getVertexNumber(int direction) { return 4; }
 		public override double getVertexIntersection() { return 4; }
 		public override Size GetDirectionSizeField() { return new Size(1,1); }
@@ -64,9 +62,9 @@ public class Square1 : BaseCell {
 	}
 
 	protected override Coord?[] GetCoordsNeighbor() {
-      var neighborCoord = new Coord?[Attr.getNeighborNumber()];
+      var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
 		neighborCoord[1] = new Coord(coord.x  , coord.y-1);
 		neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
@@ -120,7 +118,7 @@ public class Square1 : BaseCell {
 		switch (fillMode) {
 		default:
 			return base.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);
-		case 1: // перекрываю базовый на основе direction
+		case 1: // РїРµСЂРµРєСЂС‹РІР°СЋ Р±Р°Р·РѕРІС‹Р№ РЅР° РѕСЃРЅРѕРІРµ direction
 			int pos = (-getCoord().x + getCoord().y) % ((Attr.GetHashCode() & 0x3)+fillMode);
 //			System.out.println(pos);
 			return repositoryColor(pos);

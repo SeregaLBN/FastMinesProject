@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FMG project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "BaseCell.java"
 //
-// Реализация базового класса BaseCell
+// Р РµР°Р»РёР·Р°С†РёСЏ Р±Р°Р·РѕРІРѕРіРѕ РєР»Р°СЃСЃР° BaseCell
 // Copyright (C) 2010-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -22,12 +22,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 using System;
 using System.ComponentModel;
+using System.Linq;
 using ua.ksn.fmg.Event.click;
 using ua.ksn.geom;
 
 namespace ua.ksn.fmg.model.mosaics.cell {
 
-/// <summary>Базовый класс фигуры-ячейки</summary>
+/// <summary>Р‘Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ С„РёРіСѓСЂС‹-СЏС‡РµР№РєРё</summary>
 public abstract class BaseCell {
    public const double PI = 3.14159265358979323846; // Math.PI;
    public static readonly double SQRT2   = Math.Sqrt(2.0);
@@ -47,65 +48,66 @@ public abstract class BaseCell {
    public static readonly double SIN135a = Math.Sin(PI/180.0*135.0-Math.Atan(8.0/3));
 
    /*
-    * Контекст/метаданные, описывающий общие хар-ки для каждого из экземпялров BaseCell.
-    * <br> (Полные данные о конкретной мозаике) <br>
-    * Доопределаяется наследниками BaseCell
+    * РљРѕРЅС‚РµРєСЃС‚/РјРµС‚Р°РґР°РЅРЅС‹Рµ, РѕРїРёСЃС‹РІР°СЋС‰РёР№ РѕР±С‰РёРµ С…Р°СЂ-РєРё РґР»СЏ РєР°Р¶РґРѕРіРѕ РёР· СЌРєР·РµРјРїСЏР»СЂРѕРІ BaseCell.
+    * <br> (РџРѕР»РЅС‹Рµ РґР°РЅРЅС‹Рµ Рѕ РєРѕРЅРєСЂРµС‚РЅРѕР№ РјРѕР·Р°РёРєРµ) <br>
+    * Р”РѕРѕРїСЂРµРґРµР»Р°СЏРµС‚СЃСЏ РЅР°СЃР»РµРґРЅРёРєР°РјРё BaseCell
     */
    public abstract class BaseAttribute : FastMines.Common.BindableBase {
-      /// На PropertyChanged это подписаны все наследники BaseCell: при изменении A - надо пересчить все координаты точек
+      /// РќР° PropertyChanged СЌС‚Рѕ РїРѕРґРїРёСЃР°РЅС‹ РІСЃРµ РЅР°СЃР»РµРґРЅРёРєРё BaseCell: РїСЂРё РёР·РјРµРЅРµРЅРёРё A - РЅР°РґРѕ РїРµСЂРµСЃС‡РёС‚СЊ РІСЃРµ РєРѕРѕСЂРґРёРЅР°С‚С‹ С‚РѕС‡РµРє
 
       public BaseAttribute(int area) {
          Area = area;
       }
 
-      /// <summary>площадь ячейки/фигуры</summary>
+      /// <summary>РїР»РѕС‰Р°РґСЊ СЏС‡РµР№РєРё/С„РёРіСѓСЂС‹</summary>
       private int _area;
 
-      /// <summary>площадь ячейки/фигуры</summary>
+      /// <summary>РїР»РѕС‰Р°РґСЊ СЏС‡РµР№РєРё/С„РёРіСѓСЂС‹</summary>
       public int Area {
          get { return _area; }
          set { this.SetProperty(ref this._area, value); }
       }
 
-      /// <summary>пересчитать размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
-      /// на основе заданных параметров</summary>
+      /// <summary>РїРµСЂРµСЃС‡РёС‚Р°С‚СЊ СЂР°Р·РјРµСЂ РєРІР°РґСЂР°С‚Р°, РІРїРёСЃР°РЅРЅРѕРіРѕ РІ С„РёРіСѓСЂСѓ - РѕР±Р»Р°СЃС‚СЊ РєСѓРґР° РІС‹РІРѕРґРёС‚СЊСЃСЏ РёР·РѕР±СЂР°Р¶РµРЅРёРµ/С‚РµРєСЃС‚
+      /// РЅР° РѕСЃРЅРѕРІРµ Р·Р°РґР°РЅРЅС‹С… РїР°СЂР°РјРµС‚СЂРѕРІ</summary>
       public abstract double CalcSq(int area, int borderWidth);
 
-      /// <summary>пересчитать значение A (базовая величина фигуры - обычно это размер одной из сторон фигуры) по заданной площади фигуры</summary>
+      /// <summary>РїРµСЂРµСЃС‡РёС‚Р°С‚СЊ Р·РЅР°С‡РµРЅРёРµ A (Р±Р°Р·РѕРІР°СЏ РІРµР»РёС‡РёРЅР° С„РёРіСѓСЂС‹ - РѕР±С‹С‡РЅРѕ СЌС‚Рѕ СЂР°Р·РјРµСЂ РѕРґРЅРѕР№ РёР· СЃС‚РѕСЂРѕРЅ С„РёРіСѓСЂС‹) РїРѕ Р·Р°РґР°РЅРЅРѕР№ РїР»РѕС‰Р°РґРё С„РёРіСѓСЂС‹</summary>
       public abstract double CalcA(int area);
 
       /// <summary>get parent container (owner window) size in pixels</summary>
       public abstract Size CalcOwnerSize(Size sizeField, int area);
 
-      /// <summary>размер поля из группы ячеек состоящих из разных direction</summary>
+      /// <summary>СЂР°Р·РјРµСЂ РїРѕР»СЏ РёР· РіСЂСѓРїРїС‹ СЏС‡РµРµРє СЃРѕСЃС‚РѕСЏС‰РёС… РёР· СЂР°Р·РЅС‹С… direction</summary>
       public abstract Size GetDirectionSizeField();
-      /// <summary>кол-во direction'ов, которые знает данный тип мозаики</summary>
+      /// <summary>РєРѕР»-РІРѕ direction'РѕРІ, РєРѕС‚РѕСЂС‹Рµ Р·РЅР°РµС‚ РґР°РЅРЅС‹Р№ С‚РёРї РјРѕР·Р°РёРєРё</summary>
       public int GetDirectionCount() { Size s = GetDirectionSizeField(); return s.width*s.height; }
 
-      /// <summary>кол-во соседей (максимум)</summary>
-      public abstract int getNeighborNumber();
-      /// <summary>кол-во соседей у ячейки конкретной направленности</summary>
+      /// <summary>РєРѕР»-РІРѕ СЃРѕСЃРµРґРµР№ (РјР°РєСЃРёРјСѓРј РёР»Рё РјРёРЅРёРјСѓРј)</summary>
+      public virtual int getNeighborNumber(bool max) {
+         var str = Enumerable.Range(0, GetDirectionCount()).Select(getNeighborNumber);
+         return max ? str.Max() : str.Min();
+      }
+      /// <summary>РєРѕР»-РІРѕ СЃРѕСЃРµРґРµР№ Сѓ СЏС‡РµР№РєРё РєРѕРЅРєСЂРµС‚РЅРѕР№ РЅР°РїСЂР°РІР»РµРЅРЅРѕСЃС‚Рё</summary>
       public abstract int getNeighborNumber(int direction);
-      /// <summary>из скольки точек/вершин состоит фигура (максимум)</summary>
-      public abstract int getVertexNumber();
-      /// <summary>из скольки точек/вершин состоит фигура конкретной направленности</summary>
+      /// <summary>РёР· СЃРєРѕР»СЊРєРё С‚РѕС‡РµРє/РІРµСЂС€РёРЅ СЃРѕСЃС‚РѕРёС‚ С„РёРіСѓСЂР° РєРѕРЅРєСЂРµС‚РЅРѕР№ РЅР°РїСЂР°РІР»РµРЅРЅРѕСЃС‚Рё</summary>
       public abstract int getVertexNumber(int direction);
-      /// <summary>сколько фигур пересекается в одной точке (в среднем)</summary>
+      /// <summary>СЃРєРѕР»СЊРєРѕ С„РёРіСѓСЂ РїРµСЂРµСЃРµРєР°РµС‚СЃСЏ РІ РѕРґРЅРѕР№ РІРµСЂС€РёРЅРµ (РІ СЃСЂРµРґРЅРµРј)</summary>
       public abstract double getVertexIntersection(); 
 
-      /// <summary>макс кол-во режимов заливки фона, которые знает данный тип мозаики
-      /// (знает ф-ция BaseCell::getBackgroundFillColor() или её наследующая)
-      /// (Не считая режима заливки цветом фона по-умолчанию...)</summary>
+      /// <summary>РјР°РєСЃ РєРѕР»-РІРѕ СЂРµР¶РёРјРѕРІ Р·Р°Р»РёРІРєРё С„РѕРЅР°, РєРѕС‚РѕСЂС‹Рµ Р·РЅР°РµС‚ РґР°РЅРЅС‹Р№ С‚РёРї РјРѕР·Р°РёРєРё
+      /// (Р·РЅР°РµС‚ С„-С†РёСЏ BaseCell::getBackgroundFillColor() РёР»Рё РµС‘ РЅР°СЃР»РµРґСѓСЋС‰Р°СЏ)
+      /// (РќРµ СЃС‡РёС‚Р°СЏ СЂРµР¶РёРјР° Р·Р°Р»РёРІРєРё С†РІРµС‚РѕРј С„РѕРЅР° РїРѕ-СѓРјРѕР»С‡Р°РЅРёСЋ...)</summary>
       public virtual int getMaxBackgroundFillModeValue() {
-         return 18;
+         return 19;
       }
 
       #region calc dimension window region
-      /// <summary> Поиск больше-меньше </summary>
-      /// <param name="baseMin">стартовое значение для поиска</param>
-      /// <param name="baseDelta">начало дельты приращения</param>
-      /// <param name="comparable">ф-ция сравнения</param>
-      /// <returns>что найдено</returns>
+      /// <summary> РџРѕРёСЃРє Р±РѕР»СЊС€Рµ-РјРµРЅСЊС€Рµ </summary>
+      /// <param name="baseMin">СЃС‚Р°СЂС‚РѕРІРѕРµ Р·РЅР°С‡РµРЅРёРµ РґР»СЏ РїРѕРёСЃРєР°</param>
+      /// <param name="baseDelta">РЅР°С‡Р°Р»Рѕ РґРµР»СЊС‚С‹ РїСЂРёСЂР°С‰РµРЅРёСЏ</param>
+      /// <param name="comparable">С„-С†РёСЏ СЃСЂР°РІРЅРµРЅРёСЏ</param>
+      /// <returns>С‡С‚Рѕ РЅР°Р№РґРµРЅРѕ</returns>
       private static int Finder(int baseMin, int baseDelta, Func<int, int> comparable) {
          double res = baseMin;
          double d = baseDelta;
@@ -130,10 +132,10 @@ public abstract class BaseCell {
          return (int)res;
       }
 
-      /// <summary> узнаю мах размер площади ячеек мозаики, при котором вся мозаика помещается в заданную область </summary>
-      /// <param name="mosaicSizeField">интересуемый размер (в ячейках) поля мозаики</param>
-      /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
-      /// <returns>макс площадь ячейки</returns>
+      /// <summary> СѓР·РЅР°СЋ РјР°С… СЂР°Р·РјРµСЂ РїР»РѕС‰Р°РґРё СЏС‡РµРµРє РјРѕР·Р°РёРєРё, РїСЂРё РєРѕС‚РѕСЂРѕРј РІСЃСЏ РјРѕР·Р°РёРєР° РїРѕРјРµС‰Р°РµС‚СЃСЏ РІ Р·Р°РґР°РЅРЅСѓСЋ РѕР±Р»Р°СЃС‚СЊ </summary>
+      /// <param name="mosaicSizeField">РёРЅС‚РµСЂРµСЃСѓРµРјС‹Р№ СЂР°Р·РјРµСЂ (РІ СЏС‡РµР№РєР°С…) РїРѕР»СЏ РјРѕР·Р°РёРєРё</param>
+      /// <param name="sizeClient">СЂР°Р·РјРµСЂ РѕРєРЅР°/РѕР±Р»Р°СЃС‚Рё (РІ РїРёРєСЃРµР»СЏС…) РІ РєРѕС‚РѕСЂСѓСЋ РґРѕР»Р¶РЅР° РІРїРёСЃР°С‚СЊСЃСЏ РјРѕР·Р°РёРєР°</param>
+      /// <returns>РјР°РєСЃ РїР»РѕС‰Р°РґСЊ СЏС‡РµР№РєРё</returns>
       public int CalcOptimalArea(int minStartArea, Size mosaicSizeField, Size sizeClient) {
          return Finder(minStartArea, 53,
             area => {
@@ -148,10 +150,10 @@ public abstract class BaseCell {
             });
       }
 
-      /// <summary> узнаю max размер поля мозаики, при котором вся мозаика помещается в заданную область </summary>
-      /// <param name="area">интересуемая площадь ячеек мозаики</param>
-      /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
-      /// <returns>max размер поля мозаики</returns>
+      /// <summary> СѓР·РЅР°СЋ max СЂР°Р·РјРµСЂ РїРѕР»СЏ РјРѕР·Р°РёРєРё, РїСЂРё РєРѕС‚РѕСЂРѕРј РІСЃСЏ РјРѕР·Р°РёРєР° РїРѕРјРµС‰Р°РµС‚СЃСЏ РІ Р·Р°РґР°РЅРЅСѓСЋ РѕР±Р»Р°СЃС‚СЊ </summary>
+      /// <param name="area">РёРЅС‚РµСЂРµСЃСѓРµРјР°СЏ РїР»РѕС‰Р°РґСЊ СЏС‡РµРµРє РјРѕР·Р°РёРєРё</param>
+      /// <param name="sizeClient">СЂР°Р·РјРµСЂ РѕРєРЅР°/РѕР±Р»Р°СЃС‚Рё (РІ РїРёРєСЃРµР»СЏС…) РІ РєРѕС‚РѕСЂСѓСЋ РґРѕР»Р¶РЅР° РІРїРёСЃР°С‚СЊСЃСЏ РјРѕР·Р°РёРєР°</param>
+      /// <returns>max СЂР°Р·РјРµСЂ РїРѕР»СЏ РјРѕР·Р°РёРєРё</returns>
       public Size CalcMaxMosaicSize(int area, Size sizeClient) {
          var result = new Size();
          Finder(1, 10, newWidth => {
@@ -185,23 +187,23 @@ public abstract class BaseCell {
 
    //CellContext cellContext;
    protected Coord coord;
-   /// <summary>направление - 'третья координата' ячейки</summary>
+   /// <summary>РЅР°РїСЂР°РІР»РµРЅРёРµ - 'С‚СЂРµС‚СЊСЏ РєРѕРѕСЂРґРёРЅР°С‚Р°' СЏС‡РµР№РєРё</summary>
    protected int direction;
 
-   /// <summary>вписанный в фигуру квадрат - область в которую выводится изображение/текст</summary>
+   /// <summary>РІРїРёСЃР°РЅРЅС‹Р№ РІ С„РёРіСѓСЂСѓ РєРІР°РґСЂР°С‚ - РѕР±Р»Р°СЃС‚СЊ РІ РєРѕС‚РѕСЂСѓСЋ РІС‹РІРѕРґРёС‚СЃСЏ РёР·РѕР±СЂР°Р¶РµРЅРёРµ/С‚РµРєСЃС‚</summary>
    public abstract Rect getRcInner(int borderWidth);
-   /// <summary>вернёт прямоугольник в который вписана фигура ячейки</summary>
+   /// <summary>РІРµСЂРЅС‘С‚ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє РІ РєРѕС‚РѕСЂС‹Р№ РІРїРёСЃР°РЅР° С„РёРіСѓСЂР° СЏС‡РµР№РєРё</summary>
    public Rect getRcOuter() {
       Rect rcOuter = region.getBounds();
-      rcOuter.height++; rcOuter.width++; // чтобы при repaint'е захватило и крайние границы
+      rcOuter.height++; rcOuter.width++; // С‡С‚РѕР±С‹ РїСЂРё repaint'Рµ Р·Р°С…РІР°С‚РёР»Рѕ Рё РєСЂР°Р№РЅРёРµ РіСЂР°РЅРёС†С‹
       return rcOuter;
    }
 
-   /// <summary>соседние ячейки - с которыми граничит this</summary>
+   /// <summary>СЃРѕСЃРµРґРЅРёРµ СЏС‡РµР№РєРё - СЃ РєРѕС‚РѕСЂС‹РјРё РіСЂР°РЅРёС‡РёС‚ this</summary>
    private BaseCell[] neighbors;
    public BaseCell[] Neighbors { get { return neighbors; } }
    
-   /// <summary>массив координат точек из которых состоит фигура</summary>
+   /// <summary>РјР°СЃСЃРёРІ РєРѕРѕСЂРґРёРЅР°С‚ С‚РѕС‡РµРє РёР· РєРѕС‚РѕСЂС‹С… СЃРѕСЃС‚РѕРёС‚ С„РёРіСѓСЂР°</summary>
    protected Region region;
 
    public class StateCell {
@@ -211,7 +213,7 @@ public abstract class BaseCell {
       private EOpen  open;   // _Nil, _1, ... _21, _Mine
       private EClose close;  // _Unknown, _Clear, _Flag
       // } end union
-      /// <summary>Нажата? Не путать с open! - ячейка может быть нажата, но ещё не открыта. Важно только для ф-ции прорисовки</summary>
+      /// <summary>РќР°Р¶Р°С‚Р°? РќРµ РїСѓС‚Р°С‚СЊ СЃ open! - СЏС‡РµР№РєР° РјРѕР¶РµС‚ Р±С‹С‚СЊ РЅР°Р¶Р°С‚Р°, РЅРѕ РµС‰С‘ РЅРµ РѕС‚РєСЂС‹С‚Р°. Р’Р°Р¶РЅРѕ С‚РѕР»СЊРєРѕ РґР»СЏ С„-С†РёРё РїСЂРѕСЂРёСЃРѕРІРєРё</summary>
       public bool Down { get; set; }
       public void setStatus(EState status, ClickReportContext clickRepContext) {
          if (clickRepContext != null)
@@ -225,10 +227,10 @@ public abstract class BaseCell {
       public EState Status { get { return status; } }
       public void CalcOpenState() {
           if (this.open == EOpen._Mine) return;
-          // подсчитать у соседей число мин и установить значение
+          // РїРѕРґСЃС‡РёС‚Р°С‚СЊ Сѓ СЃРѕСЃРµРґРµР№ С‡РёСЃР»Рѕ РјРёРЅ Рё СѓСЃС‚Р°РЅРѕРІРёС‚СЊ Р·РЅР°С‡РµРЅРёРµ
           int count = 0;
           for (int i=0; i<owner.neighbors.Length; i++) {
-             if (owner.neighbors[i] == null) continue; // существует ли сосед?
+             if (owner.neighbors[i] == null) continue; // СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё СЃРѕСЃРµРґ?
              if (owner.neighbors[i].state.open == EOpen._Mine) count++;
           }
           this.open = EOpenEx.GetValues()[count];
@@ -241,8 +243,8 @@ public abstract class BaseCell {
        public EOpen Open { get { return this.open; } }
        public void setClose(EClose close, ClickReportContext clickRepContext) {
           if (clickRepContext != null)
-             if ((    close == EClose._Flag) || // если устанавливаю флажок
-                (this.close == EClose._Flag))   // если снимаю флажок
+             if ((    close == EClose._Flag) || // РµСЃР»Рё СѓСЃС‚Р°РЅР°РІР»РёРІР°СЋ С„Р»Р°Р¶РѕРє
+                (this.close == EClose._Flag))   // РµСЃР»Рё СЃРЅРёРјР°СЋ С„Р»Р°Р¶РѕРє
              {
                 clickRepContext.setFlag.Add(owner);
              }
@@ -259,14 +261,14 @@ public abstract class BaseCell {
        }
    }
    private StateCell state;
-   /// <summary>запретить установку мины на данную ячейку</summary>
+   /// <summary>Р·Р°РїСЂРµС‚РёС‚СЊ СѓСЃС‚Р°РЅРѕРІРєСѓ РјРёРЅС‹ РЅР° РґР°РЅРЅСѓСЋ СЏС‡РµР№РєСѓ</summary>
    private bool lockMine;
 
    public void LockNeighborMines() {
       lockMine = true;
-      // запретить установку мин у соседей,
+      // Р·Р°РїСЂРµС‚РёС‚СЊ СѓСЃС‚Р°РЅРѕРІРєСѓ РјРёРЅ Сѓ СЃРѕСЃРµРґРµР№,
       for (int i=0; i<neighbors.Length; i++) {
-         if (neighbors[i] == null) continue; // существует ли сосед?
+         if (neighbors[i] == null) continue; // СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё СЃРѕСЃРµРґ?
          neighbors[i].lockMine = true;
       }
    }
@@ -291,27 +293,27 @@ public abstract class BaseCell {
 
    /// <summary>
    /// Coord[] neighborCoord = new Coord[attr.getNeighborNumber()];
-   /// <br>... потомки должны определить координаты соседей
+   /// <br>... РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РѕРїСЂРµРґРµР»РёС‚СЊ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
    /// </summary>
    protected abstract Coord?[] GetCoordsNeighbor();
 
-   /// <summary>матрица ячеек поля мозаики</summary>
+   /// <summary>РјР°С‚СЂРёС†Р° СЏС‡РµРµРє РїРѕР»СЏ РјРѕР·Р°РёРєРё</summary>
    public interface IMatrixCells {
-      /// <summary>размер поля</summary>
+      /// <summary>СЂР°Р·РјРµСЂ РїРѕР»СЏ</summary>
       Size SizeField { get; }
 
-      /// <summary>доступ к заданной ячейке</summary>
+      /// <summary>РґРѕСЃС‚СѓРї Рє Р·Р°РґР°РЅРЅРѕР№ СЏС‡РµР№РєРµ</summary>
       BaseCell getCell(Coord coord);
    }
-   /// <summary>для this определить ячейки-соседей, и проверить валидность их координат
-   /// вызывать после изменений размера поля или типа мозаики</summary>
+   /// <summary>РґР»СЏ this РѕРїСЂРµРґРµР»РёС‚СЊ СЏС‡РµР№РєРё-СЃРѕСЃРµРґРµР№, Рё РїСЂРѕРІРµСЂРёС‚СЊ РІР°Р»РёРґРЅРѕСЃС‚СЊ РёС… РєРѕРѕСЂРґРёРЅР°С‚
+   /// РІС‹Р·С‹РІР°С‚СЊ РїРѕСЃР»Рµ РёР·РјРµРЅРµРЅРёР№ СЂР°Р·РјРµСЂР° РїРѕР»СЏ РёР»Рё С‚РёРїР° РјРѕР·Р°РёРєРё</summary>
    public void IdentifyNeighbors(IMatrixCells matrix) {
-      // получаю координаты соседних ячеек
+      // РїРѕР»СѓС‡Р°СЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРЅРёС… СЏС‡РµРµРє
       var neighborCoord = GetCoordsNeighbor();
-      if (neighborCoord.Length != attr.getNeighborNumber())
+      if (neighborCoord.Length != attr.getNeighborNumber(true))
          throw new Exception("neighborCoord.Length != GetNeighborNumber()");
 
-      // проверяю что они не вылезли за размеры
+      // РїСЂРѕРІРµСЂСЏСЋ С‡С‚Рѕ РѕРЅРё РЅРµ РІС‹Р»РµР·Р»Рё Р·Р° СЂР°Р·РјРµСЂС‹
       for (int i=0; i<neighborCoord.Length; i++)
          if (neighborCoord[i] != null)
             if ((neighborCoord[i].Value.x >= matrix.SizeField.width) ||
@@ -321,8 +323,8 @@ public abstract class BaseCell {
             {
                neighborCoord[i] = null;
             }
-      // по координатам получаю множество соседних обьектов-ячеек
-      neighbors = new BaseCell[attr.getNeighborNumber()];
+      // РїРѕ РєРѕРѕСЂРґРёРЅР°С‚Р°Рј РїРѕР»СѓС‡Р°СЋ РјРЅРѕР¶РµСЃС‚РІРѕ СЃРѕСЃРµРґРЅРёС… РѕР±СЊРµРєС‚РѕРІ-СЏС‡РµРµРє
+      neighbors = new BaseCell[attr.getNeighborNumber(true)];
       for (int i=0; i<neighborCoord.Length; i++)
          if (neighborCoord[i] != null)
             neighbors[i] = matrix.getCell(neighborCoord[i].Value);
@@ -330,15 +332,15 @@ public abstract class BaseCell {
 
    public Coord getCoord() { return coord; }
    public int getDirection() { return direction; }
-   /// <summary>координата центра фигуры (в пикселях)</summary>
+   /// <summary>РєРѕРѕСЂРґРёРЅР°С‚Р° С†РµРЅС‚СЂР° С„РёРіСѓСЂС‹ (РІ РїРёРєСЃРµР»СЏС…)</summary>
    public Point getCenter() { return getRcInner(1).center(); }
 
-   /// <summary>принадлежат ли эти экранные координаты ячейке</summary>
+   /// <summary>РїСЂРёРЅР°РґР»РµР¶Р°С‚ Р»Рё СЌС‚Рё СЌРєСЂР°РЅРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЏС‡РµР№РєРµ</summary>
    public virtual bool PointInRegion(Point point) { return region.Contains(point); }
 
    public Region getRegion() { return region; }
 
-   /// <summary>определить координаты точек из которых состоит фигура</summary>
+   /// <summary>РѕРїСЂРµРґРµР»РёС‚СЊ РєРѕРѕСЂРґРёРЅР°С‚С‹ С‚РѕС‡РµРє РёР· РєРѕС‚РѕСЂС‹С… СЃРѕСЃС‚РѕРёС‚ С„РёРіСѓСЂР°</summary>
    protected abstract void CalcRegion();
 
    public void Reset() {
@@ -360,10 +362,10 @@ public abstract class BaseCell {
       }
 
       LeftDownResult result = null;
-      // эффект нажатости для неоткрытых соседей
+      // СЌС„С„РµРєС‚ РЅР°Р¶Р°С‚РѕСЃС‚Рё РґР»СЏ РЅРµРѕС‚РєСЂС‹С‚С‹С… СЃРѕСЃРµРґРµР№
       if ((state.Status == EState._Open) && (state.Open != EOpen._Nil))
          for (int i=0; i<neighbors.Length; i++) {
-            if (neighbors[i] == null) continue; // существует ли сосед?
+            if (neighbors[i] == null) continue; // СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё СЃРѕСЃРµРґ?
             if ((neighbors[i].state.Status == EState._Open) ||
                (neighbors[i].state.Close  == EClose._Flag)) continue;
             neighbors[i].state.Down = true;
@@ -377,16 +379,16 @@ public abstract class BaseCell {
       LeftUpResult result = new LeftUpResult(0, 0, 0, false, false);
 
       if (state.Close == EClose._Flag) return result;
-      // избавится от эффекта нажатости
+      // РёР·Р±Р°РІРёС‚СЃСЏ РѕС‚ СЌС„С„РµРєС‚Р° РЅР°Р¶Р°С‚РѕСЃС‚Рё
       if ((state.Status == EState._Open) && (state.Open != EOpen._Nil))
          for (int i=0; i<neighbors.Length; i++) {
-            if (neighbors[i] == null) continue; // существует ли сосед?
+            if (neighbors[i] == null) continue; // СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё СЃРѕСЃРµРґ?
             if ((neighbors[i].state.Status == EState._Open) ||
                (neighbors[i].state.Close  == EClose._Flag)) continue;
             neighbors[i].state.Down = false;
             result.addToRepaint(neighbors[i]);
          }
-      // Открыть закрытую ячейку на которой нажали
+      // РћС‚РєСЂС‹С‚СЊ Р·Р°РєСЂС‹С‚СѓСЋ СЏС‡РµР№РєСѓ РЅР° РєРѕС‚РѕСЂРѕР№ РЅР°Р¶Р°Р»Рё
       if (state.Status == EState._Close)
          if (!isMy) {
             state.Down = false;
@@ -400,22 +402,22 @@ public abstract class BaseCell {
             result.addToRepaint(this);
          }
 
-      // ! В этой точке ячейка уже открыта
-      // Подсчитываю кол-во установленных вокруг флагов и не открытых ячеек
+      // ! Р’ СЌС‚РѕР№ С‚РѕС‡РєРµ СЏС‡РµР№РєР° СѓР¶Рµ РѕС‚РєСЂС‹С‚Р°
+      // РџРѕРґСЃС‡РёС‚С‹РІР°СЋ РєРѕР»-РІРѕ СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹С… РІРѕРєСЂСѓРі С„Р»Р°РіРѕРІ Рё РЅРµ РѕС‚РєСЂС‹С‚С‹С… СЏС‡РµРµРє
       int countFlags = 0;
       int countClear = 0;
       if (state.Open != EOpen._Nil)
          for (int i=0; i<neighbors.Length; i++) {
-            if (neighbors[i] == null) continue; // существует ли сосед?
+            if (neighbors[i] == null) continue; // СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё СЃРѕСЃРµРґ?
             if (neighbors[i].state.Status == EState._Open) continue;
             if (neighbors[i].state.Close  == EClose._Flag)
                countFlags++;
             else countClear++;
          }
-      // оставшимся установить флаги
+      // РѕСЃС‚Р°РІС€РёРјСЃСЏ СѓСЃС‚Р°РЅРѕРІРёС‚СЊ С„Р»Р°РіРё
       if ((state.Open != EOpen._Nil) && ((countFlags+countClear) == state.Open.Ordinal()))
          for (int i=0; i<neighbors.Length; i++) {
-            if (neighbors[i] == null) continue; // существует ли сосед?
+            if (neighbors[i] == null) continue; // СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё СЃРѕСЃРµРґ?
             if ((neighbors[i].state.Status == EState._Open) ||
                (neighbors[i].state.Close  == EClose._Flag)) continue;
             result.countUnknown += (neighbors[i].state.Close == EClose._Unknown) ? -1 : 0;
@@ -424,10 +426,10 @@ public abstract class BaseCell {
             result.addToRepaint(neighbors[i]);
          }
       if (!isMy) return result;
-      // открыть оставшиеся
+      // РѕС‚РєСЂС‹С‚СЊ РѕСЃС‚Р°РІС€РёРµСЃСЏ
       if ((countFlags+result.countFlag) == state.Open.Ordinal())
          for (int i=0; i<neighbors.Length; i++) {
-            if (neighbors[i] == null) continue; // существует ли сосед?
+            if (neighbors[i] == null) continue; // СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё СЃРѕСЃРµРґ?
             if ((neighbors[i].state.Status == EState._Open) ||
                (neighbors[i].state.Close  == EClose._Flag)) continue;
             result.countUnknown += (neighbors[i].state.Close == EClose._Unknown) ? -1 : 0;
@@ -499,24 +501,24 @@ public abstract class BaseCell {
       return result;
    }
 
-   /// <summary>Вернуть цвет заливки ячеки в зависимости от
-   /// * режима заливки фона ячеек
-   /// * координаты ячейки
-   /// * направления ячейки
-   /// * ... - как придумает дочерний класс </summary>
+   /// <summary>Р’РµСЂРЅСѓС‚СЊ С†РІРµС‚ Р·Р°Р»РёРІРєРё СЏС‡РµРєРё РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚
+   /// * СЂРµР¶РёРјР° Р·Р°Р»РёРІРєРё С„РѕРЅР° СЏС‡РµРµРє
+   /// * РєРѕРѕСЂРґРёРЅР°С‚С‹ СЏС‡РµР№РєРё
+   /// * РЅР°РїСЂР°РІР»РµРЅРёСЏ СЏС‡РµР№РєРё
+   /// * ... - РєР°Рє РїСЂРёРґСѓРјР°РµС‚ РґРѕС‡РµСЂРЅРёР№ РєР»Р°СЃСЃ </summary>
    public virtual Color getBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
       switch (fillMode) {
       default:
-         System.Diagnostics.Debug.Assert(false,this.GetType()+".getBackgroundFillColor: fillMode="+fillMode+":  добавь цветовую обработку для этого режима!");
-         //break;// !!! без break'а
+         System.Diagnostics.Debug.Assert(false,this.GetType()+".getBackgroundFillColor: fillMode="+fillMode+":  РґРѕР±Р°РІСЊ С†РІРµС‚РѕРІСѓСЋ РѕР±СЂР°Р±РѕС‚РєСѓ РґР»СЏ СЌС‚РѕРіРѕ СЂРµР¶РёРјР°!");
+         //break;// !!! Р±РµР· break'Р°
          goto case 0;
       case 0:
          if ((state.Status == EState._Open) && (state.Open == EOpen._Mine) && state.Down)
-            return Color.Red.Brighter(0.05); // game ower: игра завершена - клик на мине
+            return Color.Red.Brighter(0.05); // game ower: РёРіСЂР° Р·Р°РІРµСЂС€РµРЅР° - РєР»РёРє РЅР° РјРёРЅРµ
          if ((state.Status == EState._Open) && (state.Open != EOpen._Mine) && (state.Close == EClose._Flag))
-            return Color.Magenta.Brighter(0.3); // game ower: игра завершена - не верно проставлен флаг (на ячейке с цифрой)
+            return Color.Magenta.Brighter(0.3); // game ower: РёРіСЂР° Р·Р°РІРµСЂС€РµРЅР° - РЅРµ РІРµСЂРЅРѕ РїСЂРѕСЃС‚Р°РІР»РµРЅ С„Р»Р°Рі (РЅР° СЏС‡РµР№РєРµ СЃ С†РёС„СЂРѕР№)
 
-          // для Down и Нажатого состояний делаю фон чуть и чуть-чуть темнее...
+          // РґР»СЏ Down Рё РќР°Р¶Р°С‚РѕРіРѕ СЃРѕСЃС‚РѕСЏРЅРёР№ РґРµР»Р°СЋ С„РѕРЅ С‡СѓС‚СЊ Рё С‡СѓС‚СЊ-С‡СѓС‚СЊ С‚РµРјРЅРµРµ...
          if (state.Down)
             return defaultColor.Darker((state.Status == EState._Close) ? 0.15 : 0.25);
          return defaultColor;
@@ -525,7 +527,7 @@ public abstract class BaseCell {
          return repositoryColor(getDirection());
       case 2:
          {
-            // подсветить каждую i-тую строку c шагом div
+            // РїРѕРґСЃРІРµС‚РёС‚СЊ РєР°Р¶РґСѓСЋ i-С‚СѓСЋ СЃС‚СЂРѕРєСѓ c С€Р°РіРѕРј div
             int i = 2;
             int div = 5;
             int tmp1 = getCoord().x % div;
@@ -534,7 +536,7 @@ public abstract class BaseCell {
          }
       case 3:
          {
-            // дуршлаг
+            // РґСѓСЂС€Р»Р°Рі
             int i = 3;
             int div = 4;
             int tmp1 = getCoord().x % div;
@@ -543,7 +545,7 @@ public abstract class BaseCell {
          }
       case 4:
          {
-            // ход конём
+            // С…РѕРґ РєРѕРЅС‘Рј
             int i = 3;
             int div = 5;
             int tmp1 = getCoord().x % div;
@@ -552,7 +554,7 @@ public abstract class BaseCell {
          }
       case 5:
          {
-            // волны
+            // РІРѕР»РЅС‹
             int div = 15;
             int tmp1 = getCoord().x % div;
             int tmp2 = (getCoord().y+tmp1) % div;
@@ -570,6 +572,11 @@ public abstract class BaseCell {
       case 13: case 14: case 15:
       case 16: case 17: case 18:
          return repositoryColor(getCoord().x % (-fillMode) - fillMode + getCoord().y % (+fillMode));
+      case 19:
+         // РїРѕРґСЃРІРµС‚РёС‚СЊ direction
+         var zx = getCoord().x / Attr.GetDirectionSizeField().width + 1;
+         var zy = getCoord().y / Attr.GetDirectionSizeField().height + 1;
+         return repositoryColor(zx * zy);
       }
    }
 

@@ -1,6 +1,4 @@
 using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using ua.ksn.fmg.model.mosaics;
 using ua.ksn.fmg.model.mosaics.cell;
@@ -22,25 +20,32 @@ namespace ua.ksn.fmg.controller.types {
 
       /// <summary>
       /// skill level coefficient
-      /// коэффициент уровня сложности в зависимости от типа мозаики - чем больше, тем сложнее
+      /// РєРѕСЌС„С„РёС†РёРµРЅС‚ СѓСЂРѕРІРЅСЏ СЃР»РѕР¶РЅРѕСЃС‚Рё РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ С‚РёРїР° РјРѕР·Р°РёРєРё - С‡РµРј Р±РѕР»СЊС€Рµ, С‚РµРј СЃР»РѕР¶РЅРµРµ
       /// </summary>
       private static readonly IDictionary<EMosaic, double> mosaicCoefficient;
       static ESkillLevelEx() {
          var values = EMosaicEx.GetValues();
          mosaicCoefficient = new Dictionary<EMosaic, double>(values.Length);
-         const int area = 200; // пох
+         const int area = 200; // РїРѕС…
          foreach (EMosaic mosaicType in values) {
             BaseCell.BaseAttribute attr = CellFactory.CreateAttributeInstance(mosaicType, area);
 
-            // variant 1 - сложность в зависимости от кол-ва пересечений ячеек в одной точке
+            // variant 1 - СЃР»РѕР¶РЅРѕСЃС‚СЊ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РєРѕР»-РІР° РїРµСЂРµСЃРµС‡РµРЅРёР№ СЏС‡РµРµРє РІ РѕРґРЅРѕР№ С‚РѕС‡РєРµ
             //			mosaicCoefficient.put(mosaicType, attr.getVertexIntersection());
 
-            // variant 2 - сложность в зависимости от кол-ва соседних ячеек
-            int cntDir = attr.GetDirectionCount();
-            int neighbors = 0;
-            for (int i=0; i < cntDir; i++)
-               neighbors += attr.getNeighborNumber(i);
-            mosaicCoefficient.Add(mosaicType, ((double)neighbors) / cntDir);
+            // variant 2 - СЃР»РѕР¶РЅРѕСЃС‚СЊ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РєРѕР»-РІР° СЃРѕСЃРµРґРЅРёС… СЏС‡РµРµРє
+            //int cntDir = attr.GetDirectionCount();
+            //int neighbors = 0;
+            //for (int i=0; i < cntDir; i++)
+            //   neighbors += attr.getNeighborNumber(i);
+            //mosaicCoefficient.Add(mosaicType, ((double)neighbors) / cntDir);
+
+            // variant 3 - СЃР»РѕР¶РЅРѕСЃС‚СЊ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РєРѕР»-РІР° СЃРѕСЃРµРґРЅРёС… СЏС‡РµРµРє Рё РєРѕР»-РІР° С‚РѕС‡РµРє РїРµСЂРµСЃРµС‡РµРЅРёСЏ
+            //int cntDir = attr.GetDirectionCount();
+            //int totalNeighbors = Enumerable.Range(0, cntDir).Aggregate((accum, i) => accum+attr.getNeighborNumber(i));
+            //double neighbors = ((double)totalNeighbors)/cntDir;
+            var neighbors = (double)attr.getNeighborNumber(false);
+            mosaicCoefficient.Add(mosaicType, attr.getVertexIntersection() / neighbors);
 
             //			System.out.println(attr.getClass().getSimpleName() + ": " + mosaicCoefficient.get(mosaicType));
          }
@@ -55,7 +60,7 @@ namespace ua.ksn.fmg.controller.types {
          //		System.exit(0);
       }
 
-      /** коэффициент уровня сложности */
+      /** РєРѕСЌС„С„РёС†РёРµРЅС‚ СѓСЂРѕРІРЅСЏ СЃР»РѕР¶РЅРѕСЃС‚Рё */
       private static double GetCoefficient(this ESkillLevel self) {
          // variant 1
          //		switch (self) {
@@ -64,22 +69,26 @@ namespace ua.ksn.fmg.controller.types {
          //		case eProfi   : return 0.84;
          //		case eCrazy   : return 0.9991111111111111;
          //		}
-         // variant 2
-         switch (self) {
-         case ESkillLevel.eBeginner:
-            return 1.2;
-         case ESkillLevel.eAmateur:
-            return 1.44;
-         case ESkillLevel.eProfi:
-            return 1.68;
-         case ESkillLevel.eCrazy:
-            return 1.9982222222222221;
-         }
 
-         throw new Exception("Invalid method call. Для уровня сложности '" + self + "' нет коэффициента сложности.");
+         // variant 2
+         //switch (self) {
+         //case ESkillLevel.eBeginner: return 1.2;
+         //case ESkillLevel.eAmateur : return 1.44;
+         //case ESkillLevel.eProfi   : return 1.68;
+         //case ESkillLevel.eCrazy   : return 1.9982222222222221;
+         //}
+
+         // variant 3
+         switch (self) {
+         case ESkillLevel.eBeginner: return 0.075;
+         case ESkillLevel.eAmateur : return 0.09;
+         case ESkillLevel.eProfi   : return 0.105;
+         case ESkillLevel.eCrazy   : return 0.12488888888888888;
+         }
+         throw new Exception("Invalid method call. Р”Р»СЏ СѓСЂРѕРІРЅСЏ СЃР»РѕР¶РЅРѕСЃС‚Рё '" + self + "' РЅРµС‚ РєРѕСЌС„С„РёС†РёРµРЅС‚Р° СЃР»РѕР¶РЅРѕСЃС‚Рё.");
       }
 
-      /** размеры полей */
+      /** СЂР°Р·РјРµСЂС‹ РїРѕР»РµР№ */
       public static Size DefaultSize(this ESkillLevel self) {
          switch (self) {
          case ESkillLevel.eBeginner: return new Size(10, 10); // 15
@@ -87,20 +96,20 @@ namespace ua.ksn.fmg.controller.types {
          case ESkillLevel.eProfi   : return new Size(30, 20); // 126
          case ESkillLevel.eCrazy   : return new Size(45, 25); // 281
          }
-         throw new Exception("Invalid method call. Для уровня сложности '" + self + "' нет размера поля по-умолчанию.");
+         throw new Exception("Invalid method call. Р”Р»СЏ СѓСЂРѕРІРЅСЏ СЃР»РѕР¶РЅРѕСЃС‚Рё '" + self + "' РЅРµС‚ СЂР°Р·РјРµСЂР° РїРѕР»СЏ РїРѕ-СѓРјРѕР»С‡Р°РЅРёСЋ.");
       }
 
-      /** Узнать кол-во мин на размере поля по-умолчанию */
+      /** РЈР·РЅР°С‚СЊ РєРѕР»-РІРѕ РјРёРЅ РЅР° СЂР°Р·РјРµСЂРµ РїРѕР»СЏ РїРѕ-СѓРјРѕР»С‡Р°РЅРёСЋ */
       public static int GetNumberMines(this ESkillLevel self, EMosaic eMosaic) {
          return GetNumberMines(self, eMosaic, self.DefaultSize());
       }
 
-      /** Узнать кол-во мин на заданном размере поля */
+      /** РЈР·РЅР°С‚СЊ РєРѕР»-РІРѕ РјРёРЅ РЅР° Р·Р°РґР°РЅРЅРѕРј СЂР°Р·РјРµСЂРµ РїРѕР»СЏ */
       public static int GetNumberMines(this ESkillLevel self, EMosaic eMosaic, Size customSizeMosaic) {
          if (customSizeMosaic == null)
             throw new ArgumentException("customSizeMosaic must be not null");
          if (self == ESkillLevel.eCustom)
-            throw new Exception("Для уровня сложности '" + self + "' кол-во мин задаётся явно, а не расчитывается...");
+            throw new Exception("Р”Р»СЏ СѓСЂРѕРІРЅСЏ СЃР»РѕР¶РЅРѕСЃС‚Рё '" + self + "' РєРѕР»-РІРѕ РјРёРЅ Р·Р°РґР°С‘С‚СЃСЏ СЏРІРЅРѕ, Р° РЅРµ СЂР°СЃС‡РёС‚С‹РІР°РµС‚СЃСЏ...");
 
          return (int)(customSizeMosaic.width * customSizeMosaic.height * GetCoefficient(self) / mosaicCoefficient[eMosaic]);
       }

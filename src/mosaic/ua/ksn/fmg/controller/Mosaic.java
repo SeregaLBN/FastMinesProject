@@ -629,7 +629,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 
 	/** Максимальное кол-во мин при указанном размере поля */
 	public int GetMaxMines(Size sizeFld) {
-		int iMustFreeCell = GetNeighborNumber()+1;
+		int iMustFreeCell = GetMaxNeighborNumber()+1;
 		int iMaxMines = sizeFld.width*sizeFld.height-iMustFreeCell;
 		return Math.max(1, iMaxMines);
 	}
@@ -640,7 +640,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 	/** размер в пикселях */
 	public Size getWindowSize() { return CalcWindowSize(getSizeField(), getArea()); }
 	/** узнать количество соседей для текущей мозаики */
-	public int GetNeighborNumber() { return getCellAttr().getNeighborNumber(); }
+	public int GetMaxNeighborNumber() { return getCellAttr().getNeighborNumber(true); }
 
 	/** действительно лишь когда gameStatus == gsEnd */
 	public boolean isVictory() {

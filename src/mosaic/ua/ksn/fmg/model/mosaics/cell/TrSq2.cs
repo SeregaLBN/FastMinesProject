@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "TrSq2.java"
 //
-// Реализация класса TrSq2 - мозаика из 24х треугольников и 12х квадратов (на 1 квадрат приходится 2 треугольника)
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° TrSq2 - РјРѕР·Р°РёРєР° РёР· 24С… С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ Рё 12С… РєРІР°РґСЂР°С‚РѕРІ (РЅР° 1 РєРІР°РґСЂР°С‚ РїСЂРёС…РѕРґРёС‚СЃСЏ 2 С‚СЂРµСѓРіРѕР»СЊРЅРёРєР°)
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ using ua.ksn.geom;
  
 namespace ua.ksn.fmg.model.mosaics.cell {
 
-/// <summary> Комбинация. мозаика из 24х треугольников и 12х квадратов (на 1 квадрат приходится 2 треугольника) </summary>
+/// <summary> РљРѕРјР±РёРЅР°С†РёСЏ. РјРѕР·Р°РёРєР° РёР· 24С… С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ Рё 12С… РєРІР°РґСЂР°С‚РѕРІ (РЅР° 1 РєРІР°РґСЂР°С‚ РїСЂРёС…РѕРґРёС‚СЃСЏ 2 С‚СЂРµСѓРіРѕР»СЊРЅРёРєР°) </summary>
 public class TrSq2 : BaseCell {
 	public class AttrTrSq2 : BaseAttribute {
 		public AttrTrSq2(int area)
@@ -70,8 +70,8 @@ public class TrSq2 : BaseCell {
 
 			return result;
 		}
-	
-		public override int getNeighborNumber() { return 12; }
+
+      public override int getNeighborNumber(bool max) { return max ? 12 : 9; }
 		public override int getNeighborNumber(int direction) {
 			switch (direction) {
 			case  1: case  2: case  4: case  5:
@@ -87,7 +87,6 @@ public class TrSq2 : BaseCell {
 				throw new ArgumentException("Invalid value direction="+direction);
 			}
 		}
-		public override int getVertexNumber() { return 4; }
 		public override int getVertexNumber(int direction) {
 			switch (direction) {
 			case  0: case  3: case  7: case 10:
@@ -105,7 +104,7 @@ public class TrSq2 : BaseCell {
 		}
 		public override double getVertexIntersection() { return 5.0; }
 		public override Size GetDirectionSizeField() { return new Size(6, 6); }
-		/// <summary> </summary> размер стороны треугольника и квадрата */
+		/// <summary> </summary> СЂР°Р·РјРµСЂ СЃС‚РѕСЂРѕРЅС‹ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР° Рё РєРІР°РґСЂР°С‚Р° */
 		public override double CalcA(int area) { return Math.Sqrt(6*area/(2+SQRT3)); }
 		public double CalcB(int area) { return CalcA(area)/2; }
 		public double CalcH(int area) { return CalcB(area)*SQRT3; }
@@ -126,9 +125,9 @@ public class TrSq2 : BaseCell {
 	}
 
 	protected override Coord?[] GetCoordsNeighbor() {
-		var neighborCoord = new Coord?[Attr.getNeighborNumber()];
+      var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
 		switch (direction) {
 		case 0:
 		case 21:
@@ -549,7 +548,7 @@ public class TrSq2 : BaseCell {
 
 		PointDouble o = getOffest();
 
-		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
+		PointDouble center = new PointDouble(); // РєРѕРѕСЂРґРёРЅР°С‚Р° РІРїРёСЃР°РЅРЅРѕРіРѕ РІ С„РёРіСѓСЂСѓ РєРІР°РґСЂР°С‚Р° (РЅРµ СЃРѕРІРїР°РґР°РµС‚ СЃ С†РµРЅС‚СЂРѕРј С„РёРіСѓСЂС‹)
 		switch (direction) {
 		case  0: case 21: center.x = o.x -(b+h)/2; center.y = o.y + (b-h)/2; break;
 		case  1: case 22: center.x = o.x;          center.y = o.y - h+wsq2;  break;

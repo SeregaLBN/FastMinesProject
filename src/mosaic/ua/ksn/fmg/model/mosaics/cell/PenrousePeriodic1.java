@@ -136,7 +136,7 @@ public class PenrousePeriodic1 extends BaseCell {
 		}
 	
 		@Override
-		public int getNeighborNumber() { return 12; }
+		public int getNeighborNumber(boolean max) { return max ? 12 : 7; }
 		@Override
 		public int getNeighborNumber(int direction) {
 	    	switch (direction) {
@@ -173,8 +173,6 @@ public class PenrousePeriodic1 extends BaseCell {
 	    	}
 		}
 		@Override
-		public int getVertexNumber() { return 4; }
-		@Override
 		public int getVertexNumber(int direction) { return 4; }
 
 		static double vertexIntersection = 0.;
@@ -187,7 +185,7 @@ public class PenrousePeriodic1 extends BaseCell {
 					sum += getNeighborNumber(dir) +
 						4 + // соседние фигуры, которые граничат с гранями this, участвуют в подсчёте два раза... 
 						4; // ...сама this участвует подсчёте все 4 раза
-				vertexIntersection = ((double)sum) / getVertexNumber() / cntDirection;
+				vertexIntersection = ((double)sum) / getVertexNumber(-1) / cntDirection;
 //				System.out.println("PenrousePeriodic1::getVertexgetVertexNeighbor == " + vertexIntersection);
 			}
 			return vertexIntersection;
@@ -230,7 +228,7 @@ public class PenrousePeriodic1 extends BaseCell {
 
 	@Override
 	protected Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber()];
+		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
     	for (int i=0; i<neighborCoord.length; i++)
 			neighborCoord[i] = null;
 

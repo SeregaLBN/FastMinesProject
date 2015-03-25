@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+//                                      В© Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Square2.java"
 //
-// Реализация класса Square2 - квадрат (перекошенный вариант поля)
+// Р РµР°Р»РёР·Р°С†РёСЏ РєР»Р°СЃСЃР° Square2 - РєРІР°РґСЂР°С‚ (РїРµСЂРµРєРѕС€РµРЅРЅС‹Р№ РІР°СЂРёР°РЅС‚ РїРѕР»СЏ)
 // Copyright (C) 2002-2011 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ using ua.ksn.geom;
  
 namespace ua.ksn.fmg.model.mosaics.cell {
 
-/// <summary> Квадрат. Вариант 2 - сдвинутые ряды </summary>
+/// <summary> РљРІР°РґСЂР°С‚. Р’Р°СЂРёР°РЅС‚ 2 - СЃРґРІРёРЅСѓС‚С‹Рµ СЂСЏРґС‹ </summary>
 public class Square2 : BaseCell {
 	public class AttrSquare2 : BaseAttribute {
 		public AttrSquare2(int area)
@@ -34,16 +34,15 @@ public class Square2 : BaseCell {
       {}
 
 		public override Size CalcOwnerSize(Size sizeField, int area) {
-			double a = CalcA(area); // размер стороны квадрата
+			double a = CalcA(area); // СЂР°Р·РјРµСЂ СЃС‚РѕСЂРѕРЅС‹ РєРІР°РґСЂР°С‚Р°
 			Size result = new Size(
 					(int)(sizeField.width * a + a/2),
 					(int)(sizeField.height * a));
 			return result;
 		}
-	
-		public override int getNeighborNumber() { return 6; }
+
+      public override int getNeighborNumber(bool max) { return 6; }
 		public override int getNeighborNumber(int direction) { return 6; }
-		public override int getVertexNumber() { return 4; }
 		public override int getVertexNumber(int direction) { return 4; }
 		public override double getVertexIntersection() { return 3; }
 		public override Size GetDirectionSizeField() { return new Size(1, 2); }
@@ -65,9 +64,9 @@ public class Square2 : BaseCell {
 	}
 
 	protected override Coord?[] GetCoordsNeighbor() {
-      var neighborCoord = new Coord?[Attr.getNeighborNumber()];
+      var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
-		// определяю координаты соседей
+		// РѕРїСЂРµРґРµР»СЏСЋ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕСЃРµРґРµР№
     	neighborCoord[0] = new Coord(coord.x- direction   , coord.y-1);
 		neighborCoord[1] = new Coord(coord.x+(direction^1), coord.y-1);
 		neighborCoord[2] = new Coord(coord.x-1            , coord.y);
