@@ -16,9 +16,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>data</name>
+			<name>types</name>
 			<type>2</type>
-			<locationURI>MY_SOURCE_FOLDER/data</locationURI>
+			<locationURI>MY_SOURCE_FOLDER/types</locationURI>
 		</link>
 		<link>
 			<name>lib</name>
@@ -26,9 +26,9 @@
 			<locationURI>MY_SOURCE_FOLDER/lib</locationURI>
 		</link>
 		<link>
-			<name>mosaic</name>
+			<name>core</name>
 			<type>2</type>
-			<locationURI>MY_SOURCE_FOLDER/mosaic</locationURI>
+			<locationURI>MY_SOURCE_FOLDER/core</locationURI>
 		</link>
 		<link>
 			<name>res</name>
@@ -36,9 +36,9 @@
 			<locationURI>MY_RESOURCE_FOLDER/res</locationURI>
 		</link>
 		<link>
-			<name>ui_desktop</name>
+			<name>swing</name>
 			<type>2</type>
-			<locationURI>MY_SOURCE_FOLDER/ui_desktop</locationURI>
+			<locationURI>MY_SOURCE_FOLDER/platform/swing</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
