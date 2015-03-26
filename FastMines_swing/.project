@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>swingFastMines</name>
+	<name>FastMines_swing</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -31,14 +31,14 @@
 			<locationURI>MY_SOURCE_FOLDER/mosaic</locationURI>
 		</link>
 		<link>
-			<name>ui_desktop</name>
-			<type>2</type>
-			<locationURI>MY_SOURCE_FOLDER/ui_desktop</locationURI>
-		</link>
-		<link>
 			<name>res</name>
 			<type>2</type>
 			<locationURI>MY_RESOURCE_FOLDER/res</locationURI>
+		</link>
+		<link>
+			<name>ui_desktop</name>
+			<type>2</type>
+			<locationURI>MY_SOURCE_FOLDER/ui_desktop</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
