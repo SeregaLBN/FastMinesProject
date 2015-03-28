@@ -16,14 +16,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>types</name>
+			<name>common</name>
 			<type>2</type>
-			<locationURI>MY_SOURCE_FOLDER/types</locationURI>
-		</link>
-		<link>
-			<name>lib</name>
-			<type>2</type>
-			<locationURI>MY_SOURCE_FOLDER/lib</locationURI>
+			<locationURI>MY_SOURCE_FOLDER/common</locationURI>
 		</link>
 		<link>
 			<name>core</name>
@@ -33,22 +28,27 @@
 		<link>
 			<name>res</name>
 			<type>2</type>
-			<locationURI>MY_RESOURCE_FOLDER/res</locationURI>
+			<locationURI>MY_RESOURCE_FOLDER</locationURI>
 		</link>
 		<link>
 			<name>swing</name>
 			<type>2</type>
 			<locationURI>MY_SOURCE_FOLDER/platform/swing</locationURI>
 		</link>
+		<link>
+			<name>types</name>
+			<type>2</type>
+			<locationURI>MY_SOURCE_FOLDER/types</locationURI>
+		</link>
 	</linkedResources>
 	<variableList>
 		<variable>
 			<name>MY_RESOURCE_FOLDER</name>
-			<value>$%7BWORKSPACE_LOC%7D</value>
+			<value>$%7BPARENT-2-WORKSPACE_LOC%7D/res</value>
 		</variable>
 		<variable>
 			<name>MY_SOURCE_FOLDER</name>
-			<value>$%7BWORKSPACE_LOC%7D/src</value>
+			<value>$%7BPARENT-2-WORKSPACE_LOC%7D/src</value>
 		</variable>
 	</variableList>
 </projectDescription>

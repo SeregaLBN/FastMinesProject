@@ -1,10 +1,13 @@
-./src - каталог исходников. Чисто c поддержкой стандартной библиотеки класов, без уклона в какую либо из UI библиотек
-./res - ресурсы
+./Workspaces  -  IDE Workspaces /Solutions:
+   ./Workspaces/Eclipse  - workspace IDE Eclipse
+   ./Workspaces/VS       - solutions for Visual Studio 
 
-xxx_FastMines - каталоги конкретной языковой реализации, под конкретную UI платформу:
- * swing_FastMines - Java desktop SWING project
- * winForms_FastMines - C# desktop Windows Forms application
- * winRT_FastMines - C# desktop/tablet Windows RT application
- * ...   
+./src - common source projects
+./res - shared resources projects
 
-BmpLogo - Win32 C++ proj (generate logo project - raw bitmap)
+FastMines_xxx - РїСЂРѕРµРєС‚С‹ РєРѕРЅРєСЂРµС‚РЅРѕР№ СЏР·С‹РєРѕРІРѕР№ СЂРµР°Р»РёР·Р°С†РёРё, РїРѕРґ РєРѕРЅРєСЂРµС‚РЅСѓСЋ UI РїР»Р°С‚С„РѕСЂРјСѓ:
+ * FastMines_swing    - Java desktop SWING project                          (open from Eclipse workspace)
+ * FastMines_winForms - C# desktop Windows Forms application                (open from Visual Studio workspace)
+ * FastMines_winRT    - C# desktop/tablet/mobile Windows RT application     (open from Visual Studio workspace)
+ * FastMines_Logo     - C++ Win32 proj (generate logo project - raw bitmap) (open from Visual Studio workspace)
+ * ...
