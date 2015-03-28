@@ -9,7 +9,7 @@ Workspaces/VS/packages/*/
 **/Debug
 **/Release
 FastMines_winRT/res
-FastMines_winRT/src
+FastMines_winRT/src_*
 Mines.bst
 Mines.dat
 Mines.stc
