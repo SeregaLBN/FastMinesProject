@@ -2,7 +2,7 @@
 *.opensdf
 .metadata
 .recommenders
-packages/*/
+Workspaces/VS/packages/*/
 *.suo
 **/obj
 **/bin

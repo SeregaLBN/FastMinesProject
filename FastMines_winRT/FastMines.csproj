@@ -106,89 +106,89 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\controller\event\MosaicListener.cs">
-      <Link>src\mosaic\ua\ksn\fmg\controller\event\MosaicListener.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\controller\event\MosaicListener.cs">
+      <Link>src\core\ua\ksn\fmg\controller\event\MosaicListener.cs</Link>
     </Compile>
-    <Compile Include="..\src\ui_desktop\ua\ksn\fmg\view\draw\ColorText.cs">
-      <Link>src\ui_desktop\ua\ksn\fmg\view\draw\ColorText.cs</Link>
+    <Compile Include="..\src\types\ua\ksn\fmg\view\draw\ColorText.cs">
+      <Link>src\types\ua\ksn\fmg\view\draw\ColorText.cs</Link>
     </Compile>
-    <Compile Include="..\src\data\ua\ksn\fmg\controller\types\ESkillLevel.cs">
-      <Link>src\data\ua\ksn\fmg\controller\types\ESkillLevel.cs</Link>
+    <Compile Include="..\src\types\ua\ksn\fmg\controller\types\ESkillLevel.cs">
+      <Link>src\types\ua\ksn\fmg\controller\types\ESkillLevel.cs</Link>
     </Compile>
-    <Compile Include="..\src\data\ua\ksn\fmg\controller\serializable\ChampionsModel.cs">
-      <Link>src\data\ua\ksn\fmg\controller\serializable\ChampionsModel.cs</Link>
+    <Compile Include="..\src\types\ua\ksn\fmg\controller\serializable\ChampionsModel.cs">
+      <Link>src\types\ua\ksn\fmg\controller\serializable\ChampionsModel.cs</Link>
     </Compile>
-    <Compile Include="..\src\data\ua\ksn\fmg\controller\serializable\PlayersModel.cs">
-      <Link>src\data\ua\ksn\fmg\controller\serializable\PlayersModel.cs</Link>
+    <Compile Include="..\src\types\ua\ksn\fmg\controller\serializable\PlayersModel.cs">
+      <Link>src\types\ua\ksn\fmg\controller\serializable\PlayersModel.cs</Link>
     </Compile>
-    <Compile Include="..\src\data\ua\ksn\fmg\controller\serializable\StatisticCounts.cs">
-      <Link>src\data\ua\ksn\fmg\controller\serializable\StatisticCounts.cs</Link>
+    <Compile Include="..\src\types\ua\ksn\fmg\controller\serializable\StatisticCounts.cs">
+      <Link>src\types\ua\ksn\fmg\controller\serializable\StatisticCounts.cs</Link>
     </Compile>
-    <Compile Include="..\src\lib\ua\ksn\geom\Coord.cs">
-      <Link>src\lib\ua\ksn\geom\Coord.cs</Link>
+    <Compile Include="..\src\common\ua\ksn\geom\Coord.cs">
+      <Link>src\common\ua\ksn\geom\Coord.cs</Link>
     </Compile>
-    <Compile Include="..\src\lib\ua\ksn\geom\Point.cs">
-      <Link>src\lib\ua\ksn\geom\Point.cs</Link>
+    <Compile Include="..\src\common\ua\ksn\geom\Point.cs">
+      <Link>src\common\ua\ksn\geom\Point.cs</Link>
     </Compile>
-    <Compile Include="..\src\lib\ua\ksn\geom\PointDouble.cs">
-      <Link>src\lib\ua\ksn\geom\PointDouble.cs</Link>
+    <Compile Include="..\src\common\ua\ksn\geom\PointDouble.cs">
+      <Link>src\common\ua\ksn\geom\PointDouble.cs</Link>
     </Compile>
-    <Compile Include="..\src\lib\ua\ksn\geom\Rect.cs">
-      <Link>src\lib\ua\ksn\geom\Rect.cs</Link>
+    <Compile Include="..\src\common\ua\ksn\geom\Rect.cs">
+      <Link>src\common\ua\ksn\geom\Rect.cs</Link>
     </Compile>
-    <Compile Include="..\src\lib\ua\ksn\geom\Region.cs">
-      <Link>src\lib\ua\ksn\geom\Region.cs</Link>
+    <Compile Include="..\src\common\ua\ksn\geom\Region.cs">
+      <Link>src\common\ua\ksn\geom\Region.cs</Link>
     </Compile>
-    <Compile Include="..\src\lib\ua\ksn\geom\Size.cs">
-      <Link>src\lib\ua\ksn\geom\Size.cs</Link>
+    <Compile Include="..\src\common\ua\ksn\geom\Size.cs">
+      <Link>src\common\ua\ksn\geom\Size.cs</Link>
     </Compile>
-    <Compile Include="..\src\lib\ua\ksn\geom\SizeDouble.cs">
-      <Link>src\lib\ua\ksn\geom\SizeDouble.cs</Link>
+    <Compile Include="..\src\common\ua\ksn\geom\SizeDouble.cs">
+      <Link>src\common\ua\ksn\geom\SizeDouble.cs</Link>
     </Compile>
-    <Compile Include="..\src\lib\ua\ksn\Color.cs">
-      <Link>src\lib\ua\ksn\Color.cs</Link>
+    <Compile Include="..\src\common\ua\ksn\Color.cs">
+      <Link>src\common\ua\ksn\Color.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\controller\types\EGameStatus.cs">
-      <Link>src\mosaic\ua\ksn\fmg\controller\types\EGameStatus.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\controller\types\EGameStatus.cs">
+      <Link>src\core\ua\ksn\fmg\controller\types\EGameStatus.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\controller\types\EPlayInfo.cs">
-      <Link>src\mosaic\ua\ksn\fmg\controller\types\EPlayInfo.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\controller\types\EPlayInfo.cs">
+      <Link>src\core\ua\ksn\fmg\controller\types\EPlayInfo.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\EClose.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\EClose.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\EClose.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\EClose.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\EMosaic.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\EMosaic.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\EMosaic.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\EMosaic.cs</Link>
     </Compile>
-    <Compile Include="..\src\data\ua\ksn\fmg\controller\event\ActionToUser.cs">
-      <Link>src\data\ua\ksn\fmg\controller\event\ActionToUser.cs</Link>
+    <Compile Include="..\src\types\ua\ksn\fmg\controller\event\ActionToUser.cs">
+      <Link>src\types\ua\ksn\fmg\controller\event\ActionToUser.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\EMosaicGroup.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\EMosaicGroup.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\EMosaicGroup.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\EMosaicGroup.cs</Link>
     </Compile>
-    <Compile Include="..\src\data\ua\ksn\fmg\controller\event\ChampionModelEvent.cs">
-      <Link>src\data\ua\ksn\fmg\controller\event\ChampionModelEvent.cs</Link>
+    <Compile Include="..\src\types\ua\ksn\fmg\controller\event\ChampionModelEvent.cs">
+      <Link>src\types\ua\ksn\fmg\controller\event\ChampionModelEvent.cs</Link>
     </Compile>
-    <Compile Include="..\src\data\ua\ksn\fmg\controller\event\PlayerModelEvent.cs">
-      <Link>src\data\ua\ksn\fmg\controller\event\PlayerModelEvent.cs</Link>
+    <Compile Include="..\src\types\ua\ksn\fmg\controller\event\PlayerModelEvent.cs">
+      <Link>src\types\ua\ksn\fmg\controller\event\PlayerModelEvent.cs</Link>
     </Compile>
-    <Compile Include="..\src\data\ua\ksn\fmg\controller\types\User.cs">
-      <Link>src\data\ua\ksn\fmg\controller\types\User.cs</Link>
+    <Compile Include="..\src\types\ua\ksn\fmg\controller\types\User.cs">
+      <Link>src\types\ua\ksn\fmg\controller\types\User.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\EOpen.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\EOpen.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\EOpen.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\EOpen.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\EState.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\EState.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\EState.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\EState.cs</Link>
     </Compile>
-    <Compile Include="..\src\ui_desktop\ua\ksn\fmg\view\draw\EShowElement.cs">
-      <Link>src\ui_desktop\ua\ksn\fmg\view\draw\EShowElement.cs</Link>
+    <Compile Include="..\src\types\ua\ksn\fmg\view\draw\EShowElement.cs">
+      <Link>src\types\ua\ksn\fmg\view\draw\EShowElement.cs</Link>
     </Compile>
-    <Compile Include="..\src\ui_desktop\ua\ksn\fmg\view\draw\EZoomInterface.cs">
-      <Link>src\ui_desktop\ua\ksn\fmg\view\draw\EZoomInterface.cs</Link>
+    <Compile Include="..\src\types\ua\ksn\fmg\view\draw\EZoomInterface.cs">
+      <Link>src\types\ua\ksn\fmg\view\draw\EZoomInterface.cs</Link>
     </Compile>
-    <Compile Include="..\src\ui_desktop\ua\ksn\fmg\view\draw\PenBorder.cs">
-      <Link>src\ui_desktop\ua\ksn\fmg\view\draw\PenBorder.cs</Link>
+    <Compile Include="..\src\types\ua\ksn\fmg\view\draw\PenBorder.cs">
+      <Link>src\types\ua\ksn\fmg\view\draw\PenBorder.cs</Link>
     </Compile>
     <Compile Include="Common\AsyncRunner.cs" />
     <Compile Include="Common\INotifyPropertyChangedEx.cs" />
@@ -206,11 +206,11 @@
     <Compile Include="ItemDetailPage.xaml.cs">
       <DependentUpon>ItemDetailPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="..\src\lib\ua\ksn\IExternalizable.cs">
-      <Link>src\lib\ua\ksn\IExternalizable.cs</Link>
+    <Compile Include="..\src\common\ua\ksn\IExternalizable.cs">
+      <Link>src\common\ua\ksn\IExternalizable.cs</Link>
     </Compile>
-    <Compile Include="..\src\lib\ua\ksn\ISerializable.cs">
-      <Link>src\lib\ua\ksn\ISerializable.cs</Link>
+    <Compile Include="..\src\common\ua\ksn\ISerializable.cs">
+      <Link>src\common\ua\ksn\ISerializable.cs</Link>
     </Compile>
     <Compile Include="MosaicPage.xaml.cs">
       <DependentUpon>MosaicPage.xaml</DependentUpon>
@@ -223,71 +223,71 @@
     <Compile Include="Common\LayoutAwarePage.cs" />
     <Compile Include="Common\RichTextColumns.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
-    <Compile Include="..\src\lib\ua\ksn\crypt\DES.cs">
-      <Link>src\lib\ua\ksn\crypt\DES.cs</Link>
+    <Compile Include="..\src\common\ua\ksn\crypt\DES.cs">
+      <Link>src\common\ua\ksn\crypt\DES.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Hexagon1.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Hexagon1.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\Hexagon1.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\Hexagon1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Parquet1.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Parquet1.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\Parquet1.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\Parquet1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Parquet2.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Parquet2.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\Parquet2.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\Parquet2.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\PenrousePeriodic1.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\PenrousePeriodic1.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\PenrousePeriodic1.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\PenrousePeriodic1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\PentagonT10.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\PentagonT10.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\PentagonT10.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\PentagonT10.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\PentagonT24.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\PentagonT24.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\PentagonT24.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\PentagonT24.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\PentagonT5.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\PentagonT5.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\PentagonT5.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\PentagonT5.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Quadrangle1.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Quadrangle1.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\Quadrangle1.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\Quadrangle1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Rhombus1.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Rhombus1.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\Rhombus1.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\Rhombus1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\SqTrHex.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\SqTrHex.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\SqTrHex.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\SqTrHex.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Square1.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Square1.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\Square1.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\Square1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Square2.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Square2.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\Square2.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\Square2.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Trapezoid1.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Trapezoid1.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\Trapezoid1.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\Trapezoid1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Trapezoid2.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Trapezoid2.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\Trapezoid2.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\Trapezoid2.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Trapezoid3.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Trapezoid3.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\Trapezoid3.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\Trapezoid3.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle1.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle1.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\Triangle1.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\Triangle1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle2.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle2.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\Triangle2.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\Triangle2.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle3.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle3.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\Triangle3.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\Triangle3.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle4.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\Triangle4.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\Triangle4.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\Triangle4.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq1.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq1.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\TrSq1.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\TrSq1.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq2.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\TrSq2.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\TrSq2.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\TrSq2.cs</Link>
     </Compile>
     <Compile Include="src_winrt\ua\ksn\fmg\controller\win_rt\MosaicExt.cs" />
     <Compile Include="src_winrt\ua\ksn\fmg\view\win_rt\draw\BitmapFont.cs" />
@@ -565,26 +565,26 @@
     <Content Include="..\res\MosaicGroup\Triangles.ico">
       <Link>res\MosaicGroup\Triangles.ico</Link>
     </Content>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\event\click\ClickReportContext.cs">
-      <Link>src\mosaic\ua\ksn\fmg\event\click\ClickReportContext.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\event\click\ClickReportContext.cs">
+      <Link>src\core\ua\ksn\fmg\event\click\ClickReportContext.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\event\click\LeftDownResult.cs">
-      <Link>src\mosaic\ua\ksn\fmg\event\click\LeftDownResult.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\event\click\LeftDownResult.cs">
+      <Link>src\core\ua\ksn\fmg\event\click\LeftDownResult.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\event\click\LeftUpResult.cs">
-      <Link>src\mosaic\ua\ksn\fmg\event\click\LeftUpResult.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\event\click\LeftUpResult.cs">
+      <Link>src\core\ua\ksn\fmg\event\click\LeftUpResult.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\event\click\RightDownReturn.cs">
-      <Link>src\mosaic\ua\ksn\fmg\event\click\RightDownReturn.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\event\click\RightDownReturn.cs">
+      <Link>src\core\ua\ksn\fmg\event\click\RightDownReturn.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\controller\Mosaic.cs">
-      <Link>src\mosaic\ua\ksn\fmg\controller\Mosaic.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\controller\Mosaic.cs">
+      <Link>src\core\ua\ksn\fmg\controller\Mosaic.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\cell\BaseCell.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\cell\BaseCell.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\cell\BaseCell.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\cell\BaseCell.cs</Link>
     </Compile>
-    <Compile Include="..\src\mosaic\ua\ksn\fmg\model\mosaics\CellFactory.cs">
-      <Link>src\mosaic\ua\ksn\fmg\model\mosaics\CellFactory.cs</Link>
+    <Compile Include="..\src\core\ua\ksn\fmg\model\mosaics\CellFactory.cs">
+      <Link>src\core\ua\ksn\fmg\model\mosaics\CellFactory.cs</Link>
     </Compile>
     <Content Include="..\res\Font\NirmalaUI_30.xml">
       <Link>res\Font\NirmalaUI_30.xml</Link>
@@ -738,9 +738,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="WriteableBitmapEx.WinRT, Version=1.0.14.0, Culture=neutral, PublicKeyToken=50375ca6144f1c69, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\WriteableBitmapEx.1.0.14.0\lib\NetCore45\WriteableBitmapEx.WinRT.dll</HintPath>
+    <Reference Include="WriteableBitmapEx.WinRT">
+      <HintPath>..\Workspaces\VS\packages\WriteableBitmapEx.1.0.14.0\lib\NetCore45\WriteableBitmapEx.WinRT.dll</HintPath>
     </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
@@ -753,8 +752,8 @@
   <PropertyGroup>
     <PreBuildEvent>rd /s /q $(ProjectDir)src
 rd /s /q $(ProjectDir)res
-mklink /j $(ProjectDir)src $(SolutionDir)src
-mklink /j $(ProjectDir)res $(SolutionDir)res</PreBuildEvent>
+mklink /j $(ProjectDir)src $(SolutionDir)..\..\src
+mklink /j $(ProjectDir)res $(SolutionDir)..\..\res</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
