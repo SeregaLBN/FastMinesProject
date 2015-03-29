@@ -1,0 +1,150 @@
+////////////////////////////////////////////////////////////////////////////////
+//                               FastMines project
+//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
+// file name: "Square1.java"
+//
+// Описание класса Square1 - квадрат (классический вариант поля)
+// Copyright (C) 2002-2011 Sergey Krivulya
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+////////////////////////////////////////////////////////////////////////////////
+
+package fmg.core.model.mosaics.cell;
+
+import java.util.Map;
+
+import fmg.common.Color;
+import fmg.common.geom.Coord;
+import fmg.common.geom.Point;
+import fmg.common.geom.Rect;
+import fmg.common.geom.Size;
+
+/**
+ * Квадрат. Вариант 1
+ * @see BaseCell
+ **/
+public class Square1 extends BaseCell {
+	public static class AttrSquare1 extends BaseAttribute {
+		public AttrSquare1(int area) {
+			super(area);
+		}
+
+		@Override
+		public Size CalcOwnerSize(Size sizeField, int area) {
+			double a = CalcA(area); // размер стороны квадрата
+			Size result = new Size(
+					(int)(sizeField.width * a),
+					(int)(sizeField.height * a));
+			return result;
+		}
+	
+		@Override
+		public int getNeighborNumber(boolean max) { return 8; }
+		@Override
+		public int getNeighborNumber(int direction) { return 8; }
+		@Override
+		public int getVertexNumber(int direction) { return 4; }
+		@Override
+		public double getVertexIntersection() { return 4; }
+		@Override
+		public Size GetDirectionSizeField() { return new Size(1,1); }
+		@Override
+		protected double CalcA(int area) { return Math.sqrt(area); }
+		@Override
+		public double CalcSq(int area, int borderWidth) {
+			double w = borderWidth/2.;
+			return CalcA(area)-2*w;
+		}
+	}
+
+	public Square1(AttrSquare1 attr, Coord coord) {
+		super(attr, coord, -1);
+	}
+
+	@Override
+	public AttrSquare1 getAttr() {
+		return (AttrSquare1) super.getAttr();
+	}
+
+	@Override
+	protected Coord[] GetCoordsNeighbor() {
+		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
+
+		// определяю координаты соседей
+    	neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
+		neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+		neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
+		neighborCoord[3] = new Coord(coord.x-1, coord.y);
+		neighborCoord[4] = new Coord(coord.x+1, coord.y);
+		neighborCoord[5] = new Coord(coord.x-1, coord.y+1);
+		neighborCoord[6] = new Coord(coord.x  , coord.y+1);
+		neighborCoord[7] = new Coord(coord.x+1, coord.y+1);
+
+		return neighborCoord;
+	}
+
+	@Override
+	public boolean PointInRegion(Point point) {
+		if ((point.x < region.getPoint(3).x) || (point.x >= region.getPoint(0).x) ||
+			(point.y < region.getPoint(0).y) || (point.y >= region.getPoint(2).y))
+			return false;
+		return true;
+	}
+
+	@Override
+	protected void CalcRegion() {
+		AttrSquare1 attr = getAttr();
+		double a = attr.CalcA(attr.getArea());
+
+      int x1 = (int)(a * (coord.x + 0));
+      int x2 = (int)(a * (coord.x + 1));
+      int y1 = (int)(a * (coord.y + 0));
+      int y2 = (int)(a * (coord.y + 1));
+
+      region.setPoint(0, x2, y1);
+      region.setPoint(1, x2, y2);
+      region.setPoint(2, x1, y2);
+      region.setPoint(3, x1, y1);
+	}
+
+	@Override
+	public Rect getRcInner(int borderWidth) {
+		AttrSquare1 attr = getAttr();
+		double sq = attr.CalcSq(attr.getArea(), borderWidth);
+		double w = borderWidth/2.;
+
+		Rect square = new Rect();
+		square.x = (int) (region.getPoint(3).x + w);
+		square.y = (int) (region.getPoint(3).y + w);
+		square.width = (int)sq;
+		square.height = (int)sq;
+		return square;
+	}
+
+	@Override
+	public int getShiftPointBorderIndex() { return 2; }
+
+	@Override
+	public Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
+		switch (fillMode) {
+		default:
+			return super.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);
+		case 1: // перекрываю базовый на основе direction
+			int pos = (-getCoord().x + getCoord().y) % ((getAttr().hashCode() & 0x3)+fillMode);
+//			System.out.println(pos);
+			return repositoryColor.get(pos);
+		}
+	}
+}

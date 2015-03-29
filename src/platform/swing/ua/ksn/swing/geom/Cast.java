@@ -1,12 +1,12 @@
-package ua.ksn.swing.geom;
+package fmg.swing.geom;
 
 import java.awt.Dimension;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 
-import ua.ksn.geom.Rect;
-import ua.ksn.geom.Region;
-import ua.ksn.geom.Size;
+import fmg.common.geom.Rect;
+import fmg.common.geom.Region;
+import fmg.common.geom.Size;
 
 /**
  * Приведение типов от платформонезависемых читых Java классов ua.ksn.geom.* к библиотечным SWING/AWT классам java.awt.*\java.swing.*
@@ -15,11 +15,11 @@ import ua.ksn.geom.Size;
  */
 public final class Cast {
 	
-	public static    java.awt.Point toPoint(ua.ksn.geom.Point p) { return new    java.awt.Point(p.x, p.y); }
-	public static ua.ksn.geom.Point toPoint(   java.awt.Point p) { return new ua.ksn.geom.Point(p.x, p.y); }
+	public static    java.awt.Point toPoint(fmg.common.geom.Point p) { return new    java.awt.Point(p.x, p.y); }
+	public static fmg.common.geom.Point toPoint(   java.awt.Point p) { return new fmg.common.geom.Point(p.x, p.y); }
 
-	public static java.awt.geom.Point2D.Double toPoint(ua.ksn  .geom.PointDouble    p) { return new java.awt.geom.Point2D.Double(p.x, p.y); }
-	public static   ua.ksn.geom.PointDouble    toPoint(java.awt.geom.Point2D.Double p) { return new ua.ksn  .geom.PointDouble(   p.x, p.y); }
+	public static java.awt.geom.Point2D.Double toPoint(fmg.common.geom.PointDouble    p) { return new java.awt.geom.Point2D.Double(p.x, p.y); }
+	public static   fmg.common.geom.PointDouble    toPoint(java.awt.geom.Point2D.Double p) { return new fmg.common.geom.PointDouble(   p.x, p.y); }
 	
 	public static Rectangle toRect(Rect      rc) { return new Rectangle(rc.x, rc.y, rc.width, rc.height); }
 	public static Rect      toRect(Rectangle rc) { return new Rect     (rc.x, rc.y, rc.width, rc.height); }
@@ -30,12 +30,12 @@ public final class Cast {
 	public static Polygon   toPolygon(Region region) {
 		Polygon polygon = new Polygon();
 		for (int i=0; i<region.getCountPoints(); i++) {
-			ua.ksn.geom.Point p = region.getPoint(i);
+			fmg.common.geom.Point p = region.getPoint(i);
 			polygon.addPoint(p.x, p.y);
 		}
 		return polygon;
 	}
 
-	public static java.awt.Color toColor(ua.ksn.Color   clr) { return new java.awt.Color( 0xFF & clr.getR() ,  0xFF & clr.getG() ,  0xFF & clr.getB() ,  0xFF & clr.getA() ); }
-	public static   ua.ksn.Color toColor(java.awt.Color clr) { return new   ua.ksn.Color((byte) clr.getRed(), (byte)clr.getGreen(), (byte)clr.getBlue(), (byte)clr.getAlpha()); }
+	public static java.awt.Color toColor(fmg.common.Color   clr) { return new java.awt.Color( 0xFF & clr.getR() ,  0xFF & clr.getG() ,  0xFF & clr.getB() ,  0xFF & clr.getA() ); }
+	public static   fmg.common.Color toColor(java.awt.Color clr) { return new   fmg.common.Color((byte) clr.getRed(), (byte)clr.getGreen(), (byte)clr.getBlue(), (byte)clr.getAlpha()); }
 }
