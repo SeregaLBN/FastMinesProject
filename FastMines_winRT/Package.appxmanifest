@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="SeregaLBN.FastMines" Publisher="CN=Serega" Version="1.1.0.0" />
+  <Identity Name="SeregaLBN.FastMines" Publisher="CN=SeregaLBN" Version="1.2015.3.30" />
   <Properties>
     <DisplayName>FastMines</DisplayName>
-    <PublisherDisplayName>Serega</PublisherDisplayName>
+    <PublisherDisplayName>SeregaLBN</PublisherDisplayName>
     <Logo>res\Logo\StoreTile\Logo.png</Logo>
   </Properties>
   <Prerequisites>
