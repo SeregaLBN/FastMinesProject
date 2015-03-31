@@ -16,29 +16,29 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>common</name>
-			<type>2</type>
-			<locationURI>MY_SOURCE_FOLDER/common</locationURI>
-		</link>
-		<link>
-			<name>core</name>
-			<type>2</type>
-			<locationURI>MY_SOURCE_FOLDER/core</locationURI>
-		</link>
-		<link>
 			<name>res</name>
 			<type>2</type>
 			<locationURI>MY_RESOURCE_FOLDER</locationURI>
 		</link>
 		<link>
-			<name>swing</name>
+			<name>src_common</name>
 			<type>2</type>
-			<locationURI>MY_SOURCE_FOLDER/platform/swing</locationURI>
+			<location>P:/Project/FastMinesProject/src/src_common</location>
 		</link>
 		<link>
-			<name>types</name>
+			<name>src_core</name>
 			<type>2</type>
-			<locationURI>MY_SOURCE_FOLDER/types</locationURI>
+			<location>P:/Project/FastMinesProject/src/src_core</location>
+		</link>
+		<link>
+			<name>src_swing</name>
+			<type>2</type>
+			<location>P:/Project/FastMinesProject/src/src_platform_swing</location>
+		</link>
+		<link>
+			<name>src_types</name>
+			<type>2</type>
+			<location>P:/Project/FastMinesProject/src/src_types</location>
 		</link>
 	</linkedResources>
 	<variableList>
