@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using ua.ksn.fmg.model.mosaics.cell;
+using fmg.core.model.mosaics.cell;
 
-namespace ua.ksn.fmg.Event.click {
+namespace fmg.core.Event.click {
 
 public class LeftDownResult {
 	public IList<BaseCell> needRepaint;

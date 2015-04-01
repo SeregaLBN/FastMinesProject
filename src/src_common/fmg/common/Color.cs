@@ -1,6 +1,6 @@
 using System;
 
-namespace ua.ksn {
+namespace fmg.common {
 
    public struct Color {
       public static readonly Color Transparent = new Color(0,255,255,255);

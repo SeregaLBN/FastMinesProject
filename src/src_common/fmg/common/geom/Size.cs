@@ -1,4 +1,4 @@
-namespace ua.ksn.geom {
+namespace fmg.common.geom {
 
 public struct Size {
    public int width,height;

@@ -1,7 +1,8 @@
 using System;
-using ua.ksn.fmg.model.mosaics;
+using fmg.common;
+using fmg.core.model.mosaics;
 
-namespace ua.ksn.fmg.view.draw {
+namespace fmg.data.view.draw {
 
    public delegate void ColorPropertyChange(object sender, string hintPropertyName, Color oldColor, Color newColor);
 

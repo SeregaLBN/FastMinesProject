@@ -22,9 +22,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using ua.ksn.geom;
+using fmg.common.geom;
  
-namespace ua.ksn.fmg.model.mosaics.cell {
+namespace fmg.core.model.mosaics.cell {
 
 /// <summary> Треугольник. Вариант 4 - треугольник 30°-30°-120° </summary>
 public class Triangle4 : BaseCell {

@@ -1,6 +1,6 @@
 using System;
 
-namespace ua.ksn.fmg.view.draw {
+namespace fmg.data.view.draw {
 
 public enum EZoomInterface {
    eAlwaysMax,

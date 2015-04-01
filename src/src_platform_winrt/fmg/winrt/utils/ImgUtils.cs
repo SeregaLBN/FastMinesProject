@@ -8,8 +8,9 @@ using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using fmg.common;
 
-namespace ua.ksn.win_rt.utils {
+namespace fmg.winrt.utils {
 
    /// <summary>
    /// вспомогательный класс для преобразований картинок
@@ -126,7 +127,7 @@ namespace ua.ksn.win_rt.utils {
                int[] points = new int[] { 10, 10, 10, maxY, maxX, maxY, maxX, 10 };
                var clr = 0xFF << 24; //unchecked((int)0xFF000000);
                image.FillPolygon(points,
-                  Windows.ApplicationModel.DesignMode.DesignModeEnabled
+                  DesignMode.DesignModeEnabled
                      ? Color.Green.ToWinColor()
                      : Color.Red.ToWinColor());
                //image.DrawRectangle(10, 10, maxX, maxY, clr);

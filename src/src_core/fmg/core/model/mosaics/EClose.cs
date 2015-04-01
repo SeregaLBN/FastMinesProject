@@ -1,6 +1,6 @@
 using System;
 
-namespace ua.ksn.fmg.model.mosaics {
+namespace fmg.core.model.mosaics {
 
    public enum EClose {
       _Unknown,

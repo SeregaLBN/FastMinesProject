@@ -22,9 +22,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using ua.ksn.geom;
- 
-namespace ua.ksn.fmg.model.mosaics.cell {
+using fmg.common;
+using fmg.common.geom;
+
+namespace fmg.core.model.mosaics.cell {
 
 /// <summary> Квадрат. Вариант 1 </summary>
 public class Square1 : BaseCell {

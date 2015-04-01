@@ -24,15 +24,15 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ua.ksn.geom;
-using ua.ksn.fmg.model.mosaics.cell;
-using ua.ksn.fmg.model.mosaics;
-using ua.ksn.fmg.controller.Event;
-using ua.ksn.fmg.controller.types;
-using ua.ksn.fmg.Event.click;
+using fmg.common.geom;
+using fmg.core.model.mosaics.cell;
+using fmg.core.model.mosaics;
+using fmg.core.controller.Event;
+using fmg.core.controller.types;
+using fmg.core.Event.click;
 using Log = FastMines.Common.LoggerSimple;
 
-namespace ua.ksn.fmg.controller {
+namespace fmg.core.controller {
 
 /// <summary> Mosaic field: класс окна мозаики поля </summary>
 public abstract class Mosaic : BaseCell.IMatrixCells {
@@ -239,7 +239,7 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
     *<br>              |  or eGSReady  |    eGSPlay    |   eGSEnd    |
     *<br>              \------ 1 -----/ \----- 2 -----/ \---- 3 ----/
     *<br>
-    *<br> @see ua.ksn.fmg.types.EGameStatus
+    *<br> @see fmg.core.types.EGameStatus
     *<br>
     *<br> PS: При этапе gsReady поле чисто - мин нет! Мины расставляются только после первого клика
     *<br>     Так сделал только лишь потому, чтобы первый клик выполнялся не на мине. Естественно

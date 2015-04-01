@@ -22,10 +22,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using System.Collections.Generic;
-using ua.ksn.geom;
- 
-namespace ua.ksn.fmg.model.mosaics.cell {
+using fmg.common;
+using fmg.common.geom;
+
+namespace fmg.core.model.mosaics.cell {
 
 /// <summary> Rhombus1 - 3 ромба, составляющие равносторонний шестиугольник </summary>
 public class Rhombus1 : BaseCell {

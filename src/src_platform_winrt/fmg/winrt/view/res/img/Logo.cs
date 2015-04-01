@@ -1,9 +1,9 @@
 using System.Linq;
-using Windows.UI;
 using Windows.UI.Xaml.Media.Imaging;
-using ua.ksn.geom;
+using fmg.common;
+using fmg.common.geom;
 
-namespace ua.ksn.fmg.view.win_rt.res.img {
+namespace fmg.winrt.view.res.img {
 
    /// <summary> main logos image </summary>
    public class Logo {

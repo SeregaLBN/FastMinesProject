@@ -5,7 +5,7 @@ using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
 using System.Runtime.InteropServices.WindowsRuntime;
 
-namespace ua.ksn.crypt {
+namespace fmg.common.crypt {
    public class TripleDESOperations {
       public BinaryStringEncoding Encoding { get; set; }
       /// <summary> Symmetric algorithm name </summary>

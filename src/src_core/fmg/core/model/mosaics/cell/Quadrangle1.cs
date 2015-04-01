@@ -22,9 +22,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using ua.ksn.geom;
- 
-namespace ua.ksn.fmg.model.mosaics.cell {
+using fmg.common.geom;
+
+namespace fmg.core.model.mosaics.cell {
 
 /// <summary> Quadrangle1 - четырёхугольник 120°-90°-60°-90° </summary>
 public class Quadrangle1 : BaseCell {

@@ -4,8 +4,9 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Media.Imaging;
-using ua.ksn.fmg.controller.types;
-using ua.ksn.fmg.model.mosaics;
+using fmg.common.geom;
+using fmg.core.model.mosaics;
+using fmg.data.controller.types;
 
 // The data model defined by this file serves as a representative example of a strongly-typed
 // model that supports notification when members are added, removed, or modified.  The property
@@ -68,7 +69,7 @@ namespace FastMines.Data {
       }
 
       public static ESkillLevel SkillLevel { get; set; }
-      public static ua.ksn.geom.Size SizeField { get; set; }
+      public static Size SizeField { get; set; }
       public static int MinesCount { get; set; }
    }
 }

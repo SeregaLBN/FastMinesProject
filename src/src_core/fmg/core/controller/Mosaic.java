@@ -266,7 +266,7 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 	 *<br>              |  or eGSReady  |    eGSPlay    |   eGSEnd    |
 	 *<br>              \------ 1 -----/ \----- 2 -----/ \---- 3 ----/
 	 *<br>
-	 *<br> @see ua.ksn.fmg.types.EGameStatus
+	 *<br> @see fmg.core.types.EGameStatus
 	 *<br>
 	 *<br> PS: При этапе gsReady поле чисто - мин нет! Мины расставляются только после первого клика
 	 *<br>     Так сделал только лишь потому, чтобы первый клик выполнялся не на мине. Естественно

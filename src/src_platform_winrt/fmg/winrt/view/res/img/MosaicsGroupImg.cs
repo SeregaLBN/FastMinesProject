@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
-using ua.ksn.fmg.model.mosaics;
+using fmg.core.model.mosaics;
 using FastMines.Common;
-using ua.ksn.geom;
+using fmg.common;
+using fmg.common.geom;
 using Point = Windows.Foundation.Point;
 using Rect = Windows.Foundation.Rect;
 
-namespace ua.ksn.fmg.view.win_rt.res.img {
+namespace fmg.winrt.view.res.img {
 
    public class MosaicsGroupImg : IDisposable {
       internal struct Color16 {
@@ -213,7 +214,7 @@ namespace ua.ksn.fmg.view.win_rt.res.img {
          for (var i = 0; i < _points.Length; i++) {
             var p1 = _points[i];
             var p2 = _points[(i == _points.Length - 1) ? 0 : i + 1];
-            bmp.DrawLineAa((int) p1.X, (int) p1.Y, (int) p2.X, (int) p2.Y, Windows.UI.Colors.Red);
+            bmp.DrawLineAa((int) p1.X, (int) p1.Y, (int) p2.X, (int) p2.Y, Windows.UI.Colors.Red, 3);
          }
 
 //#if DEBUG

@@ -3,12 +3,13 @@ using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using System.IO;
-using ua.ksn.fmg.controller.Event;
-using ua.ksn.fmg.controller.types;
-using ua.ksn.fmg.model.mosaics;
-using ua.ksn.crypt;
+using fmg.common;
+using fmg.common.crypt;
+using fmg.core.model.mosaics;
+using fmg.data.controller.Event;
+using fmg.data.controller.types;
 
-namespace ua.ksn.fmg.controller.serializable {
+namespace fmg.data.controller.serializable {
 
 /// <summary>хранилище чемпионов</summary>
 public class ChampionsModel : IExternalizable {

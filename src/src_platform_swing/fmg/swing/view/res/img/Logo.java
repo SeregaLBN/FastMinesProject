@@ -42,7 +42,7 @@ public class Logo implements Icon {
 	}
 
 	public void MixLoopColor(int loop) {
-//		ua.ksn.Color[] copy = Palette.clone();
+//		fmg.common.Color[] copy = Palette.clone();
 //		for (int i = 0; i < Palette.length; i++)
 //			Palette[i] = copy[(i + loop) % 8];
 	}

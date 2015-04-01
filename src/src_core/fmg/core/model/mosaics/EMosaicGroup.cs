@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ua.ksn.fmg.model.mosaics {
+namespace fmg.core.model.mosaics {
 
 public enum EMosaicGroup {
 	eTriangles,

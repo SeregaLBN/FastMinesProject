@@ -1,6 +1,6 @@
 using System;
 
-namespace ua.ksn.fmg.controller.types {
+namespace fmg.core.controller.types {
 
    /// <summary>
    /// 1. Kто играл: юзер и/или робот?

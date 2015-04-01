@@ -10,15 +10,17 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
 using FastMines.Common;
-using ua.ksn.geom;
-using ua.ksn.fmg.model.mosaics;
-using ua.ksn.fmg.model.mosaics.cell;
-using ua.ksn.fmg.view.draw;
-using ua.ksn.fmg.view.win_rt.draw;
-using ua.ksn.fmg.view.win_rt.draw.mosaics;
+using fmg.common;
+using fmg.common.geom;
+using fmg.core.controller;
+using fmg.core.model.mosaics;
+using fmg.core.model.mosaics.cell;
+using fmg.data.view.draw;
+using fmg.winrt.view.draw;
+using fmg.winrt.view.draw.mosaics;
 using Log = FastMines.Common.LoggerSimple;
 
-namespace ua.ksn.fmg.controller.win_rt {
+namespace fmg.winrt.controller {
    public class MosaicExt : Mosaic {
       private IDictionary<BaseCell, Tuple<Polygon, TextBlock, Image>> _xamlBinder;
       private MosaicGraphicContext _gContext;

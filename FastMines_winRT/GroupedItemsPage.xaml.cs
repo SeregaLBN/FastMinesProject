@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using FastMines.Data;
-using ua.ksn.fmg.controller.types;
-using ua.ksn.fmg.view.win_rt;
+using fmg.data.controller.types;
+using fmg.winrt.view;
 
 // The Grouped Items Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234231
 

@@ -1,8 +1,8 @@
 using System;
 using System.IO;
-using ua.ksn;
+using fmg.common;
 
-namespace ua.ksn.fmg.controller.types {
+namespace fmg.data.controller.types {
 
 public class User : IExternalizable {
 	/** неизменный id пользователя */

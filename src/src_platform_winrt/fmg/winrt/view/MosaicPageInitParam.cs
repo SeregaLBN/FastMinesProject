@@ -1,7 +1,7 @@
-﻿using ua.ksn.geom;
-using ua.ksn.fmg.model.mosaics;
+﻿using fmg.common.geom;
+using fmg.core.model.mosaics;
 
-namespace ua.ksn.fmg.view.win_rt {
+namespace fmg.winrt.view {
    public class MosaicPageInitParam {
       public EMosaic MosaicTypes { get; set; }
       public Size SizeField { get; set; }

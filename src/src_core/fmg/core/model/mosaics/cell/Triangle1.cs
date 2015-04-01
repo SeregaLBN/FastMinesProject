@@ -22,9 +22,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using ua.ksn.geom;
- 
-namespace ua.ksn.fmg.model.mosaics.cell {
+using fmg.common.geom;
+
+namespace fmg.core.model.mosaics.cell {
 
 /// <summary> Треугольник. Вариант 1 - равносторонний, классика </summary>
 public class Triangle1 : BaseCell {

@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using ua.ksn.geom;
+using fmg.common.geom;
 
-namespace ua.ksn.fmg.model.mosaics {
+namespace fmg.core.model.mosaics {
 
 /* Перечень мозаик */
 

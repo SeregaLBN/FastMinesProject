@@ -23,10 +23,11 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
-using ua.ksn.fmg.Event.click;
-using ua.ksn.geom;
+using fmg.common;
+using fmg.common.geom;
+using fmg.core.Event.click;
 
-namespace ua.ksn.fmg.model.mosaics.cell {
+namespace fmg.core.model.mosaics.cell {
 
 /// <summary>Базовый класс фигуры-ячейки</summary>
 public abstract class BaseCell {

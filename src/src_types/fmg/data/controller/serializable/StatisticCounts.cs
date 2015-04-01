@@ -1,6 +1,7 @@
 using System.IO;
+using fmg.common;
 
-namespace ua.ksn.fmg.controller.serializable {
+namespace fmg.data.controller.serializable {
 
 public class StatisticCounts : IExternalizable {
 	public long

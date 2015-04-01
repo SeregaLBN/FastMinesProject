@@ -1,6 +1,6 @@
 using System;
 
-namespace ua.ksn.geom {
+namespace fmg.common.geom {
 
 public struct PointDouble {
    public double x, y;

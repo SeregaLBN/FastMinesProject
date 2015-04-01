@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using ua.ksn.fmg.model.mosaics;
-using ua.ksn.fmg.model.mosaics.cell;
-using ua.ksn.geom;
+using fmg.core.model.mosaics;
+using fmg.core.model.mosaics.cell;
+using fmg.common.geom;
 
-namespace ua.ksn.fmg.controller.types {
+namespace fmg.data.controller.types {
 
    public enum ESkillLevel {
       eBeginner,

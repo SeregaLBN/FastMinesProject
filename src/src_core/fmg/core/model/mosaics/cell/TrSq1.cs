@@ -22,9 +22,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using ua.ksn.geom;
+using fmg.common.geom;
  
-namespace ua.ksn.fmg.model.mosaics.cell {
+namespace fmg.core.model.mosaics.cell {
 
 /// <summary> Комбинация. Мозаика из 4х треугольников и 2х квадратов </summary>
 public class TrSq1 : BaseCell {

@@ -1,8 +1,8 @@
-using ua.ksn.fmg.controller.serializable;
-using ua.ksn.fmg.controller.types;
-using ua.ksn.fmg.model.mosaics;
+using fmg.data.controller.serializable;
+using fmg.data.controller.types;
+using fmg.core.model.mosaics;
 
-namespace ua.ksn.fmg.controller.Event {
+namespace fmg.data.controller.Event {
 
 public class PlayerModelEvent { //extends EventObject {
 

@@ -3,10 +3,10 @@ using Windows.ApplicationModel;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
 using FastMines.Common;
-using ua.ksn.geom;
-using ua.ksn.fmg.model.mosaics;
-using ua.ksn.fmg.view.win_rt.res;
-using ua.ksn.fmg.view.win_rt.res.img;
+using fmg.common.geom;
+using fmg.core.model.mosaics;
+using fmg.winrt.view.res;
+using fmg.winrt.view.res.img;
 
 // The data model defined by this file serves as a representative example of a strongly-typed
 // model that supports notification when members are added, removed, or modified.  The property
@@ -20,7 +20,7 @@ namespace FastMines.Data {
    /// <summary> Generic item data model. </summary>
    public class FmDataItem : FmDataCommon<EMosaic> {
       private static readonly Random _random = new Random();
-      private readonly ua.ksn.geom.Size _sizeField;
+      private readonly Size _sizeField;
       private const int Area = 3000;
       private MosaicsImg _mosaicsImg;
 

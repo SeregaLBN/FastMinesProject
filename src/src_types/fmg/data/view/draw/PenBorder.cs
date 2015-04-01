@@ -1,4 +1,6 @@
-namespace ua.ksn.fmg.view.draw {
+using fmg.common;
+
+namespace fmg.data.view.draw {
 
    public delegate void OnPenBorderColorChanged(PenBorder source, bool light, Color oldVal);
    public delegate void OnPenBorderWidthChanged(PenBorder source, int oldVal);

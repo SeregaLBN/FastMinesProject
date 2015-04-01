@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using Windows.UI.Text;
 using Windows.UI.Xaml.Media.Imaging;
-using ua.ksn.geom;
-using ua.ksn.fmg.view.draw;
+using fmg.common;
+using fmg.common.geom;
+using fmg.data.view.draw;
 
-namespace ua.ksn.fmg.view.win_rt.draw {
+namespace fmg.winrt.view.draw {
 
    public class GraphicContext : FastMines.Common.BindableBase {
       private WriteableBitmap _imgMine, _imgFlag;

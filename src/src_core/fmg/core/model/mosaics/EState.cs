@@ -1,4 +1,4 @@
-namespace ua.ksn.fmg.model.mosaics {
+namespace fmg.core.model.mosaics {
    public enum EState {
       _Open,
       _Close

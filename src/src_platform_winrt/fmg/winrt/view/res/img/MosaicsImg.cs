@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
-using ua.ksn.geom;
-using ua.ksn.fmg.model.mosaics;
-using ua.ksn.fmg.model.mosaics.cell;
-using ua.ksn.fmg.view.win_rt.draw;
-using ua.ksn.fmg.view.win_rt.draw.mosaics;
+using fmg.common.geom;
+using fmg.core.model.mosaics;
+using fmg.core.model.mosaics.cell;
+using fmg.winrt.view.draw;
+using fmg.winrt.view.draw.mosaics;
 using FastMines.Common;
 
-namespace ua.ksn.fmg.view.win_rt.res.img {
+namespace fmg.winrt.view.res.img {
 
    /// <summary>
    /// картинка поля конкретной мозаики. Используется для меню, кнопок, etc... 

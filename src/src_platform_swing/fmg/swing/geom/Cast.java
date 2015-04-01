@@ -9,7 +9,7 @@ import fmg.common.geom.Region;
 import fmg.common.geom.Size;
 
 /**
- * Приведение типов от платформонезависемых читых Java классов ua.ksn.geom.* к библиотечным SWING/AWT классам java.awt.*\java.swing.*
+ * Приведение типов от платформонезависемых читых Java классов fmg.common.geom.* к библиотечным SWING/AWT классам java.awt.*\java.swing.*
  * @author SeregaLBN
  *
  */

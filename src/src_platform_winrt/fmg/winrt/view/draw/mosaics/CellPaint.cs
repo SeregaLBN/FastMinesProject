@@ -8,11 +8,12 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
-using ua.ksn.geom;
-using ua.ksn.fmg.model.mosaics;
-using ua.ksn.fmg.model.mosaics.cell;
+using fmg.common;
+using fmg.common.geom;
+using fmg.core.model.mosaics;
+using fmg.core.model.mosaics.cell;
 
-namespace ua.ksn.fmg.view.win_rt.draw.mosaics
+namespace fmg.winrt.view.draw.mosaics
 {
 
    /// <summary>

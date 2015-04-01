@@ -10,16 +10,17 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
-using ua.ksn.geom;
-using ua.ksn.fmg.model.mosaics;
-using ua.ksn.fmg.model.mosaics.cell;
-using ua.ksn.fmg.view.win_rt;
-using ua.ksn.fmg.controller;
-using ua.ksn.fmg.controller.types;
-using ua.ksn.fmg.controller.win_rt;
+using fmg.common.geom;
+using fmg.core.model.mosaics;
+using fmg.core.model.mosaics.cell;
+using fmg.winrt.view;
+using fmg.data.controller.types;
+using fmg.winrt.controller;
 using FastMines.Common;
 using Log = FastMines.Common.LoggerSimple;
-using Size = ua.ksn.geom.Size;
+using Size = fmg.common.geom.Size;
+using fmg.core.controller;
+using fmg.core.controller.types;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace FastMines {
@@ -93,8 +94,8 @@ namespace FastMines {
             ToolTipService.SetToolTip(bttnSkillCrazy, new ToolTip { Content = "3" });
             ToolTipService.SetToolTip(bttnSkillProfi, new ToolTip {Content = "4"});
          }
-         MosaicField.GraphicContext.ImgMine = await ua.ksn.fmg.view.win_rt.res.Resources.GetImgMine();
-         //MosaicField.GraphicContext.ImgFlag = await ua.ksn.fmg.view.win_rt.res.Resources.GetImgFlag();
+         MosaicField.GraphicContext.ImgMine = await fmg.winrt.view.res.Resources.GetImgMine();
+         //MosaicField.GraphicContext.ImgFlag = await fmg.winrt.view.res.Resources.GetImgFlag();
       }
 
       /// <summary> Поменять игру на новый уровень сложности </summary>

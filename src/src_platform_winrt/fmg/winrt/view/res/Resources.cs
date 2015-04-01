@@ -6,12 +6,12 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Graphics.Imaging;
-using ua.ksn.geom;
-using ua.ksn.win_rt.utils;
-using ua.ksn.fmg.model.mosaics;
-using ua.ksn.fmg.view.win_rt.res.img;
+using fmg.common.geom;
+using fmg.winrt.utils;
+using fmg.core.model.mosaics;
+using fmg.winrt.view.res.img;
 
-namespace ua.ksn.fmg.view.win_rt.res {
+namespace fmg.winrt.view.res {
 
    /// <summary> Мультимедиа ресурсы программы </summary>
    public static class Resources {

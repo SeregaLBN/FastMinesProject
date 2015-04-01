@@ -1,6 +1,6 @@
 using System;
 
-namespace ua.ksn.geom {
+namespace fmg.common.geom {
 
 public struct SizeDouble {
    public double width, height;

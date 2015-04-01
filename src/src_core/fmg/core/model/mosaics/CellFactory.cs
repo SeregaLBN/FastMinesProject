@@ -1,8 +1,8 @@
 using System;
-using ua.ksn.geom;
-using ua.ksn.fmg.model.mosaics.cell;
+using fmg.common.geom;
+using fmg.core.model.mosaics.cell;
 
-namespace ua.ksn.fmg.model.mosaics {
+namespace fmg.core.model.mosaics {
 
 /// <summary>‘абрика дл€ создани€ экземпл€ров класса €чеек и их атрибутов</summary>
 public static class CellFactory {

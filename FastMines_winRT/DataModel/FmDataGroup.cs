@@ -2,9 +2,9 @@
 using System.Collections.Specialized;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
-using ua.ksn.fmg.model.mosaics;
-using ua.ksn.fmg.view.win_rt.res;
-using ua.ksn.fmg.view.win_rt.res.img;
+using fmg.core.model.mosaics;
+using fmg.winrt.view.res;
+using fmg.winrt.view.res.img;
 using FastMines.Common;
 
 // The data model defined by this file serves as a representative example of a strongly-typed

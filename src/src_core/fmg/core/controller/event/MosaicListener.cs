@@ -1,10 +1,10 @@
-using ua.ksn.geom;
-using ua.ksn.fmg.controller.types;
-using ua.ksn.fmg.model.mosaics;
-using ua.ksn.fmg.model.mosaics.cell;
+using fmg.common.geom;
+using fmg.core.controller.types;
+using fmg.core.model.mosaics;
+using fmg.core.model.mosaics.cell;
 
 // Делегаты, для уведомлений от мозаики
-namespace ua.ksn.fmg.controller.Event {
+namespace fmg.core.controller.Event {
 
    /// <summary> уведомление о том, что на мозаике был произведён клик </summary>
    public delegate void OnClickEvent(Mosaic source, BaseCell clickedCell, bool leftClick, bool down);

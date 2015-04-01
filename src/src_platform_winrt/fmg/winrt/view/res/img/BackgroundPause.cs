@@ -1,6 +1,7 @@
 using Windows.UI.Xaml.Media.Imaging;
+using fmg.common;
 
-namespace ua.ksn.fmg.view.win_rt.res.img {
+namespace fmg.winrt.view.res.img {
 
    /// <summary> картинка для фоновой паузы </summary>
    public class BackgroundPause {

@@ -3,14 +3,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
+using fmg.common;
+using fmg.data.controller.Event;
+using fmg.data.controller.types;
+using fmg.core.model.mosaics;
 
-using ua.ksn.fmg.controller.Event;
-//using ua.ksn.crypt.Simple3DES;
-using ua.ksn.fmg.controller.types;
-using ua.ksn.fmg.model.mosaics;
 
-
-namespace ua.ksn.fmg.controller.serializable {
+namespace fmg.data.controller.serializable {
 
 /// <summary>хранилище пользователей и их игровой статистики</summary>
 public class PlayersModel : IExternalizable {

@@ -22,9 +22,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using ua.ksn.geom;
- 
-namespace ua.ksn.fmg.model.mosaics.cell {
+using fmg.common;
+using fmg.common.geom;
+
+namespace fmg.core.model.mosaics.cell {
 
 /// <summary> PenrousePeriodic1 - один из вариантов периодической мозаики Пенроуза (ромбы 72°-108° & 36°- 144°) </summary>
 public class PenrousePeriodic1 : BaseCell {

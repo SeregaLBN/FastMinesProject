@@ -1,4 +1,4 @@
-namespace ua.ksn.geom {
+namespace fmg.common.geom {
 
 public struct Coord {
    public int x, y;

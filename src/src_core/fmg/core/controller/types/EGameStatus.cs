@@ -1,4 +1,4 @@
-namespace ua.ksn.fmg.controller.types {
+namespace fmg.core.controller.types {
 
    /// <summary>
    ///

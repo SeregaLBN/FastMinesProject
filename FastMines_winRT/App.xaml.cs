@@ -9,7 +9,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using FastMines.Common;
-using ua.ksn.fmg.view.win_rt.draw.mosaics;
+using fmg.winrt.view.draw.mosaics;
 
 // The Grid App template is documented at http://go.microsoft.com/fwlink/?LinkId=234226
 
@@ -49,23 +49,23 @@ namespace FastMines {
             // 3DES
             {
                var secKey = "super-puper mega Password";
-               var tdes1 = new ua.ksn.crypt.TripleDESOperations() {SecurityKeyStr = secKey, DataStr = testString};
+               var tdes1 = new fmg.common.crypt.TripleDESOperations() {SecurityKeyStr = secKey, DataStr = testString};
                var encrypted = tdes1.EncryptB64();
                var decrypted =
-                  new ua.ksn.crypt.TripleDESOperations() {SecurityKeyStr = secKey, DataB64 = encrypted}.DecryptStr();
+                  new fmg.common.crypt.TripleDESOperations() {SecurityKeyStr = secKey, DataB64 = encrypted}.DecryptStr();
                System.Diagnostics.Debug.Assert(decrypted == testString, "Triple DES failed!");
             }
             //{
-            //   var secKey = ua.ksn.crypt.TripleDESOperations.GenerateKey();
-            //   var encrypted = new ua.ksn.crypt.TripleDESOperations() { SecurityKey = secKey, DataStr = testString }.EncryptB64();
-            //   var decrypted = new ua.ksn.crypt.TripleDESOperations() { SecurityKey = secKey, DataB64 = encrypted }.DecryptStr();
+            //   var secKey = fmg.common.TripleDESOperations.GenerateKey();
+            //   var encrypted = new fmg.common.TripleDESOperations() { SecurityKey = secKey, DataStr = testString }.EncryptB64();
+            //   var decrypted = new fmg.common.TripleDESOperations() { SecurityKey = secKey, DataB64 = encrypted }.DecryptStr();
             //   System.Diagnostics.Debug.Assert(decrypted == testString, "Triple DES failed!");
             //}
             //{
-            //   var secKey = ua.ksn.crypt.TripleDESOperations.GenerateKey();
-            //   var iv = ua.ksn.crypt.TripleDESOperations.GenerateInitVector(CipherMode.CBC);
-            //   var encrypted = new ua.ksn.crypt.TripleDESOperations() { InitVector = iv, Mode = CipherMode.CBC, SecurityKey = secKey, DataStr = testString }.EncryptB64();
-            //   var decrypted = new ua.ksn.crypt.TripleDESOperations() { InitVector = iv, Mode = CipherMode.CBC, SecurityKey = secKey, DataB64 = encrypted }.DecryptStr();
+            //   var secKey = fmg.common.TripleDESOperations.GenerateKey();
+            //   var iv = fmg.common.TripleDESOperations.GenerateInitVector(CipherMode.CBC);
+            //   var encrypted = new fmg.common.TripleDESOperations() { InitVector = iv, Mode = CipherMode.CBC, SecurityKey = secKey, DataStr = testString }.EncryptB64();
+            //   var decrypted = new fmg.common.TripleDESOperations() { InitVector = iv, Mode = CipherMode.CBC, SecurityKey = secKey, DataB64 = encrypted }.DecryptStr();
             //   System.Diagnostics.Debug.Assert(decrypted == testString, "Triple DES failed!");
             //}
          }

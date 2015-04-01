@@ -13,9 +13,9 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using FastMines.Data;
-using ua.ksn.fmg.controller.types;
-using ua.ksn.fmg.model.mosaics;
-using ua.ksn.fmg.view.win_rt;
+using fmg.data.controller.types;
+using fmg.core.model.mosaics;
+using fmg.winrt.view;
 using FastMines.Common;
 
 // The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229

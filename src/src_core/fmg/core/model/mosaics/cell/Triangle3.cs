@@ -22,9 +22,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using ua.ksn.geom;
+using fmg.common.geom;
  
-namespace ua.ksn.fmg.model.mosaics.cell {
+namespace fmg.core.model.mosaics.cell {
 
 /// <summary> Треугольник. Вариант 3 - треугольник 45°-90°-45°(квадрат разделённый на 4 части) </summary>
 public class Triangle3 : BaseCell {

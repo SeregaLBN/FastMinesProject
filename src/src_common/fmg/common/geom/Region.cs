@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ua.ksn.geom {
+namespace fmg.common.geom {
 
 public class Region {
    protected readonly Point[] points;

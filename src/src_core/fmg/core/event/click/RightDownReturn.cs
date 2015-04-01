@@ -1,4 +1,4 @@
-namespace ua.ksn.fmg.Event.click {
+namespace fmg.core.Event.click {
 
 public struct RightDownReturn {
 	public int countFlag, countUnknown;

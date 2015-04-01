@@ -5,3 +5,7 @@
 
 common, core, types - только стандартные библиотеки классов, без уклона в какую либо из UI библиотек
                     - only standard class library, without any bias in any of the UI library
+
+Agreements:
+ * basic package/namespace name - fmg.*     -  FastMinesGame
+ * using 3 space   for  tab size 
