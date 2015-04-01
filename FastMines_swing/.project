@@ -21,24 +21,24 @@
 			<locationURI>MY_RESOURCE_FOLDER</locationURI>
 		</link>
 		<link>
-			<name>src_common</name>
+			<name>src_fmg.common</name>
 			<type>2</type>
 			<location>P:/Project/FastMinesProject/src/src_common</location>
 		</link>
 		<link>
-			<name>src_core</name>
+			<name>src_fmg.core</name>
 			<type>2</type>
 			<location>P:/Project/FastMinesProject/src/src_core</location>
 		</link>
 		<link>
-			<name>src_swing</name>
+			<name>src_fmg.data</name>
 			<type>2</type>
-			<location>P:/Project/FastMinesProject/src/src_platform_swing</location>
+			<location>P:/Project/FastMinesProject/src/src_data</location>
 		</link>
 		<link>
-			<name>src_types</name>
+			<name>src_fmg.swing</name>
 			<type>2</type>
-			<location>P:/Project/FastMinesProject/src/src_types</location>
+			<location>P:/Project/FastMinesProject/src/src_platform_swing</location>
 		</link>
 	</linkedResources>
 	<variableList>
