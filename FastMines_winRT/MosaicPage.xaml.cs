@@ -13,9 +13,9 @@ using Windows.UI.Xaml.Navigation;
 using fmg.common.geom;
 using fmg.core.model.mosaics;
 using fmg.core.model.mosaics.cell;
-using fmg.winrt.view;
+using fmg.winrt.mosaic;
 using fmg.data.controller.types;
-using fmg.winrt.controller;
+using fmg.winrt.mosaic;
 using FastMines.Common;
 using Log = FastMines.Common.LoggerSimple;
 using Size = fmg.common.geom.Size;
@@ -94,8 +94,8 @@ namespace FastMines {
             ToolTipService.SetToolTip(bttnSkillCrazy, new ToolTip { Content = "3" });
             ToolTipService.SetToolTip(bttnSkillProfi, new ToolTip {Content = "4"});
          }
-         MosaicField.GraphicContext.ImgMine = await fmg.winrt.view.res.Resources.GetImgMine();
-         //MosaicField.GraphicContext.ImgFlag = await fmg.winrt.view.res.Resources.GetImgFlag();
+         MosaicField.GraphicContext.ImgMine = await fmg.winrt.res.Resources.GetImgMine();
+         //MosaicField.GraphicContext.ImgFlag = await fmg.winrt.res.Resources.GetImgFlag();
       }
 
       /// <summary> Поменять игру на новый уровень сложности </summary>

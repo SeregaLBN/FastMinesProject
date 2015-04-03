@@ -9,7 +9,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using FastMines.Common;
-using fmg.winrt.view.draw.mosaics;
+using fmg.winrt.draw.mosaic;
 
 // The Grid App template is documented at http://go.microsoft.com/fwlink/?LinkId=234226
 

@@ -3,8 +3,8 @@ using System.Collections.Specialized;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
 using fmg.core.model.mosaics;
-using fmg.winrt.view.res;
-using fmg.winrt.view.res.img;
+using fmg.winrt.res;
+using fmg.winrt.res.img;
 using FastMines.Common;
 
 // The data model defined by this file serves as a representative example of a strongly-typed

@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 using FastMines.Data;
 using fmg.data.controller.types;
 using fmg.core.model.mosaics;
-using fmg.winrt.view;
+using fmg.winrt.mosaic;
 using FastMines.Common;
 
 // The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229

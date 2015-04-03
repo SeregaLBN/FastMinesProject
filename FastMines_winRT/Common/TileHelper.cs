@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.ApplicationModel.Background;
 using fmg.common;
 using fmg.core.model.mosaics;
-using fmg.winrt.view.res;
+using fmg.winrt.res;
 using Size = fmg.common.geom.Size;
 using BackgroundTasks;
 

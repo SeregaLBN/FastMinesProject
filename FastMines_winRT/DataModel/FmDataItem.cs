@@ -5,8 +5,8 @@ using Windows.UI.Xaml.Media;
 using FastMines.Common;
 using fmg.common.geom;
 using fmg.core.model.mosaics;
-using fmg.winrt.view.res;
-using fmg.winrt.view.res.img;
+using fmg.winrt.res;
+using fmg.winrt.res.img;
 
 // The data model defined by this file serves as a representative example of a strongly-typed
 // model that supports notification when members are added, removed, or modified.  The property

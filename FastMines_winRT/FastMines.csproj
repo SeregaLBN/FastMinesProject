@@ -290,44 +290,44 @@
     <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\TrSq2.cs">
       <Link>src_fmg.core\model\mosaics\cell\TrSq2.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\controller\MosaicExt.cs">
-      <Link>src_fmg.winrt\controller\MosaicExt.cs</Link>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\mosaic\MosaicExt.cs">
+      <Link>src_fmg.winrt\mosaic\MosaicExt.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\view\draw\BitmapFont.cs">
-      <Link>src_fmg.winrt\view\draw\BitmapFont.cs</Link>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\BitmapFont.cs">
+      <Link>src_fmg.winrt\draw\BitmapFont.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\view\draw\GraphicContext.cs">
-      <Link>src_fmg.winrt\view\draw\GraphicContext.cs</Link>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\GraphicContext.cs">
+      <Link>src_fmg.winrt\draw\GraphicContext.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\view\draw\mosaics\CellPaint.cs">
-      <Link>src_fmg.winrt\view\draw\mosaics\CellPaint.cs</Link>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\CellPaint.cs">
+      <Link>src_fmg.winrt\draw\mosaic\CellPaint.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\view\draw\mosaics\MosaicGraphicContext.cs">
-      <Link>src_fmg.winrt\view\draw\mosaics\MosaicGraphicContext.cs</Link>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\MosaicGraphicContext.cs">
+      <Link>src_fmg.winrt\draw\mosaic\MosaicGraphicContext.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\view\MosaicPageInitParam.cs">
-      <Link>src_fmg.winrt\view\MosaicPageInitParam.cs</Link>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\mosaic\MosaicPageInitParam.cs">
+      <Link>src_fmg.winrt\mosaic\MosaicPageInitParam.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\view\res\img\BackgroundPause.cs">
-      <Link>src_fmg.winrt\view\res\img\BackgroundPause.cs</Link>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\res\img\BackgroundPause.cs">
+      <Link>src_fmg.winrt\res\img\BackgroundPause.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\view\res\img\Logo.cs">
-      <Link>src_fmg.winrt\view\res\img\Logo.cs</Link>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\res\img\Logo.cs">
+      <Link>src_fmg.winrt\res\img\Logo.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\view\res\img\Flag.cs">
-      <Link>src_fmg.winrt\view\res\img\Flag.cs</Link>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\res\img\Flag.cs">
+      <Link>src_fmg.winrt\res\img\Flag.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\view\res\img\Mine.cs">
-      <Link>src_fmg.winrt\view\res\img\Mine.cs</Link>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\res\img\Mine.cs">
+      <Link>src_fmg.winrt\res\img\Mine.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\view\res\img\MosaicsGroupImg.cs">
-      <Link>src_fmg.winrt\view\res\img\MosaicsGroupImg.cs</Link>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\res\img\MosaicsGroupImg.cs">
+      <Link>src_fmg.winrt\res\img\MosaicsGroupImg.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\view\res\img\MosaicsImg.cs">
-      <Link>src_fmg.winrt\view\res\img\MosaicsImg.cs</Link>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\res\img\MosaicsImg.cs">
+      <Link>src_fmg.winrt\res\img\MosaicsImg.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\view\res\Resources.cs">
-      <Link>src_fmg.winrt\view\res\Resources.cs</Link>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\res\Resources.cs">
+      <Link>src_fmg.winrt\res\Resources.cs</Link>
     </Compile>
     <Compile Include="..\src\src_platform_winrt\fmg\winrt\utils\ImgUtils.cs">
       <Link>src_fmg.winrt\utils\ImgUtils.cs</Link>
