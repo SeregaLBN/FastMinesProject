@@ -25,7 +25,7 @@ using System;
 using fmg.common;
 using fmg.common.geom;
 
-namespace fmg.core.model.mosaics.cell {
+namespace fmg.core.mosaic.cells {
 
 /// <summary> Пятиугольник. Тип №5 </summary>
 public class PentagonT5 : BaseCell {

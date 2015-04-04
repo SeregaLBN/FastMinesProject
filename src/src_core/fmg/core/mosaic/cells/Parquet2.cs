@@ -24,7 +24,7 @@
 using System;
 using fmg.common.geom;
 
-namespace fmg.core.model.mosaics.cell {
+namespace fmg.core.mosaic.cells {
 
 /// <summary> Паркет. Вариант №2 </summary>
 public class Parquet2 : BaseCell {

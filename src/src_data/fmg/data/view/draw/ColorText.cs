@@ -1,6 +1,6 @@
 using System;
 using fmg.common;
-using fmg.core.model.mosaics;
+using fmg.core.types;
 
 namespace fmg.data.view.draw {
 

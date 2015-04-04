@@ -1,4 +1,4 @@
-namespace fmg.core.Event.click {
+namespace fmg.core.types.click {
 
 public struct RightDownReturn {
 	public int countFlag, countUnknown;

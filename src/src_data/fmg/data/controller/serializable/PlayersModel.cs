@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using fmg.common;
 using fmg.data.controller.Event;
 using fmg.data.controller.types;
-using fmg.core.model.mosaics;
+using fmg.core.types;
 
 
 namespace fmg.data.controller.serializable {

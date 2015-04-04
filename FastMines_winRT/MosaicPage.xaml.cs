@@ -11,16 +11,14 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using fmg.common.geom;
-using fmg.core.model.mosaics;
-using fmg.core.model.mosaics.cell;
+using fmg.core.types;
+using fmg.core.mosaic;
+using fmg.core.mosaic.cells;
 using fmg.winrt.mosaic;
 using fmg.data.controller.types;
-using fmg.winrt.mosaic;
 using FastMines.Common;
 using Log = FastMines.Common.LoggerSimple;
 using Size = fmg.common.geom.Size;
-using fmg.core.controller;
-using fmg.core.controller.types;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace FastMines {

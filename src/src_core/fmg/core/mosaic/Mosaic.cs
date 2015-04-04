@@ -25,14 +25,13 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using fmg.common.geom;
-using fmg.core.model.mosaics.cell;
-using fmg.core.model.mosaics;
-using fmg.core.controller.Event;
-using fmg.core.controller.types;
-using fmg.core.Event.click;
+using fmg.core.types;
+using fmg.core.types.Event;
+using fmg.core.types.click;
+using fmg.core.mosaic.cells;
 using Log = FastMines.Common.LoggerSimple;
 
-namespace fmg.core.controller {
+namespace fmg.core.mosaic {
 
 /// <summary> Mosaic field: класс окна мозаики поля </summary>
 public abstract class Mosaic : BaseCell.IMatrixCells {

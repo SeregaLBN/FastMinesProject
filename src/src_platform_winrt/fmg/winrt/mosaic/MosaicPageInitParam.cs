@@ -1,5 +1,5 @@
 ﻿using fmg.common.geom;
-using fmg.core.model.mosaics;
+using fmg.core.types;
 
 namespace fmg.winrt.mosaic {
    public class MosaicPageInitParam {

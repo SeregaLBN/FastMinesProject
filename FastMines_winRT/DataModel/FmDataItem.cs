@@ -4,7 +4,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
 using FastMines.Common;
 using fmg.common.geom;
-using fmg.core.model.mosaics;
+using fmg.core.types;
 using fmg.winrt.res;
 using fmg.winrt.res.img;
 

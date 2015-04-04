@@ -24,7 +24,7 @@
 using System;
 using fmg.common.geom;
  
-namespace fmg.core.model.mosaics.cell {
+namespace fmg.core.mosaic.cells {
 
 /// <summary> Треугольник. Вариант 3 - треугольник 45°-90°-45°(квадрат разделённый на 4 части) </summary>
 public class Triangle3 : BaseCell {

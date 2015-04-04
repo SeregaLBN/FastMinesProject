@@ -24,7 +24,7 @@
 using System;
 using fmg.common.geom;
  
-namespace fmg.core.model.mosaics.cell {
+namespace fmg.core.mosaic.cells {
 
 /// <summary> Комбинация. Мозаика из 4х треугольников и 2х квадратов </summary>
 public class TrSq1 : BaseCell {

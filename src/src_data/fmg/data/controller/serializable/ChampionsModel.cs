@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using fmg.common;
 using fmg.common.crypt;
-using fmg.core.model.mosaics;
+using fmg.core.types;
 using fmg.data.controller.Event;
 using fmg.data.controller.types;
 

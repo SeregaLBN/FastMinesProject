@@ -33,7 +33,7 @@ public class CellFactory {
 //		throw new RuntimeException("Unknown type "+mosaicType);
 
 		try {
-			String className = getPackageName() + ".cell." + mosaicType.getMosaicClassName() + "$Attr"+mosaicType.getMosaicClassName();
+			String className = getPackageName() + ".cells." + mosaicType.getMosaicClassName() + "$Attr"+mosaicType.getMosaicClassName();
 			@SuppressWarnings("unchecked")
 			Class<? extends BaseCell.BaseAttribute> cellAttrClass = (Class<? extends BaseCell.BaseAttribute>)Class.forName(className);
 			Constructor<? extends BaseCell.BaseAttribute> constructor = cellAttrClass.getConstructor(int.class); //(Constructor<? extends BaseAttribute>) cellClass.getConstructors()[0]; // 
@@ -58,7 +58,7 @@ public class CellFactory {
 //		throw new RuntimeException("Unknown type "+mosaicType);
 
 		try {
-			String className = getPackageName() + ".cell." + mosaicType.getMosaicClassName();
+			String className = getPackageName() + ".cells." + mosaicType.getMosaicClassName();
 			@SuppressWarnings("unchecked")
 			Class<? extends BaseCell> cellClass = (Class<? extends BaseCell>)Class.forName(className);
 

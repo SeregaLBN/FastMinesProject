@@ -24,7 +24,7 @@
 using System;
 using fmg.common.geom;
 
-namespace fmg.core.model.mosaics.cell {
+namespace fmg.core.mosaic.cells {
 
 /// <summary> Trapezoid3 - 8 трапеций, складывающихся в шестигранник </summary>
 public class Trapezoid3 : BaseCell {

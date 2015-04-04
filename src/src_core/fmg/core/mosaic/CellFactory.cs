@@ -1,8 +1,9 @@
 using System;
 using fmg.common.geom;
-using fmg.core.model.mosaics.cell;
+using fmg.core.types;
+using fmg.core.mosaic.cells;
 
-namespace fmg.core.model.mosaics {
+namespace fmg.core.mosaic {
 
 /// <summary>‘абрика дл€ создани€ экземпл€ров класса €чеек и их атрибутов</summary>
 public static class CellFactory {
@@ -19,7 +20,7 @@ public static class CellFactory {
 //		throw new Exception("Unknown type "+mosaicType);
 
       try {
-         var className = GetPackageName() + ".cell." + mosaicType.GetMosaicClassName() + "+Attr"+mosaicType.GetMosaicClassName();
+         var className = GetPackageName() + ".cells." + mosaicType.GetMosaicClassName() + "+Attr"+mosaicType.GetMosaicClassName();
          var cellAttrClass = Type.GetType(className);
          object[] args = { area };
          var attr = (BaseCell.BaseAttribute)Activator.CreateInstance(cellAttrClass, args);
@@ -42,7 +43,7 @@ public static class CellFactory {
 //		throw new RuntimeException("Unknown type "+mosaicType);
 
       try {
-         var className = GetPackageName() + ".cell." + mosaicType.GetMosaicClassName();
+         var className = GetPackageName() + ".cells." + mosaicType.GetMosaicClassName();
          var cellClass = Type.GetType(className);
          object[] args = { attr, coord };
          var cell = (BaseCell)Activator.CreateInstance(cellClass, args);

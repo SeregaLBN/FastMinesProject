@@ -24,7 +24,7 @@
 using System;
 using fmg.common.geom;
 
-namespace fmg.core.model.mosaics.cell {
+namespace fmg.core.mosaic.cells {
 
 /// <summary> Треугольник. Вариант 2 - равносторонний, ёлочкой </summary>
 public class Triangle2 : BaseCell {

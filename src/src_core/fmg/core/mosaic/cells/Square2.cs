@@ -24,7 +24,7 @@
 using System;
 using fmg.common.geom;
 
-namespace fmg.core.model.mosaics.cell {
+namespace fmg.core.mosaic.cells {
 
 /// <summary> Квадрат. Вариант 2 - сдвинутые ряды </summary>
 public class Square2 : BaseCell {

@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.Graphics.Imaging;
 using fmg.common.geom;
 using fmg.winrt.utils;
-using fmg.core.model.mosaics;
+using fmg.core.types;
 using fmg.winrt.res.img;
 
 namespace fmg.winrt.res {

@@ -25,9 +25,10 @@ using System.ComponentModel;
 using System.Linq;
 using fmg.common;
 using fmg.common.geom;
-using fmg.core.Event.click;
+using fmg.core.types;
+using fmg.core.types.click;
 
-namespace fmg.core.model.mosaics.cell {
+namespace fmg.core.mosaic.cells {
 
 /// <summary>Базовый класс фигуры-ячейки</summary>
 public abstract class BaseCell {

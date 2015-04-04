@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace fmg.core.model.mosaics {
+namespace fmg.core.types {
 
 public enum EMosaicGroup {
 	eTriangles,

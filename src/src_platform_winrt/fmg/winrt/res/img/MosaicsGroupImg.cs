@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.core.model.mosaics;
+using fmg.core.types;
 using FastMines.Common;
 using fmg.common;
 using fmg.common.geom;

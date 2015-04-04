@@ -1,10 +1,9 @@
 using fmg.common.geom;
-using fmg.core.controller.types;
-using fmg.core.model.mosaics;
-using fmg.core.model.mosaics.cell;
+using fmg.core.mosaic;
+using fmg.core.mosaic.cells;
 
 // Делегаты, для уведомлений от мозаики
-namespace fmg.core.controller.Event {
+namespace fmg.core.types.Event {
 
    /// <summary> уведомление о том, что на мозаике был произведён клик </summary>
    public delegate void OnClickEvent(Mosaic source, BaseCell clickedCell, bool leftClick, bool down);

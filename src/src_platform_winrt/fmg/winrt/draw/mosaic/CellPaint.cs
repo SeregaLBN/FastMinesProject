@@ -10,8 +10,8 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
-using fmg.core.model.mosaics;
-using fmg.core.model.mosaics.cell;
+using fmg.core.types;
+using fmg.core.mosaic.cells;
 
 namespace fmg.winrt.draw.mosaic
 {

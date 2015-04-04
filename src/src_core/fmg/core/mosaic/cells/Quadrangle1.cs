@@ -24,7 +24,7 @@
 using System;
 using fmg.common.geom;
 
-namespace fmg.core.model.mosaics.cell {
+namespace fmg.core.mosaic.cells {
 
 /// <summary> Quadrangle1 - четырёхугольник 120°-90°-60°-90° </summary>
 public class Quadrangle1 : BaseCell {

@@ -1,6 +1,6 @@
 using fmg.data.controller.serializable;
 using fmg.data.controller.types;
-using fmg.core.model.mosaics;
+using fmg.core.types;
 
 namespace fmg.data.controller.Event {
 

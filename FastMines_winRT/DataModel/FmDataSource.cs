@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common.geom;
-using fmg.core.model.mosaics;
+using fmg.core.types;
 using fmg.data.controller.types;
 
 // The data model defined by this file serves as a representative example of a strongly-typed

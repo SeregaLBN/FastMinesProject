@@ -1,4 +1,4 @@
-namespace fmg.core.controller.types {
+namespace fmg.core.types {
 
    /// <summary>
    ///

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using fmg.core.model.mosaics.cell;
+using fmg.core.mosaic.cells;
 
-namespace fmg.core.Event.click {
+namespace fmg.core.types.click {
 
 public class LeftUpResult {
 	public int countFlag, countOpen, countUnknown;

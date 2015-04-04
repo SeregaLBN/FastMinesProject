@@ -1,6 +1,6 @@
 using System;
 
-namespace fmg.core.controller.types {
+namespace fmg.core.types {
 
    /// <summary>
    /// 1. Kто играл: юзер и/или робот?

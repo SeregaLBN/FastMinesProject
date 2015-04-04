@@ -24,7 +24,7 @@
 using System;
 using fmg.common.geom;
 
-namespace fmg.core.model.mosaics.cell {
+namespace fmg.core.mosaic.cells {
 
 /// <summary> Комбинация. мозаика из 6Square 4Triangle 2Hexagon </summary>
 public class SqTrHex : BaseCell {

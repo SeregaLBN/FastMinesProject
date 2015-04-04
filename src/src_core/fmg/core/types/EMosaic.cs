@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using fmg.common.geom;
 
-namespace fmg.core.model.mosaics {
+namespace fmg.core.types {
 
 /* Перечень мозаик */
 

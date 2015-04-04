@@ -1,6 +1,6 @@
 using System;
 
-namespace fmg.core.model.mosaics {
+namespace fmg.core.types {
 
    public enum EClose {
       _Unknown,

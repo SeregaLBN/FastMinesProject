@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using fmg.core.model.mosaics;
-using fmg.core.model.mosaics.cell;
+using fmg.core.types;
+using fmg.core.mosaic;
+using fmg.core.mosaic.cells;
 using fmg.common.geom;
 
 namespace fmg.data.controller.types {

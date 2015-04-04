@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using FastMines.Data;
 using fmg.data.controller.types;
-using fmg.core.model.mosaics;
+using fmg.core.types;
 using fmg.winrt.mosaic;
 using FastMines.Common;
 
