@@ -33,11 +33,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import fmg.common.geom.Size;
-import fmg.core.controller.Mosaic;
-import fmg.core.controller.event.MosaicEvent;
-import fmg.core.controller.event.MosaicListener;
-import fmg.core.model.mosaics.CellFactory;
-import fmg.core.model.mosaics.cell.BaseCell;
+import fmg.core.mosaic.CellFactory;
+import fmg.core.mosaic.Mosaic;
+import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.types.event.MosaicEvent;
+import fmg.core.types.event.MosaicListener;
 import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Main;
 import fmg.swing.utils.GuiTools;

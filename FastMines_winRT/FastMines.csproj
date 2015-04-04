@@ -107,8 +107,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\controller\event\MosaicListener.cs">
-      <Link>src_fmg.core\controller\event\MosaicListener.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\types\event\MosaicListener.cs">
+      <Link>src_fmg.core\types\event\MosaicListener.cs</Link>
     </Compile>
     <Compile Include="..\src\src_data\fmg\data\view\draw\ColorText.cs">
       <Link>src_fmg.data\view\draw\ColorText.cs</Link>
@@ -149,23 +149,23 @@
     <Compile Include="..\src\src_common\fmg\common\Color.cs">
       <Link>src_fmg.common\Color.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\controller\types\EGameStatus.cs">
-      <Link>src_fmg.core\controller\types\EGameStatus.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\types\EGameStatus.cs">
+      <Link>src_fmg.core\types\EGameStatus.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\controller\types\EPlayInfo.cs">
-      <Link>src_fmg.core\controller\types\EPlayInfo.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\types\EPlayInfo.cs">
+      <Link>src_fmg.core\types\EPlayInfo.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\EClose.cs">
-      <Link>src_fmg.core\model\mosaics\EClose.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\types\EClose.cs">
+      <Link>src_fmg.core\types\EClose.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\EMosaic.cs">
-      <Link>src_fmg.core\model\mosaics\EMosaic.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\types\EMosaic.cs">
+      <Link>src_fmg.core\types\EMosaic.cs</Link>
     </Compile>
     <Compile Include="..\src\src_data\fmg\data\controller\event\ActionToUser.cs">
       <Link>src_fmg.data\controller\event\ActionToUser.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\EMosaicGroup.cs">
-      <Link>src_fmg.core\model\mosaics\EMosaicGroup.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\types\EMosaicGroup.cs">
+      <Link>src_fmg.core\types\EMosaicGroup.cs</Link>
     </Compile>
     <Compile Include="..\src\src_data\fmg\data\controller\event\ChampionModelEvent.cs">
       <Link>src_fmg.data\controller\event\ChampionModelEvent.cs</Link>
@@ -176,11 +176,11 @@
     <Compile Include="..\src\src_data\fmg\data\controller\types\User.cs">
       <Link>src_fmg.data\controller\types\User.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\EOpen.cs">
-      <Link>src_fmg.core\model\mosaics\EOpen.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\types\EOpen.cs">
+      <Link>src_fmg.core\types\EOpen.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\EState.cs">
-      <Link>src_fmg.core\model\mosaics\EState.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\types\EState.cs">
+      <Link>src_fmg.core\types\EState.cs</Link>
     </Compile>
     <Compile Include="..\src\src_data\fmg\data\view\draw\EShowElement.cs">
       <Link>src_fmg.data\view\draw\EShowElement.cs</Link>
@@ -227,68 +227,68 @@
     <Compile Include="..\src\src_common\fmg\common\crypt\DES.cs">
       <Link>src_fmg.common\crypt\DES.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\Hexagon1.cs">
-      <Link>src_fmg.core\model\mosaics\cell\Hexagon1.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Hexagon1.cs">
+      <Link>src_fmg.core\mosaic\cells\Hexagon1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\Parquet1.cs">
-      <Link>src_fmg.core\model\mosaics\cell\Parquet1.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Parquet1.cs">
+      <Link>src_fmg.core\mosaic\cells\Parquet1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\Parquet2.cs">
-      <Link>src_fmg.core\model\mosaics\cell\Parquet2.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Parquet2.cs">
+      <Link>src_fmg.core\mosaic\cells\Parquet2.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\PenrousePeriodic1.cs">
-      <Link>src_fmg.core\model\mosaics\cell\PenrousePeriodic1.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\PenrousePeriodic1.cs">
+      <Link>src_fmg.core\mosaic\cells\PenrousePeriodic1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\PentagonT10.cs">
-      <Link>src_fmg.core\model\mosaics\cell\PentagonT10.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\PentagonT10.cs">
+      <Link>src_fmg.core\mosaic\cells\PentagonT10.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\PentagonT24.cs">
-      <Link>src_fmg.core\model\mosaics\cell\PentagonT24.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\PentagonT24.cs">
+      <Link>src_fmg.core\mosaic\cells\PentagonT24.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\PentagonT5.cs">
-      <Link>src_fmg.core\model\mosaics\cell\PentagonT5.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\PentagonT5.cs">
+      <Link>src_fmg.core\mosaic\cells\PentagonT5.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\Quadrangle1.cs">
-      <Link>src_fmg.core\model\mosaics\cell\Quadrangle1.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Quadrangle1.cs">
+      <Link>src_fmg.core\mosaic\cells\Quadrangle1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\Rhombus1.cs">
-      <Link>src_fmg.core\model\mosaics\cell\Rhombus1.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Rhombus1.cs">
+      <Link>src_fmg.core\mosaic\cells\Rhombus1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\SqTrHex.cs">
-      <Link>src_fmg.core\model\mosaics\cell\SqTrHex.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\SqTrHex.cs">
+      <Link>src_fmg.core\mosaic\cells\SqTrHex.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\Square1.cs">
-      <Link>src_fmg.core\model\mosaics\cell\Square1.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Square1.cs">
+      <Link>src_fmg.core\mosaic\cells\Square1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\Square2.cs">
-      <Link>src_fmg.core\model\mosaics\cell\Square2.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Square2.cs">
+      <Link>src_fmg.core\mosaic\cells\Square2.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\Trapezoid1.cs">
-      <Link>src_fmg.core\model\mosaics\cell\Trapezoid1.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Trapezoid1.cs">
+      <Link>src_fmg.core\mosaic\cells\Trapezoid1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\Trapezoid2.cs">
-      <Link>src_fmg.core\model\mosaics\cell\Trapezoid2.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Trapezoid2.cs">
+      <Link>src_fmg.core\mosaic\cells\Trapezoid2.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\Trapezoid3.cs">
-      <Link>src_fmg.core\model\mosaics\cell\Trapezoid3.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Trapezoid3.cs">
+      <Link>src_fmg.core\mosaic\cells\Trapezoid3.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\Triangle1.cs">
-      <Link>src_fmg.core\model\mosaics\cell\Triangle1.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Triangle1.cs">
+      <Link>src_fmg.core\mosaic\cells\Triangle1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\Triangle2.cs">
-      <Link>src_fmg.core\model\mosaics\cell\Triangle2.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Triangle2.cs">
+      <Link>src_fmg.core\mosaic\cells\Triangle2.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\Triangle3.cs">
-      <Link>src_fmg.core\model\mosaics\cell\Triangle3.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Triangle3.cs">
+      <Link>src_fmg.core\mosaic\cells\Triangle3.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\Triangle4.cs">
-      <Link>src_fmg.core\model\mosaics\cell\Triangle4.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Triangle4.cs">
+      <Link>src_fmg.core\mosaic\cells\Triangle4.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\TrSq1.cs">
-      <Link>src_fmg.core\model\mosaics\cell\TrSq1.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\TrSq1.cs">
+      <Link>src_fmg.core\mosaic\cells\TrSq1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\TrSq2.cs">
-      <Link>src_fmg.core\model\mosaics\cell\TrSq2.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\TrSq2.cs">
+      <Link>src_fmg.core\mosaic\cells\TrSq2.cs</Link>
     </Compile>
     <Compile Include="..\src\src_platform_winrt\fmg\winrt\mosaic\MosaicExt.cs">
       <Link>src_fmg.winrt\mosaic\MosaicExt.cs</Link>
@@ -594,26 +594,26 @@
     <Content Include="..\res\MosaicGroup\Triangles.ico">
       <Link>res\MosaicGroup\Triangles.ico</Link>
     </Content>
-    <Compile Include="..\src\src_core\fmg\core\event\click\ClickReportContext.cs">
-      <Link>src_fmg.core\event\click\ClickReportContext.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\types\click\ClickReportContext.cs">
+      <Link>src_fmg.core\types\click\ClickReportContext.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\event\click\LeftDownResult.cs">
-      <Link>src_fmg.core\event\click\LeftDownResult.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\types\click\LeftDownResult.cs">
+      <Link>src_fmg.core\types\click\LeftDownResult.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\event\click\LeftUpResult.cs">
-      <Link>src_fmg.core\event\click\LeftUpResult.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\types\click\LeftUpResult.cs">
+      <Link>src_fmg.core\types\click\LeftUpResult.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\event\click\RightDownReturn.cs">
-      <Link>src_fmg.core\event\click\RightDownReturn.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\types\click\RightDownReturn.cs">
+      <Link>src_fmg.core\types\click\RightDownReturn.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\controller\Mosaic.cs">
-      <Link>src_fmg.core\controller\Mosaic.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\Mosaic.cs">
+      <Link>src_fmg.core\mosaic\Mosaic.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\cell\BaseCell.cs">
-      <Link>src_fmg.core\model\mosaics\cell\BaseCell.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\BaseCell.cs">
+      <Link>src_fmg.core\mosaic\cells\BaseCell.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\model\mosaics\CellFactory.cs">
-      <Link>src_fmg.core\model\mosaics\CellFactory.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\CellFactory.cs">
+      <Link>src_fmg.core\mosaic\CellFactory.cs</Link>
     </Compile>
     <Content Include="..\res\Font\NirmalaUI_30.xml">
       <Link>res\Font\NirmalaUI_30.xml</Link>

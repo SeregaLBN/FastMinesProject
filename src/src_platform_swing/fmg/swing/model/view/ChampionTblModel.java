@@ -2,7 +2,7 @@ package fmg.swing.model.view;
 
 import javax.swing.event.TableModelEvent;
 
-import fmg.core.model.mosaics.EMosaic;
+import fmg.core.types.EMosaic;
 import fmg.data.controller.event.ChampionModelEvent;
 import fmg.data.controller.event.ChampionModelListener;
 import fmg.data.controller.serializable.ChampionsModel;

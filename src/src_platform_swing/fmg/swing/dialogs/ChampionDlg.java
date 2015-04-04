@@ -4,7 +4,7 @@ import java.awt.Dimension;
 
 import javax.swing.SwingConstants;
 
-import fmg.core.model.mosaics.EMosaic;
+import fmg.core.types.EMosaic;
 import fmg.data.controller.serializable.ChampionsModel;
 import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Main;

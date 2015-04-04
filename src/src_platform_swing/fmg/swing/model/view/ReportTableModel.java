@@ -7,7 +7,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
-import fmg.core.model.mosaics.EMosaic;
+import fmg.core.types.EMosaic;
 import fmg.data.controller.types.ESkillLevel;
 
 public abstract class ReportTableModel implements TableModel {

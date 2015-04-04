@@ -2,7 +2,7 @@ package fmg.data.controller.event;
 
 import java.util.EventObject;
 
-import fmg.core.model.mosaics.EMosaic;
+import fmg.core.types.EMosaic;
 import fmg.data.controller.serializable.PlayersModel;
 import fmg.data.controller.types.ESkillLevel;
 

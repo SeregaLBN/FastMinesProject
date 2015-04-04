@@ -5,7 +5,7 @@ import java.text.NumberFormat;
 
 import javax.swing.event.TableModelEvent;
 
-import fmg.core.model.mosaics.EMosaic;
+import fmg.core.types.EMosaic;
 import fmg.data.controller.event.PlayerModelEvent;
 import fmg.data.controller.event.PlayerModelListener;
 import fmg.data.controller.serializable.PlayersModel;

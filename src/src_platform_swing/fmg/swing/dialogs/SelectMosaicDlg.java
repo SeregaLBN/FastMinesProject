@@ -28,8 +28,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 
-import fmg.core.model.mosaics.EMosaic;
-import fmg.core.model.mosaics.EMosaicGroup;
+import fmg.core.types.EMosaic;
+import fmg.core.types.EMosaicGroup;
 import fmg.swing.Main;
 import fmg.swing.model.SpinNumberDocListener;
 import fmg.swing.model.SpinnerDiapasonModel;

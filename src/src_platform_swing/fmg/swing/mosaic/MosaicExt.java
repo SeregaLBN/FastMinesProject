@@ -22,10 +22,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
 import fmg.common.geom.Size;
-import fmg.core.controller.Mosaic;
-import fmg.core.model.mosaics.CellFactory;
-import fmg.core.model.mosaics.EMosaic;
-import fmg.core.model.mosaics.cell.BaseCell;
+import fmg.core.mosaic.CellFactory;
+import fmg.core.mosaic.Mosaic;
+import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.types.EMosaic;
 import fmg.data.view.draw.PenBorder;
 import fmg.swing.draw.GraphicContext;
 import fmg.swing.draw.mosaic.CellPaint;

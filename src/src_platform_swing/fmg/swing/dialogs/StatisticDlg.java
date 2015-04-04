@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 
-import fmg.core.model.mosaics.EMosaic;
+import fmg.core.types.EMosaic;
 import fmg.data.controller.serializable.PlayersModel;
 import fmg.data.controller.types.ESkillLevel;
 import fmg.data.controller.types.User;

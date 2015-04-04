@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 import fmg.common.crypt.Simple3DES;
-import fmg.core.model.mosaics.EMosaic;
+import fmg.core.types.EMosaic;
 import fmg.data.controller.event.PlayerModelEvent;
 import fmg.data.controller.event.PlayerModelListener;
 import fmg.data.controller.types.ESkillLevel;

@@ -4,8 +4,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import fmg.common.Color;
-import fmg.core.model.mosaics.EClose;
-import fmg.core.model.mosaics.EOpen;
+import fmg.core.types.EClose;
+import fmg.core.types.EOpen;
 
 public class ColorText {
 	private PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);

@@ -8,9 +8,9 @@ import javax.swing.Icon;
 
 import fmg.common.geom.Coord;
 import fmg.common.geom.Size;
-import fmg.core.model.mosaics.CellFactory;
-import fmg.core.model.mosaics.EMosaic;
-import fmg.core.model.mosaics.cell.BaseCell;
+import fmg.core.mosaic.CellFactory;
+import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.types.EMosaic;
 import fmg.swing.draw.GraphicContext;
 import fmg.swing.draw.mosaic.CellPaint;
 

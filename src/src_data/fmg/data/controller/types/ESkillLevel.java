@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fmg.common.geom.Size;
-import fmg.core.model.mosaics.CellFactory;
-import fmg.core.model.mosaics.EMosaic;
-import fmg.core.model.mosaics.cell.BaseCell;
+import fmg.core.mosaic.CellFactory;
+import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.types.EMosaic;
 
 public enum ESkillLevel {
 	eBeginner,

@@ -7,8 +7,8 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
-import fmg.core.model.mosaics.EMosaic;
-import fmg.core.model.mosaics.EMosaicGroup;
+import fmg.core.types.EMosaic;
+import fmg.core.types.EMosaicGroup;
 import fmg.swing.res.img.BackgroundPause;
 import fmg.swing.res.img.Flag;
 import fmg.swing.res.img.Mine;

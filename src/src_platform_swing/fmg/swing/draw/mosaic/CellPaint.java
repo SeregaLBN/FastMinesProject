@@ -20,10 +20,10 @@ import fmg.common.geom.Point;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Region;
 import fmg.common.geom.Size;
-import fmg.core.model.mosaics.EClose;
-import fmg.core.model.mosaics.EOpen;
-import fmg.core.model.mosaics.EState;
-import fmg.core.model.mosaics.cell.BaseCell;
+import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.types.EClose;
+import fmg.core.types.EOpen;
+import fmg.core.types.EState;
 import fmg.swing.draw.GraphicContext;
 import fmg.swing.geom.Cast;
 

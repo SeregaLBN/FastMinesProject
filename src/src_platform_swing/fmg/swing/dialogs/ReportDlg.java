@@ -36,7 +36,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
-import fmg.core.model.mosaics.EMosaic;
+import fmg.core.types.EMosaic;
 import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Main;
 import fmg.swing.model.view.ReportTableModel;

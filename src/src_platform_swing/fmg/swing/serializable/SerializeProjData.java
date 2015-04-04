@@ -14,7 +14,7 @@ import java.util.UUID;
 
 import fmg.common.geom.Point;
 import fmg.common.geom.Size;
-import fmg.core.model.mosaics.EMosaic;
+import fmg.core.types.EMosaic;
 import fmg.data.controller.types.ESkillLevel;
 import fmg.data.view.draw.EShowElement;
 import fmg.swing.Main;
