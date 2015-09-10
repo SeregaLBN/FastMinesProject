@@ -47,6 +47,7 @@ public static class CellFactory {
          var cellClass = Type.GetType(className);
          object[] args = { attr, coord };
          var cell = (BaseCell)Activator.CreateInstance(cellClass, args);
+         cell.Init();
          return cell;
       } catch (Exception ex) {
          System.Diagnostics.Debug.Assert(false, ex.Message);

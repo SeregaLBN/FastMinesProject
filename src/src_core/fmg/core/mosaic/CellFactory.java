@@ -64,6 +64,7 @@ public class CellFactory {
 
 			Constructor<? extends BaseCell> constructor = cellClass.getConstructor(attr.getClass(), coord.getClass()); // cellClass.getConstructors()[0];
 			BaseCell cell = constructor.newInstance(attr, coord);
+			cell.Init();
 			return cell;
 		} catch (Exception ex) {
 			System.err.println(ex.getMessage());

@@ -185,8 +185,6 @@ public abstract class BaseCell {
    private readonly BaseAttribute attr;
    public BaseAttribute Attr { get { return attr; } }
 
-   //public bool bPresumeFlag { get; set; }
-
    //CellContext cellContext;
    protected Coord coord;
    /// <summary>направление - 'третья координата' ячейки</summary>
@@ -290,6 +288,9 @@ public abstract class BaseCell {
 
       this.state = new StateCell(this);
       Reset();
+   }
+
+   public void Init() {
       CalcRegion();
    }
 

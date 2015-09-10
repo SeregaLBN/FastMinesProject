@@ -227,8 +227,6 @@ public abstract class BaseCell implements PropertyChangeListener {
 		return attr;
 	}
 
-//    private boolean bPresumeFlag;
-
 //    CellContext cellContext;
 	protected Coord coord;
 	/** направление - 'третья координата' ячейки */
@@ -334,6 +332,9 @@ public abstract class BaseCell implements PropertyChangeListener {
 
 		this.state = new StateCell();
 		Reset();
+	}
+
+	public void Init() {
 		CalcRegion();
 	}
 
@@ -624,9 +625,6 @@ public abstract class BaseCell implements PropertyChangeListener {
 			return repositoryColor.get(zx*zy);
 		}
 	}
-
-//    public void    setPresumeFlag(boolean bValue) { bPresumeFlag = bValue; }
-//    public boolean getPresumeFlag()               { return bPresumeFlag; }
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
