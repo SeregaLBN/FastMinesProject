@@ -41,13 +41,23 @@ namespace FastMines.Common {
       }
 
       public void Dispose() {
+         Dispose(true);
+      }
+
+      protected virtual void Dispose(bool disposing)
+      {
+         if (disposing)
+         {
+            // free managed resources
 #if DEBUG
-         if (_disposeMessage == null)
-            LoggerSimple.Put("< {0}", _hint);
-         else
-            LoggerSimple.Put("< {0}: {1}", _hint, _disposeMessage());
+            if (_disposeMessage == null)
+               LoggerSimple.Put("< {0}", _hint);
+            else
+               LoggerSimple.Put("< {0}: {1}", _hint, _disposeMessage());
 #else
 #endif
+         }
+         // free native resources if there are any.
       }
 
 #if DEBUG

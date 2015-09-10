@@ -48,7 +48,7 @@ namespace fmg.winrt.res.img {
             B = Convert.ToUInt16(_random.Next(Color16.MaxColorValue))
          };
          if (Any—hannel)
-            _channel = Next—hannel();
+            _channel = NextChannel();
 
       #region Make Coords
          switch (_eMosaicGroup) {
@@ -194,7 +194,7 @@ namespace fmg.winrt.res.img {
 
          if (Animate) {
             Func<UInt16, UInt16> funcAddRandomBit = (val) => (UInt16)((((_random.Next() & 1) == 1) ? 0x0000 : 0x8000) | (val >> 1));
-            switch (Any—hannel ? _channel : Next—hannel()) {
+            switch (Any—hannel ? _channel : NextChannel()) {
             case 0: _fillColor.R = funcAddRandomBit(_fillColor.R); break;
             case 1: _fillColor.G = funcAddRandomBit(_fillColor.G); break;
             case 2: _fillColor.B = funcAddRandomBit(_fillColor.B); break;
@@ -250,12 +250,20 @@ namespace fmg.winrt.res.img {
       }
 
       public void Dispose() {
-         _timer.Stop();
-         Animate = false;
-         Dance = false;
+         Dispose(true);
       }
 
-      private int Next—hannel() {
+      protected virtual void Dispose(bool disposing) {
+         if (disposing) {
+            // free managed resources
+            _timer.Stop();
+            Animate = false;
+            Dance = false;
+         }
+         // free native resources if there are any.
+      }
+
+      private int NextChannel() {
          var i = _random.Next();
          return (i % 3);
       }
