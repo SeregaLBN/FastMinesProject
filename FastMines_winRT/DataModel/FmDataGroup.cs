@@ -30,8 +30,10 @@ namespace FastMines.Data {
             var seeXxxPageXamlInViewDesigner = MosaicGroupImage;
             System.Diagnostics.Debug.WriteLine(seeXxxPageXamlInViewDesigner.ToString());
          } else
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             AsyncRunner.InvokeLater(async () => { base.Image = await Resources.GetImgMosaicGroupPng(eMosaicGroup); },
                CoreDispatcherPriority.High);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
       }
 
       private void ItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) {
@@ -98,7 +100,9 @@ namespace FastMines.Data {
       public override ImageSource Image {
          get {
             if (_mosaicsGroupImg == null)
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                AsyncRunner.InvokeLater(() => { base.Image = MosaicGroupImage.Image; }, CoreDispatcherPriority.Low);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             return base.Image;
          }
       }

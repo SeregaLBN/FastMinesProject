@@ -115,7 +115,9 @@ namespace FastMines {
          // Ensure the current window is active
          Window.Current.Activate();
 
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
          AsyncRunner.InvokeLater(TileHelper.RegisterBackgroundTask, CoreDispatcherPriority.Low);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
       }
 
       /// <summary>
