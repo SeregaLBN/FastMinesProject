@@ -66,7 +66,7 @@ public class PentagonT24 : BaseCell {
 				)
 	{}
 
-	private AttrPentagonT24 Attr {
+	private new AttrPentagonT24 Attr {
 		get { return (AttrPentagonT24) base.Attr; }
 	}
 

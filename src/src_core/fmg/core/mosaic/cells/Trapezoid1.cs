@@ -72,7 +72,7 @@ public class Trapezoid1 : BaseCell {
 			)
 	{}
 
-	private AttrTrapezoid1 Attr {
+	private new AttrTrapezoid1 Attr {
 		get { return (AttrTrapezoid1) base.Attr; }
 	}
 

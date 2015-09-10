@@ -86,7 +86,7 @@ public class Quadrangle1 : BaseCell {
 			)
    {}
 
-	private AttrQuadrangle1 Attr {
+	private new AttrQuadrangle1 Attr {
 		get { return (AttrQuadrangle1) base.Attr; }
 	}
 

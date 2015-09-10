@@ -205,7 +205,7 @@ public class PenrousePeriodic1 : BaseCell {
 			)
 	{}
 
-	private AttrPenrousePeriodic1 Attr {
+	private new AttrPenrousePeriodic1 Attr {
 		get { return (AttrPenrousePeriodic1) base.Attr; }
 	}
 

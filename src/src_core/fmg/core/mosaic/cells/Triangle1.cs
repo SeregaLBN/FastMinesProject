@@ -65,7 +65,7 @@ public class Triangle1 : BaseCell {
 			)
 	{}
 
-	private AttrTriangle1 Attr {
+	private new AttrTriangle1 Attr {
 		get { return (AttrTriangle1) base.Attr; }
 	}
 

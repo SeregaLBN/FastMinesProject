@@ -120,7 +120,7 @@ public class TrSq2 : BaseCell {
 			)
 	{}
 
-	private AttrTrSq2 Attr {
+	private new AttrTrSq2 Attr {
 		get { return (AttrTrSq2) base.Attr; }
 	}
 

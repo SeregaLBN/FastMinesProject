@@ -91,7 +91,7 @@ public class TrSq1 : BaseCell {
 			)
 	{}
 
-	private AttrTrSq1 Attr {
+	private new AttrTrSq1 Attr {
 		get { return (AttrTrSq1) base.Attr; }
 	}
 

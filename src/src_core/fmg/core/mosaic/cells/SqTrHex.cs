@@ -104,7 +104,7 @@ public class SqTrHex : BaseCell {
 			)
 	{}
 
-	private AttrSqTrHex Attr {
+	private new AttrSqTrHex Attr {
 		get { return (AttrSqTrHex) base.Attr; }
 	}
 

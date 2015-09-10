@@ -80,7 +80,7 @@ public class Rhombus1 : BaseCell {
 			)
 	{}
 
-	private AttrRhombus1 Attr {
+	private new AttrRhombus1 Attr {
 		get { return (AttrRhombus1) base.Attr; }
 	}
 

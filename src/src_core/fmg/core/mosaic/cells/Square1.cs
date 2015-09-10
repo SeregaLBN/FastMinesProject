@@ -58,7 +58,7 @@ public class Square1 : BaseCell {
 		: base(attr, coord, -1)
 	{}
 
-	private AttrSquare1 Attr {
+	private new AttrSquare1 Attr {
 		get { return (AttrSquare1) base.Attr; }
 	}
 

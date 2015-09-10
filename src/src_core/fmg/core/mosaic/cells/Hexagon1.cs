@@ -65,7 +65,7 @@ public class Hexagon1 : BaseCell {
 			)
 	{}
 
-	private AttrHexagon1 Attr {
+	private new AttrHexagon1 Attr {
 		get { return (AttrHexagon1) base.Attr; }
 	}
 

@@ -173,7 +173,7 @@ public class Triangle4 : BaseCell {
          )
    {}
 
-   private AttrTriangle4 Attr {
+   private new AttrTriangle4 Attr {
       get { return (AttrTriangle4) base.Attr; }
    }
 

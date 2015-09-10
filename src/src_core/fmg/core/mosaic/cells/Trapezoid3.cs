@@ -111,7 +111,7 @@ public class Trapezoid3 : BaseCell {
 			)
 	{}
 
-	private AttrTrapezoid3 Attr {
+	private new AttrTrapezoid3 Attr {
 		get { return (AttrTrapezoid3) base.Attr; }
 	}
 

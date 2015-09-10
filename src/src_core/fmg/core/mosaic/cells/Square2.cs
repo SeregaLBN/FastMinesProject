@@ -59,7 +59,7 @@ public class Square2 : BaseCell {
 				)
 	{}
 
-	private AttrSquare2 Attr {
+	private new AttrSquare2 Attr {
 		get { return (AttrSquare2) base.Attr; }
 	}
 

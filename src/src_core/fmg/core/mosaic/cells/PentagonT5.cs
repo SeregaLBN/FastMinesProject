@@ -132,7 +132,7 @@ public class PentagonT5 : BaseCell {
 			)
 	{}
 
-	private AttrPentagonT5 Attr {
+	private new AttrPentagonT5 Attr {
 		get { return (AttrPentagonT5) base.Attr; }
 	}
 

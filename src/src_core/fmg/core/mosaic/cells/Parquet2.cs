@@ -63,7 +63,7 @@ public class Parquet2 : BaseCell {
 				)
 	{}
 
-	private AttrParquet2 Attr {
+	private new AttrParquet2 Attr {
 		get { return (AttrParquet2) base.Attr; }
 	}
 
