@@ -265,24 +265,24 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
       }
    }
 
-   public event OnClickEvent OnClick = delegate { };
-   public event OnChangedCountersEvent OnChangedCounters = delegate { };
-   public event OnChangedGameStatusEvent OnChangedGameStatus = delegate { };
-   public event OnChangedAreaEvent OnChangedArea = delegate { };
-   public event OnChangedMosaicTypeEvent OnChangedMosaicType = delegate { };
-   public event OnChangedMosaicSizeEvent OnChangedMosaicSize = delegate { };
+   public event ClickEventHandler OnClick = delegate { };
+   public event ChangedCountersEventHandler OnChangedCounters = delegate { };
+   public event ChangedGameStatusEventHandler OnChangedGameStatus = delegate { };
+   public event ChangedAreaEventHandler OnChangedArea = delegate { };
+   public event ChangedMosaicTypeEventHandler OnChangedMosaicType = delegate { };
+   public event ChangedMosaicSizeEventHandler OnChangedMosaicSize = delegate { };
 
    /// <summary> уведомить о клике на мозаике </summary>
-   private void fireOnClick(BaseCell cell, bool leftClick, bool down) { OnClick(this, cell, leftClick, down); }
-   private void fireOnChangedCounters() { OnChangedCounters(this); }
+   private void fireOnClick(BaseCell cell, bool leftClick, bool down) { OnClick(this, new MosaicEvent.ClickEventArgs(cell, leftClick, down)); }
+   private void fireOnChangedCounters() { OnChangedCounters(this, new MosaicEvent.ChangedCountersEventArgs()); }
    /// <summary> уведомить об изменении статуса игры (новая игра, начало игры, конец игры) </summary>
-   private void fireOnChangedGameStatus(EGameStatus oldValue) { OnChangedGameStatus(this, oldValue); }
+   private void fireOnChangedGameStatus(EGameStatus oldValue) { OnChangedGameStatus(this, new MosaicEvent.ChangedGameStatusEventArgs(oldValue)); }
    /// <summary> уведомить об изменении размера площади у ячейки </summary>
-   private void fireOnChangedArea(int oldArea) { OnChangedArea(this, oldArea); }
+   private void fireOnChangedArea(int oldArea) { OnChangedArea(this, new MosaicEvent.ChangedAreaEventArgs(oldArea)); }
    /// <summary> уведомить об изменении размера площади у ячейки </summary>
-   private void fireOnChangedMosaicType(EMosaic oldMosaic) { OnChangedMosaicType(this, oldMosaic); }
+   private void fireOnChangedMosaicType(EMosaic oldMosaic) { OnChangedMosaicType(this, new MosaicEvent.ChangedMosaicTypeEventArgs(oldMosaic)); }
    /// <summary> уведомить об изменении размера мозаики </summary>
-   private void fireOnChangedMosaicSize(Size oldSize) { OnChangedMosaicSize(this, oldSize); }
+   private void fireOnChangedMosaicSize(Size oldSize) { OnChangedMosaicSize(this, new MosaicEvent.ChangedMosaicSizeEventArgs(oldSize)); }
 
    /// <summary>перерисовать ячейку; если null - перерисовать всё поле </summary>
    protected abstract void Repaint(BaseCell cell);

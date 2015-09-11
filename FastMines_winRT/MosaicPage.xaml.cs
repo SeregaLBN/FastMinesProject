@@ -19,6 +19,7 @@ using fmg.data.controller.types;
 using FastMines.Common;
 using Log = FastMines.Common.LoggerSimple;
 using Size = fmg.common.geom.Size;
+using fmg.core.types.Event;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace FastMines {
@@ -227,20 +228,20 @@ namespace FastMines {
          AreaOptimal();
       }
 
-      private void Mosaic_OnClick(Mosaic source, BaseCell clickedCell, bool leftClick, bool down) {
-         _clickInfo.Cell = clickedCell;
-         _clickInfo.IsLeft = leftClick;
-         _clickInfo.Released = !down;
+      private void Mosaic_OnClick(object source, MosaicEvent.ClickEventArgs e) {
+         _clickInfo.Cell = e.getCell();
+         _clickInfo.IsLeft = e.isLeftClick();
+         _clickInfo.Released = !e.isDown();
       }
 
-      private void Mosaic_OnChangedGameStatus(Mosaic source, EGameStatus oldValue) {
-         if (source.GameStatus == EGameStatus.eGSEnd) {
+      private void Mosaic_OnChangedGameStatus(object source, MosaicEvent.ChangedGameStatusEventArgs e) {
+         if ((MosaicEvent.getSource(source) ?? _mosaic).GameStatus == EGameStatus.eGSEnd) {
             //this.bottomAppBar.Focus(FocusState.Programmatic);
             bottomAppBar.IsOpen = true;
          }
       }
-      private void Mosaic_OnChangedCounters(Mosaic source) {}
-      private void Mosaic_OnChangedArea(Mosaic source, int oldArea) {
+      private void Mosaic_OnChangedCounters(object source, MosaicEvent.ChangedCountersEventArgs e) {}
+      private void Mosaic_OnChangedArea(object source, MosaicEvent.ChangedAreaEventArgs e) {
          using (new Tracer("Mosaic_OnChangedArea")) {
             Debug.Assert(ReferenceEquals(MosaicField, source));
             //ChangeSizeImagesMineFlag();
@@ -251,7 +252,7 @@ namespace FastMines {
             if (_mouseDevicePosition_AreaChanging.HasValue) {
                var devicePos = _mouseDevicePosition_AreaChanging.Value;
 
-               var oldWinSize = MosaicField.CalcWindowSize(MosaicField.SizeField, oldArea);
+               var oldWinSize = MosaicField.CalcWindowSize(MosaicField.SizeField, e.getOldArea());
                var newWinSize = MosaicField.CalcWindowSize(MosaicField.SizeField, Area);
 
                // точка над игровым полем со старой площадью ячеек
@@ -275,7 +276,7 @@ namespace FastMines {
             MosaicField.Container.Margin = m;
          }
       }
-      private void Mosaic_OnChangedMosaicType(Mosaic source, EMosaic oldMosaic) {
+      private void Mosaic_OnChangedMosaicType(object source, MosaicEvent.ChangedMosaicTypeEventArgs e) {
          using (new Tracer("Mosaic_OnChangedMosaicType")) {
             Debug.Assert(ReferenceEquals(MosaicField, source));
             (source as MosaicExt).ChangeFontSize();
@@ -283,7 +284,7 @@ namespace FastMines {
          }
       }
 
-      private void Mosaic_OnChangedMosaicSize(Mosaic source, Size oldSize) {
+      private void Mosaic_OnChangedMosaicSize(object source, MosaicEvent.ChangedMosaicSizeEventArgs e) {
          using (new Tracer("Mosaic_OnChangedMosaicSize")) {
             Debug.Assert(ReferenceEquals(MosaicField, source));
          }

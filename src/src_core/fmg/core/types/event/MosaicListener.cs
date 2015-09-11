@@ -1,25 +1,23 @@
-using fmg.common.geom;
-using fmg.core.mosaic;
-using fmg.core.mosaic.cells;
-
-// Делегаты, для уведомлений от мозаики
+/// <summary>
+/// Р”РµР»РµРіР°С‚С‹, РґР»СЏ СѓРІРµРґРѕРјР»РµРЅРёР№ РѕС‚ РјРѕР·Р°РёРєРё
+/// </summary>
 namespace fmg.core.types.Event {
 
-   /// <summary> уведомление о том, что на мозаике был произведён клик </summary>
-   public delegate void OnClickEvent(Mosaic source, BaseCell clickedCell, bool leftClick, bool down);
+   // <summary> ClickEventHandler - СѓРІРµРґРѕРјР»РµРЅРёРµ Рѕ С‚РѕРј, С‡С‚Рѕ РЅР° РјРѕР·Р°РёРєРµ Р±С‹Р» РїСЂРѕРёР·РІРµРґС‘РЅ РєР»РёРє </summary>
+   public delegate void ClickEventHandler(object sender, MosaicEvent.ClickEventArgs e);
 
-   /// <summary> изменено кол-во открытых ячеек / флагов / кликов / ... на мозаике </summary>
-   public delegate void OnChangedCountersEvent(Mosaic source);
+   /// <summary> ChangedCountersEventHandler - РёР·РјРµРЅРµРЅРѕ РєРѕР»-РІРѕ РѕС‚РєСЂС‹С‚С‹С… СЏС‡РµРµРє / С„Р»Р°РіРѕРІ / РєР»РёРєРѕРІ / ... РЅР° РјРѕР·Р°РёРєРµ </summary>
+   public delegate void ChangedCountersEventHandler(object sender, MosaicEvent.ChangedCountersEventArgs e);
 
-   /// <summary> уведомление об изменении статуса игры (новая игра, начало игры, конец игры) </summary>
-   public delegate void OnChangedGameStatusEvent(Mosaic source, EGameStatus oldValue);
+   /// <summary> ChangedGameStatusEventHandler - СѓРІРµРґРѕРјР»РµРЅРёРµ РѕР± РёР·РјРµРЅРµРЅРёРё СЃС‚Р°С‚СѓСЃР° РёРіСЂС‹ (РЅРѕРІР°СЏ РёРіСЂР°, РЅР°С‡Р°Р»Рѕ РёРіСЂС‹, РєРѕРЅРµС† РёРіСЂС‹) </summary>
+   public delegate void ChangedGameStatusEventHandler(object sender, MosaicEvent.ChangedGameStatusEventArgs e);
 
-   /// <summary> уведомление об изменении размера площади у ячейки </summary>
-   public delegate void OnChangedAreaEvent(Mosaic source, int oldArea);
+   /// <summary> ChangedAreaEventHandler - СѓРІРµРґРѕРјР»РµРЅРёРµ РѕР± РёР·РјРµРЅРµРЅРёРё СЂР°Р·РјРµСЂР° РїР»РѕС‰Р°РґРё Сѓ СЏС‡РµР№РєРё </summary>
+   public delegate void ChangedAreaEventHandler(object sender, MosaicEvent.ChangedAreaEventArgs e);
 
-   /// <summary> уведомление об изменении типа мозаики </summary>
-   public delegate void OnChangedMosaicTypeEvent(Mosaic source, EMosaic oldMosaic);
+   /// <summary> ChangedMosaicTypeEventHandler - СѓРІРµРґРѕРјР»РµРЅРёРµ РѕР± РёР·РјРµРЅРµРЅРёРё С‚РёРїР° РјРѕР·Р°РёРєРё </summary>
+   public delegate void ChangedMosaicTypeEventHandler(object sender, MosaicEvent.ChangedMosaicTypeEventArgs e);
 
-   /// <summary> уведомление об изменении размера мозаики </summary>
-   public delegate void OnChangedMosaicSizeEvent(Mosaic source, Size oldSize);
+   /// <summary> ChangedMosaicSizeEventHandler - СѓРІРµРґРѕРјР»РµРЅРёРµ РѕР± РёР·РјРµРЅРµРЅРёРё СЂР°Р·РјРµСЂР° РјРѕР·Р°РёРєРё </summary>
+   public delegate void ChangedMosaicSizeEventHandler(object sender, MosaicEvent.ChangedMosaicSizeEventArgs e);
 }

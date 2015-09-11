@@ -1,5 +1,6 @@
 package fmg.data.view.draw;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -7,11 +8,14 @@ import fmg.common.Color;
 
 /** Характеристики кисти у рамки ячейки */
 public class PenBorder {
+
 	private PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
+
 	/**  подписаться на уведомления изменений PenBorder */
 	public void addPropertyChangeListener(PropertyChangeListener l) {
 		propertyChanges.addPropertyChangeListener(l);
 	}
+
 	/**  отписаться от уведомлений изменений PenBorder */
 	public void removePropertyChangeListener(PropertyChangeListener l) {
 		propertyChanges.removePropertyChangeListener(l);
@@ -24,6 +28,7 @@ public class PenBorder {
     	this(Color.Black, Color.White, 3);
 //    	this(Color.Green, Color.Red, 1);
     }
+
     public PenBorder(
     		Color colorShadow,
     		Color colorLight,
@@ -37,22 +42,27 @@ public class PenBorder {
     public Color getColorShadow() {
 		return colorShadow;
 	}
+
 	public void setColorShadow(Color colorShadow) {
 		Color old = colorShadow;
 		this.colorShadow = colorShadow;
-		propertyChanges.firePropertyChange("PenBorder_colorShadow", old, colorShadow);
+		propertyChanges.firePropertyChange(new PropertyChangeEvent(this, "PenBorder_colorShadow", old, colorShadow));
 	}
+
 	public Color getColorLight() {
 		return colorLight;
 	}
+
 	public void setColorLight(Color colorLight) {
 		Color old = colorLight;
 		this.colorLight = colorLight;
-		propertyChanges.firePropertyChange("PenBorder_colorLight", old, colorLight);
+		propertyChanges.firePropertyChange(new PropertyChangeEvent(this, "PenBorder_colorLight", old, colorLight));
 	}
+
 	public int getWidth() {
 		return width;
 	}
+
 	public void setWidth(int iWidth) {
 		int old = iWidth;
 		this.width = iWidth;

@@ -4,10 +4,26 @@ using fmg.core.types;
 
 namespace fmg.data.view.draw {
 
-   public delegate void ColorPropertyChange(object sender, string hintPropertyName, Color oldColor, Color newColor);
+   public delegate void ColorPropertyChangeEventHandler(object sender, ColorText.PropertyChangeEventArgs e);
 
    public class ColorText {
-      public event ColorPropertyChange OnColorPropertyChange = delegate { };
+
+      #region EventArgs
+      public class PropertyChangeEventArgs : EventArgs {
+         string _hintPropertyName;
+         Color _oldColor;
+         Color _newColor;
+
+         public PropertyChangeEventArgs(string hintPropertyName, Color oldColor, Color newColor)
+         {
+            _hintPropertyName = hintPropertyName;
+            _oldColor = oldColor;
+            _newColor = newColor;
+         }
+      }
+      #endregion
+
+      public event ColorPropertyChangeEventHandler OnColorPropertyChange = delegate { };
 
       private readonly Color[] _colorOpen;
       private readonly Color[] _colorClose;
@@ -59,7 +75,7 @@ namespace fmg.data.view.draw {
       public void SetColorOpen(int i, Color colorOpen) {
          var old = colorOpen;
          _colorOpen[i] = colorOpen;
-         OnColorPropertyChange(this, "ColorText_colorOpen" + i, old, colorOpen);
+         OnColorPropertyChange(this, new PropertyChangeEventArgs("ColorText_colorOpen" + i, old, colorOpen));
       }
 
       public Color GetColorClose(int i) {
@@ -69,7 +85,7 @@ namespace fmg.data.view.draw {
       public void SetColorClose(int i, Color colorClose) {
          var old = colorClose;
          _colorClose[i] = colorClose;
-         OnColorPropertyChange(this, "ColorText_colorClose" + i, old, colorClose);
+         OnColorPropertyChange(this, new PropertyChangeEventArgs("ColorText_colorClose" + i, old, colorClose));
       }
    }
 }

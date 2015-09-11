@@ -11,7 +11,7 @@ using fmg.data.controller.types;
 
 namespace fmg.data.controller.serializable {
 
-/// <summary>хранилище чемпионов</summary>
+/// <summary>С…СЂР°РЅРёР»РёС‰Рµ С‡РµРјРїРёРѕРЅРѕРІ</summary>
 public class ChampionsModel : IExternalizable {
    private readonly long version;
 
@@ -53,10 +53,11 @@ public class ChampionsModel : IExternalizable {
 
    private List<ChampionsModel.Record>[,] champions = new List<ChampionsModel.Record>[EMosaicEx.GetValues().Length, ESkillLevelEx.GetValues().Length - 1];
 
-   public void OnPlayerChanged(PlayersModel players, PlayerModelEvent e) {
-      if (e.getType() == PlayerModelEvent.UPDATE) {
-         // если был UPDATE, то это, возможно что, было переименование пользователя...
-         // в этом случае переименовываю его имя и в чемпионах
+   public void OnPlayerChanged(object sender, PlayerModelEventArgs e) {
+      if (e.getType() == PlayerModelEventArgs.UPDATE) {
+         // РµСЃР»Рё Р±С‹Р» UPDATE, С‚Рѕ СЌС‚Рѕ, РІРѕР·РјРѕР¶РЅРѕ С‡С‚Рѕ, Р±С‹Р»Рѕ РїРµСЂРµРёРјРµРЅРѕРІР°РЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ...
+         // РІ СЌС‚РѕРј СЃР»СѓС‡Р°Рµ РїРµСЂРµРёРјРµРЅРѕРІС‹РІР°СЋ РµРіРѕ РёРјСЏ Рё РІ С‡РµРјРїРёРѕРЅР°С…
+         PlayersModel players = sender as PlayersModel;
          User user = players.getUser(e.getPos());
          foreach (var mosaic in EMosaicEx.GetValues())
             foreach (var eSkill in ESkillLevelEx.GetValues())
@@ -70,7 +71,7 @@ public class ChampionsModel : IExternalizable {
                         isChanged = true;
                      }
                   if (isChanged)
-                     fireChanged(new ChampionModelEvent(mosaic, eSkill, ChampionModelEvent.POS_ALL, ChampionModelEvent.UPDATE));
+                     fireChanged(new ChampionModelEventArgs(mosaic, eSkill, ChampionModelEventArgs.POS_ALL, ChampionModelEventArgs.UPDATE));
                }
       }
    }
@@ -102,9 +103,9 @@ public class ChampionsModel : IExternalizable {
       if (list.Count > MAX_SIZE)
          list = list.Take(MAX_SIZE).ToList();
 
-      fireChanged(new ChampionModelEvent(mosaic, eSkill, ChampionModelEvent.POS_ALL, ChampionModelEvent.UPDATE));
+      fireChanged(new ChampionModelEventArgs(mosaic, eSkill, ChampionModelEventArgs.POS_ALL, ChampionModelEventArgs.UPDATE));
       if (pos < MAX_SIZE) {
-         fireChanged(new ChampionModelEvent(mosaic, eSkill, pos, ChampionModelEvent.INSERT));
+         fireChanged(new ChampionModelEventArgs(mosaic, eSkill, pos, ChampionModelEventArgs.INSERT));
          return pos;
       }
       return -1;
@@ -133,7 +134,7 @@ public class ChampionsModel : IExternalizable {
                   record.readExternal(input);
                   list.Add(record);
                }
-               fireChanged(new ChampionModelEvent(mosaic, eSkill, ChampionModelEvent.POS_ALL, ChampionModelEvent.INSERT));
+               fireChanged(new ChampionModelEventArgs(mosaic, eSkill, ChampionModelEventArgs.POS_ALL, ChampionModelEventArgs.INSERT));
             }
    }
 
@@ -143,7 +144,7 @@ public class ChampionsModel : IExternalizable {
             if (eSkill != ESkillLevel.eCustom) {
                IList<ChampionsModel.Record> list = champions[mosaic.Ordinal(), eSkill.Ordinal()];
                list.Clear();
-               fireChanged(new ChampionModelEvent(mosaic, eSkill, ChampionModelEvent.POS_ALL, ChampionModelEvent.DELETE));
+               fireChanged(new ChampionModelEventArgs(mosaic, eSkill, ChampionModelEventArgs.POS_ALL, ChampionModelEventArgs.DELETE));
             }
    }
 
@@ -176,7 +177,7 @@ public class ChampionsModel : IExternalizable {
                   read += curr;
                } while (read < data.Length);
                if (read != data.Length)
-                  throw new IOException("Invalid data length. Ожидалось " + data.Length + " байт, а прочитано " + read + " байт.");
+                  throw new IOException("Invalid data length. РћР¶РёРґР°Р»РѕСЃСЊ " + data.Length + " Р±Р°Р№С‚, Р° РїСЂРѕС‡РёС‚Р°РЅРѕ " + read + " Р±Р°Р№С‚.");
             }
          }
 
@@ -262,7 +263,7 @@ public class ChampionsModel : IExternalizable {
    //         read += curr;
    //      } while(read < data.length);
    //      if (read != data.length)
-   //         throw new IOException("Invalid data length. Ожидалось " + data.length + " байт, а прочитано " + read + " байт.");
+   //         throw new IOException("Invalid data length. РћР¶РёРґР°Р»РѕСЃСЊ " + data.length + " Р±Р°Р№С‚, Р° РїСЂРѕС‡РёС‚Р°РЅРѕ " + read + " Р±Р°Р№С‚.");
    //      in.close();
 
    //      // 2. decrypt data
@@ -318,8 +319,8 @@ public class ChampionsModel : IExternalizable {
 
    public static string ChampFile { get { return "Mines.bst"; } }
 
-   public event ChampionModelEvent.OnChanged OnChampionChanged = delegate {};
-   private void fireChanged(ChampionModelEvent e) {
+   public event ChampionModelChangedHandler OnChampionChanged = delegate {};
+   private void fireChanged(ChampionModelEventArgs e) {
       OnChampionChanged(this, e);
    }
 
@@ -339,7 +340,7 @@ public class ChampionsModel : IExternalizable {
       return champions[mosaic.Ordinal(), eSkill.Ordinal()].Count;
    }
 
-   /** Найдёт позицию лучшего результата указанного пользователя */
+   /** РќР°Р№РґС‘С‚ РїРѕР·РёС†РёСЋ Р»СѓС‡С€РµРіРѕ СЂРµР·СѓР»СЊС‚Р°С‚Р° СѓРєР°Р·Р°РЅРЅРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ */
    public int getPos(Guid userId, EMosaic mosaic, ESkillLevel eSkill) {
       if (userId == null)
          return -1;

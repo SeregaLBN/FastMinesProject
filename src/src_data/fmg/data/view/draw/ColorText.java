@@ -1,5 +1,6 @@
 package fmg.data.view.draw;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -72,12 +73,12 @@ public class ColorText {
 	public void setColorOpen(Color[] colorOpen) {
 		Color[] old = colorOpen;
 		this.colorOpen = colorOpen;
-		propertyChanges.firePropertyChange("ColorText_colorOpen", old, colorOpen);
+		propertyChanges.firePropertyChange(new PropertyChangeEvent(this, "ColorText_colorOpen", old, colorOpen));
 	}
 	public void setColorOpen(int i, Color colorOpen) {
 		Color old = colorOpen;
 		this.colorOpen[i] = colorOpen;
-		propertyChanges.firePropertyChange("ColorText_colorOpen"+i, old, colorOpen);
+		propertyChanges.firePropertyChange(new PropertyChangeEvent(this, "ColorText_colorOpen"+i, old, colorOpen));
 	}
 
 	public Color[] getColorClose() {
@@ -89,11 +90,11 @@ public class ColorText {
 	public void setColorClose(Color[] colorClose) {
 		Color[] old = colorClose;
 		this.colorClose = colorClose;
-		propertyChanges.firePropertyChange("ColorText_colorClose", old, colorClose);
+		propertyChanges.firePropertyChange(new PropertyChangeEvent(this, "ColorText_colorClose", old, colorClose));
 	}
 	public void setColorClose(int i, Color colorClose) {
 		Color old = colorClose;
 		this.colorClose[i] = colorClose;
-		propertyChanges.firePropertyChange("ColorText_colorClose"+i, old, colorClose);
+		propertyChanges.firePropertyChange(new PropertyChangeEvent(this, "ColorText_colorClose"+i, old, colorClose));
 	}
 }

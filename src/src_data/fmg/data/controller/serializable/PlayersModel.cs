@@ -68,7 +68,7 @@ public class PlayersModel : IExternalizable {
       int pos = players.IndexOf(rec);
       players.Remove(rec);
 
-      fireChanged(new PlayerModelEvent(pos, PlayerModelEvent.DELETE));
+      fireChanged(new PlayerModelEventArgs(pos, PlayerModelEventArgs.DELETE));
    }
    public bool isExist(Guid userId) { return find(userId) != null; }
    public int Size { get { return players.Count; } }
@@ -81,7 +81,7 @@ public class PlayersModel : IExternalizable {
 
       User user = new User(name, pass, null);
       players.Add(new PlayersModel.Record(user));
-      fireChanged(new PlayerModelEvent(players.Count-1, PlayerModelEvent.INSERT));
+      fireChanged(new PlayerModelEventArgs(players.Count-1, PlayerModelEventArgs.INSERT));
       return user.Guid;
    }
    public int indexOf(User user) {
@@ -121,7 +121,7 @@ public class PlayersModel : IExternalizable {
       }
 
       int pos = players.IndexOf(rec);
-      fireChanged(new PlayerModelEvent(pos, PlayerModelEvent.CHANGE_STATISTICS, mosaic, skill));
+      fireChanged(new PlayerModelEventArgs(pos, PlayerModelEventArgs.CHANGE_STATISTICS, mosaic, skill));
    }
    private Record find(Guid userId) {
       if (userId != null)
@@ -173,13 +173,13 @@ public class PlayersModel : IExternalizable {
       for (int i=0; i<size; i++)
          players.Add(new PlayersModel.Record(input));
 
-      fireChanged(new PlayerModelEvent(players.Count-1, PlayerModelEvent.INSERT_ALL));
+      fireChanged(new PlayerModelEventArgs(players.Count-1, PlayerModelEventArgs.INSERT_ALL));
    }
 
    private void setDefaults() {
       int len = players.Count;
       players.Clear();
-      fireChanged(new PlayerModelEvent(len-1, PlayerModelEvent.DELETE_ALL));
+      fireChanged(new PlayerModelEventArgs(len-1, PlayerModelEventArgs.DELETE_ALL));
    }
 
 #if WINDOWS_RT
@@ -348,14 +348,14 @@ public class PlayersModel : IExternalizable {
    /// <summary>STatistiCs file name</summary>
    public static string StcFile { get {return "Mines.stc"; } }
 
-   public event PlayerModelEvent.OnChanged OnPlayerChanged = delegate { };
-   private void fireChanged(PlayerModelEvent e) {
+   public event PlayerModelChangedHandler OnPlayerChanged = delegate { };
+   private void fireChanged(PlayerModelEventArgs e) {
       OnPlayerChanged(this, e);
    }
    public void setUserName(int pos, String name) {
       User user = getUser(pos);
       user.Name = name;
-      fireChanged(new PlayerModelEvent(pos, PlayerModelEvent.UPDATE));
+      fireChanged(new PlayerModelEventArgs(pos, PlayerModelEventArgs.UPDATE));
    }
 }
 }
