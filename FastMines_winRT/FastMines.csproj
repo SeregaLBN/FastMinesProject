@@ -104,6 +104,15 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\CellPaint_WinShapes.cs">
+      <Link>src_fmg.winrt\draw\mosaic\CellPaint_WinShapes.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\CellPaint_WriteableBitmap.cs">
+      <Link>src_fmg.winrt\draw\mosaic\CellPaint_WriteableBitmap.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\ICellPaint.cs">
+      <Link>src_fmg.winrt\draw\mosaic\ICellPaint.cs</Link>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>

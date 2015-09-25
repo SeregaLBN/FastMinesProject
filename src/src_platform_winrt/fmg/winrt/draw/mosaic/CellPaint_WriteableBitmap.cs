@@ -15,11 +15,12 @@ using fmg.core.mosaic.cells;
 
 namespace fmg.winrt.draw.mosaic
 {
+   public class PaintableWriteableBitmap : WriteableBitmap, IPaintable { }
 
    /// <summary>
    /// Helper class for drawing info
    /// </summary>
-   public class CellPaint
+   public class CellPaint_
    {
       protected GraphicContext gContext;
       private IDictionary<Color, Brush> _brushCacheMap;
