@@ -17,7 +17,6 @@ namespace fmg.winrt.draw.mosaic
       protected GraphicContext gContext;
       private IDictionary<Color, Brush> _brushCacheMap;
 
-
       public ICellPaint(GraphicContext gContext)
       {
          this.gContext = gContext;
@@ -48,7 +47,7 @@ namespace fmg.winrt.draw.mosaic
       protected abstract void PaintComponent(BaseCell cell, TPaintable paint);
 
       /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера </summary>
-      private Color DefaultBackgroundFillColor { get; set; }
+      public Color DefaultBackgroundFillColor { get; set; }
 
       /// <summary> залить ячейку нужным цветом </summary>
       protected abstract void PaintComponentBackground(BaseCell cell, TPaintable paint);

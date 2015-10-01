@@ -19,7 +19,7 @@ namespace fmg.winrt.draw.mosaic
    /// <summary>
    /// Helper class for drawing info
    /// </summary>
-   public class CellPaint
+   public class CellPaint_WinShapes
    {
       protected GraphicContext gContext;
       private IDictionary<Color, Brush> _brushCacheMap;
@@ -32,7 +32,7 @@ namespace fmg.winrt.draw.mosaic
          await BitmapFont.RegisterFont(DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE);
       }
 
-      public CellPaint(GraphicContext gContext)
+      public CellPaint_WinShapes(GraphicContext gContext)
       {
          //BitmapFont.RegisterFont(DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE);
          this.gContext = gContext;
