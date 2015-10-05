@@ -1,12 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
@@ -26,28 +17,9 @@ namespace fmg.winrt.draw.mosaic
    /// </summary>
    public class CellPaint_WriteableBitmap : ICellPaint<PaintableWBmp>
    {
-      private IList<FontFamily> _fontFamilies;
-      public const string DRAW_BMP_FONT_NAME = "NirmalaUI";
-      public const int DRAW_BMP_FONT_SIZE = 30;
-
-
-      public static async Task RegisterFont() {
-         await BitmapFont.RegisterFont(DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE);
-      }
-
       public CellPaint_WriteableBitmap(GraphicContext gContext) :
          base(gContext)
       {
-         //BitmapFont.RegisterFont(DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE);
-         _fontFamilies = new List<FontFamily>(1);
-      }
-
-      /// <summary> find cached font. if not exist - create it </summary>
-      private FontFamily FindFontFamily(string fontName) {
-         var res = _fontFamilies.FirstOrDefault(x => x.Source == fontName);
-         if (res == null)
-            _fontFamilies.Add(res = new FontFamily(fontName));
-         return res;
       }
 
       public override void Paint(BaseCell cell, PaintableWBmp paint)
@@ -75,19 +47,19 @@ namespace fmg.winrt.draw.mosaic
       /// <summary> draw border lines </summary>
       public override void PaintBorderLines(BaseCell cell, PaintableWBmp paint) {
          var down = cell.State.Down || (cell.State.Status == EState._Open);
-         if (gContext.IconicMode) {
-            paint.Bmp.DrawPolyline(cell.getRegion().RegionAsXyxyxySequence(gContext.Bound, true), (down ? gContext.PenBorder.ColorLight : gContext.PenBorder.ColorShadow).ToWinColor());
+         if (_gContext.IconicMode) {
+            paint.Bmp.DrawPolyline(cell.getRegion().RegionAsXyxyxySequence(_gContext.Bound, true), (down ? _gContext.PenBorder.ColorLight : _gContext.PenBorder.ColorShadow).ToWinColor());
          } else {
-            var color = down ? gContext.PenBorder.ColorLight : gContext.PenBorder.ColorShadow;
+            var color = down ? _gContext.PenBorder.ColorLight : _gContext.PenBorder.ColorShadow;
             var s = cell.getShiftPointBorderIndex();
             var v = cell.Attr.getVertexNumber(cell.getDirection());
             for (var i=0; i < v; i++) {
                var p1 = cell.getRegion().getPoint(i);
-               p1.Move(gContext.Bound);
+               p1.Move(_gContext.Bound);
                var p2 = (i != (v - 1)) ? cell.getRegion().getPoint(i + 1) : cell.getRegion().getPoint(0);
-               p2.Move(gContext.Bound);
+               p2.Move(_gContext.Bound);
                if (i == s)
-                  color = down ? gContext.PenBorder.ColorShadow : gContext.PenBorder.ColorLight;
+                  color = down ? _gContext.PenBorder.ColorShadow : _gContext.PenBorder.ColorLight;
                paint.Bmp.DrawLine(p1.x, p1.y, p2.x, p2.y, color.ToWinColor());
             }
          }
@@ -97,21 +69,21 @@ namespace fmg.winrt.draw.mosaic
       {
          PaintComponentBackground(cell, paint);
 
-         var rcInner = cell.getRcInner(gContext.PenBorder.Width);
-         rcInner.moveXY(gContext.Bound);
+         var rcInner = cell.getRcInner(_gContext.PenBorder.Width);
+         rcInner.moveXY(_gContext.Bound);
 
          WriteableBitmap srcImg = null;
-         if ((gContext.ImgFlag != null) &&
+         if ((_gContext.ImgFlag != null) &&
              (cell.State.Status == EState._Close) &&
              (cell.State.Close == EClose._Flag))
          {
-            srcImg = gContext.ImgFlag;
+            srcImg = _gContext.ImgFlag;
          }
-         else if ((gContext.ImgMine != null) &&
+         else if ((_gContext.ImgMine != null) &&
                   (cell.State.Status == EState._Open) &&
                   (cell.State.Open == EOpen._Mine))
          {
-            srcImg = gContext.ImgMine;
+            srcImg = _gContext.ImgMine;
          }
 
          // output Pictures
@@ -126,14 +98,14 @@ namespace fmg.winrt.draw.mosaic
             Color txtColor;
             if (cell.State.Status == EState._Close)
             {
-               txtColor = gContext.ColorText.GetColorClose((int) cell.State.Close.Ordinal());
+               txtColor = _gContext.ColorText.GetColorClose((int) cell.State.Close.Ordinal());
                szCaption = cell.State.Close.ToCaption();
                //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
                //szCaption = ""+cell.getDirection(); // debug
             }
             else
             {
-               txtColor = gContext.ColorText.GetColorOpen((int) cell.State.Open.Ordinal());
+               txtColor = _gContext.ColorText.GetColorOpen((int) cell.State.Open.Ordinal());
                szCaption = cell.State.Open.ToCaption();
             }
             if (!string.IsNullOrWhiteSpace(szCaption)) {
@@ -153,7 +125,7 @@ namespace fmg.winrt.draw.mosaic
 //                  }
 //               }
 //#endif
-               paint.Bmp.DrawString(szCaption, rcInner.ToWinRect(), DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE, txtColor.ToWinColor());
+               paint.Bmp.DrawString(szCaption, rcInner.ToWinRect(), _gContext.FontFamily.Source, _gContext.FontSize, txtColor.ToWinColor());
                //paint.Bmp.DrawRectangle(rcInner.left(), rcInner.top(), rcInner.right(), rcInner.bottom(), Color.RED.ToWinColor()); // debug
             }
          }
@@ -165,11 +137,11 @@ namespace fmg.winrt.draw.mosaic
          //if (gContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
          //   return;
          var color = cell.getBackgroundFillColor(
-            gContext.BkFill.Mode,
+            _gContext.BkFill.Mode,
             DefaultBackgroundFillColor,
-            gContext.BkFill.GetColor
+            _gContext.BkFill.GetColor
             );
-         paint.Bmp.FillPolygon(cell.getRegion().RegionAsXyxyxySequence(gContext.Bound, true), color.ToWinColor());
+         paint.Bmp.FillPolygon(cell.getRegion().RegionAsXyxyxySequence(_gContext.Bound, true), color.ToWinColor());
       }
 
    }

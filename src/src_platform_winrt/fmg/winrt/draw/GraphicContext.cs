@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Windows.UI.Text;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
@@ -9,12 +10,18 @@ using fmg.data.view.draw;
 namespace fmg.winrt.draw {
 
    public class GraphicContext : FastMines.Common.BindableBase {
+      public const string    DEFAULT_FONT_NAME  = "SansSerif";
+      public const string DRAW_BMP_FONT_NAME = "NirmalaUI";
+      public const FontStyle DEFAULT_FONT_STYLE = FontStyle.Normal;
+      public const int       DEFAULT_FONT_SIZE  = 10;
+      public const int DRAW_BMP_FONT_SIZE = 30;
+
       private WriteableBitmap _imgMine, _imgFlag;
       private ColorText _colorText;
-      private string _fontFamilyName;
       protected PenBorder _penBorder;
-      private FontStyle _fontStyle = FontStyle.Normal;
-      private int _fontSize = 10;
+      private FontFamily _fontFamily = new FontFamily(DEFAULT_FONT_NAME);
+      private FontStyle _fontStyle = DEFAULT_FONT_STYLE;
+      private int _fontSize = DEFAULT_FONT_SIZE;
 
       private readonly bool _iconicMode;
       private readonly Size _bound;
@@ -102,13 +109,11 @@ namespace fmg.winrt.draw {
       public bool IconicMode { get { return _iconicMode; } }
       public Size Bound { get { return _bound; } }
 
-      public string FontFamilyName {
+      public FontFamily FontFamily {
          get {
-            if (string.IsNullOrWhiteSpace(_fontFamilyName))
-               _fontFamilyName = "SansSerif";
-            return _fontFamilyName;
+            return _fontFamily;
          }
-         set { this.SetProperty(ref this._fontFamilyName, value); }
+         set { this.SetProperty(ref this._fontFamily, value); }
       }
       public FontStyle FontStyle {
          get {

@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Windows.UI.ViewManagement;
@@ -23,22 +22,17 @@ namespace fmg.winrt.draw.mosaic
    {
       protected GraphicContext gContext;
       private IDictionary<Color, Brush> _brushCacheMap;
-      private IList<FontFamily> _fontFamilies;
-      public const string DRAW_BMP_FONT_NAME = "NirmalaUI";
-      public const int DRAW_BMP_FONT_SIZE = 30;
 
-
-      public static async Task RegisterFont() {
-         await BitmapFont.RegisterFont(DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE);
+      public static async Task RegisterFont()
+      {
+         await BitmapFont.RegisterFont(GraphicContext.DRAW_BMP_FONT_NAME, GraphicContext.DRAW_BMP_FONT_SIZE);
       }
 
       public CellPaint(GraphicContext gContext)
       {
-         //BitmapFont.RegisterFont(DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE);
          this.gContext = gContext;
          DefaultBackgroundFillColor = new UISettings().UIElementColor(UIElementType.ButtonFace).ToFmColor();
          _brushCacheMap = new Dictionary<Color, Brush>();
-         _fontFamilies = new List<FontFamily>(1);
       }
 
       /// <summary> find cached solid brush. if not exist - create it </summary>
@@ -52,14 +46,6 @@ namespace fmg.winrt.draw.mosaic
       }
       private Brush BrushBorderLight {
          get { return FindBrush(gContext.PenBorder.ColorLight); }
-      }
-
-      /// <summary> find cached font. if not exist - create it </summary>
-      private FontFamily FindFontFamily(string fontName) {
-         var res = _fontFamilies.FirstOrDefault(x => x.Source == fontName);
-         if (res == null)
-            _fontFamilies.Add(res = new FontFamily(fontName));
-         return res;
       }
 
       public void Paint(BaseCell cell, Tuple<Polygon, TextBlock, Image> binder) {
@@ -224,7 +210,7 @@ namespace fmg.winrt.draw.mosaic
 //                  }
 //               }
 //#endif
-               bmp.DrawString(szCaption, rcInner.ToWinRect(), DRAW_BMP_FONT_NAME, DRAW_BMP_FONT_SIZE, txtColor.ToWinColor());
+               bmp.DrawString(szCaption, rcInner.ToWinRect(), gContext.FontFamily.Source, gContext.FontSize, txtColor.ToWinColor());
                //bmp.DrawRectangle(rcInner.left(), rcInner.top(), rcInner.right(), rcInner.bottom(), Color.RED.ToWinColor()); // debug
             }
          }
@@ -285,7 +271,7 @@ namespace fmg.winrt.draw.mosaic
                   rcInner.moveXY(gContext.PenBorder.Width, gContext.PenBorder.Width);
                txt.Text = szCaption;
                txt.TextAlignment = TextAlignment.Center;
-               txt.FontFamily = FindFontFamily(gContext.FontFamilyName);
+               txt.FontFamily = gContext.FontFamily;
                txt.FontStyle = gContext.FontStyle;
                txt.FontSize = gContext.FontSize;
                txt.Foreground = FindBrush(txtColor);
