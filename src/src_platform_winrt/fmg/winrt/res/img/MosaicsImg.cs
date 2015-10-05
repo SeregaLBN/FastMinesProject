@@ -19,7 +19,7 @@ namespace fmg.winrt.res.img {
       private const bool _randomCellBkColor = true;
 
       private readonly BaseCell.BaseAttribute _attr;
-      private readonly CellPaint _gInfo;
+      private readonly ICellPaint<PaintableWBmp> _gInfo;
       private readonly List<BaseCell> _arrCell;
       private readonly GraphicContext _gContext;
       private readonly Size _sizeField;
@@ -40,7 +40,7 @@ namespace fmg.winrt.res.img {
          if (_randomCellBkColor)
             _gContext.BkFill.Mode = 1 + _random.Next(_attr.getMaxBackgroundFillModeValue());
 
-         _gInfo = new CellPaint(_gContext);
+         _gInfo = new CellPaint_WriteableBitmap(_gContext);
 
          _sizeField = sizeField;
          for (var i = 0; i < _sizeField.width; i++)
@@ -68,7 +68,7 @@ namespace fmg.winrt.res.img {
             // sync draw
             funcFillBk();
             foreach (var cell in _arrCell)
-               _gInfo.Paint(cell, _image);
+               _gInfo.Paint(cell, new PaintableWBmp(_image));
          } else {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             // async draw
@@ -76,7 +76,7 @@ namespace fmg.winrt.res.img {
                funcFillBk();
                foreach (var cell in _arrCell) {
                   var tmp = cell;
-                  AsyncRunner.InvokeLater(() => _gInfo.Paint(tmp, _image),
+                  AsyncRunner.InvokeLater(() => _gInfo.Paint(tmp, new PaintableWBmp(_image)),
                      ((_random.Next() & 1) == 0)
                         ? CoreDispatcherPriority.Low
                         : CoreDispatcherPriority.Normal);

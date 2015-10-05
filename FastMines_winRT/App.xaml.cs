@@ -20,7 +20,7 @@ namespace FastMines {
    sealed partial class App : Application {
 
       private async Task RegisterResource() {
-         await CellPaint.RegisterFont();
+         await CellPaint_WriteableBitmap.RegisterFont();
       }
 
       /// <summary>

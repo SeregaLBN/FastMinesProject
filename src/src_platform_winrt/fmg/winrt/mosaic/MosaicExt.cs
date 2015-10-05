@@ -3,9 +3,7 @@ using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Windows.UI.Core;
 using Windows.UI.Popups;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
@@ -18,13 +16,12 @@ using fmg.core.mosaic.cells;
 using fmg.data.view.draw;
 using fmg.winrt.draw;
 using fmg.winrt.draw.mosaic;
-using Log = FastMines.Common.LoggerSimple;
 
 namespace fmg.winrt.mosaic {
    public class MosaicExt : Mosaic {
-      private IDictionary<BaseCell, Tuple<Polygon, TextBlock, Image>> _xamlBinder;
+      private IDictionary<BaseCell, PaintableShapes> _xamlBinder;
       private MosaicGraphicContext _gContext;
-      private CellPaint _cellPaint;
+      private ICellPaint<PaintableShapes> _cellPaint;
       private Panel _container;
 
       public MosaicExt() {}
@@ -47,7 +44,7 @@ namespace fmg.winrt.mosaic {
                var shape = new Polygon();
                var txt = new TextBlock();
                var img = new Image();
-               XamlBinder.Add(cell, new Tuple<Polygon, TextBlock, Image>(shape, txt, img));
+               XamlBinder.Add(cell, new PaintableShapes(shape, txt, img));
                Container.Children.Add(shape);
                Container.Children.Add(txt);
                Container.Children.Add(img);
@@ -94,12 +91,12 @@ namespace fmg.winrt.mosaic {
          }
       }
 
-      public CellPaint CellPaint {
-         get { return _cellPaint ?? (_cellPaint = new CellPaint(GraphicContext)); }
+      public ICellPaint<PaintableShapes> CellPaint {
+         get { return _cellPaint ?? (_cellPaint = new CellPaint_WinShapes(GraphicContext)); }
       }
 
-      private IDictionary<BaseCell, Tuple<Polygon, TextBlock, Image>> XamlBinder {
-         get { return _xamlBinder ?? (_xamlBinder = new Dictionary<BaseCell, Tuple<Polygon, TextBlock, Image>>()); }
+      private IDictionary<BaseCell, PaintableShapes> XamlBinder {
+         get { return _xamlBinder ?? (_xamlBinder = new Dictionary<BaseCell, PaintableShapes>()); }
       }
 
       protected override void Repaint(BaseCell cell) {

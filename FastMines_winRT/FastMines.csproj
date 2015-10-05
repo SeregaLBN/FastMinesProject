@@ -311,9 +311,6 @@
     <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\GraphicContext.cs">
       <Link>src_fmg.winrt\draw\GraphicContext.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\CellPaint.cs">
-      <Link>src_fmg.winrt\draw\mosaic\CellPaint.cs</Link>
-    </Compile>
     <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\MosaicGraphicContext.cs">
       <Link>src_fmg.winrt\draw\mosaic\MosaicGraphicContext.cs</Link>
     </Compile>
