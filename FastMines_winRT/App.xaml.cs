@@ -9,7 +9,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using FastMines.Common;
-using fmg.winrt.draw.mosaic;
+using fmg.winrt.draw;
 
 // The Grid App template is documented at http://go.microsoft.com/fwlink/?LinkId=234226
 
@@ -20,7 +20,7 @@ namespace FastMines {
    sealed partial class App : Application {
 
       private async Task RegisterResource() {
-         await CellPaint_WriteableBitmap.RegisterFont();
+         await BitmapFont.RegisterFonts();
       }
 
       /// <summary>

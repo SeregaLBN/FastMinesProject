@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 
 namespace fmg.core.types {
 
@@ -25,9 +25,9 @@ namespace fmg.core.types {
                //return "X";
                return string.Empty;
             case EClose._Flag:
-               //return "\u26F3"; // Flag in hole: Флаг в воронке
-               return "\u2690"; // Белый флаг: White flag
-               //return "\u2691"; // Черный флаг: Black flag
+               //return "\u26F3"; // Flag in hole: Р¤Р»Р°Рі РІ РІРѕСЂРѕРЅРєРµ
+               return "\u2690"; // Р‘РµР»С‹Р№ С„Р»Р°Рі: White flag
+               //return "\u2691"; // Р§РµСЂРЅС‹Р№ С„Р»Р°Рі: Black flag
                //return "F";
          }
          return null;

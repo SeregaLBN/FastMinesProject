@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
@@ -18,11 +17,6 @@ namespace fmg.winrt.draw.mosaic
    /// </summary>
    public class CellPaint_WriteableBitmap : ICellPaint<PaintableWBmp>
    {
-      public static async Task RegisterFont()
-      {
-         await BitmapFont.RegisterFont(GraphicContext.DRAW_BMP_FONT_NAME, GraphicContext.DRAW_BMP_FONT_SIZE);
-      }
-
       public CellPaint_WriteableBitmap(GraphicContext gContext) :
          base(gContext)
       {

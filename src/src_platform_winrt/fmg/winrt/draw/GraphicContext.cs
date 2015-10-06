@@ -10,11 +10,9 @@ using fmg.data.view.draw;
 namespace fmg.winrt.draw {
 
    public class GraphicContext : FastMines.Common.BindableBase {
-      public const string    DEFAULT_FONT_NAME  = "SansSerif";
-      public const string DRAW_BMP_FONT_NAME = "NirmalaUI";
+      public const string    DEFAULT_FONT_NAME  = "Arial"; // Times New Roman // Verdana // Courier New // SansSerif
       public const FontStyle DEFAULT_FONT_STYLE = FontStyle.Normal;
       public const int       DEFAULT_FONT_SIZE  = 10;
-      public const int DRAW_BMP_FONT_SIZE = 30;
 
       private WriteableBitmap _imgMine, _imgFlag;
       private ColorText _colorText;

@@ -8,10 +8,14 @@ using Windows.UI.Xaml.Media.Imaging;
 using fmg.winrt.utils;
 
 namespace fmg.winrt.draw {
+
    /// <summary>
    ///  http://stackoverflow.com/questions/5666772/how-can-i-render-text-on-a-writeablebitmap-on-a-background-thread-in-windows-ph
    /// </summary>
    public static class BitmapFont {
+      private const string DRAW_BMP_FONT_NAME = "NirmalaUI";
+      private const int DRAW_BMP_FONT_SIZE = 30;
+
       private class FontInfo {
          public FontInfo(WriteableBitmap image, Dictionary<char, Rect> metrics, int size) {
             Image = image;
@@ -22,11 +26,21 @@ namespace fmg.winrt.draw {
          public WriteableBitmap Image { get; private set; }
          public Dictionary<char, Rect> Metrics { get; private set; }
          public int Size { get; private set; }
+         public Rect FindMetrics(char c) {
+            return Metrics.Where(p => p.Key == c)
+               .DefaultIfEmpty(Metrics.Last()) // hm.. default value
+               .First().Value;
+         }
       }
 
       private static readonly Dictionary<string, List<FontInfo>> Fonts = new Dictionary<string, List<FontInfo>>();
 
-      public static async Task RegisterFont(string name, params int[] sizes) {
+      public static async Task RegisterFonts()
+      {
+         await RegisterFont(BitmapFont.DRAW_BMP_FONT_NAME, BitmapFont.DRAW_BMP_FONT_SIZE);
+      }
+
+      private static async Task RegisterFont(string name, params int[] sizes) {
          foreach (var size in sizes) {
             var fontFile = name + "_" + size + ".png";
             var fontMetricsFile = name + "_" + size + ".xml";
@@ -51,7 +65,10 @@ namespace fmg.winrt.draw {
       }
 
       private static FontInfo GetNearestFont(string fontName, int size) {
-         return Fonts[fontName].OrderBy(x => Math.Abs(x.Size - size)).First();
+         var key= Fonts.Keys.FirstOrDefault(k => k == fontName);
+         if (key == null)
+            key = Fonts.Keys.First(k => k == DRAW_BMP_FONT_NAME);
+         return Fonts[key].OrderBy(x => Math.Abs(x.Size - size)).First();
       }
 
       public static Size MeasureString(string text, string fontName, int size) {
@@ -69,7 +86,7 @@ namespace fmg.winrt.draw {
          var font = GetNearestFont(fontName, size);
 
          //var letters = text.Select(f => font.Metrics[f]).ToArray();
-         var letters = (from char c in text select font.Metrics[c]).ToList();
+         var letters = (from char c in text select font.FindMetrics(c)).ToList();
          var txtW = letters.Sum(x => x.Width);
          var txtH = letters.Max(x => x.Height);
 
