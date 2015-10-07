@@ -28,13 +28,14 @@ import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
 import fmg.data.view.draw.PenBorder;
 import fmg.swing.draw.GraphicContext;
-import fmg.swing.draw.mosaic.CellPaint;
 import fmg.swing.draw.mosaic.MosaicGraphicContext;
+import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
+import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 import fmg.swing.geom.Cast;
 
 public class MosaicExt extends Mosaic implements PropertyChangeListener {
 	private MosaicGraphicContext _gContext;
-	private CellPaint _cellPaint;
+	private CellPaintGraphics _cellPaint;
 	private JPanel _container;
 	private MosaicMouseListeners _mosaicMouseListener;
 	private static final boolean _DEBUG = true;
@@ -66,9 +67,10 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 
 					// paint cells
 					g.setFont(getGraphicContext().getFont());
+					PaintableGraphics p = new PaintableGraphics(g);
 					for (BaseCell cell: _matrix)
 						if (cell.getRcOuter().Intersects(Cast.toRect(g.getClipBounds()))) // redraw only when needed - when the cells and update region intersect
-							getCellPaint().paint(cell, g);
+							getCellPaint().paint(cell, p);
 				}
 
 			    @Override
@@ -117,9 +119,9 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 		return _gContext;
 	}
 
-	public CellPaint getCellPaint() {
+	public CellPaintGraphics getCellPaint() {
 		if (_cellPaint == null)
-			_cellPaint = new CellPaint(getGraphicContext());
+			_cellPaint = new CellPaintGraphics(getGraphicContext());
 		return _cellPaint;
 	}
 

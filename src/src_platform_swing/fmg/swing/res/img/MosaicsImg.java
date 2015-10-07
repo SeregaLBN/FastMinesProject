@@ -12,12 +12,13 @@ import fmg.core.mosaic.CellFactory;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
 import fmg.swing.draw.GraphicContext;
-import fmg.swing.draw.mosaic.CellPaint;
+import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
+import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
 /** картинка поля конкретной мозаики. Используется для меню, кнопок, etc... */
 public class MosaicsImg implements Icon {
 	private final BaseCell.BaseAttribute attr;
-	private final CellPaint gInfo;
+	private final CellPaintGraphics gInfo;
 	private final List<BaseCell> arrCell;
 	private final static GraphicContext gContext;
 	private final Size sizeField;
@@ -32,7 +33,7 @@ public class MosaicsImg implements Icon {
 	public MosaicsImg(EMosaic mosaicType, boolean smallIco, int area) {
 		attr = CellFactory.createAttributeInstance(mosaicType, area);
 		arrCell = new ArrayList<BaseCell>();
-		gInfo = new CellPaint(gContext);
+		gInfo = new CellPaintGraphics(gContext);
 		sizeField = mosaicType.sizeIcoField(smallIco);
 		for (int i=0; i<sizeField.width; i++)
 			for (int j=0; j<sizeField.height; j++)
@@ -56,7 +57,8 @@ public class MosaicsImg implements Icon {
 //			g.setColor(java.awt.Color.ORANGE);
 //			g.fillRect(0, 0, pixelSize.width+gContext.getBound().width*2, pixelSize.height+gContext.getBound().height*2);
 //		}
+		PaintableGraphics p = new PaintableGraphics(g);
 		for (BaseCell cell: arrCell)
-			gInfo.paint(cell, g);
+			gInfo.paint(cell, p);
 	}
 }

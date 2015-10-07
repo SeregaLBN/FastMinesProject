@@ -1,4 +1,4 @@
-package fmg.swing.draw.mosaic;
+package fmg.swing.draw.mosaic.graphics;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -13,9 +13,6 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
-
 import fmg.common.geom.Point;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Region;
@@ -25,6 +22,7 @@ import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
 import fmg.swing.draw.GraphicContext;
+import fmg.swing.draw.mosaic.ICellPaint;
 import fmg.swing.geom.Cast;
 
 /**
@@ -32,27 +30,20 @@ import fmg.swing.geom.Cast;
  * @author SeregaLBN
  *
  */
-public class CellPaint {
-	protected GraphicContext gContext;
-	
-	public CellPaint(GraphicContext gContext) {
-		this.gContext = gContext;
-	}
-
-	protected void repaint(BaseCell cell) {
-//    	gContext.getOwner().paintImmediately(Cast.toRect(cell.getRcOuter()));
-		gContext.getOwner().repaint(Cast.toRect(cell.getRcOuter()));
+public class CellPaintGraphics extends ICellPaint<PaintableGraphics> {
+	public CellPaintGraphics(GraphicContext gContext) {
+		super(gContext);
 	}
 
 	/** @see javax.swing.JComponent.paint */
-	public void paint(BaseCell cell, Graphics g) {
+	public void paint(BaseCell cell, PaintableGraphics p) {
 //		Object obj = this;
 //		if (obj instanceof JComponent) {
 //			JComponent This = (JComponent)obj;
 //			This.paint(g);
 //		} else
 		{
-			Graphics2D g2d = (Graphics2D) g;
+			Graphics2D g2d = (Graphics2D)p.getGraphics();;
 
 			// save
 			Shape shapeOld = g2d.getClip();
@@ -61,8 +52,8 @@ public class CellPaint {
 			g2d.setClip(Cast.toPolygon(Region.moveXY(cell.getRegion(), gContext.getBound())));
 
 			// all paint
-			this.paintComponent(cell, g);
-			this.paintBorder(cell, g);
+			this.paintComponent(cell, p);
+			this.paintBorder(cell, p);
 
 			// restore
 			g2d.setClip(shapeOld);
@@ -70,7 +61,7 @@ public class CellPaint {
 	}
 
 	/** @see javax.swing.JComponent.paintBorder */
-	public void paintBorder(BaseCell cell, Graphics g) {
+	public void paintBorder(BaseCell cell, PaintableGraphics p) {
 //		Object obj = this;
 //		if (obj instanceof JComponent) {
 //			JComponent This = (JComponent)obj;
@@ -79,7 +70,7 @@ public class CellPaint {
 //			return;
 //		}
 
-		Graphics2D g2 = (Graphics2D) g;
+		Graphics2D g2 = (Graphics2D) p.getGraphics();
 		// save
 		Stroke strokeOld = g2.getStroke();
 		Object oldValAntialiasing = g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
@@ -89,7 +80,7 @@ public class CellPaint {
 		g2.setStroke(new BasicStroke(gContext.getPenBorder().getWidth())); // TODO глянуть расширенные параметры конструктора пера
 
 		// draw lines
-		paintBorderLines(cell, g);
+		paintBorderLines(cell, p);
 
 		// debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
 //		Rect rcInner = cell.getRcInner(gContext.getPenBorder().getWidth());
@@ -102,9 +93,10 @@ public class CellPaint {
 	}
 
 	/** draw border lines */
-	public void paintBorderLines(BaseCell cell, Graphics g) {
+	public void paintBorderLines(BaseCell cell, PaintableGraphics p) {
 		Size bound = gContext.getBound();
 		boolean down = cell.getState().isDown() || (cell.getState().getStatus() == EState._Open);
+		Graphics g = p.getGraphics();
 		if (gContext.isIconicMode()) {
 			g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorLight() : gContext.getPenBorder().getColorShadow()));
 			g.drawPolygon(Cast.toPolygon(Region.moveXY(cell.getRegion(), bound)));
@@ -123,11 +115,12 @@ public class CellPaint {
 	}
 
 	/** @see javax.swing.JComponent.paintComponent */
-	public void paintComponent(BaseCell cell, Graphics g) {
+	public void paintComponent(BaseCell cell, PaintableGraphics p) {
+		Graphics g = p.getGraphics();
 		Color colorOld = g.getColor();
 		Size bound = gContext.getBound();
 
-		paintComponentBackground(cell, g);
+		paintComponentBackground(cell, p);
 
 		Rect rcInner = cell.getRcInner(gContext.getPenBorder().getWidth());
 //		g.setColor(Color.MAGENTA);
@@ -177,45 +170,9 @@ public class CellPaint {
 		g.setColor(colorOld);
 	}
 
-	private fmg.common.Color _defaultBkColor;
-	/** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера */
-	private fmg.common.Color getDefaultBackgroundFillColor() {
-		if (_defaultBkColor == null) {
-			UIDefaults uiDef = UIManager.getDefaults();
-	
-			if (gContext.isIconicMode()) // когда русуется иконка, а не игровое поле, - делаю попроще...
-				_defaultBkColor = Cast.toColor(uiDef.getColor("Panel.background"));
-			else {
-				String key = "Panel.background"; // "ToggleButton.light"; // "Button.light"; // 
-				// ToggleButton.darkShadow : javax.swing.plaf.ColorUIResource[r=105,g=105,b=105]
-				// ToggleButton.background : javax.swing.plaf.ColorUIResource[r=240,g=240,b=240]
-				// ToggleButton.focus      : javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
-				// ToggleButton.highlight  : javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]
-				// ToggleButton.light      : javax.swing.plaf.ColorUIResource[r=227,g=227,b=227]
-				// ToggleButton.shadow     : javax.swing.plaf.ColorUIResource[r=160,g=160,b=160]
-				// ToggleButton.foreground : javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
-		
-		//		if (state.getStatus() == EStatus._Close)
-		//			if (state.isDown())
-		//				key = "ToggleButton.light";
-		//			else
-		//				key = "ToggleButton.highlight";
-		//		else
-		//			key = "ToggleButton.shadow";
-		
-				Color clr = uiDef.getColor(key);
-				if (clr == null) {
-					System.out.println("Invalid color key: " + key);
-					clr = uiDef.getColor("Panel.background");
-				}
-				_defaultBkColor = Cast.toColor(clr);
-			}
-		}
-		return _defaultBkColor;
-	}
-
 	/** залить ячейку нужным цветом */
-	protected void paintComponentBackground(BaseCell cell, Graphics g) {
+	protected void paintComponentBackground(BaseCell cell, PaintableGraphics p) {
+		Graphics g = p.getGraphics();
 //		if (gContext.isIconicMode()) // когда русуется иконка, а не игровое поле, - делаю попроще...
 //			return;
 		g.setColor(Cast.toColor(cell.getBackgroundFillColor(
