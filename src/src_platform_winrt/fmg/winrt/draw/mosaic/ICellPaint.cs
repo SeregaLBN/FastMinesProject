@@ -5,8 +5,6 @@ using fmg.core.mosaic.cells;
 namespace fmg.winrt.draw.mosaic
 {
 
-   public interface IPaintable { }
-
    /// <summary>
    /// Helper class for drawing info
    /// </summary>

@@ -104,14 +104,23 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\CellPaint_WinShapes.cs">
-      <Link>src_fmg.winrt\draw\mosaic\CellPaint_WinShapes.cs</Link>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\bmp\CellPaintBmp.cs">
+      <Link>src_fmg.winrt\draw\mosaic\bmp\CellPaintBmp.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\CellPaint_WriteableBitmap.cs">
-      <Link>src_fmg.winrt\draw\mosaic\CellPaint_WriteableBitmap.cs</Link>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\bmp\PaintableBmp.cs">
+      <Link>src_fmg.winrt\draw\mosaic\bmp\PaintableBmp.cs</Link>
     </Compile>
     <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\ICellPaint.cs">
       <Link>src_fmg.winrt\draw\mosaic\ICellPaint.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\IPaintable.cs">
+      <Link>src_fmg.winrt\draw\mosaic\IPaintable.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\xaml\CellPaintShapes.cs">
+      <Link>src_fmg.winrt\draw\mosaic\xaml\CellPaintShapes.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\xaml\PaintableShapes.cs">
+      <Link>src_fmg.winrt\draw\mosaic\xaml\PaintableShapes.cs</Link>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -780,6 +789,7 @@
       <HintPath>..\Workspaces\VS\packages\WriteableBitmapEx.1.5.0.0\lib\NetCore45\WriteableBitmapEx.WinRT.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>

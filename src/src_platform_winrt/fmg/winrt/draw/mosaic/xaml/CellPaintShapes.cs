@@ -1,32 +1,22 @@
 using System.Collections.Generic;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
 using Windows.UI.Xaml.Controls;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic.cells;
 
-namespace fmg.winrt.draw.mosaic
+namespace fmg.winrt.draw.mosaic.xaml
 {
-   public class PaintableShapes : IPaintable
-   {
-      public PaintableShapes(Polygon poly, TextBlock txt, Image img) { Poly = poly; Txt = txt; Img = img; }
-      public Polygon Poly{ get; private set; }
-      public TextBlock Txt { get; private set; }
-      public Image Img { get; private set; }
-   }
-
-
    /// <summary>
-   /// Helper class for drawing info
+   /// Helper class for drawing info (over xaml shapes)
    /// </summary>
-   public class CellPaint_WinShapes : ICellPaint<PaintableShapes>
+   public class CellPaintShapes : ICellPaint<PaintableShapes>
    {
       private IDictionary<Color, Brush> _brushCacheMap;
 
-      public CellPaint_WinShapes(GraphicContext gContext) :
+      public CellPaintShapes(GraphicContext gContext) :
          base(gContext)
       {
          _brushCacheMap = new Dictionary<Color, Brush>();

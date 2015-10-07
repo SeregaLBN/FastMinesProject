@@ -16,6 +16,7 @@ using fmg.core.mosaic.cells;
 using fmg.data.view.draw;
 using fmg.winrt.draw;
 using fmg.winrt.draw.mosaic;
+using fmg.winrt.draw.mosaic.xaml;
 
 namespace fmg.winrt.mosaic {
    public class MosaicExt : Mosaic {
@@ -92,7 +93,7 @@ namespace fmg.winrt.mosaic {
       }
 
       public ICellPaint<PaintableShapes> CellPaint {
-         get { return _cellPaint ?? (_cellPaint = new CellPaint_WinShapes(GraphicContext)); }
+         get { return _cellPaint ?? (_cellPaint = new CellPaintShapes(GraphicContext)); }
       }
 
       private IDictionary<BaseCell, PaintableShapes> XamlBinder {
