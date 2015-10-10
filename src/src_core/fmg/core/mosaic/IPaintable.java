@@ -1,4 +1,4 @@
-package fmg.swing.draw.mosaic;
+package fmg.core.mosaic;
 
 public interface IPaintable {
 

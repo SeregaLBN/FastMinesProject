@@ -1,5 +1,6 @@
 using Windows.UI.ViewManagement;
 using fmg.common;
+using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 
 namespace fmg.winrt.draw.mosaic

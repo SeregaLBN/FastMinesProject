@@ -2,7 +2,7 @@ package fmg.swing.draw.mosaic.graphics;
 
 import java.awt.Graphics;
 
-import fmg.swing.draw.mosaic.IPaintable;
+import fmg.core.mosaic.IPaintable;
 
 public class PaintableGraphics implements IPaintable {
 	private Graphics _graphics;

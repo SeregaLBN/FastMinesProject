@@ -5,6 +5,7 @@ import java.awt.Color;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
+import fmg.core.mosaic.IPaintable;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.swing.draw.GraphicContext;
 import fmg.swing.geom.Cast;

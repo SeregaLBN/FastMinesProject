@@ -1,4 +1,5 @@
 using Windows.UI.Xaml.Media.Imaging;
+using fmg.core.mosaic;
 
 namespace fmg.winrt.draw.mosaic.bmp
 {

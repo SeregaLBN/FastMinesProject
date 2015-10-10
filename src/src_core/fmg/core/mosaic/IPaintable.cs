@@ -1,4 +1,4 @@
-namespace fmg.winrt.draw.mosaic
+namespace fmg.core.mosaic
 {
 
    public interface IPaintable { }
