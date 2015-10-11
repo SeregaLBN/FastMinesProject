@@ -33,6 +33,25 @@ using Log = FastMines.Common.LoggerSimple;
 
 namespace fmg.core.mosaic {
 
+   ///// <summary> Mosaic field: класс окна мозаики поля </summary>
+   //public abstract class MosaicBase<TPaintable> : BaseCell.IMatrixCells where TPaintable : IPaintable
+   //{
+   //   /// <summary>размер поля в ячейках</summary>
+   //   public Size SizeField { get; protected set; } = new Size(0, 0);
+
+   //   /// <summary>доступ к заданной ячейке</summary>
+   //   public abstract BaseCell getCell(Coord coord);
+
+   //   protected BaseCell.BaseAttribute _cellAttr;
+
+   //   public ICellPaint<TPaintable> CellPaint;
+
+   //      protected MosaicBase()
+   //   {
+   //   }
+   //}
+
+
 /// <summary> Mosaic field: класс окна мозаики поля </summary>
 public abstract class Mosaic : BaseCell.IMatrixCells {
 

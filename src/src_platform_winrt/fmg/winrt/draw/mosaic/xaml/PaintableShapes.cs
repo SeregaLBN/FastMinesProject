@@ -1,6 +1,6 @@
 using Windows.UI.Xaml.Shapes;
 using Windows.UI.Xaml.Controls;
-using fmg.core.mosaic;
+using fmg.core.mosaic.draw;
 
 namespace fmg.winrt.draw.mosaic.xaml
 {

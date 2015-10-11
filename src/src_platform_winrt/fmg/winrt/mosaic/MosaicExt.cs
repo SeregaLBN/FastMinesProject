@@ -12,6 +12,7 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic;
+using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
 using fmg.data.view.draw;
 using fmg.winrt.draw;

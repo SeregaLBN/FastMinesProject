@@ -104,8 +104,11 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\IPaintable.cs">
-      <Link>src_fmg.core\mosaic\IPaintable.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\draw\ICellPaint.cs">
+      <Link>src_fmg.core\mosaic\draw\ICellPaint.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\draw\IPaintable.cs">
+      <Link>src_fmg.core\mosaic\draw\IPaintable.cs</Link>
     </Compile>
     <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\bmp\CellPaintBmp.cs">
       <Link>src_fmg.winrt\draw\mosaic\bmp\CellPaintBmp.cs</Link>
@@ -113,8 +116,8 @@
     <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\bmp\PaintableBmp.cs">
       <Link>src_fmg.winrt\draw\mosaic\bmp\PaintableBmp.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\ICellPaint.cs">
-      <Link>src_fmg.winrt\draw\mosaic\ICellPaint.cs</Link>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\CellPaint.cs">
+      <Link>src_fmg.winrt\draw\mosaic\CellPaint.cs</Link>
     </Compile>
     <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\xaml\CellPaintShapes.cs">
       <Link>src_fmg.winrt\draw\mosaic\xaml\CellPaintShapes.cs</Link>

@@ -22,7 +22,7 @@ import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
 import fmg.swing.draw.GraphicContext;
-import fmg.swing.draw.mosaic.ICellPaint;
+import fmg.swing.draw.mosaic.CellPaint;
 import fmg.swing.geom.Cast;
 
 /**
@@ -30,12 +30,13 @@ import fmg.swing.geom.Cast;
  * @author SeregaLBN
  *
  */
-public class CellPaintGraphics extends ICellPaint<PaintableGraphics> {
+public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
 	public CellPaintGraphics(GraphicContext gContext) {
 		super(gContext);
 	}
 
 	/** @see javax.swing.JComponent.paint */
+	@Override
 	public void paint(BaseCell cell, PaintableGraphics p) {
 //		Object obj = this;
 //		if (obj instanceof JComponent) {
@@ -61,6 +62,7 @@ public class CellPaintGraphics extends ICellPaint<PaintableGraphics> {
 	}
 
 	/** @see javax.swing.JComponent.paintBorder */
+	@Override
 	public void paintBorder(BaseCell cell, PaintableGraphics p) {
 //		Object obj = this;
 //		if (obj instanceof JComponent) {
@@ -93,6 +95,7 @@ public class CellPaintGraphics extends ICellPaint<PaintableGraphics> {
 	}
 
 	/** draw border lines */
+	@Override
 	public void paintBorderLines(BaseCell cell, PaintableGraphics p) {
 		Size bound = gContext.getBound();
 		boolean down = cell.getState().isDown() || (cell.getState().getStatus() == EState._Open);
@@ -115,6 +118,7 @@ public class CellPaintGraphics extends ICellPaint<PaintableGraphics> {
 	}
 
 	/** @see javax.swing.JComponent.paintComponent */
+	@Override
 	public void paintComponent(BaseCell cell, PaintableGraphics p) {
 		Graphics g = p.getGraphics();
 		Color colorOld = g.getColor();
@@ -171,7 +175,8 @@ public class CellPaintGraphics extends ICellPaint<PaintableGraphics> {
 	}
 
 	/** залить ячейку нужным цветом */
-	protected void paintComponentBackground(BaseCell cell, PaintableGraphics p) {
+	@Override
+	public void paintComponentBackground(BaseCell cell, PaintableGraphics p) {
 		Graphics g = p.getGraphics();
 //		if (gContext.isIconicMode()) // когда русуется иконка, а не игровое поле, - делаю попроще...
 //			return;

@@ -12,7 +12,7 @@ namespace fmg.winrt.draw.mosaic.xaml
    /// <summary>
    /// Helper class for drawing info (over xaml shapes)
    /// </summary>
-   public class CellPaintShapes : ICellPaint<PaintableShapes>
+   public class CellPaintShapes : CellPaint<PaintableShapes>
    {
       private IDictionary<Color, Brush> _brushCacheMap;
 
@@ -97,7 +97,7 @@ namespace fmg.winrt.draw.mosaic.xaml
          // TODO граница региона должна быть двухцветной...
       }
 
-      protected override void PaintComponent(BaseCell cell, PaintableShapes binder) {
+      public override void PaintComponent(BaseCell cell, PaintableShapes binder) {
          PaintComponentBackground(cell, binder);
 
          var rcInner = cell.getRcInner(_gContext.PenBorder.Width);
@@ -166,7 +166,7 @@ namespace fmg.winrt.draw.mosaic.xaml
       }
 
       /// <summary> залить ячейку нужным цветом </summary>
-      protected override void PaintComponentBackground(BaseCell cell, PaintableShapes binder) {
+      public override void PaintComponentBackground(BaseCell cell, PaintableShapes binder) {
          Color clr;
          if (_gContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
             clr = DefaultBackgroundFillColor; // TODO ??? мож прозрачное..

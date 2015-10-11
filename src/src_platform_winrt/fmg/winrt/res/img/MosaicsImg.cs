@@ -5,9 +5,9 @@ using Windows.UI.Xaml.Media.Imaging;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic;
+using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
 using fmg.winrt.draw;
-using fmg.winrt.draw.mosaic;
 using fmg.winrt.draw.mosaic.bmp;
 using FastMines.Common;
 

@@ -9,7 +9,7 @@ namespace fmg.winrt.draw.mosaic.bmp
    /// <summary>
    /// Helper class for drawing info (ower WriteableBitmap)
    /// </summary>
-   public class CellPaintBmp : ICellPaint<PaintableBmp>
+   public class CellPaintBmp : CellPaint<PaintableBmp>
    {
       public CellPaintBmp(GraphicContext gContext) :
          base(gContext)
@@ -59,7 +59,7 @@ namespace fmg.winrt.draw.mosaic.bmp
          }
       }
 
-      protected override void PaintComponent(BaseCell cell, PaintableBmp paint)
+      public override void PaintComponent(BaseCell cell, PaintableBmp paint)
       {
          PaintComponentBackground(cell, paint);
 
@@ -126,7 +126,7 @@ namespace fmg.winrt.draw.mosaic.bmp
       }
 
       /// <summary> залить ячейку нужным цветом </summary>
-      protected override void PaintComponentBackground(BaseCell cell, PaintableBmp paint)
+      public override void PaintComponentBackground(BaseCell cell, PaintableBmp paint)
       {
          //if (gContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
          //   return;

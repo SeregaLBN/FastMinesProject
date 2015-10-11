@@ -5,7 +5,8 @@ import java.awt.Color;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
-import fmg.core.mosaic.IPaintable;
+import fmg.core.mosaic.draw.ICellPaint;
+import fmg.core.mosaic.draw.IPaintable;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.swing.draw.GraphicContext;
 import fmg.swing.geom.Cast;
@@ -15,10 +16,10 @@ import fmg.swing.geom.Cast;
  * @author SeregaLBN
  *
  */
-public abstract class ICellPaint<TPaintable extends IPaintable> {
+public abstract class CellPaint<TPaintable extends IPaintable> implements ICellPaint<TPaintable> {
 	protected GraphicContext gContext;
 	
-	public ICellPaint(GraphicContext gContext) {
+	public CellPaint(GraphicContext gContext) {
 		this.gContext = gContext;
 	}
 
@@ -38,7 +39,7 @@ public abstract class ICellPaint<TPaintable extends IPaintable> {
 
 	private fmg.common.Color _defaultBkColor;
 	/** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера */
-	protected fmg.common.Color getDefaultBackgroundFillColor() {
+	public fmg.common.Color getDefaultBackgroundFillColor() {
 		if (_defaultBkColor == null) {
 			UIDefaults uiDef = UIManager.getDefaults();
 	
@@ -74,6 +75,6 @@ public abstract class ICellPaint<TPaintable extends IPaintable> {
 	}
 
 	/** залить ячейку нужным цветом */
-	protected abstract void paintComponentBackground(BaseCell cell, TPaintable p);
+	public abstract void paintComponentBackground(BaseCell cell, TPaintable p);
 
 }
