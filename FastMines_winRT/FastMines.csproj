@@ -110,6 +110,12 @@
     <Compile Include="..\src\src_core\fmg\core\mosaic\draw\IPaintable.cs">
       <Link>src_fmg.core\mosaic\draw\IPaintable.cs</Link>
     </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\IMosaic.cs">
+      <Link>src_fmg.core\mosaic\IMosaic.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\MosaicBase.cs">
+      <Link>src_fmg.core\mosaic\MosaicBase.cs</Link>
+    </Compile>
     <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\bmp\CellPaintBmp.cs">
       <Link>src_fmg.winrt\draw\mosaic\bmp\CellPaintBmp.cs</Link>
     </Compile>
@@ -124,6 +130,9 @@
     </Compile>
     <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\xaml\PaintableShapes.cs">
       <Link>src_fmg.winrt\draw\mosaic\xaml\PaintableShapes.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\mosaic\Mosaic.cs">
+      <Link>src_fmg.winrt\mosaic\Mosaic.cs</Link>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -313,9 +322,6 @@
     </Compile>
     <Compile Include="..\src\src_core\fmg\core\mosaic\cells\TrSq2.cs">
       <Link>src_fmg.core\mosaic\cells\TrSq2.cs</Link>
-    </Compile>
-    <Compile Include="..\src\src_platform_winrt\fmg\winrt\mosaic\MosaicExt.cs">
-      <Link>src_fmg.winrt\mosaic\MosaicExt.cs</Link>
     </Compile>
     <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\BitmapFont.cs">
       <Link>src_fmg.winrt\draw\BitmapFont.cs</Link>
@@ -626,9 +632,6 @@
     </Compile>
     <Compile Include="..\src\src_core\fmg\core\types\click\RightDownReturn.cs">
       <Link>src_fmg.core\types\click\RightDownReturn.cs</Link>
-    </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\Mosaic.cs">
-      <Link>src_fmg.core\mosaic\Mosaic.cs</Link>
     </Compile>
     <Compile Include="..\src\src_core\fmg\core\mosaic\cells\BaseCell.cs">
       <Link>src_fmg.core\mosaic\cells\BaseCell.cs</Link>

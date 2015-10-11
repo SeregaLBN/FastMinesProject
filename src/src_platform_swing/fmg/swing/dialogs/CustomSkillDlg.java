@@ -34,7 +34,7 @@ import javax.swing.event.ChangeListener;
 
 import fmg.common.geom.Size;
 import fmg.core.mosaic.CellFactory;
-import fmg.core.mosaic.Mosaic;
+import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.event.MosaicEvent;
 import fmg.core.types.event.MosaicListener;
@@ -319,7 +319,7 @@ public class CustomSkillDlg extends JDialog {
 		} else {
 			miniSizeX = miniSizeY = 5; 
 
-			Size s = parent.CalcMaxMosaicSize(Mosaic.AREA_MINIMUM);
+			Size s = parent.CalcMaxMosaicSize(MosaicBase.AREA_MINIMUM);
 			maxiSizeX = s.width; maxiSizeY = s.height;
 
 			if (isFullScreen) {

@@ -71,7 +71,7 @@ import javax.swing.border.EmptyBorder;
 import fmg.common.Pair;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
-import fmg.core.mosaic.Mosaic;
+import fmg.core.mosaic.MosaicBase;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
@@ -92,7 +92,7 @@ import fmg.swing.dialogs.SelectMosaicDlg;
 import fmg.swing.dialogs.StatisticDlg;
 import fmg.swing.draw.GraphicContext;
 import fmg.swing.geom.Cast;
-import fmg.swing.mosaic.MosaicExt;
+import fmg.swing.mosaic.Mosaic;
 import fmg.swing.res.Resources;
 import fmg.swing.res.Resources.EBtnNewGameState;
 import fmg.swing.res.Resources.EBtnPauseState;
@@ -107,7 +107,7 @@ public class Main extends JFrame  {
 	private JPanel     contentPane;
 	private MainMenu   menu;
 	private Toolbar    toolbar;
-	private MosaicExt  mosaic;
+	private Mosaic     mosaic;
 	private PausePanel pausePanel;
 	private StatusBar  statusBar;
 
@@ -795,9 +795,9 @@ public class Main extends JFrame  {
 		return toolbar;
 	}
 	/** мозаика */
-	public MosaicExt getMosaic() {
+	public Mosaic getMosaic() {
 		if (mosaic == null)
-			mosaic = new MosaicExt();
+			mosaic = new Mosaic();
 		return mosaic;
 	}
 	private PausePanel getPausePanel() {
@@ -1903,7 +1903,7 @@ public class Main extends JFrame  {
 
 					@Override
 					public void OnChangedMosaicType(MosaicEvent.ChangedMosaicTypeEvent e) {
-						((MosaicExt)e.getSource()).changeFontSize();
+						((Mosaic)e.getSource()).changeFontSize();
 						Main.this.ChangeSizeImagesMineFlag();
 					}
 
@@ -2169,7 +2169,7 @@ public class Main extends JFrame  {
 
 	/** переустанавливаю заного размер мины/флага для мозаики */
 	private void ChangeSizeImagesMineFlag() {
-		MosaicExt m = getMosaic();
+		Mosaic m = getMosaic();
 		GraphicContext gc = m.getGraphicContext();
 		int sq = (int)m.getCellAttr().CalcSq(m.getArea(), gc.getPenBorder().getWidth());
 		if (sq <= 0) {
@@ -2278,7 +2278,7 @@ public class Main extends JFrame  {
 
 	/** Сохранить чемпиона && Установить статистику */
 	public void setStatisticAndChampion(MosaicEvent.ChangedGameStatusEvent e) {
-		Mosaic mosaic = e.getSource();
+		MosaicBase mosaic = e.getSource();
 		if (mosaic.getGameStatus() != EGameStatus.eGSEnd)
 			throw new RuntimeException("Invalid method state call");
 

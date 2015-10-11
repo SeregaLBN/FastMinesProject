@@ -3,7 +3,7 @@ package fmg.core.types.event;
 import java.util.EventObject;
 
 import fmg.common.geom.Size;
-import fmg.core.mosaic.Mosaic;
+import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
@@ -11,7 +11,7 @@ import fmg.core.types.EMosaic;
 public class MosaicEvent extends EventObject {
 	private static final long serialVersionUID = 1L;
 
-	private MosaicEvent(Mosaic source) {
+	private MosaicEvent(MosaicBase source) {
 		super(source);
 	}
 
@@ -21,7 +21,7 @@ public class MosaicEvent extends EventObject {
 		boolean leftClick;
 		boolean down;
 
-		public ClickEvent(Mosaic source, BaseCell clickedCell, boolean leftClick, boolean down) {
+		public ClickEvent(MosaicBase source, BaseCell clickedCell, boolean leftClick, boolean down) {
 			super(source);
 			this.cell = clickedCell;
 			this.leftClick  = leftClick;
@@ -42,7 +42,7 @@ public class MosaicEvent extends EventObject {
 	public static class ChangedCountersEvent extends MosaicEvent {
 		private static final long serialVersionUID = 1L;
 
-		public ChangedCountersEvent(Mosaic source) {
+		public ChangedCountersEvent(MosaicBase source) {
 			super(source);
 		}
 	}
@@ -51,7 +51,7 @@ public class MosaicEvent extends EventObject {
 		private static final long serialVersionUID = 1L;
 		EGameStatus oldGameStatus;
 
-		public ChangedGameStatusEvent(Mosaic source, EGameStatus oldGameStatus) {
+		public ChangedGameStatusEvent(MosaicBase source, EGameStatus oldGameStatus) {
 			super(source);
 			this.oldGameStatus = oldGameStatus;
 		}
@@ -65,7 +65,7 @@ public class MosaicEvent extends EventObject {
 		private static final long serialVersionUID = 1L;
 		int oldArea;
 
-		public ChangedAreaEvent(Mosaic source, int oldArea) {
+		public ChangedAreaEvent(MosaicBase source, int oldArea) {
 			super(source);
 			this.oldArea = oldArea;
 		}
@@ -79,7 +79,7 @@ public class MosaicEvent extends EventObject {
 		private static final long serialVersionUID = 1L;
 		EMosaic oldMosaic;
 
-		public ChangedMosaicTypeEvent(Mosaic source, EMosaic oldMosaic) {
+		public ChangedMosaicTypeEvent(MosaicBase source, EMosaic oldMosaic) {
 			super(source);
 			this.oldMosaic = oldMosaic;
 		}
@@ -93,7 +93,7 @@ public class MosaicEvent extends EventObject {
 		private static final long serialVersionUID = 1L;
 		Size oldSize;
 
-		public ChangedMosaicSizeEvent(Mosaic source, Size oldSize) {
+		public ChangedMosaicSizeEvent(MosaicBase source, Size oldSize) {
 			super(source);
 			this.oldSize = oldSize;
 		}
@@ -104,7 +104,7 @@ public class MosaicEvent extends EventObject {
 	}
 
 	@Override
-	public Mosaic getSource() {
-		return (Mosaic)super.getSource();
+	public MosaicBase getSource() {
+		return (MosaicBase)super.getSource();
 	}
 }

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
 //                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
-// file name: "Mosaic.java"
+// file name: "MosaicBase.cs"
 //
 // реализация алгоритма Мозаики состоящей из ячеек
 // Copyright (C) 2011 Sergey Krivulya
@@ -29,31 +29,11 @@ using fmg.core.types;
 using fmg.core.types.Event;
 using fmg.core.types.click;
 using fmg.core.mosaic.cells;
-using Log = FastMines.Common.LoggerSimple;
 
 namespace fmg.core.mosaic {
 
-   ///// <summary> Mosaic field: класс окна мозаики поля </summary>
-   //public abstract class MosaicBase<TPaintable> : BaseCell.IMatrixCells where TPaintable : IPaintable
-   //{
-   //   /// <summary>размер поля в ячейках</summary>
-   //   public Size SizeField { get; protected set; } = new Size(0, 0);
-
-   //   /// <summary>доступ к заданной ячейке</summary>
-   //   public abstract BaseCell getCell(Coord coord);
-
-   //   protected BaseCell.BaseAttribute _cellAttr;
-
-   //   public ICellPaint<TPaintable> CellPaint;
-
-   //      protected MosaicBase()
-   //   {
-   //   }
-   //}
-
-
-/// <summary> Mosaic field: класс окна мозаики поля </summary>
-public abstract class Mosaic : BaseCell.IMatrixCells {
+   /// <summary> Mosaic field: класс окна мозаики поля </summary>
+   public abstract class MosaicBase : BaseCell.IMatrixCells {
 
 #region Members
 
@@ -612,11 +592,11 @@ public abstract class Mosaic : BaseCell.IMatrixCells {
    }
 
    /// <summary>Mosaic field: класс окна мозаики поля</summary>
-   public Mosaic() {
+   public MosaicBase() {
       Initialize();
    }
    /// <summary>Mosaic field: класс окна мозаики поля</summary>
-   public Mosaic(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
+   public MosaicBase(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
       Initialize(sizeField, mosaicType, minesCount, area);
    }
 

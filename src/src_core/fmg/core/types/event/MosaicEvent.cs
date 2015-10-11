@@ -99,9 +99,9 @@ namespace fmg.core.types.Event
          }
       }
 
-      public static Mosaic getSource(object sender)
+      public static MosaicBase getSource(object sender)
       {
-         return sender is Mosaic ? (Mosaic)sender : null;
+         return sender is MosaicBase ? (MosaicBase)sender : null;
       }
    }
 }

@@ -44,7 +44,7 @@ import fmg.core.types.event.MosaicEvent;
 import fmg.core.types.event.MosaicListener;
 
 /** Mosaic field: класс окна мозаики поля */
-public abstract class Mosaic implements BaseCell.IMatrixCells {
+public abstract class MosaicBase implements BaseCell.IMatrixCells {
 
 	public static final int AREA_MINIMUM = 230;
 
@@ -149,11 +149,11 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 					cell.IdentifyNeighbors(this);
 			}
 
-			getMosaicListeners().fireOnChangedCounters(new MosaicEvent.ChangedCountersEvent(Mosaic.this));
+			getMosaicListeners().fireOnChangedCounters(new MosaicEvent.ChangedCountersEvent(MosaicBase.this));
 			if (isNewMosaic)
-				getMosaicListeners().fireOnChangedMosaicType(new MosaicEvent.ChangedMosaicTypeEvent(Mosaic.this, oldMosaicType));
+				getMosaicListeners().fireOnChangedMosaicType(new MosaicEvent.ChangedMosaicTypeEvent(MosaicBase.this, oldMosaicType));
 			if (isNewSizeFld)
-				getMosaicListeners().fireOnChangedMosaicSize(new MosaicEvent.ChangedMosaicSizeEvent(Mosaic.this, oldMosaicSize));
+				getMosaicListeners().fireOnChangedMosaicSize(new MosaicEvent.ChangedMosaicSizeEvent(MosaicBase.this, oldMosaicSize));
 		} finally {
 			if ((storageCoordMines == null) || storageCoordMines.isEmpty())
 				getRepositoryMines().clear();
@@ -647,11 +647,11 @@ public abstract class Mosaic implements BaseCell.IMatrixCells {
 	}
 
 	/** Mosaic field: класс окна мозаики поля */
-	public Mosaic() {
+	public MosaicBase() {
 		initialize();
 	}
 	/** Mosaic field: класс окна мозаики поля */
-	public Mosaic(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
+	public MosaicBase(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
 		initialize(sizeField, mosaicType, minesCount, area);
 	}
 

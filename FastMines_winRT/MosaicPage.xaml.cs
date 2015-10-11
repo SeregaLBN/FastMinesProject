@@ -30,7 +30,7 @@ namespace FastMines {
       /// <summary> мин отступ от краев экрана для мозаики </summary>
       private const int MinIndent = 30;
 
-      private MosaicExt _mosaic;
+      private Mosaic _mosaic;
       private readonly ClickInfo _clickInfo = new ClickInfo();
       private bool _manipulationStarted;
       private bool _turnX;
@@ -39,10 +39,10 @@ namespace FastMines {
       private Windows.Foundation.Point? _mouseDevicePosition_AreaChanging = null;
       private static double? _baseWheelDelta;
 
-      public MosaicExt MosaicField {
+      public Mosaic MosaicField {
          get {
             if (_mosaic == null) {
-               _mosaic = new MosaicExt();
+               _mosaic = new Mosaic();
                ContentRoot.Children.Add(_mosaic.Container);
 
                _mosaic.OnClick += Mosaic_OnClick;
@@ -279,7 +279,7 @@ namespace FastMines {
       private void Mosaic_OnChangedMosaicType(object source, MosaicEvent.ChangedMosaicTypeEventArgs e) {
          using (new Tracer("Mosaic_OnChangedMosaicType")) {
             Debug.Assert(ReferenceEquals(MosaicField, source));
-            (source as MosaicExt).ChangeFontSize();
+            (source as Mosaic).ChangeFontSize();
             //ChangeSizeImagesMineFlag();
          }
       }

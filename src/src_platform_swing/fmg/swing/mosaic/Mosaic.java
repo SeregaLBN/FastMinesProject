@@ -23,7 +23,7 @@ import javax.swing.event.MouseInputListener;
 
 import fmg.common.geom.Size;
 import fmg.core.mosaic.CellFactory;
-import fmg.core.mosaic.Mosaic;
+import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
 import fmg.data.view.draw.PenBorder;
@@ -33,17 +33,17 @@ import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 import fmg.swing.geom.Cast;
 
-public class MosaicExt extends Mosaic implements PropertyChangeListener {
+public class Mosaic extends MosaicBase implements PropertyChangeListener {
 	private MosaicGraphicContext _gContext;
 	private CellPaintGraphics _cellPaint;
 	private JPanel _container;
 	private MosaicMouseListeners _mosaicMouseListener;
 	private static final boolean _DEBUG = true;
 
-	public MosaicExt() {
+	public Mosaic() {
 		super();
 	}
-	public MosaicExt(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
+	public Mosaic(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
 		super(sizeField, mosaicType, minesCount, area);
 	}
 
@@ -224,13 +224,13 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 		@Override
 		public void focusLost(FocusEvent e) {
 //			System.out.println("Mosaic::MosaicMouseListeners::focusLost: " + e);
-			BaseCell cell = MosaicExt.this.getCellDown();
+			BaseCell cell = Mosaic.this.getCellDown();
 			if (cell == null)
 				return;
 			if (cell.getState().isDown())
-				MosaicExt.this.OnLeftButtonUp(null);
+				Mosaic.this.OnLeftButtonUp(null);
 			else
-				MosaicExt.this.OnRightButtonUp();
+				Mosaic.this.OnRightButtonUp();
 		}
 		@Override
 		public void focusGained(FocusEvent e) {}
@@ -279,7 +279,7 @@ public class MosaicExt extends Mosaic implements PropertyChangeListener {
 
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
-		frame.add((new MosaicExt()).getContainer());
+		frame.add((new Mosaic()).getContainer());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);

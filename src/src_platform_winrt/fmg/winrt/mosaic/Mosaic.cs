@@ -20,15 +20,15 @@ using fmg.winrt.draw.mosaic;
 using fmg.winrt.draw.mosaic.xaml;
 
 namespace fmg.winrt.mosaic {
-   public class MosaicExt : Mosaic {
+   public class Mosaic : MosaicBase {
       private IDictionary<BaseCell, PaintableShapes> _xamlBinder;
       private MosaicGraphicContext _gContext;
       private ICellPaint<PaintableShapes> _cellPaint;
       private Panel _container;
 
-      public MosaicExt() {}
+      public Mosaic() {}
 
-      public MosaicExt(Size sizeField, EMosaic mosaicType, int minesCount, int area) :
+      public Mosaic(Size sizeField, EMosaic mosaicType, int minesCount, int area) :
          base(sizeField, mosaicType, minesCount, area)
       {}
 
