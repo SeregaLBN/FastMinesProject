@@ -22,13 +22,12 @@ namespace fmg.winrt.draw {
       private int _fontSize = DEFAULT_FONT_SIZE;
 
       private readonly bool _iconicMode;
-      private readonly Size _bound;
+      private Size _bound;
 
       private static readonly Random Rand = new Random();
 
-      public GraphicContext(bool iconicMode, Size bound) {
+      public GraphicContext(bool iconicMode) {
          this._iconicMode = iconicMode;
-         _bound = bound;
       }
 
       public WriteableBitmap ImgMine {
@@ -105,24 +104,22 @@ namespace fmg.winrt.draw {
       }
 
       public bool IconicMode { get { return _iconicMode; } }
-      public Size Bound { get { return _bound; } }
+
+      public Size Bound {
+         get { return _bound; }
+         set { this.SetProperty(ref this._bound, value); }
+      }
 
       public FontFamily FontFamily {
-         get {
-            return _fontFamily;
-         }
+         get { return _fontFamily; }
          set { this.SetProperty(ref this._fontFamily, value); }
       }
       public FontStyle FontStyle {
-         get {
-            return _fontStyle;
-         }
+         get { return _fontStyle; }
          set { this.SetProperty(ref this._fontStyle, value); }
       }
       public int FontSize {
-         get {
-            return _fontSize;
-         }
+         get { return _fontSize; }
          set { this.SetProperty(ref this._fontSize, value); }
       }
    }

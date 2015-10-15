@@ -12,7 +12,7 @@ namespace fmg.winrt.draw.mosaic {
       private WriteableBitmap _imgBckgrnd;
 
       public MosaicGraphicContext() :
-         base(false, new Size(0, 0)) {
+         base(false) {
          //_colorBk = COLOR_BTNFACE;
          //_colorBk = Color.BLACK;
          //_colorBk = new UISettings().UIElementColor(UIElementType.Window).Cast(); // Panel background

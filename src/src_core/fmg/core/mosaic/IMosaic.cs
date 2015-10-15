@@ -42,8 +42,6 @@ namespace fmg.core.mosaic
       /// <summary>матрица ячеек, представленная(развёрнута) в виде вектора</summary>
       IList<BaseCell> Matrix { get; }
 
-      // GraphicContext GContext { get; }
-
       /// <summary>из каких фигур состоит мозаика поля</summary>
       EMosaic MosaicType { get; set; }
 

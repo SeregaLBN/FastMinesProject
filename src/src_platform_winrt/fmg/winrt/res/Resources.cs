@@ -191,7 +191,13 @@ namespace fmg.winrt.res {
          var key = new Tuple<EMosaic, Size, int, Windows.UI.Color, Size>(mosaicType, sizeField, area, bkColor, bound);
          if (_imgsMosaic.ContainsKey(key))
             return _imgsMosaic[key];
-         return _imgsMosaic[key] = new MosaicsImg(mosaicType, sizeField, area, bkColor, bound);
+         return _imgsMosaic[key] = new MosaicsImg {
+            MosaicType = mosaicType,
+            SizeField = sizeField,
+            Area = area,
+            BackgroundColor = bkColor,
+            Bound = bound
+         };
       }
 
       public static async Task<Dictionary<CultureInfo, WriteableBitmap>> getImgsLang() {

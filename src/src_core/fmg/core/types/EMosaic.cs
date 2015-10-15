@@ -58,6 +58,8 @@ public enum EMosaic {
    eMosaicPenrousePeriodic1   = (409),
 
    // ============== Pentagons ==============
+   // http://en.wikipedia.org/wiki/Pentagonal_tiling
+
    /// <summary> Pentagon (type 2 and 4) </summary>
    eMosaicPentagonT24         = (500),
 
