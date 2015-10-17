@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using Windows.Foundation;
 using Windows.System;
 using Windows.Devices.Input;
 using Windows.UI.Core;
@@ -12,14 +10,14 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using fmg.common.geom;
 using fmg.core.types;
-using fmg.core.mosaic;
+using fmg.core.types.Event;
 using fmg.core.mosaic.cells;
 using fmg.winrt.mosaic;
+using fmg.winrt.draw.mosaic.xaml;
 using fmg.data.controller.types;
 using FastMines.Common;
 using Log = FastMines.Common.LoggerSimple;
 using Size = fmg.common.geom.Size;
-using fmg.core.types.Event;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace FastMines {
@@ -235,7 +233,7 @@ namespace FastMines {
       }
 
       private void Mosaic_OnChangedGameStatus(object source, MosaicEvent.ChangedGameStatusEventArgs e) {
-         if ((MosaicEvent.getSource(source) ?? _mosaic).GameStatus == EGameStatus.eGSEnd) {
+         if ((MosaicEvent.getSource<PaintableShapes>(source) ?? _mosaic).GameStatus == EGameStatus.eGSEnd) {
             //this.bottomAppBar.Focus(FocusState.Programmatic);
             bottomAppBar.IsOpen = true;
          }

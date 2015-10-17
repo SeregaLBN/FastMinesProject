@@ -1,6 +1,7 @@
 using fmg.common.geom;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
+using fmg.core.mosaic.draw;
 
 namespace fmg.core.types.Event
 {
@@ -99,9 +100,8 @@ namespace fmg.core.types.Event
          }
       }
 
-      public static MosaicBase getSource(object sender)
-      {
-         return sender is MosaicBase ? (MosaicBase)sender : null;
+      public static MosaicBase<TPaintable> getSource<TPaintable>(object sender) where TPaintable : IPaintable {
+         return sender as MosaicBase<TPaintable>;
       }
    }
 }

@@ -20,7 +20,7 @@ using fmg.winrt.draw.mosaic;
 using fmg.winrt.draw.mosaic.xaml;
 
 namespace fmg.winrt.mosaic {
-   public class Mosaic : MosaicBase {
+   public class Mosaic : MosaicBase<PaintableShapes> {
       private IDictionary<BaseCell, PaintableShapes> _xamlBinder;
       private MosaicGraphicContext _gContext;
       private ICellPaint<PaintableShapes> _cellPaint;
@@ -93,9 +93,7 @@ namespace fmg.winrt.mosaic {
          }
       }
 
-      public ICellPaint<PaintableShapes> CellPaint {
-         get { return _cellPaint ?? (_cellPaint = new CellPaintShapes(GraphicContext)); }
-      }
+      public override ICellPaint<PaintableShapes> CellPaint => _cellPaint ?? (_cellPaint = new CellPaintShapes(GraphicContext));
 
       private IDictionary<BaseCell, PaintableShapes> XamlBinder {
          get { return _xamlBinder ?? (_xamlBinder = new Dictionary<BaseCell, PaintableShapes>()); }
@@ -153,7 +151,7 @@ namespace fmg.winrt.mosaic {
 
       /// <summary> преобразовать экранные координаты в ячейку поля мозаики </summary>
       private BaseCell CursorPointToCell(Point point) {
-         return _matrix.AsParallel().FirstOrDefault(cell =>
+         return Matrix.AsParallel().FirstOrDefault(cell =>
             //cell.getRcOuter().Contains(point) && // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
             cell.PointInRegion(point));
       }

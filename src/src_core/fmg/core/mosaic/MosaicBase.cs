@@ -28,18 +28,19 @@ using fmg.core.types;
 using fmg.core.types.Event;
 using fmg.core.types.click;
 using fmg.core.mosaic.cells;
+using fmg.core.mosaic.draw;
 
 namespace fmg.core.mosaic {
 
    /// <summary> Mosaic field: класс окна мозаики поля </summary>
-   public abstract class MosaicBase : BaseCell.IMatrixCells {
+   public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPaintable : IPaintable {
 
 #region Members
 
    public const int AREA_MINIMUM = 230;
 
    /// <summary>матрица List &lt; List &lt; BaseCell &gt; &gt; , представленная(развёрнута) в виде вектора</summary>
-   protected IList<BaseCell> _matrix = new List<BaseCell>(0);
+   public IList<BaseCell> Matrix { get; protected set; } = new List<BaseCell>(0);
    /// <summary>размер поля в ячейках</summary>
    protected Size _size = new Size(0, 0);
    /// <summary>из каких фигур состоит мозаика поля</summary>
@@ -70,24 +71,19 @@ namespace fmg.core.mosaic {
             throw new ArgumentException("Bad argument - support only null value!");
          _cellAttr = null;
       }
-      get {
-         if (_cellAttr == null)
-            _cellAttr = CellFactory.CreateAttributeInstance(MosaicType, Area);
-         return _cellAttr;
-      }
+      get { return _cellAttr ?? (_cellAttr = CellFactory.CreateAttributeInstance(MosaicType, Area)); }
    }
+
+   public abstract ICellPaint<TPaintable> CellPaint { get; }
 
    /// <summary> размер поля в ячейках </summary>
    public Size SizeField { get { return _size; } set { SetParams(value, null, null); } }
-   //public async void SetSizeField(Size value) { await SetParams(value, null, null); }
 
    /// <summary> тип мозаики </summary>
-   public EMosaic MosaicType { get { return _mosaicType; } /* set { SetParams(null, value, null); } */ }
-   //public async void SetMosaicType(EMosaic value) { await SetParams(null, value, null); }
+   public EMosaic MosaicType { get { return _mosaicType; } set { SetParams(null, value, null); } }
 
    /// <summary> кол-во мин </summary>
-   public int MinesCount { get { return _minesCount; } /* set { SetParams(null, null, value); } */ }
-   public void SetMinesCount(int value) { SetParams(null, null, value); }
+   public int MinesCount { get { return _minesCount; } set { SetParams(null, null, value); } }
 
    /// <summary> установить мозаику заданного размера, типа  и с определённым количеством мин (координаты мин могут задаваться с помощью "Хранилища Мин") </summary>
    public virtual void SetParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount, List<Coord> storageCoordMines) {
@@ -121,22 +117,22 @@ namespace fmg.core.mosaic {
          if (isNewMosaic || isNewSizeFld) {
             var attr = CellAttr;
 
-            foreach (var cell in _matrix)
+            foreach (var cell in Matrix)
                // отписываю старые ячейки от уведомлений атрибута
                attr.PropertyChanged -= cell.OnPropertyChanged;
 
-            _matrix.Clear();
-            _matrix = new List<BaseCell>(_size.width*_size.height);
+            Matrix.Clear();
+            (Matrix as List<BaseCell>).Capacity = _size.width*_size.height;
             for (var i = 0; i < _size.width; i++)
                for (var j = 0; j < _size.height; j++) {
                   var cell = CellFactory.CreateCellInstance(attr, _mosaicType, new Coord(i, j));
-                  _matrix.Add( /*i*size.height + j, */cell);
+                  Matrix.Add( /*i*size.height + j, */cell);
 
                   // подписываю новые ячейки на уведомления атрибута (изменение a -> перерасчёт координат)
                   attr.PropertyChanged += cell.OnPropertyChanged;
                }
 
-            foreach (var cell in _matrix)
+            foreach (var cell in Matrix)
                cell.IdentifyNeighbors(this);
          }
 
@@ -177,7 +173,7 @@ namespace fmg.core.mosaic {
             OnError("Проблемы с установкой мин... :(");
       }
       // set other CellOpen and set all Caption
-      foreach (BaseCell cell in _matrix)
+      foreach (BaseCell cell in Matrix)
          cell.State.CalcOpenState();
    }
    /// <summary>arrange Mines - set random mines</summary>
@@ -186,7 +182,7 @@ namespace fmg.core.mosaic {
          _minesCount = _oldMinesCount;
          
       var firstClickNeighbors = firstClickCell.Neighbors;
-      List<BaseCell> matrixClone = new List<BaseCell>(_matrix);
+      List<BaseCell> matrixClone = new List<BaseCell>(Matrix);
       matrixClone.Remove(firstClickCell); // исключаю на которой кликал юзер
       matrixClone.RemoveAll( x => firstClickNeighbors.Contains(x) ); // и их соседей
       int count = 0;
@@ -208,20 +204,20 @@ namespace fmg.core.mosaic {
       } while (count < _minesCount);
 
       // set other CellOpen and set all Caption
-      foreach (BaseCell cell in _matrix)
+      foreach (BaseCell cell in Matrix)
          cell.State.CalcOpenState();
    }
 
-   public int CountOpen { get { return _matrix.Count(x => x.State.Status == EState._Open); } }
-   public int CountFlag { get { return _matrix.Count(x => (x.State.Status == EState._Close) && (x.State.Close == EClose._Flag)); } }
-   public int CountUnknown { get { return _matrix.Count(x => (x.State.Status == EState._Close) && (x.State.Close == EClose._Unknown)); } }
+   public int CountOpen { get { return Matrix.Count(x => x.State.Status == EState._Open); } }
+   public int CountFlag { get { return Matrix.Count(x => (x.State.Status == EState._Close) && (x.State.Close == EClose._Flag)); } }
+   public int CountUnknown { get { return Matrix.Count(x => (x.State.Status == EState._Close) && (x.State.Close == EClose._Unknown)); } }
 
    /// <summary>сколько ещё осталось открыть мин</summary>
    public int CountMinesLeft { get { return MinesCount - CountFlag; } }
    public int CountClick { get { return _countClick; } private set { _countClick = value; fireOnChangedCounters(); } }
       
    /// <summary> доступ к заданной ячейке </summary>
-   public BaseCell getCell(int x, int y) { return _matrix[x*_size.height + y]; }
+   public BaseCell getCell(int x, int y) { return Matrix[x*_size.height + y]; }
    /// <summary> доступ к заданной ячейке </summary>
    public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
 
@@ -307,7 +303,7 @@ namespace fmg.core.mosaic {
       int realCountOpen = 0;
       { // открыть оставшeеся
 //         ::SetCursor(::LoadCursor(NULL, IDC_WAIT));
-         foreach (BaseCell cell in _matrix)
+         foreach (BaseCell cell in Matrix)
             if (cell.State.Status == EState._Close) {
                if (victory) {
                   if (cell.State.Open == EOpen._Mine)
@@ -340,14 +336,14 @@ namespace fmg.core.mosaic {
    private void VerifyFlag() {
       if (GameStatus == EGameStatus.eGSEnd) return;
       if (MinesCount == CountFlag) {
-         foreach (BaseCell cell in _matrix)
+         foreach (BaseCell cell in Matrix)
             if ((cell.State.Close == EClose._Flag) &&
                (cell.State.Open != EOpen._Mine))
                return; // неверно проставленный флажок - на выход
          GameEnd(true);
       } else
          if (MinesCount == (CountFlag + CountUnknown)) {
-            foreach (BaseCell cell in _matrix)
+            foreach (BaseCell cell in Matrix)
                if (((cell.State.Close == EClose._Unknown) ||
                   ( cell.State.Close == EClose._Flag)) &&
                   ( cell.State.Open != EOpen._Mine))
@@ -370,11 +366,11 @@ namespace fmg.core.mosaic {
             if (cellLeftDown.State.Open != EOpen._Mine) {
                cellLeftDown.State.setStatus(EState._Open, null);
                cellLeftDown.State.SetMine();
-               SetMinesCount(MinesCount + 1);
+               MinesCount = MinesCount + 1;
                RepositoryMines.Add(cellLeftDown.getCoord());
             } else {
                cellLeftDown.Reset();
-               SetMinesCount(MinesCount - 1);
+               MinesCount = MinesCount - 1;
                RepositoryMines.Remove(cellLeftDown.getCoord());
             }
             Repaint(cellLeftDown);
@@ -514,7 +510,7 @@ namespace fmg.core.mosaic {
                RepositoryMines.Clear();
          }
 
-      foreach (BaseCell cell in _matrix)
+      foreach (BaseCell cell in Matrix)
          cell.Reset();
 
       CountClick = 0;
@@ -527,7 +523,7 @@ namespace fmg.core.mosaic {
    public void GameCreate() {
       GameNew();
       if (RepositoryMines.Count == 0) {
-         SetMinesCount(0);
+         MinesCount = 0;
          GameStatus = EGameStatus.eGSCreateGame;
          fireOnChangedCounters();
       }
@@ -592,7 +588,7 @@ namespace fmg.core.mosaic {
    public IList<Coord> StorageMines {
       get {
          IList<Coord> repositoryMines = new List<Coord>();
-         foreach (BaseCell cell in _matrix)
+         foreach (BaseCell cell in Matrix)
             if (cell.State.Open == EOpen._Mine)
                repositoryMines.Add(cell.getCoord());
          return repositoryMines;
