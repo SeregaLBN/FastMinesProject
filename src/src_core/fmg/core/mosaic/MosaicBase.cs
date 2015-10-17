@@ -23,7 +23,6 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.types.Event;
@@ -79,7 +78,7 @@ namespace fmg.core.mosaic {
    }
 
    /// <summary> размер поля в ячейках </summary>
-   public Size SizeField { get { return _size; } /* set { SetParams(value, null, null); } */ }
+   public Size SizeField { get { return _size; } set { SetParams(value, null, null); } }
    //public async void SetSizeField(Size value) { await SetParams(value, null, null); }
 
    /// <summary> тип мозаики </summary>
@@ -88,10 +87,10 @@ namespace fmg.core.mosaic {
 
    /// <summary> кол-во мин </summary>
    public int MinesCount { get { return _minesCount; } /* set { SetParams(null, null, value); } */ }
-   public async Task SetMinesCount(int value) { await SetParams(null, null, value); }
+   public void SetMinesCount(int value) { SetParams(null, null, value); }
 
    /// <summary> установить мозаику заданного размера, типа  и с определённым количеством мин (координаты мин могут задаваться с помощью "Хранилища Мин") </summary>
-   public virtual async Task SetParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount, List<Coord> storageCoordMines) {
+   public virtual void SetParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount, List<Coord> storageCoordMines) {
       //repositoryMines.Reset();
       var res = (MosaicType != newMosaicType) || !SizeField.Equals(newSizeField) || (MinesCount != newMinesCount);
       if (res)
@@ -152,12 +151,12 @@ namespace fmg.core.mosaic {
       else
          RepositoryMines = storageCoordMines;
       //GameStatus = EGameStatus.eGSEnd;
-      await GameNew();
+      GameNew();
    }
 
    /// <summary>установить мозаику заданного размера, типа и с определённым количеством мин</summary>
-   public virtual async Task SetParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
-      await SetParams(newSizeField, newMosaicType, newMinesCount, null);
+   public virtual void SetParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
+      SetParams(newSizeField, newMosaicType, newMinesCount, null);
    }
 
    protected virtual void OnError(String msg) {
@@ -358,7 +357,7 @@ namespace fmg.core.mosaic {
       return;
    }
 
-   protected async Task<bool> OnLeftButtonDown(BaseCell cellLeftDown) {
+   protected bool OnLeftButtonDown(BaseCell cellLeftDown) {
       using (new FastMines.Common.Tracer("Mosaic::OnLeftButtonDown")) {
          CellDown = null;
          if (GameStatus == EGameStatus.eGSEnd)
@@ -371,11 +370,11 @@ namespace fmg.core.mosaic {
             if (cellLeftDown.State.Open != EOpen._Mine) {
                cellLeftDown.State.setStatus(EState._Open, null);
                cellLeftDown.State.SetMine();
-               await SetMinesCount(MinesCount + 1);
+               SetMinesCount(MinesCount + 1);
                RepositoryMines.Add(cellLeftDown.getCoord());
             } else {
                cellLeftDown.Reset();
-               await SetMinesCount(MinesCount - 1);
+               SetMinesCount(MinesCount - 1);
                RepositoryMines.Remove(cellLeftDown.getCoord());
             }
             Repaint(cellLeftDown);
@@ -437,10 +436,10 @@ namespace fmg.core.mosaic {
       }
    }
 
-   protected async Task<bool> OnRightButtonDown(BaseCell cellRightDown) {
+   protected bool OnRightButtonDown(BaseCell cellRightDown) {
       using (var tracer = new FastMines.Common.Tracer("Mosaic::OnRightButtonDown")) {
          if (GameStatus == EGameStatus.eGSEnd) {
-            await GameNew();
+            GameNew();
             return true;
          }
          if (GameStatus == EGameStatus.eGSReady)
@@ -497,22 +496,11 @@ namespace fmg.core.mosaic {
       }
    }
 
-   protected virtual async Task<bool> RequestToUser_RestoreLastGame() {
-      //  need override in child class
-      var msg = "Restore last game?";
-      System.Diagnostics.Debug.WriteLine(msg);
-#if WINDOWS_RT
-#elif WINDOWS_FORMS
-         System.Console.WriteLine(msg);
-#else
-         ...
-#endif
-
-      return await new Task<bool>(() => false);
-   }
+      /// <summary> Request to user </summary>
+      public Func<bool> CheckNeedRestoreLastGame { get; set; }
 
    /// <summary>Подготовиться к началу игры - сбросить все ячейки</summary>
-   public virtual async Task GameNew() {
+   public virtual void GameNew() {
 //      System.out.println("Mosaic::GameNew()");
 
       if (GameStatus == EGameStatus.eGSReady)
@@ -521,7 +509,8 @@ namespace fmg.core.mosaic {
       if (RepositoryMines.Count != 0)
          if (GameStatus == EGameStatus.eGSCreateGame) {
          } else {
-            if (await RequestToUser_RestoreLastGame())
+            var func = CheckNeedRestoreLastGame;
+            if ((func!= null) && func())
                RepositoryMines.Clear();
          }
 
@@ -535,10 +524,10 @@ namespace fmg.core.mosaic {
    }
 
    /// <summary>создать игру игроком - он сам расставит мины</summary>
-   public async Task GameCreate() {
-      await GameNew();
+   public void GameCreate() {
+      GameNew();
       if (RepositoryMines.Count == 0) {
-         await SetMinesCount(0);
+         SetMinesCount(0);
          GameStatus = EGameStatus.eGSCreateGame;
          fireOnChangedCounters();
       }
@@ -615,8 +604,9 @@ namespace fmg.core.mosaic {
             EMosaic.eMosaicPenrousePeriodic1,
             1, AREA_MINIMUM);
    }
-   protected async void Initialize(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
-      await SetParams(sizeField, mosaicType, minesCount);
+
+   protected void Initialize(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
+      SetParams(sizeField, mosaicType, minesCount);
       Area = area; // ...провера на валидность есть только при установке из класса Main. Так что, не нуна тут задавать громадные велечины.
    }
 }

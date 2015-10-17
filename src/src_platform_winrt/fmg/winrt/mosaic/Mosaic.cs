@@ -65,7 +65,7 @@ namespace fmg.winrt.mosaic {
 #endif
       }
 
-      public override async Task SetParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
+      public override void SetParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
          if (this._mosaicType != newMosaicType)
             _cellPaint = null;
 
@@ -74,7 +74,7 @@ namespace fmg.winrt.mosaic {
                       (this.MinesCount != newMinesCount);
          if (rebind)
             UnbindXaml();
-         await base.SetParams(newSizeField, newMosaicType, newMinesCount);
+         base.SetParams(newSizeField, newMosaicType, newMinesCount);
          if (rebind)
             BindXamlToMosaic();
 
@@ -138,11 +138,11 @@ namespace fmg.winrt.mosaic {
          }
       }
 
-      public override async Task GameNew() {
+      public override void GameNew() {
          var mode = 1 + new Random().Next(CellFactory.CreateAttributeInstance(MosaicType, Area).getMaxBackgroundFillModeValue());
          //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
          GraphicContext.BkFill.Mode = (int)mode;
-         await base.GameNew();
+         base.GameNew();
          Repaint();
       }
 
@@ -153,23 +153,9 @@ namespace fmg.winrt.mosaic {
 
       /// <summary> преобразовать экранные координаты в ячейку поля мозаики </summary>
       private BaseCell CursorPointToCell(Point point) {
-         foreach (var cell in _matrix)
-            //if (cell.getRcOuter().Contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
-               if (cell.PointInRegion(point))
-                  return cell;
-         return null;
-      }
-
-      protected override async Task<bool> RequestToUser_RestoreLastGame() {
-         var dlg = new MessageDialog("Restore last game?", "Question");
-         const string okLabel = "Ok";
-         dlg.Commands.Add(new UICommand(okLabel));
-         dlg.Commands.Add(new UICommand("Cancel"));
-         dlg.DefaultCommandIndex = 0;
-         dlg.CancelCommandIndex = 1;
-
-         var cmd = await dlg.ShowAsync();
-         return okLabel.Equals(cmd.Label);
+         return _matrix.AsParallel().FirstOrDefault(cell =>
+            //cell.getRcOuter().Contains(point) && // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
+            cell.PointInRegion(point));
       }
 
       public override int Area {
@@ -186,11 +172,11 @@ namespace fmg.winrt.mosaic {
          }
       }
 
-      public async Task<bool> MousePressed(Point clickPoint, bool isLeftMouseButton) {
+      public bool MousePressed(Point clickPoint, bool isLeftMouseButton) {
          using (new Tracer("MosaicExt::MousePressed", "isLeftMouseButton="+isLeftMouseButton)) {
             return isLeftMouseButton
-               ? await OnLeftButtonDown(CursorPointToCell(clickPoint))
-               : await OnRightButtonDown(CursorPointToCell(clickPoint));
+               ? OnLeftButtonDown(CursorPointToCell(clickPoint))
+               : OnRightButtonDown(CursorPointToCell(clickPoint));
          }
       }
 

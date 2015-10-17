@@ -71,8 +71,8 @@ namespace FastMines {
 
          if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            AsyncRunner.InvokeLater(async () => {
-               await MosaicField.SetParams(new Size(10, 10), EMosaic.eMosaicRhombus1, 3);
+            AsyncRunner.InvokeLater(() => {
+               MosaicField.SetParams(new Size(10, 10), EMosaic.eMosaicRhombus1, 3);
                MosaicField.Area = 1500;
                MosaicField.Repaint();
             }, CoreDispatcherPriority.High);
@@ -85,7 +85,7 @@ namespace FastMines {
 
          var initParam = e.Parameter as MosaicPageInitParam;
          Debug.Assert(initParam != null);
-         await MosaicField.SetParams(initParam.SizeField, initParam.MosaicTypes, initParam.MinesCount);
+         MosaicField.SetParams(initParam.SizeField, initParam.MosaicTypes, initParam.MinesCount);
 
          // if () // TODO: check if no tablet
          {
@@ -100,7 +100,7 @@ namespace FastMines {
       }
 
       /// <summary> Поменять игру на новый уровень сложности </summary>
-      async Task SetGame(ESkillLevel skill) {
+      void SetGame(ESkillLevel skill) {
          //if (isPaused())
          //   ChangePause(e);
 
@@ -115,7 +115,7 @@ namespace FastMines {
             sizeFld = skill.DefaultSize();
          }
 
-         await MosaicField.SetParams(sizeFld, MosaicField.MosaicType, numberMines);
+         MosaicField.SetParams(sizeFld, MosaicField.MosaicType, numberMines);
 
          //if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected()) {
          //   AreaMax();
@@ -308,7 +308,7 @@ namespace FastMines {
          //}
       }
 
-      async Task<bool> OnClick(Windows.Foundation.Point pos, bool leftClick, bool downHandling, bool upHandling) {
+      bool OnClick(Windows.Foundation.Point pos, bool leftClick, bool downHandling, bool upHandling) {
          var margin = MosaicField.Container.Margin;
          //if ((pos.X >= margin.Left) && (pos.Y >= margin.Top)) {
          var point = pos.ToFmRect().Move(-(int)margin.Left, -(int)margin.Top);
@@ -316,7 +316,7 @@ namespace FastMines {
          //   if ((point.x <= winSize.width) && (point.y <= winSize.height)) {
             var handled = false;
             if (downHandling) {
-               var h = _clickInfo.DownHandled = await MosaicField.MousePressed(point, leftClick);
+               var h = _clickInfo.DownHandled = MosaicField.MousePressed(point, leftClick);
                handled |= h;
             }
             if (upHandling) {
@@ -329,29 +329,29 @@ namespace FastMines {
          //return false;
       }
 
-      protected override async void OnTapped(TappedRoutedEventArgs ev) {
+      protected override void OnTapped(TappedRoutedEventArgs ev) {
          using (new Tracer("OnTapped", () => string.Format("ev.Handled = " + ev.Handled))) {
             //if (!_manipulationStarted) {
             if (ev.PointerDeviceType != PointerDeviceType.Mouse) {
-               ev.Handled = await OnClick(ev.GetPosition(this), true, false, true);
+               ev.Handled = OnClick(ev.GetPosition(this), true, false, true);
             }
             if (!ev.Handled)
                base.OnTapped(ev);
          }
       }
 
-      protected override async void OnRightTapped(RightTappedRoutedEventArgs ev) {
+      protected override void OnRightTapped(RightTappedRoutedEventArgs ev) {
          using (new Tracer("OnRightTapped", () => string.Format("ev.Handled = " + ev.Handled))) {
             if (ev.PointerDeviceType == PointerDeviceType.Mouse)
                ev.Handled = _clickInfo.DownHandled || _clickInfo.UpHandled; // TODO: для избежания появления appBar'ов при установке '?'
             else if (!_manipulationStarted) {
 
                // 1. release left click in invalid coord
-               await OnClick(new Windows.Foundation.Point(-1, -1), true, false, true);
+               OnClick(new Windows.Foundation.Point(-1, -1), true, false, true);
 
                // 2. make right click - up & down
                var pos = ev.GetPosition(this);
-               ev.Handled = await OnClick(pos, false, true, true);
+               ev.Handled = OnClick(pos, false, true, true);
             }
 
             if (!ev.Handled)
@@ -360,7 +360,7 @@ namespace FastMines {
          }
       }
 
-      protected override async void OnPointerPressed(PointerRoutedEventArgs ev) {
+      protected override void OnPointerPressed(PointerRoutedEventArgs ev) {
          using (new Tracer("OnPointerPressed", () => string.Format("ev.Handled = " + ev.Handled))) {
 
             var pointerPoint = ev.GetCurrentPoint(this);
@@ -377,7 +377,7 @@ namespace FastMines {
             }
 
             if (!ev.Handled)
-               ev.Handled = await OnClick(pointerPoint.Position, props.IsLeftButtonPressed, true, false);
+               ev.Handled = OnClick(pointerPoint.Position, props.IsLeftButtonPressed, true, false);
 
             _clickInfo.DownHandled = ev.Handled;
             if (!ev.Handled)
@@ -386,7 +386,7 @@ namespace FastMines {
          }
       }
 
-      protected override async void OnPointerReleased(PointerRoutedEventArgs ev) {
+      protected override void OnPointerReleased(PointerRoutedEventArgs ev) {
          using (new Tracer("OnPointerReleased", "_manipulationStarted = " + _manipulationStarted, () => string.Format("ev.Handled = " + ev.Handled))) {
             var pointerPoint = ev.GetCurrentPoint(this);
             //if (_manipulationStarted)
@@ -394,13 +394,13 @@ namespace FastMines {
                var isLeftClick = (pointerPoint.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased);
                var isRightClick = (pointerPoint.Properties.PointerUpdateKind == PointerUpdateKind.RightButtonReleased);
                Debug.Assert(isLeftClick != isRightClick);
-               ev.Handled = await OnClick(pointerPoint.Position, isLeftClick, false, true);
+               ev.Handled = OnClick(pointerPoint.Position, isLeftClick, false, true);
             } else {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-               AsyncRunner.InvokeLater(async () => {
+               AsyncRunner.InvokeLater(() => {
                   if (!_clickInfo.Released) {
                      Log.Put("ã OnPointerReleased: forced left release click...");
-                     await OnClick(pointerPoint.Position, true, false, true);
+                     OnClick(pointerPoint.Position, true, false, true);
                   }
                }, CoreDispatcherPriority.High);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -556,24 +556,24 @@ namespace FastMines {
          }
       }
 
-      private async void OnKeyUp_CoreWindow(CoreWindow win, KeyEventArgs ev) {
+      private void OnKeyUp_CoreWindow(CoreWindow win, KeyEventArgs ev) {
          //using (new Tracer("OnKeyUp_CoreWindow", "virtKey=" + ev.Key)) {
          ev.Handled = true;
          switch (ev.VirtualKey) {
             case VirtualKey.F2:
-               await MosaicField.GameNew();
+               MosaicField.GameNew();
                break;
             case VirtualKey.Number1:
-               await SetGame(ESkillLevel.eBeginner);
+               SetGame(ESkillLevel.eBeginner);
                break;
             case VirtualKey.Number2:
-               await SetGame(ESkillLevel.eAmateur);
+               SetGame(ESkillLevel.eAmateur);
                break;
             case VirtualKey.Number3:
-               await SetGame(ESkillLevel.eProfi);
+               SetGame(ESkillLevel.eProfi);
                break;
             case VirtualKey.Number4:
-               await SetGame(ESkillLevel.eCrazy);
+               SetGame(ESkillLevel.eCrazy);
                break;
             case (VirtualKey)187: // Plus (without Shift)
             case VirtualKey.Add: // numpad Plus
@@ -593,23 +593,23 @@ namespace FastMines {
       private void OnClickBttnBack(object sender, RoutedEventArgs ev) {
          GoBack();
       }
-      private async void OnClickBttnNewGame(object sender, RoutedEventArgs ev) {
+      private void OnClickBttnNewGame(object sender, RoutedEventArgs ev) {
          topAppBar.IsOpen = false;
          bottomAppBar.IsOpen = false;
-         await MosaicField.GameNew();
+         MosaicField.GameNew();
       }
 
-      private async void OnClickBttnSkillBeginner(object sender, RoutedEventArgs ev) {
-         await SetGame(ESkillLevel.eBeginner);
+      private void OnClickBttnSkillBeginner(object sender, RoutedEventArgs ev) {
+         SetGame(ESkillLevel.eBeginner);
       }
-      private async void OnClickBttnSkillAmateur(object sender, RoutedEventArgs ev) {
-         await SetGame(ESkillLevel.eAmateur);
+      private void OnClickBttnSkillAmateur(object sender, RoutedEventArgs ev) {
+         SetGame(ESkillLevel.eAmateur);
       }
-      private async void OnClickBttnSkillProfi(object sender, RoutedEventArgs ev) {
-         await SetGame(ESkillLevel.eProfi);
+      private void OnClickBttnSkillProfi(object sender, RoutedEventArgs ev) {
+         SetGame(ESkillLevel.eProfi);
       }
-      private async void OnClickBttnSkillCrazy(object sender, RoutedEventArgs ev) {
-         await SetGame(ESkillLevel.eCrazy);
+      private void OnClickBttnSkillCrazy(object sender, RoutedEventArgs ev) {
+         SetGame(ESkillLevel.eCrazy);
       }
 
       /// <summary> Перепроверить Margin поля мозаики так, что бы при нём поле мозаки было в пределах страницы </summary>
