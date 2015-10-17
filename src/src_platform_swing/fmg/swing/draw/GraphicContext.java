@@ -36,12 +36,12 @@ public class GraphicContext  {
 	protected PenBorder penBorder;
 	private Font   	  font;
 	private final boolean iconicMode;
-	private final Size bound;
+	private Size bound;
 
-	public GraphicContext(JComponent owner, boolean iconicMode, Size bound) {
+	public GraphicContext(JComponent owner, boolean iconicMode) {
 		this.owner = owner;
 		this.iconicMode = iconicMode;
-		this.bound = bound;
+		this.bound = new Size(0, 0);
 	}
 
 	public ImageIcon getImgMine() {
@@ -142,6 +142,10 @@ public class GraphicContext  {
 
 	public Size getBound() {
 		return bound;
+	}
+
+	public void setBound(Size bound) {
+		this.bound = bound;
 	}
 
 	public Font getFont() {

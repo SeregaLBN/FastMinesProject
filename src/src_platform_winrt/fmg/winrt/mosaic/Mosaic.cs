@@ -2,8 +2,6 @@
 using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Windows.UI.Popups;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;

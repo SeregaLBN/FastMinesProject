@@ -24,7 +24,7 @@ public class MosaicsImg implements Icon {
 	private final Size sizeField;
 
 	static {
-		gContext = new GraphicContext(null, true, new Size(0,0));
+		gContext = new GraphicContext(null, true);
 		gContext.getPenBorder().setWidth(2);
 		gContext.getPenBorder().setColorLight(gContext.getPenBorder().getColorShadow());
 	}

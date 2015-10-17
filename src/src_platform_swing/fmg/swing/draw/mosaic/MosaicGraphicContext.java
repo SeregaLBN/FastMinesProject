@@ -6,7 +6,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 
-import fmg.common.geom.Size;
 import fmg.swing.draw.GraphicContext;
 
 public class MosaicGraphicContext extends GraphicContext {
@@ -16,7 +15,7 @@ public class MosaicGraphicContext extends GraphicContext {
 	private ImageIcon imgBckgrnd;
 
 	public MosaicGraphicContext(JComponent owner) {
-		super(owner, false, new Size(0,0));
+		super(owner, false);
 	}
 
 	public Color getColorBk() {
