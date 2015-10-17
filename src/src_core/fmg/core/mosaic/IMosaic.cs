@@ -28,7 +28,7 @@ using fmg.core.mosaic.cells;
 namespace fmg.core.mosaic
 {
 
-   /// <summary> Mosaic field: класс окна мозаики поля </summary>
+   /// <summary> interface of mosaic field </summary>
    public interface IMosaic<TPaintable> : BaseCell.IMatrixCells where TPaintable : IPaintable
    {
       BaseCell.BaseAttribute CellAttr { get; }
