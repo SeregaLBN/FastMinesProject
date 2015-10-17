@@ -303,7 +303,7 @@ public abstract class BaseCell {
    /// <summary>матрица ячеек поля мозаики</summary>
    public interface IMatrixCells {
       /// <summary>размер поля</summary>
-      Size SizeField { get; }
+      Size SizeField { get; set; }
 
       /// <summary>доступ к заданной ячейке</summary>
       BaseCell getCell(Coord coord);

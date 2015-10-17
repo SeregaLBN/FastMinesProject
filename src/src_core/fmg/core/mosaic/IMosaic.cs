@@ -21,7 +21,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ////////////////////////////////////////////////////////////////////////////////
 using System.Collections.Generic;
-using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
@@ -32,9 +31,6 @@ namespace fmg.core.mosaic
    /// <summary> Mosaic field: класс окна мозаики поля </summary>
    public interface IMosaic<TPaintable> : BaseCell.IMatrixCells where TPaintable : IPaintable
    {
-      new Size SizeField { get; set; }
-      //BaseCell base.getCell(Coord coord);
-
       BaseCell.BaseAttribute CellAttr { get; }
 
       ICellPaint<TPaintable> CellPaint { get; }

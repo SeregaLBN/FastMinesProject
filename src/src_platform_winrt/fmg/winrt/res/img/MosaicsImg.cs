@@ -24,7 +24,7 @@ namespace fmg.winrt.res.img {
       private Size _sizeField;
       private int _area = 230;
       private BaseCell.BaseAttribute _attr;
-      private List<BaseCell> _matrix = new List<BaseCell>();
+      private readonly List<BaseCell> _matrix = new List<BaseCell>();
       private ICellPaint<PaintableBmp> _cellPaint;
       private GraphicContext _gContext;
       private Windows.UI.Color _bkColor;
@@ -69,26 +69,9 @@ namespace fmg.winrt.res.img {
 
       public BaseCell getCell(Coord coord) { return Matrix[coord.x * SizeField.height + coord.y]; }
 
-      public BaseCell.BaseAttribute CellAttr
-      {
-         get
-         {
-            if (_attr == null)
-               _attr = CellFactory.CreateAttributeInstance(MosaicType, Area);
-            return _attr;
-         }
-      }
+      public BaseCell.BaseAttribute CellAttr => _attr ?? (_attr = CellFactory.CreateAttributeInstance(MosaicType, Area));
 
-      public ICellPaint<PaintableBmp> CellPaint {
-         get
-         {
-            if (_cellPaint == null)
-            {
-               _cellPaint = new CellPaintBmp(GContext);
-            }
-            return _cellPaint;
-         }
-      }
+      public ICellPaint<PaintableBmp> CellPaint => _cellPaint ?? (_cellPaint = new CellPaintBmp(GContext));
 
       /// <summary>матрица ячеек, представленная(развёрнута) в виде вектора</summary>
       public IList<BaseCell> Matrix
@@ -173,10 +156,7 @@ namespace fmg.winrt.res.img {
          }
       }
 
-      public WriteableBitmap Image
-      {
-         get { return GetImage(false); }
-      }
+      public WriteableBitmap Image => GetImage(false);
 
       /// <summary> Return painted mosaic bitmap </summary>
       /// <param name="drawAsync">== true Сама картинка возвращается сразу.
