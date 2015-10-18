@@ -42,9 +42,10 @@ import fmg.core.types.click.LeftUpResult;
 import fmg.core.types.click.RightDownReturn;
 import fmg.core.types.event.MosaicEvent;
 import fmg.core.types.event.MosaicListener;
+import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
 /** Mosaic field: класс окна мозаики поля */
-public abstract class MosaicBase implements BaseCell.IMatrixCells {
+public abstract class MosaicBase implements IMosaic<PaintableGraphics> {
 
 	public static final int AREA_MINIMUM = 230;
 
@@ -83,6 +84,10 @@ public abstract class MosaicBase implements BaseCell.IMatrixCells {
 		return _cellAttr;
 	}
 
+	public List<BaseCell> getMatrix() {
+		return _matrix;
+	}
+
 	/** размер поля в ячейках */
 	@Override
 	public Size getSizeField() { return new Size(_size); } // return clone
@@ -91,11 +96,12 @@ public abstract class MosaicBase implements BaseCell.IMatrixCells {
 	public void setSizeField(Size newSizeField) { setParams(newSizeField, null, null ); } 
 
 	/** узнать тип мозаики */
+	@Override
 	public EMosaic getMosaicType() { return _mosaicType; }
+	@Override
+	public void setMosaicType(EMosaic newMosaicType) { setParams(null, newMosaicType, null); }
 	/** количество мин */
 	public int getMinesCount() { return _minesCount; }
-
-//		public void setMosaicType(EMosaic newMosaicType) { setParams(null, newMosaicType, null); }
 	public void setMinesCount(int newMinesCount    ) { setParams(null, null, newMinesCount); }
 
 	/** установить мозаику заданного размера, типа  и с определённым количеством мин (координаты мин могут задаваться с помощью "Хранилища Мин") */
@@ -140,7 +146,7 @@ public abstract class MosaicBase implements BaseCell.IMatrixCells {
 					attr.removePropertyChangeListener(cell);
 
 				_matrix.clear();
-				_matrix = new ArrayList<BaseCell>(_size.width*_size.height);
+				//_matrix = new ArrayList<BaseCell>(_size.width*_size.height);
 				for (int i=0; i < _size.width; i++)
 					for (int j=0; j < _size.height; j++) {
 						BaseCell cell = CellFactory.createCellInstance(attr, _mosaicType, new Coord(i, j));
