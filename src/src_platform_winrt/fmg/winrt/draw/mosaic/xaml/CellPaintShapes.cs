@@ -14,10 +14,9 @@ namespace fmg.winrt.draw.mosaic.xaml
    /// </summary>
    public class CellPaintShapes : CellPaint<PaintableShapes>
    {
-      private IDictionary<Color, Brush> _brushCacheMap;
+      private readonly IDictionary<Color, Brush> _brushCacheMap;
 
-      public CellPaintShapes(GraphicContext gContext) :
-         base(gContext)
+      public CellPaintShapes()
       {
          _brushCacheMap = new Dictionary<Color, Brush>();
       }
@@ -29,14 +28,8 @@ namespace fmg.winrt.draw.mosaic.xaml
             _brushCacheMap.Add(clr, new SolidColorBrush(clr.ToWinColor()));
          return _brushCacheMap[clr];
       }
-      protected Brush BrushBorderShadow
-      {
-         get { return FindBrush(_gContext.PenBorder.ColorShadow); }
-      }
-      protected Brush BrushBorderLight
-      {
-         get { return FindBrush(_gContext.PenBorder.ColorLight); }
-      }
+      protected Brush BrushBorderShadow => FindBrush(GContext.PenBorder.ColorShadow);
+      protected Brush BrushBorderLight => FindBrush(GContext.PenBorder.ColorLight);
 
       public override void Paint(BaseCell cell, PaintableShapes binder) {
          // all paint
@@ -52,7 +45,7 @@ namespace fmg.winrt.draw.mosaic.xaml
          PaintBorderLines(cell, binder);
 
          // debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
-         //var rcInner = cell.getRcInner(_gContext.PenBorder.Width);
+         //var rcInner = cell.getRcInner(GContext.PenBorder.Width);
          //bmp.DrawRectangle(rcInner.x, rcInner.y, rcInner.right(), rcInner.bottom(), (Windows.UI.Color)Color.MAGENTA);
       }
 
@@ -70,7 +63,7 @@ namespace fmg.winrt.draw.mosaic.xaml
                poly.Points.Clear();
             for (var p = 0; p < cnt; p++) {
                var point = cell.getRegion().getPoint(p);
-               point.Move(_gContext.Bound);
+               point.Move(GContext.Bound);
                if (d)
                   poly.Points.Add(point.ToWinPoint());
                else
@@ -83,7 +76,7 @@ namespace fmg.winrt.draw.mosaic.xaml
             var region = cell.getRegion();
             for (var p = 0; p < region.CountPoints; p++) {
                var point = region.getPoint(p);
-               point.Move(_gContext.Bound);
+               point.Move(GContext.Bound);
                points.Add(point.ToWinPoint());
             }
          }
@@ -91,7 +84,7 @@ namespace fmg.winrt.draw.mosaic.xaml
 #endif
          var open = (cell.State.Status == EState._Open);
          var down = cell.State.Down || open;
-         poly.StrokeThickness = open ? (_gContext.PenBorder.Width * 2) : _gContext.PenBorder.Width;
+         poly.StrokeThickness = open ? (GContext.PenBorder.Width * 2) : GContext.PenBorder.Width;
          poly.Stroke = down ? BrushBorderLight : BrushBorderShadow;
          Canvas.SetZIndex(poly, open ? 1 : down ? 3 : 2);
          // TODO граница региона должна быть двухцветной...
@@ -100,21 +93,21 @@ namespace fmg.winrt.draw.mosaic.xaml
       public override void PaintComponent(BaseCell cell, PaintableShapes binder) {
          PaintComponentBackground(cell, binder);
 
-         var rcInner = cell.getRcInner(_gContext.PenBorder.Width);
-         rcInner.moveXY(_gContext.Bound);
+         var rcInner = cell.getRcInner(GContext.PenBorder.Width);
+         rcInner.moveXY(GContext.Bound);
          var txt = binder.Txt;
          var image = binder.Img;
 
          ImageSource srcImg = null;
-         if ((_gContext.ImgFlag != null) &&
+         if ((GContext.ImgFlag != null) &&
              (cell.State.Status == EState._Close) &&
              (cell.State.Close == EClose._Flag))
          {
-            srcImg = _gContext.ImgFlag;
-         } else if ((_gContext.ImgMine != null) &&
+            srcImg = GContext.ImgFlag;
+         } else if ((GContext.ImgMine != null) &&
                     (cell.State.Status == EState._Open) &&
                     (cell.State.Open == EOpen._Mine)) {
-            srcImg = _gContext.ImgMine;
+            srcImg = GContext.ImgMine;
          }
 
          // output Pictures
@@ -135,12 +128,12 @@ namespace fmg.winrt.draw.mosaic.xaml
             string szCaption;
             Color txtColor;
             if (cell.State.Status == EState._Close) {
-               txtColor = _gContext.ColorText.GetColorClose((int)cell.State.Close.Ordinal());
+               txtColor = GContext.ColorText.GetColorClose((int)cell.State.Close.Ordinal());
                szCaption = cell.State.Close.ToCaption();
                //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
                //szCaption = ""+cell.getDirection(); // debug
             } else {
-               txtColor = _gContext.ColorText.GetColorOpen((int)cell.State.Open.Ordinal());
+               txtColor = GContext.ColorText.GetColorOpen((int)cell.State.Open.Ordinal());
                szCaption = cell.State.Open.ToCaption();
             }
             if (string.IsNullOrWhiteSpace(szCaption)) {
@@ -149,12 +142,12 @@ namespace fmg.winrt.draw.mosaic.xaml
                txt.Visibility = Visibility.Visible;
 
                if (cell.State.Down)
-                  rcInner.moveXY(_gContext.PenBorder.Width, _gContext.PenBorder.Width);
+                  rcInner.moveXY(GContext.PenBorder.Width, GContext.PenBorder.Width);
                txt.Text = szCaption;
                txt.TextAlignment = TextAlignment.Center;
-               txt.FontFamily = _gContext.FontFamily;
-               txt.FontStyle = _gContext.FontStyle;
-               txt.FontSize = _gContext.FontSize;
+               txt.FontFamily = GContext.FontFamily;
+               txt.FontStyle = GContext.FontStyle;
+               txt.FontSize = GContext.FontSize;
                txt.Foreground = FindBrush(txtColor);
                Canvas.SetLeft(txt, rcInner.left());
                Canvas.SetTop(txt, rcInner.top());
@@ -168,13 +161,13 @@ namespace fmg.winrt.draw.mosaic.xaml
       /// <summary> залить ячейку нужным цветом </summary>
       public override void PaintComponentBackground(BaseCell cell, PaintableShapes binder) {
          Color clr;
-         if (_gContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
+         if (GContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
             clr = DefaultBackgroundFillColor; // TODO ??? мож прозрачное..
          else
             clr = cell.getBackgroundFillColor(
-               _gContext.BkFill.Mode,
+               GContext.BkFill.Mode,
                DefaultBackgroundFillColor,
-               _gContext.BkFill.GetColor
+               GContext.BkFill.GetColor
                );
          binder.Poly.Fill = FindBrush(clr);
       }

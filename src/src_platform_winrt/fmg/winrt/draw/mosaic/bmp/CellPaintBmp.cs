@@ -11,11 +11,6 @@ namespace fmg.winrt.draw.mosaic.bmp
    /// </summary>
    public class CellPaintBmp : CellPaint<PaintableBmp>
    {
-      public CellPaintBmp(GraphicContext gContext) :
-         base(gContext)
-      {
-      }
-
       public override void Paint(BaseCell cell, PaintableBmp paint)
       {
          // TODO ограничиваю рисование только границами своей фигуры
@@ -41,19 +36,19 @@ namespace fmg.winrt.draw.mosaic.bmp
       /// <summary> draw border lines </summary>
       public override void PaintBorderLines(BaseCell cell, PaintableBmp paint) {
          var down = cell.State.Down || (cell.State.Status == EState._Open);
-         if (_gContext.IconicMode) {
-            paint.Bmp.DrawPolyline(cell.getRegion().RegionAsXyxyxySequence(_gContext.Bound, true), (down ? _gContext.PenBorder.ColorLight : _gContext.PenBorder.ColorShadow).ToWinColor());
+         if (GContext.IconicMode) {
+            paint.Bmp.DrawPolyline(cell.getRegion().RegionAsXyxyxySequence(GContext.Bound, true), (down ? GContext.PenBorder.ColorLight : GContext.PenBorder.ColorShadow).ToWinColor());
          } else {
-            var color = down ? _gContext.PenBorder.ColorLight : _gContext.PenBorder.ColorShadow;
+            var color = down ? GContext.PenBorder.ColorLight : GContext.PenBorder.ColorShadow;
             var s = cell.getShiftPointBorderIndex();
             var v = cell.Attr.getVertexNumber(cell.getDirection());
             for (var i=0; i < v; i++) {
                var p1 = cell.getRegion().getPoint(i);
-               p1.Move(_gContext.Bound);
+               p1.Move(GContext.Bound);
                var p2 = (i != (v - 1)) ? cell.getRegion().getPoint(i + 1) : cell.getRegion().getPoint(0);
-               p2.Move(_gContext.Bound);
+               p2.Move(GContext.Bound);
                if (i == s)
-                  color = down ? _gContext.PenBorder.ColorShadow : _gContext.PenBorder.ColorLight;
+                  color = down ? GContext.PenBorder.ColorShadow : GContext.PenBorder.ColorLight;
                paint.Bmp.DrawLine(p1.x, p1.y, p2.x, p2.y, color.ToWinColor());
             }
          }
@@ -63,21 +58,21 @@ namespace fmg.winrt.draw.mosaic.bmp
       {
          PaintComponentBackground(cell, paint);
 
-         var rcInner = cell.getRcInner(_gContext.PenBorder.Width);
-         rcInner.moveXY(_gContext.Bound);
+         var rcInner = cell.getRcInner(GContext.PenBorder.Width);
+         rcInner.moveXY(GContext.Bound);
 
          WriteableBitmap srcImg = null;
-         if ((_gContext.ImgFlag != null) &&
+         if ((GContext.ImgFlag != null) &&
              (cell.State.Status == EState._Close) &&
              (cell.State.Close == EClose._Flag))
          {
-            srcImg = _gContext.ImgFlag;
+            srcImg = GContext.ImgFlag;
          }
-         else if ((_gContext.ImgMine != null) &&
+         else if ((GContext.ImgMine != null) &&
                   (cell.State.Status == EState._Open) &&
                   (cell.State.Open == EOpen._Mine))
          {
-            srcImg = _gContext.ImgMine;
+            srcImg = GContext.ImgMine;
          }
 
          // output Pictures
@@ -92,14 +87,14 @@ namespace fmg.winrt.draw.mosaic.bmp
             Color txtColor;
             if (cell.State.Status == EState._Close)
             {
-               txtColor = _gContext.ColorText.GetColorClose((int) cell.State.Close.Ordinal());
+               txtColor = GContext.ColorText.GetColorClose((int) cell.State.Close.Ordinal());
                szCaption = cell.State.Close.ToCaption();
                //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
                //szCaption = ""+cell.getDirection(); // debug
             }
             else
             {
-               txtColor = _gContext.ColorText.GetColorOpen((int) cell.State.Open.Ordinal());
+               txtColor = GContext.ColorText.GetColorOpen((int) cell.State.Open.Ordinal());
                szCaption = cell.State.Open.ToCaption();
             }
             if (!string.IsNullOrWhiteSpace(szCaption)) {
@@ -119,7 +114,7 @@ namespace fmg.winrt.draw.mosaic.bmp
 //                  }
 //               }
 //#endif
-               paint.Bmp.DrawString(szCaption, rcInner.ToWinRect(), _gContext.FontFamily.Source, _gContext.FontSize, txtColor.ToWinColor());
+               paint.Bmp.DrawString(szCaption, rcInner.ToWinRect(), GContext.FontFamily.Source, GContext.FontSize, txtColor.ToWinColor());
                //paint.Bmp.DrawRectangle(rcInner.left(), rcInner.top(), rcInner.right(), rcInner.bottom(), Color.RED.ToWinColor()); // debug
             }
          }
@@ -131,11 +126,11 @@ namespace fmg.winrt.draw.mosaic.bmp
          //if (gContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
          //   return;
          var color = cell.getBackgroundFillColor(
-            _gContext.BkFill.Mode,
+            GContext.BkFill.Mode,
             DefaultBackgroundFillColor,
-            _gContext.BkFill.GetColor
+            GContext.BkFill.GetColor
             );
-         paint.Bmp.FillPolygon(cell.getRegion().RegionAsXyxyxySequence(_gContext.Bound, true), color.ToWinColor());
+         paint.Bmp.FillPolygon(cell.getRegion().RegionAsXyxyxySequence(GContext.Bound, true), color.ToWinColor());
       }
 
    }

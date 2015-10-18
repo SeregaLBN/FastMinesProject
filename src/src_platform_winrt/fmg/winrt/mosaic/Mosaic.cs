@@ -20,8 +20,7 @@ using fmg.winrt.draw.mosaic.xaml;
 namespace fmg.winrt.mosaic {
    public class Mosaic : MosaicBase<PaintableShapes> {
       private IDictionary<BaseCell, PaintableShapes> _xamlBinder;
-      private MosaicGraphicContext _gContext;
-      private ICellPaint<PaintableShapes> _cellPaint;
+      private CellPaintShapes _cellPaint;
       private Panel _container;
 
       public Mosaic() {}
@@ -81,17 +80,20 @@ namespace fmg.winrt.mosaic {
       }
 
       public MosaicGraphicContext GraphicContext {
-         get {
-            if (_gContext == null) {
-               _gContext = new MosaicGraphicContext();
-               //changeFontSize(_gContext.PenBorder, Area);
-               _gContext.PropertyChanged += OnPropertyChange; // изменение контекста -> перерисовка мозаики
+         get
+         {
+            var gContext = CellPaintFigures.GContext as MosaicGraphicContext;
+            if (gContext == null) {
+               CellPaintFigures.GContext = gContext = new MosaicGraphicContext();
+               //changeFontSize(gContext.PenBorder, Area);
+               gContext.PropertyChanged += OnPropertyChange; // изменение контекста -> перерисовка мозаики
             }
-            return _gContext;
+            return gContext;
          }
       }
 
-      public override ICellPaint<PaintableShapes> CellPaint => _cellPaint ?? (_cellPaint = new CellPaintShapes(GraphicContext));
+      public override ICellPaint<PaintableShapes> CellPaint => CellPaintFigures;
+      protected CellPaintShapes CellPaintFigures => _cellPaint ?? (_cellPaint = new CellPaintShapes());
 
       private IDictionary<BaseCell, PaintableShapes> XamlBinder {
          get { return _xamlBinder ?? (_xamlBinder = new Dictionary<BaseCell, PaintableShapes>()); }

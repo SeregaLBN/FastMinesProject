@@ -9,15 +9,15 @@ namespace fmg.winrt.draw.mosaic
    /// <summary>
    /// Helper class for drawing info
    /// </summary>
-   public abstract class CellPaint<TPaintable> : ICellPaint<TPaintable> where TPaintable : IPaintable
+   public abstract class CellPaint<TPaintable> : ICellPaint<TPaintable>
+      where TPaintable : IPaintable
    {
-      protected GraphicContext _gContext;
-
-      public CellPaint(GraphicContext gContext)
+      protected CellPaint()
       {
-         this._gContext = gContext;
          DefaultBackgroundFillColor = new UISettings().UIElementColor(UIElementType.ButtonFace).ToFmColor();
       }
+
+      public GraphicContext GContext { get; set; }
 
       public abstract void Paint(BaseCell cell, TPaintable paint);
 

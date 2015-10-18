@@ -25,8 +25,7 @@ namespace fmg.winrt.res.img {
       private int _area = 230;
       private BaseCell.BaseAttribute _attr;
       private readonly List<BaseCell> _matrix = new List<BaseCell>();
-      private ICellPaint<PaintableBmp> _cellPaint;
-      private GraphicContext _gContext;
+      private CellPaintBmp _cellPaint;
       private Windows.UI.Color _bkColor;
       private WriteableBitmap _image;
       private static readonly Random _random = new Random();
@@ -71,7 +70,8 @@ namespace fmg.winrt.res.img {
 
       public BaseCell.BaseAttribute CellAttr => _attr ?? (_attr = CellFactory.CreateAttributeInstance(MosaicType, Area));
 
-      public ICellPaint<PaintableBmp> CellPaint => _cellPaint ?? (_cellPaint = new CellPaintBmp(GContext));
+      public ICellPaint<PaintableBmp> CellPaint => CellPaintBitmap;
+      protected CellPaintBmp CellPaintBitmap => _cellPaint ?? (_cellPaint = new CellPaintBmp());
 
       /// <summary>матрица ячеек, представленная(развёрнута) в виде вектора</summary>
       public IList<BaseCell> Matrix
@@ -130,17 +130,25 @@ namespace fmg.winrt.res.img {
 
       public GraphicContext GContext
       {
-         get {
-            if (_gContext == null)
+         get
+         {
+            var gContext = CellPaintBitmap.GContext;
+            if (gContext == null)
             {
-               _gContext = new GraphicContext(true);
-               _gContext.PenBorder.Width = 2;
-               _gContext.PenBorder.ColorLight = _gContext.PenBorder.ColorShadow;
+               CellPaintBitmap.GContext = gContext = new GraphicContext(true);
+               gContext.PenBorder.Width = 2;
+               gContext.PenBorder.ColorLight = gContext.PenBorder.ColorShadow;
                if (_randomCellBkColor)
-                  _gContext.BkFill.Mode = 1 + _random.Next(CellAttr.getMaxBackgroundFillModeValue());
-
+                  gContext.BkFill.Mode = 1 + _random.Next(CellAttr.getMaxBackgroundFillModeValue());
             }
-            return _gContext;
+            return gContext;
+         }
+         set
+         {
+            // reset
+            _image = null;
+
+            CellPaintBitmap.GContext = value;
          }
       }
 
