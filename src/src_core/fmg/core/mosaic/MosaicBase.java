@@ -86,12 +86,15 @@ public abstract class MosaicBase implements BaseCell.IMatrixCells {
 	/** размер поля в ячейках */
 	@Override
 	public Size getSizeField() { return new Size(_size); } // return clone
+	/** размер поля в ячейках */
+	@Override
+	public void setSizeField(Size newSizeField) { setParams(newSizeField, null, null ); } 
+
 	/** узнать тип мозаики */
 	public EMosaic getMosaicType() { return _mosaicType; }
 	/** количество мин */
 	public int getMinesCount() { return _minesCount; }
 
-//		public void setSize(Size newSizeField          ) { setParams(newSizeField, null, null ); } 
 //		public void setMosaicType(EMosaic newMosaicType) { setParams(null, newMosaicType, null); }
 	public void setMinesCount(int newMinesCount    ) { setParams(null, null, newMinesCount); }
 

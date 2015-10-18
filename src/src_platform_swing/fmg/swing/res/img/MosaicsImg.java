@@ -9,57 +9,136 @@ import javax.swing.Icon;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Size;
 import fmg.core.mosaic.CellFactory;
+import fmg.core.mosaic.IMosaic;
 import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
+import fmg.core.mosaic.draw.ICellPaint;
 import fmg.core.types.EMosaic;
 import fmg.swing.draw.GraphicContext;
 import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
 /** картинка поля конкретной мозаики. Используется для меню, кнопок, etc... */
-public class MosaicsImg implements Icon {
-	private final BaseCell.BaseAttribute attr;
-	private final CellPaintGraphics gInfo;
-	private final List<BaseCell> arrCell;
-	private final static GraphicContext gContext;
-	private final Size sizeField;
-
-	static {
-		gContext = new GraphicContext(null, true);
-		gContext.getPenBorder().setWidth(2);
-		gContext.getPenBorder().setColorLight(gContext.getPenBorder().getColorShadow());
-	}
-
-	public MosaicsImg(EMosaic mosaicType, boolean smallIco) { this(mosaicType, smallIco, 300); }
-	public MosaicsImg(EMosaic mosaicType, boolean smallIco, int area) {
-		attr = CellFactory.createAttributeInstance(mosaicType, area);
-		arrCell = new ArrayList<BaseCell>();
-		gInfo = new CellPaintGraphics();
-		gInfo.setGraphicContext(gContext);
-		sizeField = mosaicType.sizeIcoField(smallIco);
-		for (int i=0; i<sizeField.width; i++)
-			for (int j=0; j<sizeField.height; j++)
-				arrCell.add(CellFactory.createCellInstance(attr, mosaicType, new Coord(i,j)));
-	}
+public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
+	private EMosaic _mosaicType;
+	private Size _sizeField;
+	private int _area = 230;
+	private BaseCell.BaseAttribute _attr;
+	private List<BaseCell> _matrix = new ArrayList<BaseCell>();
+	private CellPaintGraphics _cellPaint;
 
 	@Override
 	public int getIconWidth() {
-		return attr.CalcOwnerSize(sizeField, attr.getArea()).width+gContext.getBound().width*2;
+		BaseCell.BaseAttribute attr = getCellAttr();
+		return attr.CalcOwnerSize(getSizeField(), attr.getArea()).width+getGraphicContext().getBound().width*2;
 	}
 
 	@Override
 	public int getIconHeight() {
-		return attr.CalcOwnerSize(sizeField, attr.getArea()).height+gContext.getBound().height*2;
+		BaseCell.BaseAttribute attr = getCellAttr();
+		return attr.CalcOwnerSize(getSizeField(), attr.getArea()).height+getGraphicContext().getBound().height*2;
 	}
 
 	@Override
 	public void paintIcon(Component c, Graphics g, int x, int y) {
 //		if (false) {
-//			Size pixelSize = attr.CalcOwnerSize(sizeField, area);
+//			Size pixelSize = getCellAttr().CalcOwnerSize(getSizeField(), getArea());
 //			g.setColor(java.awt.Color.ORANGE);
-//			g.fillRect(0, 0, pixelSize.width+gContext.getBound().width*2, pixelSize.height+gContext.getBound().height*2);
+//			g.fillRect(0, 0, pixelSize.width+getGraphicContext().getBound().width*2, pixelSize.height+getGraphicContext().getBound().height*2);
 //		}
 		PaintableGraphics p = new PaintableGraphics(g);
-		for (BaseCell cell: arrCell)
-			gInfo.paint(cell, p);
+		ICellPaint<PaintableGraphics> cellPaint = getCellPaint();
+		for (BaseCell cell: getMatrix())
+			cellPaint.paint(cell, p);
+	}
+
+	@Override
+	public Size getSizeField() {
+		return _sizeField;
+	}
+	@Override
+	public void setSizeField(Size size) {
+		// reset
+		_matrix.clear();
+
+		_sizeField = size;
+	}
+
+	public void SetSmallIco(EMosaic mosaicType, boolean smallIco) {
+		setSizeField(mosaicType.sizeIcoField(smallIco));
+	}
+
+	@Override
+	public BaseCell getCell(Coord coord) {
+		return getMatrix().get(coord.x * getSizeField().height + coord.y);
+	}
+
+	@Override
+	public BaseAttribute getCellAttr() {
+		if (_attr == null)
+			_attr = CellFactory.createAttributeInstance(getMosaicType(), getArea());
+		return _attr;
+	}
+
+	@Override
+	public ICellPaint<PaintableGraphics> getCellPaint() {
+		return getCellPaintGraphics();
+	}
+	public CellPaintGraphics getCellPaintGraphics() {
+		if (_cellPaint == null)
+			_cellPaint = new CellPaintGraphics();
+		return _cellPaint;
+	}
+
+	@Override
+	public List<BaseCell> getMatrix() {
+		if (_matrix.isEmpty()) {
+			BaseCell.BaseAttribute attr = getCellAttr();
+			EMosaic type = getMosaicType();
+			Size size = getSizeField();
+			for (int i=0; i<size.width; i++)
+				for (int j=0; j<size.height; j++)
+					_matrix.add(CellFactory.createCellInstance(attr, type, new Coord(i,j)));
+		}
+		return _matrix;
+	}
+	
+	@Override
+	public EMosaic getMosaicType() {
+		return _mosaicType;
+	}
+	@Override
+	public void setMosaicType(EMosaic type) {
+		// reset
+		_matrix.clear();
+		_attr = null;
+
+		_mosaicType = type;
+	}
+
+	@Override
+	public int getArea() {
+		return _area;
+	}
+	@Override
+	public void setArea(int area) {
+		this._area = area;
+	}
+
+	public GraphicContext getGraphicContext() {
+		GraphicContext gContext = getCellPaintGraphics().getGraphicContext();
+		if (gContext == null)
+		{
+			gContext = new GraphicContext(null, true);
+			getCellPaintGraphics().setGraphicContext(gContext);
+			gContext.getPenBorder().setWidth(2);
+			gContext.getPenBorder().setColorLight(gContext.getPenBorder().getColorShadow());
+//			if (_randomCellBkColor)
+//				gContext.getBackgroundFill().setMode(1 + _random.Next(CellAttr.getMaxBackgroundFillModeValue()));
+		}
+		return gContext;
+	}
+	public void setGraphicContext(GraphicContext gContext) {
+		getCellPaintGraphics().setGraphicContext(gContext);
 	}
 }

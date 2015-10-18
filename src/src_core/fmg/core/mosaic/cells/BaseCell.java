@@ -349,6 +349,7 @@ public abstract class BaseCell implements PropertyChangeListener {
 	public static interface IMatrixCells {
 		/** размер поля */
 		Size getSizeField();
+		void setSizeField(Size size);
 
 		/** доступ к заданной ячейке */
 		BaseCell getCell(Coord coord);

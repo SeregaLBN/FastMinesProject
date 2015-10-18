@@ -166,11 +166,14 @@ public final class Resources {
 		}
 		Map<EMosaic, ImageIcon> imgsMosaic = smallIco ? imgsMosaicSmall : imgsMosaicWide;
 
-		for (EMosaic val: EMosaic.values()) {
-			ImageIcon imgMosaic = getImageIcon("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + val.getDescription(true)+".png"); // сначала из ресурсов
-			if (imgMosaic == null) // иначе - своя картинка из кода
-				imgMosaic = ImgUtils.toImgIco(ImgUtils.toImg(new MosaicsImg(val, smallIco)));
-			imgsMosaic.put(val, imgMosaic);
+		for (EMosaic mosaicType: EMosaic.values()) {
+			ImageIcon imgMosaic = getImageIcon("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.getDescription(true)+".png"); // сначала из ресурсов
+			if (imgMosaic == null) { // иначе - своя картинка из кода
+				MosaicsImg img = new MosaicsImg();
+				img.SetSmallIco(mosaicType, smallIco);
+				imgMosaic = ImgUtils.toImgIco(ImgUtils.toImg(img));
+			}
+			imgsMosaic.put(mosaicType, imgMosaic);
 		}
 		return imgsMosaic.get(key);
 	}
