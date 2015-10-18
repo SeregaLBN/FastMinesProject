@@ -170,7 +170,9 @@ public final class Resources {
 			ImageIcon imgMosaic = getImageIcon("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.getDescription(true)+".png"); // сначала из ресурсов
 			if (imgMosaic == null) { // иначе - своя картинка из кода
 				MosaicsImg img = new MosaicsImg();
-				img.SetSmallIco(mosaicType, smallIco);
+				img.setMosaicType(mosaicType);
+				img.setSmallIco(mosaicType, smallIco);
+				//img.setBackgroundColor(java.awt.Color.ORANGE); // test
 				imgMosaic = ImgUtils.toImgIco(ImgUtils.toImg(img));
 			}
 			imgsMosaic.put(mosaicType, imgMosaic);

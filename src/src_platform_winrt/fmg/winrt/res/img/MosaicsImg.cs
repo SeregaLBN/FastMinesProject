@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
+using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic;
@@ -119,7 +120,13 @@ namespace fmg.winrt.res.img {
 
       public Windows.UI.Color BackgroundColor
       {
-         get { return _bkColor; }
+         get
+         {
+            //if (_bkColor == null) {
+            //   _bkColor = CellPaint.DefaultBackgroundFillColor.ToWinColor();
+            //}
+            return _bkColor;
+         }
          set {
             // reset
             _image = null;

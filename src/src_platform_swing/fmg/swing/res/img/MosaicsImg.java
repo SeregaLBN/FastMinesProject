@@ -1,8 +1,10 @@
 package fmg.swing.res.img;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.Icon;
 
@@ -20,12 +22,16 @@ import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
 /** картинка поля конкретной мозаики. Используется для меню, кнопок, etc... */
 public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
+	private static final boolean _randomCellBkColor = true;
+
 	private EMosaic _mosaicType;
 	private Size _sizeField;
 	private int _area = 230;
 	private BaseCell.BaseAttribute _attr;
 	private List<BaseCell> _matrix = new ArrayList<BaseCell>();
 	private CellPaintGraphics _cellPaint;
+	private Color _bkColor;
+	private final Random _random = !_randomCellBkColor ? null : new Random();
 
 	@Override
 	public int getIconWidth() {
@@ -41,11 +47,17 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
 
 	@Override
 	public void paintIcon(Component c, Graphics g, int x, int y) {
-//		if (false) {
-//			Size pixelSize = getCellAttr().CalcOwnerSize(getSizeField(), getArea());
-//			g.setColor(java.awt.Color.ORANGE);
-//			g.fillRect(0, 0, pixelSize.width+getGraphicContext().getBound().width*2, pixelSize.height+getGraphicContext().getBound().height*2);
-//		}
+		if (!false) {
+			Color clr = getBackgroundColor();
+			if (clr != null) {
+				Color tmp = g.getColor(); // save
+				g.setColor(clr); // change
+				Size pixelSize = getCellAttr().CalcOwnerSize(getSizeField(), getArea());
+				Size bound = getGraphicContext().getBound();
+				g.fillRect(0, 0, pixelSize.width+bound.width*2, pixelSize.height+bound.height*2);
+				g.setColor(tmp); // restore
+			}
+		}
 		PaintableGraphics p = new PaintableGraphics(g);
 		ICellPaint<PaintableGraphics> cellPaint = getCellPaint();
 		for (BaseCell cell: getMatrix())
@@ -64,7 +76,7 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
 		_sizeField = size;
 	}
 
-	public void SetSmallIco(EMosaic mosaicType, boolean smallIco) {
+	public void setSmallIco(EMosaic mosaicType, boolean smallIco) {
 		setSizeField(mosaicType.sizeIcoField(smallIco));
 	}
 
@@ -125,6 +137,16 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
 		this._area = area;
 	}
 
+	public Color getBackgroundColor() {
+		//if (_bkColor == null) {
+		//	_bkColor = fmg.swing.geom.Cast.toColor(getCellPaint().getDefaultBackgroundFillColor());
+		//}
+		return _bkColor;
+	}
+	public void setBackgroundColor(Color color) {
+		_bkColor = color;
+	}
+
 	public GraphicContext getGraphicContext() {
 		GraphicContext gContext = getCellPaintGraphics().getGraphicContext();
 		if (gContext == null)
@@ -133,8 +155,8 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
 			getCellPaintGraphics().setGraphicContext(gContext);
 			gContext.getPenBorder().setWidth(2);
 			gContext.getPenBorder().setColorLight(gContext.getPenBorder().getColorShadow());
-//			if (_randomCellBkColor)
-//				gContext.getBackgroundFill().setMode(1 + _random.Next(CellAttr.getMaxBackgroundFillModeValue()));
+			if (_randomCellBkColor)
+				gContext.getBackgroundFill().setMode(1 + _random.nextInt(getCellAttr().getMaxBackgroundFillModeValue()));
 		}
 		return gContext;
 	}

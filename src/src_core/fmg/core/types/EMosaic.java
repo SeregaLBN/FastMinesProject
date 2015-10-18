@@ -208,8 +208,9 @@ public enum EMosaic {
 		case eMosaicTrSq1            : res.width = 4; res.height = smallSize ? 4 : 5; break;
 		case eMosaicTrSq2            : res.width = 4; res.height = smallSize ? 4 : 5; break;
 		case eMosaicSqTrHex          : res.width = 4; res.height = smallSize ? 4 : 5; break;
+		default:
+			System.err.println("EMosaic.SizeIcoField: Mosaic '" + this + "' not implemented");
 		}
-		System.err.println("EMosaic.SizeIcoField: Mosaic '" + this + "' not implemented");
 		return res;
 	}
 }
