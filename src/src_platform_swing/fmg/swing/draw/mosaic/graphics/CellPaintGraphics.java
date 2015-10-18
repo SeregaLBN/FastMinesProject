@@ -21,7 +21,6 @@ import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
-import fmg.swing.draw.GraphicContext;
 import fmg.swing.draw.mosaic.CellPaint;
 import fmg.swing.geom.Cast;
 
@@ -31,10 +30,6 @@ import fmg.swing.geom.Cast;
  *
  */
 public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
-	public CellPaintGraphics(GraphicContext gContext) {
-		super(gContext);
-	}
-
 	/** @see javax.swing.JComponent.paint */
 	@Override
 	public void paint(BaseCell cell, PaintableGraphics p) {

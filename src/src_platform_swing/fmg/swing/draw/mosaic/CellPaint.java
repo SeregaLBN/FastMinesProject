@@ -18,8 +18,11 @@ import fmg.swing.geom.Cast;
  */
 public abstract class CellPaint<TPaintable extends IPaintable> implements ICellPaint<TPaintable> {
 	protected GraphicContext gContext;
-	
-	public CellPaint(GraphicContext gContext) {
+
+	public GraphicContext getGraphicContext() {
+		return gContext;
+	}
+	public void setGraphicContext(GraphicContext gContext) {
 		this.gContext = gContext;
 	}
 

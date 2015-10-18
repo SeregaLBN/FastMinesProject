@@ -120,8 +120,10 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
 	}
 
 	public CellPaintGraphics getCellPaint() {
-		if (_cellPaint == null)
-			_cellPaint = new CellPaintGraphics(getGraphicContext());
+		if (_cellPaint == null) {
+			_cellPaint = new CellPaintGraphics();
+			_cellPaint.setGraphicContext(getGraphicContext());
+		}
 		return _cellPaint;
 	}
 
