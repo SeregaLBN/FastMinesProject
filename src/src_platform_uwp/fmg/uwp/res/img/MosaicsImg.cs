@@ -9,11 +9,11 @@ using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
-using fmg.winrt.draw;
-using fmg.winrt.draw.mosaic.bmp;
+using fmg.uwp.draw;
+using fmg.uwp.draw.mosaic.bmp;
 using FastMines.Common;
 
-namespace fmg.winrt.res.img {
+namespace fmg.uwp.res.img {
 
    /// <summary>
    /// картинка поля конкретной мозаики. Используется для меню, кнопок, etc... 

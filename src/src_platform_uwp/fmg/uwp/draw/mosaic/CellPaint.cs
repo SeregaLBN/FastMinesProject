@@ -3,7 +3,7 @@ using fmg.common;
 using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
 
-namespace fmg.winrt.draw.mosaic
+namespace fmg.uwp.draw.mosaic
 {
 
    /// <summary>

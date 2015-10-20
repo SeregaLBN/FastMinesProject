@@ -2,7 +2,7 @@ using Windows.UI.Xaml.Shapes;
 using Windows.UI.Xaml.Controls;
 using fmg.core.mosaic.draw;
 
-namespace fmg.winrt.draw.mosaic.xaml
+namespace fmg.uwp.draw.mosaic.xaml
 {
    public class PaintableShapes : IPaintable
    {

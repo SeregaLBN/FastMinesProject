@@ -1,7 +1,7 @@
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.core.mosaic.draw;
 
-namespace fmg.winrt.draw.mosaic.bmp
+namespace fmg.uwp.draw.mosaic.bmp
 {
    public class PaintableBmp : IPaintable
    {

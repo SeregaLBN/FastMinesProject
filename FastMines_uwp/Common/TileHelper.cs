@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
@@ -10,7 +10,7 @@ using Windows.ApplicationModel.Background;
 using fmg.common;
 using fmg.core.types;
 using fmg.core.mosaic;
-using fmg.winrt.res;
+using fmg.uwp.res;
 using Size = fmg.common.geom.Size;
 using BackgroundTasks;
 

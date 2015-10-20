@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 using FastMines.Data;
 using fmg.data.controller.types;
 using fmg.core.types;
-using fmg.winrt.mosaic;
+using fmg.uwp.mosaic;
 using FastMines.Common;
 
 // The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229

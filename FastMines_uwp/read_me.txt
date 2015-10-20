@@ -1,3 +1,3 @@
-Desktop WinRT project
+Desktop UWP project
 
-Platform: Windows RT (Windows 8.1)
+Platform: Universal Windows Platform

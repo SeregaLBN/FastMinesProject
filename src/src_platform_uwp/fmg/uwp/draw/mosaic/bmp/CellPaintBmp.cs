@@ -4,7 +4,7 @@ using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic.cells;
 
-namespace fmg.winrt.draw.mosaic.bmp
+namespace fmg.uwp.draw.mosaic.bmp
 {
    /// <summary>
    /// Helper class for drawing info (ower WriteableBitmap)

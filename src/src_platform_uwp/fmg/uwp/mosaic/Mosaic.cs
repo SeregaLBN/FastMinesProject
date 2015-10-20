@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -13,11 +13,11 @@ using fmg.core.mosaic;
 using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
 using fmg.data.view.draw;
-using fmg.winrt.draw;
-using fmg.winrt.draw.mosaic;
-using fmg.winrt.draw.mosaic.xaml;
+using fmg.uwp.draw;
+using fmg.uwp.draw.mosaic;
+using fmg.uwp.draw.mosaic.xaml;
 
-namespace fmg.winrt.mosaic {
+namespace fmg.uwp.mosaic {
    public class Mosaic : MosaicBase<PaintableShapes> {
       private IDictionary<BaseCell, PaintableShapes> _xamlBinder;
       private CellPaintShapes _cellPaint;

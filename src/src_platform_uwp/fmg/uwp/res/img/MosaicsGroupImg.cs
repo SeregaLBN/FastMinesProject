@@ -10,7 +10,7 @@ using fmg.common.geom;
 using Point = Windows.Foundation.Point;
 using Rect = Windows.Foundation.Rect;
 
-namespace fmg.winrt.res.img {
+namespace fmg.uwp.res.img {
 
    public class MosaicsGroupImg : IDisposable {
       internal struct Color16 {

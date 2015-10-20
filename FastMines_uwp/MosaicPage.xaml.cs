@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using Windows.System;
 using Windows.Devices.Input;
@@ -12,8 +12,8 @@ using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.types.Event;
 using fmg.core.mosaic.cells;
-using fmg.winrt.mosaic;
-using fmg.winrt.draw.mosaic.xaml;
+using fmg.uwp.mosaic;
+using fmg.uwp.draw.mosaic.xaml;
 using fmg.data.controller.types;
 using FastMines.Common;
 using Log = FastMines.Common.LoggerSimple;
@@ -93,8 +93,8 @@ namespace FastMines {
             ToolTipService.SetToolTip(bttnSkillCrazy, new ToolTip { Content = "3" });
             ToolTipService.SetToolTip(bttnSkillProfi, new ToolTip {Content = "4"});
          }
-         MosaicField.GraphicContext.ImgMine = await fmg.winrt.res.Resources.GetImgMine();
-         //MosaicField.GraphicContext.ImgFlag = await fmg.winrt.res.Resources.GetImgFlag();
+         MosaicField.GraphicContext.ImgMine = await fmg.uwp.res.Resources.GetImgMine();
+         //MosaicField.GraphicContext.ImgFlag = await fmg.uwp.res.Resources.GetImgFlag();
       }
 
       /// <summary> Поменять игру на новый уровень сложности </summary>
@@ -128,7 +128,7 @@ namespace FastMines {
       /// <summary> узнать размер окна проекта при указанном размере окна мозаики </summary>
       [Obsolete]
       Size CalcSize(Size sizeMosaicInPixel) {
-         // под WinRT окно проекта === текущая страница
+         // под UWP окно проекта === текущая страница
          // и т.к. нет ни меню, ни заголовка, ни тулбара, ни строки состояния
          // то размер окна равен как есть размеру в пикселях самой мозаики
          return sizeMosaicInPixel;

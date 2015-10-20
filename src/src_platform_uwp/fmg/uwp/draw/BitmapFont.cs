@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Foundation;
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.winrt.utils;
+using fmg.uwp.utils;
 
-namespace fmg.winrt.draw {
+namespace fmg.uwp.draw {
 
    /// <summary>
    ///  http://stackoverflow.com/questions/5666772/how-can-i-render-text-on-a-writeablebitmap-on-a-background-thread-in-windows-ph

@@ -1,10 +1,10 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
 using fmg.core.types;
-using fmg.winrt.res;
-using fmg.winrt.res.img;
+using fmg.uwp.res;
+using fmg.uwp.res.img;
 using FastMines.Common;
 
 // The data model defined by this file serves as a representative example of a strongly-typed

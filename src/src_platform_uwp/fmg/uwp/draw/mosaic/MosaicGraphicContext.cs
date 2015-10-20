@@ -3,7 +3,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
 
-namespace fmg.winrt.draw.mosaic {
+namespace fmg.uwp.draw.mosaic {
 
    public class MosaicGraphicContext : GraphicContext {
       public static readonly Color COLOR_BTNFACE = Color.Gray;

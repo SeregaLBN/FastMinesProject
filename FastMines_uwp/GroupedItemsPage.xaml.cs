@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using FastMines.Data;
 using fmg.data.controller.types;
-using fmg.winrt.mosaic;
+using fmg.uwp.mosaic;
 
 // The Grouped Items Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234231
 

@@ -6,8 +6,8 @@
 ./res - shared resources projects
 
 FastMines_xxx - проекты конкретной языковой реализации, под конкретную UI платформу:
- * FastMines_swing    - Java desktop SWING project                          (open from Eclipse workspace)
- * FastMines_winForms - C# desktop Windows Forms application                (open from Visual Studio workspace)
- * FastMines_winRT    - C# desktop/tablet/mobile Windows RT application     (open from Visual Studio workspace)
- * FastMines_Logo     - C++ Win32 proj (generate logo project - raw bitmap) (open from Visual Studio workspace)
+ * FastMines_swing    - Java desktop SWING project                                      (open from Eclipse workspace)
+ * FastMines_winForms - C# desktop Windows Forms application                            (open from Visual Studio workspace)
+ * FastMines_uwp      - C# desktop/tablet/mobile Universal Windows Platform application (open from Visual Studio workspace)
+ * FastMines_Logo     - C++ Win32 proj (generate logo project - raw bitmap)             (open from Visual Studio workspace)
  * ...

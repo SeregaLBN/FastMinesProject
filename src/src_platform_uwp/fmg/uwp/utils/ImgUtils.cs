@@ -10,14 +10,14 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 
-namespace fmg.winrt.utils {
+namespace fmg.uwp.utils {
 
    /// <summary>
-   /// вспомогательный класс для преобразований картинок
+   /// РІСЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Р№ РєР»Р°СЃСЃ РґР»СЏ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёР№ РєР°СЂС‚РёРЅРѕРє
    /// </summary>
    public class ImgUtils {
 
-      /// <summary> загрузить картинку из локальных ресурсов </summary>
+      /// <summary> Р·Р°РіСЂСѓР·РёС‚СЊ РєР°СЂС‚РёРЅРєСѓ РёР· Р»РѕРєР°Р»СЊРЅС‹С… СЂРµСЃСѓСЂСЃРѕРІ </summary>
       public static async Task<WriteableBitmap> GetImage(Uri uri) {
          return await LoadBitmap(uri);
       }
@@ -26,7 +26,7 @@ namespace fmg.winrt.utils {
          return new BitmapImage(uri);
       }
 
-      /// <summary> загрузить картинку из локальных ресурсов </summary>
+      /// <summary> Р·Р°РіСЂСѓР·РёС‚СЊ РєР°СЂС‚РёРЅРєСѓ РёР· Р»РѕРєР°Р»СЊРЅС‹С… СЂРµСЃСѓСЂСЃРѕРІ </summary>
       private static async Task<WriteableBitmap> LoadBitmap(Uri uri) {
          try {
             return await new WriteableBitmap(1, 1).FromContent(uri);
@@ -39,7 +39,7 @@ namespace fmg.winrt.utils {
          return null;
       }
 
-      /// <summary> загрузить картинку из локальных ресурсов </summary>
+      /// <summary> Р·Р°РіСЂСѓР·РёС‚СЊ РєР°СЂС‚РёРЅРєСѓ РёР· Р»РѕРєР°Р»СЊРЅС‹С… СЂРµСЃСѓСЂСЃРѕРІ </summary>
       private static async Task<WriteableBitmap> LoadBitmap(string resourceName) {
          if (string.IsNullOrWhiteSpace(resourceName))
             return null;
@@ -117,7 +117,7 @@ namespace fmg.winrt.utils {
       }
 
       private static WriteableBitmap _failedImage;
-      // TODO переделать...
+      // TODO РїРµСЂРµРґРµР»Р°С‚СЊ...
       private static WriteableBitmap GetFailedImage() {
          if (null == _failedImage) {
             int maxX = 1024, maxY = 1024;

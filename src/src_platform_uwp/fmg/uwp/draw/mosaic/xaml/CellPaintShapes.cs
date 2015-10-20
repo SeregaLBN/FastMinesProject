@@ -7,7 +7,7 @@ using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic.cells;
 
-namespace fmg.winrt.draw.mosaic.xaml
+namespace fmg.uwp.draw.mosaic.xaml
 {
    /// <summary>
    /// Helper class for drawing info (over xaml shapes)

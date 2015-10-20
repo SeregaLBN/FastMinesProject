@@ -7,11 +7,11 @@ using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Graphics.Imaging;
 using fmg.common.geom;
-using fmg.winrt.utils;
 using fmg.core.types;
-using fmg.winrt.res.img;
+using fmg.uwp.utils;
+using fmg.uwp.res.img;
 
-namespace fmg.winrt.res {
+namespace fmg.uwp.res {
 
    /// <summary> Мультимедиа ресурсы программы </summary>
    public static class Resources {

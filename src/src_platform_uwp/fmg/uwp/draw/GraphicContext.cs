@@ -7,7 +7,7 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.data.view.draw;
 
-namespace fmg.winrt.draw {
+namespace fmg.uwp.draw {
 
    public class GraphicContext : FastMines.Common.BindableBase {
       public const string    DEFAULT_FONT_NAME  = "Arial"; // Times New Roman // Verdana // Courier New // SansSerif
