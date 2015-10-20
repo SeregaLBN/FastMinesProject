@@ -1,2 +1,15 @@
 *.sdf
 *.opensdf
+.metadata
+.recommenders
+Workspaces/VS/packages/*/
+*.suo
+**/obj
+**/bin
+**/Debug
+**/Release
+FastMines_winRT/res
+FastMines_winRT/src_*
+Mines.bst
+Mines.dat
+Mines.stc

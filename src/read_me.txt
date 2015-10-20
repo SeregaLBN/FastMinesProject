@@ -1,4 +1,13 @@
-./mosaic - каталог исходников, где лежит ядро всего проекта - классы мозаик
-./lib - всё то, что можно использовать отдельно - вне рамок проекта 
-./data - классы серелезируемых данных/эвентов/...
-./ui_desktop - классы описывающие отображение классического десктоп приложения (вне рамок какой либо из UI библиотек)
+./src_common        - libs  -  РІСЃС‘ С‚Рѕ, С‡С‚Рѕ РјРѕР¶РЅРѕ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РѕС‚РґРµР»СЊРЅРѕ - РІРЅРµ СЂР°РјРѕРє РїСЂРѕРµРєС‚Р° 
+./src_core          - mosaic  -  РєР°С‚Р°Р»РѕРі РёСЃС…РѕРґРЅРёРєРѕРІ, РіРґРµ Р»РµР¶РёС‚ СЏРґСЂРѕ РІСЃРµРіРѕ РїСЂРѕРµРєС‚Р° - РєР»Р°СЃСЃС‹ РјРѕР·Р°РёРє
+./src_data          - data/types  -  РєР»Р°СЃСЃС‹ РґР°РЅРЅС‹С…/СЌРІРµРЅС‚РѕРІ/...   РІСЃС‘ С‡С‚Рѕ РґР»СЏ РїСЂРѕРµРєС‚Р°, РЅРѕ РЅРµ РѕС‚РЅРёСЃРёС‚СЊСЃСЏ Рє РµРіРѕ СЏРґСЂСѓ
+./src_platform_xxx  - platform specific UI main Application (classic desktop; mobile; etc..)
+
+src_common, src_core, src_data - С‚РѕР»СЊРєРѕ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рµ Р±РёР±Р»РёРѕС‚РµРєРё РєР»Р°СЃСЃРѕРІ, Р±РµР· СѓРєР»РѕРЅР° РІ РєР°РєСѓСЋ Р»РёР±Рѕ РёР· UI Р±РёР±Р»РёРѕС‚РµРє
+                               - only standard class library, without any bias in any of the UI library
+
+Agreements:
+ * basic package/namespace name - fmg.*     -  FastMinesGame
+ * using 3 space   for  tab size
+ * subdirectories corresponds to the package name/namespace (РЎ++, C# attention  -  Java style)
+ * namespaces with lowercase (C# sorry)    

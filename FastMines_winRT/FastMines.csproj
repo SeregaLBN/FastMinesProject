@@ -1,0 +1,825 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{758FC9E6-177D-4231-8AFF-2BDA5B7DAB54}</ProjectGuid>
+    <OutputType>appcontainerexe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FastMines</RootNamespace>
+    <AssemblyName>FastMines</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <PackageCertificateKeyFile>FastMines_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <TargetPlatformVersion>8.1</TargetPlatformVersion>
+    <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
+    <TargetFrameworkVersion />
+    <PackageCertificateThumbprint>2A4D3F6BDFD446EFFA5F612246505D2E1FAC3252</PackageCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE WINDOWS_RT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE WINDOWS_RT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE WINDOWS_RT</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <OutputPath>bin\ARM\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE WINDOWS_RT</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE WINDOWS_RT</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE WINDOWS_RT</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE WINDOWS_RT</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE WINDOWS_RT</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\draw\ICellPaint.cs">
+      <Link>src_fmg.core\mosaic\draw\ICellPaint.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\draw\IPaintable.cs">
+      <Link>src_fmg.core\mosaic\draw\IPaintable.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\IMosaic.cs">
+      <Link>src_fmg.core\mosaic\IMosaic.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\MosaicBase.cs">
+      <Link>src_fmg.core\mosaic\MosaicBase.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\bmp\CellPaintBmp.cs">
+      <Link>src_fmg.winrt\draw\mosaic\bmp\CellPaintBmp.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\bmp\PaintableBmp.cs">
+      <Link>src_fmg.winrt\draw\mosaic\bmp\PaintableBmp.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\CellPaint.cs">
+      <Link>src_fmg.winrt\draw\mosaic\CellPaint.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\xaml\CellPaintShapes.cs">
+      <Link>src_fmg.winrt\draw\mosaic\xaml\CellPaintShapes.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\xaml\PaintableShapes.cs">
+      <Link>src_fmg.winrt\draw\mosaic\xaml\PaintableShapes.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\mosaic\Mosaic.cs">
+      <Link>src_fmg.winrt\mosaic\Mosaic.cs</Link>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\types\event\MosaicListener.cs">
+      <Link>src_fmg.core\types\event\MosaicListener.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\types\event\MosaicEvent.cs">
+      <Link>src_fmg.core\types\event\MosaicEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_data\fmg\data\view\draw\ColorText.cs">
+      <Link>src_fmg.data\view\draw\ColorText.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_data\fmg\data\controller\types\ESkillLevel.cs">
+      <Link>src_fmg.data\controller\types\ESkillLevel.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_data\fmg\data\controller\serializable\ChampionsModel.cs">
+      <Link>src_fmg.data\controller\serializable\ChampionsModel.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_data\fmg\data\controller\serializable\PlayersModel.cs">
+      <Link>src_fmg.data\controller\serializable\PlayersModel.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_data\fmg\data\controller\serializable\StatisticCounts.cs">
+      <Link>src_fmg.data\controller\serializable\StatisticCounts.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_common\fmg\common\geom\Coord.cs">
+      <Link>src_fmg.common\geom\Coord.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_common\fmg\common\geom\Point.cs">
+      <Link>src_fmg.common\geom\Point.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_common\fmg\common\geom\PointDouble.cs">
+      <Link>src_fmg.common\geom\PointDouble.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_common\fmg\common\geom\Rect.cs">
+      <Link>src_fmg.common\geom\Rect.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_common\fmg\common\geom\Region.cs">
+      <Link>src_fmg.common\geom\Region.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_common\fmg\common\geom\Size.cs">
+      <Link>src_fmg.common\geom\Size.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_common\fmg\common\geom\SizeDouble.cs">
+      <Link>src_fmg.common\geom\SizeDouble.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_common\fmg\common\Color.cs">
+      <Link>src_fmg.common\Color.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\types\EGameStatus.cs">
+      <Link>src_fmg.core\types\EGameStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\types\EPlayInfo.cs">
+      <Link>src_fmg.core\types\EPlayInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\types\EClose.cs">
+      <Link>src_fmg.core\types\EClose.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\types\EMosaic.cs">
+      <Link>src_fmg.core\types\EMosaic.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_data\fmg\data\controller\event\ActionToUser.cs">
+      <Link>src_fmg.data\controller\event\ActionToUser.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\types\EMosaicGroup.cs">
+      <Link>src_fmg.core\types\EMosaicGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_data\fmg\data\controller\event\ChampionModelEvent.cs">
+      <Link>src_fmg.data\controller\event\ChampionModelEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_data\fmg\data\controller\event\PlayerModelEvent.cs">
+      <Link>src_fmg.data\controller\event\PlayerModelEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_data\fmg\data\controller\types\User.cs">
+      <Link>src_fmg.data\controller\types\User.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\types\EOpen.cs">
+      <Link>src_fmg.core\types\EOpen.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\types\EState.cs">
+      <Link>src_fmg.core\types\EState.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_data\fmg\data\view\draw\EShowElement.cs">
+      <Link>src_fmg.data\view\draw\EShowElement.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_data\fmg\data\view\draw\EZoomInterface.cs">
+      <Link>src_fmg.data\view\draw\EZoomInterface.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_data\fmg\data\view\draw\PenBorder.cs">
+      <Link>src_fmg.data\view\draw\PenBorder.cs</Link>
+    </Compile>
+    <Compile Include="Common\AsyncRunner.cs" />
+    <Compile Include="Common\INotifyPropertyChangedEx.cs" />
+    <Compile Include="Common\LoggerSimple.cs" />
+    <Compile Include="Common\TileHelper.cs" />
+    <Compile Include="DataModel\FmDataItem.cs" />
+    <Compile Include="DataModel\FmDataGroup.cs" />
+    <Compile Include="DataModel\FmDataCommon.cs" />
+    <Compile Include="GroupedItemsPage.xaml.cs">
+      <DependentUpon>GroupedItemsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GroupDetailPage.xaml.cs">
+      <DependentUpon>GroupDetailPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ItemDetailPage.xaml.cs">
+      <DependentUpon>ItemDetailPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="..\src\src_common\fmg\common\IExternalizable.cs">
+      <Link>src_fmg.common\IExternalizable.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_common\fmg\common\ISerializable.cs">
+      <Link>src_fmg.common\ISerializable.cs</Link>
+    </Compile>
+    <Compile Include="MosaicPage.xaml.cs">
+      <DependentUpon>MosaicPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DataModel\FmDataSource.cs" />
+    <Compile Include="Common\BindableBase.cs" />
+    <Compile Include="Common\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Common\BooleanNegationConverter.cs" />
+    <Compile Include="Common\LayoutAwarePage.cs" />
+    <Compile Include="Common\RichTextColumns.cs" />
+    <Compile Include="Common\SuspensionManager.cs" />
+    <Compile Include="..\src\src_common\fmg\common\crypt\DES.cs">
+      <Link>src_fmg.common\crypt\DES.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Hexagon1.cs">
+      <Link>src_fmg.core\mosaic\cells\Hexagon1.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Parquet1.cs">
+      <Link>src_fmg.core\mosaic\cells\Parquet1.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Parquet2.cs">
+      <Link>src_fmg.core\mosaic\cells\Parquet2.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\PenrousePeriodic1.cs">
+      <Link>src_fmg.core\mosaic\cells\PenrousePeriodic1.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\PentagonT10.cs">
+      <Link>src_fmg.core\mosaic\cells\PentagonT10.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\PentagonT24.cs">
+      <Link>src_fmg.core\mosaic\cells\PentagonT24.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\PentagonT5.cs">
+      <Link>src_fmg.core\mosaic\cells\PentagonT5.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Quadrangle1.cs">
+      <Link>src_fmg.core\mosaic\cells\Quadrangle1.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Rhombus1.cs">
+      <Link>src_fmg.core\mosaic\cells\Rhombus1.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\SqTrHex.cs">
+      <Link>src_fmg.core\mosaic\cells\SqTrHex.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Square1.cs">
+      <Link>src_fmg.core\mosaic\cells\Square1.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Square2.cs">
+      <Link>src_fmg.core\mosaic\cells\Square2.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Trapezoid1.cs">
+      <Link>src_fmg.core\mosaic\cells\Trapezoid1.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Trapezoid2.cs">
+      <Link>src_fmg.core\mosaic\cells\Trapezoid2.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Trapezoid3.cs">
+      <Link>src_fmg.core\mosaic\cells\Trapezoid3.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Triangle1.cs">
+      <Link>src_fmg.core\mosaic\cells\Triangle1.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Triangle2.cs">
+      <Link>src_fmg.core\mosaic\cells\Triangle2.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Triangle3.cs">
+      <Link>src_fmg.core\mosaic\cells\Triangle3.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Triangle4.cs">
+      <Link>src_fmg.core\mosaic\cells\Triangle4.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\TrSq1.cs">
+      <Link>src_fmg.core\mosaic\cells\TrSq1.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\TrSq2.cs">
+      <Link>src_fmg.core\mosaic\cells\TrSq2.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\BitmapFont.cs">
+      <Link>src_fmg.winrt\draw\BitmapFont.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\GraphicContext.cs">
+      <Link>src_fmg.winrt\draw\GraphicContext.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\draw\mosaic\MosaicGraphicContext.cs">
+      <Link>src_fmg.winrt\draw\mosaic\MosaicGraphicContext.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\mosaic\MosaicPageInitParam.cs">
+      <Link>src_fmg.winrt\mosaic\MosaicPageInitParam.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\res\img\BackgroundPause.cs">
+      <Link>src_fmg.winrt\res\img\BackgroundPause.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\res\img\Logo.cs">
+      <Link>src_fmg.winrt\res\img\Logo.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\res\img\Flag.cs">
+      <Link>src_fmg.winrt\res\img\Flag.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\res\img\Mine.cs">
+      <Link>src_fmg.winrt\res\img\Mine.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\res\img\MosaicsGroupImg.cs">
+      <Link>src_fmg.winrt\res\img\MosaicsGroupImg.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\res\img\MosaicsImg.cs">
+      <Link>src_fmg.winrt\res\img\MosaicsImg.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\res\Resources.cs">
+      <Link>src_fmg.winrt\res\Resources.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_winrt\fmg\winrt\utils\ImgUtils.cs">
+      <Link>src_fmg.winrt\utils\ImgUtils.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+    <None Include="Common\ReadMe.txt" />
+    <None Include="FastMines_TemporaryKey.pfx" />
+    <None Include="..\res\Background\Face~.vsd">
+      <Link>res\Background\Face~.vsd</Link>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\res\ToolBarButton\newNormal.png">
+      <Link>res\ToolBarButton\newNormal.png</Link>
+    </Content>
+    <Content Include="..\res\ToolBarButton\newNormalLoss.png">
+      <Link>res\ToolBarButton\newNormalLoss.png</Link>
+    </Content>
+    <Content Include="..\res\ToolBarButton\newNormalMosaic.png">
+      <Link>res\ToolBarButton\newNormalMosaic.png</Link>
+    </Content>
+    <Content Include="..\res\ToolBarButton\newNormalWin.png">
+      <Link>res\ToolBarButton\newNormalWin.png</Link>
+    </Content>
+    <Content Include="..\res\ToolBarButton\newPressed.png">
+      <Link>res\ToolBarButton\newPressed.png</Link>
+    </Content>
+    <Content Include="..\res\ToolBarButton\newPressed~.png">
+      <Link>res\ToolBarButton\newPressed~.png</Link>
+    </Content>
+    <Content Include="..\res\ToolBarButton\newRollover.png">
+      <Link>res\ToolBarButton\newRollover.png</Link>
+    </Content>
+    <Content Include="..\res\ToolBarButton\newRollover~.png">
+      <Link>res\ToolBarButton\newRollover~.png</Link>
+    </Content>
+    <Content Include="..\res\ToolBarButton\pauseAssistant.png">
+      <Link>res\ToolBarButton\pauseAssistant.png</Link>
+    </Content>
+    <Content Include="..\res\ToolBarButton\pauseDisabled.png">
+      <Link>res\ToolBarButton\pauseDisabled.png</Link>
+    </Content>
+    <Content Include="..\res\ToolBarButton\pauseDisabledSelected.png">
+      <Link>res\ToolBarButton\pauseDisabledSelected.png</Link>
+    </Content>
+    <Content Include="..\res\ToolBarButton\pauseNormal.png">
+      <Link>res\ToolBarButton\pauseNormal.png</Link>
+    </Content>
+    <Content Include="..\res\ToolBarButton\pausePressed.png">
+      <Link>res\ToolBarButton\pausePressed.png</Link>
+    </Content>
+    <Content Include="..\res\ToolBarButton\pausePressed~.png">
+      <Link>res\ToolBarButton\pausePressed~.png</Link>
+    </Content>
+    <Content Include="..\res\ToolBarButton\pauseRollover.png">
+      <Link>res\ToolBarButton\pauseRollover.png</Link>
+    </Content>
+    <Content Include="..\res\ToolBarButton\pauseRolloverSelected.png">
+      <Link>res\ToolBarButton\pauseRolloverSelected.png</Link>
+    </Content>
+    <Content Include="..\res\ToolBarButton\pauseSelected.png">
+      <Link>res\ToolBarButton\pauseSelected.png</Link>
+    </Content>
+    <Content Include="..\res\Lang\English.png">
+      <Link>res\Lang\English.png</Link>
+    </Content>
+    <Content Include="..\res\Lang\Russian.png">
+      <Link>res\Lang\Russian.png</Link>
+    </Content>
+    <Content Include="..\res\Lang\Ukrainian.png">
+      <Link>res\Lang\Ukrainian.png</Link>
+    </Content>
+    <Content Include="..\res\Background\~Pause.png">
+      <Link>res\Background\~Pause.png</Link>
+    </Content>
+    <Content Include="..\res\Background\DarkGray.png">
+      <Link>res\Background\DarkGray.png</Link>
+    </Content>
+    <Content Include="..\res\Font\NirmalaUI_30.png">
+      <Link>res\Font\NirmalaUI_30.png</Link>
+    </Content>
+    <Content Include="..\res\Background\LightGray.png">
+      <Link>res\Background\LightGray.png</Link>
+    </Content>
+    <Content Include="..\res\Background\MediumGray.png">
+      <Link>res\Background\MediumGray.png</Link>
+    </Content>
+    <Content Include="..\res\CellState\~Flag.png">
+      <Link>res\CellState\~Flag.png</Link>
+    </Content>
+    <Content Include="..\res\CellState\~Mine.png">
+      <Link>res\CellState\~Mine.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\PenrousePeriodic1.ico">
+      <Link>res\Mosaic\32x32\PenrousePeriodic1.ico</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\Hexagon1.png">
+      <Link>res\Mosaic\32x32\Hexagon1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\Null.png">
+      <Link>res\Mosaic\32x32\Null.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\Parquet1.png">
+      <Link>res\Mosaic\32x32\Parquet1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\Parquet2.png">
+      <Link>res\Mosaic\32x32\Parquet2.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\PenrousePeriodic1.png">
+      <Link>res\Mosaic\32x32\PenrousePeriodic1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\PentagonT5.png">
+      <Link>res\Mosaic\32x32\PentagonT5.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\PentagonT10.png">
+      <Link>res\Mosaic\32x32\PentagonT10.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\PentagonT24.png">
+      <Link>res\Mosaic\32x32\PentagonT24.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\Quadrangle1.png">
+      <Link>res\Mosaic\32x32\Quadrangle1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\Rhombus1.png">
+      <Link>res\Mosaic\32x32\Rhombus1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\SqTrHex.png">
+      <Link>res\Mosaic\32x32\SqTrHex.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\Square1.png">
+      <Link>res\Mosaic\32x32\Square1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\Square2.png">
+      <Link>res\Mosaic\32x32\Square2.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\Trapezoid1.png">
+      <Link>res\Mosaic\32x32\Trapezoid1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\Trapezoid2.png">
+      <Link>res\Mosaic\32x32\Trapezoid2.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\Trapezoid3.png">
+      <Link>res\Mosaic\32x32\Trapezoid3.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\Triangle1.png">
+      <Link>res\Mosaic\32x32\Triangle1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\Triangle2.png">
+      <Link>res\Mosaic\32x32\Triangle2.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\Triangle3.png">
+      <Link>res\Mosaic\32x32\Triangle3.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\Triangle4.png">
+      <Link>res\Mosaic\32x32\Triangle4.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\TrSq1.png">
+      <Link>res\Mosaic\32x32\TrSq1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\32x32\TrSq2.png">
+      <Link>res\Mosaic\32x32\TrSq2.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\PenrousePeriodic1.ico">
+      <Link>res\Mosaic\48x32\PenrousePeriodic1.ico</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\Hexagon1.png">
+      <Link>res\Mosaic\48x32\Hexagon1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\Null.png">
+      <Link>res\Mosaic\48x32\Null.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\Parquet1.png">
+      <Link>res\Mosaic\48x32\Parquet1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\Parquet2.png">
+      <Link>res\Mosaic\48x32\Parquet2.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\PenrousePeriodic1.png">
+      <Link>res\Mosaic\48x32\PenrousePeriodic1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\PentagonT5.png">
+      <Link>res\Mosaic\48x32\PentagonT5.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\PentagonT10.png">
+      <Link>res\Mosaic\48x32\PentagonT10.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\PentagonT24.png">
+      <Link>res\Mosaic\48x32\PentagonT24.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\Quadrangle1.png">
+      <Link>res\Mosaic\48x32\Quadrangle1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\Rhombus1.png">
+      <Link>res\Mosaic\48x32\Rhombus1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\SqTrHex.png">
+      <Link>res\Mosaic\48x32\SqTrHex.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\Square1.png">
+      <Link>res\Mosaic\48x32\Square1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\Square2.png">
+      <Link>res\Mosaic\48x32\Square2.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\Trapezoid1.png">
+      <Link>res\Mosaic\48x32\Trapezoid1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\Trapezoid2.png">
+      <Link>res\Mosaic\48x32\Trapezoid2.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\Trapezoid3.png">
+      <Link>res\Mosaic\48x32\Trapezoid3.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\Triangle1.png">
+      <Link>res\Mosaic\48x32\Triangle1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\Triangle2.png">
+      <Link>res\Mosaic\48x32\Triangle2.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\Triangle3.png">
+      <Link>res\Mosaic\48x32\Triangle3.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\Triangle4.png">
+      <Link>res\Mosaic\48x32\Triangle4.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\TrSq1.png">
+      <Link>res\Mosaic\48x32\TrSq1.png</Link>
+    </Content>
+    <Content Include="..\res\Mosaic\48x32\TrSq2.png">
+      <Link>res\Mosaic\48x32\TrSq2.png</Link>
+    </Content>
+    <Content Include="..\res\MosaicGroup\Hexagons.png">
+      <Link>res\MosaicGroup\Hexagons.png</Link>
+    </Content>
+    <Content Include="..\res\MosaicGroup\Others.png">
+      <Link>res\MosaicGroup\Others.png</Link>
+    </Content>
+    <Content Include="..\res\MosaicGroup\Pentagons.png">
+      <Link>res\MosaicGroup\Pentagons.png</Link>
+    </Content>
+    <Content Include="..\res\MosaicGroup\Quadrangles.png">
+      <Link>res\MosaicGroup\Quadrangles.png</Link>
+    </Content>
+    <Content Include="..\res\MosaicGroup\Triangles.png">
+      <Link>res\MosaicGroup\Triangles.png</Link>
+    </Content>
+    <Content Include="..\res\MosaicGroup\Hexagons.ico">
+      <Link>res\MosaicGroup\Hexagons.ico</Link>
+    </Content>
+    <Content Include="..\res\MosaicGroup\Others.ico">
+      <Link>res\MosaicGroup\Others.ico</Link>
+    </Content>
+    <Content Include="..\res\MosaicGroup\Pentagons.ico">
+      <Link>res\MosaicGroup\Pentagons.ico</Link>
+    </Content>
+    <Content Include="..\res\MosaicGroup\Quadrangles.ico">
+      <Link>res\MosaicGroup\Quadrangles.ico</Link>
+    </Content>
+    <Content Include="..\res\MosaicGroup\Triangles.ico">
+      <Link>res\MosaicGroup\Triangles.ico</Link>
+    </Content>
+    <Compile Include="..\src\src_core\fmg\core\types\click\ClickReportContext.cs">
+      <Link>src_fmg.core\types\click\ClickReportContext.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\types\click\LeftDownResult.cs">
+      <Link>src_fmg.core\types\click\LeftDownResult.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\types\click\LeftUpResult.cs">
+      <Link>src_fmg.core\types\click\LeftUpResult.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\types\click\RightDownReturn.cs">
+      <Link>src_fmg.core\types\click\RightDownReturn.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\BaseCell.cs">
+      <Link>src_fmg.core\mosaic\cells\BaseCell.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\mosaic\CellFactory.cs">
+      <Link>src_fmg.core\mosaic\CellFactory.cs</Link>
+    </Compile>
+    <Content Include="..\res\Font\NirmalaUI_30.xml">
+      <Link>res\Font\NirmalaUI_30.xml</Link>
+    </Content>
+    <Content Include="..\res\Skill\skillWhite.ico">
+      <Link>res\Skill\skillWhite.ico</Link>
+    </Content>
+    <Content Include="..\res\Skill\skillWhite1.png">
+      <Link>res\Skill\skillWhite1.png</Link>
+    </Content>
+    <Content Include="..\res\Skill\skillWhite2.png">
+      <Link>res\Skill\skillWhite2.png</Link>
+    </Content>
+    <Content Include="..\res\Skill\skillWhite3.png">
+      <Link>res\Skill\skillWhite3.png</Link>
+    </Content>
+    <Content Include="..\res\Skill\skillWhite4.png">
+      <Link>res\Skill\skillWhite4.png</Link>
+    </Content>
+    <Content Include="read_me.txt" />
+    <Content Include="..\res\Logo\Badge\Logo.scale-100.png">
+      <Link>res\Logo\Badge\Logo.scale-100.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\Badge\Logo.scale-140.png">
+      <Link>res\Logo\Badge\Logo.scale-140.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\Badge\Logo.scale-180.png">
+      <Link>res\Logo\Badge\Logo.scale-180.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\Tile\Logo.scale-100.png">
+      <Link>res\Logo\Tile\Logo.scale-100.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\Tile\Logo.scale-140.png">
+      <Link>res\Logo\Tile\Logo.scale-140.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\Tile\Logo.scale-180.png">
+      <Link>res\Logo\Tile\Logo.scale-180.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\Tile\Logo.scale-80.png">
+      <Link>res\Logo\Tile\Logo.scale-80.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\WideTile\Logo.scale-100.png">
+      <Link>res\Logo\WideTile\Logo.scale-100.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\WideTile\Logo.scale-140.png">
+      <Link>res\Logo\WideTile\Logo.scale-140.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\WideTile\Logo.scale-180.png">
+      <Link>res\Logo\WideTile\Logo.scale-180.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\WideTile\Logo.scale-80.png">
+      <Link>res\Logo\WideTile\Logo.scale-80.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SplashScreen\Logo.scale-100.png">
+      <Link>res\Logo\SplashScreen\Logo.scale-100.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SplashScreen\Logo.scale-140.png">
+      <Link>res\Logo\SplashScreen\Logo.scale-140.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SplashScreen\Logo.scale-180.png">
+      <Link>res\Logo\SplashScreen\Logo.scale-180.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\StoreTile\Logo.scale-100.png">
+      <Link>res\Logo\StoreTile\Logo.scale-100.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\StoreTile\Logo.scale-140.png">
+      <Link>res\Logo\StoreTile\Logo.scale-140.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\StoreTile\Logo.scale-180.png">
+      <Link>res\Logo\StoreTile\Logo.scale-180.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SmallTile\Logo.scale-100.png">
+      <Link>res\Logo\SmallTile\Logo.scale-100.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SmallTile\Logo.scale-140.png">
+      <Link>res\Logo\SmallTile\Logo.scale-140.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SmallTile\Logo.scale-180.png">
+      <Link>res\Logo\SmallTile\Logo.scale-180.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SmallTile\Logo.scale-80.png">
+      <Link>res\Logo\SmallTile\Logo.scale-80.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SmallTile\Logo.targetsize-16.png">
+      <Link>res\Logo\SmallTile\Logo.targetsize-16.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SmallTile\Logo.targetsize-256.png">
+      <Link>res\Logo\SmallTile\Logo.targetsize-256.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SmallTile\Logo.targetsize-32.png">
+      <Link>res\Logo\SmallTile\Logo.targetsize-32.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SmallTile\Logo.targetsize-48.png">
+      <Link>res\Logo\SmallTile\Logo.targetsize-48.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq310\Logo.scale-100.png">
+      <Link>res\Logo\TileSq310\Logo.scale-100.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq310\Logo.scale-140.png">
+      <Link>res\Logo\TileSq310\Logo.scale-140.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq310\Logo.scale-180.png">
+      <Link>res\Logo\TileSq310\Logo.scale-180.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq310\Logo.scale-80.png">
+      <Link>res\Logo\TileSq310\Logo.scale-80.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq70\Logo.scale-100.png">
+      <Link>res\Logo\TileSq70\Logo.scale-100.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq70\Logo.scale-140.png">
+      <Link>res\Logo\TileSq70\Logo.scale-140.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq70\Logo.scale-180.png">
+      <Link>res\Logo\TileSq70\Logo.scale-180.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq70\Logo.scale-80.png">
+      <Link>res\Logo\TileSq70\Logo.scale-80.png</Link>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="Common\StandardStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GroupedItemsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GroupDetailPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ItemDetailPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MosaicPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="BackgroundTasks\BackgroundTasks.csproj">
+      <Project>{4f75c36e-7157-449f-9686-dea20f83bbdb}</Project>
+      <Name>BackgroundTasks</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="WriteableBitmapEx.WinRT">
+      <HintPath>..\Workspaces\VS\packages\WriteableBitmapEx.1.5.0.0\lib\NetCore45\WriteableBitmapEx.WinRT.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup />
+  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
+    <VisualStudioVersion>12.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>rd /s /q $(ProjectDir)res
+rd /s /q $(ProjectDir)src_fmg.common
+rd /s /q $(ProjectDir)src_fmg.core
+rd /s /q $(ProjectDir)src_fmg.data
+rd /s /q $(ProjectDir)src_fmg.winrt
+mklink /j $(ProjectDir)res            $(SolutionDir)..\..\res
+mklink /j $(ProjectDir)src_fmg.common $(SolutionDir)..\..\src\src_common\fmg\common
+mklink /j $(ProjectDir)src_fmg.core   $(SolutionDir)..\..\src\src_core\fmg\core
+mklink /j $(ProjectDir)src_fmg.data   $(SolutionDir)..\..\src\src_data\fmg\data
+mklink /j $(ProjectDir)src_fmg.winrt  $(SolutionDir)..\..\src\src_platform_winrt\fmg\winrt</PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
