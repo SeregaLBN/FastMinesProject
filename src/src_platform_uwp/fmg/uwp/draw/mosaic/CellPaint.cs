@@ -1,3 +1,4 @@
+using System;
 using Windows.UI.ViewManagement;
 using fmg.common;
 using fmg.core.mosaic.draw;
@@ -12,9 +13,27 @@ namespace fmg.uwp.draw.mosaic
    public abstract class CellPaint<TPaintable> : ICellPaint<TPaintable>
       where TPaintable : IPaintable
    {
+      private static readonly UISettings UiSettings = new UISettings();
+
       protected CellPaint()
       {
-         DefaultBackgroundFillColor = new UISettings().UIElementColor(UIElementType.ButtonFace).ToFmColor();
+         try {
+            //DefaultBackgroundFillColor = new UISettings().UIElementColor(UIElementType.ButtonFace).ToFmColor();
+            Color clr;
+            try {
+               clr = UiSettings.UIElementColor(UIElementType.ButtonFace).ToFmColor(); // desktop
+            } catch (ArgumentException) {
+               try {
+                  clr = UiSettings.UIElementColor(1000 + UIElementType.ButtonFace).ToFmColor(); // mobile
+               } catch (Exception) {
+                  clr = MosaicGraphicContext.COLOR_BTNFACE; // hz
+               }
+            }
+            DefaultBackgroundFillColor = clr;
+         } catch (Exception ex) {
+            System.Diagnostics.Debug.Fail(ex.Message);
+         }
+         //DefaultBackgroundFillColor = new UISettings().UIElementColor(UIElementType.ButtonFace).ToFmColor();
       }
 
       public GraphicContext GContext { get; set; }

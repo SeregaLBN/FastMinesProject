@@ -1,7 +1,7 @@
+using System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
-using fmg.common.geom;
 
 namespace fmg.uwp.draw.mosaic {
 
@@ -10,15 +10,22 @@ namespace fmg.uwp.draw.mosaic {
 
       private Color _colorBk;
       private WriteableBitmap _imgBckgrnd;
+      private static readonly UISettings UiSettings = new UISettings();
 
       public MosaicGraphicContext() :
          base(false) {
-         //_colorBk = COLOR_BTNFACE;
-         //_colorBk = Color.BLACK;
-         //_colorBk = new UISettings().UIElementColor(UIElementType.Window).Cast(); // Panel background
 
-         var clr = new UISettings().UIElementColor(UIElementType.Window).ToFmColor(); // Panel background
-         const float perc = 0.40f; // делаю темнее
+         Color clr;
+         try {
+            clr = UiSettings.UIElementColor(UIElementType.Window).ToFmColor(); // desktop
+         } catch (ArgumentException) {
+            try {
+               clr = UiSettings.UIElementColor(1000 + UIElementType.Window).ToFmColor(); // mobile
+            } catch (Exception) {
+               clr = COLOR_BTNFACE; // hz
+            }
+         }
+         const float perc = 0.40f; // РґРµР»Р°СЋ С‚РµРјРЅРµРµ
          var r = (int) (clr.R - clr.R*perc);
          var g = (int) (clr.G - clr.G*perc);
          var b = (int) (clr.B - clr.B*perc);
