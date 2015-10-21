@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Windows.Foundation;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using FastMines.Data;
@@ -17,6 +19,11 @@ namespace FastMines {
          // modify to http://stackoverflow.com/questions/15435023/add-dynamically-an-image-in-xaml-in-a-canvas
          this.InitializeComponent();
          //this.Loaded += PageOnLoaded;
+
+
+         //ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size { Width = 500, Height = 400 });
+         //ApplicationView.PreferredLaunchViewSize = new Size { Height = 800, Width = 600 };
+         //ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
       }
 
       /// <summary>

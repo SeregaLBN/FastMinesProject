@@ -291,6 +291,28 @@ namespace FastMines.Common
         protected virtual string DetermineVisualState(ApplicationViewState viewState)
         {
             return viewState.ToString();
+            /** /
+            var visualState = ApplicationViewState.FullScreenLandscape.ToString();
+            var windowWidth = Window.Current.Bounds.Width;
+            var windowHeight = Window.Current.Bounds.Height;
+          
+            if (windowWidth <= 500)
+            {
+               visualState = ApplicationViewState.Snapped + "_Detail";
+            }
+            else if (windowWidth <= 1366)
+            {
+               if (windowWidth < windowHeight)
+               {
+                  visualState = ApplicationViewState.FullScreenPortrait + "_Detail";
+               }
+               else
+               {
+                  visualState = ApplicationViewState.Filled.ToString(); // FilledOrNarrow
+               }
+            }
+            return visualState;
+            /**/
         }
 
         /// <summary>

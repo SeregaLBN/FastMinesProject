@@ -137,7 +137,7 @@ namespace FastMines {
          var frame = (Frame) Windows.UI.Xaml.Window.Current.Content;
          //var page = (Windows.UI.Xaml.Controls.Page)frame.Content;
          switch (args.VirtualKey) {
-            case (VirtualKey) 166: // VirtualKey.GoBack:
+            case VirtualKey.GoBack:
             case VirtualKey.Back:
                if (frame != null) {
                   if (frame.CanGoBack) {

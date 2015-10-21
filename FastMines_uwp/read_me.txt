@@ -1,3 +1,3 @@
-Desktop UWP project
+Desktop/Tablet/Mobile UWP project
 
 Platform: Universal Windows Platform
