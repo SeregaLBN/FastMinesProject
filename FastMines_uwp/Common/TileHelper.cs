@@ -135,7 +135,7 @@ namespace FastMines {
                var bmpLogo = await (
                   (primary==2)
                      ? Resources.GetImgLogoPng()
-                     : Resources.GetImgLogoPng("Tile", 140));
+                     : Resources.GetImgLogoPng("TileSq150", 150));
                var rcLogoRegion = new Rect {
                   X = 0, Y = 0,
                   Width  = w,

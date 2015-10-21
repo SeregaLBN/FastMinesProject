@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -11,10 +11,13 @@
     <AssemblyName>FastMines</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>FastMines_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <TargetPlatformVersion>8.1</TargetPlatformVersion>
-    <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
+    <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
+    <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
     <TargetFrameworkVersion />
     <PackageCertificateThumbprint>2A4D3F6BDFD446EFFA5F612246505D2E1FAC3252</PackageCertificateThumbprint>
   </PropertyGroup>
@@ -369,9 +372,126 @@
     <None Include="..\res\Background\Face~.vsd">
       <Link>res\Background\Face~.vsd</Link>
     </None>
-    <None Include="packages.config" />
+    <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\res\Logo\Badge\Logo.scale-125.png">
+      <Link>res\Logo\Badge\Logo.scale-125.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\Badge\Logo.scale-150.png">
+      <Link>res\Logo\Badge\Logo.scale-150.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\Badge\Logo.scale-200.png">
+      <Link>res\Logo\Badge\Logo.scale-200.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\Badge\Logo.scale-400.png">
+      <Link>res\Logo\Badge\Logo.scale-400.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SplashScreen\Logo.scale-125.png">
+      <Link>res\Logo\SplashScreen\Logo.scale-125.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SplashScreen\Logo.scale-150.png">
+      <Link>res\Logo\SplashScreen\Logo.scale-150.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SplashScreen\Logo.scale-200.png">
+      <Link>res\Logo\SplashScreen\Logo.scale-200.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\SplashScreen\Logo.scale-400.png">
+      <Link>res\Logo\SplashScreen\Logo.scale-400.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\StoreTile\Logo.scale-125.png">
+      <Link>res\Logo\StoreTile\Logo.scale-125.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\StoreTile\Logo.scale-150.png">
+      <Link>res\Logo\StoreTile\Logo.scale-150.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\StoreTile\Logo.scale-200.png">
+      <Link>res\Logo\StoreTile\Logo.scale-200.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\StoreTile\Logo.scale-400.png">
+      <Link>res\Logo\StoreTile\Logo.scale-400.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq150\Logo.scale-100.png">
+      <Link>res\Logo\TileSq150\Logo.scale-100.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq150\Logo.scale-125.png">
+      <Link>res\Logo\TileSq150\Logo.scale-125.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq150\Logo.scale-150.png">
+      <Link>res\Logo\TileSq150\Logo.scale-150.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq150\Logo.scale-200.png">
+      <Link>res\Logo\TileSq150\Logo.scale-200.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq150\Logo.scale-400.png">
+      <Link>res\Logo\TileSq150\Logo.scale-400.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq310\Logo.scale-125.png">
+      <Link>res\Logo\TileSq310\Logo.scale-125.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq310\Logo.scale-150.png">
+      <Link>res\Logo\TileSq310\Logo.scale-150.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq310\Logo.scale-200.png">
+      <Link>res\Logo\TileSq310\Logo.scale-200.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq310\Logo.scale-400.png">
+      <Link>res\Logo\TileSq310\Logo.scale-400.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq44\Logo.scale-100.png">
+      <Link>res\Logo\TileSq44\Logo.scale-100.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq44\Logo.scale-125.png">
+      <Link>res\Logo\TileSq44\Logo.scale-125.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq44\Logo.scale-150.png">
+      <Link>res\Logo\TileSq44\Logo.scale-150.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq44\Logo.scale-200.png">
+      <Link>res\Logo\TileSq44\Logo.scale-200.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq44\Logo.scale-400.png">
+      <Link>res\Logo\TileSq44\Logo.scale-400.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq44\Logo.targetsize-16.png">
+      <Link>res\Logo\TileSq44\Logo.targetsize-16.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq44\Logo.targetsize-24.png">
+      <Link>res\Logo\TileSq44\Logo.targetsize-24.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq44\Logo.targetsize-256.png">
+      <Link>res\Logo\TileSq44\Logo.targetsize-256.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq44\Logo.targetsize-48.png">
+      <Link>res\Logo\TileSq44\Logo.targetsize-48.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq71\Logo.scale-100.png">
+      <Link>res\Logo\TileSq71\Logo.scale-100.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq71\Logo.scale-125.png">
+      <Link>res\Logo\TileSq71\Logo.scale-125.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq71\Logo.scale-150.png">
+      <Link>res\Logo\TileSq71\Logo.scale-150.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq71\Logo.scale-200.png">
+      <Link>res\Logo\TileSq71\Logo.scale-200.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\TileSq71\Logo.scale-400.png">
+      <Link>res\Logo\TileSq71\Logo.scale-400.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\WideTile\Logo.scale-125.png">
+      <Link>res\Logo\WideTile\Logo.scale-125.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\WideTile\Logo.scale-150.png">
+      <Link>res\Logo\WideTile\Logo.scale-150.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\WideTile\Logo.scale-200.png">
+      <Link>res\Logo\WideTile\Logo.scale-200.png</Link>
+    </Content>
+    <Content Include="..\res\Logo\WideTile\Logo.scale-400.png">
+      <Link>res\Logo\WideTile\Logo.scale-400.png</Link>
+    </Content>
     <Content Include="..\res\ToolBarButton\newNormal.png">
       <Link>res\ToolBarButton\newNormal.png</Link>
     </Content>
@@ -661,101 +781,17 @@
     <Content Include="..\res\Logo\Badge\Logo.scale-100.png">
       <Link>res\Logo\Badge\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\res\Logo\Badge\Logo.scale-140.png">
-      <Link>res\Logo\Badge\Logo.scale-140.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\Badge\Logo.scale-180.png">
-      <Link>res\Logo\Badge\Logo.scale-180.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\Tile\Logo.scale-100.png">
-      <Link>res\Logo\Tile\Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\Tile\Logo.scale-140.png">
-      <Link>res\Logo\Tile\Logo.scale-140.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\Tile\Logo.scale-180.png">
-      <Link>res\Logo\Tile\Logo.scale-180.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\Tile\Logo.scale-80.png">
-      <Link>res\Logo\Tile\Logo.scale-80.png</Link>
-    </Content>
     <Content Include="..\res\Logo\WideTile\Logo.scale-100.png">
       <Link>res\Logo\WideTile\Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\WideTile\Logo.scale-140.png">
-      <Link>res\Logo\WideTile\Logo.scale-140.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\WideTile\Logo.scale-180.png">
-      <Link>res\Logo\WideTile\Logo.scale-180.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\WideTile\Logo.scale-80.png">
-      <Link>res\Logo\WideTile\Logo.scale-80.png</Link>
     </Content>
     <Content Include="..\res\Logo\SplashScreen\Logo.scale-100.png">
       <Link>res\Logo\SplashScreen\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\res\Logo\SplashScreen\Logo.scale-140.png">
-      <Link>res\Logo\SplashScreen\Logo.scale-140.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\SplashScreen\Logo.scale-180.png">
-      <Link>res\Logo\SplashScreen\Logo.scale-180.png</Link>
-    </Content>
     <Content Include="..\res\Logo\StoreTile\Logo.scale-100.png">
       <Link>res\Logo\StoreTile\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\res\Logo\StoreTile\Logo.scale-140.png">
-      <Link>res\Logo\StoreTile\Logo.scale-140.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\StoreTile\Logo.scale-180.png">
-      <Link>res\Logo\StoreTile\Logo.scale-180.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\SmallTile\Logo.scale-100.png">
-      <Link>res\Logo\SmallTile\Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\SmallTile\Logo.scale-140.png">
-      <Link>res\Logo\SmallTile\Logo.scale-140.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\SmallTile\Logo.scale-180.png">
-      <Link>res\Logo\SmallTile\Logo.scale-180.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\SmallTile\Logo.scale-80.png">
-      <Link>res\Logo\SmallTile\Logo.scale-80.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\SmallTile\Logo.targetsize-16.png">
-      <Link>res\Logo\SmallTile\Logo.targetsize-16.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\SmallTile\Logo.targetsize-256.png">
-      <Link>res\Logo\SmallTile\Logo.targetsize-256.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\SmallTile\Logo.targetsize-32.png">
-      <Link>res\Logo\SmallTile\Logo.targetsize-32.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\SmallTile\Logo.targetsize-48.png">
-      <Link>res\Logo\SmallTile\Logo.targetsize-48.png</Link>
-    </Content>
     <Content Include="..\res\Logo\TileSq310\Logo.scale-100.png">
       <Link>res\Logo\TileSq310\Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\TileSq310\Logo.scale-140.png">
-      <Link>res\Logo\TileSq310\Logo.scale-140.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\TileSq310\Logo.scale-180.png">
-      <Link>res\Logo\TileSq310\Logo.scale-180.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\TileSq310\Logo.scale-80.png">
-      <Link>res\Logo\TileSq310\Logo.scale-80.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\TileSq70\Logo.scale-100.png">
-      <Link>res\Logo\TileSq70\Logo.scale-100.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\TileSq70\Logo.scale-140.png">
-      <Link>res\Logo\TileSq70\Logo.scale-140.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\TileSq70\Logo.scale-180.png">
-      <Link>res\Logo\TileSq70\Logo.scale-180.png</Link>
-    </Content>
-    <Content Include="..\res\Logo\TileSq70\Logo.scale-80.png">
-      <Link>res\Logo\TileSq70\Logo.scale-80.png</Link>
     </Content>
   </ItemGroup>
   <ItemGroup>
@@ -790,14 +826,9 @@
       <Name>BackgroundTasks</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="WriteableBitmapEx.WinRT, Version=1.5.0.0, Culture=neutral, PublicKeyToken=50375ca6144f1c69, processorArchitecture=MSIL">
-      <HintPath>..\Workspaces\VS\packages\WriteableBitmapEx.1.5.0.0\lib\NetCore45\WriteableBitmapEx.WinRT.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
-  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
-    <VisualStudioVersion>12.0</VisualStudioVersion>
+  <ItemGroup />
+  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
+    <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
