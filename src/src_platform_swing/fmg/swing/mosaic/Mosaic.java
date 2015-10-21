@@ -27,11 +27,11 @@ import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
 import fmg.data.view.draw.PenBorder;
+import fmg.swing.Cast;
 import fmg.swing.draw.GraphicContext;
 import fmg.swing.draw.mosaic.MosaicGraphicContext;
 import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
-import fmg.swing.geom.Cast;
 
 public class Mosaic extends MosaicBase implements PropertyChangeListener {
 	private MosaicGraphicContext _gContext;

@@ -1,4 +1,4 @@
-package fmg.swing.geom;
+package fmg.swing;
 
 import java.awt.Dimension;
 import java.awt.Polygon;

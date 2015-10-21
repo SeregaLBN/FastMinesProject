@@ -13,7 +13,7 @@ import java.awt.geom.Point2D;
 
 import javax.swing.Icon;
 
-import fmg.swing.geom.Cast;
+import fmg.swing.Cast;
 
 /** main logos image */
 public class Logo implements Icon {

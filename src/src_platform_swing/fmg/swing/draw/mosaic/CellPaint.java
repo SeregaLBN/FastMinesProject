@@ -8,8 +8,8 @@ import javax.swing.UIManager;
 import fmg.core.mosaic.draw.ICellPaint;
 import fmg.core.mosaic.draw.IPaintable;
 import fmg.core.mosaic.cells.BaseCell;
+import fmg.swing.Cast;
 import fmg.swing.draw.GraphicContext;
-import fmg.swing.geom.Cast;
 
 /**
  * Helper class for drawing info

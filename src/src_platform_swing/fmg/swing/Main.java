@@ -91,7 +91,6 @@ import fmg.swing.dialogs.ManageDlg;
 import fmg.swing.dialogs.SelectMosaicDlg;
 import fmg.swing.dialogs.StatisticDlg;
 import fmg.swing.draw.GraphicContext;
-import fmg.swing.geom.Cast;
 import fmg.swing.mosaic.Mosaic;
 import fmg.swing.res.Resources;
 import fmg.swing.res.Resources.EBtnNewGameState;
