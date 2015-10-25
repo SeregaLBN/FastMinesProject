@@ -6,6 +6,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 
+import fmg.swing.Cast;
 import fmg.swing.draw.GraphicContext;
 
 public class MosaicGraphicContext extends GraphicContext {
@@ -20,16 +21,8 @@ public class MosaicGraphicContext extends GraphicContext {
 
 	public Color getColorBk() {
 		if (colorBk == null) {
-//			setColorBk(COLOR_BTNFACE);
-//			setColorBk(Color.BLACK);
-//			setColorBk(UIManager.getDefaults().getColor("Panel.background"));
-
 			Color clr = UIManager.getDefaults().getColor("Panel.background");
-			float perc = 0.40f; // делаю темнее
-			int _r = (int) (clr.getRed  () - clr.getRed  () * perc);
-			int _g = (int) (clr.getGreen() - clr.getGreen() * perc);
-			int _b = (int) (clr.getBlue () - clr.getBlue () * perc);
-			setColorBk(new Color(_r,_g,_b));
+			setColorBk(Cast.toColor(Cast.toColor(clr).darker(0.4)));
 		}
 		return colorBk;
 //		return Color.white;

@@ -8,7 +8,7 @@ import java.awt.image.MemoryImageSource;
 
 import javax.swing.Icon;
 
-import fmg.swing.geom.Cast;
+import fmg.swing.Cast;
 import fmg.swing.utils.ImgUtils;
 
 /** mine image */
