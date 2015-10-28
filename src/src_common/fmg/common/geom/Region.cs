@@ -118,7 +118,7 @@ public static class RegionExt {
       return points;
    }
 
-#if WINDOWS_RT
+#if WINDOWS_RT || WINDOWS_UWP
    public static int[] PointsAsXyxyxySequence(IList<Windows.Foundation.Point> coords, bool firstToLast) {
       var points = new int[coords.Count*2 + (firstToLast ? 2 : 0)];
       int i;

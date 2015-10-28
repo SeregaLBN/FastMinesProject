@@ -157,7 +157,7 @@ namespace fmg.core.mosaic {
 
    protected virtual void OnError(String msg) {
       System.Diagnostics.Debug.WriteLine(msg);
-#if WINDOWS_RT
+#if WINDOWS_RT || WINDOWS_UWP
 #elif WINDOWS_FORMS
       System.Console.Error(msg);
 #else

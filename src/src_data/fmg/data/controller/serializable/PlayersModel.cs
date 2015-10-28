@@ -182,7 +182,7 @@ public class PlayersModel : IExternalizable {
       fireChanged(new PlayerModelEventArgs(len-1, PlayerModelEventArgs.DELETE_ALL));
    }
 
-#if WINDOWS_RT
+#if WINDOWS_RT || WINDOWS_UWP
    /// <summary>Load STC data from file</summary>
    /// <returns><b>true</b> - successful read; <b>false</b> - not exist or fail read, and set to defaults</returns>
    public async System.Threading.Tasks.Task<bool> Load() {
@@ -341,7 +341,7 @@ public class PlayersModel : IExternalizable {
       }
    }
 #else
-   public bool Load()...
+      public bool Load()...
    public void Save()...
 #endif
 

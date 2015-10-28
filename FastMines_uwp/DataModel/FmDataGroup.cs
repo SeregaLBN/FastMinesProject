@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using fmg.core.types;
 using fmg.uwp.res;
 using fmg.uwp.res.img;
@@ -31,8 +32,11 @@ namespace FastMines.Data {
             System.Diagnostics.Debug.WriteLine(seeXxxPageXamlInViewDesigner.ToString());
          } else
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            AsyncRunner.InvokeLater(async () => { base.Image = await Resources.GetImgMosaicGroupPng(eMosaicGroup); },
-               CoreDispatcherPriority.High);
+            AsyncRunner.InvokeLater(async () => {
+               var img = await Resources.GetImgMosaicGroupPng(eMosaicGroup);
+               if (base.Image == null)
+                  base.Image = img;
+            }, CoreDispatcherPriority.High);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
       }
 
@@ -103,7 +107,7 @@ namespace FastMines.Data {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                AsyncRunner.InvokeLater(() => { base.Image = MosaicGroupImage.Image; }, CoreDispatcherPriority.Low);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            return base.Image;
+            return base.Image;// ?? new WriteableBitmap(1,1);
          }
       }
 

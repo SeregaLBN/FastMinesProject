@@ -25,7 +25,7 @@ public struct Size {
 }
 
 public static class SizeExt {
-#if WINDOWS_RT
+#if WINDOWS_RT || WINDOWS_UWP
    public static Size ToFmSize(this Windows.Foundation.Size self) { return new Size((int)self.Width, (int)self.Height); }
    public static Windows.Foundation.Size ToWinSize(this Size self) { return new Windows.Foundation.Size { Width = self.width, Height = self.height }; }
 #elif WINDOWS_FORMS

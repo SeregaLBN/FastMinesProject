@@ -1,4 +1,4 @@
-#if WINDOWS_RT
+#if WINDOWS_RT || WINDOWS_UWP
 using System;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;

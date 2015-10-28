@@ -34,7 +34,7 @@ public struct Point {
 }
 
    public static class PointExt {
-#if WINDOWS_RT
+#if WINDOWS_RT || WINDOWS_UWP
       public static Point ToFmRect(this Windows.Foundation.Point self) { return new Point((int)self.X, (int)self.Y); }
       public static Windows.Foundation.Point ToWinPoint(this Point self) { return new Windows.Foundation.Point { X = self.x, Y = self.y }; }
 #elif WINDOWS_FORMS

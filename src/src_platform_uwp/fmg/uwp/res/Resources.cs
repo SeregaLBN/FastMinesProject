@@ -13,7 +13,7 @@ using fmg.uwp.res.img;
 
 namespace fmg.uwp.res {
 
-   /// <summary> Мультимедиа ресурсы программы </summary>
+   /// <summary> РњСѓР»СЊС‚РёРјРµРґРёР° СЂРµСЃСѓСЂСЃС‹ РїСЂРѕРіСЂР°РјРјС‹ </summary>
    public static class Resources {
       //public static readonly WriteableBitmap ImgDummy1x1 = new WriteableBitmap(1, 1);
 
@@ -53,7 +53,7 @@ namespace fmg.uwp.res {
          eRollover,
          eRolloverSelected,
 
-         // типа ход ассистента - задел на будущее
+         // С‚РёРїР° С…РѕРґ Р°СЃСЃРёСЃС‚РµРЅС‚Р° - Р·Р°РґРµР» РЅР° Р±СѓРґСѓС‰РµРµ
          eAssistant
       }
 
@@ -104,27 +104,27 @@ namespace fmg.uwp.res {
 
       public static async Task<WriteableBitmap> GetImgFlag() {
          if (_imgFlag == null) {
-            _imgFlag = await GetImage("CellState/Flag.png"); // сначала из ресурсов
+            _imgFlag = await GetImage("CellState/Flag.png"); // СЃРЅР°С‡Р°Р»Р° РёР· СЂРµСЃСѓСЂСЃРѕРІ
             if (_imgFlag == null)
-               _imgFlag = new Flag().Image; // иначе - своя картинка из кода
+               _imgFlag = new Flag().Image; // РёРЅР°С‡Рµ - СЃРІРѕСЏ РєР°СЂС‚РёРЅРєР° РёР· РєРѕРґР°
          }
          return _imgFlag;
       }
 
       public static async Task<WriteableBitmap> GetImgMine() {
          if (_imgMine == null) {
-            _imgMine = await GetImage("CellState/Mine.png"); // сначала из ресурсов
+            _imgMine = await GetImage("CellState/Mine.png"); // СЃРЅР°С‡Р°Р»Р° РёР· СЂРµСЃСѓСЂСЃРѕРІ
             if (_imgMine == null)
-               _imgMine = new Mine().Image; // иначе - своя картинка из кода
+               _imgMine = new Mine().Image; // РёРЅР°С‡Рµ - СЃРІРѕСЏ РєР°СЂС‚РёРЅРєР° РёР· РєРѕРґР°
          }
          return _imgMine;
       }
 
       public static async Task<WriteableBitmap> GetImgPause() {
          if (_imgPause == null) {
-            _imgPause = await GetImage("Background/Pause.png"); // сначала из ресурсов
+            _imgPause = await GetImage("Background/Pause.png"); // СЃРЅР°С‡Р°Р»Р° РёР· СЂРµСЃСѓСЂСЃРѕРІ
             if (_imgPause == null)
-               _imgPause = new BackgroundPause().Image; // иначе - своя картинка из кода
+               _imgPause = new BackgroundPause().Image; // РёРЅР°С‡Рµ - СЃРІРѕСЏ РєР°СЂС‚РёРЅРєР° РёР· РєРѕРґР°
          }
          return _imgPause;
       }
@@ -151,7 +151,7 @@ namespace fmg.uwp.res {
          return _imgsBtnPause[key];
       }
 
-      /// <summary> из ресурсов </summary>
+      /// <summary> РёР· СЂРµСЃСѓСЂСЃРѕРІ </summary>
       public async static Task<WriteableBitmap> GetImgMosaicGroupPng(EMosaicGroup key) {
          if (_imgsMosaicGroupPng == null)
             _imgsMosaicGroupPng = new Dictionary<EMosaicGroup, WriteableBitmap>(EMosaicGroupEx.GetValues().Length);
@@ -160,16 +160,16 @@ namespace fmg.uwp.res {
          return _imgsMosaicGroupPng[key] = await GetImage("MosaicGroup/" + key.GetDescription() + ".png");
       }
 
-      /// <summary> самостоятельная отрисовка </summary>
+      /// <summary> СЃР°РјРѕСЃС‚РѕСЏС‚РµР»СЊРЅР°СЏ РѕС‚СЂРёСЃРѕРІРєР° </summary>
       public static MosaicsGroupImg GetImgMosaicGroup(EMosaicGroup key) {
          if (_imgsMosaicGroup == null)
             _imgsMosaicGroup = new Dictionary<EMosaicGroup, MosaicsGroupImg>(EMosaicGroupEx.GetValues().Length);
          if (_imgsMosaicGroup.ContainsKey(key))
             return _imgsMosaicGroup[key];
-         return _imgsMosaicGroup[key] = new MosaicsGroupImg(key, true);
+         return _imgsMosaicGroup[key] = new MosaicsGroupImg(key) { PolarLights = true };
       }
 
-      /// <summary> из ресурсов </summary>
+      /// <summary> РёР· СЂРµСЃСѓСЂСЃРѕРІ </summary>
       public static async Task<WriteableBitmap> GetImgMosaicPng(EMosaic mosaicType, bool smallIco) {
          if (_imgsMosaicPng == null)
             _imgsMosaicPng = new Dictionary<Tuple<EMosaic, bool>, WriteableBitmap>(EMosaicEx.GetValues().Length);
@@ -184,7 +184,7 @@ namespace fmg.uwp.res {
          return GetImageSync("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.GetDescription(true) + ".png");
       }
 
-      /// <summary> самостоятельная отрисовка </summary>
+      /// <summary> СЃР°РјРѕСЃС‚РѕСЏС‚РµР»СЊРЅР°СЏ РѕС‚СЂРёСЃРѕРІРєР° </summary>
       public static MosaicsImg GetImgMosaic(EMosaic mosaicType, Size sizeField, int area, Windows.UI.Color bkColor, Size bound) {
          if (_imgsMosaic == null)
             _imgsMosaic = new Dictionary<Tuple<EMosaic, Size, int, Windows.UI.Color, Size>, MosaicsImg>(EMosaicEx.GetValues().Length);

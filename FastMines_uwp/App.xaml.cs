@@ -1,123 +1,117 @@
-using System;
-using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.System;
-using Windows.UI.Core;
+﻿using System;
+using System.Linq;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.Foundation.Metadata;
+using Windows.Phone.UI.Input;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
-using FastMines.Common;
-using fmg.uwp.draw;
+using Windows.UI.Xaml.Navigation;
+using FastMines.Data;
 
-// The Grid App template is documented at http://go.microsoft.com/fwlink/?LinkId=234226
-
-namespace FastMines {
+namespace FastMines
+{
    /// <summary>
    /// Provides application-specific behavior to supplement the default Application class.
    /// </summary>
-   sealed partial class App : Application {
-
-      private async Task RegisterResource() {
-         await BitmapFont.RegisterFonts();
-      }
-
+   sealed partial class App : Application
+   {
       /// <summary>
-      /// Initializes the singleton Application object.  This is the first line of authored code
+      /// Initializes the singleton application object.  This is the first line of authored code
       /// executed, and as such is the logical equivalent of main() or WinMain().
       /// </summary>
-      public App() {
+      public App()
+      {
          this.InitializeComponent();
          this.Suspending += OnSuspending;
-
-#if DEBUG
-         var testString = "Hello World! Чпунтику привет!";
-         var bs = System.Text.Encoding.UTF8.GetBytes(testString);
-         var text2 =
-            Windows.Security.Cryptography.CryptographicBuffer.ConvertBinaryToString(
-               Windows.Security.Cryptography.BinaryStringEncoding.Utf8,
-               System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeBufferExtensions.AsBuffer(bs));
-         System.Diagnostics.Debug.Assert(testString == text2);
-
-         var omg =
-            Windows.Security.Cryptography.CryptographicBuffer.EncodeToHexString(
-               System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeBufferExtensions.AsBuffer(new byte[]
-               {0x01, 0x02, 0x1d, 0x55, 0xFF}));
-
-         {
-            // 3DES
-            {
-               var secKey = "super-puper mega Password";
-               var tdes1 = new fmg.common.crypt.TripleDESOperations() {SecurityKeyStr = secKey, DataStr = testString};
-               var encrypted = tdes1.EncryptB64();
-               var decrypted =
-                  new fmg.common.crypt.TripleDESOperations() {SecurityKeyStr = secKey, DataB64 = encrypted}.DecryptStr();
-               System.Diagnostics.Debug.Assert(decrypted == testString, "Triple DES failed!");
-            }
-            //{
-            //   var secKey = fmg.common.TripleDESOperations.GenerateKey();
-            //   var encrypted = new fmg.common.TripleDESOperations() { SecurityKey = secKey, DataStr = testString }.EncryptB64();
-            //   var decrypted = new fmg.common.TripleDESOperations() { SecurityKey = secKey, DataB64 = encrypted }.DecryptStr();
-            //   System.Diagnostics.Debug.Assert(decrypted == testString, "Triple DES failed!");
-            //}
-            //{
-            //   var secKey = fmg.common.TripleDESOperations.GenerateKey();
-            //   var iv = fmg.common.TripleDESOperations.GenerateInitVector(CipherMode.CBC);
-            //   var encrypted = new fmg.common.TripleDESOperations() { InitVector = iv, Mode = CipherMode.CBC, SecurityKey = secKey, DataStr = testString }.EncryptB64();
-            //   var decrypted = new fmg.common.TripleDESOperations() { InitVector = iv, Mode = CipherMode.CBC, SecurityKey = secKey, DataB64 = encrypted }.DecryptStr();
-            //   System.Diagnostics.Debug.Assert(decrypted == testString, "Triple DES failed!");
-            //}
-         }
-#endif
       }
 
       /// <summary>
       /// Invoked when the application is launched normally by the end user.  Other entry points
-      /// will be used when the application is launched to open a specific file, to display
-      /// search results, and so forth.
+      /// will be used such as when the application is launched to open a specific file.
       /// </summary>
-      /// <param name="args">Details about the launch request and process.</param>
-      protected override async void OnLaunched(LaunchActivatedEventArgs args) {
-         Window.Current.CoreWindow.KeyDown += AppOnKeyDown;
-         await RegisterResource();
-         Frame rootFrame = Window.Current.Content as Frame;
+      /// <param name="e">Details about the launch request and process.</param>
+      protected override void OnLaunched(LaunchActivatedEventArgs e)
+      {
+#if DEBUG
+         if (System.Diagnostics.Debugger.IsAttached)
+         {
+            // disabled, obscures the hamburger button, enable if you need it
+            //this.DebugSettings.EnableFrameRateCounter = true;
+         }
+#endif
 
-         // Do not repeat app initialization when the Window already has content, just ensure that the window is active
-         if (rootFrame == null) {
-            // Create a Frame to act as the navigation context and navigate to the first page
-            rootFrame = new Frame();
-            //Associate the frame with a SuspensionManager key                                
-            SuspensionManager.RegisterFrame(rootFrame, "AppFrame");
+         var shell = Window.Current.Content as Shell;
 
-            if (args.PreviousExecutionState == ApplicationExecutionState.Terminated) {
-               // Restore the saved session state only when appropriate
-               try {
-                  await SuspensionManager.RestoreAsync();
-               }
-               catch (SuspensionManagerException ex) {
-                  //Something went wrong restoring state.
-                  //Assume there is no state and continue
-                  System.Diagnostics.Debug.Assert(false, ex.ToString());
-               }
+         // Do not repeat app initialization when the Window already has content,
+         // just ensure that the window is active
+         if (shell == null)
+         {
+            // Create a Shell which navigates to the first page
+            shell = new Shell();
+
+            // hook-up shell root frame navigation events
+            shell.RootFrame.NavigationFailed += OnNavigationFailed;
+            shell.RootFrame.Navigated += OnNavigated;
+
+            if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+            {
+               //TODO: Load state from previously suspended application
             }
 
-            // Place the frame in the current Window
-            Window.Current.Content = rootFrame;
-         }
-         if (rootFrame.Content == null) {
-            // When the navigation stack isn't restored navigate to the first page,
-            // configuring the new page by passing required information as a navigation parameter
-            if (!rootFrame.Navigate(typeof (GroupedItemsPage), "AllGroups")) {
-               throw new Exception("Failed to create initial page");
+            // set the Shell as content
+            Window.Current.Content = shell;
+
+            // listen for back button clicks (both soft- and hardware)
+            SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+
+            if (ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
+            {
+               HardwareButtons.BackPressed += OnBackPressed;
             }
+
+            UpdateBackButtonVisibility();
          }
+
          // Ensure the current window is active
          Window.Current.Activate();
+      }
 
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-         AsyncRunner.InvokeLater(TileHelper.RegisterBackgroundTask, CoreDispatcherPriority.Low);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+      // handle hardware back button press
+      void OnBackPressed(object sender, BackPressedEventArgs e)
+      {
+         var shell = (Shell)Window.Current.Content;
+         if (shell.RootFrame.CanGoBack)
+         {
+            e.Handled = true;
+            shell.RootFrame.GoBack();
+         }
+      }
+
+      // handle software back button press
+      void OnBackRequested(object sender, BackRequestedEventArgs e)
+      {
+         var shell = (Shell)Window.Current.Content;
+         if (shell.RootFrame.CanGoBack)
+         {
+            e.Handled = true;
+            shell.RootFrame.GoBack();
+         }
+      }
+
+      void OnNavigated(object sender, NavigationEventArgs e)
+      {
+         UpdateBackButtonVisibility();
+      }
+
+      /// <summary>
+      /// Invoked when Navigation to a certain page fails
+      /// </summary>
+      /// <param name="sender">The Frame which failed navigation</param>
+      /// <param name="e">Details about the navigation failure</param>
+      void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+      {
+         throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
       }
 
       /// <summary>
@@ -127,30 +121,24 @@ namespace FastMines {
       /// </summary>
       /// <param name="sender">The source of the suspend request.</param>
       /// <param name="e">Details about the suspend request.</param>
-      private async void OnSuspending(object sender, SuspendingEventArgs e) {
+      private void OnSuspending(object sender, SuspendingEventArgs e)
+      {
          var deferral = e.SuspendingOperation.GetDeferral();
-         await SuspensionManager.SaveAsync();
+         //TODO: Save application state and stop any background activity
          deferral.Complete();
       }
 
-      private static void AppOnKeyDown(CoreWindow sender, KeyEventArgs args) {
-         var frame = (Frame) Windows.UI.Xaml.Window.Current.Content;
-         //var page = (Windows.UI.Xaml.Controls.Page)frame.Content;
-         switch (args.VirtualKey) {
-            case VirtualKey.GoBack:
-            case VirtualKey.Back:
-               if (frame != null) {
-                  if (frame.CanGoBack) {
-                     args.Handled = true;
-                     frame.GoBack();
-                  } else {
-                     if (frame.Content is GroupedItemsPage) {
-                        App.Current.Exit();
-                     }
-                  }
-               }
-               break;
+      private void UpdateBackButtonVisibility()
+      {
+         var shell = (Shell)Window.Current.Content;
+
+         var visibility = AppViewBackButtonVisibility.Collapsed;
+         if (shell.RootFrame.CanGoBack)
+         {
+            visibility = AppViewBackButtonVisibility.Visible;
          }
+
+         SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = visibility;
       }
    }
 }

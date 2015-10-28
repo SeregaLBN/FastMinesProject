@@ -148,7 +148,7 @@ public class ChampionsModel : IExternalizable {
             }
    }
 
-#if WINDOWS_RT
+#if WINDOWS_RT || WINDOWS_UWP
    // Load BST data from file
    // return <b>true</b> - successful read; <b>false</b> - not exist or fail read, and set to defaults
    public async System.Threading.Tasks.Task<bool> Load() {

@@ -133,7 +133,7 @@ namespace fmg.common.geom {
    }
 
    public static class RectExt {
-#if WINDOWS_RT
+#if WINDOWS_RT || WINDOWS_UWP
       public static Rect ToFmRect(this Windows.Foundation.Rect self) { return new Rect((int)self.X, (int)self.Y, (int)self.Width, (int)self.Height); }
       public static Windows.Foundation.Rect ToWinRect(this Rect self) { return new Windows.Foundation.Rect(self.x, self.y, self.width, self.height); }
 #elif WINDOWS_FORMS

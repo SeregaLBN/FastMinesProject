@@ -5,6 +5,7 @@ namespace fmg.common {
    public struct Color {
       public static readonly Color Transparent = new Color(0,255,255,255);
       public static readonly Color Black   = new Color(0xFF000000);
+      public static Color Dark => Black;
       public static readonly Color White   = new Color(0xFFFFFFFF);
       public static readonly Color Navy    = new Color(0xFF000080);
       public static readonly Color Green   = new Color(0xFF008000);
@@ -42,7 +43,7 @@ namespace fmg.common {
       public override int GetHashCode() { return (A << 24) | (R << 16) | (G << 8) | B; }
 
       public override string ToString() {
-         return string.Format("argb={0:X2}{1:X2}{2:X2}{3:X2}", A, R, G, B);
+         return $"argb={A:X2}{R:X2}{G:X2}{B:X2}";
       }
    }
 
@@ -58,10 +59,12 @@ namespace fmg.common {
 
       /// <summary> —м€гчить цвет </summary>
       /// <param name="clr"></param>
-      /// <param name="basic"> от заданной границы светлости буду создавать новый цвет </param>
+      /// <param name="basic"> от заданной границы светлости буду создавать новый цвет. Ranges: 0 - as is; 255 - WHITE </param>
       /// <returns></returns>
       public static Color Attenuate(this Color clr, int basic = 120) {
-         System.Diagnostics.Debug.Assert(basic >= 0 && basic < 0xFF);
+         System.Diagnostics.Debug.Assert(basic >= 0 && basic <= 0xFF);
+         if (basic == 0xFF)
+            return new Color(0xFF, 0xFF, 0xFF, clr.A);
          return new Color {
             R = (byte) (basic + clr.R%(0xFF - basic)),
             G = (byte) (basic + clr.G%(0xFF - basic)),
@@ -93,7 +96,7 @@ namespace fmg.common {
             clr.A);
       }
 
-#if WINDOWS_RT
+#if WINDOWS_RT || WINDOWS_UWP
       public static Color ToFmColor(this Windows.UI.Color self) { return new Color(self.R, self.G, self.B, self.A); }
       public static Windows.UI.Color ToWinColor(this Color self) { return new Windows.UI.Color { A = self.A, B = self.B, G = self.G, R = self.R }; }
 #elif WINDOWS_FORMS
