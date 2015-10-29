@@ -24,7 +24,7 @@ namespace fmg.uwp.draw {
       private readonly bool _iconicMode;
       private Size _bound;
 
-      private static readonly Random Rand = new Random();
+      private static readonly Random Rand = new Random(Guid.NewGuid().GetHashCode());
 
       public GraphicContext(bool iconicMode) {
          this._iconicMode = iconicMode;

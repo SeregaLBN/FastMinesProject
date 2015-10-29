@@ -137,7 +137,7 @@ namespace fmg.uwp.mosaic {
       }
 
       public override void GameNew() {
-         var mode = 1 + new Random().Next(CellFactory.CreateAttributeInstance(MosaicType, Area).getMaxBackgroundFillModeValue());
+         var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(CellFactory.CreateAttributeInstance(MosaicType, Area).getMaxBackgroundFillModeValue());
          //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
          GraphicContext.BkFill.Mode = (int)mode;
          base.GameNew();

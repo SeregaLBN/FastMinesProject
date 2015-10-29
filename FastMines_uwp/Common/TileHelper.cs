@@ -16,7 +16,7 @@ using BackgroundTasks;
 
 namespace FastMines {
    public static class TileHelper {
-      private static readonly Random Random = new Random();
+      private static readonly Random Random = new Random(Guid.NewGuid().GetHashCode());
       private static readonly string TaskName = typeof(BackgroundTasks.FastMinesTileUpdater).Name;
       private static readonly string TaskEntryPoint = typeof(BackgroundTasks.FastMinesTileUpdater).FullName;
 

@@ -6,7 +6,6 @@ using fmg.core.types;
 using FastMines.Common;
 using fmg.common;
 using fmg.common.geom;
-using src_fmg.common.geom;
 using Point = Windows.Foundation.Point;
 using Rect = Windows.Foundation.Rect;
 using Thickness = src_fmg.common.geom.Thickness;
@@ -24,8 +23,8 @@ namespace fmg.uwp.res.img
          public UInt16 R, G, B;
       }
 
-      private int _size = 100;
-      /// <summary> width and height in pixels (wi</summary>
+      private int _size;
+      /// <summary> width and height in pixels (inner part of image output) </summary>
       public int Size
       {
          get { return _size; }
@@ -76,7 +75,7 @@ namespace fmg.uwp.res.img
 
       public EMosaicGroup MosaicGroup { get; private set; }
       private Point[] _points;
-      private readonly Random _random = new Random();
+
       public WriteableBitmap Image { get; private set; }
 
       /// <summary> frequency of redrawing (in milliseconds) </summary>
@@ -138,7 +137,7 @@ namespace fmg.uwp.res.img
       }
       private DispatcherTimer _timer;
 
-      public bool _rotate;
+      private bool _rotate;
       public bool Rotate {
          get { return _rotate; }
          set
@@ -149,13 +148,13 @@ namespace fmg.uwp.res.img
             NextIteration();
          }
       }
-      private double _rotateAngle;
+      /// <summary> -360° .. 0° .. +360° </summary>
+      public double RotateAngle { get; set; }
+      public double RotateAngleDelta { get; set; } = .4;
 
       private Color16 _fillColor;
 
-      /// <summary> использовать для мигашки один канал (R или G или B), или все (и R и G и B) </summary>
-      private const bool AnyChannel = !true;
-      private int _channel;
+      private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
 
       public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = 100, int padding = -1) {
          MosaicGroup = group;
@@ -168,8 +167,6 @@ namespace fmg.uwp.res.img
             G = Convert.ToUInt16(_random.Next(Color16.MaxColorValue)),
             B = Convert.ToUInt16(_random.Next(Color16.MaxColorValue))
          };
-         if (AnyChannel)
-            _channel = NextChannel();
          MakeCoords(true);
       }
 
@@ -262,7 +259,7 @@ namespace fmg.uwp.res.img
       }
 
       private bool _sheduledNextIteration;
-      /// <summary> async operation </summary>
+      /// <summary> schedule drawing (async operation) </summary>
       private void NextIteration()
       {
          if (_sheduledNextIteration)
@@ -280,26 +277,31 @@ namespace fmg.uwp.res.img
          var h = Height;
          var bmp = new WriteableBitmap(w, h);
 
-         bmp.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 },
-            Windows.UI.Color.FromArgb(BkColor.A, BkColor.R, BkColor.G, BkColor.B));
+         var rotate = Rotate || (Math.Abs(RotateAngle) > 0.1);
+         Action<WriteableBitmap> funcFillBk = img => {
+               img.FillPolygon(new[] {0, 0, w, 0, w, h, 0, h, 0, 0},
+                  Windows.UI.Color.FromArgb(BkColor.A, BkColor.R, BkColor.G, BkColor.B));
+            };
+         if (!rotate) {
+            funcFillBk(bmp);
+         }
 
          if (PolarLights)
          {
-            Func<UInt16, UInt16> funcAddRandomBit = (val) => (UInt16)((((_random.Next() & 1) == 1) ? 0x0000 : 0x8000) | (val >> 1));
-            switch (AnyChannel ? _channel : NextChannel())
-            {
+            Func<UInt16, UInt16> funcAddRandomBit = val => (UInt16)((((_random.Next() & 1) == 1) ? 0x0000 : 0x8000) | (val >> 1));
+            switch (_random.Next() % 3) {
                case 0: _fillColor.R = funcAddRandomBit(_fillColor.R); break;
                case 1: _fillColor.G = funcAddRandomBit(_fillColor.G); break;
                case 2: _fillColor.B = funcAddRandomBit(_fillColor.B); break;
             }
          }
-         Func<double, byte> funcCast_UInt16_to_Byte = (val) => (byte)(byte.MaxValue * val / Color16.MaxColorValue);
+         Func<double, byte> funcCastUInt16ToByte = val => (byte)(byte.MaxValue * val / Color16.MaxColorValue);
          var fillColor =
             new Color
             {
-               R = funcCast_UInt16_to_Byte(_fillColor.R),
-               G = funcCast_UInt16_to_Byte(_fillColor.G),
-               B = funcCast_UInt16_to_Byte(_fillColor.B),
+               R = funcCastUInt16ToByte(_fillColor.R),
+               G = funcCastUInt16ToByte(_fillColor.G),
+               B = funcCastUInt16ToByte(_fillColor.B),
                A = byte.MaxValue
             }.Attenuate(160).ToWinColor();
 
@@ -316,19 +318,33 @@ namespace fmg.uwp.res.img
             }
          }
 
-         if (Rotate) {
-            if ((_rotateAngle != 0) || (_rotateAngle != 360)) {
-               bmp = bmp.RotateFree(_rotateAngle);
+         if (rotate) {
+            bmp = bmp.RotateFree(RotateAngle);
+
+            RotateAngle += RotateAngleDelta;
+            if (RotateAngleDelta > 0) {
+               if (RotateAngle >= 360)
+                  RotateAngle -= 360;
+            } else {
+               if (RotateAngle <= -360)
+                  RotateAngle += 360;
             }
-            _rotateAngle += .4;
-            if (_rotateAngle > 360)
-               _rotateAngle -= 360;
          }
 
          if (Image == null) {
-            Image = bmp;
+            if (rotate) {
+               Image = new WriteableBitmap(w, h);
+               funcFillBk(Image);
+               var rc = new Rect(0, 0, w, h);
+               Image.Blit(rc, bmp, rc);
+            } else {
+               Image = bmp;
+            }
          } else {
             var rc = new Rect(0, 0, w, h);
+            if (rotate) {
+               funcFillBk(Image);
+            }
             Image.Blit(rc, bmp, rc);
          }
 
@@ -358,10 +374,5 @@ namespace fmg.uwp.res.img
          // free native resources if there are any.
       }
 
-      private int NextChannel()
-      {
-         var i = _random.Next();
-         return (i % 3);
-      }
    }
 }

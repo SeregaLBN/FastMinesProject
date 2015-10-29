@@ -21,8 +21,8 @@ public static class EMosaicGroupEx {
       case EMosaicGroup.eQuadrangles: return 4;
       case EMosaicGroup.ePentagons  : return 5;
       case EMosaicGroup.eHexagons   : return 6;
-      case EMosaicGroup.eOthers     : return defaultValue; // 3 + new Random().Next() & 3;
-      }
+      case EMosaicGroup.eOthers     : return defaultValue; // 3 + new Random(Guid.NewGuid().GetHashCode()).Next() & 3;
+         }
       throw new ArgumentException("Invalid paramenter value " + self);
    }
 

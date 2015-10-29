@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic;
@@ -29,7 +28,7 @@ namespace fmg.uwp.res.img {
       private CellPaintBmp _cellPaint;
       private Windows.UI.Color _bkColor;
       private WriteableBitmap _image;
-      private static readonly Random _random = new Random();
+      private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
 
       public Size SizeField
       {

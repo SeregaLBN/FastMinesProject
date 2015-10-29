@@ -186,7 +186,7 @@ namespace fmg.core.mosaic {
       matrixClone.Remove(firstClickCell); // исключаю на которой кликал юзер
       matrixClone.RemoveAll( x => firstClickNeighbors.Contains(x) ); // и их соседей
       int count = 0;
-      Random rand = new Random();
+      Random rand = new Random(Guid.NewGuid().GetHashCode());
       do {
          int len = matrixClone.Count;
          if (len == 0) {

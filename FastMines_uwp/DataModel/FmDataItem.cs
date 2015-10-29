@@ -19,7 +19,7 @@ namespace FastMines.Data {
 
    /// <summary> Generic item data model. </summary>
    public class FmDataItem : FmDataCommon<EMosaic> {
-      private static readonly Random _random = new Random();
+      private static readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
       private readonly Size _sizeField;
       private const int Area = 3000;
       private MosaicsImg _mosaicsImg;
