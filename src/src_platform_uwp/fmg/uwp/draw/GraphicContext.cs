@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Windows.UI.Text;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
@@ -21,13 +22,12 @@ namespace fmg.uwp.draw {
       private FontStyle _fontStyle = DEFAULT_FONT_STYLE;
       private int _fontSize = DEFAULT_FONT_SIZE;
 
-      private readonly bool _iconicMode;
       private Bound _padding;
 
       private static readonly Random Rand = new Random(Guid.NewGuid().GetHashCode());
 
       public GraphicContext(bool iconicMode) {
-         this._iconicMode = iconicMode;
+         this.IconicMode = iconicMode;
       }
 
       public WriteableBitmap ImgMine {
@@ -61,17 +61,17 @@ namespace fmg.uwp.draw {
          }
       }
 
-      /// <summary> всё что относиться к заливке фоном ячееек </summary>
+      /// <summary> РІСЃС‘ С‡С‚Рѕ РѕС‚РЅРѕСЃРёС‚СЊСЃСЏ Рє Р·Р°Р»РёРІРєРµ С„РѕРЅРѕРј СЏС‡РµРµРµРє </summary>
       public class BackgroundFill {
-         /// <summary> режим заливки фона ячеек </summary>
+         /// <summary> СЂРµР¶РёРј Р·Р°Р»РёРІРєРё С„РѕРЅР° СЏС‡РµРµРє </summary>
          private int _mode = 0;
 
-         /// <summary> кэшированные цвета фона ячеек </summary>
+         /// <summary> РєСЌС€РёСЂРѕРІР°РЅРЅС‹Рµ С†РІРµС‚Р° С„РѕРЅР° СЏС‡РµРµРє </summary>
          private readonly IDictionary<int, Color> _colors = new Dictionary<int, Color>();
 
-         /// <summary> режим заливки фона ячеек:
-         /// 0 - цвет заливки фона по-умолчанию
-         /// not 0 - радуга %)
+         /// <summary> СЂРµР¶РёРј Р·Р°Р»РёРІРєРё С„РѕРЅР° СЏС‡РµРµРє:
+         /// 0 - С†РІРµС‚ Р·Р°Р»РёРІРєРё С„РѕРЅР° РїРѕ-СѓРјРѕР»С‡Р°РЅРёСЋ
+         /// not 0 - СЂР°РґСѓРіР° %)
          /// </summary>
          public int Mode {
             get { return _mode; }
@@ -81,8 +81,8 @@ namespace fmg.uwp.draw {
             }
          }
 
-         /// <summary> кэшированные цвета фона ячеек
-         /// Нет цвета? - создасться с нужной интенсивностью! */
+         /// <summary> РєСЌС€РёСЂРѕРІР°РЅРЅС‹Рµ С†РІРµС‚Р° С„РѕРЅР° СЏС‡РµРµРє
+         /// РќРµС‚ С†РІРµС‚Р°? - СЃРѕР·РґР°СЃС‚СЊСЃСЏ СЃ РЅСѓР¶РЅРѕР№ РёРЅС‚РµРЅСЃРёРІРЅРѕСЃС‚СЊСЋ! */
          /// </summary>
          public Color GetColor(int index) {
             if (_colors.ContainsKey(index))
@@ -103,7 +103,7 @@ namespace fmg.uwp.draw {
          }
       }
 
-      public bool IconicMode { get { return _iconicMode; } }
+      public bool IconicMode { get; }
 
       public Bound Padding {
          get { return _padding; }
@@ -122,5 +122,35 @@ namespace fmg.uwp.draw {
          get { return _fontSize; }
          set { this.SetProperty(ref this._fontSize, value); }
       }
+
+      /// <summary> Р¦РІРµС‚ Р·Р°Р»РёРІРєРё СЏС‡РµР№РєРё РїРѕ-СѓРјРѕР»С‡Р°РЅРёСЋ. Р—Р°РІРёСЃРёС‚ РѕС‚ С‚РµРєСѓС‰РµРіРѕ UI РјР°РЅР°РіРµСЂР° </summary>
+      public static Color DefaultBackgroundFillColor { get; }
+      public static Color DefaultBackgroundWindowColor { get; }
+
+      static GraphicContext() {
+         try {
+            var uiSettings = new UISettings();
+
+            Color clrBtn, clrWin;
+            try {
+               // desktop
+               clrBtn = uiSettings.UIElementColor(UIElementType.ButtonFace).ToFmColor();
+               clrWin = uiSettings.UIElementColor(UIElementType.Window).ToFmColor();
+            } catch (ArgumentException) {
+               try {
+                  // mobile
+                  clrBtn = uiSettings.UIElementColor(1000 + UIElementType.ButtonFace).ToFmColor();
+                  clrWin = uiSettings.UIElementColor(1000 + UIElementType.Window).ToFmColor();
+               } catch (Exception) {
+                  clrBtn = clrWin = Color.Gray; // wtf??
+               }
+            }
+            DefaultBackgroundFillColor = clrBtn;
+            DefaultBackgroundWindowColor = clrWin;
+         } catch (Exception ex) {
+            System.Diagnostics.Debug.Fail(ex.Message);
+         }
+      }
+
    }
 }

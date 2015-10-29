@@ -342,16 +342,16 @@ namespace fmg.uwp.res.img
          {
             bmp = bmp.RotateFree(RotateAngle);
 
-            RotateAngle += RotateAngleDelta;
+            _rotateAngle += RotateAngleDelta;
             if (RotateAngleDelta > 0)
             {
                if (RotateAngle >= 360)
-                  RotateAngle -= 360;
+                  _rotateAngle -= 360;
             }
             else
             {
                if (RotateAngle <= -360)
-                  RotateAngle += 360;
+                  _rotateAngle += 360;
             }
          }
 

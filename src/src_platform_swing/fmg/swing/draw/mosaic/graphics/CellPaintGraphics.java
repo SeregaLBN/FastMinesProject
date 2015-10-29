@@ -22,6 +22,7 @@ import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
 import fmg.swing.Cast;
+import fmg.swing.draw.GraphicContext;
 import fmg.swing.draw.mosaic.CellPaint;
 
 /**
@@ -177,7 +178,7 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
 //			return;
 		g.setColor(Cast.toColor(cell.getBackgroundFillColor(
 				gContext.getBackgroundFill().getMode(),
-				getDefaultBackgroundFillColor(),
+				GraphicContext.getDefaultBackgroundFillColor(),
 				gContext.getBackgroundFill().getColors()
 				)));
 		g.fillPolygon(Cast.toPolygon(Region.moveXY(cell.getRegion(), gContext.getPadding())));

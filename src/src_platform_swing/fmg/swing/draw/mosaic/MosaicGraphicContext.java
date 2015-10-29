@@ -4,14 +4,11 @@ import java.awt.Color;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.UIManager;
 
 import fmg.swing.Cast;
 import fmg.swing.draw.GraphicContext;
 
 public class MosaicGraphicContext extends GraphicContext {
-	public static final Color COLOR_BTNFACE = Color.GRAY;
-
 	private Color  	  colorBk;
 	private ImageIcon imgBckgrnd;
 
@@ -21,8 +18,8 @@ public class MosaicGraphicContext extends GraphicContext {
 
 	public Color getColorBk() {
 		if (colorBk == null) {
-			Color clr = UIManager.getDefaults().getColor("Panel.background");
-			setColorBk(Cast.toColor(Cast.toColor(clr).darker(0.4)));
+			fmg.common.Color clr = GraphicContext.getDefaultBackgroundFillColor();
+			setColorBk(Cast.toColor(clr.darker(0.4)));
 		}
 		return colorBk;
 //		return Color.white;

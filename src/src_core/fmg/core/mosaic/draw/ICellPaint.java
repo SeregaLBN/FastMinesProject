@@ -18,9 +18,6 @@ public interface ICellPaint<TPaintable extends IPaintable> {
 
 	void paintComponent(BaseCell cell, TPaintable p);
 
-	/** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера */
-	fmg.common.Color getDefaultBackgroundFillColor();
-
 	/** залить ячейку нужным цветом */
 	void paintComponentBackground(BaseCell cell, TPaintable p);
 }

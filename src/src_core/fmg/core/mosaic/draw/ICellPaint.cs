@@ -1,4 +1,3 @@
-using fmg.common;
 using fmg.core.mosaic.cells;
 
 namespace fmg.core.mosaic.draw
@@ -17,9 +16,6 @@ namespace fmg.core.mosaic.draw
       void PaintBorderLines(BaseCell cell, TPaintable paint);
 
       void PaintComponent(BaseCell cell, TPaintable paint);
-
-      /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера </summary>
-      Color DefaultBackgroundFillColor { get; }
 
       /// <summary> залить ячейку нужным цветом </summary>
       void PaintComponentBackground(BaseCell cell, TPaintable paint);

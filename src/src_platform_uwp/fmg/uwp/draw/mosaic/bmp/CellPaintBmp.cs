@@ -127,7 +127,7 @@ namespace fmg.uwp.draw.mosaic.bmp
          //   return;
          var color = cell.getBackgroundFillColor(
             GContext.BkFill.Mode,
-            DefaultBackgroundFillColor,
+            GraphicContext.DefaultBackgroundFillColor,
             GContext.BkFill.GetColor
             );
          paint.Bmp.FillPolygon(cell.getRegion().RegionAsXyxyxySequence(GContext.Padding, true), color.ToWinColor());

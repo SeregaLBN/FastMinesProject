@@ -162,11 +162,11 @@ namespace fmg.uwp.draw.mosaic.xaml
       public override void PaintComponentBackground(BaseCell cell, PaintableShapes binder) {
          Color clr;
          if (GContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
-            clr = DefaultBackgroundFillColor; // TODO ??? мож прозрачное..
+            clr = GraphicContext.DefaultBackgroundFillColor; // TODO ??? мож прозрачное..
          else
             clr = cell.getBackgroundFillColor(
                GContext.BkFill.Mode,
-               DefaultBackgroundFillColor,
+               GraphicContext.DefaultBackgroundFillColor,
                GContext.BkFill.GetColor
                );
          binder.Poly.Fill = FindBrush(clr);
