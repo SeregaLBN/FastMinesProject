@@ -3,7 +3,7 @@ using System;
 namespace fmg.common {
 
    public struct Color {
-      public static readonly Color Transparent = new Color(0,255,255,255);
+      public static readonly Color Transparent = new Color(255,255,255,0);
       public static readonly Color Black   = new Color(0xFF000000);
       public static Color Dark => Black;
       public static readonly Color White   = new Color(0xFFFFFFFF);

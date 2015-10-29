@@ -13,7 +13,7 @@ using Thickness = src_fmg.common.geom.Thickness;
 namespace fmg.uwp.res.img
 {
 
-   public class MosaicsGroupImg : IDisposable
+   public class MosaicsGroupImg : BindableBase, IDisposable
    {
       public static readonly Color BkColorDefault = new Color(0xff, 0x8c, 0x00, 0xFF);
 
@@ -30,11 +30,11 @@ namespace fmg.uwp.res.img
          get { return _size; }
          set
          {
-            if (_size == value)
-               return;
-            _size = value;
-            Image = null;
-            MakeCoords(false);
+            if (SetProperty(ref _size, value))
+            {
+               _image = null;
+               MakeCoords(false);
+            }
          }
       }
 
@@ -50,11 +50,11 @@ namespace fmg.uwp.res.img
          get { return _margin; }
          set
          {
-            if (_margin.Equals(value))
-               return;
-            _margin = value;
-            Image = null;
-            MakeCoords(false);
+            if (SetProperty(ref _margin, value))
+            {
+               _image = null;
+               MakeCoords(false);
+            }
          }
       }
 
@@ -65,18 +65,19 @@ namespace fmg.uwp.res.img
          get { return _padding; }
          set
          {
-            if (_padding == value)
-               return;
-            _padding = value;
-            Image = null;
-            MakeCoords(false);
+            if (SetProperty(ref _padding, value))
+            {
+               _image = null;
+               MakeCoords(false);
+            }
          }
       }
 
       public EMosaicGroup MosaicGroup { get; private set; }
       private Point[] _points;
 
-      public WriteableBitmap Image { get; private set; }
+      private WriteableBitmap _image;
+      public WriteableBitmap Image { get { return _image; } private set { SetPropertyForce(ref _image, value); } }
 
       /// <summary> frequency of redrawing (in milliseconds) </summary>
       public double RedrawInterval { get; set; } = 100;
@@ -89,10 +90,8 @@ namespace fmg.uwp.res.img
          get { return _polarLights; }
          set
          {
-            if (_polarLights == value)
-               return;
-            _polarLights = value;
-            NextIteration();
+            if (SetProperty(ref _polarLights, value))
+               NextIteration();
          }
       }
 
@@ -103,10 +102,8 @@ namespace fmg.uwp.res.img
          get { return _bkColor; }
          set
          {
-            if (_bkColor.Equals(value))
-               return;
-            _bkColor = value;
-            NextIteration();
+            if (SetProperty(ref _bkColor, value))
+               NextIteration();
          }
       }
 
@@ -116,10 +113,8 @@ namespace fmg.uwp.res.img
          get { return _borderColor; }
          set
          {
-            if (_borderColor.Equals(value))
-               return;
-            _borderColor = value;
-            NextIteration();
+            if (SetProperty(ref _borderColor, value))
+               NextIteration();
          }
       }
 
@@ -129,40 +124,59 @@ namespace fmg.uwp.res.img
          get { return _borderWidth; }
          set
          {
-            if (_borderWidth == value)
-               return;
-            _borderWidth = value;
-            NextIteration();
+            if (SetProperty(ref _borderWidth, value))
+               NextIteration();
          }
       }
       private DispatcherTimer _timer;
 
       private bool _rotate;
-      public bool Rotate {
+      public bool Rotate
+      {
          get { return _rotate; }
          set
          {
-            if (_rotate == value)
-               return;
-            _rotate = value;
-            NextIteration();
+            if (SetProperty(ref _rotate, value))
+               NextIteration();
          }
       }
+
+      private double _rotateAngle;
       /// <summary> -360° .. 0° .. +360° </summary>
-      public double RotateAngle { get; set; }
-      public double RotateAngleDelta { get; set; } = .4;
+      public double RotateAngle
+      {
+         get { return _rotateAngle; }
+         set
+         {
+            if (SetProperty(ref _rotateAngle, value))
+               NextIteration();
+         }
+      }
+
+      private double _rotateAngleDelta = .4;
+      public double RotateAngleDelta
+      {
+         get { return _rotateAngleDelta; }
+         set
+         {
+            if (SetProperty(ref _rotateAngleDelta, value) && Rotate)
+               NextIteration();
+         }
+      }
 
       private Color16 _fillColor;
 
       private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
 
-      public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = 100, int padding = -1) {
+      public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = 100, int padding = -1)
+      {
          MosaicGroup = group;
          _size = widthAndHeight;
          if (padding < 0)
-            _padding = (int) (widthAndHeight*0.05); // 5%
+            _padding = (int)(widthAndHeight * 0.05); // 5%
 
-         _fillColor = new Color16 {
+         _fillColor = new Color16
+         {
             R = Convert.ToUInt16(_random.Next(Color16.MaxColorValue)),
             G = Convert.ToUInt16(_random.Next(Color16.MaxColorValue)),
             B = Convert.ToUInt16(_random.Next(Color16.MaxColorValue))
@@ -170,8 +184,9 @@ namespace fmg.uwp.res.img
          MakeCoords(true);
       }
 
-      private void MakeCoords(bool sync) {
-         double s = Size - Padding*2; // size inner Square1
+      private void MakeCoords(bool sync)
+      {
+         double s = Size - Padding * 2; // size inner Square1
          var w = s;
          var h = s;
          switch (MosaicGroup)
@@ -180,18 +195,18 @@ namespace fmg.uwp.res.img
                {
                   // An equilateral triangle in a circle.
                   // The circle inscribed in a Square1.
-                  var r = s/2.0; // circle radius
-                  var a = r*Math.Sqrt(3); // size triangle
-                  _points = new[] {new Point(r, 0), new Point(r + a/2, r*1.5), new Point(r - a/2, r*1.5)};
+                  var r = s / 2.0; // circle radius
+                  var a = r * Math.Sqrt(3); // size triangle
+                  _points = new[] { new Point(r, 0), new Point(r + a / 2, r * 1.5), new Point(r - a / 2, r * 1.5) };
                }
                break;
             case EMosaicGroup.eQuadrangles:
                {
                   // The circle inscribed in a Square1.
                   // The Square2 inscribed in a circle.
-                  var x = s/ Math.Sqrt(2); // size Square2
-                  var d = (s - x)/2; // delta offset
-                  _points = new[] {new Point(d, d), new Point(w - d, d), new Point(w - d, h - d), new Point(d, h - d)};
+                  var x = s / Math.Sqrt(2); // size Square2
+                  var d = (s - x) / 2; // delta offset
+                  _points = new[] { new Point(d, d), new Point(w - d, d), new Point(w - d, h - d), new Point(d, h - d) };
                }
                break;
             case EMosaicGroup.ePentagons:
@@ -247,7 +262,8 @@ namespace fmg.uwp.res.img
          }
 
          // adding offset
-         for (var i = 0; i < _points.Length; i++) {
+         for (var i = 0; i < _points.Length; i++)
+         {
             _points[i].X += Margin.Left + Padding;
             _points[i].Y += Margin.Top + Padding;
          }
@@ -278,18 +294,21 @@ namespace fmg.uwp.res.img
          var bmp = new WriteableBitmap(w, h);
 
          var rotate = Rotate || (Math.Abs(RotateAngle) > 0.1);
-         Action<WriteableBitmap> funcFillBk = img => {
-               img.FillPolygon(new[] {0, 0, w, 0, w, h, 0, h, 0, 0},
-                  Windows.UI.Color.FromArgb(BkColor.A, BkColor.R, BkColor.G, BkColor.B));
-            };
-         if (!rotate) {
+         Action<WriteableBitmap> funcFillBk = img =>
+         {
+            img.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 },
+               Windows.UI.Color.FromArgb(BkColor.A, BkColor.R, BkColor.G, BkColor.B));
+         };
+         if (!rotate)
+         {
             funcFillBk(bmp);
          }
 
          if (PolarLights)
          {
             Func<UInt16, UInt16> funcAddRandomBit = val => (UInt16)((((_random.Next() & 1) == 1) ? 0x0000 : 0x8000) | (val >> 1));
-            switch (_random.Next() % 3) {
+            switch (_random.Next() % 3)
+            {
                case 0: _fillColor.R = funcAddRandomBit(_fillColor.R); break;
                case 1: _fillColor.G = funcAddRandomBit(_fillColor.G); break;
                case 2: _fillColor.B = funcAddRandomBit(_fillColor.B); break;
@@ -309,52 +328,67 @@ namespace fmg.uwp.res.img
 
          { // draw perimeter border
             var clr = BorderColor;
-            if (clr.A != Color.Transparent.A) {
-               for (var i = 0; i < _points.Length; i++) {
+            if (clr.A != Color.Transparent.A)
+            {
+               for (var i = 0; i < _points.Length; i++)
+               {
                   var p1 = _points[i];
                   var p2 = _points[(i == _points.Length - 1) ? 0 : i + 1];
-                  bmp.DrawLineAa((int) p1.X, (int) p1.Y, (int) p2.X, (int) p2.Y, clr.ToWinColor(), BorderWidth);
+                  bmp.DrawLineAa((int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y, clr.ToWinColor(), BorderWidth);
                }
             }
          }
 
-         if (rotate) {
+         if (rotate)
+         {
             bmp = bmp.RotateFree(RotateAngle);
 
             RotateAngle += RotateAngleDelta;
-            if (RotateAngleDelta > 0) {
+            if (RotateAngleDelta > 0)
+            {
                if (RotateAngle >= 360)
                   RotateAngle -= 360;
-            } else {
+            }
+            else
+            {
                if (RotateAngle <= -360)
                   RotateAngle += 360;
             }
          }
 
-         if (Image == null) {
-            if (rotate) {
-               Image = new WriteableBitmap(w, h);
-               funcFillBk(Image);
+         if (Image == null)
+         {
+            if (rotate)
+            {
+               var tmp = new WriteableBitmap(w, h);
+               funcFillBk(tmp);
                var rc = new Rect(0, 0, w, h);
-               Image.Blit(rc, bmp, rc);
-            } else {
-               Image = bmp;
+               tmp.Blit(rc, bmp, rc);
+               bmp = tmp;
             }
-         } else {
+            Image = bmp;
+         }
+         else
+         {
             var rc = new Rect(0, 0, w, h);
-            if (rotate) {
+            if (rotate)
+            {
                funcFillBk(Image);
             }
             Image.Blit(rc, bmp, rc);
          }
 
-         if (PolarLights || Rotate) {
-            if (_timer == null) {
-               _timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(RedrawInterval) };
+         if (PolarLights || Rotate)
+         {
+            if (_timer == null)
+            {
+               _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(RedrawInterval) };
                _timer.Tick += delegate { NextIteration(); };
             }
             _timer.Start();
-         } else {
+         }
+         else
+         {
             _timer?.Stop();
          }
       }
