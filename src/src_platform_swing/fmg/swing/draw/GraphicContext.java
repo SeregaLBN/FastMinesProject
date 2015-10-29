@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import fmg.common.Color;
-import fmg.common.geom.Size;
+import fmg.common.geom.Bound;
 import fmg.data.view.draw.ColorText;
 import fmg.data.view.draw.PenBorder;
 
@@ -36,12 +36,12 @@ public class GraphicContext  {
 	protected PenBorder penBorder;
 	private Font   	  font;
 	private final boolean iconicMode;
-	private Size bound;
+	private Bound padding;
 
 	public GraphicContext(JComponent owner, boolean iconicMode) {
 		this.owner = owner;
 		this.iconicMode = iconicMode;
-		this.bound = new Size(0, 0);
+		this.padding = new Bound(0, 0, 0, 0);
 	}
 
 	public ImageIcon getImgMine() {
@@ -140,12 +140,12 @@ public class GraphicContext  {
 		return iconicMode;
 	}
 
-	public Size getBound() {
-		return bound;
+	public Bound getPadding() {
+		return padding;
 	}
 
-	public void setBound(Size bound) {
-		this.bound = bound;
+	public void setPadding(Bound padding) {
+		this.padding = padding;
 	}
 
 	public Font getFont() {

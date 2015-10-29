@@ -8,6 +8,7 @@ import java.util.Random;
 
 import javax.swing.Icon;
 
+import fmg.common.geom.Bound;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Size;
 import fmg.core.mosaic.CellFactory;
@@ -36,13 +37,15 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
 	@Override
 	public int getIconWidth() {
 		BaseCell.BaseAttribute attr = getCellAttr();
-		return attr.CalcOwnerSize(getSizeField(), attr.getArea()).width+getGraphicContext().getBound().width*2;
+		Bound padding = getGraphicContext().getPadding();
+		return attr.CalcOwnerSize(getSizeField(), attr.getArea()).width+padding.getLeft()+padding.getRight();
 	}
 
 	@Override
 	public int getIconHeight() {
 		BaseCell.BaseAttribute attr = getCellAttr();
-		return attr.CalcOwnerSize(getSizeField(), attr.getArea()).height+getGraphicContext().getBound().height*2;
+		Bound padding = getGraphicContext().getPadding();
+		return attr.CalcOwnerSize(getSizeField(), attr.getArea()).height+padding.getTop()+padding.getBottom();
 	}
 
 	@Override
@@ -53,8 +56,8 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
 				Color tmp = g.getColor(); // save
 				g.setColor(clr); // change
 				Size pixelSize = getCellAttr().CalcOwnerSize(getSizeField(), getArea());
-				Size bound = getGraphicContext().getBound();
-				g.fillRect(0, 0, pixelSize.width+bound.width*2, pixelSize.height+bound.height*2);
+				Bound padding = getGraphicContext().getPadding();
+				g.fillRect(0, 0, pixelSize.width+padding.getLeft()+padding.getRight(), pixelSize.height+padding.getTop()+padding.getBottom());
 				g.setColor(tmp); // restore
 			}
 		}

@@ -65,7 +65,7 @@ namespace fmg.uwp.res {
       private static Dictionary<EBtnPauseState, WriteableBitmap> _imgsBtnPause;
       private static Dictionary<EMosaicGroup, MosaicsGroupImg> _imgsMosaicGroup;
       private static Dictionary<EMosaicGroup, WriteableBitmap> _imgsMosaicGroupPng;
-      private static Dictionary<Tuple<EMosaic, Size, int, Windows.UI.Color, Size>, MosaicsImg> _imgsMosaic;
+      private static Dictionary<Tuple<EMosaic, Size, int, Windows.UI.Color, Bound>, MosaicsImg> _imgsMosaic;
       private static Dictionary<Tuple<EMosaic, bool>, WriteableBitmap> _imgsMosaicPng;
       private static Dictionary<CultureInfo, WriteableBitmap> _imgsLang;
 
@@ -185,10 +185,10 @@ namespace fmg.uwp.res {
       }
 
       /// <summary> самостоятельная отрисовка </summary>
-      public static MosaicsImg GetImgMosaic(EMosaic mosaicType, Size sizeField, int area, Windows.UI.Color bkColor, Size bound) {
+      public static MosaicsImg GetImgMosaic(EMosaic mosaicType, Size sizeField, int area, Windows.UI.Color bkColor, Bound padding) {
          if (_imgsMosaic == null)
-            _imgsMosaic = new Dictionary<Tuple<EMosaic, Size, int, Windows.UI.Color, Size>, MosaicsImg>(EMosaicEx.GetValues().Length);
-         var key = new Tuple<EMosaic, Size, int, Windows.UI.Color, Size>(mosaicType, sizeField, area, bkColor, bound);
+            _imgsMosaic = new Dictionary<Tuple<EMosaic, Size, int, Windows.UI.Color, Bound>, MosaicsImg>(EMosaicEx.GetValues().Length);
+         var key = new Tuple<EMosaic, Size, int, Windows.UI.Color, Bound>(mosaicType, sizeField, area, bkColor, padding);
          if (_imgsMosaic.ContainsKey(key))
             return _imgsMosaic[key];
          return _imgsMosaic[key] = new MosaicsImg {
@@ -196,7 +196,7 @@ namespace fmg.uwp.res {
             SizeField = sizeField,
             Area = area,
             BackgroundColor = bkColor,
-            Bound = bound
+            Padding = padding
          };
       }
 

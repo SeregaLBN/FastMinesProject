@@ -16,7 +16,7 @@ import java.awt.geom.Rectangle2D;
 import fmg.common.geom.Point;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Region;
-import fmg.common.geom.Size;
+import fmg.common.geom.Bound;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
@@ -45,7 +45,7 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
 			Shape shapeOld = g2d.getClip();
 
 			// ограничиваю рисование только границами своей фигуры
-			g2d.setClip(Cast.toPolygon(Region.moveXY(cell.getRegion(), gContext.getBound())));
+			g2d.setClip(Cast.toPolygon(Region.moveXY(cell.getRegion(), gContext.getPadding())));
 
 			// all paint
 			this.paintComponent(cell, p);
@@ -92,12 +92,12 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
 	/** draw border lines */
 	@Override
 	public void paintBorderLines(BaseCell cell, PaintableGraphics p) {
-		Size bound = gContext.getBound();
+		Bound padding = gContext.getPadding();
 		boolean down = cell.getState().isDown() || (cell.getState().getStatus() == EState._Open);
 		Graphics g = p.getGraphics();
 		if (gContext.isIconicMode()) {
 			g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorLight() : gContext.getPenBorder().getColorShadow()));
-			g.drawPolygon(Cast.toPolygon(Region.moveXY(cell.getRegion(), bound)));
+			g.drawPolygon(Cast.toPolygon(Region.moveXY(cell.getRegion(), padding)));
 		} else {
 			g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorLight()  : gContext.getPenBorder().getColorShadow()));
 			int s = cell.getShiftPointBorderIndex();
@@ -107,7 +107,7 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
 				Point p2 = (i != (v-1)) ? cell.getRegion().getPoint(i+1) : cell.getRegion().getPoint(0);
 				if (i==s)
 					g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorShadow(): gContext.getPenBorder().getColorLight()));
-				g.drawLine(p1.x+bound.width, p1.y+bound.height, p2.x+bound.width, p2.y+bound.height);
+				g.drawLine(p1.x+padding.getLeft(), p1.y+padding.getTop(), p2.x+padding.getLeft(), p2.y+padding.getTop());
 			}
 		}
 	}
@@ -117,7 +117,7 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
 	public void paintComponent(BaseCell cell, PaintableGraphics p) {
 		Graphics g = p.getGraphics();
 		Color colorOld = g.getColor();
-		Size bound = gContext.getBound();
+		Bound padding = gContext.getPadding();
 
 		paintComponentBackground(cell, p);
 
@@ -130,13 +130,13 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
 			(cell.getState().getStatus() == EState._Close) &&
 			(cell.getState().getClose() == EClose._Flag))
 		{
-			gContext.getImgFlag().paintIcon(gContext.getOwner(), g, rcInner.x+bound.width, rcInner.y+bound.height);
+			gContext.getImgFlag().paintIcon(gContext.getOwner(), g, rcInner.x+padding.getLeft(), rcInner.y+padding.getTop());
 		} else
 		if ((gContext.getImgMine() != null) &&
 			(cell.getState().getStatus() == EState._Open ) &&
 			(cell.getState().getOpen() == EOpen._Mine))
 		{
-			gContext.getImgMine().paintIcon(gContext.getOwner(), g, rcInner.x+bound.width, rcInner.y+bound.height);
+			gContext.getImgMine().paintIcon(gContext.getOwner(), g, rcInner.x+padding.getLeft(), rcInner.y+padding.getTop());
 		} else
 		// output text
 		{
@@ -152,7 +152,7 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
 			}
 			if ((szCaption != null) && (szCaption.length() > 0))
 			{
-				rcInner.moveXY(bound);
+				rcInner.moveXY(padding.getLeft(), padding.getTop());
 				if (cell.getState().isDown())
 					rcInner.moveXY(1, 1);
 				DrawText(g, szCaption, Cast.toRect(rcInner));
@@ -180,7 +180,7 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
 				getDefaultBackgroundFillColor(),
 				gContext.getBackgroundFill().getColors()
 				)));
-		g.fillPolygon(Cast.toPolygon(Region.moveXY(cell.getRegion(), gContext.getBound())));
+		g.fillPolygon(Cast.toPolygon(Region.moveXY(cell.getRegion(), gContext.getPadding())));
 	}
 
 	private static Rectangle2D getStringBounds(String text, Font font) {

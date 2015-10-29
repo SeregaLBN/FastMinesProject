@@ -8,7 +8,6 @@ using fmg.common;
 using fmg.common.geom;
 using Point = Windows.Foundation.Point;
 using Rect = Windows.Foundation.Rect;
-using Thickness = src_fmg.common.geom.Thickness;
 
 namespace fmg.uwp.res.img
 {
@@ -43,9 +42,9 @@ namespace fmg.uwp.res.img
       /// <summary> height image </summary>
       public int Height => Size + Margin.Top + Margin.Bottom;
 
-      private Thickness _margin;
+      private Bound _margin;
       /// <summary> outside padding </summary>
-      public Thickness Margin
+      public Bound Margin
       {
          get { return _margin; }
          set

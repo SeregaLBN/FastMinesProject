@@ -88,8 +88,8 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\src\src_common\fmg\common\geom\Thickness.cs">
-      <Link>src_fmg.common\geom\Thickness.cs</Link>
+    <Compile Include="..\src\src_common\fmg\common\geom\Bound.cs">
+      <Link>src_fmg.common\geom\Bound.cs</Link>
     </Compile>
     <Compile Include="..\src\src_core\fmg\core\mosaic\draw\ICellPaint.cs">
       <Link>src_fmg.core\mosaic\draw\ICellPaint.cs</Link>

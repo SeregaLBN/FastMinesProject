@@ -99,19 +99,19 @@ public class Region {
 }
 
 public static class RegionExt {
-   public static int[] RegionAsXyxyxySequence(this Region region, Size bound, bool firstToLast) {
+   public static int[] RegionAsXyxyxySequence(this Region region, Bound padding, bool firstToLast) {
       var points = new int[region.CountPoints*2 + (firstToLast ? 2 : 0)];
       int i;
       for (i = 0; i < region.CountPoints; i++) {
          var point = region.getPoint(i);
-         point.Move(bound);
+         point.Move(padding.Left, padding.Top);
          points[i*2 + 0] = point.x;
          points[i*2 + 1] = point.y;
       }
       if (firstToLast) {
          // Add the first point also at the end of the array if the line should be closed.
          var point = region.getPoint(0);
-         point.Move(bound);
+         point.Move(padding.Left, padding.Top);
          points[i*2 + 0] = point.x;
          points[i*2 + 1] = point.y;
       }

@@ -158,15 +158,15 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      public Size Bound
+      public Bound Padding
       {
-         get { return GContext.Bound; }
+         get { return GContext.Padding; }
          set
          {
             // reset
             _image = null;
 
-            GContext.Bound = value;
+            GContext.Padding = value;
          }
       }
 
@@ -182,8 +182,8 @@ namespace fmg.uwp.res.img {
             return _image;
 
          var pixelSize = CellAttr.CalcOwnerSize(SizeField, CellAttr.Area);
-         var w = pixelSize.width + GContext.Bound.width*2;
-         var h = pixelSize.height + GContext.Bound.height*2;
+         var w = pixelSize.width + GContext.Padding.Left + +GContext.Padding.Right;
+         var h = pixelSize.height + GContext.Padding.Top + +GContext.Padding.Bottom;
 
          _image = BitmapFactory.New(w, h); // new WriteableBitmap(w, h); // 
          Action funcFillBk = () => _image.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor);

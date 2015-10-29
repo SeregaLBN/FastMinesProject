@@ -37,16 +37,16 @@ namespace fmg.uwp.draw.mosaic.bmp
       public override void PaintBorderLines(BaseCell cell, PaintableBmp paint) {
          var down = cell.State.Down || (cell.State.Status == EState._Open);
          if (GContext.IconicMode) {
-            paint.Bmp.DrawPolyline(cell.getRegion().RegionAsXyxyxySequence(GContext.Bound, true), (down ? GContext.PenBorder.ColorLight : GContext.PenBorder.ColorShadow).ToWinColor());
+            paint.Bmp.DrawPolyline(cell.getRegion().RegionAsXyxyxySequence(GContext.Padding, true), (down ? GContext.PenBorder.ColorLight : GContext.PenBorder.ColorShadow).ToWinColor());
          } else {
             var color = down ? GContext.PenBorder.ColorLight : GContext.PenBorder.ColorShadow;
             var s = cell.getShiftPointBorderIndex();
             var v = cell.Attr.getVertexNumber(cell.getDirection());
             for (var i=0; i < v; i++) {
                var p1 = cell.getRegion().getPoint(i);
-               p1.Move(GContext.Bound);
+               p1.Move(GContext.Padding.Left, GContext.Padding.Top);
                var p2 = (i != (v - 1)) ? cell.getRegion().getPoint(i + 1) : cell.getRegion().getPoint(0);
-               p2.Move(GContext.Bound);
+               p2.Move(GContext.Padding.Left, GContext.Padding.Top);
                if (i == s)
                   color = down ? GContext.PenBorder.ColorShadow : GContext.PenBorder.ColorLight;
                paint.Bmp.DrawLine(p1.x, p1.y, p2.x, p2.y, color.ToWinColor());
@@ -59,7 +59,7 @@ namespace fmg.uwp.draw.mosaic.bmp
          PaintComponentBackground(cell, paint);
 
          var rcInner = cell.getRcInner(GContext.PenBorder.Width);
-         rcInner.moveXY(GContext.Bound);
+         rcInner.moveXY(GContext.Padding.Left, GContext.Padding.Top);
 
          WriteableBitmap srcImg = null;
          if ((GContext.ImgFlag != null) &&
@@ -130,7 +130,7 @@ namespace fmg.uwp.draw.mosaic.bmp
             DefaultBackgroundFillColor,
             GContext.BkFill.GetColor
             );
-         paint.Bmp.FillPolygon(cell.getRegion().RegionAsXyxyxySequence(GContext.Bound, true), color.ToWinColor());
+         paint.Bmp.FillPolygon(cell.getRegion().RegionAsXyxyxySequence(GContext.Padding, true), color.ToWinColor());
       }
 
    }

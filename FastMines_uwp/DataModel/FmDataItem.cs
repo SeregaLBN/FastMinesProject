@@ -39,7 +39,7 @@ namespace FastMines.Data {
       public FmDataGroup Group { get { return this._group; } set { this.SetProperty(ref this._group, value); } }
 
       private static MosaicsImg GetMosaicsImage(EMosaic eMosaic, Size sizeField) {
-         return Resources.GetImgMosaic(eMosaic, sizeField, Area, Resources.DefaultBkColor, new Size(7, 7));
+         return Resources.GetImgMosaic(eMosaic, sizeField, Area, Resources.DefaultBkColor, new Bound(7, 7, 7, 7));
       }
 
       public override ImageSource Image {

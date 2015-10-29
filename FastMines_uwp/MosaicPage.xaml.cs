@@ -18,6 +18,7 @@ using fmg.data.controller.types;
 using FastMines.Common;
 using Log = FastMines.Common.LoggerSimple;
 using Size = fmg.common.geom.Size;
+using Thickness = Windows.UI.Xaml.Thickness;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace FastMines {

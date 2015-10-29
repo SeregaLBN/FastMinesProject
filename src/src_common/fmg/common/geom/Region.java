@@ -94,13 +94,13 @@ public class Region {
 		return clon;
 	}
 
-	public static Region moveXY(Region self, Size bound) {
-		if (bound.width == 0 && bound.height == 0)
+	public static Region moveXY(Region self, Bound padding) {
+		if (padding.isEmpty())
 			return self;
 		Region res = self.clone();
 		for (int i=0; i<res.getCountPoints(); i++) {
-			res.points[i].x = res.points[i].x + bound.width;
-			res.points[i].y = res.points[i].y + bound.height;
+			res.points[i].x = res.points[i].x + padding.getLeft();
+			res.points[i].y = res.points[i].y + padding.getTop();
 		}
 		return res;
 	}

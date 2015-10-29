@@ -22,7 +22,7 @@ namespace fmg.uwp.draw {
       private int _fontSize = DEFAULT_FONT_SIZE;
 
       private readonly bool _iconicMode;
-      private Size _bound;
+      private Bound _padding;
 
       private static readonly Random Rand = new Random(Guid.NewGuid().GetHashCode());
 
@@ -105,9 +105,9 @@ namespace fmg.uwp.draw {
 
       public bool IconicMode { get { return _iconicMode; } }
 
-      public Size Bound {
-         get { return _bound; }
-         set { this.SetProperty(ref this._bound, value); }
+      public Bound Padding {
+         get { return _padding; }
+         set { this.SetProperty(ref this._padding, value); }
       }
 
       public FontFamily FontFamily {

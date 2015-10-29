@@ -2,16 +2,17 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.ApplicationModel.Background;
 using fmg.common;
+using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.uwp.res;
 using Size = fmg.common.geom.Size;
+using Rect = Windows.Foundation.Rect;
 using BackgroundTasks;
 
 namespace FastMines {
@@ -194,7 +195,7 @@ namespace FastMines {
          sizeField.width += Random.Next()%2;
          const int bound = 3;
          var area = CellFactory.CreateAttributeInstance(mosaicType, 0).CalcOptimalArea(250, sizeField, new Size(w - bound*2, h - bound*2));
-         var img = Resources.GetImgMosaic(mosaicType, sizeField, area, bkClr, new Size(bound, bound));
+         var img = Resources.GetImgMosaic(mosaicType, sizeField, area, bkClr, new Bound(bound, bound, bound, bound));
          var bmp = img.GetImage(false);
          if ((bmp.PixelWidth==w) && (bmp.PixelHeight==h))
             return new Tuple<EMosaic, WriteableBitmap>(mosaicType, bmp);

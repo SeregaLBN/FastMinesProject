@@ -63,7 +63,7 @@ namespace fmg.uwp.draw.mosaic.xaml
                poly.Points.Clear();
             for (var p = 0; p < cnt; p++) {
                var point = cell.getRegion().getPoint(p);
-               point.Move(GContext.Bound);
+               point.Move(GContext.Padding.Left, GContext.Padding.Top);
                if (d)
                   poly.Points.Add(point.ToWinPoint());
                else
@@ -94,7 +94,7 @@ namespace fmg.uwp.draw.mosaic.xaml
          PaintComponentBackground(cell, binder);
 
          var rcInner = cell.getRcInner(GContext.PenBorder.Width);
-         rcInner.moveXY(GContext.Bound);
+         rcInner.moveXY(GContext.Padding.Left, GContext.Padding.Top);
          var txt = binder.Txt;
          var image = binder.Img;
 
