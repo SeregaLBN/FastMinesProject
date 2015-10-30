@@ -23,7 +23,8 @@
 
         <SplitView x:Name="SplitView" Grid.Row="1" IsPaneOpen="{x:Bind ViewModel.IsSplitViewPaneOpen, Mode=TwoWay}" >
             <SplitView.Pane>
-                <ListView ItemsSource="{x:Bind ViewModel.MenuItems}"
+                <ListView x:Name="_listView"
+                          ItemsSource="{x:Bind ViewModel.MenuItems}"
                           SelectedItem="{x:Bind ViewModel.SelectedMenuItem, Mode=TwoWay, Converter={StaticResource ObjectToMenuItemConverter}}">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">

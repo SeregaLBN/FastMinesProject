@@ -15,7 +15,17 @@ namespace FastMines.Presentation
       public MosaicsGroupImg MosaicGroupImage
       {
          get { return this._mosaicGroupImage; }
-         set { Set(ref this._mosaicGroupImage, value); }
+         set
+         {
+            if (Set(ref this._mosaicGroupImage, value)) {
+               _mosaicGroupImage.PropertyChanged += (sender, ev) => {
+                  var pn = ev.PropertyName;
+                  if (pn == "Image") {
+                     OnPropertyChanged(pn);
+                  }
+               };
+            }
+         }
       }
 
       public ImageSource Image => MosaicGroupImage?.Image;

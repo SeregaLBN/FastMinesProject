@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using fmg.common;
+using fmg.common.geom;
 using fmg.core.types;
+using fmg.uwp.draw;
 using fmg.uwp.res.img;
 using FastMines.Common;
 using FastMines.Data;
@@ -21,18 +25,19 @@ namespace FastMines
       public Shell()
       {
          this.InitializeComponent();
+         Unloaded += OnClosing;
 
          foreach (var fmDataGroup in FmDataSource.AllGroups)
          {
             fmDataGroup.MosaicGroupImage.PolarLights = false;
             fmDataGroup.MosaicGroupImage.Rotate = false;
-            _vm.MenuItems.Add(new MenuItem
-            {
+            var mi = new MenuItem {
                MosaicGroupImage = fmDataGroup.MosaicGroupImage,
                Icon = fmDataGroup.UniqueId.UnicodeChar(false).ToString(),
                Title = fmDataGroup.Title,
-               PageType = typeof(WelcomePage)
-            });
+               PageType = typeof (WelcomePage)
+            };
+            _vm.MenuItems.Add(mi);
          }
          //_vm.MenuItems.Add(new MenuItem { Icon = "\uE170", Title = "Welcome", PageType = typeof(WelcomePage) });
          //_vm.MenuItems.Add(new MenuItem { Icon = "\uE115", Title = "Page 1", PageType = typeof(Page1) });
@@ -41,11 +46,13 @@ namespace FastMines
 
          // select the first menu item
          _vm.SelectedMenuItem = _vm.MenuItems.First();
-         OnViewModelPropertyChanged(_vm, new PropertyChangedEventArgs("SelectedPageType"));
 
          this.ViewModel = _vm;
 
          _vm.PropertyChanged += OnViewModelPropertyChanged;
+         OnViewModelPropertyChanged(_vm, new PropertyChangedEventArgs("SelectedPageType"));
+
+         this.SizeChanged += OnSizeChanged;
       }
 
       private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs ev)
@@ -54,32 +61,63 @@ namespace FastMines
          {
             System.Diagnostics.Debug.Assert(ReferenceEquals(sender as ShellViewModel, _vm));
 
+            //var marginUnselected = new Bound(20, 5, 20, 5);
+            //var marginSelected = new Bound(0, 0, 0, 0);
+
+            Action<bool, MenuItem> action = (selected, mi) => {
+               var img = mi.MosaicGroupImage;
+               img.PolarLights = selected;
+               img.Rotate = selected;
+               img.BkColor = selected ? MosaicsGroupImg.BkColorDefault : GraphicContext.DefaultBackgroundFillColor;
+               //img.Margin = selected ? marginSelected : marginUnselected;
+               img.Padding = selected ? 5 : 10;
+               mi.Icon = img.MosaicGroup.UnicodeChar(selected).ToString();
+            };
+
             // for all - stop animate
             _vm.MenuItems.ToList().ForEach(mi =>
             {
-               if (ReferenceEquals(mi, sender))
-                  return;
-               mi.MosaicGroupImage.PolarLights = false;
-               mi.MosaicGroupImage.Rotate = false;
-               mi.MosaicGroupImage.BkColor = Color.Gray.Brighter(0.4);
-               mi.Icon = mi.MosaicGroupImage.MosaicGroup.UnicodeChar(false).ToString();
+               if (!ReferenceEquals(mi, sender))
+                  action(false, mi);
             });
 
             // for one selected- start animate
-            _vm.SelectedMenuItem.MosaicGroupImage.Rotate = true;
-            _vm.SelectedMenuItem.MosaicGroupImage.PolarLights = true;
-            _vm.SelectedMenuItem.MosaicGroupImage.BkColor = MosaicsGroupImg.BkColorDefault;
-            _vm.SelectedMenuItem.Icon = _vm.SelectedMenuItem.MosaicGroupImage.MosaicGroup.UnicodeChar(true).ToString();
+            if (_vm.SelectedMenuItem != null)
+               action(true, _vm.SelectedMenuItem);
          }
       }
 
       public ShellViewModel ViewModel { get; private set; }
 
-      public Frame RootFrame
+      public Frame RootFrame => this.Frame;
+
+      private void OnClosing(object sender, RoutedEventArgs ev) {
+         System.Diagnostics.Debug.WriteLine("OnClosing");
+      }
+
+      void OnSizeChanged(object sender, SizeChangedEventArgs ev) {
+         System.Diagnostics.Debug.WriteLine("OnSizeChanged");
+         foreach (var stackPanel in FindChilds<StackPanel>(_listView, 10)) {
+            stackPanel.Height++;
+            var cnt = VisualTreeHelper.GetChildrenCount(stackPanel);
+            cnt++;
+         }
+      }
+
+      public static IEnumerable<T> FindChilds<T>(FrameworkElement parent, int depth = 1, Func<T, bool> filter = null)
+         where T : FrameworkElement
       {
-         get
-         {
-            return this.Frame;
+         var cnt = VisualTreeHelper.GetChildrenCount(parent);
+         for (var i = 0; i < cnt; i++) {
+            var child = VisualTreeHelper.GetChild(parent, i) as FrameworkElement;
+            var correctlyTyped = child as T;
+            if (correctlyTyped != null && (filter == null || filter(correctlyTyped)))
+               yield return correctlyTyped;
+         }
+         for (var i = 0; (depth > 1) && (i < cnt); i++) {
+            var child = VisualTreeHelper.GetChild(parent, i) as FrameworkElement;
+            foreach (var c in FindChilds(child, depth - 1, filter))
+               yield return c;
          }
       }
    }
