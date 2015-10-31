@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using fmg.core.types;
 
 namespace FastMines.Presentation
 {
@@ -32,10 +33,23 @@ namespace FastMines.Presentation
             if (Set(ref this.selectedMenuItem, value))
             {
                OnPropertyChanged("SelectedPageType");
+               OnPropertyChanged("Icons");
 
                // auto-close split view pane
                this.IsSplitViewPaneOpen = !false;
             }
+         }
+      }
+
+      public string Icons
+      {
+         get
+         {
+            var smi = SelectedMenuItem;
+            return string.Join(" ", menuItems.Select(mi => {
+               var selected = (smi!= null) && (mi.MosaicGroupImage.MosaicGroup == smi.MosaicGroupImage.MosaicGroup);
+               return mi.MosaicGroupImage.MosaicGroup.UnicodeChar(selected);
+            }));
          }
       }
 

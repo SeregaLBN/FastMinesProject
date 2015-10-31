@@ -7,10 +7,8 @@ namespace FastMines.Presentation
    public class MenuItem : NotifyPropertyChanged
    {
       private MosaicsGroupImg _mosaicGroupImage;
-      private string _icon;
       private string _title;
       private Type _pageType;
-
 
       public MosaicsGroupImg MosaicGroupImage
       {
@@ -29,12 +27,6 @@ namespace FastMines.Presentation
       }
 
       public ImageSource Image => MosaicGroupImage?.Image;
-
-      public string Icon
-      {
-         get { return this._icon; }
-         set { Set(ref this._icon, value); }
-      }
 
       public string Title
       {

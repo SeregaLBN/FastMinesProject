@@ -33,7 +33,6 @@ namespace FastMines
             fmDataGroup.MosaicGroupImage.Rotate = false;
             var mi = new MenuItem {
                MosaicGroupImage = fmDataGroup.MosaicGroupImage,
-               Icon = fmDataGroup.UniqueId.UnicodeChar(false).ToString(),
                Title = fmDataGroup.Title,
                PageType = typeof (WelcomePage)
             };
@@ -71,7 +70,6 @@ namespace FastMines
                img.BkColor = selected ? MosaicsGroupImg.BkColorDefault : GraphicContext.DefaultBackgroundFillColor;
                //img.Margin = selected ? marginSelected : marginUnselected;
                img.Padding = selected ? 5 : 10;
-               mi.Icon = img.MosaicGroup.UnicodeChar(selected).ToString();
             };
 
             // for all - stop animate
@@ -89,7 +87,7 @@ namespace FastMines
 
       public ShellViewModel ViewModel { get; private set; }
 
-      public Frame RootFrame => this.Frame;
+      public Frame RootFrame => this._frame;
 
       private void OnClosing(object sender, RoutedEventArgs ev) {
          System.Diagnostics.Debug.WriteLine("OnClosing");

@@ -18,10 +18,13 @@
 
         <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}">
             <Button Content="&#xE700;" Command="{x:Bind ViewModel.ToggleSplitViewPaneCommand}" Style="{StaticResource IconButtonStyle}"/>
-            <TextBlock Text="SPLITVIEW TEMPLATE" Style="{StaticResource AppTitleTextBlockStyle}" />
+            <TextBlock Text="Mosaics" Style="{StaticResource AppTitleTextBlockStyle}" />
+            <!--
+            <TextBlock Text="{x:Bind ViewModel.Icons, Mode=OneWay}" Style="{StaticResource MosaicIconTextBlockStyle}" Width="Auto" Margin="15,0,0,0"/>
+            -->
         </StackPanel>
 
-        <SplitView x:Name="SplitView" Grid.Row="1" IsPaneOpen="{x:Bind ViewModel.IsSplitViewPaneOpen, Mode=TwoWay}" >
+        <SplitView x:Name="_splitView" Grid.Row="1" IsPaneOpen="{x:Bind ViewModel.IsSplitViewPaneOpen, Mode=TwoWay}" >
             <SplitView.Pane>
                 <ListView x:Name="_listView"
                           ItemsSource="{x:Bind ViewModel.MenuItems}"
@@ -35,7 +38,6 @@
                         <DataTemplate x:DataType="presentation:MenuItem">
                             <StackPanel Orientation="Horizontal" Height="52">
                                 <Image  Grid.RowSpan="1" Source="{x:Bind Image, Mode=OneWay}" Height="50" Width="50" Margin="1,1,1,1" Stretch="Fill" AutomationProperties.Name="{x:Bind Title, Mode=OneWay}" />
-                                <TextBlock Grid.RowSpan="2" Text="{x:Bind Icon, Mode=OneWay}" Style="{StaticResource MosaicIconTextBlockStyle}" />
                                 <TextBlock Grid.Column="1" Text="{x:Bind Title, Mode=OneWay}" Style="{StaticResource MenuTitleTextBlockStyle}" />
                             </StackPanel>
                         </DataTemplate>
@@ -43,7 +45,7 @@
                 </ListView>
             </SplitView.Pane>
             <SplitView.Content>
-                <Frame x:Name="Frame" SourcePageType="{x:Bind ViewModel.SelectedPageType, Mode=TwoWay}" />
+                <Frame x:Name="_frame" SourcePageType="{x:Bind ViewModel.SelectedPageType, Mode=TwoWay}" />
             </SplitView.Content>
         </SplitView>
 
