@@ -56,5 +56,7 @@
         </Style>
 
         <presentation:ObjectToMenuItemConverter x:Key="ObjectToMenuItemConverter"/>
+        <presentation:ImageSizeWithMarginConverter x:Key="ImageSizeWithMarginConverter"/>
+        <presentation:ImageSizeOpenPaneConverter x:Key="ImageSizeOpenPaneConverter"/>
     </Application.Resources>
 </Application>

@@ -95,11 +95,11 @@ namespace FastMines
 
       void OnSizeChanged(object sender, SizeChangedEventArgs ev) {
          System.Diagnostics.Debug.WriteLine("OnSizeChanged");
-         foreach (var stackPanel in FindChilds<StackPanel>(_listView, 10)) {
-            stackPanel.Height++;
-            var cnt = VisualTreeHelper.GetChildrenCount(stackPanel);
-            cnt++;
-         }
+         //foreach (var stackPanel in FindChilds<StackPanel>(_listView, 10)) {
+         //   stackPanel.Height++;
+         //   var cnt = VisualTreeHelper.GetChildrenCount(stackPanel);
+         //   cnt++;
+         //}
       }
 
       public static IEnumerable<T> FindChilds<T>(FrameworkElement parent, int depth = 1, Func<T, bool> filter = null)

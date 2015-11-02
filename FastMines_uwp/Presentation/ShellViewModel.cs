@@ -11,6 +11,7 @@ namespace FastMines.Presentation
       private ObservableCollection<MenuItem> menuItems = new ObservableCollection<MenuItem>();
       private MenuItem selectedMenuItem;
       private bool isSplitViewPaneOpen;
+      private int _imageSize = 50;
 
       public ShellViewModel()
       {
@@ -25,6 +26,7 @@ namespace FastMines.Presentation
          set { Set(ref this.isSplitViewPaneOpen, value); }
       }
 
+
       public MenuItem SelectedMenuItem
       {
          get { return this.selectedMenuItem; }
@@ -36,7 +38,7 @@ namespace FastMines.Presentation
                OnPropertyChanged("Icons");
 
                // auto-close split view pane
-               this.IsSplitViewPaneOpen = !false;
+               this.IsSplitViewPaneOpen = false;
             }
          }
       }
@@ -46,8 +48,9 @@ namespace FastMines.Presentation
          get
          {
             var smi = SelectedMenuItem;
-            return string.Join(" ", menuItems.Select(mi => {
-               var selected = (smi!= null) && (mi.MosaicGroupImage.MosaicGroup == smi.MosaicGroupImage.MosaicGroup);
+            return string.Join(" ", menuItems.Select(mi =>
+            {
+               var selected = (smi != null) && (mi.MosaicGroupImage.MosaicGroup == smi.MosaicGroupImage.MosaicGroup);
                return mi.MosaicGroupImage.MosaicGroup.UnicodeChar(selected);
             }));
          }
@@ -72,5 +75,7 @@ namespace FastMines.Presentation
       {
          get { return this.menuItems; }
       }
+
+      public int ImageSize { get { return _imageSize; } set { Set(ref _imageSize, value); } }
    }
 }

@@ -83,8 +83,9 @@ public static class EMosaicGroupEx {
       case EMosaicGroup.eQuadrangles: return dark ? '\u25AE' : '\u25AF'; // http://unicode-table.com/en/search/?q=rectangle
       case EMosaicGroup.ePentagons  : return dark ? '\u2B1F' : '\u2B20'; // http://unicode-table.com/en/search/?q=pentagon
       case EMosaicGroup.eHexagons   : return dark ? '\u2B22' : '\u2B21'; // http://unicode-table.com/en/search/?q=hexagon
-      case EMosaicGroup.eOthers     : return dark ? '\u25E9' : '\u2B15'; // http://unicode-table.com/en/search/?q=Square+with+Left+Diagonal+Half+Black
-         }
+      case EMosaicGroup.eOthers     : return dark ? '\u2605' : '\u2606'; // http://unicode-table.com/en/blocks/miscellaneous-symbols/
+                                    //return dark ? '\u25E9' : '\u2B15'; // http://unicode-table.com/en/search/?q=Square+with+Left+Diagonal+Half+Black
+      }
       throw new ArgumentException("Invalid paramenter value " + self);
    }
 }
