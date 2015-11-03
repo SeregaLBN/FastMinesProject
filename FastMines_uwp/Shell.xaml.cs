@@ -46,7 +46,7 @@ namespace FastMines
          // select the first menu item
          _vm.SelectedMenuItem = _vm.MenuItems.First();
 
-         this.ViewModel = _vm;
+         this.ViewModelMosaicsGroup = _vm;
 
          _vm.PropertyChanged += OnViewModelPropertyChanged;
          OnViewModelPropertyChanged(_vm, new PropertyChangedEventArgs("SelectedPageType"));
@@ -67,7 +67,7 @@ namespace FastMines
                var img = mi.MosaicGroupImage;
                img.PolarLights = selected;
                img.Rotate = selected;
-               img.BkColor = selected ? MosaicsGroupImg.BkColorDefault : GraphicContext.DefaultBackgroundFillColor;
+               img.BkColor = selected ? MosaicsGroupImg.DefaultBkColor.ToFmColor() : GraphicContext.DefaultBackgroundFillColor;
                //img.Margin = selected ? marginSelected : marginUnselected;
                img.Padding = selected ? 5 : 10;
             };
@@ -85,7 +85,7 @@ namespace FastMines
          }
       }
 
-      public ShellViewModel ViewModel { get; private set; }
+      public ShellViewModel ViewModelMosaicsGroup { get; private set; }
 
       public Frame RootFrame => this._frame;
 
