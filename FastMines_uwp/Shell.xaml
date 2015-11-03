@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:FastMines"
     xmlns:presentation="using:FastMines.Presentation"
+    xmlns:PresentationMenu="using:FastMines.Presentation.Menu"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -20,7 +21,7 @@
             <Button Content="&#xE700;" Command="{x:Bind ViewModelMosaicsGroup.ToggleSplitViewPaneCommand}" Style="{StaticResource IconButtonStyle}"/>
             <TextBlock Text="Mosaics" Style="{StaticResource AppTitleTextBlockStyle}" />
             <!--
-            <TextBlock Text="{x:Bind ViewModelMosaicsGroup.Icons, Mode=OneWay}" Style="{StaticResource MosaicIconTextBlockStyle}" Width="Auto" Margin="15,0,0,0"/>
+            <TextBlock Text="{x:Bind ViewModelMosaicsGroup.UnicodeChars, Mode=OneWay}" Style="{StaticResource MosaicIconTextBlockStyle}" Width="Auto" Margin="15,0,0,0"/>
             -->
         </StackPanel>
 
@@ -41,16 +42,16 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="presentation:MenuItem">
-                            <StackPanel Orientation="Horizontal" Height="{x:Bind Image.PixelHeight, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}">
+                        <DataTemplate x:DataType="PresentationMenu:MenuItem">
+                            <StackPanel Orientation="Horizontal" Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}">
                                 <Image Grid.RowSpan="1"
                                        Source="{x:Bind Image, Mode=OneWay}"
-                                       Height="{x:Bind Image.PixelHeight, Mode=OneWay}"
-                                       Width="{x:Bind Image.PixelWidth, Mode=OneWay}"
+                                       Height="{x:Bind ImageSize, Mode=OneWay}"
+                                       Width="{x:Bind ImageSize, Mode=OneWay}"
                                        Margin="1,1,1,1"
                                        Stretch="Fill"
                                        AutomationProperties.Name="{x:Bind Title, Mode=OneWay}" />
-                                <TextBlock Grid.Column="1" Text="{x:Bind Title, Mode=OneWay}" Style="{StaticResource MenuTitleTextBlockStyle}" Margin="10,0,0,0"/>
+                                <TextBlock Grid.Column="1" Text="{x:Bind Title, Mode=OneWay}" Style="{StaticResource MenuTitleTextBlockStyle}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>

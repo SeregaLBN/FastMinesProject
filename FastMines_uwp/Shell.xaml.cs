@@ -15,6 +15,7 @@ using FastMines.Common;
 using FastMines.Data;
 using FastMines.Pages;
 using FastMines.Presentation;
+using FastMines.Presentation.Menu;
 
 namespace FastMines
 {
@@ -27,16 +28,9 @@ namespace FastMines
          this.InitializeComponent();
          Unloaded += OnClosing;
 
-         foreach (var fmDataGroup in FmDataSource.AllGroups)
+         foreach (var mi in _vm.MenuItems)
          {
-            fmDataGroup.MosaicGroupImage.PolarLights = false;
-            fmDataGroup.MosaicGroupImage.Rotate = false;
-            var mi = new MenuItem {
-               MosaicGroupImage = fmDataGroup.MosaicGroupImage,
-               Title = fmDataGroup.Title,
-               PageType = typeof (WelcomePage)
-            };
-            _vm.MenuItems.Add(mi);
+            mi.PageType = typeof (WelcomePage);
          }
          //_vm.MenuItems.Add(new MenuItem { Icon = "\uE170", Title = "Welcome", PageType = typeof(WelcomePage) });
          //_vm.MenuItems.Add(new MenuItem { Icon = "\uE115", Title = "Page 1", PageType = typeof(Page1) });

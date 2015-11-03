@@ -151,6 +151,7 @@ namespace fmg.uwp.res {
       }
 
       /// <summary> самостоятельная отрисовка </summary>
+      [Obsolete("???")]
       public static MosaicsGroupImg GetImgMosaicGroup(EMosaicGroup key, int widthAndHeight = MosaicsGroupImg.DefaultImageSize) {
          return new MosaicsGroupImg(key, widthAndHeight) { PolarLights = true };
       }

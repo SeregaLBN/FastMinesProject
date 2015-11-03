@@ -1,5 +1,6 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
+using FastMines.Presentation.Menu;
 
 namespace FastMines.Presentation.Converters
 {
@@ -12,9 +13,7 @@ namespace FastMines.Presentation.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            if (value != null)
-                return (MenuItem)value;
-            return value;
+            return value as MenuItem;
         }
     }
 }

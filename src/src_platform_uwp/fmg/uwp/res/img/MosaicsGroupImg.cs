@@ -16,6 +16,7 @@ namespace fmg.uwp.res.img
    public class MosaicsGroupImg : NotifyPropertyChanged, IDisposable
    {
       public static readonly Windows.UI.Color DefaultBkColor = Resources.DefaultBkColor;
+      public const int DefaultImageSize = 100;
 
       internal struct Color16
       {
@@ -39,24 +40,9 @@ namespace fmg.uwp.res.img
       }
 
       /// <summary> width image </summary>
-      public int Width => Size + Margin.Left + Margin.Right;
+      public int Width => Size;
       /// <summary> height image </summary>
-      public int Height => Size + Margin.Top + Margin.Bottom;
-
-      private Bound _margin;
-      /// <summary> outside padding </summary>
-      public Bound Margin
-      {
-         get { return _margin; }
-         set
-         {
-            if (SetProperty(ref _margin, value))
-            {
-               _image = null;
-               MakeCoords(false);
-            }
-         }
-      }
+      public int Height => Size;
 
       private int _padding;
       /// <summary> inside padding </summary>
@@ -168,11 +154,11 @@ namespace fmg.uwp.res.img
 
       private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
 
-      public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = 100, int padding = -1)
+      public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = DefaultImageSize, int? padding = null)
       {
          MosaicGroup = group;
          _size = widthAndHeight;
-         if (padding < 0)
+         if (!padding.HasValue)
             _padding = (int)(widthAndHeight * 0.05); // 5%
 
          _fillColor = new Color16
@@ -264,8 +250,8 @@ namespace fmg.uwp.res.img
          // adding offset
          for (var i = 0; i < _points.Length; i++)
          {
-            _points[i].X += Margin.Left + Padding;
-            _points[i].Y += Margin.Top + Padding;
+            _points[i].X += Padding;
+            _points[i].Y += Padding;
          }
 
          if (sync)
