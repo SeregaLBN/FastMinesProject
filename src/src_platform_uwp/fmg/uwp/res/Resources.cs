@@ -61,7 +61,6 @@ namespace fmg.uwp.res {
 
       private static Dictionary<EBtnNewGameState, WriteableBitmap> _imgsBtnNew;
       private static Dictionary<EBtnPauseState, WriteableBitmap> _imgsBtnPause;
-      private static Dictionary<EMosaicGroup, MosaicsGroupImg> _imgsMosaicGroup;
       private static Dictionary<EMosaicGroup, WriteableBitmap> _imgsMosaicGroupPng;
       private static Dictionary<CultureInfo, WriteableBitmap> _imgsLang;
 
@@ -152,12 +151,8 @@ namespace fmg.uwp.res {
       }
 
       /// <summary> самостоятельная отрисовка </summary>
-      public static MosaicsGroupImg GetImgMosaicGroup(EMosaicGroup key) {
-         if (_imgsMosaicGroup == null)
-            _imgsMosaicGroup = new Dictionary<EMosaicGroup, MosaicsGroupImg>(EMosaicGroupEx.GetValues().Length);
-         if (_imgsMosaicGroup.ContainsKey(key))
-            return _imgsMosaicGroup[key];
-         return _imgsMosaicGroup[key] = new MosaicsGroupImg(key) { PolarLights = true };
+      public static MosaicsGroupImg GetImgMosaicGroup(EMosaicGroup key, int widthAndHeight = MosaicsGroupImg.DefaultImageSize) {
+         return new MosaicsGroupImg(key, widthAndHeight) { PolarLights = true };
       }
 
       /// <summary> из ресурсов </summary>
