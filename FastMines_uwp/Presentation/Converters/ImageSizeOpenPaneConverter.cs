@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
 
-namespace FastMines.Presentation
+namespace FastMines.Presentation.Converters
 {
    public class ImageSizeOpenPaneConverter : IValueConverter
    {

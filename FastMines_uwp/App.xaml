@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:FastMines"
     xmlns:presentation="using:FastMines.Presentation"
+    xmlns:converters="using:FastMines.Presentation.Converters"
     RequestedTheme="Light">
     
     <Application.Resources>
@@ -55,8 +56,8 @@
             <Setter Property="Padding" Value="24,20,24,24" />
         </Style>
 
-        <presentation:ObjectToMenuItemConverter x:Key="ObjectToMenuItemConverter"/>
-        <presentation:ImageSizeWithMarginConverter x:Key="ImageSizeWithMarginConverter"/>
-        <presentation:ImageSizeOpenPaneConverter x:Key="ImageSizeOpenPaneConverter"/>
+        <converters:ObjectToMenuItemConverter x:Key="ObjectToMenuItemConverter"/>
+        <converters:ImageSizeWithMarginConverter x:Key="ImageSizeWithMarginConverter"/>
+        <converters:ImageSizeOpenPaneConverter x:Key="ImageSizeOpenPaneConverter"/>
     </Application.Resources>
 </Application>

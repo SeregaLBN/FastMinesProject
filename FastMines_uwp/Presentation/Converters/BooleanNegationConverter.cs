@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
 
-namespace FastMines.Common
+namespace FastMines.Presentation.Converters
 {
     /// <summary>
     /// Value converter that translates true to false and vice versa.
