@@ -212,8 +212,8 @@
       <Link>src_fmg.data\view\draw\PenBorder.cs</Link>
     </Compile>
     <Compile Include="Common\AsyncRunner.cs" />
-    <Compile Include="Common\INotifyPropertyChangedEx.cs" />
     <Compile Include="Common\LoggerSimple.cs" />
+    <Compile Include="Presentation\Notyfier\PropertyChangedExEventArgs.cs" />
     <Compile Include="Common\TileHelper.cs" />
     <Compile Include="DataModel\FmDataItem.cs" />
     <Compile Include="DataModel\FmDataGroup.cs" />
@@ -249,17 +249,16 @@
       <DependentUpon>WelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Presentation\Command.cs" />
-    <Compile Include="Presentation\ImageSizeOpenPaneConverter.cs" />
+    <Compile Include="Presentation\Converters\ImageSizeOpenPaneConverter.cs" />
     <Compile Include="Presentation\MenuItem.cs" />
-    <Compile Include="Presentation\NotifyPropertyChanged.cs" />
-    <Compile Include="Presentation\ImageSizeWithMarginConverter.cs" />
-    <Compile Include="Presentation\ObjectToMenuItemConverter.cs" />
+    <Compile Include="Presentation\Notyfier\NotifyPropertyChanged.cs" />
+    <Compile Include="Presentation\Converters\ImageSizeWithMarginConverter.cs" />
+    <Compile Include="Presentation\Converters\ObjectToMenuItemConverter.cs" />
     <Compile Include="Presentation\ShellViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataModel\FmDataSource.cs" />
-    <Compile Include="Common\BindableBase.cs" />
-    <Compile Include="Common\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Common\BooleanNegationConverter.cs" />
+    <Compile Include="Presentation\Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Presentation\Converters\BooleanNegationConverter.cs" />
     <Compile Include="Common\LayoutAwarePage.cs" />
     <Compile Include="Common\RichTextColumns.cs" />
     <Compile Include="Common\SuspensionManager.cs" />

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using fmg.core.types;
+using FastMines.Presentation.Notyfier;
 
 namespace FastMines.Presentation
 {
@@ -23,7 +24,7 @@ namespace FastMines.Presentation
       public bool IsSplitViewPaneOpen
       {
          get { return this.isSplitViewPaneOpen; }
-         set { Set(ref this.isSplitViewPaneOpen, value); }
+         set { SetProperty(ref this.isSplitViewPaneOpen, value); }
       }
 
 
@@ -32,7 +33,7 @@ namespace FastMines.Presentation
          get { return this.selectedMenuItem; }
          set
          {
-            if (Set(ref this.selectedMenuItem, value))
+            if (SetProperty(ref this.selectedMenuItem, value))
             {
                OnPropertyChanged("SelectedPageType");
                OnPropertyChanged("Icons");
@@ -76,6 +77,6 @@ namespace FastMines.Presentation
          get { return this.menuItems; }
       }
 
-      public int ImageSize { get { return _imageSize; } set { Set(ref _imageSize, value); } }
+      public int ImageSize { get { return _imageSize; } set { SetProperty(ref _imageSize, value); } }
    }
 }

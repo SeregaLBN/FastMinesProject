@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.uwp.res.img;
+using FastMines.Presentation.Notyfier;
 
 namespace FastMines.Presentation
 {
@@ -18,7 +19,7 @@ namespace FastMines.Presentation
          set
          {
             var old = this._mosaicGroupImage;
-            if (Set(ref this._mosaicGroupImage, value)) {
+            if (SetProperty(ref this._mosaicGroupImage, value)) {
                if (old != null) {
                   old.PropertyChanged -= OnMosaicGroupImagePropertyChanged;
                   old.Dispose();
@@ -35,13 +36,13 @@ namespace FastMines.Presentation
       public string Title
       {
          get { return this._title; }
-         set { Set(ref this._title, value); }
+         set { SetProperty(ref this._title, value); }
       }
 
       public Type PageType
       {
          get { return this._pageType; }
-         set { Set(ref this._pageType, value); }
+         set { SetProperty(ref this._pageType, value); }
       }
 
       private void OnMosaicGroupImagePropertyChanged(object sender, PropertyChangedEventArgs ev)
@@ -49,7 +50,7 @@ namespace FastMines.Presentation
          var pn = ev.PropertyName;
          if (pn == "Image")
          {
-            OnPropertyChanged(pn);
+            OnPropertyChanged(this, ev);
          }
       }
 

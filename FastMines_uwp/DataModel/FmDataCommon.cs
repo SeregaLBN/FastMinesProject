@@ -1,6 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using FastMines.Presentation.Notyfier;
 
 // The data model defined by this file serves as a representative example of a strongly-typed
 // model that supports notification when members are added, removed, or modified.  The property
@@ -14,7 +15,7 @@ namespace FastMines.Data {
    /// Base class for <see cref="FmDataItem"/> and <see cref="FmDataGroup"/> that defines properties common to both.
    /// </summary>
    [Windows.Foundation.Metadata.WebHostHidden]
-   public abstract class FmDataCommon<T> : FastMines.Common.BindableBase {
+   public abstract class FmDataCommon<T> : NotifyPropertyChanged {
       private static Uri _baseUri = new Uri("ms-appx:///");
 
       public FmDataCommon(T uniqueId, String title, string relativeUri)

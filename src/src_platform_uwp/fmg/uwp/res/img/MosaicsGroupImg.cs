@@ -6,13 +6,14 @@ using fmg.core.types;
 using FastMines.Common;
 using fmg.common;
 using fmg.common.geom;
+using FastMines.Presentation.Notyfier;
 using Point = Windows.Foundation.Point;
 using Rect = Windows.Foundation.Rect;
 
 namespace fmg.uwp.res.img
 {
 
-   public class MosaicsGroupImg : BindableBase, IDisposable
+   public class MosaicsGroupImg : NotifyPropertyChanged, IDisposable
    {
       public static readonly Windows.UI.Color DefaultBkColor = Resources.DefaultBkColor;
 

@@ -10,7 +10,7 @@ using fmg.data.view.draw;
 
 namespace fmg.uwp.draw {
 
-   public class GraphicContext : FastMines.Common.BindableBase {
+   public class GraphicContext : FastMines.Presentation.Notyfier.NotifyPropertyChanged {
       public const string    DEFAULT_FONT_NAME  = "Arial"; // Times New Roman // Verdana // Courier New // SansSerif
       public const FontStyle DEFAULT_FONT_STYLE = FontStyle.Normal;
       public const int       DEFAULT_FONT_SIZE  = 10;
