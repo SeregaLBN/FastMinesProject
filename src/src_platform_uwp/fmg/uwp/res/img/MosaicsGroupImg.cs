@@ -14,7 +14,7 @@ namespace fmg.uwp.res.img
 
    public class MosaicsGroupImg : BindableBase, IDisposable
    {
-      public static readonly Color BkColorDefault = new Color(0xff, 0x8c, 0x00, 0xFF);
+      public static readonly Windows.UI.Color DefaultBkColor = Resources.DefaultBkColor;
 
       internal struct Color16
       {
@@ -94,7 +94,7 @@ namespace fmg.uwp.res.img
          }
       }
 
-      private Color _bkColor = BkColorDefault;
+      private Color _bkColor = DefaultBkColor.ToFmColor();
       /// <summary> background fill color </summary>
       public Color BkColor
       {

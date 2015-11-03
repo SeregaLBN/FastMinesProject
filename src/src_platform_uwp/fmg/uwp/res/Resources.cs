@@ -15,12 +15,10 @@ namespace fmg.uwp.res {
 
    /// <summary> Мультимедиа ресурсы программы </summary>
    public static class Resources {
-      //public static readonly WriteableBitmap ImgDummy1x1 = new WriteableBitmap(1, 1);
 
-      public static readonly Windows.UI.Color DefaultBkColor = Windows.UI.Color.FromArgb(0xFF, 0xff, 0x8c, 0x00);
+      public static readonly Windows.UI.Color DefaultBkColor = Windows.UI.Color.FromArgb(0xFF, 0xFF, 0x8C, 0x00);
 
       private static WriteableBitmap _imgLogoPng;
-      private static Dictionary<Tuple<Size, uint, uint>, WriteableBitmap> _imgLogos;
 
       private static WriteableBitmap _imgFlag, _imgMine;
       private static WriteableBitmap _imgPause;
@@ -65,8 +63,6 @@ namespace fmg.uwp.res {
       private static Dictionary<EBtnPauseState, WriteableBitmap> _imgsBtnPause;
       private static Dictionary<EMosaicGroup, MosaicsGroupImg> _imgsMosaicGroup;
       private static Dictionary<EMosaicGroup, WriteableBitmap> _imgsMosaicGroupPng;
-      private static Dictionary<Tuple<EMosaic, Size, int, Windows.UI.Color, Bound>, MosaicsImg> _imgsMosaic;
-      private static Dictionary<Tuple<EMosaic, bool>, WriteableBitmap> _imgsMosaicPng;
       private static Dictionary<CultureInfo, WriteableBitmap> _imgsLang;
 
       private static async Task<WriteableBitmap> GetImage(string path) {
@@ -88,18 +84,13 @@ namespace fmg.uwp.res {
       }
 
       public static WriteableBitmap GetImgLogo(Size sizeImage, uint loopMix = 0, uint margin = 3) {
-         if (_imgLogos == null)
-            _imgLogos = new Dictionary<Tuple<Size, uint, uint>, WriteableBitmap>();
-         var key = new Tuple<Size, uint, uint>(sizeImage, loopMix, margin);
-         if (_imgLogos.ContainsKey(key))
-            return _imgLogos[key];
          var imgLogo = new Logo {
             Margin = margin,
             ZoomX = Logo.CalcZoom(sizeImage.width, margin),
             ZoomY = Logo.CalcZoom(sizeImage.height, margin)
          };
          imgLogo.MixLoopColor(loopMix);
-         return _imgLogos[key] = imgLogo.Image;
+         return imgLogo.Image;
       }
 
       public static async Task<WriteableBitmap> GetImgFlag() {
@@ -171,12 +162,7 @@ namespace fmg.uwp.res {
 
       /// <summary> из ресурсов </summary>
       public static async Task<WriteableBitmap> GetImgMosaicPng(EMosaic mosaicType, bool smallIco) {
-         if (_imgsMosaicPng == null)
-            _imgsMosaicPng = new Dictionary<Tuple<EMosaic, bool>, WriteableBitmap>(EMosaicEx.GetValues().Length);
-         var key = new Tuple<EMosaic, bool>(mosaicType, smallIco);
-         if (_imgsMosaicPng.ContainsKey(key))
-            return _imgsMosaicPng[key];
-         return _imgsMosaicPng[key] = await GetImage("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.GetDescription(true) + ".png");
+         return await GetImage("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.GetDescription(true) + ".png");
       }
 
       public static BitmapImage GetImgMosaicPngSync(EMosaic mosaicType, bool smallIco)
@@ -186,12 +172,7 @@ namespace fmg.uwp.res {
 
       /// <summary> самостоятельная отрисовка </summary>
       public static MosaicsImg GetImgMosaic(EMosaic mosaicType, Size sizeField, int area, Windows.UI.Color bkColor, Bound padding) {
-         if (_imgsMosaic == null)
-            _imgsMosaic = new Dictionary<Tuple<EMosaic, Size, int, Windows.UI.Color, Bound>, MosaicsImg>(EMosaicEx.GetValues().Length);
-         var key = new Tuple<EMosaic, Size, int, Windows.UI.Color, Bound>(mosaicType, sizeField, area, bkColor, padding);
-         if (_imgsMosaic.ContainsKey(key))
-            return _imgsMosaic[key];
-         return _imgsMosaic[key] = new MosaicsImg {
+         return new MosaicsImg {
             MosaicType = mosaicType,
             SizeField = sizeField,
             Area = area,
