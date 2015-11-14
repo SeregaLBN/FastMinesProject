@@ -4,9 +4,9 @@ using FastMines.DataModel.Items;
 
 namespace FastMines.Presentation.Menu {
 
-   public class MenuItem : MosaicGroupDataItem {
+   public class MosaicGroupMenuItem : MosaicGroupDataItem {
 
-      public MenuItem(EMosaicGroup eMosaicGroup) :
+      public MosaicGroupMenuItem(EMosaicGroup eMosaicGroup) :
          base(eMosaicGroup)
       { }
 
