@@ -20,7 +20,7 @@ namespace FastMines.Common {
 #endif
    }
 
-   public class Tracer : IDisposable {
+   public class Tracer : Disposable {
       private readonly string _hint;
       private readonly Func<string> _disposeMessage;
 
@@ -40,14 +40,9 @@ namespace FastMines.Common {
 #endif
       }
 
-      public void Dispose() {
-         Dispose(true);
-      }
-
-      protected virtual void Dispose(bool disposing)
+      protected override void Dispose(bool disposing)
       {
-         if (disposing)
-         {
+         if (disposing) {
             // free managed resources
 #if DEBUG
             if (_disposeMessage == null)

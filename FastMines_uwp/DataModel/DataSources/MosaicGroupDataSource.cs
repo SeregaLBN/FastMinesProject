@@ -11,7 +11,7 @@ using FastMines.Presentation.Notyfier;
 namespace FastMines.DataModel.DataSources
 {
    /// <summary> DataSource menu items </summary>
-   public class MosaicGroupDataSource : NotifyPropertyChanged
+   public class MosaicGroupDataSource : NotifyPropertyChanged, IDisposable
    {
       private readonly ObservableCollection<MosaicGroupMenuItem> _menuItems = new ObservableCollection<MosaicGroupMenuItem>();
       private MosaicGroupMenuItem _selectedMenuItem;
@@ -95,5 +95,13 @@ namespace FastMines.DataModel.DataSources
             }
          }
       }
+
+      public void Dispose()
+      {
+         foreach (var mi in _menuItems)
+            mi.Dispose();
+         _menuItems.Clear();
+      }
+
    }
 }

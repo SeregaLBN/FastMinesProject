@@ -212,6 +212,7 @@
       <Link>src_fmg.data\view\draw\PenBorder.cs</Link>
     </Compile>
     <Compile Include="Common\AsyncRunner.cs" />
+    <Compile Include="Common\Disposable.cs" />
     <Compile Include="Common\LoggerSimple.cs" />
     <Compile Include="DataModel\DataSources\MosaicGroupDataSource.cs" />
     <Compile Include="DataModel\Items\BaseData.cs" />

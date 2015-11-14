@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
 using fmg.uwp.res.img;
 using FastMines.DataModel.DataSources;
 using FastMines.Presentation.Notyfier;
@@ -6,7 +7,7 @@ using FastMines.Presentation.Notyfier;
 namespace FastMines.Presentation {
 
    /// <summary> ViewModel for main page </summary>
-   public class ShellViewModel : NotifyPropertyChanged {
+   public class ShellViewModel : NotifyPropertyChanged, IDisposable {
       private readonly MosaicGroupDataSource _mosaicGroupDs = new MosaicGroupDataSource();
       private bool _isSplitViewPaneOpen;
 
@@ -35,5 +36,11 @@ namespace FastMines.Presentation {
          get { return _mosaicGroupDs.ImageSize; }
          set { _mosaicGroupDs.ImageSize = value; }
       }
+
+      public void Dispose()
+      {
+         _mosaicGroupDs.Dispose();
+      }
+
    }
 }

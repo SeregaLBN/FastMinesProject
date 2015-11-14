@@ -49,6 +49,7 @@ namespace FastMines
 
       private void OnClosing(object sender, RoutedEventArgs ev) {
          System.Diagnostics.Debug.WriteLine("OnClosing");
+         _vm?.Dispose();
       }
 
       void OnSizeChanged(object sender, SizeChangedEventArgs ev) {

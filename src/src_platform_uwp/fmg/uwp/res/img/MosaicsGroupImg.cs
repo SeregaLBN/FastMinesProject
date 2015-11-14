@@ -157,7 +157,7 @@ namespace fmg.uwp.res.img
 
       public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = DefaultImageSize, int? padding = null)
       {
-         LoggerSimple.Put("> MosaicsGroupImg");
+         //LoggerSimple.Put("> MosaicsGroupImg");
          MosaicGroup = group;
          _size = widthAndHeight;
          if (!padding.HasValue)
@@ -272,16 +272,9 @@ namespace fmg.uwp.res.img
       }
 
 
-      private void DrawSync() {
-         //using (var t = new Tracer("DrawSync", MosaicGroup + ": " + BkColor))
-         LoggerSimple.Put(" DrawSync: " + MosaicGroup + ": " + BkColor);
-         {
-            DrawSyncW();
-         }
-      }
-
-      private void DrawSyncW()
+      private void DrawSync()
       {
+         //LoggerSimple.Put(" DrawSync: " + MosaicGroup + ": " + BkColor);
          _scheduledDraw = false;
          var w = Width;
          var h = Height;
