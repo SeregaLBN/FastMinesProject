@@ -18,31 +18,31 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}">
-            <Button Content="&#xE700;" Command="{x:Bind ViewModelMosaicsGroup.ToggleSplitViewPaneCommand}" Style="{StaticResource IconButtonStyle}"/>
+            <Button Content="&#xE700;" Command="{x:Bind ViewModel.ToggleSplitViewPaneCommand}" Style="{StaticResource IconButtonStyle}"/>
             <TextBlock Text="Mosaics" Style="{StaticResource AppTitleTextBlockStyle}" />
             <!--
-            <TextBlock Text="{x:Bind ViewModelMosaicsGroup.UnicodeChars, Mode=OneWay}" Style="{StaticResource MosaicIconTextBlockStyle}" Width="Auto" Margin="15,0,0,0"/>
             -->
+            <TextBlock Text="{x:Bind ViewModel.MosaicGroupDs.UnicodeChars, Mode=OneWay}" Style="{StaticResource MosaicIconTextBlockStyle}" Width="Auto" Margin="15,0,0,0"/>
         </StackPanel>
 
         <SplitView x:Name="_splitView"
                    Grid.Row="1"
-                   IsPaneOpen="{x:Bind ViewModelMosaicsGroup.IsSplitViewPaneOpen, Mode=TwoWay}"
+                   IsPaneOpen="{x:Bind ViewModel.IsSplitViewPaneOpen, Mode=TwoWay}"
                    DisplayMode="CompactInline"
                    PaneBackground="Beige"
-                   OpenPaneLength="{x:Bind ViewModelMosaicsGroup.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeOpenPaneConverter}}"
-                   CompactPaneLength="{x:Bind ViewModelMosaicsGroup.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}">
+                   OpenPaneLength="{x:Bind ViewModel.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeOpenPaneConverter}}"
+                   CompactPaneLength="{x:Bind ViewModel.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}">
             <SplitView.Pane>
                 <ListView x:Name="_listView"
-                          ItemsSource="{x:Bind ViewModelMosaicsGroup.MenuItems}"
-                          SelectedItem="{x:Bind ViewModelMosaicsGroup.SelectedMenuItem, Mode=TwoWay, Converter={StaticResource ObjectToMenuItemConverter}}">
+                          ItemsSource="{x:Bind ViewModel.MosaicGroupDs.MenuItems}"
+                          SelectedItem="{x:Bind ViewModel.MosaicGroupDs.SelectedMenuItem, Mode=TwoWay, Converter={StaticResource ObjectToMenuItemConverter}}">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="Padding" Value="0" />
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="PresentationMenu:MenuItem">
+                        <DataTemplate x:DataType="PresentationMenu:MosaicGroupMenuItem">
                             <StackPanel Orientation="Horizontal" Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}">
                                 <Image Grid.RowSpan="1"
                                        Source="{x:Bind Image, Mode=OneWay}"
@@ -58,7 +58,7 @@
                 </ListView>
             </SplitView.Pane>
             <SplitView.Content>
-                <Frame x:Name="_frame" SourcePageType="{x:Bind ViewModelMosaicsGroup.SelectedPageType, Mode=TwoWay}" />
+                <Frame x:Name="_frame" SourcePageType="{x:Bind ViewModel.MosaicGroupDs.SelectedPageType, Mode=TwoWay}" />
             </SplitView.Content>
         </SplitView>
 

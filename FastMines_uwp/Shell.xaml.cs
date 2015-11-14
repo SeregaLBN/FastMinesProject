@@ -21,14 +21,15 @@ namespace FastMines
 {
    public sealed partial class Shell : UserControl
    {
-      private readonly ShellViewModel _vm = new ShellViewModel();
+      private readonly ShellViewModel _vm;
 
       public Shell()
       {
          this.InitializeComponent();
          Unloaded += OnClosing;
 
-         foreach (var mi in _vm.MenuItems)
+         _vm = new ShellViewModel();
+         foreach (var mi in _vm.MosaicGroupDs.MenuItems)
          {
             mi.PageType = typeof (WelcomePage);
          }
@@ -37,49 +38,12 @@ namespace FastMines
          //_vm.MenuItems.Add(new MenuItem { Icon = "\uE1C3", Title = "Page 2", PageType = typeof(Page2) });
          //_vm.MenuItems.Add(new MenuItem { Icon = "\uE212", Title = "Page 3", PageType = typeof(Page3) });
 
-         // select the first menu item
-         _vm.SelectedMenuItem = _vm.MenuItems.First();
-
-         this.ViewModelMosaicsGroup = _vm;
-
-         _vm.PropertyChanged += OnViewModelPropertyChanged;
-         OnViewModelPropertyChanged(_vm, new PropertyChangedEventArgs("SelectedPageType"));
+         this.ViewModel = _vm;
 
          this.SizeChanged += OnSizeChanged;
       }
 
-      private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs ev)
-      {
-         if (ev.PropertyName == "SelectedPageType")
-         {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender as ShellViewModel, _vm));
-
-            //var marginUnselected = new Bound(20, 5, 20, 5);
-            //var marginSelected = new Bound(0, 0, 0, 0);
-
-            Action<bool, MenuItem> action = (selected, mi) => {
-               var img = mi.MosaicGroupImage;
-               img.PolarLights = selected;
-               img.Rotate = selected;
-               img.BkColor = selected ? MosaicsGroupImg.DefaultBkColor.ToFmColor() : GraphicContext.DefaultBackgroundFillColor;
-               //img.Margin = selected ? marginSelected : marginUnselected;
-               img.Padding = selected ? 5 : 10;
-            };
-
-            // for all - stop animate
-            _vm.MenuItems.ToList().ForEach(mi =>
-            {
-               if (!ReferenceEquals(mi, sender))
-                  action(false, mi);
-            });
-
-            // for one selected- start animate
-            if (_vm.SelectedMenuItem != null)
-               action(true, _vm.SelectedMenuItem);
-         }
-      }
-
-      public ShellViewModel ViewModelMosaicsGroup { get; private set; }
+      public ShellViewModel ViewModel { get; private set; }
 
       public Frame RootFrame => this._frame;
 

@@ -18,14 +18,14 @@ namespace fmg.uwp.res.img
       public static readonly Windows.UI.Color DefaultBkColor = Resources.DefaultBkColor;
       public const int DefaultImageSize = 100;
 
-      internal struct Color16
+      private struct Color16
       {
          public const UInt16 MaxColorValue = 0xFFFF;
          public UInt16 R, G, B;
       }
 
       private int _size;
-      /// <summary> width and height in pixels (inner part of image output) </summary>
+      /// <summary> width and height in pixel </summary>
       public int Size
       {
          get { return _size; }
@@ -34,7 +34,7 @@ namespace fmg.uwp.res.img
             if (SetProperty(ref _size, value))
             {
                _image = null;
-               MakeCoords(false);
+               MakeCoords();
             }
          }
       }
@@ -51,10 +51,12 @@ namespace fmg.uwp.res.img
          get { return _padding; }
          set
          {
+            if (value*2 >= Size)
+               throw new ArgumentException("Padding size is very large. Should be less than Size / 2.");
             if (SetProperty(ref _padding, value))
             {
                _image = null;
-               MakeCoords(false);
+               MakeCoords();
             }
          }
       }
@@ -69,7 +71,6 @@ namespace fmg.uwp.res.img
       public double RedrawInterval { get; set; } = 100;
 
       private bool _polarLights;
-
       /// <summary> shimmering filling </summary>
       public bool PolarLights
       {
@@ -77,7 +78,7 @@ namespace fmg.uwp.res.img
          set
          {
             if (SetProperty(ref _polarLights, value))
-               NextIteration();
+               Draw();
          }
       }
 
@@ -89,7 +90,7 @@ namespace fmg.uwp.res.img
          set
          {
             if (SetProperty(ref _bkColor, value))
-               NextIteration();
+               Draw();
          }
       }
 
@@ -100,7 +101,7 @@ namespace fmg.uwp.res.img
          set
          {
             if (SetProperty(ref _borderColor, value))
-               NextIteration();
+               Draw();
          }
       }
 
@@ -111,7 +112,7 @@ namespace fmg.uwp.res.img
          set
          {
             if (SetProperty(ref _borderWidth, value))
-               NextIteration();
+               Draw();
          }
       }
       private DispatcherTimer _timer;
@@ -122,8 +123,8 @@ namespace fmg.uwp.res.img
          get { return _rotate; }
          set
          {
-            if (SetProperty(ref _rotate, value))
-               NextIteration();
+            if (SetProperty(ref _rotate, value) && value)
+               Draw();
          }
       }
 
@@ -135,7 +136,7 @@ namespace fmg.uwp.res.img
          set
          {
             if (SetProperty(ref _rotateAngle, value))
-               NextIteration();
+               Draw();
          }
       }
 
@@ -146,7 +147,7 @@ namespace fmg.uwp.res.img
          set
          {
             if (SetProperty(ref _rotateAngleDelta, value) && Rotate)
-               NextIteration();
+               Draw();
          }
       }
 
@@ -156,6 +157,7 @@ namespace fmg.uwp.res.img
 
       public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = DefaultImageSize, int? padding = null)
       {
+         LoggerSimple.Put("> MosaicsGroupImg");
          MosaicGroup = group;
          _size = widthAndHeight;
          if (!padding.HasValue)
@@ -167,10 +169,10 @@ namespace fmg.uwp.res.img
             G = Convert.ToUInt16(_random.Next(Color16.MaxColorValue)),
             B = Convert.ToUInt16(_random.Next(Color16.MaxColorValue))
          };
-         MakeCoords(true);
+         MakeCoords();
       }
 
-      private void MakeCoords(bool sync)
+      private void MakeCoords()
       {
          double s = Size - Padding * 2; // size inner Square1
          var w = s;
@@ -254,27 +256,33 @@ namespace fmg.uwp.res.img
             _points[i].Y += Padding;
          }
 
-         if (sync)
-            NextIterationSync();
-         else
-            NextIteration();
+         Draw();
       }
 
-      private bool _sheduledNextIteration;
+      private bool _scheduledDraw;
       /// <summary> schedule drawing (async operation) </summary>
-      private void NextIteration()
+      private void Draw()
       {
-         if (_sheduledNextIteration)
+          if (_scheduledDraw)
             return;
-         _sheduledNextIteration = true;
+         _scheduledDraw = true;
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-         AsyncRunner.InvokeLater(NextIterationSync, CoreDispatcherPriority.Low);
+         AsyncRunner.InvokeLater(DrawSync, CoreDispatcherPriority.Low);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
       }
 
-      private void NextIterationSync()
+
+      private void DrawSync() {
+         //using (var t = new Tracer("DrawSync", MosaicGroup + ": " + BkColor))
+         LoggerSimple.Put(" DrawSync: " + MosaicGroup + ": " + BkColor);
+         {
+            DrawSyncW();
+         }
+      }
+
+      private void DrawSyncW()
       {
-         _sheduledNextIteration = false;
+         _scheduledDraw = false;
          var w = Width;
          var h = Height;
          var bmp = new WriteableBitmap(w, h);
@@ -282,8 +290,7 @@ namespace fmg.uwp.res.img
          var rotate = Rotate || (Math.Abs(RotateAngle) > 0.1);
          Action<WriteableBitmap> funcFillBk = img =>
          {
-            img.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 },
-               Windows.UI.Color.FromArgb(BkColor.A, BkColor.R, BkColor.G, BkColor.B));
+            img.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BkColor.ToWinColor());
          };
          if (!rotate)
          {
@@ -369,7 +376,7 @@ namespace fmg.uwp.res.img
             if (_timer == null)
             {
                _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(RedrawInterval) };
-               _timer.Tick += delegate { NextIteration(); };
+               _timer.Tick += delegate { Draw(); };
             }
             _timer.Start();
          }

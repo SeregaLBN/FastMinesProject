@@ -213,6 +213,7 @@
     </Compile>
     <Compile Include="Common\AsyncRunner.cs" />
     <Compile Include="Common\LoggerSimple.cs" />
+    <Compile Include="DataModel\DataSources\MosaicGroupDataSource.cs" />
     <Compile Include="DataModel\Items\BaseData.cs" />
     <Compile Include="DataModel\Items\MosaicGroupDataItem.cs" />
     <Compile Include="Presentation\Notyfier\PropertyChangedExEventArgs.cs" />
@@ -252,7 +253,7 @@
     </Compile>
     <Compile Include="Presentation\Command.cs" />
     <Compile Include="Presentation\Converters\ImageSizeOpenPaneConverter.cs" />
-    <Compile Include="Presentation\Menu\MenuItem.cs" />
+    <Compile Include="Presentation\Menu\MosaicGroupMenuItem.cs" />
     <Compile Include="Presentation\Notyfier\NotifyPropertyChanged.cs" />
     <Compile Include="Presentation\Converters\ImageSizeWithMarginConverter.cs" />
     <Compile Include="Presentation\Converters\ObjectToMenuItemConverter.cs" />

@@ -3,7 +3,7 @@ using System;
 namespace fmg.common {
 
    public struct Color {
-      public static readonly Color Transparent = new Color(255,255,255,0);
+      public static readonly Color Transparent = new Color(0, 255,255,255);
       public static readonly Color Black   = new Color(0xFF000000);
       public static Color Dark => Black;
       public static readonly Color White   = new Color(0xFFFFFFFF);
@@ -20,7 +20,7 @@ namespace fmg.common {
 
       public byte R,G,B,A;
 
-      public Color(byte r, byte g, byte b, byte a) { R = r; G = g; B = b; A = a; }
+      public Color(byte a, byte r, byte g, byte b) { R = r; G = g; B = b; A = a; }
       public Color(byte r, byte g, byte b) { R = r; G = g; B = b; A = 0xFF; }
       public Color(ulong aarrggbb) {
          if (aarrggbb > 0xFFFFFFFF)
@@ -64,7 +64,7 @@ namespace fmg.common {
       public static Color Attenuate(this Color clr, int basic = 120) {
          System.Diagnostics.Debug.Assert(basic >= 0 && basic <= 0xFF);
          if (basic == 0xFF)
-            return new Color(0xFF, 0xFF, 0xFF, clr.A);
+            return new Color(clr.A, 0xFF, 0xFF, 0xFF);
          return new Color {
             R = (byte) (basic + clr.R%(0xFF - basic)),
             G = (byte) (basic + clr.G%(0xFF - basic)),
@@ -78,9 +78,9 @@ namespace fmg.common {
       /// <param name="percent">0.0 - as is; 1 - WHITE</param>
       /// <returns></returns>
       public static Color Brighter(this Color clr, double percent = 0.7) {
-         var tmp = new Color((byte)(0xFF - clr.R), (byte)(0xFF - clr.G), (byte)(0xFF - clr.B), clr.A);
+         var tmp = new Color(clr.A, (byte)(0xFF - clr.R), (byte)(0xFF - clr.G), (byte)(0xFF - clr.B));
          tmp = tmp.Darker(percent);
-         return new Color((byte)(0xFF - tmp.R), (byte)(0xFF - tmp.G), (byte)(0xFF - tmp.B), tmp.A);
+         return new Color(tmp.A, (byte)(0xFF - tmp.R), (byte)(0xFF - tmp.G), (byte)(0xFF - tmp.B));
       }
 
       /// <summary> Creates darker version of this Color </summary>
@@ -89,15 +89,14 @@ namespace fmg.common {
       /// <returns></returns>
       public static Color Darker(this Color clr, double percent = 0.7) {
          var tmp = 1 - Math.Min(1, Math.Max(0, percent));
-         return new Color(
-            (byte)(clr.R*tmp), // (byte)Math.Min(clr.R*tmp, byte.MaxValue),
-            (byte)(clr.G*tmp), // (byte)Math.Min(clr.G*tmp, byte.MaxValue),
-            (byte)(clr.B*tmp), // (byte)Math.Min(clr.B*tmp, byte.MaxValue),
-            clr.A);
+         return new Color(clr.A,
+            (byte)(clr.R*tmp),  // (byte)Math.Min(clr.R*tmp, byte.MaxValue),
+            (byte)(clr.G*tmp),  // (byte)Math.Min(clr.G*tmp, byte.MaxValue),
+            (byte)(clr.B*tmp)); // (byte)Math.Min(clr.B*tmp, byte.MaxValue),
       }
 
 #if WINDOWS_RT || WINDOWS_UWP
-      public static Color ToFmColor(this Windows.UI.Color self) { return new Color(self.R, self.G, self.B, self.A); }
+      public static Color ToFmColor(this Windows.UI.Color self) { return new Color(self.A, self.R, self.G, self.B); }
       public static Windows.UI.Color ToWinColor(this Color self) { return new Windows.UI.Color { A = self.A, B = self.B, G = self.G, R = self.R }; }
 #elif WINDOWS_FORMS
       ...

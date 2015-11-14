@@ -13,7 +13,7 @@ namespace FastMines.Presentation.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            return value as MenuItem;
+            return value as MosaicGroupMenuItem;
         }
     }
 }

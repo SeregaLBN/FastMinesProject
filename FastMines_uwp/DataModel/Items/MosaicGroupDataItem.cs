@@ -20,8 +20,7 @@ namespace FastMines.DataModel.Items {
          get {
             if (_mosaicGroupImg == null) {
                var tmp = MosaicGroupImage = new MosaicsGroupImg(MosaicGroup, ImageSize * ZoomKoef) {
-                  BorderWidth = 3,
-                  PolarLights = true
+                  BorderWidth = 3
                };
                System.Diagnostics.Debug.Assert(tmp.Size == ImageSize * ZoomKoef);
                System.Diagnostics.Debug.Assert(tmp.Width == ImageSize * ZoomKoef);
@@ -30,7 +29,7 @@ namespace FastMines.DataModel.Items {
             return _mosaicGroupImg;
          }
          private set {
-            var old = this._mosaicGroupImg;
+            var old = _mosaicGroupImg;
             if (SetProperty(ref _mosaicGroupImg, value)) {
                if (old != null)
                {
@@ -55,7 +54,7 @@ namespace FastMines.DataModel.Items {
          set
          {
             if (SetProperty(ref _imageSize, value)) {
-               MosaicGroupImage = null;
+               MosaicGroupImage.Size = ImageSize * ZoomKoef;
             }
          }
       }
