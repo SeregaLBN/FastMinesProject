@@ -219,6 +219,7 @@
     <Compile Include="DataModel\Items\BaseData.cs" />
     <Compile Include="DataModel\Items\MosaicSkillDataItem.cs" />
     <Compile Include="DataModel\Items\MosaicGroupDataItem.cs" />
+    <Compile Include="Presentation\Converters\ObjectToSkillMenuItemConverter.cs" />
     <Compile Include="Presentation\Menu\MosaicSkillMenuItem.cs" />
     <Compile Include="Presentation\Notyfier\PropertyChangedExEventArgs.cs" />
     <Compile Include="Common\TileHelper.cs" />

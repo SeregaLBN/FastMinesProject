@@ -23,7 +23,7 @@ namespace FastMines.DataModel.Items {
       private int _imageSize = MosaicsGroupImg.DefaultImageSize;
       public override int ImageSize {
          get { return _imageSize; }
-         set { }
+         set { SetProperty(ref _imageSize, value); }
       }
 
       private void OnMosaicGroupImagePropertyChanged(object sender, PropertyChangedEventArgs ev) {

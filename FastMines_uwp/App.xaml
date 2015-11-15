@@ -63,6 +63,7 @@
         </Style>
 
         <converters:ObjectToMenuItemConverter x:Key="ObjectToMenuItemConverter"/>
+        <converters:ObjectToSkillMenuItemConverter x:Key="ObjectToSkillMenuItemConverter"/>
         <converters:ImageSizeWithMarginConverter x:Key="ImageSizeWithMarginConverter"/>
         <converters:ImageSizeOpenPaneConverter x:Key="ImageSizeOpenPaneConverter"/>
     </Application.Resources>
