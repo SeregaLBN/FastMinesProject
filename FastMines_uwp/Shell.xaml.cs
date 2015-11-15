@@ -60,12 +60,10 @@ namespace FastMines
          //   var cnt = VisualTreeHelper.GetChildrenCount(stackPanel);
          //   cnt++;
          //}
-         var min = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
-         min = min/7;
+         var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
+         size = size / 7;
          //Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi
-         if ((min > 50) && (min < 100)) { // TODO: DPI dependency
-            _vm.ImageSize = (int) min;
-         }
+         _vm.ImageSize = (int)Math.Min(Math.Max(50, size), 100); // TODO: DPI dependency
       }
 
       public static IEnumerable<T> FindChilds<T>(FrameworkElement parent, int depth = 1, Func<T, bool> filter = null)
@@ -83,6 +81,12 @@ namespace FastMines
             foreach (var c in FindChilds(child, depth - 1, filter))
                yield return c;
          }
+      }
+
+      private void ButtonSplitSkillLevel_OnClick(object sender, RoutedEventArgs e) {
+         _listViewSkillLevelMenu.Visibility = (_listViewSkillLevelMenu.Visibility == Visibility.Visible)
+            ? Visibility.Collapsed
+            : Visibility.Visible;
       }
    }
 }

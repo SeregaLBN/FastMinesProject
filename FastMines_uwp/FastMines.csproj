@@ -217,6 +217,7 @@
     <Compile Include="DataModel\DataSources\MosaicGroupDataSource.cs" />
     <Compile Include="DataModel\Items\BaseData.cs" />
     <Compile Include="DataModel\Items\MosaicGroupDataItem.cs" />
+    <Compile Include="Presentation\Converters\VisibilityBoolConverter.cs" />
     <Compile Include="Presentation\Notyfier\PropertyChangedExEventArgs.cs" />
     <Compile Include="Common\TileHelper.cs" />
     <Compile Include="DataModel\FmDataItem.cs" />

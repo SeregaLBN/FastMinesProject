@@ -26,7 +26,8 @@ namespace FastMines.Presentation {
 
       public ICommand ToggleSplitViewPaneCommand { get; private set; }
 
-      public bool IsSplitViewPaneOpen {
+      public bool IsSplitViewPaneOpen
+      {
          get { return _isSplitViewPaneOpen; }
          set { SetProperty(ref _isSplitViewPaneOpen, value); }
       }
