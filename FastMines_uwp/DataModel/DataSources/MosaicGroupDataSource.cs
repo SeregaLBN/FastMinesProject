@@ -90,9 +90,12 @@ namespace FastMines.DataModel.DataSources
       public int ImageSize {
          get { return MenuItems.First().ImageSize; }
          set {
+            var old = ImageSize;
             foreach (var mi in MenuItems) {
                mi.ImageSize = value;
             }
+            if (old != value)
+               OnPropertyChanged(this, new PropertyChangedExEventArgs<int>("ImageSize", value, old));
          }
       }
 

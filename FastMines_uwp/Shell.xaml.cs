@@ -19,8 +19,9 @@ using FastMines.Presentation.Menu;
 
 namespace FastMines
 {
-   public sealed partial class Shell : UserControl
-   {
+   public sealed partial class Shell : UserControl {
+      internal const int MenuTextWidth = 110;
+
       private readonly ShellViewModel _vm;
 
       public Shell()
@@ -59,6 +60,12 @@ namespace FastMines
          //   var cnt = VisualTreeHelper.GetChildrenCount(stackPanel);
          //   cnt++;
          //}
+         var min = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
+         min = min/7;
+         //Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi
+         if ((min > 50) && (min < 100)) { // TODO: DPI dependency
+            _vm.ImageSize = (int) min;
+         }
       }
 
       public static IEnumerable<T> FindChilds<T>(FrameworkElement parent, int depth = 1, Func<T, bool> filter = null)

@@ -7,12 +7,12 @@ namespace FastMines.Presentation.Converters
    {
       public object Convert(object value, Type targetType, object parameter, string language)
       {
-         return System.Convert.ToDouble((int)value + 110);
+         return System.Convert.ToDouble((int)value + Shell.MenuTextWidth);
       }
 
       public object ConvertBack(object value, Type targetType, object parameter, string language)
       {
-         return System.Convert.ToDouble((int)value - 110);
+         return System.Convert.ToDouble((int)value - Shell.MenuTextWidth);
       }
    }
 }
