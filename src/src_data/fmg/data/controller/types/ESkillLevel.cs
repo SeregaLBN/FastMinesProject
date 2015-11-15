@@ -136,6 +136,19 @@ namespace fmg.data.controller.types {
             throw new IndexOutOfRangeException("Invalid ordinal");
          return values[ordinal];
       }
+
+      public static string UnicodeChar(this ESkillLevel self) {
+         switch (self) {
+         // http://unicode-table.com/en/sets/emoji/
+         // http://unicode-table.com/en/1F63D/
+         case ESkillLevel.eBeginner: return "\u1F638"; // 😺
+         case ESkillLevel.eAmateur : return "\u1F63A"; // 😸
+         case ESkillLevel.eProfi   : return "\u1F63B"; // 😻
+         case ESkillLevel.eCrazy   : return "\u1F63C"; // 😼
+         case ESkillLevel.eCustom  : return "\u1F63D"; // 😽
+         }
+         throw new ArgumentException("Invalid paramenter value " + self);
+      }
    }
 
 }

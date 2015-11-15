@@ -214,10 +214,12 @@
     <Compile Include="Common\AsyncRunner.cs" />
     <Compile Include="Common\Disposable.cs" />
     <Compile Include="Common\LoggerSimple.cs" />
+    <Compile Include="DataModel\DataSources\MosaicSkillDataSource.cs" />
     <Compile Include="DataModel\DataSources\MosaicGroupDataSource.cs" />
     <Compile Include="DataModel\Items\BaseData.cs" />
+    <Compile Include="DataModel\Items\MosaicSkillDataItem.cs" />
     <Compile Include="DataModel\Items\MosaicGroupDataItem.cs" />
-    <Compile Include="Presentation\Converters\VisibilityBoolConverter.cs" />
+    <Compile Include="Presentation\Menu\MosaicSkillMenuItem.cs" />
     <Compile Include="Presentation\Notyfier\PropertyChangedExEventArgs.cs" />
     <Compile Include="Common\TileHelper.cs" />
     <Compile Include="DataModel\FmDataItem.cs" />

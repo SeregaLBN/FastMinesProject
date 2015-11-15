@@ -10,12 +10,12 @@ using FastMines.Presentation.Notyfier;
 
 namespace FastMines.DataModel.DataSources
 {
-   /// <summary> DataSource menu items </summary>
+   /// <summary> DataSource menu items (mosaic groups) </summary>
    public class MosaicGroupDataSource : NotifyPropertyChanged, IDisposable
    {
       private readonly ObservableCollection<MosaicGroupMenuItem> _menuItems = new ObservableCollection<MosaicGroupMenuItem>();
-      private MosaicGroupMenuItem _selectedMenuItem;
 
+      private MosaicGroupMenuItem _selectedMenuItem;
       public MosaicGroupMenuItem SelectedMenuItem
       {
          get { return _selectedMenuItem; }
@@ -77,8 +77,7 @@ namespace FastMines.DataModel.DataSources
          {
             if (!_menuItems.Any()) {
                // add elements
-               var groups = EMosaicGroupEx.GetValues();
-               foreach (var g in groups) {
+               foreach (var g in EMosaicGroupEx.GetValues()) {
                   _menuItems.Add(new MosaicGroupMenuItem(g));
                }
                SelectedMenuItem = _menuItems.First();
