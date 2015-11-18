@@ -121,6 +121,15 @@
     <Compile Include="..\src\src_platform_uwp\fmg\uwp\mosaic\Mosaic.cs">
       <Link>src_fmg.uwp\mosaic\Mosaic.cs</Link>
     </Compile>
+    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsSkillImg.cs">
+      <Link>src_fmg.uwp\res\img\MosaicsSkillImg.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\PolarLightsImg.cs">
+      <Link>src_fmg.uwp\res\img\PolarLightsImg.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\RotatedImg.cs">
+      <Link>src_fmg.uwp\res\img\RotatedImg.cs</Link>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>

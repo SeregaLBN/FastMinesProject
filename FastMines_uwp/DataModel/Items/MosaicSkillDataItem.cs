@@ -16,7 +16,7 @@ namespace FastMines.DataModel.Items {
 
       public ESkillLevel SkillLevel => UniqueId;
 
-      public string UnicodeChar => SkillLevel.UnicodeChar();
+      public string UnicodeChar => SkillLevel.UnicodeChar().ToString();
 
       public override ImageSource Image => null;
 

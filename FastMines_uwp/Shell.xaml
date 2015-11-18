@@ -22,7 +22,11 @@
             <TextBlock Text="Mosaics" Style="{StaticResource AppTitleTextBlockStyle}" />
             <!--
             -->
-            <TextBlock Text="{x:Bind ViewModel.MosaicGroupDs.UnicodeChars, Mode=OneWay}" Style="{StaticResource MosaicIconTextBlockStyle}" Width="Auto" Margin="15,0,0,0"/>
+            <TextBlock Text="{x:Bind ViewModel.MosaicGroupDs.UnicodeChars, Mode=OneWay}" Style="{StaticResource MosaicIconTextBlockStyle}" Width="Auto" Margin="15,0,0,0" RenderTransformOrigin="0.5,0.5">
+                <TextBlock.RenderTransform>
+                    <CompositeTransform Rotation="-39.372"/>
+                </TextBlock.RenderTransform>
+            </TextBlock>
         </StackPanel>
 
         <SplitView x:Name="_splitView"
@@ -74,7 +78,7 @@
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="PresentationMenu:MosaicSkillMenuItem">
                                 <StackPanel Orientation="Horizontal" Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}">
-                                    <TextBlock Grid.Column="1" Text="{x:Bind UnicodeChar, Mode=OneWay}" Style="{StaticResource MosaicIconTextBlockStyle}"/>
+                                    <TextBlock Grid.Column="1" Text="{x:Bind UnicodeChar, Mode=OneWay}" Style="{StaticResource SkillIconTextBlockStyle}" />
                                     <TextBlock Grid.Column="1" Text="{x:Bind Title, Mode=OneWay}" Style="{StaticResource MenuTitleTextBlockStyle}"/>
                                 </StackPanel>
                             </DataTemplate>

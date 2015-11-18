@@ -137,15 +137,15 @@ namespace fmg.data.controller.types {
          return values[ordinal];
       }
 
-      public static string UnicodeChar(this ESkillLevel self) {
+      public static char UnicodeChar(this ESkillLevel self) {
          switch (self) {
-         // http://unicode-table.com/en/sets/emoji/
-         // http://unicode-table.com/en/1F63D/
-         case ESkillLevel.eBeginner: return "\u1F638"; // 😺
-         case ESkillLevel.eAmateur : return "\u1F63A"; // 😸
-         case ESkillLevel.eProfi   : return "\u1F63B"; // 😻
-         case ESkillLevel.eCrazy   : return "\u1F63C"; // 😼
-         case ESkillLevel.eCustom  : return "\u1F63D"; // 😽
+         // http://unicode-table.com/ru/sets/stars-symbols/                  // http://unicode-table.com/en/sets/emoji/
+         // http://unicode-table.com/ru/search/?q=star                       // http://unicode-table.com/en/1F63D/
+         case ESkillLevel.eBeginner: return '\u2736'; // '✶'; //                               "😺"; // \u1F638
+         case ESkillLevel.eAmateur : return '\u2737'; // '✷'; //                               "😸"; // \u1F63A
+         case ESkillLevel.eProfi   : return '\u2738'; // '✸'; //                               "😻"; // \u1F63B
+         case ESkillLevel.eCrazy   : return '\u2739'; // '✹'; //                               "😼"; // \u1F63C
+         case ESkillLevel.eCustom  : return '\u273B'; // '✻'; //                               "😽"; // \u1F63D
          }
          throw new ArgumentException("Invalid paramenter value " + self);
       }

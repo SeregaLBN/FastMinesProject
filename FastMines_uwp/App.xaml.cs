@@ -8,6 +8,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 using FastMines.Data;
+using fmg.data.controller.types;
 
 namespace FastMines
 {

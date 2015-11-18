@@ -1,178 +1,25 @@
 using System;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.core.types;
-using FastMines.Common;
 using fmg.common;
 using fmg.common.geom;
-using FastMines.Presentation.Notyfier;
 using Point = Windows.Foundation.Point;
 using Rect = Windows.Foundation.Rect;
 
 namespace fmg.uwp.res.img
 {
-
-   public class MosaicsGroupImg : NotifyPropertyChanged, IDisposable
-   {
-      public static readonly Windows.UI.Color DefaultBkColor = Resources.DefaultBkColor;
-      public const int DefaultImageSize = 100;
-
-      private struct Color16
-      {
-         public const UInt16 MaxColorValue = 0xFFFF;
-         public UInt16 R, G, B;
-      }
-
-      private int _size;
-      /// <summary> width and height in pixel </summary>
-      public int Size
-      {
-         get { return _size; }
-         set
-         {
-            if (SetProperty(ref _size, value))
-            {
-               _image = null;
-               MakeCoords();
-            }
-         }
-      }
-
-      /// <summary> width image </summary>
-      public int Width => Size;
-      /// <summary> height image </summary>
-      public int Height => Size;
-
-      private int _padding;
-      /// <summary> inside padding </summary>
-      public int Padding
-      {
-         get { return _padding; }
-         set
-         {
-            if (value*2 >= Size)
-               throw new ArgumentException("Padding size is very large. Should be less than Size / 2.");
-            if (SetProperty(ref _padding, value))
-            {
-               _image = null;
-               MakeCoords();
-            }
-         }
-      }
-
-      public EMosaicGroup MosaicGroup { get; private set; }
-      private Point[] _points;
-
-      private WriteableBitmap _image;
-      public WriteableBitmap Image { get { return _image; } private set { SetPropertyForce(ref _image, value); } }
-
-      /// <summary> frequency of redrawing (in milliseconds) </summary>
-      public double RedrawInterval { get; set; } = 100;
-
-      private bool _polarLights;
-      /// <summary> shimmering filling </summary>
-      public bool PolarLights
-      {
-         get { return _polarLights; }
-         set
-         {
-            if (SetProperty(ref _polarLights, value))
-               Draw();
-         }
-      }
-
-      private Color _bkColor = DefaultBkColor.ToFmColor();
-      /// <summary> background fill color </summary>
-      public Color BkColor
-      {
-         get { return _bkColor; }
-         set
-         {
-            if (SetProperty(ref _bkColor, value))
-               Draw();
-         }
-      }
-
-      private Color _borderColor = Color.Red;
-      public Color BorderColor
-      {
-         get { return _borderColor; }
-         set
-         {
-            if (SetProperty(ref _borderColor, value))
-               Draw();
-         }
-      }
-
-      private int _borderWidth = 3;
-      public int BorderWidth
-      {
-         get { return _borderWidth; }
-         set
-         {
-            if (SetProperty(ref _borderWidth, value))
-               Draw();
-         }
-      }
-      private DispatcherTimer _timer;
-
-      private bool _rotate;
-      public bool Rotate
-      {
-         get { return _rotate; }
-         set
-         {
-            if (SetProperty(ref _rotate, value) && value)
-               Draw();
-         }
-      }
-
-      private double _rotateAngle;
-      /// <summary> -360° .. 0° .. +360° </summary>
-      public double RotateAngle
-      {
-         get { return _rotateAngle; }
-         set
-         {
-            if (SetProperty(ref _rotateAngle, value))
-               Draw();
-         }
-      }
-
-      private double _rotateAngleDelta = .4;
-      public double RotateAngleDelta
-      {
-         get { return _rotateAngleDelta; }
-         set
-         {
-            if (SetProperty(ref _rotateAngleDelta, value) && Rotate)
-               Draw();
-         }
-      }
-
-      private Color16 _fillColor;
-
-      private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
+   /// <summary> representable fmg.core.types.EMosaicGroup as image </summary>
+   public class MosaicsGroupImg : PolarLightsImg<EMosaicGroup, WriteableBitmap> {
 
       public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = DefaultImageSize, int? padding = null)
+         : base(group, widthAndHeight, padding)
       {
-         //LoggerSimple.Put("> MosaicsGroupImg");
-         MosaicGroup = group;
-         _size = widthAndHeight;
-         if (!padding.HasValue)
-            _padding = (int)(widthAndHeight * 0.05); // 5%
-
-         _fillColor = new Color16
-         {
-            R = Convert.ToUInt16(_random.Next(Color16.MaxColorValue)),
-            G = Convert.ToUInt16(_random.Next(Color16.MaxColorValue)),
-            B = Convert.ToUInt16(_random.Next(Color16.MaxColorValue))
-         };
-         MakeCoords();
       }
 
-      private void MakeCoords()
+      public EMosaicGroup MosaicGroup => Entity;
+
+      protected override void MakeCoords()
       {
          double s = Size - Padding * 2; // size inner Square1
          var w = s;
@@ -256,23 +103,10 @@ namespace fmg.uwp.res.img
             _points[i].Y += Padding;
          }
 
-         Draw();
+         base.MakeCoords(); // => Draw();
       }
 
-      private bool _scheduledDraw;
-      /// <summary> schedule drawing (async operation) </summary>
-      private void Draw()
-      {
-          if (_scheduledDraw)
-            return;
-         _scheduledDraw = true;
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-         AsyncRunner.InvokeLater(DrawSync, CoreDispatcherPriority.Low);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-      }
-
-
-      private void DrawSync()
+      protected override void DrawSync()
       {
          //LoggerSimple.Put(" DrawSync: " + MosaicGroup + ": " + BkColor);
          _scheduledDraw = false;
@@ -290,27 +124,8 @@ namespace fmg.uwp.res.img
             funcFillBk(bmp);
          }
 
-         if (PolarLights)
-         {
-            Func<UInt16, UInt16> funcAddRandomBit = val => (UInt16)((((_random.Next() & 1) == 1) ? 0x0000 : 0x8000) | (val >> 1));
-            switch (_random.Next() % 3)
-            {
-               case 0: _fillColor.R = funcAddRandomBit(_fillColor.R); break;
-               case 1: _fillColor.G = funcAddRandomBit(_fillColor.G); break;
-               case 2: _fillColor.B = funcAddRandomBit(_fillColor.B); break;
-            }
-         }
-         Func<double, byte> funcCastUInt16ToByte = val => (byte)(byte.MaxValue * val / Color16.MaxColorValue);
-         var fillColor =
-            new Color
-            {
-               R = funcCastUInt16ToByte(_fillColor.R),
-               G = funcCastUInt16ToByte(_fillColor.G),
-               B = funcCastUInt16ToByte(_fillColor.B),
-               A = byte.MaxValue
-            }.Attenuate(160).ToWinColor();
-
-         bmp.FillPolygon(RegionExt.PointsAsXyxyxySequence(_points, true), fillColor);
+         NextFillColor();
+         bmp.FillPolygon(RegionExt.PointsAsXyxyxySequence(_points, true), FillColorAttenuate.ToWinColor());
 
          { // draw perimeter border
             var clr = BorderColor;
@@ -377,21 +192,6 @@ namespace fmg.uwp.res.img
          {
             _timer?.Stop();
          }
-      }
-
-      public void Dispose()
-      {
-         Dispose(true);
-      }
-
-      protected virtual void Dispose(bool disposing)
-      {
-         if (disposing)
-         {
-            // free managed resources
-            _timer?.Stop();
-         }
-         // free native resources if there are any.
       }
 
    }
