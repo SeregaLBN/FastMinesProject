@@ -1,5 +1,4 @@
 using System;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.core.types;
 using fmg.common;
@@ -106,10 +105,8 @@ namespace fmg.uwp.res.img
          base.MakeCoords(); // => Draw();
       }
 
-      protected override void DrawSync()
+      protected override void DrawBody()
       {
-         //LoggerSimple.Put(" DrawSync: " + MosaicGroup + ": " + BkColor);
-         _scheduledDraw = false;
          var w = Width;
          var h = Height;
          var bmp = new WriteableBitmap(w, h);
@@ -177,20 +174,6 @@ namespace fmg.uwp.res.img
                funcFillBk(Image);
             }
             Image.Blit(rc, bmp, rc);
-         }
-
-         if (PolarLights || Rotate)
-         {
-            if (_timer == null)
-            {
-               _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(RedrawInterval) };
-               _timer.Tick += delegate { Draw(); };
-            }
-            _timer.Start();
-         }
-         else
-         {
-            _timer?.Stop();
          }
       }
 

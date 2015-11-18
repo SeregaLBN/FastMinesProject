@@ -21,21 +21,8 @@ namespace fmg.uwp.res.img
          base.MakeCoords(); // => Draw();
       }
 
-      protected override void DrawSync()
+      protected override void DrawBody()
       {
-         if (Rotate)
-         {
-            if (_timer == null)
-            {
-               _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(RedrawInterval) };
-               _timer.Tick += delegate { Draw(); };
-            }
-            _timer.Start();
-         }
-         else
-         {
-            _timer?.Stop();
-         }
       }
 
    }

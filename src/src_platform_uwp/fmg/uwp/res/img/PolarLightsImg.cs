@@ -21,6 +21,8 @@ namespace fmg.uwp.res.img {
          }
       }
 
+      private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
+
       protected void NextFillColor() {
          if (PolarLights) {
             Func<byte, byte> funcAddRandomBit = val => (byte) ((((_random.Next() & 1) == 1) ? 0x00 : 0x80) | (val >> 1));
@@ -32,7 +34,12 @@ namespace fmg.uwp.res.img {
             }
             _fillColor = f;
          }
-
       }
+
+      protected override bool LiveImage()
+      {
+         return PolarLights || base.LiveImage();
+      }
+
    }
 }
