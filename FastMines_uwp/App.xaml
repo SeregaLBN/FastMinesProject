@@ -75,6 +75,8 @@
         <converters:ObjectToMenuItemConverter x:Key="ObjectToMenuItemConverter"/>
         <converters:ObjectToSkillMenuItemConverter x:Key="ObjectToSkillMenuItemConverter"/>
         <converters:ImageSizeWithMarginConverter x:Key="ImageSizeWithMarginConverter"/>
+        <converters:ImageSizeFontSizeConverter x:Key="ImageSizeFontSizeConverter"/>
         <converters:ImageSizeOpenPaneConverter x:Key="ImageSizeOpenPaneConverter"/>
+        <converters:FmColorToBrushConverter x:Key="FmColorToBrushConverter"/>
     </Application.Resources>
 </Application>

@@ -22,11 +22,7 @@
             <TextBlock Text="Mosaics" Style="{StaticResource AppTitleTextBlockStyle}" />
             <!--
             -->
-            <TextBlock Text="{x:Bind ViewModel.MosaicGroupDs.UnicodeChars, Mode=OneWay}" Style="{StaticResource MosaicIconTextBlockStyle}" Width="Auto" Margin="15,0,0,0" RenderTransformOrigin="0.5,0.5">
-                <TextBlock.RenderTransform>
-                    <CompositeTransform Rotation="-39.372"/>
-                </TextBlock.RenderTransform>
-            </TextBlock>
+            <TextBlock Text="{x:Bind ViewModel.MosaicGroupDs.UnicodeChars, Mode=OneWay}" Style="{StaticResource MosaicIconTextBlockStyle}" Width="Auto" Margin="15,0,0,0" RenderTransformOrigin="0.5,0.5" />
         </StackPanel>
 
         <SplitView x:Name="_splitView"
@@ -39,8 +35,8 @@
             <SplitView.Pane>
                 <StackPanel Orientation="Vertical">
                     <ListView x:Name="_listViewMosaicGroupMenu"
-                              ItemsSource="{x:Bind ViewModel.MosaicGroupDs.MenuItems}"
-                              SelectedItem="{x:Bind ViewModel.MosaicGroupDs.SelectedMenuItem, Mode=TwoWay, Converter={StaticResource ObjectToMenuItemConverter}}">
+                              ItemsSource="{x:Bind ViewModel.MosaicGroupDs.DataSource}"
+                              SelectedItem="{x:Bind ViewModel.MosaicGroupDs.CurrentElement, Mode=TwoWay, Converter={StaticResource ObjectToMenuItemConverter}}">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="Padding" Value="0" />
@@ -77,8 +73,20 @@
                         </ListView.ItemContainerStyle>
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="PresentationMenu:MosaicSkillMenuItem">
-                                <StackPanel Orientation="Horizontal" Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}">
-                                    <TextBlock Grid.Column="1" Text="{x:Bind UnicodeChar, Mode=OneWay}" Style="{StaticResource SkillIconTextBlockStyle}" />
+                                <StackPanel Orientation="Horizontal"
+                                            Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}"
+                                            Background="{x:Bind MosaicSkillImg.BkColor, Mode=OneWay, Converter={StaticResource FmColorToBrushConverter}}" >
+                                    <TextBlock Grid.Column="1"
+                                               Text="{x:Bind UnicodeChar, Mode=OneWay}"
+                                               FontSize="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeFontSizeConverter}}"
+                                               Width="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}"
+                                               Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}"
+                                               Style="{StaticResource SkillIconTextBlockStyle}"
+                                               AutomationProperties.Name="{x:Bind Title, Mode=OneWay}" >
+                                        <TextBlock.RenderTransform>
+                                            <CompositeTransform Rotation="{x:Bind MosaicSkillImg.RotateAngle, Mode=OneWay}" />
+                                        </TextBlock.RenderTransform>
+                                    </TextBlock>
                                     <TextBlock Grid.Column="1" Text="{x:Bind Title, Mode=OneWay}" Style="{StaticResource MenuTitleTextBlockStyle}"/>
                                 </StackPanel>
                             </DataTemplate>

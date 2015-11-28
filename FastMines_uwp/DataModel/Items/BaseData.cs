@@ -3,7 +3,7 @@ using FastMines.Presentation.Notyfier;
 
 namespace FastMines.DataModel.Items {
 
-   /// <summary> Base item class for <see cref="MosaicGroupDataItem"/> and <see cref="MosaicDataItem"/> </summary>
+   /// <summary> Base item class for <see cref="MosaicGroupDataItem"/> and <see cref="MosaicSkillDataItem"/> </summary>
    [Windows.Foundation.Metadata.WebHostHidden]
    public abstract class BaseData<T> : NotifyPropertyChanged {
       protected BaseData(T uniqueId) {

@@ -111,7 +111,7 @@ namespace fmg.uwp.res.img
          var h = Height;
          var bmp = new WriteableBitmap(w, h);
 
-         var rotate = Rotate || (Math.Abs(RotateAngle) > 0.1);
+         var rotate = NeedRotate();
          Action<WriteableBitmap> funcFillBk = img =>
          {
             img.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BkColor.ToWinColor());
@@ -140,18 +140,7 @@ namespace fmg.uwp.res.img
          if (rotate)
          {
             bmp = bmp.RotateFree(RotateAngle);
-
-            _rotateAngle += RotateAngleDelta;
-            if (RotateAngleDelta > 0)
-            {
-               if (RotateAngle >= 360)
-                  _rotateAngle -= 360;
-            }
-            else
-            {
-               if (RotateAngle <= -360)
-                  _rotateAngle += 360;
-            }
+            RotateStep();
          }
 
          if (Image == null)

@@ -58,6 +58,30 @@ namespace fmg.uwp.res.img
          return Rotate;
       }
 
+      protected bool NeedRotate()
+      {
+         return Rotate || (Math.Abs(RotateAngle) > 0.1);
+      }
+      protected void RotateStep()
+      {
+         if (!NeedRotate())
+            return;
+
+         var rotateAngle = RotateAngle + RotateAngleDelta;
+         if (RotateAngleDelta > 0)
+         {
+            if (rotateAngle >= 360)
+               rotateAngle -= 360;
+         }
+         else
+         {
+            if (rotateAngle <= -360)
+               rotateAngle += 360;
+         }
+         //RotateAngle = rotateAngle; зацикливается при старте :(
+         _rotateAngle = rotateAngle;
+      }
+
       public void Dispose()
       {
          Dispose(true);

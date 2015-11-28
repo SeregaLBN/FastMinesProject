@@ -13,15 +13,33 @@ namespace FastMines.DataModel.DataSources
    /// <summary> DataSource menu items (mosaic groups) </summary>
    public class MosaicGroupDataSource : NotifyPropertyChanged, IDisposable
    {
-      private readonly ObservableCollection<MosaicGroupMenuItem> _menuItems = new ObservableCollection<MosaicGroupMenuItem>();
+      private readonly ObservableCollection<MosaicGroupMenuItem> _dataSource = new ObservableCollection<MosaicGroupMenuItem>();
+      private MosaicGroupMenuItem _currentElement;
 
-      private MosaicGroupMenuItem _selectedMenuItem;
-      public MosaicGroupMenuItem SelectedMenuItem
+      public ObservableCollection<MosaicGroupMenuItem> DataSource
       {
-         get { return _selectedMenuItem; }
+         get
+         {
+            if (!_dataSource.Any())
+            {
+               // add elements
+               foreach (var g in EMosaicGroupEx.GetValues())
+               {
+                  _dataSource.Add(new MosaicGroupMenuItem(g));
+               }
+               CurrentElement = _dataSource.First();
+            }
+            return _dataSource;
+         }
+      }
+
+      /// <summary> Selected element </summary>
+      public MosaicGroupMenuItem CurrentElement
+      {
+         get { return _currentElement; }
          set
          {
-            if (SetProperty(ref _selectedMenuItem, value))
+            if (SetProperty(ref _currentElement, value))
             {
                OnPropertyChanged("SelectedPageType");
                OnPropertyChanged("UnicodeChars");
@@ -30,7 +48,7 @@ namespace FastMines.DataModel.DataSources
                //var marginSelected = new Bound(0, 0, 0, 0);
 
                // for one selected- start animate; for all other - stop animate
-               foreach (var mi in MenuItems) {
+               foreach (var mi in DataSource) {
                   var selected = ReferenceEquals(mi, value);
                   var img = mi.MosaicGroupImage;
                   img.PolarLights = selected;
@@ -47,8 +65,8 @@ namespace FastMines.DataModel.DataSources
       {
          get
          {
-            var smi = SelectedMenuItem;
-            return string.Join(" ", MenuItems.Select(mi =>
+            var smi = CurrentElement;
+            return string.Join(" ", DataSource.Select(mi =>
             {
                var selected = (smi != null) && (mi.MosaicGroupImage.MosaicGroup == smi.MosaicGroupImage.MosaicGroup);
                return mi.MosaicGroupImage.MosaicGroup.UnicodeChar(selected);
@@ -60,37 +78,22 @@ namespace FastMines.DataModel.DataSources
       {
          get
          {
-            return _selectedMenuItem?.PageType;
+            return _currentElement?.PageType;
          }
          set
          {
             // select associated menu item
-            SelectedMenuItem = (value == null)
+            CurrentElement = (value == null)
                ? null
-               : MenuItems.FirstOrDefault(m => m.PageType == value);
-         }
-      }
-
-      public ObservableCollection<MosaicGroupMenuItem> MenuItems
-      {
-         get
-         {
-            if (!_menuItems.Any()) {
-               // add elements
-               foreach (var g in EMosaicGroupEx.GetValues()) {
-                  _menuItems.Add(new MosaicGroupMenuItem(g));
-               }
-               SelectedMenuItem = _menuItems.First();
-            }
-            return _menuItems;
+               : DataSource.FirstOrDefault(m => m.PageType == value);
          }
       }
 
       public int ImageSize {
-         get { return MenuItems.First().ImageSize; }
+         get { return DataSource.First().ImageSize; }
          set {
             var old = ImageSize;
-            foreach (var mi in MenuItems) {
+            foreach (var mi in DataSource) {
                mi.ImageSize = value;
             }
             if (old != value)
@@ -100,9 +103,9 @@ namespace FastMines.DataModel.DataSources
 
       public void Dispose()
       {
-         foreach (var mi in _menuItems)
+         foreach (var mi in _dataSource)
             mi.Dispose();
-         _menuItems.Clear();
+         _dataSource.Clear();
       }
 
    }

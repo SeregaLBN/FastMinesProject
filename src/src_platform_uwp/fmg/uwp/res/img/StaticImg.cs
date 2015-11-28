@@ -149,13 +149,13 @@ namespace fmg.uwp.res.img
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
       }
 
-      protected void DrawSync() {
+      protected virtual void DrawSync() {
          DrawBegin();
          DrawBody();
          DrawEnd();
       }
 
-      protected void DrawBegin() {
+      protected virtual void DrawBegin() {
          //LoggerSimple.Put(" DrawSync: " + MosaicGroup + ": " + BkColor);
          _scheduledDraw = false;
       }

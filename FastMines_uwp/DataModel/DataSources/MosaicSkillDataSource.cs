@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using fmg.common;
 using fmg.data.controller.types;
+using fmg.uwp.draw;
+using fmg.uwp.res.img;
 using FastMines.Presentation.Menu;
 using FastMines.Presentation.Notyfier;
 
@@ -28,10 +31,29 @@ namespace FastMines.DataModel.DataSources
          }
       }
 
+      /// <summary> Selected element </summary>
       public MosaicSkillMenuItem CurrentElement
       {
          get { return _currentElement; }
-         set { SetProperty(ref _currentElement, value); }
+         set
+         {
+            if (SetProperty(ref _currentElement, value))
+            {
+               System.Diagnostics.Debug.WriteLine("called CurrentElement: " + value.UniqueId);
+               //OnPropertyChanged("SelectedPageType");
+               //OnPropertyChanged("UnicodeChars");
+
+               // for one selected- start animate; for all other - stop animate
+               foreach (var mi in DataSource)
+               {
+                  var selected = ReferenceEquals(mi, value);
+                  var img = mi.MosaicSkillImg;
+                  img.Rotate = selected;
+                  img.BkColor = selected ? MosaicsSkillImg.DefaultBkColor.ToFmColor() : GraphicContext.DefaultBackgroundFillColor;
+                  img.Padding = selected ? 5 : 15;
+               }
+            }
+         }
       }
 
       public int ImageSize {

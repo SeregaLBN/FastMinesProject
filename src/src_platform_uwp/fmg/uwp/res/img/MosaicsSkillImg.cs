@@ -1,5 +1,3 @@
-using System;
-using Windows.UI.Xaml;
 using fmg.data.controller.types;
 
 namespace fmg.uwp.res.img
@@ -23,6 +21,8 @@ namespace fmg.uwp.res.img
 
       protected override void DrawBody()
       {
+         //System.Diagnostics.Debug.WriteLine("DrawBody: " + SkillLevel);
+         RotateStep();
       }
 
    }

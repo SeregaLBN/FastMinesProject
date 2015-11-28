@@ -30,7 +30,7 @@ namespace FastMines
          Unloaded += OnClosing;
 
          _vm = new ShellViewModel();
-         foreach (var mi in _vm.MosaicGroupDs.MenuItems)
+         foreach (var mi in _vm.MosaicGroupDs.DataSource)
          {
             mi.PageType = typeof (WelcomePage);
          }
