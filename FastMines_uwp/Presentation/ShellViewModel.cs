@@ -47,11 +47,6 @@ namespace FastMines.Presentation {
          }
       }
 
-      public void Activate() {
-         _mosaicGroupDs.DataSource.ToList().ForEach(menu => menu.MosaicGroupImage.Draw());
-         _mosaicSkillDs.DataSource.ToList().ForEach(menu => menu.MosaicSkillImg.Draw());
-      }
-
       public void Dispose()
       {
          _mosaicGroupDs.Dispose();

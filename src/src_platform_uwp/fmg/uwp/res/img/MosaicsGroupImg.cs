@@ -111,7 +111,7 @@ namespace fmg.uwp.res.img
          var h = Height;
          var bmp = new WriteableBitmap(w, h);
 
-         var rotate = NeedRotate();
+         var rotate = Rotate || (Math.Abs(RotateAngle) > 0.5);
          Action<WriteableBitmap> funcFillBk = img =>
          {
             img.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BkColor.ToWinColor());
@@ -121,7 +121,6 @@ namespace fmg.uwp.res.img
             funcFillBk(bmp);
          }
 
-         NextFillColor();
          bmp.FillPolygon(RegionExt.PointsAsXyxyxySequence(_points, true), FillColorAttenuate.ToWinColor());
 
          { // draw perimeter border
@@ -138,10 +137,7 @@ namespace fmg.uwp.res.img
          }
 
          if (rotate)
-         {
             bmp = bmp.RotateFree(RotateAngle);
-            RotateStep();
-         }
 
          if (Image == null)
          {

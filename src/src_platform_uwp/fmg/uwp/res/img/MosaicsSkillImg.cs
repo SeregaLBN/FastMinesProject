@@ -9,20 +9,19 @@ namespace fmg.uwp.res.img
       public MosaicsSkillImg(ESkillLevel skill, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(skill, widthAndHeight, padding)
       {
-         Image = skill.UnicodeChar().ToString();
       }
 
       public ESkillLevel SkillLevel => Entity;
 
-      protected override void MakeCoords()
-      {
+      protected override void MakeCoords() {
          base.MakeCoords(); // => Draw();
       }
 
       protected override void DrawBody()
       {
          //System.Diagnostics.Debug.WriteLine("DrawBody: " + SkillLevel);
-         RotateStep();
+         if (Image ==  null)
+            Image = SkillLevel.UnicodeChar().ToString();
       }
 
    }

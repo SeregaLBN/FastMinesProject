@@ -19,10 +19,6 @@ namespace fmg.uwp.res.img
          _size = widthAndHeight;
          if (!padding.HasValue)
             _padding = (int)(widthAndHeight * 0.05); // 5%
-
-//#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-//         AsyncRunner.InvokeLater(MakeCoords, CoreDispatcherPriority.High); // call async virtual method
-//#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
       }
 
       private int _size;
@@ -60,7 +56,16 @@ namespace fmg.uwp.res.img
       protected Point[] _points;
 
       private TImage _image;
-      public TImage Image { get { return _image; } protected set { SetPropertyForce(ref _image, value); } }
+      public TImage Image {
+         get {
+            //if (_image == null)
+            //   DrawAsync();
+            return _image;
+         }
+         protected set {
+            SetPropertyForce(ref _image, value);
+         }
+      }
 
       private Color _bkColor = DefaultBkColor.ToFmColor();
       /// <summary> background fill color </summary>
@@ -117,22 +122,8 @@ namespace fmg.uwp.res.img
       private bool _coordinateMaked;
       protected virtual void MakeCoords() {
          // ... see child class
-         if (!_coordinateMaked)
-            _coordinateMaked = true;
+         _coordinateMaked = true;
          DrawAsync();
-      }
-
-      private bool _activated;
-      public void Draw() {
-         if (_activated)
-            return;
-         _activated = true;
-
-         _scheduledDraw = false;
-         if (_coordinateMaked)
-            DrawAsync();
-         else
-            MakeCoords();
       }
 
       protected bool _scheduledDraw;
@@ -141,17 +132,21 @@ namespace fmg.uwp.res.img
          if (_scheduledDraw)
             return;
          _scheduledDraw = true;
-         if (!_activated)
-            return;
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
          AsyncRunner.InvokeLater(DrawSync, CoreDispatcherPriority.Low);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
       }
 
       protected virtual void DrawSync() {
-         DrawBegin();
-         DrawBody();
-         DrawEnd();
+         if (!_coordinateMaked) {
+            //LoggerSimple.Put("> DrawSync: MakeCoords: {0}", Entity);
+            MakeCoords();
+         } else {
+            //LoggerSimple.Put("> DrawSync: {0}",  Entity);
+            DrawBegin();
+            DrawBody();
+            DrawEnd();
+         }
       }
 
       protected virtual void DrawBegin() {

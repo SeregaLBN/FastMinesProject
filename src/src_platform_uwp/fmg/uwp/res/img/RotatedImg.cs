@@ -44,7 +44,7 @@ namespace fmg.uwp.res.img
             if (_timer == null)
             {
                _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(RedrawInterval) };
-               _timer.Tick += delegate { DrawAsync(); };
+               _timer.Tick += OnTick;
             }
             _timer.Start();
          }
@@ -54,17 +54,22 @@ namespace fmg.uwp.res.img
          }
       }
 
+      private void OnTick(object sender, object e) {
+         OnTimer();
+      }
+
+      protected virtual void OnTimer() {
+         RotateStep();
+         DrawAsync();
+      }
+
       protected virtual bool LiveImage() {
          return Rotate;
       }
 
-      protected bool NeedRotate()
+      private void RotateStep()
       {
-         return Rotate || (Math.Abs(RotateAngle) > 0.1);
-      }
-      protected void RotateStep()
-      {
-         if (!NeedRotate())
+         if (!Rotate)
             return;
 
          var rotateAngle = RotateAngle + RotateAngleDelta;
@@ -91,7 +96,11 @@ namespace fmg.uwp.res.img
          if (disposing)
          {
             // free managed resources
-            _timer?.Stop();
+            var t = _timer;
+            if (t != null) {
+               t.Tick -= OnTick;
+               t.Stop();
+            }
          }
          // free native resources if there are any.
       }
