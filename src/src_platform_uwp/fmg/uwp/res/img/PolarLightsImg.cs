@@ -17,7 +17,7 @@ namespace fmg.uwp.res.img {
          set
          {
             if (SetProperty(ref _polarLights, value))
-               Draw();
+               DrawAsync();
          }
       }
 

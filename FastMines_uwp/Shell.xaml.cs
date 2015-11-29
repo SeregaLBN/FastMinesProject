@@ -41,12 +41,18 @@ namespace FastMines
 
          this.ViewModel = _vm;
 
+         this.Loaded += OnLoaded;
          this.SizeChanged += OnSizeChanged;
       }
 
       public ShellViewModel ViewModel { get; private set; }
 
       public Frame RootFrame => this._frame;
+
+
+      private void OnLoaded(object sender, RoutedEventArgs e) {
+         ViewModel.Activate();
+      }
 
       private void OnClosing(object sender, RoutedEventArgs ev) {
          System.Diagnostics.Debug.WriteLine("OnClosing");

@@ -44,9 +44,6 @@ namespace FastMines.DataModel.DataSources
                OnPropertyChanged("SelectedPageType");
                OnPropertyChanged("UnicodeChars");
 
-               //var marginUnselected = new Bound(20, 5, 20, 5);
-               //var marginSelected = new Bound(0, 0, 0, 0);
-
                // for one selected- start animate; for all other - stop animate
                foreach (var mi in DataSource) {
                   var selected = ReferenceEquals(mi, value);
@@ -54,7 +51,6 @@ namespace FastMines.DataModel.DataSources
                   img.PolarLights = selected;
                   img.Rotate = selected;
                   img.BkColor = selected ? MosaicsGroupImg.DefaultBkColor.ToFmColor() : GraphicContext.DefaultBackgroundFillColor;
-                  //img.Margin = selected ? marginSelected : marginUnselected;
                   img.Padding = selected ? 5 : 15;
                }
             }

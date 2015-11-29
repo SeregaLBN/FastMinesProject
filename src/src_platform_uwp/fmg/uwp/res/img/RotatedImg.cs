@@ -22,7 +22,7 @@ namespace fmg.uwp.res.img
          set
          {
             if (SetProperty(ref _rotate, value) && value)
-               Draw();
+               DrawAsync();
          }
       }
 
@@ -33,7 +33,7 @@ namespace fmg.uwp.res.img
          set
          {
             if (SetProperty(ref _rotateAngleDelta, value) && Rotate)
-               Draw();
+               DrawAsync();
          }
       }
 
@@ -44,7 +44,7 @@ namespace fmg.uwp.res.img
             if (_timer == null)
             {
                _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(RedrawInterval) };
-               _timer.Tick += delegate { Draw(); };
+               _timer.Tick += delegate { DrawAsync(); };
             }
             _timer.Start();
          }
@@ -78,8 +78,7 @@ namespace fmg.uwp.res.img
             if (rotateAngle <= -360)
                rotateAngle += 360;
          }
-         //RotateAngle = rotateAngle; зацикливается при старте :(
-         _rotateAngle = rotateAngle;
+         RotateAngle = rotateAngle;
       }
 
       public void Dispose()

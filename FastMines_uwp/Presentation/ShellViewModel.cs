@@ -1,5 +1,5 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Linq;
 using System.Windows.Input;
 using fmg.uwp.res.img;
 using FastMines.DataModel.DataSources;
@@ -45,6 +45,11 @@ namespace FastMines.Presentation {
             if (old != value)
                OnPropertyChanged(this, new PropertyChangedExEventArgs<int>("ImageSize", value, old));
          }
+      }
+
+      public void Activate() {
+         _mosaicGroupDs.DataSource.ToList().ForEach(menu => menu.MosaicGroupImage.Draw());
+         _mosaicSkillDs.DataSource.ToList().ForEach(menu => menu.MosaicSkillImg.Draw());
       }
 
       public void Dispose()
