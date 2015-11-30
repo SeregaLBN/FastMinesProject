@@ -16,15 +16,11 @@ namespace FastMines.DataModel.DataSources
       private readonly ObservableCollection<MosaicGroupMenuItem> _dataSource = new ObservableCollection<MosaicGroupMenuItem>();
       private MosaicGroupMenuItem _currentElement;
 
-      public ObservableCollection<MosaicGroupMenuItem> DataSource
-      {
-         get
-         {
-            if (!_dataSource.Any())
-            {
+      public ObservableCollection<MosaicGroupMenuItem> DataSource {
+         get {
+            if (!_dataSource.Any()) {
                // add elements
-               foreach (var g in EMosaicGroupEx.GetValues())
-               {
+               foreach (var g in EMosaicGroupEx.GetValues()) {
                   _dataSource.Add(new MosaicGroupMenuItem(g));
                }
                CurrentElement = _dataSource.First();
@@ -34,13 +30,10 @@ namespace FastMines.DataModel.DataSources
       }
 
       /// <summary> Selected element </summary>
-      public MosaicGroupMenuItem CurrentElement
-      {
+      public MosaicGroupMenuItem CurrentElement {
          get { return _currentElement; }
-         set
-         {
-            if (SetProperty(ref _currentElement, value))
-            {
+         set {
+            if (SetProperty(ref _currentElement, value)) {
                OnPropertyChanged("SelectedPageType");
                OnPropertyChanged("UnicodeChars");
 
@@ -57,27 +50,21 @@ namespace FastMines.DataModel.DataSources
          }
       }
 
-      public string UnicodeChars
-      {
-         get
-         {
+      public string UnicodeChars {
+         get {
             var smi = CurrentElement;
-            return string.Join(" ", DataSource.Select(mi =>
-            {
+            return string.Join(" ", DataSource.Select(mi => {
                var selected = (smi != null) && (mi.MosaicGroupImage.MosaicGroup == smi.MosaicGroupImage.MosaicGroup);
                return mi.MosaicGroupImage.MosaicGroup.UnicodeChar(selected);
             }));
          }
       }
 
-      public Type SelectedPageType
-      {
-         get
-         {
+      public Type SelectedPageType {
+         get {
             return _currentElement?.PageType;
          }
-         set
-         {
+         set {
             // select associated menu item
             CurrentElement = (value == null)
                ? null
@@ -97,8 +84,7 @@ namespace FastMines.DataModel.DataSources
          }
       }
 
-      public void Dispose()
-      {
+      public void Dispose() {
          foreach (var mi in _dataSource)
             mi.Dispose();
          _dataSource.Clear();

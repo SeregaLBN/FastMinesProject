@@ -59,7 +59,7 @@
                     </ListView>
 
                     <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}" Margin="0,15,0,0">
-                        <Button Content="&#xE700;" Click="ButtonSplitSkillLevel_OnClick" Style="{StaticResource IconButtonStyle}"/>
+                        <Button Content="&#xE728;" Click="ButtonSplitSkillLevel_OnClick" Style="{StaticResource IconButtonStyle}"/>
                         <TextBlock Text="Skill" Style="{StaticResource SkillLevelTitleTextBlockStyle}" />
                     </StackPanel>
                     <ListView x:Name="_listViewSkillLevelMenu"
@@ -74,19 +74,21 @@
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="PresentationMenu:MosaicSkillMenuItem">
                                 <StackPanel Orientation="Horizontal"
-                                            Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}"
-                                            Background="{x:Bind MosaicSkillImg.BkColor, Mode=OneWay, Converter={StaticResource FmColorToBrushConverter}}" >
-                                    <TextBlock Grid.Column="1"
+                                            Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}" >
+                                    <Border Background="{x:Bind MosaicSkillImg.FillColor, Mode=OneWay, Converter={StaticResource FmColorToBrushConverter}}" >
+                                        <TextBlock Grid.Column="1"
                                                Text="{x:Bind UnicodeChar, Mode=OneWay}"
                                                FontSize="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeFontSizeConverter}}"
                                                Width="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}"
                                                Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}"
                                                Style="{StaticResource SkillIconTextBlockStyle}"
-                                               AutomationProperties.Name="{x:Bind Title, Mode=OneWay}" >
-                                        <TextBlock.RenderTransform>
-                                            <CompositeTransform Rotation="{x:Bind MosaicSkillImg.RotateAngle, Mode=OneWay}" />
-                                        </TextBlock.RenderTransform>
-                                    </TextBlock>
+                                               AutomationProperties.Name="{x:Bind Title, Mode=OneWay}"
+                                               RenderTransformOrigin="0.5,0.5" >
+                                            <TextBlock.RenderTransform>
+                                                <CompositeTransform Rotation="{x:Bind MosaicSkillImg.RotateAngle, Mode=OneWay}" />
+                                            </TextBlock.RenderTransform>
+                                        </TextBlock>
+                                    </Border>
                                     <TextBlock Grid.Column="1" Text="{x:Bind Title, Mode=OneWay}" Style="{StaticResource MenuTitleTextBlockStyle}"/>
                                 </StackPanel>
                             </DataTemplate>
@@ -95,7 +97,8 @@
                 </StackPanel>
             </SplitView.Pane>
             <SplitView.Content>
-                <Frame x:Name="_frame" SourcePageType="{x:Bind ViewModel.MosaicGroupDs.SelectedPageType, Mode=TwoWay}" />
+                <Frame x:Name="_frame" SourcePageType="{x:Bind ViewModel.MosaicGroupDs.SelectedPageType, Mode=TwoWay}" >
+                </Frame>
             </SplitView.Content>
         </SplitView>
 

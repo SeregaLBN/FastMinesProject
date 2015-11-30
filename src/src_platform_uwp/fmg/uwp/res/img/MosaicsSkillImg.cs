@@ -3,7 +3,7 @@ using fmg.data.controller.types;
 namespace fmg.uwp.res.img
 {
    /// <summary> representable fmg.data.controller.types.ESkillLevel as image </summary>
-   public class MosaicsSkillImg : RotatedImg<ESkillLevel, string>
+   public class MosaicsSkillImg : PolarLightsImg<ESkillLevel, string>
    {
 
       public MosaicsSkillImg(ESkillLevel skill, int widthAndHeight = DefaultImageSize, int? padding = null)

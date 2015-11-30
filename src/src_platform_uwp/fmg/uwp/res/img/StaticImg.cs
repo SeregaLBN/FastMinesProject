@@ -129,8 +129,16 @@ namespace fmg.uwp.res.img
       protected bool _scheduledDraw;
       /// <summary> schedule drawing (async operation) </summary>
       protected void DrawAsync() {
+         //if (Entity is data.controller.types.ESkillLevel) {
+         //   var skill = (data.controller.types.ESkillLevel)(object)Entity;
+         //   if (skill == data.controller.types.ESkillLevel.eBeginner) {
+         //      System.Diagnostics.Debug.WriteLine("DrawAsync: " + skill);
+         //   }
+         //}
+
          if (_scheduledDraw)
             return;
+
          _scheduledDraw = true;
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
          AsyncRunner.InvokeLater(DrawSync, CoreDispatcherPriority.Low);

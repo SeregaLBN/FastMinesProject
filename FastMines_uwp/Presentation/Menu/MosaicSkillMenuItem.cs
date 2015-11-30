@@ -1,5 +1,4 @@
-﻿using fmg.core.types;
-using fmg.data.controller.types;
+﻿using fmg.data.controller.types;
 using FastMines.DataModel.Items;
 
 namespace FastMines.Presentation.Menu

@@ -72,6 +72,13 @@ namespace fmg.uwp.res.img
          if (!Rotate)
             return;
 
+         //if (Entity is data.controller.types.ESkillLevel) {
+         //   var skill = (data.controller.types.ESkillLevel)(object)Entity;
+         //   if (skill == data.controller.types.ESkillLevel.eBeginner) {
+         //      System.Diagnostics.Debug.WriteLine("RotateStep: " + skill);
+         //   }
+         //}
+
          var rotateAngle = RotateAngle + RotateAngleDelta;
          if (RotateAngleDelta > 0)
          {

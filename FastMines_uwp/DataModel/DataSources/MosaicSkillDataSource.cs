@@ -39,7 +39,7 @@ namespace FastMines.DataModel.DataSources
          {
             if (SetProperty(ref _currentElement, value))
             {
-               System.Diagnostics.Debug.WriteLine("called CurrentElement: " + value.UniqueId);
+               //System.Diagnostics.Debug.WriteLine("called CurrentElement: " + value.UniqueId);
                //OnPropertyChanged("SelectedPageType");
                //OnPropertyChanged("UnicodeChars");
 
