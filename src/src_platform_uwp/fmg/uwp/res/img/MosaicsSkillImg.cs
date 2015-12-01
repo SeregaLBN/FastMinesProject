@@ -19,21 +19,18 @@ namespace fmg.uwp.res.img
       public ESkillLevel MosaicGroup => Entity;
 
       protected override void MakeCoords() {
-         double s = Size - Padding * 2; // size inner Square1
-         var w = s;
-         var h = s;
          {
-            #region
-            _points = new[] {
-                  new Point(w*306/800, h* 63/800),
-                  new Point(w*490/800, h*244/800),
-                  new Point(w*737/800, h*310/800),
-                  new Point(w*557/800, h*491/800),
-                  new Point(w*490/800, h*737/800),
-                  new Point(w*308/800, h*558/800),
-                  new Point(w* 63/800, h*491/800),
-                  new Point(w*243/800, h*310/800)};
-            #endregion
+            double s = Size - Padding * 2; // size inner Square
+            var alpha = (2 * Math.PI) / 10;
+            var radius = s / 2;
+            var center = new[] { s / 2, s / 2 }; // star center [x, y]
+
+            _points = new Point[10];
+            for (var i = 0; i < 10; i++) {
+               var r = radius * (i % 2 + 1) / 2;
+               var omega = alpha * i;
+               _points[i] = new Point((r * Math.Sin(omega)) + center[0], (r * Math.Cos(omega)) + center[1]);
+            }
          }
 
          // adding offset

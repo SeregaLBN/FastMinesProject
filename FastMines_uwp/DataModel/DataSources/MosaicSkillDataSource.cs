@@ -23,7 +23,7 @@ namespace FastMines.DataModel.DataSources
                foreach (var s in ESkillLevelEx.GetValues()) {
                   var mi = new MosaicSkillMenuItem(s);
                   mi.MosaicSkillImage.RedrawInterval = 50;
-                  mi.MosaicSkillImage.RotateAngleDelta = 5;
+                  mi.MosaicSkillImage.RotateAngleDelta = -5;
                   _dataSource.Add(mi);
                }
                CurrentElement = _dataSource.First();

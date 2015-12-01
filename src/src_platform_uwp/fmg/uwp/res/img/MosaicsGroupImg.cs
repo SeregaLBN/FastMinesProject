@@ -20,7 +20,7 @@ namespace fmg.uwp.res.img
 
       protected override void MakeCoords()
       {
-         double s = Size - Padding * 2; // size inner Square1
+         double s = Size - Padding * 2; // size inner Square
          var w = s;
          var h = s;
          switch (MosaicGroup)
