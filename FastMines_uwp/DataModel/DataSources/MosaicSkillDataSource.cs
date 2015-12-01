@@ -16,14 +16,15 @@ namespace FastMines.DataModel.DataSources
       private readonly ObservableCollection<MosaicSkillMenuItem> _dataSource = new ObservableCollection<MosaicSkillMenuItem>();
       private MosaicSkillMenuItem _currentElement;
 
-      public ObservableCollection<MosaicSkillMenuItem> DataSource
-      {
-         get
-         {
+      public ObservableCollection<MosaicSkillMenuItem> DataSource {
+         get {
             if (!_dataSource.Any()) {
                // add elements
                foreach (var s in ESkillLevelEx.GetValues()) {
-                  _dataSource.Add(new MosaicSkillMenuItem(s));
+                  var mi = new MosaicSkillMenuItem(s);
+                  mi.MosaicSkillImage.RedrawInterval = 50;
+                  mi.MosaicSkillImage.RotateAngleDelta = 5;
+                  _dataSource.Add(mi);
                }
                CurrentElement = _dataSource.First();
             }
@@ -32,22 +33,17 @@ namespace FastMines.DataModel.DataSources
       }
 
       /// <summary> Selected element </summary>
-      public MosaicSkillMenuItem CurrentElement
-      {
+      public MosaicSkillMenuItem CurrentElement {
          get { return _currentElement; }
-         set
-         {
-            if (SetProperty(ref _currentElement, value))
-            {
-               //System.Diagnostics.Debug.WriteLine("called CurrentElement: " + value.UniqueId);
+         set {
+            if (SetProperty(ref _currentElement, value)) {
                //OnPropertyChanged("SelectedPageType");
                //OnPropertyChanged("UnicodeChars");
 
                // for one selected- start animate; for all other - stop animate
-               foreach (var mi in DataSource)
-               {
+               foreach (var mi in DataSource) {
                   var selected = ReferenceEquals(mi, value);
-                  var img = mi.MosaicSkillImg;
+                  var img = mi.MosaicSkillImage;
                   img.Rotate = selected;
                   img.BkColor = selected ? MosaicsSkillImg.DefaultBkColor.ToFmColor() : GraphicContext.DefaultBackgroundFillColor;
                   img.Padding = selected ? 5 : 15;
@@ -68,8 +64,7 @@ namespace FastMines.DataModel.DataSources
          }
       }
 
-      public void Dispose()
-      {
+      public void Dispose() {
          foreach (var mi in _dataSource)
             mi.Dispose();
          _dataSource.Clear();

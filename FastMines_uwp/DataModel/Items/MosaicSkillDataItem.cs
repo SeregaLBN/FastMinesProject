@@ -9,7 +9,7 @@ namespace FastMines.DataModel.Items {
 
    /// <summary> Mosaic skill level item for data model </summary>
    public class MosaicSkillDataItem : BaseData<ESkillLevel>, IDisposable {
-      private const int ZoomKoef = 1;
+      private const int ZoomKoef = 2;
 
       public MosaicSkillDataItem(ESkillLevel eSkill) : base(eSkill) {
          Title = eSkill.GetDescription();
@@ -17,17 +17,16 @@ namespace FastMines.DataModel.Items {
 
       public ESkillLevel SkillLevel => UniqueId;
 
+      [Obsolete]
       public string UnicodeChar => SkillLevel.UnicodeChar().ToString();
 
       private MosaicsSkillImg _mosaicSkillImg;
-      public MosaicsSkillImg MosaicSkillImg
+      public MosaicsSkillImg MosaicSkillImage
       {
          get
          {
-            if (_mosaicSkillImg == null)
-            {
-               var tmp = MosaicSkillImg = new MosaicsSkillImg(SkillLevel, ImageSize * ZoomKoef)
-               {
+            if (_mosaicSkillImg == null) {
+               var tmp = MosaicSkillImage = new MosaicsSkillImg(SkillLevel, ImageSize * ZoomKoef) {
                   BorderWidth = 3,
                   RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
                };
@@ -40,15 +39,12 @@ namespace FastMines.DataModel.Items {
          private set
          {
             var old = _mosaicSkillImg;
-            if (SetProperty(ref _mosaicSkillImg, value))
-            {
-               if (old != null)
-               {
+            if (SetProperty(ref _mosaicSkillImg, value)) {
+               if (old != null) {
                   old.PropertyChanged -= OnMosaicGroupImagePropertyChanged;
                   old.Dispose();
                }
-               if (value != null)
-               {
+               if (value != null) {
                   value.PropertyChanged += OnMosaicGroupImagePropertyChanged;
                }
                OnPropertyChanged("Image");
@@ -56,12 +52,16 @@ namespace FastMines.DataModel.Items {
          }
       }
 
-      public override ImageSource Image => null; // MosaicSkillImg.Image;
+      public override ImageSource Image => MosaicSkillImage.Image;
 
       private int _imageSize = MosaicsSkillImg.DefaultImageSize;
       public override int ImageSize {
          get { return _imageSize; }
-         set { SetProperty(ref _imageSize, value); }
+         set {
+            if (SetProperty(ref _imageSize, value)) {
+               MosaicSkillImage.Size = ImageSize * ZoomKoef;
+            }
+         }
       }
 
       private void OnMosaicGroupImagePropertyChanged(object sender, PropertyChangedEventArgs ev) {
@@ -72,6 +72,7 @@ namespace FastMines.DataModel.Items {
       }
 
       public void Dispose() {
+         _mosaicSkillImg?.Dispose();
       }
 
    }

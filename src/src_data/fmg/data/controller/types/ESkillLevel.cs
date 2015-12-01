@@ -137,10 +137,11 @@ namespace fmg.data.controller.types {
          return values[ordinal];
       }
 
+      [Obsolete]
       public static char UnicodeChar(this ESkillLevel self) {
          switch (self) {
-         // http://unicode-table.com/ru/sets/stars-symbols/                  // http://unicode-table.com/en/sets/emoji/
-         // http://unicode-table.com/ru/search/?q=star                       // http://unicode-table.com/en/1F63D/
+         // http://unicode-table.com/sets/stars-symbols/                  // http://unicode-table.com/en/sets/emoji/
+         // http://unicode-table.com/search/?q=star                       // http://unicode-table.com/en/1F63D/
          case ESkillLevel.eBeginner: return '\u2736'; // '✶'; //                               "😺"; // \u1F638
          case ESkillLevel.eAmateur : return '\u2737'; // '✷'; //                               "😸"; // \u1F63A
          case ESkillLevel.eProfi   : return '\u2738'; // '✸'; //                               "😻"; // \u1F63B

@@ -22,13 +22,13 @@ namespace FastMines.DataModel.Items {
          get
          {
             if (_mosaicGroupImg == null) {
-               var tmp = MosaicGroupImage = new MosaicsGroupImg(MosaicGroup, ImageSize*ZoomKoef) {
+               var tmp = MosaicGroupImage = new MosaicsGroupImg(MosaicGroup, ImageSize * ZoomKoef) {
                   BorderWidth = 3,
                   RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
                };
-               System.Diagnostics.Debug.Assert(tmp.Size == ImageSize*ZoomKoef);
-               System.Diagnostics.Debug.Assert(tmp.Width == ImageSize*ZoomKoef);
-               System.Diagnostics.Debug.Assert(tmp.Height == ImageSize*ZoomKoef);
+               System.Diagnostics.Debug.Assert(tmp.Size == ImageSize * ZoomKoef);
+               System.Diagnostics.Debug.Assert(tmp.Width == ImageSize * ZoomKoef);
+               System.Diagnostics.Debug.Assert(tmp.Height == ImageSize * ZoomKoef);
             }
             return _mosaicGroupImg;
          }
@@ -53,10 +53,9 @@ namespace FastMines.DataModel.Items {
       private int _imageSize = MosaicsGroupImg.DefaultImageSize;
       public override int ImageSize {
          get { return _imageSize; }
-         set
-         {
+         set {
             if (SetProperty(ref _imageSize, value)) {
-               MosaicGroupImage.Size = ImageSize*ZoomKoef;
+               MosaicGroupImage.Size = ImageSize * ZoomKoef;
             }
          }
       }
