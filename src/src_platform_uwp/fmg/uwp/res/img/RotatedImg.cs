@@ -26,7 +26,7 @@ namespace fmg.uwp.res.img
          }
       }
 
-      private double _rotateAngleDelta = .4;
+      private double _rotateAngleDelta = 1.4;
       public double RotateAngleDelta
       {
          get { return _rotateAngleDelta; }
