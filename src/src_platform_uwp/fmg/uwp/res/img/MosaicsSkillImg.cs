@@ -6,7 +6,6 @@ using fmg.common.geom;
 using fmg.data.controller.types;
 using Point = Windows.Foundation.Point;
 using Rect = Windows.Foundation.Rect;
-using System.Collections.Generic;
 
 namespace fmg.uwp.res.img
 {
@@ -46,7 +45,7 @@ namespace fmg.uwp.res.img
          #endregion
 
          #region star from js code http://stackoverflow.com/questions/14580033/algorithm-for-drawing-a-5-point-star
-#if true
+#if !true
          {
             Func<Point[], double, Point[]> funcRotate2D = (vecArr, byRads) => {
                var mat = new double[2, 2] {
@@ -78,6 +77,36 @@ namespace fmg.uwp.res.img
             for (var i = 0; i < _points.Length; i++) {
                _points[i].X += Padding + Size / 2;
                _points[i].Y += Padding + Size / 2;
+            }
+         }
+#endif
+         #endregion
+
+         #region my star calc
+#if true
+         // идея:
+         // * два круга - внешний и внутр
+         // * на каждом, по периметру - равноудалённые точки. Кол-во точек == кол-ву лучей у звезды
+         // * внутр круг повёрнут относительно внешенего на 360° / (кол-во лучей) / 2
+         // * и соединяем (т.е. последовательны в массиве) поочерёдно точки с внешнего и внутр круга
+         // так и получаем звезду
+         {
+            var r1 = s / 2; // external radius
+            var r2 = s / 5; // internal radius
+            var rays = 4 + MosaicGroup.Ordinal(); // rays count
+            var angle = 2 * Math.PI / rays; // 360° / rays
+            var pointsExt = Enumerable.Range(0, rays)
+               .Select(x => x * angle)
+               .Select(x => new Point(r1 * Math.Sin(x), r1 * Math.Cos(x)));
+            var pointsInt = Enumerable.Range(0, rays)
+               .Select(x => x * angle + angle / 2)
+               .Select(x => new Point(r2 * Math.Sin(x), r2 * Math.Cos(x)));
+            _points = pointsExt.Zip(pointsInt, (p1, p2) => new[] { p1, p2 }).SelectMany(x => x).ToArray();
+
+            // adding offset
+            for (var i = 0; i < _points.Length; i++) {
+               _points[i].X += Padding + s / 2;
+               _points[i].Y += Padding + s / 2;
             }
          }
 #endif
