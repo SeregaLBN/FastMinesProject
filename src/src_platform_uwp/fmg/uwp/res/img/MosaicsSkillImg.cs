@@ -5,7 +5,6 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.common.geom.util;
 using fmg.data.controller.types;
-using Point = Windows.Foundation.Point;
 using Rect = Windows.Foundation.Rect;
 
 namespace fmg.uwp.res.img
@@ -18,19 +17,19 @@ namespace fmg.uwp.res.img
          : base(group, widthAndHeight, padding) {
       }
 
-      public ESkillLevel MosaicGroup => Entity;
+      public ESkillLevel MosaicSkill => Entity;
 
       protected override void MakeCoords() {
          double s = Size - Padding * 2; // size inner Square
          var r1 = s / 2; // external radius
          var r2 = s / 5; // internal radius
-         var rays = 4 + MosaicGroup.Ordinal(); // rays count
-         _points = FigureHelper.GetRegularStarCoords(rays, r1, r2).Select(c => new Point(c.x, c.y)).ToArray();
+         var rays = 4 + MosaicSkill.Ordinal(); // rays count
+         _points = FigureHelper.GetRegularStarCoords(rays, r1, r2).ToArray();
 
          // adding offset
          for (var i = 0; i < _points.Length; i++) {
-            _points[i].X += Padding + s / 2;
-            _points[i].Y += Padding + s / 2;
+            _points[i].x += Padding + s / 2;
+            _points[i].y += Padding + s / 2;
          }
 
          base.MakeCoords(); // => Draw();
@@ -49,7 +48,7 @@ namespace fmg.uwp.res.img
             funcFillBk(bmp);
          }
 
-         bmp.FillPolygon(RegionExt.PointsAsXyxyxySequence(_points, true), FillColorAttenuate.ToWinColor());
+         bmp.FillPolygon(_points.PointsAsXyxyxySequence(true), FillColorAttenuate.ToWinColor());
 
          { // draw perimeter border
             var clr = BorderColor;
@@ -57,7 +56,7 @@ namespace fmg.uwp.res.img
                for (var i = 0; i < _points.Length; i++) {
                   var p1 = _points[i];
                   var p2 = _points[(i == _points.Length - 1) ? 0 : i + 1];
-                  bmp.DrawLineAa((int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y, clr.ToWinColor(), BorderWidth);
+                  bmp.DrawLineAa((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y, clr.ToWinColor(), BorderWidth);
                }
             }
          }

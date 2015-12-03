@@ -26,51 +26,47 @@ namespace fmg.uwp.res.img {
             var bmp = BitmapFactory.New(size.width, size.height);
 
             var p = new[] {
-               new Windows.Foundation.Point(13.5*Zoom, 90*Zoom),
-               new Windows.Foundation.Point(17.44*Zoom, 51*Zoom),
-               new Windows.Foundation.Point(21*Zoom, 16*Zoom),
-               new Windows.Foundation.Point(85*Zoom, 15*Zoom),
-               new Windows.Foundation.Point(81.45*Zoom, 50*Zoom)
+               new PointDouble(13.5*Zoom, 90*Zoom),
+               new PointDouble(17.44*Zoom, 51*Zoom),
+               new PointDouble(21*Zoom, 16*Zoom),
+               new PointDouble(85*Zoom, 15*Zoom),
+               new PointDouble(81.45*Zoom, 50*Zoom)
             };
 
-            //bmp.DrawLineAa((int) p[0].X, (int) p[0].Y, (int) p[2].X, (int) p[2].Y, Color.BLACK.ToWinColor());
-            bmp.DrawLineAa((int) p[0].X, (int) p[0].Y, (int) p[1].X, (int) p[1].Y, Color.Black.ToWinColor());
+            //bmp.DrawLineAa((int) p[0].x, (int) p[0].y, (int) p[2].x, (int) p[2].y, Color.BLACK.ToWinColor());
+            bmp.DrawLineAa((int) p[0].x, (int) p[0].y, (int) p[1].x, (int) p[1].y, Color.Black.ToWinColor());
 
             const float tension = 0.5f;
             var clrCurve = Color.Red.ToWinColor();
-            bmp.DrawCurve(
-               RegionExt.PointsAsXyxyxySequence(new[] {
+            bmp.DrawCurve(new[] {
                   p[3],
-                  new Windows.Foundation.Point(95*Zoom, 0*Zoom),
-                  new Windows.Foundation.Point(19.3*Zoom, 32*Zoom),
+                  new PointDouble(95*Zoom, 0*Zoom),
+                  new PointDouble(19.3*Zoom, 32*Zoom),
                   p[2]
-               }, false), tension, clrCurve);
+               }.PointsAsXyxyxySequence(false), tension, clrCurve);
 
-   #if false
-            bmp.DrawCurve(
-               RegionExt.PointsAsXyxyxySequence(new[] {
+#if false
+            bmp.DrawCurve(new[] {
                   p[1],
-                  new Windows.Foundation.Point(55.5*Zoom, 15*Zoom),
-                  new Windows.Foundation.Point(45*Zoom, 62.5*Zoom),
+                  new PointDouble(55.5*Zoom, 15*Zoom),
+                  new PointDouble(45*Zoom, 62.5*Zoom),
                   p[3]
-               }, false), tension, clrCurve);
-   #else
-            bmp.DrawCurve(
-               RegionExt.PointsAsXyxyxySequence(new[] {
+               }.PointsAsXyxyxySequence(false), tension, clrCurve);
+#else
+            bmp.DrawCurve(new[] {
                   p[1],
-                  new Windows.Foundation.Point(91.45*Zoom, 35*Zoom),
-                  new Windows.Foundation.Point(15.83*Zoom, 67*Zoom),
+                  new PointDouble(91.45*Zoom, 35*Zoom),
+                  new PointDouble(15.83*Zoom, 67*Zoom),
                   p[4]
-               }, false), tension, clrCurve);
-            bmp.DrawCurve(
-               RegionExt.PointsAsXyxyxySequence(new[] {
+               }.PointsAsXyxyxySequence(false), tension, clrCurve);
+            bmp.DrawCurve(new[] {
                   p[3],
-                  new Windows.Foundation.Point(77.8*Zoom, 32.89*Zoom),
-                  new Windows.Foundation.Point(88.05*Zoom, 22.73*Zoom),
+                  new PointDouble(77.8*Zoom, 32.89*Zoom),
+                  new PointDouble(88.05*Zoom, 22.73*Zoom),
                   p[4]
-               }, false), tension, clrCurve);
+               }.PointsAsXyxyxySequence(false), tension, clrCurve);
    #endif
-            bmp.DrawLineAa((int) p[1].X, (int) p[1].Y, (int) p[2].X, (int) p[2].Y, clrCurve);
+            bmp.DrawLineAa((int) p[1].x, (int) p[1].y, (int) p[2].x, (int) p[2].y, clrCurve);
             _bmp = bmp;
             return _bmp;
 #else

@@ -3,8 +3,8 @@ using System.ComponentModel;
 using Windows.UI.Core;
 using FastMines.Common;
 using fmg.common;
+using fmg.common.geom;
 using FastMines.Presentation.Notyfier;
-using Point = Windows.Foundation.Point;
 
 namespace fmg.uwp.res.img
 {
@@ -53,7 +53,7 @@ namespace fmg.uwp.res.img
       }
 
       public T Entity { get; private set; }
-      protected Point[] _points;
+      protected PointDouble[] _points;
 
       private TImage _image;
       public TImage Image {

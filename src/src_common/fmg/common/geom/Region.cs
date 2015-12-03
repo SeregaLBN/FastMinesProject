@@ -118,23 +118,22 @@ public static class RegionExt {
       return points;
    }
 
-#if WINDOWS_RT || WINDOWS_UWP
-   public static int[] PointsAsXyxyxySequence(IList<Windows.Foundation.Point> coords, bool firstToLast) {
-      var points = new int[coords.Count*2 + (firstToLast ? 2 : 0)];
-      int i;
-      for (i = 0; i < coords.Count; i++) {
-         var point = coords[i];
-         points[i*2 + 0] = (int)point.X;
-         points[i*2 + 1] = (int)point.Y;
+      public static int[] PointsAsXyxyxySequence(this IList<PointDouble> coords, bool firstToLast) {
+         var points = new int[coords.Count * 2 + (firstToLast ? 2 : 0)];
+         int i;
+         for (i = 0; i < coords.Count; i++) {
+            var point = coords[i];
+            points[i * 2 + 0] = (int)point.x;
+            points[i * 2 + 1] = (int)point.y;
+         }
+         if (firstToLast) {
+            // Add the first point also at the end of the array if the line should be closed.
+            var point = coords[0];
+            points[i * 2 + 0] = (int)point.x;
+            points[i * 2 + 1] = (int)point.y;
+         }
+         return points;
       }
-      if (firstToLast) {
-         // Add the first point also at the end of the array if the line should be closed.
-         var point = coords[0];
-         points[i*2 + 0] = (int)point.X;
-         points[i*2 + 1] = (int)point.Y;
-      }
-      return points;
-   }
-#endif
+
 }
 }

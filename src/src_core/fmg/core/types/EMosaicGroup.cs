@@ -36,6 +36,14 @@ public static class EMosaicGroupEx {
 
    public static int GetIndex(this EMosaicGroup self) { return (int)self; }
 
+   public static int Ordinal(this EMosaicGroup self) {
+      var values = GetValues();
+      for (var i = 0; i < values.Length; i++)
+         if (values[i] == self)
+            return i;
+      throw new ArgumentException("Index not found");
+   }
+
    public static IEnumerable<EMosaic> GetBind(this EMosaicGroup self) {
       switch (self) {
       case EMosaicGroup.eTriangles:
