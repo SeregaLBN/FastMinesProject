@@ -40,29 +40,26 @@ namespace fmg.uwp.res.img {
       protected override void DrawBody() {
          var w = Width;
          var h = Height;
-         var bmp = new WriteableBitmap(w, h);
+         var bmp = Image;
+         var isNew = (bmp == null);
+         if (isNew)
+            bmp = new WriteableBitmap(w, h);
 
          bmp.Clear(BkColor.ToWinColor());
 
          var points = GetCoords().PointsAsXyxyxySequence(true).ToArray();
          bmp.FillPolygon(points, FillColorAttenuate.ToWinColor());
 
-         {
-            // draw perimeter border
-            var clr = BorderColor;
-            if (clr.A != Color.Transparent.A) {
-               for (var i = 0; i < points.Length - 2; i += 2) {
-                  bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], clr.ToWinColor(), BorderWidth);
-               }
+         // draw perimeter border
+         var clr = BorderColor;
+         if (clr.A != Color.Transparent.A) {
+            for (var i = 0; i < points.Length - 2; i += 2) {
+               bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], clr.ToWinColor(), BorderWidth);
             }
          }
 
-         if (Image == null) {
+         if (isNew)
             Image = bmp;
-         } else {
-            var rc = new Rect(0, 0, w, h);
-            Image.Blit(rc, bmp, rc);
-         }
       }
 
    }

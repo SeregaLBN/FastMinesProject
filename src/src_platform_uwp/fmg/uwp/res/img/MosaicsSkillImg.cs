@@ -42,7 +42,10 @@ namespace fmg.uwp.res.img {
       protected override void DrawBody() {
          var w = Width;
          var h = Height;
-         var bmp = new WriteableBitmap(w, h);
+         var bmp = Image;
+         var isNew = (bmp == null);
+         if (isNew)
+            bmp = new WriteableBitmap(w, h);
 
          bmp.Clear(BkColor.ToWinColor());
 
@@ -59,12 +62,8 @@ namespace fmg.uwp.res.img {
             }
          }
 
-         if (Image == null) {
+         if (isNew)
             Image = bmp;
-         } else {
-            var rc = new Rect(0, 0, w, h);
-            Image.Blit(rc, bmp, rc);
-         }
       }
 
    }
