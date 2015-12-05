@@ -18,10 +18,10 @@ namespace fmg.uwp.res.img {
 
       public ESkillLevel MosaicSkill => Entity;
 
-      protected override IEnumerable<PointDouble> GetCoords() {
+      private IEnumerable<PointDouble> GetCoords() {
          double s = Size - Padding*2; // size inner Square
-         var r1 = s/2; // external radius
-         var r2 = s/5; // internal radius
+         var r1 = s/7; // external radius
+         var r2 = s/9; // internal radius
          var rays = 4 + MosaicSkill.Ordinal(); // rays count
          var points = FigureHelper.GetRegularStarCoords(rays, r1, r2);
 
@@ -29,10 +29,12 @@ namespace fmg.uwp.res.img {
             points = points.Rotate(RotateAngle);
 
          // adding offset
-         var offset = Padding + s/2;
+         var offset = FigureHelper.GetPointOnCircle(s/3, RotateAngle);
+         offset.x += s/2 + Padding;
+         offset.y += s / 2 + Padding;
          return points.Select(p => {
-            p.x += offset;
-            p.y += offset;
+            p.x += offset.x;
+            p.y += offset.y;
             return p;
          });
       }

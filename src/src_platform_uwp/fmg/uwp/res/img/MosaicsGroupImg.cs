@@ -18,7 +18,7 @@ namespace fmg.uwp.res.img {
 
       public EMosaicGroup MosaicGroup => Entity;
 
-      protected override IEnumerable<PointDouble> GetCoords() {
+      private IEnumerable<PointDouble> GetCoords() {
          double s = Size - Padding*2; // size inner square
          var rays = 3 + MosaicGroup.Ordinal(); // rays count
          var points = (MosaicGroup != EMosaicGroup.eOthers)

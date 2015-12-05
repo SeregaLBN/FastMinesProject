@@ -119,18 +119,9 @@ namespace fmg.uwp.res.img
 
       public Color FillColorAttenuate => FillColor.Attenuate(160);
 
-      protected abstract IEnumerable<PointDouble> GetCoords();
-
       private bool _scheduledDraw;
       /// <summary> schedule drawing (async operation) </summary>
       protected void DrawAsync() {
-         //if (Entity is data.controller.types.ESkillLevel) {
-         //   var skill = (data.controller.types.ESkillLevel)(object)Entity;
-         //   if (skill == data.controller.types.ESkillLevel.eBeginner) {
-         //      System.Diagnostics.Debug.WriteLine("DrawAsync: " + skill);
-         //   }
-         //}
-
          if (_scheduledDraw)
             return;
 
@@ -141,14 +132,12 @@ namespace fmg.uwp.res.img
       }
 
       protected virtual void DrawSync() {
-         //LoggerSimple.Put("> DrawSync: {0}",  Entity);
          DrawBegin();
          DrawBody();
          DrawEnd();
       }
 
       protected virtual void DrawBegin() {
-         //LoggerSimple.Put(" DrawSync: " + MosaicGroup + ": " + BkColor);
          _scheduledDraw = false;
       }
 
