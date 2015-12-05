@@ -1,3 +1,4 @@
+using System.Linq;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
@@ -43,7 +44,7 @@ namespace fmg.uwp.res.img {
                   new PointDouble(95*Zoom, 0*Zoom),
                   new PointDouble(19.3*Zoom, 32*Zoom),
                   p[2]
-               }.PointsAsXyxyxySequence(false), tension, clrCurve);
+               }.PointsAsXyxyxySequence(false).ToArray(), tension, clrCurve);
 
 #if false
             bmp.DrawCurve(new[] {
@@ -58,13 +59,13 @@ namespace fmg.uwp.res.img {
                   new PointDouble(91.45*Zoom, 35*Zoom),
                   new PointDouble(15.83*Zoom, 67*Zoom),
                   p[4]
-               }.PointsAsXyxyxySequence(false), tension, clrCurve);
+               }.PointsAsXyxyxySequence(false).ToArray(), tension, clrCurve);
             bmp.DrawCurve(new[] {
                   p[3],
                   new PointDouble(77.8*Zoom, 32.89*Zoom),
                   new PointDouble(88.05*Zoom, 22.73*Zoom),
                   p[4]
-               }.PointsAsXyxyxySequence(false), tension, clrCurve);
+               }.PointsAsXyxyxySequence(false).ToArray(), tension, clrCurve);
    #endif
             bmp.DrawLineAa((int) p[1].x, (int) p[1].y, (int) p[2].x, (int) p[2].y, clrCurve);
             _bmp = bmp;

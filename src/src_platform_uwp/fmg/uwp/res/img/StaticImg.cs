@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Windows.UI.Core;
-using FastMines.Common;
 using fmg.common;
 using fmg.common.geom;
+using FastMines.Common;
 using FastMines.Presentation.Notyfier;
 
 namespace fmg.uwp.res.img
@@ -28,7 +29,7 @@ namespace fmg.uwp.res.img
          set {
             if (SetProperty(ref _size, value)) {
                _image = null;
-               MakeCoords();
+               DrawAsync();
             }
          }
       }
@@ -47,13 +48,12 @@ namespace fmg.uwp.res.img
                throw new ArgumentException("Padding size is very large. Should be less than Size / 2.");
             if (SetProperty(ref _padding, value)) {
                _image = null;
-               MakeCoords();
+               DrawAsync();
             }
          }
       }
 
       public T Entity { get; private set; }
-      protected PointDouble[] _points;
 
       private TImage _image;
       public TImage Image {
@@ -95,7 +95,7 @@ namespace fmg.uwp.res.img
          }
       }
 
-      protected double _rotateAngle;
+      private double _rotateAngle;
       /// <summary> -360° .. 0° .. +360° </summary>
       public double RotateAngle {
          get { return _rotateAngle; }
@@ -119,14 +119,9 @@ namespace fmg.uwp.res.img
 
       public Color FillColorAttenuate => FillColor.Attenuate(160);
 
-      private bool _coordinateMaked;
-      protected virtual void MakeCoords() {
-         // ... see child class
-         _coordinateMaked = true;
-         DrawAsync();
-      }
+      protected abstract IEnumerable<PointDouble> GetCoords();
 
-      protected bool _scheduledDraw;
+      private bool _scheduledDraw;
       /// <summary> schedule drawing (async operation) </summary>
       protected void DrawAsync() {
          //if (Entity is data.controller.types.ESkillLevel) {
@@ -146,15 +141,10 @@ namespace fmg.uwp.res.img
       }
 
       protected virtual void DrawSync() {
-         if (!_coordinateMaked) {
-            //LoggerSimple.Put("> DrawSync: MakeCoords: {0}", Entity);
-            MakeCoords();
-         } else {
-            //LoggerSimple.Put("> DrawSync: {0}",  Entity);
-            DrawBegin();
-            DrawBody();
-            DrawEnd();
-         }
+         //LoggerSimple.Put("> DrawSync: {0}",  Entity);
+         DrawBegin();
+         DrawBody();
+         DrawEnd();
       }
 
       protected virtual void DrawBegin() {

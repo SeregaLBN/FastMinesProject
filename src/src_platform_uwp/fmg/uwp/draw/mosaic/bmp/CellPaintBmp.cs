@@ -1,3 +1,4 @@
+using System.Linq;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
@@ -37,7 +38,7 @@ namespace fmg.uwp.draw.mosaic.bmp
       public override void PaintBorderLines(BaseCell cell, PaintableBmp paint) {
          var down = cell.State.Down || (cell.State.Status == EState._Open);
          if (GContext.IconicMode) {
-            paint.Bmp.DrawPolyline(cell.getRegion().RegionAsXyxyxySequence(GContext.Padding, true), (down ? GContext.PenBorder.ColorLight : GContext.PenBorder.ColorShadow).ToWinColor());
+            paint.Bmp.DrawPolyline(cell.getRegion().RegionAsXyxyxySequence(GContext.Padding, true).ToArray(), (down ? GContext.PenBorder.ColorLight : GContext.PenBorder.ColorShadow).ToWinColor());
          } else {
             var color = down ? GContext.PenBorder.ColorLight : GContext.PenBorder.ColorShadow;
             var s = cell.getShiftPointBorderIndex();
@@ -130,7 +131,7 @@ namespace fmg.uwp.draw.mosaic.bmp
             GraphicContext.DefaultBackgroundFillColor,
             GContext.BkFill.GetColor
             );
-         paint.Bmp.FillPolygon(cell.getRegion().RegionAsXyxyxySequence(GContext.Padding, true), color.ToWinColor());
+         paint.Bmp.FillPolygon(cell.getRegion().RegionAsXyxyxySequence(GContext.Padding, true).ToArray(), color.ToWinColor());
       }
 
    }

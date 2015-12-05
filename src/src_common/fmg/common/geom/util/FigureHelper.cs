@@ -37,7 +37,7 @@ namespace fmg.common.geom.util {
       public static IEnumerable<PointDouble> GetRegularStarCoords(int rays, double radiusOut, double radiusIn, double offsetAngle = 0) {
          var pointsExt = GetRegularPolygonCoords(rays, radiusOut, offsetAngle);
          var pointsInt = GetRegularPolygonCoords(rays, radiusIn, offsetAngle + 180.0/rays);
-         return pointsExt.Zip(pointsInt, (p1, p2) => new[] { p1, p2 }).SelectMany(x => x).ToArray();
+         return pointsExt.Zip(pointsInt, (p1, p2) => new[] { p1, p2 }).SelectMany(x => x);
       }
    }
 }
