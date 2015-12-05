@@ -25,14 +25,16 @@ namespace fmg.uwp.res.img {
          var rays = 4 + MosaicSkill.Ordinal(); // rays count
          var points = FigureHelper.GetRegularStarCoords(rays, r1, r2);
 
+         if (Rotate || (Math.Abs(RotateAngle) > 0.5))
+            points = points.Rotate(RotateAngle);
+
          // adding offset
-         var offset = Padding + s / 2;
-         points = points.Select(p => {
+         var offset = Padding + s/2;
+         return points.Select(p => {
             p.x += offset;
             p.y += offset;
             return p;
          });
-         return points;
       }
 
       protected override void DrawBody() {
@@ -40,12 +42,7 @@ namespace fmg.uwp.res.img {
          var h = Height;
          var bmp = new WriteableBitmap(w, h);
 
-         var rotate = Rotate || (Math.Abs(RotateAngle) > 0.5);
-         Action<WriteableBitmap> funcFillBk =
-            img => { img.FillPolygon(new[] {0, 0, w, 0, w, h, 0, h, 0, 0}, BkColor.ToWinColor()); };
-         if (!rotate) {
-            funcFillBk(bmp);
-         }
+         bmp.Clear(BkColor.ToWinColor());
 
          var points = GetCoords().PointsAsXyxyxySequence(true).ToArray();
          bmp.FillPolygon(points, FillColorAttenuate.ToWinColor());
@@ -54,29 +51,16 @@ namespace fmg.uwp.res.img {
             // draw perimeter border
             var clr = BorderColor;
             if (clr.A != Color.Transparent.A) {
-               for (var i = 0; i < points.Length-2; i += 2) {
+               for (var i = 0; i < points.Length - 2; i += 2) {
                   bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], clr.ToWinColor(), BorderWidth);
                }
             }
          }
 
-         if (rotate)
-            bmp = bmp.RotateFree(RotateAngle);
-
          if (Image == null) {
-            if (rotate) {
-               var tmp = new WriteableBitmap(w, h);
-               funcFillBk(tmp);
-               var rc = new Rect(0, 0, w, h);
-               tmp.Blit(rc, bmp, rc);
-               bmp = tmp;
-            }
             Image = bmp;
          } else {
             var rc = new Rect(0, 0, w, h);
-            if (rotate) {
-               funcFillBk(Image);
-            }
             Image.Blit(rc, bmp, rc);
          }
       }
