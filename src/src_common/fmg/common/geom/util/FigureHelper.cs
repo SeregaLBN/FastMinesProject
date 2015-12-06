@@ -15,7 +15,8 @@ namespace fmg.common.geom.util {
       /// <param name="radAngle">угол в падианах</param>
       /// <returns>координаты точки на круге</returns>
       public static PointDouble GetPointOnCircleRadian(double radius, double radAngle) {
-         return new PointDouble(radius * Math.Sin(radAngle), radius * Math.Cos(radAngle));
+         return new PointDouble(radius * Math.Sin(radAngle), -radius * Math.Cos(radAngle));
+         // ! беру радиус с минусом по Y'ку, т.к. эта координата в математике зеркальна экранной
       }
       /// <summary> Получить координаты точки на переиметре круга. Центр круга - начало координат </summary>
       /// <param name="radius">радиус круга</param>
@@ -66,8 +67,9 @@ namespace fmg.common.geom.util {
       /// <returns></returns>
       public static IEnumerable<PointDouble> Rotate(this IEnumerable<PointDouble> coords, double angle) {
          angle = angle.ToRadian();
-         var mat = new[] {Math.Cos(angle), -Math.Sin(angle), Math.Sin(angle), Math.Cos(angle) };
-         return coords.Select(i => new PointDouble(mat[0]*i.x + mat[1]*i.y, mat[2]*i.x + mat[3]*i.y));
+         var cos = Math.Cos(angle);
+         var sin = Math.Sin(angle);
+         return coords.Select(i => new PointDouble(i.x*cos - i.y*sin, i.x*sin + i.y*cos));
       }
 
    }

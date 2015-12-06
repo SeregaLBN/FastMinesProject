@@ -24,7 +24,7 @@ namespace FastMines.DataModel.DataSources
                   var mi = new MosaicSkillMenuItem(s);
                   mi.MosaicSkillImage.BorderColor = Color.Green;
                   mi.MosaicSkillImage.RedrawInterval = 50;
-                  mi.MosaicSkillImage.RotateAngleDelta = -5;
+                  mi.MosaicSkillImage.RotateAngleDelta = 5;
                   _dataSource.Add(mi);
                }
                CurrentElement = _dataSource.First();

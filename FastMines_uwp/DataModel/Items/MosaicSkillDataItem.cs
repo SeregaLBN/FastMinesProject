@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel;
 using Windows.UI.Xaml.Media;
-using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.uwp.res.img;
 

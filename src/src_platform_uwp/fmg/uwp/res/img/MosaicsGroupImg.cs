@@ -6,7 +6,6 @@ using fmg.core.types;
 using fmg.common;
 using fmg.common.geom;
 using fmg.common.geom.util;
-using Rect = Windows.Foundation.Rect;
 
 namespace fmg.uwp.res.img {
 
@@ -20,16 +19,13 @@ namespace fmg.uwp.res.img {
 
       private IEnumerable<PointDouble> GetCoords() {
          double s = Size - Padding*2; // size inner square
-         var rays = 3 + MosaicGroup.Ordinal(); // rays count
+         var vertices = 3 + MosaicGroup.Ordinal(); // vertices count
          var points = (MosaicGroup != EMosaicGroup.eOthers)
-            ? FigureHelper.GetRegularPolygonCoords(rays, s/2)
-            : FigureHelper.GetRegularStarCoords(4, s/2, s/5);
-
-         if (Rotate || (Math.Abs(RotateAngle) > 0.5))
-            points = points.Rotate(RotateAngle);
+            ? FigureHelper.GetRegularPolygonCoords(vertices, s/2, RotateAngle)
+            : FigureHelper.GetRegularStarCoords(4, s/2, s/5, RotateAngle);
 
          // adding offset
-         var offset = Padding + s/2;
+         var offset = Size / 2.0;
          return points.Select(p => {
             p.x += offset;
             p.y += offset;

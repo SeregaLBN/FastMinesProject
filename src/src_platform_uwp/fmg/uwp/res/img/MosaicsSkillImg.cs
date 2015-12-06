@@ -6,7 +6,6 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.common.geom.util;
 using fmg.data.controller.types;
-using Rect = Windows.Foundation.Rect;
 
 namespace fmg.uwp.res.img {
 
@@ -23,15 +22,12 @@ namespace fmg.uwp.res.img {
          var r1 = s/7; // external radius
          var r2 = s/9; // internal radius
          var rays = 4 + MosaicSkill.Ordinal(); // rays count
-         var points = FigureHelper.GetRegularStarCoords(rays, r1, r2);
-
-         if (Rotate || (Math.Abs(RotateAngle) > 0.5))
-            points = points.Rotate(RotateAngle);
+         var points = FigureHelper.GetRegularStarCoords(rays, r1, r2, -RotateAngle);
 
          // adding offset
          var offset = FigureHelper.GetPointOnCircle(s/3, RotateAngle);
-         offset.x += s/2 + Padding;
-         offset.y += s / 2 + Padding;
+         offset.x += Size / 2.0;
+         offset.y += Size / 2.0;
          return points.Select(p => {
             p.x += offset.x;
             p.y += offset.y;
