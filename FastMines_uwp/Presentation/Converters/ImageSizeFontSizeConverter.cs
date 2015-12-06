@@ -3,7 +3,7 @@ using Windows.UI.Xaml.Data;
 
 namespace FastMines.Presentation.Converters
 {
-   /// <summary> text size inscribed ещ image </summary>
+   /// <summary> text size inscribed to image </summary>
    public class ImageSizeFontSizeConverter : IValueConverter
    {
       public object Convert(object value, Type targetType, object parameter, string language)
