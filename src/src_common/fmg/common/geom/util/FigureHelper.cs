@@ -6,7 +6,7 @@ namespace fmg.common.geom.util {
 
    public static class FigureHelper {
 
-      private static double ToRadian(this double degreeAngle) {
+      public static double ToRadian(this double degreeAngle) {
          return degreeAngle * Math.PI / 180; // to radians
       }
 
@@ -18,7 +18,7 @@ namespace fmg.common.geom.util {
          return new PointDouble(radius * Math.Sin(radAngle), -radius * Math.Cos(radAngle));
          // ! беру радиус с минусом по Y'ку, т.к. эта координата в математике зеркальна экранной
       }
-      /// <summary> Получить координаты точки на переиметре круга. Центр круга - начало координат </summary>
+      /// <summary> Получить координаты точки на периметре круга. Центр круга - начало координат </summary>
       /// <param name="radius">радиус круга</param>
       /// <param name="degreeAngle">угол: -360° .. 0° .. +360°</param>
       /// <returns>координаты точки на круге</returns>
