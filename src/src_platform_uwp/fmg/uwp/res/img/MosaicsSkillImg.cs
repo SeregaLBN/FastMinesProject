@@ -21,12 +21,15 @@ namespace fmg.uwp.res.img {
          double s = Size - Padding*2; // size inner Square
          var r1 = s/7; // external radius
          var r2 = s/12; // internal radius
-         var rays = 5 + MosaicSkill.Ordinal(); // rays count
-         var stars = 3 + MosaicSkill.Ordinal(); // number of stars on the perimeter of the circle
+         var ordinal = MosaicSkill.Ordinal();
+         var rays = 5 + ordinal; // rays count
+         var stars = 4 + ordinal; // number of stars on the perimeter of the circle
          var angle = RotateAngle;
          var starAngle = 360.0/stars;
          return Enumerable.Range(0, stars).Select(st => {
-            var points = FigureHelper.GetRegularStarCoords(rays, r1, r2, -angle);
+            var points = (MosaicSkill == ESkillLevel.eCustom)
+               ? FigureHelper.GetRegularPolygonCoords(3 + st % 4, r1, -angle)
+               : FigureHelper.GetRegularStarCoords(rays, r1, r2, -angle);
 
             angle = Math.Sin((angle/4).ToRadian())*angle; // ускоряшка..
 
