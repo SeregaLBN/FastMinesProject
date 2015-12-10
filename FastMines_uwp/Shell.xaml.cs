@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using FastMines.Pages;
 using FastMines.Presentation;
+using FastMines.Common;
 
 namespace FastMines
 {
@@ -24,8 +26,16 @@ namespace FastMines
          }
 
          this.ViewModel = _vm;
-         this.SizeChanged += OnSizeChanged;
+         //this.SizeChanged += OnSizeChanged;
+         _sizeChangedObservable = Observable
+            .FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
+            .Throttle(TimeSpan.FromSeconds(0.2))
+            .Subscribe(x => UiThreadExecutor.InvokeLater(() => OnSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low));
+
+         //var SearchTextChangedObservable = Observable.FromEventPattern<TextChangedEventArgs>(this._textBox, "TextChanged");
+         //_currentSubscription = SearchTextChangedObservable.Throttle(TimeSpan.FromSeconds(.5)).ObserveOnDispatcher().Subscribe(e => this.ListItems.Add(this.textBox.Text));
       }
+      IDisposable _sizeChangedObservable;
 
       public ShellViewModel ViewModel { get; private set; }
 
@@ -35,18 +45,13 @@ namespace FastMines
       private void OnClosing(object sender, RoutedEventArgs ev) {
          System.Diagnostics.Debug.WriteLine("OnClosing");
          _vm?.Dispose();
+         _sizeChangedObservable.Dispose();
       }
 
       void OnSizeChanged(object sender, SizeChangedEventArgs ev) {
          System.Diagnostics.Debug.WriteLine("OnSizeChanged");
-         //foreach (var stackPanel in FindChilds<StackPanel>(_listView, 10)) {
-         //   stackPanel.Height++;
-         //   var cnt = VisualTreeHelper.GetChildrenCount(stackPanel);
-         //   cnt++;
-         //}
          var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
          size = size / 7;
-         //Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi
          _vm.ImageSize = (int)Math.Min(Math.Max(50, size), 100); // TODO: DPI dependency
       }
 

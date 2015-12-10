@@ -194,19 +194,17 @@ namespace fmg.uwp.res.img {
             foreach (var cell in Matrix)
                CellPaint.Paint(cell, new PaintableBmp(_image));
          } else {
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             // async draw
-            AsyncRunner.InvokeLater(() => {
+            UiThreadExecutor.InvokeLater(() => {
                funcFillBk();
                foreach (var cell in Matrix) {
                   var tmp = cell;
-                  AsyncRunner.InvokeLater(() => CellPaint.Paint(tmp, new PaintableBmp(_image)),
+                  UiThreadExecutor.InvokeLater(() => CellPaint.Paint(tmp, new PaintableBmp(_image)),
                      ((_random.Next() & 1) == 0)
                         ? CoreDispatcherPriority.Low
                         : CoreDispatcherPriority.Normal);
                }
             }, CoreDispatcherPriority.Normal);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
          }
          return _image;
       }

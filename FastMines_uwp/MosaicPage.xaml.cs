@@ -69,13 +69,11 @@ namespace FastMines {
             ManipulationModes.TranslateInertia;
 
          if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) {
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            AsyncRunner.InvokeLater(() => {
+            UiThreadExecutor.InvokeLater(() => {
                MosaicField.SetParams(new Size(10, 10), EMosaic.eMosaicRhombus1, 3);
                MosaicField.Area = 1500;
                MosaicField.Repaint();
             }, CoreDispatcherPriority.High);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
          }
       }
 
@@ -395,14 +393,12 @@ namespace FastMines {
                Debug.Assert(isLeftClick != isRightClick);
                ev.Handled = OnClick(pointerPoint.Position, isLeftClick, false, true);
             } else {
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-               AsyncRunner.InvokeLater(() => {
+               UiThreadExecutor.InvokeLater(() => {
                   if (!_clickInfo.Released) {
                      Log.Put("ã OnPointerReleased: forced left release click...");
                      OnClick(pointerPoint.Position, true, false, true);
                   }
                }, CoreDispatcherPriority.High);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
 
             _clickInfo.UpHandled = ev.Handled;

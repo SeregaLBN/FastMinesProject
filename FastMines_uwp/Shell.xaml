@@ -17,13 +17,13 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
+        <!--
         <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}">
             <Button Content="&#xE700;" Command="{x:Bind ViewModel.ToggleSplitViewPaneCommand}" Style="{StaticResource IconButtonStyle}"/>
             <TextBlock Text="Mosaics" Style="{StaticResource AppTitleTextBlockStyle}" />
-            <!--
-            -->
             <TextBlock Text="{x:Bind ViewModel.MosaicGroupDs.UnicodeChars, Mode=OneWay}" Style="{StaticResource MosaicIconTextBlockStyle}" Width="Auto" Margin="15,0,0,0" RenderTransformOrigin="0.5,0.5" />
         </StackPanel>
+        -->
 
         <SplitView x:Name="_splitView"
                    Grid.Row="1"
@@ -100,6 +100,20 @@
             </SplitView.Content>
         </SplitView>
 
+        <!-- Declared last to have it rendered above everything else, but it needs to be the first item in the tab sequence. -->
+        <ToggleButton x:Name="TogglePaneButton"
+                      TabIndex="1"
+                      Style="{StaticResource SplitViewTogglePaneButtonStyle}"
+                      AutomationProperties.Name="Menu"
+                      ToolTipService.ToolTip="Menuzzzzzzzzzzz" >
+            <!--
+            <ToggleButton.RenderTransform>
+                <CompositeTransform ScaleX=".4"/>
+            </ToggleButton.RenderTransform>
+            -->
+        </ToggleButton>
+
+
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState>
@@ -117,5 +131,6 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
+
     </Grid>
 </UserControl>

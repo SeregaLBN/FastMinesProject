@@ -52,9 +52,7 @@ namespace FastMines.Data {
                if (DesignMode.DesignModeEnabled)
                   func(false);
                else
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                  AsyncRunner.InvokeLater(() => func(true), CoreDispatcherPriority.Low);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                  UiThreadExecutor.InvokeLater(() => func(true), CoreDispatcherPriority.Low);
             }
             return base.Image;
          }

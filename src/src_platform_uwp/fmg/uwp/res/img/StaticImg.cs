@@ -126,9 +126,7 @@ namespace fmg.uwp.res.img
             return;
 
          _scheduledDraw = true;
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-         AsyncRunner.InvokeLater(DrawSync, CoreDispatcherPriority.Low);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+         UiThreadExecutor.InvokeLater(DrawSync, CoreDispatcherPriority.Low);
       }
 
       protected virtual void DrawSync() {
