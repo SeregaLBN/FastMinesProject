@@ -31,7 +31,7 @@ namespace FastMines.Data {
             var seeXxxPageXamlInViewDesigner = MosaicGroupImage;
             System.Diagnostics.Debug.WriteLine(seeXxxPageXamlInViewDesigner.ToString());
          } else
-            UiThreadExecutor.InvokeLater(async () => {
+            AsyncRunner.InvokeFromUiLater(async () => {
                var img = await Resources.GetImgMosaicGroupPng(eMosaicGroup);
                if (base.Image == null)
                   base.Image = img;
@@ -102,7 +102,7 @@ namespace FastMines.Data {
       public override ImageSource Image {
          get {
             if (_mosaicsGroupImg == null)
-               UiThreadExecutor.InvokeLater(() => { base.Image = MosaicGroupImage.Image; }, CoreDispatcherPriority.Low);
+               AsyncRunner.InvokeFromUiLater(() => { base.Image = MosaicGroupImage.Image; }, CoreDispatcherPriority.Low);
             return base.Image;// ?? new WriteableBitmap(1,1);
          }
       }

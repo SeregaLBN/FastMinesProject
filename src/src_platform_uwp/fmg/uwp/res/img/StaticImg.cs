@@ -126,7 +126,7 @@ namespace fmg.uwp.res.img
             return;
 
          _scheduledDraw = true;
-         UiThreadExecutor.InvokeLater(DrawSync, CoreDispatcherPriority.Low);
+         AsyncRunner.InvokeFromUiLater(DrawSync, CoreDispatcherPriority.Low);
       }
 
       protected virtual void DrawSync() {

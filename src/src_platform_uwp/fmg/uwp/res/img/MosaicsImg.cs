@@ -195,11 +195,11 @@ namespace fmg.uwp.res.img {
                CellPaint.Paint(cell, new PaintableBmp(_image));
          } else {
             // async draw
-            UiThreadExecutor.InvokeLater(() => {
+            AsyncRunner.InvokeFromUiLater(() => {
                funcFillBk();
                foreach (var cell in Matrix) {
                   var tmp = cell;
-                  UiThreadExecutor.InvokeLater(() => CellPaint.Paint(tmp, new PaintableBmp(_image)),
+                  AsyncRunner.InvokeFromUiLater(() => CellPaint.Paint(tmp, new PaintableBmp(_image)),
                      ((_random.Next() & 1) == 0)
                         ? CoreDispatcherPriority.Low
                         : CoreDispatcherPriority.Normal);

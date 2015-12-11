@@ -52,7 +52,7 @@ namespace FastMines.Data {
                if (DesignMode.DesignModeEnabled)
                   func(false);
                else
-                  UiThreadExecutor.InvokeLater(() => func(true), CoreDispatcherPriority.Low);
+                  AsyncRunner.InvokeFromUiLater(() => func(true), CoreDispatcherPriority.Low);
             }
             return base.Image;
          }

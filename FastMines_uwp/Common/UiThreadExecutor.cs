@@ -2,22 +2,25 @@
 using Windows.UI.Core;
 
 namespace FastMines.Common {
-   public static class UiThreadExecutor {
-      /// <summary> ExecuteOnUIThread </summary>
-      public static IAsyncAction InvokeLaterAsync(this DispatchedHandler action, CoreDispatcherPriority priority) {
+   public static class AsyncRunner {
+      /// <summary> send for execution on the UI thread </summary>
+      public static IAsyncAction InvokeFromUiLaterAsync(this DispatchedHandler action, CoreDispatcherPriority priority) {
          return Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(priority, action);
       }
 
-      public static void InvokeLater(this DispatchedHandler action, CoreDispatcherPriority priority) {
+      /// <summary> send for execution on the UI thread, without waiting for the result </summary>
+      public static void InvokeFromUiLater(this DispatchedHandler action, CoreDispatcherPriority priority) {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-         InvokeLaterAsync(action, priority);
+         InvokeFromUiLaterAsync(action, priority);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
       }
 
-      //public static IAsyncAction InvokeLater(DispatchedHandler action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal, bool bAwait = false) {
-      //   return bAwait
-      //      ? Windows.System.Threading.ThreadPool.RunAsync(async delegate { await InvokeLater(action, priority); }, (Windows.System.Threading.WorkItemPriority)priority)
-      //      : Windows.System.Threading.ThreadPool.RunAsync(delegate { InvokeLater(action, priority); }, (Windows.System.Threading.WorkItemPriority)priority);
-      //}
+      /// <summary> send to run asynchronously without waiting for the result </summary>
+      public static void InvokeLater(Windows.System.Threading.WorkItemHandler handler, Windows.System.Threading.WorkItemPriority priority = Windows.System.Threading.WorkItemPriority.Normal) {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+         Windows.System.Threading.ThreadPool.RunAsync(handler, priority);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+      }
+
    }
 }

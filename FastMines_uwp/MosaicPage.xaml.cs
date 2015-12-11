@@ -69,7 +69,7 @@ namespace FastMines {
             ManipulationModes.TranslateInertia;
 
          if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) {
-            UiThreadExecutor.InvokeLater(() => {
+            AsyncRunner.InvokeFromUiLater(() => {
                MosaicField.SetParams(new Size(10, 10), EMosaic.eMosaicRhombus1, 3);
                MosaicField.Area = 1500;
                MosaicField.Repaint();
@@ -393,7 +393,7 @@ namespace FastMines {
                Debug.Assert(isLeftClick != isRightClick);
                ev.Handled = OnClick(pointerPoint.Position, isLeftClick, false, true);
             } else {
-               UiThreadExecutor.InvokeLater(() => {
+               AsyncRunner.InvokeFromUiLater(() => {
                   if (!_clickInfo.Released) {
                      Log.Put("ã OnPointerReleased: forced left release click...");
                      OnClick(pointerPoint.Position, true, false, true);
