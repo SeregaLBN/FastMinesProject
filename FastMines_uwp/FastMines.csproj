@@ -226,7 +226,7 @@
     <Compile Include="..\src\src_data\fmg\data\view\draw\PenBorder.cs">
       <Link>src_fmg.data\view\draw\PenBorder.cs</Link>
     </Compile>
-    <Compile Include="Common\UiThreadExecutor.cs" />
+    <Compile Include="Common\AsyncRunner.cs" />
     <Compile Include="Common\Disposable.cs" />
     <Compile Include="Common\LoggerSimple.cs" />
     <Compile Include="DataModel\DataSources\MosaicSkillDataSource.cs" />
