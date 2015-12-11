@@ -30,7 +30,7 @@ namespace FastMines
          //this.SizeChanged += OnSizeChanged;
          _sizeChangedObservable = Observable
             .FromEventPattern<SizeChangedEventHandler, SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h) // equals .FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
-            .Throttle(TimeSpan.FromSeconds(0.2))
+            .Throttle(TimeSpan.FromSeconds(0.2)) // debounce events
             .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low));
       }
       IDisposable _sizeChangedObservable;
