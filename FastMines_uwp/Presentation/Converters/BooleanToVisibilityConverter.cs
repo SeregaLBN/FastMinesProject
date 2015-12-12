@@ -7,11 +7,15 @@ namespace FastMines.Presentation.Converters {
    /// <summary>  Value converter that translates true to <see cref="Visibility.Visible"/> and false to <see cref="Visibility.Collapsed"/> </summary>
    public sealed class BooleanToVisibilityConverter : IValueConverter {
       public object Convert(object value, Type targetType, object parameter, string language) {
-         return (value is bool && (bool) value) ? Visibility.Visible : Visibility.Collapsed;
+         if (value is bool)
+            return (bool)value ? Visibility.Visible : Visibility.Collapsed;
+         if (value is Visibility)
+            return (Visibility)value == Visibility.Visible;
+         throw new ArgumentException("Unsupported type " + value.GetType().FullName);
       }
 
       public object ConvertBack(object value, Type targetType, object parameter, string language) {
-         return value is Visibility && (Visibility) value == Visibility.Visible;
+         return Convert(value, targetType, parameter, language);
       }
    }
 

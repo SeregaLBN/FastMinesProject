@@ -12,18 +12,10 @@
     d:DesignWidth="800">
 
     <Grid>
-        <Grid.RowDefinitions>
+        <!--<Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
-        </Grid.RowDefinitions>
-
-        <!--
-        <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}">
-            <Button Content="&#xE700;" Command="{x:Bind ViewModel.ToggleSplitViewPaneCommand}" Style="{StaticResource IconButtonStyle}"/>
-            <TextBlock Text="Mosaics" Style="{StaticResource AppTitleTextBlockStyle}" />
-            <TextBlock Text="{x:Bind ViewModel.MosaicGroupDs.UnicodeChars, Mode=OneWay}" Style="{StaticResource MosaicIconTextBlockStyle}" Width="Auto" Margin="15,0,0,0" RenderTransformOrigin="0.5,0.5" />
-        </StackPanel>
-        -->
+        </Grid.RowDefinitions>-->
 
         <SplitView x:Name="_splitView"
                    Grid.Row="1"
@@ -34,7 +26,25 @@
                    CompactPaneLength="{x:Bind ViewModel.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}">
             <SplitView.Pane>
                 <ScrollViewer HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="{x:Bind ViewModel.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeOpenPaneConverter}}" >
+
                     <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}">
+                            <ToggleButton x:Name="_togglePaneButton"
+                                          TabIndex="1"
+                                          Content="&#xE700;"
+                                          Style="{StaticResource ToggleButtonExtStyle}"
+                                          Width="{x:Bind ViewModel.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}"
+                                          IsChecked="{x:Bind _splitView.IsPaneOpen, Mode=TwoWay, Converter={StaticResource BooleanNullableConverter}}"
+                                          AutomationProperties.Name="Menu"
+                                          ToolTipService.ToolTip="{x:Bind ViewModel.MosaicGroupDs.UnicodeChars, Mode=OneWay}" >
+                                <!--
+                                <ToggleButton.RenderTransform>
+                                    <CompositeTransform ScaleX="{x:Bind ViewModel.ImageSize, Mode=OneWay, Converter={StaticResource ScaleXToggleButtonConverter}}" />
+                                </ToggleButton.RenderTransform>
+                                -->
+                            </ToggleButton>
+                            <TextBlock Text="Mosaics" Style="{StaticResource AppTitleTextBlockStyle}" />
+                        </StackPanel>
 
                         <ListView x:Name="_listViewMosaicGroupMenu"
                                   ItemsSource="{x:Bind ViewModel.MosaicGroupDs.DataSource}"
@@ -61,8 +71,19 @@
                         </ListView>
 
                         <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}" Margin="0,15,0,0">
-                            <Button Content="&#xE728;" Click="ButtonSplitSkillLevel_OnClick" Style="{StaticResource IconButtonStyle}"/>
-                            <TextBlock Text="Skill" Style="{StaticResource SkillLevelTitleTextBlockStyle}" />
+                            <ToggleButton Style="{StaticResource ToggleButtonExtStyle}"
+                                          Width="{x:Bind ViewModel.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}"
+                                          Content="&#xE728;"
+                                          IsChecked="{x:Bind _listViewSkillLevelMenu.Visibility, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                          AutomationProperties.Name="Menu"
+                                          ToolTipService.ToolTip="Difficulty level" >
+                                <!--
+                                <ToggleButton.RenderTransform>
+                                    <CompositeTransform ScaleX=".4"/>
+                                </ToggleButton.RenderTransform>
+                                -->
+                            </ToggleButton>
+                            <TextBlock Text="Skill" Style="{StaticResource AppTitleTextBlockStyle}" />
                         </StackPanel>
                         <ListView x:Name="_listViewSkillLevelMenu"
                               Visibility="Collapsed"
@@ -99,20 +120,6 @@
                 </Frame>
             </SplitView.Content>
         </SplitView>
-
-        <!-- Declared last to have it rendered above everything else, but it needs to be the first item in the tab sequence. -->
-        <ToggleButton x:Name="TogglePaneButton"
-                      TabIndex="1"
-                      Style="{StaticResource SplitViewTogglePaneButtonStyle}"
-                      AutomationProperties.Name="Menu"
-                      ToolTipService.ToolTip="Menuzzzzzzzzzzz" >
-            <!--
-            <ToggleButton.RenderTransform>
-                <CompositeTransform ScaleX=".4"/>
-            </ToggleButton.RenderTransform>
-            -->
-        </ToggleButton>
-
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>

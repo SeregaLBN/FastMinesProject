@@ -69,10 +69,5 @@ namespace FastMines
       //   }
       //}
 
-      private void ButtonSplitSkillLevel_OnClick(object sender, RoutedEventArgs e) {
-         _listViewSkillLevelMenu.Visibility = (_listViewSkillLevelMenu.Visibility == Visibility.Visible)
-            ? Visibility.Collapsed
-            : Visibility.Visible;
-      }
    }
 }

@@ -2,7 +2,9 @@
 using Windows.UI.Core;
 
 namespace FastMines.Common {
+
    public static class AsyncRunner {
+
       /// <summary> send for execution on the UI thread </summary>
       public static IAsyncAction InvokeFromUiLaterAsync(this DispatchedHandler action, CoreDispatcherPriority priority) {
          return Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(priority, action);
