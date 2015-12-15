@@ -150,6 +150,20 @@ namespace fmg.data.controller.types {
          }
          throw new ArgumentException("Invalid paramenter value " + self);
       }
+
+      public static Size SizeTileField(this EMosaic self, ESkillLevel skill) {
+         var size = self.SizeIcoField(true);
+         switch (skill) {
+         case ESkillLevel.eBeginner: size.width += 0; size.height += 0; break;
+         case ESkillLevel.eAmateur : size.width += 1; size.height += 0; break;
+         case ESkillLevel.eProfi   : size.width += 1; size.height += 1; break;
+         case ESkillLevel.eCrazy   : size.width += 2; size.height += 1; break;
+         case ESkillLevel.eCustom  :
+         default:
+            throw new ArgumentException("Invalid paramenter value " + self);
+         }
+         return size;
+      }
    }
 
 }
