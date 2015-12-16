@@ -1,12 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
 using Windows.UI.Xaml.Media;
+using fmg.common.geom;
 using fmg.core.types;
-using fmg.uwp.res.img;
 using fmg.data.controller.types;
+using fmg.uwp.res.img;
 
 namespace FastMines.DataModel.Items {
-
+/*
    /// <summary> Mosaic item for data model </summary>
    class MosaicDataItem : BaseData<EMosaic>, IDisposable
    {
@@ -29,14 +30,14 @@ namespace FastMines.DataModel.Items {
                   SizeField = MosaicType.SizeTileField(ESkillLevel.eAmateur), // TODO - как свойство: MosaicDataItem.SkillLevel
                   Area = 456, // TODO - вычслять в зависимости от размера картинки == ImageSize * ZoomKoef
                   BackgroundColor = StaticImg<object, object>.DefaultBkColor,
-                  Padding = this. padding,
-
-                  BorderWidth = 3,
-                  RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
+                  Padding = new Bound(5,5,5,5),
+                  //BorderWidth = 3,
+                  //RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
                };
-               System.Diagnostics.Debug.Assert(tmp.Size == ImageSize * ZoomKoef);
-               System.Diagnostics.Debug.Assert(tmp.Width == ImageSize * ZoomKoef);
-               System.Diagnostics.Debug.Assert(tmp.Height == ImageSize * ZoomKoef);
+               tmp.GContext.PenBorder.Width = 3; // eq tmp.BorderWidth
+               //System.Diagnostics.Debug.Assert(tmp.Size == ImageSize * ZoomKoef);
+               //System.Diagnostics.Debug.Assert(tmp.Width == ImageSize * ZoomKoef);
+               //System.Diagnostics.Debug.Assert(tmp.Height == ImageSize * ZoomKoef);
             }
             return _mosaicImg;
          }
@@ -82,4 +83,5 @@ namespace FastMines.DataModel.Items {
       }
 
    }
+/**/
 }

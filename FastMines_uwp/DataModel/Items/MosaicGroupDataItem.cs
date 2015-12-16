@@ -37,11 +37,11 @@ namespace FastMines.DataModel.Items {
             var old = _mosaicGroupImg;
             if (SetProperty(ref _mosaicGroupImg, value)) {
                if (old != null) {
-                  old.PropertyChanged -= OnMosaicGroupImagePropertyChanged;
+                  old.PropertyChanged -= OnImagePropertyChanged;
                   old.Dispose();
                }
                if (value != null) {
-                  value.PropertyChanged += OnMosaicGroupImagePropertyChanged;
+                  value.PropertyChanged += OnImagePropertyChanged;
                }
                OnPropertyChanged("Image");
             }
@@ -60,7 +60,7 @@ namespace FastMines.DataModel.Items {
          }
       }
 
-      private void OnMosaicGroupImagePropertyChanged(object sender, PropertyChangedEventArgs ev) {
+      private void OnImagePropertyChanged(object sender, PropertyChangedEventArgs ev) {
          var pn = ev.PropertyName;
          if (pn == "Image") {
             OnPropertyChanged(this, ev); // ! notify parent container
@@ -68,7 +68,7 @@ namespace FastMines.DataModel.Items {
       }
 
       public void Dispose() {
-         _mosaicGroupImg?.Dispose();
+         MosaicGroupImage = null;
       }
 
    }
