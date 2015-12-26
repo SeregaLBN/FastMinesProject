@@ -68,7 +68,7 @@ namespace FastMines.DataModel.Items {
       }
 
       public void Dispose() {
-         MosaicGroupImage = null;
+         MosaicGroupImage = null; // call setter
       }
 
    }

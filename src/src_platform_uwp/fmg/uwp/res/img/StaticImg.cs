@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using Windows.UI.Core;
 using fmg.common;
-using fmg.common.geom;
 using FastMines.Common;
 using FastMines.Presentation.Notyfier;
 

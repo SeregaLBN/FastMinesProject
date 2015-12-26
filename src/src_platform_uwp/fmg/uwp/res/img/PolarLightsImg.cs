@@ -2,7 +2,8 @@ using System;
 
 namespace fmg.uwp.res.img {
 
-   public abstract class PolarLightsImg<T, TImage> : RotatedImg<T, TImage> where TImage : class
+   public abstract class PolarLightsImg<T, TImage> : RotatedImg<T, TImage>
+      where TImage : class
    {
 
       protected PolarLightsImg(T entity, int widthAndHeight = DefaultImageSize, int? padding = null)

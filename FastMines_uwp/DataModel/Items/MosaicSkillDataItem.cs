@@ -71,7 +71,7 @@ namespace FastMines.DataModel.Items {
       }
 
       public void Dispose() {
-         MosaicSkillImage = null;
+         MosaicSkillImage = null; // call setter
       }
 
    }

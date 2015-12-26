@@ -11,13 +11,14 @@ using fmg.core.mosaic.cells;
 using fmg.uwp.draw;
 using fmg.uwp.draw.mosaic.bmp;
 using FastMines.Common;
+using FastMines.Presentation.Notyfier;
 
 namespace fmg.uwp.res.img {
 
    /// <summary>
    /// картинка поля конкретной мозаики. Используется для меню, кнопок, etc... 
    /// </summary>
-   public class MosaicsImg : IMosaic<PaintableBmp> {
+   public class MosaicsImg : NotifyPropertyChanged, IMosaic<PaintableBmp>, IDisposable {
       private const bool _randomCellBkColor = true;
 
       private EMosaic _mosaicType;
@@ -33,31 +34,20 @@ namespace fmg.uwp.res.img {
       public Size SizeField
       {
          get {
-            if (_sizeField.width < 1)
-            {
-               // reset
-               _image = null;
-               _matrix.Clear();
-
-               _sizeField.width = 4;
-            }
-            if (_sizeField.height < 1)
-            {
-               // reset
-               _image = null;
-               _matrix.Clear();
-
-               _sizeField.width = 3;
+            if ((_sizeField.width < 1) || (_sizeField.height < 1)) {
+               SizeField = new Size(
+                  (_sizeField.width < 1) ? 4 : _sizeField.width,
+                  (_sizeField.height < 1) ? 4 : _sizeField.height);
             }
             return _sizeField;
          }
          set
          {
-            // reset
-            _matrix.Clear();
-            _image = null;
-
-            _sizeField = value;
+            if (SetProperty(ref _sizeField, value)) {
+               // reset
+               _matrix.Clear();
+               Image = null;
+            }
          }
       }
 
@@ -96,12 +86,12 @@ namespace fmg.uwp.res.img {
          get { return _mosaicType; }
          set
          {
-            // reset
-            _matrix.Clear();
-            _attr = null;
-            _image = null;
-
-            _mosaicType = value;
+            if (SetProperty(ref _mosaicType, value)) {
+               // reset
+               _matrix.Clear();
+               _attr = null;
+               Image = null;
+            }
          }
       }
 
@@ -110,10 +100,10 @@ namespace fmg.uwp.res.img {
          get { return _area; }
          set
          {
-            // reset
-            _image = null;
-
-            _area = value;
+            if (SetProperty(ref _area, value)) {
+               // reset
+               Image = null;
+            }
          }
       }
 
@@ -127,10 +117,10 @@ namespace fmg.uwp.res.img {
             return _bkColor;
          }
          set {
-            // reset
-            _image = null;
-
-            _bkColor = value;
+            if (SetProperty(ref _bkColor, value)) {
+               // reset
+               Image = null;
+            }
          }
       }
 
@@ -151,10 +141,10 @@ namespace fmg.uwp.res.img {
          }
          set
          {
-            // reset
-            _image = null;
-
             CellPaintBitmap.GContext = value;
+            OnPropertyChanged("GContext");
+            // reset
+            Image = null;
          }
       }
 
@@ -163,14 +153,17 @@ namespace fmg.uwp.res.img {
          get { return GContext.Padding; }
          set
          {
-            // reset
-            _image = null;
-
             GContext.Padding = value;
+            OnPropertyChanged("Padding");
+            // reset
+            Image = null;
          }
       }
 
-      public WriteableBitmap Image => GetImage(false);
+      public WriteableBitmap Image {
+         get { return GetImage(false); }
+         set { SetProperty(ref _image, value); }
+      }
 
       /// <summary> Return painted mosaic bitmap </summary>
       /// <param name="drawAsync">== true Сама картинка возвращается сразу.
@@ -208,5 +201,19 @@ namespace fmg.uwp.res.img {
          }
          return _image;
       }
+
+
+      public void Dispose() {
+         Dispose(true);
+      }
+
+      protected virtual void Dispose(bool disposing) {
+         if (disposing) {
+            // free managed resources
+         }
+         // free native resources if there are any.
+      }
+
    }
+
 }

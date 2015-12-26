@@ -7,7 +7,7 @@ using fmg.data.controller.types;
 using fmg.uwp.res.img;
 
 namespace FastMines.DataModel.Items {
-/*
+
    /// <summary> Mosaic item for data model </summary>
    class MosaicDataItem : BaseData<EMosaic>, IDisposable
    {
@@ -79,9 +79,9 @@ namespace FastMines.DataModel.Items {
       }
 
       public void Dispose() {
-         _mosaicImg?.Dispose();
+         _mosaicImg = null; // call setter
       }
 
    }
-/**/
+
 }

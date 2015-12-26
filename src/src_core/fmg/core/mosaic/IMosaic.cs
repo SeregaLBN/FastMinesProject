@@ -25,11 +25,11 @@ using fmg.core.types;
 using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
 
-namespace fmg.core.mosaic
-{
+namespace fmg.core.mosaic {
 
    /// <summary> interface of mosaic field </summary>
-   public interface IMosaic<TPaintable> : BaseCell.IMatrixCells where TPaintable : IPaintable
+   public interface IMosaic<TPaintable> : BaseCell.IMatrixCells
+      where TPaintable : IPaintable
    {
       BaseCell.BaseAttribute CellAttr { get; }
 

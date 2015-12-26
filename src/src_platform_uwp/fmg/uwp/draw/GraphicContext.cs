@@ -7,10 +7,11 @@ using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
 using fmg.data.view.draw;
+using FastMines.Presentation.Notyfier;
 
 namespace fmg.uwp.draw {
 
-   public class GraphicContext : FastMines.Presentation.Notyfier.NotifyPropertyChanged {
+   public class GraphicContext : NotifyPropertyChanged {
       public const string    DEFAULT_FONT_NAME  = "Arial"; // Times New Roman // Verdana // Courier New // SansSerif
       public const FontStyle DEFAULT_FONT_STYLE = FontStyle.Normal;
       public const int       DEFAULT_FONT_SIZE  = 10;
