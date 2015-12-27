@@ -33,7 +33,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import fmg.common.geom.Size;
-import fmg.core.mosaic.CellFactory;
+import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.event.MosaicEvent;
@@ -306,7 +306,7 @@ public class CustomSkillDlg extends JDialog {
 		if (parent == null)
 			return 21;
 		final int area = 200; // пох
-		BaseCell.BaseAttribute attr = CellFactory.createAttributeInstance(parent.getMosaic().getMosaicType(), area);
+		BaseCell.BaseAttribute attr = MosaicHelper.createAttributeInstance(parent.getMosaic().getMosaicType(), area);
 		return attr.getNeighborNumber(true) + 1; // +thisCell
 	}
 

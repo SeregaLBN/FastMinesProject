@@ -167,9 +167,9 @@ public abstract class BaseCell implements PropertyChangeListener {
 		/** узнаю мах размер площади ячеек мозаики, при котором окно проекта вмещается в заданную область
 		 * @param mosaicSizeField - интересуемый размер (в ячейках) поля мозаики
 		 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
-		 * @return макс площадь ячейки
+		 * @return площадь ячейки
 		 */
-		public int CalcMaxArea(int minStartArea, final Size mosaicSizeField, final Size sizeClient) {
+		public int CalcOptimalArea(int minStartArea, final Size mosaicSizeField, final Size sizeClient) {
 			return Finder(minStartArea, 53, new Comparable<Integer>() {
 				@Override
 				public int compareTo(Integer area) {
@@ -189,9 +189,9 @@ public abstract class BaseCell implements PropertyChangeListener {
 		 * узнаю max размер поля мозаики, при котором окно проекта вмещается в в заданную область
 		 * @param area - интересуемая площадь ячеек мозаики
 		 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
-		 * @return max размер поля мозаики
+		 * @return размер поля мозаики
 		 */
-		public Size CalcMaxMosaicSize(final int area, final Size sizeClient) {
+		public Size CalcOptimalMosaicSize(final int area, final Size sizeClient) {
 			final Size result = new Size();
 			Finder(1, 10, new Comparable<Integer>() {
 				@Override

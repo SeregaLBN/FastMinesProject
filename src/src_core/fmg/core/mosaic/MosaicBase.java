@@ -80,7 +80,7 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics> {
 	}
 	public BaseCell.BaseAttribute getCellAttr() {
 		if (_cellAttr == null)
-			_cellAttr = CellFactory.createAttributeInstance(getMosaicType(), getArea());
+			_cellAttr = MosaicHelper.createAttributeInstance(getMosaicType(), getArea());
 		return _cellAttr;
 	}
 
@@ -149,7 +149,7 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics> {
 				//_matrix = new ArrayList<BaseCell>(_size.width*_size.height);
 				for (int i=0; i < _size.width; i++)
 					for (int j=0; j < _size.height; j++) {
-						BaseCell cell = CellFactory.createCellInstance(attr, _mosaicType, new Coord(i, j));
+						BaseCell cell = MosaicHelper.createCellInstance(attr, _mosaicType, new Coord(i, j));
 						_matrix.add(i*_size.height + j, cell);
 						attr.addPropertyChangeListener(cell); // подписываю новые ячейки на уведомления атрибута (изменение a -> перерасчёт координат)
 					}

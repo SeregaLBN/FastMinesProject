@@ -11,7 +11,7 @@ import javax.swing.Icon;
 import fmg.common.geom.Bound;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Size;
-import fmg.core.mosaic.CellFactory;
+import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.IMosaic;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
@@ -91,7 +91,7 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
 	@Override
 	public BaseAttribute getCellAttr() {
 		if (_attr == null)
-			_attr = CellFactory.createAttributeInstance(getMosaicType(), getArea());
+			_attr = MosaicHelper.createAttributeInstance(getMosaicType(), getArea());
 		return _attr;
 	}
 
@@ -113,7 +113,7 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
 			Size size = getSizeField();
 			for (int i=0; i<size.width; i++)
 				for (int j=0; j<size.height; j++)
-					_matrix.add(CellFactory.createCellInstance(attr, type, new Coord(i,j)));
+					_matrix.add(MosaicHelper.createCellInstance(attr, type, new Coord(i,j)));
 		}
 		return _matrix;
 	}

@@ -72,6 +72,7 @@ import fmg.common.Pair;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
 import fmg.core.mosaic.MosaicBase;
+import fmg.core.mosaic.MosaicHelper;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
@@ -1397,7 +1398,7 @@ public class Main extends JFrame  {
 	 */
 	int CalcMaxArea(Size mosaicSizeField) {
 		Size sizeMosaic = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
-		return getMosaic().getCellAttr().CalcMaxArea(Mosaic.AREA_MINIMUM, mosaicSizeField, sizeMosaic);
+		return MosaicHelper.findAreaBySize(getMosaic().getCellAttr(), mosaicSizeField, sizeMosaic);
 	}
 
 	/**
@@ -1407,7 +1408,7 @@ public class Main extends JFrame  {
 	 */
 	public Size CalcMaxMosaicSize(int area) {
 		Size sizeMosaic = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
-		return getMosaic().getCellAttr().CalcMaxMosaicSize(area, sizeMosaic);
+		return MosaicHelper.findSizeByArea(getMosaic().getCellAttr(), area, sizeMosaic);
 	}
 
 	/**

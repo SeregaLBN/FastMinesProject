@@ -22,7 +22,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
 import fmg.common.geom.Size;
-import fmg.core.mosaic.CellFactory;
+import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
@@ -140,7 +140,7 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
 	public void GameNew() {
 		getGraphicContext().getBackgroundFill().setMode(
 				1 + new Random().nextInt(
-						CellFactory.createAttributeInstance(getMosaicType(), getArea()).getMaxBackgroundFillModeValue()));
+						MosaicHelper.createAttributeInstance(getMosaicType(), getArea()).getMaxBackgroundFillModeValue()));
 		super.GameNew();
 		getContainer().repaint();
 	}

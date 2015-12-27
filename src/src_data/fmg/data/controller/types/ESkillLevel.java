@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fmg.common.geom.Size;
-import fmg.core.mosaic.CellFactory;
+import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
 
@@ -22,7 +22,7 @@ public enum ESkillLevel {
 		mosaicCoefficient = new HashMap<EMosaic, Double>(EMosaic.values().length);
 		final int area = 200; // пох
 		for (EMosaic mosaicType : EMosaic.values()) {
-			BaseCell.BaseAttribute attr = CellFactory.createAttributeInstance(mosaicType, area);
+			BaseCell.BaseAttribute attr = MosaicHelper.createAttributeInstance(mosaicType, area);
 
 			// variant 1 - сложность в зависимости от кол-ва пересечений ячеек в одной точке
 //			mosaicCoefficient.put(mosaicType, attr.getVertexIntersection());

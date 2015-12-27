@@ -3,16 +3,16 @@ package fmg.core.mosaic;
 import java.lang.reflect.Constructor;
 
 import fmg.common.geom.Coord;
+import fmg.common.geom.Size;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
 
-/** Фабрика для создания экземпляров класса ячеек и их атрибутов */
-public class CellFactory {
+public final class MosaicHelper {
 	private static final String getPackageName() {
-		Package pkg = CellFactory.class.getPackage();
+		Package pkg = MosaicHelper.class.getPackage();
 		if (pkg != null)
 			return pkg.getName();
-		String[] arr = CellFactory.class.getName().split("\\.");
+		String[] arr = MosaicHelper.class.getName().split("\\.");
 		String name = "";
 		for (int i=0; i<arr.length-1; i++) {
 			if (!name.isEmpty())
@@ -72,4 +72,41 @@ public class CellFactory {
 			throw new RuntimeException("Unknown type "+mosaicType + ": "+ex.getMessage(), ex);
 		}
 	}
+
+	/** узнаю мах размер площади ячеек мозаики, при котором окно проекта вмещается в заданную область
+	 * @param mosaicSizeField - интересуемый размер (в ячейках) поля мозаики
+	 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
+	 * @return макс площадь ячейки
+	 */
+	public static int findAreaBySize(BaseCell.BaseAttribute cellAttr, Size mosaicSizeField, Size sizeClient) {
+		return cellAttr.CalcOptimalArea(MosaicBase.AREA_MINIMUM, mosaicSizeField, sizeClient);
+	}
+
+	/** узнаю мах размер площади ячеек мозаики, при котором окно проекта вмещается в заданную область
+	 * @param mosaicSizeField - интересуемый размер (в ячейках) поля мозаики
+	 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
+	 * @return макс площадь ячейки
+	 */
+	public static int findAreaBySize(EMosaic mosaicType, Size mosaicSizeField, Size sizeClient) {
+		return findAreaBySize(createAttributeInstance(mosaicType, 0), mosaicSizeField, sizeClient);
+	}
+
+	/** узнаю max размер поля мозаики, при котором окно проекта вмещается в в заданную область
+	 * @param area - интересуемая площадь ячеек мозаики
+	 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
+	 * @return размер поля мозаики
+	 */
+	public static Size findSizeByArea(BaseCell.BaseAttribute cellAttr, int area, Size sizeClient) {
+		return cellAttr.CalcOptimalMosaicSize(area, sizeClient);
+	}
+
+	/** узнаю max размер поля мозаики, при котором окно проекта вмещается в в заданную область
+	 * @param area - интересуемая площадь ячеек мозаики
+	 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
+	 * @return размер поля мозаики
+	 */
+	public static Size findSizeByArea(EMosaic mosaicType, int area, Size sizeClient) {
+		return findSizeByArea(createAttributeInstance(mosaicType, 0), area, sizeClient);
+	}
+
 }
