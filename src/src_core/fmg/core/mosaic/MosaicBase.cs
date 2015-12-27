@@ -37,8 +37,6 @@ namespace fmg.core.mosaic {
 
 #region Members
 
-   public const int AREA_MINIMUM = 230;
-
    /// <summary>матрица List &lt; List &lt; BaseCell &gt; &gt; , представленная(развёрнута) в виде вектора</summary>
    public IList<BaseCell> Matrix { get; protected set; } = new List<BaseCell>(0);
    /// <summary>размер поля в ячейках</summary>
@@ -533,19 +531,19 @@ namespace fmg.core.mosaic {
    public virtual int Area {
       get {
          if (_cellAttr == null)
-            return AREA_MINIMUM;
+            return BaseCell.AREA_MINIMUM;
          var area = CellAttr.Area;
-         if (area < AREA_MINIMUM) {
-            area = AREA_MINIMUM;
-            CellAttr.Area = AREA_MINIMUM;
+         if (area < BaseCell.AREA_MINIMUM) {
+            area = BaseCell.AREA_MINIMUM;
+            CellAttr.Area = BaseCell.AREA_MINIMUM;
          }
          return area;
       }
       set {
          var oldArea = CellAttr.Area;
-         if (oldArea == Math.Max(AREA_MINIMUM, value))
+         if (oldArea == Math.Max(BaseCell.AREA_MINIMUM, value))
             return;
-         CellAttr.Area = Math.Max(AREA_MINIMUM, value);
+         CellAttr.Area = Math.Max(BaseCell.AREA_MINIMUM, value);
          fireOnChangedArea(oldArea);
       }
    }
@@ -597,8 +595,8 @@ namespace fmg.core.mosaic {
 
    protected void Initialize() {
       Initialize(new Size(5, 5),
-            EMosaic.eMosaicPenrousePeriodic1,
-            1, AREA_MINIMUM);
+            EMosaic.eMosaicPenrousePeriodic1, 
+            1, BaseCell.AREA_MINIMUM);
    }
 
    protected void Initialize(Size sizeField, EMosaic mosaicType, int minesCount, int area) {

@@ -193,7 +193,7 @@ namespace FastMines {
 
       void AreaOptimal() {
          var sizePage = Window.Current.Bounds.ToFmRect().size();
-         Area = MosaicField.CellAttr.CalcOptimalArea(Mosaic.AREA_MINIMUM, MosaicField.SizeField, sizePage);
+         Area = MosaicField.CellAttr.CalcOptimalArea(BaseCell.AREA_MINIMUM, MosaicField.SizeField, sizePage);
       }
 
 

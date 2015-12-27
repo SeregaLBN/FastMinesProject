@@ -5,6 +5,7 @@ using fmg.common.geom;
 using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.uwp.res.img;
+using fmg.core.mosaic.cells;
 
 namespace FastMines.DataModel.Items {
 
@@ -59,14 +60,16 @@ namespace FastMines.DataModel.Items {
 
       public override ImageSource Image => MosaicImage.Image;
 
-      private int _imageSize = MosaicsImg.DefaultImageSize;
+      private int _imageSize = 100; // MosaicsImg.DefaultImageSize;
       public override int ImageSize
       {
          get { return _imageSize; }
          set
          {
             if (SetProperty(ref _imageSize, value)) {
-               MosaicImage.Size = ImageSize * ZoomKoef;
+               MosaicsImg mosaicImage = MosaicImage;
+               int area = mosaicImage.CellAttr.CalcOptimalArea(BaseCell.AREA_MINIMUM, mosaicImage.SizeField, new Size(value, value));
+               mosaicImage.Area = area * ZoomKoef;
             }
          }
       }

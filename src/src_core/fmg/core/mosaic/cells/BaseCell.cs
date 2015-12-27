@@ -32,6 +32,8 @@ namespace fmg.core.mosaic.cells {
 
 /// <summary>Базовый класс фигуры-ячейки</summary>
 public abstract class BaseCell {
+   public const int AREA_MINIMUM = 230;
+
    public const double PI = 3.14159265358979323846; // Math.PI;
    public static readonly double SQRT2   = Math.Sqrt(2.0);
    public static readonly double SQRT3   = Math.Sqrt(3.0);
