@@ -33,11 +33,11 @@ public class TrSq1 : BaseCell {
 			: base(area)
       {}
 
-		public override Size CalcOwnerSize(Size sizeField, int area) {
-			double b = CalcB(area);
-			double k = CalcK(area);
-			double n = CalcN(area);
-			double m = CalcM(area);
+		public override Size GetOwnerSize(Size sizeField) {
+			double b = CalcB();
+			double k = CalcK();
+			double n = CalcN();
+			double m = CalcM();
 			Size result = new Size(
 					(int)(b+n*((sizeField.width-1+2)/3)+
 					        k*((sizeField.width-1+1)/3)+
@@ -74,14 +74,14 @@ public class TrSq1 : BaseCell {
 		}
 		public override double getVertexIntersection() { return 5.0; }
 		public override Size GetDirectionSizeField() { return new Size(3, 2); }
-		public override double CalcA(int area) { return Math.Sqrt(3*area/(1+SQRT3/2)); }
-		public double CalcB(int area) { return CalcN(area)+CalcM(area); }
-		public double CalcK(int area) { return CalcN(area)-CalcM(area); }
-		public double CalcN(int area) { return CalcA(area)*SIN75; }
-		public double CalcM(int area) { return CalcA(area)*SIN15; }
-		public override double CalcSq(int area, int borderWidth) {
+		public override double CalcA() { return Math.Sqrt(3*Area/(1+SQRT3/2)); }
+		public double CalcB() { return CalcN()+CalcM(); }
+		public double CalcK() { return CalcN()-CalcM(); }
+		public double CalcN() { return CalcA()*SIN75; }
+		public double CalcM() { return CalcA()*SIN15; }
+		public override double CalcSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return (CalcA(area)*SQRT3 - w*6) / (4*SIN75); 
+			return (CalcA()*SQRT3 - w*6) / (4*SIN75); 
 		}
 	}
 
@@ -191,11 +191,10 @@ public class TrSq1 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrTrSq1 attr = Attr;
-		int area = attr.Area;
-		double b = attr.CalcB(area);
-		double k = attr.CalcK(area);
-		double n = attr.CalcN(area);
-		double m = attr.CalcM(area);
+		double b = attr.CalcB();
+		double k = attr.CalcK();
+		double n = attr.CalcN();
+		double m = attr.CalcM();
 
 		double oX = b + n * (coord.x/3*2); // offset X
 		double oY = n + n*2*(coord.y/2);   // offset Y
@@ -238,13 +237,12 @@ public class TrSq1 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrTrSq1 attr = Attr;
-		int area = attr.Area;
-		double b = attr.CalcB(area);
-		double k = attr.CalcK(area);
-		double n = attr.CalcN(area);
-		double m = attr.CalcM(area);
+		double b = attr.CalcB();
+		double k = attr.CalcK();
+		double n = attr.CalcN();
+		double m = attr.CalcM();
 		double w = borderWidth/2.0;
-		double sq = attr.CalcSq(area, borderWidth);
+		double sq = attr.CalcSq(borderWidth);
 		double sq2 = sq/2;
 
 		double oX = b + n * (coord.x/3*2); // offset X

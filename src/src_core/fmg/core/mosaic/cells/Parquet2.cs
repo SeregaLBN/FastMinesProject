@@ -33,8 +33,8 @@ public class Parquet2 : BaseCell {
 			: base(area)
       {}
 
-		public override Size CalcOwnerSize(Size sizeField, int area) {
-			double a = CalcA(area);
+		public override Size GetOwnerSize(Size sizeField) {
+			double a = CalcA();
 			Size result = new Size(
 					(int)((sizeField.width*2+2) * a),
 					(int)((sizeField.height*2+2) * a));
@@ -50,10 +50,10 @@ public class Parquet2 : BaseCell {
 		public override int getVertexNumber(int direction) { return 4; }
 		public override double getVertexIntersection() { return 3.5; } // (4+4+3+3) / 4
 		public override Size GetDirectionSizeField() { return new Size(2, 2); }
-		public override double CalcA(int area) { return Math.Sqrt(area)/2; }
-		public override double CalcSq(int area, int borderWidth) {
+		public override double CalcA() { return Math.Sqrt(Area)/2; }
+		public override double CalcSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return CalcA(area)-w*SQRT2;
+			return CalcA()-w*SQRT2;
 		}
 	}
 
@@ -115,7 +115,7 @@ public class Parquet2 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrParquet2 attr = Attr;
-		double a = attr.CalcA(attr.Area);
+		double a = attr.CalcA();
 
 		switch (direction) {
 		case 0:
@@ -147,7 +147,7 @@ public class Parquet2 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrParquet2 attr = Attr;
-		double sq = attr.CalcSq(attr.Area, borderWidth);
+		double sq = attr.CalcSq(borderWidth);
 		double w = borderWidth/2.0;
 
 		Rect square = new Rect();

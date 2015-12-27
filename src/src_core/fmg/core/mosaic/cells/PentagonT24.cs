@@ -33,15 +33,15 @@ public class PentagonT24 : BaseCell {
 			: base(area)
       {}
 
-		public override Size CalcOwnerSize(Size sizeField, int area) {
-			double a = CalcA(area);
-			double b = CalcB(area);
+		public override Size GetOwnerSize(Size sizeField) {
+			double a = CalcA();
+			double b = CalcB();
 			Size result = new Size(
 					(int)(b + sizeField.width * a),
 					(int)(b + sizeField.height * a));
 
 			if (sizeField.height == 1)
-				result.width -= (int)(CalcC(area));
+				result.width -= (int)(CalcC());
 
 				return result;
 		}
@@ -51,12 +51,12 @@ public class PentagonT24 : BaseCell {
 		public override int getVertexNumber(int direction) { return 5; }
 		public override double getVertexIntersection() { return 3.4; } // (3+3+3+4+4)/5.
 		public override Size GetDirectionSizeField() { return new Size(2, 2); }
-		public override double CalcA(int area) { return Math.Sqrt(area); }
-		public double CalcB(int area) { return CalcA(area)*6/11; }
-		public double CalcC(int area) { return CalcB(area)/2; }
-		public override double CalcSq(int area, int borderWidth) {
+		public override double CalcA() { return Math.Sqrt(Area); }
+		public double CalcB() { return CalcA()*6/11; }
+		public double CalcC() { return CalcB()/2; }
+		public override double CalcSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return CalcA(area)*8/11-(w+w/SIN135a) / SQRT2;
+			return CalcA()*8/11-(w+w/SIN135a) / SQRT2;
 		}
 	}
 
@@ -118,10 +118,9 @@ public class PentagonT24 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrPentagonT24 attr = Attr;
-		int area = attr.Area;
-		double a = attr.CalcA(area);
-		double b = attr.CalcB(area);
-		double c = attr.CalcC(area);
+		double a = attr.CalcA();
+		double b = attr.CalcB();
+		double c = attr.CalcC();
 
 		// определение координат точек фигуры
 		double oX = a*((coord.x>>1)<<1); // offset X
@@ -160,7 +159,7 @@ public class PentagonT24 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrPentagonT24 attr = Attr;
-		double sq = attr.CalcSq(attr.Area, borderWidth);
+		double sq = attr.CalcSq(borderWidth);
 		double w = borderWidth/2.0;
 		double w2 = w/SQRT2;
 

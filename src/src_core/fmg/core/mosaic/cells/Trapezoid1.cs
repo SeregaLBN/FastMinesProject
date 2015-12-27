@@ -33,11 +33,11 @@ public class Trapezoid1 : BaseCell {
 			: base(area)
       {}
 
-		public override Size CalcOwnerSize(Size sizeField, int area) {
-			double a = CalcA(area);
-			double c = CalcC(area);
-			double r = CalcRIn(area);
-			double R = CalcROut(area);
+		public override Size GetOwnerSize(Size sizeField) {
+			double a = CalcA();
+			double c = CalcC();
+			double r = CalcRIn();
+			double R = CalcROut();
 			Size result = new Size(
 					(int)( c + a *  (sizeField.width+1)),
 					(int)( R     * ((sizeField.height+1)/2) +
@@ -55,14 +55,14 @@ public class Trapezoid1 : BaseCell {
 		public override int getVertexNumber(int direction) { return 4; }
 		public override double getVertexIntersection() { return 3.6; } // (3+3+3+3+6)/5.
 		public override Size GetDirectionSizeField() { return new Size(3, 4); }
-		public override double CalcA   (int area) { return Math.Sqrt(area/SQRT27)*2; }
-		public double CalcB   (int area) { return CalcA(area)*2; }
-		public double CalcC   (int area) { return CalcA(area)/2; }
-		public double CalcROut(int area) { return CalcA(area)*SQRT3; }
-		public double CalcRIn (int area) { return CalcROut(area)/2; }
-		public override double CalcSq(int area, int borderWidth) {
+		public override double CalcA   () { return Math.Sqrt(Area/SQRT27)*2; }
+		public double CalcB   () { return CalcA()*2; }
+		public double CalcC   () { return CalcA()/2; }
+		public double CalcROut() { return CalcA()*SQRT3; }
+		public double CalcRIn () { return CalcROut()/2; }
+		public override double CalcSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return (CalcA(area)*SQRT3 - w*4)/(SQRT3+1);
+			return (CalcA()*SQRT3 - w*4)/(SQRT3+1);
 		}
 	}
 
@@ -209,11 +209,11 @@ public class Trapezoid1 : BaseCell {
 	protected override void CalcRegion() {
 		AttrTrapezoid1 attr = Attr;
 		int area = attr.Area;
-		double a = attr.CalcA(area);
-		double b = attr.CalcB(area);
-		double c = attr.CalcC(area);
-		double R = attr.CalcROut(area);
-		double r = attr.CalcRIn(area);
+		double a = attr.CalcA();
+		double b = attr.CalcB();
+		double c = attr.CalcC();
+		double R = attr.CalcROut();
+		double r = attr.CalcRIn();
 
 		// определение координат точек фигуры
 		double oX = (a+b)*(coord.x/3) + b; // offset X
@@ -297,14 +297,13 @@ public class Trapezoid1 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrTrapezoid1 attr = Attr;
-		int area = attr.Area;
-		double a = attr.CalcA(area);
-		double b = attr.CalcB(area);
-		double c = attr.CalcC(area);
-		double R = attr.CalcROut(area);
-		double r = attr.CalcRIn(area);
+		double a = attr.CalcA();
+		double b = attr.CalcB();
+		double c = attr.CalcC();
+		double R = attr.CalcROut();
+		double r = attr.CalcRIn();
 //		double w = borderWidth/2.0;
-		double sq    = attr.CalcSq(area, borderWidth);
+		double sq    = attr.CalcSq(borderWidth);
 		double sq2   = sq/2;
 
 		double oX = (a+b)*(coord.x/3) + b; // offset X

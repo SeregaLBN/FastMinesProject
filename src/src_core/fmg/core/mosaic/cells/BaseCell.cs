@@ -72,13 +72,13 @@ public abstract class BaseCell {
 
       /// <summary>пересчитать размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
       /// на основе заданных параметров</summary>
-      public abstract double CalcSq(int area, int borderWidth);
+      public abstract double CalcSq(int borderWidth);
 
       /// <summary>пересчитать значение A (базовая величина фигуры - обычно это размер одной из сторон фигуры) по заданной площади фигуры</summary>
-      public abstract double CalcA(int area);
+      public abstract double CalcA();
 
       /// <summary>get parent container (owner window) size in pixels</summary>
-      public abstract Size CalcOwnerSize(Size sizeField, int area);
+      public abstract Size GetOwnerSize(Size sizeField);
 
       /// <summary>размер поля из группы ячеек состоящих из разных direction</summary>
       public abstract Size GetDirectionSizeField();
@@ -104,82 +104,6 @@ public abstract class BaseCell {
          return 19;
       }
 
-      #region calc dimension window region
-      /// <summary> Поиск больше-меньше </summary>
-      /// <param name="baseMin">стартовое значение для поиска</param>
-      /// <param name="baseDelta">начало дельты приращения</param>
-      /// <param name="comparable">ф-ция сравнения</param>
-      /// <returns>что найдено</returns>
-      private static int Finder(int baseMin, int baseDelta, Func<int, int> comparable) {
-         double res = baseMin;
-         double d = baseDelta;
-         bool deltaUp = true, lastSmall = true;
-         do {
-            if (deltaUp)
-               d *= 2;
-            else
-               d /= 2;
-
-            if (lastSmall)
-               res += d;
-            else
-               res -= d;
-
-            var z = comparable((int)res);
-            if (z == 0)
-               return (int)res;
-            lastSmall = (z < 0);
-            deltaUp = deltaUp && lastSmall;
-         } while (d > 1);
-         return (int)res;
-      }
-
-      /// <summary> узнаю мах размер площади ячеек мозаики, при котором вся мозаика помещается в заданную область </summary>
-      /// <param name="mosaicSizeField">интересуемый размер (в ячейках) поля мозаики</param>
-      /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
-      /// <returns>площадь ячейки</returns>
-      public int CalcOptimalArea(int minStartArea, Size mosaicSizeField, Size sizeClient) {
-         return Finder(minStartArea, 53,
-            area => {
-               var sizeWnd = CalcOwnerSize(mosaicSizeField, area);
-               if ((sizeWnd.width == sizeClient.width) &&
-                   (sizeWnd.height == sizeClient.height))
-                  return 0;
-               if ((sizeWnd.width <= sizeClient.width) &&
-                   (sizeWnd.height <= sizeClient.height))
-                  return -1;
-               return +1;
-            });
-      }
-
-      /// <summary> узнаю max размер поля мозаики, при котором вся мозаика помещается в заданную область </summary>
-      /// <param name="area">интересуемая площадь ячеек мозаики</param>
-      /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
-      /// <returns>размер поля мозаики</returns>
-      public Size CalcOptimalMosaicSize(int area, Size sizeClient) {
-         var result = new Size();
-         Finder(1, 10, newWidth => {
-            result.width = newWidth;
-            var sizeWnd = CalcOwnerSize(result, area);
-            if (sizeWnd.width == sizeClient.width)
-               return 0;
-            if (sizeWnd.width <= sizeClient.width)
-               return -1;
-            return +1;
-         });
-         Finder(1, 10, newHeight => {
-            result.height = newHeight;
-            var sizeWnd = CalcOwnerSize(result, area);
-            if (sizeWnd.width == sizeClient.height)
-               return 0;
-            if (sizeWnd.height <= sizeClient.height)
-               return -1;
-            return +1;
-         });
-         return result;
-      }
-
-      #endregion
    }
 
    private readonly BaseAttribute attr;

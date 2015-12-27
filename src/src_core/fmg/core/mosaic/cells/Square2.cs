@@ -33,8 +33,8 @@ public class Square2 : BaseCell {
 			: base(area)
       {}
 
-		public override Size CalcOwnerSize(Size sizeField, int area) {
-			double a = CalcA(area); // размер стороны квадрата
+		public override Size GetOwnerSize(Size sizeField) {
+			double a = CalcA(); // размер стороны квадрата
 			Size result = new Size(
 					(int)(sizeField.width * a + a/2),
 					(int)(sizeField.height * a));
@@ -46,10 +46,10 @@ public class Square2 : BaseCell {
 		public override int getVertexNumber(int direction) { return 4; }
 		public override double getVertexIntersection() { return 3; }
 		public override Size GetDirectionSizeField() { return new Size(1, 2); }
-		public override double CalcA(int area) { return Math.Sqrt(area); }
-		public override double CalcSq(int area, int borderWidth) {
+		public override double CalcA() { return Math.Sqrt(Area); }
+		public override double CalcSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return CalcA(area)-2*w;
+			return CalcA()-2*w;
 		}
 	}
 
@@ -86,7 +86,7 @@ public class Square2 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrSquare2 attr = Attr;
-		double a = attr.CalcA(attr.Area);
+		double a = attr.CalcA();
 
       int x1 = (int)(a * (coord.x + 0) + ((direction != 0) ? 0 : a / 2));
       int x2 = (int)(a * (coord.x + 1) + ((direction != 0) ? 0 : a / 2));
@@ -101,7 +101,7 @@ public class Square2 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrSquare2 attr = Attr;
-		double sq = attr.CalcSq(attr.Area, borderWidth);
+		double sq = attr.CalcSq(borderWidth);
 		double w = borderWidth/2.0;
 
 		Rect square = new Rect();

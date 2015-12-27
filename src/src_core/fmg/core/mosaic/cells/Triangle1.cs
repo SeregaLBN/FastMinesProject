@@ -33,9 +33,9 @@ public class Triangle1 : BaseCell {
 			: base(area)
       {}
 
-		public override Size CalcOwnerSize(Size sizeField, int area) {
-			double b = CalcB(area);
-			double h = CalcH(area);
+		public override Size GetOwnerSize(Size sizeField) {
+			double b = CalcB();
+			double h = CalcH();
 			Size result = new Size(
 					(int)(b * (sizeField.width+1)),
 					(int)(h * (sizeField.height+0)));
@@ -47,14 +47,14 @@ public class Triangle1 : BaseCell {
 		public override int getVertexNumber(int direction) { return 3; }
 		public override double getVertexIntersection() { return 6; }
 		public override Size GetDirectionSizeField() { return new Size(2, 2); }
-		public override double CalcA(int area) { return CalcB(area) * 2.0f; } // размер стороны треугольника
+		public override double CalcA() { return CalcB() * 2.0f; } // размер стороны треугольника
 		/// <summary> </summary> пол стороны треугольника */
-		public double CalcB(int area) { return Math.Sqrt(area/SQRT3); }
+		public double CalcB() { return Math.Sqrt(Area/SQRT3); }
 		/// <summary> </summary> высота треугольника */
-		public double CalcH(int area) { return CalcB(area) * SQRT3; }
-		public override double CalcSq(int area, int borderWidth) {
+		public double CalcH() { return CalcB() * SQRT3; }
+		public override double CalcSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return (CalcH(area)*2 - 6*w)/(SQRT3+2);
+			return (CalcH()*2 - 6*w)/(SQRT3+2);
 			//return (CalcA(area)*SQRT3 - 6*w)/(SQRT3+2);
 		}
 	}
@@ -109,10 +109,9 @@ public class Triangle1 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrTriangle1 attr = Attr;
-		int area = attr.Area;
-		double a = attr.CalcA(area);
-		double b = attr.CalcB(area);
-		double h = attr.CalcH(area);
+		double a = attr.CalcA();
+		double b = attr.CalcB();
+		double h = attr.CalcH();
 
 		double oX = a*(coord.x>>1); // offset X
 		double oY = h* coord.y;     // offset Y
@@ -143,9 +142,8 @@ public class Triangle1 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrTriangle1 attr = Attr;
-		int area = attr.Area;
-		double b = attr.CalcB(area);
-		double sq = attr.CalcSq(area, borderWidth);
+		double b = attr.CalcB();
+		double sq = attr.CalcSq(borderWidth);
 		double w = borderWidth/2.0;
 
 		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)

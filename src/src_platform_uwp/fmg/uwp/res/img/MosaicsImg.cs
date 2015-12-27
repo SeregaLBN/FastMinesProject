@@ -174,7 +174,7 @@ namespace fmg.uwp.res.img {
          if (_image != null)
             return _image;
 
-         var pixelSize = CellAttr.CalcOwnerSize(SizeField, CellAttr.Area);
+         var pixelSize = CellAttr.GetOwnerSize(SizeField);
          var w = pixelSize.width + GContext.Padding.Left + +GContext.Padding.Right;
          var h = pixelSize.height + GContext.Padding.Top + +GContext.Padding.Bottom;
 

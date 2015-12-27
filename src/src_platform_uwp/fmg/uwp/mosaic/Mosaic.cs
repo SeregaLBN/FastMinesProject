@@ -164,7 +164,7 @@ namespace fmg.uwp.mosaic {
             var newVal = Area;
             if (oldVal != newVal) {
                // см. комент - сноску 1
-               ChangeFontSize(GraphicContext.PenBorder, value);
+               ChangeFontSize(GraphicContext.PenBorder);
                Repaint();
             }
          }
@@ -201,7 +201,7 @@ namespace fmg.uwp.mosaic {
          if ((sender is GraphicContext) && "PenBorder".Equals(e.PropertyName)) {
             // см. комент - сноску 1
             var gc = sender as GraphicContext;
-            ChangeFontSize(gc.PenBorder, Area);
+            ChangeFontSize(gc.PenBorder);
          }
 
          if (sender is GraphicContext)
@@ -209,10 +209,10 @@ namespace fmg.uwp.mosaic {
       }
 
       /// <summary> пересчитать и установить новую высоту шрифта </summary>
-      public void ChangeFontSize() { ChangeFontSize(GraphicContext.PenBorder, Area); }
+      public void ChangeFontSize() { ChangeFontSize(GraphicContext.PenBorder); }
       /// <summary> пересчитать и установить новую высоту шрифта </summary>
-      private void ChangeFontSize(PenBorder penBorder, int area) {
-         GraphicContext.FontSize = (int)CellAttr.CalcSq(area, penBorder.Width);
+      private void ChangeFontSize(PenBorder penBorder) {
+         GraphicContext.FontSize = (int)CellAttr.CalcSq(penBorder.Width);
       }
    }
 }

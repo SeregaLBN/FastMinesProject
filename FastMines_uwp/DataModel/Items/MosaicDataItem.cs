@@ -69,7 +69,7 @@ namespace FastMines.DataModel.Items {
          {
             if (SetProperty(ref _imageSize, value)) {
                MosaicsImg mosaicImage = MosaicImage;
-               int area = MosaicHelper.FindAreaBySize(mosaicImage.CellAttr, mosaicImage.SizeField, new Size(value, value));
+               int area = MosaicHelper.FindAreaBySize(MosaicType, mosaicImage.SizeField, new Size(value, value));
                mosaicImage.Area = area * ZoomKoef;
             }
          }

@@ -563,9 +563,13 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
    /// <summary> Максимальное кол-во мин при  текущем  размере поля </summary>
    public int GetMaxMines() { return GetMaxMines(SizeField); }
    /// <summary> размер в пикселях для указанных параметров </summary>
-   public Size CalcWindowSize(Size sizeField, int area) { return CellAttr.CalcOwnerSize(sizeField, area); }
+   public Size GetWindowSize(Size sizeField, int area) {
+      return (area == Area)
+         ? CellAttr.GetOwnerSize(sizeField)
+         : MosaicHelper.GetOwnerSize(MosaicType, area, sizeField);
+   }
    /// <summary> размер в пикселях </summary>
-   public Size WindowSize { get { return CalcWindowSize(SizeField, Area); }}
+   public Size WindowSize { get { return GetWindowSize(SizeField, Area); }}
    /// <summary> узнать количество соседей для текущей мозаики </summary>
    public int MaxNeighborNumber { get { return CellAttr.getNeighborNumber(true); } }
 

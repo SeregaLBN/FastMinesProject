@@ -34,10 +34,10 @@ public class Rhombus1 : BaseCell {
 			: base(area)
       {}
 
-		public override Size CalcOwnerSize(Size sizeField, int area) {
-			double a = CalcA(area);
-			double r = CalcR(area);
-			double c = CalcC(area);
+		public override Size GetOwnerSize(Size sizeField) {
+			double a = CalcA();
+			double r = CalcR();
+			double c = CalcC();
 			Size result = new Size(
 					(int)(c+a   *((sizeField.width+2)/3) +
 					       (a+c)*((sizeField.width+1)/3) +
@@ -60,13 +60,13 @@ public class Rhombus1 : BaseCell {
 		public override int getVertexNumber(int direction) { return 4; }
 		public override double getVertexIntersection() { return 4.5; } // (3+3+6+6)/4.
 		public override Size GetDirectionSizeField() { return new Size(3, 2); }
-		public override double CalcA(int area) { return Math.Sqrt(area*2/SQRT3); }
-		public double CalcC(int area) { return CalcA(area)/2; }
-		public double CalcH(int area) { return CalcA(area)*SQRT3; }
-		public double CalcR(int area) { return CalcH(area)/2; }
-		public override double CalcSq(int area, int borderWidth) {
+		public override double CalcA() { return Math.Sqrt(Area*2/SQRT3); }
+		public double CalcC() { return CalcA()/2; }
+		public double CalcH() { return CalcA()*SQRT3; }
+		public double CalcR() { return CalcH()/2; }
+		public override double CalcSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return (CalcA(area)*SQRT3 - w*4)/(SQRT3+1);
+			return (CalcA()*SQRT3 - w*4)/(SQRT3+1);
 		}
 
 		public override int getMaxBackgroundFillModeValue() {
@@ -168,11 +168,10 @@ public class Rhombus1 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrRhombus1 attr = Attr;
-		int area = attr.Area;
-		double a = attr.CalcA(area);
-		double c = attr.CalcC(area);
-		double h = attr.CalcH(area);
-		double r = attr.CalcR(area);
+		double a = attr.CalcA();
+		double c = attr.CalcC();
+		double h = attr.CalcH();
+		double r = attr.CalcR();
 
 		// определение координат точек фигуры
 		double oX = a*(coord.x/3*3+1)+c; // offset X
@@ -220,13 +219,12 @@ public class Rhombus1 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrRhombus1 attr = Attr;
-		int area = attr.Area;
-		double a = attr.CalcA(area);
-		double c = attr.CalcC(area);
-		double h = attr.CalcH(area);
-		double r = attr.CalcR(area);
+		double a = attr.CalcA();
+		double c = attr.CalcC();
+		double h = attr.CalcH();
+		double r = attr.CalcR();
 //		double w = borderWidth/2.0;
-		double sq  = attr.CalcSq(area, borderWidth);
+		double sq  = attr.CalcSq(borderWidth);
 		double sq2 = sq/2;
 
 		double oX = a*(coord.x/3*3+1)+c; // offset X

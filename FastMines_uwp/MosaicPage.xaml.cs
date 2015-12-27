@@ -194,7 +194,7 @@ namespace FastMines {
 
       void AreaOptimal() {
          var sizePage = Window.Current.Bounds.ToFmRect().size();
-         Area = MosaicHelper.FindAreaBySize(MosaicField.CellAttr, MosaicField.SizeField, sizePage);
+         Area = MosaicHelper.FindAreaBySize(MosaicField.MosaicType, MosaicField.SizeField, sizePage);
       }
 
 
@@ -250,8 +250,8 @@ namespace FastMines {
             if (_mouseDevicePosition_AreaChanging.HasValue) {
                var devicePos = _mouseDevicePosition_AreaChanging.Value;
 
-               var oldWinSize = MosaicField.CalcWindowSize(MosaicField.SizeField, e.getOldArea());
-               var newWinSize = MosaicField.CalcWindowSize(MosaicField.SizeField, Area);
+               var oldWinSize = MosaicField.GetWindowSize(MosaicField.SizeField, e.getOldArea());
+               var newWinSize = MosaicField.GetWindowSize(MosaicField.SizeField, Area);
 
                // точка над игровым полем со старой площадью ячеек
                var point = new PointDouble(devicePos.X - m.Left, devicePos.Y - m.Top);

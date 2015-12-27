@@ -34,9 +34,9 @@ public class PentagonT5 : BaseCell {
 			: base(area)
       {}
 
-		public override Size CalcOwnerSize(Size sizeField, int area) {
-			double a = CalcA(area);
-			double h = CalcH(area);
+		public override Size GetOwnerSize(Size sizeField) {
+			double a = CalcA();
+			double h = CalcH();
 			Size result = new Size(
 					(int)(a*3.5 +
 					      a*2.0*((sizeField.width+13)/14) +
@@ -113,11 +113,11 @@ public class PentagonT5 : BaseCell {
 		public override int getVertexNumber(int direction) { return 5; }
 		public override double getVertexIntersection() { return 3.6; } // (3+3+3+3+6)/5.
 		public override Size GetDirectionSizeField() { return new Size(14, 6); }
-		public override double CalcA(int area) { return 2*Math.Sqrt(area/SQRT147); }
-		public double CalcH(int area) { return CalcA(area)*SQRT3/2; }
-		public override double CalcSq(int area, int borderWidth) {
+		public override double CalcA() { return 2*Math.Sqrt(Area/SQRT147); }
+		public double CalcH() { return CalcA()*SQRT3/2; }
+		public override double CalcSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return (CalcA(area)*2*SQRT3-4*w)/(SQRT3+1);
+			return (CalcA()*2*SQRT3-4*w)/(SQRT3+1);
 		}
 
 		public override int getMaxBackgroundFillModeValue() {
@@ -518,9 +518,8 @@ public class PentagonT5 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrPentagonT5 attr = Attr;
-		int area = attr.Area;
-		double a = attr.CalcA(area);
-		double h = attr.CalcH(area);
+		double a = attr.CalcA();
+		double h = attr.CalcH();
 
 		// определение координат точек фигуры
 		double oX = a*21*(coord.x/14); // offset X
@@ -589,11 +588,10 @@ public class PentagonT5 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrPentagonT5 attr = Attr;
-		int area = attr.Area;
-		double a = attr.CalcA(area);
-		double h = attr.CalcH(area);
+		double a = attr.CalcA();
+		double h = attr.CalcH();
 //		double w = borderWidth/2.0;
-		double sq  = Attr.CalcSq(area, borderWidth);
+		double sq  = Attr.CalcSq(borderWidth);
 		double sq2 = sq/2;
 
 		// определение координат точек фигуры
