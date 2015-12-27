@@ -38,15 +38,15 @@ public class PentagonT24 extends BaseCell {
 		}
 
 		@Override
-		public Size CalcOwnerSize(Size sizeField, int area) {
-			double a = CalcA(area);
-			double b = CalcB(area);
+		public Size getOwnerSize(Size sizeField) {
+			double a = CalcA();
+			double b = CalcB();
 			Size result = new Size(
 					(int)(b + sizeField.width * a),
 					(int)(b + sizeField.height * a));
 
 			if (sizeField.height == 1)
-				result.width -= CalcC(area);
+				result.width -= CalcC();
 
 				return result;
 		}
@@ -62,13 +62,13 @@ public class PentagonT24 extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(2, 2); }
 		@Override
-		protected double CalcA(int area) { return Math.sqrt(area); }
-		protected double CalcB(int area) { return CalcA(area)*6/11; }
-		protected double CalcC(int area) { return CalcB(area)/2; }
+		protected double CalcA() { return Math.sqrt(getArea()); }
+		protected double CalcB() { return CalcA()*6/11; }
+		protected double CalcC() { return CalcB()/2; }
 		@Override
-		public double CalcSq(int area, int borderWidth) {
+		public double CalcSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return CalcA(area)*8/11-(w+w/SIN135a) / SQRT2;
+			return CalcA()*8/11-(w+w/SIN135a) / SQRT2;
 		}
 	}
 
@@ -133,10 +133,9 @@ public class PentagonT24 extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrPentagonT24 attr = getAttr();
-		int area = attr.getArea();
-		double a = attr.CalcA(area);
-		double b = attr.CalcB(area);
-		double c = attr.CalcC(area);
+		double a = attr.CalcA();
+		double b = attr.CalcB();
+		double c = attr.CalcC();
 
 		// определение координат точек фигуры
 		double oX = a*((coord.x>>1)<<1); // offset X
@@ -176,7 +175,7 @@ public class PentagonT24 extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrPentagonT24 attr = getAttr();
-		double sq = attr.CalcSq(attr.getArea(), borderWidth);
+		double sq = attr.CalcSq(borderWidth);
 		double w = borderWidth/2.;
 		double w2 = w/SQRT2;
 

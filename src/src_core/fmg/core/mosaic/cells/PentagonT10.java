@@ -42,8 +42,8 @@ public class PentagonT10 extends BaseCell {
 		}
 
 		@Override
-		public Size CalcOwnerSize(Size sizeField, int area) {
-			double a = CalcA(area);
+		public Size getOwnerSize(Size sizeField) {
+			double a = CalcA();
 			Size result = new Size(
 					(int)(2*a +
 					      5*a*((sizeField.width+1)/2) +
@@ -112,11 +112,11 @@ public class PentagonT10 extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(2, 6); }
 		@Override
-		protected double CalcA(int area) { return Math.sqrt(area/7); }
+		protected double CalcA() { return Math.sqrt(getArea()/7); }
 		@Override
-		public double CalcSq(int area, int borderWidth) {
+		public double CalcSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return 2*(CalcA(area)-w);
+			return 2*(CalcA()-w);
 		}
 
 		@Override
@@ -258,7 +258,7 @@ public class PentagonT10 extends BaseCell {
 
 	private PointDouble getOffset() {
 		AttrPentagonT10 attr = getAttr();
-		double a = attr.CalcA(attr.getArea());
+		double a = attr.CalcA();
 
 		PointDouble o = new PointDouble(0,0);
 		switch (direction) {
@@ -280,7 +280,7 @@ public class PentagonT10 extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrPentagonT10 attr = getAttr();
-		double a = attr.CalcA(attr.getArea());
+		double a = attr.CalcA();
 
 		PointDouble o = getOffset();
 
@@ -319,7 +319,7 @@ public class PentagonT10 extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrPentagonT10 attr = getAttr();
-		double sq = attr.CalcSq(attr.getArea(), borderWidth);
+		double sq = attr.CalcSq(borderWidth);
 		double sq2 = sq/2;
 
 		PointDouble center = new PointDouble(); // координата центра квадрата

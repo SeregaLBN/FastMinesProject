@@ -39,9 +39,9 @@ public class SqTrHex extends BaseCell {
 		}
 
 		@Override
-		public Size CalcOwnerSize(Size sizeField, int area) {
-			double a = CalcA(area);
-			double h = CalcH(area);
+		public Size getOwnerSize(Size sizeField) {
+			double a = CalcA();
+			double h = CalcH();
 			Size result = new Size(
 					(int)(a/2+h + a/2*((sizeField.width+2)/3) +
 					              h * ((sizeField.width+1)/3) +
@@ -102,12 +102,12 @@ public class SqTrHex extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(3, 4); }
 		@Override
-		protected double CalcA(int area) { return Math.sqrt(area/(0.5+1/SQRT3)); }
-		protected double CalcH(int area) { return CalcA(area)*SQRT3/2; }
+		protected double CalcA() { return Math.sqrt(getArea()/(0.5+1/SQRT3)); }
+		protected double CalcH() { return CalcA()*SQRT3/2; }
 		@Override
-		public double CalcSq(int area, int borderWidth) {
+		public double CalcSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return (CalcA(area)*SQRT3 - w*6) / (2+SQRT3); 
+			return (CalcA()*SQRT3 - w*6) / (2+SQRT3); 
 		}
 	}
 
@@ -303,9 +303,8 @@ public class SqTrHex extends BaseCell {
 
 	private PointDouble getOffest() {
 		AttrSqTrHex attr = getAttr();
-		int area = attr.getArea();
-		double a = attr.CalcA(area);
-		double h = attr.CalcH(area);
+		double a = attr.CalcA();
+		double h = attr.CalcH();
 
 		return new PointDouble(
 				(h*2+a  )*(coord.x/3) + a+h,
@@ -315,10 +314,9 @@ public class SqTrHex extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrSqTrHex attr = getAttr();
-		int area = attr.getArea();
-		double a = attr.CalcA(area);
+		double a = attr.CalcA();
 		double b = a/2;
-		double h = attr.CalcH(area);
+		double h = attr.CalcH();
 
 		PointDouble o = getOffest();
 		switch (direction) {
@@ -400,12 +398,11 @@ public class SqTrHex extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrSqTrHex attr = getAttr();
-		int area = attr.getArea();
-		double a = attr.CalcA(area);
+		double a = attr.CalcA();
 		double b = a/2;
-		double h = attr.CalcH(area);
+		double h = attr.CalcH();
 		double w = borderWidth/2.;
-		double sq = getAttr().CalcSq(area, borderWidth);
+		double sq = getAttr().CalcSq(borderWidth);
 		double sq2 = sq/2;
 
 		PointDouble o = getOffest();

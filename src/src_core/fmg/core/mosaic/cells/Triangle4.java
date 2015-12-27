@@ -48,10 +48,10 @@ public class Triangle4 extends BaseCell {
 		private final static ComplexityMode Mode = ComplexityMode.eOptimalMode; // TODO: check others to view...
 
 		@Override
-		public Size CalcOwnerSize(Size sizeField, int area) {
-			double b = CalcB(area);
-			double r = CalcRIn(area);
-			double R = CalcROut(area);
+		public Size getOwnerSize(Size sizeField) {
+			double b = CalcB();
+			double r = CalcRIn();
+			double R = CalcROut();
 			Size result = new Size(
 					(int)( b+b *((sizeField.width+2)/3) +
 					         b *((sizeField.width+0)/3)),
@@ -65,7 +65,7 @@ public class Triangle4 extends BaseCell {
 			case eMeanMode:
 			case eSimpeMode:
 				{
-					double u = CalcSnip(area)/2; // Snip * cos60
+					double u = CalcSnip()/2; // Snip * cos60
 					double c = u*SQRT3; // Snip * cos30
 					switch (sizeField.width%3) {
 					case 0: result.width -= u+u; break;
@@ -164,16 +164,16 @@ public class Triangle4 extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(3, 4); }
 		@Override
-		protected double CalcA   (int area) { return Math.sqrt(area*SQRT48); }
-		protected double CalcB   (int area) { return CalcA(area)/2; }
-		protected double CalcROut(int area) { return CalcA(area)/SQRT3; }
-		protected double CalcRIn (int area) { return CalcROut(area)/2; }
+		protected double CalcA   () { return Math.sqrt(getArea()*SQRT48); }
+		protected double CalcB   () { return CalcA()/2; }
+		protected double CalcROut() { return CalcA()/SQRT3; }
+		protected double CalcRIn () { return CalcROut()/2; }
 		//private double __snip  = 2.3456789 + new java.util.Random(java.util.UUID.randomUUID().hashCode()).nextInt(15);
-		protected double CalcSnip(int area) { return CalcA(area)/(/*12*/6.789012345 /*__snip*/); }
+		protected double CalcSnip() { return CalcA()/(/*12*/6.789012345 /*__snip*/); }
 		@Override
-		public double CalcSq(int area, int borderWidth) {
+		public double CalcSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return (CalcA(area)-w*2/TAN15)/(SQRT3+3);
+			return (CalcA()-w*2/TAN15)/(SQRT3+3);
 		}
 	}
 
@@ -734,12 +734,11 @@ public class Triangle4 extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrTriangle4 attr = getAttr();
-		int area = attr.getArea();
-		double a = attr.CalcA(area);
-		double b = attr.CalcB(area);
-		double R = attr.CalcROut(area);
-		double r = attr.CalcRIn(area);
-		double s = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? attr.CalcSnip(area) : 0;
+		double a = attr.CalcA();
+		double b = attr.CalcB();
+		double R = attr.CalcROut();
+		double r = attr.CalcRIn();
+		double s = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? attr.CalcSnip() : 0;
 		double c = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2*SQRT3 : 0; // s * cos30
 		double u = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2 : 0; // s * cos60
 
@@ -1071,9 +1070,8 @@ public class Triangle4 extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrTriangle4 attr = getAttr();
-		int area = attr.getArea();
 		double w = borderWidth/2.;
-		double sq    = attr.CalcSq(area, borderWidth);
+		double sq    = attr.CalcSq(borderWidth);
 		double sq2   = sq/2;
 		double sq2w  = sq2+w;
 		double sq2w3 = sq2+w/SQRT3;

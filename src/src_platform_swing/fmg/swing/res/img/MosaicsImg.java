@@ -38,14 +38,14 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
 	public int getIconWidth() {
 		BaseCell.BaseAttribute attr = getCellAttr();
 		Bound padding = getGraphicContext().getPadding();
-		return attr.CalcOwnerSize(getSizeField(), attr.getArea()).width+padding.getLeft()+padding.getRight();
+		return attr.getOwnerSize(getSizeField()).width+padding.getLeft()+padding.getRight();
 	}
 
 	@Override
 	public int getIconHeight() {
 		BaseCell.BaseAttribute attr = getCellAttr();
 		Bound padding = getGraphicContext().getPadding();
-		return attr.CalcOwnerSize(getSizeField(), attr.getArea()).height+padding.getTop()+padding.getBottom();
+		return attr.getOwnerSize(getSizeField()).height+padding.getTop()+padding.getBottom();
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
 			if (clr != null) {
 				Color tmp = g.getColor(); // save
 				g.setColor(clr); // change
-				Size pixelSize = getCellAttr().CalcOwnerSize(getSizeField(), getArea());
+				Size pixelSize = getCellAttr().getOwnerSize(getSizeField());
 				Bound padding = getGraphicContext().getPadding();
 				g.fillRect(0, 0, pixelSize.width+padding.getLeft()+padding.getRight(), pixelSize.height+padding.getTop()+padding.getBottom());
 				g.setColor(tmp); // restore

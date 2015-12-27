@@ -1398,7 +1398,7 @@ public class Main extends JFrame  {
 	 */
 	int CalcMaxArea(Size mosaicSizeField) {
 		Size sizeMosaic = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
-		return MosaicHelper.findAreaBySize(getMosaic().getCellAttr(), mosaicSizeField, sizeMosaic);
+		return MosaicHelper.findAreaBySize(getMosaic().getMosaicType(), mosaicSizeField, sizeMosaic);
 	}
 
 	/**
@@ -1408,7 +1408,7 @@ public class Main extends JFrame  {
 	 */
 	public Size CalcMaxMosaicSize(int area) {
 		Size sizeMosaic = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
-		return MosaicHelper.findSizeByArea(getMosaic().getCellAttr(), area, sizeMosaic);
+		return MosaicHelper.findSizeByArea(getMosaic().getCellAttr(), sizeMosaic);
 	}
 
 	/**
@@ -2171,7 +2171,7 @@ public class Main extends JFrame  {
 	private void ChangeSizeImagesMineFlag() {
 		Mosaic m = getMosaic();
 		GraphicContext gc = m.getGraphicContext();
-		int sq = (int)m.getCellAttr().CalcSq(m.getArea(), gc.getPenBorder().getWidth());
+		int sq = (int)m.getCellAttr().CalcSq(gc.getPenBorder().getWidth());
 		if (sq <= 0) {
 			System.err.println("Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");
 			sq = 3; // ат балды...

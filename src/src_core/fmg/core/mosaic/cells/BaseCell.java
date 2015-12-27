@@ -100,13 +100,13 @@ public abstract class BaseCell implements PropertyChangeListener {
 
 		/** пересчитать размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
 		 * на основе заданных параметров */
-		public abstract double CalcSq(int area, int borderWidth);
+		public abstract double CalcSq(int borderWidth);
 
 		/** пересчитать значение A (базовая величина фигуры - обычно это размер одной из сторон фигуры) по заданной площади фигуры */
-		protected abstract double CalcA(int area);
+		protected abstract double CalcA();
 
 		/** get parent container (owner window) size in pixels */
-		public abstract Size CalcOwnerSize(Size sizeField, int area);
+		public abstract Size getOwnerSize(Size sizeField);
 
 		/** размер поля из группы ячеек состоящих из разных direction */
 		public abstract Size GetDirectionSizeField();
@@ -131,93 +131,6 @@ public abstract class BaseCell implements PropertyChangeListener {
 		 */
 		public int getMaxBackgroundFillModeValue() {
 			return 19;
-		}
-
-		/**
-		 * Поиск больше-меньше
-		 * @param baseMin - стартовое значение для поиска
-		 * @param baseDelta - начало дельты приращения
-		 * @param func - ф-ция сравнения
-		 * @return что найдено
-		 */
-		static int Finder(int baseMin, int baseDelta, Comparable<Integer> func) {
-			double res = baseMin;
-			double d = baseDelta;
-			boolean deltaUp = true, lastSmall = true;
-			do {
-				if (deltaUp)
-					d *= 2;
-				else
-					d /= 2;
-
-				if (lastSmall)
-					res += d;
-				else
-					res -= d;
-
-				int z = func.compareTo((int)res);
-				if (z == 0)
-					return (int)res;
-				lastSmall = (z < 0);
-				deltaUp = deltaUp && lastSmall;
-			} while(d > 1);
-			return (int)res;
-		}
-
-		/** узнаю мах размер площади ячеек мозаики, при котором окно проекта вмещается в заданную область
-		 * @param mosaicSizeField - интересуемый размер (в ячейках) поля мозаики
-		 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
-		 * @return площадь ячейки
-		 */
-		public int CalcOptimalArea(int minStartArea, final Size mosaicSizeField, final Size sizeClient) {
-			return Finder(minStartArea, 53, new Comparable<Integer>() {
-				@Override
-				public int compareTo(Integer area) {
-					Size sizeWnd = CalcOwnerSize(mosaicSizeField, area);
-					if ((sizeWnd.width == sizeClient.width) &&
-					   (sizeWnd.height == sizeClient.height))
-					  return 0;
-					if ((sizeWnd.width <= sizeClient.width) &&
-						(sizeWnd.height <= sizeClient.height))
-						return -1;
-					return +1;
-				}
-			});
-		}
-
-		/**
-		 * узнаю max размер поля мозаики, при котором окно проекта вмещается в в заданную область
-		 * @param area - интересуемая площадь ячеек мозаики
-		 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
-		 * @return размер поля мозаики
-		 */
-		public Size CalcOptimalMosaicSize(final int area, final Size sizeClient) {
-			final Size result = new Size();
-			Finder(1, 10, new Comparable<Integer>() {
-				@Override
-				public int compareTo(Integer newWidth) {
-					result.width = newWidth;
-					Size sizeWnd = CalcOwnerSize(result, area);
-					if (sizeWnd.width == sizeClient.width)
-						return 0;
-					if (sizeWnd.width <= sizeClient.width)
-						return -1;
-					return +1;
-				}
-			});
-			Finder(1, 10, new Comparable<Integer>() {
-				@Override
-				public int compareTo(Integer newHeight) {
-					result.height = newHeight;
-					Size sizeWnd = CalcOwnerSize(result, area);
-					if (sizeWnd.width == sizeClient.height)
-						return 0;
-					if (sizeWnd.height <= sizeClient.height)
-						return -1;
-					return +1;
-				}
-			});
-			return result;
 		}
 
 	}

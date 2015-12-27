@@ -644,9 +644,13 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics> {
 	/** Максимальное кол-во мин при  текущем  размере поля */
 	public int GetMaxMines() { return GetMaxMines(getSizeField()); }
 	/** размер в пикселях для указанных параметров */
-	public Size CalcWindowSize(Size sizeField, int area) { return getCellAttr().CalcOwnerSize(sizeField, area); }
+	public Size getWindowSize(Size sizeField, int area) {
+		return (area == getArea())
+			? getCellAttr().getOwnerSize(sizeField)
+			: MosaicHelper.getOwnerSize(getMosaicType(), area, sizeField);
+	}
 	/** размер в пикселях */
-	public Size getWindowSize() { return CalcWindowSize(getSizeField(), getArea()); }
+	public Size getWindowSize() { return getWindowSize(getSizeField(), getArea()); }
 	/** узнать количество соседей для текущей мозаики */
 	public int GetMaxNeighborNumber() { return getCellAttr().getNeighborNumber(true); }
 

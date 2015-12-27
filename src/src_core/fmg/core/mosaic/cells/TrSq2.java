@@ -39,10 +39,10 @@ public class TrSq2 extends BaseCell {
 		}
 
 		@Override
-		public Size CalcOwnerSize(Size sizeField, int area) {
-			double a = CalcA(area);
-			double b = CalcB(area);
-			double h = CalcH(area);
+		public Size getOwnerSize(Size sizeField) {
+			double a = CalcA();
+			double b = CalcB();
+			double h = CalcH();
 			Size result = new Size(
 					(int)(b+h*((sizeField.width+2)/3)+
 					        a*((sizeField.width+1)/3)+
@@ -117,13 +117,13 @@ public class TrSq2 extends BaseCell {
 		public Size GetDirectionSizeField() { return new Size(6, 6); }
 		/** размер стороны треугольника и квадрата */
 		@Override
-		protected double CalcA(int area) { return Math.sqrt(6*area/(2+SQRT3)); }
-		protected double CalcB(int area) { return CalcA(area)/2; }
-		protected double CalcH(int area) { return CalcB(area)*SQRT3; }
+		protected double CalcA() { return Math.sqrt(6*getArea()/(2+SQRT3)); }
+		protected double CalcB() { return CalcA()/2; }
+		protected double CalcH() { return CalcB()*SQRT3; }
 		@Override
-		public double CalcSq(int area, int borderWidth) {
+		public double CalcSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return (CalcA(area)*SQRT3 - w*6) / (2+SQRT3) - 1; 
+			return (CalcA()*SQRT3 - w*6) / (2+SQRT3) - 1; 
 		}
 	}
 
@@ -419,12 +419,11 @@ public class TrSq2 extends BaseCell {
 		return neighborCoord;
 	}
 
-	private PointDouble getOffest() {
+	private PointDouble getOffset() {
 		AttrTrSq2 attr = getAttr();
-		int area = attr.getArea();
-		double a = attr.CalcA(area);
-		double b = attr.CalcB(area);
-		double h = attr.CalcH(area);
+		double a = attr.CalcA();
+		double b = attr.CalcB();
+		double h = attr.CalcH();
 
 		double oX = 0; // offset X
 		double oY = 0; // offset Y
@@ -445,12 +444,11 @@ public class TrSq2 extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrTrSq2 attr = getAttr();
-		int area = attr.getArea();
-		double a = attr.CalcA(area);
-		double b = attr.CalcB(area);
-		double h = attr.CalcH(area);
+		double a = attr.CalcA();
+		double b = attr.CalcB();
+		double h = attr.CalcH();
 
-		PointDouble o = getOffest();
+		PointDouble o = getOffset();
 		switch (direction) {
 		case 0: case 21:
 			region.setPoint(0, (int)(o.x - b  ), (int)(o.y - h  ));
@@ -554,16 +552,15 @@ public class TrSq2 extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrTrSq2 attr = getAttr();
-		int area = attr.getArea();
-		double a = attr.CalcA(area);
-		double b = attr.CalcB(area);
-		double h = attr.CalcH(area);
+		double a = attr.CalcA();
+		double b = attr.CalcB();
+		double h = attr.CalcH();
 		double w = borderWidth/2.;
-		double sq = attr.CalcSq(area, borderWidth);
+		double sq = attr.CalcSq(borderWidth);
 		double sq2 = sq/2;
 		double wsq2 = w+sq2;
 
-		PointDouble o = getOffest();
+		PointDouble o = getOffset();
 
 		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
 		switch (direction) {
