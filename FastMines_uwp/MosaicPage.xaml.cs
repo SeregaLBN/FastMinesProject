@@ -19,6 +19,7 @@ using FastMines.Common;
 using Log = FastMines.Common.LoggerSimple;
 using Size = fmg.common.geom.Size;
 using Thickness = Windows.UI.Xaml.Thickness;
+using fmg.core.mosaic;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace FastMines {
@@ -193,7 +194,7 @@ namespace FastMines {
 
       void AreaOptimal() {
          var sizePage = Window.Current.Bounds.ToFmRect().size();
-         Area = MosaicField.CellAttr.CalcOptimalArea(BaseCell.AREA_MINIMUM, MosaicField.SizeField, sizePage);
+         Area = MosaicHelper.FindAreaBySize(MosaicField.CellAttr, MosaicField.SizeField, sizePage);
       }
 
 

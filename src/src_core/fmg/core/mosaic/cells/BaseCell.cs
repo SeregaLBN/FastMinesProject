@@ -32,8 +32,6 @@ namespace fmg.core.mosaic.cells {
 
 /// <summary>Базовый класс фигуры-ячейки</summary>
 public abstract class BaseCell {
-   public const int AREA_MINIMUM = 230;
-
    public const double PI = 3.14159265358979323846; // Math.PI;
    public static readonly double SQRT2   = Math.Sqrt(2.0);
    public static readonly double SQRT3   = Math.Sqrt(3.0);
@@ -139,7 +137,7 @@ public abstract class BaseCell {
       /// <summary> узнаю мах размер площади ячеек мозаики, при котором вся мозаика помещается в заданную область </summary>
       /// <param name="mosaicSizeField">интересуемый размер (в ячейках) поля мозаики</param>
       /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
-      /// <returns>макс площадь ячейки</returns>
+      /// <returns>площадь ячейки</returns>
       public int CalcOptimalArea(int minStartArea, Size mosaicSizeField, Size sizeClient) {
          return Finder(minStartArea, 53,
             area => {
@@ -157,8 +155,8 @@ public abstract class BaseCell {
       /// <summary> узнаю max размер поля мозаики, при котором вся мозаика помещается в заданную область </summary>
       /// <param name="area">интересуемая площадь ячеек мозаики</param>
       /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
-      /// <returns>max размер поля мозаики</returns>
-      public Size CalcMaxMosaicSize(int area, Size sizeClient) {
+      /// <returns>размер поля мозаики</returns>
+      public Size CalcOptimalMosaicSize(int area, Size sizeClient) {
          var result = new Size();
          Finder(1, 10, newWidth => {
             result.width = newWidth;

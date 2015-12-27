@@ -6,6 +6,7 @@ using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.uwp.res.img;
 using fmg.core.mosaic.cells;
+using fmg.core.mosaic;
 
 namespace FastMines.DataModel.Items {
 
@@ -68,7 +69,7 @@ namespace FastMines.DataModel.Items {
          {
             if (SetProperty(ref _imageSize, value)) {
                MosaicsImg mosaicImage = MosaicImage;
-               int area = mosaicImage.CellAttr.CalcOptimalArea(BaseCell.AREA_MINIMUM, mosaicImage.SizeField, new Size(value, value));
+               int area = MosaicHelper.FindAreaBySize(mosaicImage.CellAttr, mosaicImage.SizeField, new Size(value, value));
                mosaicImage.Area = area * ZoomKoef;
             }
          }
