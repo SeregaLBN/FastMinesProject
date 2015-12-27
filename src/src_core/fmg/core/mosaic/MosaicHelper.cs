@@ -5,9 +5,8 @@ using fmg.core.mosaic.cells;
 
 namespace fmg.core.mosaic {
 
-/// <summary>‘абрика дл€ создани€ экземпл€ров класса €чеек и их атрибутов</summary>
-public static class CellFactory {
-   private static string GetPackageName() { return typeof (CellFactory).Namespace; }
+public static class MosaicHelper {
+   private static string GetPackageName() { return typeof (MosaicHelper).Namespace; }
 
    /// <summary>—оздать экземпл€р атрибута дл€ конкретного типа мозаики</summary>
 	public static BaseCell.BaseAttribute CreateAttributeInstance(EMosaic mosaicType, int area) {

@@ -69,7 +69,7 @@ namespace fmg.core.mosaic {
             throw new ArgumentException("Bad argument - support only null value!");
          _cellAttr = null;
       }
-      get { return _cellAttr ?? (_cellAttr = CellFactory.CreateAttributeInstance(MosaicType, Area)); }
+      get { return _cellAttr ?? (_cellAttr = MosaicHelper.CreateAttributeInstance(MosaicType, Area)); }
    }
 
    public abstract ICellPaint<TPaintable> CellPaint { get; }
@@ -123,7 +123,7 @@ namespace fmg.core.mosaic {
             (Matrix as List<BaseCell>).Capacity = _size.width*_size.height;
             for (var i = 0; i < _size.width; i++)
                for (var j = 0; j < _size.height; j++) {
-                  var cell = CellFactory.CreateCellInstance(attr, _mosaicType, new Coord(i, j));
+                  var cell = MosaicHelper.CreateCellInstance(attr, _mosaicType, new Coord(i, j));
                   Matrix.Add( /*i*size.height + j, */cell);
 
                   // подписываю новые ячейки на уведомления атрибута (изменение a -> перерасчёт координат)

@@ -194,7 +194,7 @@ namespace FastMines {
          sizeField.height += Random.Next()%3;
          sizeField.width += Random.Next()%2;
          const int bound = 3;
-         var area = CellFactory.CreateAttributeInstance(mosaicType, 0).CalcOptimalArea(250, sizeField, new Size(w - bound*2, h - bound*2));
+         var area = MosaicHelper.CreateAttributeInstance(mosaicType, 0).CalcOptimalArea(250, sizeField, new Size(w - bound*2, h - bound*2));
          var img = Resources.GetImgMosaic(mosaicType, sizeField, area, bkClr, new Bound(bound, bound, bound, bound));
          var bmp = img.GetImage(false);
          if ((bmp.PixelWidth==w) && (bmp.PixelHeight==h))

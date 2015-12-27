@@ -58,7 +58,7 @@ namespace fmg.uwp.res.img {
 
       public BaseCell getCell(Coord coord) { return Matrix[coord.x * SizeField.height + coord.y]; }
 
-      public BaseCell.BaseAttribute CellAttr => _attr ?? (_attr = CellFactory.CreateAttributeInstance(MosaicType, Area));
+      public BaseCell.BaseAttribute CellAttr => _attr ?? (_attr = MosaicHelper.CreateAttributeInstance(MosaicType, Area));
 
       public ICellPaint<PaintableBmp> CellPaint => CellPaintBitmap;
       protected CellPaintBmp CellPaintBitmap => _cellPaint ?? (_cellPaint = new CellPaintBmp());
@@ -75,7 +75,7 @@ namespace fmg.uwp.res.img {
                var size = SizeField;
                for (var i = 0; i < size.width; i++)
                   for (var j = 0; j < size.height; j++)
-                     _matrix.Add(CellFactory.CreateCellInstance(attr, type, new Coord(i, j)));
+                     _matrix.Add(MosaicHelper.CreateCellInstance(attr, type, new Coord(i, j)));
             }
             return _matrix;
          }
