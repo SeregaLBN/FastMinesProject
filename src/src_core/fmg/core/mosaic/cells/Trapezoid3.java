@@ -24,6 +24,7 @@
 package fmg.core.mosaic.cells;
 
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
@@ -39,22 +40,22 @@ public class Trapezoid3 extends BaseCell {
 		}
 
 		@Override
-		public Size getOwnerSize(Size sizeField) {
+		public Size getOwnerSize(Matrisize sizeField) {
 			double a = getA();
 			double b = getB();
 			double R = getROut();
 			Size result = new Size(
-					(int)(  R *((sizeField.width+1)/2)),
-					(int)(a+b *((sizeField.height+1)/2)+
-					        a *((sizeField.height+0)/2)));
+					(int)(  R *((sizeField.m+1)/2)),
+					(int)(a+b *((sizeField.n+1)/2)+
+					        a *((sizeField.n+0)/2)));
 
-			if (sizeField.width == 1)
-				switch (sizeField.height % 4) {
+			if (sizeField.m == 1)
+				switch (sizeField.n % 4) {
 				case 0: result.height -= a; break;
 				case 3: result.height -= a*1.5; break;
 				}
-			if (sizeField.height == 1)
-				if ((sizeField.width & 1) == 1)
+			if (sizeField.n == 1)
+				if ((sizeField.m & 1) == 1)
 					result.width -= getRIn();
 
 			return result;

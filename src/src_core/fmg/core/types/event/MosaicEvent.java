@@ -2,7 +2,7 @@ package fmg.core.types.event;
 
 import java.util.EventObject;
 
-import fmg.common.geom.Size;
+import fmg.common.geom.Matrisize;
 import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EGameStatus;
@@ -91,14 +91,14 @@ public class MosaicEvent extends EventObject {
 
 	public static class ChangedMosaicSizeEvent extends MosaicEvent {
 		private static final long serialVersionUID = 1L;
-		Size oldSize;
+		Matrisize oldSize;
 
-		public ChangedMosaicSizeEvent(MosaicBase source, Size oldSize) {
+		public ChangedMosaicSizeEvent(MosaicBase source, Matrisize oldSize) {
 			super(source);
 			this.oldSize = oldSize;
 		}
 	
-		public Size getOldSize() {
+		public Matrisize getOldSize() {
 			return oldSize;
 		}
 	}

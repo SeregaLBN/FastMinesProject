@@ -27,6 +27,7 @@ import java.util.Map;
 
 import fmg.common.Color;
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.Point;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
@@ -42,11 +43,11 @@ public class Square1 extends BaseCell {
 		}
 
 		@Override
-		public Size getOwnerSize(Size sizeField) {
+		public Size getOwnerSize(Matrisize sizeField) {
 			double a = getA(); // размер стороны квадрата
 			Size result = new Size(
-					(int)(sizeField.width * a),
-					(int)(sizeField.height * a));
+					(int)(sizeField.m * a),
+					(int)(sizeField.n * a));
 			return result;
 		}
 	

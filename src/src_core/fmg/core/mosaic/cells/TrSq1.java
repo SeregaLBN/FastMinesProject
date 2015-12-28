@@ -24,6 +24,7 @@
 package fmg.core.mosaic.cells;
 
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
@@ -39,23 +40,23 @@ public class TrSq1 extends BaseCell {
 		}
 
 		@Override
-		public Size getOwnerSize(Size sizeField) {
+		public Size getOwnerSize(Matrisize sizeField) {
 			double b = getB();
 			double k = getK();
 			double n = getN();
 			double m = getM();
 			Size result = new Size(
-					(int)(b+n*((sizeField.width-1+2)/3)+
-					        k*((sizeField.width-1+1)/3)+
-					        m*((sizeField.width-1+0)/3)),
-					(int)(b+n* (sizeField.height-1)));
+					(int)(b+n*((sizeField.m-1+2)/3)+
+					        k*((sizeField.m-1+1)/3)+
+					        m*((sizeField.m-1+0)/3)),
+					(int)(b+n* (sizeField.n-1)));
 
-			if (sizeField.height == 1) {
-				if ((sizeField.width % 3) == 2) result.width -= m;
-				if ((sizeField.width % 3) == 0) result.width -= k;
+			if (sizeField.n == 1) {
+				if ((sizeField.m % 3) == 2) result.width -= m;
+				if ((sizeField.m % 3) == 0) result.width -= k;
 			}
-			if (sizeField.width == 1)
-				if ((sizeField.height & 1) == 0)
+			if (sizeField.m == 1)
+				if ((sizeField.n & 1) == 0)
 					result.height -= m;
 
 			return result;

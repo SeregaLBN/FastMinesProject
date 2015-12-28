@@ -24,6 +24,7 @@
 package fmg.core.mosaic.cells;
 
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
@@ -39,14 +40,14 @@ public class Triangle3 extends BaseCell {
 		}
 
 		@Override
-		public Size getOwnerSize(Size sizeField) {
+		public Size getOwnerSize(Matrisize sizeField) {
 			double a = getA();
 			Size result = new Size(
-					(int)(a * ((sizeField.width+1)>>1)),
-					(int)(a * ((sizeField.height+1)>>1)));
+					(int)(a * ((sizeField.m+1)>>1)),
+					(int)(a * ((sizeField.n+1)>>1)));
 
-			if (sizeField.width == 1)
-				if ((sizeField.height & 1) == 1)
+			if (sizeField.m == 1)
+				if ((sizeField.n & 1) == 1)
 					result.height -= a*0.5;
 
 			return result;

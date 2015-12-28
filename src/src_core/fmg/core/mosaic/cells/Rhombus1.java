@@ -27,6 +27,7 @@ import java.util.Map;
 
 import fmg.common.Color;
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
@@ -42,20 +43,20 @@ public class Rhombus1 extends BaseCell {
 		}
 
 		@Override
-		public Size getOwnerSize(Size sizeField) {
+		public Size getOwnerSize(Matrisize sizeField) {
 			double a = getA();
 			double r = getR();
 			double c = getC();
 			Size result = new Size(
-					(int)(c+a   *((sizeField.width+2)/3) +
-					       (a+c)*((sizeField.width+1)/3) +
-					          c *((sizeField.width+0)/3)),
-					(int)(    r * (sizeField.height+1)));
+					(int)(c+a   *((sizeField.m+2)/3) +
+					       (a+c)*((sizeField.m+1)/3) +
+					          c *((sizeField.m+0)/3)),
+					(int)(    r * (sizeField.n+1)));
 
-			if (sizeField.width == 1)
+			if (sizeField.m == 1)
 				result.height -= r;
-			if (sizeField.height == 1)
-				switch (sizeField.width % 3) {
+			if (sizeField.n == 1)
+				switch (sizeField.m % 3) {
 				case 0: result.width -= a/2; break;
 				case 2: result.width -= a; break;
 				}

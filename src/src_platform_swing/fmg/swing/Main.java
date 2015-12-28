@@ -69,6 +69,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import fmg.common.Pair;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
 import fmg.core.mosaic.MosaicBase;
@@ -996,7 +997,7 @@ public class Main extends JFrame  {
 
 	ESkillLevel getSkillLevel() {
 		EMosaic eMosaic = getMosaic().getMosaicType();
-		Size sizeFld    = getMosaic().getSizeField();
+		Matrisize sizeFld = getMosaic().getSizeField();
 		int numberMines = getMosaic().getMinesCount();
 
 		if (sizeFld.equals(ESkillLevel.eBeginner.DefaultSize()) && (numberMines == ESkillLevel.eBeginner.GetNumberMines(eMosaic)))
@@ -1266,11 +1267,11 @@ public class Main extends JFrame  {
 	}
 
 	/** Попытаться установить новый размер на мозаику (при возможности, сохраняя ESkillLevel) */
-	boolean setMosaicSizeField(Size newSize) {
+	boolean setMosaicSizeField(Matrisize newSize) {
 		//System.out.println("setMosaicSizeField: newSize=" + newSize);
 
 		// 1. Проверяю валидность нового размера
-		if ((newSize.width < 1) || (newSize.height < 1)) {
+		if ((newSize.m < 1) || (newSize.n < 1)) {
 			Beep();
 			return false;
 		}
@@ -1319,7 +1320,7 @@ public class Main extends JFrame  {
 	}
 
 	/** Поменять игру на новый размер & кол-во мин */
-	public void SetGame(Size sizeField, int numberMines) {
+	public void SetGame(Matrisize sizeField, int numberMines) {
 		if (isPaused())
 			ChangePause(new AWTEvent(this, 0) { private static final long serialVersionUID = 1L; });
 
@@ -1336,7 +1337,7 @@ public class Main extends JFrame  {
 			ChangePause(e);
 
 		int numberMines;
-		Size sizeFld;
+		Matrisize sizeFld;
 		if (skill == ESkillLevel.eCustom) {
 			//System.out.println("... dialog box 'Select custom skill level...' ");
 			getCustomSkillDialog().setVisible(!getCustomSkillDialog().isVisible());
@@ -1396,7 +1397,7 @@ public class Main extends JFrame  {
 	 * @param mosaicSizeField - интересуемый размер поля мозаики
 	 * @return макс площадь ячейки
 	 */
-	int CalcMaxArea(Size mosaicSizeField) {
+	int CalcMaxArea(Matrisize mosaicSizeField) {
 		Size sizeMosaic = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
 		return MosaicHelper.findAreaBySize(getMosaic().getMosaicType(), mosaicSizeField, sizeMosaic);
 	}
@@ -1406,7 +1407,7 @@ public class Main extends JFrame  {
 	 * @param area - интересуемая площадь ячеек мозаики
 	 * @return max размер поля мозаики
 	 */
-	public Size CalcMaxMosaicSize(int area) {
+	public Matrisize CalcMaxMosaicSize(int area) {
 		Size sizeMosaic = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
 		return MosaicHelper.findSizeByArea(getMosaic().getCellAttr(), sizeMosaic);
 	}
@@ -2115,8 +2116,8 @@ public class Main extends JFrame  {
 					private static final long serialVersionUID = 1L;
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						Size size = Main.this.getMosaic().getSizeField();
-						size.width++;
+						Matrisize size = Main.this.getMosaic().getSizeField();
+						size.m++;
 						Main.this.setMosaicSizeField(size);
 					}
 				};
@@ -2129,8 +2130,8 @@ public class Main extends JFrame  {
 					private static final long serialVersionUID = 1L;
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						Size size = Main.this.getMosaic().getSizeField();
-						size.width--;
+						Matrisize size = Main.this.getMosaic().getSizeField();
+						size.m--;
 						Main.this.setMosaicSizeField(size);
 					}
 				};
@@ -2143,8 +2144,8 @@ public class Main extends JFrame  {
 					private static final long serialVersionUID = 1L;
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						Size size = Main.this.getMosaic().getSizeField();
-						size.height++;
+						Matrisize size = Main.this.getMosaic().getSizeField();
+						size.n++;
 						Main.this.setMosaicSizeField(size);
 					}
 				};
@@ -2157,8 +2158,8 @@ public class Main extends JFrame  {
 					private static final long serialVersionUID = 1L;
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						Size size = Main.this.getMosaic().getSizeField();
-						size.height--;
+						Matrisize size = Main.this.getMosaic().getSizeField();
+						size.n--;
 						Main.this.setMosaicSizeField(size);
 					}
 				};

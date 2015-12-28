@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.Size;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicBase;
@@ -43,7 +44,7 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
 	public Mosaic() {
 		super();
 	}
-	public Mosaic(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
+	public Mosaic(Matrisize sizeField, EMosaic mosaicType, int minesCount, int area) {
 		super(sizeField, mosaicType, minesCount, area);
 	}
 
@@ -100,7 +101,7 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
 	}
 
 	@Override
-	public void setParams(Size newSizeField, EMosaic newMosaicType, Integer newMinesCount) {
+	public void setParams(Matrisize newSizeField, EMosaic newMosaicType, Integer newMinesCount) {
 		if (this._mosaicType != newMosaicType)
 			_cellPaint = null;
 		
@@ -244,7 +245,7 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
 		return _mosaicMouseListener;
 	}
 
-	protected void initialize(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
+	protected void initialize(Matrisize sizeField, EMosaic mosaicType, int minesCount, int area) {
 		this.getContainer().setFocusable(true); // иначе не будет срабатывать FocusListener
 
 		this.getContainer().addMouseListener(getMosaicMouseListeners());

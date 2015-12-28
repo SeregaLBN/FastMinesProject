@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Random;
 
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.Size;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EClose;
@@ -52,7 +53,7 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics> {
 	/** матрица List &lt; List &lt; BaseCell &gt; &gt; , представленная(развёрнута) в виде вектора */
 	protected List<BaseCell> _matrix = new ArrayList<BaseCell>(0);
 	/** размер поля в ячейках */
-	protected Size _size = new Size(0, 0);
+	protected Matrisize _size = new Matrisize(0, 0);
 	/** из каких фигур состоит мозаика поля */
 	protected EMosaic _mosaicType = EMosaic.eMosaicSquare1;
 	/** кол-во мин на поле */
@@ -90,10 +91,10 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics> {
 
 	/** размер поля в ячейках */
 	@Override
-	public Size getSizeField() { return new Size(_size); } // return clone
+	public Matrisize getSizeField() { return new Matrisize(_size); } // return clone
 	/** размер поля в ячейках */
 	@Override
-	public void setSizeField(Size newSizeField) { setParams(newSizeField, null, null ); } 
+	public void setSizeField(Matrisize newSizeField) { setParams(newSizeField, null, null ); } 
 
 	/** узнать тип мозаики */
 	@Override
@@ -105,7 +106,7 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics> {
 	public void setMinesCount(int newMinesCount    ) { setParams(null, null, newMinesCount); }
 
 	/** установить мозаику заданного размера, типа  и с определённым количеством мин (координаты мин могут задаваться с помощью "Хранилища Мин") */
-	public void setParams(Size newSizeField, EMosaic newMosaicType, Integer newMinesCount, List<Coord> storageCoordMines) {
+	public void setParams(Matrisize newSizeField, EMosaic newMosaicType, Integer newMinesCount, List<Coord> storageCoordMines) {
 		try {
 			//repositoryMines.Reset();
 			if ((getMosaicType() == newMosaicType) &&
@@ -116,7 +117,7 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics> {
 			}
 
 			EMosaic oldMosaicType = this._mosaicType;
-			Size oldMosaicSize = this._size;
+			Matrisize oldMosaicSize = this._size;
 			boolean isNewMosaic = (newMosaicType != null) && (newMosaicType != this._mosaicType);
 			boolean isNewSizeFld = (newSizeField != null) && !newSizeField.equals(this._size);
 
@@ -147,10 +148,10 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics> {
 
 				_matrix.clear();
 				//_matrix = new ArrayList<BaseCell>(_size.width*_size.height);
-				for (int i=0; i < _size.width; i++)
-					for (int j=0; j < _size.height; j++) {
+				for (int i=0; i < _size.m; i++)
+					for (int j=0; j < _size.n; j++) {
 						BaseCell cell = MosaicHelper.createCellInstance(attr, _mosaicType, new Coord(i, j));
-						_matrix.add(i*_size.height + j, cell);
+						_matrix.add(i*_size.n + j, cell);
 						attr.addPropertyChangeListener(cell); // подписываю новые ячейки на уведомления атрибута (изменение a -> перерасчёт координат)
 					}
 	
@@ -174,8 +175,7 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics> {
 	}
 
 	/** установить мозаику заданного размера, типа и с определённым количеством мин */
-	public void setParams(Size sizeField, EMosaic mosaicType, Integer minesCount)
-	{
+	public void setParams(Matrisize sizeField, EMosaic mosaicType, Integer minesCount) {
 		setParams(sizeField, mosaicType, minesCount, null);
 	}
 
@@ -255,7 +255,7 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics> {
 	public void setCountClick(int clickCount)  { _countClick=clickCount; getMosaicListeners().fireOnChangedCounters(new MosaicEvent.ChangedCountersEvent(this)); }
 
 	/** доступ к заданной ячейке */
-	public BaseCell getCell(int x, int y) { return _matrix.get(x*_size.height + y); }
+	public BaseCell getCell(int x, int y) { return _matrix.get(x*_size.n + y); }
 	/** доступ к заданной ячейке */
 	@Override
 	public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
@@ -507,8 +507,8 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics> {
 			if (result.endGame) {
 				GameEnd(result.victory);
 			} else {
-				Size sizeField = getSizeField();
-				if ((getCountOpen() + getMinesCount()) == sizeField.width*sizeField.height) {
+				Matrisize sizeField = getSizeField();
+				if ((getCountOpen() + getMinesCount()) == sizeField.m*sizeField.n) {
 					GameEnd(true);
 				} else {
 					VerifyFlag();
@@ -636,15 +636,15 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics> {
 	public boolean getUseUnknown() { return _useUnknown; }
 
 	/** Максимальное кол-во мин при указанном размере поля */
-	public int GetMaxMines(Size sizeFld) {
+	public int GetMaxMines(Matrisize sizeFld) {
 		int iMustFreeCell = GetMaxNeighborNumber()+1;
-		int iMaxMines = sizeFld.width*sizeFld.height-iMustFreeCell;
+		int iMaxMines = sizeFld.m*sizeFld.n-iMustFreeCell;
 		return Math.max(1, iMaxMines);
 	}
 	/** Максимальное кол-во мин при  текущем  размере поля */
 	public int GetMaxMines() { return GetMaxMines(getSizeField()); }
 	/** размер в пикселях для указанных параметров */
-	public Size getWindowSize(Size sizeField, int area) {
+	public Size getWindowSize(Matrisize sizeField, int area) {
 		return (area == getArea())
 			? getCellAttr().getOwnerSize(sizeField)
 			: MosaicHelper.getOwnerSize(getMosaicType(), area, sizeField);
@@ -664,7 +664,7 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics> {
 		initialize();
 	}
 	/** Mosaic field: класс окна мозаики поля */
-	public MosaicBase(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
+	public MosaicBase(Matrisize sizeField, EMosaic mosaicType, int minesCount, int area) {
 		initialize(sizeField, mosaicType, minesCount, area);
 	}
 
@@ -677,11 +677,11 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics> {
 	}
 
 	protected void initialize() {
-		initialize(new Size(10, 10),
+		initialize(new Matrisize(10, 10),
 				EMosaic.eMosaicSquare1,//EMosaic.eMosaicPenrousePeriodic1, // 
 				15, AREA_MINIMUM*10);
 	}
-	protected void initialize(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
+	protected void initialize(Matrisize sizeField, EMosaic mosaicType, int minesCount, int area) {
 		setParams(sizeField, mosaicType, minesCount);
 		setArea(area); // ...провера на валидность есть только при установке из класса Main. Так что, не нуна тут задавать громадные велечины.
 	}

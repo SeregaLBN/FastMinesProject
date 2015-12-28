@@ -27,6 +27,7 @@ import java.util.Map;
 
 import fmg.common.Color;
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
@@ -42,70 +43,70 @@ public class PentagonT5 extends BaseCell {
 		}
 
 		@Override
-		public Size getOwnerSize(Size sizeField) {
+		public Size getOwnerSize(Matrisize sizeField) {
 			double a = getA();
 			double h = getH();
 			Size result = new Size(
 					(int)(a*3.5 +
-					      a*2.0*((sizeField.width+13)/14) +
-					      a    *((sizeField.width+12)/14) +
-					      a*1.5*((sizeField.width+11)/14) +
-					      a*2.0*((sizeField.width+10)/14) +
-					      a    *((sizeField.width+ 9)/14) +
-					      a*1.5*((sizeField.width+ 8)/14) +
-					      a*2.0*((sizeField.width+ 7)/14) +
-					      a    *((sizeField.width+ 6)/14) +
-					      a*1.5*((sizeField.width+ 5)/14) +
-					      a*2.0*((sizeField.width+ 4)/14) +
-					      a    *((sizeField.width+ 3)/14) +
-					      a*2.0*((sizeField.width+ 2)/14) +
-					      a    *((sizeField.width+ 1)/14) +
-					      a*1.5*((sizeField.width+ 0)/14)),
+					      a*2.0*((sizeField.m+13)/14) +
+					      a    *((sizeField.m+12)/14) +
+					      a*1.5*((sizeField.m+11)/14) +
+					      a*2.0*((sizeField.m+10)/14) +
+					      a    *((sizeField.m+ 9)/14) +
+					      a*1.5*((sizeField.m+ 8)/14) +
+					      a*2.0*((sizeField.m+ 7)/14) +
+					      a    *((sizeField.m+ 6)/14) +
+					      a*1.5*((sizeField.m+ 5)/14) +
+					      a*2.0*((sizeField.m+ 4)/14) +
+					      a    *((sizeField.m+ 3)/14) +
+					      a*2.0*((sizeField.m+ 2)/14) +
+					      a    *((sizeField.m+ 1)/14) +
+					      a*1.5*((sizeField.m+ 0)/14)),
 					(int)(h*5  +
-					      h*2  *((sizeField.height+ 5)/ 6) +
-					      h*2  *((sizeField.height+ 4)/ 6) +
-					      h*2  *((sizeField.height+ 3)/ 6) +
-					      h*3  *((sizeField.height+ 2)/ 6) +
-					      h*2  *((sizeField.height+ 1)/ 6) +
-					      h*3  *((sizeField.height+ 0)/ 6)));
+					      h*2  *((sizeField.n+ 5)/ 6) +
+					      h*2  *((sizeField.n+ 4)/ 6) +
+					      h*2  *((sizeField.n+ 3)/ 6) +
+					      h*3  *((sizeField.n+ 2)/ 6) +
+					      h*2  *((sizeField.n+ 1)/ 6) +
+					      h*3  *((sizeField.n+ 0)/ 6)));
 
 			// когда размер поля мал...
-			if (sizeField.width < 14) { // ...нужно вычислять не только по общей формуле, а и убрать остатки снизу..
-				if ((sizeField.height & 1) == 0) {
-					if (sizeField.width < 11) result.height -= h;
-					if (sizeField.width <  8) result.height -= h;
-					if (sizeField.width <  5) result.height -= h;
-					if (sizeField.width <  2) result.height -= h;
+			if (sizeField.m < 14) { // ...нужно вычислять не только по общей формуле, а и убрать остатки снизу..
+				if ((sizeField.n & 1) == 0) {
+					if (sizeField.m < 11) result.height -= h;
+					if (sizeField.m <  8) result.height -= h;
+					if (sizeField.m <  5) result.height -= h;
+					if (sizeField.m <  2) result.height -= h;
 				} else {
-					if (sizeField.width < 10) result.height -= h;
-					if (sizeField.width <  7) result.height -= h;
-					if (sizeField.width <  4) result.height -= h;
+					if (sizeField.m < 10) result.height -= h;
+					if (sizeField.m <  7) result.height -= h;
+					if (sizeField.m <  4) result.height -= h;
 				}
-				if ((sizeField.height+5)%6 == 0) // y == 1 7 13 ..
-					if (sizeField.width < 13) result.height -= h;
+				if ((sizeField.n+5)%6 == 0) // y == 1 7 13 ..
+					if (sizeField.m < 13) result.height -= h;
 			}
-			if (sizeField.height < 5) { // .. и справа
-				switch (sizeField.height) {
+			if (sizeField.n < 5) { // .. и справа
+				switch (sizeField.n) {
 				case 1:
-					switch (sizeField.width % 14) {
+					switch (sizeField.m % 14) {
 					default: result.width -= 3*a; 	  break;
 					case 12: result.width -= 3*a+a/2; break;
 					case 13: result.width -= 3*a-a/2; break;
 					} break;
 				case 2:
-					switch (sizeField.width % 14) {
+					switch (sizeField.m % 14) {
 					default: result.width -= 3*a;     break;
 					case 12: result.width -= 3*a+a/2; break;
 					case 13: result.width -= 3*a-a/2; break;
 					case  0: result.width -= 1.5*a;   break;
 					} break;
 				case 3:
-					switch (sizeField.width % 14) {
+					switch (sizeField.m % 14) {
 					default: result.width -= 1.5*a; break;
 					case 12: result.width -=   2*a; break;
 					} break;
 				case 4:
-					switch (sizeField.width % 14) {
+					switch (sizeField.m % 14) {
 					default: result.width -= 1.5*a; break;
 					case 12: result.width -=   2*a; break;
 					case 13: result.width -=   1*a; break;

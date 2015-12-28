@@ -24,6 +24,7 @@
 package fmg.core.mosaic.cells;
 
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
 
@@ -38,14 +39,14 @@ public class PentagonT24 extends BaseCell {
 		}
 
 		@Override
-		public Size getOwnerSize(Size sizeField) {
+		public Size getOwnerSize(Matrisize sizeField) {
 			double a = getA();
 			double b = getB();
 			Size result = new Size(
-					(int)(b + sizeField.width * a),
-					(int)(b + sizeField.height * a));
+					(int)(b + sizeField.m * a),
+					(int)(b + sizeField.n * a));
 
-			if (sizeField.height == 1)
+			if (sizeField.n == 1)
 				result.width -= getC();
 
 				return result;

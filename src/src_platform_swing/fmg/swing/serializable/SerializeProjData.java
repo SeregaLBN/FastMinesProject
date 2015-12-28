@@ -12,8 +12,8 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.UUID;
 
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.Point;
-import fmg.common.geom.Size;
 import fmg.core.types.EMosaic;
 import fmg.data.controller.types.ESkillLevel;
 import fmg.data.view.draw.EShowElement;
@@ -23,7 +23,7 @@ import fmg.swing.Main;
 public class SerializeProjData implements Externalizable {
 	private static final long version = Main.serialVersionUID;
 
-	private Size sizeField;
+	private Matrisize sizeField;
 	private EMosaic mosaicType;
 	private int minesCount;
 	private int area;
@@ -72,8 +72,8 @@ public class SerializeProjData implements Externalizable {
 
 		out.writeInt(area);
 		out.writeInt(mosaicType.getIndex());
-		out.writeInt(sizeField.width);
-		out.writeInt(sizeField.height);
+		out.writeInt(sizeField.m);
+		out.writeInt(sizeField.n);
 		out.writeInt(minesCount);
 
 		out.writeBoolean(activeUserId != null);
@@ -98,7 +98,7 @@ public class SerializeProjData implements Externalizable {
 
 		area = in.readInt();
 		mosaicType = EMosaic.fromIndex(in.readInt());
-		sizeField = new Size(in.readInt(), in.readInt());
+		sizeField = new Matrisize(in.readInt(), in.readInt());
 		minesCount = in.readInt();
 
 		if (in.readBoolean())
@@ -147,8 +147,8 @@ public class SerializeProjData implements Externalizable {
 		return new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "Mines.dat");
 	}
 
-	public Size getSizeField() { return sizeField; }
-	public void setSizeField(Size sizeField) { this.sizeField = sizeField; }
+	public Matrisize getSizeField() { return sizeField; }
+	public void setSizeField(Matrisize sizeField) { this.sizeField = sizeField; }
 
 	public EMosaic getMosaicType() { return mosaicType; }
 	public void setMosaicType(EMosaic mosaicType) { this.mosaicType = mosaicType; }

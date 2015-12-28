@@ -27,6 +27,7 @@ import java.util.Map;
 
 import fmg.common.Color;
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
@@ -42,31 +43,31 @@ public class PentagonT10 extends BaseCell {
 		}
 
 		@Override
-		public Size getOwnerSize(Size sizeField) {
+		public Size getOwnerSize(Matrisize sizeField) {
 			double a = getA();
 			Size result = new Size(
 					(int)(2*a +
-					      5*a*((sizeField.width+1)/2) +
-					        a*((sizeField.width+0)/2)),
+					      5*a*((sizeField.m+1)/2) +
+					        a*((sizeField.m+0)/2)),
 					(int)(2*a +
-					      3*a*((sizeField.height+2)/3) +
-					      3*a*((sizeField.height+1)/3) +
-					        a*((sizeField.height+0)/3)));
+					      3*a*((sizeField.n+2)/3) +
+					      3*a*((sizeField.n+1)/3) +
+					        a*((sizeField.n+0)/3)));
 
-			if (sizeField.height == 1)
-				if ((sizeField.width & 1) == 1)
+			if (sizeField.n == 1)
+				if ((sizeField.m & 1) == 1)
 					result.width -= 3*a;
 				else
 					result.width -= a;
-			if (sizeField.height == 2)
-				if ((sizeField.width & 1) == 1)
+			if (sizeField.n == 2)
+				if ((sizeField.m & 1) == 1)
 					result.width -= 2*a;
 				else
 					result.width -= a;
 
-			if (sizeField.width == 1)
-				if (((sizeField.height % 6) == 4) ||
-					((sizeField.height % 6) == 5))
+			if (sizeField.m == 1)
+				if (((sizeField.n % 6) == 4) ||
+					((sizeField.n % 6) == 5))
 					result.height -= 2*a;
 
 			return result;

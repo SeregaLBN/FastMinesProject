@@ -1,7 +1,7 @@
 ﻿namespace fmg.common.geom {
 
    /// <summary>
-   /// Matrix size.
+   /// Matrix Size - a new dimension for the particular type of matrix, so as not to be confused with the similar types Size / Dimension (size in pixels).
    /// m rows × n columns.
    /// Ввёл отдельный тип для размерности матрицы, чтобы не путать со похожими типами Size/Dimension (размеры в пикселях)
    /// </summary>

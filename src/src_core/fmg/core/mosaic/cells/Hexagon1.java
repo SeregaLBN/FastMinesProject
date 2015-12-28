@@ -24,6 +24,7 @@
 package fmg.core.mosaic.cells;
 
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
@@ -39,13 +40,13 @@ public class Hexagon1 extends BaseCell {
 		}
 
 		@Override
-		public Size getOwnerSize(Size sizeField) {
+		public Size getOwnerSize(Matrisize sizeField) {
 			double a = getA();
 			Size result = new Size(
-					(int)(a * (sizeField.width    +0.5) * SQRT3),
-					(int)(a * (sizeField.height*1.5+0.5)));
+					(int)(a * (sizeField.m    +0.5) * SQRT3),
+					(int)(a * (sizeField.n*1.5+0.5)));
 
-			if (sizeField.height == 1)
+			if (sizeField.n == 1)
 				result.width -= getB()/2;
 
 			return result;

@@ -30,6 +30,7 @@ import java.util.stream.IntStream;
 
 import fmg.common.Color;
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.Point;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Region;
@@ -106,7 +107,7 @@ public abstract class BaseCell implements PropertyChangeListener {
 		protected abstract double getA();
 
 		/** get parent container (owner window) size in pixels */
-		public abstract Size getOwnerSize(Size sizeField);
+		public abstract Size getOwnerSize(Matrisize sizeField);
 
 		/** размер поля из группы ячеек состоящих из разных direction */
 		public abstract Size GetDirectionSizeField();
@@ -261,8 +262,8 @@ public abstract class BaseCell implements PropertyChangeListener {
 	/** матрица ячеек поля мозаики */
 	public static interface IMatrixCells {
 		/** размер поля */
-		Size getSizeField();
-		void setSizeField(Size size);
+		Matrisize getSizeField();
+		void setSizeField(Matrisize size);
 
 		/** доступ к заданной ячейке */
 		BaseCell getCell(Coord coord);
@@ -279,8 +280,8 @@ public abstract class BaseCell implements PropertyChangeListener {
 		// проверяю что они не вылезли за размеры
 		for (int i=0; i<neighborCoord.length; i++)
 			if (neighborCoord[i] != null)
-				if ((neighborCoord[i].x >= matrix.getSizeField().width) ||
-					(neighborCoord[i].y >= matrix.getSizeField().height) ||
+				if ((neighborCoord[i].x >= matrix.getSizeField().m) ||
+					(neighborCoord[i].y >= matrix.getSizeField().n) ||
 					(neighborCoord[i].x < 0) ||
 					(neighborCoord[i].y < 0))
 				{

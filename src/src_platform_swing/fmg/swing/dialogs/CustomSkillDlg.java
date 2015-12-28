@@ -32,7 +32,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import fmg.common.geom.Size;
+import fmg.common.geom.Matrisize;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.cells.BaseCell;
@@ -283,7 +283,7 @@ public class CustomSkillDlg extends JDialog {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					parent.SetGame(new Size(x,y), m);
+					parent.SetGame(new Matrisize(x,y), m);
 				}
 			});
 		}
@@ -319,15 +319,15 @@ public class CustomSkillDlg extends JDialog {
 		} else {
 			miniSizeX = miniSizeY = 5; 
 
-			Size s = parent.CalcMaxMosaicSize(MosaicBase.AREA_MINIMUM);
-			maxiSizeX = s.width; maxiSizeY = s.height;
+			Matrisize s = parent.CalcMaxMosaicSize(MosaicBase.AREA_MINIMUM);
+			maxiSizeX = s.m; maxiSizeY = s.n;
 
 			if (isFullScreen) {
 				if (isFullScreenAtCurrArea)
 					s = parent.CalcMaxMosaicSize(parent.getMosaic().getArea());
 			} else
 				s = parent.getMosaic().getSizeField();
-			currSizeX = s.width; currSizeY = s.height;
+			currSizeX = s.m; currSizeY = s.n;
 		}
 //		// recheck
 //		if (currSizeX < miniSizeX) currSizeX = miniSizeX;
@@ -373,7 +373,7 @@ public class CustomSkillDlg extends JDialog {
 	private void OnPopupSetSize(ESkillLevel eSkill) {
 		if (parent == null)
 			return;
-		Size size = new Size((Integer)spinX.getValue(), (Integer)spinY.getValue());
+		Matrisize size = new Matrisize((Integer)spinX.getValue(), (Integer)spinY.getValue());
 		int mines = eSkill.GetNumberMines(parent.getMosaic().getMosaicType(), size);
 		spinMines.setValue(mines);
 	}

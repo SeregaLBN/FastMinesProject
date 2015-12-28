@@ -24,6 +24,7 @@
 package fmg.core.mosaic.cells;
 
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
@@ -39,21 +40,21 @@ public class TrSq2 extends BaseCell {
 		}
 
 		@Override
-		public Size getOwnerSize(Size sizeField) {
+		public Size getOwnerSize(Matrisize sizeField) {
 			double a = getA();
 			double b = getB();
 			double h = getH();
 			Size result = new Size(
-					(int)(b+h*((sizeField.width+2)/3)+
-					        a*((sizeField.width+1)/3)+
-					        b*((sizeField.width+0)/3)),
-					(int)(b+h*((sizeField.height+2)/3)+
-					        a*((sizeField.height+1)/3)+
-					        b*((sizeField.height+0)/3)));
+					(int)(b+h*((sizeField.m+2)/3)+
+					        a*((sizeField.m+1)/3)+
+					        b*((sizeField.m+0)/3)),
+					(int)(b+h*((sizeField.n+2)/3)+
+					        a*((sizeField.n+1)/3)+
+					        b*((sizeField.n+0)/3)));
 
-			if (sizeField.height < 5) {
-				int x = sizeField.width % 6;
-				switch (sizeField.height) {
+			if (sizeField.n < 5) {
+				int x = sizeField.m % 6;
+				switch (sizeField.n) {
 				case 1:
 					switch (x) { case 0: case 2: case 5: result.width -= b; }
 					break;
@@ -62,9 +63,9 @@ public class TrSq2 extends BaseCell {
 					break;
 				}
 			}
-			if (sizeField.width < 5) {
-				int y = sizeField.height % 6;
-				switch (sizeField.width) {
+			if (sizeField.m < 5) {
+				int y = sizeField.n % 6;
+				switch (sizeField.m) {
 				case 1:
 					switch (y) { case 2: case 3: case 5: result.height -= b; }
 					break;

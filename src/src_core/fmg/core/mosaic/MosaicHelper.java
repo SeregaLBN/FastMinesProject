@@ -3,6 +3,7 @@ package fmg.core.mosaic;
 import java.lang.reflect.Constructor;
 
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.Size;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
@@ -109,7 +110,7 @@ public final class MosaicHelper {
 	 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
 	 * @return площадь ячейки
 	 */
-	private static int findAreaBySize(BaseCell.BaseAttribute cellAttr, final Size mosaicSizeField, final Size sizeClient) {
+	private static int findAreaBySize(BaseCell.BaseAttribute cellAttr, final Matrisize mosaicSizeField, final Size sizeClient) {
 		// сделал приватным, т.к. неявно меняет свойства параметра 'cellAttr'
         return Finder(MosaicBase.AREA_MINIMUM, 53, new Comparable<Integer>() {
 			@Override
@@ -132,12 +133,12 @@ public final class MosaicHelper {
 	 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
 	 * @return размер поля мозаики
 	 */
-	public static Size findSizeByArea(BaseCell.BaseAttribute cellAttr, final Size sizeClient) {
-		final Size result = new Size();
+	public static Matrisize findSizeByArea(BaseCell.BaseAttribute cellAttr, final Size sizeClient) {
+		final Matrisize result = new Matrisize();
 		Finder(1, 10, new Comparable<Integer>() {
 			@Override
 			public int compareTo(Integer newWidth) {
-				result.width = newWidth;
+				result.m = newWidth;
 				Size sizeWnd = cellAttr.getOwnerSize(result);
 				if (sizeWnd.width == sizeClient.width)
 					return 0;
@@ -149,7 +150,7 @@ public final class MosaicHelper {
 		Finder(1, 10, new Comparable<Integer>() {
 			@Override
 			public int compareTo(Integer newHeight) {
-				result.height = newHeight;
+				result.n = newHeight;
 				Size sizeWnd = cellAttr.getOwnerSize(result);
 				if (sizeWnd.width == sizeClient.height)
 					return 0;
@@ -166,7 +167,7 @@ public final class MosaicHelper {
 	 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
 	 * @return площадь ячейки
 	 */
-	public static int findAreaBySize(EMosaic mosaicType, Size mosaicSizeField, Size sizeClient) {
+	public static int findAreaBySize(EMosaic mosaicType, Matrisize mosaicSizeField, Size sizeClient) {
 		return findAreaBySize(createAttributeInstance(mosaicType, 0), mosaicSizeField, sizeClient);
 	}
 
@@ -175,12 +176,12 @@ public final class MosaicHelper {
 	 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
 	 * @return размер поля мозаики
 	 */
-	public static Size findSizeByArea(EMosaic mosaicType, int area, Size sizeClient) {
+	public static Matrisize findSizeByArea(EMosaic mosaicType, int area, Size sizeClient) {
 		return findSizeByArea(createAttributeInstance(mosaicType, area), sizeClient);
 	}
 
     /** get parent container (owner window) size in pixels */
-    public static Size getOwnerSize(EMosaic mosaicType, int area, Size mosaicSizeField) {
+    public static Size getOwnerSize(EMosaic mosaicType, int area, Matrisize mosaicSizeField) {
        return createAttributeInstance(mosaicType, area).getOwnerSize(mosaicSizeField);
     }
 

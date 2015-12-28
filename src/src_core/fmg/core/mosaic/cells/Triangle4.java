@@ -24,6 +24,7 @@
 package fmg.core.mosaic.cells;
 
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
@@ -48,14 +49,14 @@ public class Triangle4 extends BaseCell {
 		private final static ComplexityMode Mode = ComplexityMode.eOptimalMode; // TODO: check others to view...
 
 		@Override
-		public Size getOwnerSize(Size sizeField) {
+		public Size getOwnerSize(Matrisize sizeField) {
 			double b = getB();
 			double r = getRIn();
 			double R = getROut();
 			Size result = new Size(
-					(int)( b+b *((sizeField.width+2)/3) +
-					         b *((sizeField.width+0)/3)),
-					(int)((R+r)*((sizeField.height+1)/2)));
+					(int)( b+b *((sizeField.m+2)/3) +
+					         b *((sizeField.m+0)/3)),
+					(int)((R+r)*((sizeField.n+1)/2)));
 
 			switch (Mode) {
 			case eUnrealMode:
@@ -67,27 +68,27 @@ public class Triangle4 extends BaseCell {
 				{
 					double u = getSnip()/2; // Snip * cos60
 					double c = u*SQRT3; // Snip * cos30
-					switch (sizeField.width%3) {
+					switch (sizeField.m%3) {
 					case 0: result.width -= u+u; break;
 					case 1: result.width -= u+c; break;
 					case 2: result.width -= u; break;
 					}
 					if (Mode == ComplexityMode.eMeanMode) {
-						if ((sizeField.height % 4) == 3)
+						if ((sizeField.n % 4) == 3)
 							result.height -= u;
 					} else {
-						if ((sizeField.height & 1) == 1)
+						if ((sizeField.n & 1) == 1)
 							result.height -= u;
 					}
 				}
 				break;
 			}
 
-			if (sizeField.width == 1)
-				if ((sizeField.height % 4) == 3)
+			if (sizeField.m == 1)
+				if ((sizeField.n % 4) == 3)
 					result.height -= R;
-			if (sizeField.height == 1)
-				if ((sizeField.width % 3) == 1)
+			if (sizeField.n == 1)
+				if ((sizeField.m % 3) == 1)
 					result.width -= b;
 
 			return result;

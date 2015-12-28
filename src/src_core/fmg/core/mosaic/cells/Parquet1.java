@@ -24,6 +24,7 @@
 package fmg.core.mosaic.cells;
 
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
 
@@ -38,13 +39,13 @@ public class Parquet1 extends BaseCell {
 		}
 
 		@Override
-		public Size getOwnerSize(Size sizeField) {
+		public Size getOwnerSize(Matrisize sizeField) {
 			double a = getA();
 			Size result = new Size(
-					(int)((sizeField.width*2+1) * a),
-					(int)((sizeField.height*2+2) * a));
+					(int)((sizeField.m*2+1) * a),
+					(int)((sizeField.n*2+2) * a));
 
-			if (sizeField.width == 1)
+			if (sizeField.m == 1)
 				result.height -= a;
 
 			return result;

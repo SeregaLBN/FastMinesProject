@@ -10,6 +10,7 @@ import javax.swing.Icon;
 
 import fmg.common.geom.Bound;
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.Size;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.IMosaic;
@@ -26,7 +27,7 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
 	private static final boolean _randomCellBkColor = true;
 
 	private EMosaic _mosaicType;
-	private Size _sizeField;
+	private Matrisize _sizeField;
 	private int _area = 230;
 	private BaseCell.BaseAttribute _attr;
 	private List<BaseCell> _matrix = new ArrayList<BaseCell>();
@@ -68,11 +69,11 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
 	}
 
 	@Override
-	public Size getSizeField() {
+	public Matrisize getSizeField() {
 		return _sizeField;
 	}
 	@Override
-	public void setSizeField(Size size) {
+	public void setSizeField(Matrisize size) {
 		// reset
 		_matrix.clear();
 
@@ -85,7 +86,7 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
 
 	@Override
 	public BaseCell getCell(Coord coord) {
-		return getMatrix().get(coord.x * getSizeField().height + coord.y);
+		return getMatrix().get(coord.x * getSizeField().n + coord.y);
 	}
 
 	@Override
@@ -110,9 +111,9 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
 		if (_matrix.isEmpty()) {
 			BaseCell.BaseAttribute attr = getCellAttr();
 			EMosaic type = getMosaicType();
-			Size size = getSizeField();
-			for (int i=0; i<size.width; i++)
-				for (int j=0; j<size.height; j++)
+			Matrisize size = getSizeField();
+			for (int i=0; i<size.m; i++)
+				for (int j=0; j<size.n; j++)
 					_matrix.add(MosaicHelper.createCellInstance(attr, type, new Coord(i,j)));
 		}
 		return _matrix;

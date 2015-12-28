@@ -4,7 +4,7 @@ import java.lang.IllegalArgumentException;
 import java.util.HashMap;
 import java.util.Map;
 
-import fmg.common.geom.Size;
+import fmg.common.geom.Matrisize;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
@@ -93,12 +93,12 @@ eCrazy      281
 	}
 
 	/** размеры полей */
-	public Size DefaultSize() {
+	public Matrisize DefaultSize() {
 		switch (this) {
-		case eBeginner: return new Size(10, 10); // 15
-		case eAmateur : return new Size(20, 15); // 54
-		case eProfi   : return new Size(30, 20); // 126
-		case eCrazy   : return new Size(45, 25); // 281
+		case eBeginner: return new Matrisize(10, 10); // 15
+		case eAmateur : return new Matrisize(20, 15); // 54
+		case eProfi   : return new Matrisize(30, 20); // 126
+		case eCrazy   : return new Matrisize(45, 25); // 281
 		default: break;
 		}
 		throw new RuntimeException("Invalid method call. Для уровня сложности '"+this+"' нет размера поля по-умолчанию.");
@@ -110,13 +110,13 @@ eCrazy      281
 	}
 
 	/** Узнать кол-во мин на заданном размере поля */
-	public int GetNumberMines(EMosaic eMosaic, Size customSizeMosaic) {
+	public int GetNumberMines(EMosaic eMosaic, Matrisize customSizeMosaic) {
 		if (customSizeMosaic == null)
 			throw new IllegalArgumentException("customSizeMosaic must be not null");
 		if (this == eCustom)
 			throw new RuntimeException("Для уровня сложности '"+this+"' кол-во мин задаётся явно, а не расчитывается...");
 
-		return (int) (customSizeMosaic.width * customSizeMosaic.height * getCoefficient() / mosaicCoefficient.get(eMosaic));
+		return (int) (customSizeMosaic.m * customSizeMosaic.n * getCoefficient() / mosaicCoefficient.get(eMosaic));
 	}
 
 	public String getDescription() {

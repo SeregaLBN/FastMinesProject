@@ -24,6 +24,7 @@
 package fmg.core.mosaic.cells;
 
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
@@ -39,28 +40,28 @@ public class Quadrangle1 extends BaseCell {
 		}
 
 		@Override
-		public Size getOwnerSize(Size sizeField) {
+		public Size getOwnerSize(Matrisize sizeField) {
 			double a = getA();
 			double b = getB();
 			double h = getH();
 			double m = getM();
 			Size result = new Size(
-					(int)(m + m*((sizeField.width+2)/3)+
-					          h*((sizeField.width+1)/3)+
-					          m*((sizeField.width+0)/3)),
-					(int)(b + b*((sizeField.height+1)/2)+
-					          a*((sizeField.height+0)/2)));
+					(int)(m + m*((sizeField.m+2)/3)+
+					          h*((sizeField.m+1)/3)+
+					          m*((sizeField.m+0)/3)),
+					(int)(b + b*((sizeField.n+1)/2)+
+					          a*((sizeField.n+0)/2)));
 
-			if (sizeField.width == 1)
-				if ((sizeField.height & 1) == 0)
+			if (sizeField.m == 1)
+				if ((sizeField.n & 1) == 0)
 					result.height -= a/4;
-			if (sizeField.width == 2)
-				if ((sizeField.height % 4) == 0)
+			if (sizeField.m == 2)
+				if ((sizeField.n % 4) == 0)
 					result.height -= a/4;
-			if ((sizeField.height == 1) || (sizeField.height == 2)) {
-				if ((sizeField.width % 3) == 2)
+			if ((sizeField.n == 1) || (sizeField.n == 2)) {
+				if ((sizeField.m % 3) == 2)
 					result.width -= m;
-				if ((sizeField.width % 3) == 0)
+				if ((sizeField.m % 3) == 0)
 					result.width -= m;
 			}
 

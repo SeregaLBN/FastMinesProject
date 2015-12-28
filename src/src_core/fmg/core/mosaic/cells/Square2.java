@@ -24,6 +24,7 @@
 package fmg.core.mosaic.cells;
 
 import fmg.common.geom.Coord;
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.Point;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
@@ -39,11 +40,11 @@ public class Square2 extends BaseCell {
 		}
 
 		@Override
-		public Size getOwnerSize(Size sizeField) {
+		public Size getOwnerSize(Matrisize sizeField) {
 			double a = getA(); // размер стороны квадрата
 			Size result = new Size(
-					(int)(sizeField.width * a + a/2),
-					(int)(sizeField.height * a));
+					(int)(sizeField.m * a + a/2),
+					(int)(sizeField.n * a));
 			return result;
 		}
 	
