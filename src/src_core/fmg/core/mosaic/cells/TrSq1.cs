@@ -33,23 +33,23 @@ public class TrSq1 : BaseCell {
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Size sizeField) {
+		public override Size GetOwnerSize(Matrisize sizeField) {
 			double b = B;
 			double k = K;
 			double n = N;
 			double m = M;
 			Size result = new Size(
-					(int)(b+n*((sizeField.width-1+2)/3)+
-					        k*((sizeField.width-1+1)/3)+
-					        m*((sizeField.width-1+0)/3)),
-					(int)(b+n* (sizeField.height-1)));
+					(int)(b+n*((sizeField.m-1+2)/3)+
+					        k*((sizeField.m-1+1)/3)+
+					        m*((sizeField.m-1+0)/3)),
+					(int)(b+n* (sizeField.n-1)));
 
-			if (sizeField.height == 1) {
-				if ((sizeField.width % 3) == 2) result.width -= (int)m;
-				if ((sizeField.width % 3) == 0) result.width -= (int)k;
+			if (sizeField.n == 1) {
+				if ((sizeField.m % 3) == 2) result.width -= (int)m;
+				if ((sizeField.m % 3) == 0) result.width -= (int)k;
 			}
-			if (sizeField.width == 1)
-				if ((sizeField.height & 1) == 0)
+			if (sizeField.m == 1)
+				if ((sizeField.n & 1) == 0)
 					result.height -= (int)m;
 
 			return result;

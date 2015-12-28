@@ -42,7 +42,7 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
    /// <summary>матрица List &lt; List &lt; BaseCell &gt; &gt; , представленная(развёрнута) в виде вектора</summary>
    public IList<BaseCell> Matrix { get; protected set; } = new List<BaseCell>(0);
    /// <summary>размер поля в ячейках</summary>
-   protected Size _size = new Size(0, 0);
+   protected Matrisize _size = new Matrisize(0, 0);
    /// <summary>из каких фигур состоит мозаика поля</summary>
    protected EMosaic _mosaicType = EMosaic.eMosaicSquare1;
    /// <summary>кол-во мин на поле</summary>
@@ -77,7 +77,7 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
    public abstract ICellPaint<TPaintable> CellPaint { get; }
 
    /// <summary> размер поля в ячейках </summary>
-   public Size SizeField { get { return _size; } set { SetParams(value, null, null); } }
+   public Matrisize SizeField { get { return _size; } set { SetParams(value, null, null); } }
 
    /// <summary> тип мозаики </summary>
    public EMosaic MosaicType { get { return _mosaicType; } set { SetParams(null, value, null); } }
@@ -86,7 +86,7 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
    public int MinesCount { get { return _minesCount; } set { SetParams(null, null, value); } }
 
    /// <summary> установить мозаику заданного размера, типа  и с определённым количеством мин (координаты мин могут задаваться с помощью "Хранилища Мин") </summary>
-   public virtual void SetParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount, List<Coord> storageCoordMines) {
+   public virtual void SetParams(Matrisize? newSizeField, EMosaic? newMosaicType, int? newMinesCount, List<Coord> storageCoordMines) {
       //repositoryMines.Reset();
       var res = (MosaicType != newMosaicType) || !SizeField.Equals(newSizeField) || (MinesCount != newMinesCount);
       if (res)
@@ -122,9 +122,9 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
                attr.PropertyChanged -= cell.OnPropertyChanged;
 
             Matrix.Clear();
-            (Matrix as List<BaseCell>).Capacity = _size.width*_size.height;
-            for (var i = 0; i < _size.width; i++)
-               for (var j = 0; j < _size.height; j++) {
+            (Matrix as List<BaseCell>).Capacity = _size.m*_size.n;
+            for (var i = 0; i < _size.m; i++)
+               for (var j = 0; j < _size.n; j++) {
                   var cell = MosaicHelper.CreateCellInstance(attr, _mosaicType, new Coord(i, j));
                   Matrix.Add( /*i*size.height + j, */cell);
 
@@ -151,7 +151,7 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
    }
 
    /// <summary>установить мозаику заданного размера, типа и с определённым количеством мин</summary>
-   public virtual void SetParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
+   public virtual void SetParams(Matrisize? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
       SetParams(newSizeField, newMosaicType, newMinesCount, null);
    }
 
@@ -217,7 +217,7 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
    public int CountClick { get { return _countClick; } private set { _countClick = value; fireOnChangedCounters(); } }
       
    /// <summary> доступ к заданной ячейке </summary>
-   public BaseCell getCell(int x, int y) { return Matrix[x*_size.height + y]; }
+   public BaseCell getCell(int x, int y) { return Matrix[x*_size.n + y]; }
    /// <summary> доступ к заданной ячейке </summary>
    public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
 
@@ -276,7 +276,7 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
    /// <summary> уведомить об изменении размера площади у ячейки </summary>
    private void fireOnChangedMosaicType(EMosaic oldMosaic) { OnChangedMosaicType(this, new MosaicEvent.ChangedMosaicTypeEventArgs(oldMosaic)); }
    /// <summary> уведомить об изменении размера мозаики </summary>
-   private void fireOnChangedMosaicSize(Size oldSize) { OnChangedMosaicSize(this, new MosaicEvent.ChangedMosaicSizeEventArgs(oldSize)); }
+   private void fireOnChangedMosaicSize(Matrisize oldSize) { OnChangedMosaicSize(this, new MosaicEvent.ChangedMosaicSizeEventArgs(oldSize)); }
 
    /// <summary>перерисовать ячейку; если null - перерисовать всё поле </summary>
    protected abstract void Repaint(BaseCell cell);
@@ -418,8 +418,8 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
          if (result.endGame) {
             GameEnd(result.victory);
          } else {
-            Size sizeField = SizeField;
-            if ((CountOpen + MinesCount) == sizeField.width*sizeField.height) {
+            Matrisize sizeField = SizeField;
+            if ((CountOpen + MinesCount) == sizeField.m*sizeField.n) {
                GameEnd(true);
             } else {
                VerifyFlag();
@@ -555,15 +555,15 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
    }
 
    /// <summary> Максимальное кол-во мин при указанном размере поля </summary>
-   public int GetMaxMines(Size sizeFld) {
+   public int GetMaxMines(Matrisize sizeFld) {
       var iMustFreeCell = MaxNeighborNumber+1;
-      var iMaxMines = sizeFld.width*sizeFld.height-iMustFreeCell;
+      var iMaxMines = sizeFld.m*sizeFld.n-iMustFreeCell;
       return Math.Max(1, iMaxMines);
    }
    /// <summary> Максимальное кол-во мин при  текущем  размере поля </summary>
    public int GetMaxMines() { return GetMaxMines(SizeField); }
    /// <summary> размер в пикселях для указанных параметров </summary>
-   public Size GetWindowSize(Size sizeField, int area) {
+   public Size GetWindowSize(Matrisize sizeField, int area) {
       return (area == Area)
          ? CellAttr.GetOwnerSize(sizeField)
          : MosaicHelper.GetOwnerSize(MosaicType, area, sizeField);
@@ -585,7 +585,7 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
       Initialize();
    }
    /// <summary>Mosaic field: класс окна мозаики поля</summary>
-   public MosaicBase(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
+   public MosaicBase(Matrisize sizeField, EMosaic mosaicType, int minesCount, int area) {
       Initialize(sizeField, mosaicType, minesCount, area);
    }
 
@@ -600,12 +600,12 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
    }
 
    protected void Initialize() {
-      Initialize(new Size(5, 5),
+      Initialize(new Matrisize(5, 5),
             EMosaic.eMosaicPenrousePeriodic1, 
             1, AREA_MINIMUM);
    }
 
-   protected void Initialize(Size sizeField, EMosaic mosaicType, int minesCount, int area) {
+   protected void Initialize(Matrisize sizeField, EMosaic mosaicType, int minesCount, int area) {
       SetParams(sizeField, mosaicType, minesCount);
       Area = area; // ...провера на валидность есть только при установке из класса Main. Так что, не нуна тут задавать громадные велечины.
    }

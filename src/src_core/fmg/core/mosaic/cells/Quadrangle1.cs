@@ -33,28 +33,28 @@ public class Quadrangle1 : BaseCell {
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Size sizeField) {
+		public override Size GetOwnerSize(Matrisize sizeField) {
 			double a = A;
 			double b = B;
 			double h = H;
 			double m = M;
 			Size result = new Size(
-					(int)(m + m*((sizeField.width+2)/3)+
-					          h*((sizeField.width+1)/3)+
-					          m*((sizeField.width+0)/3)),
-					(int)(b + b*((sizeField.height+1)/2)+
-					          a*((sizeField.height+0)/2)));
+					(int)(m + m*((sizeField.m+2)/3)+
+					          h*((sizeField.m+1)/3)+
+					          m*((sizeField.m+0)/3)),
+					(int)(b + b*((sizeField.n+1)/2)+
+					          a*((sizeField.n+0)/2)));
 
-			if (sizeField.width == 1)
-				if ((sizeField.height & 1) == 0)
+			if (sizeField.m == 1)
+				if ((sizeField.n & 1) == 0)
 					result.height -= (int)(a/4);
-			if (sizeField.width == 2)
-				if ((sizeField.height % 4) == 0)
+			if (sizeField.m == 2)
+				if ((sizeField.n % 4) == 0)
 					result.height -= (int)(a/4);
-			if ((sizeField.height == 1) || (sizeField.height == 2)) {
-				if ((sizeField.width % 3) == 2)
+			if ((sizeField.n == 1) || (sizeField.n == 2)) {
+				if ((sizeField.m % 3) == 2)
 					result.width -= (int)m;
-				if ((sizeField.width % 3) == 0)
+				if ((sizeField.m % 3) == 0)
 					result.width -= (int)m;
 			}
 

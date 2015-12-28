@@ -33,22 +33,22 @@ public class Trapezoid3 : BaseCell {
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Size sizeField) {
+		public override Size GetOwnerSize(Matrisize sizeField) {
 			double a = A;
 			double b = B;
 			double R = ROut;
 			Size result = new Size(
-					(int)(  R *((sizeField.width+1)/2)),
-					(int)(a+b *((sizeField.height+1)/2)+
-					        a *((sizeField.height+0)/2)));
+					(int)(  R *((sizeField.m+1)/2)),
+					(int)(a+b *((sizeField.n+1)/2)+
+					        a *((sizeField.n+0)/2)));
 
-			if (sizeField.width == 1)
-				switch (sizeField.height % 4) {
+			if (sizeField.m == 1)
+				switch (sizeField.n % 4) {
 				case 0: result.height -= (int)a; break;
 				case 3: result.height -= (int)(a*1.5); break;
 				}
-			if (sizeField.height == 1)
-				if ((sizeField.width & 1) == 1)
+			if (sizeField.n == 1)
+				if ((sizeField.m & 1) == 1)
 					result.width -= (int)(RIn);
 
 			return result;

@@ -90,12 +90,12 @@ namespace fmg.data.controller.types {
       }
 
       /** размеры полей */
-      public static Size DefaultSize(this ESkillLevel self) {
+      public static Matrisize DefaultSize(this ESkillLevel self) {
          switch (self) {
-         case ESkillLevel.eBeginner: return new Size(10, 10); // 15
-         case ESkillLevel.eAmateur : return new Size(20, 15); // 54
-         case ESkillLevel.eProfi   : return new Size(30, 20); // 126
-         case ESkillLevel.eCrazy   : return new Size(45, 25); // 281
+         case ESkillLevel.eBeginner: return new Matrisize(10, 10); // 15
+         case ESkillLevel.eAmateur : return new Matrisize(20, 15); // 54
+         case ESkillLevel.eProfi   : return new Matrisize(30, 20); // 126
+         case ESkillLevel.eCrazy   : return new Matrisize(45, 25); // 281
          }
          throw new Exception("Invalid method call. Для уровня сложности '" + self + "' нет размера поля по-умолчанию.");
       }
@@ -106,13 +106,13 @@ namespace fmg.data.controller.types {
       }
 
       /** Узнать кол-во мин на заданном размере поля */
-      public static int GetNumberMines(this ESkillLevel self, EMosaic eMosaic, Size customSizeMosaic) {
+      public static int GetNumberMines(this ESkillLevel self, EMosaic eMosaic, Matrisize customSizeMosaic) {
          if (customSizeMosaic == null)
             throw new ArgumentException("customSizeMosaic must be not null");
          if (self == ESkillLevel.eCustom)
             throw new Exception("Для уровня сложности '" + self + "' кол-во мин задаётся явно, а не расчитывается...");
 
-         return (int)(customSizeMosaic.width * customSizeMosaic.height * GetCoefficient(self) / mosaicCoefficient[eMosaic]);
+         return (int)(customSizeMosaic.m * customSizeMosaic.n * GetCoefficient(self) / mosaicCoefficient[eMosaic]);
       }
 
       public static String GetDescription(this ESkillLevel self) {
@@ -151,13 +151,13 @@ namespace fmg.data.controller.types {
          throw new ArgumentException("Invalid paramenter value " + self);
       }
 
-      public static Size SizeTileField(this EMosaic self, ESkillLevel skill) {
+      public static Matrisize SizeTileField(this EMosaic self, ESkillLevel skill) {
          var size = self.SizeIcoField(true);
          switch (skill) {
-         case ESkillLevel.eBeginner: size.width += 0; size.height += 0; break;
-         case ESkillLevel.eAmateur : size.width += 1; size.height += 0; break;
-         case ESkillLevel.eProfi   : size.width += 1; size.height += 1; break;
-         case ESkillLevel.eCrazy   : size.width += 2; size.height += 1; break;
+         case ESkillLevel.eBeginner: size.m += 0; size.n += 0; break;
+         case ESkillLevel.eAmateur : size.m += 1; size.n += 0; break;
+         case ESkillLevel.eProfi   : size.m += 1; size.n += 1; break;
+         case ESkillLevel.eCrazy   : size.m += 2; size.n += 1; break;
          case ESkillLevel.eCustom  :
          default:
             throw new ArgumentException("Invalid paramenter value " + self);

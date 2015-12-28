@@ -25,7 +25,7 @@ namespace fmg.uwp.mosaic {
 
       public Mosaic() {}
 
-      public Mosaic(Size sizeField, EMosaic mosaicType, int minesCount, int area) :
+      public Mosaic(Matrisize sizeField, EMosaic mosaicType, int minesCount, int area) :
          base(sizeField, mosaicType, minesCount, area)
       {}
 
@@ -37,8 +37,8 @@ namespace fmg.uwp.mosaic {
       private void BindXamlToMosaic() {
          //UnbindXaml();
          var sizeMosaic = SizeField;
-         for (var i = 0; i < sizeMosaic.width; i++)
-            for (var j = 0; j < sizeMosaic.height; j++) {
+         for (var i = 0; i < sizeMosaic.m; i++)
+            for (var j = 0; j < sizeMosaic.n; j++) {
                var cell = base.getCell(i, j);
                var shape = new Polygon();
                var txt = new TextBlock();
@@ -62,7 +62,7 @@ namespace fmg.uwp.mosaic {
 #endif
       }
 
-      public override void SetParams(Size? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
+      public override void SetParams(Matrisize? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
          if (this._mosaicType != newMosaicType)
             _cellPaint = null;
 
@@ -126,8 +126,8 @@ namespace fmg.uwp.mosaic {
 
             // paint all cells
             var sizeMosaic = SizeField;
-            for (var i = 0; i < sizeMosaic.width; i++)
-               for (var j = 0; j < sizeMosaic.height; j++) {
+            for (var i = 0; i < sizeMosaic.m; i++)
+               for (var j = 0; j < sizeMosaic.n; j++) {
                   var cell = base.getCell(i, j);
                   CellPaint.Paint(cell, XamlBinder[cell]);
                }

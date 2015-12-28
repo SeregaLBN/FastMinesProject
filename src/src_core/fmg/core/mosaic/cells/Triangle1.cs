@@ -33,12 +33,12 @@ public class Triangle1 : BaseCell {
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Size sizeField) {
+		public override Size GetOwnerSize(Matrisize sizeField) {
 			double b = B;
 			double h = H;
 			Size result = new Size(
-					(int)(b * (sizeField.width+1)),
-					(int)(h * (sizeField.height+0)));
+					(int)(b * (sizeField.m+1)),
+					(int)(h * (sizeField.n+0)));
 			return result;
 		}
 

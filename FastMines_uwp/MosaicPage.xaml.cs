@@ -71,7 +71,7 @@ namespace FastMines {
 
          if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) {
             AsyncRunner.InvokeFromUiLater(() => {
-               MosaicField.SetParams(new Size(10, 10), EMosaic.eMosaicRhombus1, 3);
+               MosaicField.SetParams(new Matrisize(10, 10), EMosaic.eMosaicRhombus1, 3);
                MosaicField.Area = 1500;
                MosaicField.Repaint();
             }, CoreDispatcherPriority.High);
@@ -103,7 +103,7 @@ namespace FastMines {
          //   ChangePause(e);
 
          int numberMines;
-         Size sizeFld;
+         Matrisize sizeFld;
          if (skill == ESkillLevel.eCustom) {
             //System.out.println("... dialog box 'Select custom skill level...' ");
             //getCustomSkillDiaLog.Put().setVisible(!getCustomSkillDiaLog.Put().isVisible());
@@ -137,7 +137,7 @@ namespace FastMines {
       /// <summary> узнаю мах размер площади ячеек мозаики, при котором ... удобно... </summary>
       /// <param name="mosaicSizeField">интересуемый размер поля мозаики</param>
       /// <returns>макс площадь ячейки</returns>
-      private int CalcMaxArea(Size mosaicSizeField) {
+      private int CalcMaxArea(Matrisize mosaicSizeField) {
          var sizePage = Window.Current.Bounds;
          return (int) (sizePage.Width/3 * sizePage.Height/3);
       }

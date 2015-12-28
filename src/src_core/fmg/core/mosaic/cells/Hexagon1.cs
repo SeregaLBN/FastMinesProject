@@ -33,13 +33,13 @@ public class Hexagon1 : BaseCell {
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Size sizeField) {
+		public override Size GetOwnerSize(Matrisize sizeField) {
 			double a = A;
 			Size result = new Size(
-					(int)(a * (sizeField.width    +0.5) * SQRT3),
-					(int)(a * (sizeField.height*1.5+0.5)));
+					(int)(a * (sizeField.m    +0.5) * SQRT3),
+					(int)(a * (sizeField.n*1.5+0.5)));
 
-			if (sizeField.height == 1)
+			if (sizeField.n == 1)
 				result.width -= (int)(B/2);
 
 			return result;

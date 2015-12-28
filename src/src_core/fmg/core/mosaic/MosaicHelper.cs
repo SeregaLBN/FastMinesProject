@@ -90,7 +90,7 @@ namespace fmg.core.mosaic {
       /// <param name="mosaicSizeField">интересуемый размер (в ячейках) поля мозаики</param>
       /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
       /// <returns>площадь ячейки</returns>
-      private static int FindAreaBySize(BaseCell.BaseAttribute cellAttr, Size mosaicSizeField, Size sizeClient) {
+      private static int FindAreaBySize(BaseCell.BaseAttribute cellAttr, Matrisize mosaicSizeField, Size sizeClient) {
          // сделал приватным, т.к. неявно меняет свойства параметра 'cellAttr'
          return Finder(MosaicBase<IPaintable>.AREA_MINIMUM, 53,
             area => {
@@ -110,10 +110,10 @@ namespace fmg.core.mosaic {
       /// <param name="cellAttr">метаданные ячеек</param>
       /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
       /// <returns>размер поля мозаики</returns>
-      public static Size FindSizeByArea(BaseCell.BaseAttribute cellAttr, Size sizeClient) {
-         var result = new Size();
+      public static Matrisize FindSizeByArea(BaseCell.BaseAttribute cellAttr, Size sizeClient) {
+         var result = new Matrisize();
          Finder(1, 10, newWidth => {
-            result.width = newWidth;
+            result.m = newWidth;
             var sizeWnd = cellAttr.GetOwnerSize(result);
             if (sizeWnd.width == sizeClient.width)
                return 0;
@@ -122,7 +122,7 @@ namespace fmg.core.mosaic {
             return +1;
          });
          Finder(1, 10, newHeight => {
-            result.height = newHeight;
+            result.n = newHeight;
             var sizeWnd = cellAttr.GetOwnerSize(result);
             if (sizeWnd.width == sizeClient.height)
                return 0;
@@ -137,7 +137,7 @@ namespace fmg.core.mosaic {
       /// <param name="mosaicSizeField">интересуемый размер (в ячейках) поля мозаики</param>
       /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
       /// <returns>площадь ячейки</returns>
-      public static int FindAreaBySize(EMosaic mosaicType, Size mosaicSizeField, Size sizeClient) {
+      public static int FindAreaBySize(EMosaic mosaicType, Matrisize mosaicSizeField, Size sizeClient) {
          return FindAreaBySize(CreateAttributeInstance(mosaicType, 0), mosaicSizeField, sizeClient);
       }
 
@@ -145,12 +145,12 @@ namespace fmg.core.mosaic {
       /// <param name="area">интересуемая площадь ячеек мозаики</param>
       /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
       /// <returns>размер поля мозаики</returns>
-      public static Size FindSizeByArea(EMosaic mosaicType, int area, Size sizeClient) {
+      public static Matrisize FindSizeByArea(EMosaic mosaicType, int area, Size sizeClient) {
          return FindSizeByArea(CreateAttributeInstance(mosaicType, area), sizeClient);
       }
 
       /// <summary>get parent container (owner window) size in pixels</summary>
-      public static Size GetOwnerSize(EMosaic mosaicType, int area, Size mosaicSizeField) {
+      public static Size GetOwnerSize(EMosaic mosaicType, int area, Matrisize mosaicSizeField) {
          return CreateAttributeInstance(mosaicType, area).GetOwnerSize(mosaicSizeField);
       }
 

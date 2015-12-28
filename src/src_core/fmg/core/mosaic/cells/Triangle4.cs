@@ -43,14 +43,14 @@ public class Triangle4 : BaseCell {
 
       public static readonly ComplexityMode Mode = ComplexityMode.eOptimalMode; // TODO: check others to view...
 
-      public override Size GetOwnerSize(Size sizeField) {
+      public override Size GetOwnerSize(Matrisize sizeField) {
          double b = B;
          double r = RIn;
          double R = ROut;
          Size result = new Size(
-               (int)( b+b *((sizeField.width+2)/3) +
-                        b *((sizeField.width+0)/3)),
-               (int)((R+r)*((sizeField.height+1)/2)));
+               (int)( b+b *((sizeField.m+2)/3) +
+                        b *((sizeField.m+0)/3)),
+               (int)((R+r)*((sizeField.n+1)/2)));
 
          switch (Mode) {
          case ComplexityMode.eUnrealMode:
@@ -61,27 +61,27 @@ public class Triangle4 : BaseCell {
          case ComplexityMode.eSimpeMode: {
                double u = CalcSnip() / 2; // Snip * cos60
                double c = u * SQRT3; // Snip * cos30
-               switch (sizeField.width % 3) {
+               switch (sizeField.m % 3) {
                case 0: result.width -= (int)(u + u); break;
                case 1: result.width -= (int)(u + c); break;
                case 2: result.width -= (int)u; break;
                }
                if (Mode == ComplexityMode.eMeanMode) {
-                  if ((sizeField.height % 4) == 3)
+                  if ((sizeField.n % 4) == 3)
                      result.height -= (int)u;
                } else {
-                  if ((sizeField.height & 1) == 1)
+                  if ((sizeField.n & 1) == 1)
                      result.height -= (int)u;
                }
             }
             break;
          }
 
-         if (sizeField.width == 1)
-            if ((sizeField.height % 4) == 3)
+         if (sizeField.m == 1)
+            if ((sizeField.n % 4) == 3)
                result.height -= (int)R;
-         if (sizeField.height == 1)
-            if ((sizeField.width % 3) == 1)
+         if (sizeField.n == 1)
+            if ((sizeField.m % 3) == 1)
                result.width -= (int)b;
 
          return result;

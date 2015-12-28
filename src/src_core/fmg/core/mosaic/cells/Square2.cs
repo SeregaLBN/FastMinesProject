@@ -33,11 +33,11 @@ public class Square2 : BaseCell {
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Size sizeField) {
+		public override Size GetOwnerSize(Matrisize sizeField) {
 			double a = A; // размер стороны квадрата
 			Size result = new Size(
-					(int)(sizeField.width * a + a/2),
-					(int)(sizeField.height * a));
+					(int)(sizeField.m * a + a/2),
+					(int)(sizeField.n * a));
 			return result;
 		}
 

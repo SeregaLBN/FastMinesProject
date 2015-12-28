@@ -78,7 +78,7 @@ public abstract class BaseCell {
       public abstract double A { get; }
 
       /// <summary>get parent container (owner window) size in pixels</summary>
-      public abstract Size GetOwnerSize(Size sizeField);
+      public abstract Size GetOwnerSize(Matrisize sizeField);
 
       /// <summary>размер поля из группы ячеек состоящих из разных direction</summary>
       public abstract Size GetDirectionSizeField();
@@ -227,7 +227,7 @@ public abstract class BaseCell {
    /// <summary>матрица ячеек поля мозаики</summary>
    public interface IMatrixCells {
       /// <summary>размер поля</summary>
-      Size SizeField { get; set; }
+      Matrisize SizeField { get; set; }
 
       /// <summary>доступ к заданной ячейке</summary>
       BaseCell getCell(Coord coord);
@@ -243,8 +243,8 @@ public abstract class BaseCell {
       // проверяю что они не вылезли за размеры
       for (int i=0; i<neighborCoord.Length; i++)
          if (neighborCoord[i] != null)
-            if ((neighborCoord[i].Value.x >= matrix.SizeField.width) ||
-               (neighborCoord[i].Value.y >= matrix.SizeField.height) ||
+            if ((neighborCoord[i].Value.x >= matrix.SizeField.m) ||
+               (neighborCoord[i].Value.y >= matrix.SizeField.n) ||
                (neighborCoord[i].Value.x < 0) ||
                (neighborCoord[i].Value.y < 0))
             {

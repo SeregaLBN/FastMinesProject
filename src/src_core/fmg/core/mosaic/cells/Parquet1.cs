@@ -33,13 +33,13 @@ public class Parquet1 : BaseCell {
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Size sizeField) {
+		public override Size GetOwnerSize(Matrisize sizeField) {
 			double a = A;
 			Size result = new Size(
-					(int)((sizeField.width*2+1) * a),
-					(int)((sizeField.height*2+2) * a));
+					(int)((sizeField.m*2+1) * a),
+					(int)((sizeField.n*2+2) * a));
 
-			if (sizeField.width == 1)
+			if (sizeField.m == 1)
 				result.height -= (int)a;
 
 			return result;

@@ -191,8 +191,8 @@ namespace FastMines {
          var mosaicType = EMosaicEx.FromOrdinal(Random.Next() % EMosaicEx.GetValues().Length);
          var bkClr = ColorExt.RandomColor(Random).Attenuate().ToWinColor();
          var sizeField = mosaicType.SizeIcoField(true);
-         sizeField.height += Random.Next()%3;
-         sizeField.width += Random.Next()%2;
+         sizeField.n += Random.Next()%3;
+         sizeField.m += Random.Next()%2;
          const int bound = 3;
          var area = MosaicHelper.FindAreaBySize(mosaicType, sizeField, new Size(w - bound*2, h - bound*2));
          var img = Resources.GetImgMosaic(mosaicType, sizeField, area, bkClr, new Bound(bound, bound, bound, bound));

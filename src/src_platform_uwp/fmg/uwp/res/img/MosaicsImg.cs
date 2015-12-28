@@ -22,7 +22,7 @@ namespace fmg.uwp.res.img {
       private const bool _randomCellBkColor = true;
 
       private EMosaic _mosaicType;
-      private Size _sizeField;
+      private Matrisize _sizeField;
       private int _area = 230;
       private BaseCell.BaseAttribute _attr;
       private readonly List<BaseCell> _matrix = new List<BaseCell>();
@@ -31,13 +31,13 @@ namespace fmg.uwp.res.img {
       private WriteableBitmap _image;
       private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
 
-      public Size SizeField
+      public Matrisize SizeField
       {
          get {
-            if ((_sizeField.width < 1) || (_sizeField.height < 1)) {
-               SizeField = new Size(
-                  (_sizeField.width < 1) ? 4 : _sizeField.width,
-                  (_sizeField.height < 1) ? 4 : _sizeField.height);
+            if ((_sizeField.m < 1) || (_sizeField.n < 1)) {
+               SizeField = new Matrisize(
+                  (_sizeField.m < 1) ? 4 : _sizeField.m,
+                  (_sizeField.n < 1) ? 4 : _sizeField.n);
             }
             return _sizeField;
          }
@@ -56,7 +56,7 @@ namespace fmg.uwp.res.img {
          SizeField = mosaicType.SizeIcoField(smallIco);
       }
 
-      public BaseCell getCell(Coord coord) { return Matrix[coord.x * SizeField.height + coord.y]; }
+      public BaseCell getCell(Coord coord) { return Matrix[coord.x * SizeField.n + coord.y]; }
 
       public BaseCell.BaseAttribute CellAttr => _attr ?? (_attr = MosaicHelper.CreateAttributeInstance(MosaicType, Area));
 
@@ -73,8 +73,8 @@ namespace fmg.uwp.res.img {
                var attr = CellAttr;
                var type = MosaicType;
                var size = SizeField;
-               for (var i = 0; i < size.width; i++)
-                  for (var j = 0; j < size.height; j++)
+               for (var i = 0; i < size.m; i++)
+                  for (var j = 0; j < size.n; j++)
                      _matrix.Add(MosaicHelper.CreateCellInstance(attr, type, new Coord(i, j)));
             }
             return _matrix;

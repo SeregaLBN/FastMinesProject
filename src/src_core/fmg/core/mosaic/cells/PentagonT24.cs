@@ -33,14 +33,14 @@ public class PentagonT24 : BaseCell {
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Size sizeField) {
+		public override Size GetOwnerSize(Matrisize sizeField) {
 			double a = A;
 			double b = B;
 			Size result = new Size(
-					(int)(b + sizeField.width * a),
-					(int)(b + sizeField.height * a));
+					(int)(b + sizeField.m * a),
+					(int)(b + sizeField.n * a));
 
-			if (sizeField.height == 1)
+			if (sizeField.n == 1)
 				result.width -= (int)(C);
 
 				return result;

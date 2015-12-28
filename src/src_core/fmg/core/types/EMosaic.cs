@@ -215,30 +215,30 @@ public static class EMosaicEx {
    }
 
    /// <summary> ƒл€ рисование иконки: минимальный размер пол€, по которому будет визуально €сно, что это за мозаика... </summary>
-   public static Size SizeIcoField(this EMosaic self, bool smallSize) {
-      var res = new Size();
+   public static Matrisize SizeIcoField(this EMosaic self, bool smallSize) {
+      var res = new Matrisize();
       switch (self) {
-      case EMosaic.eMosaicTriangle1        : res.width = 3; res.height = smallSize ? 2 : 3; break;
-      case EMosaic.eMosaicTriangle2        : res.width = 3; res.height = smallSize ? 2 : 3; break;
-      case EMosaic.eMosaicTriangle3        : res.width = 2; res.height = smallSize ? 2 : 3; break;
-      case EMosaic.eMosaicTriangle4        : res.width = 4; res.height = smallSize ? 4 : 5; break;
-      case EMosaic.eMosaicSquare1          : res.width = smallSize ? 2 : 3; res.height = smallSize ? 2 : 3; break;
-      case EMosaic.eMosaicSquare2          : res.width = 2; res.height = smallSize ? 2 : 3; break;
-      case EMosaic.eMosaicParquet1         : res.width = 2; res.height = smallSize ? 2 : 3; break;
-      case EMosaic.eMosaicParquet2         : res.width = 2; res.height = smallSize ? 2 : 3; break;
-      case EMosaic.eMosaicTrapezoid1       : res.width = 2; res.height = smallSize ? 2 : 3; break;
-      case EMosaic.eMosaicTrapezoid2       : res.width = 2; res.height = smallSize ? 2 : 3; break;
-      case EMosaic.eMosaicTrapezoid3       : res.width = 4; res.height = smallSize ? 2 : 3; break;
-      case EMosaic.eMosaicRhombus1         : res.width = 3; res.height = smallSize ? 2 : 3; break;
-      case EMosaic.eMosaicQuadrangle1      : res.width = 3; res.height = smallSize ? 2 : 3; break;
-      case EMosaic.eMosaicPenrousePeriodic1: res.width = 3; res.height = smallSize ? 3 : 4; break;
-      case EMosaic.eMosaicPentagonT24      : res.width = 2; res.height = smallSize ? 2 : 3; break;
-      case EMosaic.eMosaicPentagonT5       : res.width = 3; res.height = smallSize ? 2 : 3; break;
-      case EMosaic.eMosaicPentagonT10      : res.width = 3; res.height = smallSize ? 2 : 3; break;
-      case EMosaic.eMosaicHexagon1         : res.width = 2; res.height = smallSize ? 2 : 3; break;
-      case EMosaic.eMosaicTrSq1            : res.width = 4; res.height = smallSize ? 4 : 5; break;
-      case EMosaic.eMosaicTrSq2            : res.width = 4; res.height = smallSize ? 4 : 5; break;
-      case EMosaic.eMosaicSqTrHex          : res.width = 4; res.height = smallSize ? 4 : 5; break;
+      case EMosaic.eMosaicTriangle1        : res.m = 3; res.n = smallSize ? 2 : 3; break;
+      case EMosaic.eMosaicTriangle2        : res.m = 3; res.n = smallSize ? 2 : 3; break;
+      case EMosaic.eMosaicTriangle3        : res.m = 2; res.n = smallSize ? 2 : 3; break;
+      case EMosaic.eMosaicTriangle4        : res.m = 4; res.n = smallSize ? 4 : 5; break;
+      case EMosaic.eMosaicSquare1          : res.m = smallSize ? 2 : 3; res.n = smallSize ? 2 : 3; break;
+      case EMosaic.eMosaicSquare2          : res.m = 2; res.n = smallSize ? 2 : 3; break;
+      case EMosaic.eMosaicParquet1         : res.m = 2; res.n = smallSize ? 2 : 3; break;
+      case EMosaic.eMosaicParquet2         : res.m = 2; res.n = smallSize ? 2 : 3; break;
+      case EMosaic.eMosaicTrapezoid1       : res.m = 2; res.n = smallSize ? 2 : 3; break;
+      case EMosaic.eMosaicTrapezoid2       : res.m = 2; res.n = smallSize ? 2 : 3; break;
+      case EMosaic.eMosaicTrapezoid3       : res.m = 4; res.n = smallSize ? 2 : 3; break;
+      case EMosaic.eMosaicRhombus1         : res.m = 3; res.n = smallSize ? 2 : 3; break;
+      case EMosaic.eMosaicQuadrangle1      : res.m = 3; res.n = smallSize ? 2 : 3; break;
+      case EMosaic.eMosaicPenrousePeriodic1: res.m = 3; res.n = smallSize ? 3 : 4; break;
+      case EMosaic.eMosaicPentagonT24      : res.m = 2; res.n = smallSize ? 2 : 3; break;
+      case EMosaic.eMosaicPentagonT5       : res.m = 3; res.n = smallSize ? 2 : 3; break;
+      case EMosaic.eMosaicPentagonT10      : res.m = 3; res.n = smallSize ? 2 : 3; break;
+      case EMosaic.eMosaicHexagon1         : res.m = 2; res.n = smallSize ? 2 : 3; break;
+      case EMosaic.eMosaicTrSq1            : res.m = 4; res.n = smallSize ? 4 : 5; break;
+      case EMosaic.eMosaicTrSq2            : res.m = 4; res.n = smallSize ? 4 : 5; break;
+      case EMosaic.eMosaicSqTrHex          : res.m = 4; res.n = smallSize ? 4 : 5; break;
       default:
          System.Diagnostics.Debug.Assert(false, "EMosaicEx.SizeIcoField: Mosaic '" + self + "' not implemented");
          break;

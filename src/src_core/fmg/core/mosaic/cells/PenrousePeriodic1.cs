@@ -34,7 +34,7 @@ public class PenrousePeriodic1 : BaseCell {
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Size sizeField) {
+		public override Size GetOwnerSize(Matrisize sizeField) {
 			double a = A;
 			double b = B;
 			double c = C;
@@ -46,82 +46,82 @@ public class PenrousePeriodic1 : BaseCell {
 			double z = Z;
 			Size result = new Size(
 					(int)(g +
-					      z*((sizeField.width+8)/9) +
-					      k*((sizeField.width+7)/9) +
-					      g*((sizeField.width+6)/9) +
-					      g*((sizeField.width+5)/9) +
-					      z*((sizeField.width+4)/9) +
-					      g*((sizeField.width+3)/9) +
-					      g*((sizeField.width+2)/9) +
-					      z*((sizeField.width+1)/9) +
-					      g*((sizeField.width+0)/9)),
+					      z*((sizeField.m+8)/9) +
+					      k*((sizeField.m+7)/9) +
+					      g*((sizeField.m+6)/9) +
+					      g*((sizeField.m+5)/9) +
+					      z*((sizeField.m+4)/9) +
+					      g*((sizeField.m+3)/9) +
+					      g*((sizeField.m+2)/9) +
+					      z*((sizeField.m+1)/9) +
+					      g*((sizeField.m+0)/9)),
 					(int)(e +
-					      f*((sizeField.height+13)/14) +
-					      b*((sizeField.height+12)/14) +
-					      h*((sizeField.height+11)/14) +
-					      h*((sizeField.height+10)/14) +
-					      b*((sizeField.height+ 9)/14) +
-					      f*((sizeField.height+ 8)/14) +
-					      b*((sizeField.height+ 7)/14) +
-					      c*((sizeField.height+ 6)/14) +
-					      b*((sizeField.height+ 5)/14) +
-					      h*((sizeField.height+ 4)/14) +
-					      h*((sizeField.height+ 3)/14) +
-					      a*((sizeField.height+ 2)/14) +
-					      h*((sizeField.height+ 1)/14) +
-					      e*((sizeField.height+ 0)/14)));
+					      f*((sizeField.n+13)/14) +
+					      b*((sizeField.n+12)/14) +
+					      h*((sizeField.n+11)/14) +
+					      h*((sizeField.n+10)/14) +
+					      b*((sizeField.n+ 9)/14) +
+					      f*((sizeField.n+ 8)/14) +
+					      b*((sizeField.n+ 7)/14) +
+					      c*((sizeField.n+ 6)/14) +
+					      b*((sizeField.n+ 5)/14) +
+					      h*((sizeField.n+ 4)/14) +
+					      h*((sizeField.n+ 3)/14) +
+					      a*((sizeField.n+ 2)/14) +
+					      h*((sizeField.n+ 1)/14) +
+					      e*((sizeField.n+ 0)/14)));
 
 			// когда размер поля мал...
-			if (sizeField.height < 14) { // ...нужно вычислять не только по общей формуле, а и убрать остатки по ширине...
-				if ((sizeField.width % 9) == 7)
-					if (sizeField.height < 7)
+			if (sizeField.n < 14) { // ...нужно вычислять не только по общей формуле, а и убрать остатки по ширине...
+				if ((sizeField.m % 9) == 7)
+					if (sizeField.n < 7)
 						result.width -= (int)(g-z);
-				if ((sizeField.width % 9) == 6)
-					if (sizeField.height < 4)
+				if ((sizeField.m % 9) == 6)
+					if (sizeField.n < 4)
 						result.width -= (int)(g-z);
-				if ((sizeField.width % 9) == 4)
-					if (sizeField.height < 9)
+				if ((sizeField.m % 9) == 4)
+					if (sizeField.n < 9)
 						result.width -= (int)g;
-				if ((sizeField.width % 9) == 3) {
-					if (sizeField.height < 14)
+				if ((sizeField.m % 9) == 3) {
+					if (sizeField.n < 14)
 						result.width -= (int)z;
-					if (sizeField.height < 3)
+					if (sizeField.n < 3)
 						result.width -= (int)(g-z);
 				}
-				if ((sizeField.width % 9) == 2)
-					if (sizeField.height < 5)
+				if ((sizeField.m % 9) == 2)
+					if (sizeField.n < 5)
 						result.width -= (int)z;
 			}
-			if (sizeField.width < 5) { // .. и высоте
-				if ((sizeField.height % 14) == 0) {
-					if (sizeField.width < 4)
+			if (sizeField.m < 5) { // .. и высоте
+				if ((sizeField.n % 14) == 0) {
+					if (sizeField.m < 4)
 						result.height -= (int)h;
-					if (sizeField.width < 2)
+					if (sizeField.m < 2)
 						result.height -= (int)c;
 				}
-				if ((sizeField.height % 14) == 13)
-					if (sizeField.width < 2)
+				if ((sizeField.n % 14) == 13)
+					if (sizeField.m < 2)
 						result.height -= (int)c;
-				if ((sizeField.height % 14) == 7)
-					if (sizeField.width < 3)
+				if ((sizeField.n % 14) == 7)
+					if (sizeField.m < 3)
 						result.height -= (int)f;
-				if ((sizeField.height % 14) == 6)
-					if (sizeField.width < 5)
+				if ((sizeField.n % 14) == 6)
+					if (sizeField.m < 5)
 						result.height -= (int)f;
-				if ((sizeField.height % 14) == 5)
-					if (sizeField.width < 3)
+				if ((sizeField.n % 14) == 5)
+					if (sizeField.m < 3)
 						result.height -= (int)a;
-				if ((sizeField.height % 14) == 4)
-					if (sizeField.width < 2)
+				if ((sizeField.n % 14) == 4)
+					if (sizeField.m < 2)
 						result.height -= (int)f;
-				if ((sizeField.height % 14) == 3)
-					if (sizeField.width < 5)
+				if ((sizeField.n % 14) == 3)
+					if (sizeField.m < 5)
 						result.height -= (int)f;
-				if ((sizeField.height % 14) == 2)
-					if (sizeField.width < 3)
+				if ((sizeField.n % 14) == 2)
+					if (sizeField.m < 3)
 						result.height -= (int)f;
-				if ((sizeField.height % 14) == 1)
-					if (sizeField.width < 3)
+				if ((sizeField.n % 14) == 1)
+					if (sizeField.m < 3)
 						result.height -= (int)f;
 			}
 			return result;

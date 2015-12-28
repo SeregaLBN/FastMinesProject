@@ -178,6 +178,9 @@
     <Compile Include="..\src\src_common\fmg\common\geom\Size.cs">
       <Link>src_fmg.common\geom\Size.cs</Link>
     </Compile>
+    <Compile Include="..\src\src_common\fmg\common\geom\Matrisize.cs">
+      <Link>src_fmg.common\geom\Matrisize.cs</Link>
+    </Compile>
     <Compile Include="..\src\src_common\fmg\common\geom\SizeDouble.cs">
       <Link>src_fmg.common\geom\SizeDouble.cs</Link>
     </Compile>

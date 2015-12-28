@@ -34,20 +34,20 @@ public class Rhombus1 : BaseCell {
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Size sizeField) {
+		public override Size GetOwnerSize(Matrisize sizeField) {
 			double a = A;
 			double r = R;
 			double c = C;
 			Size result = new Size(
-					(int)(c+a   *((sizeField.width+2)/3) +
-					       (a+c)*((sizeField.width+1)/3) +
-					          c *((sizeField.width+0)/3)),
-					(int)(    r * (sizeField.height+1)));
+					(int)(c+a   *((sizeField.m+2)/3) +
+					       (a+c)*((sizeField.m+1)/3) +
+					          c *((sizeField.m+0)/3)),
+					(int)(    r * (sizeField.n+1)));
 
-			if (sizeField.width == 1)
+			if (sizeField.m == 1)
 				result.height -= (int)r;
-			if (sizeField.height == 1)
-				switch (sizeField.width % 3) {
+			if (sizeField.n == 1)
+				switch (sizeField.m % 3) {
 				case 0: result.width -= (int)(a/2); break;
 				case 2: result.width -= (int)a; break;
 				}

@@ -20,7 +20,7 @@ namespace FastMines.Data {
    /// <summary> Generic item data model. </summary>
    public class FmDataItem : FmDataCommon<EMosaic> {
       private static readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
-      private readonly Size _sizeField;
+      private readonly Matrisize _sizeField;
       private const int Area = 3000;
       private MosaicsImg _mosaicsImg;
 
@@ -30,15 +30,15 @@ namespace FastMines.Data {
          this.Subtitle = "Subtitle item " + eMosaic.GetDescription(false);
          this.Description = "Description item ...";
          _sizeField = eMosaic.SizeIcoField(true);
-         _sizeField.height += _random.Next() & 3;
-         _sizeField.width += _random.Next() & 3;
+         _sizeField.n += _random.Next() & 3;
+         _sizeField.m += _random.Next() & 3;
       }
 
       private FmDataGroup _group;
 
       public FmDataGroup Group { get { return this._group; } set { this.SetProperty(ref this._group, value); } }
 
-      private static MosaicsImg GetMosaicsImage(EMosaic eMosaic, Size sizeField) {
+      private static MosaicsImg GetMosaicsImage(EMosaic eMosaic, Matrisize sizeField) {
          return Resources.GetImgMosaic(eMosaic, sizeField, Area, Resources.DefaultBkColor, new Bound(7, 7, 7, 7));
       }
 

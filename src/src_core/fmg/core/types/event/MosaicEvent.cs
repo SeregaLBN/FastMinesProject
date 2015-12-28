@@ -87,14 +87,14 @@ namespace fmg.core.types.Event
 
       public class ChangedMosaicSizeEventArgs : MosaicEvent
       {
-         Size oldSize;
+         Matrisize oldSize;
 
-         public ChangedMosaicSizeEventArgs(Size oldSize)
+         public ChangedMosaicSizeEventArgs(Matrisize oldSize)
          {
             this.oldSize = oldSize;
          }
 
-         public Size getOldSize()
+         public Matrisize getOldSize()
          {
             return oldSize;
          }
