@@ -40,8 +40,8 @@ public class Triangle1 extends BaseCell {
 
 		@Override
 		public Size getOwnerSize(Size sizeField) {
-			double b = CalcB();
-			double h = CalcH();
+			double b = getB();
+			double h = getH();
 			Size result = new Size(
 					(int)(b * (sizeField.width+1)),
 					(int)(h * (sizeField.height+0)));
@@ -59,16 +59,16 @@ public class Triangle1 extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(2, 2); }
 		@Override
-		protected double CalcA() { return CalcB() * 2.f; } // размер стороны треугольника
+		protected double getA() { return getB() * 2.f; } // размер стороны треугольника
 		/** пол стороны треугольника */
-		protected double CalcB() { return Math.sqrt(getArea()/SQRT3); }
+		protected double getB() { return Math.sqrt(getArea()/SQRT3); }
 		/** высота треугольника */
-		protected double CalcH() { return CalcB() * SQRT3; }
+		protected double getH() { return getB() * SQRT3; }
 		@Override
-		public double CalcSq(int borderWidth) {
+		public double getSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return (CalcH()*2 - 6*w)/(SQRT3+2);
-			//return (CalcA()*SQRT3 - 6*w)/(SQRT3+2);
+			return (getH()*2 - 6*w)/(SQRT3+2);
+			//return (getA()*SQRT3 - 6*w)/(SQRT3+2);
 		}
 	}
 
@@ -125,9 +125,9 @@ public class Triangle1 extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrTriangle1 attr = getAttr();
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double h = attr.CalcH();
+		double a = attr.getA();
+		double b = attr.getB();
+		double h = attr.getH();
 
 		double oX = a*(coord.x>>1); // offset X
 		double oY = h* coord.y;     // offset Y
@@ -159,8 +159,8 @@ public class Triangle1 extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrTriangle1 attr = getAttr();
-		double b = attr.CalcB();
-		double sq = attr.CalcSq(borderWidth);
+		double b = attr.getB();
+		double sq = attr.getSq(borderWidth);
 		double w = borderWidth/2.;
 
 		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)

@@ -43,15 +43,15 @@ public class PenrousePeriodic1 extends BaseCell {
 
 		@Override
 		public Size getOwnerSize(Size sizeField) {
-			double a = CalcA();
-			double b = CalcB();
-			double c = CalcC();
-			double e = CalcE();
-			double f = CalcF();
-			double h = CalcH();
-			double g = CalcG();
-			double k = CalcK();
-			double z = CalcZ();
+			double a = getA();
+			double b = getB();
+			double c = getC();
+			double e = getE();
+			double f = getF();
+			double h = getH();
+			double g = getG();
+			double k = getK();
+			double z = getZ();
 			Size result = new Size(
 					(int)(g +
 					      z*((sizeField.width+8)/9) +
@@ -194,19 +194,19 @@ public class PenrousePeriodic1 extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(9, 14); }
 		@Override
-		protected double CalcA() { return Math.sqrt(getArea()*63/(39*SIN72 + 24*SIN36)); }
-		protected double CalcB() { return CalcA()+CalcC(); }
-		protected double CalcC() { return CalcA()*SIN18; }
-		protected double CalcE() { return CalcH()+CalcC(); }
-		protected double CalcH() { return CalcA()*SIN54; }
-		protected double CalcF() { return CalcH()-CalcC(); }
-		protected double CalcG() { return CalcA()*SIN72; }
-		protected double CalcZ() { return CalcA()*SIN36; }
-		protected double CalcK() { return CalcZ()+CalcG(); }
+		protected double getA() { return Math.sqrt(getArea()*63/(39*SIN72 + 24*SIN36)); }
+		protected double getB() { return getA()+getC(); }
+		protected double getC() { return getA()*SIN18; }
+		protected double getE() { return getH()+getC(); }
+		protected double getH() { return getA()*SIN54; }
+		protected double getF() { return getH()-getC(); }
+		protected double getG() { return getA()*SIN72; }
+		protected double getZ() { return getA()*SIN36; }
+		protected double getK() { return getZ()+getG(); }
 		@Override
-		public double CalcSq(int borderWidth) {
+		public double getSq(int borderWidth) {
 			//double w = borderWidth/2.;
-			return CalcA()/SIN99 * SIN36 / SQRT2;
+			return getA()/SIN99 * SIN36 / SQRT2;
 		}
 
 		@Override
@@ -1715,14 +1715,14 @@ public class PenrousePeriodic1 extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrPenrousePeriodic1 attr = getAttr();
-		double a = attr.CalcA();
-		double c = attr.CalcC();
-		double e = attr.CalcE();
-		double f = attr.CalcF();
-		double h = attr.CalcH();
-		double g = attr.CalcG();
-		double k = attr.CalcK();
-		double z = attr.CalcZ();
+		double a = attr.getA();
+		double c = attr.getC();
+		double e = attr.getE();
+		double f = attr.getF();
+		double h = attr.getH();
+		double g = attr.getG();
+		double k = attr.getK();
+		double z = attr.getZ();
 
 		double gz = g-z;
 
@@ -1924,7 +1924,7 @@ public class PenrousePeriodic1 extends BaseCell {
 	public Rect getRcInner(int borderWidth) {
 		AttrPenrousePeriodic1 attr = getAttr();
 //		double w = borderWidth/2.;
-		double sq  = attr.CalcSq(borderWidth);
+		double sq  = attr.getSq(borderWidth);
 		double sq2 = sq/2;
 
 		PointDouble center = new PointDouble(); // координата центра квадрата

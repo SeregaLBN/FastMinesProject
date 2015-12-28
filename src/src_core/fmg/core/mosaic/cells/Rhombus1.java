@@ -43,9 +43,9 @@ public class Rhombus1 extends BaseCell {
 
 		@Override
 		public Size getOwnerSize(Size sizeField) {
-			double a = CalcA();
-			double r = CalcR();
-			double c = CalcC();
+			double a = getA();
+			double r = getR();
+			double c = getC();
 			Size result = new Size(
 					(int)(c+a   *((sizeField.width+2)/3) +
 					       (a+c)*((sizeField.width+1)/3) +
@@ -74,14 +74,14 @@ public class Rhombus1 extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(3, 2); }
 		@Override
-		protected double CalcA() { return Math.sqrt(getArea()*2/SQRT3); }
-		protected double CalcC() { return CalcA()/2; }
-		protected double CalcH() { return CalcA()*SQRT3; }
-		protected double CalcR() { return CalcH()/2; }
+		protected double getA() { return Math.sqrt(getArea()*2/SQRT3); }
+		protected double getC() { return getA()/2; }
+		protected double getH() { return getA()*SQRT3; }
+		protected double getR() { return getH()/2; }
 		@Override
-		public double CalcSq(int borderWidth) {
+		public double getSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return (CalcA()*SQRT3 - w*4)/(SQRT3+1);
+			return (getA()*SQRT3 - w*4)/(SQRT3+1);
 		}
 
 		@Override
@@ -187,10 +187,10 @@ public class Rhombus1 extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrRhombus1 attr = getAttr();
-		double a = attr.CalcA();
-		double c = attr.CalcC();
-		double h = attr.CalcH();
-		double r = attr.CalcR();
+		double a = attr.getA();
+		double c = attr.getC();
+		double h = attr.getH();
+		double r = attr.getR();
 
 		// определение координат точек фигуры
 		double oX = a*(coord.x/3*3+1)+c; // offset X
@@ -239,12 +239,12 @@ public class Rhombus1 extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrRhombus1 attr = getAttr();
-		double a = attr.CalcA();
-		double c = attr.CalcC();
-		double h = attr.CalcH();
-		double r = attr.CalcR();
+		double a = attr.getA();
+		double c = attr.getC();
+		double h = attr.getH();
+		double r = attr.getR();
 //		double w = borderWidth/2.;
-		double sq  = attr.CalcSq(borderWidth);
+		double sq  = attr.getSq(borderWidth);
 		double sq2 = sq/2;
 
 		double oX = a*(coord.x/3*3+1)+c; // offset X

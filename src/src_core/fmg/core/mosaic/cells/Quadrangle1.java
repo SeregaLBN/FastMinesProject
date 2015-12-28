@@ -40,10 +40,10 @@ public class Quadrangle1 extends BaseCell {
 
 		@Override
 		public Size getOwnerSize(Size sizeField) {
-			double a = CalcA();
-			double b = CalcB();
-			double h = CalcH();
-			double m = CalcM();
+			double a = getA();
+			double b = getB();
+			double h = getH();
+			double m = getM();
 			Size result = new Size(
 					(int)(m + m*((sizeField.width+2)/3)+
 					          h*((sizeField.width+1)/3)+
@@ -78,18 +78,18 @@ public class Quadrangle1 extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(3, 4); }
 		@Override
-		protected double CalcA() { return Math.sqrt(getArea()/SQRT3)*2; }
-		protected double CalcB() { return CalcA()/2; }
-		protected double CalcH() { return CalcB()*SQRT3; }
-		protected double CalcN() { return CalcA()*0.75; }
-		protected double CalcM() { return CalcH()/2; }
-		protected double CalcZ() { return CalcA()/(1+SQRT3); }
-		protected double CalcZx() { return CalcZ()*SQRT3/2; }
-		protected double CalcZy() { return CalcZ()/2; }
+		protected double getA() { return Math.sqrt(getArea()/SQRT3)*2; }
+		protected double getB() { return getA()/2; }
+		protected double getH() { return getB()*SQRT3; }
+		protected double getN() { return getA()*0.75; }
+		protected double getM() { return getH()/2; }
+		protected double getZ() { return getA()/(1+SQRT3); }
+		protected double getZx() { return getZ()*SQRT3/2; }
+		protected double getZy() { return getZ()/2; }
 		@Override
-		public double CalcSq(int borderWidth) {
+		public double getSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return (CalcA()*SQRT3 - w*2*(1+SQRT3))/(SQRT3+2);
+			return (getA()*SQRT3 - w*2*(1+SQRT3))/(SQRT3+2);
 		}
 	}
 
@@ -250,11 +250,11 @@ public class Quadrangle1 extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrQuadrangle1 attr = getAttr();
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double h = attr.CalcH();
-		double n = attr.CalcN();
-		double m = attr.CalcM();
+		double a = attr.getA();
+		double b = attr.getB();
+		double h = attr.getH();
+		double n = attr.getN();
+		double m = attr.getM();
 
 		// определение координат точек фигуры
 		double oX = (h*2)*(coord.x/3) + h+m; // offset X
@@ -339,16 +339,16 @@ public class Quadrangle1 extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrQuadrangle1 attr = getAttr();
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double h = attr.CalcH();
-		double n = attr.CalcN();
-		double m = attr.CalcM();
-		double z = attr.CalcZ();
-		double zx = attr.CalcZx();
-		double zy = attr.CalcZy();
+		double a = attr.getA();
+		double b = attr.getB();
+		double h = attr.getH();
+		double n = attr.getN();
+		double m = attr.getM();
+		double z = attr.getZ();
+		double zx = attr.getZx();
+		double zy = attr.getZy();
 //		double w = borderWidth/2.;
-		double sq    = attr.CalcSq(borderWidth);
+		double sq    = attr.getSq(borderWidth);
 		double sq2   = sq/2;
 
 		double oX = (h*2)*(coord.x/3) + h+m; // offset X

@@ -40,7 +40,7 @@ public class Square2 extends BaseCell {
 
 		@Override
 		public Size getOwnerSize(Size sizeField) {
-			double a = CalcA(); // размер стороны квадрата
+			double a = getA(); // размер стороны квадрата
 			Size result = new Size(
 					(int)(sizeField.width * a + a/2),
 					(int)(sizeField.height * a));
@@ -58,11 +58,11 @@ public class Square2 extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(1, 2); }
 		@Override
-		protected double CalcA() { return Math.sqrt(getArea()); }
+		protected double getA() { return Math.sqrt(getArea()); }
 		@Override
-		public double CalcSq(int borderWidth) {
+		public double getSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return CalcA()-2*w;
+			return getA()-2*w;
 		}
 	}
 
@@ -103,7 +103,7 @@ public class Square2 extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrSquare2 attr = getAttr();
-		double a = attr.CalcA();
+		double a = attr.getA();
 
       int x1 = (int)(a * (coord.x + 0) + ((direction != 0) ? 0 : a / 2));
       int x2 = (int)(a * (coord.x + 1) + ((direction != 0) ? 0 : a / 2));
@@ -119,7 +119,7 @@ public class Square2 extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrSquare2 attr = getAttr();
-		double sq = attr.CalcSq(borderWidth);
+		double sq = attr.getSq(borderWidth);
 		double w = borderWidth/2.;
 
 		Rect square = new Rect();

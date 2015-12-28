@@ -39,7 +39,7 @@ public class Parquet1 extends BaseCell {
 
 		@Override
 		public Size getOwnerSize(Size sizeField) {
-			double a = CalcA();
+			double a = getA();
 			Size result = new Size(
 					(int)((sizeField.width*2+1) * a),
 					(int)((sizeField.height*2+2) * a));
@@ -61,11 +61,11 @@ public class Parquet1 extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(2, 1); }
 		@Override
-		protected double CalcA() { return Math.sqrt(getArea())/2; }
+		protected double getA() { return Math.sqrt(getArea())/2; }
 		@Override
-		public double CalcSq(int borderWidth) {
+		public double getSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return CalcA()-w*SQRT2;
+			return getA()-w*SQRT2;
 		}
 	}
 
@@ -99,7 +99,7 @@ public class Parquet1 extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrParquet1 attr = getAttr();
-		double a = attr.CalcA();
+		double a = attr.getA();
 
 		switch (direction) {
 		case 0:
@@ -120,7 +120,7 @@ public class Parquet1 extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrParquet1 attr = getAttr();
-		double sq = attr.CalcSq(borderWidth);
+		double sq = attr.getSq(borderWidth);
 		double w = borderWidth/2.;
 		boolean bdir = (direction != 0);
 

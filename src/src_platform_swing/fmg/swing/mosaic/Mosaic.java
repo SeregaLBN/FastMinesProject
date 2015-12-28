@@ -275,7 +275,7 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
     /** пересчитать и установить новую высоту шрифта */
     private void changeFontSize(PenBorder penBorder, int area) {
 		getGraphicContext().setFontSize(
-				(int) getCellAttr().CalcSq(penBorder.getWidth()));
+				(int) getCellAttr().getSq(penBorder.getWidth()));
     }
 
 	public static void main(String[] args) {

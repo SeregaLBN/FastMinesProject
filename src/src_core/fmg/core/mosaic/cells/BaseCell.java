@@ -98,12 +98,12 @@ public abstract class BaseCell implements PropertyChangeListener {
 		/** площадь ячейки/фигуры */
 		public int getArea() { return area; }
 
-		/** пересчитать размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
+		/** размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
 		 * на основе заданных параметров */
-		public abstract double CalcSq(int borderWidth);
+		public abstract double getSq(int borderWidth);
 
-		/** пересчитать значение A (базовая величина фигуры - обычно это размер одной из сторон фигуры) по заданной площади фигуры */
-		protected abstract double CalcA();
+		/** значение A (базовая величина фигуры - обычно это размер одной из сторон фигуры) по заданной площади фигуры */
+		protected abstract double getA();
 
 		/** get parent container (owner window) size in pixels */
 		public abstract Size getOwnerSize(Size sizeField);

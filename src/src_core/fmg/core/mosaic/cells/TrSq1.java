@@ -40,10 +40,10 @@ public class TrSq1 extends BaseCell {
 
 		@Override
 		public Size getOwnerSize(Size sizeField) {
-			double b = CalcB();
-			double k = CalcK();
-			double n = CalcN();
-			double m = CalcM();
+			double b = getB();
+			double k = getK();
+			double n = getN();
+			double m = getM();
 			Size result = new Size(
 					(int)(b+n*((sizeField.width-1+2)/3)+
 					        k*((sizeField.width-1+1)/3)+
@@ -86,15 +86,15 @@ public class TrSq1 extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(3, 2); }
 		@Override
-		protected double CalcA() { return Math.sqrt(3*getArea()/(1+SQRT3/2)); }
-		protected double CalcB() { return CalcN()+CalcM(); }
-		protected double CalcK() { return CalcN()-CalcM(); }
-		protected double CalcN() { return CalcA()*SIN75; }
-		protected double CalcM() { return CalcA()*SIN15; }
+		protected double getA() { return Math.sqrt(3*getArea()/(1+SQRT3/2)); }
+		protected double getB() { return getN()+getM(); }
+		protected double getK() { return getN()-getM(); }
+		protected double getN() { return getA()*SIN75; }
+		protected double getM() { return getA()*SIN15; }
 		@Override
-		public double CalcSq(int borderWidth) {
+		public double getSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return (CalcA()*SQRT3 - w*6) / (4*SIN75); 
+			return (getA()*SQRT3 - w*6) / (4*SIN75); 
 		}
 	}
 
@@ -207,10 +207,10 @@ public class TrSq1 extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrTrSq1 attr = getAttr();
-		double b = attr.CalcB();
-		double k = attr.CalcK();
-		double n = attr.CalcN();
-		double m = attr.CalcM();
+		double b = attr.getB();
+		double k = attr.getK();
+		double n = attr.getN();
+		double m = attr.getM();
 
 		double oX = b + n * (coord.x/3*2); // offset X
 		double oY = n + n*2*(coord.y/2);   // offset Y
@@ -254,12 +254,12 @@ public class TrSq1 extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrTrSq1 attr = getAttr();
-		double b = attr.CalcB();
-		double k = attr.CalcK();
-		double n = attr.CalcN();
-		double m = attr.CalcM();
+		double b = attr.getB();
+		double k = attr.getK();
+		double n = attr.getN();
+		double m = attr.getM();
 		double w = borderWidth/2.;
-		double sq = attr.CalcSq(borderWidth);
+		double sq = attr.getSq(borderWidth);
 		double sq2 = sq/2;
 
 		double oX = b + n * (coord.x/3*2); // offset X

@@ -40,10 +40,10 @@ public class Trapezoid1 extends BaseCell {
 
 		@Override
 		public Size getOwnerSize(Size sizeField) {
-			double a = CalcA();
-			double c = CalcC();
-			double r = CalcRIn();
-			double R = CalcROut();
+			double a = getA();
+			double c = getC();
+			double r = getRIn();
+			double R = getROut();
 			Size result = new Size(
 					(int)( c + a *  (sizeField.width+1)),
 					(int)( R     * ((sizeField.height+1)/2) +
@@ -67,15 +67,15 @@ public class Trapezoid1 extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(3, 4); }
 		@Override
-		protected double CalcA   () { return Math.sqrt(getArea()/SQRT27)*2; }
-		protected double CalcB   () { return CalcA()*2; }
-		protected double CalcC   () { return CalcA()/2; }
-		protected double CalcROut() { return CalcA()*SQRT3; }
-		protected double CalcRIn () { return CalcROut()/2; }
+		protected double getA   () { return Math.sqrt(getArea()/SQRT27)*2; }
+		protected double getB   () { return getA()*2; }
+		protected double getC   () { return getA()/2; }
+		protected double getROut() { return getA()*SQRT3; }
+		protected double getRIn () { return getROut()/2; }
 		@Override
-		public double CalcSq(int borderWidth) {
+		public double getSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return (CalcA()*SQRT3 - w*4)/(SQRT3+1);
+			return (getA()*SQRT3 - w*4)/(SQRT3+1);
 		}
 	}
 
@@ -224,11 +224,11 @@ public class Trapezoid1 extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrTrapezoid1 attr = getAttr();
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double c = attr.CalcC();
-		double R = attr.CalcROut();
-		double r = attr.CalcRIn();
+		double a = attr.getA();
+		double b = attr.getB();
+		double c = attr.getC();
+		double R = attr.getROut();
+		double r = attr.getRIn();
 
 		// определение координат точек фигуры
 		double oX = (a+b)*(coord.x/3) + b; // offset X
@@ -313,13 +313,13 @@ public class Trapezoid1 extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrTrapezoid1 attr = getAttr();
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double c = attr.CalcC();
-		double R = attr.CalcROut();
-		double r = attr.CalcRIn();
+		double a = attr.getA();
+		double b = attr.getB();
+		double c = attr.getC();
+		double R = attr.getROut();
+		double r = attr.getRIn();
 //		double w = borderWidth/2.;
-		double sq    = attr.CalcSq(borderWidth);
+		double sq    = attr.getSq(borderWidth);
 		double sq2   = sq/2;
 
 		double oX = (a+b)*(coord.x/3) + b; // offset X

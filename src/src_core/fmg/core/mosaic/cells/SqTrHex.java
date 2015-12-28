@@ -40,8 +40,8 @@ public class SqTrHex extends BaseCell {
 
 		@Override
 		public Size getOwnerSize(Size sizeField) {
-			double a = CalcA();
-			double h = CalcH();
+			double a = getA();
+			double h = getH();
 			Size result = new Size(
 					(int)(a/2+h + a/2*((sizeField.width+2)/3) +
 					              h * ((sizeField.width+1)/3) +
@@ -102,12 +102,12 @@ public class SqTrHex extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(3, 4); }
 		@Override
-		protected double CalcA() { return Math.sqrt(getArea()/(0.5+1/SQRT3)); }
-		protected double CalcH() { return CalcA()*SQRT3/2; }
+		protected double getA() { return Math.sqrt(getArea()/(0.5+1/SQRT3)); }
+		protected double getH() { return getA()*SQRT3/2; }
 		@Override
-		public double CalcSq(int borderWidth) {
+		public double getSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return (CalcA()*SQRT3 - w*6) / (2+SQRT3); 
+			return (getA()*SQRT3 - w*6) / (2+SQRT3); 
 		}
 	}
 
@@ -301,10 +301,10 @@ public class SqTrHex extends BaseCell {
 		return neighborCoord;
 	}
 
-	private PointDouble getOffest() {
+	private PointDouble getOffset() {
 		AttrSqTrHex attr = getAttr();
-		double a = attr.CalcA();
-		double h = attr.CalcH();
+		double a = attr.getA();
+		double h = attr.getH();
 
 		return new PointDouble(
 				(h*2+a  )*(coord.x/3) + a+h,
@@ -314,11 +314,11 @@ public class SqTrHex extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrSqTrHex attr = getAttr();
-		double a = attr.CalcA();
+		double a = attr.getA();
 		double b = a/2;
-		double h = attr.CalcH();
+		double h = attr.getH();
 
-		PointDouble o = getOffest();
+		PointDouble o = getOffset();
 		switch (direction) {
 		case 0:
 			region.setPoint(0, (int)(o.x - b-h  ), (int)(o.y - a-b-h));
@@ -398,14 +398,14 @@ public class SqTrHex extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrSqTrHex attr = getAttr();
-		double a = attr.CalcA();
+		double a = attr.getA();
 		double b = a/2;
-		double h = attr.CalcH();
+		double h = attr.getH();
 		double w = borderWidth/2.;
-		double sq = getAttr().CalcSq(borderWidth);
+		double sq = getAttr().getSq(borderWidth);
 		double sq2 = sq/2;
 
-		PointDouble o = getOffest();
+		PointDouble o = getOffset();
 
 		PointDouble center = new PointDouble(); // координата центра вписанного в фигуру квадрата
 		switch (direction) {

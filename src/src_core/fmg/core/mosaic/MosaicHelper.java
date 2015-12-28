@@ -110,7 +110,8 @@ public final class MosaicHelper {
 	 * @return площадь ячейки
 	 */
 	private static int findAreaBySize(BaseCell.BaseAttribute cellAttr, final Size mosaicSizeField, final Size sizeClient) {
-		return Finder(MosaicBase.AREA_MINIMUM, 53, new Comparable<Integer>() {
+		// сделал приватным, т.к. неявно меняет свойства параметра 'cellAttr'
+        return Finder(MosaicBase.AREA_MINIMUM, 53, new Comparable<Integer>() {
 			@Override
 			public int compareTo(Integer area) {
 				cellAttr.setArea(area);

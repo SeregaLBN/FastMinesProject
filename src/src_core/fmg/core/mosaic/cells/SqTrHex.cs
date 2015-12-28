@@ -286,7 +286,7 @@ public class SqTrHex : BaseCell {
 		return neighborCoord;
 	}
 
-	private PointDouble getOffest() {
+	private PointDouble getOffset() {
 		AttrSqTrHex attr = Attr;
 		double a = attr.A;
 		double h = attr.H;
@@ -303,7 +303,7 @@ public class SqTrHex : BaseCell {
 		double b = a/2;
 		double h = attr.H;
 
-		PointDouble o = getOffest();
+		PointDouble o = getOffset();
 		switch (direction) {
 		case 0:
 			region.setPoint(0, (int)(o.x - b-h  ), (int)(o.y - a-b-h));
@@ -390,7 +390,7 @@ public class SqTrHex : BaseCell {
 		double sq = Attr.GetSq(borderWidth);
 		double sq2 = sq/2;
 
-		PointDouble o = getOffest();
+		PointDouble o = getOffset();
 
 		PointDouble center = new PointDouble(); // координата центра вписанного в фигуру квадрата
 		switch (direction) {

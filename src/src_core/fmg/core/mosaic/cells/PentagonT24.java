@@ -39,14 +39,14 @@ public class PentagonT24 extends BaseCell {
 
 		@Override
 		public Size getOwnerSize(Size sizeField) {
-			double a = CalcA();
-			double b = CalcB();
+			double a = getA();
+			double b = getB();
 			Size result = new Size(
 					(int)(b + sizeField.width * a),
 					(int)(b + sizeField.height * a));
 
 			if (sizeField.height == 1)
-				result.width -= CalcC();
+				result.width -= getC();
 
 				return result;
 		}
@@ -62,13 +62,13 @@ public class PentagonT24 extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(2, 2); }
 		@Override
-		protected double CalcA() { return Math.sqrt(getArea()); }
-		protected double CalcB() { return CalcA()*6/11; }
-		protected double CalcC() { return CalcB()/2; }
+		protected double getA() { return Math.sqrt(getArea()); }
+		protected double getB() { return getA()*6/11; }
+		protected double getC() { return getB()/2; }
 		@Override
-		public double CalcSq(int borderWidth) {
+		public double getSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return CalcA()*8/11-(w+w/SIN135a) / SQRT2;
+			return getA()*8/11-(w+w/SIN135a) / SQRT2;
 		}
 	}
 
@@ -133,9 +133,9 @@ public class PentagonT24 extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrPentagonT24 attr = getAttr();
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double c = attr.CalcC();
+		double a = attr.getA();
+		double b = attr.getB();
+		double c = attr.getC();
 
 		// определение координат точек фигуры
 		double oX = a*((coord.x>>1)<<1); // offset X
@@ -175,7 +175,7 @@ public class PentagonT24 extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrPentagonT24 attr = getAttr();
-		double sq = attr.CalcSq(borderWidth);
+		double sq = attr.getSq(borderWidth);
 		double w = borderWidth/2.;
 		double w2 = w/SQRT2;
 

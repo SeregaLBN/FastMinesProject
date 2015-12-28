@@ -40,7 +40,7 @@ public class Triangle3 extends BaseCell {
 
 		@Override
 		public Size getOwnerSize(Size sizeField) {
-			double a = CalcA();
+			double a = getA();
 			Size result = new Size(
 					(int)(a * ((sizeField.width+1)>>1)),
 					(int)(a * ((sizeField.height+1)>>1)));
@@ -63,13 +63,13 @@ public class Triangle3 extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(2, 2); }
 		@Override
-		protected double CalcA() { return 2*CalcB(); }
+		protected double getA() { return 2*getB(); }
 		/** пол стороны треугольника */
-		protected double CalcB() { return Math.sqrt(getArea()); }
+		protected double getB() { return Math.sqrt(getArea()); }
 		@Override
-		public double CalcSq(int borderWidth) {
+		public double getSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return (CalcA() - w*2 / TAN45_2 ) / 3; 
+			return (getA() - w*2 / TAN45_2 ) / 3; 
 		}
 	}
 
@@ -162,8 +162,8 @@ public class Triangle3 extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrTriangle3 attr = getAttr();
-		double a = attr.CalcA();
-		double b = attr.CalcB();
+		double a = attr.getA();
+		double b = attr.getB();
 
 		double oX = a*(coord.x>>1); // offset X
 		double oY = a*(coord.y>>1); // offset Y
@@ -195,7 +195,7 @@ public class Triangle3 extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrTriangle3 attr = getAttr();
-		double sq = attr.CalcSq(borderWidth);
+		double sq = attr.getSq(borderWidth);
 		double w = borderWidth/2.;
 
 		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)

@@ -2171,7 +2171,7 @@ public class Main extends JFrame  {
 	private void ChangeSizeImagesMineFlag() {
 		Mosaic m = getMosaic();
 		GraphicContext gc = m.getGraphicContext();
-		int sq = (int)m.getCellAttr().CalcSq(gc.getPenBorder().getWidth());
+		int sq = (int)m.getCellAttr().getSq(gc.getPenBorder().getWidth());
 		if (sq <= 0) {
 			System.err.println("Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");
 			sq = 3; // ат балды...

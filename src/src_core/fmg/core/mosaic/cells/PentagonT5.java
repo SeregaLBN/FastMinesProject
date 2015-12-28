@@ -43,8 +43,8 @@ public class PentagonT5 extends BaseCell {
 
 		@Override
 		public Size getOwnerSize(Size sizeField) {
-			double a = CalcA();
-			double h = CalcH();
+			double a = getA();
+			double h = getH();
 			Size result = new Size(
 					(int)(a*3.5 +
 					      a*2.0*((sizeField.width+13)/14) +
@@ -127,12 +127,12 @@ public class PentagonT5 extends BaseCell {
 		@Override
 		public Size GetDirectionSizeField() { return new Size(14, 6); }
 		@Override
-		protected double CalcA() { return 2*Math.sqrt(getArea()/SQRT147); }
-		protected double CalcH() { return CalcA()*SQRT3/2; }
+		protected double getA() { return 2*Math.sqrt(getArea()/SQRT147); }
+		protected double getH() { return getA()*SQRT3/2; }
 		@Override
-		public double CalcSq(int borderWidth) {
+		public double getSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return (CalcA()*2*SQRT3-4*w)/(SQRT3+1);
+			return (getA()*2*SQRT3-4*w)/(SQRT3+1);
 		}
 
 		@Override
@@ -537,8 +537,8 @@ public class PentagonT5 extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrPentagonT5 attr = getAttr();
-		double a = attr.CalcA();
-		double h = attr.CalcH();
+		double a = attr.getA();
+		double h = attr.getH();
 
 		// определение координат точек фигуры
 		double oX = a*21*(coord.x/14); // offset X
@@ -608,10 +608,10 @@ public class PentagonT5 extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrPentagonT5 attr = getAttr();
-		double a = attr.CalcA();
-		double h = attr.CalcH();
+		double a = attr.getA();
+		double h = attr.getH();
 //		double w = borderWidth/2.;
-		double sq  = getAttr().CalcSq(borderWidth);
+		double sq  = getAttr().getSq(borderWidth);
 		double sq2 = sq/2;
 
 		// определение координат точек фигуры

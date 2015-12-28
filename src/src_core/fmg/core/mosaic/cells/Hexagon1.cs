@@ -115,7 +115,7 @@ public class Hexagon1 : BaseCell {
 		AttrHexagon1 attr = Attr;
 		double a = attr.A;
 		double b = attr.B;
-		double sq = Attr.GetSq(borderWidth);
+		double sq = attr.GetSq(borderWidth);
 
 		double oX = (coord.x+1)*b;      // offset X
 		double oY = (coord.y+1-direction)*a*1.5; // offset Y

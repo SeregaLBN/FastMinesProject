@@ -40,9 +40,9 @@ public class TrSq2 extends BaseCell {
 
 		@Override
 		public Size getOwnerSize(Size sizeField) {
-			double a = CalcA();
-			double b = CalcB();
-			double h = CalcH();
+			double a = getA();
+			double b = getB();
+			double h = getH();
 			Size result = new Size(
 					(int)(b+h*((sizeField.width+2)/3)+
 					        a*((sizeField.width+1)/3)+
@@ -117,13 +117,13 @@ public class TrSq2 extends BaseCell {
 		public Size GetDirectionSizeField() { return new Size(6, 6); }
 		/** размер стороны треугольника и квадрата */
 		@Override
-		protected double CalcA() { return Math.sqrt(6*getArea()/(2+SQRT3)); }
-		protected double CalcB() { return CalcA()/2; }
-		protected double CalcH() { return CalcB()*SQRT3; }
+		protected double getA() { return Math.sqrt(6*getArea()/(2+SQRT3)); }
+		protected double getB() { return getA()/2; }
+		protected double getH() { return getB()*SQRT3; }
 		@Override
-		public double CalcSq(int borderWidth) {
+		public double getSq(int borderWidth) {
 			double w = borderWidth/2.;
-			return (CalcA()*SQRT3 - w*6) / (2+SQRT3) - 1; 
+			return (getA()*SQRT3 - w*6) / (2+SQRT3) - 1; 
 		}
 	}
 
@@ -421,9 +421,9 @@ public class TrSq2 extends BaseCell {
 
 	private PointDouble getOffset() {
 		AttrTrSq2 attr = getAttr();
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double h = attr.CalcH();
+		double a = attr.getA();
+		double b = attr.getB();
+		double h = attr.getH();
 
 		double oX = 0; // offset X
 		double oY = 0; // offset Y
@@ -444,9 +444,9 @@ public class TrSq2 extends BaseCell {
 	@Override
 	protected void CalcRegion() {
 		AttrTrSq2 attr = getAttr();
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double h = attr.CalcH();
+		double a = attr.getA();
+		double b = attr.getB();
+		double h = attr.getH();
 
 		PointDouble o = getOffset();
 		switch (direction) {
@@ -552,11 +552,11 @@ public class TrSq2 extends BaseCell {
 	@Override
 	public Rect getRcInner(int borderWidth) {
 		AttrTrSq2 attr = getAttr();
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double h = attr.CalcH();
+		double a = attr.getA();
+		double b = attr.getB();
+		double h = attr.getH();
 		double w = borderWidth/2.;
-		double sq = attr.CalcSq(borderWidth);
+		double sq = attr.getSq(borderWidth);
 		double sq2 = sq/2;
 		double wsq2 = w+sq2;
 
