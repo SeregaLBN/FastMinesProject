@@ -34,9 +34,9 @@ public class Trapezoid3 : BaseCell {
       {}
 
 		public override Size GetOwnerSize(Size sizeField) {
-			double a = CalcA();
-			double b = CalcB();
-			double R = CalcROut();
+			double a = A;
+			double b = B;
+			double R = ROut;
 			Size result = new Size(
 					(int)(  R *((sizeField.width+1)/2)),
 					(int)(a+b *((sizeField.height+1)/2)+
@@ -49,7 +49,7 @@ public class Trapezoid3 : BaseCell {
 				}
 			if (sizeField.height == 1)
 				if ((sizeField.width & 1) == 1)
-					result.width -= (int)(CalcRIn());
+					result.width -= (int)(RIn);
 
 			return result;
 		}
@@ -94,14 +94,14 @@ public class Trapezoid3 : BaseCell {
 		}
 
 		public override Size GetDirectionSizeField() { return new Size(4, 4); }
-		public override double CalcA   () { return Math.Sqrt(Area/SQRT27)*2; }
-		public double CalcB   () { return CalcA()*2; }
-		public double CalcC   () { return CalcA()/2; }
-		public double CalcROut() { return CalcA()*SQRT3; }
-		public double CalcRIn () { return CalcROut()/2; }
-		public override double CalcSq(int borderWidth) {
+		public override double A => Math.Sqrt(Area/SQRT27)*2;
+		public double B => A * 2;
+		public double C => A / 2;
+		public double ROut => A * SQRT3;
+		public double RIn => ROut / 2;
+		public override double GetSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return (CalcA()*SQRT3 - w*4)/(SQRT3+1);
+			return (A*SQRT3 - w*4)/(SQRT3+1);
 		}
 	}
 
@@ -335,11 +335,11 @@ public class Trapezoid3 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrTrapezoid3 attr = Attr;
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double c = attr.CalcC();
-		double R = attr.CalcROut();
-		double r = attr.CalcRIn();
+		double a = attr.A;
+		double b = attr.B;
+		double c = attr.C;
+		double R = attr.ROut;
+		double r = attr.RIn;
 
 		// определение координат точек фигуры
 		double oX = (R*2)*(coord.x/4) + R; // offset X
@@ -447,13 +447,13 @@ public class Trapezoid3 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrTrapezoid3 attr = Attr;
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double c = attr.CalcC();
-		double R = attr.CalcROut();
-		double r = attr.CalcRIn();
+		double a = attr.A;
+		double b = attr.B;
+		double c = attr.C;
+		double R = attr.ROut;
+		double r = attr.RIn;
 //		double w = borderWidth/2.0;
-		double sq  = attr.CalcSq(borderWidth);
+		double sq  = attr.GetSq(borderWidth);
 		double sq2 = sq/2;
 
 		double oX = (R*2)*(coord.x/4) + R; // offset X

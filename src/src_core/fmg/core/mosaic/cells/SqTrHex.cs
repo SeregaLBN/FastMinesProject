@@ -34,8 +34,8 @@ public class SqTrHex : BaseCell {
       {}
 
 		public override Size GetOwnerSize(Size sizeField) {
-			double a = CalcA();
-			double h = CalcH();
+			double a = A;
+			double h = H;
 			Size result = new Size(
 					(int)(a/2+h + a/2*((sizeField.width+2)/3) +
 					              h * ((sizeField.width+1)/3) +
@@ -90,11 +90,11 @@ public class SqTrHex : BaseCell {
 		}
 		public override double getVertexIntersection() { return 4.0; }
 		public override Size GetDirectionSizeField() { return new Size(3, 4); }
-		public override double CalcA() { return Math.Sqrt(Area/(0.5+1/SQRT3)); }
-		public double CalcH() { return CalcA()*SQRT3/2; }
-		public override double CalcSq(int borderWidth) {
+		public override double A => Math.Sqrt(Area/(0.5+1/SQRT3));
+		public double H => A * SQRT3/2;
+		public override double GetSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return (CalcA()*SQRT3 - w*6) / (2+SQRT3); 
+			return (A*SQRT3 - w*6) / (2+SQRT3); 
 		}
 	}
 
@@ -288,8 +288,8 @@ public class SqTrHex : BaseCell {
 
 	private PointDouble getOffest() {
 		AttrSqTrHex attr = Attr;
-		double a = attr.CalcA();
-		double h = attr.CalcH();
+		double a = attr.A;
+		double h = attr.H;
 
 		return new PointDouble(
 				(h*2+a  )*(coord.x/3) + a+h,
@@ -299,9 +299,9 @@ public class SqTrHex : BaseCell {
 	protected override void CalcRegion() {
 		AttrSqTrHex attr = Attr;
 		int area = attr.Area;
-		double a = attr.CalcA();
+		double a = attr.A;
 		double b = a/2;
-		double h = attr.CalcH();
+		double h = attr.H;
 
 		PointDouble o = getOffest();
 		switch (direction) {
@@ -383,11 +383,11 @@ public class SqTrHex : BaseCell {
 	public override Rect getRcInner(int borderWidth) {
 		AttrSqTrHex attr = Attr;
 		int area = attr.Area;
-		double a = attr.CalcA();
+		double a = attr.A;
 		double b = a/2;
-		double h = attr.CalcH();
+		double h = attr.H;
 		double w = borderWidth/2.0;
-		double sq = Attr.CalcSq(borderWidth);
+		double sq = Attr.GetSq(borderWidth);
 		double sq2 = sq/2;
 
 		PointDouble o = getOffest();

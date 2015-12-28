@@ -72,10 +72,10 @@ public abstract class BaseCell {
 
       /// <summary>пересчитать размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
       /// на основе заданных параметров</summary>
-      public abstract double CalcSq(int borderWidth);
+      public abstract double GetSq(int borderWidth);
 
       /// <summary>пересчитать значение A (базовая величина фигуры - обычно это размер одной из сторон фигуры) по заданной площади фигуры</summary>
-      public abstract double CalcA();
+      public abstract double A { get; }
 
       /// <summary>get parent container (owner window) size in pixels</summary>
       public abstract Size GetOwnerSize(Size sizeField);

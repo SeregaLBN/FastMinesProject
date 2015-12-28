@@ -34,10 +34,10 @@ public class TrSq1 : BaseCell {
       {}
 
 		public override Size GetOwnerSize(Size sizeField) {
-			double b = CalcB();
-			double k = CalcK();
-			double n = CalcN();
-			double m = CalcM();
+			double b = B;
+			double k = K;
+			double n = N;
+			double m = M;
 			Size result = new Size(
 					(int)(b+n*((sizeField.width-1+2)/3)+
 					        k*((sizeField.width-1+1)/3)+
@@ -74,14 +74,14 @@ public class TrSq1 : BaseCell {
 		}
 		public override double getVertexIntersection() { return 5.0; }
 		public override Size GetDirectionSizeField() { return new Size(3, 2); }
-		public override double CalcA() { return Math.Sqrt(3*Area/(1+SQRT3/2)); }
-		public double CalcB() { return CalcN()+CalcM(); }
-		public double CalcK() { return CalcN()-CalcM(); }
-		public double CalcN() { return CalcA()*SIN75; }
-		public double CalcM() { return CalcA()*SIN15; }
-		public override double CalcSq(int borderWidth) {
+		public override double A => Math.Sqrt(3*Area/(1+SQRT3/2));
+		public double B => N + M;
+		public double K => N - M;
+		public double N => A * SIN75;
+		public double M => A * SIN15;
+		public override double GetSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return (CalcA()*SQRT3 - w*6) / (4*SIN75); 
+			return (A*SQRT3 - w*6) / (4*SIN75); 
 		}
 	}
 
@@ -191,10 +191,10 @@ public class TrSq1 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrTrSq1 attr = Attr;
-		double b = attr.CalcB();
-		double k = attr.CalcK();
-		double n = attr.CalcN();
-		double m = attr.CalcM();
+		double b = attr.B;
+		double k = attr.K;
+		double n = attr.N;
+		double m = attr.M;
 
 		double oX = b + n * (coord.x/3*2); // offset X
 		double oY = n + n*2*(coord.y/2);   // offset Y
@@ -237,12 +237,12 @@ public class TrSq1 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrTrSq1 attr = Attr;
-		double b = attr.CalcB();
-		double k = attr.CalcK();
-		double n = attr.CalcN();
-		double m = attr.CalcM();
+		double b = attr.B;
+		double k = attr.K;
+		double n = attr.N;
+		double m = attr.M;
 		double w = borderWidth/2.0;
-		double sq = attr.CalcSq(borderWidth);
+		double sq = attr.GetSq(borderWidth);
 		double sq2 = sq/2;
 
 		double oX = b + n * (coord.x/3*2); // offset X

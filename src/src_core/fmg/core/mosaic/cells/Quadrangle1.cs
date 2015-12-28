@@ -34,10 +34,10 @@ public class Quadrangle1 : BaseCell {
       {}
 
 		public override Size GetOwnerSize(Size sizeField) {
-			double a = CalcA();
-			double b = CalcB();
-			double h = CalcH();
-			double m = CalcM();
+			double a = A;
+			double b = B;
+			double h = H;
+			double m = M;
 			Size result = new Size(
 					(int)(m + m*((sizeField.width+2)/3)+
 					          h*((sizeField.width+1)/3)+
@@ -66,17 +66,17 @@ public class Quadrangle1 : BaseCell {
 		public override int getVertexNumber(int direction) { return 4; }
 		public override double getVertexIntersection() { return 4.25; } // (3+4+4+6)/4.
 		public override Size GetDirectionSizeField() { return new Size(3, 4); }
-		public override double CalcA() { return Math.Sqrt(Area/SQRT3)*2; }
-		public double CalcB() { return CalcA()/2; }
-		public double CalcH() { return CalcB()*SQRT3; }
-		public double CalcN() { return CalcA()*0.75; }
-		public double CalcM() { return CalcH()/2; }
-		public double CalcZ() { return CalcA()/(1+SQRT3); }
-		public double CalcZx() { return CalcZ()*SQRT3/2; }
-		public double CalcZy() { return CalcZ()/2; }
-		public override double CalcSq(int borderWidth) {
+		public override double A => Math.Sqrt(Area/SQRT3)*2;
+		public double B => A / 2;
+		public double H => B * SQRT3;
+		public double N => A * 0.75;
+		public double M => H / 2;
+		public double Z => A / (1+SQRT3);
+		public double Zx => Z * SQRT3/2;
+		public double Zy => Z / 2;
+		public override double GetSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return (CalcA()*SQRT3 - w*2*(1+SQRT3))/(SQRT3+2);
+			return (A*SQRT3 - w*2*(1+SQRT3))/(SQRT3+2);
 		}
 	}
 
@@ -234,11 +234,11 @@ public class Quadrangle1 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrQuadrangle1 attr = Attr;
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double h = attr.CalcH();
-		double n = attr.CalcN();
-		double m = attr.CalcM();
+		double a = attr.A;
+		double b = attr.B;
+		double h = attr.H;
+		double n = attr.N;
+		double m = attr.M;
 
 		// определение координат точек фигуры
 		double oX = (h*2)*(coord.x/3) + h+m; // offset X
@@ -322,16 +322,16 @@ public class Quadrangle1 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrQuadrangle1 attr = Attr;
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double h = attr.CalcH();
-		double n = attr.CalcN();
-		double m = attr.CalcM();
-		double z = attr.CalcZ();
-		double zx = attr.CalcZx();
-		double zy = attr.CalcZy();
+		double a = attr.A;
+		double b = attr.B;
+		double h = attr.H;
+		double n = attr.N;
+		double m = attr.M;
+		double z = attr.Z;
+		double zx = attr.Zx;
+		double zy = attr.Zy;
 //		double w = borderWidth/2.0;
-		double sq    = attr.CalcSq(borderWidth);
+		double sq    = attr.GetSq(borderWidth);
 		double sq2   = sq/2;
 
 		double oX = (h*2)*(coord.x/3) + h+m; // offset X

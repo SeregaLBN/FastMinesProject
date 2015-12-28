@@ -212,7 +212,7 @@ namespace fmg.uwp.mosaic {
       public void ChangeFontSize() { ChangeFontSize(GraphicContext.PenBorder); }
       /// <summary> пересчитать и установить новую высоту шрифта </summary>
       private void ChangeFontSize(PenBorder penBorder) {
-         GraphicContext.FontSize = (int)CellAttr.CalcSq(penBorder.Width);
+         GraphicContext.FontSize = (int)CellAttr.GetSq(penBorder.Width);
       }
    }
 }

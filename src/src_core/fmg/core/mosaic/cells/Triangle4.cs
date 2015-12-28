@@ -44,9 +44,9 @@ public class Triangle4 : BaseCell {
       public static readonly ComplexityMode Mode = ComplexityMode.eOptimalMode; // TODO: check others to view...
 
       public override Size GetOwnerSize(Size sizeField) {
-         double b = CalcB();
-         double r = CalcRIn();
-         double R = CalcROut();
+         double b = B;
+         double r = RIn;
+         double R = ROut;
          Size result = new Size(
                (int)( b+b *((sizeField.width+2)/3) +
                         b *((sizeField.width+0)/3)),
@@ -155,15 +155,15 @@ public class Triangle4 : BaseCell {
       }
 
       public override Size GetDirectionSizeField() { return new Size(3, 4); }
-      public override double CalcA   () { return Math.Sqrt(Area*SQRT48); }
-      public double CalcB   () { return CalcA()/2; }
-      public double CalcROut() { return CalcA()/SQRT3; }
-      public double CalcRIn () { return CalcROut()/2; }
+      public override double A => Math.Sqrt(Area*SQRT48);
+      public double B => A / 2;
+      public double ROut => A / SQRT3;
+      public double RIn => ROut / 2;
       //private double __snip  = 2.3456789 + new Random(Guid.NewGuid().GetHashCode()).Next(15);
-      public double CalcSnip() { return CalcA() / (/*12*/6.789012345 /*__snip*/); }
-      public override double CalcSq(int borderWidth) {
+      public double CalcSnip() { return A / (/*12*/6.789012345 /*__snip*/); }
+      public override double GetSq(int borderWidth) {
          double w = borderWidth/2.0;
-         return (CalcA()-w*2/TAN15)/(SQRT3+3);
+         return (A-w*2/TAN15)/(SQRT3+3);
       }
    }
 
@@ -728,10 +728,10 @@ public class Triangle4 : BaseCell {
 
    protected override void CalcRegion() {
       AttrTriangle4 attr = Attr;
-      double a = attr.CalcA();
-      double b = attr.CalcB();
-      double R = attr.CalcROut();
-      double r = attr.CalcRIn();
+      double a = attr.A;
+      double b = attr.B;
+      double R = attr.ROut;
+      double r = attr.RIn;
       double s = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? attr.CalcSnip() : 0;
       double c = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2*SQRT3 : 0; // s * cos30
       double u = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2 : 0; // s * cos60
@@ -1072,7 +1072,7 @@ public class Triangle4 : BaseCell {
    public override Rect getRcInner(int borderWidth) {
       AttrTriangle4 attr = Attr;
       double w = borderWidth/2.0;
-      double sq    = attr.CalcSq(borderWidth);
+      double sq    = attr.GetSq(borderWidth);
       double sq2   = sq/2;
       double sq2w  = sq2+w;
       double sq2w3 = sq2+w/SQRT3;

@@ -35,7 +35,7 @@ public class PentagonT10 : BaseCell {
       {}
 
 		public override Size GetOwnerSize(Size sizeField) {
-			double a = CalcA();
+			double a = A;
 			Size result = new Size(
 					(int)(2*a +
 					      5*a*((sizeField.width+1)/2) +
@@ -98,10 +98,10 @@ public class PentagonT10 : BaseCell {
 		}
 
 		public override Size GetDirectionSizeField() { return new Size(2, 6); }
-		public override double CalcA() { return Math.Sqrt(Area/7); }
-		public override double CalcSq(int borderWidth) {
+		public override double A => Math.Sqrt(Area/7);
+		public override double GetSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return 2*(CalcA()-w);
+			return 2*(A-w);
 		}
 
 		public override int getMaxBackgroundFillModeValue() {
@@ -240,7 +240,7 @@ public class PentagonT10 : BaseCell {
 
 	private PointDouble getOffset() {
 		AttrPentagonT10 attr = Attr;
-		double a = attr.CalcA();
+		double a = attr.A;
 
 		PointDouble o = new PointDouble(0,0);
 		switch (direction) {
@@ -261,7 +261,7 @@ public class PentagonT10 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrPentagonT10 attr = Attr;
-		double a = attr.CalcA();
+		double a = attr.A;
 
 		PointDouble o = getOffset();
 
@@ -299,7 +299,7 @@ public class PentagonT10 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrPentagonT10 attr = Attr;
-		double sq = attr.CalcSq(borderWidth);
+		double sq = attr.GetSq(borderWidth);
 		double sq2 = sq/2;
 
 		PointDouble center = new PointDouble(); // координата центра квадрата

@@ -35,15 +35,15 @@ public class PenrousePeriodic1 : BaseCell {
       {}
 
 		public override Size GetOwnerSize(Size sizeField) {
-			double a = CalcA();
-			double b = CalcB();
-			double c = CalcC();
-			double e = CalcE();
-			double f = CalcF();
-			double h = CalcH();
-			double g = CalcG();
-			double k = CalcK();
-			double z = CalcZ();
+			double a = A;
+			double b = B;
+			double c = C;
+			double e = E;
+			double f = F;
+			double h = H;
+			double g = G;
+			double k = K;
+			double z = Z;
 			Size result = new Size(
 					(int)(g +
 					      z*((sizeField.width+8)/9) +
@@ -180,18 +180,18 @@ public class PenrousePeriodic1 : BaseCell {
 		}
 
 		public override Size GetDirectionSizeField() { return new Size(9, 14); }
-		public override double CalcA() { return Math.Sqrt(Area*63/(39*SIN72 + 24*SIN36)); }
-		public double CalcB() { return CalcA()+CalcC(); }
-		public double CalcC() { return CalcA()*SIN18; }
-		public double CalcE() { return CalcH()+CalcC(); }
-		public double CalcH() { return CalcA()*SIN54; }
-		public double CalcF() { return CalcH()-CalcC(); }
-		public double CalcG() { return CalcA()*SIN72; }
-		public double CalcZ() { return CalcA()*SIN36; }
-		public double CalcK() { return CalcZ()+CalcG(); }
-		public override double CalcSq(int borderWidth) {
+		public override double A => Math.Sqrt(Area*63/(39*SIN72 + 24*SIN36));
+		public double B => A + C;
+		public double C => A * SIN18;
+		public double E => H + C;
+		public double H => A * SIN54;
+		public double F => H - C;
+		public double G => A * SIN72;
+		public double Z => A * SIN36;
+		public double K => Z + G;
+		public override double GetSq(int borderWidth) {
 			//double w = borderWidth/2.0;
-			return CalcA()/SIN99 * SIN36 / SQRT2;
+			return A/SIN99 * SIN36 / SQRT2;
 		}
 
 		public override int getMaxBackgroundFillModeValue() {
@@ -1698,14 +1698,14 @@ public class PenrousePeriodic1 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrPenrousePeriodic1 attr = Attr;
-		double a = attr.CalcA();
-		double c = attr.CalcC();
-		double e = attr.CalcE();
-		double f = attr.CalcF();
-		double h = attr.CalcH();
-		double g = attr.CalcG();
-		double k = attr.CalcK();
-		double z = attr.CalcZ();
+		double a = attr.A;
+		double c = attr.C;
+		double e = attr.E;
+		double f = attr.F;
+		double h = attr.H;
+		double g = attr.G;
+		double k = attr.K;
+		double z = attr.Z;
 
 		double gz = g-z;
 
@@ -1956,7 +1956,7 @@ public class PenrousePeriodic1 : BaseCell {
 		AttrPenrousePeriodic1 attr = Attr;
 		int area = attr.Area;
 //		double w = borderWidth/2.0;
-		double sq  = attr.CalcSq(borderWidth);
+		double sq  = attr.GetSq(borderWidth);
 		double sq2 = sq/2;
 
 		PointDouble center = new PointDouble(); // координата центра квадрата

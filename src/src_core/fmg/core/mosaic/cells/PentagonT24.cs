@@ -34,14 +34,14 @@ public class PentagonT24 : BaseCell {
       {}
 
 		public override Size GetOwnerSize(Size sizeField) {
-			double a = CalcA();
-			double b = CalcB();
+			double a = A;
+			double b = B;
 			Size result = new Size(
 					(int)(b + sizeField.width * a),
 					(int)(b + sizeField.height * a));
 
 			if (sizeField.height == 1)
-				result.width -= (int)(CalcC());
+				result.width -= (int)(C);
 
 				return result;
 		}
@@ -51,12 +51,12 @@ public class PentagonT24 : BaseCell {
 		public override int getVertexNumber(int direction) { return 5; }
 		public override double getVertexIntersection() { return 3.4; } // (3+3+3+4+4)/5.
 		public override Size GetDirectionSizeField() { return new Size(2, 2); }
-		public override double CalcA() { return Math.Sqrt(Area); }
-		public double CalcB() { return CalcA()*6/11; }
-		public double CalcC() { return CalcB()/2; }
-		public override double CalcSq(int borderWidth) {
+		public override double A => Math.Sqrt(Area);
+		public double B => A * 6/11;
+		public double C => B / 2;
+		public override double GetSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return CalcA()*8/11-(w+w/SIN135a) / SQRT2;
+			return A*8/11-(w+w/SIN135a) / SQRT2;
 		}
 	}
 
@@ -118,9 +118,9 @@ public class PentagonT24 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrPentagonT24 attr = Attr;
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double c = attr.CalcC();
+		double a = attr.A;
+		double b = attr.B;
+		double c = attr.C;
 
 		// определение координат точек фигуры
 		double oX = a*((coord.x>>1)<<1); // offset X
@@ -159,7 +159,7 @@ public class PentagonT24 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrPentagonT24 attr = Attr;
-		double sq = attr.CalcSq(borderWidth);
+		double sq = attr.GetSq(borderWidth);
 		double w = borderWidth/2.0;
 		double w2 = w/SQRT2;
 

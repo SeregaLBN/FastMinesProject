@@ -34,7 +34,7 @@ public class Triangle3 : BaseCell {
       {}
 
 		public override Size GetOwnerSize(Size sizeField) {
-			double a = CalcA();
+			double a = A;
 			Size result = new Size(
 					(int)(a * ((sizeField.width+1)>>1)),
 					(int)(a * ((sizeField.height+1)>>1)));
@@ -51,12 +51,12 @@ public class Triangle3 : BaseCell {
 		public override int getVertexNumber(int direction) { return 3; }
 		public override double getVertexIntersection() { return 6.6666666666666666666666666666667; } // (8+8+4)/3.
 		public override Size GetDirectionSizeField() { return new Size(2, 2); }
-		public override double CalcA() { return 2*CalcB(); }
+		public override double A => 2 * B;
 		/// <summary> пол стороны треугольника </summary>
-		public double CalcB() { return Math.Sqrt(Area); }
-		public override double CalcSq(int borderWidth) {
+		public double B => Math.Sqrt(Area);
+		public override double GetSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return (CalcA() - w*2 / TAN45_2 ) / 3; 
+			return (A - w*2 / TAN45_2 ) / 3; 
 		}
 	}
 
@@ -146,8 +146,8 @@ public class Triangle3 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrTriangle3 attr = Attr;
-		double a = attr.CalcA();
-		double b = attr.CalcB();
+		double a = attr.A;
+		double b = attr.B;
 
 		double oX = a*(coord.x>>1); // offset X
 		double oY = a*(coord.y>>1); // offset Y
@@ -178,7 +178,7 @@ public class Triangle3 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrTriangle3 attr = Attr;
-		double sq = attr.CalcSq(borderWidth);
+		double sq = attr.GetSq(borderWidth);
 		double w = borderWidth/2.0;
 
 		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)

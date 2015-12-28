@@ -34,13 +34,13 @@ public class Hexagon1 : BaseCell {
       {}
 
 		public override Size GetOwnerSize(Size sizeField) {
-			double a = CalcA();
+			double a = A;
 			Size result = new Size(
 					(int)(a * (sizeField.width    +0.5) * SQRT3),
 					(int)(a * (sizeField.height*1.5+0.5)));
 
 			if (sizeField.height == 1)
-				result.width -= (int)(CalcB()/2);
+				result.width -= (int)(B/2);
 
 			return result;
 		}
@@ -50,12 +50,12 @@ public class Hexagon1 : BaseCell {
 		public override int getVertexNumber(int direction) { return 6; }
 		public override double getVertexIntersection() { return 3; }
 		public override Size GetDirectionSizeField() { return new Size(1, 2); }
-		public override double CalcA() { return Math.Sqrt(2*Area/SQRT27); }
+		public override double A => Math.Sqrt(2*Area/SQRT27);
 		/// <summary> пол стороны треугольника </summary>
-		public double CalcB() { return CalcA()*SQRT3; }
-		public override double CalcSq(int borderWidth) {
+		public double B => A*SQRT3;
+		public override double GetSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return 2*(CalcB() - 2*w)/(SQRT3+1);
+			return 2*(B - 2*w)/(SQRT3+1);
 		}
 	}
 
@@ -85,8 +85,8 @@ public class Hexagon1 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrHexagon1 attr = Attr;
-		double a = attr.CalcA();
-		double b = attr.CalcB();
+		double a = attr.A;
+		double b = attr.B;
 
 		double oX = (coord.x+1)*b;                 // offset X
 		double oY = (coord.y+(direction^1))*a*1.5; // offset Y
@@ -113,9 +113,9 @@ public class Hexagon1 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrHexagon1 attr = Attr;
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double sq = Attr.CalcSq(borderWidth);
+		double a = attr.A;
+		double b = attr.B;
+		double sq = Attr.GetSq(borderWidth);
 
 		double oX = (coord.x+1)*b;      // offset X
 		double oY = (coord.y+1-direction)*a*1.5; // offset Y

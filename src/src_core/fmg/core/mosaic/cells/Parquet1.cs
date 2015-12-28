@@ -34,7 +34,7 @@ public class Parquet1 : BaseCell {
       {}
 
 		public override Size GetOwnerSize(Size sizeField) {
-			double a = CalcA();
+			double a = A;
 			Size result = new Size(
 					(int)((sizeField.width*2+1) * a),
 					(int)((sizeField.height*2+2) * a));
@@ -50,10 +50,10 @@ public class Parquet1 : BaseCell {
 		public override int getVertexNumber(int direction) { return 4; }
 		public override double getVertexIntersection() { return 3; }
 		public override Size GetDirectionSizeField() { return new Size(2, 1); }
-		public override double CalcA() { return Math.Sqrt(Area)/2; }
-		public override double CalcSq(int borderWidth) {
+		public override double A => Math.Sqrt(Area)/2;
+		public override double GetSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return CalcA()-w*SQRT2;
+			return A-w*SQRT2;
 		}
 	}
 
@@ -84,7 +84,7 @@ public class Parquet1 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrParquet1 attr = Attr;
-		double a = attr.CalcA();
+		double a = attr.A;
 
 		switch (direction) {
 		case 0:
@@ -104,7 +104,7 @@ public class Parquet1 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrParquet1 attr = Attr;
-		double sq = attr.CalcSq(borderWidth);
+		double sq = attr.GetSq(borderWidth);
 		double w = borderWidth/2.0;
 		bool bdir = (direction != 0);
 

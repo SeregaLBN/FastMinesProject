@@ -34,9 +34,9 @@ public class TrSq2 : BaseCell {
       {}
 
 		public override Size GetOwnerSize(Size sizeField) {
-			double a = CalcA();
-			double b = CalcB();
-			double h = CalcH();
+			double a = A;
+			double b = B;
+			double h = H;
 			Size result = new Size(
 					(int)(b+h*((sizeField.width+2)/3)+
 					        a*((sizeField.width+1)/3)+
@@ -105,12 +105,12 @@ public class TrSq2 : BaseCell {
 		public override double getVertexIntersection() { return 5.0; }
 		public override Size GetDirectionSizeField() { return new Size(6, 6); }
 		/// <summary> </summary> размер стороны треугольника и квадрата */
-		public override double CalcA() { return Math.Sqrt(6*Area/(2+SQRT3)); }
-		public double CalcB() { return CalcA()/2; }
-		public double CalcH() { return CalcB()*SQRT3; }
-		public override double CalcSq(int borderWidth) {
+		public override double A => Math.Sqrt(6*Area/(2+SQRT3));
+		public double B => A / 2;
+		public double H => B * SQRT3;
+		public override double GetSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return (CalcA()*SQRT3 - w*6) / (2+SQRT3) - 1; 
+			return (A*SQRT3 - w*6) / (2+SQRT3) - 1; 
 		}
 	}
 
@@ -406,9 +406,9 @@ public class TrSq2 : BaseCell {
 
 	private PointDouble getOffset() {
 		AttrTrSq2 attr = Attr;
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double h = attr.CalcH();
+		double a = attr.A;
+		double b = attr.B;
+		double h = attr.H;
 
 		double oX = 0; // offset X
 		double oY = 0; // offset Y
@@ -428,9 +428,9 @@ public class TrSq2 : BaseCell {
 	
 	protected override void CalcRegion() {
 		AttrTrSq2 attr = Attr;
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double h = attr.CalcH();
+		double a = attr.A;
+		double b = attr.B;
+		double h = attr.H;
 
 		PointDouble o = getOffset();
 		switch (direction) {
@@ -535,11 +535,11 @@ public class TrSq2 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrTrSq2 attr = Attr;
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double h = attr.CalcH();
+		double a = attr.A;
+		double b = attr.B;
+		double h = attr.H;
 		double w = borderWidth/2.0;
-		double sq = attr.CalcSq(borderWidth);
+		double sq = attr.GetSq(borderWidth);
 		double sq2 = sq/2;
 		double wsq2 = w+sq2;
 

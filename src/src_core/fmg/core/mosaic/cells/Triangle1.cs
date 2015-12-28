@@ -34,8 +34,8 @@ public class Triangle1 : BaseCell {
       {}
 
 		public override Size GetOwnerSize(Size sizeField) {
-			double b = CalcB();
-			double h = CalcH();
+			double b = B;
+			double h = H;
 			Size result = new Size(
 					(int)(b * (sizeField.width+1)),
 					(int)(h * (sizeField.height+0)));
@@ -47,14 +47,14 @@ public class Triangle1 : BaseCell {
 		public override int getVertexNumber(int direction) { return 3; }
 		public override double getVertexIntersection() { return 6; }
 		public override Size GetDirectionSizeField() { return new Size(2, 2); }
-		public override double CalcA() { return CalcB() * 2.0f; } // размер стороны треугольника
+		public override double A => B * 2.0f; // размер стороны треугольника
 		/// <summary> </summary> пол стороны треугольника */
-		public double CalcB() { return Math.Sqrt(Area/SQRT3); }
+		public double B => Math.Sqrt(Area/SQRT3);
 		/// <summary> </summary> высота треугольника */
-		public double CalcH() { return CalcB() * SQRT3; }
-		public override double CalcSq(int borderWidth) {
+		public double H => B * SQRT3;
+		public override double GetSq(int borderWidth) {
 			double w = borderWidth/2.0;
-			return (CalcH()*2 - 6*w)/(SQRT3+2);
+			return (H*2 - 6*w)/(SQRT3+2);
 			//return (CalcA(area)*SQRT3 - 6*w)/(SQRT3+2);
 		}
 	}
@@ -109,9 +109,9 @@ public class Triangle1 : BaseCell {
 
 	protected override void CalcRegion() {
 		AttrTriangle1 attr = Attr;
-		double a = attr.CalcA();
-		double b = attr.CalcB();
-		double h = attr.CalcH();
+		double a = attr.A;
+		double b = attr.B;
+		double h = attr.H;
 
 		double oX = a*(coord.x>>1); // offset X
 		double oY = h* coord.y;     // offset Y
@@ -142,8 +142,8 @@ public class Triangle1 : BaseCell {
 
 	public override Rect getRcInner(int borderWidth) {
 		AttrTriangle1 attr = Attr;
-		double b = attr.CalcB();
-		double sq = attr.CalcSq(borderWidth);
+		double b = attr.B;
+		double sq = attr.GetSq(borderWidth);
 		double w = borderWidth/2.0;
 
 		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
