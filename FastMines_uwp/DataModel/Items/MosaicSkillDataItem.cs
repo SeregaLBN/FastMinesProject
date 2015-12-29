@@ -19,6 +19,7 @@ namespace FastMines.DataModel.Items {
       [Obsolete]
       public string UnicodeChar => SkillLevel.UnicodeChar().ToString();
 
+      public override ImageSource Image => MosaicSkillImage.Image;
       private MosaicsSkillImg _mosaicSkillImg;
       public MosaicsSkillImg MosaicSkillImage
       {
@@ -50,8 +51,6 @@ namespace FastMines.DataModel.Items {
             }
          }
       }
-
-      public override ImageSource Image => MosaicSkillImage.Image;
 
       private int _imageSize = MosaicsSkillImg.DefaultImageSize;
       public override int ImageSize {

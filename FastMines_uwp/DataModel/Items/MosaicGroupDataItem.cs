@@ -16,6 +16,7 @@ namespace FastMines.DataModel.Items {
 
       public EMosaicGroup MosaicGroup => UniqueId;
 
+      public override ImageSource Image => MosaicGroupImage.Image;
       private MosaicsGroupImg _mosaicGroupImg;
       public MosaicsGroupImg MosaicGroupImage
       {
@@ -47,8 +48,6 @@ namespace FastMines.DataModel.Items {
             }
          }
       }
-
-      public override ImageSource Image => MosaicGroupImage.Image;
 
       private int _imageSize = MosaicsGroupImg.DefaultImageSize;
       public override int ImageSize {

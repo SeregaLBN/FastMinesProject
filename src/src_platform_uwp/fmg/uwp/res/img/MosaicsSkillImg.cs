@@ -31,6 +31,7 @@ namespace fmg.uwp.res.img {
                ? FigureHelper.GetRegularPolygonCoords(3 + st % 4, r1, -angle)
                : FigureHelper.GetRegularStarCoords(rays, r1, r2, -angle);
 
+            // (un)comment next line to view result changes...
             angle = Math.Sin((angle/4).ToRadian())*angle; // ускоряшка..
 
             // adding offset

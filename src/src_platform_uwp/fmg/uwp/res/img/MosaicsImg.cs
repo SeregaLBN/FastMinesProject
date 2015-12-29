@@ -23,7 +23,7 @@ namespace fmg.uwp.res.img {
 
       private EMosaic _mosaicType;
       private Matrisize _sizeField;
-      private int _area = 230;
+      private int _area = MosaicBase<IPaintable>.AREA_MINIMUM;
       private BaseCell.BaseAttribute _attr;
       private readonly List<BaseCell> _matrix = new List<BaseCell>();
       private CellPaintBmp _cellPaint;
@@ -41,8 +41,7 @@ namespace fmg.uwp.res.img {
             }
             return _sizeField;
          }
-         set
-         {
+         set {
             if (SetProperty(ref _sizeField, value)) {
                // reset
                _matrix.Clear();
@@ -51,8 +50,7 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      public void SetSmallIco(EMosaic mosaicType, bool smallIco)
-      {
+      public void SetSmallIco(EMosaic mosaicType, bool smallIco) {
          SizeField = mosaicType.SizeIcoField(smallIco);
       }
 
@@ -64,12 +62,9 @@ namespace fmg.uwp.res.img {
       protected CellPaintBmp CellPaintBitmap => _cellPaint ?? (_cellPaint = new CellPaintBmp());
 
       /// <summary>матрица ячеек, представленная(развёрнута) в виде вектора</summary>
-      public IList<BaseCell> Matrix
-      {
-         get
-         {
-            if (!_matrix.Any())
-            {
+      public IList<BaseCell> Matrix {
+         get {
+            if (!_matrix.Any()) {
                var attr = CellAttr;
                var type = MosaicType;
                var size = SizeField;
@@ -84,8 +79,7 @@ namespace fmg.uwp.res.img {
       /// <summary>из каких фигур состоит мозаика поля</summary>
       public EMosaic MosaicType {
          get { return _mosaicType; }
-         set
-         {
+         set {
             if (SetProperty(ref _mosaicType, value)) {
                // reset
                _matrix.Clear();
@@ -95,11 +89,9 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      public int Area
-      {
+      public int Area {
          get { return _area; }
-         set
-         {
+         set {
             if (SetProperty(ref _area, value)) {
                // reset
                Image = null;
@@ -107,10 +99,8 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      public Windows.UI.Color BackgroundColor
-      {
-         get
-         {
+      public Windows.UI.Color BackgroundColor {
+         get {
             //if (_bkColor == null) {
             //   _bkColor = CellPaint.DefaultBackgroundFillColor.ToWinColor();
             //}
@@ -118,19 +108,15 @@ namespace fmg.uwp.res.img {
          }
          set {
             if (SetProperty(ref _bkColor, value)) {
-               // reset
-               Image = null;
+               DrawAsync();
             }
          }
       }
 
-      public GraphicContext GContext
-      {
-         get
-         {
+      public GraphicContext GContext {
+         get {
             var gContext = CellPaintBitmap.GContext;
-            if (gContext == null)
-            {
+            if (gContext == null) {
                CellPaintBitmap.GContext = gContext = new GraphicContext(true);
                gContext.PenBorder.Width = 2;
                gContext.PenBorder.ColorLight = gContext.PenBorder.ColorShadow;
@@ -139,8 +125,7 @@ namespace fmg.uwp.res.img {
             }
             return gContext;
          }
-         set
-         {
+         set {
             CellPaintBitmap.GContext = value;
             OnPropertyChanged("GContext");
             // reset
@@ -148,11 +133,9 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      public Bound Padding
-      {
+      public Bound Padding {
          get { return GContext.Padding; }
-         set
-         {
+         set {
             GContext.Padding = value;
             OnPropertyChanged("Padding");
             // reset
@@ -165,6 +148,11 @@ namespace fmg.uwp.res.img {
          set { SetProperty(ref _image, value); }
       }
 
+      private void DrawAsync() {
+         // TODO заменить на чесную перерисовку, подобно как в fmg.uwp.res.img.StaticImg
+         Image = null;
+      }
+
       /// <summary> Return painted mosaic bitmap </summary>
       /// <param name="drawAsync">== true Сама картинка возвращается сразу.
       /// Но вот её отрисовка - в фоне.
@@ -175,8 +163,8 @@ namespace fmg.uwp.res.img {
             return _image;
 
          var pixelSize = CellAttr.GetOwnerSize(SizeField);
-         var w = pixelSize.width + GContext.Padding.Left + +GContext.Padding.Right;
-         var h = pixelSize.height + GContext.Padding.Top + +GContext.Padding.Bottom;
+         var w = pixelSize.width + GContext.Padding.Left + GContext.Padding.Right;
+         var h = pixelSize.height + GContext.Padding.Top + GContext.Padding.Bottom;
 
          _image = BitmapFactory.New(w, h); // new WriteableBitmap(w, h); // 
          Action funcFillBk = () => _image.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor);

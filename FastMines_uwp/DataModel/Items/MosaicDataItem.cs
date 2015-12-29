@@ -3,16 +3,14 @@ using System.ComponentModel;
 using Windows.UI.Xaml.Media;
 using fmg.common.geom;
 using fmg.core.types;
+using fmg.core.mosaic;
 using fmg.data.controller.types;
 using fmg.uwp.res.img;
-using fmg.core.mosaic.cells;
-using fmg.core.mosaic;
 
 namespace FastMines.DataModel.Items {
 
    /// <summary> Mosaic item for data model </summary>
-   class MosaicDataItem : BaseData<EMosaic>, IDisposable
-   {
+   class MosaicDataItem : BaseData<EMosaic>, IDisposable {
       private const int ZoomKoef = 2;
 
       public MosaicDataItem(EMosaic eMosaic) : base(eMosaic) {
@@ -21,30 +19,40 @@ namespace FastMines.DataModel.Items {
 
       public EMosaic MosaicType => UniqueId;
 
+      private ESkillLevel _skillLevel;
+      public ESkillLevel SkillLevel {
+         get { return _skillLevel; }
+         set {
+            if (SetProperty(ref _skillLevel, value)) {
+               _mosaicImg = null;
+            }
+         }
+      }
+
+      public override ImageSource Image => MosaicImage.Image;
       private MosaicsImg _mosaicImg;
-      public MosaicsImg MosaicImage
-      {
-         get
-         {
+      public MosaicsImg MosaicImage {
+         get {
             if (_mosaicImg == null) {
+               var sizeField = MosaicType.SizeTileField(SkillLevel);
+               int area = MosaicHelper.FindAreaBySize(MosaicType, sizeField, new Size(ImageSize, ImageSize));
                var tmp = MosaicImage = new MosaicsImg {
                   MosaicType = MosaicType,
-                  SizeField = MosaicType.SizeTileField(ESkillLevel.eAmateur), // TODO - как свойство: MosaicDataItem.SkillLevel
-                  Area = 456, // TODO - вычслять в зависимости от размера картинки == ImageSize * ZoomKoef
+                  SizeField = sizeField,
+                  Area = area * ZoomKoef,
                   BackgroundColor = StaticImg<object, object>.DefaultBkColor,
                   Padding = new Bound(5,5,5,5),
                   //BorderWidth = 3,
                   //RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
                };
-               tmp.GContext.PenBorder.Width = 3; // eq tmp.BorderWidth
+               tmp.GContext.PenBorder.Width = 3;
                //System.Diagnostics.Debug.Assert(tmp.Size == ImageSize * ZoomKoef);
                //System.Diagnostics.Debug.Assert(tmp.Width == ImageSize * ZoomKoef);
                //System.Diagnostics.Debug.Assert(tmp.Height == ImageSize * ZoomKoef);
             }
             return _mosaicImg;
          }
-         private set
-         {
+         private set {
             var old = _mosaicImg;
             if (SetProperty(ref _mosaicImg, value)) {
                if (old != null) {
@@ -59,18 +67,12 @@ namespace FastMines.DataModel.Items {
          }
       }
 
-      public override ImageSource Image => MosaicImage.Image;
-
       private int _imageSize = 100; // MosaicsImg.DefaultImageSize;
-      public override int ImageSize
-      {
+      public override int ImageSize {
          get { return _imageSize; }
-         set
-         {
+         set {
             if (SetProperty(ref _imageSize, value)) {
-               MosaicsImg mosaicImage = MosaicImage;
-               int area = MosaicHelper.FindAreaBySize(MosaicType, mosaicImage.SizeField, new Size(value, value));
-               mosaicImage.Area = area * ZoomKoef;
+               _mosaicImg = null;
             }
          }
       }

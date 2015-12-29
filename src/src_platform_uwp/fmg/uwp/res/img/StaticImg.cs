@@ -5,8 +5,8 @@ using fmg.common;
 using FastMines.Common;
 using FastMines.Presentation.Notyfier;
 
-namespace fmg.uwp.res.img
-{
+namespace fmg.uwp.res.img {
+
    public abstract class StaticImg<T, TImage> : NotifyPropertyChanged
       where TImage : class
    {
@@ -45,7 +45,6 @@ namespace fmg.uwp.res.img
             if (value * 2 >= Size)
                throw new ArgumentException("Padding size is very large. Should be less than Size / 2.");
             if (SetProperty(ref _padding, value)) {
-               _image = null;
                DrawAsync();
             }
          }
