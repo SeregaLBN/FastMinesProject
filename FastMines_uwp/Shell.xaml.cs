@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using FastMines.Pages;
 using FastMines.Presentation;
 using FastMines.Common;
@@ -19,6 +17,11 @@ namespace FastMines
       public Shell() {
          this.InitializeComponent();
          Unloaded += OnClosing;
+         //Loaded += (sender, ev) => {
+         //   // test
+         //   var res = TileHelper.CreateRandomMosaicImage(87, 111);
+         //   System.Diagnostics.Debug.WriteLine(res);
+         //};
 
          _vm = new ShellViewModel();
          foreach (var mi in _vm.MosaicGroupDs.DataSource) {

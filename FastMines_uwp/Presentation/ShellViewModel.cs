@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Input;
 using fmg.uwp.res.img;
 using FastMines.DataModel.DataSources;

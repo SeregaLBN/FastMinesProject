@@ -194,7 +194,7 @@ namespace FastMines {
 
       void AreaOptimal() {
          var sizePage = Window.Current.Bounds.ToFmRect().size();
-         Area = MosaicHelper.FindAreaBySize(MosaicField.MosaicType, MosaicField.SizeField, sizePage);
+         Area = MosaicHelper.FindAreaBySize(MosaicField.MosaicType, MosaicField.SizeField, ref sizePage);
       }
 
 

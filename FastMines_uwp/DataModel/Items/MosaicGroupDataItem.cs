@@ -23,13 +23,14 @@ namespace FastMines.DataModel.Items {
          get
          {
             if (_mosaicGroupImg == null) {
-               var tmp = MosaicGroupImage = new MosaicsGroupImg(MosaicGroup, ImageSize * ZoomKoef) {
+               var tmp = new MosaicsGroupImg(MosaicGroup, ImageSize * ZoomKoef) {
                   BorderWidth = 3,
                   RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
                };
                System.Diagnostics.Debug.Assert(tmp.Size == ImageSize * ZoomKoef);
                System.Diagnostics.Debug.Assert(tmp.Width == ImageSize * ZoomKoef);
                System.Diagnostics.Debug.Assert(tmp.Height == ImageSize * ZoomKoef);
+               MosaicGroupImage = tmp; // call this setter
             }
             return _mosaicGroupImg;
          }

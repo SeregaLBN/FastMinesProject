@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.ComponentModel;
 using System.Collections.Generic;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
@@ -113,23 +114,36 @@ namespace fmg.uwp.res.img {
          }
       }
 
+      private GraphicContext _gContext;
       public GraphicContext GContext {
          get {
-            var gContext = CellPaintBitmap.GContext;
-            if (gContext == null) {
-               CellPaintBitmap.GContext = gContext = new GraphicContext(true);
-               gContext.PenBorder.Width = 2;
-               gContext.PenBorder.ColorLight = gContext.PenBorder.ColorShadow;
+            if (_gContext == null) {
+               var tmp = new GraphicContext(true);
+               tmp.PenBorder.Width = 2;
+               tmp.PenBorder.ColorLight = tmp.PenBorder.ColorShadow;
                if (_randomCellBkColor)
-                  gContext.BkFill.Mode = 1 + _random.Next(CellAttr.getMaxBackgroundFillModeValue());
+                  tmp.BkFill.Mode = 1 + _random.Next(CellAttr.getMaxBackgroundFillModeValue());
+
+               GContext = tmp; // call this setter
             }
-            return gContext;
+            return _gContext;
          }
          set {
             CellPaintBitmap.GContext = value;
-            OnPropertyChanged("GContext");
-            // reset
-            Image = null;
+
+            var old = _gContext;
+            if (SetProperty(ref _gContext, value)) {
+               if (old != null) {
+                  old.PropertyChanged -= OnGContextPropertyChanged;
+                  //old.Dispose();
+               }
+               if (value != null) {
+                  value.PropertyChanged += OnGContextPropertyChanged;
+               }
+
+               // reset
+               Image = null;
+            }
          }
       }
 
@@ -137,7 +151,7 @@ namespace fmg.uwp.res.img {
          get { return GContext.Padding; }
          set {
             GContext.Padding = value;
-            OnPropertyChanged("Padding");
+            OnPropertyChanged();
             // reset
             Image = null;
          }
@@ -166,27 +180,41 @@ namespace fmg.uwp.res.img {
          var w = pixelSize.width + GContext.Padding.Left + GContext.Padding.Right;
          var h = pixelSize.height + GContext.Padding.Top + GContext.Padding.Bottom;
 
-         _image = BitmapFactory.New(w, h); // new WriteableBitmap(w, h); // 
-         Action funcFillBk = () => _image.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor);
+         var img = BitmapFactory.New(w, h); // new WriteableBitmap(w, h); // 
+         Action funcFillBk = () => img.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor);
 
+         _lockOnPropChngDrawing = true;
          if (!drawAsync) {
             // sync draw
             funcFillBk();
+            var paint = new PaintableBmp(img);
             foreach (var cell in Matrix)
-               CellPaint.Paint(cell, new PaintableBmp(_image));
+               CellPaint.Paint(cell, paint);
+            _lockOnPropChngDrawing = false;
          } else {
             // async draw
             AsyncRunner.InvokeFromUiLater(() => {
                funcFillBk();
+               var paint = new PaintableBmp(img);
                foreach (var cell in Matrix) {
+                  if (!ReferenceEquals(img, _image)) {
+                     // aborted...
+                     System.Diagnostics.Debug.Assert(false, "убедись под дебагером что реально чтото сбросило _image");
+                     break;
+                  }
                   var tmp = cell;
-                  AsyncRunner.InvokeFromUiLater(() => CellPaint.Paint(tmp, new PaintableBmp(_image)),
+                  AsyncRunner.InvokeFromUiLater(
+                     () => {
+                        CellPaint.Paint(tmp, paint);
+                        _lockOnPropChngDrawing = false; },
                      ((_random.Next() & 1) == 0)
                         ? CoreDispatcherPriority.Low
-                        : CoreDispatcherPriority.Normal);
+                        : CoreDispatcherPriority.Normal
+                  );
                }
             }, CoreDispatcherPriority.Normal);
          }
+         Image = img;
          return _image;
       }
 
@@ -202,6 +230,11 @@ namespace fmg.uwp.res.img {
          // free native resources if there are any.
       }
 
+      bool _lockOnPropChngDrawing = false;
+      private void OnGContextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         if (!_lockOnPropChngDrawing)
+            DrawAsync();
+      }
    }
 
 }

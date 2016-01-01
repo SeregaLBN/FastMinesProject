@@ -26,13 +26,14 @@ namespace FastMines.DataModel.Items {
          get
          {
             if (_mosaicSkillImg == null) {
-               var tmp = MosaicSkillImage = new MosaicsSkillImg(SkillLevel, ImageSize * ZoomKoef) {
+               var tmp = new MosaicsSkillImg(SkillLevel, ImageSize * ZoomKoef) {
                   BorderWidth = 2,
                   RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
                };
                System.Diagnostics.Debug.Assert(tmp.Size == ImageSize * ZoomKoef);
                System.Diagnostics.Debug.Assert(tmp.Width == ImageSize * ZoomKoef);
                System.Diagnostics.Debug.Assert(tmp.Height == ImageSize * ZoomKoef);
+               MosaicSkillImage = tmp; // call this setter
             }
             return _mosaicSkillImg;
          }

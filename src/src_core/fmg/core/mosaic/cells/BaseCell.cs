@@ -70,11 +70,11 @@ public abstract class BaseCell {
          set { this.SetProperty(ref this._area, value); }
       }
 
-      /// <summary>пересчитать размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
+      /// <summary>размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
       /// на основе заданных параметров</summary>
       public abstract double GetSq(int borderWidth);
 
-      /// <summary>пересчитать значение A (базовая величина фигуры - обычно это размер одной из сторон фигуры) по заданной площади фигуры</summary>
+      /// <summary>значение A (базовая величина фигуры - обычно это размер одной из сторон фигуры) по заданной площади фигуры</summary>
       public abstract double A { get; }
 
       /// <summary>get parent container (owner window) size in pixels</summary>

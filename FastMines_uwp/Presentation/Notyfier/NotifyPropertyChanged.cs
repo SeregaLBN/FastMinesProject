@@ -49,7 +49,7 @@ namespace FastMines.Presentation.Notyfier
          OnPropertyChanged(this, new PropertyChangedExEventArgs<T>(propertyName, newValue, oldValue));
       }
 
-      protected void OnPropertyChanged(string propertyName = null)
+      protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
       {
          OnPropertyChanged(this, new PropertyChangedEventArgs(propertyName));
       }

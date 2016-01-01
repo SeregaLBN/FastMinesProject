@@ -35,20 +35,34 @@ namespace FastMines.DataModel.Items {
          get {
             if (_mosaicImg == null) {
                var sizeField = MosaicType.SizeTileField(SkillLevel);
-               int area = MosaicHelper.FindAreaBySize(MosaicType, sizeField, new Size(ImageSize, ImageSize));
-               var tmp = MosaicImage = new MosaicsImg {
+               var padIn = new Bound(5, 5, 5, 5);
+               var sizeImageIn = new Size(ImageSize - padIn.Left - padIn.Right, ImageSize - padIn.Top - padIn.Bottom);
+               var sizeImageOut = new Size(sizeImageIn);
+               int area = MosaicHelper.FindAreaBySize(MosaicType, sizeField, ref sizeImageOut);
+               System.Diagnostics.Debug.Assert(ImageSize >= (sizeImageOut.width + padIn.Left + padIn.Right));
+               System.Diagnostics.Debug.Assert(ImageSize >= (sizeImageOut.height + padIn.Top + padIn.Bottom));
+               var paddingOut = new Bound(
+                  (ImageSize - sizeImageOut.width) / 2,
+                  (ImageSize - sizeImageOut.height) / 2,
+                  (ImageSize - sizeImageOut.width) / 2 + (ImageSize - sizeImageOut.width) % 2,
+                  (ImageSize - sizeImageOut.height) / 2 + (ImageSize - sizeImageOut.height) % 2);
+               System.Diagnostics.Debug.Assert(ImageSize == sizeImageOut.width + paddingOut.Left + paddingOut.Right);
+               System.Diagnostics.Debug.Assert(ImageSize == sizeImageOut.height + paddingOut.Top + paddingOut.Bottom);
+               var tmp = new MosaicsImg {
                   MosaicType = MosaicType,
                   SizeField = sizeField,
                   Area = area * ZoomKoef,
                   BackgroundColor = StaticImg<object, object>.DefaultBkColor,
-                  Padding = new Bound(5,5,5,5),
+                  Padding = new Bound(paddingOut.Left * ZoomKoef, paddingOut.Top * ZoomKoef, paddingOut.Right * ZoomKoef, paddingOut.Bottom * ZoomKoef),
                   //BorderWidth = 3,
                   //RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
                };
                tmp.GContext.PenBorder.Width = 3;
+               var bmp = tmp.Image;
                //System.Diagnostics.Debug.Assert(tmp.Size == ImageSize * ZoomKoef);
-               //System.Diagnostics.Debug.Assert(tmp.Width == ImageSize * ZoomKoef);
-               //System.Diagnostics.Debug.Assert(tmp.Height == ImageSize * ZoomKoef);
+               System.Diagnostics.Debug.Assert(bmp.PixelWidth == ImageSize * ZoomKoef);
+               System.Diagnostics.Debug.Assert(bmp.PixelHeight == ImageSize * ZoomKoef);
+               MosaicImage = tmp; // call this setter
             }
             return _mosaicImg;
          }

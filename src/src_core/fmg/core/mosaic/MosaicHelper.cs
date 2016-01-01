@@ -78,6 +78,7 @@ namespace fmg.core.mosaic {
                res -= d;
 
             var z = comparable((int)res);
+            System.Diagnostics.Debug.WriteLine("delta{0}{1}; res{2}{3}; comprbl={4}", deltaUp ? '↑' : '↓', d, lastSmall ? '↑' : '↓', res, z);
             if (z == 0)
                return (int)res;
             lastSmall = (z < 0);
@@ -88,22 +89,31 @@ namespace fmg.core.mosaic {
 
       /// <summary> узнаю мах размер площади ячеек мозаики, при котором вся мозаика помещается в заданную область </summary>
       /// <param name="mosaicSizeField">интересуемый размер (в ячейках) поля мозаики</param>
-      /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
+      /// <param name="sizeClient"> размер окна/области (в пикселях):
+      /// in - в которую должна вписаться мозаика;
+      /// out - в которую реально впишется мозаика;
+      /// </param>
       /// <returns>площадь ячейки</returns>
-      private static int FindAreaBySize(BaseCell.BaseAttribute cellAttr, Matrisize mosaicSizeField, Size sizeClient) {
+      private static int FindAreaBySize(BaseCell.BaseAttribute cellAttr, Matrisize mosaicSizeField, ref Size sizeClient) {
          // сделал приватным, т.к. неявно меняет свойства параметра 'cellAttr'
-         return Finder(MosaicBase<IPaintable>.AREA_MINIMUM, 53,
+
+         Size sizeClientCopy = sizeClient;
+         Size sizeWnd = sizeClient;
+         var res = Finder(MosaicBase<IPaintable>.AREA_MINIMUM, 53,
             area => {
                cellAttr.Area = area;
-               var sizeWnd = cellAttr.GetOwnerSize(mosaicSizeField);
-               if ((sizeWnd.width == sizeClient.width) &&
-                   (sizeWnd.height == sizeClient.height))
+               sizeWnd = cellAttr.GetOwnerSize(mosaicSizeField);
+               if ((sizeWnd.width == sizeClientCopy.width) &&
+                   (sizeWnd.height == sizeClientCopy.height))
                   return 0;
-               if ((sizeWnd.width <= sizeClient.width) &&
-                   (sizeWnd.height <= sizeClient.height))
+               if ((sizeWnd.width <= sizeClientCopy.width) &&
+                   (sizeWnd.height <= sizeClientCopy.height))
                   return -1;
                return +1;
             });
+         sizeClient.width = sizeWnd.width;
+         sizeClient.height = sizeWnd.height;
+         return res;
       }
 
       /// <summary> узнаю max размер поля мозаики, при котором вся мозаика помещается в заданную область </summary>
@@ -135,10 +145,13 @@ namespace fmg.core.mosaic {
 
       /// <summary> узнаю мах размер площади ячеек мозаики, при котором вся мозаика помещается в заданную область </summary>
       /// <param name="mosaicSizeField">интересуемый размер (в ячейках) поля мозаики</param>
-      /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
+      /// <param name="sizeClient"> размер окна/области (в пикселях):
+      /// in - в которую должна вписаться мозаика;
+      /// out - в которую реально впишется мозаика;
+      /// </param>
       /// <returns>площадь ячейки</returns>
-      public static int FindAreaBySize(EMosaic mosaicType, Matrisize mosaicSizeField, Size sizeClient) {
-         return FindAreaBySize(CreateAttributeInstance(mosaicType, 0), mosaicSizeField, sizeClient);
+      public static int FindAreaBySize(EMosaic mosaicType, Matrisize mosaicSizeField, ref Size sizeClient) {
+         return FindAreaBySize(CreateAttributeInstance(mosaicType, 0), mosaicSizeField, ref sizeClient);
       }
 
       /// <summary> узнаю max размер поля мозаики, при котором вся мозаика помещается в заданную область </summary>

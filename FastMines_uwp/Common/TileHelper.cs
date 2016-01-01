@@ -187,31 +187,35 @@ namespace FastMines {
          return "ms-appdata:///local/" + storageFile.DisplayName;
       }
 
-      private static Tuple<EMosaic, WriteableBitmap> CreateRandomMosaicImage(int w, int h) {
-         var mosaicType = EMosaicEx.FromOrdinal(Random.Next() % EMosaicEx.GetValues().Length);
+      public static Tuple<EMosaic, WriteableBitmap> CreateRandomMosaicImage(int w, int h) {
+         var mosaicType = EMosaic.eMosaicTriangle3; // EMosaicEx.FromOrdinal(Random.Next() % EMosaicEx.GetValues().Length);
          var bkClr = ColorExt.RandomColor(Random).Attenuate().ToWinColor();
          var sizeField = mosaicType.SizeIcoField(true);
-         sizeField.n += Random.Next()%3;
-         sizeField.m += Random.Next()%2;
+         sizeField.n += 1;//Random.Next()%3;
+         sizeField.m += 2;//Random.Next()%2;
          const int bound = 3;
-         var area = MosaicHelper.FindAreaBySize(mosaicType, sizeField, new Size(w - bound*2, h - bound*2));
-         var img = Resources.GetImgMosaic(mosaicType, sizeField, area, bkClr, new Bound(bound, bound, bound, bound));
-         var bmp = img.GetImage(false);
-         if ((bmp.PixelWidth==w) && (bmp.PixelHeight==h))
-            return new Tuple<EMosaic, WriteableBitmap>(mosaicType, bmp);
-         var bmpOut = new WriteableBitmap(w, h);
-         bmpOut.FillRectangle(0, 0, w, h, bkClr);
-         bmpOut.Blit(
-            new Rect(
-                  Math.Max(0, (w-bmp.PixelWidth)/2),
-                  Math.Max(0, (h-bmp.PixelHeight)/2),
-                  bmp.PixelWidth,
-                  bmp.PixelHeight),
-            bmp,
-            new Rect(
-               0, 0,
-               bmp.PixelWidth, bmp.PixelHeight));
-         return new Tuple<EMosaic, WriteableBitmap>(mosaicType, bmpOut);
+         var sizeImageIn = new Size(w - bound * 2, h - bound * 2);
+         var sizeImageOut = new Size(sizeImageIn);
+         var area = MosaicHelper.FindAreaBySize(mosaicType, sizeField, ref sizeImageOut);
+         System.Diagnostics.Debug.Assert(w >= (sizeImageOut.width + bound * 2));
+         System.Diagnostics.Debug.Assert(h >= (sizeImageOut.height + bound * 2));
+         var paddingOut = new Bound(
+                  (w - sizeImageOut.width) / 2,
+                  (h - sizeImageOut.height) / 2,
+                  (w - sizeImageOut.width) / 2 + (w - sizeImageOut.width) % 2,
+                  (h - sizeImageOut.height) / 2 + (h - sizeImageOut.height) % 2);
+         System.Diagnostics.Debug.Assert(w == sizeImageOut.width + paddingOut.Left + paddingOut.Right);
+         System.Diagnostics.Debug.Assert(h == sizeImageOut.height + paddingOut.Top + paddingOut.Bottom);
+         const int ZoomKoef = 1;
+         var img = Resources.GetImgMosaic(mosaicType, sizeField, area* ZoomKoef, bkClr, new Bound(
+            paddingOut.Left * ZoomKoef,
+            paddingOut.Top * ZoomKoef,
+            paddingOut.Right * ZoomKoef,
+            paddingOut.Bottom * ZoomKoef));
+         var bmp = img.Image;
+         System.Diagnostics.Debug.Assert(w * ZoomKoef == bmp.PixelWidth);
+         System.Diagnostics.Debug.Assert(h * ZoomKoef == bmp.PixelHeight);
+         return new Tuple<EMosaic, WriteableBitmap>(mosaicType, bmp);
       }
 
       private static async Task<StorageFile> SaveToFileLogo(int part, WriteableBitmap writeableBitmap) {
