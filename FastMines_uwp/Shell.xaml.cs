@@ -19,8 +19,10 @@ namespace FastMines
          Unloaded += OnClosing;
          //Loaded += (sender, ev) => {
          //   // test
-         //   var res = TileHelper.CreateRandomMosaicImage(87, 111);
-         //   System.Diagnostics.Debug.WriteLine(res);
+         //   var r = new Random(Guid.NewGuid().GetHashCode());
+         //   for (int i = 0; i < 100; ++i) {
+         //      TileHelper.CreateRandomMosaicImage(10 + r.Next(100), 10+r.Next(100));
+         //   }
          //};
 
          _vm = new ShellViewModel();

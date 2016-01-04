@@ -22,7 +22,7 @@ public struct Point {
    }
 
    public override string ToString() {
-      return "[x=" + x + ", y=" + y + "]";
+      return "{x:" + x + ", y:" + y + "}";
    }
 
    public Point Move(Size s) { return Move(s.width, s.height); }

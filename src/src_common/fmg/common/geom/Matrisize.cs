@@ -28,7 +28,7 @@
          return sum * (sum + 1) / 2 + n;
       }
       public override string ToString() {
-         return "[m=" + m + ", n=" + n + "]";
+         return "{m:" + m + ", n:" + n + "}";
       }
    }
 

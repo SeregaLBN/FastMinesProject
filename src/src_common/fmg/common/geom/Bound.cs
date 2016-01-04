@@ -40,7 +40,7 @@
             return hashCode;
          }
       }
-      public override string ToString() { return $"Left={Left}; Top={Top}; Right={Right}; Bottom={Bottom}"; }
+      public override string ToString() { return $"{{Left:{Left}, Top:{Top}, Right:{Right}, Bottom:{Bottom}}}"; }
 
       public static bool operator ==(Bound t1, Bound t2)
       {

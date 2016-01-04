@@ -58,32 +58,41 @@ namespace fmg.core.mosaic {
       #region calc dimension window region
 
       /// <summary> Поиск больше-меньше </summary>
-      /// <param name="baseMin">стартовое значение для поиска</param>
       /// <param name="baseDelta">начало дельты приращения</param>
       /// <param name="comparable">ф-ция сравнения</param>
       /// <returns>что найдено</returns>
-      private static int Finder(int baseMin, int baseDelta, Func<int, int> comparable) {
-         double res = baseMin;
+      private static int Finder(int baseDelta, Func<int, int> comparable) {
+         double res = baseDelta;
          double d = baseDelta;
-         bool deltaUp = true, lastSmall = true;
+         bool deltaUp = true;
          do {
+            var cmp = comparable((int)res);
+            System.Diagnostics.Debug.WriteLine("d={0}{1}; res={2}; cmp={3}", deltaUp ? '↑' : '↓', d, res, cmp);
+            // Example:
+            // func comparable(x) -> return x==1000 ? 0: x<1000 ? -1 : +1;
+            // init data:  res=100 d=100
+            //  iter 0: cmp=+1; d=d*2=200; res=res+d=300
+            //  iter 1: cmp=+1; d=d*2=400; res=res+d=700
+            //  iter 2: cmp=+1; d=d*2=800; res=res+d=1500
+            //  iter 3: cmp=-1; d=d/2=400; res=res-d=1100
+            //  iter 4: cmp=-1; d=d/2=200; res=res-d=900
+            //  iter 5: cmp=+1; d=d/2=100; res=res+d=1000 - finded!!!
+            if (cmp == 0)
+               break;
+            if ((d < 1) && (cmp == -1))
+               break;
+
+            var resultUp = (cmp < 0);
+            deltaUp = deltaUp && resultUp;
             if (deltaUp)
                d *= 2;
             else
                d /= 2;
-
-            if (lastSmall)
+            if (resultUp)
                res += d;
             else
                res -= d;
-
-            var z = comparable((int)res);
-            System.Diagnostics.Debug.WriteLine("delta{0}{1}; res{2}{3}; comprbl={4}", deltaUp ? '↑' : '↓', d, lastSmall ? '↑' : '↓', res, z);
-            if (z == 0)
-               return (int)res;
-            lastSmall = (z < 0);
-            deltaUp = deltaUp && lastSmall;
-         } while (d > 1);
+         } while (true);
          return (int)res;
       }
 
@@ -98,21 +107,24 @@ namespace fmg.core.mosaic {
          // сделал приватным, т.к. неявно меняет свойства параметра 'cellAttr'
 
          Size sizeClientCopy = sizeClient;
-         Size sizeWnd = sizeClient;
-         var res = Finder(MosaicBase<IPaintable>.AREA_MINIMUM, 53,
+         Size sizeIter = sizeClient;
+         var res = Finder(MosaicBase<IPaintable>.AREA_MINIMUM,// 53,
             area => {
                cellAttr.Area = area;
-               sizeWnd = cellAttr.GetOwnerSize(mosaicSizeField);
-               if ((sizeWnd.width == sizeClientCopy.width) &&
-                   (sizeWnd.height == sizeClientCopy.height))
+               sizeIter = cellAttr.GetOwnerSize(mosaicSizeField);
+               if ((sizeIter.width == sizeClientCopy.width) &&
+                   (sizeIter.height <= sizeClientCopy.height))
                   return 0;
-               if ((sizeWnd.width <= sizeClientCopy.width) &&
-                   (sizeWnd.height <= sizeClientCopy.height))
+               if ((sizeIter.width <= sizeClientCopy.width) &&
+                   (sizeIter.height == sizeClientCopy.height))
+                  return 0;
+               if ((sizeIter.width < sizeClientCopy.width) &&
+                   (sizeIter.height < sizeClientCopy.height))
                   return -1;
                return +1;
             });
-         sizeClient.width = sizeWnd.width;
-         sizeClient.height = sizeWnd.height;
+         sizeClient.width = sizeIter.width;
+         sizeClient.height = sizeIter.height;
          return res;
       }
 
@@ -122,7 +134,7 @@ namespace fmg.core.mosaic {
       /// <returns>размер поля мозаики</returns>
       public static Matrisize FindSizeByArea(BaseCell.BaseAttribute cellAttr, Size sizeClient) {
          var result = new Matrisize();
-         Finder(1, 10, newWidth => {
+         Finder(10, newWidth => {
             result.m = newWidth;
             var sizeWnd = cellAttr.GetOwnerSize(result);
             if (sizeWnd.width == sizeClient.width)
@@ -131,7 +143,7 @@ namespace fmg.core.mosaic {
                return -1;
             return +1;
          });
-         Finder(1, 10, newHeight => {
+         Finder(10, newHeight => {
             result.n = newHeight;
             var sizeWnd = cellAttr.GetOwnerSize(result);
             if (sizeWnd.width == sizeClient.height)

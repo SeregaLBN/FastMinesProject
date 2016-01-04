@@ -98,7 +98,7 @@ public class Region {
          //sb.Append(i).Append('=');
          sb.Append(p.ToString());
          if (i != _points.Length - 1)
-            sb.Append("; ");
+            sb.Append(", ");
       }
       sb.Append('}');
       return sb.ToString();

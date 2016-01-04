@@ -24,7 +24,7 @@ public struct SizeDouble {
    }
 
    public override string ToString() {
-      return "[width=" + width + ", height=" + height + "]";
+      return "{width:" + width + ", height:" + height + "}";
    }
 }
 }

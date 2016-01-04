@@ -161,10 +161,9 @@ namespace fmg.uwp.res.img {
          get { return GetImage(false); }
          set { SetProperty(ref _image, value); }
       }
-
-      private void DrawAsync() {
-         // TODO заменить на чесную перерисовку, подобно как в fmg.uwp.res.img.StaticImg
-         Image = null;
+      /// <summary> отдаст или уже готовую картинку; или новую, на которой контент отрисуется потом </summary>
+      public WriteableBitmap ImageAsync {
+         get { return GetImage(true); }
       }
 
       /// <summary> Return painted mosaic bitmap </summary>
@@ -172,11 +171,12 @@ namespace fmg.uwp.res.img {
       /// Но вот её отрисовка - в фоне.
       /// Ф-ция без ключевого слова async, т.к. результат есть DependencyObject, т.е. владелец может сам отслеживать отрисовку...</param>
       /// <returns></returns>
-      public WriteableBitmap GetImage(bool drawAsync) {
+      private WriteableBitmap GetImage(bool drawAsync) {
          if (_image != null)
             return _image;
 
          var pixelSize = CellAttr.GetOwnerSize(SizeField);
+         //System.Diagnostics.Debug.WriteLine("pixelSize={0}; padding={1}", pixelSize, GContext.Padding);
          var w = pixelSize.width + GContext.Padding.Left + GContext.Padding.Right;
          var h = pixelSize.height + GContext.Padding.Top + GContext.Padding.Bottom;
 
@@ -219,6 +219,16 @@ namespace fmg.uwp.res.img {
       }
 
 
+      private void DrawAsync() {
+         // TODO заменить на чесную перерисовку, подобно как в fmg.uwp.res.img.StaticImg
+         Image = null;
+      }
+
+      bool _lockOnPropChngDrawing = false;
+      private void OnGContextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         if (!_lockOnPropChngDrawing)
+            DrawAsync();
+      }
       public void Dispose() {
          Dispose(true);
       }
@@ -230,11 +240,6 @@ namespace fmg.uwp.res.img {
          // free native resources if there are any.
       }
 
-      bool _lockOnPropChngDrawing = false;
-      private void OnGContextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         if (!_lockOnPropChngDrawing)
-            DrawAsync();
-      }
    }
 
 }

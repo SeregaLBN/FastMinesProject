@@ -47,7 +47,7 @@ namespace FastMines.Data {
             if (_mosaicsImg == null) {
                Action<bool> func = drawAsync => {
                   _mosaicsImg = GetMosaicsImage(UniqueId, _sizeField);
-                  base.Image = _mosaicsImg.GetImage(drawAsync);
+                  base.Image = drawAsync ? _mosaicsImg.ImageAsync : _mosaicsImg.Image;
                };
                if (DesignMode.DesignModeEnabled)
                   func(false);

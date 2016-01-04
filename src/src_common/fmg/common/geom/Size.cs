@@ -20,7 +20,7 @@ public struct Size {
       return sum * (sum + 1) / 2 + height;
    }
    public override string ToString() {
-      return "[w=" + width + ", h=" + height + "]";
+      return "{w:" + width + ", h:" + height + "}";
    }
 }
 

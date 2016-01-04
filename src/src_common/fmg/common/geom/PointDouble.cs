@@ -24,7 +24,7 @@ public struct PointDouble {
    }
 
    public override string ToString() {
-      return "[x=" + x + ", y=" + y + "]";
+      return "{x:" + x + ", y:" + y + "}";
    }
 }
 }

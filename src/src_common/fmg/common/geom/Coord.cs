@@ -19,7 +19,7 @@ public struct Coord {
       return sum * (sum + 1) / 2 + y;
    }
    public override string ToString() {
-      return "[x=" + x + ", y=" + y + "]";
+      return "{x:" + x + ", y:" + y + "}";
    }
 }
 }

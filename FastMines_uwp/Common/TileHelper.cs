@@ -188,11 +188,11 @@ namespace FastMines {
       }
 
       public static Tuple<EMosaic, WriteableBitmap> CreateRandomMosaicImage(int w, int h) {
-         var mosaicType = EMosaic.eMosaicTriangle3; // EMosaicEx.FromOrdinal(Random.Next() % EMosaicEx.GetValues().Length);
+         var mosaicType = EMosaicEx.FromOrdinal(Random.Next() % EMosaicEx.GetValues().Length);
          var bkClr = ColorExt.RandomColor(Random).Attenuate().ToWinColor();
          var sizeField = mosaicType.SizeIcoField(true);
-         sizeField.n += 1;//Random.Next()%3;
-         sizeField.m += 2;//Random.Next()%2;
+         sizeField.n += Random.Next()%3;
+         sizeField.m += Random.Next()%2;
          const int bound = 3;
          var sizeImageIn = new Size(w - bound * 2, h - bound * 2);
          var sizeImageOut = new Size(sizeImageIn);
@@ -206,15 +206,17 @@ namespace FastMines {
                   (h - sizeImageOut.height) / 2 + (h - sizeImageOut.height) % 2);
          System.Diagnostics.Debug.Assert(w == sizeImageOut.width + paddingOut.Left + paddingOut.Right);
          System.Diagnostics.Debug.Assert(h == sizeImageOut.height + paddingOut.Top + paddingOut.Bottom);
-         const int ZoomKoef = 1;
+         const int ZoomKoef = 1;--------------------
          var img = Resources.GetImgMosaic(mosaicType, sizeField, area* ZoomKoef, bkClr, new Bound(
             paddingOut.Left * ZoomKoef,
             paddingOut.Top * ZoomKoef,
             paddingOut.Right * ZoomKoef,
             paddingOut.Bottom * ZoomKoef));
          var bmp = img.Image;
-         System.Diagnostics.Debug.Assert(w * ZoomKoef == bmp.PixelWidth);
-         System.Diagnostics.Debug.Assert(h * ZoomKoef == bmp.PixelHeight);
+         var pw = bmp.PixelWidth;
+         var ph = bmp.PixelHeight;
+         System.Diagnostics.Debug.Assert(w * ZoomKoef == pw);
+         System.Diagnostics.Debug.Assert(h * ZoomKoef == ph);
          return new Tuple<EMosaic, WriteableBitmap>(mosaicType, bmp);
       }
 

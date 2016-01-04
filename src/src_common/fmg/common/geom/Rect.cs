@@ -128,7 +128,7 @@ namespace fmg.common.geom {
       }
 
       public override String ToString() {
-         return "x=" + x + "; y=" + y + "; w=" + width + "; h=" + height;
+         return "{x:" + x + ", y:" + y + ", w:" + width + ", h:" + height + "}";
       }
    }
 
