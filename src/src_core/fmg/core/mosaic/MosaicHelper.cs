@@ -107,8 +107,8 @@ namespace fmg.core.mosaic {
          // сделал приватным, т.к. неявно меняет свойства параметра 'cellAttr'
 
          Size sizeClientCopy = sizeClient;
-         Size sizeIter = sizeClient;
-         var res = Finder(MosaicBase<IPaintable>.AREA_MINIMUM,// 53,
+         Size sizeIter = new Size();
+         var res = Finder(MosaicBase<IPaintable>.AREA_MINIMUM,
             area => {
                cellAttr.Area = area;
                sizeIter = cellAttr.GetOwnerSize(mosaicSizeField);
@@ -140,16 +140,16 @@ namespace fmg.core.mosaic {
             var sizeWnd = cellAttr.GetOwnerSize(result);
             if (sizeWnd.width == sizeClient.width)
                return 0;
-            if (sizeWnd.width <= sizeClient.width)
+            if (sizeWnd.width < sizeClient.width)
                return -1;
             return +1;
          });
          Finder(10, newHeight => {
             result.n = newHeight;
             var sizeWnd = cellAttr.GetOwnerSize(result);
-            if (sizeWnd.width == sizeClient.height)
+            if (sizeWnd.height == sizeClient.height)
                return 0;
-            if (sizeWnd.height <= sizeClient.height)
+            if (sizeWnd.height < sizeClient.height)
                return -1;
             return +1;
          });

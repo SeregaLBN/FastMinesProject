@@ -1398,8 +1398,9 @@ public class Main extends JFrame  {
 	 * @return макс площадь ячейки
 	 */
 	int CalcMaxArea(Matrisize mosaicSizeField) {
-		Size sizeMosaic = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
-		return MosaicHelper.findAreaBySize(getMosaic().getMosaicType(), mosaicSizeField, sizeMosaic);
+		Size sizeMosaicIn = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
+		Size sizeMosaicOut = new Size();
+		return MosaicHelper.findAreaBySize(getMosaic().getMosaicType(), mosaicSizeField, sizeMosaicIn, sizeMosaicOut);
 	}
 
 	/**

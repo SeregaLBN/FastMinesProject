@@ -76,56 +76,76 @@ public final class MosaicHelper {
 
 	/**
 	 * Поиск больше-меньше
-	 * @param baseMin - стартовое значение для поиска
 	 * @param baseDelta - начало дельты приращения
 	 * @param func - ф-ция сравнения
 	 * @return что найдено
 	 */
-	static int Finder(int baseMin, int baseDelta, Comparable<Integer> func) {
-		double res = baseMin;
+	static int Finder(int baseDelta, Comparable<Integer> func) {
+		double res = baseDelta;
 		double d = baseDelta;
-		boolean deltaUp = true, lastSmall = true;
+		boolean deltaUp = true;
 		do {
+			int cmp = func.compareTo((int)res);
+			// Example:
+			// func comparable(x) -> return x==1000 ? 0: x<1000 ? -1 : +1;
+			// init data:  res=100 d=100
+			//  iter 0: cmp=+1; d=d*2=200; res=res+d=300
+			//  iter 1: cmp=+1; d=d*2=400; res=res+d=700
+			//  iter 2: cmp=+1; d=d*2=800; res=res+d=1500
+			//  iter 3: cmp=-1; d=d/2=400; res=res-d=1100
+			//  iter 4: cmp=-1; d=d/2=200; res=res-d=900
+			//  iter 5: cmp=+1; d=d/2=100; res=res+d=1000 - finded!!!
+			if (cmp == 0)
+				return (int)res;
+			if ((d < 1) && (cmp == -1))
+				break;
+			
+			boolean resultUp = (cmp < 0);
+			deltaUp = deltaUp && resultUp;
 			if (deltaUp)
 				d *= 2;
 			else
 				d /= 2;
-
-			if (lastSmall)
+			if (resultUp)
 				res += d;
 			else
 				res -= d;
-
-			int z = func.compareTo((int)res);
-			if (z == 0)
-				return (int)res;
-			lastSmall = (z < 0);
-			deltaUp = deltaUp && lastSmall;
-		} while(d > 1);
+        } while (true);
 		return (int)res;
 	}
 
 	/** узнаю мах размер площади ячеек мозаики, при котором окно проекта вмещается в заданную область
 	 * @param mosaicSizeField - интересуемый размер (в ячейках) поля мозаики
-	 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
+	 * @param sizeClientIn - размер окна/области (в пикселях) в которую должна вписаться мозаика
+	 * @param sizeClientOut - размер окна/области (в пикселях) в которую реально впишется мозаика
 	 * @return площадь ячейки
 	 */
-	private static int findAreaBySize(BaseCell.BaseAttribute cellAttr, final Matrisize mosaicSizeField, final Size sizeClient) {
+	private static int findAreaBySize(BaseCell.BaseAttribute cellAttr, final Matrisize mosaicSizeField, final Size sizeClientIn, Size sizeClientOut) {
 		// сделал приватным, т.к. неявно меняет свойства параметра 'cellAttr'
-        return Finder(MosaicBase.AREA_MINIMUM, 53, new Comparable<Integer>() {
+
+		final Size sizeIter = new Size();
+		int res = Finder(MosaicBase.AREA_MINIMUM, new Comparable<Integer>() {
 			@Override
 			public int compareTo(Integer area) {
 				cellAttr.setArea(area);
-				Size sizeWnd = cellAttr.getOwnerSize(mosaicSizeField);
-				if ((sizeWnd.width == sizeClient.width) &&
-				   (sizeWnd.height == sizeClient.height))
-				  return 0;
-				if ((sizeWnd.width <= sizeClient.width) &&
-					(sizeWnd.height <= sizeClient.height))
+				Size tmp = cellAttr.getOwnerSize(mosaicSizeField);
+				sizeIter.width = tmp.width;
+				sizeIter.height = tmp.height;
+				if ((sizeIter.width == sizeClientIn.width) &&
+					(sizeIter.height <= sizeClientIn.height))
+					return 0;
+				if ((sizeIter.width <= sizeClientIn.width) &&
+					(sizeIter.height == sizeClientIn.height))
+					return 0;
+				if ((sizeIter.width < sizeClientIn.width) &&
+					(sizeIter.height < sizeClientIn.height))
 					return -1;
 				return +1;
 			}
 		});
+		sizeClientOut.width = sizeIter.width;
+		sizeClientOut.height = sizeIter.height;
+		return res;
 	}
 
 	/** узнаю max размер поля мозаики, при котором окно проекта вмещается в в заданную область
@@ -135,7 +155,7 @@ public final class MosaicHelper {
 	 */
 	public static Matrisize findSizeByArea(BaseCell.BaseAttribute cellAttr, final Size sizeClient) {
 		final Matrisize result = new Matrisize();
-		Finder(1, 10, new Comparable<Integer>() {
+		Finder(10, new Comparable<Integer>() {
 			@Override
 			public int compareTo(Integer newWidth) {
 				result.m = newWidth;
@@ -147,14 +167,14 @@ public final class MosaicHelper {
 				return +1;
 			}
 		});
-		Finder(1, 10, new Comparable<Integer>() {
+		Finder(10, new Comparable<Integer>() {
 			@Override
 			public int compareTo(Integer newHeight) {
 				result.n = newHeight;
 				Size sizeWnd = cellAttr.getOwnerSize(result);
-				if (sizeWnd.width == sizeClient.height)
+				if (sizeWnd.height == sizeClient.height)
 					return 0;
-				if (sizeWnd.height <= sizeClient.height)
+				if (sizeWnd.height < sizeClient.height)
 					return -1;
 				return +1;
 			}
@@ -164,11 +184,12 @@ public final class MosaicHelper {
 
 	/** узнаю мах размер площади ячеек мозаики, при котором окно проекта вмещается в заданную область
 	 * @param mosaicSizeField - интересуемый размер (в ячейках) поля мозаики
-	 * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
+	 * @param sizeClientIn - размер окна/области (в пикселях) в которую должна вписаться мозаика
+	 * @param sizeClientOut - размер окна/области (в пикселях) в которую реально впишется мозаика
 	 * @return площадь ячейки
 	 */
-	public static int findAreaBySize(EMosaic mosaicType, Matrisize mosaicSizeField, Size sizeClient) {
-		return findAreaBySize(createAttributeInstance(mosaicType, 0), mosaicSizeField, sizeClient);
+	public static int findAreaBySize(EMosaic mosaicType, Matrisize mosaicSizeField, Size sizeClientIn, Size sizeClientOut) {
+		return findAreaBySize(createAttributeInstance(mosaicType, 0), mosaicSizeField, sizeClientIn, sizeClientOut);
 	}
 
 	/** узнаю max размер поля мозаики, при котором окно проекта вмещается в в заданную область
