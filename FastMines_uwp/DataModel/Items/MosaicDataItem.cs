@@ -35,8 +35,7 @@ namespace FastMines.DataModel.Items {
          get {
             if (_mosaicImg == null) {
                var sizeField = MosaicType.SizeTileField(SkillLevel);
-               var tmp = new MosaicsImg {
-                  MosaicType = MosaicType,
+               var tmp = new MosaicsImg(MosaicType) {
                   SizeField = sizeField,
                   Size = ImageSize * ZoomKoef,
                   BackgroundColor = StaticImg<object, object>.DefaultBkColor,

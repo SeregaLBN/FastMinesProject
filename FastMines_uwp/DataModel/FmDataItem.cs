@@ -38,26 +38,26 @@ namespace FastMines.Data {
       public FmDataGroup Group { get { return this._group; } set { this.SetProperty(ref this._group, value); } }
 
       private static MosaicsImg GetMosaicsImage(EMosaic eMosaic, Matrisize sizeField) {
-         return new MosaicsImg {
-            MosaicType = eMosaic,
+         return new MosaicsImg(eMosaic) {
             SizeField = sizeField,
             Size = 750,
             BackgroundColor = Resources.DefaultBkColor,
-            Padding = 7
+            Padding = 7,
+            OnlySyncDraw = DesignMode.DesignModeEnabled
          };
       }
 
       public override ImageSource Image {
          get {
             if (_mosaicsImg == null) {
-               Action<bool> func = drawAsync => {
-                  _mosaicsImg = GetMosaicsImage(UniqueId, _sizeField);
-                  base.Image = drawAsync ? _mosaicsImg.ImageAsync : _mosaicsImg.Image;
+               _mosaicsImg = new MosaicsImg(UniqueId) {
+                  SizeField = _sizeField,
+                  Size = 750,
+                  BackgroundColor = Resources.DefaultBkColor,
+                  Padding = 7,
+                  OnlySyncDraw = DesignMode.DesignModeEnabled
                };
-               if (DesignMode.DesignModeEnabled)
-                  func(false);
-               else
-                  AsyncRunner.InvokeFromUiLater(() => func(true), CoreDispatcherPriority.Low);
+               base.Image = _mosaicsImg.Image;
             }
             return base.Image;
          }

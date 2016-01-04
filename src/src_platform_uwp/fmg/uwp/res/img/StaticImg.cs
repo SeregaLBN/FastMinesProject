@@ -50,7 +50,7 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      public T Entity { get; private set; }
+      public T Entity { get; protected set; }
 
       private TImage _image;
       public TImage Image {
@@ -84,7 +84,7 @@ namespace fmg.uwp.res.img {
       }
 
       private int _borderWidth = 3;
-      public int BorderWidth {
+      public virtual int BorderWidth {
          get { return _borderWidth; }
          set {
             if (SetProperty(ref _borderWidth, value))
@@ -116,9 +116,15 @@ namespace fmg.uwp.res.img {
 
       public Color FillColorAttenuate => FillColor.Attenuate(160);
 
+      public bool OnlySyncDraw { get; set; } = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+
       private bool _scheduledDraw;
       /// <summary> schedule drawing (async operation) </summary>
       protected void DrawAsync() {
+         if (OnlySyncDraw) {
+            DrawSync();
+            return;
+         }
          if (_scheduledDraw)
             return;
 

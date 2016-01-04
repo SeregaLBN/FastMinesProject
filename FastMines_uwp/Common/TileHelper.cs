@@ -196,8 +196,7 @@ namespace FastMines {
          sizeField.m += Random.Next()%2;
          const int bound = 3;
          const int ZoomKoef = 1;
-         var img = new MosaicsImg {
-            MosaicType = mosaicType,
+         var img = new MosaicsImg(mosaicType) {
             SizeField = sizeField,
             Size = ZoomKoef * Math.Max(w, h),
             BackgroundColor = bkClr,
