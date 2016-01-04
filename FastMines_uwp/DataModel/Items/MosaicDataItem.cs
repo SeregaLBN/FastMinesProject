@@ -54,10 +54,9 @@ namespace FastMines.DataModel.Items {
                   Area = area * ZoomKoef,
                   BackgroundColor = StaticImg<object, object>.DefaultBkColor,
                   Padding = new Bound(paddingOut.Left * ZoomKoef, paddingOut.Top * ZoomKoef, paddingOut.Right * ZoomKoef, paddingOut.Bottom * ZoomKoef),
-                  //BorderWidth = 3,
+                  BorderWidth = 3,
                   //RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
                };
-               tmp.GContext.PenBorder.Width = 3;
                var bmp = tmp.Image;
                //System.Diagnostics.Debug.Assert(tmp.Size == ImageSize * ZoomKoef);
                System.Diagnostics.Debug.Assert(bmp.PixelWidth == ImageSize * ZoomKoef);

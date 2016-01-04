@@ -206,7 +206,7 @@ namespace FastMines {
                   (h - sizeImageOut.height) / 2 + (h - sizeImageOut.height) % 2);
          System.Diagnostics.Debug.Assert(w == sizeImageOut.width + paddingOut.Left + paddingOut.Right);
          System.Diagnostics.Debug.Assert(h == sizeImageOut.height + paddingOut.Top + paddingOut.Bottom);
-         const int ZoomKoef = 1;--------------------
+         const int ZoomKoef = 1;//--------------------
          var img = Resources.GetImgMosaic(mosaicType, sizeField, area* ZoomKoef, bkClr, new Bound(
             paddingOut.Left * ZoomKoef,
             paddingOut.Top * ZoomKoef,

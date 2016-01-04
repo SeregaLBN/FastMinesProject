@@ -115,7 +115,7 @@ namespace fmg.uwp.res.img {
       }
 
       private GraphicContext _gContext;
-      public GraphicContext GContext {
+      protected GraphicContext GContext {
          get {
             if (_gContext == null) {
                var tmp = new GraphicContext(true);
@@ -143,6 +143,18 @@ namespace fmg.uwp.res.img {
 
                // reset
                Image = null;
+            }
+         }
+      }
+
+      public int BorderWidth {
+         get { return GContext.PenBorder.Width; }
+         set {
+            var w = GContext.PenBorder.Width;
+            if (value != w) {
+               GContext.PenBorder.Width = value;
+               OnPropertyChanged();
+               DrawAsync();
             }
          }
       }

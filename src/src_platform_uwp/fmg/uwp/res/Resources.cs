@@ -167,6 +167,7 @@ namespace fmg.uwp.res {
       }
 
       /// <summary> самостоятельная отрисовка </summary>
+      [Obsolete("Вызывать напрямую new MosaicsImg")]
       public static MosaicsImg GetImgMosaic(EMosaic mosaicType, Matrisize sizeField, int area, Windows.UI.Color bkColor, Bound padding) {
          return new MosaicsImg {
             MosaicType = mosaicType,
