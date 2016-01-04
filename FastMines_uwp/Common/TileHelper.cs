@@ -11,6 +11,7 @@ using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.uwp.res;
+using fmg.uwp.res.img;
 using Size = fmg.common.geom.Size;
 using Rect = Windows.Foundation.Rect;
 using BackgroundTasks;
@@ -194,24 +195,14 @@ namespace FastMines {
          sizeField.n += Random.Next()%3;
          sizeField.m += Random.Next()%2;
          const int bound = 3;
-         var sizeImageIn = new Size(w - bound * 2, h - bound * 2);
-         var sizeImageOut = new Size(sizeImageIn);
-         var area = MosaicHelper.FindAreaBySize(mosaicType, sizeField, ref sizeImageOut);
-         System.Diagnostics.Debug.Assert(w >= (sizeImageOut.width + bound * 2));
-         System.Diagnostics.Debug.Assert(h >= (sizeImageOut.height + bound * 2));
-         var paddingOut = new Bound(
-                  (w - sizeImageOut.width) / 2,
-                  (h - sizeImageOut.height) / 2,
-                  (w - sizeImageOut.width) / 2 + (w - sizeImageOut.width) % 2,
-                  (h - sizeImageOut.height) / 2 + (h - sizeImageOut.height) % 2);
-         System.Diagnostics.Debug.Assert(w == sizeImageOut.width + paddingOut.Left + paddingOut.Right);
-         System.Diagnostics.Debug.Assert(h == sizeImageOut.height + paddingOut.Top + paddingOut.Bottom);
-         const int ZoomKoef = 1;//--------------------
-         var img = Resources.GetImgMosaic(mosaicType, sizeField, area* ZoomKoef, bkClr, new Bound(
-            paddingOut.Left * ZoomKoef,
-            paddingOut.Top * ZoomKoef,
-            paddingOut.Right * ZoomKoef,
-            paddingOut.Bottom * ZoomKoef));
+         const int ZoomKoef = 1;
+         var img = new MosaicsImg {
+            MosaicType = mosaicType,
+            SizeField = sizeField,
+            Size = ZoomKoef * Math.Max(w, h),
+            BackgroundColor = bkClr,
+            Padding = ZoomKoef * bound
+         };
          var bmp = img.Image;
          var pw = bmp.PixelWidth;
          var ph = bmp.PixelHeight;

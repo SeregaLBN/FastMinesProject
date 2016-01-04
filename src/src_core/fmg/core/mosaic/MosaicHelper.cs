@@ -123,8 +123,9 @@ namespace fmg.core.mosaic {
                   return -1;
                return +1;
             });
-         sizeClient.width = sizeIter.width;
-         sizeClient.height = sizeIter.height;
+         System.Diagnostics.Debug.Assert(sizeClient.width <= sizeIter.width);
+         System.Diagnostics.Debug.Assert(sizeClient.height <= sizeIter.height);
+         sizeClient = sizeIter;
          return res;
       }
 

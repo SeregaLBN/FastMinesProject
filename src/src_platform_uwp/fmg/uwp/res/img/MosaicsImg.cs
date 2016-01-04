@@ -24,7 +24,6 @@ namespace fmg.uwp.res.img {
 
       private EMosaic _mosaicType;
       private Matrisize _sizeField;
-      private int _area = MosaicBase<IPaintable>.AREA_MINIMUM;
       private BaseCell.BaseAttribute _attr;
       private readonly List<BaseCell> _matrix = new List<BaseCell>();
       private CellPaintBmp _cellPaint;
@@ -91,12 +90,33 @@ namespace fmg.uwp.res.img {
       }
 
       public int Area {
-         get { return _area; }
-         set {
-            if (SetProperty(ref _area, value)) {
-               // reset
-               Image = null;
+         get {
+            {
+               var attr = _attr;
+               if (attr != null)
+                  return attr.Area;
             }
+
+            var w = Width;
+            var h = Height;
+            var pad = Padding;
+            var sizeImageIn = new Size(w - pad * 2, h - pad * 2);
+            var sizeImageOut = new Size(sizeImageIn);
+            var area = MosaicHelper.FindAreaBySize(_mosaicType, SizeField, ref sizeImageOut);
+            System.Diagnostics.Debug.Assert(w >= (sizeImageOut.width + pad * 2));
+            System.Diagnostics.Debug.Assert(h >= (sizeImageOut.height + pad * 2));
+            var paddingOut = new Bound(
+                     (w - sizeImageOut.width) / 2,
+                     (h - sizeImageOut.height) / 2,
+                     (w - sizeImageOut.width) / 2 + (w - sizeImageOut.width) % 2,
+                     (h - sizeImageOut.height) / 2 + (h - sizeImageOut.height) % 2);
+            System.Diagnostics.Debug.Assert(w == sizeImageOut.width + paddingOut.Left + paddingOut.Right);
+            System.Diagnostics.Debug.Assert(h == sizeImageOut.height + paddingOut.Top + paddingOut.Bottom);
+            GContext.Padding = paddingOut;
+            return area;
+         }
+         set {
+            throw new InvalidOperationException("Not supported...");
          }
       }
 
@@ -159,13 +179,33 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      public Bound Padding {
-         get { return GContext.Padding; }
+      private int _size;
+      /// <summary> width and height in pixel </summary>
+      public int Size {
+         get { return _size; }
          set {
-            GContext.Padding = value;
-            OnPropertyChanged();
-            // reset
-            Image = null;
+            if (SetProperty(ref _size, value)) {
+               _image = null;
+               DrawAsync();
+            }
+         }
+      }
+
+      /// <summary> width image </summary>
+      public int Width => Size;
+      /// <summary> height image </summary>
+      public int Height => Size;
+
+      private int _padding;
+      /// <summary> inside padding </summary>
+      public int Padding {
+         get { return _padding; }
+         set {
+            if (value * 2 >= Size)
+               throw new ArgumentException("Padding size is very large. Should be less than Size / 2.");
+            if (SetProperty(ref _padding, value)) {
+               DrawAsync();
+            }
          }
       }
 
@@ -195,14 +235,12 @@ namespace fmg.uwp.res.img {
          var img = BitmapFactory.New(w, h); // new WriteableBitmap(w, h); // 
          Action funcFillBk = () => img.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor);
 
-         _lockOnPropChngDrawing = true;
          if (!drawAsync) {
             // sync draw
             funcFillBk();
             var paint = new PaintableBmp(img);
             foreach (var cell in Matrix)
                CellPaint.Paint(cell, paint);
-            _lockOnPropChngDrawing = false;
          } else {
             // async draw
             AsyncRunner.InvokeFromUiLater(() => {
@@ -216,9 +254,7 @@ namespace fmg.uwp.res.img {
                   }
                   var tmp = cell;
                   AsyncRunner.InvokeFromUiLater(
-                     () => {
-                        CellPaint.Paint(tmp, paint);
-                        _lockOnPropChngDrawing = false; },
+                     () => CellPaint.Paint(tmp, paint),
                      ((_random.Next() & 1) == 0)
                         ? CoreDispatcherPriority.Low
                         : CoreDispatcherPriority.Normal
@@ -236,10 +272,8 @@ namespace fmg.uwp.res.img {
          Image = null;
       }
 
-      bool _lockOnPropChngDrawing = false;
       private void OnGContextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         if (!_lockOnPropChngDrawing)
-            DrawAsync();
+         //...
       }
       public void Dispose() {
          Dispose(true);
@@ -248,6 +282,7 @@ namespace fmg.uwp.res.img {
       protected virtual void Dispose(bool disposing) {
          if (disposing) {
             // free managed resources
+            GContext = null; // call setter
          }
          // free native resources if there are any.
       }

@@ -21,7 +21,6 @@ namespace FastMines.Data {
    public class FmDataItem : FmDataCommon<EMosaic> {
       private static readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
       private readonly Matrisize _sizeField;
-      private const int Area = 3000;
       private MosaicsImg _mosaicsImg;
 
       public FmDataItem(EMosaic eMosaic, FmDataGroup group)
@@ -39,7 +38,13 @@ namespace FastMines.Data {
       public FmDataGroup Group { get { return this._group; } set { this.SetProperty(ref this._group, value); } }
 
       private static MosaicsImg GetMosaicsImage(EMosaic eMosaic, Matrisize sizeField) {
-         return Resources.GetImgMosaic(eMosaic, sizeField, Area, Resources.DefaultBkColor, new Bound(7, 7, 7, 7));
+         return new MosaicsImg {
+            MosaicType = eMosaic,
+            SizeField = sizeField,
+            Size = 750,
+            BackgroundColor = Resources.DefaultBkColor,
+            Padding = 7
+         };
       }
 
       public override ImageSource Image {

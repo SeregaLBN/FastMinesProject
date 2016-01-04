@@ -35,25 +35,12 @@ namespace FastMines.DataModel.Items {
          get {
             if (_mosaicImg == null) {
                var sizeField = MosaicType.SizeTileField(SkillLevel);
-               var padIn = new Bound(5, 5, 5, 5);
-               var sizeImageIn = new Size(ImageSize - padIn.Left - padIn.Right, ImageSize - padIn.Top - padIn.Bottom);
-               var sizeImageOut = new Size(sizeImageIn);
-               int area = MosaicHelper.FindAreaBySize(MosaicType, sizeField, ref sizeImageOut);
-               System.Diagnostics.Debug.Assert(ImageSize >= (sizeImageOut.width + padIn.Left + padIn.Right));
-               System.Diagnostics.Debug.Assert(ImageSize >= (sizeImageOut.height + padIn.Top + padIn.Bottom));
-               var paddingOut = new Bound(
-                  (ImageSize - sizeImageOut.width) / 2,
-                  (ImageSize - sizeImageOut.height) / 2,
-                  (ImageSize - sizeImageOut.width) / 2 + (ImageSize - sizeImageOut.width) % 2,
-                  (ImageSize - sizeImageOut.height) / 2 + (ImageSize - sizeImageOut.height) % 2);
-               System.Diagnostics.Debug.Assert(ImageSize == sizeImageOut.width + paddingOut.Left + paddingOut.Right);
-               System.Diagnostics.Debug.Assert(ImageSize == sizeImageOut.height + paddingOut.Top + paddingOut.Bottom);
                var tmp = new MosaicsImg {
                   MosaicType = MosaicType,
                   SizeField = sizeField,
-                  Area = area * ZoomKoef,
+                  Size = ImageSize * ZoomKoef,
                   BackgroundColor = StaticImg<object, object>.DefaultBkColor,
-                  Padding = new Bound(paddingOut.Left * ZoomKoef, paddingOut.Top * ZoomKoef, paddingOut.Right * ZoomKoef, paddingOut.Bottom * ZoomKoef),
+                  Padding = 5 * ZoomKoef,
                   BorderWidth = 3,
                   //RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
                };

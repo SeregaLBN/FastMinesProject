@@ -166,18 +166,6 @@ namespace fmg.uwp.res {
          return GetImageSync("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.GetDescription(true) + ".png");
       }
 
-      /// <summary> самостоятельная отрисовка </summary>
-      [Obsolete("Вызывать напрямую new MosaicsImg")]
-      public static MosaicsImg GetImgMosaic(EMosaic mosaicType, Matrisize sizeField, int area, Windows.UI.Color bkColor, Bound padding) {
-         return new MosaicsImg {
-            MosaicType = mosaicType,
-            SizeField = sizeField,
-            Area = area,
-            BackgroundColor = bkColor,
-            Padding = padding
-         };
-      }
-
       public static async Task<Dictionary<CultureInfo, WriteableBitmap>> getImgsLang() {
          if (_imgsLang == null) {
             _imgsLang = new Dictionary<CultureInfo, WriteableBitmap>(4);
