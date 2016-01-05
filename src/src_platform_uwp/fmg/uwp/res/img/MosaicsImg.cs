@@ -179,7 +179,7 @@ namespace fmg.uwp.res.img {
       protected override void DrawBody() {
          var w = Width;
          var h = Height;
-         var img = Image;
+         var img = ImageInternal;
          var isNew = (img == null);
          if (isNew)
             img = BitmapFactory.New(w, h); // new WriteableBitmap(w, h); // 

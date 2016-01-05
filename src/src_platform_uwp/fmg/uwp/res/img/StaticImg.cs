@@ -64,10 +64,11 @@ namespace fmg.uwp.res.img {
       public T Entity { get; protected set; }
 
       private TImage _image;
+      protected TImage ImageInternal => _image;
       public TImage Image {
          get {
-            //if (_image == null)
-            //   DrawAsync();
+            if ((_image == null) && OnlySyncDraw)
+               DrawSync();
             return _image;
          }
          protected set {

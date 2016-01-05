@@ -37,7 +37,7 @@ namespace fmg.uwp.res.img {
       }
 
       protected override void DrawBody() {
-         var bmp = Image;
+         var bmp = ImageInternal;
          var isNew = (bmp == null);
          if (isNew)
             bmp = new WriteableBitmap(Width, Height);
