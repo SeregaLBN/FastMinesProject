@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using fmg.common;
+using fmg.common.geom;
 using fmg.core.types;
 using fmg.uwp.draw;
 using fmg.uwp.res.img;
@@ -44,7 +45,7 @@ namespace FastMines.DataModel.DataSources
                   img.PolarLights = selected;
                   img.Rotate = selected;
                   img.BkColor = selected ? MosaicsGroupImg.DefaultBkColor.ToFmColor() : GraphicContext.DefaultBackgroundFillColor;
-                  img.Padding = selected ? 5 : 15;
+                  img.Padding = new Bound(selected ? 5 : 15);
                }
             }
          }

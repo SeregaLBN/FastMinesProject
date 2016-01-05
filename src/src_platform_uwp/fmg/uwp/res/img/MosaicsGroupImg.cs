@@ -18,18 +18,20 @@ namespace fmg.uwp.res.img {
       public EMosaicGroup MosaicGroup => Entity;
 
       private IEnumerable<PointDouble> GetCoords() {
-         var sizeInner = Math.Min(Width, Height);
-         double s = sizeInner - Padding*2; // size inner square
+         double s = Math.Min( // size inner square
+            Width - Padding.LeftAndRight,
+            Height - Padding.TopAndBottom);
          var vertices = 3 + MosaicGroup.Ordinal(); // vertices count
          var points = (MosaicGroup != EMosaicGroup.eOthers)
             ? FigureHelper.GetRegularPolygonCoords(vertices, s/2, RotateAngle)
             : FigureHelper.GetRegularStarCoords(4, s/2, s/5, RotateAngle);
 
          // adding offset
-         var offset = sizeInner / 2.0;
+         var offsetX = Width / 2.0;
+         var offsetY = Height / 2.0;
          return points.Select(p => {
-            p.x += offset;
-            p.y += offset;
+            p.x += offsetX;
+            p.y += offsetY;
             return p;
          });
       }

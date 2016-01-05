@@ -47,14 +47,7 @@ namespace fmg.uwp.res.img {
 
       public Matrisize SizeField
       {
-         get {
-            if ((_sizeField.m < 1) || (_sizeField.n < 1)) {
-               SizeField = new Matrisize(
-                  (_sizeField.m < 1) ? 4 : _sizeField.m,
-                  (_sizeField.n < 1) ? 4 : _sizeField.n);
-            }
-            return _sizeField;
-         }
+         get { return _sizeField; }
          set {
             if (SetProperty(ref _sizeField, value)) {
                // reset
@@ -102,11 +95,11 @@ namespace fmg.uwp.res.img {
             var w = Width;
             var h = Height;
             var pad = Padding;
-            var sizeImageIn = new Size(w - pad * 2, h - pad * 2);
+            var sizeImageIn = new Size(w - pad.LeftAndRight, h - pad.TopAndBottom);
             var sizeImageOut = new Size(sizeImageIn);
             var area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref sizeImageOut);
-            System.Diagnostics.Debug.Assert(w >= (sizeImageOut.width + pad * 2));
-            System.Diagnostics.Debug.Assert(h >= (sizeImageOut.height + pad * 2));
+            System.Diagnostics.Debug.Assert(w >= (sizeImageOut.width + pad.LeftAndRight));
+            System.Diagnostics.Debug.Assert(h >= (sizeImageOut.height + pad.TopAndBottom));
             var paddingOut = new Bound(
                      (w - sizeImageOut.width) / 2,
                      (h - sizeImageOut.height) / 2,

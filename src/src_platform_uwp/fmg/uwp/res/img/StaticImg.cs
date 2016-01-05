@@ -18,7 +18,8 @@ namespace fmg.uwp.res.img {
          Entity = entity;
          _size = new Size(widthAndHeight, widthAndHeight);
          if (!padding.HasValue)
-            _padding = (int)(widthAndHeight * 0.05); // 5%
+            padding = (int)(widthAndHeight * 0.05); // 5%
+         _padding = new Bound(padding.Value);
       }
 
       private Size _size;
@@ -38,15 +39,15 @@ namespace fmg.uwp.res.img {
       /// <summary> height image </summary>
       public int Height => Size.height;
 
-      private int _padding;
+      private Bound _padding;
       /// <summary> inside padding </summary>
-      public int Padding {
+      public Bound Padding {
          get { return _padding; }
          set {
-            if (value * 2 >= Width)
-               throw new ArgumentException("Padding size is very large. Should be less than Width / 2.");
-            if (value * 2 >= Height)
-               throw new ArgumentException("Padding size is very large. Should be less than Height / 2.");
+            if ((value.Left + value.Right) >= Width)
+               throw new ArgumentException("Padding size is very large. Should be less than Width.");
+            if ((value.Top + value.Bottom) >= Height)
+               throw new ArgumentException("Padding size is very large. Should be less than Height.");
             if (SetProperty(ref _padding, value)) {
                DrawAsync();
             }
