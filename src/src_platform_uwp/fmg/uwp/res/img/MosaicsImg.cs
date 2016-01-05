@@ -31,6 +31,12 @@ namespace fmg.uwp.res.img {
          _sizeField = sizeField;
       }
 
+      public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding)
+         : base(mosaicType, sizeImage, padding)
+      {
+         _sizeField = sizeField;
+      }
+
       /// <summary>из каких фигур состоит мозаика поля</summary>
       public EMosaic MosaicType {
          get { return Entity; }

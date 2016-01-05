@@ -14,12 +14,19 @@ namespace fmg.uwp.res.img {
       public static readonly Windows.UI.Color DefaultBkColor = Resources.DefaultBkColor;
       public const int DefaultImageSize = 100;
 
-      protected StaticImg(T entity, int widthAndHeight = DefaultImageSize, int? padding = null) {
+      protected StaticImg(T entity, int widthAndHeight = DefaultImageSize, int? padding = null)
+         : this(entity,
+              new Size(widthAndHeight, widthAndHeight),
+              new Bound(padding.HasValue
+                 ? padding.Value
+                 : (int)(widthAndHeight * 0.05) // 5%
+         ))
+      { }
+
+      protected StaticImg(T entity, Size sizeImage, Bound padding) {
          Entity = entity;
-         _size = new Size(widthAndHeight, widthAndHeight);
-         if (!padding.HasValue)
-            padding = (int)(widthAndHeight * 0.05); // 5%
-         _padding = new Bound(padding.Value);
+         _size = sizeImage;
+         _padding = padding;
       }
 
       private Size _size;
