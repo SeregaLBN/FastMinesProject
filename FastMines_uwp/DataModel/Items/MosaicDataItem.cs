@@ -35,16 +35,12 @@ namespace FastMines.DataModel.Items {
          get {
             if (_mosaicImg == null) {
                var sizeField = MosaicType.SizeTileField(SkillLevel);
-               var tmp = new MosaicsImg(MosaicType) {
-                  SizeField = sizeField,
-                  Size = ImageSize * ZoomKoef,
+               var tmp = new MosaicsImg(MosaicType, sizeField, ImageSize * ZoomKoef, 5 * ZoomKoef) {
                   BackgroundColor = StaticImg<object, object>.DefaultBkColor,
-                  Padding = 5 * ZoomKoef,
                   BorderWidth = 3,
                   //RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
                };
                var bmp = tmp.Image;
-               //System.Diagnostics.Debug.Assert(tmp.Size == ImageSize * ZoomKoef);
                System.Diagnostics.Debug.Assert(bmp.PixelWidth == ImageSize * ZoomKoef);
                System.Diagnostics.Debug.Assert(bmp.PixelHeight == ImageSize * ZoomKoef);
                MosaicImage = tmp; // call this setter

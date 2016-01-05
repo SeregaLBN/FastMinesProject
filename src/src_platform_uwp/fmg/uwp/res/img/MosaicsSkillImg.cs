@@ -18,7 +18,8 @@ namespace fmg.uwp.res.img {
       public ESkillLevel MosaicSkill => Entity;
 
       private IEnumerable<IEnumerable<PointDouble>> GetCoords() {
-         double s = Size - Padding*2; // size inner Square
+         var sizeInner = Math.Min(Width, Height);
+         double s = sizeInner - Padding*2; // size inner Square
          var r1 = s/7; // external radius
          var r2 = s/12; // internal radius
          var ordinal = MosaicSkill.Ordinal();
@@ -36,8 +37,8 @@ namespace fmg.uwp.res.img {
 
             // adding offset
             var offset = FigureHelper.GetPointOnCircle(s/3, angle + st*starAngle);
-            offset.x += Size/2.0;
-            offset.y += Size/2.0;
+            offset.x += sizeInner / 2.0;
+            offset.y += sizeInner / 2.0;
             return points.Select(p => {
                p.x += offset.x;
                p.y += offset.y;

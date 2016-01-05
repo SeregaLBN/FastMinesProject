@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using Windows.UI.Xaml.Media.Imaging;
@@ -17,14 +18,15 @@ namespace fmg.uwp.res.img {
       public EMosaicGroup MosaicGroup => Entity;
 
       private IEnumerable<PointDouble> GetCoords() {
-         double s = Size - Padding*2; // size inner square
+         var sizeInner = Math.Min(Width, Height);
+         double s = sizeInner - Padding*2; // size inner square
          var vertices = 3 + MosaicGroup.Ordinal(); // vertices count
          var points = (MosaicGroup != EMosaicGroup.eOthers)
             ? FigureHelper.GetRegularPolygonCoords(vertices, s/2, RotateAngle)
             : FigureHelper.GetRegularStarCoords(4, s/2, s/5, RotateAngle);
 
          // adding offset
-         var offset = Size / 2.0;
+         var offset = sizeInner / 2.0;
          return points.Select(p => {
             p.x += offset;
             p.y += offset;

@@ -37,25 +37,11 @@ namespace FastMines.Data {
 
       public FmDataGroup Group { get { return this._group; } set { this.SetProperty(ref this._group, value); } }
 
-      private static MosaicsImg GetMosaicsImage(EMosaic eMosaic, Matrisize sizeField) {
-         return new MosaicsImg(eMosaic) {
-            SizeField = sizeField,
-            Size = 750,
-            BackgroundColor = Resources.DefaultBkColor,
-            Padding = 7,
-            OnlySyncDraw = DesignMode.DesignModeEnabled
-         };
-      }
-
       public override ImageSource Image {
          get {
             if (_mosaicsImg == null) {
-               _mosaicsImg = new MosaicsImg(UniqueId) {
-                  SizeField = _sizeField,
-                  Size = 750,
-                  BackgroundColor = Resources.DefaultBkColor,
-                  Padding = 7,
-                  OnlySyncDraw = DesignMode.DesignModeEnabled
+               _mosaicsImg = new MosaicsImg(UniqueId, _sizeField, 750, 7) {
+                  BackgroundColor = Resources.DefaultBkColor
                };
                base.Image = _mosaicsImg.Image;
             }

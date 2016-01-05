@@ -18,7 +18,6 @@ namespace fmg.uwp.res.img {
    public class MosaicsImg : StaticImg<EMosaic, WriteableBitmap>, IMosaic<PaintableBmp>, IDisposable {
       private const bool _randomCellBkColor = true;
 
-      private EMosaic _mosaicType;
       private Matrisize _sizeField;
       private BaseCell.BaseAttribute _attr;
       private readonly List<BaseCell> _matrix = new List<BaseCell>();
@@ -26,8 +25,11 @@ namespace fmg.uwp.res.img {
       private Windows.UI.Color _bkColor;
       private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
 
-      public MosaicsImg(EMosaic mosaicType, int widthAndHeight = DefaultImageSize, int? padding = null)
-         : base(mosaicType, widthAndHeight, padding) { }
+      public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
+         : base(mosaicType, widthAndHeight, padding)
+      {
+         _sizeField = sizeField;
+      }
 
       /// <summary>из каких фигур состоит мозаика поля</summary>
       public EMosaic MosaicType {
@@ -102,7 +104,7 @@ namespace fmg.uwp.res.img {
             var pad = Padding;
             var sizeImageIn = new Size(w - pad * 2, h - pad * 2);
             var sizeImageOut = new Size(sizeImageIn);
-            var area = MosaicHelper.FindAreaBySize(_mosaicType, SizeField, ref sizeImageOut);
+            var area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref sizeImageOut);
             System.Diagnostics.Debug.Assert(w >= (sizeImageOut.width + pad * 2));
             System.Diagnostics.Debug.Assert(h >= (sizeImageOut.height + pad * 2));
             var paddingOut = new Bound(

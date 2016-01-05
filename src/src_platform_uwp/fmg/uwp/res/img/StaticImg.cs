@@ -4,6 +4,7 @@ using Windows.UI.Core;
 using fmg.common;
 using FastMines.Common;
 using FastMines.Presentation.Notyfier;
+using fmg.common.geom;
 
 namespace fmg.uwp.res.img {
 
@@ -15,14 +16,14 @@ namespace fmg.uwp.res.img {
 
       protected StaticImg(T entity, int widthAndHeight = DefaultImageSize, int? padding = null) {
          Entity = entity;
-         _size = widthAndHeight;
+         _size = new Size(widthAndHeight, widthAndHeight);
          if (!padding.HasValue)
             _padding = (int)(widthAndHeight * 0.05); // 5%
       }
 
-      private int _size;
+      private Size _size;
       /// <summary> width and height in pixel </summary>
-      public int Size {
+      public Size Size {
          get { return _size; }
          set {
             if (SetProperty(ref _size, value)) {
@@ -33,17 +34,19 @@ namespace fmg.uwp.res.img {
       }
 
       /// <summary> width image </summary>
-      public int Width => Size;
+      public int Width => Size.width;
       /// <summary> height image </summary>
-      public int Height => Size;
+      public int Height => Size.height;
 
       private int _padding;
       /// <summary> inside padding </summary>
       public int Padding {
          get { return _padding; }
          set {
-            if (value * 2 >= Size)
-               throw new ArgumentException("Padding size is very large. Should be less than Size / 2.");
+            if (value * 2 >= Width)
+               throw new ArgumentException("Padding size is very large. Should be less than Width / 2.");
+            if (value * 2 >= Height)
+               throw new ArgumentException("Padding size is very large. Should be less than Height / 2.");
             if (SetProperty(ref _padding, value)) {
                DrawAsync();
             }

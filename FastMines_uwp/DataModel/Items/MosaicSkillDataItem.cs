@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using Windows.UI.Xaml.Media;
+using fmg.common.geom;
 using fmg.data.controller.types;
 using fmg.uwp.res.img;
 
@@ -30,7 +31,6 @@ namespace FastMines.DataModel.Items {
                   BorderWidth = 2,
                   RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
                };
-               System.Diagnostics.Debug.Assert(tmp.Size == ImageSize * ZoomKoef);
                System.Diagnostics.Debug.Assert(tmp.Width == ImageSize * ZoomKoef);
                System.Diagnostics.Debug.Assert(tmp.Height == ImageSize * ZoomKoef);
                MosaicSkillImage = tmp; // call this setter
@@ -58,7 +58,7 @@ namespace FastMines.DataModel.Items {
          get { return _imageSize; }
          set {
             if (SetProperty(ref _imageSize, value)) {
-               MosaicSkillImage.Size = ImageSize * ZoomKoef;
+               MosaicSkillImage.Size = new Size(ImageSize * ZoomKoef, ImageSize * ZoomKoef);
             }
          }
       }
