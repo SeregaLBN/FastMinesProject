@@ -18,13 +18,13 @@ namespace fmg.uwp.res.img {
       public EMosaicGroup MosaicGroup => Entity;
 
       private IEnumerable<PointDouble> GetCoords() {
-         double s = Math.Min( // size inner square
+         double sq = Math.Min( // size inner square
             Width - Padding.LeftAndRight,
             Height - Padding.TopAndBottom);
          var vertices = 3 + MosaicGroup.Ordinal(); // vertices count
          var points = (MosaicGroup != EMosaicGroup.eOthers)
-            ? FigureHelper.GetRegularPolygonCoords(vertices, s/2, RotateAngle)
-            : FigureHelper.GetRegularStarCoords(4, s/2, s/5, RotateAngle);
+            ? FigureHelper.GetRegularPolygonCoords(vertices, sq/2, RotateAngle)
+            : FigureHelper.GetRegularStarCoords(4, sq/2, sq/5, RotateAngle);
 
          // adding offset
          var offsetX = Width / 2.0;
@@ -37,12 +37,10 @@ namespace fmg.uwp.res.img {
       }
 
       protected override void DrawBody() {
-         var w = Width;
-         var h = Height;
          var bmp = Image;
          var isNew = (bmp == null);
          if (isNew)
-            bmp = new WriteableBitmap(w, h);
+            bmp = new WriteableBitmap(Width, Height);
 
          bmp.Clear(BkColor.ToWinColor());
 

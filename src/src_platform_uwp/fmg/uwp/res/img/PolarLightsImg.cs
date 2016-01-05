@@ -12,11 +12,9 @@ namespace fmg.uwp.res.img {
 
       private bool _polarLights;
       /// <summary> shimmering filling </summary>
-      public bool PolarLights
-      {
+      public bool PolarLights {
          get { return _polarLights; }
-         set
-         {
+         set {
             if (SetProperty(ref _polarLights, value))
                DrawAsync();
          }
@@ -42,8 +40,7 @@ namespace fmg.uwp.res.img {
          base.OnTimer();
       }
 
-      protected override bool LiveImage()
-      {
+      protected override bool LiveImage() {
          return PolarLights || base.LiveImage();
       }
 

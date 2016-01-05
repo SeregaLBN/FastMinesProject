@@ -10,10 +10,7 @@
       }
 
       public Bound(int bound) {
-         Left = bound;
-         Top = bound;
-         Right = bound;
-         Bottom = bound;
+         Left = Top = Right = Bottom = bound;
       }
 
       public int Left { get; set; }

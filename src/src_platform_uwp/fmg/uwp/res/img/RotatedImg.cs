@@ -16,40 +16,31 @@ namespace fmg.uwp.res.img
       private DispatcherTimer _timer;
 
       private bool _rotate;
-      public bool Rotate
-      {
+      public bool Rotate {
          get { return _rotate; }
-         set
-         {
+         set {
             if (SetProperty(ref _rotate, value) && value)
                DrawAsync();
          }
       }
 
       private double _rotateAngleDelta = 1.4;
-      public double RotateAngleDelta
-      {
+      public double RotateAngleDelta {
          get { return _rotateAngleDelta; }
-         set
-         {
+         set {
             if (SetProperty(ref _rotateAngleDelta, value) && Rotate)
                DrawAsync();
          }
       }
 
-      protected override void DrawEnd()
-      {
-         if (LiveImage())
-         {
-            if (_timer == null)
-            {
+      protected override void DrawEnd() {
+         if (LiveImage()) {
+            if (_timer == null) {
                _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(RedrawInterval) };
                _timer.Tick += OnTick;
             }
             _timer.Start();
-         }
-         else
-         {
+         } else {
             _timer?.Stop();
          }
       }
@@ -67,41 +58,27 @@ namespace fmg.uwp.res.img
          return Rotate;
       }
 
-      private void RotateStep()
-      {
+      private void RotateStep() {
          if (!Rotate)
             return;
 
-         //if (Entity is data.controller.types.ESkillLevel) {
-         //   var skill = (data.controller.types.ESkillLevel)(object)Entity;
-         //   if (skill == data.controller.types.ESkillLevel.eBeginner) {
-         //      System.Diagnostics.Debug.WriteLine("RotateStep: " + skill);
-         //   }
-         //}
-
          var rotateAngle = RotateAngle + RotateAngleDelta;
-         if (RotateAngleDelta > 0)
-         {
+         if (RotateAngleDelta > 0) {
             if (rotateAngle >= 360)
                rotateAngle -= 360;
-         }
-         else
-         {
+         } else {
             if (rotateAngle <= -360)
                rotateAngle += 360;
          }
          RotateAngle = rotateAngle;
       }
 
-      public void Dispose()
-      {
+      public void Dispose() {
          Dispose(true);
       }
 
-      protected virtual void Dispose(bool disposing)
-      {
-         if (disposing)
-         {
+      protected virtual void Dispose(bool disposing) {
+         if (disposing) {
             // free managed resources
             var t = _timer;
             if (t != null) {

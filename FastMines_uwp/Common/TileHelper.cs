@@ -199,11 +199,14 @@ namespace FastMines {
          var img = new MosaicsImg(mosaicType, sizeField) {
             Size = new Size(w * ZoomKoef, h * ZoomKoef),
             BackgroundColor = bkClr,
-            Padding = new Bound(ZoomKoef * bound)
+            Padding = new Bound(ZoomKoef * bound),
+            OnlySyncDraw = true
          };
          var bmp = img.Image;
          var pw = bmp.PixelWidth;
          var ph = bmp.PixelHeight;
+         System.Diagnostics.Debug.Assert(img.Width == pw);
+         System.Diagnostics.Debug.Assert(img.Height == ph);
          System.Diagnostics.Debug.Assert(w * ZoomKoef == pw);
          System.Diagnostics.Debug.Assert(h * ZoomKoef == ph);
          return new Tuple<EMosaic, WriteableBitmap>(mosaicType, bmp);

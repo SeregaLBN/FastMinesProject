@@ -18,11 +18,11 @@ namespace fmg.uwp.res.img {
       public ESkillLevel MosaicSkill => Entity;
 
       private IEnumerable<IEnumerable<PointDouble>> GetCoords() {
-         double s = Math.Min( // size inner square
+         double sq = Math.Min( // size inner square
             Width - Padding.LeftAndRight,
             Height - Padding.TopAndBottom);
-         var r1 = s/7; // external radius
-         var r2 = s/12; // internal radius
+         var r1 = sq/7; // external radius
+         var r2 = sq/12; // internal radius
          var ordinal = MosaicSkill.Ordinal();
          var rays = 5 + ordinal; // rays count
          var stars = 4 + ordinal; // number of stars on the perimeter of the circle
@@ -37,7 +37,7 @@ namespace fmg.uwp.res.img {
             angle = Math.Sin((angle/4).ToRadian())*angle; // ускоряшка..
 
             // adding offset
-            var offset = FigureHelper.GetPointOnCircle(s/3, angle + st*starAngle);
+            var offset = FigureHelper.GetPointOnCircle(sq/3, angle + st*starAngle);
             offset.x += Width / 2.0;
             offset.y += Height / 2.0;
             return points.Select(p => {
@@ -49,12 +49,10 @@ namespace fmg.uwp.res.img {
       }
 
       protected override void DrawBody() {
-         var w = Width;
-         var h = Height;
          var bmp = Image;
          var isNew = (bmp == null);
          if (isNew)
-            bmp = new WriteableBitmap(w, h);
+            bmp = new WriteableBitmap(Width, Height);
 
          bmp.Clear(BkColor.ToWinColor());
 
@@ -62,14 +60,11 @@ namespace fmg.uwp.res.img {
             var points = coords.PointsAsXyxyxySequence(true).ToArray();
             bmp.FillPolygon(points, FillColorAttenuate.ToWinColor());
 
-            {
-               // draw perimeter border
-               var clr = BorderColor;
-               if (clr.A != Color.Transparent.A) {
-                  for (var i = 0; i < points.Length - 2; i += 2) {
-                     bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], clr.ToWinColor(),
-                        BorderWidth);
-                  }
+            // draw perimeter border
+            var clr = BorderColor;
+            if (clr.A != Color.Transparent.A) {
+               for (var i = 0; i < points.Length - 2; i += 2) {
+                  bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], clr.ToWinColor(), BorderWidth);
                }
             }
          }
