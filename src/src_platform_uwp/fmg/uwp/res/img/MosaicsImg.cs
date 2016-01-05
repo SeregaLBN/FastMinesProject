@@ -111,8 +111,8 @@ namespace fmg.uwp.res.img {
                      (h - sizeImageOut.height) / 2,
                      (w - sizeImageOut.width) / 2 + (w - sizeImageOut.width) % 2,
                      (h - sizeImageOut.height) / 2 + (h - sizeImageOut.height) % 2);
-            System.Diagnostics.Debug.Assert(w == sizeImageOut.width + paddingOut.Left + paddingOut.Right);
-            System.Diagnostics.Debug.Assert(h == sizeImageOut.height + paddingOut.Top + paddingOut.Bottom);
+            System.Diagnostics.Debug.Assert(w == sizeImageOut.width + paddingOut.LeftAndRight);
+            System.Diagnostics.Debug.Assert(h == sizeImageOut.height + paddingOut.TopAndBottom);
             GContext.Padding = paddingOut;
             return area;
          }
@@ -140,12 +140,13 @@ namespace fmg.uwp.res.img {
          get {
             if (_gContext == null) {
                var tmp = new GraphicContext(true);
+
+               GContext = tmp; // call this setter
+
                tmp.PenBorder.Width = 2;
                tmp.PenBorder.ColorLight = tmp.PenBorder.ColorShadow;
                if (_randomCellBkColor)
                   tmp.BkFill.Mode = 1 + _random.Next(CellAttr.getMaxBackgroundFillModeValue());
-
-               GContext = tmp; // call this setter
             }
             return _gContext;
          }
@@ -181,17 +182,22 @@ namespace fmg.uwp.res.img {
          var h = Height;
          var img = ImageInternal;
          var isNew = (img == null);
-         if (isNew)
+         if (isNew) {
             img = BitmapFactory.New(w, h); // new WriteableBitmap(w, h); // 
 
 #if DEBUG
-         {
-            var innerSize = CellAttr.GetOwnerSize(SizeField);
-            //System.Diagnostics.Debug.WriteLine("pixelSize={0}; padding={1}", pixelSize, GContext.Padding);
-            System.Diagnostics.Debug.Assert(w == innerSize.width + GContext.Padding.Left + GContext.Padding.Right);
-            System.Diagnostics.Debug.Assert(h == innerSize.height + GContext.Padding.Top + GContext.Padding.Bottom);
-         }
+            {
+               var attr = _attr;
+               if (attr != null)
+               {
+                  var innerSize = attr.GetOwnerSize(SizeField);
+                  //System.Diagnostics.Debug.WriteLine("pixelSize={0}; padding={1}", pixelSize, GContext.Padding);
+                  System.Diagnostics.Debug.Assert(w == innerSize.width + GContext.Padding.Left + GContext.Padding.Right);
+                  System.Diagnostics.Debug.Assert(h == innerSize.height + GContext.Padding.Top + GContext.Padding.Bottom);
+               }
+            }
 #endif
+         }
 
          Action funcFillBk = () => img.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor);
 
