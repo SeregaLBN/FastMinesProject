@@ -127,6 +127,9 @@
     <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsSkillImg.cs">
       <Link>src_fmg.uwp\res\img\MosaicsSkillImg.cs</Link>
     </Compile>
+    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsSkillCharImg.cs">
+      <Link>src_fmg.uwp\res\img\MosaicsSkillCharImg.cs</Link>
+    </Compile>
     <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\PolarLightsImg.cs">
       <Link>src_fmg.uwp\res\img\PolarLightsImg.cs</Link>
     </Compile>

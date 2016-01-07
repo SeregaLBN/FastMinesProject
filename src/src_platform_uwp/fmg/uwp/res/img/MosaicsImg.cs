@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common.geom;
@@ -11,6 +12,7 @@ using fmg.core.mosaic.cells;
 using fmg.uwp.draw;
 using fmg.uwp.draw.mosaic.bmp;
 using FastMines.Common;
+using FastMines.Presentation.Notyfier;
 
 namespace fmg.uwp.res.img {
 
@@ -29,12 +31,14 @@ namespace fmg.uwp.res.img {
          : base(mosaicType, widthAndHeight, padding)
       {
          _sizeField = sizeField;
+         base.PropertyChanged += OnBasePropertyChanged;
       }
 
       public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding)
          : base(mosaicType, sizeImage, padding)
       {
          _sizeField = sizeField;
+         base.PropertyChanged += OnBasePropertyChanged;
       }
 
       /// <summary>из каких фигур состоит мозаика поля</summary>
@@ -45,8 +49,8 @@ namespace fmg.uwp.res.img {
                Entity = value;
                _matrix.Clear();
                _attr = null;
-               Image = null;
-               DrawAsync();
+               _gContext = null;
+               RecalcAll();
             }
          }
       }
@@ -57,9 +61,9 @@ namespace fmg.uwp.res.img {
          set {
             if (SetProperty(ref _sizeField, value)) {
                // reset
-               _matrix.Clear();
                Image = null;
-               DrawAsync();
+               _matrix.Clear();
+               RecalcAll();
             }
          }
       }
@@ -73,7 +77,7 @@ namespace fmg.uwp.res.img {
       public BaseCell.BaseAttribute CellAttr => _attr ?? (_attr = MosaicHelper.CreateAttributeInstance(MosaicType, Area));
 
       public ICellPaint<PaintableBmp> CellPaint => CellPaintBitmap;
-      protected CellPaintBmp CellPaintBitmap => _cellPaint ?? (_cellPaint = new CellPaintBmp());
+      protected CellPaintBmp CellPaintBitmap => _cellPaint ?? (_cellPaint = new CellPaintBmp { GContext = GContext });
 
       /// <summary>матрица ячеек, представленная(развёрнута) в виде вектора</summary>
       public IList<BaseCell> Matrix {
@@ -90,35 +94,37 @@ namespace fmg.uwp.res.img {
          }
       }
 
+      private int _area;
       public int Area {
-         get {
-            {
-               var attr = _attr;
-               if (attr != null)
-                  return attr.Area;
-            }
-
-            var w = Width;
-            var h = Height;
-            var pad = Padding;
-            var sizeImageIn = new Size(w - pad.LeftAndRight, h - pad.TopAndBottom);
-            var sizeImageOut = new Size(sizeImageIn);
-            var area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref sizeImageOut);
-            System.Diagnostics.Debug.Assert(w >= (sizeImageOut.width + pad.LeftAndRight));
-            System.Diagnostics.Debug.Assert(h >= (sizeImageOut.height + pad.TopAndBottom));
-            var paddingOut = new Bound(
-                     (w - sizeImageOut.width) / 2,
-                     (h - sizeImageOut.height) / 2,
-                     (w - sizeImageOut.width) / 2 + (w - sizeImageOut.width) % 2,
-                     (h - sizeImageOut.height) / 2 + (h - sizeImageOut.height) % 2);
-            System.Diagnostics.Debug.Assert(w == sizeImageOut.width + paddingOut.LeftAndRight);
-            System.Diagnostics.Debug.Assert(h == sizeImageOut.height + paddingOut.TopAndBottom);
-            GContext.Padding = paddingOut;
-            return area;
-         }
+         get { return _area; }
          set {
-            throw new NotImplementedException("Not supported...");
+            throw new NotImplementedException("Not supported... Use Size property");
          }
+      }
+
+      private void RecalcAll() {
+         _area = CellAttr.Area = RecalcArea();
+         DrawAsync();
+      }
+
+      private int RecalcArea() {
+         var w = Width;
+         var h = Height;
+         var pad = Padding;
+         var sizeImageIn = new Size(w - pad.LeftAndRight, h - pad.TopAndBottom);
+         var sizeImageOut = new Size(sizeImageIn);
+         var area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref sizeImageOut);
+         System.Diagnostics.Debug.Assert(w >= (sizeImageOut.width + pad.LeftAndRight));
+         System.Diagnostics.Debug.Assert(h >= (sizeImageOut.height + pad.TopAndBottom));
+         var paddingOut = new Bound(
+                  (w - sizeImageOut.width) / 2,
+                  (h - sizeImageOut.height) / 2,
+                  (w - sizeImageOut.width) / 2 + (w - sizeImageOut.width) % 2,
+                  (h - sizeImageOut.height) / 2 + (h - sizeImageOut.height) % 2);
+         System.Diagnostics.Debug.Assert(w == sizeImageOut.width + paddingOut.LeftAndRight);
+         System.Diagnostics.Debug.Assert(h == sizeImageOut.height + paddingOut.TopAndBottom);
+         PaddingFull = paddingOut;
+         return area;
       }
 
       public Windows.UI.Color BackgroundColor {
@@ -135,38 +141,32 @@ namespace fmg.uwp.res.img {
          }
       }
 
+      protected Bound PaddingFull { get; set; }
+
       private GraphicContext _gContext;
       protected GraphicContext GContext {
          get {
             if (_gContext == null) {
                var tmp = new GraphicContext(true);
 
-               GContext = tmp; // call this setter
-
                tmp.PenBorder.Width = 2;
                tmp.PenBorder.ColorLight = tmp.PenBorder.ColorShadow;
+               tmp.Padding = PaddingFull;
                if (_randomCellBkColor)
                   tmp.BkFill.Mode = 1 + _random.Next(CellAttr.getMaxBackgroundFillModeValue());
+
+               GContext = tmp; // call this setter
             }
             return _gContext;
          }
          set {
-            CellPaintBitmap.GContext = value;
             if (SetProperty(ref _gContext, value)) {
+               CellPaintBitmap.GContext = value;
                if (value != null) {
                   value.PenBorder.Width = BorderWidth;
                }
-               // reset
-               Image = null;
                DrawAsync();
             }
-         }
-      }
-
-      public override int BorderWidth {
-         //get ... don't override
-         set {
-            GContext.PenBorder.Width = base.BorderWidth = value;
          }
       }
 
@@ -215,7 +215,7 @@ namespace fmg.uwp.res.img {
                foreach (var cell in Matrix) {
                   if (!ReferenceEquals(img, Image)) {
                      // aborted...
-                     System.Diagnostics.Debug.Assert(false, "убедись под дебагером что реально чтото сбросило _image");
+                     System.Diagnostics.Debug.Assert(false, "убедись под дебагером что реально что-то сбросило _image");
                      break;
                   }
                   var tmp = cell;
@@ -233,6 +233,15 @@ namespace fmg.uwp.res.img {
             Image = img;
       }
 
+      private void OnBasePropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs) {
+         if (!ReferenceEquals(sender, this))
+            return;
+         if (propertyChangedEventArgs.PropertyName == "BorderWidth")
+            GContext.PenBorder.Width = ((PropertyChangedExEventArgs<int>)propertyChangedEventArgs).NewValue;
+         if (propertyChangedEventArgs.PropertyName == "Padding")
+            RecalcAll();
+      }
+
       public void Dispose() {
          Dispose(true);
       }
@@ -241,6 +250,7 @@ namespace fmg.uwp.res.img {
          if (disposing) {
             // free managed resources
             GContext = null; // call setter
+            base.PropertyChanged -= OnBasePropertyChanged;
          }
          // free native resources if there are any.
       }

@@ -2,9 +2,9 @@ using System;
 using System.ComponentModel;
 using Windows.UI.Core;
 using fmg.common;
+using fmg.common.geom;
 using FastMines.Common;
 using FastMines.Presentation.Notyfier;
-using fmg.common.geom;
 
 namespace fmg.uwp.res.img {
 
@@ -51,9 +51,9 @@ namespace fmg.uwp.res.img {
       public Bound Padding {
          get { return _padding; }
          set {
-            if ((value.Left + value.Right) >= Width)
+            if (value.LeftAndRight >= Width)
                throw new ArgumentException("Padding size is very large. Should be less than Width.");
-            if ((value.Top + value.Bottom) >= Height)
+            if (value.TopAndBottom >= Height)
                throw new ArgumentException("Padding size is very large. Should be less than Height.");
             if (SetProperty(ref _padding, value)) {
                DrawAsync();
@@ -67,7 +67,7 @@ namespace fmg.uwp.res.img {
       protected TImage ImageInternal => _image;
       public TImage Image {
          get {
-            if ((_image == null) && OnlySyncDraw)
+            if (OnlySyncDraw && (_scheduledDraw || (_image == null)))
                DrawSync();
             return _image;
          }
@@ -96,7 +96,7 @@ namespace fmg.uwp.res.img {
       }
 
       private int _borderWidth = 3;
-      public virtual int BorderWidth {
+      public int BorderWidth {
          get { return _borderWidth; }
          set {
             if (SetProperty(ref _borderWidth, value))
@@ -133,14 +133,13 @@ namespace fmg.uwp.res.img {
       private bool _scheduledDraw;
       /// <summary> schedule drawing (async operation) </summary>
       protected void DrawAsync() {
-         if (OnlySyncDraw) {
-            DrawSync();
-            return;
-         }
          if (_scheduledDraw)
             return;
 
          _scheduledDraw = true;
+         if (OnlySyncDraw)
+            return;
+
          AsyncRunner.InvokeFromUiLater(DrawSync, CoreDispatcherPriority.Low);
       }
 
