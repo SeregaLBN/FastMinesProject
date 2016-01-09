@@ -10,8 +10,6 @@ import fmg.common.geom.Size;
 
 /**
  * Приведение типов от платформонезависемых читых Java классов fmg.common.geom.* к библиотечным SWING/AWT классам java.awt.*\java.swing.*
- * @author SeregaLBN
- *
  */
 public final class Cast {
 	
@@ -37,5 +35,5 @@ public final class Cast {
 	}
 
 	public static java.awt.Color toColor(fmg.common.Color   clr) { return new java.awt.Color( 0xFF & clr.getR() ,  0xFF & clr.getG() ,  0xFF & clr.getB() ,  0xFF & clr.getA() ); }
-	public static   fmg.common.Color toColor(java.awt.Color clr) { return new   fmg.common.Color((byte) clr.getRed(), (byte)clr.getGreen(), (byte)clr.getBlue(), (byte)clr.getAlpha()); }
+	public static   fmg.common.Color toColor(java.awt.Color clr) { return new fmg.common.Color((byte)clr.getAlpha(), (byte) clr.getRed(), (byte)clr.getGreen(), (byte)clr.getBlue()); }
 }

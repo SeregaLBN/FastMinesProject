@@ -19,32 +19,32 @@ public class Color {
 	protected byte r,g,b,a;
 	
 	public Color() {
-		this((byte)0, (byte)0, (byte)0, (byte)255);
+		this((byte)255, (byte)0, (byte)0, (byte)0);
 	}
 	private static byte int_to_byte(int v, String name) {
 		if (v<0 || v>255) throw new IllegalArgumentException("Bad "+name+" argument");
 		return (byte)(v&0xFF);
 	}
-	public Color(int r, int g, int b, int a) {
-		this(int_to_byte(r, "RED"), int_to_byte(g, "GREEN"), int_to_byte(b, "BLUE"), int_to_byte(a, "ALPHA"));
+	public Color(int a, int r, int g, int b) {
+		this(int_to_byte(a, "ALPHA"), int_to_byte(r, "RED"), int_to_byte(g, "GREEN"), int_to_byte(b, "BLUE"));
 	}
-	public Color(byte r, byte g, byte b, byte a) {
+	public Color(byte a, byte r, byte g, byte b) {
 		this.r=r;
 		this.g=g;
 		this.b=b;
 		this.a=a;
 	}
 	public Color(int r, int g, int b) {
-		this(r, g, b, 255);
+		this(255, r, g, b);
 	}
 	public Color(byte r, byte g, byte b) {
-		this(r, g, b, (byte)255);
+		this((byte)255, r, g, b);
 	}
 	public Color(int OxAARRGGBB) {
-		this((byte)((OxAARRGGBB >> 16) &  0xFF),
+		this((byte)((OxAARRGGBB >> 24) &  0xFF),
+			(byte)((OxAARRGGBB >> 16) &  0xFF),
 			(byte)((OxAARRGGBB >> 8) &  0xFF),
-			(byte)((OxAARRGGBB >> 0) &  0xFF),
-			(byte)((OxAARRGGBB >> 24) &  0xFF));
+			(byte)((OxAARRGGBB >> 0) &  0xFF));
 	}
 
 	@Override
@@ -91,12 +91,10 @@ public class Color {
 	public Color attenuate(int basic /* = 120 */) {
 		if (basic < 0 || basic >= 0xFF)
 			throw new IllegalArgumentException();
-		return new Color(
+		return new Color(this.a,
 			(byte) (basic + (0xFF & this.r)%(0xFF - basic)),
 			(byte) (basic + (0xFF & this.g)%(0xFF - basic)),
-			(byte) (basic + (0xFF & this.b)%(0xFF - basic)),
-			this.a
-	);
+			(byte) (basic + (0xFF & this.b)%(0xFF - basic)));
 	}
 	public Color attenuate() { return this.attenuate(120); }
 
@@ -106,9 +104,9 @@ public class Color {
 	 * @return
 	 */
 	public Color brighter(double percent) {
-		Color tmp = new Color((byte)(0xFF - (0xFF & this.r)), (byte)(0xFF - (0xFF & this.g)), (byte)(0xFF - (0xFF & this.b)), this.a);
+		Color tmp = new Color(this.a, (byte)(0xFF - (0xFF & this.r)), (byte)(0xFF - (0xFF & this.g)), (byte)(0xFF - (0xFF & this.b)));
 		tmp = tmp.darker(percent);
-		return new Color((byte)(0xFF - (0xFF & tmp.r)), (byte)(0xFF - (0xFF & tmp.g)), (byte)(0xFF - (0xFF & tmp.b)), tmp.a);
+		return new Color(tmp.a, (byte)(0xFF - (0xFF & tmp.r)), (byte)(0xFF - (0xFF & tmp.g)), (byte)(0xFF - (0xFF & tmp.b)));
 	}
 	public Color brighter() { return this.brighter(0.7); }
 
@@ -119,11 +117,10 @@ public class Color {
 	 */
 	public Color darker(double percent) {
 		double tmp = 1 - Math.min(1, Math.max(0, percent));
-		return new Color(
+		return new Color(this.a,
 			(byte)((0xFF & this.r)*tmp),
 			(byte)((0xFF & this.g)*tmp),
-			(byte)((0xFF & this.b)*tmp),
-			this.a);
+			(byte)((0xFF & this.b)*tmp));
 	}
 	public Color darker() { return darker(0.7); }
 }

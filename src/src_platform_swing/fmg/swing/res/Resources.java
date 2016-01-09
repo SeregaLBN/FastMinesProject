@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
+import fmg.common.Color;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.swing.res.img.BackgroundPause;
@@ -17,6 +18,8 @@ import fmg.swing.utils.ImgUtils;
 
 /** Мультимедиа ресурсы программы */
 public final class Resources {
+
+    public static final Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
 
 	private Image imgLogo;
 
