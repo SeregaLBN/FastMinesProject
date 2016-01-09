@@ -17,8 +17,7 @@ namespace FastMines
       public Shell() {
          this.InitializeComponent();
          Unloaded += OnClosing;
-         //Loaded += (sender, ev) => {
-         //   // test
+         //Loaded += (sender, ev) => { // unit test
          //   var r = new Random(Guid.NewGuid().GetHashCode());
          //   for (int i = 0; i < 100; ++i) {
          //      TileHelper.CreateRandomMosaicImage(10 + r.Next(100), 10+r.Next(100));
