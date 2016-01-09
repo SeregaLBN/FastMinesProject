@@ -191,7 +191,7 @@ namespace FastMines {
       public static Tuple<EMosaic, WriteableBitmap> CreateRandomMosaicImage(int w, int h) {
          w = 53; h = 39;
          var mosaicType = EMosaic.eMosaicQuadrangle1;// EMosaicEx.FromOrdinal(Random.Next() % EMosaicEx.GetValues().Length);
-         var bkClr = ColorExt.RandomColor(Random).Attenuate().ToWinColor();
+         var bkClr = ColorExt.RandomColor(Random).Attenuate();
          var sizeField = mosaicType.SizeIcoField(true);
          sizeField.m += Random.Next() % 2;
          sizeField.n += Random.Next() % 3;

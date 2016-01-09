@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace FastMines.Presentation.Notyfier
 {
    public class PropertyChangedExEventArgs<T> : PropertyChangedEventArgs
    {
-      public PropertyChangedExEventArgs(string propertyName, T newValue, T oldValue) :
+      public PropertyChangedExEventArgs(T newValue, T oldValue, [CallerMemberName] string propertyName = null) :
          base(propertyName)
       {
          NewValue = newValue;

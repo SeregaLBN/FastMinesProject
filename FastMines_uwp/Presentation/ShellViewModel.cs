@@ -42,7 +42,7 @@ namespace FastMines.Presentation {
             _mosaicGroupDs.ImageSize = value;
             _mosaicSkillDs.ImageSize = value;
             if (old != value)
-               OnPropertyChanged(this, new PropertyChangedExEventArgs<int>("ImageSize", value, old));
+               OnPropertyChanged(this, new PropertyChangedExEventArgs<int>(value, old));
          }
       }
 

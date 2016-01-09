@@ -44,7 +44,7 @@ namespace FastMines.DataModel.DataSources
                   var img = mi.MosaicGroupImage;
                   img.PolarLights = selected;
                   img.Rotate = selected;
-                  img.BkColor = selected ? MosaicsGroupImg.DefaultBkColor.ToFmColor() : GraphicContext.DefaultBackgroundFillColor;
+                  img.BackgroundColor = selected ? MosaicsGroupImg.DefaultBkColor : GraphicContext.DefaultBackgroundFillColor;
                   img.Padding = new Bound(selected ? 5 : 15);
                }
             }
@@ -81,7 +81,7 @@ namespace FastMines.DataModel.DataSources
                mi.ImageSize = value;
             }
             if (old != value)
-               OnPropertyChanged(this, new PropertyChangedExEventArgs<int>("ImageSize", value, old));
+               OnPropertyChanged(this, new PropertyChangedExEventArgs<int>(value, old));
          }
       }
 

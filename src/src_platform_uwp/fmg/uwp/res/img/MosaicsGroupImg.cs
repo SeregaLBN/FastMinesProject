@@ -42,7 +42,7 @@ namespace fmg.uwp.res.img {
          if (isNew)
             bmp = new WriteableBitmap(Width, Height);
 
-         bmp.Clear(BkColor.ToWinColor());
+         bmp.Clear(BackgroundColor.ToWinColor());
 
          var points = GetCoords().PointsAsXyxyxySequence(true).ToArray();
          bmp.FillPolygon(points, FillColorAttenuate.ToWinColor());

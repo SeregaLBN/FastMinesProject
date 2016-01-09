@@ -54,7 +54,7 @@ namespace fmg.uwp.res.img {
          if (isNew)
             bmp = new WriteableBitmap(Width, Height);
 
-         bmp.Clear(BkColor.ToWinColor());
+         bmp.Clear(BackgroundColor.ToWinColor());
 
          foreach (var coords in GetCoords().Reverse()) {
             var points = coords.PointsAsXyxyxySequence(true).ToArray();

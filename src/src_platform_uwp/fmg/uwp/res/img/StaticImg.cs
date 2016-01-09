@@ -11,7 +11,7 @@ namespace fmg.uwp.res.img {
    public abstract class StaticImg<T, TImage> : NotifyPropertyChanged
       where TImage : class
    {
-      public static readonly Windows.UI.Color DefaultBkColor = Resources.DefaultBkColor;
+      public static readonly Color DefaultBkColor = Resources.DefaultBkColor;
       public const int DefaultImageSize = 100;
 
       protected StaticImg(T entity, int widthAndHeight = DefaultImageSize, int? padding = null)
@@ -76,12 +76,12 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      private Color _bkColor = DefaultBkColor.ToFmColor();
+      private Color _backgroundColor = DefaultBkColor;
       /// <summary> background fill color </summary>
-      public Color BkColor {
-         get { return _bkColor; }
+      public Color BackgroundColor {
+         get { return _backgroundColor; }
          set {
-            if (SetProperty(ref _bkColor, value))
+            if (SetProperty(ref _backgroundColor, value))
                DrawAsync();
          }
       }

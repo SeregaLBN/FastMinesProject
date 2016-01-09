@@ -46,7 +46,7 @@ namespace FastMines.Presentation.Notyfier
       /// when invoked from compilers that support <see cref="CallerMemberNameAttribute"/>.</param>
       private void OnPropertyChanged<T>(T oldValue, T newValue, [CallerMemberName] string propertyName = null)
       {
-         OnPropertyChanged(this, new PropertyChangedExEventArgs<T>(propertyName, newValue, oldValue));
+         OnPropertyChanged(this, new PropertyChangedExEventArgs<T>(newValue, oldValue, propertyName));
       }
 
       protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
