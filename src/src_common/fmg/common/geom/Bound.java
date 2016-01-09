@@ -4,46 +4,32 @@ package fmg.common.geom;
 public class Bound {
 	private int left, right, top, bottom;
 
+	public Bound(int bound) {
+		left = top = right = bottom = bound;
+	}
+
 	public Bound(int left, int top, int right, int bottom) {
-		super();
 		this.left = left;
 		this.top = top;
 		this.right = right;
 		this.bottom = bottom;
 	}
 
-	public int getLeft() {
-		return left;
-	}
+	public int getLeft() { return left; }
+	public void setLeft(int left) { this.left = left; }
 
-	public void setLeft(int left) {
-		this.left = left;
-	}
+	public int getRight() { return right; }
+	public void setRight(int right) { this.right = right; }
 
-	public int getRight() {
-		return right;
-	}
+	public int getTop() { return top; }
+	public void setTop(int top) { this.top = top; }
 
-	public void setRight(int right) {
-		this.right = right;
-	}
+	public int getBottom() { return bottom; }
+	public void setBottom(int bottom) { this.bottom = bottom; }
 
-	public int getTop() {
-		return top;
-	}
+	public int getLeftAndRight() { return left + right; }
+	public int getTopAndBottom() { return top + bottom; }
 
-	public void setTop(int top) {
-		this.top = top;
-	}
-
-	public int getBottom() {
-		return bottom;
-	}
-
-	public void setBottom(int bottom) {
-		this.bottom = bottom;
-	}
-	
 	public boolean isEmpty() {
 		return left == 0 && right == 0 && top == 0 && bottom == 0;
 	}
@@ -83,6 +69,6 @@ public class Bound {
 
 	@Override
 	public String toString() {
-		return "[left="+left+", right="+right+", top="+top+", bottom="+bottom+"]";
+		return "{left:"+left+", right:"+right+", top:"+top+", bottom:"+bottom+"}";
 	}
 }
