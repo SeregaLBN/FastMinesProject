@@ -80,10 +80,6 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
 		_sizeField = size;
 	}
 
-	public void setSmallIco(EMosaic mosaicType, boolean smallIco) {
-		setSizeField(mosaicType.sizeIcoField(smallIco));
-	}
-
 	@Override
 	public BaseCell getCell(Coord coord) {
 		return getMatrix().get(coord.x * getSizeField().n + coord.y);

@@ -174,7 +174,7 @@ public final class Resources {
 			if (imgMosaic == null) { // иначе - своя картинка из кода
 				MosaicsImg img = new MosaicsImg();
 				img.setMosaicType(mosaicType);
-				img.setSmallIco(mosaicType, smallIco);
+				img.setSizeField(mosaicType.sizeIcoField(smallIco));
 				//img.setBackgroundColor(java.awt.Color.ORANGE); // test
 				imgMosaic = ImgUtils.toImgIco(ImgUtils.toImg(img));
 			}

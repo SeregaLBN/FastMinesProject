@@ -64,10 +64,6 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      public bool SmallIco {
-         set { SizeField = MosaicType.SizeIcoField(value); }
-      }
-
       public BaseCell getCell(Coord coord) { return Matrix[coord.x * SizeField.n + coord.y]; }
 
       private BaseCell.BaseAttribute _attr;
@@ -81,6 +77,8 @@ namespace fmg.uwp.res.img {
             if (SetProperty(ref _attr, value)) {
                Dependency_GContext_CellAttribute();
                Dependency_CellAttribute_Area();
+               if (value != null)
+                  DrawAsync();
             }
          }
       }
@@ -95,6 +93,8 @@ namespace fmg.uwp.res.img {
          private set {
             if (SetProperty(ref _cellPaint, value)) {
                Dependency_CellPaint_GContext();
+               if (value != null)
+                  DrawAsync();
             }
          }
       }
@@ -116,7 +116,11 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      private void RecalcArea() {
+      private void RecalcArea(bool reset) {
+         if (reset) {
+            Area = 0;
+            return;
+         }
          var w = Width;
          var h = Height;
          var pad = Padding;
@@ -141,12 +145,14 @@ namespace fmg.uwp.res.img {
       public int Area {
          get {
             if (_area <= 0)
-               RecalcArea();
+               RecalcArea(false);
             return _area;
          }
          set {
             if (SetProperty(ref _area, value)) {
                Dependency_CellAttribute_Area();
+               if (value != 0)
+                  DrawAsync();
             }
          }
       }
@@ -157,6 +163,7 @@ namespace fmg.uwp.res.img {
          protected set {
             if (SetProperty(ref _paddingFull, value)) {
                Dependency_GContext_PaddingFull();
+               DrawAsync();
             }
          }
       }
@@ -175,7 +182,8 @@ namespace fmg.uwp.res.img {
                Dependency_CellPaint_GContext();
                Dependency_GContext_BorderWidth();
                Dependency_GContext_BorderColor();
-               DrawAsync();
+               if (value != null)
+                  DrawAsync();
             }
          }
       }
@@ -249,7 +257,7 @@ namespace fmg.uwp.res.img {
          switch (propertyChangedEventArgs.PropertyName) {
          case "Size":
          case "Padding":
-            RecalcArea();
+            RecalcArea(true);
             break;
          case "BorderWidth":
             Dependency_GContext_BorderWidth();

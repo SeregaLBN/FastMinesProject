@@ -22,21 +22,10 @@ namespace FastMines.Presentation.Notyfier
       {
          if (object.Equals(storage, value)) return false;
 
-         SetPropertyForce(ref storage, value, propertyName);
-         return true;
-      }
-
-      /// <summary> Sets the property and notifies listeners only when necessary. (!! Without comparing by Equals) </summary>
-      /// <typeparam name="T">Type of the property.</typeparam>
-      /// <param name="storage">Reference to a property with both getter and setter.</param>
-      /// <param name="value">Desired value for the property.</param>
-      /// <param name="propertyName">Name of the property used to notify listeners.  This value is optional and can be provided automatically
-      /// when invoked from compilers that support CallerMemberName.</param>
-      protected void SetPropertyForce<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
-      {
          var tmp = storage;
          storage = value;
          OnPropertyChanged(tmp, value, propertyName);
+         return true;
       }
 
       /// <summary> Notifies listeners that a property value has changed. </summary>

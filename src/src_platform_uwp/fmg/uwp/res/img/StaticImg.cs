@@ -72,7 +72,7 @@ namespace fmg.uwp.res.img {
             return _image;
          }
          protected set {
-            SetPropertyForce(ref _image, value);
+            SetProperty(ref _image, value);
          }
       }
 
