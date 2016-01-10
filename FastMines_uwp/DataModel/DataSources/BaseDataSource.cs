@@ -17,7 +17,8 @@ namespace FastMines.DataModel.DataSources
          get {
             if (!_dataSource.Any()) {
                FillDataSource(_dataSource);
-               CurrentElement = _dataSource.First();
+               if (CurrentElement == null)
+                  CurrentElement = _dataSource.First();
             }
             return _dataSource;
          }
@@ -49,10 +50,15 @@ namespace FastMines.DataModel.DataSources
          }
       }
 
-      public void Dispose() {
-         foreach (var mi in DataSource)
+      protected void Reset() {
+         foreach (var mi in _dataSource)
             mi.Dispose();
          _dataSource.Clear();
+         CurrentElement = null;
+      }
+
+      public void Dispose() {
+         Reset();
       }
 
    }

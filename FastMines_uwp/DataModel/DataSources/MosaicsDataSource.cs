@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
@@ -11,8 +12,19 @@ namespace FastMines.DataModel.DataSources
    /// <summary> DataSource mosaics items </summary>
    public class MosaicsDataSource : BaseDataSource<MosaicDataItem, EMosaic> {
 
+      private EMosaicGroup _currentGroup;
+      public EMosaicGroup CurrentGroup {
+         get { return _currentGroup; }
+         set {
+            if (SetProperty(ref _currentGroup, value)) {
+               Reset();
+               OnPropertyChanged("DataSource");
+            }
+         }
+      }
+
       protected override void FillDataSource(Collection<MosaicDataItem> dataSource) {
-         foreach (var s in EMosaicEx.GetValues()) {
+         foreach (var s in CurrentGroup.GetBind()) {
             var mi = new MosaicDataItem(s);
             mi.MosaicImage.BorderColor = Color.Green;
             //mi.MosaicImage.RedrawInterval = 50;
