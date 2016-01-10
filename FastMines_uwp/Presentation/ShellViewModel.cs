@@ -8,8 +8,8 @@ namespace FastMines.Presentation {
 
    /// <summary> ViewModel for main page </summary>
    public class ShellViewModel : NotifyPropertyChanged, IDisposable {
-      private readonly MosaicGroupDataSource _mosaicGroupDs = new MosaicGroupDataSource();
-      private readonly MosaicSkillDataSource _mosaicSkillDs = new MosaicSkillDataSource();
+      private readonly MosaicGroupsDataSource _mosaicGroupDs = new MosaicGroupsDataSource();
+      private readonly MosaicSkillsDataSource _mosaicSkillDs = new MosaicSkillsDataSource();
       private bool _isSplitViewPaneOpen;
 
       public ShellViewModel() {
@@ -32,8 +32,8 @@ namespace FastMines.Presentation {
          set { SetProperty(ref _isSplitViewPaneOpen, value); }
       }
 
-      public MosaicGroupDataSource MosaicGroupDs => _mosaicGroupDs;
-      public MosaicSkillDataSource MosaicSkillDs => _mosaicSkillDs;
+      public MosaicGroupsDataSource MosaicGroupDs => _mosaicGroupDs;
+      public MosaicSkillsDataSource MosaicSkillDs => _mosaicSkillDs;
 
       public int ImageSize {
          get { return _mosaicGroupDs.ImageSize; }

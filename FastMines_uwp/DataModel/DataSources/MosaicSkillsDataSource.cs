@@ -9,7 +9,7 @@ using FastMines.Presentation.Menu;
 namespace FastMines.DataModel.DataSources
 {
    /// <summary> DataSource menu items (mosaic skills) </summary>
-   public class MosaicSkillDataSource : BaseDataSource<MosaicSkillMenuItem, ESkillLevel> {
+   public class MosaicSkillsDataSource : BaseDataSource<MosaicSkillMenuItem, ESkillLevel> {
 
       protected override void FillDataSource(Collection<MosaicSkillMenuItem> dataSource) {
          foreach (var s in ESkillLevelEx.GetValues()) {

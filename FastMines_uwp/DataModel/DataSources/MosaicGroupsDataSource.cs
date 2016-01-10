@@ -10,7 +10,7 @@ using FastMines.Presentation.Menu;
 namespace FastMines.DataModel.DataSources
 {
    /// <summary> DataSource menu items (mosaic groups) </summary>
-   public class MosaicGroupDataSource : BaseDataSource<MosaicGroupMenuItem, EMosaicGroup> {
+   public class MosaicGroupsDataSource : BaseDataSource<MosaicGroupMenuItem, EMosaicGroup> {
 
       protected override void FillDataSource(Collection<MosaicGroupMenuItem> dataSource) {
          foreach (var g in EMosaicGroupEx.GetValues()) {
