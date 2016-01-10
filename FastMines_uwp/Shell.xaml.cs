@@ -12,8 +12,6 @@ namespace FastMines
    {
       internal const int MenuTextWidth = 110;
 
-      private readonly ShellViewModel _vm;
-
       public Shell() {
          this.InitializeComponent();
          Unloaded += OnClosing;
@@ -24,12 +22,12 @@ namespace FastMines
          //   }
          //};
 
-         _vm = new ShellViewModel();
-         foreach (var mi in _vm.MosaicGroupDs.DataSource) {
+         var vm = new ShellViewModel();
+         foreach (var mi in vm.MosaicGroupDs.DataSource) {
             mi.PageType = typeof(WelcomePage);
          }
 
-         this.ViewModel = _vm;
+         this.ViewModel = vm;
 
          //this.SizeChanged += OnSizeChanged;
          _sizeChangedObservable = Observable
@@ -37,7 +35,8 @@ namespace FastMines
             .Throttle(TimeSpan.FromSeconds(0.2)) // debounce events
             .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low));
       }
-      IDisposable _sizeChangedObservable;
+
+      readonly IDisposable _sizeChangedObservable;
 
       public ShellViewModel ViewModel { get; private set; }
 
@@ -46,7 +45,7 @@ namespace FastMines
 
       private void OnClosing(object sender, RoutedEventArgs ev) {
          //System.Diagnostics.Debug.WriteLine("OnClosing");
-         _vm?.Dispose();
+         ViewModel?.Dispose();
          _sizeChangedObservable.Dispose();
       }
 
@@ -54,7 +53,7 @@ namespace FastMines
          //System.Diagnostics.Debug.WriteLine("OnSizeChanged");
          var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
          size = size / 7;
-         _vm.ImageSize = (int)Math.Min(Math.Max(50, size), 100); // TODO: DPI dependency
+         ViewModel.ImageSize = (int)Math.Min(Math.Max(50, size), 100); // TODO: DPI dependency
       }
 
       //public static IEnumerable<T> FindChilds<T>(FrameworkElement parent, int depth = 1, Func<T, bool> filter = null)

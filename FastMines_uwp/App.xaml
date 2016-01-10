@@ -159,8 +159,9 @@
             </Setter>
         </Style>
 
-        <converters:ObjectToMenuItemConverter x:Key="ObjectToMenuItemConverter"/>
-        <converters:ObjectToSkillMenuItemConverter x:Key="ObjectToSkillMenuItemConverter"/>
+        <converters:ObjectToMosaicTailItemConverter x:Key="ObjectToMosaicTailItemConverter"/>
+        <converters:ObjectToMosaicGroupMenuItemConverter x:Key="ObjectToMosaicGroupMenuItemConverter"/>
+        <converters:ObjectToMosaicSkillMenuItemConverter x:Key="ObjectToMosaicSkillMenuItemConverter"/>
         <converters:ImageSizeWithMarginConverter x:Key="ImageSizeWithMarginConverter"/>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:ImageSizeFontSizeConverter x:Key="ImageSizeFontSizeConverter"/>

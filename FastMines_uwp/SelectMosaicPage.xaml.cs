@@ -12,8 +12,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
+using FastMines.Presentation;
 
 namespace FastMines
 {
@@ -22,8 +21,22 @@ namespace FastMines
    /// </summary>
    public sealed partial class MosaicGroupItemsPage : Page
    {
+
       public MosaicGroupItemsPage() {
          this.InitializeComponent();
+         ViewModel = new MosaicsViewModel();
+      }
+
+      public MosaicsViewModel ViewModel { get; private set; }
+
+      private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+      {
+         //throw new NotImplementedException();
+      }
+
+      private void ListViewBase_OnItemClick(object sender, ItemClickEventArgs e)
+      {
+         //throw new NotImplementedException();
       }
    }
 }

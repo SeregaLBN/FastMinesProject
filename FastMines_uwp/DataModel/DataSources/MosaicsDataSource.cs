@@ -1,16 +1,15 @@
 ﻿using System.Collections.ObjectModel;
-using System.Linq;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.uwp.draw;
 using fmg.uwp.res.img;
-using FastMines.DataModel.Items;
+using FastMines.Presentation.Tail;
 
-namespace FastMines.DataModel.DataSources
-{
+namespace FastMines.DataModel.DataSources {
+
    /// <summary> DataSource mosaics items </summary>
-   public class MosaicsDataSource : BaseDataSource<MosaicDataItem, EMosaic> {
+   public class MosaicsDataSource : BaseDataSource<MosaicTailItem, EMosaic> {
 
       private EMosaicGroup _currentGroup;
       public EMosaicGroup CurrentGroup {
@@ -23,9 +22,9 @@ namespace FastMines.DataModel.DataSources
          }
       }
 
-      protected override void FillDataSource(Collection<MosaicDataItem> dataSource) {
+      protected override void FillDataSource(Collection<MosaicTailItem> dataSource) {
          foreach (var s in CurrentGroup.GetBind()) {
-            var mi = new MosaicDataItem(s);
+            var mi = new MosaicTailItem(s);
             mi.MosaicImage.BorderColor = Color.Green;
             //mi.MosaicImage.RedrawInterval = 50;
             //mi.MosaicImage.RotateAngleDelta = 5;
