@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Windows.UI.Xaml.Media;
 using fmg.core.types;
 using fmg.data.controller.types;
@@ -8,7 +7,7 @@ using fmg.uwp.res.img;
 namespace FastMines.DataModel.Items {
 
    /// <summary> Mosaic item for data model </summary>
-   class MosaicDataItem : BaseData<EMosaic>, IDisposable {
+   public class MosaicDataItem : BaseData<EMosaic> {
       private const int ZoomKoef = 2;
 
       public MosaicDataItem(EMosaic eMosaic) : base(eMosaic) {
@@ -77,7 +76,7 @@ namespace FastMines.DataModel.Items {
          }
       }
 
-      public void Dispose() {
+      public override void Dispose() {
          _mosaicImg = null; // call setter
       }
 

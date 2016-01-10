@@ -55,11 +55,5 @@ namespace FastMines.DataModel.DataSources
          }
       }
 
-      public override void Dispose() {
-         foreach (var mi in DataSource)
-            mi.Dispose();
-         base.Dispose();
-      }
-
    }
 }

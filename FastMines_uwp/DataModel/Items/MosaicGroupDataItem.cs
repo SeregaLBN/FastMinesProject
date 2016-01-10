@@ -8,7 +8,7 @@ using fmg.uwp.res.img;
 namespace FastMines.DataModel.Items {
 
    /// <summary> Mosaic group item for data model </summary>
-   public class MosaicGroupDataItem : BaseData<EMosaicGroup>, IDisposable {
+   public class MosaicGroupDataItem : BaseData<EMosaicGroup> {
       private const int ZoomKoef = 2;
 
       public MosaicGroupDataItem(EMosaicGroup eMosaicGroup) : base(eMosaicGroup) {
@@ -67,7 +67,7 @@ namespace FastMines.DataModel.Items {
          }
       }
 
-      public void Dispose() {
+      public override void Dispose() {
          MosaicGroupImage = null; // call setter
       }
 

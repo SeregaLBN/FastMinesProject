@@ -8,7 +8,7 @@ using fmg.uwp.res.img;
 namespace FastMines.DataModel.Items {
 
    /// <summary> Mosaic skill level item for data model </summary>
-   public class MosaicSkillDataItem : BaseData<ESkillLevel>, IDisposable {
+   public class MosaicSkillDataItem : BaseData<ESkillLevel> {
       private const int ZoomKoef = 2;
 
       public MosaicSkillDataItem(ESkillLevel eSkill) : base(eSkill) {
@@ -70,7 +70,7 @@ namespace FastMines.DataModel.Items {
          }
       }
 
-      public void Dispose() {
+      public override void Dispose() {
          MosaicSkillImage = null; // call setter
       }
 

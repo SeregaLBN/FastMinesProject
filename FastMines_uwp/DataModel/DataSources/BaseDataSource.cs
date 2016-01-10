@@ -49,7 +49,9 @@ namespace FastMines.DataModel.DataSources
          }
       }
 
-      public virtual void Dispose() {
+      public void Dispose() {
+         foreach (var mi in DataSource)
+            mi.Dispose();
          _dataSource.Clear();
       }
 
