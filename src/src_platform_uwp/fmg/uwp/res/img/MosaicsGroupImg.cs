@@ -45,7 +45,7 @@ namespace fmg.uwp.res.img {
          bmp.Clear(BackgroundColor.ToWinColor());
 
          var points = GetCoords().PointsAsXyxyxySequence(true).ToArray();
-         bmp.FillPolygon(points, FillColorAttenuate.ToWinColor());
+         bmp.FillPolygon(points, ForegroundColorAttenuate.ToWinColor());
 
          // draw perimeter border
          var clr = BorderColor;

@@ -114,19 +114,19 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      protected Color _fillColor = Color.Aqua;
-      public Color FillColor {
-         get { return _fillColor; }
+      private Color _foregroundColor = Color.Aqua;
+      public Color ForegroundColor {
+         get { return _foregroundColor; }
          set {
-            if (SetProperty(ref _fillColor, value)) {
-               //OnPropertyChanged(this, new PropertyChangedExEventArgs<Color>("FillColorAttenuate", ..., ...));
-               OnPropertyChanged(this, new PropertyChangedEventArgs("FillColorAttenuate"));
+            if (SetProperty(ref _foregroundColor, value)) {
+               //OnPropertyChanged(this, new PropertyChangedExEventArgs<Color>(ForegroundColor, oldForegroundColor.Attenuate(160), "ForegroundColorAttenuate"));
+               OnPropertyChanged(this, new PropertyChangedEventArgs("ForegroundColorAttenuate"));
                DrawAsync();
             }
          }
       }
 
-      public Color FillColorAttenuate => FillColor.Attenuate(160);
+      public Color ForegroundColorAttenuate => ForegroundColor.Attenuate(160);
 
       public bool OnlySyncDraw { get; set; } = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
 
@@ -138,9 +138,9 @@ namespace fmg.uwp.res.img {
 
          _scheduledDraw = true;
          if (OnlySyncDraw)
-            return;
-
-         AsyncRunner.InvokeFromUiLater(DrawSync, CoreDispatcherPriority.Low);
+            OnPropertyChanged("Image");
+         else
+            AsyncRunner.InvokeFromUiLater(DrawSync, CoreDispatcherPriority.Low);
       }
 
       protected virtual void DrawSync() {
