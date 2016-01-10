@@ -243,8 +243,8 @@
     <Compile Include="DataModel\Items\MosaicDataItem.cs" />
     <Compile Include="DataModel\Items\MosaicSkillDataItem.cs" />
     <Compile Include="DataModel\Items\MosaicGroupDataItem.cs" />
-    <Compile Include="MosaicGroupItemsPage.xaml.cs">
-      <DependentUpon>MosaicGroupItemsPage.xaml</DependentUpon>
+    <Compile Include="SelectMosaicPage.xaml.cs">
+      <DependentUpon>SelectMosaicPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Presentation\Converters\FmColorToWinColorConverter.cs" />
     <Compile Include="Presentation\Converters\FmColorToBrushConverter.cs" />
@@ -859,7 +859,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="MosaicGroupItemsPage.xaml">
+    <Page Include="SelectMosaicPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
