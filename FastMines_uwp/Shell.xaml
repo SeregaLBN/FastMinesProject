@@ -48,7 +48,7 @@
 
                         <ListView x:Name="_listViewMosaicGroupMenu"
                                   ItemsSource="{x:Bind ViewModel.MosaicGroupDs.DataSource}"
-                                  SelectedItem="{x:Bind ViewModel.MosaicGroupDs.CurrentElement, Mode=TwoWay, Converter={StaticResource ObjectToMenuItemConverter}}">
+                                  SelectedItem="{x:Bind ViewModel.MosaicGroupDs.CurrentElement, Mode=TwoWay, Converter={StaticResource ObjectToMosaicGroupMenuItemConverter}}">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="Padding" Value="0" />
@@ -88,7 +88,7 @@
                         <ListView x:Name="_listViewSkillLevelMenu"
                               Visibility="Collapsed"
                               ItemsSource="{x:Bind ViewModel.MosaicSkillDs.DataSource}"
-                              SelectedItem="{x:Bind ViewModel.MosaicSkillDs.CurrentElement, Mode=TwoWay, Converter={StaticResource ObjectToSkillMenuItemConverter}}">
+                              SelectedItem="{x:Bind ViewModel.MosaicSkillDs.CurrentElement, Mode=TwoWay, Converter={StaticResource ObjectToMosaicSkillMenuItemConverter}}">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="Padding" Value="0" />
