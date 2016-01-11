@@ -35,8 +35,8 @@ namespace fmg.uwp.res.img {
          get { return _size; }
          set {
             if (SetProperty(ref _size, value)) {
-               _image = null;
-               DrawAsync();
+               Image = null;
+               NeedRedraw();
             }
          }
       }
@@ -56,18 +56,20 @@ namespace fmg.uwp.res.img {
             if (value.TopAndBottom >= Height)
                throw new ArgumentException("Padding size is very large. Should be less than Height.");
             if (SetProperty(ref _padding, value)) {
-               DrawAsync();
+               NeedRedraw();
             }
          }
       }
 
       public T Entity { get; protected set; }
 
+      protected abstract TImage CreateImage();
       private TImage _image;
-      protected TImage ImageInternal => _image;
       public TImage Image {
          get {
-            if (OnlySyncDraw && (_scheduledDraw || (_image == null)))
+            if (_image == null)
+               Image = CreateImage();
+            if (OnlySyncDraw && _scheduledDraw)
                DrawSync();
             return _image;
          }
@@ -82,7 +84,7 @@ namespace fmg.uwp.res.img {
          get { return _backgroundColor; }
          set {
             if (SetProperty(ref _backgroundColor, value))
-               DrawAsync();
+               NeedRedraw();
          }
       }
 
@@ -91,7 +93,7 @@ namespace fmg.uwp.res.img {
          get { return _borderColor; }
          set {
             if (SetProperty(ref _borderColor, value))
-               DrawAsync();
+               NeedRedraw();
          }
       }
 
@@ -100,7 +102,7 @@ namespace fmg.uwp.res.img {
          get { return _borderWidth; }
          set {
             if (SetProperty(ref _borderWidth, value))
-               DrawAsync();
+               NeedRedraw();
          }
       }
 
@@ -110,7 +112,7 @@ namespace fmg.uwp.res.img {
          get { return _rotateAngle; }
          set {
             if (SetProperty(ref _rotateAngle, value))
-               DrawAsync();
+               NeedRedraw();
          }
       }
 
@@ -121,7 +123,7 @@ namespace fmg.uwp.res.img {
             if (SetProperty(ref _foregroundColor, value)) {
                //OnPropertyChanged(this, new PropertyChangedExEventArgs<Color>(ForegroundColor, oldForegroundColor.Attenuate(160), "ForegroundColorAttenuate"));
                OnPropertyChanged(this, new PropertyChangedEventArgs("ForegroundColorAttenuate"));
-               DrawAsync();
+               NeedRedraw();
             }
          }
       }
@@ -130,17 +132,23 @@ namespace fmg.uwp.res.img {
 
       public bool OnlySyncDraw { get; set; } = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
 
+      protected void NeedRedraw() {
+         if (OnlySyncDraw)
+         {
+            _scheduledDraw = true;
+            OnPropertyChanged("Image");
+         } else {
+            DrawAsync();
+         }
+      }
+
       private bool _scheduledDraw;
       /// <summary> schedule drawing (async operation) </summary>
-      protected void DrawAsync() {
+      private void DrawAsync() {
          if (_scheduledDraw)
             return;
-
          _scheduledDraw = true;
-         if (OnlySyncDraw)
-            OnPropertyChanged("Image");
-         else
-            AsyncRunner.InvokeFromUiLater(DrawSync, CoreDispatcherPriority.Low);
+         AsyncRunner.InvokeFromUiLater(DrawSync, CoreDispatcherPriority.Low);
       }
 
       protected virtual void DrawSync() {

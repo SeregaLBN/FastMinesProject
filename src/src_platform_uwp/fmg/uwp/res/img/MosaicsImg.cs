@@ -47,7 +47,7 @@ namespace fmg.uwp.res.img {
                _matrix.Clear();
                CellAttr = null;
                OnPropertyChanged(this, new PropertyChangedExEventArgs<EMosaic>(value, old));
-               DrawAsync();
+               NeedRedraw();
             }
          }
       }
@@ -59,7 +59,7 @@ namespace fmg.uwp.res.img {
             if (SetProperty(ref _sizeField, value)) {
                Area = 0;
                _matrix.Clear();
-               DrawAsync();
+               NeedRedraw();
             }
          }
       }
@@ -78,7 +78,7 @@ namespace fmg.uwp.res.img {
                Dependency_GContext_CellAttribute();
                Dependency_CellAttribute_Area();
                if (value != null)
-                  DrawAsync();
+                  NeedRedraw();
             }
          }
       }
@@ -94,7 +94,7 @@ namespace fmg.uwp.res.img {
             if (SetProperty(ref _cellPaint, value)) {
                Dependency_CellPaint_GContext();
                if (value != null)
-                  DrawAsync();
+                  NeedRedraw();
             }
          }
       }
@@ -152,7 +152,7 @@ namespace fmg.uwp.res.img {
             if (SetProperty(ref _area, value)) {
                Dependency_CellAttribute_Area();
                if (value != 0)
-                  DrawAsync();
+                  NeedRedraw();
             }
          }
       }
@@ -163,7 +163,7 @@ namespace fmg.uwp.res.img {
          protected set {
             if (SetProperty(ref _paddingFull, value)) {
                Dependency_GContext_PaddingFull();
-               DrawAsync();
+               NeedRedraw();
             }
          }
       }
@@ -183,9 +183,15 @@ namespace fmg.uwp.res.img {
                Dependency_GContext_BorderWidth();
                Dependency_GContext_BorderColor();
                if (value != null)
-                  DrawAsync();
+                  NeedRedraw();
             }
          }
+      }
+
+      protected override WriteableBitmap CreateImage() {
+         var w = Width;
+         var h = Height;
+         return BitmapFactory.New(w, h); // new WriteableBitmap(w, h); // 
       }
 
       /// <summary> Return painted mosaic bitmap 
@@ -198,10 +204,7 @@ namespace fmg.uwp.res.img {
       protected override void DrawBody() {
          var w = Width;
          var h = Height;
-         var img = ImageInternal;
-         var isNew = (img == null);
-         if (isNew) {
-            img = BitmapFactory.New(w, h); // new WriteableBitmap(w, h); // 
+         var img = Image;
 
 #if DEBUG
             {
@@ -215,7 +218,6 @@ namespace fmg.uwp.res.img {
                }
             }
 #endif
-         }
 
          Action funcFillBk = () => img.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
 
@@ -246,9 +248,6 @@ namespace fmg.uwp.res.img {
                }
             }, CoreDispatcherPriority.Normal);
          }
-
-         if (isNew)
-            Image = img;
       }
 
       private void OnBasePropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs) {
@@ -305,6 +304,11 @@ namespace fmg.uwp.res.img {
          System.Diagnostics.Debug.Assert(cellPaintBmp != null);
       }
       #endregion
+
+      protected override void DrawSync() {
+         System.Diagnostics.Debug.WriteLine(GetType().Name + "::DrawSync");
+         base.DrawSync();
+      }
 
       public void Dispose() {
          Dispose(true);

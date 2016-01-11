@@ -20,7 +20,7 @@ namespace fmg.uwp.res.img
          get { return _rotate; }
          set {
             if (SetProperty(ref _rotate, value) && value)
-               DrawAsync();
+               NeedRedraw();
          }
       }
 
@@ -29,7 +29,7 @@ namespace fmg.uwp.res.img
          get { return _rotateAngleDelta; }
          set {
             if (SetProperty(ref _rotateAngleDelta, value) && Rotate)
-               DrawAsync();
+               NeedRedraw();
          }
       }
 
@@ -51,7 +51,7 @@ namespace fmg.uwp.res.img
 
       protected virtual void OnTimer() {
          RotateStep();
-         DrawAsync();
+         NeedRedraw();
       }
 
       protected virtual bool LiveImage() {

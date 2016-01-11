@@ -8,7 +8,7 @@ namespace FastMines.DataModel.Items {
 
    /// <summary> Mosaic item for data model </summary>
    public class MosaicDataItem : BaseData<EMosaic> {
-      private const int ZoomKoef = 2;
+      private const int ZoomKoef = 5;
 
       public MosaicDataItem(EMosaic eMosaic) : base(eMosaic) {
          Title = eMosaic.GetDescription(false);
@@ -36,10 +36,11 @@ namespace FastMines.DataModel.Items {
                   BackgroundColor = StaticImg<object, object>.DefaultBkColor,
                   BorderWidth = 3,
                   //RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
+                  OnlySyncDraw = true
                };
-               var bmp = tmp.Image;
-               System.Diagnostics.Debug.Assert(bmp.PixelWidth == ImageSize * ZoomKoef);
-               System.Diagnostics.Debug.Assert(bmp.PixelHeight == ImageSize * ZoomKoef);
+               //var bmp = tmp.Image;
+               //System.Diagnostics.Debug.Assert(bmp.PixelWidth == ImageSize * ZoomKoef);
+               //System.Diagnostics.Debug.Assert(bmp.PixelHeight == ImageSize * ZoomKoef);
                MosaicImage = tmp; // call this setter
             }
             return _mosaicImg;
@@ -71,6 +72,7 @@ namespace FastMines.DataModel.Items {
 
       private void OnMosaicImagePropertyChanged(object sender, PropertyChangedEventArgs ev) {
          var pn = ev.PropertyName;
+         System.Diagnostics.Debug.WriteLine("OnPropertyChanged: " + ev.PropertyName);
          if (pn == "Image") {
             OnPropertyChanged(this, ev); // ! notify parent container
          }

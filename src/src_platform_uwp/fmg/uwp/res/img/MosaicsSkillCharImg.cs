@@ -10,9 +10,10 @@ namespace fmg.uwp.res.img {
 
       public ESkillLevel MosaicSkill => Entity;
 
-      protected override void DrawBody() {
-         if (Image == null)
-            Image = MosaicSkill.UnicodeChar().ToString();
+      protected override void DrawBody() { }
+
+      protected override string CreateImage() {
+         return MosaicSkill.UnicodeChar().ToString();
       }
 
    }

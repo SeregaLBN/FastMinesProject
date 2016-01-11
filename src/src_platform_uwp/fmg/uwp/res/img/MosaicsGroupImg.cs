@@ -36,11 +36,12 @@ namespace fmg.uwp.res.img {
          });
       }
 
+      protected override WriteableBitmap CreateImage() {
+         return new WriteableBitmap(Width, Height);
+      }
+
       protected override void DrawBody() {
-         var bmp = ImageInternal;
-         var isNew = (bmp == null);
-         if (isNew)
-            bmp = new WriteableBitmap(Width, Height);
+         var bmp = Image;
 
          bmp.Clear(BackgroundColor.ToWinColor());
 
@@ -54,9 +55,6 @@ namespace fmg.uwp.res.img {
                bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], clr.ToWinColor(), BorderWidth);
             }
          }
-
-         if (isNew)
-            Image = bmp;
       }
 
    }

@@ -48,12 +48,12 @@ namespace fmg.uwp.res.img {
          });
       }
 
-      protected override void DrawBody() {
-         var bmp = ImageInternal;
-         var isNew = (bmp == null);
-         if (isNew)
-            bmp = new WriteableBitmap(Width, Height);
+      protected override WriteableBitmap CreateImage() {
+         return new WriteableBitmap(Width, Height);
+      }
 
+      protected override void DrawBody() {
+         var bmp = Image;
          bmp.Clear(BackgroundColor.ToWinColor());
 
          foreach (var coords in GetCoords().Reverse()) {
@@ -68,9 +68,6 @@ namespace fmg.uwp.res.img {
                }
             }
          }
-
-         if (isNew)
-            Image = bmp;
       }
 
    }
