@@ -3,6 +3,7 @@ using Windows.UI.Xaml.Media;
 using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.uwp.res.img;
+using FastMines.Common;
 
 namespace FastMines.DataModel.Items {
 
@@ -72,7 +73,7 @@ namespace FastMines.DataModel.Items {
 
       private void OnMosaicImagePropertyChanged(object sender, PropertyChangedEventArgs ev) {
          var pn = ev.PropertyName;
-         System.Diagnostics.Debug.WriteLine("OnPropertyChanged: " + ev.PropertyName);
+         LoggerSimple.Put(GetType().Name+"::OnPropertyChanged: " + ev.PropertyName);
          if (pn == "Image") {
             OnPropertyChanged(this, ev); // ! notify parent container
          }

@@ -14,7 +14,7 @@
             <StackPanel Height="130" Width="190" Margin="4,4,4,8">
                 <TextBlock Text="{x:Bind Title}" 
                        Margin="8,4" Width="186" Style="{StaticResource BaseTextBlockStyle}" HorizontalAlignment="Left"/>
-                <Image Source="{x:Bind Image}" Margin="8,0,8,8" Stretch="UniformToFill"/>
+                <Image Source="{x:Bind Image, Mode=OneWay}" Margin="8,0,8,8" Stretch="UniformToFill"/>
             </StackPanel>
         </DataTemplate>
     </Page.Resources>

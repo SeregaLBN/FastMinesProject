@@ -41,13 +41,14 @@ namespace fmg.uwp.res.img {
          get { return Entity; }
          set {
             if (value != Entity) {
-               var old = Entity;
-               Entity = value;
-               Area = 0;
-               _matrix.Clear();
-               CellAttr = null;
-               OnPropertyChanged(this, new PropertyChangedExEventArgs<EMosaic>(value, old));
-               NeedRedraw();
+               using (DispozedRedraw()) {
+                  var old = Entity;
+                  Entity = value;
+                  Area = 0;
+                  _matrix.Clear();
+                  CellAttr = null;
+                  OnPropertyChanged(this, new PropertyChangedExEventArgs<EMosaic>(value, old));
+               }
             }
          }
       }
@@ -57,9 +58,10 @@ namespace fmg.uwp.res.img {
          get { return _sizeField; }
          set {
             if (SetProperty(ref _sizeField, value)) {
-               Area = 0;
-               _matrix.Clear();
-               NeedRedraw();
+               using (DispozedRedraw()) {
+                  Area = 0;
+                  _matrix.Clear();
+               }
             }
          }
       }
@@ -75,10 +77,10 @@ namespace fmg.uwp.res.img {
          }
          private set {
             if (SetProperty(ref _attr, value)) {
-               Dependency_GContext_CellAttribute();
-               Dependency_CellAttribute_Area();
-               if (value != null)
-                  NeedRedraw();
+               using (DispozedRedraw(value == null)) {
+                  Dependency_GContext_CellAttribute();
+                  Dependency_CellAttribute_Area();
+               }
             }
          }
       }
@@ -92,9 +94,9 @@ namespace fmg.uwp.res.img {
          }
          private set {
             if (SetProperty(ref _cellPaint, value)) {
-               Dependency_CellPaint_GContext();
-               if (value != null)
-                  NeedRedraw();
+               using (DispozedRedraw(value == null)) {
+                  Dependency_CellPaint_GContext();
+               }
             }
          }
       }
@@ -104,13 +106,15 @@ namespace fmg.uwp.res.img {
       public IList<BaseCell> Matrix {
          get {
             if (!_matrix.Any()) {
-               var attr = CellAttr;
-               var type = MosaicType;
-               var size = SizeField;
-               for (var i = 0; i < size.m; i++)
-                  for (var j = 0; j < size.n; j++)
-                     _matrix.Add(MosaicHelper.CreateCellInstance(attr, type, new Coord(i, j)));
-               OnPropertyChanged(this, new PropertyChangedEventArgs("Matrix"));
+               using (DispozedRedraw()) {
+                  var attr = CellAttr;
+                  var type = MosaicType;
+                  var size = SizeField;
+                  for (var i = 0; i < size.m; i++)
+                     for (var j = 0; j < size.n; j++)
+                        _matrix.Add(MosaicHelper.CreateCellInstance(attr, type, new Coord(i, j)));
+                  OnPropertyChanged(this, new PropertyChangedEventArgs("Matrix"));
+               }
             }
             return _matrix;
          }
@@ -150,9 +154,9 @@ namespace fmg.uwp.res.img {
          }
          set {
             if (SetProperty(ref _area, value)) {
-               Dependency_CellAttribute_Area();
-               if (value != 0)
-                  NeedRedraw();
+               using (DispozedRedraw(value == 0)) {
+                  Dependency_CellAttribute_Area();
+               }
             }
          }
       }
@@ -162,8 +166,9 @@ namespace fmg.uwp.res.img {
          get { return _paddingFull; }
          protected set {
             if (SetProperty(ref _paddingFull, value)) {
-               Dependency_GContext_PaddingFull();
-               NeedRedraw();
+               using (DispozedRedraw()) {
+                  Dependency_GContext_PaddingFull();
+               }
             }
          }
       }
@@ -177,13 +182,13 @@ namespace fmg.uwp.res.img {
          }
          set {
             if (SetProperty(ref _gContext, value)) {
-               Dependency_GContext_CellAttribute();
-               Dependency_GContext_PaddingFull();
-               Dependency_CellPaint_GContext();
-               Dependency_GContext_BorderWidth();
-               Dependency_GContext_BorderColor();
-               if (value != null)
-                  NeedRedraw();
+               using (DispozedRedraw(value == null)) {
+                  Dependency_GContext_CellAttribute();
+                  Dependency_GContext_PaddingFull();
+                  Dependency_CellPaint_GContext();
+                  Dependency_GContext_BorderWidth();
+                  Dependency_GContext_BorderColor();
+               }
             }
          }
       }
@@ -209,12 +214,11 @@ namespace fmg.uwp.res.img {
 #if DEBUG
             {
                var attr = _attr;
-               if (attr != null)
-               {
+               if (attr != null) {
                   var innerSize = attr.GetOwnerSize(SizeField);
-                  //System.Diagnostics.Debug.WriteLine("pixelSize={0}; padding={1}", pixelSize, GContext.Padding);
-                  System.Diagnostics.Debug.Assert(w == innerSize.width + GContext.Padding.Left + GContext.Padding.Right);
-                  System.Diagnostics.Debug.Assert(h == innerSize.height + GContext.Padding.Top + GContext.Padding.Bottom);
+                  LoggerSimple.Put("pixelSize={0}; padding={1}", Size, PaddingFull);
+                  System.Diagnostics.Debug.Assert(w == innerSize.width + PaddingFull.LeftAndRight);
+                  System.Diagnostics.Debug.Assert(h == innerSize.height + PaddingFull.TopAndBottom);
                }
             }
 #endif
@@ -305,9 +309,9 @@ namespace fmg.uwp.res.img {
       }
       #endregion
 
-      protected override void DrawSync() {
-         System.Diagnostics.Debug.WriteLine(GetType().Name + "::DrawSync");
-         base.DrawSync();
+      protected override void DrawBegin() {
+         LoggerSimple.Put(GetType().Name + "::DrawBegin");
+         base.DrawBegin();
       }
 
       public void Dispose() {

@@ -16,7 +16,7 @@ namespace fmg.uwp.res.img {
          get { return _polarLights; }
          set {
             if (SetProperty(ref _polarLights, value))
-               NeedRedraw();
+               Redraw();
          }
       }
 
@@ -36,8 +36,10 @@ namespace fmg.uwp.res.img {
       }
 
       protected override void OnTimer() {
-         NextForegroundColor();
-         base.OnTimer();
+         using (DispozedRedraw()) {
+            NextForegroundColor();
+            base.OnTimer();
+         }
       }
 
       protected override bool LiveImage() {

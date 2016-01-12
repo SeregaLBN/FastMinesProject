@@ -35,8 +35,9 @@ namespace fmg.uwp.res.img {
          get { return _size; }
          set {
             if (SetProperty(ref _size, value)) {
-               Image = null;
-               NeedRedraw();
+               using (DispozedRedraw()) {
+                  Image = null;
+               }
             }
          }
       }
@@ -56,21 +57,30 @@ namespace fmg.uwp.res.img {
             if (value.TopAndBottom >= Height)
                throw new ArgumentException("Padding size is very large. Should be less than Height.");
             if (SetProperty(ref _padding, value)) {
-               NeedRedraw();
+               Redraw();
             }
          }
       }
 
-      public T Entity { get; protected set; }
+      private T _entity;
+      public T Entity {
+         get { return _entity; }
+         set {
+            if (SetProperty(ref _entity, value))
+               Redraw();
+         }
+      }
 
       protected abstract TImage CreateImage();
       private TImage _image;
       public TImage Image {
          get {
+            if (GetType() == typeof(MosaicsImg))
+               LoggerSimple.Put(GetType().Name+"::getImage");
             if (_image == null)
                Image = CreateImage();
-            if (OnlySyncDraw && _scheduledDraw)
-               DrawSync();
+            //if (OnlySyncDraw && _scheduledDraw)
+            //   DrawSync();
             return _image;
          }
          protected set {
@@ -84,7 +94,7 @@ namespace fmg.uwp.res.img {
          get { return _backgroundColor; }
          set {
             if (SetProperty(ref _backgroundColor, value))
-               NeedRedraw();
+               Redraw();
          }
       }
 
@@ -93,7 +103,7 @@ namespace fmg.uwp.res.img {
          get { return _borderColor; }
          set {
             if (SetProperty(ref _borderColor, value))
-               NeedRedraw();
+               Redraw();
          }
       }
 
@@ -102,7 +112,7 @@ namespace fmg.uwp.res.img {
          get { return _borderWidth; }
          set {
             if (SetProperty(ref _borderWidth, value))
-               NeedRedraw();
+               Redraw();
          }
       }
 
@@ -112,7 +122,7 @@ namespace fmg.uwp.res.img {
          get { return _rotateAngle; }
          set {
             if (SetProperty(ref _rotateAngle, value))
-               NeedRedraw();
+               Redraw();
          }
       }
 
@@ -123,7 +133,7 @@ namespace fmg.uwp.res.img {
             if (SetProperty(ref _foregroundColor, value)) {
                //OnPropertyChanged(this, new PropertyChangedExEventArgs<Color>(ForegroundColor, oldForegroundColor.Attenuate(160), "ForegroundColorAttenuate"));
                OnPropertyChanged(this, new PropertyChangedEventArgs("ForegroundColorAttenuate"));
-               NeedRedraw();
+               Redraw();
             }
          }
       }
@@ -132,34 +142,56 @@ namespace fmg.uwp.res.img {
 
       public bool OnlySyncDraw { get; set; } = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
 
-      protected void NeedRedraw() {
+      class Finalizer : IDisposable {
+         private readonly Action _dispoze;
+         public Finalizer(Action dispoze) { _dispoze = dispoze; }
+         public void Dispose() { _dispoze?.Invoke(); }
+      }
+
+      private bool _lockedRedraw;
+      protected IDisposable DispozedRedraw(bool ignoreRedraw = false) {
+         if (_lockedRedraw)
+            return new Finalizer(null);
+         _lockedRedraw = true;
+         return new Finalizer(() => {
+            _lockedRedraw = false;
+            Redraw();
+         });
+      }
+
+      protected void Redraw() {
+         if (_lockedRedraw)
+            return;
          if (OnlySyncDraw)
-         {
-            _scheduledDraw = true;
-            OnPropertyChanged("Image");
-         } else {
+            DrawSync();
+         else
             DrawAsync();
+      }
+
+      private bool _scheduleAsyncDraw;
+      /// <summary> schedule drawing (async operation) </summary>
+      private void DrawAsync() {
+         if (_scheduleAsyncDraw)
+            return;
+         _scheduleAsyncDraw = true;
+         AsyncRunner.InvokeFromUiLater(() => {
+            _scheduleAsyncDraw = false;
+            DrawSync();
+         }, CoreDispatcherPriority.Low);
+      }
+
+      private void DrawSync() {
+         System.Diagnostics.Debug.Assert(!_lockedRedraw);
+         _lockedRedraw = true;
+         using (new Finalizer(() => _lockedRedraw = false))
+         {
+            DrawBegin();
+            DrawBody();
+            DrawEnd();
          }
       }
 
-      private bool _scheduledDraw;
-      /// <summary> schedule drawing (async operation) </summary>
-      private void DrawAsync() {
-         if (_scheduledDraw)
-            return;
-         _scheduledDraw = true;
-         AsyncRunner.InvokeFromUiLater(DrawSync, CoreDispatcherPriority.Low);
-      }
-
-      protected virtual void DrawSync() {
-         DrawBegin();
-         DrawBody();
-         DrawEnd();
-      }
-
-      protected virtual void DrawBegin() {
-         _scheduledDraw = false;
-      }
+      protected virtual void DrawBegin() { }
 
       protected abstract void DrawBody();
 
