@@ -22,7 +22,7 @@ namespace FastMines.DataModel.DataSources
          OnPropertyChanged("SelectedPageType");
          OnPropertyChanged("UnicodeChars");
 
-         // for one selected- start animate; for all other - stop animate
+         // for one selected - start animate; for all other - stop animate
          foreach (var mi in DataSource) {
             var selected = ReferenceEquals(mi, CurrentElement);
             var img = mi.MosaicGroupImage;
@@ -43,17 +43,6 @@ namespace FastMines.DataModel.DataSources
          }
       }
 
-      public Type SelectedPageType {
-         get {
-            return CurrentElement?.PageType;
-         }
-         set {
-            // select associated menu item
-            CurrentElement = (value == null)
-               ? null
-               : DataSource.FirstOrDefault(m => m.PageType == value);
-         }
-      }
-
+      public Type SelectedPageType => CurrentElement?.PageType;
    }
 }

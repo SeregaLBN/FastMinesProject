@@ -24,7 +24,7 @@ namespace FastMines
 
          var vm = new ShellViewModel();
          foreach (var mi in vm.MosaicGroupDs.DataSource) {
-            mi.PageType = typeof(WelcomePage);
+            mi.PageType = typeof(SelectMosaicPage);
          }
 
          this.ViewModel = vm;

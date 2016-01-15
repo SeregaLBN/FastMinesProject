@@ -116,7 +116,7 @@
                 </ScrollViewer>
             </SplitView.Pane>
             <SplitView.Content>
-                <Frame x:Name="_frame" SourcePageType="{x:Bind ViewModel.MosaicGroupDs.SelectedPageType, Mode=TwoWay}" >
+                <Frame x:Name="_frame" SourcePageType="{x:Bind ViewModel.MosaicGroupDs.SelectedPageType, Mode=OneWay}" >
                 </Frame>
             </SplitView.Content>
         </SplitView>
