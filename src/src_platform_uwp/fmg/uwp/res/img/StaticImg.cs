@@ -17,9 +17,7 @@ namespace fmg.uwp.res.img {
       protected StaticImg(T entity, int widthAndHeight = DefaultImageSize, int? padding = null)
          : this(entity,
               new Size(widthAndHeight, widthAndHeight),
-              new Bound(padding.HasValue
-                 ? padding.Value
-                 : (int)(widthAndHeight * 0.05) // 5%
+              new Bound(padding ?? (int)(widthAndHeight * 0.05) // 5%
          ))
       { }
 

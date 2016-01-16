@@ -610,7 +610,7 @@ namespace FastMines {
 
       /// <summary> Перепроверить Margin поля мозаики так, что бы при нём поле мозаки было в пределах страницы </summary>
       private Thickness CheckMosaicMargin(Thickness? newMargin = null, Size? sizeWinMosaic = null) {
-         var margin = newMargin.HasValue ? newMargin.Value : MosaicField.Container.Margin;
+         var margin = newMargin ?? MosaicField.Container.Margin;
          if (!sizeWinMosaic.HasValue)
             sizeWinMosaic = MosaicField.WindowSize;
          var sizePage = Window.Current.Bounds.ToFmRect().toSize();

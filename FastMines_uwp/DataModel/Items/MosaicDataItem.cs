@@ -3,7 +3,6 @@ using Windows.UI.Xaml.Media;
 using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.uwp.res.img;
-using FastMines.Common;
 
 namespace FastMines.DataModel.Items {
 
