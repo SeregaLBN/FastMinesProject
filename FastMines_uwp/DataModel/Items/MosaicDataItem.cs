@@ -73,7 +73,7 @@ namespace FastMines.DataModel.Items {
 
       private void OnMosaicImagePropertyChanged(object sender, PropertyChangedEventArgs ev) {
          var pn = ev.PropertyName;
-         LoggerSimple.Put(GetType().Name+"::OnPropertyChanged: " + ev.PropertyName);
+         //LoggerSimple.Put(GetType().Name+"::OnPropertyChanged: " + ev.PropertyName);
          if (pn == "Image") {
             OnPropertyChanged(this, ev); // ! notify parent container
          }

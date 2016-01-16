@@ -45,6 +45,7 @@ namespace FastMines.Presentation.Notyfier
 
       protected void OnPropertyChanged(object sender, PropertyChangedEventArgs ev)
       {
+         //FastMines.Common.LoggerSimple.Put(sender.GetType().Name + "::" + ev.PropertyName);
          var eventHandler = PropertyChanged;
          eventHandler?.Invoke(sender, ev);
       }

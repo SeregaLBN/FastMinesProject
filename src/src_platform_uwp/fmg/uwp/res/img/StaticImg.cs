@@ -75,8 +75,6 @@ namespace fmg.uwp.res.img {
       private TImage _image;
       public TImage Image {
          get {
-            if (GetType() == typeof(MosaicsImg))
-               LoggerSimple.Put(GetType().Name+"::getImage");
             if (_image == null)
                Image = CreateImage();
             //if (OnlySyncDraw && _scheduledDraw)

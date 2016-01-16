@@ -211,18 +211,6 @@ namespace fmg.uwp.res.img {
          var h = Height;
          var img = Image;
 
-#if DEBUG
-            {
-               var attr = _attr;
-               if (attr != null) {
-                  var innerSize = attr.GetOwnerSize(SizeField);
-                  LoggerSimple.Put("pixelSize={0}; padding={1}", Size, PaddingFull);
-                  System.Diagnostics.Debug.Assert(w == innerSize.width + PaddingFull.LeftAndRight);
-                  System.Diagnostics.Debug.Assert(h == innerSize.height + PaddingFull.TopAndBottom);
-               }
-            }
-#endif
-
          Action funcFillBk = () => img.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
 
          if (OnlySyncDraw) {
@@ -308,11 +296,6 @@ namespace fmg.uwp.res.img {
          System.Diagnostics.Debug.Assert(cellPaintBmp != null);
       }
       #endregion
-
-      protected override void DrawBegin() {
-         LoggerSimple.Put(GetType().Name + "::DrawBegin");
-         base.DrawBegin();
-      }
 
       public void Dispose() {
          Dispose(true);

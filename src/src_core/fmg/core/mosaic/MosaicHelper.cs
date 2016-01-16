@@ -67,7 +67,7 @@ namespace fmg.core.mosaic {
          bool deltaUp = true;
          do {
             var cmp = comparable((int)res);
-            System.Diagnostics.Debug.WriteLine("d={0}{1}; res={2}; cmp={3}", deltaUp ? '↑' : '↓', d, res, cmp);
+            //System.Diagnostics.Debug.WriteLine("d={0}{1}; res={2}; cmp={3}", deltaUp ? '↑' : '↓', d, res, cmp);
             // Example:
             // func comparable(x) -> return x==1000 ? 0: x<1000 ? -1 : +1;
             // init data:  res=100 d=100

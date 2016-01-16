@@ -19,7 +19,8 @@ namespace FastMines.DataModel.DataSources
       }
 
       protected override void OnCurrentElementChanged() {
-         OnPropertyChanged("SelectedPageType");
+         if (CurrentElement != null)  // if unselected item
+            OnPropertyChanged("SelectedPageType");
          OnPropertyChanged("UnicodeChars");
 
          // for one selected - start animate; for all other - stop animate
