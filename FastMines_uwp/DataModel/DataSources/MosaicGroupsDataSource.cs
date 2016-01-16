@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.uwp.draw;
 using fmg.uwp.res.img;
-using FastMines.Presentation.Menu;
+using FastMines.Presentation.Controls;
 
 namespace FastMines.DataModel.DataSources
 {
@@ -14,7 +15,8 @@ namespace FastMines.DataModel.DataSources
 
       protected override void FillDataSource(Collection<MosaicGroupMenuItem> dataSource) {
          foreach (var g in EMosaicGroupEx.GetValues()) {
-            dataSource.Add(new MosaicGroupMenuItem(g));
+            var mi = new MosaicGroupMenuItem(g);
+            dataSource.Add(mi);
          }
       }
 
@@ -29,6 +31,7 @@ namespace FastMines.DataModel.DataSources
             var img = mi.MosaicGroupImage;
             img.PolarLights = selected;
             img.Rotate = selected;
+            img.BorderColor = selected ? Color.Red : Color.Green;
             img.BackgroundColor = selected ? MosaicsGroupImg.DefaultBkColor : GraphicContext.DefaultBackgroundFillColor;
             img.Padding = new Bound(selected ? 5 : 15);
          }

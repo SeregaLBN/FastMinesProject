@@ -245,7 +245,7 @@
     <Compile Include="DataModel\Items\MosaicGroupDataItem.cs" />
     <Compile Include="Presentation\Converters\ObjectToMosaicTailItemConverter.cs" />
     <Compile Include="Presentation\MosaicsViewModel.cs" />
-    <Compile Include="Presentation\Tail\MosaicTailtem.cs" />
+    <Compile Include="Presentation\Controls\MosaicTailtem.cs" />
     <Compile Include="SelectMosaicPage.xaml.cs">
       <DependentUpon>SelectMosaicPage.xaml</DependentUpon>
     </Compile>
@@ -254,7 +254,7 @@
     <Compile Include="Presentation\Converters\ScaleXToggleButtonConverter.cs" />
     <Compile Include="Presentation\Converters\ImageSizeFontSizeConverter.cs" />
     <Compile Include="Presentation\Converters\ObjectToMosaicSkillMenuItemConverter.cs" />
-    <Compile Include="Presentation\Menu\MosaicSkillMenuItem.cs" />
+    <Compile Include="Presentation\Controls\MosaicSkillMenuItem.cs" />
     <Compile Include="Presentation\Notyfier\PropertyChangedExEventArgs.cs" />
     <Compile Include="Common\TileHelper.cs" />
     <Compile Include="DataModel\FmDataItem.cs" />
@@ -292,7 +292,7 @@
     </Compile>
     <Compile Include="Presentation\Command.cs" />
     <Compile Include="Presentation\Converters\ImageSizeOpenPaneConverter.cs" />
-    <Compile Include="Presentation\Menu\MosaicGroupMenuItem.cs" />
+    <Compile Include="Presentation\Controls\MosaicGroupMenuItem.cs" />
     <Compile Include="Presentation\Notyfier\NotifyPropertyChanged.cs" />
     <Compile Include="Presentation\Converters\ImageSizeWithMarginConverter.cs" />
     <Compile Include="Presentation\Converters\ObjectToMosaicGroupMenuItemConverter.cs" />

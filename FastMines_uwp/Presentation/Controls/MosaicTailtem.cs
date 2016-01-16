@@ -1,7 +1,7 @@
 ﻿using fmg.core.types;
 using FastMines.DataModel.Items;
 
-namespace FastMines.Presentation.Tail {
+namespace FastMines.Presentation.Controls {
 
    public class MosaicTailItem : MosaicDataItem {
 

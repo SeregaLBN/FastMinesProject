@@ -4,7 +4,7 @@ using fmg.common.geom;
 using fmg.core.types;
 using fmg.uwp.draw;
 using fmg.uwp.res.img;
-using FastMines.Presentation.Tail;
+using FastMines.Presentation.Controls;
 
 namespace FastMines.DataModel.DataSources {
 
@@ -24,10 +24,12 @@ namespace FastMines.DataModel.DataSources {
 
       protected override void FillDataSource(Collection<MosaicTailItem> dataSource) {
          foreach (var s in CurrentGroup.GetBind()) {
-            var mi = new MosaicTailItem(s);
-            mi.MosaicImage.BorderColor = Color.Green;
-            //mi.MosaicImage.RedrawInterval = 50;
-            //mi.MosaicImage.RotateAngleDelta = 5;
+            var mi = new MosaicTailItem(s) {
+               MosaicImage = {
+                  //RedrawInterval = 50,
+                  //RotateAngleDelta = 5
+               }
+            };
             dataSource.Add(mi);
          }
       }
@@ -38,6 +40,7 @@ namespace FastMines.DataModel.DataSources {
             var selected = ReferenceEquals(mi, CurrentElement);
             var img = mi.MosaicImage;
             //img.Rotate = selected;
+            img.BorderColor = selected ? Color.White : Color.Dark;
             img.BackgroundColor = selected ? MosaicsSkillImg.DefaultBkColor : GraphicContext.DefaultBackgroundFillColor;
             img.Padding = new Bound(selected ? 5 : 15);
          }

@@ -1,6 +1,6 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
-using FastMines.Presentation.Tail;
+using FastMines.Presentation.Controls;
 
 namespace FastMines.Presentation.Converters {
 

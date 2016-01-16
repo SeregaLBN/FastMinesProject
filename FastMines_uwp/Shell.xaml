@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:FastMines"
     xmlns:presentation="using:FastMines.Presentation"
-    xmlns:PresentationMenu="using:FastMines.Presentation.Menu"
+    xmlns:PresentationControls="using:FastMines.Presentation.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -55,7 +55,7 @@
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="PresentationMenu:MosaicGroupMenuItem">
+                                <DataTemplate x:DataType="PresentationControls:MosaicGroupMenuItem">
                                     <StackPanel Orientation="Horizontal" Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}">
                                         <Image Grid.RowSpan="1"
                                                Source="{x:Bind Image, Mode=OneWay}"
@@ -95,7 +95,7 @@
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="PresentationMenu:MosaicSkillMenuItem">
+                                <DataTemplate x:DataType="PresentationControls:MosaicSkillMenuItem">
                                     <StackPanel Orientation="Horizontal"
                                                 Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}" >
                                         <Image Grid.RowSpan="1"

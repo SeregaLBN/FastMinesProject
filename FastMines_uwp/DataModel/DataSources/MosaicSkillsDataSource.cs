@@ -4,7 +4,7 @@ using fmg.common.geom;
 using fmg.data.controller.types;
 using fmg.uwp.draw;
 using fmg.uwp.res.img;
-using FastMines.Presentation.Menu;
+using FastMines.Presentation.Controls;
 
 namespace FastMines.DataModel.DataSources
 {
@@ -13,10 +13,12 @@ namespace FastMines.DataModel.DataSources
 
       protected override void FillDataSource(Collection<MosaicSkillMenuItem> dataSource) {
          foreach (var s in ESkillLevelEx.GetValues()) {
-            var mi = new MosaicSkillMenuItem(s);
-            mi.MosaicSkillImage.BorderColor = Color.Green;
-            mi.MosaicSkillImage.RedrawInterval = 50;
-            mi.MosaicSkillImage.RotateAngleDelta = 5;
+            var mi = new MosaicSkillMenuItem(s) {
+               MosaicSkillImage = {
+                  RedrawInterval = 50,
+                  RotateAngleDelta = 5
+               }
+            };
             dataSource.Add(mi);
          }
       }
@@ -27,6 +29,7 @@ namespace FastMines.DataModel.DataSources
             var selected = ReferenceEquals(mi, CurrentElement);
             var img = mi.MosaicSkillImage;
             img.Rotate = selected;
+            img.BorderColor = selected ? Color.Red : Color.Green;
             img.BackgroundColor = selected ? MosaicsSkillImg.DefaultBkColor : GraphicContext.DefaultBackgroundFillColor;
             img.Padding = new Bound(selected ? 5 : 15);
          }
