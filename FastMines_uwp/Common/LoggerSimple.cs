@@ -21,14 +21,18 @@ namespace FastMines.Common {
    }
 
    public class Tracer : Disposable {
+      private readonly bool _on;
       private readonly string _hint;
       private readonly Func<string> _disposeMessage;
 
       public Tracer(string hint) : this(hint, null, null) { }
       public Tracer(string hint, string ctorMessage) : this(hint, ctorMessage, null) { }
       public Tracer(string hint, Func<string> disposeMessage) : this(hint, null, disposeMessage) { }
-
-      public Tracer(string hint, string ctorMessage, Func<string> disposeMessage) {
+      public Tracer(string hint, string ctorMessage, Func<string> disposeMessage) : this(true, hint, ctorMessage, disposeMessage) { }
+      public Tracer(bool on, string hint, string ctorMessage, Func<string> disposeMessage) {
+         _on = on;
+         if (!_on)
+            return;
          _hint = hint;
          _disposeMessage = disposeMessage;
 #if DEBUG
@@ -42,6 +46,8 @@ namespace FastMines.Common {
 
       protected override void Dispose(bool disposing)
       {
+         if (!_on)
+            return;
          if (disposing) {
             // free managed resources
 #if DEBUG
@@ -57,6 +63,8 @@ namespace FastMines.Common {
 
 #if DEBUG
       public void Put(string format, params object[] args) {
+         if (!_on)
+            return;
          if (args.Length > 0)
             format = string.Format(format, args);
          LoggerSimple.Put("  {0}: {1}", _hint, format);

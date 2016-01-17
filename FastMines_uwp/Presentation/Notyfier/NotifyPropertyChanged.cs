@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using fmg.uwp.res.img;
+using FastMines.Common;
 
 namespace FastMines.Presentation.Notyfier
 {
@@ -45,9 +47,12 @@ namespace FastMines.Presentation.Notyfier
 
       protected void OnPropertyChanged(object sender, PropertyChangedEventArgs ev)
       {
-         //FastMines.Common.LoggerSimple.Put(sender.GetType().Name + "::" + ev.PropertyName);
-         var eventHandler = PropertyChanged;
-         eventHandler?.Invoke(sender, ev);
+         var mi = this as MosaicsImg;
+         var hint = (mi == null) ? null : "(" + mi.Entity + ")";
+         using (new Tracer(this is MosaicsImg, sender.GetType().Name + hint + "::OnPropertyChanged: " + ev.PropertyName, null, null)) {
+            var eventHandler = PropertyChanged;
+            eventHandler?.Invoke(sender, ev);
+         }
       }
    }
 }

@@ -4,6 +4,7 @@ using fmg.common.geom;
 using fmg.core.types;
 using fmg.uwp.draw;
 using fmg.uwp.res.img;
+using FastMines.Common;
 using FastMines.Presentation.Controls;
 
 namespace FastMines.DataModel.DataSources {
@@ -35,6 +36,7 @@ namespace FastMines.DataModel.DataSources {
       }
 
       protected override void OnCurrentElementChanged() {
+         LoggerSimple.Put("MosaicsDataSource::OnCurrentElementChanged: CurrentElement=" + CurrentElement?.MosaicType);
          // for one selected- start animate; for all other - stop animate
          foreach (var mi in DataSource) {
             var selected = ReferenceEquals(mi, CurrentElement);

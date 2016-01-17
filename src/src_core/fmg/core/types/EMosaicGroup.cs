@@ -49,8 +49,8 @@ public static class EMosaicGroupEx {
       case EMosaicGroup.eTriangles:
          yield return EMosaic.eMosaicTriangle1;
          yield return EMosaic.eMosaicTriangle2;
-         yield return EMosaic.eMosaicTriangle3;
-         yield return EMosaic.eMosaicTriangle4;
+         //yield return EMosaic.eMosaicTriangle3;
+         //yield return EMosaic.eMosaicTriangle4;
          break;
       case EMosaicGroup.eQuadrangles:
          yield return EMosaic.eMosaicSquare1;

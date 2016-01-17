@@ -64,6 +64,9 @@ namespace fmg.uwp.res.img {
       public T Entity {
          get { return _entity; }
          set {
+            if (this is MosaicsImg) {
+               LoggerSimple.Put("  " + this.GetType().Name + "(" + this.Entity + ")::Entity:");
+            }
             if (SetProperty(ref _entity, value))
                Redraw();
          }
@@ -170,20 +173,24 @@ namespace fmg.uwp.res.img {
          if (_scheduleAsyncDraw)
             return;
          _scheduleAsyncDraw = true;
-         AsyncRunner.InvokeFromUiLater(() => {
-            _scheduleAsyncDraw = false;
-            DrawSync();
-         }, CoreDispatcherPriority.Low);
+         using (new Tracer(this is MosaicsImg, this.GetType().Name + "(" + this.Entity + ")::DrawAsync", null, null)) {
+            AsyncRunner.InvokeFromUiLater(() => {
+               _scheduleAsyncDraw = false;
+               DrawSync();
+            }, CoreDispatcherPriority.Low);
+         }
       }
 
       private void DrawSync() {
          System.Diagnostics.Debug.Assert(!_lockedRedraw);
          _lockedRedraw = true;
+         using (new Tracer(this is MosaicsImg, this.GetType().Name + "(" + this.Entity + ")::DrawSync", null, null)) {
          using (new Finalizer(() => _lockedRedraw = false))
          {
             DrawBegin();
             DrawBody();
             DrawEnd();
+         }
          }
       }
 
