@@ -64,9 +64,6 @@ namespace fmg.uwp.res.img {
       public T Entity {
          get { return _entity; }
          set {
-            if (this is MosaicsImg) {
-               LoggerSimple.Put("  " + this.GetType().Name + "(" + this.Entity + ")::Entity:");
-            }
             if (SetProperty(ref _entity, value))
                Redraw();
          }
@@ -147,58 +144,47 @@ namespace fmg.uwp.res.img {
          public void Dispose() { _dispoze?.Invoke(); }
       }
 
-      private bool _lockedRedraw;
+      private enum LockRedraw {
+         eRedrawed,
+         eNeedRedraw,
+         eNeedRedrawRedraw
+      };
+      private LockRedraw _lockedRedraw;
       protected IDisposable DispozedRedraw(bool ignoreRedraw = false) {
-         if (_lockedRedraw)
+         if (ignoreRedraw)
             return new Finalizer(null);
-         _lockedRedraw = true;
-         return new Finalizer(() => {
-            _lockedRedraw = false;
-            Redraw();
-         });
+         _lockedRedraw = (_lockedRedraw == LockRedraw.eRedrawed) ? LockRedraw.eNeedRedraw : LockRedraw.eNeedRedrawRedraw;
+         return new Finalizer(Redraw);
       }
 
       protected void Redraw() {
-         if (_lockedRedraw)
-            return;
          if (OnlySyncDraw)
             DrawSync();
          else
             DrawAsync();
       }
 
-      private bool _scheduleAsyncDraw;
       /// <summary> schedule drawing (async operation) </summary>
       private void DrawAsync() {
-         if (_scheduleAsyncDraw)
+         if (_lockedRedraw == LockRedraw.eNeedRedrawRedraw) {
+            _lockedRedraw = LockRedraw.eNeedRedraw;
+            AsyncRunner.InvokeFromUiLater(DrawAsync, CoreDispatcherPriority.Normal);
             return;
-         _scheduleAsyncDraw = true;
-         using (new Tracer(this is MosaicsImg, this.GetType().Name + "(" + this.Entity + ")::DrawAsync", null, null)) {
-            AsyncRunner.InvokeFromUiLater(() => {
-               _scheduleAsyncDraw = false;
-               DrawSync();
-            }, CoreDispatcherPriority.Low);
          }
+         AsyncRunner.InvokeFromUiLater(DrawSync, CoreDispatcherPriority.Low);
       }
 
       private void DrawSync() {
-         System.Diagnostics.Debug.Assert(!_lockedRedraw);
-         _lockedRedraw = true;
-         using (new Tracer(this is MosaicsImg, this.GetType().Name + "(" + this.Entity + ")::DrawSync", null, null)) {
-         using (new Finalizer(() => _lockedRedraw = false))
-         {
-            DrawBegin();
-            DrawBody();
-            DrawEnd();
-         }
-         }
+         DrawBegin();
+         DrawBody();
+         DrawEnd();
       }
 
       protected virtual void DrawBegin() { }
 
       protected abstract void DrawBody();
 
-      protected virtual void DrawEnd() { }
+      protected virtual void DrawEnd() { _lockedRedraw = LockRedraw.eRedrawed; }
 
    }
 }

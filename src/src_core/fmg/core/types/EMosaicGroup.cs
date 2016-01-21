@@ -49,8 +49,8 @@ public static class EMosaicGroupEx {
       case EMosaicGroup.eTriangles:
          yield return EMosaic.eMosaicTriangle1;
          yield return EMosaic.eMosaicTriangle2;
-         //yield return EMosaic.eMosaicTriangle3;
-         //yield return EMosaic.eMosaicTriangle4;
+         yield return EMosaic.eMosaicTriangle3;
+         yield return EMosaic.eMosaicTriangle4;
          break;
       case EMosaicGroup.eQuadrangles:
          yield return EMosaic.eMosaicSquare1;
@@ -81,7 +81,7 @@ public static class EMosaicGroupEx {
    }
 
    /// <summary> Описание для пользователя </summary>
-   public static String GetDescription(this EMosaicGroup self) {
+   public static string GetDescription(this EMosaicGroup self) {
       return self.ToString().Substring(1);
    }
 

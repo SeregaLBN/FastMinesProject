@@ -3,7 +3,6 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.uwp.draw;
-using fmg.uwp.res.img;
 using FastMines.Common;
 using FastMines.Presentation.Controls;
 
@@ -43,7 +42,8 @@ namespace FastMines.DataModel.DataSources {
             var img = mi.MosaicImage;
             //img.Rotate = selected;
             img.BorderColor = selected ? Color.White : Color.Dark;
-            img.BackgroundColor = selected ? MosaicsSkillImg.DefaultBkColor : GraphicContext.DefaultBackgroundFillColor;
+            //img.BackgroundColor = selected ? MosaicsSkillImg.DefaultBkColor : GraphicContext.DefaultBackgroundFillColor;
+            img.BackgroundColor = selected ? Color.Red : GraphicContext.DefaultBackgroundFillColor;
             img.Padding = new Bound(selected ? 5 : 15);
          }
       }
