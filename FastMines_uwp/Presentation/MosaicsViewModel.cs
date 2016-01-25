@@ -12,10 +12,11 @@ namespace FastMines.Presentation {
       private readonly MosaicsDataSource _mosaicsDs = new MosaicsDataSource();
 
       public MosaicsViewModel() {
+         const int defSize = 200;
          if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
-            _mosaicsDs.ImageSize = MosaicsGroupImg.DefaultImageSize/2;
+            _mosaicsDs.ImageSize = defSize;
          else
-            AsyncRunner.InvokeFromUiLater(() => _mosaicsDs.ImageSize = MosaicsGroupImg.DefaultImageSize/2,
+            AsyncRunner.InvokeFromUiLater(() => ImageSize = defSize,
                CoreDispatcherPriority.Low);
          //_mosaicsDs.PropertyChanged += (sender, args) => {
          //   if (args.PropertyName == "SelectedMenuItem") {

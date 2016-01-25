@@ -50,9 +50,7 @@ namespace fmg.uwp.res.img
       }
 
       protected virtual void OnTimer() {
-         using (DispozedRedraw()) {
-            RotateStep();
-         }
+         RotateStep();
       }
 
       protected virtual bool LiveImage() {

@@ -3,7 +3,7 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.uwp.draw;
-using FastMines.Common;
+using fmg.uwp.res.img;
 using FastMines.Presentation.Controls;
 
 namespace FastMines.DataModel.DataSources {
@@ -35,15 +35,14 @@ namespace FastMines.DataModel.DataSources {
       }
 
       protected override void OnCurrentElementChanged() {
-         LoggerSimple.Put("MosaicsDataSource::OnCurrentElementChanged: CurrentElement=" + CurrentElement?.MosaicType);
+         //LoggerSimple.Put("MosaicsDataSource::OnCurrentElementChanged: CurrentElement=" + CurrentElement?.MosaicType);
          // for one selected- start animate; for all other - stop animate
          foreach (var mi in DataSource) {
             var selected = ReferenceEquals(mi, CurrentElement);
             var img = mi.MosaicImage;
             //img.Rotate = selected;
             img.BorderColor = selected ? Color.White : Color.Dark;
-            //img.BackgroundColor = selected ? MosaicsSkillImg.DefaultBkColor : GraphicContext.DefaultBackgroundFillColor;
-            img.BackgroundColor = selected ? Color.Red : GraphicContext.DefaultBackgroundFillColor;
+            img.BackgroundColor = selected ? MosaicsSkillImg.DefaultBkColor : GraphicContext.DefaultBackgroundFillColor;
             img.Padding = new Bound(selected ? 5 : 15);
          }
       }

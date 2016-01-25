@@ -39,7 +39,7 @@ namespace FastMines.Presentation.Notyfier {
          OnPropertyChanged(this, new PropertyChangedEventArgs(propertyName));
       }
 
-      protected void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+      protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          var eventHandler = PropertyChanged;
          eventHandler?.Invoke(sender, ev);
       }

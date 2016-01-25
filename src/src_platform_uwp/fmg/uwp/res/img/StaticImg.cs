@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Windows.UI.Core;
 using fmg.common;
 using fmg.common.geom;
@@ -33,9 +35,7 @@ namespace fmg.uwp.res.img {
          get { return _size; }
          set {
             if (SetProperty(ref _size, value)) {
-               using (DispozedRedraw()) {
-                  Image = null;
-               }
+               Image = null;
             }
          }
       }
@@ -138,25 +138,6 @@ namespace fmg.uwp.res.img {
 
       public bool OnlySyncDraw { get; set; } = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
 
-      class Finalizer : IDisposable {
-         private readonly Action _dispoze;
-         public Finalizer(Action dispoze) { _dispoze = dispoze; }
-         public void Dispose() { _dispoze?.Invoke(); }
-      }
-
-      private enum LockRedraw {
-         eRedrawed,
-         eNeedRedraw,
-         eNeedRedrawRedraw
-      };
-      private LockRedraw _lockedRedraw;
-      protected IDisposable DispozedRedraw(bool ignoreRedraw = false) {
-         if (ignoreRedraw)
-            return new Finalizer(null);
-         _lockedRedraw = (_lockedRedraw == LockRedraw.eRedrawed) ? LockRedraw.eNeedRedraw : LockRedraw.eNeedRedrawRedraw;
-         return new Finalizer(Redraw);
-      }
-
       protected void Redraw() {
          if (OnlySyncDraw)
             DrawSync();
@@ -166,11 +147,6 @@ namespace fmg.uwp.res.img {
 
       /// <summary> schedule drawing (async operation) </summary>
       private void DrawAsync() {
-         if (_lockedRedraw == LockRedraw.eNeedRedrawRedraw) {
-            _lockedRedraw = LockRedraw.eNeedRedraw;
-            AsyncRunner.InvokeFromUiLater(DrawAsync, CoreDispatcherPriority.Normal);
-            return;
-         }
          AsyncRunner.InvokeFromUiLater(DrawSync, CoreDispatcherPriority.Low);
       }
 
@@ -184,7 +160,33 @@ namespace fmg.uwp.res.img {
 
       protected abstract void DrawBody();
 
-      protected virtual void DrawEnd() { _lockedRedraw = LockRedraw.eRedrawed; }
+      protected virtual void DrawEnd() {
+         //OnPropertyChanged(this, new PropertyChangedEventArgs("Image"));
+      }
+
+      protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         if (NotifyOn) {
+            base.OnPropertyChanged(sender, ev);
+            return;
+         }
+
+         _delayedPropertyChanged.Add(new KeyValuePair<object, PropertyChangedEventArgs>(sender, ev));
+      }
+      private readonly List<KeyValuePair<object, PropertyChangedEventArgs>> _delayedPropertyChanged = new List<KeyValuePair<object, PropertyChangedEventArgs>>();
+
+      private bool _notifyOn = true;
+      public bool NotifyOn {
+         get { return _notifyOn; }
+         set {
+            _notifyOn = value;
+            if (!_notifyOn || !_delayedPropertyChanged.Any())
+               return;
+            _delayedPropertyChanged.ForEach(x => {
+               base.OnPropertyChanged(x.Key, x.Value);
+            });
+            _delayedPropertyChanged.Clear();
+         }
+      }
 
    }
 }

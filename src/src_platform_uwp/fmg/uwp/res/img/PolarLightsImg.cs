@@ -36,10 +36,8 @@ namespace fmg.uwp.res.img {
       }
 
       protected override void OnTimer() {
-         using (DispozedRedraw()) {
-            NextForegroundColor();
-            base.OnTimer();
-         }
+         NextForegroundColor();
+         base.OnTimer();
       }
 
       protected override bool LiveImage() {
