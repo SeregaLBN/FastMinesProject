@@ -40,10 +40,12 @@ namespace FastMines.DataModel.DataSources {
          foreach (var mi in DataSource) {
             var selected = ReferenceEquals(mi, CurrentElement);
             var img = mi.MosaicImage;
+            img.DeferredOn = true;
             //img.Rotate = selected;
             img.BorderColor = selected ? Color.White : Color.Dark;
             img.BackgroundColor = selected ? MosaicsSkillImg.DefaultBkColor : GraphicContext.DefaultBackgroundFillColor;
             img.Padding = new Bound(selected ? 5 : 15);
+            img.DeferredOn = false;
          }
       }
 

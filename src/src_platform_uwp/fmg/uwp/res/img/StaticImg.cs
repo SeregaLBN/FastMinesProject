@@ -24,9 +24,9 @@ namespace fmg.uwp.res.img {
       { }
 
       protected StaticImg(T entity, Size sizeImage, Bound padding) {
-         Entity = entity;
          _size = sizeImage;
          _padding = padding;
+         _entity = entity;
       }
 
       private Size _size;
@@ -35,7 +35,9 @@ namespace fmg.uwp.res.img {
          get { return _size; }
          set {
             if (SetProperty(ref _size, value)) {
-               Image = null;
+               //LoggerSimple.Put("setSize: {0}", Entity);
+               Image = CreateImage();
+               Redraw();
             }
          }
       }
@@ -73,10 +75,9 @@ namespace fmg.uwp.res.img {
       private TImage _image;
       public TImage Image {
          get {
+            //LoggerSimple.Put("getImage: {0}", Entity);
             if (_image == null)
                Image = CreateImage();
-            //if (OnlySyncDraw && _scheduledDraw)
-            //   DrawSync();
             return _image;
          }
          protected set {
@@ -136,24 +137,38 @@ namespace fmg.uwp.res.img {
 
       public Color ForegroundColorAttenuate => ForegroundColor.Attenuate(160);
 
-      public bool OnlySyncDraw { get; set; } = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+      public bool OnlySyncDraw { get; set; } = true;// Windows.ApplicationModel.DesignMode.DesignModeEnabled;
 
+      private bool _deferredRedraw;
       protected void Redraw() {
-         if (OnlySyncDraw)
-            DrawSync();
-         else
-            DrawAsync();
+         if (!DeferredOn) {
+            if (OnlySyncDraw)
+               DrawSync();
+            else
+               DrawAsync();
+         } else {
+            _deferredRedraw = true;
+         }
       }
 
+      private bool _sheduledDraw;
       /// <summary> schedule drawing (async operation) </summary>
       private void DrawAsync() {
-         AsyncRunner.InvokeFromUiLater(DrawSync, CoreDispatcherPriority.Low);
+         if (_sheduledDraw)
+            return;
+         _sheduledDraw = true;
+         AsyncRunner.InvokeFromUiLater(() => { DrawSync(); _sheduledDraw = false; }, CoreDispatcherPriority.Low);
       }
 
       private void DrawSync() {
+         //var n = NotifyOn;
+         //if (n)
+         //   NotifyOn = false;
          DrawBegin();
          DrawBody();
          DrawEnd();
+         //if (n)
+         //   NotifyOn = true;
       }
 
       protected virtual void DrawBegin() { }
@@ -161,30 +176,42 @@ namespace fmg.uwp.res.img {
       protected abstract void DrawBody();
 
       protected virtual void DrawEnd() {
-         //OnPropertyChanged(this, new PropertyChangedEventArgs("Image"));
+         //LoggerSimple.Put("DrawEnd: {0}", Entity);
       }
 
       protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         if (NotifyOn) {
+         System.Diagnostics.Debug.Assert(ReferenceEquals(this, sender), "WTF??");
+
+         if (!DeferredOn) {
             base.OnPropertyChanged(sender, ev);
             return;
          }
 
-         _delayedPropertyChanged.Add(new KeyValuePair<object, PropertyChangedEventArgs>(sender, ev));
+         _deferredPropertyChanged[ev.PropertyName] = ev;
       }
-      private readonly List<KeyValuePair<object, PropertyChangedEventArgs>> _delayedPropertyChanged = new List<KeyValuePair<object, PropertyChangedEventArgs>>();
+      private readonly Dictionary<string, PropertyChangedEventArgs> _deferredPropertyChanged = new Dictionary<string, PropertyChangedEventArgs>();
 
-      private bool _notifyOn = true;
-      public bool NotifyOn {
-         get { return _notifyOn; }
+      private bool _deferredOn;
+      /// <summary> Deferr notifications and rendering </summary>
+      public bool DeferredOn {
+         get { return _deferredOn; }
          set {
-            _notifyOn = value;
-            if (!_notifyOn || !_delayedPropertyChanged.Any())
-               return;
-            _delayedPropertyChanged.ForEach(x => {
-               base.OnPropertyChanged(x.Key, x.Value);
-            });
-            _delayedPropertyChanged.Clear();
+            if (SetProperty(ref _deferredOn, value)) {
+               if (_deferredOn)
+                  return;
+
+               if (_deferredRedraw) {
+                  _deferredRedraw = false;
+                  Redraw();
+               }
+
+               if (_deferredPropertyChanged.Any()) {
+                  foreach(var key in _deferredPropertyChanged.Keys) {
+                     base.OnPropertyChanged(this, _deferredPropertyChanged[key]);
+                  }
+                  _deferredPropertyChanged.Clear();
+               }
+            }
          }
       }
 

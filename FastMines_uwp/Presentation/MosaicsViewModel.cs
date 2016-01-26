@@ -1,7 +1,4 @@
 ﻿using System;
-using Windows.UI.Core;
-using fmg.uwp.res.img;
-using FastMines.Common;
 using FastMines.DataModel.DataSources;
 using FastMines.Presentation.Notyfier;
 
@@ -12,12 +9,8 @@ namespace FastMines.Presentation {
       private readonly MosaicsDataSource _mosaicsDs = new MosaicsDataSource();
 
       public MosaicsViewModel() {
-         const int defSize = 200;
-         if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
-            _mosaicsDs.ImageSize = defSize;
-         else
-            AsyncRunner.InvokeFromUiLater(() => ImageSize = defSize,
-               CoreDispatcherPriority.Low);
+         //_mosaicsDs.ImageSize = 200; // TODO убрать, если будет зависимость ImageSize от размеров окна
+
          //_mosaicsDs.PropertyChanged += (sender, args) => {
          //   if (args.PropertyName == "SelectedMenuItem") {
          //      // auto-close split view pane

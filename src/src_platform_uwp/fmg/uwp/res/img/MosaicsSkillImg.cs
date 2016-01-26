@@ -49,6 +49,7 @@ namespace fmg.uwp.res.img {
       }
 
       protected override WriteableBitmap CreateImage() {
+         //LoggerSimple.Put("CreateImage: Width={0}; Height={1}: {2}", Width, Height, Entity);
          return new WriteableBitmap(Width, Height);
       }
 

@@ -43,6 +43,7 @@ namespace fmg.uwp.res.img
          } else {
             _timer?.Stop();
          }
+         base.DrawEnd();
       }
 
       private void OnTick(object sender, object e) {

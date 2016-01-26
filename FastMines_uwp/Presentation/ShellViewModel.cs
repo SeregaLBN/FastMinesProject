@@ -15,13 +15,12 @@ namespace FastMines.Presentation {
       public ShellViewModel() {
          ToggleSplitViewPaneCommand = new Command(() => IsSplitViewPaneOpen = !IsSplitViewPaneOpen);
 
-         _mosaicGroupDs.ImageSize = MosaicsGroupImg.DefaultImageSize / 2;
-         _mosaicGroupDs.PropertyChanged += (sender, args) => {
-            if (args.PropertyName == "SelectedMenuItem") {
-               // auto-close split view pane
-               //this.IsSplitViewPaneOpen = false;
-            }
-         };
+         //_mosaicGroupDs.PropertyChanged += (sender, args) => {
+         //   if (args.PropertyName == "SelectedMenuItem") {
+         //      // auto-close split view pane
+         //      //this.IsSplitViewPaneOpen = false;
+         //   }
+         //};
       }
 
       public ICommand ToggleSplitViewPaneCommand { get; private set; }
