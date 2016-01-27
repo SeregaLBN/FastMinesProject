@@ -218,13 +218,13 @@ namespace fmg.uwp.res.img {
       private class DeferredLock : IDisposable {
          private readonly StaticImg<T, TImage> _owner;
          private readonly bool _locked;
-         private bool _redrawAfter;
+         private readonly bool _redrawAfter;
          public DeferredLock(StaticImg<T, TImage> owner, bool redrawAfter) {
             if ((_owner = owner).DeferredOn)
                return;
             _owner.DeferredOn = true;
             _locked = true;
-            _redrawAfter = true;
+            _redrawAfter = redrawAfter;
          }
          public void Dispose() {
             if (!_locked)
