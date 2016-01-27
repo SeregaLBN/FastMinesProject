@@ -56,7 +56,7 @@ namespace FastMines.DataModel.Items {
          get { return _imageSize; }
          set {
             if (SetProperty(ref _imageSize, value)) {
-               MosaicGroupImage.Size = new Size(ImageSize * ZoomKoef, ImageSize * ZoomKoef);
+               MosaicGroupImage.Size = new Size(_imageSize * ZoomKoef, _imageSize * ZoomKoef);
             }
          }
       }

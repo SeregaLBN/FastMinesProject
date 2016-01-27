@@ -137,18 +137,19 @@ namespace fmg.uwp.res.img {
 
       public Color ForegroundColorAttenuate => ForegroundColor.Attenuate(160);
 
-      public bool OnlySyncDraw { get; set; } = true;// Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+      public bool OnlySyncDraw { get; set; } = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
 
       private bool _deferredRedraw;
       protected void Redraw() {
-         if (!DeferredOn) {
-            if (OnlySyncDraw)
-               DrawSync();
-            else
-               DrawAsync();
-         } else {
+         if (DeferredOn) {
             _deferredRedraw = true;
+            return;
          }
+
+         if (OnlySyncDraw)
+            DrawSync();
+         else
+            DrawAsync();
       }
 
       private bool _sheduledDraw;
@@ -161,23 +162,20 @@ namespace fmg.uwp.res.img {
       }
 
       private void DrawSync() {
-         //var n = NotifyOn;
-         //if (n)
-         //   NotifyOn = false;
-         DrawBegin();
-         DrawBody();
-         DrawEnd();
-         //if (n)
-         //   NotifyOn = true;
+         using (DeferredLock) {
+            //LoggerSimple.Put("> DrawBegin: {0}", Entity);
+            DrawBegin();
+            DrawBody();
+            DrawEnd();
+            //LoggerSimple.Put("< DrawEnd: {0}", Entity);
+         }
       }
 
       protected virtual void DrawBegin() { }
 
       protected abstract void DrawBody();
 
-      protected virtual void DrawEnd() {
-         //LoggerSimple.Put("DrawEnd: {0}", Entity);
-      }
+      protected virtual void DrawEnd() { }
 
       protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(this, sender), "WTF??");
@@ -193,27 +191,46 @@ namespace fmg.uwp.res.img {
 
       private bool _deferredOn;
       /// <summary> Deferr notifications and rendering </summary>
-      public bool DeferredOn {
+      private bool DeferredOn {
          get { return _deferredOn; }
          set {
-            if (SetProperty(ref _deferredOn, value)) {
-               if (_deferredOn)
-                  return;
+            if (_deferredOn == value)
+               return;
 
-               if (_deferredRedraw) {
-                  _deferredRedraw = false;
-                  Redraw();
-               }
+            _deferredOn = value;
+            if (_deferredOn)
+               return;
 
-               if (_deferredPropertyChanged.Any()) {
-                  foreach(var key in _deferredPropertyChanged.Keys) {
-                     base.OnPropertyChanged(this, _deferredPropertyChanged[key]);
-                  }
-                  _deferredPropertyChanged.Clear();
+            if (_deferredRedraw) {
+               _deferredRedraw = false;
+               Redraw();
+            }
+
+            if (_deferredPropertyChanged.Any()) {
+               foreach(var key in _deferredPropertyChanged.Keys) {
+                  base.OnPropertyChanged(this, _deferredPropertyChanged[key]);
                }
+               _deferredPropertyChanged.Clear();
             }
          }
       }
+
+      private class DeferredHelper : IDisposable {
+         private readonly StaticImg<T, TImage> _owner;
+         private readonly bool _locked;
+         public DeferredHelper(StaticImg<T, TImage> owner) {
+            if ((_owner = owner).DeferredOn)
+               return;
+            _owner.DeferredOn = true;
+            _locked = true;
+         }
+         public void Dispose() {
+            if (_locked)
+               _owner.DeferredOn = false;
+         }
+      }
+      /// <summary> Deferr notifications and rendering </summary>
+      public IDisposable DeferredLock => new DeferredHelper(this);
 
    }
 }

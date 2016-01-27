@@ -38,14 +38,13 @@ namespace fmg.uwp.res.img {
       public EMosaic MosaicType {
          get { return Entity; }
          set {
-            if (value != Entity) {
-               var old = Entity;
-               Entity = value;
-               Area = 0;
-               _matrix.Clear();
-               CellAttr = null;
-               OnPropertyChanged(this, new PropertyChangedExEventArgs<EMosaic>(value, old));
-            }
+            if (value != Entity)
+               using (DeferredLock) {
+                  var old = Entity;
+                  Entity = value;
+                  Dependency_MosaicType_As_Entity(value, old);
+                  Redraw();
+               }
          }
       }
 
@@ -53,10 +52,12 @@ namespace fmg.uwp.res.img {
       public Matrisize SizeField {
          get { return _sizeField; }
          set {
-            if (SetProperty(ref _sizeField, value)) {
-               Area = 0;
-               _matrix.Clear();
-            }
+            if (SetProperty(ref _sizeField, value))
+               using (DeferredLock) {
+                  RecalcArea();
+                  _matrix.Clear();
+                  Redraw();
+               }
          }
       }
 
@@ -70,10 +71,12 @@ namespace fmg.uwp.res.img {
             return _attr;
          }
          private set {
-            if (SetProperty(ref _attr, value)) {
-               Dependency_GContext_CellAttribute();
-               Dependency_CellAttribute_Area();
-            }
+            if (SetProperty(ref _attr, value))
+               using (DeferredLock) {
+                  Dependency_GContext_CellAttribute();
+                  Dependency_CellAttribute_Area();
+                  Redraw();
+               }
          }
       }
 
@@ -85,9 +88,11 @@ namespace fmg.uwp.res.img {
             return _cellPaint;
          }
          private set {
-            if (SetProperty(ref _cellPaint, value)) {
-               Dependency_CellPaint_GContext();
-            }
+            if (SetProperty(ref _cellPaint, value))
+               using (DeferredLock) {
+                  Dependency_CellPaint_GContext();
+                  Redraw();
+               }
          }
       }
 
@@ -96,54 +101,59 @@ namespace fmg.uwp.res.img {
       public IList<BaseCell> Matrix {
          get {
             if (!_matrix.Any()) {
-               var attr = CellAttr;
-               var type = MosaicType;
-               var size = SizeField;
-               for (var i = 0; i < size.m; i++)
-                  for (var j = 0; j < size.n; j++)
-                     _matrix.Add(MosaicHelper.CreateCellInstance(attr, type, new Coord(i, j)));
+               using (DeferredLock) {
+                  var attr = CellAttr;
+                  var type = MosaicType;
+                  var size = SizeField;
+                  for (var i = 0; i < size.m; i++)
+                     for (var j = 0; j < size.n; j++)
+                        _matrix.Add(MosaicHelper.CreateCellInstance(attr, type, new Coord(i, j)));
+               }
                OnPropertyChanged(this, new PropertyChangedEventArgs("Matrix"));
+               Redraw();
             }
             return _matrix;
          }
       }
 
-      private void RecalcArea(bool reset) {
-         if (reset) {
-            Area = 0;
-            return;
-         }
-         var w = Width;
-         var h = Height;
-         var pad = Padding;
-         var sizeImageIn = new Size(w - pad.LeftAndRight, h - pad.TopAndBottom);
-         var sizeImageOut = new Size(sizeImageIn);
-         var area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref sizeImageOut);
-         Area = area; // call setter
-         System.Diagnostics.Debug.Assert(w >= (sizeImageOut.width + pad.LeftAndRight));
-         System.Diagnostics.Debug.Assert(h >= (sizeImageOut.height + pad.TopAndBottom));
-         var paddingOut = new Bound(
-                  (w - sizeImageOut.width) / 2,
-                  (h - sizeImageOut.height) / 2,
-                  (w - sizeImageOut.width) / 2 + (w - sizeImageOut.width) % 2,
-                  (h - sizeImageOut.height) / 2 + (h - sizeImageOut.height) % 2);
-         System.Diagnostics.Debug.Assert(w == sizeImageOut.width + paddingOut.LeftAndRight);
-         System.Diagnostics.Debug.Assert(h == sizeImageOut.height + paddingOut.TopAndBottom);
+      private void RecalcArea() {
+         using (DeferredLock) {
+            var w = Width;
+            var h = Height;
+            var pad = Padding;
+            var sizeImageIn = new Size(w - pad.LeftAndRight, h - pad.TopAndBottom);
+            var sizeImageOut = new Size(sizeImageIn);
+            var area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref sizeImageOut);
+            Area = area; // call setter
+            System.Diagnostics.Debug.Assert(w >= (sizeImageOut.width + pad.LeftAndRight));
+            System.Diagnostics.Debug.Assert(h >= (sizeImageOut.height + pad.TopAndBottom));
+            var paddingOut = new Bound(
+               (w - sizeImageOut.width)/2,
+               (h - sizeImageOut.height)/2,
+               (w - sizeImageOut.width)/2 + (w - sizeImageOut.width)%2,
+               (h - sizeImageOut.height)/2 + (h - sizeImageOut.height)%2);
+            System.Diagnostics.Debug.Assert(w == sizeImageOut.width + paddingOut.LeftAndRight);
+            System.Diagnostics.Debug.Assert(h == sizeImageOut.height + paddingOut.TopAndBottom);
 
-         PaddingFull = paddingOut;
+            PaddingFull = paddingOut;
+
+            Redraw();
+         }
       }
 
       private int _area;
       public int Area {
          get {
             if (_area <= 0)
-               RecalcArea(false);
+               RecalcArea();
             return _area;
          }
          set {
-            if (SetProperty(ref _area, value)) {
-               Dependency_CellAttribute_Area();
-            }
+            if (SetProperty(ref _area, value))
+               using (DeferredLock) {
+                  Dependency_CellAttribute_Area();
+                  Redraw();
+               }
          }
       }
 
@@ -151,9 +161,11 @@ namespace fmg.uwp.res.img {
       public Bound PaddingFull {
          get { return _paddingFull; }
          protected set {
-            if (SetProperty(ref _paddingFull, value)) {
-               Dependency_GContext_PaddingFull();
-            }
+            if (SetProperty(ref _paddingFull, value))
+               using (DeferredLock) {
+                  Dependency_GContext_PaddingFull();
+                  Redraw();
+               }
          }
       }
 
@@ -165,13 +177,15 @@ namespace fmg.uwp.res.img {
             return _gContext;
          }
          set {
-            if (SetProperty(ref _gContext, value)) {
-               Dependency_GContext_CellAttribute();
-               Dependency_GContext_PaddingFull();
-               Dependency_CellPaint_GContext();
-               Dependency_GContext_BorderWidth();
-               Dependency_GContext_BorderColor();
-            }
+            if (SetProperty(ref _gContext, value))
+               using (DeferredLock) {
+                  Dependency_GContext_CellAttribute();
+                  Dependency_GContext_PaddingFull();
+                  Dependency_CellPaint_GContext();
+                  Dependency_GContext_BorderWidth();
+                  Dependency_GContext_BorderColor();
+                  Redraw();
+               }
          }
       }
 
@@ -225,19 +239,31 @@ namespace fmg.uwp.res.img {
       }
 
       protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         //LoggerSimple.Put("OnPropertyChanged: {0}: PropertyName={1}", Entity, ev.PropertyName);
          base.OnPropertyChanged(sender, ev);
-         if (!ReferenceEquals(sender, this))
-            return;
          switch (ev.PropertyName) {
+         case "Entity":
+            var ev2 = ev as PropertyChangedExEventArgs<EMosaic>;
+            using (DeferredLock) {
+               Dependency_MosaicType_As_Entity(ev2?.NewValue, ev2?.OldValue);
+               Redraw();
+            }
+            break;
          case "Size":
          case "Padding":
-            RecalcArea(true);
+            RecalcArea();
             break;
          case "BorderWidth":
-            Dependency_GContext_BorderWidth();
+            using (DeferredLock) {
+               Dependency_GContext_BorderWidth();
+               Redraw();
+            }
             break;
          case "BorderColor":
-            Dependency_GContext_BorderColor();
+            using (DeferredLock) {
+               Dependency_GContext_BorderColor();
+               Redraw();
+            }
             break;
          }
       }
@@ -253,6 +279,9 @@ namespace fmg.uwp.res.img {
          if (_attr == null)
             return;
          CellAttr.Area = Area;
+         if (_matrix.Any())
+            foreach (var cell in Matrix)
+               cell.Init();
       }
       void Dependency_GContext_PaddingFull() {
          if (_gContext == null)
@@ -273,10 +302,17 @@ namespace fmg.uwp.res.img {
       void Dependency_CellPaint_GContext() {
          if (_cellPaint == null)
             return;
-         var cellPaintBmp = CellPaint as CellPaintBmp;
-         if (cellPaintBmp != null)
-            cellPaintBmp.GContext = GContext;
-         System.Diagnostics.Debug.Assert(cellPaintBmp != null);
+         System.Diagnostics.Debug.Assert(CellPaint is CellPaintBmp);
+         ((CellPaintBmp)CellPaint).GContext = GContext;
+      }
+      void Dependency_MosaicType_As_Entity(EMosaic? newValue, EMosaic? oldValue) {
+         Area = 0;
+         _matrix.Clear();
+         CellAttr = null;
+         if ((newValue == null) || (oldValue == null))
+            OnPropertyChanged(this, new PropertyChangedEventArgs("MosaicType"));
+         else
+            OnPropertyChanged(this, new PropertyChangedExEventArgs<EMosaic>(newValue.Value, oldValue.Value, "MosaicType"));
       }
       #endregion
 
