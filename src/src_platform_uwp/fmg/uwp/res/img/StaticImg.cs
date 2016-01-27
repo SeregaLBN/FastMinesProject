@@ -162,7 +162,7 @@ namespace fmg.uwp.res.img {
       }
 
       private void DrawSync() {
-         using (DeferredLock) {
+         using (Deferring(false)) {
             //LoggerSimple.Put("> DrawBegin: {0}", Entity);
             DrawBegin();
             DrawBody();
@@ -215,22 +215,30 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      private class DeferredHelper : IDisposable {
+      private class DeferredLock : IDisposable {
          private readonly StaticImg<T, TImage> _owner;
          private readonly bool _locked;
-         public DeferredHelper(StaticImg<T, TImage> owner) {
+         private bool _redrawAfter;
+         public DeferredLock(StaticImg<T, TImage> owner, bool redrawAfter) {
             if ((_owner = owner).DeferredOn)
                return;
             _owner.DeferredOn = true;
             _locked = true;
+            _redrawAfter = true;
          }
          public void Dispose() {
-            if (_locked)
-               _owner.DeferredOn = false;
+            if (!_locked)
+               return;
+            if (_redrawAfter)
+               _owner.Redraw();
+            _owner.DeferredOn = false;
          }
       }
+
       /// <summary> Deferr notifications and rendering </summary>
-      public IDisposable DeferredLock => new DeferredHelper(this);
+      public IDisposable Deferring(bool redrawAfter = true) {
+         return new DeferredLock(this, redrawAfter);
+      }
 
    }
 }

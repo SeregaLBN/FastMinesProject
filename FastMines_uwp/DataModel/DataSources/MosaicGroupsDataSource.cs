@@ -29,7 +29,7 @@ namespace FastMines.DataModel.DataSources
          foreach (var mi in DataSource) {
             var selected = ReferenceEquals(mi, CurrentElement);
             var img = mi.MosaicGroupImage;
-            using (img.DeferredLock) {
+            using (img.Deferring()) {
                img.PolarLights = selected;
                img.Rotate = selected;
                img.BorderColor = selected ? Color.Red : Color.Green;

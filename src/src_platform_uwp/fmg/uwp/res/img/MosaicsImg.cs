@@ -39,11 +39,10 @@ namespace fmg.uwp.res.img {
          get { return Entity; }
          set {
             if (value != Entity)
-               using (DeferredLock) {
+               using (Deferring()) {
                   var old = Entity;
                   Entity = value;
                   Dependency_MosaicType_As_Entity(value, old);
-                  Redraw();
                }
          }
       }
@@ -53,10 +52,9 @@ namespace fmg.uwp.res.img {
          get { return _sizeField; }
          set {
             if (SetProperty(ref _sizeField, value))
-               using (DeferredLock) {
+               using (Deferring()) {
                   RecalcArea();
                   _matrix.Clear();
-                  Redraw();
                }
          }
       }
@@ -72,10 +70,9 @@ namespace fmg.uwp.res.img {
          }
          private set {
             if (SetProperty(ref _attr, value))
-               using (DeferredLock) {
+               using (Deferring()) {
                   Dependency_GContext_CellAttribute();
                   Dependency_CellAttribute_Area();
-                  Redraw();
                }
          }
       }
@@ -89,9 +86,8 @@ namespace fmg.uwp.res.img {
          }
          private set {
             if (SetProperty(ref _cellPaint, value))
-               using (DeferredLock) {
+               using (Deferring()) {
                   Dependency_CellPaint_GContext();
-                  Redraw();
                }
          }
       }
@@ -101,7 +97,7 @@ namespace fmg.uwp.res.img {
       public IList<BaseCell> Matrix {
          get {
             if (!_matrix.Any()) {
-               using (DeferredLock) {
+               using (Deferring()) {
                   var attr = CellAttr;
                   var type = MosaicType;
                   var size = SizeField;
@@ -110,14 +106,13 @@ namespace fmg.uwp.res.img {
                         _matrix.Add(MosaicHelper.CreateCellInstance(attr, type, new Coord(i, j)));
                }
                OnPropertyChanged(this, new PropertyChangedEventArgs("Matrix"));
-               Redraw();
             }
             return _matrix;
          }
       }
 
       private void RecalcArea() {
-         using (DeferredLock) {
+         using (Deferring()) {
             var w = Width;
             var h = Height;
             var pad = Padding;
@@ -136,8 +131,6 @@ namespace fmg.uwp.res.img {
             System.Diagnostics.Debug.Assert(h == sizeImageOut.height + paddingOut.TopAndBottom);
 
             PaddingFull = paddingOut;
-
-            Redraw();
          }
       }
 
@@ -150,9 +143,8 @@ namespace fmg.uwp.res.img {
          }
          set {
             if (SetProperty(ref _area, value))
-               using (DeferredLock) {
+               using (Deferring()) {
                   Dependency_CellAttribute_Area();
-                  Redraw();
                }
          }
       }
@@ -162,9 +154,8 @@ namespace fmg.uwp.res.img {
          get { return _paddingFull; }
          protected set {
             if (SetProperty(ref _paddingFull, value))
-               using (DeferredLock) {
+               using (Deferring()) {
                   Dependency_GContext_PaddingFull();
-                  Redraw();
                }
          }
       }
@@ -178,13 +169,12 @@ namespace fmg.uwp.res.img {
          }
          set {
             if (SetProperty(ref _gContext, value))
-               using (DeferredLock) {
+               using (Deferring()) {
                   Dependency_GContext_CellAttribute();
                   Dependency_GContext_PaddingFull();
                   Dependency_CellPaint_GContext();
                   Dependency_GContext_BorderWidth();
                   Dependency_GContext_BorderColor();
-                  Redraw();
                }
          }
       }
@@ -244,9 +234,8 @@ namespace fmg.uwp.res.img {
          switch (ev.PropertyName) {
          case "Entity":
             var ev2 = ev as PropertyChangedExEventArgs<EMosaic>;
-            using (DeferredLock) {
+            using (Deferring()) {
                Dependency_MosaicType_As_Entity(ev2?.NewValue, ev2?.OldValue);
-               Redraw();
             }
             break;
          case "Size":
@@ -254,15 +243,13 @@ namespace fmg.uwp.res.img {
             RecalcArea();
             break;
          case "BorderWidth":
-            using (DeferredLock) {
+            using (Deferring()) {
                Dependency_GContext_BorderWidth();
-               Redraw();
             }
             break;
          case "BorderColor":
-            using (DeferredLock) {
+            using (Deferring()) {
                Dependency_GContext_BorderColor();
-               Redraw();
             }
             break;
          }
