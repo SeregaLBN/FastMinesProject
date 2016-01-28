@@ -220,17 +220,17 @@ namespace fmg.uwp.res.img {
          private readonly bool _locked;
          private readonly bool _redrawAfter;
          public DeferredLock(StaticImg<T, TImage> owner, bool redrawAfter) {
+            _redrawAfter = redrawAfter;
             if ((_owner = owner).DeferredOn)
                return;
             _owner.DeferredOn = true;
             _locked = true;
-            _redrawAfter = redrawAfter;
          }
          public void Dispose() {
-            if (!_locked)
-               return;
             if (_redrawAfter)
                _owner.Redraw();
+            if (!_locked)
+               return;
             _owner.DeferredOn = false;
          }
       }
