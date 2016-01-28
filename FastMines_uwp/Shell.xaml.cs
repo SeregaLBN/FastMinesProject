@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Reactive.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using FastMines.Pages;
 using FastMines.Presentation;
 using FastMines.Common;
+using FastMines.DataModel.DataSources;
+using FastMines.Presentation.Controls;
 
 namespace FastMines
 {
@@ -22,12 +24,12 @@ namespace FastMines
          //   }
          //};
 
-         var vm = new ShellViewModel();
-         foreach (var mi in vm.MosaicGroupDs.DataSource) {
+         foreach (var mi in ViewModel.MosaicGroupDs.DataSource) {
             mi.PageType = typeof(SelectMosaicPage);
          }
 
-         this.ViewModel = vm;
+         ViewModel.MosaicGroupDs.PropertyChanged += MosaicGroupDsOnPropertyChanged;
+         ViewModel.MosaicSkillDs.PropertyChanged += MosaicSkillDsOnPropertyChanged;
 
          //this.SizeChanged += OnSizeChanged;
          _sizeChangedObservable = Observable
@@ -36,15 +38,28 @@ namespace FastMines
             .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low));
       }
 
+      private void MosaicGroupDsOnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         var ds = (MosaicGroupsDataSource)sender;
+         LoggerSimple.Put("MosaicGroupsDataSource::" + ev.PropertyName);
+      }
+
+      private void MosaicSkillDsOnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         var ds = (MosaicSkillsDataSource)sender;
+         LoggerSimple.Put("MosaicSkillsDataSource::" + ev.PropertyName);
+      }
+
       readonly IDisposable _sizeChangedObservable;
 
-      public ShellViewModel ViewModel { get; private set; }
+      public ShellViewModel ViewModel { get; } = new ShellViewModel();
 
       public Frame RootFrame => this._frame;
 
 
       private void OnClosing(object sender, RoutedEventArgs ev) {
          //System.Diagnostics.Debug.WriteLine("OnClosing");
+         ViewModel.MosaicGroupDs.PropertyChanged -= MosaicGroupDsOnPropertyChanged;
+         ViewModel.MosaicSkillDs.PropertyChanged -= MosaicSkillDsOnPropertyChanged;
+
          ViewModel?.Dispose();
          _sizeChangedObservable.Dispose();
       }
