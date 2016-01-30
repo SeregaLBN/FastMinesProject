@@ -1,8 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Reactive.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using fmg.core.types;
+using fmg.data.controller.types;
 using FastMines.Presentation;
 using FastMines.Common;
 using FastMines.DataModel.DataSources;
@@ -14,6 +17,13 @@ namespace FastMines
    {
       internal const int MenuTextWidth = 110;
 
+      readonly IDisposable _sizeChangedObservable;
+
+      public ShellViewModel ViewModel { get; } = new ShellViewModel();
+
+      public Frame RootFrame => this._frame;
+
+
       public Shell() {
          this.InitializeComponent();
          Unloaded += OnClosing;
@@ -24,12 +34,14 @@ namespace FastMines
          //   }
          //};
 
+         ViewModel.MosaicGroupDs.PropertyChanged += MosaicGroupDsOnPropertyChanged;
+         ViewModel.MosaicSkillDs.PropertyChanged += MosaicSkillDsOnPropertyChanged;
+         ViewModel.MosaicGroupDs.CurrentElement = ViewModel.MosaicGroupDs.DataSource.First(x => x.MosaicGroup == EMosaicGroup.ePentagons);
+         ViewModel.MosaicSkillDs.CurrentElement = ViewModel.MosaicSkillDs.DataSource.First(x => x.SkillLevel == ESkillLevel.eCrazy);
+
          foreach (var mi in ViewModel.MosaicGroupDs.DataSource) {
             mi.PageType = typeof(SelectMosaicPage);
          }
-
-         ViewModel.MosaicGroupDs.PropertyChanged += MosaicGroupDsOnPropertyChanged;
-         ViewModel.MosaicSkillDs.PropertyChanged += MosaicSkillDsOnPropertyChanged;
 
          //this.SizeChanged += OnSizeChanged;
          _sizeChangedObservable = Observable
@@ -39,28 +51,43 @@ namespace FastMines
       }
 
       private void MosaicGroupDsOnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         var ds = (MosaicGroupsDataSource)sender;
          LoggerSimple.Put("MosaicGroupsDataSource::" + ev.PropertyName);
+         switch (ev.PropertyName) {
+         case "CurrentElement":
+            var smp = RootFrame?.Content as SelectMosaicPage;
+            var dsFrom = (MosaicGroupsDataSource)sender;
+            if (smp == null) {
+               SelectMosaicPage.DefaultMosaicGroup = dsFrom.CurrentElement.MosaicGroup;
+            } else {
+               var dsTo = smp.ViewModel.MosaicsDs;
+               dsTo.CurrentGroup = dsFrom.CurrentElement.MosaicGroup;
+            }
+            break;
+         }
       }
 
       private void MosaicSkillDsOnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         var ds = (MosaicSkillsDataSource)sender;
          LoggerSimple.Put("MosaicSkillsDataSource::" + ev.PropertyName);
+         switch(ev.PropertyName) {
+         case "CurrentElement":
+            var smp = RootFrame?.Content as SelectMosaicPage;
+            var dsFrom = (MosaicSkillsDataSource)sender;
+            if (smp == null) {
+               SelectMosaicPage.DefaultSkillLevel = dsFrom.CurrentElement.SkillLevel;
+            } else {
+               var dsTo = smp.ViewModel.MosaicsDs;
+               dsTo.CurrentSkill = dsFrom.CurrentElement.SkillLevel;
+            }
+            break;
+         }
       }
-
-      readonly IDisposable _sizeChangedObservable;
-
-      public ShellViewModel ViewModel { get; } = new ShellViewModel();
-
-      public Frame RootFrame => this._frame;
-
 
       private void OnClosing(object sender, RoutedEventArgs ev) {
          //System.Diagnostics.Debug.WriteLine("OnClosing");
          ViewModel.MosaicGroupDs.PropertyChanged -= MosaicGroupDsOnPropertyChanged;
          ViewModel.MosaicSkillDs.PropertyChanged -= MosaicSkillDsOnPropertyChanged;
 
-         ViewModel?.Dispose();
+         ViewModel.Dispose();
          _sizeChangedObservable.Dispose();
       }
 

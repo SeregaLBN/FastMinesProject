@@ -1,29 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+﻿using Windows.UI.Xaml.Controls;
+using fmg.core.types;
+using fmg.data.controller.types;
 using FastMines.Presentation;
 
-namespace FastMines
-{
+namespace FastMines {
    /// <summary>
    /// An empty page that can be used on its own or navigated to within a Frame.
    /// </summary>
    public sealed partial class SelectMosaicPage : Page {
+      public static EMosaicGroup DefaultMosaicGroup;
+      public static ESkillLevel DefaultSkillLevel;
 
       public SelectMosaicPage() {
          this.InitializeComponent();
          ViewModel = new MosaicsViewModel();
+
+         ViewModel.MosaicsDs.CurrentGroup = DefaultMosaicGroup;
+         ViewModel.MosaicsDs.CurrentSkill = DefaultSkillLevel;
       }
 
       public MosaicsViewModel ViewModel { get; private set; }

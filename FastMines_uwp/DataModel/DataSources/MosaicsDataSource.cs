@@ -2,6 +2,7 @@
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
+using fmg.data.controller.types;
 using fmg.uwp.draw;
 using fmg.uwp.res.img;
 using FastMines.Presentation.Controls;
@@ -22,9 +23,21 @@ namespace FastMines.DataModel.DataSources {
          }
       }
 
+      private ESkillLevel _currentSkill;
+      public ESkillLevel CurrentSkill {
+         get { return _currentSkill; }
+         set {
+            if (SetProperty(ref _currentSkill, value)) {
+               Reset();
+               OnPropertyChanged("DataSource");
+            }
+         }
+      }
+
       protected override void FillDataSource(Collection<MosaicTailItem> dataSource) {
          foreach (var s in CurrentGroup.GetBind()) {
             var mi = new MosaicTailItem(s) {
+               SkillLevel = CurrentSkill,
                MosaicImage = {
                   //RedrawInterval = 50,
                   //RotateAngleDelta = 5

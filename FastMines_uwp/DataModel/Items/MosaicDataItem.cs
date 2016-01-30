@@ -22,7 +22,7 @@ namespace FastMines.DataModel.Items {
          get { return _skillLevel; }
          set {
             if (SetProperty(ref _skillLevel, value)) {
-               _mosaicImg = null;
+               MosaicImage.SizeField = MosaicType.SizeTileField(value);
             }
          }
       }
