@@ -38,6 +38,13 @@ namespace FastMines
          ViewModel.MosaicSkillDs.PropertyChanged += MosaicSkillDsOnPropertyChanged;
          ViewModel.MosaicGroupDs.CurrentElement = ViewModel.MosaicGroupDs.DataSource.First(x => x.MosaicGroup == EMosaicGroup.ePentagons);
          ViewModel.MosaicSkillDs.CurrentElement = ViewModel.MosaicSkillDs.DataSource.First(x => x.SkillLevel == ESkillLevel.eCrazy);
+         Loaded += (sender, ev) => {
+            var smp = RootFrame?.Content as SelectMosaicPage;
+            if (smp != null) {
+               var ds = smp.ViewModel.MosaicsDs;
+               ds.CurrentElement = ds.DataSource.First();
+            }
+         };
 
          foreach (var mi in ViewModel.MosaicGroupDs.DataSource) {
             mi.PageType = typeof(SelectMosaicPage);
@@ -55,12 +62,11 @@ namespace FastMines
          switch (ev.PropertyName) {
          case "CurrentElement":
             var smp = RootFrame?.Content as SelectMosaicPage;
-            var dsFrom = (MosaicGroupsDataSource)sender;
+            var ds = (MosaicGroupsDataSource)sender;
             if (smp == null) {
-               SelectMosaicPage.DefaultMosaicGroup = dsFrom.CurrentElement.MosaicGroup;
+               SelectMosaicPage.DefaultMosaicGroup = ds.CurrentElement.MosaicGroup;
             } else {
-               var dsTo = smp.ViewModel.MosaicsDs;
-               dsTo.CurrentGroup = dsFrom.CurrentElement.MosaicGroup;
+               smp.CurrentMosaicGroup = ds.CurrentElement.MosaicGroup;
             }
             break;
          }
@@ -71,12 +77,11 @@ namespace FastMines
          switch(ev.PropertyName) {
          case "CurrentElement":
             var smp = RootFrame?.Content as SelectMosaicPage;
-            var dsFrom = (MosaicSkillsDataSource)sender;
+            var ds = (MosaicSkillsDataSource)sender;
             if (smp == null) {
-               SelectMosaicPage.DefaultSkillLevel = dsFrom.CurrentElement.SkillLevel;
+               SelectMosaicPage.DefaultSkillLevel = ds.CurrentElement.SkillLevel;
             } else {
-               var dsTo = smp.ViewModel.MosaicsDs;
-               dsTo.CurrentSkill = dsFrom.CurrentElement.SkillLevel;
+               smp.CurrentSkillLevel = ds.CurrentElement.SkillLevel;
             }
             break;
          }

@@ -15,8 +15,10 @@ namespace FastMines {
          this.InitializeComponent();
          ViewModel = new MosaicsViewModel();
 
-         ViewModel.MosaicsDs.CurrentGroup = DefaultMosaicGroup;
-         ViewModel.MosaicsDs.CurrentSkill = DefaultSkillLevel;
+         var size = ViewModel.ImageSize; // save
+         CurrentMosaicGroup = DefaultMosaicGroup;
+         CurrentSkillLevel = DefaultSkillLevel;
+         ViewModel.ImageSize = size; // restore
       }
 
       public MosaicsViewModel ViewModel { get; private set; }
@@ -30,5 +32,16 @@ namespace FastMines {
       {
          //throw new NotImplementedException();
       }
+
+      public EMosaicGroup CurrentMosaicGroup {
+         get { return ViewModel.MosaicsDs.CurrentGroup; }
+         set { ViewModel.MosaicsDs.CurrentGroup = value; }
+      }
+
+      public ESkillLevel CurrentSkillLevel {
+         get { return ViewModel.MosaicsDs.CurrentSkill; }
+         set { ViewModel.MosaicsDs.CurrentSkill = value; }
+      }
+
    }
 }

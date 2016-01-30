@@ -39,6 +39,9 @@ namespace FastMines.DataModel.DataSources {
             var mi = new MosaicTailItem(s) {
                SkillLevel = CurrentSkill,
                MosaicImage = {
+                  BorderColor = Color.Dark,
+                  BackgroundColor = GraphicContext.DefaultBackgroundFillColor,
+                  Padding = new Bound(15)
                   //RedrawInterval = 50,
                   //RotateAngleDelta = 5
                }
@@ -56,7 +59,7 @@ namespace FastMines.DataModel.DataSources {
             using (img.Deferring(false)) {
                //img.Rotate = selected;
                img.BorderColor = selected ? Color.White : Color.Dark;
-               img.BackgroundColor = selected ? MosaicsSkillImg.DefaultBkColor : GraphicContext.DefaultBackgroundFillColor;
+               img.BackgroundColor = selected ? MosaicsImg.DefaultBkColor : GraphicContext.DefaultBackgroundFillColor;
                img.Padding = new Bound(selected ? 5 : 15);
             }
          }
