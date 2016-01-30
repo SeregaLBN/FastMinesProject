@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using fmg.common;
+﻿using fmg.common;
 using fmg.common.geom;
 using fmg.data.controller.types;
 using fmg.uwp.draw;
@@ -11,7 +10,8 @@ namespace FastMines.DataModel.DataSources
    /// <summary> DataSource menu items (mosaic skills) </summary>
    public class MosaicSkillsDataSource : BaseDataSource<MosaicSkillMenuItem, ESkillLevel> {
 
-      protected override void FillDataSource(Collection<MosaicSkillMenuItem> dataSource) {
+      protected override void FillDataSource() {
+         var dataSource = DataSourceInternal;
          foreach (var s in ESkillLevelEx.GetValues()) {
             var mi = new MosaicSkillMenuItem(s) {
                MosaicSkillImage = {
@@ -21,6 +21,7 @@ namespace FastMines.DataModel.DataSources
             };
             dataSource.Add(mi);
          }
+         base.FillDataSource();
       }
 
       protected override void OnCurrentElementChanged() {

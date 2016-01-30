@@ -13,16 +13,19 @@ namespace FastMines.DataModel.DataSources
       private readonly ObservableCollection<TItem> _dataSource = new ObservableCollection<TItem>();
       private TItem _currentElement;
 
+      protected ObservableCollection<TItem> DataSourceInternal => _dataSource;
       public ObservableCollection<TItem> DataSource {
          get {
             if (!_dataSource.Any()) {
-               FillDataSource(_dataSource);
+               FillDataSource();
             }
             return _dataSource;
          }
       }
 
-      protected abstract void FillDataSource(Collection<TItem> dataSource);
+      protected virtual void FillDataSource() {
+         OnPropertyChanged("DataSource");
+      }
 
       /// <summary> Selected element </summary>
       public TItem CurrentElement {

@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using fmg.common;
+﻿using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.data.controller.types;
@@ -17,8 +16,7 @@ namespace FastMines.DataModel.DataSources {
          get { return _currentGroup; }
          set {
             if (SetProperty(ref _currentGroup, value)) {
-               Reset();
-               OnPropertyChanged("DataSource");
+               Reload();
             }
          }
       }
@@ -28,13 +26,20 @@ namespace FastMines.DataModel.DataSources {
          get { return _currentSkill; }
          set {
             if (SetProperty(ref _currentSkill, value)) {
-               Reset();
-               OnPropertyChanged("DataSource");
+               Reload();
             }
          }
       }
 
-      protected override void FillDataSource(Collection<MosaicTailItem> dataSource) {
+      private void Reload() {
+         var size = ImageSize; // save
+         Reset();
+         FillDataSource();
+         ImageSize = size; // restore
+      }
+
+      protected override void FillDataSource() {
+         var dataSource = DataSourceInternal;
          foreach (var s in CurrentGroup.GetBind()) {
             var mi = new MosaicTailItem(s) {
                SkillLevel = CurrentSkill,
@@ -48,6 +53,7 @@ namespace FastMines.DataModel.DataSources {
             };
             dataSource.Add(mi);
          }
+         base.FillDataSource();
       }
 
       protected override void OnCurrentElementChanged() {

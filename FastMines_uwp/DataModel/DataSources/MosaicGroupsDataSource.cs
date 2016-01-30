@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using fmg.common;
 using fmg.common.geom;
@@ -13,11 +12,13 @@ namespace FastMines.DataModel.DataSources
    /// <summary> DataSource menu items (mosaic groups) </summary>
    public class MosaicGroupsDataSource : BaseDataSource<MosaicGroupMenuItem, EMosaicGroup> {
 
-      protected override void FillDataSource(Collection<MosaicGroupMenuItem> dataSource) {
+      protected override void FillDataSource() {
+         var dataSource = DataSourceInternal;
          foreach (var g in EMosaicGroupEx.GetValues()) {
             var mi = new MosaicGroupMenuItem(g);
             dataSource.Add(mi);
          }
+         base.FillDataSource();
       }
 
       protected override void OnCurrentElementChanged() {

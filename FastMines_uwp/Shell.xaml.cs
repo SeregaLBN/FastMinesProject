@@ -58,7 +58,7 @@ namespace FastMines
       }
 
       private void MosaicGroupDsOnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         LoggerSimple.Put("MosaicGroupsDataSource::" + ev.PropertyName);
+         //LoggerSimple.Put("MosaicGroupsDataSource::" + ev.PropertyName);
          switch (ev.PropertyName) {
          case "CurrentElement":
             var smp = RootFrame?.Content as SelectMosaicPage;
@@ -73,7 +73,7 @@ namespace FastMines
       }
 
       private void MosaicSkillDsOnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         LoggerSimple.Put("MosaicSkillsDataSource::" + ev.PropertyName);
+         //LoggerSimple.Put("MosaicSkillsDataSource::" + ev.PropertyName);
          switch(ev.PropertyName) {
          case "CurrentElement":
             var smp = RootFrame?.Content as SelectMosaicPage;

@@ -34,12 +34,12 @@ namespace FastMines {
       }
 
       public EMosaicGroup CurrentMosaicGroup {
-         get { return ViewModel.MosaicsDs.CurrentGroup; }
+         //get { return ViewModel.MosaicsDs.CurrentGroup; }
          set { ViewModel.MosaicsDs.CurrentGroup = value; }
       }
 
       public ESkillLevel CurrentSkillLevel {
-         get { return ViewModel.MosaicsDs.CurrentSkill; }
+         //get { return ViewModel.MosaicsDs.CurrentSkill; }
          set { ViewModel.MosaicsDs.CurrentSkill = value; }
       }
 
