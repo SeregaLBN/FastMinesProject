@@ -51,15 +51,11 @@ namespace FastMines.DataModel.DataSources
          }
       }
 
-      protected void Reset() {
+      public void Dispose() {
          CurrentElement = null;
          foreach (var mi in _dataSource)
             mi.Dispose();
          _dataSource.Clear();
-      }
-
-      public void Dispose() {
-         Reset();
       }
 
    }

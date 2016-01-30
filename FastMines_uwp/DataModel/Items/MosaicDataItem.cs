@@ -4,6 +4,7 @@ using fmg.common.geom;
 using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.uwp.res.img;
+using FastMines.Presentation.Notyfier;
 
 namespace FastMines.DataModel.Items {
 
@@ -11,8 +12,8 @@ namespace FastMines.DataModel.Items {
    public class MosaicDataItem : BaseData<EMosaic> {
       private const int ZoomKoef = 2;
 
-      public MosaicDataItem(EMosaic eMosaic) : base(eMosaic) {
-         Title = eMosaic.GetDescription(false);
+      public MosaicDataItem(EMosaic mosaicType) : base(mosaicType) {
+         Title = mosaicType.GetDescription(false);
       }
 
       public EMosaic MosaicType => UniqueId;
@@ -76,6 +77,21 @@ namespace FastMines.DataModel.Items {
          //LoggerSimple.Put(GetType().Name+"::OnPropertyChanged: " + ev.PropertyName);
          if (pn == "Image") {
             OnPropertyChanged(this, ev); // ! notify parent container
+         }
+      }
+
+      protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         base.OnPropertyChanged(sender, ev);
+         switch(ev.PropertyName) {
+         case "UniqueId":
+            var ev2 = ev as PropertyChangedExEventArgs<EMosaic>;
+            if (ev2 == null)
+               OnPropertyChanged("MosaicType");
+            else
+               OnPropertyChanged(this, new PropertyChangedExEventArgs<EMosaic>(ev2.NewValue, ev2.OldValue, "MosaicType"));
+            MosaicImage.MosaicType = MosaicType;
+            Title = MosaicType.GetDescription(false);
+            break;
          }
       }
 

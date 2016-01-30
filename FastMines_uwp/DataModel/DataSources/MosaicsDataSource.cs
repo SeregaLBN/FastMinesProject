@@ -1,4 +1,6 @@
-﻿using fmg.common;
+﻿using System;
+using System.Linq;
+using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.data.controller.types;
@@ -16,7 +18,7 @@ namespace FastMines.DataModel.DataSources {
          get { return _currentGroup; }
          set {
             if (SetProperty(ref _currentGroup, value)) {
-               Reload();
+               ReloadDataSource();
             }
          }
       }
@@ -26,34 +28,57 @@ namespace FastMines.DataModel.DataSources {
          get { return _currentSkill; }
          set {
             if (SetProperty(ref _currentSkill, value)) {
-               Reload();
+               ReloadDataSource();
             }
          }
       }
 
-      private void Reload() {
-         var size = ImageSize; // save
-         Reset();
-         FillDataSource();
-         ImageSize = size; // restore
+      protected override void FillDataSource() {
+         foreach (var mosaicType in CurrentGroup.GetBind()) {
+            AddItem(mosaicType);
+         }
+         base.FillDataSource();
       }
 
-      protected override void FillDataSource() {
+      private void ReloadDataSource() {
+         var size = ImageSize; // save
+         CurrentElement = null;
          var dataSource = DataSourceInternal;
-         foreach (var s in CurrentGroup.GetBind()) {
-            var mi = new MosaicTailItem(s) {
-               SkillLevel = CurrentSkill,
-               MosaicImage = {
+         var newEntities = CurrentGroup.GetBind().ToList();
+         var max = Math.Max(dataSource.Count, newEntities.Count);
+         var min = Math.Min(dataSource.Count, newEntities.Count);
+         var remove = (dataSource.Count > newEntities.Count);
+         for (var i = 0; i < max; ++i) {
+            if ((i >= min) && remove) {
+               dataSource.RemoveAt(min);
+               continue;
+            }
+            var mosaicType = newEntities[i];
+            if (i < min) {
+               var mi = dataSource[i];
+               mi.UniqueId = mosaicType;
+               mi.SkillLevel = CurrentSkill;
+            } else {
+               var mi = AddItem(mosaicType);
+               mi.ImageSize = size; //  restore
+            }
+         }
+         base.FillDataSource();
+      }
+
+      private MosaicTailItem AddItem(EMosaic mosaicType) {
+         var mi = new MosaicTailItem(mosaicType) {
+            SkillLevel = CurrentSkill,
+            MosaicImage = {
                   BorderColor = Color.Dark,
                   BackgroundColor = GraphicContext.DefaultBackgroundFillColor,
                   Padding = new Bound(15)
                   //RedrawInterval = 50,
                   //RotateAngleDelta = 5
                }
-            };
-            dataSource.Add(mi);
-         }
-         base.FillDataSource();
+         };
+         DataSourceInternal.Add(mi);
+         return mi;
       }
 
       protected override void OnCurrentElementChanged() {

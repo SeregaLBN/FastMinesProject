@@ -11,7 +11,11 @@ namespace FastMines.DataModel.Items {
          UniqueId = uniqueId;
       }
 
-      public T UniqueId { get; }
+      private T _uniqueId;
+      public T UniqueId {
+         get { return _uniqueId; }
+         set { SetProperty(ref _uniqueId, value); }
+      }
 
       private string _title = string.Empty;
       public string Title {

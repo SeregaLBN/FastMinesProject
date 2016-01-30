@@ -15,10 +15,8 @@ namespace FastMines {
          this.InitializeComponent();
          ViewModel = new MosaicsViewModel();
 
-         var size = ViewModel.ImageSize; // save
          CurrentMosaicGroup = DefaultMosaicGroup;
          CurrentSkillLevel = DefaultSkillLevel;
-         ViewModel.ImageSize = size; // restore
       }
 
       public MosaicsViewModel ViewModel { get; private set; }
