@@ -10,7 +10,7 @@ using FastMines.Presentation.Notyfier;
 
 namespace fmg.uwp.res.img {
 
-   public abstract class StaticImg<T, TImage> : NotifyPropertyChanged
+   public abstract class StaticImg<T, TImage> : NotifyPropertyChanged, IDisposable
       where TImage : class
    {
       public static readonly Color DefaultBkColor = Resources.DefaultBkColor;
@@ -240,5 +240,10 @@ namespace fmg.uwp.res.img {
          return new DeferredLock(this, redrawAfter);
       }
 
+      public void Dispose() {
+         Dispose(true);
+      }
+
+      protected virtual void Dispose(bool disposing) { }
    }
 }

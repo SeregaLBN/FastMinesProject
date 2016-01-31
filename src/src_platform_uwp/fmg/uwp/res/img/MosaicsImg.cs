@@ -18,9 +18,9 @@ using FastMines.Presentation.Notyfier;
 namespace fmg.uwp.res.img {
 
    /// <summary> картинка поля конкретной мозаики. Используется для меню, кнопок, etc... </summary>
-   public class MosaicsImg : StaticImg<EMosaic, WriteableBitmap>, IMosaic<PaintableBmp>, IDisposable {
+   public class MosaicsImg : RotatedImg<EMosaic, WriteableBitmap>, IMosaic<PaintableBmp> {
       private const bool RandomCellBkColor = true;
-      private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
+      private Random Rand => GraphicContext.Rand;
 
       public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(mosaicType, widthAndHeight, padding)
@@ -55,6 +55,7 @@ namespace fmg.uwp.res.img {
                using (Deferring()) {
                   RecalcArea();
                   _matrix.Clear();
+                  RandomRotateElemenIndex();
                }
          }
       }
@@ -199,12 +200,17 @@ namespace fmg.uwp.res.img {
 
          Action funcFillBk = () => img.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
 
-         if (OnlySyncDraw) {
+         if (OnlySyncDraw || LiveImage()) {
             // sync draw
             funcFillBk();
+            var rotatedCell = !Rotate ? null : Matrix[_rotateElemIndex];
             var paint = new PaintableBmp(img);
             foreach (var cell in Matrix)
-               CellPaint.Paint(cell, paint);
+               if (!ReferenceEquals(rotatedCell, cell))
+                  CellPaint.Paint(cell, paint);
+            if (rotatedCell != null) {
+               // rotate
+            }
          } else {
             // async draw
             AsyncRunner.InvokeFromUiLater(() => {
@@ -219,7 +225,7 @@ namespace fmg.uwp.res.img {
                   var tmp = cell;
                   AsyncRunner.InvokeFromUiLater(
                      () => CellPaint.Paint(tmp, paint),
-                     ((_random.Next() & 1) == 0)
+                     ((Rand.Next() & 1) == 0)
                         ? CoreDispatcherPriority.Low
                         : CoreDispatcherPriority.Normal
                   );
@@ -252,15 +258,27 @@ namespace fmg.uwp.res.img {
                Dependency_GContext_BorderColor();
             }
             break;
+         case "Rotate":
+            RandomRotateElemenIndex();
+            break;
          }
       }
+
+      private int _rotateElemIndex;
+
+      private void RandomRotateElemenIndex() {
+         if (!Rotate)
+            return;
+         _rotateElemIndex = Rand.Next(SizeField.m * SizeField.n);
+      }
+
 
       #region Dependencys
       void Dependency_GContext_CellAttribute() {
          if ((_attr == null) || (_gContext == null))
             return;
          if (RandomCellBkColor)
-            GContext.BkFill.Mode = 1 + _random.Next(CellAttr.getMaxBackgroundFillModeValue());
+            GContext.BkFill.Mode = 1 + Rand.Next(CellAttr.getMaxBackgroundFillModeValue());
       }
       void Dependency_CellAttribute_Area() {
          if (_attr == null)
@@ -303,16 +321,12 @@ namespace fmg.uwp.res.img {
       }
       #endregion
 
-      public void Dispose() {
-         Dispose(true);
-      }
-
-      protected virtual void Dispose(bool disposing) {
+      protected override void Dispose(bool disposing) {
          if (disposing) {
-            // free managed resources
             GContext = null; // call setter
          }
-         // free native resources if there are any.
+
+         base.Dispose(disposing);
       }
 
    }

@@ -25,7 +25,7 @@ namespace fmg.uwp.draw {
 
       private Bound _padding;
 
-      private static readonly Random Rand = new Random(Guid.NewGuid().GetHashCode());
+      public static readonly Random Rand = new Random(Guid.NewGuid().GetHashCode());
 
       public GraphicContext(bool iconicMode) {
          this.IconicMode = iconicMode;

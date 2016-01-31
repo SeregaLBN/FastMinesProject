@@ -88,7 +88,7 @@ namespace FastMines.DataModel.DataSources {
             var selected = ReferenceEquals(mi, CurrentElement);
             var img = mi.MosaicImage;
             using (img.Deferring(false)) {
-               //img.Rotate = selected;
+               img.Rotate = selected;
                img.BorderColor = selected ? Color.White : Color.Dark;
                img.BackgroundColor = selected ? MosaicsImg.DefaultBkColor : GraphicContext.DefaultBackgroundFillColor;
                img.Padding = new Bound(selected ? 5 : 15);

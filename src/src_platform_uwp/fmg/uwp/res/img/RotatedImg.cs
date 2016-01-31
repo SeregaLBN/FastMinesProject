@@ -1,13 +1,18 @@
 using System;
 using Windows.UI.Xaml;
+using fmg.common.geom;
 
 namespace fmg.uwp.res.img
 {
-   public abstract class RotatedImg<T, TImage> : StaticImg<T, TImage>, IDisposable
+   public abstract class RotatedImg<T, TImage> : StaticImg<T, TImage>
       where TImage : class
    {
       protected RotatedImg(T entity, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(entity, widthAndHeight, padding)
+      { }
+
+      protected RotatedImg(T entity, Size sizeImage, Bound padding)
+         : base(entity, sizeImage, padding)
       { }
 
       /// <summary> frequency of redrawing (in milliseconds) </summary>
@@ -73,11 +78,7 @@ namespace fmg.uwp.res.img
          RotateAngle = rotateAngle;
       }
 
-      public void Dispose() {
-         Dispose(true);
-      }
-
-      protected virtual void Dispose(bool disposing) {
+      protected override void Dispose(bool disposing) {
          if (disposing) {
             // free managed resources
             var t = _timer;
