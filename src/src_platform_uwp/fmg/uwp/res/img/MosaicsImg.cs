@@ -211,7 +211,7 @@ namespace fmg.uwp.res.img {
                   CellPaint.Paint(cell, paint);
             if (rotatedCell != null) {
                // rotate
-               var copy = rotatedCell;///MosaicHelper.CreateCellInstance(CellAttr, MosaicType, new Coord(rotatedCell.getCoord().x, rotatedCell.getCoord().y));
+               var copy = MosaicHelper.CreateCellInstance(CellAttr, MosaicType, new Coord(rotatedCell.getCoord().x, rotatedCell.getCoord().y));
                var center = copy.getCenter();
                var reg = copy.getRegion();
                var newReg = reg.Points
