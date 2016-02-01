@@ -6,6 +6,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
+using fmg.common.geom.util;
 using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.mosaic.draw;
@@ -210,6 +211,35 @@ namespace fmg.uwp.res.img {
                   CellPaint.Paint(cell, paint);
             if (rotatedCell != null) {
                // rotate
+               var copy = rotatedCell;///MosaicHelper.CreateCellInstance(CellAttr, MosaicType, new Coord(rotatedCell.getCoord().x, rotatedCell.getCoord().y));
+               var center = copy.getCenter();
+               var reg = copy.getRegion();
+               var newReg = reg.Points
+                               .Select(p => {
+                                          p.x -= center.x;
+                                          p.y -= center.y;
+                                          return new PointDouble(p);
+                                       })
+                               .Rotate(RotateAngle)
+                               .Select(p => {
+                                          p.x += center.x;
+                                          p.y += center.y;
+                                          return p;
+                                       });
+               var i = 0;
+               foreach (var p in newReg) {
+                  reg.setPoint(i++, (int)p.x, (int)p.y);
+               }
+
+               // draw rotated cell
+               var borderWidth = BorderWidth;
+               var borderColor = BorderColor;
+               var pb = GContext.PenBorder;
+               pb.Width = 2 * borderWidth; //BorderWidth = 5 * borderWidth;
+               pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5); //BorderColor = borderColor.Darker(0.5);
+               CellPaint.Paint(copy, paint);
+               pb.Width = borderWidth; //BorderWidth = borderWidth;
+               pb.ColorLight = pb.ColorShadow = borderColor; //BorderColor = borderColor;
             }
          } else {
             // async draw
@@ -217,11 +247,11 @@ namespace fmg.uwp.res.img {
                funcFillBk();
                var paint = new PaintableBmp(img);
                foreach (var cell in Matrix) {
-                  if (!ReferenceEquals(img, Image)) {
-                     // aborted...
-                     System.Diagnostics.Debug.Assert(false, "убедись под дебагером что реально что-то сбросило _image");
-                     break;
-                  }
+                  //if (!ReferenceEquals(img, Image)) {
+                  //   // aborted...
+                  //   System.Diagnostics.Debug.Assert(false, "убедись под дебагером что реально что-то сбросило _image");
+                  //   break;
+                  //}
                   var tmp = cell;
                   AsyncRunner.InvokeFromUiLater(
                      () => CellPaint.Paint(tmp, paint),

@@ -12,7 +12,7 @@ namespace fmg.common.geom.util {
 
       /// <summary> Получить координаты точки на переиметре круга. Центр круга - начало координат </summary>
       /// <param name="radius">радиус круга</param>
-      /// <param name="radAngle">угол в падианах</param>
+      /// <param name="radAngle">угол в радианах</param>
       /// <returns>координаты точки на круге</returns>
       public static PointDouble GetPointOnCircleRadian(double radius, double radAngle) {
          return new PointDouble(radius * Math.Sin(radAngle), -radius * Math.Cos(radAngle));

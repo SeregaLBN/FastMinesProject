@@ -8,6 +8,7 @@ public struct PointDouble {
    //public PointDouble() { x=y=0; }
    public PointDouble(double x, double y) { this.x = x; this.y = y; }
    public PointDouble(PointDouble p) { this.x = p.x; this.y = p.y; }
+   public PointDouble(Point p) { this.x = p.x; this.y = p.y; }
 
    public static bool operator !=(PointDouble p1, PointDouble p2) { return (p1.x != p2.x) || (p1.y != p2.y); }
    public static bool operator ==(PointDouble p1, PointDouble p2) { return (p1.x == p2.x) && (p1.y == p2.y); }

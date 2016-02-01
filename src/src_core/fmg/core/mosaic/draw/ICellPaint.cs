@@ -6,7 +6,7 @@ namespace fmg.core.mosaic.draw
    /// <summary>
    /// Interface for drawing
    /// </summary>
-   public interface ICellPaint<TPaintable> where TPaintable : IPaintable
+   public interface ICellPaint<in TPaintable> where TPaintable : IPaintable
    {
       void Paint(BaseCell cell, TPaintable paint);
 

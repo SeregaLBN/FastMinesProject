@@ -38,19 +38,29 @@ namespace fmg.uwp.draw.mosaic.bmp
       public override void PaintBorderLines(BaseCell cell, PaintableBmp paint) {
          var down = cell.State.Down || (cell.State.Status == EState._Open);
          if (GContext.IconicMode) {
-            paint.Bmp.DrawPolyline(cell.getRegion().RegionAsXyxyxySequence(GContext.Padding, true).ToArray(), (down ? GContext.PenBorder.ColorLight : GContext.PenBorder.ColorShadow).ToWinColor());
+
+            var points = cell.getRegion().RegionAsXyxyxySequence(GContext.Padding, true).ToArray();
+            var color = (down ? GContext.PenBorder.ColorLight : GContext.PenBorder.ColorShadow).ToWinColor();
+            var borderWidth = GContext.PenBorder.Width;
+            if (borderWidth == 1)
+               paint.Bmp.DrawPolyline(points, color);
+            else
+               for (var i = 0; i < points.Length - 2; i += 2) {
+                  paint.Bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], color, borderWidth);
+               }
          } else {
-            var color = down ? GContext.PenBorder.ColorLight : GContext.PenBorder.ColorShadow;
+            var color = (down ? GContext.PenBorder.ColorLight : GContext.PenBorder.ColorShadow).ToWinColor();
             var s = cell.getShiftPointBorderIndex();
             var v = cell.Attr.getVertexNumber(cell.getDirection());
+            var borderWidth = GContext.PenBorder.Width;
             for (var i=0; i < v; i++) {
                var p1 = cell.getRegion().getPoint(i);
                p1.Move(GContext.Padding.Left, GContext.Padding.Top);
                var p2 = (i != (v - 1)) ? cell.getRegion().getPoint(i + 1) : cell.getRegion().getPoint(0);
                p2.Move(GContext.Padding.Left, GContext.Padding.Top);
                if (i == s)
-                  color = down ? GContext.PenBorder.ColorShadow : GContext.PenBorder.ColorLight;
-               paint.Bmp.DrawLine(p1.x, p1.y, p2.x, p2.y, color.ToWinColor());
+                  color = (down ? GContext.PenBorder.ColorShadow : GContext.PenBorder.ColorLight).ToWinColor();
+               paint.Bmp.DrawLineAa(p1.x, p1.y, p2.x, p2.y, color, borderWidth);
             }
          }
       }

@@ -259,7 +259,7 @@ public abstract class BaseCell {
 
    public Coord getCoord() { return coord; }
    public int getDirection() { return direction; }
-   /// <summary>координата центра фигуры (в пикселях)</summary>
+   /// <summary>координата центра фигуры</summary>
    public Point getCenter() { return getRcInner(1).center(); }
 
    /// <summary>принадлежат ли эти экранные координаты ячейке</summary>
