@@ -24,6 +24,9 @@ public class Region {
       _points[index].x = x;
       _points[index].y = y;
    }
+   public void setPoint(int index, Point p) {
+      _points[index] = p;
+   }
 
    public int CountPoints { get { return _points.Length; } }
 

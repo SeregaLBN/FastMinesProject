@@ -19,17 +19,17 @@ using FastMines.Presentation.Notyfier;
 namespace fmg.uwp.res.img {
 
    /// <summary> картинка поля конкретной мозаики. Используется для меню, кнопок, etc... </summary>
-   public class MosaicsImg : RotatedImg<EMosaic, WriteableBitmap>, IMosaic<PaintableBmp> {
+   public class MosaicsAnimateImg : RotatedImg<EMosaic, WriteableBitmap>, IMosaic<PaintableBmp> {
       private const bool RandomCellBkColor = true;
       private Random Rand => GraphicContext.Rand;
 
-      public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
+      public MosaicsAnimateImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(mosaicType, widthAndHeight, padding)
       {
          _sizeField = sizeField;
       }
 
-      public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding)
+      public MosaicsAnimateImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding)
          : base(mosaicType, sizeImage, padding)
       {
          _sizeField = sizeField;
@@ -95,12 +95,10 @@ namespace fmg.uwp.res.img {
       }
 
       private readonly List<BaseCell> _matrix = new List<BaseCell>();
-      private readonly List<BaseCell> _matrixRotated = new List<BaseCell>();
       /// <summary>матрица ячеек, представленная(развёрнута) в виде вектора</summary>
       public IList<BaseCell> Matrix {
          get {
             if (!_matrix.Any()) {
-               _matrixRotated.Clear();
                using (Deferring()) {
                   var attr = CellAttr;
                   var type = MosaicType;
@@ -112,50 +110,6 @@ namespace fmg.uwp.res.img {
                OnPropertyChanged(this, new PropertyChangedEventArgs("Matrix"));
             }
             return _matrix;
-         }
-      }
-
-      private IList<BaseCell> RotatedMatrix {
-         get {
-            if (Math.Abs(RotateAngle) < 0.1)
-               return Matrix;
-            if (!_matrixRotated.Any()) {
-               // create copy Matrix
-               var attr = CellAttr;
-               var type = MosaicType;
-               var size = SizeField;
-               for (var i = 0; i < size.m; i++)
-                  for (var j = 0; j < size.n; j++)
-                     _matrixRotated.Add(MosaicHelper.CreateCellInstance(attr, type, new Coord(i, j)));
-            } else {
-               // restore base coords
-               foreach (var cell in _matrixRotated)
-                  cell.Init();
-            }
-
-            var center = new PointDouble(Width / 2.0 - _paddingFull.Left, Height / 2.0 - _paddingFull.Top);
-            foreach(var cell in _matrixRotated) {
-               var reg = cell.getRegion();
-               var newReg = reg.Points
-                               .Select(p => new PointDouble(p))
-                               .Select(p => {
-                                          p.x -= center.x;
-                                          p.y -= center.y;
-                                          return p;
-                                       })
-                               .Rotate(RotateAngle)
-                               .Select(p => {
-                                          p.x += center.x;
-                                          p.y += center.y;
-                                          return p;
-                                       });
-               var i = 0;
-               foreach(var p in newReg) {
-                  reg.setPoint(i++, (int)p.x, (int)p.y);
-               }
-            }
-
-            return _matrixRotated;
          }
       }
 
@@ -247,19 +201,52 @@ namespace fmg.uwp.res.img {
 
          Action funcFillBk = () => img.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
 
-         var matrix = RotatedMatrix;
          if (OnlySyncDraw || LiveImage()) {
             // sync draw
             funcFillBk();
+            var rotatedCell = !Rotate ? null : Matrix[_rotateElemIndex];
             var paint = new PaintableBmp(img);
-            foreach (var cell in matrix)
-               CellPaint.Paint(cell, paint);
+            foreach (var cell in Matrix)
+               if (!ReferenceEquals(rotatedCell, cell))
+                  CellPaint.Paint(cell, paint);
+            if (rotatedCell != null) {
+               // rotate
+               var copy = MosaicHelper.CreateCellInstance(CellAttr, MosaicType, new Coord(rotatedCell.getCoord().x, rotatedCell.getCoord().y));
+               var center = copy.getCenter();
+               var reg = copy.getRegion();
+               var newReg = reg.Points
+                               .Select(p => {
+                                          p.x -= center.x;
+                                          p.y -= center.y;
+                                          return new PointDouble(p);
+                                       })
+                               .Rotate(RotateAngle)
+                               .Select(p => {
+                                          p.x += center.x;
+                                          p.y += center.y;
+                                          return p;
+                                       });
+               var i = 0;
+               foreach (var p in newReg) {
+                  reg.setPoint(i++, (int)p.x, (int)p.y);
+               }
+
+               // draw rotated cell
+               var borderWidth = BorderWidth;
+               var borderColor = BorderColor;
+               var pb = GContext.PenBorder;
+               pb.Width = 2 * borderWidth; //BorderWidth = 5 * borderWidth;
+               pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5); //BorderColor = borderColor.Darker(0.5);
+               CellPaint.Paint(copy, paint);
+               pb.Width = borderWidth; //BorderWidth = borderWidth;
+               pb.ColorLight = pb.ColorShadow = borderColor; //BorderColor = borderColor;
+            }
          } else {
             // async draw
             AsyncRunner.InvokeFromUiLater(() => {
                funcFillBk();
                var paint = new PaintableBmp(img);
-               foreach (var cell in matrix) {
+               foreach (var cell in Matrix) {
                   //if (!ReferenceEquals(img, Image)) {
                   //   // aborted...
                   //   System.Diagnostics.Debug.Assert(false, "убедись под дебагером что реально что-то сбросило _image");

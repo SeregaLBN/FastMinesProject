@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using Windows.UI.Xaml.Media;
 using fmg.common.geom;
 using fmg.core.types;
@@ -36,9 +37,9 @@ namespace FastMines.DataModel.Items {
                var sizeField = MosaicType.SizeTileField(SkillLevel);
                var tmp = new MosaicsImg(MosaicType, sizeField, ImageSize * ZoomKoef, 5 * ZoomKoef) {
                   BackgroundColor = StaticImg<object, object>.DefaultBkColor,
-                  BorderWidth = 3*ZoomKoef
-                  //RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
-                  //, OnlySyncDraw = true
+                  BorderWidth = 3*ZoomKoef,
+                  RotateAngle = 45 * new Random(Guid.NewGuid().GetHashCode()).Next(7)
+                  , OnlySyncDraw = true
                };
                //var bmp = tmp.Image;
                //System.Diagnostics.Debug.Assert(bmp.PixelWidth == ImageSize * ZoomKoef);
