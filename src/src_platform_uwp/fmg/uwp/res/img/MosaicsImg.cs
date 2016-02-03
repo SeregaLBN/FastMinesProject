@@ -56,7 +56,6 @@ namespace fmg.uwp.res.img {
                using (Deferring()) {
                   RecalcArea();
                   _matrix.Clear();
-                  RandomRotateElemenIndex();
                }
          }
       }
@@ -302,20 +301,8 @@ namespace fmg.uwp.res.img {
                Dependency_GContext_BorderColor();
             }
             break;
-         case "Rotate":
-            RandomRotateElemenIndex();
-            break;
          }
       }
-
-      private int _rotateElemIndex;
-
-      private void RandomRotateElemenIndex() {
-         if (!Rotate)
-            return;
-         _rotateElemIndex = Rand.Next(SizeField.m * SizeField.n);
-      }
-
 
       #region Dependencys
       void Dependency_GContext_CellAttribute() {
