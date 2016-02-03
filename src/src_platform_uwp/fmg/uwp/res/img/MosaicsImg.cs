@@ -21,7 +21,7 @@ namespace fmg.uwp.res.img {
    /// <summary> картинка поля конкретной мозаики. Используется для меню, кнопок, etc... </summary>
    public class MosaicsImg : RotatedImg<EMosaic, WriteableBitmap>, IMosaic<PaintableBmp> {
       private const bool RandomCellBkColor = true;
-      private Random Rand => GraphicContext.Rand;
+      protected Random Rand => GraphicContext.Rand;
 
       public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(mosaicType, widthAndHeight, padding)

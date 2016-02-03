@@ -35,7 +35,7 @@ namespace FastMines.DataModel.Items {
          get {
             if (_mosaicImg == null) {
                var sizeField = MosaicType.SizeTileField(SkillLevel);
-               var tmp = new MosaicsImg(MosaicType, sizeField, ImageSize * ZoomKoef, 5 * ZoomKoef) {
+               var tmp = new MosaicsAnimateImg(MosaicType, sizeField, ImageSize * ZoomKoef, 5 * ZoomKoef) {
                   BackgroundColor = StaticImg<object, object>.DefaultBkColor,
                   BorderWidth = 3*ZoomKoef//,
                   //RotateAngle = 45 * new Random(Guid.NewGuid().GetHashCode()).Next(7)

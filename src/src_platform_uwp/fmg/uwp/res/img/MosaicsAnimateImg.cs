@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.ComponentModel;
 using Windows.UI.Xaml.Media.Imaging;
@@ -7,14 +6,11 @@ using fmg.common.geom;
 using fmg.common.geom.util;
 using fmg.core.types;
 using fmg.core.mosaic;
-using fmg.uwp.draw;
 using fmg.uwp.draw.mosaic.bmp;
 
 namespace fmg.uwp.res.img {
 
    public class MosaicsAnimateImg : MosaicsImg {
-      private const bool RandomCellBkColor = true;
-      private Random Rand => GraphicContext.Rand;
 
       public MosaicsAnimateImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(mosaicType, sizeField, widthAndHeight, padding)
@@ -43,7 +39,8 @@ namespace fmg.uwp.res.img {
 
             if (rotatedCell != null) {
                // rotate
-               var copy = MosaicHelper.CreateCellInstance(CellAttr, MosaicType, new Coord(rotatedCell.getCoord().x, rotatedCell.getCoord().y));
+               var coord = rotatedCell.getCoord();
+               var copy = MosaicHelper.CreateCellInstance(CellAttr, MosaicType, new Coord(coord.x, coord.y));
                var center = copy.getCenter();
                var reg = copy.getRegion();
                var newReg = reg.Points
@@ -52,7 +49,7 @@ namespace fmg.uwp.res.img {
                                           p.y -= center.y;
                                           return new PointDouble(p);
                                        })
-                               .Rotate(RotateAngle)
+                               .Rotate(RotateAngle * ((((coord.x+coord.y) & 1) == 0) ? +1 : -1))
                                .Select(p => {
                                           p.x += center.x;
                                           p.y += center.y;
