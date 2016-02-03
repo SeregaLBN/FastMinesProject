@@ -94,8 +94,9 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      private readonly List<BaseCell> _matrix = new List<BaseCell>();
+      /// <summary> caching rotated values </summary>
       private readonly List<BaseCell> _matrixRotated = new List<BaseCell>();
+      private readonly List<BaseCell> _matrix = new List<BaseCell>();
       /// <summary>матрица ячеек, представленная(развёрнута) в виде вектора</summary>
       public IList<BaseCell> Matrix {
          get {
@@ -356,6 +357,7 @@ namespace fmg.uwp.res.img {
       void Dependency_MosaicType_As_Entity(EMosaic? newValue, EMosaic? oldValue) {
          Area = 0;
          _matrix.Clear();
+         _matrixRotated.Clear();
          CellAttr = null;
          if ((newValue == null) || (oldValue == null))
             OnPropertyChanged(this, new PropertyChangedEventArgs("MosaicType"));
