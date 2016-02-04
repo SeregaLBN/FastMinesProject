@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
 using Windows.UI.Xaml.Media.Imaging;
@@ -31,14 +32,14 @@ namespace fmg.uwp.res.img {
 
             img.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
 
-            var rotatedCell = !Rotate ? null : Matrix[_rotateElemIndex];
             var paint = new PaintableBmp(img);
 
-            foreach (var cell in Matrix)
-               if (!ReferenceEquals(rotatedCell, cell))
-                  CellPaint.Paint(cell, paint);
+            for (var i=0; i<Matrix.Count; ++i)
+               if (!_rotateElemIndex.Contains(i))
+                  CellPaint.Paint(Matrix[i], paint);
 
-            if (rotatedCell != null) {
+            foreach(var I in _rotateElemIndex) {
+               var rotatedCell = Matrix[I];
                var pb = GContext.PenBorder;
                var center = rotatedCell.getCenter();
                var coord = rotatedCell.getCoord();
@@ -101,12 +102,22 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      private int _rotateElemIndex;
+      private readonly IList<int> _rotateElemIndex = new List<int>();
 
       private void RandomRotateElemenIndex() {
+         _rotateElemIndex.Clear();
+
          if (!Rotate)
             return;
-         _rotateElemIndex = Rand.Next(SizeField.m * SizeField.n);
+
+         var len = Matrix.Count;
+         for (var i = 0; i < len/3.5;) {
+            var pos = Rand.Next(len);
+            if (_rotateElemIndex.Contains(pos))
+               continue;
+            _rotateElemIndex.Add(pos);
+            ++i;
+         }
       }
 
    }
