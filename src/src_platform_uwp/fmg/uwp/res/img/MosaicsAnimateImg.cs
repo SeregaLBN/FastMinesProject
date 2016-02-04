@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.ComponentModel;
 using Windows.UI.Xaml.Media.Imaging;
@@ -38,18 +39,33 @@ namespace fmg.uwp.res.img {
                   CellPaint.Paint(cell, paint);
 
             if (rotatedCell != null) {
-               // rotate
+               var pb = GContext.PenBorder;
+               var center = rotatedCell.getCenter();
                var coord = rotatedCell.getCoord();
-               var copy = MosaicHelper.CreateCellInstance(CellAttr, MosaicType, new Coord(coord.x, coord.y));
-               var center = copy.getCenter();
-               var reg = copy.getRegion();
+               var attr = CellAttr;
+
+               // save
+               var borderWidth = BorderWidth;
+               var borderColor = BorderColor;
+               var area = Area;
+
+               { // modify
+                  pb.Width = 2 * borderWidth;
+                  pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5);
+                  attr.Area = (int)(area * (1 + Math.Sin((RotateAngle / 2).ToRadian()))); // zoom'ирую
+               }
+
+               // rotate
+               var cellNew = MosaicHelper.CreateCellInstance(attr, MosaicType, new Coord(coord.x, coord.y)); // 'copy' rotatedCell with zoomed Area
+               var centerNew = cellNew.getCenter();
+               var reg = cellNew.getRegion();
                var newReg = reg.Points
                                .Select(p => {
-                                          p.x -= center.x;
-                                          p.y -= center.y;
-                                          return new PointDouble(p);
+                                          p.x -= centerNew.x;
+                                          p.y -= centerNew.y;
+                                          return new PointDouble(p.x, p.y);
                                        })
-                               .Rotate(RotateAngle * ((((coord.x+coord.y) & 1) == 0) ? +1 : -1))
+                               .Rotate((((coord.x+coord.y) & 1) == 0) ? +RotateAngle : -RotateAngle)
                                .Select(p => {
                                           p.x += center.x;
                                           p.y += center.y;
@@ -61,14 +77,13 @@ namespace fmg.uwp.res.img {
                }
 
                // draw rotated cell
-               var borderWidth = BorderWidth;
-               var borderColor = BorderColor;
-               var pb = GContext.PenBorder;
-               pb.Width = 2 * borderWidth; //BorderWidth = 5 * borderWidth;
-               pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5); //BorderColor = borderColor.Darker(0.5);
-               CellPaint.Paint(copy, paint);
-               pb.Width = borderWidth; //BorderWidth = borderWidth;
-               pb.ColorLight = pb.ColorShadow = borderColor; //BorderColor = borderColor;
+               CellPaint.Paint(cellNew, paint);
+
+               { // restore
+                  pb.Width = borderWidth; //BorderWidth = borderWidth;
+                  pb.ColorLight = pb.ColorShadow = borderColor; //BorderColor = borderColor;
+                  attr.Area = area;
+               }
             }
          } else {
             // async draw

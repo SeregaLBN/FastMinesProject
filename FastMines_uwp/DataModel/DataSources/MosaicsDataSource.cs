@@ -73,9 +73,9 @@ namespace FastMines.DataModel.DataSources {
                   BorderWidth = 1,
                   BorderColor = Color.Dark,
                   BackgroundColor = GraphicContext.DefaultBackgroundFillColor,
-                  Padding = new Bound(15)
-                  //RedrawInterval = 50,
-                  //RotateAngleDelta = 5
+                  Padding = new Bound(15),
+                  RedrawInterval = 5,
+                  RotateAngleDelta = 3.37
                }
          };
          DataSourceInternal.Add(mi);

@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Windows.UI.Xaml.Media;
 using fmg.common.geom;
 using fmg.core.types;
