@@ -68,11 +68,10 @@ namespace fmg.uwp.res.img
             return;
 
          var rotateAngle = RotateAngle + RotateAngleDelta;
-         if (RotateAngleDelta > 0) {
-            if (rotateAngle >= 360)
-               rotateAngle -= 360;
+         if (rotateAngle >= 360) {
+            rotateAngle -= 360;
          } else {
-            if (rotateAngle <= -360)
+            if (rotateAngle < 0)
                rotateAngle += 360;
          }
          RotateAngle = rotateAngle;

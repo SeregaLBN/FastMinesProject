@@ -35,26 +35,47 @@ namespace fmg.uwp.res.img {
             var paint = new PaintableBmp(img);
 
             for (var i=0; i<Matrix.Count; ++i)
-               if (!_rotateElemIndex.Contains(i))
+               if (!_rotateElemIndex.ContainsKey(i) || (_rotateElemIndex[i] < 0))
                   CellPaint.Paint(Matrix[i], paint);
 
-            foreach(var I in _rotateElemIndex) {
-               var rotatedCell = Matrix[I];
-               var pb = GContext.PenBorder;
+            var pb = GContext.PenBorder;
+            var attr = CellAttr;
+            var angle = RotateAngle;
+            // save
+            var borderWidth = BorderWidth;
+            var borderColor = BorderColor;
+            var area = Area;
+            // modify
+            pb.Width = 2 * borderWidth;
+            pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5);
+            foreach(var index in new List<int>(_rotateElemIndex.Keys)) {
+               var angleOffset = _rotateElemIndex[index];
+               if (angleOffset >= 0)
+                  continue;
+               if (angleOffset + angle < 0)
+                  continue;
+               _rotateElemIndex[index] = 360 - angleOffset;
+            }
+            foreach (var pair in _rotateElemIndex) {
+               var angleOffset = pair.Value;
+               if (angleOffset < 0)
+                  continue;
+
+               var angle2 = angle + angleOffset;
+               if (angle2 >= 360) {
+                  angle2 -= 360;
+               } else {
+                  if (angle2 < 0)
+                     angle2 += 360;
+               }
+
+               var rotatedCell = Matrix[pair.Key];
+
                var center = rotatedCell.getCenter();
                var coord = rotatedCell.getCoord();
-               var attr = CellAttr;
 
-               // save
-               var borderWidth = BorderWidth;
-               var borderColor = BorderColor;
-               var area = Area;
-
-               { // modify
-                  pb.Width = 2 * borderWidth;
-                  pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5);
-                  attr.Area = (int)(area * (1 + Math.Sin((RotateAngle / 2).ToRadian()))); // zoom'ирую
-               }
+               // modify
+               //attr.Area = (int)(area * (1 + Math.Sin((angle2 / 2).ToRadian()))); // zoom'ирую
 
                // rotate
                var cellNew = MosaicHelper.CreateCellInstance(attr, MosaicType, new Coord(coord.x, coord.y)); // 'copy' rotatedCell with zoomed Area
@@ -66,7 +87,7 @@ namespace fmg.uwp.res.img {
                                           p.y -= centerNew.y;
                                           return new PointDouble(p.x, p.y);
                                        })
-                               .Rotate((((coord.x+coord.y) & 1) == 0) ? +RotateAngle : -RotateAngle)
+                               .Rotate(((((coord.x+coord.y) & 1) == 0) ? +1 : -1) * angle2)
                                .Select(p => {
                                           p.x += center.x;
                                           p.y += center.y;
@@ -80,12 +101,13 @@ namespace fmg.uwp.res.img {
                // draw rotated cell
                CellPaint.Paint(cellNew, paint);
 
-               { // restore
-                  pb.Width = borderWidth; //BorderWidth = borderWidth;
-                  pb.ColorLight = pb.ColorShadow = borderColor; //BorderColor = borderColor;
-                  attr.Area = area;
-               }
             }
+            { // restore
+               pb.Width = borderWidth; //BorderWidth = borderWidth;
+               pb.ColorLight = pb.ColorShadow = borderColor; //BorderColor = borderColor;
+               attr.Area = area;
+            }
+
          } else {
             // async draw
             base.DrawBody();
@@ -102,7 +124,12 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      private readonly IList<int> _rotateElemIndex = new List<int>();
+      //protected override void OnTimer() {
+      //   base.OnTimer();
+
+      //}
+
+      private readonly IDictionary<int /* cell index */, double /* rotate angle ofset */> _rotateElemIndex = new Dictionary<int, double>();
 
       private void RandomRotateElemenIndex() {
          _rotateElemIndex.Clear();
@@ -110,14 +137,17 @@ namespace fmg.uwp.res.img {
          if (!Rotate)
             return;
 
+         // create random cells indexes  and  base rotate offset (negative)
          var len = Matrix.Count;
          for (var i = 0; i < len/3.5;) {
             var pos = Rand.Next(len);
-            if (_rotateElemIndex.Contains(pos))
+            if (_rotateElemIndex.ContainsKey(pos))
                continue;
-            _rotateElemIndex.Add(pos);
+            _rotateElemIndex.Add(pos, -Rand.Next(360));
             ++i;
          }
+         var max = _rotateElemIndex.Max(p => p.Value);
+         new List<int>(_rotateElemIndex.Keys).ForEach(key => _rotateElemIndex[key] -= max);
       }
 
    }
