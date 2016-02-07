@@ -92,7 +92,7 @@ namespace FastMines.DataModel.DataSources {
                img.Rotate = selected;
                img.BorderColor = selected ? Color.White : Color.Dark;
                img.BackgroundColor = selected ? MosaicsImg.DefaultBkColor : GraphicContext.DefaultBackgroundFillColor;
-               img.Padding = new Bound(selected ? 5 : 15);
+               img.Padding = new Bound(img.Width*(selected ? 15 : 8)/(mi.SkillLevel.Ordinal() + 1)/100);
                img.RotateAngle = 0;
             }
          }
