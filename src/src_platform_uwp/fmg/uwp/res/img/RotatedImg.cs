@@ -75,6 +75,7 @@ namespace fmg.uwp.res.img
                rotateAngle += 360;
          }
          RotateAngle = rotateAngle;
+         System.Diagnostics.Debug.Assert((rotateAngle >= 0) && (rotateAngle < 360));
       }
 
       protected override void Dispose(bool disposing) {

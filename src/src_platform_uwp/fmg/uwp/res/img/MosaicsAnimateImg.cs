@@ -51,10 +51,10 @@ namespace fmg.uwp.res.img {
             // modify
             pb.Width = 2 * borderWidth;
             pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5);
-            foreach (var pair in _rotateElemIndexPositive) {
+
+            var transform = _rotateElemIndexPositive.Select(pair => {
                var angleOffset = pair.Value;
-               if (angleOffset < 0)
-                  continue;
+               System.Diagnostics.Debug.Assert(angleOffset >= 0);
 
                var angle2 = angle + angleOffset;
                if (angle2 >= 360) {
@@ -65,14 +65,23 @@ namespace fmg.uwp.res.img {
                }
                System.Diagnostics.Debug.Assert(angle2 < 360);
                System.Diagnostics.Debug.Assert(angle2 >= 0);
+               // (un)comment next line to view result changes...
+               angle2 = Math.Sin((angle2 / 4).ToRadian()) * angle2; // ускоряшка..
 
-               var rotatedCell = Matrix[pair.Key];
+               // (un)comment next line to view result changes...
+               var area2 = (int)(area * (1 + Math.Sin((angle2 / 2).ToRadian()))); // zoom'ирую
+               return new KeyValuePair<KeyValuePair<int, double>, KeyValuePair<double, int>>(pair, new KeyValuePair<double, int>(angle2, area2));
+            }).OrderBy(x => x.Value.Value);
+            foreach (var pair in transform) {
+               var angle2 = pair.Value.Key;
+               // modify
+               attr.Area = (int)(area * (1 + Math.Sin((angle2 / 2).ToRadian()))); // zoom'ирую
+
+               var index = pair.Key.Key;
+               var rotatedCell = Matrix[index];
 
                var center = rotatedCell.getCenter();
                var coord = rotatedCell.getCoord();
-
-               // modify
-               attr.Area = (int)(area * (1 + Math.Sin((angle2 / 2).ToRadian()))); // zoom'ирую
 
                // rotate
                var cellNew = MosaicHelper.CreateCellInstance(attr, MosaicType, new Coord(coord.x, coord.y)); // 'copy' rotatedCell with zoomed Area

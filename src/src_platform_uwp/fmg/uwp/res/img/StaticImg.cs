@@ -114,10 +114,15 @@ namespace fmg.uwp.res.img {
       }
 
       private double _rotateAngle;
-      /// <summary> -360° .. 0° .. +360° </summary>
+      /// <summary> 0° .. +360° </summary>
       public double RotateAngle {
          get { return _rotateAngle; }
          set {
+            if (value > 360 || value < 0) {
+               value %= 360;
+               if (value < 0)
+                  value += 360;
+            }
             if (SetProperty(ref _rotateAngle, value))
                Redraw();
          }
