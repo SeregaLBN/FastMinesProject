@@ -55,7 +55,6 @@ namespace fmg.uwp.res.img {
             var transform = _rotateElemIndexPositive.Select(pair => {
                var angleOffset = pair.Value;
                System.Diagnostics.Debug.Assert(angleOffset >= 0);
-
                var angle2 = angle + angleOffset;
                if (angle2 >= 360) {
                   angle2 -= 360;
@@ -70,18 +69,21 @@ namespace fmg.uwp.res.img {
 
                // (un)comment next line to view result changes...
                var area2 = (int)(area * (1 + Math.Sin((angle2 / 2).ToRadian()))); // zoom'ирую
-               return new KeyValuePair<KeyValuePair<int, double>, KeyValuePair<double, int>>(pair, new KeyValuePair<double, int>(angle2, area2));
-            }).OrderBy(x => x.Value.Value);
-            foreach (var pair in transform) {
-               var angle2 = pair.Value.Key;
-               // modify
-               attr.Area = (int)(area * (1 + Math.Sin((angle2 / 2).ToRadian()))); // zoom'ирую
+               return new Tuple<int, double, int>(pair.Key, angle2, area2);
+            }).OrderBy(t => t.Item3); // order by area2
 
-               var index = pair.Key.Key;
+            foreach (var tuple in transform) {
+               var index = tuple.Item1;
+               var angle2 = tuple.Item2;
+               var area2 = tuple.Item3;
+
                var rotatedCell = Matrix[index];
 
                var center = rotatedCell.getCenter();
                var coord = rotatedCell.getCoord();
+
+               // modify
+               attr.Area = area2;
 
                // rotate
                var cellNew = MosaicHelper.CreateCellInstance(attr, MosaicType, new Coord(coord.x, coord.y)); // 'copy' rotatedCell with zoomed Area
