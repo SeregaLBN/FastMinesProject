@@ -53,6 +53,7 @@ namespace fmg.uwp.res.img {
             pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5);
 
             var transform = _rotateElemIndexPositive.Select(pair => {
+               var index = pair.Key;
                var angleOffset = pair.Value;
                System.Diagnostics.Debug.Assert(angleOffset >= 0);
                var angle2 = angle + angleOffset;
@@ -69,7 +70,7 @@ namespace fmg.uwp.res.img {
 
                // (un)comment next line to view result changes...
                var area2 = (int)(area * (1 + Math.Sin((angle2 / 2).ToRadian()))); // zoom'ирую
-               return new Tuple<int, double, int>(pair.Key, angle2, area2);
+               return new Tuple<int, double, int>(index, angle2, area2);
             }).OrderBy(t => t.Item3); // order by area2
 
             foreach (var tuple in transform) {
@@ -95,7 +96,7 @@ namespace fmg.uwp.res.img {
                                           p.y -= centerNew.y;
                                           return new PointDouble(p.x, p.y);
                                        })
-                               .Rotate(((((coord.x+coord.y) & 1) == 0) ? +1 : -1) * angle2)
+                               .Rotate((((coord.x+coord.y) & 1) == 0) ? +angle2 : -angle2)
                                .Select(p => {
                                           p.x += center.x;
                                           p.y += center.y;
@@ -111,6 +112,15 @@ namespace fmg.uwp.res.img {
 
                // restore
                attr.Area = area;
+
+
+               { // check. prepare to next step
+                  var angle3 = angle2 + RotateAngleDelta;
+                  if ((angle3 >= 360) || (angle3 < 0)) {
+                     AddRandomToNegative(false);
+                     _rotateElemIndexPositive.Remove(index);
+                  }
+               }
             }
             // restore
             pb.Width = borderWidth; //BorderWidth = borderWidth;
@@ -150,13 +160,22 @@ namespace fmg.uwp.res.img {
 
          // create random cells indexes  and  base rotate offset (negative)
          var len = Matrix.Count;
-         for (var i = 0; i < len/4.5;) {
+         for (var i = 0; i < len/4.5; ++i) {
+            AddRandomToNegative(_rotateElemIndexNegative.Count == 0);
+         }
+      }
+
+      private void AddRandomToNegative(bool zero) {
+         var len = Matrix.Count;
+         do {
             var pos = Rand.Next(len);
             if (_rotateElemIndexNegative.ContainsKey(pos))
                continue;
-            _rotateElemIndexNegative.Add(pos, (_rotateElemIndexNegative.Count == 0) ? 0 : -Rand.Next(360));
-            ++i;
-         }
+            if (_rotateElemIndexPositive.ContainsKey(pos))
+               continue;
+            _rotateElemIndexNegative.Add(pos, zero ? 0 : - Rand.Next(360));
+            return;
+         } while(true);
       }
 
       protected override void OnTimer() {
@@ -170,7 +189,9 @@ namespace fmg.uwp.res.img {
             if (angleOffset + angle < 0)
                continue;
             var positive = _rotateElemIndexPositive[index] = 360 + angleOffset; // negative value as positive
-            System.Diagnostics.Debug.Assert(positive <= 360);
+            if (positive >= 360)
+               positive = _rotateElemIndexPositive[index] -= 360;
+            System.Diagnostics.Debug.Assert(positive < 360);
             System.Diagnostics.Debug.Assert(positive >= 0);
             _rotateElemIndexNegative.Remove(index);
          }
