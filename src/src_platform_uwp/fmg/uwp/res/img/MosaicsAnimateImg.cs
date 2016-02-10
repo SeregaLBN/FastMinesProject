@@ -114,7 +114,7 @@ namespace fmg.uwp.res.img {
                attr.Area = area;
 
 
-               { // check. prepare to next step
+               { // prepare to next step - exclude current cell from rotate and add next random cell
                   var angle3 = angle2 + RotateAngleDelta;
                   if ((angle3 >= 360) || (angle3 < 0)) {
                      AddRandomToNegative(false);
@@ -122,6 +122,7 @@ namespace fmg.uwp.res.img {
                   }
                }
             }
+
             // restore
             pb.Width = borderWidth; //BorderWidth = borderWidth;
             pb.ColorLight = pb.ColorShadow = borderColor; //BorderColor = borderColor;

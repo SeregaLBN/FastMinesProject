@@ -90,6 +90,7 @@ namespace FastMines.DataModel.Items {
             else
                OnPropertyChanged(this, new PropertyChangedExEventArgs<EMosaic>(ev2.NewValue, ev2.OldValue, "MosaicType"));
             MosaicImage.MosaicType = MosaicType;
+            MosaicImage.SizeField = MosaicType.SizeTileField(SkillLevel);
             Title = MosaicType.GetDescription(false);
             break;
          }
