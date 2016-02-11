@@ -175,8 +175,14 @@
     <Compile Include="..\src\src_common\fmg\common\geom\Rect.cs">
       <Link>src_fmg.common\geom\Rect.cs</Link>
     </Compile>
+    <Compile Include="..\src\src_common\fmg\common\geom\RectDouble.cs">
+      <Link>src_fmg.common\geom\RectDouble.cs</Link>
+    </Compile>
     <Compile Include="..\src\src_common\fmg\common\geom\Region.cs">
       <Link>src_fmg.common\geom\Region.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_common\fmg\common\geom\RegionDouble.cs">
+      <Link>src_fmg.common\geom\RegionDouble.cs</Link>
     </Compile>
     <Compile Include="..\src\src_common\fmg\common\geom\Size.cs">
       <Link>src_fmg.common\geom\Size.cs</Link>

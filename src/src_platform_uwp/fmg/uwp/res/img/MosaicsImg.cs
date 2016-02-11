@@ -139,19 +139,19 @@ namespace fmg.uwp.res.img {
                var newReg = reg.Points
                                .Select(p => new PointDouble(p))
                                .Select(p => {
-                                          p.x -= center.x;
-                                          p.y -= center.y;
+                                          p.X -= center.X;
+                                          p.Y -= center.Y;
                                           return p;
                                        })
                                .Rotate(RotateAngle)
                                .Select(p => {
-                                          p.x += center.x;
-                                          p.y += center.y;
+                                          p.X += center.X;
+                                          p.Y += center.Y;
                                           return p;
                                        });
                var i = 0;
                foreach(var p in newReg) {
-                  reg.setPoint(i++, (int)p.x, (int)p.y);
+                  reg.SetPoint(i++, (int)p.X, (int)p.Y);
                }
             }
 

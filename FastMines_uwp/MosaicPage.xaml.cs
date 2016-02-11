@@ -255,14 +255,14 @@ namespace FastMines {
 
                // точка над игровым полем со старой площадью ячеек
                var point = new PointDouble(devicePos.X - m.Left, devicePos.Y - m.Top);
-               var percent = new Tuple<double, double>(point.x*100/oldWinSize.width, point.y*100/oldWinSize.height);
+               var percent = new Tuple<double, double>(point.X*100/oldWinSize.width, point.Y*100/oldWinSize.height);
 
                // таже точка над игровым полем, но с учётом zoom'а (новой площади)
                point = new PointDouble(newWinSize.width*percent.Item1/100, newWinSize.height*percent.Item2/100);
 
                // смещаю игровое поле так, чтобы точка была на том же месте экрана
-               m.Left = devicePos.X - point.x;
-               m.Top = devicePos.Y - point.y;
+               m.Left = devicePos.X - point.X;
+               m.Top = devicePos.Y - point.Y;
 
                m = CheckMosaicMargin(m, newWinSize);
             } else {

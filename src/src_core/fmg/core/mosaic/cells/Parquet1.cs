@@ -88,16 +88,16 @@ public class Parquet1 : BaseCell {
 
 		switch (direction) {
 		case 0:
-			region.setPoint(0, (int)(a * (2 + 2 * coord.x)), (int)(a * (0 + 2 * coord.y)));
-			region.setPoint(1, (int)(a * (3 + 2 * coord.x)), (int)(a * (1 + 2 * coord.y)));
-			region.setPoint(2, (int)(a * (1 + 2 * coord.x)), (int)(a * (3 + 2 * coord.y)));
-			region.setPoint(3, (int)(a * (0 + 2 * coord.x)), (int)(a * (2 + 2 * coord.y)));
+			region.SetPoint(0, (int)(a * (2 + 2 * coord.x)), (int)(a * (0 + 2 * coord.y)));
+			region.SetPoint(1, (int)(a * (3 + 2 * coord.x)), (int)(a * (1 + 2 * coord.y)));
+			region.SetPoint(2, (int)(a * (1 + 2 * coord.x)), (int)(a * (3 + 2 * coord.y)));
+			region.SetPoint(3, (int)(a * (0 + 2 * coord.x)), (int)(a * (2 + 2 * coord.y)));
 			break;
 		case 1:
-			region.setPoint(0, (int)(a * (1 + 2 * coord.x)), (int)(a * (1 + 2 * coord.y)));
-			region.setPoint(1, (int)(a * (3 + 2 * coord.x)), (int)(a * (3 + 2 * coord.y)));
-			region.setPoint(2, (int)(a * (2 + 2 * coord.x)), (int)(a * (4 + 2 * coord.y)));
-			region.setPoint(3, (int)(a * (0 + 2 * coord.x)), (int)(a * (2 + 2 * coord.y)));
+			region.SetPoint(0, (int)(a * (1 + 2 * coord.x)), (int)(a * (1 + 2 * coord.y)));
+			region.SetPoint(1, (int)(a * (3 + 2 * coord.x)), (int)(a * (3 + 2 * coord.y)));
+			region.SetPoint(2, (int)(a * (2 + 2 * coord.x)), (int)(a * (4 + 2 * coord.y)));
+			region.SetPoint(3, (int)(a * (0 + 2 * coord.x)), (int)(a * (2 + 2 * coord.y)));
 			break;
 		}
 	}
@@ -109,8 +109,8 @@ public class Parquet1 : BaseCell {
 		bool bdir = (direction != 0);
 
 		Rect square = new Rect();
-		square.X = (int) ((bdir ? region.getPoint(0).x: region.getPoint(2).x) + w / SQRT2);
-		square.Y = (int) ((bdir ? region.getPoint(3).y: region.getPoint(1).y) + w / SQRT2);
+		square.X = (int) ((bdir ? region.GetPoint(0).X: region.GetPoint(2).X) + w / SQRT2);
+		square.Y = (int) ((bdir ? region.GetPoint(3).Y: region.GetPoint(1).Y) + w / SQRT2);
 		square.Width = (int)sq;
 		square.Height = (int)sq;
 		return square;

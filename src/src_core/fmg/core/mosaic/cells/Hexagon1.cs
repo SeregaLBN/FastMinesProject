@@ -93,20 +93,20 @@ public class Hexagon1 : BaseCell {
 
 		switch (direction) {
 		case 0:
-			region.setPoint(0, (int)(oX      ), (int)(oY - a  ));
-			region.setPoint(1, (int)(oX      ), (int)(oY      ));
-			region.setPoint(2, (int)(oX - b/2), (int)(oY + a/2));
-			region.setPoint(3, (int)(oX - b  ), (int)(oY      ));
-			region.setPoint(4, (int)(oX - b  ), (int)(oY - a  ));
-			region.setPoint(5, (int)(oX - b/2), (int)(oY - a*1.5));
+			region.SetPoint(0, (int)(oX      ), (int)(oY - a  ));
+			region.SetPoint(1, (int)(oX      ), (int)(oY      ));
+			region.SetPoint(2, (int)(oX - b/2), (int)(oY + a/2));
+			region.SetPoint(3, (int)(oX - b  ), (int)(oY      ));
+			region.SetPoint(4, (int)(oX - b  ), (int)(oY - a  ));
+			region.SetPoint(5, (int)(oX - b/2), (int)(oY - a*1.5));
 			break;
 		case 1:
-			region.setPoint(0, (int)(oX + b/2), (int)(oY + a/2  ));
-			region.setPoint(1, (int)(oX + b/2), (int)(oY + a*1.5));
-			region.setPoint(2, (int)(oX      ), (int)(oY + a*2  ));
-			region.setPoint(3, (int)(oX - b/2), (int)(oY + a*1.5));
-			region.setPoint(4, (int)(oX - b/2), (int)(oY + a/2  ));
-			region.setPoint(5, (int)(oX      ), (int)(oY        ));
+			region.SetPoint(0, (int)(oX + b/2), (int)(oY + a/2  ));
+			region.SetPoint(1, (int)(oX + b/2), (int)(oY + a*1.5));
+			region.SetPoint(2, (int)(oX      ), (int)(oY + a*2  ));
+			region.SetPoint(3, (int)(oX - b/2), (int)(oY + a*1.5));
+			region.SetPoint(4, (int)(oX - b/2), (int)(oY + a/2  ));
+			region.SetPoint(5, (int)(oX      ), (int)(oY        ));
 			break;
 		}
 	}
@@ -122,13 +122,13 @@ public class Hexagon1 : BaseCell {
 
 		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
 		switch (direction) {
-		case 0: center.x = oX - b/2; center.y = oY - a/2; break;
-		case 1: center.x = oX;       center.y = oY + a;   break;
+		case 0: center.X = oX - b/2; center.Y = oY - a/2; break;
+		case 1: center.X = oX;       center.Y = oY + a;   break;
 		}
 
 		Rect square = new Rect();
-		square.X = (int) (center.x - sq/2);
-		square.Y = (int) (center.y - sq/2);
+		square.X = (int) (center.X - sq/2);
+		square.Y = (int) (center.Y - sq/2);
 		square.Width =
 		square.Height = (int) sq;
 		return square;

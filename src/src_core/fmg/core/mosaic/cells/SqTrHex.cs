@@ -306,76 +306,76 @@ public class SqTrHex : BaseCell {
 		PointDouble o = getOffset();
 		switch (direction) {
 		case 0:
-			region.setPoint(0, (int)(o.x - b-h  ), (int)(o.y - a-b-h));
-			region.setPoint(1, (int)(o.x - h    ), (int)(o.y - a-b  ));
-			region.setPoint(2, (int)(o.x - h-a  ), (int)(o.y - a-b  ));
+			region.SetPoint(0, (int)(o.X - b-h  ), (int)(o.Y - a-b-h));
+			region.SetPoint(1, (int)(o.X - h    ), (int)(o.Y - a-b  ));
+			region.SetPoint(2, (int)(o.X - h-a  ), (int)(o.Y - a-b  ));
 			break;
 		case 1:
-			region.setPoint(0, (int)(o.x - b    ), (int)(o.y - a-a-h));
-			region.setPoint(1, (int)(o.x        ), (int)(o.y - a-a  ));
-			region.setPoint(2, (int)(o.x - h    ), (int)(o.y - a-b  ));
-			region.setPoint(3, (int)(o.x - b-h  ), (int)(o.y - a-b-h));
+			region.SetPoint(0, (int)(o.X - b    ), (int)(o.Y - a-a-h));
+			region.SetPoint(1, (int)(o.X        ), (int)(o.Y - a-a  ));
+			region.SetPoint(2, (int)(o.X - h    ), (int)(o.Y - a-b  ));
+			region.SetPoint(3, (int)(o.X - b-h  ), (int)(o.Y - a-b-h));
 			break;
 		case 2:
-			region.setPoint(0, (int)(o.x + b    ), (int)(o.y - a-a-h));
-			region.setPoint(1, (int)(o.x        ), (int)(o.y - a-a  ));
-			region.setPoint(2, (int)(o.x - b    ), (int)(o.y - a-a-h));
+			region.SetPoint(0, (int)(o.X + b    ), (int)(o.Y - a-a-h));
+			region.SetPoint(1, (int)(o.X        ), (int)(o.Y - a-a  ));
+			region.SetPoint(2, (int)(o.X - b    ), (int)(o.Y - a-a-h));
 			break;
 		case 3:
-			region.setPoint(0, (int)(o.x - h    ), (int)(o.y - a-b  ));
-			region.setPoint(1, (int)(o.x - h    ), (int)(o.y - b    ));
-			region.setPoint(2, (int)(o.x - a-h  ), (int)(o.y - b    ));
-			region.setPoint(3, (int)(o.x - a-h  ), (int)(o.y - a-b  ));
+			region.SetPoint(0, (int)(o.X - h    ), (int)(o.Y - a-b  ));
+			region.SetPoint(1, (int)(o.X - h    ), (int)(o.Y - b    ));
+			region.SetPoint(2, (int)(o.X - a-h  ), (int)(o.Y - b    ));
+			region.SetPoint(3, (int)(o.X - a-h  ), (int)(o.Y - a-b  ));
 			break;
 		case 4:
-			region.setPoint(0, (int)(o.x        ), (int)(o.y - a-a  ));
-			region.setPoint(1, (int)(o.x + h    ), (int)(o.y - a-b  ));
-			region.setPoint(2, (int)(o.x + h    ), (int)(o.y - b    ));
-			region.setPoint(3, (int)(o.x        ), (int)(o.y        ));
-			region.setPoint(4, (int)(o.x - h    ), (int)(o.y - b    ));
-			region.setPoint(5, (int)(o.x - h    ), (int)(o.y - a-b  ));
+			region.SetPoint(0, (int)(o.X        ), (int)(o.Y - a-a  ));
+			region.SetPoint(1, (int)(o.X + h    ), (int)(o.Y - a-b  ));
+			region.SetPoint(2, (int)(o.X + h    ), (int)(o.Y - b    ));
+			region.SetPoint(3, (int)(o.X        ), (int)(o.Y        ));
+			region.SetPoint(4, (int)(o.X - h    ), (int)(o.Y - b    ));
+			region.SetPoint(5, (int)(o.X - h    ), (int)(o.Y - a-b  ));
 			break;
 		case 5:
-			region.setPoint(0, (int)(o.x + b    ), (int)(o.y - a-a-h));
-			region.setPoint(1, (int)(o.x + b+h  ), (int)(o.y - a-b-h));
-			region.setPoint(2, (int)(o.x + h    ), (int)(o.y - a-b  ));
-			region.setPoint(3, (int)(o.x        ), (int)(o.y - a-a  ));
+			region.SetPoint(0, (int)(o.X + b    ), (int)(o.Y - a-a-h));
+			region.SetPoint(1, (int)(o.X + b+h  ), (int)(o.Y - a-b-h));
+			region.SetPoint(2, (int)(o.X + h    ), (int)(o.Y - a-b  ));
+			region.SetPoint(3, (int)(o.X        ), (int)(o.Y - a-a  ));
 			break;
 		case 6:
-			region.setPoint(0, (int)(o.x - h    ), (int)(o.y - b    ));
-			region.setPoint(1, (int)(o.x - b-h  ), (int)(o.y - b+h  ));
-			region.setPoint(2, (int)(o.x - a-h  ), (int)(o.y - b    ));
+			region.SetPoint(0, (int)(o.X - h    ), (int)(o.Y - b    ));
+			region.SetPoint(1, (int)(o.X - b-h  ), (int)(o.Y - b+h  ));
+			region.SetPoint(2, (int)(o.X - a-h  ), (int)(o.Y - b    ));
 			break;
 		case 7:
-			region.setPoint(0, (int)(o.x        ), (int)(o.y        ));
-			region.setPoint(1, (int)(o.x + b    ), (int)(o.y + h    ));
-			region.setPoint(2, (int)(o.x - b    ), (int)(o.y + h    ));
+			region.SetPoint(0, (int)(o.X        ), (int)(o.Y        ));
+			region.SetPoint(1, (int)(o.X + b    ), (int)(o.Y + h    ));
+			region.SetPoint(2, (int)(o.X - b    ), (int)(o.Y + h    ));
 			break;
 		case 8:
-			region.setPoint(0, (int)(o.x + h    ), (int)(o.y - b    ));
-			region.setPoint(1, (int)(o.x + h+b  ), (int)(o.y - b+h  ));
-			region.setPoint(2, (int)(o.x + b    ), (int)(o.y + h    ));
-			region.setPoint(3, (int)(o.x        ), (int)(o.y        ));
+			region.SetPoint(0, (int)(o.X + h    ), (int)(o.Y - b    ));
+			region.SetPoint(1, (int)(o.X + h+b  ), (int)(o.Y - b+h  ));
+			region.SetPoint(2, (int)(o.X + b    ), (int)(o.Y + h    ));
+			region.SetPoint(3, (int)(o.X        ), (int)(o.Y        ));
 			break;
 		case 9:
-			region.setPoint(0, (int)(o.x - h    ), (int)(o.y - b    ));
-			region.setPoint(1, (int)(o.x        ), (int)(o.y        ));
-			region.setPoint(2, (int)(o.x - b    ), (int)(o.y + h    ));
-			region.setPoint(3, (int)(o.x - b-h  ), (int)(o.y - b+h  ));
+			region.SetPoint(0, (int)(o.X - h    ), (int)(o.Y - b    ));
+			region.SetPoint(1, (int)(o.X        ), (int)(o.Y        ));
+			region.SetPoint(2, (int)(o.X - b    ), (int)(o.Y + h    ));
+			region.SetPoint(3, (int)(o.X - b-h  ), (int)(o.Y - b+h  ));
 			break;
 		case 10:
-			region.setPoint(0, (int)(o.x + b    ), (int)(o.y + h    ));
-			region.setPoint(1, (int)(o.x + b    ), (int)(o.y + a+h  ));
-			region.setPoint(2, (int)(o.x - b    ), (int)(o.y + a+h  ));
-			region.setPoint(3, (int)(o.x - b    ), (int)(o.y + h    ));
+			region.SetPoint(0, (int)(o.X + b    ), (int)(o.Y + h    ));
+			region.SetPoint(1, (int)(o.X + b    ), (int)(o.Y + a+h  ));
+			region.SetPoint(2, (int)(o.X - b    ), (int)(o.Y + a+h  ));
+			region.SetPoint(3, (int)(o.X - b    ), (int)(o.Y + h    ));
 			break;
 		case 11:
-			region.setPoint(0, (int)(o.x + b+h  ), (int)(o.y + h-b  ));
-			region.setPoint(1, (int)(o.x + b+h+h), (int)(o.y + h    ));
-			region.setPoint(2, (int)(o.x + b+h+h), (int)(o.y + a+h  ));
-			region.setPoint(3, (int)(o.x + b+h  ), (int)(o.y + a+b+h));
-			region.setPoint(4, (int)(o.x + b    ), (int)(o.y + a+h  ));
-			region.setPoint(5, (int)(o.x + b    ), (int)(o.y + h    ));
+			region.SetPoint(0, (int)(o.X + b+h  ), (int)(o.Y + h-b  ));
+			region.SetPoint(1, (int)(o.X + b+h+h), (int)(o.Y + h    ));
+			region.SetPoint(2, (int)(o.X + b+h+h), (int)(o.Y + a+h  ));
+			region.SetPoint(3, (int)(o.X + b+h  ), (int)(o.Y + a+b+h));
+			region.SetPoint(4, (int)(o.X + b    ), (int)(o.Y + a+h  ));
+			region.SetPoint(5, (int)(o.X + b    ), (int)(o.Y + h    ));
 			break;
 		}
 	}
@@ -394,23 +394,23 @@ public class SqTrHex : BaseCell {
 
 		PointDouble center = new PointDouble(); // координата центра вписанного в фигуру квадрата
 		switch (direction) {
-		case  0: center.x = o.x -  b-h;    center.y = o.y - a-b-w-sq2;   break;
-		case  1: center.x = o.x - (b+h)/2; center.y = o.y - a-b-(b+h)/2; break;
-		case  2: center.x = o.x;           center.y = o.y - a-a-h+w+sq2; break;
-		case  3: center.x = o.x -  b-h;    center.y = o.y - a;           break;
-		case  4: center.x = o.x;           center.y = o.y - a;           break;
-		case  5: center.x = o.x + (b+h)/2; center.y = o.y - a-b-(b+h)/2; break;
-		case  6: center.x = o.x -  b-h;    center.y = o.y - b+w+sq2;     break;
-		case  7: center.x = o.x;           center.y = o.y + h-w-sq2;     break;
-		case  8: center.x = o.x + (b+h)/2; center.y = o.y - b+(b+h)/2;   break;
-		case  9: center.x = o.x - (b+h)/2; center.y = o.y - b+(b+h)/2;   break;
-		case 10: center.x = o.x;           center.y = o.y + b+h;         break;
-		case 11: center.x = o.x +  b+h;    center.y = o.y + b+h;         break;
+		case  0: center.X = o.X -  b-h;    center.Y = o.Y - a-b-w-sq2;   break;
+		case  1: center.X = o.X - (b+h)/2; center.Y = o.Y - a-b-(b+h)/2; break;
+		case  2: center.X = o.X;           center.Y = o.Y - a-a-h+w+sq2; break;
+		case  3: center.X = o.X -  b-h;    center.Y = o.Y - a;           break;
+		case  4: center.X = o.X;           center.Y = o.Y - a;           break;
+		case  5: center.X = o.X + (b+h)/2; center.Y = o.Y - a-b-(b+h)/2; break;
+		case  6: center.X = o.X -  b-h;    center.Y = o.Y - b+w+sq2;     break;
+		case  7: center.X = o.X;           center.Y = o.Y + h-w-sq2;     break;
+		case  8: center.X = o.X + (b+h)/2; center.Y = o.Y - b+(b+h)/2;   break;
+		case  9: center.X = o.X - (b+h)/2; center.Y = o.Y - b+(b+h)/2;   break;
+		case 10: center.X = o.X;           center.Y = o.Y + b+h;         break;
+		case 11: center.X = o.X +  b+h;    center.Y = o.Y + b+h;         break;
 		}
 
 		Rect square = new Rect();
-		square.X = (int) (center.x - sq2);
-		square.Y = (int) (center.y - sq2);
+		square.X = (int) (center.X - sq2);
+		square.Y = (int) (center.Y - sq2);
 		square.Width =
 		square.Height = (int) sq;
 		return square;

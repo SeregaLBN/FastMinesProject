@@ -16,19 +16,19 @@ namespace fmg.common.geom {
       public Rect Bottom(int v) { Height = v - Y; return this; }
 
       // constructors
-      //public Rect() { this.X = this.Y = 0; this.Width = 0; this.Height = 0; }
-      public Rect(Point pLT, Point pRB) { this.X = pLT.x; this.Y = pLT.y; Width = pRB.x - pLT.x; Height = pRB.y - pLT.y; }
-      public Rect(Rect r) { this.X = r.X; this.Y = r.Y; Width = r.Width; Height = r.Height; }
-      public Rect(int x, int y, int w, int h) { this.X = x; this.Y = y; this.Width = w; this.Height = h; }
-      public Rect(Size size) { this.X = this.Y = 0; this.Width = size.width; this.Height = size.height; }
-      public Rect(int width, int height) { this.X = this.Y = 0; this.Width = width; this.Height = height; }
+      //public Rect() { X = Y = 0; Width = 0; Height = 0; }
+      public Rect(Point pLT, Point pRB) { X = pLT.X; Y = pLT.Y; Width = pRB.X - pLT.X; Height = pRB.Y - pLT.Y; }
+      public Rect(Rect r) { X = r.X; Y = r.Y; Width = r.Width; Height = r.Height; }
+      public Rect(int x, int y, int w, int h) { X = x; Y = y; Width = w; Height = h; }
+      public Rect(Size size) { X = Y = 0; Width = size.width; Height = size.height; }
+      public Rect(int width, int height) { X = Y = 0; Width = width; Height = height; }
 
       public bool Intersects(Rect rc) {
          return ((X >= rc.X) || (X < rc.Right())) && ((Y >= rc.Y) || (Y < rc.Bottom()));
       }
 
       public bool Contains(Point point) {
-         return (point.x >= Left()) && (point.x < Right()) && (point.y >= Top()) && (point.y < Bottom());
+         return (point.X >= Left()) && (point.X < Right()) && (point.Y >= Top()) && (point.Y < Bottom());
       }
 
       public static bool operator !=(Rect r1, Rect r2) { return (r1.X != r2.X) || (r1.Y != r2.Y) || (r1.Width != r2.Width) || (r1.Height != r2.Height); }
@@ -65,14 +65,14 @@ namespace fmg.common.geom {
       public static Rect AlignRT(this Rect self, int x, int y) { return self.AlignRight(x).AlignTop(y); }
       public static Rect AlignLB(this Rect self, int x, int y) { return self.AlignLeft(x).AlignBottom(y); }
       public static Rect AlignRB(this Rect self, int x, int y) { return self.AlignRight(x).AlignBottom(y); }
-      public static Rect AlignLT(this Rect self, Point p) { return self.AlignLT(p.x, p.y); }
-      public static Rect AlignRT(this Rect self, Point p) { return self.AlignRT(p.x, p.y); }
-      public static Rect AlignLB(this Rect self, Point p) { return self.AlignLB(p.x, p.y); }
-      public static Rect AlignRB(this Rect self, Point p) { return self.AlignRB(p.x, p.y); }
+      public static Rect AlignLT(this Rect self, Point p) { return self.AlignLT(p.X, p.Y); }
+      public static Rect AlignRT(this Rect self, Point p) { return self.AlignRT(p.X, p.Y); }
+      public static Rect AlignLB(this Rect self, Point p) { return self.AlignLB(p.X, p.Y); }
+      public static Rect AlignRB(this Rect self, Point p) { return self.AlignRB(p.X, p.Y); }
 
-      public static Rect AlignCenter(this Rect self, Point c) { return AlignCenter(self, c.x, c.y); }   // совместить центр прямоугольника с заданной точкой центра
+      public static Rect AlignCenter(this Rect self, Point c) { return AlignCenter(self, c.X, c.Y); }   // совместить центр прямоугольника с заданной точкой центра
       public static Rect AlignCenter(this Rect self, Rect r) { return AlignCenter(self, r.Center()); } // совместить центр прямоугольника с центром заданного прямоугольника
-      public static Rect AlignCenter(this Rect self, int x, int y) { var c = self.Center(); return MoveXY(self, x - c.x, y - c.y); } // совместить центр прямоугольника с заданнымм координатами
+      public static Rect AlignCenter(this Rect self, int x, int y) { var c = self.Center(); return MoveXY(self, x - c.X, y - c.Y); } // совместить центр прямоугольника с заданнымм координатами
 
       public static Point PointLT(this Rect self) { return new Point(self.X, self.Y); }
       public static Point PointRT(this Rect self) { return new Point(self.X + self.Width, self.Y); }
@@ -82,10 +82,10 @@ namespace fmg.common.geom {
       public static Rect PointRT(this Rect self, int x, int y) { self.Width = x - self.X; self.Y = y; return self; }
       public static Rect PointLB(this Rect self, int x, int y) { self.X = x; self.Height = y - self.Y; return self; }
       public static Rect PointRB(this Rect self, int x, int y) { self.Width = x - self.X; self.Height = y - self.Y; return self; }
-      public static Rect PointLT(this Rect self, Point pLT) { return PointLT(self, pLT.x, pLT.y); }
-      public static Rect PointRT(this Rect self, Point pRT) { return PointRT(self, pRT.x, pRT.y); }
-      public static Rect PointLB(this Rect self, Point pLB) { return PointLB(self, pLB.x, pLB.y); }
-      public static Rect PointRB(this Rect self, Point pRB) { return PointRB(self, pRB.x, pRB.y); }
+      public static Rect PointLT(this Rect self, Point pLT) { return PointLT(self, pLT.X, pLT.Y); }
+      public static Rect PointRT(this Rect self, Point pRT) { return PointRT(self, pRT.X, pRT.Y); }
+      public static Rect PointLB(this Rect self, Point pLB) { return PointLB(self, pLB.X, pLB.Y); }
+      public static Rect PointRB(this Rect self, Point pRB) { return PointRB(self, pRB.X, pRB.Y); }
 
       public static Point Center(this Rect self) { return new Point(self.X + (self.Width >> 1), self.Y + (self.Height >> 1)); }
       public static Rect Center(this Rect self, Point c) { return AlignCenter(self, c); } // совместить центр прямоугольника с заданной точкой центра

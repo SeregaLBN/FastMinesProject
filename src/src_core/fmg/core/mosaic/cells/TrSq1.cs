@@ -201,36 +201,36 @@ public class TrSq1 : BaseCell {
 
 		switch (direction) {
 		case 0:
-			region.setPoint(0, (int)(oX - m  ), (int)(oY - n));
-			region.setPoint(1, (int)(oX      ), (int)(oY    ));
-			region.setPoint(2, (int)(oX - n  ), (int)(oY + m));
-			region.setPoint(3, (int)(oX - b  ), (int)(oY - k));
+			region.SetPoint(0, (int)(oX - m  ), (int)(oY - n));
+			region.SetPoint(1, (int)(oX      ), (int)(oY    ));
+			region.SetPoint(2, (int)(oX - n  ), (int)(oY + m));
+			region.SetPoint(3, (int)(oX - b  ), (int)(oY - k));
 			break;
 		case 1:                            
-			region.setPoint(1, (int)(oX      ), (int)(oY    ));
-			region.setPoint(2, (int)(oX - m  ), (int)(oY - n));
-			region.setPoint(0, (int)(oX + k  ), (int)(oY - k));
+			region.SetPoint(1, (int)(oX      ), (int)(oY    ));
+			region.SetPoint(2, (int)(oX - m  ), (int)(oY - n));
+			region.SetPoint(0, (int)(oX + k  ), (int)(oY - k));
 			break;
 		case 2:                            
-			region.setPoint(0, (int)(oX + k  ), (int)(oY - k));
-			region.setPoint(1, (int)(oX + n  ), (int)(oY + m));
-			region.setPoint(2, (int)(oX      ), (int)(oY    ));
+			region.SetPoint(0, (int)(oX + k  ), (int)(oY - k));
+			region.SetPoint(1, (int)(oX + n  ), (int)(oY + m));
+			region.SetPoint(2, (int)(oX      ), (int)(oY    ));
 			break;
 		case 3:                            
-			region.setPoint(1, (int)(oX - m  ), (int)(oY + n));
-			region.setPoint(2, (int)(oX - n  ), (int)(oY + m));
-			region.setPoint(0, (int)(oX      ), (int)(oY    ));
+			region.SetPoint(1, (int)(oX - m  ), (int)(oY + n));
+			region.SetPoint(2, (int)(oX - n  ), (int)(oY + m));
+			region.SetPoint(0, (int)(oX      ), (int)(oY    ));
 			break;
 		case 4:                            
-			region.setPoint(0, (int)(oX + n  ), (int)(oY + m));
-			region.setPoint(3, (int)(oX      ), (int)(oY    ));
-			region.setPoint(2, (int)(oX - m  ), (int)(oY + n));
-			region.setPoint(1, (int)(oX + k  ), (int)(oY + b));
+			region.SetPoint(0, (int)(oX + n  ), (int)(oY + m));
+			region.SetPoint(3, (int)(oX      ), (int)(oY    ));
+			region.SetPoint(2, (int)(oX - m  ), (int)(oY + n));
+			region.SetPoint(1, (int)(oX + k  ), (int)(oY + b));
 			break;
 		case 5:                            
-			region.setPoint(0, (int)(oX + n  ), (int)(oY + m));
-			region.setPoint(1, (int)(oX + n+k), (int)(oY + n));
-			region.setPoint(2, (int)(oX + k  ), (int)(oY + b));
+			region.SetPoint(0, (int)(oX + n  ), (int)(oY + m));
+			region.SetPoint(1, (int)(oX + n+k), (int)(oY + n));
+			region.SetPoint(2, (int)(oX + k  ), (int)(oY + b));
 			break;
 		}
 	}
@@ -253,17 +253,17 @@ public class TrSq1 : BaseCell {
 		double ksw2 = k/2+sq2+w/SQRT2;
 		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
 		switch (direction) {
-		case 0:  center.x = oX - b/2;    center.y = oY - k/2;    break;
-		case 1:  center.x = oX + ksw1;   center.y = oY - ksw2;   break;
-		case 2:  center.x = oX + ksw2;   center.y = oY - ksw1;   break;
-		case 3:  center.x = oX + ksw2-n; center.y = oY - ksw2+n; break;
-		case 4:  center.x = oX + k/2;    center.y = oY + b/2;    break;
-		case 5:  center.x = oX + ksw1+n; center.y = oY + ksw2+m; break;
+		case 0:  center.X = oX - b/2;    center.Y = oY - k/2;    break;
+		case 1:  center.X = oX + ksw1;   center.Y = oY - ksw2;   break;
+		case 2:  center.X = oX + ksw2;   center.Y = oY - ksw1;   break;
+		case 3:  center.X = oX + ksw2-n; center.Y = oY - ksw2+n; break;
+		case 4:  center.X = oX + k/2;    center.Y = oY + b/2;    break;
+		case 5:  center.X = oX + ksw1+n; center.Y = oY + ksw2+m; break;
 		}
 
 		Rect square = new Rect();
-		square.X = (int) (center.x - sq2);
-		square.Y = (int) (center.y - sq2);
+		square.X = (int) (center.X - sq2);
+		square.Y = (int) (center.Y - sq2);
 		square.Width =
 		square.Height = (int) sq;
 		return square;

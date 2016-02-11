@@ -179,40 +179,40 @@ public class Rhombus1 : BaseCell {
 
 		switch (direction) {
 		case 0:
-			region.setPoint(0, (int)(oX      ), (int)(oY - h));
-			region.setPoint(1, (int)(oX - c  ), (int)(oY - r));
-			region.setPoint(2, (int)(oX - a-c), (int)(oY - r));
-			region.setPoint(3, (int)(oX - a  ), (int)(oY - h));
+			region.SetPoint(0, (int)(oX      ), (int)(oY - h));
+			region.SetPoint(1, (int)(oX - c  ), (int)(oY - r));
+			region.SetPoint(2, (int)(oX - a-c), (int)(oY - r));
+			region.SetPoint(3, (int)(oX - a  ), (int)(oY - h));
 			break;
 		case 1:
-			region.setPoint(0, (int)(oX      ), (int)(oY - h));
-			region.setPoint(1, (int)(oX + c  ), (int)(oY - r));
-			region.setPoint(2, (int)(oX      ), (int)(oY    ));
-			region.setPoint(3, (int)(oX - c  ), (int)(oY - r));
+			region.SetPoint(0, (int)(oX      ), (int)(oY - h));
+			region.SetPoint(1, (int)(oX + c  ), (int)(oY - r));
+			region.SetPoint(2, (int)(oX      ), (int)(oY    ));
+			region.SetPoint(3, (int)(oX - c  ), (int)(oY - r));
 			break;
 		case 2:
-			region.setPoint(0, (int)(oX + a+c), (int)(oY - r));
-			region.setPoint(1, (int)(oX + a  ), (int)(oY    ));
-			region.setPoint(2, (int)(oX      ), (int)(oY    ));
-			region.setPoint(3, (int)(oX + c  ), (int)(oY - r));
+			region.SetPoint(0, (int)(oX + a+c), (int)(oY - r));
+			region.SetPoint(1, (int)(oX + a  ), (int)(oY    ));
+			region.SetPoint(2, (int)(oX      ), (int)(oY    ));
+			region.SetPoint(3, (int)(oX + c  ), (int)(oY - r));
 			break;
 		case 3:
-			region.setPoint(0, (int)(oX - c  ), (int)(oY - r));
-			region.setPoint(1, (int)(oX      ), (int)(oY    ));
-			region.setPoint(2, (int)(oX - a  ), (int)(oY    ));
-			region.setPoint(3, (int)(oX - a-c), (int)(oY - r));
+			region.SetPoint(0, (int)(oX - c  ), (int)(oY - r));
+			region.SetPoint(1, (int)(oX      ), (int)(oY    ));
+			region.SetPoint(2, (int)(oX - a  ), (int)(oY    ));
+			region.SetPoint(3, (int)(oX - a-c), (int)(oY - r));
 			break;
 		case 4:
-			region.setPoint(0, (int)(oX + a  ), (int)(oY    ));
-			region.setPoint(1, (int)(oX + a+c), (int)(oY + r));
-			region.setPoint(2, (int)(oX + c  ), (int)(oY + r));
-			region.setPoint(3, (int)(oX      ), (int)(oY    ));
+			region.SetPoint(0, (int)(oX + a  ), (int)(oY    ));
+			region.SetPoint(1, (int)(oX + a+c), (int)(oY + r));
+			region.SetPoint(2, (int)(oX + c  ), (int)(oY + r));
+			region.SetPoint(3, (int)(oX      ), (int)(oY    ));
 			break;
 		case 5:
-			region.setPoint(0, (int)(oX + a+c), (int)(oY - r));
-			region.setPoint(1, (int)(oX + a+a), (int)(oY    ));
-			region.setPoint(2, (int)(oX + a+c), (int)(oY + r));
-			region.setPoint(3, (int)(oX + a  ), (int)(oY    ));
+			region.SetPoint(0, (int)(oX + a+c), (int)(oY - r));
+			region.SetPoint(1, (int)(oX + a+a), (int)(oY    ));
+			region.SetPoint(2, (int)(oX + a+c), (int)(oY + r));
+			region.SetPoint(3, (int)(oX + a  ), (int)(oY    ));
 			break;
 		}
 	}
@@ -232,17 +232,17 @@ public class Rhombus1 : BaseCell {
 
 		PointDouble center = new PointDouble(); // координата центра квадрата
 		switch (direction) {
-		case 0: center.x = oX - c*1.5; center.y = oY - r*1.5; break;
-		case 1: center.x = oX;         center.y = oY - r;     break;
-		case 2: center.x = oX + c*1.5; center.y = oY - r*0.5; break;
-		case 3: center.x = oX - c*1.5; center.y = oY - r*0.5; break;
-		case 4: center.x = oX + c*1.5; center.y = oY + r*0.5; break;
-		case 5: center.x = oX + a+c;   center.y = oY;         break;
+		case 0: center.X = oX - c*1.5; center.Y = oY - r*1.5; break;
+		case 1: center.X = oX;         center.Y = oY - r;     break;
+		case 2: center.X = oX + c*1.5; center.Y = oY - r*0.5; break;
+		case 3: center.X = oX - c*1.5; center.Y = oY - r*0.5; break;
+		case 4: center.X = oX + c*1.5; center.Y = oY + r*0.5; break;
+		case 5: center.X = oX + a+c;   center.Y = oY;         break;
 		}
 
 		Rect square = new Rect();
-		square.X = (int) (center.x - sq2);
-		square.Y = (int) (center.y - sq2);
+		square.X = (int) (center.X - sq2);
+		square.Y = (int) (center.Y - sq2);
 		square.Width =
 		square.Height = (int) sq;
 		return square;

@@ -92,19 +92,19 @@ namespace fmg.uwp.res.img {
                var reg = cellNew.getRegion();
                var newReg = reg.Points
                                .Select(p => {
-                                          p.x -= centerNew.x;
-                                          p.y -= centerNew.y;
-                                          return new PointDouble(p.x, p.y);
+                                          p.X -= centerNew.X;
+                                          p.Y -= centerNew.Y;
+                                          return new PointDouble(p.X, p.Y);
                                        })
                                .Rotate((((coord.x+coord.y) & 1) == 0) ? +angle2 : -angle2)
                                .Select(p => {
-                                          p.x += center.x;
-                                          p.y += center.y;
+                                          p.X += center.X;
+                                          p.Y += center.Y;
                                           return p;
                                        });
                var i = 0;
                foreach (var p in newReg) {
-                  reg.setPoint(i++, (int)p.x, (int)p.y);
+                  reg.SetPoint(i++, (int)p.X, (int)p.Y);
                }
 
                // draw rotated cell

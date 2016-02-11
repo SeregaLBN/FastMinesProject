@@ -5,18 +5,18 @@ using System.Text;
 
 namespace fmg.common.geom {
 
-public class Region {
-   private readonly Point[] _points;
+public class RegionDouble {
+   private readonly PointDouble[] _points;
 
-   public Region(int size) {
-      _points = new Point[size];
+   public RegionDouble(int size) {
+      _points = new PointDouble[size];
       for (var i = 0; i < size; i++)
-         _points[i] = new Point();
+         _points[i] = new PointDouble();
    }
 
-   public IEnumerable<Point> Points => _points;
+   public IEnumerable<PointDouble> Points => _points;
 
-   public Point GetPoint(int index) {
+   public PointDouble GetPoint(int index) {
       return _points[index];
    }
 
@@ -24,32 +24,32 @@ public class Region {
       _points[index].X = x;
       _points[index].Y = y;
    }
-   public void SetPoint(int index, Point p) {
+   public void SetPoint(int index, PointDouble p) {
       _points[index] = p;
    }
 
    public int CountPoints => _points.Length;
 
-   public Rect GetBounds() {
-      int minX = _points[0].X, maxX = _points[0].X;
-      int minY = _points[0].Y, maxY = _points[0].Y;
+   public RectDouble GetBounds() {
+      double minX = _points[0].X, maxX = _points[0].X;
+      double minY = _points[0].Y, maxY = _points[0].Y;
       for (var i = 1; i < _points.Length; i++) {
          minX = Math.Min(minX, _points[i].X);
          maxX = Math.Max(maxX, _points[i].X);
          minY = Math.Min(minY, _points[i].Y);
          maxY = Math.Max(maxY, _points[i].Y);
       }
-      return new Rect(minX, minY, maxX - minX, maxY - minY);
+      return new RectDouble(minX, minY, maxX - minX, maxY - minY);
    }
 
    /// <summary> PointInPolygon </summary>
-   public bool Contains(Point point) {
+   public bool Contains(PointDouble point) {
       double x = point.X + 0.01;
       double y = point.Y + 0.01;
       var count = 0;
       for (var i = 0; i < _points.Length; i++) {
          var j = (i + 1)%_points.Length;
-         if (_points[i].Y == _points[j].Y)
+         if (_points[i].Y.HasMinDiff(_points[j].Y))
             continue;
          if (_points[i].Y > y && _points[j].Y > y)
             continue;
@@ -73,7 +73,7 @@ public class Region {
          return true;
       if (ReferenceEquals(null, other))
          return false;
-      var o = other as Region;
+      var o = other as RegionDouble;
       if (o == null)
          return false;
       if (_points.Length != o._points.Length)
@@ -85,14 +85,14 @@ public class Region {
       return _points.Aggregate(0, (current, p) => current^p.GetHashCode());
    }
 
-   public override String ToString() {
+   public override string ToString() {
       var sb = new StringBuilder();
       //sb.Append(super.ToString());
       sb.Append('{');
       for (var i = 0; i < _points.Length; i++) {
          var p = _points[i];
          //sb.Append(i).Append('=');
-         sb.Append(p.ToString());
+         sb.Append(p);
          if (i != _points.Length - 1)
             sb.Append(", ");
       }
@@ -101,19 +101,19 @@ public class Region {
    }
 }
 
-public static class RegionExt {
+public static class RegionDoubleExt {
 
-   public static IEnumerable<int> RegionAsXyxyxySequence(this Region region, Bound padding, bool firstToLast) {
+   public static IEnumerable<int> RegionDoubleAsXyxyxySequence(this RegionDouble region, Bound padding, bool firstToLast) {
       var res = region.Points.Select(p => new[] { p.X + padding.Left, p.Y + padding.Top }).SelectMany(x => x);
       if (firstToLast) {
          // Add the first point also at the end of the array if the line should be closed.
          var p0 = region.GetPoint(0);
          res = res.Concat(new[] { p0.X + padding.Left, p0.Y + padding.Top });
       }
-      return res;
+      return res.Select(x => (int)x);
    }
 
-   public static IEnumerable<int> PointsAsXyxyxySequence(this IEnumerable<PointDouble> coords, bool firstToLast) {
+   public static IEnumerable<int> PointsDoubleAsXyxyxySequence(this IEnumerable<PointDouble> coords, bool firstToLast) {
       IEnumerable<double> res;
       if (firstToLast) {
          var points = coords as IList<PointDouble> ?? coords.ToList();

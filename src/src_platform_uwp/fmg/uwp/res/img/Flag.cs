@@ -35,7 +35,7 @@ namespace fmg.uwp.res.img {
             };
 
             //bmp.DrawLineAa((int) p[0].x, (int) p[0].y, (int) p[2].x, (int) p[2].y, Color.BLACK.ToWinColor());
-            bmp.DrawLineAa((int) p[0].x, (int) p[0].y, (int) p[1].x, (int) p[1].y, Color.Black.ToWinColor());
+            bmp.DrawLineAa((int) p[0].X, (int) p[0].Y, (int) p[1].X, (int) p[1].Y, Color.Black.ToWinColor());
 
             const float tension = 0.5f;
             var clrCurve = Color.Red.ToWinColor();
@@ -67,7 +67,7 @@ namespace fmg.uwp.res.img {
                   p[4]
                }.PointsAsXyxyxySequence(false).ToArray(), tension, clrCurve);
    #endif
-            bmp.DrawLineAa((int) p[1].x, (int) p[1].y, (int) p[2].x, (int) p[2].y, clrCurve);
+            bmp.DrawLineAa((int) p[1].X, (int) p[1].Y, (int) p[2].X, (int) p[2].Y, clrCurve);
             _bmp = bmp;
             return _bmp;
 #else

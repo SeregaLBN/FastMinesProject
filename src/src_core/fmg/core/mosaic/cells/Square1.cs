@@ -79,8 +79,8 @@ public class Square1 : BaseCell {
 	}
 
 	public override bool PointInRegion(Point point) {
-		if ((point.x < region.getPoint(3).x) || (point.x >= region.getPoint(0).x) ||
-			(point.y < region.getPoint(0).y) || (point.y >= region.getPoint(2).y))
+		if ((point.X < region.GetPoint(3).X) || (point.X >= region.GetPoint(0).X) ||
+			(point.Y < region.GetPoint(0).Y) || (point.Y >= region.GetPoint(2).Y))
 			return false;
 		return true;
 	}
@@ -94,10 +94,10 @@ public class Square1 : BaseCell {
       int y1 = (int)(a * (coord.y + 0));
       int y2 = (int)(a * (coord.y + 1));
 
-      region.setPoint(0, x2, y1);
-      region.setPoint(1, x2, y2);
-      region.setPoint(2, x1, y2);
-      region.setPoint(3, x1, y1);
+      region.SetPoint(0, x2, y1);
+      region.SetPoint(1, x2, y2);
+      region.SetPoint(2, x1, y2);
+      region.SetPoint(3, x1, y1);
 	}
 
 	public override Rect getRcInner(int borderWidth) {
@@ -106,8 +106,8 @@ public class Square1 : BaseCell {
 		double w = borderWidth/2.0;
 
 		Rect square = new Rect();
-		square.X = (int) (region.getPoint(3).x + w);
-		square.Y = (int) (region.getPoint(3).y + w);
+		square.X = (int) (region.GetPoint(3).X + w);
+		square.Y = (int) (region.GetPoint(3).Y + w);
 		square.Width = (int)sq;
 		square.Height = (int)sq;
 		return square;

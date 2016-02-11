@@ -62,7 +62,7 @@ namespace fmg.uwp.draw.mosaic.xaml
             if (d)
                poly.Points.Clear();
             for (var p = 0; p < cnt; p++) {
-               var point = cell.getRegion().getPoint(p);
+               var point = cell.getRegion().GetPoint(p);
                point.Move(GContext.Padding.Left, GContext.Padding.Top);
                if (d)
                   poly.Points.Add(point.ToWinPoint());

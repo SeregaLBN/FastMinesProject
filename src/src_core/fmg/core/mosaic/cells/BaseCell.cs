@@ -118,7 +118,7 @@ public abstract class BaseCell {
    public abstract Rect getRcInner(int borderWidth);
    /// <summary>вернёт прямоугольник в который вписана фигура ячейки</summary>
    public Rect getRcOuter() {
-      Rect rcOuter = region.getBounds();
+      Rect rcOuter = region.GetBounds();
       rcOuter.Height++; rcOuter.Width++; // чтобы при repaint'е захватило и крайние границы
       return rcOuter;
    }

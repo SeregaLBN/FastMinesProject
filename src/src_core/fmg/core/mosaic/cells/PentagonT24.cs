@@ -127,32 +127,32 @@ public class PentagonT24 : BaseCell {
 		double oY = a*((coord.y>>1)<<1); // offset Y
 		switch (direction) {
 		case 0:
-			region.setPoint(0, (int)(oX +       a), (int)(oY + b      ));
-			region.setPoint(1, (int)(oX + c +   a), (int)(oY + c +   a));
-			region.setPoint(2, (int)(oX + b      ), (int)(oY + b +   a));
-			region.setPoint(3, (int)(oX          ), (int)(oY +       a));
-			region.setPoint(4, (int)(oX + c      ), (int)(oY + c      ));
+			region.SetPoint(0, (int)(oX +       a), (int)(oY + b      ));
+			region.SetPoint(1, (int)(oX + c +   a), (int)(oY + c +   a));
+			region.SetPoint(2, (int)(oX + b      ), (int)(oY + b +   a));
+			region.SetPoint(3, (int)(oX          ), (int)(oY +       a));
+			region.SetPoint(4, (int)(oX + c      ), (int)(oY + c      ));
 			break;
 		case 1:
-			region.setPoint(0, (int)(oX + c + 2*a), (int)(oY + c      ));
-			region.setPoint(1, (int)(oX +     2*a), (int)(oY +       a));
-			region.setPoint(2, (int)(oX + c +   a), (int)(oY + c +   a));
-			region.setPoint(3, (int)(oX +       a), (int)(oY + b      ));
-			region.setPoint(4, (int)(oX + b +   a), (int)(oY          ));
+			region.SetPoint(0, (int)(oX + c + 2*a), (int)(oY + c      ));
+			region.SetPoint(1, (int)(oX +     2*a), (int)(oY +       a));
+			region.SetPoint(2, (int)(oX + c +   a), (int)(oY + c +   a));
+			region.SetPoint(3, (int)(oX +       a), (int)(oY + b      ));
+			region.SetPoint(4, (int)(oX + b +   a), (int)(oY          ));
 			break;
 		case 2:
-			region.setPoint(0, (int)(oX + c +   a), (int)(oY + c +   a));
-			region.setPoint(1, (int)(oX + b +   a), (int)(oY +     2*a));
-			region.setPoint(2, (int)(oX +       a), (int)(oY + b + 2*a));
-			region.setPoint(3, (int)(oX + c      ), (int)(oY + c + 2*a));
-			region.setPoint(4, (int)(oX + b      ), (int)(oY + b +   a));
+			region.SetPoint(0, (int)(oX + c +   a), (int)(oY + c +   a));
+			region.SetPoint(1, (int)(oX + b +   a), (int)(oY +     2*a));
+			region.SetPoint(2, (int)(oX +       a), (int)(oY + b + 2*a));
+			region.SetPoint(3, (int)(oX + c      ), (int)(oY + c + 2*a));
+			region.SetPoint(4, (int)(oX + b      ), (int)(oY + b +   a));
 			break;
 		case 3:
-			region.setPoint(0, (int)(oX +     2*a), (int)(oY +       a));
-			region.setPoint(1, (int)(oX + b + 2*a), (int)(oY + b +   a));
-			region.setPoint(2, (int)(oX + c + 2*a), (int)(oY + c + 2*a));
-			region.setPoint(3, (int)(oX + b +   a), (int)(oY +     2*a));
-			region.setPoint(4, (int)(oX + c +   a), (int)(oY + c +   a));
+			region.SetPoint(0, (int)(oX +     2*a), (int)(oY +       a));
+			region.SetPoint(1, (int)(oX + b + 2*a), (int)(oY + b +   a));
+			region.SetPoint(2, (int)(oX + c + 2*a), (int)(oY + c + 2*a));
+			region.SetPoint(3, (int)(oX + b +   a), (int)(oY +     2*a));
+			region.SetPoint(4, (int)(oX + c +   a), (int)(oY + c +   a));
 			break;
 		}
 	}
@@ -166,20 +166,20 @@ public class PentagonT24 : BaseCell {
 		Rect square = new Rect();
 		switch (direction) {
 		case 0:
-			square.X = (int) (region.getPoint(4).x+w2);
-			square.Y = (int) (region.getPoint(1).y-w2 - sq);
+			square.X = (int) (region.GetPoint(4).X+w2);
+			square.Y = (int) (region.GetPoint(1).Y-w2 - sq);
 			break;
 		case 1:
-			square.X = (int) (region.getPoint(2).x+w2);
-			square.Y = (int) (region.getPoint(0).y+w2);
+			square.X = (int) (region.GetPoint(2).X+w2);
+			square.Y = (int) (region.GetPoint(0).Y+w2);
 			break;
 		case 2:
-			square.X = (int) (region.getPoint(0).x-w2 - sq);
-			square.Y = (int) (region.getPoint(3).y-w2 - sq);
+			square.X = (int) (region.GetPoint(0).X-w2 - sq);
+			square.Y = (int) (region.GetPoint(3).Y-w2 - sq);
 			break;
 		case 3:
-			square.X = (int) (region.getPoint(2).x-w2 - sq);
-			square.Y = (int) (region.getPoint(4).y+w2);
+			square.X = (int) (region.GetPoint(2).X-w2 - sq);
+			square.Y = (int) (region.GetPoint(4).Y+w2);
 			break;
 		}
 		square.Width = (int)sq;

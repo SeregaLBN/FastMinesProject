@@ -118,24 +118,24 @@ public class Triangle1 : BaseCell {
 
 		switch (direction) {
 		case 0:
-			region.setPoint(0, (int)(oX +   b), (int)(oY    ));
-			region.setPoint(1, (int)(oX + a  ), (int)(oY + h));
-			region.setPoint(2, (int)(oX      ), (int)(oY + h));
+			region.SetPoint(0, (int)(oX +   b), (int)(oY    ));
+			region.SetPoint(1, (int)(oX + a  ), (int)(oY + h));
+			region.SetPoint(2, (int)(oX      ), (int)(oY + h));
 			break;
 		case 1:
-			region.setPoint(0, (int)(oX + a+b), (int)(oY    ));
-			region.setPoint(1, (int)(oX + a  ), (int)(oY + h));
-			region.setPoint(2, (int)(oX +   b), (int)(oY    ));
+			region.SetPoint(0, (int)(oX + a+b), (int)(oY    ));
+			region.SetPoint(1, (int)(oX + a  ), (int)(oY + h));
+			region.SetPoint(2, (int)(oX +   b), (int)(oY    ));
 			break;
 		case 2:
-			region.setPoint(0, (int)(oX + a  ), (int)(oY    ));
-			region.setPoint(1, (int)(oX +   b), (int)(oY + h));
-			region.setPoint(2, (int)(oX      ), (int)(oY    ));
+			region.SetPoint(0, (int)(oX + a  ), (int)(oY    ));
+			region.SetPoint(1, (int)(oX +   b), (int)(oY + h));
+			region.SetPoint(2, (int)(oX      ), (int)(oY    ));
 			break;
 		case 3:
-			region.setPoint(0, (int)(oX + a  ), (int)(oY    ));
-			region.setPoint(1, (int)(oX + a+b), (int)(oY + h));
-			region.setPoint(2, (int)(oX +   b), (int)(oY + h));
+			region.SetPoint(0, (int)(oX + a  ), (int)(oY    ));
+			region.SetPoint(1, (int)(oX + a+b), (int)(oY + h));
+			region.SetPoint(2, (int)(oX +   b), (int)(oY + h));
 			break;
 		}
 	}
@@ -149,18 +149,18 @@ public class Triangle1 : BaseCell {
 		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
 		switch (direction) {
 		case 0: case 3:
-			center.x = region.getPoint(2).x + b;
-			center.y = region.getPoint(2).y - sq/2 - w;
+			center.X = region.GetPoint(2).X + b;
+			center.Y = region.GetPoint(2).Y - sq/2 - w;
 			break;
 		case 1: case 2:
-			center.x = region.getPoint(2).x + b;
-			center.y = region.getPoint(2).y + sq/2 + w;
+			center.X = region.GetPoint(2).X + b;
+			center.Y = region.GetPoint(2).Y + sq/2 + w;
 			break;
 		}
 
 		Rect square = new Rect();
-		square.X = (int) (center.x - sq/2);
-		square.Y = (int) (center.y - sq/2);
+		square.X = (int) (center.X - sq/2);
+		square.Y = (int) (center.Y - sq/2);
 		square.Width =
 		square.Height = (int) sq;
 		return square;

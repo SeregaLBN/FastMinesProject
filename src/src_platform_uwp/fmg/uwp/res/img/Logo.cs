@@ -77,10 +77,10 @@ namespace fmg.uwp.res.img {
                // paint owner rays
                for (var i=0; i<8; i++) {
                   bmp.FillQuad(
-                     (int) rays[i].x, (int) rays[i].y,
-                     (int) oct[i].x, (int) oct[i].y,
-                     (int) inn[i].x, (int) inn[i].y,
-                     (int) oct[(i+5)%8].x, (int) oct[(i+5)%8].y,
+                     (int) rays[i].X, (int) rays[i].Y,
+                     (int) oct[i].X, (int) oct[i].Y,
+                     (int) inn[i].X, (int) inn[i].Y,
+                     (int) oct[(i+5)%8].X, (int) oct[(i+5)%8].Y,
                      Palette[i].Darker().ToWinColor()
                   );
                }
@@ -89,14 +89,14 @@ namespace fmg.uwp.res.img {
                for (var i=0; i<8; i++) {
                   var p1 = rays[(i + 7)%8];
                   var p2 = rays[i];
-                  bmp.DrawLineAa((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y, Palette[i].ToWinColor());
+                  bmp.DrawLineAa((int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y, Palette[i].ToWinColor());
                }
 
                // paint inner gradient triangles
                for (var i=0; i<8; i++) {
                   bmp.FillTriangle(
-                     (int) inn[(i + 0)%8].x, (int) inn[(i + 0)%8].y,
-                     (int) inn[(i + 3)%8].x, (int) inn[(i + 3)%8].y,
+                     (int) inn[(i + 0)%8].X, (int) inn[(i + 0)%8].Y,
+                     (int) inn[(i + 3)%8].X, (int) inn[(i + 3)%8].Y,
                      size.width/2, size.height/2,
                      ((i & 1) == 0)
                         ? Palette[(i + 6)%8].Brighter().ToWinColor()

@@ -54,13 +54,13 @@ namespace fmg.uwp.draw.mosaic.bmp
             var v = cell.Attr.getVertexNumber(cell.getDirection());
             var borderWidth = GContext.PenBorder.Width;
             for (var i=0; i < v; i++) {
-               var p1 = cell.getRegion().getPoint(i);
+               var p1 = cell.getRegion().GetPoint(i);
                p1.Move(GContext.Padding.Left, GContext.Padding.Top);
-               var p2 = (i != (v - 1)) ? cell.getRegion().getPoint(i + 1) : cell.getRegion().getPoint(0);
+               var p2 = (i != (v - 1)) ? cell.getRegion().GetPoint(i + 1) : cell.getRegion().GetPoint(0);
                p2.Move(GContext.Padding.Left, GContext.Padding.Top);
                if (i == s)
                   color = (down ? GContext.PenBorder.ColorShadow : GContext.PenBorder.ColorLight).ToWinColor();
-               paint.Bmp.DrawLineAa(p1.x, p1.y, p2.x, p2.y, color, borderWidth);
+               paint.Bmp.DrawLineAa(p1.X, p1.Y, p2.X, p2.Y, color, borderWidth);
             }
          }
       }

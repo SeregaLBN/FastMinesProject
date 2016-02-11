@@ -30,8 +30,8 @@ namespace fmg.uwp.res.img {
          var offsetX = Width / 2.0;
          var offsetY = Height / 2.0;
          return points.Select(p => {
-            p.x += offsetX;
-            p.y += offsetY;
+            p.X += offsetX;
+            p.Y += offsetY;
             return p;
          });
       }

@@ -1883,69 +1883,69 @@ public class PenrousePeriodic1 : BaseCell {
 		case  0: case 12: case  15: case  26: case 31:
 		case 37: case 44: case  58: case  63: case 68:
 		case 84: case 91: case 97: case 104: case 119: case 124:
-			region.setPoint(0, (int)(left + k), (int)(top + c));
-			region.setPoint(1, (int)(left + g), (int)(top + e));
-			region.setPoint(2, (int)(left    ), (int)(top + h));
-			region.setPoint(3, (int)(left + z), (int)(top    ));
+			region.SetPoint(0, (int)(left + k), (int)(top + c));
+			region.SetPoint(1, (int)(left + g), (int)(top + e));
+			region.SetPoint(2, (int)(left    ), (int)(top + h));
+			region.SetPoint(3, (int)(left + z), (int)(top    ));
 			break;
 		case 1: case 4: case 27: case 33: case 48: case 74: case 90: case 114:
-			region.setPoint(0, (int)(left + k), (int)(top    ));
-			region.setPoint(1, (int)(left + g), (int)(top + h));
-			region.setPoint(2, (int)(left    ), (int)(top + e));
-			region.setPoint(3, (int)(left + z), (int)(top + c));
+			region.SetPoint(0, (int)(left + k), (int)(top    ));
+			region.SetPoint(1, (int)(left + g), (int)(top + h));
+			region.SetPoint(2, (int)(left    ), (int)(top + e));
+			region.SetPoint(3, (int)(left + z), (int)(top + c));
 			break;
 		case  2: case  5: case 22: case 28: case  35: case  43: case  49: case 62:
 		case 73: case 78: case 85: case 98: case 101: case 105: case 120: case 125:
-			region.setPoint(0, (int)(left+2*z), (int)(top + h));
-			region.setPoint(1, (int)(left + z), (int)(top+2*h));
-			region.setPoint(2, (int)(left    ), (int)(top + h));
-			region.setPoint(3, (int)(left + z), (int)(top    ));
+			region.SetPoint(0, (int)(left+2*z), (int)(top + h));
+			region.SetPoint(1, (int)(left + z), (int)(top+2*h));
+			region.SetPoint(2, (int)(left    ), (int)(top + h));
+			region.SetPoint(3, (int)(left + z), (int)(top    ));
 			break;
 		case 3: case 6: case 29: case 34: case 50: case 77: case 100: case 107:
-			region.setPoint(0, (int)(left + k), (int)(top + e));
-			region.setPoint(1, (int)(left + z), (int)(top + h));
-			region.setPoint(2, (int)(left    ), (int)(top    ));
-			region.setPoint(3, (int)(left + g), (int)(top + c));
+			region.SetPoint(0, (int)(left + k), (int)(top + e));
+			region.SetPoint(1, (int)(left + z), (int)(top + h));
+			region.SetPoint(2, (int)(left    ), (int)(top    ));
+			region.SetPoint(3, (int)(left + g), (int)(top + c));
 			break;
 		case  7: case 10: case 14: case 18: case  30: case  36: case  42: case  57:
 		case 65: case 76: case 79: case 81: case 102: case 106: case 117: case 121:
-			region.setPoint(0, (int)(left + k), (int)(top + h));
-			region.setPoint(1, (int)(left + z), (int)(top + e));
-			region.setPoint(2, (int)(left    ), (int)(top + c));
-			region.setPoint(3, (int)(left + g), (int)(top   ));
+			region.SetPoint(0, (int)(left + k), (int)(top + h));
+			region.SetPoint(1, (int)(left + z), (int)(top + e));
+			region.SetPoint(2, (int)(left    ), (int)(top + c));
+			region.SetPoint(3, (int)(left + g), (int)(top   ));
 			break;
 		case  8: case 20: case 32: case  55: case  60: case  75:
 		case 80: case 83: case 87: case 103: case 118: case 123:
-			region.setPoint(0, (int)(left+2*g), (int)(top + c));
-			region.setPoint(1, (int)(left + g), (int)(top+2*c));
-			region.setPoint(2, (int)(left    ), (int)(top + c));
-			region.setPoint(3, (int)(left + g), (int)(top    ));
+			region.SetPoint(0, (int)(left+2*g), (int)(top + c));
+			region.SetPoint(1, (int)(left + g), (int)(top+2*c));
+			region.SetPoint(2, (int)(left    ), (int)(top + c));
+			region.SetPoint(3, (int)(left + g), (int)(top    ));
 			break;
 		case  9: case 11: case 24: case 39: case 46: case  51: case  61: case 64:
 		case 66: case 72: case 93: case 96: case 99: case 112: case 122:
-			region.setPoint(0, (int)(left + g), (int)(top    ));
-			region.setPoint(1, (int)(left + g), (int)(top + a));
-			region.setPoint(2, (int)(left    ), (int)(top+a+c));
-			region.setPoint(3, (int)(left    ), (int)(top + c));
+			region.SetPoint(0, (int)(left + g), (int)(top    ));
+			region.SetPoint(1, (int)(left + g), (int)(top + a));
+			region.SetPoint(2, (int)(left    ), (int)(top+a+c));
+			region.SetPoint(3, (int)(left    ), (int)(top + c));
 			break;
 		case 13: case 16: case 38: case 53: case 59: case 71: case 88: case 95: case 110: case 115:
-			region.setPoint(0, (int)(left + z), (int)(top    ));
-			region.setPoint(1, (int)(left + z), (int)(top + a));
-			region.setPoint(2, (int)(left    ), (int)(top+a+h));
-			region.setPoint(3, (int)(left    ), (int)(top + h));
+			region.SetPoint(0, (int)(left + z), (int)(top    ));
+			region.SetPoint(1, (int)(left + z), (int)(top + a));
+			region.SetPoint(2, (int)(left    ), (int)(top+a+h));
+			region.SetPoint(3, (int)(left    ), (int)(top + h));
 			break;
 		case 17: case 21: case 25: case 40: case  47: case  52: case  54: case 67:
 		case 69: case 86: case 89: case 92: case 109: case 111: case 116:
-			region.setPoint(0, (int)(left + g), (int)(top + c));
-			region.setPoint(1, (int)(left + g), (int)(top+c+a));
-			region.setPoint(2, (int)(left    ), (int)(top + a));
-			region.setPoint(3, (int)(left    ), (int)(top    ));
+			region.SetPoint(0, (int)(left + g), (int)(top + c));
+			region.SetPoint(1, (int)(left + g), (int)(top+c+a));
+			region.SetPoint(2, (int)(left    ), (int)(top + a));
+			region.SetPoint(3, (int)(left    ), (int)(top    ));
 			break;
 		case 19: case 23: case 41: case 45: case 56: case 70: case 82: case 94: case 108: case 113: 
-			region.setPoint(0, (int)(left + z), (int)(top + h));
-			region.setPoint(1, (int)(left + z), (int)(top+h+a));
-			region.setPoint(2, (int)(left    ), (int)(top + a));
-			region.setPoint(3, (int)(left    ), (int)(top    ));
+			region.SetPoint(0, (int)(left + z), (int)(top + h));
+			region.SetPoint(1, (int)(left + z), (int)(top+h+a));
+			region.SetPoint(2, (int)(left    ), (int)(top + a));
+			region.SetPoint(3, (int)(left    ), (int)(top    ));
 			break;
 		default:
 			throw new Exception("Забыл case #" + direction);
@@ -1960,7 +1960,7 @@ public class PenrousePeriodic1 : BaseCell {
 		double sq2 = sq/2;
 
 		PointDouble center = new PointDouble(); // координата центра квадрата
-		center.x = (region.getPoint(0).x+region.getPoint(2).x) / 2.0;
+		center.X = (region.GetPoint(0).X+region.GetPoint(2).X) / 2.0;
 
 		switch (direction) {
 		case  0: case 12: case 15: case  26: case  31:
@@ -1975,7 +1975,7 @@ public class PenrousePeriodic1 : BaseCell {
 		case 17: case 21: case 25: case  40: case  47: case  52: case  54: case  67:
 		case 69: case 86: case 89: case  92: case 109: case 111: case 116:
 		case 19: case 23: case 41: case  45: case  56: case  70: case  82: case  94: case 108: case 113: 
-			center.y = (region.getPoint(3).y+region.getPoint(1).y) / 2.0;
+			center.Y = (region.GetPoint(3).Y+region.GetPoint(1).Y) / 2.0;
 			break;
 
 		case  1: case  4: case 27: case 33: case  48: case  74: case  90: case 114:
@@ -1983,15 +1983,15 @@ public class PenrousePeriodic1 : BaseCell {
 		case  9: case 11: case 24: case 39: case  46: case  51: case  61: case  64:
 		case 66: case 72: case 93: case 96: case  99: case 112: case 122:
 		case 13: case 16: case 38: case 53: case  59: case  71: case  88: case  95: case 110: case 115:
-			center.y = (region.getPoint(0).y+region.getPoint(2).y) / 2.0;
+			center.Y = (region.GetPoint(0).Y+region.GetPoint(2).Y) / 2.0;
 			break;
 		default:
 			throw new Exception("Забыл case #" + direction);
 		}
 
 		Rect square = new Rect();
-		square.X = (int) (center.x - sq2);
-		square.Y = (int) (center.y - sq2);
+		square.X = (int) (center.X - sq2);
+		square.Y = (int) (center.Y - sq2);
 		square.Width =
 		square.Height = (int) sq;
 		return square;

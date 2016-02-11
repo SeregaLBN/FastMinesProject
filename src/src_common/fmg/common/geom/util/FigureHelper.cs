@@ -69,7 +69,7 @@ namespace fmg.common.geom.util {
          angle = angle.ToRadian();
          var cos = Math.Cos(angle);
          var sin = Math.Sin(angle);
-         return coords.Select(i => new PointDouble(i.x*cos - i.y*sin, i.x*sin + i.y*cos));
+         return coords.Select(i => new PointDouble(i.X*cos - i.Y*sin, i.X*sin + i.Y*cos));
       }
 
    }

@@ -38,11 +38,11 @@ namespace fmg.uwp.res.img {
 
             // adding offset
             var offset = FigureHelper.GetPointOnCircle(sq/3, angle + st*starAngle);
-            offset.x += Width / 2.0;
-            offset.y += Height / 2.0;
+            offset.X += Width / 2.0;
+            offset.Y += Height / 2.0;
             return points.Select(p => {
-               p.x += offset.x;
-               p.y += offset.y;
+               p.X += offset.X;
+               p.Y += offset.Y;
                return p;
             });
          });

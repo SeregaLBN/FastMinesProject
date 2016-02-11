@@ -244,17 +244,17 @@ public class PentagonT10 : BaseCell {
 
 		PointDouble o = new PointDouble(0,0);
 		switch (direction) {
-		case 0: case 6: case  8: case 9: case 10:          o.x = a*2+a*6*((coord.x+0)/2); break;
-		case 1: case 2: case  3: case 4: case 5: case 7:   o.x = a*5+a*6*((coord.x+0)/2); break;
-		case 11:                                           o.x = a*2+a*6*((coord.x+1)/2); break;
+		case 0: case 6: case  8: case 9: case 10:          o.X = a*2+a*6*((coord.x+0)/2); break;
+		case 1: case 2: case  3: case 4: case 5: case 7:   o.X = a*5+a*6*((coord.x+0)/2); break;
+		case 11:                                           o.X = a*2+a*6*((coord.x+1)/2); break;
 		}
 		switch (direction) {
-		case 0:                                            o.y = a*5 +a*14*(coord.y/6);   break;
-		case 1:                                            o.y =      a*14*(coord.y/6);   break;
-		case 2: case 3: case  4: case 5:                   o.y = a*6 +a*14*(coord.y/6);   break;
-		case 6:                                            o.y = a*7 +a*14*(coord.y/6);   break;
-		case 7:                                            o.y = a*12+a*14*(coord.y/6);   break;
-		case 8: case 9: case 10: case 11:                  o.y = a*13+a*14*(coord.y/6);   break;
+		case 0:                                            o.Y = a*5 +a*14*(coord.y/6);   break;
+		case 1:                                            o.Y =      a*14*(coord.y/6);   break;
+		case 2: case 3: case  4: case 5:                   o.Y = a*6 +a*14*(coord.y/6);   break;
+		case 6:                                            o.Y = a*7 +a*14*(coord.y/6);   break;
+		case 7:                                            o.Y = a*12+a*14*(coord.y/6);   break;
+		case 8: case 9: case 10: case 11:                  o.Y = a*13+a*14*(coord.y/6);   break;
 		}
 		return o;
 	}
@@ -267,32 +267,32 @@ public class PentagonT10 : BaseCell {
 
 		switch (direction) {
 		case 0: case 3: case 7: case 8:
-			region.setPoint(0, (int)(o.x + a  ), (int)(o.y - a*3));
-			region.setPoint(1, (int)(o.x + a*2), (int)(o.y - a*2));
-			region.setPoint(2, (int)(o.x      ), (int)(o.y      ));
-			region.setPoint(3, (int)(o.x - a*2), (int)(o.y - a*2));
-			region.setPoint(4, (int)(o.x - a  ), (int)(o.y - a*3));
+			region.SetPoint(0, (int)(o.X + a  ), (int)(o.Y - a*3));
+			region.SetPoint(1, (int)(o.X + a*2), (int)(o.Y - a*2));
+			region.SetPoint(2, (int)(o.X      ), (int)(o.Y      ));
+			region.SetPoint(3, (int)(o.X - a*2), (int)(o.Y - a*2));
+			region.SetPoint(4, (int)(o.X - a  ), (int)(o.Y - a*3));
 			break;
 		case 1: case 4: case 6: case 10:
-			region.setPoint(0, (int)(o.x      ), (int)(o.y      ));
-			region.setPoint(1, (int)(o.x + a*2), (int)(o.y + a*2));
-			region.setPoint(2, (int)(o.x + a  ), (int)(o.y + a*3));
-			region.setPoint(3, (int)(o.x - a  ), (int)(o.y + a*3));
-			region.setPoint(4, (int)(o.x - a*2), (int)(o.y + a*2));
+			region.SetPoint(0, (int)(o.X      ), (int)(o.Y      ));
+			region.SetPoint(1, (int)(o.X + a*2), (int)(o.Y + a*2));
+			region.SetPoint(2, (int)(o.X + a  ), (int)(o.Y + a*3));
+			region.SetPoint(3, (int)(o.X - a  ), (int)(o.Y + a*3));
+			region.SetPoint(4, (int)(o.X - a*2), (int)(o.Y + a*2));
 			break;
 		case 2: case 11:
-			region.setPoint(0, (int)(o.x - a*2), (int)(o.y - a*2));
-			region.setPoint(1, (int)(o.x      ), (int)(o.y      ));
-			region.setPoint(2, (int)(o.x - a*2), (int)(o.y + a*2));
-			region.setPoint(3, (int)(o.x - a*3), (int)(o.y + a  ));
-			region.setPoint(4, (int)(o.x - a*3), (int)(o.y - a  ));
+			region.SetPoint(0, (int)(o.X - a*2), (int)(o.Y - a*2));
+			region.SetPoint(1, (int)(o.X      ), (int)(o.Y      ));
+			region.SetPoint(2, (int)(o.X - a*2), (int)(o.Y + a*2));
+			region.SetPoint(3, (int)(o.X - a*3), (int)(o.Y + a  ));
+			region.SetPoint(4, (int)(o.X - a*3), (int)(o.Y - a  ));
 			break;
 		case 5: case 9:
-			region.setPoint(0, (int)(o.x + a*2), (int)(o.y - a*2));
-			region.setPoint(1, (int)(o.x + a*3), (int)(o.y - a  ));
-			region.setPoint(2, (int)(o.x + a*3), (int)(o.y + a  ));
-			region.setPoint(3, (int)(o.x + a*2), (int)(o.y + a*2));
-			region.setPoint(4, (int)(o.x      ), (int)(o.y      ));
+			region.SetPoint(0, (int)(o.X + a*2), (int)(o.Y - a*2));
+			region.SetPoint(1, (int)(o.X + a*3), (int)(o.Y - a  ));
+			region.SetPoint(2, (int)(o.X + a*3), (int)(o.Y + a  ));
+			region.SetPoint(3, (int)(o.X + a*2), (int)(o.Y + a*2));
+			region.SetPoint(4, (int)(o.X      ), (int)(o.Y      ));
 			break;
 		}
 	}
@@ -304,15 +304,15 @@ public class PentagonT10 : BaseCell {
 
 		PointDouble center = new PointDouble(); // координата центра квадрата
 		switch (direction) {
-		case 0: case  3: case 7: case  8: center.x = region.getPoint(2).x; center.y = region.getPoint(1).y; break;
+		case 0: case  3: case 7: case  8: center.X = region.GetPoint(2).X; center.Y = region.GetPoint(1).Y; break;
 		case 1: case  4: case 6: case 10: 
-		case 2: case 11:                  center.x = region.getPoint(0).x; center.y = region.getPoint(1).y; break;
-		case 5: case  9:                  center.x = region.getPoint(0).x; center.y = region.getPoint(4).y; break; 
+		case 2: case 11:                  center.X = region.GetPoint(0).X; center.Y = region.GetPoint(1).Y; break;
+		case 5: case  9:                  center.X = region.GetPoint(0).X; center.Y = region.GetPoint(4).Y; break; 
 		}
 
 		Rect square = new Rect();
-		square.X = (int) (center.x - sq2);
-		square.Y = (int) (center.y - sq2);
+		square.X = (int) (center.X - sq2);
+		square.Y = (int) (center.Y - sq2);
 		square.Width =
 		square.Height = (int) sq;
 		return square;
