@@ -153,16 +153,16 @@ public class Parquet2 : BaseCell {
 		Rect square = new Rect();
 		switch (direction) {
 		case 0: case 3:
-			square.x = (int) (region.getPoint(0).x + w/SQRT2);
-			square.y = (int) (region.getPoint(3).y + w/SQRT2);
+			square.X = (int) (region.getPoint(0).x + w/SQRT2);
+			square.Y = (int) (region.getPoint(3).y + w/SQRT2);
 			break;
 		case 1: case 2:
-			square.x = (int) (region.getPoint(2).x + w/SQRT2);
-			square.y = (int) (region.getPoint(1).y + w/SQRT2);
+			square.X = (int) (region.getPoint(2).x + w/SQRT2);
+			square.Y = (int) (region.getPoint(1).y + w/SQRT2);
 			break;
 		}
-		square.width = (int)sq;
-		square.height = (int)sq;
+		square.Width = (int)sq;
+		square.Height = (int)sq;
 		return square;
 	}
 

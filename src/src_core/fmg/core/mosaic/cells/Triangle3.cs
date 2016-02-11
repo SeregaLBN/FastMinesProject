@@ -202,10 +202,10 @@ public class Triangle3 : BaseCell {
 		}
 
 		Rect square = new Rect();
-		square.x = (int) (center.x - sq/2);
-		square.y = (int) (center.y - sq/2);
-		square.width =
-		square.height = (int) sq;
+		square.X = (int) (center.x - sq/2);
+		square.Y = (int) (center.y - sq/2);
+		square.Width =
+		square.Height = (int) sq;
 		return square;
 	}
 

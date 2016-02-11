@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
@@ -70,7 +70,7 @@ namespace fmg.uwp.draw.mosaic.bmp
          PaintComponentBackground(cell, paint);
 
          var rcInner = cell.getRcInner(GContext.PenBorder.Width);
-         rcInner.moveXY(GContext.Padding.Left, GContext.Padding.Top);
+         rcInner.MoveXY(GContext.Padding.Left, GContext.Padding.Top);
 
          WriteableBitmap srcImg = null;
          if ((GContext.ImgFlag != null) &&
@@ -110,7 +110,7 @@ namespace fmg.uwp.draw.mosaic.bmp
             }
             if (!string.IsNullOrWhiteSpace(szCaption)) {
                if (cell.State.Down)
-                  rcInner.moveXY(1, 1);
+                  rcInner.MoveXY(1, 1);
 //#if DEBUG
 //               { // debug
 //                  var rnd = Windows.Security.Cryptography.CryptographicBuffer.GenerateRandomNumber();

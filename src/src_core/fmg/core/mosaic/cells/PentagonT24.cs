@@ -166,24 +166,24 @@ public class PentagonT24 : BaseCell {
 		Rect square = new Rect();
 		switch (direction) {
 		case 0:
-			square.x = (int) (region.getPoint(4).x+w2);
-			square.y = (int) (region.getPoint(1).y-w2 - sq);
+			square.X = (int) (region.getPoint(4).x+w2);
+			square.Y = (int) (region.getPoint(1).y-w2 - sq);
 			break;
 		case 1:
-			square.x = (int) (region.getPoint(2).x+w2);
-			square.y = (int) (region.getPoint(0).y+w2);
+			square.X = (int) (region.getPoint(2).x+w2);
+			square.Y = (int) (region.getPoint(0).y+w2);
 			break;
 		case 2:
-			square.x = (int) (region.getPoint(0).x-w2 - sq);
-			square.y = (int) (region.getPoint(3).y-w2 - sq);
+			square.X = (int) (region.getPoint(0).x-w2 - sq);
+			square.Y = (int) (region.getPoint(3).y-w2 - sq);
 			break;
 		case 3:
-			square.x = (int) (region.getPoint(2).x-w2 - sq);
-			square.y = (int) (region.getPoint(4).y+w2);
+			square.X = (int) (region.getPoint(2).x-w2 - sq);
+			square.Y = (int) (region.getPoint(4).y+w2);
 			break;
 		}
-		square.width = (int)sq;
-		square.height = (int)sq;
+		square.Width = (int)sq;
+		square.Height = (int)sq;
 		return square;
 	}
 

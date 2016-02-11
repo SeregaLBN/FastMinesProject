@@ -262,10 +262,10 @@ public class TrSq1 : BaseCell {
 		}
 
 		Rect square = new Rect();
-		square.x = (int) (center.x - sq2);
-		square.y = (int) (center.y - sq2);
-		square.width =
-		square.height = (int) sq;
+		square.X = (int) (center.x - sq2);
+		square.Y = (int) (center.y - sq2);
+		square.Width =
+		square.Height = (int) sq;
 		return square;
 	}
 

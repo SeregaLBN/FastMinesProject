@@ -109,10 +109,10 @@ public class Parquet1 : BaseCell {
 		bool bdir = (direction != 0);
 
 		Rect square = new Rect();
-		square.x = (int) ((bdir ? region.getPoint(0).x: region.getPoint(2).x) + w / SQRT2);
-		square.y = (int) ((bdir ? region.getPoint(3).y: region.getPoint(1).y) + w / SQRT2);
-		square.width = (int)sq;
-		square.height = (int)sq;
+		square.X = (int) ((bdir ? region.getPoint(0).x: region.getPoint(2).x) + w / SQRT2);
+		square.Y = (int) ((bdir ? region.getPoint(3).y: region.getPoint(1).y) + w / SQRT2);
+		square.Width = (int)sq;
+		square.Height = (int)sq;
 		return square;
 	}
 

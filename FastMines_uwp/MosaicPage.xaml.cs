@@ -193,7 +193,7 @@ namespace FastMines {
       }
 
       void AreaOptimal() {
-         var sizePage = Window.Current.Bounds.ToFmRect().size();
+         var sizePage = Window.Current.Bounds.ToFmRect().Size();
          Area = MosaicHelper.FindAreaBySize(MosaicField.MosaicType, MosaicField.SizeField, ref sizePage);
       }
 
@@ -451,11 +451,11 @@ namespace FastMines {
                   //var inCellRegion = _tmpClickedCell.PointInRegion(noMarginPoint.ToFmRect());
                   //this.ContentRoot.Background = new SolidColorBrush(inCellRegion ? Colors.Aquamarine : Colors.DeepPink);
                   var rcOuter = _clickInfo.Cell.getRcOuter();
-                  var sizePage = Window.Current.Bounds.ToFmRect().toSize();
+                  var sizePage = Window.Current.Bounds.ToFmRect().Size();
                   var delta = Math.Min(sizePage.width/20, sizePage.height/20);
-                  rcOuter.moveXY(-delta, -delta);
-                  rcOuter.width  += delta*2;
-                  rcOuter.height += delta*2;
+                  rcOuter.MoveXY(-delta, -delta);
+                  rcOuter.Width  += delta*2;
+                  rcOuter.Height += delta*2;
                   needDrag = !rcOuter.Contains(noMarginPoint.ToFmRect());
                }
 #endregion
@@ -478,7 +478,7 @@ namespace FastMines {
                   }
 
                   var sizeWinMosaic = MosaicField.WindowSize;
-                  var sizePage = Window.Current.Bounds.ToFmRect().toSize();
+                  var sizePage = Window.Current.Bounds.ToFmRect().Size();
                   if ((margin.Left + sizeWinMosaic.width + deltaTrans.X) < MinIndent) {
                      // правый край мозаики пересёк левую сторону страницы/экрана
                      if (ev.IsInertial)
@@ -537,9 +537,10 @@ namespace FastMines {
 #endif
          //var pnt2 = ContentRoot.TransformToVisual(Mosaic.Container).TransformPoint(ev.Position);
          //var content = Window.Current.Content;
-         using (new Tracer("OnManipulationCompleted", string.Format("Pos=[{0} / {1}]; Container=[{2}]; Cumulative.Translation=[{3}]",
-            ev.Position, pnt1, (ev.Container == null) ? "null" : ev.Container.GetType().ToString(),
-            ev.Cumulative.Translation)))
+         using (new Tracer("OnManipulationCompleted", $"Pos=[{ev.Position} / {pnt1}]; " +
+                                                      $"Container=[" +
+                                                         $"{((ev.Container == null) ? "null" : ev.Container.GetType().ToString())}" +
+                                                      $"]; Cumulative.Translation=[{ev.Cumulative.Translation}]"))
          {
             //e.Handled = true;
             base.OnManipulationCompleted(ev);
@@ -613,7 +614,7 @@ namespace FastMines {
          var margin = newMargin ?? MosaicField.Container.Margin;
          if (!sizeWinMosaic.HasValue)
             sizeWinMosaic = MosaicField.WindowSize;
-         var sizePage = Window.Current.Bounds.ToFmRect().toSize();
+         var sizePage = Window.Current.Bounds.ToFmRect().Size();
 
          if ((margin.Left + sizeWinMosaic.Value.width) < MinIndent) {
             // правый край мозаики пересёк левую сторону страницы/экрана

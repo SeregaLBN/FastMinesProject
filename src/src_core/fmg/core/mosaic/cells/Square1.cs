@@ -106,10 +106,10 @@ public class Square1 : BaseCell {
 		double w = borderWidth/2.0;
 
 		Rect square = new Rect();
-		square.x = (int) (region.getPoint(3).x + w);
-		square.y = (int) (region.getPoint(3).y + w);
-		square.width = (int)sq;
-		square.height = (int)sq;
+		square.X = (int) (region.getPoint(3).x + w);
+		square.Y = (int) (region.getPoint(3).y + w);
+		square.Width = (int)sq;
+		square.Height = (int)sq;
 		return square;
 	}
 

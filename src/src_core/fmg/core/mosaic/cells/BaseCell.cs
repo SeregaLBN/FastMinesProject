@@ -119,7 +119,7 @@ public abstract class BaseCell {
    /// <summary>вернёт прямоугольник в который вписана фигура ячейки</summary>
    public Rect getRcOuter() {
       Rect rcOuter = region.getBounds();
-      rcOuter.height++; rcOuter.width++; // чтобы при repaint'е захватило и крайние границы
+      rcOuter.Height++; rcOuter.Width++; // чтобы при repaint'е захватило и крайние границы
       return rcOuter;
    }
 
@@ -260,7 +260,7 @@ public abstract class BaseCell {
    public Coord getCoord() { return coord; }
    public int getDirection() { return direction; }
    /// <summary>координата центра фигуры</summary>
-   public Point getCenter() { return getRcInner(1).center(); }
+   public Point getCenter() { return getRcInner(1).Center(); }
 
    /// <summary>принадлежат ли эти экранные координаты ячейке</summary>
    public virtual bool PointInRegion(Point point) { return region.Contains(point); }

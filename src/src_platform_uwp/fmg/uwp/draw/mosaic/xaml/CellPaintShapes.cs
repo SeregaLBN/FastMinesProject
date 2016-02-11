@@ -94,7 +94,7 @@ namespace fmg.uwp.draw.mosaic.xaml
          PaintComponentBackground(cell, binder);
 
          var rcInner = cell.getRcInner(GContext.PenBorder.Width);
-         rcInner.moveXY(GContext.Padding.Left, GContext.Padding.Top);
+         rcInner.MoveXY(GContext.Padding.Left, GContext.Padding.Top);
          var txt = binder.Txt;
          var image = binder.Img;
 
@@ -114,10 +114,10 @@ namespace fmg.uwp.draw.mosaic.xaml
          if (srcImg != null) {
             image.Source = srcImg;
             image.Stretch = Stretch.UniformToFill;
-            image.Width = rcInner.width;
-            image.Height = rcInner.height;
-            Canvas.SetLeft(image, rcInner.left());
-            Canvas.SetTop(image, rcInner.top());
+            image.Width = rcInner.Width;
+            image.Height = rcInner.Height;
+            Canvas.SetLeft(image, rcInner.Left());
+            Canvas.SetTop(image, rcInner.Top());
             Canvas.SetZIndex(image, 5);
             image.Visibility = Visibility.Visible;
             txt.Visibility = Visibility.Collapsed;
@@ -142,17 +142,17 @@ namespace fmg.uwp.draw.mosaic.xaml
                txt.Visibility = Visibility.Visible;
 
                if (cell.State.Down)
-                  rcInner.moveXY(GContext.PenBorder.Width, GContext.PenBorder.Width);
+                  rcInner.MoveXY(GContext.PenBorder.Width, GContext.PenBorder.Width);
                txt.Text = szCaption;
                txt.TextAlignment = TextAlignment.Center;
                txt.FontFamily = GContext.FontFamily;
                txt.FontStyle = GContext.FontStyle;
                txt.FontSize = GContext.FontSize;
                txt.Foreground = FindBrush(txtColor);
-               Canvas.SetLeft(txt, rcInner.left());
-               Canvas.SetTop(txt, rcInner.top());
-               txt.Width = rcInner.width;
-               txt.Height = rcInner.height;
+               Canvas.SetLeft(txt, rcInner.Left());
+               Canvas.SetTop(txt, rcInner.Top());
+               txt.Width = rcInner.Width;
+               txt.Height = rcInner.Height;
                Canvas.SetZIndex(txt, 4);
             }
          }
