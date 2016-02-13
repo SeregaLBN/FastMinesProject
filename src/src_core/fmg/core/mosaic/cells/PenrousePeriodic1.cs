@@ -46,30 +46,30 @@ public class PenrousePeriodic1 : BaseCell {
 			var z = Z;
 			var result = new SizeDouble(
 					g +
-					z*((sizeField.m+8)/9.0) +
-					k*((sizeField.m+7)/9.0) +
-					g*((sizeField.m+6)/9.0) +
-					g*((sizeField.m+5)/9.0) +
-					z*((sizeField.m+4)/9.0) +
-					g*((sizeField.m+3)/9.0) +
-					g*((sizeField.m+2)/9.0) +
-					z*((sizeField.m+1)/9.0) +
-					g*((sizeField.m+0)/9.0),
+					z*((sizeField.m+8)/9) +
+					k*((sizeField.m+7)/9) +
+					g*((sizeField.m+6)/9) +
+					g*((sizeField.m+5)/9) +
+					z*((sizeField.m+4)/9) +
+					g*((sizeField.m+3)/9) +
+					g*((sizeField.m+2)/9) +
+					z*((sizeField.m+1)/9) +
+					g*((sizeField.m+0)/9),
 					e +
-					f*((sizeField.n+13)/14.0) +
-					b*((sizeField.n+12)/14.0) +
-					h*((sizeField.n+11)/14.0) +
-					h*((sizeField.n+10)/14.0) +
-					b*((sizeField.n+ 9)/14.0) +
-					f*((sizeField.n+ 8)/14.0) +
-					b*((sizeField.n+ 7)/14.0) +
-					c*((sizeField.n+ 6)/14.0) +
-					b*((sizeField.n+ 5)/14.0) +
-					h*((sizeField.n+ 4)/14.0) +
-					h*((sizeField.n+ 3)/14.0) +
-					a*((sizeField.n+ 2)/14.0) +
-					h*((sizeField.n+ 1)/14.0) +
-					e*((sizeField.n+ 0)/14.0));
+					f*((sizeField.n+13)/14) +
+					b*((sizeField.n+12)/14) +
+					h*((sizeField.n+11)/14) +
+					h*((sizeField.n+10)/14) +
+					b*((sizeField.n+ 9)/14) +
+					f*((sizeField.n+ 8)/14) +
+					b*((sizeField.n+ 7)/14) +
+					c*((sizeField.n+ 6)/14) +
+					b*((sizeField.n+ 5)/14) +
+					h*((sizeField.n+ 4)/14) +
+					h*((sizeField.n+ 3)/14) +
+					a*((sizeField.n+ 2)/14) +
+					h*((sizeField.n+ 1)/14) +
+					e*((sizeField.n+ 0)/14));
 
 			// когда размер поля мал...
 			if (sizeField.n < 14) { // ...нужно вычислять не только по общей формуле, а и убрать остатки по ширине...

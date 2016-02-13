@@ -48,9 +48,9 @@ public class Triangle4 : BaseCell {
          var r = RIn;
          var R = ROut;
          var result = new SizeDouble(
-                b+b *((sizeField.m+2)/3.0) +
-                  b *((sizeField.m+0)/3.0),
-               (R+r)*((sizeField.n+1)/2.0));
+                b+b *((sizeField.m+2)/3) +
+                  b *((sizeField.m+0)/3),
+               (R+r)*((sizeField.n+1)/2));
 
          switch (Mode) {
          case ComplexityMode.eUnrealMode:
@@ -735,8 +735,8 @@ public class Triangle4 : BaseCell {
       var u = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2 : 0; // s * cos60
 
       // определение координат точек фигуры
-      var oX =  (coord.x/3.0)*a + b;      // offset X
-      var oY = ((coord.y/4.0)*2+1)*(R+r); // offset Y
+      var oX =  (coord.x/3)*a + b;      // offset X
+      var oY = ((coord.y/4)*2+1)*(R+r); // offset Y
       switch (AttrTriangle4.Mode) {
       case ComplexityMode.eUnrealMode:
       case ComplexityMode.eOptimalMode:

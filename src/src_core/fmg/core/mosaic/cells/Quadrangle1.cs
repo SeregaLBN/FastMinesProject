@@ -39,11 +39,11 @@ public class Quadrangle1 : BaseCell {
 			var h = H;
 			var m = M;
 			var result = new SizeDouble(
-					m + m*((sizeField.m+2)/3.0)+
-					    h*((sizeField.m+1)/3.0)+
-					    m*((sizeField.m+0)/3.0),
-					b + b*((sizeField.n+1)/2.0)+
-					    a*((sizeField.n+0)/2.0));
+					m + m*((sizeField.m+2)/3)+
+					    h*((sizeField.m+1)/3)+
+					    m*((sizeField.m+0)/3),
+					b + b*((sizeField.n+1)/2)+
+					    a*((sizeField.n+0)/2));
 
 			if (sizeField.m == 1)
 				if ((sizeField.n & 1) == 0)
@@ -239,8 +239,8 @@ public class Quadrangle1 : BaseCell {
 		var m = attr.M;
 
 		// определение координат точек фигуры
-		var oX = (h*2)*(coord.x/3.0) + h+m; // offset X
-		var oY = (a*3)*(coord.y/4.0) + a+n; // offset Y
+		var oX = (h*2)*(coord.x/3) + h+m; // offset X
+		var oY = (a*3)*(coord.y/4) + a+n; // offset Y
 
 		switch (direction) {
 		case 0:
@@ -332,8 +332,8 @@ public class Quadrangle1 : BaseCell {
 		var sq    = attr.GetSq(borderWidth);
 		var sq2   = sq/2;
 
-		var oX = (h*2)*(coord.x/3.0) + h+m; // offset X
-		var oY = (a*3)*(coord.y/4.0) + a+n; // offset Y
+		var oX = (h*2)*(coord.x/3) + h+m; // offset X
+		var oY = (a*3)*(coord.y/4) + a+n; // offset Y
 
 		var center = new PointDouble(); // координата центра квадрата
 		switch (direction) {

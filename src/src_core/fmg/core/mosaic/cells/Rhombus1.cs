@@ -39,9 +39,9 @@ public class Rhombus1 : BaseCell {
 			var r = R;
 			var c = C;
 			var result = new SizeDouble(
-					c+a   *((sizeField.m+2)/3.0) +
-					 (a+c)*((sizeField.m+1)/3.0) +
-					    c *((sizeField.m+0)/3.0),
+					c+a   *((sizeField.m+2)/3) +
+					 (a+c)*((sizeField.m+1)/3) +
+					    c *((sizeField.m+0)/3),
 					    r * (sizeField.n+1));
 
 			if (sizeField.m == 1)
@@ -172,8 +172,8 @@ public class Rhombus1 : BaseCell {
 		var r = attr.R;
 
 		// определение координат точек фигуры
-		var oX = a*(coord.x/3.0*3+1)+c; // offset X
-		var oY = h*(coord.y/2.0)    +h; // offset Y
+		var oX = a*(coord.x/3*3+1)+c; // offset X
+		var oY = h*(coord.y/2)    +h; // offset Y
 
 		switch (direction) {
 		case 0:
@@ -225,8 +225,8 @@ public class Rhombus1 : BaseCell {
 		var sq  = attr.GetSq(borderWidth);
 		var sq2 = sq/2;
 
-		var oX = a*(coord.x/3.0*3+1)+c; // offset X
-		var oY = h*(coord.y/2.0)    +h; // offset Y
+		var oX = a*(coord.x/3*3+1)+c; // offset X
+		var oY = h*(coord.y/2)    +h; // offset Y
 
 		var center = new PointDouble(); // координата центра квадрата
 		switch (direction) {

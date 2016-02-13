@@ -38,12 +38,12 @@ public class TrSq2 : BaseCell {
 			var b = B;
 			var h = H;
 			var result = new SizeDouble(
-					b+h*((sizeField.m+2)/3.0)+
-					  a*((sizeField.m+1)/3.0)+
-					  b*((sizeField.m+0)/3.0),
-					b+h*((sizeField.n+2)/3.0)+
-					  a*((sizeField.n+1)/3.0)+
-					  b*((sizeField.n+0)/3.0));
+					b+h*((sizeField.m+2)/3)+
+					  a*((sizeField.m+1)/3)+
+					  b*((sizeField.m+0)/3),
+					b+h*((sizeField.n+2)/3)+
+					  a*((sizeField.n+1)/3)+
+					  b*((sizeField.n+0)/3));
 
 			if (sizeField.n < 5) {
 				var x = sizeField.m % 6;
@@ -412,14 +412,14 @@ public class TrSq2 : BaseCell {
 		double oY = 0; // offset Y
 
 		switch (direction) {
-		case  0: case  1: case  2: case  6: case  7: case  8: case 12: case 13: case 14: oX = (h*2+a*3)*(coord.x/6.0) + h+b;
-		                                                                                 oY = (h*2+a*3)*(coord.y/6.0) + h;       break;
-		case  3: case  4: case  5: case  9: case 10: case 11: case 15: case 16: case 17: oX = (h*2+a*3)*(coord.x/6.0) + h*2+a+b;
-		                                                                                 oY = (h*2+a*3)*(coord.y/6.0) + h+b;     break;
-		case 18: case 19: case 20: case 24: case 25: case 26: case 30: case 31: case 32: oX = (h*2+a*3)*(coord.x/6.0) + h;
-		                                                                                 oY = (h*2+a*3)*(coord.y/6.0) + h*2+a*2; break;
-		case 21: case 22: case 23: case 27: case 28: case 29: case 33: case 34: case 35: oX = (h*2+a*3)*(coord.x/6.0) + h*2+a*2;
-		                                                                                 oY = (h*2+a*3)*(coord.y/6.0) + h*2+a+b; break;
+		case  0: case  1: case  2: case  6: case  7: case  8: case 12: case 13: case 14: oX = (h*2+a*3)*(coord.x/6) + h+b;
+		                                                                                 oY = (h*2+a*3)*(coord.y/6) + h;       break;
+		case  3: case  4: case  5: case  9: case 10: case 11: case 15: case 16: case 17: oX = (h*2+a*3)*(coord.x/6) + h*2+a+b;
+		                                                                                 oY = (h*2+a*3)*(coord.y/6) + h+b;     break;
+		case 18: case 19: case 20: case 24: case 25: case 26: case 30: case 31: case 32: oX = (h*2+a*3)*(coord.x/6) + h;
+		                                                                                 oY = (h*2+a*3)*(coord.y/6) + h*2+a*2; break;
+		case 21: case 22: case 23: case 27: case 28: case 29: case 33: case 34: case 35: oX = (h*2+a*3)*(coord.x/6) + h*2+a*2;
+		                                                                                 oY = (h*2+a*3)*(coord.y/6) + h*2+a+b; break;
 		}
 		return new PointDouble(oX, oY);
 	}

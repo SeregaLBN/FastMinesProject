@@ -39,9 +39,9 @@ public class TrSq1 : BaseCell {
 			var n = N;
 			var m = M;
 			var result = new SizeDouble(
-					b+n*((sizeField.m-1+2)/3.0)+
-					  k*((sizeField.m-1+1)/3.0)+
-					  m*((sizeField.m-1+0)/3.0),
+					b+n*((sizeField.m-1+2)/3)+
+					  k*((sizeField.m-1+1)/3)+
+					  m*((sizeField.m-1+0)/3),
 					b+n* (sizeField.n-1));
 
 			if (sizeField.n == 1) {
@@ -194,8 +194,8 @@ public class TrSq1 : BaseCell {
 		var n = attr.N;
 		var m = attr.M;
 
-		var oX = b + n * (coord.x/3.0*2); // offset X
-		var oY = n + n*2*(coord.y/2.0);   // offset Y
+		var oX = b + n * (coord.x/3*2); // offset X
+		var oY = n + n*2*(coord.y/2);   // offset Y
 
 		switch (direction) {
 		case 0:
@@ -243,8 +243,8 @@ public class TrSq1 : BaseCell {
 		var sq = attr.GetSq(borderWidth);
 		var sq2 = sq/2;
 
-		var oX = b + n * (coord.x/3.0*2); // offset X
-		var oY = n + n*2*(coord.y/2.0);   // offset Y
+		var oX = b + n * (coord.x/3*2); // offset X
+		var oY = n + n*2*(coord.y/2);   // offset Y
 
 
 		var ksw1 = k/2-sq2-w/SQRT2;

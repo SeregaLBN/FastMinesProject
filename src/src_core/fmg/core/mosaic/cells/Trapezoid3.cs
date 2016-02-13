@@ -38,9 +38,9 @@ public class Trapezoid3 : BaseCell {
 			var b = B;
 			var R = ROut;
 			var result = new SizeDouble(
-					  R *((sizeField.m+1)/2.0),
-					a+b *((sizeField.n+1)/2.0)+
-					  a *((sizeField.n+0)/2.0));
+					  R *((sizeField.m+1)/2),
+					a+b *((sizeField.n+1)/2)+
+					  a *((sizeField.n+0)/2));
 
 			if (sizeField.m == 1)
 				switch (sizeField.n % 4) {
@@ -340,8 +340,8 @@ public class Trapezoid3 : BaseCell {
 		var r = attr.RIn;
 
 		// определение координат точек фигуры
-		var oX = (R*2)*(coord.x/4.0) + R; // offset X
-		var oY = (a*6)*(coord.y/4.0) + a + b; // offset Y
+		var oX = (R*2)*(coord.x/4) + R; // offset X
+		var oY = (a*6)*(coord.y/4) + a + b; // offset Y
 
 		switch (direction) {
 		case 0:
@@ -454,8 +454,8 @@ public class Trapezoid3 : BaseCell {
 		var sq  = attr.GetSq(borderWidth);
 		var sq2 = sq/2;
 
-		var oX = (R*2)*(coord.x/4.0) + R; // offset X
-		var oY = (a*6)*(coord.y/4.0) + a + b; // offset Y
+		var oX = (R*2)*(coord.x/4) + R; // offset X
+		var oY = (a*6)*(coord.y/4) + a + b; // offset Y
 
 		var center = new PointDouble(); // координата центра квадрата
 		switch (direction) {

@@ -38,12 +38,12 @@ public class PentagonT10 : BaseCell {
 			var  a = A;
 			var result = new SizeDouble(
 					2*a +
-					5*a*((sizeField.m+1)/2.0) +
-					  a*((sizeField.m+0)/2.0),
+					5*a*((sizeField.m+1)/2) +
+					  a*((sizeField.m+0)/2),
 					2*a +
-					3*a*((sizeField.n+2)/3.0) +
-					3*a*((sizeField.n+1)/3.0) +
-					  a*((sizeField.n+0)/3.0));
+					3*a*((sizeField.n+2)/3) +
+					3*a*((sizeField.n+1)/3) +
+					  a*((sizeField.n+0)/3));
 
 			if (sizeField.n == 1)
 				if ((sizeField.m & 1) == 1)
@@ -242,17 +242,17 @@ public class PentagonT10 : BaseCell {
 
 		var o = new PointDouble(0,0);
 		switch (direction) {
-		case 0: case 6: case  8: case 9: case 10:          o.X = a*2+a*6*((coord.x+0)/2.0); break;
-		case 1: case 2: case  3: case 4: case 5: case 7:   o.X = a*5+a*6*((coord.x+0)/2.0); break;
-		case 11:                                           o.X = a*2+a*6*((coord.x+1)/2.0); break;
+		case 0: case 6: case  8: case 9: case 10:          o.X = a*2+a*6*((coord.x+0)/2); break;
+		case 1: case 2: case  3: case 4: case 5: case 7:   o.X = a*5+a*6*((coord.x+0)/2); break;
+		case 11:                                           o.X = a*2+a*6*((coord.x+1)/2); break;
 		}
 		switch (direction) {
-		case 0:                                            o.Y = a*5 +a*14*(coord.y/6.0);   break;
-		case 1:                                            o.Y =      a*14*(coord.y/6.0);   break;
-		case 2: case 3: case  4: case 5:                   o.Y = a*6 +a*14*(coord.y/6.0);   break;
-		case 6:                                            o.Y = a*7 +a*14*(coord.y/6.0);   break;
-		case 7:                                            o.Y = a*12+a*14*(coord.y/6.0);   break;
-		case 8: case 9: case 10: case 11:                  o.Y = a*13+a*14*(coord.y/6.0);   break;
+		case 0:                                            o.Y = a*5 +a*14*(coord.y/6);   break;
+		case 1:                                            o.Y =      a*14*(coord.y/6);   break;
+		case 2: case 3: case  4: case 5:                   o.Y = a*6 +a*14*(coord.y/6);   break;
+		case 6:                                            o.Y = a*7 +a*14*(coord.y/6);   break;
+		case 7:                                            o.Y = a*12+a*14*(coord.y/6);   break;
+		case 8: case 9: case 10: case 11:                  o.Y = a*13+a*14*(coord.y/6);   break;
 		}
 		return o;
 	}

@@ -39,27 +39,27 @@ public class PentagonT5 : BaseCell {
 			var h = H;
 			var result = new SizeDouble(
 					a*3.5 +
-					a*2.0*((sizeField.m+13)/14.0) +
-					a    *((sizeField.m+12)/14.0) +
-					a*1.5*((sizeField.m+11)/14.0) +
-					a*2.0*((sizeField.m+10)/14.0) +
-					a    *((sizeField.m+ 9)/14.0) +
-					a*1.5*((sizeField.m+ 8)/14.0) +
-					a*2.0*((sizeField.m+ 7)/14.0) +
-					a    *((sizeField.m+ 6)/14.0) +
-					a*1.5*((sizeField.m+ 5)/14.0) +
-					a*2.0*((sizeField.m+ 4)/14.0) +
-					a    *((sizeField.m+ 3)/14.0) +
-					a*2.0*((sizeField.m+ 2)/14.0) +
-					a    *((sizeField.m+ 1)/14.0) +
-					a*1.5*((sizeField.m+ 0)/14.0),
+					a*2.0*((sizeField.m+13)/14) +
+					a    *((sizeField.m+12)/14) +
+					a*1.5*((sizeField.m+11)/14) +
+					a*2.0*((sizeField.m+10)/14) +
+					a    *((sizeField.m+ 9)/14) +
+					a*1.5*((sizeField.m+ 8)/14) +
+					a*2.0*((sizeField.m+ 7)/14) +
+					a    *((sizeField.m+ 6)/14) +
+					a*1.5*((sizeField.m+ 5)/14) +
+					a*2.0*((sizeField.m+ 4)/14) +
+					a    *((sizeField.m+ 3)/14) +
+					a*2.0*((sizeField.m+ 2)/14) +
+					a    *((sizeField.m+ 1)/14) +
+					a*1.5*((sizeField.m+ 0)/14),
 					h*5  +
-					h*2  *((sizeField.n+ 5)/ 6.0) +
-					h*2  *((sizeField.n+ 4)/ 6.0) +
-					h*2  *((sizeField.n+ 3)/ 6.0) +
-					h*3  *((sizeField.n+ 2)/ 6.0) +
-					h*2  *((sizeField.n+ 1)/ 6.0) +
-					h*3  *((sizeField.n+ 0)/ 6.0));
+					h*2  *((sizeField.n+ 5)/ 6) +
+					h*2  *((sizeField.n+ 4)/ 6) +
+					h*2  *((sizeField.n+ 3)/ 6) +
+					h*3  *((sizeField.n+ 2)/ 6) +
+					h*2  *((sizeField.n+ 1)/ 6) +
+					h*3  *((sizeField.n+ 0)/ 6));
 
 			// когда размер поля мал...
 			if (sizeField.m < 14) { // ...нужно вычислять не только по общей формуле, а и убрать остатки снизу..
@@ -520,8 +520,8 @@ public class PentagonT5 : BaseCell {
 		var h = attr.H;
 
 		// определение координат точек фигуры
-		var oX = a*21*(coord.x/14.0); // offset X
-		var oY = h*14*(coord.y/6.0);  // offset Y
+		var oX = a*21*(coord.x/14); // offset X
+		var oY = h*14*(coord.y/6);  // offset Y
 		switch (direction) {
 		case  0: case  1: case  2: case 14: case 15: case 16: oX += a* 2.5; oY += h* 3; break;
 		case  3: case  4: case  5: case 17: case 18: case 19: oX += a* 7.0; oY += h* 4; break;
@@ -593,8 +593,8 @@ public class PentagonT5 : BaseCell {
 		var sq2 = sq/2;
 
 		// определение координат точек фигуры
-		var oX = a*21*(coord.x/14.0); // offset X
-		var oY = h*14*(coord.y/6.0);  // offset Y
+		var oX = a*21*(coord.x/14); // offset X
+		var oY = h*14*(coord.y/6);  // offset Y
 		switch (direction) {
 		case  0: case  1: case  2: case 14: case 15: case 16: oX += a* 2.5; oY += h* 3; break;
 		case  3: case  4: case  5: case 17: case 18: case 19: oX += a* 7.0; oY += h* 4; break;

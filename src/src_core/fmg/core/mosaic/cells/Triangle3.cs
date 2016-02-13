@@ -36,8 +36,8 @@ public class Triangle3 : BaseCell {
 		public override SizeDouble GetOwnerSize(Matrisize sizeField) {
 			var a = A;
 			var result = new SizeDouble(
-					a * (sizeField.m+1)/2.0,
-					a * (sizeField.n+1)/2.0);
+					a * (sizeField.m+1)/2,
+					a * (sizeField.n+1)/2);
 
 			if (sizeField.m == 1)
 				if ((sizeField.n & 1) == 1)
@@ -147,8 +147,8 @@ public class Triangle3 : BaseCell {
 		var a = attr.A;
 		var b = attr.B;
 
-		var oX = a*coord.x/2.0; // offset X
-		var oY = a*coord.y/2.0; // offset Y
+		var oX = a*(coord.x>>1); // offset X
+		var oY = a*(coord.y>>1); // offset Y
 
 		switch (direction) {
 		case 0:

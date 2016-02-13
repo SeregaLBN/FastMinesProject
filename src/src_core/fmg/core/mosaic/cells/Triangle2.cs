@@ -99,8 +99,8 @@ public class Triangle2 : BaseCell {
 		var b = attr.B;
 		var h = attr.H;
 
-		var oX = a*coord.x/2.0; // offset X
-		var oY = h*coord.y;     // offset Y
+		var oX = a*(coord.x>>1); // offset X
+		var oY = h* coord.y;     // offset Y
 
 		switch (direction) {
 		case 0:
