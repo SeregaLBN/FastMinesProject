@@ -29,18 +29,18 @@ namespace fmg.core.mosaic.cells {
 /// <summary> Паркет. Вариант №2 </summary>
 public class Parquet2 : BaseCell {
 	public class AttrParquet2 : BaseAttribute {
-		public AttrParquet2(int area)
+		public AttrParquet2(double area)
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Matrisize sizeField) {
-			double a = A;
-			Size result = new Size(
-					(int)((sizeField.m*2+2) * a),
-					(int)((sizeField.n*2+2) * a));
+		public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+			var a = A;
+			var result = new SizeDouble(
+					(sizeField.m*2+2) * a,
+					(sizeField.n*2+2) * a);
 
 			if (sizeField.m == 1)
-				result.height -= (int)a;
+				result.Height -= a;
 
 			return result;
 		}
@@ -52,7 +52,7 @@ public class Parquet2 : BaseCell {
 		public override Size GetDirectionSizeField() { return new Size(2, 2); }
 		public override double A => Math.Sqrt(Area)/2;
 		public override double GetSq(int borderWidth) {
-			double w = borderWidth/2.0;
+			var w = borderWidth/2.0;
 			return A-w*SQRT2;
 		}
 	}
@@ -63,11 +63,9 @@ public class Parquet2 : BaseCell {
 				)
 	{}
 
-	private new AttrParquet2 Attr {
-		get { return (AttrParquet2) base.Attr; }
-	}
+	private new AttrParquet2 Attr => (AttrParquet2) base.Attr;
 
-	protected override Coord?[] GetCoordsNeighbor() {
+   protected override Coord?[] GetCoordsNeighbor() {
 		var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
 		// определяю координаты соседей
@@ -114,55 +112,55 @@ public class Parquet2 : BaseCell {
 	}
 
 	protected override void CalcRegion() {
-		AttrParquet2 attr = Attr;
-		double a = attr.A;
+		var attr = Attr;
+		var a = attr.A;
 
 		switch (direction) {
 		case 0:
-			region.SetPoint(0, (int)((2 * coord.x + 2) * a), (int)((2 * coord.y + 0) * a));
-			region.SetPoint(1, (int)((2 * coord.x + 4) * a), (int)((2 * coord.y + 2) * a));
-			region.SetPoint(2, (int)((2 * coord.x + 3) * a), (int)((2 * coord.y + 3) * a));
-			region.SetPoint(3, (int)((2 * coord.x + 1) * a), (int)((2 * coord.y + 1) * a));
+			region.SetPoint(0, (2 * coord.x + 2) * a, (2 * coord.y + 0) * a);
+			region.SetPoint(1, (2 * coord.x + 4) * a, (2 * coord.y + 2) * a);
+			region.SetPoint(2, (2 * coord.x + 3) * a, (2 * coord.y + 3) * a);
+			region.SetPoint(3, (2 * coord.x + 1) * a, (2 * coord.y + 1) * a);
 			break;
 		case 1:
-			region.SetPoint(0, (int)((2 * coord.x + 3) * a), (int)((2 * coord.y + 1) * a));
-			region.SetPoint(1, (int)((2 * coord.x + 4) * a), (int)((2 * coord.y + 2) * a));
-			region.SetPoint(2, (int)((2 * coord.x + 2) * a), (int)((2 * coord.y + 4) * a));
-			region.SetPoint(3, (int)((2 * coord.x + 1) * a), (int)((2 * coord.y + 3) * a));
+			region.SetPoint(0, (2 * coord.x + 3) * a, (2 * coord.y + 1) * a);
+			region.SetPoint(1, (2 * coord.x + 4) * a, (2 * coord.y + 2) * a);
+			region.SetPoint(2, (2 * coord.x + 2) * a, (2 * coord.y + 4) * a);
+			region.SetPoint(3, (2 * coord.x + 1) * a, (2 * coord.y + 3) * a);
 			break;
 		case 2:
-			region.SetPoint(0, (int)((2 * coord.x + 2) * a), (int)((2 * coord.y + 0) * a));
-			region.SetPoint(1, (int)((2 * coord.x + 3) * a), (int)((2 * coord.y + 1) * a));
-			region.SetPoint(2, (int)((2 * coord.x + 1) * a), (int)((2 * coord.y + 3) * a));
-			region.SetPoint(3, (int)((2 * coord.x + 0) * a), (int)((2 * coord.y + 2) * a));
+			region.SetPoint(0, (2 * coord.x + 2) * a, (2 * coord.y + 0) * a);
+			region.SetPoint(1, (2 * coord.x + 3) * a, (2 * coord.y + 1) * a);
+			region.SetPoint(2, (2 * coord.x + 1) * a, (2 * coord.y + 3) * a);
+			region.SetPoint(3, (2 * coord.x + 0) * a, (2 * coord.y + 2) * a);
 			break;
 		case 3:
-			region.SetPoint(0, (int)((2 * coord.x + 1) * a), (int)((2 * coord.y + 1) * a));
-			region.SetPoint(1, (int)((2 * coord.x + 3) * a), (int)((2 * coord.y + 3) * a));
-			region.SetPoint(2, (int)((2 * coord.x + 2) * a), (int)((2 * coord.y + 4) * a));
-			region.SetPoint(3, (int)((2 * coord.x + 0) * a), (int)((2 * coord.y + 2) * a));
+			region.SetPoint(0, (2 * coord.x + 1) * a, (2 * coord.y + 1) * a);
+			region.SetPoint(1, (2 * coord.x + 3) * a, (2 * coord.y + 3) * a);
+			region.SetPoint(2, (2 * coord.x + 2) * a, (2 * coord.y + 4) * a);
+			region.SetPoint(3, (2 * coord.x + 0) * a, (2 * coord.y + 2) * a);
 			break;
 		}
 	}
 
-	public override Rect getRcInner(int borderWidth) {
-		AttrParquet2 attr = Attr;
-		double sq = attr.GetSq(borderWidth);
-		double w = borderWidth/2.0;
+	public override RectDouble getRcInner(int borderWidth) {
+		var attr = Attr;
+		var sq = attr.GetSq(borderWidth);
+		var w = borderWidth/2.0;
 
-		Rect square = new Rect();
+		var square = new RectDouble();
 		switch (direction) {
 		case 0: case 3:
-			square.X = (int) (region.GetPoint(0).X + w/SQRT2);
-			square.Y = (int) (region.GetPoint(3).Y + w/SQRT2);
+			square.X = region.GetPoint(0).X + w/SQRT2;
+			square.Y = region.GetPoint(3).Y + w/SQRT2;
 			break;
 		case 1: case 2:
-			square.X = (int) (region.GetPoint(2).X + w/SQRT2);
-			square.Y = (int) (region.GetPoint(1).Y + w/SQRT2);
+			square.X = region.GetPoint(2).X + w/SQRT2;
+			square.Y = region.GetPoint(1).Y + w/SQRT2;
 			break;
 		}
-		square.Width = (int)sq;
-		square.Height = (int)sq;
+		square.Width = sq;
+		square.Height = sq;
 		return square;
 	}
 

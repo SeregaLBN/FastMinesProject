@@ -30,77 +30,77 @@ namespace fmg.core.mosaic.cells {
 /// <summary> Пятиугольник. Тип №5 </summary>
 public class PentagonT5 : BaseCell {
 	public class AttrPentagonT5 : BaseAttribute {
-		public AttrPentagonT5(int area)
+		public AttrPentagonT5(double area)
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Matrisize sizeField) {
-			double a = A;
-			double h = H;
-			Size result = new Size(
-					(int)(a*3.5 +
-					      a*2.0*((sizeField.m+13)/14) +
-					      a    *((sizeField.m+12)/14) +
-					      a*1.5*((sizeField.m+11)/14) +
-					      a*2.0*((sizeField.m+10)/14) +
-					      a    *((sizeField.m+ 9)/14) +
-					      a*1.5*((sizeField.m+ 8)/14) +
-					      a*2.0*((sizeField.m+ 7)/14) +
-					      a    *((sizeField.m+ 6)/14) +
-					      a*1.5*((sizeField.m+ 5)/14) +
-					      a*2.0*((sizeField.m+ 4)/14) +
-					      a    *((sizeField.m+ 3)/14) +
-					      a*2.0*((sizeField.m+ 2)/14) +
-					      a    *((sizeField.m+ 1)/14) +
-					      a*1.5*((sizeField.m+ 0)/14)),
-					(int)(h*5  +
-					      h*2  *((sizeField.n+ 5)/ 6) +
-					      h*2  *((sizeField.n+ 4)/ 6) +
-					      h*2  *((sizeField.n+ 3)/ 6) +
-					      h*3  *((sizeField.n+ 2)/ 6) +
-					      h*2  *((sizeField.n+ 1)/ 6) +
-					      h*3  *((sizeField.n+ 0)/ 6)));
+		public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+			var a = A;
+			var h = H;
+			var result = new SizeDouble(
+					a*3.5 +
+					a*2.0*((sizeField.m+13)/14.0) +
+					a    *((sizeField.m+12)/14.0) +
+					a*1.5*((sizeField.m+11)/14.0) +
+					a*2.0*((sizeField.m+10)/14.0) +
+					a    *((sizeField.m+ 9)/14.0) +
+					a*1.5*((sizeField.m+ 8)/14.0) +
+					a*2.0*((sizeField.m+ 7)/14.0) +
+					a    *((sizeField.m+ 6)/14.0) +
+					a*1.5*((sizeField.m+ 5)/14.0) +
+					a*2.0*((sizeField.m+ 4)/14.0) +
+					a    *((sizeField.m+ 3)/14.0) +
+					a*2.0*((sizeField.m+ 2)/14.0) +
+					a    *((sizeField.m+ 1)/14.0) +
+					a*1.5*((sizeField.m+ 0)/14.0),
+					h*5  +
+					h*2  *((sizeField.n+ 5)/ 6.0) +
+					h*2  *((sizeField.n+ 4)/ 6.0) +
+					h*2  *((sizeField.n+ 3)/ 6.0) +
+					h*3  *((sizeField.n+ 2)/ 6.0) +
+					h*2  *((sizeField.n+ 1)/ 6.0) +
+					h*3  *((sizeField.n+ 0)/ 6.0));
 
 			// когда размер поля мал...
 			if (sizeField.m < 14) { // ...нужно вычислять не только по общей формуле, а и убрать остатки снизу..
 				if ((sizeField.n & 1) == 0) {
-					if (sizeField.m < 11) result.height -= (int)h;
-					if (sizeField.m <  8) result.height -= (int)h;
-					if (sizeField.m <  5) result.height -= (int)h;
-					if (sizeField.m <  2) result.height -= (int)h;
+					if (sizeField.m < 11) result.Height -= h;
+					if (sizeField.m <  8) result.Height -= h;
+					if (sizeField.m <  5) result.Height -= h;
+					if (sizeField.m <  2) result.Height -= h;
 				} else {
-					if (sizeField.m < 10) result.height -= (int)h;
-					if (sizeField.m <  7) result.height -= (int)h;
-					if (sizeField.m <  4) result.height -= (int)h;
+					if (sizeField.m < 10) result.Height -= h;
+					if (sizeField.m <  7) result.Height -= h;
+					if (sizeField.m <  4) result.Height -= h;
 				}
 				if ((sizeField.n+5)%6 == 0) // y == 1 7 13 ..
-					if (sizeField.m < 13) result.height -= (int)h;
+					if (sizeField.m < 13) result.Height -= h;
 			}
 			if (sizeField.n < 5) { // .. и справа
 				switch (sizeField.n) {
 				case 1:
 					switch (sizeField.m % 14) {
-					default: result.width -= (int)(3*a); 	  break;
-					case 12: result.width -= (int)(3*a+a/2); break;
-					case 13: result.width -= (int)(3*a-a/2); break;
+					default: result.Width -= 3*a;    break;
+					case 12: result.Width -= 3*a+a/2; break;
+					case 13: result.Width -= 3*a-a/2; break;
 					} break;
 				case 2:
 					switch (sizeField.m % 14) {
-					default: result.width -= (int)(3*a);     break;
-					case 12: result.width -= (int)(3*a+a/2); break;
-					case 13: result.width -= (int)(3*a-a/2); break;
-					case  0: result.width -= (int)(1.5*a);   break;
+					default: result.Width -= 3*a;     break;
+					case 12: result.Width -= 3*a+a/2; break;
+					case 13: result.Width -= 3*a-a/2; break;
+					case  0: result.Width -= 1.5*a;   break;
 					} break;
 				case 3:
 					switch (sizeField.m % 14) {
-					default: result.width -= (int)(1.5*a); break;
-					case 12: result.width -= (int)(  2*a); break;
+					default: result.Width -= 1.5*a; break;
+					case 12: result.Width -=   2*a; break;
 					} break;
 				case 4:
 					switch (sizeField.m % 14) {
-					default: result.width -= (int)(1.5*a); break;
-					case 12: result.width -= (int)(  2*a); break;
-					case 13: result.width -= (int)(  1*a); break;
+					default: result.Width -= 1.5*a; break;
+					case 12: result.Width -=   2*a; break;
+					case 13: result.Width -=   1*a; break;
 					} break;
 				}
 			}
@@ -116,7 +116,7 @@ public class PentagonT5 : BaseCell {
 		public override double A => 2 * Math.Sqrt(Area/SQRT147);
 		public double H => A * SQRT3/2;
 		public override double GetSq(int borderWidth) {
-			double w = borderWidth/2.0;
+			var w = borderWidth/2.0;
 			return (A*2*SQRT3-4*w)/(SQRT3+1);
 		}
 
@@ -132,11 +132,9 @@ public class PentagonT5 : BaseCell {
 			)
 	{}
 
-	private new AttrPentagonT5 Attr {
-		get { return (AttrPentagonT5) base.Attr; }
-	}
+	private new AttrPentagonT5 Attr => (AttrPentagonT5) base.Attr;
 
-	protected override Coord?[] GetCoordsNeighbor() {
+   protected override Coord?[] GetCoordsNeighbor() {
       var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
 		// определяю координаты соседей
@@ -517,13 +515,13 @@ public class PentagonT5 : BaseCell {
 	}
 
 	protected override void CalcRegion() {
-		AttrPentagonT5 attr = Attr;
-		double a = attr.A;
-		double h = attr.H;
+		var attr = Attr;
+		var a = attr.A;
+		var h = attr.H;
 
 		// определение координат точек фигуры
-		double oX = a*21*(coord.x/14); // offset X
-		double oY = h*14*(coord.y/6);  // offset Y
+		var oX = a*21*(coord.x/14.0); // offset X
+		var oY = h*14*(coord.y/6.0);  // offset Y
 		switch (direction) {
 		case  0: case  1: case  2: case 14: case 15: case 16: oX += a* 2.5; oY += h* 3; break;
 		case  3: case  4: case  5: case 17: case 18: case 19: oX += a* 7.0; oY += h* 4; break;
@@ -542,61 +540,61 @@ public class PentagonT5 : BaseCell {
 		}
 		switch (direction) {
 		case  0: case  3: case  6: case  9: case 12: case 28: case 31: case 34: case 37: case 54: case 56: case 59: case 62: case 65:
-			region.SetPoint(0, (int)(oX - a    ), (int)(oY - h*2));
-			region.SetPoint(1, (int)(oX        ), (int)(oY      ));
-			region.SetPoint(2, (int)(oX - a*2  ), (int)(oY      ));
-			region.SetPoint(3, (int)(oX - a*2.5), (int)(oY - h  ));
-			region.SetPoint(4, (int)(oX - a*2  ), (int)(oY - h*2));
+			region.SetPoint(0, oX - a    , oY - h*2);
+			region.SetPoint(1, oX        , oY      );
+			region.SetPoint(2, oX - a*2  , oY      );
+			region.SetPoint(3, oX - a*2.5, oY - h  );
+			region.SetPoint(4, oX - a*2  , oY - h*2);
 			break;
 		case  1: case  4: case  7: case 10: case 13: case 29: case 32: case 35: case 38: case 55: case 57: case 60: case 63: case 66:
-			region.SetPoint(0, (int)(oX + a*0.5), (int)(oY - h*3));
-			region.SetPoint(1, (int)(oX + a    ), (int)(oY - h*2));
-			region.SetPoint(2, (int)(oX        ), (int)(oY      ));
-			region.SetPoint(3, (int)(oX - a    ), (int)(oY - h*2));
-			region.SetPoint(4, (int)(oX - a*0.5), (int)(oY - h*3));
+			region.SetPoint(0, oX + a*0.5, oY - h*3);
+			region.SetPoint(1, oX + a    , oY - h*2);
+			region.SetPoint(2, oX        , oY      );
+			region.SetPoint(3, oX - a    , oY - h*2);
+			region.SetPoint(4, oX - a*0.5, oY - h*3);
 			break;
 		case  2: case  5: case  8: case 11: case 27: case 30: case 33: case 36: case 39: case 69: case 58: case 61: case 64: case 82:
-			region.SetPoint(0, (int)(oX + a*2  ), (int)(oY - h*2));
-			region.SetPoint(1, (int)(oX + a*2.5), (int)(oY - h  ));
-			region.SetPoint(2, (int)(oX + a*2  ), (int)(oY      ));
-			region.SetPoint(3, (int)(oX        ), (int)(oY      ));
-			region.SetPoint(4, (int)(oX + a    ), (int)(oY - h*2));
+			region.SetPoint(0, oX + a*2  , oY - h*2);
+			region.SetPoint(1, oX + a*2.5, oY - h  );
+			region.SetPoint(2, oX + a*2  , oY      );
+			region.SetPoint(3, oX        , oY      );
+			region.SetPoint(4, oX + a    , oY - h*2);
 			break;
 		case 14: case 17: case 20: case 23: case 26: case 42: case 45: case 48: case 51: case 67: case 70: case 73: case 76: case 79:
-			region.SetPoint(0, (int)(oX        ), (int)(oY      ));
-			region.SetPoint(1, (int)(oX - a    ), (int)(oY + h*2));
-			region.SetPoint(2, (int)(oX - a*2  ), (int)(oY + h*2));
-			region.SetPoint(3, (int)(oX - a*2.5), (int)(oY + h  ));
-			region.SetPoint(4, (int)(oX - a*2  ), (int)(oY      ));
+			region.SetPoint(0, oX        , oY      );
+			region.SetPoint(1, oX - a    , oY + h*2);
+			region.SetPoint(2, oX - a*2  , oY + h*2);
+			region.SetPoint(3, oX - a*2.5, oY + h  );
+			region.SetPoint(4, oX - a*2  , oY      );
 			break;
 		case 15: case 18: case 21: case 24: case 40: case 43: case 46: case 49: case 52: case 68: case 71: case 74: case 77: case 80:
-			region.SetPoint(0, (int)(oX        ), (int)(oY      ));
-			region.SetPoint(1, (int)(oX + a    ), (int)(oY + h*2));
-			region.SetPoint(2, (int)(oX + a*0.5), (int)(oY + h*3));
-			region.SetPoint(3, (int)(oX - a*0.5), (int)(oY + h*3));
-			region.SetPoint(4, (int)(oX - a    ), (int)(oY + h*2));
+			region.SetPoint(0, oX        , oY      );
+			region.SetPoint(1, oX + a    , oY + h*2);
+			region.SetPoint(2, oX + a*0.5, oY + h*3);
+			region.SetPoint(3, oX - a*0.5, oY + h*3);
+			region.SetPoint(4, oX - a    , oY + h*2);
 			break;
 		case 16: case 19: case 22: case 25: case 41: case 44: case 47: case 50: case 53: case 83: case 72: case 75: case 78: case 81:
-			region.SetPoint(0, (int)(oX + a*2  ), (int)(oY      ));
-			region.SetPoint(1, (int)(oX + a*2.5), (int)(oY + h  ));
-			region.SetPoint(2, (int)(oX + a*2  ), (int)(oY + h*2));
-			region.SetPoint(3, (int)(oX + a    ), (int)(oY + h*2));
-			region.SetPoint(4, (int)(oX        ), (int)(oY      ));
+			region.SetPoint(0, oX + a*2  , oY      );
+			region.SetPoint(1, oX + a*2.5, oY + h  );
+			region.SetPoint(2, oX + a*2  , oY + h*2);
+			region.SetPoint(3, oX + a    , oY + h*2);
+			region.SetPoint(4, oX        , oY      );
 			break;
 		}
 	}
 
-	public override Rect getRcInner(int borderWidth) {
-		AttrPentagonT5 attr = Attr;
-		double a = attr.A;
-		double h = attr.H;
-//		double w = borderWidth/2.0;
-		double sq  = Attr.GetSq(borderWidth);
-		double sq2 = sq/2;
+	public override RectDouble getRcInner(int borderWidth) {
+		var attr = Attr;
+		var a = attr.A;
+		var h = attr.H;
+//		var w = borderWidth/2.0;
+		var sq  = Attr.GetSq(borderWidth);
+		var sq2 = sq/2;
 
 		// определение координат точек фигуры
-		double oX = a*21*(coord.x/14); // offset X
-		double oY = h*14*(coord.y/6);  // offset Y
+		var oX = a*21*(coord.x/14.0); // offset X
+		var oY = h*14*(coord.y/6.0);  // offset Y
 		switch (direction) {
 		case  0: case  1: case  2: case 14: case 15: case 16: oX += a* 2.5; oY += h* 3; break;
 		case  3: case  4: case  5: case 17: case 18: case 19: oX += a* 7.0; oY += h* 4; break;
@@ -630,12 +628,10 @@ public class PentagonT5 : BaseCell {
 		case 50: case 53: case 83: case 72: case 75: case 78: case 81: center.X = oX + a*1.5;  center.Y = oY + h;   break;
 		}
 
-		Rect square = new Rect();
-		square.X = (int) (center.X - sq2);
-		square.Y = (int) (center.Y - sq2);
-		square.Width =
-		square.Height = (int) sq;
-		return square;
+		return new RectDouble(
+		   center.X - sq2,
+		   center.Y - sq2,
+		   sq, sq);
 	}
 
 	public override int getShiftPointBorderIndex() {

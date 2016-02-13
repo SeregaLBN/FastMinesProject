@@ -23,7 +23,7 @@ namespace fmg.uwp.draw {
       private FontStyle _fontStyle = DEFAULT_FONT_STYLE;
       private int _fontSize = DEFAULT_FONT_SIZE;
 
-      private Bound _padding;
+      private BoundDouble _padding;
 
       public static readonly Random Rand = new Random(Guid.NewGuid().GetHashCode());
 
@@ -106,7 +106,7 @@ namespace fmg.uwp.draw {
 
       public bool IconicMode { get; }
 
-      public Bound Padding {
+      public BoundDouble Padding {
          get { return _padding; }
          set { this.SetProperty(ref this._padding, value); }
       }

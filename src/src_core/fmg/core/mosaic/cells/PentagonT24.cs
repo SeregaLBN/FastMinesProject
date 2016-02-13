@@ -29,19 +29,19 @@ namespace fmg.core.mosaic.cells {
 /// <summary> Пятиугольник. Тип №2 и №4 - равносторонний </summary>
 public class PentagonT24 : BaseCell {
 	public class AttrPentagonT24 : BaseAttribute {
-		public AttrPentagonT24(int area)
+		public AttrPentagonT24(double area)
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Matrisize sizeField) {
-			double a = A;
-			double b = B;
-			Size result = new Size(
-					(int)(b + sizeField.m * a),
-					(int)(b + sizeField.n * a));
+		public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+			var a = A;
+			var b = B;
+			var result = new SizeDouble(
+					b + sizeField.m * a,
+					b + sizeField.n * a);
 
 			if (sizeField.n == 1)
-				result.width -= (int)(C);
+				result.Width -= C;
 
 				return result;
 		}
@@ -55,7 +55,7 @@ public class PentagonT24 : BaseCell {
 		public double B => A * 6/11;
 		public double C => B / 2;
 		public override double GetSq(int borderWidth) {
-			double w = borderWidth/2.0;
+			var w = borderWidth/2.0;
 			return A*8/11-(w+w/SIN135a) / SQRT2;
 		}
 	}
@@ -66,11 +66,9 @@ public class PentagonT24 : BaseCell {
 				)
 	{}
 
-	private new AttrPentagonT24 Attr {
-		get { return (AttrPentagonT24) base.Attr; }
-	}
+	private new AttrPentagonT24 Attr => (AttrPentagonT24) base.Attr;
 
-	protected override Coord?[] GetCoordsNeighbor() {
+   protected override Coord?[] GetCoordsNeighbor() {
       var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
 		// определяю координаты соседей
@@ -117,73 +115,73 @@ public class PentagonT24 : BaseCell {
 	}
 
 	protected override void CalcRegion() {
-		AttrPentagonT24 attr = Attr;
-		double a = attr.A;
-		double b = attr.B;
-		double c = attr.C;
+		var attr = Attr;
+		var a = attr.A;
+		var b = attr.B;
+		var c = attr.C;
 
 		// определение координат точек фигуры
-		double oX = a*((coord.x>>1)<<1); // offset X
-		double oY = a*((coord.y>>1)<<1); // offset Y
+		var oX = a*((coord.x>>1)<<1); // offset X
+		var oY = a*((coord.y>>1)<<1); // offset Y
 		switch (direction) {
 		case 0:
-			region.SetPoint(0, (int)(oX +       a), (int)(oY + b      ));
-			region.SetPoint(1, (int)(oX + c +   a), (int)(oY + c +   a));
-			region.SetPoint(2, (int)(oX + b      ), (int)(oY + b +   a));
-			region.SetPoint(3, (int)(oX          ), (int)(oY +       a));
-			region.SetPoint(4, (int)(oX + c      ), (int)(oY + c      ));
+			region.SetPoint(0, oX +       a, oY + b      );
+			region.SetPoint(1, oX + c +   a, oY + c +   a);
+			region.SetPoint(2, oX + b      , oY + b +   a);
+			region.SetPoint(3, oX          , oY +       a);
+			region.SetPoint(4, oX + c      , oY + c      );
 			break;
 		case 1:
-			region.SetPoint(0, (int)(oX + c + 2*a), (int)(oY + c      ));
-			region.SetPoint(1, (int)(oX +     2*a), (int)(oY +       a));
-			region.SetPoint(2, (int)(oX + c +   a), (int)(oY + c +   a));
-			region.SetPoint(3, (int)(oX +       a), (int)(oY + b      ));
-			region.SetPoint(4, (int)(oX + b +   a), (int)(oY          ));
+			region.SetPoint(0, oX + c + 2*a, oY + c      );
+			region.SetPoint(1, oX +     2*a, oY +       a);
+			region.SetPoint(2, oX + c +   a, oY + c +   a);
+			region.SetPoint(3, oX +       a, oY + b      );
+			region.SetPoint(4, oX + b +   a, oY          );
 			break;
 		case 2:
-			region.SetPoint(0, (int)(oX + c +   a), (int)(oY + c +   a));
-			region.SetPoint(1, (int)(oX + b +   a), (int)(oY +     2*a));
-			region.SetPoint(2, (int)(oX +       a), (int)(oY + b + 2*a));
-			region.SetPoint(3, (int)(oX + c      ), (int)(oY + c + 2*a));
-			region.SetPoint(4, (int)(oX + b      ), (int)(oY + b +   a));
+			region.SetPoint(0, oX + c +   a, oY + c +   a);
+			region.SetPoint(1, oX + b +   a, oY +     2*a);
+			region.SetPoint(2, oX +       a, oY + b + 2*a);
+			region.SetPoint(3, oX + c      , oY + c + 2*a);
+			region.SetPoint(4, oX + b      , oY + b +   a);
 			break;
 		case 3:
-			region.SetPoint(0, (int)(oX +     2*a), (int)(oY +       a));
-			region.SetPoint(1, (int)(oX + b + 2*a), (int)(oY + b +   a));
-			region.SetPoint(2, (int)(oX + c + 2*a), (int)(oY + c + 2*a));
-			region.SetPoint(3, (int)(oX + b +   a), (int)(oY +     2*a));
-			region.SetPoint(4, (int)(oX + c +   a), (int)(oY + c +   a));
+			region.SetPoint(0, oX +     2*a, oY +       a);
+			region.SetPoint(1, oX + b + 2*a, oY + b +   a);
+			region.SetPoint(2, oX + c + 2*a, oY + c + 2*a);
+			region.SetPoint(3, oX + b +   a, oY +     2*a);
+			region.SetPoint(4, oX + c +   a, oY + c +   a);
 			break;
 		}
 	}
 
-	public override Rect getRcInner(int borderWidth) {
-		AttrPentagonT24 attr = Attr;
-		double sq = attr.GetSq(borderWidth);
-		double w = borderWidth/2.0;
-		double w2 = w/SQRT2;
+	public override RectDouble getRcInner(int borderWidth) {
+		var attr = Attr;
+		var sq = attr.GetSq(borderWidth);
+		var w = borderWidth/2.0;
+		var w2 = w/SQRT2;
 
-		Rect square = new Rect();
+		var square = new RectDouble();
 		switch (direction) {
 		case 0:
-			square.X = (int) (region.GetPoint(4).X+w2);
-			square.Y = (int) (region.GetPoint(1).Y-w2 - sq);
+			square.X = region.GetPoint(4).X+w2;
+			square.Y = region.GetPoint(1).Y-w2 - sq;
 			break;
 		case 1:
-			square.X = (int) (region.GetPoint(2).X+w2);
-			square.Y = (int) (region.GetPoint(0).Y+w2);
+			square.X = region.GetPoint(2).X+w2;
+			square.Y = region.GetPoint(0).Y+w2;
 			break;
 		case 2:
-			square.X = (int) (region.GetPoint(0).X-w2 - sq);
-			square.Y = (int) (region.GetPoint(3).Y-w2 - sq);
+			square.X = region.GetPoint(0).X-w2 - sq;
+			square.Y = region.GetPoint(3).Y-w2 - sq;
 			break;
 		case 3:
-			square.X = (int) (region.GetPoint(2).X-w2 - sq);
-			square.Y = (int) (region.GetPoint(4).Y+w2);
+			square.X = region.GetPoint(2).X-w2 - sq;
+			square.Y = region.GetPoint(4).Y+w2;
 			break;
 		}
-		square.Width = (int)sq;
-		square.Height = (int)sq;
+		square.Width = sq;
+		square.Height = sq;
 		return square;
 	}
 

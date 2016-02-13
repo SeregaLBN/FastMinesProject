@@ -29,17 +29,14 @@ namespace fmg.core.mosaic.cells {
 /// <summary> Треугольник. Вариант 2 - равносторонний, ёлочкой </summary>
 public class Triangle2 : BaseCell {
 	public class AttrTriangle2 : BaseAttribute {
-		public AttrTriangle2(int area)
+		public AttrTriangle2(double area)
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Matrisize sizeField) {
-			double b = B;
-			double h = H;
-			Size result = new Size(
-					(int)(b * (sizeField.m+1)),
-					(int)(h * (sizeField.n+0)));
-			return result;
+		public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+			return new SizeDouble(
+					B * (sizeField.m+1),
+					H * (sizeField.n+0));
 		}
 
       public override int getNeighborNumber(bool max) { return 8; }
@@ -53,7 +50,7 @@ public class Triangle2 : BaseCell {
 		/// <summary> </summary> высота треугольника */
 		public double H => B * SQRT3;
 		public override double GetSq(int borderWidth) {
-			double w = borderWidth/2.0;
+			var w = borderWidth/2.0;
 			return (H*2 - 6*w)/(SQRT3+2);
 		}
 	}
@@ -64,11 +61,9 @@ public class Triangle2 : BaseCell {
 			)
 	{}
 
-	private new AttrTriangle2 Attr {
-		get { return (AttrTriangle2) base.Attr; }
-	}
+	private new AttrTriangle2 Attr => (AttrTriangle2) base.Attr;
 
-	protected override Coord?[] GetCoordsNeighbor() {
+   protected override Coord?[] GetCoordsNeighbor() {
       var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
 		// определяю координаты соседей
@@ -99,35 +94,35 @@ public class Triangle2 : BaseCell {
 	}
 
 	protected override void CalcRegion() {
-		AttrTriangle2 attr = Attr;
-		double a = attr.A;
-		double b = attr.B;
-		double h = attr.H;
+		var attr = Attr;
+		var a = attr.A;
+		var b = attr.B;
+		var h = attr.H;
 
-		double oX = a*(coord.x>>1); // offset X
-		double oY = h* coord.y;     // offset Y
+		var oX = a*coord.x/2.0; // offset X
+		var oY = h*coord.y;     // offset Y
 
 		switch (direction) {
 		case 0:
-			region.SetPoint(0, (int)(oX +   b), (int)(oY    ));
-			region.SetPoint(1, (int)(oX + a  ), (int)(oY + h));
-			region.SetPoint(2, (int)(oX      ), (int)(oY + h));
-			break;                                                              
-		case 1:                                                                
-			region.SetPoint(0, (int)(oX + a+b), (int)(oY    ));
-			region.SetPoint(1, (int)(oX + a  ), (int)(oY + h));
-			region.SetPoint(2, (int)(oX +   b), (int)(oY    ));
+			region.SetPoint(0, oX +   b, oY    );
+			region.SetPoint(1, oX + a  , oY + h);
+			region.SetPoint(2, oX      , oY + h);
+			break;
+		case 1:
+			region.SetPoint(0, oX + a+b, oY    );
+			region.SetPoint(1, oX + a  , oY + h);
+			region.SetPoint(2, oX +   b, oY    );
 			break;
 		}
 	}
 
-	public override Rect getRcInner(int borderWidth) {
-		AttrTriangle2 attr = Attr;
-		double b = attr.B;
-		double sq = attr.GetSq(borderWidth);
-		double w = borderWidth/2.0;
+	public override RectDouble getRcInner(int borderWidth) {
+		var attr = Attr;
+		var b = attr.B;
+		var sq = attr.GetSq(borderWidth);
+		var w = borderWidth/2.0;
 
-		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
+		var center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
 		switch (direction) {
 		case 0:
 			center.X = region.GetPoint(2).X + b;
@@ -139,12 +134,10 @@ public class Triangle2 : BaseCell {
 			break;
 		}
 
-		Rect square = new Rect();
-		square.X = (int) (center.X - sq/2);
-		square.Y = (int) (center.Y - sq/2);
-		square.Width =
-		square.Height = (int) sq;
-		return square;
+		return new RectDouble(
+		   center.X - sq/2,
+		   center.Y - sq/2,
+		   sq, sq);
 	}
 
 	public override int getShiftPointBorderIndex() {

@@ -43,7 +43,7 @@ namespace fmg.uwp.res.img {
                return _img;
 
             var size = new Size((int) (DefaultWidht*ZoomX+2*Margin), (int) (DefaultHeight*ZoomY+2*Margin));
-            var bmp = BitmapFactory.New(size.width, size.height);
+            var bmp = BitmapFactory.New(size.Width, size.Height);
 
             { // draw star
                var rays = new [] { // owner rays points
@@ -97,7 +97,7 @@ namespace fmg.uwp.res.img {
                   bmp.FillTriangle(
                      (int) inn[(i + 0)%8].X, (int) inn[(i + 0)%8].Y,
                      (int) inn[(i + 3)%8].X, (int) inn[(i + 3)%8].Y,
-                     size.width/2, size.height/2,
+                     size.Width/2, size.Height/2,
                      ((i & 1) == 0)
                         ? Palette[(i + 6)%8].Brighter().ToWinColor()
                         : Palette[(i + 6)%8].Darker().ToWinColor());

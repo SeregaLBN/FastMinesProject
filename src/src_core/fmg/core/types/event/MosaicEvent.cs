@@ -57,14 +57,14 @@ namespace fmg.core.types.Event
 
       public class ChangedAreaEventArgs : MosaicEvent
       {
-         int oldArea;
+         double oldArea;
 
-         public ChangedAreaEventArgs(int oldArea)
+         public ChangedAreaEventArgs(double oldArea)
          {
             this.oldArea = oldArea;
          }
 
-         public int getOldArea()
+         public double getOldArea()
          {
             return oldArea;
          }

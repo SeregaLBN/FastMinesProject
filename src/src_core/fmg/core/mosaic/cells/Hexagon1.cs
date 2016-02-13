@@ -29,18 +29,18 @@ namespace fmg.core.mosaic.cells {
 /// <summary> Шестиугольник </summary>
 public class Hexagon1 : BaseCell {
 	public class AttrHexagon1 : BaseAttribute {
-		public AttrHexagon1(int area)
+		public AttrHexagon1(double area)
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Matrisize sizeField) {
-			double a = A;
-			Size result = new Size(
-					(int)(a * (sizeField.m    +0.5) * SQRT3),
-					(int)(a * (sizeField.n*1.5+0.5)));
+		public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+			var a = A;
+			var result = new SizeDouble(
+					a * (sizeField.m    +0.5) * SQRT3,
+					a * (sizeField.n*1.5+0.5));
 
 			if (sizeField.n == 1)
-				result.width -= (int)(B/2);
+				result.Width -= B/2;
 
 			return result;
 		}
@@ -54,7 +54,7 @@ public class Hexagon1 : BaseCell {
 		/// <summary> пол стороны треугольника </summary>
 		public double B => A*SQRT3;
 		public override double GetSq(int borderWidth) {
-			double w = borderWidth/2.0;
+			var w = borderWidth/2.0;
 			return 2*(B - 2*w)/(SQRT3+1);
 		}
 	}
@@ -65,11 +65,9 @@ public class Hexagon1 : BaseCell {
 			)
 	{}
 
-	private new AttrHexagon1 Attr {
-		get { return (AttrHexagon1) base.Attr; }
-	}
+	private new AttrHexagon1 Attr => (AttrHexagon1) base.Attr;
 
-	protected override Coord?[] GetCoordsNeighbor() {
+   protected override Coord?[] GetCoordsNeighbor() {
 		var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
 		// определяю координаты соседей
@@ -84,54 +82,52 @@ public class Hexagon1 : BaseCell {
 	}
 
 	protected override void CalcRegion() {
-		AttrHexagon1 attr = Attr;
-		double a = attr.A;
-		double b = attr.B;
+		var attr = Attr;
+		var a = attr.A;
+		var b = attr.B;
 
-		double oX = (coord.x+1)*b;                 // offset X
-		double oY = (coord.y+(direction^1))*a*1.5; // offset Y
+		var oX = (coord.x+1)*b;                 // offset X
+		var oY = (coord.y+(direction^1))*a*1.5; // offset Y
 
 		switch (direction) {
 		case 0:
-			region.SetPoint(0, (int)(oX      ), (int)(oY - a  ));
-			region.SetPoint(1, (int)(oX      ), (int)(oY      ));
-			region.SetPoint(2, (int)(oX - b/2), (int)(oY + a/2));
-			region.SetPoint(3, (int)(oX - b  ), (int)(oY      ));
-			region.SetPoint(4, (int)(oX - b  ), (int)(oY - a  ));
-			region.SetPoint(5, (int)(oX - b/2), (int)(oY - a*1.5));
+			region.SetPoint(0, oX      , oY - a  );
+			region.SetPoint(1, oX      , oY      );
+			region.SetPoint(2, oX - b/2, oY + a/2);
+			region.SetPoint(3, oX - b  , oY      );
+			region.SetPoint(4, oX - b  , oY - a  );
+			region.SetPoint(5, oX - b/2, oY - a*1.5);
 			break;
 		case 1:
-			region.SetPoint(0, (int)(oX + b/2), (int)(oY + a/2  ));
-			region.SetPoint(1, (int)(oX + b/2), (int)(oY + a*1.5));
-			region.SetPoint(2, (int)(oX      ), (int)(oY + a*2  ));
-			region.SetPoint(3, (int)(oX - b/2), (int)(oY + a*1.5));
-			region.SetPoint(4, (int)(oX - b/2), (int)(oY + a/2  ));
-			region.SetPoint(5, (int)(oX      ), (int)(oY        ));
+			region.SetPoint(0, oX + b/2, oY + a/2  );
+			region.SetPoint(1, oX + b/2, oY + a*1.5);
+			region.SetPoint(2, oX      , oY + a*2  );
+			region.SetPoint(3, oX - b/2, oY + a*1.5);
+			region.SetPoint(4, oX - b/2, oY + a/2  );
+			region.SetPoint(5, oX      , oY        );
 			break;
 		}
 	}
 
-	public override Rect getRcInner(int borderWidth) {
-		AttrHexagon1 attr = Attr;
-		double a = attr.A;
-		double b = attr.B;
-		double sq = attr.GetSq(borderWidth);
+	public override RectDouble getRcInner(int borderWidth) {
+		var attr = Attr;
+		var a = attr.A;
+		var b = attr.B;
+		var sq = attr.GetSq(borderWidth);
 
-		double oX = (coord.x+1)*b;      // offset X
-		double oY = (coord.y+1-direction)*a*1.5; // offset Y
+		var oX = (coord.x+1)*b;               // offset X
+		var oY = (coord.y+1-direction)*a*1.5; // offset Y
 
-		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
+		var center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
 		switch (direction) {
 		case 0: center.X = oX - b/2; center.Y = oY - a/2; break;
 		case 1: center.X = oX;       center.Y = oY + a;   break;
 		}
 
-		Rect square = new Rect();
-		square.X = (int) (center.X - sq/2);
-		square.Y = (int) (center.Y - sq/2);
-		square.Width =
-		square.Height = (int) sq;
-		return square;
+		return new RectDouble(
+			center.X - sq/2,
+			center.Y - sq/2,
+			sq, sq);
 	}
 
 	public override int getShiftPointBorderIndex() { return 3; }

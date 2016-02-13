@@ -57,15 +57,15 @@ public abstract class BaseCell {
    public abstract class BaseAttribute : FastMines.Presentation.Notyfier.NotifyPropertyChanged {
       /// На PropertyChanged это подписаны все наследники BaseCell: при изменении A - надо пересчить все координаты точек
 
-      public BaseAttribute(int area) {
+      public BaseAttribute(double area) {
          Area = area;
       }
 
       /// <summary>площадь ячейки/фигуры</summary>
-      private int _area;
+      private double _area;
 
       /// <summary>площадь ячейки/фигуры</summary>
-      public int Area {
+      public double Area {
          get { return _area; }
          set { this.SetProperty(ref this._area, value); }
       }
@@ -78,12 +78,12 @@ public abstract class BaseCell {
       public abstract double A { get; }
 
       /// <summary>get parent container (owner window) size in pixels</summary>
-      public abstract Size GetOwnerSize(Matrisize sizeField);
+      public abstract SizeDouble GetOwnerSize(Matrisize sizeField);
 
       /// <summary>размер поля из группы ячеек состоящих из разных direction</summary>
       public abstract Size GetDirectionSizeField();
       /// <summary>кол-во direction'ов, которые знает данный тип мозаики</summary>
-      public int GetDirectionCount() { Size s = GetDirectionSizeField(); return s.width*s.height; }
+      public int GetDirectionCount() { Size s = GetDirectionSizeField(); return s.Width*s.Height; }
 
       /// <summary>кол-во соседей (максимум или минимум)</summary>
       public virtual int getNeighborNumber(bool max) {
@@ -115,10 +115,10 @@ public abstract class BaseCell {
    protected int direction;
 
    /// <summary>вписанный в фигуру квадрат - область в которую выводится изображение/текст</summary>
-   public abstract Rect getRcInner(int borderWidth);
+   public abstract RectDouble getRcInner(int borderWidth);
    /// <summary>вернёт прямоугольник в который вписана фигура ячейки</summary>
-   public Rect getRcOuter() {
-      Rect rcOuter = region.GetBounds();
+   public RectDouble getRcOuter() {
+      var rcOuter = region.GetBounds();
       rcOuter.Height++; rcOuter.Width++; // чтобы при repaint'е захватило и крайние границы
       return rcOuter;
    }
@@ -126,9 +126,9 @@ public abstract class BaseCell {
    /// <summary>соседние ячейки - с которыми граничит this</summary>
    private BaseCell[] neighbors;
    public BaseCell[] Neighbors { get { return neighbors; } }
-   
+
    /// <summary>массив координат точек из которых состоит фигура</summary>
-   protected Region region;
+   protected RegionDouble region;
 
    public class StateCell {
       private readonly BaseCell owner;
@@ -207,7 +207,7 @@ public abstract class BaseCell {
       this.attr = attr;
       this.coord = coord;
       this.direction = iDirection;
-      this.region = new Region(attr.getVertexNumber(iDirection));
+      this.region = new RegionDouble(attr.getVertexNumber(iDirection));
       this.neighbors = null;
 
       this.state = new StateCell(this);
@@ -241,7 +241,7 @@ public abstract class BaseCell {
          throw new Exception("neighborCoord.Length != GetNeighborNumber()");
 
       // проверяю что они не вылезли за размеры
-      for (int i=0; i<neighborCoord.Length; i++)
+      for (var i=0; i<neighborCoord.Length; i++)
          if (neighborCoord[i] != null)
             if ((neighborCoord[i].Value.x >= matrix.SizeField.m) ||
                (neighborCoord[i].Value.y >= matrix.SizeField.n) ||
@@ -252,7 +252,7 @@ public abstract class BaseCell {
             }
       // по координатам получаю множество соседних обьектов-ячеек
       neighbors = new BaseCell[attr.getNeighborNumber(true)];
-      for (int i=0; i<neighborCoord.Length; i++)
+      for (var i=0; i<neighborCoord.Length; i++)
          if (neighborCoord[i] != null)
             neighbors[i] = matrix.getCell(neighborCoord[i].Value);
    }
@@ -260,12 +260,12 @@ public abstract class BaseCell {
    public Coord getCoord() { return coord; }
    public int getDirection() { return direction; }
    /// <summary>координата центра фигуры</summary>
-   public Point getCenter() { return getRcInner(1).Center(); }
+   public PointDouble getCenter() { return getRcInner(1).Center(); }
 
    /// <summary>принадлежат ли эти экранные координаты ячейке</summary>
-   public virtual bool PointInRegion(Point point) { return region.Contains(point); }
+   public virtual bool PointInRegion(PointDouble point) { return region.Contains(point); }
 
-   public Region getRegion() { return region; }
+   public RegionDouble getRegion() { return region; }
 
    /// <summary>определить координаты точек из которых состоит фигура</summary>
    protected abstract void CalcRegion();
@@ -501,8 +501,8 @@ public abstract class BaseCell {
          return repositoryColor(getCoord().x % (-fillMode) - fillMode + getCoord().y % (+fillMode));
       case 19:
          // подсветить direction
-         var zx = getCoord().x / Attr.GetDirectionSizeField().width + 1;
-         var zy = getCoord().y / Attr.GetDirectionSizeField().height + 1;
+         var zx = getCoord().x / Attr.GetDirectionSizeField().Width + 1;
+         var zy = getCoord().y / Attr.GetDirectionSizeField().Height + 1;
          return repositoryColor(zx * zy);
       }
    }

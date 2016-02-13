@@ -29,28 +29,28 @@ namespace fmg.core.mosaic.cells {
 /// <summary> Комбинация. Мозаика из 4х треугольников и 2х квадратов </summary>
 public class TrSq1 : BaseCell {
 	public class AttrTrSq1 : BaseAttribute {
-		public AttrTrSq1(int area)
+		public AttrTrSq1(double area)
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Matrisize sizeField) {
-			double b = B;
-			double k = K;
-			double n = N;
-			double m = M;
-			Size result = new Size(
-					(int)(b+n*((sizeField.m-1+2)/3)+
-					        k*((sizeField.m-1+1)/3)+
-					        m*((sizeField.m-1+0)/3)),
-					(int)(b+n* (sizeField.n-1)));
+		public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+			var b = B;
+			var k = K;
+			var n = N;
+			var m = M;
+			var result = new SizeDouble(
+					b+n*((sizeField.m-1+2)/3.0)+
+					  k*((sizeField.m-1+1)/3.0)+
+					  m*((sizeField.m-1+0)/3.0),
+					b+n* (sizeField.n-1));
 
 			if (sizeField.n == 1) {
-				if ((sizeField.m % 3) == 2) result.width -= (int)m;
-				if ((sizeField.m % 3) == 0) result.width -= (int)k;
+				if ((sizeField.m % 3) == 2) result.Width -= m;
+				if ((sizeField.m % 3) == 0) result.Width -= k;
 			}
 			if (sizeField.m == 1)
 				if ((sizeField.n & 1) == 0)
-					result.height -= (int)m;
+					result.Height -= m;
 
 			return result;
 		}
@@ -80,7 +80,7 @@ public class TrSq1 : BaseCell {
 		public double N => A * SIN75;
 		public double M => A * SIN15;
 		public override double GetSq(int borderWidth) {
-			double w = borderWidth/2.0;
+			var w = borderWidth/2.0;
 			return (A*SQRT3 - w*6) / (4*SIN75); 
 		}
 	}
@@ -91,11 +91,9 @@ public class TrSq1 : BaseCell {
 			)
 	{}
 
-	private new AttrTrSq1 Attr {
-		get { return (AttrTrSq1) base.Attr; }
-	}
+	private new AttrTrSq1 Attr => (AttrTrSq1) base.Attr;
 
-	protected override Coord?[] GetCoordsNeighbor() {
+   protected override Coord?[] GetCoordsNeighbor() {
       var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
 		// определяю координаты соседей
@@ -190,68 +188,68 @@ public class TrSq1 : BaseCell {
 	}
 
 	protected override void CalcRegion() {
-		AttrTrSq1 attr = Attr;
-		double b = attr.B;
-		double k = attr.K;
-		double n = attr.N;
-		double m = attr.M;
+		var attr = Attr;
+		var b = attr.B;
+		var k = attr.K;
+		var n = attr.N;
+		var m = attr.M;
 
-		double oX = b + n * (coord.x/3*2); // offset X
-		double oY = n + n*2*(coord.y/2);   // offset Y
+		var oX = b + n * (coord.x/3.0*2); // offset X
+		var oY = n + n*2*(coord.y/2.0);   // offset Y
 
 		switch (direction) {
 		case 0:
-			region.SetPoint(0, (int)(oX - m  ), (int)(oY - n));
-			region.SetPoint(1, (int)(oX      ), (int)(oY    ));
-			region.SetPoint(2, (int)(oX - n  ), (int)(oY + m));
-			region.SetPoint(3, (int)(oX - b  ), (int)(oY - k));
+			region.SetPoint(0, oX - m  , oY - n);
+			region.SetPoint(1, oX      , oY    );
+			region.SetPoint(2, oX - n  , oY + m);
+			region.SetPoint(3, oX - b  , oY - k);
 			break;
-		case 1:                            
-			region.SetPoint(1, (int)(oX      ), (int)(oY    ));
-			region.SetPoint(2, (int)(oX - m  ), (int)(oY - n));
-			region.SetPoint(0, (int)(oX + k  ), (int)(oY - k));
+		case 1:
+			region.SetPoint(1, oX      , oY    );
+			region.SetPoint(2, oX - m  , oY - n);
+			region.SetPoint(0, oX + k  , oY - k);
 			break;
-		case 2:                            
-			region.SetPoint(0, (int)(oX + k  ), (int)(oY - k));
-			region.SetPoint(1, (int)(oX + n  ), (int)(oY + m));
-			region.SetPoint(2, (int)(oX      ), (int)(oY    ));
+		case 2:
+			region.SetPoint(0, oX + k  , oY - k);
+			region.SetPoint(1, oX + n  , oY + m);
+			region.SetPoint(2, oX      , oY    );
 			break;
-		case 3:                            
-			region.SetPoint(1, (int)(oX - m  ), (int)(oY + n));
-			region.SetPoint(2, (int)(oX - n  ), (int)(oY + m));
-			region.SetPoint(0, (int)(oX      ), (int)(oY    ));
+		case 3:
+			region.SetPoint(1, oX - m  , oY + n);
+			region.SetPoint(2, oX - n  , oY + m);
+			region.SetPoint(0, oX      , oY    );
 			break;
-		case 4:                            
-			region.SetPoint(0, (int)(oX + n  ), (int)(oY + m));
-			region.SetPoint(3, (int)(oX      ), (int)(oY    ));
-			region.SetPoint(2, (int)(oX - m  ), (int)(oY + n));
-			region.SetPoint(1, (int)(oX + k  ), (int)(oY + b));
+		case 4:
+			region.SetPoint(0, oX + n  , oY + m);
+			region.SetPoint(3, oX      , oY    );
+			region.SetPoint(2, oX - m  , oY + n);
+			region.SetPoint(1, oX + k  , oY + b);
 			break;
-		case 5:                            
-			region.SetPoint(0, (int)(oX + n  ), (int)(oY + m));
-			region.SetPoint(1, (int)(oX + n+k), (int)(oY + n));
-			region.SetPoint(2, (int)(oX + k  ), (int)(oY + b));
+		case 5:
+			region.SetPoint(0, oX + n  , oY + m);
+			region.SetPoint(1, oX + n+k, oY + n);
+			region.SetPoint(2, oX + k  , oY + b);
 			break;
 		}
 	}
 
-	public override Rect getRcInner(int borderWidth) {
-		AttrTrSq1 attr = Attr;
-		double b = attr.B;
-		double k = attr.K;
-		double n = attr.N;
-		double m = attr.M;
-		double w = borderWidth/2.0;
-		double sq = attr.GetSq(borderWidth);
-		double sq2 = sq/2;
+	public override RectDouble getRcInner(int borderWidth) {
+		var attr = Attr;
+		var b = attr.B;
+		var k = attr.K;
+		var n = attr.N;
+		var m = attr.M;
+		var w = borderWidth/2.0;
+		var sq = attr.GetSq(borderWidth);
+		var sq2 = sq/2;
 
-		double oX = b + n * (coord.x/3*2); // offset X
-		double oY = n + n*2*(coord.y/2);   // offset Y
+		var oX = b + n * (coord.x/3.0*2); // offset X
+		var oY = n + n*2*(coord.y/2.0);   // offset Y
 
 
-		double ksw1 = k/2-sq2-w/SQRT2;
-		double ksw2 = k/2+sq2+w/SQRT2;
-		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
+		var ksw1 = k/2-sq2-w/SQRT2;
+		var ksw2 = k/2+sq2+w/SQRT2;
+		var center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
 		switch (direction) {
 		case 0:  center.X = oX - b/2;    center.Y = oY - k/2;    break;
 		case 1:  center.X = oX + ksw1;   center.Y = oY - ksw2;   break;
@@ -261,12 +259,10 @@ public class TrSq1 : BaseCell {
 		case 5:  center.X = oX + ksw1+n; center.Y = oY + ksw2+m; break;
 		}
 
-		Rect square = new Rect();
-		square.X = (int) (center.X - sq2);
-		square.Y = (int) (center.Y - sq2);
-		square.Width =
-		square.Height = (int) sq;
-		return square;
+		return new RectDouble(
+		   center.X - sq2,
+		   center.Y - sq2,
+		   sq, sq);
 	}
 
 	public override int getShiftPointBorderIndex() {

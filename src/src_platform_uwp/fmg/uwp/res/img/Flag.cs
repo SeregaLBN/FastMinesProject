@@ -24,7 +24,7 @@ namespace fmg.uwp.res.img {
 
 #if true
             var size = new Size((int) (DefaultWidht*Zoom), (int) (DefaultHeight*Zoom));
-            var bmp = BitmapFactory.New(size.width, size.height);
+            var bmp = BitmapFactory.New(size.Width, size.Height);
 
             var p = new[] {
                new PointDouble(13.5*Zoom, 90*Zoom),

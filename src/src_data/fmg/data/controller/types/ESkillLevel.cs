@@ -27,7 +27,7 @@ namespace fmg.data.controller.types {
       static ESkillLevelEx() {
          var values = EMosaicEx.GetValues();
          mosaicCoefficient = new Dictionary<EMosaic, double>(values.Length);
-         const int area = 200; // пох
+         const double area = 200; // пох
          foreach (EMosaic mosaicType in values) {
             BaseCell.BaseAttribute attr = MosaicHelper.CreateAttributeInstance(mosaicType, area);
 

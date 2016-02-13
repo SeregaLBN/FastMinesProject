@@ -27,4 +27,15 @@ public struct SizeDouble {
       return "{width:" + Width + ", height:" + Height + "}";
    }
 }
+
+   public static class SizeDoubleExt {
+#if WINDOWS_RT || WINDOWS_UWP
+      public static SizeDouble ToFmSizeDouble(this Windows.Foundation.Size self) { return new SizeDouble(self.Width, self.Height); }
+      public static Windows.Foundation.Size ToWinSize(this SizeDouble self) { return new Windows.Foundation.Size { Width = self.Width, Height = self.Height }; }
+#elif WINDOWS_FORMS
+      ...
+#else
+      ...
+#endif
+   }
 }

@@ -86,8 +86,8 @@ namespace fmg.uwp.res {
       public static WriteableBitmap GetImgLogo(Size sizeImage, uint loopMix = 0, uint margin = 3) {
          var imgLogo = new Logo {
             Margin = margin,
-            ZoomX = Logo.CalcZoom(sizeImage.width, margin),
-            ZoomY = Logo.CalcZoom(sizeImage.height, margin)
+            ZoomX = Logo.CalcZoom(sizeImage.Width, margin),
+            ZoomY = Logo.CalcZoom(sizeImage.Height, margin)
          };
          imgLogo.MixLoopColor(loopMix);
          return imgLogo.Image;

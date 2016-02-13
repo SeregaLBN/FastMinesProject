@@ -37,20 +37,20 @@ public class Triangle4 : BaseCell {
    }
 
    public class AttrTriangle4 : BaseAttribute {
-      public AttrTriangle4(int area)
+      public AttrTriangle4(double area)
          : base(area)
       {}
 
       public static readonly ComplexityMode Mode = ComplexityMode.eOptimalMode; // TODO: check others to view...
 
-      public override Size GetOwnerSize(Matrisize sizeField) {
-         double b = B;
-         double r = RIn;
-         double R = ROut;
-         Size result = new Size(
-               (int)( b+b *((sizeField.m+2)/3) +
-                        b *((sizeField.m+0)/3)),
-               (int)((R+r)*((sizeField.n+1)/2)));
+      public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         var b = B;
+         var r = RIn;
+         var R = ROut;
+         var result = new SizeDouble(
+                b+b *((sizeField.m+2)/3.0) +
+                  b *((sizeField.m+0)/3.0),
+               (R+r)*((sizeField.n+1)/2.0));
 
          switch (Mode) {
          case ComplexityMode.eUnrealMode:
@@ -59,19 +59,19 @@ public class Triangle4 : BaseCell {
             break;
          case ComplexityMode.eMeanMode:
          case ComplexityMode.eSimpeMode: {
-               double u = CalcSnip() / 2; // Snip * cos60
-               double c = u * SQRT3; // Snip * cos30
+               var u = CalcSnip() / 2; // Snip * cos60
+               var c = u * SQRT3; // Snip * cos30
                switch (sizeField.m % 3) {
-               case 0: result.width -= (int)(u + u); break;
-               case 1: result.width -= (int)(u + c); break;
-               case 2: result.width -= (int)u; break;
+               case 0: result.Width -= u + u; break;
+               case 1: result.Width -= u + c; break;
+               case 2: result.Width -= u; break;
                }
                if (Mode == ComplexityMode.eMeanMode) {
                   if ((sizeField.n % 4) == 3)
-                     result.height -= (int)u;
+                     result.Height -= u;
                } else {
                   if ((sizeField.n & 1) == 1)
-                     result.height -= (int)u;
+                     result.Height -= u;
                }
             }
             break;
@@ -79,10 +79,10 @@ public class Triangle4 : BaseCell {
 
          if (sizeField.m == 1)
             if ((sizeField.n % 4) == 3)
-               result.height -= (int)R;
+               result.Height -= R;
          if (sizeField.n == 1)
             if ((sizeField.m % 3) == 1)
-               result.width -= (int)b;
+               result.Width -= b;
 
          return result;
       }
@@ -162,7 +162,7 @@ public class Triangle4 : BaseCell {
       //private double __snip  = 2.3456789 + new Random(Guid.NewGuid().GetHashCode()).Next(15);
       public double CalcSnip() { return A / (/*12*/6.789012345 /*__snip*/); }
       public override double GetSq(int borderWidth) {
-         double w = borderWidth/2.0;
+         var w = borderWidth/2.0;
          return (A-w*2/TAN15)/(SQRT3+3);
       }
    }
@@ -173,9 +173,7 @@ public class Triangle4 : BaseCell {
          )
    {}
 
-   private new AttrTriangle4 Attr {
-      get { return (AttrTriangle4) base.Attr; }
-   }
+   private new AttrTriangle4 Attr => (AttrTriangle4) base.Attr;
 
    protected override Coord?[] GetCoordsNeighbor() {
       var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
@@ -727,18 +725,18 @@ public class Triangle4 : BaseCell {
    }
 
    protected override void CalcRegion() {
-      AttrTriangle4 attr = Attr;
-      double a = attr.A;
-      double b = attr.B;
-      double R = attr.ROut;
-      double r = attr.RIn;
-      double s = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? attr.CalcSnip() : 0;
-      double c = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2*SQRT3 : 0; // s * cos30
-      double u = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2 : 0; // s * cos60
+      var attr = Attr;
+      var a = attr.A;
+      var b = attr.B;
+      var R = attr.ROut;
+      var r = attr.RIn;
+      var s = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? attr.CalcSnip() : 0;
+      var c = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2*SQRT3 : 0; // s * cos30
+      var u = (AttrTriangle4.Mode != ComplexityMode.eUnrealMode) ? s/2 : 0; // s * cos60
 
       // определение координат точек фигуры
-      double oX =  (coord.x/3)*a + b;      // offset X
-      double oY = ((coord.y/4)*2+1)*(R+r); // offset Y
+      var oX =  (coord.x/3.0)*a + b;      // offset X
+      var oY = ((coord.y/4.0)*2+1)*(R+r); // offset Y
       switch (AttrTriangle4.Mode) {
       case ComplexityMode.eUnrealMode:
       case ComplexityMode.eOptimalMode:
@@ -754,64 +752,64 @@ public class Triangle4 : BaseCell {
          #region
          switch (direction) {
          case 0:
-            region.SetPoint(0, (int)(oX    ), (int)(oY - R-r));
-            region.SetPoint(1, (int)(oX    ), (int)(oY - r  ));
-            region.SetPoint(2, (int)(oX - b), (int)(oY      ));
+            region.SetPoint(0, oX    , oY - R-r);
+            region.SetPoint(1, oX    , oY - r  );
+            region.SetPoint(2, oX - b, oY      );
             break;
          case 1:
-            region.SetPoint(0, (int)(oX + b), (int)(oY - R  ));
-            region.SetPoint(1, (int)(oX + b), (int)(oY      ));
-            region.SetPoint(2, (int)(oX    ), (int)(oY - R-r));
+            region.SetPoint(0, oX + b, oY - R  );
+            region.SetPoint(1, oX + b, oY      );
+            region.SetPoint(2, oX    , oY - R-r);
             break;
          case 2:
-            region.SetPoint(0, (int)(oX + a), (int)(oY - R-r));
-            region.SetPoint(1, (int)(oX + b), (int)(oY - R  ));
-            region.SetPoint(2, (int)(oX    ), (int)(oY - R-r));
+            region.SetPoint(0, oX + a, oY - R-r);
+            region.SetPoint(1, oX + b, oY - R  );
+            region.SetPoint(2, oX    , oY - R-r);
             break;
          case 3:
-            region.SetPoint(0, (int)(oX + b), (int)(oY      ));
-            region.SetPoint(1, (int)(oX - b), (int)(oY      ));
-            region.SetPoint(2, (int)(oX    ), (int)(oY - r  ));
+            region.SetPoint(0, oX + b, oY      );
+            region.SetPoint(1, oX - b, oY      );
+            region.SetPoint(2, oX    , oY - r  );
             break;
          case 4:
-            region.SetPoint(0, (int)(oX    ), (int)(oY - R-r));
-            region.SetPoint(1, (int)(oX + b), (int)(oY      ));
-            region.SetPoint(2, (int)(oX    ), (int)(oY - r  ));
+            region.SetPoint(0, oX    , oY - R-r);
+            region.SetPoint(1, oX + b, oY      );
+            region.SetPoint(2, oX    , oY - r  );
             break;
          case 5:
-            region.SetPoint(0, (int)(oX + a), (int)(oY - R-r));
-            region.SetPoint(1, (int)(oX + b), (int)(oY      ));
-            region.SetPoint(2, (int)(oX + b), (int)(oY - R  ));
+            region.SetPoint(0, oX + a, oY - R-r);
+            region.SetPoint(1, oX + b, oY      );
+            region.SetPoint(2, oX + b, oY - R  );
             break;
          case 6:
-            region.SetPoint(0, (int)(oX + b), (int)(oY      ));
-            region.SetPoint(1, (int)(oX    ), (int)(oY + r  ));
-            region.SetPoint(2, (int)(oX - b), (int)(oY      ));
+            region.SetPoint(0, oX + b, oY      );
+            region.SetPoint(1, oX    , oY + r  );
+            region.SetPoint(2, oX - b, oY      );
             break;
          case 7:
-            region.SetPoint(0, (int)(oX + b), (int)(oY      ));
-            region.SetPoint(1, (int)(oX    ), (int)(oY + R+r));
-            region.SetPoint(2, (int)(oX    ), (int)(oY + r  ));
+            region.SetPoint(0, oX + b, oY      );
+            region.SetPoint(1, oX    , oY + R+r);
+            region.SetPoint(2, oX    , oY + r  );
             break;
          case 8:
-            region.SetPoint(0, (int)(oX + b), (int)(oY      ));
-            region.SetPoint(1, (int)(oX + a), (int)(oY + R+r));
-            region.SetPoint(2, (int)(oX + b), (int)(oY + R  ));
+            region.SetPoint(0, oX + b, oY      );
+            region.SetPoint(1, oX + a, oY + R+r);
+            region.SetPoint(2, oX + b, oY + R  );
             break;
          case 9:
-            region.SetPoint(0, (int)(oX    ), (int)(oY + r  ));
-            region.SetPoint(1, (int)(oX    ), (int)(oY + R+r));
-            region.SetPoint(2, (int)(oX - b), (int)(oY      ));
+            region.SetPoint(0, oX    , oY + r  );
+            region.SetPoint(1, oX    , oY + R+r);
+            region.SetPoint(2, oX - b, oY      );
             break;
          case 10:
-            region.SetPoint(0, (int)(oX + b), (int)(oY      ));
-            region.SetPoint(1, (int)(oX + b), (int)(oY + R  ));
-            region.SetPoint(2, (int)(oX    ), (int)(oY + R+r));
+            region.SetPoint(0, oX + b, oY      );
+            region.SetPoint(1, oX + b, oY + R  );
+            region.SetPoint(2, oX    , oY + R+r);
             break;
          case 11:
-            region.SetPoint(0, (int)(oX + a), (int)(oY + R+r));
-            region.SetPoint(1, (int)(oX    ), (int)(oY + R+r));
-            region.SetPoint(2, (int)(oX + b), (int)(oY + R  ));
+            region.SetPoint(0, oX + a, oY + R+r);
+            region.SetPoint(1, oX    , oY + R+r);
+            region.SetPoint(2, oX + b, oY + R  );
             break;
          }
          #endregion
@@ -820,80 +818,80 @@ public class Triangle4 : BaseCell {
          #region
          switch (direction) {
          case 0:
-            region.SetPoint(0, (int)(oX    ), (int)(oY-R-r+s));
-            region.SetPoint(1, (int)(oX    ), (int)(oY - r  ));
-            region.SetPoint(2, (int)(oX-b+c), (int)(oY - u  ));
-            region.SetPoint(3, (int)(oX-b+u), (int)(oY - c  ));
-            region.SetPoint(4, (int)(oX - u), (int)(oY-R-r+c));
+            region.SetPoint(0, oX    , oY-R-r+s);
+            region.SetPoint(1, oX    , oY - r  );
+            region.SetPoint(2, oX-b+c, oY - u  );
+            region.SetPoint(3, oX-b+u, oY - c  );
+            region.SetPoint(4, oX - u, oY-R-r+c);
             break;
          case 1:
-            region.SetPoint(0, (int)(oX + b), (int)(oY - R  ));
-            region.SetPoint(1, (int)(oX + b), (int)(oY      ));
-            region.SetPoint(2, (int)(oX + u), (int)(oY-R-r+c));
-            region.SetPoint(3, (int)(oX + c), (int)(oY-R-r+u));
+            region.SetPoint(0, oX + b, oY - R  );
+            region.SetPoint(1, oX + b, oY      );
+            region.SetPoint(2, oX + u, oY-R-r+c);
+            region.SetPoint(3, oX + c, oY-R-r+u);
             break;
          case 2:
-            region.SetPoint(0, (int)(oX + a), (int)(oY - R-r));
-            region.SetPoint(1, (int)(oX + b), (int)(oY - R  ));
-            region.SetPoint(2, (int)(oX    ), (int)(oY - R-r));
+            region.SetPoint(0, oX + a, oY - R-r);
+            region.SetPoint(1, oX + b, oY - R  );
+            region.SetPoint(2, oX    , oY - R-r);
             break;
          case 3:
-            region.SetPoint(0, (int)(oX+b-s), (int)(oY      ));
-            region.SetPoint(1, (int)(oX-b+s), (int)(oY      ));
-            region.SetPoint(2, (int)(oX-b+c), (int)(oY - u  ));
-            region.SetPoint(3, (int)(oX    ), (int)(oY - r  ));
-            region.SetPoint(4, (int)(oX+b-c), (int)(oY - u  ));
+            region.SetPoint(0, oX+b-s, oY      );
+            region.SetPoint(1, oX-b+s, oY      );
+            region.SetPoint(2, oX-b+c, oY - u  );
+            region.SetPoint(3, oX    , oY - r  );
+            region.SetPoint(4, oX+b-c, oY - u  );
             break;
          case 4:
-            region.SetPoint(0, (int)(oX + u), (int)(oY-R-r+c));
-            region.SetPoint(1, (int)(oX+b-u), (int)(oY - c  ));
-            region.SetPoint(2, (int)(oX+b-c), (int)(oY - u  ));
-            region.SetPoint(3, (int)(oX    ), (int)(oY - r  ));
-            region.SetPoint(4, (int)(oX    ), (int)(oY-R-r+s));
+            region.SetPoint(0, oX + u, oY-R-r+c);
+            region.SetPoint(1, oX+b-u, oY - c  );
+            region.SetPoint(2, oX+b-c, oY - u  );
+            region.SetPoint(3, oX    , oY - r  );
+            region.SetPoint(4, oX    , oY-R-r+s);
             break;
          case 5:
-            region.SetPoint(0, (int)(oX+a-u), (int)(oY-R-r+c));
-            region.SetPoint(1, (int)(oX + b), (int)(oY      ));
-            region.SetPoint(2, (int)(oX + b), (int)(oY - R  ));
-            region.SetPoint(3, (int)(oX+a-c), (int)(oY-R-r+u));
+            region.SetPoint(0, oX+a-u, oY-R-r+c);
+            region.SetPoint(1, oX + b, oY      );
+            region.SetPoint(2, oX + b, oY - R  );
+            region.SetPoint(3, oX+a-c, oY-R-r+u);
             break;
          case 6:
-            region.SetPoint(0, (int)(oX+b-c), (int)(oY + u  ));
-            region.SetPoint(1, (int)(oX    ), (int)(oY + r  ));
-            region.SetPoint(2, (int)(oX-b+c), (int)(oY + u  ));
-            region.SetPoint(3, (int)(oX-b+s), (int)(oY      ));
-            region.SetPoint(4, (int)(oX+b-s), (int)(oY      ));
+            region.SetPoint(0, oX+b-c, oY + u  );
+            region.SetPoint(1, oX    , oY + r  );
+            region.SetPoint(2, oX-b+c, oY + u  );
+            region.SetPoint(3, oX-b+s, oY      );
+            region.SetPoint(4, oX+b-s, oY      );
             break;
          case 7:
-            region.SetPoint(0, (int)(oX+b-u), (int)(oY + c  ));
-            region.SetPoint(1, (int)(oX + u), (int)(oY+R+r-c));
-            region.SetPoint(2, (int)(oX    ), (int)(oY+R+r-s));
-            region.SetPoint(3, (int)(oX    ), (int)(oY + r  ));
-            region.SetPoint(4, (int)(oX+b-c), (int)(oY + u  ));
+            region.SetPoint(0, oX+b-u, oY + c  );
+            region.SetPoint(1, oX + u, oY+R+r-c);
+            region.SetPoint(2, oX    , oY+R+r-s);
+            region.SetPoint(3, oX    , oY + r  );
+            region.SetPoint(4, oX+b-c, oY + u  );
             break;
          case 8:
-            region.SetPoint(0, (int)(oX + b), (int)(oY      ));
-            region.SetPoint(1, (int)(oX+a-u), (int)(oY+R+r-c));
-            region.SetPoint(2, (int)(oX+a-c), (int)(oY+R+r-u));
-            region.SetPoint(3, (int)(oX + b), (int)(oY + R  ));
+            region.SetPoint(0, oX + b, oY      );
+            region.SetPoint(1, oX+a-u, oY+R+r-c);
+            region.SetPoint(2, oX+a-c, oY+R+r-u);
+            region.SetPoint(3, oX + b, oY + R  );
             break;
          case 9:
-            region.SetPoint(0, (int)(oX    ), (int)(oY + r  ));
-            region.SetPoint(1, (int)(oX    ), (int)(oY+R+r-s));
-            region.SetPoint(2, (int)(oX - u), (int)(oY+R+r-c));
-            region.SetPoint(3, (int)(oX-b+u), (int)(oY + c  ));
-            region.SetPoint(4, (int)(oX-b+c), (int)(oY + u  ));
+            region.SetPoint(0, oX    , oY + r  );
+            region.SetPoint(1, oX    , oY+R+r-s);
+            region.SetPoint(2, oX - u, oY+R+r-c);
+            region.SetPoint(3, oX-b+u, oY + c  );
+            region.SetPoint(4, oX-b+c, oY + u  );
             break;
          case 10:
-            region.SetPoint(0, (int)(oX + b), (int)(oY      ));
-            region.SetPoint(1, (int)(oX + b), (int)(oY + R  ));
-            region.SetPoint(2, (int)(oX + c), (int)(oY+R+r-u));
-            region.SetPoint(3, (int)(oX + u), (int)(oY+R+r-c));
+            region.SetPoint(0, oX + b, oY      );
+            region.SetPoint(1, oX + b, oY + R  );
+            region.SetPoint(2, oX + c, oY+R+r-u);
+            region.SetPoint(3, oX + u, oY+R+r-c);
             break;
          case 11:
-            region.SetPoint(0, (int)(oX + a), (int)(oY + R+r));
-            region.SetPoint(2, (int)(oX + b), (int)(oY + R  ));
-            region.SetPoint(1, (int)(oX    ), (int)(oY + R+r));
+            region.SetPoint(0, oX + a, oY + R+r);
+            region.SetPoint(2, oX + b, oY + R  );
+            region.SetPoint(1, oX    , oY + R+r);
             break;
          }
          #endregion
@@ -902,76 +900,76 @@ public class Triangle4 : BaseCell {
          #region
          switch (direction) {
          case 0:
-            region.SetPoint(0, (int)(oX    ), (int)(oY - R-r));
-            region.SetPoint(1, (int)(oX    ), (int)(oY - r  ));
-            region.SetPoint(2, (int)(oX-b+c), (int)(oY - u  ));
-            region.SetPoint(3, (int)(oX-b+u), (int)(oY - c  ));
+            region.SetPoint(0, oX    , oY - R-r);
+            region.SetPoint(1, oX    , oY - r  );
+            region.SetPoint(2, oX-b+c, oY - u  );
+            region.SetPoint(3, oX-b+u, oY - c  );
             break;
          case 1:
-            region.SetPoint(0, (int)(oX + b), (int)(oY - R  ));
-            region.SetPoint(1, (int)(oX + b), (int)(oY      ));
-            region.SetPoint(2, (int)(oX + u), (int)(oY-R-r+c));
-            region.SetPoint(3, (int)(oX + c), (int)(oY-R-r+u));
+            region.SetPoint(0, oX + b, oY - R  );
+            region.SetPoint(1, oX + b, oY      );
+            region.SetPoint(2, oX + u, oY-R-r+c);
+            region.SetPoint(3, oX + c, oY-R-r+u);
             break;
          case 2:
-            region.SetPoint(0, (int)(oX + a), (int)(oY -R -r));
-            region.SetPoint(1, (int)(oX + b), (int)(oY - R  ));
-            region.SetPoint(2, (int)(oX + c), (int)(oY-R-r+u));
-            region.SetPoint(3, (int)(oX + s), (int)(oY -R -r));
+            region.SetPoint(0, oX + a, oY -R -r);
+            region.SetPoint(1, oX + b, oY - R  );
+            region.SetPoint(2, oX + c, oY-R-r+u);
+            region.SetPoint(3, oX + s, oY -R -r);
             break;
          case 3:
-            region.SetPoint(0, (int)(oX+b  ), (int)(oY      ));
-            region.SetPoint(1, (int)(oX-b+s), (int)(oY      ));
-            region.SetPoint(2, (int)(oX-b+c), (int)(oY - u  ));
-            region.SetPoint(3, (int)(oX    ), (int)(oY - r  ));
+            region.SetPoint(0, oX+b  , oY      );
+            region.SetPoint(1, oX-b+s, oY      );
+            region.SetPoint(2, oX-b+c, oY - u  );
+            region.SetPoint(3, oX    , oY - r  );
             break;
          case 4:
-            region.SetPoint(0, (int)(oX + u), (int)(oY-R-r+c));
-            region.SetPoint(1, (int)(oX + b), (int)(oY      ));
-            region.SetPoint(2, (int)(oX    ), (int)(oY - r  ));
-            region.SetPoint(3, (int)(oX    ), (int)(oY-R-r+s));
+            region.SetPoint(0, oX + u, oY-R-r+c);
+            region.SetPoint(1, oX + b, oY      );
+            region.SetPoint(2, oX    , oY - r  );
+            region.SetPoint(3, oX    , oY-R-r+s);
             break;
          case 5:
-            region.SetPoint(0, (int)(oX+a  ), (int)(oY - R-r));
-            region.SetPoint(1, (int)(oX+b+u), (int)(oY - c  ));
-            region.SetPoint(2, (int)(oX + b), (int)(oY - s  ));
-            region.SetPoint(3, (int)(oX + b), (int)(oY - R  ));
+            region.SetPoint(0, oX+a  , oY - R-r);
+            region.SetPoint(1, oX+b+u, oY - c  );
+            region.SetPoint(2, oX + b, oY - s  );
+            region.SetPoint(3, oX + b, oY - R  );
             break;
          case 6:
-            region.SetPoint(0, (int)(oX+b-c), (int)(oY + u  ));
-            region.SetPoint(1, (int)(oX    ), (int)(oY + r  ));
-            region.SetPoint(2, (int)(oX-b  ), (int)(oY      ));
-            region.SetPoint(3, (int)(oX+b-s), (int)(oY      ));
+            region.SetPoint(0, oX+b-c, oY + u  );
+            region.SetPoint(1, oX    , oY + r  );
+            region.SetPoint(2, oX-b  , oY      );
+            region.SetPoint(3, oX+b-s, oY      );
             break;
          case 7:
-            region.SetPoint(0, (int)(oX+b-u), (int)(oY + c  ));
-            region.SetPoint(1, (int)(oX    ), (int)(oY + R+r));
-            region.SetPoint(2, (int)(oX    ), (int)(oY + r  ));
-            region.SetPoint(3, (int)(oX+b-c), (int)(oY + u  ));
+            region.SetPoint(0, oX+b-u, oY + c  );
+            region.SetPoint(1, oX    , oY + R+r);
+            region.SetPoint(2, oX    , oY + r  );
+            region.SetPoint(3, oX+b-c, oY + u  );
             break;
          case 8:
-            region.SetPoint(0, (int)(oX + b), (int)(oY      ));
-            region.SetPoint(1, (int)(oX+a-u), (int)(oY+R+r-c));
-            region.SetPoint(2, (int)(oX+a-c), (int)(oY+R+r-u));
-            region.SetPoint(3, (int)(oX + b), (int)(oY + R  ));
+            region.SetPoint(0, oX + b, oY      );
+            region.SetPoint(1, oX+a-u, oY+R+r-c);
+            region.SetPoint(2, oX+a-c, oY+R+r-u);
+            region.SetPoint(3, oX + b, oY + R  );
             break;
          case 9:
-            region.SetPoint(0, (int)(oX    ), (int)(oY + r  ));
-            region.SetPoint(1, (int)(oX    ), (int)(oY+R+r-s));
-            region.SetPoint(2, (int)(oX - u), (int)(oY+R+r-c));
-            region.SetPoint(3, (int)(oX - b), (int)(oY      ));
+            region.SetPoint(0, oX    , oY + r  );
+            region.SetPoint(1, oX    , oY+R+r-s);
+            region.SetPoint(2, oX - u, oY+R+r-c);
+            region.SetPoint(3, oX - b, oY      );
             break;
          case 10:
-            region.SetPoint(0, (int)(oX + b), (int)(oY + s  ));
-            region.SetPoint(1, (int)(oX + b), (int)(oY + R  ));
-            region.SetPoint(2, (int)(oX    ), (int)(oY+R+r  ));
-            region.SetPoint(3, (int)(oX+b-u), (int)(oY + c  ));
+            region.SetPoint(0, oX + b, oY + s  );
+            region.SetPoint(1, oX + b, oY + R  );
+            region.SetPoint(2, oX    , oY+R+r  );
+            region.SetPoint(3, oX+b-u, oY + c  );
             break;
          case 11:
-            region.SetPoint(0, (int)(oX+a-c), (int)(oY+R+r-u));
-            region.SetPoint(1, (int)(oX+a-s), (int)(oY + R+r));
-            region.SetPoint(2, (int)(oX    ), (int)(oY + R+r));
-            region.SetPoint(3, (int)(oX + b), (int)(oY + R  ));
+            region.SetPoint(0, oX+a-c, oY+R+r-u);
+            region.SetPoint(1, oX+a-s, oY + R+r);
+            region.SetPoint(2, oX    , oY + R+r);
+            region.SetPoint(3, oX + b, oY + R  );
             break;
          }
          #endregion
@@ -980,88 +978,88 @@ public class Triangle4 : BaseCell {
          #region
          switch (direction) {
          case 0:
-            region.SetPoint(0, (int)(oX    ), (int)(oY-R-r+s));
-            region.SetPoint(1, (int)(oX    ), (int)(oY - r  ));
-            region.SetPoint(2, (int)(oX-b+c), (int)(oY - u  ));
-            region.SetPoint(3, (int)(oX-b+u), (int)(oY - c  ));
-            region.SetPoint(4, (int)(oX - u), (int)(oY-R-r+c));
+            region.SetPoint(0, oX    , oY-R-r+s);
+            region.SetPoint(1, oX    , oY - r  );
+            region.SetPoint(2, oX-b+c, oY - u  );
+            region.SetPoint(3, oX-b+u, oY - c  );
+            region.SetPoint(4, oX - u, oY-R-r+c);
             break;
          case 1:
-            region.SetPoint(0, (int)(oX + b), (int)(oY - R  ));
-            region.SetPoint(1, (int)(oX + b), (int)(oY - s  ));
-            region.SetPoint(2, (int)(oX+b-u), (int)(oY - c  ));
-            region.SetPoint(3, (int)(oX + u), (int)(oY-R-r+c));
-            region.SetPoint(4, (int)(oX + c), (int)(oY-R-r+u));
+            region.SetPoint(0, oX + b, oY - R  );
+            region.SetPoint(1, oX + b, oY - s  );
+            region.SetPoint(2, oX+b-u, oY - c  );
+            region.SetPoint(3, oX + u, oY-R-r+c);
+            region.SetPoint(4, oX + c, oY-R-r+u);
             break;
          case 2:
-            region.SetPoint(0, (int)(oX+a-c), (int)(oY-R-r+u));
-            region.SetPoint(1, (int)(oX + b), (int)(oY - R  ));
-            region.SetPoint(2, (int)(oX + c), (int)(oY-R-r+u));
-            region.SetPoint(3, (int)(oX + s), (int)(oY -R -r));
-            region.SetPoint(4, (int)(oX+a-s), (int)(oY -R -r));
+            region.SetPoint(0, oX+a-c, oY-R-r+u);
+            region.SetPoint(1, oX + b, oY - R  );
+            region.SetPoint(2, oX + c, oY-R-r+u);
+            region.SetPoint(3, oX + s, oY -R -r);
+            region.SetPoint(4, oX+a-s, oY -R -r);
             break;
          case 3:
-            region.SetPoint(0, (int)(oX+b-s), (int)(oY      ));
-            region.SetPoint(1, (int)(oX-b+s), (int)(oY      ));
-            region.SetPoint(2, (int)(oX-b+c), (int)(oY - u  ));
-            region.SetPoint(3, (int)(oX    ), (int)(oY - r  ));
-            region.SetPoint(4, (int)(oX+b-c), (int)(oY - u  ));
+            region.SetPoint(0, oX+b-s, oY      );
+            region.SetPoint(1, oX-b+s, oY      );
+            region.SetPoint(2, oX-b+c, oY - u  );
+            region.SetPoint(3, oX    , oY - r  );
+            region.SetPoint(4, oX+b-c, oY - u  );
             break;
          case 4:
-            region.SetPoint(0, (int)(oX + u), (int)(oY-R-r+c));
-            region.SetPoint(1, (int)(oX+b-u), (int)(oY - c  ));
-            region.SetPoint(2, (int)(oX+b-c), (int)(oY - u  ));
-            region.SetPoint(3, (int)(oX    ), (int)(oY - r  ));
-            region.SetPoint(4, (int)(oX    ), (int)(oY-R-r+s));
+            region.SetPoint(0, oX + u, oY-R-r+c);
+            region.SetPoint(1, oX+b-u, oY - c  );
+            region.SetPoint(2, oX+b-c, oY - u  );
+            region.SetPoint(3, oX    , oY - r  );
+            region.SetPoint(4, oX    , oY-R-r+s);
             break;
          case 5:
-            region.SetPoint(0, (int)(oX+a-u), (int)(oY-R-r+c));
-            region.SetPoint(1, (int)(oX+b+u), (int)(oY - c  ));
-            region.SetPoint(2, (int)(oX + b), (int)(oY - s  ));
-            region.SetPoint(3, (int)(oX + b), (int)(oY - R  ));
-            region.SetPoint(4, (int)(oX+a-c), (int)(oY-R-r+u));
+            region.SetPoint(0, oX+a-u, oY-R-r+c);
+            region.SetPoint(1, oX+b+u, oY - c  );
+            region.SetPoint(2, oX + b, oY - s  );
+            region.SetPoint(3, oX + b, oY - R  );
+            region.SetPoint(4, oX+a-c, oY-R-r+u);
             break;
          case 6:
-            region.SetPoint(0, (int)(oX+b-c), (int)(oY + u  ));
-            region.SetPoint(1, (int)(oX    ), (int)(oY + r  ));
-            region.SetPoint(2, (int)(oX-b+c), (int)(oY + u  ));
-            region.SetPoint(3, (int)(oX-b+s), (int)(oY      ));
-            region.SetPoint(4, (int)(oX+b-s), (int)(oY      ));
+            region.SetPoint(0, oX+b-c, oY + u  );
+            region.SetPoint(1, oX    , oY + r  );
+            region.SetPoint(2, oX-b+c, oY + u  );
+            region.SetPoint(3, oX-b+s, oY      );
+            region.SetPoint(4, oX+b-s, oY      );
             break;
          case 7:
-            region.SetPoint(0, (int)(oX+b-u), (int)(oY + c  ));
-            region.SetPoint(1, (int)(oX + u), (int)(oY+R+r-c));
-            region.SetPoint(2, (int)(oX    ), (int)(oY+R+r-s));
-            region.SetPoint(3, (int)(oX    ), (int)(oY + r  ));
-            region.SetPoint(4, (int)(oX+b-c), (int)(oY + u  ));
+            region.SetPoint(0, oX+b-u, oY + c  );
+            region.SetPoint(1, oX + u, oY+R+r-c);
+            region.SetPoint(2, oX    , oY+R+r-s);
+            region.SetPoint(3, oX    , oY + r  );
+            region.SetPoint(4, oX+b-c, oY + u  );
             break;
          case 8:
-            region.SetPoint(0, (int)(oX+b+u), (int)(oY + c  ));
-            region.SetPoint(1, (int)(oX+a-u), (int)(oY+R+r-c));
-            region.SetPoint(2, (int)(oX+a-c), (int)(oY+R+r-u));
-            region.SetPoint(3, (int)(oX + b), (int)(oY + R  ));
-            region.SetPoint(4, (int)(oX + b), (int)(oY + s  ));
+            region.SetPoint(0, oX+b+u, oY + c  );
+            region.SetPoint(1, oX+a-u, oY+R+r-c);
+            region.SetPoint(2, oX+a-c, oY+R+r-u);
+            region.SetPoint(3, oX + b, oY + R  );
+            region.SetPoint(4, oX + b, oY + s  );
             break;
          case 9:
-            region.SetPoint(0, (int)(oX    ), (int)(oY + r  ));
-            region.SetPoint(1, (int)(oX    ), (int)(oY+R+r-s));
-            region.SetPoint(2, (int)(oX - u), (int)(oY+R+r-c));
-            region.SetPoint(3, (int)(oX-b+u), (int)(oY + c  ));
-            region.SetPoint(4, (int)(oX-b+c), (int)(oY + u  ));
+            region.SetPoint(0, oX    , oY + r  );
+            region.SetPoint(1, oX    , oY+R+r-s);
+            region.SetPoint(2, oX - u, oY+R+r-c);
+            region.SetPoint(3, oX-b+u, oY + c  );
+            region.SetPoint(4, oX-b+c, oY + u  );
             break;
          case 10:
-            region.SetPoint(0, (int)(oX + b), (int)(oY + s  ));
-            region.SetPoint(1, (int)(oX + b), (int)(oY + R  ));
-            region.SetPoint(2, (int)(oX + c), (int)(oY+R+r-u));
-            region.SetPoint(3, (int)(oX + u), (int)(oY+R+r-c));
-            region.SetPoint(4, (int)(oX+b-u), (int)(oY + c  ));
+            region.SetPoint(0, oX + b, oY + s  );
+            region.SetPoint(1, oX + b, oY + R  );
+            region.SetPoint(2, oX + c, oY+R+r-u);
+            region.SetPoint(3, oX + u, oY+R+r-c);
+            region.SetPoint(4, oX+b-u, oY + c  );
             break;
          case 11:
-            region.SetPoint(0, (int)(oX+a-s), (int)(oY + R+r));
-            region.SetPoint(1, (int)(oX + s), (int)(oY + R+r));
-            region.SetPoint(2, (int)(oX + c), (int)(oY+R+r-u));
-            region.SetPoint(3, (int)(oX + b), (int)(oY + R  ));
-            region.SetPoint(4, (int)(oX+a-c), (int)(oY+R+r-u));
+            region.SetPoint(0, oX+a-s, oY + R+r);
+            region.SetPoint(1, oX + s, oY + R+r);
+            region.SetPoint(2, oX + c, oY+R+r-u);
+            region.SetPoint(3, oX + b, oY + R  );
+            region.SetPoint(4, oX+a-c, oY+R+r-u);
             break;
          }
          #endregion
@@ -1069,15 +1067,15 @@ public class Triangle4 : BaseCell {
       }
    }
 
-   public override Rect getRcInner(int borderWidth) {
-      AttrTriangle4 attr = Attr;
-      double w = borderWidth/2.0;
-      double sq    = attr.GetSq(borderWidth);
-      double sq2   = sq/2;
-      double sq2w  = sq2+w;
-      double sq2w3 = sq2+w/SQRT3;
+   public override RectDouble getRcInner(int borderWidth) {
+      var attr = Attr;
+      var w = borderWidth/2.0;
+      var sq    = attr.GetSq(borderWidth);
+      var sq2   = sq/2;
+      var sq2w  = sq2+w;
+      var sq2w3 = sq2+w/SQRT3;
 
-      PointDouble center = new PointDouble(); // координата центра квадрата
+      var center = new PointDouble(); // координата центра квадрата
       switch (direction) {
       case 0: case 10:
          center.X = region.GetPoint(1).X - sq2w;
@@ -1136,12 +1134,10 @@ public class Triangle4 : BaseCell {
          break;
       }
 
-      Rect square = new Rect();
-      square.X = (int) (center.X - sq2);
-      square.Y = (int) (center.Y - sq2);
-      square.Width =
-      square.Height = (int) sq;
-      return square;
+      return new RectDouble(
+         center.X - sq2,
+         center.Y - sq2,
+         sq, sq);
    }
 
    public override int getShiftPointBorderIndex() {

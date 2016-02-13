@@ -30,26 +30,26 @@ namespace fmg.core.mosaic.cells {
 /// <summary> Rhombus1 - 3 ромба, составляющие равносторонний шестиугольник </summary>
 public class Rhombus1 : BaseCell {
 	public class AttrRhombus1 : BaseAttribute {
-		public AttrRhombus1(int area)
+		public AttrRhombus1(double area)
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Matrisize sizeField) {
-			double a = A;
-			double r = R;
-			double c = C;
-			Size result = new Size(
-					(int)(c+a   *((sizeField.m+2)/3) +
-					       (a+c)*((sizeField.m+1)/3) +
-					          c *((sizeField.m+0)/3)),
-					(int)(    r * (sizeField.n+1)));
+		public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+			var a = A;
+			var r = R;
+			var c = C;
+			var result = new SizeDouble(
+					c+a   *((sizeField.m+2)/3.0) +
+					 (a+c)*((sizeField.m+1)/3.0) +
+					    c *((sizeField.m+0)/3.0),
+					    r * (sizeField.n+1));
 
 			if (sizeField.m == 1)
-				result.height -= (int)r;
+				result.Height -= r;
 			if (sizeField.n == 1)
 				switch (sizeField.m % 3) {
-				case 0: result.width -= (int)(a/2); break;
-				case 2: result.width -= (int)a; break;
+				case 0: result.Width -= a/2; break;
+				case 2: result.Width -= a; break;
 				}
 
 			return result;
@@ -65,7 +65,7 @@ public class Rhombus1 : BaseCell {
 		public double H => A * SQRT3;
 		public double R => H / 2;
 		public override double GetSq(int borderWidth) {
-			double w = borderWidth/2.0;
+			var w = borderWidth/2.0;
 			return (A*SQRT3 - w*4)/(SQRT3+1);
 		}
 
@@ -80,11 +80,9 @@ public class Rhombus1 : BaseCell {
 			)
 	{}
 
-	private new AttrRhombus1 Attr {
-		get { return (AttrRhombus1) base.Attr; }
-	}
+	private new AttrRhombus1 Attr => (AttrRhombus1) base.Attr;
 
-	protected override Coord?[] GetCoordsNeighbor() {
+   protected override Coord?[] GetCoordsNeighbor() {
       var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
 		// определяю координаты соседей
@@ -167,70 +165,70 @@ public class Rhombus1 : BaseCell {
 	}
 
 	protected override void CalcRegion() {
-		AttrRhombus1 attr = Attr;
-		double a = attr.A;
-		double c = attr.C;
-		double h = attr.H;
-		double r = attr.R;
+		var attr = Attr;
+		var a = attr.A;
+		var c = attr.C;
+		var h = attr.H;
+		var r = attr.R;
 
 		// определение координат точек фигуры
-		double oX = a*(coord.x/3*3+1)+c; // offset X
-		double oY = h*(coord.y/2)    +h; // offset Y
+		var oX = a*(coord.x/3.0*3+1)+c; // offset X
+		var oY = h*(coord.y/2.0)    +h; // offset Y
 
 		switch (direction) {
 		case 0:
-			region.SetPoint(0, (int)(oX      ), (int)(oY - h));
-			region.SetPoint(1, (int)(oX - c  ), (int)(oY - r));
-			region.SetPoint(2, (int)(oX - a-c), (int)(oY - r));
-			region.SetPoint(3, (int)(oX - a  ), (int)(oY - h));
+			region.SetPoint(0, oX      , oY - h);
+			region.SetPoint(1, oX - c  , oY - r);
+			region.SetPoint(2, oX - a-c, oY - r);
+			region.SetPoint(3, oX - a  , oY - h);
 			break;
 		case 1:
-			region.SetPoint(0, (int)(oX      ), (int)(oY - h));
-			region.SetPoint(1, (int)(oX + c  ), (int)(oY - r));
-			region.SetPoint(2, (int)(oX      ), (int)(oY    ));
-			region.SetPoint(3, (int)(oX - c  ), (int)(oY - r));
+			region.SetPoint(0, oX      , oY - h);
+			region.SetPoint(1, oX + c  , oY - r);
+			region.SetPoint(2, oX      , oY    );
+			region.SetPoint(3, oX - c  , oY - r);
 			break;
 		case 2:
-			region.SetPoint(0, (int)(oX + a+c), (int)(oY - r));
-			region.SetPoint(1, (int)(oX + a  ), (int)(oY    ));
-			region.SetPoint(2, (int)(oX      ), (int)(oY    ));
-			region.SetPoint(3, (int)(oX + c  ), (int)(oY - r));
+			region.SetPoint(0, oX + a+c, oY - r);
+			region.SetPoint(1, oX + a  , oY    );
+			region.SetPoint(2, oX      , oY    );
+			region.SetPoint(3, oX + c  , oY - r);
 			break;
 		case 3:
-			region.SetPoint(0, (int)(oX - c  ), (int)(oY - r));
-			region.SetPoint(1, (int)(oX      ), (int)(oY    ));
-			region.SetPoint(2, (int)(oX - a  ), (int)(oY    ));
-			region.SetPoint(3, (int)(oX - a-c), (int)(oY - r));
+			region.SetPoint(0, oX - c  , oY - r);
+			region.SetPoint(1, oX      , oY    );
+			region.SetPoint(2, oX - a  , oY    );
+			region.SetPoint(3, oX - a-c, oY - r);
 			break;
 		case 4:
-			region.SetPoint(0, (int)(oX + a  ), (int)(oY    ));
-			region.SetPoint(1, (int)(oX + a+c), (int)(oY + r));
-			region.SetPoint(2, (int)(oX + c  ), (int)(oY + r));
-			region.SetPoint(3, (int)(oX      ), (int)(oY    ));
+			region.SetPoint(0, oX + a  , oY    );
+			region.SetPoint(1, oX + a+c, oY + r);
+			region.SetPoint(2, oX + c  , oY + r);
+			region.SetPoint(3, oX      , oY    );
 			break;
 		case 5:
-			region.SetPoint(0, (int)(oX + a+c), (int)(oY - r));
-			region.SetPoint(1, (int)(oX + a+a), (int)(oY    ));
-			region.SetPoint(2, (int)(oX + a+c), (int)(oY + r));
-			region.SetPoint(3, (int)(oX + a  ), (int)(oY    ));
+			region.SetPoint(0, oX + a+c, oY - r);
+			region.SetPoint(1, oX + a+a, oY    );
+			region.SetPoint(2, oX + a+c, oY + r);
+			region.SetPoint(3, oX + a  , oY    );
 			break;
 		}
 	}
 
-	public override Rect getRcInner(int borderWidth) {
-		AttrRhombus1 attr = Attr;
-		double a = attr.A;
-		double c = attr.C;
-		double h = attr.H;
-		double r = attr.R;
-//		double w = borderWidth/2.0;
-		double sq  = attr.GetSq(borderWidth);
-		double sq2 = sq/2;
+	public override RectDouble getRcInner(int borderWidth) {
+		var attr = Attr;
+		var a = attr.A;
+		var c = attr.C;
+		var h = attr.H;
+		var r = attr.R;
+//		var w = borderWidth/2.0;
+		var sq  = attr.GetSq(borderWidth);
+		var sq2 = sq/2;
 
-		double oX = a*(coord.x/3*3+1)+c; // offset X
-		double oY = h*(coord.y/2)    +h; // offset Y
+		var oX = a*(coord.x/3.0*3+1)+c; // offset X
+		var oY = h*(coord.y/2.0)    +h; // offset Y
 
-		PointDouble center = new PointDouble(); // координата центра квадрата
+		var center = new PointDouble(); // координата центра квадрата
 		switch (direction) {
 		case 0: center.X = oX - c*1.5; center.Y = oY - r*1.5; break;
 		case 1: center.X = oX;         center.Y = oY - r;     break;
@@ -240,12 +238,10 @@ public class Rhombus1 : BaseCell {
 		case 5: center.X = oX + a+c;   center.Y = oY;         break;
 		}
 
-		Rect square = new Rect();
-		square.X = (int) (center.X - sq2);
-		square.Y = (int) (center.Y - sq2);
-		square.Width =
-		square.Height = (int) sq;
-		return square;
+		return new RectDouble(
+		   center.X - sq2,
+		   center.Y - sq2,
+		   sq, sq);
 	}
 
 	public override int getShiftPointBorderIndex() { return 2; }

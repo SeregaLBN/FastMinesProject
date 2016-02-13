@@ -30,99 +30,99 @@ namespace fmg.core.mosaic.cells {
 /// <summary> PenrousePeriodic1 - один из вариантов периодической мозаики Пенроуза (ромбы 72°-108° & 36°- 144°) </summary>
 public class PenrousePeriodic1 : BaseCell {
 	public class AttrPenrousePeriodic1 : BaseAttribute {
-		public AttrPenrousePeriodic1(int area)
+		public AttrPenrousePeriodic1(double area)
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Matrisize sizeField) {
-			double a = A;
-			double b = B;
-			double c = C;
-			double e = E;
-			double f = F;
-			double h = H;
-			double g = G;
-			double k = K;
-			double z = Z;
-			Size result = new Size(
-					(int)(g +
-					      z*((sizeField.m+8)/9) +
-					      k*((sizeField.m+7)/9) +
-					      g*((sizeField.m+6)/9) +
-					      g*((sizeField.m+5)/9) +
-					      z*((sizeField.m+4)/9) +
-					      g*((sizeField.m+3)/9) +
-					      g*((sizeField.m+2)/9) +
-					      z*((sizeField.m+1)/9) +
-					      g*((sizeField.m+0)/9)),
-					(int)(e +
-					      f*((sizeField.n+13)/14) +
-					      b*((sizeField.n+12)/14) +
-					      h*((sizeField.n+11)/14) +
-					      h*((sizeField.n+10)/14) +
-					      b*((sizeField.n+ 9)/14) +
-					      f*((sizeField.n+ 8)/14) +
-					      b*((sizeField.n+ 7)/14) +
-					      c*((sizeField.n+ 6)/14) +
-					      b*((sizeField.n+ 5)/14) +
-					      h*((sizeField.n+ 4)/14) +
-					      h*((sizeField.n+ 3)/14) +
-					      a*((sizeField.n+ 2)/14) +
-					      h*((sizeField.n+ 1)/14) +
-					      e*((sizeField.n+ 0)/14)));
+		public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+			var a = A;
+			var b = B;
+			var c = C;
+			var e = E;
+			var f = F;
+			var h = H;
+			var g = G;
+			var k = K;
+			var z = Z;
+			var result = new SizeDouble(
+					g +
+					z*((sizeField.m+8)/9.0) +
+					k*((sizeField.m+7)/9.0) +
+					g*((sizeField.m+6)/9.0) +
+					g*((sizeField.m+5)/9.0) +
+					z*((sizeField.m+4)/9.0) +
+					g*((sizeField.m+3)/9.0) +
+					g*((sizeField.m+2)/9.0) +
+					z*((sizeField.m+1)/9.0) +
+					g*((sizeField.m+0)/9.0),
+					e +
+					f*((sizeField.n+13)/14.0) +
+					b*((sizeField.n+12)/14.0) +
+					h*((sizeField.n+11)/14.0) +
+					h*((sizeField.n+10)/14.0) +
+					b*((sizeField.n+ 9)/14.0) +
+					f*((sizeField.n+ 8)/14.0) +
+					b*((sizeField.n+ 7)/14.0) +
+					c*((sizeField.n+ 6)/14.0) +
+					b*((sizeField.n+ 5)/14.0) +
+					h*((sizeField.n+ 4)/14.0) +
+					h*((sizeField.n+ 3)/14.0) +
+					a*((sizeField.n+ 2)/14.0) +
+					h*((sizeField.n+ 1)/14.0) +
+					e*((sizeField.n+ 0)/14.0));
 
 			// когда размер поля мал...
 			if (sizeField.n < 14) { // ...нужно вычислять не только по общей формуле, а и убрать остатки по ширине...
 				if ((sizeField.m % 9) == 7)
 					if (sizeField.n < 7)
-						result.width -= (int)(g-z);
+						result.Width -= g-z;
 				if ((sizeField.m % 9) == 6)
 					if (sizeField.n < 4)
-						result.width -= (int)(g-z);
+						result.Width -= g-z;
 				if ((sizeField.m % 9) == 4)
 					if (sizeField.n < 9)
-						result.width -= (int)g;
+						result.Width -= g;
 				if ((sizeField.m % 9) == 3) {
 					if (sizeField.n < 14)
-						result.width -= (int)z;
+						result.Width -= z;
 					if (sizeField.n < 3)
-						result.width -= (int)(g-z);
+						result.Width -= g-z;
 				}
 				if ((sizeField.m % 9) == 2)
 					if (sizeField.n < 5)
-						result.width -= (int)z;
+						result.Width -= z;
 			}
 			if (sizeField.m < 5) { // .. и высоте
 				if ((sizeField.n % 14) == 0) {
 					if (sizeField.m < 4)
-						result.height -= (int)h;
+						result.Height -= h;
 					if (sizeField.m < 2)
-						result.height -= (int)c;
+						result.Height -= c;
 				}
 				if ((sizeField.n % 14) == 13)
 					if (sizeField.m < 2)
-						result.height -= (int)c;
+						result.Height -= c;
 				if ((sizeField.n % 14) == 7)
 					if (sizeField.m < 3)
-						result.height -= (int)f;
+						result.Height -= f;
 				if ((sizeField.n % 14) == 6)
 					if (sizeField.m < 5)
-						result.height -= (int)f;
+						result.Height -= f;
 				if ((sizeField.n % 14) == 5)
 					if (sizeField.m < 3)
-						result.height -= (int)a;
+						result.Height -= a;
 				if ((sizeField.n % 14) == 4)
 					if (sizeField.m < 2)
-						result.height -= (int)f;
+						result.Height -= f;
 				if ((sizeField.n % 14) == 3)
 					if (sizeField.m < 5)
-						result.height -= (int)f;
+						result.Height -= f;
 				if ((sizeField.n % 14) == 2)
 					if (sizeField.m < 3)
-						result.height -= (int)f;
+						result.Height -= f;
 				if ((sizeField.n % 14) == 1)
 					if (sizeField.m < 3)
-						result.height -= (int)f;
+						result.Height -= f;
 			}
 			return result;
 		}
@@ -167,9 +167,9 @@ public class PenrousePeriodic1 : BaseCell {
 		static double vertexIntersection = 0.0;
 		public override double getVertexIntersection() {
 			if (vertexIntersection < 1) {
-				int cntDirection = GetDirectionCount(); // 0..125
-				int sum = 0;
-				for (int dir=0; dir<cntDirection; dir++)
+				var cntDirection = GetDirectionCount(); // 0..125
+				var sum = 0;
+				for (var dir=0; dir<cntDirection; dir++)
 					sum += getNeighborNumber(dir) +
 						4 + // соседние фигуры, которые граничат с гранями this, участвуют в подсчёте два раза... 
 						4; // ...сама this участвует подсчёте все 4 раза
@@ -190,7 +190,7 @@ public class PenrousePeriodic1 : BaseCell {
 		public double Z => A * SIN36;
 		public double K => Z + G;
 		public override double GetSq(int borderWidth) {
-			//double w = borderWidth/2.0;
+			//var w = borderWidth/2.0;
 			return A/SIN99 * SIN36 / SQRT2;
 		}
 
@@ -205,11 +205,9 @@ public class PenrousePeriodic1 : BaseCell {
 			)
 	{}
 
-	private new AttrPenrousePeriodic1 Attr {
-		get { return (AttrPenrousePeriodic1) base.Attr; }
-	}
+	private new AttrPenrousePeriodic1 Attr => (AttrPenrousePeriodic1) base.Attr;
 
-	protected override Coord?[] GetCoordsNeighbor() {
+   protected override Coord?[] GetCoordsNeighbor() {
 		var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
     	for (int i=0; i<neighborCoord.Length; i++)
 			neighborCoord[i] = null;
@@ -1883,83 +1881,83 @@ public class PenrousePeriodic1 : BaseCell {
 		case  0: case 12: case  15: case  26: case 31:
 		case 37: case 44: case  58: case  63: case 68:
 		case 84: case 91: case 97: case 104: case 119: case 124:
-			region.SetPoint(0, (int)(left + k), (int)(top + c));
-			region.SetPoint(1, (int)(left + g), (int)(top + e));
-			region.SetPoint(2, (int)(left    ), (int)(top + h));
-			region.SetPoint(3, (int)(left + z), (int)(top    ));
+			region.SetPoint(0, left + k, top + c);
+			region.SetPoint(1, left + g, top + e);
+			region.SetPoint(2, left    , top + h);
+			region.SetPoint(3, left + z, top    );
 			break;
 		case 1: case 4: case 27: case 33: case 48: case 74: case 90: case 114:
-			region.SetPoint(0, (int)(left + k), (int)(top    ));
-			region.SetPoint(1, (int)(left + g), (int)(top + h));
-			region.SetPoint(2, (int)(left    ), (int)(top + e));
-			region.SetPoint(3, (int)(left + z), (int)(top + c));
+			region.SetPoint(0, left + k, top    );
+			region.SetPoint(1, left + g, top + h);
+			region.SetPoint(2, left    , top + e);
+			region.SetPoint(3, left + z, top + c);
 			break;
 		case  2: case  5: case 22: case 28: case  35: case  43: case  49: case 62:
 		case 73: case 78: case 85: case 98: case 101: case 105: case 120: case 125:
-			region.SetPoint(0, (int)(left+2*z), (int)(top + h));
-			region.SetPoint(1, (int)(left + z), (int)(top+2*h));
-			region.SetPoint(2, (int)(left    ), (int)(top + h));
-			region.SetPoint(3, (int)(left + z), (int)(top    ));
+			region.SetPoint(0, left+2*z, top + h);
+			region.SetPoint(1, left + z, top+2*h);
+			region.SetPoint(2, left    , top + h);
+			region.SetPoint(3, left + z, top    );
 			break;
 		case 3: case 6: case 29: case 34: case 50: case 77: case 100: case 107:
-			region.SetPoint(0, (int)(left + k), (int)(top + e));
-			region.SetPoint(1, (int)(left + z), (int)(top + h));
-			region.SetPoint(2, (int)(left    ), (int)(top    ));
-			region.SetPoint(3, (int)(left + g), (int)(top + c));
+			region.SetPoint(0, left + k, top + e);
+			region.SetPoint(1, left + z, top + h);
+			region.SetPoint(2, left    , top    );
+			region.SetPoint(3, left + g, top + c);
 			break;
 		case  7: case 10: case 14: case 18: case  30: case  36: case  42: case  57:
 		case 65: case 76: case 79: case 81: case 102: case 106: case 117: case 121:
-			region.SetPoint(0, (int)(left + k), (int)(top + h));
-			region.SetPoint(1, (int)(left + z), (int)(top + e));
-			region.SetPoint(2, (int)(left    ), (int)(top + c));
-			region.SetPoint(3, (int)(left + g), (int)(top   ));
+			region.SetPoint(0, left + k, top + h);
+			region.SetPoint(1, left + z, top + e);
+			region.SetPoint(2, left    , top + c);
+			region.SetPoint(3, left + g, top    );
 			break;
 		case  8: case 20: case 32: case  55: case  60: case  75:
 		case 80: case 83: case 87: case 103: case 118: case 123:
-			region.SetPoint(0, (int)(left+2*g), (int)(top + c));
-			region.SetPoint(1, (int)(left + g), (int)(top+2*c));
-			region.SetPoint(2, (int)(left    ), (int)(top + c));
-			region.SetPoint(3, (int)(left + g), (int)(top    ));
+			region.SetPoint(0, left+2*g, top + c);
+			region.SetPoint(1, left + g, top+2*c);
+			region.SetPoint(2, left    , top + c);
+			region.SetPoint(3, left + g, top    );
 			break;
 		case  9: case 11: case 24: case 39: case 46: case  51: case  61: case 64:
 		case 66: case 72: case 93: case 96: case 99: case 112: case 122:
-			region.SetPoint(0, (int)(left + g), (int)(top    ));
-			region.SetPoint(1, (int)(left + g), (int)(top + a));
-			region.SetPoint(2, (int)(left    ), (int)(top+a+c));
-			region.SetPoint(3, (int)(left    ), (int)(top + c));
+			region.SetPoint(0, left + g, top    );
+			region.SetPoint(1, left + g, top + a);
+			region.SetPoint(2, left    , top+a+c);
+			region.SetPoint(3, left    , top + c);
 			break;
 		case 13: case 16: case 38: case 53: case 59: case 71: case 88: case 95: case 110: case 115:
-			region.SetPoint(0, (int)(left + z), (int)(top    ));
-			region.SetPoint(1, (int)(left + z), (int)(top + a));
-			region.SetPoint(2, (int)(left    ), (int)(top+a+h));
-			region.SetPoint(3, (int)(left    ), (int)(top + h));
+			region.SetPoint(0, left + z, top    );
+			region.SetPoint(1, left + z, top + a);
+			region.SetPoint(2, left    , top+a+h);
+			region.SetPoint(3, left    , top + h);
 			break;
 		case 17: case 21: case 25: case 40: case  47: case  52: case  54: case 67:
 		case 69: case 86: case 89: case 92: case 109: case 111: case 116:
-			region.SetPoint(0, (int)(left + g), (int)(top + c));
-			region.SetPoint(1, (int)(left + g), (int)(top+c+a));
-			region.SetPoint(2, (int)(left    ), (int)(top + a));
-			region.SetPoint(3, (int)(left    ), (int)(top    ));
+			region.SetPoint(0, left + g, top + c);
+			region.SetPoint(1, left + g, top+c+a);
+			region.SetPoint(2, left    , top + a);
+			region.SetPoint(3, left    , top    );
 			break;
 		case 19: case 23: case 41: case 45: case 56: case 70: case 82: case 94: case 108: case 113: 
-			region.SetPoint(0, (int)(left + z), (int)(top + h));
-			region.SetPoint(1, (int)(left + z), (int)(top+h+a));
-			region.SetPoint(2, (int)(left    ), (int)(top + a));
-			region.SetPoint(3, (int)(left    ), (int)(top    ));
+			region.SetPoint(0, left + z, top + h);
+			region.SetPoint(1, left + z, top+h+a);
+			region.SetPoint(2, left    , top + a);
+			region.SetPoint(3, left    , top    );
 			break;
 		default:
 			throw new Exception("Забыл case #" + direction);
 		}
 	}
 
-	public override Rect getRcInner(int borderWidth) {
-		AttrPenrousePeriodic1 attr = Attr;
-		int area = attr.Area;
-//		double w = borderWidth/2.0;
-		double sq  = attr.GetSq(borderWidth);
-		double sq2 = sq/2;
+	public override RectDouble getRcInner(int borderWidth) {
+		var attr = Attr;
+		var area = attr.Area;
+//		var w = borderWidth/2.0;
+		var sq  = attr.GetSq(borderWidth);
+		var sq2 = sq/2;
 
-		PointDouble center = new PointDouble(); // координата центра квадрата
+		var center = new PointDouble(); // координата центра квадрата
 		center.X = (region.GetPoint(0).X+region.GetPoint(2).X) / 2.0;
 
 		switch (direction) {
@@ -1989,12 +1987,10 @@ public class PenrousePeriodic1 : BaseCell {
 			throw new Exception("Забыл case #" + direction);
 		}
 
-		Rect square = new Rect();
-		square.X = (int) (center.X - sq2);
-		square.Y = (int) (center.Y - sq2);
-		square.Width =
-		square.Height = (int) sq;
-		return square;
+		return new RectDouble(
+		   center.X - sq2,
+		   center.Y - sq2,
+		   sq, sq);
 	}
 
 	public override int getShiftPointBorderIndex() { return 2; }

@@ -41,7 +41,7 @@ namespace fmg.core.mosaic {
       /// <summary>из каких фигур состоит мозаика поля</summary>
       EMosaic MosaicType { get; set; }
 
-      int Area { get; set; }
+      double Area { get; set; }
    }
 
 }

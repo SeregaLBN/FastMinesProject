@@ -29,16 +29,15 @@ namespace fmg.core.mosaic.cells {
 /// <summary> Квадрат. Вариант 2 - сдвинутые ряды </summary>
 public class Square2 : BaseCell {
 	public class AttrSquare2 : BaseAttribute {
-		public AttrSquare2(int area)
+		public AttrSquare2(double area)
 			: base(area)
       {}
 
-		public override Size GetOwnerSize(Matrisize sizeField) {
-			double a = A; // размер стороны квадрата
-			Size result = new Size(
-					(int)(sizeField.m * a + a/2),
-					(int)(sizeField.n * a));
-			return result;
+		public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+			var a = A; // размер стороны квадрата
+			return new SizeDouble(
+					sizeField.m * a + a/2,
+					sizeField.n * a);
 		}
 
       public override int getNeighborNumber(bool max) { return 6; }
@@ -48,7 +47,7 @@ public class Square2 : BaseCell {
 		public override Size GetDirectionSizeField() { return new Size(1, 2); }
 		public override double A => Math.Sqrt(Area);
 		public override double GetSq(int borderWidth) {
-			double w = borderWidth/2.0;
+			var w = borderWidth/2.0;
 			return A-2*w;
 		}
 	}
@@ -59,11 +58,9 @@ public class Square2 : BaseCell {
 				)
 	{}
 
-	private new AttrSquare2 Attr {
-		get { return (AttrSquare2) base.Attr; }
-	}
+	private new AttrSquare2 Attr => (AttrSquare2) base.Attr;
 
-	protected override Coord?[] GetCoordsNeighbor() {
+   protected override Coord?[] GetCoordsNeighbor() {
       var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
 
 		// определяю координаты соседей
@@ -77,7 +74,7 @@ public class Square2 : BaseCell {
 		return neighborCoord;
 	}
 
-	public override bool PointInRegion(Point point) {
+	public override bool PointInRegion(PointDouble point) {
 		if ((point.X < region.GetPoint(3).X) || (point.X >= region.GetPoint(0).X) ||
 			(point.Y < region.GetPoint(0).Y) || (point.Y >= region.GetPoint(2).Y))
 			return false;
@@ -85,13 +82,13 @@ public class Square2 : BaseCell {
 	}
 
 	protected override void CalcRegion() {
-		AttrSquare2 attr = Attr;
-		double a = attr.A;
+		var attr = Attr;
+		var a = attr.A;
 
-      int x1 = (int)(a * (coord.x + 0) + ((direction != 0) ? 0 : a / 2));
-      int x2 = (int)(a * (coord.x + 1) + ((direction != 0) ? 0 : a / 2));
-      int y1 = (int)(a * (coord.y + 0));
-      int y2 = (int)(a * (coord.y + 1));
+      var x1 = a * (coord.x + 0) + ((direction != 0) ? 0 : a / 2);
+      var x2 = a * (coord.x + 1) + ((direction != 0) ? 0 : a / 2);
+      var y1 = a * (coord.y + 0);
+      var y2 = a * (coord.y + 1);
 
       region.SetPoint(0, x2, y1);
       region.SetPoint(1, x2, y2);
@@ -99,17 +96,15 @@ public class Square2 : BaseCell {
       region.SetPoint(3, x1, y1);
 	}
 
-	public override Rect getRcInner(int borderWidth) {
-		AttrSquare2 attr = Attr;
-		double sq = attr.GetSq(borderWidth);
-		double w = borderWidth/2.0;
+	public override RectDouble getRcInner(int borderWidth) {
+		var attr = Attr;
+		var sq = attr.GetSq(borderWidth);
+		var w = borderWidth/2.0;
 
-		Rect square = new Rect();
-		square.X = (int) (region.GetPoint(3).X + w);
-		square.Y = (int) (region.GetPoint(3).Y + w);
-		square.Width = (int)sq;
-		square.Height = (int)sq;
-		return square;
+		return new RectDouble(
+		   region.GetPoint(3).X + w,
+		   region.GetPoint(3).Y + w,
+		   sq, sq);
 	}
 
 	public override int getShiftPointBorderIndex() { return 2; }

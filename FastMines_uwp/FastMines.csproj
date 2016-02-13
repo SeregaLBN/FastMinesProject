@@ -91,6 +91,9 @@
     <Compile Include="..\src\src_common\fmg\common\geom\Bound.cs">
       <Link>src_fmg.common\geom\Bound.cs</Link>
     </Compile>
+    <Compile Include="..\src\src_common\fmg\common\geom\BoundDouble.cs">
+      <Link>src_fmg.common\geom\BoundDouble.cs</Link>
+    </Compile>
     <Compile Include="..\src\src_common\fmg\common\geom\util\FigureHelper.cs">
       <Link>src_fmg.common\geom\util\FigureHelper.cs</Link>
     </Compile>

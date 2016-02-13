@@ -165,25 +165,25 @@ namespace fmg.uwp.res.img {
             var h = Height;
             var pad = Padding;
             var sizeImageIn = new Size(w - pad.LeftAndRight, h - pad.TopAndBottom);
-            var sizeImageOut = new Size(sizeImageIn);
+            var sizeImageOut = new SizeDouble(sizeImageIn.Width, sizeImageIn.Height);
             var area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref sizeImageOut);
             Area = area; // call setter
-            System.Diagnostics.Debug.Assert(w >= (sizeImageOut.width + pad.LeftAndRight));
-            System.Diagnostics.Debug.Assert(h >= (sizeImageOut.height + pad.TopAndBottom));
-            var paddingOut = new Bound(
-               (w - sizeImageOut.width)/2,
-               (h - sizeImageOut.height)/2,
-               (w - sizeImageOut.width)/2 + (w - sizeImageOut.width)%2,
-               (h - sizeImageOut.height)/2 + (h - sizeImageOut.height)%2);
-            System.Diagnostics.Debug.Assert(w == sizeImageOut.width + paddingOut.LeftAndRight);
-            System.Diagnostics.Debug.Assert(h == sizeImageOut.height + paddingOut.TopAndBottom);
+            System.Diagnostics.Debug.Assert(w >= (sizeImageOut.Width + pad.LeftAndRight));
+            System.Diagnostics.Debug.Assert(h >= (sizeImageOut.Height + pad.TopAndBottom));
+            var paddingOut = new BoundDouble(
+               (w - sizeImageOut.Width)/2,
+               (h - sizeImageOut.Height)/2,
+               (w - sizeImageOut.Width)/2,
+               (h - sizeImageOut.Height)/2);
+            System.Diagnostics.Debug.Assert((sizeImageOut.Width + paddingOut.LeftAndRight).HasMinDiff(w));
+            System.Diagnostics.Debug.Assert((sizeImageOut.Height + paddingOut.TopAndBottom).HasMinDiff(h));
 
             PaddingFull = paddingOut;
          }
       }
 
-      private int _area;
-      public int Area {
+      private double _area;
+      public double Area {
          get {
             if (_area <= 0)
                RecalcArea();
@@ -197,8 +197,8 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      private Bound _paddingFull;
-      public Bound PaddingFull {
+      private BoundDouble _paddingFull;
+      public BoundDouble PaddingFull {
          get { return _paddingFull; }
          protected set {
             if (SetProperty(ref _paddingFull, value))

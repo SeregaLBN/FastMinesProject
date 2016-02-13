@@ -25,7 +25,7 @@ namespace fmg.uwp.mosaic {
 
       public Mosaic() {}
 
-      public Mosaic(Matrisize sizeField, EMosaic mosaicType, int minesCount, int area) :
+      public Mosaic(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) :
          base(sizeField, mosaicType, minesCount, area)
       {}
 
@@ -95,9 +95,7 @@ namespace fmg.uwp.mosaic {
       public override ICellPaint<PaintableShapes> CellPaint => CellPaintFigures;
       protected CellPaintShapes CellPaintFigures => _cellPaint ?? (_cellPaint = new CellPaintShapes());
 
-      private IDictionary<BaseCell, PaintableShapes> XamlBinder {
-         get { return _xamlBinder ?? (_xamlBinder = new Dictionary<BaseCell, PaintableShapes>()); }
-      }
+      private IDictionary<BaseCell, PaintableShapes> XamlBinder => _xamlBinder ?? (_xamlBinder = new Dictionary<BaseCell, PaintableShapes>());
 
       protected override void Repaint(BaseCell cell) {
          if (cell == null)
@@ -150,19 +148,19 @@ namespace fmg.uwp.mosaic {
       }
 
       /// <summary> преобразовать экранные координаты в ячейку поля мозаики </summary>
-      private BaseCell CursorPointToCell(Point point) {
+      private BaseCell CursorPointToCell(PointDouble point) {
          return Matrix.AsParallel().FirstOrDefault(cell =>
             //cell.getRcOuter().Contains(point) && // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
             cell.PointInRegion(point));
       }
 
-      public override int Area {
+      public override double Area {
          //get { return base.Area; }
          set {
             var oldVal = Area;
             base.Area = value;
             var newVal = Area;
-            if (oldVal != newVal) {
+            if (!oldVal.HasMinDiff(newVal)) {
                // см. комент - сноску 1
                ChangeFontSize(GraphicContext.PenBorder);
                Repaint();
@@ -170,7 +168,7 @@ namespace fmg.uwp.mosaic {
          }
       }
 
-      public bool MousePressed(Point clickPoint, bool isLeftMouseButton) {
+      public bool MousePressed(PointDouble clickPoint, bool isLeftMouseButton) {
          using (new Tracer("MosaicExt::MousePressed", "isLeftMouseButton="+isLeftMouseButton)) {
             return isLeftMouseButton
                ? OnLeftButtonDown(CursorPointToCell(clickPoint))
@@ -178,7 +176,7 @@ namespace fmg.uwp.mosaic {
          }
       }
 
-      public bool MouseReleased(Point clickPoint, bool isLeftMouseButton) {
+      public bool MouseReleased(PointDouble clickPoint, bool isLeftMouseButton) {
          using (new Tracer("MosaicExt::MouseReleased", "isLeftMouseButton="+isLeftMouseButton)) {
             return isLeftMouseButton
                ? OnLeftButtonUp(CursorPointToCell(clickPoint))
@@ -190,10 +188,9 @@ namespace fmg.uwp.mosaic {
          using (new Tracer("MosaicExt::MouseFocusLost")) {
             if (CellDown == null)
                return false;
-            if (CellDown.State.Down)
-               return OnLeftButtonUp(null);
-            else
-               return OnRightButtonUp();
+            return CellDown.State.Down
+               ? OnLeftButtonUp(null)
+               : OnRightButtonUp();
          }
       }
 

@@ -20,7 +20,7 @@ namespace fmg.common.geom {
       public Rect(Point pLT, Point pRB) { X = pLT.X; Y = pLT.Y; Width = pRB.X - pLT.X; Height = pRB.Y - pLT.Y; }
       public Rect(Rect r) { X = r.X; Y = r.Y; Width = r.Width; Height = r.Height; }
       public Rect(int x, int y, int w, int h) { X = x; Y = y; Width = w; Height = h; }
-      public Rect(Size size) { X = Y = 0; Width = size.width; Height = size.height; }
+      public Rect(Size size) { X = Y = 0; Width = size.Width; Height = size.Height; }
       public Rect(int width, int height) { X = Y = 0; Width = width; Height = height; }
 
       public bool Intersects(Rect rc) {
@@ -54,7 +54,7 @@ namespace fmg.common.geom {
       public static Rect MoveX(this Rect self, int dx) { self.X += dx; return self; }
       public static Rect MoveY(this Rect self, int dy) { self.Y += dy; return self; }
       public static Rect MoveXY(this Rect self, int dx, int dy) { return self.MoveX(dx).MoveY(dy); }
-      public static Rect MoveXY(this Rect self, Size s) { return self.MoveXY(s.width, s.height); }
+      public static Rect MoveXY(this Rect self, Size s) { return self.MoveXY(s.Width, s.Height); }
 
       // Выравнивание прямоугольника (без изменений размеров прямоугольника)
       public static Rect AlignLeft(this Rect self, int l) { self.X = l; return self; } // выровнять прямоугольник по левой   стороне к заданному значению
@@ -92,7 +92,7 @@ namespace fmg.common.geom {
       public static Rect Center(this Rect self, Rect r) { return AlignCenter(self, r); } // совместить центр прямоугольника с центром заданного прямоугольника
       public static Rect Center(this Rect self, int x, int y) { return AlignCenter(self, x, y); } // совместить центр прямоугольника с заданными координатами
       public static Size Size(this Rect self) { return new Size(self.Width, self.Height); }
-      public static Rect Size(this Rect self, Size s) { self.Width = s.width; self.Height = s.height; return self; }
+      public static Rect Size(this Rect self, Size s) { self.Width = s.Width; self.Height = s.Height; return self; }
 
       /// <summary>Найти равномерно вписанный Rect</summary>
       public static Rect CalcInnerRect(Size sizeInner, Size sizeOutward) {
@@ -101,14 +101,14 @@ namespace fmg.common.geom {
          // во внешний прямоугольник, т.е. кторый должен быть или увеличен или уменьшен.
          // Относительные координаты этого вписаного прямоугольника и находятся.
          var percent = Math.Min(
-               (float)sizeOutward.width / sizeInner.width,
-               (float)sizeOutward.height / sizeInner.height);
+               (float)sizeOutward.Width / sizeInner.Width,
+               (float)sizeOutward.Height / sizeInner.Height);
          var rect = new Rect {
-            Width = (int)(sizeInner.width * percent),
-            Height = (int)(sizeInner.height * percent)
+            Width = (int)(sizeInner.Width * percent),
+            Height = (int)(sizeInner.Height * percent)
          };
-         rect.X = (sizeOutward.width - rect.Width) >> 1;
-         rect.Y = (sizeOutward.height - rect.Height) >> 1;
+         rect.X = (sizeOutward.Width - rect.Width) >> 1;
+         rect.Y = (sizeOutward.Height - rect.Height) >> 1;
          return rect;
       }
 

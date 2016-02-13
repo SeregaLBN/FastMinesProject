@@ -37,7 +37,7 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
 
 #region Members
 
-   public const int AREA_MINIMUM = 230;
+   public const double AREA_MINIMUM = 230;
 
    /// <summary>матрица List &lt; List &lt; BaseCell &gt; &gt; , представленная(развёрнута) в виде вектора</summary>
    public IList<BaseCell> Matrix { get; protected set; } = new List<BaseCell>(0);
@@ -272,7 +272,7 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
    /// <summary> уведомить об изменении статуса игры (новая игра, начало игры, конец игры) </summary>
    private void fireOnChangedGameStatus(EGameStatus oldValue) { OnChangedGameStatus(this, new MosaicEvent.ChangedGameStatusEventArgs(oldValue)); }
    /// <summary> уведомить об изменении размера площади у ячейки </summary>
-   private void fireOnChangedArea(int oldArea) { OnChangedArea(this, new MosaicEvent.ChangedAreaEventArgs(oldArea)); }
+   private void fireOnChangedArea(double oldArea) { OnChangedArea(this, new MosaicEvent.ChangedAreaEventArgs(oldArea)); }
    /// <summary> уведомить об изменении размера площади у ячейки </summary>
    private void fireOnChangedMosaicType(EMosaic oldMosaic) { OnChangedMosaicType(this, new MosaicEvent.ChangedMosaicTypeEventArgs(oldMosaic)); }
    /// <summary> уведомить об изменении размера мозаики </summary>
@@ -405,7 +405,7 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
          var result = cell.LButtonUp(CellDown == cellLeftUp, clickReportContext);
          tracer.Put(" result.needRepaint="+((result.needRepaint==null) ? "null" : result.needRepaint.Count.ToString()));
          if (result.needRepaint != null) {
-            foreach (BaseCell cellToRepaint in result.needRepaint)
+            foreach (var cellToRepaint in result.needRepaint)
                Repaint(cellToRepaint);
          }
          var res = (result.countOpen > 0) || (result.countFlag != 0) || (result.countUnknown != 0); // клик со смыслом (были изменения на поле)
@@ -530,7 +530,7 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
    }
 
    /// <summary>площадь ячеек</summary>
-   public virtual int Area {
+   public virtual double Area {
       get {
          if (_cellAttr == null)
             return AREA_MINIMUM;
@@ -563,13 +563,13 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
    /// <summary> Максимальное кол-во мин при  текущем  размере поля </summary>
    public int GetMaxMines() { return GetMaxMines(SizeField); }
    /// <summary> размер в пикселях для указанных параметров </summary>
-   public Size GetWindowSize(Matrisize sizeField, int area) {
-      return (area == Area)
+   public SizeDouble GetWindowSize(Matrisize sizeField, double area) {
+      return area.HasMinDiff(Area)
          ? CellAttr.GetOwnerSize(sizeField)
          : MosaicHelper.GetOwnerSize(MosaicType, area, sizeField);
    }
    /// <summary> размер в пикселях </summary>
-   public Size WindowSize { get { return GetWindowSize(SizeField, Area); }}
+   public SizeDouble WindowSize { get { return GetWindowSize(SizeField, Area); }}
    /// <summary> узнать количество соседей для текущей мозаики </summary>
    public int MaxNeighborNumber { get { return CellAttr.getNeighborNumber(true); } }
 
@@ -585,19 +585,13 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
       Initialize();
    }
    /// <summary>Mosaic field: класс окна мозаики поля</summary>
-   public MosaicBase(Matrisize sizeField, EMosaic mosaicType, int minesCount, int area) {
+   public MosaicBase(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) {
       Initialize(sizeField, mosaicType, minesCount, area);
    }
 
-   public IList<Coord> StorageMines {
-      get {
-         IList<Coord> repositoryMines = new List<Coord>();
-         foreach (BaseCell cell in Matrix)
-            if (cell.State.Open == EOpen._Mine)
-               repositoryMines.Add(cell.getCoord());
-         return repositoryMines;
-      }
-   }
+   public IList<Coord> StorageMines => (from cell in Matrix
+                                        where cell.State.Open == EOpen._Mine
+                                        select cell.getCoord()).ToList();
 
    protected void Initialize() {
       Initialize(new Matrisize(5, 5),
@@ -605,7 +599,7 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
             1, AREA_MINIMUM);
    }
 
-   protected void Initialize(Matrisize sizeField, EMosaic mosaicType, int minesCount, int area) {
+   protected void Initialize(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) {
       SetParams(sizeField, mosaicType, minesCount);
       Area = area; // ...провера на валидность есть только при установке из класса Main. Так что, не нуна тут задавать громадные велечины.
    }

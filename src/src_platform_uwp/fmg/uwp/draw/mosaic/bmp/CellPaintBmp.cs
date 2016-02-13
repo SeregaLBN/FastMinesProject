@@ -39,7 +39,7 @@ namespace fmg.uwp.draw.mosaic.bmp
          var down = cell.State.Down || (cell.State.Status == EState._Open);
          if (GContext.IconicMode) {
 
-            var points = cell.getRegion().RegionAsXyxyxySequence(GContext.Padding, true).ToArray();
+            var points = cell.getRegion().RegionDoubleAsXyxyxySequence(GContext.Padding, true).ToArray();
             var color = (down ? GContext.PenBorder.ColorLight : GContext.PenBorder.ColorShadow).ToWinColor();
             var borderWidth = GContext.PenBorder.Width;
             if (borderWidth == 1)
@@ -60,7 +60,7 @@ namespace fmg.uwp.draw.mosaic.bmp
                p2.Move(GContext.Padding.Left, GContext.Padding.Top);
                if (i == s)
                   color = (down ? GContext.PenBorder.ColorShadow : GContext.PenBorder.ColorLight).ToWinColor();
-               paint.Bmp.DrawLineAa(p1.X, p1.Y, p2.X, p2.Y, color, borderWidth);
+               paint.Bmp.DrawLineAa((int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y, color, borderWidth);
             }
          }
       }
@@ -141,7 +141,7 @@ namespace fmg.uwp.draw.mosaic.bmp
             GraphicContext.DefaultBackgroundFillColor,
             GContext.BkFill.GetColor
             );
-         paint.Bmp.FillPolygon(cell.getRegion().RegionAsXyxyxySequence(GContext.Padding, true).ToArray(), color.ToWinColor());
+         paint.Bmp.FillPolygon(cell.getRegion().RegionDoubleAsXyxyxySequence(GContext.Padding, true).ToArray(), color.ToWinColor());
       }
 
    }

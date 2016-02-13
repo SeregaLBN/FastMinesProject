@@ -20,7 +20,7 @@ public class RegionDouble {
       return _points[index];
    }
 
-   public void SetPoint(int index, int x, int y) {
+   public void SetPoint(int index, double x, double y) {
       _points[index].X = x;
       _points[index].Y = y;
    }
@@ -103,7 +103,7 @@ public class RegionDouble {
 
 public static class RegionDoubleExt {
 
-   public static IEnumerable<int> RegionDoubleAsXyxyxySequence(this RegionDouble region, Bound padding, bool firstToLast) {
+   public static IEnumerable<int> RegionDoubleAsXyxyxySequence(this RegionDouble region, BoundDouble padding, bool firstToLast) {
       var res = region.Points.Select(p => new[] { p.X + padding.Left, p.Y + padding.Top }).SelectMany(x => x);
       if (firstToLast) {
          // Add the first point also at the end of the array if the line should be closed.

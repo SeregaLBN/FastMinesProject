@@ -43,9 +43,9 @@ namespace fmg.uwp.res.img {
       }
 
       /// <summary> width image </summary>
-      public int Width => Size.width;
+      public int Width => Size.Width;
       /// <summary> height image </summary>
-      public int Height => Size.height;
+      public int Height => Size.Height;
 
       private Bound _padding;
       /// <summary> inside padding </summary>
