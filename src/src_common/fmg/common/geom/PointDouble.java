@@ -1,33 +1,31 @@
 package fmg.common.geom;
 
 public class PointDouble {
-	public double x,y;
-	public PointDouble() { x=y=0; }
-	public PointDouble(double x, double y) { this.x=x; this.y=y; }
-	public PointDouble(PointDouble p) { this.x=p.x; this.y=p.y; }
+   public double x, y;
 
-	public double getX() { return x; }
-	public void setX(double x) { this.x = x; }
-	public double getY() { return y; }
-	public void setY(double y) { this.y = y; }
+   public PointDouble() { x = y = 0;    }
+   public PointDouble(double x, double y) { this.x = x; this.y = y; }
+   public PointDouble(PointDouble p) { this.x = p.x; this.y = p.y; }
 
-	@Override
-    public boolean equals(Object other) {
-		if (this == other)
-			return true;
-		if (!(other instanceof PointDouble))
-			return false;
-		PointDouble p = (PointDouble)other;
-		return (x == p.x) && (y == p.y);
-    }
-	@Override
-    public int hashCode() {
-        long bits = java.lang.Double.doubleToLongBits(getX());
-        bits ^= java.lang.Double.doubleToLongBits(getY()) * 31;
-        return (((int) bits) ^ ((int) (bits >> 32)));
-    }
-	@Override
-    public String toString() {
-    	return "[x="+x+", y="+y+"]";
-    }
+   @Override
+   public int hashCode() {
+      long temp = Double.doubleToLongBits(x);
+      int result = 31 + (int) (temp ^ (temp >>> 32));
+      temp = Double.doubleToLongBits(y);
+      return 31 * result + (int) (temp ^ (temp >>> 32));
+   }
+   
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (!(obj instanceof PointDouble))
+         return false;
+      PointDouble other = (PointDouble) obj;
+      return (Double.doubleToLongBits(x) == Double.doubleToLongBits(other.x)) &&
+             (Double.doubleToLongBits(y) == Double.doubleToLongBits(other.y));
+   }
+
+   @Override
+   public String toString() { return "{ x:" + x + ", y:" + y + " }"; }
+
 }

@@ -8,3 +8,10 @@ Initialize Eclipse workspace:
    menu Window -> Preferences -> General -> Editors -> Text Editors -> 
       -> Displayed tab width: 3
       -> Insert spaced for tabs: checked!
+
+   4.1. To resolve the issue of tab with space in eclipse editor:
+      Step-1. window-->preferences-->java-->code style-->formatter
+      Step-2. click on configure project specific settings.. choose the project
+      Step-3. check Enable project specific settings -Click on new -mention your profile name-->click ok.
+      Step-4. Profile page will be poped up - Chose space only under tab policy label of indentation tab. -click apply and the ok.
+      Step-5. Use ctrl+shift+f to format a java class which will replace tab with space.

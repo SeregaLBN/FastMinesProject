@@ -108,7 +108,7 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
 				Point p2 = (i != (v-1)) ? cell.getRegion().getPoint(i+1) : cell.getRegion().getPoint(0);
 				if (i==s)
 					g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorShadow(): gContext.getPenBorder().getColorLight()));
-				g.drawLine(p1.x+padding.getLeft(), p1.y+padding.getTop(), p2.x+padding.getLeft(), p2.y+padding.getTop());
+				g.drawLine(p1.x+padding.left, p1.y+padding.top, p2.x+padding.left, p2.y+padding.top);
 			}
 		}
 	}
@@ -131,13 +131,13 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
 			(cell.getState().getStatus() == EState._Close) &&
 			(cell.getState().getClose() == EClose._Flag))
 		{
-			gContext.getImgFlag().paintIcon(gContext.getOwner(), g, rcInner.x+padding.getLeft(), rcInner.y+padding.getTop());
+			gContext.getImgFlag().paintIcon(gContext.getOwner(), g, rcInner.x+padding.left, rcInner.y+padding.top);
 		} else
 		if ((gContext.getImgMine() != null) &&
 			(cell.getState().getStatus() == EState._Open ) &&
 			(cell.getState().getOpen() == EOpen._Mine))
 		{
-			gContext.getImgMine().paintIcon(gContext.getOwner(), g, rcInner.x+padding.getLeft(), rcInner.y+padding.getTop());
+			gContext.getImgMine().paintIcon(gContext.getOwner(), g, rcInner.x+padding.left, rcInner.y+padding.top);
 		} else
 		// output text
 		{
@@ -153,7 +153,7 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
 			}
 			if ((szCaption != null) && (szCaption.length() > 0))
 			{
-				rcInner.moveXY(padding.getLeft(), padding.getTop());
+				rcInner.moveXY(padding.left, padding.top);
 				if (cell.getState().isDown())
 					rcInner.moveXY(1, 1);
 				DrawText(g, szCaption, Cast.toRect(rcInner));
