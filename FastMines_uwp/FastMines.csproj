@@ -175,6 +175,9 @@
     <Compile Include="..\src\src_common\fmg\common\geom\PointDouble.cs">
       <Link>src_fmg.common\geom\PointDouble.cs</Link>
     </Compile>
+    <Compile Include="..\src\src_common\fmg\common\geom\DoubleExt.cs">
+      <Link>src_fmg.common\geom\DoubleExt.cs</Link>
+    </Compile>
     <Compile Include="..\src\src_common\fmg\common\geom\Rect.cs">
       <Link>src_fmg.common\geom\Rect.cs</Link>
     </Compile>

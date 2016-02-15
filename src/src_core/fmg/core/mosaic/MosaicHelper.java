@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
 
@@ -24,7 +25,7 @@ public final class MosaicHelper {
    }
 
    /** Создать экземпляр атрибута для конкретного типа мозаики */
-   public static final BaseCell.BaseAttribute createAttributeInstance(EMosaic mosaicType, int area) {
+   public static final BaseCell.BaseAttribute createAttributeInstance(EMosaic mosaicType, double area) {
 //      switch (mosaicType) {
 //      case eMosaicTriangle1  : return new Triangle1.AttrTriangle1(area);
 //      // ...
@@ -197,12 +198,12 @@ public final class MosaicHelper {
     * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
     * @return размер поля мозаики
     */
-   public static Matrisize findSizeByArea(EMosaic mosaicType, int area, Size sizeClient) {
+   public static Matrisize findSizeByArea(EMosaic mosaicType, double area, Size sizeClient) {
       return findSizeByArea(createAttributeInstance(mosaicType, area), sizeClient);
    }
 
     /** get parent container (owner window) size in pixels */
-    public static Size getOwnerSize(EMosaic mosaicType, int area, Matrisize mosaicSizeField) {
+    public static SizeDouble getOwnerSize(EMosaic mosaicType, double area, Matrisize mosaicSizeField) {
        return createAttributeInstance(mosaicType, area).getOwnerSize(mosaicSizeField);
     }
 

@@ -63,14 +63,14 @@ public class MosaicEvent extends EventObject {
 
    public static class ChangedAreaEvent extends MosaicEvent {
       private static final long serialVersionUID = 1L;
-      int oldArea;
+      double oldArea;
 
-      public ChangedAreaEvent(MosaicBase source, int oldArea) {
+      public ChangedAreaEvent(MosaicBase source, double oldArea) {
          super(source);
          this.oldArea = oldArea;
       }
    
-      public int getOldArea() {
+      public double getOldArea() {
          return oldArea;
       }
    }

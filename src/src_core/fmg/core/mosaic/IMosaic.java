@@ -23,7 +23,7 @@ public interface IMosaic<TPaintable extends IPaintable> extends BaseCell.IMatrix
 
    void setMosaicType(EMosaic val);
 
-   int getArea();
+   double getArea();
 
-   void setArea(int area);
+   void setArea(double area);
 }
