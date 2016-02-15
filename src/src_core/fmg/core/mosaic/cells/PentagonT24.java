@@ -25,8 +25,9 @@ package fmg.core.mosaic.cells;
 
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
-import fmg.common.geom.Rect;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 
 /**
  * Пятиугольник. Тип №2 и №4 - равносторонний
@@ -34,17 +35,17 @@ import fmg.common.geom.Size;
  **/
 public class PentagonT24 extends BaseCell {
    public static class AttrPentagonT24 extends BaseAttribute {
-      public AttrPentagonT24(int area) {
+      public AttrPentagonT24(double area) {
          super(area);
       }
 
       @Override
-      public Size getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getOwnerSize(Matrisize sizeField) {
          double a = getA();
          double b = getB();
-         Size result = new Size(
-               (int)(b + sizeField.m * a),
-               (int)(b + sizeField.n * a));
+         SizeDouble result = new SizeDouble(
+               b + sizeField.m * a,
+               b + sizeField.n * a);
 
          if (sizeField.n == 1)
             result.width -= getC();
@@ -143,64 +144,64 @@ public class PentagonT24 extends BaseCell {
       double oY = a*((coord.y>>1)<<1); // offset Y
       switch (direction) {
       case 0:
-         region.setPoint(0, (int)(oX +       a), (int)(oY + b      ));
-         region.setPoint(1, (int)(oX + c +   a), (int)(oY + c +   a));
-         region.setPoint(2, (int)(oX + b      ), (int)(oY + b +   a));
-         region.setPoint(3, (int)(oX          ), (int)(oY +       a));
-         region.setPoint(4, (int)(oX + c      ), (int)(oY + c      ));
+         region.setPoint(0, oX +       a, oY + b      );
+         region.setPoint(1, oX + c +   a, oY + c +   a);
+         region.setPoint(2, oX + b      , oY + b +   a);
+         region.setPoint(3, oX          , oY +       a);
+         region.setPoint(4, oX + c      , oY + c      );
          break;
       case 1:
-         region.setPoint(0, (int)(oX + c + 2*a), (int)(oY + c      ));
-         region.setPoint(1, (int)(oX +     2*a), (int)(oY +       a));
-         region.setPoint(2, (int)(oX + c +   a), (int)(oY + c +   a));
-         region.setPoint(3, (int)(oX +       a), (int)(oY + b      ));
-         region.setPoint(4, (int)(oX + b +   a), (int)(oY          ));
+         region.setPoint(0, oX + c + 2*a, oY + c      );
+         region.setPoint(1, oX +     2*a, oY +       a);
+         region.setPoint(2, oX + c +   a, oY + c +   a);
+         region.setPoint(3, oX +       a, oY + b      );
+         region.setPoint(4, oX + b +   a, oY          );
          break;
       case 2:
-         region.setPoint(0, (int)(oX + c +   a), (int)(oY + c +   a));
-         region.setPoint(1, (int)(oX + b +   a), (int)(oY +     2*a));
-         region.setPoint(2, (int)(oX +       a), (int)(oY + b + 2*a));
-         region.setPoint(3, (int)(oX + c      ), (int)(oY + c + 2*a));
-         region.setPoint(4, (int)(oX + b      ), (int)(oY + b +   a));
+         region.setPoint(0, oX + c +   a, oY + c +   a);
+         region.setPoint(1, oX + b +   a, oY +     2*a);
+         region.setPoint(2, oX +       a, oY + b + 2*a);
+         region.setPoint(3, oX + c      , oY + c + 2*a);
+         region.setPoint(4, oX + b      , oY + b +   a);
          break;
       case 3:
-         region.setPoint(0, (int)(oX +     2*a), (int)(oY +       a));
-         region.setPoint(1, (int)(oX + b + 2*a), (int)(oY + b +   a));
-         region.setPoint(2, (int)(oX + c + 2*a), (int)(oY + c + 2*a));
-         region.setPoint(3, (int)(oX + b +   a), (int)(oY +     2*a));
-         region.setPoint(4, (int)(oX + c +   a), (int)(oY + c +   a));
+         region.setPoint(0, oX +     2*a, oY +       a);
+         region.setPoint(1, oX + b + 2*a, oY + b +   a);
+         region.setPoint(2, oX + c + 2*a, oY + c + 2*a);
+         region.setPoint(3, oX + b +   a, oY +     2*a);
+         region.setPoint(4, oX + c +   a, oY + c +   a);
          break;
       }
    }
 
    @Override
-   public Rect getRcInner(int borderWidth) {
+   public RectDouble getRcInner(int borderWidth) {
       AttrPentagonT24 attr = getAttr();
       double sq = attr.getSq(borderWidth);
       double w = borderWidth/2.;
       double w2 = w/SQRT2;
 
-      Rect square = new Rect();
+      RectDouble square = new RectDouble();
       switch (direction) {
       case 0:
-         square.x = (int) (region.getPoint(4).x+w2);
-         square.y = (int) (region.getPoint(1).y-w2 - sq);
+         square.x = region.getPoint(4).x+w2;
+         square.y = region.getPoint(1).y-w2 - sq;
          break;
       case 1:
-         square.x = (int) (region.getPoint(2).x+w2);
-         square.y = (int) (region.getPoint(0).y+w2);
+         square.x = region.getPoint(2).x+w2;
+         square.y = region.getPoint(0).y+w2;
          break;
       case 2:
-         square.x = (int) (region.getPoint(0).x-w2 - sq);
-         square.y = (int) (region.getPoint(3).y-w2 - sq);
+         square.x = region.getPoint(0).x-w2 - sq;
+         square.y = region.getPoint(3).y-w2 - sq;
          break;
       case 3:
-         square.x = (int) (region.getPoint(2).x-w2 - sq);
-         square.y = (int) (region.getPoint(4).y+w2);
+         square.x = region.getPoint(2).x-w2 - sq;
+         square.y = region.getPoint(4).y+w2;
          break;
       }
-      square.width = (int)sq;
-      square.height = (int)sq;
+      square.width = sq;
+      square.height = sq;
       return square;
    }
 

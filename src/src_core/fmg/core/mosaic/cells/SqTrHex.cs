@@ -37,11 +37,11 @@ public class SqTrHex : BaseCell {
 			var a = A;
 			var h = H;
 			var result = new SizeDouble(
-					(a/2+h + a/2*((sizeField.m+2)/3) +
+					 a/2+h + a/2*((sizeField.m+2)/3) +
 					         h * ((sizeField.m+1)/3) +
-					(a/2+h)    * ((sizeField.m+0)/3)),
-					(a/2   + h * ((sizeField.n+1)/2)+
-					 a*3/2*      ((sizeField.n+0)/2)));
+					(a/2+h)    * ((sizeField.m+0)/3),
+					 a/2   + h * ((sizeField.n+1)/2)+
+					 a*3/2*      ((sizeField.n+0)/2));
 
 			if (sizeField.n < 4) {
 				int x = sizeField.m % 3;

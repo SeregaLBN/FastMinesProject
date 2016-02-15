@@ -26,8 +26,9 @@ package fmg.core.mosaic.cells;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.Rect;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 
 /**
  * Комбинация. мозаика из 24х треугольников и 12х квадратов (на 1 квадрат приходится 2 треугольника) 
@@ -35,22 +36,22 @@ import fmg.common.geom.Size;
  **/
 public class TrSq2 extends BaseCell {
    public static class AttrTrSq2 extends BaseAttribute {
-      public AttrTrSq2(int area) {
+      public AttrTrSq2(double area) {
          super(area);
       }
 
       @Override
-      public Size getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getOwnerSize(Matrisize sizeField) {
          double a = getA();
          double b = getB();
          double h = getH();
-         Size result = new Size(
-               (int)(b+h*((sizeField.m+2)/3)+
-                       a*((sizeField.m+1)/3)+
-                       b*((sizeField.m+0)/3)),
-               (int)(b+h*((sizeField.n+2)/3)+
-                       a*((sizeField.n+1)/3)+
-                       b*((sizeField.n+0)/3)));
+         SizeDouble result = new SizeDouble(
+               b+h*((sizeField.m+2)/3)+
+                 a*((sizeField.m+1)/3)+
+                 b*((sizeField.m+0)/3),
+               b+h*((sizeField.n+2)/3)+
+                 a*((sizeField.n+1)/3)+
+                 b*((sizeField.n+0)/3));
 
          if (sizeField.n < 5) {
             int x = sizeField.m % 6;
@@ -452,106 +453,106 @@ public class TrSq2 extends BaseCell {
       PointDouble o = getOffset();
       switch (direction) {
       case 0: case 21:
-         region.setPoint(0, (int)(o.x - b  ), (int)(o.y - h  ));
-         region.setPoint(3, (int)(o.x - b-h), (int)(o.y + b-h));
-         region.setPoint(2, (int)(o.x - h  ), (int)(o.y + b  ));
-         region.setPoint(1, (int)(o.x      ), (int)(o.y      ));
+         region.setPoint(0, o.x - b  , o.y - h  );
+         region.setPoint(3, o.x - b-h, o.y + b-h);
+         region.setPoint(2, o.x - h  , o.y + b  );
+         region.setPoint(1, o.x      , o.y      );
          break;
       case 1: case 22:
-         region.setPoint(0, (int)(o.x + b  ), (int)(o.y - h  ));
-         region.setPoint(2, (int)(o.x - b  ), (int)(o.y - h  ));
-         region.setPoint(1, (int)(o.x      ), (int)(o.y      ));
+         region.setPoint(0, o.x + b  , o.y - h  );
+         region.setPoint(2, o.x - b  , o.y - h  );
+         region.setPoint(1, o.x      , o.y      );
          break;
       case 2: case 23:
-         region.setPoint(0, (int)(o.x + a+b), (int)(o.y - h  ));
-         region.setPoint(2, (int)(o.x + b  ), (int)(o.y - h  ));
-         region.setPoint(1, (int)(o.x + a  ), (int)(o.y      ));
+         region.setPoint(0, o.x + a+b, o.y - h  );
+         region.setPoint(2, o.x + b  , o.y - h  );
+         region.setPoint(1, o.x + a  , o.y      );
          break;
       case 3: case 18:
-         region.setPoint(0, (int)(o.x - h+b), (int)(o.y - b-h));
-         region.setPoint(3, (int)(o.x - h  ), (int)(o.y - b  ));
-         region.setPoint(2, (int)(o.x      ), (int)(o.y      ));
-         region.setPoint(1, (int)(o.x + b  ), (int)(o.y - h  ));
+         region.setPoint(0, o.x - h+b, o.y - b-h);
+         region.setPoint(3, o.x - h  , o.y - b  );
+         region.setPoint(2, o.x      , o.y      );
+         region.setPoint(1, o.x + b  , o.y - h  );
          break;
       case 4: case 19:
-         region.setPoint(0, (int)(o.x + b  ), (int)(o.y - h  ));
-         region.setPoint(1, (int)(o.x + a  ), (int)(o.y      ));
-         region.setPoint(2, (int)(o.x      ), (int)(o.y      ));
+         region.setPoint(0, o.x + b  , o.y - h  );
+         region.setPoint(1, o.x + a  , o.y      );
+         region.setPoint(2, o.x      , o.y      );
          break;
       case 5: case 20:
-         region.setPoint(0, (int)(o.x + a+b), (int)(o.y - h  ));
-         region.setPoint(2, (int)(o.x + b  ), (int)(o.y - h  ));
-         region.setPoint(1, (int)(o.x + a  ), (int)(o.y      ));
+         region.setPoint(0, o.x + a+b, o.y - h  );
+         region.setPoint(2, o.x + b  , o.y - h  );
+         region.setPoint(1, o.x + a  , o.y      );
          break;
       case 6: case 27:
-         region.setPoint(0, (int)(o.x      ), (int)(o.y      ));
-         region.setPoint(2, (int)(o.x - h  ), (int)(o.y + b  ));
-         region.setPoint(1, (int)(o.x      ), (int)(o.y + a  ));
+         region.setPoint(0, o.x      , o.y      );
+         region.setPoint(2, o.x - h  , o.y + b  );
+         region.setPoint(1, o.x      , o.y + a  );
          break;
       case 7: case 28:
-         region.setPoint(0, (int)(o.x + a  ), (int)(o.y      ));
-         region.setPoint(3, (int)(o.x      ), (int)(o.y      ));
-         region.setPoint(2, (int)(o.x      ), (int)(o.y + a  ));
-         region.setPoint(1, (int)(o.x + a  ), (int)(o.y + a  ));
+         region.setPoint(0, o.x + a  , o.y      );
+         region.setPoint(3, o.x      , o.y      );
+         region.setPoint(2, o.x      , o.y + a  );
+         region.setPoint(1, o.x + a  , o.y + a  );
          break;
       case 8: case 29:
-         region.setPoint(0, (int)(o.x + b  ), (int)(o.y - h  ));
-         region.setPoint(1, (int)(o.x + a  ), (int)(o.y      ));
-         region.setPoint(2, (int)(o.x      ), (int)(o.y      ));
+         region.setPoint(0, o.x + b  , o.y - h  );
+         region.setPoint(1, o.x + a  , o.y      );
+         region.setPoint(2, o.x      , o.y      );
          break;
       case 9: case 24:
-         region.setPoint(0, (int)(o.x - h  ), (int)(o.y - b  ));
-         region.setPoint(1, (int)(o.x      ), (int)(o.y      ));
-         region.setPoint(2, (int)(o.x - h  ), (int)(o.y + b  ));
+         region.setPoint(0, o.x - h  , o.y - b  );
+         region.setPoint(1, o.x      , o.y      );
+         region.setPoint(2, o.x - h  , o.y + b  );
          break;
       case 10: case 25:
-         region.setPoint(0, (int)(o.x + a  ), (int)(o.y      ));
-         region.setPoint(3, (int)(o.x      ), (int)(o.y      ));
-         region.setPoint(2, (int)(o.x      ), (int)(o.y + a  ));
-         region.setPoint(1, (int)(o.x + a  ), (int)(o.y + a  ));
+         region.setPoint(0, o.x + a  , o.y      );
+         region.setPoint(3, o.x      , o.y      );
+         region.setPoint(2, o.x      , o.y + a  );
+         region.setPoint(1, o.x + a  , o.y + a  );
          break;
       case 11: case 26:
-         region.setPoint(0, (int)(o.x + a+b), (int)(o.y - h  ));
-         region.setPoint(1, (int)(o.x + a+a), (int)(o.y      ));
-         region.setPoint(2, (int)(o.x + a  ), (int)(o.y      ));
+         region.setPoint(0, o.x + a+b, o.y - h  );
+         region.setPoint(1, o.x + a+a, o.y      );
+         region.setPoint(2, o.x + a  , o.y      );
          break;
       case 12: case 33:
-         region.setPoint(0, (int)(o.x - h  ), (int)(o.y + b  ));
-         region.setPoint(1, (int)(o.x      ), (int)(o.y + a  ));
-         region.setPoint(2, (int)(o.x - h  ), (int)(o.y + a+b));
+         region.setPoint(0, o.x - h  , o.y + b  );
+         region.setPoint(1, o.x      , o.y + a  );
+         region.setPoint(2, o.x - h  , o.y + a+b);
          break;
       case 13: case 34:
-         region.setPoint(0, (int)(o.x      ), (int)(o.y + a  ));
-         region.setPoint(2, (int)(o.x - h  ), (int)(o.y + a+b));
-         region.setPoint(1, (int)(o.x      ), (int)(o.y + a+a));
+         region.setPoint(0, o.x      , o.y + a  );
+         region.setPoint(2, o.x - h  , o.y + a+b);
+         region.setPoint(1, o.x      , o.y + a+a);
          break;
       case 14: case 35:
-         region.setPoint(0, (int)(o.x + a  ), (int)(o.y + a  ));
-         region.setPoint(3, (int)(o.x      ), (int)(o.y + a  ));
-         region.setPoint(2, (int)(o.x      ), (int)(o.y + a+a));
-         region.setPoint(1, (int)(o.x + a  ), (int)(o.y + a+a));
+         region.setPoint(0, o.x + a  , o.y + a  );
+         region.setPoint(3, o.x      , o.y + a  );
+         region.setPoint(2, o.x      , o.y + a+a);
+         region.setPoint(1, o.x + a  , o.y + a+a);
          break;
       case 15: case 30:
-         region.setPoint(0, (int)(o.x - h  ), (int)(o.y + b  ));
-         region.setPoint(1, (int)(o.x      ), (int)(o.y + a  ));
-         region.setPoint(2, (int)(o.x - h  ), (int)(o.y + a+b));
+         region.setPoint(0, o.x - h  , o.y + b  );
+         region.setPoint(1, o.x      , o.y + a  );
+         region.setPoint(2, o.x - h  , o.y + a+b);
          break;
       case 16: case 31:
-         region.setPoint(0, (int)(o.x      ), (int)(o.y      ));
-         region.setPoint(2, (int)(o.x - h  ), (int)(o.y + b  ));
-         region.setPoint(1, (int)(o.x      ), (int)(o.y + a  ));
+         region.setPoint(0, o.x      , o.y      );
+         region.setPoint(2, o.x - h  , o.y + b  );
+         region.setPoint(1, o.x      , o.y + a  );
          break;
       case 17: case 32:
-         region.setPoint(0, (int)(o.x + a+a), (int)(o.y      ));
-         region.setPoint(3, (int)(o.x + a  ), (int)(o.y      ));
-         region.setPoint(2, (int)(o.x + a  ), (int)(o.y + a  ));
-         region.setPoint(1, (int)(o.x + a+a), (int)(o.y + a  ));
+         region.setPoint(0, o.x + a+a, o.y      );
+         region.setPoint(3, o.x + a  , o.y      );
+         region.setPoint(2, o.x + a  , o.y + a  );
+         region.setPoint(1, o.x + a+a, o.y + a  );
          break;
       }
    }
 
    @Override
-   public Rect getRcInner(int borderWidth) {
+   public RectDouble getRcInner(int borderWidth) {
       AttrTrSq2 attr = getAttr();
       double a = attr.getA();
       double b = attr.getB();
@@ -585,12 +586,10 @@ public class TrSq2 extends BaseCell {
       case 17: case 32: center.x = o.x + a+b;    center.y = o.y + b;       break;
       }
 
-      Rect square = new Rect();
-      square.x = (int) (center.x - sq2);
-      square.y = (int) (center.y - sq2);
-      square.width =
-      square.height = (int) sq;
-      return square;
+      return new RectDouble(
+         center.x - sq2,
+         center.y - sq2,
+         sq, sq);
    }
 
    @Override

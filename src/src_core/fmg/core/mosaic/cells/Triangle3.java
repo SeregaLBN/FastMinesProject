@@ -26,8 +26,9 @@ package fmg.core.mosaic.cells;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.Rect;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 
 /**
  * Треугольник. Вариант 3 - треугольник 45°-90°-45°(квадрат разделённый на 4 части) 
@@ -35,16 +36,16 @@ import fmg.common.geom.Size;
  **/
 public class Triangle3 extends BaseCell {
    public static class AttrTriangle3 extends BaseAttribute {
-      public AttrTriangle3(int area) {
+      public AttrTriangle3(double area) {
          super(area);
       }
 
       @Override
-      public Size getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getOwnerSize(Matrisize sizeField) {
          double a = getA();
-         Size result = new Size(
-               (int)(a * ((sizeField.m+1)>>1)),
-               (int)(a * ((sizeField.n+1)>>1)));
+         SizeDouble result = new SizeDouble(
+               a * ((sizeField.m+1)>>1),
+               a * ((sizeField.n+1)>>1));
 
          if (sizeField.m == 1)
             if ((sizeField.n & 1) == 1)
@@ -171,30 +172,30 @@ public class Triangle3 extends BaseCell {
 
       switch (direction) {
       case 0:
-         region.setPoint(0, (int)(oX + a), (int)(oY    ));
-         region.setPoint(2, (int)(oX    ), (int)(oY    ));
-         region.setPoint(1, (int)(oX + b), (int)(oY + b));
+         region.setPoint(0, oX + a, oY    );
+         region.setPoint(2, oX    , oY    );
+         region.setPoint(1, oX + b, oY + b);
          break;
       case 1:
-         region.setPoint(0, (int)(oX + a), (int)(oY    ));
-         region.setPoint(2, (int)(oX + b), (int)(oY + b));
-         region.setPoint(1, (int)(oX + a), (int)(oY + a));
+         region.setPoint(0, oX + a, oY    );
+         region.setPoint(2, oX + b, oY + b);
+         region.setPoint(1, oX + a, oY + a);
          break;
       case 2:
-         region.setPoint(2, (int)(oX    ), (int)(oY + a));
-         region.setPoint(1, (int)(oX + b), (int)(oY + b));
-         region.setPoint(0, (int)(oX    ), (int)(oY    ));
+         region.setPoint(2, oX    , oY + a);
+         region.setPoint(1, oX + b, oY + b);
+         region.setPoint(0, oX    , oY    );
          break;
       case 3:
-         region.setPoint(2, (int)(oX    ), (int)(oY + a));
-         region.setPoint(1, (int)(oX + a), (int)(oY + a));
-         region.setPoint(0, (int)(oX + b), (int)(oY + b));
+         region.setPoint(2, oX    , oY + a);
+         region.setPoint(1, oX + a, oY + a);
+         region.setPoint(0, oX + b, oY + b);
          break;
       }
    }
 
    @Override
-   public Rect getRcInner(int borderWidth) {
+   public RectDouble getRcInner(int borderWidth) {
       AttrTriangle3 attr = getAttr();
       double sq = attr.getSq(borderWidth);
       double w = borderWidth/2.;
@@ -219,12 +220,10 @@ public class Triangle3 extends BaseCell {
          break;
       }
 
-      Rect square = new Rect();
-      square.x = (int) (center.x - sq/2);
-      square.y = (int) (center.y - sq/2);
-      square.width =
-      square.height = (int) sq;
-      return square;
+      return new RectDouble(
+         center.x - sq/2,
+         center.y - sq/2,
+         sq, sq);
    }
 
    @Override

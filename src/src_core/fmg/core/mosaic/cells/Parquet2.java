@@ -25,8 +25,9 @@ package fmg.core.mosaic.cells;
 
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
-import fmg.common.geom.Rect;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 
 /**
  * Паркет. Вариант №2
@@ -34,16 +35,16 @@ import fmg.common.geom.Size;
  **/
 public class Parquet2 extends BaseCell {
    public static class AttrParquet2 extends BaseAttribute {
-      public AttrParquet2(int area) {
+      public AttrParquet2(double area) {
          super(area);
       }
 
       @Override
-      public Size getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getOwnerSize(Matrisize sizeField) {
          double a = getA();
-         Size result = new Size(
-               (int)((sizeField.m*2+2) * a),
-               (int)((sizeField.n*2+2) * a));
+         SizeDouble result = new SizeDouble(
+               (sizeField.m*2+2) * a,
+               (sizeField.n*2+2) * a);
 
          if (sizeField.m == 1)
             result.height -= a;
@@ -135,51 +136,51 @@ public class Parquet2 extends BaseCell {
 
       switch (direction) {
       case 0:
-         region.setPoint(0, (int)((2 * coord.x + 2) * a), (int)((2 * coord.y + 0) * a));
-         region.setPoint(1, (int)((2 * coord.x + 4) * a), (int)((2 * coord.y + 2) * a));
-         region.setPoint(2, (int)((2 * coord.x + 3) * a), (int)((2 * coord.y + 3) * a));
-         region.setPoint(3, (int)((2 * coord.x + 1) * a), (int)((2 * coord.y + 1) * a));
+         region.setPoint(0, (2 * coord.x + 2) * a, (2 * coord.y + 0) * a);
+         region.setPoint(1, (2 * coord.x + 4) * a, (2 * coord.y + 2) * a);
+         region.setPoint(2, (2 * coord.x + 3) * a, (2 * coord.y + 3) * a);
+         region.setPoint(3, (2 * coord.x + 1) * a, (2 * coord.y + 1) * a);
          break;
       case 1:
-         region.setPoint(0, (int)((2 * coord.x + 3) * a), (int)((2 * coord.y + 1) * a));
-         region.setPoint(1, (int)((2 * coord.x + 4) * a), (int)((2 * coord.y + 2) * a));
-         region.setPoint(2, (int)((2 * coord.x + 2) * a), (int)((2 * coord.y + 4) * a));
-         region.setPoint(3, (int)((2 * coord.x + 1) * a), (int)((2 * coord.y + 3) * a));
+         region.setPoint(0, (2 * coord.x + 3) * a, (2 * coord.y + 1) * a);
+         region.setPoint(1, (2 * coord.x + 4) * a, (2 * coord.y + 2) * a);
+         region.setPoint(2, (2 * coord.x + 2) * a, (2 * coord.y + 4) * a);
+         region.setPoint(3, (2 * coord.x + 1) * a, (2 * coord.y + 3) * a);
          break;
       case 2:
-         region.setPoint(0, (int)((2 * coord.x + 2) * a), (int)((2 * coord.y + 0) * a));
-         region.setPoint(1, (int)((2 * coord.x + 3) * a), (int)((2 * coord.y + 1) * a));
-         region.setPoint(2, (int)((2 * coord.x + 1) * a), (int)((2 * coord.y + 3) * a));
-         region.setPoint(3, (int)((2 * coord.x + 0) * a), (int)((2 * coord.y + 2) * a));
+         region.setPoint(0, (2 * coord.x + 2) * a, (2 * coord.y + 0) * a);
+         region.setPoint(1, (2 * coord.x + 3) * a, (2 * coord.y + 1) * a);
+         region.setPoint(2, (2 * coord.x + 1) * a, (2 * coord.y + 3) * a);
+         region.setPoint(3, (2 * coord.x + 0) * a, (2 * coord.y + 2) * a);
          break;
       case 3:
-         region.setPoint(0, (int)((2 * coord.x + 1) * a), (int)((2 * coord.y + 1) * a));
-         region.setPoint(1, (int)((2 * coord.x + 3) * a), (int)((2 * coord.y + 3) * a));
-         region.setPoint(2, (int)((2 * coord.x + 2) * a), (int)((2 * coord.y + 4) * a));
-         region.setPoint(3, (int)((2 * coord.x + 0) * a), (int)((2 * coord.y + 2) * a));
+         region.setPoint(0, (2 * coord.x + 1) * a, (2 * coord.y + 1) * a);
+         region.setPoint(1, (2 * coord.x + 3) * a, (2 * coord.y + 3) * a);
+         region.setPoint(2, (2 * coord.x + 2) * a, (2 * coord.y + 4) * a);
+         region.setPoint(3, (2 * coord.x + 0) * a, (2 * coord.y + 2) * a);
          break;
       }
    }
 
    @Override
-   public Rect getRcInner(int borderWidth) {
+   public RectDouble getRcInner(int borderWidth) {
       AttrParquet2 attr = getAttr();
       double sq = attr.getSq(borderWidth);
       double w = borderWidth/2.;
 
-      Rect square = new Rect();
+      RectDouble square = new RectDouble();
       switch (direction) {
       case 0: case 3:
-         square.x = (int) (region.getPoint(0).x + w/SQRT2);
-         square.y = (int) (region.getPoint(3).y + w/SQRT2);
+         square.x = region.getPoint(0).x + w/SQRT2;
+         square.y = region.getPoint(3).y + w/SQRT2;
          break;
       case 1: case 2:
-         square.x = (int) (region.getPoint(2).x + w/SQRT2);
-         square.y = (int) (region.getPoint(1).y + w/SQRT2);
+         square.x = region.getPoint(2).x + w/SQRT2;
+         square.y = region.getPoint(1).y + w/SQRT2;
          break;
       }
-      square.width = (int)sq;
-      square.height = (int)sq;
+      square.width = sq;
+      square.height = sq;
       return square;
    }
 

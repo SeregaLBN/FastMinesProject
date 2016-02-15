@@ -31,10 +31,11 @@ import java.util.stream.IntStream;
 import fmg.common.Color;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
-import fmg.common.geom.Point;
-import fmg.common.geom.Rect;
-import fmg.common.geom.Region;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.common.geom.RegionDouble;
 import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
@@ -82,22 +83,22 @@ public abstract class BaseCell implements PropertyChangeListener {
          propertyChanges.removePropertyChangeListener(l);
       }
 
-      public BaseAttribute(int area) {
+      public BaseAttribute(double area) {
          super();
          setArea(area);
       }
 
       /** площадь ячейки/фигуры */
-      private int area;
+      private double area;
 
       /** площадь ячейки/фигуры */
-      public void setArea(int area) {
-         int old = this.area;
+      public void setArea(double area) {
+         double old = this.area;
          this.area = area;
          propertyChanges.firePropertyChange("Area", old, area);
       }
       /** площадь ячейки/фигуры */
-      public int getArea() { return area; }
+      public double getArea() { return area; }
 
       /** размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
        * на основе заданных параметров */
@@ -107,7 +108,7 @@ public abstract class BaseCell implements PropertyChangeListener {
       protected abstract double getA();
 
       /** get parent container (owner window) size in pixels */
-      public abstract Size getOwnerSize(Matrisize sizeField);
+      public abstract SizeDouble getOwnerSize(Matrisize sizeField);
 
       /** размер поля из группы ячеек состоящих из разных direction */
       public abstract Size GetDirectionSizeField();
@@ -147,10 +148,10 @@ public abstract class BaseCell implements PropertyChangeListener {
    protected int direction;
 
    /** вписанный в фигуру квадрат - область в которую выводится изображение/текст */
-   public abstract Rect getRcInner(int borderWidth);
+   public abstract RectDouble getRcInner(int borderWidth);
    /** вернёт прямоугольник в который вписана фигура ячейки */
-   public Rect getRcOuter() {
-      Rect rcOuter = region.getBounds();
+   public RectDouble getRcOuter() {
+      RectDouble rcOuter = region.getBounds();
       rcOuter.height++; rcOuter.width++; // чтобы при repaint'е захватило и крайние границы
       return rcOuter;
    }
@@ -160,7 +161,7 @@ public abstract class BaseCell implements PropertyChangeListener {
    public BaseCell[] getNeighbors() { return neighbors; }
    
    /** массив координат точек из которых состоит фигура */
-   protected Region region;
+   protected RegionDouble region;
 
    public class StateCell {
       // { union
@@ -241,7 +242,7 @@ public abstract class BaseCell implements PropertyChangeListener {
       this.attr = attr;
       this.coord = coord;
       this.direction = iDirection;
-      this.region = new Region(attr.getVertexNumber(iDirection));
+      this.region = new RegionDouble(attr.getVertexNumber(iDirection));
       this.neighbors = null;
 
       this.state = new StateCell();
@@ -297,12 +298,12 @@ public abstract class BaseCell implements PropertyChangeListener {
    public Coord getCoord() { return coord; }
    public int getDirection() { return direction; }
    /** координата центра фигуры (в пикселях) */
-   public Point getCenter() { return getRcInner(1).center(); }
+   public PointDouble getCenter() { return getRcInner(1).center(); }
 
    /** принадлежат ли эти экранные координаты ячейке */
-   public boolean PointInRegion(Point point) { return region.Contains(point); }
+   public boolean PointInRegion(PointDouble point) { return region.Contains(point); }
 
-   public Region getRegion() { return region; }
+   public RegionDouble getRegion() { return region; }
 
    /** определить координаты точек из которых состоит фигура */
    protected abstract void CalcRegion();

@@ -25,8 +25,9 @@ package fmg.core.mosaic.cells;
 
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
-import fmg.common.geom.Rect;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 
 /**
  * Паркет в елку
@@ -34,16 +35,16 @@ import fmg.common.geom.Size;
  **/
 public class Parquet1 extends BaseCell {
    public static class AttrParquet1 extends BaseAttribute {
-      public AttrParquet1(int area) {
+      public AttrParquet1(double area) {
          super(area);
       }
 
       @Override
-      public Size getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getOwnerSize(Matrisize sizeField) {
          double a = getA();
-         Size result = new Size(
-               (int)((sizeField.m*2+1) * a),
-               (int)((sizeField.n*2+2) * a));
+         SizeDouble result = new SizeDouble(
+               (sizeField.m*2+1) * a,
+               (sizeField.n*2+2) * a);
 
          if (sizeField.m == 1)
             result.height -= a;
@@ -86,8 +87,8 @@ public class Parquet1 extends BaseCell {
       Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
 
       // определяю координаты соседей
-       boolean bdir = (direction != 0);
-       neighborCoord[0] = new Coord(bdir ? coord.x  : coord.x-1, coord.y-1);
+      boolean bdir = (direction != 0);
+      neighborCoord[0] = new Coord(bdir ? coord.x  : coord.x-1, coord.y-1);
       neighborCoord[1] = new Coord(bdir ? coord.x-1: coord.x  , bdir ? coord.y  : coord.y-1);
       neighborCoord[2] = new Coord(       coord.x+1           , bdir ? coord.y  : coord.y-1);
       neighborCoord[3] = new Coord(       coord.x-1           , bdir ? coord.y+1: coord.y);
@@ -104,33 +105,31 @@ public class Parquet1 extends BaseCell {
 
       switch (direction) {
       case 0:
-         region.setPoint(0, (int)(a * (2 + 2 * coord.x)), (int)(a * (0 + 2 * coord.y)));
-         region.setPoint(1, (int)(a * (3 + 2 * coord.x)), (int)(a * (1 + 2 * coord.y)));
-         region.setPoint(2, (int)(a * (1 + 2 * coord.x)), (int)(a * (3 + 2 * coord.y)));
-         region.setPoint(3, (int)(a * (0 + 2 * coord.x)), (int)(a * (2 + 2 * coord.y)));
+         region.setPoint(0, a * (2 + 2 * coord.x), a * (0 + 2 * coord.y));
+         region.setPoint(1, a * (3 + 2 * coord.x), a * (1 + 2 * coord.y));
+         region.setPoint(2, a * (1 + 2 * coord.x), a * (3 + 2 * coord.y));
+         region.setPoint(3, a * (0 + 2 * coord.x), a * (2 + 2 * coord.y));
          break;
       case 1:
-         region.setPoint(0, (int)(a * (1 + 2 * coord.x)), (int)(a * (1 + 2 * coord.y)));
-         region.setPoint(1, (int)(a * (3 + 2 * coord.x)), (int)(a * (3 + 2 * coord.y)));
-         region.setPoint(2, (int)(a * (2 + 2 * coord.x)), (int)(a * (4 + 2 * coord.y)));
-         region.setPoint(3, (int)(a * (0 + 2 * coord.x)), (int)(a * (2 + 2 * coord.y)));
+         region.setPoint(0, a * (1 + 2 * coord.x), a * (1 + 2 * coord.y));
+         region.setPoint(1, a * (3 + 2 * coord.x), a * (3 + 2 * coord.y));
+         region.setPoint(2, a * (2 + 2 * coord.x), a * (4 + 2 * coord.y));
+         region.setPoint(3, a * (0 + 2 * coord.x), a * (2 + 2 * coord.y));
          break;
       }
    }
 
    @Override
-   public Rect getRcInner(int borderWidth) {
+   public RectDouble getRcInner(int borderWidth) {
       AttrParquet1 attr = getAttr();
       double sq = attr.getSq(borderWidth);
       double w = borderWidth/2.;
       boolean bdir = (direction != 0);
 
-      Rect square = new Rect();
-      square.x = (int) ((bdir ? region.getPoint(0).x: region.getPoint(2).x) + w / SQRT2);
-      square.y = (int) ((bdir ? region.getPoint(3).y: region.getPoint(1).y) + w / SQRT2);
-      square.width = (int)sq;
-      square.height = (int)sq;
-      return square;
+      return new RectDouble(
+         (bdir ? region.getPoint(0).x: region.getPoint(2).x) + w / SQRT2,
+         (bdir ? region.getPoint(3).y: region.getPoint(1).y) + w / SQRT2,
+         sq, sq);
    }
 
    @Override

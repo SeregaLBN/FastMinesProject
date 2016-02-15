@@ -29,8 +29,9 @@ import fmg.common.Color;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.Rect;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 
 /**
  * PenrousePeriodic1 - один из вариантов периодической мозаики Пенроуза (ромбы 72°-108° & 36°- 144°)
@@ -38,12 +39,12 @@ import fmg.common.geom.Size;
  **/
 public class PenrousePeriodic1 extends BaseCell {
    public static class AttrPenrousePeriodic1 extends BaseAttribute {
-      public AttrPenrousePeriodic1(int area) {
+      public AttrPenrousePeriodic1(double area) {
          super(area);
       }
 
       @Override
-      public Size getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getOwnerSize(Matrisize sizeField) {
          double a = getA();
          double b = getB();
          double c = getC();
@@ -53,32 +54,32 @@ public class PenrousePeriodic1 extends BaseCell {
          double g = getG();
          double k = getK();
          double z = getZ();
-         Size result = new Size(
-               (int)(g +
-                     z*((sizeField.m+8)/9) +
-                     k*((sizeField.m+7)/9) +
-                     g*((sizeField.m+6)/9) +
-                     g*((sizeField.m+5)/9) +
-                     z*((sizeField.m+4)/9) +
-                     g*((sizeField.m+3)/9) +
-                     g*((sizeField.m+2)/9) +
-                     z*((sizeField.m+1)/9) +
-                     g*((sizeField.m+0)/9)),
-               (int)(e +
-                     f*((sizeField.n+13)/14) +
-                     b*((sizeField.n+12)/14) +
-                     h*((sizeField.n+11)/14) +
-                     h*((sizeField.n+10)/14) +
-                     b*((sizeField.n+ 9)/14) +
-                     f*((sizeField.n+ 8)/14) +
-                     b*((sizeField.n+ 7)/14) +
-                     c*((sizeField.n+ 6)/14) +
-                     b*((sizeField.n+ 5)/14) +
-                     h*((sizeField.n+ 4)/14) +
-                     h*((sizeField.n+ 3)/14) +
-                     a*((sizeField.n+ 2)/14) +
-                     h*((sizeField.n+ 1)/14) +
-                     e*((sizeField.n+ 0)/14)));
+         SizeDouble result = new SizeDouble(
+               g +
+               z*((sizeField.m+8)/9) +
+               k*((sizeField.m+7)/9) +
+               g*((sizeField.m+6)/9) +
+               g*((sizeField.m+5)/9) +
+               z*((sizeField.m+4)/9) +
+               g*((sizeField.m+3)/9) +
+               g*((sizeField.m+2)/9) +
+               z*((sizeField.m+1)/9) +
+               g*((sizeField.m+0)/9),
+               e +
+               f*((sizeField.n+13)/14) +
+               b*((sizeField.n+12)/14) +
+               h*((sizeField.n+11)/14) +
+               h*((sizeField.n+10)/14) +
+               b*((sizeField.n+ 9)/14) +
+               f*((sizeField.n+ 8)/14) +
+               b*((sizeField.n+ 7)/14) +
+               c*((sizeField.n+ 6)/14) +
+               b*((sizeField.n+ 5)/14) +
+               h*((sizeField.n+ 4)/14) +
+               h*((sizeField.n+ 3)/14) +
+               a*((sizeField.n+ 2)/14) +
+               h*((sizeField.n+ 1)/14) +
+               e*((sizeField.n+ 0)/14));
 
          // когда размер поля мал...
          if (sizeField.n < 14) { // ...нужно вычислять не только по общей формуле, а и убрать остатки по ширине...
@@ -1852,69 +1853,69 @@ public class PenrousePeriodic1 extends BaseCell {
       case  0: case 12: case  15: case  26: case 31:
       case 37: case 44: case  58: case  63: case 68:
       case 84: case 91: case 97: case 104: case 119: case 124:
-         region.setPoint(0, (int)(left + k), (int)(top + c));
-         region.setPoint(1, (int)(left + g), (int)(top + e));
-         region.setPoint(2, (int)(left    ), (int)(top + h));
-         region.setPoint(3, (int)(left + z), (int)(top    ));
+         region.setPoint(0, left + k, top + c);
+         region.setPoint(1, left + g, top + e);
+         region.setPoint(2, left    , top + h);
+         region.setPoint(3, left + z, top    );
          break;
       case 1: case 4: case 27: case 33: case 48: case 74: case 90: case 114:
-         region.setPoint(0, (int)(left + k), (int)(top    ));
-         region.setPoint(1, (int)(left + g), (int)(top + h));
-         region.setPoint(2, (int)(left    ), (int)(top + e));
-         region.setPoint(3, (int)(left + z), (int)(top + c));
+         region.setPoint(0, left + k, top    );
+         region.setPoint(1, left + g, top + h);
+         region.setPoint(2, left    , top + e);
+         region.setPoint(3, left + z, top + c);
          break;
       case  2: case  5: case 22: case 28: case  35: case  43: case  49: case 62:
       case 73: case 78: case 85: case 98: case 101: case 105: case 120: case 125:
-         region.setPoint(0, (int)(left+2*z), (int)(top + h));
-         region.setPoint(1, (int)(left + z), (int)(top+2*h));
-         region.setPoint(2, (int)(left    ), (int)(top + h));
-         region.setPoint(3, (int)(left + z), (int)(top    ));
+         region.setPoint(0, left+2*z, top + h);
+         region.setPoint(1, left + z, top+2*h);
+         region.setPoint(2, left    , top + h);
+         region.setPoint(3, left + z, top    );
          break;
       case 3: case 6: case 29: case 34: case 50: case 77: case 100: case 107:
-         region.setPoint(0, (int)(left + k), (int)(top + e));
-         region.setPoint(1, (int)(left + z), (int)(top + h));
-         region.setPoint(2, (int)(left    ), (int)(top    ));
-         region.setPoint(3, (int)(left + g), (int)(top + c));
+         region.setPoint(0, left + k, top + e);
+         region.setPoint(1, left + z, top + h);
+         region.setPoint(2, left    , top    );
+         region.setPoint(3, left + g, top + c);
          break;
       case  7: case 10: case 14: case 18: case  30: case  36: case  42: case  57:
       case 65: case 76: case 79: case 81: case 102: case 106: case 117: case 121:
-         region.setPoint(0, (int)(left + k), (int)(top + h));
-         region.setPoint(1, (int)(left + z), (int)(top + e));
-         region.setPoint(2, (int)(left    ), (int)(top + c));
-         region.setPoint(3, (int)(left + g), (int)(top   ));
+         region.setPoint(0, left + k, top + h);
+         region.setPoint(1, left + z, top + e);
+         region.setPoint(2, left    , top + c);
+         region.setPoint(3, left + g, top    );
          break;
       case  8: case 20: case 32: case  55: case  60: case  75:
       case 80: case 83: case 87: case 103: case 118: case 123:
-         region.setPoint(0, (int)(left+2*g), (int)(top + c));
-         region.setPoint(1, (int)(left + g), (int)(top+2*c));
-         region.setPoint(2, (int)(left    ), (int)(top + c));
-         region.setPoint(3, (int)(left + g), (int)(top    ));
+         region.setPoint(0, left+2*g, top + c);
+         region.setPoint(1, left + g, top+2*c);
+         region.setPoint(2, left    , top + c);
+         region.setPoint(3, left + g, top    );
          break;
       case  9: case 11: case 24: case 39: case 46: case  51: case  61: case 64:
       case 66: case 72: case 93: case 96: case 99: case 112: case 122:
-         region.setPoint(0, (int)(left + g), (int)(top    ));
-         region.setPoint(1, (int)(left + g), (int)(top + a));
-         region.setPoint(2, (int)(left    ), (int)(top+a+c));
-         region.setPoint(3, (int)(left    ), (int)(top + c));
+         region.setPoint(0, left + g, top    );
+         region.setPoint(1, left + g, top + a);
+         region.setPoint(2, left    , top+a+c);
+         region.setPoint(3, left    , top + c);
          break;
       case 13: case 16: case 38: case 53: case 59: case 71: case 88: case 95: case 110: case 115:
-         region.setPoint(0, (int)(left + z), (int)(top    ));
-         region.setPoint(1, (int)(left + z), (int)(top + a));
-         region.setPoint(2, (int)(left    ), (int)(top+a+h));
-         region.setPoint(3, (int)(left    ), (int)(top + h));
+         region.setPoint(0, left + z, top    );
+         region.setPoint(1, left + z, top + a);
+         region.setPoint(2, left    , top+a+h);
+         region.setPoint(3, left    , top + h);
          break;
       case 17: case 21: case 25: case 40: case  47: case  52: case  54: case 67:
       case 69: case 86: case 89: case 92: case 109: case 111: case 116:
-         region.setPoint(0, (int)(left + g), (int)(top + c));
-         region.setPoint(1, (int)(left + g), (int)(top+c+a));
-         region.setPoint(2, (int)(left    ), (int)(top + a));
-         region.setPoint(3, (int)(left    ), (int)(top    ));
+         region.setPoint(0, left + g, top + c);
+         region.setPoint(1, left + g, top+c+a);
+         region.setPoint(2, left    , top + a);
+         region.setPoint(3, left    , top    );
          break;
       case 19: case 23: case 41: case 45: case 56: case 70: case 82: case 94: case 108: case 113: 
-         region.setPoint(0, (int)(left + z), (int)(top + h));
-         region.setPoint(1, (int)(left + z), (int)(top+h+a));
-         region.setPoint(2, (int)(left    ), (int)(top + a));
-         region.setPoint(3, (int)(left    ), (int)(top    ));
+         region.setPoint(0, left + z, top + h);
+         region.setPoint(1, left + z, top+h+a);
+         region.setPoint(2, left    , top + a);
+         region.setPoint(3, left    , top    );
          break;
       default:
          throw new RuntimeException("Забыл case #" + direction);
@@ -1922,7 +1923,7 @@ public class PenrousePeriodic1 extends BaseCell {
    }
 
    @Override
-   public Rect getRcInner(int borderWidth) {
+   public RectDouble getRcInner(int borderWidth) {
       AttrPenrousePeriodic1 attr = getAttr();
 //      double w = borderWidth/2.;
       double sq  = attr.getSq(borderWidth);
@@ -1958,12 +1959,10 @@ public class PenrousePeriodic1 extends BaseCell {
          throw new RuntimeException("Забыл case #" + direction);
       }
 
-      Rect square = new Rect();
-      square.x = (int) (center.x - sq2);
-      square.y = (int) (center.y - sq2);
-      square.width =
-      square.height = (int) sq;
-      return square;
+      return new RectDouble(
+         center.x - sq2,
+         center.y - sq2,
+         sq, sq);
    }
 
    @Override

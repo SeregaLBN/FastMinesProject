@@ -29,8 +29,9 @@ import fmg.common.Color;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.Rect;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 
 /**
  * Пятиугольник. Тип №5
@@ -38,37 +39,37 @@ import fmg.common.geom.Size;
  **/
 public class PentagonT5 extends BaseCell {
    public static class AttrPentagonT5 extends BaseAttribute {
-      public AttrPentagonT5(int area) {
+      public AttrPentagonT5(double area) {
          super(area);
       }
 
       @Override
-      public Size getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getOwnerSize(Matrisize sizeField) {
          double a = getA();
          double h = getH();
-         Size result = new Size(
-               (int)(a*3.5 +
-                     a*2.0*((sizeField.m+13)/14) +
-                     a    *((sizeField.m+12)/14) +
-                     a*1.5*((sizeField.m+11)/14) +
-                     a*2.0*((sizeField.m+10)/14) +
-                     a    *((sizeField.m+ 9)/14) +
-                     a*1.5*((sizeField.m+ 8)/14) +
-                     a*2.0*((sizeField.m+ 7)/14) +
-                     a    *((sizeField.m+ 6)/14) +
-                     a*1.5*((sizeField.m+ 5)/14) +
-                     a*2.0*((sizeField.m+ 4)/14) +
-                     a    *((sizeField.m+ 3)/14) +
-                     a*2.0*((sizeField.m+ 2)/14) +
-                     a    *((sizeField.m+ 1)/14) +
-                     a*1.5*((sizeField.m+ 0)/14)),
-               (int)(h*5  +
-                     h*2  *((sizeField.n+ 5)/ 6) +
-                     h*2  *((sizeField.n+ 4)/ 6) +
-                     h*2  *((sizeField.n+ 3)/ 6) +
-                     h*3  *((sizeField.n+ 2)/ 6) +
-                     h*2  *((sizeField.n+ 1)/ 6) +
-                     h*3  *((sizeField.n+ 0)/ 6)));
+         SizeDouble result = new SizeDouble(
+               a*3.5 +
+               a*2.0*((sizeField.m+13)/14) +
+               a    *((sizeField.m+12)/14) +
+               a*1.5*((sizeField.m+11)/14) +
+               a*2.0*((sizeField.m+10)/14) +
+               a    *((sizeField.m+ 9)/14) +
+               a*1.5*((sizeField.m+ 8)/14) +
+               a*2.0*((sizeField.m+ 7)/14) +
+               a    *((sizeField.m+ 6)/14) +
+               a*1.5*((sizeField.m+ 5)/14) +
+               a*2.0*((sizeField.m+ 4)/14) +
+               a    *((sizeField.m+ 3)/14) +
+               a*2.0*((sizeField.m+ 2)/14) +
+               a    *((sizeField.m+ 1)/14) +
+               a*1.5*((sizeField.m+ 0)/14),
+               h*5  +
+               h*2  *((sizeField.n+ 5)/ 6) +
+               h*2  *((sizeField.n+ 4)/ 6) +
+               h*2  *((sizeField.n+ 3)/ 6) +
+               h*3  *((sizeField.n+ 2)/ 6) +
+               h*2  *((sizeField.n+ 1)/ 6) +
+               h*3  *((sizeField.n+ 0)/ 6));
 
          // когда размер поля мал...
          if (sizeField.m < 14) { // ...нужно вычислять не только по общей формуле, а и убрать остатки снизу..
@@ -562,52 +563,52 @@ public class PentagonT5 extends BaseCell {
       }
       switch (direction) {
       case  0: case  3: case  6: case  9: case 12: case 28: case 31: case 34: case 37: case 54: case 56: case 59: case 62: case 65:
-         region.setPoint(0, (int)(oX - a    ), (int)(oY - h*2));
-         region.setPoint(1, (int)(oX        ), (int)(oY      ));
-         region.setPoint(2, (int)(oX - a*2  ), (int)(oY      ));
-         region.setPoint(3, (int)(oX - a*2.5), (int)(oY - h  ));
-         region.setPoint(4, (int)(oX - a*2  ), (int)(oY - h*2));
+         region.setPoint(0, oX - a    , oY - h*2);
+         region.setPoint(1, oX        , oY      );
+         region.setPoint(2, oX - a*2  , oY      );
+         region.setPoint(3, oX - a*2.5, oY - h  );
+         region.setPoint(4, oX - a*2  , oY - h*2);
          break;
       case  1: case  4: case  7: case 10: case 13: case 29: case 32: case 35: case 38: case 55: case 57: case 60: case 63: case 66:
-         region.setPoint(0, (int)(oX + a*0.5), (int)(oY - h*3));
-         region.setPoint(1, (int)(oX + a    ), (int)(oY - h*2));
-         region.setPoint(2, (int)(oX        ), (int)(oY      ));
-         region.setPoint(3, (int)(oX - a    ), (int)(oY - h*2));
-         region.setPoint(4, (int)(oX - a*0.5), (int)(oY - h*3));
+         region.setPoint(0, oX + a*0.5, oY - h*3);
+         region.setPoint(1, oX + a    , oY - h*2);
+         region.setPoint(2, oX        , oY      );
+         region.setPoint(3, oX - a    , oY - h*2);
+         region.setPoint(4, oX - a*0.5, oY - h*3);
          break;
       case  2: case  5: case  8: case 11: case 27: case 30: case 33: case 36: case 39: case 69: case 58: case 61: case 64: case 82:
-         region.setPoint(0, (int)(oX + a*2  ), (int)(oY - h*2));
-         region.setPoint(1, (int)(oX + a*2.5), (int)(oY - h  ));
-         region.setPoint(2, (int)(oX + a*2  ), (int)(oY      ));
-         region.setPoint(3, (int)(oX        ), (int)(oY      ));
-         region.setPoint(4, (int)(oX + a    ), (int)(oY - h*2));
+         region.setPoint(0, oX + a*2  , oY - h*2);
+         region.setPoint(1, oX + a*2.5, oY - h  );
+         region.setPoint(2, oX + a*2  , oY      );
+         region.setPoint(3, oX        , oY      );
+         region.setPoint(4, oX + a    , oY - h*2);
          break;
       case 14: case 17: case 20: case 23: case 26: case 42: case 45: case 48: case 51: case 67: case 70: case 73: case 76: case 79:
-         region.setPoint(0, (int)(oX        ), (int)(oY      ));
-         region.setPoint(1, (int)(oX - a    ), (int)(oY + h*2));
-         region.setPoint(2, (int)(oX - a*2  ), (int)(oY + h*2));
-         region.setPoint(3, (int)(oX - a*2.5), (int)(oY + h  ));
-         region.setPoint(4, (int)(oX - a*2  ), (int)(oY      ));
+         region.setPoint(0, oX        , oY      );
+         region.setPoint(1, oX - a    , oY + h*2);
+         region.setPoint(2, oX - a*2  , oY + h*2);
+         region.setPoint(3, oX - a*2.5, oY + h  );
+         region.setPoint(4, oX - a*2  , oY      );
          break;
       case 15: case 18: case 21: case 24: case 40: case 43: case 46: case 49: case 52: case 68: case 71: case 74: case 77: case 80:
-         region.setPoint(0, (int)(oX        ), (int)(oY      ));
-         region.setPoint(1, (int)(oX + a    ), (int)(oY + h*2));
-         region.setPoint(2, (int)(oX + a*0.5), (int)(oY + h*3));
-         region.setPoint(3, (int)(oX - a*0.5), (int)(oY + h*3));
-         region.setPoint(4, (int)(oX - a    ), (int)(oY + h*2));
+         region.setPoint(0, oX        , oY      );
+         region.setPoint(1, oX + a    , oY + h*2);
+         region.setPoint(2, oX + a*0.5, oY + h*3);
+         region.setPoint(3, oX - a*0.5, oY + h*3);
+         region.setPoint(4, oX - a    , oY + h*2);
          break;
       case 16: case 19: case 22: case 25: case 41: case 44: case 47: case 50: case 53: case 83: case 72: case 75: case 78: case 81:
-         region.setPoint(0, (int)(oX + a*2  ), (int)(oY      ));
-         region.setPoint(1, (int)(oX + a*2.5), (int)(oY + h  ));
-         region.setPoint(2, (int)(oX + a*2  ), (int)(oY + h*2));
-         region.setPoint(3, (int)(oX + a    ), (int)(oY + h*2));
-         region.setPoint(4, (int)(oX        ), (int)(oY      ));
+         region.setPoint(0, oX + a*2  , oY      );
+         region.setPoint(1, oX + a*2.5, oY + h  );
+         region.setPoint(2, oX + a*2  , oY + h*2);
+         region.setPoint(3, oX + a    , oY + h*2);
+         region.setPoint(4, oX        , oY      );
          break;
       }
    }
 
    @Override
-   public Rect getRcInner(int borderWidth) {
+   public RectDouble getRcInner(int borderWidth) {
       AttrPentagonT5 attr = getAttr();
       double a = attr.getA();
       double h = attr.getH();
@@ -651,12 +652,10 @@ public class PentagonT5 extends BaseCell {
       case 50: case 53: case 83: case 72: case 75: case 78: case 81: center.x = oX + a*1.5;  center.y = oY + h;   break;
       }
 
-      Rect square = new Rect();
-      square.x = (int) (center.x - sq2);
-      square.y = (int) (center.y - sq2);
-      square.width =
-      square.height = (int) sq;
-      return square;
+      return new RectDouble(
+         center.x - sq2,
+         center.y - sq2,
+         sq, sq);
    }
 
    @Override

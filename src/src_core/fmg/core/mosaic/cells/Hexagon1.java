@@ -26,8 +26,9 @@ package fmg.core.mosaic.cells;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.Rect;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 
 /**
  * Шестиугольник 
@@ -35,16 +36,16 @@ import fmg.common.geom.Size;
  **/
 public class Hexagon1 extends BaseCell {
    public static class AttrHexagon1 extends BaseAttribute {
-      public AttrHexagon1(int area) {
+      public AttrHexagon1(double area) {
          super(area);
       }
 
       @Override
-      public Size getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getOwnerSize(Matrisize sizeField) {
          double a = getA();
-         Size result = new Size(
-               (int)(a * (sizeField.m    +0.5) * SQRT3),
-               (int)(a * (sizeField.n*1.5+0.5)));
+         SizeDouble result = new SizeDouble(
+               a * (sizeField.m    +0.5) * SQRT3,
+               a * (sizeField.n*1.5+0.5));
 
          if (sizeField.n == 1)
             result.width -= getB()/2;
@@ -110,26 +111,26 @@ public class Hexagon1 extends BaseCell {
 
       switch (direction) {
       case 0:
-         region.setPoint(0, (int)(oX      ), (int)(oY - a  ));
-         region.setPoint(1, (int)(oX      ), (int)(oY      ));
-         region.setPoint(2, (int)(oX - b/2), (int)(oY + a/2));
-         region.setPoint(3, (int)(oX - b  ), (int)(oY      ));
-         region.setPoint(4, (int)(oX - b  ), (int)(oY - a  ));
-         region.setPoint(5, (int)(oX - b/2), (int)(oY - a*1.5));
+         region.setPoint(0, oX      , oY - a    );
+         region.setPoint(1, oX      , oY        );
+         region.setPoint(2, oX - b/2, oY + a/2  );
+         region.setPoint(3, oX - b  , oY        );
+         region.setPoint(4, oX - b  , oY - a    );
+         region.setPoint(5, oX - b/2, oY - a*1.5);
          break;
       case 1:
-         region.setPoint(0, (int)(oX + b/2), (int)(oY + a/2  ));
-         region.setPoint(1, (int)(oX + b/2), (int)(oY + a*1.5));
-         region.setPoint(2, (int)(oX      ), (int)(oY + a*2  ));
-         region.setPoint(3, (int)(oX - b/2), (int)(oY + a*1.5));
-         region.setPoint(4, (int)(oX - b/2), (int)(oY + a/2  ));
-         region.setPoint(5, (int)(oX      ), (int)(oY        ));
+         region.setPoint(0, oX + b/2, oY + a/2  );
+         region.setPoint(1, oX + b/2, oY + a*1.5);
+         region.setPoint(2, oX      , oY + a*2  );
+         region.setPoint(3, oX - b/2, oY + a*1.5);
+         region.setPoint(4, oX - b/2, oY + a/2  );
+         region.setPoint(5, oX      , oY        );
          break;
       }
    }
 
    @Override
-   public Rect getRcInner(int borderWidth) {
+   public RectDouble getRcInner(int borderWidth) {
       AttrHexagon1 attr = getAttr();
       double a = attr.getA();
       double b = attr.getB();
@@ -144,12 +145,10 @@ public class Hexagon1 extends BaseCell {
       case 1: center.x = oX;       center.y = oY + a;   break;
       }
 
-      Rect square = new Rect();
-      square.x = (int) (center.x - sq/2);
-      square.y = (int) (center.y - sq/2);
-      square.width =
-      square.height = (int) sq;
-      return square;
+      return new RectDouble(
+         center.x - sq/2,
+         center.y - sq/2,
+         sq, sq);
    }
 
    @Override

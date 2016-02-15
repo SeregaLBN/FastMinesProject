@@ -26,8 +26,9 @@ package fmg.core.mosaic.cells;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.Rect;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 
 /**
  * Комбинация. Мозаика из 4х треугольников и 2х квадратов 
@@ -35,21 +36,21 @@ import fmg.common.geom.Size;
  **/
 public class TrSq1 extends BaseCell {
    public static class AttrTrSq1 extends BaseAttribute {
-      public AttrTrSq1(int area) {
+      public AttrTrSq1(double area) {
          super(area);
       }
 
       @Override
-      public Size getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getOwnerSize(Matrisize sizeField) {
          double b = getB();
          double k = getK();
          double n = getN();
          double m = getM();
-         Size result = new Size(
-               (int)(b+n*((sizeField.m-1+2)/3)+
-                       k*((sizeField.m-1+1)/3)+
-                       m*((sizeField.m-1+0)/3)),
-               (int)(b+n* (sizeField.n-1)));
+         SizeDouble result = new SizeDouble(
+               b+n*((sizeField.m-1+2)/3)+
+                 k*((sizeField.m-1+1)/3)+
+                 m*((sizeField.m-1+0)/3),
+               b+n* (sizeField.n-1));
 
          if (sizeField.n == 1) {
             if ((sizeField.m % 3) == 2) result.width -= m;
@@ -218,42 +219,42 @@ public class TrSq1 extends BaseCell {
 
       switch (direction) {
       case 0:
-         region.setPoint(0, (int)(oX - m  ), (int)(oY - n));
-         region.setPoint(1, (int)(oX      ), (int)(oY    ));
-         region.setPoint(2, (int)(oX - n  ), (int)(oY + m));
-         region.setPoint(3, (int)(oX - b  ), (int)(oY - k));
+         region.setPoint(0, oX - m  , oY - n);
+         region.setPoint(1, oX      , oY    );
+         region.setPoint(2, oX - n  , oY + m);
+         region.setPoint(3, oX - b  , oY - k);
          break;
-      case 1:                            
-         region.setPoint(1, (int)(oX      ), (int)(oY    ));
-         region.setPoint(2, (int)(oX - m  ), (int)(oY - n));
-         region.setPoint(0, (int)(oX + k  ), (int)(oY - k));
+      case 1:
+         region.setPoint(1, oX      , oY    );
+         region.setPoint(2, oX - m  , oY - n);
+         region.setPoint(0, oX + k  , oY - k);
          break;
-      case 2:                            
-         region.setPoint(0, (int)(oX + k  ), (int)(oY - k));
-         region.setPoint(1, (int)(oX + n  ), (int)(oY + m));
-         region.setPoint(2, (int)(oX      ), (int)(oY    ));
+      case 2:
+         region.setPoint(0, oX + k  , oY - k);
+         region.setPoint(1, oX + n  , oY + m);
+         region.setPoint(2, oX      , oY    );
          break;
-      case 3:                            
-         region.setPoint(1, (int)(oX - m  ), (int)(oY + n));
-         region.setPoint(2, (int)(oX - n  ), (int)(oY + m));
-         region.setPoint(0, (int)(oX      ), (int)(oY    ));
+      case 3:
+         region.setPoint(1, oX - m  , oY + n);
+         region.setPoint(2, oX - n  , oY + m);
+         region.setPoint(0, oX      , oY    );
          break;
-      case 4:                            
-         region.setPoint(0, (int)(oX + n  ), (int)(oY + m));
-         region.setPoint(3, (int)(oX      ), (int)(oY    ));
-         region.setPoint(2, (int)(oX - m  ), (int)(oY + n));
-         region.setPoint(1, (int)(oX + k  ), (int)(oY + b));
+      case 4:
+         region.setPoint(0, oX + n  , oY + m);
+         region.setPoint(3, oX      , oY    );
+         region.setPoint(2, oX - m  , oY + n);
+         region.setPoint(1, oX + k  , oY + b);
          break;
-      case 5:                            
-         region.setPoint(0, (int)(oX + n  ), (int)(oY + m));
-         region.setPoint(1, (int)(oX + n+k), (int)(oY + n));
-         region.setPoint(2, (int)(oX + k  ), (int)(oY + b));
+      case 5:
+         region.setPoint(0, oX + n  , oY + m);
+         region.setPoint(1, oX + n+k, oY + n);
+         region.setPoint(2, oX + k  , oY + b);
          break;
       }
    }
 
    @Override
-   public Rect getRcInner(int borderWidth) {
+   public RectDouble getRcInner(int borderWidth) {
       AttrTrSq1 attr = getAttr();
       double b = attr.getB();
       double k = attr.getK();
@@ -279,12 +280,10 @@ public class TrSq1 extends BaseCell {
       case 5:  center.x = oX + ksw1+n; center.y = oY + ksw2+m; break;
       }
 
-      Rect square = new Rect();
-      square.x = (int) (center.x - sq2);
-      square.y = (int) (center.y - sq2);
-      square.width =
-      square.height = (int) sq;
-      return square;
+      return new RectDouble(
+         center.x - sq2,
+         center.y - sq2,
+         sq, sq);
    }
 
    @Override

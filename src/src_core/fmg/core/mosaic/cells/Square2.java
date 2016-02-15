@@ -25,9 +25,10 @@ package fmg.core.mosaic.cells;
 
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
-import fmg.common.geom.Point;
-import fmg.common.geom.Rect;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 
 /**
  * Квадрат. Вариант 2 - сдвинутые ряды
@@ -35,17 +36,16 @@ import fmg.common.geom.Size;
  **/
 public class Square2 extends BaseCell {
    public static class AttrSquare2 extends BaseAttribute {
-      public AttrSquare2(int area) {
+      public AttrSquare2(double area) {
          super(area);
       }
 
       @Override
-      public Size getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getOwnerSize(Matrisize sizeField) {
          double a = getA(); // размер стороны квадрата
-         Size result = new Size(
-               (int)(sizeField.m * a + a/2),
-               (int)(sizeField.n * a));
-         return result;
+         return new SizeDouble(
+            sizeField.m * a + a/2,
+            sizeField.n * a);
       }
    
       @Override
@@ -94,7 +94,7 @@ public class Square2 extends BaseCell {
    }
 
    @Override
-   public boolean PointInRegion(Point point) {
+   public boolean PointInRegion(PointDouble point) {
       if ((point.x < region.getPoint(3).x) || (point.x >= region.getPoint(0).x) ||
          (point.y < region.getPoint(0).y) || (point.y >= region.getPoint(2).y))
          return false;
@@ -106,10 +106,10 @@ public class Square2 extends BaseCell {
       AttrSquare2 attr = getAttr();
       double a = attr.getA();
 
-      int x1 = (int)(a * (coord.x + 0) + ((direction != 0) ? 0 : a / 2));
-      int x2 = (int)(a * (coord.x + 1) + ((direction != 0) ? 0 : a / 2));
-      int y1 = (int)(a * (coord.y + 0));
-      int y2 = (int)(a * (coord.y + 1));
+      double x1 = a * (coord.x + 0) + ((direction != 0) ? 0 : a / 2);
+      double x2 = a * (coord.x + 1) + ((direction != 0) ? 0 : a / 2);
+      double y1 = a * (coord.y + 0);
+      double y2 = a * (coord.y + 1);
 
       region.setPoint(0, x2, y1);
       region.setPoint(1, x2, y2);
@@ -118,17 +118,15 @@ public class Square2 extends BaseCell {
    }
 
    @Override
-   public Rect getRcInner(int borderWidth) {
+   public RectDouble getRcInner(int borderWidth) {
       AttrSquare2 attr = getAttr();
       double sq = attr.getSq(borderWidth);
       double w = borderWidth/2.;
 
-      Rect square = new Rect();
-      square.x = (int) (region.getPoint(3).x + w);
-      square.y = (int) (region.getPoint(3).y + w);
-      square.width = (int)sq;
-      square.height = (int)sq;
-      return square;
+      return new RectDouble(
+         region.getPoint(3).x + w,
+         region.getPoint(3).y + w,
+         sq, sq);
    }
 
    @Override

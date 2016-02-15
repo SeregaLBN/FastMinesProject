@@ -26,8 +26,9 @@ package fmg.core.mosaic.cells;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.Rect;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 
 /**
  * Trapezoid3 - 8 трапеций, складывающихся в шестигранник
@@ -35,19 +36,19 @@ import fmg.common.geom.Size;
  **/
 public class Trapezoid3 extends BaseCell {
    public static class AttrTrapezoid3 extends BaseAttribute {
-      public AttrTrapezoid3(int area) {
+      public AttrTrapezoid3(double area) {
          super(area);
       }
 
       @Override
-      public Size getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getOwnerSize(Matrisize sizeField) {
          double a = getA();
          double b = getB();
          double R = getROut();
-         Size result = new Size(
-               (int)(  R *((sizeField.m+1)/2)),
-               (int)(a+b *((sizeField.n+1)/2)+
-                       a *((sizeField.n+0)/2)));
+         SizeDouble result = new SizeDouble(
+                 R *((sizeField.m+1)/2),
+               a+b *((sizeField.n+1)/2)+
+                 a *((sizeField.n+0)/2));
 
          if (sizeField.m == 1)
             switch (sizeField.n % 4) {
@@ -364,106 +365,106 @@ public class Trapezoid3 extends BaseCell {
 
       switch (direction) {
       case 0:
-         region.setPoint(0, (int)(oX - r), (int)(oY - a-c));
-         region.setPoint(1, (int)(oX - r), (int)(oY - c  ));
-         region.setPoint(2, (int)(oX - R), (int)(oY      ));
-         region.setPoint(3, (int)(oX - R), (int)(oY - b  ));
+         region.setPoint(0, oX - r, oY - a-c);
+         region.setPoint(1, oX - r, oY - c  );
+         region.setPoint(2, oX - R, oY      );
+         region.setPoint(3, oX - R, oY - b  );
          break;
       case 1:
-         region.setPoint(0, (int)(oX    ), (int)(oY - a-b));
-         region.setPoint(1, (int)(oX    ), (int)(oY - b  ));
-         region.setPoint(2, (int)(oX - r), (int)(oY - a-c));
-         region.setPoint(3, (int)(oX - R), (int)(oY - b  ));
+         region.setPoint(0, oX    , oY - a-b);
+         region.setPoint(1, oX    , oY - b  );
+         region.setPoint(2, oX - r, oY - a-c);
+         region.setPoint(3, oX - R, oY - b  );
          break;
       case 2:
-         region.setPoint(0, (int)(oX + r), (int)(oY - a-c));
-         region.setPoint(1, (int)(oX + r), (int)(oY - c  ));
-         region.setPoint(2, (int)(oX    ), (int)(oY      ));
-         region.setPoint(3, (int)(oX    ), (int)(oY - b  ));
+         region.setPoint(0, oX + r, oY - a-c);
+         region.setPoint(1, oX + r, oY - c  );
+         region.setPoint(2, oX    , oY      );
+         region.setPoint(3, oX    , oY - b  );
          break;
       case 3:
-         region.setPoint(0, (int)(oX + R), (int)(oY - b  ));
-         region.setPoint(1, (int)(oX + r), (int)(oY - a-c));
-         region.setPoint(2, (int)(oX    ), (int)(oY - b  ));
-         region.setPoint(3, (int)(oX    ), (int)(oY - a-b));
+         region.setPoint(0, oX + R, oY - b  );
+         region.setPoint(1, oX + r, oY - a-c);
+         region.setPoint(2, oX    , oY - b  );
+         region.setPoint(3, oX    , oY - a-b);
          break;
       case 4:
-         region.setPoint(0, (int)(oX    ), (int)(oY      ));
-         region.setPoint(1, (int)(oX    ), (int)(oY + a  ));
-         region.setPoint(2, (int)(oX - R), (int)(oY      ));
-         region.setPoint(3, (int)(oX - r), (int)(oY - c  ));
+         region.setPoint(0, oX    , oY      );
+         region.setPoint(1, oX    , oY + a  );
+         region.setPoint(2, oX - R, oY      );
+         region.setPoint(3, oX - r, oY - c  );
          break;
       case 5:
-         region.setPoint(0, (int)(oX    ), (int)(oY - b  ));
-         region.setPoint(1, (int)(oX    ), (int)(oY      ));
-         region.setPoint(2, (int)(oX - r), (int)(oY - c  ));
-         region.setPoint(3, (int)(oX - r), (int)(oY - a-c));
+         region.setPoint(0, oX    , oY - b  );
+         region.setPoint(1, oX    , oY      );
+         region.setPoint(2, oX - r, oY - c  );
+         region.setPoint(3, oX - r, oY - a-c);
          break;
       case 6:
-         region.setPoint(0, (int)(oX + R), (int)(oY      ));
-         region.setPoint(1, (int)(oX    ), (int)(oY + a  ));
-         region.setPoint(2, (int)(oX    ), (int)(oY      ));
-         region.setPoint(3, (int)(oX + r), (int)(oY - c  ));
+         region.setPoint(0, oX + R, oY      );
+         region.setPoint(1, oX    , oY + a  );
+         region.setPoint(2, oX    , oY      );
+         region.setPoint(3, oX + r, oY - c  );
          break;
       case 7:
-         region.setPoint(0, (int)(oX + R), (int)(oY - b  ));
-         region.setPoint(1, (int)(oX + R), (int)(oY      ));
-         region.setPoint(2, (int)(oX + r), (int)(oY - c  ));
-         region.setPoint(3, (int)(oX + r), (int)(oY - a-c));
+         region.setPoint(0, oX + R, oY - b  );
+         region.setPoint(1, oX + R, oY      );
+         region.setPoint(2, oX + r, oY - c  );
+         region.setPoint(3, oX + r, oY - a-c);
          break;
       case 8:
-         region.setPoint(0, (int)(oX    ), (int)(oY + a  ));
-         region.setPoint(1, (int)(oX - r), (int)(oY + a+c));
-         region.setPoint(2, (int)(oX - R), (int)(oY + a  ));
-         region.setPoint(3, (int)(oX - R), (int)(oY      ));
+         region.setPoint(0, oX    , oY + a  );
+         region.setPoint(1, oX - r, oY + a+c);
+         region.setPoint(2, oX - R, oY + a  );
+         region.setPoint(3, oX - R, oY      );
          break;
       case 9:
-         region.setPoint(0, (int)(oX    ), (int)(oY + a  ));
-         region.setPoint(1, (int)(oX    ), (int)(oY + a+b));
-         region.setPoint(2, (int)(oX - r), (int)(oY + b+c));
-         region.setPoint(3, (int)(oX - r), (int)(oY + a+c));
+         region.setPoint(0, oX    , oY + a  );
+         region.setPoint(1, oX    , oY + a+b);
+         region.setPoint(2, oX - r, oY + b+c);
+         region.setPoint(3, oX - r, oY + a+c);
          break;
       case 10:
-         region.setPoint(0, (int)(oX + R), (int)(oY      ));
-         region.setPoint(1, (int)(oX + R), (int)(oY + a  ));
-         region.setPoint(2, (int)(oX + r), (int)(oY + a+c));
-         region.setPoint(3, (int)(oX    ), (int)(oY + a  ));
+         region.setPoint(0, oX + R, oY      );
+         region.setPoint(1, oX + R, oY + a  );
+         region.setPoint(2, oX + r, oY + a+c);
+         region.setPoint(3, oX    , oY + a  );
          break;
       case 11:
-         region.setPoint(0, (int)(oX + R), (int)(oY + a  ));
-         region.setPoint(1, (int)(oX + R), (int)(oY + a+b));
-         region.setPoint(2, (int)(oX + r), (int)(oY + b+c));
-         region.setPoint(3, (int)(oX + r), (int)(oY + a+c));
+         region.setPoint(0, oX + R, oY + a  );
+         region.setPoint(1, oX + R, oY + a+b);
+         region.setPoint(2, oX + r, oY + b+c);
+         region.setPoint(3, oX + r, oY + a+c);
          break;
       case 12:
-         region.setPoint(0, (int)(oX - r), (int)(oY + a+c));
-         region.setPoint(1, (int)(oX - r), (int)(oY + b+c));
-         region.setPoint(2, (int)(oX - R), (int)(oY + a+b));
-         region.setPoint(3, (int)(oX - R), (int)(oY + a  ));
+         region.setPoint(0, oX - r, oY + a+c);
+         region.setPoint(1, oX - r, oY + b+c);
+         region.setPoint(2, oX - R, oY + a+b);
+         region.setPoint(3, oX - R, oY + a  );
          break;
       case 13:
-         region.setPoint(0, (int)(oX    ), (int)(oY + a+b));
-         region.setPoint(1, (int)(oX - R), (int)(oY + b*2));
-         region.setPoint(2, (int)(oX - R), (int)(oY + a+b));
-         region.setPoint(3, (int)(oX - r), (int)(oY + b+c));
+         region.setPoint(0, oX    , oY + a+b);
+         region.setPoint(1, oX - R, oY + b*2);
+         region.setPoint(2, oX - R, oY + a+b);
+         region.setPoint(3, oX - r, oY + b+c);
          break;
       case 14:
-         region.setPoint(0, (int)(oX + r), (int)(oY + a+c));
-         region.setPoint(1, (int)(oX + r), (int)(oY + b+c));
-         region.setPoint(2, (int)(oX    ), (int)(oY + a+b));
-         region.setPoint(3, (int)(oX    ), (int)(oY + a  ));
+         region.setPoint(0, oX + r, oY + a+c);
+         region.setPoint(1, oX + r, oY + b+c);
+         region.setPoint(2, oX    , oY + a+b);
+         region.setPoint(3, oX    , oY + a  );
          break;
       case 15:
-         region.setPoint(0, (int)(oX + R), (int)(oY + a+b));
-         region.setPoint(1, (int)(oX + R), (int)(oY + b*2));
-         region.setPoint(2, (int)(oX    ), (int)(oY + a+b));
-         region.setPoint(3, (int)(oX + r), (int)(oY + b+c));
+         region.setPoint(0, oX + R, oY + a+b);
+         region.setPoint(1, oX + R, oY + b*2);
+         region.setPoint(2, oX    , oY + a+b);
+         region.setPoint(3, oX + r, oY + b+c);
          break;
       }
    }
 
    @Override
-   public Rect getRcInner(int borderWidth) {
+   public RectDouble getRcInner(int borderWidth) {
       AttrTrapezoid3 attr = getAttr();
       double a = attr.getA();
       double b = attr.getB();
@@ -497,12 +498,10 @@ public class Trapezoid3 extends BaseCell {
       case 15: center.x = oX + r*1.25; center.y = oY + c*6.25; break;
       }
 
-      Rect square = new Rect();
-      square.x = (int) (center.x - sq2);
-      square.y = (int) (center.y - sq2);
-      square.width =
-      square.height = (int) sq;
-      return square;
+      return new RectDouble(
+         center.x - sq2,
+         center.y - sq2,
+         sq, sq);
    }
 
    @Override

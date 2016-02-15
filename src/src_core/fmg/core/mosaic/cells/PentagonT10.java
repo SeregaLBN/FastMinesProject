@@ -29,8 +29,9 @@ import fmg.common.Color;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.Rect;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 
 /**
  * Пятиугольник. Тип №10
@@ -38,21 +39,21 @@ import fmg.common.geom.Size;
  **/
 public class PentagonT10 extends BaseCell {
    public static class AttrPentagonT10 extends BaseAttribute {
-      public AttrPentagonT10(int area) {
+      public AttrPentagonT10(double area) {
          super(area);
       }
 
       @Override
-      public Size getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getOwnerSize(Matrisize sizeField) {
          double a = getA();
-         Size result = new Size(
-               (int)(2*a +
-                     5*a*((sizeField.m+1)/2) +
-                       a*((sizeField.m+0)/2)),
-               (int)(2*a +
-                     3*a*((sizeField.n+2)/3) +
-                     3*a*((sizeField.n+1)/3) +
-                       a*((sizeField.n+0)/3)));
+         SizeDouble result = new SizeDouble(
+               2*a +
+               5*a*((sizeField.m+1)/2) +
+                 a*((sizeField.m+0)/2),
+               2*a +
+               3*a*((sizeField.n+2)/3) +
+               3*a*((sizeField.n+1)/3) +
+                 a*((sizeField.n+0)/3));
 
          if (sizeField.n == 1)
             if ((sizeField.m & 1) == 1)
@@ -287,38 +288,38 @@ public class PentagonT10 extends BaseCell {
 
       switch (direction) {
       case 0: case 3: case 7: case 8:
-         region.setPoint(0, (int)(o.x + a  ), (int)(o.y - a*3));
-         region.setPoint(1, (int)(o.x + a*2), (int)(o.y - a*2));
-         region.setPoint(2, (int)(o.x      ), (int)(o.y      ));
-         region.setPoint(3, (int)(o.x - a*2), (int)(o.y - a*2));
-         region.setPoint(4, (int)(o.x - a  ), (int)(o.y - a*3));
+         region.setPoint(0, o.x + a  , o.y - a*3);
+         region.setPoint(1, o.x + a*2, o.y - a*2);
+         region.setPoint(2, o.x      , o.y      );
+         region.setPoint(3, o.x - a*2, o.y - a*2);
+         region.setPoint(4, o.x - a  , o.y - a*3);
          break;
       case 1: case 4: case 6: case 10:
-         region.setPoint(0, (int)(o.x      ), (int)(o.y      ));
-         region.setPoint(1, (int)(o.x + a*2), (int)(o.y + a*2));
-         region.setPoint(2, (int)(o.x + a  ), (int)(o.y + a*3));
-         region.setPoint(3, (int)(o.x - a  ), (int)(o.y + a*3));
-         region.setPoint(4, (int)(o.x - a*2), (int)(o.y + a*2));
+         region.setPoint(0, o.x      , o.y      );
+         region.setPoint(1, o.x + a*2, o.y + a*2);
+         region.setPoint(2, o.x + a  , o.y + a*3);
+         region.setPoint(3, o.x - a  , o.y + a*3);
+         region.setPoint(4, o.x - a*2, o.y + a*2);
          break;
       case 2: case 11:
-         region.setPoint(0, (int)(o.x - a*2), (int)(o.y - a*2));
-         region.setPoint(1, (int)(o.x      ), (int)(o.y      ));
-         region.setPoint(2, (int)(o.x - a*2), (int)(o.y + a*2));
-         region.setPoint(3, (int)(o.x - a*3), (int)(o.y + a  ));
-         region.setPoint(4, (int)(o.x - a*3), (int)(o.y - a  ));
+         region.setPoint(0, o.x - a*2, o.y - a*2);
+         region.setPoint(1, o.x      , o.y      );
+         region.setPoint(2, o.x - a*2, o.y + a*2);
+         region.setPoint(3, o.x - a*3, o.y + a  );
+         region.setPoint(4, o.x - a*3, o.y - a  );
          break;
       case 5: case 9:
-         region.setPoint(0, (int)(o.x + a*2), (int)(o.y - a*2));
-         region.setPoint(1, (int)(o.x + a*3), (int)(o.y - a  ));
-         region.setPoint(2, (int)(o.x + a*3), (int)(o.y + a  ));
-         region.setPoint(3, (int)(o.x + a*2), (int)(o.y + a*2));
-         region.setPoint(4, (int)(o.x      ), (int)(o.y      ));
+         region.setPoint(0, o.x + a*2, o.y - a*2);
+         region.setPoint(1, o.x + a*3, o.y - a  );
+         region.setPoint(2, o.x + a*3, o.y + a  );
+         region.setPoint(3, o.x + a*2, o.y + a*2);
+         region.setPoint(4, o.x      , o.y      );
          break;
       }
    }
 
    @Override
-   public Rect getRcInner(int borderWidth) {
+   public RectDouble getRcInner(int borderWidth) {
       AttrPentagonT10 attr = getAttr();
       double sq = attr.getSq(borderWidth);
       double sq2 = sq/2;
@@ -331,12 +332,10 @@ public class PentagonT10 extends BaseCell {
       case 5: case  9:                  center.x = region.getPoint(0).x; center.y = region.getPoint(4).y; break; 
       }
 
-      Rect square = new Rect();
-      square.x = (int) (center.x - sq2);
-      square.y = (int) (center.y - sq2);
-      square.width =
-      square.height = (int) sq;
-      return square;
+      return new RectDouble(
+         center.x - sq2,
+         center.y - sq2,
+         sq, sq);
    }
 
    @Override

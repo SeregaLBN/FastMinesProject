@@ -29,8 +29,9 @@ import fmg.common.Color;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.Rect;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 
 /**
  * Rhombus1 - 3 ромба, составляющие равносторонний шестиугольник
@@ -38,20 +39,20 @@ import fmg.common.geom.Size;
  **/
 public class Rhombus1 extends BaseCell {
    public static class AttrRhombus1 extends BaseAttribute {
-      public AttrRhombus1(int area) {
+      public AttrRhombus1(double area) {
          super(area);
       }
 
       @Override
-      public Size getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getOwnerSize(Matrisize sizeField) {
          double a = getA();
          double r = getR();
          double c = getC();
-         Size result = new Size(
-               (int)(c+a   *((sizeField.m+2)/3) +
-                      (a+c)*((sizeField.m+1)/3) +
-                         c *((sizeField.m+0)/3)),
-               (int)(    r * (sizeField.n+1)));
+         SizeDouble result = new SizeDouble(
+               c+a   *((sizeField.m+2)/3) +
+                (a+c)*((sizeField.m+1)/3) +
+                   c *((sizeField.m+0)/3),
+                   r * (sizeField.n+1));
 
          if (sizeField.m == 1)
             result.height -= r;
@@ -199,46 +200,46 @@ public class Rhombus1 extends BaseCell {
 
       switch (direction) {
       case 0:
-         region.setPoint(0, (int)(oX      ), (int)(oY - h));
-         region.setPoint(1, (int)(oX - c  ), (int)(oY - r));
-         region.setPoint(2, (int)(oX - a-c), (int)(oY - r));
-         region.setPoint(3, (int)(oX - a  ), (int)(oY - h));
+         region.setPoint(0, oX      , oY - h);
+         region.setPoint(1, oX - c  , oY - r);
+         region.setPoint(2, oX - a-c, oY - r);
+         region.setPoint(3, oX - a  , oY - h);
          break;
       case 1:
-         region.setPoint(0, (int)(oX      ), (int)(oY - h));
-         region.setPoint(1, (int)(oX + c  ), (int)(oY - r));
-         region.setPoint(2, (int)(oX      ), (int)(oY    ));
-         region.setPoint(3, (int)(oX - c  ), (int)(oY - r));
+         region.setPoint(0, oX      , oY - h);
+         region.setPoint(1, oX + c  , oY - r);
+         region.setPoint(2, oX      , oY    );
+         region.setPoint(3, oX - c  , oY - r);
          break;
       case 2:
-         region.setPoint(0, (int)(oX + a+c), (int)(oY - r));
-         region.setPoint(1, (int)(oX + a  ), (int)(oY    ));
-         region.setPoint(2, (int)(oX      ), (int)(oY    ));
-         region.setPoint(3, (int)(oX + c  ), (int)(oY - r));
+         region.setPoint(0, oX + a+c, oY - r);
+         region.setPoint(1, oX + a  , oY    );
+         region.setPoint(2, oX      , oY    );
+         region.setPoint(3, oX + c  , oY - r);
          break;
       case 3:
-         region.setPoint(0, (int)(oX - c  ), (int)(oY - r));
-         region.setPoint(1, (int)(oX      ), (int)(oY    ));
-         region.setPoint(2, (int)(oX - a  ), (int)(oY    ));
-         region.setPoint(3, (int)(oX - a-c), (int)(oY - r));
+         region.setPoint(0, oX - c  , oY - r);
+         region.setPoint(1, oX      , oY    );
+         region.setPoint(2, oX - a  , oY    );
+         region.setPoint(3, oX - a-c, oY - r);
          break;
       case 4:
-         region.setPoint(0, (int)(oX + a  ), (int)(oY    ));
-         region.setPoint(1, (int)(oX + a+c), (int)(oY + r));
-         region.setPoint(2, (int)(oX + c  ), (int)(oY + r));
-         region.setPoint(3, (int)(oX      ), (int)(oY    ));
+         region.setPoint(0, oX + a  , oY    );
+         region.setPoint(1, oX + a+c, oY + r);
+         region.setPoint(2, oX + c  , oY + r);
+         region.setPoint(3, oX      , oY    );
          break;
       case 5:
-         region.setPoint(0, (int)(oX + a+c), (int)(oY - r));
-         region.setPoint(1, (int)(oX + a+a), (int)(oY    ));
-         region.setPoint(2, (int)(oX + a+c), (int)(oY + r));
-         region.setPoint(3, (int)(oX + a  ), (int)(oY    ));
+         region.setPoint(0, oX + a+c, oY - r);
+         region.setPoint(1, oX + a+a, oY    );
+         region.setPoint(2, oX + a+c, oY + r);
+         region.setPoint(3, oX + a  , oY    );
          break;
       }
    }
 
    @Override
-   public Rect getRcInner(int borderWidth) {
+   public RectDouble getRcInner(int borderWidth) {
       AttrRhombus1 attr = getAttr();
       double a = attr.getA();
       double c = attr.getC();
@@ -261,12 +262,10 @@ public class Rhombus1 extends BaseCell {
       case 5: center.x = oX + a+c;   center.y = oY;         break;
       }
 
-      Rect square = new Rect();
-      square.x = (int) (center.x - sq2);
-      square.y = (int) (center.y - sq2);
-      square.width =
-      square.height = (int) sq;
-      return square;
+      return new RectDouble(
+         center.x - sq2,
+         center.y - sq2,
+         sq, sq);
    }
 
    @Override
