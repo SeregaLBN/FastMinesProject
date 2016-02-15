@@ -31,178 +31,178 @@ import fmg.swing.draw.mosaic.CellPaint;
  *
  */
 public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
-	/** @see javax.swing.JComponent.paint */
-	@Override
-	public void paint(BaseCell cell, PaintableGraphics p) {
-//		Object obj = this;
-//		if (obj instanceof JComponent) {
-//			JComponent This = (JComponent)obj;
-//			This.paint(g);
-//		} else
-		{
-			Graphics2D g2d = (Graphics2D)p.getGraphics();;
+   /** @see javax.swing.JComponent.paint */
+   @Override
+   public void paint(BaseCell cell, PaintableGraphics p) {
+//      Object obj = this;
+//      if (obj instanceof JComponent) {
+//         JComponent This = (JComponent)obj;
+//         This.paint(g);
+//      } else
+      {
+         Graphics2D g2d = (Graphics2D)p.getGraphics();;
 
-			// save
-			Shape shapeOld = g2d.getClip();
+         // save
+         Shape shapeOld = g2d.getClip();
 
-			// ограничиваю рисование только границами своей фигуры
-			g2d.setClip(Cast.toPolygon(Region.moveXY(cell.getRegion(), gContext.getPadding())));
+         // ограничиваю рисование только границами своей фигуры
+         g2d.setClip(Cast.toPolygon(Region.moveXY(cell.getRegion(), gContext.getPadding())));
 
-			// all paint
-			this.paintComponent(cell, p);
-			this.paintBorder(cell, p);
+         // all paint
+         this.paintComponent(cell, p);
+         this.paintBorder(cell, p);
 
-			// restore
-			g2d.setClip(shapeOld);
-		}
-	}
+         // restore
+         g2d.setClip(shapeOld);
+      }
+   }
 
-	/** @see javax.swing.JComponent.paintBorder */
-	@Override
-	public void paintBorder(BaseCell cell, PaintableGraphics p) {
-//		Object obj = this;
-//		if (obj instanceof JComponent) {
-//			JComponent This = (JComponent)obj;
-//			This.paintBorder(g);
-//			super.paintBorder(g);
-//			return;
-//		}
+   /** @see javax.swing.JComponent.paintBorder */
+   @Override
+   public void paintBorder(BaseCell cell, PaintableGraphics p) {
+//      Object obj = this;
+//      if (obj instanceof JComponent) {
+//         JComponent This = (JComponent)obj;
+//         This.paintBorder(g);
+//         super.paintBorder(g);
+//         return;
+//      }
 
-		Graphics2D g2 = (Graphics2D) p.getGraphics();
-		// save
-		Stroke strokeOld = g2.getStroke();
-		Object oldValAntialiasing = g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+      Graphics2D g2 = (Graphics2D) p.getGraphics();
+      // save
+      Stroke strokeOld = g2.getStroke();
+      Object oldValAntialiasing = g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
 
-		// set my custom params
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // TODO для релиза сменить на VALUE_ANTIALIAS_ON 
-		g2.setStroke(new BasicStroke(gContext.getPenBorder().getWidth())); // TODO глянуть расширенные параметры конструктора пера
+      // set my custom params
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // TODO для релиза сменить на VALUE_ANTIALIAS_ON 
+      g2.setStroke(new BasicStroke(gContext.getPenBorder().getWidth())); // TODO глянуть расширенные параметры конструктора пера
 
-		// draw lines
-		paintBorderLines(cell, p);
+      // draw lines
+      paintBorderLines(cell, p);
 
-		// debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
-//		Rect rcInner = cell.getRcInner(gContext.getPenBorder().getWidth());
-//		g.setColor(Color.MAGENTA);
-//		g.drawRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
+      // debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
+//      Rect rcInner = cell.getRcInner(gContext.getPenBorder().getWidth());
+//      g.setColor(Color.MAGENTA);
+//      g.drawRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
 
-		// restore
-		g2.setStroke(strokeOld);
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, oldValAntialiasing);
-	}
+      // restore
+      g2.setStroke(strokeOld);
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, oldValAntialiasing);
+   }
 
-	/** draw border lines */
-	@Override
-	public void paintBorderLines(BaseCell cell, PaintableGraphics p) {
-		Bound padding = gContext.getPadding();
-		boolean down = cell.getState().isDown() || (cell.getState().getStatus() == EState._Open);
-		Graphics g = p.getGraphics();
-		if (gContext.isIconicMode()) {
-			g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorLight() : gContext.getPenBorder().getColorShadow()));
-			g.drawPolygon(Cast.toPolygon(Region.moveXY(cell.getRegion(), padding)));
-		} else {
-			g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorLight()  : gContext.getPenBorder().getColorShadow()));
-			int s = cell.getShiftPointBorderIndex();
-			int v = cell.getAttr().getVertexNumber(cell.getDirection());
-			for (int i=0; i<v; i++) {
-				Point p1 = cell.getRegion().getPoint(i);
-				Point p2 = (i != (v-1)) ? cell.getRegion().getPoint(i+1) : cell.getRegion().getPoint(0);
-				if (i==s)
-					g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorShadow(): gContext.getPenBorder().getColorLight()));
-				g.drawLine(p1.x+padding.left, p1.y+padding.top, p2.x+padding.left, p2.y+padding.top);
-			}
-		}
-	}
+   /** draw border lines */
+   @Override
+   public void paintBorderLines(BaseCell cell, PaintableGraphics p) {
+      Bound padding = gContext.getPadding();
+      boolean down = cell.getState().isDown() || (cell.getState().getStatus() == EState._Open);
+      Graphics g = p.getGraphics();
+      if (gContext.isIconicMode()) {
+         g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorLight() : gContext.getPenBorder().getColorShadow()));
+         g.drawPolygon(Cast.toPolygon(Region.moveXY(cell.getRegion(), padding)));
+      } else {
+         g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorLight()  : gContext.getPenBorder().getColorShadow()));
+         int s = cell.getShiftPointBorderIndex();
+         int v = cell.getAttr().getVertexNumber(cell.getDirection());
+         for (int i=0; i<v; i++) {
+            Point p1 = cell.getRegion().getPoint(i);
+            Point p2 = (i != (v-1)) ? cell.getRegion().getPoint(i+1) : cell.getRegion().getPoint(0);
+            if (i==s)
+               g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorShadow(): gContext.getPenBorder().getColorLight()));
+            g.drawLine(p1.x+padding.left, p1.y+padding.top, p2.x+padding.left, p2.y+padding.top);
+         }
+      }
+   }
 
-	/** @see javax.swing.JComponent.paintComponent */
-	@Override
-	public void paintComponent(BaseCell cell, PaintableGraphics p) {
-		Graphics g = p.getGraphics();
-		Color colorOld = g.getColor();
-		Bound padding = gContext.getPadding();
+   /** @see javax.swing.JComponent.paintComponent */
+   @Override
+   public void paintComponent(BaseCell cell, PaintableGraphics p) {
+      Graphics g = p.getGraphics();
+      Color colorOld = g.getColor();
+      Bound padding = gContext.getPadding();
 
-		paintComponentBackground(cell, p);
+      paintComponentBackground(cell, p);
 
-		Rect rcInner = cell.getRcInner(gContext.getPenBorder().getWidth());
-//		g.setColor(Color.MAGENTA);
-//		g.drawRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
+      Rect rcInner = cell.getRcInner(gContext.getPenBorder().getWidth());
+//      g.setColor(Color.MAGENTA);
+//      g.drawRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
 
-		// output Pictures
-		if ((gContext.getImgFlag() != null) &&
-			(cell.getState().getStatus() == EState._Close) &&
-			(cell.getState().getClose() == EClose._Flag))
-		{
-			gContext.getImgFlag().paintIcon(gContext.getOwner(), g, rcInner.x+padding.left, rcInner.y+padding.top);
-		} else
-		if ((gContext.getImgMine() != null) &&
-			(cell.getState().getStatus() == EState._Open ) &&
-			(cell.getState().getOpen() == EOpen._Mine))
-		{
-			gContext.getImgMine().paintIcon(gContext.getOwner(), g, rcInner.x+padding.left, rcInner.y+padding.top);
-		} else
-		// output text
-		{
-			String szCaption;
-			if (cell.getState().getStatus() == EState._Close) {
-				g.setColor(Cast.toColor(gContext.getColorText().getColorClose(cell.getState().getClose().ordinal())));
-				szCaption = cell.getState().getClose().toCaption();
-//				szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
-//				szCaption = ""+cell.getDirection(); // debug
-			} else {
-				g.setColor(Cast.toColor(gContext.getColorText().getColorOpen(cell.getState().getOpen().ordinal())));
-				szCaption = cell.getState().getOpen().toCaption();
-			}
-			if ((szCaption != null) && (szCaption.length() > 0))
-			{
-				rcInner.moveXY(padding.left, padding.top);
-				if (cell.getState().isDown())
-					rcInner.moveXY(1, 1);
-				DrawText(g, szCaption, Cast.toRect(rcInner));
-//				{ // test
-//					Color clrOld = g.getColor(); // test
-//					g.setColor(Color.red);
-//					g.drawRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
-//					g.setColor(clrOld);
-//				}
-			}
-		}
+      // output Pictures
+      if ((gContext.getImgFlag() != null) &&
+         (cell.getState().getStatus() == EState._Close) &&
+         (cell.getState().getClose() == EClose._Flag))
+      {
+         gContext.getImgFlag().paintIcon(gContext.getOwner(), g, rcInner.x+padding.left, rcInner.y+padding.top);
+      } else
+      if ((gContext.getImgMine() != null) &&
+         (cell.getState().getStatus() == EState._Open ) &&
+         (cell.getState().getOpen() == EOpen._Mine))
+      {
+         gContext.getImgMine().paintIcon(gContext.getOwner(), g, rcInner.x+padding.left, rcInner.y+padding.top);
+      } else
+      // output text
+      {
+         String szCaption;
+         if (cell.getState().getStatus() == EState._Close) {
+            g.setColor(Cast.toColor(gContext.getColorText().getColorClose(cell.getState().getClose().ordinal())));
+            szCaption = cell.getState().getClose().toCaption();
+//            szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
+//            szCaption = ""+cell.getDirection(); // debug
+         } else {
+            g.setColor(Cast.toColor(gContext.getColorText().getColorOpen(cell.getState().getOpen().ordinal())));
+            szCaption = cell.getState().getOpen().toCaption();
+         }
+         if ((szCaption != null) && (szCaption.length() > 0))
+         {
+            rcInner.moveXY(padding.left, padding.top);
+            if (cell.getState().isDown())
+               rcInner.moveXY(1, 1);
+            DrawText(g, szCaption, Cast.toRect(rcInner));
+//            { // test
+//               Color clrOld = g.getColor(); // test
+//               g.setColor(Color.red);
+//               g.drawRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
+//               g.setColor(clrOld);
+//            }
+         }
+      }
 
-		// restore
-		g.setColor(colorOld);
-	}
+      // restore
+      g.setColor(colorOld);
+   }
 
-	/** залить ячейку нужным цветом */
-	@Override
-	public void paintComponentBackground(BaseCell cell, PaintableGraphics p) {
-		Graphics g = p.getGraphics();
-//		if (gContext.isIconicMode()) // когда русуется иконка, а не игровое поле, - делаю попроще...
-//			return;
-		g.setColor(Cast.toColor(cell.getBackgroundFillColor(
-				gContext.getBackgroundFill().getMode(),
-				GraphicContext.getDefaultBackgroundFillColor(),
-				gContext.getBackgroundFill().getColors()
-				)));
-		g.fillPolygon(Cast.toPolygon(Region.moveXY(cell.getRegion(), gContext.getPadding())));
-	}
+   /** залить ячейку нужным цветом */
+   @Override
+   public void paintComponentBackground(BaseCell cell, PaintableGraphics p) {
+      Graphics g = p.getGraphics();
+//      if (gContext.isIconicMode()) // когда русуется иконка, а не игровое поле, - делаю попроще...
+//         return;
+      g.setColor(Cast.toColor(cell.getBackgroundFillColor(
+            gContext.getBackgroundFill().getMode(),
+            GraphicContext.getDefaultBackgroundFillColor(),
+            gContext.getBackgroundFill().getColors()
+            )));
+      g.fillPolygon(Cast.toPolygon(Region.moveXY(cell.getRegion(), gContext.getPadding())));
+   }
 
-	private static Rectangle2D getStringBounds(String text, Font font) {
-		TextLayout tl = new TextLayout(text, font, new FontRenderContext(null, true, true));
-		return tl.getBounds();
-//		return font.getStringBounds(text, new FontRenderContext(null, true, true));
-	}
-	public static void DrawText(Graphics g, String text, Rectangle rc) {
-		if ((text == null) || text.trim().isEmpty())
-			return;
-		//DrawText(m_GContext.m_hDCTmp, szCaption, -1, &sq_tmp, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-		Rectangle2D bnd = getStringBounds(text, g.getFont());
-//		{ // test
-//			Color clrOld = g.getColor();
-//			g.setColor(Color.BLUE);
-//			g.fillRect(rc.x, rc.y, rc.width, rc.height);
-//			g.setColor(clrOld);
-//		}
-		g.drawString(text,
-				rc.x          +(int)((rc.width -bnd.getWidth ())/2.),
-				rc.y+rc.height-(int)((rc.height-bnd.getHeight())/2.));
-	}
+   private static Rectangle2D getStringBounds(String text, Font font) {
+      TextLayout tl = new TextLayout(text, font, new FontRenderContext(null, true, true));
+      return tl.getBounds();
+//      return font.getStringBounds(text, new FontRenderContext(null, true, true));
+   }
+   public static void DrawText(Graphics g, String text, Rectangle rc) {
+      if ((text == null) || text.trim().isEmpty())
+         return;
+      //DrawText(m_GContext.m_hDCTmp, szCaption, -1, &sq_tmp, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+      Rectangle2D bnd = getStringBounds(text, g.getFont());
+//      { // test
+//         Color clrOld = g.getColor();
+//         g.setColor(Color.BLUE);
+//         g.fillRect(rc.x, rc.y, rc.width, rc.height);
+//         g.setColor(clrOld);
+//      }
+      g.drawString(text,
+            rc.x          +(int)((rc.width -bnd.getWidth ())/2.),
+            rc.y+rc.height-(int)((rc.height-bnd.getHeight())/2.));
+   }
 
 }

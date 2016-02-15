@@ -37,252 +37,252 @@ import fmg.common.geom.Size;
  * @see BaseCell
  **/
 public class Rhombus1 extends BaseCell {
-	public static class AttrRhombus1 extends BaseAttribute {
-		public AttrRhombus1(int area) {
-			super(area);
-		}
+   public static class AttrRhombus1 extends BaseAttribute {
+      public AttrRhombus1(int area) {
+         super(area);
+      }
 
-		@Override
-		public Size getOwnerSize(Matrisize sizeField) {
-			double a = getA();
-			double r = getR();
-			double c = getC();
-			Size result = new Size(
-					(int)(c+a   *((sizeField.m+2)/3) +
-					       (a+c)*((sizeField.m+1)/3) +
-					          c *((sizeField.m+0)/3)),
-					(int)(    r * (sizeField.n+1)));
+      @Override
+      public Size getOwnerSize(Matrisize sizeField) {
+         double a = getA();
+         double r = getR();
+         double c = getC();
+         Size result = new Size(
+               (int)(c+a   *((sizeField.m+2)/3) +
+                      (a+c)*((sizeField.m+1)/3) +
+                         c *((sizeField.m+0)/3)),
+               (int)(    r * (sizeField.n+1)));
 
-			if (sizeField.m == 1)
-				result.height -= r;
-			if (sizeField.n == 1)
-				switch (sizeField.m % 3) {
-				case 0: result.width -= a/2; break;
-				case 2: result.width -= a; break;
-				}
+         if (sizeField.m == 1)
+            result.height -= r;
+         if (sizeField.n == 1)
+            switch (sizeField.m % 3) {
+            case 0: result.width -= a/2; break;
+            case 2: result.width -= a; break;
+            }
 
-			return result;
-		}
-	
-		@Override
-		public int getNeighborNumber(boolean max) { return 10; }
-		@Override
-		public int getNeighborNumber(int direction) { return 10; }
-		@Override
-		public int getVertexNumber(int direction) { return 4; }
-		@Override
-		public double getVertexIntersection() { return 4.5; } // (3+3+6+6)/4.
-		@Override
-		public Size GetDirectionSizeField() { return new Size(3, 2); }
-		@Override
-		protected double getA() { return Math.sqrt(getArea()*2/SQRT3); }
-		protected double getC() { return getA()/2; }
-		protected double getH() { return getA()*SQRT3; }
-		protected double getR() { return getH()/2; }
-		@Override
-		public double getSq(int borderWidth) {
-			double w = borderWidth/2.;
-			return (getA()*SQRT3 - w*4)/(SQRT3+1);
-		}
+         return result;
+      }
+   
+      @Override
+      public int getNeighborNumber(boolean max) { return 10; }
+      @Override
+      public int getNeighborNumber(int direction) { return 10; }
+      @Override
+      public int getVertexNumber(int direction) { return 4; }
+      @Override
+      public double getVertexIntersection() { return 4.5; } // (3+3+6+6)/4.
+      @Override
+      public Size GetDirectionSizeField() { return new Size(3, 2); }
+      @Override
+      protected double getA() { return Math.sqrt(getArea()*2/SQRT3); }
+      protected double getC() { return getA()/2; }
+      protected double getH() { return getA()*SQRT3; }
+      protected double getR() { return getH()/2; }
+      @Override
+      public double getSq(int borderWidth) {
+         double w = borderWidth/2.;
+         return (getA()*SQRT3 - w*4)/(SQRT3+1);
+      }
 
-		@Override
-		public int getMaxBackgroundFillModeValue() {
-			return super.getMaxBackgroundFillModeValue()+1;
-		}
-	}
+      @Override
+      public int getMaxBackgroundFillModeValue() {
+         return super.getMaxBackgroundFillModeValue()+1;
+      }
+   }
 
-	public Rhombus1(AttrRhombus1 attr, Coord coord) {
-		super(attr, coord,
-				(coord.y&1)*3+(coord.x%3) // 0..5
-			);
-	}
+   public Rhombus1(AttrRhombus1 attr, Coord coord) {
+      super(attr, coord,
+            (coord.y&1)*3+(coord.x%3) // 0..5
+         );
+   }
 
-	@Override
-	public AttrRhombus1 getAttr() {
-		return (AttrRhombus1) super.getAttr();
-	}
+   @Override
+   public AttrRhombus1 getAttr() {
+      return (AttrRhombus1) super.getAttr();
+   }
 
-	@Override
-	protected Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
+   @Override
+   protected Coord[] GetCoordsNeighbor() {
+      Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
 
-		// определяю координаты соседей
-    	switch (direction) {
-    	case 0:
-    		neighborCoord[ 0] = new Coord(coord.x+1, coord.y-2);
-    		neighborCoord[ 1] = new Coord(coord.x+2, coord.y-2);
-    		neighborCoord[ 2] = new Coord(coord.x-2, coord.y-1);
-    		neighborCoord[ 3] = new Coord(coord.x-1, coord.y-1);
-    		neighborCoord[ 4] = new Coord(coord.x  , coord.y-1);
-    		neighborCoord[ 5] = new Coord(coord.x+1, coord.y-1);
-    		neighborCoord[ 6] = new Coord(coord.x-1, coord.y  );
-    		neighborCoord[ 7] = new Coord(coord.x+1, coord.y  );
-    		neighborCoord[ 8] = new Coord(coord.x-1, coord.y+1);
-    		neighborCoord[ 9] = new Coord(coord.x  , coord.y+1);
-    		break;
-    	case 1:
-    		neighborCoord[ 0] = new Coord(coord.x  , coord.y-2);
-    		neighborCoord[ 1] = new Coord(coord.x+1, coord.y-2);
-    		neighborCoord[ 2] = new Coord(coord.x-1, coord.y-1);
-    		neighborCoord[ 3] = new Coord(coord.x  , coord.y-1);
-    		neighborCoord[ 4] = new Coord(coord.x-1, coord.y  );
-    		neighborCoord[ 5] = new Coord(coord.x+1, coord.y  );
-    		neighborCoord[ 6] = new Coord(coord.x-1, coord.y+1);
-    		neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
-    		neighborCoord[ 8] = new Coord(coord.x-1, coord.y+2);
-    		neighborCoord[ 9] = new Coord(coord.x  , coord.y+2);
-    		break;
-    	case 2:
-    		neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
-    		neighborCoord[ 1] = new Coord(coord.x  , coord.y-1);
-    		neighborCoord[ 2] = new Coord(coord.x-1, coord.y  );
-    		neighborCoord[ 3] = new Coord(coord.x+1, coord.y  );
-    		neighborCoord[ 4] = new Coord(coord.x-2, coord.y+1);
-    		neighborCoord[ 5] = new Coord(coord.x-1, coord.y+1);
-    		neighborCoord[ 6] = new Coord(coord.x  , coord.y+1);
-    		neighborCoord[ 7] = new Coord(coord.x+1, coord.y+1);
-    		neighborCoord[ 8] = new Coord(coord.x-2, coord.y+2);
-    		neighborCoord[ 9] = new Coord(coord.x-1, coord.y+2);
-    		break;
-    	case 3:
-    		neighborCoord[ 0] = new Coord(coord.x-2, coord.y-2);
-    		neighborCoord[ 1] = new Coord(coord.x-1, coord.y-2);
-    		neighborCoord[ 2] = new Coord(coord.x-1, coord.y-1);
-    		neighborCoord[ 3] = new Coord(coord.x  , coord.y-1);
-    		neighborCoord[ 4] = new Coord(coord.x+1, coord.y-1);
-    		neighborCoord[ 5] = new Coord(coord.x+2, coord.y-1);
-    		neighborCoord[ 6] = new Coord(coord.x-1, coord.y  );
-    		neighborCoord[ 7] = new Coord(coord.x+1, coord.y  );
-    		neighborCoord[ 8] = new Coord(coord.x  , coord.y+1);
-    		neighborCoord[ 9] = new Coord(coord.x+1, coord.y+1);
-    		break;
-    	case 4:
-    		neighborCoord[ 0] = new Coord(coord.x  , coord.y-1);
-    		neighborCoord[ 1] = new Coord(coord.x+1, coord.y-1);
-    		neighborCoord[ 2] = new Coord(coord.x-1, coord.y  );
-    		neighborCoord[ 3] = new Coord(coord.x+1, coord.y  );
-    		neighborCoord[ 4] = new Coord(coord.x-1, coord.y+1);
-    		neighborCoord[ 5] = new Coord(coord.x  , coord.y+1);
-    		neighborCoord[ 6] = new Coord(coord.x+1, coord.y+1);
-    		neighborCoord[ 7] = new Coord(coord.x+2, coord.y+1);
-    		neighborCoord[ 8] = new Coord(coord.x+1, coord.y+2);
-    		neighborCoord[ 9] = new Coord(coord.x+2, coord.y+2);
-    		break;
-    	case 5:
-    		neighborCoord[ 0] = new Coord(coord.x-1, coord.y-2);
-    		neighborCoord[ 1] = new Coord(coord.x  , coord.y-2);
-    		neighborCoord[ 2] = new Coord(coord.x  , coord.y-1);
-    		neighborCoord[ 3] = new Coord(coord.x+1, coord.y-1);
-    		neighborCoord[ 4] = new Coord(coord.x-1, coord.y  );
-    		neighborCoord[ 5] = new Coord(coord.x+1, coord.y  );
-    		neighborCoord[ 6] = new Coord(coord.x  , coord.y+1);
-    		neighborCoord[ 7] = new Coord(coord.x+1, coord.y+1);
-    		neighborCoord[ 8] = new Coord(coord.x  , coord.y+2);
-    		neighborCoord[ 9] = new Coord(coord.x+1, coord.y+2);
-    		break;
-    	}
+      // определяю координаты соседей
+       switch (direction) {
+       case 0:
+          neighborCoord[ 0] = new Coord(coord.x+1, coord.y-2);
+          neighborCoord[ 1] = new Coord(coord.x+2, coord.y-2);
+          neighborCoord[ 2] = new Coord(coord.x-2, coord.y-1);
+          neighborCoord[ 3] = new Coord(coord.x-1, coord.y-1);
+          neighborCoord[ 4] = new Coord(coord.x  , coord.y-1);
+          neighborCoord[ 5] = new Coord(coord.x+1, coord.y-1);
+          neighborCoord[ 6] = new Coord(coord.x-1, coord.y  );
+          neighborCoord[ 7] = new Coord(coord.x+1, coord.y  );
+          neighborCoord[ 8] = new Coord(coord.x-1, coord.y+1);
+          neighborCoord[ 9] = new Coord(coord.x  , coord.y+1);
+          break;
+       case 1:
+          neighborCoord[ 0] = new Coord(coord.x  , coord.y-2);
+          neighborCoord[ 1] = new Coord(coord.x+1, coord.y-2);
+          neighborCoord[ 2] = new Coord(coord.x-1, coord.y-1);
+          neighborCoord[ 3] = new Coord(coord.x  , coord.y-1);
+          neighborCoord[ 4] = new Coord(coord.x-1, coord.y  );
+          neighborCoord[ 5] = new Coord(coord.x+1, coord.y  );
+          neighborCoord[ 6] = new Coord(coord.x-1, coord.y+1);
+          neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
+          neighborCoord[ 8] = new Coord(coord.x-1, coord.y+2);
+          neighborCoord[ 9] = new Coord(coord.x  , coord.y+2);
+          break;
+       case 2:
+          neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
+          neighborCoord[ 1] = new Coord(coord.x  , coord.y-1);
+          neighborCoord[ 2] = new Coord(coord.x-1, coord.y  );
+          neighborCoord[ 3] = new Coord(coord.x+1, coord.y  );
+          neighborCoord[ 4] = new Coord(coord.x-2, coord.y+1);
+          neighborCoord[ 5] = new Coord(coord.x-1, coord.y+1);
+          neighborCoord[ 6] = new Coord(coord.x  , coord.y+1);
+          neighborCoord[ 7] = new Coord(coord.x+1, coord.y+1);
+          neighborCoord[ 8] = new Coord(coord.x-2, coord.y+2);
+          neighborCoord[ 9] = new Coord(coord.x-1, coord.y+2);
+          break;
+       case 3:
+          neighborCoord[ 0] = new Coord(coord.x-2, coord.y-2);
+          neighborCoord[ 1] = new Coord(coord.x-1, coord.y-2);
+          neighborCoord[ 2] = new Coord(coord.x-1, coord.y-1);
+          neighborCoord[ 3] = new Coord(coord.x  , coord.y-1);
+          neighborCoord[ 4] = new Coord(coord.x+1, coord.y-1);
+          neighborCoord[ 5] = new Coord(coord.x+2, coord.y-1);
+          neighborCoord[ 6] = new Coord(coord.x-1, coord.y  );
+          neighborCoord[ 7] = new Coord(coord.x+1, coord.y  );
+          neighborCoord[ 8] = new Coord(coord.x  , coord.y+1);
+          neighborCoord[ 9] = new Coord(coord.x+1, coord.y+1);
+          break;
+       case 4:
+          neighborCoord[ 0] = new Coord(coord.x  , coord.y-1);
+          neighborCoord[ 1] = new Coord(coord.x+1, coord.y-1);
+          neighborCoord[ 2] = new Coord(coord.x-1, coord.y  );
+          neighborCoord[ 3] = new Coord(coord.x+1, coord.y  );
+          neighborCoord[ 4] = new Coord(coord.x-1, coord.y+1);
+          neighborCoord[ 5] = new Coord(coord.x  , coord.y+1);
+          neighborCoord[ 6] = new Coord(coord.x+1, coord.y+1);
+          neighborCoord[ 7] = new Coord(coord.x+2, coord.y+1);
+          neighborCoord[ 8] = new Coord(coord.x+1, coord.y+2);
+          neighborCoord[ 9] = new Coord(coord.x+2, coord.y+2);
+          break;
+       case 5:
+          neighborCoord[ 0] = new Coord(coord.x-1, coord.y-2);
+          neighborCoord[ 1] = new Coord(coord.x  , coord.y-2);
+          neighborCoord[ 2] = new Coord(coord.x  , coord.y-1);
+          neighborCoord[ 3] = new Coord(coord.x+1, coord.y-1);
+          neighborCoord[ 4] = new Coord(coord.x-1, coord.y  );
+          neighborCoord[ 5] = new Coord(coord.x+1, coord.y  );
+          neighborCoord[ 6] = new Coord(coord.x  , coord.y+1);
+          neighborCoord[ 7] = new Coord(coord.x+1, coord.y+1);
+          neighborCoord[ 8] = new Coord(coord.x  , coord.y+2);
+          neighborCoord[ 9] = new Coord(coord.x+1, coord.y+2);
+          break;
+       }
 
-		return neighborCoord;
-	}
+      return neighborCoord;
+   }
 
-	@Override
-	protected void CalcRegion() {
-		AttrRhombus1 attr = getAttr();
-		double a = attr.getA();
-		double c = attr.getC();
-		double h = attr.getH();
-		double r = attr.getR();
+   @Override
+   protected void CalcRegion() {
+      AttrRhombus1 attr = getAttr();
+      double a = attr.getA();
+      double c = attr.getC();
+      double h = attr.getH();
+      double r = attr.getR();
 
-		// определение координат точек фигуры
-		double oX = a*(coord.x/3*3+1)+c; // offset X
-		double oY = h*(coord.y/2)    +h; // offset Y
+      // определение координат точек фигуры
+      double oX = a*(coord.x/3*3+1)+c; // offset X
+      double oY = h*(coord.y/2)    +h; // offset Y
 
-		switch (direction) {
-		case 0:
-			region.setPoint(0, (int)(oX      ), (int)(oY - h));
-			region.setPoint(1, (int)(oX - c  ), (int)(oY - r));
-			region.setPoint(2, (int)(oX - a-c), (int)(oY - r));
-			region.setPoint(3, (int)(oX - a  ), (int)(oY - h));
-			break;
-		case 1:
-			region.setPoint(0, (int)(oX      ), (int)(oY - h));
-			region.setPoint(1, (int)(oX + c  ), (int)(oY - r));
-			region.setPoint(2, (int)(oX      ), (int)(oY    ));
-			region.setPoint(3, (int)(oX - c  ), (int)(oY - r));
-			break;
-		case 2:
-			region.setPoint(0, (int)(oX + a+c), (int)(oY - r));
-			region.setPoint(1, (int)(oX + a  ), (int)(oY    ));
-			region.setPoint(2, (int)(oX      ), (int)(oY    ));
-			region.setPoint(3, (int)(oX + c  ), (int)(oY - r));
-			break;
-		case 3:
-			region.setPoint(0, (int)(oX - c  ), (int)(oY - r));
-			region.setPoint(1, (int)(oX      ), (int)(oY    ));
-			region.setPoint(2, (int)(oX - a  ), (int)(oY    ));
-			region.setPoint(3, (int)(oX - a-c), (int)(oY - r));
-			break;
-		case 4:
-			region.setPoint(0, (int)(oX + a  ), (int)(oY    ));
-			region.setPoint(1, (int)(oX + a+c), (int)(oY + r));
-			region.setPoint(2, (int)(oX + c  ), (int)(oY + r));
-			region.setPoint(3, (int)(oX      ), (int)(oY    ));
-			break;
-		case 5:
-			region.setPoint(0, (int)(oX + a+c), (int)(oY - r));
-			region.setPoint(1, (int)(oX + a+a), (int)(oY    ));
-			region.setPoint(2, (int)(oX + a+c), (int)(oY + r));
-			region.setPoint(3, (int)(oX + a  ), (int)(oY    ));
-			break;
-		}
-	}
+      switch (direction) {
+      case 0:
+         region.setPoint(0, (int)(oX      ), (int)(oY - h));
+         region.setPoint(1, (int)(oX - c  ), (int)(oY - r));
+         region.setPoint(2, (int)(oX - a-c), (int)(oY - r));
+         region.setPoint(3, (int)(oX - a  ), (int)(oY - h));
+         break;
+      case 1:
+         region.setPoint(0, (int)(oX      ), (int)(oY - h));
+         region.setPoint(1, (int)(oX + c  ), (int)(oY - r));
+         region.setPoint(2, (int)(oX      ), (int)(oY    ));
+         region.setPoint(3, (int)(oX - c  ), (int)(oY - r));
+         break;
+      case 2:
+         region.setPoint(0, (int)(oX + a+c), (int)(oY - r));
+         region.setPoint(1, (int)(oX + a  ), (int)(oY    ));
+         region.setPoint(2, (int)(oX      ), (int)(oY    ));
+         region.setPoint(3, (int)(oX + c  ), (int)(oY - r));
+         break;
+      case 3:
+         region.setPoint(0, (int)(oX - c  ), (int)(oY - r));
+         region.setPoint(1, (int)(oX      ), (int)(oY    ));
+         region.setPoint(2, (int)(oX - a  ), (int)(oY    ));
+         region.setPoint(3, (int)(oX - a-c), (int)(oY - r));
+         break;
+      case 4:
+         region.setPoint(0, (int)(oX + a  ), (int)(oY    ));
+         region.setPoint(1, (int)(oX + a+c), (int)(oY + r));
+         region.setPoint(2, (int)(oX + c  ), (int)(oY + r));
+         region.setPoint(3, (int)(oX      ), (int)(oY    ));
+         break;
+      case 5:
+         region.setPoint(0, (int)(oX + a+c), (int)(oY - r));
+         region.setPoint(1, (int)(oX + a+a), (int)(oY    ));
+         region.setPoint(2, (int)(oX + a+c), (int)(oY + r));
+         region.setPoint(3, (int)(oX + a  ), (int)(oY    ));
+         break;
+      }
+   }
 
-	@Override
-	public Rect getRcInner(int borderWidth) {
-		AttrRhombus1 attr = getAttr();
-		double a = attr.getA();
-		double c = attr.getC();
-		double h = attr.getH();
-		double r = attr.getR();
-//		double w = borderWidth/2.;
-		double sq  = attr.getSq(borderWidth);
-		double sq2 = sq/2;
+   @Override
+   public Rect getRcInner(int borderWidth) {
+      AttrRhombus1 attr = getAttr();
+      double a = attr.getA();
+      double c = attr.getC();
+      double h = attr.getH();
+      double r = attr.getR();
+//      double w = borderWidth/2.;
+      double sq  = attr.getSq(borderWidth);
+      double sq2 = sq/2;
 
-		double oX = a*(coord.x/3*3+1)+c; // offset X
-		double oY = h*(coord.y/2)    +h; // offset Y
+      double oX = a*(coord.x/3*3+1)+c; // offset X
+      double oY = h*(coord.y/2)    +h; // offset Y
 
-		PointDouble center = new PointDouble(); // координата центра квадрата
-		switch (direction) {
-		case 0: center.x = oX - c*1.5; center.y = oY - r*1.5; break;
-		case 1: center.x = oX;         center.y = oY - r;     break;
-		case 2: center.x = oX + c*1.5; center.y = oY - r*0.5; break;
-		case 3: center.x = oX - c*1.5; center.y = oY - r*0.5; break;
-		case 4: center.x = oX + c*1.5; center.y = oY + r*0.5; break;
-		case 5: center.x = oX + a+c;   center.y = oY;         break;
-		}
+      PointDouble center = new PointDouble(); // координата центра квадрата
+      switch (direction) {
+      case 0: center.x = oX - c*1.5; center.y = oY - r*1.5; break;
+      case 1: center.x = oX;         center.y = oY - r;     break;
+      case 2: center.x = oX + c*1.5; center.y = oY - r*0.5; break;
+      case 3: center.x = oX - c*1.5; center.y = oY - r*0.5; break;
+      case 4: center.x = oX + c*1.5; center.y = oY + r*0.5; break;
+      case 5: center.x = oX + a+c;   center.y = oY;         break;
+      }
 
-		Rect square = new Rect();
-		square.x = (int) (center.x - sq2);
-		square.y = (int) (center.y - sq2);
-		square.width =
-		square.height = (int) sq;
-		return square;
-	}
+      Rect square = new Rect();
+      square.x = (int) (center.x - sq2);
+      square.y = (int) (center.y - sq2);
+      square.width =
+      square.height = (int) sq;
+      return square;
+   }
 
-	@Override
-	public int getShiftPointBorderIndex() { return 2; }
+   @Override
+   public int getShiftPointBorderIndex() { return 2; }
 
-	@Override
-	public Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
-		if (fillMode == getAttr().getMaxBackgroundFillModeValue()) {
-			switch ((getCoord().y%4)*3+(getCoord().x%3)) { // почти как вычисление direction...
-			// подсвечиваю 4 группы, составляющие каждая шестигранник из 3х ромбов
-			case 0: case  1: case  3: return repositoryColor.get(0);
-			case 2: case  4: case  5: return repositoryColor.get(1);
-			case 6: case  7: case  9: return repositoryColor.get(2);
-			case 8: case 10: case 11: return repositoryColor.get(3);
-			}
-		}
-		return super.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);
-	}
+   @Override
+   public Color getBackgroundFillColor(int fillMode, Color defaultColor, Map<Integer, Color> repositoryColor) {
+      if (fillMode == getAttr().getMaxBackgroundFillModeValue()) {
+         switch ((getCoord().y%4)*3+(getCoord().x%3)) { // почти как вычисление direction...
+         // подсвечиваю 4 группы, составляющие каждая шестигранник из 3х ромбов
+         case 0: case  1: case  3: return repositoryColor.get(0);
+         case 2: case  4: case  5: return repositoryColor.get(1);
+         case 6: case  7: case  9: return repositoryColor.get(2);
+         case 8: case 10: case 11: return repositoryColor.get(3);
+         }
+      }
+      return super.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);
+   }
 }

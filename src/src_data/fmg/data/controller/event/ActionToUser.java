@@ -5,5 +5,5 @@ import java.util.UUID;
 
 public interface ActionToUser extends EventListener {
 
-	void applyToUser(UUID userId);
+   void applyToUser(UUID userId);
 }

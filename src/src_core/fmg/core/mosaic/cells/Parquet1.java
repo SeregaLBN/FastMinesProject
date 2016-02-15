@@ -33,106 +33,106 @@ import fmg.common.geom.Size;
  * @see BaseCell
  **/
 public class Parquet1 extends BaseCell {
-	public static class AttrParquet1 extends BaseAttribute {
-		public AttrParquet1(int area) {
-			super(area);
-		}
+   public static class AttrParquet1 extends BaseAttribute {
+      public AttrParquet1(int area) {
+         super(area);
+      }
 
-		@Override
-		public Size getOwnerSize(Matrisize sizeField) {
-			double a = getA();
-			Size result = new Size(
-					(int)((sizeField.m*2+1) * a),
-					(int)((sizeField.n*2+2) * a));
+      @Override
+      public Size getOwnerSize(Matrisize sizeField) {
+         double a = getA();
+         Size result = new Size(
+               (int)((sizeField.m*2+1) * a),
+               (int)((sizeField.n*2+2) * a));
 
-			if (sizeField.m == 1)
-				result.height -= a;
+         if (sizeField.m == 1)
+            result.height -= a;
 
-			return result;
-		}
-	
-		@Override
-		public int getNeighborNumber(boolean max) { return 6; }
-		@Override
-		public int getNeighborNumber(int direction) { return 6; }
-		@Override
-		public int getVertexNumber(int direction) { return 4; }
-		@Override
-		public double getVertexIntersection() { return 3; }
-		@Override
-		public Size GetDirectionSizeField() { return new Size(2, 1); }
-		@Override
-		protected double getA() { return Math.sqrt(getArea())/2; }
-		@Override
-		public double getSq(int borderWidth) {
-			double w = borderWidth/2.;
-			return getA()-w*SQRT2;
-		}
-	}
+         return result;
+      }
+   
+      @Override
+      public int getNeighborNumber(boolean max) { return 6; }
+      @Override
+      public int getNeighborNumber(int direction) { return 6; }
+      @Override
+      public int getVertexNumber(int direction) { return 4; }
+      @Override
+      public double getVertexIntersection() { return 3; }
+      @Override
+      public Size GetDirectionSizeField() { return new Size(2, 1); }
+      @Override
+      protected double getA() { return Math.sqrt(getArea())/2; }
+      @Override
+      public double getSq(int borderWidth) {
+         double w = borderWidth/2.;
+         return getA()-w*SQRT2;
+      }
+   }
 
-	public Parquet1(AttrParquet1 attr, Coord coord) {
-		super(attr, coord,
-		           coord.x&1 // 0..1
-				);
-	}
+   public Parquet1(AttrParquet1 attr, Coord coord) {
+      super(attr, coord,
+                 coord.x&1 // 0..1
+            );
+   }
 
-	@Override
-	public AttrParquet1 getAttr() {
-		return (AttrParquet1) super.getAttr();
-	}
+   @Override
+   public AttrParquet1 getAttr() {
+      return (AttrParquet1) super.getAttr();
+   }
 
-	@Override
-	protected Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
+   @Override
+   protected Coord[] GetCoordsNeighbor() {
+      Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
 
-		// определяю координаты соседей
-    	boolean bdir = (direction != 0);
-    	neighborCoord[0] = new Coord(bdir ? coord.x  : coord.x-1, coord.y-1);
-		neighborCoord[1] = new Coord(bdir ? coord.x-1: coord.x  , bdir ? coord.y  : coord.y-1);
-		neighborCoord[2] = new Coord(       coord.x+1           , bdir ? coord.y  : coord.y-1);
-		neighborCoord[3] = new Coord(       coord.x-1           , bdir ? coord.y+1: coord.y);
-		neighborCoord[4] = new Coord(bdir ? coord.x  : coord.x+1, bdir ? coord.y+1: coord.y);
-		neighborCoord[5] = new Coord(bdir ? coord.x+1: coord.x  , coord.y+1);
+      // определяю координаты соседей
+       boolean bdir = (direction != 0);
+       neighborCoord[0] = new Coord(bdir ? coord.x  : coord.x-1, coord.y-1);
+      neighborCoord[1] = new Coord(bdir ? coord.x-1: coord.x  , bdir ? coord.y  : coord.y-1);
+      neighborCoord[2] = new Coord(       coord.x+1           , bdir ? coord.y  : coord.y-1);
+      neighborCoord[3] = new Coord(       coord.x-1           , bdir ? coord.y+1: coord.y);
+      neighborCoord[4] = new Coord(bdir ? coord.x  : coord.x+1, bdir ? coord.y+1: coord.y);
+      neighborCoord[5] = new Coord(bdir ? coord.x+1: coord.x  , coord.y+1);
 
-		return neighborCoord;
-	}
+      return neighborCoord;
+   }
 
-	@Override
-	protected void CalcRegion() {
-		AttrParquet1 attr = getAttr();
-		double a = attr.getA();
+   @Override
+   protected void CalcRegion() {
+      AttrParquet1 attr = getAttr();
+      double a = attr.getA();
 
-		switch (direction) {
-		case 0:
-			region.setPoint(0, (int)(a * (2 + 2 * coord.x)), (int)(a * (0 + 2 * coord.y)));
-			region.setPoint(1, (int)(a * (3 + 2 * coord.x)), (int)(a * (1 + 2 * coord.y)));
-			region.setPoint(2, (int)(a * (1 + 2 * coord.x)), (int)(a * (3 + 2 * coord.y)));
-			region.setPoint(3, (int)(a * (0 + 2 * coord.x)), (int)(a * (2 + 2 * coord.y)));
-			break;
-		case 1:
-			region.setPoint(0, (int)(a * (1 + 2 * coord.x)), (int)(a * (1 + 2 * coord.y)));
-			region.setPoint(1, (int)(a * (3 + 2 * coord.x)), (int)(a * (3 + 2 * coord.y)));
-			region.setPoint(2, (int)(a * (2 + 2 * coord.x)), (int)(a * (4 + 2 * coord.y)));
-			region.setPoint(3, (int)(a * (0 + 2 * coord.x)), (int)(a * (2 + 2 * coord.y)));
-			break;
-		}
-	}
+      switch (direction) {
+      case 0:
+         region.setPoint(0, (int)(a * (2 + 2 * coord.x)), (int)(a * (0 + 2 * coord.y)));
+         region.setPoint(1, (int)(a * (3 + 2 * coord.x)), (int)(a * (1 + 2 * coord.y)));
+         region.setPoint(2, (int)(a * (1 + 2 * coord.x)), (int)(a * (3 + 2 * coord.y)));
+         region.setPoint(3, (int)(a * (0 + 2 * coord.x)), (int)(a * (2 + 2 * coord.y)));
+         break;
+      case 1:
+         region.setPoint(0, (int)(a * (1 + 2 * coord.x)), (int)(a * (1 + 2 * coord.y)));
+         region.setPoint(1, (int)(a * (3 + 2 * coord.x)), (int)(a * (3 + 2 * coord.y)));
+         region.setPoint(2, (int)(a * (2 + 2 * coord.x)), (int)(a * (4 + 2 * coord.y)));
+         region.setPoint(3, (int)(a * (0 + 2 * coord.x)), (int)(a * (2 + 2 * coord.y)));
+         break;
+      }
+   }
 
-	@Override
-	public Rect getRcInner(int borderWidth) {
-		AttrParquet1 attr = getAttr();
-		double sq = attr.getSq(borderWidth);
-		double w = borderWidth/2.;
-		boolean bdir = (direction != 0);
+   @Override
+   public Rect getRcInner(int borderWidth) {
+      AttrParquet1 attr = getAttr();
+      double sq = attr.getSq(borderWidth);
+      double w = borderWidth/2.;
+      boolean bdir = (direction != 0);
 
-		Rect square = new Rect();
-		square.x = (int) ((bdir ? region.getPoint(0).x: region.getPoint(2).x) + w / SQRT2);
-		square.y = (int) ((bdir ? region.getPoint(3).y: region.getPoint(1).y) + w / SQRT2);
-		square.width = (int)sq;
-		square.height = (int)sq;
-		return square;
-	}
+      Rect square = new Rect();
+      square.x = (int) ((bdir ? region.getPoint(0).x: region.getPoint(2).x) + w / SQRT2);
+      square.y = (int) ((bdir ? region.getPoint(3).y: region.getPoint(1).y) + w / SQRT2);
+      square.width = (int)sq;
+      square.height = (int)sq;
+      return square;
+   }
 
-	@Override
-	public int getShiftPointBorderIndex() { return 2; }
+   @Override
+   public int getShiftPointBorderIndex() { return 2; }
 }

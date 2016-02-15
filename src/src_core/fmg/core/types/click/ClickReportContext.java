@@ -6,16 +6,16 @@ import java.util.Set;
 import fmg.core.mosaic.cells.BaseCell;
 
 public class ClickReportContext {
-	/** множество ячеек (нулевых  ) открытых           при последнем клике */
-	public Set<BaseCell> setOpenNil;
-	/** множество ячеек (ненулевых) открытых           при последнем клике */
-	public Set<BaseCell> setOpen;
-	/** множество ячеек с флажками  снятых/уставленных при последнем клике */
-	public Set<BaseCell> setFlag;
+   /** множество ячеек (нулевых  ) открытых           при последнем клике */
+   public Set<BaseCell> setOpenNil;
+   /** множество ячеек (ненулевых) открытых           при последнем клике */
+   public Set<BaseCell> setOpen;
+   /** множество ячеек с флажками  снятых/уставленных при последнем клике */
+   public Set<BaseCell> setFlag;
 
     public ClickReportContext() {
-    	setOpenNil = new HashSet<BaseCell>();
-    	setOpen = new HashSet<BaseCell>();
-    	setFlag = new HashSet<BaseCell>();
+       setOpenNil = new HashSet<BaseCell>();
+       setOpen = new HashSet<BaseCell>();
+       setFlag = new HashSet<BaseCell>();
     }
 }

@@ -11,19 +11,19 @@ import fmg.core.types.EMosaic;
  * interface of mosaic field
  */
 public interface IMosaic<TPaintable extends IPaintable> extends BaseCell.IMatrixCells {
-	BaseCell.BaseAttribute getCellAttr();
+   BaseCell.BaseAttribute getCellAttr();
 
-	ICellPaint<TPaintable> getCellPaint();
+   ICellPaint<TPaintable> getCellPaint();
 
-	/** матрица ячеек, представленная(развёрнута) в виде вектора */
-	List<BaseCell> getMatrix();
+   /** матрица ячеек, представленная(развёрнута) в виде вектора */
+   List<BaseCell> getMatrix();
 
-	/** из каких фигур состоит мозаика поля */
-	EMosaic getMosaicType();
+   /** из каких фигур состоит мозаика поля */
+   EMosaic getMosaicType();
 
-	void setMosaicType(EMosaic val);
+   void setMosaicType(EMosaic val);
 
-	int getArea();
+   int getArea();
 
-	void setArea(int area);
+   void setArea(int area);
 }

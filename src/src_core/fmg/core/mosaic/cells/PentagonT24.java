@@ -33,183 +33,183 @@ import fmg.common.geom.Size;
  * @see BaseCell
  **/
 public class PentagonT24 extends BaseCell {
-	public static class AttrPentagonT24 extends BaseAttribute {
-		public AttrPentagonT24(int area) {
-			super(area);
-		}
+   public static class AttrPentagonT24 extends BaseAttribute {
+      public AttrPentagonT24(int area) {
+         super(area);
+      }
 
-		@Override
-		public Size getOwnerSize(Matrisize sizeField) {
-			double a = getA();
-			double b = getB();
-			Size result = new Size(
-					(int)(b + sizeField.m * a),
-					(int)(b + sizeField.n * a));
+      @Override
+      public Size getOwnerSize(Matrisize sizeField) {
+         double a = getA();
+         double b = getB();
+         Size result = new Size(
+               (int)(b + sizeField.m * a),
+               (int)(b + sizeField.n * a));
 
-			if (sizeField.n == 1)
-				result.width -= getC();
+         if (sizeField.n == 1)
+            result.width -= getC();
 
-				return result;
-		}
-	
-		@Override
-		public int getNeighborNumber(boolean max) { return 7; }
-		@Override
-		public int getNeighborNumber(int direction) { return 7; }
-		@Override
-		public int getVertexNumber(int direction) { return 5; }
-		@Override
-		public double getVertexIntersection() { return 3.4; } // (3+3+3+4+4)/5.
-		@Override
-		public Size GetDirectionSizeField() { return new Size(2, 2); }
-		@Override
-		protected double getA() { return Math.sqrt(getArea()); }
-		protected double getB() { return getA()*6/11; }
-		protected double getC() { return getB()/2; }
-		@Override
-		public double getSq(int borderWidth) {
-			double w = borderWidth/2.;
-			return getA()*8/11-(w+w/SIN135a) / SQRT2;
-		}
-	}
+            return result;
+      }
+   
+      @Override
+      public int getNeighborNumber(boolean max) { return 7; }
+      @Override
+      public int getNeighborNumber(int direction) { return 7; }
+      @Override
+      public int getVertexNumber(int direction) { return 5; }
+      @Override
+      public double getVertexIntersection() { return 3.4; } // (3+3+3+4+4)/5.
+      @Override
+      public Size GetDirectionSizeField() { return new Size(2, 2); }
+      @Override
+      protected double getA() { return Math.sqrt(getArea()); }
+      protected double getB() { return getA()*6/11; }
+      protected double getC() { return getB()/2; }
+      @Override
+      public double getSq(int borderWidth) {
+         double w = borderWidth/2.;
+         return getA()*8/11-(w+w/SIN135a) / SQRT2;
+      }
+   }
 
-	public PentagonT24(AttrPentagonT24 attr, Coord coord) {
-		super(attr, coord,
-		           ((coord.y&1)<<1) + (coord.x&1) // 0..3
-				);
-	}
+   public PentagonT24(AttrPentagonT24 attr, Coord coord) {
+      super(attr, coord,
+                 ((coord.y&1)<<1) + (coord.x&1) // 0..3
+            );
+   }
 
-	@Override
-	public AttrPentagonT24 getAttr() {
-		return (AttrPentagonT24) super.getAttr();
-	}
+   @Override
+   public AttrPentagonT24 getAttr() {
+      return (AttrPentagonT24) super.getAttr();
+   }
 
-	@Override
-	protected Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
+   @Override
+   protected Coord[] GetCoordsNeighbor() {
+      Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
 
-		// определяю координаты соседей
-		switch (direction) {
-		case 0:
-			neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
-			neighborCoord[1] = new Coord(coord.x  , coord.y-1);
-			neighborCoord[2] = new Coord(coord.x-1, coord.y  );
-			neighborCoord[3] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[4] = new Coord(coord.x-1, coord.y+1);
-			neighborCoord[5] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[6] = new Coord(coord.x+1, coord.y+1);
-			break;
-		case 1:
-			neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
-			neighborCoord[1] = new Coord(coord.x  , coord.y-1);
-			neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
-			neighborCoord[3] = new Coord(coord.x-1, coord.y  );
-			neighborCoord[4] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[5] = new Coord(coord.x-1, coord.y+1);
-			neighborCoord[6] = new Coord(coord.x  , coord.y+1);
-			break;
-		case 2:
-			neighborCoord[0] = new Coord(coord.x  , coord.y-1);
-			neighborCoord[1] = new Coord(coord.x+1, coord.y-1);
-			neighborCoord[2] = new Coord(coord.x-1, coord.y  );
-			neighborCoord[3] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[4] = new Coord(coord.x-1, coord.y+1);
-			neighborCoord[5] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[6] = new Coord(coord.x+1, coord.y+1);
-			break;
-		case 3:
-			neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
-			neighborCoord[1] = new Coord(coord.x  , coord.y-1);
-			neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
-			neighborCoord[3] = new Coord(coord.x-1, coord.y  );
-			neighborCoord[4] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[5] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[6] = new Coord(coord.x+1, coord.y+1);
-			break;
-		}
+      // определяю координаты соседей
+      switch (direction) {
+      case 0:
+         neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
+         neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+         neighborCoord[2] = new Coord(coord.x-1, coord.y  );
+         neighborCoord[3] = new Coord(coord.x+1, coord.y  );
+         neighborCoord[4] = new Coord(coord.x-1, coord.y+1);
+         neighborCoord[5] = new Coord(coord.x  , coord.y+1);
+         neighborCoord[6] = new Coord(coord.x+1, coord.y+1);
+         break;
+      case 1:
+         neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
+         neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+         neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
+         neighborCoord[3] = new Coord(coord.x-1, coord.y  );
+         neighborCoord[4] = new Coord(coord.x+1, coord.y  );
+         neighborCoord[5] = new Coord(coord.x-1, coord.y+1);
+         neighborCoord[6] = new Coord(coord.x  , coord.y+1);
+         break;
+      case 2:
+         neighborCoord[0] = new Coord(coord.x  , coord.y-1);
+         neighborCoord[1] = new Coord(coord.x+1, coord.y-1);
+         neighborCoord[2] = new Coord(coord.x-1, coord.y  );
+         neighborCoord[3] = new Coord(coord.x+1, coord.y  );
+         neighborCoord[4] = new Coord(coord.x-1, coord.y+1);
+         neighborCoord[5] = new Coord(coord.x  , coord.y+1);
+         neighborCoord[6] = new Coord(coord.x+1, coord.y+1);
+         break;
+      case 3:
+         neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
+         neighborCoord[1] = new Coord(coord.x  , coord.y-1);
+         neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
+         neighborCoord[3] = new Coord(coord.x-1, coord.y  );
+         neighborCoord[4] = new Coord(coord.x+1, coord.y  );
+         neighborCoord[5] = new Coord(coord.x  , coord.y+1);
+         neighborCoord[6] = new Coord(coord.x+1, coord.y+1);
+         break;
+      }
 
-		return neighborCoord;
-	}
+      return neighborCoord;
+   }
 
-	@Override
-	protected void CalcRegion() {
-		AttrPentagonT24 attr = getAttr();
-		double a = attr.getA();
-		double b = attr.getB();
-		double c = attr.getC();
+   @Override
+   protected void CalcRegion() {
+      AttrPentagonT24 attr = getAttr();
+      double a = attr.getA();
+      double b = attr.getB();
+      double c = attr.getC();
 
-		// определение координат точек фигуры
-		double oX = a*((coord.x>>1)<<1); // offset X
-		double oY = a*((coord.y>>1)<<1); // offset Y
-		switch (direction) {
-		case 0:
-			region.setPoint(0, (int)(oX +       a), (int)(oY + b      ));
-			region.setPoint(1, (int)(oX + c +   a), (int)(oY + c +   a));
-			region.setPoint(2, (int)(oX + b      ), (int)(oY + b +   a));
-			region.setPoint(3, (int)(oX          ), (int)(oY +       a));
-			region.setPoint(4, (int)(oX + c      ), (int)(oY + c      ));
-			break;
-		case 1:
-			region.setPoint(0, (int)(oX + c + 2*a), (int)(oY + c      ));
-			region.setPoint(1, (int)(oX +     2*a), (int)(oY +       a));
-			region.setPoint(2, (int)(oX + c +   a), (int)(oY + c +   a));
-			region.setPoint(3, (int)(oX +       a), (int)(oY + b      ));
-			region.setPoint(4, (int)(oX + b +   a), (int)(oY          ));
-			break;
-		case 2:
-			region.setPoint(0, (int)(oX + c +   a), (int)(oY + c +   a));
-			region.setPoint(1, (int)(oX + b +   a), (int)(oY +     2*a));
-			region.setPoint(2, (int)(oX +       a), (int)(oY + b + 2*a));
-			region.setPoint(3, (int)(oX + c      ), (int)(oY + c + 2*a));
-			region.setPoint(4, (int)(oX + b      ), (int)(oY + b +   a));
-			break;
-		case 3:
-			region.setPoint(0, (int)(oX +     2*a), (int)(oY +       a));
-			region.setPoint(1, (int)(oX + b + 2*a), (int)(oY + b +   a));
-			region.setPoint(2, (int)(oX + c + 2*a), (int)(oY + c + 2*a));
-			region.setPoint(3, (int)(oX + b +   a), (int)(oY +     2*a));
-			region.setPoint(4, (int)(oX + c +   a), (int)(oY + c +   a));
-			break;
-		}
-	}
+      // определение координат точек фигуры
+      double oX = a*((coord.x>>1)<<1); // offset X
+      double oY = a*((coord.y>>1)<<1); // offset Y
+      switch (direction) {
+      case 0:
+         region.setPoint(0, (int)(oX +       a), (int)(oY + b      ));
+         region.setPoint(1, (int)(oX + c +   a), (int)(oY + c +   a));
+         region.setPoint(2, (int)(oX + b      ), (int)(oY + b +   a));
+         region.setPoint(3, (int)(oX          ), (int)(oY +       a));
+         region.setPoint(4, (int)(oX + c      ), (int)(oY + c      ));
+         break;
+      case 1:
+         region.setPoint(0, (int)(oX + c + 2*a), (int)(oY + c      ));
+         region.setPoint(1, (int)(oX +     2*a), (int)(oY +       a));
+         region.setPoint(2, (int)(oX + c +   a), (int)(oY + c +   a));
+         region.setPoint(3, (int)(oX +       a), (int)(oY + b      ));
+         region.setPoint(4, (int)(oX + b +   a), (int)(oY          ));
+         break;
+      case 2:
+         region.setPoint(0, (int)(oX + c +   a), (int)(oY + c +   a));
+         region.setPoint(1, (int)(oX + b +   a), (int)(oY +     2*a));
+         region.setPoint(2, (int)(oX +       a), (int)(oY + b + 2*a));
+         region.setPoint(3, (int)(oX + c      ), (int)(oY + c + 2*a));
+         region.setPoint(4, (int)(oX + b      ), (int)(oY + b +   a));
+         break;
+      case 3:
+         region.setPoint(0, (int)(oX +     2*a), (int)(oY +       a));
+         region.setPoint(1, (int)(oX + b + 2*a), (int)(oY + b +   a));
+         region.setPoint(2, (int)(oX + c + 2*a), (int)(oY + c + 2*a));
+         region.setPoint(3, (int)(oX + b +   a), (int)(oY +     2*a));
+         region.setPoint(4, (int)(oX + c +   a), (int)(oY + c +   a));
+         break;
+      }
+   }
 
-	@Override
-	public Rect getRcInner(int borderWidth) {
-		AttrPentagonT24 attr = getAttr();
-		double sq = attr.getSq(borderWidth);
-		double w = borderWidth/2.;
-		double w2 = w/SQRT2;
+   @Override
+   public Rect getRcInner(int borderWidth) {
+      AttrPentagonT24 attr = getAttr();
+      double sq = attr.getSq(borderWidth);
+      double w = borderWidth/2.;
+      double w2 = w/SQRT2;
 
-		Rect square = new Rect();
-		switch (direction) {
-		case 0:
-			square.x = (int) (region.getPoint(4).x+w2);
-			square.y = (int) (region.getPoint(1).y-w2 - sq);
-			break;
-		case 1:
-			square.x = (int) (region.getPoint(2).x+w2);
-			square.y = (int) (region.getPoint(0).y+w2);
-			break;
-		case 2:
-			square.x = (int) (region.getPoint(0).x-w2 - sq);
-			square.y = (int) (region.getPoint(3).y-w2 - sq);
-			break;
-		case 3:
-			square.x = (int) (region.getPoint(2).x-w2 - sq);
-			square.y = (int) (region.getPoint(4).y+w2);
-			break;
-		}
-		square.width = (int)sq;
-		square.height = (int)sq;
-		return square;
-	}
+      Rect square = new Rect();
+      switch (direction) {
+      case 0:
+         square.x = (int) (region.getPoint(4).x+w2);
+         square.y = (int) (region.getPoint(1).y-w2 - sq);
+         break;
+      case 1:
+         square.x = (int) (region.getPoint(2).x+w2);
+         square.y = (int) (region.getPoint(0).y+w2);
+         break;
+      case 2:
+         square.x = (int) (region.getPoint(0).x-w2 - sq);
+         square.y = (int) (region.getPoint(3).y-w2 - sq);
+         break;
+      case 3:
+         square.x = (int) (region.getPoint(2).x-w2 - sq);
+         square.y = (int) (region.getPoint(4).y+w2);
+         break;
+      }
+      square.width = (int)sq;
+      square.height = (int)sq;
+      return square;
+   }
 
-	@Override
-	public int getShiftPointBorderIndex() {
-		switch (direction) {
-		case 0: case 1:
-			return 2;
-		}
-		return 3;
-	}
+   @Override
+   public int getShiftPointBorderIndex() {
+      switch (direction) {
+      case 0: case 1:
+         return 2;
+      }
+      return 3;
+   }
 }

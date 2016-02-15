@@ -34,124 +34,124 @@ import fmg.common.geom.Size;
  * @see BaseCell
  **/
 public class Hexagon1 extends BaseCell {
-	public static class AttrHexagon1 extends BaseAttribute {
-		public AttrHexagon1(int area) {
-			super(area);
-		}
+   public static class AttrHexagon1 extends BaseAttribute {
+      public AttrHexagon1(int area) {
+         super(area);
+      }
 
-		@Override
-		public Size getOwnerSize(Matrisize sizeField) {
-			double a = getA();
-			Size result = new Size(
-					(int)(a * (sizeField.m    +0.5) * SQRT3),
-					(int)(a * (sizeField.n*1.5+0.5)));
+      @Override
+      public Size getOwnerSize(Matrisize sizeField) {
+         double a = getA();
+         Size result = new Size(
+               (int)(a * (sizeField.m    +0.5) * SQRT3),
+               (int)(a * (sizeField.n*1.5+0.5)));
 
-			if (sizeField.n == 1)
-				result.width -= getB()/2;
+         if (sizeField.n == 1)
+            result.width -= getB()/2;
 
-			return result;
-		}
-	
-		@Override
-		public int getNeighborNumber(boolean max) { return 6; }
-		@Override
-		public int getNeighborNumber(int direction) { return 6; }
-		@Override
-		public int getVertexNumber(int direction) { return 6; }
-		@Override
-		public double getVertexIntersection() { return 3; }
-		@Override
-		public Size GetDirectionSizeField() { return new Size(1, 2); }
-		@Override
-		protected double getA() { return Math.sqrt(2*getArea()/SQRT27); }
-		/** пол стороны треугольника */
-		protected double getB() { return getA()*SQRT3; }
-		@Override
-		public double getSq(int borderWidth) {
-			double w = borderWidth/2.;
-			return 2*(getB() - 2*w)/(SQRT3+1);
-		}
-	}
+         return result;
+      }
+   
+      @Override
+      public int getNeighborNumber(boolean max) { return 6; }
+      @Override
+      public int getNeighborNumber(int direction) { return 6; }
+      @Override
+      public int getVertexNumber(int direction) { return 6; }
+      @Override
+      public double getVertexIntersection() { return 3; }
+      @Override
+      public Size GetDirectionSizeField() { return new Size(1, 2); }
+      @Override
+      protected double getA() { return Math.sqrt(2*getArea()/SQRT27); }
+      /** пол стороны треугольника */
+      protected double getB() { return getA()*SQRT3; }
+      @Override
+      public double getSq(int borderWidth) {
+         double w = borderWidth/2.;
+         return 2*(getB() - 2*w)/(SQRT3+1);
+      }
+   }
 
-	public Hexagon1(AttrHexagon1 attr, Coord coord) {
-		super(attr, coord,
-				coord.y&1 // 0..1
-			);
-	}
+   public Hexagon1(AttrHexagon1 attr, Coord coord) {
+      super(attr, coord,
+            coord.y&1 // 0..1
+         );
+   }
 
-	@Override
-	public AttrHexagon1 getAttr() {
-		return (AttrHexagon1) super.getAttr();
-	}
+   @Override
+   public AttrHexagon1 getAttr() {
+      return (AttrHexagon1) super.getAttr();
+   }
 
-	@Override
-	protected Coord[] GetCoordsNeighbor() {
-		Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
+   @Override
+   protected Coord[] GetCoordsNeighbor() {
+      Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
 
-		// определяю координаты соседей
-		neighborCoord[0] = new Coord(coord.x-(direction^1), coord.y-1);
-		neighborCoord[1] = new Coord(coord.x+ direction   , coord.y-1);
-		neighborCoord[2] = new Coord(coord.x-1            , coord.y);
-		neighborCoord[3] = new Coord(coord.x+1            , coord.y);
-		neighborCoord[4] = new Coord(coord.x-(direction^1), coord.y+1);
-		neighborCoord[5] = new Coord(coord.x+ direction   , coord.y+1);
+      // определяю координаты соседей
+      neighborCoord[0] = new Coord(coord.x-(direction^1), coord.y-1);
+      neighborCoord[1] = new Coord(coord.x+ direction   , coord.y-1);
+      neighborCoord[2] = new Coord(coord.x-1            , coord.y);
+      neighborCoord[3] = new Coord(coord.x+1            , coord.y);
+      neighborCoord[4] = new Coord(coord.x-(direction^1), coord.y+1);
+      neighborCoord[5] = new Coord(coord.x+ direction   , coord.y+1);
 
-		return neighborCoord;
-	}
+      return neighborCoord;
+   }
 
-	@Override
-	protected void CalcRegion() {
-		AttrHexagon1 attr = getAttr();
-		double a = attr.getA();
-		double b = attr.getB();
+   @Override
+   protected void CalcRegion() {
+      AttrHexagon1 attr = getAttr();
+      double a = attr.getA();
+      double b = attr.getB();
 
-		double oX = (coord.x+1)*b;                 // offset X
-		double oY = (coord.y+(direction^1))*a*1.5; // offset Y
+      double oX = (coord.x+1)*b;                 // offset X
+      double oY = (coord.y+(direction^1))*a*1.5; // offset Y
 
-		switch (direction) {
-		case 0:
-			region.setPoint(0, (int)(oX      ), (int)(oY - a  ));
-			region.setPoint(1, (int)(oX      ), (int)(oY      ));
-			region.setPoint(2, (int)(oX - b/2), (int)(oY + a/2));
-			region.setPoint(3, (int)(oX - b  ), (int)(oY      ));
-			region.setPoint(4, (int)(oX - b  ), (int)(oY - a  ));
-			region.setPoint(5, (int)(oX - b/2), (int)(oY - a*1.5));
-			break;
-		case 1:
-			region.setPoint(0, (int)(oX + b/2), (int)(oY + a/2  ));
-			region.setPoint(1, (int)(oX + b/2), (int)(oY + a*1.5));
-			region.setPoint(2, (int)(oX      ), (int)(oY + a*2  ));
-			region.setPoint(3, (int)(oX - b/2), (int)(oY + a*1.5));
-			region.setPoint(4, (int)(oX - b/2), (int)(oY + a/2  ));
-			region.setPoint(5, (int)(oX      ), (int)(oY        ));
-			break;
-		}
-	}
+      switch (direction) {
+      case 0:
+         region.setPoint(0, (int)(oX      ), (int)(oY - a  ));
+         region.setPoint(1, (int)(oX      ), (int)(oY      ));
+         region.setPoint(2, (int)(oX - b/2), (int)(oY + a/2));
+         region.setPoint(3, (int)(oX - b  ), (int)(oY      ));
+         region.setPoint(4, (int)(oX - b  ), (int)(oY - a  ));
+         region.setPoint(5, (int)(oX - b/2), (int)(oY - a*1.5));
+         break;
+      case 1:
+         region.setPoint(0, (int)(oX + b/2), (int)(oY + a/2  ));
+         region.setPoint(1, (int)(oX + b/2), (int)(oY + a*1.5));
+         region.setPoint(2, (int)(oX      ), (int)(oY + a*2  ));
+         region.setPoint(3, (int)(oX - b/2), (int)(oY + a*1.5));
+         region.setPoint(4, (int)(oX - b/2), (int)(oY + a/2  ));
+         region.setPoint(5, (int)(oX      ), (int)(oY        ));
+         break;
+      }
+   }
 
-	@Override
-	public Rect getRcInner(int borderWidth) {
-		AttrHexagon1 attr = getAttr();
-		double a = attr.getA();
-		double b = attr.getB();
-		double sq = attr.getSq(borderWidth);
+   @Override
+   public Rect getRcInner(int borderWidth) {
+      AttrHexagon1 attr = getAttr();
+      double a = attr.getA();
+      double b = attr.getB();
+      double sq = attr.getSq(borderWidth);
 
-		double oX = (coord.x+1)*b;      // offset X
-		double oY = (coord.y+1-direction)*a*1.5; // offset Y
+      double oX = (coord.x+1)*b;      // offset X
+      double oY = (coord.y+1-direction)*a*1.5; // offset Y
 
-		PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
-		switch (direction) {
-		case 0: center.x = oX - b/2; center.y = oY - a/2; break;
-		case 1: center.x = oX;       center.y = oY + a;   break;
-		}
+      PointDouble center = new PointDouble(); // координата вписанного в фигуру квадрата (не совпадает с центром фигуры)
+      switch (direction) {
+      case 0: center.x = oX - b/2; center.y = oY - a/2; break;
+      case 1: center.x = oX;       center.y = oY + a;   break;
+      }
 
-		Rect square = new Rect();
-		square.x = (int) (center.x - sq/2);
-		square.y = (int) (center.y - sq/2);
-		square.width =
-		square.height = (int) sq;
-		return square;
-	}
+      Rect square = new Rect();
+      square.x = (int) (center.x - sq/2);
+      square.y = (int) (center.y - sq/2);
+      square.width =
+      square.height = (int) sq;
+      return square;
+   }
 
-	@Override
-	public int getShiftPointBorderIndex() { return 3; }
+   @Override
+   public int getShiftPointBorderIndex() { return 3; }
 }

@@ -6,10 +6,10 @@ import java.util.List;
 import fmg.core.mosaic.cells.BaseCell;
 
 public class LeftDownResult {
-	public List<BaseCell> needRepaint;
+   public List<BaseCell> needRepaint;
 
-	public LeftDownResult()
-	{
-		needRepaint = new ArrayList<BaseCell>();
-	}
+   public LeftDownResult()
+   {
+      needRepaint = new ArrayList<BaseCell>();
+   }
 }

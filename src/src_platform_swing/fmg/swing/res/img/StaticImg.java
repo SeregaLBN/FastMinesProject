@@ -36,10 +36,10 @@ public abstract class StaticImg<T, TImage extends Icon> //implements INotifyProp
       }
       
       <TI>boolean SetProperty(TI storage, TI value, String propertyName) {
-    	  return false;
+         return false;
       }
       <TI>boolean SetPropertyForce(TI storage, TI value, String propertyName) {
-    	  return false;
+         return false;
       }
 
       private Size _size;

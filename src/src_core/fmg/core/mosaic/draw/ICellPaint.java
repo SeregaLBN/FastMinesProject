@@ -9,15 +9,15 @@ import fmg.core.mosaic.cells.BaseCell;
  *
  */
 public interface ICellPaint<TPaintable extends IPaintable> {
-	void paint(BaseCell cell, TPaintable p);
-	
-	void paintBorder(BaseCell cell, TPaintable p);
+   void paint(BaseCell cell, TPaintable p);
+   
+   void paintBorder(BaseCell cell, TPaintable p);
 
-	/** draw border lines */
-	void paintBorderLines(BaseCell cell, TPaintable p);
+   /** draw border lines */
+   void paintBorderLines(BaseCell cell, TPaintable p);
 
-	void paintComponent(BaseCell cell, TPaintable p);
+   void paintComponent(BaseCell cell, TPaintable p);
 
-	/** залить ячейку нужным цветом */
-	void paintComponentBackground(BaseCell cell, TPaintable p);
+   /** залить ячейку нужным цветом */
+   void paintComponentBackground(BaseCell cell, TPaintable p);
 }
