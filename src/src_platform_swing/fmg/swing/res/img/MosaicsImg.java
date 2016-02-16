@@ -1,4 +1,5 @@
 package fmg.swing.res.img;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -8,10 +9,10 @@ import java.util.Random;
 
 import javax.swing.Icon;
 
-import fmg.common.geom.Bound;
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
-import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.IMosaic;
 import fmg.core.mosaic.cells.BaseCell;
@@ -28,7 +29,7 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
 
    private EMosaic _mosaicType;
    private Matrisize _sizeField;
-   private int _area = 230;
+   private double _area = 230;
    private BaseCell.BaseAttribute _attr;
    private List<BaseCell> _matrix = new ArrayList<BaseCell>();
    private CellPaintGraphics _cellPaint;
@@ -38,15 +39,15 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
    @Override
    public int getIconWidth() {
       BaseCell.BaseAttribute attr = getCellAttr();
-      Bound padding = getGraphicContext().getPadding();
-      return attr.getOwnerSize(getSizeField()).width+padding.left+padding.right;
+      BoundDouble padding = getGraphicContext().getPadding();
+      return (int)(attr.getOwnerSize(getSizeField()).width + padding.left + padding.right);
    }
 
    @Override
    public int getIconHeight() {
       BaseCell.BaseAttribute attr = getCellAttr();
-      Bound padding = getGraphicContext().getPadding();
-      return attr.getOwnerSize(getSizeField()).height+padding.top+padding.bottom;
+      BoundDouble padding = getGraphicContext().getPadding();
+      return (int)(attr.getOwnerSize(getSizeField()).height + padding.top + padding.bottom);
    }
 
    @Override
@@ -56,9 +57,9 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
          if (clr != null) {
             Color tmp = g.getColor(); // save
             g.setColor(clr); // change
-            Size pixelSize = getCellAttr().getOwnerSize(getSizeField());
-            Bound padding = getGraphicContext().getPadding();
-            g.fillRect(0, 0, pixelSize.width+padding.left+padding.right, pixelSize.height+padding.top+padding.bottom);
+            SizeDouble pixelSize = getCellAttr().getOwnerSize(getSizeField());
+            BoundDouble padding = getGraphicContext().getPadding();
+            g.fillRect(0, 0, (int)(pixelSize.width + padding.left + padding.right), (int)(pixelSize.height + padding.top + padding.bottom));
             g.setColor(tmp); // restore
          }
       }
@@ -129,11 +130,11 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
    }
 
    @Override
-   public int getArea() {
+   public double getArea() {
       return _area;
    }
    @Override
-   public void setArea(int area) {
+   public void setArea(double area) {
       this._area = area;
    }
 

@@ -13,7 +13,7 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
 import fmg.common.Color;
-import fmg.common.geom.Bound;
+import fmg.common.geom.BoundDouble;
 import fmg.data.view.draw.ColorText;
 import fmg.data.view.draw.PenBorder;
 import fmg.swing.Cast;
@@ -39,12 +39,12 @@ public class GraphicContext  {
    protected PenBorder penBorder;
    private Font        font;
    private final boolean iconicMode;
-   private Bound padding;
+   private BoundDouble padding;
 
    public GraphicContext(JComponent owner, boolean iconicMode) {
       this.owner = owner;
       this.iconicMode = iconicMode;
-      this.padding = new Bound(0, 0, 0, 0);
+      this.padding = new BoundDouble(0, 0, 0, 0);
    }
 
    public ImageIcon getImgMine() {
@@ -143,11 +143,11 @@ public class GraphicContext  {
       return iconicMode;
    }
 
-   public Bound getPadding() {
+   public BoundDouble getPadding() {
       return padding;
    }
 
-   public void setPadding(Bound padding) {
+   public void setPadding(BoundDouble padding) {
       this.padding = padding;
    }
 

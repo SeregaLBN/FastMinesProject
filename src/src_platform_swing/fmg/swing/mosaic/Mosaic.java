@@ -21,8 +21,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
+import fmg.common.geom.DoubleExt;
 import fmg.common.geom.Matrisize;
-import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.cells.BaseCell;
@@ -44,7 +45,7 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
    public Mosaic() {
       super();
    }
-   public Mosaic(Matrisize sizeField, EMosaic mosaicType, int minesCount, int area) {
+   public Mosaic(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) {
       super(sizeField, mosaicType, minesCount, area);
    }
 
@@ -70,13 +71,13 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
                g.setFont(getGraphicContext().getFont());
                PaintableGraphics p = new PaintableGraphics(g);
                for (BaseCell cell: _matrix)
-                  if (cell.getRcOuter().Intersects(Cast.toRect(g.getClipBounds()))) // redraw only when needed - when the cells and update region intersect
+                  if (cell.getRcOuter().Intersects(Cast.toRectDouble(g.getClipBounds()))) // redraw only when needed - when the cells and update region intersect
                      getCellPaint().paint(cell, p);
             }
 
              @Override
              public Dimension getPreferredSize() {
-                Size size = getWindowSize();
+                SizeDouble size = getWindowSize();
                 size.height++;
                 size.width++;
 //                System.out.println("Mosaic::getPreferredSize: size="+size);
@@ -156,7 +157,7 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
    private BaseCell CursorPointToCell(Point point) {
 //      long l1 = System.currentTimeMillis();
 //      try {
-          fmg.common.geom.Point p = Cast.toPoint(point);
+         fmg.common.geom.PointDouble p = Cast.toPointDouble(point);
          for (BaseCell cell: _matrix)
             //if (cell.getRcOuter().contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
                if (cell.PointInRegion(p))
@@ -174,11 +175,11 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
    }
 
    @Override
-   public void setArea(int newArea)  {
-      int oldVal = this.getArea();
+   public void setArea(double newArea)  {
+      double oldVal = this.getArea();
       super.setArea(newArea);
-      int newVal = this.getArea();
-      if (oldVal != newVal) {
+      double newVal = this.getArea();
+      if (!DoubleExt.hasMinDiff(oldVal, newVal)) {
          // см. комент - сноску 1
          changeFontSize(getGraphicContext().getPenBorder(), newArea);
    //      getContainer().repaint(); // вызовится неявно: area->gContext.font->this.repaint
@@ -245,7 +246,7 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
       return _mosaicMouseListener;
    }
 
-   protected void initialize(Matrisize sizeField, EMosaic mosaicType, int minesCount, int area) {
+   protected void initialize(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) {
       this.getContainer().setFocusable(true); // иначе не будет срабатывать FocusListener
 
       this.getContainer().addMouseListener(getMosaicMouseListeners());
@@ -274,7 +275,7 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
     /** пересчитать и установить новую высоту шрифта */
     public void changeFontSize() { changeFontSize(getGraphicContext().getPenBorder(), getArea()); }
     /** пересчитать и установить новую высоту шрифта */
-    private void changeFontSize(PenBorder penBorder, int area) {
+    private void changeFontSize(PenBorder penBorder, double area) {
       getGraphicContext().setFontSize(
             (int) getCellAttr().getSq(penBorder.getWidth()));
     }

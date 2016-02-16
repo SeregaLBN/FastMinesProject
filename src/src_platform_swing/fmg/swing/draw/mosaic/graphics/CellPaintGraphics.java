@@ -13,10 +13,10 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 
-import fmg.common.geom.Point;
-import fmg.common.geom.Rect;
-import fmg.common.geom.Region;
-import fmg.common.geom.Bound;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.common.geom.RegionDouble;
+import fmg.common.geom.BoundDouble;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
@@ -46,7 +46,7 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
          Shape shapeOld = g2d.getClip();
 
          // ограничиваю рисование только границами своей фигуры
-         g2d.setClip(Cast.toPolygon(Region.moveXY(cell.getRegion(), gContext.getPadding())));
+         g2d.setClip(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), gContext.getPadding())));
 
          // all paint
          this.paintComponent(cell, p);
@@ -93,22 +93,22 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
    /** draw border lines */
    @Override
    public void paintBorderLines(BaseCell cell, PaintableGraphics p) {
-      Bound padding = gContext.getPadding();
+      BoundDouble padding = gContext.getPadding();
       boolean down = cell.getState().isDown() || (cell.getState().getStatus() == EState._Open);
       Graphics g = p.getGraphics();
       if (gContext.isIconicMode()) {
          g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorLight() : gContext.getPenBorder().getColorShadow()));
-         g.drawPolygon(Cast.toPolygon(Region.moveXY(cell.getRegion(), padding)));
+         g.drawPolygon(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), padding)));
       } else {
          g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorLight()  : gContext.getPenBorder().getColorShadow()));
          int s = cell.getShiftPointBorderIndex();
          int v = cell.getAttr().getVertexNumber(cell.getDirection());
          for (int i=0; i<v; i++) {
-            Point p1 = cell.getRegion().getPoint(i);
-            Point p2 = (i != (v-1)) ? cell.getRegion().getPoint(i+1) : cell.getRegion().getPoint(0);
+            PointDouble p1 = cell.getRegion().getPoint(i);
+            PointDouble p2 = (i != (v-1)) ? cell.getRegion().getPoint(i+1) : cell.getRegion().getPoint(0);
             if (i==s)
                g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorShadow(): gContext.getPenBorder().getColorLight()));
-            g.drawLine(p1.x+padding.left, p1.y+padding.top, p2.x+padding.left, p2.y+padding.top);
+            g.drawLine((int)(p1.x+padding.left), (int)(p1.y+padding.top), (int)(p2.x+padding.left), (int)(p2.y+padding.top));
          }
       }
    }
@@ -118,11 +118,11 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
    public void paintComponent(BaseCell cell, PaintableGraphics p) {
       Graphics g = p.getGraphics();
       Color colorOld = g.getColor();
-      Bound padding = gContext.getPadding();
+      BoundDouble padding = gContext.getPadding();
 
       paintComponentBackground(cell, p);
 
-      Rect rcInner = cell.getRcInner(gContext.getPenBorder().getWidth());
+      RectDouble rcInner = cell.getRcInner(gContext.getPenBorder().getWidth());
 //      g.setColor(Color.MAGENTA);
 //      g.drawRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
 
@@ -131,13 +131,13 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
          (cell.getState().getStatus() == EState._Close) &&
          (cell.getState().getClose() == EClose._Flag))
       {
-         gContext.getImgFlag().paintIcon(gContext.getOwner(), g, rcInner.x+padding.left, rcInner.y+padding.top);
+         gContext.getImgFlag().paintIcon(gContext.getOwner(), g, (int)(rcInner.x+padding.left), (int)(rcInner.y+padding.top));
       } else
       if ((gContext.getImgMine() != null) &&
          (cell.getState().getStatus() == EState._Open ) &&
          (cell.getState().getOpen() == EOpen._Mine))
       {
-         gContext.getImgMine().paintIcon(gContext.getOwner(), g, rcInner.x+padding.left, rcInner.y+padding.top);
+         gContext.getImgMine().paintIcon(gContext.getOwner(), g, (int)(rcInner.x+padding.left), (int)(rcInner.y+padding.top));
       } else
       // output text
       {
@@ -181,7 +181,7 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
             GraphicContext.getDefaultBackgroundFillColor(),
             gContext.getBackgroundFill().getColors()
             )));
-      g.fillPolygon(Cast.toPolygon(Region.moveXY(cell.getRegion(), gContext.getPadding())));
+      g.fillPolygon(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), gContext.getPadding())));
    }
 
    private static Rectangle2D getStringBounds(String text, Font font) {

@@ -103,7 +103,7 @@ import fmg.swing.utils.ImgUtils;
 
 /** Главное окно программы */
 public class Main extends JFrame  {
-   public static final long serialVersionUID = 7923652871481566227L;
+   public static final long serialVersionUID = -3441735484862759425L;
 
    private JPanel     contentPane;
    private MainMenu   menu;

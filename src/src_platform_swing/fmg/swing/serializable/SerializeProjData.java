@@ -26,7 +26,7 @@ public class SerializeProjData implements Externalizable {
    private Matrisize sizeField;
    private EMosaic mosaicType;
    private int minesCount;
-   private int area;
+   private double area;
 
    private UUID activeUserId;
    private boolean doNotAskStartup; // manage dialog
@@ -70,7 +70,7 @@ public class SerializeProjData implements Externalizable {
    public void writeExternal(ObjectOutput out) throws IOException {
       out.writeLong(version);
 
-      out.writeInt(area);
+      out.writeDouble(area);
       out.writeInt(mosaicType.getIndex());
       out.writeInt(sizeField.m);
       out.writeInt(sizeField.n);
@@ -96,7 +96,7 @@ public class SerializeProjData implements Externalizable {
       if (version != in.readLong())
          throw new RuntimeException("Unknown version!");
 
-      area = in.readInt();
+      area = in.readDouble();
       mosaicType = EMosaic.fromIndex(in.readInt());
       sizeField = new Matrisize(in.readInt(), in.readInt());
       minesCount = in.readInt();
@@ -156,8 +156,8 @@ public class SerializeProjData implements Externalizable {
    public int getMinesCount() { return minesCount; }
    public void setMinesCount(int minesCount) { this.minesCount = minesCount; }
 
-   public int getArea() { return area; }
-   public void setArea(int area) { this.area = area; }
+   public double getArea() { return area; }
+   public void setArea(double area) { this.area = area; }
 
    public boolean getShowElement(EShowElement key) { return eShowElements[key.ordinal()]; }
    public void setShowElement(EShowElement key, boolean val) { this.eShowElements[key.ordinal()] = val; }

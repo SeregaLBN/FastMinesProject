@@ -3,8 +3,8 @@ package fmg.core.mosaic;
 import java.lang.reflect.Constructor;
 
 import fmg.common.geom.Coord;
+import fmg.common.geom.DoubleExt;
 import fmg.common.geom.Matrisize;
-import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
@@ -97,10 +97,10 @@ public final class MosaicHelper {
          //  iter 4: cmp=-1; d=d/2=200; res=res-d=900
          //  iter 5: cmp=+1; d=d/2=100; res=res+d=1000 - finded!!!
          if (cmp == 0)
-            return (int)res;
+            break;
          if ((d < 1) && (cmp == -1))
             break;
-         
+
          boolean resultUp = (cmp < 0);
          deltaUp = deltaUp && resultUp;
          if (deltaUp)
@@ -115,28 +115,59 @@ public final class MosaicHelper {
       return (int)res;
    }
 
+   /**
+    * Поиск больше-меньше
+    * @param baseDelta - начало дельты приращения
+    * @param func - ф-ция сравнения
+    * @return что найдено
+    */
+   static double Finder(double baseDelta, Comparable<Double> func) {
+      double res = baseDelta;
+      double d = baseDelta;
+      boolean deltaUp = true;
+      do {
+         double cmp = func.compareTo(res);
+         if (DoubleExt.hasMinDiff(cmp, 0))
+            break;
+         if ((d < 1) && DoubleExt.hasMinDiff(cmp, -1))
+            break;
+
+         boolean resultUp = (cmp < 0);
+         deltaUp = deltaUp && resultUp;
+         if (deltaUp)
+            d *= 2;
+         else
+            d /= 2;
+         if (resultUp)
+            res += d;
+         else
+            res -= d;
+        } while (true);
+      return res;
+   }
+
    /** узнаю мах размер площади ячеек мозаики, при котором окно проекта вмещается в заданную область
     * @param mosaicSizeField - интересуемый размер (в ячейках) поля мозаики
     * @param sizeClientIn - размер окна/области (в пикселях) в которую должна вписаться мозаика
     * @param sizeClientOut - размер окна/области (в пикселях) в которую реально впишется мозаика
     * @return площадь ячейки
     */
-   private static int findAreaBySize(BaseCell.BaseAttribute cellAttr, final Matrisize mosaicSizeField, final Size sizeClientIn, Size sizeClientOut) {
+   private static double findAreaBySize(BaseCell.BaseAttribute cellAttr, final Matrisize mosaicSizeField, final SizeDouble sizeClientIn, SizeDouble sizeClientOut) {
       // сделал приватным, т.к. неявно меняет свойства параметра 'cellAttr'
 
-      final Size sizeIter = new Size();
-      int res = Finder(MosaicBase.AREA_MINIMUM, new Comparable<Integer>() {
+      final SizeDouble sizeIter = new SizeDouble();
+      double res = Finder(MosaicBase.AREA_MINIMUM, new Comparable<Double>() {
          @Override
-         public int compareTo(Integer area) {
+         public int compareTo(Double area) {
             cellAttr.setArea(area);
-            Size tmp = cellAttr.getOwnerSize(mosaicSizeField);
+            SizeDouble tmp = cellAttr.getOwnerSize(mosaicSizeField);
             sizeIter.width = tmp.width;
             sizeIter.height = tmp.height;
-            if ((sizeIter.width == sizeClientIn.width) &&
+            if (DoubleExt.hasMinDiff(sizeIter.width, sizeClientIn.width) &&
                (sizeIter.height <= sizeClientIn.height))
                return 0;
             if ((sizeIter.width <= sizeClientIn.width) &&
-               (sizeIter.height == sizeClientIn.height))
+                DoubleExt.hasMinDiff(sizeIter.height, sizeClientIn.height))
                return 0;
             if ((sizeIter.width < sizeClientIn.width) &&
                (sizeIter.height < sizeClientIn.height))
@@ -154,14 +185,14 @@ public final class MosaicHelper {
     * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
     * @return размер поля мозаики
     */
-   public static Matrisize findSizeByArea(BaseCell.BaseAttribute cellAttr, final Size sizeClient) {
+   public static Matrisize findSizeByArea(BaseCell.BaseAttribute cellAttr, final SizeDouble sizeClient) {
       final Matrisize result = new Matrisize();
       Finder(10, new Comparable<Integer>() {
          @Override
          public int compareTo(Integer newWidth) {
             result.m = newWidth;
-            Size sizeWnd = cellAttr.getOwnerSize(result);
-            if (sizeWnd.width == sizeClient.width)
+            SizeDouble sizeWnd = cellAttr.getOwnerSize(result);
+            if (DoubleExt.hasMinDiff(sizeWnd.width, sizeClient.width))
                return 0;
             if (sizeWnd.width <= sizeClient.width)
                return -1;
@@ -172,8 +203,8 @@ public final class MosaicHelper {
          @Override
          public int compareTo(Integer newHeight) {
             result.n = newHeight;
-            Size sizeWnd = cellAttr.getOwnerSize(result);
-            if (sizeWnd.height == sizeClient.height)
+            SizeDouble sizeWnd = cellAttr.getOwnerSize(result);
+            if (DoubleExt.hasMinDiff(sizeWnd.height, sizeClient.height))
                return 0;
             if (sizeWnd.height < sizeClient.height)
                return -1;
@@ -189,7 +220,7 @@ public final class MosaicHelper {
     * @param sizeClientOut - размер окна/области (в пикселях) в которую реально впишется мозаика
     * @return площадь ячейки
     */
-   public static int findAreaBySize(EMosaic mosaicType, Matrisize mosaicSizeField, Size sizeClientIn, Size sizeClientOut) {
+   public static double findAreaBySize(EMosaic mosaicType, Matrisize mosaicSizeField, SizeDouble sizeClientIn, SizeDouble sizeClientOut) {
       return findAreaBySize(createAttributeInstance(mosaicType, 0), mosaicSizeField, sizeClientIn, sizeClientOut);
    }
 
@@ -198,7 +229,7 @@ public final class MosaicHelper {
     * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
     * @return размер поля мозаики
     */
-   public static Matrisize findSizeByArea(EMosaic mosaicType, double area, Size sizeClient) {
+   public static Matrisize findSizeByArea(EMosaic mosaicType, double area, SizeDouble sizeClient) {
       return findSizeByArea(createAttributeInstance(mosaicType, area), sizeClient);
    }
 
