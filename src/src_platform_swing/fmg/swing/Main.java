@@ -69,9 +69,11 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import fmg.common.Pair;
+import fmg.common.geom.DoubleExt;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.types.EGameStatus;
@@ -1275,7 +1277,7 @@ public class Main extends JFrame  {
          Beep();
          return false;
       }
-      int area = CalcMaxArea(newSize);
+      double area = CalcMaxArea(newSize);
       if (area <= Mosaic.AREA_MINIMUM) {
          Beep();
          return false;
@@ -1370,14 +1372,14 @@ public class Main extends JFrame  {
 //         return dummy;
       }
 
-      Size currSizeMosaicInPixel = getMosaic().getWindowSize();
+      SizeDouble currSizeMosaicInPixel = getMosaic().getWindowSize();
       return new Dimension(
-            sizeMosaicInPixel.width  + (currSizeWin.width  - currSizeMosaicInPixel.width),
-            sizeMosaicInPixel.height + (currSizeWin.height - currSizeMosaicInPixel.height));
+            (int)(sizeMosaicInPixel.width  + (currSizeWin.width  - currSizeMosaicInPixel.width)),
+            (int)(sizeMosaicInPixel.height + (currSizeWin.height - currSizeMosaicInPixel.height)));
    }
 
    /** узнать размер окна мозаики при указанном размере окна проекта */
-   Size CalcMosaicWindowSize(Dimension sizeWindow) {
+   SizeDouble CalcMosaicWindowSize(Dimension sizeWindow) {
       Dimension currSizeWin = this.getSize();
 
       if ((currSizeWin.height == 0) && (currSizeWin.width == 0) && !this.isVisible()) {
@@ -1387,8 +1389,8 @@ public class Main extends JFrame  {
 //         return dummy;
       }
 
-      Size currSizeMosaicInPixel = getMosaic().getWindowSize();
-      return new Size(
+      SizeDouble currSizeMosaicInPixel = getMosaic().getWindowSize();
+      return new SizeDouble(
             sizeWindow.width  - (currSizeWin.width  - currSizeMosaicInPixel.width),
             sizeWindow.height - (currSizeWin.height - currSizeMosaicInPixel.height));
    }
@@ -1397,9 +1399,9 @@ public class Main extends JFrame  {
     * @param mosaicSizeField - интересуемый размер поля мозаики
     * @return макс площадь ячейки
     */
-   int CalcMaxArea(Matrisize mosaicSizeField) {
-      Size sizeMosaicIn = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
-      Size sizeMosaicOut = new Size();
+   double CalcMaxArea(Matrisize mosaicSizeField) {
+      SizeDouble sizeMosaicIn = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
+      SizeDouble sizeMosaicOut = new SizeDouble();
       return MosaicHelper.findAreaBySize(getMosaic().getMosaicType(), mosaicSizeField, sizeMosaicIn, sizeMosaicOut);
    }
 
@@ -1408,8 +1410,8 @@ public class Main extends JFrame  {
     * @param area - интересуемая площадь ячеек мозаики
     * @return max размер поля мозаики
     */
-   public Matrisize CalcMaxMosaicSize(int area) {
-      Size sizeMosaic = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
+   public Matrisize CalcMaxMosaicSize(double area) {
+      SizeDouble sizeMosaic = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
       return MosaicHelper.findSizeByArea(getMosaic().getCellAttr(), sizeMosaic);
    }
 
@@ -1420,7 +1422,7 @@ public class Main extends JFrame  {
     */
    void RecheckLocation(boolean checkArea, boolean pack) {
       if (checkArea) {
-         int maxArea = CalcMaxArea(getMosaic().getSizeField());
+         double maxArea = CalcMaxArea(getMosaic().getSizeField());
          if (maxArea < getMosaic().getArea())
             setArea(maxArea);
       }
@@ -1452,11 +1454,11 @@ public class Main extends JFrame  {
    }
    
    /** getMosaic().setArea(...) */
-   void setArea(int newArea) {
+   void setArea(double newArea) {
       newArea = Math.min(newArea, CalcMaxArea(getMosaic().getSizeField())); // recheck
 
-      int curArea = getMosaic().getArea();
-      if (curArea == newArea)
+      double curArea = getMosaic().getArea();
+      if (DoubleExt.hasMinDiff(curArea, newArea))
          return;
 
       getMosaic().setArea(newArea);
@@ -1466,11 +1468,11 @@ public class Main extends JFrame  {
 
    /** Zoom + */
    void AreaInc() {
-      setArea((int) (getMosaic().getArea() * 1.05));
+      setArea(getMosaic().getArea() * 1.05);
    }
    /** Zoom - */
    void AreaDec() {
-      setArea((int) (getMosaic().getArea() * 0.95));
+      setArea(getMosaic().getArea() * 0.95);
    }
    /** Zoom minimum */
    void AreaMin() {
@@ -1478,8 +1480,8 @@ public class Main extends JFrame  {
    }
    /** Zoom maximum */
    void AreaMax() {
-      int maxArea = CalcMaxArea(getMosaic().getSizeField());
-      if (maxArea == getMosaic().getArea()) return;
+      double maxArea = CalcMaxArea(getMosaic().getSizeField());
+      if (DoubleExt.hasMinDiff(maxArea, getMosaic().getArea())) return;
       setArea(maxArea);
 
 //      {

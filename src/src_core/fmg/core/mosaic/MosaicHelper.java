@@ -38,7 +38,7 @@ public final class MosaicHelper {
          String className = getPackageName() + ".cells." + mosaicType.getMosaicClassName() + "$Attr"+mosaicType.getMosaicClassName();
          @SuppressWarnings("unchecked")
          Class<? extends BaseCell.BaseAttribute> cellAttrClass = (Class<? extends BaseCell.BaseAttribute>)Class.forName(className);
-         Constructor<? extends BaseCell.BaseAttribute> constructor = cellAttrClass.getConstructor(int.class); //(Constructor<? extends BaseAttribute>) cellClass.getConstructors()[0]; // 
+         Constructor<? extends BaseCell.BaseAttribute> constructor = cellAttrClass.getConstructor(double.class); //(Constructor<? extends BaseAttribute>) cellClass.getConstructors()[0]; // 
          BaseCell.BaseAttribute attr = constructor.newInstance(area);
          return attr;
       } catch (Exception ex) {
