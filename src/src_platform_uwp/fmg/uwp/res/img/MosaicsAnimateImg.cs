@@ -35,10 +35,10 @@ namespace fmg.uwp.res.img {
             var paint = new PaintableBmp(img);
 
             for (var i=0; i<Matrix.Count; ++i)
-               if (!_rotateElemIndexPositive.ContainsKey(i))
+               if (!_rotatedElements.ContainsKey(i))
                   CellPaint.Paint(Matrix[i], paint);
 
-            if (!_rotateElemIndexPositive.Any())
+            if (!_rotatedElements.Any())
                return;
 
             var pb = GContext.PenBorder;
@@ -52,17 +52,13 @@ namespace fmg.uwp.res.img {
             pb.Width = 2 * borderWidth;
             pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5);
 
-            var transform = _rotateElemIndexPositive.Select(pair => {
+            var transform = _rotatedElements.Select(pair => {
                var index = pair.Key;
                var angleOffset = pair.Value;
                System.Diagnostics.Debug.Assert(angleOffset >= 0);
-               var angle2 = angle + angleOffset;
-               if (angle2 >= 360) {
-                  angle2 -= 360;
-               } else {
-                  if (angle2 < 0)
-                     angle2 += 360;
-               }
+               var angle2 = angle - angleOffset;
+               if (angle2 < 0)
+                  angle2 += 360;
                System.Diagnostics.Debug.Assert(angle2 < 360);
                System.Diagnostics.Debug.Assert(angle2 >= 0);
                // (un)comment next line to view result changes...
@@ -112,15 +108,6 @@ namespace fmg.uwp.res.img {
 
                // restore
                attr.Area = area;
-
-
-               { // prepare to next step - exclude current cell from rotate and add next random cell
-                  var angle3 = angle2 + RotateAngleDelta;
-                  if ((angle3 >= 360) || (angle3 < 0)) {
-                     AddRandomToNegative(false);
-                     _rotateElemIndexPositive.Remove(index);
-                  }
-               }
             }
 
             // restore
@@ -144,17 +131,13 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      //protected override void OnTimer() {
-      //   base.OnTimer();
-
-      //}
-
-      private readonly IDictionary<int /* cell index */, double /* rotate angle ofset (negative) */> _rotateElemIndexNegative = new Dictionary<int, double>();
-      private readonly IDictionary<int /* cell index */, double /* rotate angle ofset (positive) */> _rotateElemIndexPositive = new Dictionary<int, double>();
+      /// <summary> list of offsets rotation angles prepared for cells </summary>
+      private readonly IList<double> _prepareList = new List<double>();
+      private readonly Dictionary<int /* cell index */, double /* rotate angle offset */> _rotatedElements = new Dictionary<int, double>();
 
       private void RandomRotateElemenIndex() {
-         _rotateElemIndexNegative.Clear();
-         _rotateElemIndexPositive.Clear();
+         _prepareList.Clear();
+         _rotatedElements.Clear();
 
          if (!Rotate)
             return;
@@ -162,40 +145,71 @@ namespace fmg.uwp.res.img {
          // create random cells indexes  and  base rotate offset (negative)
          var len = Matrix.Count;
          for (var i = 0; i < len/4.5; ++i) {
-            AddRandomToNegative(_rotateElemIndexNegative.Count == 0);
+            AddRandomToPrepareList(i==0);
          }
       }
 
-      private void AddRandomToNegative(bool zero) {
+      private void AddRandomToPrepareList(bool zero) {
+         var offset = (zero?0:Rand.Next(360)) + RotateAngle;
+         if (offset > 360)
+            offset -= 360;
+         _prepareList.Add(offset);
+      }
+
+      private int NextRandomIndex() {
          var len = Matrix.Count;
+         System.Diagnostics.Debug.Assert(_rotatedElements.Count < len);
          do {
-            var pos = Rand.Next(len);
-            if (_rotateElemIndexNegative.ContainsKey(pos))
+            var index = Rand.Next(len);
+            if (_rotatedElements.ContainsKey(index))
                continue;
-            if (_rotateElemIndexPositive.ContainsKey(pos))
-               continue;
-            _rotateElemIndexNegative.Add(pos, zero ? 0 : - Rand.Next(360));
-            return;
+            return index;
          } while(true);
       }
 
       protected override void OnTimer() {
+         var angleOld = RotateAngle;
          base.OnTimer();
+         var angleNew = RotateAngle;
 
-         if (!_rotateElemIndexNegative.Any())
-            return;
-         var angle = RotateAngle;
-         foreach (var index in new List<int>(_rotateElemIndexNegative.Keys)) {
-            var angleOffset = _rotateElemIndexNegative[index];
-            if (angleOffset + angle < 0)
-               continue;
-            var positive = _rotateElemIndexPositive[index] = 360 + angleOffset; // negative value as positive
-            if (positive >= 360)
-               positive = _rotateElemIndexPositive[index] -= 360;
-            System.Diagnostics.Debug.Assert(positive < 360);
-            System.Diagnostics.Debug.Assert(positive >= 0);
-            _rotateElemIndexNegative.Remove(index);
+         if (_prepareList.Any()) {
+            var copyList = new List<double>(_prepareList);
+            for (var i = copyList.Count-1; i >= 0; --i) {
+               var angleOffset = copyList[i];
+               if ((angleOld <= angleOffset && angleOffset < angleNew && angleOld < angleNew) || // example: old=10   offset=15   new=20
+                   (angleOld <= angleOffset && angleOffset > angleNew && angleOld > angleNew) || // example: old=350  offset=355  new=0
+                   (angleOld > angleOffset && angleOffset <= angleNew && angleOld > angleNew))   // example: old=355  offset=0    new=5
+               {
+                  _prepareList.RemoveAt(i);
+                  _rotatedElements.Add(NextRandomIndex(), angleOffset);
+               }
+            }
          }
+
+         var rotateDelta = RotateAngleDelta;
+         List<int> toRemove = null;
+         foreach(var kvp in _rotatedElements) {
+            var index = kvp.Key;
+            var angleOffset = kvp.Value;
+
+            var angle2 = angleNew - angleOffset;
+            if (angle2 < 0)
+               angle2 += 360;
+            System.Diagnostics.Debug.Assert(angle2 < 360);
+            System.Diagnostics.Debug.Assert(angle2 >= 0);
+
+            // prepare to next step - exclude current cell from rotate and add next random cell
+            var angle3 = angle2 + rotateDelta;
+            if ((angle3 >= 360) || (angle3 < 0)) {
+               if (toRemove == null)
+                  toRemove = new List<int>();
+               toRemove.Add(index);
+            }
+         }
+         toRemove?.ForEach(index => {
+                              _rotatedElements.Remove(index);
+                              AddRandomToPrepareList(false);
+                           });
       }
 
    }
