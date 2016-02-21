@@ -22,25 +22,36 @@ namespace fmg.uwp.res.img {
          : base(mosaicType, sizeField, sizeImage, padding)
       { }
 
+      private bool _invalidateCache = true;
+      private WriteableBitmap _imageCache;
 
       protected override void DrawBody() {
          if (OnlySyncDraw || LiveImage()) {
             // sync draw
             var w = Width;
             var h = Height;
-            var img = Image;
+            var img = _imageCache;
+            if (_invalidateCache) {
+               _invalidateCache = false;
 
-            img.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
+               img.FillPolygon(new[] {0, 0, w, 0, w, h, 0, h, 0, 0}, BackgroundColor.ToWinColor());
 
-            var paint = new PaintableBmp(img);
+               var paint0 = new PaintableBmp(img);
+               for (var i = 0; i < Matrix.Count; ++i)
+                  if (!_rotatedElements.ContainsKey(i))
+                     CellPaint.Paint(Matrix[i], paint0);
+            }
 
-            for (var i=0; i<Matrix.Count; ++i)
-               if (!_rotatedElements.ContainsKey(i))
-                  CellPaint.Paint(Matrix[i], paint);
+            { // copy cached image to original
+               var rc = new Windows.Foundation.Rect(0,0,w,h);
+               Image.Blit(rc, img, rc);
+               img = Image;
+            }
 
             if (!_rotatedElements.Any())
                return;
 
+            var paint = new PaintableBmp(img);
             var pb = GContext.PenBorder;
             var attr = CellAttr;
             var angle = RotateAngle;
@@ -128,6 +139,10 @@ namespace fmg.uwp.res.img {
          case "SizeField":
             RandomRotateElemenIndex();
             break;
+         case "Image":
+            _invalidateCache = true;
+            _imageCache = CreateImage();
+            break;
          }
       }
 
@@ -137,7 +152,10 @@ namespace fmg.uwp.res.img {
 
       private void RandomRotateElemenIndex() {
          _prepareList.Clear();
-         _rotatedElements.Clear();
+         if (_rotatedElements.Any()) {
+            _rotatedElements.Clear();
+            _invalidateCache = true;
+         }
 
          if (!Rotate)
             return;
@@ -182,6 +200,7 @@ namespace fmg.uwp.res.img {
                {
                   _prepareList.RemoveAt(i);
                   _rotatedElements.Add(NextRandomIndex(), angleOffset);
+                  _invalidateCache = true;
                }
             }
          }
@@ -209,6 +228,7 @@ namespace fmg.uwp.res.img {
          toRemove?.ForEach(index => {
                               _rotatedElements.Remove(index);
                               AddRandomToPrepareList(false);
+                              _invalidateCache = true;
                            });
       }
 
