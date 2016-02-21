@@ -1,6 +1,8 @@
 Initialize Eclipse workspace:
 1. Open Eclipse workspace: path ./FastMinesProject/Workspaces/Eclipse
 2. Add project FastMines_swing into workspace:
+   menu File -> Import... -> Gradle: Gradle Project -> Project root directory: ./FastMinesProject/FastMines_swing -> Finish
+      or
    menu File -> Import... -> General: Existing Project into Workspace -> select root Directory: ./FastMinesProject/FastMines_swing
 3. Set UFT-8 as default encoding:
    menu Window -> Preferences -> General -> Workspace -> Text file encoding: Other: UTF-8 -> click Ok  

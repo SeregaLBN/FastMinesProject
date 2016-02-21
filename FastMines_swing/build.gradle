@@ -1,0 +1,42 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+group = 'fmg'
+version = '2.0.1'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+
+defaultTasks 'clean', 'build'
+
+repositories {
+   mavenCentral()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir '../src/src_common'
+            srcDir '../src/src_core'
+            srcDir '../src/src_data'
+            srcDir '../src/src_data'
+            srcDir '../src/src_platform_swing'
+            include '**/*.java'
+        }
+        resources {
+            srcDir '../res'
+            exclude '**/*~*'
+            include '**/*.gif'
+            include '**/*.jpeg'
+            include '**/*.jpg'
+            //include '**/*.ico'
+            include '**/*.png'
+        }
+    }
+    //test { java {} resources {} }
+}
+
+//configurations{}
+
+//dependencies {}

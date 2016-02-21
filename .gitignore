@@ -6,6 +6,7 @@ Workspaces/VS/packages/*/
 *.suo
 **/obj
 **/bin
+**/build
 **/Debug
 **/Release
 FastMines_uwp/res
