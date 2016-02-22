@@ -19,7 +19,7 @@ public class Matrisize {
    public boolean equals(Object other) {
       if (this == other)
          return true;
-      if (!(other instanceof Size))
+      if (!(other instanceof Matrisize))
          return false;
       Matrisize c = (Matrisize)other;
       return (m == c.m) && (n == c.n);

@@ -1004,17 +1004,13 @@ public class Main extends JFrame  {
 
       if (sizeFld.equals(ESkillLevel.eBeginner.DefaultSize()) && (numberMines == ESkillLevel.eBeginner.GetNumberMines(eMosaic)))
          return ESkillLevel.eBeginner;
-      else
       if (sizeFld.equals(ESkillLevel.eAmateur.DefaultSize()) && (numberMines == ESkillLevel.eAmateur.GetNumberMines(eMosaic)))
          return ESkillLevel.eAmateur;
-      else
       if (sizeFld.equals(ESkillLevel.eProfi.DefaultSize()) && (numberMines == ESkillLevel.eProfi.GetNumberMines(eMosaic)))
          return ESkillLevel.eProfi;
-      else
       if (sizeFld.equals(ESkillLevel.eCrazy.DefaultSize()) && (numberMines == ESkillLevel.eCrazy.GetNumberMines(eMosaic)))
          return ESkillLevel.eCrazy;
-      else
-         return ESkillLevel.eCustom;
+      return ESkillLevel.eCustom;
    }
 
    /** my key combinations */
