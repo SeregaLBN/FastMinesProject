@@ -44,9 +44,11 @@ public class PenBorder {
    }
 
    public void setColorShadow(Color colorShadow) {
-      Color old = colorShadow;
-      this.colorShadow = colorShadow;
-      propertyChanges.firePropertyChange(new PropertyChangeEvent(this, "PenBorder_colorShadow", old, colorShadow));
+      Color old = this.colorShadow;
+      if (!old.equals(colorShadow)) {
+         this.colorShadow = colorShadow;
+         propertyChanges.firePropertyChange(new PropertyChangeEvent(this, "PenBorder_colorShadow", old, colorShadow));
+      }
    }
 
    public Color getColorLight() {
@@ -54,9 +56,11 @@ public class PenBorder {
    }
 
    public void setColorLight(Color colorLight) {
-      Color old = colorLight;
-      this.colorLight = colorLight;
-      propertyChanges.firePropertyChange(new PropertyChangeEvent(this, "PenBorder_colorLight", old, colorLight));
+      Color old = this.colorLight;
+      if (!old.equals(colorLight)) {
+         this.colorLight = colorLight;
+         propertyChanges.firePropertyChange(new PropertyChangeEvent(this, "PenBorder_colorLight", old, colorLight));
+      }
    }
 
    public int getWidth() {
@@ -64,20 +68,28 @@ public class PenBorder {
    }
 
    public void setWidth(int iWidth) {
-      int old = iWidth;
-      this.width = iWidth;
-      propertyChanges.firePropertyChange("PenBorder_width", old, iWidth);
+      int old = this.width;
+      if (old != iWidth) {
+         this.width = iWidth;
+         propertyChanges.firePropertyChange("PenBorder_width", old, iWidth);
+      }
+   }
+
+   @Override
+   public int hashCode() {
+      int result = 31 + colorLight.hashCode();
+      result = 31 * result + colorShadow.hashCode();
+      return 31 * result + width;
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (obj instanceof PenBorder) {
-         PenBorder penObj = (PenBorder)obj;
-         return (width == penObj.width)
+      if (this == obj) return true;
+      if (!(obj instanceof PenBorder)) return false;
+      PenBorder penObj = (PenBorder) obj;
+      return (width == penObj.width)
             && colorShadow.equals(penObj.colorShadow)
             && colorLight.equals(penObj.colorLight);
-      }
-      //return super.equals(obj);
-      return false;
    }
+
 }

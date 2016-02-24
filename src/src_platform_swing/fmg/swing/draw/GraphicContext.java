@@ -52,16 +52,20 @@ public class GraphicContext  {
    }
    public void setImgMine(ImageIcon img) {
       Object old = this.imgMine;
-      this.imgMine = img;
-      propertyChanges.firePropertyChange("GraphicContext_imgMine", old, img);
+      if (old != img) { // references compare
+         this.imgMine = img;
+         propertyChanges.firePropertyChange("GraphicContext_imgMine", old, img);
+      }
    }
    public ImageIcon getImgFlag() {
       return imgFlag;
    }
    public void setImgFlag(ImageIcon img) {
       Object old = this.imgFlag;
-      this.imgFlag = img;
-      propertyChanges.firePropertyChange("GraphicContext_imgFlag", old, img);
+      if (old != img) { // references compare
+         this.imgFlag = img;
+         propertyChanges.firePropertyChange("GraphicContext_imgFlag", old, img);
+      }
    }
 
    public ColorText getColorText() {
@@ -71,8 +75,10 @@ public class GraphicContext  {
    }
    public void setColorText(ColorText colorText) {
       ColorText old = this.colorText;
-      this.colorText = colorText;
-      propertyChanges.firePropertyChange("GraphicContext_colorText", old, colorText);
+      if (!colorText.equals(old)) {
+         this.colorText = colorText;
+         propertyChanges.firePropertyChange("GraphicContext_colorText", old, colorText);
+      }
    }
 
    public PenBorder getPenBorder() {
@@ -82,8 +88,10 @@ public class GraphicContext  {
    }
    public void setPenBorder(PenBorder penBorder) {
       PenBorder old = this.penBorder;
-      this.penBorder = penBorder;
-      propertyChanges.firePropertyChange("GraphicContext_penBorder", old, penBorder);
+      if (!penBorder.equals(old)) {
+         this.penBorder = penBorder;
+         propertyChanges.firePropertyChange("GraphicContext_penBorder", old, penBorder);
+      }
    }
 
    public JComponent getOwner() {
@@ -148,7 +156,11 @@ public class GraphicContext  {
    }
 
    public void setPadding(BoundDouble padding) {
-      this.padding = padding;
+      BoundDouble old = this.padding;
+      if (!padding.equals(old)) {
+         this.padding = padding;
+         propertyChanges.firePropertyChange("GraphicContext_padding", old, padding);
+      }
    }
 
    public Font getFont() {
@@ -158,8 +170,10 @@ public class GraphicContext  {
    }
    private void setRawFont(Font font) {
       Object old = this.font;
-      this.font = font;
-      propertyChanges.firePropertyChange("GraphicContext_font", old, font);
+      if (old != font) { // references compare
+         this.font = font;
+         propertyChanges.firePropertyChange("GraphicContext_font", old, font);
+      }
    }
    public void setFont(Font newFont) {
       if (font != null) {

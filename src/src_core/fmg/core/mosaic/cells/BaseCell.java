@@ -30,6 +30,7 @@ import java.util.stream.IntStream;
 
 import fmg.common.Color;
 import fmg.common.geom.Coord;
+import fmg.common.geom.DoubleExt;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
@@ -94,8 +95,10 @@ public abstract class BaseCell implements PropertyChangeListener {
       /** площадь ячейки/фигуры */
       public void setArea(double area) {
          double old = this.area;
-         this.area = area;
-         propertyChanges.firePropertyChange("Area", old, area);
+         if (!DoubleExt.hasMinDiff(old, area)) {
+            this.area = area;
+            propertyChanges.firePropertyChange("Area", old, area);
+         }
       }
       /** площадь ячейки/фигуры */
       public double getArea() { return area; }

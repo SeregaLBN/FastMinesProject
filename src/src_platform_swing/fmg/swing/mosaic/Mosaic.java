@@ -23,6 +23,7 @@ import javax.swing.event.MouseInputListener;
 
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.Matrisize;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicBase;
@@ -70,8 +71,9 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
                // paint cells
                g.setFont(getGraphicContext().getFont());
                PaintableGraphics p = new PaintableGraphics(g);
+               RectDouble clipBounds = Cast.toRectDouble(g.getClipBounds());
                for (BaseCell cell: _matrix)
-                  if (cell.getRcOuter().Intersects(Cast.toRectDouble(g.getClipBounds()))) // redraw only when needed - when the cells and update region intersect
+                  if (cell.getRcOuter().Intersects(clipBounds)) // redraw only when needed - when the cells and update region intersect
                      getCellPaint().paint(cell, p);
             }
 
@@ -103,9 +105,6 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
 
    @Override
    public void setParams(Matrisize newSizeField, EMosaic newMosaicType, Integer newMinesCount) {
-      if (this._mosaicType != newMosaicType)
-         _cellPaint = null;
-      
       super.setParams(newSizeField, newMosaicType, newMinesCount);
 
       getContainer().repaint();
@@ -117,6 +116,7 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
          _gContext = new MosaicGraphicContext(getContainer());
 //         changeFontSize(_gContext.getPenBorder(), getArea());
          _gContext.addPropertyChangeListener(this); // изменение контекста -> перерисовка мозаики
+         _cellPaint = null;
       }
       return _gContext;
    }
@@ -182,7 +182,7 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
       if (!DoubleExt.hasMinDiff(oldVal, newVal)) {
          // см. комент - сноску 1
          changeFontSize(getGraphicContext().getPenBorder(), newArea);
-   //      getContainer().repaint(); // вызовится неявно: area->gContext.font->this.repaint
+       //getContainer().repaint(); // вызовится неявно: area->gContext.font->this.repaint
          getContainer().revalidate();
       }
    }
@@ -218,13 +218,13 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
        }
 
       @Override
-       public void mouseEntered(MouseEvent e) {}
-       @Override
-       public void mouseExited(MouseEvent e) {}
-       @Override
-       public void mouseDragged(MouseEvent e) {}
-       @Override
-       public void mouseMoved(MouseEvent e) {}
+      public void mouseEntered(MouseEvent e) {}
+      @Override
+      public void mouseExited(MouseEvent e) {}
+      @Override
+      public void mouseDragged(MouseEvent e) {}
+      @Override
+      public void mouseMoved(MouseEvent e) {}
       @Override
       public void focusLost(FocusEvent e) {
 //         System.out.println("Mosaic::MosaicMouseListeners::focusLost: " + e);
@@ -307,7 +307,7 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
  *           - перерасчёт высоту шрифта
  *           - перерасчёт размер картинок мины и флага
  *
- *    Граф контекст:
+ *    Графический контекст:
  *      * меняю любой параметр:
  *        - полная перерисовка мозаики
  *          ( @Mosaic слушает @MosaicGraphicContext)
