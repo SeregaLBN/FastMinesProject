@@ -111,7 +111,7 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
             this._minesCount = newMinesCount.GetValueOrDefault();
          }
          _minesCount = Math.Max(1, Math.Min(_minesCount, GetMaxMines(this._size)));
-         if (saveArea != Area)
+         if (!saveArea.HasMinDiff(Area))
             Area = saveArea;
 
          if (isNewMosaic || isNewSizeFld) {

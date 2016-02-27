@@ -99,7 +99,7 @@ public class GraphicContext  {
    }
 
    /** всё что относиться к заливке фоном ячееек */
-   public class BackgroundFill {
+   public static class BackgroundFill {
       /** режим заливки фона ячеек */
       private int mode = 0;
       /** кэшированные цвета фона ячеек */

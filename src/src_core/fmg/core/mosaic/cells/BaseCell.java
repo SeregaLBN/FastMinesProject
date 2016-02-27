@@ -65,7 +65,7 @@ public abstract class BaseCell implements PropertyChangeListener {
    public static final double SIN135a = java.lang.Math.sin(java.lang.Math.PI/180.*135.-java.lang.Math.atan(8./3));
 
    /**
-    * Контекст/метаданные, описывающий общие хар-ки для каждого из экземпялров BaseCell.
+    * Контекст/метаданные, описывающий общие хар-ки для каждого из экземпляров BaseCell.
     * <br> (Полные данные о конкретной мозаике) <br>
     * Доопределаяется наследниками BaseCell
     */
