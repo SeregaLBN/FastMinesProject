@@ -12,7 +12,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -36,7 +35,7 @@ import fmg.swing.draw.mosaic.MosaicGraphicContext;
 import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
-public class Mosaic extends MosaicBase implements PropertyChangeListener {
+public class Mosaic extends MosaicBase {
    private MosaicGraphicContext _gContext;
    private CellPaintGraphics _cellPaint;
    private JPanel _container;
@@ -260,6 +259,7 @@ public class Mosaic extends MosaicBase implements PropertyChangeListener {
 
    @Override
    public void propertyChange(PropertyChangeEvent evt) {
+      super.propertyChange(evt);
       if ("GraphicContext_penBorder".equals(evt.getPropertyName())) {
          // см. комент - сноску 1
          PenBorder penBorder = (PenBorder) evt.getNewValue();

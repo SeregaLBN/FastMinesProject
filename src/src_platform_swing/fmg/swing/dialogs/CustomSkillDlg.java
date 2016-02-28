@@ -11,6 +11,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -36,13 +38,11 @@ import fmg.common.geom.Matrisize;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.types.event.MosaicEvent;
-import fmg.core.types.event.MosaicListener;
 import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Main;
 import fmg.swing.utils.GuiTools;
 
-public class CustomSkillDlg extends JDialog {
+public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
    private static final long serialVersionUID = 1L;
 
    private JSpinner spinX, spinY, spinMines;
@@ -215,22 +215,6 @@ public class CustomSkillDlg extends JDialog {
       // добавляю расположение в центр окна и внизу
       getContentPane().add(boxCenter, BorderLayout.CENTER);
       getContentPane().add(boxBottom, BorderLayout.SOUTH);
-
-      if (parent != null)
-         parent.getMosaic().addMosaicListener(new MosaicListener() {
-            @Override
-            public void OnClick(MosaicEvent.ClickEvent e) {}
-            @Override
-            public void OnChangedMosaicType(MosaicEvent.ChangedMosaicTypeEvent e) { if (CustomSkillDlg.this.isVisible()) CustomSkillDlg.this.OnChangeMosaicType(); }
-            @Override
-            public void OnChangedGameStatus(MosaicEvent.ChangedGameStatusEvent e) {}
-            @Override
-            public void OnChangedCounters(MosaicEvent.ChangedCountersEvent e) {}
-            @Override
-            public void OnChangedArea(MosaicEvent.ChangedAreaEvent e) { if (radioFullScreenCurrSizeArea.isSelected()) radioGroup.clearSelection(); }
-            @Override
-            public void OnChangedMosaicSize(MosaicEvent.ChangedMosaicSizeEvent e) {  }
-         });
    }
 
    private void OnChangeSizeField() {
@@ -377,4 +361,22 @@ public class CustomSkillDlg extends JDialog {
       int mines = eSkill.GetNumberMines(parent.getMosaic().getMosaicType(), size);
       spinMines.setValue(mines);
    }
+
+   @Override
+   public void propertyChange(PropertyChangeEvent evt) {
+      switch (evt.getPropertyName()) {
+      case "MosaicType":
+         if (isVisible())
+            OnChangeMosaicType();
+         break;
+      case "Area":
+         if (radioFullScreenCurrSizeArea.isSelected())
+            radioGroup.clearSelection();
+         break;
+      //case "SizeField":
+      //   ...
+      //   break;
+      }
+   }
+
 }

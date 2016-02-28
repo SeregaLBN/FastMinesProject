@@ -26,6 +26,8 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -104,7 +107,7 @@ import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
 
 /** Главное окно программы */
-public class Main extends JFrame  {
+public class Main extends JFrame implements PropertyChangeListener {
    public static final long serialVersionUID = -3441735484862759425L;
 
    private JPanel     contentPane;
@@ -799,8 +802,10 @@ public class Main extends JFrame  {
    }
    /** мозаика */
    public Mosaic getMosaic() {
-      if (mosaic == null)
+      if (mosaic == null) {
          mosaic = new Mosaic();
+         mosaic.addPropertyChangeListener(this);
+      }
       return mosaic;
    }
    private PausePanel getPausePanel() {
@@ -1030,6 +1035,8 @@ public class Main extends JFrame  {
          default: return null; // throw new RuntimeException();
          }
       }
+      public static final KeyStroke getKeyStroke_ZoomIncAlternative() { return KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, 0, !false); }
+      public static final KeyStroke getKeyStroke_ZoomDecAlternative() { return KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0, !false); }
       public static final KeyStroke getKeyStroke_ThemeDefault   () { return KeyStroke.getKeyStroke(KeyEvent.VK_D, Event.CTRL_MASK, false); }
       public static final KeyStroke getKeyStroke_ThemeSystem    () { return KeyStroke.getKeyStroke(KeyEvent.VK_Y, Event.CTRL_MASK, false); }
       public static final KeyStroke getKeyStroke_UseUnknown     () { return null; }
@@ -1143,43 +1150,38 @@ public class Main extends JFrame  {
          ActionMap actionMap = new ActionMap();
          keyPairBindAsMenuAccelerator = new Pair<InputMap, ActionMap>(inputMap, actionMap);
 
-         inputMap.put(KeyCombo.getKeyStroke_About(), "About");
-         actionMap.put("About", this.getHandlers().getAboutAction());
+         BiConsumer<KeyStroke, Action> bind = new BiConsumer<KeyStroke,Action>() {
+            @Override
+            public void accept(KeyStroke key, Action action) {
+               String name  = UUID.randomUUID().toString();
+               inputMap.put(key, name);
+               actionMap.put(name, action);
+            }
+         };
 
-         inputMap.put(KeyCombo.getKeyStroke_Champions(), "Champions");
-         actionMap.put("Champions", this.getHandlers().getChampionsAction());
-
-         inputMap.put(KeyCombo.getKeyStroke_Statistics(), "Statistics");
-         actionMap.put("Statistics", this.getHandlers().getStatisticsAction());
-
-         inputMap.put(KeyCombo.getKeyStroke_NewGame(), "New game");
-         actionMap.put("New game", this.getHandlers().getGameNewAction());
+         bind.accept(KeyCombo.getKeyStroke_About()       , getHandlers().getAboutAction());
+         bind.accept(KeyCombo.getKeyStroke_Champions()   , getHandlers().getChampionsAction());
+         bind.accept(KeyCombo.getKeyStroke_Statistics()  , getHandlers().getStatisticsAction());
+         bind.accept(KeyCombo.getKeyStroke_NewGame()     , getHandlers().getGameNewAction());
 
          for (ESkillLevel key: ESkillLevel.values()) {
-            inputMap.put(KeyCombo.getKeyStroke_SkillLevel(key), key.getDescription());
-            actionMap.put(key.getDescription(), this.getHandlers().getSkillLevelAction(key));
+            bind.accept(KeyCombo.getKeyStroke_SkillLevel(key), getHandlers().getSkillLevelAction(key));
          }
 
-         inputMap.put(KeyCombo.getKeyStroke_PlayerManage(), "Player manage");
-         actionMap.put("Player manage", this.getHandlers().getPlayerManageAction());
-
-         inputMap.put(KeyCombo.getKeyStroke_Exit(), "Exit");
-         actionMap.put("Exit", this.getHandlers().getGameExitAction());
+         bind.accept(KeyCombo.getKeyStroke_PlayerManage(), getHandlers().getPlayerManageAction());
+         bind.accept(KeyCombo.getKeyStroke_Exit()        , getHandlers().getGameExitAction());
 
          for (EZoomInterface key: EZoomInterface.values()) {
-            inputMap.put(KeyCombo.getKeyStroke_Zoom(key), key.getDescription());
-            actionMap.put(key.getDescription(), this.getHandlers().getZoomAction(key));
+            bind.accept(KeyCombo.getKeyStroke_Zoom(key), getHandlers().getZoomAction(key));
          }
+         bind.accept(KeyCombo.getKeyStroke_ZoomIncAlternative(), getHandlers().getZoomAction(EZoomInterface.eInc));
+         bind.accept(KeyCombo.getKeyStroke_ZoomDecAlternative(), getHandlers().getZoomAction(EZoomInterface.eDec));
 
-         inputMap.put(KeyCombo.getKeyStroke_ThemeDefault(), "Theme Default");
-         actionMap.put("Theme Default", getHandlers().getThemeDefaultAction());
-   
-         inputMap.put(KeyCombo.getKeyStroke_ThemeSystem(), "Theme System");
-         actionMap.put("Theme System", getHandlers().getThemeSystemAction());
+         bind.accept(KeyCombo.getKeyStroke_ThemeDefault(), getHandlers().getThemeDefaultAction());
+         bind.accept(KeyCombo.getKeyStroke_ThemeSystem() , getHandlers().getThemeSystemAction());
 
          for (EShowElement key: EShowElement.values()) {
-            inputMap.put(KeyCombo.getKeyStroke_ShowElements(key), key.getDescription());
-            actionMap.put(key.getDescription(), this.getHandlers().getShowElementAction(key));
+            bind.accept(KeyCombo.getKeyStroke_ShowElements(key), getHandlers().getShowElementAction(key));
          }
       }
       return keyPairBindAsMenuAccelerator;
@@ -1398,7 +1400,9 @@ public class Main extends JFrame  {
    double CalcMaxArea(Matrisize mosaicSizeField) {
       SizeDouble sizeMosaicIn = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
       SizeDouble sizeMosaicOut = new SizeDouble();
-      return MosaicHelper.findAreaBySize(getMosaic().getMosaicType(), mosaicSizeField, sizeMosaicIn, sizeMosaicOut);
+      double area = MosaicHelper.findAreaBySize(getMosaic().getMosaicType(), mosaicSizeField, sizeMosaicIn, sizeMosaicOut);
+      //System.out.println("Main.CalcMaxArea: area="+area);
+      return area;
    }
 
    /**
@@ -1443,8 +1447,8 @@ public class Main extends JFrame  {
             if (((rcThis.x+rcThis.width ) > sizeScreen.width) ||
                ((rcThis.y+rcThis.height) > sizeScreen.height))
                Main.this.setLocation(
-                     Math.min(rcThis.x, sizeScreen.width  - rcThis.width),
-                     Math.min(rcThis.y, sizeScreen.height - rcThis.height));
+                     Math.max(0, Math.min(rcThis.x, sizeScreen.width  - rcThis.width)),
+                     Math.max(0, Math.min(rcThis.y, sizeScreen.height - rcThis.height)));
          }
       });
    }
@@ -1457,6 +1461,7 @@ public class Main extends JFrame  {
       if (DoubleExt.hasMinDiff(curArea, newArea))
          return;
 
+      //System.out.println("Mosaic.setArea: newArea=" + newArea);
       getMosaic().setArea(newArea);
 
       RecheckLocation(false, true);
@@ -1608,14 +1613,14 @@ public class Main extends JFrame  {
       }
    }
    void ApplyInputActionMenuMap(boolean visibleMenu) {
-      if (visibleMenu) {
-         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).setParent(null);
-         getRootPane().getActionMap().setParent(null);
-      } else {
+//      if (visibleMenu) {
+//         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).setParent(null);
+//         getRootPane().getActionMap().setParent(null);
+//      } else {
          Pair<InputMap, ActionMap> bind = getKeyPairBindAsMenuAccelerator();
          getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).setParent(bind.getFirst());
          getRootPane().getActionMap().setParent(bind.getSecond());
-      }
+//      }
    }
 
 //   @Override
@@ -1849,67 +1854,6 @@ public class Main extends JFrame  {
                      if (img != null)
                         Main.this.getToolbar().getBtnNew().setIcon(img);
                   }
-               }
-               
-               @Override
-               public void OnChangedGameStatus(MosaicEvent.ChangedGameStatusEvent e) {
-                  getToolbar().getBtnPause().setEnabled(getMosaic().getGameStatus() == EGameStatus.eGSPlay);
-//                  System.out.println("OnChangeGameStatus: " + e.getSource().getGameStatus());
-                  switch (e.getSource().getGameStatus()) {
-                  case eGSCreateGame:
-                  case eGSReady:
-                     {
-                        Main.this.getTimerGame().stop();
-                        Main.this.getToolbar().getEdtTimePlay().setText("0");
-                        Icon img = Main.this.getResources().getImgBtnNew(EBtnNewGameState.eNormal);
-                        if (img != null)
-                           Main.this.getToolbar().getBtnNew().setIcon(img);
-                     }
-                     break;
-                  case eGSPlay:
-                     {
-                        Main.this.getTimerGame().restart();
-                     }
-                     break;
-                  case eGSEnd:
-                     {
-                        Main.this.getTimerGame().stop();
-                        Icon img = Main.this.getResources().getImgBtnNew(
-                              e.getSource().isVictory() ?
-                                 EBtnNewGameState.eNormalWin :
-                                 EBtnNewGameState.eNormalLoss);
-                        if (img != null)
-                           Main.this.getToolbar().getBtnNew().setIcon(img);
-
-                        if (Main.this.getSkillLevel() != ESkillLevel.eCustom)
-                           // сохраняю статистику и чемпиона
-                           Main.this.setStatisticAndChampion(e);
-                     }
-                     break;
-                  }
-               }
-               
-               @Override
-               public void OnChangedCounters(MosaicEvent.ChangedCountersEvent e) {
-                  Main.this.getToolbar().getEdtMinesLeft().setText(
-                        Integer.toString(e.getSource().getCountMinesLeft()));
-                  Main.this.getStatusBar().setClickCount(e.getSource().getCountClick());
-               }
-
-               @Override
-               public void OnChangedArea(MosaicEvent.ChangedAreaEvent e) {
-                  Main.this.ChangeSizeImagesMineFlag();
-               }
-
-               @Override
-               public void OnChangedMosaicType(MosaicEvent.ChangedMosaicTypeEvent e) {
-                  ((Mosaic)e.getSource()).changeFontSize();
-                  Main.this.ChangeSizeImagesMineFlag();
-               }
-
-               @Override
-               public void OnChangedMosaicSize(MosaicEvent.ChangedMosaicSizeEvent e) {
-                  // ...
                }
          };
    
@@ -2277,8 +2221,8 @@ public class Main extends JFrame  {
    }
 
    /** Сохранить чемпиона && Установить статистику */
-   public void setStatisticAndChampion(MosaicEvent.ChangedGameStatusEvent e) {
-      MosaicBase mosaic = e.getSource();
+   public void setStatisticAndChampion(PropertyChangeEvent ev) {
+      MosaicBase mosaic = (MosaicBase)ev.getSource();
       if (mosaic.getGameStatus() != EGameStatus.eGSEnd)
          throw new RuntimeException("Invalid method state call");
 
@@ -2336,4 +2280,69 @@ public class Main extends JFrame  {
          return null;
       return getPlayers().getUser(userId);
    }
+
+   @Override
+   public void propertyChange(PropertyChangeEvent ev) {
+      //System.out.println("Main::propertyChange: eventName=" + ev.getPropertyName());
+      switch (ev.getPropertyName()) {
+      case "MosaicType":
+         assert ev.getSource() == getMosaic();
+         getMosaic().changeFontSize();
+         //break; // no break!
+      case "Area":
+         ChangeSizeImagesMineFlag();
+         break;
+      case "GameStatus":
+         assert ev.getSource() == getMosaic();
+         {
+            getToolbar().getBtnPause().setEnabled(getMosaic().getGameStatus() == EGameStatus.eGSPlay);
+   //         System.out.println("OnChangeGameStatus: " + e.getSource().getGameStatus());
+            switch ((EGameStatus)ev.getNewValue()) {
+            case eGSCreateGame:
+            case eGSReady:
+               {
+                  getTimerGame().stop();
+                  getToolbar().getEdtTimePlay().setText("0");
+                  Icon img = getResources().getImgBtnNew(EBtnNewGameState.eNormal);
+                  if (img != null)
+                     getToolbar().getBtnNew().setIcon(img);
+               }
+               break;
+            case eGSPlay:
+               {
+                  getTimerGame().restart();
+               }
+               break;
+            case eGSEnd:
+               {
+                  getTimerGame().stop();
+                  Icon img = getResources().getImgBtnNew(
+                        getMosaic().isVictory() ?
+                           EBtnNewGameState.eNormalWin :
+                           EBtnNewGameState.eNormalLoss);
+                  if (img != null)
+                     getToolbar().getBtnNew().setIcon(img);
+   
+                  if (getSkillLevel() != ESkillLevel.eCustom)
+                     // сохраняю статистику и чемпиона
+                     setStatisticAndChampion(ev);
+               }
+               break;
+            }
+         }
+         break;
+      //case "SizeField":
+      //   ...
+      //   break;
+      case "CountMinesLeft":
+         assert ev.getSource() == getMosaic();
+         getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaic().getCountMinesLeft()));
+         break;
+      case "CountClick":
+         assert ev.getSource() == getMosaic();
+         getStatusBar().setClickCount(getMosaic().getCountClick());
+         break;
+      }
+   }
+
 }

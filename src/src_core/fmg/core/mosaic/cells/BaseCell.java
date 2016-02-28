@@ -22,7 +22,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 package fmg.core.mosaic.cells;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Map;
@@ -46,7 +45,7 @@ import fmg.core.types.click.LeftUpResult;
 import fmg.core.types.click.RightDownReturn;
 
 /** Базовый класс фигуры-ячейки */
-public abstract class BaseCell implements PropertyChangeListener {
+public abstract class BaseCell {
 
    public static final double SQRT2   = java.lang.Math.sqrt(2.);
    public static final double SQRT3   = java.lang.Math.sqrt(3.);
@@ -72,7 +71,7 @@ public abstract class BaseCell implements PropertyChangeListener {
    public static abstract class BaseAttribute {
       /**
        * На это подписаны:
-       *  <li> все наследники BaseCell: при изменении A - надо пересчить все координаты точек
+       *  <li> мозаика - перерасчитывает координаты всех ячеек
        */
       private PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
       /**  подписаться на уведомления изменений атрибута */
@@ -545,16 +544,4 @@ public abstract class BaseCell implements PropertyChangeListener {
       }
    }
 
-   @Override
-   public void propertyChange(PropertyChangeEvent evt) {
-      if ("Area".equals(evt.getPropertyName()))
-      {
-         CalcRegion();
-
-//         region.invalidate(); // сбрасываю region.bounds, для того чтобы в теле getRcOuter() мог
-//         // вызывать AWT'ешный region.getBounds(). Иначе, после изменения площади,
-//         // вызов getRcOuter() (через вызов region.getBounds() ) будет возвращать
-//         // закешированое значение, и как следствие - глюки при перерисовке Mosaic (после изменения площади)...
-      }
-   }
 }

@@ -2,11 +2,8 @@ package fmg.core.types.event;
 
 import java.util.EventObject;
 
-import fmg.common.geom.Matrisize;
 import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.types.EGameStatus;
-import fmg.core.types.EMosaic;
 
 public class MosaicEvent extends EventObject {
    private static final long serialVersionUID = 1L;
@@ -36,70 +33,6 @@ public class MosaicEvent extends EventObject {
       }
       public BaseCell getCell() {
          return cell;
-      }
-   }
-
-   public static class ChangedCountersEvent extends MosaicEvent {
-      private static final long serialVersionUID = 1L;
-
-      public ChangedCountersEvent(MosaicBase source) {
-         super(source);
-      }
-   }
-
-   public static class ChangedGameStatusEvent extends MosaicEvent {
-      private static final long serialVersionUID = 1L;
-      EGameStatus oldGameStatus;
-
-      public ChangedGameStatusEvent(MosaicBase source, EGameStatus oldGameStatus) {
-         super(source);
-         this.oldGameStatus = oldGameStatus;
-      }
-   
-      public EGameStatus getOldGameStatus() {
-         return oldGameStatus;
-      }
-   }
-
-   public static class ChangedAreaEvent extends MosaicEvent {
-      private static final long serialVersionUID = 1L;
-      double oldArea;
-
-      public ChangedAreaEvent(MosaicBase source, double oldArea) {
-         super(source);
-         this.oldArea = oldArea;
-      }
-   
-      public double getOldArea() {
-         return oldArea;
-      }
-   }
-
-   public static class ChangedMosaicTypeEvent extends MosaicEvent {
-      private static final long serialVersionUID = 1L;
-      EMosaic oldMosaic;
-
-      public ChangedMosaicTypeEvent(MosaicBase source, EMosaic oldMosaic) {
-         super(source);
-         this.oldMosaic = oldMosaic;
-      }
-   
-      public EMosaic getOldMosaic() {
-         return oldMosaic;
-      }
-   }
-
-   public static class ChangedMosaicSizeEvent extends MosaicEvent {
-      private static final long serialVersionUID = 1L;
-      Matrisize oldSize;
-
-      public ChangedMosaicSizeEvent(MosaicBase source, Matrisize oldSize) {
-         super(source);
-         this.oldSize = oldSize;
-      }
-   
-      public Matrisize getOldSize() {
-         return oldSize;
       }
    }
 
