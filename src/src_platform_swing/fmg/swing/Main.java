@@ -2284,19 +2284,21 @@ public class Main extends JFrame implements PropertyChangeListener {
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
       //System.out.println("Main::propertyChange: eventName=" + ev.getPropertyName());
+      if (ev.getSource() instanceof Mosaic)
+         OnMosaicPropertyChanged((Mosaic)ev.getSource(), ev);
+   }
+   private void OnMosaicPropertyChanged(Mosaic source, PropertyChangeEvent ev) {
       switch (ev.getPropertyName()) {
       case "MosaicType":
-         assert ev.getSource() == getMosaic();
          getMosaic().changeFontSize();
          //break; // no break!
       case "Area":
          ChangeSizeImagesMineFlag();
          break;
       case "GameStatus":
-         assert ev.getSource() == getMosaic();
          {
             getToolbar().getBtnPause().setEnabled(getMosaic().getGameStatus() == EGameStatus.eGSPlay);
-   //         System.out.println("OnChangeGameStatus: " + e.getSource().getGameStatus());
+          //System.out.println("OnChangeGameStatus: " + e.getSource().getGameStatus());
             switch ((EGameStatus)ev.getNewValue()) {
             case eGSCreateGame:
             case eGSReady:
@@ -2332,14 +2334,17 @@ public class Main extends JFrame implements PropertyChangeListener {
          }
          break;
       //case "SizeField":
-      //   ...
+      //   break;
+      //case "MinesCount":
+      //   break;
+      //case "CountFlag":
+      //   break;
+      //case "CountOpen":
       //   break;
       case "CountMinesLeft":
-         assert ev.getSource() == getMosaic();
          getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaic().getCountMinesLeft()));
          break;
       case "CountClick":
-         assert ev.getSource() == getMosaic();
          getStatusBar().setClickCount(getMosaic().getCountClick());
          break;
       }

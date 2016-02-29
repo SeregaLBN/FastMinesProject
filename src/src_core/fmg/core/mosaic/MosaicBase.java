@@ -119,14 +119,14 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics>, Property
    public void setParams(Matrisize newSizeField, EMosaic newMosaicType, Integer newMinesCount, List<Coord> storageCoordMines) {
       try {
          //repositoryMines.Reset();
+         int oldMinesCount = getMinesCount();
          if ((getMosaicType() == newMosaicType) &&
             getSizeField().equals(newSizeField) &&
-            (getMinesCount() == newMinesCount))
+            (oldMinesCount == newMinesCount))
          {
             return;
          }
 
-         int oldMinesCount = getMinesCount();
          EMosaic oldMosaicType = this._mosaicType;
          Matrisize oldMosaicSize = this._size;
          boolean isNewMosaic = (newMosaicType != null) && (newMosaicType != this._mosaicType);
@@ -410,7 +410,7 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics>, Property
                (cell.getState().getOpen() != EOpen._Mine))
                return; // неверно проставленный флажок - на выход
          GameEnd(true);
-      } else
+      } else {
          if (getMinesCount() == (getCountFlag() + getCountUnknown())) {
             for (BaseCell cell: _matrix)
                if (((cell.getState().getClose() == EClose._Unknown) ||
@@ -419,7 +419,7 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics>, Property
                   return; // неверно проставленный флажок или '?'- на выход
             GameEnd(true);
          }
-      return;
+      }
    }
 
    protected boolean OnLeftButtonDown(BaseCell cellLeftDown) {
@@ -613,8 +613,10 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics>, Property
    /** установить новую площадь ячеек */
    public void setArea(double newArea)  {
       double oldArea = getCellAttr().getArea();
-      if (DoubleExt.hasMinDiff(oldArea, Math.max(AREA_MINIMUM, newArea))) return;
-      getCellAttr().setArea(Math.max(AREA_MINIMUM, newArea));
+      newArea = Math.max(AREA_MINIMUM, newArea);
+      if (DoubleExt.hasMinDiff(oldArea, newArea))
+         return;
+      getCellAttr().setArea(newArea);
    }
    public void setUseUnknown(boolean val) { _useUnknown = val; }
    public boolean getUseUnknown() { return _useUnknown; }
@@ -686,10 +688,14 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics>, Property
    }
 
    @Override
-   public void propertyChange(PropertyChangeEvent evt) {
-      if ("Area".equals(evt.getPropertyName())) {
+   public void propertyChange(PropertyChangeEvent ev) {
+      if (ev.getSource() instanceof BaseCell.BaseAttribute)
+         OnCellAttributePropertyChanged((BaseCell.BaseAttribute)ev.getSource(), ev);
+   }
+   private void OnCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) { 
+      if ("Area".equals(ev.getPropertyName())) {
          getMatrix().stream().forEach(cell -> cell.Init());
-         propertyChanges.firePropertyChange(evt); // rethrow event
+         propertyChanges.firePropertyChange( new PropertyChangeEvent(this, ev.getPropertyName(), ev.getOldValue(), ev.getNewValue())); // ! rethrow event - notify parent class
       }
    }
 

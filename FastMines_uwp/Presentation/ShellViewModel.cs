@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Input;
-using fmg.uwp.res.img;
 using FastMines.DataModel.DataSources;
 using FastMines.Presentation.Notyfier;
 

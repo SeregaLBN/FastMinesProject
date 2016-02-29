@@ -23,17 +23,19 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.ComponentModel;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.types.Event;
 using fmg.core.types.click;
 using fmg.core.mosaic.cells;
 using fmg.core.mosaic.draw;
+using FastMines.Presentation.Notyfier;
 
 namespace fmg.core.mosaic {
 
 /// <summary> Mosaic field: класс окна мозаики поля </summary>
-public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPaintable : IPaintable {
+public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TPaintable> where TPaintable : IPaintable {
 
 #region Members
 
@@ -71,7 +73,13 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
             throw new ArgumentException("Bad argument - support only null value!");
          _cellAttr = null;
       }
-      get { return _cellAttr ?? (_cellAttr = MosaicHelper.CreateAttributeInstance(MosaicType, Area)); }
+      get {
+         if (_cellAttr == null) {
+            _cellAttr = MosaicHelper.CreateAttributeInstance(MosaicType, Area);
+            _cellAttr.PropertyChanged += OnCellAttributePropertyChanged;
+         }
+         return _cellAttr;
+      }
    }
 
    public abstract ICellPaint<TPaintable> CellPaint { get; }
@@ -88,7 +96,8 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
    /// <summary> установить мозаику заданного размера, типа  и с определённым количеством мин (координаты мин могут задаваться с помощью "Хранилища Мин") </summary>
    public virtual void SetParams(Matrisize? newSizeField, EMosaic? newMosaicType, int? newMinesCount, List<Coord> storageCoordMines) {
       //repositoryMines.Reset();
-      var res = (MosaicType != newMosaicType) || !SizeField.Equals(newSizeField) || (MinesCount != newMinesCount);
+      var oldMinesCount = MinesCount;
+      var res = (MosaicType != newMosaicType) || !SizeField.Equals(newSizeField) || (oldMinesCount != newMinesCount);
       if (res)
       {
          var oldMosaicType = this._mosaicType;
@@ -136,12 +145,13 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
                cell.IdentifyNeighbors(this);
          }
 
-         fireOnChangedCounters();
+         OnPropertyChanged(oldMinesCount, _minesCount, "MinesCount");
+         OnPropertyChanged(-1, _minesCount, "CountMinesLeft");
          if (isNewMosaic)
-            fireOnChangedMosaicType(oldMosaicType);
+            OnPropertyChanged(oldMosaicType, newMosaicType, "MosaicType");
          if (isNewSizeFld)
-            fireOnChangedMosaicSize(oldMosaicSize);
-      }
+            OnPropertyChanged(oldMosaicSize, newSizeField, "SizeField");
+         }
       if ((storageCoordMines == null) || (storageCoordMines.Count == 0))
          RepositoryMines.Clear();
       else
@@ -214,7 +224,10 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
 
    /// <summary>сколько ещё осталось открыть мин</summary>
    public int CountMinesLeft { get { return MinesCount - CountFlag; } }
-   public int CountClick { get { return _countClick; } private set { _countClick = value; fireOnChangedCounters(); } }
+   public int CountClick {
+      get { return _countClick; }
+      private set { SetProperty(ref _countClick, value); }
+   }
       
    /// <summary> доступ к заданной ячейке </summary>
    public BaseCell getCell(int x, int y) { return Matrix[x*_size.n + y]; }
@@ -240,7 +253,7 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
     */
    public EGameStatus GameStatus {
       get { return _gameStatus; }
-      set { var old = _gameStatus; _gameStatus = value; fireOnChangedGameStatus(old); }
+      set { SetProperty(ref _gameStatus, value); }
    }
 
    public EPlayInfo PlayInfo {
@@ -260,23 +273,9 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
    }
 
    public event ClickEventHandler OnClick = delegate { };
-   public event ChangedCountersEventHandler OnChangedCounters = delegate { };
-   public event ChangedGameStatusEventHandler OnChangedGameStatus = delegate { };
-   public event ChangedAreaEventHandler OnChangedArea = delegate { };
-   public event ChangedMosaicTypeEventHandler OnChangedMosaicType = delegate { };
-   public event ChangedMosaicSizeEventHandler OnChangedMosaicSize = delegate { };
 
    /// <summary> уведомить о клике на мозаике </summary>
    private void fireOnClick(BaseCell cell, bool leftClick, bool down) { OnClick(this, new MosaicEvent.ClickEventArgs(cell, leftClick, down)); }
-   private void fireOnChangedCounters() { OnChangedCounters(this, new MosaicEvent.ChangedCountersEventArgs()); }
-   /// <summary> уведомить об изменении статуса игры (новая игра, начало игры, конец игры) </summary>
-   private void fireOnChangedGameStatus(EGameStatus oldValue) { OnChangedGameStatus(this, new MosaicEvent.ChangedGameStatusEventArgs(oldValue)); }
-   /// <summary> уведомить об изменении размера площади у ячейки </summary>
-   private void fireOnChangedArea(double oldArea) { OnChangedArea(this, new MosaicEvent.ChangedAreaEventArgs(oldArea)); }
-   /// <summary> уведомить об изменении размера площади у ячейки </summary>
-   private void fireOnChangedMosaicType(EMosaic oldMosaic) { OnChangedMosaicType(this, new MosaicEvent.ChangedMosaicTypeEventArgs(oldMosaic)); }
-   /// <summary> уведомить об изменении размера мозаики </summary>
-   private void fireOnChangedMosaicSize(Matrisize oldSize) { OnChangedMosaicSize(this, new MosaicEvent.ChangedMosaicSizeEventArgs(oldSize)); }
 
    /// <summary>перерисовать ячейку; если null - перерисовать всё поле </summary>
    protected abstract void Repaint(BaseCell cell);
@@ -300,37 +299,31 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
    private void GameEnd(bool victory) {
       if (GameStatus == EGameStatus.eGSEnd) return;
 
-      int realCountOpen = 0;
-      { // открыть оставшeеся
-//         ::SetCursor(::LoadCursor(NULL, IDC_WAIT));
-         foreach (BaseCell cell in Matrix)
-            if (cell.State.Status == EState._Close) {
-               if (victory) {
-                  if (cell.State.Open == EOpen._Mine)
-                  {
-                     cell.State.setClose(EClose._Flag, null);
-                  } else {
-                     cell.State.setStatus(EState._Open, null);
-                     cell.State.Down = true;
-                  }
-                  realCountOpen++;
+      // открыть оставшeеся
+      foreach (var cell in Matrix)
+         if (cell.State.Status == EState._Close) {
+            if (victory) {
+               if (cell.State.Open == EOpen._Mine)
+               {
+                  cell.State.setClose(EClose._Flag, null);
                } else {
-                  if ((cell.State.Open != EOpen._Mine) ||
-                     (cell.State.Close != EClose._Flag))
-                  {
-                     cell.State.setStatus(EState._Open, null);
-                  }
+                  cell.State.setStatus(EState._Open, null);
+                  cell.State.Down = true;
                }
-               Repaint(cell);
             } else {
-               realCountOpen++;
+               if ((cell.State.Open != EOpen._Mine) ||
+                  (cell.State.Close != EClose._Flag))
+               {
+                  cell.State.setStatus(EState._Open, null);
+               }
             }
-//         ::SetCursor(::LoadCursor(NULL, IDC_ARROW));
-      }
-      //BeepSpeaker();
+            Repaint(cell);
+         }
 
       GameStatus = EGameStatus.eGSEnd;
-      fireOnChangedCounters();
+      OnPropertyChanged("CountMinesLeft");
+      OnPropertyChanged("CountFlag");
+      OnPropertyChanged("CountOpen");
    }
 
    private void VerifyFlag() {
@@ -341,7 +334,7 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
                (cell.State.Open != EOpen._Mine))
                return; // неверно проставленный флажок - на выход
          GameEnd(true);
-      } else
+      } else {
          if (MinesCount == (CountFlag + CountUnknown)) {
             foreach (BaseCell cell in Matrix)
                if (((cell.State.Close == EClose._Unknown) ||
@@ -350,7 +343,7 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
                   return; // неверно проставленный флажок или '?'- на выход
             GameEnd(true);
          }
-      return;
+      }
    }
 
    protected bool OnLeftButtonDown(BaseCell cellLeftDown) {
@@ -412,7 +405,14 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
          if (res) {
             CountClick++;
             PlayInfo = EPlayInfo.ePlayerUser;  // юзер играл
-            fireOnChangedCounters();
+            if (result.countOpen > 0)
+               OnPropertyChanged("CountOpen");
+            if (result.countFlag > 0) {
+               OnPropertyChanged("CountFlag");
+               OnPropertyChanged("CountMinesLeft");
+            }
+            if (result.countUnknown > 0)
+               OnPropertyChanged("CountUnknown");
          }
 
          if (result.endGame) {
@@ -463,10 +463,15 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
          if (res) {
             CountClick++;
             PlayInfo = EPlayInfo.ePlayerUser; // то считаю что юзер играл
-            fireOnChangedCounters();
+            if (result.countFlag > 0) {
+               OnPropertyChanged("CountFlag");
+               OnPropertyChanged("CountMinesLeft");
+            }
+            if (result.countUnknown > 0)
+               OnPropertyChanged("CountUnknown");
          }
 
-         VerifyFlag();
+            VerifyFlag();
          if (GameStatus != EGameStatus.eGSEnd) {
             //...
          }
@@ -525,7 +530,6 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
       if (RepositoryMines.Count == 0) {
          MinesCount = 0;
          GameStatus = EGameStatus.eGSCreateGame;
-         fireOnChangedCounters();
       }
    }
 
@@ -543,10 +547,10 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
       }
       set {
          var oldArea = CellAttr.Area;
-         if (oldArea == Math.Max(AREA_MINIMUM, value))
+         value = Math.Max(AREA_MINIMUM, value);
+         if (oldArea.HasMinDiff(value))
             return;
-         CellAttr.Area = Math.Max(AREA_MINIMUM, value);
-         fireOnChangedArea(oldArea);
+         CellAttr.Area = value;
       }
    }
    public bool UseUnknown {
@@ -602,6 +606,14 @@ public abstract class MosaicBase<TPaintable> : IMosaic<TPaintable> where TPainta
    protected void Initialize(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) {
       SetParams(sizeField, mosaicType, minesCount);
       Area = area; // ...провера на валидность есть только при установке из класса Main. Так что, не нуна тут задавать громадные велечины.
+   }
+
+   private void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
+      var pn = ev.PropertyName;
+      if (pn == "Area") {
+         Matrix.ToList().ForEach(cell => cell.Init());
+         OnPropertyChanged(this, ev); // ! rethrow event - notify parent class
+      }
    }
 }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using Windows.System;
 using Windows.Devices.Input;
@@ -20,6 +21,7 @@ using Log = FastMines.Common.LoggerSimple;
 using Size = fmg.common.geom.Size;
 using Thickness = Windows.UI.Xaml.Thickness;
 using fmg.core.mosaic;
+using FastMines.Presentation.Notyfier;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace FastMines {
@@ -46,11 +48,7 @@ namespace FastMines {
                ContentRoot.Children.Add(_mosaic.Container);
 
                _mosaic.OnClick += Mosaic_OnClick;
-               _mosaic.OnChangedGameStatus += Mosaic_OnChangedGameStatus;
-               _mosaic.OnChangedCounters += Mosaic_OnChangedCounters;
-               _mosaic.OnChangedArea += Mosaic_OnChangedArea;
-               _mosaic.OnChangedMosaicType += Mosaic_OnChangedMosaicType;
-               _mosaic.OnChangedMosaicSize += Mosaic_OnChangedMosaicSize;
+               _mosaic.PropertyChanged += OnMosaicPropertyChanged;
             }
             return _mosaic;
          }
@@ -197,6 +195,38 @@ namespace FastMines {
          Area = MosaicHelper.FindAreaBySize(MosaicField.MosaicType, MosaicField.SizeField, ref sizePage);
       }
 
+      private void OnMosaicPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         switch (ev.PropertyName) {
+         case "MosaicType":
+            Mosaic_OnChangedMosaicType(sender as Mosaic, ev as PropertyChangedExEventArgs<EMosaic>);
+            break;
+         case "Area":
+            Mosaic_OnChangedArea(sender as Mosaic, ev as PropertyChangedExEventArgs<double>);
+            break;
+         case "GameStatus":
+            Mosaic_OnChangedGameStatus(sender as Mosaic, ev as PropertyChangedExEventArgs<EGameStatus>);
+            break;
+         case "SizeField":
+            Mosaic_OnChangedSizeField(sender as Mosaic, ev as PropertyChangedExEventArgs<Matrisize>);
+            break;
+         case "MinesCount":
+            Mosaic_OnChangedMinesCount(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
+            break;
+         case "CountFlag":
+            Mosaic_OnChangedCountFlag(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
+            break;
+         case "CountOpen":
+            Mosaic_OnChangedCountOpen(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
+            break;
+         case "CountMinesLeft":
+            Mosaic_OnChangedCountMinesLeft(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
+            break;
+         case "CountClick":
+            Mosaic_OnChangedCountClick(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
+            break;
+         }
+
+      }
 
 
 
@@ -232,16 +262,21 @@ namespace FastMines {
          _clickInfo.Released = !e.isDown();
       }
 
-      private void Mosaic_OnChangedGameStatus(object source, MosaicEvent.ChangedGameStatusEventArgs e) {
-         if ((MosaicEvent.getSource<PaintableShapes>(source) ?? _mosaic).GameStatus == EGameStatus.eGSEnd) {
+      private void Mosaic_OnChangedGameStatus(Mosaic sender, PropertyChangedExEventArgs<EGameStatus> ev) {
+         Debug.Assert(ReferenceEquals(sender, MosaicField));
+         if (sender.GameStatus == EGameStatus.eGSEnd) {
             //this.bottomAppBar.Focus(FocusState.Programmatic);
             bottomAppBar.IsOpen = true;
          }
       }
-      private void Mosaic_OnChangedCounters(object source, MosaicEvent.ChangedCountersEventArgs e) {}
-      private void Mosaic_OnChangedArea(object source, MosaicEvent.ChangedAreaEventArgs e) {
+      private void Mosaic_OnChangedMinesCount(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
+      private void Mosaic_OnChangedCountFlag(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
+      private void Mosaic_OnChangedCountOpen(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
+      private void Mosaic_OnChangedCountMinesLeft(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
+      private void Mosaic_OnChangedCountClick(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
+      private void Mosaic_OnChangedArea(Mosaic sender, PropertyChangedExEventArgs<double> ev) {
+         Debug.Assert(ReferenceEquals(sender, MosaicField));
          using (new Tracer("Mosaic_OnChangedArea")) {
-            Debug.Assert(ReferenceEquals(MosaicField, source));
             //ChangeSizeImagesMineFlag();
 
             //MosaicField.Container.Margin = new Thickness();
@@ -250,7 +285,7 @@ namespace FastMines {
             if (_mouseDevicePosition_AreaChanging.HasValue) {
                var devicePos = _mouseDevicePosition_AreaChanging.Value;
 
-               var oldWinSize = MosaicField.GetWindowSize(MosaicField.SizeField, e.getOldArea());
+               var oldWinSize = MosaicField.GetWindowSize(MosaicField.SizeField, ev.OldValue);
                var newWinSize = MosaicField.GetWindowSize(MosaicField.SizeField, Area);
 
                // точка над игровым полем со старой площадью ячеек
@@ -274,17 +309,17 @@ namespace FastMines {
             MosaicField.Container.Margin = m;
          }
       }
-      private void Mosaic_OnChangedMosaicType(object source, MosaicEvent.ChangedMosaicTypeEventArgs e) {
+      private void Mosaic_OnChangedMosaicType(Mosaic sender, PropertyChangedExEventArgs<EMosaic> ev) {
+         Debug.Assert(ReferenceEquals(sender, MosaicField));
          using (new Tracer("Mosaic_OnChangedMosaicType")) {
-            Debug.Assert(ReferenceEquals(MosaicField, source));
-            (source as Mosaic)?.ChangeFontSize();
+            sender.ChangeFontSize();
             //ChangeSizeImagesMineFlag();
          }
       }
 
-      private void Mosaic_OnChangedMosaicSize(object source, MosaicEvent.ChangedMosaicSizeEventArgs e) {
-         using (new Tracer("Mosaic_OnChangedMosaicSize")) {
-            Debug.Assert(ReferenceEquals(MosaicField, source));
+      private void Mosaic_OnChangedSizeField(Mosaic sender, PropertyChangedExEventArgs<Matrisize> ev) {
+         Debug.Assert(ReferenceEquals(sender, MosaicField));
+         using (new Tracer("Mosaic_OnChangedSizeField")) {
          }
       }
 

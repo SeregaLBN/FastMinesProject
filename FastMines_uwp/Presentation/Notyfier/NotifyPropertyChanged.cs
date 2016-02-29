@@ -31,7 +31,7 @@ namespace FastMines.Presentation.Notyfier {
       /// <param name="newValue">new value</param>
       /// <param name="propertyName">Name of the property used to notify listeners.  This value is optional and can be provided automatically
       /// when invoked from compilers that support <see cref="CallerMemberNameAttribute"/>.</param>
-      private void OnPropertyChanged<T>(T oldValue, T newValue, [CallerMemberName] string propertyName = null) {
+      protected void OnPropertyChanged<T>(T oldValue, T newValue, [CallerMemberName] string propertyName = null) {
          OnPropertyChanged(this, new PropertyChangedExEventArgs<T>(newValue, oldValue, propertyName));
       }
 

@@ -1,4 +1,3 @@
-using fmg.common.geom;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 using fmg.core.mosaic.draw;
@@ -33,70 +32,6 @@ namespace fmg.core.types.Event
          public BaseCell getCell()
          {
             return cell;
-         }
-      }
-
-      public class ChangedCountersEventArgs : MosaicEvent
-      {
-      }
-
-      public class ChangedGameStatusEventArgs : MosaicEvent
-      {
-         EGameStatus oldGameStatus;
-
-         public ChangedGameStatusEventArgs(EGameStatus oldGameStatus)
-         {
-            this.oldGameStatus = oldGameStatus;
-         }
-
-         public EGameStatus getOldGameStatus()
-         {
-            return oldGameStatus;
-         }
-      }
-
-      public class ChangedAreaEventArgs : MosaicEvent
-      {
-         double oldArea;
-
-         public ChangedAreaEventArgs(double oldArea)
-         {
-            this.oldArea = oldArea;
-         }
-
-         public double getOldArea()
-         {
-            return oldArea;
-         }
-      }
-
-      public class ChangedMosaicTypeEventArgs : MosaicEvent
-      {
-         EMosaic oldMosaic;
-
-         public ChangedMosaicTypeEventArgs(EMosaic oldMosaic)
-         {
-            this.oldMosaic = oldMosaic;
-         }
-
-         public EMosaic getOldMosaic()
-         {
-            return oldMosaic;
-         }
-      }
-
-      public class ChangedMosaicSizeEventArgs : MosaicEvent
-      {
-         Matrisize oldSize;
-
-         public ChangedMosaicSizeEventArgs(Matrisize oldSize)
-         {
-            this.oldSize = oldSize;
-         }
-
-         public Matrisize getOldSize()
-         {
-            return oldSize;
          }
       }
 
