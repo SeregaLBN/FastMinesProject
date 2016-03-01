@@ -24,7 +24,6 @@ package fmg.core.mosaic;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +36,7 @@ import fmg.common.geom.Coord;
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
+import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EClose;
 import fmg.core.types.EGameStatus;
@@ -53,8 +53,8 @@ import fmg.core.types.event.MosaicListener;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
 /** Mosaic field: класс окна мозаики поля */
-public abstract class MosaicBase implements IMosaic<PaintableGraphics>, PropertyChangeListener {
-
+public abstract class MosaicBase extends NotifyPropertyChanged implements IMosaic<PaintableGraphics>, PropertyChangeListener
+{
    public static final double AREA_MINIMUM = 230;
 
    /** матрица List &lt; List &lt; BaseCell &gt; &gt; , представленная(развёрнута) в виде вектора */
@@ -90,7 +90,7 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics>, Property
    public BaseCell.BaseAttribute getCellAttr() {
       if (_cellAttr == null) {
          _cellAttr = MosaicHelper.createAttributeInstance(getMosaicType(), getArea());
-         _cellAttr.addPropertyChangeListener(this);
+         _cellAttr.addListener(this);
       }
       return _cellAttr;
    }
@@ -165,13 +165,13 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics>, Property
                cell.IdentifyNeighbors(this);
          }
 
-         propertyChanges.firePropertyChange("MinesCount", oldMinesCount, _minesCount);
-         propertyChanges.firePropertyChange("CountMinesLeft", -1, _minesCount);
+         onPropertyChanged(oldMinesCount, _minesCount, "MinesCount");
+         onPropertyChanged(null, _minesCount, "CountMinesLeft");
          //CountMinesLeft = MinesCount - CountFlag
          if (isNewMosaic)
-            propertyChanges.firePropertyChange("MosaicType", oldMosaicType, newMosaicType);
+            onPropertyChanged(oldMosaicType, newMosaicType, "MosaicType");
          if (isNewSizeFld)
-            propertyChanges.firePropertyChange("SizeField", oldMosaicSize, newSizeField);
+            onPropertyChanged(oldMosaicSize, newSizeField, "SizeField");
       } finally {
          if ((storageCoordMines == null) || storageCoordMines.isEmpty())
             getRepositoryMines().clear();
@@ -258,7 +258,7 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics>, Property
       int old = _countClick;
       if (old != clickCount) {
          _countClick = clickCount;
-         propertyChanges.firePropertyChange("CountClick", old, clickCount);
+         onPropertyChanged(old, clickCount, "CountClick");
       }
    }
 
@@ -297,7 +297,7 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics>, Property
       EGameStatus oldStatus = _gameStatus;
       if (oldStatus != newStatus) {
          _gameStatus = newStatus;
-         propertyChanges.firePropertyChange("GameStatus", oldStatus, newStatus);
+         onPropertyChanged(oldStatus, newStatus, "GameStatus");
       }
    }
 
@@ -397,9 +397,9 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics>, Property
          }
 
       setGameStatus(EGameStatus.eGSEnd);
-      propertyChanges.firePropertyChange("CountMinesLeft", -1, -2);
-      propertyChanges.firePropertyChange("CountFlag", -1, -2);
-      propertyChanges.firePropertyChange("CountOpen", -1, -2);
+      onPropertyChanged(null, null, "CountMinesLeft");
+      onPropertyChanged(null, null, "CountFlag");
+      onPropertyChanged(null, null, "CountOpen");
    }
 
    private void VerifyFlag() {
@@ -477,13 +477,13 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics>, Property
             setCountClick(getCountClick()+1);
             setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
             if (result.countOpen > 0)
-               propertyChanges.firePropertyChange("CountOpen", -1, -2);
+               onPropertyChanged(null, null, "CountOpen");
             if (result.countFlag > 0) {
-               propertyChanges.firePropertyChange("CountFlag", -1, -2);
-               propertyChanges.firePropertyChange("CountMinesLeft", -1, -2);
+               onPropertyChanged(null, null, "CountFlag");
+               onPropertyChanged(null, null, "CountMinesLeft");
             }
             if (result.countUnknown > 0)
-               propertyChanges.firePropertyChange("CountUnknown", -1, -2);
+               onPropertyChanged(null, null, "CountUnknown");
          }
    
          if (result.endGame) {
@@ -535,11 +535,11 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics>, Property
          setCountClick(getCountClick()+1);
          setPlayInfo(EPlayInfo.ePlayerUser); // то считаю что юзер играл
          if (result.countFlag>0) {
-            propertyChanges.firePropertyChange("CountFlag", -1, -2);
-            propertyChanges.firePropertyChange("CountMinesLeft", -1, -2);
+            onPropertyChanged(null, null, "CountFlag");
+            onPropertyChanged(null, null, "CountMinesLeft");
          }
          if (result.countUnknown > 0)
-            propertyChanges.firePropertyChange("CountUnknown", -1, -2);
+            onPropertyChanged(null, null, "CountUnknown");
       }
 
       VerifyFlag();
@@ -672,21 +672,6 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics>, Property
    }
 
 
-   /**
-    * На это подписаны:
-    *  <li> Main - при изменении Area
-    *  <li> Main - при изменении счётчиков
-    */
-   private PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
-   /**  подписаться на уведомления изменений атрибута */
-   public void addPropertyChangeListener(PropertyChangeListener l) {
-      propertyChanges.addPropertyChangeListener(l);
-   }
-   /**  отписаться от уведомлений изменений атрибута */
-   public void removePropertyChangeListener(PropertyChangeListener l) {
-      propertyChanges.removePropertyChangeListener(l);
-   }
-
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
       if (ev.getSource() instanceof BaseCell.BaseAttribute)
@@ -694,8 +679,8 @@ public abstract class MosaicBase implements IMosaic<PaintableGraphics>, Property
    }
    private void OnCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) { 
       if ("Area".equals(ev.getPropertyName())) {
-         getMatrix().stream().forEach(cell -> cell.Init());
-         propertyChanges.firePropertyChange( new PropertyChangeEvent(this, ev.getPropertyName(), ev.getOldValue(), ev.getNewValue())); // ! rethrow event - notify parent class
+         getMatrix().forEach(cell -> cell.Init());
+         onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName()); // ! rethrow event - notify parent class
       }
    }
 

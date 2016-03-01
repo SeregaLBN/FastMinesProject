@@ -58,7 +58,7 @@ public abstract class BaseCell {
       /// На PropertyChanged это подписаны все наследники BaseCell: при изменении A - надо пересчить все координаты точек
 
       public BaseAttribute(double area) {
-         Area = area;
+         _area = area;
       }
 
       /// <summary>площадь ячейки/фигуры</summary>

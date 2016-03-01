@@ -22,8 +22,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 package fmg.core.mosaic.cells;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -36,6 +34,7 @@ import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
 import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
+import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
@@ -68,24 +67,11 @@ public abstract class BaseCell {
     * <br> (Полные данные о конкретной мозаике) <br>
     * Доопределаяется наследниками BaseCell
     */
-   public static abstract class BaseAttribute {
-      /**
-       * На это подписаны:
-       *  <li> мозаика - перерасчитывает координаты всех ячеек
-       */
-      private PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
-      /**  подписаться на уведомления изменений атрибута */
-      public void addPropertyChangeListener(PropertyChangeListener l) {
-         propertyChanges.addPropertyChangeListener(l);
-      }
-      /**  отписаться от уведомлений изменений атрибута */
-      public void removePropertyChangeListener(PropertyChangeListener l) {
-         propertyChanges.removePropertyChangeListener(l);
-      }
+   public static abstract class BaseAttribute extends NotifyPropertyChanged {
 
       public BaseAttribute(double area) {
          super();
-         setArea(area);
+         this.area = area;
       }
 
       /** площадь ячейки/фигуры */
@@ -93,10 +79,11 @@ public abstract class BaseCell {
 
       /** площадь ячейки/фигуры */
       public void setArea(double area) {
+         //setProperty(area, "Area");
          double old = this.area;
          if (!DoubleExt.hasMinDiff(old, area)) {
             this.area = area;
-            propertyChanges.firePropertyChange("Area", old, area);
+            onPropertyChanged(old, area, "Area");
          }
       }
       /** площадь ячейки/фигуры */

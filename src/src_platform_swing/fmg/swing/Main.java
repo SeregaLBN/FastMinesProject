@@ -804,7 +804,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    public Mosaic getMosaic() {
       if (mosaic == null) {
          mosaic = new Mosaic();
-         mosaic.addPropertyChangeListener(this);
+         mosaic.addListener(this);
       }
       return mosaic;
    }
