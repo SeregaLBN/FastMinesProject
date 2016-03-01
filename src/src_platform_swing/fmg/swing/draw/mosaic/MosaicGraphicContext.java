@@ -27,7 +27,7 @@ public class MosaicGraphicContext extends GraphicContext {
    public void setColorBk(Color colorBk) {
       Object old = this.colorBk;
       this.colorBk = colorBk;
-      propertyChanges.firePropertyChange("GraphicContext_colorBk", old, colorBk);
+      onPropertyChanged(old, colorBk, "GraphicContext_colorBk");
    }
 
    public ImageIcon getImgBckgrnd() {
@@ -36,6 +36,6 @@ public class MosaicGraphicContext extends GraphicContext {
    public void setImgBckgrnd(ImageIcon imgBckgrnd) {
       Object old = this.imgBckgrnd;
       this.imgBckgrnd = imgBckgrnd;
-      propertyChanges.firePropertyChange("GraphicContext_imgBckgrnd", old, imgBckgrnd);
+      onPropertyChanged(old, imgBckgrnd, "GraphicContext_imgBckgrnd");
    }
 }

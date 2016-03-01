@@ -1,24 +1,13 @@
 package fmg.data.view.draw;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
 
 import fmg.common.Color;
+import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 
-public class ColorText {
-   private PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
-   /**  подписаться на уведомления изменений ColorText */
-   public void addPropertyChangeListener(PropertyChangeListener l) {
-      propertyChanges.addPropertyChangeListener(l);
-   }
-   /**  отписаться от уведомлений изменений ColorText */
-   public void removeChangeListener(PropertyChangeListener l) {
-      propertyChanges.removePropertyChangeListener(l);
-   }
+public class ColorText extends NotifyPropertyChanged {
 
    private Color[] colorOpen;
    private Color[] colorClose;
@@ -75,14 +64,14 @@ public class ColorText {
       Color[] old = this.colorOpen;
       if (!Arrays.equals(old, colorOpen)) {
          this.colorOpen = colorOpen;
-         propertyChanges.firePropertyChange(new PropertyChangeEvent(this, "ColorText_colorOpen", old, colorOpen));
+         onPropertyChanged(old, colorOpen, "ColorText_colorOpen");
       }
    }
    public void setColorOpen(int i, Color colorOpen) {
       Color old = this.colorOpen[i];
       if (!old.equals(colorOpen)) {
          this.colorOpen[i] = colorOpen;
-         propertyChanges.firePropertyChange(new PropertyChangeEvent(this, "ColorText_colorOpen"+i, old, colorOpen));
+         onPropertyChanged(old, colorOpen, "ColorText_colorOpen"+i);
       }
    }
 
@@ -96,14 +85,14 @@ public class ColorText {
       Color[] old = this.colorClose;
       if (!Arrays.equals(old, colorClose)) {
          this.colorClose = colorClose;
-         propertyChanges.firePropertyChange(new PropertyChangeEvent(this, "ColorText_colorClose", old, colorClose));
+         onPropertyChanged(old, colorClose, "ColorText_colorClose");
       }
    }
    public void setColorClose(int i, Color colorClose) {
       Color old = this.colorClose[i];
       if (!old.equals(colorClose)) {
          this.colorClose[i] = colorClose;
-         propertyChanges.firePropertyChange(new PropertyChangeEvent(this, "ColorText_colorClose"+i, old, colorClose));
+         onPropertyChanged(old, colorClose, "ColorText_colorClose"+i);
       }
    }
 

@@ -1,8 +1,6 @@
 package fmg.swing.draw;
 
 import java.awt.Font;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -14,22 +12,13 @@ import javax.swing.UIManager;
 
 import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
+import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.data.view.draw.ColorText;
 import fmg.data.view.draw.PenBorder;
 import fmg.swing.Cast;
 
-public class GraphicContext  {
+public class GraphicContext extends NotifyPropertyChanged {
    public static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 10);
-
-   protected PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
-   /**  подписаться на уведомления изменений свойств GraphicContext */
-   public void addPropertyChangeListener(PropertyChangeListener l) {
-      propertyChanges.addPropertyChangeListener(l);
-   }
-   /**  отписаться от уведомлений изменений свойств GraphicContext */
-   public void removePropertyChangeListener(PropertyChangeListener l) {
-      propertyChanges.removePropertyChangeListener(l);
-   }
 
    /** TODO: Mosaic field - нуна избавиться... */
    private JComponent owner;
@@ -54,7 +43,7 @@ public class GraphicContext  {
       Object old = this.imgMine;
       if (old != img) { // references compare
          this.imgMine = img;
-         propertyChanges.firePropertyChange("GraphicContext_imgMine", old, img);
+         onPropertyChanged(old, img, "GraphicContext_imgMine");
       }
    }
    public ImageIcon getImgFlag() {
@@ -64,7 +53,7 @@ public class GraphicContext  {
       Object old = this.imgFlag;
       if (old != img) { // references compare
          this.imgFlag = img;
-         propertyChanges.firePropertyChange("GraphicContext_imgFlag", old, img);
+         onPropertyChanged(old, img, "GraphicContext_imgFlag");
       }
    }
 
@@ -77,7 +66,7 @@ public class GraphicContext  {
       ColorText old = this.colorText;
       if (!colorText.equals(old)) {
          this.colorText = colorText;
-         propertyChanges.firePropertyChange("GraphicContext_colorText", old, colorText);
+         onPropertyChanged(old, colorText, "GraphicContext_colorText");
       }
    }
 
@@ -90,7 +79,7 @@ public class GraphicContext  {
       PenBorder old = this.penBorder;
       if (!penBorder.equals(old)) {
          this.penBorder = penBorder;
-         propertyChanges.firePropertyChange("GraphicContext_penBorder", old, penBorder);
+         onPropertyChanged(old, penBorder, "GraphicContext_penBorder");
       }
    }
 
@@ -159,7 +148,7 @@ public class GraphicContext  {
       BoundDouble old = this.padding;
       if (!padding.equals(old)) {
          this.padding = padding;
-         propertyChanges.firePropertyChange("GraphicContext_padding", old, padding);
+         onPropertyChanged(old, padding, "GraphicContext_padding");
       }
    }
 
@@ -172,7 +161,7 @@ public class GraphicContext  {
       Object old = this.font;
       if (old != font) { // references compare
          this.font = font;
-         propertyChanges.firePropertyChange("GraphicContext_font", old, font);
+         onPropertyChanged(old, font, "GraphicContext_font");
       }
    }
    public void setFont(Font newFont) {

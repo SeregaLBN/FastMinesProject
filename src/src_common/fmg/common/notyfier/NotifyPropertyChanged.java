@@ -15,7 +15,7 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
    public void addListener(PropertyChangeListener l) { propertyChanges.addPropertyChangeListener(l); }
    public void removePropertyChangeListener(PropertyChangeListener l) { propertyChanges.removePropertyChangeListener(l); }
 
-   @Deprecated // used reflection...
+   @Deprecated // used reflection :(
    protected <T> boolean setProperty(T newValue, String propertyName) {
       Object oldValue;
       try {

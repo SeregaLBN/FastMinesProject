@@ -114,7 +114,7 @@ public class Mosaic extends MosaicBase {
       if (_gContext == null) {
          _gContext = new MosaicGraphicContext(getContainer());
 //         changeFontSize(_gContext.getPenBorder(), getArea());
-         _gContext.addPropertyChangeListener(this); // изменение контекста -> перерисовка мозаики
+         _gContext.addListener(this); // изменение контекста -> перерисовка мозаики
          _cellPaint = null;
       }
       return _gContext;
