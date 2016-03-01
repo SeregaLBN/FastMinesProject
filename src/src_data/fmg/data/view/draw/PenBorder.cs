@@ -1,49 +1,17 @@
 using fmg.common;
+using FastMines.Presentation.Notyfier;
 
-namespace fmg.data.view.draw
-{
-
-   public delegate void OnPenBorderColorChanged(object sender, PenBorder.PropertyChangeColorEventArgs e);
-   public delegate void OnPenBorderWidthChanged(object sender, PenBorder.PropertyChangeWidthEventArgs e);
-
+namespace fmg.data.view.draw {
 
    /// <summary> Характеристики кисти у рамки ячейки</summary>
-   public class PenBorder
-   {
+   public class PenBorder : NotifyPropertyChanged {
 
-      #region EventArgs
-      public class PropertyChangeColorEventArgs : System.EventArgs
-      {
-         bool _light;
-         Color _oldVal;
-
-         public PropertyChangeColorEventArgs(bool light, Color oldVal)
-         {
-            _light = light;
-            _oldVal = oldVal;
-         }
-      }
-
-      public class PropertyChangeWidthEventArgs : System.EventArgs
-      {
-         int _oldVal;
-
-         public PropertyChangeWidthEventArgs(int oldVal)
-         {
-            _oldVal = oldVal;
-         }
-      }
-      #endregion
-
-      public event OnPenBorderColorChanged OnColorChanged = delegate { };
-      public event OnPenBorderWidthChanged OnWidthChanged = delegate { };
-
-      private Color colorShadow, colorLight;
-      private int width;
+      private Color _colorShadow, _colorLight;
+      private int _width;
 
       public PenBorder() :
          this(Color.Black, Color.White, 3)
-      //this(Color.GREEN, Color.RED, 1)
+       //this(Color.GREEN, Color.RED, 1)
       { }
 
       public PenBorder(
@@ -51,64 +19,42 @@ namespace fmg.data.view.draw
             Color colorLight,
             int iWidth)
       {
-         this.colorShadow = colorShadow;
-         this.colorLight = colorLight;
-         this.width = iWidth;
+         _colorShadow = colorShadow;
+         _colorLight = colorLight;
+         _width = iWidth;
       }
 
-      public Color ColorShadow
-      {
-         get { return colorShadow; }
-         set
-         {
-            Color old = colorShadow;
-            colorShadow = value;
-            OnColorChanged(this, new PropertyChangeColorEventArgs(false, old));
-         }
+      public Color ColorShadow {
+         get { return _colorShadow; }
+         set { SetProperty(ref _colorShadow, value); }
       }
 
-      public Color ColorLight
-      {
-         get { return colorLight; }
-         set
-         {
-            Color old = colorLight;
-            colorLight = value;
-            OnColorChanged(this, new PropertyChangeColorEventArgs(true, old));
-         }
+      public Color ColorLight {
+         get { return _colorLight; }
+         set { SetProperty(ref _colorLight, value); }
       }
 
-      public int Width
-      {
-         get { return width; }
-         set
-         {
-            int old = width;
-            width = value;
-            OnWidthChanged(this, new PropertyChangeWidthEventArgs(old));
-         }
+      public int Width {
+         get { return _width; }
+         set { SetProperty(ref _width, value); }
       }
 
-      public override int GetHashCode()
-      {
-         unchecked
-         {
-            int hashCode = colorShadow.GetHashCode();
-            hashCode = (hashCode * 397) ^ colorLight.GetHashCode();
-            hashCode = (hashCode * 397) ^ width;
+      public override int GetHashCode() {
+         unchecked {
+            var hashCode = _colorShadow.GetHashCode();
+            hashCode = (hashCode * 397) ^ _colorLight.GetHashCode();
+            hashCode = (hashCode * 397) ^ _width;
             return hashCode;
          }
       }
 
-      protected bool Equals(PenBorder other)
-      {
-         return (width == other.width)
-               && colorShadow.Equals(other.colorShadow)
-               && colorLight.Equals(other.colorLight);
+      protected bool Equals(PenBorder other) {
+         return (_width == other._width)
+               && _colorShadow.Equals(other._colorShadow)
+               && _colorLight.Equals(other._colorLight);
       }
 
-      public override bool Equals(object other)
-      {
+      public override bool Equals(object other) {
          var penObj = other as PenBorder;
          return (penObj != null) && Equals(penObj);
       }

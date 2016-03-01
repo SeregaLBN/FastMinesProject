@@ -28,16 +28,16 @@ namespace fmg.uwp.draw {
       public static readonly Random Rand = new Random(Guid.NewGuid().GetHashCode());
 
       public GraphicContext(bool iconicMode) {
-         this.IconicMode = iconicMode;
+         IconicMode = iconicMode;
       }
 
       public WriteableBitmap ImgMine {
-         get { return this._imgMine; }
-         set { this.SetProperty(ref this._imgMine, value); }
+         get { return _imgMine; }
+         set { SetProperty(ref _imgMine, value); }
       }
       public WriteableBitmap ImgFlag {
-         get { return this._imgFlag; }
-         set { this.SetProperty(ref this._imgFlag, value); }
+         get { return _imgFlag; }
+         set { SetProperty(ref _imgFlag, value); }
       }
 
       public ColorText ColorText {
@@ -47,7 +47,7 @@ namespace fmg.uwp.draw {
             return _colorText;
          }
          set {
-            this.SetProperty(ref this._colorText, value);
+            SetProperty(ref _colorText, value);
          }
       }
 
@@ -58,7 +58,7 @@ namespace fmg.uwp.draw {
             return _penBorder;
          }
          set {
-            this.SetProperty(ref this._penBorder, value);
+            SetProperty(ref _penBorder, value);
          }
       }
 
@@ -77,7 +77,7 @@ namespace fmg.uwp.draw {
          public int Mode {
             get { return _mode; }
             set {
-               this._mode = value;
+               _mode = value;
                _colors.Clear();
             }
          }
@@ -108,20 +108,20 @@ namespace fmg.uwp.draw {
 
       public BoundDouble Padding {
          get { return _padding; }
-         set { this.SetProperty(ref this._padding, value); }
+         set { SetProperty(ref _padding, value); }
       }
 
       public FontFamily FontFamily {
          get { return _fontFamily; }
-         set { this.SetProperty(ref this._fontFamily, value); }
+         set { SetProperty(ref _fontFamily, value); }
       }
       public FontStyle FontStyle {
          get { return _fontStyle; }
-         set { this.SetProperty(ref this._fontStyle, value); }
+         set { SetProperty(ref _fontStyle, value); }
       }
       public int FontSize {
          get { return _fontSize; }
-         set { this.SetProperty(ref this._fontSize, value); }
+         set { SetProperty(ref _fontSize, value); }
       }
 
       /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера </summary>
