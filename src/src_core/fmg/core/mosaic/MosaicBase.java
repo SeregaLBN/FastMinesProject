@@ -517,17 +517,8 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
          return false;
 
       setCellDown(cellRightDown);
-      EClose eClose;
-      switch (cellRightDown.getState().getClose()) {
-      case _Clear  : eClose = EClose._Flag; break;
-      case _Flag   : eClose = getUseUnknown() ? EClose._Unknown : EClose._Clear; break;
-      default: // fix: The local variable eClose may not have been initialized
-      //case _Unknown:
-         eClose = EClose._Clear;
-         break;
-      }
       ClickReportContext clickReportContext = new ClickReportContext();
-      RightDownReturn result = cellRightDown.RButtonDown(eClose, clickReportContext);
+      RightDownReturn result = cellRightDown.RButtonDown(cellRightDown.getState().getClose().nextState(getUseUnknown()), clickReportContext);
       if (result.needRepaint)
          Repaint(cellRightDown);
       boolean res = (result.countFlag>0) || (result.countUnknown>0); // клик со смыслом (были изменения на поле)

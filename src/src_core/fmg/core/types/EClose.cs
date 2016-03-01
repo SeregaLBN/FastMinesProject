@@ -32,5 +32,14 @@ namespace fmg.core.types {
          }
          return null;
       }
+
+      public static EClose NextState(this EClose self, bool useUnknown) {
+         switch (self) {
+         case EClose._Clear  : return EClose._Flag;
+         case EClose._Flag   : return useUnknown ? EClose._Unknown : EClose._Clear;
+         case EClose._Unknown: return EClose._Clear;
+         }
+         throw new ArgumentException("Unknown current value EClose." + self);
+      }
    }
 }

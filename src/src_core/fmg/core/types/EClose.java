@@ -18,4 +18,13 @@ public enum EClose {
    public final String toCaption() {
       return toCaption(this);
    }
+
+   public EClose nextState(boolean useUnknown) {
+      switch (this) {
+      case _Clear  : return _Flag;
+      case _Flag   : return useUnknown ? _Unknown : _Clear;
+      case _Unknown: return _Clear;
+      }
+      throw new RuntimeException("Unknown current value EClose."+this);
+   }
 }

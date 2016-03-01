@@ -395,7 +395,7 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
          }
          var clickReportContext = new ClickReportContext();
          var cell = CellDown;
-         var result = cell.LButtonUp(CellDown == cellLeftUp, clickReportContext);
+         var result = cell.LButtonUp(ReferenceEquals(CellDown, cellLeftUp), clickReportContext);
          tracer.Put(" result.needRepaint="+((result.needRepaint==null) ? "null" : result.needRepaint.Count.ToString()));
          if (result.needRepaint != null) {
             foreach (var cellToRepaint in result.needRepaint)
@@ -446,17 +446,8 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
             return false;
 
          CellDown = cellRightDown;
-         EClose eClose;
-         switch (cellRightDown.State.Close) {
-         case EClose._Clear: eClose = EClose._Flag; break;
-         case EClose._Flag : eClose = UseUnknown ? EClose._Unknown : EClose._Clear; break;
-         default:
-         //case EClose._Unknown:
-            eClose = EClose._Clear;
-            break;
-         }
          var clickReportContext = new ClickReportContext();
-         var result = cellRightDown.RButtonDown(eClose, clickReportContext);
+         var result = cellRightDown.RButtonDown(cellRightDown.State.Close.NextState(UseUnknown), clickReportContext);
          if (result.needRepaint)
             Repaint(cellRightDown);
          var res = (result.countFlag != 0) || (result.countUnknown != 0); // клик со смыслом (были изменения на поле)
