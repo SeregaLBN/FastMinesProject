@@ -258,18 +258,18 @@ public class Mosaic extends MosaicBase {
    }
 
    @Override
-   public void propertyChange(PropertyChangeEvent evt) {
-      super.propertyChange(evt);
-      if ("GraphicContext_penBorder".equals(evt.getPropertyName())) {
+   public void propertyChange(PropertyChangeEvent ev) {
+      super.propertyChange(ev);
+      if (ev.getSource() instanceof GraphicContext)
+         onGraphicContextPropertyChanged((GraphicContext)ev.getSource(), ev);
+   }
+   private void onGraphicContextPropertyChanged(GraphicContext source, PropertyChangeEvent ev) { 
+      if ("PenBorder".equals(ev.getPropertyName())) {
          // см. комент - сноску 1
-         PenBorder penBorder = (PenBorder) evt.getNewValue();
+         PenBorder penBorder = (PenBorder)ev.getNewValue();
          changeFontSize(penBorder, getArea());
       }
-
-      if (evt.getSource().getClass() == GraphicContext.class)
-         getContainer().repaint();
-      if (evt.getSource().getClass() == MosaicGraphicContext.class)
-         getContainer().repaint();
+      getContainer().repaint();
    }
 
     /** пересчитать и установить новую высоту шрифта */

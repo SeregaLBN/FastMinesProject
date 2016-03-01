@@ -43,7 +43,7 @@ public class GraphicContext extends NotifyPropertyChanged {
       Object old = this.imgMine;
       if (old != img) { // references compare
          this.imgMine = img;
-         onPropertyChanged(old, img, "GraphicContext_imgMine");
+         onPropertyChanged(old, img, "ImgMine");
       }
    }
    public ImageIcon getImgFlag() {
@@ -53,7 +53,7 @@ public class GraphicContext extends NotifyPropertyChanged {
       Object old = this.imgFlag;
       if (old != img) { // references compare
          this.imgFlag = img;
-         onPropertyChanged(old, img, "GraphicContext_imgFlag");
+         onPropertyChanged(old, img, "ImgFlag");
       }
    }
 
@@ -66,7 +66,7 @@ public class GraphicContext extends NotifyPropertyChanged {
       ColorText old = this.colorText;
       if (!colorText.equals(old)) {
          this.colorText = colorText;
-         onPropertyChanged(old, colorText, "GraphicContext_colorText");
+         onPropertyChanged(old, colorText, "ColorText");
       }
    }
 
@@ -79,7 +79,7 @@ public class GraphicContext extends NotifyPropertyChanged {
       PenBorder old = this.penBorder;
       if (!penBorder.equals(old)) {
          this.penBorder = penBorder;
-         onPropertyChanged(old, penBorder, "GraphicContext_penBorder");
+         onPropertyChanged(old, penBorder, "PenBorder");
       }
    }
 
@@ -148,7 +148,7 @@ public class GraphicContext extends NotifyPropertyChanged {
       BoundDouble old = this.padding;
       if (!padding.equals(old)) {
          this.padding = padding;
-         onPropertyChanged(old, padding, "GraphicContext_padding");
+         onPropertyChanged(old, padding, "Padding");
       }
    }
 
@@ -161,7 +161,7 @@ public class GraphicContext extends NotifyPropertyChanged {
       Object old = this.font;
       if (old != font) { // references compare
          this.font = font;
-         onPropertyChanged(old, font, "GraphicContext_font");
+         onPropertyChanged(old, font, "Font");
       }
    }
    public void setFont(Font newFont) {

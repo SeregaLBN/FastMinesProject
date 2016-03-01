@@ -32,7 +32,7 @@ public class PenBorder extends NotifyPropertyChanged {
       Color old = this.colorShadow;
       if (!old.equals(colorShadow)) {
          this.colorShadow = colorShadow;
-         onPropertyChanged(old, colorShadow, "PenBorder_colorShadow");
+         onPropertyChanged(old, colorShadow, "ColorShadow");
       }
    }
 
@@ -44,7 +44,7 @@ public class PenBorder extends NotifyPropertyChanged {
       Color old = this.colorLight;
       if (!old.equals(colorLight)) {
          this.colorLight = colorLight;
-         onPropertyChanged(old, colorLight, "PenBorder_colorLight");
+         onPropertyChanged(old, colorLight, "ColorLight");
       }
    }
 

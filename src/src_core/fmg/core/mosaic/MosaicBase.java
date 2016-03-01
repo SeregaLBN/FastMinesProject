@@ -675,9 +675,9 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
       if (ev.getSource() instanceof BaseCell.BaseAttribute)
-         OnCellAttributePropertyChanged((BaseCell.BaseAttribute)ev.getSource(), ev);
+         onCellAttributePropertyChanged((BaseCell.BaseAttribute)ev.getSource(), ev);
    }
-   private void OnCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) { 
+   private void onCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) { 
       if ("Area".equals(ev.getPropertyName())) {
          getMatrix().forEach(cell -> cell.Init());
          onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName()); // ! rethrow event - notify parent class
