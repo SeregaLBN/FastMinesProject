@@ -38,10 +38,7 @@ import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
-import fmg.core.types.click.ClickReportContext;
-import fmg.core.types.click.LeftDownResult;
-import fmg.core.types.click.LeftUpResult;
-import fmg.core.types.click.RightDownReturn;
+import fmg.core.types.click.ClickContext;
 
 /** Базовый класс фигуры-ячейки */
 public abstract class BaseCell {
@@ -163,16 +160,10 @@ public abstract class BaseCell {
 
        public void setDown(boolean bDown) { this.down = bDown; }
        public boolean isDown() { return this.down; }
-       public void setStatus(EState status, ClickReportContext clickRepContext) {
-          if (clickRepContext != null)
-             if (status == EState._Open)
-                if (this.open == EOpen._Nil)
-                   clickRepContext.setOpenNil.add(BaseCell.this);
-                 else
-                    clickRepContext.setOpen.add(BaseCell.this);
-          this.status = status;
-       }
+
+       public void setStatus(EState status) { this.status = status; }
        public EState getStatus() { return status; }
+       
        public void CalcOpenState() {
           if (this.open == EOpen._Mine) return;
           // подсчитать у соседей число мин и установить значение
@@ -189,15 +180,8 @@ public abstract class BaseCell {
           return true;
        }
        public EOpen getOpen() { return this.open; }
-       public void setClose(EClose close, ClickReportContext clickRepContext) {
-          if (clickRepContext != null)
-             if ((     close == EClose._Flag) || // если устанавливаю флажок
-                (this.close == EClose._Flag))   // если снимаю флажок
-             {
-                clickRepContext.setFlag.add(BaseCell.this);
-             }
-          this.close = close;
-       }
+
+       public void setClose(EClose close) { this.close = close; }
        public EClose getClose() { return this.close; }
 
        private StateCell() { Reset(); }
@@ -306,16 +290,16 @@ public abstract class BaseCell {
    public abstract int getShiftPointBorderIndex();
 
 
-   public LeftDownResult LButtonDown() {
+   public ClickContext LButtonDown() {
       if (state.getClose()  == EClose._Flag) return null;
       if (state.getStatus() == EState._Close) {
          state.setDown(true);
-         LeftDownResult result = new LeftDownResult();
-         result.needRepaint.add(this);
+         ClickContext result = new ClickContext();
+         result.modified.add(this);
          return result;
       }
 
-      LeftDownResult result = null;
+      ClickContext result = null;
       // эффект нажатости для неоткрытых соседей
       if ((state.getStatus() == EState._Open) && (state.getOpen() != EOpen._Nil))
          for (int i=0; i<neighbors.length; i++) {
@@ -324,13 +308,13 @@ public abstract class BaseCell {
                (neighbors[i].state.getClose()  == EClose._Flag)) continue;
             neighbors[i].state.setDown(true);
             if (result == null)
-               result = new LeftDownResult();
-            result.needRepaint.add(neighbors[i]);
+               result = new ClickContext();
+            result.modified.add(neighbors[i]);
          }
       return result;
    }
-   public LeftUpResult LButtonUp(boolean isMy, ClickReportContext clickRepContext) {
-      LeftUpResult result = new LeftUpResult(0, 0, 0, false, false);
+   public ClickContext LButtonUp(boolean isMy) {
+      ClickContext result = new ClickContext();
 
       if (state.getClose() == EClose._Flag) return result;
       // избавится от эффекта нажатости
@@ -340,20 +324,18 @@ public abstract class BaseCell {
             if ((neighbors[i].state.getStatus() == EState._Open) ||
                (neighbors[i].state.getClose()  == EClose._Flag)) continue;
             neighbors[i].state.setDown(false);
-            result.addToRepaint(neighbors[i]);
+            result.modified.add(neighbors[i]);
          }
       // Открыть закрытую ячейку на которой нажали
       if (state.getStatus() == EState._Close)
          if (!isMy) {
             state.setDown(false);
-            result.addToRepaint(this);
+            result.modified.add(this);
             return result;
          } else {
-            result.countUnknown += (state.getClose() == EClose._Unknown) ? -1 : 0;
-            result.countOpen++;
-            getState().setStatus(EState._Open, clickRepContext);
+            getState().setStatus(EState._Open);
             getState().setDown(true);
-            result.addToRepaint(this);
+            result.modified.add(this);
          }
 
       // ! В этой точке ячейка уже открыта
@@ -374,35 +356,26 @@ public abstract class BaseCell {
             if (neighbors[i] == null) continue; // существует ли сосед?
             if ((neighbors[i].state.getStatus() == EState._Open) ||
                (neighbors[i].state.getClose()  == EClose._Flag)) continue;
-            result.countUnknown += (neighbors[i].state.getClose() == EClose._Unknown) ? -1 : 0;
-            result.countFlag++;
-            neighbors[i].state.setClose(EClose._Flag, clickRepContext);
-            result.addToRepaint(neighbors[i]);
+            neighbors[i].state.setClose(EClose._Flag);
+            result.modified.add(neighbors[i]);
          }
       if (!isMy) return result;
       // открыть оставшиеся
-      if ((countFlags+result.countFlag) == state.getOpen().ordinal())
+      if ((countFlags+result.getCountFlag()) == state.getOpen().ordinal())
          for (int i=0; i<neighbors.length; i++) {
             if (neighbors[i] == null) continue; // существует ли сосед?
             if ((neighbors[i].state.getStatus() == EState._Open) ||
                (neighbors[i].state.getClose()  == EClose._Flag)) continue;
-            result.countUnknown += (neighbors[i].state.getClose() == EClose._Unknown) ? -1 : 0;
-            result.countOpen++;
             neighbors[i].state.setDown(true);
-            neighbors[i].state.setStatus(EState._Open, clickRepContext);
-            result.addToRepaint(neighbors[i]);
+            neighbors[i].state.setStatus(EState._Open);
+            result.modified.add(neighbors[i]);
             if (neighbors[i].state.getOpen() == EOpen._Nil) {
-               LeftUpResult result2 = neighbors[i].LButtonUp(true, clickRepContext);
-               result.countFlag    += result2.countFlag;
-               result.countOpen    += result2.countOpen;
-               result.countUnknown += result2.countUnknown;
+               ClickContext result2 = neighbors[i].LButtonUp(true);
                if (result.endGame) {
                   result.endGame = result2.endGame;
                   result.victory = result2.victory;
                }
-               if (result2.needRepaint != null)
-                  for (BaseCell cellToRepaint : result2.needRepaint)
-                     result.addToRepaint(cellToRepaint);
+               result.modified.addAll(result2.modified);
             }
             if (neighbors[i].state.getOpen() == EOpen._Mine) {
                result.endGame = true;
@@ -416,39 +389,15 @@ public abstract class BaseCell {
       }
       return result;
    }
-   public RightDownReturn RButtonDown(EClose close, ClickReportContext clickRepContext) {
-      RightDownReturn result = new RightDownReturn(0, 0);
+   public ClickContext RButtonDown(EClose close) {
+      if ((state.getStatus() == EState._Open) || state.isDown())
+         return null;
 
-      if ((state.getStatus() == EState._Open) || state.isDown()) return result;
-      switch (state.getClose()) {
-      case _Clear:
-         switch (close) {
-         case _Flag:    result.countFlag    = +1;  break;
-         case _Unknown: result.countUnknown = +1;
-         default: break;
-         }
-         if (state.getClose() != close)
-            state.setClose(close, clickRepContext);
-         break;
-      case _Flag:
-         switch (close) {
-         case _Unknown: result.countUnknown = +1;
-         case _Clear:   result.countFlag    = -1;
-         default: break;
-         }
-         if (state.getClose() != close)
-            state.setClose(close, clickRepContext);
-         break;
-      case _Unknown:
-         switch (close) {
-         case _Flag:    result.countFlag    = +1;
-         case _Clear:   result.countUnknown = -1;
-         default: break;
-         }
-         if (state.getClose() != close)
-            state.setClose(close, clickRepContext);
-      }
-      result.needRepaint = true;
+      if (state.getClose() != close)
+         state.setClose(close);
+
+      ClickContext result = new ClickContext();
+      result.modified.add(this);
       return result;
    }
 

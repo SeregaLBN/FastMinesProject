@@ -44,10 +44,7 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.EOpen;
 import fmg.core.types.EPlayInfo;
 import fmg.core.types.EState;
-import fmg.core.types.click.ClickReportContext;
-import fmg.core.types.click.LeftDownResult;
-import fmg.core.types.click.LeftUpResult;
-import fmg.core.types.click.RightDownReturn;
+import fmg.core.types.click.ClickContext;
 import fmg.core.types.event.MosaicEvent;
 import fmg.core.types.event.MosaicListener;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
@@ -381,16 +378,16 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
             if (victory) {
                if (cell.getState().getOpen() == EOpen._Mine)
                {
-                  cell.getState().setClose(EClose._Flag, null);
+                  cell.getState().setClose(EClose._Flag);
                } else {
-                  cell.getState().setStatus(EState._Open, null);
+                  cell.getState().setStatus(EState._Open);
                   cell.getState().setDown(true);
                }
             } else {
                if ((cell.getState().getOpen() != EOpen._Mine) ||
                   (cell.getState().getClose() != EClose._Flag))
                {
-                  cell.getState().setStatus(EState._Open, null);
+                  cell.getState().setStatus(EState._Open);
                }
             }
             Repaint(cell);
@@ -432,7 +429,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       setCellDown(cellLeftDown);
       if (getGameStatus() == EGameStatus.eGSCreateGame) {
          if (cellLeftDown.getState().getOpen() != EOpen._Mine) {
-            cellLeftDown.getState().setStatus(EState._Open, null);
+            cellLeftDown.getState().setStatus(EState._Open);
             cellLeftDown.getState().SetMine();
             setMinesCount(getMinesCount()+1);
             getRepositoryMines().add(cellLeftDown.getCoord());
@@ -443,10 +440,9 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
          }
          Repaint(cellLeftDown);
       } else {
-         LeftDownResult result = cellLeftDown.LButtonDown();
-         if ((result != null) && (result.needRepaint != null))
-            for (BaseCell cellToRepaint : result.needRepaint)
-               Repaint(cellToRepaint);
+         ClickContext result = cellLeftDown.LButtonDown();
+         if (result != null)
+            result.modified.forEach(cell -> Repaint(cell));
       }
       getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, cellLeftDown, true, true));
       return true;
@@ -467,23 +463,22 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
          {
             GameBegin(cell);
          }
-         ClickReportContext clickReportContext = new ClickReportContext();
-         LeftUpResult result = cell.LButtonUp(cell == cellLeftUp, clickReportContext);
-         if (result.needRepaint != null)
-            for (BaseCell cellToRepaint : result.needRepaint)
-               Repaint(cellToRepaint);
-         boolean res = (result.countOpen > 0) || (result.countFlag > 0) || (result.countUnknown > 0); // клик со смыслом (были изменения на поле) 
+         ClickContext result = cell.LButtonUp(cell == cellLeftUp);
+         result.modified.forEach(c -> Repaint(c));
+         int countOpen = result.getCountOpen();
+         int countFlag = result.getCountFlag();
+         int countUnknown = result.getCountUnknown();
+         boolean res = (countOpen > 0) || (countFlag > 0) || (countUnknown > 0); // клик со смыслом (были изменения на поле) 
          if (res) {
             setCountClick(getCountClick()+1);
             setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
-            if (result.countOpen > 0)
+            if (countOpen > 0)
                onPropertyChanged(null, null, "CountOpen");
-            if (result.countFlag > 0) {
+            if ((countFlag > 0) || (countUnknown > 0)) {
                onPropertyChanged(null, null, "CountFlag");
                onPropertyChanged(null, null, "CountMinesLeft");
-            }
-            if (result.countUnknown > 0)
                onPropertyChanged(null, null, "CountUnknown");
+            }
          }
    
          if (result.endGame) {
@@ -517,20 +512,20 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
          return false;
 
       setCellDown(cellRightDown);
-      ClickReportContext clickReportContext = new ClickReportContext();
-      RightDownReturn result = cellRightDown.RButtonDown(cellRightDown.getState().getClose().nextState(getUseUnknown()), clickReportContext);
-      if (result.needRepaint)
-         Repaint(cellRightDown);
-      boolean res = (result.countFlag>0) || (result.countUnknown>0); // клик со смыслом (были изменения на поле)
+      ClickContext result = cellRightDown.RButtonDown(cellRightDown.getState().getClose().nextState(getUseUnknown()));
+      if (result==null)
+         return false;
+
+      result.modified.forEach(c -> Repaint(c));
+      int countFlag = result.getCountFlag();
+      int countUnknown = result.getCountUnknown();
+      boolean res = (countFlag > 0) || (countUnknown > 0); // клик со смыслом (были изменения на поле)
       if (res) {
          setCountClick(getCountClick()+1);
          setPlayInfo(EPlayInfo.ePlayerUser); // то считаю что юзер играл
-         if (result.countFlag>0) {
-            onPropertyChanged(null, null, "CountFlag");
-            onPropertyChanged(null, null, "CountMinesLeft");
-         }
-         if (result.countUnknown > 0)
-            onPropertyChanged(null, null, "CountUnknown");
+         onPropertyChanged(null, null, "CountFlag");
+         onPropertyChanged(null, null, "CountMinesLeft");
+         onPropertyChanged(null, null, "CountUnknown");
       }
 
       VerifyFlag();
