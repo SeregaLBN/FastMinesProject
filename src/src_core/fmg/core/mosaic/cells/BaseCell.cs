@@ -262,16 +262,16 @@ public abstract class BaseCell {
    public abstract int getShiftPointBorderIndex();
 
 
-   public ClickContext LButtonDown() {
+   public ClickResult LButtonDown() {
       if (state.Close  == EClose._Flag) return null;
       if (state.Status == EState._Close) {
          state.Down = true;
-         var result1 = new ClickContext();
+         var result1 = new ClickResult();
          result1.Modified.Add(this);
          return result1;
       }
 
-         ClickContext result = null;
+         ClickResult result = null;
       // эффект нажатости для неоткрытых соседей
       if ((state.Status == EState._Open) && (state.Open != EOpen._Nil))
          foreach(var nCell in neighbors) {
@@ -280,14 +280,14 @@ public abstract class BaseCell {
                 (nCell.state.Close  == EClose._Flag)) continue;
                nCell.state.Down = true;
             if (result == null)
-               result = new ClickContext();
+               result = new ClickResult();
             result.Modified.Add(nCell);
          }
       return result;
    }
 
-   public ClickContext LButtonUp(bool isMy) {
-      var result = new ClickContext();
+   public ClickResult LButtonUp(bool isMy) {
+      var result = new ClickResult();
 
       if (state.Close == EClose._Flag) return result;
       // избавится от эффекта нажатости
@@ -350,14 +350,14 @@ public abstract class BaseCell {
       return result;
    }
 
-   public ClickContext RButtonDown(EClose close) {
+   public ClickResult RButtonDown(EClose close) {
       if ((state.Status == EState._Open) || state.Down)
          return null;
 
       if (state.Close != close)
          state.Close = close;
 
-      var result = new ClickContext();
+      var result = new ClickResult();
       result.Modified.Add(this);
       return result;
    }

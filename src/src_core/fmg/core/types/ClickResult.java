@@ -1,14 +1,11 @@
-package fmg.core.types.click;
+package fmg.core.types;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.types.EClose;
-import fmg.core.types.EOpen;
-import fmg.core.types.EState;
 
-public class ClickContext {
+public class ClickResult {
    public List<BaseCell> modified = new ArrayList<BaseCell>();
    
    public boolean isAnyOpenMine() {

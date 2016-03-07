@@ -35,10 +35,10 @@ import fmg.common.geom.RegionDouble;
 import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
+import fmg.core.types.ClickResult;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
-import fmg.core.types.click.ClickContext;
 
 /** Базовый класс фигуры-ячейки */
 public abstract class BaseCell {
@@ -290,16 +290,16 @@ public abstract class BaseCell {
    public abstract int getShiftPointBorderIndex();
 
 
-   public ClickContext LButtonDown() {
+   public ClickResult LButtonDown() {
       if (state.getClose()  == EClose._Flag) return null;
       if (state.getStatus() == EState._Close) {
          state.setDown(true);
-         ClickContext result = new ClickContext();
+         ClickResult result = new ClickResult();
          result.modified.add(this);
          return result;
       }
 
-      ClickContext result = null;
+      ClickResult result = null;
       // эффект нажатости для неоткрытых соседей
       if ((state.getStatus() == EState._Open) && (state.getOpen() != EOpen._Nil))
          for (BaseCell nCell : neighbors) {
@@ -308,14 +308,14 @@ public abstract class BaseCell {
                (nCell.state.getClose()  == EClose._Flag)) continue;
             nCell.state.setDown(true);
             if (result == null)
-               result = new ClickContext();
+               result = new ClickResult();
             result.modified.add(nCell);
          }
       return result;
    }
 
-   public ClickContext LButtonUp(boolean isMy) {
-      ClickContext result = new ClickContext();
+   public ClickResult LButtonUp(boolean isMy) {
+      ClickResult result = new ClickResult();
 
       if (state.getClose() == EClose._Flag) return result;
       // избавится от эффекта нажатости
@@ -368,7 +368,7 @@ public abstract class BaseCell {
             nCell.state.setStatus(EState._Open);
             result.modified.add(nCell);
             if (nCell.state.getOpen() == EOpen._Nil) {
-               ClickContext result2 = nCell.LButtonUp(true);
+               ClickResult result2 = nCell.LButtonUp(true);
                result.modified.addAll(result2.modified);
             }
             if (nCell.state.getOpen() == EOpen._Mine) {
@@ -378,14 +378,14 @@ public abstract class BaseCell {
       return result;
    }
 
-   public ClickContext RButtonDown(EClose close) {
+   public ClickResult RButtonDown(EClose close) {
       if ((state.getStatus() == EState._Open) || state.isDown())
          return null;
 
       if (state.getClose() != close)
          state.setClose(close);
 
-      ClickContext result = new ClickContext();
+      ClickResult result = new ClickResult();
       result.modified.add(this);
       return result;
    }

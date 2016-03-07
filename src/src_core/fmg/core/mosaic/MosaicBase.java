@@ -38,13 +38,13 @@ import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.types.ClickResult;
 import fmg.core.types.EClose;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EOpen;
 import fmg.core.types.EPlayInfo;
 import fmg.core.types.EState;
-import fmg.core.types.click.ClickContext;
 import fmg.core.types.event.MosaicEvent;
 import fmg.core.types.event.MosaicListener;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
@@ -440,7 +440,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
          }
          Repaint(cellLeftDown);
       } else {
-         ClickContext result = cellLeftDown.LButtonDown();
+         ClickResult result = cellLeftDown.LButtonDown();
          if (result != null)
             result.modified.forEach(cell -> Repaint(cell));
       }
@@ -463,7 +463,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
          {
             GameBegin(cell);
          }
-         ClickContext result = cell.LButtonUp(cell == cellLeftUp);
+         ClickResult result = cell.LButtonUp(cell == cellLeftUp);
          result.modified.forEach(c -> Repaint(c));
          int countOpen = result.getCountOpen();
          int countFlag = result.getCountFlag();
@@ -512,7 +512,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
          return false;
 
       setCellDown(cellRightDown);
-      ClickContext result = cellRightDown.RButtonDown(cellRightDown.getState().getClose().nextState(getUseUnknown()));
+      ClickResult result = cellRightDown.RButtonDown(cellRightDown.getState().getClose().nextState(getUseUnknown()));
       if (result == null)
          return false;
 

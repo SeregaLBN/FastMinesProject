@@ -803,8 +803,8 @@
     <Content Include="..\res\MosaicGroup\Triangles.ico">
       <Link>res\MosaicGroup\Triangles.ico</Link>
     </Content>
-    <Compile Include="..\src\src_core\fmg\core\types\click\ClickContext.cs">
-      <Link>src_fmg.core\types\click\ClickContext.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\types\ClickResult.cs">
+      <Link>src_fmg.core\types\ClickResult.cs</Link>
     </Compile>
     <Compile Include="..\src\src_core\fmg\core\mosaic\cells\BaseCell.cs">
       <Link>src_fmg.core\mosaic\cells\BaseCell.cs</Link>

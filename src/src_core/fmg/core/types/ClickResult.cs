@@ -4,7 +4,7 @@ using fmg.core.mosaic.cells;
 
 namespace fmg.core.types.click {
 
-   public class ClickContext {
+   public class ClickResult {
       public List<BaseCell> Modified = new List<BaseCell>();
 
       public bool IsAnyOpenMine() {
