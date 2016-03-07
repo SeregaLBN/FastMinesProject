@@ -168,9 +168,9 @@ public abstract class BaseCell {
           if (this.open == EOpen._Mine) return;
           // подсчитать у соседей число мин и установить значение
           int count = 0;
-          for (int i=0; i<neighbors.length; i++) {
-             if (neighbors[i] == null) continue; // существует ли сосед?
-             if (neighbors[i].getState().getOpen() == EOpen._Mine) count++;
+          for (BaseCell nCell : neighbors) {
+             if (nCell == null) continue; // существует ли сосед?
+             if (nCell.getState().getOpen() == EOpen._Mine) count++;
           }
           this.open = EOpen.class.getEnumConstants()[count];
        }
@@ -199,9 +199,9 @@ public abstract class BaseCell {
    public void LockNeighborMines() {
       lockMine = true;
       // запретить установку мин у соседей,
-      for (int i=0; i<neighbors.length; i++) {
-         if (neighbors[i] == null) continue; // существует ли сосед?
-         neighbors[i].lockMine = true;
+      for (BaseCell nCell : neighbors) {
+         if (nCell == null) continue; // существует ли сосед?
+         nCell.lockMine = true;
       }
    }
 
@@ -302,14 +302,14 @@ public abstract class BaseCell {
       ClickContext result = null;
       // эффект нажатости для неоткрытых соседей
       if ((state.getStatus() == EState._Open) && (state.getOpen() != EOpen._Nil))
-         for (int i=0; i<neighbors.length; i++) {
-            if (neighbors[i] == null) continue; // существует ли сосед?
-            if ((neighbors[i].state.getStatus() == EState._Open) ||
-               (neighbors[i].state.getClose()  == EClose._Flag)) continue;
-            neighbors[i].state.setDown(true);
+         for (BaseCell nCell : neighbors) {
+            if (nCell == null) continue; // существует ли сосед?
+            if ((nCell.state.getStatus() == EState._Open) ||
+               (nCell.state.getClose()  == EClose._Flag)) continue;
+            nCell.state.setDown(true);
             if (result == null)
                result = new ClickContext();
-            result.modified.add(neighbors[i]);
+            result.modified.add(nCell);
          }
       return result;
    }
@@ -320,61 +320,58 @@ public abstract class BaseCell {
       if (state.getClose() == EClose._Flag) return result;
       // избавится от эффекта нажатости
       if ((state.getStatus() == EState._Open) && (state.getOpen() != EOpen._Nil))
-         for (int i=0; i<neighbors.length; i++) {
-            if (neighbors[i] == null) continue; // существует ли сосед?
-            if ((neighbors[i].state.getStatus() == EState._Open) ||
-               (neighbors[i].state.getClose()  == EClose._Flag)) continue;
-            neighbors[i].state.setDown(false);
-            result.modified.add(neighbors[i]);
+         for (BaseCell nCell : neighbors) {
+            if (nCell == null) continue; // существует ли сосед?
+            if ((nCell.state.getStatus() == EState._Open) ||
+               (nCell.state.getClose()  == EClose._Flag)) continue;
+            nCell.state.setDown(false);
+            result.modified.add(nCell);
          }
       // Открыть закрытую ячейку на которой нажали
-      if (state.getStatus() == EState._Close)
-         if (!isMy) {
-            state.setDown(false);
-            result.modified.add(this);
+      if (state.getStatus() == EState._Close) {
+         state.setDown(isMy);
+         result.modified.add(this);
+         if (!isMy)
             return result;
-         } else {
-            getState().setStatus(EState._Open);
-            getState().setDown(true);
-            result.modified.add(this);
-         }
+         getState().setStatus(EState._Open);
+      }
 
       // ! В этой точке ячейка уже открыта
       // Подсчитываю кол-во установленных вокруг флагов и не открытых ячеек
       int countFlags = 0;
       int countClear = 0;
       if (state.getOpen() != EOpen._Nil)
-         for (int i=0; i<neighbors.length; i++) {
-            if (neighbors[i] == null) continue; // существует ли сосед?
-            if (neighbors[i].state.getStatus() == EState._Open) continue;
-            if (neighbors[i].state.getClose()  == EClose._Flag)
+         for (BaseCell nCell : neighbors) {
+            if (nCell == null) continue; // существует ли сосед?
+            if (nCell.state.getStatus() == EState._Open) continue;
+            if (nCell.state.getClose()  == EClose._Flag)
                countFlags++;
             else countClear++;
          }
       // оставшимся установить флаги
       if ((state.getOpen() != EOpen._Nil) && ((countFlags+countClear) == state.getOpen().ordinal()))
-         for (int i=0; i<neighbors.length; i++) {
-            if (neighbors[i] == null) continue; // существует ли сосед?
-            if ((neighbors[i].state.getStatus() == EState._Open) ||
-               (neighbors[i].state.getClose()  == EClose._Flag)) continue;
-            neighbors[i].state.setClose(EClose._Flag);
-            result.modified.add(neighbors[i]);
+         for (BaseCell nCell : neighbors) {
+            if (nCell == null) continue; // существует ли сосед?
+            if ((nCell.state.getStatus() == EState._Open) ||
+               (nCell.state.getClose()  == EClose._Flag)) continue;
+            nCell.state.setClose(EClose._Flag);
+            result.modified.add(nCell);
          }
       if (!isMy) return result;
       // открыть оставшиеся
       if ((countFlags+result.getCountFlag()) == state.getOpen().ordinal())
-         for (int i=0; i<neighbors.length; i++) {
-            if (neighbors[i] == null) continue; // существует ли сосед?
-            if ((neighbors[i].state.getStatus() == EState._Open) ||
-               (neighbors[i].state.getClose()  == EClose._Flag)) continue;
-            neighbors[i].state.setDown(true);
-            neighbors[i].state.setStatus(EState._Open);
-            result.modified.add(neighbors[i]);
-            if (neighbors[i].state.getOpen() == EOpen._Nil) {
-               ClickContext result2 = neighbors[i].LButtonUp(true);
+         for (BaseCell nCell : neighbors) {
+            if (nCell == null) continue; // существует ли сосед?
+            if ((nCell.state.getStatus() == EState._Open) ||
+               (nCell.state.getClose()  == EClose._Flag)) continue;
+            nCell.state.setDown(true);
+            nCell.state.setStatus(EState._Open);
+            result.modified.add(nCell);
+            if (nCell.state.getOpen() == EOpen._Nil) {
+               ClickContext result2 = nCell.LButtonUp(true);
                result.modified.addAll(result2.modified);
             }
-            if (neighbors[i].state.getOpen() == EOpen._Mine) {
+            if (nCell.state.getOpen() == EOpen._Mine) {
                return result;
             }
          }

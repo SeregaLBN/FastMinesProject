@@ -137,18 +137,10 @@ public abstract class BaseCell {
       private EOpen  open;   // _Nil, _1, ... _21, _Mine
       private EClose close;  // _Unknown, _Clear, _Flag
       // } end union
+
       /// <summary>Нажата? Не путать с open! - ячейка может быть нажата, но ещё не открыта. Важно только для ф-ции прорисовки</summary>
       public bool Down { get; set; }
-      public void setStatus(EState status, ClickReportContext clickRepContext) {
-         if (clickRepContext != null)
-            if (status == EState._Open)
-               if (this.open == EOpen._Nil)
-                  clickRepContext.setOpenNil.Add(owner);
-               else
-                  clickRepContext.setOpen.Add(owner);
-         this.status = status;
-      }
-      public EState Status { get { return status; } }
+      public EState Status { get { return status; } set { status = value; } }
       public void CalcOpenState() {
           if (this.open == EOpen._Mine) return;
           // подсчитать у соседей число мин и установить значение
@@ -157,24 +149,15 @@ public abstract class BaseCell {
              if (owner.neighbors[i] == null) continue; // существует ли сосед?
              if (owner.neighbors[i].state.open == EOpen._Mine) count++;
           }
-          this.open = EOpenEx.GetValues()[count];
+          open = EOpenEx.GetValues()[count];
        }
        public bool SetMine() {
-          if (owner.lockMine || (this.open == EOpen._Mine)) return false;
-          this.open = EOpen._Mine;
+          if (owner.lockMine || (open == EOpen._Mine)) return false;
+          open = EOpen._Mine;
           return true;
        }
-       public EOpen Open { get { return this.open; } }
-       public void setClose(EClose close, ClickReportContext clickRepContext) {
-          if (clickRepContext != null)
-             if ((    close == EClose._Flag) || // если устанавливаю флажок
-                (this.close == EClose._Flag))   // если снимаю флажок
-             {
-                clickRepContext.setFlag.Add(owner);
-             }
-          this.close = close;
-       }
-       public EClose Close { get { return this.close; } }
+       public EOpen Open { get { return open; } }
+       public EClose Close { get { return close; } set { close = value; } }
 
        public StateCell(BaseCell self) { owner = self; Reset(); }
        public void Reset() {
@@ -279,152 +262,103 @@ public abstract class BaseCell {
    public abstract int getShiftPointBorderIndex();
 
 
-   public LeftDownResult LButtonDown() {
+   public ClickContext LButtonDown() {
       if (state.Close  == EClose._Flag) return null;
       if (state.Status == EState._Close) {
          state.Down = true;
-         LeftDownResult result1 = new LeftDownResult();
-         result1.needRepaint.Add(this);
+         var result1 = new ClickContext();
+         result1.Modified.Add(this);
          return result1;
       }
 
-      LeftDownResult result = null;
+         ClickContext result = null;
       // эффект нажатости для неоткрытых соседей
       if ((state.Status == EState._Open) && (state.Open != EOpen._Nil))
-         for (int i=0; i<neighbors.Length; i++) {
-            if (neighbors[i] == null) continue; // существует ли сосед?
-            if ((neighbors[i].state.Status == EState._Open) ||
-               (neighbors[i].state.Close  == EClose._Flag)) continue;
-            neighbors[i].state.Down = true;
+         foreach(var nCell in neighbors) {
+            if (nCell == null) continue; // существует ли сосед?
+            if ((nCell.state.Status == EState._Open) ||
+                (nCell.state.Close  == EClose._Flag)) continue;
+               nCell.state.Down = true;
             if (result == null)
-               result = new LeftDownResult();
-            result.needRepaint.Add(neighbors[i]);
+               result = new ClickContext();
+            result.Modified.Add(nCell);
          }
       return result;
    }
-   public LeftUpResult LButtonUp(bool isMy, ClickReportContext clickRepContext) {
-      LeftUpResult result = new LeftUpResult(0, 0, 0, false, false);
+
+   public ClickContext LButtonUp(bool isMy) {
+      var result = new ClickContext();
 
       if (state.Close == EClose._Flag) return result;
       // избавится от эффекта нажатости
       if ((state.Status == EState._Open) && (state.Open != EOpen._Nil))
-         for (int i=0; i<neighbors.Length; i++) {
-            if (neighbors[i] == null) continue; // существует ли сосед?
-            if ((neighbors[i].state.Status == EState._Open) ||
-               (neighbors[i].state.Close  == EClose._Flag)) continue;
-            neighbors[i].state.Down = false;
-            result.addToRepaint(neighbors[i]);
+         foreach(var nCell in neighbors) {
+            if (nCell == null) continue; // существует ли сосед?
+            if ((nCell.state.Status == EState._Open) ||
+                (nCell.state.Close  == EClose._Flag)) continue;
+            nCell.state.Down = false;
+            result.Modified.Add(nCell);
          }
       // Открыть закрытую ячейку на которой нажали
-      if (state.Status == EState._Close)
-         if (!isMy) {
-            state.Down = false;
-            result.addToRepaint(this);
+      if (state.Status == EState._Close) {
+         state.Down = isMy;
+         result.Modified.Add(this);
+         if (!isMy)
             return result;
-         } else {
-            result.countUnknown += (state.Close == EClose._Unknown) ? -1 : 0;
-            result.countOpen++;
-            state.setStatus(EState._Open, clickRepContext);
-            state.Down = true;
-            result.addToRepaint(this);
-         }
+         state.Status = EState._Open;
+      }
 
       // ! В этой точке ячейка уже открыта
       // Подсчитываю кол-во установленных вокруг флагов и не открытых ячеек
-      int countFlags = 0;
-      int countClear = 0;
+      var countFlags = 0;
+      var countClear = 0;
       if (state.Open != EOpen._Nil)
-         for (int i=0; i<neighbors.Length; i++) {
-            if (neighbors[i] == null) continue; // существует ли сосед?
-            if (neighbors[i].state.Status == EState._Open) continue;
-            if (neighbors[i].state.Close  == EClose._Flag)
+         foreach(var nCell in neighbors) {
+            if (nCell == null) continue; // существует ли сосед?
+            if (nCell.state.Status == EState._Open) continue;
+            if (nCell.state.Close  == EClose._Flag)
                countFlags++;
             else countClear++;
          }
       // оставшимся установить флаги
       if ((state.Open != EOpen._Nil) && ((countFlags+countClear) == state.Open.Ordinal()))
-         for (int i=0; i<neighbors.Length; i++) {
-            if (neighbors[i] == null) continue; // существует ли сосед?
-            if ((neighbors[i].state.Status == EState._Open) ||
-               (neighbors[i].state.Close  == EClose._Flag)) continue;
-            result.countUnknown += (neighbors[i].state.Close == EClose._Unknown) ? -1 : 0;
-            result.countFlag++;
-            neighbors[i].state.setClose(EClose._Flag, clickRepContext);
-            result.addToRepaint(neighbors[i]);
+         foreach(BaseCell nCell in neighbors) {
+            if (nCell == null) continue; // существует ли сосед?
+            if ((nCell.state.Status == EState._Open) ||
+                (nCell.state.Close  == EClose._Flag)) continue;
+            nCell.state.Close = EClose._Flag;
+            result.Modified.Add(nCell);
          }
       if (!isMy) return result;
       // открыть оставшиеся
-      if ((countFlags+result.countFlag) == state.Open.Ordinal())
-         for (int i=0; i<neighbors.Length; i++) {
-            if (neighbors[i] == null) continue; // существует ли сосед?
-            if ((neighbors[i].state.Status == EState._Open) ||
-               (neighbors[i].state.Close  == EClose._Flag)) continue;
-            result.countUnknown += (neighbors[i].state.Close == EClose._Unknown) ? -1 : 0;
-            result.countOpen++;
-            neighbors[i].state.Down = true;
-            neighbors[i].state.setStatus(EState._Open, clickRepContext);
-            result.addToRepaint(neighbors[i]);
-            if (neighbors[i].state.Open == EOpen._Nil) {
-               LeftUpResult result2 = neighbors[i].LButtonUp(true, clickRepContext);
-               result.countFlag    += result2.countFlag;
-               result.countOpen    += result2.countOpen;
-               result.countUnknown += result2.countUnknown;
-               if (result.endGame) {
-                  result.endGame = result2.endGame;
-                  result.victory = result2.victory;
-               }
-               if (result2.needRepaint != null)
-                  foreach (BaseCell cellToRepaint in result2.needRepaint)
-                     result.addToRepaint(cellToRepaint);
+      if ((countFlags+result.CountFlag) == state.Open.Ordinal())
+         foreach(BaseCell nCell in neighbors) {
+            if (nCell == null) continue; // существует ли сосед?
+            if ((nCell.state.Status == EState._Open) ||
+                (nCell.state.Close  == EClose._Flag)) continue;
+            nCell.state.Down = true;
+            nCell.state.Status = EState._Open;
+            result.Modified.Add(nCell);
+            if (nCell.state.Open == EOpen._Nil) {
+               var result2 = nCell.LButtonUp(true);
+               result.Modified.AddRange(result2.Modified);
             }
-            if (neighbors[i].state.Open == EOpen._Mine) {
-               result.endGame = true;
-               result.victory = false;
+            if (nCell.state.Open == EOpen._Mine) {
                return result;
             }
          }
-      if (state.Open == EOpen._Mine) {
-         result.endGame = true;
-         result.victory = false;
-      }
       return result;
    }
-   public RightDownReturn RButtonDown(EClose close, ClickReportContext clickRepContext) {
-      RightDownReturn result = new RightDownReturn(0, 0);
 
-      if ((state.Status == EState._Open) || state.Down) return result;
-      switch (state.Close) {
-      case EClose._Clear:
-         switch (close) {
-         case EClose._Flag:    result.countFlag    = +1;  break;
-         case EClose._Unknown: result.countUnknown = +1;  break;
-         default: break;
-         }
-         if (state.Close != close)
-            state.setClose(close, clickRepContext);
-         break;
-      case EClose._Flag:
-         switch (close) {
-         case EClose._Unknown: result.countUnknown = +1;
-                               result.countFlag    = -1; break;
-         case EClose._Clear:   result.countFlag    = -1; break;
-         default: break;
-         }
-         if (state.Close != close)
-            state.setClose(close, clickRepContext);
-         break;
-      case EClose._Unknown:
-         switch (close) {
-         case EClose._Flag:    result.countFlag    = +1;
-                               result.countUnknown = -1; break;
-         case EClose._Clear:   result.countUnknown = -1; break;
-         default: break;
-         }
-         if (state.Close != close)
-            state.setClose(close, clickRepContext);
-         break;
-      }
-      result.needRepaint = true;
+   public ClickContext RButtonDown(EClose close) {
+      if ((state.Status == EState._Open) || state.Down)
+         return null;
+
+      if (state.Close != close)
+         state.Close = close;
+
+      var result = new ClickContext();
+      result.Modified.Add(this);
       return result;
    }
 

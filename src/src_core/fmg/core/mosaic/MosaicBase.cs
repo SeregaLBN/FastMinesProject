@@ -27,7 +27,6 @@ using System.ComponentModel;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.types.Event;
-using fmg.core.types.click;
 using fmg.core.mosaic.cells;
 using fmg.core.mosaic.draw;
 using FastMines.Presentation.Notyfier;
@@ -305,16 +304,16 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
             if (victory) {
                if (cell.State.Open == EOpen._Mine)
                {
-                  cell.State.setClose(EClose._Flag, null);
+                  cell.State.Close = EClose._Flag;
                } else {
-                  cell.State.setStatus(EState._Open, null);
+                  cell.State.Status = EState._Open;
                   cell.State.Down = true;
                }
             } else {
                if ((cell.State.Open != EOpen._Mine) ||
                   (cell.State.Close != EClose._Flag))
                {
-                  cell.State.setStatus(EState._Open, null);
+                  cell.State.Status = EState._Open;
                }
             }
             Repaint(cell);
@@ -357,7 +356,7 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
          CellDown = cellLeftDown;
          if (GameStatus == EGameStatus.eGSCreateGame) {
             if (cellLeftDown.State.Open != EOpen._Mine) {
-               cellLeftDown.State.setStatus(EState._Open, null);
+               cellLeftDown.State.Status = EState._Open;
                cellLeftDown.State.SetMine();
                MinesCount = MinesCount + 1;
                RepositoryMines.Add(cellLeftDown.getCoord());
@@ -369,9 +368,7 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
             Repaint(cellLeftDown);
          } else {
             var result = cellLeftDown.LButtonDown();
-            if ((result != null) && (result.needRepaint != null))
-               foreach (var cellToRepaint in result.needRepaint)
-                  Repaint(cellToRepaint);
+            result?.Modified.ForEach(Repaint);
          }
          fireOnClick(cellLeftDown, true, true);
          return true;
@@ -383,7 +380,8 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
       try {
          if (GameStatus == EGameStatus.eGSEnd)
             return false;
-         if (CellDown == null)
+         var cell = CellDown;
+         if (cell == null)
             return false;
          if (GameStatus == EGameStatus.eGSCreateGame)
             return false;
@@ -393,32 +391,29 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
          {
             GameBegin(CellDown);
          }
-         var clickReportContext = new ClickReportContext();
-         var cell = CellDown;
-         var result = cell.LButtonUp(ReferenceEquals(CellDown, cellLeftUp), clickReportContext);
-         tracer.Put(" result.needRepaint="+((result.needRepaint==null) ? "null" : result.needRepaint.Count.ToString()));
-         if (result.needRepaint != null) {
-            foreach (var cellToRepaint in result.needRepaint)
-               Repaint(cellToRepaint);
-         }
-         var res = (result.countOpen > 0) || (result.countFlag != 0) || (result.countUnknown != 0); // клик со смыслом (были изменения на поле)
+         var result = cell.LButtonUp(ReferenceEquals(cell, cellLeftUp));
+         tracer.Put(" result.Modified=" + result.Modified.Count);
+         result.Modified.ForEach(Repaint);
+         var countOpen = result.CountOpen;
+         var countFlag = result.CountFlag;
+         var countUnknown = result.CountUnknown;
+         var res = (countOpen > 0) || (countFlag > 0) || (countUnknown > 0); // клик со смыслом (были изменения на поле)
          if (res) {
             CountClick++;
             PlayInfo = EPlayInfo.ePlayerUser;  // юзер играл
-            if (result.countOpen > 0)
+            if (countOpen > 0)
                OnPropertyChanged("CountOpen");
-            if (result.countFlag > 0) {
+            if ((countFlag > 0) || (countUnknown > 0)) {
                OnPropertyChanged("CountFlag");
                OnPropertyChanged("CountMinesLeft");
-            }
-            if (result.countUnknown > 0)
                OnPropertyChanged("CountUnknown");
+            }
          }
 
-         if (result.endGame) {
-            GameEnd(result.victory);
+         if (result.IsAnyOpenMine()) {
+            GameEnd(false);
          } else {
-            Matrisize sizeField = SizeField;
+            var sizeField = SizeField;
             if ((CountOpen + MinesCount) == sizeField.m*sizeField.n) {
                GameEnd(true);
             } else {
@@ -446,23 +441,24 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
             return false;
 
          CellDown = cellRightDown;
-         var clickReportContext = new ClickReportContext();
-         var result = cellRightDown.RButtonDown(cellRightDown.State.Close.NextState(UseUnknown), clickReportContext);
-         if (result.needRepaint)
-            Repaint(cellRightDown);
-         var res = (result.countFlag != 0) || (result.countUnknown != 0); // клик со смыслом (были изменения на поле)
+         var result = cellRightDown.RButtonDown(cellRightDown.State.Close.NextState(UseUnknown));
+         if (result == null)
+            return false;
+
+         result.Modified.ForEach(Repaint);
+
+         var countFlag = CountFlag;
+         var countUnknown = CountUnknown;
+         var res = (countFlag != 0) || (countUnknown != 0); // клик со смыслом (были изменения на поле)
          if (res) {
             CountClick++;
             PlayInfo = EPlayInfo.ePlayerUser; // то считаю что юзер играл
-            if (result.countFlag > 0) {
-               OnPropertyChanged("CountFlag");
-               OnPropertyChanged("CountMinesLeft");
-            }
-            if (result.countUnknown > 0)
-               OnPropertyChanged("CountUnknown");
+            OnPropertyChanged("CountFlag");
+            OnPropertyChanged("CountMinesLeft");
+            OnPropertyChanged("CountUnknown");
          }
 
-            VerifyFlag();
+         VerifyFlag();
          if (GameStatus != EGameStatus.eGSEnd) {
             //...
          }

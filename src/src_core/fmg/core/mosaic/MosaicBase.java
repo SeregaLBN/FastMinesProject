@@ -481,7 +481,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
             }
          }
    
-         if (result.isOpenMine()) {
+         if (result.isAnyOpenMine()) {
             GameEnd(false);
          } else {
             Matrisize sizeField = getSizeField();
@@ -513,10 +513,11 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
 
       setCellDown(cellRightDown);
       ClickContext result = cellRightDown.RButtonDown(cellRightDown.getState().getClose().nextState(getUseUnknown()));
-      if (result==null)
+      if (result == null)
          return false;
 
       result.modified.forEach(c -> Repaint(c));
+
       int countFlag = result.getCountFlag();
       int countUnknown = result.getCountUnknown();
       boolean res = (countFlag > 0) || (countUnknown > 0); // клик со смыслом (были изменения на поле)

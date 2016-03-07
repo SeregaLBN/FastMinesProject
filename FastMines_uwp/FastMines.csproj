@@ -803,17 +803,8 @@
     <Content Include="..\res\MosaicGroup\Triangles.ico">
       <Link>res\MosaicGroup\Triangles.ico</Link>
     </Content>
-    <Compile Include="..\src\src_core\fmg\core\types\click\ClickReportContext.cs">
-      <Link>src_fmg.core\types\click\ClickReportContext.cs</Link>
-    </Compile>
-    <Compile Include="..\src\src_core\fmg\core\types\click\LeftDownResult.cs">
-      <Link>src_fmg.core\types\click\LeftDownResult.cs</Link>
-    </Compile>
-    <Compile Include="..\src\src_core\fmg\core\types\click\LeftUpResult.cs">
-      <Link>src_fmg.core\types\click\LeftUpResult.cs</Link>
-    </Compile>
-    <Compile Include="..\src\src_core\fmg\core\types\click\RightDownReturn.cs">
-      <Link>src_fmg.core\types\click\RightDownReturn.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\types\click\ClickContext.cs">
+      <Link>src_fmg.core\types\click\ClickContext.cs</Link>
     </Compile>
     <Compile Include="..\src\src_core\fmg\core\mosaic\cells\BaseCell.cs">
       <Link>src_fmg.core\mosaic\cells\BaseCell.cs</Link>
