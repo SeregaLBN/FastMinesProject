@@ -313,6 +313,7 @@ public abstract class BaseCell {
          }
       return result;
    }
+
    public ClickContext LButtonUp(boolean isMy) {
       ClickContext result = new ClickContext();
 
@@ -371,24 +372,15 @@ public abstract class BaseCell {
             result.modified.add(neighbors[i]);
             if (neighbors[i].state.getOpen() == EOpen._Nil) {
                ClickContext result2 = neighbors[i].LButtonUp(true);
-               if (result.endGame) {
-                  result.endGame = result2.endGame;
-                  result.victory = result2.victory;
-               }
                result.modified.addAll(result2.modified);
             }
             if (neighbors[i].state.getOpen() == EOpen._Mine) {
-               result.endGame = true;
-               result.victory = false;
                return result;
             }
          }
-      if (state.getOpen() == EOpen._Mine) {
-         result.endGame = true;
-         result.victory = false;
-      }
       return result;
    }
+
    public ClickContext RButtonDown(EClose close) {
       if ((state.getStatus() == EState._Open) || state.isDown())
          return null;

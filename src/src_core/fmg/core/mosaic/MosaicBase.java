@@ -481,8 +481,8 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
             }
          }
    
-         if (result.endGame) {
-            GameEnd(result.victory);
+         if (result.isOpenMine()) {
+            GameEnd(false);
          } else {
             Matrisize sizeField = getSizeField();
             if ((getCountOpen() + getMinesCount()) == sizeField.m*sizeField.n) {

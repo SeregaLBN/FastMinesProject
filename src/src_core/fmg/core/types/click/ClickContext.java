@@ -11,9 +11,14 @@ import fmg.core.types.EOpen;
 import fmg.core.types.EState;
 
 public class ClickContext {
-   public boolean endGame, victory;
    public List<BaseCell> modified = new ArrayList<BaseCell>();
-
+   
+   public boolean isOpenMine() {
+      return modified.stream()
+            .filter(x -> x.getState().getStatus() == EState._Open)
+            .anyMatch(x -> x.getState().getOpen() == EOpen._Mine);
+   }
+   
    /** множество ячеек (нулевых  ) открытых при последнем клике */
    public Set<BaseCell> getOpenNil() {
       return modified.stream()
