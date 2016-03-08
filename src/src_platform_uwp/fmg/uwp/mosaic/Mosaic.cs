@@ -12,6 +12,7 @@ using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
+using fmg.core.types.click;
 using fmg.data.view.draw;
 using fmg.uwp.draw;
 using fmg.uwp.draw.mosaic;
@@ -168,7 +169,7 @@ namespace fmg.uwp.mosaic {
          }
       }
 
-      public bool MousePressed(PointDouble clickPoint, bool isLeftMouseButton) {
+      public ClickResult MousePressed(PointDouble clickPoint, bool isLeftMouseButton) {
          using (new Tracer("MosaicExt::MousePressed", "isLeftMouseButton="+isLeftMouseButton)) {
             return isLeftMouseButton
                ? OnLeftButtonDown(CursorPointToCell(clickPoint))
@@ -176,21 +177,21 @@ namespace fmg.uwp.mosaic {
          }
       }
 
-      public bool MouseReleased(PointDouble clickPoint, bool isLeftMouseButton) {
+      public ClickResult MouseReleased(PointDouble clickPoint, bool isLeftMouseButton) {
          using (new Tracer("MosaicExt::MouseReleased", "isLeftMouseButton="+isLeftMouseButton)) {
             return isLeftMouseButton
                ? OnLeftButtonUp(CursorPointToCell(clickPoint))
-               : OnRightButtonUp(/*CursorPointToCell(clickPoint)*/);
+               : OnRightButtonUp(CursorPointToCell(clickPoint));
          }
       }
 
-      public bool MouseFocusLost() {
+      public ClickResult MouseFocusLost() {
          using (new Tracer("MosaicExt::MouseFocusLost")) {
             if (CellDown == null)
-               return false;
+               return null;
             return CellDown.State.Down
                ? OnLeftButtonUp(null)
-               : OnRightButtonUp();
+               : OnRightButtonUp(null);
          }
       }
 

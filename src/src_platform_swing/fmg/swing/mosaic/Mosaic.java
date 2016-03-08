@@ -13,6 +13,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.Random;
+import java.util.function.Consumer;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -28,6 +29,7 @@ import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
+import fmg.core.types.click.ClickResult;
 import fmg.data.view.draw.PenBorder;
 import fmg.swing.Cast;
 import fmg.swing.draw.GraphicContext;
@@ -143,7 +145,6 @@ public class Mosaic extends MosaicBase {
             1 + new Random().nextInt(
                   MosaicHelper.createAttributeInstance(getMosaicType(), getArea()).getMaxBackgroundFillModeValue()));
       super.GameNew();
-      getContainer().repaint();
    }
 
    @Override
@@ -154,6 +155,8 @@ public class Mosaic extends MosaicBase {
 
    /** преобразовать экранные координаты в ячейку поля мозаики */
    private BaseCell CursorPointToCell(Point point) {
+      if (point == null)
+            return null;
 //      long l1 = System.currentTimeMillis();
 //      try {
          fmg.common.geom.PointDouble p = Cast.toPointDouble(point);
@@ -166,6 +169,34 @@ public class Mosaic extends MosaicBase {
 //         System.out.println("Mosaic::CursorPointToCell: find cell: " + (System.currentTimeMillis()-l1) + "ms.");
 //      }
    }
+
+   public ClickResult mousePressed(Point clickPoint, boolean isLeftMouseButton) {
+      ClickResult res = isLeftMouseButton
+         ? onLeftButtonDown(CursorPointToCell(clickPoint))
+         : onRightButtonDown(CursorPointToCell(clickPoint));
+      acceptClickEvent(res);
+      return res;
+   }
+
+   public ClickResult mouseReleased(Point clickPoint, boolean isLeftMouseButton) {
+      ClickResult res = isLeftMouseButton
+         ? onLeftButtonUp(CursorPointToCell(clickPoint))
+         : onRightButtonUp(CursorPointToCell(clickPoint));
+         acceptClickEvent(res);
+         return res;
+   }
+
+   public ClickResult mouseFocusLost() {
+      BaseCell cellDown = getCellDown();
+      if (cellDown == null)
+         return null;
+      ClickResult res = cellDown.getState().isDown()
+         ? onLeftButtonUp(null)
+         : onRightButtonUp(null);
+      acceptClickEvent(res);
+      return res;
+   }
+
 
    @Override
    protected boolean RequestToUser_RestoreLastGame() {
@@ -186,34 +217,47 @@ public class Mosaic extends MosaicBase {
       }
    }
 
+   /** уведомление о том, что на мозаике был произведён клик */
+   private Consumer<ClickResult> clickEvent;
+   public void setOnClickEvent(Consumer<ClickResult> handler) {
+      clickEvent = handler;
+   }
+   public void acceptClickEvent(ClickResult clickResult) {
+      if (clickEvent != null)
+         clickEvent.accept(clickResult);
+   }
+   
    private class MosaicMouseListeners implements MouseInputListener, FocusListener {
       @Override
-       public void mouseClicked(MouseEvent e) {}
+      public void mouseClicked(MouseEvent e) {}
 
       @Override
-       public void mousePressed(MouseEvent e) {
-         if (SwingUtilities.isLeftMouseButton(e))
-            OnLeftButtonDown(CursorPointToCell(e.getPoint()));
-         else
-         if (SwingUtilities.isRightMouseButton(e))
-            OnRightButtonDown(CursorPointToCell(e.getPoint()));
+      public void mousePressed(MouseEvent e) {
+         if (SwingUtilities.isLeftMouseButton(e)) {
+            Mosaic.this.mousePressed(e.getPoint(), true);
+         } else
+         if (SwingUtilities.isRightMouseButton(e)) {
+            Mosaic.this.mousePressed(e.getPoint(), false);
+         }
       }
 
       @Override
       public void mouseReleased(MouseEvent e) {
-         if (SwingUtilities.isLeftMouseButton(e)) {
-             // Получаю этот эвент на отпускание клавиши даже тогда, когда окно проги неактивно..
-             // Избегаю срабатывания onClick'a
-             Component rootFrame = SwingUtilities.getRoot((Component) e.getSource());
-             boolean rootFrameActive = true;
-             if (rootFrame instanceof Window)
-                rootFrameActive = ((Window)rootFrame).isActive(); 
+         // Получаю этот эвент на отпускание клавиши даже тогда, когда окно проги неактивно..
+         // Избегаю срабатывания onClick'a
+         Component rootFrame = SwingUtilities.getRoot((Component) e.getSource());
+         if (rootFrame instanceof Window) {
+            boolean rootFrameActive = ((Window)rootFrame).isActive(); 
+            if (!rootFrameActive)
+               return;
+         }
 
-             if (rootFrameActive)
-                OnLeftButtonUp(CursorPointToCell(e.getPoint()));
+         if (SwingUtilities.isLeftMouseButton(e)) {
+             Mosaic.this.mouseReleased(e.getPoint(), true);
          } else
-         if (SwingUtilities.isRightMouseButton(e))
-             OnRightButtonUp(/*CursorPointToCell(e.getPoint())*/);
+         if (SwingUtilities.isRightMouseButton(e)) {
+             Mosaic.this.mouseReleased(e.getPoint(), false);
+         }
        }
 
       @Override
@@ -226,14 +270,8 @@ public class Mosaic extends MosaicBase {
       public void mouseMoved(MouseEvent e) {}
       @Override
       public void focusLost(FocusEvent e) {
-//         System.out.println("Mosaic::MosaicMouseListeners::focusLost: " + e);
-         BaseCell cell = Mosaic.this.getCellDown();
-         if (cell == null)
-            return;
-         if (cell.getState().isDown())
-            Mosaic.this.OnLeftButtonUp(null);
-         else
-            Mosaic.this.OnRightButtonUp();
+         //System.out.println("Mosaic::MosaicMouseListeners::focusLost: " + e);
+         Mosaic.this.mouseFocusLost();
       }
       @Override
       public void focusGained(FocusEvent e) {}
@@ -245,6 +283,7 @@ public class Mosaic extends MosaicBase {
       return _mosaicMouseListener;
    }
 
+   @Override
    protected void initialize(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) {
       this.getContainer().setFocusable(true); // иначе не будет срабатывать FocusListener
 

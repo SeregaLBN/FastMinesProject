@@ -144,10 +144,10 @@ public abstract class BaseCell {
       public void CalcOpenState() {
           if (this.open == EOpen._Mine) return;
           // подсчитать у соседей число мин и установить значение
-          int count = 0;
-          for (int i=0; i<owner.neighbors.Length; i++) {
-             if (owner.neighbors[i] == null) continue; // существует ли сосед?
-             if (owner.neighbors[i].state.open == EOpen._Mine) count++;
+          var count = 0;
+          foreach(var nCell in owner.neighbors) {
+             if (nCell == null) continue; // существует ли сосед?
+             if (nCell.state.open == EOpen._Mine) count++;
           }
           open = EOpenEx.GetValues()[count];
        }
@@ -174,9 +174,9 @@ public abstract class BaseCell {
    public void LockNeighborMines() {
       lockMine = true;
       // запретить установку мин у соседей,
-      for (int i=0; i<neighbors.Length; i++) {
-         if (neighbors[i] == null) continue; // существует ли сосед?
-         neighbors[i].lockMine = true;
+      foreach(var nCell in neighbors) {
+         if (nCell == null) continue; // существует ли сосед?
+         nCell.lockMine = true;
       }
    }
 
@@ -262,16 +262,17 @@ public abstract class BaseCell {
    public abstract int getShiftPointBorderIndex();
 
 
-   public ClickResult LButtonDown() {
-      if (state.Close  == EClose._Flag) return null;
+   public ClickCellResult LButtonDown() {
+      var result = new ClickCellResult();
+      if (state.Close  == EClose._Flag)
+         return result;
+
       if (state.Status == EState._Close) {
          state.Down = true;
-         var result1 = new ClickResult();
-         result1.Modified.Add(this);
-         return result1;
+         result.Modified.Add(this);
+         return result;
       }
 
-         ClickResult result = null;
       // эффект нажатости для неоткрытых соседей
       if ((state.Status == EState._Open) && (state.Open != EOpen._Nil))
          foreach(var nCell in neighbors) {
@@ -279,17 +280,17 @@ public abstract class BaseCell {
             if ((nCell.state.Status == EState._Open) ||
                 (nCell.state.Close  == EClose._Flag)) continue;
                nCell.state.Down = true;
-            if (result == null)
-               result = new ClickResult();
             result.Modified.Add(nCell);
          }
       return result;
    }
 
-   public ClickResult LButtonUp(bool isMy) {
-      var result = new ClickResult();
+   public ClickCellResult LButtonUp(bool isMy) {
+      var result = new ClickCellResult();
 
-      if (state.Close == EClose._Flag) return result;
+      if (state.Close == EClose._Flag)
+            return result;
+
       // избавится от эффекта нажатости
       if ((state.Status == EState._Open) && (state.Open != EOpen._Nil))
          foreach(var nCell in neighbors) {
@@ -322,17 +323,19 @@ public abstract class BaseCell {
          }
       // оставшимся установить флаги
       if ((state.Open != EOpen._Nil) && ((countFlags+countClear) == state.Open.Ordinal()))
-         foreach(BaseCell nCell in neighbors) {
+         foreach(var nCell in neighbors) {
             if (nCell == null) continue; // существует ли сосед?
             if ((nCell.state.Status == EState._Open) ||
                 (nCell.state.Close  == EClose._Flag)) continue;
             nCell.state.Close = EClose._Flag;
             result.Modified.Add(nCell);
          }
-      if (!isMy) return result;
+      if (!isMy)
+         return result;
+
       // открыть оставшиеся
       if ((countFlags+result.CountFlag) == state.Open.Ordinal())
-         foreach(BaseCell nCell in neighbors) {
+         foreach(var nCell in neighbors) {
             if (nCell == null) continue; // существует ли сосед?
             if ((nCell.state.Status == EState._Open) ||
                 (nCell.state.Close  == EClose._Flag)) continue;
@@ -350,14 +353,12 @@ public abstract class BaseCell {
       return result;
    }
 
-   public ClickResult RButtonDown(EClose close) {
+   public ClickCellResult RButtonDown(EClose close) {
+      var result = new ClickCellResult();
       if ((state.Status == EState._Open) || state.Down)
-         return null;
+         return result;
 
-      if (state.Close != close)
-         state.Close = close;
-
-      var result = new ClickResult();
+      state.Close = close;
       result.Modified.Add(this);
       return result;
    }

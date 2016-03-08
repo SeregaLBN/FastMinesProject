@@ -1,13 +1,18 @@
-package fmg.core.types;
+package fmg.core.types.click;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.types.EClose;
+import fmg.core.types.EOpen;
+import fmg.core.types.EState;
 
-public class ClickResult {
+public class ClickCellResult {
    public List<BaseCell> modified = new ArrayList<BaseCell>();
-   
+
+   /** были ли изменения на поле? Была ли открыта хоть одна ячейка или выставлен/снят флажёк / знак вопроса */
+   public boolean isAnyChanges() { return !modified.isEmpty(); }
    public boolean isAnyOpenMine() {
       return modified.stream()
             .filter(x -> x.getState().getStatus() == EState._Open)

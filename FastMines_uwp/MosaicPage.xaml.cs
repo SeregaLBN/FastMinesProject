@@ -11,7 +11,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using fmg.common.geom;
 using fmg.core.types;
-using fmg.core.types.Event;
 using fmg.core.mosaic.cells;
 using fmg.uwp.mosaic;
 using fmg.uwp.draw.mosaic.xaml;
@@ -21,6 +20,7 @@ using Log = FastMines.Common.LoggerSimple;
 using Size = fmg.common.geom.Size;
 using Thickness = Windows.UI.Xaml.Thickness;
 using fmg.core.mosaic;
+using fmg.core.types.click;
 using FastMines.Presentation.Notyfier;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -47,7 +47,6 @@ namespace FastMines {
                _mosaic = new Mosaic();
                ContentRoot.Children.Add(_mosaic.Container);
 
-               _mosaic.OnClick += Mosaic_OnClick;
                _mosaic.PropertyChanged += OnMosaicPropertyChanged;
             }
             return _mosaic;
@@ -256,10 +255,14 @@ namespace FastMines {
          AreaOptimal();
       }
 
-      private void Mosaic_OnClick(object source, MosaicEvent.ClickEventArgs e) {
-         _clickInfo.Cell = e.getCell();
-         _clickInfo.IsLeft = e.isLeftClick();
-         _clickInfo.Released = !e.isDown();
+      private void Mosaic_OnClick(ClickResult clickResult) {
+         _clickInfo.CellDown = clickResult.CellDown;
+         //_clickInfo.IsLeft = clickResult.IsLeft;
+         if (clickResult.IsDown)
+            _clickInfo.DownHandled = clickResult.IsAnyChanges;
+         else
+            _clickInfo.UpHandled = clickResult.IsAnyChanges;
+         _clickInfo.Released = !clickResult.IsDown;
       }
 
       private void Mosaic_OnChangedGameStatus(Mosaic sender, PropertyChangedExEventArgs<EGameStatus> ev) {
@@ -349,14 +352,16 @@ namespace FastMines {
          //   if ((point.x <= winSize.width) && (point.y <= winSize.height)) {
             var handled = false;
             if (downHandling) {
-               var h = _clickInfo.DownHandled = MosaicField.MousePressed(point, leftClick);
-               handled |= h;
+               var clickResult = MosaicField.MousePressed(point, leftClick);
+               Mosaic_OnClick(clickResult);
+               handled |= _clickInfo.DownHandled;
             }
             if (upHandling) {
-               var h = _clickInfo.UpHandled = MosaicField.MouseReleased(point, leftClick);
-               handled |= h;
+               var clickResult = MosaicField.MouseReleased(point, leftClick);
+               Mosaic_OnClick(clickResult);
+               handled |= _clickInfo.UpHandled;
             }
-            return handled;
+         return handled;
          //   }
          //}
          //return false;
@@ -480,12 +485,12 @@ namespace FastMines {
                var needDrag = true;
                var margin = MosaicField.Container.Margin;
 #region check possibility dragging
-               if (_clickInfo.Cell != null)
+               if (_clickInfo.CellDown != null)
                {
                   var noMarginPoint = new Windows.Foundation.Point(ev.Position.X - margin.Left, ev.Position.Y - margin.Top);
                   //var inCellRegion = _tmpClickedCell.PointInRegion(noMarginPoint.ToFmRect());
                   //this.ContentRoot.Background = new SolidColorBrush(inCellRegion ? Colors.Aquamarine : Colors.DeepPink);
-                  var rcOuter = _clickInfo.Cell.getRcOuter();
+                  var rcOuter = _clickInfo.CellDown.getRcOuter();
                   var sizePage = Window.Current.Bounds.ToFmRect().Size();
                   var delta = Math.Min(sizePage.Width/20, sizePage.Height/20);
                   rcOuter.MoveXY(-delta, -delta);
@@ -673,8 +678,8 @@ namespace FastMines {
    }
 
    class ClickInfo {
-      public BaseCell Cell { get; set; }
-      public bool IsLeft { get; set; }
+      public BaseCell CellDown { get; set; }
+      //public bool IsLeft { get; set; }
       /// <summary> pressed or released </summary>
       public bool Released { get; set; }
       public bool DownHandled { get; set; }

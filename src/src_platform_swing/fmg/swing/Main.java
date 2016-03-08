@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -82,8 +83,7 @@ import fmg.core.mosaic.MosaicHelper;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
-import fmg.core.types.event.MosaicEvent;
-import fmg.core.types.event.MosaicListener;
+import fmg.core.types.click.ClickResult;
 import fmg.data.controller.event.ActionToUser;
 import fmg.data.controller.serializable.ChampionsModel;
 import fmg.data.controller.serializable.PlayersModel;
@@ -932,7 +932,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       this.setTitle("FastMines");
       this.setIconImage(getResources().getImgLogo());
 
-      getMosaic().addMosaicListener(this.getHandlers().getMosaicListener());
+      getMosaic().setOnClickEvent(this.getHandlers().getMosaicClickHandler());
 //      this.getHandlers().getMosaicListener().OnChangedArea(new MosaicEvent(getMosaic())); // TODO: это нужно только тогда, когда нет десериализации
       getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaic().getCountMinesLeft()));
       getToolbar().getEdtTimePlay().setText("0");
@@ -1839,25 +1839,22 @@ public class Main extends JFrame implements PropertyChangeListener {
          return themeSystemAction;
       }
 
-      private MosaicListener mosaicListener;
-      public MosaicListener getMosaicListener() {
-         if (mosaicListener == null)
-            mosaicListener = new MosaicListener() {
-               @Override
-               public void OnClick(MosaicEvent.ClickEvent e) {
-//                  System.out.println("OnMosaicClick: down=" + e.isDown() + "; leftClick=" + e.isLeftClick());
-                  if (e.isLeftClick() && (e.getSource().getGameStatus() == EGameStatus.eGSPlay)) {
-                     Icon img = Main.this.getResources().getImgBtnNew(
-                           e.isDown() ?
-                              EBtnNewGameState.eNormalMosaic :
-                              EBtnNewGameState.eNormal);
-                     if (img != null)
-                        Main.this.getToolbar().getBtnNew().setIcon(img);
-                  }
+      private Consumer<ClickResult> mosaicClickHandler;
+      public Consumer<ClickResult> getMosaicClickHandler() {
+         if (mosaicClickHandler == null)
+            mosaicClickHandler = (clickResult) -> {
+               //System.out.println("OnMosaicClick: down=" + clickResult.isDown() + "; leftClick=" + clickResult.isLeft());
+               if (clickResult.isLeft() && (Main.this.getMosaic().getGameStatus() == EGameStatus.eGSPlay)) {
+                  Icon img = Main.this.getResources().getImgBtnNew(
+                        clickResult.isDown() ?
+                           EBtnNewGameState.eNormalMosaic :
+                           EBtnNewGameState.eNormal);
+                  if (img != null)
+                     Main.this.getToolbar().getBtnNew().setIcon(img);
                }
-         };
+            };
    
-         return mosaicListener;
+         return mosaicClickHandler;
       }
    
       private MouseListener pausePanelMouseListener;

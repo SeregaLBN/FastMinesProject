@@ -145,12 +145,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\types\event\MosaicListener.cs">
-      <Link>src_fmg.core\types\event\MosaicListener.cs</Link>
-    </Compile>
-    <Compile Include="..\src\src_core\fmg\core\types\event\MosaicEvent.cs">
-      <Link>src_fmg.core\types\event\MosaicEvent.cs</Link>
-    </Compile>
     <Compile Include="..\src\src_data\fmg\data\view\draw\ColorText.cs">
       <Link>src_fmg.data\view\draw\ColorText.cs</Link>
     </Compile>
@@ -803,8 +797,11 @@
     <Content Include="..\res\MosaicGroup\Triangles.ico">
       <Link>res\MosaicGroup\Triangles.ico</Link>
     </Content>
-    <Compile Include="..\src\src_core\fmg\core\types\ClickResult.cs">
-      <Link>src_fmg.core\types\ClickResult.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\types\click\ClickCellResult.cs">
+      <Link>src_fmg.core\types\click\ClickCellResult.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_core\fmg\core\types\click\ClickResult.cs">
+      <Link>src_fmg.core\types\click\ClickResult.cs</Link>
     </Compile>
     <Compile Include="..\src\src_core\fmg\core\mosaic\cells\BaseCell.cs">
       <Link>src_fmg.core\mosaic\cells\BaseCell.cs</Link>

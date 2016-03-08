@@ -4,16 +4,17 @@ using fmg.core.mosaic.cells;
 
 namespace fmg.core.types.click {
 
-   public class ClickResult {
+   public class ClickCellResult {
+
       public List<BaseCell> Modified = new List<BaseCell>();
 
-      public bool IsAnyOpenMine() {
-         return Modified
-            .Where(x => x.State.Status == EState._Open)
-            .Any(x => x.State.Open == EOpen._Mine);
-      }
+      /// <summary> были ли изменени€ на поле? Ѕыла ли открыта хоть одна €чейка или выставлен/сн€т флажЄк / знак вопроса </summary>
+      public bool IsAnyChanges => Modified.Any();
+      public bool IsAnyOpenMine => Modified
+         .Where(x => x.State.Status == EState._Open)
+         .Any(x => x.State.Open == EOpen._Mine);
 
-      ///// <summary> множество €чеек (нулевых  ) открытых при последнем клике </summary>
+      ///// <summary> множество €чеек (нулевых) открытых при последнем клике </summary>
       //public List<BaseCell> GetOpenNils() {
       //   return Modified
       //      .Where(x => x.State.Status == EState._Open)

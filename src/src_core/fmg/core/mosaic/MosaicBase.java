@@ -30,23 +30,20 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import javax.swing.event.EventListenerList;
-
 import fmg.common.geom.Coord;
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.types.ClickResult;
 import fmg.core.types.EClose;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EOpen;
 import fmg.core.types.EPlayInfo;
 import fmg.core.types.EState;
-import fmg.core.types.event.MosaicEvent;
-import fmg.core.types.event.MosaicListener;
+import fmg.core.types.click.ClickCellResult;
+import fmg.core.types.click.ClickResult;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
 /** Mosaic field: класс окна мозаики поля */
@@ -316,40 +313,6 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       this._repositoryMines = repositoryMines;
    }
 
-   protected static class MosaicListeners {
-      private EventListenerList listeners = new EventListenerList();
-      
-      public void add(MosaicListener l) {
-         listeners.add(MosaicListener.class, l);
-      }
-      public void remove(MosaicListener l) {
-         listeners.remove(MosaicListener.class, l);
-      }
-
-      /** уведомить о клике на мозаике */
-      public void fireOnClick(MosaicEvent.ClickEvent ev) {
-         for (Object o: listeners.getListenerList()) {
-            if (!(o instanceof MosaicListener))
-               continue;
-            ((MosaicListener)o).OnClick(ev);
-         }
-      }
-   }
-   private MosaicListeners _mosaicListeners;
-   protected MosaicListeners getMosaicListeners() {
-      if (_mosaicListeners  == null)
-         _mosaicListeners = new MosaicListeners();
-      return _mosaicListeners;
-   }
-   /**  подписаться на уведомления изменений мозаики */
-   public void addMosaicListener(MosaicListener listener) {
-      getMosaicListeners().add(listener);
-   }
-   /**  отписаться от уведомлений изменений мозаики */
-   public void removeMosaicListener(MosaicListener listener) {
-      getMosaicListeners().remove(listener);
-   }
-
    /** перерисовать ячейку; если null - перерисовать всё поле */
    protected abstract void Repaint(BaseCell cell);
    
@@ -419,12 +382,13 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       }
    }
 
-   protected boolean OnLeftButtonDown(BaseCell cellLeftDown) {
+   protected ClickResult onLeftButtonDown(BaseCell cellLeftDown) {
+      ClickResult result = new ClickResult(cellLeftDown, true, true);
       setCellDown(null);
       if (getGameStatus() == EGameStatus.eGSEnd)
-         return false;
+         return result;
       if (cellLeftDown == null)
-         return false;
+         return result;
 
       setCellDown(cellLeftDown);
       if (getGameStatus() == EGameStatus.eGSCreateGame) {
@@ -439,37 +403,40 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
             getRepositoryMines().remove(cellLeftDown.getCoord());
          }
          Repaint(cellLeftDown);
+         result.modified.add(cellLeftDown);
+         return result;
       } else {
-         ClickResult result = cellLeftDown.LButtonDown();
-         if (result != null)
-            result.modified.forEach(cell -> Repaint(cell));
+         ClickCellResult resultCell = cellLeftDown.LButtonDown();
+         result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified); 
+         result.modified.forEach(cell -> Repaint(cell));
+         return result;
       }
-      getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, cellLeftDown, true, true));
-      return true;
    }
 
-   protected boolean OnLeftButtonUp(BaseCell cellLeftUp) {
+   protected ClickResult onLeftButtonUp(BaseCell cellLeftUp) {
       try {
+         BaseCell cellDown = getCellDown(); 
+         ClickResult result = new ClickResult(cellDown, true, false);
          if (getGameStatus() == EGameStatus.eGSEnd)
-            return false;
-         BaseCell cell = getCellDown(); 
-         if (cell == null)
-            return false;
+            return result;
+         if (cellDown == null)
+            return result;
          if (getGameStatus() == EGameStatus.eGSCreateGame)
-            return false;
+            return result;
    
    //      System.out.println("OnLeftButtonUp: coordLUp="+coordLUp);
-         if ((getGameStatus() == EGameStatus.eGSReady) && (cell == cellLeftUp))
+         if ((getGameStatus() == EGameStatus.eGSReady) && (cellDown == cellLeftUp))
          {
-            GameBegin(cell);
+            GameBegin(cellDown);
          }
-         ClickResult result = cell.LButtonUp(cell == cellLeftUp);
+         ClickCellResult resultCell = cellDown.LButtonUp(cellDown == cellLeftUp);
+         result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
          result.modified.forEach(c -> Repaint(c));
          int countOpen = result.getCountOpen();
          int countFlag = result.getCountFlag();
          int countUnknown = result.getCountUnknown();
-         boolean res = (countOpen > 0) || (countFlag > 0) || (countUnknown > 0); // клик со смыслом (были изменения на поле) 
-         if (res) {
+         boolean any = (countOpen > 0) || (countFlag > 0) || (countUnknown > 0); // клик со смыслом (были изменения на поле) 
+         if (any) {
             setCountClick(getCountClick()+1);
             setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
             if (countOpen > 0)
@@ -491,37 +458,36 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
                VerifyFlag();
             }
          }
-         getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, cell, true, false));
-         return res;
+         return result;
       } finally {
          setCellDown(null);
       }
    }
 
-   protected boolean OnRightButtonDown(BaseCell cellRightDown) {
+   protected ClickResult onRightButtonDown(BaseCell cellRightDown) {
       setCellDown(null);
+      ClickResult result = new ClickResult(cellRightDown, false, true);
       if (getGameStatus() == EGameStatus.eGSEnd) {
          GameNew();
-         return true;
+         result.modified.addAll(getMatrix()); // ??? TODO optimize
+         return result;
       }
       if (getGameStatus() == EGameStatus.eGSReady)
-         return false;
+         return result;
       if (getGameStatus() == EGameStatus.eGSCreateGame)
-         return false;
+         return result;
       if (cellRightDown == null)
-         return false;
+         return result;
 
       setCellDown(cellRightDown);
-      ClickResult result = cellRightDown.RButtonDown(cellRightDown.getState().getClose().nextState(getUseUnknown()));
-      if (result == null)
-         return false;
-
+      ClickCellResult resultCell = cellRightDown.RButtonDown(cellRightDown.getState().getClose().nextState(getUseUnknown()));
+      result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
       result.modified.forEach(c -> Repaint(c));
 
       int countFlag = result.getCountFlag();
       int countUnknown = result.getCountUnknown();
-      boolean res = (countFlag > 0) || (countUnknown > 0); // клик со смыслом (были изменения на поле)
-      if (res) {
+      boolean any = (countFlag > 0) || (countUnknown > 0); // клик со смыслом (были изменения на поле)
+      if (any) {
          setCountClick(getCountClick()+1);
          setPlayInfo(EPlayInfo.ePlayerUser); // то считаю что юзер играл
          onPropertyChanged(null, null, "CountFlag");
@@ -533,17 +499,13 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       if (getGameStatus() != EGameStatus.eGSEnd) {
          //...
       }
-      getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, cellRightDown, false, true));
-      return res;
+      return result;
    }
 
-   protected boolean OnRightButtonUp(/*BaseCell cellRightUp*/) {
+   protected ClickResult onRightButtonUp(BaseCell cellRightUp) {
       try {
-         BaseCell cell = getCellDown(); 
-         if (cell == null)
-            return false;
-         getMosaicListeners().fireOnClick(new MosaicEvent.ClickEvent(this, cell, false, false));
-         return true;
+         BaseCell cellDown = getCellDown(); 
+         return new ClickResult(cellDown, false, false);
       } finally {
          setCellDown(null);
       }
@@ -575,6 +537,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
 
       setGameStatus(EGameStatus.eGSReady);
       setPlayInfo(EPlayInfo.ePlayerUnknown); // пока не знаю кто будет играть
+      Repaint(null);
    }
 
    /** создать игру игроком - он сам расставит мины */

@@ -35,10 +35,10 @@ import fmg.common.geom.RegionDouble;
 import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
-import fmg.core.types.ClickResult;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
+import fmg.core.types.click.ClickCellResult;
 
 /** Базовый класс фигуры-ячейки */
 public abstract class BaseCell {
@@ -290,40 +290,41 @@ public abstract class BaseCell {
    public abstract int getShiftPointBorderIndex();
 
 
-   public ClickResult LButtonDown() {
-      if (state.getClose()  == EClose._Flag) return null;
+   public ClickCellResult LButtonDown() {
+      ClickCellResult result = new ClickCellResult();
+      if (state.getClose() == EClose._Flag)
+         return result;
+
       if (state.getStatus() == EState._Close) {
          state.setDown(true);
-         ClickResult result = new ClickResult();
          result.modified.add(this);
          return result;
       }
 
-      ClickResult result = null;
       // эффект нажатости для неоткрытых соседей
       if ((state.getStatus() == EState._Open) && (state.getOpen() != EOpen._Nil))
          for (BaseCell nCell : neighbors) {
             if (nCell == null) continue; // существует ли сосед?
             if ((nCell.state.getStatus() == EState._Open) ||
-               (nCell.state.getClose()  == EClose._Flag)) continue;
+                (nCell.state.getClose()  == EClose._Flag)) continue;
             nCell.state.setDown(true);
-            if (result == null)
-               result = new ClickResult();
             result.modified.add(nCell);
          }
       return result;
    }
 
-   public ClickResult LButtonUp(boolean isMy) {
-      ClickResult result = new ClickResult();
+   public ClickCellResult LButtonUp(boolean isMy) {
+      ClickCellResult result = new ClickCellResult();
 
-      if (state.getClose() == EClose._Flag) return result;
+      if (state.getClose() == EClose._Flag)
+         return result;
+
       // избавится от эффекта нажатости
       if ((state.getStatus() == EState._Open) && (state.getOpen() != EOpen._Nil))
          for (BaseCell nCell : neighbors) {
             if (nCell == null) continue; // существует ли сосед?
             if ((nCell.state.getStatus() == EState._Open) ||
-               (nCell.state.getClose()  == EClose._Flag)) continue;
+                (nCell.state.getClose()  == EClose._Flag)) continue;
             nCell.state.setDown(false);
             result.modified.add(nCell);
          }
@@ -333,6 +334,7 @@ public abstract class BaseCell {
          result.modified.add(this);
          if (!isMy)
             return result;
+
          getState().setStatus(EState._Open);
       }
 
@@ -353,39 +355,38 @@ public abstract class BaseCell {
          for (BaseCell nCell : neighbors) {
             if (nCell == null) continue; // существует ли сосед?
             if ((nCell.state.getStatus() == EState._Open) ||
-               (nCell.state.getClose()  == EClose._Flag)) continue;
+                (nCell.state.getClose()  == EClose._Flag)) continue;
             nCell.state.setClose(EClose._Flag);
             result.modified.add(nCell);
          }
-      if (!isMy) return result;
+      if (!isMy)
+         return result;
+
       // открыть оставшиеся
       if ((countFlags+result.getCountFlag()) == state.getOpen().ordinal())
          for (BaseCell nCell : neighbors) {
             if (nCell == null) continue; // существует ли сосед?
             if ((nCell.state.getStatus() == EState._Open) ||
-               (nCell.state.getClose()  == EClose._Flag)) continue;
+                (nCell.state.getClose()  == EClose._Flag)) continue;
             nCell.state.setDown(true);
             nCell.state.setStatus(EState._Open);
             result.modified.add(nCell);
             if (nCell.state.getOpen() == EOpen._Nil) {
-               ClickResult result2 = nCell.LButtonUp(true);
+               ClickCellResult result2 = nCell.LButtonUp(true);
                result.modified.addAll(result2.modified);
             }
-            if (nCell.state.getOpen() == EOpen._Mine) {
+            if (nCell.state.getOpen() == EOpen._Mine)
                return result;
-            }
          }
       return result;
    }
 
-   public ClickResult RButtonDown(EClose close) {
+   public ClickCellResult RButtonDown(EClose close) {
+      ClickCellResult result = new ClickCellResult();
       if ((state.getStatus() == EState._Open) || state.isDown())
-         return null;
+         return result;
 
-      if (state.getClose() != close)
-         state.setClose(close);
-
-      ClickResult result = new ClickResult();
+      state.setClose(close);
       result.modified.add(this);
       return result;
    }

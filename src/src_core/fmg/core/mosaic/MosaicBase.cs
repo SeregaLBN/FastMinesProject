@@ -26,9 +26,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using fmg.common.geom;
 using fmg.core.types;
-using fmg.core.types.Event;
 using fmg.core.mosaic.cells;
 using fmg.core.mosaic.draw;
+using fmg.core.types.click;
 using FastMines.Presentation.Notyfier;
 
 namespace fmg.core.mosaic {
@@ -271,11 +271,6 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
       }
    }
 
-   public event ClickEventHandler OnClick = delegate { };
-
-   /// <summary> уведомить о клике на мозаике </summary>
-   private void fireOnClick(BaseCell cell, bool leftClick, bool down) { OnClick(this, new MosaicEvent.ClickEventArgs(cell, leftClick, down)); }
-
    /// <summary>перерисовать ячейку; если null - перерисовать всё поле </summary>
    protected abstract void Repaint(BaseCell cell);
    
@@ -345,13 +340,14 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
       }
    }
 
-   protected bool OnLeftButtonDown(BaseCell cellLeftDown) {
+   protected ClickResult OnLeftButtonDown(BaseCell cellLeftDown) {
       using (new FastMines.Common.Tracer("Mosaic::OnLeftButtonDown")) {
+         var result = new ClickResult(cellLeftDown, true, true);
          CellDown = null;
          if (GameStatus == EGameStatus.eGSEnd)
-            return false;
+            return result;
          if (cellLeftDown == null)
-            return false;
+            return result;
 
          CellDown = cellLeftDown;
          if (GameStatus == EGameStatus.eGSCreateGame) {
@@ -366,39 +362,42 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
                RepositoryMines.Remove(cellLeftDown.getCoord());
             }
             Repaint(cellLeftDown);
+            result.Modified.Add(cellLeftDown);
          } else {
-            var result = cellLeftDown.LButtonDown();
-            result?.Modified.ForEach(Repaint);
+            var resultCell = cellLeftDown.LButtonDown();
+            result.Modified = resultCell.Modified; // copy reference; TODO result.Modified.AddRange(resultCell.Modified);
+            result.Modified.ForEach(Repaint);
          }
-         fireOnClick(cellLeftDown, true, true);
-         return true;
+         return result;
       }
    }
 
-   protected bool OnLeftButtonUp(BaseCell cellLeftUp) {
+   protected ClickResult OnLeftButtonUp(BaseCell cellLeftUp) {
       using (var tracer = new FastMines.Common.Tracer("Mosaic::OnLeftButtonUp"))
       try {
+         var cellDown = CellDown;
+         var result = new ClickResult(cellDown, true, false);
          if (GameStatus == EGameStatus.eGSEnd)
-            return false;
-         var cell = CellDown;
-         if (cell == null)
-            return false;
+            return result;
+         if (cellDown == null)
+            return result;
          if (GameStatus == EGameStatus.eGSCreateGame)
-            return false;
+            return result;
 
    //      System.out.println("OnLeftButtonUp: coordLUp="+coordLUp);
-         if ((GameStatus == EGameStatus.eGSReady) && (CellDown == cellLeftUp))
+         if ((GameStatus == EGameStatus.eGSReady) && ReferenceEquals(cellDown, cellLeftUp))
          {
             GameBegin(CellDown);
          }
-         var result = cell.LButtonUp(ReferenceEquals(cell, cellLeftUp));
+         var resultCell = cellDown.LButtonUp(ReferenceEquals(cellDown, cellLeftUp));
+         result.Modified = resultCell.Modified; // copy reference; TODO result.Modified.AddRange(resultCell.Modified);
          tracer.Put(" result.Modified=" + result.Modified.Count);
          result.Modified.ForEach(Repaint);
          var countOpen = result.CountOpen;
          var countFlag = result.CountFlag;
          var countUnknown = result.CountUnknown;
-         var res = (countOpen > 0) || (countFlag > 0) || (countUnknown > 0); // клик со смыслом (были изменения на поле)
-         if (res) {
+         var any = (countOpen > 0) || (countFlag > 0) || (countUnknown > 0); // клик со смыслом (были изменения на поле)
+         if (any) {
             CountClick++;
             PlayInfo = EPlayInfo.ePlayerUser;  // юзер играл
             if (countOpen > 0)
@@ -410,7 +409,7 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
             }
          }
 
-         if (result.IsAnyOpenMine()) {
+         if (result.IsAnyOpenMine) {
             GameEnd(false);
          } else {
             var sizeField = SizeField;
@@ -420,37 +419,37 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
                VerifyFlag();
             }
          }
-         fireOnClick(cell, true, false);
-         return res;
+         return result;
       } finally {
          CellDown = null;
       }
    }
 
-   protected bool OnRightButtonDown(BaseCell cellRightDown) {
+   protected ClickResult OnRightButtonDown(BaseCell cellRightDown) {
       using (var tracer = new FastMines.Common.Tracer("Mosaic::OnRightButtonDown")) {
+         CellDown = null;
+         var result = new ClickResult(cellRightDown, false, true); ;
          if (GameStatus == EGameStatus.eGSEnd) {
             GameNew();
-            return true;
+            result.Modified.AddRange(Matrix); // ??? TODO optimize
+            return result;
          }
          if (GameStatus == EGameStatus.eGSReady)
-            return false;
+            return null;
          if (GameStatus == EGameStatus.eGSCreateGame)
-            return false;
+            return null;
          if (cellRightDown == null)
-            return false;
+            return null;
 
          CellDown = cellRightDown;
-         var result = cellRightDown.RButtonDown(cellRightDown.State.Close.NextState(UseUnknown));
-         if (result == null)
-            return false;
-
+         var resultCell = cellRightDown.RButtonDown(cellRightDown.State.Close.NextState(UseUnknown));
+         result.Modified = resultCell.Modified; // copy reference; TODO result.Modified.AddRange(resultCell.Modified);
          result.Modified.ForEach(Repaint);
 
-         var countFlag = CountFlag;
-         var countUnknown = CountUnknown;
-         var res = (countFlag != 0) || (countUnknown != 0); // клик со смыслом (были изменения на поле)
-         if (res) {
+         var countFlag = result.CountFlag;
+         var countUnknown = result.CountUnknown;
+         var any = (countFlag != 0) || (countUnknown != 0); // клик со смыслом (были изменения на поле)
+         if (any) {
             CountClick++;
             PlayInfo = EPlayInfo.ePlayerUser; // то считаю что юзер играл
             OnPropertyChanged("CountFlag");
@@ -462,23 +461,17 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
          if (GameStatus != EGameStatus.eGSEnd) {
             //...
          }
-         fireOnClick(cellRightDown, false, true);
-         tracer.Put("return " + res);
-         return res;
+         tracer.Put("any=" + any);
+         return result;
       }
    }
 
-   protected bool OnRightButtonUp() {
+   protected ClickResult OnRightButtonUp(BaseCell cellRightUp) {
       using (var tracer = new FastMines.Common.Tracer("Mosaic::OnRightButtonUp"))
       try {
-         var cell = CellDown;
-         if (cell == null) {
-            tracer.Put("return " + false);
-            return false;
-         }
-         fireOnClick(cell, false, false);
-         tracer.Put("return " + true);
-         return true;
+         var cellDown = CellDown;
+         //tracer.Put("return");
+         return new ClickResult(cellDown, false, false);
       } finally {
          CellDown = null;
       }
