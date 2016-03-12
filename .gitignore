@@ -1,7 +1,12 @@
 *.sdf
 *.opensdf
-.metadata
-.recommenders
+.metadata/
+.recommenders/
+.gradle/
+.settings/
+.idea/
+.project
+.classpath
 Workspaces/VS/packages/*/
 *.suo
 **/obj

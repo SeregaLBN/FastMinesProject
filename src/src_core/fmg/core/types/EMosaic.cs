@@ -5,21 +5,21 @@ using fmg.common.geom;
 
 namespace fmg.core.types {
 
-/* Перечень мозаик */
+/* РџРµСЂРµС‡РµРЅСЊ РјРѕР·Р°РёРє */
 
-/// <summary> тип мозаики </summary>
+/// <summary> С‚РёРї РјРѕР·Р°РёРєРё </summary>
 public enum EMosaic {
    // ============== Triangles ==============
-   /// <summary> Triangle 60°-60°-60° </summary>
+   /// <summary> Triangle 60В°-60В°-60В° </summary>
    eMosaicTriangle1           = (300),
 
-   /// <summary> Triangle 60°-60°-60° (offset) </summary>
+   /// <summary> Triangle 60В°-60В°-60В° (offset) </summary>
    eMosaicTriangle2           = (301),
 
-   /// <summary> Triangle 45°-90°-45° </summary>
+   /// <summary> Triangle 45В°-90В°-45В° </summary>
    eMosaicTriangle3           = (302),
 
-   /// <summary> Triangle 30°-30°-120° </summary>
+   /// <summary> Triangle 30В°-30В°-120В° </summary>
    eMosaicTriangle4           = (303),
 
    // ============== Quadrangles ==============
@@ -29,29 +29,29 @@ public enum EMosaic {
    /// <summary> Square 2 (offset) </summary>
    eMosaicSquare2             = (401),
 
-   /// <summary> Parquet №1 - 'Herring-bone' - Паркет в елку </summary>
+   /// <summary> Parquet в„–1 - 'Herring-bone' - РџР°СЂРєРµС‚ РІ РµР»РєСѓ </summary>
    eMosaicParquet1            = (402),
 
-   /// <summary> Parquet №2 </summary>
+   /// <summary> Parquet в„–2 </summary>
    eMosaicParquet2            = (403),
 
-   /// <summary> Trapezoid 1 - 3 трапеции, составляющие равносторонний треугольник </summary>
+   /// <summary> Trapezoid 1 - 3 С‚СЂР°РїРµС†РёРё, СЃРѕСЃС‚Р°РІР»СЏСЋС‰РёРµ СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРє </summary>
    eMosaicTrapezoid1          = (404),
 
-   /// <summary> Trapezoid 2 - 3 трапеции, составляющие равносторонний треугольник </summary>
+   /// <summary> Trapezoid 2 - 3 С‚СЂР°РїРµС†РёРё, СЃРѕСЃС‚Р°РІР»СЏСЋС‰РёРµ СЂР°РІРЅРѕСЃС‚РѕСЂРѕРЅРЅРёР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРє </summary>
    eMosaicTrapezoid2          = (405),
 
-   /// <summary> Trapezoid 3 - 8 трапеций, складывающихся в шестигранник </summary>
+   /// <summary> Trapezoid 3 - 8 С‚СЂР°РїРµС†РёР№, СЃРєР»Р°РґС‹РІР°СЋС‰РёС…СЃСЏ РІ С€РµСЃС‚РёРіСЂР°РЅРЅРёРє </summary>
    eMosaicTrapezoid3          = (406),
 
    /// <summary> Rhombus </summary>
    eMosaicRhombus1            = (407),
 
-   /// <summary> Quadrilateral 120°-90°-60°-90° </summary>
+   /// <summary> Quadrilateral 120В°-90В°-60В°-90В° </summary>
    eMosaicQuadrangle1         = (408),
 
    /// <summary>
-   ///   Penrose tilings (rombus 72°-108° & 36°- 144°) - one of the periodic variations.
+   ///   Penrose tilings (rombus 72В°-108В° & 36В°- 144В°) - one of the periodic variations.
    ///   <li><a href="http://ru.wikipedia.org/wiki/%D0%9C%D0%BE%D0%B7%D0%B0%D0%B8%D0%BA%D0%B0_%D0%9F%D0%B5%D0%BD%D1%80%D0%BE%D1%83%D0%B7%D0%B0">ru wiki</>
    ///   <li><a href="http://en.wikipedia.org/wiki/Penrose_tiling">en wiki</>
    /// </summary>
@@ -110,7 +110,7 @@ public static class EMosaicEx {
    public static int GetIndex(this EMosaic self) { return (int)self; }
 
    /// <summary>
-   /// Описание для пользователя
+   /// РћРїРёСЃР°РЅРёРµ РґР»СЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
    /// </summary>
    /// <param name="self"></param>
    /// <param name="small"></param>
@@ -120,10 +120,10 @@ public static class EMosaicEx {
          return self.ToString().Substring(7);
 
       switch (self) {
-      case EMosaic.eMosaicTriangle1        : return "Triangle 60°-60°-60°";
-      case EMosaic.eMosaicTriangle2        : return "Triangle 60°-60°-60° (offset)";
-      case EMosaic.eMosaicTriangle3        : return "Triangle 45°-90°-45°";
-      case EMosaic.eMosaicTriangle4        : return "Triangle 30°-30°-120°";
+      case EMosaic.eMosaicTriangle1        : return "Triangle 60В°-60В°-60В°";
+      case EMosaic.eMosaicTriangle2        : return "Triangle 60В°-60В°-60В° (offset)";
+      case EMosaic.eMosaicTriangle3        : return "Triangle 45В°-90В°-45В°";
+      case EMosaic.eMosaicTriangle4        : return "Triangle 30В°-30В°-120В°";
       case EMosaic.eMosaicSquare1          : return "Square 1";
       case EMosaic.eMosaicSquare2          : return "Square 2 (offset)";
       case EMosaic.eMosaicParquet1         : return "Rectangle 1 (Parquet 'Herring-bone')";
@@ -132,8 +132,8 @@ public static class EMosaicEx {
       case EMosaic.eMosaicTrapezoid2       : return "Trapezoid 2";
       case EMosaic.eMosaicTrapezoid3       : return "Trapezoid 3";
       case EMosaic.eMosaicRhombus1         : return "Rhombus";
-      case EMosaic.eMosaicQuadrangle1      : return "Quadrilateral 120°-90°-60°-90°";
-      case EMosaic.eMosaicPenrousePeriodic1: return "Penrose periodic tilings";// (rombus 72°-108° & 36°- 144°)";
+      case EMosaic.eMosaicQuadrangle1      : return "Quadrilateral 120В°-90В°-60В°-90В°";
+      case EMosaic.eMosaicPenrousePeriodic1: return "Penrose periodic tilings";// (rombus 72В°-108В° & 36В°- 144В°)";
       case EMosaic.eMosaicPentagonT24      : return "Pentagon (type 2 and 4)";
       case EMosaic.eMosaicPentagonT5       : return "Pentagon (type 5)";
       case EMosaic.eMosaicPentagonT10      : return "Pentagon (type 10)";
@@ -146,7 +146,7 @@ public static class EMosaicEx {
    }
 
    /// <summary>
-   /// Перечень описаний мозаик
+   /// РџРµСЂРµС‡РµРЅСЊ РѕРїРёСЃР°РЅРёР№ РјРѕР·Р°РёРє
    /// </summary>
    /// <returns></returns>
    public static IEnumerable<string> GetDescriptionValues() {
@@ -160,13 +160,13 @@ public static class EMosaicEx {
    }
 
    /// <summary>
-   /// 'Быстрый' код - уникальный номер мозаики для быстрого ввода.
-   /// <ul> Идея:
-   /// <li> треугольники начинаются с цифры 3
-   /// <li> четырёхугольники - с цифры 4
-   /// <li> пятиугольники - с цифры 5
-   /// <li> шестиугольники - с цифры 6
-   /// <li> прочие - с цифры 7
+   /// 'Р‘С‹СЃС‚СЂС‹Р№' РєРѕРґ - СѓРЅРёРєР°Р»СЊРЅС‹Р№ РЅРѕРјРµСЂ РјРѕР·Р°РёРєРё РґР»СЏ Р±С‹СЃС‚СЂРѕРіРѕ РІРІРѕРґР°.
+   /// <ul> РРґРµСЏ:
+   /// <li> С‚СЂРµСѓРіРѕР»СЊРЅРёРєРё РЅР°С‡РёРЅР°СЋС‚СЃСЏ СЃ С†РёС„СЂС‹ 3
+   /// <li> С‡РµС‚С‹СЂС‘С…СѓРіРѕР»СЊРЅРёРєРё - СЃ С†РёС„СЂС‹ 4
+   /// <li> РїСЏС‚РёСѓРіРѕР»СЊРЅРёРєРё - СЃ С†РёС„СЂС‹ 5
+   /// <li> С€РµСЃС‚РёСѓРіРѕР»СЊРЅРёРєРё - СЃ С†РёС„СЂС‹ 6
+   /// <li> РїСЂРѕС‡РёРµ - СЃ С†РёС„СЂС‹ 7
    /// </summary>
    public static int GetFastCode(this EMosaic self) {
       switch (self) {
@@ -197,7 +197,7 @@ public static class EMosaicEx {
    }
 
    /// <summary>
-   /// Перечень 'быстрых' кодов
+   /// РџРµСЂРµС‡РµРЅСЊ 'Р±С‹СЃС‚СЂС‹С…' РєРѕРґРѕРІ
    /// </summary>
    /// <returns></returns>
    public static IEnumerable<int> GetFastCodeValues() {
@@ -214,7 +214,7 @@ public static class EMosaicEx {
       return self.ToString().Substring(7);
    }
 
-   /// <summary> Для рисование иконки: минимальный размер поля, по которому будет визуально ясно, что это за мозаика... </summary>
+   /// <summary> Р”Р»СЏ СЂРёСЃРѕРІР°РЅРёРµ РёРєРѕРЅРєРё: РјРёРЅРёРјР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ РїРѕР»СЏ, РїРѕ РєРѕС‚РѕСЂРѕРјСѓ Р±СѓРґРµС‚ РІРёР·СѓР°Р»СЊРЅРѕ СЏСЃРЅРѕ, С‡С‚Рѕ СЌС‚Рѕ Р·Р° РјРѕР·Р°РёРєР°... </summary>
    public static Matrisize SizeIcoField(this EMosaic self, bool smallSize) {
       var res = new Matrisize();
       switch (self) {
