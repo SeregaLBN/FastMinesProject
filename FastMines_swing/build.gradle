@@ -26,25 +26,25 @@ sourceSets {
          srcDir '../src/src_platform_swing'
          include '**/*.java'
       }
-      //resources {
-      //   srcDir '../res'
-      //   exclude '**/*~*'
-      //   include '**/*.gif'
-      //   include '**/*.jpeg'
-      //   include '**/*.jpg'
-      // //include '**/*.ico'
-      //   include '**/*.png'
-      //}
+      resources {
+         srcDir '../res'
+         exclude '**/*~*'
+         include '**/*.gif'
+         include '**/*.jpeg'
+         include '**/*.jpg'
+       //include '**/*.ico'
+         include '**/*.png'
+      }
    }
 }
 
-jar {
-   into('res') {
-      from '../res'
-      exclude '**/*~*'
-      include '**/*.png'
-   }
-}
+//jar {
+//   into('res') {
+//      from '../res'
+//      exclude '**/*~*'
+//      include '**/*.png'
+//   }
+//}
 
 jar {
    manifest {
