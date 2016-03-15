@@ -9,7 +9,7 @@ namespace FastMines.Presentation {
       private readonly MosaicsDataSource _mosaicsDs = new MosaicsDataSource();
 
       public MosaicsViewModel() {
-         _mosaicsDs.ImageSize = 150; // TODO убрать, если будет зависимость ImageSize от размеров окна
+         //_mosaicsDs.ImageSize = 150; // TODO убрать, если будет зависимость ImageSize от размеров окна // see Shell.xaml.cs: Shell.OnSizeChanged
 
          //_mosaicsDs.PropertyChanged += (sender, args) => {
          //   if (args.PropertyName == "SelectedMenuItem") {

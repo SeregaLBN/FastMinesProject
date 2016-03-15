@@ -99,8 +99,17 @@ namespace FastMines
       void OnSizeChanged(object sender, SizeChangedEventArgs ev) {
          //System.Diagnostics.Debug.WriteLine("OnSizeChanged");
          var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
-         size = size / 7;
-         ViewModel.ImageSize = (int)Math.Min(Math.Max(50, size), 100); // TODO: DPI dependency
+         {
+            var size1 = size/7;
+            ViewModel.ImageSize = (int)Math.Min(Math.Max(50, size1), 100); // TODO: DPI dependency
+         }
+         {
+            var smp = RootFrame?.Content as SelectMosaicPage;
+            if (smp != null) {
+               var size2 = size/4;
+               smp.ViewModel.ImageSize = (int)Math.Min(Math.Max(100, size2), 200); // TODO: DPI dependency
+            }
+         }
       }
 
       //public static IEnumerable<T> FindChilds<T>(FrameworkElement parent, int depth = 1, Func<T, bool> filter = null)

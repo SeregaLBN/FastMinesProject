@@ -16,7 +16,7 @@ namespace FastMines.Common {
          System.Diagnostics.Debug.WriteLine("[{0}]  Th={1}  {2}", DateTime.Now.ToString("HH:mm:ss.fff"), thr, format);
       }
 #else 
-      public static void Log(string format, params object[] args) {}
+      public static void Put(string format, params object[] args) {}
 #endif
    }
 
@@ -70,7 +70,7 @@ namespace FastMines.Common {
          LoggerSimple.Put("  {0}: {1}", _hint, format);
       }
 #else
-      public static void Put(string format, params object[] args) {}
+      public void Put(string format, params object[] args) {}
 #endif
    }
 }

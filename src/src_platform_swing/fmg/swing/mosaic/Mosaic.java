@@ -145,6 +145,7 @@ public class Mosaic extends MosaicBase {
             1 + new Random().nextInt(
                   MosaicHelper.createAttributeInstance(getMosaicType(), getArea()).getMaxBackgroundFillModeValue()));
       super.GameNew();
+      getContainer().repaint();
    }
 
    @Override
