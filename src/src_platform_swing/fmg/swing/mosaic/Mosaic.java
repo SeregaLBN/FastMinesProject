@@ -108,7 +108,7 @@ public class Mosaic extends MosaicBase {
    public void setParams(Matrisize newSizeField, EMosaic newMosaicType, Integer newMinesCount) {
       super.setParams(newSizeField, newMosaicType, newMinesCount);
 
-      getContainer().repaint();
+      Repaint(null);
       getContainer().revalidate();
    }
 
@@ -145,7 +145,6 @@ public class Mosaic extends MosaicBase {
             1 + new Random().nextInt(
                   MosaicHelper.createAttributeInstance(getMosaicType(), getArea()).getMaxBackgroundFillModeValue()));
       super.GameNew();
-      getContainer().repaint();
    }
 
    @Override
@@ -213,7 +212,7 @@ public class Mosaic extends MosaicBase {
       if (!DoubleExt.hasMinDiff(oldVal, newVal)) {
          // см. комент - сноску 1
          changeFontSize(getGraphicContext().getPenBorder(), newArea);
-       //getContainer().repaint(); // вызовится неявно: area->gContext.font->this.repaint
+       //Repaint(null); // вызовится неявно: area->gContext.font->this.repaint
          getContainer().revalidate();
       }
    }
@@ -304,12 +303,14 @@ public class Mosaic extends MosaicBase {
          onGraphicContextPropertyChanged((GraphicContext)ev.getSource(), ev);
    }
    private void onGraphicContextPropertyChanged(GraphicContext source, PropertyChangeEvent ev) { 
+      //if ("BackgroundFill".equals(ev.getPropertyName()))
+      //   Repaint(null);
       if ("PenBorder".equals(ev.getPropertyName())) {
          // см. комент - сноску 1
          PenBorder penBorder = (PenBorder)ev.getNewValue();
          changeFontSize(penBorder, getArea());
       }
-      getContainer().repaint();
+      Repaint(null);;
    }
 
     /** пересчитать и установить новую высоту шрифта */

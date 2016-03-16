@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Media;
@@ -63,7 +64,7 @@ namespace fmg.uwp.draw {
       }
 
       /// <summary> всё что относиться к заливке фоном ячееек </summary>
-      public class BackgroundFill {
+      public class BackgroundFill : NotifyPropertyChanged {
          /// <summary> режим заливки фона ячеек </summary>
          private int _mode = 0;
 
@@ -77,8 +78,8 @@ namespace fmg.uwp.draw {
          public int Mode {
             get { return _mode; }
             set {
-               _mode = value;
-               _colors.Clear();
+               if (SetProperty(ref _mode, value))
+                  _colors.Clear();
             }
          }
 
@@ -98,8 +99,11 @@ namespace fmg.uwp.draw {
       private BackgroundFill _backgroundFill;
       public BackgroundFill BkFill {
          get {
-            if (_backgroundFill == null)
+            if (_backgroundFill == null) {
                _backgroundFill = new BackgroundFill();
+               _backgroundFill.PropertyChanged += OnPropertyChange;
+               OnPropertyChanged();
+            }
             return _backgroundFill;
          }
       }
@@ -127,6 +131,11 @@ namespace fmg.uwp.draw {
       /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера </summary>
       public static Color DefaultBackgroundFillColor { get; }
       public static Color DefaultBackgroundWindowColor { get; }
+
+      private void OnPropertyChange(object sender, PropertyChangedEventArgs ev) {
+         if ((sender is BackgroundFill) && ("Mode" == ev.PropertyName))
+            OnPropertyChanged("BkFill");
+      }
 
       static GraphicContext() {
          try {

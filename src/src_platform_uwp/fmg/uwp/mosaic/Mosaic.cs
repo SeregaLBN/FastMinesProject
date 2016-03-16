@@ -140,7 +140,6 @@ namespace fmg.uwp.mosaic {
          //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
          GraphicContext.BkFill.Mode = (int)mode;
          base.GameNew();
-         Repaint();
       }
 
       protected override void GameBegin(BaseCell firstClickCell) {
@@ -195,15 +194,16 @@ namespace fmg.uwp.mosaic {
          }
       }
 
-      private void OnPropertyChange(object sender, PropertyChangedEventArgs e) {
-         if ((sender is GraphicContext) && "PenBorder".Equals(e.PropertyName)) {
-            // см. комент - сноску 1
-            var gc = sender as GraphicContext;
-            ChangeFontSize(gc.PenBorder);
-         }
+      private void OnPropertyChange(object sender, PropertyChangedEventArgs ev) {
+         var gc = sender as GraphicContext;
+         if (gc != null) {
+            //if ("BkFill" == ev.PropertyName)
+            //   Repaint();
+            if ("PenBorder" == ev.PropertyName)
+               ChangeFontSize(gc.PenBorder);
 
-         if (sender is GraphicContext)
             Repaint();
+         }
       }
 
       /// <summary> пересчитать и установить новую высоту шрифта </summary>

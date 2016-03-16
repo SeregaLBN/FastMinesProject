@@ -1,6 +1,8 @@
 package fmg.swing.draw;
 
 import java.awt.Font;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -17,7 +19,7 @@ import fmg.data.view.draw.ColorText;
 import fmg.data.view.draw.PenBorder;
 import fmg.swing.Cast;
 
-public class GraphicContext extends NotifyPropertyChanged {
+public class GraphicContext extends NotifyPropertyChanged implements PropertyChangeListener {
    public static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 10);
 
    /** TODO: Mosaic field - нуна избавиться... */
@@ -88,7 +90,7 @@ public class GraphicContext extends NotifyPropertyChanged {
    }
 
    /** всё что относиться к заливке фоном ячееек */
-   public static class BackgroundFill {
+   public static class BackgroundFill extends NotifyPropertyChanged {
       /** режим заливки фона ячеек */
       private int mode = 0;
       /** кэшированные цвета фона ячеек */
@@ -105,8 +107,12 @@ public class GraphicContext extends NotifyPropertyChanged {
        *  <li> not 0 - радуга %)
        */
       public void setMode(int newFillMode) {
-         this.mode = newFillMode;
-         getColors().clear();
+         int old = this.mode;
+         if (old != newFillMode) {
+            this.mode = newFillMode;
+            onPropertyChanged(old, newFillMode, "Mode");
+            getColors().clear();
+         }
       }
 
       /** кэшированные цвета фона ячеек
@@ -131,8 +137,11 @@ public class GraphicContext extends NotifyPropertyChanged {
    }
    private BackgroundFill _backgroundFill;
    public BackgroundFill getBackgroundFill() {
-      if (_backgroundFill == null)
+      if (_backgroundFill == null) {
          _backgroundFill = new BackgroundFill();
+         _backgroundFill.addListener(this);
+         onPropertyChanged("BackgroundFill");
+      }
       return _backgroundFill;
    }
 
@@ -205,6 +214,17 @@ public class GraphicContext extends NotifyPropertyChanged {
       // ToggleButton.light      : javax.swing.plaf.ColorUIResource[r=227,g=227,b=227]
       // ToggleButton.shadow     : javax.swing.plaf.ColorUIResource[r=160,g=160,b=160]
       // ToggleButton.foreground : javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
+   }
+
+   @Override
+   public void propertyChange(PropertyChangeEvent ev) {
+      //super.propertyChange(ev);
+      if (ev.getSource() instanceof BackgroundFill)
+         onBackgroundFillPropertyChanged((BackgroundFill)ev.getSource(), ev);
+   }
+   private void onBackgroundFillPropertyChanged(BackgroundFill source, PropertyChangeEvent ev) { 
+      if ("Mode".equals(ev.getPropertyName()))
+         onPropertyChanged("BackgroundFill");
    }
 
 }
