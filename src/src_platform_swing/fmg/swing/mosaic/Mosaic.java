@@ -108,8 +108,8 @@ public class Mosaic extends MosaicBase {
    public void setParams(Matrisize newSizeField, EMosaic newMosaicType, Integer newMinesCount) {
       super.setParams(newSizeField, newMosaicType, newMinesCount);
 
-      Repaint(null);
-      getContainer().revalidate();
+      //Repaint(null);
+      //getContainer().revalidate();
    }
 
    public MosaicGraphicContext getGraphicContext() {
@@ -297,6 +297,13 @@ public class Mosaic extends MosaicBase {
    }
 
    @Override
+   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+      super.onPropertyChanged(oldValue, newValue, propertyName);
+      if ("MosaicType".equals(propertyName))
+         changeFontSize();
+   }
+
+   @Override
    public void propertyChange(PropertyChangeEvent ev) {
       super.propertyChange(ev);
       if (ev.getSource() instanceof GraphicContext)
@@ -310,7 +317,7 @@ public class Mosaic extends MosaicBase {
          PenBorder penBorder = (PenBorder)ev.getNewValue();
          changeFontSize(penBorder, getArea());
       }
-      Repaint(null);;
+      Repaint(null);
    }
 
     /** пересчитать и установить новую высоту шрифта */

@@ -315,7 +315,6 @@ namespace FastMines {
       private void Mosaic_OnChangedMosaicType(Mosaic sender, PropertyChangedExEventArgs<EMosaic> ev) {
          Debug.Assert(ReferenceEquals(sender, MosaicField));
          using (new Tracer("Mosaic_OnChangedMosaicType")) {
-            sender.ChangeFontSize();
             //ChangeSizeImagesMineFlag();
          }
       }

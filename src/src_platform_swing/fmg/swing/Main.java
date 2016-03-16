@@ -895,12 +895,9 @@ public class Main extends JFrame implements PropertyChangeListener {
          setActiveUserId(spm.getActiveUserId());
          getPlayerManageDlg().setDoNotAskStartupChecked(spm.isDoNotAskStartup());
          if (!spm.isDoNotAskStartup())
-            SwingUtilities.invokeLater( new Runnable() {
-               @Override
-               public void run() {
-                  getHandlers().getPlayerManageAction().actionPerformed(new ActionEvent(Main.this, 0, "Main::initialize"));
-               }
-            });
+            SwingUtilities.invokeLater(() ->
+               getHandlers().getPlayerManageAction().actionPerformed(new ActionEvent(Main.this, 0, "Main::initialize"))
+            );
 
          getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).setSelected(spm.isZoomAlwaysMax());
          isZoomAlwaysMax = spm.isZoomAlwaysMax();
@@ -987,9 +984,9 @@ public class Main extends JFrame implements PropertyChangeListener {
       RecheckLocation(!true, true);
 
       if (isZoomAlwaysMax)
-         SwingUtilities.invokeLater(new Runnable() { @Override public void run() { Main.this.AreaAlwaysMax(new ActionEvent(Main.this, 0, null)); } });
+         SwingUtilities.invokeLater(() -> Main.this.AreaAlwaysMax(new ActionEvent(Main.this, 0, null)) );
       if (!defaultData)
-         SwingUtilities.invokeLater(new Runnable() { @Override public void run() { Main.this.setLocation(startLocation);  RecheckLocation(true, !true); } });
+         SwingUtilities.invokeLater(() -> { Main.this.setLocation(startLocation);  RecheckLocation(true, !true); } );
    }
 
    /** Выставить верный bullet для меню мозаики */
@@ -1436,9 +1433,8 @@ public class Main extends JFrame implements PropertyChangeListener {
          this.setBounds(newBounds);
       }
 
-      SwingUtilities.invokeLater(new Runnable() { // спецом для Ubuntu Gnome
-         @Override
-         public void run() {
+      SwingUtilities.invokeLater(() -> // спецом для Ubuntu Gnome
+         {
             Dimension sizeScreen = Toolkit.getDefaultToolkit().getScreenSize();
             Rectangle rcThis = Main.this.getBounds();
             if ((rcThis.x<0) || (rcThis.y<0))
@@ -1450,7 +1446,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                      Math.max(0, Math.min(rcThis.x, sizeScreen.width  - rcThis.width)),
                      Math.max(0, Math.min(rcThis.y, sizeScreen.height - rcThis.height)));
          }
-      });
+      );
    }
    
    /** getMosaic().setArea(...) */
@@ -1571,9 +1567,8 @@ public class Main extends JFrame implements PropertyChangeListener {
             final boolean isNotPaused = (getMosaic().getGameStatus() == EGameStatus.eGSPlay) && !isPaused();
 //            if (this.isDisplayable())
                this.dispose();
-            SwingUtilities.invokeLater(new Runnable() {
-               @Override
-               public void run() {
+            SwingUtilities.invokeLater(() ->
+               {
                   Main.this.setUndecorated(!mapShow.get(EShowElement.eCaption).booleanValue());
                   Main.this.setBounds(rc);
                   Main.this.getMenu()     .setVisible(mapShow.get(EShowElement.eMenu).booleanValue());
@@ -1586,7 +1581,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   Main.this.setVisible(true);
                   Main.this.pack();
                }
-            });
+            );
          }
          break;
       case eMenu:
@@ -2287,8 +2282,6 @@ public class Main extends JFrame implements PropertyChangeListener {
    private void OnMosaicPropertyChanged(Mosaic source, PropertyChangeEvent ev) {
       switch (ev.getPropertyName()) {
       case "MosaicType":
-         getMosaic().changeFontSize();
-         //break; // no break!
       case "Area":
          ChangeSizeImagesMineFlag();
          break;

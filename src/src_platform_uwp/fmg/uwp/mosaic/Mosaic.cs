@@ -194,6 +194,13 @@ namespace fmg.uwp.mosaic {
          }
       }
 
+      protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         base.OnPropertyChanged(sender, ev);
+         if ("MosaicType" == ev.PropertyName)
+            ChangeFontSize();
+      }
+
+
       private void OnPropertyChange(object sender, PropertyChangedEventArgs ev) {
          var gc = sender as GraphicContext;
          if (gc != null) {
