@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using Windows.UI.Core;
 using fmg.common;
 using fmg.common.geom;
@@ -182,67 +180,19 @@ namespace fmg.uwp.res.img {
 
       protected virtual void DrawEnd() { }
 
-      protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(this, sender), "WTF??");
-
-         if (!DeferredOn) {
-            base.OnPropertyChanged(sender, ev);
-            return;
-         }
-
-         _deferredPropertyChanged[ev.PropertyName] = ev;
-      }
-      private readonly Dictionary<string, PropertyChangedEventArgs> _deferredPropertyChanged = new Dictionary<string, PropertyChangedEventArgs>();
-
-      private bool _deferredOn;
-      /// <summary> Deferr notifications and rendering </summary>
-      private bool DeferredOn {
-         get { return _deferredOn; }
-         set {
-            if (_deferredOn == value)
-               return;
-
-            _deferredOn = value;
-            if (_deferredOn)
-               return;
-
-            if (_deferredRedraw) {
-               _deferredRedraw = false;
-               Redraw();
-            }
-
-            if (_deferredPropertyChanged.Any()) {
-               foreach(var key in _deferredPropertyChanged.Keys) {
-                  base.OnPropertyChanged(this, _deferredPropertyChanged[key]);
-               }
-               _deferredPropertyChanged.Clear();
-            }
-         }
-      }
-
-      private class DeferredLock : IDisposable {
-         private readonly StaticImg<T, TImage> _owner;
-         private readonly bool _locked;
-         private readonly bool _redrawAfter;
-         public DeferredLock(StaticImg<T, TImage> owner, bool redrawAfter) {
-            _redrawAfter = redrawAfter;
-            if ((_owner = owner).DeferredOn)
-               return;
-            _owner.DeferredOn = true;
-            _locked = true;
-         }
-         public void Dispose() {
-            if (_redrawAfter)
-               _owner.Redraw();
-            if (!_locked)
-               return;
-            _owner.DeferredOn = false;
+      protected override void DeferredSwitchOff() {
+         if (_deferredRedraw) {
+            _deferredRedraw = false;
+            Redraw();
          }
       }
 
       /// <summary> Deferr notifications and rendering </summary>
       public IDisposable Deferring(bool redrawAfter = true) {
-         return new DeferredLock(this, redrawAfter);
+         return new DeferredLock(this, () => {
+                                          if (redrawAfter)
+                                             Redraw();
+                                       });
       }
 
       public void Dispose() {
@@ -250,5 +200,6 @@ namespace fmg.uwp.res.img {
       }
 
       protected virtual void Dispose(bool disposing) { }
+
    }
 }
