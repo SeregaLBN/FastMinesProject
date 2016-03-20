@@ -21,7 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
-import fmg.common.geom.DoubleExt;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
@@ -47,6 +46,7 @@ public class Mosaic extends MosaicBase {
    public Mosaic() {
       super();
    }
+
    public Mosaic(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) {
       super(sizeField, mosaicType, minesCount, area);
    }
@@ -58,7 +58,6 @@ public class Mosaic extends MosaicBase {
             
             @Override
             protected void paintComponent(Graphics g) {
-//               super.paintComponent(g); // ::DefWindowProc(hwnd, WM_PAINT, 0L, 0L); // это чтобы не писать обработчик WM_PAINT как принято - BeginPaint ... EndPaint
                {
                   Graphics2D g2d = (Graphics2D) g;
                   g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -73,7 +72,7 @@ public class Mosaic extends MosaicBase {
                g.setFont(getGraphicContext().getFont());
                PaintableGraphics p = new PaintableGraphics(g);
                RectDouble clipBounds = Cast.toRectDouble(g.getClipBounds());
-               for (BaseCell cell: _matrix)
+               for (BaseCell cell: getMatrix())
                   if (cell.getRcOuter().Intersects(clipBounds)) // redraw only when needed - when the cells and update region intersect
                      getCellPaint().paint(cell, p);
             }
@@ -104,14 +103,6 @@ public class Mosaic extends MosaicBase {
          super.OnError(msg);
    }
 
-   @Override
-   public void setParams(Matrisize newSizeField, EMosaic newMosaicType, Integer newMinesCount) {
-      super.setParams(newSizeField, newMosaicType, newMinesCount);
-
-      //Repaint(null);
-      //getContainer().revalidate();
-   }
-
    public MosaicGraphicContext getGraphicContext() {
       if (_gContext == null) {
          _gContext = new MosaicGraphicContext(getContainer());
@@ -130,6 +121,10 @@ public class Mosaic extends MosaicBase {
       return _cellPaint;
    }
 
+   protected void revalidate() {
+      getContainer().revalidate();
+   }
+
    @Override
    protected void Repaint(BaseCell cell) {
       if (cell == null)
@@ -140,11 +135,14 @@ public class Mosaic extends MosaicBase {
    }
    
    @Override
-   public void GameNew() {
+   public boolean GameNew() {
       getGraphicContext().getBackgroundFill().setMode(
             1 + new Random().nextInt(
                   MosaicHelper.createAttributeInstance(getMosaicType(), getArea()).getMaxBackgroundFillModeValue()));
-      super.GameNew();
+      boolean res = super.GameNew();
+      if (!res)
+         Repaint(null);
+      return res;
    }
 
    @Override
@@ -159,12 +157,12 @@ public class Mosaic extends MosaicBase {
             return null;
 //      long l1 = System.currentTimeMillis();
 //      try {
-         fmg.common.geom.PointDouble p = Cast.toPointDouble(point);
-         for (BaseCell cell: _matrix)
-            //if (cell.getRcOuter().contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
-               if (cell.PointInRegion(p))
-                  return cell;
-         return null;
+      fmg.common.geom.PointDouble p = Cast.toPointDouble(point);
+      for (BaseCell cell: getMatrix())
+         //if (cell.getRcOuter().contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
+            if (cell.PointInRegion(p))
+               return cell;
+      return null;
 //      } finally {
 //         System.out.println("Mosaic::CursorPointToCell: find cell: " + (System.currentTimeMillis()-l1) + "ms.");
 //      }
@@ -182,8 +180,8 @@ public class Mosaic extends MosaicBase {
       ClickResult res = isLeftMouseButton
          ? onLeftButtonUp(CursorPointToCell(clickPoint))
          : onRightButtonUp(CursorPointToCell(clickPoint));
-         acceptClickEvent(res);
-         return res;
+      acceptClickEvent(res);
+      return res;
    }
 
    public ClickResult mouseFocusLost() {
@@ -202,19 +200,6 @@ public class Mosaic extends MosaicBase {
    protected boolean RequestToUser_RestoreLastGame() {
       int iRes = JOptionPane.showOptionDialog(getContainer(), "Restore last game?", "Question", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
       return (iRes == JOptionPane.NO_OPTION);
-   }
-
-   @Override
-   public void setArea(double newArea)  {
-      double oldVal = this.getArea();
-      super.setArea(newArea);
-      double newVal = this.getArea();
-      if (!DoubleExt.hasMinDiff(oldVal, newVal)) {
-         // см. комент - сноску 1
-         changeFontSize(getGraphicContext().getPenBorder(), newArea);
-       //Repaint(null); // вызовится неявно: area->gContext.font->this.repaint
-         getContainer().revalidate();
-      }
    }
 
    /** уведомление о том, что на мозаике был произведён клик */
@@ -299,8 +284,14 @@ public class Mosaic extends MosaicBase {
    @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       super.onPropertyChanged(oldValue, newValue, propertyName);
-      if ("MosaicType".equals(propertyName))
+      switch (propertyName) {
+      case "MosaicType":
          changeFontSize();
+         break;
+      case "Matrix":
+         revalidate();
+         break;
+      }
    }
 
    @Override
@@ -309,24 +300,41 @@ public class Mosaic extends MosaicBase {
       if (ev.getSource() instanceof GraphicContext)
          onGraphicContextPropertyChanged((GraphicContext)ev.getSource(), ev);
    }
-   private void onGraphicContextPropertyChanged(GraphicContext source, PropertyChangeEvent ev) { 
-      //if ("BackgroundFill".equals(ev.getPropertyName()))
-      //   Repaint(null);
-      if ("PenBorder".equals(ev.getPropertyName())) {
-         // см. комент - сноску 1
-         PenBorder penBorder = (PenBorder)ev.getNewValue();
-         changeFontSize(penBorder, getArea());
+
+   @Override
+   protected void onCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) {
+      super.onCellAttributePropertyChanged(source, ev);
+      if ("Area".equals(ev.getPropertyName())) {
+         Double area = (Double) ev.getNewValue();
+         if (area == null)
+            area = getArea();
+         changeFontSize(getGraphicContext().getPenBorder(), area);
+
+         revalidate();
       }
-      Repaint(null);
    }
 
-    /** пересчитать и установить новую высоту шрифта */
-    public void changeFontSize() { changeFontSize(getGraphicContext().getPenBorder(), getArea()); }
-    /** пересчитать и установить новую высоту шрифта */
-    private void changeFontSize(PenBorder penBorder, double area) {
-      getGraphicContext().setFontSize(
-            (int) getCellAttr().getSq(penBorder.getWidth()));
-    }
+   private void onGraphicContextPropertyChanged(GraphicContext source, PropertyChangeEvent ev) {
+      switch (ev.getPropertyName()) {
+      case "PenBorder":
+         PenBorder penBorder = (PenBorder)ev.getNewValue();
+         changeFontSize(penBorder, getArea());
+         break;
+      //case "Font":
+      //case "BackgroundFill":
+      //   //Repaint(null);
+      //   break;
+      }
+      Repaint(null);
+      onPropertyChanged("GraphicContext." + ev.getPropertyName());
+   }
+
+   /** пересчитать и установить новую высоту шрифта */
+   public void changeFontSize() { changeFontSize(getGraphicContext().getPenBorder(), getArea()); }
+   /** пересчитать и установить новую высоту шрифта */
+   private void changeFontSize(PenBorder penBorder, double area) {
+      getGraphicContext().setFontSize((int) getCellAttr().getSq(penBorder.getWidth()));
+   }
 
    public static void main(String[] args) {
       JFrame frame = new JFrame();
@@ -336,44 +344,3 @@ public class Mosaic extends MosaicBase {
       frame.setVisible(true);
    }
 }
-/**
- * Сноски
- * ======
- *
- *
- *  1. Зависимости объектов:
- *  ------------------------
- *    Mosaic:
- *      * меняю area (площать ячейки):
- *        - перерасчёт величин (базовая сторона, высота, etc) фигуры (из @BaseCell$BaseAttribute)
- *          ( @BaseCell$BaseAttribute слушает Mosaic_area)
- *        - перерасчёт высоты шрифта - запрашиваю @BaseCell$BaseAttribute размер вписанного квадрата, а далее SetSizeFont для @MosaicGraphicContext
- *          (из @Mosaic.setArea узнаю @BaseCell$BaseAttribute.InSquare и устанавливаю новую высоту шрифта)
- *        - полная перерисовка мозаики
- *      * меняю тип мозаики:
- *        - т.к. меняется размер вписанного в ячейку квадрата, то явным вызовом fireOnChangeMosaicType меняю в @Main класе (в слушателе @MosaicListener.OnChangeMosaicType) :
- *           - перерасчёт высоту шрифта
- *           - перерасчёт размер картинок мины и флага
- *
- *    Графический контекст:
- *      * меняю любой параметр:
- *        - полная перерисовка мозаики
- *          ( @Mosaic слушает @MosaicGraphicContext)
- *      * меняю ширину пера:
- *        - перерасчёт высоты шрифта - по текущей area запрашиваю @BaseCell$BaseAttribute размер вписанного квадрата, а далее SetSizeFont для @MosaicGraphicContext
- *           ( @Mosaic слушает @MosaicGraphicContext.ширина_пера)
- *          (тут, изменение ширины пера, опосредственно (через мозаику), меняет др параметр @MosaicGraphicContext - шрифт)
- *
- *    BaseAttr:
- *      * меняю любую величину (базовая сторона, высота, etc) фигуры
- *        - перерасчёт координат всех ячеек фигуры
- *          ( @BaseCell слушает @BaseCell$BaseAttribute)
- *
- *   Т.е., в целом, имею след слушателей:
- *     - @Mosaic слушает @MosaicGraphicContext
- *     - @BaseCell$BaseAttribute слушает @Mosaic - свойство Mosaic_area
- *     - @BaseCell слушает @BaseCell$BaseAttribute
- *
- *     - ну и отдельный для @Main - @MosaicListener 
- *
- **/

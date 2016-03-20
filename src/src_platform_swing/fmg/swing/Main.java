@@ -889,7 +889,9 @@ public class Main extends JFrame implements PropertyChangeListener {
             }
          this.setUndecorated(!spm.getShowElement(EShowElement.eCaption));
 
-         getMosaic().setParams(spm.getSizeField(), spm.getMosaicType(), spm.getMinesCount());
+         getMosaic().setSizeField(spm.getSizeField());
+         getMosaic().setMosaicType(spm.getMosaicType());
+         getMosaic().setMinesCount(spm.getMinesCount());
          getMosaic().setArea(spm.getArea());
 
          setActiveUserId(spm.getActiveUserId());
@@ -1287,7 +1289,9 @@ public class Main extends JFrame implements PropertyChangeListener {
       else
          numberMines = skill.GetNumberMines(mosaicType, newSize);
 
-      getMosaic().setParams(newSize, mosaicType, numberMines);
+      getMosaic().setSizeField(newSize);
+      getMosaic().setMosaicType(mosaicType);
+      getMosaic().setMinesCount(numberMines);
 
       RecheckSelectedMenuSkillLevel();
       RecheckLocation(true, true);
@@ -1307,7 +1311,8 @@ public class Main extends JFrame implements PropertyChangeListener {
       else
          numberMines = skill.GetNumberMines(mosaicType);
 
-      getMosaic().setParams(null, mosaicType, numberMines);
+      getMosaic().setMosaicType(mosaicType);
+      getMosaic().setMinesCount(numberMines);
 
       if (!isMenuEvent(e))
          RecheckSelectedMenuMosaicType();
@@ -1321,7 +1326,8 @@ public class Main extends JFrame implements PropertyChangeListener {
       if (isPaused())
          ChangePause(new AWTEvent(this, 0) { private static final long serialVersionUID = 1L; });
 
-      getMosaic().setParams(sizeField, null, numberMines);
+      getMosaic().setSizeField(sizeField);
+      getMosaic().setMinesCount(numberMines);
 
       RecheckSelectedMenuSkillLevel();
 
@@ -1333,18 +1339,17 @@ public class Main extends JFrame implements PropertyChangeListener {
       if (isPaused())
          ChangePause(e);
 
-      int numberMines;
-      Matrisize sizeFld;
       if (skill == ESkillLevel.eCustom) {
          //System.out.println("... dialog box 'Select custom skill level...' ");
          getCustomSkillDialog().setVisible(!getCustomSkillDialog().isVisible());
          return;
-      } else {
-         numberMines = skill.GetNumberMines(getMosaic().getMosaicType());
-         sizeFld = skill.DefaultSize();
       }
 
-      getMosaic().setParams(sizeFld, null, numberMines);
+      int numberMines = skill.GetNumberMines(getMosaic().getMosaicType());
+      Matrisize sizeFld = skill.DefaultSize();
+
+      getMosaic().setSizeField(sizeFld);
+      getMosaic().setMinesCount(numberMines);
 
       if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected()) {
          AreaMax();

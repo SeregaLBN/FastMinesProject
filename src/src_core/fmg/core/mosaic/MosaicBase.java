@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import fmg.common.geom.Coord;
 import fmg.common.geom.DoubleExt;
@@ -52,7 +51,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
    public static final double AREA_MINIMUM = 230;
 
    /** матрица List &lt; List &lt; BaseCell &gt; &gt; , представленная(развёрнута) в виде вектора */
-   protected List<BaseCell> _matrix = new ArrayList<BaseCell>(0);
+   private final List<BaseCell> _matrix = new ArrayList<BaseCell>(0);
    /** размер поля в ячейках */
    protected Matrisize _size = new Matrisize(0, 0);
    /** из каких фигур состоит мозаика поля */
@@ -80,6 +79,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
          throw new IllegalArgumentException("Bad argument - support only null value!");
       _cellAttr.removePropertyChangeListener(this);
       _cellAttr = null;
+      onPropertyChanged("CellAttr");
    }
    public BaseCell.BaseAttribute getCellAttr() {
       if (_cellAttr == null) {
@@ -90,95 +90,83 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
    }
 
    public List<BaseCell> getMatrix() {
+      if (_matrix.isEmpty()) {
+         BaseCell.BaseAttribute attr = getCellAttr();
+         Matrisize size = getSizeField();
+         EMosaic mosaicType = getMosaicType();
+         //_matrix = new ArrayList<BaseCell>(size.width * size.height);
+         for (int i=0; i < size.m; i++)
+            for (int j=0; j < size.n; j++) {
+               BaseCell cell = MosaicHelper.createCellInstance(attr, mosaicType, new Coord(i, j));
+               _matrix.add(i*_size.n + j, cell);
+            }
+   
+         for (BaseCell cell: _matrix)
+            cell.IdentifyNeighbors(this);
+      }
       return _matrix;
    }
 
    /** размер поля в ячейках */
    @Override
-   public Matrisize getSizeField() { return new Matrisize(_size); } // return clone
+   public Matrisize getSizeField() { return _size; }
    /** размер поля в ячейках */
    @Override
-   public void setSizeField(Matrisize newSizeField) { setParams(newSizeField, null, null ); } 
+   public void setSizeField(Matrisize newSizeField) {
+      Matrisize old = this._size;
+      if (old.equals(newSizeField))
+         return;
+
+      setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
+      this._size = newSizeField;
+      onPropertyChanged(old, newSizeField, "SizeField");
+
+      _matrix.clear();
+      onPropertyChanged("Matrix");
+
+      GameNew();
+   }
 
    /** узнать тип мозаики */
    @Override
    public EMosaic getMosaicType() { return _mosaicType; }
    @Override
-   public void setMosaicType(EMosaic newMosaicType) { setParams(null, newMosaicType, null); }
-   /** количество мин */
-   public int getMinesCount() { return _minesCount; }
-   public void setMinesCount(int newMinesCount    ) { setParams(null, null, newMinesCount); }
+   /** установить тип мозаики */
+   public void setMosaicType(EMosaic newMosaicType) {
+      EMosaic old = this._mosaicType;
+      if (old == newMosaicType)
+         return;
 
-   /** установить мозаику заданного размера, типа  и с определённым количеством мин (координаты мин могут задаваться с помощью "Хранилища Мин") */
-   public void setParams(Matrisize newSizeField, EMosaic newMosaicType, Integer newMinesCount, List<Coord> storageCoordMines) {
-      try {
-         //repositoryMines.Reset();
-         int oldMinesCount = getMinesCount();
-         if ((getMosaicType() == newMosaicType) &&
-            getSizeField().equals(newSizeField) &&
-            (oldMinesCount == newMinesCount))
-         {
-            return;
-         }
+      this._mosaicType = newMosaicType;
+      onPropertyChanged(old, newMosaicType, "MosaicType");
 
-         EMosaic oldMosaicType = this._mosaicType;
-         Matrisize oldMosaicSize = this._size;
-         boolean isNewMosaic = (newMosaicType != null) && (newMosaicType != this._mosaicType);
-         boolean isNewSizeFld = (newSizeField != null) && !newSizeField.equals(this._size);
+      double saveArea = getArea(); // save
+      setCellAttr(null); // lost area
 
-         double saveArea = getArea();
-         if (isNewSizeFld) {
-            setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
-            this._size = newSizeField;
-         }
-         if (isNewMosaic) {
-            this._mosaicType = newMosaicType;
-            setCellAttr(null);
-         }
-         if (newMinesCount != null) {
-            if (newMinesCount == 0)
-               this._oldMinesCount = this._minesCount;
-            this._minesCount = newMinesCount;
-         }
-         _minesCount = Math.max(1, Math.min(_minesCount, GetMaxMines(this._size)));
-         if (!DoubleExt.hasMinDiff(saveArea, getArea()))
-            setArea(saveArea);
+      _matrix.clear();
+      onPropertyChanged("Matrix");
 
-         if (isNewSizeFld || isNewMosaic) {
-            BaseCell.BaseAttribute attr = getCellAttr();
+      setArea(saveArea); // restore
 
-            _matrix.clear();
-            //_matrix = new ArrayList<BaseCell>(_size.width*_size.height);
-            for (int i=0; i < _size.m; i++)
-               for (int j=0; j < _size.n; j++) {
-                  BaseCell cell = MosaicHelper.createCellInstance(attr, _mosaicType, new Coord(i, j));
-                  _matrix.add(i*_size.n + j, cell);
-               }
-   
-            for (BaseCell cell: _matrix)
-               cell.IdentifyNeighbors(this);
-         }
-
-         onPropertyChanged(oldMinesCount, _minesCount, "MinesCount");
-         onPropertyChanged(null, _minesCount, "CountMinesLeft");
-         //CountMinesLeft = MinesCount - CountFlag
-         if (isNewMosaic)
-            onPropertyChanged(oldMosaicType, newMosaicType, "MosaicType");
-         if (isNewSizeFld)
-            onPropertyChanged(oldMosaicSize, newSizeField, "SizeField");
-      } finally {
-         if ((storageCoordMines == null) || storageCoordMines.isEmpty())
-            getRepositoryMines().clear();
-         else
-            setRepositoryMines(storageCoordMines);
-         //setGameStatus(EGameStatus.eGSEnd);
-         GameNew();
-      }
+      GameNew();
    }
 
-   /** установить мозаику заданного размера, типа и с определённым количеством мин */
-   public void setParams(Matrisize sizeField, EMosaic mosaicType, Integer minesCount) {
-      setParams(sizeField, mosaicType, minesCount, null);
+   /** количество мин */
+   public int getMinesCount() { return _minesCount; }
+   /** количество мин */
+   public void setMinesCount(int newMinesCount) {
+      int old = getMinesCount();
+      if (old == newMinesCount)
+         return;
+
+      if (newMinesCount == 0) // TODO  ?? to create field mode - EGameStatus.eGSCreateGame
+         this._oldMinesCount = this._minesCount; // save
+
+      _minesCount = Math.max(1, Math.min(newMinesCount, GetMaxMines(getSizeField())));
+      onPropertyChanged(old, _minesCount, "MinesCount");
+      onPropertyChanged(null, _minesCount, "CountMinesLeft");
+
+      GameNew();
    }
 
    protected void OnError(String msg) {
@@ -193,8 +181,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
             OnError("Проблемы с установкой мин... :(");
       }
       // set other CellOpen and set all Caption
-      for (BaseCell cell: _matrix)
-         cell.getState().CalcOpenState();
+      getMatrix().forEach(cell -> cell.getState().CalcOpenState());
    }
    /** arrange Mines - set random mines */
    public void setMines_random(BaseCell firstClickCell) {
@@ -223,8 +210,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       } while (count < _minesCount);
 
       // set other CellOpen and set all Caption
-      for (BaseCell cell: _matrix)
-         cell.getState().CalcOpenState();
+      getMatrix().forEach(cell -> cell.getState().CalcOpenState());
    }
 
    public int getCountOpen() {
@@ -288,10 +274,10 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       return _gameStatus;
    }
    public void setGameStatus(EGameStatus newStatus) {
-      EGameStatus oldStatus = _gameStatus;
-      if (oldStatus != newStatus) {
+      EGameStatus old = _gameStatus;
+      if (old != newStatus) {
          _gameStatus = newStatus;
-         onPropertyChanged(oldStatus, newStatus, "GameStatus");
+         onPropertyChanged(old, newStatus, "GameStatus");
       }
    }
 
@@ -301,16 +287,28 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       return _playInfo;
    }
    public void setPlayInfo(EPlayInfo newVal) {
+      EPlayInfo old = _playInfo;
+      if (old == newVal)
+         return;
       _playInfo = EPlayInfo.setPlayInfo(getPlayInfo(), newVal);
+      onPropertyChanged(old, newVal, "PlayInfo");
    }
 
-   private List<Coord> getRepositoryMines() {
+   public List<Coord> getRepositoryMines() {
       if (_repositoryMines == null)
          _repositoryMines = new ArrayList<Coord>(0);
       return _repositoryMines;
    }
-   private void setRepositoryMines(List<Coord> repositoryMines) {
-      this._repositoryMines = repositoryMines;
+   public void setRepositoryMines(List<Coord> newMines) {
+      List<Coord> current = getRepositoryMines();
+      if (!current.equals(newMines)) {
+         current.clear();
+         if ((newMines == null) || newMines.isEmpty())
+            current.addAll(newMines);
+      }
+      onPropertyChanged("RepositoryMines");
+      //setGameStatus(EGameStatus.eGSEnd);
+      GameNew();
    }
 
    /** перерисовать ячейку; если null - перерисовать всё поле */
@@ -318,8 +316,6 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
    
    /** Начать игру, т.к. произошёл первый клик на поле */
    protected void GameBegin(BaseCell firstClickCell) {
-      Repaint(null);
-
       setGameStatus(EGameStatus.eGSPlay);
 
       // set mines
@@ -329,11 +325,14 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       } else {
          setMines_random(firstClickCell);
       }
+
+      Repaint(null);
    }
 
    /** Завершить игру */
    private void GameEnd(boolean victory) {
-      if (getGameStatus() == EGameStatus.eGSEnd) return;
+      if (getGameStatus() == EGameStatus.eGSEnd)
+         return;
 
       // открыть оставшeеся
       for (BaseCell cell: _matrix)
@@ -357,9 +356,9 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
          }
 
       setGameStatus(EGameStatus.eGSEnd);
-      onPropertyChanged(null, null, "CountMinesLeft");
-      onPropertyChanged(null, null, "CountFlag");
-      onPropertyChanged(null, null, "CountOpen");
+      onPropertyChanged("CountMinesLeft");
+      onPropertyChanged("CountFlag");
+      onPropertyChanged("CountOpen");
    }
 
    private void VerifyFlag() {
@@ -440,11 +439,11 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
             setCountClick(getCountClick()+1);
             setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
             if (countOpen > 0)
-               onPropertyChanged(null, null, "CountOpen");
+               onPropertyChanged("CountOpen");
             if ((countFlag > 0) || (countUnknown > 0)) {
-               onPropertyChanged(null, null, "CountFlag");
-               onPropertyChanged(null, null, "CountMinesLeft");
-               onPropertyChanged(null, null, "CountUnknown");
+               onPropertyChanged("CountFlag");
+               onPropertyChanged("CountMinesLeft");
+               onPropertyChanged("CountUnknown");
             }
          }
    
@@ -490,9 +489,9 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       if (any) {
          setCountClick(getCountClick()+1);
          setPlayInfo(EPlayInfo.ePlayerUser); // то считаю что юзер играл
-         onPropertyChanged(null, null, "CountFlag");
-         onPropertyChanged(null, null, "CountMinesLeft");
-         onPropertyChanged(null, null, "CountUnknown");
+         onPropertyChanged("CountFlag");
+         onPropertyChanged("CountMinesLeft");
+         onPropertyChanged("CountUnknown");
       }
 
       VerifyFlag();
@@ -516,12 +515,13 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       System.out.println("Restore last game?");
       return false;
    }
+
    /** Подготовиться к началу игры - сбросить все ячейки */
-   public void GameNew() {
+   public boolean GameNew() {
 //      System.out.println("Mosaic::GameNew()");
 
       if (getGameStatus() == EGameStatus.eGSReady)
-         return;
+         return false;
 
       if (!getRepositoryMines().isEmpty())
          if (getGameStatus() == EGameStatus.eGSCreateGame) {
@@ -530,14 +530,15 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
                getRepositoryMines().clear();
          }
 
-      for (BaseCell cell: _matrix)
-         cell.Reset();
+      getMatrix().forEach(cell -> cell.Reset());
 
       setCountClick(0);
 
       setGameStatus(EGameStatus.eGSReady);
       setPlayInfo(EPlayInfo.ePlayerUnknown); // пока не знаю кто будет играть
       Repaint(null);
+
+      return true;
    }
 
    /** создать игру игроком - он сам расставит мины */
@@ -568,6 +569,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
          return;
       getCellAttr().setArea(newArea);
    }
+
    public void setUseUnknown(boolean val) { _useUnknown = val; }
    public boolean getUseUnknown() { return _useUnknown; }
 
@@ -604,20 +606,15 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       initialize(sizeField, mosaicType, minesCount, area);
    }
 
-   public List<Coord> getStorageMines() {
-      return _matrix.stream()
-         .filter(c -> c.getState().getOpen() == EOpen._Mine)
-         .map(c -> c.getCoord())
-         .collect(Collectors.toList());
-   }
-
    protected void initialize() {
       initialize(new Matrisize(10, 10),
             EMosaic.eMosaicSquare1,//EMosaic.eMosaicPenrousePeriodic1, // 
             15, AREA_MINIMUM*10);
    }
    protected void initialize(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) {
-      setParams(sizeField, mosaicType, minesCount);
+      setSizeField(sizeField);
+      setMosaicType(mosaicType);
+      setMinesCount(minesCount);
       setArea(area); // ...провера на валидность есть только при установке из класса Main. Так что, не нуна тут задавать громадные велечины.
    }
 
@@ -627,11 +624,13 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       if (ev.getSource() instanceof BaseCell.BaseAttribute)
          onCellAttributePropertyChanged((BaseCell.BaseAttribute)ev.getSource(), ev);
    }
-   private void onCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) { 
+   protected void onCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) { 
       if ("Area".equals(ev.getPropertyName())) {
          getMatrix().forEach(cell -> cell.Init());
          onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName()); // ! rethrow event - notify parent class
+         Repaint(null);
       }
+      onPropertyChanged("CellAttr." + ev.getPropertyName());
    }
 
 }
