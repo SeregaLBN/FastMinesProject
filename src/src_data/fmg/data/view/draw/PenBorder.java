@@ -6,25 +6,25 @@ import fmg.common.notyfier.NotifyPropertyChanged;
 /** Характеристики кисти у рамки ячейки */
 public class PenBorder extends NotifyPropertyChanged {
 
-    private Color colorShadow, colorLight;
-    private int width;
+   private Color colorShadow, colorLight;
+   private int width;
 
-    public PenBorder() {
-       this(Color.Black, Color.White, 3);
-//       this(Color.Green, Color.Red, 1);
-    }
+   public PenBorder() {
+      this(Color.Black, Color.White, 3);
+//      this(Color.Green, Color.Red, 1);
+   }
 
-    public PenBorder(
-          Color colorShadow,
-          Color colorLight,
-          int iWidth)
-    {
-       this.colorShadow = colorShadow;
-       this.colorLight  = colorLight;
-       this.width = iWidth;
-    }
+   public PenBorder(
+         Color colorShadow,
+         Color colorLight,
+         int iWidth)
+   {
+      this.colorShadow = colorShadow;
+      this.colorLight  = colorLight;
+      this.width = iWidth;
+   }
 
-    public Color getColorShadow() {
+   public Color getColorShadow() {
       return colorShadow;
    }
 
@@ -56,7 +56,7 @@ public class PenBorder extends NotifyPropertyChanged {
       int old = this.width;
       if (old != iWidth) {
          this.width = iWidth;
-         onPropertyChanged(old, iWidth, "PenBorder_width");
+         onPropertyChanged(old, iWidth, "Width");
       }
    }
 

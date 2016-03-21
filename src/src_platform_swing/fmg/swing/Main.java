@@ -1423,37 +1423,47 @@ public class Main extends JFrame implements PropertyChangeListener {
     * @param pack - call this.pack();
     */
    void RecheckLocation(boolean checkArea, boolean pack) {
-      if (checkArea) {
-         double maxArea = CalcMaxArea(getMosaic().getSizeField());
-         if (maxArea < getMosaic().getArea())
-            setArea(maxArea);
+      if (checkArea && !_sheduleCheckArea) {
+         _sheduleCheckArea = true;
+         SwingUtilities.invokeLater(() -> {
+            double maxArea = CalcMaxArea(getMosaic().getSizeField());
+            if (maxArea < getMosaic().getArea())
+               setArea(maxArea);
+            _sheduleCheckArea = false;
+         });
       }
 
-      if (pack) {
-         fmg.common.geom.Point center = Rect.getCenter(Cast.toRect(this.getBounds()));
-//         Point center = new Rect(this.getBounds()).center();
-         pack();
-//         Rectangle newBounds = new Rect(this.getBounds()).center(center);
-         Rectangle newBounds = Cast.toRect(Rect.setCenter(Cast.toRect(this.getBounds()), center));
-         this.setBounds(newBounds);
+      if (pack && !_shedulePack) {
+         _shedulePack = true;
+         SwingUtilities.invokeLater(() -> {
+            fmg.common.geom.Point center = Rect.getCenter(Cast.toRect(this.getBounds()));
+          //Point center = new Rect(this.getBounds()).center();
+            pack();
+          //Rectangle newBounds = new Rect(this.getBounds()).center(center);
+            Rectangle newBounds = Cast.toRect(Rect.setCenter(Cast.toRect(this.getBounds()), center));
+            this.setBounds(newBounds);
+            _shedulePack = false;
+         });
       }
 
-      SwingUtilities.invokeLater(() -> // спецом для Ubuntu Gnome
-         {
-            Dimension sizeScreen = Toolkit.getDefaultToolkit().getScreenSize();
-            Rectangle rcThis = Main.this.getBounds();
-            if ((rcThis.x<0) || (rcThis.y<0))
-               Main.this.setLocation(Math.max(0, rcThis.x), Math.max(0, rcThis.y));
-            else
-            if (((rcThis.x+rcThis.width ) > sizeScreen.width) ||
-               ((rcThis.y+rcThis.height) > sizeScreen.height))
-               Main.this.setLocation(
-                     Math.max(0, Math.min(rcThis.x, sizeScreen.width  - rcThis.width)),
-                     Math.max(0, Math.min(rcThis.y, sizeScreen.height - rcThis.height)));
-         }
-      );
+      //SwingUtilities.invokeLater(() -> // спецом для Ubuntu Gnome
+      //   {
+      //      Dimension sizeScreen = Toolkit.getDefaultToolkit().getScreenSize();
+      //      Rectangle rcThis = Main.this.getBounds();
+      //      if ((rcThis.x<0) || (rcThis.y<0))
+      //         Main.this.setLocation(Math.max(0, rcThis.x), Math.max(0, rcThis.y));
+      //      else
+      //      if (((rcThis.x+rcThis.width ) > sizeScreen.width) ||
+      //         ((rcThis.y+rcThis.height) > sizeScreen.height))
+      //         Main.this.setLocation(
+      //               Math.max(0, Math.min(rcThis.x, sizeScreen.width  - rcThis.width)),
+      //               Math.max(0, Math.min(rcThis.y, sizeScreen.height - rcThis.height)));
+      //   }
+      //);
    }
-   
+   private boolean _sheduleCheckArea;
+   private boolean _shedulePack;
+
    /** getMosaic().setArea(...) */
    void setArea(double newArea) {
       newArea = Math.min(newArea, CalcMaxArea(getMosaic().getSizeField())); // recheck

@@ -27,7 +27,7 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
 
    private ImageIcon imgMine, imgFlag;
    private ColorText colorText;
-   protected PenBorder penBorder;
+   private PenBorder penBorder;
    private Font        font;
    private final boolean iconicMode;
    private BoundDouble padding;
@@ -48,6 +48,7 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
          onPropertyChanged(old, img, "ImgMine");
       }
    }
+
    public ImageIcon getImgFlag() {
       return imgFlag;
    }
@@ -66,10 +67,15 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
    }
    public void setColorText(ColorText colorText) {
       ColorText old = this.colorText;
-      if (!colorText.equals(old)) {
-         this.colorText = colorText;
-         onPropertyChanged(old, colorText, "ColorText");
-      }
+      if (colorText.equals(old))
+         return;
+
+      if (old != null)
+         old.removePropertyChangeListener(this);
+      colorText.addListener(this);
+
+      this.colorText = colorText;
+      onPropertyChanged(old, colorText, "ColorText");
    }
 
    public PenBorder getPenBorder() {
@@ -79,10 +85,15 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
    }
    public void setPenBorder(PenBorder penBorder) {
       PenBorder old = this.penBorder;
-      if (!penBorder.equals(old)) {
-         this.penBorder = penBorder;
-         onPropertyChanged(old, penBorder, "PenBorder");
-      }
+      if (penBorder.equals(old))
+         return;
+
+      if (old != null)
+         old.removePropertyChangeListener(this);
+      penBorder.addListener(this);
+
+      this.penBorder = penBorder;
+      onPropertyChanged(old, penBorder, "PenBorder");
    }
 
    public JComponent getOwner() {
@@ -100,6 +111,7 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
       public int getMode() {
          return mode;
       }
+
       /**
       /* режим заливки фона ячеек
        * @param mode
@@ -135,6 +147,7 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
          return colors;
       }
    }
+
    private BackgroundFill _backgroundFill;
    public BackgroundFill getBackgroundFill() {
       if (_backgroundFill == null) {
@@ -219,12 +232,25 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
       //super.propertyChange(ev);
-      if (ev.getSource() instanceof BackgroundFill)
+      Object source = ev.getSource();
+      if (source instanceof BackgroundFill)
          onBackgroundFillPropertyChanged((BackgroundFill)ev.getSource(), ev);
+      if (source instanceof ColorText)
+         onColorTextPropertyChanged((ColorText)ev.getSource(), ev);
+      if (source instanceof PenBorder)
+         onPenBorderPropertyChanged((PenBorder)ev.getSource(), ev);
    }
-   private void onBackgroundFillPropertyChanged(BackgroundFill source, PropertyChangeEvent ev) { 
-      if ("Mode".equals(ev.getPropertyName()))
-         onPropertyChanged("BackgroundFill");
+   private void onBackgroundFillPropertyChanged(BackgroundFill source, PropertyChangeEvent ev) {
+      onPropertyChanged("BackgroundFill");
+      onPropertyChanged("BackgroundFill." + ev.getPropertyName());
+   }
+   private void onColorTextPropertyChanged(ColorText source, PropertyChangeEvent ev) {
+      onPropertyChanged("ColorText");
+      onPropertyChanged("ColorText." + ev.getPropertyName());
+   }
+   private void onPenBorderPropertyChanged(PenBorder source, PropertyChangeEvent ev) {
+      onPropertyChanged("PenBorder");
+      onPropertyChanged("PenBorder." + ev.getPropertyName());
    }
 
 }

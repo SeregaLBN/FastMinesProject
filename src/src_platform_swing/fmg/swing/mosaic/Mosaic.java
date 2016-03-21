@@ -122,18 +122,27 @@ public class Mosaic extends MosaicBase {
    }
 
    protected void revalidate() {
-      getContainer().revalidate();
+      //getContainer().revalidate();
    }
 
    @Override
    protected void Repaint(BaseCell cell) {
-      if (cell == null)
-         getContainer().repaint();
-      else
+      if (_sheduleRepaint)
+         return;
+
+      if (cell == null) {
+         _sheduleRepaint = true;
+         SwingUtilities.invokeLater(() -> {
+            getContainer().repaint();
+            _sheduleRepaint = false;
+         });
+      } else {
          //getCellPaint().paint(cell, getContainer().getGraphics());
          getContainer().repaint(Cast.toRect(cell.getRcOuter()));
+      }
    }
-   
+   private boolean _sheduleRepaint;
+
    @Override
    public boolean GameNew() {
       getGraphicContext().getBackgroundFill().setMode(
@@ -315,7 +324,8 @@ public class Mosaic extends MosaicBase {
    }
 
    private void onGraphicContextPropertyChanged(GraphicContext source, PropertyChangeEvent ev) {
-      switch (ev.getPropertyName()) {
+      String propName = ev.getPropertyName();
+      switch (propName) {
       case "PenBorder":
          PenBorder penBorder = (PenBorder)ev.getNewValue();
          changeFontSize(penBorder, getArea());
@@ -326,7 +336,8 @@ public class Mosaic extends MosaicBase {
       //   break;
       }
       Repaint(null);
-      onPropertyChanged("GraphicContext." + ev.getPropertyName());
+      onPropertyChanged("GraphicContext");
+      onPropertyChanged("GraphicContext." + propName);
    }
 
    /** пересчитать и установить новую высоту шрифта */

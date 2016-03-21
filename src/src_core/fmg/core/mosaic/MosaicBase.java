@@ -625,12 +625,14 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
          onCellAttributePropertyChanged((BaseCell.BaseAttribute)ev.getSource(), ev);
    }
    protected void onCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) { 
-      if ("Area".equals(ev.getPropertyName())) {
+      String propName = ev.getPropertyName();
+      if ("Area".equals(propName)) {
          getMatrix().forEach(cell -> cell.Init());
-         onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName()); // ! rethrow event - notify parent class
+         onPropertyChanged(ev.getOldValue(), ev.getNewValue(), propName); // ! rethrow event - notify parent class
          Repaint(null);
       }
-      onPropertyChanged("CellAttr." + ev.getPropertyName());
+      onPropertyChanged("CellAttr");
+      onPropertyChanged("CellAttr." + propName);
    }
 
 }

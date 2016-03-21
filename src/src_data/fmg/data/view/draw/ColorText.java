@@ -71,7 +71,7 @@ public class ColorText extends NotifyPropertyChanged {
       Color old = this.colorOpen[i];
       if (!old.equals(colorOpen)) {
          this.colorOpen[i] = colorOpen;
-         onPropertyChanged(old, colorOpen, "ColorOpen"+i);
+         onPropertyChanged(old, colorOpen, "ColorOpen.#"+i);
       }
    }
 
@@ -92,7 +92,7 @@ public class ColorText extends NotifyPropertyChanged {
       Color old = this.colorClose[i];
       if (!old.equals(colorClose)) {
          this.colorClose[i] = colorClose;
-         onPropertyChanged(old, colorClose, "ColorClose"+i);
+         onPropertyChanged(old, colorClose, "ColorClose.#"+i);
       }
    }
 
