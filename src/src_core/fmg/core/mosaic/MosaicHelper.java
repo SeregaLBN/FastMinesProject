@@ -1,6 +1,7 @@
 package fmg.core.mosaic;
 
 import java.lang.reflect.Constructor;
+import java.security.InvalidParameterException;
 
 import fmg.common.geom.Coord;
 import fmg.common.geom.DoubleExt;
@@ -154,6 +155,9 @@ public final class MosaicHelper {
     */
    private static double findAreaBySize(BaseCell.BaseAttribute cellAttr, final Matrisize mosaicSizeField, final SizeDouble sizeClientIn, SizeDouble sizeClientOut) {
       // сделал приватным, т.к. неявно меняет свойства параметра 'cellAttr'
+      
+      if (sizeClientIn.height <= 0 || sizeClientIn.width <= 0)
+         throw new InvalidParameterException("sizeClientIn must be positive");
 
       final SizeDouble sizeIter = new SizeDouble();
       double res = Finder(MosaicBase.AREA_MINIMUM, new Comparable<Double>() {

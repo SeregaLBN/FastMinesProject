@@ -5,13 +5,14 @@ import java.beans.PropertyChangeSupport;
 import java.io.Closeable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+
+import fmg.common.Pair;
 
 public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
 {
@@ -52,7 +53,7 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       //propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
       if (getDeferredOn())
-         _deferredPropertyChanged.put(propertyName, new Pair(oldValue, newValue));
+         _deferredPropertyChanged.put(propertyName, new Pair<Object, Object>(oldValue, newValue));
       else
          EventHandlerInvoke(oldValue, newValue, propertyName);
    }
@@ -95,15 +96,7 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
    // #region Deferr notifications
    //
 
-   private static class Pair extends AbstractMap.SimpleImmutableEntry<Object, Object> {
-      private static final long serialVersionUID = 1L;
-      public Pair(Object oldValue, Object newValue) {
-         super(oldValue, newValue);
-      }
-      public Object getOldValue() { return super.getKey(); }
-      public Object getNewValue() { return super.getValue(); }
-   }
-   private Map<String, Pair> _deferredPropertyChanged;
+   private Map<String, Pair<Object, Object>> _deferredPropertyChanged;
 
    private boolean _deferredOn;
    /** Deferr notifications */
@@ -122,9 +115,9 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
       DeferredSwitchOff();
 
       if (!_deferredPropertyChanged.isEmpty()) {
-         Map<String, Pair> tmpCopy = new HashMap<>(_deferredPropertyChanged);
+         Map<String, Pair<Object, Object>> tmpCopy = new HashMap<>(_deferredPropertyChanged);
          _deferredPropertyChanged.clear();
-         tmpCopy.forEach((name, old_new) -> EventHandlerInvoke(old_new.getOldValue(), old_new.getNewValue(), name));
+         tmpCopy.forEach((name, old_new) -> EventHandlerInvoke(old_new.getFirst(), old_new.getSecond(), name));
          tmpCopy.clear();
       }
    }
