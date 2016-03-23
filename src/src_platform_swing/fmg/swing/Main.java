@@ -851,9 +851,9 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
 
    void toCenterScreen() {
-//      Dimension sizeScreen = Toolkit.getDefaultToolkit().getScreenSize();
+//      Dimension desktopSize = getDesktopSize();
 //      Dimension sizeWin = this.getSize();
-//      setLocation((sizeScreen.width - sizeWin.width) / 2, (sizeScreen.height - sizeWin.height) / 2);
+//      setLocation((desktopSize.width - sizeWin.width) / 2, (desktopSize.height - sizeWin.height) / 2);
       this.setLocationRelativeTo(null);
    }
 
@@ -1355,7 +1355,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
       if ((currSizeWin.height == 0) && (currSizeWin.width == 0) && !this.isVisible()) {
          throw new RuntimeException("Invalid method call.  Нельзя высчитать размер окна, когда оно даже не выведено на экран...");
-//         Dimension dummy = Toolkit.getDefaultToolkit().getScreenSize(); // заглушка
+//         Dimension dummy = getDesktopSize(); // заглушка
 //         dummy.height++; dummy.width++;
 //         return dummy;
       }
@@ -1388,7 +1388,7 @@ public class Main extends JFrame implements PropertyChangeListener {
     * @return макс площадь ячейки
     */
    double CalcMaxArea(Matrisize mosaicSizeField) {
-      SizeDouble sizeMosaicIn = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
+      SizeDouble sizeMosaicIn = CalcMosaicWindowSize(getDesktopSize());
       SizeDouble sizeMosaicOut = new SizeDouble();
       double area = MosaicHelper.findAreaBySize(getMosaic().getMosaicType(), mosaicSizeField, sizeMosaicIn, sizeMosaicOut);
       //System.out.println("Main.CalcMaxArea: area="+area);
@@ -1401,7 +1401,7 @@ public class Main extends JFrame implements PropertyChangeListener {
     * @return max размер поля мозаики
     */
    public Matrisize CalcMaxMosaicSize(double area) {
-      SizeDouble sizeMosaic = CalcMosaicWindowSize(Toolkit.getDefaultToolkit().getScreenSize());
+      SizeDouble sizeMosaic = CalcMosaicWindowSize(getDesktopSize());
       return MosaicHelper.findSizeByArea(getMosaic().getCellAttr(), sizeMosaic);
    }
 
@@ -1413,13 +1413,13 @@ public class Main extends JFrame implements PropertyChangeListener {
             _shedulePack = false;
 
             {
-//               fmg.common.geom.Point center = Rect.getCenter(Cast.toRect(this.getBounds()));
-             //Point center = new Rect(this.getBounds()).center();
+               fmg.common.geom.Point center = Rect.getCenter(Cast.toRect(this.getBounds()));
+//               Point center = new Rect(this.getBounds()).center();
                pack();
-             //Rectangle newBounds = new Rect(this.getBounds()).center(center);
-//               Rectangle newBounds = Cast.toRect(Rect.setCenter(Cast.toRect(this.getBounds()), center));
-//               this.setBounds(newBounds);
-//               revalidate();
+//               Rectangle newBounds = new Rect(this.getBounds()).center(center);
+               Rectangle newBounds = Cast.toRect(Rect.setCenter(Cast.toRect(this.getBounds()), center));
+               this.setBounds(newBounds);
+               revalidate();
             }
 
             if (!_sheduleCheckArea) {
@@ -1435,17 +1435,18 @@ public class Main extends JFrame implements PropertyChangeListener {
 
                      // check that within the screen
 
-                     Dimension sizeScreen = Toolkit.getDefaultToolkit().getScreenSize();
+                     Dimension screenSize = getScreenSize();
+                     Insets padding = getScreenPadding();
                      Rect rcThis = Cast.toRect(this.getBounds());
 
                      boolean changed = false;
                      { // check that the bottom-right boundary within the screen
                         fmg.common.geom.Point pRB = rcThis.PointRB();
                         int offsetX = 0, offsetY = 0;
-                        if (pRB.x > sizeScreen.width)
-                           offsetX = pRB.x - sizeScreen.width;
-                        if (pRB.y > sizeScreen.height)
-                           offsetY = pRB.y - sizeScreen.height;
+                        if (pRB.x > (screenSize.width-padding.right))
+                           offsetX = pRB.x - (screenSize.width - padding.right);
+                        if (pRB.y > (screenSize.height-padding.bottom))
+                           offsetY = pRB.y - (screenSize.height - padding.bottom);
                         if ((offsetX != 0) || (offsetY != 0)) {
                            rcThis.moveXY(-offsetX, -offsetY);
                            changed = true;
@@ -1454,10 +1455,10 @@ public class Main extends JFrame implements PropertyChangeListener {
                      { // check that the top-left boundary within the screen
                         fmg.common.geom.Point pLT = rcThis.PointLT();
                         int offsetX = 0, offsetY = 0;
-                        if (pLT.x < 0)
-                           offsetX = pLT.x;
-                        if (pLT.y < 0)
-                           offsetY = pLT.y;
+                        if (pLT.x < padding.left)
+                           offsetX = padding.left - pLT.x;
+                        if (pLT.y < padding.top)
+                           offsetY = padding.top - pLT.y;
                         if ((offsetX != 0) || (offsetY != 0)) {
                            rcThis.moveXY(-offsetX, -offsetY);
                            changed = true;
@@ -1471,21 +1472,6 @@ public class Main extends JFrame implements PropertyChangeListener {
 
          });
       }
-
-      //SwingUtilities.invokeLater(() -> // спецом для Ubuntu Gnome
-      //   {
-      //      Dimension sizeScreen = Toolkit.getDefaultToolkit().getScreenSize();
-      //      Rectangle rcThis = Main.this.getBounds();
-      //      if ((rcThis.x<0) || (rcThis.y<0))
-      //         Main.this.setLocation(Math.max(0, rcThis.x), Math.max(0, rcThis.y));
-      //      else
-      //      if (((rcThis.x+rcThis.width ) > sizeScreen.width) ||
-      //         ((rcThis.y+rcThis.height) > sizeScreen.height))
-      //         Main.this.setLocation(
-      //               Math.max(0, Math.min(rcThis.x, sizeScreen.width  - rcThis.width)),
-      //               Math.max(0, Math.min(rcThis.y, sizeScreen.height - rcThis.height)));
-      //   }
-      //);
    }
    private boolean _sheduleCheckArea;
    private boolean _shedulePack;
@@ -2376,6 +2362,21 @@ public class Main extends JFrame implements PropertyChangeListener {
          getStatusBar().setClickCount(getMosaic().getCountClick());
          break;
       }
+   }
+
+
+   static Dimension getScreenSize() {
+      return Toolkit.getDefaultToolkit().getScreenSize();
+   }
+   Insets getScreenPadding() {
+      return Toolkit.getDefaultToolkit().getScreenInsets(this.getGraphicsConfiguration());
+   }
+   Dimension getDesktopSize() {
+      Dimension screenSize = getScreenSize();
+      Insets screenPadding = getScreenPadding();
+      return new Dimension(
+         screenSize.width - (screenPadding.left + screenPadding.right),
+         screenSize.height - (screenPadding.top + screenPadding.bottom));
    }
 
 }
