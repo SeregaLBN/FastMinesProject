@@ -1186,15 +1186,14 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
 
    /** pause on/off */
-   void ChangePause(AWTEvent e) {
+   void ChangePause() {
       if (getMosaic().getGameStatus() != EGameStatus.eGSPlay)
          return;
 
 //      System.out.println("> FMG::ChangePause: " + KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() );
 
       boolean paused = isPaused();
-      if (e.getSource() != getToolbar().getBtnPause())
-         getToolbar().getBtnPause().setSelected(!paused);
+      getToolbar().getBtnPause().setSelected(!paused);
 
       if (paused) {
          getTimerGame().restart();
@@ -1212,9 +1211,9 @@ public class Main extends JFrame implements PropertyChangeListener {
 //      System.out.println("< FMG::ChangePause: " + KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() );
    }
 
-   void GameNew(ActionEvent e) {
+   void GameNew() {
       if (isPaused())
-         ChangePause(e);
+         ChangePause();
       else
          getMosaic().GameNew();
    }
@@ -1265,42 +1264,33 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
 
    /** Попытаться установить новый размер на мозаику (при возможности, сохраняя ESkillLevel) */
-   boolean setMosaicSizeField(Matrisize newSize) {
+   void setMosaicSizeField(Matrisize newSize) {
       //System.out.println("setMosaicSizeField: newSize=" + newSize);
 
       // 1. Проверяю валидность нового размера
       if ((newSize.m < 1) || (newSize.n < 1)) {
          Beep();
-         return false;
-      }
-      double area = CalcMaxArea(newSize);
-      if (area <= Mosaic.AREA_MINIMUM) {
-         Beep();
-         return false;
+         return;
       }
 
       // 2. Устанавливаю новый размер
       EMosaic mosaicType = getMosaic().getMosaicType();
-      int numberMines;
       ESkillLevel skill = getSkillLevel();
-      if (skill == ESkillLevel.eCustom)
-         numberMines = getMosaic().getMinesCount();
-      else
-         numberMines = skill.GetNumberMines(mosaicType, newSize);
+      int numberMines = (skill == ESkillLevel.eCustom)
+         ? getMosaic().getMinesCount()
+         : skill.GetNumberMines(mosaicType, newSize);
 
       getMosaic().setSizeField(newSize);
       getMosaic().setMosaicType(mosaicType);
       getMosaic().setMinesCount(numberMines);
 
       RecheckSelectedMenuSkillLevel();
-
-      return true;
    }
 
    /** Поменять игру на новую мозаику */
-   public void SetGame(EMosaic mosaicType, ActionEvent e) {
+   public void SetGame(EMosaic mosaicType) {
       if (isPaused())
-         ChangePause(e);
+         ChangePause();
 
       getMosaic().setMosaicType(mosaicType);
       ESkillLevel skill = getSkillLevel();
@@ -1309,15 +1299,14 @@ public class Main extends JFrame implements PropertyChangeListener {
          getMosaic().setMinesCount(numberMines);
       }
 
-      if (!isMenuEvent(e))
-         RecheckSelectedMenuMosaicType();
+      RecheckSelectedMenuMosaicType();
       RecheckSelectedMenuSkillLevel();
    }
 
    /** Поменять игру на новый размер & кол-во мин */
    public void SetGame(Matrisize sizeField, int numberMines) {
       if (isPaused())
-         ChangePause(new AWTEvent(this, 0) { private static final long serialVersionUID = 1L; });
+         ChangePause();
 
       getMosaic().setSizeField(sizeField);
       getMosaic().setMinesCount(numberMines);
@@ -1326,9 +1315,9 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
 
    /** Поменять игру на новый уровень сложности */
-   void SetGame(ESkillLevel skill, ActionEvent e) {
+   void SetGame(ESkillLevel skill) {
       if (isPaused())
-         ChangePause(e);
+         ChangePause();
 
       if (skill == ESkillLevel.eCustom) {
          //System.out.println("... dialog box 'Select custom skill level...' ");
@@ -1345,8 +1334,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected())
          AreaMax();
 
-      if (!isMenuEvent(e))
-         RecheckSelectedMenuSkillLevel();
+      RecheckSelectedMenuSkillLevel();
    }
 
    /** узнать размер окна проекта при указанном размере окна мозаики */
@@ -1568,7 +1556,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 //      this.getToolbar().revalidate();
 
       if (!usePause && isPaused())
-         ChangePause(e);
+         ChangePause();
    }
 
    void OptionsShowElement(EShowElement key, final ActionEvent e) {
@@ -1597,7 +1585,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   Main.this.getStatusBar().setVisible(mapShow.get(EShowElement.eStatusbar).booleanValue());
 
                   if (isNotPaused && isUsePause())
-                     Main.this.ChangePause(e);
+                     Main.this.ChangePause();
 
                   Main.this.setVisible(true);
                   Main.this.pack();
@@ -1695,7 +1683,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                private static final long serialVersionUID = 1L;
                @Override
                public void actionPerformed(ActionEvent e) {
-                  Main.this.GameNew(e);
+                  Main.this.GameNew();
                }
             };
 
@@ -1712,7 +1700,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   private static final long serialVersionUID = 1L;
                   @Override
                   public void actionPerformed(ActionEvent e) {
-                     Main.this.SetGame(val, e);
+                     Main.this.SetGame(val);
                   }
                });
          }
@@ -1730,7 +1718,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   private static final long serialVersionUID = 1L;
                   @Override
                   public void actionPerformed(ActionEvent e) {
-                     Main.this.SetGame(val, e);
+                     Main.this.SetGame(val);
                   }
                });
          }
@@ -1776,7 +1764,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                @Override
                public void actionPerformed(ActionEvent e) {
                   if (Main.this.isUsePause())
-                     Main.this.ChangePause(e);
+                     Main.this.ChangePause();
                }
             };
          return pauseAction;
@@ -1880,7 +1868,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                @Override
                public void mousePressed(MouseEvent e) {
                   if (SwingUtilities.isRightMouseButton(e) && Main.this.isPaused())
-                     Main.this.ChangePause(e);
+                     Main.this.ChangePause();
                }
             };
          return pausePanelMouseListener;
@@ -1894,7 +1882,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                public void windowLostFocus(WindowEvent e) {
                   if (!Main.this.isPaused()) {
                      if (Main.this.isUsePause())
-                        Main.this.ChangePause(e);
+                        Main.this.ChangePause();
 
                      Icon img = Main.this.getResources().getImgBtnNew(EBtnNewGameState.eNormal);
                      if (img != null)

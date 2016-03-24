@@ -296,7 +296,7 @@ public class SelectMosaicDlg extends JDialog {
          SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-               parent.SetGame(selectedMosaicType, new ActionEvent(SelectMosaicDlg.this, 0, null));
+               parent.SetGame(selectedMosaicType);
             }
          });
       }
