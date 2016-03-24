@@ -1460,7 +1460,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                         if (pLT.y < padding.top)
                            offsetY = padding.top - pLT.y;
                         if ((offsetX != 0) || (offsetY != 0)) {
-                           rcThis.moveXY(-offsetX, -offsetY);
+                           rcThis.moveXY(offsetX, offsetY);
                            changed = true;
                         }
                      }
