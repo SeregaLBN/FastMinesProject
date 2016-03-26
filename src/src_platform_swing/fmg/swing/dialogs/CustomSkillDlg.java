@@ -261,15 +261,10 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
 //      System.out.println("OnOk");
 
       if (parent != null) {
-         final int x = (Integer)spinX.getValue();
-         final int y = (Integer)spinY.getValue();
-         final int m = (Integer)spinMines.getValue();
-         SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-               parent.SetGame(new Matrisize(x,y), m);
-            }
-         });
+         int x = (Integer)spinX.getValue();
+         int y = (Integer)spinY.getValue();
+         int m = (Integer)spinMines.getValue();
+         SwingUtilities.invokeLater(() -> parent.changeGame(new Matrisize(x,y), m) );
       }
 
       OnClose();

@@ -292,13 +292,8 @@ public class SelectMosaicDlg extends JDialog {
 //      System.out.println("OnOk");
 
       if (parent != null) {
-         final EMosaic selectedMosaicType = getSelectedMosaicType();
-         SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-               parent.SetGame(selectedMosaicType);
-            }
-         });
+         EMosaic selectedMosaicType = getSelectedMosaicType();
+         SwingUtilities.invokeLater(() -> parent.changeGame(selectedMosaicType) );
       }
 
       OnClose();

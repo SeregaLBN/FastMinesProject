@@ -1264,36 +1264,21 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
 
    /** Попытаться установить новый размер на мозаику (при возможности, сохраняя ESkillLevel) */
-   void setMosaicSizeField(Matrisize newSize) {
-      //System.out.println("setMosaicSizeField: newSize=" + newSize);
-
-      // 1. Проверяю валидность нового размера
-      if ((newSize.m < 1) || (newSize.n < 1)) {
-         Beep();
-         return;
-      }
-
-      // 2. Устанавливаю новый размер
-      EMosaic mosaicType = getMosaic().getMosaicType();
+   void changeGame(Matrisize newSize) {
       ESkillLevel skill = getSkillLevel();
-      int numberMines = (skill == ESkillLevel.eCustom)
-         ? getMosaic().getMinesCount()
-         : skill.GetNumberMines(mosaicType, newSize);
-
-      getMosaic().setSizeField(newSize);
-      getMosaic().setMosaicType(mosaicType);
-      getMosaic().setMinesCount(numberMines);
-
-      RecheckSelectedMenuSkillLevel();
+      changeGame(newSize, 
+            (skill == ESkillLevel.eCustom)
+               ? getMosaic().getMinesCount()
+               : skill.GetNumberMines(getMosaic().getMosaicType()));
    }
 
    /** Поменять игру на новую мозаику */
-   public void SetGame(EMosaic mosaicType) {
+   public void changeGame(EMosaic mosaicType) {
       if (isPaused())
          ChangePause();
 
-      getMosaic().setMosaicType(mosaicType);
       ESkillLevel skill = getSkillLevel();
+      getMosaic().setMosaicType(mosaicType);
       if (skill != ESkillLevel.eCustom) {
          int numberMines = skill.GetNumberMines(mosaicType);
          getMosaic().setMinesCount(numberMines);
@@ -1304,26 +1289,35 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
 
    /** Поменять игру на новый размер & кол-во мин */
-   public void SetGame(Matrisize sizeField, int numberMines) {
+   public void changeGame(Matrisize newSize, int numberMines) {
+      if ((newSize.m < 1) || (newSize.n < 1)) {
+         Beep();
+         return;
+      }
+      if (numberMines < 0) {
+         Beep();
+         return;
+      }
+
       if (isPaused())
          ChangePause();
 
-      getMosaic().setSizeField(sizeField);
+      getMosaic().setSizeField(newSize);
       getMosaic().setMinesCount(numberMines);
 
       RecheckSelectedMenuSkillLevel();
    }
 
    /** Поменять игру на новый уровень сложности */
-   void SetGame(ESkillLevel skill) {
-      if (isPaused())
-         ChangePause();
-
+   void changeGame(ESkillLevel skill) {
       if (skill == ESkillLevel.eCustom) {
          //System.out.println("... dialog box 'Select custom skill level...' ");
          getCustomSkillDialog().setVisible(!getCustomSkillDialog().isVisible());
          return;
       }
+
+      if (isPaused())
+         ChangePause();
 
       int numberMines = skill.GetNumberMines(getMosaic().getMosaicType());
       Matrisize sizeFld = skill.DefaultSize();
@@ -1700,7 +1694,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   private static final long serialVersionUID = 1L;
                   @Override
                   public void actionPerformed(ActionEvent e) {
-                     Main.this.SetGame(val);
+                     Main.this.changeGame(val);
                   }
                });
          }
@@ -1718,7 +1712,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   private static final long serialVersionUID = 1L;
                   @Override
                   public void actionPerformed(ActionEvent e) {
-                     Main.this.SetGame(val);
+                     Main.this.changeGame(val);
                   }
                });
          }
@@ -2062,7 +2056,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                public void actionPerformed(ActionEvent e) {
                   Matrisize size = Main.this.getMosaic().getSizeField();
                   size.m++;
-                  Main.this.setMosaicSizeField(size);
+                  Main.this.changeGame(size);
                }
             };
       
@@ -2076,7 +2070,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                public void actionPerformed(ActionEvent e) {
                   Matrisize size = Main.this.getMosaic().getSizeField();
                   size.m--;
-                  Main.this.setMosaicSizeField(size);
+                  Main.this.changeGame(size);
                }
             };
       
@@ -2090,7 +2084,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                public void actionPerformed(ActionEvent e) {
                   Matrisize size = Main.this.getMosaic().getSizeField();
                   size.n++;
-                  Main.this.setMosaicSizeField(size);
+                  Main.this.changeGame(size);
                }
             };
       
@@ -2104,7 +2098,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                public void actionPerformed(ActionEvent e) {
                   Matrisize size = Main.this.getMosaic().getSizeField();
                   size.n--;
-                  Main.this.setMosaicSizeField(size);
+                  Main.this.changeGame(size);
                }
             };
       
