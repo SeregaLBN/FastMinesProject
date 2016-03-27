@@ -17,6 +17,8 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -28,6 +30,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.Closeable;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,11 +76,11 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import fmg.common.Pair;
-import fmg.common.geom.DoubleExt;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
+import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.types.EGameStatus;
@@ -852,7 +855,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    void toCenterScreen() {
 //      Dimension desktopSize = getDesktopSize();
-//      Dimension sizeWin = this.getSize();
+//      Dimension sizeWin = getRealSize();
 //      setLocation((desktopSize.width - sizeWin.width) / 2, (desktopSize.height - sizeWin.height) / 2);
       this.setLocationRelativeTo(null);
    }
@@ -870,7 +873,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
       boolean isZoomAlwaysMax;
       final Point startLocation = new Point();
-      boolean defaultData = false;
+      boolean defaultData;
       { // aplly data from SerializeProjModel
          final SerializeProjData spm = new SerializeProjData();
          defaultData = !spm.Load();
@@ -889,10 +892,15 @@ public class Main extends JFrame implements PropertyChangeListener {
             }
          this.setUndecorated(!spm.getShowElement(EShowElement.eCaption));
 
-         getMosaic().setSizeField(spm.getSizeField());
-         getMosaic().setMosaicType(spm.getMosaicType());
-         getMosaic().setMinesCount(spm.getMinesCount());
-         getMosaic().setArea(spm.getArea());
+         Mosaic mosaic = getMosaic();
+         try (AutoCloseable zz = mosaic.getDeferredNotice()) {
+            mosaic.setSizeField(spm.getSizeField());
+            mosaic.setMosaicType(spm.getMosaicType());
+            mosaic.setMinesCount(spm.getMinesCount());
+            mosaic.setArea(spm.getArea());
+         } catch (Exception ex) {
+            ex.printStackTrace();
+         }
 
          setActiveUserId(spm.getActiveUserId());
          getPlayerManageDlg().setDoNotAskStartupChecked(spm.isDoNotAskStartup());
@@ -936,7 +944,6 @@ public class Main extends JFrame implements PropertyChangeListener {
       getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaic().getCountMinesLeft()));
       getToolbar().getEdtTimePlay().setText("0");
 
-      setLocationRelativeTo(null);
       //setDefaultCloseOperation(EXIT_ON_CLOSE);
       this.addWindowListener(new WindowAdapter() {
          public void windowClosing(WindowEvent we) {
@@ -977,17 +984,27 @@ public class Main extends JFrame implements PropertyChangeListener {
 //         }
 //      });
 
-      RecheckSelectedMenuMosaicType();
-      RecheckSelectedMenuSkillLevel();
-      ChangeSizeImagesMineFlag();
+//      this.addComponentListener(new ComponentAdapter() {
+//         @Override
+//         public void componentShown(ComponentEvent ev) {
+//            Main.this.RecheckLocation();
+//         }
+//         @Override
+//         public void componentHidden(ComponentEvent ev) {
+//            System.out.println ( "Component hidden" );
+//         }
+//      });
+
       CustomKeyBinding();
 
       pack();
+      if (defaultData)
+         setLocationRelativeTo(null);
+      else
+         setLocation(startLocation);
 
       if (isZoomAlwaysMax)
          SwingUtilities.invokeLater(() -> AreaAlwaysMax(new ActionEvent(Main.this, 0, null)) );
-//      if (!defaultData)
-//         SwingUtilities.invokeLater(() -> { setLocation(startLocation); RecheckLocation(); } );
    }
 
    /** Выставить верный bullet для меню мозаики */
@@ -1283,9 +1300,6 @@ public class Main extends JFrame implements PropertyChangeListener {
          int numberMines = skill.GetNumberMines(mosaicType);
          getMosaic().setMinesCount(numberMines);
       }
-
-      RecheckSelectedMenuMosaicType();
-      RecheckSelectedMenuSkillLevel();
    }
 
    /** Поменять игру на новый размер & кол-во мин */
@@ -1304,8 +1318,6 @@ public class Main extends JFrame implements PropertyChangeListener {
 
       getMosaic().setSizeField(newSize);
       getMosaic().setMinesCount(numberMines);
-
-      RecheckSelectedMenuSkillLevel();
    }
 
    /** Поменять игру на новый уровень сложности */
@@ -1324,44 +1336,86 @@ public class Main extends JFrame implements PropertyChangeListener {
 
       getMosaic().setSizeField(sizeFld);
       getMosaic().setMinesCount(numberMines);
-
-      if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected())
-         AreaMax();
-
-      RecheckSelectedMenuSkillLevel();
    }
+
+   Insets getMosaicMargin() {
+      Insets mainPadding = getMenu().getOptions().getShowElement(EShowElement.eCaption).isSelected()
+            ? this.getInsets()
+            : new Insets(0,0,0,0);
+      Dimension menuSize = getMenu().getOptions().getShowElement(EShowElement.eMenu).isSelected()
+            ? getMenu().getSize()
+            : new Dimension();
+      Dimension toolbarSize = getMenu().getOptions().getShowElement(EShowElement.eToolbar).isSelected()
+            ? getToolbar().getSize()
+            : new Dimension();
+      Dimension statusBarSize = getMenu().getOptions().getShowElement(EShowElement.eStatusbar).isSelected()
+            ? getStatusBar().getSize()
+            : new Dimension();
+      return new Insets(
+            mainPadding.top + menuSize.height + toolbarSize.height,
+            mainPadding.left,
+            mainPadding.bottom + statusBarSize.height,
+            mainPadding.right);
+   }
+
+   public Dimension getFullSize() {
+      Dimension res = super.getSize();
+      Insets mosaicMargin = getMosaicMargin();
+      Dimension mosaicSize = getMosaic().getContainer().getSize();
+      Dimension res2 = new Dimension(
+            mosaicMargin.left + mosaicSize.width + mosaicMargin.right,
+            mosaicMargin.top + mosaicSize.height + mosaicMargin.bottom);
+      if (res2.equals(res))
+         System.out.println("res1="+res+"; res2="+res2);
+      else
+         System.err.println("res1="+res+"; res2="+res2);
+      return res2;
+  }
 
    /** узнать размер окна проекта при указанном размере окна мозаики */
    Dimension CalcSize(Size sizeMosaicInPixel) {
-      Dimension currSizeWin = this.getSize();
+//    // variant algorithm #1
+//      Dimension currSizeWin = getFullSize();
+//
+//      if ((currSizeWin.height == 0) && (currSizeWin.width == 0) && !this.isVisible())
+//         throw new RuntimeException("Invalid method call.  Нельзя высчитать размер окна, когда оно даже не выведено на экран...");
+//
+//      SizeDouble currSizeMosaicInPixel = getMosaic().getWindowSize();
+//      return new Dimension(
+//            (int)(sizeMosaicInPixel.width  + (currSizeWin.width  - currSizeMosaicInPixel.width)),
+//            (int)(sizeMosaicInPixel.height + (currSizeWin.height - currSizeMosaicInPixel.height)));
 
-      if ((currSizeWin.height == 0) && (currSizeWin.width == 0) && !this.isVisible()) {
-         throw new RuntimeException("Invalid method call.  Нельзя высчитать размер окна, когда оно даже не выведено на экран...");
-//         Dimension dummy = getDesktopSize(); // заглушка
-//         dummy.height++; dummy.width++;
-//         return dummy;
-      }
-
-      SizeDouble currSizeMosaicInPixel = getMosaic().getWindowSize();
+      // variant algorithm #2
+      Insets mosaicMargin = getMosaicMargin();
       return new Dimension(
-            (int)(sizeMosaicInPixel.width  + (currSizeWin.width  - currSizeMosaicInPixel.width)),
-            (int)(sizeMosaicInPixel.height + (currSizeWin.height - currSizeMosaicInPixel.height)));
+            mosaicMargin.left + sizeMosaicInPixel.width + mosaicMargin.right,
+            mosaicMargin.top + sizeMosaicInPixel.height + mosaicMargin.bottom);
    }
 
    /** узнать размер окна мозаики при указанном размере окна проекта */
    SizeDouble CalcMosaicWindowSize(Dimension sizeWindow) {
-      Dimension currSizeWin = this.getSize();
-      if ((currSizeWin.width == 0) || (currSizeWin.height == 0))
-         throw new RuntimeException("Invalid method call.  Нельзя высчитать размер окна, когда оно даже не выведено на экран...");
+//      // variant algorithm #1
+//      Dimension currSizeWin = getFullSize();
+//      if ((currSizeWin.width == 0) || (currSizeWin.height == 0))
+//         throw new RuntimeException("Invalid method call.  Нельзя высчитать размер окна, когда оно даже не выведено на экран...");
+//
+//      SizeDouble currSizeMosaicInPixel = getMosaic().getWindowSize();
+//      SizeDouble res = new SizeDouble(
+//            sizeWindow.width  - (currSizeWin.width  - currSizeMosaicInPixel.width),
+//            sizeWindow.height - (currSizeWin.height - currSizeMosaicInPixel.height));
+//
+//      if (res.height < 0 || res.width < 0)
+//         throw new RuntimeException("Bad algorithm... :(");
+//
+//      return res;
 
-      SizeDouble currSizeMosaicInPixel = getMosaic().getWindowSize();
+      // variant algorithm #2
+      Insets mosaicMargin = getMosaicMargin();
       SizeDouble res = new SizeDouble(
-            sizeWindow.width  - (currSizeWin.width  - currSizeMosaicInPixel.width),
-            sizeWindow.height - (currSizeWin.height - currSizeMosaicInPixel.height));
-
+            sizeWindow.width - (mosaicMargin.left + mosaicMargin.right),
+            sizeWindow.height - (mosaicMargin.top + mosaicMargin.bottom));
       if (res.height < 0 || res.width < 0)
          throw new RuntimeException("Bad algorithm... :(");
-
       return res;
    }
 
@@ -1404,19 +1458,22 @@ public class Main extends JFrame implements PropertyChangeListener {
                revalidate();
             }
 
-            if (!_sheduleCheckArea) {
-               _sheduleCheckArea = true;
-               SwingUtilities.invokeLater(() -> {
-                  _sheduleCheckArea = false;
-                  if (!this.isVisible())
-                     return;
-                  double maxArea = CalcMaxArea(getMosaic().getSizeField());
-                  if (maxArea < getMosaic().getArea()) {
-                     setArea(maxArea);
+//            if (!_sheduleCheckArea) {
+//               _sheduleCheckArea = true;
+//               SwingUtilities.invokeLater(() -> {
+//                  _sheduleCheckArea = false;
+//                  if (!this.isVisible())
+//                     return;
+                  if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected()) {
+                     AreaMax();
                   } else {
+                     double maxArea = CalcMaxArea(getMosaic().getSizeField());
+                     if (maxArea < getMosaic().getArea())
+                        setArea(maxArea);
+                  }
 
-                     // check that within the screen
-
+                  // check that within the screen
+                  {
                      Dimension screenSize = getScreenSize();
                      Insets padding = getScreenPadding();
                      Rect rcThis = Cast.toRect(this.getBounds());
@@ -1449,8 +1506,8 @@ public class Main extends JFrame implements PropertyChangeListener {
                      if (changed)
                         this.setLocation(Cast.toPoint(rcThis.PointLT()));
                   }
-               });
-            }
+//               });
+//            }
 
          });
       }
@@ -1460,8 +1517,6 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    /** getMosaic().setArea(...) */
    void setArea(double newArea) {
-      newArea = Math.min(newArea, CalcMaxArea(getMosaic().getSizeField())); // recheck
-
       //System.out.println("Mosaic.setArea: newArea=" + newArea);
       getMosaic().setArea(newArea);
    }
@@ -1478,10 +1533,10 @@ public class Main extends JFrame implements PropertyChangeListener {
    void AreaMin() {
       setArea(0);
    }
+
    /** Zoom maximum */
    void AreaMax() {
       double maxArea = CalcMaxArea(getMosaic().getSizeField());
-      if (DoubleExt.hasMinDiff(maxArea, getMosaic().getArea())) return;
       setArea(maxArea);
 
 //      {
@@ -2285,12 +2340,23 @@ public class Main extends JFrame implements PropertyChangeListener {
    private void OnMosaicPropertyChanged(Mosaic source, PropertyChangeEvent ev) {
       switch (ev.getPropertyName()) {
       case "Area":
-         ChangeSizeImagesMineFlag();
-         //break; // no break
       case "SizeField":
       case "MosaicType":
          RecheckLocation();
+       //break; // no break
+      case "MinesCount":
+         RecheckSelectedMenuMosaicType();
+         RecheckSelectedMenuSkillLevel();
          break;
+      }
+
+      switch (ev.getPropertyName()) {
+      case "Area":
+         ChangeSizeImagesMineFlag();
+         break;
+      //case "SizeField":
+      //case "MosaicType":
+      //   break;
       case "GameStatus":
          {
             getToolbar().getBtnPause().setEnabled(getMosaic().getGameStatus() == EGameStatus.eGSPlay);

@@ -2,7 +2,6 @@ package fmg.common.notyfier;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.Closeable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -124,14 +123,15 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
 
    protected void DeferredSwitchOff() { }
 
-   protected class DeferredLock implements Closeable {
+   protected class DeferredNotice implements AutoCloseable {
       private final boolean _locked;
-      private final Runnable _onDisposed;
-      private boolean _disposed;
+      private final Runnable _onDisposed,  _onBeforeNotify,  _onAfterNotify;
 
-      public DeferredLock() { this(null); }
-      public DeferredLock(Runnable onDisposed) {
+      public DeferredNotice() { this(null, null, null); }
+      public DeferredNotice(Runnable onDisposed,  Runnable onBeforeNotify,  Runnable onAfterNotify) {
          _onDisposed = onDisposed;
+         _onBeforeNotify = onBeforeNotify;
+         _onAfterNotify = onAfterNotify;
          if (NotifyPropertyChanged.this.getDeferredOn()) {
             _locked = false;
             return;
@@ -142,16 +142,21 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
 
       @Override
       public void close() {
-         if (_disposed)
-            return;
-         _disposed = true;
-
          if (_onDisposed != null)
             _onDisposed.run();
          if (!_locked)
             return;
+         if (_onBeforeNotify != null)
+            _onBeforeNotify.run();
          NotifyPropertyChanged.this.setDeferredOn(false);
+         if (_onAfterNotify != null)
+            _onAfterNotify.run();
       }
+   }
+   
+   public AutoCloseable getDeferredNotice() { return new DeferredNotice(); }
+   public AutoCloseable getDeferredNotice(Runnable onDisposed,  Runnable onBeforeNotify,  Runnable onAfterNotify) {
+      return new DeferredNotice(onDisposed, onBeforeNotify,  onAfterNotify);
    }
 
    //
