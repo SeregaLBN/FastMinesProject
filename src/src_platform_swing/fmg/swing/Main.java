@@ -998,10 +998,12 @@ public class Main extends JFrame implements PropertyChangeListener {
       CustomKeyBinding();
 
       pack();
+      System.out.println("ThreadId=" + Thread.currentThread().getId() + ": Main::initialize: after pack");
       if (defaultData)
          setLocationRelativeTo(null);
       else
          setLocation(startLocation);
+      System.out.println("Main::initialize: after setLocation");
 
       if (isZoomAlwaysMax)
          SwingUtilities.invokeLater(() -> AreaAlwaysMax(new ActionEvent(Main.this, 0, null)) );
@@ -1518,7 +1520,8 @@ public class Main extends JFrame implements PropertyChangeListener {
    /** getMosaic().setArea(...) */
    void setArea(double newArea) {
       //System.out.println("Mosaic.setArea: newArea=" + newArea);
-      getMosaic().setArea(newArea);
+      double maxArea = CalcMaxArea(getMosaic().getSizeField());
+      getMosaic().setArea(Math.min(maxArea, newArea));
    }
 
    /** Zoom + */
@@ -2333,7 +2336,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
-      //System.out.println("Main::propertyChange: eventName=" + ev.getPropertyName());
+      System.out.println("ThreadId=" + Thread.currentThread().getId() + ": Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
       if (ev.getSource() instanceof Mosaic)
          OnMosaicPropertyChanged((Mosaic)ev.getSource(), ev);
    }
