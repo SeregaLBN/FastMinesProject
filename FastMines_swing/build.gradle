@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'application'
 apply plugin: 'idea'; apply plugin: 'eclipse'
 
 group = 'fmg'
@@ -45,6 +46,8 @@ sourceSets {
 //      include '**/*.png'
 //   }
 //}
+
+mainClassName = "fmg.swing.Main"
 
 jar {
    manifest {

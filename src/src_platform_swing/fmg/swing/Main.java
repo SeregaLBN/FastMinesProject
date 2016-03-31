@@ -17,8 +17,6 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -30,7 +28,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.Closeable;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,7 +77,6 @@ import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
-import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.types.EGameStatus;
@@ -893,7 +889,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          this.setUndecorated(!spm.getShowElement(EShowElement.eCaption));
 
          Mosaic mosaic = getMosaic();
-         try (AutoCloseable zz = mosaic.getDeferredNotice()) {
+         try (AutoCloseable tmp = mosaic.deferredNotice()) {
             mosaic.setSizeField(spm.getSizeField());
             mosaic.setMosaicType(spm.getMosaicType());
             mosaic.setMinesCount(spm.getMinesCount());
@@ -998,12 +994,12 @@ public class Main extends JFrame implements PropertyChangeListener {
       CustomKeyBinding();
 
       pack();
-      System.out.println("ThreadId=" + Thread.currentThread().getId() + ": Main::initialize: after pack");
+//      System.out.println("ThreadId=" + Thread.currentThread().getId() + ": Main::initialize: after pack");
       if (defaultData)
          setLocationRelativeTo(null);
       else
          setLocation(startLocation);
-      System.out.println("Main::initialize: after setLocation");
+//      System.out.println("Main::initialize: after setLocation");
 
       if (isZoomAlwaysMax)
          SwingUtilities.invokeLater(() -> AreaAlwaysMax(new ActionEvent(Main.this, 0, null)) );
@@ -1361,16 +1357,16 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
 
    public Dimension getFullSize() {
-      Dimension res = super.getSize();
+//      Dimension res = super.getSize();
       Insets mosaicMargin = getMosaicMargin();
       Dimension mosaicSize = getMosaic().getContainer().getSize();
       Dimension res2 = new Dimension(
             mosaicMargin.left + mosaicSize.width + mosaicMargin.right,
             mosaicMargin.top + mosaicSize.height + mosaicMargin.bottom);
-      if (res2.equals(res))
-         System.out.println("res1="+res+"; res2="+res2);
-      else
-         System.err.println("res1="+res+"; res2="+res2);
+//      if (res2.equals(res))
+//         System.out.println("res1="+res+"; res2="+res2);
+//      else
+//         System.err.println("res1="+res+"; res2="+res2);
       return res2;
   }
 
@@ -1514,7 +1510,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          });
       }
    }
-   private boolean _sheduleCheckArea;
+   //private boolean _sheduleCheckArea;
    private boolean _shedulePack;
 
    /** getMosaic().setArea(...) */
@@ -2336,7 +2332,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
-      System.out.println("ThreadId=" + Thread.currentThread().getId() + ": Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
+//      System.out.println("ThreadId=" + Thread.currentThread().getId() + ": Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
       if (ev.getSource() instanceof Mosaic)
          OnMosaicPropertyChanged((Mosaic)ev.getSource(), ev);
    }

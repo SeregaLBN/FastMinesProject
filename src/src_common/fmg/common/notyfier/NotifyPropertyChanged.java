@@ -51,14 +51,14 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
 
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       //propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
-      if (getDeferredOn())
+      if (isDeferredNoticeOn())
          _deferredPropertyChanged.put(propertyName, new Pair<Object, Object>(oldValue, newValue));
       else
-         EventHandlerInvoke(oldValue, newValue, propertyName);
+         propertyChangedReal(oldValue, newValue, propertyName);
    }
 
    // not virtual!
-   private final void EventHandlerInvoke(Object oldValue, Object newValue, String propertyName) {
+   private final void propertyChangedReal(Object oldValue, Object newValue, String propertyName) {
       propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
    }
 
@@ -97,65 +97,62 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
 
    private Map<String, Pair<Object, Object>> _deferredPropertyChanged;
 
-   private boolean _deferredOn;
+   private boolean _deferredNoticeOn;
    /** Deferr notifications */
-   protected boolean getDeferredOn() { return _deferredOn; }
-   protected void setDeferredOn(boolean value) { 
-      if (_deferredOn == value)
+   protected boolean isDeferredNoticeOn() { return _deferredNoticeOn; }
+   private void setDeferredNoticeOn(boolean value) {
+      setDeferredNoticeOn(value, null);
+   }
+   private void setDeferredNoticeOn(boolean value, Runnable onBeforeNotify) { 
+      if (_deferredNoticeOn == value)
          return;
 
       if (value && (_deferredPropertyChanged == null))
          _deferredPropertyChanged = new HashMap<>();
 
-      _deferredOn = value;
-      if (_deferredOn)
+      _deferredNoticeOn = value;
+      if (_deferredNoticeOn)
          return;
 
-      DeferredSwitchOff();
+      if (onBeforeNotify != null)
+         onBeforeNotify.run();
 
       if (!_deferredPropertyChanged.isEmpty()) {
          Map<String, Pair<Object, Object>> tmpCopy = new HashMap<>(_deferredPropertyChanged);
          _deferredPropertyChanged.clear();
-         tmpCopy.forEach((name, old_new) -> EventHandlerInvoke(old_new.getFirst(), old_new.getSecond(), name));
+         tmpCopy.forEach((name, old_new) -> propertyChangedReal(old_new.getFirst(), old_new.getSecond(), name));
          tmpCopy.clear();
       }
    }
 
-   protected void DeferredSwitchOff() { }
-
    protected class DeferredNotice implements AutoCloseable {
-      private final boolean _locked;
-      private final Runnable _onDisposed,  _onBeforeNotify,  _onAfterNotify;
+      private final boolean _deferred;
+      private final Runnable _onDisposed, _onBeforeNotify, _onAfterNotify;
 
       public DeferredNotice() { this(null, null, null); }
-      public DeferredNotice(Runnable onDisposed,  Runnable onBeforeNotify,  Runnable onAfterNotify) {
+      public DeferredNotice(Runnable onDisposed, Runnable onBeforeNotify, Runnable onAfterNotify) {
          _onDisposed = onDisposed;
          _onBeforeNotify = onBeforeNotify;
          _onAfterNotify = onAfterNotify;
-         if (NotifyPropertyChanged.this.getDeferredOn()) {
-            _locked = false;
-            return;
-         }
-         NotifyPropertyChanged.this.setDeferredOn(true);
-         _locked = true;
+         _deferred = !NotifyPropertyChanged.this.isDeferredNoticeOn();
+         if (_deferred)
+            NotifyPropertyChanged.this.setDeferredNoticeOn(true);
       }
 
       @Override
       public void close() {
          if (_onDisposed != null)
             _onDisposed.run();
-         if (!_locked)
+         if (!_deferred)
             return;
-         if (_onBeforeNotify != null)
-            _onBeforeNotify.run();
-         NotifyPropertyChanged.this.setDeferredOn(false);
+         NotifyPropertyChanged.this.setDeferredNoticeOn(false, _onBeforeNotify);
          if (_onAfterNotify != null)
             _onAfterNotify.run();
       }
    }
    
-   public AutoCloseable getDeferredNotice() { return new DeferredNotice(); }
-   public AutoCloseable getDeferredNotice(Runnable onDisposed,  Runnable onBeforeNotify,  Runnable onAfterNotify) {
+   public AutoCloseable deferredNotice() { return new DeferredNotice(); }
+   public AutoCloseable deferredNotice(Runnable onDisposed,  Runnable onBeforeNotify,  Runnable onAfterNotify) {
       return new DeferredNotice(onDisposed, onBeforeNotify,  onAfterNotify);
    }
 
