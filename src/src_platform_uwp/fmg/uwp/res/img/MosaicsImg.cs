@@ -40,7 +40,7 @@ namespace fmg.uwp.res.img {
          get { return Entity; }
          set {
             if (value != Entity)
-               using (Deferring()) {
+               using (DeferredNotice()) {
                   var old = Entity;
                   Entity = value;
                   Dependency_MosaicType_As_Entity(value, old);
@@ -53,7 +53,7 @@ namespace fmg.uwp.res.img {
          get { return _sizeField; }
          set {
             if (SetProperty(ref _sizeField, value))
-               using (Deferring()) {
+               using (DeferredNotice()) {
                   RecalcArea();
                   _matrix.Clear();
                }
@@ -71,7 +71,7 @@ namespace fmg.uwp.res.img {
          }
          private set {
             if (SetProperty(ref _attr, value))
-               using (Deferring()) {
+               using (DeferredNotice()) {
                   Dependency_GContext_CellAttribute();
                   Dependency_CellAttribute_Area();
                }
@@ -87,7 +87,7 @@ namespace fmg.uwp.res.img {
          }
          private set {
             if (SetProperty(ref _cellPaint, value))
-               using (Deferring()) {
+               using (DeferredNotice()) {
                   Dependency_CellPaint_GContext();
                }
          }
@@ -101,7 +101,7 @@ namespace fmg.uwp.res.img {
          get {
             if (!_matrix.Any()) {
                _matrixRotated.Clear();
-               using (Deferring()) {
+               using (DeferredNotice()) {
                   var attr = CellAttr;
                   var type = MosaicType;
                   var size = SizeField;
@@ -160,7 +160,7 @@ namespace fmg.uwp.res.img {
       }
 
       private void RecalcArea() {
-         using (Deferring()) {
+         using (DeferredNotice()) {
             var w = Width;
             var h = Height;
             var pad = Padding;
@@ -191,7 +191,7 @@ namespace fmg.uwp.res.img {
          }
          set {
             if (SetProperty(ref _area, value))
-               using (Deferring()) {
+               using (DeferredNotice()) {
                   Dependency_CellAttribute_Area();
                }
          }
@@ -202,7 +202,7 @@ namespace fmg.uwp.res.img {
          get { return _paddingFull; }
          protected set {
             if (SetProperty(ref _paddingFull, value))
-               using (Deferring()) {
+               using (DeferredNotice()) {
                   Dependency_GContext_PaddingFull();
                }
          }
@@ -217,7 +217,7 @@ namespace fmg.uwp.res.img {
          }
          set {
             if (SetProperty(ref _gContext, value))
-               using (Deferring()) {
+               using (DeferredNotice()) {
                   Dependency_GContext_CellAttribute();
                   Dependency_GContext_PaddingFull();
                   Dependency_CellPaint_GContext();
@@ -283,7 +283,7 @@ namespace fmg.uwp.res.img {
          switch (ev.PropertyName) {
          case "Entity":
             var ev2 = ev as PropertyChangedExEventArgs<EMosaic>;
-            using (Deferring()) {
+            using (DeferredNotice()) {
                Dependency_MosaicType_As_Entity(ev2?.NewValue, ev2?.OldValue);
             }
             break;
@@ -292,12 +292,12 @@ namespace fmg.uwp.res.img {
             RecalcArea();
             break;
          case "BorderWidth":
-            using (Deferring()) {
+            using (DeferredNotice()) {
                Dependency_GContext_BorderWidth();
             }
             break;
          case "BorderColor":
-            using (Deferring()) {
+            using (DeferredNotice()) {
                Dependency_GContext_BorderColor();
             }
             break;

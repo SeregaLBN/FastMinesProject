@@ -43,14 +43,14 @@ namespace FastMines.Presentation.Notyfier {
       }
 
       protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         if (DeferredOn)
+         if (DeferredNoticeOn)
             _deferredPropertyChanged[ev.PropertyName] = ev;
          else
-            EventHandlerInvoke(sender, ev);
+            PropertyChangedReal(sender, ev);
       }
 
       // not virtual!
-      private void EventHandlerInvoke(object sender, PropertyChangedEventArgs ev) {
+      private void PropertyChangedReal(object sender, PropertyChangedEventArgs ev) {
          var eventHandler = PropertyChanged;
          eventHandler?.Invoke(sender, ev);
       }
@@ -59,57 +59,60 @@ namespace FastMines.Presentation.Notyfier {
 
       private Dictionary<string, PropertyChangedEventArgs> _deferredPropertyChanged;
 
-      private bool _deferredOn;
+      private bool _deferredNoticeOn;
       /// <summary> Deferr notifications </summary>
-      protected bool DeferredOn {
-         get { return _deferredOn; }
-         set {
-            if (_deferredOn == value)
-               return;
+      protected bool DeferredNoticeOn {
+         get { return _deferredNoticeOn; }
+         set { SetDeferredNoticeOn(value, null); }
+      }
+      private void SetDeferredNoticeOn(bool value, Action onBeforeNotify) {
+         if (_deferredNoticeOn == value)
+            return;
 
-            if (value && (_deferredPropertyChanged == null))
-               _deferredPropertyChanged = new Dictionary<string, PropertyChangedEventArgs>();
+         if (value && (_deferredPropertyChanged == null))
+            _deferredPropertyChanged = new Dictionary<string, PropertyChangedEventArgs>();
 
-            _deferredOn = value;
-            if (_deferredOn)
-               return;
+         _deferredNoticeOn = value;
+         if (_deferredNoticeOn)
+            return;
 
-            DeferredSwitchOff();
+         onBeforeNotify?.Invoke();
 
-            if (_deferredPropertyChanged.Any()) {
-               var tmpCopy = new Dictionary<string, PropertyChangedEventArgs>(_deferredPropertyChanged);
-               _deferredPropertyChanged.Clear();
-               foreach(var key in tmpCopy.Keys)
-                  EventHandlerInvoke(this, tmpCopy[key]);
-               tmpCopy.Clear();
-            }
+         if (_deferredPropertyChanged.Any()) {
+            var tmpCopy = new Dictionary<string, PropertyChangedEventArgs>(_deferredPropertyChanged);
+            _deferredPropertyChanged.Clear();
+            foreach (var key in tmpCopy.Keys)
+               PropertyChangedReal(this, tmpCopy[key]);
+            tmpCopy.Clear();
          }
       }
 
-      protected virtual void DeferredSwitchOff() { }
-
-      protected class DeferredLock : IDisposable {
+      protected class DeferredNoticeClass : IDisposable {
          private readonly NotifyPropertyChanged _owner;
-         private readonly bool _locked;
-         private readonly Action _onDisposed;
-         private bool _disposed;
-         public DeferredLock(NotifyPropertyChanged owner, Action onDisposed) {
-            _onDisposed = onDisposed;
-            if ((_owner = owner).DeferredOn)
-               return;
-            _owner.DeferredOn = true;
-            _locked = true;
-         }
-         public void Dispose() {
-            if (_disposed)
-               return;
-            _disposed = true;
+         private readonly bool _deferred;
+         private readonly Action _onDisposed, _onBeforeNotify, _onAfterNotify;
 
-            _onDisposed?.Invoke();
-            if (!_locked)
-               return;
-            _owner.DeferredOn = false;
+         public DeferredNoticeClass(NotifyPropertyChanged owner, Action onDisposed = null, Action onBeforeNotify = null, Action onAfterNotify = null) {
+            _owner = owner;
+            _onDisposed = onDisposed;
+            _onBeforeNotify = onBeforeNotify;
+            _onAfterNotify = onAfterNotify;
+            _deferred = !owner.DeferredNoticeOn;
+            if (_deferred)
+               _owner.DeferredNoticeOn = true;
          }
+
+         public void Dispose() {
+            _onDisposed?.Invoke();
+            if (!_deferred)
+               return;
+            _owner.SetDeferredNoticeOn(false, _onBeforeNotify);
+            _onAfterNotify?.Invoke();
+         }
+      }
+
+      public IDisposable DeferredNotice(Action onDisposed = null, Action onBeforeNotify = null, Action onAfterNotify = null) {
+         return new DeferredNoticeClass(this, onDisposed, onBeforeNotify, onAfterNotify);
       }
 
       #endregion

@@ -88,7 +88,7 @@ namespace FastMines.DataModel.DataSources {
          foreach (var mi in DataSource) {
             var selected = ReferenceEquals(mi, CurrentElement);
             var img = mi.MosaicImage;
-            using (img.Deferring(false)) {
+            using (img.DeferredNotice(false)) {
                img.Rotate = selected;
                img.BorderColor = selected ? Color.White : Color.Dark;
                img.BackgroundColor = selected ? MosaicsImg.DefaultBkColor : GraphicContext.DefaultBackgroundFillColor;

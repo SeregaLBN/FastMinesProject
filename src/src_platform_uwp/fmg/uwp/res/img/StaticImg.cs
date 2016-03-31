@@ -144,7 +144,7 @@ namespace fmg.uwp.res.img {
 
       private bool _deferredRedraw;
       protected void Redraw() {
-         if (DeferredOn) {
+         if (DeferredNoticeOn) {
             _deferredRedraw = true;
             return;
          }
@@ -165,7 +165,7 @@ namespace fmg.uwp.res.img {
       }
 
       private void DrawSync() {
-         using (Deferring(false)) {
+         using (DeferredNotice(false)) {
             //LoggerSimple.Put("> DrawBegin: {0}", Entity);
             DrawBegin();
             DrawBody();
@@ -175,24 +175,21 @@ namespace fmg.uwp.res.img {
       }
 
       protected virtual void DrawBegin() { }
-
       protected abstract void DrawBody();
-
       protected virtual void DrawEnd() { }
 
-      protected override void DeferredSwitchOff() {
-         if (_deferredRedraw) {
-            _deferredRedraw = false;
-            Redraw();
-         }
-      }
-
       /// <summary> Deferr notifications and rendering </summary>
-      public IDisposable Deferring(bool redrawAfter = true) {
-         return new DeferredLock(this, () => {
-                                          if (redrawAfter)
-                                             Redraw();
-                                       });
+      public IDisposable DeferredNotice(bool redrawAfter = true) {
+         return DeferredNotice(() => {
+                                        if (_deferredRedraw) {
+                                           _deferredRedraw = false;
+                                           Redraw();
+                                        }
+                                     },
+                                     () => {
+                                        if (redrawAfter)
+                                           Redraw();
+                                     }, null);
       }
 
       public void Dispose() {
