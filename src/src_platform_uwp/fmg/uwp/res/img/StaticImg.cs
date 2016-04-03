@@ -181,15 +181,16 @@ namespace fmg.uwp.res.img {
       /// <summary> Deferr notifications and rendering </summary>
       public IDisposable DeferredNotice(bool redrawAfter = true) {
          return DeferredNotice(() => {
-                                        if (_deferredRedraw) {
-                                           _deferredRedraw = false;
-                                           Redraw();
-                                        }
-                                     },
-                                     () => {
-                                        if (redrawAfter)
-                                           Redraw();
-                                     }, null);
+                                  if (redrawAfter)
+                                     Redraw();
+                               },
+                               () => {
+                                  if (_deferredRedraw) {
+                                     _deferredRedraw = false;
+                                     Redraw();
+                                  }
+                               },
+                               null);
       }
 
       public void Dispose() {
