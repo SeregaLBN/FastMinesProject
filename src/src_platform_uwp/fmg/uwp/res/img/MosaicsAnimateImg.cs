@@ -22,7 +22,12 @@ namespace fmg.uwp.res.img {
          : base(mosaicType, sizeField, sizeImage, padding)
       { }
 
+      /// <summary> need redraw the static part of the cache </summary>
       private bool _invalidateCache = true;
+      /// <summary>
+      /// Cached static part of the picture.
+      /// ! Recreated only when changing the original image size (minimizing CreateImage calls).
+      /// </summary>
       private WriteableBitmap _imageCache;
 
       protected override void DrawBody() {
@@ -30,6 +35,10 @@ namespace fmg.uwp.res.img {
             // sync draw
             var w = Width;
             var h = Height;
+            if (_imageCache == null) {
+               _imageCache = CreateImage();
+               _invalidateCache = true;
+            }
             var img = _imageCache;
             if (_invalidateCache) {
                _invalidateCache = false;
@@ -141,7 +150,7 @@ namespace fmg.uwp.res.img {
             break;
          case "Image":
             _invalidateCache = true;
-            _imageCache = CreateImage();
+            _imageCache = null;
             break;
          }
       }
