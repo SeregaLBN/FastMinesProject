@@ -69,6 +69,7 @@ namespace fmg.uwp.res.img {
          }
       }
 
+      private bool _invalidate = true;
       protected abstract TImage CreateImage();
       private TImage _image;
       public TImage Image {
@@ -76,6 +77,8 @@ namespace fmg.uwp.res.img {
             //LoggerSimple.Put("getImage: {0}", Entity);
             if (_image == null)
                Image = CreateImage();
+            if (_invalidate)
+               Draw();
             return _image;
          }
          protected set {
@@ -142,55 +145,30 @@ namespace fmg.uwp.res.img {
 
       public bool OnlySyncDraw { get; set; } = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
 
-      private bool _deferredRedraw;
       protected void Redraw() {
-         if (DeferredNoticeOn) {
-            _deferredRedraw = true;
-            return;
-         }
-
-         if (OnlySyncDraw)
-            DrawSync();
-         else
-            DrawAsync();
+         _invalidate = true;
+         OnPropertyChanged("Image");
       }
 
-      private bool _sheduledDraw;
-      /// <summary> schedule drawing (async operation) </summary>
-      private void DrawAsync() {
-         if (_sheduledDraw)
-            return;
-         _sheduledDraw = true;
-         AsyncRunner.InvokeFromUiLater(() => { DrawSync(); _sheduledDraw = false; }, CoreDispatcherPriority.Low);
-      }
-
-      private void DrawSync() {
-         using (DeferredNotice(false)) {
-            //LoggerSimple.Put("> DrawBegin: {0}", Entity);
-            DrawBegin();
-            DrawBody();
-            DrawEnd();
-            //LoggerSimple.Put("< DrawEnd: {0}", Entity);
-         }
+      private void Draw() {
+         _invalidate = false;
+         //LoggerSimple.Put("> DrawBegin: {0}", Entity);
+         DrawBegin();
+         DrawBody();
+         DrawEnd();
+         //LoggerSimple.Put("< DrawEnd: {0}", Entity);
       }
 
       protected virtual void DrawBegin() { }
       protected abstract void DrawBody();
       protected virtual void DrawEnd() { }
 
-      /// <summary> Deferr notifications and rendering </summary>
-      public IDisposable DeferredNotice(bool redrawAfter = true) {
-         return DeferredNotice(() => {
-                                  if (redrawAfter)
-                                     Redraw();
-                               },
-                               () => {
-                                  if (_deferredRedraw) {
-                                     _deferredRedraw = false;
-                                     Redraw();
-                                  }
-                               },
-                               null);
+      /// <summary> Deferr notifications </summary>
+      protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         if (OnlySyncDraw)
+            base.OnPropertyChanged(sender, ev);
+         else
+            AsyncRunner.InvokeFromUiLater(() => base.OnPropertyChanged(sender, ev), CoreDispatcherPriority.Normal);
       }
 
       public void Dispose() {
