@@ -21,7 +21,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -118,7 +117,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    private Resources resources;
    private PlayersModel players;
-   private UUID activeUserId; // current user 
+   private UUID activeUserId; // current user
    private ChampionsModel champions;
 
    private ManageDlg       _playerManageDialog;
@@ -546,7 +545,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
       class BtnNew extends JButton {
          private static final long serialVersionUID = 1L;
-      
+
          public BtnNew() {
             super();
             initialize();
@@ -579,7 +578,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       }
       class BtnPause extends JToggleButton {
          private static final long serialVersionUID = 1L;
-      
+
          public BtnPause() {
             super(Main.this.getHandlers().getPauseAction());
             initialize();
@@ -657,7 +656,7 @@ public class Main extends JFrame implements PropertyChangeListener {
             getBtnPause().setPreferredSize(dimBtn);
             getBtnPause().setMinimumSize(dimBtn);
             getBtnPause().setMaximumSize(dimBtn);
-   
+
             Dimension dimEdt = new Dimension(40, 21);
             getEdtTimePlay().setPreferredSize(dimEdt);
 //            getEdtTimePlay().setMinimumSize(dimEdt);
@@ -814,7 +813,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 //         pausePanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 //         pausePanel.setFocusable(true);
          pausePanel.setVisible(false);
-         
+
          pausePanel.addMouseListener(this.getHandlers().getPausePanelMouseListener());
       }
       return pausePanel;
@@ -840,10 +839,10 @@ public class Main extends JFrame implements PropertyChangeListener {
    void iconify() {
       if (Toolkit.getDefaultToolkit().isFrameStateSupported(Frame.ICONIFIED)) {
          int state = this.getExtendedState();
-   
+
          // Set the iconified bit
          state ^= Frame.ICONIFIED;
-   
+
          // Iconify the frame
          this.setExtendedState(state);
       }
@@ -889,13 +888,11 @@ public class Main extends JFrame implements PropertyChangeListener {
          this.setUndecorated(!spm.getShowElement(EShowElement.eCaption));
 
          Mosaic mosaic = getMosaic();
-         try (AutoCloseable tmp = mosaic.deferredNotice()) {
+         {
             mosaic.setSizeField(spm.getSizeField());
             mosaic.setMosaicType(spm.getMosaicType());
             mosaic.setMinesCount(spm.getMinesCount());
             mosaic.setArea(spm.getArea());
-         } catch (Exception ex) {
-            ex.printStackTrace();
          }
 
          setActiveUserId(spm.getActiveUserId());
@@ -942,6 +939,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
       //setDefaultCloseOperation(EXIT_ON_CLOSE);
       this.addWindowListener(new WindowAdapter() {
+         @Override
          public void windowClosing(WindowEvent we) {
             Main.this.OnClose();
          }
@@ -954,7 +952,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       this.addWindowFocusListener(this.getHandlers().getWindowFocusListener());
       this.addMouseWheelListener(this.getHandlers().getMouseWheelListener());
 //      this.addWindowListener(new WindowAdapter() {
-//         
+//
 //         @Override
 //         public void windowActivated(WindowEvent e) {
 ////            if (Main.this.isAlwaysOnTopSupported())
@@ -1156,20 +1154,17 @@ public class Main extends JFrame implements PropertyChangeListener {
       }
    }
 
-   private Pair<InputMap, ActionMap> keyPairBindAsMenuAccelerator; 
+   private Pair<InputMap, ActionMap> keyPairBindAsMenuAccelerator;
    Pair<InputMap, ActionMap> getKeyPairBindAsMenuAccelerator() {
       if (keyPairBindAsMenuAccelerator == null) {
          InputMap inputMap = new ComponentInputMap(getRootPane());
          ActionMap actionMap = new ActionMap();
          keyPairBindAsMenuAccelerator = new Pair<InputMap, ActionMap>(inputMap, actionMap);
 
-         BiConsumer<KeyStroke, Action> bind = new BiConsumer<KeyStroke,Action>() {
-            @Override
-            public void accept(KeyStroke key, Action action) {
-               String name  = UUID.randomUUID().toString();
-               inputMap.put(key, name);
-               actionMap.put(name, action);
-            }
+         BiConsumer<KeyStroke, Action> bind = (key, action) -> {
+            String name  = UUID.randomUUID().toString();
+            inputMap.put(key, name);
+            actionMap.put(name, action);
          };
 
          bind.accept(KeyCombo.getKeyStroke_About()       , getHandlers().getAboutAction());
@@ -1281,7 +1276,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    /** Попытаться установить новый размер на мозаику (при возможности, сохраняя ESkillLevel) */
    void changeGame(Matrisize newSize) {
       ESkillLevel skill = getSkillLevel();
-      changeGame(newSize, 
+      changeGame(newSize,
             (skill == ESkillLevel.eCustom)
                ? getMosaic().getMinesCount()
                : skill.GetNumberMines(getMosaic().getMosaicType()));
@@ -1717,7 +1712,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    private Handlers handlers;
    /** all Action handlers */
-   private Handlers getHandlers() { 
+   private Handlers getHandlers() {
       if (handlers == null)
          handlers = new Handlers();
       return handlers;
@@ -1741,8 +1736,8 @@ public class Main extends JFrame implements PropertyChangeListener {
       private Map<ESkillLevel, Action> skillLevelActions;
       public Action getSkillLevelAction(ESkillLevel key) {
          if (skillLevelActions == null) {
-            skillLevelActions = new HashMap<ESkillLevel, Action>(ESkillLevel.values().length); 
-   
+            skillLevelActions = new HashMap<ESkillLevel, Action>(ESkillLevel.values().length);
+
             for (final ESkillLevel val: ESkillLevel.values())
                skillLevelActions.put(val, new AbstractAction() {
                   private static final long serialVersionUID = 1L;
@@ -1760,7 +1755,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       public ActionListener getMosaicAction(EMosaic key) {
          if (mosaicAction == null) {
             mosaicAction = new HashMap<EMosaic, Action>(EMosaic.values().length);
-   
+
             for (final EMosaic val: EMosaic.values())
                mosaicAction.put(val, new AbstractAction() {
                   private static final long serialVersionUID = 1L;
@@ -1850,7 +1845,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       public Action getShowElementAction(EShowElement key) {
          if (showElementsAction == null) {
             showElementsAction = new HashMap<EShowElement, Action>(EShowElement.values().length);
-   
+
             for (final EShowElement val: EShowElement.values())
                showElementsAction.put(val, new AbstractAction() {
                   private static final long serialVersionUID = 1L;
@@ -1905,10 +1900,10 @@ public class Main extends JFrame implements PropertyChangeListener {
                      Main.this.getToolbar().getBtnNew().setIcon(img);
                }
             };
-   
+
          return mosaicClickHandler;
       }
-   
+
       private MouseListener pausePanelMouseListener;
       public MouseListener getPausePanelMouseListener() {
          if (pausePanelMouseListener == null)
@@ -1921,7 +1916,7 @@ public class Main extends JFrame implements PropertyChangeListener {
             };
          return pausePanelMouseListener;
       }
-   
+
       private WindowFocusListener windowFocusListener;
       public WindowFocusListener getWindowFocusListener() {
          if (windowFocusListener == null)
@@ -1942,31 +1937,28 @@ public class Main extends JFrame implements PropertyChangeListener {
                public void windowGainedFocus(WindowEvent e) {}
             };
          return windowFocusListener;
-      }   
-   
+      }
+
       private MouseWheelListener mouseWheelListener;
       public MouseWheelListener getMouseWheelListener() {
          if (mouseWheelListener == null)
-            mouseWheelListener = new MouseWheelListener() {
-               @Override
-               public void mouseWheelMoved(MouseWheelEvent evt) {
+            mouseWheelListener = evt -> {
 //                  System.out.println("FMG::mouseWheelMoved: " + evt);
-                  if (!Main.this.getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected())
-                     switch (evt.getWheelRotation()) {
-                     case  1: Main.this.AreaDec(); break;
-                     case -1: Main.this.AreaInc(); break;
-                     }
-               }
+               if (!Main.this.getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected())
+                  switch (evt.getWheelRotation()) {
+                  case  1: Main.this.AreaDec(); break;
+                  case -1: Main.this.AreaInc(); break;
+                  }
             };
-   
+
          return mouseWheelListener;
       }
-   
+
       private Map<EZoomInterface, Action> zoomActions;
       public Action getZoomAction(EZoomInterface key) {
          if (zoomActions == null) {
             zoomActions = new HashMap<EZoomInterface, Action>(EZoomInterface.values().length);
-   
+
             for (final EZoomInterface val: EZoomInterface.values())
                zoomActions.put(val, new AbstractAction() {
                   private static final long serialVersionUID = 1L;
@@ -2097,7 +2089,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   }
                }
             };
-      
+
          return timePlayAction;
       }
 
@@ -2113,7 +2105,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   Main.this.changeGame(size);
                }
             };
-      
+
          return mosaicSizeIncX;
       }
       public Action getMosaicSizeDecX() {
@@ -2127,7 +2119,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   Main.this.changeGame(size);
                }
             };
-      
+
          return mosaicSizeDecX;
       }
       public Action getMosaicSizeIncY() {
@@ -2141,7 +2133,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   Main.this.changeGame(size);
                }
             };
-      
+
          return mosaicSizeIncY;
       }
       public Action getMosaicSizeDecY() {
@@ -2155,7 +2147,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   Main.this.changeGame(size);
                }
             };
-      
+
          return mosaicSizeDecY;
       }
    }
@@ -2201,7 +2193,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
             file += val + "FastMines.log";
             GuiTools.alert(file);
-   
+
             //new FileOutputStream(file);
             PrintStream ps = new PrintStream(file);
             System.setOut(ps);
@@ -2290,28 +2282,25 @@ public class Main extends JFrame implements PropertyChangeListener {
       final long clickCount = mosaic.getCountClick();
 
       // логика сохранения...
-      ActionToUser onActionToUser = new ActionToUser() {
-         @Override
-         public void applyToUser(UUID userId) {
-            if (userId != null) {
-               // ...статистики
-               getPlayers().setStatistic(userId, eMosaic, eSkill, victory, realCountOpen, playTime, clickCount);
-               if (getStatisticDialog().isVisible())
-                  // если окно открыто - сфокусируюсь на нужной закладке/скилле и пользователе
-                  getStatisticDialog().ShowData(eSkill, eMosaic);
+      ActionToUser onActionToUser = userId -> {
+         if (userId != null) {
+            // ...статистики
+            getPlayers().setStatistic(userId, eMosaic, eSkill, victory, realCountOpen, playTime, clickCount);
+            if (getStatisticDialog().isVisible())
+               // если окно открыто - сфокусируюсь на нужной закладке/скилле и пользователе
+               getStatisticDialog().ShowData(eSkill, eMosaic);
 
-               // ...чемпиона
-               if (victory) {
-                  User user = Main.this.getPlayers().getUser(userId);
-                  int pos = Main.this.getChampions().add(user, playTime, eMosaic, eSkill);
-                  if (pos != -1)
-                     Main.this.getChampionDialog().ShowData(eSkill, eMosaic, pos);
-               }
+            // ...чемпиона
+            if (victory) {
+               User user = Main.this.getPlayers().getUser(userId);
+               int pos = Main.this.getChampions().add(user, playTime, eMosaic, eSkill);
+               if (pos != -1)
+                  Main.this.getChampionDialog().ShowData(eSkill, eMosaic, pos);
             }
          }
       };
 
-      // вызываю логику: 
+      // вызываю логику:
       if (getActiveUserId() != null) {
          // 1. явно
          onActionToUser.applyToUser(getActiveUserId());
@@ -2385,7 +2374,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                            EBtnNewGameState.eNormalLoss);
                   if (img != null)
                      getToolbar().getBtnNew().setIcon(img);
-   
+
                   if (getSkillLevel() != ESkillLevel.eCustom)
                      // сохраняю статистику и чемпиона
                      setStatisticAndChampion(ev);

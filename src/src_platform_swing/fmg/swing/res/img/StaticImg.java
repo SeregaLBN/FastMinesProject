@@ -76,16 +76,19 @@ public abstract class StaticImg<T, TImage extends Icon> extends NotifyPropertyCh
          Redraw();
   }
 
+   private boolean _invalidate = true;
    protected abstract TImage CreateImage();
    private TImage _image;
    public TImage getImage() {
       if (_image == null)
          setImage(CreateImage());
+      if (_invalidate)
+         Draw();
       return _image;
-  }
-  protected void setImage(TImage value) {
-     setProperty(_image, value, "Image");
-  }
+   }
+   protected void setImage(TImage value) {
+      setProperty(_image, value, "Image");
+   }
 
    private Color _backgroundColor = DefaultBkColor;
    /** background fill color */
@@ -134,60 +137,33 @@ public abstract class StaticImg<T, TImage extends Icon> extends NotifyPropertyCh
 
    public Color getForegroundColorAttenuate() { return getForegroundColor().attenuate(160); }
 
-   public boolean _onlySyncDraw;
+   private boolean _onlySyncDraw;
    public boolean isOnlySyncDraw() { return _onlySyncDraw; }
-   public void setOnlySyncDraw(boolean value) {
-     setProperty(_onlySyncDraw, value, "OnlySyncDraw");
-  }
+   public void setOnlySyncDraw(boolean value) { _onlySyncDraw = value; }
 
    protected void Redraw() {
-      if (isDeferredNoticeOn())
-         return;
-
-      if (isOnlySyncDraw())
-         DrawSync();
-      else
-         DrawAsync();
-   }
-   
-   private boolean _scheduledDraw;
-   /** schedule drawing (async operation) */
-   private void DrawAsync() {
-      if (_scheduledDraw)
-         return;
-
-      _scheduledDraw = true;
-      SwingUtilities.invokeLater(() -> { DrawSync(); _scheduledDraw = false; } );
+      _invalidate = true;
+      onPropertyChanged("Image");
    }
 
-   private void DrawSync() {
-      try (AutoCloseable c = deferredNotice(false)) {
-         DrawBegin();
-         DrawBody();
-         DrawEnd();
-      } catch (Exception ex) {
-         throw (ex instanceof RuntimeException)
-            ? (RuntimeException)ex
-            : new RuntimeException(ex);
-      }
+   private void Draw() {
+      _invalidate = false;
+      DrawBegin();
+      DrawBody();
+      DrawEnd();
    }
 
    protected void DrawBegin() { }
    protected abstract void DrawBody();
    protected void DrawEnd() { }
 
-   /** Deferr notifications and rendering */
+   /** Deferr notifications */
    @Override
-   public AutoCloseable deferredNotice() {
-      return deferredNotice(true);
-   }
-   public AutoCloseable deferredNotice(boolean redrawAfter) {
-      return super.deferredNotice(null,
-            () -> {
-               if (redrawAfter)
-                  Redraw();
-            },
-            null);
+   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+      if (isOnlySyncDraw())
+         super.onPropertyChanged(oldValue, newValue, propertyName);
+      else
+         SwingUtilities.invokeLater(() -> super.onPropertyChanged(oldValue, newValue, propertyName) );
    }
 
    @Override

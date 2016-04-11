@@ -6,12 +6,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
-
-import fmg.common.Pair;
 
 public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
 {
@@ -50,15 +46,6 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
    }
 
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      //propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
-      if (isDeferredNoticeOn())
-         _deferredPropertyChanged.put(propertyName, new Pair<Object, Object>(oldValue, newValue));
-      else
-         propertyChangedReal(oldValue, newValue, propertyName);
-   }
-
-   // not virtual!
-   private final void propertyChangedReal(Object oldValue, Object newValue, String propertyName) {
       propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
    }
 
@@ -89,75 +76,5 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
                          !Modifier.isStatic(m) &&
                          !Modifier.isFinal(m); });
    }
-
-
-   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // #region Deferr notifications
-   //
-
-   private Map<String, Pair<Object, Object>> _deferredPropertyChanged;
-
-   private boolean _deferredNoticeOn;
-   /** Deferr notifications */
-   protected boolean isDeferredNoticeOn() { return _deferredNoticeOn; }
-   private void setDeferredNoticeOn(boolean value) {
-      setDeferredNoticeOn(value, null);
-   }
-   private void setDeferredNoticeOn(boolean value, Runnable onBeforeNotify) { 
-      if (_deferredNoticeOn == value)
-         return;
-
-      if (value && (_deferredPropertyChanged == null))
-         _deferredPropertyChanged = new HashMap<>();
-
-      _deferredNoticeOn = value;
-      if (_deferredNoticeOn)
-         return;
-
-      if (onBeforeNotify != null)
-         onBeforeNotify.run();
-
-      if (!_deferredPropertyChanged.isEmpty()) {
-         Map<String, Pair<Object, Object>> tmpCopy = new HashMap<>(_deferredPropertyChanged);
-         _deferredPropertyChanged.clear();
-         tmpCopy.forEach((name, old_new) -> propertyChangedReal(old_new.getFirst(), old_new.getSecond(), name));
-         tmpCopy.clear();
-      }
-   }
-
-   protected class DeferredNotice implements AutoCloseable {
-      private final boolean _deferred;
-      private final Runnable _onDisposed, _onBeforeNotify, _onAfterNotify;
-
-      public DeferredNotice() { this(null, null, null); }
-      public DeferredNotice(Runnable onDisposed, Runnable onBeforeNotify, Runnable onAfterNotify) {
-         _onDisposed = onDisposed;
-         _onBeforeNotify = onBeforeNotify;
-         _onAfterNotify = onAfterNotify;
-         _deferred = !NotifyPropertyChanged.this.isDeferredNoticeOn();
-         if (_deferred)
-            NotifyPropertyChanged.this.setDeferredNoticeOn(true);
-      }
-
-      @Override
-      public void close() {
-         if (_onDisposed != null)
-            _onDisposed.run();
-         if (!_deferred)
-            return;
-         NotifyPropertyChanged.this.setDeferredNoticeOn(false, _onBeforeNotify);
-         if (_onAfterNotify != null)
-            _onAfterNotify.run();
-      }
-   }
-   
-   public AutoCloseable deferredNotice() { return new DeferredNotice(); }
-   public AutoCloseable deferredNotice(Runnable onDisposed,  Runnable onBeforeNotify,  Runnable onAfterNotify) {
-      return new DeferredNotice(onDisposed, onBeforeNotify,  onAfterNotify);
-   }
-
-   //
-   // #endregion
-   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 }
