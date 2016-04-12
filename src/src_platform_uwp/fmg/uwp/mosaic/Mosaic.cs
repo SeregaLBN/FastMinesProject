@@ -17,6 +17,7 @@ using fmg.data.view.draw;
 using fmg.uwp.draw;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.mosaic.xaml;
+using FastMines.Presentation.Notyfier;
 
 namespace fmg.uwp.mosaic {
    public class Mosaic : MosaicBase<PaintableShapes> {
@@ -63,23 +64,6 @@ namespace fmg.uwp.mosaic {
 #endif
       }
 
-      public override void SetParams(Matrisize? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
-         if (this._mosaicType != newMosaicType)
-            _cellPaint = null;
-
-         var rebind = (this.SizeField != newSizeField) ||
-                      (this.MosaicType != newMosaicType) ||
-                      (this.MinesCount != newMinesCount);
-         if (rebind)
-            UnbindXaml();
-         base.SetParams(newSizeField, newMosaicType, newMinesCount);
-         if (rebind)
-            BindXamlToMosaic();
-
-         Repaint();
-         //Container.InvalidateArrange(); // Revalidate();
-      }
-
       public MosaicGraphicContext GraphicContext {
          get
          {
@@ -87,7 +71,7 @@ namespace fmg.uwp.mosaic {
             if (gContext == null) {
                CellPaintFigures.GContext = gContext = new MosaicGraphicContext();
                //changeFontSize(gContext.PenBorder, Area);
-               gContext.PropertyChanged += OnPropertyChange; // изменение контекста -> перерисовка мозаики
+               gContext.PropertyChanged += OnGraphicContextPropertyChanged; // изменение контекста -> перерисовка мозаики
             }
             return gContext;
          }
@@ -135,11 +119,14 @@ namespace fmg.uwp.mosaic {
          }
       }
 
-      public override void GameNew() {
+      public override bool GameNew() {
          var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(MosaicHelper.CreateAttributeInstance(MosaicType, Area).getMaxBackgroundFillModeValue());
          //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
          GraphicContext.BkFill.Mode = (int)mode;
-         base.GameNew();
+         var res = base.GameNew();
+         if (!res)
+            Repaint(null);
+         return res;
       }
 
       protected override void GameBegin(BaseCell firstClickCell) {
@@ -196,21 +183,43 @@ namespace fmg.uwp.mosaic {
 
       protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          base.OnPropertyChanged(sender, ev);
-         if ("MosaicType" == ev.PropertyName)
+         switch (ev.PropertyName) {
+         case "MosaicType":
             ChangeFontSize();
+            break;
+         case "Matrix":
+            //revalidate();
+            break;
+         }
       }
 
+      protected override void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         base.OnCellAttributePropertyChanged(sender, ev);
+         if ("Area" == ev.PropertyName) {
+            ChangeFontSize(GraphicContext.PenBorder);
 
-      private void OnPropertyChange(object sender, PropertyChangedEventArgs ev) {
-         var gc = sender as GraphicContext;
-         if (gc != null) {
-            //if ("BkFill" == ev.PropertyName)
-            //   Repaint();
-            if ("PenBorder" == ev.PropertyName)
-               ChangeFontSize(gc.PenBorder);
-
-            Repaint();
+            //revalidate();
          }
+      }
+
+      private void OnGraphicContextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         var gc = sender as GraphicContext;
+         if (gc == null)
+            return;
+
+         switch (ev.PropertyName) {
+         case "PenBorder":
+            var evex = ev as PropertyChangedExEventArgs<PenBorder>;
+            var penBorder = evex?.NewValue ?? GraphicContext.PenBorder;
+            ChangeFontSize(penBorder);
+            break;
+         //case "Font":
+         //case "BackgroundFill":
+         //   //Repaint(null);
+         //   break;
+         }
+         Repaint(null);
+         OnPropertyChanged("GraphicContext." + ev.PropertyName);
       }
 
       /// <summary> пересчитать и установить новую высоту шрифта </summary>
@@ -219,5 +228,7 @@ namespace fmg.uwp.mosaic {
       private void ChangeFontSize(PenBorder penBorder) {
          GraphicContext.FontSize = (int)CellAttr.GetSq(penBorder.Width);
       }
+
    }
+
 }

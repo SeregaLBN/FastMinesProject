@@ -24,8 +24,8 @@ import javax.swing.event.MouseInputListener;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicBase;
+import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
 import fmg.core.types.click.ClickResult;
@@ -55,7 +55,7 @@ public class Mosaic extends MosaicBase {
       if (_container == null) {
          _container = new JPanel() {
             private static final long serialVersionUID = 1L;
-            
+
             @Override
             protected void paintComponent(Graphics g) {
                {
@@ -113,6 +113,7 @@ public class Mosaic extends MosaicBase {
       return _gContext;
    }
 
+   @Override
    public CellPaintGraphics getCellPaint() {
       if (_cellPaint == null) {
          _cellPaint = new CellPaintGraphics();
@@ -220,7 +221,7 @@ public class Mosaic extends MosaicBase {
       if (clickEvent != null)
          clickEvent.accept(clickResult);
    }
-   
+
    private class MosaicMouseListeners implements MouseInputListener, FocusListener {
       @Override
       public void mouseClicked(MouseEvent e) {}
@@ -241,7 +242,7 @@ public class Mosaic extends MosaicBase {
          // Избегаю срабатывания onClick'a
          Component rootFrame = SwingUtilities.getRoot((Component) e.getSource());
          if (rootFrame instanceof Window) {
-            boolean rootFrameActive = ((Window)rootFrame).isActive(); 
+            boolean rootFrameActive = ((Window)rootFrame).isActive();
             if (!rootFrameActive)
                return;
          }
@@ -284,7 +285,7 @@ public class Mosaic extends MosaicBase {
       this.getContainer().addMouseListener(getMosaicMouseListeners());
       this.getContainer().addMouseMotionListener(getMosaicMouseListeners());
       this.getContainer().addFocusListener(getMosaicMouseListeners());
-      
+
       super.initialize(sizeField, mosaicType, minesCount, area);
 
       getContainer().setSize(getContainer().getPreferredSize()); // for run as java been
@@ -314,10 +315,7 @@ public class Mosaic extends MosaicBase {
    protected void onCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) {
       super.onCellAttributePropertyChanged(source, ev);
       if ("Area".equals(ev.getPropertyName())) {
-         Double area = (Double) ev.getNewValue();
-         if (area == null)
-            area = getArea();
-         changeFontSize(getGraphicContext().getPenBorder(), area);
+         changeFontSize(getGraphicContext().getPenBorder());
 
          revalidate();
       }
@@ -328,7 +326,7 @@ public class Mosaic extends MosaicBase {
       switch (propName) {
       case "PenBorder":
          PenBorder penBorder = (PenBorder)ev.getNewValue();
-         changeFontSize(penBorder, getArea());
+         changeFontSize(penBorder);
          break;
       //case "Font":
       //case "BackgroundFill":
@@ -341,9 +339,9 @@ public class Mosaic extends MosaicBase {
    }
 
    /** пересчитать и установить новую высоту шрифта */
-   public void changeFontSize() { changeFontSize(getGraphicContext().getPenBorder(), getArea()); }
+   public void changeFontSize() { changeFontSize(getGraphicContext().getPenBorder()); }
    /** пересчитать и установить новую высоту шрифта */
-   private void changeFontSize(PenBorder penBorder, double area) {
+   private void changeFontSize(PenBorder penBorder) {
       getGraphicContext().setFontSize((int) getCellAttr().getSq(penBorder.getWidth()));
    }
 
