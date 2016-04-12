@@ -41,7 +41,7 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
    public const double AREA_MINIMUM = 230;
 
    /// <summary>матрица List &lt; List &lt; BaseCell &gt; &gt; , представленная(развёрнута) в виде вектора</summary>
-   public IList<BaseCell> Matrix { get; protected set; } = new List<BaseCell>(0);
+   private readonly List<BaseCell> _matrix = new List<BaseCell>(0);
    /// <summary>размер поля в ячейках</summary>
    protected Matrisize _size = new Matrisize(0, 0);
    /// <summary>из каких фигур состоит мозаика поля</summary>
@@ -71,6 +71,7 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
          if (value != null)
             throw new ArgumentException("Bad argument - support only null value!");
          _cellAttr = null;
+         OnPropertyChanged();
       }
       get {
          if (_cellAttr == null) {
@@ -83,85 +84,74 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
 
    public abstract ICellPaint<TPaintable> CellPaint { get; }
 
-   /// <summary> размер поля в ячейках </summary>
-   public Matrisize SizeField { get { return _size; } set { SetParams(value, null, null); } }
-
-   /// <summary> тип мозаики </summary>
-   public EMosaic MosaicType { get { return _mosaicType; } set { SetParams(null, value, null); } }
-
-   /// <summary> кол-во мин </summary>
-   public int MinesCount { get { return _minesCount; } set { SetParams(null, null, value); } }
-
-   /// <summary> установить мозаику заданного размера, типа  и с определённым количеством мин (координаты мин могут задаваться с помощью "Хранилища Мин") </summary>
-   public virtual void SetParams(Matrisize? newSizeField, EMosaic? newMosaicType, int? newMinesCount, List<Coord> storageCoordMines) {
-      //repositoryMines.Reset();
-      var oldMinesCount = MinesCount;
-      var res = (MosaicType != newMosaicType) || !SizeField.Equals(newSizeField) || (oldMinesCount != newMinesCount);
-      if (res)
-      {
-         var oldMosaicType = this._mosaicType;
-         var oldMosaicSize = this._size;
-         var isNewMosaic = (newMosaicType != null) && (newMosaicType != this._mosaicType);
-         var isNewSizeFld = ((newSizeField != null) && !this._size.Equals(newSizeField));
-
-         var saveArea = Area;
-         if (isNewSizeFld) {
-            CellDown = null; // чтобы небыло IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
-            this._size = newSizeField.GetValueOrDefault();
-         }
-         if (isNewMosaic) {
-            this._mosaicType = newMosaicType.GetValueOrDefault();
-            CellAttr = null;
-         }
-         if (newMinesCount != null) {
-            if (newMinesCount == 0)
-               this._oldMinesCount = this._minesCount;
-            this._minesCount = newMinesCount.GetValueOrDefault();
-         }
-         _minesCount = Math.Max(1, Math.Min(_minesCount, GetMaxMines(this._size)));
-         if (!saveArea.HasMinDiff(Area))
-            Area = saveArea;
-
-         if (isNewMosaic || isNewSizeFld) {
+   public IList<BaseCell> Matrix { get {
+         if (!_matrix.Any()) {
             var attr = CellAttr;
-
-            foreach (var cell in Matrix)
-               // отписываю старые ячейки от уведомлений атрибута
-               attr.PropertyChanged -= cell.OnPropertyChanged;
-
-            Matrix.Clear();
-            (Matrix as List<BaseCell>).Capacity = _size.m*_size.n;
-            for (var i = 0; i < _size.m; i++)
-               for (var j = 0; j < _size.n; j++) {
-                  var cell = MosaicHelper.CreateCellInstance(attr, _mosaicType, new Coord(i, j));
+            var size = SizeField;
+            var mosaicType = MosaicType;
+            //_matrix = new ArrayList<BaseCell>(size.width * size.height);
+            for (var i = 0; i < size.m; i++)
+               for (var j = 0; j < size.n; j++) {
+                  var cell = MosaicHelper.CreateCellInstance(attr, mosaicType, new Coord(i, j));
                   Matrix.Add( /*i*size.height + j, */cell);
-
-                  // подписываю новые ячейки на уведомления атрибута (изменение a -> перерасчёт координат)
-                  attr.PropertyChanged += cell.OnPropertyChanged;
                }
 
-            foreach (var cell in Matrix)
+            foreach (var cell in _matrix)
                cell.IdentifyNeighbors(this);
          }
-
-         OnPropertyChanged(oldMinesCount, _minesCount, "MinesCount");
-         OnPropertyChanged(-1, _minesCount, "CountMinesLeft");
-         if (isNewMosaic)
-            OnPropertyChanged(oldMosaicType, newMosaicType, "MosaicType");
-         if (isNewSizeFld)
-            OnPropertyChanged(oldMosaicSize, newSizeField, "SizeField");
-         }
-      if ((storageCoordMines == null) || (storageCoordMines.Count == 0))
-         RepositoryMines.Clear();
-      else
-         RepositoryMines = storageCoordMines;
-      //GameStatus = EGameStatus.eGSEnd;
-      GameNew();
+         return _matrix;
+      }
    }
 
-   /// <summary>установить мозаику заданного размера, типа и с определённым количеством мин</summary>
-   public virtual void SetParams(Matrisize? newSizeField, EMosaic? newMosaicType, int? newMinesCount) {
-      SetParams(newSizeField, newMosaicType, newMinesCount, null);
+   /// <summary> размер поля в ячейках </summary>
+   public Matrisize SizeField {
+      get { return _size; }
+      set {
+         if (!SetProperty(ref _size, value))
+            return;
+
+         CellDown = null; // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
+
+         _matrix.Clear();
+         OnPropertyChanged("Matrix");
+
+         GameNew();
+      }
+   }
+
+   /// <summary> тип мозаики </summary>
+   public EMosaic MosaicType {
+      get { return _mosaicType; }
+      set {
+         if (!SetProperty(ref _mosaicType, value))
+            return;
+
+         var saveArea = Area; // save
+         CellAttr = null; // lost area
+
+         _matrix.Clear();
+         OnPropertyChanged("Matrix");
+
+         Area = saveArea; // restore
+         GameNew();
+      }
+   }
+
+   /// <summary> кол-во мин </summary>
+   public int MinesCount {
+      get { return _minesCount; }
+      set {
+         if (!SetProperty(ref _minesCount, value))
+            return;
+
+         if (value == 0) // TODO  ?? to create field mode - EGameStatus.eGSCreateGame
+            _oldMinesCount = _minesCount; // save
+
+         _minesCount = Math.Max(1, Math.Min(value, GetMaxMines(SizeField)));
+         OnPropertyChanged(-1, _minesCount, "CountMinesLeft");
+
+         GameNew();
+      }
    }
 
    protected virtual void OnError(String msg) {
@@ -176,13 +166,13 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
 
    /// <summary>arrange Mines</summary>
    public void setMines_LoadRepository(IList<Coord> repository) {
-      foreach (Coord c in repository) {
-         bool suc = getCell(c).State.SetMine();
+      foreach (var c in repository) {
+         var suc = getCell(c).State.SetMine();
          if (!suc)
             OnError("Проблемы с установкой мин... :(");
       }
       // set other CellOpen and set all Caption
-      foreach (BaseCell cell in Matrix)
+      foreach (var cell in Matrix)
          cell.State.CalcOpenState();
    }
    /// <summary>arrange Mines - set random mines</summary>
@@ -191,20 +181,20 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
          _minesCount = _oldMinesCount;
          
       var firstClickNeighbors = firstClickCell.Neighbors;
-      List<BaseCell> matrixClone = new List<BaseCell>(Matrix);
+      var matrixClone = new List<BaseCell>(Matrix);
       matrixClone.Remove(firstClickCell); // исключаю на которой кликал юзер
       matrixClone.RemoveAll( x => firstClickNeighbors.Contains(x) ); // и их соседей
-      int count = 0;
-      Random rand = new Random(Guid.NewGuid().GetHashCode());
+      var count = 0;
+      var rand = new Random(Guid.NewGuid().GetHashCode());
       do {
-         int len = matrixClone.Count;
+         var len = matrixClone.Count;
          if (len == 0) {
             OnError("ээээ..... лажа......\r\nЗахотели установить больше мин чем возможно");
             _minesCount = count;
             break;
          }
-         int i = rand.Next(len);
-         BaseCell cellToSetMines = matrixClone[i];
+         var i = rand.Next(len);
+         var cellToSetMines = matrixClone[i];
          if (cellToSetMines.State.SetMine()) {
             count++;
             matrixClone.Remove(cellToSetMines);
@@ -213,7 +203,7 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
       } while (count < _minesCount);
 
       // set other CellOpen and set all Caption
-      foreach (BaseCell cell in Matrix)
+      foreach (var cell in Matrix)
          cell.State.CalcOpenState();
    }
 
@@ -237,19 +227,19 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
    protected BaseCell CellDown { get; set; }
 
    /**
-    *<br> Этапы игры:
-    *<br>           GameNew()      GameBegin()     GameEnd()      GameNew()
-    *<br>    time      |               |               |             |
-    *<br>  -------->   | eGSCreateGame |               |             |
-    *<br>              |  or eGSReady  |    eGSPlay    |   eGSEnd    |
-    *<br>              \------ 1 -----/ \----- 2 -----/ \---- 3 ----/
-    *<br>
-    *<br> @see fmg.core.types.EGameStatus
-    *<br>
-    *<br> PS: При этапе gsReady поле чисто - мин нет! Мины расставляются только после первого клика
-    *<br>     Так сделал только лишь потому, чтобы первый клик выполнялся не на мине. Естественно
-    *<br>     это не относится к случаю, когда игра была создана пользователем или считана из файла.
-    */
+      *<br> Этапы игры:
+      *<br>           GameNew()      GameBegin()     GameEnd()      GameNew()
+      *<br>    time      |               |               |             |
+      *<br>  -------->   | eGSCreateGame |               |             |
+      *<br>              |  or eGSReady  |    eGSPlay    |   eGSEnd    |
+      *<br>              \------ 1 -----/ \----- 2 -----/ \---- 3 ----/
+      *<br>
+      *<br> @see fmg.core.types.EGameStatus
+      *<br>
+      *<br> PS: При этапе gsReady поле чисто - мин нет! Мины расставляются только после первого клика
+      *<br>     Так сделал только лишь потому, чтобы первый клик выполнялся не на мине. Естественно
+      *<br>     это не относится к случаю, когда игра была создана пользователем или считана из файла.
+      */
    public EGameStatus GameStatus {
       get { return _gameStatus; }
       set { SetProperty(ref _gameStatus, value); }
@@ -257,17 +247,22 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
 
    public EPlayInfo PlayInfo {
       get { return _playInfo; }
-      set { _playInfo = EPlayInfoEx.setPlayInfo(_playInfo, value); }
+      set { SetProperty(ref _playInfo, EPlayInfoEx.setPlayInfo(_playInfo, value)); }
    }
 
-   private IList<Coord> RepositoryMines {
-      get {
-         if (_repositoryMines == null)
-            _repositoryMines = new List<Coord>(0);
-         return _repositoryMines;
-      }
+   public IList<Coord> RepositoryMines {
+      get { return _repositoryMines ?? (_repositoryMines = new List<Coord>(0)); }
       set {
-         this._repositoryMines = value;
+         var current = RepositoryMines;
+         var areEquivalent = (value != null) && (current.Count == value.Count) && !current.Except(value).Any();
+         if (!areEquivalent) {
+            current.Clear();
+            if ((value != null) && value.Any())
+               value.ToList().ForEach(itm => current.Add(itm));
+         }
+         OnPropertyChanged();
+         //setGameStatus(EGameStatus.eGSEnd);
+         GameNew();
       }
    }
 
@@ -276,8 +271,6 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
    
    /// <summary>Начать игру, т.к. произошёл первый клик на поле</summary>
    protected virtual void GameBegin(BaseCell firstClickCell) {
-      Repaint(null);
-
       GameStatus = EGameStatus.eGSPlay;
 
       // set mines
@@ -287,11 +280,14 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
       } else {
          setMines_random(firstClickCell);
       }
+
+      Repaint(null);
    }
 
    /// <summary>Завершить игру</summary>
    private void GameEnd(bool victory) {
-      if (GameStatus == EGameStatus.eGSEnd) return;
+      if (GameStatus == EGameStatus.eGSEnd)
+return;
 
       // открыть оставшeеся
       foreach (var cell in Matrix)
@@ -481,11 +477,11 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
       public Func<bool> CheckNeedRestoreLastGame { get; set; }
 
    /// <summary>Подготовиться к началу игры - сбросить все ячейки</summary>
-   public virtual void GameNew() {
+   public virtual bool GameNew() {
 //      System.out.println("Mosaic::GameNew()");
 
       if (GameStatus == EGameStatus.eGSReady)
-         return;
+         return false;
 
       if (RepositoryMines.Count != 0)
          if (GameStatus == EGameStatus.eGSCreateGame) {
@@ -502,10 +498,13 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
 
       GameStatus = EGameStatus.eGSReady;
       PlayInfo = EPlayInfo.ePlayerUnknown; // пока не знаю кто будет играть
+      Repaint(null);
+
+      return true;
    }
 
-   /// <summary>создать игру игроком - он сам расставит мины</summary>
-   public void GameCreate() {
+      /// <summary>создать игру игроком - он сам расставит мины</summary>
+      public void GameCreate() {
       GameNew();
       if (RepositoryMines.Count == 0) {
          MinesCount = 0;
@@ -573,10 +572,6 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
       Initialize(sizeField, mosaicType, minesCount, area);
    }
 
-   public IList<Coord> StorageMines => (from cell in Matrix
-                                        where cell.State.Open == EOpen._Mine
-                                        select cell.getCoord()).ToList();
-
    protected void Initialize() {
       Initialize(new Matrisize(5, 5),
             EMosaic.eMosaicPenrousePeriodic1, 
@@ -584,16 +579,20 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
    }
 
    protected void Initialize(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) {
-      SetParams(sizeField, mosaicType, minesCount);
+      SizeField = sizeField;
+      MosaicType = mosaicType;
+      MinesCount = minesCount;
       Area = area; // ...провера на валидность есть только при установке из класса Main. Так что, не нуна тут задавать громадные велечины.
    }
 
-   private void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
+   protected virtual void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
       var pn = ev.PropertyName;
       if (pn == "Area") {
          Matrix.ToList().ForEach(cell => cell.Init());
          OnPropertyChanged(this, ev); // ! rethrow event - notify parent class
+         Repaint(null);
       }
+      OnPropertyChanged("CellAttr." + ev.PropertyName);
    }
 }
 }

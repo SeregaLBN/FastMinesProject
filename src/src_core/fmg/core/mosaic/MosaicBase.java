@@ -81,6 +81,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       _cellAttr = null;
       onPropertyChanged("CellAttr");
    }
+   @Override
    public BaseCell.BaseAttribute getCellAttr() {
       if (_cellAttr == null) {
          _cellAttr = MosaicHelper.createAttributeInstance(getMosaicType(), getArea());
@@ -89,6 +90,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       return _cellAttr;
    }
 
+   @Override
    public List<BaseCell> getMatrix() {
       if (_matrix.isEmpty()) {
          BaseCell.BaseAttribute attr = getCellAttr();
@@ -100,7 +102,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
                BaseCell cell = MosaicHelper.createCellInstance(attr, mosaicType, new Coord(i, j));
                _matrix.add(i*_size.n + j, cell);
             }
-   
+
          for (BaseCell cell: _matrix)
             cell.IdentifyNeighbors(this);
       }
@@ -187,7 +189,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
    public void setMines_random(BaseCell firstClickCell) {
       if (_minesCount == 0)
          _minesCount = _oldMinesCount;
-      
+
       List<BaseCell> matrixClone = new ArrayList<BaseCell>(_matrix);
       matrixClone.remove(firstClickCell); // исключаю на которой кликал юзер
       matrixClone.removeAll(Arrays.asList(firstClickCell.getNeighbors())); // и их соседей
@@ -230,7 +232,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
             .filter(c -> c.getState().getClose() == EClose._Unknown)
             .count();
    }
-   
+
    /** сколько ещё осталось открыть мин */
    public int getCountMinesLeft() { return getMinesCount() - getCountFlag(); }
    public int getCountClick()  { return _countClick; }
@@ -288,9 +290,10 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
    }
    public void setPlayInfo(EPlayInfo newVal) {
       EPlayInfo old = _playInfo;
+      newVal = EPlayInfo.setPlayInfo(_playInfo, newVal);
       if (old == newVal)
          return;
-      _playInfo = EPlayInfo.setPlayInfo(getPlayInfo(), newVal);
+      _playInfo = newVal;
       onPropertyChanged(old, newVal, "PlayInfo");
    }
 
@@ -303,7 +306,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       List<Coord> current = getRepositoryMines();
       if (!current.equals(newMines)) {
          current.clear();
-         if ((newMines == null) || newMines.isEmpty())
+         if ((newMines != null) && !newMines.isEmpty())
             current.addAll(newMines);
       }
       onPropertyChanged("RepositoryMines");
@@ -313,7 +316,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
 
    /** перерисовать ячейку; если null - перерисовать всё поле */
    protected abstract void Repaint(BaseCell cell);
-   
+
    /** Начать игру, т.к. произошёл первый клик на поле */
    protected void GameBegin(BaseCell firstClickCell) {
       setGameStatus(EGameStatus.eGSPlay);
@@ -406,7 +409,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
          return result;
       } else {
          ClickCellResult resultCell = cellLeftDown.LButtonDown();
-         result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified); 
+         result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
          result.modified.forEach(cell -> Repaint(cell));
          return result;
       }
@@ -414,7 +417,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
 
    protected ClickResult onLeftButtonUp(BaseCell cellLeftUp) {
       try {
-         BaseCell cellDown = getCellDown(); 
+         BaseCell cellDown = getCellDown();
          ClickResult result = new ClickResult(cellDown, true, false);
          if (getGameStatus() == EGameStatus.eGSEnd)
             return result;
@@ -422,7 +425,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
             return result;
          if (getGameStatus() == EGameStatus.eGSCreateGame)
             return result;
-   
+
    //      System.out.println("OnLeftButtonUp: coordLUp="+coordLUp);
          if ((getGameStatus() == EGameStatus.eGSReady) && (cellDown == cellLeftUp))
          {
@@ -434,7 +437,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
          int countOpen = result.getCountOpen();
          int countFlag = result.getCountFlag();
          int countUnknown = result.getCountUnknown();
-         boolean any = (countOpen > 0) || (countFlag > 0) || (countUnknown > 0); // клик со смыслом (были изменения на поле) 
+         boolean any = (countOpen > 0) || (countFlag > 0) || (countUnknown > 0); // клик со смыслом (были изменения на поле)
          if (any) {
             setCountClick(getCountClick()+1);
             setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
@@ -446,7 +449,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
                onPropertyChanged("CountUnknown");
             }
          }
-   
+
          if (result.isAnyOpenMine()) {
             GameEnd(false);
          } else {
@@ -503,7 +506,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
 
    protected ClickResult onRightButtonUp(BaseCell cellRightUp) {
       try {
-         BaseCell cellDown = getCellDown(); 
+         BaseCell cellDown = getCellDown();
          return new ClickResult(cellDown, false, false);
       } finally {
          setCellDown(null);
@@ -551,6 +554,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
    }
 
    /** площадь ячеек */
+   @Override
    public double getArea() {
       if (_cellAttr == null)
          return AREA_MINIMUM;
@@ -562,6 +566,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       return area;
    }
    /** установить новую площадь ячеек */
+   @Override
    public void setArea(double newArea)  {
       double oldArea = getCellAttr().getArea();
       newArea = Math.max(AREA_MINIMUM, newArea);
@@ -608,7 +613,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
 
    protected void initialize() {
       initialize(new Matrisize(10, 10),
-            EMosaic.eMosaicSquare1,//EMosaic.eMosaicPenrousePeriodic1, // 
+            EMosaic.eMosaicSquare1,//EMosaic.eMosaicPenrousePeriodic1, //
             15, AREA_MINIMUM*10);
    }
    protected void initialize(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) {
@@ -624,7 +629,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       if (ev.getSource() instanceof BaseCell.BaseAttribute)
          onCellAttributePropertyChanged((BaseCell.BaseAttribute)ev.getSource(), ev);
    }
-   protected void onCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) { 
+   protected void onCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) {
       String propName = ev.getPropertyName();
       if ("Area".equals(propName)) {
          getMatrix().forEach(cell -> cell.Init());
