@@ -68,7 +68,9 @@ namespace FastMines {
 
          if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) {
             AsyncRunner.InvokeFromUiLater(() => {
-               MosaicField.SetParams(new Matrisize(10, 10), EMosaic.eMosaicRhombus1, 3);
+               MosaicField.SizeField = new Matrisize(10, 10);
+               MosaicField.MosaicType = EMosaic.eMosaicRhombus1;
+               MosaicField.MinesCount = 3;
                MosaicField.Area = 1500;
                MosaicField.Repaint();
             }, CoreDispatcherPriority.High);
@@ -80,7 +82,9 @@ namespace FastMines {
 
          var initParam = e.Parameter as MosaicPageInitParam;
          Debug.Assert(initParam != null);
-         MosaicField.SetParams(initParam.SizeField, initParam.MosaicTypes, initParam.MinesCount);
+         MosaicField.SizeField = initParam.SizeField;
+         MosaicField.MosaicType = initParam.MosaicTypes;
+         MosaicField.MinesCount = initParam.MinesCount;
 
          // if () // TODO: check if no tablet
          {
@@ -110,7 +114,9 @@ namespace FastMines {
             sizeFld = skill.DefaultSize();
          }
 
-         MosaicField.SetParams(sizeFld, MosaicField.MosaicType, numberMines);
+         MosaicField.SizeField = sizeFld;
+         MosaicField.MosaicType = MosaicField.MosaicType;
+         MosaicField.MinesCount = numberMines;
 
          //if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected()) {
          //   AreaMax();
