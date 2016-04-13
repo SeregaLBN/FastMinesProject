@@ -55,7 +55,7 @@ namespace fmg.data.view.draw {
       }
 
       public void SetColorOpen(int i, Color colorOpen) {
-         SetProperty(ref _colorOpen[i], colorOpen, "ColorOpen" + i);
+         SetProperty(ref _colorOpen[i], colorOpen, "ColorOpen..#" + i);
       }
 
       public Color GetColorClose(int i) {
@@ -63,7 +63,7 @@ namespace fmg.data.view.draw {
       }
 
       public void SetColorClose(int i, Color colorClose) {
-         SetProperty(ref _colorClose[i], colorClose, "ColorClose" + i);
+         SetProperty(ref _colorClose[i], colorClose, "ColorClose.#" + i);
       }
    }
 }

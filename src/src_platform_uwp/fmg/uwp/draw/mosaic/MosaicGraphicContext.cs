@@ -13,10 +13,7 @@ namespace fmg.uwp.draw.mosaic {
       }
 
       public Color ColorBk {
-         get {
-            return _colorBk;
-            //return Color.WHITE;
-         }
+         get { return _colorBk; }
          set { SetProperty(ref _colorBk, value); }
       }
 

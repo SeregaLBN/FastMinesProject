@@ -592,6 +592,7 @@ return;
          OnPropertyChanged(this, ev); // ! rethrow event - notify parent class
          Repaint(null);
       }
+      OnPropertyChanged("CellAttr");
       OnPropertyChanged("CellAttr." + ev.PropertyName);
    }
 }

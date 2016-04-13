@@ -19,7 +19,7 @@ namespace fmg.uwp.draw {
 
       private WriteableBitmap _imgMine, _imgFlag;
       private ColorText _colorText;
-      protected PenBorder _penBorder;
+      private PenBorder _penBorder;
       private FontFamily _fontFamily = new FontFamily(DEFAULT_FONT_NAME);
       private FontStyle _fontStyle = DEFAULT_FONT_STYLE;
       private int _fontSize = DEFAULT_FONT_SIZE;
@@ -48,7 +48,12 @@ namespace fmg.uwp.draw {
             return _colorText;
          }
          set {
-            SetProperty(ref _colorText, value);
+            var old = _colorText;
+            if (!SetProperty(ref _colorText, value))
+               return;
+            if (old != null)
+               old.PropertyChanged -= OnColorTextPropertyChanged;
+            _colorText.PropertyChanged += OnColorTextPropertyChanged;
          }
       }
 
@@ -59,7 +64,12 @@ namespace fmg.uwp.draw {
             return _penBorder;
          }
          set {
-            SetProperty(ref _penBorder, value);
+            var old = _penBorder;
+            if (!SetProperty(ref _penBorder, value))
+               return;
+            if (old != null)
+               old.PropertyChanged -= OnPenBorderPropertyChanged;
+            _penBorder.PropertyChanged += OnPenBorderPropertyChanged;
          }
       }
 
@@ -101,7 +111,7 @@ namespace fmg.uwp.draw {
          get {
             if (_backgroundFill == null) {
                _backgroundFill = new BackgroundFill();
-               _backgroundFill.PropertyChanged += OnPropertyChange;
+               _backgroundFill.PropertyChanged += OnBackgroundFillPropertyChanged;
                OnPropertyChanged();
             }
             return _backgroundFill;
@@ -132,11 +142,6 @@ namespace fmg.uwp.draw {
       public static Color DefaultBackgroundFillColor { get; }
       public static Color DefaultBackgroundWindowColor { get; }
 
-      private void OnPropertyChange(object sender, PropertyChangedEventArgs ev) {
-         if ((sender is BackgroundFill) && ("Mode" == ev.PropertyName))
-            OnPropertyChanged("BkFill");
-      }
-
       static GraphicContext() {
          try {
             var uiSettings = new UISettings();
@@ -160,6 +165,21 @@ namespace fmg.uwp.draw {
          } catch (Exception ex) {
             System.Diagnostics.Debug.Fail(ex.Message);
          }
+      }
+
+      private void OnBackgroundFillPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         OnPropertyChanged("BkFill");
+         OnPropertyChanged("BkFill." + ev.PropertyName);
+      }
+
+      private void OnColorTextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         OnPropertyChanged("ColorText");
+         OnPropertyChanged("ColorText." + ev.PropertyName);
+      }
+
+      private void OnPenBorderPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         OnPropertyChanged("PenBorder");
+         OnPropertyChanged("PenBorder." + ev.PropertyName);
       }
 
    }

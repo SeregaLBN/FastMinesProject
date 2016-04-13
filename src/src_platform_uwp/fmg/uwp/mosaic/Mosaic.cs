@@ -219,6 +219,7 @@ namespace fmg.uwp.mosaic {
          //   break;
          }
          Repaint(null);
+         OnPropertyChanged("GraphicContext");
          OnPropertyChanged("GraphicContext." + ev.PropertyName);
       }
 
