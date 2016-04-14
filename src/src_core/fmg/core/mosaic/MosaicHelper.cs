@@ -141,6 +141,9 @@ namespace fmg.core.mosaic {
       private static double FindAreaBySize(BaseCell.BaseAttribute cellAttr, Matrisize mosaicSizeField, ref SizeDouble sizeClient) {
          // сделал приватным, т.к. неявно меняет свойства параметра 'cellAttr'
 
+         if (sizeClient.Height <= 0 || sizeClient.Width <= 0)
+            throw new ArgumentException("sizeClient must be positive");
+
          var sizeClientCopy = sizeClient;
          var sizeIter = new SizeDouble();
          var res = Finder(MosaicBase<IPaintable>.AREA_MINIMUM,

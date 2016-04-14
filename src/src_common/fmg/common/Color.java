@@ -3,6 +3,7 @@ package fmg.common;
 import java.util.Random;
 
 public class Color {
+   public static final Color Transparent = new Color(0, 255,255,255);
    public static final Color Black   = new Color(0xFF000000);
    public static final Color White   = new Color(0xFFFFFFFF);
    public static final Color Navy    = new Color(0xFF000080);

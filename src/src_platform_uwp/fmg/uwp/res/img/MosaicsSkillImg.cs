@@ -64,8 +64,10 @@ namespace fmg.uwp.res.img {
             // draw perimeter border
             var clr = BorderColor;
             if (clr.A != Color.Transparent.A) {
+               var clrWin = clr.ToWinColor();
+               var bw = BorderWidth;
                for (var i = 0; i < points.Length - 2; i += 2) {
-                  bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], clr.ToWinColor(), BorderWidth);
+                  bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], clrWin, bw);
                }
             }
          }

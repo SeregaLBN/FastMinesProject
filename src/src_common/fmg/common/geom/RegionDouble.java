@@ -36,14 +36,14 @@ public class RegionDouble {
       for (int i=0; i<points.length; i++) {
          int j = (i+1)%points.length;
          if (points[i].y == points[j].y) continue;
-         if (points[i].y > y && points[j].y > y) continue;
-         if (points[i].y < y && points[j].y < y) continue;
+         if ((points[i].y > y) && (points[j].y > y)) continue;
+         if ((points[i].y < y) && (points[j].y < y)) continue;
          if (Math.max(points[i].y, points[j].y) == y) count++;
          else
             if (Math.min(points[i].y, points[j].y) == y) continue;
             else {
                double t = (y-points[i].y)/(points[j].y-points[i].y);
-               if (t>0 && t<1 && points[i].x+t*(points[j].x-points[i].x) >= x) count++;
+               if ((t>0) && (t<1) && ((points[i].x+(t*(points[j].x-points[i].x))) >= x)) count++;
             }
          }
       return ((count & 1) == 1);
@@ -69,7 +69,7 @@ public class RegionDouble {
       for (int i=0; i<points.length; i++) {
          PointDouble p = points[i];
          sb.append(p.toString());
-         if (i != points.length-1)
+         if (i != (points.length-1))
             sb.append(", ");
       }
       sb.append(" }");
@@ -81,7 +81,7 @@ public class RegionDouble {
       int cnt = getCountPoints();
       RegionDouble clon = new RegionDouble(cnt);
       for (int i=0; i<cnt; i++) {
-         PointDouble p = this.getPoint(i);
+         PointDouble p = getPoint(i);
          clon.setPoint(i, p.x, p.y);
       }
       return clon;

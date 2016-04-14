@@ -1,6 +1,5 @@
 package fmg.swing.res.img;
 
-import javax.swing.Icon;
 import javax.swing.SwingUtilities;
 
 import fmg.common.Color;
@@ -9,7 +8,7 @@ import fmg.common.geom.Size;
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.swing.res.Resources;
 
-public abstract class StaticImg<T, TImage extends Icon> extends NotifyPropertyChanged implements AutoCloseable {
+public abstract class StaticImg<T, TImage extends Object> extends NotifyPropertyChanged implements AutoCloseable {
    public static final Color DefaultBkColor = Resources.DefaultBkColor;
    public static final int DefaultImageSize = 100;
 
@@ -45,11 +44,11 @@ public abstract class StaticImg<T, TImage extends Icon> extends NotifyPropertyCh
    /** width and height in pixel */
    public Size getSize() { return _size; }
    public void setSize(Size value) {
-     if (setProperty(_size, value, "Size")) {
-        setImage(CreateImage());
-        Redraw();
-     }
-  }
+      if (setProperty(_size, value, "Size")) {
+         setImage(createImage());
+         redraw();
+      }
+   }
 
    /** width image */
    public int getWidth() { return getSize().width; }
@@ -60,30 +59,31 @@ public abstract class StaticImg<T, TImage extends Icon> extends NotifyPropertyCh
    /** inside padding */
    public Bound getPadding() { return _padding; }
    public void setPadding(Bound value) {
-     if (value.getLeftAndRight() >= getWidth())
-        throw new IllegalArgumentException("Padding size is very large. Should be less than Width.");
-     if (value.getTopAndBottom() >= getHeight())
-        throw new IllegalArgumentException("Padding size is very large. Should be less than Height.");
-     if (setProperty(_padding, value, "Padding")) {
-        Redraw();
-     }
-  }
+      if (value.getLeftAndRight() >= getWidth())
+         throw new IllegalArgumentException("Padding size is very large. Should be less than Width.");
+      if (value.getTopAndBottom() >= getHeight())
+         throw new IllegalArgumentException("Padding size is very large. Should be less than Height.");
+      if (setProperty(_padding, value, "Padding")) {
+         redraw();
+      }
+   }
 
    public T _entity;
    public T getEntity() { return _entity; }
    public void setEntity(T value) {
       if (setProperty(_entity, value, "Entity"))
-         Redraw();
-  }
+         redraw();
+   }
 
    private boolean _invalidate = true;
-   protected abstract TImage CreateImage();
+
+   protected abstract TImage createImage();
    private TImage _image;
    public TImage getImage() {
       if (_image == null)
-         setImage(CreateImage());
+         setImage(createImage());
       if (_invalidate)
-         Draw();
+         draw();
       return _image;
    }
    protected void setImage(TImage value) {
@@ -94,35 +94,35 @@ public abstract class StaticImg<T, TImage extends Icon> extends NotifyPropertyCh
    /** background fill color */
    public Color getBackgroundColor() { return _backgroundColor; }
    public void setBackgroundColor(Color value) {
-     if (setProperty(_backgroundColor, value, "BackgroundColor"))
-        Redraw();
+      if (setProperty(_backgroundColor, value, "BackgroundColor"))
+         redraw();
    }
 
    private Color _borderColor = Color.Red;
    public Color getBorderColor() { return _borderColor; }
    public void setBorderColor(Color value) {
-     if (setProperty(_borderColor, value, "BorderColor"))
-        Redraw();
+      if (setProperty(_borderColor, value, "BorderColor"))
+         redraw();
    }
 
    private int _borderWidth = 3;
    public int getBorderWidth() { return _borderWidth; }
    public void setBorderWidth(int value) {
-     if (setProperty(_borderWidth, value, "BorderWidth"))
-        Redraw();
+      if (setProperty(_borderWidth, value, "BorderWidth"))
+         redraw();
    }
 
    private double _rotateAngle;
    /** 0° .. +360° */
    public double getRotateAngle() { return _rotateAngle; }
    public void setRotateAngle(double value) {
-      if (value > 360 || value < 0) {
+      if ((value > 360) || (value < 0)) {
          value %= 360;
          if (value < 0)
             value += 360;
       }
-     if (setProperty(_rotateAngle, value, "RotateAngle"))
-        Redraw();
+      if (setProperty(_rotateAngle, value, "RotateAngle"))
+         redraw();
    }
 
    private Color _foregroundColor = Color.Aqua;
@@ -131,7 +131,7 @@ public abstract class StaticImg<T, TImage extends Icon> extends NotifyPropertyCh
       if (setProperty(_foregroundColor, value, "ForegroundColor")) {
          //OnPropertyChanged(this, new PropertyChangedExEventArgs<Color>(ForegroundColor, oldForegroundColor.Attenuate(160), "ForegroundColorAttenuate"));
          onPropertyChanged("ForegroundColorAttenuate");
-         Redraw();
+         redraw();
       }
    }
 
@@ -141,21 +141,21 @@ public abstract class StaticImg<T, TImage extends Icon> extends NotifyPropertyCh
    public boolean isOnlySyncDraw() { return _onlySyncDraw; }
    public void setOnlySyncDraw(boolean value) { _onlySyncDraw = value; }
 
-   protected void Redraw() {
+   protected void redraw() {
       _invalidate = true;
       onPropertyChanged("Image");
    }
 
-   private void Draw() {
+   private void draw() {
       _invalidate = false;
-      DrawBegin();
-      DrawBody();
-      DrawEnd();
+      drawBegin();
+      drawBody();
+      drawEnd();
    }
 
-   protected void DrawBegin() { }
-   protected abstract void DrawBody();
-   protected void DrawEnd() { }
+   protected void drawBegin() { }
+   protected abstract void drawBody();
+   protected void drawEnd() { }
 
    /** Deferr notifications */
    @Override
@@ -167,6 +167,7 @@ public abstract class StaticImg<T, TImage extends Icon> extends NotifyPropertyCh
    }
 
    @Override
-   public void close() { }
+   public void close() { close(true); }
 
+   protected void close(boolean disposing) { }
 }
