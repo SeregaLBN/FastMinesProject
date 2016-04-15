@@ -259,7 +259,7 @@ abstract class ReportDlg extends JDialog {
       int i = mosaicType.ordinal();
       Icon icon = getResources().getImgMosaic(mosaicType, false);
       // TODO кэшировать картинки??? - жрёт память
-      icon = ImgUtils.toImgIco(ImgUtils.rotate(ImgUtils.toImg(icon), roteteAngle[i]), imgSize,imgSize);
+      icon = ImgUtils.toIco(ImgUtils.rotate(ImgUtils.toImg(icon), roteteAngle[i]), imgSize,imgSize);
 
       roteteAngle[i] = roteteAngle[i] + 1.2;
       if (roteteAngle[i] > 360.)

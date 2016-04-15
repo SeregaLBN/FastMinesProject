@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
@@ -25,7 +25,7 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
    /** TODO: Mosaic field - нуна избавиться... */
    private JComponent owner;
 
-   private ImageIcon imgMine, imgFlag;
+   private Icon imgMine, imgFlag;
    private ColorText colorText;
    private PenBorder penBorder;
    private Font        font;
@@ -38,10 +38,10 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
       this.padding = new BoundDouble(0, 0, 0, 0);
    }
 
-   public ImageIcon getImgMine() {
+   public Icon getImgMine() {
       return imgMine;
    }
-   public void setImgMine(ImageIcon img) {
+   public void setImgMine(Icon img) {
       Object old = this.imgMine;
       if (old != img) { // references compare
          this.imgMine = img;
@@ -49,10 +49,10 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
       }
    }
 
-   public ImageIcon getImgFlag() {
+   public Icon getImgFlag() {
       return imgFlag;
    }
-   public void setImgFlag(ImageIcon img) {
+   public void setImgFlag(Icon img) {
       Object old = this.imgFlag;
       if (old != img) { // references compare
          this.imgFlag = img;
@@ -192,7 +192,7 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
             (font.getStyle() == newFont.getStyle()) &&
             (font.getSize() == newFont.getSize()))
             return;
-   
+
          int heightNeed = font.getSize();
          int heightBad = newFont.getSize();
          if (heightNeed != heightBad)
@@ -213,7 +213,7 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
    public static fmg.common.Color getDefaultBackgroundFillColor() {
       return _defaultBkColor;
    }
-   
+
    static {
       UIDefaults uiDef = UIManager.getDefaults();
       java.awt.Color clr = uiDef.getColor("Panel.background");

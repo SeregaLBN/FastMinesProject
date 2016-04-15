@@ -38,23 +38,30 @@ public class ImgUtils {
 //         }
    }
    /** загрузить картинку из локальных ресурсов */
-   public static ImageIcon getImageIcon(String resName) {
-      return toImgIco(getImage(resName));
+   public static Icon getIcon(String resName) {
+      return toIco(getImage(resName));
    }
-   /** convert Image -> ImageIcon */
-   public static ImageIcon toImgIco(Image img) {
+
+   /** convert Image -> Icon */
+   public static Icon toIco(Image img) {
       if (img == null) return null;
       return new ImageIcon(img);
    }
-   /** convert and change size Image -> ImageIcon */
-   public static ImageIcon toImgIco(Image img, int newWidth, int newHeight) {
+
+   /** convert and change size Image -> Icon */
+   public static Icon toIco(Image img, int newWidth, int newHeight) {
       if (img == null) return null;
       return new ImageIcon(img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH));
    }
-   /** change size ImageIcon */
-   public static ImageIcon zoom(ImageIcon img, int newWidth, int newHeight) {
+
+   /** change size Icon */
+   public static Icon zoom(Icon img, int newWidth, int newHeight) {
       if (img == null) return null;
-      return toImgIco(img.getImage(), newWidth, newHeight);
+      return toIco(
+            (img instanceof ImageIcon)
+               ? ((ImageIcon)img).getImage()
+               : toImg(img),
+            newWidth, newHeight);
    }
 
    /** convert Icon -> Image */

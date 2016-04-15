@@ -46,7 +46,6 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ComponentInputMap;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -705,11 +704,11 @@ public class Main extends JFrame implements PropertyChangeListener {
 
       @Override
       protected void paintComponent(Graphics g) {
-         ImageIcon img = Main.this.getResources().getImgPause();
+         Icon img = Main.this.getResources().getImgPause();
          if (img == null) {
             super.paintComponent(g);
          } else {
-            ImageIcon imgIco = getCachedImg(img);
+            Icon imgIco = getCachedImg(img);
             Dimension sizeOutward = this.getSize();
             imgIco.paintIcon(this, g,
                   (sizeOutward.width -imgIco.getIconWidth())>>1,
@@ -724,8 +723,8 @@ public class Main extends JFrame implements PropertyChangeListener {
       }
 
       /** кэшированная картинка */
-      private ImageIcon cachedImg;
-      public ImageIcon getCachedImg(ImageIcon img) {
+      private Icon cachedImg;
+      public Icon getCachedImg(Icon img) {
          if (cachedImg == null)
             cachedImg = img;
 

@@ -131,7 +131,7 @@ public class AboutDlg extends JDialog {
 //      panel.setBorder(BorderFactory.createTitledBorder("Logos"));// getDefaultBorder());
 
       int icoSize = 48;
-      JButton btnLogo = new JButton(ImgUtils.toImgIco(getResources().getImgLogo(), icoSize,icoSize));
+      JButton btnLogo = new JButton(ImgUtils.toIco(getResources().getImgLogo(), icoSize,icoSize));
       btnLogo.setPressedIcon(ImgUtils.zoom(getResources().getImgBtnNew(EBtnNewGameState.eNormalLoss), icoSize,icoSize));
       btnLogo.setFocusable(false);
 
