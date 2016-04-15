@@ -15,7 +15,8 @@ public abstract class RotatedImg<T, TImage extends Object> extends StaticImg<T, 
    protected RotatedImg(T entity, int widthAndHeight) {
       super(entity, widthAndHeight);
    }
-   protected RotatedImg(T entity, int widthAndHeight, Integer padding) {
+
+   protected RotatedImg(T entity, int widthAndHeight, int padding) {
       super(entity, widthAndHeight, padding);
    }
 

@@ -15,20 +15,12 @@ public abstract class StaticImg<T, TImage extends Object> extends NotifyProperty
    protected StaticImg(T entity) {
       this(entity, DefaultImageSize);
    }
-
    protected StaticImg(T entity, int widthAndHeight) {
-      this(entity, widthAndHeight, null);
+      this(entity, widthAndHeight, (int)(widthAndHeight * 0.05)); // 5%
    }
-
-   protected StaticImg(T entity, int widthAndHeight, Integer padding) {
-      this(entity,
-           new Size(widthAndHeight, widthAndHeight),
-           new Bound(padding != null
-              ? (int)padding
-              : (int)(widthAndHeight * 0.05) // 5%
-        ));
+   protected StaticImg(T entity, int widthAndHeight, int padding) {
+      this(entity, new Size(widthAndHeight, widthAndHeight), new Bound(padding));
    }
-
    protected StaticImg(T entity, Size sizeImage, Bound padding) {
       _size = sizeImage;
       _padding = padding;

@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.swing.Icon;
-
 import fmg.common.Color;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.util.FigureHelper;
@@ -19,17 +17,11 @@ import fmg.core.types.EMosaicGroup;
 import fmg.swing.Cast;
 
 /** representable fmg.core.types.EMosaicGroup as image */
-public class MosaicsGroupImg extends PolarLightsImg<EMosaicGroup, Icon> {
+public abstract class MosaicsGroupImg<TImage extends Object> extends PolarLightsImg<EMosaicGroup, TImage> {
 
-   public MosaicsGroupImg(EMosaicGroup group) {
-      super(group);
-   }
-   public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight) {
-      super(group, widthAndHeight);
-   }
-   public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight, Integer padding) {
-      super(group, widthAndHeight, padding);
-   }
+   public MosaicsGroupImg(EMosaicGroup group) { super(group); }
+   public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight) { super(group, widthAndHeight); }
+   public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight, Integer padding) { super(group, widthAndHeight, padding); }
 
    public EMosaicGroup getMosaicGroup() { return getEntity(); }
    public void setMosaicGroup(EMosaicGroup value) { setEntity(value); }
@@ -53,47 +45,78 @@ public class MosaicsGroupImg extends PolarLightsImg<EMosaicGroup, Icon> {
       });
    }
 
-   @Override
-   protected Icon createImage() {
-      return new Icon() {
-         @Override
-         public int getIconWidth() { return MosaicsGroupImg.this.getWidth(); }
-         @Override
-         public int getIconHeight() { return MosaicsGroupImg.this.getHeight(); }
-         @Override
-         public void paintIcon(Component c, Graphics g, int x, int y) {
-            g.setColor(Cast.toColor(getBackgroundColor()));
-            g.fillRect(0,0, getIconWidth(), getIconHeight());
+   public void paint(Graphics g) {
+      Graphics2D g2 = (Graphics2D) g;
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            g.setColor(Cast.toColor(getForegroundColorAttenuate()));
-            List<PointDouble> points = getCoords().collect(Collectors.toList());
-            g.fillPolygon(Cast.toPolygon(points));
+      g.setColor(Cast.toColor(getBackgroundColor()));
+      g.fillRect(0, 0, getWidth(), getHeight());
 
-            // draw perimeter border
-            Color clr = getBorderColor();
-            if (clr.getA() != Color.Transparent.getA()) {
-               g.setColor(Cast.toColor(clr));
-               int bw = getBorderWidth();
-               ((Graphics2D)g).setStroke(new BasicStroke(bw));
+      g.setColor(Cast.toColor(getForegroundColorAttenuate()));
+      List<PointDouble> points = getCoords().collect(Collectors.toList());
+      g.fillPolygon(Cast.toPolygon(points));
 
-               for (int i = 0; i < points.size(); i++) {
-                  PointDouble p1 = points.get(i);
-                  PointDouble p2 = (i != (points.size() - 1)) ? points.get(i + 1) : points.get(0);
-                  g.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
-               }
-            }
+      // draw perimeter border
+      Color clr = getBorderColor();
+      if (clr.getA() != Color.Transparent.getA()) {
+         g.setColor(Cast.toColor(clr));
+         int bw = getBorderWidth();
+         g2.setStroke(new BasicStroke(bw));
+
+         for (int i = 0; i < points.size(); i++) {
+            PointDouble p1 = points.get(i);
+            PointDouble p2 = (i != (points.size() - 1)) ? points.get(i + 1) : points.get(0);
+            g.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
          }
-      };
+      }
    }
 
-   @Override
-   protected void drawBody() {
-      Icon ico = getImage();
-      BufferedImage img = new BufferedImage(ico.getIconWidth(), ico.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-      Graphics2D g = img.createGraphics();
-      g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      ico.paintIcon(null, g, 0, 0);
-      g.dispose();
+   public static class Icon extends MosaicsGroupImg<javax.swing.Icon> {
+      public Icon(EMosaicGroup group) { super(group); }
+      public Icon(EMosaicGroup group, int widthAndHeight) { super(group, widthAndHeight); }
+      public Icon(EMosaicGroup group, int widthAndHeight, Integer padding) { super(group, widthAndHeight, padding); }
+
+      @Override
+      protected javax.swing.Icon createImage() {
+         return new javax.swing.Icon() {
+            @Override
+            public int getIconWidth() { return Icon.this.getWidth(); }
+            @Override
+            public int getIconHeight() { return Icon.this.getHeight(); }
+            @Override
+            public void paintIcon(Component c, Graphics g, int x, int y) { paint(g); }
+         };
+      }
+
+      @Override
+      protected void drawBody() {
+         javax.swing.Icon ico = getImage();
+         BufferedImage img = new BufferedImage(ico.getIconWidth(), ico.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+         Graphics g = img.createGraphics();
+         ico.paintIcon(null, g, 0, 0);
+         g.dispose();
+      }
+
+   }
+
+   public static class Image extends MosaicsGroupImg<java.awt.Image> {
+      public Image(EMosaicGroup group) { super(group); }
+      public Image(EMosaicGroup group, int widthAndHeight) { super(group, widthAndHeight); }
+      public Image(EMosaicGroup group, int widthAndHeight, Integer padding) { super(group, widthAndHeight, padding); }
+
+      @Override
+      protected java.awt.Image createImage() {
+         return new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+      }
+
+      @Override
+      protected void drawBody() {
+         java.awt.Image img = getImage();
+         Graphics g = img.getGraphics();
+         paint(g);
+         // g.dispose();
+      }
+
    }
 
 }

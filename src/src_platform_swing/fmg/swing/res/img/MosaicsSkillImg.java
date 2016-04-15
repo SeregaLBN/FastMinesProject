@@ -11,8 +11,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import javax.swing.Icon;
-
 import fmg.common.Color;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.util.FigureHelper;
@@ -20,22 +18,16 @@ import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Cast;
 
 /** representable fmg.data.controller.types.ESkillLevel as image */
-public class MosaicsSkillImg extends RotatedImg<ESkillLevel, Icon> {
+public abstract class MosaicsSkillImg<TImage extends Object> extends RotatedImg<ESkillLevel, TImage> {
 
-   public MosaicsSkillImg(ESkillLevel group) {
-      super(group);
-   }
-   public MosaicsSkillImg(ESkillLevel group, int widthAndHeight) {
-      super(group, widthAndHeight);
-   }
-   public MosaicsSkillImg(ESkillLevel group, int widthAndHeight, Integer padding) {
-      super(group, widthAndHeight, padding);
-   }
+   public MosaicsSkillImg(ESkillLevel group) { super(group); }
+   public MosaicsSkillImg(ESkillLevel group, int widthAndHeight) { super(group, widthAndHeight); }
+   public MosaicsSkillImg(ESkillLevel group, int widthAndHeight, int padding) { super(group, widthAndHeight, padding); }
 
    public ESkillLevel getMosaicSkill() { return getEntity(); }
    public void setMosaicSkill(ESkillLevel value) { setEntity(value); }
 
-   private Stream<Stream<PointDouble>> getCoords() {
+   protected Stream<Stream<PointDouble>> getCoords() {
       double sq = Math.min( // size inner square
             getWidth()  - getPadding().getLeftAndRight(),
             getHeight() - getPadding().getTopAndBottom());
@@ -68,50 +60,81 @@ public class MosaicsSkillImg extends RotatedImg<ESkillLevel, Icon> {
             });
    }
 
-   @Override
-   protected Icon createImage() {
-      return new Icon() {
-         @Override
-         public int getIconWidth() { return MosaicsSkillImg.this.getWidth(); }
-         @Override
-         public int getIconHeight() { return MosaicsSkillImg.this.getHeight(); }
-         @Override
-         public void paintIcon(Component c, Graphics g, int x, int y) {
-            g.setColor(Cast.toColor(getBackgroundColor()));
-            g.fillRect(0,0, getIconWidth(), getIconHeight());
+   protected void paint(Graphics g) {
+      Graphics2D g2 = (Graphics2D) g;
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            getCoords()//.reverse()
-               .forEach(coords -> {
-                  g.setColor(Cast.toColor(getForegroundColorAttenuate()));
-                  List<PointDouble> points = coords.collect(Collectors.toList());
-                  g.fillPolygon(Cast.toPolygon(points));
+      g.setColor(Cast.toColor(getBackgroundColor()));
+      g.fillRect(0, 0, getWidth(), getHeight());
 
-                  // draw perimeter border
-                  Color clr = getBorderColor();
-                  if (clr.getA() != Color.Transparent.getA()) {
-                     g.setColor(Cast.toColor(clr));
-                     int bw = getBorderWidth();
-                     ((Graphics2D)g).setStroke(new BasicStroke(bw));
+      getCoords()// .reverse()
+            .forEach(coords -> {
+               g.setColor(Cast.toColor(getForegroundColorAttenuate()));
+               List<PointDouble> points = coords.collect(Collectors.toList());
+               g.fillPolygon(Cast.toPolygon(points));
 
-                     for (int i = 0; i < points.size(); i++) {
-                        PointDouble p1 = points.get(i);
-                        PointDouble p2 = (i != (points.size() - 1)) ? points.get(i + 1) : points.get(0);
-                        g.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
-                     }
+               // draw perimeter border
+               Color clr = getBorderColor();
+               if (clr.getA() != Color.Transparent.getA()) {
+                  g.setColor(Cast.toColor(clr));
+                  int bw = getBorderWidth();
+                  g2.setStroke(new BasicStroke(bw));
+
+                  for (int i = 0; i < points.size(); i++) {
+                     PointDouble p1 = points.get(i);
+                     PointDouble p2 = (i != (points.size() - 1)) ? points.get(i + 1) : points.get(0);
+                     g.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
                   }
-               });
-         }
-      };
+               }
+            });
    }
 
-   @Override
-   protected void drawBody() {
-      Icon ico = getImage();
-      BufferedImage img = new BufferedImage(ico.getIconWidth(), ico.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-      Graphics2D g = img.createGraphics();
-      g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      ico.paintIcon(null, g, 0, 0);
-      g.dispose();
+   public static class Icon extends MosaicsSkillImg<javax.swing.Icon> {
+      public Icon(ESkillLevel group) { super(group); }
+      public Icon(ESkillLevel group, int widthAndHeight) { super(group, widthAndHeight); }
+      public Icon(ESkillLevel group, int widthAndHeight, int padding) { super(group, widthAndHeight, padding); }
+
+      @Override
+      protected javax.swing.Icon createImage() {
+         return new javax.swing.Icon() {
+            @Override
+            public int getIconWidth() { return Icon.this.getWidth(); }
+            @Override
+            public int getIconHeight() { return Icon.this.getHeight(); }
+            @Override
+            public void paintIcon(Component c, Graphics g, int x, int y) { paint(g); }
+         };
+      }
+
+      @Override
+      protected void drawBody() {
+         javax.swing.Icon ico = getImage();
+         BufferedImage img = new BufferedImage(ico.getIconWidth(), ico.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+         Graphics g = img.createGraphics();
+         ico.paintIcon(null, g, 0, 0);
+         g.dispose();
+      }
+
+   }
+
+   public static class Image extends MosaicsSkillImg<java.awt.Image> {
+      public Image(ESkillLevel group) { super(group); }
+      public Image(ESkillLevel group, int widthAndHeight) { super(group, widthAndHeight); }
+      public Image(ESkillLevel group, int widthAndHeight, Integer padding) { super(group, widthAndHeight, padding); }
+
+      @Override
+      protected java.awt.Image createImage() {
+         return new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+      }
+
+      @Override
+      protected void drawBody() {
+         java.awt.Image img = getImage();
+         Graphics g = img.getGraphics();
+         paint(g);
+         // g.dispose();
+      }
+
    }
 
 }
