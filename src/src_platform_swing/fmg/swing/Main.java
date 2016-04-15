@@ -929,7 +929,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
       this.setJMenuBar(getMenu());
       this.setTitle("FastMines");
-      this.setIconImage(getResources().getImgLogo());
+      this.setIconImage(ImgUtils.toImg(getResources().getImgLogo()));
 
       getMosaic().setOnClickEvent(this.getHandlers().getMosaicClickHandler());
 //      this.getHandlers().getMosaicListener().OnChangedArea(new MosaicEvent(getMosaic())); // TODO: это нужно только тогда, когда нет десериализации

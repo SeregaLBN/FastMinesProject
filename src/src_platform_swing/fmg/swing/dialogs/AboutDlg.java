@@ -6,7 +6,6 @@ import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -61,6 +60,7 @@ public class AboutDlg extends JDialog {
       });
 
       addWindowListener(new WindowAdapter() {
+         @Override
          public void windowClosing(WindowEvent we) { OnClose(); }
       });
 
@@ -81,8 +81,8 @@ public class AboutDlg extends JDialog {
    private void CreateComponents() {
       // 1. Создаю панель, которая будет содержать все остальные элементы и панели расположения
       Box boxCenter = Box.createVerticalBox();
-      // Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов. 
-      // использую пустую рамку 
+      // Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов.
+      // использую пустую рамку
       //boxCenter.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
       boxCenter.setBorder(
             new CompoundBorder(
@@ -95,7 +95,7 @@ public class AboutDlg extends JDialog {
       // 2. Поочередно создаются "полосы", на которые был разбит интерфейс
       // а) ряд для Иконки, НазвыПроги, версии, авторства и лицензии
       Box firstLine = Box.createHorizontalBox();
-      { 
+      {
 //         firstLine.setBorder(GuiTools.getDummyBorder(Color.RED));
 
          // слева - кнопка иконки
@@ -124,14 +124,14 @@ public class AboutDlg extends JDialog {
       // ряд кнопок внизу
       getContentPane().add(CreatePanelOk(), BorderLayout.SOUTH);
    }
-   
+
    /** логотип */
    private JComponent CreatePanelLogo() {
       JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
 //      panel.setBorder(BorderFactory.createTitledBorder("Logos"));// getDefaultBorder());
 
       int icoSize = 48;
-      JButton btnLogo = new JButton(ImgUtils.toIco(getResources().getImgLogo(), icoSize,icoSize));
+      JButton btnLogo = new JButton(ImgUtils.zoom(getResources().getImgLogo(), icoSize, icoSize));
       btnLogo.setPressedIcon(ImgUtils.zoom(getResources().getImgBtnNew(EBtnNewGameState.eNormalLoss), icoSize,icoSize));
       btnLogo.setFocusable(false);
 
@@ -144,7 +144,7 @@ public class AboutDlg extends JDialog {
    }
    /** тексты НазвыПроги, версии, авторства и лицензии */
    private JComponent CreatePanelTitle() {
-      Box panel = Box.createVerticalBox(); 
+      Box panel = Box.createVerticalBox();
 //      panel.setBorder(BorderFactory.createTitledBorder("titles"));// getDefaultBorder());
 
       String htmpWidth = "190px";
@@ -219,7 +219,7 @@ public class AboutDlg extends JDialog {
          mail.add(lblMail);
       }
 
-      
+
       Box web = Box.createHorizontalBox();
       JLabel lblLeftWeb = new JLabel("Web: ");
       {
@@ -254,7 +254,7 @@ public class AboutDlg extends JDialog {
    private JComponent CreatePanelOk() {
       JPanel panel = new JPanel( new FlowLayout(FlowLayout.CENTER, 12, 12) );
 //      panel.setBorder(GuiTools.getDummyBorder(Color.LIGHT_GRAY));
-      
+
       JButton ok = new JButton("OK");
       Insets margin = ok.getMargin();
       margin.left = margin.right = 12; margin.top = margin.bottom = 2;
@@ -263,16 +263,12 @@ public class AboutDlg extends JDialog {
       // стандартный вид для кнопок
 //      createRecommendedMargin(new JButton[] { ok } );
 
-      ok.addActionListener(new ActionListener() {
-         public void actionPerformed(ActionEvent evt) {
-            OnClose();
-         }
-      });
-      
+      ok.addActionListener(evt -> OnClose());
+
       panel.add(ok);
       return panel;
    }
-   
+
    // тестовый метод для проверки диалогового окна
    public static void main(String[] args) {
       new AboutDlg(null, true).setVisible(true);

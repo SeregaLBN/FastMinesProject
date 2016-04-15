@@ -1,6 +1,5 @@
 package fmg.swing.res;
 
-import java.awt.Image;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -12,6 +11,7 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.swing.res.img.BackgroundPause;
 import fmg.swing.res.img.Flag;
+import fmg.swing.res.img.Logo;
 import fmg.swing.res.img.Mine;
 import fmg.swing.res.img.MosaicsImg;
 import fmg.swing.utils.ImgUtils;
@@ -21,8 +21,7 @@ public final class Resources {
 
     public static final Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
 
-   private Image imgLogo;
-
+   private Icon imgLogo;
    private Icon imgFlag, imgMine;
    private Icon imgPause;
 
@@ -65,47 +64,50 @@ public final class Resources {
    private Map<EBtnPauseState  , Icon> imgsBtnPause;
    private Map<EMosaicGroup    , Icon> imgsMosaicGroup;
    private Map<EMosaic         , Icon> imgsMosaicSmall, imgsMosaicWide;
-   private Map<Locale          , Image> imgsLang;
+   private Map<Locale          , Icon> imgsLang;
 
-   private Image getImage(String path) {
-      Image img = ImgUtils.getImage("res/"+path);
-      if (img == null)
-         img = ImgUtils.getImage(path);
-      return img;
-   }
-   private Icon getImageIcon(String path) {
+   private Icon getIcon(String path) {
       Icon img = ImgUtils.getIcon("res/"+path);
       if (img == null)
          img = ImgUtils.getIcon(path);
       return img;
    }
 
-   public Image getImgLogo() {
-      if (imgLogo == null)
-         imgLogo = getImage("Logo/Logo_128x128.png");
+   public Icon getImgLogo() {
+      if (imgLogo == null) {
+         Logo logo = new Logo(true);
+
+         final int margin = 1;
+         final double constIconSize = 128 - 2 * margin;
+         logo.setZoomX(constIconSize / Logo.DefaultWidht);
+         logo.setZoomY(constIconSize / Logo.DefaultHeight);
+         logo.setMargin(margin);
+
+         imgLogo = logo;
+      }
       return imgLogo;
    }
    public Icon getImgFlag(int width, int height) {
       if (imgFlag == null) {
-         imgFlag = getImageIcon("CellState/Flag.png"); // сначала из ресурсов
+         imgFlag = getIcon("CellState/Flag.png"); // сначала из ресурсов
          if (imgFlag == null)
             // иначе - своя картинка из кода
-            imgFlag = ImgUtils.toIco(new Flag());
+            imgFlag = new Flag();
       }
       return ImgUtils.zoom(imgFlag, width, height);
    }
    public Icon getImgMine(int width, int height) {
       if (imgMine == null) {
-         imgMine = getImageIcon("CellState/Mine.png"); // сначала из ресурсов
+         imgMine = getIcon("CellState/Mine.png"); // сначала из ресурсов
          if (imgMine == null)
             // иначе - своя картинка из кода
-            imgMine = ImgUtils.toIco(new Mine());
+            imgMine = new Mine();
       }
       return ImgUtils.zoom(imgMine, width, height);
    }
    public Icon getImgPause() {
       if (imgPause == null) {
-         imgPause = getImageIcon("Background/Pause.png"); // сначала из ресурсов
+         imgPause = getIcon("Background/Pause.png"); // сначала из ресурсов
          if (imgPause == null)
             imgPause = ImgUtils.toIco(ImgUtils.toImg(new BackgroundPause())); // иначе - своя картинка из кода
       }
@@ -117,7 +119,7 @@ public final class Resources {
          imgsBtnNew = new HashMap<Resources.EBtnNewGameState, Icon>(EBtnNewGameState.values().length);
 
          for (EBtnNewGameState val: EBtnNewGameState.values())
-            imgsBtnNew.put(val, getImageIcon("ToolBarButton/new" + val.getDescription() + ".png"));
+            imgsBtnNew.put(val, getIcon("ToolBarButton/new" + val.getDescription() + ".png"));
       }
       return imgsBtnNew.get(key);
    }
@@ -132,7 +134,7 @@ public final class Resources {
          imgsBtnPause = new HashMap<EBtnPauseState, Icon>(EBtnPauseState.values().length);
 
          for (EBtnPauseState val: EBtnPauseState.values())
-            imgsBtnPause.put(val, getImageIcon("ToolBarButton/pause" + val.getDescription() + ".png"));
+            imgsBtnPause.put(val, getIcon("ToolBarButton/pause" + val.getDescription() + ".png"));
       }
       return imgsBtnPause.get(key);
    }
@@ -147,7 +149,7 @@ public final class Resources {
          imgsMosaicGroup = new HashMap<EMosaicGroup, Icon>(EMosaicGroup.values().length);
 
          for (EMosaicGroup val: EMosaicGroup.values())
-            imgsMosaicGroup.put(val, getImageIcon("MosaicGroup/" + val.getDescription() + ".png"));
+            imgsMosaicGroup.put(val, getIcon("MosaicGroup/" + val.getDescription() + ".png"));
       }
       return imgsMosaicGroup.get(key);
    }
@@ -170,7 +172,7 @@ public final class Resources {
       Map<EMosaic, Icon> imgsMosaic = smallIco ? imgsMosaicSmall : imgsMosaicWide;
 
       for (EMosaic mosaicType: EMosaic.values()) {
-         Icon imgMosaic = getImageIcon("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.getDescription(true)+".png"); // сначала из ресурсов
+         Icon imgMosaic = getIcon("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.getDescription(true)+".png"); // сначала из ресурсов
          if (imgMosaic == null) { // иначе - своя картинка из кода
             MosaicsImg img = new MosaicsImg();
             img.setMosaicType(mosaicType);
@@ -188,13 +190,13 @@ public final class Resources {
       return ImgUtils.zoom(original, newWidth, newHeight);
    }
 
-   public Map<Locale, Image> getImgsLang() {
+   public Map<Locale, Icon> getImgsLang() {
       if (imgsLang == null) {
-         imgsLang = new HashMap<Locale, Image>(4);
+         imgsLang = new HashMap<Locale, Icon>(4);
 
-         Image imgEng = getImage("Lang/English.png");
-         Image imgUkr = getImage("Lang/Ukrainian.png");
-         Image imgRus = getImage("Lang/Russian.png");
+         Icon imgEng = getIcon("Lang/English.png");
+         Icon imgUkr = getIcon("Lang/Ukrainian.png");
+         Icon imgRus = getIcon("Lang/Russian.png");
 
          for (Locale locale: Locale.getAvailableLocales()) {
             if (locale.equals(Locale.ENGLISH))
