@@ -1,8 +1,10 @@
 package fmg.swing.res.img;
 
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -201,7 +203,8 @@ public abstract class MosaicsImg2<TImage extends Object> extends RotatedImg<EMos
          recalcArea();
       return _area;
    }
-   public void getArea(double value) {
+   @Override
+   public void setArea(double value) {
       if (setProperty(_area, value, "Area")) {
          dependency_CellAttribute_Area();
          redraw();
@@ -247,7 +250,7 @@ public abstract class MosaicsImg2<TImage extends Object> extends RotatedImg<EMos
     *    Т.к. WriteableBitmap есть DependencyObject, то его владелец может сам отслеживать отрисовку...
     *  }
     */
-   public void paint(Graphics g) {
+   public void drawBody(Graphics g) {
       Graphics2D g2 = (Graphics2D) g;
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -364,6 +367,56 @@ public abstract class MosaicsImg2<TImage extends Object> extends RotatedImg<EMos
       }
 
       super.close(disposing);
+   }
+
+   public static class Icon extends MosaicsImg2<javax.swing.Icon> {
+      public Icon(EMosaic mosaicType, Matrisize sizeField) { super(mosaicType, sizeField); }
+      public Icon(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight) { super(mosaicType, sizeField, widthAndHeight); }
+      public Icon(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) { super(mosaicType, sizeField, widthAndHeight, padding); }
+      public Icon(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) { super(mosaicType, sizeField, sizeImage, padding); }
+
+      @Override
+      protected javax.swing.Icon createImage() {
+         return new javax.swing.Icon() {
+            @Override
+            public int getIconWidth() { return Icon.this.getWidth(); }
+            @Override
+            public int getIconHeight() { return Icon.this.getHeight(); }
+            @Override
+            public void paintIcon(Component c, Graphics g, int x, int y) { drawBody(g); }
+         };
+      }
+
+      @Override
+      protected void drawBody() {
+         javax.swing.Icon ico = getImage();
+         BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+         Graphics g = img.createGraphics();
+         ico.paintIcon(null, g, 0, 0);
+         g.dispose();
+      }
+
+   }
+
+   public static class Image extends MosaicsImg2<java.awt.Image> {
+      public Image(EMosaic mosaicType, Matrisize sizeField) { super(mosaicType, sizeField); }
+      public Image(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight) { super(mosaicType, sizeField, widthAndHeight); }
+      public Image(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) { super(mosaicType, sizeField, widthAndHeight, padding); }
+      public Image(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) { super(mosaicType, sizeField, sizeImage, padding); }
+
+      @Override
+      protected java.awt.Image createImage() {
+         return new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+      }
+
+      @Override
+      protected void drawBody() {
+         BufferedImage img = (BufferedImage) getImage();
+         Graphics g = img.createGraphics();
+         drawBody(g);
+         g.dispose();
+      }
+
    }
 
 }

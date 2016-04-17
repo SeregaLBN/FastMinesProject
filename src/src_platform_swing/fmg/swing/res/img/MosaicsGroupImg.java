@@ -45,7 +45,7 @@ public abstract class MosaicsGroupImg<TImage extends Object> extends PolarLights
       });
    }
 
-   public void paint(Graphics g) {
+   public void drawBody(Graphics g) {
       Graphics2D g2 = (Graphics2D) g;
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -84,14 +84,14 @@ public abstract class MosaicsGroupImg<TImage extends Object> extends PolarLights
             @Override
             public int getIconHeight() { return Icon.this.getHeight(); }
             @Override
-            public void paintIcon(Component c, Graphics g, int x, int y) { paint(g); }
+            public void paintIcon(Component c, Graphics g, int x, int y) { drawBody(g); }
          };
       }
 
       @Override
       protected void drawBody() {
          javax.swing.Icon ico = getImage();
-         BufferedImage img = new BufferedImage(ico.getIconWidth(), ico.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+         BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
          Graphics g = img.createGraphics();
          ico.paintIcon(null, g, 0, 0);
          g.dispose();
@@ -111,10 +111,10 @@ public abstract class MosaicsGroupImg<TImage extends Object> extends PolarLights
 
       @Override
       protected void drawBody() {
-         java.awt.Image img = getImage();
-         Graphics g = img.getGraphics();
-         paint(g);
-         // g.dispose();
+         BufferedImage img = (BufferedImage) getImage();
+         Graphics g = img.createGraphics();
+         drawBody(g);
+         g.dispose();
       }
 
    }
