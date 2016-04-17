@@ -1,6 +1,7 @@
 package fmg.common.geom;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class RegionDouble {
    protected final PointDouble[] points;
@@ -11,9 +12,11 @@ public class RegionDouble {
          points[i] = new PointDouble();
    }
 
+   public List<PointDouble> getPoints() { return Arrays.asList(points); }
+
    public PointDouble getPoint(int index) { return points[index]; }
    public void setPoint(int index, double x, double y) { points[index].x = x; points[index].y = y; }
-   
+
    public int getCountPoints() { return points.length; }
 
    public RectDouble getBounds() {

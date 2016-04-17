@@ -133,12 +133,13 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
          if (colors == null)
             colors = new HashMap<Integer, Color>() {
                private static final long serialVersionUID = 1L;
+               private Random rnd = new Random();
 
                @Override
                public Color get(Object key) {
                   Color res = super.get(key);
                   if (res == null) {
-                     res = Color.RandomColor(new Random()).attenuate();
+                     res = Color.RandomColor(rnd).attenuate();
                      super.put((Integer)key, res);
                   }
                   return res;

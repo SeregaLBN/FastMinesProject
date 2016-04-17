@@ -237,33 +237,26 @@ namespace fmg.uwp.res.img {
       /// }
       /// </summary>
       protected override void DrawBody() {
-         var w = Width;
-         var h = Height;
          var img = Image;
 
-         Action funcFillBk = () => img.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
+         Action funcFillBk = () => { img.Clear(BackgroundColor.ToWinColor()); };
 
          var matrix = RotatedMatrix;
+         var paint = new PaintableBmp(img);
+         var cp = CellPaint;
          if (OnlySyncDraw || LiveImage()) {
             // sync draw
             funcFillBk();
-            var paint = new PaintableBmp(img);
             foreach (var cell in matrix)
-               CellPaint.Paint(cell, paint);
+               cp.Paint(cell, paint);
          } else {
             // async draw
             AsyncRunner.InvokeFromUiLater(() => {
                funcFillBk();
-               var paint = new PaintableBmp(img);
                foreach (var cell in matrix) {
-                  //if (!ReferenceEquals(img, Image)) {
-                  //   // aborted...
-                  //   System.Diagnostics.Debug.Assert(false, "убедись под дебагером что реально что-то сбросило _image");
-                  //   break;
-                  //}
                   var tmp = cell;
                   AsyncRunner.InvokeFromUiLater(
-                     () => CellPaint.Paint(tmp, paint),
+                     () => cp.Paint(tmp, paint),
                      ((Rand.Next() & 1) == 0)
                         ? CoreDispatcherPriority.Low
                         : CoreDispatcherPriority.Normal

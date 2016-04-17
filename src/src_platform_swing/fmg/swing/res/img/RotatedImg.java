@@ -9,20 +9,10 @@ import fmg.common.geom.Size;
 
 public abstract class RotatedImg<T, TImage extends Object> extends StaticImg<T, TImage> {
 
-   protected RotatedImg(T entity) {
-      super(entity);
-   }
-   protected RotatedImg(T entity, int widthAndHeight) {
-      super(entity, widthAndHeight);
-   }
-
-   protected RotatedImg(T entity, int widthAndHeight, int padding) {
-      super(entity, widthAndHeight, padding);
-   }
-
-   protected RotatedImg(T entity, Size sizeImage, Bound padding) {
-      super(entity, sizeImage, padding);
-   }
+   protected RotatedImg(T entity) { super(entity); }
+   protected RotatedImg(T entity, int widthAndHeight) { super(entity, widthAndHeight); }
+   protected RotatedImg(T entity, int widthAndHeight, int padding) { super(entity, widthAndHeight, padding); }
+   protected RotatedImg(T entity, Size sizeImage, Bound padding) { super(entity, sizeImage, padding); }
 
    private double _redrawInterval = 100;
    /** frequency of redrawing (in milliseconds) */
