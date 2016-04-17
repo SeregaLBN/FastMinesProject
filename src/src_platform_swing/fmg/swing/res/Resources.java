@@ -172,13 +172,11 @@ public final class Resources {
       Map<EMosaic, Icon> imgsMosaic = smallIco ? imgsMosaicSmall : imgsMosaicWide;
 
       for (EMosaic mosaicType: EMosaic.values()) {
-         Icon imgMosaic = getIcon("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.getDescription(true)+".png"); // сначала из ресурсов
+         Icon imgMosaic = null; // getIcon("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.getDescription(true)+".png"); // сначала из ресурсов
          if (imgMosaic == null) { // иначе - своя картинка из кода
-            MosaicsImg img = new MosaicsImg();
-            img.setMosaicType(mosaicType);
-            img.setSizeField(mosaicType.sizeIcoField(smallIco));
+            MosaicsImg.Image img = new MosaicsImg.Image(mosaicType, mosaicType.sizeIcoField(smallIco));
             //img.setBackgroundColor(java.awt.Color.ORANGE); // test
-            imgMosaic = ImgUtils.toIco(ImgUtils.toImg(img));
+            imgMosaic = ImgUtils.toIco(img.getImage());
          }
          imgsMosaic.put(mosaicType, imgMosaic);
       }

@@ -22,7 +22,9 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
          Field fld = findField(propertyName);
          fld.setAccessible(true);
          oldValue = fld.get(this);
-         if ((oldValue == null && newValue==null) || oldValue.equals(newValue))
+         if ((oldValue == null) && (newValue == null))
+            return false;
+         if ((oldValue != null) && !oldValue.equals(newValue))
             return false;
          fld.set(this, newValue);
       } catch (Exception ex) {

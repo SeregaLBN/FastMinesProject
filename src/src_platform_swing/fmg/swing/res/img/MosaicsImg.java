@@ -35,24 +35,24 @@ import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
 /** картинка поля конкретной мозаики. Используется для меню, кнопок, etc... */
-public abstract class MosaicsImg2<TImage extends Object> extends RotatedImg<EMosaic, TImage>
+public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosaic, TImage>
       implements IMosaic<PaintableGraphics>
 {
    private final boolean RandomCellBkColor = true;
 
-   public MosaicsImg2(EMosaic mosaicType, Matrisize sizeField) {
+   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
       super(mosaicType);
       _sizeField = sizeField;
    }
-   public MosaicsImg2(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight) {
+   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight) {
       super(mosaicType, widthAndHeight);
       _sizeField = sizeField;
    }
-   public MosaicsImg2(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) {
+   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) {
       super(mosaicType, widthAndHeight, padding);
       _sizeField = sizeField;
    }
-   public MosaicsImg2(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) {
+   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) {
       super(mosaicType, sizeImage, padding);
       _sizeField = sizeField;
    }
@@ -84,15 +84,15 @@ public abstract class MosaicsImg2<TImage extends Object> extends RotatedImg<EMos
    @Override
    public BaseCell getCell(Coord coord) { return getMatrix().get(coord.x * getSizeField().n + coord.y); }
 
-   private BaseCell.BaseAttribute _attr;
+   private BaseCell.BaseAttribute _cellAttr;
    @Override
    public BaseCell.BaseAttribute getCellAttr() {
-      if (_attr == null)
+      if (_cellAttr == null)
          setCellAttr(MosaicHelper.createAttributeInstance(getMosaicType(), getArea()));
-      return _attr;
+      return _cellAttr;
    }
    private void setCellAttr(BaseCell.BaseAttribute value) {
-      if (setProperty(_attr, value, "CellAttr")) {
+      if (setProperty(_cellAttr, value, "CellAttr")) {
          dependency_GContext_CellAttribute();
          dependency_CellAttribute_Area();
          redraw();
@@ -305,7 +305,7 @@ public abstract class MosaicsImg2<TImage extends Object> extends RotatedImg<EMos
 
    ///////////// #region Dependencys
    void dependency_GContext_CellAttribute() {
-      if ((_attr == null) || (_gContext == null))
+      if ((_cellAttr == null) || (_gContext == null))
          return;
       if (RandomCellBkColor)
          getGContext().getBackgroundFill()
@@ -313,7 +313,7 @@ public abstract class MosaicsImg2<TImage extends Object> extends RotatedImg<EMos
    }
 
    void dependency_CellAttribute_Area() {
-      if (_attr == null)
+      if (_cellAttr == null)
          return;
       getCellAttr().setArea(getArea());
       if (!_matrix.isEmpty())
@@ -369,7 +369,7 @@ public abstract class MosaicsImg2<TImage extends Object> extends RotatedImg<EMos
       super.close(disposing);
    }
 
-   public static class Icon extends MosaicsImg2<javax.swing.Icon> {
+   public static class Icon extends MosaicsImg<javax.swing.Icon> {
       public Icon(EMosaic mosaicType, Matrisize sizeField) { super(mosaicType, sizeField); }
       public Icon(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight) { super(mosaicType, sizeField, widthAndHeight); }
       public Icon(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) { super(mosaicType, sizeField, widthAndHeight, padding); }
@@ -398,7 +398,7 @@ public abstract class MosaicsImg2<TImage extends Object> extends RotatedImg<EMos
 
    }
 
-   public static class Image extends MosaicsImg2<java.awt.Image> {
+   public static class Image extends MosaicsImg<java.awt.Image> {
       public Image(EMosaic mosaicType, Matrisize sizeField) { super(mosaicType, sizeField); }
       public Image(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight) { super(mosaicType, sizeField, widthAndHeight); }
       public Image(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) { super(mosaicType, sizeField, widthAndHeight, padding); }

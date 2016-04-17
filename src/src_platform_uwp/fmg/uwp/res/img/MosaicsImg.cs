@@ -61,15 +61,15 @@ namespace fmg.uwp.res.img {
 
       public BaseCell getCell(Coord coord) { return Matrix[coord.x * SizeField.n + coord.y]; }
 
-      private BaseCell.BaseAttribute _attr;
+      private BaseCell.BaseAttribute _cellAttr;
       public BaseCell.BaseAttribute CellAttr {
          get {
-            if (_attr == null)
+            if (_cellAttr == null)
                CellAttr = MosaicHelper.CreateAttributeInstance(MosaicType, Area); // call this setter
-            return _attr;
+            return _cellAttr;
          }
          private set {
-            if (SetProperty(ref _attr, value)) {
+            if (SetProperty(ref _cellAttr, value)) {
                Dependency_GContext_CellAttribute();
                Dependency_CellAttribute_Area();
                Redraw();
@@ -289,13 +289,13 @@ namespace fmg.uwp.res.img {
 
       #region Dependencys
       void Dependency_GContext_CellAttribute() {
-         if ((_attr == null) || (_gContext == null))
+         if ((_cellAttr == null) || (_gContext == null))
             return;
          if (RandomCellBkColor)
             GContext.BkFill.Mode = 1 + Rand.Next(CellAttr.getMaxBackgroundFillModeValue());
       }
       void Dependency_CellAttribute_Area() {
-         if (_attr == null)
+         if (_cellAttr == null)
             return;
          CellAttr.Area = Area;
          if (_matrix.Any())

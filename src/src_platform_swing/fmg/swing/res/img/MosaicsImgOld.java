@@ -13,8 +13,8 @@ import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
-import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.IMosaic;
+import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
 import fmg.core.mosaic.draw.ICellPaint;
@@ -24,7 +24,7 @@ import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
 /** картинка поля конкретной мозаики. Используется для меню, кнопок, etc... */
-public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
+public class MosaicsImgOld implements Icon, IMosaic<PaintableGraphics> {
    private static final boolean _randomCellBkColor = true;
 
    private EMosaic _mosaicType;
@@ -115,7 +115,7 @@ public class MosaicsImg implements Icon, IMosaic<PaintableGraphics> {
       }
       return _matrix;
    }
-   
+
    @Override
    public EMosaic getMosaicType() {
       return _mosaicType;
