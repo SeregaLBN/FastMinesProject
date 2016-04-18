@@ -129,7 +129,7 @@ public abstract class StaticImg<T, TImage extends Object> extends NotifyProperty
 
    public Color getForegroundColorAttenuate() { return getForegroundColor().attenuate(160); }
 
-   private boolean _onlySyncDraw;
+   private boolean _onlySyncDraw = true;
    public boolean isOnlySyncDraw() { return _onlySyncDraw; }
    public void setOnlySyncDraw(boolean value) { _onlySyncDraw = value; }
 

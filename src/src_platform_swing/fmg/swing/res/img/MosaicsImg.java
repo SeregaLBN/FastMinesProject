@@ -250,7 +250,7 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
     *    Т.к. WriteableBitmap есть DependencyObject, то его владелец может сам отслеживать отрисовку...
     *  }
     */
-   public void drawBody(Graphics g) {
+   protected void drawBody(Graphics g) {
       Graphics2D g2 = (Graphics2D) g;
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 

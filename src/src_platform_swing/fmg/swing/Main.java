@@ -868,6 +868,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       boolean isZoomAlwaysMax;
       final Point startLocation = new Point();
       boolean defaultData;
+      boolean doNotAskStartup;
       { // aplly data from SerializeProjModel
          final SerializeProjData spm = new SerializeProjData();
          defaultData = !spm.Load();
@@ -896,10 +897,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
          setActiveUserId(spm.getActiveUserId());
          getPlayerManageDlg().setDoNotAskStartupChecked(spm.isDoNotAskStartup());
-         if (!spm.isDoNotAskStartup())
-            SwingUtilities.invokeLater(() ->
-               getHandlers().getPlayerManageAction().actionPerformed(new ActionEvent(Main.this, 0, "Main::initialize"))
-            );
+         doNotAskStartup = spm.isDoNotAskStartup();
 
          getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).setSelected(spm.isZoomAlwaysMax());
          isZoomAlwaysMax = spm.isZoomAlwaysMax();
@@ -998,9 +996,16 @@ public class Main extends JFrame implements PropertyChangeListener {
          setLocation(startLocation);
 //      System.out.println("Main::initialize: after setLocation");
 
+      _initialized = true;
       if (isZoomAlwaysMax)
-         SwingUtilities.invokeLater(() -> AreaAlwaysMax(new ActionEvent(Main.this, 0, null)) );
+         invokeLater(() -> AreaAlwaysMax(new ActionEvent(Main.this, 0, null)));
+      if (!doNotAskStartup)
+         invokeLater(() ->
+            getHandlers().getPlayerManageAction().actionPerformed(new ActionEvent(Main.this, 0, "Main::initialize"))
+         );
    }
+
+   boolean _initialized;
 
    /** Выставить верный bullet для меню мозаики */
    void RecheckSelectedMenuMosaicType() {
@@ -1437,7 +1442,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    void RecheckLocation() {
       if (!_shedulePack) {
          _shedulePack = true;
-         SwingUtilities.invokeLater(() -> {
+         invokeLater(() -> {
             _shedulePack = false;
 
             {
@@ -1452,7 +1457,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
 //            if (!_sheduleCheckArea) {
 //               _sheduleCheckArea = true;
-//               SwingUtilities.invokeLater(() -> {
+//               invokeLater(() -> {
 //                  _sheduleCheckArea = false;
 //                  if (!this.isVisible())
 //                     return;
@@ -1616,23 +1621,21 @@ public class Main extends JFrame implements PropertyChangeListener {
             // вызов this.dispose(); приводит к потере фокуса, т.е, когда идёт игра, - к срабатыванию паузы
             // т.е. нужно позже снять паузу...
             final boolean isNotPaused = (getMosaic().getGameStatus() == EGameStatus.eGSPlay) && !isPaused();
-//            if (this.isDisplayable())
+            //if (this.isDisplayable())
                this.dispose();
-            SwingUtilities.invokeLater(() ->
-               {
+            invokeLater(() -> {
                   Main.this.setUndecorated(!mapShow.get(EShowElement.eCaption).booleanValue());
                   Main.this.setBounds(rc);
                   Main.this.getMenu()     .setVisible(mapShow.get(EShowElement.eMenu).booleanValue());
                   Main.this.getToolbar()  .setVisible(mapShow.get(EShowElement.eToolbar).booleanValue());
                   Main.this.getStatusBar().setVisible(mapShow.get(EShowElement.eStatusbar).booleanValue());
-
+   
                   if (isNotPaused && isUsePause())
                      Main.this.ChangePause();
-
+   
                   Main.this.setVisible(true);
                   Main.this.pack();
-               }
-            );
+            });
          }
          break;
       case eMenu:
@@ -2412,6 +2415,13 @@ public class Main extends JFrame implements PropertyChangeListener {
       return new Dimension(
          screenSize.width - (screenPadding.left + screenPadding.right),
          screenSize.height - (screenPadding.top + screenPadding.bottom));
+   }
+
+   void invokeLater(Runnable doRun) {
+      if (!_initialized)
+         doRun.run();
+      else
+         SwingUtilities.invokeLater(doRun);
    }
 
 }
