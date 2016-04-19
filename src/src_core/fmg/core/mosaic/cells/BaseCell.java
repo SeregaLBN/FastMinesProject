@@ -22,6 +22,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 package fmg.core.mosaic.cells;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -143,8 +145,8 @@ public abstract class BaseCell {
    }
 
    /** соседние ячейки - с которыми граничит this */
-   private BaseCell[] neighbors;
-   public BaseCell[] getNeighbors() { return neighbors; }
+   private List<BaseCell> neighbors;
+   public List<BaseCell> getNeighbors() { return neighbors; }
 
    /** массив координат точек из которых состоит фигура */
    protected RegionDouble region;
@@ -231,7 +233,7 @@ public abstract class BaseCell {
     * <br>... потомки должны определить координаты соседей
     * @return neighborCoord
     */
-   protected abstract Coord[] GetCoordsNeighbor();
+   protected abstract List<Coord> getCoordsNeighbor();
 
    /** матрица ячеек поля мозаики */
    public static interface IMatrixCells {
@@ -247,25 +249,18 @@ public abstract class BaseCell {
     **/
    public final void IdentifyNeighbors(IMatrixCells matrix) {
       // получаю координаты соседних ячеек
-      Coord[] neighborCoord = GetCoordsNeighbor();
-      if (neighborCoord.length != attr.getNeighborNumber(true))
+      List<Coord> neighborCoord = getCoordsNeighbor();
+      if (neighborCoord.size() != attr.getNeighborNumber(true))
          throw new RuntimeException("neighborCoord.length != GetNeighborNumber()");
 
-      // проверяю что они не вылезли за размеры
-      for (int i=0; i<neighborCoord.length; i++)
-         if (neighborCoord[i] != null)
-            if ((neighborCoord[i].x >= matrix.getSizeField().m) ||
-               (neighborCoord[i].y >= matrix.getSizeField().n) ||
-               (neighborCoord[i].x < 0) ||
-               (neighborCoord[i].y < 0))
-            {
-               neighborCoord[i] = null;
-            }
+      int m = matrix.getSizeField().m;
+      int n = matrix.getSizeField().n;
       // по координатам получаю множество соседних обьектов-ячеек
-      neighbors = new BaseCell[attr.getNeighborNumber(true)];
-      for (int i=0; i<neighborCoord.length; i++)
-         if (neighborCoord[i] != null)
-            neighbors[i] = matrix.getCell(neighborCoord[i]);
+      neighbors = new ArrayList<>(attr.getNeighborNumber(true));
+      for (Coord c : neighborCoord)
+         // проверяю что они не вылезли за размеры
+         if ((c.x < m) || (c.y < n) || (c.x >= 0) || (c.y >= 0))
+             neighbors.add( matrix.getCell(c) );
    }
 
    public Coord getCoord() { return coord; }

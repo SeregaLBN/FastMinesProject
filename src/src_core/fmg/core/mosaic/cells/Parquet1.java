@@ -23,6 +23,9 @@
 
 package fmg.core.mosaic.cells;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.RectDouble;
@@ -83,17 +86,17 @@ public class Parquet1 extends BaseCell {
    }
 
    @Override
-   protected Coord[] GetCoordsNeighbor() {
-      Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
+   protected List<Coord> getCoordsNeighbor() {
+      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
 
       // определяю координаты соседей
       boolean bdir = (direction != 0);
-      neighborCoord[0] = new Coord(bdir ? coord.x  : coord.x-1, coord.y-1);
-      neighborCoord[1] = new Coord(bdir ? coord.x-1: coord.x  , bdir ? coord.y  : coord.y-1);
-      neighborCoord[2] = new Coord(       coord.x+1           , bdir ? coord.y  : coord.y-1);
-      neighborCoord[3] = new Coord(       coord.x-1           , bdir ? coord.y+1: coord.y);
-      neighborCoord[4] = new Coord(bdir ? coord.x  : coord.x+1, bdir ? coord.y+1: coord.y);
-      neighborCoord[5] = new Coord(bdir ? coord.x+1: coord.x  , coord.y+1);
+      neighborCoord.add(new Coord(bdir ? coord.x  : coord.x-1, coord.y-1));
+      neighborCoord.add(new Coord(bdir ? coord.x-1: coord.x  , bdir ? coord.y  : coord.y-1));
+      neighborCoord.add(new Coord(       coord.x+1           , bdir ? coord.y  : coord.y-1));
+      neighborCoord.add(new Coord(       coord.x-1           , bdir ? coord.y+1: coord.y));
+      neighborCoord.add(new Coord(bdir ? coord.x  : coord.x+1, bdir ? coord.y+1: coord.y));
+      neighborCoord.add(new Coord(bdir ? coord.x+1: coord.x  , coord.y+1));
 
       return neighborCoord;
    }

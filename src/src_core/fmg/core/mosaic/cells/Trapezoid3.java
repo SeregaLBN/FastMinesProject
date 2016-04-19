@@ -132,8 +132,8 @@ public class Trapezoid3 extends BaseCell {
    }
 
    @Override
-   protected Coord[] GetCoordsNeighbor() {
-      Coord[] neighborCoord = new Coord[getAttr().getNeighborNumber(true)];
+   protected List<Coord> getCoordsNeighbor() {
+      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
 
       // определяю координаты соседей
        switch (direction) {
