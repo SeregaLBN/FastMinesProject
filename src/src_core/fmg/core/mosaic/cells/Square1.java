@@ -23,6 +23,8 @@
 
 package fmg.core.mosaic.cells;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import fmg.common.Color;
@@ -84,14 +86,14 @@ public class Square1 extends BaseCell {
       List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
 
       // определяю координаты соседей
-       neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
-      neighborCoord[1] = new Coord(coord.x  , coord.y-1);
-      neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
-      neighborCoord[3] = new Coord(coord.x-1, coord.y);
-      neighborCoord[4] = new Coord(coord.x+1, coord.y);
-      neighborCoord[5] = new Coord(coord.x-1, coord.y+1);
-      neighborCoord[6] = new Coord(coord.x  , coord.y+1);
-      neighborCoord[7] = new Coord(coord.x+1, coord.y+1);
+      neighborCoord.add(new Coord(coord.x-1, coord.y-1));
+      neighborCoord.add(new Coord(coord.x  , coord.y-1));
+      neighborCoord.add(new Coord(coord.x+1, coord.y-1));
+      neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+      neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+      neighborCoord.add(new Coord(coord.x-1, coord.y+1));
+      neighborCoord.add(new Coord(coord.x  , coord.y+1));
+      neighborCoord.add(new Coord(coord.x+1, coord.y+1));
 
       return neighborCoord;
    }

@@ -23,6 +23,9 @@
 
 package fmg.core.mosaic.cells;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
@@ -91,72 +94,72 @@ public class Triangle3 extends BaseCell {
       List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
 
       // определяю координаты соседей
-       switch (direction) {
-       case 0:
-          neighborCoord[ 0] = new Coord(coord.x-1, coord.y-2);
-          neighborCoord[ 1] = new Coord(coord.x+1, coord.y-2);
-          neighborCoord[ 2] = new Coord(coord.x-1, coord.y-1);
-          neighborCoord[ 3] = new Coord(coord.x  , coord.y-1);
-          neighborCoord[ 4] = new Coord(coord.x+1, coord.y-1);
-          neighborCoord[ 5] = new Coord(coord.x+2, coord.y-1);
-          neighborCoord[ 6] = new Coord(coord.x+3, coord.y-1);
-          neighborCoord[ 7] = new Coord(coord.x-2, coord.y  );
-          neighborCoord[ 8] = new Coord(coord.x-1, coord.y  );
-          neighborCoord[ 9] = new Coord(coord.x+1, coord.y  );
-          neighborCoord[10] = new Coord(coord.x+2, coord.y  );
-          neighborCoord[11] = new Coord(coord.x  , coord.y+1);
-          neighborCoord[12] = new Coord(coord.x+1, coord.y+1);
-          neighborCoord[13] = new Coord(coord.x+2, coord.y+1);
-          break;
-       case 1:
-          neighborCoord[ 0] = new Coord(coord.x  , coord.y-2);
-          neighborCoord[ 1] = new Coord(coord.x  , coord.y-1);
-          neighborCoord[ 2] = new Coord(coord.x+1, coord.y-1);
-          neighborCoord[ 3] = new Coord(coord.x+2, coord.y-1);
-          neighborCoord[ 4] = new Coord(coord.x-1, coord.y  );
-          neighborCoord[ 5] = new Coord(coord.x+1, coord.y  );
-          neighborCoord[ 6] = new Coord(coord.x-1, coord.y+1);
-          neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
-          neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
-          neighborCoord[ 9] = new Coord(coord.x+2, coord.y+1);
-          neighborCoord[10] = new Coord(coord.x-1, coord.y+2);
-          neighborCoord[11] = new Coord(coord.x  , coord.y+2);
-          neighborCoord[12] = new Coord(coord.x+1, coord.y+2);
-          neighborCoord[13] = new Coord(coord.x+1, coord.y+3);
-          break;
-       case 2:
-          neighborCoord[ 0] = new Coord(coord.x-1, coord.y-3);
-          neighborCoord[ 1] = new Coord(coord.x-1, coord.y-2);
-          neighborCoord[ 2] = new Coord(coord.x  , coord.y-2);
-          neighborCoord[ 3] = new Coord(coord.x+1, coord.y-2);
-          neighborCoord[ 4] = new Coord(coord.x-2, coord.y-1);
-          neighborCoord[ 5] = new Coord(coord.x-1, coord.y-1);
-          neighborCoord[ 6] = new Coord(coord.x  , coord.y-1);
-          neighborCoord[ 7] = new Coord(coord.x+1, coord.y-1);
-          neighborCoord[ 8] = new Coord(coord.x-1, coord.y  );
-          neighborCoord[ 9] = new Coord(coord.x+1, coord.y  );
-          neighborCoord[10] = new Coord(coord.x-2, coord.y+1);
-          neighborCoord[11] = new Coord(coord.x-1, coord.y+1);
-          neighborCoord[12] = new Coord(coord.x  , coord.y+1);
-          neighborCoord[13] = new Coord(coord.x  , coord.y+2);
-          break;
-       case 3:
-          neighborCoord[ 0] = new Coord(coord.x-2, coord.y-1);
-          neighborCoord[ 1] = new Coord(coord.x-1, coord.y-1);
-          neighborCoord[ 2] = new Coord(coord.x  , coord.y-1);
-          neighborCoord[ 3] = new Coord(coord.x-2, coord.y  );
-          neighborCoord[ 4] = new Coord(coord.x-1, coord.y  );
-          neighborCoord[ 5] = new Coord(coord.x+1, coord.y  );
-          neighborCoord[ 6] = new Coord(coord.x+2, coord.y  );
-          neighborCoord[ 7] = new Coord(coord.x-3, coord.y+1);
-          neighborCoord[ 8] = new Coord(coord.x-2, coord.y+1);
-          neighborCoord[ 9] = new Coord(coord.x-1, coord.y+1);
-          neighborCoord[10] = new Coord(coord.x  , coord.y+1);
-          neighborCoord[11] = new Coord(coord.x+1, coord.y+1);
-          neighborCoord[12] = new Coord(coord.x-1, coord.y+2);
-          neighborCoord[13] = new Coord(coord.x+1, coord.y+2);
-          break;
-       }
+      switch (direction) {
+      case 0:
+         neighborCoord.add(new Coord(coord.x-1, coord.y-2));
+         neighborCoord.add(new Coord(coord.x+1, coord.y-2));
+         neighborCoord.add(new Coord(coord.x-1, coord.y-1));
+         neighborCoord.add(new Coord(coord.x  , coord.y-1));
+         neighborCoord.add(new Coord(coord.x+1, coord.y-1));
+         neighborCoord.add(new Coord(coord.x+2, coord.y-1));
+         neighborCoord.add(new Coord(coord.x+3, coord.y-1));
+         neighborCoord.add(new Coord(coord.x-2, coord.y  ));
+         neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+         neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+         neighborCoord.add(new Coord(coord.x+2, coord.y  ));
+         neighborCoord.add(new Coord(coord.x  , coord.y+1));
+         neighborCoord.add(new Coord(coord.x+1, coord.y+1));
+         neighborCoord.add(new Coord(coord.x+2, coord.y+1));
+         break;
+      case 1:
+         neighborCoord.add(new Coord(coord.x  , coord.y-2));
+         neighborCoord.add(new Coord(coord.x  , coord.y-1));
+         neighborCoord.add(new Coord(coord.x+1, coord.y-1));
+         neighborCoord.add(new Coord(coord.x+2, coord.y-1));
+         neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+         neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+         neighborCoord.add(new Coord(coord.x-1, coord.y+1));
+         neighborCoord.add(new Coord(coord.x  , coord.y+1));
+         neighborCoord.add(new Coord(coord.x+1, coord.y+1));
+         neighborCoord.add(new Coord(coord.x+2, coord.y+1));
+         neighborCoord.add(new Coord(coord.x-1, coord.y+2));
+         neighborCoord.add(new Coord(coord.x  , coord.y+2));
+         neighborCoord.add(new Coord(coord.x+1, coord.y+2));
+         neighborCoord.add(new Coord(coord.x+1, coord.y+3));
+         break;
+      case 2:
+         neighborCoord.add(new Coord(coord.x-1, coord.y-3));
+         neighborCoord.add(new Coord(coord.x-1, coord.y-2));
+         neighborCoord.add(new Coord(coord.x  , coord.y-2));
+         neighborCoord.add(new Coord(coord.x+1, coord.y-2));
+         neighborCoord.add(new Coord(coord.x-2, coord.y-1));
+         neighborCoord.add(new Coord(coord.x-1, coord.y-1));
+         neighborCoord.add(new Coord(coord.x  , coord.y-1));
+         neighborCoord.add(new Coord(coord.x+1, coord.y-1));
+         neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+         neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+         neighborCoord.add(new Coord(coord.x-2, coord.y+1));
+         neighborCoord.add(new Coord(coord.x-1, coord.y+1));
+         neighborCoord.add(new Coord(coord.x  , coord.y+1));
+         neighborCoord.add(new Coord(coord.x  , coord.y+2));
+         break;
+      case 3:
+         neighborCoord.add(new Coord(coord.x-2, coord.y-1));
+         neighborCoord.add(new Coord(coord.x-1, coord.y-1));
+         neighborCoord.add(new Coord(coord.x  , coord.y-1));
+         neighborCoord.add(new Coord(coord.x-2, coord.y  ));
+         neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+         neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+         neighborCoord.add(new Coord(coord.x+2, coord.y  ));
+         neighborCoord.add(new Coord(coord.x-3, coord.y+1));
+         neighborCoord.add(new Coord(coord.x-2, coord.y+1));
+         neighborCoord.add(new Coord(coord.x-1, coord.y+1));
+         neighborCoord.add(new Coord(coord.x  , coord.y+1));
+         neighborCoord.add(new Coord(coord.x+1, coord.y+1));
+         neighborCoord.add(new Coord(coord.x-1, coord.y+2));
+         neighborCoord.add(new Coord(coord.x+1, coord.y+2));
+         break;
+      }
 
       return neighborCoord;
    }

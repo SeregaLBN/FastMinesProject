@@ -23,6 +23,9 @@
 
 package fmg.core.mosaic.cells;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
@@ -83,12 +86,12 @@ public class Square2 extends BaseCell {
       List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
 
       // определяю координаты соседей
-       neighborCoord[0] = new Coord(coord.x- direction   , coord.y-1);
-      neighborCoord[1] = new Coord(coord.x+(direction^1), coord.y-1);
-      neighborCoord[2] = new Coord(coord.x-1            , coord.y);
-      neighborCoord[3] = new Coord(coord.x+1            , coord.y);
-      neighborCoord[4] = new Coord(coord.x- direction   , coord.y+1);
-      neighborCoord[5] = new Coord(coord.x+(direction^1), coord.y+1);
+      neighborCoord.add(new Coord(coord.x- direction   , coord.y-1));
+      neighborCoord.add(new Coord(coord.x+(direction^1), coord.y-1));
+      neighborCoord.add(new Coord(coord.x-1            , coord.y  ));
+      neighborCoord.add(new Coord(coord.x+1            , coord.y  ));
+      neighborCoord.add(new Coord(coord.x- direction   , coord.y+1));
+      neighborCoord.add(new Coord(coord.x+(direction^1), coord.y+1));
 
       return neighborCoord;
    }
