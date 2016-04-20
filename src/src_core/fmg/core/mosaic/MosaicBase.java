@@ -102,9 +102,6 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
                BaseCell cell = MosaicHelper.createCellInstance(attr, mosaicType, new Coord(i, j));
                _matrix.add(i*_size.n + j, cell);
             }
-
-         for (BaseCell cell: _matrix)
-            cell.IdentifyNeighbors(this);
       }
       return _matrix;
    }
@@ -183,7 +180,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
             OnError("Проблемы с установкой мин... :(");
       }
       // set other CellOpen and set all Caption
-      getMatrix().forEach(cell -> cell.getState().CalcOpenState());
+      getMatrix().forEach(cell -> cell.getState().calcOpenState(this));
    }
    /** arrange Mines - set random mines */
    public void setMines_random(BaseCell firstClickCell) {
@@ -192,7 +189,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
 
       List<BaseCell> matrixClone = new ArrayList<BaseCell>(_matrix);
       matrixClone.remove(firstClickCell); // исключаю на которой кликал юзер
-      matrixClone.removeAll(Arrays.asList(firstClickCell.getNeighbors())); // и их соседей
+      matrixClone.removeAll(Arrays.asList(firstClickCell.getNeighbors(this))); // и их соседей
       int count = 0;
       Random rand = new Random();
       do {
@@ -212,7 +209,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       } while (count < _minesCount);
 
       // set other CellOpen and set all Caption
-      getMatrix().forEach(cell -> cell.getState().CalcOpenState());
+      getMatrix().forEach(cell -> cell.getState().calcOpenState(this));
    }
 
    public int getCountOpen() {
@@ -408,7 +405,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
          result.modified.add(cellLeftDown);
          return result;
       } else {
-         ClickCellResult resultCell = cellLeftDown.LButtonDown();
+         ClickCellResult resultCell = cellLeftDown.LButtonDown(this);
          result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
          result.modified.forEach(cell -> Repaint(cell));
          return result;
@@ -431,7 +428,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
          {
             GameBegin(cellDown);
          }
-         ClickCellResult resultCell = cellDown.LButtonUp(cellDown == cellLeftUp);
+         ClickCellResult resultCell = cellDown.LButtonUp(cellDown == cellLeftUp, this);
          result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
          result.modified.forEach(c -> Repaint(c));
          int countOpen = result.getCountOpen();
