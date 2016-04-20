@@ -5,9 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -83,6 +81,7 @@ public class SelectMosaicDlg extends JDialog {
       });
 
       addWindowListener(new WindowAdapter() {
+         @Override
          public void windowClosing(WindowEvent we) { SelectMosaicDlg.this.OnClose(); }
       });
 
@@ -97,7 +96,7 @@ public class SelectMosaicDlg extends JDialog {
       String txt = (initMosaicGroup.ordinal()+3) + "0";
       spin.setValue(Integer.parseInt(txt));
 
-//      spin.getEditor().requestFocusInWindow(); 
+//      spin.getEditor().requestFocusInWindow();
 //      spin.requestFocusInWindow();
 
 //      SwingUtilities.invokeLater(new Runnable() {
@@ -123,8 +122,8 @@ public class SelectMosaicDlg extends JDialog {
    private void CreateComponents() {
       // 1. Создаю панель, которая будет содержать все остальные элементы и панели расположения
       Box boxCenter = Box.createVerticalBox();
-      // Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов. 
-      // использую пустую рамку 
+      // Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов.
+      // использую пустую рамку
       boxCenter.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
 //      boxCenter.setBorder(
 //            new javax.swing.border.CompoundBorder(
@@ -180,10 +179,7 @@ public class SelectMosaicDlg extends JDialog {
       cmbxMosaicTypes = new JComboBox<Object>(EMosaic.getDescriptionValues().toArray());
 //      cmbxMosaicTypes.setPrototypeDisplayValue("aaaaaaaaaaaa");
       // слушатель смены выбранного элемента
-      cmbxMosaicTypes.addItemListener(new ItemListener() {
-         @Override
-         public void itemStateChanged(ItemEvent e) { OnChangeMosaicType(e); }
-      });
+      cmbxMosaicTypes.addItemListener(e -> OnChangeMosaicType(e));
 
       btnOk = new JButton();
       setBtnOkIcons(EMosaic.eMosaicTriangle1);
@@ -191,13 +187,10 @@ public class SelectMosaicDlg extends JDialog {
       Insets margin = btnOk.getMargin();
       margin.left = margin.right = 2; margin.top = margin.bottom = 2;
       btnOk.setMargin(margin);
-      btnOk.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) { OnOk(); }
-      });
+      btnOk.addActionListener(e -> OnOk());
 
       // variant 1
-      boxCenter.add(lbl1); 
+      boxCenter.add(lbl1);
       lbl1.setAlignmentX(Component.CENTER_ALIGNMENT);
       boxCenter.add(spin);
       boxCenter.add(Box.createVerticalStrut(12));
@@ -248,12 +241,9 @@ public class SelectMosaicDlg extends JDialog {
 //         System.out.println(item);
          final int groupNumber = item.getFastCode();
          if (groupNumber != (Integer)spin.getValue()) {
-            SwingUtilities.invokeLater(new Runnable() {
-               @Override
-               public void run() {
-                  setBtnOkIcons(item);
-                  spin.setValue(groupNumber);
-               }
+            SwingUtilities.invokeLater(() -> {
+               setBtnOkIcons(item);
+               spin.setValue(groupNumber);
             });
          }
       }
@@ -285,8 +275,8 @@ public class SelectMosaicDlg extends JDialog {
          }
    }
    private void setBtnOkIcons(EMosaic mosaicType) {
-      btnOk.setIcon(getResources().getImgMosaic(mosaicType, false, 51,41));
-      btnOk.setRolloverIcon(getResources().getImgMosaic(mosaicType, false, 50,40));
+      btnOk.setIcon(getResources().getImgMosaic(mosaicType, false, 51/*,41*/));
+      btnOk.setRolloverIcon(getResources().getImgMosaic(mosaicType, false, 50/*,40*/));
    }
    private void OnOk() {
 //      System.out.println("OnOk");
@@ -313,7 +303,7 @@ public class SelectMosaicDlg extends JDialog {
 
       // я же хочу то что редактируется руцями в editor'е (до нажатия Enter'а на editbox'e)
       JTextField txtField = ((JSpinner.DefaultEditor)spin.getEditor()).getTextField();
-      return txtField.getText(); 
+      return txtField.getText();
    }
 
    // тестовый метод для проверки диалогового окна

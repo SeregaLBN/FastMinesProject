@@ -271,8 +271,10 @@ public class Main extends JFrame implements PropertyChangeListener {
 
                for (EMosaicGroup val: EMosaicGroup.values()) {
                   JMenu menuItem = new JMenu(val.getDescription());// + (experimentalMenuMnemonic ?  "                      " : ""));
-                  for (EMosaic mosaic: val.getBind())
+                  for (EMosaic mosaic: val.getBind()) {
                      menuItem.add(getMenuItemMosaic(mosaic));
+                     //menuItem.add(Box.createRigidArea(new Dimension(100,25)));
+                  }
 //                  menuItem.setMnemonic(Main.KeyCombo.getMnemonic_MenuMosaicGroup(val));
                   menuItem.setIcon(Main.this.getResources().getImgMosaicGroup(val, icoMosaicWidht, icoMosaicHeight));
 
@@ -299,7 +301,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   menuItem.setMnemonic(Main.KeyCombo.getMnemonic_Mosaic(val));
                   menuItem.setAccelerator(Main.KeyCombo.getKeyStroke_Mosaic(val));
                   menuItem.addActionListener(Main.this.getHandlers().getMosaicAction(val));
-                  menuItem.setIcon(Main.this.getResources().getImgMosaic(val, true, icoMosaicWidht, icoMosaicHeight));
+                  menuItem.setIcon(Main.this.getResources().getImgMosaic(val, true, 32));
 
                   if (experimentalMenuMnemonic) {
                      menuItem.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -1629,10 +1631,10 @@ public class Main extends JFrame implements PropertyChangeListener {
                   Main.this.getMenu()     .setVisible(mapShow.get(EShowElement.eMenu).booleanValue());
                   Main.this.getToolbar()  .setVisible(mapShow.get(EShowElement.eToolbar).booleanValue());
                   Main.this.getStatusBar().setVisible(mapShow.get(EShowElement.eStatusbar).booleanValue());
-   
+
                   if (isNotPaused && isUsePause())
                      Main.this.ChangePause();
-   
+
                   Main.this.setVisible(true);
                   Main.this.pack();
             });

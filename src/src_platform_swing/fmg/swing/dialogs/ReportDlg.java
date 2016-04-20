@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -31,8 +30,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
@@ -64,12 +61,12 @@ abstract class ReportDlg extends JDialog {
 
    public ReportDlg(Main parent, boolean modal) {
       super(parent, "report window...", modal);
-      this.parent = (Main) parent;
+      this.parent = parent;
       initialize(parent);
    }
    public ReportDlg(Main parent, boolean modal, Resources resources) {
       super(parent, "report window...", modal);
-      this.parent = (Main) parent;
+      this.parent = parent;
       this.resources = resources;
       initialize(parent);
    }
@@ -84,18 +81,14 @@ abstract class ReportDlg extends JDialog {
       });
 
       addWindowListener(new WindowAdapter() {
+         @Override
          public void windowClosing(WindowEvent we) { OnClose(); }
       });
 
       this.setResizable(!false);
       CreateComponents();
 
-      rotateTimer = new Timer(10, new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            ReportDlg.this.OnNextRotate();
-         }
-      });
+      rotateTimer = new Timer(10, e -> ReportDlg.this.OnNextRotate());
       rotateTimer.start();
 
 //      Dimension preferredSize = this.getPreferredSize();
@@ -123,25 +116,20 @@ abstract class ReportDlg extends JDialog {
       // 1. Создаю панель, которая будет содержать все остальные элементы и панели расположения
       tabPanel = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
       {
-         // Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов. 
-         // использую пустую рамку 
+         // Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов.
+         // использую пустую рамку
          tabPanel.setBorder(BorderFactory.createEmptyBorder(12,12,2,12));
 
          for (EMosaic eMosaic: EMosaic.values()) {
             JScrollPane scroll = new JScrollPane();
-            tabPanel.addTab(null, getResources().getImgMosaic(eMosaic, false, imgSize,imgSize), scroll, eMosaic.getDescription(false));
+            tabPanel.addTab(null, getResources().getImgMosaic(eMosaic, false, imgSize), scroll, eMosaic.getDescription(false));
             scroll.setPreferredSize(getPreferredScrollPaneSize());
             scrollPanes.put(eMosaic, scroll);
          }
 
          // таблички создаю динамически - когда юзер выберет конкретную вкладку. См. getSelectedTable()
 
-         tabPanel.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-               ReportDlg.this.OnChangeTab(getSelectedMosaicType());
-            }
-         });
+         tabPanel.addChangeListener(e -> ReportDlg.this.OnChangeTab(getSelectedMosaicType()));
       }
 
       // 2. Панель кнопок снизу
@@ -155,12 +143,7 @@ abstract class ReportDlg extends JDialog {
             JToggleButton btn = btns[eSkill.ordinal()] = new JToggleButton(eSkill.getDescription());
             panelBottom.add(btn);
             radioGroup.add(btn);
-            btn.addActionListener(new ActionListener() {
-               @Override
-               public void actionPerformed(ActionEvent e) {
-                  ReportDlg.this.OnClickBtnSkill(eSkill);
-               }
-            });
+            btn.addActionListener(e -> ReportDlg.this.OnClickBtnSkill(eSkill));
          }
       }
 
@@ -197,7 +180,7 @@ abstract class ReportDlg extends JDialog {
     */
    public void ShowData(ESkillLevel eSkill, EMosaic eMosaic, int pos) {
       if (eSkill == ESkillLevel.eCustom)
-         eSkill = ESkillLevel.eAmateur; 
+         eSkill = ESkillLevel.eAmateur;
 
       radioGroup.setSelected(btns[eSkill.ordinal()].getModel(), true);
       tabPanel.setSelectedIndex(eMosaic.ordinal());
@@ -257,7 +240,7 @@ abstract class ReportDlg extends JDialog {
 
       EMosaic mosaicType = getSelectedMosaicType();
       int i = mosaicType.ordinal();
-      Icon icon = getResources().getImgMosaic(mosaicType, false);
+      Icon icon = getResources().getImgMosaic(mosaicType, false,imgSize);
       // TODO кэшировать картинки??? - жрёт память
       icon = ImgUtils.toIco(ImgUtils.rotate(ImgUtils.toImg(icon), roteteAngle[i]), imgSize,imgSize);
 
@@ -299,7 +282,7 @@ abstract class ReportDlg extends JDialog {
 //      // выравниваю текст заголовков таблицы по центру
 //      // TODO Хоть текст и выравнивается, но сами ячейки заголовка таблицы уже выглядят хуже чем
 //      //      в оригинальном рендере (особо заметно под Маком).
-//      //      Т.е. DefaultTableCellRenderer выглядит паршиво, а как достать орининальный рендер заголовка - хз 
+//      //      Т.е. DefaultTableCellRenderer выглядит паршиво, а как достать орининальный рендер заголовка - хз
 //      //System.out.println(table.getColumnModel().getColumn(0).getHeaderRenderer()); // print null... hmmm
 //      javax.swing.table.TableColumnModel tableColumnModel = table.getColumnModel();
 //      for (int i=0; i<tableColumnModel.getColumnCount(); i++)

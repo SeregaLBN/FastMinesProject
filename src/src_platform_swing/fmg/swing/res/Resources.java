@@ -63,7 +63,6 @@ public final class Resources {
    private Map<EBtnNewGameState, Icon> imgsBtnNew;
    private Map<EBtnPauseState  , Icon> imgsBtnPause;
    private Map<EMosaicGroup    , Icon> imgsMosaicGroup;
-   private Map<EMosaic         , Icon> imgsMosaicSmall, imgsMosaicWide;
    private Map<Locale          , Icon> imgsLang;
 
    private Icon getIcon(String path) {
@@ -159,33 +158,10 @@ public final class Resources {
       return ImgUtils.zoom(original, newWidth, newHeight);
    }
 
-   public Icon getImgMosaic(EMosaic key, boolean smallIco) {
-      if (smallIco) {
-         if (imgsMosaicSmall != null)
-            return imgsMosaicSmall.get(key);
-         imgsMosaicSmall = new HashMap<EMosaic, Icon>(EMosaic.values().length);
-      } else {
-         if (imgsMosaicWide != null)
-            return imgsMosaicWide.get(key);
-         imgsMosaicWide = new HashMap<EMosaic, Icon>(EMosaic.values().length);
-      }
-      Map<EMosaic, Icon> imgsMosaic = smallIco ? imgsMosaicSmall : imgsMosaicWide;
-
-      for (EMosaic mosaicType: EMosaic.values()) {
-         Icon imgMosaic = null; // getIcon("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.getDescription(true)+".png"); // сначала из ресурсов
-         if (imgMosaic == null) { // иначе - своя картинка из кода
-            MosaicsImg.Image img = new MosaicsImg.Image(mosaicType, mosaicType.sizeIcoField(smallIco));
-            //img.setBackgroundColor(java.awt.Color.ORANGE); // test
-            imgMosaic = ImgUtils.toIco(img.getImage());
-         }
-         imgsMosaic.put(mosaicType, imgMosaic);
-      }
-      return imgsMosaic.get(key);
-   }
-   public Icon getImgMosaic(EMosaic key, boolean smallIco, int newWidth, int newHeight) {
-      Icon original = getImgMosaic(key, smallIco);
-      if (original == null) return null;
-      return ImgUtils.zoom(original, newWidth, newHeight);
+   public Icon getImgMosaic(EMosaic mosaicType, boolean smallIco, int widthAndHeight) {
+      MosaicsImg.Icon img = new MosaicsImg.Icon(mosaicType, mosaicType.sizeIcoField(smallIco), widthAndHeight);
+      //img.setBackgroundColor(java.awt.Color.ORANGE); // test
+      return img.getImage();
    }
 
    public Map<Locale, Icon> getImgsLang() {
