@@ -256,7 +256,7 @@ public abstract class BaseCell {
       List<BaseCell> neighbors = new ArrayList<>(attr.getNeighborNumber(true));
       for (Coord c : neighborCoord)
          // проверяю что они не вылезли за размеры
-         if ((c.x < m) || (c.y < n) || (c.x >= 0) || (c.y >= 0))
+         if ((c.x >= 0) && (c.y >= 0) && (c.x < m) && (c.y < n))
              neighbors.add( matrix.getCell(c) );
       return neighbors;
    }

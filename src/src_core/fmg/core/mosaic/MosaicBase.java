@@ -25,7 +25,6 @@ package fmg.core.mosaic;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -189,7 +188,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
 
       List<BaseCell> matrixClone = new ArrayList<BaseCell>(_matrix);
       matrixClone.remove(firstClickCell); // исключаю на которой кликал юзер
-      matrixClone.removeAll(Arrays.asList(firstClickCell.getNeighbors(this))); // и их соседей
+      matrixClone.removeAll(firstClickCell.getNeighbors(this)); // и их соседей
       int count = 0;
       Random rand = new Random();
       do {
