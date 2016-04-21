@@ -31,8 +31,9 @@ import fmg.core.types.EMosaicGroup;
 import fmg.swing.Main;
 import fmg.swing.model.SpinNumberDocListener;
 import fmg.swing.model.SpinnerDiapasonModel;
-import fmg.swing.res.Resources;
+import fmg.swing.res.img.MosaicsImg;
 import fmg.swing.utils.GuiTools;
+import fmg.swing.utils.ImgUtils;
 
 public class SelectMosaicDlg extends JDialog {
    private static final long serialVersionUID = 1L;
@@ -42,24 +43,10 @@ public class SelectMosaicDlg extends JDialog {
    private JButton btnOk;
    private Main parent;
 
-   private Resources resources;
-   private Resources getResources() {
-      if (resources == null)
-         resources = new Resources();
-      return resources;
-   }
-
    public SelectMosaicDlg(JFrame parent, boolean modal) {
       super(parent, "Select mosaic", modal);
       if (parent instanceof Main)
          this.parent = (Main) parent;
-      initialize(parent);
-   }
-   public SelectMosaicDlg(JFrame parent, boolean modal, Resources resources) {
-      super(parent, "Select mosaic", modal);
-      if (parent instanceof Main)
-         this.parent = (Main) parent;
-      this.resources = resources;
       initialize(parent);
    }
 
@@ -275,8 +262,10 @@ public class SelectMosaicDlg extends JDialog {
          }
    }
    private void setBtnOkIcons(EMosaic mosaicType) {
-      btnOk.setIcon(getResources().getImgMosaic(mosaicType, false, 51/*,41*/));
-      btnOk.setRolloverIcon(getResources().getImgMosaic(mosaicType, false, 50/*,40*/));
+      MosaicsImg.Image img = new MosaicsImg.Image(mosaicType, mosaicType.sizeIcoField(false), 51/*,41*/);
+      btnOk.setIcon(ImgUtils.toIco(img.getImage()));
+      img = new MosaicsImg.Image(mosaicType, mosaicType.sizeIcoField(false), 50/*,40*/);
+      btnOk.setRolloverIcon(ImgUtils.toIco(img.getImage()));
    }
    private void OnOk() {
 //      System.out.println("OnOk");

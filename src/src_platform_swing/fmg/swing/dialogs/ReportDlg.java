@@ -38,6 +38,7 @@ import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Main;
 import fmg.swing.model.view.ReportTableModel;
 import fmg.swing.res.Resources;
+import fmg.swing.res.img.MosaicsImg;
 import fmg.swing.utils.ImgUtils;
 
 abstract class ReportDlg extends JDialog {
@@ -122,7 +123,8 @@ abstract class ReportDlg extends JDialog {
 
          for (EMosaic eMosaic: EMosaic.values()) {
             JScrollPane scroll = new JScrollPane();
-            tabPanel.addTab(null, getResources().getImgMosaic(eMosaic, false, imgSize), scroll, eMosaic.getDescription(false));
+            MosaicsImg.Icon img = new MosaicsImg.Icon(eMosaic, eMosaic.sizeIcoField(false), imgSize);
+            tabPanel.addTab(null, img.getImage(), scroll, eMosaic.getDescription(false));
             scroll.setPreferredSize(getPreferredScrollPaneSize());
             scrollPanes.put(eMosaic, scroll);
          }
@@ -240,7 +242,8 @@ abstract class ReportDlg extends JDialog {
 
       EMosaic mosaicType = getSelectedMosaicType();
       int i = mosaicType.ordinal();
-      Icon icon = getResources().getImgMosaic(mosaicType, false,imgSize);
+      MosaicsImg.Icon img = new MosaicsImg.Icon(mosaicType, mosaicType.sizeIcoField(false), imgSize);
+      Icon icon = img.getImage();
       // TODO кэшировать картинки??? - жрёт память
       icon = ImgUtils.toIco(ImgUtils.rotate(ImgUtils.toImg(icon), roteteAngle[i]), imgSize,imgSize);
 

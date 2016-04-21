@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -70,6 +71,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
+import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
@@ -99,6 +101,8 @@ import fmg.swing.mosaic.Mosaic;
 import fmg.swing.res.Resources;
 import fmg.swing.res.Resources.EBtnNewGameState;
 import fmg.swing.res.Resources.EBtnPauseState;
+import fmg.swing.res.img.MosaicsGroupImg;
+import fmg.swing.res.img.MosaicsImg;
 import fmg.swing.serializable.SerializeProjData;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
@@ -138,7 +142,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
    private SelectMosaicDlg getSelectMosaicDialog() {
       if (_selectMosaicDialog == null)
-         _selectMosaicDialog = new SelectMosaicDlg(this, false, getResources());
+         _selectMosaicDialog = new SelectMosaicDlg(this, false);
       return _selectMosaicDialog;
    }
    private AboutDlg getAboutDialog() {
@@ -245,6 +249,8 @@ public class Main extends JFrame implements PropertyChangeListener {
       }
       class Mosaics extends JMenu {
          private static final long serialVersionUID = 1L;
+         private static final int MenuHeightWithIcon = 32;
+         private static final int ZoomQualityFactor = 4; // 1 - as is
 
          private Map<EMosaicGroup, JMenuItem> mosaicsGroup;
          private Map<EMosaic, JRadioButtonMenuItem> mosaics;
@@ -269,6 +275,7 @@ public class Main extends JFrame implements PropertyChangeListener {
             if (mosaicsGroup == null) {
                mosaicsGroup = new HashMap<EMosaicGroup, JMenuItem>(EMosaicGroup.values().length);
 
+               Random rnd = new Random(UUID.randomUUID().hashCode());
                for (EMosaicGroup val: EMosaicGroup.values()) {
                   JMenu menuItem = new JMenu(val.getDescription());// + (experimentalMenuMnemonic ?  "                      " : ""));
                   for (EMosaic mosaic: val.getBind()) {
@@ -276,7 +283,13 @@ public class Main extends JFrame implements PropertyChangeListener {
                      //menuItem.add(Box.createRigidArea(new Dimension(100,25)));
                   }
 //                  menuItem.setMnemonic(Main.KeyCombo.getMnemonic_MenuMosaicGroup(val));
-                  menuItem.setIcon(Main.this.getResources().getImgMosaicGroup(val, icoMosaicWidht, icoMosaicHeight));
+                  try (MosaicsGroupImg.Icon img = new MosaicsGroupImg.Icon(val, MenuHeightWithIcon*ZoomQualityFactor)) {
+                     img.setBorderWidth(1*ZoomQualityFactor);
+                     img.setBorderColor(Color.RandomColor(rnd).darker(0.4));
+                     img.setForegroundColor(Color.RandomColor(rnd).brighter(0.7));
+                     img.setBackgroundColor(Color.Transparent);
+                     menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+                  }
 
 //                  if (experimentalMenuMnemonic) {
 //                     menuItem.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -289,10 +302,11 @@ public class Main extends JFrame implements PropertyChangeListener {
             return mosaicsGroup.get(key);
          }
 
-         private JRadioButtonMenuItem getMenuItemMosaic(EMosaic key) {
+         private JRadioButtonMenuItem getMenuItemMosaic(EMosaic mosaicType) {
             if (mosaics == null) {
                mosaics = new HashMap<EMosaic, JRadioButtonMenuItem>(EMosaic.values().length);
 
+               Random rnd = new Random(UUID.randomUUID().hashCode());
                for (EMosaic val: EMosaic.values()) {
                   String menuItemTxt = val.getDescription(false);
                   if (experimentalMenuMnemonic)
@@ -301,17 +315,23 @@ public class Main extends JFrame implements PropertyChangeListener {
                   menuItem.setMnemonic(Main.KeyCombo.getMnemonic_Mosaic(val));
                   menuItem.setAccelerator(Main.KeyCombo.getKeyStroke_Mosaic(val));
                   menuItem.addActionListener(Main.this.getHandlers().getMosaicAction(val));
-                  menuItem.setIcon(Main.this.getResources().getImgMosaic(val, true, 32));
+
+                  try (MosaicsImg.Icon img = new MosaicsImg.Icon(val, val.sizeIcoField(true), MenuHeightWithIcon*ZoomQualityFactor)) {
+                     img.setBorderWidth(1*ZoomQualityFactor);
+                     img.setBorderColor(Color.RandomColor(rnd).darker(0.4));
+                     img.setBackgroundColor(Color.Transparent);
+                     menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+                  }
 
                   if (experimentalMenuMnemonic) {
-                     menuItem.setLayout(new FlowLayout(FlowLayout.RIGHT));
+                     menuItem.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, MenuHeightWithIcon/2 - 4));
                      menuItem.add(new JLabel("NumPad " + val.getFastCode()));
                   }
 
                   mosaics.put(val, menuItem);
                }
             }
-            return mosaics.get(key);
+            return mosaics.get(mosaicType);
          }
       }
       class Options extends JMenu {
@@ -1168,7 +1188,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          keyPairBindAsMenuAccelerator = new Pair<InputMap, ActionMap>(inputMap, actionMap);
 
          BiConsumer<KeyStroke, Action> bind = (key, action) -> {
-            String name  = UUID.randomUUID().toString();
+            String name = UUID.randomUUID().toString();
             inputMap.put(key, name);
             actionMap.put(name, action);
          };

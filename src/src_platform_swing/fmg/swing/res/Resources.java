@@ -7,13 +7,10 @@ import java.util.Map;
 import javax.swing.Icon;
 
 import fmg.common.Color;
-import fmg.core.types.EMosaic;
-import fmg.core.types.EMosaicGroup;
 import fmg.swing.res.img.BackgroundPause;
 import fmg.swing.res.img.Flag;
 import fmg.swing.res.img.Logo;
 import fmg.swing.res.img.Mine;
-import fmg.swing.res.img.MosaicsImg;
 import fmg.swing.utils.ImgUtils;
 
 /** Мультимедиа ресурсы программы */
@@ -62,7 +59,6 @@ public final class Resources {
 
    private Map<EBtnNewGameState, Icon> imgsBtnNew;
    private Map<EBtnPauseState  , Icon> imgsBtnPause;
-   private Map<EMosaicGroup    , Icon> imgsMosaicGroup;
    private Map<Locale          , Icon> imgsLang;
 
    private Icon getIcon(String path) {
@@ -142,27 +138,6 @@ public final class Resources {
 //      if (original == null) return null;
 //      return ImgUtils.zoom(original, newWidth, newHeight);
 //   }
-
-   public Icon getImgMosaicGroup(EMosaicGroup key) {
-      if (imgsMosaicGroup == null) {
-         imgsMosaicGroup = new HashMap<EMosaicGroup, Icon>(EMosaicGroup.values().length);
-
-         for (EMosaicGroup val: EMosaicGroup.values())
-            imgsMosaicGroup.put(val, getIcon("MosaicGroup/" + val.getDescription() + ".png"));
-      }
-      return imgsMosaicGroup.get(key);
-   }
-   public Icon getImgMosaicGroup(EMosaicGroup key, int newWidth, int newHeight) {
-      Icon original = getImgMosaicGroup(key);
-      if (original == null) return null;
-      return ImgUtils.zoom(original, newWidth, newHeight);
-   }
-
-   public Icon getImgMosaic(EMosaic mosaicType, boolean smallIco, int widthAndHeight) {
-      MosaicsImg.Icon img = new MosaicsImg.Icon(mosaicType, mosaicType.sizeIcoField(smallIco), widthAndHeight);
-      //img.setBackgroundColor(java.awt.Color.ORANGE); // test
-      return img.getImage();
-   }
 
    public Map<Locale, Icon> getImgsLang() {
       if (imgsLang == null) {
