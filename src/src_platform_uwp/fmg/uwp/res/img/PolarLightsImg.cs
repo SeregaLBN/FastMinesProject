@@ -16,7 +16,7 @@ namespace fmg.uwp.res.img {
          get { return _polarLights; }
          set {
             if (SetProperty(ref _polarLights, value))
-               Redraw();
+               Invalidate();
          }
       }
 

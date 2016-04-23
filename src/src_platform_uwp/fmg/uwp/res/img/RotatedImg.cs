@@ -25,7 +25,7 @@ namespace fmg.uwp.res.img
          get { return _rotate; }
          set {
             if (SetProperty(ref _rotate, value) && value)
-               Redraw();
+               Invalidate();
          }
       }
 
@@ -34,7 +34,7 @@ namespace fmg.uwp.res.img
          get { return _rotateAngleDelta; }
          set {
             if (SetProperty(ref _rotateAngleDelta, value) && Rotate)
-               Redraw();
+               Invalidate();
          }
       }
 

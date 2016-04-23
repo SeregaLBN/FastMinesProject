@@ -35,7 +35,7 @@ namespace fmg.uwp.res.img {
             if (SetProperty(ref _size, value)) {
                //LoggerSimple.Put("setSize: {0}", Entity);
                Image = CreateImage();
-               Redraw();
+               Invalidate();
             }
          }
       }
@@ -55,7 +55,7 @@ namespace fmg.uwp.res.img {
             if (value.TopAndBottom >= Height)
                throw new ArgumentException("Padding size is very large. Should be less than Height.");
             if (SetProperty(ref _padding, value)) {
-               Redraw();
+               Invalidate();
             }
          }
       }
@@ -65,11 +65,16 @@ namespace fmg.uwp.res.img {
          get { return _entity; }
          set {
             if (SetProperty(ref _entity, value))
-               Redraw();
+               Invalidate();
          }
       }
 
-      private bool _invalidate = true;
+      enum EInvalidate {
+         Invalidate,
+         Redrawing,
+         Redrawed
+      }
+      private EInvalidate _invalidate = EInvalidate.Invalidate;
       protected abstract TImage CreateImage();
       private TImage _image;
       public TImage Image {
@@ -77,7 +82,7 @@ namespace fmg.uwp.res.img {
             //LoggerSimple.Put("getImage: {0}", Entity);
             if (_image == null)
                Image = CreateImage();
-            if (_invalidate)
+            if (_invalidate == EInvalidate.Invalidate)
                Draw();
             return _image;
          }
@@ -92,7 +97,7 @@ namespace fmg.uwp.res.img {
          get { return _backgroundColor; }
          set {
             if (SetProperty(ref _backgroundColor, value))
-               Redraw();
+               Invalidate();
          }
       }
 
@@ -101,7 +106,7 @@ namespace fmg.uwp.res.img {
          get { return _borderColor; }
          set {
             if (SetProperty(ref _borderColor, value))
-               Redraw();
+               Invalidate();
          }
       }
 
@@ -110,7 +115,7 @@ namespace fmg.uwp.res.img {
          get { return _borderWidth; }
          set {
             if (SetProperty(ref _borderWidth, value))
-               Redraw();
+               Invalidate();
          }
       }
 
@@ -125,7 +130,7 @@ namespace fmg.uwp.res.img {
                   value += 360;
             }
             if (SetProperty(ref _rotateAngle, value))
-               Redraw();
+               Invalidate();
          }
       }
 
@@ -136,7 +141,7 @@ namespace fmg.uwp.res.img {
             if (SetProperty(ref _foregroundColor, value)) {
                //OnPropertyChanged(this, new PropertyChangedExEventArgs<Color>(ForegroundColor, oldForegroundColor.Attenuate(160), "ForegroundColorAttenuate"));
                OnPropertyChanged(this, new PropertyChangedEventArgs("ForegroundColorAttenuate"));
-               Redraw();
+               Invalidate();
             }
          }
       }
@@ -145,13 +150,14 @@ namespace fmg.uwp.res.img {
 
       public bool OnlySyncDraw { get; set; } = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
 
-      protected void Redraw() {
-         _invalidate = true;
+      protected void Invalidate() {
+         if (_invalidate != EInvalidate.Redrawed)
+            return;
+         _invalidate = EInvalidate.Invalidate;
          OnPropertyChanged("Image");
       }
 
       private void Draw() {
-         _invalidate = false;
          //LoggerSimple.Put("> DrawBegin: {0}", Entity);
          DrawBegin();
          DrawBody();
@@ -159,9 +165,9 @@ namespace fmg.uwp.res.img {
          //LoggerSimple.Put("< DrawEnd: {0}", Entity);
       }
 
-      protected virtual void DrawBegin() { }
+      protected virtual void DrawBegin() { _invalidate = EInvalidate.Redrawing; }
       protected abstract void DrawBody();
-      protected virtual void DrawEnd() { }
+      protected virtual void DrawEnd() { _invalidate = EInvalidate.Redrawed; }
 
       /// <summary> Deferr notifications </summary>
       protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {

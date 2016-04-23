@@ -54,7 +54,7 @@ namespace fmg.uwp.res.img {
             if (SetProperty(ref _sizeField, value)) {
                RecalcArea();
                _matrix.Clear();
-               Redraw();
+               Invalidate();
             }
          }
       }
@@ -72,7 +72,7 @@ namespace fmg.uwp.res.img {
             if (SetProperty(ref _cellAttr, value)) {
                Dependency_GContext_CellAttribute();
                Dependency_CellAttribute_Area();
-               Redraw();
+               Invalidate();
             }
          }
       }
@@ -87,7 +87,7 @@ namespace fmg.uwp.res.img {
          private set {
             if (SetProperty(ref _cellPaint, value))  {
                Dependency_CellPaint_GContext();
-               Redraw();
+               Invalidate();
             }
          }
       }
@@ -107,7 +107,7 @@ namespace fmg.uwp.res.img {
                   for (var j = 0; j < size.n; j++)
                      _matrix.Add(MosaicHelper.CreateCellInstance(attr, type, new Coord(i, j)));
                OnPropertyChanged(this, new PropertyChangedEventArgs("Matrix"));
-               Redraw();
+               Invalidate();
             }
             return _matrix;
          }
@@ -188,7 +188,7 @@ namespace fmg.uwp.res.img {
          set {
             if (SetProperty(ref _area, value)) {
                Dependency_CellAttribute_Area();
-               Redraw();
+               Invalidate();
             }
          }
       }
@@ -199,7 +199,7 @@ namespace fmg.uwp.res.img {
          protected set {
             if (SetProperty(ref _paddingFull, value)) {
                Dependency_GContext_PaddingFull();
-               Redraw();
+               Invalidate();
             }
          }
       }
@@ -218,7 +218,7 @@ namespace fmg.uwp.res.img {
                Dependency_CellPaint_GContext();
                Dependency_GContext_BorderWidth();
                Dependency_GContext_BorderColor();
-               Redraw();
+               Invalidate();
             }
          }
       }
