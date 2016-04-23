@@ -18,7 +18,7 @@ public class Color {
    public static final Color Gray    = new Color(0xFF808080);
 
    protected byte r,g,b,a;
-   
+
    public Color() {
       this((byte)255, (byte)0, (byte)0, (byte)0);
    }
@@ -59,20 +59,31 @@ public class Color {
       if (!(obj instanceof Color))
          return false;
       Color clr = (Color)obj;
-      return (clr.a==a) &&(clr.r==r) &&(clr.g==g) &&(clr.b==b); 
+      return (clr.a==a) && (clr.r==r) && (clr.g==g) && (clr.b==b);
    }
    @Override
    public String toString() {
       return String.format("argb=%02X%02X%02X%02X", a,r,g,b);
    }
 
-   public byte getR() { return r; }
+   @Override
+   public Color clone() { return new Color(a,r,g,b); }
+
+   /** get RED chanel */
+   public byte  getR() { return r; }
+   /** set RED chanel */
    public void setR(byte r) { this.r = r; }
-   public byte getG() { return g; }
+   /** get GREEN chanel */
+   public byte  getG() { return g; }
+   /** set GREEN chanel */
    public void setG(byte g) { this.g = g; }
-   public byte getB() { return b;    }
+   /** get BLUE chanel */
+   public byte  getB() { return b;    }
+   /** set BLUE chanel */
    public void setB(byte b) { this.b = b; }
-   public byte getA() { return a; }
+   /** get ALPHA chanel */
+   public byte  getA() { return a; }
+   /** set ALPHA chanel */
    public void setA(byte a) { this.a = a; }
 
    public static Color RandomColor(Random rnd) {

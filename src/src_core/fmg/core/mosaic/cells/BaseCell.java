@@ -468,4 +468,8 @@ public abstract class BaseCell {
       }
    }
 
+   @Override
+   public String toString() {
+      return getClass().getSimpleName()+"{ x:"+coord.x+", y:"+coord.y+" }";
+   }
 }

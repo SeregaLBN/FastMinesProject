@@ -3,7 +3,7 @@ package fmg.common.geom;
 public class Coord {
    public int x, y;
 
-   public Coord() { x=y=0; }
+   public Coord() { }
    public Coord(int x, int y) { this.x=x; this.y=y; }
    public Coord(Coord c) { this.x=c.x; this.y=c.y; }
 
@@ -18,12 +18,9 @@ public class Coord {
    public boolean equals(Coord other) { return (other != null) && (x == other.x) && (y == other.y); }
 
    @Override
-   public int hashCode() {
-      int sum = x+y;
-      return sum * (sum + 1)/2 + y;
-   }
+   public int hashCode() { return 31 * (31 + x) + y; }
 
    @Override
-   public String toString() { return getClass().getName() + "{ x:"+x+", y:"+y+" }"; }
+   public String toString() { return getClass().getSimpleName() + "{ x:"+x+", y:"+y+" }"; }
 
 }

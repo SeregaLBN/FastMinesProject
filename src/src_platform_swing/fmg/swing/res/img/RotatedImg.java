@@ -25,14 +25,14 @@ public abstract class RotatedImg<T, TImage extends Object> extends StaticImg<T, 
    public boolean isRotate() { return _rotate; }
    public void setRotate(boolean value) {
       if (setProperty(_rotate, value, "Rotate") && value)
-         redraw();
+         invalidate();
    }
 
    private double _rotateAngleDelta = 1.4;
    public double getRotateAngleDelta() { return _rotateAngleDelta; }
    public void setRotateAngleDelta(double value) {
       if (setProperty(_rotateAngleDelta, value, "RotateAngleDelta") && isRotate())
-         redraw();
+         invalidate();
    }
 
    @Override

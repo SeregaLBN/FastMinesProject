@@ -1,6 +1,7 @@
 package fmg.swing.res.img;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -8,10 +9,14 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Stream;
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import fmg.common.Color;
 import fmg.common.geom.Bound;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Coord;
@@ -77,7 +82,7 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
       if (setProperty(_sizeField, value, "SizeField")) {
          recalcArea();
          _matrix.clear();
-         redraw();
+         invalidate();
       }
    }
 
@@ -95,7 +100,7 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
       if (setProperty(_cellAttr, value, "CellAttr")) {
          dependency_GContext_CellAttribute();
          dependency_CellAttribute_Area();
-         redraw();
+         invalidate();
       }
    }
 
@@ -109,7 +114,7 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
    private void setCellPaint(ICellPaint<PaintableGraphics> value) {
       if (setProperty(_cellPaint, value, "CellPaint")) {
          dependency_CellPaint_GContext();
-         redraw();
+         invalidate();
       }
    }
 
@@ -128,7 +133,7 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
             for (int j = 0; j < size.n; j++)
                _matrix.add(MosaicHelper.createCellInstance(attr, type, new Coord(i, j)));
          onPropertyChanged("Matrix");
-         redraw();
+         invalidate();
       }
       return _matrix;
    }
@@ -207,7 +212,7 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
    public void setArea(double value) {
       if (setProperty(_area, value, "Area")) {
          dependency_CellAttribute_Area();
-         redraw();
+         invalidate();
       }
    }
 
@@ -216,7 +221,7 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
    protected void setPaddingFull(BoundDouble value) {
       if (setProperty(_paddingFull, value, "PaddingFull")) {
          dependency_GContext_PaddingFull();
-         redraw();
+         invalidate();
       }
    }
 
@@ -233,15 +238,9 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
          dependency_CellPaint_GContext();
          dependency_GContext_BorderWidth();
          dependency_GContext_BorderColor();
-         redraw();
+         invalidate();
       }
    }
-
-//   protected override WriteableBitmap CreateImage() {
-//      var w = Width;
-//      var h = Height;
-//      return BitmapFactory.New(w, h); // new WriteableBitmap(w, h); //
-//   }
 
    /** Return painted mosaic bitmap
     *  if (!OnlySyncDraw) {
@@ -375,27 +374,37 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
       public Icon(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) { super(mosaicType, sizeField, widthAndHeight, padding); }
       public Icon(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) { super(mosaicType, sizeField, sizeImage, padding); }
 
+      private BufferedImage buffImg;
+      private Graphics gBuffImg;
       @Override
       protected javax.swing.Icon createImage() {
+         if (gBuffImg != null)
+            gBuffImg.dispose();
+
+         buffImg = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+         gBuffImg = buffImg.createGraphics();
+
          return new javax.swing.Icon() {
             @Override
             public int getIconWidth() { return Icon.this.getWidth(); }
             @Override
             public int getIconHeight() { return Icon.this.getHeight(); }
             @Override
-            public void paintIcon(Component c, Graphics g, int x, int y) { drawBody(g); }
+            public void paintIcon(Component c, Graphics g, int x, int y) {
+               g.drawImage(buffImg, x,y, null);
+            }
          };
       }
 
       @Override
-      protected void drawBody() {
-         javax.swing.Icon ico = getImage();
-         BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-         Graphics g = img.createGraphics();
-         ico.paintIcon(null, g, 0, 0);
-         g.dispose();
-      }
+      protected void drawBody() { drawBody(gBuffImg); }
 
+      @Override
+      public void close() {
+         super.close();
+         if (gBuffImg != null)
+            gBuffImg.dispose();
+      }
    }
 
    public static class Image extends MosaicsImg<java.awt.Image> {
@@ -419,4 +428,52 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
 
    }
 
+   ////////////// TEST //////////////
+   public static void main(String[] args) {
+      (new JFrame() {
+         private static final long serialVersionUID = 1L;
+         static final int SIZE = 700;
+         {
+             setSize(SIZE+30, SIZE+50);
+             setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+             Random rnd = new Random(UUID.randomUUID().hashCode());
+             EMosaic eMosaic = EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length));
+             MosaicsImg.Icon img1 = new MosaicsImg.Icon(
+                   eMosaic,
+                   new Matrisize(5+rnd.nextInt(5), 5 + rnd.nextInt(5)),
+                   SIZE/2);
+
+//             eMosaic = EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length));
+//             MosaicsImg.Image img2 = new MosaicsImg.Image(
+//                   eMosaic,
+//                   new Matrisize(5+rnd.nextInt(5), 5 + rnd.nextInt(5)),
+//                   SIZE/2);
+
+             Color bkClr = Color.RandomColor(rnd); bkClr.setA((byte)0x40);
+             img1.setBackgroundColor(bkClr);
+//             bkClr = Color.RandomColor(rnd); bkClr.setA((byte)0x30);
+//             img2.setBackgroundColor(bkClr);
+             img1.setRotateAngle(33.333);
+//             img2.setRotateAngle(-15);
+
+             add(new JPanel() {
+                private static final long serialVersionUID = 1L;
+                {
+                   setPreferredSize(new Dimension(SIZE, SIZE));
+                }
+                @Override
+                public void paintComponent(Graphics g) {
+                   super.paintComponent(g);
+                   final int offset = 10;
+                   g.drawRect(offset, offset, SIZE-offset, SIZE-offset);
+
+                   img1.getImage().paintIcon(this, g, 2*offset, 2*offset);
+//                   g.drawImage(img2.getImage(), SIZE/2-offset, SIZE/2-offset, null);
+                }
+             });
+         }
+      }).setVisible(true);
+   }
+   //////////////////////////////////
 }

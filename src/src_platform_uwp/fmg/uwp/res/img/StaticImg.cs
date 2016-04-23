@@ -101,7 +101,7 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      private Color _borderColor = Color.Red;
+      private Color _borderColor = Color.Maroon.Darker(0.5);
       public Color BorderColor {
          get { return _borderColor; }
          set {

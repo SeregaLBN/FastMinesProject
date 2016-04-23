@@ -38,7 +38,7 @@ public abstract class StaticImg<T, TImage extends Object> extends NotifyProperty
    public void setSize(Size value) {
       if (setProperty(_size, value, "Size")) {
          setImage(createImage());
-         redraw();
+         invalidate();
       }
    }
 
@@ -56,7 +56,7 @@ public abstract class StaticImg<T, TImage extends Object> extends NotifyProperty
       if (value.getTopAndBottom() >= getHeight())
          throw new IllegalArgumentException("Padding size is very large. Should be less than Height.");
       if (setProperty(_padding, value, "Padding")) {
-         redraw();
+         invalidate();
       }
    }
 
@@ -64,17 +64,22 @@ public abstract class StaticImg<T, TImage extends Object> extends NotifyProperty
    public T getEntity() { return _entity; }
    public void setEntity(T value) {
       if (setProperty(_entity, value, "Entity"))
-         redraw();
+         invalidate();
    }
 
-   private boolean _invalidate = true;
+   enum EInvalidate {
+      invalidate,
+      redrawing,
+      redrawed
+   }
+   private EInvalidate _invalidate = EInvalidate.invalidate;
 
    protected abstract TImage createImage();
    private TImage _image;
    public TImage getImage() {
       if (_image == null)
          setImage(createImage());
-      if (_invalidate)
+      if (_invalidate == EInvalidate.invalidate)
          draw();
       return _image;
    }
@@ -87,21 +92,21 @@ public abstract class StaticImg<T, TImage extends Object> extends NotifyProperty
    public Color getBackgroundColor() { return _backgroundColor; }
    public void setBackgroundColor(Color value) {
       if (setProperty(_backgroundColor, value, "BackgroundColor"))
-         redraw();
+         invalidate();
    }
 
-   private Color _borderColor = Color.Red;
+   private Color _borderColor = Color.Maroon.clone().darker(0.5);
    public Color getBorderColor() { return _borderColor; }
    public void setBorderColor(Color value) {
       if (setProperty(_borderColor, value, "BorderColor"))
-         redraw();
+         invalidate();
    }
 
    private int _borderWidth = 3;
    public int getBorderWidth() { return _borderWidth; }
    public void setBorderWidth(int value) {
       if (setProperty(_borderWidth, value, "BorderWidth"))
-         redraw();
+         invalidate();
    }
 
    private double _rotateAngle;
@@ -114,7 +119,7 @@ public abstract class StaticImg<T, TImage extends Object> extends NotifyProperty
             value += 360;
       }
       if (setProperty(_rotateAngle, value, "RotateAngle"))
-         redraw();
+         invalidate();
    }
 
    private Color _foregroundColor = Color.Aqua;
@@ -123,7 +128,7 @@ public abstract class StaticImg<T, TImage extends Object> extends NotifyProperty
       if (setProperty(_foregroundColor, value, "ForegroundColor")) {
          //OnPropertyChanged(this, new PropertyChangedExEventArgs<Color>(ForegroundColor, oldForegroundColor.Attenuate(160), "ForegroundColorAttenuate"));
          onPropertyChanged("ForegroundColorAttenuate");
-         redraw();
+         invalidate();
       }
    }
 
@@ -133,21 +138,22 @@ public abstract class StaticImg<T, TImage extends Object> extends NotifyProperty
    public boolean isOnlySyncDraw() { return _onlySyncDraw; }
    public void setOnlySyncDraw(boolean value) { _onlySyncDraw = value; }
 
-   protected void redraw() {
-      _invalidate = true;
+   protected void invalidate() {
+      if (_invalidate != EInvalidate.redrawed)
+         return;
+      _invalidate = EInvalidate.invalidate;
       onPropertyChanged("Image");
    }
 
    private void draw() {
-      _invalidate = false;
       drawBegin();
       drawBody();
       drawEnd();
    }
 
-   protected void drawBegin() { }
+   protected void drawBegin() { _invalidate = EInvalidate.redrawing; }
    protected abstract void drawBody();
-   protected void drawEnd() { }
+   protected void drawEnd() { _invalidate = EInvalidate.redrawed; }
 
    /** Deferr notifications */
    @Override

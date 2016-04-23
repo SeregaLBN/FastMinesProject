@@ -23,7 +23,7 @@ public abstract class PolarLightsImg<T, TImage extends Object> extends RotatedIm
    public boolean isPolarLights() { return _polarLights; }
    public void setPolarLights(boolean value) {
       if (setProperty(_polarLights, value, "PolarLights"))
-         redraw();
+         invalidate();
    }
 
    private final Random _random = new Random(UUID.randomUUID().hashCode());
