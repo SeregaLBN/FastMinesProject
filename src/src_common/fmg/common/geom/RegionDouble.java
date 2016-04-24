@@ -1,59 +1,68 @@
 package fmg.common.geom;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RegionDouble {
-   protected final PointDouble[] points;
+   protected final List<PointDouble> points;
 
    public RegionDouble(int size) {
-      points = new PointDouble[size];
+      points = new ArrayList<>(size);
       for (int i=0; i<size; i++)
-         points[i] = new PointDouble();
+         points.add( new PointDouble() );
    }
 
-   public List<PointDouble> getPoints() { return Arrays.asList(points); }
+   public List<PointDouble> getPoints() { return points; }
 
-   public PointDouble getPoint(int index) { return points[index]; }
-   public void setPoint(int index, double x, double y) { points[index].x = x; points[index].y = y; }
+   public PointDouble getPoint(int index) { return points.get(index); }
+   public void setPoint(int index, double x, double y) {
+      PointDouble p = points.get(index);
+      p.x = x;
+      p.y = y;
+   }
 
-   public int getCountPoints() { return points.length; }
+   public int getCountPoints() { return points.size(); }
 
    public RectDouble getBounds() {
-      double minX = points[0].x, maxX = points[0].x;
-      double minY = points[0].y, maxY = points[0].y;
-      for (int i=1; i<points.length; i++) {
-         minX = Math.min(minX, points[i].x);
-         maxX = Math.max(maxX, points[i].x);
-         minY = Math.min(minY, points[i].y);
-         maxY = Math.max(maxY, points[i].y);
+      PointDouble p = points.get(0);
+      double minX = p.x, maxX = p.x;
+      double minY = p.y, maxY = p.y;
+      for (int i=1; i<points.size(); ++i) {
+         p = points.get(i);
+         minX = Math.min(minX, p.x);
+         maxX = Math.max(maxX, p.x);
+         minY = Math.min(minY, p.y);
+         maxY = Math.max(maxY, p.y);
       }
       return new RectDouble(minX, minY, maxX-minX, maxY-minY);
     }
 
    /** PointInPolygon */
-   public boolean Contains(PointDouble point) {
+   public boolean contains(PointDouble point) {
       double x = point.x+0.01;
       double y = point.y+0.01;
       int count = 0;
-      for (int i=0; i<points.length; i++) {
-         int j = (i+1)%points.length;
-         if (points[i].y == points[j].y) continue;
-         if ((points[i].y > y) && (points[j].y > y)) continue;
-         if ((points[i].y < y) && (points[j].y < y)) continue;
-         if (Math.max(points[i].y, points[j].y) == y) count++;
+      int len = points.size();
+      for (int i=0; i < len; ++i) {
+         int j = (i+1) % len;
+         PointDouble pi = points.get(i);
+         PointDouble pj = points.get(j);
+         if (pi.y == pj.y) continue;
+         if ((pi.y > y) && (pj.y > y)) continue;
+         if ((pi.y < y) && (pj.y < y)) continue;
+         if (Math.max(pi.y, pj.y) == y) count++;
          else
-            if (Math.min(points[i].y, points[j].y) == y) continue;
+            if (Math.min(pi.y, pj.y) == y) continue;
             else {
-               double t = (y-points[i].y)/(points[j].y-points[i].y);
-               if ((t>0) && (t<1) && ((points[i].x+(t*(points[j].x-points[i].x))) >= x)) count++;
+               double t = (y-pi.y)/(pj.y-pi.y);
+               if ((t>0) && (t<1) && ((pi.x+(t*(pj.x-pi.x))) >= x)) count++;
             }
          }
       return ((count & 1) == 1);
    }
 
    @Override
-   public int hashCode() { return 31 + Arrays.hashCode(points); }
+   public int hashCode() { return points.hashCode(); }
 
    @Override
    public boolean equals(Object obj) {
@@ -63,42 +72,45 @@ public class RegionDouble {
       return equals((RegionDouble) obj);
    }
 
-   public boolean equals(RegionDouble other) { return (other != null) && Arrays.equals(points, other.points); }
+   public boolean equals(RegionDouble other) { return (other != null) && points.equals(other.points); }
 
    @Override
    public String toString() {
       StringBuffer sb = new StringBuffer();
       sb.append("{ ");
-      for (int i=0; i<points.length; i++) {
-         PointDouble p = points[i];
-         sb.append(p.toString());
-         if (i != (points.length-1))
+      boolean first = true;
+      for (PointDouble p : points) {
+         if (!first)
+            first = false;
+         else
             sb.append(", ");
+         sb.append(p.toString());
       }
       sb.append(" }");
       return sb.toString();
    }
 
-   @Override
-   public RegionDouble clone() {
-      int cnt = getCountPoints();
-      RegionDouble clon = new RegionDouble(cnt);
-      for (int i=0; i<cnt; i++) {
-         PointDouble p = getPoint(i);
-         clon.setPoint(i, p.x, p.y);
+   public RegionDouble moveXY(SizeDouble offset) {
+      for (PointDouble p : points) {
+         p.x += offset.width;
+         p.y += offset.height;
       }
-      return clon;
+      return this;
    }
 
-   public static RegionDouble moveXY(RegionDouble self, BoundDouble padding) {
-      if (padding.isEmpty())
+   @Deprecated
+   public static RegionDouble moveXY(RegionDouble self, SizeDouble offset) {
+      if (offset.width == 0 && offset.height == 0)
          return self;
-      RegionDouble res = self.clone();
-      for (int i=0; i<res.getCountPoints(); i++) {
-         res.points[i].x = res.points[i].x + padding.left;
-         res.points[i].y = res.points[i].y + padding.top;
+      int len = self.points.size();
+      RegionDouble copy = new RegionDouble(len);
+      for (int i=0; i<len; ++i) {
+         PointDouble p = self.points.get(i);
+         double x = p.x + offset.width;
+         double y = p.y + offset.height;
+         copy.setPoint(i, x, y);
       }
-      return res;
+      return copy;
    }
 
 }

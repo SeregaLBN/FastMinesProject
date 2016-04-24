@@ -111,7 +111,7 @@ public abstract class BaseCell {
       /** из скольки точек/вершин состоит фигура конкретной направленности */
       public abstract int getVertexNumber(int direction);
       /** сколько фигур пересекается в одной вершине (в среднем) */
-      public abstract double getVertexIntersection(); 
+      public abstract double getVertexIntersection();
 
       /** макс кол-во режимов заливки фона, которые знает данный тип мозаики
        * (знает ф-ция BaseCell::getBackgroundFillColor() или её наследующая)
@@ -145,7 +145,7 @@ public abstract class BaseCell {
    /** соседние ячейки - с которыми граничит this */
    private BaseCell[] neighbors;
    public BaseCell[] getNeighbors() { return neighbors; }
-   
+
    /** массив координат точек из которых состоит фигура */
    protected RegionDouble region;
 
@@ -163,7 +163,7 @@ public abstract class BaseCell {
 
        public void setStatus(EState status) { this.status = status; }
        public EState getStatus() { return status; }
-       
+
        public void CalcOpenState() {
           if (this.open == EOpen._Mine) return;
           // подсчитать у соседей число мин и установить значение
@@ -274,7 +274,7 @@ public abstract class BaseCell {
    public PointDouble getCenter() { return getRcInner(1).center(); }
 
    /** принадлежат ли эти экранные координаты ячейке */
-   public boolean PointInRegion(PointDouble point) { return region.Contains(point); }
+   public boolean PointInRegion(PointDouble point) { return region.contains(point); }
 
    public RegionDouble getRegion() { return region; }
 

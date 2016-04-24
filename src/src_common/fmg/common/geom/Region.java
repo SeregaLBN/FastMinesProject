@@ -1,77 +1,66 @@
 package fmg.common.geom;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Region {
-   protected final Point[] points;
+   protected final List<Point> points;
 
    public Region(int size) {
-      points = new Point[size];
+      points = new ArrayList<>(size);
       for (int i=0; i<size; i++)
-         points[i] = new Point();
+         points.add(new Point());
    }
 
-   public Point getPoint(int index) { return points[index]; }
-   public void setPoint(int index, int x, int y) { points[index].x = x; points[index].y = y; }
-   
-   public int getCountPoints() { return points.length; }
+   public Point getPoint(int index) { return points.get(index); }
+   public void setPoint(int index, int x, int y) {
+      Point p = points.get(index);
+      p.x = x;
+      p.y = y;
+   }
+
+   public int getCountPoints() { return points.size(); }
 
    public Rect getBounds() {
-      int minX = points[0].x, maxX = points[0].x;
-      int minY = points[0].y, maxY = points[0].y;
-      for (int i=1; i<points.length; i++) {
-         minX = Math.min(minX, points[i].x);
-         maxX = Math.max(maxX, points[i].x);
-         minY = Math.min(minY, points[i].y);
-         maxY = Math.max(maxY, points[i].y);
+      Point p = points.get(0);
+      int minX = p.x, maxX = p.x;
+      int minY = p.y, maxY = p.y;
+      for (int i=1; i < points.size(); ++i) {
+         p = points.get(i);
+         minX = Math.min(minX, p.x);
+         maxX = Math.max(maxX, p.x);
+         minY = Math.min(minY, p.y);
+         maxY = Math.max(maxY, p.y);
       }
       return new Rect(minX, minY, maxX-minX, maxY-minY);
    }
 
    /** PointInPolygon */
-   public boolean Contains(Point point) {
+   public boolean contains(Point point) {
       double x = point.x+0.01;
       double y = point.y+0.01;
       int count = 0;
-      for (int i=0; i<points.length; i++) {
-         int j = (i+1)%points.length;
-         if (points[i].y == points[j].y) continue;
-         if (points[i].y > y && points[j].y > y) continue;
-         if (points[i].y < y && points[j].y < y) continue;
-         if (Math.max(points[i].y, points[j].y) == y) count++;
+      int len = points.size();
+      for (int i=0; i < len; ++i) {
+         int j = (i+1) % len;
+         Point pi = points.get(i);
+         Point pj = points.get(j);
+         if (pi.y == pj.y) continue;
+         if (pi.y > y && pj.y > y) continue;
+         if (pi.y < y && pj.y < y) continue;
+         if (Math.max(pi.y, pj.y) == y) count++;
          else
-            if (Math.min(points[i].y, points[j].y) == y) continue;
+            if (Math.min(pi.y, pj.y) == y) continue;
             else {
-               double t = (double)(y-points[i].y)/(points[j].y-points[i].y);
-               if (t>0 && t<1 && points[i].x+t*(points[j].x-points[i].x) >= x) count++;
+               double t = (y-pi.y)/(pj.y-pi.y);
+               if (t>0 && t<1 && pi.x+t*(pj.x-pi.x) >= x) count++;
             }
          }
       return ((count & 1) == 1);
    }
 
-//   @Override
-//   public boolean equals(Object other) {
-//      if (this == other) return true;
-//      if (!(other instanceof Region)) return false;
-//      Region o = (Region)other;
-//      if (points.length != o.points.length)
-//         return false;
-//      for (int i=0; i<points.length; i++)
-//         if (!points[i].equals(o.points[i]))
-//            return false;
-//      return true;
-//   }
-//
-//   @Override
-//   public int hashCode() {
-//      int h = 0;
-//      for (Point p : points)
-//         h ^= p.hashCode();
-//      return h;
-//   }
-
    @Override
-   public int hashCode() { return 31 + Arrays.hashCode(points); }
+   public int hashCode() { return points.hashCode(); }
 
    @Override
    public boolean equals(Object obj) {
@@ -81,42 +70,45 @@ public class Region {
       return equals((Region) obj);
    }
 
-   public boolean equals(Region other) { return (other != null) && Arrays.equals(points, other.points); }
+   public boolean equals(Region other) { return (other != null) && points.equals(other.points); }
 
    @Override
    public String toString() {
       StringBuffer sb = new StringBuffer();
       sb.append("{ ");
-      for (int i=0; i<points.length; i++) {
-         Point p = points[i];
-         sb.append(p.toString());
-         if (i != points.length-1)
+      boolean first = true;
+      for (Point p : points) {
+         if (!first)
+            first = false;
+         else
             sb.append(", ");
+         sb.append(p.toString());
       }
       sb.append(" }");
       return sb.toString();
    }
 
-   @Override
-   public Region clone() {
-      int cnt = getCountPoints();
-      Region clon = new Region(cnt);
-      for (int i=0; i<cnt; i++) {
-         Point p = this.getPoint(i);
-         clon.setPoint(i, p.x, p.y);
+   public Region moveXY(Size offset) {
+      for (Point p : points) {
+         p.x += offset.width;
+         p.y += offset.height;
       }
-      return clon;
+      return this;
    }
 
-   public static Region moveXY(Region self, Bound padding) {
-      if (padding.isEmpty())
+   @Deprecated
+   public static Region moveXY(Region self, Size offset) {
+      if (offset.width == 0 && offset.height == 0)
          return self;
-      Region res = self.clone();
-      for (int i=0; i<res.getCountPoints(); i++) {
-         res.points[i].x = res.points[i].x + padding.left;
-         res.points[i].y = res.points[i].y + padding.top;
+      int len = self.points.size();
+      Region copy = new Region(len);
+      for (int i=0; i<len; ++i) {
+         Point p = self.points.get(i);
+         int x = p.x + offset.width;
+         int y = p.y + offset.height;
+         copy.setPoint(i, x, y);
       }
-      return res;
+      return copy;
    }
 
 }

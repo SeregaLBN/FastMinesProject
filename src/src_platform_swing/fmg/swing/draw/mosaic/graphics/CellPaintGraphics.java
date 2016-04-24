@@ -13,10 +13,11 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
-import fmg.common.geom.BoundDouble;
+import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
@@ -46,7 +47,8 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
          Shape shapeOld = g2d.getClip();
 
          // ограничиваю рисование только границами своей фигуры
-         g2d.setClip(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), gContext.getPadding())));
+         SizeDouble offset = new SizeDouble(gContext.getPadding().left, gContext.getPadding().top);
+         g2d.setClip(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset)));
 
          // all paint
          this.paintComponent(cell, p);
@@ -74,7 +76,7 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
       Object oldValAntialiasing = g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
 
       // set my custom params
-      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // TODO для релиза сменить на VALUE_ANTIALIAS_ON 
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // TODO для релиза сменить на VALUE_ANTIALIAS_ON
       g2.setStroke(new BasicStroke(gContext.getPenBorder().getWidth())); // TODO глянуть расширенные параметры конструктора пера
 
       // draw lines
@@ -93,12 +95,12 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
    /** draw border lines */
    @Override
    public void paintBorderLines(BaseCell cell, PaintableGraphics p) {
-      BoundDouble padding = gContext.getPadding();
+      SizeDouble offset = new SizeDouble(gContext.getPadding().left, gContext.getPadding().top);
       boolean down = cell.getState().isDown() || (cell.getState().getStatus() == EState._Open);
       Graphics g = p.getGraphics();
       if (gContext.isIconicMode()) {
          g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorLight() : gContext.getPenBorder().getColorShadow()));
-         g.drawPolygon(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), padding)));
+         g.drawPolygon(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset)));
       } else {
          g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorLight()  : gContext.getPenBorder().getColorShadow()));
          int s = cell.getShiftPointBorderIndex();
@@ -108,7 +110,7 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
             PointDouble p2 = (i != (v-1)) ? cell.getRegion().getPoint(i+1) : cell.getRegion().getPoint(0);
             if (i==s)
                g.setColor(Cast.toColor(down ? gContext.getPenBorder().getColorShadow(): gContext.getPenBorder().getColorLight()));
-            g.drawLine((int)(p1.x+padding.left), (int)(p1.y+padding.top), (int)(p2.x+padding.left), (int)(p2.y+padding.top));
+            g.drawLine((int)(p1.x+offset.width), (int)(p1.y+offset.height), (int)(p2.x+offset.width), (int)(p2.y+offset.height));
          }
       }
    }
@@ -181,7 +183,8 @@ public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
             GraphicContext.getDefaultBackgroundFillColor(),
             gContext.getBackgroundFill().getColors()
             )));
-      g.fillPolygon(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), gContext.getPadding())));
+      SizeDouble offset = new SizeDouble(gContext.getPadding().left, gContext.getPadding().top);
+      g.fillPolygon(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset)));
    }
 
    private static Rectangle2D getStringBounds(String text, Font font) {
