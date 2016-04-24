@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -444,20 +445,20 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
                    new Matrisize(5+rnd.nextInt(5), 5 + rnd.nextInt(5)),
                    SIZE/2);
 
-//             eMosaic = EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length));
-//             MosaicsImg.Image img2 = new MosaicsImg.Image(
-//                   eMosaic,
-//                   new Matrisize(5+rnd.nextInt(5), 5 + rnd.nextInt(5)),
-//                   SIZE/2);
+             eMosaic = EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length));
+             MosaicsImg.Image img2 = new MosaicsImg.Image(
+                   eMosaic,
+                   new Matrisize(5+rnd.nextInt(5), 5 + rnd.nextInt(5)),
+                   SIZE/2);
 
              Color bkClr = Color.RandomColor(rnd); bkClr.setA((byte)0x40);
              img1.setBackgroundColor(bkClr);
-//             bkClr = Color.RandomColor(rnd); bkClr.setA((byte)0x30);
-//             img2.setBackgroundColor(bkClr);
+             bkClr = Color.RandomColor(rnd); bkClr.setA((byte)0x30);
+             img2.setBackgroundColor(bkClr);
              img1.setRotateAngle(33.333);
-//             img2.setRotateAngle(-15);
+             img2.setRotateAngle(-15);
 
-             add(new JPanel() {
+             JPanel jPanel = new JPanel() {
                 private static final long serialVersionUID = 1L;
                 {
                    setPreferredSize(new Dimension(SIZE, SIZE));
@@ -466,12 +467,27 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
                 public void paintComponent(Graphics g) {
                    super.paintComponent(g);
                    final int offset = 10;
+                   g.fillRect(offset, offset, SIZE-offset, SIZE-offset);
                    g.drawRect(offset, offset, SIZE-offset, SIZE-offset);
 
                    img1.getImage().paintIcon(this, g, 2*offset, 2*offset);
-//                   g.drawImage(img2.getImage(), SIZE/2-offset, SIZE/2-offset, null);
+                   g.drawImage(img2.getImage(), SIZE/2-offset, SIZE/2-offset, null);
                 }
-             });
+             };
+             add(jPanel);
+
+             PropertyChangeListener l = evt -> {
+                //jPanel.invalidate();
+                //jPanel.revalidate();
+                jPanel.repaint();
+             };
+             img1.addListener(l);
+             img2.addListener(l);
+
+             img1.setRotateAngleDelta( -img1.getRotateAngleDelta());
+             img2.setRotateAngleDelta(3*img2.getRotateAngleDelta());
+             img1.setRotate(true);
+             img2.setRotate(true);
          }
       }).setVisible(true);
    }
