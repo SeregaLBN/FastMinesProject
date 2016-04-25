@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -257,6 +259,8 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
       int w = getWidth();
       int h = getHeight();
 
+      //g.clearRect(0, 0, w, h);
+
       Runnable funcFillBk = () -> {
          g.setColor(Cast.toColor(getBackgroundColor()));
          g.fillRect(0, 0, w, h);
@@ -431,12 +435,13 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      (new JFrame() {
+      new JFrame() {
          private static final long serialVersionUID = 1L;
          static final int SIZE = 700;
          {
              setSize(SIZE+30, SIZE+50);
-             setDefaultCloseOperation(EXIT_ON_CLOSE);
+             setLocationRelativeTo(null);
+             setTitle("test paints MosaicsImg.Image & MosaicsImg.Icon");
 
              Random rnd = new Random(UUID.randomUUID().hashCode());
              EMosaic eMosaic = EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length));
@@ -451,13 +456,6 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
                    new Matrisize(5+rnd.nextInt(5), 5 + rnd.nextInt(5)),
                    SIZE/2);
 
-             Color bkClr = Color.RandomColor(rnd); bkClr.setA((byte)0x40);
-             img1.setBackgroundColor(bkClr);
-             bkClr = Color.RandomColor(rnd); bkClr.setA((byte)0x30);
-             img2.setBackgroundColor(bkClr);
-             img1.setRotateAngle(33.333);
-             img2.setRotateAngle(-15);
-
              JPanel jPanel = new JPanel() {
                 private static final long serialVersionUID = 1L;
                 {
@@ -467,7 +465,7 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
                 public void paintComponent(Graphics g) {
                    super.paintComponent(g);
                    final int offset = 10;
-                   g.fillRect(offset, offset, SIZE-offset, SIZE-offset);
+                   //g.fillRect(offset, offset, SIZE-offset, SIZE-offset);
                    g.drawRect(offset, offset, SIZE-offset, SIZE-offset);
 
                    img1.getImage().paintIcon(this, g, 2*offset, 2*offset);
@@ -477,19 +475,45 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
              add(jPanel);
 
              PropertyChangeListener l = evt -> {
-                //jPanel.invalidate();
-                //jPanel.revalidate();
-                jPanel.repaint();
+                if ("Image".equals(evt.getPropertyName())) {
+                   //jPanel.invalidate();
+                   //jPanel.revalidate();
+                   jPanel.repaint();
+                }
              };
              img1.addListener(l);
              img2.addListener(l);
+
+             final boolean testTransparent = !false;
+             if (testTransparent) {  // test transparent
+                Color bkClr = Color.RandomColor(rnd); bkClr.setA((byte)0x40); // Color.Transparent; //
+                img1.setBackgroundColor(bkClr);
+                bkClr = Color.RandomColor(rnd); bkClr.setA((byte)0x30); // Color.Transparent; //
+                img2.setBackgroundColor(bkClr);
+             } else {
+                img1.setBackgroundColor(Cast.toColor(jPanel.getBackground()));
+                img2.setBackgroundColor(Cast.toColor(jPanel.getBackground()));
+             }
+             img1.setRotateAngle(33.333);
+             img2.setRotateAngle(-15);
 
              img1.setRotateAngleDelta( -img1.getRotateAngleDelta());
              img2.setRotateAngleDelta(3*img2.getRotateAngleDelta());
              img1.setRotate(true);
              img2.setRotate(true);
+
+             //setDefaultCloseOperation(EXIT_ON_CLOSE);
+             addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent we) {
+                   img1.close();
+                   img2.close();
+                   dispose();
+                }
+             });
+             setVisible(true);
          }
-      }).setVisible(true);
+      };
    }
    //////////////////////////////////
 }
