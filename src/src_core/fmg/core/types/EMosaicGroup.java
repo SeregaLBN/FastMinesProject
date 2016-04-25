@@ -51,4 +51,11 @@ public enum EMosaicGroup {
    public String getDescription() {
       return this.toString().substring(1);
    }
+
+   public static EMosaicGroup fromOrdinal(int ordinal) {
+      if ((ordinal < 0) || (ordinal >= EMosaicGroup.values().length))
+         throw new IndexOutOfBoundsException("Invalid ordinal");
+      return EMosaicGroup.values()[ordinal];
+   }
+
 }
