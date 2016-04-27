@@ -16,7 +16,7 @@ namespace fmg.uwp.res.img
       { }
 
       /// <summary> frequency of redrawing (in milliseconds) </summary>
-      public double RedrawInterval { get; set; } = 100;
+      public long RedrawInterval { get; set; } = 100;
 
       private DispatcherTimer _timer;
 

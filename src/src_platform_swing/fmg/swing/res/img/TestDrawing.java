@@ -78,8 +78,10 @@ final class TestDrawing {
                 img1.setBackgroundColor(Cast.toColor(jPanel.getBackground()));
                 img2.setBackgroundColor(Cast.toColor(jPanel.getBackground()));
              }
-             img1.setRotateAngle(+15 + rnd.nextInt(15));
-             img2.setRotateAngle( -7 - rnd.nextInt(8));
+             //img1.setRotateAngle(+15 + rnd.nextInt(15));
+             //img2.setRotateAngle( -7 - rnd.nextInt(8));
+             img1.setRotateAngle(+33.3333);
+             img2.setRotateAngle(-15);
 
              if (img1 instanceof PolarLightsImg) {
                 PolarLightsImg<TEntity, javax.swing.Icon> imgP1 = (PolarLightsImg<TEntity, javax.swing.Icon>)img1;
@@ -91,12 +93,12 @@ final class TestDrawing {
              }
              if (img1 instanceof RotatedImg) {
                 RotatedImg<TEntity, javax.swing.Icon> imgR1 = (RotatedImg<TEntity, javax.swing.Icon>)img1;
-                imgR1.setRotateAngleDelta(-(1+rnd.nextInt(3))*imgR1.getRotateAngleDelta());
+                imgR1.setRotateAngleDelta(-(1/*+rnd.nextInt(3)*/)*imgR1.getRotateAngleDelta());
                 imgR1.setRotate(true);
              }
              if (img1 instanceof RotatedImg) {
                 RotatedImg<TEntity, java.awt.Image> imgR2 = (RotatedImg<TEntity, java.awt.Image>)img2;
-                imgR2.setRotateAngleDelta(+(3+rnd.nextInt(3))*imgR2.getRotateAngleDelta());
+                imgR2.setRotateAngleDelta(+(3/*+rnd.nextInt(3)*/)*imgR2.getRotateAngleDelta());
                 imgR2.setRotate(true);
              }
 

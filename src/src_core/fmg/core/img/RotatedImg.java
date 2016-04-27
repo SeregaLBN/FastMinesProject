@@ -15,12 +15,12 @@ public abstract class RotatedImg<T, TImage extends Object> extends StaticImg<T, 
    protected RotatedImg(T entity, int widthAndHeight, int padding) { super(entity, widthAndHeight, padding); }
    protected RotatedImg(T entity, Size sizeImage, Bound padding) { super(entity, sizeImage, padding); }
 
-   private double _redrawInterval = 100;
+   private long _redrawInterval = 100;
    /** frequency of redrawing (in milliseconds) */
    public double getRedrawInterval() { return _redrawInterval; }
    public void setRedrawInterval(double value) {
       if (setProperty(_redrawInterval, value, "RedrawInterval") && (_timer != null))
-         _timer.setInterval((long)_redrawInterval);
+         _timer.setInterval(_redrawInterval);
    }
 
    private ITimer _timer;
@@ -44,11 +44,12 @@ public abstract class RotatedImg<T, TImage extends Object> extends StaticImg<T, 
       if (isLiveImage()) {
          if (_timer == null) {
             _timer = TIMER_CREATOR.get();
-            _timer.setCallback(() -> onTimer());
+            _timer.setInterval(_redrawInterval);
+            _timer.setCallback(() -> onTimer()); //  start
          }
       } else {
          if (_timer != null)
-            _timer.setCallback(null);
+            _timer.setCallback(null); // stop
       }
       super.drawEnd();
    }
