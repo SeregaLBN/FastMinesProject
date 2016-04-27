@@ -1,4 +1,4 @@
-package fmg.swing.res.img;
+package fmg.core.img;
 
 import java.util.Random;
 import java.util.UUID;

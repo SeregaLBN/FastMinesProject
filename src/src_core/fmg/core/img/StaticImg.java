@@ -1,4 +1,4 @@
-package fmg.swing.res.img;
+package fmg.core.img;
 
 import javax.swing.SwingUtilities;
 
