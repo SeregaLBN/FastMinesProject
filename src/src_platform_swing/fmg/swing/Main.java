@@ -1689,8 +1689,8 @@ public class Main extends JFrame implements PropertyChangeListener {
 //         getRootPane().getActionMap().setParent(null);
 //      } else {
          Pair<InputMap, ActionMap> bind = getKeyPairBindAsMenuAccelerator();
-         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).setParent(bind.getFirst());
-         getRootPane().getActionMap().setParent(bind.getSecond());
+         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).setParent(bind.first);
+         getRootPane().getActionMap().setParent(bind.second);
 //      }
    }
 

@@ -1,39 +1,22 @@
 package fmg.swing.res.img;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
-import java.util.stream.Stream;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import fmg.common.Color;
+import fmg.common.Pair;
 import fmg.common.geom.Bound;
-import fmg.common.geom.BoundDouble;
-import fmg.common.geom.Coord;
-import fmg.common.geom.DoubleExt;
 import fmg.common.geom.Matrisize;
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.RegionDouble;
 import fmg.common.geom.Size;
-import fmg.common.geom.SizeDouble;
-import fmg.common.geom.util.FigureHelper;
-import fmg.core.mosaic.IMosaic;
-import fmg.core.mosaic.MosaicHelper;
+import fmg.core.img.RotatedImg;
+import fmg.core.img.StaticImg;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
 import fmg.core.mosaic.draw.ICellPaint;
 import fmg.core.types.EMosaic;
 import fmg.data.view.draw.PenBorder;
@@ -42,70 +25,22 @@ import fmg.swing.draw.GraphicContext;
 import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
-/** картинка поля конкретной мозаики. Используется для меню, кнопок, etc... */
-public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosaic, TImage>
-      implements IMosaic<PaintableGraphics>
-{
+/** картинка поля конкретной мозаики. Используется для меню, кнопок, etc...
+ *  SWING impl
+ **/
+public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.MosaicsImg<PaintableGraphics, TImage> {
+
+   static {
+      StaticImg.DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
+      RotatedImg.TIMER_CREATOR = () -> new fmg.swing.ui.Timer();
+   }
+
    private final boolean RandomCellBkColor = true;
 
-   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
-      super(mosaicType);
-      _sizeField = sizeField;
-   }
-   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight) {
-      super(mosaicType, widthAndHeight);
-      _sizeField = sizeField;
-   }
-   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) {
-      super(mosaicType, widthAndHeight, padding);
-      _sizeField = sizeField;
-   }
-   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) {
-      super(mosaicType, sizeImage, padding);
-      _sizeField = sizeField;
-   }
-
-   /** из каких фигур состоит мозаика поля */
-   @Override
-   public EMosaic getMosaicType() { return getEntity(); }
-   @Override
-   public void setMosaicType(EMosaic value) {
-      if (value != getEntity()) {
-         EMosaic old = getEntity();
-         setEntity(value);
-         dependency_MosaicType_As_Entity(value, old);
-      }
-   }
-
-   private Matrisize _sizeField;
-   @Override
-   public Matrisize getSizeField() { return _sizeField; }
-   @Override
-   public void setSizeField(Matrisize value) {
-      if (setProperty(_sizeField, value, "SizeField")) {
-         recalcArea();
-         _matrix.clear();
-         invalidate();
-      }
-   }
-
-   @Override
-   public BaseCell getCell(Coord coord) { return getMatrix().get(coord.x * getSizeField().n + coord.y); }
-
-   private BaseCell.BaseAttribute _cellAttr;
-   @Override
-   public BaseCell.BaseAttribute getCellAttr() {
-      if (_cellAttr == null)
-         setCellAttr(MosaicHelper.createAttributeInstance(getMosaicType(), getArea()));
-      return _cellAttr;
-   }
-   private void setCellAttr(BaseCell.BaseAttribute value) {
-      if (setProperty(_cellAttr, value, "CellAttr")) {
-         dependency_GContext_CellAttribute();
-         dependency_CellAttribute_Area();
-         invalidate();
-      }
-   }
+   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField) { super(mosaicType, sizeField); }
+   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight) { super(mosaicType, sizeField, widthAndHeight); }
+   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) { super(mosaicType, sizeField, widthAndHeight, padding); }
+   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) { super(mosaicType, sizeField, sizeImage, padding); }
 
    private ICellPaint<PaintableGraphics> _cellPaint;
    @Override
@@ -116,114 +51,7 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
    }
    private void setCellPaint(ICellPaint<PaintableGraphics> value) {
       if (setProperty(_cellPaint, value, "CellPaint")) {
-         dependency_CellPaint_GContext();
-         invalidate();
-      }
-   }
-
-   /** caching rotated values */
-   private final List<BaseCell> _matrixRotated = new ArrayList<BaseCell>();
-   private final List<BaseCell> _matrix        = new ArrayList<BaseCell>();
-   /** матрица ячеек, представленная(развёрнута) в виде вектора */
-   @Override
-   public List<BaseCell> getMatrix() {
-      if (_matrix.isEmpty()) {
-         _matrixRotated.clear();
-         BaseAttribute attr = getCellAttr();
-         EMosaic type = getMosaicType();
-         Matrisize size = getSizeField();
-         for (int i = 0; i < size.m; i++)
-            for (int j = 0; j < size.n; j++)
-               _matrix.add(MosaicHelper.createCellInstance(attr, type, new Coord(i, j)));
-         onPropertyChanged("Matrix");
-         invalidate();
-      }
-      return _matrix;
-   }
-
-   private List<BaseCell> getRotatedMatrix() {
-      if (Math.abs(getRotateAngle()) < 0.1)
-         return getMatrix();
-      if (_matrixRotated.isEmpty()) {
-         // create copy Matrix
-         BaseCell.BaseAttribute attr = getCellAttr();
-         EMosaic type = getMosaicType();
-         Matrisize size = getSizeField();
-         for (int i = 0; i < size.m; i++)
-            for (int j = 0; j < size.n; j++)
-               _matrixRotated.add(MosaicHelper.createCellInstance(attr, type, new Coord(i, j)));
-      } else {
-         // restore base coords
-         for (BaseCell cell : _matrixRotated)
-            cell.Init();
-      }
-
-      PointDouble center = new PointDouble(getWidth() / 2.0 - _paddingFull.left, getHeight() / 2.0 - _paddingFull.top);
-      for (BaseCell cell : _matrixRotated) {
-         RegionDouble reg = cell.getRegion();
-         Stream<PointDouble> newReg = reg.getPoints()
-               .stream()
-               .map(p -> new PointDouble(p))
-               .map(p -> {
-                  p.x -= center.x;
-                  p.y -= center.y;
-                  return p;
-               });
-         newReg = FigureHelper
-               .rotate(newReg, getRotateAngle())
-               .map(p -> {
-                  p.x += center.x;
-                  p.y += center.y;
-                  return p;
-               });
-         int[] i = { 0 };
-         newReg.forEach(p -> reg.setPoint(i[0]++, (int) p.x, (int) p.y));
-      }
-
-      return _matrixRotated;
-   }
-
-   private void recalcArea() {
-      int w = getWidth();
-      int h = getHeight();
-      Bound pad = getPadding();
-      SizeDouble sizeImageIn = new SizeDouble(w - pad.getLeftAndRight(), h - pad.getTopAndBottom());
-      SizeDouble sizeImageOut = new SizeDouble();
-      double area = MosaicHelper.findAreaBySize(getMosaicType(), getSizeField(), sizeImageIn, sizeImageOut);
-      setArea(area);
-      assert (w >= (sizeImageOut.width + pad.getLeftAndRight()));
-      assert (h >= (sizeImageOut.height + pad.getTopAndBottom()));
-      BoundDouble paddingOut = new BoundDouble(
-         (w - sizeImageOut.width)/2,
-         (h - sizeImageOut.height)/2,
-         (w - sizeImageOut.width)/2,
-         (h - sizeImageOut.height)/2);
-      assert DoubleExt.hasMinDiff(sizeImageOut.width + paddingOut.getLeftAndRight(), w);
-      assert DoubleExt.hasMinDiff(sizeImageOut.height + paddingOut.getTopAndBottom(), h);
-
-      setPaddingFull(paddingOut);
-   }
-
-   private double _area;
-   @Override
-   public double getArea() {
-      if (_area <= 0)
-         recalcArea();
-      return _area;
-   }
-   @Override
-   public void setArea(double value) {
-      if (setProperty(_area, value, "Area")) {
-         dependency_CellAttribute_Area();
-         invalidate();
-      }
-   }
-
-   private BoundDouble _paddingFull;
-   public BoundDouble getPaddingFull() { return _paddingFull; }
-   protected void setPaddingFull(BoundDouble value) {
-      if (setProperty(_paddingFull, value, "PaddingFull")) {
-         dependency_GContext_PaddingFull();
+         dependency_GContext_CellPaint();
          invalidate();
       }
    }
@@ -238,7 +66,7 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
       if (setProperty(_gContext, value, "GContext")) {
          dependency_GContext_CellAttribute();
          dependency_GContext_PaddingFull();
-         dependency_CellPaint_GContext();
+         dependency_GContext_CellPaint();
          dependency_GContext_BorderWidth();
          dependency_GContext_BorderColor();
          invalidate();
@@ -291,12 +119,11 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
       //LoggerSimple.Put("OnPropertyChanged: {0}: PropertyName={1}", Entity, ev.PropertyName);
       super.onPropertyChanged(oldValue, newValue, propertyName);
       switch (propertyName) {
-      case "Entity":
-         dependency_MosaicType_As_Entity((EMosaic) newValue, (EMosaic) oldValue);
+      case "PaddingFull":
+         dependency_GContext_PaddingFull();
          break;
-      case "Size":
-      case "Padding":
-         recalcArea();
+      case "CellAttr":
+         dependency_GContext_CellAttribute();
          break;
       case "BorderWidth":
          dependency_GContext_BorderWidth();
@@ -309,20 +136,11 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
 
    ///////////// #region Dependencys
    void dependency_GContext_CellAttribute() {
-      if ((_cellAttr == null) || (_gContext == null))
+      if (_gContext == null)
          return;
       if (RandomCellBkColor)
          getGContext().getBackgroundFill()
                .setMode(1 + new Random().nextInt(getCellAttr().getMaxBackgroundFillModeValue()));
-   }
-
-   void dependency_CellAttribute_Area() {
-      if (_cellAttr == null)
-         return;
-      getCellAttr().setArea(getArea());
-      if (!_matrix.isEmpty())
-         for (BaseCell cell : getMatrix())
-            cell.Init();
    }
 
    void dependency_GContext_PaddingFull() {
@@ -345,23 +163,13 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
       pb.setColorLight(getBorderColor());
    }
 
-   void dependency_CellPaint_GContext() {
+   void dependency_GContext_CellPaint() {
       if (_cellPaint == null)
          return;
       assert (getCellPaint() instanceof CellPaintGraphics);
       ((CellPaintGraphics) getCellPaint()).setGraphicContext(getGContext());
    }
 
-   void dependency_MosaicType_As_Entity(EMosaic newValue, EMosaic oldValue) {
-      setArea(0);
-      _matrix.clear();
-      _matrixRotated.clear();
-      setCellAttr(null);
-      if ((newValue == null) || (oldValue == null))
-         onPropertyChanged("MosaicType");
-      else
-         onPropertyChanged(oldValue, newValue, "MosaicType");
-   }
    ////////////// #endregion
 
    @Override
@@ -435,85 +243,15 @@ public abstract class MosaicsImg<TImage extends Object> extends RotatedImg<EMosa
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      new JFrame() {
-         private static final long serialVersionUID = 1L;
-         static final int SIZE = 700;
-         {
-             setSize(SIZE+30, SIZE+50);
-             setLocationRelativeTo(null);
-             setTitle("test paints MosaicsImg.Image & MosaicsImg.Icon");
+      TestDrawing.<EMosaic>testApp(rnd -> {
+         EMosaic eMosaic = EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length));
+         MosaicsImg.Icon img1 = new MosaicsImg.Icon(eMosaic, new Matrisize(5+rnd.nextInt(5), 5 + rnd.nextInt(5)));
 
-             Random rnd = new Random(UUID.randomUUID().hashCode());
-             EMosaic eMosaic = EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length));
-             MosaicsImg.Icon img1 = new MosaicsImg.Icon(
-                   eMosaic,
-                   new Matrisize(5+rnd.nextInt(5), 5 + rnd.nextInt(5)),
-                   SIZE/2);
+         eMosaic = EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length));
+         MosaicsImg.Image img2 = new MosaicsImg.Image(eMosaic, new Matrisize(5+rnd.nextInt(5), 5 + rnd.nextInt(5)));
 
-             eMosaic = EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length));
-             MosaicsImg.Image img2 = new MosaicsImg.Image(
-                   eMosaic,
-                   new Matrisize(5+rnd.nextInt(5), 5 + rnd.nextInt(5)),
-                   SIZE/2);
-
-             JPanel jPanel = new JPanel() {
-                private static final long serialVersionUID = 1L;
-                {
-                   setPreferredSize(new Dimension(SIZE, SIZE));
-                }
-                @Override
-                public void paintComponent(Graphics g) {
-                   super.paintComponent(g);
-                   final int offset = 10;
-                   //g.fillRect(offset, offset, SIZE-offset, SIZE-offset);
-                   g.drawRect(offset, offset, SIZE-offset, SIZE-offset);
-
-                   img1.getImage().paintIcon(this, g, 2*offset, 2*offset);
-                   g.drawImage(img2.getImage(), SIZE/2-offset, SIZE/2-offset, null);
-                }
-             };
-             add(jPanel);
-
-             PropertyChangeListener l = evt -> {
-                if ("Image".equals(evt.getPropertyName())) {
-                   //jPanel.invalidate();
-                   //jPanel.revalidate();
-                   jPanel.repaint();
-                }
-             };
-             img1.addListener(l);
-             img2.addListener(l);
-
-             final boolean testTransparent = !false;
-             if (testTransparent) {  // test transparent
-                Color bkClr = Color.RandomColor(rnd); bkClr.setA((byte)0x40); // Color.Transparent; //
-                img1.setBackgroundColor(bkClr);
-                bkClr = Color.RandomColor(rnd); bkClr.setA((byte)0x30); // Color.Transparent; //
-                img2.setBackgroundColor(bkClr);
-             } else {
-                img1.setBackgroundColor(Cast.toColor(jPanel.getBackground()));
-                img2.setBackgroundColor(Cast.toColor(jPanel.getBackground()));
-             }
-             img1.setRotateAngle(33.333);
-             img2.setRotateAngle(-15);
-
-             img1.setRotateAngleDelta( -img1.getRotateAngleDelta());
-             img2.setRotateAngleDelta(3*img2.getRotateAngleDelta());
-             img1.setRotate(true);
-             img2.setRotate(true);
-
-             //setDefaultCloseOperation(EXIT_ON_CLOSE);
-             addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent we) {
-                   img1.close();
-                   img2.close();
-                   dispose();
-                }
-             });
-             setVisible(true);
-         }
-      };
+         return new Pair<>(img1, img2);
+      });
    }
    //////////////////////////////////
 }

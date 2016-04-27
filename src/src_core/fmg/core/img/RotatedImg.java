@@ -1,13 +1,14 @@
 package fmg.core.img;
 
-import java.awt.event.ActionListener;
-
-import javax.swing.Timer;
+import java.util.function.Supplier;
 
 import fmg.common.geom.Bound;
 import fmg.common.geom.Size;
+import fmg.common.ui.ITimer;
 
 public abstract class RotatedImg<T, TImage extends Object> extends StaticImg<T, TImage> {
+
+   public static Supplier<ITimer> TIMER_CREATOR;
 
    protected RotatedImg(T entity) { super(entity); }
    protected RotatedImg(T entity, int widthAndHeight) { super(entity, widthAndHeight); }
@@ -17,9 +18,12 @@ public abstract class RotatedImg<T, TImage extends Object> extends StaticImg<T, 
    private double _redrawInterval = 100;
    /** frequency of redrawing (in milliseconds) */
    public double getRedrawInterval() { return _redrawInterval; }
-   public void setRedrawInterval(double value) { setProperty(_redrawInterval, value, "RedrawInterval"); }
+   public void setRedrawInterval(double value) {
+      if (setProperty(_redrawInterval, value, "RedrawInterval") && (_timer != null))
+         _timer.setInterval((long)_redrawInterval);
+   }
 
-   private Timer _timer;
+   private ITimer _timer;
 
    private boolean _rotate;
    public boolean isRotate() { return _rotate; }
@@ -38,18 +42,17 @@ public abstract class RotatedImg<T, TImage extends Object> extends StaticImg<T, 
    @Override
    protected void drawEnd() {
       if (isLiveImage()) {
-         if (_timer == null)
-            _timer = new Timer((int) getRedrawInterval(), timerListener);
-         _timer.setRepeats(true);
-         _timer.start();
+         if (_timer == null) {
+            _timer = TIMER_CREATOR.get();
+            _timer.setCallback(() -> onTimer());
+         }
       } else {
          if (_timer != null)
-            _timer.stop();
+            _timer.setCallback(null);
       }
       super.drawEnd();
    }
 
-   private ActionListener timerListener = evt -> onTimer();
    protected void onTimer() { RotateStep(); }
 
    protected boolean isLiveImage() { return isRotate(); }
@@ -73,11 +76,9 @@ public abstract class RotatedImg<T, TImage extends Object> extends StaticImg<T, 
    protected void close(boolean disposing) {
       if (disposing) {
          // free managed resources
-         Timer t = _timer;
-         if (t != null) {
-            t.removeActionListener(timerListener);
-            t.stop();
-         }
+         ITimer t = _timer;
+         if (t != null)
+            t.close();
          _timer = null;
       }
       // free native resources if there are any.
