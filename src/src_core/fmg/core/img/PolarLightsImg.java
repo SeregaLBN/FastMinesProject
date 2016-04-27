@@ -30,9 +30,9 @@ public abstract class PolarLightsImg<T, TImage extends Object> extends RotatedIm
 
    private void NextForegroundColor() {
       if (isPolarLights()) {
-         Function<Byte, Byte> funcAddRandomBit = val -> (byte) ((((_random.nextInt() & 1) == 1) ? 0x00 : 0x80) | (val >> 1));
-         Color f = getForegroundColor();
-         switch (_random.nextInt() % 3) {
+         Function<Byte, Byte> funcAddRandomBit = val -> (byte)(((_random.nextInt(2) == 1) ? 0x00 : 0x80)  |  ((val & 0xFF) >> 1));
+         Color f = getForegroundColor().clone();
+         switch (_random.nextInt(3)) {
          case 0: f.setR( funcAddRandomBit.apply(f.getR()) ); break;
          case 1: f.setG( funcAddRandomBit.apply(f.getG()) ); break;
          case 2: f.setB( funcAddRandomBit.apply(f.getB()) ); break;
