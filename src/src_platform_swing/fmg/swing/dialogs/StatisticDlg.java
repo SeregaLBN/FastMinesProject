@@ -12,7 +12,6 @@ import fmg.data.controller.types.User;
 import fmg.swing.Main;
 import fmg.swing.model.view.ReportTableModel;
 import fmg.swing.model.view.StaticsticTblModel;
-import fmg.swing.res.Resources;
 
 /** Диалог отображения статистики пользователя */
 public class StatisticDlg extends ReportDlg {
@@ -20,8 +19,8 @@ public class StatisticDlg extends ReportDlg {
 
    private PlayersModel players;
 
-   public StatisticDlg(Main parent, boolean modal, Resources resources, PlayersModel players) {
-      super(parent, modal, resources);
+   public StatisticDlg(Main parent, boolean modal, PlayersModel players) {
+      super(parent, modal);
       this.players = players;
    }
 
@@ -59,7 +58,7 @@ public class StatisticDlg extends ReportDlg {
    public static void main(String[] args) {
       PlayersModel players = new PlayersModel(Main.serialVersionUID);
       players.Load();
-      new StatisticDlg(null, true, null, players).ShowData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle3);
+      new StatisticDlg(null, true, players).ShowData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle3);
    }
 
    @Override

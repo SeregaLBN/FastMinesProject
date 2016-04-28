@@ -152,12 +152,12 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
    private ChampionDlg getChampionDialog() {
       if (_championDialog == null)
-         _championDialog = new ChampionDlg(this, false, getResources(), getChampions());
+         _championDialog = new ChampionDlg(this, false, getChampions());
       return _championDialog;
    }
    private StatisticDlg getStatisticDialog() {
       if (_statisticDialog == null)
-         _statisticDialog = new StatisticDlg(this, false, getResources(), getPlayers());
+         _statisticDialog = new StatisticDlg(this, false, getPlayers());
       return _statisticDialog;
    }
 

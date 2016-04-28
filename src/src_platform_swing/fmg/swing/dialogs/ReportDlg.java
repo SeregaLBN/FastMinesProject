@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +16,6 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -28,47 +28,34 @@ import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
+import fmg.common.Color;
 import fmg.core.types.EMosaic;
 import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Main;
 import fmg.swing.model.view.ReportTableModel;
-import fmg.swing.res.Resources;
 import fmg.swing.res.img.MosaicsImg;
 import fmg.swing.utils.ImgUtils;
 
 abstract class ReportDlg extends JDialog {
    private static final long serialVersionUID = 1L;
 
-   private static final int imgSize = 30;
+   private static final int ImgSize = 30;
+   private static final int ImgZoomQuality = 3;
+
    protected JTabbedPane tabPanel;
    protected JToggleButton[] btns = new JToggleButton[ESkillLevel.values().length-1];
-   private Map<EMosaic, JScrollPane> scrollPanes = new HashMap<EMosaic, JScrollPane>(EMosaic.values().length-1);
+   private Map<EMosaic, JScrollPane> scrollPanes = new HashMap<>(EMosaic.values().length);
+   private Map<EMosaic, MosaicsImg.Icon> images = new HashMap<>(EMosaic.values().length);
    protected ButtonGroup radioGroup;
    protected Main parent;
-   private double roteteAngle[] = new double[EMosaic.values().length];
-   private Timer rotateTimer;
-
-   private Resources resources;
-   private Resources getResources() {
-      if (resources == null)
-         resources = new Resources();
-      return resources;
-   }
 
    public ReportDlg(Main parent, boolean modal) {
       super(parent, "report window...", modal);
       this.parent = parent;
-      initialize(parent);
-   }
-   public ReportDlg(Main parent, boolean modal, Resources resources) {
-      super(parent, "report window...", modal);
-      this.parent = parent;
-      this.resources = resources;
       initialize(parent);
    }
 
@@ -78,19 +65,16 @@ abstract class ReportDlg extends JDialog {
         getRootPane().getActionMap().put(keyBind, new AbstractAction() {
          private static final long serialVersionUID = 1L;
          @Override
-         public void actionPerformed(ActionEvent e) { OnClose(); }
+         public void actionPerformed(ActionEvent e) { onClose(); }
       });
 
       addWindowListener(new WindowAdapter() {
          @Override
-         public void windowClosing(WindowEvent we) { OnClose(); }
+         public void windowClosing(WindowEvent we) { onClose(); }
       });
 
       this.setResizable(!false);
-      CreateComponents();
-
-      rotateTimer = new Timer(10, e -> ReportDlg.this.OnNextRotate());
-      rotateTimer.start();
+      createComponents();
 
 //      Dimension preferredSize = this.getPreferredSize();
 //      preferredSize.width = Toolkit.getDefaultToolkit().getScreenSize().width-100;
@@ -101,9 +85,8 @@ abstract class ReportDlg extends JDialog {
       this.setLocationRelativeTo(parent);
    }
 
-   private void OnClose() {
-      // при выходе из диалогового окна - освобождаю ресурсы
-      rotateTimer.stop();
+   private void onClose() {
+      images.forEach((k,v) -> v.close());
       dispose();
 //      System.exit(0);
    }
@@ -113,7 +96,7 @@ abstract class ReportDlg extends JDialog {
    }
 
    /** создаю панели с нужным расположением */
-   private void CreateComponents() {
+   private void createComponents() {
       // 1. Создаю панель, которая будет содержать все остальные элементы и панели расположения
       tabPanel = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
       {
@@ -123,7 +106,11 @@ abstract class ReportDlg extends JDialog {
 
          for (EMosaic eMosaic: EMosaic.values()) {
             JScrollPane scroll = new JScrollPane();
-            MosaicsImg.Icon img = new MosaicsImg.Icon(eMosaic, eMosaic.sizeIcoField(false), imgSize);
+            MosaicsImg.Icon img = new MosaicsImg.Icon(eMosaic, eMosaic.sizeIcoField(false), ImgSize*ImgZoomQuality);
+            images.put(eMosaic, img);
+            img.addListener(ev -> onImagePropertyChange(eMosaic, ev));
+
+            img.setBackgroundColor(Color.Transparent);
             tabPanel.addTab(null, img.getImage(), scroll, eMosaic.getDescription(false));
             scroll.setPreferredSize(getPreferredScrollPaneSize());
             scrollPanes.put(eMosaic, scroll);
@@ -131,7 +118,7 @@ abstract class ReportDlg extends JDialog {
 
          // таблички создаю динамически - когда юзер выберет конкретную вкладку. См. getSelectedTable()
 
-         tabPanel.addChangeListener(e -> ReportDlg.this.OnChangeTab(getSelectedMosaicType()));
+         tabPanel.addChangeListener(e -> onChangeTab(getSelectedMosaicType()));
       }
 
       // 2. Панель кнопок снизу
@@ -145,7 +132,7 @@ abstract class ReportDlg extends JDialog {
             JToggleButton btn = btns[eSkill.ordinal()] = new JToggleButton(eSkill.getDescription());
             panelBottom.add(btn);
             radioGroup.add(btn);
-            btn.addActionListener(e -> ReportDlg.this.OnClickBtnSkill(eSkill));
+            btn.addActionListener(e -> onClickBtnSkill(eSkill));
          }
       }
 
@@ -157,12 +144,12 @@ abstract class ReportDlg extends JDialog {
 
    protected boolean isOneLineSkillLevelButtons() { return false; }
 
-   protected void OnClickBtnSkill(ESkillLevel eSkill) {
+   protected void onClickBtnSkill(ESkillLevel eSkill) {
 //      System.out.println("OnClickBtnSkill: " + eSkill);
       UpdateModel(eSkill);
    }
 
-   protected void OnChangeTab(EMosaic mosaicType) {
+   protected void onChangeTab(EMosaic mosaicType) {
 //      System.out.println("OnChangeTab: " + mosaicType);
       UpdateModel(getSelectedSkillLevel());
    }
@@ -236,22 +223,16 @@ abstract class ReportDlg extends JDialog {
       throw new RuntimeException("dialog Report::getSelectedSkillLevel: radioGroup.getSelection() return unknown model ???");
    }
 
-   private void OnNextRotate() {
+   private void onImagePropertyChange(EMosaic mosaicType, PropertyChangeEvent ev) {
       if (!this.isVisible())
          return;
+      if (!ev.getPropertyName().equalsIgnoreCase("Image"))
+         return;
 
-      EMosaic mosaicType = getSelectedMosaicType();
       int i = mosaicType.ordinal();
-      MosaicsImg.Icon img = new MosaicsImg.Icon(mosaicType, mosaicType.sizeIcoField(false), imgSize);
-      Icon icon = img.getImage();
-      // TODO кэшировать картинки??? - жрёт память
-      icon = ImgUtils.toIco(ImgUtils.rotate(ImgUtils.toImg(icon), roteteAngle[i]), imgSize,imgSize);
+      MosaicsImg.Icon img = images.get(mosaicType);
 
-      roteteAngle[i] = roteteAngle[i] + 1.2;
-      if (roteteAngle[i] > 360.)
-         roteteAngle[i] = roteteAngle[i] - 360.;
-
-      tabPanel.setIconAt(i, icon);
+      tabPanel.setIconAt(i, ImgUtils.zoom(img.getImage(), ImgSize, ImgSize));
    }
 
    protected ReportTableModel createTableModel(EMosaic eMosaic) {
@@ -295,10 +276,10 @@ abstract class ReportDlg extends JDialog {
 
    @Override
    public void setVisible(boolean b) {
-      if (!b)
-         rotateTimer.stop();
-      else
-         rotateTimer.start();
+      EMosaic mosaicType = getSelectedMosaicType();
+      MosaicsImg.Icon img = images.get(mosaicType);
+      img.setRotate(b);
+
       super.setVisible(b);
    }
 

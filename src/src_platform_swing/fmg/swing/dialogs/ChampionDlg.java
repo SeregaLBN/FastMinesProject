@@ -10,7 +10,6 @@ import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Main;
 import fmg.swing.model.view.ChampionTblModel;
 import fmg.swing.model.view.ReportTableModel;
-import fmg.swing.res.Resources;
 
 /** Диалог отображения чемпионов */
 public class ChampionDlg extends ReportDlg {
@@ -18,8 +17,8 @@ public class ChampionDlg extends ReportDlg {
 
    private final ChampionsModel champions;
 
-   public ChampionDlg(Main parent, boolean modal, Resources resources, ChampionsModel champions) {
-      super(parent, modal, resources);
+   public ChampionDlg(Main parent, boolean modal, ChampionsModel champions) {
+      super(parent, modal);
       this.champions = champions;
    }
 
@@ -45,7 +44,7 @@ public class ChampionDlg extends ReportDlg {
    public static void main(String[] args) {
       ChampionsModel champions = new ChampionsModel(Main.serialVersionUID, null);
       champions.Load();
-      new ChampionDlg(null, true, null, champions).ShowData(ESkillLevel.eBeginner, EMosaic.eMosaicSquare1);
+      new ChampionDlg(null, true, champions).ShowData(ESkillLevel.eBeginner, EMosaic.eMosaicSquare1);
    }
 
    @Override
