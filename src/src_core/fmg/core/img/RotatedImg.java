@@ -28,8 +28,12 @@ public abstract class RotatedImg<T, TImage extends Object> extends StaticImg<T, 
    private boolean _rotate;
    public boolean isRotate() { return _rotate; }
    public void setRotate(boolean value) {
-      if (setProperty(_rotate, value, "Rotate") && value)
-         invalidate();
+      if (setProperty(_rotate, value, "Rotate")) {
+         if (value)
+            startTimer();
+         else
+            stopTimer();
+      }
    }
 
    private double _rotateAngleDelta = 1.4;
@@ -39,29 +43,25 @@ public abstract class RotatedImg<T, TImage extends Object> extends StaticImg<T, 
          invalidate();
    }
 
-   @Override
-   protected void drawEnd() {
-      if (isLiveImage()) {
-         if (_timer == null) {
-            _timer = TIMER_CREATOR.get();
-            _timer.setInterval(_redrawInterval);
-            _timer.setCallback(() -> onTimer()); //  start
-         }
-      } else {
-         if (_timer != null)
-            _timer.setCallback(null); // stop
+   protected void startTimer() {
+      if (_timer == null) {
+         _timer = TIMER_CREATOR.get();
+         _timer.setInterval(_redrawInterval);
       }
-      super.drawEnd();
+      _timer.setCallback(() -> onTimer()); //  start
    }
-
-   protected void onTimer() { RotateStep(); }
+   protected void stopTimer() {
+      if ((_timer != null) && !isLiveImage())
+         _timer.setCallback(null); // stop
+   }
+   protected void onTimer() {
+      if (isRotate())
+         rotateStep();
+   }
 
    protected boolean isLiveImage() { return isRotate(); }
 
-   private void RotateStep() {
-      if (!isRotate())
-         return;
-
+   private void rotateStep() {
       double rotateAngle = getRotateAngle() + getRotateAngleDelta();
       if (rotateAngle >= 360) {
          rotateAngle -= 360;

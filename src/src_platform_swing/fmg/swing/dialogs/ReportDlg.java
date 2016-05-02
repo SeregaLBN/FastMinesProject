@@ -35,6 +35,7 @@ import javax.swing.table.TableCellRenderer;
 import fmg.common.Color;
 import fmg.core.types.EMosaic;
 import fmg.data.controller.types.ESkillLevel;
+import fmg.swing.Cast;
 import fmg.swing.Main;
 import fmg.swing.model.view.ReportTableModel;
 import fmg.swing.res.img.MosaicsImg;
@@ -43,7 +44,7 @@ import fmg.swing.utils.ImgUtils;
 abstract class ReportDlg extends JDialog {
    private static final long serialVersionUID = 1L;
 
-   private static final int ImgSize = 30;
+   private static final int ImgSize = 40;
    private static final int ImgZoomQuality = 3;
 
    protected JTabbedPane tabPanel;
@@ -108,17 +109,17 @@ abstract class ReportDlg extends JDialog {
             JScrollPane scroll = new JScrollPane();
             MosaicsImg.Icon img = new MosaicsImg.Icon(eMosaic, eMosaic.sizeIcoField(false), ImgSize*ImgZoomQuality);
             images.put(eMosaic, img);
-            img.addListener(ev -> onImagePropertyChange(eMosaic, ev));
+            img.addListener(ev -> onImagePropertyChanged(eMosaic, ev));
+            img.setBackgroundColor(bkTabBkColor);
 
-            img.setBackgroundColor(Color.Transparent);
-            tabPanel.addTab(null, img.getImage(), scroll, eMosaic.getDescription(false));
+            tabPanel.addTab(null, ImgUtils.zoom(img.getImage(), ImgSize, ImgSize), scroll, eMosaic.getDescription(false));
             scroll.setPreferredSize(getPreferredScrollPaneSize());
             scrollPanes.put(eMosaic, scroll);
          }
 
          // таблички создаю динамически - когда юзер выберет конкретную вкладку. См. getSelectedTable()
 
-         tabPanel.addChangeListener(e -> onChangeTab(getSelectedMosaicType()));
+         tabPanel.addChangeListener(ev -> onChangeTab(getSelectedMosaicType()));
       }
 
       // 2. Панель кнопок снизу
@@ -149,9 +150,18 @@ abstract class ReportDlg extends JDialog {
       UpdateModel(eSkill);
    }
 
-   protected void onChangeTab(EMosaic mosaicType) {
+   static final Color bkTabBkColor = Cast.toColor(UIManager.getColor("TabbedPane.light")); // Cast.toColor(getContentPane().getBackground());
+   static final Color bkTabBkColorSelected = Cast.toColor(UIManager.getColor("TabbedPane.shadow")); // "TabbedPane.darkShadow"
+
+   protected void onChangeTab(EMosaic eMosaic) {
 //      System.out.println("OnChangeTab: " + mosaicType);
       UpdateModel(getSelectedSkillLevel());
+
+      images.forEach((mosaicType, img) -> {
+         boolean selected = (mosaicType == eMosaic);
+         img.setRotate(selected);
+         img.setBackgroundColor(selected ? bkTabBkColorSelected : bkTabBkColor);
+      });
    }
 
    // тестовый метод для проверки диалогового окна
@@ -173,7 +183,7 @@ abstract class ReportDlg extends JDialog {
 
       radioGroup.setSelected(btns[eSkill.ordinal()].getModel(), true);
       tabPanel.setSelectedIndex(eMosaic.ordinal());
-      UpdateModel(eSkill);
+      onChangeTab(eMosaic);
 
       JTable table = getSelectedTable();
       if (pos != -1)
@@ -223,16 +233,15 @@ abstract class ReportDlg extends JDialog {
       throw new RuntimeException("dialog Report::getSelectedSkillLevel: radioGroup.getSelection() return unknown model ???");
    }
 
-   private void onImagePropertyChange(EMosaic mosaicType, PropertyChangeEvent ev) {
-      if (!this.isVisible())
-         return;
-      if (!ev.getPropertyName().equalsIgnoreCase("Image"))
-         return;
-
-      int i = mosaicType.ordinal();
-      MosaicsImg.Icon img = images.get(mosaicType);
-
-      tabPanel.setIconAt(i, ImgUtils.zoom(img.getImage(), ImgSize, ImgSize));
+   private void onImagePropertyChanged(EMosaic mosaicType, PropertyChangeEvent ev) {
+      if (ev.getPropertyName().equalsIgnoreCase("Image")) {
+         int i = mosaicType.ordinal();
+         MosaicsImg.Icon img = images.get(mosaicType);
+         if (isVisible())
+            tabPanel.setIconAt(i, ImgUtils.zoom(img.getImage(), ImgSize, ImgSize));
+         else
+            img.getImage();
+      }
    }
 
    protected ReportTableModel createTableModel(EMosaic eMosaic) {
@@ -272,15 +281,6 @@ abstract class ReportDlg extends JDialog {
 //      for (int i=0; i<tableColumnModel.getColumnCount(); i++)
 //         tableColumnModel.getColumn(i).setHeaderRenderer(defaultTableCellRenderer);
       return table;
-   }
-
-   @Override
-   public void setVisible(boolean b) {
-      EMosaic mosaicType = getSelectedMosaicType();
-      MosaicsImg.Icon img = images.get(mosaicType);
-      img.setRotate(b);
-
-      super.setVisible(b);
    }
 
    public void CleanResource() {

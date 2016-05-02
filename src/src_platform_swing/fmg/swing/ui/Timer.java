@@ -8,6 +8,7 @@ public class Timer implements ITimer {
 
    private javax.swing.Timer _timer;
    private long _interval = 200;
+   private Runnable _callback;
 
    @Override
    public long getInterval() { return _interval; }
@@ -21,10 +22,14 @@ public class Timer implements ITimer {
 
    @Override
    public void setCallback(Runnable cb) {
+      if (cb == _callback)
+         return;
+
       clean();
       if (cb == null)
          return;
 
+      _callback = cb;
       _timer = new javax.swing.Timer((int)_interval, evt -> cb.run());
       _timer.setRepeats(true);
       _timer.start();
@@ -38,6 +43,7 @@ public class Timer implements ITimer {
       for (ActionListener al : _timer.getActionListeners())
          _timer.removeActionListener(al);
       _timer = null;
+      _callback = null;
    }
 
    @Override
