@@ -44,7 +44,9 @@ public class ChampionDlg extends ReportDlg {
    public static void main(String[] args) {
       ChampionsModel champions = new ChampionsModel(Main.serialVersionUID, null);
       champions.Load();
-      new ChampionDlg(null, true, champions).ShowData(ESkillLevel.eBeginner, EMosaic.eMosaicSquare1);
+      try (ChampionDlg dlg = new ChampionDlg(null, true, champions)) {
+         dlg.ShowData(ESkillLevel.eBeginner, EMosaic.eMosaicSquare1);
+      }
    }
 
    @Override

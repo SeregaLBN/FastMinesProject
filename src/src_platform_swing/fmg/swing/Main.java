@@ -269,7 +269,6 @@ public class Main extends JFrame implements PropertyChangeListener {
                bg.add(getMenuItemMosaic(key));
          }
 
-         private static final int icoMosaicWidht = 16, icoMosaicHeight = 16;
          final static boolean experimentalMenuMnemonic = true;
          private JMenuItem getMenuItemMosaicGroup(EMosaicGroup key) {
             if (mosaicsGroup == null) {
@@ -1291,8 +1290,8 @@ public class Main extends JFrame implements PropertyChangeListener {
          ex.printStackTrace();
       }
 
-      getStatisticDialog().CleanResource(); // без этого не завершиться java поцесс (под виндой глядел)
-      getChampionDialog().CleanResource(); // без этого не завершиться java поцесс (под виндой глядел)
+      getStatisticDialog().close();
+      getChampionDialog().close();
 
 //      setVisible(false);
       dispose();

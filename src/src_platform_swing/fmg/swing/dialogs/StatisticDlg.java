@@ -58,7 +58,9 @@ public class StatisticDlg extends ReportDlg {
    public static void main(String[] args) {
       PlayersModel players = new PlayersModel(Main.serialVersionUID);
       players.Load();
-      new StatisticDlg(null, true, players).ShowData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle3);
+      try (StatisticDlg dlg = new StatisticDlg(null, true, players)) {
+         dlg.ShowData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle3);
+      }
    }
 
    @Override

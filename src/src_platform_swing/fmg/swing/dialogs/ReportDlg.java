@@ -41,7 +41,7 @@ import fmg.swing.model.view.ReportTableModel;
 import fmg.swing.res.img.MosaicsImg;
 import fmg.swing.utils.ImgUtils;
 
-abstract class ReportDlg extends JDialog {
+abstract class ReportDlg extends JDialog implements AutoCloseable {
    private static final long serialVersionUID = 1L;
 
    private static final int ImgSize = 40;
@@ -87,9 +87,7 @@ abstract class ReportDlg extends JDialog {
    }
 
    private void onClose() {
-      images.forEach((k,v) -> v.close());
-      dispose();
-//      System.exit(0);
+      close();
    }
 
    protected Dimension getPreferredScrollPaneSize() {
@@ -166,9 +164,11 @@ abstract class ReportDlg extends JDialog {
 
    // тестовый метод для проверки диалогового окна
    public static void main(String[] args) {
-      new ReportDlg(null, true) {
-         private static final long serialVersionUID = 1L; }
-      .ShowData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle1, -1);
+      try (ReportDlg dlg = new ReportDlg(null, true)
+         { private static final long serialVersionUID = 1L; })
+      {
+         dlg.ShowData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle1, -1);
+      }
    }
 
    /**
@@ -282,8 +282,11 @@ abstract class ReportDlg extends JDialog {
       return table;
    }
 
-   public void CleanResource() {
+   @Override
+   public void close() {
       setVisible(false);
+      images.forEach((k,v) -> v.close());
+      dispose();
    }
 
    DefaultTableCellRenderer defaultTableCellRenderer = new CustomHeaderTableCellRenderer();
