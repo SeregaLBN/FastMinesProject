@@ -234,13 +234,12 @@ abstract class ReportDlg extends JDialog {
    }
 
    private void onImagePropertyChanged(EMosaic mosaicType, PropertyChangeEvent ev) {
+      if (!isVisible())
+         return;
       if (ev.getPropertyName().equalsIgnoreCase("Image")) {
          int i = mosaicType.ordinal();
          MosaicsImg.Icon img = images.get(mosaicType);
-         if (isVisible())
-            tabPanel.setIconAt(i, ImgUtils.zoom(img.getImage(), ImgSize, ImgSize));
-         else
-            img.getImage();
+         tabPanel.setIconAt(i, ImgUtils.zoom(img.getImage(), ImgSize, ImgSize));
       }
    }
 

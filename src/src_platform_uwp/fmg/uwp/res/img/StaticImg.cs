@@ -70,11 +70,11 @@ namespace fmg.uwp.res.img {
       }
 
       enum EInvalidate {
-         Invalidate,
+         NeedRedraw,
          Redrawing,
          Redrawed
       }
-      private EInvalidate _invalidate = EInvalidate.Invalidate;
+      private EInvalidate _invalidate = EInvalidate.NeedRedraw;
       protected abstract TImage CreateImage();
       private TImage _image;
       public TImage Image {
@@ -82,7 +82,7 @@ namespace fmg.uwp.res.img {
             //LoggerSimple.Put("getImage: {0}", Entity);
             if (_image == null)
                Image = CreateImage();
-            if (_invalidate == EInvalidate.Invalidate)
+            if (_invalidate == EInvalidate.NeedRedraw)
                Draw();
             return _image;
          }
@@ -151,9 +151,9 @@ namespace fmg.uwp.res.img {
       public bool OnlySyncDraw { get; set; } = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
 
       protected void Invalidate() {
-         if (_invalidate != EInvalidate.Redrawed)
+         if (_invalidate == EInvalidate.Redrawing)
             return;
-         _invalidate = EInvalidate.Invalidate;
+         _invalidate = EInvalidate.NeedRedraw;
          OnPropertyChanged("Image");
       }
 

@@ -71,18 +71,18 @@ public abstract class StaticImg<T, TImage extends Object> extends NotifyProperty
    }
 
    enum EInvalidate {
-      invalidate,
+      needRedraw,
       redrawing,
       redrawed
    }
-   private EInvalidate _invalidate = EInvalidate.invalidate;
+   private EInvalidate _invalidate = EInvalidate.needRedraw;
 
    protected abstract TImage createImage();
    private TImage _image;
    public TImage getImage() {
       if (_image == null)
          setImage(createImage());
-      if (_invalidate == EInvalidate.invalidate)
+      if (_invalidate == EInvalidate.needRedraw)
          draw();
       return _image;
    }
@@ -142,9 +142,9 @@ public abstract class StaticImg<T, TImage extends Object> extends NotifyProperty
    public void setOnlySyncDraw(boolean value) { _onlySyncDraw = value; }
 
    protected void invalidate() {
-      if (_invalidate != EInvalidate.redrawed)
+      if (_invalidate == EInvalidate.redrawing)
          return;
-      _invalidate = EInvalidate.invalidate;
+      _invalidate = EInvalidate.needRedraw;
       onPropertyChanged("Image");
    }
 
