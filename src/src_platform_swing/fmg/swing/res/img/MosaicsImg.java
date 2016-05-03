@@ -172,15 +172,6 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
 
    ////////////// #endregion
 
-   @Override
-   protected void close(boolean disposing) {
-      if (disposing) {
-         setGContext(null);
-      }
-
-      super.close(disposing);
-   }
-
    public static class Icon extends MosaicsImg<javax.swing.Icon> {
       public Icon(EMosaic mosaicType, Matrisize sizeField) { super(mosaicType, sizeField); }
       public Icon(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight) { super(mosaicType, sizeField, widthAndHeight); }
