@@ -62,8 +62,8 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
 
    private void initialize(JFrame parent) {
       Object keyBind = "CloseDialog";
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
-        getRootPane().getActionMap().put(keyBind, new AbstractAction() {
+      getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
+      getRootPane().getActionMap().put(keyBind, new AbstractAction() {
          private static final long serialVersionUID = 1L;
          @Override
          public void actionPerformed(ActionEvent e) { onClose(); }
@@ -87,7 +87,10 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
    }
 
    private void onClose() {
-      close();
+      if (isModal())
+         dispose();
+      else
+         setVisible(false);
    }
 
    protected Dimension getPreferredScrollPaneSize() {
@@ -145,7 +148,7 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
 
    protected void onClickBtnSkill(ESkillLevel eSkill) {
 //      System.out.println("OnClickBtnSkill: " + eSkill);
-      UpdateModel(eSkill);
+      updateModel(eSkill);
    }
 
    static final Color bkTabBkColor = Cast.toColor(UIManager.getColor("TabbedPane.light")); // Cast.toColor(getContentPane().getBackground());
@@ -153,7 +156,7 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
 
    protected void onChangeTab(EMosaic eMosaic) {
 //      System.out.println("OnChangeTab: " + mosaicType);
-      UpdateModel(getSelectedSkillLevel());
+      updateModel(getSelectedSkillLevel());
 
       images.forEach((mosaicType, img) -> {
          boolean selected = (mosaicType == eMosaic);
@@ -167,7 +170,7 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
       try (ReportDlg dlg = new ReportDlg(null, true)
          { private static final long serialVersionUID = 1L; })
       {
-         dlg.ShowData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle1, -1);
+         dlg.showData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle1, -1);
       }
    }
 
@@ -177,7 +180,7 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
     * @param eMosaic
     * @param pos - позиция строки в табличке, которую выделить
     */
-   public void ShowData(ESkillLevel eSkill, EMosaic eMosaic, int pos) {
+   public void showData(ESkillLevel eSkill, EMosaic eMosaic, int pos) {
       if (eSkill == ESkillLevel.eCustom)
          eSkill = ESkillLevel.eAmateur;
 
@@ -194,7 +197,7 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
       this.setVisible(true);
    }
 
-   protected void UpdateModel(ESkillLevel eSkill) {
+   protected void updateModel(ESkillLevel eSkill) {
       getSelectedTableModel().setSkill(eSkill);
    }
 
@@ -283,8 +286,18 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
    }
 
    @Override
+   public void setVisible(boolean b) {
+      EMosaic mosaicType = getSelectedMosaicType();
+      MosaicsImg.Icon img = images.get(mosaicType);
+      img.setRotate(b);
+      if (!b)
+         img.setBackgroundColor(bkTabBkColor);
+
+      super.setVisible(b);
+   }
+
+   @Override
    public void close() {
-      setVisible(false);
       images.forEach((k,v) -> v.close());
       dispose();
    }

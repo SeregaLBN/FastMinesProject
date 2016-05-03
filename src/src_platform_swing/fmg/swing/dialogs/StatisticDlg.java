@@ -25,9 +25,9 @@ public class StatisticDlg extends ReportDlg {
    }
 
    @Override
-   protected void UpdateModel(ESkillLevel eSkill) {
+   protected void updateModel(ESkillLevel eSkill) {
       setTitle("Statistics - " + getSelectedMosaicType().getDescription(false));
-      super.UpdateModel(eSkill);
+      super.updateModel(eSkill);
 
       // выделяю рядок текущего пользователя
       try {
@@ -59,7 +59,7 @@ public class StatisticDlg extends ReportDlg {
       PlayersModel players = new PlayersModel(Main.serialVersionUID);
       players.Load();
       try (StatisticDlg dlg = new StatisticDlg(null, true, players)) {
-         dlg.ShowData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle3);
+         dlg.showData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle3);
       }
    }
 
@@ -71,8 +71,8 @@ public class StatisticDlg extends ReportDlg {
    @Override
    protected boolean isOneLineSkillLevelButtons() { return true; }
 
-   public void ShowData(ESkillLevel eSkill, EMosaic eMosaic) {
+   public void showData(ESkillLevel eSkill, EMosaic eMosaic) {
       int pos = players.getPos((parent==null) ? null : parent.getActiveUserId());
-      super.ShowData(eSkill, eMosaic, pos);
+      super.showData(eSkill, eMosaic, pos);
    }
 }

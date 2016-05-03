@@ -217,6 +217,7 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
          super.close();
          if (gBuffImg != null)
             gBuffImg.dispose();
+         gBuffImg = null;
       }
    }
 

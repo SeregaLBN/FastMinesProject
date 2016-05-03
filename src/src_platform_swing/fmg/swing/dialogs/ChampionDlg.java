@@ -23,9 +23,9 @@ public class ChampionDlg extends ReportDlg {
    }
 
    @Override
-   protected void UpdateModel(ESkillLevel eSkill) {
+   protected void updateModel(ESkillLevel eSkill) {
       setTitle("Champions - " + getSelectedMosaicType().getDescription(false));
-      super.UpdateModel(eSkill);
+      super.updateModel(eSkill);
    }
 
    @Override
@@ -45,7 +45,7 @@ public class ChampionDlg extends ReportDlg {
       ChampionsModel champions = new ChampionsModel(Main.serialVersionUID, null);
       champions.Load();
       try (ChampionDlg dlg = new ChampionDlg(null, true, champions)) {
-         dlg.ShowData(ESkillLevel.eBeginner, EMosaic.eMosaicSquare1);
+         dlg.showData(ESkillLevel.eBeginner, EMosaic.eMosaicSquare1);
       }
    }
 
@@ -57,10 +57,10 @@ public class ChampionDlg extends ReportDlg {
    @Override
    protected boolean isOneLineSkillLevelButtons() { return false; }
 
-   public void ShowData(ESkillLevel eSkill, EMosaic eMosaic) {
+   public void showData(ESkillLevel eSkill, EMosaic eMosaic) {
       // найдёт позицию первого вхождения пользователя...
       int pos = champions.getPos((parent==null) ? null : parent.getActiveUserId(), eMosaic, eSkill);
       // ...на этой позиции и фокусируюсь
-      super.ShowData(eSkill, eMosaic, pos);
+      super.showData(eSkill, eMosaic, pos);
    }
 }

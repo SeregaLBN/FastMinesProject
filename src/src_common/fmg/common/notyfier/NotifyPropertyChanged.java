@@ -48,6 +48,7 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
    }
 
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+    //System.out.println("onPropertyChanged: " + propertyName + ": " + newValue);
       propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
    }
 
@@ -75,8 +76,7 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
               .filter(fld -> {
                   int m = fld.getModifiers();
                   return !Modifier.isTransient(m) &&
-                         !Modifier.isStatic(m) &&
-                         !Modifier.isFinal(m); });
+                         !Modifier.isStatic(m); });
    }
 
 }

@@ -2011,7 +2011,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   if (Main.this.getChampionDialog().isVisible())
                      Main.this.getChampionDialog().setVisible(false);
                   else {
-                     Main.this.getChampionDialog().ShowData(
+                     Main.this.getChampionDialog().showData(
                            Main.this.getSkillLevel(),
                            Main.this.getMosaic().getMosaicType());
                   }
@@ -2031,7 +2031,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   if (Main.this.getStatisticDialog().isVisible())
                      Main.this.getStatisticDialog().setVisible(false);
                   else
-                     Main.this.getStatisticDialog().ShowData(Main.this.getSkillLevel(), Main.this.getMosaic().getMosaicType());
+                     Main.this.getStatisticDialog().showData(Main.this.getSkillLevel(), Main.this.getMosaic().getMosaicType());
                }
             };
 
@@ -2311,14 +2311,14 @@ public class Main extends JFrame implements PropertyChangeListener {
             getPlayers().setStatistic(userId, eMosaic, eSkill, victory, realCountOpen, playTime, clickCount);
             if (getStatisticDialog().isVisible())
                // если окно открыто - сфокусируюсь на нужной закладке/скилле и пользователе
-               getStatisticDialog().ShowData(eSkill, eMosaic);
+               getStatisticDialog().showData(eSkill, eMosaic);
 
             // ...чемпиона
             if (victory) {
                User user = Main.this.getPlayers().getUser(userId);
                int pos = Main.this.getChampions().add(user, playTime, eMosaic, eSkill);
                if (pos != -1)
-                  Main.this.getChampionDialog().ShowData(eSkill, eMosaic, pos);
+                  Main.this.getChampionDialog().showData(eSkill, eMosaic, pos);
             }
          }
       };
