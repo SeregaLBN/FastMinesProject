@@ -17,8 +17,8 @@ public abstract class RotatedImg<T, TImage extends Object> extends StaticImg<T, 
 
    private long _redrawInterval = 100;
    /** frequency of redrawing (in milliseconds) */
-   public double getRedrawInterval() { return _redrawInterval; }
-   public void setRedrawInterval(double value) {
+   public long getRedrawInterval() { return _redrawInterval; }
+   public void setRedrawInterval(long value) {
       if (setProperty(_redrawInterval, value, "RedrawInterval") && (_timer != null))
          _timer.setInterval(_redrawInterval);
    }

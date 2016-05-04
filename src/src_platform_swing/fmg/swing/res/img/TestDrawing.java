@@ -49,7 +49,7 @@ final class TestDrawing {
                 public void paintComponent(Graphics g) {
                    super.paintComponent(g);
                    final int offset = 10;
-                   //g.fillRect(offset, offset, SIZE-offset, SIZE-offset);
+                   //g.clearRect(offset, offset, SIZE-offset, SIZE-offset);
                    g.drawRect(offset, offset, SIZE-offset, SIZE-offset);
 
                    img1.getImage().paintIcon(this, g, 2*offset, 2*offset);

@@ -46,7 +46,7 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
 
    private static final int ImgSize = 40;
    private static final int ImgZoomQuality = 3;
-   private static final Color bkTabBkColor = Cast.toColor(UIManager.getColor("TabbedPane.light")); // Cast.toColor(getContentPane().getBackground());
+   private static final Color bkTabBkColor = fmg.common.Color.Transparent; // Cast.toColor(UIManager.getColor("TabbedPane.light")); // Cast.toColor(getContentPane().getBackground());
    private static final Color bkTabBkColorSelected = Cast.toColor(UIManager.getColor("TabbedPane.shadow")); // "TabbedPane.darkShadow"
 
    protected JTabbedPane tabPanel;
@@ -114,6 +114,8 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
             images.put(eMosaic, img);
             img.addListener(ev -> onImagePropertyChanged(eMosaic, ev));
             img.setBackgroundColor(bkTabBkColor);
+            img.setRotateAngleDelta(3.5);
+            img.setRedrawInterval(50);
 
             tabPanel.addTab(null, ImgUtils.zoom(img.getImage(), ImgSize, ImgSize), scroll, eMosaic.getDescription(false));
             scroll.setPreferredSize(getPreferredScrollPaneSize());

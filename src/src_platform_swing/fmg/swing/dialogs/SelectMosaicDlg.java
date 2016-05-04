@@ -9,6 +9,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -26,7 +27,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 
-import fmg.common.geom.Bound;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.swing.Cast;
@@ -48,7 +48,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
    private MosaicsImg.Image mosaicsImg, mosaicsImgRollover;
    private static final int ImgSize = 40;
    private static final int ImgZoomQuality = 3;
-   private static final Color bkTabBkColor = UIManager.getColor("Button.light"); // "Button.light" "Button.foreground"
+   private static final Color bkTabBkColor = Cast.toColor(fmg.common.Color.Transparent); // UIManager.getColor("Button.light"); // "Button.light" "Button.foreground"
    private static final Color bkTabBkColorSelected = UIManager.getColor("Button.shadow"); // "Button.select" "Button.darkShadow"
 
    public SelectMosaicDlg(JFrame parent, boolean modal) {
@@ -270,23 +270,34 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
    }
    private void setBtnOkIcons(EMosaic mosaicType) {
       if (mosaicsImg == null) {
-         mosaicsImg = new MosaicsImg.Image(mosaicType, mosaicType.sizeIcoField(false), ImgSize*ImgZoomQuality);
+         mosaicsImg = new MosaicsImg.Image(mosaicType, mosaicType.sizeIcoField(false), ImgSize*ImgZoomQuality, 10);
          mosaicsImg.setBackgroundColor(Cast.toColor(bkTabBkColor));
+         mosaicsImg.setRotate(true);
+         mosaicsImg.setRotateAngleDelta(3.5);
+         mosaicsImg.setRedrawInterval(50);
+         mosaicsImg.addListener(ev -> onMosaicsImgPropertyChanged(ev));
       } else {
          mosaicsImg.setMosaicType(mosaicType);
       }
       btnOk.setIcon(ImgUtils.toIco(mosaicsImg.getImage(), ImgSize, ImgSize));
 
       if (mosaicsImgRollover == null) {
-         mosaicsImgRollover = new MosaicsImg.Image(mosaicType, mosaicType.sizeIcoField(false), ImgSize*ImgZoomQuality);
+         mosaicsImgRollover = new MosaicsImg.Image(mosaicType, mosaicType.sizeIcoField(false), ImgSize*ImgZoomQuality, 3);
          mosaicsImgRollover.setBackgroundColor(Cast.toColor(bkTabBkColorSelected));
-         Bound padding = mosaicsImgRollover.getPadding();
-         padding.add(3);
       } else {
          mosaicsImgRollover.setMosaicType(mosaicType);
       }
       btnOk.setRolloverIcon(ImgUtils.toIco(mosaicsImgRollover.getImage(), ImgSize, ImgSize));
    }
+
+   private void onMosaicsImgPropertyChanged(PropertyChangeEvent ev) {
+      if (!isVisible())
+         return;
+      if (ev.getPropertyName().equalsIgnoreCase("Image")) {
+         btnOk.setIcon(ImgUtils.toIco(mosaicsImg.getImage(), ImgSize, ImgSize));
+      }
+   }
+
    private void onOk() {
 //      System.out.println("onOk");
 
@@ -319,6 +330,13 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
       return txtField.getText();
    }
 
+
+   @Override
+   public void setVisible(boolean b) {
+      mosaicsImg.setRotate(b);
+      super.setVisible(b);
+   }
+
    @Override
    public void close() {
       mosaicsImg.close();
@@ -327,9 +345,11 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
 
    // test
    public static void main(String[] args) {
-      try (SelectMosaicDlg sm = new SelectMosaicDlg(null, true)) {
-         sm.startSelect(EMosaicGroup.eQuadrangles);
-      }
+      SwingUtilities.invokeLater(() -> {
+         try (SelectMosaicDlg sm = new SelectMosaicDlg(null, true)) {
+            sm.startSelect(EMosaicGroup.eQuadrangles);
+         }
+      });
    }
 
 }

@@ -1,5 +1,6 @@
 package fmg.swing.res.img;
 
+import java.awt.AlphaComposite;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -81,9 +82,6 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
     *  }
     */
    protected void drawBody(Graphics g) {
-      Graphics2D g2 = (Graphics2D) g;
-      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
       int w = getWidth();
       int h = getHeight();
 
@@ -179,7 +177,7 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
       public Icon(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) { super(mosaicType, sizeField, sizeImage, padding); }
 
       private BufferedImage buffImg;
-      private Graphics gBuffImg;
+      private Graphics2D gBuffImg;
       @Override
       protected javax.swing.Icon createImage() {
          if (gBuffImg != null)
@@ -187,6 +185,8 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
 
          buffImg = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
          gBuffImg = buffImg.createGraphics();
+         gBuffImg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
+         gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
          return new javax.swing.Icon() {
             @Override
@@ -226,7 +226,9 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
       @Override
       protected void drawBody() {
          BufferedImage img = (BufferedImage) getImage();
-         Graphics g = img.createGraphics();
+         Graphics2D g = img.createGraphics();
+         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
+         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
          drawBody(g);
          g.dispose();
       }
