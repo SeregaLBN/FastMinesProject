@@ -26,8 +26,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 
+import fmg.common.geom.Bound;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
+import fmg.swing.Cast;
 import fmg.swing.Main;
 import fmg.swing.model.SpinNumberDocListener;
 import fmg.swing.model.SpinnerDiapasonModel;
@@ -35,13 +37,19 @@ import fmg.swing.res.img.MosaicsImg;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
 
-public class SelectMosaicDlg extends JDialog {
+public class SelectMosaicDlg extends JDialog implements AutoCloseable {
    private static final long serialVersionUID = 1L;
 
    private JSpinner spin;
    private JComboBox<?> cmbxMosaicTypes;
    private JButton btnOk;
    private Main parent;
+
+   private MosaicsImg.Image mosaicsImg, mosaicsImgRollover;
+   private static final int ImgSize = 40;
+   private static final int ImgZoomQuality = 3;
+   private static final Color bkTabBkColor = UIManager.getColor("Button.light"); // "Button.light" "Button.foreground"
+   private static final Color bkTabBkColorSelected = UIManager.getColor("Button.shadow"); // "Button.select" "Button.darkShadow"
 
    public SelectMosaicDlg(JFrame parent, boolean modal) {
       super(parent, "Select mosaic", modal);
@@ -51,30 +59,29 @@ public class SelectMosaicDlg extends JDialog {
    }
 
    private void initialize(JFrame parent) {
-      Object keyBind = "OnOk";
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), keyBind);
-        getRootPane().getActionMap().put(keyBind, new AbstractAction() {
+      Object keyBind = "onOk";
+      getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), keyBind);
+      getRootPane().getActionMap().put(keyBind, new AbstractAction() {
          private static final long serialVersionUID = 1L;
          @Override
-         public void actionPerformed(ActionEvent e) { SelectMosaicDlg.this.OnOk(); }
+         public void actionPerformed(ActionEvent e) { SelectMosaicDlg.this.onOk(); }
       });
 
-        keyBind = "CloseDialog";
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
-        getRootPane().getActionMap().put(keyBind, new AbstractAction() {
+      keyBind = "CloseDialog";
+      getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
+      getRootPane().getActionMap().put(keyBind, new AbstractAction() {
          private static final long serialVersionUID = 1L;
          @Override
-         public void actionPerformed(ActionEvent e) { SelectMosaicDlg.this.OnClose(); }
+         public void actionPerformed(ActionEvent e) { SelectMosaicDlg.this.onClose(); }
       });
 
       addWindowListener(new WindowAdapter() {
          @Override
-         public void windowClosing(WindowEvent we) { SelectMosaicDlg.this.OnClose(); }
+         public void windowClosing(WindowEvent we) { SelectMosaicDlg.this.onClose(); }
       });
 
       this.setResizable(false);
-      CreateComponents();
-      // задаю предпочтительный размер
+      createComponents();
       pack();
       this.setLocationRelativeTo(parent);
    }
@@ -106,7 +113,7 @@ public class SelectMosaicDlg extends JDialog {
    }
 
    // создаю панели с нужным расположением
-   private void CreateComponents() {
+   private void createComponents() {
       // 1. Создаю панель, которая будет содержать все остальные элементы и панели расположения
       Box boxCenter = Box.createVerticalBox();
       // Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов.
@@ -129,9 +136,9 @@ public class SelectMosaicDlg extends JDialog {
       JTextField txtField = ((JSpinner.DefaultEditor)spin.getEditor()).getTextField();
 //      txtField.getDocument().addDocumentListener(new DocumentListener() {
 //         @Override
-//         public void removeUpdate(DocumentEvent e) { OnChangeMosaicNumber(); }
+//         public void removeUpdate(DocumentEvent e) { onChangeMosaicNumber(); }
 //         @Override
-//         public void insertUpdate(DocumentEvent e) { OnChangeMosaicNumber(); }
+//         public void insertUpdate(DocumentEvent e) { onChangeMosaicNumber(); }
 //         @Override
 //         public void changedUpdate(DocumentEvent e) {}
 //
@@ -141,14 +148,14 @@ public class SelectMosaicDlg extends JDialog {
          protected boolean OnChangeTextSpin(DocumentEvent e) {
             boolean res = super.OnChangeTextSpin(e);
             if (res)
-               OnChangeMosaicNumber();
+               onChangeMosaicNumber();
             return res;
          }
       });
       // ... а не в самой модели spin'а
 //      spin.addChangeListener(new ChangeListener() {
 //         @Override
-//         public void stateChanged(ChangeEvent e) { OnChangeMosaicNumber(); }
+//         public void stateChanged(ChangeEvent e) { onChangeMosaicNumber(); }
 //      });
 
 //      final Object keyBind = "Enter pressed in txt field";
@@ -166,7 +173,7 @@ public class SelectMosaicDlg extends JDialog {
       cmbxMosaicTypes = new JComboBox<Object>(EMosaic.getDescriptionValues().toArray());
 //      cmbxMosaicTypes.setPrototypeDisplayValue("aaaaaaaaaaaa");
       // слушатель смены выбранного элемента
-      cmbxMosaicTypes.addItemListener(e -> OnChangeMosaicType(e));
+      cmbxMosaicTypes.addItemListener(e -> onChangeMosaicType(e));
 
       btnOk = new JButton();
       setBtnOkIcons(EMosaic.eMosaicTriangle1);
@@ -174,7 +181,7 @@ public class SelectMosaicDlg extends JDialog {
       Insets margin = btnOk.getMargin();
       margin.left = margin.right = 2; margin.top = margin.bottom = 2;
       btnOk.setMargin(margin);
-      btnOk.addActionListener(e -> OnOk());
+      btnOk.addActionListener(e -> onOk());
 
       // variant 1
       boxCenter.add(lbl1);
@@ -220,7 +227,7 @@ public class SelectMosaicDlg extends JDialog {
       getContentPane().add(boxCenter, BorderLayout.CENTER);
    }
 
-   private void OnChangeMosaicType(ItemEvent e) {
+   private void onChangeMosaicType(ItemEvent e) {
       // выясняю, что случилось
       if ( e.getStateChange() == ItemEvent.SELECTED ) {
          // показываю выбранный номер
@@ -235,8 +242,8 @@ public class SelectMosaicDlg extends JDialog {
          }
       }
    }
-   private void OnChangeMosaicNumber() {
-//      System.out.println("OnChangeMosaicNumber: getMosaicNumber()=" + getMosaicNumber());
+   private void onChangeMosaicNumber() {
+//      System.out.println("onChangeMosaicNumber: getMosaicNumber()=" + getMosaicNumber());
       int val;
       try {
          val = Integer.parseInt(getMosaicNumber());
@@ -262,30 +269,47 @@ public class SelectMosaicDlg extends JDialog {
          }
    }
    private void setBtnOkIcons(EMosaic mosaicType) {
-      MosaicsImg.Image img = new MosaicsImg.Image(mosaicType, mosaicType.sizeIcoField(false), 51/*,41*/);
-      btnOk.setIcon(ImgUtils.toIco(img.getImage()));
-      img = new MosaicsImg.Image(mosaicType, mosaicType.sizeIcoField(false), 50/*,40*/);
-      btnOk.setRolloverIcon(ImgUtils.toIco(img.getImage()));
+      if (mosaicsImg == null) {
+         mosaicsImg = new MosaicsImg.Image(mosaicType, mosaicType.sizeIcoField(false), ImgSize*ImgZoomQuality);
+         mosaicsImg.setBackgroundColor(Cast.toColor(bkTabBkColor));
+      } else {
+         mosaicsImg.setMosaicType(mosaicType);
+      }
+      btnOk.setIcon(ImgUtils.toIco(mosaicsImg.getImage(), ImgSize, ImgSize));
+
+      if (mosaicsImgRollover == null) {
+         mosaicsImgRollover = new MosaicsImg.Image(mosaicType, mosaicType.sizeIcoField(false), ImgSize*ImgZoomQuality);
+         mosaicsImgRollover.setBackgroundColor(Cast.toColor(bkTabBkColorSelected));
+         Bound padding = mosaicsImgRollover.getPadding();
+         padding.add(3);
+      } else {
+         mosaicsImgRollover.setMosaicType(mosaicType);
+      }
+      btnOk.setRolloverIcon(ImgUtils.toIco(mosaicsImgRollover.getImage(), ImgSize, ImgSize));
    }
-   private void OnOk() {
-//      System.out.println("OnOk");
+   private void onOk() {
+//      System.out.println("onOk");
 
       if (parent != null) {
          EMosaic selectedMosaicType = getSelectedMosaicType();
          SwingUtilities.invokeLater(() -> parent.changeGame(selectedMosaicType) );
       }
 
-      OnClose();
+      onClose();
    }
-   private void OnClose() {
-      // при выходе из диалогового окна - освобождаю ресурсы
-      dispose();
-//      System.exit(0);
+
+   private void onClose() {
+      if (isModal())
+         dispose();
+      else
+         setVisible(false);
    }
+
    private EMosaic getSelectedMosaicType() {
       EMosaic item = EMosaic.fromDescription(cmbxMosaicTypes.getSelectedItem().toString());
       return item;
    }
+
    /** данные не из модели, а из редактора */
    private String getMosaicNumber() {
       //return spin.getValue().toString(); // из SpinnerNumberModel
@@ -295,9 +319,17 @@ public class SelectMosaicDlg extends JDialog {
       return txtField.getText();
    }
 
-   // тестовый метод для проверки диалогового окна
-   public static void main(String[] args) {
-      SelectMosaicDlg sm = new SelectMosaicDlg(null, true);
-      sm.startSelect(EMosaicGroup.eQuadrangles);
+   @Override
+   public void close() {
+      mosaicsImg.close();
+      mosaicsImgRollover.close();
    }
+
+   // test
+   public static void main(String[] args) {
+      try (SelectMosaicDlg sm = new SelectMosaicDlg(null, true)) {
+         sm.startSelect(EMosaicGroup.eQuadrangles);
+      }
+   }
+
 }

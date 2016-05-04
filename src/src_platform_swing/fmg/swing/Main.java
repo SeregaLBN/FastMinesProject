@@ -1292,6 +1292,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
       getStatisticDialog().close();
       getChampionDialog().close();
+      getSelectMosaicDialog().close();
 
 //      setVisible(false);
       dispose();

@@ -26,11 +26,7 @@ import fmg.swing.Cast;
 import fmg.swing.draw.GraphicContext;
 import fmg.swing.draw.mosaic.CellPaint;
 
-/**
- * Helper class for drawing info
- * @author SeregaLBN
- *
- */
+/** Helper class for drawing info */
 public class CellPaintGraphics extends CellPaint<PaintableGraphics> {
    /** @see javax.swing.JComponent.paint */
    @Override

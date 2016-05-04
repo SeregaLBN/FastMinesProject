@@ -98,7 +98,7 @@ public class RegionDouble {
       return this;
    }
 
-   @Deprecated
+   /** create a new region, if there an offset */
    public static RegionDouble moveXY(RegionDouble self, SizeDouble offset) {
       if (offset.width == 0 && offset.height == 0)
          return self;

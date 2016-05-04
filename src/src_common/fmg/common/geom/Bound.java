@@ -5,7 +5,7 @@ public class Bound {
    public int left, right, top, bottom;
 
    public Bound(int bound) { left = top = right = bottom = bound; }
-
+   public Bound(Bound bound) { left = bound.left; top = bound.top; right = bound.right; bottom = bound.bottom; }
    public Bound(int left, int top, int right, int bottom) {
       this.left = left;
       this.top = top;
@@ -15,6 +15,8 @@ public class Bound {
 
    public int getLeftAndRight() { return left + right; }
    public int getTopAndBottom() { return top + bottom; }
+
+   public void add(int incrase) { left += incrase; top += incrase; right += incrase; bottom += incrase; }
 
    public boolean isEmpty() { return left == 0 && right == 0 && top == 0 && bottom == 0; }
 
