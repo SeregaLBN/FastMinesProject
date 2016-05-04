@@ -45,8 +45,7 @@ public final class FigureHelper {
    public static Stream<PointDouble> getRegularPolygonCoords(int n, double radius, double offsetAngle) {
       double angle = (2 * Math.PI)/n; // 360° / n
       double offsetAngle2 = toRadian(offsetAngle);
-      return IntStream.iterate(1, i -> ++i)
-            .limit(n)
+      return IntStream.range(0, n)
             .mapToObj(i -> (i * angle) + offsetAngle2)
             .map(a -> getPointOnCircleRadian(radius, a));
    }

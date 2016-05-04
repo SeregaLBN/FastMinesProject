@@ -34,7 +34,7 @@ namespace fmg.uwp.res.img {
                : FigureHelper.GetRegularStarCoords(rays, r1, r2, -angle);
 
             // (un)comment next line to view result changes...
-            angle = Math.Sin((angle/4).ToRadian())*angle; // ускоряшка..
+            angle = Math.Sin((angle/4).ToRadian())*angle; // accelerate / ускоряшка..
 
             // adding offset
             var offset = FigureHelper.GetPointOnCircle(sq/3, angle + st*starAngle);
@@ -57,7 +57,9 @@ namespace fmg.uwp.res.img {
          var bmp = Image;
          bmp.Clear(BackgroundColor.ToWinColor());
 
-         foreach (var coords in GetCoords().Reverse()) {
+         var stars = GetCoords();
+         stars = stars.Reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
+         foreach (var coords in stars) {
             var points = coords.PointsAsXyxyxySequence(true).ToArray();
             bmp.FillPolygon(points, ForegroundColorAttenuate.ToWinColor());
 

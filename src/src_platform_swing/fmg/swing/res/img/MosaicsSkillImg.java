@@ -6,8 +6,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.SwingUtilities;
 
@@ -40,26 +42,27 @@ public abstract class MosaicsSkillImg<TImage extends Object> extends fmg.core.im
       g.setColor(Cast.toColor(getBackgroundColor()));
       g.fillRect(0, 0, getWidth(), getHeight());
 
-      getCoords()// .reverse()
-            .forEach(coords -> {
-               g.setColor(Cast.toColor(getForegroundColorAttenuate()));
-               List<PointDouble> points = coords.collect(Collectors.toList());
-               g.fillPolygon(Cast.toPolygon(points));
+      List<Stream<PointDouble>> stars = getCoords().collect(Collectors.toList());
+      Collections.reverse(stars); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
+      stars.forEach(coords -> {
+         g.setColor(Cast.toColor(getForegroundColorAttenuate()));
+         List<PointDouble> points = coords.collect(Collectors.toList());
+         g.fillPolygon(Cast.toPolygon(points));
 
-               // draw perimeter border
-               Color clr = getBorderColor();
-               if (clr.getA() != Color.Transparent.getA()) {
-                  g.setColor(Cast.toColor(clr));
-                  int bw = getBorderWidth();
-                  g2.setStroke(new BasicStroke(bw));
+         // draw perimeter border
+         Color clr = getBorderColor();
+         if (clr.getA() != Color.Transparent.getA()) {
+            g.setColor(Cast.toColor(clr));
+            int bw = getBorderWidth();
+            g2.setStroke(new BasicStroke(bw));
 
-                  for (int i = 0; i < points.size(); i++) {
-                     PointDouble p1 = points.get(i);
-                     PointDouble p2 = (i != (points.size() - 1)) ? points.get(i + 1) : points.get(0);
-                     g.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
-                  }
-               }
-            });
+            for (int i = 0; i < points.size(); i++) {
+               PointDouble p1 = points.get(i);
+               PointDouble p2 = (i != (points.size() - 1)) ? points.get(i + 1) : points.get(0);
+               g.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
+            }
+         }
+      });
    }
 
    public static class Icon extends MosaicsSkillImg<javax.swing.Icon> {

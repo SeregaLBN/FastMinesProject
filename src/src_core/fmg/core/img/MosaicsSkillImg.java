@@ -28,15 +28,14 @@ public abstract class MosaicsSkillImg<TImage extends Object> extends RotatedImg<
       int stars = 4 + ordinal; // number of stars on the perimeter of the circle
       double[] angle = { getRotateAngle() };
       double starAngle = 360.0/stars;
-      return IntStream.iterate(0, i -> ++i)
-            .limit(stars)
+      return IntStream.range(0, stars)
             .mapToObj(st -> {
                Stream<PointDouble> points = (getMosaicSkill() == ESkillLevel.eCustom)
                      ? FigureHelper.getRegularPolygonCoords(3 + (st % 4), r1, -angle[0])
                      : FigureHelper.getRegularStarCoords(rays, r1, r2, -angle[0]);
 
                // (un)comment next line to view result changes...
-               angle[0] = Math.sin(FigureHelper.toRadian(angle[0]/4))*angle[0]; // ускоряшка..
+               angle[0] = Math.sin(FigureHelper.toRadian(angle[0]/4))*angle[0]; // accelerate / ускоряшка..
 
                // adding offset
                PointDouble offset = FigureHelper.getPointOnCircle(sq / 3, angle[0] + (st * starAngle));
