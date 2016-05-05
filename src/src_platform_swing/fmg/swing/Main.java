@@ -16,7 +16,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -273,7 +272,8 @@ public class Main extends JFrame implements PropertyChangeListener {
             return exit;
          }
 
-         void recheckSelectedMenuSkillLevel() {
+         /** Выставить верный bullet (menu.setSelected) для меню skillLevel'a */
+         void recheckSelectedSkillLevel() {
             ESkillLevel skill = getSkillLevel();
             getMenuItemSkillLevel(skill).setSelected(true);
             skillLevelImages.forEach((key, img) -> img.setRotate(key == skill));
@@ -363,7 +363,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(menuItemTxt);
                   menuItem.setMnemonic(Main.KeyCombo.getMnemonic_Mosaic(val));
                   menuItem.setAccelerator(Main.KeyCombo.getKeyStroke_Mosaic(val));
-                  menuItem.addActionListener(Main.this.getHandlers().getMosaicAction(val));
+                  menuItem.addActionListener(ev -> Main.this.changeGame(val));
 
                   MosaicsImg.Icon img = new MosaicsImg.Icon(val, val.sizeIcoField(true), MenuHeightWithIcon*ZoomQualityFactor);
                   mosaicsImages.put(val, img);
@@ -390,11 +390,12 @@ public class Main extends JFrame implements PropertyChangeListener {
             return mosaics.get(mosaicType);
          }
 
-         void recheckSelectedMenuMosaicType() {
+         /** Выставить верный bullet для меню мозаики */
+         void recheckSelectedMosaicType() {
             EMosaic mosaicType = getMosaic().getMosaicType();
             getMenuItemMosaic(mosaicType).setSelected(true);
-            mosaicsImages.forEach((eMosaic, img) -> img.setRotate(eMosaic == mosaicType));
 
+            mosaicsImages.forEach((eMosaic, img) -> img.setRotate(eMosaic == mosaicType));
             mosaicsGroupImages.forEach((mosaicGroup, img) -> {
                boolean current = mosaicGroup.getBind().contains(mosaicType);
                img.setPolarLights(current);
@@ -1102,18 +1103,7 @@ public class Main extends JFrame implements PropertyChangeListener {
             getHandlers().getPlayerManageAction().actionPerformed(new ActionEvent(Main.this, 0, "Main::initialize"))
          );
    }
-
    boolean _initialized;
-
-   /** Выставить верный bullet для меню мозаики */
-   void recheckSelectedMenuMosaicType() {
-      getMenu().getMosaics().recheckSelectedMenuMosaicType();
-   }
-
-   /** Выставить верный bullet (menu.setSelected) для меню skillLevel'a */
-   void recheckSelectedMenuSkillLevel() {
-      getMenu().getGame().recheckSelectedMenuSkillLevel();
-   }
 
    ESkillLevel getSkillLevel() {
       EMosaic eMosaic = getMosaic().getMosaicType();
@@ -1857,24 +1847,6 @@ public class Main extends JFrame implements PropertyChangeListener {
          return skillLevelActions.get(key);
       }
 
-      private Map<EMosaic, Action> mosaicAction;
-      public ActionListener getMosaicAction(EMosaic key) {
-         if (mosaicAction == null) {
-            mosaicAction = new HashMap<>(EMosaic.values().length);
-
-            for (final EMosaic val: EMosaic.values())
-               mosaicAction.put(val, new AbstractAction() {
-                  private static final long serialVersionUID = 1L;
-                  @Override
-                  public void actionPerformed(ActionEvent e) {
-                     Main.this.changeGame(val);
-                  }
-               });
-         }
-
-         return mosaicAction.get(key);
-      }
-
       private Action playerManageAction;
       public Action getPlayerManageAction() {
          if (playerManageAction == null)
@@ -2439,8 +2411,8 @@ public class Main extends JFrame implements PropertyChangeListener {
          RecheckLocation();
        //break; // no break
       case "MinesCount":
-         recheckSelectedMenuMosaicType();
-         recheckSelectedMenuSkillLevel();
+         getMenu().getMosaics().recheckSelectedMosaicType();
+         getMenu().getGame().recheckSelectedSkillLevel();
          break;
       }
 
