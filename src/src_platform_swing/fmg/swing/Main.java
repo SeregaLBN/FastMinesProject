@@ -103,6 +103,7 @@ import fmg.swing.res.Resources.EBtnNewGameState;
 import fmg.swing.res.Resources.EBtnPauseState;
 import fmg.swing.res.img.MosaicsGroupImg;
 import fmg.swing.res.img.MosaicsImg;
+import fmg.swing.res.img.MosaicsSkillImg;
 import fmg.swing.serializable.SerializeProjData;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
@@ -166,12 +167,15 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    class MainMenu extends JMenuBar {
       private static final long serialVersionUID = 1L;
+      private static final int MenuHeightWithIcon = 32;
+      private static final int ZoomQualityFactor = 4; // 1 - as is
 
-      class Game extends JMenu {
+      class Game extends JMenu implements AutoCloseable {
          private static final long serialVersionUID = 1L;
 
          private JMenuItem anew;
          private Map<ESkillLevel, JRadioButtonMenuItem> skillLevel;
+         private Map<ESkillLevel, MosaicsSkillImg.Icon> skillLevelImages;
          private JMenuItem playerManage;
          private JMenuItem exit;
 
@@ -211,7 +215,9 @@ public class Main extends JFrame implements PropertyChangeListener {
          private JRadioButtonMenuItem getMenuItemSkillLevel(ESkillLevel key) {
             if (skillLevel == null) {
                skillLevel = new HashMap<>(ESkillLevel.values().length);
+               skillLevelImages = new HashMap<>(ESkillLevel.values().length);
 
+               Random rnd = new Random(UUID.randomUUID().hashCode());
                for (ESkillLevel val: ESkillLevel.values()) {
                   JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem();
 
@@ -224,10 +230,31 @@ public class Main extends JFrame implements PropertyChangeListener {
                   menuItem.setAccelerator(Main.KeyCombo.getKeyStroke_SkillLevel(val));
                   menuItem.addActionListener(Main.this.getHandlers().getSkillLevelAction(val));
 
+                  MosaicsSkillImg.Icon img = new MosaicsSkillImg.Icon(val, MenuHeightWithIcon*ZoomQualityFactor);
+                  skillLevelImages.put(val, img);
+                  img.setBorderWidth(1*ZoomQualityFactor);
+                  img.setBorderColor(Color.RandomColor(rnd).darker(0.4));
+                  img.setForegroundColor(Color.RandomColor(rnd).brighter(0.4));
+                  img.setBackgroundColor(Color.Transparent);
+                  //img.setRedrawInterval(30);
+                  img.setRotateAngleDelta(3*img.getRotateAngleDelta());
+                  menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+                  img.addListener(ev -> onMosaicsSkillImagePropertyChanged(val, ev));
+
                   skillLevel.put(val, menuItem);
                }
             }
             return skillLevel.get(key);
+         }
+
+         private void onMosaicsSkillImagePropertyChanged(ESkillLevel skill, PropertyChangeEvent ev) {
+            JRadioButtonMenuItem menuItem = getMenuItemSkillLevel(skill);
+            if (!menuItem.getParent().isVisible())
+               return;
+            if (ev.getPropertyName().equalsIgnoreCase("Image")) {
+               MosaicsSkillImg.Icon img = skillLevelImages.get(skill);
+               menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+            }
          }
 
          private JMenuItem getPlayerManage() {
@@ -249,11 +276,22 @@ public class Main extends JFrame implements PropertyChangeListener {
             }
             return exit;
          }
+
+         void recheckSelectedMenuSkillLevel() {
+            ESkillLevel skill = getSkillLevel();
+            getMenuItemSkillLevel(skill).setSelected(true);
+            skillLevelImages.forEach((key, img) -> img.setRotate(key == skill));
+         }
+
+         @Override
+         public void close() {
+            skillLevelImages.forEach((key, img) -> img.close());
+         }
+
       }
+
       class Mosaics extends JMenu implements AutoCloseable {
          private static final long serialVersionUID = 1L;
-         private static final int MenuHeightWithIcon = 32;
-         private static final int ZoomQualityFactor = 4; // 1 - as is
 
          private Map<EMosaicGroup, JMenuItem> mosaicsGroup;
          private Map<EMosaicGroup, MosaicsGroupImg.Icon> mosaicsGroupImages;
@@ -345,22 +383,22 @@ public class Main extends JFrame implements PropertyChangeListener {
          }
 
          private void onMosaicImageGroupPropertyChanged(EMosaicGroup mosaicGroup, PropertyChangeEvent ev) {
-            JMenuItem menuItemMosaicGroup = getMenuItemMosaicGroup(mosaicGroup);
-            if (!menuItemMosaicGroup.getParent().isVisible())
+            JMenuItem menuItem = getMenuItemMosaicGroup(mosaicGroup);
+            if (!menuItem.getParent().isVisible())
                return;
             if (ev.getPropertyName().equalsIgnoreCase("Image")) {
                MosaicsGroupImg.Icon img = mosaicsGroupImages.get(mosaicGroup);
-               menuItemMosaicGroup.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+               menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
             }
          }
 
          private void onMosaicImagePropertyChanged(EMosaic mosaicType, PropertyChangeEvent ev) {
-            JRadioButtonMenuItem menuItemMosaic = getMenuItemMosaic(mosaicType);
-            if (!menuItemMosaic.getParent().isVisible())
+            JRadioButtonMenuItem menuItem = getMenuItemMosaic(mosaicType);
+            if (!menuItem.getParent().isVisible())
                return;
             if (ev.getPropertyName().equalsIgnoreCase("Image")) {
                MosaicsImg.Icon img = mosaicsImages.get(mosaicType);
-               menuItemMosaic.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+               menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
             }
          }
 
@@ -1085,8 +1123,8 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
 
    /** Выставить верный bullet (menu.setSelected) для меню skillLevel'a */
-   void RecheckSelectedMenuSkillLevel() {
-      getMenu().getGame().getMenuItemSkillLevel(getSkillLevel()).setSelected(true);
+   void recheckSelectedMenuSkillLevel() {
+      getMenu().getGame().recheckSelectedMenuSkillLevel();
    }
 
    ESkillLevel getSkillLevel() {
@@ -1341,6 +1379,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          ex.printStackTrace();
       }
 
+      getMenu().getGame().close();
       getMenu().getMosaics().close();
       if (isStatisticDialogExist())
          getStatisticDialog().close();
@@ -2413,7 +2452,7 @@ public class Main extends JFrame implements PropertyChangeListener {
        //break; // no break
       case "MinesCount":
          recheckSelectedMenuMosaicType();
-         RecheckSelectedMenuSkillLevel();
+         recheckSelectedMenuSkillLevel();
          break;
       }
 
