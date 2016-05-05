@@ -24,11 +24,16 @@ public class Color {
       if (v<0 || v>255) throw new IllegalArgumentException("Bad "+name+" argument");
       return v;
    }
+   static int checkA(int a) { return check(a, "ALPHA"); }
+   static int checkR(int r) { return check(r, "RED"); }
+   static int checkG(int g) { return check(g, "GREEN"); }
+   static int checkB(int b) { return check(b, "BLUE"); }
+
    public Color(int a, int r, int g, int b) {
-      this.a = check(a, "ALPHA");
-      this.r = check(r, "RED");
-      this.g = check(g, "GREEN");
-      this.b = check(b, "BLUE");
+      this.a = checkA(a);
+      this.r = checkR(r);
+      this.g = checkG(g);
+      this.b = checkB(b);
    }
    public Color(int r, int g, int b) {
       this(255, r, g, b);
@@ -55,7 +60,7 @@ public class Color {
    }
    @Override
    public String toString() {
-      return String.format("argb=%02X%02X%02X%02X", a,r,g,b);
+      return String.format("argb[%02X%02X%02X%02X]", a,r,g,b);
    }
 
    @Override
@@ -64,19 +69,19 @@ public class Color {
    /** get RED chanel */
    public int getR() { return r; }
    /** set RED chanel */
-   public void setR(int r) { this.r = check(r, "RED"); }
+   public void setR(int r) { this.r = checkR(r); }
    /** get GREEN chanel */
    public int getG() { return g; }
    /** set GREEN chanel */
-   public void setG(int g) { this.g = check(g, "GREEN"); }
+   public void setG(int g) { this.g = checkG(g); }
    /** get BLUE chanel */
    public int getB() { return b; }
    /** set BLUE chanel */
-   public void setB(int b) { this.b = check(b, "BLUE"); }
+   public void setB(int b) { this.b = checkB(b); }
    /** get ALPHA chanel */
    public int getA() { return a; }
    /** set ALPHA chanel */
-   public void setA(int a) { this.a = check(a, "ALPHA"); }
+   public void setA(int a) { this.a = checkA(a); }
 
    public static Color RandomColor(Random rnd) {
       return new Color(
