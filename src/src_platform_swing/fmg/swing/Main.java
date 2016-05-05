@@ -236,25 +236,21 @@ public class Main extends JFrame implements PropertyChangeListener {
                   img.setBorderColor(Color.RandomColor(rnd).darker(0.4));
                   img.setForegroundColor(Color.RandomColor(rnd).brighter(0.4));
                   img.setBackgroundColor(Color.Transparent);
-                  //img.setRedrawInterval(30);
-                  img.setRotateAngleDelta(3*img.getRotateAngleDelta());
+                  img.setRedrawInterval(50);
+                  img.setRotateAngleDelta(2*img.getRotateAngleDelta());
                   menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
-                  img.addListener(ev -> onMosaicsSkillImagePropertyChanged(val, ev));
+                  img.addListener(ev -> {
+                     if (!menuItem.getParent().isVisible())
+                        return;
+                     if (ev.getPropertyName().equalsIgnoreCase("Image")) {
+                        menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+                     }
+                  });
 
                   skillLevel.put(val, menuItem);
                }
             }
             return skillLevel.get(key);
-         }
-
-         private void onMosaicsSkillImagePropertyChanged(ESkillLevel skill, PropertyChangeEvent ev) {
-            JRadioButtonMenuItem menuItem = getMenuItemSkillLevel(skill);
-            if (!menuItem.getParent().isVisible())
-               return;
-            if (ev.getPropertyName().equalsIgnoreCase("Image")) {
-               MosaicsSkillImg.Icon img = skillLevelImages.get(skill);
-               menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
-            }
          }
 
          private JMenuItem getPlayerManage() {
@@ -335,7 +331,13 @@ public class Main extends JFrame implements PropertyChangeListener {
                   img.setRotateAngleDelta(-img.getRotateAngleDelta());
                   img.setRedrawInterval(50);
                   menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
-                  img.addListener(ev -> onMosaicImageGroupPropertyChanged(val, ev));
+                  img.addListener(ev -> {
+                     if (!menuItem.getParent().isVisible())
+                        return;
+                     if (ev.getPropertyName().equalsIgnoreCase("Image")) {
+                        menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+                     }
+                  });
 
 //                  if (experimentalMenuMnemonic) {
 //                     menuItem.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -369,7 +371,13 @@ public class Main extends JFrame implements PropertyChangeListener {
                   img.setBorderColor(Color.RandomColor(rnd).darker(0.4));
                   img.setBackgroundColor(Color.Transparent);
                   menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
-                  img.addListener(ev -> onMosaicImagePropertyChanged(val, ev));
+                  img.addListener(ev -> {
+                     if (!menuItem.getParent().isVisible())
+                        return;
+                     if (ev.getPropertyName().equalsIgnoreCase("Image")) {
+                        menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+                     }
+                  });
 
                   if (experimentalMenuMnemonic) {
                      menuItem.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, MenuHeightWithIcon/2 - 4));
@@ -380,26 +388,6 @@ public class Main extends JFrame implements PropertyChangeListener {
                }
             }
             return mosaics.get(mosaicType);
-         }
-
-         private void onMosaicImageGroupPropertyChanged(EMosaicGroup mosaicGroup, PropertyChangeEvent ev) {
-            JMenuItem menuItem = getMenuItemMosaicGroup(mosaicGroup);
-            if (!menuItem.getParent().isVisible())
-               return;
-            if (ev.getPropertyName().equalsIgnoreCase("Image")) {
-               MosaicsGroupImg.Icon img = mosaicsGroupImages.get(mosaicGroup);
-               menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
-            }
-         }
-
-         private void onMosaicImagePropertyChanged(EMosaic mosaicType, PropertyChangeEvent ev) {
-            JRadioButtonMenuItem menuItem = getMenuItemMosaic(mosaicType);
-            if (!menuItem.getParent().isVisible())
-               return;
-            if (ev.getPropertyName().equalsIgnoreCase("Image")) {
-               MosaicsImg.Icon img = mosaicsImages.get(mosaicType);
-               menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
-            }
          }
 
          void recheckSelectedMenuMosaicType() {
