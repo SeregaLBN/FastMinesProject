@@ -140,6 +140,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          _customSkillDialog = new CustomSkillDlg(this, false);
       return _customSkillDialog;
    }
+   private boolean isSelectMosaicDialogExist() { return _selectMosaicDialog != null; }
    private SelectMosaicDlg getSelectMosaicDialog() {
       if (_selectMosaicDialog == null)
          _selectMosaicDialog = new SelectMosaicDlg(this, false);
@@ -150,11 +151,13 @@ public class Main extends JFrame implements PropertyChangeListener {
          _aboutDialog = new AboutDlg(this, false, getResources());
       return _aboutDialog;
    }
+   private boolean isChampionDialogExist() { return _championDialog != null; }
    private ChampionDlg getChampionDialog() {
       if (_championDialog == null)
          _championDialog = new ChampionDlg(this, false, getChampions());
       return _championDialog;
    }
+   private boolean isStatisticDialogExist() { return _statisticDialog != null; }
    private StatisticDlg getStatisticDialog() {
       if (_statisticDialog == null)
          _statisticDialog = new StatisticDlg(this, false, getPlayers());
@@ -207,7 +210,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          }
          private JRadioButtonMenuItem getMenuItemSkillLevel(ESkillLevel key) {
             if (skillLevel == null) {
-               skillLevel = new HashMap<ESkillLevel, JRadioButtonMenuItem>(ESkillLevel.values().length);
+               skillLevel = new HashMap<>(ESkillLevel.values().length);
 
                for (ESkillLevel val: ESkillLevel.values()) {
                   JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem();
@@ -247,13 +250,15 @@ public class Main extends JFrame implements PropertyChangeListener {
             return exit;
          }
       }
-      class Mosaics extends JMenu {
+      class Mosaics extends JMenu implements AutoCloseable {
          private static final long serialVersionUID = 1L;
          private static final int MenuHeightWithIcon = 32;
          private static final int ZoomQualityFactor = 4; // 1 - as is
 
          private Map<EMosaicGroup, JMenuItem> mosaicsGroup;
+         private Map<EMosaicGroup, MosaicsGroupImg.Icon> mosaicsGroupImages;
          private Map<EMosaic, JRadioButtonMenuItem> mosaics;
+         private Map<EMosaic, MosaicsImg.Icon> mosaicsImages;
 
          Mosaics() {
             super("Mosaics");
@@ -272,7 +277,8 @@ public class Main extends JFrame implements PropertyChangeListener {
          final static boolean experimentalMenuMnemonic = true;
          private JMenuItem getMenuItemMosaicGroup(EMosaicGroup key) {
             if (mosaicsGroup == null) {
-               mosaicsGroup = new HashMap<EMosaicGroup, JMenuItem>(EMosaicGroup.values().length);
+               mosaicsGroup = new HashMap<>(EMosaicGroup.values().length);
+               mosaicsGroupImages = new HashMap<>(EMosaicGroup.values().length);
 
                Random rnd = new Random(UUID.randomUUID().hashCode());
                for (EMosaicGroup val: EMosaicGroup.values()) {
@@ -282,13 +288,16 @@ public class Main extends JFrame implements PropertyChangeListener {
                      //menuItem.add(Box.createRigidArea(new Dimension(100,25)));
                   }
 //                  menuItem.setMnemonic(Main.KeyCombo.getMnemonic_MenuMosaicGroup(val));
-                  try (MosaicsGroupImg.Icon img = new MosaicsGroupImg.Icon(val, MenuHeightWithIcon*ZoomQualityFactor)) {
-                     img.setBorderWidth(1*ZoomQualityFactor);
-                     img.setBorderColor(Color.RandomColor(rnd).darker(0.4));
-                     img.setForegroundColor(Color.RandomColor(rnd).brighter(0.7));
-                     img.setBackgroundColor(Color.Transparent);
-                     menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
-                  }
+                  MosaicsGroupImg.Icon img = new MosaicsGroupImg.Icon(val, MenuHeightWithIcon*ZoomQualityFactor);
+                  mosaicsGroupImages.put(val, img);
+                  img.setBorderWidth(1*ZoomQualityFactor);
+                  img.setBorderColor(Color.RandomColor(rnd).darker(0.4));
+                  img.setForegroundColor(Color.RandomColor(rnd).brighter(0.7));
+                  img.setBackgroundColor(Color.Transparent);
+                  img.setRotateAngleDelta(-img.getRotateAngleDelta());
+                  img.setRedrawInterval(50);
+                  menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+                  img.addListener(ev -> onMosaicImageGroupPropertyChanged(val, ev));
 
 //                  if (experimentalMenuMnemonic) {
 //                     menuItem.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -303,7 +312,8 @@ public class Main extends JFrame implements PropertyChangeListener {
 
          private JRadioButtonMenuItem getMenuItemMosaic(EMosaic mosaicType) {
             if (mosaics == null) {
-               mosaics = new HashMap<EMosaic, JRadioButtonMenuItem>(EMosaic.values().length);
+               mosaics = new HashMap<>(EMosaic.values().length);
+               mosaicsImages = new HashMap<>(EMosaic.values().length);
 
                Random rnd = new Random(UUID.randomUUID().hashCode());
                for (EMosaic val: EMosaic.values()) {
@@ -315,12 +325,13 @@ public class Main extends JFrame implements PropertyChangeListener {
                   menuItem.setAccelerator(Main.KeyCombo.getKeyStroke_Mosaic(val));
                   menuItem.addActionListener(Main.this.getHandlers().getMosaicAction(val));
 
-                  try (MosaicsImg.Icon img = new MosaicsImg.Icon(val, val.sizeIcoField(true), MenuHeightWithIcon*ZoomQualityFactor)) {
-                     img.setBorderWidth(1*ZoomQualityFactor);
-                     img.setBorderColor(Color.RandomColor(rnd).darker(0.4));
-                     img.setBackgroundColor(Color.Transparent);
-                     menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
-                  }
+                  MosaicsImg.Icon img = new MosaicsImg.Icon(val, val.sizeIcoField(true), MenuHeightWithIcon*ZoomQualityFactor);
+                  mosaicsImages.put(val, img);
+                  img.setBorderWidth(1*ZoomQualityFactor);
+                  img.setBorderColor(Color.RandomColor(rnd).darker(0.4));
+                  img.setBackgroundColor(Color.Transparent);
+                  menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+                  img.addListener(ev -> onMosaicImagePropertyChanged(val, ev));
 
                   if (experimentalMenuMnemonic) {
                      menuItem.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, MenuHeightWithIcon/2 - 4));
@@ -332,7 +343,47 @@ public class Main extends JFrame implements PropertyChangeListener {
             }
             return mosaics.get(mosaicType);
          }
+
+         private void onMosaicImageGroupPropertyChanged(EMosaicGroup mosaicGroup, PropertyChangeEvent ev) {
+            JMenuItem menuItemMosaicGroup = getMenuItemMosaicGroup(mosaicGroup);
+            if (!menuItemMosaicGroup.getParent().isVisible())
+               return;
+            if (ev.getPropertyName().equalsIgnoreCase("Image")) {
+               MosaicsGroupImg.Icon img = mosaicsGroupImages.get(mosaicGroup);
+               menuItemMosaicGroup.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+            }
+         }
+
+         private void onMosaicImagePropertyChanged(EMosaic mosaicType, PropertyChangeEvent ev) {
+            JRadioButtonMenuItem menuItemMosaic = getMenuItemMosaic(mosaicType);
+            if (!menuItemMosaic.getParent().isVisible())
+               return;
+            if (ev.getPropertyName().equalsIgnoreCase("Image")) {
+               MosaicsImg.Icon img = mosaicsImages.get(mosaicType);
+               menuItemMosaic.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+            }
+         }
+
+         void recheckSelectedMenuMosaicType() {
+            EMosaic mosaicType = getMosaic().getMosaicType();
+            getMenuItemMosaic(mosaicType).setSelected(true);
+            mosaicsImages.forEach((eMosaic, img) -> img.setRotate(eMosaic == mosaicType));
+
+            mosaicsGroupImages.forEach((mosaicGroup, img) -> {
+               boolean current = mosaicGroup.getBind().contains(mosaicType);
+               img.setPolarLights(current);
+               img.setRotate(current);
+            });
+         }
+
+         @Override
+         public void close() {
+            mosaicsGroupImages.forEach((key, img) -> img.close() );
+            mosaicsImages.forEach((key, img) -> img.close() );
+         }
+
       }
+
       class Options extends JMenu {
          private static final long serialVersionUID = 1L;
 
@@ -370,7 +421,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          }
          private JMenuItem getZoomItem(EZoomInterface key) {
             if (zoomItems == null) {
-               zoomItems = new HashMap<EZoomInterface, JMenuItem>(EZoomInterface.values().length);
+               zoomItems = new HashMap<>(EZoomInterface.values().length);
 
                for (EZoomInterface val: EZoomInterface.values()) {
                   JMenuItem menuItem;
@@ -441,7 +492,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
          private JCheckBoxMenuItem getShowElement(EShowElement key) {
             if (showElements == null) {
-               showElements = new HashMap<EShowElement, JCheckBoxMenuItem>(EShowElement.values().length);
+               showElements = new HashMap<>(EShowElement.values().length);
 
                for (EShowElement val: EShowElement.values()) {
                   JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(val.getDescription());
@@ -1029,8 +1080,8 @@ public class Main extends JFrame implements PropertyChangeListener {
    boolean _initialized;
 
    /** Выставить верный bullet для меню мозаики */
-   void RecheckSelectedMenuMosaicType() {
-      getMenu().getMosaics().getMenuItemMosaic(getMosaic().getMosaicType()).setSelected(true);
+   void recheckSelectedMenuMosaicType() {
+      getMenu().getMosaics().recheckSelectedMenuMosaicType();
    }
 
    /** Выставить верный bullet (menu.setSelected) для меню skillLevel'a */
@@ -1290,9 +1341,13 @@ public class Main extends JFrame implements PropertyChangeListener {
          ex.printStackTrace();
       }
 
-      getStatisticDialog().close();
-      getChampionDialog().close();
-      getSelectMosaicDialog().close();
+      getMenu().getMosaics().close();
+      if (isStatisticDialogExist())
+         getStatisticDialog().close();
+      if (isChampionDialogExist())
+         getChampionDialog().close();
+      if (isSelectMosaicDialogExist())
+         getSelectMosaicDialog().close();
 
 //      setVisible(false);
       dispose();
@@ -1636,7 +1691,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       case eCaption:
          {
             final Rectangle rc = getBounds();
-            final Map<EShowElement, Boolean> mapShow = new HashMap<EShowElement, Boolean>(EShowElement.values().length);
+            final Map<EShowElement, Boolean> mapShow = new HashMap<>(EShowElement.values().length);
             for (EShowElement val: EShowElement.values())
                mapShow.put(val, new Boolean(getMenu().getOptions().getShowElement(val).isSelected()));
 
@@ -1760,7 +1815,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       private Map<ESkillLevel, Action> skillLevelActions;
       public Action getSkillLevelAction(ESkillLevel key) {
          if (skillLevelActions == null) {
-            skillLevelActions = new HashMap<ESkillLevel, Action>(ESkillLevel.values().length);
+            skillLevelActions = new HashMap<>(ESkillLevel.values().length);
 
             for (final ESkillLevel val: ESkillLevel.values())
                skillLevelActions.put(val, new AbstractAction() {
@@ -1778,7 +1833,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       private Map<EMosaic, Action> mosaicAction;
       public ActionListener getMosaicAction(EMosaic key) {
          if (mosaicAction == null) {
-            mosaicAction = new HashMap<EMosaic, Action>(EMosaic.values().length);
+            mosaicAction = new HashMap<>(EMosaic.values().length);
 
             for (final EMosaic val: EMosaic.values())
                mosaicAction.put(val, new AbstractAction() {
@@ -1868,7 +1923,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       private Map<EShowElement, Action> showElementsAction;
       public Action getShowElementAction(EShowElement key) {
          if (showElementsAction == null) {
-            showElementsAction = new HashMap<EShowElement, Action>(EShowElement.values().length);
+            showElementsAction = new HashMap<>(EShowElement.values().length);
 
             for (final EShowElement val: EShowElement.values())
                showElementsAction.put(val, new AbstractAction() {
@@ -1981,7 +2036,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       private Map<EZoomInterface, Action> zoomActions;
       public Action getZoomAction(EZoomInterface key) {
          if (zoomActions == null) {
-            zoomActions = new HashMap<EZoomInterface, Action>(EZoomInterface.values().length);
+            zoomActions = new HashMap<>(EZoomInterface.values().length);
 
             for (final EZoomInterface val: EZoomInterface.values())
                zoomActions.put(val, new AbstractAction() {
@@ -2056,7 +2111,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       private Map<EMosaicGroup, Action> selectMosaicActions;
       public Action getSelectMosaicAction(final EMosaicGroup key) {
          if (selectMosaicActions == null) {
-            selectMosaicActions = new HashMap<EMosaicGroup, Action>(EMosaicGroup.values().length);
+            selectMosaicActions = new HashMap<>(EMosaicGroup.values().length);
 
             for (final EMosaicGroup val: EMosaicGroup.values())
                selectMosaicActions.put(val, new AbstractAction() {
@@ -2357,7 +2412,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          RecheckLocation();
        //break; // no break
       case "MinesCount":
-         RecheckSelectedMenuMosaicType();
+         recheckSelectedMenuMosaicType();
          RecheckSelectedMenuSkillLevel();
          break;
       }
