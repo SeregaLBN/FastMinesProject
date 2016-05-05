@@ -59,6 +59,6 @@ public final class Cast {
       return p;
    }
 
-   public static   java.awt.Color toColor(fmg.common.Color clr) { return new java.awt.Color( 0xFF & clr.getR()    ,  0xFF & clr.getG() ,  0xFF & clr.getB()  ,  0xFF & clr.getA() ); }
-   public static fmg.common.Color toColor(java.awt.Color   clr) { return new fmg.common.Color((byte)clr.getAlpha(), (byte) clr.getRed(), (byte)clr.getGreen(), (byte)clr.getBlue()); }
+   public static   java.awt.Color toColor(fmg.common.Color clr) { return new java.awt.Color( clr.getR(), clr.getG(), clr.getB(), clr.getA()); }
+   public static fmg.common.Color toColor(java.awt.Color   clr) { return new fmg.common.Color(clr.getAlpha(), clr.getRed(), clr.getGreen(), clr.getBlue()); }
 }

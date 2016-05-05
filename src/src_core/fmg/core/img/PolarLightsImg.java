@@ -27,7 +27,7 @@ public abstract class PolarLightsImg<T, TImage extends Object> extends RotatedIm
    private final Random _random = new Random(UUID.randomUUID().hashCode());
 
    private void nextForegroundColor() {
-      Function<Byte, Byte> funcAddRandomBit = val -> (byte)(((_random.nextInt(2) == 1) ? 0x00 : 0x80)  |  ((val & 0xFF) >> 1));
+      Function<Integer, Integer> funcAddRandomBit = val -> ((_random.nextInt(2) == 1) ? 0x00 : 0x80)  |  (val >> 1);
       Color f = getForegroundColor().clone();
       switch (_random.nextInt(3)) {
       case 0: f.setR( funcAddRandomBit.apply(f.getR()) ); break;
