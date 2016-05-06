@@ -1,10 +1,6 @@
 package fmg.core.img;
 
-import java.util.Random;
-import java.util.UUID;
-import java.util.function.Function;
-
-import fmg.common.Color;
+import fmg.common.HSV;
 
 public abstract class PolarLightsImg<T, TImage extends Object> extends RotatedImg<T, TImage> {
 
@@ -24,17 +20,10 @@ public abstract class PolarLightsImg<T, TImage extends Object> extends RotatedIm
       }
    }
 
-   private final Random _random = new Random(UUID.randomUUID().hashCode());
-
    private void nextForegroundColor() {
-      Function<Integer, Integer> funcAddRandomBit = val -> ((_random.nextInt(2) == 1) ? 0x00 : 0x80)  |  (val >> 1);
-      Color f = getForegroundColor().clone();
-      switch (_random.nextInt(3)) {
-      case 0: f.setR( funcAddRandomBit.apply(f.getR()) ); break;
-      case 1: f.setG( funcAddRandomBit.apply(f.getG()) ); break;
-      case 2: f.setB( funcAddRandomBit.apply(f.getB()) ); break;
-      }
-      setForegroundColor(f);
+      HSV hsv = new HSV(getForegroundColor());
+      hsv.h += getRotateAngleDelta();
+      setForegroundColor(hsv.toColor());
    }
 
    @Override

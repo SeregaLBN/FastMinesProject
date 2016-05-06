@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import fmg.common.Color;
+import fmg.common.HSV;
 import fmg.common.Pair;
 import fmg.common.geom.Size;
 import fmg.core.img.PolarLightsImg;
@@ -26,7 +27,7 @@ final class TestDrawing {
    static <TEntity> void testApp(Function<Random, Pair<StaticImg<TEntity, javax.swing.Icon>, StaticImg<TEntity, java.awt.Image>>> funcGetImages) {
       new JFrame() {
          private static final long serialVersionUID = 1L;
-         static final int SIZE = 700;
+         static final int SIZE = 600;
          {
              Random rnd = new Random(UUID.randomUUID().hashCode());
              Pair<StaticImg<TEntity, javax.swing.Icon>, StaticImg<TEntity, java.awt.Image>> icoImg = funcGetImages.apply(rnd);
@@ -45,15 +46,45 @@ final class TestDrawing {
                 {
                    setPreferredSize(new Dimension(SIZE, SIZE));
                 }
+                final int offset = 10;
                 @Override
                 public void paintComponent(Graphics g) {
                    super.paintComponent(g);
-                   final int offset = 10;
                    //g.clearRect(offset, offset, SIZE-offset, SIZE-offset);
                    g.drawRect(offset, offset, SIZE-offset, SIZE-offset);
 
                    img1.getImage().paintIcon(this, g, 2*offset, 2*offset);
                    g.drawImage(img2.getImage(), SIZE/2-offset, SIZE/2-offset, null);
+
+                   //testHsv(g);
+                }
+
+                @SuppressWarnings("unused")
+                private void testHsv(Graphics g) {
+                   int offsetX = SIZE-offset-360, offsetY = offset*2;
+                   HSV hsv = new HSV();
+
+                   hsv.v = 100;
+                   for (int h = 0; h < 360; ++h) {
+                      hsv.h = h;
+                      for (int s = 0; s <= 100; ++s) {
+                         hsv.s = s;
+                         g.setColor(Cast.toColor(hsv.toColor()));
+                         g.drawLine(offsetX+h, offsetY+s, offsetX+h, offsetY+s); // set point
+                      }
+                   }
+
+                   offsetY += 200;
+
+                   hsv.s = 100;
+                   for (int h = 0; h < 360; ++h) {
+                      hsv.h = h;
+                      for (int v = 0; v <= 100; ++v) {
+                         hsv.v = v;
+                         g.setColor(Cast.toColor(hsv.toColor()));
+                         g.drawLine(offsetX+h, offsetY-v, offsetX+h, offsetY-v); // set point
+                      }
+                   }
                 }
              };
              add(jPanel);

@@ -107,7 +107,7 @@ public class HSV {
 
    private final void fix() {
       if (h < 0) {
-         h = 0;
+         h += 360;
       } else {
          if (h >= 360)
             h %= 360;
