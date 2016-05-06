@@ -167,7 +167,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    class MainMenu extends JMenuBar {
       private static final long serialVersionUID = 1L;
       private static final int MenuHeightWithIcon = 32;
-      private static final int ZoomQualityFactor = 4; // 1 - as is
+      private static final int ZoomQualityFactor = 2; // 1 - as is
 
       class Game extends JMenu implements AutoCloseable {
          private static final long serialVersionUID = 1L;
@@ -237,12 +237,12 @@ public class Main extends JFrame implements PropertyChangeListener {
                   img.setBackgroundColor(Color.Transparent);
                   img.setRedrawInterval(50);
                   img.setRotateAngleDelta(2*img.getRotateAngleDelta());
-                  menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+                  setMenuItemIcon(menuItem, img.getImage());
                   img.addListener(ev -> {
                      if (!menuItem.getParent().isVisible())
                         return;
                      if (ev.getPropertyName().equalsIgnoreCase("Image")) {
-                        menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+                        setMenuItemIcon(menuItem, img.getImage());
                      }
                   });
 
@@ -330,12 +330,12 @@ public class Main extends JFrame implements PropertyChangeListener {
                   img.setBackgroundColor(Color.Transparent);
                   img.setRotateAngleDelta(-img.getRotateAngleDelta());
                   img.setRedrawInterval(50);
-                  menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+                  setMenuItemIcon(menuItem,  img.getImage());
                   img.addListener(ev -> {
                      if (!menuItem.getParent().isVisible())
                         return;
                      if (ev.getPropertyName().equalsIgnoreCase("Image")) {
-                        menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+                        setMenuItemIcon(menuItem, img.getImage());
                      }
                   });
 
@@ -370,12 +370,12 @@ public class Main extends JFrame implements PropertyChangeListener {
                   img.setBorderWidth(1*ZoomQualityFactor);
                   img.setBorderColor(Color.RandomColor(rnd).darker(0.4));
                   img.setBackgroundColor(Color.Transparent);
-                  menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+                  setMenuItemIcon(menuItem, img.getImage());
                   img.addListener(ev -> {
                      if (!menuItem.getParent().isVisible())
                         return;
                      if (ev.getPropertyName().equalsIgnoreCase("Image")) {
-                        menuItem.setIcon(ImgUtils.zoom(img.getImage(), MenuHeightWithIcon, MenuHeightWithIcon));
+                        setMenuItemIcon(menuItem, img.getImage());
                      }
                   });
 
@@ -392,14 +392,14 @@ public class Main extends JFrame implements PropertyChangeListener {
 
          /** Выставить верный bullet для меню мозаики */
          void recheckSelectedMosaicType() {
-            EMosaic mosaicType = getMosaic().getMosaicType();
-            getMenuItemMosaic(mosaicType).setSelected(true);
+            EMosaic currentMosaicType = getMosaic().getMosaicType();
+            getMenuItemMosaic(currentMosaicType).setSelected(true);
 
-            mosaicsImages.forEach((eMosaic, img) -> img.setRotate(eMosaic == mosaicType));
+            mosaicsImages.forEach((eMosaic, img) -> img.setRotate(eMosaic == currentMosaicType));
             mosaicsGroupImages.forEach((mosaicGroup, img) -> {
-               boolean current = mosaicGroup.getBind().contains(mosaicType);
-               img.setPolarLights(current);
-               img.setRotate(current);
+               boolean isCurrentGroup = mosaicGroup.getBind().contains(currentMosaicType);
+               img.setPolarLights(isCurrentGroup);
+               img.setRotate(isCurrentGroup);
             });
          }
 
@@ -409,6 +409,15 @@ public class Main extends JFrame implements PropertyChangeListener {
             mosaicsImages.forEach((key, img) -> img.close() );
          }
 
+      }
+
+      @SuppressWarnings("unused")
+      private void setMenuItemIcon(JMenuItem menuItem, Icon ico) {
+         if (ZoomQualityFactor != 1)
+            ico = ImgUtils.zoom(ico, MenuHeightWithIcon, MenuHeightWithIcon);
+         menuItem.setIcon(ico);
+         if (ZoomQualityFactor == 1)
+            menuItem.repaint();
       }
 
       class Options extends JMenu {

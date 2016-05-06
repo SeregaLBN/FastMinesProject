@@ -7,7 +7,6 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -31,12 +30,11 @@ import javax.swing.JSpinner;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import fmg.common.geom.Matrisize;
-import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicBase;
+import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Main;
@@ -54,7 +52,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
    private Main parent;
 
    public CustomSkillDlg(JFrame parent, boolean modal) {
-      super(parent, "Select mosaic", modal);
+      super(parent, "Select skill", modal);
       if (parent instanceof Main)
          this.parent = (Main) parent;
       initialize(parent);
@@ -78,6 +76,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       });
 
       addWindowListener(new WindowAdapter() {
+         @Override
          public void windowClosing(WindowEvent we) { OnClose(); }
       });
 
@@ -93,8 +92,8 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       // 1. Создаю панель, которая будет содержать все остальные элементы и панели расположения
       Box boxCenter = Box.createHorizontalBox();
       Box boxBottom = Box.createHorizontalBox();
-      // Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов. 
-      // использую пустую рамку 
+      // Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов.
+      // использую пустую рамку
       boxBottom.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
 //      boxCenter.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
       boxCenter.setBorder(
@@ -116,10 +115,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       spinMines.setToolTipText("Mines count");
 
       // отслеживаю изменения
-      ChangeListener changeSizeListener = new ChangeListener() {
-         @Override
-         public void stateChanged(ChangeEvent e) { OnChangeSizeField(); }
-      };
+      ChangeListener changeSizeListener = e -> OnChangeSizeField();
       spinX.addChangeListener(changeSizeListener);
       spinY.addChangeListener(changeSizeListener);
 
@@ -133,30 +129,21 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       Insets margin = btnPopup.getMargin();
       margin.left = margin.right = 0; margin.top = margin.bottom = 0;
       btnPopup.setMargin(margin);
-      btnPopup.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) { OnPopup(); }
-      });
+      btnPopup.addActionListener(e -> OnPopup());
 
       btnOk = new JButton();
       btnOk.setText("Ok");
       margin = btnOk.getMargin();
       margin.left = margin.right = 5; margin.top = margin.bottom = 2;
       btnOk.setMargin(margin);
-      btnOk.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) { OnOk(); }
-      });
+      btnOk.addActionListener(e -> OnOk());
 
       btnCancel = new JButton();
       btnCancel.setText("Cancel");
       margin = btnCancel.getMargin();
       margin.left = margin.right = 5; margin.top = margin.bottom = 2;
       btnCancel.setMargin(margin);
-      btnCancel.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) { OnClose(); }
-      });
+      btnCancel.addActionListener(e -> OnClose());
 
 
       JPanel panel4Radio = new JPanel(new GridLayout(0, 1, 0, 5));
@@ -168,18 +155,8 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       panel4Radio.add(radioFullScreenMiniSizeArea);
       radioGroup.add(radioFullScreenCurrSizeArea);
       radioGroup.add(radioFullScreenMiniSizeArea);
-      radioFullScreenCurrSizeArea.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            OnFullScreenCurrArea();
-         }
-      });
-      radioFullScreenMiniSizeArea.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            OnFullScreenMiniArea();
-         }
-      });
+      radioFullScreenCurrSizeArea.addActionListener(e -> OnFullScreenCurrArea());
+      radioFullScreenMiniSizeArea.addActionListener(e -> OnFullScreenMiniArea());
 
       JPanel panel4Left = new JPanel(new GridLayout(0, 1, 0, 5));
       panel4Left.setBorder(BorderFactory.createEmptyBorder(7,0,2,0));
@@ -209,7 +186,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       GuiTools.makeSameWidth(new JComponent[] {btnCancel, btnOk});
 
       boxCenter.add(panel4Left);
-      boxCenter.add(Box.createHorizontalStrut(5)); 
+      boxCenter.add(Box.createHorizontalStrut(5));
       boxCenter.add(panel4Radio);
 
       // добавляю расположение в центр окна и внизу
@@ -240,16 +217,11 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
          for (final ESkillLevel val: ESkillLevel.values()) {
             if (val == ESkillLevel.eCustom)
                continue;
-   
+
             JMenuItem menuItem = new JMenuItem();
-   
+
             menuItem.setText(val.getDescription());
-               menuItem.addActionListener(new ActionListener() {
-               @Override
-               public void actionPerformed(ActionEvent e) {
-                  OnPopupSetSize(val);
-               }
-            });
+            menuItem.addActionListener(e -> OnPopupSetSize(val));
             popupMenu.add(menuItem);
          }
       }
@@ -296,7 +268,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
          miniSizeX = miniSizeY = 5;
          maxiSizeX = maxiSizeY = 50;
       } else {
-         miniSizeX = miniSizeY = 5; 
+         miniSizeX = miniSizeY = 5;
 
          Matrisize s = parent.CalcMaxMosaicSize(MosaicBase.AREA_MINIMUM);
          maxiSizeX = s.m; maxiSizeY = s.n;
