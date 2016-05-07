@@ -91,31 +91,20 @@ public class Color {
    }
 
    /**
-    * Смягчить цвет
-    * @param clr
-    * @param basic - от заданной границы светлости буду создавать новый цвет
-    * @param withAlphaChanel
-    * @return
-    */
-   public Color attenuate(int basic /* = 120 */) {
-      if (basic < 0 || basic >= 0xFF)
-         throw new IllegalArgumentException();
-      return new Color(a,
-         basic + r % (0xFF - basic),
-         basic + g % (0xFF - basic),
-         basic + b % (0xFF - basic));
-   }
-   public Color attenuate() { return this.attenuate(120); }
-
-   /**
     * Creates brighter version of this Color
     * @param percent - 0.0 - as is; 1 - WHITE
     * @return
     */
    public Color brighter(double percent) {
+      if ((percent < 0) || (percent > 1))
+         throw new IllegalArgumentException("Bad 'percent' argument");
       Color tmp = new Color(a, 0xFF - r, 0xFF - g, 0xFF - b);
       tmp = tmp.darker(percent);
       return new Color(tmp.a, 0xFF - tmp.r, 0xFF - tmp.g, 0xFF - tmp.b);
+      //HSV hsv = new HSV(this);
+      //hsv.s *= 1 - percent;
+      //hsv.v = 100 - hsv.v * ( 1 - percent);
+      //return hsv.toColor();
    }
    public Color brighter() { return this.brighter(0.7); }
 
@@ -125,11 +114,55 @@ public class Color {
     * @return
     */
    public Color darker(double percent) {
+      if ((percent < 0) || (percent > 1))
+         throw new IllegalArgumentException("Bad 'percent' argument");
       double tmp = 1 - Math.min(1.0, Math.max(0, percent));
       return new Color(a,
          (int)(r * tmp),
          (int)(g * tmp),
          (int)(b * tmp));
+      //HSV hsv = new HSV(this);
+      //hsv.v *= 1 - percent;
+      //return hsv.toColor();
    }
    public Color darker() { return darker(0.7); }
+
+/*
+   // test
+   public static void main(String[] args) {
+      Random rnd = new Random(java.util.UUID.randomUUID().hashCode());
+
+      try {
+         Color clr = Color.RandomColor(rnd);
+         System.out.println("original: " + new HSV(clr));
+         for (int i=0; i<=10; ++i) {
+            double prcnt = 0.1 * i;
+            Color darker = clr.darker(prcnt);
+            Color brighter = clr.brighter(prcnt);
+            HSV hsvD = new HSV(darker);
+            HSV hsvB = new HSV(brighter);
+            System.out.println(hsvD + "  <-D  " + String.format("%.2f", prcnt) + "  B->  " + hsvB);
+         }
+      } catch(Exception ex) {
+         ex.printStackTrace(System.err);
+      }
+
+      try {
+         Color clr = Color.RandomColor(rnd);
+
+         Color black = clr.darker(1);
+         System.out.println("Test darker max - black("+black+").equals(Black) is " + black.equals(Black));
+         Color copy1 = clr.darker(0);
+         System.out.println("Test darker min - copy("+copy1+").equals(original("+clr+")) is " + copy1.equals(clr));
+
+         Color white = clr.brighter(1);
+         System.out.println("Test brighter max - white("+white+").equals(White) is " + white.equals(White));
+         Color copy2 = clr.brighter(0);
+         System.out.println("Test brighter min - copy("+copy2+").equals(original("+clr+")) is " + copy2.equals(clr));
+      } catch(Exception ex) {
+         ex.printStackTrace(System.err);
+      }
+   }
+*/
+
 }

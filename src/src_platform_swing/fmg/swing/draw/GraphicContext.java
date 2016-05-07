@@ -139,7 +139,7 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
                public Color get(Object key) {
                   Color res = super.get(key);
                   if (res == null) {
-                     res = Color.RandomColor(rnd).attenuate();
+                     res = Color.RandomColor(rnd).brighter(0.45);
                      super.put((Integer)key, res);
                   }
                   return res;

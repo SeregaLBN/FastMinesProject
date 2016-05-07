@@ -7,16 +7,27 @@ package fmg.common;
  *    it also <br>
  *  HSB - Hue, Saturation, Brightness (тон, насыщенность, яркость)
  * </p>
+ *
+ * White: h=any; s=0; v=100 <br>
+ * Black: h=any; s=any; v=0
  **/
 public class HSV {
 
-   /** Hue — цветовой тон: 0°..360° */
+   /** Hue — цветовой тон (цвет/оттенок): <ul> 0°..360°
+    * <li> 0° - red
+    * <li> 60° - yellow
+    * <li> 120° - green
+    * <li> 180° - aqua
+    * <li> 240° - blue
+    * <li> 300° - fuchsia
+    * <li> 360° - red
+    **/
    public double h;
 
-   /** Saturation — насыщенность: 0%..100% */
+   /** Saturation — насыщенность: 0%..100% (white(gray)..color) */
    public double s;
 
-   /** Value or Brightness — значение цвета или яркость: 0%..100% */
+   /** Value or Brightness — значение цвета или яркость: 0%..100% (black..color) */
    public double v;
 
    /** Alpha chanel: 0..255 */
@@ -107,6 +118,7 @@ public class HSV {
 
    private final void fix() {
       if (h < 0) {
+         h %= 360;
          h += 360;
       } else {
          if (h >= 360)
@@ -168,9 +180,13 @@ public class HSV {
 
    @Override
    public String toString() {
-      return "HSV[h=" + h + ", s=" + s + "%, v=" + v + "%, a=" + a + "]";
+      //return "HSV[h=" + h + ", s=" + s + "%, v=" + v + "%, a=" + a + "]";
+      return (a == 255)
+            ? String.format("HSV[h=%.3f, s=%.3f%%, v=%.3f%%]", h, s, v)
+            : String.format("HSV[h=%.3f, s=%.3f%%, v=%.3f%%, a=%d]", h, s, v, a);
    }
 
+/*
    // test
    public static void main(String[] args) {
       try {
@@ -183,4 +199,6 @@ public class HSV {
          ex.printStackTrace(System.err);
       }
    }
+*/
+
 }
