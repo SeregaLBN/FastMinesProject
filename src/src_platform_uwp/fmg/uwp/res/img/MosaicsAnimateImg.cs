@@ -8,6 +8,7 @@ using fmg.common.geom;
 using fmg.common.geom.util;
 using fmg.core.types;
 using fmg.core.mosaic;
+using fmg.core.mosaic.cells;
 using fmg.uwp.draw.mosaic.bmp;
 
 namespace fmg.uwp.res.img {
@@ -29,6 +30,77 @@ namespace fmg.uwp.res.img {
       /// ! Recreated only when changing the original image size (minimizing CreateImage calls).
       /// </summary>
       private WriteableBitmap _imageCache;
+
+      private IEnumerable<Tuple<int /* cell index */, double /* cell rotate angle */, int /* cell area */>> RotatedCells {
+         get {
+            var angle = RotateAngle;
+            var area = Area;
+            var transform = _rotatedElements.Select(pair => {
+               var index = pair.Key;
+               var angleOffset = pair.Value;
+               System.Diagnostics.Debug.Assert(angleOffset >= 0);
+               var angle2 = angle - angleOffset;
+               if (angle2 < 0)
+                  angle2 += 360;
+               System.Diagnostics.Debug.Assert(angle2 < 360);
+               System.Diagnostics.Debug.Assert(angle2 >= 0);
+               // (un)comment next line to view result changes...
+               angle2 = Math.Sin((angle2 / 4).ToRadian()) * angle2; // ускоряшка..
+
+               // (un)comment next line to view result changes...
+               var area2 = (int)(area * (1 + Math.Sin((angle2 / 2).ToRadian()))); // zoom'ирую
+               return new Tuple<int, double, int>(index, angle2, area2);
+            }).OrderBy(t => t.Item3); // order by area2
+            return transform;
+         }
+      }
+
+      private void DrawRotatedCells(Action<BaseCell> drawCellFunc) {
+         var attr = CellAttr;
+         // save
+         var area = Area;
+
+         foreach (var tuple in RotatedCells) {
+            var index = tuple.Item1;
+            var angle2 = tuple.Item2;
+            var area2 = tuple.Item3;
+
+            var rotatedCell = Matrix[index];
+
+            var center = rotatedCell.getCenter();
+            var coord = rotatedCell.getCoord();
+
+            // modify
+            attr.Area = area2;
+
+            // rotate
+            var cellNew = MosaicHelper.CreateCellInstance(attr, MosaicType, new Coord(coord.x, coord.y)); // 'copy' rotatedCell with zoomed Area
+            var centerNew = cellNew.getCenter();
+            var reg = cellNew.getRegion();
+            var newReg = reg.Points
+                            .Select(p => {
+                               p.X -= centerNew.X;
+                               p.Y -= centerNew.Y;
+                               return new PointDouble(p.X, p.Y);
+                            })
+                            .Rotate((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2)
+                            .Select(p => {
+                               p.X += center.X;
+                               p.Y += center.Y;
+                               return p;
+                            });
+            var i = 0;
+            foreach (var p in newReg) {
+               reg.SetPoint(i++, (int)p.X, (int)p.Y);
+            }
+
+            // draw rotated cell
+            drawCellFunc.Invoke(cellNew);
+
+            // restore
+            attr.Area = area; // ! before next call IEnumerable<> RotatedCells
+         }
+      }
 
       protected override void DrawBody() {
          if (OnlySyncDraw || LiveImage()) {
@@ -62,78 +134,18 @@ namespace fmg.uwp.res.img {
 
             var paint = new PaintableBmp(img);
             var pb = GContext.PenBorder;
-            var attr = CellAttr;
-            var angle = RotateAngle;
             // save
             var borderWidth = BorderWidth;
             var borderColor = BorderColor;
-            var area = Area;
             // modify
             pb.Width = 2 * borderWidth;
             pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5);
 
-            var transform = _rotatedElements.Select(pair => {
-               var index = pair.Key;
-               var angleOffset = pair.Value;
-               System.Diagnostics.Debug.Assert(angleOffset >= 0);
-               var angle2 = angle - angleOffset;
-               if (angle2 < 0)
-                  angle2 += 360;
-               System.Diagnostics.Debug.Assert(angle2 < 360);
-               System.Diagnostics.Debug.Assert(angle2 >= 0);
-               // (un)comment next line to view result changes...
-               angle2 = Math.Sin((angle2 / 4).ToRadian()) * angle2; // ускоряшка..
-
-               // (un)comment next line to view result changes...
-               var area2 = (int)(area * (1 + Math.Sin((angle2 / 2).ToRadian()))); // zoom'ирую
-               return new Tuple<int, double, int>(index, angle2, area2);
-            }).OrderBy(t => t.Item3); // order by area2
-
-            foreach (var tuple in transform) {
-               var index = tuple.Item1;
-               var angle2 = tuple.Item2;
-               var area2 = tuple.Item3;
-
-               var rotatedCell = Matrix[index];
-
-               var center = rotatedCell.getCenter();
-               var coord = rotatedCell.getCoord();
-
-               // modify
-               attr.Area = area2;
-
-               // rotate
-               var cellNew = MosaicHelper.CreateCellInstance(attr, MosaicType, new Coord(coord.x, coord.y)); // 'copy' rotatedCell with zoomed Area
-               var centerNew = cellNew.getCenter();
-               var reg = cellNew.getRegion();
-               var newReg = reg.Points
-                               .Select(p => {
-                                          p.X -= centerNew.X;
-                                          p.Y -= centerNew.Y;
-                                          return new PointDouble(p.X, p.Y);
-                                       })
-                               .Rotate((((coord.x+coord.y) & 1) == 0) ? +angle2 : -angle2)
-                               .Select(p => {
-                                          p.X += center.X;
-                                          p.Y += center.Y;
-                                          return p;
-                                       });
-               var i = 0;
-               foreach (var p in newReg) {
-                  reg.SetPoint(i++, (int)p.X, (int)p.Y);
-               }
-
-               // draw rotated cell
-               CellPaint.Paint(cellNew, paint);
-
-               // restore
-               attr.Area = area;
-            }
+            DrawRotatedCells(rotatedCell => CellPaint.Paint(rotatedCell, paint));
 
             // restore
             pb.Width = borderWidth; //BorderWidth = borderWidth;
             pb.ColorLight = pb.ColorShadow = borderColor; //BorderColor = borderColor;
-            //attr.Area = area;
 
          } else {
             // async draw
