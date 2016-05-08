@@ -24,6 +24,8 @@ namespace fmg.uwp.res.img {
          : base(mosaicType, sizeField, sizeImage, padding)
       { }
 
+      private const bool UseCache = true;
+
       /// <summary> need redraw the static part of the cache </summary>
       private bool _invalidateCache = true;
       /// <summary>
@@ -122,42 +124,52 @@ namespace fmg.uwp.res.img {
          Image.Blit(rc, ImageCache, rc);
       }
 
-      private void DrawCache() {
+      private void DrawCache() { DrawStaticPart(_imageCache); }
+
+      private void DrawStaticPart(WriteableBitmap toImage) {
          var w = Width;
          var h = Height;
-         _imageCache.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
+         toImage.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
 
-         var paint0 = new PaintableBmp(_imageCache);
+         var paint0 = new PaintableBmp(toImage);
          for (var i = 0; i < Matrix.Count; ++i)
             if (!_rotatedElements.ContainsKey(i))
                CellPaint.Paint(Matrix[i], paint0);
       }
 
+      protected void DrawStaticPart() {
+         if (UseCache)
+            CopyFromCache();
+         else
+            DrawStaticPart(Image);
+      }
+
+      protected void DrawRotatedPart() {
+         if (!_rotatedElements.Any())
+            return;
+
+         var img = Image;
+         var paint = new PaintableBmp(img);
+         var pb = GContext.PenBorder;
+         // save
+         var borderWidth = BorderWidth;
+         var borderColor = BorderColor;
+         // modify
+         pb.Width = 2 * borderWidth;
+         pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5);
+
+         DrawRotatedCells(rotatedCell => CellPaint.Paint(rotatedCell, paint));
+
+         // restore
+         pb.Width = borderWidth; //BorderWidth = borderWidth;
+         pb.ColorLight = pb.ColorShadow = borderColor; //BorderColor = borderColor;
+      }
+
       protected override void DrawBody() {
          if (OnlySyncDraw || LiveImage()) {
             // sync draw
-
-            CopyFromCache();
-
-            if (!_rotatedElements.Any())
-               return;
-
-            var img = Image;
-            var paint = new PaintableBmp(img);
-            var pb = GContext.PenBorder;
-            // save
-            var borderWidth = BorderWidth;
-            var borderColor = BorderColor;
-            // modify
-            pb.Width = 2 * borderWidth;
-            pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5);
-
-            DrawRotatedCells(rotatedCell => CellPaint.Paint(rotatedCell, paint));
-
-            // restore
-            pb.Width = borderWidth; //BorderWidth = borderWidth;
-            pb.ColorLight = pb.ColorShadow = borderColor; //BorderColor = borderColor;
-
+            DrawStaticPart();
+            DrawRotatedPart();
          } else {
             // async draw
             base.DrawBody();
