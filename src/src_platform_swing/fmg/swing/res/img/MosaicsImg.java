@@ -8,6 +8,8 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
+import java.util.function.Consumer;
 
 import javax.swing.SwingUtilities;
 
@@ -36,42 +38,126 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
       RotatedImg.TIMER_CREATOR = () -> new fmg.swing.ui.Timer();
    }
 
-   private final boolean RandomCellBkColor = true;
-
    public MosaicsImg(EMosaic mosaicType, Matrisize sizeField) { super(mosaicType, sizeField); }
    public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight) { super(mosaicType, sizeField, widthAndHeight); }
    public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) { super(mosaicType, sizeField, widthAndHeight, padding); }
    public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) { super(mosaicType, sizeField, sizeImage, padding); }
 
-   private ICellPaint<PaintableGraphics> _cellPaint;
    @Override
-   public ICellPaint<PaintableGraphics> getCellPaint() {
-      if (_cellPaint == null)
-         setCellPaint(new CellPaintGraphics());
-      return _cellPaint;
-   }
-   private void setCellPaint(ICellPaint<PaintableGraphics> value) {
-      if (setProperty(_cellPaint, value, "CellPaint")) {
-         dependency_GContext_CellPaint();
-         invalidate();
-      }
-   }
+   public ICellPaint<PaintableGraphics> getCellPaint() { return _extProperties.getCellPaint(); }
 
-   private GraphicContext _gContext;
-   protected GraphicContext getGContext() {
-      if (_gContext == null)
-         setGContext(new GraphicContext(null, true));
-      return _gContext;
-   }
-   protected void setGContext(GraphicContext value) {
-      if (setProperty(_gContext, value, "GContext")) {
-         dependency_GContext_CellAttribute();
-         dependency_GContext_PaddingFull();
-         dependency_GContext_CellPaint();
-         dependency_GContext_BorderWidth();
-         dependency_GContext_BorderColor();
-         invalidate();
+   private MosaicsImgExtProperty<TImage> _extProperties = new MosaicsImgExtProperty<>(
+         this,
+         propertyName -> onPropertyChanged(propertyName),
+         () -> invalidate() );
+
+   static class MosaicsImgExtProperty<TImage> {
+
+      final fmg.core.img.MosaicsImg<PaintableGraphics, TImage> _self;
+      final Consumer<String> _firePropertyChanged;
+      final Runnable _invalidator;
+      private static final boolean RandomCellBkColor = true;
+
+      public MosaicsImgExtProperty(
+            fmg.core.img.MosaicsImg<PaintableGraphics, TImage> owner,
+            Consumer<String> firePropertyChanged,
+            Runnable invalidator)
+      {
+         _self = owner;
+         _firePropertyChanged = firePropertyChanged;
+         _invalidator = invalidator;
       }
+
+      private ICellPaint<PaintableGraphics> _cellPaint;
+      public ICellPaint<PaintableGraphics> getCellPaint() {
+         if (_cellPaint == null)
+            setCellPaint(new CellPaintGraphics());
+         return _cellPaint;
+      }
+      private void setCellPaint(ICellPaint<PaintableGraphics> value) {
+         //if (_self.setProperty(_cellPaint, value, "CellPaint")) {
+         if (_cellPaint != value) {
+            _cellPaint = value;
+            _firePropertyChanged.accept("CellPaint");
+            dependency_GContext_CellPaint();
+            _invalidator.run();
+         }
+      }
+
+      private GraphicContext _gContext;
+      protected GraphicContext getGContext() {
+         if (_gContext == null)
+            setGContext(new GraphicContext(null, true));
+         return _gContext;
+      }
+      protected void setGContext(GraphicContext value) {
+         //if (_self.setProperty(_gContext, value, "GContext")) {
+         if (_gContext != value) {
+            _gContext = value;
+            _firePropertyChanged.accept("GContext");
+            dependency_GContext_CellAttribute();
+            dependency_GContext_PaddingFull();
+            dependency_GContext_CellPaint();
+            dependency_GContext_BorderWidth();
+            dependency_GContext_BorderColor();
+            _invalidator.run();
+         }
+      }
+
+      protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+         switch (propertyName) {
+         case "PaddingFull":
+            dependency_GContext_PaddingFull();
+            break;
+         case "CellAttr":
+            dependency_GContext_CellAttribute();
+            break;
+         case "BorderWidth":
+            dependency_GContext_BorderWidth();
+            break;
+         case "BorderColor":
+            dependency_GContext_BorderColor();
+            break;
+         }
+      }
+
+      ///////////// #region Dependencys
+      void dependency_GContext_CellAttribute() {
+         if (_gContext == null)
+            return;
+         if (RandomCellBkColor)
+            getGContext().getBackgroundFill()
+                  .setMode(1 + new Random(UUID.randomUUID().hashCode()).nextInt(_self.getCellAttr().getMaxBackgroundFillModeValue()));
+      }
+
+      void dependency_GContext_PaddingFull() {
+         if (_gContext == null)
+            return;
+         getGContext().setPadding(_self.getPaddingFull());
+      }
+
+      void dependency_GContext_BorderWidth() {
+         if (_gContext == null)
+            return;
+         getGContext().getPenBorder().setWidth(_self.getBorderWidth());
+      }
+
+      void dependency_GContext_BorderColor() {
+         if (_gContext == null)
+            return;
+         PenBorder pb = getGContext().getPenBorder();
+         pb.setColorShadow(_self.getBorderColor());
+         pb.setColorLight(_self.getBorderColor());
+      }
+
+      void dependency_GContext_CellPaint() {
+         if (_cellPaint == null)
+            return;
+         assert (getCellPaint() instanceof CellPaintGraphics);
+         ((CellPaintGraphics) getCellPaint()).setGraphicContext(getGContext());
+      }
+
+      ////////////// #endregion
    }
 
    /** Return painted mosaic bitmap
@@ -81,21 +167,22 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
     *    Т.к. WriteableBitmap есть DependencyObject, то его владелец может сам отслеживать отрисовку...
     *  }
     */
-   protected void drawBody(Graphics g) {
-      int w = getWidth();
-      int h = getHeight();
+   protected void drawBody(Graphics g) { drawBody(g, this); }
+   protected static <TImage> void drawBody(Graphics g, fmg.core.img.MosaicsImg<PaintableGraphics, TImage> self) {
+      int w = self.getWidth();
+      int h = self.getHeight();
 
       //g.clearRect(0, 0, w, h);
 
       Runnable funcFillBk = () -> {
-         g.setColor(Cast.toColor(getBackgroundColor()));
+         g.setColor(Cast.toColor(self.getBackgroundColor()));
          g.fillRect(0, 0, w, h);
       };
 
-      List<BaseCell> matrix = getRotatedMatrix();
+      List<BaseCell> matrix = self.getRotatedMatrix();
       PaintableGraphics paint = new PaintableGraphics(g);
-      ICellPaint<PaintableGraphics> cp = getCellPaint();
-      if (isOnlySyncDraw() || isLiveImage()) {
+      ICellPaint<PaintableGraphics> cp = self.getCellPaint();
+      if (self.isOnlySyncDraw() || self.isLiveImage()) {
          // sync draw
          funcFillBk.run();
          for (BaseCell cell : matrix)
@@ -116,59 +203,12 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       //LoggerSimple.Put("OnPropertyChanged: {0}: PropertyName={1}", Entity, ev.PropertyName);
       super.onPropertyChanged(oldValue, newValue, propertyName);
-      switch (propertyName) {
-      case "PaddingFull":
-         dependency_GContext_PaddingFull();
-         break;
-      case "CellAttr":
-         dependency_GContext_CellAttribute();
-         break;
-      case "BorderWidth":
-         dependency_GContext_BorderWidth();
-         break;
-      case "BorderColor":
-         dependency_GContext_BorderColor();
-         break;
-      }
+      _extProperties.onPropertyChanged(oldValue, newValue, propertyName);
    }
 
-   ///////////// #region Dependencys
-   void dependency_GContext_CellAttribute() {
-      if (_gContext == null)
-         return;
-      if (RandomCellBkColor)
-         getGContext().getBackgroundFill()
-               .setMode(1 + new Random().nextInt(getCellAttr().getMaxBackgroundFillModeValue()));
-   }
-
-   void dependency_GContext_PaddingFull() {
-      if (_gContext == null)
-         return;
-      getGContext().setPadding(getPaddingFull());
-   }
-
-   void dependency_GContext_BorderWidth() {
-      if (_gContext == null)
-         return;
-      getGContext().getPenBorder().setWidth(getBorderWidth());
-   }
-
-   void dependency_GContext_BorderColor() {
-      if (_gContext == null)
-         return;
-      PenBorder pb = getGContext().getPenBorder();
-      pb.setColorShadow(getBorderColor());
-      pb.setColorLight(getBorderColor());
-   }
-
-   void dependency_GContext_CellPaint() {
-      if (_cellPaint == null)
-         return;
-      assert (getCellPaint() instanceof CellPaintGraphics);
-      ((CellPaintGraphics) getCellPaint()).setGraphicContext(getGContext());
-   }
-
-   ////////////// #endregion
+   /////////////////////////////////////////////////////////////////////////////////////////////////////
+   //    custom implementations
+   /////////////////////////////////////////////////////////////////////////////////////////////////////
 
    public static class Icon extends MosaicsImg<javax.swing.Icon> {
       public Icon(EMosaic mosaicType, Matrisize sizeField) { super(mosaicType, sizeField); }

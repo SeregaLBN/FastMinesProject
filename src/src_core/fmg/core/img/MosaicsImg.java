@@ -103,7 +103,7 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
       return _matrix;
    }
 
-   protected List<BaseCell> getRotatedMatrix() {
+   public List<BaseCell> getRotatedMatrix() {
       if (Math.abs(getRotateAngle()) < 0.1)
          return getMatrix();
       if (_matrixRotated.isEmpty()) {

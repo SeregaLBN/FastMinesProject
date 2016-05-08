@@ -65,6 +65,10 @@ public abstract class MosaicsSkillImg<TImage extends Object> extends fmg.core.im
       });
    }
 
+   /////////////////////////////////////////////////////////////////////////////////////////////////////
+   //    custom implementations
+   /////////////////////////////////////////////////////////////////////////////////////////////////////
+
    public static class Icon extends MosaicsSkillImg<javax.swing.Icon> {
       public Icon(ESkillLevel skill) { super(skill); }
       public Icon(ESkillLevel skill, int widthAndHeight) { super(skill, widthAndHeight); }

@@ -34,7 +34,7 @@ public abstract class PolarLightsImg<T, TImage extends Object> extends RotatedIm
    }
 
    @Override
-   protected boolean isLiveImage() {
+   public boolean isLiveImage() {
       return isPolarLights() || super.isLiveImage();
    }
 

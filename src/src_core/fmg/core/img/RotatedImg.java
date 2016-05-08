@@ -59,7 +59,7 @@ public abstract class RotatedImg<T, TImage extends Object> extends StaticImg<T, 
          rotateStep();
    }
 
-   protected boolean isLiveImage() { return isRotate(); }
+   public boolean isLiveImage() { return isRotate(); }
 
    private void rotateStep() {
       double rotateAngle = getRotateAngle() + getRotateAngleDelta();

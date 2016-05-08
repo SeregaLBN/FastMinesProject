@@ -59,6 +59,10 @@ public abstract class MosaicsGroupImg<TImage extends Object> extends fmg.core.im
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////////////////////////////
+   //    custom implementations
+   /////////////////////////////////////////////////////////////////////////////////////////////////////
+
    public static class Icon extends MosaicsGroupImg<javax.swing.Icon> {
       public Icon(EMosaicGroup group) { super(group); }
       public Icon(EMosaicGroup group, int widthAndHeight) { super(group, widthAndHeight); }

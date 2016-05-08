@@ -31,14 +31,25 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
    public MosaicsAnimateImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) { super(mosaicType, sizeField, sizeImage, padding); }
 
    /** need redraw the static part of the cache */
-   protected boolean _invalidateCache = true;
+   private boolean _invalidateCache = true;
    /**
     * Cached static part of the picture.
     * ! Recreated only when changing the original image size (minimizing CreateImage calls).
     **/
-   protected TImage _imageCache;
+   private TImage _imageCache;
+   protected TImage getImageCache() {
+      if (_imageCache == null) {
+         _imageCache = createImage();
+         _invalidateCache = true;
+      }
+      if (_invalidateCache) {
+         _invalidateCache = false;
+         drawCache();
+      }
+      return _imageCache;
+   }
 
-   private static class RotatedCellContext {
+   private static final class RotatedCellContext {
       public RotatedCellContext(int index, double rotateAngle, double area) {
          this.index = index;
          this.rotateAngle = rotateAngle;
@@ -52,7 +63,7 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
    private Stream<RotatedCellContext> getRotatedCells() {
       double angle = getRotateAngle();
       double area = getArea();
-      Stream<RotatedCellContext> transform = _rotatedElements.entrySet().stream()
+      return _rotatedElements.entrySet().stream()
             .map(pair -> {
                int index = pair.getKey();
                double angleOffset = pair.getValue();
@@ -70,10 +81,9 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
                return new RotatedCellContext(index, angle2, area2);
             })
             .sorted((e1, e2) -> Double.compare(e1.area, e2.area)); // order by area2
-      return transform;
    }
 
-   protected void DrawRotatedCells(Consumer<BaseCell> drawCellFunc) {
+   protected void drawRotatedCells(Consumer<BaseCell> drawCellFunc) {
       BaseAttribute attr = getCellAttr();
       EMosaic mosaicType = getMosaicType();
       // save
@@ -119,6 +129,8 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
       });
    }
 
+   protected abstract void drawCache();
+
    @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       super.onPropertyChanged(oldValue, newValue, propertyName);
@@ -136,7 +148,7 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
 
    /** list of offsets rotation angles prepared for cells */
    private final List<Double> _prepareList = new ArrayList<Double>();
-   private final Map<Integer /* cell index */, Double /* rotate angle offset */> _rotatedElements = new HashMap<Integer, Double>();
+   protected final Map<Integer /* cell index */, Double /* rotate angle offset */> _rotatedElements = new HashMap<Integer, Double>();
 
    private void randomRotateElemenIndex() {
       _prepareList.clear();
