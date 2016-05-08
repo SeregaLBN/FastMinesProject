@@ -13,6 +13,7 @@ using fmg.uwp.draw.mosaic.bmp;
 
 namespace fmg.uwp.res.img {
 
+   /// <summary> картинка поля конкретной мозаики, где могут вращаться отдельный ячейки. </summary>
    public class MosaicsAnimateImg : MosaicsImg {
 
       public MosaicsAnimateImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
@@ -31,11 +32,11 @@ namespace fmg.uwp.res.img {
       /// </summary>
       private WriteableBitmap _imageCache;
 
-      private IEnumerable<Tuple<int /* cell index */, double /* cell rotate angle */, int /* cell area */>> RotatedCells {
+      private IEnumerable<Tuple<int /* cell index */, double /* cell rotate angle */, double /* cell area */>> RotatedCells {
          get {
             var angle = RotateAngle;
             var area = Area;
-            var transform = _rotatedElements.Select(pair => {
+            return _rotatedElements.Select(pair => {
                var index = pair.Key;
                var angleOffset = pair.Value;
                System.Diagnostics.Debug.Assert(angleOffset >= 0);
@@ -48,15 +49,15 @@ namespace fmg.uwp.res.img {
                angle2 = Math.Sin((angle2 / 4).ToRadian()) * angle2; // ускоряшка..
 
                // (un)comment next line to view result changes...
-               var area2 = (int)(area * (1 + Math.Sin((angle2 / 2).ToRadian()))); // zoom'ирую
-               return new Tuple<int, double, int>(index, angle2, area2);
+               var area2 = area * (1 + Math.Sin((angle2 / 2).ToRadian())); // zoom'ирую
+               return new Tuple<int, double, double>(index, angle2, area2);
             }).OrderBy(t => t.Item3); // order by area2
-            return transform;
          }
       }
 
       private void DrawRotatedCells(Action<BaseCell> drawCellFunc) {
          var attr = CellAttr;
+         var mosaicType = MosaicType;
          // save
          var area = Area;
 
@@ -74,14 +75,14 @@ namespace fmg.uwp.res.img {
             attr.Area = area2;
 
             // rotate
-            var cellNew = MosaicHelper.CreateCellInstance(attr, MosaicType, new Coord(coord.x, coord.y)); // 'copy' rotatedCell with zoomed Area
+            var cellNew = MosaicHelper.CreateCellInstance(attr, mosaicType, new Coord(coord.x, coord.y)); // 'copy' rotatedCell with zoomed Area
             var centerNew = cellNew.getCenter();
             var reg = cellNew.getRegion();
             var newReg = reg.Points
                             .Select(p => {
                                p.X -= centerNew.X;
                                p.Y -= centerNew.Y;
-                               return new PointDouble(p.X, p.Y);
+                               return p;
                             })
                             .Rotate((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2)
                             .Select(p => {
@@ -189,7 +190,7 @@ namespace fmg.uwp.res.img {
       }
 
       private void AddRandomToPrepareList(bool zero) {
-         var offset = (zero?0:Rand.Next(360)) + RotateAngle;
+         var offset = (zero ? 0 : Rand.Next(360)) + RotateAngle;
          if (offset > 360)
             offset -= 360;
          _prepareList.Add(offset);
