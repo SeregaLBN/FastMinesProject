@@ -31,6 +31,19 @@ namespace fmg.uwp.res.img {
       /// ! Recreated only when changing the original image size (minimizing CreateImage calls).
       /// </summary>
       private WriteableBitmap _imageCache;
+      private WriteableBitmap ImageCache {
+         get {
+            if (_imageCache == null) {
+               _imageCache = CreateImage();
+               _invalidateCache = true;
+            }
+            if (_invalidateCache) {
+               _invalidateCache = false;
+               DrawCache();
+            }
+            return _imageCache;
+         }
+      }
 
       private IEnumerable<Tuple<int /* cell index */, double /* cell rotate angle */, double /* cell area */>> RotatedCells {
          get {
@@ -103,36 +116,33 @@ namespace fmg.uwp.res.img {
          }
       }
 
+      /// <summary> copy cached image to original </summary>
+      private void CopyFromCache() {
+         var rc = new Windows.Foundation.Rect(0, 0, Width, Height);
+         Image.Blit(rc, ImageCache, rc);
+      }
+
+      private void DrawCache() {
+         var w = Width;
+         var h = Height;
+         _imageCache.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
+
+         var paint0 = new PaintableBmp(_imageCache);
+         for (var i = 0; i < Matrix.Count; ++i)
+            if (!_rotatedElements.ContainsKey(i))
+               CellPaint.Paint(Matrix[i], paint0);
+      }
+
       protected override void DrawBody() {
          if (OnlySyncDraw || LiveImage()) {
             // sync draw
-            var w = Width;
-            var h = Height;
-            if (_imageCache == null) {
-               _imageCache = CreateImage();
-               _invalidateCache = true;
-            }
-            var img = _imageCache;
-            if (_invalidateCache) {
-               _invalidateCache = false;
 
-               img.FillPolygon(new[] {0, 0, w, 0, w, h, 0, h, 0, 0}, BackgroundColor.ToWinColor());
-
-               var paint0 = new PaintableBmp(img);
-               for (var i = 0; i < Matrix.Count; ++i)
-                  if (!_rotatedElements.ContainsKey(i))
-                     CellPaint.Paint(Matrix[i], paint0);
-            }
-
-            { // copy cached image to original
-               var rc = new Windows.Foundation.Rect(0,0,w,h);
-               Image.Blit(rc, img, rc);
-               img = Image;
-            }
+            CopyFromCache();
 
             if (!_rotatedElements.Any())
                return;
 
+            var img = Image;
             var paint = new PaintableBmp(img);
             var pb = GContext.PenBorder;
             // save
