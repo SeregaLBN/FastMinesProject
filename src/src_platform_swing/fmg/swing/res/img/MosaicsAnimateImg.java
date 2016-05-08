@@ -38,6 +38,8 @@ public abstract class MosaicsAnimateImg<TImage extends Object> extends fmg.core.
    public MosaicsAnimateImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) { super(mosaicType, sizeField, widthAndHeight, padding); }
    public MosaicsAnimateImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) { super(mosaicType, sizeField, sizeImage, padding); }
 
+   private static final boolean USE_CACHE = false;
+
    @Override
    public ICellPaint<PaintableGraphics> getCellPaint() { return _extProperties.getCellPaint(); }
 
@@ -47,9 +49,11 @@ public abstract class MosaicsAnimateImg<TImage extends Object> extends fmg.core.
          () -> invalidate() );
 
    /** copy cached image to original */
-   protected abstract void CopyFromCache();
+   protected abstract void copyFromCache();
 
-   protected void drawCache(Graphics g) {
+   protected void drawCache(Graphics g) { drawStaticPartReal(g); }
+
+   private void drawStaticPartReal(Graphics g) {
       int w = getWidth();
       int h = getHeight();
 
@@ -63,32 +67,40 @@ public abstract class MosaicsAnimateImg<TImage extends Object> extends fmg.core.
             getCellPaint().paint(getMatrix().get(i), paint0);
    }
 
+   private void drawStaticPart(Graphics g) {
+      if (USE_CACHE)
+         copyFromCache();
+      else
+         drawStaticPartReal(g);
+   }
+
+   private void drawRotatedPart(Graphics g) {
+      if (_rotatedElements.isEmpty())
+         return;
+
+      PaintableGraphics paint = new PaintableGraphics(g);
+      PenBorder pb = _extProperties.getGContext().getPenBorder();
+      // save
+      int borderWidth = getBorderWidth();
+      Color borderColor = getBorderColor();
+      // modify
+      pb.setWidth(2 * borderWidth);
+      pb.setColorLight(borderColor.darker(0.5));
+      pb.setColorShadow(borderColor.darker(0.5));
+
+      drawRotatedCells(rotatedCell -> getCellPaint().paint(rotatedCell, paint));
+
+      // restore
+      pb.setWidth(borderWidth); //BorderWidth = borderWidth;
+      pb.setColorLight(borderColor); //BorderColor = borderColor;
+      pb.setColorShadow(borderColor); //BorderColor = borderColor;
+   }
+
    protected void drawBody(Graphics g) {
       if (isOnlySyncDraw() || isLiveImage()) {
          // sync draw
-
-         CopyFromCache();
-
-         if (_rotatedElements.isEmpty())
-            return;
-
-         PaintableGraphics paint = new PaintableGraphics(g);
-         PenBorder pb = _extProperties.getGContext().getPenBorder();
-         // save
-         int borderWidth = getBorderWidth();
-         Color borderColor = getBorderColor();
-         // modify
-         pb.setWidth(2 * borderWidth);
-         pb.setColorLight(borderColor.darker(0.5));
-         pb.setColorShadow(borderColor.darker(0.5));
-
-         drawRotatedCells(rotatedCell -> getCellPaint().paint(rotatedCell, paint));
-
-         // restore
-         pb.setWidth(borderWidth); //BorderWidth = borderWidth;
-         pb.setColorLight(borderColor); //BorderColor = borderColor;
-         pb.setColorShadow(borderColor); //BorderColor = borderColor;
-
+         drawStaticPart(g);
+         drawRotatedPart(g);
       } else {
          // async draw
          MosaicsImg.drawBody(g, this);
@@ -137,7 +149,7 @@ public abstract class MosaicsAnimateImg<TImage extends Object> extends fmg.core.
       }
 
       @Override
-      protected void CopyFromCache() {
+      protected void copyFromCache() {
       }
 
       @Override
@@ -168,7 +180,7 @@ public abstract class MosaicsAnimateImg<TImage extends Object> extends fmg.core.
       }
 
       @Override
-      protected void CopyFromCache() {
+      protected void copyFromCache() {
          BufferedImage img = (BufferedImage) getImage();
          Graphics2D g = img.createGraphics();
 //         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
