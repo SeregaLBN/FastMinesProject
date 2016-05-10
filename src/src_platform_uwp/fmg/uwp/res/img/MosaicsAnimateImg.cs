@@ -24,7 +24,7 @@ namespace fmg.uwp.res.img {
          : base(mosaicType, sizeField, sizeImage, padding)
       { }
 
-      private const bool UseCache = true;
+      private const bool UseCache = !true;
 
       /// <summary> need redraw the static part of the cache </summary>
       private bool _invalidateCache = true;
@@ -124,9 +124,9 @@ namespace fmg.uwp.res.img {
          Image.Blit(rc, ImageCache, rc);
       }
 
-      private void DrawCache() { DrawStaticPart(_imageCache); }
+      private void DrawCache() { DrawStaticPartReal(_imageCache); }
 
-      private void DrawStaticPart(WriteableBitmap toImage) {
+      private void DrawStaticPartReal(WriteableBitmap toImage) {
          var w = Width;
          var h = Height;
          toImage.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
@@ -141,7 +141,7 @@ namespace fmg.uwp.res.img {
          if (UseCache)
             CopyFromCache();
          else
-            DrawStaticPart(Image);
+            DrawStaticPartReal(Image);
       }
 
       protected void DrawRotatedPart() {

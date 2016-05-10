@@ -215,10 +215,10 @@ public abstract class MosaicsAnimateImg<TImage extends Object> extends fmg.core.
    public static void main(String[] args) {
       TestDrawing.<EMosaic>testApp(rnd -> {
          EMosaic eMosaic = EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length));
-         MosaicsAnimateImg.Icon img1 = new MosaicsAnimateImg.Icon(eMosaic, new Matrisize(5+rnd.nextInt(5), 5 + rnd.nextInt(5)));
+         MosaicsAnimateImg.Icon img1 = new MosaicsAnimateImg.Icon(eMosaic, new Matrisize(3+rnd.nextInt(3), 3 + rnd.nextInt(3)));
 
          eMosaic = EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length));
-         MosaicsAnimateImg.Image img2 = new MosaicsAnimateImg.Image(eMosaic, new Matrisize(5+rnd.nextInt(5), 5 + rnd.nextInt(5)));
+         MosaicsAnimateImg.Image img2 = new MosaicsAnimateImg.Image(eMosaic, new Matrisize(3+rnd.nextInt(3), 3 + rnd.nextInt(3)));
 
          return new Pair<>(img1, img2);
       });

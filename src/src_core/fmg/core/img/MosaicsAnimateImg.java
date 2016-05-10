@@ -74,10 +74,10 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
                assert (angle2 < 360);
                assert (angle2 >= 0);
                // (un)comment next line to view result changes...
-               angle2 = FigureHelper.toRadian(Math.sin((angle2 / 4))) * angle2; // ускоряшка..
+               angle2 = Math.sin(FigureHelper.toRadian((angle2 / 4))) * angle2; // ускоряшка..
 
                // (un)comment next line to view result changes...
-               double area2 = area * (1 + FigureHelper.toRadian(Math.sin(angle2 / 2))); // zoom'ирую
+               double area2 = area * (1 + Math.sin(FigureHelper.toRadian(angle2 / 2))); // zoom'ирую
                return new RotatedCellContext(index, angle2, area2);
             })
             .sorted((e1, e2) -> Double.compare(e1.area, e2.area)); // order by area2
