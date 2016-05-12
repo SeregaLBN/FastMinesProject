@@ -83,14 +83,11 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
       }
    }
 
-   /** caching rotated values */
-   private final List<BaseCell> _matrixRotated = new ArrayList<BaseCell>();
-   private final List<BaseCell> _matrix        = new ArrayList<BaseCell>();
+   private final List<BaseCell> _matrix = new ArrayList<BaseCell>();
    /** матрица ячеек, представленная(развёрнута) в виде вектора */
    @Override
    public List<BaseCell> getMatrix() {
       if (_matrix.isEmpty()) {
-         _matrixRotated.clear();
          BaseAttribute attr = getCellAttr();
          EMosaic type = getMosaicType();
          Matrisize size = getSizeField();
@@ -104,24 +101,16 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
    }
 
    public List<BaseCell> getRotatedMatrix() {
+      List<BaseCell> matrix  = getMatrix();
       if (Math.abs(getRotateAngle()) < 0.1)
-         return getMatrix();
-      if (_matrixRotated.isEmpty()) {
-         // create copy Matrix
-         BaseCell.BaseAttribute attr = getCellAttr();
-         EMosaic type = getMosaicType();
-         Matrisize size = getSizeField();
-         for (int i = 0; i < size.m; i++)
-            for (int j = 0; j < size.n; j++)
-               _matrixRotated.add(MosaicHelper.createCellInstance(attr, type, new Coord(i, j)));
-      } else {
-         // restore base coords
-         for (BaseCell cell : _matrixRotated)
-            cell.Init();
-      }
+         return matrix;
+
+      // restore base coords
+      for (BaseCell cell : matrix)
+         cell.Init();
 
       PointDouble center = new PointDouble(getWidth() / 2.0 - _paddingFull.left, getHeight() / 2.0 - _paddingFull.top);
-      for (BaseCell cell : _matrixRotated) {
+      for (BaseCell cell : matrix) {
          RegionDouble reg = cell.getRegion();
          Stream<PointDouble> newReg = reg.getPoints()
                .stream()
@@ -142,7 +131,7 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
          newReg.forEach(p -> reg.setPoint(i[0]++, (int) p.x, (int) p.y));
       }
 
-      return _matrixRotated;
+      return matrix;
    }
 
    private void recalcArea() {
@@ -217,7 +206,6 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
    void dependency_MosaicType_As_Entity(EMosaic newValue, EMosaic oldValue) {
       setArea(0);
       _matrix.clear();
-      _matrixRotated.clear();
       setCellAttr(null);
       onPropertyChanged(oldValue, newValue, "MosaicType");
    }
