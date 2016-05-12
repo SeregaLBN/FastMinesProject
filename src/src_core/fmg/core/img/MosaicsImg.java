@@ -105,12 +105,10 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
       if (Math.abs(getRotateAngle()) < 0.1)
          return matrix;
 
-      // restore base coords
-      for (BaseCell cell : matrix)
-         cell.Init();
-
       PointDouble center = new PointDouble(getWidth() / 2.0 - _paddingFull.left, getHeight() / 2.0 - _paddingFull.top);
       for (BaseCell cell : matrix) {
+         cell.Init(); // restore base coords
+
          RegionDouble reg = cell.getRegion();
          Stream<PointDouble> newReg = reg.getPoints()
                .stream()

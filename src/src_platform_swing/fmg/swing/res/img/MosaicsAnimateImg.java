@@ -59,6 +59,8 @@ public abstract class MosaicsAnimateImg<TImage extends Object> extends fmg.core.
       return _imageCache;
    }
 
+   protected abstract void drawCache();
+
    @Override
    public ICellPaint<PaintableGraphics> getCellPaint() { return _extProperties.getCellPaint(); }
 
@@ -107,7 +109,7 @@ public abstract class MosaicsAnimateImg<TImage extends Object> extends fmg.core.
       pb.setColorLight(borderColor.darker(0.5));
       pb.setColorShadow(borderColor.darker(0.5));
 
-      drawRotatedCells(rotatedCell -> getCellPaint().paint(rotatedCell, paint));
+      getRotatedCells().forEach(rotatedCell -> getCellPaint().paint(rotatedCell, paint));
 
       // restore
       pb.setWidth(borderWidth); //BorderWidth = borderWidth;

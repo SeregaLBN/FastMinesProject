@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import fmg.common.geom.Bound;
@@ -16,7 +15,6 @@ import fmg.common.geom.PointDouble;
 import fmg.common.geom.RegionDouble;
 import fmg.common.geom.Size;
 import fmg.common.geom.util.FigureHelper;
-import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
 import fmg.core.mosaic.draw.IPaintable;
@@ -41,7 +39,7 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
       public double area;
    }
 
-   private Stream<RotatedCellContext> getRotatedCells() {
+   private Stream<RotatedCellContext> getRotatedCellsContext() {
       double angle = getRotateAngle();
       double area = getArea();
       return _rotatedElements.entrySet().stream()
@@ -64,29 +62,29 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
             .sorted((e1, e2) -> Double.compare(e1.area, e2.area)); // order by area2
    }
 
-   protected void drawRotatedCells(Consumer<BaseCell> drawCellFunc) {
+   /** return BaseCell from original Matrix with modified Region */
+   protected Stream<BaseCell> getRotatedCells() {
       BaseAttribute attr = getCellAttr();
-      EMosaic mosaicType = getMosaicType();
-      // save
       double area = getArea();
 
-      getRotatedCells().forEach(ctxt -> {
+      return getRotatedCellsContext().map(ctxt -> {
          int index = ctxt.index;
          double angle2 = ctxt.rotateAngle;
          double area2 = ctxt.area;
 
-         BaseCell rotatedCell = getMatrix().get(index);
+         BaseCell cell = getMatrix().get(index);
 
-         PointDouble center = rotatedCell.getCenter();
-         Coord coord = rotatedCell.getCoord();
+         cell.Init();
+         PointDouble center = cell.getCenter();
+         Coord coord = cell.getCoord();
 
          // modify
          attr.setArea(area2);
 
          // rotate
-         BaseCell cellNew = MosaicHelper.createCellInstance(attr, mosaicType, new Coord(coord.x, coord.y)); // 'copy' rotatedCell with zoomed Area
-         PointDouble centerNew = cellNew.getCenter();
-         RegionDouble reg = cellNew.getRegion();
+         cell.Init();
+         PointDouble centerNew = cell.getCenter();
+         RegionDouble reg = cell.getRegion();
          Stream<PointDouble> newReg = reg.getPoints().stream()
                          .map(p -> {
                             p.x -= centerNew.x;
@@ -102,15 +100,12 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
          int[] i = {0};
          newReg.forEach(p -> reg.setPoint(i[0]++, (int)p.x, (int)p.y));
 
-         // draw rotated cell
-         drawCellFunc.accept(cellNew);
-
          // restore
-         attr.setArea(area); // ! before next call IEnumerable<> RotatedCells
+         attr.setArea(area);
+
+         return cell;
       });
    }
-
-   protected abstract void drawCache();
 
    @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
@@ -202,6 +197,7 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
       });
       if (!toRemove.isEmpty()) {
          toRemove.forEach(index -> {
+                           getMatrix().get(index).Init(); // restore original region coords
                            _rotatedElements.remove(index);
                            addRandomToPrepareList(false, rand);
                         });
