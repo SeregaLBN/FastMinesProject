@@ -40,6 +40,25 @@ public abstract class MosaicsAnimateImg<TImage extends Object> extends fmg.core.
 
    private static final boolean USE_CACHE = false;
 
+   /** need redraw the static part of the cache */
+   private boolean _invalidateCache = true;
+   /**
+    * Cached static part of the picture.
+    * ! Recreated only when changing the original image size (minimizing CreateImage calls).
+    **/
+   private TImage _imageCache;
+   protected TImage getImageCache() {
+      if (_imageCache == null) {
+         _imageCache = createImage();
+         _invalidateCache = true;
+      }
+      if (_invalidateCache) {
+         _invalidateCache = false;
+         drawCache();
+      }
+      return _imageCache;
+   }
+
    @Override
    public ICellPaint<PaintableGraphics> getCellPaint() { return _extProperties.getCellPaint(); }
 
@@ -111,6 +130,15 @@ public abstract class MosaicsAnimateImg<TImage extends Object> extends fmg.core.
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       //LoggerSimple.Put("OnPropertyChanged: {0}: PropertyName={1}", Entity, ev.PropertyName);
       super.onPropertyChanged(oldValue, newValue, propertyName);
+      switch (propertyName) {
+      case "Size":
+         //_invalidateCache = true;
+         _imageCache = null;
+         break;
+      case "RotatedElements":
+         _invalidateCache = true;
+         break;
+      }
       _extProperties.onPropertyChanged(oldValue, newValue, propertyName);
    }
 

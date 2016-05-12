@@ -30,25 +30,6 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
    public MosaicsAnimateImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) { super(mosaicType, sizeField, widthAndHeight, padding); }
    public MosaicsAnimateImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) { super(mosaicType, sizeField, sizeImage, padding); }
 
-   /** need redraw the static part of the cache */
-   private boolean _invalidateCache = true;
-   /**
-    * Cached static part of the picture.
-    * ! Recreated only when changing the original image size (minimizing CreateImage calls).
-    **/
-   private TImage _imageCache;
-   protected TImage getImageCache() {
-      if (_imageCache == null) {
-         _imageCache = createImage();
-         _invalidateCache = true;
-      }
-      if (_invalidateCache) {
-         _invalidateCache = false;
-         drawCache();
-      }
-      return _imageCache;
-   }
-
    private static final class RotatedCellContext {
       public RotatedCellContext(int index, double rotateAngle, double area) {
          this.index = index;
@@ -139,10 +120,6 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
       case "SizeField":
          randomRotateElemenIndex();
          break;
-      case "Image":
-         _invalidateCache = true;
-         _imageCache = null;
-         break;
       }
    }
 
@@ -154,7 +131,7 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
       _prepareList.clear();
       if (!_rotatedElements.isEmpty()) {
          _rotatedElements.clear();
-         _invalidateCache = true;
+         onPropertyChanged("RotatedElements");
       }
 
       if (!isRotate())
@@ -203,7 +180,7 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
             {
                _prepareList.remove(i);
                _rotatedElements.put(nextRandomIndex(rand), angleOffset);
-               _invalidateCache = true;
+               onPropertyChanged("RotatedElements");
             }
          }
       }
@@ -223,12 +200,13 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
             toRemove.add(index);
          }
       });
-      if (toRemove != null)
+      if (!toRemove.isEmpty()) {
          toRemove.forEach(index -> {
                            _rotatedElements.remove(index);
                            addRandomToPrepareList(false, rand);
-                           _invalidateCache = true;
                         });
+         onPropertyChanged("RotatedElements");
+      }
    }
 
 }
