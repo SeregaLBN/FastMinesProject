@@ -100,13 +100,9 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
       return _matrix;
    }
 
-   public List<BaseCell> getRotatedMatrix() {
-      List<BaseCell> matrix  = getMatrix();
-      if (Math.abs(getRotateAngle()) < 0.1)
-         return matrix;
-
+   public void rotatedMatrix() {
       PointDouble center = new PointDouble(getWidth() / 2.0 - _paddingFull.left, getHeight() / 2.0 - _paddingFull.top);
-      for (BaseCell cell : matrix) {
+      for (BaseCell cell : getMatrix()) {
          cell.Init(); // restore base coords
 
          RegionDouble reg = cell.getRegion();
@@ -128,8 +124,6 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
          int[] i = { 0 };
          newReg.forEach(p -> reg.setPoint(i[0]++, (int) p.x, (int) p.y));
       }
-
-      return matrix;
    }
 
    private void recalcArea() {
@@ -208,5 +202,12 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
       onPropertyChanged(oldValue, newValue, "MosaicType");
    }
    ////////////// #endregion
+
+
+   @Override
+   protected void onTimer() {
+      super.onTimer();
+      rotatedMatrix();
+   }
 
 }

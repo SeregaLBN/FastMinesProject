@@ -62,17 +62,18 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
             .sorted((e1, e2) -> Double.compare(e1.area, e2.area)); // order by area2
    }
 
-   /** return BaseCell from original Matrix with modified Region */
-   protected Stream<BaseCell> getRotatedCells() {
+   /** rotate BaseCell from original Matrix with modified Region */
+   protected void rotatedCells() {
       BaseAttribute attr = getCellAttr();
       double area = getArea();
+      List<BaseCell> matrix = getMatrix();
 
-      return getRotatedCellsContext().map(ctxt -> {
+      getRotatedCellsContext().forEach(ctxt -> {
          int index = ctxt.index;
          double angle2 = ctxt.rotateAngle;
          double area2 = ctxt.area;
 
-         BaseCell cell = getMatrix().get(index);
+         BaseCell cell = matrix.get(index);
 
          cell.Init();
          PointDouble center = cell.getCenter();
@@ -102,8 +103,6 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
 
          // restore
          attr.setArea(area);
-
-         return cell;
       });
    }
 
@@ -196,13 +195,16 @@ public abstract class MosaicsAnimateImg<TPaintable extends IPaintable, TImage ex
          }
       });
       if (!toRemove.isEmpty()) {
+         List<BaseCell> matrix = getMatrix();
          toRemove.forEach(index -> {
-                           getMatrix().get(index).Init(); // restore original region coords
+                           matrix.get(index).Init(); // restore original region coords
                            _rotatedElements.remove(index);
                            addRandomToPrepareList(false, rand);
                         });
          onPropertyChanged("RotatedElements");
       }
+
+      rotatedCells();
    }
 
 }

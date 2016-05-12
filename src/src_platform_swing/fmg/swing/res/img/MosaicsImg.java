@@ -179,7 +179,7 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
          g.fillRect(0, 0, w, h);
       };
 
-      List<BaseCell> matrix = self.getRotatedMatrix();
+      List<BaseCell> matrix = self.getMatrix();
       PaintableGraphics paint = new PaintableGraphics(g);
       ICellPaint<PaintableGraphics> cp = self.getCellPaint();
       if (self.isOnlySyncDraw() || self.isLiveImage()) {
@@ -288,4 +288,5 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
       });
    }
    //////////////////////////////////
+
 }

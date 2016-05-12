@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import javax.swing.SwingUtilities;
 
@@ -16,6 +17,7 @@ import fmg.common.geom.Matrisize;
 import fmg.common.geom.Size;
 import fmg.core.img.RotatedImg;
 import fmg.core.img.StaticImg;
+import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.ICellPaint;
 import fmg.core.types.EMosaic;
 import fmg.data.view.draw.PenBorder;
@@ -82,10 +84,11 @@ public abstract class MosaicsAnimateImg<TImage extends Object> extends fmg.core.
       //g.clearRect(0, 0, w, h);
       g.fillRect(0, 0, w, h);
 
-      PaintableGraphics paint0 = new PaintableGraphics(g);
-      for (int i = 0; i < getMatrix().size(); ++i)
+      PaintableGraphics paint = new PaintableGraphics(g);
+      List<BaseCell> matrix = getMatrix();
+      for (int i = 0; i < matrix.size(); ++i)
          if (!_rotatedElements.containsKey(i))
-            getCellPaint().paint(getMatrix().get(i), paint0);
+            getCellPaint().paint(matrix.get(i), paint);
    }
 
    private void drawStaticPart(Graphics g) {
@@ -109,7 +112,10 @@ public abstract class MosaicsAnimateImg<TImage extends Object> extends fmg.core.
       pb.setColorLight(borderColor.darker(0.5));
       pb.setColorShadow(borderColor.darker(0.5));
 
-      getRotatedCells().forEach(rotatedCell -> getCellPaint().paint(rotatedCell, paint));
+      List<BaseCell> matrix = getMatrix();
+      for (int i = 0; i < matrix.size(); ++i)
+         if (_rotatedElements.containsKey(i))
+            getCellPaint().paint(matrix.get(i), paint);
 
       // restore
       pb.setWidth(borderWidth); //BorderWidth = borderWidth;
