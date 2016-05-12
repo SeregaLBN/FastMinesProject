@@ -20,7 +20,8 @@ import fmg.core.img.StaticImg;
 import fmg.core.types.EMosaicGroup;
 import fmg.swing.Cast;
 
-/** representable fmg.core.types.EMosaicGroup as image
+/** representable {@link fmg.core.types.EMosaicGroup} as image
+ *  <br>
  *  SWING impl
  **/
 public abstract class MosaicsGroupImg<TImage extends Object> extends fmg.core.img.MosaicsGroupImg<TImage> {

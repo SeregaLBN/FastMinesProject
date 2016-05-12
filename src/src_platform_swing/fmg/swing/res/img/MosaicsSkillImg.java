@@ -22,7 +22,8 @@ import fmg.core.img.StaticImg;
 import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Cast;
 
-/** representable fmg.data.controller.types.ESkillLevel as image
+/** representable {@link fmg.data.controller.types.ESkillLevel} as image
+ *  <br>
  *  SWING impl
  **/
 public abstract class MosaicsSkillImg<TImage extends Object> extends fmg.core.img.MosaicsSkillImg<TImage> {

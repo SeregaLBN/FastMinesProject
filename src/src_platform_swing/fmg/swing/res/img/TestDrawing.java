@@ -120,7 +120,7 @@ final class TestDrawing {
              }
              if (img1 instanceof RotatedImg) {
                 RotatedImg<TEntity, javax.swing.Icon> imgR1 = (RotatedImg<TEntity, javax.swing.Icon>)img1;
-                imgR1.setRotateAngleDelta(-(1/*+rnd.nextInt(3)*/)*imgR1.getRotateAngleDelta());
+                imgR1.setRotateAngleDelta(-(3/*+rnd.nextInt(3)*/)*imgR1.getRotateAngleDelta());
                 imgR1.setRotate(true);
              } else {
                 //img1.setRotateAngle(+15 + rnd.nextInt(15));
@@ -128,7 +128,7 @@ final class TestDrawing {
              }
              if (img2 instanceof RotatedImg) {
                 RotatedImg<TEntity, java.awt.Image> imgR2 = (RotatedImg<TEntity, java.awt.Image>)img2;
-                imgR2.setRotateAngleDelta(+(3/*+rnd.nextInt(3)*/)*imgR2.getRotateAngleDelta());
+                imgR2.setRotateAngleDelta(+(5/*+rnd.nextInt(3)*/)*imgR2.getRotateAngleDelta());
                 imgR2.setRotate(true);
              } else {
                 //img2.setRotateAngle( -7 - rnd.nextInt(8));
