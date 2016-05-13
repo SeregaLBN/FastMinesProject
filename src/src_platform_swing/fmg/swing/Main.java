@@ -76,6 +76,7 @@ import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
+import fmg.core.img.MosaicsImg.ERotateMode;
 import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.types.EGameStatus;
@@ -367,9 +368,12 @@ public class Main extends JFrame implements PropertyChangeListener {
 
                   MosaicsImg.Icon img = new MosaicsImg.Icon(val, val.sizeIcoField(true), MenuHeightWithIcon*ZoomQualityFactor);
                   mosaicsImages.put(val, img);
+                  img.setRotateMode(ERotateMode.someCells);
                   img.setBorderWidth(1*ZoomQualityFactor);
                   img.setBorderColor(Color.RandomColor(rnd).darker(0.4));
                   img.setBackgroundColor(Color.Transparent);
+                  img.setRotateAngleDelta(3.333);
+                  img.setRedrawInterval(50);
                   setMenuItemIcon(menuItem, img.getImage());
                   img.addListener(ev -> {
                      if (!menuItem.getParent().isVisible())
