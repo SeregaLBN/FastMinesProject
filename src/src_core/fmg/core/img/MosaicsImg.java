@@ -268,12 +268,12 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
                assert (angle2 < 360);
                assert (angle2 >= 0);
                // (un)comment next line to view result changes...
-               angle2 = Math.sin(FigureHelper.toRadian((angle2 / 4))) * angle2; // СѓСЃРєРѕСЂСЏС€РєР°..
+               angle2 = Math.sin(FigureHelper.toRadian((angle2 / 4))) * angle2; // ускоряшка..
 
                // (un)comment next line to view result changes...
-               double area2 = area * (1 + Math.sin(FigureHelper.toRadian(angle2 / 2))); // zoom'РёСЂСѓСЋ
+               double area2 = area * (1 + Math.sin(FigureHelper.toRadian(angle2 / 2))); // zoom'ирую
                return new RotatedCellContext(index, angle2, area2);
-            });//.sorted((e1, e2) -> Double.compare(e1.area, e2.area)); // order by area2
+            });
    }
 
    /** rotate BaseCell from original Matrix with modified Region */
@@ -321,7 +321,7 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
    }
 
    /** list of offsets rotation angles prepared for cells */
-   private final List<Double /* angle offset */ > _prepareList = new ArrayList<Double>();
+   private final List<Double /* angle offset */ > _prepareList = new ArrayList<>();
    protected final List<RotatedCellContext> _rotatedElements = new ArrayList<>();
 
    private void randomRotateElemenIndex() {
