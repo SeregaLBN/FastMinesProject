@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -96,6 +96,9 @@
     </Compile>
     <Compile Include="..\src\src_common\fmg\common\geom\util\FigureHelper.cs">
       <Link>src_fmg.common\geom\util\FigureHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\src\src_common\fmg\common\HSV.cs">
+      <Link>src_fmg.common\HSV.cs</Link>
     </Compile>
     <Compile Include="..\src\src_core\fmg\core\mosaic\draw\ICellPaint.cs">
       <Link>src_fmg.core\mosaic\draw\ICellPaint.cs</Link>
