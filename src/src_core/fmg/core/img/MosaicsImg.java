@@ -364,6 +364,7 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
    }
 
    protected void updateAnglesOffsets(double angleOld) {
+      double rotateDelta = getRotateAngleDelta();
       double angleNew = getRotateAngle();
       Random rand = new Random(UUID.randomUUID().hashCode());
 
@@ -371,9 +372,13 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
          List<Double> copyList = new ArrayList<Double>(_prepareList);
          for (int i = copyList.size()-1; i >= 0; --i) {
             double angleOffset = copyList.get(i);
-            if ((angleOld <= angleOffset && angleOffset < angleNew && angleOld < angleNew) || // example: old=10   offset=15   new=20
-                (angleOld <= angleOffset && angleOffset > angleNew && angleOld > angleNew) || // example: old=350  offset=355  new=0
-                (angleOld > angleOffset && angleOffset <= angleNew && angleOld > angleNew))   // example: old=355  offset=0    new=5
+            if ((rotateDelta >= 0)
+               ?  ((angleOld <= angleOffset && angleOffset <  angleNew && angleOld < angleNew) || // example: old=10   offset=15   new=20
+                   (angleOld <= angleOffset && angleOffset >  angleNew && angleOld > angleNew) || // example: old=350  offset=355  new=0
+                   (angleOld >  angleOffset && angleOffset <= angleNew && angleOld > angleNew))   // example: old=355  offset=0    new=5
+               :  ((angleOld >= angleOffset && angleOffset >  angleNew && angleOld > angleNew) || // example: old=20   offset=15   new=10
+                   (angleOld <  angleOffset && angleOffset >  angleNew && angleOld < angleNew) || // example: old=0    offset=355  new=350
+                   (angleOld >= angleOffset && angleOffset <= angleNew && angleOld < angleNew)))  // example: old=5    offset=0    new=355
             {
                _prepareList.remove(i);
                _rotatedElements.put(nextRandomIndex(rand), angleOffset);
@@ -382,7 +387,6 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
          }
       }
 
-      double rotateDelta = getRotateAngleDelta();
       List<Integer> toRemove = new ArrayList<>();
       _rotatedElements.forEach((index, angleOffset) -> {
          double angle2 = angleNew - angleOffset;
