@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.swing.SwingUtilities;
 
@@ -236,8 +237,9 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
 
       PaintableGraphics paint = new PaintableGraphics(g);
       List<BaseCell> matrix = getMatrix();
+      List<Integer> indexes = _rotatedElements.stream().map(cntxt -> cntxt.index).collect(Collectors.toList());
       for (int i = 0; i < matrix.size(); ++i)
-         if (!_rotatedElements.containsKey(i))
+         if (!indexes.contains(i))
             getCellPaint().paint(matrix.get(i), paint);
    }
 
@@ -263,8 +265,9 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
       pb.setColorShadow(borderColor.darker(0.5));
 
       List<BaseCell> matrix = getMatrix();
+      List<Integer> indexes = _rotatedElements.stream().map(cntxt -> cntxt.index).collect(Collectors.toList());
       for (int i = 0; i < matrix.size(); ++i)
-         if (_rotatedElements.containsKey(i))
+         if (indexes.contains(i))
             getCellPaint().paint(matrix.get(i), paint);
 
       // restore
@@ -384,11 +387,11 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
    public static void main(String[] args) {
       TestDrawing.<EMosaic>testApp(rnd -> {
          EMosaic eMosaic = EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length));
-         MosaicsImg.Icon img1 = new MosaicsImg.Icon(eMosaic, new Matrisize(5+rnd.nextInt(5), 5 + rnd.nextInt(5)));
+         MosaicsImg.Icon img1 = new MosaicsImg.Icon(eMosaic, new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2)));
          img1.setRotateMode(ERotateMode.values()[rnd.nextInt(ERotateMode.values().length)]);
 
          eMosaic = EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length));
-         MosaicsImg.Image img2 = new MosaicsImg.Image(eMosaic, new Matrisize(5+rnd.nextInt(5), 5 + rnd.nextInt(5)));
+         MosaicsImg.Image img2 = new MosaicsImg.Image(eMosaic, new Matrisize(3+rnd.nextInt(3), 3 + rnd.nextInt(3)));
          img2.setRotateMode(ERotateMode.values()[rnd.nextInt(ERotateMode.values().length)]);
 
          return new Pair<>(img1, img2);

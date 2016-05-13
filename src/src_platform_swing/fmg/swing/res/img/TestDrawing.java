@@ -27,7 +27,7 @@ final class TestDrawing {
    static <TEntity> void testApp(Function<Random, Pair<StaticImg<TEntity, javax.swing.Icon>, StaticImg<TEntity, java.awt.Image>>> funcGetImages) {
       new JFrame() {
          private static final long serialVersionUID = 1L;
-         static final int SIZE = 600;
+         static final int SIZE = 300;
          {
              Random rnd = new Random(UUID.randomUUID().hashCode());
              Pair<StaticImg<TEntity, javax.swing.Icon>, StaticImg<TEntity, java.awt.Image>> icoImg = funcGetImages.apply(rnd);

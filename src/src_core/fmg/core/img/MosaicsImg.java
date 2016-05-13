@@ -1,9 +1,7 @@
 package fmg.core.img;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -212,7 +210,7 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
          rotatedCells();
          break;
       }
-      
+
    }
 
    /** ///////////// ================= PART {@link ERotateMode#fullMatrix} ======================= ///////////// */
@@ -245,24 +243,24 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
 
    /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
 
-   private static final class RotatedCellContext {
-      public RotatedCellContext(int index, double rotateAngle, double area) {
+   protected static final class RotatedCellContext {
+      public RotatedCellContext(int index, double angle, double area) {
          this.index = index;
-         this.rotateAngle = rotateAngle;
+         this.angle = angle;
          this.area = area;
       }
       public int index;
-      public double rotateAngle;
+      public double angle;
       public double area;
    }
 
    private Stream<RotatedCellContext> getRotatedCellsContext() {
       double angle = getRotateAngle();
       double area = getArea();
-      return _rotatedElements.entrySet().stream()
-            .map(pair -> {
-               int index = pair.getKey();
-               double angleOffset = pair.getValue();
+      return _rotatedElements.stream()
+            .map(cntxt -> {
+               int index = cntxt.index;
+               double angleOffset = cntxt.angle;
                assert (angleOffset >= 0);
                double angle2 = angle - angleOffset;
                if (angle2 < 0)
@@ -270,13 +268,12 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
                assert (angle2 < 360);
                assert (angle2 >= 0);
                // (un)comment next line to view result changes...
-               angle2 = Math.sin(FigureHelper.toRadian((angle2 / 4))) * angle2; // ускоряшка..
+               angle2 = Math.sin(FigureHelper.toRadian((angle2 / 4))) * angle2; // СѓСЃРєРѕСЂСЏС€РєР°..
 
                // (un)comment next line to view result changes...
-               double area2 = area * (1 + Math.sin(FigureHelper.toRadian(angle2 / 2))); // zoom'ирую
+               double area2 = area * (1 + Math.sin(FigureHelper.toRadian(angle2 / 2))); // zoom'РёСЂСѓСЋ
                return new RotatedCellContext(index, angle2, area2);
-            })
-            .sorted((e1, e2) -> Double.compare(e1.area, e2.area)); // order by area2
+            });//.sorted((e1, e2) -> Double.compare(e1.area, e2.area)); // order by area2
    }
 
    /** rotate BaseCell from original Matrix with modified Region */
@@ -287,7 +284,7 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
 
       getRotatedCellsContext().forEach(ctxt -> {
          int index = ctxt.index;
-         double angle2 = ctxt.rotateAngle;
+         double angle2 = ctxt.angle;
          double area2 = ctxt.area;
 
          BaseCell cell = matrix.get(index);
@@ -324,8 +321,8 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
    }
 
    /** list of offsets rotation angles prepared for cells */
-   private final List<Double> _prepareList = new ArrayList<Double>();
-   protected final Map<Integer /* cell index */, Double /* rotate angle offset */> _rotatedElements = new HashMap<Integer, Double>();
+   private final List<Double /* angle offset */ > _prepareList = new ArrayList<Double>();
+   protected final List<RotatedCellContext> _rotatedElements = new ArrayList<>();
 
    private void randomRotateElemenIndex() {
       _prepareList.clear();
@@ -357,7 +354,7 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
       assert (_rotatedElements.size() < len);
       do {
          int index = rand.nextInt(len);
-         if (_rotatedElements.containsKey(index))
+         if (_rotatedElements.stream().anyMatch(ctxt -> ctxt.index == index))
             continue;
          return index;
       } while(true);
@@ -381,15 +378,16 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
                    (angleOld >= angleOffset && angleOffset <= angleNew && angleOld < angleNew)))  // example: old=5    offset=0    new=355
             {
                _prepareList.remove(i);
-               _rotatedElements.put(nextRandomIndex(rand), angleOffset);
+               _rotatedElements.add(new RotatedCellContext(nextRandomIndex(rand), angleOffset, getArea()));
                onPropertyChanged("RotatedElements");
             }
          }
       }
 
-      List<Integer> toRemove = new ArrayList<>();
-      _rotatedElements.forEach((index, angleOffset) -> {
-         double angle2 = angleNew - angleOffset;
+      List<RotatedCellContext> toRemove = new ArrayList<>();
+      _rotatedElements.forEach(cntxt -> {
+         double angle = cntxt.angle;
+         double angle2 = angleNew - angle;
          if (angle2 < 0)
             angle2 += 360;
          assert (angle2 < 360);
@@ -398,14 +396,14 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
          // prepare to next step - exclude current cell from rotate and add next random cell
          double angle3 = angle2 + rotateDelta;
          if ((angle3 >= 360) || (angle3 < 0)) {
-            toRemove.add(index);
+            toRemove.add(cntxt);
          }
       });
       if (!toRemove.isEmpty()) {
          List<BaseCell> matrix = getMatrix();
-         toRemove.forEach(index -> {
-                           matrix.get(index).Init(); // restore original region coords
-                           _rotatedElements.remove(index);
+         toRemove.forEach(cntxt -> {
+                           matrix.get(cntxt.index).Init(); // restore original region coords
+                           _rotatedElements.remove(cntxt);
                            addRandomToPrepareList(false, rand);
                         });
          onPropertyChanged("RotatedElements");
