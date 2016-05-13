@@ -225,9 +225,9 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
 
    protected abstract void drawCache();
 
-   protected void drawCache(Graphics g) { drawStaticPartReal(g); }
+   protected void drawCache(Graphics g) { drawStaticPart(g); }
 
-   private void drawStaticPartReal(Graphics g) {
+   private void drawStaticPart(Graphics g) {
       int w = getWidth();
       int h = getHeight();
 
@@ -241,13 +241,6 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
       for (int i = 0; i < matrix.size(); ++i)
          if (!indexes.contains(i))
             getCellPaint().paint(matrix.get(i), paint);
-   }
-
-   private void drawStaticPart(Graphics g) {
-      if (USE_CACHE)
-         copyFromCache();
-      else
-         drawStaticPartReal(g);
    }
 
    private void drawRotatedPart(Graphics g) {
@@ -265,10 +258,10 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
       pb.setColorShadow(borderColor.darker(0.5));
 
       List<BaseCell> matrix = getMatrix();
-      List<Integer> indexes = _rotatedElements.stream().map(cntxt -> cntxt.index).collect(Collectors.toList());
-      for (int i = 0; i < matrix.size(); ++i)
-         if (indexes.contains(i))
-            getCellPaint().paint(matrix.get(i), paint);
+      _rotatedElements.stream()
+         .sorted((e1, e2) -> Double.compare(e1.area, e2.area)) // Z-ordering
+         .mapToInt(cntxt -> cntxt.index)
+         .forEach(i -> getCellPaint().paint(matrix.get(i), paint));
 
       // restore
       pb.setWidth(borderWidth); //BorderWidth = borderWidth;
@@ -279,7 +272,10 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
    private void drawBodySomeCells(Graphics g) {
       if (isOnlySyncDraw() || isLiveImage()) {
          // sync draw
-         drawStaticPart(g);
+         if (USE_CACHE)
+            copyFromCache();
+         else
+            drawStaticPart(g);
          drawRotatedPart(g);
       } else {
          // async draw

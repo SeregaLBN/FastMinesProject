@@ -244,57 +244,46 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
    /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
 
    protected static final class RotatedCellContext {
-      public RotatedCellContext(int index, double angle, double area) {
+      public RotatedCellContext(int index, double angleOffset, double area) {
          this.index = index;
-         this.angle = angle;
+         this.angleOffset = angleOffset;
          this.area = area;
       }
-      public int index;
-      public double angle;
+      public final int index;
+      public final double angleOffset;
       public double area;
-   }
-
-   private Stream<RotatedCellContext> getRotatedCellsContext() {
-      double angle = getRotateAngle();
-      double area = getArea();
-      return _rotatedElements.stream()
-            .map(cntxt -> {
-               int index = cntxt.index;
-               double angleOffset = cntxt.angle;
-               assert (angleOffset >= 0);
-               double angle2 = angle - angleOffset;
-               if (angle2 < 0)
-                  angle2 += 360;
-               assert (angle2 < 360);
-               assert (angle2 >= 0);
-               // (un)comment next line to view result changes...
-               angle2 = Math.sin(FigureHelper.toRadian((angle2 / 4))) * angle2; // ускоряшка..
-
-               // (un)comment next line to view result changes...
-               double area2 = area * (1 + Math.sin(FigureHelper.toRadian(angle2 / 2))); // zoom'ирую
-               return new RotatedCellContext(index, angle2, area2);
-            });
    }
 
    /** rotate BaseCell from original Matrix with modified Region */
    protected void rotatedCells() {
       BaseAttribute attr = getCellAttr();
-      double area = getArea();
       List<BaseCell> matrix = getMatrix();
+      final double area = getArea();
+      final double angle = getRotateAngle();
 
-      getRotatedCellsContext().forEach(ctxt -> {
-         int index = ctxt.index;
-         double angle2 = ctxt.angle;
-         double area2 = ctxt.area;
+      _rotatedElements.forEach(cntxt -> {
+         assert (cntxt.angleOffset >= 0);
+         double angle2 = angle - cntxt.angleOffset;
+         if (angle2 < 0)
+            angle2 += 360;
+         assert (angle2 < 360);
+         assert (angle2 >= 0);
+         // (un)comment next line to view result changes...
+         angle2 = Math.sin(FigureHelper.toRadian((angle2 / 4))) * angle2; // accelerate / ускоряшка..
 
-         BaseCell cell = matrix.get(index);
+         // (un)comment next line to view result changes...
+         cntxt.area = area * (1 + Math.sin(FigureHelper.toRadian(angle2 / 2))); // zoom'ирую
+
+
+
+         BaseCell cell = matrix.get(cntxt.index);
 
          cell.Init();
          PointDouble center = cell.getCenter();
          Coord coord = cell.getCoord();
 
          // modify
-         attr.setArea(area2);
+         attr.setArea(cntxt.area);
 
          // rotate
          cell.Init();
@@ -386,8 +375,7 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
 
       List<RotatedCellContext> toRemove = new ArrayList<>();
       _rotatedElements.forEach(cntxt -> {
-         double angle = cntxt.angle;
-         double angle2 = angleNew - angle;
+         double angle2 = angleNew - cntxt.angleOffset;
          if (angle2 < 0)
             angle2 += 360;
          assert (angle2 < 360);
