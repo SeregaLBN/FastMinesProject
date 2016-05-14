@@ -1,8 +1,6 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Windows.UI.Xaml.Media.Imaging;
-using fmg.common;
 using fmg.common.geom;
 using fmg.common.geom.util;
 using fmg.data.controller.types;
@@ -10,7 +8,9 @@ using fmg.data.controller.types;
 namespace fmg.core.img {
 
    /// <summary> representable fmg.data.controller.types.ESkillLevel as image </summary>
-   public class MosaicsSkillImg : RotatedImg<ESkillLevel, WriteableBitmap> {
+   public abstract class MosaicsSkillImg<TImage> : RotatedImg<ESkillLevel, TImage>
+      where TImage : class
+   {
 
       public MosaicsSkillImg(ESkillLevel group, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(group, widthAndHeight, padding) {}
@@ -48,32 +48,6 @@ namespace fmg.core.img {
          });
       }
 
-      protected override WriteableBitmap CreateImage() {
-         //LoggerSimple.Put("CreateImage: Width={0}; Height={1}: {2}", Width, Height, Entity);
-         return new WriteableBitmap(Width, Height);
-      }
-
-      protected override void DrawBody() {
-         var bmp = Image;
-         bmp.Clear(BackgroundColor.ToWinColor());
-
-         var stars = GetCoords();
-         stars = stars.Reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
-         foreach (var coords in stars) {
-            var points = coords.PointsAsXyxyxySequence(true).ToArray();
-            bmp.FillPolygon(points, ForegroundColorAttenuate.ToWinColor());
-
-            // draw perimeter border
-            var clr = BorderColor;
-            if (clr.A != Color.Transparent.A) {
-               var clrWin = clr.ToWinColor();
-               var bw = BorderWidth;
-               for (var i = 0; i < points.Length - 2; i += 2) {
-                  bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], clrWin, bw);
-               }
-            }
-         }
-      }
-
    }
+
 }

@@ -193,7 +193,6 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
    }
    ////////////// #endregion
 
-
    @Override
    protected void onTimer() {
       ERotateMode rotateMode = getRotateMode();
@@ -210,7 +209,6 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
          rotatedCells();
          break;
       }
-
    }
 
    /** ///////////// ================= PART {@link ERotateMode#fullMatrix} ======================= ///////////// */
@@ -223,7 +221,6 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
          RegionDouble reg = cell.getRegion();
          Stream<PointDouble> newReg = reg.getPoints()
                .stream()
-               .map(p -> new PointDouble(p))
                .map(p -> {
                   p.x -= center.x;
                   p.y -= center.y;
@@ -350,8 +347,9 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
    }
 
    protected void updateAnglesOffsets(double angleOld) {
-      double rotateDelta = getRotateAngleDelta();
       double angleNew = getRotateAngle();
+      double rotateDelta = getRotateAngleDelta();
+      double area = getArea();
       Random rand = new Random(UUID.randomUUID().hashCode());
 
       if (!_prepareList.isEmpty()) {
@@ -367,7 +365,7 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
                    (angleOld >= angleOffset && angleOffset <= angleNew && angleOld < angleNew)))  // example: old=5    offset=0    new=355
             {
                _prepareList.remove(i);
-               _rotatedElements.add(new RotatedCellContext(nextRandomIndex(rand), angleOffset, getArea()));
+               _rotatedElements.add(new RotatedCellContext(nextRandomIndex(rand), angleOffset, area));
                onPropertyChanged("RotatedElements");
             }
          }

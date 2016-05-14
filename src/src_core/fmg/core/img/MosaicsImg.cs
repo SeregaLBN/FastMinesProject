@@ -2,37 +2,35 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Windows.UI.Core;
-using Windows.UI.Xaml.Media.Imaging;
-using fmg.common;
 using fmg.common.geom;
 using fmg.common.geom.util;
 using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
-using fmg.uwp.draw;
-using fmg.uwp.draw.mosaic.bmp;
-using FastMines.Common;
 using FastMines.Presentation.Notyfier;
 
 namespace fmg.core.img {
 
    /// <summary> картинка поля конкретной мозаики. Используется для меню, кнопок, etc... </summary>
-   public class MosaicsImg : RotatedImg<EMosaic, WriteableBitmap>, IMosaic<PaintableBmp> {
+   public abstract class MosaicsImg<TPaintable, TImage> : RotatedImg<EMosaic, TImage>, IMosaic<TPaintable>
+      where TPaintable : IPaintable
+      where TImage : class {
       private const bool RandomCellBkColor = true;
-      protected Random Rand => GraphicContext.Rand;
 
       public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
-         : base(mosaicType, widthAndHeight, padding)
-      {
+         : base(mosaicType, widthAndHeight, padding) {
          _sizeField = sizeField;
       }
 
       public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding)
-         : base(mosaicType, sizeImage, padding)
-      {
+         : base(mosaicType, sizeImage, padding) {
          _sizeField = sizeField;
+      }
+
+      public enum ERotateMode {
+         FullMatrix,
+         SomeCells
       }
 
       /// <summary>из каких фигур состоит мозаика поля</summary>
@@ -61,6 +59,8 @@ namespace fmg.core.img {
 
       public BaseCell getCell(Coord coord) { return Matrix[coord.x * SizeField.n + coord.y]; }
 
+      public abstract ICellPaint<TPaintable> CellPaint { get; }
+
       private BaseCell.BaseAttribute _cellAttr;
       public BaseCell.BaseAttribute CellAttr {
          get {
@@ -70,13 +70,16 @@ namespace fmg.core.img {
          }
          private set {
             if (SetProperty(ref _cellAttr, value)) {
+               /*
                Dependency_GContext_CellAttribute();
+               */
                Dependency_CellAttribute_Area();
                Invalidate();
             }
          }
       }
 
+      /*
       private ICellPaint<PaintableBmp> _cellPaint;
       public ICellPaint<PaintableBmp> CellPaint {
          get {
@@ -91,15 +94,14 @@ namespace fmg.core.img {
             }
          }
       }
+      */
 
       /// <summary> caching rotated values </summary>
-      private readonly List<BaseCell> _matrixRotated = new List<BaseCell>();
       private readonly List<BaseCell> _matrix = new List<BaseCell>();
       /// <summary>матрица ячеек, представленная(развёрнута) в виде вектора</summary>
       public IList<BaseCell> Matrix {
          get {
             if (!_matrix.Any()) {
-               _matrixRotated.Clear();
                var attr = CellAttr;
                var type = MosaicType;
                var size = SizeField;
@@ -110,50 +112,6 @@ namespace fmg.core.img {
                Invalidate();
             }
             return _matrix;
-         }
-      }
-
-      private IList<BaseCell> RotatedMatrix {
-         get {
-            if (Math.Abs(RotateAngle) < 0.1)
-               return Matrix;
-            if (!_matrixRotated.Any()) {
-               // create copy Matrix
-               var attr = CellAttr;
-               var type = MosaicType;
-               var size = SizeField;
-               for (var i = 0; i < size.m; i++)
-                  for (var j = 0; j < size.n; j++)
-                     _matrixRotated.Add(MosaicHelper.CreateCellInstance(attr, type, new Coord(i, j)));
-            } else {
-               // restore base coords
-               foreach (var cell in _matrixRotated)
-                  cell.Init();
-            }
-
-            var center = new PointDouble(Width / 2.0 - _paddingFull.Left, Height / 2.0 - _paddingFull.Top);
-            foreach(var cell in _matrixRotated) {
-               var reg = cell.getRegion();
-               var newReg = reg.Points
-                               .Select(p => new PointDouble(p))
-                               .Select(p => {
-                                          p.X -= center.X;
-                                          p.Y -= center.Y;
-                                          return p;
-                                       })
-                               .Rotate(RotateAngle)
-                               .Select(p => {
-                                          p.X += center.X;
-                                          p.Y += center.Y;
-                                          return p;
-                                       });
-               var i = 0;
-               foreach(var p in newReg) {
-                  reg.SetPoint(i++, (int)p.X, (int)p.Y);
-               }
-            }
-
-            return _matrixRotated;
          }
       }
 
@@ -168,10 +126,10 @@ namespace fmg.core.img {
          System.Diagnostics.Debug.Assert(w >= (sizeImageOut.Width + pad.LeftAndRight));
          System.Diagnostics.Debug.Assert(h >= (sizeImageOut.Height + pad.TopAndBottom));
          var paddingOut = new BoundDouble(
-            (w - sizeImageOut.Width)/2,
-            (h - sizeImageOut.Height)/2,
-            (w - sizeImageOut.Width)/2,
-            (h - sizeImageOut.Height)/2);
+            (w - sizeImageOut.Width) / 2,
+            (h - sizeImageOut.Height) / 2,
+            (w - sizeImageOut.Width) / 2,
+            (h - sizeImageOut.Height) / 2);
          System.Diagnostics.Debug.Assert((sizeImageOut.Width + paddingOut.LeftAndRight).HasMinDiff(w));
          System.Diagnostics.Debug.Assert((sizeImageOut.Height + paddingOut.TopAndBottom).HasMinDiff(h));
 
@@ -198,12 +156,12 @@ namespace fmg.core.img {
          get { return _paddingFull; }
          protected set {
             if (SetProperty(ref _paddingFull, value)) {
-               Dependency_GContext_PaddingFull();
                Invalidate();
             }
          }
       }
 
+      /*
       private GraphicContext _gContext;
       protected GraphicContext GContext {
          get {
@@ -222,48 +180,12 @@ namespace fmg.core.img {
             }
          }
       }
+      */
 
-      protected override WriteableBitmap CreateImage() {
-         var w = Width;
-         var h = Height;
-         return BitmapFactory.New(w, h); // new WriteableBitmap(w, h); // 
-      }
-
-      /// <summary> Return painted mosaic bitmap 
-      /// if (!OnlySyncDraw) {
-      ///   Сама картинка возвращается сразу.
-      ///   Но вот её отрисовка - в фоне.
-      ///   Т.к. WriteableBitmap есть DependencyObject, то его владелец может сам отслеживать отрисовку...
-      /// }
-      /// </summary>
-      protected override void DrawBody() {
-         var img = Image;
-
-         Action funcFillBk = () => { img.Clear(BackgroundColor.ToWinColor()); };
-
-         var matrix = RotatedMatrix;
-         var paint = new PaintableBmp(img);
-         var cp = CellPaint;
-         if (OnlySyncDraw || LiveImage()) {
-            // sync draw
-            funcFillBk();
-            foreach (var cell in matrix)
-               cp.Paint(cell, paint);
-         } else {
-            // async draw
-            AsyncRunner.InvokeFromUiLater(() => {
-               funcFillBk();
-               foreach (var cell in matrix) {
-                  var tmp = cell;
-                  AsyncRunner.InvokeFromUiLater(
-                     () => cp.Paint(tmp, paint),
-                     ((Rand.Next() & 1) == 0)
-                        ? CoreDispatcherPriority.Low
-                        : CoreDispatcherPriority.Normal
-                  );
-               }
-            }, CoreDispatcherPriority.Normal);
-         }
+      private ERotateMode _rotateMode = ERotateMode.FullMatrix;
+      public ERotateMode RotateMode {
+         get { return _rotateMode; }
+         set { SetProperty(ref _rotateMode, value); }
       }
 
       protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
@@ -278,22 +200,15 @@ namespace fmg.core.img {
          case "Padding":
             RecalcArea();
             break;
-         case "BorderWidth":
-            Dependency_GContext_BorderWidth();
-            break;
-         case "BorderColor":
-            Dependency_GContext_BorderColor();
+         case "Rotate":
+         case "SizeField":
+            if (RotateMode == ERotateMode.SomeCells)
+               RandomRotateElemenIndex();
             break;
          }
       }
 
       #region Dependencys
-      void Dependency_GContext_CellAttribute() {
-         if ((_cellAttr == null) || (_gContext == null))
-            return;
-         if (RandomCellBkColor)
-            GContext.BkFill.Mode = 1 + Rand.Next(CellAttr.getMaxBackgroundFillModeValue());
-      }
       void Dependency_CellAttribute_Area() {
          if (_cellAttr == null)
             return;
@@ -302,32 +217,10 @@ namespace fmg.core.img {
             foreach (var cell in Matrix)
                cell.Init();
       }
-      void Dependency_GContext_PaddingFull() {
-         if (_gContext == null)
-            return;
-         GContext.Padding = PaddingFull;
-      }
-      void Dependency_GContext_BorderWidth() {
-         if (_gContext == null)
-            return;
-         GContext.PenBorder.Width = BorderWidth;
-      }
-      void Dependency_GContext_BorderColor() {
-         if (_gContext == null)
-            return;
-         var pb = GContext.PenBorder;
-         pb.ColorLight = pb.ColorShadow = BorderColor;
-      }
-      void Dependency_CellPaint_GContext() {
-         if (_cellPaint == null)
-            return;
-         System.Diagnostics.Debug.Assert(CellPaint is CellPaintBmp);
-         ((CellPaintBmp)CellPaint).GContext = GContext;
-      }
+
       void Dependency_MosaicType_As_Entity(EMosaic? newValue, EMosaic? oldValue) {
          Area = 0;
          _matrix.Clear();
-         _matrixRotated.Clear();
          CellAttr = null;
          if ((newValue == null) || (oldValue == null))
             OnPropertyChanged(this, new PropertyChangedEventArgs("MosaicType"));
@@ -336,12 +229,208 @@ namespace fmg.core.img {
       }
       #endregion
 
-      protected override void Dispose(bool disposing) {
-         if (disposing) {
-            GContext = null; // call setter
+      protected override void OnTimer() {
+         var rotateMode = RotateMode;
+
+         double? anglePrevis = null;
+         if (rotateMode == ERotateMode.SomeCells)
+            anglePrevis = RotateAngle;
+         base.OnTimer();
+
+         switch (rotateMode) {
+         case ERotateMode.FullMatrix:
+            RotatedMatrix();
+            break;
+         case ERotateMode.SomeCells:
+            UpdateAnglesOffsets(anglePrevis.Value);
+            RotatedCells();
+            break;
+         }
+      }
+
+      ///////////// ================= PART ERotateMode.FullMatrix ======================= /////////////
+
+      private void RotatedMatrix() {
+         var center = new PointDouble(Width / 2.0 - _paddingFull.Left, Height / 2.0 - _paddingFull.Top);
+         foreach (var cell in Matrix) {
+            cell.Init(); // restore base coords
+            var reg = cell.getRegion();
+            var newReg = reg.Points
+                              .Select(p => {
+                                 p.X -= center.X;
+                                 p.Y -= center.Y;
+                                 return p;
+                              })
+                              .Rotate(RotateAngle)
+                              .Select(p => {
+                                 p.X += center.X;
+                                 p.Y += center.Y;
+                                 return p;
+                              });
+            var i = 0;
+            foreach (var p in newReg) {
+               reg.SetPoint(i++, (int)p.X, (int)p.Y);
+            }
+         }
+      }
+
+      ///////////// ================= PART ERotateMode.SomeCells ======================= /////////////
+
+      protected struct RotatedCellContext {
+         public RotatedCellContext(int index, double angleOffset, double area) {
+            this.index = index;
+            this.angleOffset = angleOffset;
+            this.area = area;
+         }
+         public readonly int index;
+         public readonly double angleOffset;
+         public double area;
+      }
+
+      private void RotatedCells() {
+         var attr = CellAttr;
+         var matrix = Matrix;
+         var angle = RotateAngle;
+         var area = Area;
+
+         _rotatedElements.ForEach(cntxt => {
+            System.Diagnostics.Debug.Assert(cntxt.angleOffset >= 0);
+            var angle2 = angle - cntxt.angleOffset;
+            if (angle2 < 0)
+               angle2 += 360;
+            System.Diagnostics.Debug.Assert(angle2 < 360);
+            System.Diagnostics.Debug.Assert(angle2 >= 0);
+            // (un)comment next line to view result changes...
+            angle2 = Math.Sin((angle2 / 4).ToRadian()) * angle2; // accelerate / ускоряшка..
+
+            // (un)comment next line to view result changes...
+            cntxt.area = area * (1 + Math.Sin((angle2 / 2).ToRadian())); // zoom'ирую
+
+
+            var cell = Matrix[cntxt.index];
+
+            cell.Init();
+            var center = cell.getCenter();
+            var coord = cell.getCoord();
+
+            // modify
+            attr.Area = cntxt.area;
+
+            // rotate
+            cell.Init();
+            var centerNew = cell.getCenter();
+            var reg = cell.getRegion();
+            var newReg = reg.Points
+                              .Select(p => {
+                                 p.X -= centerNew.X;
+                                 p.Y -= centerNew.Y;
+                                 return p;
+                              })
+                              .Rotate((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2)
+                              .Select(p => {
+                                 p.X += center.X;
+                                 p.Y += center.Y;
+                                 return p;
+                              });
+            var i = 0;
+            foreach (var p in newReg) {
+               reg.SetPoint(i++, (int)p.X, (int)p.Y);
+            }
+
+            // restore
+            attr.Area = area;
+         });
+      }
+
+      /// <summary> list of offsets rotation angles prepared for cells </summary>
+      private readonly IList<double /* angle offset */ > _prepareList = new List<double>();
+      private readonly List<RotatedCellContext> _rotatedElements = new List<RotatedCellContext>();
+
+      private void RandomRotateElemenIndex() {
+         _prepareList.Clear();
+         if (_rotatedElements.Any()) {
+            _rotatedElements.Clear();
+            OnPropertyChanged("RotatedElements");
          }
 
-         base.Dispose(disposing);
+         if (!Rotate)
+            return;
+
+         // create random cells indexes  and  base rotate offset (negative)
+         var len = Matrix.Count;
+         var rand = new Random(Guid.NewGuid().GetHashCode());
+         for (var i = 0; i < len / 4.5; ++i) {
+            AddRandomToPrepareList(i == 0, rand);
+         }
+      }
+
+      private void AddRandomToPrepareList(bool zero, Random rand) {
+         var offset = (zero ? 0 : rand.Next(360)) + RotateAngle;
+         if (offset > 360)
+            offset -= 360;
+         _prepareList.Add(offset);
+      }
+
+      private int NextRandomIndex(Random rand) {
+         var len = Matrix.Count;
+         System.Diagnostics.Debug.Assert(_rotatedElements.Count < len);
+         do {
+            var index = rand.Next(len);
+            if (_rotatedElements.Any(ctxt => ctxt.index == index))
+               continue;
+            return index;
+         } while (true);
+      }
+
+      protected void UpdateAnglesOffsets(double angleOld) {
+         var angleNew = RotateAngle;
+         var rotateDelta = RotateAngleDelta;
+         var area = Area;
+         Random rand = new Random(Guid.NewGuid().GetHashCode());
+
+         if (_prepareList.Any()) {
+            var copyList = new List<double>(_prepareList);
+            for (var i = copyList.Count - 1; i >= 0; --i) {
+               var angleOffset = copyList[i];
+               if ((rotateDelta >= 0)
+                  ? ((angleOld <= angleOffset && angleOffset <  angleNew && angleOld < angleNew) || // example: old=10   offset=15   new=20
+                     (angleOld <= angleOffset && angleOffset >  angleNew && angleOld > angleNew) || // example: old=350  offset=355  new=0
+                     (angleOld >  angleOffset && angleOffset <= angleNew && angleOld > angleNew))   // example: old=355  offset=0    new=5
+                  : ((angleOld >= angleOffset && angleOffset >  angleNew && angleOld > angleNew) || // example: old=20   offset=15   new=10
+                     (angleOld <  angleOffset && angleOffset >  angleNew && angleOld < angleNew) || // example: old=0    offset=355  new=350
+                     (angleOld >= angleOffset && angleOffset <= angleNew && angleOld < angleNew)))  // example: old=5    offset=0    new=355
+               {
+                  _prepareList.RemoveAt(i);
+                  _rotatedElements.Add(new RotatedCellContext(NextRandomIndex(rand), angleOffset, area));
+                  OnPropertyChanged("RotatedElements");
+               }
+            }
+         }
+
+         List<RotatedCellContext> toRemove = null;
+         foreach (var cntxt in _rotatedElements) {
+            var angle2 = angleNew - cntxt.angleOffset;
+            if (angle2 < 0)
+               angle2 += 360;
+            System.Diagnostics.Debug.Assert(angle2 < 360);
+            System.Diagnostics.Debug.Assert(angle2 >= 0);
+
+            // prepare to next step - exclude current cell from rotate and add next random cell
+            var angle3 = angle2 + rotateDelta;
+            if ((angle3 >= 360) || (angle3 < 0)) {
+               if (toRemove == null)
+                  toRemove = new List<RotatedCellContext>();
+               toRemove.Add(cntxt);
+            }
+         }
+         if (toRemove != null) {
+            toRemove.ForEach(cntxt => {
+               Matrix[cntxt.index].Init(); // restore original region coords
+               _rotatedElements.Remove(cntxt);
+               AddRandomToPrepareList(false, rand);
+            });
+            OnPropertyChanged("RotatedElements");
+         }
       }
 
    }
