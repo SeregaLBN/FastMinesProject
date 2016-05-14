@@ -16,10 +16,10 @@ using fmg.uwp.draw.mosaic.bmp;
 using FastMines.Common;
 using FastMines.Presentation.Notyfier;
 
-namespace fmg.core.img {
+namespace fmg.uwp.res.img {
 
    /// <summary> картинка поля конкретной мозаики. Используется для меню, кнопок, etc... </summary>
-   public class MosaicsImg : RotatedImg<EMosaic, WriteableBitmap>, IMosaic<PaintableBmp> {
+   public class MosaicsImg : core.img.RotatedImg<EMosaic, WriteableBitmap>, IMosaic<PaintableBmp> {
       private const bool RandomCellBkColor = true;
       protected Random Rand => GraphicContext.Rand;
 

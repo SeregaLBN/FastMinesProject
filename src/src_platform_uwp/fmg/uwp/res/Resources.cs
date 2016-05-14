@@ -6,7 +6,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Graphics.Imaging;
-using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.uwp.utils;
@@ -17,10 +16,7 @@ namespace fmg.uwp.res {
    /// <summary> Мультимедиа ресурсы программы </summary>
    public static class Resources {
 
-      public static readonly Color DefaultBkColor = Windows.UI.Color.FromArgb(0xFF, 0xFF, 0x8C, 0x00).ToFmColor();
-
       private static WriteableBitmap _imgLogoPng;
-
       private static WriteableBitmap _imgFlag, _imgMine;
       private static WriteableBitmap _imgPause;
 

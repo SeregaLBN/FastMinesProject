@@ -2,7 +2,7 @@ using System;
 using Windows.UI.Xaml;
 using fmg.common.geom;
 
-namespace fmg.uwp.res.img
+namespace fmg.core.img
 {
    public abstract class RotatedImg<T, TImage> : StaticImg<T, TImage>
       where TImage : class

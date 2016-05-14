@@ -41,7 +41,7 @@ namespace FastMines.Data {
          get {
             if (_mosaicsImg == null) {
                _mosaicsImg = new MosaicsImg(UniqueId, _sizeField, 750, 7) {
-                  BackgroundColor = Resources.DefaultBkColor
+                  BackgroundColor = MosaicsImg.DefaultBkColor
                };
                base.Image = _mosaicsImg.Image;
             }

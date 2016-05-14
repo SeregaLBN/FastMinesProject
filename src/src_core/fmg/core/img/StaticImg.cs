@@ -6,12 +6,12 @@ using fmg.common.geom;
 using FastMines.Common;
 using FastMines.Presentation.Notyfier;
 
-namespace fmg.uwp.res.img {
+namespace fmg.core.img {
 
    public abstract class StaticImg<T, TImage> : NotifyPropertyChanged, IDisposable
       where TImage : class
    {
-      public static readonly Color DefaultBkColor = Resources.DefaultBkColor;
+      public static readonly Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
       public const int DefaultImageSize = 100;
 
       protected StaticImg(T entity, int widthAndHeight = DefaultImageSize, int? padding = null)

@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.swing.Icon;
 
-import fmg.common.Color;
 import fmg.swing.res.img.BackgroundPause;
 import fmg.swing.res.img.Flag;
 import fmg.swing.res.img.Logo;
@@ -15,8 +14,6 @@ import fmg.swing.utils.ImgUtils;
 
 /** Мультимедиа ресурсы программы */
 public final class Resources {
-
-    public static final Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
 
    private Icon imgLogo;
    private Icon imgFlag, imgMine;

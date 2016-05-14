@@ -11,7 +11,7 @@ using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 using fmg.uwp.draw.mosaic.bmp;
 
-namespace fmg.uwp.res.img {
+namespace fmg.core.img {
 
    /// <summary> картинка поля конкретной мозаики, где могут вращаться отдельный ячейки. </summary>
    public class MosaicsAnimateImg : MosaicsImg {

@@ -1,6 +1,6 @@
 using System;
 
-namespace fmg.uwp.res.img {
+namespace fmg.core.img {
 
    public abstract class PolarLightsImg<T, TImage> : RotatedImg<T, TImage>
       where TImage : class

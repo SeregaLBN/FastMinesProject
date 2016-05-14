@@ -3,7 +3,7 @@ using Windows.UI.Xaml.Media;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.data.controller.types;
-using fmg.uwp.res.img;
+using fmg.core.img;
 using FastMines.Presentation.Notyfier;
 
 namespace FastMines.DataModel.Items {

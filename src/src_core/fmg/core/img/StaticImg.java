@@ -6,13 +6,12 @@ import fmg.common.Color;
 import fmg.common.geom.Bound;
 import fmg.common.geom.Size;
 import fmg.common.notyfier.NotifyPropertyChanged;
-import fmg.swing.res.Resources;
 
 public abstract class StaticImg<T, TImage extends Object> extends NotifyPropertyChanged implements AutoCloseable {
 
    public static Consumer<Runnable> DEFERR_INVOKER;
 
-   public static final Color DefaultBkColor = Resources.DefaultBkColor;
+   public static final Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
    public static final int DefaultImageSize = 100;
 
    protected StaticImg(T entity) {

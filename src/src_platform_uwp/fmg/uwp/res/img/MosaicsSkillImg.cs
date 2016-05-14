@@ -7,10 +7,10 @@ using fmg.common.geom;
 using fmg.common.geom.util;
 using fmg.data.controller.types;
 
-namespace fmg.core.img {
+namespace fmg.uwp.res.img {
 
    /// <summary> representable fmg.data.controller.types.ESkillLevel as image </summary>
-   public class MosaicsSkillImg : RotatedImg<ESkillLevel, WriteableBitmap> {
+   public class MosaicsSkillImg : core.img.RotatedImg<ESkillLevel, WriteableBitmap> {
 
       public MosaicsSkillImg(ESkillLevel group, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(group, widthAndHeight, padding) {}

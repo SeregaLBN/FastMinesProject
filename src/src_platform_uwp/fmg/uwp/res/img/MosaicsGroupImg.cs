@@ -7,10 +7,10 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.common.geom.util;
 
-namespace fmg.core.img {
+namespace fmg.uwp.res.img {
 
    /// <summary> representable fmg.core.types.EMosaicGroup as image </summary>
-   public class MosaicsGroupImg : PolarLightsImg<EMosaicGroup, WriteableBitmap> {
+   public class MosaicsGroupImg : core.img.PolarLightsImg<EMosaicGroup, WriteableBitmap> {
 
       public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(group, widthAndHeight, padding) {}
