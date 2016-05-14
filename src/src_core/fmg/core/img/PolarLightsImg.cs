@@ -1,4 +1,4 @@
-using System;
+using fmg.common;
 
 namespace fmg.core.img {
 
@@ -16,27 +16,22 @@ namespace fmg.core.img {
          get { return _polarLights; }
          set {
             if (SetProperty(ref _polarLights, value))
-               Invalidate();
+               if (value)
+                  StartTimer();
+               else
+                  StopTimer();
          }
       }
 
-      private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
-
       private void NextForegroundColor() {
-         if (PolarLights) {
-            Func<byte, byte> funcAddRandomBit = val => (byte) ((((_random.Next() & 1) == 1) ? 0x00 : 0x80) | (val >> 1));
-            var f = ForegroundColor;
-            switch (_random.Next()%3) {
-            case 0: f.R = funcAddRandomBit(f.R); break;
-            case 1: f.G = funcAddRandomBit(f.G); break;
-            case 2: f.B = funcAddRandomBit(f.B); break;
-            }
-            ForegroundColor = f;
-         }
+         HSV hsv = new HSV(ForegroundColor);
+         hsv.h += RotateAngleDelta;
+         ForegroundColor = hsv.toColor();
       }
 
       protected override void OnTimer() {
-         NextForegroundColor();
+         if (PolarLights)
+            NextForegroundColor();
          base.OnTimer();
       }
 

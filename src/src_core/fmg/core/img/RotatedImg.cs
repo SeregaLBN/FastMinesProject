@@ -1,12 +1,14 @@
 using System;
-using Windows.UI.Xaml;
 using fmg.common.geom;
+using fmg.common.ui;
 
 namespace fmg.core.img
 {
    public abstract class RotatedImg<T, TImage> : StaticImg<T, TImage>
       where TImage : class
    {
+      public static Func<ITimer> TimerCreator;
+
       protected RotatedImg(T entity, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(entity, widthAndHeight, padding)
       { }
@@ -15,17 +17,27 @@ namespace fmg.core.img
          : base(entity, sizeImage, padding)
       { }
 
+      private long _redrawInterval = 100;
       /// <summary> frequency of redrawing (in milliseconds) </summary>
-      public long RedrawInterval { get; set; } = 100;
+      public long RedrawInterval {
+         get { return _redrawInterval; }
+         set {
+            if (SetProperty(ref _redrawInterval, value) && (_timer != null))
+               _timer.Interval  = _redrawInterval;
+         }
+      }
 
-      private DispatcherTimer _timer;
+      private ITimer _timer;
 
       private bool _rotate;
       public bool Rotate {
          get { return _rotate; }
          set {
-            if (SetProperty(ref _rotate, value) && value)
-               Invalidate();
+            if (SetProperty(ref _rotate, value))
+               if (value)
+                  StartTimer();
+               else
+                  StopTimer();
          }
       }
 
@@ -38,25 +50,22 @@ namespace fmg.core.img
          }
       }
 
-      protected override void DrawEnd() {
-         if (LiveImage()) {
-            if (_timer == null) {
-               _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(RedrawInterval) };
-               _timer.Tick += OnTick;
-            }
-            _timer.Start();
-         } else {
-            _timer?.Stop();
+      protected void StartTimer() {
+         if (_timer == null) {
+            _timer = TimerCreator();
+            _timer.Interval = RedrawInterval;
          }
-         base.DrawEnd();
+         _timer.Callback = () => OnTimer(); //  start
       }
 
-      private void OnTick(object sender, object e) {
-         OnTimer();
+      protected void StopTimer() {
+         if ((_timer != null) && !LiveImage())
+            _timer.Callback = null; // stop
       }
 
       protected virtual void OnTimer() {
-         RotateStep();
+         if (Rotate)
+            RotateStep();
       }
 
       protected virtual bool LiveImage() {
@@ -64,9 +73,6 @@ namespace fmg.core.img
       }
 
       private void RotateStep() {
-         if (!Rotate)
-            return;
-
          var rotateAngle = RotateAngle + RotateAngleDelta;
          if (rotateAngle >= 360) {
             rotateAngle -= 360;
@@ -81,11 +87,8 @@ namespace fmg.core.img
       protected override void Dispose(bool disposing) {
          if (disposing) {
             // free managed resources
-            var t = _timer;
-            if (t != null) {
-               t.Tick -= OnTick;
-               t.Stop();
-            }
+            _timer?.Dispose();
+            _timer = null;
          }
          // free native resources if there are any.
       }

@@ -50,10 +50,12 @@ public abstract class RotatedImg<T, TImage extends Object> extends StaticImg<T, 
       }
       _timer.setCallback(() -> onTimer()); //  start
    }
+
    protected void stopTimer() {
       if ((_timer != null) && !isLiveImage())
          _timer.setCallback(null); // stop
    }
+
    protected void onTimer() {
       if (isRotate())
          rotateStep();

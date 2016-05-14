@@ -17,6 +17,7 @@ Workspaces/VS/packages/*/
 **/Release
 FastMines_uwp/res
 FastMines_uwp/src_*
+*proj.user
 Mines.bst
 Mines.dat
 Mines.stc

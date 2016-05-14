@@ -1,9 +1,7 @@
 using System;
 using System.ComponentModel;
-using Windows.UI.Core;
 using fmg.common;
 using fmg.common.geom;
-using FastMines.Common;
 using FastMines.Presentation.Notyfier;
 
 namespace fmg.core.img {
@@ -11,6 +9,8 @@ namespace fmg.core.img {
    public abstract class StaticImg<T, TImage> : NotifyPropertyChanged, IDisposable
       where TImage : class
    {
+      public static Action<Action> DeferrInvoker;
+
       public static readonly Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
       public const int DefaultImageSize = 100;
 
@@ -174,7 +174,7 @@ namespace fmg.core.img {
          if (OnlySyncDraw)
             base.OnPropertyChanged(sender, ev);
          else
-            AsyncRunner.InvokeFromUiLater(() => base.OnPropertyChanged(sender, ev), CoreDispatcherPriority.Normal);
+            DeferrInvoker(() => base.OnPropertyChanged(sender, ev));
       }
 
       public void Dispose() {
