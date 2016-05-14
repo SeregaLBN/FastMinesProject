@@ -17,7 +17,7 @@ namespace fmg.core.img {
 
       public ESkillLevel MosaicSkill => Entity;
 
-      private IEnumerable<IEnumerable<PointDouble>> GetCoords() {
+      protected IEnumerable<IEnumerable<PointDouble>> GetCoords() {
          double sq = Math.Min( // size inner square
             Width - Padding.LeftAndRight,
             Height - Padding.TopAndBottom);

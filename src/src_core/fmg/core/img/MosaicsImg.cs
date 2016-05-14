@@ -15,8 +15,8 @@ namespace fmg.core.img {
    /// <summary> картинка поля конкретной мозаики. Используется для меню, кнопок, etc... </summary>
    public abstract class MosaicsImg<TPaintable, TImage> : RotatedImg<EMosaic, TImage>, IMosaic<TPaintable>
       where TPaintable : IPaintable
-      where TImage : class {
-      private const bool RandomCellBkColor = true;
+      where TImage : class
+   {
 
       public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(mosaicType, widthAndHeight, padding) {
@@ -70,31 +70,11 @@ namespace fmg.core.img {
          }
          private set {
             if (SetProperty(ref _cellAttr, value)) {
-               /*
-               Dependency_GContext_CellAttribute();
-               */
                Dependency_CellAttribute_Area();
                Invalidate();
             }
          }
       }
-
-      /*
-      private ICellPaint<PaintableBmp> _cellPaint;
-      public ICellPaint<PaintableBmp> CellPaint {
-         get {
-            if (_cellPaint == null)
-               CellPaint = new CellPaintBmp(); // call this setter
-            return _cellPaint;
-         }
-         private set {
-            if (SetProperty(ref _cellPaint, value))  {
-               Dependency_CellPaint_GContext();
-               Invalidate();
-            }
-         }
-      }
-      */
 
       /// <summary> caching rotated values </summary>
       private readonly List<BaseCell> _matrix = new List<BaseCell>();
@@ -160,27 +140,6 @@ namespace fmg.core.img {
             }
          }
       }
-
-      /*
-      private GraphicContext _gContext;
-      protected GraphicContext GContext {
-         get {
-            if (_gContext == null)
-               GContext = new GraphicContext(true); // call this setter
-            return _gContext;
-         }
-         set {
-            if (SetProperty(ref _gContext, value)) {
-               Dependency_GContext_CellAttribute();
-               Dependency_GContext_PaddingFull();
-               Dependency_CellPaint_GContext();
-               Dependency_GContext_BorderWidth();
-               Dependency_GContext_BorderColor();
-               Invalidate();
-            }
-         }
-      }
-      */
 
       private ERotateMode _rotateMode = ERotateMode.FullMatrix;
       public ERotateMode RotateMode {
@@ -344,7 +303,7 @@ namespace fmg.core.img {
 
       /// <summary> list of offsets rotation angles prepared for cells </summary>
       private readonly IList<double /* angle offset */ > _prepareList = new List<double>();
-      private readonly List<RotatedCellContext> _rotatedElements = new List<RotatedCellContext>();
+      protected readonly List<RotatedCellContext> _rotatedElements = new List<RotatedCellContext>();
 
       private void RandomRotateElemenIndex() {
          _prepareList.Clear();

@@ -17,7 +17,7 @@ namespace fmg.core.img {
 
       public EMosaicGroup MosaicGroup => Entity;
 
-      private IEnumerable<PointDouble> GetCoords() {
+      protected IEnumerable<PointDouble> GetCoords() {
          double sq = Math.Min( // size inner square
             Width - Padding.LeftAndRight,
             Height - Padding.TopAndBottom);

@@ -1,206 +1,47 @@
 using System;
 using System.Linq;
-using System.Collections.Generic;
 using System.ComponentModel;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
-using fmg.common.geom.util;
 using fmg.core.types;
-using fmg.core.mosaic;
 using fmg.core.mosaic.draw;
-using fmg.core.mosaic.cells;
 using fmg.uwp.draw;
 using fmg.uwp.draw.mosaic.bmp;
 using FastMines.Common;
-using FastMines.Presentation.Notyfier;
 
 namespace fmg.uwp.res.img {
 
-   /// <summary> картинка поля конкретной мозаики. Используется для меню, кнопок, etc... </summary>
-   public class MosaicsImg : core.img.RotatedImg<EMosaic, WriteableBitmap>, IMosaic<PaintableBmp> {
+   /// <summary> картинка поля конкретной мозаики. Используется для меню, кнопок, etc...
+   /// <br>
+   /// WriteableBitmap impl
+   /// </summary>
+   public class MosaicsImg : core.img.MosaicsImg<PaintableBmp, WriteableBitmap> {
+
       private const bool RandomCellBkColor = true;
-      protected Random Rand => GraphicContext.Rand;
+      private Random Rand => GraphicContext.Rand;
 
       public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
-         : base(mosaicType, widthAndHeight, padding)
-      {
-         _sizeField = sizeField;
-      }
+         : base(mosaicType, sizeField, widthAndHeight, padding)
+      { }
 
       public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding)
-         : base(mosaicType, sizeImage, padding)
-      {
-         _sizeField = sizeField;
-      }
-
-      /// <summary>из каких фигур состоит мозаика поля</summary>
-      public EMosaic MosaicType {
-         get { return Entity; }
-         set {
-            if (value != Entity) {
-               var old = Entity;
-               Entity = value;
-               Dependency_MosaicType_As_Entity(value, old);
-            }
-         }
-      }
-
-      private Matrisize _sizeField;
-      public Matrisize SizeField {
-         get { return _sizeField; }
-         set {
-            if (SetProperty(ref _sizeField, value)) {
-               RecalcArea();
-               _matrix.Clear();
-               Invalidate();
-            }
-         }
-      }
-
-      public BaseCell getCell(Coord coord) { return Matrix[coord.x * SizeField.n + coord.y]; }
-
-      private BaseCell.BaseAttribute _cellAttr;
-      public BaseCell.BaseAttribute CellAttr {
-         get {
-            if (_cellAttr == null)
-               CellAttr = MosaicHelper.CreateAttributeInstance(MosaicType, Area); // call this setter
-            return _cellAttr;
-         }
-         private set {
-            if (SetProperty(ref _cellAttr, value)) {
-               Dependency_GContext_CellAttribute();
-               Dependency_CellAttribute_Area();
-               Invalidate();
-            }
-         }
-      }
+         : base(mosaicType, sizeField, sizeImage, padding)
+      { }
 
       private ICellPaint<PaintableBmp> _cellPaint;
-      public ICellPaint<PaintableBmp> CellPaint {
+      public override ICellPaint<PaintableBmp> CellPaint {
          get {
             if (_cellPaint == null)
-               CellPaint = new CellPaintBmp(); // call this setter
+               SetCellPaint(new CellPaintBmp()); // call this setter
             return _cellPaint;
          }
-         private set {
-            if (SetProperty(ref _cellPaint, value))  {
-               Dependency_CellPaint_GContext();
-               Invalidate();
-            }
-         }
       }
-
-      /// <summary> caching rotated values </summary>
-      private readonly List<BaseCell> _matrixRotated = new List<BaseCell>();
-      private readonly List<BaseCell> _matrix = new List<BaseCell>();
-      /// <summary>матрица ячеек, представленная(развёрнута) в виде вектора</summary>
-      public IList<BaseCell> Matrix {
-         get {
-            if (!_matrix.Any()) {
-               _matrixRotated.Clear();
-               var attr = CellAttr;
-               var type = MosaicType;
-               var size = SizeField;
-               for (var i = 0; i < size.m; i++)
-                  for (var j = 0; j < size.n; j++)
-                     _matrix.Add(MosaicHelper.CreateCellInstance(attr, type, new Coord(i, j)));
-               OnPropertyChanged(this, new PropertyChangedEventArgs("Matrix"));
-               Invalidate();
-            }
-            return _matrix;
-         }
-      }
-
-      private IList<BaseCell> RotatedMatrix {
-         get {
-            if (Math.Abs(RotateAngle) < 0.1)
-               return Matrix;
-            if (!_matrixRotated.Any()) {
-               // create copy Matrix
-               var attr = CellAttr;
-               var type = MosaicType;
-               var size = SizeField;
-               for (var i = 0; i < size.m; i++)
-                  for (var j = 0; j < size.n; j++)
-                     _matrixRotated.Add(MosaicHelper.CreateCellInstance(attr, type, new Coord(i, j)));
-            } else {
-               // restore base coords
-               foreach (var cell in _matrixRotated)
-                  cell.Init();
-            }
-
-            var center = new PointDouble(Width / 2.0 - _paddingFull.Left, Height / 2.0 - _paddingFull.Top);
-            foreach(var cell in _matrixRotated) {
-               var reg = cell.getRegion();
-               var newReg = reg.Points
-                               .Select(p => new PointDouble(p))
-                               .Select(p => {
-                                          p.X -= center.X;
-                                          p.Y -= center.Y;
-                                          return p;
-                                       })
-                               .Rotate(RotateAngle)
-                               .Select(p => {
-                                          p.X += center.X;
-                                          p.Y += center.Y;
-                                          return p;
-                                       });
-               var i = 0;
-               foreach(var p in newReg) {
-                  reg.SetPoint(i++, (int)p.X, (int)p.Y);
-               }
-            }
-
-            return _matrixRotated;
-         }
-      }
-
-      private void RecalcArea() {
-         var w = Width;
-         var h = Height;
-         var pad = Padding;
-         var sizeImageIn = new Size(w - pad.LeftAndRight, h - pad.TopAndBottom);
-         var sizeImageOut = new SizeDouble(sizeImageIn.Width, sizeImageIn.Height);
-         var area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref sizeImageOut);
-         Area = area; // call setter
-         System.Diagnostics.Debug.Assert(w >= (sizeImageOut.Width + pad.LeftAndRight));
-         System.Diagnostics.Debug.Assert(h >= (sizeImageOut.Height + pad.TopAndBottom));
-         var paddingOut = new BoundDouble(
-            (w - sizeImageOut.Width)/2,
-            (h - sizeImageOut.Height)/2,
-            (w - sizeImageOut.Width)/2,
-            (h - sizeImageOut.Height)/2);
-         System.Diagnostics.Debug.Assert((sizeImageOut.Width + paddingOut.LeftAndRight).HasMinDiff(w));
-         System.Diagnostics.Debug.Assert((sizeImageOut.Height + paddingOut.TopAndBottom).HasMinDiff(h));
-
-         PaddingFull = paddingOut;
-      }
-
-      private double _area;
-      public double Area {
-         get {
-            if (_area <= 0)
-               RecalcArea();
-            return _area;
-         }
-         set {
-            if (SetProperty(ref _area, value)) {
-               Dependency_CellAttribute_Area();
-               Invalidate();
-            }
-         }
-      }
-
-      private BoundDouble _paddingFull;
-      public BoundDouble PaddingFull {
-         get { return _paddingFull; }
-         protected set {
-            if (SetProperty(ref _paddingFull, value)) {
-               Dependency_GContext_PaddingFull();
-               Invalidate();
-            }
+      private void SetCellPaint(ICellPaint<PaintableBmp> value) {
+         if (SetProperty(ref _cellPaint, value))  {
+            Dependency_CellPaint_GContext();
+            Invalidate();
          }
       }
 
@@ -223,11 +64,96 @@ namespace fmg.uwp.res.img {
          }
       }
 
+      protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         base.OnPropertyChanged(sender, ev);
+         switch (ev.PropertyName) {
+         case "PaddingFull":
+            Dependency_GContext_PaddingFull();
+            break;
+         case "CellAttr":
+            Dependency_GContext_CellAttribute();
+            break;
+         case "BorderWidth":
+            Dependency_GContext_BorderWidth();
+            break;
+         case "BorderColor":
+            Dependency_GContext_BorderColor();
+            break;
+         }
+
+         if (RotateMode == ERotateMode.SomeCells) {
+            switch (ev.PropertyName) {
+            case "Size":
+               _imageCache = null;
+               break;
+            case "RotatedElements":
+               _invalidateCache = true;
+               break;
+            }
+         }
+      }
+
+      #region Dependencys
+      void Dependency_GContext_CellAttribute() {
+         if (_gContext == null)
+            return;
+         if (RandomCellBkColor)
+            GContext.BkFill.Mode = 1 + Rand.Next(CellAttr.getMaxBackgroundFillModeValue());
+      }
+
+      void Dependency_GContext_PaddingFull() {
+         if (_gContext == null)
+            return;
+         GContext.Padding = PaddingFull;
+      }
+
+      void Dependency_GContext_BorderWidth() {
+         if (_gContext == null)
+            return;
+         GContext.PenBorder.Width = BorderWidth;
+      }
+
+      void Dependency_GContext_BorderColor() {
+         if (_gContext == null)
+            return;
+         var pb = GContext.PenBorder;
+         pb.ColorLight = pb.ColorShadow = BorderColor;
+      }
+
+      void Dependency_CellPaint_GContext() {
+         if (_cellPaint == null)
+            return;
+         System.Diagnostics.Debug.Assert(CellPaint is CellPaintBmp);
+         ((CellPaintBmp)CellPaint).GContext = GContext;
+      }
+      #endregion
+
+      //protected override void Dispose(bool disposing) {
+      //   if (disposing) {
+      //      GContext = null; // call setter
+      //   }
+
+      //   base.Dispose(disposing);
+      //}
+
       protected override WriteableBitmap CreateImage() {
          var w = Width;
          var h = Height;
          return BitmapFactory.New(w, h); // new WriteableBitmap(w, h); // 
       }
+
+      protected override void DrawBody() {
+         switch (RotateMode) {
+         case ERotateMode.FullMatrix:
+            DrawBodyFullMatrix();
+            break;
+         case ERotateMode.SomeCells:
+            DrawBodySomeCells();
+            break;
+         }
+      }
+
+      ///////////// ================= PART ERotateMode.FullMatrix ======================= /////////////
 
       /// <summary> Return painted mosaic bitmap 
       /// if (!OnlySyncDraw) {
@@ -236,12 +162,12 @@ namespace fmg.uwp.res.img {
       ///   Т.к. WriteableBitmap есть DependencyObject, то его владелец может сам отслеживать отрисовку...
       /// }
       /// </summary>
-      protected override void DrawBody() {
+      protected void DrawBodyFullMatrix() {
          var img = Image;
 
          Action funcFillBk = () => { img.Clear(BackgroundColor.ToWinColor()); };
 
-         var matrix = RotatedMatrix;
+         var matrix = Matrix;
          var paint = new PaintableBmp(img);
          var cp = CellPaint;
          if (OnlySyncDraw || LiveImage()) {
@@ -266,82 +192,90 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         //LoggerSimple.Put("OnPropertyChanged: {0}: PropertyName={1}", Entity, ev.PropertyName);
-         base.OnPropertyChanged(sender, ev);
-         switch (ev.PropertyName) {
-         case "Entity":
-            var ev2 = ev as PropertyChangedExEventArgs<EMosaic>;
-            Dependency_MosaicType_As_Entity(ev2?.NewValue, ev2?.OldValue);
-            break;
-         case "Size":
-         case "Padding":
-            RecalcArea();
-            break;
-         case "BorderWidth":
-            Dependency_GContext_BorderWidth();
-            break;
-         case "BorderColor":
-            Dependency_GContext_BorderColor();
-            break;
+      ///////////// ================= PART ERotateMode.someCells ======================= /////////////
+
+      private const bool UseCache = true;
+
+      /// <summary> need redraw the static part of the cache </summary>
+      private bool _invalidateCache = true;
+      /// <summary>
+      /// Cached static part of the picture.
+      /// ! Recreated only when changing the original image size (minimizing CreateImage calls).
+      /// </summary>
+      private WriteableBitmap _imageCache;
+      private WriteableBitmap ImageCache {
+         get {
+            if (_imageCache == null) {
+               _imageCache = CreateImage();
+               _invalidateCache = true;
+            }
+            if (_invalidateCache) {
+               _invalidateCache = false;
+               DrawCache();
+            }
+            return _imageCache;
          }
       }
 
-      #region Dependencys
-      void Dependency_GContext_CellAttribute() {
-         if ((_cellAttr == null) || (_gContext == null))
-            return;
-         if (RandomCellBkColor)
-            GContext.BkFill.Mode = 1 + Rand.Next(CellAttr.getMaxBackgroundFillModeValue());
+      /// <summary> copy cached image to original </summary>
+      private void CopyFromCache() {
+         var rc = new Windows.Foundation.Rect(0, 0, Width, Height);
+         Image.Blit(rc, ImageCache, rc);
       }
-      void Dependency_CellAttribute_Area() {
-         if (_cellAttr == null)
-            return;
-         CellAttr.Area = Area;
-         if (_matrix.Any())
-            foreach (var cell in Matrix)
-               cell.Init();
+
+      private void DrawCache() { DrawStaticPart(_imageCache); }
+
+      private void DrawStaticPart(WriteableBitmap toImage) {
+         var w = Width;
+         var h = Height;
+         toImage.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
+
+         var paint0 = new PaintableBmp(toImage);
+         var matrix = Matrix;
+         var indexes = _rotatedElements.Select(cntxt => cntxt.index).ToList();
+         for (var i = 0; i < matrix.Count; ++i)
+            if (!indexes.Contains(i))
+               CellPaint.Paint(matrix[i], paint0);
       }
-      void Dependency_GContext_PaddingFull() {
-         if (_gContext == null)
+
+      protected void DrawRotatedPart() {
+         if (!_rotatedElements.Any())
             return;
-         GContext.Padding = PaddingFull;
-      }
-      void Dependency_GContext_BorderWidth() {
-         if (_gContext == null)
-            return;
-         GContext.PenBorder.Width = BorderWidth;
-      }
-      void Dependency_GContext_BorderColor() {
-         if (_gContext == null)
-            return;
+
+         var img = Image;
+         var paint = new PaintableBmp(img);
          var pb = GContext.PenBorder;
-         pb.ColorLight = pb.ColorShadow = BorderColor;
-      }
-      void Dependency_CellPaint_GContext() {
-         if (_cellPaint == null)
-            return;
-         System.Diagnostics.Debug.Assert(CellPaint is CellPaintBmp);
-         ((CellPaintBmp)CellPaint).GContext = GContext;
-      }
-      void Dependency_MosaicType_As_Entity(EMosaic? newValue, EMosaic? oldValue) {
-         Area = 0;
-         _matrix.Clear();
-         _matrixRotated.Clear();
-         CellAttr = null;
-         if ((newValue == null) || (oldValue == null))
-            OnPropertyChanged(this, new PropertyChangedEventArgs("MosaicType"));
-         else
-            OnPropertyChanged(this, new PropertyChangedExEventArgs<EMosaic>(newValue.Value, oldValue.Value, "MosaicType"));
-      }
-      #endregion
+         // save
+         var borderWidth = BorderWidth;
+         var borderColor = BorderColor;
+         // modify
+         pb.Width = 2 * borderWidth;
+         pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5);
 
-      protected override void Dispose(bool disposing) {
-         if (disposing) {
-            GContext = null; // call setter
+         var matrix = Matrix;
+         var indexes = _rotatedElements
+            .OrderBy(cntxt => cntxt.area) // Z-ordering
+            .Select(cntxt => cntxt.index);
+         foreach (var i in indexes)
+            CellPaint.Paint(matrix[i], paint);
+
+         // restore
+         pb.Width = borderWidth; //BorderWidth = borderWidth;
+         pb.ColorLight = pb.ColorShadow = borderColor; //BorderColor = borderColor;
+      }
+
+      protected void DrawBodySomeCells() {
+         if (OnlySyncDraw || LiveImage()) {
+            // sync draw
+            if (UseCache)
+               CopyFromCache();
+            else
+               DrawStaticPart(Image);
+            DrawRotatedPart();
+         } else {
+            // async draw
+            DrawBodyFullMatrix();
          }
-
-         base.Dispose(disposing);
       }
 
    }
