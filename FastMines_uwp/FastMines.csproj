@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -130,20 +130,20 @@
     <Compile Include="..\src\src_platform_uwp\fmg\uwp\mosaic\Mosaic.cs">
       <Link>src_fmg.uwp\mosaic\Mosaic.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsSkillImg.cs">
-      <Link>src_fmg.uwp\res\img\MosaicsSkillImg.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\img\MosaicsSkillImg.cs">
+      <Link>src_fmg.core\img\MosaicsSkillImg.cs</Link>
     </Compile>
     <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsSkillCharImg.cs">
       <Link>src_fmg.uwp\res\img\MosaicsSkillCharImg.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\PolarLightsImg.cs">
-      <Link>src_fmg.uwp\res\img\PolarLightsImg.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\img\PolarLightsImg.cs">
+      <Link>src_fmg.core\img\PolarLightsImg.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\RotatedImg.cs">
-      <Link>src_fmg.uwp\res\img\RotatedImg.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\img\RotatedImg.cs">
+      <Link>src_fmg.core\img\RotatedImg.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\StaticImg.cs">
-      <Link>src_fmg.uwp\res\img\StaticImg.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\img\StaticImg.cs">
+      <Link>src_fmg.core\img\StaticImg.cs</Link>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -403,14 +403,14 @@
     <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\Mine.cs">
       <Link>src_fmg.uwp\res\img\Mine.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsGroupImg.cs">
-      <Link>src_fmg.uwp\res\img\MosaicsGroupImg.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\img\MosaicsGroupImg.cs">
+      <Link>src_fmg.core\img\MosaicsGroupImg.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsImg.cs">
-      <Link>src_fmg.uwp\res\img\MosaicsImg.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\img\MosaicsImg.cs">
+      <Link>src_fmg.core\img\MosaicsImg.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsAnimateImg.cs">
-      <Link>src_fmg.uwp\res\img\MosaicsAnimateImg.cs</Link>
+    <Compile Include="..\src\src_core\fmg\core\img\MosaicsAnimateImg.cs">
+      <Link>src_fmg.core\img\MosaicsAnimateImg.cs</Link>
     </Compile>
     <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\Resources.cs">
       <Link>src_fmg.uwp\res\Resources.cs</Link>
