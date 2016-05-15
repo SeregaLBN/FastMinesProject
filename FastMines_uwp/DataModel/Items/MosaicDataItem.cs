@@ -3,7 +3,7 @@ using Windows.UI.Xaml.Media;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.data.controller.types;
-using fmg.core.img;
+using fmg.uwp.res.img;
 using FastMines.Presentation.Notyfier;
 
 namespace FastMines.DataModel.Items {
@@ -34,8 +34,9 @@ namespace FastMines.DataModel.Items {
          get {
             if (_mosaicImg == null) {
                var sizeField = MosaicType.SizeTileField(SkillLevel);
-               var tmp = new MosaicsAnimateImg(MosaicType, sizeField, ImageSize * ZoomKoef, 5 * ZoomKoef) {
-                  BackgroundColor = StaticImg<object, object>.DefaultBkColor,
+               var tmp = new MosaicsImg(MosaicType, sizeField, ImageSize * ZoomKoef, 5 * ZoomKoef) {
+                  RotateMode = MosaicsImg.ERotateMode.SomeCells,
+                  //BackgroundColor = MosaicsImg.DefaultBkColor,
                   BorderWidth = 3*ZoomKoef//,
                   //RotateAngle = 45 * new Random(Guid.NewGuid().GetHashCode()).Next(7)
                   //, OnlySyncDraw = true

@@ -19,6 +19,13 @@ namespace fmg.uwp.res.img {
    /// </summary>
    public class MosaicsImg : core.img.MosaicsImg<PaintableBmp, WriteableBitmap> {
 
+      static MosaicsImg() {
+         if (DeferrInvoker == null)
+            DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
+         if (TimerCreator == null)
+            TimerCreator = () => new ui.Timer();
+      }
+
       private const bool RandomCellBkColor = true;
       private Random Rand => GraphicContext.Rand;
 

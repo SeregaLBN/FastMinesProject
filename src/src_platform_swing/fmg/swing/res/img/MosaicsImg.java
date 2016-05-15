@@ -18,8 +18,6 @@ import fmg.common.Pair;
 import fmg.common.geom.Bound;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Size;
-import fmg.core.img.RotatedImg;
-import fmg.core.img.StaticImg;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.ICellPaint;
 import fmg.core.types.EMosaic;
@@ -29,6 +27,7 @@ import fmg.swing.draw.GraphicContext;
 import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
+
 /** representable {@link fmg.core.types.EMosaic} as image
  *  <br>
  *  SWING impl
@@ -36,8 +35,10 @@ import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.MosaicsImg<PaintableGraphics, TImage> {
 
    static {
-      StaticImg.DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
-      RotatedImg.TIMER_CREATOR = () -> new fmg.swing.ui.Timer();
+      if (DEFERR_INVOKER == null)
+         DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
+      if (TIMER_CREATOR == null)
+         TIMER_CREATOR = () -> new fmg.swing.ui.Timer();
    }
 
    private static final boolean RandomCellBkColor = true;

@@ -17,8 +17,6 @@ import javax.swing.SwingUtilities;
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.RotatedImg;
-import fmg.core.img.StaticImg;
 import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Cast;
 
@@ -29,8 +27,10 @@ import fmg.swing.Cast;
 public abstract class MosaicsSkillImg<TImage extends Object> extends fmg.core.img.MosaicsSkillImg<TImage> {
 
    static {
-      StaticImg.DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
-      RotatedImg.TIMER_CREATOR = () -> new fmg.swing.ui.Timer();
+      if (DEFERR_INVOKER == null)
+         DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
+      if (TIMER_CREATOR == null)
+         TIMER_CREATOR = () -> new fmg.swing.ui.Timer();
    }
 
    public MosaicsSkillImg(ESkillLevel skill) { super(skill); }

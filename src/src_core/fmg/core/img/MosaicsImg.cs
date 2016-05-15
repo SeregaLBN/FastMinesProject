@@ -235,7 +235,7 @@ namespace fmg.core.img {
 
       ///////////// ================= PART ERotateMode.SomeCells ======================= /////////////
 
-      protected struct RotatedCellContext {
+      protected class RotatedCellContext {
          public RotatedCellContext(int index, double angleOffset, double area) {
             this.index = index;
             this.angleOffset = angleOffset;
