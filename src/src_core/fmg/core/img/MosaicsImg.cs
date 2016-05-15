@@ -299,6 +299,9 @@ namespace fmg.core.img {
             // restore
             attr.Area = area;
          });
+
+         // Z-ordering
+         _rotatedElements.Sort((x, y) => x.area.CompareTo(y.area));
       }
 
       /// <summary> list of offsets rotation angles prepared for cells </summary>

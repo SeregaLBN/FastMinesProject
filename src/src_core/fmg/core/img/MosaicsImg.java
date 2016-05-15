@@ -1,6 +1,7 @@
 package fmg.core.img;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -304,6 +305,9 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends O
          // restore
          attr.setArea(area);
       });
+
+      // Z-ordering
+      Collections.sort(_rotatedElements, (e1, e2) -> Double.compare(e1.area, e2.area));
    }
 
    /** list of offsets rotation angles prepared for cells */

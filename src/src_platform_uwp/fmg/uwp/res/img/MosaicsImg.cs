@@ -260,11 +260,7 @@ namespace fmg.uwp.res.img {
          pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5);
 
          var matrix = Matrix;
-         var indexes = _rotatedElements
-            .OrderBy(cntxt => cntxt.area) // Z-ordering
-            .Select(cntxt => cntxt.index);
-         foreach (var i in indexes)
-            CellPaint.Paint(matrix[i], paint);
+         _rotatedElements.ForEach(cntxt => CellPaint.Paint(matrix[cntxt.index], paint));
 
          // restore
          pb.Width = borderWidth; //BorderWidth = borderWidth;

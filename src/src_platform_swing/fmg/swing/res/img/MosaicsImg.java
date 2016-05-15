@@ -259,10 +259,7 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
       pb.setColorShadow(borderColor.darker(0.5));
 
       List<BaseCell> matrix = getMatrix();
-      _rotatedElements.stream()
-         .sorted((e1, e2) -> Double.compare(e1.area, e2.area)) // Z-ordering
-         .mapToInt(cntxt -> cntxt.index)
-         .forEach(i -> getCellPaint().paint(matrix.get(i), paint));
+      _rotatedElements.forEach(cntxt -> getCellPaint().paint(matrix.get(cntxt.index), paint));
 
       // restore
       pb.setWidth(borderWidth); //BorderWidth = borderWidth;
