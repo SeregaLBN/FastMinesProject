@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -88,166 +88,166 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\src\src_common\fmg\common\ui\ITimer.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\ui\ITimer.cs">
       <Link>src_fmg.common\ui\ITimer.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\geom\Bound.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\geom\Bound.cs">
       <Link>src_fmg.common\geom\Bound.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\geom\BoundDouble.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\geom\BoundDouble.cs">
       <Link>src_fmg.common\geom\BoundDouble.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\geom\util\FigureHelper.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\geom\util\FigureHelper.cs">
       <Link>src_fmg.common\geom\util\FigureHelper.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\HSV.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\HSV.cs">
       <Link>src_fmg.common\HSV.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\draw\ICellPaint.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\draw\ICellPaint.cs">
       <Link>src_fmg.core\mosaic\draw\ICellPaint.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\draw\IPaintable.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\draw\IPaintable.cs">
       <Link>src_fmg.core\mosaic\draw\IPaintable.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\IMosaic.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\IMosaic.cs">
       <Link>src_fmg.core\mosaic\IMosaic.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\MosaicBase.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicBase.cs">
       <Link>src_fmg.core\mosaic\MosaicBase.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\ui\Timer.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\ui\Timer.cs">
       <Link>src_fmg.uwp\ui\Timer.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\draw\mosaic\bmp\CellPaintBmp.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\bmp\CellPaintBmp.cs">
       <Link>src_fmg.uwp\draw\mosaic\bmp\CellPaintBmp.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\draw\mosaic\bmp\PaintableBmp.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\bmp\PaintableBmp.cs">
       <Link>src_fmg.uwp\draw\mosaic\bmp\PaintableBmp.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\draw\mosaic\CellPaint.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\CellPaint.cs">
       <Link>src_fmg.uwp\draw\mosaic\CellPaint.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\draw\mosaic\xaml\CellPaintShapes.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\xaml\CellPaintShapes.cs">
       <Link>src_fmg.uwp\draw\mosaic\xaml\CellPaintShapes.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\draw\mosaic\xaml\PaintableShapes.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\xaml\PaintableShapes.cs">
       <Link>src_fmg.uwp\draw\mosaic\xaml\PaintableShapes.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\mosaic\Mosaic.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\Mosaic.cs">
       <Link>src_fmg.uwp\mosaic\Mosaic.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsSkillImg.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsSkillImg.cs">
       <Link>src_fmg.uwp\res\img\MosaicsSkillImg.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\img\MosaicsSkillImg.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\img\MosaicsSkillImg.cs">
       <Link>src_fmg.core\img\MosaicsSkillImg.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsSkillCharImg.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsSkillCharImg.cs">
       <Link>src_fmg.uwp\res\img\MosaicsSkillCharImg.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\img\PolarLightsImg.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\img\PolarLightsImg.cs">
       <Link>src_fmg.core\img\PolarLightsImg.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\img\RotatedImg.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\img\RotatedImg.cs">
       <Link>src_fmg.core\img\RotatedImg.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\img\StaticImg.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\img\StaticImg.cs">
       <Link>src_fmg.core\img\StaticImg.cs</Link>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="..\src\src_data\fmg\data\view\draw\ColorText.cs">
+    <Compile Include="..\..\src\src_data\fmg\data\view\draw\ColorText.cs">
       <Link>src_fmg.data\view\draw\ColorText.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_data\fmg\data\controller\types\ESkillLevel.cs">
+    <Compile Include="..\..\src\src_data\fmg\data\controller\types\ESkillLevel.cs">
       <Link>src_fmg.data\controller\types\ESkillLevel.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_data\fmg\data\controller\serializable\ChampionsModel.cs">
+    <Compile Include="..\..\src\src_data\fmg\data\controller\serializable\ChampionsModel.cs">
       <Link>src_fmg.data\controller\serializable\ChampionsModel.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_data\fmg\data\controller\serializable\PlayersModel.cs">
+    <Compile Include="..\..\src\src_data\fmg\data\controller\serializable\PlayersModel.cs">
       <Link>src_fmg.data\controller\serializable\PlayersModel.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_data\fmg\data\controller\serializable\StatisticCounts.cs">
+    <Compile Include="..\..\src\src_data\fmg\data\controller\serializable\StatisticCounts.cs">
       <Link>src_fmg.data\controller\serializable\StatisticCounts.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\geom\Coord.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\geom\Coord.cs">
       <Link>src_fmg.common\geom\Coord.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\geom\Point.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\geom\Point.cs">
       <Link>src_fmg.common\geom\Point.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\geom\PointDouble.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\geom\PointDouble.cs">
       <Link>src_fmg.common\geom\PointDouble.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\geom\DoubleExt.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\geom\DoubleExt.cs">
       <Link>src_fmg.common\geom\DoubleExt.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\geom\Rect.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\geom\Rect.cs">
       <Link>src_fmg.common\geom\Rect.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\geom\RectDouble.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\geom\RectDouble.cs">
       <Link>src_fmg.common\geom\RectDouble.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\geom\Region.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\geom\Region.cs">
       <Link>src_fmg.common\geom\Region.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\geom\RegionDouble.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\geom\RegionDouble.cs">
       <Link>src_fmg.common\geom\RegionDouble.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\geom\Size.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\geom\Size.cs">
       <Link>src_fmg.common\geom\Size.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\geom\Matrisize.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\geom\Matrisize.cs">
       <Link>src_fmg.common\geom\Matrisize.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\geom\SizeDouble.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\geom\SizeDouble.cs">
       <Link>src_fmg.common\geom\SizeDouble.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\Color.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\Color.cs">
       <Link>src_fmg.common\Color.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\types\EGameStatus.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\types\EGameStatus.cs">
       <Link>src_fmg.core\types\EGameStatus.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\types\EPlayInfo.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\types\EPlayInfo.cs">
       <Link>src_fmg.core\types\EPlayInfo.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\types\EClose.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\types\EClose.cs">
       <Link>src_fmg.core\types\EClose.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\types\EMosaic.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\types\EMosaic.cs">
       <Link>src_fmg.core\types\EMosaic.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_data\fmg\data\controller\event\ActionToUser.cs">
+    <Compile Include="..\..\src\src_data\fmg\data\controller\event\ActionToUser.cs">
       <Link>src_fmg.data\controller\event\ActionToUser.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\types\EMosaicGroup.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\types\EMosaicGroup.cs">
       <Link>src_fmg.core\types\EMosaicGroup.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_data\fmg\data\controller\event\ChampionModelEvent.cs">
+    <Compile Include="..\..\src\src_data\fmg\data\controller\event\ChampionModelEvent.cs">
       <Link>src_fmg.data\controller\event\ChampionModelEvent.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_data\fmg\data\controller\event\PlayerModelEvent.cs">
+    <Compile Include="..\..\src\src_data\fmg\data\controller\event\PlayerModelEvent.cs">
       <Link>src_fmg.data\controller\event\PlayerModelEvent.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_data\fmg\data\controller\types\User.cs">
+    <Compile Include="..\..\src\src_data\fmg\data\controller\types\User.cs">
       <Link>src_fmg.data\controller\types\User.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\types\EOpen.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\types\EOpen.cs">
       <Link>src_fmg.core\types\EOpen.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\types\EState.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\types\EState.cs">
       <Link>src_fmg.core\types\EState.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_data\fmg\data\view\draw\EShowElement.cs">
+    <Compile Include="..\..\src\src_data\fmg\data\view\draw\EShowElement.cs">
       <Link>src_fmg.data\view\draw\EShowElement.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_data\fmg\data\view\draw\EZoomInterface.cs">
+    <Compile Include="..\..\src\src_data\fmg\data\view\draw\EZoomInterface.cs">
       <Link>src_fmg.data\view\draw\EZoomInterface.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_data\fmg\data\view\draw\PenBorder.cs">
+    <Compile Include="..\..\src\src_data\fmg\data\view\draw\PenBorder.cs">
       <Link>src_fmg.data\view\draw\PenBorder.cs</Link>
     </Compile>
     <Compile Include="Common\AsyncRunner.cs" />
@@ -287,10 +287,10 @@
     <Compile Include="ItemDetailPage.xaml.cs">
       <DependentUpon>ItemDetailPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\IExternalizable.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\IExternalizable.cs">
       <Link>src_fmg.common\IExternalizable.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_common\fmg\common\ISerializable.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\ISerializable.cs">
       <Link>src_fmg.common\ISerializable.cs</Link>
     </Compile>
     <Compile Include="MosaicPage.xaml.cs">
@@ -322,112 +322,112 @@
     <Compile Include="Common\LayoutAwarePage.cs" />
     <Compile Include="Common\RichTextColumns.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
-    <Compile Include="..\src\src_common\fmg\common\crypt\DES.cs">
+    <Compile Include="..\..\src\src_common\fmg\common\crypt\DES.cs">
       <Link>src_fmg.common\crypt\DES.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Hexagon1.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Hexagon1.cs">
       <Link>src_fmg.core\mosaic\cells\Hexagon1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Parquet1.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Parquet1.cs">
       <Link>src_fmg.core\mosaic\cells\Parquet1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Parquet2.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Parquet2.cs">
       <Link>src_fmg.core\mosaic\cells\Parquet2.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\PenrousePeriodic1.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\PenrousePeriodic1.cs">
       <Link>src_fmg.core\mosaic\cells\PenrousePeriodic1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\PentagonT10.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\PentagonT10.cs">
       <Link>src_fmg.core\mosaic\cells\PentagonT10.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\PentagonT24.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\PentagonT24.cs">
       <Link>src_fmg.core\mosaic\cells\PentagonT24.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\PentagonT5.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\PentagonT5.cs">
       <Link>src_fmg.core\mosaic\cells\PentagonT5.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Quadrangle1.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Quadrangle1.cs">
       <Link>src_fmg.core\mosaic\cells\Quadrangle1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Rhombus1.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Rhombus1.cs">
       <Link>src_fmg.core\mosaic\cells\Rhombus1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\SqTrHex.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\SqTrHex.cs">
       <Link>src_fmg.core\mosaic\cells\SqTrHex.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Square1.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Square1.cs">
       <Link>src_fmg.core\mosaic\cells\Square1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Square2.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Square2.cs">
       <Link>src_fmg.core\mosaic\cells\Square2.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Trapezoid1.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Trapezoid1.cs">
       <Link>src_fmg.core\mosaic\cells\Trapezoid1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Trapezoid2.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Trapezoid2.cs">
       <Link>src_fmg.core\mosaic\cells\Trapezoid2.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Trapezoid3.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Trapezoid3.cs">
       <Link>src_fmg.core\mosaic\cells\Trapezoid3.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Triangle1.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Triangle1.cs">
       <Link>src_fmg.core\mosaic\cells\Triangle1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Triangle2.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Triangle2.cs">
       <Link>src_fmg.core\mosaic\cells\Triangle2.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Triangle3.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Triangle3.cs">
       <Link>src_fmg.core\mosaic\cells\Triangle3.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\Triangle4.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Triangle4.cs">
       <Link>src_fmg.core\mosaic\cells\Triangle4.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\TrSq1.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\TrSq1.cs">
       <Link>src_fmg.core\mosaic\cells\TrSq1.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\TrSq2.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\TrSq2.cs">
       <Link>src_fmg.core\mosaic\cells\TrSq2.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\draw\BitmapFont.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\BitmapFont.cs">
       <Link>src_fmg.uwp\draw\BitmapFont.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\draw\GraphicContext.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\GraphicContext.cs">
       <Link>src_fmg.uwp\draw\GraphicContext.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\draw\mosaic\MosaicGraphicContext.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\MosaicGraphicContext.cs">
       <Link>src_fmg.uwp\draw\mosaic\MosaicGraphicContext.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\mosaic\MosaicPageInitParam.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\MosaicPageInitParam.cs">
       <Link>src_fmg.uwp\mosaic\MosaicPageInitParam.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\BackgroundPause.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\BackgroundPause.cs">
       <Link>src_fmg.uwp\res\img\BackgroundPause.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\Logo.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\Logo.cs">
       <Link>src_fmg.uwp\res\img\Logo.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\Flag.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\Flag.cs">
       <Link>src_fmg.uwp\res\img\Flag.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\Mine.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\Mine.cs">
       <Link>src_fmg.uwp\res\img\Mine.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsGroupImg.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsGroupImg.cs">
       <Link>src_fmg.uwp\res\img\MosaicsGroupImg.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\img\MosaicsGroupImg.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\img\MosaicsGroupImg.cs">
       <Link>src_fmg.core\img\MosaicsGroupImg.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsImg.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsImg.cs">
       <Link>src_fmg.uwp\res\img\MosaicsImg.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\img\MosaicsImg.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\img\MosaicsImg.cs">
       <Link>src_fmg.core\img\MosaicsImg.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\res\Resources.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\Resources.cs">
       <Link>src_fmg.uwp\res\Resources.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_platform_uwp\fmg\uwp\utils\ImgUtils.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\ImgUtils.cs">
       <Link>src_fmg.uwp\utils\ImgUtils.cs</Link>
     </Compile>
     <Compile Include="Shell.xaml.cs">
@@ -446,416 +446,415 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\res\Logo\Badge\Logo.scale-125.png">
+    <Content Include="..\..\res\Logo\Badge\Logo.scale-125.png">
       <Link>res\Logo\Badge\Logo.scale-125.png</Link>
     </Content>
-    <Content Include="..\res\Logo\Badge\Logo.scale-150.png">
+    <Content Include="..\..\res\Logo\Badge\Logo.scale-150.png">
       <Link>res\Logo\Badge\Logo.scale-150.png</Link>
     </Content>
-    <Content Include="..\res\Logo\Badge\Logo.scale-200.png">
+    <Content Include="..\..\res\Logo\Badge\Logo.scale-200.png">
       <Link>res\Logo\Badge\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\res\Logo\Badge\Logo.scale-400.png">
+    <Content Include="..\..\res\Logo\Badge\Logo.scale-400.png">
       <Link>res\Logo\Badge\Logo.scale-400.png</Link>
     </Content>
-    <Content Include="..\res\Logo\SplashScreen\Logo.scale-125.png">
+    <Content Include="..\..\res\Logo\SplashScreen\Logo.scale-125.png">
       <Link>res\Logo\SplashScreen\Logo.scale-125.png</Link>
     </Content>
-    <Content Include="..\res\Logo\SplashScreen\Logo.scale-150.png">
+    <Content Include="..\..\res\Logo\SplashScreen\Logo.scale-150.png">
       <Link>res\Logo\SplashScreen\Logo.scale-150.png</Link>
     </Content>
-    <Content Include="..\res\Logo\SplashScreen\Logo.scale-200.png">
+    <Content Include="..\..\res\Logo\SplashScreen\Logo.scale-200.png">
       <Link>res\Logo\SplashScreen\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\res\Logo\SplashScreen\Logo.scale-400.png">
+    <Content Include="..\..\res\Logo\SplashScreen\Logo.scale-400.png">
       <Link>res\Logo\SplashScreen\Logo.scale-400.png</Link>
     </Content>
-    <Content Include="..\res\Logo\StoreTile\Logo.scale-125.png">
+    <Content Include="..\..\res\Logo\StoreTile\Logo.scale-125.png">
       <Link>res\Logo\StoreTile\Logo.scale-125.png</Link>
     </Content>
-    <Content Include="..\res\Logo\StoreTile\Logo.scale-150.png">
+    <Content Include="..\..\res\Logo\StoreTile\Logo.scale-150.png">
       <Link>res\Logo\StoreTile\Logo.scale-150.png</Link>
     </Content>
-    <Content Include="..\res\Logo\StoreTile\Logo.scale-200.png">
+    <Content Include="..\..\res\Logo\StoreTile\Logo.scale-200.png">
       <Link>res\Logo\StoreTile\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\res\Logo\StoreTile\Logo.scale-400.png">
+    <Content Include="..\..\res\Logo\StoreTile\Logo.scale-400.png">
       <Link>res\Logo\StoreTile\Logo.scale-400.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq150\Logo.scale-100.png">
+    <Content Include="..\..\res\Logo\TileSq150\Logo.scale-100.png">
       <Link>res\Logo\TileSq150\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq150\Logo.scale-125.png">
+    <Content Include="..\..\res\Logo\TileSq150\Logo.scale-125.png">
       <Link>res\Logo\TileSq150\Logo.scale-125.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq150\Logo.scale-150.png">
+    <Content Include="..\..\res\Logo\TileSq150\Logo.scale-150.png">
       <Link>res\Logo\TileSq150\Logo.scale-150.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq150\Logo.scale-200.png">
+    <Content Include="..\..\res\Logo\TileSq150\Logo.scale-200.png">
       <Link>res\Logo\TileSq150\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq150\Logo.scale-400.png">
+    <Content Include="..\..\res\Logo\TileSq150\Logo.scale-400.png">
       <Link>res\Logo\TileSq150\Logo.scale-400.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq310\Logo.scale-125.png">
+    <Content Include="..\..\res\Logo\TileSq310\Logo.scale-125.png">
       <Link>res\Logo\TileSq310\Logo.scale-125.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq310\Logo.scale-150.png">
+    <Content Include="..\..\res\Logo\TileSq310\Logo.scale-150.png">
       <Link>res\Logo\TileSq310\Logo.scale-150.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq310\Logo.scale-200.png">
+    <Content Include="..\..\res\Logo\TileSq310\Logo.scale-200.png">
       <Link>res\Logo\TileSq310\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq310\Logo.scale-400.png">
+    <Content Include="..\..\res\Logo\TileSq310\Logo.scale-400.png">
       <Link>res\Logo\TileSq310\Logo.scale-400.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq44\Logo.scale-100.png">
+    <Content Include="..\..\res\Logo\TileSq44\Logo.scale-100.png">
       <Link>res\Logo\TileSq44\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq44\Logo.scale-125.png">
+    <Content Include="..\..\res\Logo\TileSq44\Logo.scale-125.png">
       <Link>res\Logo\TileSq44\Logo.scale-125.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq44\Logo.scale-150.png">
+    <Content Include="..\..\res\Logo\TileSq44\Logo.scale-150.png">
       <Link>res\Logo\TileSq44\Logo.scale-150.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq44\Logo.scale-200.png">
+    <Content Include="..\..\res\Logo\TileSq44\Logo.scale-200.png">
       <Link>res\Logo\TileSq44\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq44\Logo.scale-400.png">
+    <Content Include="..\..\res\Logo\TileSq44\Logo.scale-400.png">
       <Link>res\Logo\TileSq44\Logo.scale-400.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq44\Logo.targetsize-16.png">
+    <Content Include="..\..\res\Logo\TileSq44\Logo.targetsize-16.png">
       <Link>res\Logo\TileSq44\Logo.targetsize-16.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq44\Logo.targetsize-24.png">
+    <Content Include="..\..\res\Logo\TileSq44\Logo.targetsize-24.png">
       <Link>res\Logo\TileSq44\Logo.targetsize-24.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq44\Logo.targetsize-256.png">
+    <Content Include="..\..\res\Logo\TileSq44\Logo.targetsize-256.png">
       <Link>res\Logo\TileSq44\Logo.targetsize-256.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq44\Logo.targetsize-48.png">
+    <Content Include="..\..\res\Logo\TileSq44\Logo.targetsize-48.png">
       <Link>res\Logo\TileSq44\Logo.targetsize-48.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq71\Logo.scale-100.png">
+    <Content Include="..\..\res\Logo\TileSq71\Logo.scale-100.png">
       <Link>res\Logo\TileSq71\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq71\Logo.scale-125.png">
+    <Content Include="..\..\res\Logo\TileSq71\Logo.scale-125.png">
       <Link>res\Logo\TileSq71\Logo.scale-125.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq71\Logo.scale-150.png">
+    <Content Include="..\..\res\Logo\TileSq71\Logo.scale-150.png">
       <Link>res\Logo\TileSq71\Logo.scale-150.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq71\Logo.scale-200.png">
+    <Content Include="..\..\res\Logo\TileSq71\Logo.scale-200.png">
       <Link>res\Logo\TileSq71\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq71\Logo.scale-400.png">
+    <Content Include="..\..\res\Logo\TileSq71\Logo.scale-400.png">
       <Link>res\Logo\TileSq71\Logo.scale-400.png</Link>
     </Content>
-    <Content Include="..\res\Logo\WideTile\Logo.scale-125.png">
+    <Content Include="..\..\res\Logo\WideTile\Logo.scale-125.png">
       <Link>res\Logo\WideTile\Logo.scale-125.png</Link>
     </Content>
-    <Content Include="..\res\Logo\WideTile\Logo.scale-150.png">
+    <Content Include="..\..\res\Logo\WideTile\Logo.scale-150.png">
       <Link>res\Logo\WideTile\Logo.scale-150.png</Link>
     </Content>
-    <Content Include="..\res\Logo\WideTile\Logo.scale-200.png">
+    <Content Include="..\..\res\Logo\WideTile\Logo.scale-200.png">
       <Link>res\Logo\WideTile\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\res\Logo\WideTile\Logo.scale-400.png">
+    <Content Include="..\..\res\Logo\WideTile\Logo.scale-400.png">
       <Link>res\Logo\WideTile\Logo.scale-400.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\newNormal.png">
+    <Content Include="..\..\res\ToolBarButton\newNormal.png">
       <Link>res\ToolBarButton\newNormal.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\newNormalLoss.png">
+    <Content Include="..\..\res\ToolBarButton\newNormalLoss.png">
       <Link>res\ToolBarButton\newNormalLoss.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\newNormalMosaic.png">
+    <Content Include="..\..\res\ToolBarButton\newNormalMosaic.png">
       <Link>res\ToolBarButton\newNormalMosaic.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\newNormalWin.png">
+    <Content Include="..\..\res\ToolBarButton\newNormalWin.png">
       <Link>res\ToolBarButton\newNormalWin.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\newPressed.png">
+    <Content Include="..\..\res\ToolBarButton\newPressed.png">
       <Link>res\ToolBarButton\newPressed.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\newPressed~.png">
+    <Content Include="..\..\res\ToolBarButton\newPressed~.png">
       <Link>res\ToolBarButton\newPressed~.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\newRollover.png">
+    <Content Include="..\..\res\ToolBarButton\newRollover.png">
       <Link>res\ToolBarButton\newRollover.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\newRollover~.png">
+    <Content Include="..\..\res\ToolBarButton\newRollover~.png">
       <Link>res\ToolBarButton\newRollover~.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\pauseAssistant.png">
+    <Content Include="..\..\res\ToolBarButton\pauseAssistant.png">
       <Link>res\ToolBarButton\pauseAssistant.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\pauseDisabled.png">
+    <Content Include="..\..\res\ToolBarButton\pauseDisabled.png">
       <Link>res\ToolBarButton\pauseDisabled.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\pauseDisabledSelected.png">
+    <Content Include="..\..\res\ToolBarButton\pauseDisabledSelected.png">
       <Link>res\ToolBarButton\pauseDisabledSelected.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\pauseNormal.png">
+    <Content Include="..\..\res\ToolBarButton\pauseNormal.png">
       <Link>res\ToolBarButton\pauseNormal.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\pausePressed.png">
+    <Content Include="..\..\res\ToolBarButton\pausePressed.png">
       <Link>res\ToolBarButton\pausePressed.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\pausePressed~.png">
+    <Content Include="..\..\res\ToolBarButton\pausePressed~.png">
       <Link>res\ToolBarButton\pausePressed~.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\pauseRollover.png">
+    <Content Include="..\..\res\ToolBarButton\pauseRollover.png">
       <Link>res\ToolBarButton\pauseRollover.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\pauseRolloverSelected.png">
+    <Content Include="..\..\res\ToolBarButton\pauseRolloverSelected.png">
       <Link>res\ToolBarButton\pauseRolloverSelected.png</Link>
     </Content>
-    <Content Include="..\res\ToolBarButton\pauseSelected.png">
+    <Content Include="..\..\res\ToolBarButton\pauseSelected.png">
       <Link>res\ToolBarButton\pauseSelected.png</Link>
     </Content>
-    <Content Include="..\res\Lang\English.png">
+    <Content Include="..\..\res\Lang\English.png">
       <Link>res\Lang\English.png</Link>
     </Content>
-    <Content Include="..\res\Lang\Russian.png">
+    <Content Include="..\..\res\Lang\Russian.png">
       <Link>res\Lang\Russian.png</Link>
     </Content>
-    <Content Include="..\res\Lang\Ukrainian.png">
+    <Content Include="..\..\res\Lang\Ukrainian.png">
       <Link>res\Lang\Ukrainian.png</Link>
     </Content>
-    <Content Include="..\res\Background\~Pause.png">
+    <Content Include="..\..\res\Background\~Pause.png">
       <Link>res\Background\~Pause.png</Link>
     </Content>
-    <Content Include="..\res\Background\DarkGray.png">
+    <Content Include="..\..\res\Background\DarkGray.png">
       <Link>res\Background\DarkGray.png</Link>
     </Content>
-    <Content Include="..\res\Font\NirmalaUI_30.png">
+    <Content Include="..\..\res\Font\NirmalaUI_30.png">
       <Link>res\Font\NirmalaUI_30.png</Link>
     </Content>
-    <Content Include="..\res\Background\LightGray.png">
+    <Content Include="..\..\res\Background\LightGray.png">
       <Link>res\Background\LightGray.png</Link>
     </Content>
-    <Content Include="..\res\Background\MediumGray.png">
+    <Content Include="..\..\res\Background\MediumGray.png">
       <Link>res\Background\MediumGray.png</Link>
     </Content>
-    <Content Include="..\res\CellState\~Flag.png">
+    <Content Include="..\..\res\CellState\~Flag.png">
       <Link>res\CellState\~Flag.png</Link>
     </Content>
-    <Content Include="..\res\CellState\~Mine.png">
+    <Content Include="..\..\res\CellState\~Mine.png">
       <Link>res\CellState\~Mine.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\PenrousePeriodic1.ico">
+    <Content Include="..\..\res\Mosaic\32x32\PenrousePeriodic1.ico">
       <Link>res\Mosaic\32x32\PenrousePeriodic1.ico</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\Hexagon1.png">
+    <Content Include="..\..\res\Mosaic\32x32\Hexagon1.png">
       <Link>res\Mosaic\32x32\Hexagon1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\Null.png">
+    <Content Include="..\..\res\Mosaic\32x32\Null.png">
       <Link>res\Mosaic\32x32\Null.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\Parquet1.png">
+    <Content Include="..\..\res\Mosaic\32x32\Parquet1.png">
       <Link>res\Mosaic\32x32\Parquet1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\Parquet2.png">
+    <Content Include="..\..\res\Mosaic\32x32\Parquet2.png">
       <Link>res\Mosaic\32x32\Parquet2.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\PenrousePeriodic1.png">
+    <Content Include="..\..\res\Mosaic\32x32\PenrousePeriodic1.png">
       <Link>res\Mosaic\32x32\PenrousePeriodic1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\PentagonT5.png">
+    <Content Include="..\..\res\Mosaic\32x32\PentagonT5.png">
       <Link>res\Mosaic\32x32\PentagonT5.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\PentagonT10.png">
+    <Content Include="..\..\res\Mosaic\32x32\PentagonT10.png">
       <Link>res\Mosaic\32x32\PentagonT10.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\PentagonT24.png">
+    <Content Include="..\..\res\Mosaic\32x32\PentagonT24.png">
       <Link>res\Mosaic\32x32\PentagonT24.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\Quadrangle1.png">
+    <Content Include="..\..\res\Mosaic\32x32\Quadrangle1.png">
       <Link>res\Mosaic\32x32\Quadrangle1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\Rhombus1.png">
+    <Content Include="..\..\res\Mosaic\32x32\Rhombus1.png">
       <Link>res\Mosaic\32x32\Rhombus1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\SqTrHex.png">
+    <Content Include="..\..\res\Mosaic\32x32\SqTrHex.png">
       <Link>res\Mosaic\32x32\SqTrHex.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\Square1.png">
+    <Content Include="..\..\res\Mosaic\32x32\Square1.png">
       <Link>res\Mosaic\32x32\Square1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\Square2.png">
+    <Content Include="..\..\res\Mosaic\32x32\Square2.png">
       <Link>res\Mosaic\32x32\Square2.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\Trapezoid1.png">
+    <Content Include="..\..\res\Mosaic\32x32\Trapezoid1.png">
       <Link>res\Mosaic\32x32\Trapezoid1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\Trapezoid2.png">
+    <Content Include="..\..\res\Mosaic\32x32\Trapezoid2.png">
       <Link>res\Mosaic\32x32\Trapezoid2.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\Trapezoid3.png">
+    <Content Include="..\..\res\Mosaic\32x32\Trapezoid3.png">
       <Link>res\Mosaic\32x32\Trapezoid3.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\Triangle1.png">
+    <Content Include="..\..\res\Mosaic\32x32\Triangle1.png">
       <Link>res\Mosaic\32x32\Triangle1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\Triangle2.png">
+    <Content Include="..\..\res\Mosaic\32x32\Triangle2.png">
       <Link>res\Mosaic\32x32\Triangle2.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\Triangle3.png">
+    <Content Include="..\..\res\Mosaic\32x32\Triangle3.png">
       <Link>res\Mosaic\32x32\Triangle3.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\Triangle4.png">
+    <Content Include="..\..\res\Mosaic\32x32\Triangle4.png">
       <Link>res\Mosaic\32x32\Triangle4.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\TrSq1.png">
+    <Content Include="..\..\res\Mosaic\32x32\TrSq1.png">
       <Link>res\Mosaic\32x32\TrSq1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\32x32\TrSq2.png">
+    <Content Include="..\..\res\Mosaic\32x32\TrSq2.png">
       <Link>res\Mosaic\32x32\TrSq2.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\PenrousePeriodic1.ico">
+    <Content Include="..\..\res\Mosaic\48x32\PenrousePeriodic1.ico">
       <Link>res\Mosaic\48x32\PenrousePeriodic1.ico</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\Hexagon1.png">
+    <Content Include="..\..\res\Mosaic\48x32\Hexagon1.png">
       <Link>res\Mosaic\48x32\Hexagon1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\Null.png">
+    <Content Include="..\..\res\Mosaic\48x32\Null.png">
       <Link>res\Mosaic\48x32\Null.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\Parquet1.png">
+    <Content Include="..\..\res\Mosaic\48x32\Parquet1.png">
       <Link>res\Mosaic\48x32\Parquet1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\Parquet2.png">
+    <Content Include="..\..\res\Mosaic\48x32\Parquet2.png">
       <Link>res\Mosaic\48x32\Parquet2.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\PenrousePeriodic1.png">
+    <Content Include="..\..\res\Mosaic\48x32\PenrousePeriodic1.png">
       <Link>res\Mosaic\48x32\PenrousePeriodic1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\PentagonT5.png">
+    <Content Include="..\..\res\Mosaic\48x32\PentagonT5.png">
       <Link>res\Mosaic\48x32\PentagonT5.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\PentagonT10.png">
+    <Content Include="..\..\res\Mosaic\48x32\PentagonT10.png">
       <Link>res\Mosaic\48x32\PentagonT10.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\PentagonT24.png">
+    <Content Include="..\..\res\Mosaic\48x32\PentagonT24.png">
       <Link>res\Mosaic\48x32\PentagonT24.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\Quadrangle1.png">
+    <Content Include="..\..\res\Mosaic\48x32\Quadrangle1.png">
       <Link>res\Mosaic\48x32\Quadrangle1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\Rhombus1.png">
+    <Content Include="..\..\res\Mosaic\48x32\Rhombus1.png">
       <Link>res\Mosaic\48x32\Rhombus1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\SqTrHex.png">
+    <Content Include="..\..\res\Mosaic\48x32\SqTrHex.png">
       <Link>res\Mosaic\48x32\SqTrHex.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\Square1.png">
+    <Content Include="..\..\res\Mosaic\48x32\Square1.png">
       <Link>res\Mosaic\48x32\Square1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\Square2.png">
+    <Content Include="..\..\res\Mosaic\48x32\Square2.png">
       <Link>res\Mosaic\48x32\Square2.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\Trapezoid1.png">
+    <Content Include="..\..\res\Mosaic\48x32\Trapezoid1.png">
       <Link>res\Mosaic\48x32\Trapezoid1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\Trapezoid2.png">
+    <Content Include="..\..\res\Mosaic\48x32\Trapezoid2.png">
       <Link>res\Mosaic\48x32\Trapezoid2.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\Trapezoid3.png">
+    <Content Include="..\..\res\Mosaic\48x32\Trapezoid3.png">
       <Link>res\Mosaic\48x32\Trapezoid3.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\Triangle1.png">
+    <Content Include="..\..\res\Mosaic\48x32\Triangle1.png">
       <Link>res\Mosaic\48x32\Triangle1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\Triangle2.png">
+    <Content Include="..\..\res\Mosaic\48x32\Triangle2.png">
       <Link>res\Mosaic\48x32\Triangle2.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\Triangle3.png">
+    <Content Include="..\..\res\Mosaic\48x32\Triangle3.png">
       <Link>res\Mosaic\48x32\Triangle3.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\Triangle4.png">
+    <Content Include="..\..\res\Mosaic\48x32\Triangle4.png">
       <Link>res\Mosaic\48x32\Triangle4.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\TrSq1.png">
+    <Content Include="..\..\res\Mosaic\48x32\TrSq1.png">
       <Link>res\Mosaic\48x32\TrSq1.png</Link>
     </Content>
-    <Content Include="..\res\Mosaic\48x32\TrSq2.png">
+    <Content Include="..\..\res\Mosaic\48x32\TrSq2.png">
       <Link>res\Mosaic\48x32\TrSq2.png</Link>
     </Content>
-    <Content Include="..\res\MosaicGroup\Hexagons.png">
+    <Content Include="..\..\res\MosaicGroup\Hexagons.png">
       <Link>res\MosaicGroup\Hexagons.png</Link>
     </Content>
-    <Content Include="..\res\MosaicGroup\Others.png">
+    <Content Include="..\..\res\MosaicGroup\Others.png">
       <Link>res\MosaicGroup\Others.png</Link>
     </Content>
-    <Content Include="..\res\MosaicGroup\Pentagons.png">
+    <Content Include="..\..\res\MosaicGroup\Pentagons.png">
       <Link>res\MosaicGroup\Pentagons.png</Link>
     </Content>
-    <Content Include="..\res\MosaicGroup\Quadrangles.png">
+    <Content Include="..\..\res\MosaicGroup\Quadrangles.png">
       <Link>res\MosaicGroup\Quadrangles.png</Link>
     </Content>
-    <Content Include="..\res\MosaicGroup\Triangles.png">
+    <Content Include="..\..\res\MosaicGroup\Triangles.png">
       <Link>res\MosaicGroup\Triangles.png</Link>
     </Content>
-    <Content Include="..\res\MosaicGroup\Hexagons.ico">
+    <Content Include="..\..\res\MosaicGroup\Hexagons.ico">
       <Link>res\MosaicGroup\Hexagons.ico</Link>
     </Content>
-    <Content Include="..\res\MosaicGroup\Others.ico">
+    <Content Include="..\..\res\MosaicGroup\Others.ico">
       <Link>res\MosaicGroup\Others.ico</Link>
     </Content>
-    <Content Include="..\res\MosaicGroup\Pentagons.ico">
+    <Content Include="..\..\res\MosaicGroup\Pentagons.ico">
       <Link>res\MosaicGroup\Pentagons.ico</Link>
     </Content>
-    <Content Include="..\res\MosaicGroup\Quadrangles.ico">
+    <Content Include="..\..\res\MosaicGroup\Quadrangles.ico">
       <Link>res\MosaicGroup\Quadrangles.ico</Link>
     </Content>
-    <Content Include="..\res\MosaicGroup\Triangles.ico">
+    <Content Include="..\..\res\MosaicGroup\Triangles.ico">
       <Link>res\MosaicGroup\Triangles.ico</Link>
     </Content>
-    <Compile Include="..\src\src_core\fmg\core\types\click\ClickCellResult.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\types\click\ClickCellResult.cs">
       <Link>src_fmg.core\types\click\ClickCellResult.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\types\click\ClickResult.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\types\click\ClickResult.cs">
       <Link>src_fmg.core\types\click\ClickResult.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\cells\BaseCell.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\BaseCell.cs">
       <Link>src_fmg.core\mosaic\cells\BaseCell.cs</Link>
     </Compile>
-    <Compile Include="..\src\src_core\fmg\core\mosaic\MosaicHelper.cs">
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicHelper.cs">
       <Link>src_fmg.core\mosaic\MosaicHelper.cs</Link>
     </Compile>
-    <Content Include="..\res\Font\NirmalaUI_30.xml">
+    <Content Include="..\..\res\Font\NirmalaUI_30.xml">
       <Link>res\Font\NirmalaUI_30.xml</Link>
     </Content>
-    <Content Include="..\res\Skill\skillWhite.ico">
+    <Content Include="..\..\res\Skill\skillWhite.ico">
       <Link>res\Skill\skillWhite.ico</Link>
     </Content>
-    <Content Include="..\res\Skill\skillWhite1.png">
+    <Content Include="..\..\res\Skill\skillWhite1.png">
       <Link>res\Skill\skillWhite1.png</Link>
     </Content>
-    <Content Include="..\res\Skill\skillWhite2.png">
+    <Content Include="..\..\res\Skill\skillWhite2.png">
       <Link>res\Skill\skillWhite2.png</Link>
     </Content>
-    <Content Include="..\res\Skill\skillWhite3.png">
+    <Content Include="..\..\res\Skill\skillWhite3.png">
       <Link>res\Skill\skillWhite3.png</Link>
     </Content>
-    <Content Include="..\res\Skill\skillWhite4.png">
+    <Content Include="..\..\res\Skill\skillWhite4.png">
       <Link>res\Skill\skillWhite4.png</Link>
     </Content>
-    <Content Include="read_me.txt" />
-    <Content Include="..\res\Logo\Badge\Logo.scale-100.png">
+    <Content Include="..\..\res\Logo\Badge\Logo.scale-100.png">
       <Link>res\Logo\Badge\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\res\Logo\WideTile\Logo.scale-100.png">
+    <Content Include="..\..\res\Logo\WideTile\Logo.scale-100.png">
       <Link>res\Logo\WideTile\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\res\Logo\SplashScreen\Logo.scale-100.png">
+    <Content Include="..\..\res\Logo\SplashScreen\Logo.scale-100.png">
       <Link>res\Logo\SplashScreen\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\res\Logo\StoreTile\Logo.scale-100.png">
+    <Content Include="..\..\res\Logo\StoreTile\Logo.scale-100.png">
       <Link>res\Logo\StoreTile\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\res\Logo\TileSq310\Logo.scale-100.png">
+    <Content Include="..\..\res\Logo\TileSq310\Logo.scale-100.png">
       <Link>res\Logo\TileSq310\Logo.scale-100.png</Link>
     </Content>
   </ItemGroup>
@@ -910,7 +909,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="BackgroundTasks\BackgroundTasks.csproj">
+    <ProjectReference Include="..\BackgroundTasks\BackgroundTasks.csproj">
       <Project>{4f75c36e-7157-449f-9686-dea20f83bbdb}</Project>
       <Name>BackgroundTasks</Name>
     </ProjectReference>
@@ -936,11 +935,11 @@ rd /s /q $(ProjectDir)src_fmg.common
 rd /s /q $(ProjectDir)src_fmg.core
 rd /s /q $(ProjectDir)src_fmg.data
 rd /s /q $(ProjectDir)src_fmg.uwp
-mklink /j $(ProjectDir)res            $(SolutionDir)..\..\res
-mklink /j $(ProjectDir)src_fmg.common $(SolutionDir)..\..\src\src_common\fmg\common
-mklink /j $(ProjectDir)src_fmg.core   $(SolutionDir)..\..\src\src_core\fmg\core
-mklink /j $(ProjectDir)src_fmg.data   $(SolutionDir)..\..\src\src_data\fmg\data
-mklink /j $(ProjectDir)src_fmg.uwp    $(SolutionDir)..\..\src\src_platform_uwp\fmg\uwp</PreBuildEvent>
+mklink /j $(ProjectDir)res            $(SolutionDir)..\res
+mklink /j $(ProjectDir)src_fmg.common $(SolutionDir)..\src\src_common\fmg\common
+mklink /j $(ProjectDir)src_fmg.core   $(SolutionDir)..\src\src_core\fmg\core
+mklink /j $(ProjectDir)src_fmg.data   $(SolutionDir)..\src\src_data\fmg\data
+mklink /j $(ProjectDir)src_fmg.uwp    $(SolutionDir)..\src\src_platform_uwp\fmg\uwp</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
