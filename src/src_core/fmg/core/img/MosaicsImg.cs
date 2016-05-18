@@ -8,7 +8,7 @@ using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
-using FastMines.Presentation.Notyfier;
+using fmg.common.notyfier;
 
 namespace fmg.core.img {
 

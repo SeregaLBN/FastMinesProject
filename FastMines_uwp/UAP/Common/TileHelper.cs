@@ -16,7 +16,7 @@ using Size = fmg.common.geom.Size;
 using Rect = Windows.Foundation.Rect;
 using BackgroundTasks;
 
-namespace FastMines {
+namespace fmg {
    public static class TileHelper {
       private static readonly Random Random = new Random(Guid.NewGuid().GetHashCode());
       private static readonly string TaskName = typeof(BackgroundTasks.FastMinesTileUpdater).Name;

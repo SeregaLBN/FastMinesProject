@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using FastMines.DataModel.Items;
-using FastMines.Presentation.Notyfier;
+using fmg.DataModel.Items;
+using fmg.common.notyfier;
 
-namespace FastMines.DataModel.DataSources
+namespace fmg.DataModel.DataSources
 {
    /// <summary> base DataSource menu items </summary>
    public abstract class BaseDataSource<TItem, T> : NotifyPropertyChanged, IDisposable

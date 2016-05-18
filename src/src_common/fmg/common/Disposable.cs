@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FastMines.Common
+namespace fmg.Common
 {
     public abstract class Disposable : IDisposable
     {

@@ -6,6 +6,7 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic.cells;
+using fmg.uwp.utils;
 
 namespace fmg.uwp.draw.mosaic.xaml
 {

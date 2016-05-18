@@ -3,6 +3,7 @@ using System;
 namespace fmg.common.geom {
 
    public static class DoubleExt {
+
       /** Equals N digit precision */
       public static bool EqualsPrecision(this double value1, double value2, double precision = 0.00001) {
          return Math.Abs(value1 - value1) <= precision;
@@ -21,5 +22,7 @@ namespace fmg.common.geom {
          var diff = Math.Abs(lValue1 - lValue2);
          return (diff <= units);
       }
+
    }
+
 }

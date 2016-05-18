@@ -15,7 +15,7 @@ using fmg.data.controller.types;
 // Applications may use this model as a starting point and build on it, or discard it entirely and
 // replace it with something appropriate to their needs.
 
-namespace FastMines.Data {
+namespace fmg.Data {
 
    /// <summary>
    /// Creates a collection of groups and items with hard-coded content.

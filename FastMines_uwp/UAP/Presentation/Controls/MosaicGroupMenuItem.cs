@@ -1,8 +1,8 @@
 ﻿using System;
 using fmg.core.types;
-using FastMines.DataModel.Items;
+using fmg.DataModel.Items;
 
-namespace FastMines.Presentation.Controls {
+namespace fmg.common.Controls {
 
    public class MosaicGroupMenuItem : MosaicGroupDataItem {
 

@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel;
 using fmg.common;
 using fmg.common.geom;
-using FastMines.Presentation.Notyfier;
+using fmg.common.notyfier;
 
 namespace fmg.core.img {
 
@@ -148,7 +148,7 @@ namespace fmg.core.img {
 
       public Color ForegroundColorAttenuate => ForegroundColor.Attenuate(160);
 
-      public bool OnlySyncDraw { get; set; } = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+      public bool OnlySyncDraw { get; set; } = false; // Windows.ApplicationModel.DesignMode.DesignModeEnabled;
 
       protected void Invalidate() {
          if (_invalidate == EInvalidate.Redrawing)

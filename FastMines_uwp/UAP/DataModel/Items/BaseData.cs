@@ -1,8 +1,8 @@
 ﻿using System;
 using Windows.UI.Xaml.Media;
-using FastMines.Presentation.Notyfier;
+using fmg.common.notyfier;
 
-namespace FastMines.DataModel.Items {
+namespace fmg.DataModel.Items {
 
    /// <summary> Base item class for <see cref="MosaicDataItem"/> and <see cref="MosaicGroupDataItem"/> and <see cref="MosaicSkillDataItem"/> </summary>
    [Windows.Foundation.Metadata.WebHostHidden]

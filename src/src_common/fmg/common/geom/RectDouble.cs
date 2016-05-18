@@ -123,12 +123,6 @@ namespace fmg.common.geom {
          return rect;
       }
 
-
-#if WINDOWS_RT || WINDOWS_UWP
-      public static RectDouble ToFmRectDouble(this Windows.Foundation.Rect self) { return new RectDouble(self.X, self.Y, self.Width, self.Height); }
-      public static Windows.Foundation.Rect ToWinRect(this RectDouble self) { return new Windows.Foundation.Rect(self.X, self.Y, self.Width, self.Height); }
-#elif WINDOWS_FORMS
-      ...
-#endif
    }
+
 }

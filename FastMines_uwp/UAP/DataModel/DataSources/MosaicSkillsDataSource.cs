@@ -3,9 +3,9 @@ using fmg.common.geom;
 using fmg.data.controller.types;
 using fmg.uwp.draw;
 using fmg.uwp.res.img;
-using FastMines.Presentation.Controls;
+using fmg.common.Controls;
 
-namespace FastMines.DataModel.DataSources
+namespace fmg.DataModel.DataSources
 {
    /// <summary> DataSource menu items (mosaic skills) </summary>
    public class MosaicSkillsDataSource : BaseDataSource<MosaicSkillMenuItem, ESkillLevel> {

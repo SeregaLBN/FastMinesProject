@@ -4,7 +4,8 @@ using Windows.UI.Xaml.Media.Imaging;
 using fmg.core.types;
 using fmg.common;
 using fmg.common.geom;
-using FastMines.Common;
+using fmg.Common;
+using fmg.uwp.utils;
 
 namespace fmg.uwp.res.img {
 
@@ -22,7 +23,10 @@ namespace fmg.uwp.res.img {
       }
 
       public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = DefaultImageSize, int? padding = null)
-         : base(group, widthAndHeight, padding) {}
+         : base(group, widthAndHeight, padding)
+      {
+         OnlySyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+      }
 
       protected override WriteableBitmap CreateImage() {
          //LoggerSimple.Put("CreateImage: Width={0}; Height={1}: {2}", Width, Height, Entity);

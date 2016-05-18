@@ -1,7 +1,7 @@
 ﻿using fmg.data.controller.types;
-using FastMines.DataModel.Items;
+using fmg.DataModel.Items;
 
-namespace FastMines.Presentation.Controls {
+namespace fmg.common.Controls {
 
    public class MosaicSkillMenuItem : MosaicSkillDataItem {
 

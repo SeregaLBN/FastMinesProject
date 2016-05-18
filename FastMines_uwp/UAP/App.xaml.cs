@@ -7,10 +7,10 @@ using Windows.Phone.UI.Input;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
-using FastMines.Data;
+using fmg.Data;
 using fmg.data.controller.types;
 
-namespace FastMines
+namespace fmg
 {
    /// <summary>
    /// Provides application-specific behavior to supplement the default Application class.

@@ -5,9 +5,9 @@ using fmg.common.geom;
 using fmg.core.types;
 using fmg.uwp.draw;
 using fmg.uwp.res.img;
-using FastMines.Presentation.Controls;
+using fmg.common.Controls;
 
-namespace FastMines.DataModel.DataSources
+namespace fmg.DataModel.DataSources
 {
    /// <summary> DataSource menu items (mosaic groups) </summary>
    public class MosaicGroupsDataSource : BaseDataSource<MosaicGroupMenuItem, EMosaicGroup> {

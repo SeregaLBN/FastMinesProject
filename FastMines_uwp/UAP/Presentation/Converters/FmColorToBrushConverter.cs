@@ -1,9 +1,9 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
-using fmg.common;
+using fmg.uwp.utils;
 
-namespace FastMines.Presentation.Converters {
+namespace fmg.common.Converters {
 
    /// <summary> Convert 'fmg.common.Color' to 'Windows.UI.Xaml.Media.Brush' </summary>
    public sealed class FmColorToBrushConverter : IValueConverter {

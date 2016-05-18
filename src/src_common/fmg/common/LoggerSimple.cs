@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace FastMines.Common {
+namespace fmg.Common {
    public class LoggerSimple {
 #if DEBUG
       //[System.Runtime.InteropServices.DllImport("Kernel32.dll")]

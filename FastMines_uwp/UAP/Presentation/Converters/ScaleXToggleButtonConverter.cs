@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
 
-namespace FastMines.Presentation.Converters
+namespace fmg.common.Converters
 {
    public class ScaleXToggleButtonConverter : IValueConverter
    {

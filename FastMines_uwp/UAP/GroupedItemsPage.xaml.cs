@@ -4,17 +4,17 @@ using Windows.Foundation;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using FastMines.Data;
+using fmg.Data;
 using fmg.data.controller.types;
 using fmg.uwp.mosaic;
 
 // The Grouped Items Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234231
 
-namespace FastMines {
+namespace fmg {
    /// <summary>
    /// A page that displays a grouped collection of items.
    /// </summary>
-   public sealed partial class GroupedItemsPage : FastMines.Common.LayoutAwarePage {
+   public sealed partial class GroupedItemsPage : fmg.Common.LayoutAwarePage {
       public GroupedItemsPage() {
          // modify to http://stackoverflow.com/questions/15435023/add-dynamically-an-image-in-xaml-in-a-canvas
          this.InitializeComponent();

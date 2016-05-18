@@ -29,7 +29,7 @@ using fmg.core.types;
 using fmg.core.mosaic.cells;
 using fmg.core.mosaic.draw;
 using fmg.core.types.click;
-using FastMines.Presentation.Notyfier;
+using fmg.common.notyfier;
 
 namespace fmg.core.mosaic {
 
@@ -155,13 +155,7 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
    }
 
    protected virtual void OnError(String msg) {
-      System.Diagnostics.Debug.WriteLine(msg);
-#if WINDOWS_RT || WINDOWS_UWP
-#elif WINDOWS_FORMS
-      System.Console.Error(msg);
-#else
-      ...
-#endif
+      System.Diagnostics.Debug.Fail(msg);
    }
 
    /// <summary>arrange Mines</summary>
@@ -337,7 +331,7 @@ return;
    }
 
    protected ClickResult OnLeftButtonDown(BaseCell cellLeftDown) {
-      using (new FastMines.Common.Tracer("Mosaic::OnLeftButtonDown")) {
+      using (new fmg.Common.Tracer("Mosaic::OnLeftButtonDown")) {
          var result = new ClickResult(cellLeftDown, true, true);
          CellDown = null;
          if (GameStatus == EGameStatus.eGSEnd)
@@ -369,7 +363,7 @@ return;
    }
 
    protected ClickResult OnLeftButtonUp(BaseCell cellLeftUp) {
-      using (var tracer = new FastMines.Common.Tracer("Mosaic::OnLeftButtonUp"))
+      using (var tracer = new fmg.Common.Tracer("Mosaic::OnLeftButtonUp"))
       try {
          var cellDown = CellDown;
          var result = new ClickResult(cellDown, true, false);
@@ -422,7 +416,7 @@ return;
    }
 
    protected ClickResult OnRightButtonDown(BaseCell cellRightDown) {
-      using (var tracer = new FastMines.Common.Tracer("Mosaic::OnRightButtonDown")) {
+      using (var tracer = new fmg.Common.Tracer("Mosaic::OnRightButtonDown")) {
          CellDown = null;
          var result = new ClickResult(cellRightDown, false, true); ;
          if (GameStatus == EGameStatus.eGSEnd) {
@@ -463,7 +457,7 @@ return;
    }
 
    protected ClickResult OnRightButtonUp(BaseCell cellRightUp) {
-      using (var tracer = new FastMines.Common.Tracer("Mosaic::OnRightButtonUp"))
+      using (var tracer = new fmg.Common.Tracer("Mosaic::OnRightButtonUp"))
       try {
          var cellDown = CellDown;
          //tracer.Put("return");

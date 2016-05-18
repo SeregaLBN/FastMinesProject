@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace FastMines.Presentation.Notyfier {
+namespace fmg.common.notyfier {
 
    /// <summary> Implementation of <see cref="INotifyPropertyChanged"/> to simplify models. </summary>
+#if WINDOWS_UWP
    [Windows.Foundation.Metadata.WebHostHidden]
+#endif
    public abstract class NotifyPropertyChanged : INotifyPropertyChanged {
 
       /// <summary> Multicast event for property change notifications. </summary>

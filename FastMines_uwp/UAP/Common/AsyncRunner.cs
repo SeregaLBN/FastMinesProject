@@ -1,7 +1,7 @@
 ﻿using Windows.Foundation;
 using Windows.UI.Core;
 
-namespace FastMines.Common {
+namespace fmg.Common {
 
    public static class AsyncRunner {
 

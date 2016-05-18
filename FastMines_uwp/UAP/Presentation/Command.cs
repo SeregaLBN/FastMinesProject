@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace FastMines.Presentation
+namespace fmg.common
 {
     public class Command : ICommand
     {

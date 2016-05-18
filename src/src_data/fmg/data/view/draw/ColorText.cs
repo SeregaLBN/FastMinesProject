@@ -1,7 +1,7 @@
 using System;
 using fmg.common;
 using fmg.core.types;
-using FastMines.Presentation.Notyfier;
+using fmg.common.notyfier;
 
 namespace fmg.data.view.draw {
 

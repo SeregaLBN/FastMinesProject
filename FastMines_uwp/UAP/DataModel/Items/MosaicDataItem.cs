@@ -4,9 +4,9 @@ using fmg.common.geom;
 using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.uwp.res.img;
-using FastMines.Presentation.Notyfier;
+using fmg.common.notyfier;
 
-namespace FastMines.DataModel.Items {
+namespace fmg.DataModel.Items {
 
    /// <summary> Mosaic item for data model </summary>
    public class MosaicDataItem : BaseData<EMosaic> {

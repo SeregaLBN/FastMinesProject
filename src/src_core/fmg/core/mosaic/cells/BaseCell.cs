@@ -54,7 +54,7 @@ public abstract class BaseCell {
     * <br> (Полные данные о конкретной мозаике) <br>
     * Доопределаяется наследниками BaseCell
     */
-   public abstract class BaseAttribute : FastMines.Presentation.Notyfier.NotifyPropertyChanged {
+   public abstract class BaseAttribute : fmg.common.notyfier.NotifyPropertyChanged {
       /// На PropertyChanged это подписаны все наследники BaseCell: при изменении A - надо пересчить все координаты точек
 
       public BaseAttribute(double area) {

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace FastMines.Presentation.Notyfier
+namespace fmg.common.notyfier
 {
    public class PropertyChangedExEventArgs<T> : PropertyChangedEventArgs
    {

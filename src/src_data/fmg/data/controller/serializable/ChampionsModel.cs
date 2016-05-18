@@ -12,7 +12,7 @@ using fmg.data.controller.types;
 namespace fmg.data.controller.serializable {
 
 /// <summary>хранилище чемпионов</summary>
-public class ChampionsModel : IExternalizable {
+public abstract class ChampionsModel : IExternalizable {
    private readonly long version;
 
    private const int MAX_SIZE = 10;
@@ -313,8 +313,8 @@ public class ChampionsModel : IExternalizable {
    //   out.close();
    //}
 #else
-   public bool Load()...
-   public void Save()...
+   public abstract bool Load();
+   public abstract void Save();
 #endif
 
    public static string ChampFile { get { return "Mines.bst"; } }

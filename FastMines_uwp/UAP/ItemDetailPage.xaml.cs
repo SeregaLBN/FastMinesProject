@@ -12,15 +12,15 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using fmg.core.types;
-using FastMines.Data;
+using fmg.Data;
 
 // The Item Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234232
-namespace FastMines {
+namespace fmg {
    /// <summary>
    /// A page that displays details for a single item within a group while allowing gestures to
    /// flip through other items belonging to the same group.
    /// </summary>
-   public sealed partial class ItemDetailPage : FastMines.Common.LayoutAwarePage {
+   public sealed partial class ItemDetailPage : fmg.Common.LayoutAwarePage {
       private EMosaic _eMosaic; // who i am
 
       public ItemDetailPage() {

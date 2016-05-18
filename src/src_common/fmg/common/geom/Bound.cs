@@ -2,6 +2,7 @@
 
    /// <summary> Padding / Margin </summary>
    public struct Bound {
+
       public Bound(int left, int top, int right, int bottom) {
          Left = left;
          Top = top;

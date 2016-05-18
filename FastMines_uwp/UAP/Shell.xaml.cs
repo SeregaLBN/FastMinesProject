@@ -6,12 +6,12 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using fmg.core.types;
 using fmg.data.controller.types;
-using FastMines.Presentation;
-using FastMines.Common;
-using FastMines.DataModel.DataSources;
-using FastMines.Presentation.Controls;
+using fmg.common;
+using fmg.Common;
+using fmg.DataModel.DataSources;
+using fmg.common.Controls;
 
-namespace FastMines
+namespace fmg
 {
    public sealed partial class Shell : UserControl
    {

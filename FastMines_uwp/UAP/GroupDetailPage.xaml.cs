@@ -12,20 +12,20 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using FastMines.Data;
+using fmg.Data;
 using fmg.data.controller.types;
 using fmg.core.types;
 using fmg.uwp.mosaic;
-using FastMines.Common;
+using fmg.Common;
 
 // The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229
 
-namespace FastMines {
+namespace fmg {
    /// <summary>
    /// A page that displays an overview of a single group, including a preview of the items
    /// within the group.
    /// </summary>
-   public sealed partial class GroupDetailPage : FastMines.Common.LayoutAwarePage {
+   public sealed partial class GroupDetailPage : fmg.Common.LayoutAwarePage {
       private EMosaicGroup _mosaicGroup;
 
       public GroupDetailPage() {

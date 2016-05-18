@@ -1,5 +1,5 @@
 using fmg.common;
-using FastMines.Presentation.Notyfier;
+using fmg.common.notyfier;
 
 namespace fmg.data.view.draw {
 

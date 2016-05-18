@@ -12,7 +12,7 @@ using fmg.core.types;
 namespace fmg.data.controller.serializable {
 
 /// <summary>хранилище пользователей и их игровой статистики</summary>
-public class PlayersModel : IExternalizable {
+public abstract class PlayersModel : IExternalizable {
    //private static final long version = Main.serialVersionUID;
    private readonly long version;
    
@@ -341,8 +341,8 @@ public class PlayersModel : IExternalizable {
       }
    }
 #else
-      public bool Load()...
-   public void Save()...
+   public abstract bool Load();
+   public abstract void Save();
 #endif
 
    /// <summary>STatistiCs file name</summary>

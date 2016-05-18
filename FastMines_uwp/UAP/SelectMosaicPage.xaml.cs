@@ -1,9 +1,9 @@
 ﻿using Windows.UI.Xaml.Controls;
 using fmg.core.types;
 using fmg.data.controller.types;
-using FastMines.Presentation;
+using fmg.common;
 
-namespace FastMines {
+namespace fmg {
    /// <summary>
    /// An empty page that can be used on its own or navigated to within a Frame.
    /// </summary>

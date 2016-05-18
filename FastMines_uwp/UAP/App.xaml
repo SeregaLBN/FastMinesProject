@@ -1,10 +1,10 @@
 ﻿<Application
-    x:Class="FastMines.App"
+    x:Class="fmg.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:FastMines"
-    xmlns:presentation="using:FastMines.Presentation"
-    xmlns:converters="using:FastMines.Presentation.Converters"
+    xmlns:local="using:fmg"
+    xmlns:presentation="using:fmg.common"
+    xmlns:converters="using:fmg.common.Converters"
     RequestedTheme="Light">
     
     <Application.Resources>

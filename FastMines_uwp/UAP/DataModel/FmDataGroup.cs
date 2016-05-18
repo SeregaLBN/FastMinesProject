@@ -6,7 +6,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using fmg.core.types;
 using fmg.uwp.res;
 using fmg.uwp.res.img;
-using FastMines.Common;
+using fmg.Common;
 
 // The data model defined by this file serves as a representative example of a strongly-typed
 // model that supports notification when members are added, removed, or modified.  The property
@@ -14,7 +14,7 @@ using FastMines.Common;
 //
 // Applications may use this model as a starting point and build on it, or discard it entirely and
 // replace it with something appropriate to their needs.
-namespace FastMines.Data {
+namespace fmg.Data {
 
    /// <summary> Generic group data model. </summary>
    public class FmDataGroup : FmDataCommon<EMosaicGroup> {

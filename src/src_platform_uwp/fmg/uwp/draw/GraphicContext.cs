@@ -8,7 +8,8 @@ using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
 using fmg.data.view.draw;
-using FastMines.Presentation.Notyfier;
+using fmg.common.notyfier;
+using fmg.uwp.utils;
 
 namespace fmg.uwp.draw {
 

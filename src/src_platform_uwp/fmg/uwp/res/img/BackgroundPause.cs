@@ -1,5 +1,6 @@
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
+using fmg.uwp.utils;
 
 namespace fmg.uwp.res.img {
 
@@ -35,4 +36,5 @@ namespace fmg.uwp.res.img {
          get { return _bmp; }
       }
    }
+
 }

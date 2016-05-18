@@ -95,13 +95,6 @@ namespace fmg.common {
             (byte)(clr.B*tmp)); // (byte)Math.Min(clr.B*tmp, byte.MaxValue),
       }
 
-#if WINDOWS_RT || WINDOWS_UWP
-      public static Color ToFmColor(this Windows.UI.Color self) { return new Color(self.A, self.R, self.G, self.B); }
-      public static Windows.UI.Color ToWinColor(this Color self) { return new Windows.UI.Color { A = self.A, B = self.B, G = self.G, R = self.R }; }
-#elif WINDOWS_FORMS
-      ...
-#else
-      ...
-#endif
    }
+
 }

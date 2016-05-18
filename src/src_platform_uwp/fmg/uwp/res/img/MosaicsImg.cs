@@ -9,7 +9,8 @@ using fmg.core.types;
 using fmg.core.mosaic.draw;
 using fmg.uwp.draw;
 using fmg.uwp.draw.mosaic.bmp;
-using FastMines.Common;
+using fmg.Common;
+using fmg.uwp.utils;
 
 namespace fmg.uwp.res.img {
 
@@ -31,11 +32,15 @@ namespace fmg.uwp.res.img {
 
       public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(mosaicType, sizeField, widthAndHeight, padding)
-      { }
+      {
+         OnlySyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+      }
 
       public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding)
          : base(mosaicType, sizeField, sizeImage, padding)
-      { }
+      {
+         OnlySyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+      }
 
       private ICellPaint<PaintableBmp> _cellPaint;
       public override ICellPaint<PaintableBmp> CellPaint {

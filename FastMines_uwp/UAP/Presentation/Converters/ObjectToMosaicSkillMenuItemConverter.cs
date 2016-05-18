@@ -1,8 +1,8 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
-using FastMines.Presentation.Controls;
+using fmg.common.Controls;
 
-namespace FastMines.Presentation.Converters {
+namespace fmg.common.Converters {
 
    public class ObjectToMosaicSkillMenuItemConverter : IValueConverter {
       public object Convert(object value, Type targetType, object parameter, string language) {

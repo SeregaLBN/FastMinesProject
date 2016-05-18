@@ -31,14 +31,7 @@ namespace fmg.common.geom {
          Y += h;
          return this;
       }
+
    }
 
-   public static class PointExt {
-#if WINDOWS_RT || WINDOWS_UWP
-      public static Point ToFmRect(this Windows.Foundation.Point self) { return new Point((int)self.X, (int)self.Y); }
-      public static Windows.Foundation.Point ToWinPoint(this Point self) { return new Windows.Foundation.Point { X = self.X, Y = self.Y }; }
-#elif WINDOWS_FORMS
-      ...
-#endif
-   }
 }

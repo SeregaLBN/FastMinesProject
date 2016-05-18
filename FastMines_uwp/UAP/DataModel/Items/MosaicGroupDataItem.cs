@@ -5,7 +5,7 @@ using fmg.common.geom;
 using fmg.core.types;
 using fmg.uwp.res.img;
 
-namespace FastMines.DataModel.Items {
+namespace fmg.DataModel.Items {
 
    /// <summary> Mosaic group item for data model </summary>
    public class MosaicGroupDataItem : BaseData<EMosaicGroup> {

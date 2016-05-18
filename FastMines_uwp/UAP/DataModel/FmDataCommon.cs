@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using FastMines.Presentation.Notyfier;
+using fmg.common.notyfier;
 
 // The data model defined by this file serves as a representative example of a strongly-typed
 // model that supports notification when members are added, removed, or modified.  The property
@@ -10,7 +10,7 @@ using FastMines.Presentation.Notyfier;
 // Applications may use this model as a starting point and build on it, or discard it entirely and
 // replace it with something appropriate to their needs.
 
-namespace FastMines.Data {
+namespace fmg.Data {
    /// <summary>
    /// Base class for <see cref="FmDataItem"/> and <see cref="FmDataGroup"/> that defines properties common to both.
    /// </summary>

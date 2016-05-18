@@ -34,16 +34,7 @@ namespace fmg.common.geom {
          Y += h;
          return this;
       }
-   }
 
-
-   public static class PointDoubleExt {
-#if WINDOWS_RT || WINDOWS_UWP
-      public static PointDouble ToFmRectDouble(this Windows.Foundation.Point self) { return new PointDouble(self.X, self.Y); }
-      public static Windows.Foundation.Point ToWinPoint(this PointDouble self) { return new Windows.Foundation.Point { X = self.X, Y = self.Y }; }
-#elif WINDOWS_FORMS
-      ...
-#endif
    }
 
 }

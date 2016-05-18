@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Input;
-using FastMines.DataModel.DataSources;
-using FastMines.Presentation.Notyfier;
+using fmg.DataModel.DataSources;
+using fmg.common.notyfier;
 
-namespace FastMines.Presentation {
+namespace fmg.common {
 
    /// <summary> ViewModel for main page </summary>
    public class ShellViewModel : NotifyPropertyChanged, IDisposable {

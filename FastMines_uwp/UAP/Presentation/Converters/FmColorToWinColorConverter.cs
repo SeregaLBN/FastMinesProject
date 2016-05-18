@@ -1,8 +1,8 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
-using fmg.common;
+using fmg.uwp.utils;
 
-namespace FastMines.Presentation.Converters {
+namespace fmg.common.Converters {
 
    /// <summary> Convert 'fmg.common.Color' to 'Windows.UI.Color' </summary>
    public sealed class FmColorToWinColorConverter : IValueConverter {

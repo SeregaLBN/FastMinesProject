@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml.Controls;
 
-namespace FastMines.Pages
+namespace fmg.Pages
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

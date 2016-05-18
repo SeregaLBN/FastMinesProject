@@ -1,8 +1,8 @@
 ﻿using System;
-using FastMines.DataModel.DataSources;
-using FastMines.Presentation.Notyfier;
+using fmg.DataModel.DataSources;
+using fmg.common.notyfier;
 
-namespace FastMines.Presentation {
+namespace fmg.common {
 
    /// <summary> ViewModel for SelectMosaicPage </summary>
    public class MosaicsViewModel : NotifyPropertyChanged, IDisposable {

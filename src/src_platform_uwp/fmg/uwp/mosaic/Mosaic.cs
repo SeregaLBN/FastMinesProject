@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
-using FastMines.Common;
-using fmg.common;
+using fmg.Common;
 using fmg.common.geom;
+using fmg.common.notyfier;
 using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.mosaic.draw;
@@ -17,7 +17,7 @@ using fmg.data.view.draw;
 using fmg.uwp.draw;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.mosaic.xaml;
-using FastMines.Presentation.Notyfier;
+using fmg.uwp.utils;
 
 namespace fmg.uwp.mosaic {
    public class Mosaic : MosaicBase<PaintableShapes> {

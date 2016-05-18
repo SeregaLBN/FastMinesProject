@@ -1,3 +1,11 @@
+namespace fmg.common.crypt {
+   public interface I3DES {
+      // TODO
+      byte[] Encrypt(byte[] data);
+      byte[] Decrypt(byte[] data);
+   }
+}
+/*
 #if WINDOWS_RT || WINDOWS_UWP
 using System;
 using Windows.Security.Cryptography;
@@ -207,3 +215,4 @@ namespace IBox.Client.Common.Crypto
     }
 }
 #endif
+*/

@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
 
-namespace FastMines.Presentation.Converters {
+namespace fmg.common.Converters {
 
    public class ImageSizeOpenPaneConverter : IValueConverter {
       private static int Addition = Shell.MenuTextWidth + 12 /* https://msdn.microsoft.com/en-us/library/system.windows.systemparameters.verticalscrollbarwidth.aspx */;

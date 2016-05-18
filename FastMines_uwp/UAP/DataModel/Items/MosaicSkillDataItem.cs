@@ -5,7 +5,7 @@ using fmg.common.geom;
 using fmg.data.controller.types;
 using fmg.uwp.res.img;
 
-namespace FastMines.DataModel.Items {
+namespace fmg.DataModel.Items {
 
    /// <summary> Mosaic skill level item for data model </summary>
    public class MosaicSkillDataItem : BaseData<ESkillLevel> {

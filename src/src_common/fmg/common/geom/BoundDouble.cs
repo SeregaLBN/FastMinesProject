@@ -2,6 +2,7 @@
 
    /// <summary> Padding / Margin </summary>
    public struct BoundDouble {
+
       public BoundDouble(double left, double top, double right, double bottom) {
          Left = left;
          Top = top;

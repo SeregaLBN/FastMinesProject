@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
 
-namespace FastMines.Presentation.Converters {
+namespace fmg.common.Converters {
    /// <summary> Add to image size margined 1 pixel left/top  and 1 pixel right/bottom </summary>
    public class ImageSizeWithMarginConverter : IValueConverter {
       private static int Addition = 2;

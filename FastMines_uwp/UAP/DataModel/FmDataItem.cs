@@ -2,7 +2,7 @@ using System;
 using Windows.ApplicationModel;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
-using FastMines.Common;
+using fmg.Common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.uwp.res;
@@ -15,7 +15,7 @@ using fmg.uwp.res.img;
 // Applications may use this model as a starting point and build on it, or discard it entirely and
 // replace it with something appropriate to their needs.
 
-namespace FastMines.Data {
+namespace fmg.Data {
 
    /// <summary> Generic item data model. </summary>
    public class FmDataItem : FmDataCommon<EMosaic> {
