@@ -1,0 +1,298 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6DAC4754-D2AA-480A-9FA7-21F0F3C57FD8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FastMines.Core</RootNamespace>
+    <AssemblyName>FastMines.Core</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
+    <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <PlatformTarget>ARM</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <PlatformTarget>ARM</PlatformTarget>
+    <OutputPath>bin\ARM\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Properties\FastMines.Core.rd.xml" />
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\draw\ICellPaint.cs">
+      <Link>src_fmg.core\mosaic\draw\ICellPaint.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\draw\IPaintable.cs">
+      <Link>src_fmg.core\mosaic\draw\IPaintable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\IMosaic.cs">
+      <Link>src_fmg.core\mosaic\IMosaic.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicBase.cs">
+      <Link>src_fmg.core\mosaic\MosaicBase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\MosaicsSkillImg.cs">
+      <Link>src_fmg.core\img\MosaicsSkillImg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\PolarLightsImg.cs">
+      <Link>src_fmg.core\img\PolarLightsImg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\RotatedImg.cs">
+      <Link>src_fmg.core\img\RotatedImg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\StaticImg.cs">
+      <Link>src_fmg.core\img\StaticImg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\types\EGameStatus.cs">
+      <Link>src_fmg.core\types\EGameStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\types\EPlayInfo.cs">
+      <Link>src_fmg.core\types\EPlayInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\types\EClose.cs">
+      <Link>src_fmg.core\types\EClose.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\types\EMosaic.cs">
+      <Link>src_fmg.core\types\EMosaic.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\types\EMosaicGroup.cs">
+      <Link>src_fmg.core\types\EMosaicGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\types\EOpen.cs">
+      <Link>src_fmg.core\types\EOpen.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\types\EState.cs">
+      <Link>src_fmg.core\types\EState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Hexagon1.cs">
+      <Link>src_fmg.core\mosaic\cells\Hexagon1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Parquet1.cs">
+      <Link>src_fmg.core\mosaic\cells\Parquet1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Parquet2.cs">
+      <Link>src_fmg.core\mosaic\cells\Parquet2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\PenrousePeriodic1.cs">
+      <Link>src_fmg.core\mosaic\cells\PenrousePeriodic1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\PentagonT10.cs">
+      <Link>src_fmg.core\mosaic\cells\PentagonT10.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\PentagonT24.cs">
+      <Link>src_fmg.core\mosaic\cells\PentagonT24.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\PentagonT5.cs">
+      <Link>src_fmg.core\mosaic\cells\PentagonT5.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Quadrangle1.cs">
+      <Link>src_fmg.core\mosaic\cells\Quadrangle1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Rhombus1.cs">
+      <Link>src_fmg.core\mosaic\cells\Rhombus1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\SqTrHex.cs">
+      <Link>src_fmg.core\mosaic\cells\SqTrHex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Square1.cs">
+      <Link>src_fmg.core\mosaic\cells\Square1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Square2.cs">
+      <Link>src_fmg.core\mosaic\cells\Square2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Trapezoid1.cs">
+      <Link>src_fmg.core\mosaic\cells\Trapezoid1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Trapezoid2.cs">
+      <Link>src_fmg.core\mosaic\cells\Trapezoid2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Trapezoid3.cs">
+      <Link>src_fmg.core\mosaic\cells\Trapezoid3.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Triangle1.cs">
+      <Link>src_fmg.core\mosaic\cells\Triangle1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Triangle2.cs">
+      <Link>src_fmg.core\mosaic\cells\Triangle2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Triangle3.cs">
+      <Link>src_fmg.core\mosaic\cells\Triangle3.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\Triangle4.cs">
+      <Link>src_fmg.core\mosaic\cells\Triangle4.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\TrSq1.cs">
+      <Link>src_fmg.core\mosaic\cells\TrSq1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\TrSq2.cs">
+      <Link>src_fmg.core\mosaic\cells\TrSq2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\MosaicsGroupImg.cs">
+      <Link>src_fmg.core\img\MosaicsGroupImg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\MosaicsImg.cs">
+      <Link>src_fmg.core\img\MosaicsImg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\types\click\ClickCellResult.cs">
+      <Link>src_fmg.core\types\click\ClickCellResult.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\types\click\ClickResult.cs">
+      <Link>src_fmg.core\types\click\ClickResult.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\BaseCell.cs">
+      <Link>src_fmg.core\mosaic\cells\BaseCell.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicHelper.cs">
+      <Link>src_fmg.core\mosaic\MosaicHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_data\fmg\data\view\draw\ColorText.cs">
+      <Link>src_fmg.data\view\draw\ColorText.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_data\fmg\data\controller\types\ESkillLevel.cs">
+      <Link>src_fmg.data\controller\types\ESkillLevel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_data\fmg\data\controller\serializable\ChampionsModel.cs">
+      <Link>src_fmg.data\controller\serializable\ChampionsModel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_data\fmg\data\controller\serializable\PlayersModel.cs">
+      <Link>src_fmg.data\controller\serializable\PlayersModel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_data\fmg\data\controller\serializable\StatisticCounts.cs">
+      <Link>src_fmg.data\controller\serializable\StatisticCounts.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_data\fmg\data\controller\event\ActionToUser.cs">
+      <Link>src_fmg.data\controller\event\ActionToUser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_data\fmg\data\controller\event\ChampionModelEvent.cs">
+      <Link>src_fmg.data\controller\event\ChampionModelEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_data\fmg\data\controller\event\PlayerModelEvent.cs">
+      <Link>src_fmg.data\controller\event\PlayerModelEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_data\fmg\data\controller\types\User.cs">
+      <Link>src_fmg.data\controller\types\User.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_data\fmg\data\view\draw\EShowElement.cs">
+      <Link>src_fmg.data\view\draw\EShowElement.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_data\fmg\data\view\draw\EZoomInterface.cs">
+      <Link>src_fmg.data\view\draw\EZoomInterface.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_data\fmg\data\view\draw\PenBorder.cs">
+      <Link>src_fmg.data\view\draw\PenBorder.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FastMines.Common\FastMines.Common.csproj">
+      <Project>{64de4ce5-15e4-4aa3-ae28-741ee3f9e0d1}</Project>
+      <Name>FastMines.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
+    <VisualStudioVersion>14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>rd /s /q $(ProjectDir)src_fmg.core
+rd /s /q $(ProjectDir)src_fmg.data
+mklink /j $(ProjectDir)src_fmg.core   $(SolutionDir)..\src\src_core\fmg\core
+mklink /j $(ProjectDir)src_fmg.data   $(SolutionDir)..\src\src_data\fmg\data</PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
