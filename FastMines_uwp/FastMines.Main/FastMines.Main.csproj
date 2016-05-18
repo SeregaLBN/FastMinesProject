@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -686,9 +686,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BackgroundTasks\BackgroundTasks.csproj">
+    <ProjectReference Include="..\FastMines.BackgroundTasks\FastMines.BackgroundTasks.csproj">
       <Project>{4f75c36e-7157-449f-9686-dea20f83bbdb}</Project>
-      <Name>BackgroundTasks</Name>
+      <Name>FastMines.BackgroundTasks</Name>
     </ProjectReference>
     <ProjectReference Include="..\FastMines.Common\FastMines.Common.csproj">
       <Project>{4132c01a-1666-4f2e-b0a7-59285953f4b6}</Project>
