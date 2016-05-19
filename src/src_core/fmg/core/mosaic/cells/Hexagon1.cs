@@ -23,6 +23,7 @@
 
 using System;
 using fmg.common.geom;
+using System.Collections.Generic;
 
 namespace fmg.core.mosaic.cells {
 
@@ -67,8 +68,8 @@ public class Hexagon1 : BaseCell {
 
 	private new AttrHexagon1 Attr => (AttrHexagon1) base.Attr;
 
-   protected override Coord?[] GetCoordsNeighbor() {
-		var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
+   protected override IList<Coord> GetCoordsNeighbor() {
+		var neighborCoord = new Coord[Attr.getNeighborNumber(true)];
 
 		// определяю координаты соседей
 		neighborCoord[0] = new Coord(coord.x-(direction^1), coord.y-1);

@@ -24,6 +24,7 @@
 using System;
 using fmg.common;
 using fmg.common.geom;
+using System.Collections.Generic;
 
 namespace fmg.core.mosaic.cells {
 
@@ -67,7 +68,7 @@ public class PentagonT10 : BaseCell {
       public override int getNeighborNumber(bool max) { return max ? 7 : 6; }
 		public override int getNeighborNumber(int direction) {
 			switch (direction) {
-			case 0: case 1: case 6: case 7: return 7;                              
+			case 0: case 1: case 6: case 7: return 7;
 			case 2: case 3: case 4: case 5: case 8: case 9: case 10: case 11: return 6;
 			default:
 				throw new ArgumentException("Invalid value direction=" + direction);
@@ -82,7 +83,7 @@ public class PentagonT10 : BaseCell {
 				double sum = 0;
 				for (var dir =0; dir<cntDirection; dir++)
 					switch (dir) {
-					case 0: case 1: case 6: case 7:                              
+					case 0: case 1: case 6: case 7:
 						sum += 3;
 						break;
 					case 2: case 3: case 4: case 5: case 8: case 9: case 10: case 11:
@@ -118,8 +119,8 @@ public class PentagonT10 : BaseCell {
 
 	private new AttrPentagonT10 Attr => (AttrPentagonT10) base.Attr;
 
-   protected override Coord?[] GetCoordsNeighbor() {
-		var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
+   protected override IList<Coord> GetCoordsNeighbor() {
+		var neighborCoord = new Coord[Attr.getNeighborNumber(true)];
 
 		// определяю координаты соседей
 		switch (direction) {
@@ -131,8 +132,8 @@ public class PentagonT10 : BaseCell {
 			neighborCoord[4] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[5] = new Coord(coord.x+1, coord.y+1);
 			neighborCoord[6] = new Coord(coord.x-1, coord.y+2);
-			break;                              
-		case 1:                                
+			break;
+		case 1:
 			neighborCoord[0] = new Coord(coord.x  , coord.y-2);
 			neighborCoord[1] = new Coord(coord.x-1, coord.y-1);
 			neighborCoord[2] = new Coord(coord.x  , coord.y-1);
@@ -140,44 +141,40 @@ public class PentagonT10 : BaseCell {
 			neighborCoord[4] = new Coord(coord.x-1, coord.y  );
 			neighborCoord[5] = new Coord(coord.x+1, coord.y  );
 			neighborCoord[6] = new Coord(coord.x  , coord.y+1);
-			break;                              
-		case 2:                                
+			break;
+		case 2: 
 			neighborCoord[0] = new Coord(coord.x  , coord.y-1);
 			neighborCoord[1] = new Coord(coord.x+1, coord.y  );
 			neighborCoord[2] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[3] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[4] = new Coord(coord.x+1, coord.y+1);
 			neighborCoord[5] = new Coord(coord.x  , coord.y+2);
-			neighborCoord[6] = null;
-			break;                              
-		case 3:                                
+			break;
+		case 3: 
 			neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
 			neighborCoord[1] = new Coord(coord.x  , coord.y-1);
 			neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
 			neighborCoord[3] = new Coord(coord.x-1, coord.y  );
 			neighborCoord[4] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[5] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[6] = null;
-			break;                              
-		case 4:                                
+			break;
+		case 4: 
 			neighborCoord[0] = new Coord(coord.x  , coord.y-1);
 			neighborCoord[1] = new Coord(coord.x+1, coord.y-1);
 			neighborCoord[2] = new Coord(coord.x+1, coord.y  );
 			neighborCoord[3] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[4] = new Coord(coord.x+1, coord.y+1);
 			neighborCoord[5] = new Coord(coord.x+2, coord.y+1);
-         neighborCoord[6] = null;
-			break;                              
-		case 5:                                
+			break;
+		case 5:
 			neighborCoord[0] = new Coord(coord.x+1, coord.y-2);
 			neighborCoord[1] = new Coord(coord.x-1, coord.y-1);
 			neighborCoord[2] = new Coord(coord.x  , coord.y-1);
 			neighborCoord[3] = new Coord(coord.x+1, coord.y-1);
 			neighborCoord[4] = new Coord(coord.x-1, coord.y  );
 			neighborCoord[5] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[6] = null;
-			break;                              
-		case 6:                                
+			break;
+		case 6:
 			neighborCoord[0] = new Coord(coord.x  , coord.y-2);
 			neighborCoord[1] = new Coord(coord.x-2, coord.y-1);
 			neighborCoord[2] = new Coord(coord.x-1, coord.y-1);
@@ -185,8 +182,8 @@ public class PentagonT10 : BaseCell {
 			neighborCoord[4] = new Coord(coord.x-1, coord.y  );
 			neighborCoord[5] = new Coord(coord.x+1, coord.y  );
 			neighborCoord[6] = new Coord(coord.x  , coord.y+1);
-			break;                              
-		case 7:                                
+			break;
+		case 7:
 			neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
 			neighborCoord[1] = new Coord(coord.x-1, coord.y  );
 			neighborCoord[2] = new Coord(coord.x+1, coord.y  );
@@ -194,42 +191,38 @@ public class PentagonT10 : BaseCell {
 			neighborCoord[4] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[5] = new Coord(coord.x+1, coord.y+1);
 			neighborCoord[6] = new Coord(coord.x  , coord.y+2);
-			break;                              
-		case 8:                                
+			break;
+		case 8:
 			neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
 			neighborCoord[1] = new Coord(coord.x  , coord.y-1);
 			neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
 			neighborCoord[3] = new Coord(coord.x+1, coord.y  );
 			neighborCoord[4] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[5] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[6] = null;
-			break;                              
-		case 9:                                
+			break;
+		case 9:
 			neighborCoord[0] = new Coord(coord.x  , coord.y-1);
 			neighborCoord[1] = new Coord(coord.x-1, coord.y  );
 			neighborCoord[2] = new Coord(coord.x-2, coord.y+1);
 			neighborCoord[3] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[4] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[5] = new Coord(coord.x  , coord.y+2);
-			neighborCoord[6] = null;
-			break;                              
-		case 10:                               
+			break;
+		case 10:
 			neighborCoord[0] = new Coord(coord.x  , coord.y-1);
 			neighborCoord[1] = new Coord(coord.x+1, coord.y-1);
 			neighborCoord[2] = new Coord(coord.x-1, coord.y  );
 			neighborCoord[3] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[4] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[5] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[6] = null;
-			break;                              
-		case 11:                               
+			break;
+		case 11:
 			neighborCoord[0] = new Coord(coord.x  , coord.y-2);
 			neighborCoord[1] = new Coord(coord.x  , coord.y-1);
 			neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
 			neighborCoord[3] = new Coord(coord.x+2, coord.y-1);
 			neighborCoord[4] = new Coord(coord.x+1, coord.y  );
 			neighborCoord[5] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[6] = null;
 			break;
 		}
 

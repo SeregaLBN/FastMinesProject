@@ -24,6 +24,7 @@
 using System;
 using fmg.common;
 using fmg.common.geom;
+using System.Collections.Generic;
 
 namespace fmg.core.mosaic.cells {
 
@@ -82,8 +83,8 @@ public class Rhombus1 : BaseCell {
 
 	private new AttrRhombus1 Attr => (AttrRhombus1) base.Attr;
 
-   protected override Coord?[] GetCoordsNeighbor() {
-      var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
+   protected override IList<Coord> GetCoordsNeighbor() {
+      var neighborCoord = new Coord[Attr.getNeighborNumber(true)];
 
 		// определяю координаты соседей
     	switch (direction) {

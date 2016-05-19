@@ -181,6 +181,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       // set other CellOpen and set all Caption
       getMatrix().forEach(cell -> cell.getState().calcOpenState(this));
    }
+
    /** arrange Mines - set random mines */
    public void setMines_random(BaseCell firstClickCell) {
       if (_minesCount == 0)
@@ -402,13 +403,12 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
          }
          Repaint(cellLeftDown);
          result.modified.add(cellLeftDown);
-         return result;
       } else {
          ClickCellResult resultCell = cellLeftDown.LButtonDown(this);
          result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
          result.modified.forEach(cell -> Repaint(cell));
-         return result;
       }
+      return result;
    }
 
    protected ClickResult onLeftButtonUp(BaseCell cellLeftUp) {

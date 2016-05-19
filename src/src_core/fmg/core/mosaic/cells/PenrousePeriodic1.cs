@@ -24,6 +24,7 @@
 using System;
 using fmg.common;
 using fmg.common.geom;
+using System.Collections.Generic;
 
 namespace fmg.core.mosaic.cells {
 
@@ -207,10 +208,8 @@ public class PenrousePeriodic1 : BaseCell {
 
 	private new AttrPenrousePeriodic1 Attr => (AttrPenrousePeriodic1) base.Attr;
 
-   protected override Coord?[] GetCoordsNeighbor() {
-		var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
-    	for (int i=0; i<neighborCoord.Length; i++)
-			neighborCoord[i] = null;
+   protected override IList<Coord> GetCoordsNeighbor() {
+		var neighborCoord = new Coord[Attr.getNeighborNumber(true)];
 
 		// определяю координаты соседей
     	switch (direction) {

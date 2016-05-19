@@ -23,7 +23,8 @@
 
 using System;
 using fmg.common.geom;
- 
+using System.Collections.Generic;
+
 namespace fmg.core.mosaic.cells {
 
 /// <summary> Комбинация. мозаика из 24х треугольников и 12х квадратов (на 1 квадрат приходится 2 треугольника) </summary>
@@ -122,8 +123,8 @@ public class TrSq2 : BaseCell {
 
 	private new AttrTrSq2 Attr => (AttrTrSq2) base.Attr;
 
-   protected override Coord?[] GetCoordsNeighbor() {
-      var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
+   protected override IList<Coord> GetCoordsNeighbor() {
+      var neighborCoord = new Coord[Attr.getNeighborNumber(true)];
 
 		// определяю координаты соседей
 		switch (direction) {
@@ -153,9 +154,6 @@ public class TrSq2 : BaseCell {
 			neighborCoord[ 6] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 2:
 		case 23:
@@ -168,9 +166,6 @@ public class TrSq2 : BaseCell {
 			neighborCoord[ 6] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 3:
 		case 18:
@@ -198,9 +193,6 @@ public class TrSq2 : BaseCell {
 			neighborCoord[ 6] = new Coord(coord.x+1, coord.y+1);
 			neighborCoord[ 7] = new Coord(coord.x  , coord.y+2);
 			neighborCoord[ 8] = new Coord(coord.x+1, coord.y+2);
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 5:
 		case 20:
@@ -213,9 +205,6 @@ public class TrSq2 : BaseCell {
 			neighborCoord[ 6] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[ 8] = new Coord(coord.x  , coord.y+2);
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 6:
 		case 27:
@@ -228,9 +217,6 @@ public class TrSq2 : BaseCell {
 			neighborCoord[ 6] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[ 7] = new Coord(coord.x+1, coord.y+1);
 			neighborCoord[ 8] = new Coord(coord.x+2, coord.y+1);
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 7:
 		case 28:
@@ -258,9 +244,6 @@ public class TrSq2 : BaseCell {
 			neighborCoord[ 6] = new Coord(coord.x-2, coord.y  );
 			neighborCoord[ 7] = new Coord(coord.x-1, coord.y  );
 			neighborCoord[ 8] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 9:
 		case 24:
@@ -273,9 +256,6 @@ public class TrSq2 : BaseCell {
 			neighborCoord[ 6] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 10:
 		case 25:
@@ -303,9 +283,6 @@ public class TrSq2 : BaseCell {
 			neighborCoord[ 6] = new Coord(coord.x+1, coord.y  );
 			neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 12:
 		case 33:
@@ -318,9 +295,6 @@ public class TrSq2 : BaseCell {
 			neighborCoord[ 6] = new Coord(coord.x+2, coord.y  );
 			neighborCoord[ 7] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[ 8] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 13:
 		case 34:
@@ -333,9 +307,6 @@ public class TrSq2 : BaseCell {
 			neighborCoord[ 6] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 14:
 		case 35:
@@ -363,9 +334,6 @@ public class TrSq2 : BaseCell {
 			neighborCoord[ 6] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[ 7] = new Coord(coord.x+1, coord.y+1);
 			neighborCoord[ 8] = new Coord(coord.x-1, coord.y+2);
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 16:
 		case 31:
@@ -378,9 +346,6 @@ public class TrSq2 : BaseCell {
 			neighborCoord[ 6] = new Coord(coord.x-1, coord.y  );
 			neighborCoord[ 7] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[ 8] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 17:
 		case 32:

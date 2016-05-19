@@ -23,7 +23,8 @@
 
 using System;
 using fmg.common.geom;
- 
+using System.Collections.Generic;
+
 namespace fmg.core.mosaic.cells {
 
 /// <summary> Комбинация. Мозаика из 4х треугольников и 2х квадратов </summary>
@@ -93,8 +94,8 @@ public class TrSq1 : BaseCell {
 
 	private new AttrTrSq1 Attr => (AttrTrSq1) base.Attr;
 
-   protected override Coord?[] GetCoordsNeighbor() {
-      var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
+   protected override IList<Coord> GetCoordsNeighbor() {
+      var neighborCoord = new Coord[Attr.getNeighborNumber(true)];
 
 		// определяю координаты соседей
     	switch (direction) {
@@ -122,9 +123,6 @@ public class TrSq1 : BaseCell {
     		neighborCoord[ 6] = new Coord(coord.x+2, coord.y  );
     		neighborCoord[ 7] = new Coord(coord.x-1, coord.y+1);
     		neighborCoord[ 8] = new Coord(coord.x  , coord.y+1);
-    		neighborCoord[ 9] =
-    		neighborCoord[10] =
-    		neighborCoord[11] = null;
     		break;
     	case 2:
     		neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
@@ -136,9 +134,6 @@ public class TrSq1 : BaseCell {
     		neighborCoord[ 6] = new Coord(coord.x-1, coord.y+1);
     		neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
     		neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
-    		neighborCoord[ 9] =  
-    		neighborCoord[10] =
-    		neighborCoord[11] = null;
     		break;
     	case 3:
     		neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
@@ -150,9 +145,6 @@ public class TrSq1 : BaseCell {
     		neighborCoord[ 6] = new Coord(coord.x+1, coord.y  );
     		neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
     		neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
-    		neighborCoord[ 9] =
-    		neighborCoord[10] =
-    		neighborCoord[11] = null;
     		break;
     	case 4:
     		neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
@@ -178,9 +170,6 @@ public class TrSq1 : BaseCell {
     		neighborCoord[ 6] = new Coord(coord.x  , coord.y+1);
     		neighborCoord[ 7] = new Coord(coord.x+1, coord.y+1);
     		neighborCoord[ 8] = new Coord(coord.x+2, coord.y+1);
-    		neighborCoord[ 9] =
-    		neighborCoord[10] =
-    		neighborCoord[11] = null;
     		break;
     	}
 

@@ -23,7 +23,8 @@
 
 using System;
 using fmg.common.geom;
- 
+using System.Collections.Generic;
+
 namespace fmg.core.mosaic.cells {
 
 /// <summary> Треугольник. Вариант 4 - треугольник 30°-30°-120° </summary>
@@ -175,8 +176,8 @@ public class Triangle4 : BaseCell {
 
    private new AttrTriangle4 Attr => (AttrTriangle4) base.Attr;
 
-   protected override Coord?[] GetCoordsNeighbor() {
-      var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
+   protected override IList<Coord> GetCoordsNeighbor() {
+      var neighborCoord = new Coord[Attr.getNeighborNumber(true)];
 
       // определяю координаты соседей
       switch (AttrTriangle4.Mode) {

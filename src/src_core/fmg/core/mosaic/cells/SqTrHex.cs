@@ -23,6 +23,7 @@
 
 using System;
 using fmg.common.geom;
+using System.Collections.Generic;
 
 namespace fmg.core.mosaic.cells {
 
@@ -106,8 +107,8 @@ public class SqTrHex : BaseCell {
 
 	private new AttrSqTrHex Attr => (AttrSqTrHex) base.Attr;
 
-   protected override Coord?[] GetCoordsNeighbor() {
-      var neighborCoord = new Coord?[Attr.getNeighborNumber(true)];
+   protected override IList<Coord> GetCoordsNeighbor() {
+      var neighborCoord = new Coord[Attr.getNeighborNumber(true)];
 
 		// определяю координаты соседей
 		switch (direction) {
@@ -118,12 +119,6 @@ public class SqTrHex : BaseCell {
 			neighborCoord[ 3] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[ 4] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[ 5] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[ 6] =
-			neighborCoord[ 7] =
-			neighborCoord[ 8] =
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 1:
 			neighborCoord[ 0] = new Coord(coord.x-2, coord.y-1);
@@ -134,10 +129,6 @@ public class SqTrHex : BaseCell {
 			neighborCoord[ 5] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[ 6] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[ 7] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[ 8] =
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 2:
 			neighborCoord[ 0] = new Coord(coord.x-3, coord.y-1);
@@ -146,12 +137,6 @@ public class SqTrHex : BaseCell {
 			neighborCoord[ 3] = new Coord(coord.x-1, coord.y  );
 			neighborCoord[ 4] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[ 5] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[ 6] =
-			neighborCoord[ 7] =
-			neighborCoord[ 8] =
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 3:
 			neighborCoord[ 0] = new Coord(coord.x  , coord.y-1);
@@ -162,10 +147,6 @@ public class SqTrHex : BaseCell {
 			neighborCoord[ 5] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[ 6] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[ 7] = new Coord(coord.x  , coord.y+2);
-			neighborCoord[ 8] =
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 4:
 			neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
@@ -190,10 +171,6 @@ public class SqTrHex : BaseCell {
 			neighborCoord[ 5] = new Coord(coord.x+2, coord.y-1);
 			neighborCoord[ 6] = new Coord(coord.x-1, coord.y  );
 			neighborCoord[ 7] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[ 8] =
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 6:
 			neighborCoord[ 0] = new Coord(coord.x-2, coord.y-1);
@@ -202,12 +179,6 @@ public class SqTrHex : BaseCell {
 			neighborCoord[ 3] = new Coord(coord.x-1, coord.y  );
 			neighborCoord[ 4] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[ 5] = new Coord(coord.x  , coord.y+1);
-			neighborCoord[ 6] =
-			neighborCoord[ 7] =
-			neighborCoord[ 8] =
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 7:
 			neighborCoord[ 0] = new Coord(coord.x  , coord.y-1);
@@ -216,12 +187,6 @@ public class SqTrHex : BaseCell {
 			neighborCoord[ 3] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[ 4] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[ 5] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[ 6] =
-			neighborCoord[ 7] =
-			neighborCoord[ 8] =
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 8:
 			neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
@@ -232,10 +197,6 @@ public class SqTrHex : BaseCell {
 			neighborCoord[ 5] = new Coord(coord.x-1, coord.y+1);
 			neighborCoord[ 6] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[ 7] = new Coord(coord.x+1, coord.y+1);
-			neighborCoord[ 8] =
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 9:
 			neighborCoord[ 0] = new Coord(coord.x  , coord.y-2);
@@ -246,10 +207,6 @@ public class SqTrHex : BaseCell {
 			neighborCoord[ 5] = new Coord(coord.x+2, coord.y-1);
 			neighborCoord[ 6] = new Coord(coord.x-1, coord.y  );
 			neighborCoord[ 7] = new Coord(coord.x+1, coord.y  );
-			neighborCoord[ 8] =
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 10:
 			neighborCoord[ 0] = new Coord(coord.x  , coord.y-1);
@@ -260,10 +217,6 @@ public class SqTrHex : BaseCell {
 			neighborCoord[ 5] = new Coord(coord.x  , coord.y+1);
 			neighborCoord[ 6] = new Coord(coord.x+1, coord.y+1);
 			neighborCoord[ 7] = new Coord(coord.x+1, coord.y+2);
-			neighborCoord[ 8] =
-			neighborCoord[ 9] =
-			neighborCoord[10] =
-			neighborCoord[11] = null;
 			break;
 		case 11:
 			neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);

@@ -70,6 +70,7 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
             return;
          if (value != null)
             throw new ArgumentException("Bad argument - support only null value!");
+         _cellAttr.PropertyChanged -= OnCellAttributePropertyChanged;
          _cellAttr = null;
          OnPropertyChanged();
       }
@@ -93,11 +94,8 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
             for (var i = 0; i < size.m; i++)
                for (var j = 0; j < size.n; j++) {
                   var cell = MosaicHelper.CreateCellInstance(attr, mosaicType, new Coord(i, j));
-                  Matrix.Add( /*i*size.height + j, */cell);
+                  _matrix.Add( /*i*size.height + j, */cell);
                }
-
-            foreach (var cell in _matrix)
-               cell.IdentifyNeighbors(this);
          }
          return _matrix;
       }
@@ -167,17 +165,18 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
       }
       // set other CellOpen and set all Caption
       foreach (var cell in Matrix)
-         cell.State.CalcOpenState();
+         cell.State.CalcOpenState(this);
    }
+
    /// <summary>arrange Mines - set random mines</summary>
    public void setMines_random(BaseCell firstClickCell) {
       if (_minesCount == 0)
          _minesCount = _oldMinesCount;
          
-      var firstClickNeighbors = firstClickCell.Neighbors;
       var matrixClone = new List<BaseCell>(Matrix);
       matrixClone.Remove(firstClickCell); // исключаю на которой кликал юзер
-      matrixClone.RemoveAll( x => firstClickNeighbors.Contains(x) ); // и их соседей
+      foreach (var x in firstClickCell.GetNeighbors(this))
+         matrixClone.Remove(x); // и их соседей
       var count = 0;
       var rand = new Random(Guid.NewGuid().GetHashCode());
       do {
@@ -198,7 +197,7 @@ public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TP
 
       // set other CellOpen and set all Caption
       foreach (var cell in Matrix)
-         cell.State.CalcOpenState();
+         cell.State.CalcOpenState(this);
    }
 
    public int CountOpen { get { return Matrix.Count(x => x.State.Status == EState._Open); } }
@@ -354,7 +353,7 @@ return;
             Repaint(cellLeftDown);
             result.Modified.Add(cellLeftDown);
          } else {
-            var resultCell = cellLeftDown.LButtonDown();
+            var resultCell = cellLeftDown.LButtonDown(this);
             result.Modified = resultCell.Modified; // copy reference; TODO result.Modified.AddRange(resultCell.Modified);
             result.Modified.ForEach(Repaint);
          }
@@ -379,7 +378,7 @@ return;
          {
             GameBegin(CellDown);
          }
-         var resultCell = cellDown.LButtonUp(ReferenceEquals(cellDown, cellLeftUp));
+         var resultCell = cellDown.LButtonUp(ReferenceEquals(cellDown, cellLeftUp), this);
          result.Modified = resultCell.Modified; // copy reference; TODO result.Modified.AddRange(resultCell.Modified);
          tracer.Put(" result.Modified=" + result.Modified.Count);
          result.Modified.ForEach(Repaint);
@@ -587,7 +586,7 @@ return;
          Repaint(null);
       }
       OnPropertyChanged("CellAttr");
-      OnPropertyChanged("CellAttr." + ev.PropertyName);
+      OnPropertyChanged("CellAttr." + pn);
    }
 }
 }

@@ -130,7 +130,6 @@ public abstract class BaseCell {
       return attr;
    }
 
-//    CellContext cellContext;
    protected Coord coord;
    /** направление - 'третья координата' ячейки */
    protected int direction;
@@ -226,11 +225,7 @@ public abstract class BaseCell {
       CalcRegion();
    }
 
-   /**
-    * Coord[] neighborCoord = new Coord[attr.getNeighborNumber()];
-    * <br>... потомки должны определить координаты соседей
-    * @return neighborCoord
-    */
+   /** координаты соседей */
    protected abstract List<Coord> getCoordsNeighbor();
 
    /** матрица ячеек поля мозаики */

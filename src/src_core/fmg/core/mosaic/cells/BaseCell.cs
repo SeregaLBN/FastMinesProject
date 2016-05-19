@@ -21,6 +21,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ////////////////////////////////////////////////////////////////////////////////
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using fmg.common;
@@ -109,7 +110,6 @@ public abstract class BaseCell {
    private readonly BaseAttribute attr;
    public BaseAttribute Attr { get { return attr; } }
 
-   //CellContext cellContext;
    protected Coord coord;
    /// <summary>направление - 'третья координата' ячейки</summary>
    protected int direction;
@@ -122,10 +122,6 @@ public abstract class BaseCell {
       rcOuter.Height++; rcOuter.Width++; // чтобы при repaint'е захватило и крайние границы
       return rcOuter;
    }
-
-   /// <summary>соседние ячейки - с которыми граничит this</summary>
-   private BaseCell[] neighbors;
-   public BaseCell[] Neighbors { get { return neighbors; } }
 
    /// <summary>массив координат точек из которых состоит фигура</summary>
    protected RegionDouble region;
@@ -141,39 +137,41 @@ public abstract class BaseCell {
       /// <summary>Нажата? Не путать с open! - ячейка может быть нажата, но ещё не открыта. Важно только для ф-ции прорисовки</summary>
       public bool Down { get; set; }
       public EState Status { get { return status; } set { status = value; } }
-      public void CalcOpenState() {
-          if (this.open == EOpen._Mine) return;
-          // подсчитать у соседей число мин и установить значение
-          var count = 0;
-          foreach(var nCell in owner.neighbors) {
+      public void CalcOpenState(IMatrixCells matrix) {
+         if (this.open == EOpen._Mine) return;
+         // подсчитать у соседей число мин и установить значение
+         var count = 0;
+         var neighbors = owner.GetNeighbors(matrix);
+         foreach (var nCell in neighbors) {
              if (nCell == null) continue; // существует ли сосед?
              if (nCell.state.open == EOpen._Mine) count++;
-          }
-          open = EOpenEx.GetValues()[count];
-       }
-       public bool SetMine() {
-          if (owner.lockMine || (open == EOpen._Mine)) return false;
-          open = EOpen._Mine;
-          return true;
-       }
-       public EOpen Open { get { return open; } }
-       public EClose Close { get { return close; } set { close = value; } }
+         }
+         open = EOpenEx.GetValues()[count];
+      }
+      public bool SetMine() {
+         if (owner.lockMine || (open == EOpen._Mine)) return false;
+         open = EOpen._Mine;
+         return true;
+      }
+      public EOpen Open { get { return open; } }
+      public EClose Close { get { return close; } set { close = value; } }
 
-       public StateCell(BaseCell self) { owner = self; Reset(); }
-       public void Reset() {
-          status = EState._Close;
-          open = EOpen._Nil;
-          close = EClose._Clear;
-          Down = false;
-       }
+      public StateCell(BaseCell self) { owner = self; Reset(); }
+      public void Reset() {
+         status = EState._Close;
+         open = EOpen._Nil;
+         close = EClose._Clear;
+         Down = false;
+      }
    }
    private StateCell state;
    /// <summary>запретить установку мины на данную ячейку</summary>
    private bool lockMine;
 
-   public void LockNeighborMines() {
+   public void lockNeighborMines(IMatrixCells matrix) {
       lockMine = true;
       // запретить установку мин у соседей,
+      var neighbors = GetNeighbors(matrix);
       foreach(var nCell in neighbors) {
          if (nCell == null) continue; // существует ли сосед?
          nCell.lockMine = true;
@@ -191,7 +189,6 @@ public abstract class BaseCell {
       this.coord = coord;
       this.direction = iDirection;
       this.region = new RegionDouble(attr.getVertexNumber(iDirection));
-      this.neighbors = null;
 
       this.state = new StateCell(this);
       Reset();
@@ -201,11 +198,8 @@ public abstract class BaseCell {
       CalcRegion();
    }
 
-   /// <summary>
-   /// Coord[] neighborCoord = new Coord[attr.getNeighborNumber()];
-   /// <br>... потомки должны определить координаты соседей
-   /// </summary>
-   protected abstract Coord?[] GetCoordsNeighbor();
+   /// <summary>координаты соседей</summary>
+   protected abstract IList<Coord> GetCoordsNeighbor();
 
    /// <summary>матрица ячеек поля мозаики</summary>
    public interface IMatrixCells {
@@ -215,34 +209,28 @@ public abstract class BaseCell {
       /// <summary>доступ к заданной ячейке</summary>
       BaseCell getCell(Coord coord);
    }
-   /// <summary>для this определить ячейки-соседей, и проверить валидность их координат
-   /// вызывать после изменений размера поля или типа мозаики</summary>
-   public void IdentifyNeighbors(IMatrixCells matrix) {
+
+   /// <summary>соседние ячейки - с которыми граничит this</summary>
+   public IList<BaseCell> GetNeighbors(IMatrixCells matrix) {
       // получаю координаты соседних ячеек
       var neighborCoord = GetCoordsNeighbor();
-      if (neighborCoord.Length != attr.getNeighborNumber(true))
+      if (neighborCoord.Count != attr.getNeighborNumber(true))
          throw new Exception("neighborCoord.Length != GetNeighborNumber()");
 
-      // проверяю что они не вылезли за размеры
-      for (var i=0; i<neighborCoord.Length; i++)
-         if (neighborCoord[i] != null)
-            if ((neighborCoord[i].Value.x >= matrix.SizeField.m) ||
-               (neighborCoord[i].Value.y >= matrix.SizeField.n) ||
-               (neighborCoord[i].Value.x < 0) ||
-               (neighborCoord[i].Value.y < 0))
-            {
-               neighborCoord[i] = null;
-            }
+      int m = matrix.SizeField.m;
+      int n = matrix.SizeField.n;
       // по координатам получаю множество соседних обьектов-ячеек
-      neighbors = new BaseCell[attr.getNeighborNumber(true)];
-      for (var i=0; i<neighborCoord.Length; i++)
-         if (neighborCoord[i] != null)
-            neighbors[i] = matrix.getCell(neighborCoord[i].Value);
+      IList<BaseCell> neighbors = new BaseCell[attr.getNeighborNumber(true)];
+      foreach (Coord c in neighborCoord)
+         // проверяю что они не вылезли за размеры
+         if ((c.x >= 0) && (c.y >= 0) && (c.x < m) && (c.y < n))
+             neighbors.Add( matrix.getCell(c) );
+      return neighbors;
    }
 
    public Coord getCoord() { return coord; }
    public int getDirection() { return direction; }
-   /// <summary>координата центра фигуры</summary>
+   /// <summary>координата центра фигуры (в пикселях) </summary>
    public PointDouble getCenter() { return getRcInner(1).Center(); }
 
    /// <summary>принадлежат ли эти экранные координаты ячейке</summary>
@@ -262,7 +250,7 @@ public abstract class BaseCell {
    public abstract int getShiftPointBorderIndex();
 
 
-   public ClickCellResult LButtonDown() {
+   public ClickCellResult LButtonDown(IMatrixCells matrix) {
       var result = new ClickCellResult();
       if (state.Close  == EClose._Flag)
          return result;
@@ -274,32 +262,36 @@ public abstract class BaseCell {
       }
 
       // эффект нажатости для неоткрытых соседей
-      if ((state.Status == EState._Open) && (state.Open != EOpen._Nil))
-         foreach(var nCell in neighbors) {
+      if ((state.Status == EState._Open) && (state.Open != EOpen._Nil)) {
+         var neighbors = GetNeighbors(matrix);
+         foreach (var nCell in neighbors) {
             if (nCell == null) continue; // существует ли сосед?
             if ((nCell.state.Status == EState._Open) ||
                 (nCell.state.Close  == EClose._Flag)) continue;
                nCell.state.Down = true;
             result.Modified.Add(nCell);
          }
+      }
       return result;
    }
 
-   public ClickCellResult LButtonUp(bool isMy) {
+   public ClickCellResult LButtonUp(bool isMy, IMatrixCells matrix) {
       var result = new ClickCellResult();
 
       if (state.Close == EClose._Flag)
             return result;
 
       // избавится от эффекта нажатости
-      if ((state.Status == EState._Open) && (state.Open != EOpen._Nil))
-         foreach(var nCell in neighbors) {
+      if ((state.Status == EState._Open) && (state.Open != EOpen._Nil)) {
+         var neighbors_ = GetNeighbors(matrix);
+         foreach(var nCell in neighbors_) {
             if (nCell == null) continue; // существует ли сосед?
             if ((nCell.state.Status == EState._Open) ||
                 (nCell.state.Close  == EClose._Flag)) continue;
             nCell.state.Down = false;
             result.Modified.Add(nCell);
          }
+      }
       // Открыть закрытую ячейку на которой нажали
       if (state.Status == EState._Close) {
          state.Down = isMy;
@@ -313,6 +305,7 @@ public abstract class BaseCell {
       // Подсчитываю кол-во установленных вокруг флагов и не открытых ячеек
       var countFlags = 0;
       var countClear = 0;
+      var neighbors = GetNeighbors(matrix);
       if (state.Open != EOpen._Nil)
          foreach(var nCell in neighbors) {
             if (nCell == null) continue; // существует ли сосед?
@@ -343,7 +336,7 @@ public abstract class BaseCell {
             nCell.state.Status = EState._Open;
             result.Modified.Add(nCell);
             if (nCell.state.Open == EOpen._Nil) {
-               var result2 = nCell.LButtonUp(true);
+               var result2 = nCell.LButtonUp(true, matrix);
                result.Modified.AddRange(result2.Modified);
             }
             if (nCell.state.Open == EOpen._Mine) {
@@ -442,9 +435,6 @@ public abstract class BaseCell {
       }
    }
 
-   public void OnPropertyChanged(object sender, PropertyChangedEventArgs e) {
-      if ("Area".Equals(e.PropertyName))
-         CalcRegion();
-   }
 }
+
 }
