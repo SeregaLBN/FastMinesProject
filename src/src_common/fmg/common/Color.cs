@@ -57,22 +57,6 @@ namespace fmg.common {
             A = 255};
       }
 
-      /// <summary> —м€гчить цвет </summary>
-      /// <param name="clr"></param>
-      /// <param name="basic"> от заданной границы светлости буду создавать новый цвет. Ranges: 0 - as is; 255 - WHITE </param>
-      /// <returns></returns>
-      public static Color Attenuate(this Color clr, int basic = 120) {
-         System.Diagnostics.Debug.Assert(basic >= 0 && basic <= 0xFF);
-         if (basic == 0xFF)
-            return new Color(clr.A, 0xFF, 0xFF, 0xFF);
-         return new Color {
-            R = (byte) (basic + clr.R%(0xFF - basic)),
-            G = (byte) (basic + clr.G%(0xFF - basic)),
-            B = (byte) (basic + clr.B%(0xFF - basic)),
-            A = clr.A
-         };
-      }
-
       /// <summary> Creates brighter version of this Color </summary>
       /// <param name="clr">from</param>
       /// <param name="percent">0.0 - as is; 1 - WHITE</param>

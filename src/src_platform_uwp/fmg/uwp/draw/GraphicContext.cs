@@ -101,7 +101,7 @@ namespace fmg.uwp.draw {
             if (_colors.ContainsKey(index))
                return _colors[index];
 
-            var res = ColorExt.RandomColor(Rand).Attenuate();
+            var res = ColorExt.RandomColor(Rand).Brighter(0.45);
             _colors.Add(index, res);
             return res;
          }

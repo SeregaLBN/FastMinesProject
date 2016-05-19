@@ -146,7 +146,7 @@ namespace fmg.core.img {
          }
       }
 
-      public Color ForegroundColorAttenuate => ForegroundColor.Attenuate(160);
+      public Color ForegroundColorAttenuate => ForegroundColor.Brighter(0.25);
 
       public bool OnlySyncDraw { get; set; } = false; // Windows.ApplicationModel.DesignMode.DesignModeEnabled;
 

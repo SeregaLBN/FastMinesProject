@@ -190,7 +190,7 @@ namespace fmg {
 
       public static Tuple<EMosaic, WriteableBitmap> CreateRandomMosaicImage(int w, int h) {
          var mosaicType = EMosaicEx.FromOrdinal(Random.Next() % EMosaicEx.GetValues().Length);
-         var bkClr = ColorExt.RandomColor(Random).Attenuate();
+         var bkClr = ColorExt.RandomColor(Random).Brighter(0.45);
          var sizeField = mosaicType.SizeIcoField(true);
          sizeField.m += Random.Next() % 2;
          sizeField.n += Random.Next() % 3;
