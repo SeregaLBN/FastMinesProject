@@ -34,6 +34,7 @@ import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.mosaic.draw.IPaintable;
 import fmg.core.types.EClose;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
@@ -42,10 +43,9 @@ import fmg.core.types.EPlayInfo;
 import fmg.core.types.EState;
 import fmg.core.types.click.ClickCellResult;
 import fmg.core.types.click.ClickResult;
-import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
 /** Mosaic field: класс окна мозаики поля */
-public abstract class MosaicBase extends NotifyPropertyChanged implements IMosaic<PaintableGraphics>, PropertyChangeListener
+public abstract class MosaicBase<TPaintable extends IPaintable> extends NotifyPropertyChanged implements IMosaic<TPaintable>, PropertyChangeListener
 {
    public static final double AREA_MINIMUM = 230;
 
@@ -509,7 +509,8 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       }
    }
 
-   protected boolean RequestToUser_RestoreLastGame() {
+   /** Request to user */
+   protected boolean checkNeedRestoreLastGame() {
       //  need override in child class
       System.out.println("Restore last game?");
       return false;
@@ -525,7 +526,7 @@ public abstract class MosaicBase extends NotifyPropertyChanged implements IMosai
       if (!getRepositoryMines().isEmpty())
          if (getGameStatus() == EGameStatus.eGSCreateGame) {
          } else {
-            if (RequestToUser_RestoreLastGame())
+            if (checkNeedRestoreLastGame())
                getRepositoryMines().clear();
          }
 

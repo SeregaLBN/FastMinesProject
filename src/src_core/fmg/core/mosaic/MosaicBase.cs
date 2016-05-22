@@ -466,12 +466,12 @@ namespace fmg.core.mosaic {
          }
       }
 
-         /// <summary> Request to user </summary>
-         public Func<bool> CheckNeedRestoreLastGame { get; set; }
+      /// <summary> Request to user </summary>
+      protected virtual bool CheckNeedRestoreLastGame() { return false; }
 
       /// <summary>Подготовиться к началу игры - сбросить все ячейки</summary>
       public virtual bool GameNew() {
-   //      System.out.println("Mosaic::GameNew()");
+         //System.out.println("Mosaic::GameNew()");
 
          if (GameStatus == EGameStatus.eGSReady)
             return false;
@@ -479,8 +479,7 @@ namespace fmg.core.mosaic {
          if (RepositoryMines.Count != 0)
             if (GameStatus == EGameStatus.eGSCreateGame) {
             } else {
-               var func = CheckNeedRestoreLastGame;
-               if ((func!= null) && func())
+               if (CheckNeedRestoreLastGame())
                   RepositoryMines.Clear();
             }
 

@@ -36,7 +36,8 @@ import fmg.swing.draw.mosaic.MosaicGraphicContext;
 import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
-public class Mosaic extends MosaicBase {
+public class Mosaic extends MosaicBase<PaintableGraphics> {
+
    private MosaicGraphicContext _gContext;
    private CellPaintGraphics _cellPaint;
    private JPanel _container;
@@ -207,7 +208,7 @@ public class Mosaic extends MosaicBase {
 
 
    @Override
-   protected boolean RequestToUser_RestoreLastGame() {
+   protected boolean checkNeedRestoreLastGame() {
       int iRes = JOptionPane.showOptionDialog(getContainer(), "Restore last game?", "Question", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
       return (iRes == JOptionPane.NO_OPTION);
    }
