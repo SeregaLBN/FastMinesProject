@@ -146,7 +146,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
    bRes = ::DeleteBitmap(hBmp);   _ASSERT_EXPR(bRes, L"DeleteBitmap");
 
-	return 0;
+   return 0;
 }
 
 
@@ -270,13 +270,13 @@ BOOL SaveBitmap(HDC hDC, HBITMAP hBmp, LPCTSTR szBmpFile, BOOL bReplaceFile) {
          bmpInfo.bmiHeader.biCompression = BI_RGB; // no compression!
 
          DWORD dwData = DibSectionSize(bmpInfo.bmiHeader);
-			BYTE *pData = NULL;
-			try {
-				pData = new BYTE[dwData];
-			} catch (...) {}
+         BYTE *pData = NULL;
+         try {
+            pData = new BYTE[dwData];
+         } catch (...) {}
          bRes = !!pData;
          if (!bRes) {
-				dwErrCode = ERROR_OUTOFMEMORY;
+            dwErrCode = ERROR_OUTOFMEMORY;
          } else {
             bRes = !!::GetDIBits(hDC, hBmp, 0, bmpInfo.bmiHeader.biHeight, pData, &bmpInfo, DIB_RGB_COLORS);
             if (!bRes) {

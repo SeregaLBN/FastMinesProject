@@ -11,13 +11,13 @@ namespace fmg.core.mosaic {
 
       /// <summary>Создать экземпляр атрибута для конкретного типа мозаики</summary>
       public static BaseCell.BaseAttribute CreateAttributeInstance(EMosaic mosaicType, double area) {
-         //		switch (mosaicType) {
-         //		case eMosaicTriangle1  : return new Triangle1.AttrTriangle1(area);
-         //		// ...
-         //		case eMosaicSquare1    : return new Square1.AttrSquare1(area);
-         //		// ...
-         //		}
-         //		throw new Exception("Unknown type "+mosaicType);
+         //switch (mosaicType) {
+         //case eMosaicTriangle1: return new Triangle1.AttrTriangle1(area);
+         //   // ...
+         //case eMosaicSquare1: return new Square1.AttrSquare1(area);
+         //   // ...
+         //}
+         //throw new Exception("Unknown type " + mosaicType);
 
          try {
             var className = GetPackageName() + ".cells." + mosaicType.GetMosaicClassName() + "+Attr" + mosaicType.GetMosaicClassName();
@@ -33,13 +33,13 @@ namespace fmg.core.mosaic {
 
       /// <summary>Создать экземпляр ячейки для конкретного типа мозаики</summary>
       public static BaseCell CreateCellInstance(BaseCell.BaseAttribute attr, EMosaic mosaicType, Coord coord) {
-         //		switch (mosaicType) {
-         //		case eMosaicTriangle1  : return new Triangle1((Triangle1.AttrTriangle1) attr, coord);
-         //		//...
-         //		case eMosaicSquare1    : return new Square1((Square1.AttrSquare1) attr, coord);
-         //		//...
-         //		}
-         //		throw new RuntimeException("Unknown type "+mosaicType);
+         //switch (mosaicType) {
+         //case eMosaicTriangle1  : return new Triangle1((Triangle1.AttrTriangle1) attr, coord);
+         //   // ...
+         //case eMosaicSquare1    : return new Square1((Square1.AttrSquare1) attr, coord);
+         //   // ...
+         //}
+         //throw new RuntimeException("Unknown type "+mosaicType);
 
          try {
             var className = GetPackageName() + ".cells." + mosaicType.GetMosaicClassName();

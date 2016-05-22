@@ -105,7 +105,7 @@ namespace fmg.uwp.res.img {
                }
             }
 
-	         _img = bmp;
+            _img = bmp;
             return _img;
          }
       }

@@ -27,87 +27,91 @@ using System.Collections.Generic;
 
 namespace fmg.core.mosaic.cells {
 
-/// <summary> Квадрат. Вариант 2 - сдвинутые ряды </summary>
-public class Square2 : BaseCell {
-	public class AttrSquare2 : BaseAttribute {
-		public AttrSquare2(double area)
-			: base(area)
+   /// <summary> Квадрат. Вариант 2 - сдвинутые ряды </summary>
+   public class Square2 : BaseCell {
+
+      public class AttrSquare2 : BaseAttribute {
+
+         public AttrSquare2(double area)
+            : base(area)
+         {}
+
+         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+            var a = A; // размер стороны квадрата
+            return new SizeDouble(
+                  sizeField.m * a + a/2,
+                  sizeField.n * a);
+         }
+
+         public override int getNeighborNumber(bool max) { return 6; }
+         public override int getNeighborNumber(int direction) { return 6; }
+         public override int getVertexNumber(int direction) { return 4; }
+         public override double getVertexIntersection() { return 3; }
+         public override Size GetDirectionSizeField() { return new Size(1, 2); }
+         public override double A => Math.Sqrt(Area);
+         public override double GetSq(int borderWidth) {
+            var w = borderWidth/2.0;
+            return A-2*w;
+         }
+      }
+
+      public Square2(AttrSquare2 attr, Coord coord)
+         : base(attr, coord,
+                    coord.y&1 // 0..1
+               )
       {}
 
-		public override SizeDouble GetOwnerSize(Matrisize sizeField) {
-			var a = A; // размер стороны квадрата
-			return new SizeDouble(
-					sizeField.m * a + a/2,
-					sizeField.n * a);
-		}
+      private new AttrSquare2 Attr => (AttrSquare2) base.Attr;
 
-      public override int getNeighborNumber(bool max) { return 6; }
-		public override int getNeighborNumber(int direction) { return 6; }
-		public override int getVertexNumber(int direction) { return 4; }
-		public override double getVertexIntersection() { return 3; }
-		public override Size GetDirectionSizeField() { return new Size(1, 2); }
-		public override double A => Math.Sqrt(Area);
-		public override double GetSq(int borderWidth) {
-			var w = borderWidth/2.0;
-			return A-2*w;
-		}
-	}
+      protected override IList<Coord> GetCoordsNeighbor() {
+         var neighborCoord = new Coord[Attr.getNeighborNumber(true)];
 
-	public Square2(AttrSquare2 attr, Coord coord)
-		: base(attr, coord,
-		           coord.y&1 // 0..1
-				)
-	{}
+         // определяю координаты соседей
+          neighborCoord[0] = new Coord(coord.x- direction   , coord.y-1);
+         neighborCoord[1] = new Coord(coord.x+(direction^1), coord.y-1);
+         neighborCoord[2] = new Coord(coord.x-1            , coord.y);
+         neighborCoord[3] = new Coord(coord.x+1            , coord.y);
+         neighborCoord[4] = new Coord(coord.x- direction   , coord.y+1);
+         neighborCoord[5] = new Coord(coord.x+(direction^1), coord.y+1);
 
-	private new AttrSquare2 Attr => (AttrSquare2) base.Attr;
+         return neighborCoord;
+      }
 
-   protected override IList<Coord> GetCoordsNeighbor() {
-      var neighborCoord = new Coord[Attr.getNeighborNumber(true)];
+      public override bool PointInRegion(PointDouble point) {
+         if ((point.X < region.GetPoint(3).X) || (point.X >= region.GetPoint(0).X) ||
+            (point.Y < region.GetPoint(0).Y) || (point.Y >= region.GetPoint(2).Y))
+            return false;
+         return true;
+      }
 
-		// определяю координаты соседей
-    	neighborCoord[0] = new Coord(coord.x- direction   , coord.y-1);
-		neighborCoord[1] = new Coord(coord.x+(direction^1), coord.y-1);
-		neighborCoord[2] = new Coord(coord.x-1            , coord.y);
-		neighborCoord[3] = new Coord(coord.x+1            , coord.y);
-		neighborCoord[4] = new Coord(coord.x- direction   , coord.y+1);
-		neighborCoord[5] = new Coord(coord.x+(direction^1), coord.y+1);
+      protected override void CalcRegion() {
+         var attr = Attr;
+         var a = attr.A;
 
-		return neighborCoord;
-	}
+         var x1 = a * (coord.x + 0) + ((direction != 0) ? 0 : a / 2);
+         var x2 = a * (coord.x + 1) + ((direction != 0) ? 0 : a / 2);
+         var y1 = a * (coord.y + 0);
+         var y2 = a * (coord.y + 1);
 
-	public override bool PointInRegion(PointDouble point) {
-		if ((point.X < region.GetPoint(3).X) || (point.X >= region.GetPoint(0).X) ||
-			(point.Y < region.GetPoint(0).Y) || (point.Y >= region.GetPoint(2).Y))
-			return false;
-		return true;
-	}
+         region.SetPoint(0, x2, y1);
+         region.SetPoint(1, x2, y2);
+         region.SetPoint(2, x1, y2);
+         region.SetPoint(3, x1, y1);
+      }
 
-	protected override void CalcRegion() {
-		var attr = Attr;
-		var a = attr.A;
+      public override RectDouble getRcInner(int borderWidth) {
+         var attr = Attr;
+         var sq = attr.GetSq(borderWidth);
+         var w = borderWidth/2.0;
 
-      var x1 = a * (coord.x + 0) + ((direction != 0) ? 0 : a / 2);
-      var x2 = a * (coord.x + 1) + ((direction != 0) ? 0 : a / 2);
-      var y1 = a * (coord.y + 0);
-      var y2 = a * (coord.y + 1);
+         return new RectDouble(
+            region.GetPoint(3).X + w,
+            region.GetPoint(3).Y + w,
+            sq, sq);
+      }
 
-      region.SetPoint(0, x2, y1);
-      region.SetPoint(1, x2, y2);
-      region.SetPoint(2, x1, y2);
-      region.SetPoint(3, x1, y1);
-	}
+      public override int getShiftPointBorderIndex() { return 2; }
 
-	public override RectDouble getRcInner(int borderWidth) {
-		var attr = Attr;
-		var sq = attr.GetSq(borderWidth);
-		var w = borderWidth/2.0;
+   }
 
-		return new RectDouble(
-		   region.GetPoint(3).X + w,
-		   region.GetPoint(3).Y + w,
-		   sq, sq);
-	}
-
-	public override int getShiftPointBorderIndex() { return 2; }
-}
 }

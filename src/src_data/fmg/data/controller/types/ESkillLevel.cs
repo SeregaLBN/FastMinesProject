@@ -16,6 +16,7 @@ namespace fmg.data.controller.types {
    }
 
    public static class ESkillLevelEx {
+
       private static readonly ESkillLevel[] ESkillLevelValues = (ESkillLevel[])Enum.GetValues(typeof(ESkillLevel));
       public static ESkillLevel[] GetValues() { return ESkillLevelValues; }
 
@@ -32,7 +33,7 @@ namespace fmg.data.controller.types {
             BaseCell.BaseAttribute attr = MosaicHelper.CreateAttributeInstance(mosaicType, area);
 
             // variant 1 - сложность в зависимости от кол-ва пересечений ячеек в одной точке
-            //			mosaicCoefficient.put(mosaicType, attr.getVertexIntersection());
+            //mosaicCoefficient.put(mosaicType, attr.getVertexIntersection());
 
             // variant 2 - сложность в зависимости от кол-ва соседних ячеек
             //int cntDir = attr.GetDirectionCount();
@@ -48,28 +49,28 @@ namespace fmg.data.controller.types {
             var neighbors = (double)attr.getNeighborNumber(false);
             mosaicCoefficient.Add(mosaicType, attr.getVertexIntersection() / neighbors);
 
-            //			System.out.println(attr.getClass().getSimpleName() + ": " + mosaicCoefficient.get(mosaicType));
+            //System.out.println(attr.getClass().getSimpleName() + ": " + mosaicCoefficient.get(mosaicType));
          }
 
          // x*y * coefficient / mosaicCoefficient  = 15
          // 15*mosaicCoefficient/(x*y)  = coefficient
-         //		System.out.println(mosaicCoefficient.get(EMosaic.eMosaicSquare1) * 15  / (10*10));
-         //		System.out.println(mosaicCoefficient.get(EMosaic.eMosaicSquare1) * 54  / (20*15));
-         //		System.out.println(mosaicCoefficient.get(EMosaic.eMosaicSquare1) * 126 / (30*20));
-         //		System.out.println(mosaicCoefficient.get(EMosaic.eMosaicSquare1) * 281 / (45*25));
+         //System.out.println(mosaicCoefficient.get(EMosaic.eMosaicSquare1) * 15  / (10*10));
+         //System.out.println(mosaicCoefficient.get(EMosaic.eMosaicSquare1) * 54  / (20*15));
+         //System.out.println(mosaicCoefficient.get(EMosaic.eMosaicSquare1) * 126 / (30*20));
+         //System.out.println(mosaicCoefficient.get(EMosaic.eMosaicSquare1) * 281 / (45*25));
 
-         //		System.exit(0);
+         //System.exit(0);
       }
 
       /** коэффициент уровня сложности */
       private static double GetCoefficient(this ESkillLevel self) {
          // variant 1
-         //		switch (self) {
-         //		case eBeginner: return 0.6;
-         //		case eAmateur : return 0.72;
-         //		case eProfi   : return 0.84;
-         //		case eCrazy   : return 0.9991111111111111;
-         //		}
+         //switch (self) {
+         //case eBeginner: return 0.6;
+         //case eAmateur : return 0.72;
+         //case eProfi   : return 0.84;
+         //case eCrazy   : return 0.9991111111111111;
+         //}
 
          // variant 2
          //switch (self) {

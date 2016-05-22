@@ -31,410 +31,410 @@ using fmg.core.types.click;
 
 namespace fmg.core.mosaic.cells {
 
-/// <summary>Базовый класс фигуры-ячейки</summary>
-public abstract class BaseCell {
-   public const double PI = 3.14159265358979323846; // Math.PI;
-   public static readonly double SQRT2   = Math.Sqrt(2.0);
-   public static readonly double SQRT3   = Math.Sqrt(3.0);
-   public static readonly double SQRT27  = Math.Sqrt(27.0);
-   public static readonly double SQRT48  = Math.Sqrt(48.0);
-   public static readonly double SQRT147 = Math.Sqrt(147.0);
-   public static readonly double SIN15   = Math.Sin(PI/180.0*15.0);
-   public static readonly double SIN18   = Math.Sin(PI/180.0*18.0);
-   public static readonly double SIN36   = Math.Sin(PI/180.0*36.0);
-   public static readonly double SIN54   = Math.Sin(PI/180.0*54.0);
-   public static readonly double SIN72   = Math.Sin(PI/180.0*72.0);
-   public static readonly double SIN75   = Math.Sin(PI/180.0*75.0);
-   public static readonly double SIN99   = Math.Sin(PI/180.0*99.0);
-   public static readonly double TAN15   = Math.Tan(PI/180.0*15.0);
-   public static readonly double TAN45_2 = Math.Tan(PI/180.0*45.0/2);
-   public static readonly double SIN135a = Math.Sin(PI/180.0*135.0-Math.Atan(8.0/3));
+   /// <summary>Базовый класс фигуры-ячейки</summary>
+   public abstract class BaseCell {
 
-   /*
-    * Контекст/метаданные, описывающий общие хар-ки для каждого из экземпляров BaseCell.
-    * <br> (Полные данные о конкретной мозаике) <br>
-    * Доопределаяется наследниками BaseCell
-    */
-   public abstract class BaseAttribute : fmg.common.notyfier.NotifyPropertyChanged {
-      /// На PropertyChanged это подписаны все наследники BaseCell: при изменении A - надо пересчить все координаты точек
+      public const double PI = 3.14159265358979323846; // Math.PI;
+      public static readonly double SQRT2   = Math.Sqrt(2.0);
+      public static readonly double SQRT3   = Math.Sqrt(3.0);
+      public static readonly double SQRT27  = Math.Sqrt(27.0);
+      public static readonly double SQRT48  = Math.Sqrt(48.0);
+      public static readonly double SQRT147 = Math.Sqrt(147.0);
+      public static readonly double SIN15   = Math.Sin(PI/180.0*15.0);
+      public static readonly double SIN18   = Math.Sin(PI/180.0*18.0);
+      public static readonly double SIN36   = Math.Sin(PI/180.0*36.0);
+      public static readonly double SIN54   = Math.Sin(PI/180.0*54.0);
+      public static readonly double SIN72   = Math.Sin(PI/180.0*72.0);
+      public static readonly double SIN75   = Math.Sin(PI/180.0*75.0);
+      public static readonly double SIN99   = Math.Sin(PI/180.0*99.0);
+      public static readonly double TAN15   = Math.Tan(PI/180.0*15.0);
+      public static readonly double TAN45_2 = Math.Tan(PI/180.0*45.0/2);
+      public static readonly double SIN135a = Math.Sin(PI/180.0*135.0-Math.Atan(8.0/3));
 
-      public BaseAttribute(double area) {
-         _area = area;
-      }
+      /*
+       * Контекст/метаданные, описывающий общие хар-ки для каждого из экземпляров BaseCell.
+       * <br> (Полные данные о конкретной мозаике) <br>
+       * Доопределаяется наследниками BaseCell
+       */
+      public abstract class BaseAttribute : fmg.common.notyfier.NotifyPropertyChanged {
 
-      /// <summary>площадь ячейки/фигуры</summary>
-      private double _area;
-
-      /// <summary>площадь ячейки/фигуры</summary>
-      public double Area {
-         get { return _area; }
-         set { this.SetProperty(ref this._area, value); }
-      }
-
-      /// <summary>размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
-      /// на основе заданных параметров</summary>
-      public abstract double GetSq(int borderWidth);
-
-      /// <summary>значение A (базовая величина фигуры - обычно это размер одной из сторон фигуры) по заданной площади фигуры</summary>
-      public abstract double A { get; }
-
-      /// <summary>get parent container (owner window) size in pixels</summary>
-      public abstract SizeDouble GetOwnerSize(Matrisize sizeField);
-
-      /// <summary>размер поля из группы ячеек состоящих из разных direction</summary>
-      public abstract Size GetDirectionSizeField();
-      /// <summary>кол-во direction'ов, которые знает данный тип мозаики</summary>
-      public int GetDirectionCount() { Size s = GetDirectionSizeField(); return s.Width*s.Height; }
-
-      /// <summary>кол-во соседей (максимум или минимум)</summary>
-      public virtual int getNeighborNumber(bool max) {
-         var str = Enumerable.Range(0, GetDirectionCount()).Select(getNeighborNumber);
-         return max ? str.Max() : str.Min();
-      }
-      /// <summary>кол-во соседей у ячейки конкретной направленности</summary>
-      public abstract int getNeighborNumber(int direction);
-      /// <summary>из скольки точек/вершин состоит фигура конкретной направленности</summary>
-      public abstract int getVertexNumber(int direction);
-      /// <summary>сколько фигур пересекается в одной вершине (в среднем)</summary>
-      public abstract double getVertexIntersection(); 
-
-      /// <summary>макс кол-во режимов заливки фона, которые знает данный тип мозаики
-      /// (знает ф-ция BaseCell::getBackgroundFillColor() или её наследующая)
-      /// (Не считая режима заливки цветом фона по-умолчанию...)</summary>
-      public virtual int getMaxBackgroundFillModeValue() {
-         return 19;
-      }
-
-   }
-
-   private readonly BaseAttribute attr;
-   public BaseAttribute Attr { get { return attr; } }
-
-   protected Coord coord;
-   /// <summary>направление - 'третья координата' ячейки</summary>
-   protected int direction;
-
-   /// <summary>вписанный в фигуру квадрат - область в которую выводится изображение/текст</summary>
-   public abstract RectDouble getRcInner(int borderWidth);
-   /// <summary>вернёт прямоугольник в который вписана фигура ячейки</summary>
-   public RectDouble getRcOuter() {
-      var rcOuter = region.GetBounds();
-      rcOuter.Height++; rcOuter.Width++; // чтобы при repaint'е захватило и крайние границы
-      return rcOuter;
-   }
-
-   /// <summary>массив координат точек из которых состоит фигура</summary>
-   protected RegionDouble region;
-
-   public class StateCell {
-      private readonly BaseCell owner;
-      // { union
-      private EState status; // _Open, _Close
-      private EOpen  open;   // _Nil, _1, ... _21, _Mine
-      private EClose close;  // _Unknown, _Clear, _Flag
-      // } end union
-
-      /// <summary>Нажата? Не путать с open! - ячейка может быть нажата, но ещё не открыта. Важно только для ф-ции прорисовки</summary>
-      public bool Down { get; set; }
-      public EState Status { get { return status; } set { status = value; } }
-      public void CalcOpenState(IMatrixCells matrix) {
-         if (this.open == EOpen._Mine) return;
-         // подсчитать у соседей число мин и установить значение
-         var count = 0;
-         var neighbors = owner.GetNeighbors(matrix);
-         foreach (var nCell in neighbors) {
-             if (nCell == null) continue; // существует ли сосед?
-             if (nCell.state.open == EOpen._Mine) count++;
+         public BaseAttribute(double area) {
+            _area = area;
          }
-         open = EOpenEx.GetValues()[count];
-      }
-      public bool SetMine() {
-         if (owner.lockMine || (open == EOpen._Mine)) return false;
-         open = EOpen._Mine;
-         return true;
-      }
-      public EOpen Open { get { return open; } }
-      public EClose Close { get { return close; } set { close = value; } }
 
-      public StateCell(BaseCell self) { owner = self; Reset(); }
-      public void Reset() {
-         status = EState._Close;
-         open = EOpen._Nil;
-         close = EClose._Clear;
-         Down = false;
-      }
-   }
-   private StateCell state;
-   /// <summary>запретить установку мины на данную ячейку</summary>
-   private bool lockMine;
+         /// <summary>площадь ячейки/фигуры</summary>
+         private double _area;
 
-   public void lockNeighborMines(IMatrixCells matrix) {
-      lockMine = true;
-      // запретить установку мин у соседей,
-      var neighbors = GetNeighbors(matrix);
-      foreach(var nCell in neighbors) {
-         if (nCell == null) continue; // существует ли сосед?
-         nCell.lockMine = true;
-      }
-   }
+         /// <summary>площадь ячейки/фигуры</summary>
+         public double Area {
+            get { return _area; }
+            set { this.SetProperty(ref this._area, value); }
+         }
 
-   public StateCell State { get { return state; } }
+         /// <summary>размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
+         /// на основе заданных параметров</summary>
+         public abstract double GetSq(int borderWidth);
 
-   protected BaseCell(
-         BaseAttribute attr,
-         Coord coord,
-         int iDirection)
-   {
-      this.attr = attr;
-      this.coord = coord;
-      this.direction = iDirection;
-      this.region = new RegionDouble(attr.getVertexNumber(iDirection));
+         /// <summary>значение A (базовая величина фигуры - обычно это размер одной из сторон фигуры) по заданной площади фигуры</summary>
+         public abstract double A { get; }
 
-      this.state = new StateCell(this);
-      Reset();
-   }
+         /// <summary>get parent container (owner window) size in pixels</summary>
+         public abstract SizeDouble GetOwnerSize(Matrisize sizeField);
 
-   public void Init() {
-      CalcRegion();
-   }
+         /// <summary>размер поля из группы ячеек состоящих из разных direction</summary>
+         public abstract Size GetDirectionSizeField();
+         /// <summary>кол-во direction'ов, которые знает данный тип мозаики</summary>
+         public int GetDirectionCount() { Size s = GetDirectionSizeField(); return s.Width*s.Height; }
 
-   /// <summary>координаты соседей</summary>
-   protected abstract IList<Coord> GetCoordsNeighbor();
+         /// <summary>кол-во соседей (максимум или минимум)</summary>
+         public virtual int getNeighborNumber(bool max) {
+            var str = Enumerable.Range(0, GetDirectionCount()).Select(getNeighborNumber);
+            return max ? str.Max() : str.Min();
+         }
+         /// <summary>кол-во соседей у ячейки конкретной направленности</summary>
+         public abstract int getNeighborNumber(int direction);
+         /// <summary>из скольки точек/вершин состоит фигура конкретной направленности</summary>
+         public abstract int getVertexNumber(int direction);
+         /// <summary>сколько фигур пересекается в одной вершине (в среднем)</summary>
+         public abstract double getVertexIntersection(); 
 
-   /// <summary>матрица ячеек поля мозаики</summary>
-   public interface IMatrixCells {
-      /// <summary>размер поля</summary>
-      Matrisize SizeField { get; set; }
+         /// <summary>макс кол-во режимов заливки фона, которые знает данный тип мозаики
+         /// (знает ф-ция BaseCell::getBackgroundFillColor() или её наследующая)
+         /// (Не считая режима заливки цветом фона по-умолчанию...)</summary>
+         public virtual int getMaxBackgroundFillModeValue() {
+            return 19;
+         }
 
-      /// <summary>доступ к заданной ячейке</summary>
-      BaseCell getCell(Coord coord);
-   }
-
-   /// <summary>соседние ячейки - с которыми граничит this</summary>
-   public IList<BaseCell> GetNeighbors(IMatrixCells matrix) {
-      // получаю координаты соседних ячеек
-      var neighborCoord = GetCoordsNeighbor();
-      if (neighborCoord.Count != attr.getNeighborNumber(true))
-         throw new Exception("neighborCoord.Length != GetNeighborNumber()");
-
-      int m = matrix.SizeField.m;
-      int n = matrix.SizeField.n;
-      // по координатам получаю множество соседних обьектов-ячеек
-      IList<BaseCell> neighbors = new BaseCell[attr.getNeighborNumber(true)];
-      foreach (Coord c in neighborCoord)
-         // проверяю что они не вылезли за размеры
-         if ((c.x >= 0) && (c.y >= 0) && (c.x < m) && (c.y < n))
-             neighbors.Add( matrix.getCell(c) );
-      return neighbors;
-   }
-
-   public Coord getCoord() { return coord; }
-   public int getDirection() { return direction; }
-   /// <summary>координата центра фигуры (в пикселях) </summary>
-   public PointDouble getCenter() { return getRcInner(1).Center(); }
-
-   /// <summary>принадлежат ли эти экранные координаты ячейке</summary>
-   public virtual bool PointInRegion(PointDouble point) { return region.Contains(point); }
-
-   public RegionDouble getRegion() { return region; }
-
-   /// <summary>определить координаты точек из которых состоит фигура</summary>
-   protected abstract void CalcRegion();
-
-   public void Reset() {
-      state.Reset();
-      lockMine = false;
-   }
-
-   /// <summary>Index where border change color</summary>
-   public abstract int getShiftPointBorderIndex();
-
-
-   public ClickCellResult LButtonDown(IMatrixCells matrix) {
-      var result = new ClickCellResult();
-      if (state.Close  == EClose._Flag)
-         return result;
-
-      if (state.Status == EState._Close) {
-         state.Down = true;
-         result.Modified.Add(this);
-         return result;
       }
 
-      // эффект нажатости для неоткрытых соседей
-      if ((state.Status == EState._Open) && (state.Open != EOpen._Nil)) {
+      private readonly BaseAttribute attr;
+      public BaseAttribute Attr { get { return attr; } }
+
+      protected Coord coord;
+      /// <summary>направление - 'третья координата' ячейки</summary>
+      protected int direction;
+
+      /// <summary>вписанный в фигуру квадрат - область в которую выводится изображение/текст</summary>
+      public abstract RectDouble getRcInner(int borderWidth);
+      /// <summary>вернёт прямоугольник в который вписана фигура ячейки</summary>
+      public RectDouble getRcOuter() {
+         var rcOuter = region.GetBounds();
+         rcOuter.Height++; rcOuter.Width++; // чтобы при repaint'е захватило и крайние границы
+         return rcOuter;
+      }
+
+      /// <summary>массив координат точек из которых состоит фигура</summary>
+      protected RegionDouble region;
+
+      public class StateCell {
+         private readonly BaseCell owner;
+         // { union
+         private EState status; // _Open, _Close
+         private EOpen  open;   // _Nil, _1, ... _21, _Mine
+         private EClose close;  // _Unknown, _Clear, _Flag
+         // } end union
+
+         /// <summary>Нажата? Не путать с open! - ячейка может быть нажата, но ещё не открыта. Важно только для ф-ции прорисовки</summary>
+         public bool Down { get; set; }
+         public EState Status { get { return status; } set { status = value; } }
+         public void CalcOpenState(IMatrixCells matrix) {
+            if (this.open == EOpen._Mine) return;
+            // подсчитать у соседей число мин и установить значение
+            var count = 0;
+            var neighbors = owner.GetNeighbors(matrix);
+            foreach (var nCell in neighbors) {
+                if (nCell == null) continue; // существует ли сосед?
+                if (nCell.state.open == EOpen._Mine) count++;
+            }
+            open = EOpenEx.GetValues()[count];
+         }
+         public bool SetMine() {
+            if (owner.lockMine || (open == EOpen._Mine)) return false;
+            open = EOpen._Mine;
+            return true;
+         }
+         public EOpen Open { get { return open; } }
+         public EClose Close { get { return close; } set { close = value; } }
+
+         public StateCell(BaseCell self) { owner = self; Reset(); }
+         public void Reset() {
+            status = EState._Close;
+            open = EOpen._Nil;
+            close = EClose._Clear;
+            Down = false;
+         }
+      }
+      private StateCell state;
+      /// <summary>запретить установку мины на данную ячейку</summary>
+      private bool lockMine;
+
+      public void lockNeighborMines(IMatrixCells matrix) {
+         lockMine = true;
+         // запретить установку мин у соседей,
          var neighbors = GetNeighbors(matrix);
-         foreach (var nCell in neighbors) {
+         foreach(var nCell in neighbors) {
             if (nCell == null) continue; // существует ли сосед?
-            if ((nCell.state.Status == EState._Open) ||
-                (nCell.state.Close  == EClose._Flag)) continue;
-               nCell.state.Down = true;
-            result.Modified.Add(nCell);
+            nCell.lockMine = true;
          }
       }
-      return result;
-   }
 
-   public ClickCellResult LButtonUp(bool isMy, IMatrixCells matrix) {
-      var result = new ClickCellResult();
+      public StateCell State { get { return state; } }
 
-      if (state.Close == EClose._Flag)
+      protected BaseCell(
+            BaseAttribute attr,
+            Coord coord,
+            int iDirection)
+      {
+         this.attr = attr;
+         this.coord = coord;
+         this.direction = iDirection;
+         this.region = new RegionDouble(attr.getVertexNumber(iDirection));
+
+         this.state = new StateCell(this);
+         Reset();
+      }
+
+      public void Init() {
+         CalcRegion();
+      }
+
+      /// <summary>координаты соседей</summary>
+      protected abstract IList<Coord> GetCoordsNeighbor();
+
+      /// <summary>матрица ячеек поля мозаики</summary>
+      public interface IMatrixCells {
+         /// <summary>размер поля</summary>
+         Matrisize SizeField { get; set; }
+
+         /// <summary>доступ к заданной ячейке</summary>
+         BaseCell getCell(Coord coord);
+      }
+
+      /// <summary>соседние ячейки - с которыми граничит this</summary>
+      public IList<BaseCell> GetNeighbors(IMatrixCells matrix) {
+         // получаю координаты соседних ячеек
+         var neighborCoord = GetCoordsNeighbor();
+         if (neighborCoord.Count != attr.getNeighborNumber(true))
+            throw new Exception("neighborCoord.Length != GetNeighborNumber()");
+
+         int m = matrix.SizeField.m;
+         int n = matrix.SizeField.n;
+         // по координатам получаю множество соседних обьектов-ячеек
+         IList<BaseCell> neighbors = new BaseCell[attr.getNeighborNumber(true)];
+         foreach (Coord c in neighborCoord)
+            // проверяю что они не вылезли за размеры
+            if ((c.x >= 0) && (c.y >= 0) && (c.x < m) && (c.y < n))
+                neighbors.Add( matrix.getCell(c) );
+         return neighbors;
+      }
+
+      public Coord getCoord() { return coord; }
+      public int getDirection() { return direction; }
+      /// <summary>координата центра фигуры (в пикселях) </summary>
+      public PointDouble getCenter() { return getRcInner(1).Center(); }
+
+      /// <summary>принадлежат ли эти экранные координаты ячейке</summary>
+      public virtual bool PointInRegion(PointDouble point) { return region.Contains(point); }
+
+      public RegionDouble getRegion() { return region; }
+
+      /// <summary>определить координаты точек из которых состоит фигура</summary>
+      protected abstract void CalcRegion();
+
+      public void Reset() {
+         state.Reset();
+         lockMine = false;
+      }
+
+      /// <summary>Index where border change color</summary>
+      public abstract int getShiftPointBorderIndex();
+
+
+      public ClickCellResult LButtonDown(IMatrixCells matrix) {
+         var result = new ClickCellResult();
+         if (state.Close  == EClose._Flag)
             return result;
 
-      // избавится от эффекта нажатости
-      if ((state.Status == EState._Open) && (state.Open != EOpen._Nil)) {
-         var neighbors_ = GetNeighbors(matrix);
-         foreach(var nCell in neighbors_) {
-            if (nCell == null) continue; // существует ли сосед?
-            if ((nCell.state.Status == EState._Open) ||
-                (nCell.state.Close  == EClose._Flag)) continue;
-            nCell.state.Down = false;
-            result.Modified.Add(nCell);
+         if (state.Status == EState._Close) {
+            state.Down = true;
+            result.Modified.Add(this);
+            return result;
          }
+
+         // эффект нажатости для неоткрытых соседей
+         if ((state.Status == EState._Open) && (state.Open != EOpen._Nil)) {
+            var neighbors = GetNeighbors(matrix);
+            foreach (var nCell in neighbors) {
+               if (nCell == null) continue; // существует ли сосед?
+               if ((nCell.state.Status == EState._Open) ||
+                   (nCell.state.Close  == EClose._Flag)) continue;
+                  nCell.state.Down = true;
+               result.Modified.Add(nCell);
+            }
+         }
+         return result;
       }
-      // Открыть закрытую ячейку на которой нажали
-      if (state.Status == EState._Close) {
-         state.Down = isMy;
-         result.Modified.Add(this);
+
+      public ClickCellResult LButtonUp(bool isMy, IMatrixCells matrix) {
+         var result = new ClickCellResult();
+
+         if (state.Close == EClose._Flag)
+               return result;
+
+         // избавится от эффекта нажатости
+         if ((state.Status == EState._Open) && (state.Open != EOpen._Nil)) {
+            var neighbors_ = GetNeighbors(matrix);
+            foreach(var nCell in neighbors_) {
+               if (nCell == null) continue; // существует ли сосед?
+               if ((nCell.state.Status == EState._Open) ||
+                   (nCell.state.Close  == EClose._Flag)) continue;
+               nCell.state.Down = false;
+               result.Modified.Add(nCell);
+            }
+         }
+         // Открыть закрытую ячейку на которой нажали
+         if (state.Status == EState._Close) {
+            state.Down = isMy;
+            result.Modified.Add(this);
+            if (!isMy)
+               return result;
+            state.Status = EState._Open;
+         }
+
+         // ! В этой точке ячейка уже открыта
+         // Подсчитываю кол-во установленных вокруг флагов и не открытых ячеек
+         var countFlags = 0;
+         var countClear = 0;
+         var neighbors = GetNeighbors(matrix);
+         if (state.Open != EOpen._Nil)
+            foreach(var nCell in neighbors) {
+               if (nCell == null) continue; // существует ли сосед?
+               if (nCell.state.Status == EState._Open) continue;
+               if (nCell.state.Close  == EClose._Flag)
+                  countFlags++;
+               else countClear++;
+            }
+         // оставшимся установить флаги
+         if ((state.Open != EOpen._Nil) && ((countFlags+countClear) == state.Open.Ordinal()))
+            foreach(var nCell in neighbors) {
+               if (nCell == null) continue; // существует ли сосед?
+               if ((nCell.state.Status == EState._Open) ||
+                   (nCell.state.Close  == EClose._Flag)) continue;
+               nCell.state.Close = EClose._Flag;
+               result.Modified.Add(nCell);
+            }
          if (!isMy)
             return result;
-         state.Status = EState._Open;
+
+         // открыть оставшиеся
+         if ((countFlags+result.CountFlag) == state.Open.Ordinal())
+            foreach(var nCell in neighbors) {
+               if (nCell == null) continue; // существует ли сосед?
+               if ((nCell.state.Status == EState._Open) ||
+                   (nCell.state.Close  == EClose._Flag)) continue;
+               nCell.state.Down = true;
+               nCell.state.Status = EState._Open;
+               result.Modified.Add(nCell);
+               if (nCell.state.Open == EOpen._Nil) {
+                  var result2 = nCell.LButtonUp(true, matrix);
+                  result.Modified.AddRange(result2.Modified);
+               }
+               if (nCell.state.Open == EOpen._Mine) {
+                  return result;
+               }
+            }
+         return result;
       }
 
-      // ! В этой точке ячейка уже открыта
-      // Подсчитываю кол-во установленных вокруг флагов и не открытых ячеек
-      var countFlags = 0;
-      var countClear = 0;
-      var neighbors = GetNeighbors(matrix);
-      if (state.Open != EOpen._Nil)
-         foreach(var nCell in neighbors) {
-            if (nCell == null) continue; // существует ли сосед?
-            if (nCell.state.Status == EState._Open) continue;
-            if (nCell.state.Close  == EClose._Flag)
-               countFlags++;
-            else countClear++;
-         }
-      // оставшимся установить флаги
-      if ((state.Open != EOpen._Nil) && ((countFlags+countClear) == state.Open.Ordinal()))
-         foreach(var nCell in neighbors) {
-            if (nCell == null) continue; // существует ли сосед?
-            if ((nCell.state.Status == EState._Open) ||
-                (nCell.state.Close  == EClose._Flag)) continue;
-            nCell.state.Close = EClose._Flag;
-            result.Modified.Add(nCell);
-         }
-      if (!isMy)
+      public ClickCellResult RButtonDown(EClose close) {
+         var result = new ClickCellResult();
+         if ((state.Status == EState._Open) || state.Down)
+            return result;
+
+         state.Close = close;
+         result.Modified.Add(this);
          return result;
-
-      // открыть оставшиеся
-      if ((countFlags+result.CountFlag) == state.Open.Ordinal())
-         foreach(var nCell in neighbors) {
-            if (nCell == null) continue; // существует ли сосед?
-            if ((nCell.state.Status == EState._Open) ||
-                (nCell.state.Close  == EClose._Flag)) continue;
-            nCell.state.Down = true;
-            nCell.state.Status = EState._Open;
-            result.Modified.Add(nCell);
-            if (nCell.state.Open == EOpen._Nil) {
-               var result2 = nCell.LButtonUp(true, matrix);
-               result.Modified.AddRange(result2.Modified);
-            }
-            if (nCell.state.Open == EOpen._Mine) {
-               return result;
-            }
-         }
-      return result;
-   }
-
-   public ClickCellResult RButtonDown(EClose close) {
-      var result = new ClickCellResult();
-      if ((state.Status == EState._Open) || state.Down)
-         return result;
-
-      state.Close = close;
-      result.Modified.Add(this);
-      return result;
-   }
-
-   /// <summary>Вернуть цвет заливки ячеки в зависимости от
-   /// * режима заливки фона ячеек
-   /// * координаты ячейки
-   /// * направления ячейки
-   /// * ... - как придумает дочерний класс </summary>
-   public virtual Color getBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
-      switch (fillMode) {
-      default:
-         System.Diagnostics.Debug.Assert(false,this.GetType()+".getBackgroundFillColor: fillMode="+fillMode+":  добавь цветовую обработку для этого режима!");
-         //break;// !!! без break'а
-         goto case 0;
-      case 0:
-         if ((state.Status == EState._Open) && (state.Open == EOpen._Mine) && state.Down)
-            return Color.Red.Brighter(0.05); // game ower: игра завершена - клик на мине
-         if ((state.Status == EState._Open) && (state.Open != EOpen._Mine) && (state.Close == EClose._Flag))
-            return Color.Magenta.Brighter(0.3); // game ower: игра завершена - не верно проставлен флаг (на ячейке с цифрой)
-
-          // для Down и Нажатого состояний делаю фон чуть и чуть-чуть темнее...
-         if (state.Down)
-            return defaultColor.Darker((state.Status == EState._Close) ? 0.15 : 0.25);
-         return defaultColor;
-
-      case 1:
-         return repositoryColor(getDirection());
-      case 2:
-         {
-            // подсветить каждую i-тую строку c шагом div
-            int i = 2;
-            int div = 5;
-            int tmp1 = getCoord().x % div;
-            int tmp2 = (getCoord().y-tmp1) % div;
-            return repositoryColor((((tmp1 + tmp2) % div) == i) ? 0 : 1 );
-         }
-      case 3:
-         {
-            // дуршлаг
-            int i = 3;
-            int div = 4;
-            int tmp1 = getCoord().x % div;
-            int tmp2 = (getCoord().y+tmp1) % div;
-            return repositoryColor((((tmp1 + tmp2) % div) == i) ? 0 : 1 );
-         }
-      case 4:
-         {
-            // ход конём
-            int i = 3;
-            int div = 5;
-            int tmp1 = getCoord().x % div;
-            int tmp2 = (getCoord().y+tmp1) % div;
-            return repositoryColor((((tmp1 + tmp2) % div) == i) ? 0 : 1);
-         }
-      case 5:
-         {
-            // волны
-            int div = 15;
-            int tmp1 = getCoord().x % div;
-            int tmp2 = (getCoord().y+tmp1) % div;
-            return repositoryColor((tmp1 + tmp2) % div);
-         }
-      case 6:
-         {
-            int div = 4;
-            return repositoryColor(((getCoord().x % div + getCoord().y % div) == div) ? 0 : 1);
-         }
-      case 7: case 8: case 9:
-         return repositoryColor(getCoord().x % (-5 + fillMode));
-      case 10: case 11: case 12:
-         return repositoryColor(getCoord().y % (-8 + fillMode));
-      case 13: case 14: case 15:
-      case 16: case 17: case 18:
-         return repositoryColor(getCoord().x % (-fillMode) - fillMode + getCoord().y % (+fillMode));
-      case 19:
-         // подсветить direction
-         var zx = getCoord().x / Attr.GetDirectionSizeField().Width + 1;
-         var zy = getCoord().y / Attr.GetDirectionSizeField().Height + 1;
-         return repositoryColor(zx * zy);
       }
-   }
 
-}
+      /// <summary>Вернуть цвет заливки ячеки в зависимости от
+      /// * режима заливки фона ячеек
+      /// * координаты ячейки
+      /// * направления ячейки
+      /// * ... - как придумает дочерний класс </summary>
+      public virtual Color getBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
+         switch (fillMode) {
+         default:
+            System.Diagnostics.Debug.Assert(false,this.GetType()+".getBackgroundFillColor: fillMode="+fillMode+":  добавь цветовую обработку для этого режима!");
+            //break;// !!! без break'а
+            goto case 0;
+         case 0:
+            if ((state.Status == EState._Open) && (state.Open == EOpen._Mine) && state.Down)
+               return Color.Red.Brighter(0.05); // game ower: игра завершена - клик на мине
+            if ((state.Status == EState._Open) && (state.Open != EOpen._Mine) && (state.Close == EClose._Flag))
+               return Color.Magenta.Brighter(0.3); // game ower: игра завершена - не верно проставлен флаг (на ячейке с цифрой)
+
+             // для Down и Нажатого состояний делаю фон чуть и чуть-чуть темнее...
+            if (state.Down)
+               return defaultColor.Darker((state.Status == EState._Close) ? 0.15 : 0.25);
+            return defaultColor;
+
+         case 1:
+            return repositoryColor(getDirection());
+         case 2:
+            {
+               // подсветить каждую i-тую строку c шагом div
+               int i = 2;
+               int div = 5;
+               int tmp1 = getCoord().x % div;
+               int tmp2 = (getCoord().y-tmp1) % div;
+               return repositoryColor((((tmp1 + tmp2) % div) == i) ? 0 : 1 );
+            }
+         case 3:
+            {
+               // дуршлаг
+               int i = 3;
+               int div = 4;
+               int tmp1 = getCoord().x % div;
+               int tmp2 = (getCoord().y+tmp1) % div;
+               return repositoryColor((((tmp1 + tmp2) % div) == i) ? 0 : 1 );
+            }
+         case 4:
+            {
+               // ход конём
+               int i = 3;
+               int div = 5;
+               int tmp1 = getCoord().x % div;
+               int tmp2 = (getCoord().y+tmp1) % div;
+               return repositoryColor((((tmp1 + tmp2) % div) == i) ? 0 : 1);
+            }
+         case 5:
+            {
+               // волны
+               int div = 15;
+               int tmp1 = getCoord().x % div;
+               int tmp2 = (getCoord().y+tmp1) % div;
+               return repositoryColor((tmp1 + tmp2) % div);
+            }
+         case 6:
+            {
+               int div = 4;
+               return repositoryColor(((getCoord().x % div + getCoord().y % div) == div) ? 0 : 1);
+            }
+         case 7: case 8: case 9:
+            return repositoryColor(getCoord().x % (-5 + fillMode));
+         case 10: case 11: case 12:
+            return repositoryColor(getCoord().y % (-8 + fillMode));
+         case 13: case 14: case 15:
+         case 16: case 17: case 18:
+            return repositoryColor(getCoord().x % (-fillMode) - fillMode + getCoord().y % (+fillMode));
+         case 19:
+            // подсветить direction
+            var zx = getCoord().x / Attr.GetDirectionSizeField().Width + 1;
+            var zy = getCoord().y / Attr.GetDirectionSizeField().Height + 1;
+            return repositoryColor(zx * zy);
+         }
+      }
+
+   }
 
 }

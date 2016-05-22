@@ -146,7 +146,7 @@ namespace fmg {
          return sizePage.Width/3 * sizePage.Height/3;
       }
 
-      /// <summary> проверить что находится в рамках экрана	</summary>
+      /// <summary> проверить что находится в рамках экрана </summary>
       /// <param name="checkArea">заодно проверить что влазит в текущее разрешение экрана</param>
       private void RecheckLocation(bool checkArea, bool pack) {
          if (checkArea) {

@@ -60,7 +60,7 @@ namespace fmg.uwp.mosaic {
 #if DEBUG
          System.Diagnostics.Debug.Assert(false, msg);
 #else
-			base.OnError(msg);
+         base.OnError(msg);
 #endif
       }
 
