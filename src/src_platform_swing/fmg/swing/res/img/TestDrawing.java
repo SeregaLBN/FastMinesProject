@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.function.Function;
 
+import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -23,11 +24,12 @@ import fmg.swing.Cast;
 
 /** @see {@link MosaicsSkillImg#main}, {@link MosaicsGroupImg#main}, {@link MosaicsImg#main} */
 final class TestDrawing {
+   static final int SIZE = 300;
+   static final int offset = 10;
 
    static <TEntity> void testApp(Function<Random, Pair<StaticImg<TEntity, javax.swing.Icon>, StaticImg<TEntity, java.awt.Image>>> funcGetImages) {
       new JFrame() {
          private static final long serialVersionUID = 1L;
-         static final int SIZE = 300;
          {
              Random rnd = new Random(UUID.randomUUID().hashCode());
              Pair<StaticImg<TEntity, javax.swing.Icon>, StaticImg<TEntity, java.awt.Image>> icoImg = funcGetImages.apply(rnd);
@@ -46,12 +48,11 @@ final class TestDrawing {
                 {
                    setPreferredSize(new Dimension(SIZE, SIZE));
                 }
-                final int offset = 10;
                 @Override
                 public void paintComponent(Graphics g) {
                    super.paintComponent(g);
-                   //g.clearRect(offset, offset, SIZE-offset, SIZE-offset);
-                   g.drawRect(offset, offset, SIZE-offset, SIZE-offset);
+                   //g.clearRect(offset, offset, SIZE-offset*2, SIZE-offset*2);
+                   g.drawRect(offset, offset, SIZE-offset*2, SIZE-offset*2);
 
                    img1.getImage().paintIcon(this, g, 2*offset, 2*offset);
                    g.drawImage(img2.getImage(), SIZE/2-offset, SIZE/2-offset, null);
@@ -144,6 +145,39 @@ final class TestDrawing {
                    dispose();
                 }
              });
+             setVisible(true);
+         }
+      };
+   }
+
+   static void testApp2(Function<Integer /* size */, Icon> funcGetImage) {
+      new JFrame() {
+         private static final long serialVersionUID = 1L;
+         {
+             Icon ico = funcGetImage.apply(SIZE-offset*2);
+
+             setSize(SIZE+20, SIZE+50);
+             setTitle("test paints " + ico.getClass().getName());
+             setLocationRelativeTo(null);
+
+             JPanel jPanel = new JPanel() {
+                private static final long serialVersionUID = 1L;
+                {
+                   setPreferredSize(new Dimension(SIZE, SIZE));
+                }
+                @Override
+                public void paintComponent(Graphics g) {
+                   super.paintComponent(g);
+                   //g.clearRect(offset, offset, SIZE-offset*2, SIZE-offset*2);
+                   g.drawRect(offset, offset, SIZE-offset*2, SIZE-offset*2);
+
+                   ico.paintIcon(this, g, offset, offset);
+                }
+
+             };
+             add(jPanel);
+
+             setDefaultCloseOperation(EXIT_ON_CLOSE);
              setVisible(true);
          }
       };

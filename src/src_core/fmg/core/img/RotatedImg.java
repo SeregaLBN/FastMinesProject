@@ -76,15 +76,11 @@ public abstract class RotatedImg<T, TImage extends Object> extends StaticImg<T, 
    }
 
    @Override
-   protected void close(boolean disposing) {
-      if (disposing) {
-         // free managed resources
-         ITimer t = _timer;
-         if (t != null)
-            t.close();
-         _timer = null;
-      }
-      // free native resources if there are any.
+   public void close() {
+      ITimer t = _timer;
+      if (t != null)
+         t.close();
+      _timer = null;
    }
 
 }

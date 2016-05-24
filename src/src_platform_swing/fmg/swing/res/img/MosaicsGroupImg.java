@@ -80,6 +80,7 @@ public abstract class MosaicsGroupImg<TImage extends Object> extends fmg.core.im
          gBuffImg = buffImg.createGraphics();
          gBuffImg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
          gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+         gBuffImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
          return new javax.swing.Icon() {
             @Override
@@ -88,13 +89,21 @@ public abstract class MosaicsGroupImg<TImage extends Object> extends fmg.core.im
             public int getIconHeight() { return Icon.this.getHeight(); }
             @Override
             public void paintIcon(Component c, Graphics g, int x, int y) {
-               g.drawImage(buffImg, x,y, null);
+               g.drawImage(buffImg, x,y, c);
             }
          };
       }
 
       @Override
       protected void drawBody() { drawBody(gBuffImg); }
+
+      @Override
+      public void close() {
+         super.close();
+         if (gBuffImg != null)
+            gBuffImg.dispose();
+         gBuffImg = null;
+      }
 
    }
 
@@ -114,6 +123,7 @@ public abstract class MosaicsGroupImg<TImage extends Object> extends fmg.core.im
          Graphics2D g = img.createGraphics();
          g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
          g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
          drawBody(g);
          g.dispose();
       }

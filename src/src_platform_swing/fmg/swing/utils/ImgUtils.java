@@ -1,8 +1,8 @@
 package fmg.swing.utils;
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -70,7 +70,9 @@ public class ImgUtils {
            return ((ImageIcon) ico).getImage();
 
         BufferedImage img = new BufferedImage(ico.getIconWidth(), ico.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics g = img.createGraphics();
+        Graphics2D g = img.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         ico.paintIcon(null, g, 0, 0);
         g.dispose();
         return img;
@@ -83,6 +85,8 @@ public class ImgUtils {
             BufferedImage.TYPE_INT_ARGB);
 
        Graphics2D g = (Graphics2D) sourceBI.getGraphics();
+       g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+       g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
        g.drawImage(inputImage, 0, 0, null);
 
        AffineTransform at = new AffineTransform();

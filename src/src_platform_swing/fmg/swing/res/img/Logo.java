@@ -6,14 +6,14 @@ import java.awt.Component;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Paint;
 import java.awt.RenderingHints;
-import java.awt.Stroke;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 
 import javax.swing.Icon;
 
 import fmg.swing.Cast;
+import fmg.swing.utils.ImgUtils;
 
 /** main logos image */
 public class Logo implements Icon {
@@ -47,23 +47,31 @@ public class Logo implements Icon {
 //         Palette[i] = copy[(i + loop) % 8];
    }
 
+   @Override
    public int getIconWidth() {
       return (int) (DefaultWidht * _zoomX + 2 * _margin);
    }
 
+   @Override
    public int getIconHeight() {
       return (int) (DefaultHeight * _zoomY + 2 * _margin);
    }
 
-   public void paintIcon(Component c, Graphics g, int x, int y) {
-      Color oldColor = g.getColor();
-      Graphics2D g2 = (Graphics2D)g;
-      Object oldValAntialiasing = g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-      Stroke oldStroke = g2.getStroke();
-      Paint oldGPaint = g2.getPaint();
+   Icon _ico;
+   private Icon getIcon() {
+      if (_ico == null) {
+         BufferedImage img = new BufferedImage(getIconWidth(), getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+         Graphics2D g = img.createGraphics();
+         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+         draw(g);
+         g.dispose();
+         _ico = ImgUtils.toIco(img);
+      }
+      return _ico;
+   }
 
-      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
+   private void draw(Graphics2D g) {
       final int iPenWidth = 2;
 
       // draw star
@@ -101,8 +109,8 @@ public class Logo implements Icon {
       for (int i=0; i<8; i++) {
          if (_useGradient) {
             // rectangle gragient
-            g2.setPaint(new GradientPaint(oct[(i+5)%8], Palette[(i+0)%8], oct[i], Palette[(i+3)%8]));
-            g2.fillPolygon(new int[] {
+            g.setPaint(new GradientPaint(oct[(i+5)%8], Palette[(i+0)%8], oct[i], Palette[(i+3)%8]));
+            g.fillPolygon(new int[] {
                   (int)rays[i].x,
                   (int)oct[i].x,
                   (int)inn[i].x,
@@ -114,11 +122,11 @@ public class Logo implements Icon {
                   (int)oct[(i+5)%8].y
                }, 4);
 
-            // emulate triangle gradient (see BmpLogo.cpp �++ source code)
+            // emulate triangle gradient (see BmpLogo.cpp C++ source code)
 //            Color clr = Palette[(i+6)%8];
 //            clr = new Color(clr.getRed(), clr.getGreen(), clr.getBlue(), 0);
-//            g2.setPaint(new GradientPaint(center, clr, inn[(i+6)%8], Palette[(i+3)%8]));
-//            g2.fillPolygon(new int[] {
+//            g.setPaint(new GradientPaint(center, clr, inn[(i+6)%8], Palette[(i+3)%8]));
+//            g.fillPolygon(new int[] {
 //                  (int)rays[i].x,
 //                  (int)oct[i].x,
 //                  (int)inn[i].x
@@ -127,8 +135,8 @@ public class Logo implements Icon {
 //                  (int)oct[i].y,
 //                  (int)inn[i].y
 //               }, 3);
-//            g2.setPaint(new GradientPaint(center, clr, inn[(i+2)%8], Palette[(i+0)%8]));
-//            g2.fillPolygon(new int[] {
+//            g.setPaint(new GradientPaint(center, clr, inn[(i+2)%8], Palette[(i+0)%8]));
+//            g.fillPolygon(new int[] {
 //                  (int)rays[i].x,
 //                  (int)oct[(i+5)%8].x,
 //                  (int)inn[i].x
@@ -154,7 +162,7 @@ public class Logo implements Icon {
       }
 
       // paint star perimeter
-      g2.setStroke(new BasicStroke(iPenWidth));
+      g.setStroke(new BasicStroke(iPenWidth));
       for (int i=0; i<8; i++) {
          Point2D.Double p1 = rays[(i + 7)%8];
          Point2D.Double p2 = rays[i];
@@ -165,7 +173,7 @@ public class Logo implements Icon {
       // paint inner gradient triangles
       for (int i=0; i<8; i++) {
          if (_useGradient)
-            g2.setPaint(new GradientPaint(
+            g.setPaint(new GradientPaint(
                   inn[i], Palette[(i+6)%8],
                   center, ((i&1)==0) ? Color.BLACK : Color.WHITE));
          else
@@ -182,12 +190,6 @@ public class Logo implements Icon {
                (int)center.y
             }, 3);
       }
-
-      // restore
-      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, oldValAntialiasing);
-      g2.setStroke(oldStroke);
-      g2.setPaint(oldGPaint);
-      g.setColor(oldColor);
    }
 
    public double getZoomX() {
@@ -195,6 +197,7 @@ public class Logo implements Icon {
    }
 
    public void setZoomX(double zoomX) {
+      _ico = null;
       this._zoomX = zoomX;
    }
 
@@ -203,6 +206,7 @@ public class Logo implements Icon {
    }
 
    public void setZoomY(double zoomY) {
+      _ico = null;
       this._zoomY = zoomY;
    }
 
@@ -211,7 +215,17 @@ public class Logo implements Icon {
    }
 
    public void setMargin(int margin) {
+      _ico = null;
       this._margin = margin;
+   }
+
+   @Override
+   public void paintIcon(Component c, Graphics g, int x, int y) {
+      getIcon().paintIcon(c, g, x, y);
+   }
+
+   public static void main(String[] args) {
+      TestDrawing.testApp2(size -> ImgUtils.zoom(new Logo(true), size, size));
    }
 
 }

@@ -6,47 +6,58 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 
 import javax.swing.Icon;
 
+import fmg.swing.utils.ImgUtils;
+
 /** картинка для фоновой паузы */
 public class BackgroundPause implements Icon {
-   private Logo _logo;
+   final boolean newLogo;
 
    public BackgroundPause() {
-      _logo = new Logo(true);
-      _logo.setMargin(10);
-      _logo.setZoomX(2.7);
-      _logo.setZoomY(2.7);
+      newLogo = true;
    }
 
    @Deprecated
    public BackgroundPause(boolean newLogo) {
-      super();
-      if (!newLogo)
-         _logo = null;
+      this.newLogo = newLogo;
    }
 
+   @Override
    public int getIconWidth() {
-      return (_logo == null) ? 1000 : _logo.getIconWidth();
+      return !newLogo ? 1000 : getIcon().getIconWidth();
    }
 
+   @Override
    public int getIconHeight() {
-      return (_logo == null) ? 1000 : _logo.getIconHeight();
+      return !newLogo ? 1000 : getIcon().getIconHeight();
    }
 
-   public void paintIcon(Component c, Graphics g, int x, int y) {
-      if (_logo != null) {
-         _logo.paintIcon(c, g, x, y);
-         return;
+   private Icon _ico;
+   private Icon getIcon() {
+      if (_ico == null) {
+         if (newLogo) {
+            Logo logo = new Logo(true);
+            logo.setMargin(10);
+            logo.setZoomX(2.7);
+            logo.setZoomY(2.7);
+            _ico = logo;
+         } else {
+            BufferedImage img = new BufferedImage(getIconWidth(), getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = img.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            draw(g);
+            g.dispose();
+            _ico = ImgUtils.toIco(img);
+         }
       }
+      return _ico;
+   }
 
-      Color oldColor = g.getColor();
-      Graphics2D g2 = (Graphics2D)g;
-      Object oldValAntialiasing = g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-
-      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
+   private void draw(Graphics2D g) {
 //      // fill background (only transparent color)
 //      g.setColor(new Color(0x00123456, true));
 //      g.fillRect(0, 0, getIconWidth(), getIconHeight());
@@ -61,15 +72,21 @@ public class BackgroundPause implements Icon {
       g.fillOval(570, 150, 98, 296);
 
       // smile
-      g2.setStroke(new BasicStroke(14, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+      g.setStroke(new BasicStroke(14, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
       g.drawArc(103, -133, 795, 1003, 207, 126);
 
       // ямочки на щеках
       g.drawArc(90, 580, 180, 180, 85, 57);
       g.drawArc(730, 580, 180, 180, 38, 57);
-
-      // restore
-      g.setColor(oldColor);
-      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, oldValAntialiasing);
    }
+
+   @Override
+   public void paintIcon(Component c, Graphics g, int x, int y) {
+      getIcon().paintIcon(c, g, x, y);
+   }
+
+   public static void main(String[] args) {
+      TestDrawing.testApp2(size -> ImgUtils.zoom(new BackgroundPause(), size, size));
+   }
+
 }

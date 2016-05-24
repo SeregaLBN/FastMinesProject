@@ -94,13 +94,21 @@ public abstract class MosaicsSkillImg<TImage extends Object> extends fmg.core.im
             public int getIconHeight() { return Icon.this.getHeight(); }
             @Override
             public void paintIcon(Component c, Graphics g, int x, int y) {
-               g.drawImage(buffImg, x,y, null);
+               g.drawImage(buffImg, x,y, c);
             }
          };
       }
 
       @Override
       protected void drawBody() { drawBody(gBuffImg); }
+
+      @Override
+      public void close() {
+         super.close();
+         if (gBuffImg != null)
+            gBuffImg.dispose();
+         gBuffImg = null;
+      }
 
    }
 

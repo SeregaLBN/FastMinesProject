@@ -310,7 +310,7 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
             public int getIconHeight() { return Icon.this.getHeight(); }
             @Override
             public void paintIcon(Component c, Graphics g, int x, int y) {
-               g.drawImage(buffImg, x,y, null);
+               g.drawImage(buffImg, x,y, c);
             }
          };
       }
@@ -331,6 +331,7 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
             gBuffImg.dispose();
          gBuffImg = null;
       }
+
    }
 
    public static class Image extends MosaicsImg<java.awt.Image> {

@@ -167,7 +167,6 @@ public abstract class StaticImg<T, TImage extends Object> extends NotifyProperty
    }
 
    @Override
-   public void close() { close(true); }
+   public void close() { }
 
-   protected void close(boolean disposing) { }
 }
