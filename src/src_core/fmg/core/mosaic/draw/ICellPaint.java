@@ -7,9 +7,9 @@ import fmg.core.mosaic.cells.BaseCell;
  *
  * @param <TPaintable> see {@link IPaintable}
  * @param <TImage> plaform specific image
- * @param <TPaintContext> see {@link PaintCellContext}
+ * @param <TPaintContext> see {@link PaintContext}
  */
-public interface ICellPaint<TPaintable extends IPaintable, TImage, TPaintContext extends PaintCellContext<TImage>> {
+public interface ICellPaint<TPaintable extends IPaintable, TImage, TPaintContext extends PaintContext<TImage>> {
 
    TPaintContext getPaintContext();
    void setPaintContext(TPaintContext paintContext);

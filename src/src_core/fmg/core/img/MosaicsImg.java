@@ -22,7 +22,7 @@ import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
 import fmg.core.mosaic.draw.IPaintable;
-import fmg.core.mosaic.draw.PaintCellContext;
+import fmg.core.mosaic.draw.PaintContext;
 import fmg.core.types.EMosaic;
 
 /**
@@ -30,9 +30,9 @@ import fmg.core.types.EMosaic;
  *
  * @param <TPaintable> see {@link IPaintable}
  * @param <TImage> plaform specific image
- * @param <TPaintContext> see {@link PaintCellContext}
+ * @param <TPaintContext> see {@link PaintContext}
  */
-public abstract class MosaicsImg<TPaintable extends IPaintable, TImage, TPaintContext extends PaintCellContext<TImage>>
+public abstract class MosaicsImg<TPaintable extends IPaintable, TImage, TPaintContext extends PaintContext<TImage>>
       extends RotatedImg<EMosaic, TImage>
       implements IMosaic<TPaintable, TImage, TPaintContext>
 {

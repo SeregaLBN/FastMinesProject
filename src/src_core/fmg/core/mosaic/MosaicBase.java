@@ -35,7 +35,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.IPaintable;
-import fmg.core.mosaic.draw.PaintCellContext;
+import fmg.core.mosaic.draw.PaintContext;
 import fmg.core.types.EClose;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
@@ -48,7 +48,7 @@ import fmg.core.types.click.ClickResult;
 /** Mosaic field: класс окна мозаики поля */
 public abstract class MosaicBase<TPaintable extends IPaintable,
                                  TImage,
-                                 TPaintContext extends PaintCellContext<TImage>>
+                                 TPaintContext extends PaintContext<TImage>>
                   extends NotifyPropertyChanged
                   implements IMosaic<TPaintable, TImage, TPaintContext>,
                              PropertyChangeListener

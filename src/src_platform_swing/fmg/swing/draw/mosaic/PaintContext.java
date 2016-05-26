@@ -6,7 +6,6 @@ import javax.swing.JComponent;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
-import fmg.core.mosaic.draw.PaintCellContext;
 import fmg.data.view.draw.FontInfo;
 import fmg.swing.Cast;
 
@@ -16,7 +15,7 @@ import fmg.swing.Cast;
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
  */
-public class PaintContext<TImage> extends PaintCellContext<TImage> {
+public class PaintContext<TImage> extends fmg.core.mosaic.draw.PaintContext<TImage> {
 
    public static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 10);
 

@@ -18,7 +18,7 @@ import fmg.data.view.draw.PenBorder;
  *
  * @param <TImage> plaform specific image
  **/
-public class PaintCellContext<TImage> extends NotifyPropertyChanged implements PropertyChangeListener, AutoCloseable {
+public class PaintContext<TImage> extends NotifyPropertyChanged implements PropertyChangeListener, AutoCloseable {
 
    private TImage imgMine, imgFlag;
    private ColorText colorText;
@@ -35,7 +35,7 @@ public class PaintCellContext<TImage> extends NotifyPropertyChanged implements P
       return _defaultBkColor;
    }
 
-   public PaintCellContext(boolean iconicMode) {
+   public PaintContext(boolean iconicMode) {
       this.iconicMode = iconicMode;
       this.padding = new BoundDouble(0, 0, 0, 0);
    }
