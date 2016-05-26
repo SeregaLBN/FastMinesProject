@@ -6,7 +6,13 @@ import fmg.common.geom.Bound;
 import fmg.common.geom.Size;
 import fmg.common.ui.ITimer;
 
-public abstract class RotatedImg<T, TImage extends Object> extends StaticImg<T, TImage> {
+/**
+ * {@link StaticImg} with rotated properties
+ *
+ * @param <T> the entity of image
+ * @param <TImage> plaform specific image
+ */
+public abstract class RotatedImg<T, TImage> extends StaticImg<T, TImage> {
 
    public static Supplier<ITimer> TIMER_CREATOR;
 

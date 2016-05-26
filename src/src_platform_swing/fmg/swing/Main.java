@@ -96,7 +96,7 @@ import fmg.swing.dialogs.CustomSkillDlg;
 import fmg.swing.dialogs.ManageDlg;
 import fmg.swing.dialogs.SelectMosaicDlg;
 import fmg.swing.dialogs.StatisticDlg;
-import fmg.swing.draw.GraphicContext;
+import fmg.swing.draw.mosaic.PaintContext;
 import fmg.swing.mosaic.Mosaic;
 import fmg.swing.res.Resources;
 import fmg.swing.res.Resources.EBtnNewGameState;
@@ -2246,14 +2246,14 @@ public class Main extends JFrame implements PropertyChangeListener {
    /** переустанавливаю заного размер мины/флага для мозаики */
    private void ChangeSizeImagesMineFlag() {
       Mosaic m = getMosaic();
-      GraphicContext gc = m.getGraphicContext();
-      int sq = (int)m.getCellAttr().getSq(gc.getPenBorder().getWidth());
+      PaintContext<Icon> pc = m.getPaintContext();
+      int sq = (int)m.getCellAttr().getSq(pc.getPenBorder().getWidth());
       if (sq <= 0) {
          System.err.println("Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");
          sq = 3; // ат балды...
       }
-      gc.setImgFlag(getResources().getImgFlag(sq, sq));
-      gc.setImgMine(getResources().getImgMine(sq, sq));
+      pc.setImgFlag(getResources().getImgFlag(sq, sq));
+      pc.setImgMine(getResources().getImgMine(sq, sq));
    }
 
    public static void Beep() {
@@ -2354,7 +2354,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    /** Сохранить чемпиона && Установить статистику */
    public void setStatisticAndChampion(PropertyChangeEvent ev) {
-      MosaicBase mosaic = (MosaicBase)ev.getSource();
+      MosaicBase<?,?,?> mosaic = (MosaicBase<?,?,?>)ev.getSource();
       if (mosaic.getGameStatus() != EGameStatus.eGSEnd)
          throw new RuntimeException("Invalid method state call");
 

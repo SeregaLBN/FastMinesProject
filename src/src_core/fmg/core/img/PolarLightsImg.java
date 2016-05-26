@@ -2,7 +2,14 @@ package fmg.core.img;
 
 import fmg.common.HSV;
 
-public abstract class PolarLightsImg<T, TImage extends Object> extends RotatedImg<T, TImage> {
+/**
+ * {@link RotatedImg} with hue rotation effect.
+ * Alters the color of an image by rotating its hue values.
+ *
+ * @param <T> the entity of image
+ * @param <TImage> plaform specific image
+ */
+public abstract class PolarLightsImg<T, TImage> extends RotatedImg<T, TImage> {
 
    protected PolarLightsImg(T entity) { super(entity); }
    protected PolarLightsImg(T entity, int widthAndHeight) { super(entity, widthAndHeight); }

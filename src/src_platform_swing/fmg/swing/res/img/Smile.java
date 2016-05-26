@@ -29,9 +29,11 @@ public class Smile implements Icon {
    }
 
    private final double _size;
-   private final EType _type;
+//   private final EType _type;
 
-   public Smile(int size, EType type) { _size = size; _type = type; }
+   public Smile(int size, EType type) { _size = size;
+//      _type = type;
+   }
 
    @Override
    public int getIconWidth() { return (int)_size; }

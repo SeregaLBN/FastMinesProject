@@ -1,5 +1,6 @@
 package fmg.common.notyfier;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.lang.reflect.Field;
@@ -9,11 +10,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+/** Notifies clients that a property value has changed */
 public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
 {
    private PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
    public void addListener(PropertyChangeListener l) { propertyChanges.addPropertyChangeListener(l); }
-   public void removePropertyChangeListener(PropertyChangeListener l) { propertyChanges.removePropertyChangeListener(l); }
+   public void removeListener(PropertyChangeListener l) { propertyChanges.removePropertyChangeListener(l); }
 
    @Deprecated // used reflection :(
    protected <T> boolean setProperty(T newValue, String propertyName) {
@@ -35,15 +37,15 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
       return true;
    }
 
-   protected void onPropertyChanged(int oldValue, int newValue, String propertyName) {
+   protected final void onPropertyChanged(int oldValue, int newValue, String propertyName) {
       onPropertyChanged(Integer.valueOf(oldValue), Integer.valueOf(newValue), propertyName);
    }
 
-   protected void onPropertyChanged(boolean oldValue, boolean newValue, String propertyName) {
+   protected final void onPropertyChanged(boolean oldValue, boolean newValue, String propertyName) {
       onPropertyChanged(Boolean.valueOf(oldValue), Boolean.valueOf(newValue), propertyName);
    }
 
-   protected void onPropertyChanged(String propertyName) {
+   protected final void onPropertyChanged(String propertyName) {
       onPropertyChanged(null, null, propertyName);
    }
 
@@ -52,6 +54,10 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
       propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
    }
 
+   protected <TProperty> void onInnerPropertyChanged(TProperty source, PropertyChangeEvent ev, String propertyName) {
+      onPropertyChanged(null, source, propertyName);
+      onPropertyChanged(ev.getOldValue(), ev.getNewValue(), propertyName + "." + ev.getPropertyName());
+   }
 
    private Field findField(String propertyName) {
       return getPlainFields(this)

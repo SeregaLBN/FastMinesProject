@@ -20,11 +20,14 @@ import fmg.common.geom.PointDouble;
 import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Cast;
 
-/** representable {@link fmg.data.controller.types.ESkillLevel} as image
- *  <br>
- *  SWING impl
+/**
+ * Representable {@link fmg.data.controller.types.ESkillLevel} as image
+ * <br>
+ * SWING impl
+ *
+ * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon})
  **/
-public abstract class MosaicsSkillImg<TImage extends Object> extends fmg.core.img.MosaicsSkillImg<TImage> {
+public abstract class MosaicsSkillImg<TImage> extends fmg.core.img.MosaicsSkillImg<TImage> {
 
    static {
       if (DEFERR_INVOKER == null)

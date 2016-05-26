@@ -23,16 +23,18 @@ import fmg.core.mosaic.draw.ICellPaint;
 import fmg.core.types.EMosaic;
 import fmg.data.view.draw.PenBorder;
 import fmg.swing.Cast;
-import fmg.swing.draw.GraphicContext;
+import fmg.swing.draw.mosaic.PaintContext;
 import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
-
-/** representable {@link fmg.core.types.EMosaic} as image
- *  <br>
- *  SWING impl
- **/
-public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.MosaicsImg<PaintableGraphics, TImage> {
+/**
+ * Representable {@link fmg.core.types.EMosaic} as image
+ * <br>
+ * SWING impl
+ *
+ * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
+ */
+public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<PaintableGraphics, TImage, PaintContext<TImage>> {
 
    static {
       if (DEFERR_INVOKER == null)
@@ -48,33 +50,34 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
    public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) { super(mosaicType, sizeField, widthAndHeight, padding); }
    public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) { super(mosaicType, sizeField, sizeImage, padding); }
 
-   private ICellPaint<PaintableGraphics> _cellPaint;
+   private ICellPaint<PaintableGraphics, TImage, PaintContext<TImage>> _cellPaint;
    @Override
-   public ICellPaint<PaintableGraphics> getCellPaint() {
+   public ICellPaint<PaintableGraphics, TImage, PaintContext<TImage>> getCellPaint() {
       if (_cellPaint == null)
-         setCellPaint(new CellPaintGraphics());
+         setCellPaint(new CellPaintGraphics<>());
       return _cellPaint;
    }
-   private void setCellPaint(ICellPaint<PaintableGraphics> value) {
+   private void setCellPaint(ICellPaint<PaintableGraphics, TImage, PaintContext<TImage>> value) {
       if (setProperty(_cellPaint, value, "CellPaint")) {
-         dependency_GContext_CellPaint();
+         dependency_PContext_CellPaint();
          invalidate();
       }
    }
 
-   private GraphicContext _gContext;
-   protected GraphicContext getGContext() {
-      if (_gContext == null)
-         setGContext(new GraphicContext(null, true));
-      return _gContext;
+   private PaintContext<TImage> _paintContext;
+   protected PaintContext<TImage> getPaintContext() {
+      if (_paintContext == null)
+         setPaintContext(new PaintContext<>(null, true));
+      return _paintContext;
    }
-   protected void setGContext(GraphicContext value) {
-      if (setProperty(_gContext, value, "GContext")) {
-         dependency_GContext_CellAttribute();
-         dependency_GContext_PaddingFull();
-         dependency_GContext_CellPaint();
-         dependency_GContext_BorderWidth();
-         dependency_GContext_BorderColor();
+   protected void setPaintContext(PaintContext<TImage> paintContext) {
+      if (setProperty(_paintContext, paintContext, "PaintContext")) {
+         dependency_PContext_CellAttribute();
+         dependency_PContext_PaddingFull();
+         dependency_PContext_CellPaint();
+         dependency_PContext_BorderWidth();
+         dependency_PContext_BorderColor();
+         dependency_PContext_BkColor();
          invalidate();
       }
    }
@@ -84,16 +87,19 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
       super.onPropertyChanged(oldValue, newValue, propertyName);
       switch (propertyName) {
       case "PaddingFull":
-         dependency_GContext_PaddingFull();
+         dependency_PContext_PaddingFull();
          break;
       case "CellAttr":
-         dependency_GContext_CellAttribute();
+         dependency_PContext_CellAttribute();
          break;
       case "BorderWidth":
-         dependency_GContext_BorderWidth();
+         dependency_PContext_BorderWidth();
          break;
       case "BorderColor":
-         dependency_GContext_BorderColor();
+         dependency_PContext_BorderColor();
+         break;
+      case "BackgroundColor":
+         dependency_PContext_BkColor();
          break;
       }
 
@@ -110,39 +116,44 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
    }
 
    ///////////// #region Dependencys
-   void dependency_GContext_CellAttribute() {
-      if (_gContext == null)
+   void dependency_PContext_CellAttribute() {
+      if (_paintContext == null)
          return;
       if (RandomCellBkColor)
-         getGContext().getBackgroundFill()
+         getPaintContext().getBackgroundFill()
                .setMode(1 + new Random(UUID.randomUUID().hashCode()).nextInt(getCellAttr().getMaxBackgroundFillModeValue()));
    }
 
-   void dependency_GContext_PaddingFull() {
-      if (_gContext == null)
+   void dependency_PContext_PaddingFull() {
+      if (_paintContext == null)
          return;
-      getGContext().setPadding(getPaddingFull());
+      getPaintContext().setPadding(getPaddingFull());
    }
 
-   void dependency_GContext_BorderWidth() {
-      if (_gContext == null)
+   void dependency_PContext_BorderWidth() {
+      if (_paintContext == null)
          return;
-      getGContext().getPenBorder().setWidth(getBorderWidth());
+      getPaintContext().getPenBorder().setWidth(getBorderWidth());
    }
 
-   void dependency_GContext_BorderColor() {
-      if (_gContext == null)
+   void dependency_PContext_BorderColor() {
+      if (_paintContext == null)
          return;
-      PenBorder pb = getGContext().getPenBorder();
+      PenBorder pb = getPaintContext().getPenBorder();
       pb.setColorShadow(getBorderColor());
       pb.setColorLight(getBorderColor());
    }
 
-   void dependency_GContext_CellPaint() {
+   void dependency_PContext_BkColor() {
+      if (_paintContext == null)
+         return;
+      getPaintContext().setColorBk(getBackgroundColor());
+   }
+
+   void dependency_PContext_CellPaint() {
       if (_cellPaint == null)
          return;
-      assert (getCellPaint() instanceof CellPaintGraphics);
-      ((CellPaintGraphics) getCellPaint()).setGraphicContext(getGContext());
+      getCellPaint().setPaintContext(getPaintContext());
    }
 
    ////////////// #endregion
@@ -180,7 +191,7 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
 
       List<BaseCell> matrix = getMatrix();
       PaintableGraphics paint = new PaintableGraphics(g);
-      ICellPaint<PaintableGraphics> cp = getCellPaint();
+      ICellPaint<PaintableGraphics, TImage, PaintContext<TImage>> cp = getCellPaint();
       if (isOnlySyncDraw() || isLiveImage()) {
          // sync draw
          funcFillBk.run();
@@ -249,7 +260,7 @@ public abstract class MosaicsImg<TImage extends Object> extends fmg.core.img.Mos
          return;
 
       PaintableGraphics paint = new PaintableGraphics(g);
-      PenBorder pb = getGContext().getPenBorder();
+      PenBorder pb = getPaintContext().getPenBorder();
       // save
       int borderWidth = getBorderWidth();
       Color borderColor = getBorderColor();

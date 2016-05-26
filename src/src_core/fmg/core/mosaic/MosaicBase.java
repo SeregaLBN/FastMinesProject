@@ -35,6 +35,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.IPaintable;
+import fmg.core.mosaic.draw.PaintCellContext;
 import fmg.core.types.EClose;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
@@ -45,7 +46,12 @@ import fmg.core.types.click.ClickCellResult;
 import fmg.core.types.click.ClickResult;
 
 /** Mosaic field: класс окна мозаики поля */
-public abstract class MosaicBase<TPaintable extends IPaintable> extends NotifyPropertyChanged implements IMosaic<TPaintable>, PropertyChangeListener
+public abstract class MosaicBase<TPaintable extends IPaintable,
+                                 TImage,
+                                 TPaintContext extends PaintCellContext<TImage>>
+                  extends NotifyPropertyChanged
+                  implements IMosaic<TPaintable, TImage, TPaintContext>,
+                             PropertyChangeListener
 {
    public static final double AREA_MINIMUM = 230;
 
@@ -76,7 +82,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable> extends NotifyPr
          return;
       if (newValue != null)
          throw new IllegalArgumentException("Bad argument - support only null value!");
-      _cellAttr.removePropertyChangeListener(this);
+      _cellAttr.removeListener(this);
       _cellAttr = null;
       onPropertyChanged("CellAttr");
    }

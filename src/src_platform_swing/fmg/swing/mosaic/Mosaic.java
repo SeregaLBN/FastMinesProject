@@ -15,6 +15,7 @@ import java.beans.PropertyChangeEvent;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -31,15 +32,14 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.click.ClickResult;
 import fmg.data.view.draw.PenBorder;
 import fmg.swing.Cast;
-import fmg.swing.draw.GraphicContext;
-import fmg.swing.draw.mosaic.MosaicGraphicContext;
+import fmg.swing.draw.mosaic.PaintContext;
 import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
-public class Mosaic extends MosaicBase<PaintableGraphics> {
+public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintContext<Icon>> {
 
-   private MosaicGraphicContext _gContext;
-   private CellPaintGraphics _cellPaint;
+   private PaintContext<Icon> _paintContext;
+   private CellPaintGraphics<Icon> _cellPaint;
    private JPanel _container;
    private MosaicMouseListeners _mosaicMouseListener;
    private static final boolean _DEBUG = true;
@@ -66,11 +66,11 @@ public class Mosaic extends MosaicBase<PaintableGraphics> {
 
                // background color
                Rectangle rcFill = g.getClipBounds();
-               g.setColor(getGraphicContext().getColorBk());
+               g.setColor(Cast.toColor(getPaintContext().getColorBk()));
                g.fillRect(rcFill.x, rcFill.y, rcFill.width, rcFill.height);
 
                // paint cells
-               g.setFont(getGraphicContext().getFont());
+               g.setFont(getPaintContext().getFont());
                PaintableGraphics p = new PaintableGraphics(g);
                RectDouble clipBounds = Cast.toRectDouble(g.getClipBounds());
                for (BaseCell cell: getMatrix())
@@ -104,21 +104,21 @@ public class Mosaic extends MosaicBase<PaintableGraphics> {
          super.OnError(msg);
    }
 
-   public MosaicGraphicContext getGraphicContext() {
-      if (_gContext == null) {
-         _gContext = new MosaicGraphicContext(getContainer());
-//         changeFontSize(_gContext.getPenBorder(), getArea());
-         _gContext.addListener(this); // изменение контекста -> перерисовка мозаики
+   public PaintContext<Icon> getPaintContext() {
+      if (_paintContext == null) {
+         _paintContext = new PaintContext<>(getContainer(), false);
+//         changeFontSize(_paintContext.getPenBorder(), getArea());
+         _paintContext.addListener(this); // изменение контекста -> перерисовка мозаики
          _cellPaint = null;
       }
-      return _gContext;
+      return _paintContext;
    }
 
    @Override
-   public CellPaintGraphics getCellPaint() {
+   public CellPaintGraphics<Icon> getCellPaint() {
       if (_cellPaint == null) {
-         _cellPaint = new CellPaintGraphics();
-         _cellPaint.setGraphicContext(getGraphicContext());
+         _cellPaint = new CellPaintGraphics<>();
+         _cellPaint.setPaintContext(getPaintContext());
       }
       return _cellPaint;
    }
@@ -147,7 +147,7 @@ public class Mosaic extends MosaicBase<PaintableGraphics> {
 
    @Override
    public boolean GameNew() {
-      getGraphicContext().getBackgroundFill().setMode(
+      getPaintContext().getBackgroundFill().setMode(
             1 + new Random().nextInt(
                   MosaicHelper.createAttributeInstance(getMosaicType(), getArea()).getMaxBackgroundFillModeValue()));
       boolean res = super.GameNew();
@@ -158,7 +158,7 @@ public class Mosaic extends MosaicBase<PaintableGraphics> {
 
    @Override
    protected void GameBegin(BaseCell firstClickCell) {
-      getGraphicContext().getBackgroundFill().setMode(0);
+      getPaintContext().getBackgroundFill().setMode(0);
       super.GameBegin(firstClickCell);
    }
 
@@ -308,21 +308,21 @@ public class Mosaic extends MosaicBase<PaintableGraphics> {
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
       super.propertyChange(ev);
-      if (ev.getSource() instanceof GraphicContext)
-         onGraphicContextPropertyChanged((GraphicContext)ev.getSource(), ev);
+      if (ev.getSource() instanceof PaintContext)
+         onPaintContextPropertyChanged((PaintContext<?>)ev.getSource(), ev);
    }
 
    @Override
    protected void onCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) {
       super.onCellAttributePropertyChanged(source, ev);
       if ("Area".equals(ev.getPropertyName())) {
-         changeFontSize(getGraphicContext().getPenBorder());
+         changeFontSize(getPaintContext().getPenBorder());
 
          revalidate();
       }
    }
 
-   private void onGraphicContextPropertyChanged(GraphicContext source, PropertyChangeEvent ev) {
+   private void onPaintContextPropertyChanged(PaintContext<?> source, PropertyChangeEvent ev) {
       String propName = ev.getPropertyName();
       switch (propName) {
       case "PenBorder":
@@ -340,10 +340,10 @@ public class Mosaic extends MosaicBase<PaintableGraphics> {
    }
 
    /** пересчитать и установить новую высоту шрифта */
-   public void changeFontSize() { changeFontSize(getGraphicContext().getPenBorder()); }
+   public void changeFontSize() { changeFontSize(getPaintContext().getPenBorder()); }
    /** пересчитать и установить новую высоту шрифта */
    private void changeFontSize(PenBorder penBorder) {
-      getGraphicContext().setFontSize((int) getCellAttr().getSq(penBorder.getWidth()));
+      getPaintContext().getFontInfo().setSize((int) getCellAttr().getSq(penBorder.getWidth()));
    }
 
    public static void main(String[] args) {

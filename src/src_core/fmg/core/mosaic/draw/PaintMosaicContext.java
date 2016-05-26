@@ -1,26 +1,30 @@
-package fmg.swing.draw.mosaic;
+package fmg.core.mosaic.draw;
 
-import java.awt.Color;
+import fmg.common.Color;
 
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
+/**
+ * Information required for drawing the entire mosaic and cells
+ *
+ * @param <TImage> plaform specific image
+ */
+public class PaintMosaicContext<TImage> extends PaintCellContext<TImage> {
 
-import fmg.swing.Cast;
-import fmg.swing.draw.GraphicContext;
+   protected static Color _defaultBkColor = Color.Gray;
+   /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера */
+   public static Color getDefaultBackgroundFillColor() {
+      return _defaultBkColor;
+   }
 
-public class MosaicGraphicContext extends GraphicContext {
-   private Color     colorBk;
-   private ImageIcon imgBckgrnd;
+   private Color  colorBk;
+   private TImage imgBckgrnd;
 
-   public MosaicGraphicContext(JComponent owner) {
-      super(owner, false);
+   public PaintMosaicContext(boolean iconicMode) {
+      super(iconicMode);
    }
 
    public Color getColorBk() {
-      if (colorBk == null) {
-         fmg.common.Color clr = GraphicContext.getDefaultBackgroundFillColor();
-         setColorBk(Cast.toColor(clr.darker(0.4)));
-      }
+      if (colorBk == null)
+         setColorBk(getDefaultBackgroundFillColor().darker(0.4));
       return colorBk;
    }
 
@@ -32,13 +36,13 @@ public class MosaicGraphicContext extends GraphicContext {
       onPropertyChanged(old, colorBk, "ColorBk");
    }
 
-   public ImageIcon getImgBckgrnd() {
+   public TImage getImgBckgrnd() {
       return imgBckgrnd;
    }
 
-   public void setImgBckgrnd(ImageIcon imgBckgrnd) {
+   public void setImgBckgrnd(TImage imgBckgrnd) {
       Object old = this.imgBckgrnd;
-      if (old == imgBckgrnd) // references compare 
+      if (old == imgBckgrnd) // references compare
          return;
       this.imgBckgrnd = imgBckgrnd;
       onPropertyChanged(old, imgBckgrnd, "ImgBckgrnd");

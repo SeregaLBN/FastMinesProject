@@ -22,11 +22,19 @@ import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
 import fmg.core.mosaic.draw.IPaintable;
+import fmg.core.mosaic.draw.PaintCellContext;
 import fmg.core.types.EMosaic;
 
-/** representable {@link fmg.core.types.EMosaic} as image */
-public abstract class MosaicsImg<TPaintable extends IPaintable, TImage extends Object> extends RotatedImg<EMosaic, TImage>
-      implements IMosaic<TPaintable>
+/**
+ * Representable {@link fmg.core.types.EMosaic} as image
+ *
+ * @param <TPaintable> see {@link IPaintable}
+ * @param <TImage> plaform specific image
+ * @param <TPaintContext> see {@link PaintCellContext}
+ */
+public abstract class MosaicsImg<TPaintable extends IPaintable, TImage, TPaintContext extends PaintCellContext<TImage>>
+      extends RotatedImg<EMosaic, TImage>
+      implements IMosaic<TPaintable, TImage, TPaintContext>
 {
    public MosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
       super(mosaicType);

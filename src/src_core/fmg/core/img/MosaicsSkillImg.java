@@ -7,8 +7,12 @@ import fmg.common.geom.PointDouble;
 import fmg.common.geom.util.FigureHelper;
 import fmg.data.controller.types.ESkillLevel;
 
-/** representable {@link fmg.data.controller.types.ESkillLevel} as image */
-public abstract class MosaicsSkillImg<TImage extends Object> extends RotatedImg<ESkillLevel, TImage> {
+/**
+ * Representable {@link fmg.data.controller.types.ESkillLevel} as image
+ *
+ * @param <TImage> plaform specific image
+ */
+public abstract class MosaicsSkillImg<TImage> extends RotatedImg<ESkillLevel, TImage> {
 
    public MosaicsSkillImg(ESkillLevel skill) { super(skill); }
    public MosaicsSkillImg(ESkillLevel skill, int widthAndHeight) { super(skill, widthAndHeight); }

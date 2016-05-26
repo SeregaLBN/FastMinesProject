@@ -1,16 +1,21 @@
 package fmg.core.mosaic.draw;
 
-import fmg.core.mosaic.draw.IPaintable;
 import fmg.core.mosaic.cells.BaseCell;
 
 /**
- * Interface for drawing
- * @author SeregaLBN
+ * Interface for drawing cell
  *
+ * @param <TPaintable> see {@link IPaintable}
+ * @param <TImage> plaform specific image
+ * @param <TPaintContext> see {@link PaintCellContext}
  */
-public interface ICellPaint<TPaintable extends IPaintable> {
+public interface ICellPaint<TPaintable extends IPaintable, TImage, TPaintContext extends PaintCellContext<TImage>> {
+
+   TPaintContext getPaintContext();
+   void setPaintContext(TPaintContext paintContext);
+
    void paint(BaseCell cell, TPaintable p);
-   
+
    void paintBorder(BaseCell cell, TPaintable p);
 
    /** draw border lines */

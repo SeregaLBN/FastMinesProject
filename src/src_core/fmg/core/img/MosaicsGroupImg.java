@@ -6,8 +6,12 @@ import fmg.common.geom.PointDouble;
 import fmg.common.geom.util.FigureHelper;
 import fmg.core.types.EMosaicGroup;
 
-/** representable {@link fmg.core.types.EMosaicGroup} as image */
-public abstract class MosaicsGroupImg<TImage extends Object> extends PolarLightsImg<EMosaicGroup, TImage> {
+/**
+ * Representable {@link fmg.core.types.EMosaicGroup} as image
+ *
+ * @param <TImage> plaform specific image
+ */
+public abstract class MosaicsGroupImg<TImage> extends PolarLightsImg<EMosaicGroup, TImage> {
 
    public MosaicsGroupImg(EMosaicGroup group) { super(group); }
    public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight) { super(group, widthAndHeight); }

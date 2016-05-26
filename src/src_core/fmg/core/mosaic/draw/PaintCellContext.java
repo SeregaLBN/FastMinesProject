@@ -1,47 +1,41 @@
-package fmg.swing.draw;
+package fmg.core.mosaic.draw;
 
-import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
-
 import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.data.view.draw.ColorText;
+import fmg.data.view.draw.FontInfo;
 import fmg.data.view.draw.PenBorder;
-import fmg.swing.Cast;
 
-public class GraphicContext extends NotifyPropertyChanged implements PropertyChangeListener {
-   public static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 10);
+/**
+ * Information required for drawing the cell
+ *
+ * @param <TImage> plaform specific image
+ **/
+public class PaintCellContext<TImage> extends NotifyPropertyChanged implements PropertyChangeListener, AutoCloseable {
 
-   /** TODO: Mosaic field - нуна избавиться... */
-   private JComponent owner;
-
-   private Icon imgMine, imgFlag;
+   private TImage imgMine, imgFlag;
    private ColorText colorText;
    private PenBorder penBorder;
-   private Font        font;
+   private FontInfo  fontInfo;
    private final boolean iconicMode;
    private BoundDouble padding;
 
-   public GraphicContext(JComponent owner, boolean iconicMode) {
-      this.owner = owner;
+   public PaintCellContext(boolean iconicMode) {
       this.iconicMode = iconicMode;
       this.padding = new BoundDouble(0, 0, 0, 0);
    }
 
-   public Icon getImgMine() {
+   public TImage getImgMine() {
       return imgMine;
    }
-   public void setImgMine(Icon img) {
+   public void setImgMine(TImage img) {
       Object old = this.imgMine;
       if (old != img) { // references compare
          this.imgMine = img;
@@ -49,10 +43,10 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
       }
    }
 
-   public Icon getImgFlag() {
+   public TImage getImgFlag() {
       return imgFlag;
    }
-   public void setImgFlag(Icon img) {
+   public void setImgFlag(TImage img) {
       Object old = this.imgFlag;
       if (old != img) { // references compare
          this.imgFlag = img;
@@ -71,10 +65,10 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
          return;
 
       if (old != null)
-         old.removePropertyChangeListener(this);
-      colorText.addListener(this);
-
+         old.removeListener(this);
       this.colorText = colorText;
+      if (colorText != null)
+         colorText.addListener(this);
       onPropertyChanged(old, colorText, "ColorText");
    }
 
@@ -89,15 +83,11 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
          return;
 
       if (old != null)
-         old.removePropertyChangeListener(this);
-      penBorder.addListener(this);
-
+         old.removeListener(this);
       this.penBorder = penBorder;
+      if (penBorder != null)
+         penBorder.addListener(this);
       onPropertyChanged(old, penBorder, "PenBorder");
-   }
-
-   public JComponent getOwner() {
-      return owner;
    }
 
    /** всё что относиться к заливке фоном ячееек */
@@ -151,12 +141,20 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
 
    private BackgroundFill _backgroundFill;
    public BackgroundFill getBackgroundFill() {
-      if (_backgroundFill == null) {
-         _backgroundFill = new BackgroundFill();
-         _backgroundFill.addListener(this);
-         onPropertyChanged("BackgroundFill");
-      }
+      if (_backgroundFill == null)
+         setBackgroundFill(new BackgroundFill());
       return _backgroundFill;
+   }
+   private void setBackgroundFill(BackgroundFill backgroundFill) {
+      BackgroundFill oldBkFill = this._backgroundFill;
+      if (oldBkFill == backgroundFill) // ref eq
+         return;
+      if (oldBkFill != null)
+         oldBkFill.removeListener(this);
+      this._backgroundFill = backgroundFill;
+      if (backgroundFill != null)
+         backgroundFill.addListener(this);
+      onPropertyChanged(oldBkFill, backgroundFill, "BackgroundFill");
    }
 
    public boolean isIconicMode() {
@@ -166,7 +164,6 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
    public BoundDouble getPadding() {
       return padding;
    }
-
    public void setPadding(BoundDouble padding) {
       BoundDouble old = this.padding;
       if (!padding.equals(old)) {
@@ -175,38 +172,23 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
       }
    }
 
-   public Font getFont() {
-      if (font == null)
-         setFont(DEFAULT_FONT);
-      return font;
+   public FontInfo getFontInfo() {
+      if (fontInfo == null)
+         setFontInfo(new FontInfo());
+      return fontInfo;
    }
-   private void setRawFont(Font font) {
-      Object old = this.font;
-      if (old != font) { // references compare
-         this.font = font;
-         onPropertyChanged(old, font, "Font");
-      }
-   }
-   public void setFont(Font newFont) {
-      if (font != null) {
-         if (font.getName().equals(newFont.getName()) &&
-            (font.getStyle() == newFont.getStyle()) &&
-            (font.getSize() == newFont.getSize()))
-            return;
-
-         int heightNeed = font.getSize();
-         int heightBad = newFont.getSize();
-         if (heightNeed != heightBad)
-            newFont = new Font(newFont.getName(), newFont.getStyle(), heightNeed);
-      }
-      setRawFont(newFont);
-   }
-   public void setFontSize(int size) {
-//      size = 9; // debug
-      Font fnt = getFont();
-      if (fnt.getSize() == size)
+   public void setFontInfo(FontInfo fontInfo) {
+      FontInfo oldFont = this.fontInfo;
+      if ((oldFont == null) && (fontInfo == null))
          return;
-      setRawFont(new Font(fnt.getName(), fnt.getStyle(), size));
+      if ((oldFont != null) && oldFont.equals(fontInfo))
+         return;
+      if (oldFont != null)
+         oldFont.removeListener(this);
+      this.fontInfo = fontInfo;
+      if (fontInfo != null)
+         fontInfo.addListener(this);
+      onPropertyChanged(oldFont, fontInfo, "FontInfo");
    }
 
    private static fmg.common.Color _defaultBkColor;
@@ -215,43 +197,26 @@ public class GraphicContext extends NotifyPropertyChanged implements PropertyCha
       return _defaultBkColor;
    }
 
-   static {
-      UIDefaults uiDef = UIManager.getDefaults();
-      java.awt.Color clr = uiDef.getColor("Panel.background");
-      if (clr == null)
-         clr = java.awt.Color.GRAY;
-      _defaultBkColor = Cast.toColor(clr);
-      // ToggleButton.darkShadow : javax.swing.plaf.ColorUIResource[r=105,g=105,b=105]
-      // ToggleButton.background : javax.swing.plaf.ColorUIResource[r=240,g=240,b=240]
-      // ToggleButton.focus      : javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
-      // ToggleButton.highlight  : javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]
-      // ToggleButton.light      : javax.swing.plaf.ColorUIResource[r=227,g=227,b=227]
-      // ToggleButton.shadow     : javax.swing.plaf.ColorUIResource[r=160,g=160,b=160]
-      // ToggleButton.foreground : javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
+   @Override
+   public void propertyChange(PropertyChangeEvent ev) {
+      Object source = ev.getSource();
+      if (source instanceof FontInfo)
+         onInnerPropertyChanged((FontInfo)ev.getSource(), ev, "FontInfo");
+      if (source instanceof BackgroundFill)
+         onInnerPropertyChanged((BackgroundFill)ev.getSource(), ev, "BackgroundFill");
+      if (source instanceof ColorText)
+         onInnerPropertyChanged((ColorText)ev.getSource(), ev, "ColorText");
+      if (source instanceof PenBorder)
+         onInnerPropertyChanged((PenBorder)ev.getSource(), ev, "PenBorder");
    }
 
    @Override
-   public void propertyChange(PropertyChangeEvent ev) {
-      //super.propertyChange(ev);
-      Object source = ev.getSource();
-      if (source instanceof BackgroundFill)
-         onBackgroundFillPropertyChanged((BackgroundFill)ev.getSource(), ev);
-      if (source instanceof ColorText)
-         onColorTextPropertyChanged((ColorText)ev.getSource(), ev);
-      if (source instanceof PenBorder)
-         onPenBorderPropertyChanged((PenBorder)ev.getSource(), ev);
-   }
-   private void onBackgroundFillPropertyChanged(BackgroundFill source, PropertyChangeEvent ev) {
-      onPropertyChanged("BackgroundFill");
-      onPropertyChanged("BackgroundFill." + ev.getPropertyName());
-   }
-   private void onColorTextPropertyChanged(ColorText source, PropertyChangeEvent ev) {
-      onPropertyChanged("ColorText");
-      onPropertyChanged("ColorText." + ev.getPropertyName());
-   }
-   private void onPenBorderPropertyChanged(PenBorder source, PropertyChangeEvent ev) {
-      onPropertyChanged("PenBorder");
-      onPropertyChanged("PenBorder." + ev.getPropertyName());
+   public void close() {
+      // unsubscribe from local notifications
+      setFontInfo(null);
+      setBackgroundFill(null);
+      setColorText(null);
+      setPenBorder(null);
    }
 
 }

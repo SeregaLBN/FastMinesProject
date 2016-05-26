@@ -18,11 +18,14 @@ import fmg.common.geom.PointDouble;
 import fmg.core.types.EMosaicGroup;
 import fmg.swing.Cast;
 
-/** representable {@link fmg.core.types.EMosaicGroup} as image
- *  <br>
- *  SWING impl
+/**
+ * Representable {@link fmg.core.types.EMosaicGroup} as image
+ * <br>
+ * SWING impl
+ *
+ * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon})
  **/
-public abstract class MosaicsGroupImg<TImage extends Object> extends fmg.core.img.MosaicsGroupImg<TImage> {
+public abstract class MosaicsGroupImg<TImage> extends fmg.core.img.MosaicsGroupImg<TImage> {
 
    static {
       if (DEFERR_INVOKER == null)

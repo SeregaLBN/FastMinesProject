@@ -7,7 +7,13 @@ import fmg.common.geom.Bound;
 import fmg.common.geom.Size;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
-public abstract class StaticImg<T, TImage extends Object> extends NotifyPropertyChanged implements AutoCloseable {
+/**
+ * Abstract, platform independent, image characteristics
+ *
+ * @param <T> the entity of image
+ * @param <TImage> plaform specific image
+ **/
+public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged implements AutoCloseable {
 
    public static Consumer<Runnable> DEFERR_INVOKER;
 
