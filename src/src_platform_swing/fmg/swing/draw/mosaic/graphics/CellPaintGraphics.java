@@ -23,7 +23,7 @@ import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.mosaic.draw.PaintMosaicContext;
+import fmg.core.mosaic.draw.PaintCellContext;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
@@ -36,6 +36,7 @@ import fmg.swing.draw.mosaic.CellPaint;
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
  */
 public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TImage> {
+
    /** @see javax.swing.JComponent.paint */
    @Override
    public void paint(BaseCell cell, PaintableGraphics p) {
@@ -195,7 +196,7 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
 //         return;
       g.setColor(Cast.toColor(cell.getBackgroundFillColor(
             paintContext.getBackgroundFill().getMode(),
-            PaintMosaicContext.getDefaultBackgroundFillColor(),
+            PaintCellContext.getDefaultBackgroundFillColor(),
             paintContext.getBackgroundFill().getColors()
             )));
       SizeDouble offset = new SizeDouble(paintContext.getPadding().left, paintContext.getPadding().top);
