@@ -183,12 +183,6 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\BitmapFont.cs">
       <Link>src_fmg.uwp\draw\BitmapFont.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\GraphicContext.cs">
-      <Link>src_fmg.uwp\draw\GraphicContext.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\MosaicGraphicContext.cs">
-      <Link>src_fmg.uwp\draw\mosaic\MosaicGraphicContext.cs</Link>
-    </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\MosaicPageInitParam.cs">
       <Link>src_fmg.uwp\mosaic\MosaicPageInitParam.cs</Link>
     </Compile>
