@@ -9,7 +9,7 @@ namespace fmg.uwp.draw.mosaic {
    public abstract class CellPaint<TPaintable, TImage, TPaintContext> : ICellPaint<TPaintable, TImage, TPaintContext>
       where TPaintable : IPaintable
       where TImage : class
-      where TPaintContext : PaintCellContext<TImage>
+      where TPaintContext : PaintUwpContext<TImage>
    {
       public TPaintContext PaintContext { get; set; }
 

@@ -116,7 +116,7 @@
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>rd /s /q $(ProjectDir)src_fmg.common
-mklink /j $(ProjectDir)src_fmg.common   $(SolutionDir)..\src\src_core\fmg\common</PreBuildEvent>
+mklink /j $(ProjectDir)src_fmg.common   $(SolutionDir)..\src\src_common\fmg\common</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -32,13 +32,13 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.click.ClickResult;
 import fmg.data.view.draw.PenBorder;
 import fmg.swing.Cast;
-import fmg.swing.draw.mosaic.PaintContext;
+import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
-public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintContext<Icon>> {
+public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContext<Icon>> {
 
-   private PaintContext<Icon> _paintContext;
+   private PaintSwingContext<Icon> _paintContext;
    private CellPaintGraphics<Icon> _cellPaint;
    private JPanel _container;
    private MosaicMouseListeners _mosaicMouseListener;
@@ -104,9 +104,9 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintContext<Ico
          super.OnError(msg);
    }
 
-   public PaintContext<Icon> getPaintContext() {
+   public PaintSwingContext<Icon> getPaintContext() {
       if (_paintContext == null) {
-         _paintContext = new PaintContext<>(getContainer(), false);
+         _paintContext = new PaintSwingContext<>(getContainer(), false);
 //         changeFontSize(_paintContext.getPenBorder(), getArea());
          _paintContext.addListener(this); // изменение контекста -> перерисовка мозаики
          _cellPaint = null;
@@ -308,8 +308,8 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintContext<Ico
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
       super.propertyChange(ev);
-      if (ev.getSource() instanceof PaintContext)
-         onPaintContextPropertyChanged((PaintContext<?>)ev.getSource(), ev);
+      if (ev.getSource() instanceof PaintSwingContext)
+         onPaintContextPropertyChanged((PaintSwingContext<?>)ev.getSource(), ev);
    }
 
    @Override
@@ -322,7 +322,7 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintContext<Ico
       }
    }
 
-   private void onPaintContextPropertyChanged(PaintContext<?> source, PropertyChangeEvent ev) {
+   private void onPaintContextPropertyChanged(PaintSwingContext<?> source, PropertyChangeEvent ev) {
       String propName = ev.getPropertyName();
       switch (propName) {
       case "PenBorder":

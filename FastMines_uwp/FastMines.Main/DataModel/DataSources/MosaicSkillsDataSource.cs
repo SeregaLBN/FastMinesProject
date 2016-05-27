@@ -1,10 +1,9 @@
 ﻿using fmg.common;
 using fmg.common.geom;
+using fmg.core.mosaic.draw;
 using fmg.data.controller.types;
-using fmg.uwp.draw;
 using fmg.uwp.res.img;
 using fmg.common.Controls;
-using fmg.uwp.draw.mosaic;
 
 namespace fmg.DataModel.DataSources
 {

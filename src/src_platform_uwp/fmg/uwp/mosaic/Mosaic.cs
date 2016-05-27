@@ -21,7 +21,7 @@ using fmg.uwp.utils;
 
 namespace fmg.uwp.mosaic {
 
-   public class Mosaic : MosaicBase<PaintableShapes, ImageSource, PaintContext<ImageSource>> {
+   public class Mosaic : MosaicBase<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> {
 
       private IDictionary<BaseCell, PaintableShapes> _xamlBinder;
       private CellPaintShapes _cellPaint;
@@ -71,7 +71,7 @@ namespace fmg.uwp.mosaic {
          {
             var paintContext = CellPaintFigures.PaintContext; // as PaintMosaicContext<TImage>;
             if (paintContext == null) {
-               CellPaintFigures.PaintContext = paintContext = new PaintContext<ImageSource>(false);
+               CellPaintFigures.PaintContext = paintContext = new PaintUwpContext<ImageSource>(false);
                //changeFontSize(gContext.PenBorder, Area);
                paintContext.PropertyChanged += OnGraphicContextPropertyChanged; // изменение контекста -> перерисовка мозаики
             }
@@ -79,7 +79,7 @@ namespace fmg.uwp.mosaic {
          }
       }
 
-      public override ICellPaint<PaintableShapes, ImageSource, PaintContext<ImageSource>> CellPaint => CellPaintFigures;
+      public override ICellPaint<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> CellPaint => CellPaintFigures;
       protected CellPaintShapes CellPaintFigures => _cellPaint ?? (_cellPaint = new CellPaintShapes());
 
       private IDictionary<BaseCell, PaintableShapes> XamlBinder => _xamlBinder ?? (_xamlBinder = new Dictionary<BaseCell, PaintableShapes>());

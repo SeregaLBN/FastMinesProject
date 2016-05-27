@@ -23,7 +23,7 @@ import fmg.core.mosaic.draw.ICellPaint;
 import fmg.core.types.EMosaic;
 import fmg.data.view.draw.PenBorder;
 import fmg.swing.Cast;
-import fmg.swing.draw.mosaic.PaintContext;
+import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
@@ -34,7 +34,7 @@ import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
  */
-public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<PaintableGraphics, TImage, PaintContext<TImage>> {
+public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<PaintableGraphics, TImage, PaintSwingContext<TImage>> {
 
    static {
       if (DEFERR_INVOKER == null)
@@ -50,27 +50,27 @@ public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<Paintab
    public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) { super(mosaicType, sizeField, widthAndHeight, padding); }
    public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) { super(mosaicType, sizeField, sizeImage, padding); }
 
-   private ICellPaint<PaintableGraphics, TImage, PaintContext<TImage>> _cellPaint;
+   private ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> _cellPaint;
    @Override
-   public ICellPaint<PaintableGraphics, TImage, PaintContext<TImage>> getCellPaint() {
+   public ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> getCellPaint() {
       if (_cellPaint == null)
          setCellPaint(new CellPaintGraphics<>());
       return _cellPaint;
    }
-   private void setCellPaint(ICellPaint<PaintableGraphics, TImage, PaintContext<TImage>> value) {
+   private void setCellPaint(ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> value) {
       if (setProperty(_cellPaint, value, "CellPaint")) {
          dependency_PContext_CellPaint();
          invalidate();
       }
    }
 
-   private PaintContext<TImage> _paintContext;
-   protected PaintContext<TImage> getPaintContext() {
+   private PaintSwingContext<TImage> _paintContext;
+   protected PaintSwingContext<TImage> getPaintContext() {
       if (_paintContext == null)
-         setPaintContext(new PaintContext<>(null, true));
+         setPaintContext(new PaintSwingContext<>(null, true));
       return _paintContext;
    }
-   protected void setPaintContext(PaintContext<TImage> paintContext) {
+   protected void setPaintContext(PaintSwingContext<TImage> paintContext) {
       if (setProperty(_paintContext, paintContext, "PaintContext")) {
          dependency_PContext_CellAttribute();
          dependency_PContext_PaddingFull();
@@ -191,7 +191,7 @@ public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<Paintab
 
       List<BaseCell> matrix = getMatrix();
       PaintableGraphics paint = new PaintableGraphics(g);
-      ICellPaint<PaintableGraphics, TImage, PaintContext<TImage>> cp = getCellPaint();
+      ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> cp = getCellPaint();
       if (isOnlySyncDraw() || isLiveImage()) {
          // sync draw
          funcFillBk.run();

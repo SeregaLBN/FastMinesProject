@@ -96,7 +96,7 @@ import fmg.swing.dialogs.CustomSkillDlg;
 import fmg.swing.dialogs.ManageDlg;
 import fmg.swing.dialogs.SelectMosaicDlg;
 import fmg.swing.dialogs.StatisticDlg;
-import fmg.swing.draw.mosaic.PaintContext;
+import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.mosaic.Mosaic;
 import fmg.swing.res.Resources;
 import fmg.swing.res.Resources.EBtnNewGameState;
@@ -2246,7 +2246,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    /** переустанавливаю заного размер мины/флага для мозаики */
    private void ChangeSizeImagesMineFlag() {
       Mosaic m = getMosaic();
-      PaintContext<Icon> pc = m.getPaintContext();
+      PaintSwingContext<Icon> pc = m.getPaintContext();
       int sq = (int)m.getCellAttr().getSq(pc.getPenBorder().getWidth());
       if (sq <= 0) {
          System.err.println("Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");

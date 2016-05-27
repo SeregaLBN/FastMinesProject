@@ -37,7 +37,7 @@ namespace fmg.core.mosaic {
    public abstract class MosaicBase<TPaintable, TImage, TPaintContext> : NotifyPropertyChanged, IMosaic<TPaintable, TImage, TPaintContext>
       where TPaintable : IPaintable
       where TImage : class
-      where TPaintContext : PaintCellContext<TImage>
+      where TPaintContext : PaintContext<TImage>
    {
 
    #region Members

@@ -11,15 +11,15 @@ import fmg.swing.Cast;
  * @param <TPaintable> see {@link IPaintable}
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
  */
-public abstract class CellPaint<TPaintable extends IPaintable, TImage> implements ICellPaint<TPaintable, TImage, PaintContext<TImage>> {
-   protected PaintContext<TImage> paintContext;
+public abstract class CellPaint<TPaintable extends IPaintable, TImage> implements ICellPaint<TPaintable, TImage, PaintSwingContext<TImage>> {
+   protected PaintSwingContext<TImage> paintContext;
 
    @Override
-   public PaintContext<TImage> getPaintContext() {
+   public PaintSwingContext<TImage> getPaintContext() {
       return paintContext;
    }
    @Override
-   public void setPaintContext(PaintContext<TImage> paintContext) {
+   public void setPaintContext(PaintSwingContext<TImage> paintContext) {
       this.paintContext = paintContext;
    }
 

@@ -8,7 +8,7 @@ using fmg.common.notyfier;
 
 namespace fmg.core.mosaic.draw {
 
-   public class PaintCellContext<TImage> : NotifyPropertyChanged, IDisposable
+   public class PaintContext<TImage> : NotifyPropertyChanged, IDisposable
       where TImage : class
    {
       private TImage _imgMine, _imgFlag;
@@ -23,7 +23,7 @@ namespace fmg.core.mosaic.draw {
       public static Color DefaultBackgroundFillColor { get; protected set; } = Color.Gray;
       public static Color DefaultBackgroundWindowColor { get; protected set; } = Color.Gray;
 
-      public PaintCellContext(bool iconicMode) {
+      public PaintContext(bool iconicMode) {
          IconicMode = iconicMode;
          _colorBk = DefaultBackgroundWindowColor.Darker(0.4);
       }

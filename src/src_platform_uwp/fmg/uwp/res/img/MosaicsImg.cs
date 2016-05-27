@@ -7,11 +7,10 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic.draw;
-using fmg.uwp.draw;
-using fmg.uwp.draw.mosaic.bmp;
-using fmg.Common;
 using fmg.uwp.draw.mosaic;
+using fmg.uwp.draw.mosaic.bmp;
 using fmg.uwp.utils;
+using fmg.Common;
 
 namespace fmg.uwp.res.img {
 
@@ -19,7 +18,7 @@ namespace fmg.uwp.res.img {
    /// <br>
    /// WriteableBitmap impl
    /// </summary>
-   public class MosaicsImg : core.img.MosaicsImg<PaintableBmp, WriteableBitmap, PaintContext<WriteableBitmap>> {
+   public class MosaicsImg : core.img.MosaicsImg<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> {
 
       static MosaicsImg() {
          if (DeferrInvoker == null)
@@ -43,26 +42,26 @@ namespace fmg.uwp.res.img {
          OnlySyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
       }
 
-      private ICellPaint<PaintableBmp, WriteableBitmap, PaintContext<WriteableBitmap>> _cellPaint;
-      public override ICellPaint<PaintableBmp, WriteableBitmap, PaintContext<WriteableBitmap>> CellPaint {
+      private ICellPaint<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> _cellPaint;
+      public override ICellPaint<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> CellPaint {
          get {
             if (_cellPaint == null)
-               SetCellPaint(new CellPaintBmp<PaintContext<WriteableBitmap>>()); // call this setter
+               SetCellPaint(new CellPaintBmp<PaintUwpContext<WriteableBitmap>>()); // call this setter
             return _cellPaint;
          }
       }
-      private void SetCellPaint(ICellPaint<PaintableBmp, WriteableBitmap, PaintContext<WriteableBitmap>> value) {
+      private void SetCellPaint(ICellPaint<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> value) {
          if (SetProperty(ref _cellPaint, value))  {
             dependency_PContext_CellPaint();
             Invalidate();
          }
       }
 
-      private PaintContext<WriteableBitmap> _paintContext;
-      protected PaintContext<WriteableBitmap> PaintContext {
+      private PaintUwpContext<WriteableBitmap> _paintContext;
+      protected PaintUwpContext<WriteableBitmap> PaintContext {
          get {
             if (_paintContext == null)
-               PaintContext = new PaintContext<WriteableBitmap>(true); // call this setter
+               PaintContext = new PaintUwpContext<WriteableBitmap>(true); // call this setter
             return _paintContext;
          }
          set {

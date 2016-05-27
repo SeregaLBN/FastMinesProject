@@ -8,7 +8,7 @@ namespace fmg.core.mosaic.draw {
    public interface ICellPaint<in TPaintable, TImage, TPaintContext>
       where TPaintable : IPaintable
       where TImage : class
-      where TPaintContext : PaintCellContext<TImage>
+      where TPaintContext : PaintContext<TImage>
    {
       TPaintContext PaintContext { get; set; }
 

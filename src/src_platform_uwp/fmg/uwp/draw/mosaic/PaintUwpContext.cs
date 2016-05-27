@@ -6,15 +6,15 @@ using fmg.uwp.utils;
 
 namespace fmg.uwp.draw.mosaic {
 
-   public class PaintContext<TImage> : PaintCellContext<TImage>
+   public class PaintUwpContext<TImage> : PaintContext<TImage>
       where TImage: class
    {
-      public PaintContext(bool iconicMode) :
+      public PaintUwpContext(bool iconicMode) :
          base(iconicMode)
       {
       }
 
-      static PaintContext() {
+      static PaintUwpContext() {
          try {
             var uiSettings = new UISettings();
 

@@ -3,9 +3,8 @@ using System.Linq;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
+using fmg.core.mosaic.draw;
 using fmg.data.controller.types;
-using fmg.uwp.draw;
-using fmg.uwp.draw.mosaic;
 using fmg.uwp.res.img;
 using fmg.common.Controls;
 

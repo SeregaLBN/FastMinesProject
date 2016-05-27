@@ -13,7 +13,7 @@ namespace fmg.uwp.draw.mosaic.bmp
    /// Helper class for drawing info (ower WriteableBitmap)
    /// </summary>
    public class CellPaintBmp<TPaintContext> : CellPaint<PaintableBmp, WriteableBitmap, TPaintContext>
-      where TPaintContext : PaintCellContext<WriteableBitmap>
+      where TPaintContext : PaintUwpContext<WriteableBitmap>
    {
       public override void Paint(BaseCell cell, PaintableBmp paint)
       {
@@ -141,7 +141,7 @@ namespace fmg.uwp.draw.mosaic.bmp
          //   return;
          var color = cell.getBackgroundFillColor(
             PaintContext.BkFill.Mode,
-            core.mosaic.draw.PaintCellContext<object>.DefaultBackgroundFillColor,
+            core.mosaic.draw.PaintContext<object>.DefaultBackgroundFillColor,
             PaintContext.BkFill.GetColor
             );
          paint.Bmp.FillPolygon(cell.getRegion().RegionDoubleAsXyxyxySequence(PaintContext.Padding, true).ToArray(), color.ToWinColor());

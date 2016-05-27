@@ -14,7 +14,7 @@ namespace fmg.uwp.draw.mosaic.xaml
    /// <summary>
    /// Helper class for drawing info (over xaml shapes)
    /// </summary>
-   public class CellPaintShapes : CellPaint<PaintableShapes, ImageSource, PaintContext<ImageSource>>
+   public class CellPaintShapes : CellPaint<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>>
    {
       private readonly IDictionary<Color, Brush> _brushCacheMap;
 
@@ -165,11 +165,11 @@ namespace fmg.uwp.draw.mosaic.xaml
       public override void PaintComponentBackground(BaseCell cell, PaintableShapes binder) {
          Color clr;
          if (PaintContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
-            clr = core.mosaic.draw.PaintCellContext<object>.DefaultBackgroundFillColor; // TODO ??? мож прозрачное..
+            clr = core.mosaic.draw.PaintContext<object>.DefaultBackgroundFillColor; // TODO ??? мож прозрачное..
          else
             clr = cell.getBackgroundFillColor(
                PaintContext.BkFill.Mode,
-               core.mosaic.draw.PaintCellContext<object>.DefaultBackgroundFillColor,
+               core.mosaic.draw.PaintContext<object>.DefaultBackgroundFillColor,
                PaintContext.BkFill.GetColor
                );
          binder.Poly.Fill = FindBrush(clr);
