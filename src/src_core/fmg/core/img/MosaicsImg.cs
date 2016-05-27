@@ -16,7 +16,7 @@ namespace fmg.core.img {
    public abstract class MosaicsImg<TPaintable, TImage, TPaintContext> : RotatedImg<EMosaic, TImage>, IMosaic<TPaintable, TImage, TPaintContext>
       where TPaintable : IPaintable
       where TImage : class
-      where TPaintContext : PaintMosaicContext<TImage>
+      where TPaintContext : PaintCellContext<TImage>
    {
       protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(mosaicType, widthAndHeight, padding) {

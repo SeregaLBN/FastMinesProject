@@ -6,7 +6,7 @@ using fmg.uwp.utils;
 
 namespace fmg.uwp.draw.mosaic {
 
-   public class PaintContext<TImage> : PaintMosaicContext<TImage>
+   public class PaintContext<TImage> : PaintCellContext<TImage>
       where TImage: class
    {
       public PaintContext(bool iconicMode) :

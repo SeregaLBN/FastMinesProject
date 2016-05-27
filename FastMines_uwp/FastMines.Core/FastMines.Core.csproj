@@ -43,9 +43,6 @@
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\draw\PaintCellContext.cs">
       <Link>src_fmg.core\mosaic\draw\PaintCellContext.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\mosaic\draw\PaintMosaicContext.cs">
-      <Link>src_fmg.core\mosaic\draw\PaintMosaicContext.cs</Link>
-    </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\draw\ICellPaint.cs">
       <Link>src_fmg.core\mosaic\draw\ICellPaint.cs</Link>
     </Compile>

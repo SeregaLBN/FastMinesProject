@@ -31,7 +31,7 @@ namespace fmg.core.mosaic {
    public interface IMosaic<in TPaintable, TImage, TPaintContext> : BaseCell.IMatrixCells
       where TPaintable : IPaintable
       where TImage : class
-      where TPaintContext : PaintMosaicContext<TImage>
+      where TPaintContext : PaintCellContext<TImage>
    {
       BaseCell.BaseAttribute CellAttr { get; }
 
