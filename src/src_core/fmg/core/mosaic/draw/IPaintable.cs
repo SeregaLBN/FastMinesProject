@@ -13,7 +13,7 @@ namespace fmg.core.mosaic.draw
    /// <description>java Swing: java.awt.Graphics</description>
    /// </item>
    /// <item>
-   /// <description>UWP: xaml shapes</description>
+   /// <description>UWP: xaml elements</description>
    /// </item>
    /// </list>
    /// (other names - surface; device context; drawing session; graphics; etc.)

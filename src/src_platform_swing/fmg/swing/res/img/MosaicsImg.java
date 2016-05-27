@@ -54,27 +54,20 @@ public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<Paintab
    @Override
    public ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> getCellPaint() {
       if (_cellPaint == null)
-         setCellPaint(new CellPaintGraphics<>());
+         _cellPaint = new CellPaintGraphics<>();
       return _cellPaint;
-   }
-   private void setCellPaint(ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> value) {
-      if (setProperty(_cellPaint, value, "CellPaint")) {
-         dependency_PContext_CellPaint();
-         invalidate();
-      }
    }
 
    private PaintSwingContext<TImage> _paintContext;
    protected PaintSwingContext<TImage> getPaintContext() {
       if (_paintContext == null)
-         setPaintContext(new PaintSwingContext<>(null, true));
+         setPaintContext(new PaintSwingContext<>(true));
       return _paintContext;
    }
    protected void setPaintContext(PaintSwingContext<TImage> paintContext) {
       if (setProperty(_paintContext, paintContext, "PaintContext")) {
          dependency_PContext_CellAttribute();
          dependency_PContext_PaddingFull();
-         dependency_PContext_CellPaint();
          dependency_PContext_BorderWidth();
          dependency_PContext_BorderColor();
          dependency_PContext_BkColor();
@@ -150,12 +143,6 @@ public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<Paintab
       getPaintContext().setColorBk(getBackgroundColor());
    }
 
-   void dependency_PContext_CellPaint() {
-      if (_cellPaint == null)
-         return;
-      getCellPaint().setPaintContext(getPaintContext());
-   }
-
    ////////////// #endregion
 
    protected void drawBody(Graphics g) {
@@ -190,20 +177,21 @@ public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<Paintab
       };
 
       List<BaseCell> matrix = getMatrix();
-      PaintableGraphics paint = new PaintableGraphics(g);
+      PaintableGraphics paint = new PaintableGraphics(null, g);
+      PaintSwingContext<TImage> paintContext = getPaintContext();
       ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> cp = getCellPaint();
       if (isOnlySyncDraw() || isLiveImage()) {
          // sync draw
          funcFillBk.run();
          for (BaseCell cell : matrix)
-            cp.paint(cell, paint);
+            cp.paint(cell, paint, paintContext);
       } else {
          // async draw
          SwingUtilities.invokeLater(() ->  {
             funcFillBk.run();
             for (BaseCell cell : matrix) {
                BaseCell tmp = cell;
-               SwingUtilities.invokeLater(() -> cp.paint(tmp, paint));
+               SwingUtilities.invokeLater(() -> cp.paint(tmp, paint, paintContext));
             }
          });
       }
@@ -247,19 +235,21 @@ public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<Paintab
       //g.clearRect(0, 0, w, h);
       g.fillRect(0, 0, w, h);
 
-      PaintableGraphics paint = new PaintableGraphics(g);
+      PaintableGraphics paint = new PaintableGraphics(null, g);
+      PaintSwingContext<TImage> paintContext = getPaintContext();
       List<BaseCell> matrix = getMatrix();
       List<Integer> indexes = _rotatedElements.stream().map(cntxt -> cntxt.index).collect(Collectors.toList());
       for (int i = 0; i < matrix.size(); ++i)
          if (!indexes.contains(i))
-            getCellPaint().paint(matrix.get(i), paint);
+            getCellPaint().paint(matrix.get(i), paint, paintContext);
    }
 
    private void drawRotatedPart(Graphics g) {
       if (_rotatedElements.isEmpty())
          return;
 
-      PaintableGraphics paint = new PaintableGraphics(g);
+      PaintableGraphics paint = new PaintableGraphics(null, g);
+      PaintSwingContext<TImage> paintContext = getPaintContext();
       PenBorder pb = getPaintContext().getPenBorder();
       // save
       int borderWidth = getBorderWidth();
@@ -270,7 +260,7 @@ public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<Paintab
       pb.setColorShadow(borderColor.darker(0.5));
 
       List<BaseCell> matrix = getMatrix();
-      _rotatedElements.forEach(cntxt -> getCellPaint().paint(matrix.get(cntxt.index), paint));
+      _rotatedElements.forEach(cntxt -> getCellPaint().paint(matrix.get(cntxt.index), paint, paintContext));
 
       // restore
       pb.setWidth(borderWidth); //BorderWidth = borderWidth;

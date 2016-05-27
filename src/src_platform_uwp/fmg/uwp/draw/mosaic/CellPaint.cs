@@ -10,19 +10,18 @@ namespace fmg.uwp.draw.mosaic {
       where TPaintable : IPaintable
       where TImage : class
    {
-      public PaintUwpContext<TImage> PaintContext { get; set; }
 
-      public abstract void Paint(BaseCell cell, TPaintable paint);
+      public abstract void Paint(BaseCell cell, TPaintable paint, PaintUwpContext<TImage> paintContext);
 
-      public abstract void PaintBorder(BaseCell cell, TPaintable paint);
+      public abstract void PaintBorder(BaseCell cell, TPaintable paint, PaintUwpContext<TImage> paintContext);
 
       /// <summary> draw border lines </summary>
-      public abstract void PaintBorderLines(BaseCell cell, TPaintable paint);
+      public abstract void PaintBorderLines(BaseCell cell, TPaintable paint, PaintUwpContext<TImage> paintContext);
 
-      public abstract void PaintComponent(BaseCell cell, TPaintable paint);
+      public abstract void PaintComponent(BaseCell cell, TPaintable paint, PaintUwpContext<TImage> paintContext);
 
       /// <summary> залить ячейку нужным цветом </summary>
-      public abstract void PaintComponentBackground(BaseCell cell, TPaintable paint);
+      public abstract void PaintComponentBackground(BaseCell cell, TPaintable paint, PaintUwpContext<TImage> paintContext);
 
    }
 

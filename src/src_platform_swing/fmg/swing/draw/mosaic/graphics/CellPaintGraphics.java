@@ -29,6 +29,7 @@ import fmg.core.types.EOpen;
 import fmg.core.types.EState;
 import fmg.swing.Cast;
 import fmg.swing.draw.mosaic.CellPaint;
+import fmg.swing.draw.mosaic.PaintSwingContext;
 
 /**
  * Class for drawing cell into {@link java.awt.Graphics}
@@ -39,7 +40,7 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
 
    /** @see javax.swing.JComponent.paint */
    @Override
-   public void paint(BaseCell cell, PaintableGraphics p) {
+   public void paint(BaseCell cell, PaintableGraphics p, PaintSwingContext<TImage> paintContext) {
 //      Object obj = this;
 //      if (obj instanceof JComponent) {
 //         JComponent This = (JComponent)obj;
@@ -56,8 +57,8 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
          g2d.setClip(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset)));
 
          // all paint
-         this.paintComponent(cell, p);
-         this.paintBorder(cell, p);
+         this.paintComponent(cell, p, paintContext);
+         this.paintBorder(cell, p, paintContext);
 
          // restore
          g2d.setClip(shapeOld);
@@ -66,7 +67,7 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
 
    /** @see javax.swing.JComponent.paintBorder */
    @Override
-   public void paintBorder(BaseCell cell, PaintableGraphics p) {
+   public void paintBorder(BaseCell cell, PaintableGraphics p, PaintSwingContext<TImage> paintContext) {
 //      Object obj = this;
 //      if (obj instanceof JComponent) {
 //         JComponent This = (JComponent)obj;
@@ -85,7 +86,7 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
       g2.setStroke(new BasicStroke(paintContext.getPenBorder().getWidth())); // TODO глянуть расширенные параметры конструктора пера
 
       // draw lines
-      paintBorderLines(cell, p);
+      paintBorderLines(cell, p, paintContext);
 
       // debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
 //      Rect rcInner = cell.getRcInner(paintContext.getPenBorder().getWidth());
@@ -99,7 +100,7 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
 
    /** draw border lines */
    @Override
-   public void paintBorderLines(BaseCell cell, PaintableGraphics p) {
+   public void paintBorderLines(BaseCell cell, PaintableGraphics p, PaintSwingContext<TImage> paintContext) {
       SizeDouble offset = new SizeDouble(paintContext.getPadding().left, paintContext.getPadding().top);
       boolean down = cell.getState().isDown() || (cell.getState().getStatus() == EState._Open);
       Graphics g = p.getGraphics();
@@ -122,12 +123,12 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
 
    /** @see javax.swing.JComponent.paintComponent */
    @Override
-   public void paintComponent(BaseCell cell, PaintableGraphics p) {
+   public void paintComponent(BaseCell cell, PaintableGraphics p, PaintSwingContext<TImage> paintContext) {
       Graphics g = p.getGraphics();
       Color colorOld = g.getColor();
       BoundDouble padding = paintContext.getPadding();
 
-      paintComponentBackground(cell, p);
+      paintComponentBackground(cell, p, paintContext);
 
       RectDouble rcInner = cell.getRcInner(paintContext.getPenBorder().getWidth());
 //      g.setColor(Color.MAGENTA);
@@ -138,13 +139,13 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
          (cell.getState().getStatus() == EState._Close) &&
          (cell.getState().getClose() == EClose._Flag))
       {
-         drawImage(paintContext.getOwner(), g, paintContext.getImgFlag(), (int)(rcInner.x+padding.left), (int)(rcInner.y+padding.top));
+         drawImage(p.getOwner(), g, paintContext.getImgFlag(), (int)(rcInner.x+padding.left), (int)(rcInner.y+padding.top));
       } else
       if ((paintContext.getImgMine() != null) &&
          (cell.getState().getStatus() == EState._Open ) &&
          (cell.getState().getOpen() == EOpen._Mine))
       {
-         drawImage(paintContext.getOwner(), g, paintContext.getImgMine(), (int)(rcInner.x+padding.left), (int)(rcInner.y+padding.top));
+         drawImage(p.getOwner(), g, paintContext.getImgMine(), (int)(rcInner.x+padding.left), (int)(rcInner.y+padding.top));
       } else
       // output text
       {
@@ -190,7 +191,7 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
 
    /** залить ячейку нужным цветом */
    @Override
-   public void paintComponentBackground(BaseCell cell, PaintableGraphics p) {
+   public void paintComponentBackground(BaseCell cell, PaintableGraphics p, PaintSwingContext<TImage> paintContext) {
       Graphics g = p.getGraphics();
 //      if (paintContext.isIconicMode()) // когда русуется иконка, а не игровое поле, - делаю попроще...
 //         return;

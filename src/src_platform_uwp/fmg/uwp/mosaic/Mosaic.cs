@@ -24,6 +24,7 @@ namespace fmg.uwp.mosaic {
    public class Mosaic : MosaicBase<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> {
 
       private IDictionary<BaseCell, PaintableShapes> _xamlBinder;
+      private PaintUwpContext<ImageSource> _paintContext;
       private CellPaintShapes _cellPaint;
       private Panel _container;
 
@@ -66,16 +67,14 @@ namespace fmg.uwp.mosaic {
 #endif
       }
 
-      public PaintContext<ImageSource> PaintContext {
+      public PaintUwpContext<ImageSource> PaintContext {
          get
          {
-            var paintContext = CellPaintFigures.PaintContext; // as PaintMosaicContext<TImage>;
-            if (paintContext == null) {
-               CellPaintFigures.PaintContext = paintContext = new PaintUwpContext<ImageSource>(false);
-               //changeFontSize(gContext.PenBorder, Area);
-               paintContext.PropertyChanged += OnGraphicContextPropertyChanged; // изменение контекста -> перерисовка мозаики
+            if (_paintContext == null) {
+               _paintContext = new PaintUwpContext<ImageSource>(false);
+               _paintContext.PropertyChanged += OnGraphicContextPropertyChanged; // изменение контекста -> перерисовка мозаики
             }
-            return paintContext;
+            return _paintContext;
          }
       }
 
@@ -88,7 +87,7 @@ namespace fmg.uwp.mosaic {
          if (cell == null)
             Repaint();
          else
-            CellPaint.Paint(cell, XamlBinder[cell]);
+            CellPaint.Paint(cell, XamlBinder[cell], PaintContext);
       }
 
       private bool _alreadyPainted;
@@ -114,7 +113,7 @@ namespace fmg.uwp.mosaic {
             for (var i = 0; i < sizeMosaic.m; i++)
                for (var j = 0; j < sizeMosaic.n; j++) {
                   var cell = base.getCell(i, j);
-                  CellPaint.Paint(cell, XamlBinder[cell]);
+                  CellPaint.Paint(cell, XamlBinder[cell], PaintContext);
                }
          } finally {
             _alreadyPainted = false;

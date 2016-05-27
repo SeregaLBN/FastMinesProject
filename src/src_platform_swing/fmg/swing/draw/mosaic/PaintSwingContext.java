@@ -2,7 +2,6 @@ package fmg.swing.draw.mosaic;
 
 import java.awt.Font;
 
-import javax.swing.JComponent;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
@@ -20,14 +19,10 @@ public class PaintSwingContext<TImage> extends PaintContext<TImage> {
 
    public static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 10);
 
-   /** TODO: Mosaic field - нуна избавиться... */
-   private final JComponent owner;
-
    private Font font;
 
-   public PaintSwingContext(JComponent owner, boolean iconicMode) {
+   public PaintSwingContext(boolean iconicMode) {
       super(iconicMode);
-      this.owner = owner;
    }
 
    static {
@@ -43,10 +38,6 @@ public class PaintSwingContext<TImage> extends PaintContext<TImage> {
       // ToggleButton.light      : javax.swing.plaf.ColorUIResource[r=227,g=227,b=227]
       // ToggleButton.shadow     : javax.swing.plaf.ColorUIResource[r=160,g=160,b=160]
       // ToggleButton.foreground : javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
-   }
-
-   public JComponent getOwner() {
-      return owner;
    }
 
    public Font getFont() {

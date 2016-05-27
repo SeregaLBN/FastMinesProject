@@ -46,14 +46,8 @@ namespace fmg.uwp.res.img {
       public override ICellPaint<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> CellPaint {
          get {
             if (_cellPaint == null)
-               SetCellPaint(new CellPaintBmp()); // call this setter
+               _cellPaint = new CellPaintBmp(); // call this setter
             return _cellPaint;
-         }
-      }
-      private void SetCellPaint(ICellPaint<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> value) {
-         if (SetProperty(ref _cellPaint, value))  {
-            dependency_PContext_CellPaint();
-            Invalidate();
          }
       }
 
@@ -68,7 +62,6 @@ namespace fmg.uwp.res.img {
             if (SetProperty(ref _paintContext, value)) {
                Dependency_PContext_CellAttribute();
                Dependency_PContext_PaddingFull();
-               dependency_PContext_CellPaint();
                Dependency_PContext_BorderWidth();
                Dependency_PContext_BorderColor();
                Dependency_PContext_BkColor();
@@ -138,12 +131,6 @@ namespace fmg.uwp.res.img {
             return;
          PaintContext.ColorBk = BackgroundColor;
       }
-
-      void dependency_PContext_CellPaint() {
-         if (_cellPaint == null)
-            return;
-         CellPaint.PaintContext = PaintContext;
-      }
       #endregion
 
       //protected override void Dispose(bool disposing) {
@@ -187,12 +174,13 @@ namespace fmg.uwp.res.img {
 
          var matrix = Matrix;
          var paint = new PaintableBmp(img);
+         var paintContext = PaintContext;
          var cp = CellPaint;
          if (OnlySyncDraw || LiveImage()) {
             // sync draw
             funcFillBk();
             foreach (var cell in matrix)
-               cp.Paint(cell, paint);
+               cp.Paint(cell, paint, paintContext);
          } else {
             // async draw
             AsyncRunner.InvokeFromUiLater(() => {
@@ -200,7 +188,7 @@ namespace fmg.uwp.res.img {
                foreach (var cell in matrix) {
                   var tmp = cell;
                   AsyncRunner.InvokeFromUiLater(
-                     () => cp.Paint(tmp, paint),
+                     () => cp.Paint(tmp, paint, paintContext),
                      ((Rand.Next() & 1) == 0)
                         ? CoreDispatcherPriority.Low
                         : CoreDispatcherPriority.Normal
@@ -249,11 +237,12 @@ namespace fmg.uwp.res.img {
          toImage.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
 
          var paint0 = new PaintableBmp(toImage);
+         var paintContext = PaintContext;
          var matrix = Matrix;
          var indexes = _rotatedElements.Select(cntxt => cntxt.index).ToList();
          for (var i = 0; i < matrix.Count; ++i)
             if (!indexes.Contains(i))
-               CellPaint.Paint(matrix[i], paint0);
+               CellPaint.Paint(matrix[i], paint0, paintContext);
       }
 
       protected void DrawRotatedPart() {
@@ -262,6 +251,7 @@ namespace fmg.uwp.res.img {
 
          var img = Image;
          var paint = new PaintableBmp(img);
+         var paintContext = PaintContext;
          var pb = PaintContext.PenBorder;
          // save
          var borderWidth = BorderWidth;
@@ -271,7 +261,7 @@ namespace fmg.uwp.res.img {
          pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5);
 
          var matrix = Matrix;
-         _rotatedElements.ForEach(cntxt => CellPaint.Paint(matrix[cntxt.index], paint));
+         _rotatedElements.ForEach(cntxt => CellPaint.Paint(matrix[cntxt.index], paint, paintContext));
 
          // restore
          pb.Width = borderWidth; //BorderWidth = borderWidth;

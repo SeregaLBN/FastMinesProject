@@ -71,11 +71,11 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
 
                // paint cells
                g.setFont(getPaintContext().getFont());
-               PaintableGraphics p = new PaintableGraphics(g);
+               PaintableGraphics p = new PaintableGraphics(this, g);
                RectDouble clipBounds = Cast.toRectDouble(g.getClipBounds());
                for (BaseCell cell: getMatrix())
                   if (cell.getRcOuter().Intersects(clipBounds)) // redraw only when needed - when the cells and update region intersect
-                     getCellPaint().paint(cell, p);
+                     getCellPaint().paint(cell, p, getPaintContext());
             }
 
              @Override
@@ -106,8 +106,7 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
 
    public PaintSwingContext<Icon> getPaintContext() {
       if (_paintContext == null) {
-         _paintContext = new PaintSwingContext<>(getContainer(), false);
-//         changeFontSize(_paintContext.getPenBorder(), getArea());
+         _paintContext = new PaintSwingContext<>(false);
          _paintContext.addListener(this); // изменение контекста -> перерисовка мозаики
          _cellPaint = null;
       }
@@ -118,7 +117,6 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
    public CellPaintGraphics<Icon> getCellPaint() {
       if (_cellPaint == null) {
          _cellPaint = new CellPaintGraphics<>();
-         _cellPaint.setPaintContext(getPaintContext());
       }
       return _cellPaint;
    }
