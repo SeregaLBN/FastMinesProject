@@ -7,11 +7,11 @@ using fmg.common.geom.util;
 
 namespace fmg.core.img {
 
-   /// <summary> representable fmg.core.types.EMosaicGroup as image </summary>
+   /// <summary> Representable <see cref="EMosaicGroup"/> as image </summary>
+   /// <typeparam name="TImage">plaform specific image</typeparam>
    public abstract class MosaicsGroupImg<TImage> : PolarLightsImg<EMosaicGroup, TImage>
       where TImage : class
    {
-
       protected MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(group, widthAndHeight, padding) {}
 

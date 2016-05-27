@@ -9,8 +9,8 @@ using fmg.uwp.utils;
 
 namespace fmg.uwp.res.img {
 
-   /// <summary> representable fmg.core.types.EMosaicGroup as image
-   /// <br>
+   /// <summary> Representable <see cref="EMosaicGroup"/> as image.
+   /// <br/>
    /// WriteableBitmap impl
    /// </summary>
    public class MosaicsGroupImg : core.img.MosaicsGroupImg<WriteableBitmap> {

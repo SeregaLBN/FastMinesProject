@@ -3,15 +3,14 @@ using fmg.core.mosaic.cells;
 
 namespace fmg.uwp.draw.mosaic {
 
-   /// <summary>
-   /// Class for drawing cell
-   /// </summary>
-   public abstract class CellPaint<TPaintable, TImage, TPaintContext> : ICellPaint<TPaintable, TImage, TPaintContext>
+   /// <summary> Class for drawing cell </summary>
+   /// <typeparam name="TPaintable">see <see cref="IPaintable"/></typeparam>
+   /// <typeparam name="TImage">UWP specific image: <see cref="Windows.UI.Xaml.Media.Imaging.WriteableBitmap"/> or <see cref="Windows.UI.Xaml.Media.ImageSource"/>, etc... </typeparam>
+   public abstract class CellPaint<TPaintable, TImage> : ICellPaint<TPaintable, TImage, PaintUwpContext<TImage>>
       where TPaintable : IPaintable
       where TImage : class
-      where TPaintContext : PaintUwpContext<TImage>
    {
-      public TPaintContext PaintContext { get; set; }
+      public PaintUwpContext<TImage> PaintContext { get; set; }
 
       public abstract void Paint(BaseCell cell, TPaintable paint);
 

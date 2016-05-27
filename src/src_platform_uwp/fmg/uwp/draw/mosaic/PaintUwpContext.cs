@@ -6,8 +6,12 @@ using fmg.uwp.utils;
 
 namespace fmg.uwp.draw.mosaic {
 
+   /// <summary>Information required for drawing the entire mosaic and cells.
+   /// UWP impl
+   /// </summary>
+   /// <typeparam name="TImage">UWP specific image: <see cref="Windows.UI.Xaml.Media.Imaging.WriteableBitmap"/> or <see cref="Windows.UI.Xaml.Media.ImageSource"/>, etc... </typeparam>
    public class PaintUwpContext<TImage> : PaintContext<TImage>
-      where TImage: class
+      where TImage : class
    {
       public PaintUwpContext(bool iconicMode) :
          base(iconicMode)

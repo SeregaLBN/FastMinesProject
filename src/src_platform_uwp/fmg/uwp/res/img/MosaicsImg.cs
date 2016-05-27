@@ -14,8 +14,8 @@ using fmg.Common;
 
 namespace fmg.uwp.res.img {
 
-   /// <summary> картинка поля конкретной мозаики. Используется для меню, кнопок, etc...
-   /// <br>
+   /// <summary> Representable <see cref="EMosaic"/> as image.
+   /// <br/>
    /// WriteableBitmap impl
    /// </summary>
    public class MosaicsImg : core.img.MosaicsImg<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> {
@@ -46,7 +46,7 @@ namespace fmg.uwp.res.img {
       public override ICellPaint<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> CellPaint {
          get {
             if (_cellPaint == null)
-               SetCellPaint(new CellPaintBmp<PaintUwpContext<WriteableBitmap>>()); // call this setter
+               SetCellPaint(new CellPaintBmp()); // call this setter
             return _cellPaint;
          }
       }

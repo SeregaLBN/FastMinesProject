@@ -9,23 +9,19 @@ using fmg.core.types;
 using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
 
-namespace fmg.uwp.draw.mosaic.xaml
-{
-   /// <summary>
-   /// Helper class for drawing info (over xaml shapes)
-   /// </summary>
-   public class CellPaintShapes : CellPaint<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>>
-   {
+namespace fmg.uwp.draw.mosaic.xaml {
+
+   /// <summary> Class for drawing cell into <see cref="ImageSource"/> (over xaml shapes) </summary>
+   public class CellPaintShapes : CellPaint<PaintableShapes, ImageSource> {
+
       private readonly IDictionary<Color, Brush> _brushCacheMap;
 
-      public CellPaintShapes()
-      {
+      public CellPaintShapes() {
          _brushCacheMap = new Dictionary<Color, Brush>();
       }
 
       /// <summary> find cached solid brush. if not exist - create it </summary>
-      protected Brush FindBrush(Color clr)
-      {
+      protected Brush FindBrush(Color clr) {
          if (!_brushCacheMap.ContainsKey(clr))
             _brushCacheMap.Add(clr, new SolidColorBrush(clr.ToWinColor()));
          return _brushCacheMap[clr];

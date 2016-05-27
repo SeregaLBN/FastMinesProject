@@ -6,6 +6,9 @@ using fmg.common.notyfier;
 
 namespace fmg.core.img {
 
+   /// <summary> Abstract, platform independent, image characteristics </summary>
+   /// <typeparam name="T">the entity of image</typeparam>
+   /// <typeparam name="TImage">plaform specific image</typeparam>
    public abstract class StaticImg<T, TImage> : NotifyPropertyChanged, IDisposable
       where TImage : class
    {

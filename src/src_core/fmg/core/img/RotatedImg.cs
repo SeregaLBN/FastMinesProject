@@ -2,8 +2,11 @@ using System;
 using fmg.common.geom;
 using fmg.common.ui;
 
-namespace fmg.core.img
-{
+namespace fmg.core.img {
+
+   /// <summary> <see cref="StaticImg&lt;T, TImage&gt;"/> with rotated properties </summary>
+   /// <typeparam name="T">the entity of image</typeparam>
+   /// <typeparam name="TImage">plaform specific image</typeparam>
    public abstract class RotatedImg<T, TImage> : StaticImg<T, TImage>
       where TImage : class
    {

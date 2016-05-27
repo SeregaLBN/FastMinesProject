@@ -4,17 +4,13 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic.cells;
-using fmg.core.mosaic.draw;
 using fmg.uwp.utils;
 
-namespace fmg.uwp.draw.mosaic.bmp
-{
-   /// <summary>
-   /// Helper class for drawing info (ower WriteableBitmap)
-   /// </summary>
-   public class CellPaintBmp<TPaintContext> : CellPaint<PaintableBmp, WriteableBitmap, TPaintContext>
-      where TPaintContext : PaintUwpContext<WriteableBitmap>
-   {
+namespace fmg.uwp.draw.mosaic.bmp {
+
+   /// <summary> Class for drawing cell into (ower <see cref="WriteableBitmap"/>) </summary>
+   public class CellPaintBmp : CellPaint<PaintableBmp, WriteableBitmap> {
+
       public override void Paint(BaseCell cell, PaintableBmp paint)
       {
          // TODO ограничиваю рисование только границами своей фигуры

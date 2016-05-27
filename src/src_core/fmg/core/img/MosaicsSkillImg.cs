@@ -7,11 +7,11 @@ using fmg.data.controller.types;
 
 namespace fmg.core.img {
 
-   /// <summary> representable fmg.data.controller.types.ESkillLevel as image </summary>
+   /// <summary> Representable <see cref="ESkillLevel"/> as image </summary>
+   /// <typeparam name="TImage">plaform specific image</typeparam>
    public abstract class MosaicsSkillImg<TImage> : RotatedImg<ESkillLevel, TImage>
       where TImage : class
    {
-
       protected MosaicsSkillImg(ESkillLevel group, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(group, widthAndHeight, padding) {}
 

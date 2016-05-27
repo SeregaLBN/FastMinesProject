@@ -9,8 +9,8 @@ using fmg.uwp.utils;
 
 namespace fmg.uwp.res.img {
 
-   /// <summary> representable fmg.data.controller.types.ESkillLevel as image
-   /// <br>
+   /// <summary> Representable <see cref="ESkillLevel"/> as image.
+   /// <br/>
    /// WriteableBitmap impl
    /// </summary>
    public class MosaicsSkillImg : core.img.MosaicsSkillImg<WriteableBitmap> {

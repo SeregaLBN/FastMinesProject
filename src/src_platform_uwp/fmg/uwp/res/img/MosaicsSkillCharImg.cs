@@ -2,7 +2,7 @@ using fmg.data.controller.types;
 
 namespace fmg.uwp.res.img {
 
-   /// <summary> representable fmg.data.controller.types.ESkillLevel as CHAR </summary>
+   /// <summary> representable <see cref="ESkillLevel"/> as CHAR </summary>
    public class MosaicsSkillCharImg : core.img.StaticImg<ESkillLevel, string> {
 
       public MosaicsSkillCharImg(ESkillLevel group, int widthAndHeight = DefaultImageSize, int? padding = null)
