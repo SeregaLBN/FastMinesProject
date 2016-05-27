@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
@@ -13,7 +14,7 @@ namespace fmg.uwp.draw.mosaic.xaml
    /// <summary>
    /// Helper class for drawing info (over xaml shapes)
    /// </summary>
-   public class CellPaintShapes : CellPaint<PaintableShapes>
+   public class CellPaintShapes : CellPaint<PaintableShapes, ImageSource, PaintContext<ImageSource>>
    {
       private readonly IDictionary<Color, Brush> _brushCacheMap;
 
@@ -29,8 +30,8 @@ namespace fmg.uwp.draw.mosaic.xaml
             _brushCacheMap.Add(clr, new SolidColorBrush(clr.ToWinColor()));
          return _brushCacheMap[clr];
       }
-      protected Brush BrushBorderShadow => FindBrush(GContext.PenBorder.ColorShadow);
-      protected Brush BrushBorderLight => FindBrush(GContext.PenBorder.ColorLight);
+      protected Brush BrushBorderShadow => FindBrush(PaintContext.PenBorder.ColorShadow);
+      protected Brush BrushBorderLight => FindBrush(PaintContext.PenBorder.ColorLight);
 
       public override void Paint(BaseCell cell, PaintableShapes binder) {
          // all paint
@@ -40,13 +41,13 @@ namespace fmg.uwp.draw.mosaic.xaml
 
       public override void PaintBorder(BaseCell cell, PaintableShapes binder) {
          // TODO set pen width
-         //... = gContext.PenBorder.Width;
+         //... = paintContext.PenBorder.Width;
 
          // draw lines
          PaintBorderLines(cell, binder);
 
          // debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
-         //var rcInner = cell.getRcInner(GContext.PenBorder.Width);
+         //var rcInner = cell.getRcInner(PaintContext.PenBorder.Width);
          //bmp.DrawRectangle(rcInner.x, rcInner.y, rcInner.right(), rcInner.bottom(), (Windows.UI.Color)Color.MAGENTA);
       }
 
@@ -64,7 +65,7 @@ namespace fmg.uwp.draw.mosaic.xaml
                poly.Points.Clear();
             for (var p = 0; p < cnt; p++) {
                var point = cell.getRegion().GetPoint(p);
-               point.Move(GContext.Padding.Left, GContext.Padding.Top);
+               point.Move(PaintContext.Padding.Left, PaintContext.Padding.Top);
                if (d)
                   poly.Points.Add(point.ToWinPoint());
                else
@@ -77,7 +78,7 @@ namespace fmg.uwp.draw.mosaic.xaml
             var region = cell.getRegion();
             for (var p = 0; p < region.CountPoints; p++) {
                var point = region.getPoint(p);
-               point.Move(GContext.Bound);
+               point.Move(PaintContext.Bound);
                points.Add(point.ToWinPoint());
             }
          }
@@ -85,7 +86,7 @@ namespace fmg.uwp.draw.mosaic.xaml
 #endif
          var open = (cell.State.Status == EState._Open);
          var down = cell.State.Down || open;
-         poly.StrokeThickness = open ? (GContext.PenBorder.Width * 2) : GContext.PenBorder.Width;
+         poly.StrokeThickness = open ? (PaintContext.PenBorder.Width * 2) : PaintContext.PenBorder.Width;
          poly.Stroke = down ? BrushBorderLight : BrushBorderShadow;
          Canvas.SetZIndex(poly, open ? 1 : down ? 3 : 2);
          // TODO граница региона должна быть двухцветной...
@@ -94,21 +95,21 @@ namespace fmg.uwp.draw.mosaic.xaml
       public override void PaintComponent(BaseCell cell, PaintableShapes binder) {
          PaintComponentBackground(cell, binder);
 
-         var rcInner = cell.getRcInner(GContext.PenBorder.Width);
-         rcInner.MoveXY(GContext.Padding.Left, GContext.Padding.Top);
+         var rcInner = cell.getRcInner(PaintContext.PenBorder.Width);
+         rcInner.MoveXY(PaintContext.Padding.Left, PaintContext.Padding.Top);
          var txt = binder.Txt;
          var image = binder.Img;
 
          ImageSource srcImg = null;
-         if ((GContext.ImgFlag != null) &&
+         if ((PaintContext.ImgFlag != null) &&
              (cell.State.Status == EState._Close) &&
              (cell.State.Close == EClose._Flag))
          {
-            srcImg = GContext.ImgFlag;
-         } else if ((GContext.ImgMine != null) &&
+            srcImg = PaintContext.ImgFlag;
+         } else if ((PaintContext.ImgMine != null) &&
                     (cell.State.Status == EState._Open) &&
                     (cell.State.Open == EOpen._Mine)) {
-            srcImg = GContext.ImgMine;
+            srcImg = PaintContext.ImgMine;
          }
 
          // output Pictures
@@ -129,12 +130,12 @@ namespace fmg.uwp.draw.mosaic.xaml
             string szCaption;
             Color txtColor;
             if (cell.State.Status == EState._Close) {
-               txtColor = GContext.ColorText.GetColorClose((int)cell.State.Close.Ordinal());
+               txtColor = PaintContext.ColorText.GetColorClose((int)cell.State.Close.Ordinal());
                szCaption = cell.State.Close.ToCaption();
                //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
                //szCaption = ""+cell.getDirection(); // debug
             } else {
-               txtColor = GContext.ColorText.GetColorOpen((int)cell.State.Open.Ordinal());
+               txtColor = PaintContext.ColorText.GetColorOpen((int)cell.State.Open.Ordinal());
                szCaption = cell.State.Open.ToCaption();
             }
             if (string.IsNullOrWhiteSpace(szCaption)) {
@@ -143,12 +144,13 @@ namespace fmg.uwp.draw.mosaic.xaml
                txt.Visibility = Visibility.Visible;
 
                if (cell.State.Down)
-                  rcInner.MoveXY(GContext.PenBorder.Width, GContext.PenBorder.Width);
+                  rcInner.MoveXY(PaintContext.PenBorder.Width, PaintContext.PenBorder.Width);
                txt.Text = szCaption;
                txt.TextAlignment = TextAlignment.Center;
-               txt.FontFamily = GContext.FontFamily;
-               txt.FontStyle = GContext.FontStyle;
-               txt.FontSize = GContext.FontSize;
+               txt.FontFamily = new FontFamily(PaintContext.FontInfo.Name);
+               txt.FontStyle = FontStyle.Normal;
+               txt.FontWeight = PaintContext.FontInfo.Bold ? FontWeights.SemiBold : FontWeights.Normal;
+               txt.FontSize = PaintContext.FontInfo.Size;
                txt.Foreground = FindBrush(txtColor);
                Canvas.SetLeft(txt, rcInner.Left());
                Canvas.SetTop(txt, rcInner.Top());
@@ -162,15 +164,17 @@ namespace fmg.uwp.draw.mosaic.xaml
       /// <summary> залить ячейку нужным цветом </summary>
       public override void PaintComponentBackground(BaseCell cell, PaintableShapes binder) {
          Color clr;
-         if (GContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
-            clr = GraphicContext.DefaultBackgroundFillColor; // TODO ??? мож прозрачное..
+         if (PaintContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
+            clr = core.mosaic.draw.PaintCellContext<object>.DefaultBackgroundFillColor; // TODO ??? мож прозрачное..
          else
             clr = cell.getBackgroundFillColor(
-               GContext.BkFill.Mode,
-               GraphicContext.DefaultBackgroundFillColor,
-               GContext.BkFill.GetColor
+               PaintContext.BkFill.Mode,
+               core.mosaic.draw.PaintCellContext<object>.DefaultBackgroundFillColor,
+               PaintContext.BkFill.GetColor
                );
          binder.Poly.Fill = FindBrush(clr);
       }
+
    }
+
 }

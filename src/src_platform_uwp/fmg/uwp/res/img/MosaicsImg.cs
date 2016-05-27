@@ -10,6 +10,7 @@ using fmg.core.mosaic.draw;
 using fmg.uwp.draw;
 using fmg.uwp.draw.mosaic.bmp;
 using fmg.Common;
+using fmg.uwp.draw.mosaic;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.res.img {
@@ -18,7 +19,7 @@ namespace fmg.uwp.res.img {
    /// <br>
    /// WriteableBitmap impl
    /// </summary>
-   public class MosaicsImg : core.img.MosaicsImg<PaintableBmp, WriteableBitmap> {
+   public class MosaicsImg : core.img.MosaicsImg<PaintableBmp, WriteableBitmap, PaintContext<WriteableBitmap>> {
 
       static MosaicsImg() {
          if (DeferrInvoker == null)
@@ -28,7 +29,7 @@ namespace fmg.uwp.res.img {
       }
 
       private const bool RandomCellBkColor = true;
-      private Random Rand => GraphicContext.Rand;
+      private Random Rand => new Random(Guid.NewGuid().GetHashCode());
 
       public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(mosaicType, sizeField, widthAndHeight, padding)
@@ -42,35 +43,36 @@ namespace fmg.uwp.res.img {
          OnlySyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
       }
 
-      private ICellPaint<PaintableBmp> _cellPaint;
-      public override ICellPaint<PaintableBmp> CellPaint {
+      private ICellPaint<PaintableBmp, WriteableBitmap, PaintContext<WriteableBitmap>> _cellPaint;
+      public override ICellPaint<PaintableBmp, WriteableBitmap, PaintContext<WriteableBitmap>> CellPaint {
          get {
             if (_cellPaint == null)
-               SetCellPaint(new CellPaintBmp()); // call this setter
+               SetCellPaint(new CellPaintBmp<PaintContext<WriteableBitmap>>()); // call this setter
             return _cellPaint;
          }
       }
-      private void SetCellPaint(ICellPaint<PaintableBmp> value) {
+      private void SetCellPaint(ICellPaint<PaintableBmp, WriteableBitmap, PaintContext<WriteableBitmap>> value) {
          if (SetProperty(ref _cellPaint, value))  {
-            Dependency_CellPaint_GContext();
+            dependency_PContext_CellPaint();
             Invalidate();
          }
       }
 
-      private GraphicContext _gContext;
-      protected GraphicContext GContext {
+      private PaintContext<WriteableBitmap> _paintContext;
+      protected PaintContext<WriteableBitmap> PaintContext {
          get {
-            if (_gContext == null)
-               GContext = new GraphicContext(true); // call this setter
-            return _gContext;
+            if (_paintContext == null)
+               PaintContext = new PaintContext<WriteableBitmap>(true); // call this setter
+            return _paintContext;
          }
          set {
-            if (SetProperty(ref _gContext, value)) {
-               Dependency_GContext_CellAttribute();
-               Dependency_GContext_PaddingFull();
-               Dependency_CellPaint_GContext();
-               Dependency_GContext_BorderWidth();
-               Dependency_GContext_BorderColor();
+            if (SetProperty(ref _paintContext, value)) {
+               Dependency_PContext_CellAttribute();
+               Dependency_PContext_PaddingFull();
+               dependency_PContext_CellPaint();
+               Dependency_PContext_BorderWidth();
+               Dependency_PContext_BorderColor();
+               Dependency_PContext_BkColor();
                Invalidate();
             }
          }
@@ -80,16 +82,16 @@ namespace fmg.uwp.res.img {
          base.OnPropertyChanged(sender, ev);
          switch (ev.PropertyName) {
          case "PaddingFull":
-            Dependency_GContext_PaddingFull();
+            Dependency_PContext_PaddingFull();
             break;
          case "CellAttr":
-            Dependency_GContext_CellAttribute();
+            Dependency_PContext_CellAttribute();
             break;
          case "BorderWidth":
-            Dependency_GContext_BorderWidth();
+            Dependency_PContext_BorderWidth();
             break;
          case "BorderColor":
-            Dependency_GContext_BorderColor();
+            Dependency_PContext_BorderColor();
             break;
          }
 
@@ -106,43 +108,48 @@ namespace fmg.uwp.res.img {
       }
 
       #region Dependencys
-      void Dependency_GContext_CellAttribute() {
-         if (_gContext == null)
+      void Dependency_PContext_CellAttribute() {
+         if (_paintContext == null)
             return;
          if (RandomCellBkColor)
-            GContext.BkFill.Mode = 1 + Rand.Next(CellAttr.getMaxBackgroundFillModeValue());
+            PaintContext.BkFill.Mode = 1 + Rand.Next(CellAttr.getMaxBackgroundFillModeValue());
       }
 
-      void Dependency_GContext_PaddingFull() {
-         if (_gContext == null)
+      void Dependency_PContext_PaddingFull() {
+         if (_paintContext == null)
             return;
-         GContext.Padding = PaddingFull;
+         PaintContext.Padding = PaddingFull;
       }
 
-      void Dependency_GContext_BorderWidth() {
-         if (_gContext == null)
+      void Dependency_PContext_BorderWidth() {
+         if (_paintContext == null)
             return;
-         GContext.PenBorder.Width = BorderWidth;
+         PaintContext.PenBorder.Width = BorderWidth;
       }
 
-      void Dependency_GContext_BorderColor() {
-         if (_gContext == null)
+      void Dependency_PContext_BorderColor() {
+         if (_paintContext == null)
             return;
-         var pb = GContext.PenBorder;
+         var pb = PaintContext.PenBorder;
          pb.ColorLight = pb.ColorShadow = BorderColor;
       }
 
-      void Dependency_CellPaint_GContext() {
+      void Dependency_PContext_BkColor() {
+         if (_paintContext == null)
+            return;
+         PaintContext.ColorBk = BackgroundColor;
+      }
+
+      void dependency_PContext_CellPaint() {
          if (_cellPaint == null)
             return;
-         System.Diagnostics.Debug.Assert(CellPaint is CellPaintBmp);
-         ((CellPaintBmp)CellPaint).GContext = GContext;
+         CellPaint.PaintContext = PaintContext;
       }
       #endregion
 
       //protected override void Dispose(bool disposing) {
       //   if (disposing) {
-      //      GContext = null; // call setter
+      //      PContext = null; // call setter
       //   }
 
       //   base.Dispose(disposing);
@@ -256,7 +263,7 @@ namespace fmg.uwp.res.img {
 
          var img = Image;
          var paint = new PaintableBmp(img);
-         var pb = GContext.PenBorder;
+         var pb = PaintContext.PenBorder;
          // save
          var borderWidth = BorderWidth;
          var borderColor = BorderColor;

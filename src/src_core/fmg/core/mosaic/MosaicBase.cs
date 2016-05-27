@@ -34,7 +34,11 @@ using fmg.common.notyfier;
 namespace fmg.core.mosaic {
 
    /// <summary> Mosaic field: класс окна мозаики поля </summary>
-   public abstract class MosaicBase<TPaintable> : NotifyPropertyChanged, IMosaic<TPaintable> where TPaintable : IPaintable {
+   public abstract class MosaicBase<TPaintable, TImage, TPaintContext> : NotifyPropertyChanged, IMosaic<TPaintable, TImage, TPaintContext>
+      where TPaintable : IPaintable
+      where TImage : class
+      where TPaintContext : PaintMosaicContext<TImage>
+   {
 
    #region Members
 
@@ -83,7 +87,7 @@ namespace fmg.core.mosaic {
          }
       }
 
-      public abstract ICellPaint<TPaintable> CellPaint { get; }
+      public abstract ICellPaint<TPaintable, TImage, TPaintContext> CellPaint { get; }
 
       public IList<BaseCell> Matrix { get {
             if (!_matrix.Any()) {

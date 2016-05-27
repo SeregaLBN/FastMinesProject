@@ -1,16 +1,17 @@
 using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
 
-namespace fmg.uwp.draw.mosaic
-{
+namespace fmg.uwp.draw.mosaic {
 
    /// <summary>
-   /// Helper class for drawing info
+   /// Class for drawing cell
    /// </summary>
-   public abstract class CellPaint<TPaintable> : ICellPaint<TPaintable>
+   public abstract class CellPaint<TPaintable, TImage, TPaintContext> : ICellPaint<TPaintable, TImage, TPaintContext>
       where TPaintable : IPaintable
+      where TImage : class
+      where TPaintContext : PaintCellContext<TImage>
    {
-      public GraphicContext GContext { get; set; }
+      public TPaintContext PaintContext { get; set; }
 
       public abstract void Paint(BaseCell cell, TPaintable paint);
 
@@ -23,5 +24,7 @@ namespace fmg.uwp.draw.mosaic
 
       /// <summary> залить ячейку нужным цветом </summary>
       public abstract void PaintComponentBackground(BaseCell cell, TPaintable paint);
+
    }
+
 }

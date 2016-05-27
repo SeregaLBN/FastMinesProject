@@ -28,12 +28,14 @@ using fmg.core.mosaic.cells;
 namespace fmg.core.mosaic {
 
    /// <summary> interface of mosaic field </summary>
-   public interface IMosaic<TPaintable> : BaseCell.IMatrixCells
+   public interface IMosaic<in TPaintable, TImage, TPaintContext> : BaseCell.IMatrixCells
       where TPaintable : IPaintable
+      where TImage : class
+      where TPaintContext : PaintMosaicContext<TImage>
    {
       BaseCell.BaseAttribute CellAttr { get; }
 
-      ICellPaint<TPaintable> CellPaint { get; }
+      ICellPaint<TPaintable, TImage, TPaintContext> CellPaint { get; }
 
       /// <summary>матрица ячеек, представленная(развёрнута) в виде вектора</summary>
       IList<BaseCell> Matrix { get; }

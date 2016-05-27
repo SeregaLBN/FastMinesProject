@@ -12,7 +12,7 @@ namespace fmg.core.img {
       where TImage : class
    {
 
-      public MosaicsSkillImg(ESkillLevel group, int widthAndHeight = DefaultImageSize, int? padding = null)
+      protected MosaicsSkillImg(ESkillLevel group, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(group, widthAndHeight, padding) {}
 
       public ESkillLevel MosaicSkill => Entity;

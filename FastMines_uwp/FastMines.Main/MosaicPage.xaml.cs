@@ -95,8 +95,8 @@ namespace fmg {
             ToolTipService.SetToolTip(bttnSkillCrazy, new ToolTip { Content = "3" });
             ToolTipService.SetToolTip(bttnSkillProfi, new ToolTip {Content = "4"});
          }
-         MosaicField.GraphicContext.ImgMine = await fmg.uwp.res.Resources.GetImgMine();
-         //MosaicField.GraphicContext.ImgFlag = await fmg.uwp.res.Resources.GetImgFlag();
+         MosaicField.PaintContext.ImgMine = await fmg.uwp.res.Resources.GetImgMine();
+         //MosaicField.PaintContext.ImgFlag = await fmg.uwp.res.Resources.GetImgFlag();
       }
 
       /// <summary> Поменять игру на новый уровень сложности </summary>

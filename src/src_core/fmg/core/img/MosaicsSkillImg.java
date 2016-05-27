@@ -14,9 +14,9 @@ import fmg.data.controller.types.ESkillLevel;
  */
 public abstract class MosaicsSkillImg<TImage> extends RotatedImg<ESkillLevel, TImage> {
 
-   public MosaicsSkillImg(ESkillLevel skill) { super(skill); }
-   public MosaicsSkillImg(ESkillLevel skill, int widthAndHeight) { super(skill, widthAndHeight); }
-   public MosaicsSkillImg(ESkillLevel skill, int widthAndHeight, int padding) { super(skill, widthAndHeight, padding); }
+   protected MosaicsSkillImg(ESkillLevel skill) { super(skill); }
+   protected MosaicsSkillImg(ESkillLevel skill, int widthAndHeight) { super(skill, widthAndHeight); }
+   protected MosaicsSkillImg(ESkillLevel skill, int widthAndHeight, int padding) { super(skill, widthAndHeight, padding); }
 
    public ESkillLevel getMosaicSkill() { return getEntity(); }
    public void setMosaicSkill(ESkillLevel value) { setEntity(value); }

@@ -1,13 +1,17 @@
 using fmg.core.mosaic.cells;
 
-namespace fmg.core.mosaic.draw
-{
+namespace fmg.core.mosaic.draw {
 
    /// <summary>
-   /// Interface for drawing
+   /// Interface for drawing cell
    /// </summary>
-   public interface ICellPaint<in TPaintable> where TPaintable : IPaintable
+   public interface ICellPaint<in TPaintable, TImage, TPaintContext>
+      where TPaintable : IPaintable
+      where TImage : class
+      where TPaintContext : PaintCellContext<TImage>
    {
+      TPaintContext PaintContext { get; set; }
+
       void Paint(BaseCell cell, TPaintable paint);
 
       void PaintBorder(BaseCell cell, TPaintable paint);
@@ -19,5 +23,7 @@ namespace fmg.core.mosaic.draw
 
       /// <summary> залить ячейку нужным цветом </summary>
       void PaintComponentBackground(BaseCell cell, TPaintable paint);
+
    }
+
 }

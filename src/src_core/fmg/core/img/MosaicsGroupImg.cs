@@ -12,7 +12,7 @@ namespace fmg.core.img {
       where TImage : class
    {
 
-      public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = DefaultImageSize, int? padding = null)
+      protected MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(group, widthAndHeight, padding) {}
 
       public EMosaicGroup MosaicGroup => Entity;

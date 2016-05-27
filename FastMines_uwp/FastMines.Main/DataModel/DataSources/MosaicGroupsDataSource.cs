@@ -3,7 +3,7 @@ using System.Linq;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
-using fmg.uwp.draw;
+using fmg.uwp.draw.mosaic;
 using fmg.uwp.res.img;
 using fmg.common.Controls;
 
@@ -33,7 +33,7 @@ namespace fmg.DataModel.DataSources
             img.PolarLights = selected;
             img.Rotate = selected;
             img.BorderColor = selected ? Color.Red : Color.Green;
-            img.BackgroundColor = selected ? MosaicsGroupImg.DefaultBkColor : GraphicContext.DefaultBackgroundFillColor;
+            img.BackgroundColor = selected ? MosaicsGroupImg.DefaultBkColor : PaintContext<object>.DefaultBackgroundFillColor;
             img.Padding = new Bound(selected ? 5 : 15);
          }
       }

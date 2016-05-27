@@ -36,19 +36,19 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage, TPaintCo
       extends RotatedImg<EMosaic, TImage>
       implements IMosaic<TPaintable, TImage, TPaintContext>
 {
-   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
+   protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
       super(mosaicType);
       _sizeField = sizeField;
    }
-   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight) {
+   protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight) {
       super(mosaicType, widthAndHeight);
       _sizeField = sizeField;
    }
-   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) {
+   protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) {
       super(mosaicType, widthAndHeight, padding);
       _sizeField = sizeField;
    }
-   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) {
+   protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) {
       super(mosaicType, sizeImage, padding);
       _sizeField = sizeField;
    }

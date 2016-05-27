@@ -1,14 +1,16 @@
-using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 
-namespace fmg.uwp.draw.mosaic {
+namespace fmg.core.mosaic.draw {
 
-   public class MosaicGraphicContext : GraphicContext {
+   public class PaintMosaicContext<TImage> : PaintCellContext<TImage>
+      where TImage : class
+   {
       private Color _colorBk;
-      private WriteableBitmap _imgBckgrnd;
+      private TImage _imgBckgrnd;
 
-      public MosaicGraphicContext() :
-         base(false) {
+      public PaintMosaicContext(bool iconicMode) :
+         base(iconicMode)
+      {
          _colorBk = DefaultBackgroundWindowColor.Darker(0.4);
       }
 
@@ -17,9 +19,11 @@ namespace fmg.uwp.draw.mosaic {
          set { SetProperty(ref _colorBk, value); }
       }
 
-      public WriteableBitmap ImgBckgrnd {
+      public TImage ImgBckgrnd {
          get { return _imgBckgrnd; }
          set { SetProperty(ref _imgBckgrnd, value); }
       }
+
    }
+
 }

@@ -13,17 +13,17 @@ using fmg.common.notyfier;
 namespace fmg.core.img {
 
    /// <summary> картинка поля конкретной мозаики. Используется для меню, кнопок, etc... </summary>
-   public abstract class MosaicsImg<TPaintable, TImage> : RotatedImg<EMosaic, TImage>, IMosaic<TPaintable>
+   public abstract class MosaicsImg<TPaintable, TImage, TPaintContext> : RotatedImg<EMosaic, TImage>, IMosaic<TPaintable, TImage, TPaintContext>
       where TPaintable : IPaintable
       where TImage : class
+      where TPaintContext : PaintMosaicContext<TImage>
    {
-
-      public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
+      protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(mosaicType, widthAndHeight, padding) {
          _sizeField = sizeField;
       }
 
-      public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding)
+      protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding)
          : base(mosaicType, sizeImage, padding) {
          _sizeField = sizeField;
       }
@@ -59,7 +59,7 @@ namespace fmg.core.img {
 
       public BaseCell getCell(Coord coord) { return Matrix[coord.x * SizeField.n + coord.y]; }
 
-      public abstract ICellPaint<TPaintable> CellPaint { get; }
+      public abstract ICellPaint<TPaintable, TImage, TPaintContext> CellPaint { get; }
 
       private BaseCell.BaseAttribute _cellAttr;
       public BaseCell.BaseAttribute CellAttr {

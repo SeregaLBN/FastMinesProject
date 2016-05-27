@@ -175,6 +175,9 @@
     <Compile Include="..\..\src\src_data\fmg\data\view\draw\ColorText.cs">
       <Link>src_fmg.data\view\draw\ColorText.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_data\fmg\data\view\draw\FontInfo.cs">
+      <Link>src_fmg.data\view\draw\FontInfo.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_data\fmg\data\controller\types\ESkillLevel.cs">
       <Link>src_fmg.data\controller\types\ESkillLevel.cs</Link>
     </Compile>

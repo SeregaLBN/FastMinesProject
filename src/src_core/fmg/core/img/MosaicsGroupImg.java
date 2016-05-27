@@ -13,9 +13,9 @@ import fmg.core.types.EMosaicGroup;
  */
 public abstract class MosaicsGroupImg<TImage> extends PolarLightsImg<EMosaicGroup, TImage> {
 
-   public MosaicsGroupImg(EMosaicGroup group) { super(group); }
-   public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight) { super(group, widthAndHeight); }
-   public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight, Integer padding) { super(group, widthAndHeight, padding); }
+   protected MosaicsGroupImg(EMosaicGroup group) { super(group); }
+   protected MosaicsGroupImg(EMosaicGroup group, int widthAndHeight) { super(group, widthAndHeight); }
+   protected MosaicsGroupImg(EMosaicGroup group, int widthAndHeight, Integer padding) { super(group, widthAndHeight, padding); }
 
    public EMosaicGroup getMosaicGroup() { return getEntity(); }
    public void setMosaicGroup(EMosaicGroup value) { setEntity(value); }

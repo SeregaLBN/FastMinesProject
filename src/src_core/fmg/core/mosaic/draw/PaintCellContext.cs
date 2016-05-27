@@ -1,43 +1,35 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Windows.UI.Text;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
 using fmg.data.view.draw;
 using fmg.common.notyfier;
-using fmg.uwp.utils;
 
-namespace fmg.uwp.draw {
+namespace fmg.core.mosaic.draw {
 
-   public class GraphicContext : NotifyPropertyChanged {
-      public const string    DEFAULT_FONT_NAME  = "Arial"; // Times New Roman // Verdana // Courier New // SansSerif
-      public const FontStyle DEFAULT_FONT_STYLE = FontStyle.Normal;
-      public const int       DEFAULT_FONT_SIZE  = 10;
-
-      private WriteableBitmap _imgMine, _imgFlag;
+   public class PaintCellContext<TImage> : NotifyPropertyChanged, IDisposable
+      where TImage : class
+   {
+      private TImage _imgMine, _imgFlag;
       private ColorText _colorText;
       private PenBorder _penBorder;
-      private FontFamily _fontFamily = new FontFamily(DEFAULT_FONT_NAME);
-      private FontStyle _fontStyle = DEFAULT_FONT_STYLE;
-      private int _fontSize = DEFAULT_FONT_SIZE;
-
+      private FontInfo _fontInfo;
       private BoundDouble _padding;
 
-      public static readonly Random Rand = new Random(Guid.NewGuid().GetHashCode());
+      /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера </summary>
+      public static Color DefaultBackgroundFillColor { get; protected set; } = Color.Gray;
+      public static Color DefaultBackgroundWindowColor { get; protected set; } = Color.Gray;
 
-      public GraphicContext(bool iconicMode) {
+      public PaintCellContext(bool iconicMode) {
          IconicMode = iconicMode;
       }
 
-      public WriteableBitmap ImgMine {
+      public TImage ImgMine {
          get { return _imgMine; }
          set { SetProperty(ref _imgMine, value); }
       }
-      public WriteableBitmap ImgFlag {
+      public TImage ImgFlag {
          get { return _imgFlag; }
          set { SetProperty(ref _imgFlag, value); }
       }
@@ -54,7 +46,8 @@ namespace fmg.uwp.draw {
                return;
             if (old != null)
                old.PropertyChanged -= OnColorTextPropertyChanged;
-            _colorText.PropertyChanged += OnColorTextPropertyChanged;
+            if (_colorText != null)
+               _colorText.PropertyChanged += OnColorTextPropertyChanged;
          }
       }
 
@@ -70,7 +63,8 @@ namespace fmg.uwp.draw {
                return;
             if (old != null)
                old.PropertyChanged -= OnPenBorderPropertyChanged;
-            _penBorder.PropertyChanged += OnPenBorderPropertyChanged;
+            if (_penBorder != null)
+               _penBorder.PropertyChanged += OnPenBorderPropertyChanged;
          }
       }
 
@@ -106,16 +100,23 @@ namespace fmg.uwp.draw {
             return res;
          }
       }
+      private static readonly Random Rand = new Random(Guid.NewGuid().GetHashCode());
 
       private BackgroundFill _backgroundFill;
       public BackgroundFill BkFill {
          get {
-            if (_backgroundFill == null) {
-               _backgroundFill = new BackgroundFill();
-               _backgroundFill.PropertyChanged += OnBackgroundFillPropertyChanged;
-               OnPropertyChanged();
-            }
+            if (_backgroundFill == null)
+               BkFill = new BackgroundFill(); // call setter
             return _backgroundFill;
+         }
+         set {
+            var old = _backgroundFill;
+            if (!SetProperty(ref _backgroundFill, value))
+               return;
+            if (old != null)
+               old.PropertyChanged -= OnBackgroundFillPropertyChanged;
+            if (_backgroundFill != null)
+               _backgroundFill.PropertyChanged += OnBackgroundFillPropertyChanged;
          }
       }
 
@@ -126,45 +127,16 @@ namespace fmg.uwp.draw {
          set { SetProperty(ref _padding, value); }
       }
 
-      public FontFamily FontFamily {
-         get { return _fontFamily; }
-         set { SetProperty(ref _fontFamily, value); }
-      }
-      public FontStyle FontStyle {
-         get { return _fontStyle; }
-         set { SetProperty(ref _fontStyle, value); }
-      }
-      public int FontSize {
-         get { return _fontSize; }
-         set { SetProperty(ref _fontSize, value); }
-      }
-
-      /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера </summary>
-      public static Color DefaultBackgroundFillColor { get; }
-      public static Color DefaultBackgroundWindowColor { get; }
-
-      static GraphicContext() {
-         try {
-            var uiSettings = new UISettings();
-
-            Color clrBtn, clrWin;
-            try {
-               // desktop
-               clrBtn = uiSettings.UIElementColor(UIElementType.ButtonFace).ToFmColor();
-               clrWin = uiSettings.UIElementColor(UIElementType.Window).ToFmColor();
-            } catch (ArgumentException) {
-               try {
-                  // mobile
-                  clrBtn = uiSettings.UIElementColor(1000 + UIElementType.ButtonFace).ToFmColor();
-                  clrWin = uiSettings.UIElementColor(1000 + UIElementType.Window).ToFmColor();
-               } catch (Exception) {
-                  clrBtn = clrWin = Color.Gray; // wtf??
-               }
-            }
-            DefaultBackgroundFillColor = clrBtn;
-            DefaultBackgroundWindowColor = clrWin;
-         } catch (Exception ex) {
-            System.Diagnostics.Debug.Fail(ex.Message);
+      public FontInfo FontInfo {
+         get { return _fontInfo; }
+         set {
+            var old = _fontInfo;
+            if (!SetProperty(ref _fontInfo, value))
+               return;
+            if (old != null)
+               old.PropertyChanged -= OnFontInfoPropertyChanged;
+            if (_fontInfo != null)
+               _fontInfo.PropertyChanged += OnFontInfoPropertyChanged;
          }
       }
 
@@ -172,16 +144,26 @@ namespace fmg.uwp.draw {
          OnPropertyChanged("BkFill");
          OnPropertyChanged("BkFill." + ev.PropertyName);
       }
-
       private void OnColorTextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          OnPropertyChanged("ColorText");
          OnPropertyChanged("ColorText." + ev.PropertyName);
       }
-
       private void OnPenBorderPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          OnPropertyChanged("PenBorder");
          OnPropertyChanged("PenBorder." + ev.PropertyName);
       }
+      private void OnFontInfoPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         OnPropertyChanged("FontInfo");
+         OnPropertyChanged("FontInfo." + ev.PropertyName);
+      }
 
+      public void Dispose() {
+         // unsubscribe from
+         BkFill = null;
+         ColorText = null;
+         PenBorder = null;
+         FontInfo = null;
+      }
    }
+
 }
