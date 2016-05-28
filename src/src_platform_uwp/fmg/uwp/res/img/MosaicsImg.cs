@@ -85,6 +85,9 @@ namespace fmg.uwp.res.img {
          case "BorderColor":
             Dependency_PContext_BorderColor();
             break;
+         case "BackgroundColor":
+            Dependency_PContext_BkColor();
+            break;
          }
 
          if (RotateMode == ERotateMode.SomeCells) {
@@ -129,7 +132,7 @@ namespace fmg.uwp.res.img {
       void Dependency_PContext_BkColor() {
          if (_paintContext == null)
             return;
-         PaintContext.ColorBk = BackgroundColor;
+         PaintContext.BackgroundColor = BackgroundColor;
       }
       #endregion
 

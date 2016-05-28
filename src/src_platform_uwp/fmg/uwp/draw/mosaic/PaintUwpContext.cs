@@ -22,22 +22,21 @@ namespace fmg.uwp.draw.mosaic {
          try {
             var uiSettings = new UISettings();
 
-            Color clrBtn, clrWin;
+            Color clr;
             try {
                // desktop
-               clrBtn = uiSettings.UIElementColor(UIElementType.ButtonFace).ToFmColor();
-               clrWin = uiSettings.UIElementColor(UIElementType.Window).ToFmColor();
+               clr = uiSettings.UIElementColor(UIElementType.ButtonFace).ToFmColor();
+               //clr = uiSettings.UIElementColor(UIElementType.Window).ToFmColor();
             } catch (ArgumentException) {
                try {
                   // mobile
-                  clrBtn = uiSettings.UIElementColor(1000 + UIElementType.ButtonFace).ToFmColor();
-                  clrWin = uiSettings.UIElementColor(1000 + UIElementType.Window).ToFmColor();
+                  clr = uiSettings.UIElementColor(1000 + UIElementType.ButtonFace).ToFmColor();
+                  //clr = uiSettings.UIElementColor(1000 + UIElementType.Window).ToFmColor();
                } catch (Exception) {
-                  clrBtn = clrWin = Color.Gray; // wtf??
+                  clr = Color.Gray; // wtf??
                }
             }
-            DefaultBackgroundFillColor = clrBtn;
-            DefaultBackgroundWindowColor = clrWin;
+            DefaultBackgroundColor = clr;
          } catch (Exception ex) {
             System.Diagnostics.Debug.Fail(ex.Message);
          }

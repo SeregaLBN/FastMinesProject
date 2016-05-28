@@ -31,7 +31,7 @@ namespace fmg.DataModel.DataSources
             var img = mi.MosaicSkillImage;
             img.Rotate = selected;
             img.BorderColor = selected ? Color.Red : Color.Green;
-            img.BackgroundColor = selected ? MosaicsSkillImg.DefaultBkColor : PaintContext<object>.DefaultBackgroundFillColor;
+            img.BackgroundColor = selected ? MosaicsSkillImg.DefaultBkColor : PaintContext<object>.DefaultBackgroundColor;
             img.Padding = new Bound(selected ? 5 : 15);
          }
       }

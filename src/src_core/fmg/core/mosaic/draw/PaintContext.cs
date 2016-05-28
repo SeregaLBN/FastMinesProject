@@ -18,16 +18,15 @@ namespace fmg.core.mosaic.draw {
       private PenBorder _penBorder;
       private FontInfo _fontInfo;
       private BoundDouble _padding;
-      private Color _colorBk;
+      private Color _backgroundColor;
       private TImage _imgBckgrnd;
 
-      /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера </summary>
-      public static Color DefaultBackgroundFillColor { get; protected set; } = Color.Gray;
-      public static Color DefaultBackgroundWindowColor { get; protected set; } = Color.Gray;
+      /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется классом-наследником. </summary>
+      public static Color DefaultBackgroundColor { get; protected set; } = Color.Gray;
 
       public PaintContext(bool iconicMode) {
          IconicMode = iconicMode;
-         _colorBk = DefaultBackgroundWindowColor.Darker(0.4);
+         _backgroundColor = DefaultBackgroundColor.Darker(0.4);
       }
 
       public TImage ImgMine {
@@ -145,9 +144,9 @@ namespace fmg.core.mosaic.draw {
          }
       }
 
-      public Color ColorBk {
-         get { return _colorBk; }
-         set { SetProperty(ref _colorBk, value); }
+      public Color BackgroundColor {
+         get { return _backgroundColor; }
+         set { SetProperty(ref _backgroundColor, value); }
       }
 
       public TImage ImgBckgrnd {

@@ -26,12 +26,12 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
    private FontInfo  fontInfo;
    private final boolean iconicMode;
    private BoundDouble padding;
-   private Color  colorBk;
+   private Color  backgroundColor;
    private TImage imgBckgrnd;
 
    protected static Color _defaultBkColor = Color.Gray;
-   /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера */
-   public static Color getDefaultBackgroundFillColor() {
+   /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется классом-наследником. */
+   public static Color getDefaultBackgroundColor() {
       return _defaultBkColor;
    }
 
@@ -199,18 +199,18 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       onPropertyChanged(oldFont, fontInfo, "FontInfo");
    }
 
-   public Color getColorBk() {
-      if (colorBk == null)
-         setColorBk(getDefaultBackgroundFillColor().darker(0.4));
-      return colorBk;
+   public Color getBackgroundColor() {
+      if (backgroundColor == null)
+         setBackgroundColor(getDefaultBackgroundColor().darker(0.4));
+      return backgroundColor;
    }
 
-   public void setColorBk(Color colorBk) {
-      Color old = this.colorBk;
-      if (colorBk.equals(old))
+   public void setBackgroundColor(Color color) {
+      Color old = this.backgroundColor;
+      if (color.equals(old))
          return;
-      this.colorBk = colorBk;
-      onPropertyChanged(old, colorBk, "ColorBk");
+      this.backgroundColor = color;
+      onPropertyChanged(old, color, "BackgroundColor");
    }
 
    public TImage getImgBckgrnd() {

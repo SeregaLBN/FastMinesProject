@@ -23,7 +23,6 @@ import fmg.common.geom.RectDouble;
 import fmg.common.geom.RegionDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.mosaic.draw.PaintContext;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
@@ -197,7 +196,7 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
 //         return;
       g.setColor(Cast.toColor(cell.getBackgroundFillColor(
             paintContext.getBackgroundFill().getMode(),
-            PaintContext.getDefaultBackgroundFillColor(),
+            paintContext.getBackgroundColor(),
             paintContext.getBackgroundFill().getColors()
             )));
       SizeDouble offset = new SizeDouble(paintContext.getPadding().left, paintContext.getPadding().top);

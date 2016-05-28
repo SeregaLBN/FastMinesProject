@@ -140,7 +140,7 @@ public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<Paintab
    void dependency_PContext_BkColor() {
       if (_paintContext == null)
          return;
-      getPaintContext().setColorBk(getBackgroundColor());
+      getPaintContext().setBackgroundColor(getBackgroundColor());
    }
 
    ////////////// #endregion

@@ -103,7 +103,7 @@ namespace fmg.uwp.mosaic {
 
             { // paint background
                var bkb = Container.Background as SolidColorBrush;
-               var bkc = PaintContext.ColorBk.ToWinColor();
+               var bkc = PaintContext.BackgroundColor.ToWinColor();
                if ((bkb == null) || (bkb.Color != bkc))
                   Container.Background = new SolidColorBrush(bkc);
             }

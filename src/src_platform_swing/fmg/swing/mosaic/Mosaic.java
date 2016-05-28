@@ -66,7 +66,7 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
 
                // background color
                Rectangle rcFill = g.getClipBounds();
-               g.setColor(Cast.toColor(getPaintContext().getColorBk()));
+               g.setColor(Cast.toColor(getPaintContext().getBackgroundColor()));
                g.fillRect(rcFill.x, rcFill.y, rcFill.width, rcFill.height);
 
                // paint cells

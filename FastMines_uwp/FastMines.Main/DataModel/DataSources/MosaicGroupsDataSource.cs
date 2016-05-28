@@ -33,7 +33,7 @@ namespace fmg.DataModel.DataSources
             img.PolarLights = selected;
             img.Rotate = selected;
             img.BorderColor = selected ? Color.Red : Color.Green;
-            img.BackgroundColor = selected ? MosaicsGroupImg.DefaultBkColor : PaintContext<object>.DefaultBackgroundFillColor;
+            img.BackgroundColor = selected ? MosaicsGroupImg.DefaultBkColor : PaintContext<object>.DefaultBackgroundColor;
             img.Padding = new Bound(selected ? 5 : 15);
          }
       }
