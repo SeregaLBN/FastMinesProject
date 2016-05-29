@@ -36,7 +36,7 @@ namespace fmg.core.mosaic.draw {
 
       public PaintContext(bool iconicMode) {
          IconicMode = iconicMode;
-         _backgroundColor = DefaultBackgroundColor.Darker(0.4);
+         _backgroundColor = DefaultBackgroundColor.Darker(0.1);
       }
 
       public TImage ImgMine {

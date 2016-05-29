@@ -358,13 +358,11 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
 
    @Override
    public void close() {
-      PaintSwingContext<Icon> old = getPaintContext();
-      setPaintContext(null);
-      old.close();
+      getPaintContext().close();
 
-      this.getContainer().removeMouseListener(getMosaicMouseListeners());
-      this.getContainer().removeMouseMotionListener(getMosaicMouseListeners());
-      this.getContainer().removeFocusListener(getMosaicMouseListeners());
+      getContainer().removeMouseListener(getMosaicMouseListeners());
+      getContainer().removeMouseMotionListener(getMosaicMouseListeners());
+      getContainer().removeFocusListener(getMosaicMouseListeners());
    }
 
    /// TEST

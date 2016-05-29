@@ -285,10 +285,7 @@ public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<Paintab
    @Override
    public void close() {
       super.close();
-
-      PaintSwingContext<TImage> old = getPaintContext();
-      setPaintContext(null);
-      old.close();
+      getPaintContext().close();
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////

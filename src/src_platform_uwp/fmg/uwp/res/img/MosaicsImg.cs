@@ -286,6 +286,12 @@ namespace fmg.uwp.res.img {
          }
       }
 
+      protected override void Dispose(bool disposing) {
+         base.Dispose(disposing);
+         if (disposing)
+            PaintContext.Dispose();
+      }
+
    }
 
 }

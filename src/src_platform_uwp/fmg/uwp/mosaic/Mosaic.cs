@@ -14,14 +14,13 @@ using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
 using fmg.core.types.click;
 using fmg.data.view.draw;
-using fmg.uwp.draw;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.mosaic.xaml;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.mosaic {
 
-   public class Mosaic : MosaicBase<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> {
+   public class Mosaic : MosaicBase<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>>, IDisposable {
 
       private IDictionary<BaseCell, PaintableShapes> _xamlBinder;
       private PaintUwpContext<ImageSource> _paintContext;
@@ -228,6 +227,10 @@ namespace fmg.uwp.mosaic {
       /// <summary> пересчитать и установить новую высоту шрифта </summary>
       private void ChangeFontSize(PenBorder penBorder) {
          PaintContext.FontInfo.Size = (int)CellAttr.GetSq(penBorder.Width);
+      }
+
+      public void Dispose() {
+         PaintContext.Dispose();
       }
 
    }
