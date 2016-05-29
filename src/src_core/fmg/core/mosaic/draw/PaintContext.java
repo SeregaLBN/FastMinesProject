@@ -4,6 +4,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 import fmg.common.Color;
@@ -31,7 +32,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
 
    protected static Color _defaultBkColor = Color.Gray;
    /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется классом-наследником. */
-   public static Color getDefaultBackgroundColor() {
+   protected static Color getDefaultBackgroundColor() {
       return _defaultBkColor;
    }
 
@@ -69,7 +70,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
    }
    public void setColorText(ColorText colorText) {
       ColorText old = this.colorText;
-      if (colorText.equals(old))
+      if (Objects.equals(colorText, old))
          return;
 
       if (old != null)
@@ -87,7 +88,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
    }
    public void setPenBorder(PenBorder penBorder) {
       PenBorder old = this.penBorder;
-      if (penBorder.equals(old))
+      if (Objects.equals(penBorder, old))
          return;
 
       if (old != null)
@@ -201,7 +202,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
 
    public Color getBackgroundColor() {
       if (backgroundColor == null)
-         setBackgroundColor(getDefaultBackgroundColor().darker(0.4));
+         setBackgroundColor(getDefaultBackgroundColor().darker(0.1));
       return backgroundColor;
    }
 

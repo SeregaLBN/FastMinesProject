@@ -318,7 +318,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
    }
 
    /** перерисовать ячейку; если null - перерисовать всё поле */
-   protected abstract void Repaint(BaseCell cell);
+   protected abstract void repaint(BaseCell cell);
 
    /** Начать игру, т.к. произошёл первый клик на поле */
    protected void GameBegin(BaseCell firstClickCell) {
@@ -332,7 +332,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
          setMines_random(firstClickCell);
       }
 
-      Repaint(null);
+      repaint(null);
    }
 
    /** Завершить игру */
@@ -358,7 +358,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
                   cell.getState().setStatus(EState._Open);
                }
             }
-            Repaint(cell);
+            repaint(cell);
          }
 
       setGameStatus(EGameStatus.eGSEnd);
@@ -407,12 +407,12 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
             setMinesCount(getMinesCount()-1);
             getRepositoryMines().remove(cellLeftDown.getCoord());
          }
-         Repaint(cellLeftDown);
+         repaint(cellLeftDown);
          result.modified.add(cellLeftDown);
       } else {
          ClickCellResult resultCell = cellLeftDown.LButtonDown(this);
          result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
-         result.modified.forEach(cell -> Repaint(cell));
+         result.modified.forEach(cell -> repaint(cell));
       }
       return result;
    }
@@ -435,7 +435,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
          }
          ClickCellResult resultCell = cellDown.LButtonUp(cellDown == cellLeftUp, this);
          result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
-         result.modified.forEach(c -> Repaint(c));
+         result.modified.forEach(c -> repaint(c));
          int countOpen = result.getCountOpen();
          int countFlag = result.getCountFlag();
          int countUnknown = result.getCountUnknown();
@@ -486,7 +486,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       setCellDown(cellRightDown);
       ClickCellResult resultCell = cellRightDown.RButtonDown(cellRightDown.getState().getClose().nextState(getUseUnknown()));
       result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
-      result.modified.forEach(c -> Repaint(c));
+      result.modified.forEach(c -> repaint(c));
 
       int countFlag = result.getCountFlag();
       int countUnknown = result.getCountUnknown();
@@ -542,7 +542,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
 
       setGameStatus(EGameStatus.eGSReady);
       setPlayInfo(EPlayInfo.ePlayerUnknown); // пока не знаю кто будет играть
-      Repaint(null);
+      repaint(null);
 
       return true;
    }
@@ -637,7 +637,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       if ("Area".equals(propName)) {
          getMatrix().forEach(cell -> cell.Init());
          onPropertyChanged(ev.getOldValue(), ev.getNewValue(), propName); // ! rethrow event - notify parent class
-         Repaint(null);
+         repaint(null);
       }
       onPropertyChanged("CellAttr");
       onPropertyChanged("CellAttr." + propName);

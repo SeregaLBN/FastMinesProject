@@ -11,7 +11,10 @@ import java.awt.Window;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -36,7 +39,7 @@ import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
-public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContext<Icon>> {
+public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContext<Icon>> implements AutoCloseable {
 
    private PaintSwingContext<Icon> _paintContext;
    private CellPaintGraphics<Icon> _cellPaint;
@@ -66,7 +69,7 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
 
                // background color
                Rectangle rcFill = g.getClipBounds();
-               g.setColor(Cast.toColor(getPaintContext().getBackgroundColor()));
+               g.setColor(Cast.toColor(getPaintContext().getBackgroundColor().darker(0.2)));
                g.fillRect(rcFill.x, rcFill.y, rcFill.width, rcFill.height);
 
                // paint cells
@@ -105,12 +108,21 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
    }
 
    public PaintSwingContext<Icon> getPaintContext() {
-      if (_paintContext == null) {
-         _paintContext = new PaintSwingContext<>(false);
-         _paintContext.addListener(this); // изменение контекста -> перерисовка мозаики
-         _cellPaint = null;
-      }
+      if (_paintContext == null)
+         setPaintContext(new PaintSwingContext<>(false));
       return _paintContext;
+   }
+   private void setPaintContext(PaintSwingContext<Icon> paintContext) {
+      PaintSwingContext<Icon> old = _paintContext;
+      if (Objects.equals(paintContext, _paintContext))
+         return;
+      if (old != null)
+         old.removeListener(this);
+      _paintContext = paintContext;
+      if (paintContext != null)
+         _paintContext.addListener(this); // изменение контекста -> перерисовка мозаики
+
+      _cellPaint = null;
    }
 
    @Override
@@ -126,7 +138,7 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
    }
 
    @Override
-   protected void Repaint(BaseCell cell) {
+   protected void repaint(BaseCell cell) {
       if (_sheduleRepaint)
          return;
 
@@ -150,7 +162,7 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
                   MosaicHelper.createAttributeInstance(getMosaicType(), getArea()).getMaxBackgroundFillModeValue()));
       boolean res = super.GameNew();
       if (!res)
-         Repaint(null);
+         repaint(null);
       return res;
    }
 
@@ -332,7 +344,7 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
       //   //Repaint(null);
       //   break;
       }
-      Repaint(null);
+      repaint(null);
       onPropertyChanged("GraphicContext");
       onPropertyChanged("GraphicContext." + propName);
    }
@@ -344,10 +356,31 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
       getPaintContext().getFontInfo().setSize((int) getCellAttr().getSq(penBorder.getWidth()));
    }
 
+   @Override
+   public void close() {
+      PaintSwingContext<Icon> old = getPaintContext();
+      setPaintContext(null);
+      old.close();
+
+      this.getContainer().removeMouseListener(getMosaicMouseListeners());
+      this.getContainer().removeMouseMotionListener(getMosaicMouseListeners());
+      this.getContainer().removeFocusListener(getMosaicMouseListeners());
+   }
+
+   /// TEST
    public static void main(String[] args) {
       JFrame frame = new JFrame();
-      frame.add((new Mosaic()).getContainer());
-      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      Mosaic m = new Mosaic();
+      frame.add(m.getContainer());
+      //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      frame.addWindowListener(new WindowAdapter() {
+         @Override
+         public void windowClosing(WindowEvent we) {
+            frame.dispose();
+            m.close();
+         }
+      });
+
       frame.pack();
       frame.setVisible(true);
    }

@@ -1380,6 +1380,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          getSelectMosaicDialog().close();
 
 //      setVisible(false);
+      getMosaic().close();
       dispose();
 //      System.exit(0);
    }

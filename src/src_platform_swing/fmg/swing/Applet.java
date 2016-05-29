@@ -6,9 +6,12 @@ import fmg.swing.mosaic.Mosaic;
 
 public class Applet extends JApplet {
    private static final long serialVersionUID = -8406501303115617115L;
-   
+
+   @Override
    public void init() {
-      setContentPane((new Mosaic().getContainer()));
+      try (Mosaic m = new Mosaic()) {
+         setContentPane(m.getContainer());
+      }
    }
 
 }

@@ -5,6 +5,7 @@ import java.awt.Font;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
+import fmg.common.Color;
 import fmg.core.mosaic.draw.PaintContext;
 import fmg.data.view.draw.FontInfo;
 import fmg.swing.Cast;
@@ -17,12 +18,16 @@ import fmg.swing.Cast;
  */
 public class PaintSwingContext<TImage> extends PaintContext<TImage> {
 
-   public static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 10);
+   //public static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 10);
 
    private Font font;
 
    public PaintSwingContext(boolean iconicMode) {
       super(iconicMode);
+   }
+
+   public static Color getDefaultBackgroundColor() {
+      return PaintContext.getDefaultBackgroundColor();
    }
 
    static {
@@ -31,13 +36,6 @@ public class PaintSwingContext<TImage> extends PaintContext<TImage> {
       if (clr == null)
          clr = java.awt.Color.GRAY;
       _defaultBkColor = Cast.toColor(clr);
-      // ToggleButton.darkShadow : javax.swing.plaf.ColorUIResource[r=105,g=105,b=105]
-      // ToggleButton.background : javax.swing.plaf.ColorUIResource[r=240,g=240,b=240]
-      // ToggleButton.focus      : javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
-      // ToggleButton.highlight  : javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]
-      // ToggleButton.light      : javax.swing.plaf.ColorUIResource[r=227,g=227,b=227]
-      // ToggleButton.shadow     : javax.swing.plaf.ColorUIResource[r=160,g=160,b=160]
-      // ToggleButton.foreground : javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
    }
 
    public Font getFont() {
