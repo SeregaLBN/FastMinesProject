@@ -1,10 +1,9 @@
 ﻿using fmg.common;
 using fmg.common.geom;
-using fmg.core.mosaic.draw;
-using fmg.data.controller.types;
-using fmg.uwp.res.img;
-using fmg.common.Controls;
 using fmg.core.img;
+using fmg.uwp.draw.mosaic;
+using fmg.data.controller.types;
+using fmg.common.Controls;
 
 namespace fmg.DataModel.DataSources
 {
@@ -32,7 +31,7 @@ namespace fmg.DataModel.DataSources
             var img = mi.MosaicSkillImage;
             img.Rotate = selected;
             img.BorderColor = selected ? Color.Red : Color.Green;
-            img.BackgroundColor = selected ? StaticImgConsts.DefaultBkColor : PaintContextConsts.DefaultBackgroundColor;
+            img.BackgroundColor = selected ? StaticImgConsts.DefaultBkColor : PaintUwpContext<object>.DefaultBackgroundColor;
             img.Padding = new Bound(selected ? 5 : 15);
          }
       }

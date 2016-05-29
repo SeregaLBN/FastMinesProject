@@ -2,7 +2,7 @@ using fmg.common;
 
 namespace fmg.core.img {
 
-   /// <summary> <see cref="RotatedImg&lt;T, TImage&gt;"/> with hue rotation effect.
+   /// <summary> <see cref="RotatedImg{T, TImage}"/> with hue rotation effect.
    /// Alters the color of an image by rotating its hue values.
    /// </summary>
    /// <typeparam name="T">the entity of image</typeparam>

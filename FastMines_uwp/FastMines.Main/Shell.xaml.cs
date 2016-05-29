@@ -7,9 +7,10 @@ using Windows.UI.Xaml.Controls;
 using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.common;
+using fmg.core.mosaic.draw;
 using fmg.Common;
 using fmg.DataModel.DataSources;
-using fmg.common.Controls;
+using fmg.uwp.draw.mosaic;
 
 namespace fmg
 {

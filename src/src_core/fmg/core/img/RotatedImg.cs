@@ -10,7 +10,7 @@ namespace fmg.core.img {
 
    }
 
-   /// <summary> <see cref="StaticImg&lt;T, TImage&gt;"/> with rotated properties </summary>
+   /// <summary> <see cref="StaticImg{T, TImage}"/> with rotated properties </summary>
    /// <typeparam name="T">the entity of image</typeparam>
    /// <typeparam name="TImage">plaform specific image</typeparam>
    public abstract class RotatedImg<T, TImage> : StaticImg<T, TImage>

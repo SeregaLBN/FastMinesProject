@@ -8,10 +8,11 @@ using fmg.common.notyfier;
 
 namespace fmg.core.mosaic.draw {
 
-   public static class PaintContextConsts {
+   static class PaintContextInternal {
 
-      /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется при старте ПО. </summary>
+      /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется классом наследником <see cref="PaintContext{TImage}"/>. </summary>
       public static Color DefaultBackgroundColor { get; set; } = Color.Gray;
+      public static readonly Random Rand = new Random(Guid.NewGuid().GetHashCode());
 
    }
 
@@ -28,9 +29,14 @@ namespace fmg.core.mosaic.draw {
       private Color _backgroundColor;
       private TImage _imgBckgrnd;
 
+      protected static Color DefaultBackgroundColor {
+         get { return PaintContextInternal.DefaultBackgroundColor; }
+         set { PaintContextInternal.DefaultBackgroundColor = value; }
+      }
+
       public PaintContext(bool iconicMode) {
          IconicMode = iconicMode;
-         _backgroundColor = PaintContextConsts.DefaultBackgroundColor.Darker(0.4);
+         _backgroundColor = DefaultBackgroundColor.Darker(0.4);
       }
 
       public TImage ImgMine {
@@ -79,7 +85,7 @@ namespace fmg.core.mosaic.draw {
       /// <summary> всё что относиться к заливке фоном ячееек </summary>
       public class BackgroundFill : NotifyPropertyChanged {
          /// <summary> режим заливки фона ячеек </summary>
-         private int _mode = 0;
+         private int _mode;
 
          /// <summary> кэшированные цвета фона ячеек </summary>
          private readonly IDictionary<int, Color> _colors = new Dictionary<int, Color>();
@@ -108,7 +114,8 @@ namespace fmg.core.mosaic.draw {
             return res;
          }
       }
-      private static readonly Random Rand = new Random(Guid.NewGuid().GetHashCode());
+
+      private static Random Rand => PaintContextInternal.Rand;
 
       private BackgroundFill _backgroundFill;
       public BackgroundFill BkFill {

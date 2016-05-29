@@ -15,7 +15,7 @@ namespace fmg.core.img {
    /// <summary> Representable <see cref="EMosaic"/> as image </summary>
    /// <typeparam name="TPaintable">see <see cref="IPaintable"/></typeparam>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   /// <typeparam name="TPaintContext">see <see cref="PaintContext&lt;TImage&gt;"/></typeparam>
+   /// <typeparam name="TPaintContext">see <see cref="PaintContext{TImage}"/></typeparam>
    public abstract class MosaicsImg<TPaintable, TImage, TPaintContext> : RotatedImg<EMosaic, TImage>, IMosaic<TPaintable, TImage, TPaintContext>
       where TPaintable : IPaintable
       where TImage : class
