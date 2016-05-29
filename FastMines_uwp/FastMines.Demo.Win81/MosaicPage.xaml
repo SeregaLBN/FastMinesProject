@@ -1,0 +1,78 @@
+﻿<Page
+    x:Class="FastMines.MosaicPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FastMines"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="Coral">
+
+    <Grid x:Name="ContentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}"  Margin="3">
+        <!--Canvas x:Name="ContentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}" Margin="5,5,5,5">
+        </Canvas-->
+    </Grid>
+
+
+    <!-- ======= BEGIN test top/bottom Applications Bars ======= -->
+    <Page.TopAppBar>
+        <AppBar x:Name="topAppBar" Padding="10, 0, 10,0" >
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="bttnBack" Style="{StaticResource BackAppBarButtonStyle}" Click="OnClickBttnBack"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button Style="{StaticResource ShowResultsAppBarButtonStyle}" />
+                </StackPanel>
+            </Grid>
+        </AppBar>
+    </Page.TopAppBar>
+    <Page.BottomAppBar>
+        <AppBar x:Name="bottomAppBar" Padding="10, 0, 10,0" IsSticky="False" >
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="bttnNewGame" Style="{StaticResource RefreshAppBarButtonStyle}" AutomationProperties.Name="New Game" Click="OnClickBttnNewGame"/>
+                    <!--Button Style="{StaticResource ResourceKey=AppBarButtonStyle}" AutomationProperties.Name="Пымпа" />
+                    <Button Style="{StaticResource PageAppBarButtonStyle}" />
+                    <Button Style="{StaticResource VideoChatAppBarButtonStyle}" /-->
+                    <!--Button Style="{StaticResource PathBasedAppBarButtonStyle}"
+                            AutomationProperties.Name="Wash" AutomationProperties.AutomationId="WashAppBarButton"
+                            Content="M9.6803506,4.8474294C10.209365 ... 3.5652149,0z" /-->
+                </StackPanel>
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <!--Button Style="{StaticResource ZoomInAppBarButtonStyle}" Click="ButtonBase_OnClickZoomIn"/>
+                    <Button Style="{StaticResource ZoomOutAppBarButtonStyle}" Click="ButtonBase_OnClickZoomOut"/-->
+                    <Button x:Name="bttnSkillBeginner" AutomationProperties.Name="Beginner" Style="{StaticResource AppBarButtonStyle}" Click="OnClickBttnSkillBeginner">
+                        <Button.Content>
+                            <Image Source="/res/Skill/skillWhite1.png"/>
+                        </Button.Content>
+                    </Button>
+                    <Button x:Name="bttnSkillAmateur" AutomationProperties.Name="Amateur" Style="{StaticResource AppBarButtonStyle}" Click="OnClickBttnSkillAmateur">
+                        <Button.Content>
+                            <Image Source="/res/Skill/skillWhite2.png"/>
+                        </Button.Content>
+                    </Button>
+                    <Button x:Name="bttnSkillProfi" AutomationProperties.Name="Profi" Style="{StaticResource AppBarButtonStyle}" Click="OnClickBttnSkillProfi">
+                        <Button.Content>
+                            <Image Source="/res/Skill/skillWhite3.png"/>
+                        </Button.Content>
+                    </Button>
+                    <Button x:Name="bttnSkillCrazy" AutomationProperties.Name="Crazy" Style="{StaticResource AppBarButtonStyle}" Click="OnClickBttnSkillCrazy">
+                        <Button.Content>
+                            <Image Source="res/Skill/skillWhite4.png"/>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </AppBar>
+    </Page.BottomAppBar>
+    <!-- ======= END test top/bottom Applications Bars ======= -->
+</Page>
