@@ -3,6 +3,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
+using fmg.core.img;
 using fmg.data.controller.types;
 using fmg.Common;
 using fmg.uwp.utils;
@@ -16,10 +17,10 @@ namespace fmg.uwp.res.img {
    public class MosaicsSkillImg : core.img.MosaicsSkillImg<WriteableBitmap> {
 
       static MosaicsSkillImg() {
-         if (DeferrInvoker == null)
-            DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
-         if (TimerCreator == null)
-            TimerCreator = () => new ui.Timer();
+         if (StaticImgConsts.DeferrInvoker == null)
+            StaticImgConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
+         if (RotatedImgConst.TimerCreator == null)
+            RotatedImgConst.TimerCreator = () => new ui.Timer();
       }
 
       public MosaicsSkillImg(ESkillLevel group, int widthAndHeight = DefaultImageSize, int? padding = null)

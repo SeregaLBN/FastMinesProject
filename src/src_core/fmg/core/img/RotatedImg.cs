@@ -4,14 +4,18 @@ using fmg.common.ui;
 
 namespace fmg.core.img {
 
+   public abstract class RotatedImgConst {
+
+      public static Func<ITimer> TimerCreator;
+
+   }
+
    /// <summary> <see cref="StaticImg&lt;T, TImage&gt;"/> with rotated properties </summary>
    /// <typeparam name="T">the entity of image</typeparam>
    /// <typeparam name="TImage">plaform specific image</typeparam>
    public abstract class RotatedImg<T, TImage> : StaticImg<T, TImage>
       where TImage : class
    {
-      public static Func<ITimer> TimerCreator;
-
       protected RotatedImg(T entity, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(entity, widthAndHeight, padding)
       { }
@@ -55,10 +59,10 @@ namespace fmg.core.img {
 
       protected void StartTimer() {
          if (_timer == null) {
-            _timer = TimerCreator();
+            _timer = RotatedImgConst.TimerCreator();
             _timer.Interval = RedrawInterval;
          }
-         _timer.Callback = () => OnTimer(); //  start
+         _timer.Callback = OnTimer; //  start
       }
 
       protected void StopTimer() {

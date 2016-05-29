@@ -6,15 +6,19 @@ using fmg.common.notyfier;
 
 namespace fmg.core.img {
 
+   public static class StaticImgConsts {
+
+      public static Action<Action> DeferrInvoker;
+      public static readonly Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
+
+   }
+
    /// <summary> Abstract, platform independent, image characteristics </summary>
    /// <typeparam name="T">the entity of image</typeparam>
    /// <typeparam name="TImage">plaform specific image</typeparam>
    public abstract class StaticImg<T, TImage> : NotifyPropertyChanged, IDisposable
       where TImage : class
    {
-      public static Action<Action> DeferrInvoker;
-
-      public static readonly Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
       public const int DefaultImageSize = 100;
 
       protected StaticImg(T entity, int widthAndHeight = DefaultImageSize, int? padding = null)
@@ -94,7 +98,7 @@ namespace fmg.core.img {
          }
       }
 
-      private Color _backgroundColor = DefaultBkColor;
+      private Color _backgroundColor = StaticImgConsts.DefaultBkColor;
       /// <summary> background fill color </summary>
       public Color BackgroundColor {
          get { return _backgroundColor; }
@@ -177,7 +181,7 @@ namespace fmg.core.img {
          if (OnlySyncDraw)
             base.OnPropertyChanged(sender, ev);
          else
-            DeferrInvoker(() => base.OnPropertyChanged(sender, ev));
+            StaticImgConsts.DeferrInvoker(() => base.OnPropertyChanged(sender, ev));
       }
 
       public void Dispose() {

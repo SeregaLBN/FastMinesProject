@@ -4,6 +4,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using fmg.core.types;
 using fmg.common;
 using fmg.common.geom;
+using fmg.core.img;
 using fmg.Common;
 using fmg.uwp.utils;
 
@@ -16,10 +17,10 @@ namespace fmg.uwp.res.img {
    public class MosaicsGroupImg : core.img.MosaicsGroupImg<WriteableBitmap> {
 
       static MosaicsGroupImg() {
-         if (DeferrInvoker == null)
-            DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
-         if (TimerCreator == null)
-            TimerCreator = () => new ui.Timer();
+         if (StaticImgConsts.DeferrInvoker == null)
+            StaticImgConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
+         if (RotatedImgConst.TimerCreator == null)
+            RotatedImgConst.TimerCreator = () => new ui.Timer();
       }
 
       public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = DefaultImageSize, int? padding = null)

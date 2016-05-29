@@ -4,6 +4,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
 using fmg.Common;
 using fmg.common.geom;
+using fmg.core.img;
 using fmg.core.types;
 using fmg.uwp.res;
 using fmg.uwp.res.img;
@@ -41,7 +42,7 @@ namespace fmg.Data {
          get {
             if (_mosaicsImg == null) {
                _mosaicsImg = new MosaicsImg(UniqueId, _sizeField, 750, 7) {
-                  BackgroundColor = MosaicsImg.DefaultBkColor
+                  BackgroundColor = StaticImgConsts.DefaultBkColor
                };
                base.Image = _mosaicsImg.Image;
             }

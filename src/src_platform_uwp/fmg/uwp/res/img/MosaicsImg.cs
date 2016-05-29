@@ -5,6 +5,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
+using fmg.core.img;
 using fmg.core.types;
 using fmg.core.mosaic.draw;
 using fmg.uwp.draw.mosaic;
@@ -21,10 +22,10 @@ namespace fmg.uwp.res.img {
    public class MosaicsImg : core.img.MosaicsImg<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> {
 
       static MosaicsImg() {
-         if (DeferrInvoker == null)
-            DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
-         if (TimerCreator == null)
-            TimerCreator = () => new ui.Timer();
+         if (StaticImgConsts.DeferrInvoker == null)
+            StaticImgConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
+         if (RotatedImgConst.TimerCreator == null)
+            RotatedImgConst.TimerCreator = () => new ui.Timer();
       }
 
       private const bool RandomCellBkColor = true;

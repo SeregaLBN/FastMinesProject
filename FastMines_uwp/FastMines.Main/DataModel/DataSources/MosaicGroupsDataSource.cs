@@ -6,6 +6,7 @@ using fmg.core.types;
 using fmg.core.mosaic.draw;
 using fmg.uwp.res.img;
 using fmg.common.Controls;
+using fmg.core.img;
 
 namespace fmg.DataModel.DataSources
 {
@@ -33,7 +34,7 @@ namespace fmg.DataModel.DataSources
             img.PolarLights = selected;
             img.Rotate = selected;
             img.BorderColor = selected ? Color.Red : Color.Green;
-            img.BackgroundColor = selected ? MosaicsGroupImg.DefaultBkColor : PaintContext<object>.DefaultBackgroundColor;
+            img.BackgroundColor = selected ? StaticImgConsts.DefaultBkColor : PaintContextConsts.DefaultBackgroundColor;
             img.Padding = new Bound(selected ? 5 : 15);
          }
       }

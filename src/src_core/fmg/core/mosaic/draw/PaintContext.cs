@@ -8,6 +8,13 @@ using fmg.common.notyfier;
 
 namespace fmg.core.mosaic.draw {
 
+   public static class PaintContextConsts {
+
+      /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется при старте ПО. </summary>
+      public static Color DefaultBackgroundColor { get; set; } = Color.Gray;
+
+   }
+
    /// <summary>Information required for drawing the entire mosaic and cells</summary>
    /// <typeparam name="TImage">plaform specific image</typeparam>
    public class PaintContext<TImage> : NotifyPropertyChanged, IDisposable
@@ -21,12 +28,9 @@ namespace fmg.core.mosaic.draw {
       private Color _backgroundColor;
       private TImage _imgBckgrnd;
 
-      /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется классом-наследником. </summary>
-      public static Color DefaultBackgroundColor { get; protected set; } = Color.Gray;
-
       public PaintContext(bool iconicMode) {
          IconicMode = iconicMode;
-         _backgroundColor = DefaultBackgroundColor.Darker(0.4);
+         _backgroundColor = PaintContextConsts.DefaultBackgroundColor.Darker(0.4);
       }
 
       public TImage ImgMine {
