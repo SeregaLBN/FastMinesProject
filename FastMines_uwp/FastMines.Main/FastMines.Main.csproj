@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -88,37 +88,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\ui\Timer.cs">
-      <Link>src_fmg.uwp\ui\Timer.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\bmp\CellPaintBmp.cs">
-      <Link>src_fmg.uwp\draw\mosaic\bmp\CellPaintBmp.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\bmp\PaintableBmp.cs">
-      <Link>src_fmg.uwp\draw\mosaic\bmp\PaintableBmp.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\CellPaint.cs">
-      <Link>src_fmg.uwp\draw\mosaic\CellPaint.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\xaml\CellPaintShapes.cs">
-      <Link>src_fmg.uwp\draw\mosaic\xaml\CellPaintShapes.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\xaml\PaintableShapes.cs">
-      <Link>src_fmg.uwp\draw\mosaic\xaml\PaintableShapes.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\Mosaic.cs">
-      <Link>src_fmg.uwp\mosaic\Mosaic.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsSkillImg.cs">
-      <Link>src_fmg.uwp\res\img\MosaicsSkillImg.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsSkillCharImg.cs">
-      <Link>src_fmg.uwp\res\img\MosaicsSkillCharImg.cs</Link>
-    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Common\AsyncRunner.cs" />
     <Compile Include="DataModel\DataSources\BaseDataSource.cs" />
     <Compile Include="DataModel\DataSources\MosaicsDataSource.cs" />
     <Compile Include="DataModel\DataSources\MosaicSkillsDataSource.cs" />
@@ -180,42 +152,6 @@
     <Compile Include="Common\LayoutAwarePage.cs" />
     <Compile Include="Common\RichTextColumns.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\BitmapFont.cs">
-      <Link>src_fmg.uwp\draw\BitmapFont.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\PaintUwpContext.cs">
-      <Link>src_fmg.uwp\draw\mosaic\PaintUwpContext.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\MosaicPageInitParam.cs">
-      <Link>src_fmg.uwp\mosaic\MosaicPageInitParam.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\BackgroundPause.cs">
-      <Link>src_fmg.uwp\res\img\BackgroundPause.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\Logo.cs">
-      <Link>src_fmg.uwp\res\img\Logo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\Flag.cs">
-      <Link>src_fmg.uwp\res\img\Flag.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\Mine.cs">
-      <Link>src_fmg.uwp\res\img\Mine.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsGroupImg.cs">
-      <Link>src_fmg.uwp\res\img\MosaicsGroupImg.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsImg.cs">
-      <Link>src_fmg.uwp\res\img\MosaicsImg.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\Resources.cs">
-      <Link>src_fmg.uwp\res\Resources.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\ImgUtils.cs">
-      <Link>src_fmg.uwp\utils\ImgUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\Cast.cs">
-      <Link>src_fmg.uwp\utils\Cast.cs</Link>
-    </Compile>
     <Compile Include="Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
     </Compile>
@@ -695,6 +631,10 @@
       <Project>{9dfd73db-d187-4471-98ba-713996c8a257}</Project>
       <Name>FastMines.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FastMines.Uni\FastMines.Uni.csproj">
+      <Project>{6df9a247-aeac-4d0e-9949-1781d44bd2c9}</Project>
+      <Name>FastMines.UWP</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="WindowsMobile, Version=10.0.10240.0">
@@ -710,9 +650,7 @@
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>rd /s /q $(ProjectDir)res
-rd /s /q $(ProjectDir)src_fmg.uwp
-mklink /j $(ProjectDir)res                    $(SolutionDir)..\res
-mklink /j $(ProjectDir)src_fmg.uwp  $(SolutionDir)..\src\src_platform_uwp\fmg\uwp</PreBuildEvent>
+mklink /j $(ProjectDir)res $(SolutionDir)..\res</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

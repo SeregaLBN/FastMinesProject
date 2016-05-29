@@ -4,13 +4,11 @@ using System.Linq;
 using System.Reactive.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using fmg.common;
 using fmg.core.types;
 using fmg.data.controller.types;
-using fmg.common;
-using fmg.core.mosaic.draw;
-using fmg.Common;
+using fmg.uwp.utils;
 using fmg.DataModel.DataSources;
-using fmg.uwp.draw.mosaic;
 
 namespace fmg
 {

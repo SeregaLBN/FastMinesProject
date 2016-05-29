@@ -1,7 +1,7 @@
 ﻿using Windows.Foundation;
 using Windows.UI.Core;
 
-namespace fmg.Common {
+namespace fmg.uwp.utils {
 
    public static class AsyncRunner {
 

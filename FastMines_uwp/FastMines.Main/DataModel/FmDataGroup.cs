@@ -2,11 +2,10 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using fmg.core.types;
 using fmg.uwp.res;
 using fmg.uwp.res.img;
-using fmg.Common;
+using fmg.uwp.utils;
 
 // The data model defined by this file serves as a representative example of a strongly-typed
 // model that supports notification when members are added, removed, or modified.  The property
