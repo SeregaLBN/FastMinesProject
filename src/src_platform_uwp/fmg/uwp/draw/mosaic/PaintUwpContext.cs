@@ -40,7 +40,7 @@ namespace fmg.uwp.draw.mosaic {
             }
             PaintContext<TImage>.DefaultBackgroundColor = clr;
          } catch (Exception ex) {
-            System.Diagnostics.Debug.Fail(ex.Message);
+            System.Diagnostics.Debug.WriteLine(ex.Message);
          }
       }
 

@@ -255,7 +255,7 @@ namespace fmg.core.img {
          var angle = RotateAngle;
          var area = Area;
 
-         _rotatedElements.ForEach(cntxt => {
+         foreach (var cntxt in _rotatedElements) {
             System.Diagnostics.Debug.Assert(cntxt.angleOffset >= 0);
             var angle2 = angle - cntxt.angleOffset;
             if (angle2 < 0)
@@ -301,7 +301,7 @@ namespace fmg.core.img {
 
             // restore
             attr.Area = area;
-         });
+         }
 
          // Z-ordering
          _rotatedElements.Sort((x, y) => x.area.CompareTo(y.area));
@@ -389,11 +389,11 @@ namespace fmg.core.img {
             }
          }
          if (toRemove != null) {
-            toRemove.ForEach(cntxt => {
+            foreach (var cntxt in toRemove ) {
                Matrix[cntxt.index].Init(); // restore original region coords
                _rotatedElements.Remove(cntxt);
                AddRandomToPrepareList(false, rand);
-            });
+            }
             OnPropertyChanged("RotatedElements");
          }
       }

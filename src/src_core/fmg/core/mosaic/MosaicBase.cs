@@ -156,8 +156,8 @@ namespace fmg.core.mosaic {
          }
       }
 
-      protected virtual void OnError(String msg) {
-         System.Diagnostics.Debug.Fail(msg);
+      protected virtual void OnError(string msg) {
+         System.Diagnostics.Debug.WriteLine(msg);
       }
 
       /// <summary>arrange Mines</summary>
@@ -255,7 +255,8 @@ namespace fmg.core.mosaic {
             if (!areEquivalent) {
                current.Clear();
                if ((value != null) && value.Any())
-                  value.ToList().ForEach(itm => current.Add(itm));
+                  foreach (var itm in value)
+                     current.Add(itm);
             }
             OnPropertyChanged();
             //setGameStatus(EGameStatus.eGSEnd);
@@ -359,7 +360,8 @@ namespace fmg.core.mosaic {
             } else {
                var resultCell = cellLeftDown.LButtonDown(this);
                result.Modified = resultCell.Modified; // copy reference; TODO result.Modified.AddRange(resultCell.Modified);
-               result.Modified.ForEach(Repaint);
+               foreach (var cellMod in result.Modified)
+                  Repaint(cellMod);
             }
             return result;
          }
@@ -385,7 +387,8 @@ namespace fmg.core.mosaic {
             var resultCell = cellDown.LButtonUp(ReferenceEquals(cellDown, cellLeftUp), this);
             result.Modified = resultCell.Modified; // copy reference; TODO result.Modified.AddRange(resultCell.Modified);
             tracer.Put(" result.Modified=" + result.Modified.Count);
-            result.Modified.ForEach(Repaint);
+            foreach (var cellMod in result.Modified)
+               Repaint(cellMod);
             var countOpen = result.CountOpen;
             var countFlag = result.CountFlag;
             var countUnknown = result.CountUnknown;
@@ -437,7 +440,8 @@ namespace fmg.core.mosaic {
             CellDown = cellRightDown;
             var resultCell = cellRightDown.RButtonDown(cellRightDown.State.Close.NextState(UseUnknown));
             result.Modified = resultCell.Modified; // copy reference; TODO result.Modified.AddRange(resultCell.Modified);
-            result.Modified.ForEach(Repaint);
+            foreach (var cellMod in result.Modified)
+               Repaint(cellMod);
 
             var countFlag = result.CountFlag;
             var countUnknown = result.CountUnknown;
@@ -584,7 +588,8 @@ namespace fmg.core.mosaic {
       protected virtual void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
          var pn = ev.PropertyName;
          if (pn == "Area") {
-            Matrix.ToList().ForEach(cell => cell.Init());
+            foreach (var cell in Matrix)
+               cell.Init();
             OnPropertyChanged(this, ev); // ! rethrow event - notify parent class
             Repaint(null);
          }

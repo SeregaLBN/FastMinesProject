@@ -18,6 +18,7 @@ FastMines_uwp/*.VC.opendb
 FastMines_uwp/.vs/*
 FastMines_uwp/FastMines.Main/res
 FastMines_uwp/FastMines.*/src_*
+FastMines_uwp/packages/*
 *proj.user
 Mines.bst
 Mines.dat

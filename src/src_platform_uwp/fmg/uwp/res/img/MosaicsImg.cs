@@ -265,7 +265,8 @@ namespace fmg.uwp.res.img {
          pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5);
 
          var matrix = Matrix;
-         _rotatedElements.ForEach(cntxt => CellPaint.Paint(matrix[cntxt.index], paint, paintContext));
+         foreach (var cntxt in _rotatedElements)
+            CellPaint.Paint(matrix[cntxt.index], paint, paintContext);
 
          // restore
          pb.Width = borderWidth; //BorderWidth = borderWidth;
