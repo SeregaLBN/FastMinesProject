@@ -541,17 +541,29 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FastMines.BackgroundTasks\FastMines.BackgroundTasks.csproj">
-      <Project>{4f75c36e-7157-449f-9686-dea20f83bbdb}</Project>
-      <Name>BackgroundTasks</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="WriteableBitmapEx.WinRT">
-      <HintPath>..\Workspaces\VS\packages\WriteableBitmapEx.1.5.0.0\lib\NetCore45\WriteableBitmapEx.WinRT.dll</HintPath>
+    <Reference Include="WriteableBitmapEx.WinRT, Version=1.5.0.0, Culture=neutral, PublicKeyToken=50375ca6144f1c69, processorArchitecture=MSIL">
+      <HintPath>..\packages\WriteableBitmapEx.1.5.0.0\lib\NetCore45\WriteableBitmapEx.WinRT.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\FastMines.BackgroundTasks.Win81\FastMines.BackgroundTasks.Win81.csproj">
+      <Project>{c5fd4289-0f00-4868-9c16-3517923fb64a}</Project>
+      <Name>FastMines.BackgroundTasks.Win81</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FastMines.Common\FastMines.Common.csproj">
+      <Project>{4132c01a-1666-4f2e-b0a7-59285953f4b6}</Project>
+      <Name>FastMines.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FastMines.Core\FastMines.Core.csproj">
+      <Project>{9dfd73db-d187-4471-98ba-713996c8a257}</Project>
+      <Name>FastMines.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FastMines.Uni.Win81\FastMines.Uni.Win81.csproj">
+      <Project>{6ba7a25c-04e6-4108-acd4-0084d6b019b2}</Project>
+      <Name>FastMines.Uni.Win81</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>
