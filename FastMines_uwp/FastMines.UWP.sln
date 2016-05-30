@@ -4,7 +4,7 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Main", "FastMines.Main\FastMines.Main.csproj", "{758FC9E6-177D-4231-8AFF-2BDA5B7DAB54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.BackgroundTasks", "FastMines.BackgroundTasks\FastMines.BackgroundTasks.csproj", "{4F75C36E-7157-449F-9686-DEA20F83BBDB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.BackgroundTasks.Uap", "FastMines.BackgroundTasks.Uap\FastMines.BackgroundTasks.Uap.csproj", "{4F75C36E-7157-449F-9686-DEA20F83BBDB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastMines.Logo", "..\FastMines_Logo\FastMines_Logo.vcxproj", "{709C5B80-F59C-4E4C-AED6-6CDEBA3D8E9C}"
 EndProject
@@ -12,7 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Common", "FastMin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Core", "FastMines.Core\FastMines.Core.csproj", "{9DFD73DB-D187-4471-98BA-713996C8A257}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Uni", "FastMines.Uni\FastMines.Uni.csproj", "{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Uni.Uap", "FastMines.Uni.Uap\FastMines.Uni.Uap.csproj", "{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Demo.Win81", "FastMines.Demo.Win81\FastMines.Demo.Win81.csproj", "{F05946AE-58B1-4A84-9AD1-07954F90AE31}"
 EndProject
