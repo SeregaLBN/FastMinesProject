@@ -14,13 +14,13 @@ using fmg.uwp.res;
 using fmg.uwp.res.img;
 using Size = fmg.common.geom.Size;
 using Rect = Windows.Foundation.Rect;
-using BackgroundTasks;
+using FastMines.BackgroundTasks.Uap;
 
 namespace fmg {
    public static class TileHelper {
       private static readonly Random Random = new Random(Guid.NewGuid().GetHashCode());
-      private static readonly string TaskName = typeof(BackgroundTasks.FastMinesTileUpdater).Name;
-      private static readonly string TaskEntryPoint = typeof(BackgroundTasks.FastMinesTileUpdater).FullName;
+      private static readonly string TaskName = typeof(FastMines.BackgroundTasks.Uap.FastMinesTileUpdater).Name;
+      private static readonly string TaskEntryPoint = typeof(FastMines.BackgroundTasks.Uap.FastMinesTileUpdater).FullName;
 
       public static async void RegisterBackgroundTask() {
          try {
