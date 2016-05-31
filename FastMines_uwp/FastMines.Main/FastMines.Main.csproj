@@ -168,122 +168,122 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\res\Logo\Badge\Logo.scale-125.png">
-      <Link>res\Logo\Badge\Logo.scale-125.png</Link>
+    <Content Include="..\..\res\Logo\UWP\Badge\Logo.scale-125.png">
+      <Link>res\Logo\UWP\Badge\Logo.scale-125.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\Badge\Logo.scale-150.png">
-      <Link>res\Logo\Badge\Logo.scale-150.png</Link>
+    <Content Include="..\..\res\Logo\UWP\Badge\Logo.scale-150.png">
+      <Link>res\Logo\UWP\Badge\Logo.scale-150.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\Badge\Logo.scale-200.png">
-      <Link>res\Logo\Badge\Logo.scale-200.png</Link>
+    <Content Include="..\..\res\Logo\UWP\Badge\Logo.scale-200.png">
+      <Link>res\Logo\UWP\Badge\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\Badge\Logo.scale-400.png">
-      <Link>res\Logo\Badge\Logo.scale-400.png</Link>
+    <Content Include="..\..\res\Logo\UWP\Badge\Logo.scale-400.png">
+      <Link>res\Logo\UWP\Badge\Logo.scale-400.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\SplashScreen\Logo.scale-125.png">
-      <Link>res\Logo\SplashScreen\Logo.scale-125.png</Link>
+    <Content Include="..\..\res\Logo\UWP\SplashScreen\Logo.scale-125.png">
+      <Link>res\Logo\UWP\SplashScreen\Logo.scale-125.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\SplashScreen\Logo.scale-150.png">
-      <Link>res\Logo\SplashScreen\Logo.scale-150.png</Link>
+    <Content Include="..\..\res\Logo\UWP\SplashScreen\Logo.scale-150.png">
+      <Link>res\Logo\UWP\SplashScreen\Logo.scale-150.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\SplashScreen\Logo.scale-200.png">
-      <Link>res\Logo\SplashScreen\Logo.scale-200.png</Link>
+    <Content Include="..\..\res\Logo\UWP\SplashScreen\Logo.scale-200.png">
+      <Link>res\Logo\UWP\SplashScreen\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\SplashScreen\Logo.scale-400.png">
-      <Link>res\Logo\SplashScreen\Logo.scale-400.png</Link>
+    <Content Include="..\..\res\Logo\UWP\SplashScreen\Logo.scale-400.png">
+      <Link>res\Logo\UWP\SplashScreen\Logo.scale-400.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\StoreTile\Logo.scale-125.png">
-      <Link>res\Logo\StoreTile\Logo.scale-125.png</Link>
+    <Content Include="..\..\res\Logo\UWP\StoreTile\Logo.scale-125.png">
+      <Link>res\Logo\UWP\StoreTile\Logo.scale-125.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\StoreTile\Logo.scale-150.png">
-      <Link>res\Logo\StoreTile\Logo.scale-150.png</Link>
+    <Content Include="..\..\res\Logo\UWP\StoreTile\Logo.scale-150.png">
+      <Link>res\Logo\UWP\StoreTile\Logo.scale-150.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\StoreTile\Logo.scale-200.png">
-      <Link>res\Logo\StoreTile\Logo.scale-200.png</Link>
+    <Content Include="..\..\res\Logo\UWP\StoreTile\Logo.scale-200.png">
+      <Link>res\Logo\UWP\StoreTile\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\StoreTile\Logo.scale-400.png">
-      <Link>res\Logo\StoreTile\Logo.scale-400.png</Link>
+    <Content Include="..\..\res\Logo\UWP\StoreTile\Logo.scale-400.png">
+      <Link>res\Logo\UWP\StoreTile\Logo.scale-400.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq150\Logo.scale-100.png">
-      <Link>res\Logo\TileSq150\Logo.scale-100.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq150\Logo.scale-100.png">
+      <Link>res\Logo\UWP\TileSq150\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq150\Logo.scale-125.png">
-      <Link>res\Logo\TileSq150\Logo.scale-125.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq150\Logo.scale-125.png">
+      <Link>res\Logo\UWP\TileSq150\Logo.scale-125.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq150\Logo.scale-150.png">
-      <Link>res\Logo\TileSq150\Logo.scale-150.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq150\Logo.scale-150.png">
+      <Link>res\Logo\UWP\TileSq150\Logo.scale-150.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq150\Logo.scale-200.png">
-      <Link>res\Logo\TileSq150\Logo.scale-200.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq150\Logo.scale-200.png">
+      <Link>res\Logo\UWP\TileSq150\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq150\Logo.scale-400.png">
-      <Link>res\Logo\TileSq150\Logo.scale-400.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq150\Logo.scale-400.png">
+      <Link>res\Logo\UWP\TileSq150\Logo.scale-400.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq310\Logo.scale-125.png">
-      <Link>res\Logo\TileSq310\Logo.scale-125.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq310\Logo.scale-125.png">
+      <Link>res\Logo\UWP\TileSq310\Logo.scale-125.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq310\Logo.scale-150.png">
-      <Link>res\Logo\TileSq310\Logo.scale-150.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq310\Logo.scale-150.png">
+      <Link>res\Logo\UWP\TileSq310\Logo.scale-150.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq310\Logo.scale-200.png">
-      <Link>res\Logo\TileSq310\Logo.scale-200.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq310\Logo.scale-200.png">
+      <Link>res\Logo\UWP\TileSq310\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq310\Logo.scale-400.png">
-      <Link>res\Logo\TileSq310\Logo.scale-400.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq310\Logo.scale-400.png">
+      <Link>res\Logo\UWP\TileSq310\Logo.scale-400.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq44\Logo.scale-100.png">
-      <Link>res\Logo\TileSq44\Logo.scale-100.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.scale-100.png">
+      <Link>res\Logo\UWP\TileSq44\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq44\Logo.scale-125.png">
-      <Link>res\Logo\TileSq44\Logo.scale-125.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.scale-125.png">
+      <Link>res\Logo\UWP\TileSq44\Logo.scale-125.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq44\Logo.scale-150.png">
-      <Link>res\Logo\TileSq44\Logo.scale-150.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.scale-150.png">
+      <Link>res\Logo\UWP\TileSq44\Logo.scale-150.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq44\Logo.scale-200.png">
-      <Link>res\Logo\TileSq44\Logo.scale-200.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.scale-200.png">
+      <Link>res\Logo\UWP\TileSq44\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq44\Logo.scale-400.png">
-      <Link>res\Logo\TileSq44\Logo.scale-400.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.scale-400.png">
+      <Link>res\Logo\UWP\TileSq44\Logo.scale-400.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq44\Logo.targetsize-16.png">
-      <Link>res\Logo\TileSq44\Logo.targetsize-16.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.targetsize-16.png">
+      <Link>res\Logo\UWP\TileSq44\Logo.targetsize-16.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq44\Logo.targetsize-24.png">
-      <Link>res\Logo\TileSq44\Logo.targetsize-24.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.targetsize-24.png">
+      <Link>res\Logo\UWP\TileSq44\Logo.targetsize-24.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq44\Logo.targetsize-256.png">
-      <Link>res\Logo\TileSq44\Logo.targetsize-256.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.targetsize-256.png">
+      <Link>res\Logo\UWP\TileSq44\Logo.targetsize-256.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq44\Logo.targetsize-48.png">
-      <Link>res\Logo\TileSq44\Logo.targetsize-48.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.targetsize-48.png">
+      <Link>res\Logo\UWP\TileSq44\Logo.targetsize-48.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq71\Logo.scale-100.png">
-      <Link>res\Logo\TileSq71\Logo.scale-100.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq71\Logo.scale-100.png">
+      <Link>res\Logo\UWP\TileSq71\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq71\Logo.scale-125.png">
-      <Link>res\Logo\TileSq71\Logo.scale-125.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq71\Logo.scale-125.png">
+      <Link>res\Logo\UWP\TileSq71\Logo.scale-125.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq71\Logo.scale-150.png">
-      <Link>res\Logo\TileSq71\Logo.scale-150.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq71\Logo.scale-150.png">
+      <Link>res\Logo\UWP\TileSq71\Logo.scale-150.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq71\Logo.scale-200.png">
-      <Link>res\Logo\TileSq71\Logo.scale-200.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq71\Logo.scale-200.png">
+      <Link>res\Logo\UWP\TileSq71\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq71\Logo.scale-400.png">
-      <Link>res\Logo\TileSq71\Logo.scale-400.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq71\Logo.scale-400.png">
+      <Link>res\Logo\UWP\TileSq71\Logo.scale-400.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\WideTile\Logo.scale-125.png">
-      <Link>res\Logo\WideTile\Logo.scale-125.png</Link>
+    <Content Include="..\..\res\Logo\UWP\WideTile\Logo.scale-125.png">
+      <Link>res\Logo\UWP\WideTile\Logo.scale-125.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\WideTile\Logo.scale-150.png">
-      <Link>res\Logo\WideTile\Logo.scale-150.png</Link>
+    <Content Include="..\..\res\Logo\UWP\WideTile\Logo.scale-150.png">
+      <Link>res\Logo\UWP\WideTile\Logo.scale-150.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\WideTile\Logo.scale-200.png">
-      <Link>res\Logo\WideTile\Logo.scale-200.png</Link>
+    <Content Include="..\..\res\Logo\UWP\WideTile\Logo.scale-200.png">
+      <Link>res\Logo\UWP\WideTile\Logo.scale-200.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\WideTile\Logo.scale-400.png">
-      <Link>res\Logo\WideTile\Logo.scale-400.png</Link>
+    <Content Include="..\..\res\Logo\UWP\WideTile\Logo.scale-400.png">
+      <Link>res\Logo\UWP\WideTile\Logo.scale-400.png</Link>
     </Content>
     <Content Include="..\..\res\ToolBarButton\newNormal.png">
       <Link>res\ToolBarButton\newNormal.png</Link>
@@ -552,20 +552,20 @@
     <Content Include="..\..\res\Skill\skillWhite4.png">
       <Link>res\Skill\skillWhite4.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\Badge\Logo.scale-100.png">
-      <Link>res\Logo\Badge\Logo.scale-100.png</Link>
+    <Content Include="..\..\res\Logo\UWP\Badge\Logo.scale-100.png">
+      <Link>res\Logo\UWP\Badge\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\WideTile\Logo.scale-100.png">
-      <Link>res\Logo\WideTile\Logo.scale-100.png</Link>
+    <Content Include="..\..\res\Logo\UWP\WideTile\Logo.scale-100.png">
+      <Link>res\Logo\UWP\WideTile\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\SplashScreen\Logo.scale-100.png">
-      <Link>res\Logo\SplashScreen\Logo.scale-100.png</Link>
+    <Content Include="..\..\res\Logo\UWP\SplashScreen\Logo.scale-100.png">
+      <Link>res\Logo\UWP\SplashScreen\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\StoreTile\Logo.scale-100.png">
-      <Link>res\Logo\StoreTile\Logo.scale-100.png</Link>
+    <Content Include="..\..\res\Logo\UWP\StoreTile\Logo.scale-100.png">
+      <Link>res\Logo\UWP\StoreTile\Logo.scale-100.png</Link>
     </Content>
-    <Content Include="..\..\res\Logo\TileSq310\Logo.scale-100.png">
-      <Link>res\Logo\TileSq310\Logo.scale-100.png</Link>
+    <Content Include="..\..\res\Logo\UWP\TileSq310\Logo.scale-100.png">
+      <Link>res\Logo\UWP\TileSq310\Logo.scale-100.png</Link>
     </Content>
   </ItemGroup>
   <ItemGroup>
