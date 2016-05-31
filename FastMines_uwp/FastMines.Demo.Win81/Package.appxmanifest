@@ -4,7 +4,7 @@
   <Properties>
     <DisplayName>FastMines.Demo.Win81</DisplayName>
     <PublisherDisplayName>SeregaLBN</PublisherDisplayName>
-    <Logo>res\Logo\StoreTile\Logo.png</Logo>
+    <Logo>res\Logo\Win81\StoreTile\Logo.png</Logo>
   </Properties>
   <Prerequisites>
     <OSMinVersion>6.3.0</OSMinVersion>
@@ -22,16 +22,16 @@
           </BackgroundTasks>
         </Extension>
       </Extensions>
-      <m2:VisualElements DisplayName="FastMines.Demo" Description="FastMines.Demo" BackgroundColor="#FF8C00" ForegroundText="dark" Square150x150Logo="res\Logo\Tile\Logo.png" Square30x30Logo="res\Logo\SmallTile\Logo.png">
-        <m2:DefaultTile Wide310x150Logo="res\Logo\WideTile\Logo.png" Square70x70Logo="res\Logo\TileSq70\Logo.png" Square310x310Logo="res\Logo\TileSq310\Logo.png" ShortName="FastMines.Demo" DefaultSize="wide310x150Logo">
+      <m2:VisualElements DisplayName="FastMines.Demo" Description="FastMines.Demo" BackgroundColor="#FF8C00" ForegroundText="dark" Square150x150Logo="res\Logo\Win81\Tile\Logo.png" Square30x30Logo="res\Logo\Win81\SmallTile\Logo.png">
+        <m2:DefaultTile Wide310x150Logo="res\Logo\Win81\WideTile\Logo.png" Square70x70Logo="res\Logo\Win81\TileSq70\Logo.png" Square310x310Logo="res\Logo\Win81\TileSq310\Logo.png" ShortName="FastMines.Demo" DefaultSize="wide310x150Logo">
           <m2:ShowNameOnTiles>
             <m2:ShowOn Tile="square150x150Logo" />
             <m2:ShowOn Tile="wide310x150Logo" />
             <m2:ShowOn Tile="square310x310Logo" />
           </m2:ShowNameOnTiles>
         </m2:DefaultTile>
-        <m2:LockScreen Notification="badgeAndTileText" BadgeLogo="res\Logo\Badge\Logo.png" />
-        <m2:SplashScreen Image="res\Logo\SplashScreen\Logo.png" BackgroundColor="#FF8C00" />
+        <m2:LockScreen Notification="badgeAndTileText" BadgeLogo="res\Logo\Win81\Badge\Logo.png" />
+        <m2:SplashScreen Image="res\Logo\Win81\SplashScreen\Logo.png" BackgroundColor="#FF8C00" />
       </m2:VisualElements>
     </Application>
   </Applications>
