@@ -2,7 +2,7 @@ using System;
 using Windows.ApplicationModel;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
-using fmg.Common;
+using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;

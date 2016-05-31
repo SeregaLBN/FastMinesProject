@@ -5,7 +5,6 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.data.controller.types;
-using fmg.Common;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.res.img {

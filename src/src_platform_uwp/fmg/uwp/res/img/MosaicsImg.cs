@@ -11,7 +11,6 @@ using fmg.core.mosaic.draw;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.mosaic.bmp;
 using fmg.uwp.utils;
-using fmg.Common;
 
 namespace fmg.uwp.res.img {
 

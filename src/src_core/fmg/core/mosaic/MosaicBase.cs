@@ -335,7 +335,7 @@ namespace fmg.core.mosaic {
       }
 
       protected ClickResult OnLeftButtonDown(BaseCell cellLeftDown) {
-         using (new fmg.Common.Tracer("Mosaic::OnLeftButtonDown")) {
+         using (new fmg.common.Tracer("Mosaic::OnLeftButtonDown")) {
             var result = new ClickResult(cellLeftDown, true, true);
             CellDown = null;
             if (GameStatus == EGameStatus.eGSEnd)
@@ -368,7 +368,7 @@ namespace fmg.core.mosaic {
       }
 
       protected ClickResult OnLeftButtonUp(BaseCell cellLeftUp) {
-         using (var tracer = new fmg.Common.Tracer("Mosaic::OnLeftButtonUp"))
+         using (var tracer = new fmg.common.Tracer("Mosaic::OnLeftButtonUp"))
          try {
             var cellDown = CellDown;
             var result = new ClickResult(cellDown, true, false);
@@ -422,7 +422,7 @@ namespace fmg.core.mosaic {
       }
 
       protected ClickResult OnRightButtonDown(BaseCell cellRightDown) {
-         using (var tracer = new fmg.Common.Tracer("Mosaic::OnRightButtonDown")) {
+         using (var tracer = new fmg.common.Tracer("Mosaic::OnRightButtonDown")) {
             CellDown = null;
             var result = new ClickResult(cellRightDown, false, true); ;
             if (GameStatus == EGameStatus.eGSEnd) {
@@ -464,7 +464,7 @@ namespace fmg.core.mosaic {
       }
 
       protected ClickResult OnRightButtonUp(BaseCell cellRightUp) {
-         using (var tracer = new fmg.Common.Tracer("Mosaic::OnRightButtonUp"))
+         using (var tracer = new fmg.common.Tracer("Mosaic::OnRightButtonUp"))
          try {
             var cellDown = CellDown;
             //tracer.Put("return");

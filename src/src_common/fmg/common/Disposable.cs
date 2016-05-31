@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace fmg.Common
+namespace fmg.common
 {
     public abstract class Disposable : IDisposable
     {
@@ -29,5 +29,7 @@ namespace fmg.Common
         {
             Dispose(false);
         }
-    }
+
+   }
+
 }

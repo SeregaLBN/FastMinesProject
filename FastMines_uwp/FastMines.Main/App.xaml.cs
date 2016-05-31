@@ -7,7 +7,6 @@ using Windows.Phone.UI.Input;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
-using fmg.Data;
 using fmg.data.controller.types;
 
 namespace fmg

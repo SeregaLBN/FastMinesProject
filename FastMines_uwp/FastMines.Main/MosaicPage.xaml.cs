@@ -15,8 +15,8 @@ using fmg.core.mosaic.cells;
 using fmg.uwp.mosaic;
 using fmg.uwp.draw.mosaic.xaml;
 using fmg.data.controller.types;
-using fmg.Common;
-using Log = fmg.Common.LoggerSimple;
+using fmg.common;
+using Log = fmg.common.LoggerSimple;
 using Size = fmg.common.geom.Size;
 using Thickness = Windows.UI.Xaml.Thickness;
 using fmg.core.mosaic;
@@ -26,6 +26,7 @@ using fmg.uwp.utils;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace fmg {
+
    /// <summary>
    /// An empty page that can be used on its own or navigated to within a Frame.
    /// </summary>

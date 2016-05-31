@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace fmg.Common {
+namespace fmg.common {
+
    public class LoggerSimple {
+
 #if DEBUG
       //[System.Runtime.InteropServices.DllImport("Kernel32.dll")]
       //public static extern uint GetCurrentThreadId();
@@ -73,4 +75,5 @@ namespace fmg.Common {
       public void Put(string format, params object[] args) {}
 #endif
    }
+
 }

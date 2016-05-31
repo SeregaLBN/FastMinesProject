@@ -9,18 +9,16 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
+using fmg.common;
 using fmg.common.geom;
 using fmg.common.notyfier;
 using fmg.core.mosaic;
 using fmg.core.types;
 using fmg.core.mosaic.cells;
 using fmg.core.types.click;
-using fmg.uwp.mosaic;
-using fmg.uwp.draw.mosaic.xaml;
 using fmg.data.controller.types;
+using fmg.uwp.mosaic;
 using fmg.uwp.utils;
-using FastMines.Common;
-using Log = FastMines.Common.LoggerSimple;
 using Size = fmg.common.geom.Size;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -442,7 +440,7 @@ namespace FastMines {
             } else {
                AsyncRunner.InvokeFromUiLater(() => {
                   if (!_clickInfo.Released) {
-                     Log.Put("ã OnPointerReleased: forced left release click...");
+                     LoggerSimple.Put("ã OnPointerReleased: forced left release click...");
                      OnClick(pointerPoint.Position, true, false, true);
                   }
                }, CoreDispatcherPriority.High);

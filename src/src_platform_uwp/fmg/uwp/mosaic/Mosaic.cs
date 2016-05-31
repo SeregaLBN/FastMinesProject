@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
-using fmg.Common;
+using fmg.common;
 using fmg.common.geom;
 using fmg.common.notyfier;
 using fmg.core.types;
