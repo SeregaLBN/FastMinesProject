@@ -143,7 +143,11 @@ namespace fmg.core.mosaic.draw {
       }
 
       public FontInfo FontInfo {
-         get { return _fontInfo; }
+         get {
+            if (_fontInfo == null)
+               FontInfo = new FontInfo();
+            return _fontInfo;
+         }
          set {
             var old = _fontInfo;
             if (!SetProperty(ref _fontInfo, value))
