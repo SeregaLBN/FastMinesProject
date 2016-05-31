@@ -3,9 +3,9 @@ using System.Collections.Specialized;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
 using fmg.core.types;
-using fmg.winrt.res;
-using fmg.winrt.res.img;
-using FastMines.Common;
+using fmg.uwp.res;
+using fmg.uwp.res.img;
+using fmg.uwp.utils;
 
 // The data model defined by this file serves as a representative example of a strongly-typed
 // model that supports notification when members are added, removed, or modified.  The property
@@ -30,10 +30,11 @@ namespace FastMines.Data {
             var seeXxxPageXamlInViewDesigner = MosaicGroupImage;
             System.Diagnostics.Debug.WriteLine(seeXxxPageXamlInViewDesigner.ToString());
          } else
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            AsyncRunner.InvokeLater(async () => { base.Image = await Resources.GetImgMosaicGroupPng(eMosaicGroup); },
-               CoreDispatcherPriority.High);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            AsyncRunner.InvokeFromUiLater(async () => {
+               var img = await Resources.GetImgMosaicGroupPng(eMosaicGroup);
+               if (base.Image == null)
+                  base.Image = img;
+            }, CoreDispatcherPriority.High);
       }
 
       private void ItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) {
@@ -100,10 +101,8 @@ namespace FastMines.Data {
       public override ImageSource Image {
          get {
             if (_mosaicsGroupImg == null)
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-               AsyncRunner.InvokeLater(() => { base.Image = MosaicGroupImage.Image; }, CoreDispatcherPriority.Low);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            return base.Image;
+               AsyncRunner.InvokeFromUiLater(() => { base.Image = MosaicGroupImage.Image; }, CoreDispatcherPriority.Low);
+            return base.Image;// ?? new WriteableBitmap(1,1);
          }
       }
 

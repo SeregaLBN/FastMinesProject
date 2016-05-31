@@ -9,7 +9,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using FastMines.Common;
-using fmg.winrt.draw;
+using fmg.uwp.draw;
+using fmg.uwp.utils;
 
 // The Grid App template is documented at http://go.microsoft.com/fwlink/?LinkId=234226
 
@@ -47,14 +48,14 @@ namespace FastMines {
 
          {
             // 3DES
-            {
-               var secKey = "super-puper mega Password";
-               var tdes1 = new fmg.common.crypt.TripleDESOperations() {SecurityKeyStr = secKey, DataStr = testString};
-               var encrypted = tdes1.EncryptB64();
-               var decrypted =
-                  new fmg.common.crypt.TripleDESOperations() {SecurityKeyStr = secKey, DataB64 = encrypted}.DecryptStr();
-               System.Diagnostics.Debug.Assert(decrypted == testString, "Triple DES failed!");
-            }
+            //{
+            //   var secKey = "super-puper mega Password";
+            //   var tdes1 = new fmg.common.crypt.TripleDESOperations() {SecurityKeyStr = secKey, DataStr = testString};
+            //   var encrypted = tdes1.EncryptB64();
+            //   var decrypted =
+            //      new fmg.common.crypt.TripleDESOperations() {SecurityKeyStr = secKey, DataB64 = encrypted}.DecryptStr();
+            //   System.Diagnostics.Debug.Assert(decrypted == testString, "Triple DES failed!");
+            //}
             //{
             //   var secKey = fmg.common.TripleDESOperations.GenerateKey();
             //   var encrypted = new fmg.common.TripleDESOperations() { SecurityKey = secKey, DataStr = testString }.EncryptB64();
@@ -115,9 +116,7 @@ namespace FastMines {
          // Ensure the current window is active
          Window.Current.Activate();
 
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-         AsyncRunner.InvokeLater(TileHelper.RegisterBackgroundTask, CoreDispatcherPriority.Low);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+         AsyncRunner.InvokeLater((x) => TileHelper.RegisterBackgroundTask(), Windows.System.Threading.WorkItemPriority.Low);
       }
 
       /// <summary>

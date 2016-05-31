@@ -107,7 +107,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Common\INotifyPropertyChangedEx.cs" />
     <Compile Include="Common\LoggerSimple.cs" />
     <Compile Include="Common\TileHelper.cs" />
     <Compile Include="DataModel\FmDataItem.cs" />
@@ -127,7 +126,6 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataModel\FmDataSource.cs" />
-    <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Common\BooleanToVisibilityConverter.cs" />
     <Compile Include="Common\BooleanNegationConverter.cs" />
     <Compile Include="Common\LayoutAwarePage.cs" />
@@ -573,15 +571,7 @@
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>rd /s /q $(ProjectDir)res
-rd /s /q $(ProjectDir)src_fmg.common
-rd /s /q $(ProjectDir)src_fmg.core
-rd /s /q $(ProjectDir)src_fmg.data
-rd /s /q $(ProjectDir)src_fmg.winrt
-mklink /j $(ProjectDir)res            $(SolutionDir)..\..\res
-mklink /j $(ProjectDir)src_fmg.common $(SolutionDir)..\..\src\src_common\fmg\common
-mklink /j $(ProjectDir)src_fmg.core   $(SolutionDir)..\..\src\src_core\fmg\core
-mklink /j $(ProjectDir)src_fmg.data   $(SolutionDir)..\..\src\src_data\fmg\data
-mklink /j $(ProjectDir)src_fmg.winrt  $(SolutionDir)..\..\src\src_platform_winrt\fmg\winrt</PreBuildEvent>
+mklink /j $(ProjectDir)res $(SolutionDir)..\res</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

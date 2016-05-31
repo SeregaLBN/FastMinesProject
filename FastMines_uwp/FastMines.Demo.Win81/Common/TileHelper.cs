@@ -2,23 +2,24 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.ApplicationModel.Background;
 using fmg.common;
+using fmg.common.geom;
 using fmg.core.types;
-using fmg.core.mosaic;
-using fmg.winrt.res;
 using Size = fmg.common.geom.Size;
-using BackgroundTasks;
+using Rect = Windows.Foundation.Rect;
+using fmg.uwp.res;
+using fmg.uwp.res.img;
+using FastMines.BackgroundTasks.Win81;
 
 namespace FastMines {
    public static class TileHelper {
-      private static readonly Random Random = new Random();
-      private static readonly string TaskName = typeof(BackgroundTasks.FastMinesTileUpdater).Name;
-      private static readonly string TaskEntryPoint = typeof(BackgroundTasks.FastMinesTileUpdater).FullName;
+      private static readonly Random Random = new Random(Guid.NewGuid().GetHashCode());
+      private static readonly string TaskName = typeof(FastMinesTileUpdater).Name;
+      private static readonly string TaskEntryPoint = typeof(FastMinesTileUpdater).FullName;
 
       public static async void RegisterBackgroundTask() {
          try {
@@ -135,7 +136,8 @@ namespace FastMines {
                var bmpLogo = await (
                   (primary==2)
                      ? Resources.GetImgLogoPng()
-                     : Resources.GetImgLogoPng("Tile", 140));
+                     : Resources.GetImgLogoPng("TileSq150", 150));
+                     //: Resources.GetImgLogoPng("Tile", 140));
                var rcLogoRegion = new Rect {
                   X = 0, Y = 0,
                   Width  = w,
@@ -186,31 +188,26 @@ namespace FastMines {
          return "ms-appdata:///local/" + storageFile.DisplayName;
       }
 
-      private static Tuple<EMosaic, WriteableBitmap> CreateRandomMosaicImage(int w, int h) {
+      public static Tuple<EMosaic, WriteableBitmap> CreateRandomMosaicImage(int w, int h) {
          var mosaicType = EMosaicEx.FromOrdinal(Random.Next() % EMosaicEx.GetValues().Length);
-         var bkClr = ColorExt.RandomColor(Random).Attenuate().ToWinColor();
+         var bkClr = ColorExt.RandomColor(Random).Brighter(0.45);
          var sizeField = mosaicType.SizeIcoField(true);
-         sizeField.height += Random.Next()%3;
-         sizeField.width += Random.Next()%2;
+         sizeField.m += Random.Next() % 2;
+         sizeField.n += Random.Next() % 3;
          const int bound = 3;
-         var area = CellFactory.CreateAttributeInstance(mosaicType, 0).CalcOptimalArea(250, sizeField, new Size(w - bound*2, h - bound*2));
-         var img = Resources.GetImgMosaic(mosaicType, sizeField, area, bkClr, new Size(bound, bound));
-         var bmp = img.GetImage(false);
-         if ((bmp.PixelWidth==w) && (bmp.PixelHeight==h))
-            return new Tuple<EMosaic, WriteableBitmap>(mosaicType, bmp);
-         var bmpOut = new WriteableBitmap(w, h);
-         bmpOut.FillRectangle(0, 0, w, h, bkClr);
-         bmpOut.Blit(
-            new Rect(
-                  Math.Max(0, (w-bmp.PixelWidth)/2),
-                  Math.Max(0, (h-bmp.PixelHeight)/2),
-                  bmp.PixelWidth,
-                  bmp.PixelHeight),
-            bmp,
-            new Rect(
-               0, 0,
-               bmp.PixelWidth, bmp.PixelHeight));
-         return new Tuple<EMosaic, WriteableBitmap>(mosaicType, bmpOut);
+         const int ZoomKoef = 1;
+         var img = new MosaicsImg(mosaicType, sizeField, new Size(w * ZoomKoef, h * ZoomKoef), new Bound(ZoomKoef * bound)) {
+            BackgroundColor = bkClr,
+            OnlySyncDraw = true
+         };
+         var bmp = img.Image;
+         var pw = bmp.PixelWidth;
+         var ph = bmp.PixelHeight;
+         System.Diagnostics.Debug.Assert(img.Width == pw);
+         System.Diagnostics.Debug.Assert(img.Height == ph);
+         System.Diagnostics.Debug.Assert(w * ZoomKoef == pw);
+         System.Diagnostics.Debug.Assert(h * ZoomKoef == ph);
+         return new Tuple<EMosaic, WriteableBitmap>(mosaicType, bmp);
       }
 
       private static async Task<StorageFile> SaveToFileLogo(int part, WriteableBitmap writeableBitmap) {

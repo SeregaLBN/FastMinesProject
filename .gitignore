@@ -17,6 +17,7 @@ FastMines_uwp/*.VC.db
 FastMines_uwp/*.VC.opendb
 FastMines_uwp/.vs/*
 FastMines_uwp/FastMines.Main/res
+FastMines_uwp/FastMines.Demo.Win81/res
 FastMines_uwp/FastMines.*/src_*
 FastMines_uwp/packages/*
 *proj.user

@@ -19,8 +19,8 @@ using FastMines.BackgroundTasks.Uap;
 namespace fmg {
    public static class TileHelper {
       private static readonly Random Random = new Random(Guid.NewGuid().GetHashCode());
-      private static readonly string TaskName = typeof(FastMines.BackgroundTasks.Uap.FastMinesTileUpdater).Name;
-      private static readonly string TaskEntryPoint = typeof(FastMines.BackgroundTasks.Uap.FastMinesTileUpdater).FullName;
+      private static readonly string TaskName = typeof(FastMinesTileUpdater).Name;
+      private static readonly string TaskEntryPoint = typeof(FastMinesTileUpdater).FullName;
 
       public static async void RegisterBackgroundTask() {
          try {

@@ -69,7 +69,7 @@ namespace FastMines.Data {
       }
 
       public static ESkillLevel SkillLevel { get; set; }
-      public static Size SizeField { get; set; }
+      public static Matrisize SizeField { get; set; }
       public static int MinesCount { get; set; }
    }
 }

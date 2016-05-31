@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 using FastMines.Data;
 using fmg.data.controller.types;
 using fmg.core.types;
-using fmg.winrt.mosaic;
+using fmg.uwp.mosaic;
 using FastMines.Common;
 
 // The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229
@@ -33,12 +33,12 @@ namespace FastMines {
 
          this.Loaded += delegate {
             var img = FmDataSource.GetGroup(_mosaicGroup).MosaicGroupImage;
-            img.Animate = true;
-            img.Dance = false;
+            img.PolarLights = true;
+            img.Rotate = false;
          };
          this.Unloaded += delegate {
             var img = FmDataSource.GetGroup(_mosaicGroup).MosaicGroupImage;
-            img.Animate = img.Dance = false;
+            img.PolarLights = img.Rotate = false;
          };
       }
 
@@ -79,12 +79,14 @@ namespace FastMines {
 
       private void GroupImage_OnTapped(object sender, TappedRoutedEventArgs e) {
          var img = FmDataSource.GetGroup(_mosaicGroup).MosaicGroupImage;
-         img.Dance = !img.Dance;
+         img.Rotate = !img.Rotate;
       }
 
       private void GroupImage_OnDoubleTapped(object sender, DoubleTappedRoutedEventArgs e) {
          var img = FmDataSource.GetGroup(_mosaicGroup).MosaicGroupImage;
-         img.Animate = !img.Animate;
+         img.PolarLights = !img.PolarLights;
       }
+
    }
+
 }
