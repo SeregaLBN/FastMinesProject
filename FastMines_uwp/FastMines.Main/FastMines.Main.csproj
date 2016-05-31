@@ -246,6 +246,18 @@
     <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.scale-400.png">
       <Link>res\Logo\UWP\TileSq44\Logo.scale-400.png</Link>
     </Content>
+    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.targetsize-16_altform-unplated.png">
+      <Link>res\Logo\UWP\TileSq44\Logo.targetsize-16_altform-unplated.png</Link>
+    </Content>
+    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.targetsize-24_altform-unplated.png">
+      <Link>res\Logo\UWP\TileSq44\Logo.targetsize-24_altform-unplated.png</Link>
+    </Content>
+    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.targetsize-256_altform-unplated.png">
+      <Link>res\Logo\UWP\TileSq44\Logo.targetsize-256_altform-unplated.png</Link>
+    </Content>
+    <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.targetsize-48_altform-unplated.png">
+      <Link>res\Logo\UWP\TileSq44\Logo.targetsize-48_altform-unplated.png</Link>
+    </Content>
     <Content Include="..\..\res\Logo\UWP\TileSq44\Logo.targetsize-16.png">
       <Link>res\Logo\UWP\TileSq44\Logo.targetsize-16.png</Link>
     </Content>
