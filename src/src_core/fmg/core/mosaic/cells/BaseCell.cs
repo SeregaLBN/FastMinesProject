@@ -220,7 +220,7 @@ namespace fmg.core.mosaic.cells {
          int m = matrix.SizeField.m;
          int n = matrix.SizeField.n;
          // по координатам получаю множество соседних обьектов-ячеек
-         IList<BaseCell> neighbors = new BaseCell[attr.getNeighborNumber(true)];
+         IList<BaseCell> neighbors = new List<BaseCell>(attr.getNeighborNumber(true));
          foreach (Coord c in neighborCoord)
             // проверяю что они не вылезли за размеры
             if ((c.x >= 0) && (c.y >= 0) && (c.x < m) && (c.y < n))

@@ -71,7 +71,7 @@ namespace fmg.uwp.mosaic {
          {
             if (_paintContext == null) {
                _paintContext = new PaintUwpContext<ImageSource>(false);
-               _paintContext.PropertyChanged += OnGraphicContextPropertyChanged; // изменение контекста -> перерисовка мозаики
+               _paintContext.PropertyChanged += OnPaintContextPropertyChanged; // изменение контекста -> перерисовка мозаики
             }
             return _paintContext;
          }
@@ -187,7 +187,9 @@ namespace fmg.uwp.mosaic {
             ChangeFontSize();
             break;
          case "Matrix":
-            //revalidate();
+            UnbindXaml();
+            BindXamlToMosaic();
+            Repaint();
             break;
          }
       }
@@ -201,7 +203,7 @@ namespace fmg.uwp.mosaic {
          }
       }
 
-      private void OnGraphicContextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+      private void OnPaintContextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          var pc = sender as PaintContext<ImageSource>;
          if (pc == null)
             return;
@@ -218,8 +220,8 @@ namespace fmg.uwp.mosaic {
          //   break;
          }
          Repaint(null);
-         OnPropertyChanged("GraphicContext");
-         OnPropertyChanged("GraphicContext." + ev.PropertyName);
+         OnPropertyChanged("PaintContext");
+         OnPropertyChanged("PaintContext." + ev.PropertyName);
       }
 
       /// <summary> пересчитать и установить новую высоту шрифта </summary>

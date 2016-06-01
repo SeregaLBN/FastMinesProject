@@ -357,8 +357,10 @@ namespace FastMines {
             var handled = false;
             if (downHandling) {
                var clickResult = MosaicField.MousePressed(point, leftClick);
-               Mosaic_OnClick(clickResult);
-               handled |= _clickInfo.DownHandled;
+               if (clickResult != null) {
+                  Mosaic_OnClick(clickResult);
+                  handled |= _clickInfo.DownHandled;
+               }
             }
             if (upHandling) {
                var clickResult = MosaicField.MouseReleased(point, leftClick);
