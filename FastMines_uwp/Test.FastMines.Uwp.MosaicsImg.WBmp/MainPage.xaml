@@ -1,0 +1,21 @@
+﻿<Page
+    x:Class="Test.FastMines.Uwp.MosaicsImg.WBmp.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Test.FastMines.Uwp.MosaicsImg.WBmp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+        <Image Grid.RowSpan="1"
+               Source="{x:Bind SkillImg.Image, Mode=OneWay}"
+               Height="{x:Bind SkillImg.Height, Mode=OneWay}"
+               Width="{x:Bind SkillImg.Width, Mode=OneWay}"
+               Margin="1,1,1,1"
+               Stretch="Fill" >
+        </Image>
+
+    </Grid>
+</Page>

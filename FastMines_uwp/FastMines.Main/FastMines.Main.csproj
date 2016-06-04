@@ -612,7 +612,7 @@
     </ProjectReference>
     <ProjectReference Include="..\FastMines.Uni.Uap\FastMines.Uni.Uap.csproj">
       <Project>{6df9a247-aeac-4d0e-9949-1781d44bd2c9}</Project>
-      <Name>FastMines.UWP.Uap</Name>
+      <Name>FastMines.Uni.Uap</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

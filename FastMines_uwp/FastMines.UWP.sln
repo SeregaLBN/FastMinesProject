@@ -24,6 +24,12 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.BackgroundTasks.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.BackgroundTasks.Win81", "FastMines.BackgroundTasks.Win81\FastMines.BackgroundTasks.Win81.csproj", "{C5FD4289-0F00-4868-9C16-3517923FB64A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{6C78E2F6-4321-4C89-9312-AA367B07205C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Uwp.MosaicsImg.WBmp", "Test.FastMines.Uwp.MosaicsImg.WBmp\Test.FastMines.Uwp.MosaicsImg.WBmp.csproj", "{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FastMines.BackgroundTasks", "FastMines.BackgroundTasks", "{0585F288-2040-4CC2-8289-31B7D5C28D29}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		FastMines.Uni.Shared\FastMines.Uni.Shared.projitems*{3ab77d5f-33da-4867-b97b-9e0da4901dde}*SharedItemsImports = 13
@@ -31,6 +37,7 @@ Global
 		FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.projitems*{4f75c36e-7157-449f-9686-dea20f83bbdb}*SharedItemsImports = 4
 		FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.projitems*{c5fd4289-0f00-4868-9c16-3517923fb64a}*SharedItemsImports = 4
 		FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.projitems*{020235c5-21fe-43df-bb41-60c6eb25e047}*SharedItemsImports = 13
+		FastMines.Uni.Shared\FastMines.Uni.Shared.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
 		FastMines.Uni.Shared\FastMines.Uni.Shared.projitems*{6ba7a25c-04e6-4108-acd4-0084d6b019b2}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -274,8 +281,46 @@ Global
 		{C5FD4289-0F00-4868-9C16-3517923FB64A}.Release|x64.Build.0 = Release|x64
 		{C5FD4289-0F00-4868-9C16-3517923FB64A}.Release|x86.ActiveCfg = Release|x86
 		{C5FD4289-0F00-4868-9C16-3517923FB64A}.Release|x86.Build.0 = Release|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Debug|ARM.ActiveCfg = Debug|ARM
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Debug|ARM.Build.0 = Debug|ARM
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Debug|ARM.Deploy.0 = Debug|ARM
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Debug|Mixed Platforms.Deploy.0 = Debug|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Debug|Win32.ActiveCfg = Debug|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Debug|Win32.Build.0 = Debug|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Debug|Win32.Deploy.0 = Debug|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Debug|x64.ActiveCfg = Debug|x64
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Debug|x64.Build.0 = Debug|x64
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Debug|x64.Deploy.0 = Debug|x64
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Debug|x86.ActiveCfg = Debug|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Debug|x86.Build.0 = Debug|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Debug|x86.Deploy.0 = Debug|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|Any CPU.ActiveCfg = Release|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|ARM.ActiveCfg = Release|ARM
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|ARM.Build.0 = Release|ARM
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|ARM.Deploy.0 = Release|ARM
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|Mixed Platforms.Build.0 = Release|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|Mixed Platforms.Deploy.0 = Release|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|Win32.ActiveCfg = Release|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|Win32.Build.0 = Release|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|Win32.Deploy.0 = Release|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|x64.ActiveCfg = Release|x64
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|x64.Build.0 = Release|x64
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|x64.Deploy.0 = Release|x64
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|x86.ActiveCfg = Release|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|x86.Build.0 = Release|x86
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB} = {0585F288-2040-4CC2-8289-31B7D5C28D29}
+		{020235C5-21FE-43DF-BB41-60C6EB25E047} = {0585F288-2040-4CC2-8289-31B7D5C28D29}
+		{C5FD4289-0F00-4868-9C16-3517923FB64A} = {0585F288-2040-4CC2-8289-31B7D5C28D29}
+		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF} = {6C78E2F6-4321-4C89-9312-AA367B07205C}
 	EndGlobalSection
 EndGlobal
