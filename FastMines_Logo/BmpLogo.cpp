@@ -20,7 +20,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
    const float margin = 10;
    const float zoom = 10;
-   const SIZE size = {200*zoom+2*margin, 200*zoom+2*margin};
+   const SIZE size = { LONG(200*zoom+2*margin), LONG(200*zoom+2*margin) };
    HBITMAP hBmp = CreateBitmap(size.cx, size.cy, 0xFFFFFF);
 
    HDC hCDC = ::GetDC(NULL);   _ASSERT_EXPR(hCDC, L"GetDC");
@@ -34,32 +34,32 @@ int _tmain(int argc, _TCHAR* argv[])
 
       const COLORREF palette[] = {0xFF0000, 0xFFD800, 0x4CFF00, 0x00FF90, 0x0094FF, 0x4800FF, 0xB200FF, 0xFF006E};
       const POINT rays[] = { // owner rays points
-         {margin+100.0000*zoom, margin+200.0000*zoom},
-         {margin+170.7107*zoom, margin+ 29.2893*zoom},
-         {margin+  0.0000*zoom, margin+100.0000*zoom},
-         {margin+170.7107*zoom, margin+170.7107*zoom},
-         {margin+100.0000*zoom, margin+  0.0000*zoom},
-         {margin+ 29.2893*zoom, margin+170.7107*zoom},
-         {margin+200.0000*zoom, margin+100.0000*zoom},
-         {margin+ 29.2893*zoom, margin+ 29.2893*zoom}};
+         { LONG(margin+100.0000*zoom), LONG(margin+200.0000*zoom) },
+         { LONG(margin+170.7107*zoom), LONG(margin+ 29.2893*zoom) },
+         { LONG(margin+  0.0000*zoom), LONG(margin+100.0000*zoom) },
+         { LONG(margin+170.7107*zoom), LONG(margin+170.7107*zoom) },
+         { LONG(margin+100.0000*zoom), LONG(margin+  0.0000*zoom) },
+         { LONG(margin+ 29.2893*zoom), LONG(margin+170.7107*zoom) },
+         { LONG(margin+200.0000*zoom), LONG(margin+100.0000*zoom) },
+         { LONG(margin+ 29.2893*zoom), LONG(margin+ 29.2893*zoom) }};
       const POINT inn[] = { // inner octahedron
-         {margin+100.0346*zoom, margin+141.4070*zoom},
-         {margin+129.3408*zoom, margin+ 70.7320*zoom},
-         {margin+ 58.5800*zoom, margin+100.0000*zoom},
-         {margin+129.2500*zoom, margin+129.2500*zoom},
-         {margin+ 99.9011*zoom, margin+ 58.5377*zoom},
-         {margin+ 70.7233*zoom, margin+129.3198*zoom},
-         {margin+141.4167*zoom, margin+100.0000*zoom},
-         {margin+ 70.7500*zoom, margin+ 70.7500*zoom}};
+         { LONG(margin+100.0346*zoom), LONG(margin+141.4070*zoom) },
+         { LONG(margin+129.3408*zoom), LONG(margin+ 70.7320*zoom) },
+         { LONG(margin+ 58.5800*zoom), LONG(margin+100.0000*zoom) },
+         { LONG(margin+129.2500*zoom), LONG(margin+129.2500*zoom) },
+         { LONG(margin+ 99.9011*zoom), LONG(margin+ 58.5377*zoom) },
+         { LONG(margin+ 70.7233*zoom), LONG(margin+129.3198*zoom) },
+         { LONG(margin+141.4167*zoom), LONG(margin+100.0000*zoom) },
+         { LONG(margin+ 70.7500*zoom), LONG(margin+ 70.7500*zoom) }};
       const POINT oct[] = { // central octahedron
-         {margin+120.7053*zoom, margin+149.9897*zoom},
-         {margin+120.7269*zoom, margin+ 50.0007*zoom},
-         {margin+ 50.0034*zoom, margin+120.7137*zoom},
-         {margin+150.0000*zoom, margin+120.6950*zoom},
-         {margin+ 79.3120*zoom, margin+ 50.0007*zoom},
-         {margin+ 79.2624*zoom, margin+149.9727*zoom},
-         {margin+150.0000*zoom, margin+ 79.2737*zoom},
-         {margin+ 50.0034*zoom, margin+ 79.3093*zoom}};
+         { LONG(margin+120.7053*zoom), LONG(margin+149.9897*zoom) },
+         { LONG(margin+120.7269*zoom), LONG(margin+ 50.0007*zoom) },
+         { LONG(margin+ 50.0034*zoom), LONG(margin+120.7137*zoom) },
+         { LONG(margin+150.0000*zoom), LONG(margin+120.6950*zoom) },
+         { LONG(margin+ 79.3120*zoom), LONG(margin+ 50.0007*zoom) },
+         { LONG(margin+ 79.2624*zoom), LONG(margin+149.9727*zoom) },
+         { LONG(margin+150.0000*zoom), LONG(margin+ 79.2737*zoom) },
+         { LONG(margin+ 50.0034*zoom), LONG(margin+ 79.3093*zoom) }};
 
       // paint owner gradient rays
       for (int i=0; i<8; i++) {
@@ -127,9 +127,9 @@ int _tmain(int argc, _TCHAR* argv[])
             }, {
                size.cx/2,  // LONG    x;
                size.cx/2,  // LONG    y;   
-               (i&1)?0:0xFF00,     // COLOR16 Red;   0x0000..0xff00
-               (i&1)?0:0xFF00,     // COLOR16 Green;
-               (i&1)?0:0xFF00,     // COLOR16 Blue;
+               COLOR16((i&1) ? 0 : 0xFF00),     // COLOR16 Red;   0x0000..0xff00
+               COLOR16((i&1) ? 0 : 0xFF00),     // COLOR16 Green;
+               COLOR16((i&1) ? 0 : 0xFF00),     // COLOR16 Blue;
                0x0000      // COLOR16 Alpha;
             }
          };
