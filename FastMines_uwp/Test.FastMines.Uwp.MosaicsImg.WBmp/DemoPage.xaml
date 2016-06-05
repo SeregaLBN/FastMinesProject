@@ -13,7 +13,7 @@
                Source="{x:Bind SkillImg.Image, Mode=OneWay}"
                Height="{x:Bind SkillImg.Height, Mode=OneWay}"
                Width="{x:Bind SkillImg.Width, Mode=OneWay}"
-               Margin="1,1,1,1"
+               Margin="10,10,10,10"
                Stretch="Fill" >
         </Image>
 

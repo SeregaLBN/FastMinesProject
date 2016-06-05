@@ -76,7 +76,7 @@ namespace fmg.core.img {
          }
       }
 
-      enum EInvalidate {
+      private enum EInvalidate {
          NeedRedraw,
          Redrawing,
          Redrawed
@@ -87,8 +87,10 @@ namespace fmg.core.img {
       public TImage Image {
          get {
             //LoggerSimple.Put("getImage: {0}", Entity);
-            if (_image == null)
+            if (_image == null) {
                Image = CreateImage();
+               _invalidate = EInvalidate.NeedRedraw;
+            }
             if (_invalidate == EInvalidate.NeedRedraw)
                Draw();
             return _image;
@@ -159,6 +161,8 @@ namespace fmg.core.img {
 
       protected void Invalidate() {
          if (_invalidate == EInvalidate.Redrawing)
+            return;
+         if (_invalidate == EInvalidate.NeedRedraw)
             return;
          _invalidate = EInvalidate.NeedRedraw;
          OnPropertyChanged("Image");

@@ -75,7 +75,7 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
          invalidate();
    }
 
-   enum EInvalidate {
+   private enum EInvalidate {
       needRedraw,
       redrawing,
       redrawed
@@ -85,8 +85,10 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
    protected abstract TImage createImage();
    private TImage _image;
    public TImage getImage() {
-      if (_image == null)
+      if (_image == null) {
          setImage(createImage());
+         _invalidate = EInvalidate.needRedraw;
+      }
       if (_invalidate == EInvalidate.needRedraw)
          draw();
       return _image;
@@ -148,6 +150,8 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
 
    protected void invalidate() {
       if (_invalidate == EInvalidate.redrawing)
+         return;
+      if (_invalidate == EInvalidate.needRedraw)
          return;
       _invalidate = EInvalidate.needRedraw;
       onPropertyChanged("Image");
