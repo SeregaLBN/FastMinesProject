@@ -9,13 +9,25 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-        <Image Grid.RowSpan="1"
-               Source="{x:Bind DemoImg.Image, Mode=OneWay}"
-               Height="{x:Bind DemoImg.Height, Mode=OneWay}"
-               Width="{x:Bind DemoImg.Width, Mode=OneWay}"
-               Margin="10,10,10,10"
-               Stretch="Fill" >
-        </Image>
+        <Image VerticalAlignment="Top"
+               HorizontalAlignment="Left"
+               Source="{x:Bind DemoImg1.Image, Mode=OneWay}"
+               Height="{x:Bind DemoImg1.Height, Mode=OneWay}"
+               Width="{x:Bind DemoImg1.Width, Mode=OneWay}"
+               Margin="10,10,0,0" />
+
+        <Image VerticalAlignment="Bottom"
+               HorizontalAlignment="Left"
+               Source="{x:Bind DemoImg2.Image, Mode=OneWay}"
+               Height="{x:Bind DemoImg2.Height, Mode=OneWay}"
+               Width="{x:Bind DemoImg2.Width, Mode=OneWay}"
+               Margin="10,0,0,10" />
+
+        <Image HorizontalAlignment="Right"
+               Source="{x:Bind DemoImg3.Image, Mode=OneWay}"
+               Height="{x:Bind DemoImg3.Height, Mode=OneWay}"
+               Width="{x:Bind DemoImg3.Width, Mode=OneWay}"
+               Margin="0,0,10,0" />
 
     </Grid>
 </Page>

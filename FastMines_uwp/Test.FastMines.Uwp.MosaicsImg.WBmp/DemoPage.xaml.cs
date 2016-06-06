@@ -1,12 +1,11 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using System;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
 using fmg.data.controller.types;
-using fmg.uwp.draw.mosaic;
-using fmg.uwp.draw.mosaic.bmp;
 using fmg.uwp.res.img;
 
 namespace Test.FastMines.Uwp.MosaicsImg.WBmp {
@@ -16,38 +15,49 @@ namespace Test.FastMines.Uwp.MosaicsImg.WBmp {
       public MainPage() {
          InitializeComponent();
 
-         var hsv = new HSV(DemoImg.BackgroundColor);
-         hsv.a = 180;
-         DemoImg.PropertyChanged += (o, ev) => {
+         ModifyBk(DemoImg1);
+         ModifyBk(DemoImg2);
+         //ModifyBk(DemoImg3);
+      }
+
+      private static readonly Random Rnd = new Random(Guid.NewGuid().GetHashCode());
+      private static int R(int max) => Rnd.Next(max);
+      private static int Np => (R(2) == 1 ? -1 : +1); // negative or positive
+      private static bool Bl => (R(2) == 1); // random bool
+
+      private static void ModifyBk<T>(StaticImg<T, WriteableBitmap> demoImg) {
+         var hsv = new HSV(demoImg.BackgroundColor) {a = (byte)(170 + R(10)) };
+         demoImg.PropertyChanged += (o, ev) => {
             switch (ev.PropertyName) {
             case "RotateAngle":
-               hsv.h = DemoImg.RotateAngle;
-               DemoImg.BackgroundColor = hsv.toColor();
+               hsv.h = demoImg.RotateAngle;
+               demoImg.BackgroundColor = hsv.toColor();
                break;
             }
          };
       }
 
-      //public MosaicsGroupImg DemoImg { get; } = new MosaicsGroupImg(EMosaicGroup.ePentagons, 200) {
-      //   Rotate = true,
-      //   RedrawInterval = 50,
-      //   RotateAngleDelta = 5,
-      //   PolarLights = true,
-      //   //OnlySyncDraw = true
-      //};
-      //public MosaicsSkillImg DemoImg { get; } = new MosaicsSkillImg(ESkillLevel.eCrazy, 200) {
-      //   Rotate = true,
-      //   RedrawInterval = 50,
-      //   RotateAngleDelta = 5,
-      //   //OnlySyncDraw = true
-      //};
-      public fmg.uwp.res.img.MosaicsImg DemoImg { get; } = new fmg.uwp.res.img.MosaicsImg(EMosaic.eMosaicPenrousePeriodic1, new Matrisize(5,6), 200) {
-         RotateMode = fmg.uwp.res.img.MosaicsImg.ERotateMode.SomeCells,
+      public MosaicsGroupImg DemoImg1 { get; } = new MosaicsGroupImg(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], 175 + R(50)) {
          Rotate = true,
-         RedrawInterval = 50,
-         RotateAngleDelta = 5,
+         RedrawInterval = 30 + R(40),
+         RotateAngleDelta = (3 + R(4)) * Np,
+         PolarLights = true,
          //OnlySyncDraw = true
       };
+      public MosaicsSkillImg DemoImg2 { get; } = new MosaicsSkillImg(ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], 175 + R(50)) {
+         Rotate = true,
+         RedrawInterval = 30 + R(40),
+         RotateAngleDelta = (3 + R(4)) * Np,
+         //OnlySyncDraw = true
+      };
+      public fmg.uwp.res.img.MosaicsImg DemoImg3 { get; } = new fmg.uwp.res.img.MosaicsImg(EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), 175 + R(50)) {
+         RotateMode = Bl ? fmg.uwp.res.img.MosaicsImg.ERotateMode.SomeCells : fmg.uwp.res.img.MosaicsImg.ERotateMode.FullMatrix,
+         Rotate = true,
+         RedrawInterval = 30 + R(40),
+         RotateAngleDelta = (3 + R(4)) * Np,
+         //OnlySyncDraw = true
+      };
+
    }
 
 }

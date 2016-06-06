@@ -46,6 +46,7 @@ namespace Test.FastMines.Uwp.MosaicsImg.WBmp
             }
 #endif
             Frame rootFrame = Window.Current.Content as Frame;
+            Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(300, 300));
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
