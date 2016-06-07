@@ -177,6 +177,7 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage, TPaintCo
          recalcArea();
          break;
       case "Rotate":
+      case "RotateMode":
       case "SizeField":
          if (getRotateMode() == ERotateMode.someCells)
             randomRotateElemenIndex();

@@ -163,6 +163,7 @@ namespace fmg.core.img {
             RecalcArea();
             break;
          case "Rotate":
+         case "RotateMode":
          case "SizeField":
             if (RotateMode == ERotateMode.SomeCells)
                RandomRotateElemenIndex();

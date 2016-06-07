@@ -17,7 +17,7 @@ namespace Test.FastMines.Uwp.MosaicsImg.WBmp {
 
          ModifyBk(DemoImg1);
          ModifyBk(DemoImg2);
-         //ModifyBk(DemoImg3);
+         ModifyBk(DemoImg3);
       }
 
       private static readonly Random Rnd = new Random(Guid.NewGuid().GetHashCode());
