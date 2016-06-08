@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Test.FastMines.Uwp.MosaicsImg.WBmp
+namespace Test.FastMines.Uwp.MosaicsImg.Win2D
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
@@ -46,7 +46,6 @@ namespace Test.FastMines.Uwp.MosaicsImg.WBmp
             }
 #endif
             Frame rootFrame = Window.Current.Content as Frame;
-            Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(300, 300));
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active

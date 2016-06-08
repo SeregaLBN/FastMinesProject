@@ -19,7 +19,7 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
     <TargetFrameworkVersion />
-    <PackageCertificateThumbprint>098882C28D715FF5F11E5DCE53680048D88EA82B</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>D8D9CC6D1EB433D5C11537ED561C79991E28C3BA</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>

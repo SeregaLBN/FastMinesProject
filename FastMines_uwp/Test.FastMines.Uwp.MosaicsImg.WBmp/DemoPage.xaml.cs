@@ -10,9 +10,9 @@ using fmg.uwp.res.img;
 
 namespace Test.FastMines.Uwp.MosaicsImg.WBmp {
 
-   public sealed partial class MainPage : Page {
+   public sealed partial class DemoPage : Page {
 
-      public MainPage() {
+      public DemoPage() {
          InitializeComponent();
 
          ModifyBk(DemoImg1);
