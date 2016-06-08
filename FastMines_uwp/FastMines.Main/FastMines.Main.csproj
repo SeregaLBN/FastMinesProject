@@ -598,9 +598,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FastMines.BackgroundTasks.Uap\FastMines.BackgroundTasks.Uap.csproj">
+    <ProjectReference Include="..\FastMines.BackgroundTasks.Uwp\FastMines.BackgroundTasks.Uwp.csproj">
       <Project>{4f75c36e-7157-449f-9686-dea20f83bbdb}</Project>
-      <Name>FastMines.BackgroundTasks.Uap</Name>
+      <Name>FastMines.BackgroundTasks.Uwp</Name>
     </ProjectReference>
     <ProjectReference Include="..\FastMines.Common\FastMines.Common.csproj">
       <Project>{4132c01a-1666-4f2e-b0a7-59285953f4b6}</Project>
@@ -610,9 +610,9 @@
       <Project>{9dfd73db-d187-4471-98ba-713996c8a257}</Project>
       <Name>FastMines.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FastMines.Uni.Uap\FastMines.Uni.Uap.csproj">
+    <ProjectReference Include="..\FastMines.Uwp.Win10\FastMines.Uwp.Win10.csproj">
       <Project>{6df9a247-aeac-4d0e-9949-1781d44bd2c9}</Project>
-      <Name>FastMines.Uni.Uap</Name>
+      <Name>FastMines.Uwp.Win10</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

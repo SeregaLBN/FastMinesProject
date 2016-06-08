@@ -9,7 +9,7 @@ using Windows.Data.Xml.Dom;
 using Windows.ApplicationModel.Background;
 
 #if WINDOWS_UWP
-namespace FastMines.BackgroundTasks.Uap {
+namespace FastMines.BackgroundTasks.Uwp {
 #elif WINDOWS_RT
 namespace FastMines.BackgroundTasks.Win81 {
 #endif

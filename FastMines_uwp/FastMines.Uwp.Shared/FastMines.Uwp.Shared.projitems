@@ -6,7 +6,7 @@
     <SharedGUID>3ab77d5f-33da-4867-b97b-9e0da4901dde</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>FastMines.Uni.Shared</Import_RootNamespace>
+    <Import_RootNamespace>FastMines.Uwp.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\ui\Timer.cs">

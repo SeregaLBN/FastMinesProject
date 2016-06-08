@@ -556,9 +556,9 @@
       <Project>{9dfd73db-d187-4471-98ba-713996c8a257}</Project>
       <Name>FastMines.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FastMines.Uni.Win81\FastMines.Uni.Win81.csproj">
+    <ProjectReference Include="..\FastMines.Uwp.Win81\FastMines.Uwp.Win81.csproj">
       <Project>{6ba7a25c-04e6-4108-acd4-0084d6b019b2}</Project>
-      <Name>FastMines.Uni.Win81</Name>
+      <Name>FastMines.Uwp.Win81</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">

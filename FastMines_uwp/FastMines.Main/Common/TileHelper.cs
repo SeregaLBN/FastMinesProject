@@ -14,7 +14,7 @@ using fmg.uwp.res;
 using fmg.uwp.res.img;
 using Size = fmg.common.geom.Size;
 using Rect = Windows.Foundation.Rect;
-using FastMines.BackgroundTasks.Uap;
+using FastMines.BackgroundTasks.Uwp;
 
 namespace fmg {
    public static class TileHelper {
