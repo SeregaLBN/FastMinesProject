@@ -211,7 +211,7 @@ namespace fmg.core.img {
          }
       }
 
-      ///////////// ================= PART ERotateMode.FullMatrix ======================= /////////////
+      #region PART ERotateMode.FullMatrix
 
       private void RotatedMatrix() {
          var center = new PointDouble(Width / 2.0 - _paddingFull.Left, Height / 2.0 - _paddingFull.Top);
@@ -237,7 +237,9 @@ namespace fmg.core.img {
          }
       }
 
-      ///////////// ================= PART ERotateMode.SomeCells ======================= /////////////
+      #endregion
+
+      #region PART ERotateMode.SomeCells
 
       protected class RotatedCellContext {
          public RotatedCellContext(int index, double angleOffset, double area) {
@@ -398,6 +400,8 @@ namespace fmg.core.img {
             OnPropertyChanged("RotatedElements");
          }
       }
+
+      #endregion
 
    }
 

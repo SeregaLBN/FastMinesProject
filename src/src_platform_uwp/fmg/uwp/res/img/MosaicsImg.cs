@@ -96,6 +96,7 @@ namespace fmg.uwp.res.img {
                _imageCache = null;
                break;
             case "RotatedElements":
+            case "BackgroundColor":
                _invalidateCache = true;
                break;
             }
@@ -161,7 +162,7 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      ///////////// ================= PART ERotateMode.FullMatrix ======================= /////////////
+      #region PART ERotateMode.FullMatrix
 
       /// <summary> Return painted mosaic bitmap 
       /// if (!OnlySyncDraw) {
@@ -201,7 +202,9 @@ namespace fmg.uwp.res.img {
          }
       }
 
-      ///////////// ================= PART ERotateMode.someCells ======================= /////////////
+      #endregion
+
+      #region PART ERotateMode.SomeCells
 
       private const bool UseCache = true;
 
@@ -229,7 +232,7 @@ namespace fmg.uwp.res.img {
       /// <summary> copy cached image to original </summary>
       private void CopyFromCache() {
          var rc = new Windows.Foundation.Rect(0, 0, Width, Height);
-         Image.Blit(rc, ImageCache, rc);
+         Image.Blit(rc, ImageCache, rc, WriteableBitmapExtensions.BlendMode.None);
       }
 
       private void DrawCache() { DrawStaticPart(_imageCache); }
@@ -285,6 +288,8 @@ namespace fmg.uwp.res.img {
             DrawBodyFullMatrix();
          }
       }
+
+      #endregion
 
       protected override void Dispose(bool disposing) {
          base.Dispose(disposing);

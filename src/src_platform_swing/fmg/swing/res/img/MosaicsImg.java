@@ -102,6 +102,7 @@ public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<Paintab
             _imageCache = null;
             break;
          case "RotatedElements":
+         case "BackgroundColor":
             _invalidateCache = true;
             break;
          }
