@@ -54,6 +54,9 @@
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicBase.cs">
       <Link>src_fmg.core\mosaic\MosaicBase.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\Logo.cs">
+      <Link>src_fmg.core\img\Logo.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\MosaicsSkillImg.cs">
       <Link>src_fmg.core\img\MosaicsSkillImg.cs</Link>
     </Compile>
