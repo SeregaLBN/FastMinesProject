@@ -123,28 +123,28 @@ public class Logo implements Icon {
                }, 4);
 
             // emulate triangle gradient (see BmpLogo.cpp C++ source code)
-//            Color clr = Palette[(i+6)%8];
-//            clr = new Color(clr.getRed(), clr.getGreen(), clr.getBlue(), 0);
-//            g.setPaint(new GradientPaint(center, clr, inn[(i+6)%8], Palette[(i+3)%8]));
-//            g.fillPolygon(new int[] {
-//                  (int)rays[i].x,
-//                  (int)oct[i].x,
-//                  (int)inn[i].x
-//               }, new int[] {
-//                  (int)rays[i].y,
-//                  (int)oct[i].y,
-//                  (int)inn[i].y
-//               }, 3);
-//            g.setPaint(new GradientPaint(center, clr, inn[(i+2)%8], Palette[(i+0)%8]));
-//            g.fillPolygon(new int[] {
-//                  (int)rays[i].x,
-//                  (int)oct[(i+5)%8].x,
-//                  (int)inn[i].x
-//               }, new int[] {
-//                  (int)rays[i].y,
-//                  (int)oct[(i+5)%8].y,
-//                  (int)inn[i].y
-//               }, 3);
+            Color clr = Palette[(i+6)%8];
+            clr = new Color(clr.getRed(), clr.getGreen(), clr.getBlue(), 0);
+            g.setPaint(new GradientPaint(center, clr, inn[(i+6)%8], Palette[(i+3)%8]));
+            g.fillPolygon(new int[] {
+                  (int)rays[i].x,
+                  (int)oct[i].x,
+                  (int)inn[i].x
+               }, new int[] {
+                  (int)rays[i].y,
+                  (int)oct[i].y,
+                  (int)inn[i].y
+               }, 3);
+            g.setPaint(new GradientPaint(center, clr, inn[(i+2)%8], Palette[(i+0)%8]));
+            g.fillPolygon(new int[] {
+                  (int)rays[i].x,
+                  (int)oct[(i+5)%8].x,
+                  (int)inn[i].x
+               }, new int[] {
+                  (int)rays[i].y,
+                  (int)oct[(i+5)%8].y,
+                  (int)inn[i].y
+               }, 3);
          } else {
             g.setColor(Cast.toColor(Cast.toColor(Palette[i]).darker()));
             g.fillPolygon(new int [] {

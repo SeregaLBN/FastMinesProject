@@ -31,9 +31,15 @@ namespace fmg.common {
          }
       }
 
-      public void Dispose() {
+      protected override void Dispose(bool disposing) {
+         if (Disposed)
+            return;
+
+         base.Dispose(disposing);
+
          _mosaicsDs.Dispose();
       }
 
    }
+
 }

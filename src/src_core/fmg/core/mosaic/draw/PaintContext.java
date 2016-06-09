@@ -241,6 +241,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
 
    @Override
    public void close() {
+      super.close();
       // unsubscribe from local notifications
       setFontInfo(null);
       setBackgroundFill(null);

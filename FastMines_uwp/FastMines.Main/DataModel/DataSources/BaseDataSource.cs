@@ -51,12 +51,20 @@ namespace fmg.DataModel.DataSources
          }
       }
 
-      public void Dispose() {
-         CurrentElement = null;
-         foreach (var mi in _dataSource)
-            mi.Dispose();
-         _dataSource.Clear();
+      protected override void Dispose(bool disposing) {
+         if (Disposed)
+            return;
+
+         base.Dispose(disposing);
+
+         if (disposing) {
+            CurrentElement = null;
+            foreach (var mi in _dataSource)
+               mi.Dispose();
+            _dataSource.Clear();
+         }
       }
 
    }
+
 }

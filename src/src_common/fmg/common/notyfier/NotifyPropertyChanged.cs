@@ -7,7 +7,7 @@ namespace fmg.common.notyfier {
 #if WINDOWS_UWP
    [Windows.Foundation.Metadata.WebHostHidden]
 #endif
-   public abstract class NotifyPropertyChanged : INotifyPropertyChanged {
+   public abstract class NotifyPropertyChanged : Disposable, INotifyPropertyChanged {
 
       /// <summary> Multicast event for property change notifications. </summary>
       public event PropertyChangedEventHandler PropertyChanged;
@@ -42,6 +42,8 @@ namespace fmg.common.notyfier {
       }
 
       protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         if (Disposed)
+            return;
          var eventHandler = PropertyChanged;
          eventHandler?.Invoke(sender, ev);
       }

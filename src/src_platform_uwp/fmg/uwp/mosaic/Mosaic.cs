@@ -20,7 +20,7 @@ using fmg.uwp.utils;
 
 namespace fmg.uwp.mosaic {
 
-   public class Mosaic : MosaicBase<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>>, IDisposable {
+   public class Mosaic : MosaicBase<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> {
 
       private IDictionary<BaseCell, PaintableShapes> _xamlBinder;
       private PaintUwpContext<ImageSource> _paintContext;
@@ -231,8 +231,15 @@ namespace fmg.uwp.mosaic {
          PaintContext.FontInfo.Size = (int)CellAttr.GetSq(penBorder.Width);
       }
 
-      public void Dispose() {
-         PaintContext.Dispose();
+      protected override void Dispose(bool disposing) {
+         if (Disposed)
+            return;
+
+         base.Dispose(disposing);
+
+         if (disposing) {
+            PaintContext.Dispose();
+         }
       }
 
    }

@@ -358,6 +358,7 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
 
    @Override
    public void close() {
+      super.close();
       getPaintContext().close();
 
       getContainer().removeMouseListener(getMosaicMouseListeners());

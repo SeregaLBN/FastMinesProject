@@ -186,12 +186,19 @@ namespace fmg.core.mosaic.draw {
          OnPropertyChanged("FontInfo." + ev.PropertyName);
       }
 
-      public void Dispose() {
-         // unsubscribe from
-         BkFill = null;
-         ColorText = null;
-         PenBorder = null;
-         FontInfo = null;
+      protected override void Dispose(bool disposing) {
+         if (Disposed)
+            return;
+
+         base.Dispose(disposing);
+
+         if (disposing) {
+            // unsubscribe from
+            BkFill = null;
+            ColorText = null;
+            PenBorder = null;
+            FontInfo = null;
+         }
       }
    }
 

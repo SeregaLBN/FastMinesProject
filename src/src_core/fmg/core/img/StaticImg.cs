@@ -16,7 +16,7 @@ namespace fmg.core.img {
    /// <summary> Abstract, platform independent, image characteristics </summary>
    /// <typeparam name="T">the entity of image</typeparam>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class StaticImg<T, TImage> : NotifyPropertyChanged, IDisposable
+   public abstract class StaticImg<T, TImage> : NotifyPropertyChanged
       where TImage : class
    {
       public const int DefaultImageSize = 100;
@@ -188,11 +188,6 @@ namespace fmg.core.img {
             StaticImgConsts.DeferrInvoker(() => base.OnPropertyChanged(sender, ev));
       }
 
-      public void Dispose() {
-         Dispose(true);
-      }
-
-      protected virtual void Dispose(bool disposing) { }
-
    }
+
 }

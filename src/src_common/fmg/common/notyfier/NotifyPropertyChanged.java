@@ -11,9 +11,11 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /** Notifies clients that a property value has changed */
-public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
+public abstract class NotifyPropertyChanged implements AutoCloseable // implements INotifyPropertyChanged
 {
    private PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
+   private boolean _disposed = false;
+
    public void addListener(PropertyChangeListener l) { propertyChanges.addPropertyChangeListener(l); }
    public void removeListener(PropertyChangeListener l) { propertyChanges.removePropertyChangeListener(l); }
 
@@ -50,6 +52,8 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
    }
 
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+      if (_disposed)
+         return;
     //System.out.println("onPropertyChanged: " + propertyName + ": " + newValue);
       propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
    }
@@ -83,6 +87,11 @@ public abstract class NotifyPropertyChanged // implements INotifyPropertyChanged
                   int m = fld.getModifiers();
                   return !Modifier.isTransient(m) &&
                          !Modifier.isStatic(m); });
+   }
+
+   @Override
+   public void close() {
+      _disposed = true;
    }
 
 }
