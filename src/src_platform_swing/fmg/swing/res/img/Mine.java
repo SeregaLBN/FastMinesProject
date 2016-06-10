@@ -12,8 +12,7 @@ public class Mine implements Icon {
    {
       _logo = new Logo(false);
       _logo.setPadding(10);
-      _logo.setZoomX(0.7);
-      _logo.setZoomY(0.7);
+      _logo.setZoom(0.7);
       for (int i = 0; i < _logo.Palette.length; i++)
          _logo.Palette[i] = _logo.Palette[i].darker(0.5);
    }

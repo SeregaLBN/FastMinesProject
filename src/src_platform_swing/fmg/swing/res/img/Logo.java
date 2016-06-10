@@ -1,6 +1,12 @@
 package fmg.swing.res.img;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -21,10 +27,10 @@ public class Logo extends fmg.core.img.Logo<Icon> implements Icon {
    }
 
    @Override
-   public int getIconWidth() { return (int)getWidth(); }
+   public int getIconWidth() { return (int)getSize(); }
 
    @Override
-   public int getIconHeight() { return (int)getHeight(); }
+   public int getIconHeight() { return (int)getSize(); }
 
    @Override
    protected Icon createImage() {
@@ -43,8 +49,6 @@ public class Logo extends fmg.core.img.Logo<Icon> implements Icon {
    }
 
    private void draw(Graphics2D g) {
-      final int iPenWidth = 2;
-
       List<PointDouble> rays0 = new ArrayList<>();
       List<PointDouble> inn0 = new ArrayList<>();
       List<PointDouble> oct0 = new ArrayList<>();
@@ -53,7 +57,7 @@ public class Logo extends fmg.core.img.Logo<Icon> implements Icon {
       Point2D.Double [] rays = rays0.stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
       Point2D.Double [] inn  = inn0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
       Point2D.Double [] oct  = oct0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
-      Point2D.Double center = new Point2D.Double(getWidth()/2, getHeight()/2);
+      Point2D.Double center = new Point2D.Double(getSize()/2, getSize()/2);
 
       Color [] palette = Arrays.stream(Palette).map(clr -> Cast.toColor(clr)).toArray(size -> new Color[size]);
 
@@ -114,7 +118,8 @@ public class Logo extends fmg.core.img.Logo<Icon> implements Icon {
       }
 
       // paint star perimeter
-      g.setStroke(new BasicStroke(iPenWidth));
+      final float penWidth = (float)(2*getZoom());
+      g.setStroke(new BasicStroke(penWidth));
       for (int i=0; i<8; i++) {
          Point2D.Double p1 = rays[(i + 7)%8];
          Point2D.Double p2 = rays[i];

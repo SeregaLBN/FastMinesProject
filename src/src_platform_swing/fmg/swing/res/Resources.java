@@ -71,8 +71,7 @@ public final class Resources {
 
          final int padding = 1;
          final double constIconSize = 128 - 2 * padding;
-         logo.setZoomX(constIconSize / Logo.DefaultWidht);
-         logo.setZoomY(constIconSize / Logo.DefaultHeight);
+         logo.setZoom(constIconSize / Logo.DefaultSize);
          logo.setPadding(padding);
 
          imgLogo = logo;
