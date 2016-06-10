@@ -11,8 +11,13 @@ namespace fmg.uwp.res.img {
    /// <summary> main logos image </summary>
    public class Logo : fmg.core.img.Logo<WriteableBitmap> {
 
+      public Logo(bool useGradient) :
+         base(useGradient)
+      {
+      }
+
       protected override WriteableBitmap CreateImage() {
-         var size = new Size((int)(DefaultWidht * ZoomX + 2 * Margin), (int)(DefaultHeight * ZoomY + 2 * Margin));
+         var size = new Size((int)(DefaultWidht * ZoomX + 2 * Padding), (int)(DefaultHeight * ZoomY + 2 * Padding));
          return BitmapFactory.New(size.Width, size.Height);
       }
 

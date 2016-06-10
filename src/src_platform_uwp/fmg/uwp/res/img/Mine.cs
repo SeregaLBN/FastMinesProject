@@ -9,9 +9,9 @@ namespace fmg.uwp.res.img {
 
       public Mine() {
 #if true
-         var img = new Logo {
+         var img = new Logo(true) {
             //BkColor = new Color(0x00000000).ToWinColor(),
-            Margin = 10,
+            Padding = 10,
             ZoomX = 0.7,
             ZoomY = 0.7
          };

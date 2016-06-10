@@ -5,7 +5,7 @@ using fmg.common.notyfier;
 namespace fmg.common {
 
    /// <summary> ViewModel for SelectMosaicPage </summary>
-   public class MosaicsViewModel : NotifyPropertyChanged, IDisposable {
+   public class MosaicsViewModel : NotifyPropertyChanged {
       private readonly MosaicsDataSource _mosaicsDs = new MosaicsDataSource();
 
       public MosaicsViewModel() {

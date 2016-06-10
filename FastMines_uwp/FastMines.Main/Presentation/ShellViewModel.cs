@@ -6,7 +6,7 @@ using fmg.common.notyfier;
 namespace fmg.common {
 
    /// <summary> ViewModel for main page </summary>
-   public class ShellViewModel : NotifyPropertyChanged, IDisposable {
+   public class ShellViewModel : NotifyPropertyChanged {
       private readonly MosaicGroupsDataSource _mosaicGroupDs = new MosaicGroupsDataSource();
       private readonly MosaicSkillsDataSource _mosaicSkillDs = new MosaicSkillsDataSource();
       private bool _isSplitViewPaneOpen;
@@ -44,8 +44,12 @@ namespace fmg.common {
          }
       }
 
-      public void Dispose()
-      {
+      protected override void Dispose(bool disposing) {
+         if (Disposed)
+            return;
+
+         base.Dispose(disposing);
+
          _mosaicGroupDs.Dispose();
          _mosaicSkillDs.Dispose();
       }

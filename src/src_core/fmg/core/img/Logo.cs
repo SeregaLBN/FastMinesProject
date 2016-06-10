@@ -10,15 +10,14 @@ namespace fmg.core.img {
 
       public const uint DefaultWidht = 200;
       public const uint DefaultHeight = 200;
-      private TImage _img;
 
       private double _zoomX;
       private double _zoomY;
-      private int _padding;
-      private readonly boolean _useGradient;
+      private uint _padding;
+      private readonly bool _useGradient;
       private TImage _img;
  
-      protected Logo(boolean useGradient) {
+      protected Logo(bool useGradient) {
          _zoomX = 1;
          _zoomY = 1;
          _padding = 3;
@@ -28,21 +27,21 @@ namespace fmg.core.img {
       public double ZoomX {
          get { return _zoomX; }
          set {
-            _img = null;
+            _img = default(TImage);
             _zoomX = value;
          }
       }
       public double ZoomY {
          get { return _zoomY; }
          set {
-            _img = null;
+            _img = default(TImage);
             _zoomY = value;
          }
       }
       public uint Padding {
          get { return _padding; }
          set {
-            _img = null;
+            _img = default(TImage);
             _padding = value;
          }
       }
@@ -63,8 +62,8 @@ namespace fmg.core.img {
             Palette[i] = copy[(int)((i + loop)%8)];
       }
 
-      public double Width => DefaultWidht * _zoomX + 2 * _Padding;
-      public double Height => DefaultHeight * _zoomY + 2 * _Padding;
+      public double Width => DefaultWidht * _zoomX + 2 * Padding;
+      public double Height => DefaultHeight * _zoomY + 2 * Padding;
 
       protected abstract TImage CreateImage();
       protected abstract void DrawImage(TImage img);
