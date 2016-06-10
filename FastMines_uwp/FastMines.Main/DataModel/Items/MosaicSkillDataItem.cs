@@ -71,7 +71,12 @@ namespace fmg.DataModel.Items {
          }
       }
 
-      public override void Dispose() {
+      protected override void Dispose(bool disposing) {
+         if (Disposed)
+            return;
+
+         base.Dispose(disposing);
+
          MosaicSkillImage = null; // call setter
       }
 

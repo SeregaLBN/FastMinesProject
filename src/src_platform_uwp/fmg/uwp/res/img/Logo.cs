@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using System.Collections.Generic;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
@@ -17,16 +15,15 @@ namespace fmg.uwp.res.img {
       }
 
       protected override WriteableBitmap CreateImage() {
-         var size = new Size((int)(DefaultWidht * ZoomX + 2 * Padding), (int)(DefaultHeight * ZoomY + 2 * Padding));
-         return BitmapFactory.New(size.Width, size.Height);
+         return BitmapFactory.New((int)Size, (int)Size);
       }
 
       protected override void DrawImage(WriteableBitmap img) {
          IList<PointDouble> rays, inn, oct;
          GetCoords(out rays, out inn, out oct);
 
-            // paint owner rays
-            for (var i = 0; i < 8; i++) {
+         // paint owner rays
+         for (var i = 0; i < 8; i++) {
             img.FillQuad(
                (int)rays[i].X, (int)rays[i].Y,
                (int)oct[i].X, (int)oct[i].Y,

@@ -12,8 +12,7 @@ namespace fmg.uwp.res.img {
          var img = new Logo(true) {
             //BkColor = new Color(0x00000000).ToWinColor(),
             Padding = 10,
-            ZoomX = 0.7,
-            ZoomY = 0.7
+            Zoom = 0.7
          };
          for (var i = 0; i<img.Palette.Length; i++)
             img.Palette[i] = img.Palette[i].Darker(0.5);
