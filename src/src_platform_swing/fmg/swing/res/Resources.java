@@ -69,11 +69,11 @@ public final class Resources {
       if (imgLogo == null) {
          Logo logo = new Logo(true);
 
-         final int margin = 1;
-         final double constIconSize = 128 - 2 * margin;
+         final int padding = 1;
+         final double constIconSize = 128 - 2 * padding;
          logo.setZoomX(constIconSize / Logo.DefaultWidht);
          logo.setZoomY(constIconSize / Logo.DefaultHeight);
-         logo.setMargin(margin);
+         logo.setPadding(padding);
 
          imgLogo = logo;
       }

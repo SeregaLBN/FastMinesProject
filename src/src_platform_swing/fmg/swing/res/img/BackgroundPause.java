@@ -1,11 +1,6 @@
 package fmg.swing.res.img;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import javax.swing.Icon;
@@ -40,7 +35,7 @@ public class BackgroundPause implements Icon {
       if (_ico == null) {
          if (newLogo) {
             Logo logo = new Logo(true);
-            logo.setMargin(10);
+            logo.setPadding(10);
             logo.setZoomX(2.7);
             logo.setZoomY(2.7);
             _ico = logo;

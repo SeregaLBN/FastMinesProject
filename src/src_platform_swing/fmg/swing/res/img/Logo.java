@@ -1,115 +1,67 @@
 package fmg.swing.res.img;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.Icon;
 
+import fmg.common.geom.PointDouble;
 import fmg.swing.Cast;
 import fmg.swing.utils.ImgUtils;
 
 /** main logos image */
-public class Logo implements Icon {
-   public static final int DefaultWidht = 200;
-   public static final int DefaultHeight = 200;
-
-   private double _zoomX;
-   private double _zoomY;
-   private int _margin;
-   private final boolean _useGradient;
+public class Logo extends fmg.core.img.Logo<Icon> implements Icon {
 
    public Logo(boolean useGradient) {
-      _zoomX = 1;
-      _zoomY = 1;
-      _margin = 3;
-      _useGradient = useGradient;
-   }
-
-   public final Color[] Palette = {
-         new Color(0xFF0000), new Color(0xFFD800), new Color(0x4CFF00), new Color(0x00FF90),
-         new Color(0x0094FF), new Color(0x4800FF), new Color(0xB200FF), new Color(0xFF006E) };
-
-   public static double CalcZoom(int desiredLogoWidhtHeight, int margin) {
-      // desiredLogoWidhtHeight = DefaultHeight*zoom+2*margin
-      return (desiredLogoWidhtHeight - 2.0 * margin) / DefaultHeight;
-   }
-
-   public void MixLoopColor(int loop) {
-//      fmg.common.Color[] copy = Palette.clone();
-//      for (int i = 0; i < Palette.length; i++)
-//         Palette[i] = copy[(i + loop) % 8];
+      super(useGradient);
    }
 
    @Override
-   public int getIconWidth() {
-      return (int) (DefaultWidht * _zoomX + 2 * _margin);
+   public int getIconWidth() { return (int)getWidth(); }
+
+   @Override
+   public int getIconHeight() { return (int)getHeight(); }
+
+   @Override
+   protected Icon createImage() {
+      BufferedImage img = new BufferedImage(getIconWidth(), getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+      Graphics2D g = img.createGraphics();
+      g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+      g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+      draw(g);
+      g.dispose();
+      return ImgUtils.toIco(img);
    }
 
    @Override
-   public int getIconHeight() {
-      return (int) (DefaultHeight * _zoomY + 2 * _margin);
-   }
-
-   Icon _ico;
-   private Icon getIcon() {
-      if (_ico == null) {
-         BufferedImage img = new BufferedImage(getIconWidth(), getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-         Graphics2D g = img.createGraphics();
-         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-         draw(g);
-         g.dispose();
-         _ico = ImgUtils.toIco(img);
-      }
-      return _ico;
+   protected void drawImage(Icon img) {
+      // none... already drawed in createImage()
    }
 
    private void draw(Graphics2D g) {
       final int iPenWidth = 2;
 
-      // draw star
-      Point2D.Double[] rays = new Point2D.Double[] { // owner rays points
-         new Point2D.Double(getMargin()+100.0000*getZoomX(), getMargin()+200.0000*getZoomY()),
-         new Point2D.Double(getMargin()+170.7107*getZoomX(), getMargin()+ 29.2893*getZoomY()),
-         new Point2D.Double(getMargin()+  0.0000*getZoomX(), getMargin()+100.0000*getZoomY()),
-         new Point2D.Double(getMargin()+170.7107*getZoomX(), getMargin()+170.7107*getZoomY()),
-         new Point2D.Double(getMargin()+100.0000*getZoomX(), getMargin()+  0.0000*getZoomY()),
-         new Point2D.Double(getMargin()+ 29.2893*getZoomX(), getMargin()+170.7107*getZoomY()),
-         new Point2D.Double(getMargin()+200.0000*getZoomX(), getMargin()+100.0000*getZoomY()),
-         new Point2D.Double(getMargin()+ 29.2893*getZoomX(), getMargin()+ 29.2893*getZoomY())};
-      Point2D.Double[] inn = new Point2D.Double[] { // inner octahedron
-         new Point2D.Double(getMargin()+100.0346*getZoomX(), getMargin()+141.4070*getZoomY()),
-         new Point2D.Double(getMargin()+129.3408*getZoomX(), getMargin()+ 70.7320*getZoomY()),
-         new Point2D.Double(getMargin()+ 58.5800*getZoomX(), getMargin()+100.0000*getZoomY()),
-         new Point2D.Double(getMargin()+129.2500*getZoomX(), getMargin()+129.2500*getZoomY()),
-         new Point2D.Double(getMargin()+ 99.9011*getZoomX(), getMargin()+ 58.5377*getZoomY()),
-         new Point2D.Double(getMargin()+ 70.7233*getZoomX(), getMargin()+129.3198*getZoomY()),
-         new Point2D.Double(getMargin()+141.4167*getZoomX(), getMargin()+100.0000*getZoomY()),
-         new Point2D.Double(getMargin()+ 70.7500*getZoomX(), getMargin()+ 70.7500*getZoomY())};
-      Point2D.Double[] oct = new Point2D.Double[] { // central octahedron
-         new Point2D.Double(getMargin()+120.7053*getZoomX(), getMargin()+149.9897*getZoomY()),
-         new Point2D.Double(getMargin()+120.7269*getZoomX(), getMargin()+ 50.0007*getZoomY()),
-         new Point2D.Double(getMargin()+ 50.0034*getZoomX(), getMargin()+120.7137*getZoomY()),
-         new Point2D.Double(getMargin()+150.0000*getZoomX(), getMargin()+120.6950*getZoomY()),
-         new Point2D.Double(getMargin()+ 79.3120*getZoomX(), getMargin()+ 50.0007*getZoomY()),
-         new Point2D.Double(getMargin()+ 79.2624*getZoomX(), getMargin()+149.9727*getZoomY()),
-         new Point2D.Double(getMargin()+150.0000*getZoomX(), getMargin()+ 79.2737*getZoomY()),
-         new Point2D.Double(getMargin()+ 50.0034*getZoomX(), getMargin()+ 79.3093*getZoomY())};
+      List<PointDouble> rays0 = new ArrayList<>();
+      List<PointDouble> inn0 = new ArrayList<>();
+      List<PointDouble> oct0 = new ArrayList<>();
+      getCoords(rays0, inn0, oct0);
 
-      Point2D.Double center = new Point2D.Double(getIconWidth()/2, getIconHeight()/2);
+      Point2D.Double [] rays = rays0.stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
+      Point2D.Double [] inn  = inn0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
+      Point2D.Double [] oct  = oct0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
+      Point2D.Double center = new Point2D.Double(getWidth()/2, getHeight()/2);
+
+      Color [] palette = Arrays.stream(Palette).map(clr -> Cast.toColor(clr)).toArray(size -> new Color[size]);
 
       // paint owner gradient rays
       for (int i=0; i<8; i++) {
-         if (_useGradient) {
+         if (isUseGradient()) {
             // rectangle gragient
-            g.setPaint(new GradientPaint(oct[(i+5)%8], Palette[(i+0)%8], oct[i], Palette[(i+3)%8]));
+            g.setPaint(new GradientPaint(oct[(i+5)%8], palette[(i+0)%8], oct[i], palette[(i+3)%8]));
             g.fillPolygon(new int[] {
                   (int)rays[i].x,
                   (int)oct[i].x,
@@ -123,9 +75,9 @@ public class Logo implements Icon {
                }, 4);
 
             // emulate triangle gradient (see BmpLogo.cpp C++ source code)
-            Color clr = Palette[(i+6)%8];
+            Color clr = palette[(i+6)%8];
             clr = new Color(clr.getRed(), clr.getGreen(), clr.getBlue(), 0);
-            g.setPaint(new GradientPaint(center, clr, inn[(i+6)%8], Palette[(i+3)%8]));
+            g.setPaint(new GradientPaint(center, clr, inn[(i+6)%8], palette[(i+3)%8]));
             g.fillPolygon(new int[] {
                   (int)rays[i].x,
                   (int)oct[i].x,
@@ -135,7 +87,7 @@ public class Logo implements Icon {
                   (int)oct[i].y,
                   (int)inn[i].y
                }, 3);
-            g.setPaint(new GradientPaint(center, clr, inn[(i+2)%8], Palette[(i+0)%8]));
+            g.setPaint(new GradientPaint(center, clr, inn[(i+2)%8], palette[(i+0)%8]));
             g.fillPolygon(new int[] {
                   (int)rays[i].x,
                   (int)oct[(i+5)%8].x,
@@ -146,7 +98,7 @@ public class Logo implements Icon {
                   (int)inn[i].y
                }, 3);
          } else {
-            g.setColor(Cast.toColor(Cast.toColor(Palette[i]).darker()));
+            g.setColor(Cast.toColor(Palette[i].darker()));
             g.fillPolygon(new int [] {
                   (int)rays[i].x,
                   (int)oct[i].x,
@@ -166,20 +118,20 @@ public class Logo implements Icon {
       for (int i=0; i<8; i++) {
          Point2D.Double p1 = rays[(i + 7)%8];
          Point2D.Double p2 = rays[i];
-         g.setColor(Palette[i]);
+         g.setColor(palette[i]);
          g.drawLine((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y);
       }
 
       // paint inner gradient triangles
       for (int i=0; i<8; i++) {
-         if (_useGradient)
+         if (isUseGradient())
             g.setPaint(new GradientPaint(
-                  inn[i], Palette[(i+6)%8],
+                  inn[i], palette[(i+6)%8],
                   center, ((i&1)==0) ? Color.BLACK : Color.WHITE));
          else
             g.setColor(((i & 1) == 0)
-                  ? Cast.toColor(Cast.toColor(Palette[(i + 6)%8]).brighter())
-                  : Cast.toColor(Cast.toColor(Palette[(i + 6)%8]).darker()));
+                  ? Cast.toColor(Palette[(i + 6)%8].brighter())
+                  : Cast.toColor(Palette[(i + 6)%8].darker()));
          g.fillPolygon(new int [] {
                (int)inn[(i + 0)%8].x,
                (int)inn[(i + 3)%8].x,
@@ -192,36 +144,9 @@ public class Logo implements Icon {
       }
    }
 
-   public double getZoomX() {
-      return _zoomX;
-   }
-
-   public void setZoomX(double zoomX) {
-      _ico = null;
-      this._zoomX = zoomX;
-   }
-
-   public double getZoomY() {
-      return _zoomY;
-   }
-
-   public void setZoomY(double zoomY) {
-      _ico = null;
-      this._zoomY = zoomY;
-   }
-
-   public int getMargin() {
-      return _margin;
-   }
-
-   public void setMargin(int margin) {
-      _ico = null;
-      this._margin = margin;
-   }
-
    @Override
    public void paintIcon(Component c, Graphics g, int x, int y) {
-      getIcon().paintIcon(c, g, x, y);
+      getImage().paintIcon(c, g, x, y);
    }
 
    public static void main(String[] args) {
