@@ -9,7 +9,7 @@ using fmg.uwp.utils;
 namespace fmg.uwp.res.img.win2d {
 
    /// <summary> main logos image </summary>
-   public class Logo : fmg.core.img.Logo<CanvasRenderTarget> {
+   public class Logo : fmg.core.img.Logo<CanvasBitmap> {
 
       //private CanvasDevice device;
       private readonly ICanvasResourceCreator _resourceCreator;
@@ -20,13 +20,13 @@ namespace fmg.uwp.res.img.win2d {
          _resourceCreator = resourceCreator;
       }
 
-      protected override CanvasRenderTarget CreateImage() {
+      protected override CanvasBitmap CreateImage() {
          var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
          return new CanvasRenderTarget(_resourceCreator, (float)Size, (float)Size, dpi);
       }
 
-      protected override void DrawImage(CanvasRenderTarget img) {
-         using (var ds = img.CreateDrawingSession()) {
+      protected override void DrawImage(CanvasBitmap img) {
+         using (var ds = ((CanvasRenderTarget)img).CreateDrawingSession()) {
             IList<PointDouble> rays, inn, oct;
             GetCoords(out rays, out inn, out oct);
 

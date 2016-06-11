@@ -26,7 +26,7 @@ namespace fmg.core.img {
          get { return _zoom; }
          set {
             if (SetProperty(ref _zoom, value))
-               DisposeImage();
+               ResetImage();
          }
       }
 
@@ -34,7 +34,7 @@ namespace fmg.core.img {
          get { return _padding; }
          set {
             if (SetProperty(ref _padding, value))
-               DisposeImage();
+               ResetImage();
          }
       }
 
@@ -104,9 +104,10 @@ namespace fmg.core.img {
                   new PointDouble(padding +  50.0034*zoom, padding +  79.3093*zoom)};
       }
 
-      protected virtual void DisposeImage() {
+      protected virtual void ResetImage() {
          (_img as IDisposable)?.Dispose();
-         _img = default(TImage);
+          _img = default(TImage);
+         OnPropertyChanged("Image");
       }
 
       protected override void Dispose(bool disposing) {
@@ -114,7 +115,7 @@ namespace fmg.core.img {
             return;
          base.Dispose(disposing);
 
-         DisposeImage();
+         ResetImage();
       }
 
    }

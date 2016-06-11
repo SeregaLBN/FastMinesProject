@@ -52,7 +52,7 @@ public abstract class Logo<TImage> extends NotifyPropertyChanged {
       double old = _zoom;
       _zoom = zoom;
       onPropertyChanged(old, zoom, "Zoom");
-      disposeImage();
+      resetImage();
    }
 
    public int getPadding() {
@@ -65,7 +65,7 @@ public abstract class Logo<TImage> extends NotifyPropertyChanged {
       double old = _padding;
       _padding = padding;
       onPropertyChanged(old, padding, "Padding");
-      disposeImage();
+      resetImage();
    }
 
    public boolean isUseGradient() {
@@ -116,7 +116,7 @@ public abstract class Logo<TImage> extends NotifyPropertyChanged {
          new PointDouble(padding +  50.0034*zoom, padding +  79.3093*zoom)}));
    }
 
-   protected void disposeImage() {
+   protected void resetImage() {
       if (_img instanceof AutoCloseable) {
          AutoCloseable clz = (AutoCloseable)_img;
          try {
@@ -126,12 +126,13 @@ public abstract class Logo<TImage> extends NotifyPropertyChanged {
          }
       }
       _img = null;
+      onPropertyChanged("Image");
    }
 
    @Override
    public void close() {
       super.close();
-      disposeImage();
+      resetImage();
    }
 
 }
