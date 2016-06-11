@@ -4,7 +4,7 @@ using fmg.common.geom;
 namespace fmg.uwp.utils {
 
    /// <summary>
-   /// Приведение типов от платформонезависемых читых C# классов fmg.common.* к библиотечным Windows.Foundation классам
+   /// Приведение типов от платформонезависемых чистых C# классов fmg.common.* к библиотечным Windows.Foundation классам
    /// </summary>
    public static class Cast {
 
@@ -20,7 +20,7 @@ namespace fmg.uwp.utils {
       public static RectDouble ToFmRectDouble(this Windows.Foundation.Rect self) { return new RectDouble(self.X, self.Y, self.Width, self.Height); }
       public static Windows.Foundation.Rect ToWinRect(this RectDouble self) { return new Windows.Foundation.Rect(self.X, self.Y, self.Width, self.Height); }
 
-      public static Point ToFmRect(this Windows.Foundation.Point self) { return new Point((int)self.X, (int)self.Y); }
+      public static Point ToFmPoint(this Windows.Foundation.Point self) { return new Point((int)self.X, (int)self.Y); }
       public static Windows.Foundation.Point ToWinPoint(this Point self) { return new Windows.Foundation.Point { X = self.X, Y = self.Y }; }
 
       public static PointDouble ToFmRectDouble(this Windows.Foundation.Point self) { return new PointDouble(self.X, self.Y); }

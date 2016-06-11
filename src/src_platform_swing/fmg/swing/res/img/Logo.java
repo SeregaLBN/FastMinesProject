@@ -66,54 +66,18 @@ public class Logo extends fmg.core.img.Logo<Icon> implements Icon {
          if (isUseGradient()) {
             // rectangle gragient
             g.setPaint(new GradientPaint(oct[(i+5)%8], palette[(i+0)%8], oct[i], palette[(i+3)%8]));
-            g.fillPolygon(new int[] {
-                  (int)rays[i].x,
-                  (int)oct[i].x,
-                  (int)inn[i].x,
-                  (int)oct[(i+5)%8].x
-               }, new int[] {
-                  (int)rays[i].y,
-                  (int)oct[i].y,
-                  (int)inn[i].y,
-                  (int)oct[(i+5)%8].y
-               }, 4);
+            fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
 
             // emulate triangle gradient (see BmpLogo.cpp C++ source code)
             Color clr = palette[(i+6)%8];
             clr = new Color(clr.getRed(), clr.getGreen(), clr.getBlue(), 0);
             g.setPaint(new GradientPaint(center, clr, inn[(i+6)%8], palette[(i+3)%8]));
-            g.fillPolygon(new int[] {
-                  (int)rays[i].x,
-                  (int)oct[i].x,
-                  (int)inn[i].x
-               }, new int[] {
-                  (int)rays[i].y,
-                  (int)oct[i].y,
-                  (int)inn[i].y
-               }, 3);
+            fillPolygon(g, rays[i], oct[i], inn[i]);
             g.setPaint(new GradientPaint(center, clr, inn[(i+2)%8], palette[(i+0)%8]));
-            g.fillPolygon(new int[] {
-                  (int)rays[i].x,
-                  (int)oct[(i+5)%8].x,
-                  (int)inn[i].x
-               }, new int[] {
-                  (int)rays[i].y,
-                  (int)oct[(i+5)%8].y,
-                  (int)inn[i].y
-               }, 3);
+            fillPolygon(g, rays[i], oct[(i+5)%8], inn[i]);
          } else {
             g.setColor(Cast.toColor(Palette[i].darker()));
-            g.fillPolygon(new int [] {
-                  (int)rays[i].x,
-                  (int)oct[i].x,
-                  (int)inn[i].x,
-                  (int)oct[(i+5)%8].x
-               }, new int [] {
-                  (int)rays[i].y,
-                  (int)oct[i].y,
-                  (int)inn[i].y,
-                  (int)oct[(i+5)%8].y
-               }, 4);
+            fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
          }
       }
 
@@ -137,15 +101,7 @@ public class Logo extends fmg.core.img.Logo<Icon> implements Icon {
             g.setColor(((i & 1) == 0)
                   ? Cast.toColor(Palette[(i + 6)%8].brighter())
                   : Cast.toColor(Palette[(i + 6)%8].darker()));
-         g.fillPolygon(new int [] {
-               (int)inn[(i + 0)%8].x,
-               (int)inn[(i + 3)%8].x,
-               (int)center.x
-            }, new int [] {
-               (int)inn[(i + 0)%8].y,
-               (int)inn[(i + 3)%8].y,
-               (int)center.y
-            }, 3);
+         fillPolygon(g, inn[(i + 0)%8], inn[(i + 3)%8], center);
       }
    }
 
@@ -158,4 +114,10 @@ public class Logo extends fmg.core.img.Logo<Icon> implements Icon {
       TestDrawing.testApp2(size -> ImgUtils.zoom(new Logo(true), size, size));
    }
 
+   private static void fillPolygon(Graphics2D g, Point2D.Double... p) {
+      g.fillPolygon(
+         Arrays.stream(p).mapToInt(s -> (int)s.x).toArray(),
+         Arrays.stream(p).mapToInt(s -> (int)s.y).toArray(),
+         p.length);
+   }
 }
