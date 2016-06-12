@@ -22,7 +22,7 @@
         <canvas:CanvasControl x:Name="canvasControl" ClearColor="CornflowerBlue" Draw="canvasControl_Draw"
                               Grid.Column="0" Grid.Row="0"/>
         
-        <canvas:CanvasControl x:Name="canvasControl2" ClearColor="CornflowerBlue" Draw="canvasControl_Draw"
+        <canvas:CanvasControl x:Name="canvasControl2" ClearColor="CornflowerBlue" Draw="canvasControl_Draw2"
                               Grid.Column="1" Grid.Row="1"/>
 
     </Grid>

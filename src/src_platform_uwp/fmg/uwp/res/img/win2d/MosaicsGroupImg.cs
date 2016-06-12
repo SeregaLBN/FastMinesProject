@@ -58,10 +58,12 @@ namespace fmg.uwp.res.img.win2d {
 
                using (var css = new CanvasStrokeStyle {
                   StartCap = CanvasCapStyle.Triangle,
-                  EndCap = CanvasCapStyle.Triangle,
+                  EndCap = CanvasCapStyle.Triangle
                }) {
-                  for (var i = 0; i < points.Length - 1; ++i) {
-                     ds.DrawLine(points[i].ToVector2(), points[i+1].ToVector2(), clrWin, bw, css);
+                  for (var i = 0; i < points.Length; ++i) {
+                     var p1 = points[i];
+                     var p2 = (i < points.Length-1) ? points[i+1] : points[0];
+                     ds.DrawLine(p1.ToVector2(), p2.ToVector2(), clrWin, bw, css);
                   }
                }
             }
