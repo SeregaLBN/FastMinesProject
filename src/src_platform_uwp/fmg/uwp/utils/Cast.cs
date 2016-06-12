@@ -23,11 +23,12 @@ namespace fmg.uwp.utils {
       public static Point ToFmPoint(this Windows.Foundation.Point self) { return new Point((int)self.X, (int)self.Y); }
       public static Windows.Foundation.Point ToWinPoint(this Point self) { return new Windows.Foundation.Point { X = self.X, Y = self.Y }; }
 
-      public static PointDouble ToFmRectDouble(this Windows.Foundation.Point self) { return new PointDouble(self.X, self.Y); }
+      public static PointDouble ToFmPointDouble(this Windows.Foundation.Point self) { return new PointDouble(self.X, self.Y); }
       public static Windows.Foundation.Point ToWinPoint(this PointDouble self) { return new Windows.Foundation.Point { X = self.X, Y = self.Y }; }
 
       public static Color ToFmColor(this Windows.UI.Color self) { return new Color(self.A, self.R, self.G, self.B); }
       public static Windows.UI.Color ToWinColor(this Color self) { return new Windows.UI.Color { A = self.A, B = self.B, G = self.G, R = self.R }; }
 
    }
+
 }

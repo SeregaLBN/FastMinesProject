@@ -22,6 +22,8 @@
       public double LeftAndRight => Left + Right;
       public double TopAndBottom => Top + Bottom;
 
+      public SizeDouble LeftTopOffset => new SizeDouble(Left, Top);
+
       public bool Equals(BoundDouble other) {
          return this == other;
       }

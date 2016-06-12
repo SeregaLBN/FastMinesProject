@@ -103,11 +103,10 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
       SizeDouble offset = new SizeDouble(paintContext.getPadding().left, paintContext.getPadding().top);
       boolean down = cell.getState().isDown() || (cell.getState().getStatus() == EState._Open);
       Graphics g = p.getGraphics();
+      g.setColor(Cast.toColor(down ? paintContext.getPenBorder().getColorLight() : paintContext.getPenBorder().getColorShadow()));
       if (paintContext.isIconicMode()) {
-         g.setColor(Cast.toColor(down ? paintContext.getPenBorder().getColorLight() : paintContext.getPenBorder().getColorShadow()));
          g.drawPolygon(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset)));
       } else {
-         g.setColor(Cast.toColor(down ? paintContext.getPenBorder().getColorLight()  : paintContext.getPenBorder().getColorShadow()));
          int s = cell.getShiftPointBorderIndex();
          int v = cell.getAttr().getVertexNumber(cell.getDirection());
          for (int i=0; i<v; i++) {

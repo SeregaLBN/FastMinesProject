@@ -18,7 +18,7 @@ namespace fmg.core.mosaic.draw {
 
    /// <summary>Information required for drawing the entire mosaic and cells</summary>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   public class PaintContext<TImage> : NotifyPropertyChanged, IDisposable
+   public class PaintContext<TImage> : NotifyPropertyChanged
       where TImage : class
    {
       private TImage _imgMine, _imgFlag;

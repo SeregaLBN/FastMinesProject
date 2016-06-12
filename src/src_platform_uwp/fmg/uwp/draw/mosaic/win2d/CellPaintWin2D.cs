@@ -1,17 +1,21 @@
-﻿using System.Linq;
-using Windows.UI.Xaml.Media.Imaging;
+﻿using System;
+using System.Linq;
+using Windows.UI.Text;
+using Microsoft.Graphics.Canvas;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
+using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.Text;
 
-namespace fmg.uwp.draw.mosaic.bmp {
+namespace fmg.uwp.draw.mosaic.win2d {
 
-   /// <summary> Class for drawing cell into (ower <see cref="WriteableBitmap"/>) </summary>
-   public class CellPaintBmp : CellPaint<PaintableBmp, WriteableBitmap> {
+   /// <summary> Class for drawing cell into (ower <see cref="CanvasBitmap"/>) </summary>
+   public class CellPaintWin2D : CellPaint<PaintableWin2D, CanvasBitmap> {
 
-      public override void Paint(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext)
+      public override void Paint(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext)
       {
          // TODO ограничиваю рисование только границами своей фигуры
          //...
@@ -21,7 +25,7 @@ namespace fmg.uwp.draw.mosaic.bmp {
          PaintBorder(cell, paint, paintContext);
       }
 
-      public override void PaintBorder(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext) {
+      public override void PaintBorder(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext) {
          // TODO set pen width
          //... = PaintContext.PenBorder.Width;
 
@@ -30,47 +34,49 @@ namespace fmg.uwp.draw.mosaic.bmp {
 
          // debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
          //var rcInner = cell.getRcInner(paintContext.PenBorder.Width);
-         //paint.Bmp.DrawRectangle(rcInner.ToWinRect(), Color.Magenta.ToWinColor());
+         //paint.DrawingSession.DrawRectangle(rcInner.ToWinRect(), Color.Magenta.ToWinColor(), 21);
       }
 
       /// <summary> draw border lines </summary>
-      public override void PaintBorderLines(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext) {
+      public override void PaintBorderLines(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext) {
+         var ds = paint.DrawingSession;
          var region = cell.getRegion();
          var down = cell.State.Down || (cell.State.Status == EState._Open);
          var color = (down ? paintContext.PenBorder.ColorLight : paintContext.PenBorder.ColorShadow).ToWinColor();
          var borderWidth = paintContext.PenBorder.Width;
          if (paintContext.IconicMode) {
-
-            var points = region.RegionDoubleAsXyxyxySequence(paintContext.Padding, true).ToArray();
-            if (borderWidth == 1)
-               paint.Bmp.DrawPolyline(points, color);
-            else
-               for (var i = 0; i < points.Length - 2; i += 2) {
-                  paint.Bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], color, borderWidth);
-               }
+            using (var geom = ds.BuildGeom(region)) {
+               ds.DrawGeometry(geom, paintContext.Padding.LeftTopOffset.ToVector2(), color, borderWidth);
+            }
          } else {
             var s = cell.getShiftPointBorderIndex();
             var v = cell.Attr.getVertexNumber(cell.getDirection());
-            for (var i=0; i < v; i++) {
-               var p1 = region.GetPoint(i);
-               p1.Move(paintContext.Padding.Left, paintContext.Padding.Top);
-               var p2 = (i != (v - 1)) ? region.GetPoint(i + 1) : region.GetPoint(0);
-               p2.Move(paintContext.Padding.Left, paintContext.Padding.Top);
-               if (i == s)
-                  color = (down ? paintContext.PenBorder.ColorShadow : paintContext.PenBorder.ColorLight).ToWinColor();
-               paint.Bmp.DrawLineAa((int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y, color, borderWidth);
+            using (var css = new CanvasStrokeStyle {
+               StartCap = CanvasCapStyle.Triangle,
+               EndCap = CanvasCapStyle.Triangle,
+            }) {
+               for (var i = 0; i < v; i++) {
+                  var p1 = region.GetPoint(i);
+                  p1.Move(paintContext.Padding.Left, paintContext.Padding.Top);
+                  var p2 = (i != (v - 1)) ? region.GetPoint(i + 1) : region.GetPoint(0);
+                  p2.Move(paintContext.Padding.Left, paintContext.Padding.Top);
+                  if (i == s)
+                     color =
+                        (down ? paintContext.PenBorder.ColorShadow : paintContext.PenBorder.ColorLight).ToWinColor();
+                  ds.DrawLine(p1.ToVector2(), p2.ToVector2(), color, borderWidth, css);
+               }
             }
          }
       }
 
-      public override void PaintComponent(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext)
-      {
+      public override void PaintComponent(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext) {
+         var ds = paint.DrawingSession;
          PaintComponentBackground(cell, paint, paintContext);
 
          var rcInner = cell.getRcInner(paintContext.PenBorder.Width);
          rcInner.MoveXY(paintContext.Padding.Left, paintContext.Padding.Top);
 
-         WriteableBitmap srcImg = null;
+         CanvasBitmap srcImg = null;
          if ((paintContext.ImgFlag != null) &&
              (cell.State.Status == EState._Close) &&
              (cell.State.Close == EClose._Flag))
@@ -87,8 +93,8 @@ namespace fmg.uwp.draw.mosaic.bmp {
          // output Pictures
          if (srcImg != null) {
             var destRc = rcInner.ToWinRect();
-            var srcRc = new Windows.Foundation.Rect(0, 0, srcImg.PixelWidth, srcImg.PixelHeight);
-            paint.Bmp.Blit(destRc, srcImg, srcRc);
+            var srcRc = new Windows.Foundation.Rect(0, 0, srcImg.Size.Width, srcImg.Size.Height);
+            ds.DrawImage(srcImg, destRc, srcRc);
          } else
          // output text
          {
@@ -123,24 +129,37 @@ namespace fmg.uwp.draw.mosaic.bmp {
 //                  }
 //               }
 //#endif
-               paint.Bmp.DrawString(szCaption, rcInner.ToWinRect(), paintContext.FontInfo.Name, paintContext.FontInfo.Size, txtColor.ToWinColor());
-               //paint.Bmp.DrawRectangle(rcInner.left(), rcInner.top(), rcInner.right(), rcInner.bottom(), Color.RED.ToWinColor()); // debug
+               using (var ctf = new CanvasTextFormat() {
+                  FontSize = paintContext.FontInfo.Size,
+                  FontFamily = paintContext.FontInfo.Name,
+                  FontStyle = FontStyle.Normal,
+                  FontWeight = paintContext.FontInfo.Bold ? FontWeights.Bold : FontWeights.Normal,
+                  HorizontalAlignment = CanvasHorizontalAlignment.Center,
+                  VerticalAlignment = CanvasVerticalAlignment.Center,
+               }) {
+                  ds.DrawText(szCaption, rcInner.ToWinRect(), txtColor.ToWinColor(), ctf);
+               }
+               //ds.DrawRectangle(rcInner.ToWinRect(), Color.Red.ToWinColor()); // debug
             }
          }
       }
 
       /// <summary> залить ячейку нужным цветом </summary>
-      public override void PaintComponentBackground(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext)
+      public override void PaintComponentBackground(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext)
       {
          //if (PaintContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
          //   return;
+         var ds = paint.DrawingSession;
          var color = cell.getBackgroundFillColor(
             paintContext.BkFill.Mode,
             paintContext.BackgroundColor,
             paintContext.BkFill.GetColor
             );
-         paint.Bmp.FillPolygon(cell.getRegion().RegionDoubleAsXyxyxySequence(paintContext.Padding, true).ToArray(), color.ToWinColor());
+         using (var geom = ds.BuildGeom(cell.getRegion())) {
+            ds.FillGeometry(geom, paintContext.Padding.LeftTopOffset.ToVector2(), color.ToWinColor());
+         }
       }
 
    }
+
 }

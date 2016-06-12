@@ -93,8 +93,29 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\win2d\CanvasExt.cs">
+      <Link>CanvasExt.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\win2d\CellPaintWin2D.cs">
+      <Link>CellPaintWin2D.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\win2d\PaintableWin2d.cs">
+      <Link>PaintableWin2d.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\win2d\Logo.cs">
       <Link>Logo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\win2d\MosaicsGroupImg.cs">
+      <Link>MosaicsGroupImg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\win2d\MosaicsImg.cs">
+      <Link>MosaicsImg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\win2d\MosaicsSkillImg.cs">
+      <Link>MosaicsSkillImg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\Vector2Ext.cs">
+      <Link>Vector2Ext.cs</Link>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>

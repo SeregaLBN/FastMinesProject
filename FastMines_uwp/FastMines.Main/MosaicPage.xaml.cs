@@ -354,7 +354,7 @@ namespace fmg {
       bool OnClick(Windows.Foundation.Point pos, bool leftClick, bool downHandling, bool upHandling) {
          var margin = MosaicField.Container.Margin;
          //if ((pos.X >= margin.Left) && (pos.Y >= margin.Top)) {
-         var point = pos.ToFmRectDouble().Move(-margin.Left, -margin.Top);
+         var point = pos.ToFmPointDouble().Move(-margin.Left, -margin.Top);
          //   var winSize = MosaicField.WindowSize;
          //   if ((point.x <= winSize.width) && (point.y <= winSize.height)) {
             var handled = false;
@@ -503,7 +503,7 @@ namespace fmg {
                   rcOuter.MoveXY(-delta, -delta);
                   rcOuter.Width  += delta*2;
                   rcOuter.Height += delta*2;
-                  needDrag = !rcOuter.Contains(noMarginPoint.ToFmRectDouble());
+                  needDrag = !rcOuter.Contains(noMarginPoint.ToFmPointDouble());
                }
 #endregion
 
