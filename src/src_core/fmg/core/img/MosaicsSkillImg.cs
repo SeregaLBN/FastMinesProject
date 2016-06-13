@@ -45,7 +45,8 @@ namespace fmg.core.img {
                p.Y += offset.Y;
                return p;
             });
-         });
+         })
+         .Reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
       }
 
    }

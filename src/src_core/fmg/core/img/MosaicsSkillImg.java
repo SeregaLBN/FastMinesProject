@@ -1,5 +1,8 @@
 package fmg.core.img;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -32,7 +35,7 @@ public abstract class MosaicsSkillImg<TImage> extends RotatedImg<ESkillLevel, TI
       int stars = 4 + ordinal; // number of stars on the perimeter of the circle
       double[] angle = { getRotateAngle() };
       double starAngle = 360.0/stars;
-      return IntStream.range(0, stars)
+      Stream<Stream<PointDouble>> res = IntStream.range(0, stars)
             .mapToObj(st -> {
                Stream<PointDouble> points = (getMosaicSkill() == ESkillLevel.eCustom)
                      ? FigureHelper.getRegularPolygonCoords(3 + (st % 4), r1, -angle[0])
@@ -51,6 +54,9 @@ public abstract class MosaicsSkillImg<TImage> extends RotatedImg<ESkillLevel, TI
                   return p;
                });
             });
+      List<Stream<PointDouble>> resL = res.collect(Collectors.toList());
+      Collections.reverse(resL); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
+      return resL.stream();
    }
 
 }

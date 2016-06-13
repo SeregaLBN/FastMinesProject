@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using fmg.core.types;
+using fmg.data.controller.types;
 using fmg.uwp.res.img.win2d;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -26,29 +27,44 @@ namespace Test.FastMines.Uwp.MosaicsImg.Win2D {
    /// </summary>
    public sealed partial class DemoPage : Page {
 
+      private readonly MosaicsSkillImg _msi;
       private readonly MosaicsGroupImg _mgi;
+
       public DemoPage() {
          this.InitializeComponent();
          this.Unloaded += (sender, args) => {
             _mgi.Dispose();
          };
 
-         _mgi = new MosaicsGroupImg(EMosaicGroup.ePentagons, canvasControl2) {
+         _msi = new MosaicsSkillImg(ESkillLevel.eCrazy, canvasControl2) {
+            Rotate = true
+         };
+         _msi.PropertyChanged += (sender, ev) => {
+            if (ev.PropertyName == "Image")
+               canvasControl2.Invalidate();
+         };
+
+
+         _mgi = new MosaicsGroupImg(EMosaicGroup.ePentagons, canvasControl3) {
             Rotate = true
          };
          _mgi.PropertyChanged += (sender, ev) => {
             if (ev.PropertyName == "Image")
-               canvasControl2.Invalidate();
+               canvasControl3.Invalidate();
          };
       }
 
-      void canvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args) {
+      void canvasControl_Draw1(CanvasControl sender, CanvasDrawEventArgs args) {
          using (var logo = new Logo(true, sender)) {
             args.DrawingSession.DrawImage(logo.Image, new Rect(25, 25, logo.Size, logo.Size));
          }
       }
 
       void canvasControl_Draw2(CanvasControl sender, CanvasDrawEventArgs args) {
+         args.DrawingSession.DrawImage(_msi.Image, new Rect(25, 25, _msi.Width, _msi.Height));
+      }
+
+      void canvasControl_Draw3(CanvasControl sender, CanvasDrawEventArgs args) {
          args.DrawingSession.DrawImage(_mgi.Image, new Rect(25, 25, _mgi.Width, _mgi.Height));
       }
 

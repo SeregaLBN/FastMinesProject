@@ -37,7 +37,6 @@ namespace fmg.uwp.res.img {
          bmp.Clear(BackgroundColor.ToWinColor());
 
          var stars = GetCoords();
-         stars = stars.Reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
          foreach (var coords in stars) {
             var points = coords.PointsAsXyxyxySequence(true).ToArray();
             bmp.FillPolygon(points, ForegroundColorAttenuate.ToWinColor());

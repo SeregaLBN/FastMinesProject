@@ -7,7 +7,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,8 +45,7 @@ public abstract class MosaicsSkillImg<TImage> extends fmg.core.img.MosaicsSkillI
       g.setColor(Cast.toColor(getBackgroundColor()));
       g.fillRect(0, 0, getWidth(), getHeight());
 
-      List<Stream<PointDouble>> stars = getCoords().collect(Collectors.toList());
-      Collections.reverse(stars); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
+      Stream<Stream<PointDouble>> stars = getCoords();
       stars.forEach(coords -> {
          g.setColor(Cast.toColor(getForegroundColorAttenuate()));
          List<PointDouble> points = coords.collect(Collectors.toList());
