@@ -44,7 +44,10 @@ namespace Test.FastMines.Uwp.MosaicsImg.Win2D {
 
          {
             _msi = new MosaicsSkillImg(ESkillLevel.eCrazy, canvasControl2) {
-               Rotate = true
+               Rotate = true,
+               RotateAngleDelta = 5,
+               RedrawInterval = 50,
+               BorderWidth = 2
             };
             _msi.PropertyChanged += (sender, ev) => {
                if (ev.PropertyName == "Image")
@@ -54,6 +57,9 @@ namespace Test.FastMines.Uwp.MosaicsImg.Win2D {
          {
             _mi = new fmg.uwp.res.img.win2d.MosaicsImg(EMosaic.eMosaicPentagonT10, new Matrisize(5, 5), canvasControl3) {
                Rotate = true,
+               RotateAngleDelta = 5,
+               RedrawInterval = 50,
+               BorderWidth = 1,
                RotateMode = fmg.uwp.res.img.win2d.MosaicsImg.ERotateMode.SomeCells
             };
             _mi.PropertyChanged += (sender, ev) => {
@@ -63,7 +69,10 @@ namespace Test.FastMines.Uwp.MosaicsImg.Win2D {
          }
          {
             _mgi = new MosaicsGroupImg(EMosaicGroup.ePentagons, canvasControl4) {
-               Rotate = true
+               Rotate = true,
+               RotateAngleDelta = 5,
+               RedrawInterval = 50,
+               BorderWidth = 2
             };
             _mgi.PropertyChanged += (sender, ev) => {
                if (ev.PropertyName == "Image")
