@@ -20,11 +20,13 @@
         </Grid.RowDefinitions>
 
         <canvas:CanvasControl x:Name="canvasControl1" ClearColor="CornflowerBlue" Draw="canvasControl_Draw1"
-                              Grid.Column="0" Grid.Row="0"/>
+                              Grid.Row="0" Grid.Column="0" />
         <canvas:CanvasControl x:Name="canvasControl2" ClearColor="DarkSeaGreen" Draw="canvasControl_Draw2"
-                              Grid.Column="1" Grid.Row="0"/>
-        <canvas:CanvasControl x:Name="canvasControl3" ClearColor="DarkViolet" Draw="canvasControl_Draw3"
-                              Grid.Column="1" Grid.Row="1"/>
+                              Grid.Row="0" Grid.Column="1" />
+        <canvas:CanvasControl x:Name="canvasControl3" ClearColor="Firebrick" Draw="canvasControl_Draw3"
+                              Grid.Row="1" Grid.Column="0" />
+        <canvas:CanvasControl x:Name="canvasControl4" ClearColor="DarkViolet" Draw="canvasControl_Draw4"
+                              Grid.Row="1" Grid.Column="1" />
 
     </Grid>
 
