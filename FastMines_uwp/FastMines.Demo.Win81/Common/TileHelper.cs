@@ -198,7 +198,7 @@ namespace FastMines {
          const int ZoomKoef = 1;
          var img = new MosaicsImg(mosaicType, sizeField, new Size(w * ZoomKoef, h * ZoomKoef), new Bound(ZoomKoef * bound)) {
             BackgroundColor = bkClr,
-            OnlySyncDraw = true
+            SyncDraw = true
          };
          var bmp = img.Image;
          var pw = bmp.PixelWidth;

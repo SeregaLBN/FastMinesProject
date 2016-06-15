@@ -33,13 +33,13 @@ namespace fmg.uwp.res.img {
       public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(mosaicType, sizeField, widthAndHeight, padding)
       {
-         OnlySyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+         SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
       }
 
       public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding)
          : base(mosaicType, sizeField, sizeImage, padding)
       {
-         OnlySyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+         SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
       }
 
       private ICellPaint<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> _cellPaint;
@@ -178,7 +178,7 @@ namespace fmg.uwp.res.img {
          var paint = new PaintableBmp(img);
          var paintContext = PaintContext;
          var cp = CellPaint;
-         if (OnlySyncDraw || LiveImage()) {
+         if (SyncDraw || LiveImage()) {
             // sync draw
             funcFillBk();
             foreach (var cell in matrix)
@@ -274,7 +274,7 @@ namespace fmg.uwp.res.img {
       }
 
       protected void DrawBodySomeCells() {
-         if (OnlySyncDraw || LiveImage()) {
+         if (SyncDraw || LiveImage()) {
             // sync draw
             if (UseCache)
                CopyFromCache();

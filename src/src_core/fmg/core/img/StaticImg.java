@@ -144,9 +144,12 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
 
    public Color getForegroundColorAttenuate() { return getForegroundColor().brighter(0.25); }
 
-   private boolean _onlySyncDraw = true;
-   public boolean isOnlySyncDraw() { return _onlySyncDraw; }
-   public void setOnlySyncDraw(boolean value) { _onlySyncDraw = value; }
+   private boolean _deferredNotifications = true;
+   public boolean isDeferredNotifications() { return _deferredNotifications; }
+   public void setDeferredNotifications(boolean value) { _deferredNotifications = value; }
+   private boolean _syncDraw = true;
+   public boolean isSyncDraw() { return _syncDraw; }
+   public void setSyncDraw(boolean value) { _syncDraw = value; }
 
    protected void invalidate() {
       if (_invalidate == EInvalidate.redrawing)
@@ -170,7 +173,7 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
    /** Deferr notifications */
    @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      if (isOnlySyncDraw())
+      if (!isDeferredNotifications())
          super.onPropertyChanged(oldValue, newValue, propertyName);
       else
          DEFERR_INVOKER.accept( () -> super.onPropertyChanged(oldValue, newValue, propertyName) );

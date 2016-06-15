@@ -157,7 +157,8 @@ namespace fmg.core.img {
 
       public Color ForegroundColorAttenuate => ForegroundColor.Brighter(0.25);
 
-      public bool OnlySyncDraw { get; set; } = false; // Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+      public bool DeferredNotifications { get; set; } = true;
+      public bool SyncDraw { get; set; } = false;
 
       protected void Invalidate() {
          if (_invalidate == EInvalidate.Redrawing)
@@ -182,7 +183,7 @@ namespace fmg.core.img {
 
       /// <summary> Deferr notifications </summary>
       protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         if (OnlySyncDraw)
+         if (!DeferredNotifications)
             base.OnPropertyChanged(sender, ev);
          else
             StaticImgConsts.DeferrInvoker(() => base.OnPropertyChanged(sender, ev));

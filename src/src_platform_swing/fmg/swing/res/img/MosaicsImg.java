@@ -181,7 +181,7 @@ public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<Paintab
       PaintableGraphics paint = new PaintableGraphics(null, g);
       PaintSwingContext<TImage> paintContext = getPaintContext();
       ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> cp = getCellPaint();
-      if (isOnlySyncDraw() || isLiveImage()) {
+      if (isSyncDraw() || isLiveImage()) {
          // sync draw
          funcFillBk.run();
          for (BaseCell cell : matrix)
@@ -270,7 +270,7 @@ public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<Paintab
    }
 
    private void drawBodySomeCells(Graphics g) {
-      if (isOnlySyncDraw() || isLiveImage()) {
+      if (isSyncDraw() || isLiveImage()) {
          // sync draw
          if (USE_CACHE)
             copyFromCache();

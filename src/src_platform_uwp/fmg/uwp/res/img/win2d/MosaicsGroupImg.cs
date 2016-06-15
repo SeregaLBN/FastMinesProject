@@ -30,7 +30,7 @@ namespace fmg.uwp.res.img.win2d {
       public MosaicsGroupImg(EMosaicGroup group, ICanvasResourceCreator resourceCreator, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(group, widthAndHeight, padding)
       {
-         OnlySyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+         SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
          _rc = resourceCreator;
       }
 

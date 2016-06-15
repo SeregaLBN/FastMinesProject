@@ -25,7 +25,7 @@ namespace fmg.uwp.res.img {
       public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = DefaultImageSize, int? padding = null)
          : base(group, widthAndHeight, padding)
       {
-         OnlySyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+         SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
       }
 
       protected override WriteableBitmap CreateImage() {
