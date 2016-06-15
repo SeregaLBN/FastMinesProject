@@ -38,7 +38,7 @@ public abstract class MosaicsGroupImg<TImage> extends fmg.core.img.MosaicsGroupI
    public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight) { super(group, widthAndHeight); }
    public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight, Integer padding) { super(group, widthAndHeight, padding); }
 
-   public void drawBody(Graphics g) {
+   protected void drawBody(Graphics g) {
       Graphics2D g2 = (Graphics2D) g;
 
       g.setColor(Cast.toColor(getBackgroundColor()));

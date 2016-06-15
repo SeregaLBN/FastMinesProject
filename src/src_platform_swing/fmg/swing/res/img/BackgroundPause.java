@@ -27,33 +27,26 @@ public class BackgroundPause implements Icon {
 
    @Override
    public int getIconWidth() {
-      return !newLogo ? 1000 : getIcon().getIconWidth();
+      return !newLogo ? 1000 : 550;
    }
 
    @Override
    public int getIconHeight() {
-      return !newLogo ? 1000 : getIcon().getIconHeight();
+      return !newLogo ? 1000 : 550;
    }
 
-   private Icon _ico;
+   private Icon _icoOld;
    private Icon getIcon() {
-      if (_ico == null) {
-         if (newLogo) {
-            Logo logo = new Logo(true);
-            logo.setPadding(10);
-            logo.setZoom(2.7);
-            _ico = logo;
-         } else {
-            BufferedImage img = new BufferedImage(getIconWidth(), getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g = img.createGraphics();
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            draw(g);
-            g.dispose();
-            _ico = ImgUtils.toIco(img);
-         }
+      if (_icoOld == null) {
+         BufferedImage img = new BufferedImage(getIconWidth(), getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+         Graphics2D g = img.createGraphics();
+         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+         draw(g);
+         g.dispose();
+         _icoOld = ImgUtils.toIco(img);
       }
-      return _ico;
+      return _icoOld;
    }
 
    private void draw(Graphics2D g) {
@@ -81,7 +74,13 @@ public class BackgroundPause implements Icon {
 
    @Override
    public void paintIcon(Component c, Graphics g, int x, int y) {
-      getIcon().paintIcon(c, g, x, y);
+      if (newLogo) {
+         try (Logo.Icon logo = new Logo.Icon(true, 550, 10)) {
+            logo.getImage().paintIcon(c, g, x, y);
+         }
+      } else {
+         getIcon().paintIcon(c, g, x, y);
+      }
    }
 
    public static void main(String[] args) {

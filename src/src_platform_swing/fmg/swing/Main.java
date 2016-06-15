@@ -101,6 +101,7 @@ import fmg.swing.mosaic.Mosaic;
 import fmg.swing.res.Resources;
 import fmg.swing.res.Resources.EBtnNewGameState;
 import fmg.swing.res.Resources.EBtnPauseState;
+import fmg.swing.res.img.Logo;
 import fmg.swing.res.img.MosaicsGroupImg;
 import fmg.swing.res.img.MosaicsImg;
 import fmg.swing.res.img.MosaicsSkillImg;
@@ -120,6 +121,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    private StatusBar  statusBar;
 
    private Resources resources;
+   private Logo.Image _logo;
    private PlayersModel players;
    private UUID activeUserId; // current user
    private ChampionsModel champions;
@@ -1027,7 +1029,7 @@ public class Main extends JFrame implements PropertyChangeListener {
             getMenu().getOptions().getShowElement(key).setSelected(spm.getShowElement(key));
          }
          getMenu().     setVisible(spm.getShowElement(EShowElement.eMenu));
-         ApplyInputActionMenuMap(spm.getShowElement(EShowElement.eMenu));
+         ApplyInputActionMenuMap  (spm.getShowElement(EShowElement.eMenu));
          getToolbar().  setVisible(spm.getShowElement(EShowElement.eToolbar));
          getStatusBar().setVisible(spm.getShowElement(EShowElement.eStatusbar));
 
@@ -1039,7 +1041,8 @@ public class Main extends JFrame implements PropertyChangeListener {
 
       this.setJMenuBar(getMenu());
       this.setTitle("FastMines");
-      this.setIconImage(ImgUtils.toImg(getResources().getImgLogo()));
+      this._logo = new Logo.Image(true, 128, 1);
+      this.setIconImage(_logo.getImage());
 
       getMosaic().setOnClickEvent(this.getHandlers().getMosaicClickHandler());
 //      this.getHandlers().getMosaicListener().OnChangedArea(new MosaicEvent(getMosaic())); // TODO: это нужно только тогда, когда нет десериализации
@@ -1381,6 +1384,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
 //      setVisible(false);
       getMosaic().close();
+      _logo.close();
       dispose();
 //      System.exit(0);
    }

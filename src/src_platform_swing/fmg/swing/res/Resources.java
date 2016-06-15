@@ -8,14 +8,12 @@ import javax.swing.Icon;
 
 import fmg.swing.res.img.BackgroundPause;
 import fmg.swing.res.img.Flag;
-import fmg.swing.res.img.Logo;
 import fmg.swing.res.img.Mine;
 import fmg.swing.utils.ImgUtils;
 
 /** Мультимедиа ресурсы программы */
 public final class Resources {
 
-   private Icon imgLogo;
    private Icon imgFlag, imgMine;
    private Icon imgPause;
 
@@ -65,19 +63,6 @@ public final class Resources {
       return img;
    }
 
-   public Icon getImgLogo() {
-      if (imgLogo == null) {
-         Logo logo = new Logo(true);
-
-         final int padding = 1;
-         final double constIconSize = 128 - 2 * padding;
-         logo.setZoom(constIconSize / Logo.DefaultSize);
-         logo.setPadding(padding);
-
-         imgLogo = logo;
-      }
-      return imgLogo;
-   }
    public Icon getImgFlag(int width, int height) {
       if (imgFlag == null) {
          imgFlag = getIcon("CellState/Flag.png"); // сначала из ресурсов

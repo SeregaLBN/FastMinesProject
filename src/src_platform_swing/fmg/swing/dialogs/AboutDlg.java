@@ -29,12 +29,17 @@ import javax.swing.border.EtchedBorder;
 
 import fmg.swing.res.Resources;
 import fmg.swing.res.Resources.EBtnNewGameState;
+import fmg.swing.res.img.Logo;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
 
 public class AboutDlg extends JDialog {
+
    private static final long serialVersionUID = 1L;
+
+   private Logo.Icon _logo;
    private Resources resources;
+
    private Resources getResources() {
       if (resources == null)
          resources = new Resources();
@@ -73,6 +78,8 @@ public class AboutDlg extends JDialog {
 
    private void OnClose() {
       // при выходе из диалогового окна - освобождаю ресурсы
+      if (_logo != null)
+         _logo.close();
       dispose();
 //      System.exit(0);
    }
@@ -131,7 +138,9 @@ public class AboutDlg extends JDialog {
 //      panel.setBorder(BorderFactory.createTitledBorder("Logos"));// getDefaultBorder());
 
       int icoSize = 48;
-      JButton btnLogo = new JButton(ImgUtils.zoom(getResources().getImgLogo(), icoSize, icoSize));
+      if (_logo == null)
+         _logo = new Logo.Icon(true, icoSize, 1);
+      JButton btnLogo = new JButton(_logo.getImage());
       btnLogo.setPressedIcon(ImgUtils.zoom(getResources().getImgBtnNew(EBtnNewGameState.eNormalLoss), icoSize,icoSize));
       btnLogo.setFocusable(false);
 
