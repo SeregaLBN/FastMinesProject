@@ -31,11 +31,19 @@ public abstract class Logo<TImage> extends fmg.core.img.Logo<TImage> {
          TIMER_CREATOR = () -> new fmg.swing.ui.Timer();
    }
 
-   public Logo(boolean useGradient) { super(useGradient); }
-   public Logo(boolean useGradient, int widthAndHeight) { super(useGradient, widthAndHeight); }
-   public Logo(boolean useGradient, int widthAndHeight, Integer padding) { super(useGradient, widthAndHeight, padding); }
+   public Logo(boolean useGradient)                                      { super(useGradient);                          setBackgroundColor(fmg.common.Color.Transparent); }
+   public Logo(boolean useGradient, int widthAndHeight)                  { super(useGradient, widthAndHeight);          setBackgroundColor(fmg.common.Color.Transparent); }
+   public Logo(boolean useGradient, int widthAndHeight, Integer padding) { super(useGradient, widthAndHeight, padding); setBackgroundColor(fmg.common.Color.Transparent); }
 
    protected void drawBody(Graphics2D g) {
+      {
+         fmg.common.Color bkClr = getBackgroundColor();
+         if (bkClr.getA() != fmg.common.Color.Transparent.getA()) {
+            g.setColor(Cast.toColor(bkClr));
+            g.fillRect(0, 0, getWidth(), getHeight());
+         }
+      }
+
       List<PointDouble> rays0 = new ArrayList<>();
       List<PointDouble> inn0 = new ArrayList<>();
       List<PointDouble> oct0 = new ArrayList<>();

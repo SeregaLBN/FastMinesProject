@@ -1,5 +1,6 @@
 package fmg.common.geom.util;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Spliterator;
@@ -82,6 +83,19 @@ public final class FigureHelper {
       return coords.map(p -> new PointDouble((p.x * cos) - (p.y * sin), (p.x * sin) + (p.y * cos)));
    }
 
+   public static void rotate(Collection<PointDouble> coords, double angle, PointDouble center) {
+      angle = toRadian(angle);
+      double cos = Math.cos(angle);
+      double sin = Math.sin(angle);
+      coords.forEach(p -> {
+         p.x -= center.x;
+         p.y -= center.x;
+         double x = (p.x * cos) - (p.y * sin);
+         double y = (p.x * sin) + (p.y * cos);
+         p.x = x + center.x;
+         p.y = y + center.y;
+      });
+   }
 
    /** http://stackoverflow.com/questions/17640754/zipping-streams-using-jdk8-with-lambda-java-util-stream-streams-zip */
    public static<A, B, C> Stream<C> zip(Stream<? extends A> a, Stream<? extends B> b, BiFunction<? super A, ? super B, ? extends C> zipper) {
