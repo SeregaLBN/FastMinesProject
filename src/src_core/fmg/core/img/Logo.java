@@ -37,6 +37,7 @@ public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
       double zx = getZoomX();
       double zy = getZoomX();
       PointDouble center = new PointDouble(getWidth()/2.0, getHeight()/2.0);
+      PointDouble none = new PointDouble();
 
       rays.clear();
       rays.add(new PointDouble(pl + 100.0000*zx, pt + 200.0000*zy));
@@ -47,7 +48,7 @@ public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
       rays.add(new PointDouble(pl +  29.2893*zx, pt + 170.7107*zy));
       rays.add(new PointDouble(pl + 200.0000*zx, pt + 100.0000*zy));
       rays.add(new PointDouble(pl +  29.2893*zx, pt +  29.2893*zy));
-      FigureHelper.rotate(rays, getRotateAngle(), center);
+      FigureHelper.rotate(rays, getRotateAngle(), center, none);
 
       inn.clear();
       inn.add(new PointDouble(pl + 100.0346*zx, pt + 141.4070*zy));
@@ -58,7 +59,7 @@ public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
       inn.add(new PointDouble(pl +  70.7233*zx, pt + 129.3198*zy));
       inn.add(new PointDouble(pl + 141.4167*zx, pt + 100.0000*zy));
       inn.add(new PointDouble(pl +  70.7500*zx, pt +  70.7500*zy));
-      FigureHelper.rotate(inn, getRotateAngle(), center);
+      FigureHelper.rotate(inn, getRotateAngle(), center, none);
 
       oct.clear();
       oct.add(new PointDouble(pl + 120.7053*zx, pt + 149.9897*zy));
@@ -69,7 +70,7 @@ public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
       oct.add(new PointDouble(pl +  79.2624*zx, pt + 149.9727*zy));
       oct.add(new PointDouble(pl + 150.0000*zx, pt +  79.2737*zy));
       oct.add(new PointDouble(pl +  50.0034*zx, pt +  79.3093*zy));
-      FigureHelper.rotate(oct, getRotateAngle(), center);
+      FigureHelper.rotate(oct, getRotateAngle(), center, none);
    }
 
 }

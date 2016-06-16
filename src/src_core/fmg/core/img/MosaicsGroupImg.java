@@ -25,18 +25,10 @@ public abstract class MosaicsGroupImg<TImage> extends PolarLightsImg<EMosaicGrou
             getWidth()  - getPadding().getLeftAndRight(),
             getHeight() - getPadding().getTopAndBottom());
       int vertices = 3 + getMosaicGroup().ordinal(); // vertices count
-      Stream<PointDouble> points = (getMosaicGroup() != EMosaicGroup.eOthers)
-            ? FigureHelper.getRegularPolygonCoords(vertices, sq/2, getRotateAngle())
-            : FigureHelper.getRegularStarCoords(4, sq/2, sq/5, getRotateAngle());
-
-      // adding offset
-      double offsetX = getWidth() / 2.0;
-      double offsetY = getHeight() / 2.0;
-      return points.map(p -> {
-         p.x += offsetX;
-         p.y += offsetY;
-         return p;
-      });
+      PointDouble center = new PointDouble(getWidth() / 2.0, getHeight() / 2.0);
+      return (getMosaicGroup() != EMosaicGroup.eOthers)
+            ? FigureHelper.getRegularPolygonCoords(vertices, sq/2, getRotateAngle(), center)
+            : FigureHelper.getRegularStarCoords(4, sq/2, sq/5, getRotateAngle(), center);
    }
 
 }

@@ -18,37 +18,40 @@ public final class FigureHelper {
       return (degreeAngle * Math.PI) / 180; // to radians
    }
 
-   /** Получить координаты точки на переиметре круга. Центр круга - начало координат
+   /** Получить координаты точки на переиметре круга
     * @param radius радиус круга
     * @param radAngle угол в радианах
+    * @param center центр круга
     * @return координаты точки на круге */
-   public static PointDouble getPointOnCircleRadian(double radius, double radAngle) {
-      return new PointDouble(radius * Math.sin(radAngle), -radius * Math.cos(radAngle));
+   public static PointDouble getPointOnCircleRadian(double radius, double radAngle, PointDouble center) {
+      return new PointDouble(radius * Math.sin(radAngle) + center.x, -radius * Math.cos(radAngle) + center.y);
       // ! беру радиус с минусом по Y'ку, т.к. эта координата в математике зеркальна экранной
    }
-   /** Получить координаты точки на периметре круга. Центр круга - начало координат
+   /** Получить координаты точки на периметре круга
     * @param radius радиус круга
     * @param degreeAngle угол: -360° .. 0° .. +360°
+    * @param center центр круга
     * @return координаты точки на круге */
-   public static PointDouble getPointOnCircle(double radius, double degreeAngle) {
-      return getPointOnCircleRadian(radius, toRadian(degreeAngle));
+   public static PointDouble getPointOnCircle(double radius, double degreeAngle, PointDouble center) {
+      return getPointOnCircleRadian(radius, toRadian(degreeAngle), center);
    }
 
    /** https://en.wikipedia.org/wiki/Regular_polygon
-    * Получить координаты правильного многоугольника с центром фигуры в координатах [0,0]
+    * Получить координаты правильного многоугольника
     *
     * @param n edges / vertices
     * @param radius
     * @param offsetAngle -360° .. 0° .. +360°
+    * @param center центр фигуры
     * @return координаты правильного многоугольника */
-   public static Stream<PointDouble> getRegularPolygonCoords(int n, double radius) { return getRegularPolygonCoords(n, radius, 0); }
+   public static Stream<PointDouble> getRegularPolygonCoords(int n, double radius, PointDouble center) { return getRegularPolygonCoords(n, radius, 0, center); }
 
-   public static Stream<PointDouble> getRegularPolygonCoords(int n, double radius, double offsetAngle) {
+   public static Stream<PointDouble> getRegularPolygonCoords(int n, double radius, double offsetAngle, PointDouble center) {
       double angle = (2 * Math.PI)/n; // 360° / n
       double offsetAngle2 = toRadian(offsetAngle);
       return IntStream.range(0, n)
             .mapToObj(i -> (i * angle) + offsetAngle2)
-            .map(a -> getPointOnCircleRadian(radius, a));
+            .map(a -> getPointOnCircleRadian(radius, a, center));
    }
 
    /** https://en.wikipedia.org/wiki/Star_polygon
@@ -58,42 +61,57 @@ public final class FigureHelper {
     *  * внутр круг повёрнут относительно внешенего на 360° / (кол-во лучей) / 2
     *  * и соединяем (т.е. последовательны в массиве) поочерёдно точки с внешнего и внутр круга
     * так и получаем звезду
-    * Центр фигуры - координаты [0,0]
     *
     * @param rays the number of corner vertices
     * @param radiusOut external radius
     * @param radiusIn internal radius
     * @param offsetAngle -360° .. 0° .. +360°
+    * @param center центр фигуры
     * @return координаты правильной звезды */
-   public static Stream<PointDouble> getRegularStarCoords(int rays, double radiusOut, double radiusIn) { return getRegularStarCoords(rays, radiusOut, radiusIn, 0); }
-   public static Stream<PointDouble> getRegularStarCoords(int rays, double radiusOut, double radiusIn, double offsetAngle) {
-      Stream<PointDouble> pointsExternal = getRegularPolygonCoords(rays, radiusOut, offsetAngle);
-      Stream<PointDouble> pointsInternal = getRegularPolygonCoords(rays, radiusIn, offsetAngle + (180.0/rays));
+   public static Stream<PointDouble> getRegularStarCoords(int rays, double radiusOut, double radiusIn, PointDouble center) { return getRegularStarCoords(rays, radiusOut, radiusIn, 0, center); }
+   public static Stream<PointDouble> getRegularStarCoords(int rays, double radiusOut, double radiusIn, double offsetAngle, PointDouble center) {
+      Stream<PointDouble> pointsExternal = getRegularPolygonCoords(rays, radiusOut, offsetAngle, center);
+      Stream<PointDouble> pointsInternal = getRegularPolygonCoords(rays, radiusIn, offsetAngle + (180.0/rays), center);
       return zip(pointsExternal, pointsInternal, (p1, p2) -> Stream.of(p1, p2)).flatMap(x -> x);
    }
 
    /** rotate around the center coordinates
     * @param coords coordinates for transformation
     * @param angle angle of rotation: -360° .. 0° .. +360°
+    * @param center центр фигуры
+    * @param additionalDeltaOffset дополнительное смещение координат
     */
-   public static Stream<PointDouble> rotate(Stream<PointDouble> coords, double angle) {
+   public static Stream<PointDouble> rotate(Stream<PointDouble> coords, double angle, PointDouble center, PointDouble additionalDeltaOffset) {
       angle = toRadian(angle);
       double cos = Math.cos(angle);
       double sin = Math.sin(angle);
-      return coords.map(p -> new PointDouble((p.x * cos) - (p.y * sin), (p.x * sin) + (p.y * cos)));
+      return coords.map(p -> {
+               p = new PointDouble(p.x - center.x, p.y - center.y);
+               double x = (p.x * cos) - (p.y * sin);
+               double y = (p.x * sin) + (p.y * cos);
+               p.x = x + center.x + additionalDeltaOffset.x;
+               p.y = y + center.y + additionalDeltaOffset.y;
+               return p;
+            });
    }
 
-   public static void rotate(Collection<PointDouble> coords, double angle, PointDouble center) {
+   /** rotate around the center coordinates. !!Modify existed collection!!
+    * @param coords coordinates for transformation
+    * @param angle angle of rotation: -360° .. 0° .. +360°
+    * @param center центр фигуры
+    * @param additionalDeltaOffset дополнительное смещение координат
+    */
+   public static void rotate(Collection<PointDouble> coords, double angle, PointDouble center, PointDouble additionalDeltaOffset) {
       angle = toRadian(angle);
       double cos = Math.cos(angle);
       double sin = Math.sin(angle);
       coords.forEach(p -> {
          p.x -= center.x;
-         p.y -= center.x;
+         p.y -= center.y;
          double x = (p.x * cos) - (p.y * sin);
          double y = (p.x * sin) + (p.y * cos);
-         p.x = x + center.x;
-         p.y = y + center.y;
+         p.x = x + center.x + additionalDeltaOffset.x;
+         p.y = y + center.y + additionalDeltaOffset.y;
       });
    }
 

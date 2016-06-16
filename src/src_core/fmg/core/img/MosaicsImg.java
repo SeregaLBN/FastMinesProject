@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import fmg.common.geom.Bound;
 import fmg.common.geom.BoundDouble;
@@ -13,7 +12,6 @@ import fmg.common.geom.Coord;
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.RegionDouble;
 import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 import fmg.common.geom.util.FigureHelper;
@@ -228,23 +226,7 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage, TPaintCo
       for (BaseCell cell : getMatrix()) {
          cell.Init(); // restore base coords
 
-         RegionDouble reg = cell.getRegion();
-         Stream<PointDouble> newReg = reg.getPoints()
-               .stream()
-               .map(p -> {
-                  p.x -= center.x;
-                  p.y -= center.y;
-                  return p;
-               });
-         newReg = FigureHelper
-               .rotate(newReg, getRotateAngle())
-               .map(p -> {
-                  p.x += center.x;
-                  p.y += center.y;
-                  return p;
-               });
-         int[] i = { 0 };
-         newReg.forEach(p -> reg.setPoint(i[0]++, (int) p.x, (int) p.y));
+         FigureHelper.rotate(cell.getRegion().getPoints(), getRotateAngle(), center, new PointDouble());
       }
    }
 
@@ -295,21 +277,8 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage, TPaintCo
          // rotate
          cell.Init();
          PointDouble centerNew = cell.getCenter();
-         RegionDouble reg = cell.getRegion();
-         Stream<PointDouble> newReg = reg.getPoints().stream()
-                         .map(p -> {
-                            p.x -= centerNew.x;
-                            p.y -= centerNew.y;
-                            return p;
-                         });
-         newReg = FigureHelper.rotate(newReg, (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2)
-                         .map(p -> {
-                            p.x += center.x;
-                            p.y += center.y;
-                            return p;
-                         });
-         int[] i = {0};
-         newReg.forEach(p -> reg.setPoint(i[0]++, (int)p.x, (int)p.y));
+         PointDouble delta = new PointDouble(center.x - centerNew.x, center.y - centerNew.y);
+         FigureHelper.rotate(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, centerNew, delta);
 
          // restore
          attr.setArea(area);
