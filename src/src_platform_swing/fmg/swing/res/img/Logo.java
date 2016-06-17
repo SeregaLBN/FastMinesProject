@@ -17,6 +17,7 @@ import java.util.List;
 
 import javax.swing.SwingUtilities;
 
+import fmg.common.HSV;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.swing.Cast;
@@ -109,6 +110,21 @@ public abstract class Logo<TImage> extends fmg.core.img.Logo<TImage> {
          Arrays.stream(p).mapToInt(s -> (int)s.x).toArray(),
          Arrays.stream(p).mapToInt(s -> (int)s.y).toArray(),
          p.length);
+   }
+
+   @Override
+   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+      if ("RotateAngle".equals(propertyName)) {
+         double delta = getRotateAngleDelta();
+         for (int i=0; i<Palette.length; ++i) {
+            fmg.common.Color clr = Palette[i];
+            HSV tmp = new HSV(clr);
+            tmp.h += delta;
+            Palette[i] = tmp.toColor();
+         }
+
+      }
+      super.onPropertyChanged(oldValue, newValue, propertyName);
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
