@@ -18,7 +18,7 @@ public class Mine implements Icon {
    public void paintIcon(Component c, Graphics g, int x, int y) {
       try (Logo.Icon logo = new Logo.Icon(false, 150, 10)) {
          for (int i = 0; i < logo.Palette.length; i++)
-            logo.Palette[i] = logo.Palette[i].darker(0.5);
+            logo.Palette[i].v = 75;
          logo.getImage().paintIcon(c, g, x, y);
       }
    }

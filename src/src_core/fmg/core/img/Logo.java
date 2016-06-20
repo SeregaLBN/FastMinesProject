@@ -2,7 +2,7 @@ package fmg.core.img;
 
 import java.util.List;
 
-import fmg.common.Color;
+import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.util.FigureHelper;
 
@@ -15,13 +15,11 @@ public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
    protected Logo(boolean useGradient, int widthAndHeight) { super(2, widthAndHeight); _useGradient = useGradient; }
    protected Logo(boolean useGradient, int widthAndHeight, Integer padding) { super(3, widthAndHeight, padding); _useGradient = useGradient; }
 
-   public final Color[] Palette = {
-         new Color(0xFFFF0000), new Color(0xFFFFD800), new Color(0xFF4CFF00), new Color(0xFF00FF90),
-         new Color(0xFF0094FF), new Color(0xFF4800FF), new Color(0xFFB200FF), new Color(0xFFFF006E) };
+   public final HSV[] Palette = {
+         new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100),
+         new HSV(180, 100, 100), new HSV(225, 100, 100), new HSV(270, 100, 100), new HSV(315, 100, 100) };
 
-   public boolean isUseGradient() {
-      return _useGradient;
-   }
+   public boolean isUseGradient() { return _useGradient; }
 
    public void setUseGradient(boolean value) {
       if (setProperty(_useGradient, value, "UseGradient"))
@@ -35,7 +33,7 @@ public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
       int pl = getPadding().left;
       int pt = getPadding().top;
       double zx = getZoomX();
-      double zy = getZoomX();
+      double zy = getZoomY();
       PointDouble center = new PointDouble(getWidth()/2.0, getHeight()/2.0);
       PointDouble none = new PointDouble();
 
