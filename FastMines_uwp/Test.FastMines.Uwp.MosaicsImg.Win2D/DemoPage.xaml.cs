@@ -69,6 +69,7 @@ namespace Test.FastMines.Uwp.MosaicsImg.Win2D {
          }
          {
             _mgi = new MosaicsGroupImg(EMosaicGroup.ePentagons, canvasControl4) {
+               PolarLights = true,
                Rotate = true,
                RotateAngleDelta = 5,
                RedrawInterval = 50,

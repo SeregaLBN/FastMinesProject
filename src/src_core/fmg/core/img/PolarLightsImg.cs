@@ -28,7 +28,7 @@ namespace fmg.core.img {
       }
 
       private void NextForegroundColor() {
-         HSV hsv = new HSV(ForegroundColor);
+         var hsv = new HSV(ForegroundColor);
          hsv.h += RotateAngleDelta;
          ForegroundColor = hsv.toColor();
       }

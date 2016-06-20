@@ -327,6 +327,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 //                  menuItem.setMnemonic(Main.KeyCombo.getMnemonic_MenuMosaicGroup(val));
                   MosaicsGroupImg.Icon img = new MosaicsGroupImg.Icon(val, MenuHeightWithIcon*ZoomQualityFactor);
                   mosaicsGroupImages.put(val, img);
+                  img.setPolarLights(true);
                   img.setBorderWidth(1*ZoomQualityFactor);
                   img.setBorderColor(Color.RandomColor(rnd).darker(0.4));
                   img.setForegroundColor(Color.RandomColor(rnd).brighter(0.7));
@@ -941,7 +942,9 @@ public class Main extends JFrame implements PropertyChangeListener {
       //ViewAllEvents();
       //setSysOut();
       //printSystemProperties();
-      new Main().setVisible(true);
+      SwingUtilities.invokeLater(() ->
+         new Main().setVisible(true)
+      );
    }
 
    public Main() {
