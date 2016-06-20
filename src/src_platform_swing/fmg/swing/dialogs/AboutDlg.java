@@ -140,7 +140,16 @@ public class AboutDlg extends JDialog {
       int icoSize = 48;
       if (_logo == null)
          _logo = new Logo.Icon(true, icoSize, 1);
+      _logo.setRotate(true);
+      _logo.setRedrawInterval(50);;
+      _logo.setRotateMode(Logo.ERotateMode.color);
       JButton btnLogo = new JButton(_logo.getImage());
+      _logo.addListener(ev -> {
+         if ("Image".equals(ev.getPropertyName())) {
+            btnLogo.setIcon(_logo.getImage());
+            btnLogo.repaint();
+         }
+      });
       btnLogo.setPressedIcon(ImgUtils.zoom(getResources().getImgBtnNew(EBtnNewGameState.eNormalLoss), icoSize,icoSize));
       btnLogo.setFocusable(false);
 
