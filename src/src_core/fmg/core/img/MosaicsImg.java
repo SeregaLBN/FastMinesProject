@@ -34,6 +34,11 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage, TPaintCo
       extends RotatedImg<EMosaic, TImage>
       implements IMosaic<TPaintable, TImage, TPaintContext>
 {
+   public enum ERotateMode {
+      fullMatrix,
+      someCells
+   }
+
    protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
       super(mosaicType);
       _sizeField = sizeField;
@@ -49,11 +54,6 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage, TPaintCo
    protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) {
       super(mosaicType, sizeImage, padding);
       _sizeField = sizeField;
-   }
-
-   public enum ERotateMode {
-      fullMatrix,
-      someCells
    }
 
    /** из каких фигур состоит мозаика поля */

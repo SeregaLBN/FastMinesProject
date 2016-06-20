@@ -115,7 +115,7 @@ public abstract class Logo<TImage> extends fmg.core.img.Logo<TImage> {
 
    @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      if ("RotateAngle".equals(propertyName)) {
+      if ((getRotateMode() != ERotateMode.classic) && "RotateAngle".equals(propertyName)) {
          double delta = getRotateAngleDelta();
          for (int i=0; i<Palette.length; ++i) {
             Palette[i].h += delta;
@@ -199,7 +199,9 @@ public abstract class Logo<TImage> extends fmg.core.img.Logo<TImage> {
    public static void main(String[] args) {
       TestDrawing.<Object>testApp(rnd -> {
          Logo.Icon img1 = new Logo.Icon(true);
+         img1.setRotateMode(ERotateMode.values()[rnd.nextInt(ERotateMode.values().length)]);
          Logo.Image img2 = new Logo.Image(false);
+         img2.setRotateMode(ERotateMode.values()[rnd.nextInt(ERotateMode.values().length)]);
          return new Pair<>(img1, img2);
       });
    }

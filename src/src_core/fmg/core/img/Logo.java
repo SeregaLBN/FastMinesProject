@@ -9,7 +9,11 @@ import fmg.common.geom.util.FigureHelper;
 /** main logos image */
 public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
 
-   private boolean _useGradient;
+   public enum ERotateMode {
+      classic,
+      color,
+      combi // color + classic
+   }
 
    protected Logo(boolean useGradient) { super(1); _useGradient = useGradient; }
    protected Logo(boolean useGradient, int widthAndHeight) { super(2, widthAndHeight); _useGradient = useGradient; }
@@ -19,12 +23,16 @@ public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
          new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100),
          new HSV(180, 100, 100), new HSV(225, 100, 100), new HSV(270, 100, 100), new HSV(315, 100, 100) };
 
+   private boolean _useGradient;
    public boolean isUseGradient() { return _useGradient; }
-
    public void setUseGradient(boolean value) {
       if (setProperty(_useGradient, value, "UseGradient"))
          invalidate();
    }
+
+   private ERotateMode _rotateMode = ERotateMode.combi;
+   public ERotateMode getRotateMode() { return _rotateMode; }
+   public void setRotateMode(ERotateMode value) { setProperty(_rotateMode, value, "RotateMode"); }
 
    protected double getZoomX() { return (getWidth()  - getPadding().getLeftAndRight()) / 200.0; }
    protected double getZoomY() { return (getHeight() - getPadding().getTopAndBottom()) / 200.0; }
@@ -46,7 +54,6 @@ public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
       rays.add(new PointDouble(pl +  29.2893*zx, pt + 170.7107*zy));
       rays.add(new PointDouble(pl + 200.0000*zx, pt + 100.0000*zy));
       rays.add(new PointDouble(pl +  29.2893*zx, pt +  29.2893*zy));
-      FigureHelper.rotate(rays, getRotateAngle(), center, none);
 
       inn.clear();
       inn.add(new PointDouble(pl + 100.0346*zx, pt + 141.4070*zy));
@@ -57,7 +64,6 @@ public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
       inn.add(new PointDouble(pl +  70.7233*zx, pt + 129.3198*zy));
       inn.add(new PointDouble(pl + 141.4167*zx, pt + 100.0000*zy));
       inn.add(new PointDouble(pl +  70.7500*zx, pt +  70.7500*zy));
-      FigureHelper.rotate(inn, getRotateAngle(), center, none);
 
       oct.clear();
       oct.add(new PointDouble(pl + 120.7053*zx, pt + 149.9897*zy));
@@ -68,7 +74,12 @@ public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
       oct.add(new PointDouble(pl +  79.2624*zx, pt + 149.9727*zy));
       oct.add(new PointDouble(pl + 150.0000*zx, pt +  79.2737*zy));
       oct.add(new PointDouble(pl +  50.0034*zx, pt +  79.3093*zy));
-      FigureHelper.rotate(oct, getRotateAngle(), center, none);
+
+      if (getRotateMode() != ERotateMode.color) {
+         FigureHelper.rotate(rays, getRotateAngle(), center, none);
+         FigureHelper.rotate(inn, getRotateAngle(), center, none);
+         FigureHelper.rotate(oct, getRotateAngle(), center, none);
+      }
    }
 
 }
