@@ -76,9 +76,10 @@ public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
       oct.add(new PointDouble(pl +  50.0034*zx, pt +  79.3093*zy));
 
       if (getRotateMode() != ERotateMode.color) {
-         FigureHelper.rotate(rays, getRotateAngle(), center, none);
-         FigureHelper.rotate(inn, getRotateAngle(), center, none);
-         FigureHelper.rotate(oct, getRotateAngle(), center, none);
+         double ra = getRotateAngle();
+         FigureHelper.rotate(rays, ra, center, none);
+         FigureHelper.rotate(inn, ra, center, none);
+         FigureHelper.rotate(oct, ra, center, none);
       }
    }
 

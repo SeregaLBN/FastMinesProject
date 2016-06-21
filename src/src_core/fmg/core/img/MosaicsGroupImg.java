@@ -27,8 +27,8 @@ public abstract class MosaicsGroupImg<TImage> extends PolarLightsImg<EMosaicGrou
       int vertices = 3 + getMosaicGroup().ordinal(); // vertices count
       PointDouble center = new PointDouble(getWidth() / 2.0, getHeight() / 2.0);
       return (getMosaicGroup() != EMosaicGroup.eOthers)
-            ? FigureHelper.getRegularPolygonCoords(vertices, sq/2, getRotateAngle(), center)
-            : FigureHelper.getRegularStarCoords(4, sq/2, sq/5, getRotateAngle(), center);
+            ? FigureHelper.getRegularPolygonCoords(vertices, sq/2, center, getRotateAngle())
+            : FigureHelper.getRegularStarCoords(4, sq/2, sq/5, center, getRotateAngle());
    }
 
 }

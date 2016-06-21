@@ -3,119 +3,94 @@ using System.Linq;
 using System.Collections.Generic;
 using fmg.common;
 using fmg.common.geom;
+using fmg.common.geom.util;
 using fmg.common.notyfier;
 
 namespace fmg.core.img {
 
    /// <summary> main logos image </summary>
-   public abstract class Logo<TImage> : NotifyPropertyChanged {
+   public abstract class Logo<TImage> : PolarLightsImg<object, TImage>
+      where TImage : class
+   {
 
-      public const uint DefaultSize = 200;
-
-      private double _zoom;
-      private uint _padding;
-      private TImage _img;
- 
-      protected Logo(bool useGradient) {
-         _zoom = 1;
-         _padding = 3;
-         UseGradient = useGradient;
+      public enum ERotateMode {
+         Classic,
+         Color,
+         Combi // color + classic
       }
 
-      public double Zoom {
-         get { return _zoom; }
+      protected Logo(bool useGradient, int widthAndHeight = DefaultImageSize, int? padding = null)
+         : base(0, widthAndHeight, padding)
+      {
+         _useGradient = useGradient;
+      }
+
+      public readonly HSV[] Palette = {
+         new HSV(  0), new HSV( 45), new HSV( 90), new HSV(135),
+         new HSV(180), new HSV(225), new HSV(270), new HSV(315) };
+
+      private bool _useGradient;
+      public bool UseGradient {
+         get { return _useGradient; }
          set {
-            if (SetProperty(ref _zoom, value))
-               ResetImage();
+            if (SetProperty(ref _useGradient, value))
+               Invalidate();
          }
       }
 
-      public uint Padding {
-         get { return _padding; }
-         set {
-            if (SetProperty(ref _padding, value))
-               ResetImage();
+      private ERotateMode _rotateMode = ERotateMode.Combi;
+      public ERotateMode RotateMode {
+         get { return _rotateMode; }
+         set { SetProperty(ref _rotateMode, value); }
+      }
+
+      protected double ZoomX => (Width  - Padding.LeftAndRight) / 200.0;
+      protected double ZoomY => (Height - Padding.TopAndBottom) / 200.0;
+
+      protected void GetCoords(IList<PointDouble> rays, IList<PointDouble> inn, IList<PointDouble> oct) {
+         var pl = Padding.Left;
+         var pt = Padding.Top;
+         var zx = ZoomX;
+         var zy = ZoomY;
+         var center = new PointDouble(Width / 2.0, Height / 2.0);
+         var none = new PointDouble();
+
+         rays.Clear();
+         rays.Add(new PointDouble(pl + 100.0000 * zx, pt + 200.0000 * zy));
+         rays.Add(new PointDouble(pl + 170.7107 * zx, pt +  29.2893 * zy));
+         rays.Add(new PointDouble(pl +   0.0000 * zx, pt + 100.0000 * zy));
+         rays.Add(new PointDouble(pl + 170.7107 * zx, pt + 170.7107 * zy));
+         rays.Add(new PointDouble(pl + 100.0000 * zx, pt +   0.0000 * zy));
+         rays.Add(new PointDouble(pl +  29.2893 * zx, pt + 170.7107 * zy));
+         rays.Add(new PointDouble(pl + 200.0000 * zx, pt + 100.0000 * zy));
+         rays.Add(new PointDouble(pl +  29.2893 * zx, pt +  29.2893 * zy));
+
+         inn.Clear();
+         inn.Add(new PointDouble(pl + 100.0346 * zx, pt + 141.4070 * zy));
+         inn.Add(new PointDouble(pl + 129.3408 * zx, pt +  70.7320 * zy));
+         inn.Add(new PointDouble(pl +  58.5800 * zx, pt + 100.0000 * zy));
+         inn.Add(new PointDouble(pl + 129.2500 * zx, pt + 129.2500 * zy));
+         inn.Add(new PointDouble(pl +  99.9011 * zx, pt +  58.5377 * zy));
+         inn.Add(new PointDouble(pl +  70.7233 * zx, pt + 129.3198 * zy));
+         inn.Add(new PointDouble(pl + 141.4167 * zx, pt + 100.0000 * zy));
+         inn.Add(new PointDouble(pl +  70.7500 * zx, pt +  70.7500 * zy));
+
+         oct.Clear();
+         oct.Add(new PointDouble(pl + 120.7053 * zx, pt + 149.9897 * zy));
+         oct.Add(new PointDouble(pl + 120.7269 * zx, pt +  50.0007 * zy));
+         oct.Add(new PointDouble(pl +  50.0034 * zx, pt + 120.7137 * zy));
+         oct.Add(new PointDouble(pl + 150.0000 * zx, pt + 120.6950 * zy));
+         oct.Add(new PointDouble(pl +  79.3120 * zx, pt +  50.0007 * zy));
+         oct.Add(new PointDouble(pl +  79.2624 * zx, pt + 149.9727 * zy));
+         oct.Add(new PointDouble(pl + 150.0000 * zx, pt +  79.2737 * zy));
+         oct.Add(new PointDouble(pl +  50.0034 * zx, pt +  79.3093 * zy));
+
+         if (RotateMode != ERotateMode.Color) {
+            var ra = RotateAngle;
+            rays.Rotate(ra, center, none);
+            inn.Rotate(ra, center, none);
+            oct.Rotate(ra, center, none);
          }
-      }
-
-      public bool UseGradient { get; }
-
-      public readonly Color[] Palette = {
-         new Color(0xFFFF0000), new Color(0xFFFFD800), new Color(0xFF4CFF00), new Color(0xFF00FF90),
-         new Color(0xFF0094FF), new Color(0xFF4800FF), new Color(0xFFB200FF), new Color(0xFFFF006E)
-      };
-
-      public static double CalcZoom(int desiredLogoWidhtHeight, uint padding = 3) {
-         // desiredLogoWidhtHeight = DefaultHeight*zoom+2*Padding
-         return (desiredLogoWidhtHeight - 2.0*padding)/DefaultSize;
-      }
-
-      public void MixLoopColor(uint loop) {
-         var copy = Palette.ToList();
-         for (var i = 0; i < Palette.Length; i++)
-            Palette[i] = copy[(int)((i + loop)%8)];
-      }
-
-      public double Size => DefaultSize * _zoom + 2 * Padding;
-
-      protected abstract TImage CreateImage();
-      protected abstract void DrawImage(TImage img);
-
-      public TImage Image {
-         get {
-            if (_img == null) {
-               var bmp = CreateImage();
-               DrawImage(bmp);
-               _img = bmp;
-            }
-            return _img;
-         }
-      }
-
-      protected void GetCoords(out IList<PointDouble> rays, out IList<PointDouble> inn, out IList<PointDouble> oct) {
-         var padding = Padding;
-         var zoom = Zoom;
-         rays = new [] { // owner rays points
-                  new PointDouble(padding + 100.0000*zoom, padding + 200.0000*zoom),
-                  new PointDouble(padding + 170.7107*zoom, padding +  29.2893*zoom),
-                  new PointDouble(padding +   0.0000*zoom, padding + 100.0000*zoom),
-                  new PointDouble(padding + 170.7107*zoom, padding + 170.7107*zoom),
-                  new PointDouble(padding + 100.0000*zoom, padding +   0.0000*zoom),
-                  new PointDouble(padding +  29.2893*zoom, padding + 170.7107*zoom),
-                  new PointDouble(padding + 200.0000*zoom, padding + 100.0000*zoom),
-                  new PointDouble(padding +  29.2893*zoom, padding +  29.2893*zoom)};
-         inn = new [] { // inner octahedron
-                  new PointDouble(padding + 100.0346*zoom, padding + 141.4070*zoom),
-                  new PointDouble(padding + 129.3408*zoom, padding +  70.7320*zoom),
-                  new PointDouble(padding +  58.5800*zoom, padding + 100.0000*zoom),
-                  new PointDouble(padding + 129.2500*zoom, padding + 129.2500*zoom),
-                  new PointDouble(padding +  99.9011*zoom, padding +  58.5377*zoom),
-                  new PointDouble(padding +  70.7233*zoom, padding + 129.3198*zoom),
-                  new PointDouble(padding + 141.4167*zoom, padding + 100.0000*zoom),
-                  new PointDouble(padding +  70.7500*zoom, padding +  70.7500*zoom)};
-         oct = new [] { // central octahedron
-                  new PointDouble(padding + 120.7053*zoom, padding + 149.9897*zoom),
-                  new PointDouble(padding + 120.7269*zoom, padding +  50.0007*zoom),
-                  new PointDouble(padding +  50.0034*zoom, padding + 120.7137*zoom),
-                  new PointDouble(padding + 150.0000*zoom, padding + 120.6950*zoom),
-                  new PointDouble(padding +  79.3120*zoom, padding +  50.0007*zoom),
-                  new PointDouble(padding +  79.2624*zoom, padding + 149.9727*zoom),
-                  new PointDouble(padding + 150.0000*zoom, padding +  79.2737*zoom),
-                  new PointDouble(padding +  50.0034*zoom, padding +  79.3093*zoom)};
-      }
-
-      protected virtual void ResetImage() {
-         (_img as IDisposable)?.Dispose();
-          _img = default(TImage);
-         OnPropertyChanged("Image");
-      }
-
-      protected override void Dispose(bool disposing) {
-         if (Disposed)
-            return;
-         base.Dispose(disposing);
-
-         ResetImage();
       }
 
    }

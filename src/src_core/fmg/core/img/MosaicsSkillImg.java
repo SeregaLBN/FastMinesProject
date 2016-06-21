@@ -47,8 +47,8 @@ public abstract class MosaicsSkillImg<TImage> extends RotatedImg<ESkillLevel, TI
                PointDouble centerStar = new PointDouble(center.x + offset.x, center.y + offset.y);
 
                Stream<PointDouble> points = (getMosaicSkill() == ESkillLevel.eCustom)
-                     ? FigureHelper.getRegularPolygonCoords(3 + (st % 4), r1, -angle[0], centerStar)
-                     : FigureHelper.getRegularStarCoords(rays, r1, r2, -angle[0], centerStar);
+                     ? FigureHelper.getRegularPolygonCoords(3 + (st % 4), r1, centerStar, -angle[0])
+                     : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angle[0]);
                return points;
             });
       List<Stream<PointDouble>> resL = res.collect(Collectors.toList());

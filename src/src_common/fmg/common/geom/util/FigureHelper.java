@@ -18,7 +18,7 @@ public final class FigureHelper {
       return (degreeAngle * Math.PI) / 180; // to radians
    }
 
-   /** Получить координаты точки на переиметре круга
+   /** Получить координаты точки на периметре круга
     * @param radius радиус круга
     * @param radAngle угол в радианах
     * @param center центр круга
@@ -27,6 +27,7 @@ public final class FigureHelper {
       return new PointDouble(radius * Math.sin(radAngle) + center.x, -radius * Math.cos(radAngle) + center.y);
       // ! беру радиус с минусом по Y'ку, т.к. эта координата в математике зеркальна экранной
    }
+
    /** Получить координаты точки на периметре круга
     * @param radius радиус круга
     * @param degreeAngle угол: -360° .. 0° .. +360°
@@ -41,12 +42,12 @@ public final class FigureHelper {
     *
     * @param n edges / vertices
     * @param radius
-    * @param offsetAngle -360° .. 0° .. +360°
     * @param center центр фигуры
+    * @param offsetAngle -360° .. 0° .. +360°
     * @return координаты правильного многоугольника */
-   public static Stream<PointDouble> getRegularPolygonCoords(int n, double radius, PointDouble center) { return getRegularPolygonCoords(n, radius, 0, center); }
+   public static Stream<PointDouble> getRegularPolygonCoords(int n, double radius, PointDouble center) { return getRegularPolygonCoords(n, radius, center, 0); }
 
-   public static Stream<PointDouble> getRegularPolygonCoords(int n, double radius, double offsetAngle, PointDouble center) {
+   public static Stream<PointDouble> getRegularPolygonCoords(int n, double radius, PointDouble center, double offsetAngle) {
       double angle = (2 * Math.PI)/n; // 360° / n
       double offsetAngle2 = toRadian(offsetAngle);
       return IntStream.range(0, n)
@@ -65,13 +66,13 @@ public final class FigureHelper {
     * @param rays the number of corner vertices
     * @param radiusOut external radius
     * @param radiusIn internal radius
-    * @param offsetAngle -360° .. 0° .. +360°
     * @param center центр фигуры
+    * @param offsetAngle -360° .. 0° .. +360°
     * @return координаты правильной звезды */
-   public static Stream<PointDouble> getRegularStarCoords(int rays, double radiusOut, double radiusIn, PointDouble center) { return getRegularStarCoords(rays, radiusOut, radiusIn, 0, center); }
-   public static Stream<PointDouble> getRegularStarCoords(int rays, double radiusOut, double radiusIn, double offsetAngle, PointDouble center) {
-      Stream<PointDouble> pointsExternal = getRegularPolygonCoords(rays, radiusOut, offsetAngle, center);
-      Stream<PointDouble> pointsInternal = getRegularPolygonCoords(rays, radiusIn, offsetAngle + (180.0/rays), center);
+   public static Stream<PointDouble> getRegularStarCoords(int rays, double radiusOut, double radiusIn, PointDouble center) { return getRegularStarCoords(rays, radiusOut, radiusIn, center, 0); }
+   public static Stream<PointDouble> getRegularStarCoords(int rays, double radiusOut, double radiusIn, PointDouble center, double offsetAngle) {
+      Stream<PointDouble> pointsExternal = getRegularPolygonCoords(rays, radiusOut, center, offsetAngle);
+      Stream<PointDouble> pointsInternal = getRegularPolygonCoords(rays, radiusIn, center, offsetAngle + (180.0/rays));
       return zip(pointsExternal, pointsInternal, (p1, p2) -> Stream.of(p1, p2)).flatMap(x -> x);
    }
 
