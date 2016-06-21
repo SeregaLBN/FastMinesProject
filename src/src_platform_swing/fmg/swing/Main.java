@@ -1045,8 +1045,9 @@ public class Main extends JFrame implements PropertyChangeListener {
       this.setJMenuBar(getMenu());
       this.setTitle("FastMines");
       this._logo = new Logo.Image(true, 128, 1);
+      this._logo.setBackgroundColor(Logo.Image.DefaultBkColor);
       this._logo.setRotate(true);
-      this._logo.setRotateMode(Logo.ERotateMode.color);
+      this._logo.setRotateMode(Logo.ERotateMode.combi);
       this.setIconImage(_logo.getImage());
       this._logo.addListener(ev -> {
          if ("Image".equals(ev.getPropertyName()))

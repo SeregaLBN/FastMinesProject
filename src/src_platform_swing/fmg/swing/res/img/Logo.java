@@ -88,7 +88,7 @@ public abstract class Logo<TImage> extends fmg.core.img.Logo<TImage> {
       for (int i=0; i<8; i++) {
          Point2D.Double p1 = rays[(i + 7)%8];
          Point2D.Double p2 = rays[i];
-         g.setColor(palette[i]);
+         g.setColor(palette[i].darker());
          g.drawLine((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y);
       }
 
