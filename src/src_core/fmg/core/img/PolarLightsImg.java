@@ -12,8 +12,6 @@ import fmg.common.HSV;
 public abstract class PolarLightsImg<T, TImage> extends RotatedImg<T, TImage> {
 
    protected PolarLightsImg(T entity) { super(entity); }
-   protected PolarLightsImg(T entity, int widthAndHeight) { super(entity, widthAndHeight); }
-   protected PolarLightsImg(T entity, int widthAndHeight, Integer padding) { super(entity, widthAndHeight, padding); }
 
    private boolean _polarLights;
    /** shimmering filling */

@@ -138,8 +138,12 @@ public class AboutDlg extends JDialog {
 //      panel.setBorder(BorderFactory.createTitledBorder("Logos"));// getDefaultBorder());
 
       int icoSize = 48;
-      if (_logo == null)
-         _logo = new Logo.Icon(true, icoSize, 1);
+      if (_logo == null) {
+         _logo = new Logo.Icon();
+         _logo.setUseGradient(true);
+         _logo.setSize(icoSize);
+         _logo.setPadding(1);
+      }
       _logo.setRotate(true);
       _logo.setRedrawInterval(50);;
       _logo.setRotateMode(Logo.ERotateMode.color);

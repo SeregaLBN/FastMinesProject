@@ -35,8 +35,6 @@ public abstract class MosaicsGroupImg<TImage> extends fmg.core.img.MosaicsGroupI
    }
 
    public MosaicsGroupImg(EMosaicGroup group) { super(group); }
-   public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight) { super(group, widthAndHeight); }
-   public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight, Integer padding) { super(group, widthAndHeight, padding); }
 
    protected void drawBody(Graphics g) {
       Graphics2D g2 = (Graphics2D) g;
@@ -68,9 +66,8 @@ public abstract class MosaicsGroupImg<TImage> extends fmg.core.img.MosaicsGroupI
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
    public static class Icon extends MosaicsGroupImg<javax.swing.Icon> {
+
       public Icon(EMosaicGroup group) { super(group); }
-      public Icon(EMosaicGroup group, int widthAndHeight) { super(group, widthAndHeight); }
-      public Icon(EMosaicGroup group, int widthAndHeight, Integer padding) { super(group, widthAndHeight, padding); }
 
       private BufferedImage buffImg;
       private Graphics2D gBuffImg;
@@ -111,9 +108,8 @@ public abstract class MosaicsGroupImg<TImage> extends fmg.core.img.MosaicsGroupI
    }
 
    public static class Image extends MosaicsGroupImg<java.awt.Image> {
+
       public Image(EMosaicGroup group) { super(group); }
-      public Image(EMosaicGroup group, int widthAndHeight) { super(group, widthAndHeight); }
-      public Image(EMosaicGroup group, int widthAndHeight, Integer padding) { super(group, widthAndHeight, padding); }
 
       @Override
       protected java.awt.Image createImage() {

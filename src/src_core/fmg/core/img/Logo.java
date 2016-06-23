@@ -15,9 +15,7 @@ public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
       combi // color + classic
    }
 
-   protected Logo(boolean useGradient) { super(1); _useGradient = useGradient; }
-   protected Logo(boolean useGradient, int widthAndHeight) { super(2, widthAndHeight); _useGradient = useGradient; }
-   protected Logo(boolean useGradient, int widthAndHeight, Integer padding) { super(3, widthAndHeight, padding); _useGradient = useGradient; }
+   protected Logo() { super(1); }
 
    public final HSV[] Palette = {
          new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100),

@@ -21,18 +21,9 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
    public static final int DefaultImageSize = 100;
 
    protected StaticImg(T entity) {
-      this(entity, DefaultImageSize);
-   }
-   protected StaticImg(T entity, int widthAndHeight) {
-      this(entity, widthAndHeight, (int)(widthAndHeight * 0.05)); // 5%
-   }
-   protected StaticImg(T entity, int widthAndHeight, int padding) {
-      this(entity, new Size(widthAndHeight, widthAndHeight), new Bound(padding));
-   }
-   protected StaticImg(T entity, Size sizeImage, Bound padding) {
-      _size = sizeImage;
-      _padding = padding;
       _entity = entity;
+      _size = new Size(DefaultImageSize, DefaultImageSize);
+      _padding = new Bound((int)(DefaultImageSize * 0.05)); // 5%
    }
 
    @SuppressWarnings("deprecation")
@@ -43,6 +34,7 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
    private Size _size;
    /** width and height in pixel */
    public Size getSize() { return _size; }
+   public void setSize(int widhtAndHeight) { setSize(new Size(widhtAndHeight, widhtAndHeight)) ; }
    public void setSize(Size value) {
       if (setProperty(_size, value, "Size")) {
          setImage(createImage());
@@ -58,6 +50,7 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
    private Bound _padding;
    /** inside padding */
    public Bound getPadding() { return _padding; }
+   public void setPadding(int bound) { setPadding(new Bound(bound)); }
    public void setPadding(Bound value) {
       if (value.getLeftAndRight() >= getWidth())
          throw new IllegalArgumentException("Padding size is very large. Should be less than Width.");

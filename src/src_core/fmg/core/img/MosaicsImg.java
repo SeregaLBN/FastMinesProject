@@ -12,7 +12,6 @@ import fmg.common.geom.Coord;
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 import fmg.common.geom.util.FigureHelper;
 import fmg.core.mosaic.IMosaic;
@@ -41,18 +40,6 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage, TPaintCo
 
    protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
       super(mosaicType);
-      _sizeField = sizeField;
-   }
-   protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight) {
-      super(mosaicType, widthAndHeight);
-      _sizeField = sizeField;
-   }
-   protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) {
-      super(mosaicType, widthAndHeight, padding);
-      _sizeField = sizeField;
-   }
-   protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) {
-      super(mosaicType, sizeImage, padding);
       _sizeField = sizeField;
    }
 

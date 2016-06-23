@@ -232,7 +232,8 @@ public class Main extends JFrame implements PropertyChangeListener {
                   menuItem.setAccelerator(Main.KeyCombo.getKeyStroke_SkillLevel(val));
                   menuItem.addActionListener(Main.this.getHandlers().getSkillLevelAction(val));
 
-                  MosaicsSkillImg.Icon img = new MosaicsSkillImg.Icon(val, MenuHeightWithIcon*ZoomQualityFactor);
+                  MosaicsSkillImg.Icon img = new MosaicsSkillImg.Icon(val);
+                  img.setSize(MenuHeightWithIcon*ZoomQualityFactor);
                   skillLevelImages.put(val, img);
                   img.setBorderWidth(1*ZoomQualityFactor);
                   img.setBorderColor(Color.RandomColor(rnd).darker(0.4));
@@ -325,7 +326,8 @@ public class Main extends JFrame implements PropertyChangeListener {
                      //menuItem.add(Box.createRigidArea(new Dimension(100,25)));
                   }
 //                  menuItem.setMnemonic(Main.KeyCombo.getMnemonic_MenuMosaicGroup(val));
-                  MosaicsGroupImg.Icon img = new MosaicsGroupImg.Icon(val, MenuHeightWithIcon*ZoomQualityFactor);
+                  MosaicsGroupImg.Icon img = new MosaicsGroupImg.Icon(val);
+                  img.setSize(MenuHeightWithIcon*ZoomQualityFactor);
                   mosaicsGroupImages.put(val, img);
                   img.setPolarLights(true);
                   img.setBorderWidth(1*ZoomQualityFactor);
@@ -369,7 +371,8 @@ public class Main extends JFrame implements PropertyChangeListener {
                   menuItem.setAccelerator(Main.KeyCombo.getKeyStroke_Mosaic(val));
                   menuItem.addActionListener(ev -> Main.this.changeGame(val));
 
-                  MosaicsImg.Icon img = new MosaicsImg.Icon(val, val.sizeIcoField(true), MenuHeightWithIcon*ZoomQualityFactor);
+                  MosaicsImg.Icon img = new MosaicsImg.Icon(val, val.sizeIcoField(true));
+                  img.setSize(MenuHeightWithIcon*ZoomQualityFactor);
                   mosaicsImages.put(val, img);
                   img.setRotateMode(ERotateMode.someCells);
                   img.setBorderWidth(1*ZoomQualityFactor);
@@ -1044,7 +1047,10 @@ public class Main extends JFrame implements PropertyChangeListener {
 
       this.setJMenuBar(getMenu());
       this.setTitle("FastMines");
-      this._logo = new Logo.Image(true, 128, 1);
+      this._logo = new Logo.Image();
+      this._logo.setUseGradient(true);
+      this._logo.setSize(128);
+      this._logo.setPadding(1);
       this._logo.setBackgroundColor(Logo.Image.DefaultBkColor);
       this._logo.setRotate(true);
       this._logo.setRotateMode(Logo.ERotateMode.combi);

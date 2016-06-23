@@ -110,7 +110,8 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
 
          for (EMosaic eMosaic: EMosaic.values()) {
             JScrollPane scroll = new JScrollPane();
-            MosaicsImg.Icon img = new MosaicsImg.Icon(eMosaic, eMosaic.sizeIcoField(false), ImgSize*ImgZoomQuality);
+            MosaicsImg.Icon img = new MosaicsImg.Icon(eMosaic, eMosaic.sizeIcoField(false));
+            img.setSize(ImgSize*ImgZoomQuality);
             images.put(eMosaic, img);
             img.addListener(ev -> onImagePropertyChanged(eMosaic, ev));
             img.setBackgroundColor(bkTabBkColor);

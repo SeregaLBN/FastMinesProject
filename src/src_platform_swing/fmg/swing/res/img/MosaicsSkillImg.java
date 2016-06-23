@@ -36,8 +36,6 @@ public abstract class MosaicsSkillImg<TImage> extends fmg.core.img.MosaicsSkillI
    }
 
    public MosaicsSkillImg(ESkillLevel skill) { super(skill); }
-   public MosaicsSkillImg(ESkillLevel skill, int widthAndHeight) { super(skill, widthAndHeight); }
-   public MosaicsSkillImg(ESkillLevel skill, int widthAndHeight, int padding) { super(skill, widthAndHeight, padding); }
 
    protected void drawBody(Graphics g) {
       Graphics2D g2 = (Graphics2D) g;
@@ -72,9 +70,8 @@ public abstract class MosaicsSkillImg<TImage> extends fmg.core.img.MosaicsSkillI
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
    public static class Icon extends MosaicsSkillImg<javax.swing.Icon> {
+
       public Icon(ESkillLevel skill) { super(skill); }
-      public Icon(ESkillLevel skill, int widthAndHeight) { super(skill, widthAndHeight); }
-      public Icon(ESkillLevel skill, int widthAndHeight, int padding) { super(skill, widthAndHeight, padding); }
 
       private BufferedImage buffImg;
       private Graphics2D gBuffImg;
@@ -114,9 +111,8 @@ public abstract class MosaicsSkillImg<TImage> extends fmg.core.img.MosaicsSkillI
    }
 
    public static class Image extends MosaicsSkillImg<java.awt.Image> {
+
       public Image(ESkillLevel skill) { super(skill); }
-      public Image(ESkillLevel skill, int widthAndHeight) { super(skill, widthAndHeight); }
-      public Image(ESkillLevel skill, int widthAndHeight, Integer padding) { super(skill, widthAndHeight, padding); }
 
       @Override
       protected java.awt.Image createImage() {

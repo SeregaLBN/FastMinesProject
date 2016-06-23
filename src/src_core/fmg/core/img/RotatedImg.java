@@ -2,8 +2,6 @@ package fmg.core.img;
 
 import java.util.function.Supplier;
 
-import fmg.common.geom.Bound;
-import fmg.common.geom.Size;
 import fmg.common.ui.ITimer;
 
 /**
@@ -17,9 +15,6 @@ public abstract class RotatedImg<T, TImage> extends StaticImg<T, TImage> {
    public static Supplier<ITimer> TIMER_CREATOR;
 
    protected RotatedImg(T entity) { super(entity); }
-   protected RotatedImg(T entity, int widthAndHeight) { super(entity, widthAndHeight); }
-   protected RotatedImg(T entity, int widthAndHeight, int padding) { super(entity, widthAndHeight, padding); }
-   protected RotatedImg(T entity, Size sizeImage, Bound padding) { super(entity, sizeImage, padding); }
 
    private long _redrawInterval = 100;
    /** frequency of redrawing (in milliseconds) */

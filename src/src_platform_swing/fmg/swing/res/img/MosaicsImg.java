@@ -15,9 +15,7 @@ import javax.swing.SwingUtilities;
 
 import fmg.common.Color;
 import fmg.common.Pair;
-import fmg.common.geom.Bound;
 import fmg.common.geom.Matrisize;
-import fmg.common.geom.Size;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.ICellPaint;
 import fmg.core.types.EMosaic;
@@ -46,9 +44,6 @@ public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<Paintab
    private static final boolean RandomCellBkColor = true;
 
    public MosaicsImg(EMosaic mosaicType, Matrisize sizeField) { super(mosaicType, sizeField); }
-   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight) { super(mosaicType, sizeField, widthAndHeight); }
-   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) { super(mosaicType, sizeField, widthAndHeight, padding); }
-   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) { super(mosaicType, sizeField, sizeImage, padding); }
 
    private ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> _cellPaint;
    @Override
@@ -294,10 +289,8 @@ public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<Paintab
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
    public static class Icon extends MosaicsImg<javax.swing.Icon> {
+
       public Icon(EMosaic mosaicType, Matrisize sizeField) { super(mosaicType, sizeField); }
-      public Icon(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight) { super(mosaicType, sizeField, widthAndHeight); }
-      public Icon(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) { super(mosaicType, sizeField, widthAndHeight, padding); }
-      public Icon(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) { super(mosaicType, sizeField, sizeImage, padding); }
 
       private BufferedImage buffImg;
       private Graphics2D gBuffImg;
@@ -343,10 +336,8 @@ public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<Paintab
    }
 
    public static class Image extends MosaicsImg<java.awt.Image> {
+
       public Image(EMosaic mosaicType, Matrisize sizeField) { super(mosaicType, sizeField); }
-      public Image(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight) { super(mosaicType, sizeField, widthAndHeight); }
-      public Image(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight, int padding) { super(mosaicType, sizeField, widthAndHeight, padding); }
-      public Image(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding) { super(mosaicType, sizeField, sizeImage, padding); }
 
       @Override
       protected java.awt.Image createImage() {

@@ -75,7 +75,10 @@ public class BackgroundPause implements Icon {
    @Override
    public void paintIcon(Component c, Graphics g, int x, int y) {
       if (newLogo) {
-         try (Logo.Icon logo = new Logo.Icon(true, 550, 10)) {
+         try (Logo.Icon logo = new Logo.Icon()) {
+            logo.setUseGradient(true);
+            logo.setSize(550);
+            logo.setPadding(10);
             logo.getImage().paintIcon(c, g, x, y);
          }
       } else {

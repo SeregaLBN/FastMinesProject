@@ -31,9 +31,9 @@ public abstract class Logo<TImage> extends fmg.core.img.Logo<TImage> {
          TIMER_CREATOR = () -> new fmg.swing.ui.Timer();
    }
 
-   public Logo(boolean useGradient)                                      { super(useGradient);                          setBackgroundColor(fmg.common.Color.Transparent); }
-   public Logo(boolean useGradient, int widthAndHeight)                  { super(useGradient, widthAndHeight);          setBackgroundColor(fmg.common.Color.Transparent); }
-   public Logo(boolean useGradient, int widthAndHeight, Integer padding) { super(useGradient, widthAndHeight, padding); setBackgroundColor(fmg.common.Color.Transparent); }
+   public Logo() {
+      setBackgroundColor(fmg.common.Color.Transparent);
+   }
 
    protected void drawBody(Graphics2D g) {
       {
@@ -130,9 +130,6 @@ public abstract class Logo<TImage> extends fmg.core.img.Logo<TImage> {
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
    public static class Icon extends Logo<javax.swing.Icon> {
-      public Icon(boolean useGradient) { super(useGradient); }
-      public Icon(boolean useGradient, int widthAndHeight) { super(useGradient, widthAndHeight); }
-      public Icon(boolean useGradient, int widthAndHeight, Integer padding) { super(useGradient, widthAndHeight, padding); }
 
       private BufferedImage buffImg;
       private Graphics2D gBuffImg;
@@ -173,9 +170,6 @@ public abstract class Logo<TImage> extends fmg.core.img.Logo<TImage> {
    }
 
    public static class Image extends Logo<java.awt.Image> {
-      public Image(boolean useGradient) { super(useGradient); }
-      public Image(boolean useGradient, int widthAndHeight) { super(useGradient); }
-      public Image(boolean useGradient, int widthAndHeight, Integer padding) { super(useGradient, widthAndHeight, padding); }
 
       @Override
       protected java.awt.Image createImage() {
@@ -198,9 +192,11 @@ public abstract class Logo<TImage> extends fmg.core.img.Logo<TImage> {
    ////////////// TEST //////////////
    public static void main(String[] args) {
       TestDrawing.<Object>testApp(rnd -> {
-         Logo.Icon img1 = new Logo.Icon(true);
+         Logo.Icon img1 = new Logo.Icon();
+         img1.setUseGradient(true);
          img1.setRotateMode(ERotateMode.values()[rnd.nextInt(ERotateMode.values().length)]);
-         Logo.Image img2 = new Logo.Image(false);
+         Logo.Image img2 = new Logo.Image();
+         img2.setUseGradient(false);
          img2.setRotateMode(ERotateMode.values()[rnd.nextInt(ERotateMode.values().length)]);
          return new Pair<>(img1, img2);
       });
