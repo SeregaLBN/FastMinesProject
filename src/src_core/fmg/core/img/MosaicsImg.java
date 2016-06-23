@@ -251,7 +251,6 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage, TPaintCo
          cntxt.area = area * (1 + Math.sin(FigureHelper.toRadian(angle2 / 2))); // zoom'ирую
 
 
-
          BaseCell cell = matrix.get(cntxt.index);
 
          cell.Init();

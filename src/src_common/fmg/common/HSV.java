@@ -1,5 +1,7 @@
 package fmg.common;
 
+import fmg.common.geom.DoubleExt;
+
 /**
  * Сylindrical-coordinate representations of points in an RGB color model
  * <p>
@@ -65,18 +67,18 @@ public class HSV {
       double min = Math.min(Math.min(rgba.r, rgba.g), rgba.b);
 
       { // calc H
-         if (max == min)
+         if (DoubleExt.hasMinDiff(max, min))
             h = 0;
-         else if (max == rgba.r)
+         else if (DoubleExt.hasMinDiff(max, rgba.r))
             h = 60 * (rgba.g - rgba.b) / (max - min) + ((rgba.g < rgba.b) ? 360 : 0);
-         else if (max == rgba.g)
+         else if (DoubleExt.hasMinDiff(max, rgba.g))
             h = 60 * (rgba.b - rgba.r) / (max - min) + 120;
-         else if (max == rgba.b)
+         else if (DoubleExt.hasMinDiff(max, rgba.b))
             h = 60 * (rgba.r - rgba.g) / (max - min) + 240;
          else
             throw new RuntimeException();
       }
-      s = (max == 0) ? 0 : 100*(1 - min/max);
+      s = DoubleExt.hasMinDiff(max, 0) ? 0 : 100*(1 - min/max);
       v = max*100/255;
 
       fix();
@@ -167,15 +169,10 @@ public class HSV {
       if (getClass() != obj.getClass())
          return false;
       HSV other = (HSV) obj;
-      if (a != other.a)
-         return false;
-      if (Double.doubleToLongBits(h) != Double.doubleToLongBits(other.h))
-         return false;
-      if (Double.doubleToLongBits(s) != Double.doubleToLongBits(other.s))
-         return false;
-      if (Double.doubleToLongBits(v) != Double.doubleToLongBits(other.v))
-         return false;
-      return true;
+      return (a == other.a) &&
+            (Double.doubleToLongBits(h) == Double.doubleToLongBits(other.h)) &&
+            (Double.doubleToLongBits(s) == Double.doubleToLongBits(other.s)) &&
+            (Double.doubleToLongBits(v) == Double.doubleToLongBits(other.v));
    }
 
    @Override

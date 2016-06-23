@@ -21,13 +21,9 @@ namespace fmg.core.img {
       where TImage : class
       where TPaintContext : PaintContext<TImage>
    {
-      protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
-         : base(mosaicType, widthAndHeight, padding) {
-         _sizeField = sizeField;
-      }
-
-      protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding)
-         : base(mosaicType, sizeImage, padding) {
+      protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField)
+         : base(mosaicType)
+      {
          _sizeField = sizeField;
       }
 
@@ -217,23 +213,7 @@ namespace fmg.core.img {
          var center = new PointDouble(Width / 2.0 - _paddingFull.Left, Height / 2.0 - _paddingFull.Top);
          foreach (var cell in Matrix) {
             cell.Init(); // restore base coords
-            var reg = cell.getRegion();
-            var newReg = reg.Points
-                              .Select(p => {
-                                 p.X -= center.X;
-                                 p.Y -= center.Y;
-                                 return p;
-                              })
-                              .Rotate(RotateAngle)
-                              .Select(p => {
-                                 p.X += center.X;
-                                 p.Y += center.Y;
-                                 return p;
-                              });
-            var i = 0;
-            foreach (var p in newReg) {
-               reg.SetPoint(i++, (int)p.X, (int)p.Y);
-            }
+            cell.getRegion().Points.Rotate(RotateAngle, center);
          }
       }
 
@@ -272,7 +252,7 @@ namespace fmg.core.img {
             cntxt.area = area * (1 + Math.Sin((angle2 / 2).ToRadian())); // zoom'ирую
 
 
-            var cell = Matrix[cntxt.index];
+            var cell = matrix[cntxt.index];
 
             cell.Init();
             var center = cell.getCenter();
@@ -284,23 +264,8 @@ namespace fmg.core.img {
             // rotate
             cell.Init();
             var centerNew = cell.getCenter();
-            var reg = cell.getRegion();
-            var newReg = reg.Points
-                              .Select(p => {
-                                 p.X -= centerNew.X;
-                                 p.Y -= centerNew.Y;
-                                 return p;
-                              })
-                              .Rotate((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2)
-                              .Select(p => {
-                                 p.X += center.X;
-                                 p.Y += center.Y;
-                                 return p;
-                              });
-            var i = 0;
-            foreach (var p in newReg) {
-               reg.SetPoint(i++, (int)p.X, (int)p.Y);
-            }
+            var delta = new PointDouble(center.X - centerNew.X, center.Y - centerNew.Y);
+            cell.getRegion().Points.Rotate((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, centerNew, delta);
 
             // restore
             attr.Area = area;

@@ -22,8 +22,8 @@ namespace fmg.uwp.res.img {
             RotatedImgConst.TimerCreator = () => new ui.Timer();
       }
 
-      public MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = DefaultImageSize, int? padding = null)
-         : base(group, widthAndHeight, padding)
+      public MosaicsGroupImg(EMosaicGroup group)
+         : base(group)
       {
          SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
       }

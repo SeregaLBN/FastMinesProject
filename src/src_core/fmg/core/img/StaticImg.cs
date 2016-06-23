@@ -21,17 +21,10 @@ namespace fmg.core.img {
    {
       public const int DefaultImageSize = 100;
 
-      protected StaticImg(T entity, int widthAndHeight = DefaultImageSize, int? padding = null)
-         : this(entity,
-              new Size(widthAndHeight, widthAndHeight),
-              new Bound(padding ?? (int)(widthAndHeight * 0.05) // 5%
-         ))
-      { }
-
-      protected StaticImg(T entity, Size sizeImage, Bound padding) {
-         _size = sizeImage;
-         _padding = padding;
+      protected StaticImg(T entity) {
          _entity = entity;
+         _size = new Size(DefaultImageSize, DefaultImageSize);
+         _padding = new Bound((int)(DefaultImageSize * 0.05)); // 5%
       }
 
       private Size _size;

@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using fmg.core.types;
 using fmg.common.geom;
@@ -12,8 +11,7 @@ namespace fmg.core.img {
    public abstract class MosaicsGroupImg<TImage> : PolarLightsImg<EMosaicGroup, TImage>
       where TImage : class
    {
-      protected MosaicsGroupImg(EMosaicGroup group, int widthAndHeight = DefaultImageSize, int? padding = null)
-         : base(group, widthAndHeight, padding) {}
+      protected MosaicsGroupImg(EMosaicGroup group) : base(group) {}
 
       public EMosaicGroup MosaicGroup => Entity;
 
@@ -22,18 +20,10 @@ namespace fmg.core.img {
             Width - Padding.LeftAndRight,
             Height - Padding.TopAndBottom);
          var vertices = 3 + MosaicGroup.Ordinal(); // vertices count
-         var points = (MosaicGroup != EMosaicGroup.eOthers)
-            ? FigureHelper.GetRegularPolygonCoords(vertices, sq/2, RotateAngle)
-            : FigureHelper.GetRegularStarCoords(4, sq/2, sq/5, RotateAngle);
-
-         // adding offset
-         var offsetX = Width / 2.0;
-         var offsetY = Height / 2.0;
-         return points.Select(p => {
-            p.X += offsetX;
-            p.Y += offsetY;
-            return p;
-         });
+         var center = new PointDouble(Width / 2.0, Height / 2.0);
+         return (MosaicGroup != EMosaicGroup.eOthers)
+            ? FigureHelper.GetRegularPolygonCoords(vertices, sq/2, center, RotateAngle)
+            : FigureHelper.GetRegularStarCoords(4, sq/2, sq/5, center, RotateAngle);
       }
 
    }

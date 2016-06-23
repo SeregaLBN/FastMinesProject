@@ -10,9 +10,7 @@ namespace fmg.core.img {
    public abstract class PolarLightsImg<T, TImage> : RotatedImg<T, TImage>
       where TImage : class
    {
-      protected PolarLightsImg(T entity, int widthAndHeight = DefaultImageSize, int? padding = null)
-         : base(entity, widthAndHeight, padding)
-      { }
+      protected PolarLightsImg(T entity) : base(entity) { }
 
       private bool _polarLights;
       /// <summary> shimmering filling </summary>
@@ -30,7 +28,7 @@ namespace fmg.core.img {
       private void NextForegroundColor() {
          var hsv = new HSV(ForegroundColor);
          hsv.h += RotateAngleDelta;
-         ForegroundColor = hsv.toColor();
+         ForegroundColor = hsv.ToColor();
       }
 
       protected override void OnTimer() {

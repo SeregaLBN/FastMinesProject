@@ -12,8 +12,8 @@ namespace fmg.core.img {
    public abstract class MosaicsSkillImg<TImage> : RotatedImg<ESkillLevel, TImage>
       where TImage : class
    {
-      protected MosaicsSkillImg(ESkillLevel group, int widthAndHeight = DefaultImageSize, int? padding = null)
-         : base(group, widthAndHeight, padding) {}
+      protected MosaicsSkillImg(ESkillLevel group)
+         : base(group) {}
 
       public ESkillLevel MosaicSkill => Entity;
 
@@ -28,23 +28,20 @@ namespace fmg.core.img {
          var stars = 4 + ordinal; // number of stars on the perimeter of the circle
          var angle = RotateAngle;
          var starAngle = 360.0/stars;
+         var center = new PointDouble(Width / 2.0, Height / 2.0);
+         var zero = new PointDouble(0, 0);
          return Enumerable.Range(0, stars).Select(st => {
-            var points = (MosaicSkill == ESkillLevel.eCustom)
-               ? FigureHelper.GetRegularPolygonCoords(3 + st % 4, r1, -angle)
-               : FigureHelper.GetRegularStarCoords(rays, r1, r2, -angle);
-
             // (un)comment next line to view result changes...
             angle = Math.Sin((angle/4).ToRadian())*angle; // accelerate / ускоряшка..
 
             // adding offset
-            var offset = FigureHelper.GetPointOnCircle(sq/3, angle + st*starAngle);
-            offset.X += Width / 2.0;
-            offset.Y += Height / 2.0;
-            return points.Select(p => {
-               p.X += offset.X;
-               p.Y += offset.Y;
-               return p;
-            });
+            var offset = FigureHelper.GetPointOnCircle(sq/3, angle + st*starAngle, zero);
+            var centerStar = new PointDouble(center.X + offset.X, center.Y + offset.Y);
+
+            return (MosaicSkill == ESkillLevel.eCustom)
+               ? FigureHelper.GetRegularPolygonCoords(3 + st % 4, r1, centerStar, -angle)
+               : FigureHelper.GetRegularStarCoords(rays, r1, r2, centerStar, -angle);
+
          })
          .Reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
       }

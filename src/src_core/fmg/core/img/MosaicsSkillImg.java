@@ -44,10 +44,9 @@ public abstract class MosaicsSkillImg<TImage> extends RotatedImg<ESkillLevel, TI
                PointDouble offset = FigureHelper.getPointOnCircle(sq / 3, angle[0] + (st * starAngle), zero);
                PointDouble centerStar = new PointDouble(center.x + offset.x, center.y + offset.y);
 
-               Stream<PointDouble> points = (getMosaicSkill() == ESkillLevel.eCustom)
+               return (getMosaicSkill() == ESkillLevel.eCustom)
                      ? FigureHelper.getRegularPolygonCoords(3 + (st % 4), r1, centerStar, -angle[0])
                      : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angle[0]);
-               return points;
             });
       List<Stream<PointDouble>> resL = res.collect(Collectors.toList());
       Collections.reverse(resL); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...

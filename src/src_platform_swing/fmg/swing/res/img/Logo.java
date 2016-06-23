@@ -31,10 +31,6 @@ public abstract class Logo<TImage> extends fmg.core.img.Logo<TImage> {
          TIMER_CREATOR = () -> new fmg.swing.ui.Timer();
    }
 
-   public Logo() {
-      setBackgroundColor(fmg.common.Color.Transparent);
-   }
-
    protected void drawBody(Graphics2D g) {
       {
          fmg.common.Color bkClr = getBackgroundColor();

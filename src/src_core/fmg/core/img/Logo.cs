@@ -1,10 +1,7 @@
-using System;
-using System.Linq;
 using System.Collections.Generic;
 using fmg.common;
 using fmg.common.geom;
 using fmg.common.geom.util;
-using fmg.common.notyfier;
 
 namespace fmg.core.img {
 
@@ -19,10 +16,10 @@ namespace fmg.core.img {
          Combi // color + classic
       }
 
-      protected Logo(bool useGradient, int widthAndHeight = DefaultImageSize, int? padding = null)
-         : base(0, widthAndHeight, padding)
+      protected Logo()
+         : base(0)
       {
-         _useGradient = useGradient;
+         BackgroundColor = Color.Transparent;
       }
 
       public readonly HSV[] Palette = {

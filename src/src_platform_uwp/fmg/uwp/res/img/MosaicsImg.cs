@@ -30,14 +30,8 @@ namespace fmg.uwp.res.img {
       private const bool RandomCellBkColor = true;
       private Random Rand => new Random(Guid.NewGuid().GetHashCode());
 
-      public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, int widthAndHeight = DefaultImageSize, int? padding = null)
-         : base(mosaicType, sizeField, widthAndHeight, padding)
-      {
-         SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
-      }
-
-      public MosaicsImg(EMosaic mosaicType, Matrisize sizeField, Size sizeImage, Bound padding)
-         : base(mosaicType, sizeField, sizeImage, padding)
+      public MosaicsImg(EMosaic mosaicType, Matrisize sizeField)
+         : base(mosaicType, sizeField)
       {
          SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
       }

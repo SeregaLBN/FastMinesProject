@@ -2,6 +2,7 @@ package fmg.core.img;
 
 import java.util.List;
 
+import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.util.FigureHelper;
@@ -15,7 +16,10 @@ public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
       combi // color + classic
    }
 
-   protected Logo() { super(1); }
+   protected Logo() {
+      super(1);
+      setBackgroundColor(Color.Transparent);
+   }
 
    public final HSV[] Palette = {
          new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100),

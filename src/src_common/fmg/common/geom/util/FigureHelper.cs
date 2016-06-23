@@ -71,7 +71,7 @@ namespace fmg.common.geom.util {
       /// <param name="center">центр фигуры</param>
       /// <param name="additionalDeltaOffset">дополнительное смещение координат</param>
       /// <returns>new rotated points</returns>
-      public static IEnumerable<PointDouble> Rotate(this IEnumerable<PointDouble> coords, double angle, PointDouble center, PointDouble additionalDeltaOffset = new PointDouble()) {
+      public static IEnumerable<PointDouble> Rotate(this IEnumerable<PointDouble> coords, double angle, PointDouble center, PointDouble additionalDeltaOffset = default(PointDouble)) {
          angle = angle.ToRadian();
          var cos = Math.Cos(angle);
          var sin = Math.Sin(angle);
@@ -90,7 +90,7 @@ namespace fmg.common.geom.util {
       /// <param name="angle">angle of rotation: -360° .. 0° .. +360°</param>
       /// <param name="center">центр фигуры</param>
       /// <param name="additionalDeltaOffset">дополнительное смещение координат</param>
-      public static void Rotate(this IList<PointDouble> coords, double angle, PointDouble center, PointDouble additionalDeltaOffset= new PointDouble()) {
+      public static void Rotate(this IList<PointDouble> coords, double angle, PointDouble center, PointDouble additionalDeltaOffset= default(PointDouble)) {
          angle = angle.ToRadian();
          var cos = Math.Cos(angle);
          var sin = Math.Sin(angle);

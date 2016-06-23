@@ -1,4 +1,5 @@
 using System;
+using fmg.common.geom;
 
 namespace fmg.common
 {
@@ -42,40 +43,40 @@ namespace fmg.common
          this.v = v;
          this.a = a;
 
-         fix();
+         Fix();
       }
 
       public HSV(Color rgba) {
-         this.a = rgba.A;
+         a = rgba.A;
 
          double max = Math.Max(Math.Max(rgba.R, rgba.G), rgba.B);
          double min = Math.Min(Math.Min(rgba.R, rgba.G), rgba.B);
 
          { // calc H
-            if (max == min)
+            if (max.HasMinDiff(min))
                h = 0;
-            else if (max == rgba.R)
+            else if (max.HasMinDiff(rgba.R))
                h = 60 * (rgba.G - rgba.B) / (max - min) + ((rgba.G < rgba.B) ? 360 : 0);
-            else if (max == rgba.G)
+            else if (max.HasMinDiff(rgba.G))
                h = 60 * (rgba.B - rgba.R) / (max - min) + 120;
-            else if (max == rgba.B)
+            else if (max.HasMinDiff(rgba.B))
                h = 60 * (rgba.R - rgba.G) / (max - min) + 240;
             else
                throw new Exception();
          }
-         s = (max == 0) ? 0 : 100 * (1 - min / max);
+         s = max.HasMinDiff(0) ? 0 : 100 * (1 - min / max);
          v = max * 100 / 255;
 
-         fix();
+         Fix();
       }
 
-      public Color toColor() {
-         fix();
+      public Color ToColor() {
+         Fix();
 
-         double vMin = (100 - s) * v / 100;
-         double delta = (v - vMin) * ((h % 60) / 60.0);
-         double vInc = vMin + delta;
-         double vDec = v - delta;
+         var vMin = (100 - s) * v / 100;
+         var delta = (v - vMin) * ((h % 60) / 60.0);
+         var vInc = vMin + delta;
+         var vDec = v - delta;
 
          double r, g, b;
          switch (((int)(h / 60)) % 6) {
@@ -103,7 +104,7 @@ namespace fmg.common
          return new Color(a, (byte)(r * 255 / 100), (byte)(g * 255 / 100), (byte)(b * 255 / 100));
       }
 
-      private void fix() {
+      private void Fix() {
          if (h < 0) {
             h %= 360;
             h += 360;
@@ -126,12 +127,12 @@ namespace fmg.common
                v = 100;
          }
 
-         if (a < 0) {
-            a = 0;
-         } else {
-            if (a > 255)
-               a = 255;
-         }
+         //if (a < 0) {
+         //   a = 0;
+         //} else {
+         //   if (a > 255)
+         //      a = 255;
+         //}
       }
 
 
@@ -155,8 +156,8 @@ namespace fmg.common
       }
 
       public override int GetHashCode() {
-         int result = 31 + a;
-         long temp = BitConverter.DoubleToInt64Bits(h);
+         var result = 31 + a;
+         var temp = BitConverter.DoubleToInt64Bits(h);
          result = 31 * result + (int)(temp ^ (temp >> 32));
          temp = BitConverter.DoubleToInt64Bits(s);
          result = 31 * result + (int)(temp ^ (temp >> 32));

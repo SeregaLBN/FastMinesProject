@@ -1,5 +1,4 @@
 using System;
-using fmg.common.geom;
 using fmg.common.ui;
 
 namespace fmg.core.img {
@@ -16,13 +15,7 @@ namespace fmg.core.img {
    public abstract class RotatedImg<T, TImage> : StaticImg<T, TImage>
       where TImage : class
    {
-      protected RotatedImg(T entity, int widthAndHeight = DefaultImageSize, int? padding = null)
-         : base(entity, widthAndHeight, padding)
-      { }
-
-      protected RotatedImg(T entity, Size sizeImage, Bound padding)
-         : base(entity, sizeImage, padding)
-      { }
+      protected RotatedImg(T entity) : base(entity) { }
 
       private long _redrawInterval = 100;
       /// <summary> frequency of redrawing (in milliseconds) </summary>

@@ -5,7 +5,6 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using fmg.core.types;
 using fmg.common;
-using fmg.common.geom;
 using fmg.core.img;
 using fmg.uwp.draw.mosaic.win2d;
 using fmg.uwp.utils;
@@ -27,8 +26,8 @@ namespace fmg.uwp.res.img.win2d {
 
       private readonly ICanvasResourceCreator _rc;
 
-      public MosaicsGroupImg(EMosaicGroup group, ICanvasResourceCreator resourceCreator, int widthAndHeight = DefaultImageSize, int? padding = null)
-         : base(group, widthAndHeight, padding)
+      public MosaicsGroupImg(EMosaicGroup group, ICanvasResourceCreator resourceCreator)
+         : base(group)
       {
          SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
          _rc = resourceCreator;

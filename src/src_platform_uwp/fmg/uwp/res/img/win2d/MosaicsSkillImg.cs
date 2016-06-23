@@ -4,7 +4,6 @@ using Windows.Graphics.Display;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using fmg.common;
-using fmg.common.geom;
 using fmg.core.img;
 using fmg.data.controller.types;
 using fmg.uwp.utils;
@@ -27,8 +26,8 @@ namespace fmg.uwp.res.img.win2d {
 
       private readonly ICanvasResourceCreator _rc;
 
-      public MosaicsSkillImg(ESkillLevel group, ICanvasResourceCreator resourceCreator, int widthAndHeight = DefaultImageSize, int? padding = null)
-         : base(group, widthAndHeight, padding)
+      public MosaicsSkillImg(ESkillLevel group, ICanvasResourceCreator resourceCreator)
+         : base(group)
       {
          SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
          _rc = resourceCreator;
