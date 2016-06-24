@@ -24,7 +24,8 @@ namespace fmg.DataModel.Items {
          get
          {
             if (_mosaicGroupImg == null) {
-               var tmp = new MosaicsGroupImg(MosaicGroup, ImageSize * ZoomKoef) {
+               var tmp = new MosaicsGroupImg(MosaicGroup) {
+                  SizeInt = ImageSize * ZoomKoef,
                   BorderWidth = 3,
                   RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
                   //, OnlySyncDraw = true

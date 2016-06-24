@@ -17,7 +17,7 @@ public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
    }
 
    protected Logo() {
-      super(1);
+      super(0);
       setBackgroundColor(Color.Transparent);
    }
 

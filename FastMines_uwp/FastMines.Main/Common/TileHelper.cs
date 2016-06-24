@@ -195,8 +195,10 @@ namespace fmg {
          sizeField.m += Random.Next() % 2;
          sizeField.n += Random.Next() % 3;
          const int bound = 3;
-         const int ZoomKoef = 1;
-         var img = new MosaicsImg(mosaicType, sizeField, new Size(w * ZoomKoef, h * ZoomKoef), new Bound(ZoomKoef * bound)) {
+         const int zoomKoef = 1;
+         var img = new MosaicsImg(mosaicType, sizeField) {
+            Size = new Size(w * zoomKoef, h * zoomKoef),
+            Padding = new Bound(zoomKoef * bound),
             BackgroundColor = bkClr,
             SyncDraw = true
          };
@@ -205,8 +207,8 @@ namespace fmg {
          var ph = bmp.PixelHeight;
          System.Diagnostics.Debug.Assert(img.Width == pw);
          System.Diagnostics.Debug.Assert(img.Height == ph);
-         System.Diagnostics.Debug.Assert(w * ZoomKoef == pw);
-         System.Diagnostics.Debug.Assert(h * ZoomKoef == ph);
+         System.Diagnostics.Debug.Assert(w * zoomKoef == pw);
+         System.Diagnostics.Debug.Assert(h * zoomKoef == ph);
          return new Tuple<EMosaic, WriteableBitmap>(mosaicType, bmp);
       }
 

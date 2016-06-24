@@ -79,12 +79,12 @@ namespace fmg.uwp.res {
          return _imgLogoPng;
       }
 
-      public static WriteableBitmap GetImgLogo(int sizeImage, uint loopMix = 0, uint padding = 3) {
-         var imgLogo = new Logo(true) {
-            Padding = padding,
-            Zoom = Logo.CalcZoom(sizeImage, padding)
+      public static WriteableBitmap GetImgLogo(int sizeImage, int padding = 3) {
+         var imgLogo = new Logo {
+            UseGradient = true,
+            SizeInt = sizeImage,
+            PaddingInt = padding
          };
-         imgLogo.MixLoopColor(loopMix);
          return imgLogo.Image;
       }
 
@@ -149,7 +149,7 @@ namespace fmg.uwp.res {
       /// <summary> самостоятельная отрисовка </summary>
       [Obsolete("???")]
       public static MosaicsGroupImg GetImgMosaicGroup(EMosaicGroup key, int widthAndHeight = MosaicsGroupImg.DefaultImageSize) {
-         return new MosaicsGroupImg(key, widthAndHeight) { PolarLights = true };
+         return new MosaicsGroupImg(key) { SizeInt = widthAndHeight, PolarLights = true };
       }
 
       /// <summary> из ресурсов </summary>

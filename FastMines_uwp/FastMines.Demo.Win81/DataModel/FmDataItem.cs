@@ -41,7 +41,9 @@ namespace FastMines.Data {
       public override ImageSource Image {
          get {
             if (_mosaicsImg == null) {
-               _mosaicsImg = new MosaicsImg(UniqueId, _sizeField, 750, 7) {
+               _mosaicsImg = new MosaicsImg(UniqueId, _sizeField) {
+                  SizeInt = 750,
+                  PaddingInt = 7,
                   BackgroundColor = StaticImgConsts.DefaultBkColor
                };
                base.Image = _mosaicsImg.Image;

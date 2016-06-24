@@ -41,7 +41,6 @@ namespace fmg.core.img {
             return (MosaicSkill == ESkillLevel.eCustom)
                ? FigureHelper.GetRegularPolygonCoords(3 + st % 4, r1, centerStar, -angle)
                : FigureHelper.GetRegularStarCoords(rays, r1, r2, centerStar, -angle);
-
          })
          .Reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
       }

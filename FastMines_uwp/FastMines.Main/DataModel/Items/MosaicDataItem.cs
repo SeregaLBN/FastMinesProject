@@ -34,7 +34,9 @@ namespace fmg.DataModel.Items {
          get {
             if (_mosaicImg == null) {
                var sizeField = MosaicType.SizeTileField(SkillLevel);
-               var tmp = new MosaicsImg(MosaicType, sizeField, ImageSize * ZoomKoef, 5 * ZoomKoef) {
+               var tmp = new MosaicsImg(MosaicType, sizeField) {
+                  SizeInt = ImageSize * ZoomKoef,
+                  PaddingInt = 5 * ZoomKoef,
                   RotateMode = MosaicsImg.ERotateMode.SomeCells,
                   //BackgroundColor = MosaicsImg.DefaultBkColor,
                   BorderWidth = 3*ZoomKoef//,

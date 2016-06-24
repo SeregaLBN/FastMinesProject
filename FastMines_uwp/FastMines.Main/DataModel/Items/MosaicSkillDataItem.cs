@@ -27,7 +27,8 @@ namespace fmg.DataModel.Items {
          get
          {
             if (_mosaicSkillImg == null) {
-               var tmp = new MosaicsSkillImg(SkillLevel, ImageSize * ZoomKoef) {
+               var tmp = new MosaicsSkillImg(SkillLevel) {
+                  SizeInt = ImageSize * ZoomKoef,
                   BorderWidth = 2,
                   RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
                   //, OnlySyncDraw = true

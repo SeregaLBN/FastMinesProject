@@ -83,8 +83,8 @@ namespace Test.FastMines.Uwp.MosaicsImg.Win2D {
       }
 
       void canvasControl_Draw1(CanvasControl sender, CanvasDrawEventArgs args) {
-         using (var logo = new Logo(true, sender)) {
-            args.DrawingSession.DrawImage(logo.Image, new Rect(25, 25, logo.Size, logo.Size));
+         using (var logo = new Logo(sender) { UseGradient = true }) {
+            args.DrawingSession.DrawImage(logo.Image, new Rect(25, 25, logo.Width, logo.Height));
          }
       }
 

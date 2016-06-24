@@ -32,7 +32,7 @@ public abstract class Logo<TImage> extends fmg.core.img.Logo<TImage> {
    }
 
    protected void drawBody(Graphics2D g) {
-      {
+      { // fill background
          fmg.common.Color bkClr = getBackgroundColor();
          if (bkClr.getA() != fmg.common.Color.Transparent.getA()) {
             g.setColor(Cast.toColor(bkClr));

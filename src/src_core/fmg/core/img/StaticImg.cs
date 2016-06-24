@@ -39,6 +39,9 @@ namespace fmg.core.img {
             }
          }
       }
+      public int SizeInt {
+         set { Size = new Size(value, value); }
+      }
 
       /// <summary> width image </summary>
       public int Width => Size.Width;
@@ -58,6 +61,9 @@ namespace fmg.core.img {
                Invalidate();
             }
          }
+      }
+      public int PaddingInt {
+         set { Padding = new Bound(value); }
       }
 
       private T _entity;
