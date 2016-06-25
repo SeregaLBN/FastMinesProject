@@ -244,10 +244,10 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage, TPaintCo
             angle2 += 360;
          assert (angle2 < 360);
          assert (angle2 >= 0);
-         // (un)comment next line to view result changes...
+         // (un)comment next line to look result changes...
          angle2 = Math.sin(FigureHelper.toRadian((angle2 / 4))) * angle2; // accelerate / ускоряшка..
 
-         // (un)comment next line to view result changes...
+         // (un)comment next line to look result changes...
          cntxt.area = area * (1 + Math.sin(FigureHelper.toRadian(angle2 / 2))); // zoom'ирую
 
 
@@ -264,7 +264,7 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage, TPaintCo
          cell.Init();
          PointDouble centerNew = cell.getCenter();
          PointDouble delta = new PointDouble(center.x - centerNew.x, center.y - centerNew.y);
-         FigureHelper.rotate(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, centerNew, delta);
+         FigureHelper.rotate(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, centerNew, delta); // TODO: centerNew to replace center and look result changes...
 
          // restore
          attr.setArea(area);

@@ -245,10 +245,10 @@ namespace fmg.core.img {
                angle2 += 360;
             System.Diagnostics.Debug.Assert(angle2 < 360);
             System.Diagnostics.Debug.Assert(angle2 >= 0);
-            // (un)comment next line to view result changes...
+            // (un)comment next line to look result changes...
             angle2 = Math.Sin((angle2 / 4).ToRadian()) * angle2; // accelerate / ускоряшка..
 
-            // (un)comment next line to view result changes...
+            // (un)comment next line to look result changes...
             cntxt.area = area * (1 + Math.Sin((angle2 / 2).ToRadian())); // zoom'ирую
 
 
@@ -265,7 +265,7 @@ namespace fmg.core.img {
             cell.Init();
             var centerNew = cell.getCenter();
             var delta = new PointDouble(center.X - centerNew.X, center.Y - centerNew.Y);
-            cell.getRegion().Points.Rotate((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, centerNew, delta);
+            cell.getRegion().Points.Rotate((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, centerNew, delta); // TODO: centerNew to replace center and look result changes...
 
             // restore
             attr.Area = area;

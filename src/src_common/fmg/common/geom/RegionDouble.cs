@@ -6,38 +6,27 @@ using System.Text;
 namespace fmg.common.geom {
 
    public class RegionDouble {
-      private readonly PointDouble[] _points;
 
       public RegionDouble(int size) {
-         _points = new PointDouble[size];
+         var list = new List<PointDouble>(size);
          for (var i = 0; i < size; i++)
-            _points[i] = new PointDouble();
+            list.Add(default(PointDouble));
+         Points = list;
       }
 
-      public IEnumerable<PointDouble> Points => _points;
-
-      public PointDouble GetPoint(int index) {
-         return _points[index];
-      }
-
-      public void SetPoint(int index, double x, double y) {
-         _points[index].X = x;
-         _points[index].Y = y;
-      }
-      public void SetPoint(int index, PointDouble p) {
-         _points[index] = p;
-      }
-
-      public int CountPoints => _points.Length;
+      public List<PointDouble> Points { get; }
+      public PointDouble GetPoint(int index) { return Points[index]; }
+      public void SetPoint(int index, double x, double y) { Points[index] = new PointDouble(x, y); }
+      public int CountPoints => Points.Count;
 
       public RectDouble GetBounds() {
-         double minX = _points[0].X, maxX = _points[0].X;
-         double minY = _points[0].Y, maxY = _points[0].Y;
-         for (var i = 1; i < _points.Length; i++) {
-            minX = Math.Min(minX, _points[i].X);
-            maxX = Math.Max(maxX, _points[i].X);
-            minY = Math.Min(minY, _points[i].Y);
-            maxY = Math.Max(maxY, _points[i].Y);
+         double minX = Points[0].X, maxX = Points[0].X;
+         double minY = Points[0].Y, maxY = Points[0].Y;
+         for (var i = 1; i < Points.Count; i++) {
+            minX = Math.Min(minX, Points[i].X);
+            maxX = Math.Max(maxX, Points[i].X);
+            minY = Math.Min(minY, Points[i].Y);
+            maxY = Math.Max(maxY, Points[i].Y);
          }
          return new RectDouble(minX, minY, maxX - minX, maxY - minY);
       }
@@ -47,21 +36,21 @@ namespace fmg.common.geom {
          double x = point.X + 0.01;
          double y = point.Y + 0.01;
          var count = 0;
-         for (var i = 0; i < _points.Length; i++) {
-            var j = (i + 1)%_points.Length;
-            if (_points[i].Y.HasMinDiff(_points[j].Y))
+         for (var i = 0; i < Points.Count; i++) {
+            var j = (i + 1)%Points.Count;
+            if (Points[i].Y.HasMinDiff(Points[j].Y))
                continue;
-            if (_points[i].Y > y && _points[j].Y > y)
+            if (Points[i].Y > y && Points[j].Y > y)
                continue;
-            if (_points[i].Y < y && _points[j].Y < y)
+            if (Points[i].Y < y && Points[j].Y < y)
                continue;
-            if (Math.Abs(Math.Max(_points[i].Y, _points[j].Y) - y) < 0.001)
+            if (Math.Abs(Math.Max(Points[i].Y, Points[j].Y) - y) < 0.001)
                count++;
-            else if (Math.Abs(Math.Min(_points[i].Y, _points[j].Y) - y) < 0.001)
+            else if (Math.Abs(Math.Min(Points[i].Y, Points[j].Y) - y) < 0.001)
                continue;
             else {
-               double t = (y - _points[i].Y)/(_points[j].Y - _points[i].Y);
-               if (t > 0 && t < 1 && _points[i].X + t*(_points[j].X - _points[i].X) >= x)
+               double t = (y - Points[i].Y)/(Points[j].Y - Points[i].Y);
+               if (t > 0 && t < 1 && Points[i].X + t*(Points[j].X - Points[i].X) >= x)
                   count++;
             }
          }
@@ -76,24 +65,24 @@ namespace fmg.common.geom {
          var o = other as RegionDouble;
          if (o == null)
             return false;
-         if (_points.Length != o._points.Length)
+         if (Points.Count != o.Points.Count)
             return false;
-         return !_points.Where((p, i) => p != o._points[i]).Any();
+         return !Points.Where((p, i) => p != o.Points[i]).Any();
       }
 
       public override int GetHashCode() {
-         return _points.Aggregate(0, (current, p) => current^p.GetHashCode());
+         return Points.Aggregate(0, (current, p) => current^p.GetHashCode());
       }
 
       public override string ToString() {
          var sb = new StringBuilder();
          //sb.Append(super.ToString());
          sb.Append('{');
-         for (var i = 0; i < _points.Length; i++) {
-            var p = _points[i];
+         for (var i = 0; i < Points.Count; i++) {
+            var p = Points[i];
             //sb.Append(i).Append('=');
             sb.Append(p);
-            if (i != _points.Length - 1)
+            if (i != Points.Count - 1)
                sb.Append(", ");
          }
          sb.Append('}');

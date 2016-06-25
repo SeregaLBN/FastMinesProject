@@ -22,8 +22,8 @@ namespace Test.FastMines.Uwp.MosaicsImg.WBmp {
 
       private static readonly Random Rnd = new Random(Guid.NewGuid().GetHashCode());
       private static int R(int max) => Rnd.Next(max);
-      private static int Np => (R(2) == 1 ? -1 : +1); // negative or positive
       private static bool Bl => (R(2) == 1); // random bool
+      private static int Np => (Bl ? -1 : +1); // negative or positive
 
       private static void ModifyBk<T>(StaticImg<T, WriteableBitmap> demoImg) {
          var hsv = new HSV(demoImg.BackgroundColor) {a = (byte)(170 + R(10)) };

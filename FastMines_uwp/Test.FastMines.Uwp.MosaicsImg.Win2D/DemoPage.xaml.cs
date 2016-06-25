@@ -39,7 +39,9 @@ namespace Test.FastMines.Uwp.MosaicsImg.Win2D {
       public DemoPage() {
          this.InitializeComponent();
          this.Unloaded += (sender, args) => {
+            _msi.Dispose();
             _mgi.Dispose();
+            _mi.Dispose();
          };
 
          {

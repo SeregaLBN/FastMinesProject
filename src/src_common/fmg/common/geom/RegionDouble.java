@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RegionDouble {
-   protected final List<PointDouble> points;
 
    public RegionDouble(int size) {
       points = new ArrayList<>(size);
@@ -12,15 +11,14 @@ public class RegionDouble {
          points.add( new PointDouble() );
    }
 
+   protected final List<PointDouble> points;
    public List<PointDouble> getPoints() { return points; }
-
    public PointDouble getPoint(int index) { return points.get(index); }
    public void setPoint(int index, double x, double y) {
       PointDouble p = points.get(index);
       p.x = x;
       p.y = y;
    }
-
    public int getCountPoints() { return points.size(); }
 
    public RectDouble getBounds() {
