@@ -85,7 +85,8 @@ namespace Test.FastMines.Uwp.Images.Win2D {
 
          var mosaicsImg = img as MosaicsImg;
          if (mosaicsImg != null) {
-            mosaicsImg.RotateMode = Bl ? MosaicsImg.ERotateMode.FullMatrix : MosaicsImg.ERotateMode.SomeCells;
+            var vals = (MosaicsImg.ERotateMode[])Enum.GetValues(typeof(MosaicsImg.ERotateMode));
+            mosaicsImg.RotateMode = vals[R(vals.Length)];
          }
 
          if (Bl) {

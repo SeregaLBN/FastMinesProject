@@ -240,7 +240,12 @@ namespace fmg.uwp.res.img.win2d {
          using (var ds = ((CanvasRenderTarget)img).CreateDrawingSession()) {
             //var rc = new Windows.Foundation.Rect(0, 0, Width, Height);
             //ds.DrawImage(ImageCache, rc, rc);
-            ds.DrawImage(ImageCache);
+            if (UseCache) {
+               var rc = new Windows.Foundation.Rect(0, 0, Width, Height);
+               ds.DrawImage(ImageCache, rc, rc, 1.0f, CanvasImageInterpolation.NearestNeighbor, CanvasComposite.Copy);
+            } else {
+               ds.DrawImage(ImageCache);
+            }
          }
       }
 
