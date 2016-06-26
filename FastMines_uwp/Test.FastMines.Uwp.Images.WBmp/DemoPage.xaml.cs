@@ -52,9 +52,9 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          RotateAngleDelta = (3 + R(4)) * Np,
          //OnlySyncDraw = true
       };
-      public fmg.uwp.res.img.MosaicsImg DemoImg3 { get; } = new fmg.uwp.res.img.MosaicsImg(EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3))) {
+      public MosaicsImg DemoImg3 { get; } = new MosaicsImg(EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3))) {
          SizeInt = 175 + R(50),
-         RotateMode = Bl ? fmg.uwp.res.img.MosaicsImg.ERotateMode.SomeCells : fmg.uwp.res.img.MosaicsImg.ERotateMode.FullMatrix,
+         RotateMode = Bl ? MosaicsImg.ERotateMode.SomeCells : MosaicsImg.ERotateMode.FullMatrix,
          Rotate = true,
          RedrawInterval = 30 + R(40),
          RotateAngleDelta = (3 + R(4)) * Np,
