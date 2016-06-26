@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
@@ -8,7 +8,7 @@ using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.uwp.res.img;
 
-namespace Test.FastMines.Uwp.MosaicsImg.WBmp {
+namespace Test.FastMines.Uwp.Images.WBmp {
 
    public sealed partial class DemoPage : Page {
 

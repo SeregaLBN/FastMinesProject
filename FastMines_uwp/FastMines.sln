@@ -26,13 +26,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.BackgroundTasks.W
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{6C78E2F6-4321-4C89-9312-AA367B07205C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Uwp.MosaicsImg.WBmp", "Test.FastMines.Uwp.MosaicsImg.WBmp\Test.FastMines.Uwp.MosaicsImg.WBmp.csproj", "{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Uwp.Images.WBmp", "Test.FastMines.Uwp.Images.WBmp\Test.FastMines.Uwp.Images.WBmp.csproj", "{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FastMines.BackgroundTasks", "FastMines.BackgroundTasks", "{0585F288-2040-4CC2-8289-31B7D5C28D29}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FastMines.Uwp", "FastMines.Uwp", "{D47E7AF7-77FF-43A6-949A-6B98EB51499D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Uwp.MosaicsImg.Win2D", "Test.FastMines.Uwp.MosaicsImg.Win2D\Test.FastMines.Uwp.MosaicsImg.Win2D.csproj", "{10F79DED-68DD-484D-93D0-162C71ECC56C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Uwp.Images.Win2D", "Test.FastMines.Uwp.Images.Win2D\Test.FastMines.Uwp.Images.Win2D.csproj", "{10F79DED-68DD-484D-93D0-162C71ECC56C}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

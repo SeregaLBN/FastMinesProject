@@ -1,8 +1,8 @@
-﻿<Application
-    x:Class="Test.FastMines.Uwp.MosaicsImg.WBmp.App"
+<Application
+    x:Class="Test.FastMines.Uwp.Images.WBmp.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Test.FastMines.Uwp.MosaicsImg.WBmp"
+    xmlns:local="using:Test.FastMines.Uwp.Images.WBmp"
     RequestedTheme="Light">
 
 </Application>

@@ -1,14 +1,14 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{10F79DED-68DD-484D-93D0-162C71ECC56C}</ProjectGuid>
+    <ProjectGuid>{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Test.FastMines.Uwp.MosaicsImg.Win2D</RootNamespace>
-    <AssemblyName>Test.FastMines.Uwp.MosaicsImg.Win2D</AssemblyName>
+    <RootNamespace>Test.FastMines.Uwp.Images.WBmp</RootNamespace>
+    <AssemblyName>Test.FastMines.Uwp.Images.WBmp</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
@@ -16,8 +16,8 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>Test.FastMines.Uwp.MosaicsImg.Win2D_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>2B48A0452AEE9D559EED1BD846B78BA4AEBBCF1D</PackageCertificateThumbprint>
+    <PackageCertificateKeyFile>Test.FastMines.Uwp.Images.WBmp_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>3E62273F0C7CB78EC223448C85F8B0A2F36BD234</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -93,30 +93,6 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\win2d\CanvasExt.cs">
-      <Link>CanvasExt.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\win2d\CellPaintWin2D.cs">
-      <Link>CellPaintWin2D.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\win2d\PaintableWin2d.cs">
-      <Link>PaintableWin2d.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\win2d\Logo.cs">
-      <Link>Logo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\win2d\MosaicsGroupImg.cs">
-      <Link>MosaicsGroupImg.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\win2d\MosaicsImg.cs">
-      <Link>MosaicsImg.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\win2d\MosaicsSkillImg.cs">
-      <Link>MosaicsSkillImg.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\Vector2Ext.cs">
-      <Link>Vector2Ext.cs</Link>
-    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -129,31 +105,17 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="Test.FastMines.Uwp.MosaicsImg.Win2D_TemporaryKey.pfx" />
+    <None Include="Test.FastMines.Uwp.Images.WBmp_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\Test.FastMines.Uwp.MosaicsImg.WBmp\Assets\LockScreenLogo.scale-200.png">
-      <Link>Assets\LockScreenLogo.scale-200.png</Link>
-    </Content>
-    <Content Include="..\Test.FastMines.Uwp.MosaicsImg.WBmp\Assets\SplashScreen.scale-200.png">
-      <Link>Assets\SplashScreen.scale-200.png</Link>
-    </Content>
-    <Content Include="..\Test.FastMines.Uwp.MosaicsImg.WBmp\Assets\Square150x150Logo.scale-200.png">
-      <Link>Assets\Square150x150Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="..\Test.FastMines.Uwp.MosaicsImg.WBmp\Assets\Square44x44Logo.scale-200.png">
-      <Link>Assets\Square44x44Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="..\Test.FastMines.Uwp.MosaicsImg.WBmp\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
-      <Link>Assets\Square44x44Logo.targetsize-24_altform-unplated.png</Link>
-    </Content>
-    <Content Include="..\Test.FastMines.Uwp.MosaicsImg.WBmp\Assets\StoreLogo.png">
-      <Link>Assets\StoreLogo.png</Link>
-    </Content>
-    <Content Include="..\Test.FastMines.Uwp.MosaicsImg.WBmp\Assets\Wide310x150Logo.scale-200.png">
-      <Link>Assets\Wide310x150Logo.scale-200.png</Link>
-    </Content>
     <Content Include="Properties\Default.rd.xml" />
+    <Content Include="Assets\LockScreenLogo.scale-200.png" />
+    <Content Include="Assets\SplashScreen.scale-200.png" />
+    <Content Include="Assets\Square150x150Logo.scale-200.png" />
+    <Content Include="Assets\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="Assets\StoreLogo.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -179,7 +141,6 @@
       <Name>FastMines.Uwp.Win10</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

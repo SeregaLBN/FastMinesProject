@@ -14,7 +14,7 @@
   <mp:PhoneIdentity PhoneProductId="6d381991-3090-4419-865f-5de5a4ce6392" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Test.FastMines.Uwp.MosaicsImg.WBmp</DisplayName>
+    <DisplayName>Test.FastMines.Uwp.Images.WBmp</DisplayName>
     <PublisherDisplayName>Kryvulki</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -30,12 +30,12 @@
   <Applications>
     <Application Id="App"
       Executable="$targetnametoken$.exe"
-      EntryPoint="Test.FastMines.Uwp.MosaicsImg.WBmp.App">
+      EntryPoint="Test.FastMines.Uwp.Images.WBmp.App">
       <uap:VisualElements
-        DisplayName="Test.FastMines.Uwp.MosaicsImg.WBmp"
+        DisplayName="Test.FastMines.Uwp.Images.WBmp"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="Test.FastMines.Uwp.MosaicsImg.WBmp"
+        Description="Test.FastMines.Uwp.Images.WBmp"
         BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
