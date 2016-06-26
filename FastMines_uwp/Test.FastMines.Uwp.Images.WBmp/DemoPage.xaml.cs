@@ -12,54 +12,63 @@ namespace Test.FastMines.Uwp.Images.WBmp {
 
    public sealed partial class DemoPage : Page {
 
-      public DemoPage() {
-         InitializeComponent();
-
-         ModifyBk(DemoImg1);
-         ModifyBk(DemoImg2);
-         ModifyBk(DemoImg3);
-      }
+      public Logo            DemoImg1 { get; } = new Logo();
+      public MosaicsSkillImg DemoImg2 { get; } = new MosaicsSkillImg(ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)]);
+      public MosaicsGroupImg DemoImg3 { get; } = new MosaicsGroupImg(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)]);
+      public MosaicsImg      DemoImg4 { get; } = new MosaicsImg(EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)));
 
       private static readonly Random Rnd = new Random(Guid.NewGuid().GetHashCode());
       private static int R(int max) => Rnd.Next(max);
       private static bool Bl => (R(2) == 1); // random bool
       private static int Np => (Bl ? -1 : +1); // negative or positive
 
-      private static void ModifyBk<T>(StaticImg<T, WriteableBitmap> demoImg) {
-         var hsv = new HSV(demoImg.BackgroundColor) {a = (byte)(170 + R(10)) };
-         demoImg.PropertyChanged += (o, ev) => {
-            switch (ev.PropertyName) {
-            case "RotateAngle":
-               hsv.h = demoImg.RotateAngle;
-               demoImg.BackgroundColor = hsv.ToColor();
-               break;
-            }
-         };
+      public DemoPage() {
+         InitializeComponent();
+
+         ApplyRandom(DemoImg1);
+         ApplyRandom(DemoImg2);
+         ApplyRandom(DemoImg3);
+         ApplyRandom(DemoImg4);
       }
 
-      public MosaicsGroupImg DemoImg1 { get; } = new MosaicsGroupImg(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)]) {
-         SizeInt = 175 + R(50),
-         Rotate = true,
-         RedrawInterval = 30 + R(40),
-         RotateAngleDelta = (3 + R(4)) * Np,
-         PolarLights = true,
-         //OnlySyncDraw = true
-      };
-      public MosaicsSkillImg DemoImg2 { get; } = new MosaicsSkillImg(ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)]) {
-         SizeInt = 175 + R(50),
-         Rotate = true,
-         RedrawInterval = 30 + R(40),
-         RotateAngleDelta = (3 + R(4)) * Np,
-         //OnlySyncDraw = true
-      };
-      public MosaicsImg DemoImg3 { get; } = new MosaicsImg(EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3))) {
-         SizeInt = 175 + R(50),
-         RotateMode = Bl ? MosaicsImg.ERotateMode.SomeCells : MosaicsImg.ERotateMode.FullMatrix,
-         Rotate = true,
-         RedrawInterval = 30 + R(40),
-         RotateAngleDelta = (3 + R(4)) * Np,
-         //OnlySyncDraw = true
-      };
+      private static void ApplyRandom<T>(RotatedImg<T, WriteableBitmap> img) {
+         img.SizeInt = 175 + R(50);
+
+         img.Rotate = true;
+         img.RotateAngleDelta = (3 + R(5)) * Np;
+         img.RedrawInterval = 50;
+         img.BorderWidth = Bl ? 1 : 2;
+
+         var plrImg = img as PolarLightsImg<T, WriteableBitmap>;
+         if (plrImg != null) {
+            plrImg.PolarLights = true;
+         }
+
+         var logoImg = img as Logo;
+         if (logoImg != null) {
+            var vals = (Logo.ERotateMode[])Enum.GetValues(typeof(Logo.ERotateMode));
+            logoImg.RotateMode = vals[R(vals.Length)];
+            logoImg.UseGradient = Bl;
+         }
+
+         var mosaicsImg = img as MosaicsImg;
+         if (mosaicsImg != null) {
+            mosaicsImg.RotateMode = Bl ? MosaicsImg.ERotateMode.FullMatrix : MosaicsImg.ERotateMode.SomeCells;
+         }
+
+         if (Bl) {
+            // test transparent
+            var bkClr = new HSV(ColorExt.RandomColor(Rnd)) { a = (byte)(50 + R(10)) };
+            img.PropertyChanged += (o, ev) => {
+               if ("RotateAngle" == ev.PropertyName) {
+                  bkClr.h = img.RotateAngle;
+                  img.BackgroundColor = bkClr.ToColor();
+               }
+            };
+         } else {
+            img.BackgroundColor = ColorExt.RandomColor(Rnd).Brighter();
+         }
+      }
 
    }
 

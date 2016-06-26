@@ -11,9 +11,14 @@ import fmg.common.geom.util.FigureHelper;
 public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
 
    public enum ERotateMode {
+      /** rotate image */
       classic,
+
+      /** rotate color Palette */
       color,
-      combi // color + classic
+
+      /** {@link #color} + {@link #classic} */
+      combi
    }
 
    protected Logo() {
@@ -83,6 +88,18 @@ public abstract class Logo<TImage> extends PolarLightsImg<Object, TImage> {
          FigureHelper.rotate(inn, ra, center, none);
          FigureHelper.rotate(oct, ra, center, none);
       }
+   }
+
+   @Override
+   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+      if ((getRotateMode() != ERotateMode.classic) && "RotateAngle".equals(propertyName)) {
+         double delta = getRotateAngleDelta();
+         for (int i=0; i<Palette.length; ++i) {
+            Palette[i].h += delta;
+         }
+
+      }
+      super.onPropertyChanged(oldValue, newValue, propertyName);
    }
 
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel;
 using fmg.common;
 using fmg.common.geom;
 using fmg.common.geom.util;
@@ -11,8 +12,8 @@ namespace fmg.core.img {
    {
 
       public enum ERotateMode {
-         Classic,
-         Color,
+         Classic, // rotate image
+         Color, // rotate color Palette
          Combi // color + classic
       }
 
@@ -88,6 +89,16 @@ namespace fmg.core.img {
             inn.Rotate(ra, center, none);
             oct.Rotate(ra, center, none);
          }
+      }
+
+      protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         if ((RotateMode != ERotateMode.Classic) && ("RotateAngle" == ev.PropertyName)) {
+            var delta = RotateAngleDelta;
+            for (var i = 0; i < Palette.Length; ++i) {
+               Palette[i].h += delta;
+            }
+         }
+         base.OnPropertyChanged(sender, ev);
       }
 
    }

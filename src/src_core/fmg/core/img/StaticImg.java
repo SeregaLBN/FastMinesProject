@@ -37,8 +37,8 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
    public void setSize(int widhtAndHeight) { setSize(new Size(widhtAndHeight, widhtAndHeight)) ; }
    public void setSize(Size value) {
       if (setProperty(_size, value, "Size")) {
-         setImage(createImage());
-         invalidate();
+         setImage(null);
+         //invalidate();
       }
    }
 
@@ -147,8 +147,8 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
    protected void invalidate() {
       if (_invalidate == EInvalidate.redrawing)
          return;
-//      if (_invalidate == EInvalidate.needRedraw)
-//         return;
+      //if (_invalidate == EInvalidate.needRedraw)
+      //   return;
       _invalidate = EInvalidate.needRedraw;
       onPropertyChanged("Image");
    }

@@ -2,6 +2,7 @@ package fmg.swing.res.img;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeListener;
@@ -19,133 +20,116 @@ import fmg.common.Pair;
 import fmg.common.geom.Size;
 import fmg.core.img.PolarLightsImg;
 import fmg.core.img.RotatedImg;
-import fmg.core.img.StaticImg;
-import fmg.swing.Cast;
 
 /** @see {@link MosaicsSkillImg#main}, {@link MosaicsGroupImg#main}, {@link MosaicsImg#main} */
 final class TestDrawing {
    static final int SIZE = 300;
    static final int offset = 10;
 
-   static <TEntity> void testApp(Function<Random, Pair<StaticImg<TEntity, javax.swing.Icon>, StaticImg<TEntity, java.awt.Image>>> funcGetImages) {
+   private static Random rnd = new Random(UUID.randomUUID().hashCode());
+   private static int r(int max){ return rnd.nextInt(max); }
+   private static boolean bl() { return (r(2) == 1); } // random bool
+   private static int np() { return (bl() ? -1 : +1); } // negative or positive
+
+   static <TEntity, TImage> void applyRandom(RotatedImg<TEntity, TImage> img) {
+      int maxSize = (int)(SIZE/2.0 * 1.2);
+      int minSize = (int)(maxSize * 0.8);
+      img.setSize(new Size(minSize+r(maxSize-minSize), minSize+r(maxSize-minSize)));
+
+      img.setRotate(true);
+      img.setRotateAngleDelta((3 + r(5)) * np());
+      img.setRedrawInterval(50);
+      img.setBorderWidth(bl() ? 1 : 2);
+
+      if (img instanceof PolarLightsImg) {
+         PolarLightsImg<TEntity, ?> plImg = (PolarLightsImg<TEntity, ?>)img;
+         plImg.setPolarLights(true);
+      }
+
+      if (img instanceof Logo) {
+         Logo<?> logoImg = (Logo<?>)img;
+         logoImg.setRotateMode(Logo.ERotateMode.values()[r(Logo.ERotateMode.values().length)]);
+         logoImg.setUseGradient(bl());
+      }
+
+      if (img instanceof MosaicsImg) {
+         MosaicsImg<?> mosaicsImg = (MosaicsImg<?>)img;
+         mosaicsImg.setRotateMode(MosaicsImg.ERotateMode.values()[r(MosaicsImg.ERotateMode.values().length)]);
+      }
+
+      if (bl()) {
+         // test transparent
+         HSV bkClr = new HSV(Color.RandomColor(rnd)); bkClr.a = 50 + r(10);
+         img.addListener(ev -> {
+            if ("RotateAngle".equals(ev.getPropertyName())) {
+               bkClr.h = img.getRotateAngle();
+               img.setBackgroundColor(bkClr.toColor());
+            }
+         });
+      } else {
+         img.setBackgroundColor(Color.RandomColor(rnd).brighter());
+      }
+   }
+
+   static <TEntity> void testApp(Function<Random, Pair<RotatedImg<TEntity, ?>, RotatedImg<TEntity, ?>>> funcGetImages) {
       new JFrame() {
          private static final long serialVersionUID = 1L;
          {
-             Random rnd = new Random(UUID.randomUUID().hashCode());
-             Pair<StaticImg<TEntity, javax.swing.Icon>, StaticImg<TEntity, java.awt.Image>> icoImg = funcGetImages.apply(rnd);
-             StaticImg<TEntity, javax.swing.Icon> img1 = icoImg.first;
-             StaticImg<TEntity, java.awt.Image> img2 = icoImg.second;
-             Size size = new Size(SIZE/2, SIZE/2);
-             img1.setSize(size);
-             img2.setSize(size);
+            Pair<RotatedImg<TEntity, ?>, RotatedImg<TEntity, ?>> icoImg = funcGetImages.apply(rnd);
+            RotatedImg<TEntity, ?> img1 = icoImg.first;
+            RotatedImg<TEntity, ?> img2 = icoImg.second;
 
-             setSize(SIZE+30, SIZE+50);
-             setTitle("test paints " + img1.getClass().getName() + " & " + img2.getClass().getName());
-             setLocationRelativeTo(null);
+            setSize(SIZE+30, SIZE+50);
+            setTitle("test paints " + img1.getClass().getName() + " & " + img2.getClass().getName());
+            setLocationRelativeTo(null);
 
-             JPanel jPanel = new JPanel() {
-                private static final long serialVersionUID = 1L;
-                {
-                   setPreferredSize(new Dimension(SIZE, SIZE));
-                }
-                @Override
-                public void paintComponent(Graphics g) {
-                   super.paintComponent(g);
-                   //g.clearRect(offset, offset, SIZE-offset*2, SIZE-offset*2);
-                   g.drawRect(offset, offset, SIZE-offset*2, SIZE-offset*2);
+            JPanel jPanel = new JPanel() {
+               private static final long serialVersionUID = 1L;
+               {
+                  setPreferredSize(new Dimension(SIZE, SIZE));
+               }
+               @Override
+               public void paintComponent(Graphics g) {
+                  super.paintComponent(g);
+                  //g.clearRect(offset, offset, SIZE-offset*2, SIZE-offset*2);
+                  g.drawRect(offset, offset, SIZE-offset*2, SIZE-offset*2);
 
-                   img1.getImage().paintIcon(this, g, 2*offset, 2*offset);
-                   g.drawImage(img2.getImage(), SIZE/2-offset, SIZE/2-offset, null);
+                  Object img = img1.getImage();
+                  if (img instanceof Icon)
+                     ((Icon)img).paintIcon(this, g, 2*offset, 2*offset);
 
-                   //testHsv(g);
-                }
+                  img = img2.getImage();
+                  if (img instanceof Image)
+                     g.drawImage((Image)img, SIZE-2*offset-img2.getWidth(), SIZE-2*offset-img2.getHeight(), null);
+               }
+            };
+            add(jPanel);
 
-                @SuppressWarnings("unused")
-                private void testHsv(Graphics g) {
-                   int offsetX = SIZE-offset-360, offsetY = offset*2;
-                   HSV hsv = new HSV();
+            PropertyChangeListener l = evt -> {
+               if ("Image".equals(evt.getPropertyName())) {
+                  //jPanel.invalidate();
+                  //jPanel.revalidate();
+                  jPanel.repaint();
+               }
+            };
+            img1.addListener(l);
+            img2.addListener(l);
 
-                   hsv.v = 100;
-                   for (int h = 0; h < 360; ++h) {
-                      hsv.h = h;
-                      for (int s = 0; s <= 100; ++s) {
-                         hsv.s = s;
-                         g.setColor(Cast.toColor(hsv.toColor()));
-                         g.drawLine(offsetX+h, offsetY+s, offsetX+h, offsetY+s); // set point
-                      }
-                   }
+            applyRandom(img1);
+            applyRandom(img2);
 
-                   offsetY += 200;
-
-                   hsv.s = 100;
-                   for (int h = 0; h < 360; ++h) {
-                      hsv.h = h;
-                      for (int v = 0; v <= 100; ++v) {
-                         hsv.v = v;
-                         g.setColor(Cast.toColor(hsv.toColor()));
-                         g.drawLine(offsetX+h, offsetY-v, offsetX+h, offsetY-v); // set point
-                      }
-                   }
-                }
-             };
-             add(jPanel);
-
-             PropertyChangeListener l = evt -> {
-                if ("Image".equals(evt.getPropertyName())) {
-                   //jPanel.invalidate();
-                   //jPanel.revalidate();
-                   jPanel.repaint();
-                }
-             };
-             img1.addListener(l);
-             img2.addListener(l);
-
-             final boolean testTransparent = !false;
-             if (testTransparent) {  // test transparent
-                Color bkClr = Color.RandomColor(rnd); bkClr.setA((byte)0x40); // Color.Transparent; //
-                img1.setBackgroundColor(bkClr);
-                bkClr = Color.RandomColor(rnd); bkClr.setA((byte)0x30); // Color.Transparent; //
-                img2.setBackgroundColor(bkClr);
-             } else {
-                img1.setBackgroundColor(Cast.toColor(jPanel.getBackground()));
-                img2.setBackgroundColor(Cast.toColor(jPanel.getBackground()));
-             }
-
-             if (img1 instanceof PolarLightsImg) {
-                PolarLightsImg<TEntity, javax.swing.Icon> imgP1 = (PolarLightsImg<TEntity, javax.swing.Icon>)img1;
-                imgP1.setPolarLights(true);
-             }
-             if (img2 instanceof PolarLightsImg) {
-                PolarLightsImg<TEntity, java.awt.Image> imgP2 = (PolarLightsImg<TEntity, java.awt.Image>)img2;
-                imgP2.setPolarLights(true);
-             }
-             if (img1 instanceof RotatedImg) {
-                RotatedImg<TEntity, javax.swing.Icon> imgR1 = (RotatedImg<TEntity, javax.swing.Icon>)img1;
-                imgR1.setRotateAngleDelta(-(3/*+rnd.nextInt(3)*/)*imgR1.getRotateAngleDelta());
-                imgR1.setRotate(true);
-             } else {
-                //img1.setRotateAngle(+15 + rnd.nextInt(15));
-                img1.setRotateAngle(+33.3333);
-             }
-             if (img2 instanceof RotatedImg) {
-                RotatedImg<TEntity, java.awt.Image> imgR2 = (RotatedImg<TEntity, java.awt.Image>)img2;
-                imgR2.setRotateAngleDelta(+(5/*+rnd.nextInt(3)*/)*imgR2.getRotateAngleDelta());
-                imgR2.setRotate(true);
-             } else {
-                //img2.setRotateAngle( -7 - rnd.nextInt(8));
-                img2.setRotateAngle(-15);
-             }
-
-             //setDefaultCloseOperation(EXIT_ON_CLOSE);
-             addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent we) {
-                   img1.close();
-                   img2.close();
-                   dispose();
-                }
-             });
-             setVisible(true);
+            //setDefaultCloseOperation(EXIT_ON_CLOSE);
+            addWindowListener(new WindowAdapter() {
+               @Override
+               public void windowClosing(WindowEvent we) {
+                  img1.removeListener(l);
+                  img2.removeListener(l);
+                  img1.close();
+                  img2.close();
+                  dispose();
+               }
+            });
+            setVisible(true);
          }
       };
    }

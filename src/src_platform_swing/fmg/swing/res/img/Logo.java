@@ -34,7 +34,8 @@ public abstract class Logo<TImage> extends fmg.core.img.Logo<TImage> {
    protected void drawBody(Graphics2D g) {
       { // fill background
          fmg.common.Color bkClr = getBackgroundColor();
-         if (bkClr.getA() != fmg.common.Color.Transparent.getA()) {
+         //if (bkClr.getA() != fmg.common.Color.Transparent.getA())
+         {
             g.setColor(Cast.toColor(bkClr));
             g.fillRect(0, 0, getWidth(), getHeight());
          }
@@ -109,18 +110,6 @@ public abstract class Logo<TImage> extends fmg.core.img.Logo<TImage> {
          p.length);
    }
 
-   @Override
-   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      if ((getRotateMode() != ERotateMode.classic) && "RotateAngle".equals(propertyName)) {
-         double delta = getRotateAngleDelta();
-         for (int i=0; i<Palette.length; ++i) {
-            Palette[i].h += delta;
-         }
-
-      }
-      super.onPropertyChanged(oldValue, newValue, propertyName);
-   }
-
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    //    custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -187,15 +176,9 @@ public abstract class Logo<TImage> extends fmg.core.img.Logo<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.<Object>testApp(rnd -> {
-         Logo.Icon img1 = new Logo.Icon();
-         img1.setUseGradient(true);
-         img1.setRotateMode(ERotateMode.values()[rnd.nextInt(ERotateMode.values().length)]);
-         Logo.Image img2 = new Logo.Image();
-         img2.setUseGradient(false);
-         img2.setRotateMode(ERotateMode.values()[rnd.nextInt(ERotateMode.values().length)]);
-         return new Pair<>(img1, img2);
-      });
+      TestDrawing.<Object>testApp(rnd ->
+         new Pair<>(new Logo.Icon(), new Logo.Image())
+      );
    }
 
 //   public static void main(String[] args) {

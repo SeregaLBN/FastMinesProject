@@ -33,9 +33,8 @@ namespace fmg.core.img {
          get { return _size; }
          set {
             if (SetProperty(ref _size, value)) {
-               //LoggerSimple.Put("setSize: {0}", Entity);
-               Image = CreateImage();
-               Invalidate();
+               Image = null;
+               //Invalidate();
             }
          }
       }
@@ -162,8 +161,8 @@ namespace fmg.core.img {
       protected void Invalidate() {
          if (_invalidate == EInvalidate.Redrawing)
             return;
-         if (_invalidate == EInvalidate.NeedRedraw)
-            return;
+         //if (_invalidate == EInvalidate.NeedRedraw)
+         //   return;
          _invalidate = EInvalidate.NeedRedraw;
          OnPropertyChanged("Image");
       }
