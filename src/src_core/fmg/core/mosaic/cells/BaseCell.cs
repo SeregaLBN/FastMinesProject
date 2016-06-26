@@ -22,7 +22,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using fmg.common;
 using fmg.common.geom;
@@ -86,11 +85,6 @@ namespace fmg.core.mosaic.cells {
          /// <summary>кол-во direction'ов, которые знает данный тип мозаики</summary>
          public int GetDirectionCount() { Size s = GetDirectionSizeField(); return s.Width*s.Height; }
 
-         /// <summary>кол-во соседей (максимум или минимум)</summary>
-         public virtual int getNeighborNumber(bool max) {
-            var str = Enumerable.Range(0, GetDirectionCount()).Select(getNeighborNumber);
-            return max ? str.Max() : str.Min();
-         }
          /// <summary>кол-во соседей у ячейки конкретной направленности</summary>
          public abstract int getNeighborNumber(int direction);
          /// <summary>из скольки точек/вершин состоит фигура конкретной направленности</summary>
@@ -214,14 +208,12 @@ namespace fmg.core.mosaic.cells {
       public IList<BaseCell> GetNeighbors(IMatrixCells matrix) {
          // получаю координаты соседних ячеек
          var neighborCoord = GetCoordsNeighbor();
-         if (neighborCoord.Count != attr.getNeighborNumber(true))
-            throw new Exception("neighborCoord.Length != GetNeighborNumber()");
 
-         int m = matrix.SizeField.m;
-         int n = matrix.SizeField.n;
+         var m = matrix.SizeField.m;
+         var n = matrix.SizeField.n;
          // по координатам получаю множество соседних обьектов-ячеек
-         IList<BaseCell> neighbors = new List<BaseCell>(attr.getNeighborNumber(true));
-         foreach (Coord c in neighborCoord)
+         IList<BaseCell> neighbors = new List<BaseCell>(neighborCoord.Count);
+         foreach (var c in neighborCoord)
             // проверяю что они не вылезли за размеры
             if ((c.x >= 0) && (c.y >= 0) && (c.x < m) && (c.y < n))
                 neighbors.Add( matrix.getCell(c) );

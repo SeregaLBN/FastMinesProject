@@ -42,7 +42,6 @@ namespace fmg.core.mosaic.cells {
                   H * (sizeField.n+0));
          }
 
-         public override int getNeighborNumber(bool max) { return 12; }
          public override int getNeighborNumber(int direction) { return 12; }
          public override int getVertexNumber(int direction) { return 3; }
          public override double getVertexIntersection() { return 6; }
@@ -67,7 +66,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrTriangle1 Attr => (AttrTriangle1) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(true)];
+         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
 
          // определяю координаты соседей
          switch (direction) {

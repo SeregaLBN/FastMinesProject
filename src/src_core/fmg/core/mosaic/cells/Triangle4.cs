@@ -89,33 +89,26 @@ namespace fmg.core.mosaic.cells {
             return result;
          }
 
-         public override int getNeighborNumber(bool max) {
+         public override int getNeighborNumber(int direction) {
             switch (Mode) {
             case ComplexityMode.eUnrealMode : return 21;
-            case ComplexityMode.eMeanMode   : return max ? 7 : 3;
-            case ComplexityMode.eOptimalMode: return max ? 7 : 6;
-            case ComplexityMode.eSimpeMode  : return 3;
-            default: throw new InvalidOperationException("Unknown Mode==" + Mode);
-            }
-         }
-         public override int getNeighborNumber(int direction) {
-            if (Mode == ComplexityMode.eMeanMode) {
+            case ComplexityMode.eMeanMode:
                switch (direction) {
                case 2: case 11:                                 return 7;
                case 1: case 5: case 8: case 10:                 return 5;
                case 0: case 3: case 4: case 6 : case 7: case 9: return 3;
                default: throw new InvalidOperationException("Unknown direction==" + direction);
                }
-            }
-            if (Mode == ComplexityMode.eOptimalMode) {
+            case ComplexityMode.eOptimalMode:
                switch(direction) {
                case 4: case 5: case 9: case 10:  return 6;
                case 0: case 1: case 2: case 3:
                case 6: case 7: case 8: case 11:  return 7;
                default: throw new InvalidOperationException("Unknown direction==" + direction);
                }
+            case ComplexityMode.eSimpeMode  : return 3;
+            default: throw new InvalidOperationException("Unknown Mode==" + Mode);
             }
-            return getNeighborNumber(true /* || false */); // no matter
          }
 
          public override int getVertexNumber(int direction) {
@@ -178,7 +171,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrTriangle4 Attr => (AttrTriangle4) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(true)];
+         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
 
          // определяю координаты соседей
          switch (AttrTriangle4.Mode) {

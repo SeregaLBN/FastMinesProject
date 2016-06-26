@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
@@ -43,10 +44,9 @@ namespace fmg.data.controller.types {
             //mosaicCoefficient.Add(mosaicType, ((double)neighbors) / cntDir);
 
             // variant 3 - сложность в зависимости от кол-ва соседних ячеек и кол-ва точек пересечения
-            //int cntDir = attr.GetDirectionCount();
-            //int totalNeighbors = Enumerable.Range(0, cntDir).Aggregate((accum, i) => accum+attr.getNeighborNumber(i));
-            //double neighbors = ((double)totalNeighbors)/cntDir;
-            var neighbors = (double)attr.getNeighborNumber(false);
+            var neighbors = Enumerable.Range(0, attr.GetDirectionCount())
+                      .Select(i => attr.getNeighborNumber(i))
+                      .Average();
             mosaicCoefficient.Add(mosaicType, attr.getVertexIntersection() / neighbors);
 
             //System.out.println(attr.getClass().getSimpleName() + ": " + mosaicCoefficient.get(mosaicType));

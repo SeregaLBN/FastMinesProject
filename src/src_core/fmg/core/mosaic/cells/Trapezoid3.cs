@@ -57,7 +57,6 @@ namespace fmg.core.mosaic.cells {
             return result;
          }
 
-         public override int getNeighborNumber(bool max) { return max ? 11 : 6; }
          public override int getNeighborNumber(int direction) {
              switch (direction) {
              case  2: case  5: case 11: case 12: return 6;
@@ -117,7 +116,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrTrapezoid3 Attr => (AttrTrapezoid3) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(true)];
+         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
 
          // определяю координаты соседей
           switch (direction) {

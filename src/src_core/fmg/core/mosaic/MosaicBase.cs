@@ -553,8 +553,16 @@ namespace fmg.core.mosaic {
       }
       /// <summary> размер в пикселях </summary>
       public SizeDouble WindowSize { get { return GetWindowSize(SizeField, Area); }}
+
       /// <summary> узнать количество соседей для текущей мозаики </summary>
-      public int MaxNeighborNumber { get { return CellAttr.getNeighborNumber(true); } }
+      public int MaxNeighborNumber {
+         get {
+            var attr = CellAttr;
+            return Enumerable.Range(0, attr.GetDirectionCount())
+                  .Select(i => attr.getNeighborNumber(i))
+                  .Max();
+         }
+      }
 
       /// <summary>действительно лишь когда gameStatus == gsEnd</summary>
       public bool IsVictory {

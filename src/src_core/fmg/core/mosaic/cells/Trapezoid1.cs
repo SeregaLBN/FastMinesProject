@@ -53,7 +53,6 @@ namespace fmg.core.mosaic.cells {
             return result;
          }
 
-         public override int getNeighborNumber(bool max) { return 8; }
          public override int getNeighborNumber(int direction) { return 8; }
          public override int getVertexNumber(int direction) { return 4; }
          public override double getVertexIntersection() { return 3.6; } // (3+3+3+3+6)/5.
@@ -78,7 +77,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrTrapezoid1 Attr => (AttrTrapezoid1) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(true)];
+         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
 
          // определяю координаты соседей
           switch (direction) {
