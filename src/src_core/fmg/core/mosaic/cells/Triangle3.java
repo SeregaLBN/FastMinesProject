@@ -34,7 +34,7 @@ import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 
 /**
- * Треугольник. Вариант 3 - треугольник 45°-90°-45°(квадрат разделённый на 4 части) 
+ * Треугольник. Вариант 3 - треугольник 45°-90°-45°(квадрат разделённый на 4 части)
  * @see BaseCell
  **/
 public class Triangle3 extends BaseCell {
@@ -56,9 +56,7 @@ public class Triangle3 extends BaseCell {
 
          return result;
       }
-   
-      @Override
-      public int getNeighborNumber(boolean max) { return 14; }
+
       @Override
       public int getNeighborNumber(int direction) { return 14; }
       @Override
@@ -74,7 +72,7 @@ public class Triangle3 extends BaseCell {
       @Override
       public double getSq(int borderWidth) {
          double w = borderWidth/2.;
-         return (getA() - w*2 / TAN45_2 ) / 3; 
+         return (getA() - w*2 / TAN45_2 ) / 3;
       }
    }
 
@@ -91,7 +89,7 @@ public class Triangle3 extends BaseCell {
 
    @Override
    protected List<Coord> getCoordsNeighbor() {
-      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
+      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
       // определяю координаты соседей
       switch (direction) {

@@ -34,7 +34,7 @@ import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 
 /**
- * Треугольник. Вариант 2 - равносторонний, ёлочкой 
+ * Треугольник. Вариант 2 - равносторонний, ёлочкой
  * @see BaseCell
  **/
 public class Triangle2 extends BaseCell {
@@ -51,9 +51,7 @@ public class Triangle2 extends BaseCell {
                b * (sizeField.m+1),
                h * (sizeField.n+0));
       }
-   
-      @Override
-      public int getNeighborNumber(boolean max) { return 8; }
+
       @Override
       public int getNeighborNumber(int direction) { return 8; }
       @Override
@@ -88,7 +86,7 @@ public class Triangle2 extends BaseCell {
 
    @Override
    protected List<Coord> getCoordsNeighbor() {
-      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
+      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
       // определяю координаты соседей
        switch (direction) {

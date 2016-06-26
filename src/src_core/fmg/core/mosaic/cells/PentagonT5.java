@@ -119,9 +119,7 @@ public class PentagonT5 extends BaseCell {
 
          return result;
       }
-   
-      @Override
-      public int getNeighborNumber(boolean max) { return 8; }
+
       @Override
       public int getNeighborNumber(int direction) { return 8; }
       @Override
@@ -159,7 +157,7 @@ public class PentagonT5 extends BaseCell {
 
    @Override
    protected List<Coord> getCoordsNeighbor() {
-      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
+      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
       // определяю координаты соседей
       switch (direction) {
@@ -179,7 +177,7 @@ public class PentagonT5 extends BaseCell {
          neighborCoord.add(new Coord(coord.x+1, coord.y  ));
          neighborCoord.add(new Coord(coord.x+2, coord.y  ));
          neighborCoord.add(new Coord(coord.x-1, coord.y+1));
-         neighborCoord.add(new Coord(coord.x  , coord.y+1));  
+         neighborCoord.add(new Coord(coord.x  , coord.y+1));
          neighborCoord.add(new Coord(coord.x+1, coord.y+1));
          neighborCoord.add(new Coord(coord.x+2, coord.y+1));
          break;

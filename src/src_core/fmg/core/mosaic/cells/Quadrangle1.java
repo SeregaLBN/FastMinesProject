@@ -71,9 +71,7 @@ public class Quadrangle1 extends BaseCell {
 
          return result;
       }
-   
-      @Override
-      public int getNeighborNumber(boolean max) { return 9; }
+
       @Override
       public int getNeighborNumber(int direction) { return 9; }
       @Override
@@ -111,7 +109,7 @@ public class Quadrangle1 extends BaseCell {
 
    @Override
    protected List<Coord> getCoordsNeighbor() {
-      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
+      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
       // определяю координаты соседей
        switch (direction) {

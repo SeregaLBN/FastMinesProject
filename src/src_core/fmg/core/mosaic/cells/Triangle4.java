@@ -97,36 +97,28 @@ public class Triangle4 extends BaseCell {
 
          return result;
       }
-   
-      @Override
-      public int getNeighborNumber(boolean max) {
-         switch(Mode) {
-         case eUnrealMode : return 21;
-         case eMeanMode   : return max ?  7 : 3;
-         case eOptimalMode: return max ?  7 : 6;
-         case eSimpeMode  : return 3;
-         default: throw new RuntimeException("Unknown Mode==" + Mode);
-         }
-      }
+
       @Override
       public int getNeighborNumber(int direction) {
-         if (Mode == ComplexityMode.eMeanMode) {
+         switch(Mode) {
+         case eUnrealMode : return 21;
+         case eMeanMode:
             switch(direction) {
             case 2: case 11:                                 return 7;
             case 1: case 5: case 8: case 10:                 return 5;
             case 0: case 3: case 4: case 6 : case 7: case 9: return 3;
             default: throw new RuntimeException("Unknown direction==" + direction);
             }
-         }
-         if (Mode == ComplexityMode.eOptimalMode) {
+         case eOptimalMode:
             switch(direction) {
             case 4: case 5: case 9: case 10:  return 6;
             case 0: case 1: case 2: case 3:
             case 6: case 7: case 8: case 11:  return 7;
             default: throw new RuntimeException("Unknown direction==" + direction);
             }
+         case eSimpeMode  : return 3;
+         default: throw new RuntimeException("Unknown Mode==" + Mode);
          }
-         return getNeighborNumber(true /* || false */); // no matter
       }
       @Override
       public int getVertexNumber(int direction) {
@@ -195,7 +187,7 @@ public class Triangle4 extends BaseCell {
 
    @Override
    protected List<Coord> getCoordsNeighbor() {
-      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
+      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
       // определяю координаты соседей
       switch (AttrTriangle4.Mode) {

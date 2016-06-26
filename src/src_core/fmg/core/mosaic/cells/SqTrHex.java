@@ -79,9 +79,7 @@ public class SqTrHex extends BaseCell {
 
          return result;
       }
-   
-      @Override
-      public int getNeighborNumber(boolean max) { return max ? 12 : 6; }
+
       @Override
       public int getNeighborNumber(int direction) {
          switch (direction) {
@@ -112,7 +110,7 @@ public class SqTrHex extends BaseCell {
       @Override
       public double getSq(int borderWidth) {
          double w = borderWidth/2.;
-         return (getA()*SQRT3 - w*6) / (2+SQRT3); 
+         return (getA()*SQRT3 - w*6) / (2+SQRT3);
       }
    }
 
@@ -129,7 +127,7 @@ public class SqTrHex extends BaseCell {
 
    @Override
    protected List<Coord> getCoordsNeighbor() {
-      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
+      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
       // определяю координаты соседей
       switch (direction) {
@@ -267,7 +265,7 @@ public class SqTrHex extends BaseCell {
             (h*2+a  )*(coord.x/3) + a+h,
             (h*2+a*3)*(coord.y/4) + a*2+h);
    }
-   
+
    @Override
    protected void CalcRegion() {
       AttrSqTrHex attr = getAttr();

@@ -75,13 +75,11 @@ public class PentagonT10 extends BaseCell {
 
          return result;
       }
-   
-      @Override
-      public int getNeighborNumber(boolean max) { return max ? 7 : 6; }
+
       @Override
       public int getNeighborNumber(int direction) {
          switch (direction) {
-         case 0: case 1: case 6: case 7: return 7;                              
+         case 0: case 1: case 6: case 7: return 7;
          case 2: case 3: case 4: case 5: case 8: case 9: case 10: case 11: return 6;
          default:
             throw new IllegalArgumentException("Invalid value direction=" + direction);
@@ -98,7 +96,7 @@ public class PentagonT10 extends BaseCell {
             double sum = 0;
             for (int dir=0; dir<cntDirection; dir++)
                switch (dir) {
-               case 0: case 1: case 6: case 7:                              
+               case 0: case 1: case 6: case 7:
                   sum += 3;
                   break;
                case 2: case 3: case 4: case 5: case 8: case 9: case 10: case 11:
@@ -143,7 +141,7 @@ public class PentagonT10 extends BaseCell {
 
    @Override
    protected List<Coord> getCoordsNeighbor() {
-      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
+      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
       // определяю координаты соседей
       switch (direction) {
@@ -321,9 +319,9 @@ public class PentagonT10 extends BaseCell {
       PointDouble center = new PointDouble(); // координата центра квадрата
       switch (direction) {
       case 0: case  3: case 7: case  8: center.x = region.getPoint(2).x; center.y = region.getPoint(1).y; break;
-      case 1: case  4: case 6: case 10: 
+      case 1: case  4: case 6: case 10:
       case 2: case 11:                  center.x = region.getPoint(0).x; center.y = region.getPoint(1).y; break;
-      case 5: case  9:                  center.x = region.getPoint(0).x; center.y = region.getPoint(4).y; break; 
+      case 5: case  9:                  center.x = region.getPoint(0).x; center.y = region.getPoint(4).y; break;
       }
 
       return new RectDouble(

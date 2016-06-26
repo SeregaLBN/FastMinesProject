@@ -140,8 +140,6 @@ public class PenrousePeriodic1 extends BaseCell {
       }
 
       @Override
-      public int getNeighborNumber(boolean max) { return max ? 12 : 7; }
-      @Override
       public int getNeighborNumber(int direction) {
           switch (direction) {
           case 100: case 108: case 114: case 115: return  7;
@@ -232,7 +230,7 @@ public class PenrousePeriodic1 extends BaseCell {
 
    @Override
    protected List<Coord> getCoordsNeighbor() {
-      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
+      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
       // определяю координаты соседей
        switch (direction) {

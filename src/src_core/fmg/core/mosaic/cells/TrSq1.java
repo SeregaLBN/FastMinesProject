@@ -34,7 +34,7 @@ import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 
 /**
- * Комбинация. Мозаика из 4х треугольников и 2х квадратов 
+ * Комбинация. Мозаика из 4х треугольников и 2х квадратов
  * @see BaseCell
  **/
 public class TrSq1 extends BaseCell {
@@ -65,9 +65,7 @@ public class TrSq1 extends BaseCell {
 
          return result;
       }
-   
-      @Override
-      public int getNeighborNumber(boolean max) { return max ? 12 : 9; }
+
       @Override
       public int getNeighborNumber(int direction) {
           switch (direction) {
@@ -99,7 +97,7 @@ public class TrSq1 extends BaseCell {
       @Override
       public double getSq(int borderWidth) {
          double w = borderWidth/2.;
-         return (getA()*SQRT3 - w*6) / (4*SIN75); 
+         return (getA()*SQRT3 - w*6) / (4*SIN75);
       }
    }
 
@@ -116,7 +114,7 @@ public class TrSq1 extends BaseCell {
 
    @Override
    protected List<Coord> getCoordsNeighbor() {
-      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
+      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
       // определяю координаты соседей
        switch (direction) {

@@ -1,8 +1,8 @@
 package fmg.data.controller.types;
 
-import java.lang.IllegalArgumentException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import fmg.common.geom.Matrisize;
 import fmg.core.mosaic.MosaicHelper;
@@ -35,12 +35,11 @@ public enum ESkillLevel {
 //         mosaicCoefficient.put(mosaicType, ((double)neighbors)/cntDir);
 
          // variant 3 - сложность в зависимости от кол-ва соседних ячеек и кол-ва точек пересечения
-//         int cntDir = attr.GetDirectionCount();
-//         int totalNeighbors = java.util.stream.IntStream.range(0, cntDir).reduce(0, (accum, i) -> accum+attr.getNeighborNumber(i));
-//         double neighbors = ((double)totalNeighbors)/cntDir;
-         double neighbors = (double)attr.getNeighborNumber(false);
+         double neighbors = IntStream.range(0, attr.GetDirectionCount())
+               .map(i -> attr.getNeighborNumber(i))
+               .average().getAsDouble();
          mosaicCoefficient.put(mosaicType, attr.getVertexIntersection()/neighbors);
-         
+
 //         System.out.println(attr.getClass().getSimpleName() + ": " + mosaicCoefficient.get(mosaicType));
       }
 
@@ -54,9 +53,9 @@ public enum ESkillLevel {
 //      System.exit(0);
    }
 /*
-         Sq1  Tring2       PentT5  Trapez1   Pent24   Tring1      
-Neighbor     8     8          8       8        7        12       
-VertexInter   4     3.75      3.6     3.6      3.4       6       
+         Sq1  Tring2       PentT5  Trapez1   Pent24   Tring1
+Neighbor     8     8          8       8        7        12
+VertexInter   4     3.75      3.6     3.6      3.4       6
 eBeginner    15
 eAmateur     54
 eProfi      126

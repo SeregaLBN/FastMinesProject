@@ -12,6 +12,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -258,7 +259,10 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
          return 21;
       final int area = 200; // пох
       BaseCell.BaseAttribute attr = MosaicHelper.createAttributeInstance(parent.getMosaic().getMosaicType(), area);
-      return attr.getNeighborNumber(true) + 1; // +thisCell
+      int max = IntStream.range(0, attr.GetDirectionCount())
+            .map(i -> attr.getNeighborNumber(i))
+            .max().getAsInt();
+      return max + 1; // +thisCell
    }
 
    private void RecalcModelValueXY(boolean isFullScreen, boolean isFullScreenAtCurrArea) {

@@ -25,7 +25,6 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 import fmg.common.Color;
 import fmg.common.geom.Coord;
@@ -103,11 +102,6 @@ public abstract class BaseCell {
       /** кол-во direction'ов, которые знает данный тип мозаики */
       public int GetDirectionCount() { Size s = GetDirectionSizeField(); return s.width*s.height; }
 
-      /** кол-во соседей (максимум или минимум) */
-      public int getNeighborNumber(boolean max) {
-         IntStream str = IntStream.range(0, GetDirectionCount()).map(d -> getNeighborNumber(d));
-         return (max ? str.max() : str.min()).getAsInt();
-      }
       /** кол-во соседей у ячейки конкретной направленности */
       public abstract int getNeighborNumber(int direction);
       /** из скольки точек/вершин состоит фигура конкретной направленности */
@@ -242,13 +236,11 @@ public abstract class BaseCell {
    public List<BaseCell> getNeighbors(IMatrixCells matrix) {
       // получаю координаты соседних ячеек
       List<Coord> neighborCoord = getCoordsNeighbor();
-      if (neighborCoord.size() != attr.getNeighborNumber(true))
-         throw new RuntimeException("neighborCoord.length != GetNeighborNumber()");
 
       int m = matrix.getSizeField().m;
       int n = matrix.getSizeField().n;
       // по координатам получаю множество соседних обьектов-ячеек
-      List<BaseCell> neighbors = new ArrayList<>(attr.getNeighborNumber(true));
+      List<BaseCell> neighbors = new ArrayList<>(neighborCoord.size());
       for (Coord c : neighborCoord)
          // проверяю что они не вылезли за размеры
          if ((c.x >= 0) && (c.y >= 0) && (c.x < m) && (c.y < n))

@@ -52,9 +52,7 @@ public class Square1 extends BaseCell {
                sizeField.m * a,
                sizeField.n * a);
       }
-   
-      @Override
-      public int getNeighborNumber(boolean max) { return 8; }
+
       @Override
       public int getNeighborNumber(int direction) { return 8; }
       @Override
@@ -83,7 +81,7 @@ public class Square1 extends BaseCell {
 
    @Override
    protected List<Coord> getCoordsNeighbor() {
-      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
+      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
       // определяю координаты соседей
       neighborCoord.add(new Coord(coord.x-1, coord.y-1));

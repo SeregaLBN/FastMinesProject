@@ -27,6 +27,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 import fmg.common.geom.Coord;
 import fmg.common.geom.DoubleExt;
@@ -597,8 +598,13 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
    }
    /** размер в пикселях */
    public SizeDouble getWindowSize() { return getWindowSize(getSizeField(), getArea()); }
-   /** узнать количество соседей для текущей мозаики */
-   public int GetMaxNeighborNumber() { return getCellAttr().getNeighborNumber(true); }
+   /** узнать max количество соседей для текущей мозаики */
+   public int GetMaxNeighborNumber() {
+      BaseCell.BaseAttribute attr = getCellAttr();
+      return IntStream.range(0, attr.GetDirectionCount())
+            .map(i -> attr.getNeighborNumber(i))
+            .max().getAsInt();
+   }
 
    /** действительно лишь когда gameStatus == gsEnd */
    public boolean isVictory() {

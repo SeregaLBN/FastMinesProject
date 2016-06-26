@@ -62,9 +62,7 @@ public class Trapezoid2 extends BaseCell {
 
          return result;
       }
-   
-      @Override
-      public int getNeighborNumber(boolean max) { return 9; }
+
       @Override
       public int getNeighborNumber(int direction) { return 9; }
       @Override
@@ -99,7 +97,7 @@ public class Trapezoid2 extends BaseCell {
 
    @Override
    protected List<Coord> getCoordsNeighbor() {
-      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
+      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
       // определяю координаты соседей
        switch (direction) {
@@ -314,13 +312,13 @@ public class Trapezoid2 extends BaseCell {
          region.setPoint(2, oX - c  , oY + R+r);
          region.setPoint(3, oX - a-c, oY + r  );
          break;
-      case 10: 
+      case 10:
          region.setPoint(0, oX + a  , oY + R  );
          region.setPoint(1, oX + a+c, oY + R+r);
          region.setPoint(2, oX - c  , oY + R+r);
          region.setPoint(3, oX      , oY + R  );
          break;
-      case 11: 
+      case 11:
          region.setPoint(0, oX + a+c, oY + r  );
          region.setPoint(1, oX + b+c, oY + R+r);
          region.setPoint(2, oX + a+c, oY + R+r);

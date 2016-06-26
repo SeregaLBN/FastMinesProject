@@ -34,7 +34,7 @@ import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 
 /**
- * Шестиугольник 
+ * Шестиугольник
  * @see BaseCell
  **/
 public class Hexagon1 extends BaseCell {
@@ -55,9 +55,7 @@ public class Hexagon1 extends BaseCell {
 
          return result;
       }
-   
-      @Override
-      public int getNeighborNumber(boolean max) { return 6; }
+
       @Override
       public int getNeighborNumber(int direction) { return 6; }
       @Override
@@ -90,7 +88,7 @@ public class Hexagon1 extends BaseCell {
 
    @Override
    protected List<Coord> getCoordsNeighbor() {
-      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
+      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
       // определяю координаты соседей
       neighborCoord.add(new Coord(coord.x-(direction^1), coord.y-1));

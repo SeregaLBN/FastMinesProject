@@ -34,7 +34,7 @@ import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 
 /**
- * Комбинация. мозаика из 24х треугольников и 12х квадратов (на 1 квадрат приходится 2 треугольника) 
+ * Комбинация. мозаика из 24х треугольников и 12х квадратов (на 1 квадрат приходится 2 треугольника)
  * @see BaseCell
  **/
 public class TrSq2 extends BaseCell {
@@ -81,9 +81,7 @@ public class TrSq2 extends BaseCell {
 
          return result;
       }
-   
-      @Override
-      public int getNeighborNumber(boolean max) { return max ? 12 : 9; }
+
       @Override
       public int getNeighborNumber(int direction) {
          switch (direction) {
@@ -128,7 +126,7 @@ public class TrSq2 extends BaseCell {
       @Override
       public double getSq(int borderWidth) {
          double w = borderWidth/2.;
-         return (getA()*SQRT3 - w*6) / (2+SQRT3) - 1; 
+         return (getA()*SQRT3 - w*6) / (2+SQRT3) - 1;
       }
    }
 
@@ -145,7 +143,7 @@ public class TrSq2 extends BaseCell {
 
    @Override
    protected List<Coord> getCoordsNeighbor() {
-      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(true));
+      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
       // определяю координаты соседей
       switch (direction) {
@@ -409,7 +407,7 @@ public class TrSq2 extends BaseCell {
       }
       return new PointDouble(oX, oY);
    }
-   
+
    @Override
    protected void CalcRegion() {
       AttrTrSq2 attr = getAttr();
@@ -549,7 +547,7 @@ public class TrSq2 extends BaseCell {
       case 13: case 34: center.x = o.x - wsq2;   center.y = o.y + a+b;     break;
       case 14: case 35: center.x = o.x + b;      center.y = o.y + a+b;     break;
       case 15: case 30: center.x = o.x - h+wsq2; center.y = o.y + a;       break;
-      case 16: case 31: center.x = o.x - wsq2;   center.y = o.y + b;       break; 
+      case 16: case 31: center.x = o.x - wsq2;   center.y = o.y + b;       break;
       case 17: case 32: center.x = o.x + a+b;    center.y = o.y + b;       break;
       }
 
