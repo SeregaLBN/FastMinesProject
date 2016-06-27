@@ -7,13 +7,13 @@ import fmg.common.geom.util.FigureHelper;
 import fmg.core.types.EMosaicGroup;
 
 /**
- * Representable {@link fmg.core.types.EMosaicGroup} as image
+ * Abstract representable {@link fmg.core.types.EMosaicGroup} as image
  *
  * @param <TImage> plaform specific image
  */
-public abstract class MosaicsGroupImg<TImage> extends PolarLightsImg<EMosaicGroup, TImage> {
+public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<EMosaicGroup, TImage> {
 
-   protected MosaicsGroupImg(EMosaicGroup group) { super(group); }
+   protected AMosaicsGroupImg(EMosaicGroup group) { super(group); }
 
    public EMosaicGroup getMosaicGroup() { return getEntity(); }
    public void setMosaicGroup(EMosaicGroup value) { setEntity(value); }

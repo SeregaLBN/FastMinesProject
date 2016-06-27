@@ -19,10 +19,11 @@ import javax.swing.SwingUtilities;
 
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
+import fmg.core.img.ALogo;
 import fmg.swing.Cast;
 
-/** main logos image */
-public abstract class Logo<TImage> extends fmg.core.img.Logo<TImage> {
+/** Main logos image */
+public abstract class Logo<TImage> extends ALogo<TImage> {
 
    static {
       if (DEFERR_INVOKER == null)

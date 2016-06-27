@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -54,11 +54,17 @@
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicBase.cs">
       <Link>src_fmg.core\mosaic\MosaicBase.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\img\Logo.cs">
-      <Link>src_fmg.core\img\Logo.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\img\ALogo.cs">
+      <Link>src_fmg.core\img\ALogo.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\img\MosaicsSkillImg.cs">
-      <Link>src_fmg.core\img\MosaicsSkillImg.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\img\AMosaicsSkillImg.cs">
+      <Link>src_fmg.core\img\AMosaicsSkillImg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\AMosaicsGroupImg.cs">
+      <Link>src_fmg.core\img\AMosaicsGroupImg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\AMosaicsImg.cs">
+      <Link>src_fmg.core\img\AMosaicsImg.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\PolarLightsImg.cs">
       <Link>src_fmg.core\img\PolarLightsImg.cs</Link>
@@ -152,12 +158,6 @@
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\cells\TrSq2.cs">
       <Link>src_fmg.core\mosaic\cells\TrSq2.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\img\MosaicsGroupImg.cs">
-      <Link>src_fmg.core\img\MosaicsGroupImg.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\img\MosaicsImg.cs">
-      <Link>src_fmg.core\img\MosaicsImg.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\types\click\ClickCellResult.cs">
       <Link>src_fmg.core\types\click\ClickCellResult.cs</Link>

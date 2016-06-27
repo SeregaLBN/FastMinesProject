@@ -9,7 +9,7 @@ using fmg.uwp.utils;
 namespace fmg.uwp.res.img {
 
    /// <summary> main logos image </summary>
-   public class Logo : fmg.core.img.Logo<WriteableBitmap> {
+   public class Logo : ALogo<WriteableBitmap> {
 
       static Logo() {
          if (StaticImgConsts.DeferrInvoker == null)

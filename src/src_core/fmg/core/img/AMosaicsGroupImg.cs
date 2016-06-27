@@ -6,12 +6,12 @@ using fmg.common.geom.util;
 
 namespace fmg.core.img {
 
-   /// <summary> Representable <see cref="EMosaicGroup"/> as image </summary>
+   /// <summary> Abstract representable <see cref="EMosaicGroup"/> as image </summary>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class MosaicsGroupImg<TImage> : PolarLightsImg<EMosaicGroup, TImage>
+   public abstract class AMosaicsGroupImg<TImage> : PolarLightsImg<EMosaicGroup, TImage>
       where TImage : class
    {
-      protected MosaicsGroupImg(EMosaicGroup group) : base(group) {}
+      protected AMosaicsGroupImg(EMosaicGroup group) : base(group) {}
 
       public EMosaicGroup MosaicGroup => Entity;
 

@@ -13,7 +13,7 @@ namespace fmg.uwp.res.img {
    /// <br/>
    /// WriteableBitmap impl
    /// </summary>
-   public class MosaicsGroupImg : core.img.MosaicsGroupImg<WriteableBitmap> {
+   public class MosaicsGroupImg : AMosaicsGroupImg<WriteableBitmap> {
 
       static MosaicsGroupImg() {
          if (StaticImgConsts.DeferrInvoker == null)

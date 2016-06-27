@@ -18,7 +18,7 @@ namespace fmg.uwp.res.img {
    /// <br/>
    /// WriteableBitmap impl
    /// </summary>
-   public class MosaicsImg : core.img.MosaicsImg<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> {
+   public class MosaicsImg : AMosaicsImg<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> {
 
       static MosaicsImg() {
          if (StaticImgConsts.DeferrInvoker == null)

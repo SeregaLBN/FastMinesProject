@@ -76,7 +76,7 @@ import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.MosaicsImg.ERotateMode;
+import fmg.core.img.AMosaicsImg.ERotateMode;
 import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.types.EGameStatus;

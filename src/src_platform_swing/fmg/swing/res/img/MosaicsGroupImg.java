@@ -15,6 +15,7 @@ import javax.swing.SwingUtilities;
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
+import fmg.core.img.AMosaicsGroupImg;
 import fmg.core.types.EMosaicGroup;
 import fmg.swing.Cast;
 
@@ -25,7 +26,7 @@ import fmg.swing.Cast;
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon})
  **/
-public abstract class MosaicsGroupImg<TImage> extends fmg.core.img.MosaicsGroupImg<TImage> {
+public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
 
    static {
       if (DEFERR_INVOKER == null)

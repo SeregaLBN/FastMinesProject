@@ -16,6 +16,7 @@ import javax.swing.SwingUtilities;
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.Matrisize;
+import fmg.core.img.AMosaicsImg;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.ICellPaint;
 import fmg.core.types.EMosaic;
@@ -32,7 +33,7 @@ import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
  */
-public abstract class MosaicsImg<TImage> extends fmg.core.img.MosaicsImg<PaintableGraphics, TImage, PaintSwingContext<TImage>> {
+public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, TImage, PaintSwingContext<TImage>> {
 
    static {
       if (DEFERR_INVOKER == null)

@@ -19,7 +19,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
    /// </summary>
    public sealed partial class DemoPage : Page {
 
-      private readonly Logo _logo;
+      private readonly Logo<CanvasBitmap>.CanvasBmp _logo;
       private readonly MosaicsSkillImg _msi;
       private readonly MosaicsGroupImg _mgi;
       private readonly MosaicsImg _mi;
@@ -40,7 +40,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
             _mi.Dispose();
          };
 
-         _logo = new Logo(canvasControl1);
+         _logo = new Logo<CanvasBitmap>.CanvasBmp(canvasControl1);
          _msi  = new MosaicsSkillImg(ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], canvasControl2);
          _mi   = new MosaicsImg(EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), canvasControl3);
          _mgi  = new MosaicsGroupImg(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], canvasControl4);
@@ -76,9 +76,9 @@ namespace Test.FastMines.Uwp.Images.Win2D {
             plrImg.PolarLights = true;
          }
 
-         var logoImg = img as Logo;
+         var logoImg = img as Logo<CanvasBitmap>;
          if (logoImg != null) {
-            var vals = (Logo.ERotateMode[])Enum.GetValues(typeof(Logo.ERotateMode));
+            var vals = (Logo<CanvasBitmap>.CanvasBmp.ERotateMode[])Enum.GetValues(typeof(Logo<CanvasBitmap>.CanvasBmp.ERotateMode));
             logoImg.RotateMode = vals[R(vals.Length)];
             logoImg.UseGradient = Bl;
          }

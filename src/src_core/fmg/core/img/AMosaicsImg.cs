@@ -12,16 +12,16 @@ using fmg.common.notyfier;
 
 namespace fmg.core.img {
 
-   /// <summary> Representable <see cref="EMosaic"/> as image </summary>
+   /// <summary> Abstract representable <see cref="EMosaic"/> as image </summary>
    /// <typeparam name="TPaintable">see <see cref="IPaintable"/></typeparam>
    /// <typeparam name="TImage">plaform specific image</typeparam>
    /// <typeparam name="TPaintContext">see <see cref="PaintContext{TImage}"/></typeparam>
-   public abstract class MosaicsImg<TPaintable, TImage, TPaintContext> : RotatedImg<EMosaic, TImage>, IMosaic<TPaintable, TImage, TPaintContext>
+   public abstract class AMosaicsImg<TPaintable, TImage, TPaintContext> : RotatedImg<EMosaic, TImage>, IMosaic<TPaintable, TImage, TPaintContext>
       where TPaintable : IPaintable
       where TImage : class
       where TPaintContext : PaintContext<TImage>
    {
-      protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField)
+      protected AMosaicsImg(EMosaic mosaicType, Matrisize sizeField)
          : base(mosaicType)
       {
          _sizeField = sizeField;

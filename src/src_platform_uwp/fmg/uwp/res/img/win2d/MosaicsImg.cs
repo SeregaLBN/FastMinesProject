@@ -17,9 +17,10 @@ namespace fmg.uwp.res.img.win2d {
 
    /// <summary> Representable <see cref="EMosaic"/> as image.
    /// <br/>
+   /// Win2D impl
    /// CanvasBitmap impl
    /// </summary>
-   public class MosaicsImg : core.img.MosaicsImg<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> {
+   public class MosaicsImg : AMosaicsImg<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> {
 
       static MosaicsImg() {
          if (StaticImgConsts.DeferrInvoker == null)

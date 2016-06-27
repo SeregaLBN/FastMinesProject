@@ -23,13 +23,13 @@ import fmg.core.mosaic.draw.PaintContext;
 import fmg.core.types.EMosaic;
 
 /**
- * Representable {@link fmg.core.types.EMosaic} as image
+ * Abstract representable {@link fmg.core.types.EMosaic} as image
  *
  * @param <TPaintable> see {@link IPaintable}
  * @param <TImage> plaform specific image
  * @param <TPaintContext> see {@link PaintContext}
  */
-public abstract class MosaicsImg<TPaintable extends IPaintable, TImage, TPaintContext extends PaintContext<TImage>>
+public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintContext extends PaintContext<TImage>>
       extends RotatedImg<EMosaic, TImage>
       implements IMosaic<TPaintable, TImage, TPaintContext>
 {
@@ -38,7 +38,7 @@ public abstract class MosaicsImg<TPaintable extends IPaintable, TImage, TPaintCo
       someCells
    }
 
-   protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
+   protected AMosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
       super(mosaicType);
       _sizeField = sizeField;
    }

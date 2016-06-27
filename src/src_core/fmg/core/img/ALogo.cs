@@ -6,8 +6,8 @@ using fmg.common.geom.util;
 
 namespace fmg.core.img {
 
-   /// <summary> main logos image </summary>
-   public abstract class Logo<TImage> : PolarLightsImg<object, TImage>
+   /// <summary> Abstract main logos image </summary>
+   public abstract class ALogo<TImage> : PolarLightsImg<object, TImage>
       where TImage : class
    {
 
@@ -17,7 +17,7 @@ namespace fmg.core.img {
          Combi // color + classic
       }
 
-      protected Logo()
+      protected ALogo()
          : base(0)
       {
          BackgroundColor = Color.Transparent;

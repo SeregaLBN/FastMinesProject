@@ -11,13 +11,13 @@ import fmg.common.geom.util.FigureHelper;
 import fmg.data.controller.types.ESkillLevel;
 
 /**
- * Representable {@link fmg.data.controller.types.ESkillLevel} as image
+ * Abstract representable {@link fmg.data.controller.types.ESkillLevel} as image
  *
  * @param <TImage> plaform specific image
  */
-public abstract class MosaicsSkillImg<TImage> extends RotatedImg<ESkillLevel, TImage> {
+public abstract class AMosaicsSkillImg<TImage> extends RotatedImg<ESkillLevel, TImage> {
 
-   protected MosaicsSkillImg(ESkillLevel skill) { super(skill); }
+   protected AMosaicsSkillImg(ESkillLevel skill) { super(skill); }
 
    public ESkillLevel getMosaicSkill() { return getEntity(); }
    public void setMosaicSkill(ESkillLevel value) { setEntity(value); }

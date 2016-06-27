@@ -13,9 +13,10 @@ namespace fmg.uwp.res.img.win2d {
 
    /// <summary> Representable <see cref="ESkillLevel"/> as image.
    /// <br/>
+   /// Win2D impl
    /// CanvasBitmap impl
    /// </summary>
-   public class MosaicsSkillImg : core.img.MosaicsSkillImg<CanvasBitmap> {
+   public class MosaicsSkillImg : AMosaicsSkillImg<CanvasBitmap> {
 
       static MosaicsSkillImg() {
          if (StaticImgConsts.DeferrInvoker == null)
