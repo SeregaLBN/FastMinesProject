@@ -9,6 +9,9 @@ using fmg.core.img;
 using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.uwp.res.img.win2d;
+using LogoCanvasBmp            = fmg.uwp.res.img.win2d.Logo           <Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsSkillImgCanvasBmp = fmg.uwp.res.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsGroupImgCanvasBmp = fmg.uwp.res.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -19,9 +22,9 @@ namespace Test.FastMines.Uwp.Images.Win2D {
    /// </summary>
    public sealed partial class DemoPage : Page {
 
-      private readonly Logo<CanvasBitmap>.CanvasBmp _logo;
-      private readonly MosaicsSkillImg _msi;
-      private readonly MosaicsGroupImg _mgi;
+      private readonly LogoCanvasBmp            _logo;
+      private readonly MosaicsSkillImgCanvasBmp _msi;
+      private readonly MosaicsGroupImgCanvasBmp _mgi;
       private readonly MosaicsImg _mi;
 
       private static readonly Random Rnd = new Random(Guid.NewGuid().GetHashCode());
@@ -40,10 +43,10 @@ namespace Test.FastMines.Uwp.Images.Win2D {
             _mi.Dispose();
          };
 
-         _logo = new Logo<CanvasBitmap>.CanvasBmp(canvasControl1);
-         _msi  = new MosaicsSkillImg(ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], canvasControl2);
+         _logo = new LogoCanvasBmp(canvasControl1);
+         _msi  = new MosaicsSkillImgCanvasBmp(ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], canvasControl2);
          _mi   = new MosaicsImg(EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), canvasControl3);
-         _mgi  = new MosaicsGroupImg(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], canvasControl4);
+         _mgi  = new MosaicsGroupImgCanvasBmp(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], canvasControl4);
 
          ApplyRandom(_logo, canvasControl1);
          ApplyRandom(_msi , canvasControl2);
@@ -78,7 +81,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
 
          var logoImg = img as Logo<CanvasBitmap>;
          if (logoImg != null) {
-            var vals = (Logo<CanvasBitmap>.CanvasBmp.ERotateMode[])Enum.GetValues(typeof(Logo<CanvasBitmap>.CanvasBmp.ERotateMode));
+            var vals = (LogoCanvasBmp.ERotateMode[])Enum.GetValues(typeof(LogoCanvasBmp.ERotateMode));
             logoImg.RotateMode = vals[R(vals.Length)];
             logoImg.UseGradient = Bl;
          }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.Graphics.Display;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.Graphics.Canvas;
 using fmg.common;
 using fmg.common.geom;
@@ -16,7 +17,7 @@ namespace fmg.uwp.res.img.win2d {
    /// Win2D impl
    /// </summary>
    public abstract class Logo<TImage> : ALogo<TImage>
-      where TImage : DependencyObject, ICanvasResourceCreator
+      where TImage : class, ICanvasResourceCreator
    {
 
       static Logo() {
@@ -121,6 +122,25 @@ namespace fmg.uwp.res.img.win2d {
          protected override void DrawBody() {
             using (var ds = ((CanvasRenderTarget)Image).CreateDrawingSession()) {
                DrawBody(ds, true);
+            }
+         }
+      }
+
+      /// <summary> Main logos image
+      /// <br/>
+      /// CanvasImageSource impl (XAML ImageSource compatible)
+      /// </summary>
+      public class CanvasImgSrc : Logo<CanvasImageSource> {
+
+         protected override CanvasImageSource CreateImage() {
+            var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+            var device = CanvasDevice.GetSharedDevice();
+            return new CanvasImageSource(device, Width, Height, dpi);
+         }
+
+         protected override void DrawBody() {
+            using (var ds = Image.CreateDrawingSession(BackgroundColor.ToWinColor())) {
+               DrawBody(ds, false);
             }
          }
       }

@@ -3,6 +3,7 @@ using Windows.Graphics.Display;
 using Windows.UI.Core;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.core.types;
 using fmg.common;
 using fmg.core.img;
@@ -14,9 +15,10 @@ namespace fmg.uwp.res.img.win2d {
    /// <summary> Representable <see cref="EMosaicGroup"/> as image.
    /// <br/>
    /// Win2D impl
-   /// CanvasBitmap impl
    /// </summary>
-   public class MosaicsGroupImg : AMosaicsGroupImg<CanvasBitmap> {
+   public abstract class MosaicsGroupImg<TImage> : AMosaicsGroupImg<TImage>
+      where TImage : class, ICanvasResourceCreator
+   {
 
       static MosaicsGroupImg() {
          if (StaticImgConsts.DeferrInvoker == null)
@@ -25,47 +27,91 @@ namespace fmg.uwp.res.img.win2d {
             RotatedImgConst.TimerCreator = () => new ui.Timer();
       }
 
-      private readonly ICanvasResourceCreator _rc;
-
-      public MosaicsGroupImg(EMosaicGroup group, ICanvasResourceCreator resourceCreator)
+      protected MosaicsGroupImg(EMosaicGroup group)
          : base(group)
       {
          SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
-         _rc = resourceCreator;
       }
 
-      protected override CanvasBitmap CreateImage() {
-         var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-         return new CanvasRenderTarget(_rc, Width, Height, dpi);
-      }
+      protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
+         ICanvasResourceCreator rc = Image;
 
-      protected override void DrawBody() {
-         var img = Image;
-         using (var ds = ((CanvasRenderTarget)img).CreateDrawingSession()) {
-
+         if (fillBk)
             ds.Clear(BackgroundColor.ToWinColor());
 
-            var points = GetCoords().ToArray();
-            using (var geom = _rc.BuildGeom(points)) {
-               ds.FillGeometry(geom, ForegroundColorAttenuate.ToWinColor());
-            }
+         var points = GetCoords().ToArray();
+         using (var geom = rc.BuildGeom(points)) {
+            ds.FillGeometry(geom, ForegroundColorAttenuate.ToWinColor());
+         }
 
-            // draw perimeter border
-            var clr = BorderColor;
-            if (clr.A != Color.Transparent.A) {
-               var clrWin = clr.ToWinColor();
-               var bw = BorderWidth;
+         // draw perimeter border
+         var clr = BorderColor;
+         if (clr.A != Color.Transparent.A) {
+            var clrWin = clr.ToWinColor();
+            var bw = BorderWidth;
 
-               using (var css = new CanvasStrokeStyle {
-                  StartCap = CanvasCapStyle.Triangle,
-                  EndCap = CanvasCapStyle.Triangle
-               }) {
-                  for (var i = 0; i < points.Length; ++i) {
-                     var p1 = points[i];
-                     var p2 = (i < points.Length-1) ? points[i+1] : points[0];
-                     ds.DrawLine(p1.ToVector2(), p2.ToVector2(), clrWin, bw, css);
-                  }
+            using (var css = new CanvasStrokeStyle {
+               StartCap = CanvasCapStyle.Triangle,
+               EndCap = CanvasCapStyle.Triangle
+            }) {
+               for (var i = 0; i < points.Length; ++i) {
+                  var p1 = points[i];
+                  var p2 = (i < points.Length-1) ? points[i+1] : points[0];
+                  ds.DrawLine(p1.ToVector2(), p2.ToVector2(), clrWin, bw, css);
                }
+            }
+         }
+      }
+
+      /////////////////////////////////////////////////////////////////////////////////////////////////////
+      //    custom implementations
+      /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+      /// <summary> Representable <see cref="EMosaicGroup"/> as image.
+      /// <br/>
+      /// CanvasBitmap impl
+      /// </summary>
+      public class CanvasBmp : MosaicsGroupImg<CanvasBitmap> {
+
+         private readonly ICanvasResourceCreator _rc;
+
+         public CanvasBmp(EMosaicGroup group, ICanvasResourceCreator resourceCreator)
+            : base(group)
+         {
+            _rc = resourceCreator;
+         }
+
+         protected override CanvasBitmap CreateImage() {
+            var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+            return new CanvasRenderTarget(_rc, Width, Height, dpi);
+         }
+
+         protected override void DrawBody() {
+            using (var ds = ((CanvasRenderTarget)Image).CreateDrawingSession()) {
+               DrawBody(ds, true);
+            }
+         }
+      }
+
+      /// <summary> Representable <see cref="EMosaicGroup"/> as image.
+      /// <br/>
+      /// CanvasImageSource impl (XAML ImageSource compatible)
+      /// </summary>
+      public class CanvasImgSrc : MosaicsGroupImg<CanvasImageSource> {
+
+         public CanvasImgSrc(EMosaicGroup group)
+            : base(group)
+         { }
+
+         protected override CanvasImageSource CreateImage() {
+            var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+            var device = CanvasDevice.GetSharedDevice();
+            return new CanvasImageSource(device, Width, Height, dpi);
+         }
+
+         protected override void DrawBody() {
+            using (var ds = Image.CreateDrawingSession(BackgroundColor.ToWinColor())) {
+               DrawBody(ds, false);
             }
          }
       }
