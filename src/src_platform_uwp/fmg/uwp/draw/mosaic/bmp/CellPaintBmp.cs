@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
@@ -21,7 +22,7 @@ namespace fmg.uwp.draw.mosaic.bmp {
          PaintBorder(cell, paint, paintContext);
       }
 
-      public override void PaintBorder(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext) {
+      protected override void PaintBorder(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext) {
          // TODO set pen width
          //... = PaintContext.PenBorder.Width;
 
@@ -34,7 +35,7 @@ namespace fmg.uwp.draw.mosaic.bmp {
       }
 
       /// <summary> draw border lines </summary>
-      public override void PaintBorderLines(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext) {
+      protected override void PaintBorderLines(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext) {
          var region = cell.getRegion();
          var down = cell.State.Down || (cell.State.Status == EState._Open);
          var color = (down ? paintContext.PenBorder.ColorLight : paintContext.PenBorder.ColorShadow).ToWinColor();
@@ -63,32 +64,25 @@ namespace fmg.uwp.draw.mosaic.bmp {
          }
       }
 
-      public override void PaintComponent(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext)
+      protected override void PaintComponent(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext)
       {
          PaintComponentBackground(cell, paint, paintContext);
 
          var rcInner = cell.getRcInner(paintContext.PenBorder.Width);
          rcInner.MoveXY(paintContext.Padding.Left, paintContext.Padding.Top);
 
-         WriteableBitmap srcImg = null;
+         // output Pictures
          if ((paintContext.ImgFlag != null) &&
              (cell.State.Status == EState._Close) &&
              (cell.State.Close == EClose._Flag))
          {
-            srcImg = paintContext.ImgFlag;
+            PaintImage(cell, paint, paintContext, paintContext.ImgFlag);
          }
          else if ((paintContext.ImgMine != null) &&
                   (cell.State.Status == EState._Open) &&
                   (cell.State.Open == EOpen._Mine))
          {
-            srcImg = paintContext.ImgMine;
-         }
-
-         // output Pictures
-         if (srcImg != null) {
-            var destRc = rcInner.ToWinRect();
-            var srcRc = new Windows.Foundation.Rect(0, 0, srcImg.PixelWidth, srcImg.PixelHeight);
-            paint.Bmp.Blit(destRc, srcImg, srcRc);
+            PaintImage(cell, paint, paintContext, paintContext.ImgMine);
          } else
          // output text
          {
@@ -130,7 +124,7 @@ namespace fmg.uwp.draw.mosaic.bmp {
       }
 
       /// <summary> залить ячейку нужным цветом </summary>
-      public override void PaintComponentBackground(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext)
+      protected override void PaintComponentBackground(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext)
       {
          //if (PaintContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
          //   return;
@@ -140,6 +134,14 @@ namespace fmg.uwp.draw.mosaic.bmp {
             paintContext.BkFill.GetColor
             );
          paint.Bmp.FillPolygon(cell.getRegion().RegionDoubleAsXyxyxySequence(paintContext.Padding, true).ToArray(), color.ToWinColor());
+      }
+
+      protected override void PaintImage(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext, WriteableBitmap img) {
+         var rcInner = cell.getRcInner(paintContext.PenBorder.Width);
+         rcInner.MoveXY(paintContext.Padding.Left, paintContext.Padding.Top);
+         var destRc = rcInner.ToWinRect();
+         var srcRc = new Windows.Foundation.Rect(0, 0, img.PixelWidth, img.PixelHeight);
+         paint.Bmp.Blit(destRc, img, srcRc);
       }
 
    }

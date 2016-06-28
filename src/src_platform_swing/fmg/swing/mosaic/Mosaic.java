@@ -128,7 +128,7 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
    @Override
    public CellPaintGraphics<Icon> getCellPaint() {
       if (_cellPaint == null) {
-         _cellPaint = new CellPaintGraphics<>();
+         _cellPaint = new CellPaintGraphics.Icon();
       }
       return _cellPaint;
    }

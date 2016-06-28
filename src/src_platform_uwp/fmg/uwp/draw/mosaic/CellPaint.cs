@@ -13,15 +13,18 @@ namespace fmg.uwp.draw.mosaic {
 
       public abstract void Paint(BaseCell cell, TPaintable paint, PaintUwpContext<TImage> paintContext);
 
-      public abstract void PaintBorder(BaseCell cell, TPaintable paint, PaintUwpContext<TImage> paintContext);
+      protected abstract void PaintBorder(BaseCell cell, TPaintable paint, PaintUwpContext<TImage> paintContext);
 
       /// <summary> draw border lines </summary>
-      public abstract void PaintBorderLines(BaseCell cell, TPaintable paint, PaintUwpContext<TImage> paintContext);
+      protected abstract void PaintBorderLines(BaseCell cell, TPaintable paint, PaintUwpContext<TImage> paintContext);
 
-      public abstract void PaintComponent(BaseCell cell, TPaintable paint, PaintUwpContext<TImage> paintContext);
+      protected abstract void PaintComponent(BaseCell cell, TPaintable paint, PaintUwpContext<TImage> paintContext);
 
       /// <summary> залить ячейку нужным цветом </summary>
-      public abstract void PaintComponentBackground(BaseCell cell, TPaintable paint, PaintUwpContext<TImage> paintContext);
+      protected abstract void PaintComponentBackground(BaseCell cell, TPaintable paint, PaintUwpContext<TImage> paintContext);
+
+      /// <summary> draw image Flag or image Mine </summary>
+      protected abstract void PaintImage(BaseCell cell, TPaintable paint, PaintUwpContext<TImage> paintContext, TImage img);
 
    }
 

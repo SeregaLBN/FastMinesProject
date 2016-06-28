@@ -33,7 +33,7 @@ namespace fmg.uwp.draw.mosaic.xaml {
          PaintBorder(cell, binder, paintContext);
       }
 
-      public override void PaintBorder(BaseCell cell, PaintableShapes binder, PaintUwpContext<ImageSource> paintContext) {
+      protected override void PaintBorder(BaseCell cell, PaintableShapes binder, PaintUwpContext<ImageSource> paintContext) {
          // TODO set pen width
          //... = paintContext.PenBorder.Width;
 
@@ -46,7 +46,7 @@ namespace fmg.uwp.draw.mosaic.xaml {
       }
 
       /// <summary> draw border lines </summary>
-      public override void PaintBorderLines(BaseCell cell, PaintableShapes binder, PaintUwpContext<ImageSource> paintContext)
+      protected override void PaintBorderLines(BaseCell cell, PaintableShapes binder, PaintUwpContext<ImageSource> paintContext)
       {
          var poly = binder.Poly;
 #if true
@@ -86,7 +86,7 @@ namespace fmg.uwp.draw.mosaic.xaml {
          // TODO граница региона должна быть двухцветной...
       }
 
-      public override void PaintComponent(BaseCell cell, PaintableShapes binder, PaintUwpContext<ImageSource> paintContext) {
+      protected override void PaintComponent(BaseCell cell, PaintableShapes binder, PaintUwpContext<ImageSource> paintContext) {
          PaintComponentBackground(cell, binder, paintContext);
 
          var rcInner = cell.getRcInner(paintContext.PenBorder.Width);
@@ -94,29 +94,17 @@ namespace fmg.uwp.draw.mosaic.xaml {
          var txt = binder.Txt;
          var image = binder.Img;
 
-         ImageSource srcImg = null;
+         // output Pictures
          if ((paintContext.ImgFlag != null) &&
              (cell.State.Status == EState._Close) &&
              (cell.State.Close == EClose._Flag))
          {
-            srcImg = paintContext.ImgFlag;
+            PaintImage(cell, binder, paintContext, paintContext.ImgFlag);
          } else if ((paintContext.ImgMine != null) &&
                     (cell.State.Status == EState._Open) &&
-                    (cell.State.Open == EOpen._Mine)) {
-            srcImg = paintContext.ImgMine;
-         }
-
-         // output Pictures
-         if (srcImg != null) {
-            image.Source = srcImg;
-            image.Stretch = Stretch.UniformToFill;
-            image.Width = rcInner.Width;
-            image.Height = rcInner.Height;
-            Canvas.SetLeft(image, rcInner.Left());
-            Canvas.SetTop(image, rcInner.Top());
-            Canvas.SetZIndex(image, 5);
-            image.Visibility = Visibility.Visible;
-            txt.Visibility = Visibility.Collapsed;
+                    (cell.State.Open == EOpen._Mine))
+         {
+            PaintImage(cell, binder, paintContext, paintContext.ImgMine);
          } else
          // output text
          {
@@ -156,7 +144,7 @@ namespace fmg.uwp.draw.mosaic.xaml {
       }
 
       /// <summary> залить ячейку нужным цветом </summary>
-      public override void PaintComponentBackground(BaseCell cell, PaintableShapes binder, PaintUwpContext<ImageSource> paintContext) {
+      protected override void PaintComponentBackground(BaseCell cell, PaintableShapes binder, PaintUwpContext<ImageSource> paintContext) {
          Color clr;
          if (paintContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
             clr = paintContext.BackgroundColor;
@@ -167,6 +155,23 @@ namespace fmg.uwp.draw.mosaic.xaml {
                paintContext.BkFill.GetColor
                );
          binder.Poly.Fill = FindBrush(clr);
+      }
+
+      protected override void PaintImage(BaseCell cell, PaintableShapes binder, PaintUwpContext<ImageSource> paintContext, ImageSource img) {
+         var rcInner = cell.getRcInner(paintContext.PenBorder.Width);
+         rcInner.MoveXY(paintContext.Padding.Left, paintContext.Padding.Top);
+         var txt = binder.Txt;
+         var image = binder.Img;
+
+         image.Source = img;
+         image.Stretch = Stretch.UniformToFill;
+         image.Width = rcInner.Width;
+         image.Height = rcInner.Height;
+         Canvas.SetLeft(image, rcInner.Left());
+         Canvas.SetTop(image, rcInner.Top());
+         Canvas.SetZIndex(image, 5);
+         image.Visibility = Visibility.Visible;
+         txt.Visibility = Visibility.Collapsed;
       }
 
    }

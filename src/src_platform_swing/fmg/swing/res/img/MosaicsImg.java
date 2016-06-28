@@ -46,14 +46,6 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
 
    public MosaicsImg(EMosaic mosaicType, Matrisize sizeField) { super(mosaicType, sizeField); }
 
-   private ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> _cellPaint;
-   @Override
-   public ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> getCellPaint() {
-      if (_cellPaint == null)
-         _cellPaint = new CellPaintGraphics<>();
-      return _cellPaint;
-   }
-
    private PaintSwingContext<TImage> _paintContext;
    protected PaintSwingContext<TImage> getPaintContext() {
       if (_paintContext == null)
@@ -293,6 +285,14 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
 
       public Icon(EMosaic mosaicType, Matrisize sizeField) { super(mosaicType, sizeField); }
 
+      private ICellPaint<PaintableGraphics, javax.swing.Icon, PaintSwingContext<javax.swing.Icon>> _cellPaint;
+      @Override
+      public ICellPaint<PaintableGraphics, javax.swing.Icon, PaintSwingContext<javax.swing.Icon>> getCellPaint() {
+         if (_cellPaint == null)
+            _cellPaint = new CellPaintGraphics.Icon();
+         return _cellPaint;
+      }
+
       private BufferedImage buffImg;
       private Graphics2D gBuffImg;
       @Override
@@ -343,6 +343,14 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
       @Override
       protected java.awt.Image createImage() {
          return new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+      }
+
+      private ICellPaint<PaintableGraphics, java.awt.Image, PaintSwingContext<java.awt.Image>> _cellPaint;
+      @Override
+      public ICellPaint<PaintableGraphics, java.awt.Image, PaintSwingContext<java.awt.Image>> getCellPaint() {
+         if (_cellPaint == null)
+            _cellPaint = new CellPaintGraphics.Image();
+         return _cellPaint;
       }
 
       @Override

@@ -17,7 +17,7 @@ namespace fmg.uwp.res.img.win2d {
    /// Win2D impl
    /// </summary>
    public abstract class Logo<TImage> : ALogo<TImage>
-      where TImage : class, ICanvasResourceCreator
+      where TImage : DependencyObject, ICanvasResourceCreator
    {
 
       static Logo() {
@@ -124,6 +124,7 @@ namespace fmg.uwp.res.img.win2d {
                DrawBody(ds, true);
             }
          }
+
       }
 
       /// <summary> Main logos image
@@ -143,6 +144,7 @@ namespace fmg.uwp.res.img.win2d {
                DrawBody(ds, false);
             }
          }
+
       }
 
    }

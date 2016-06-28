@@ -11,7 +11,10 @@ import fmg.core.types.EMosaic;
 /**
  * interface of mosaic field
  */
-public interface IMosaic<TPaintable extends IPaintable, TImage, TPaintContext extends PaintContext<TImage>> extends BaseCell.IMatrixCells {
+public interface IMosaic<TPaintable extends IPaintable, TImage, TPaintContext
+                                    extends PaintContext<TImage>>
+                                    extends BaseCell.IMatrixCells
+{
    BaseCell.BaseAttribute getCellAttr();
 
    ICellPaint<TPaintable, TImage, TPaintContext> getCellPaint();
@@ -27,4 +30,5 @@ public interface IMosaic<TPaintable extends IPaintable, TImage, TPaintContext ex
    double getArea();
 
    void setArea(double area);
+
 }

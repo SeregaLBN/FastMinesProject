@@ -1,14 +1,12 @@
-﻿using System;
-using System.Linq;
-using Windows.UI.Text;
+﻿using Windows.UI.Text;
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.Text;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
-using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.Graphics.Canvas.Text;
 
 namespace fmg.uwp.draw.mosaic.win2d {
 
@@ -25,7 +23,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
          PaintBorder(cell, paint, paintContext);
       }
 
-      public override void PaintBorder(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext) {
+      protected override void PaintBorder(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext) {
          // TODO set pen width
          //... = PaintContext.PenBorder.Width;
 
@@ -38,7 +36,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
       }
 
       /// <summary> draw border lines </summary>
-      public override void PaintBorderLines(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext) {
+      protected override void PaintBorderLines(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext) {
          var ds = paint.DrawingSession;
          var region = cell.getRegion();
          var down = cell.State.Down || (cell.State.Status == EState._Open);
@@ -69,32 +67,25 @@ namespace fmg.uwp.draw.mosaic.win2d {
          }
       }
 
-      public override void PaintComponent(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext) {
+      protected override void PaintComponent(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext) {
          var ds = paint.DrawingSession;
          PaintComponentBackground(cell, paint, paintContext);
 
          var rcInner = cell.getRcInner(paintContext.PenBorder.Width);
          rcInner.MoveXY(paintContext.Padding.Left, paintContext.Padding.Top);
 
-         CanvasBitmap srcImg = null;
+         // output Pictures
          if ((paintContext.ImgFlag != null) &&
              (cell.State.Status == EState._Close) &&
              (cell.State.Close == EClose._Flag))
          {
-            srcImg = paintContext.ImgFlag;
+            PaintImage(cell, paint, paintContext, paintContext.ImgFlag);
          }
          else if ((paintContext.ImgMine != null) &&
                   (cell.State.Status == EState._Open) &&
                   (cell.State.Open == EOpen._Mine))
          {
-            srcImg = paintContext.ImgMine;
-         }
-
-         // output Pictures
-         if (srcImg != null) {
-            var destRc = rcInner.ToWinRect();
-            var srcRc = new Windows.Foundation.Rect(0, 0, srcImg.Size.Width, srcImg.Size.Height);
-            ds.DrawImage(srcImg, destRc, srcRc);
+            PaintImage(cell, paint, paintContext, paintContext.ImgMine);
          } else
          // output text
          {
@@ -145,7 +136,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
       }
 
       /// <summary> залить ячейку нужным цветом </summary>
-      public override void PaintComponentBackground(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext)
+      protected override void PaintComponentBackground(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext)
       {
          //if (PaintContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
          //   return;
@@ -158,6 +149,15 @@ namespace fmg.uwp.draw.mosaic.win2d {
          using (var geom = ds.BuildGeom(cell.getRegion())) {
             ds.FillGeometry(geom, paintContext.Padding.LeftTopOffset.ToVector2(), color.ToWinColor());
          }
+      }
+
+      protected override void PaintImage(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext, CanvasBitmap img) {
+         var ds = paint.DrawingSession;
+         var rcInner = cell.getRcInner(paintContext.PenBorder.Width);
+         rcInner.MoveXY(paintContext.Padding.Left, paintContext.Padding.Top);
+         var destRc = rcInner.ToWinRect();
+         var srcRc = new Windows.Foundation.Rect(0, 0, img.Size.Width, img.Size.Height);
+         ds.DrawImage(img, destRc, srcRc);
       }
 
    }

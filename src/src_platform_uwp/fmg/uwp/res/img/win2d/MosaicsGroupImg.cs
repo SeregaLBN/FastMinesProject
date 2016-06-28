@@ -1,6 +1,7 @@
 using System.Linq;
 using Windows.Graphics.Display;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI.Xaml;
@@ -17,7 +18,7 @@ namespace fmg.uwp.res.img.win2d {
    /// Win2D impl
    /// </summary>
    public abstract class MosaicsGroupImg<TImage> : AMosaicsGroupImg<TImage>
-      where TImage : class, ICanvasResourceCreator
+      where TImage : DependencyObject, ICanvasResourceCreator
    {
 
       static MosaicsGroupImg() {

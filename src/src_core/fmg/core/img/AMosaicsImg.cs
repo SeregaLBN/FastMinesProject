@@ -16,10 +16,12 @@ namespace fmg.core.img {
    /// <typeparam name="TPaintable">see <see cref="IPaintable"/></typeparam>
    /// <typeparam name="TImage">plaform specific image</typeparam>
    /// <typeparam name="TPaintContext">see <see cref="PaintContext{TImage}"/></typeparam>
-   public abstract class AMosaicsImg<TPaintable, TImage, TPaintContext> : RotatedImg<EMosaic, TImage>, IMosaic<TPaintable, TImage, TPaintContext>
+   /// <typeparam name="TImageInner">plaform specific image (see <see cref="PaintContext{TImage}"/>)</typeparam>
+   public abstract class AMosaicsImg<TPaintable, TImage, TPaintContext, TImageInner> : RotatedImg<EMosaic, TImage>, IMosaic<TPaintable, TImageInner, TPaintContext>
       where TPaintable : IPaintable
       where TImage : class
-      where TPaintContext : PaintContext<TImage>
+      where TImageInner : class
+      where TPaintContext : PaintContext<TImageInner>
    {
       protected AMosaicsImg(EMosaic mosaicType, Matrisize sizeField)
          : base(mosaicType)
@@ -58,7 +60,7 @@ namespace fmg.core.img {
 
       public BaseCell getCell(Coord coord) { return Matrix[coord.x * SizeField.n + coord.y]; }
 
-      public abstract ICellPaint<TPaintable, TImage, TPaintContext> CellPaint { get; }
+      public abstract ICellPaint<TPaintable, TImageInner, TPaintContext> CellPaint { get; }
 
       private BaseCell.BaseAttribute _cellAttr;
       public BaseCell.BaseAttribute CellAttr {

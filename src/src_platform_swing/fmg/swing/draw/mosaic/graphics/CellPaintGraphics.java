@@ -2,11 +2,9 @@ package fmg.swing.draw.mosaic.graphics;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -14,8 +12,6 @@ import java.awt.Stroke;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
-
-import javax.swing.Icon;
 
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.PointDouble;
@@ -35,7 +31,7 @@ import fmg.swing.draw.mosaic.PaintSwingContext;
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
  */
-public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TImage> {
+public abstract class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TImage> {
 
    /** @see javax.swing.JComponent.paint */
    @Override
@@ -66,7 +62,7 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
 
    /** @see javax.swing.JComponent.paintBorder */
    @Override
-   public void paintBorder(BaseCell cell, PaintableGraphics p, PaintSwingContext<TImage> paintContext) {
+   protected void paintBorder(BaseCell cell, PaintableGraphics p, PaintSwingContext<TImage> paintContext) {
 //      Object obj = this;
 //      if (obj instanceof JComponent) {
 //         JComponent This = (JComponent)obj;
@@ -99,7 +95,7 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
 
    /** draw border lines */
    @Override
-   public void paintBorderLines(BaseCell cell, PaintableGraphics p, PaintSwingContext<TImage> paintContext) {
+   protected void paintBorderLines(BaseCell cell, PaintableGraphics p, PaintSwingContext<TImage> paintContext) {
       SizeDouble offset = new SizeDouble(paintContext.getPadding().left, paintContext.getPadding().top);
       boolean down = cell.getState().isDown() || (cell.getState().getStatus() == EState._Open);
       Graphics g = p.getGraphics();
@@ -121,7 +117,7 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
 
    /** @see javax.swing.JComponent.paintComponent */
    @Override
-   public void paintComponent(BaseCell cell, PaintableGraphics p, PaintSwingContext<TImage> paintContext) {
+   protected void paintComponent(BaseCell cell, PaintableGraphics p, PaintSwingContext<TImage> paintContext) {
       Graphics g = p.getGraphics();
       Color colorOld = g.getColor();
       BoundDouble padding = paintContext.getPadding();
@@ -137,13 +133,13 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
          (cell.getState().getStatus() == EState._Close) &&
          (cell.getState().getClose() == EClose._Flag))
       {
-         drawImage(p.getOwner(), g, paintContext.getImgFlag(), (int)(rcInner.x+padding.left), (int)(rcInner.y+padding.top));
+         paintImage(cell, p, paintContext, paintContext.getImgFlag());
       } else
       if ((paintContext.getImgMine() != null) &&
          (cell.getState().getStatus() == EState._Open ) &&
          (cell.getState().getOpen() == EOpen._Mine))
       {
-         drawImage(p.getOwner(), g, paintContext.getImgMine(), (int)(rcInner.x+padding.left), (int)(rcInner.y+padding.top));
+         paintImage(cell, p, paintContext, paintContext.getImgMine());
       } else
       // output text
       {
@@ -176,20 +172,9 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
       g.setColor(colorOld);
    }
 
-   private static <TImage> void drawImage(Component c, Graphics g, TImage img, int x, int y) {
-      if (img instanceof Icon) {
-         ((Icon)img).paintIcon(c, g, x, y);
-         return;
-      }
-      if (img instanceof Image) {
-         g.drawImage((Image)img, x, y, null);
-      }
-      throw new RuntimeException("How to draw image " + img.getClass().getName() + "?");
-   }
-
    /** залить ячейку нужным цветом */
    @Override
-   public void paintComponentBackground(BaseCell cell, PaintableGraphics p, PaintSwingContext<TImage> paintContext) {
+   protected void paintComponentBackground(BaseCell cell, PaintableGraphics p, PaintSwingContext<TImage> paintContext) {
       Graphics g = p.getGraphics();
 //      if (paintContext.isIconicMode()) // когда русуется иконка, а не игровое поле, - делаю попроще...
 //         return;
@@ -207,6 +192,7 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
       return tl.getBounds();
 //      return font.getStringBounds(text, new FontRenderContext(null, true, true));
    }
+
    public static void DrawText(Graphics g, String text, Rectangle rc) {
       if ((text == null) || text.trim().isEmpty())
          return;
@@ -221,6 +207,38 @@ public class CellPaintGraphics<TImage> extends CellPaint<PaintableGraphics, TIma
       g.drawString(text,
             rc.x          +(int)((rc.width -bnd.getWidth ())/2.),
             rc.y+rc.height-(int)((rc.height-bnd.getHeight())/2.));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////
+   //    custom implementations
+   /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   public static class Icon extends CellPaintGraphics<javax.swing.Icon> {
+
+      @Override
+      protected void paintImage(BaseCell cell, PaintableGraphics p, PaintSwingContext<javax.swing.Icon> paintContext, javax.swing.Icon img) {
+         Graphics g = p.getGraphics();
+         RectDouble rcInner = cell.getRcInner(paintContext.getPenBorder().getWidth());
+         BoundDouble padding = paintContext.getPadding();
+         int x = (int)(rcInner.x+padding.left);
+         int y = (int)(rcInner.y+padding.top);
+         img.paintIcon(p.getOwner(), g, x, y);
+      }
+
+   }
+
+   public static class Image extends CellPaintGraphics<java.awt.Image> {
+
+      @Override
+      protected void paintImage(BaseCell cell, PaintableGraphics p, PaintSwingContext<java.awt.Image> paintContext, java.awt.Image img) {
+         Graphics g = p.getGraphics();
+         RectDouble rcInner = cell.getRcInner(paintContext.getPenBorder().getWidth());
+         BoundDouble padding = paintContext.getPadding();
+         int x = (int)(rcInner.x+padding.left);
+         int y = (int)(rcInner.y+padding.top);
+         g.drawImage(img, x, y, null);
+      }
+
    }
 
 }

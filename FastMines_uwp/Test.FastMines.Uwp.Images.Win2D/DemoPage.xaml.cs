@@ -12,6 +12,7 @@ using fmg.uwp.res.img.win2d;
 using LogoCanvasBmp            = fmg.uwp.res.img.win2d.Logo           <Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 using MosaicsSkillImgCanvasBmp = fmg.uwp.res.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 using MosaicsGroupImgCanvasBmp = fmg.uwp.res.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsImgCanvasBmp      = fmg.uwp.res.img.win2d.MosaicsImg     <Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -25,7 +26,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       private readonly LogoCanvasBmp            _logo;
       private readonly MosaicsSkillImgCanvasBmp _msi;
       private readonly MosaicsGroupImgCanvasBmp _mgi;
-      private readonly MosaicsImg _mi;
+      private readonly MosaicsImgCanvasBmp      _mi;
 
       private static readonly Random Rnd = new Random(Guid.NewGuid().GetHashCode());
       private static int R(int max) => Rnd.Next(max);
@@ -45,7 +46,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
 
          _logo = new LogoCanvasBmp(canvasControl1);
          _msi  = new MosaicsSkillImgCanvasBmp(ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], canvasControl2);
-         _mi   = new MosaicsImg(EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), canvasControl3);
+         _mi   = new MosaicsImgCanvasBmp(EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), canvasControl3);
          _mgi  = new MosaicsGroupImgCanvasBmp(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], canvasControl4);
 
          ApplyRandom(_logo, canvasControl1);
@@ -86,9 +87,9 @@ namespace Test.FastMines.Uwp.Images.Win2D {
             logoImg.UseGradient = Bl;
          }
 
-         var mosaicsImg = img as MosaicsImg;
+         var mosaicsImg = img as MosaicsImgCanvasBmp;
          if (mosaicsImg != null) {
-            var vals = (MosaicsImg.ERotateMode[])Enum.GetValues(typeof(MosaicsImg.ERotateMode));
+            var vals = (MosaicsImgCanvasBmp.ERotateMode[])Enum.GetValues(typeof(MosaicsImgCanvasBmp.ERotateMode));
             mosaicsImg.RotateMode = vals[R(vals.Length)];
          }
 

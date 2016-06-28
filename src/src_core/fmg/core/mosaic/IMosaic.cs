@@ -28,7 +28,7 @@ using fmg.core.mosaic.cells;
 namespace fmg.core.mosaic {
 
    /// <summary> interface of mosaic field </summary>
-   public interface IMosaic<in TPaintable, TImage, TPaintContext> : BaseCell.IMatrixCells
+   public interface IMosaic<in TPaintable, TImage, in TPaintContext> : BaseCell.IMatrixCells
       where TPaintable : IPaintable
       where TImage : class
       where TPaintContext : PaintContext<TImage>
@@ -44,6 +44,7 @@ namespace fmg.core.mosaic {
       EMosaic MosaicType { get; set; }
 
       double Area { get; set; }
+
    }
 
 }

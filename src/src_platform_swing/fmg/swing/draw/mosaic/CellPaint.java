@@ -15,14 +15,17 @@ public abstract class CellPaint<TPaintable extends IPaintable, TImage> implement
    @Override
    public abstract void paint(BaseCell cell, TPaintable p, PaintSwingContext<TImage> paintContext);
 
-   public abstract void paintBorder(BaseCell cell, TPaintable p, PaintSwingContext<TImage> paintContext);
+   protected abstract void paintBorder(BaseCell cell, TPaintable p, PaintSwingContext<TImage> paintContext);
 
    /** draw border lines */
-   public abstract void paintBorderLines(BaseCell cell, TPaintable p, PaintSwingContext<TImage> paintContext);
+   protected abstract void paintBorderLines(BaseCell cell, TPaintable p, PaintSwingContext<TImage> paintContext);
 
-   public abstract void paintComponent(BaseCell cell, TPaintable p, PaintSwingContext<TImage> paintContext);
+   protected abstract void paintComponent(BaseCell cell, TPaintable p, PaintSwingContext<TImage> paintContext);
 
    /** залить ячейку нужным цветом */
-   public abstract void paintComponentBackground(BaseCell cell, TPaintable p, PaintSwingContext<TImage> paintContext);
+   protected abstract void paintComponentBackground(BaseCell cell, TPaintable p, PaintSwingContext<TImage> paintContext);
+
+   /** draw image Flag or image Mine */
+   protected abstract void paintImage(BaseCell cell, TPaintable p, PaintSwingContext<TImage> paintContext, TImage img);
 
 }

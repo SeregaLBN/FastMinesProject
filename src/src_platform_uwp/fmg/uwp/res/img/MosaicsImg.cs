@@ -18,7 +18,7 @@ namespace fmg.uwp.res.img {
    /// <br/>
    /// WriteableBitmap impl
    /// </summary>
-   public class MosaicsImg : AMosaicsImg<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> {
+   public class MosaicsImg : AMosaicsImg<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>, WriteableBitmap> {
 
       static MosaicsImg() {
          if (StaticImgConsts.DeferrInvoker == null)
@@ -229,12 +229,12 @@ namespace fmg.uwp.res.img {
 
       private void DrawCache() { DrawStaticPart(_imageCache); }
 
-      private void DrawStaticPart(WriteableBitmap toImage) {
+      private void DrawStaticPart(WriteableBitmap targetImage) {
          var w = Width;
          var h = Height;
-         toImage.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
+         targetImage.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
 
-         var paint0 = new PaintableBmp(toImage);
+         var paint0 = new PaintableBmp(targetImage);
          var paintContext = PaintContext;
          var matrix = Matrix;
          var indexes = _rotatedElements.Select(cntxt => cntxt.index).ToList();
