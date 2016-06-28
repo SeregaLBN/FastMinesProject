@@ -1,4 +1,5 @@
 using System;
+using Windows.UI.Xaml;
 using Rect = Windows.Foundation.Rect;
 using Windows.UI.Xaml.Controls;
 using Microsoft.Graphics.Canvas;
@@ -10,9 +11,13 @@ using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.uwp.res.img.win2d;
 using LogoCanvasBmp            = fmg.uwp.res.img.win2d.Logo           <Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using MosaicsSkillImgCanvasBmp = fmg.uwp.res.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using MosaicsGroupImgCanvasBmp = fmg.uwp.res.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using MosaicsImgCanvasBmp      = fmg.uwp.res.img.win2d.MosaicsImg     <Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using LogoCanvasImgSrc         = fmg.uwp.res.img.win2d.Logo           <Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using MosaicsSkillCanvasBmp    = fmg.uwp.res.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsSkillCanvasImgSrc = fmg.uwp.res.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using MosaicsGroupCanvasBmp    = fmg.uwp.res.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsGroupCanvasImgSrc = fmg.uwp.res.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using MosaicsCanvasBmp         = fmg.uwp.res.img.win2d.MosaicsImg     <Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsCanvasImgSrc      = fmg.uwp.res.img.win2d.MosaicsImg     <Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -23,10 +28,15 @@ namespace Test.FastMines.Uwp.Images.Win2D {
    /// </summary>
    public sealed partial class DemoPage : Page {
 
-      private readonly LogoCanvasBmp            _logo;
-      private readonly MosaicsSkillImgCanvasBmp _msi;
-      private readonly MosaicsGroupImgCanvasBmp _mgi;
-      private readonly MosaicsImgCanvasBmp      _mi;
+      private readonly LogoCanvasBmp         _logo;
+      private readonly MosaicsSkillCanvasBmp _msi;
+      private readonly MosaicsGroupCanvasBmp _mgi;
+      private readonly MosaicsCanvasBmp      _mi;
+
+      public LogoCanvasImgSrc         DemoImg1 { get; }
+      public MosaicsSkillCanvasImgSrc DemoImg2 { get; }
+      public MosaicsGroupCanvasImgSrc DemoImg3 { get; }
+      public MosaicsCanvasImgSrc      DemoImg4 { get; }
 
       private static readonly Random Rnd = new Random(Guid.NewGuid().GetHashCode());
       private static int R(int max) => Rnd.Next(max);
@@ -42,54 +52,77 @@ namespace Test.FastMines.Uwp.Images.Win2D {
             _msi.Dispose();
             _mgi.Dispose();
             _mi.Dispose();
+            DemoImg1.Dispose();
+            DemoImg2.Dispose();
+            DemoImg3.Dispose();
+            DemoImg4.Dispose();
          };
 
-         _logo = new LogoCanvasBmp(canvasControl1);
-         _msi  = new MosaicsSkillImgCanvasBmp(ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], canvasControl2);
-         _mi   = new MosaicsImgCanvasBmp(EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), canvasControl3);
-         _mgi  = new MosaicsGroupImgCanvasBmp(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], canvasControl4);
+         _logo    = new LogoCanvasBmp(canvasControl1);
+         DemoImg1 = new LogoCanvasImgSrc();
+         _msi     = new MosaicsSkillCanvasBmp   (ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], canvasControl2);
+         DemoImg2 = new MosaicsSkillCanvasImgSrc(ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)]);
+         _mgi     = new MosaicsGroupCanvasBmp   (EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], canvasControl4);
+         DemoImg3 = new MosaicsGroupCanvasImgSrc(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)]);
+         _mi      = new MosaicsCanvasBmp        (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), canvasControl3);
+         DemoImg4 = new MosaicsCanvasImgSrc     (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)));
 
          ApplyRandom(_logo, canvasControl1);
          ApplyRandom(_msi , canvasControl2);
          ApplyRandom(_mi  , canvasControl3);
          ApplyRandom(_mgi , canvasControl4);
+         ApplyRandom(DemoImg1, null);
+         ApplyRandom(DemoImg2, null);
+         ApplyRandom(DemoImg3, null);
+         ApplyRandom(DemoImg4, null);
 
-         this.SizeChanged += (sender, ev) => {
-            var w = (int)(ev.NewSize.Width / 2 - 2 * Offset);
-            var h = (int)(ev.NewSize.Height / 2 - 2 * Offset);
-            _logo.Size = new Size(w, h);
-            _msi .Size = new Size(w, h);
-            _mi  .Size = new Size(w, h);
-            _mgi .Size = new Size(w, h);
+         this.Loaded += (sender1, args) => {
+            const int o = 2 * Offset;
+            Action onSize = () => {
+               _logo.Size = new Size((int)canvasControl1.Size.Width - o, (int)canvasControl1.Size.Height - o);
+               _msi .Size = new Size((int)canvasControl2.Size.Width - o, (int)canvasControl2.Size.Height - o);
+               _mi  .Size = new Size((int)canvasControl3.Size.Width - o, (int)canvasControl3.Size.Height - o);
+               _mgi .Size = new Size((int)canvasControl4.Size.Width - o, (int)canvasControl4.Size.Height - o);
+            };
+            onSize();
+            this.SizeChanged += (sender2, ev) => onSize();
          };
       }
 
-      private static void ApplyRandom<T>(RotatedImg<T, CanvasBitmap> img, CanvasControl canvasControl) {
+      private static void ApplyRandom<T, TImage>(RotatedImg<T, TImage> img, CanvasControl canvasControl)
+         where TImage : DependencyObject, ICanvasResourceCreator
+      {
+         if (canvasControl != null) {
+            // TImage is CanvasBitmap
+            img.PropertyChanged += (sender, ev) => {
+               if (ev.PropertyName == "Image")
+                  canvasControl.Invalidate();
+            };
+         } else {
+            // TImage is CanvasImageSource
+            img.SizeInt = 175 + R(50);
+         }
+
          img.Rotate = true;
          img.RotateAngleDelta = (3 + R(5)) * Np;
          img.RedrawInterval = 50;
          img.BorderWidth = Bl ? 1 : 2;
 
-         img.PropertyChanged += (sender, ev) => {
-               if (ev.PropertyName == "Image")
-                  canvasControl.Invalidate();
-            };
-
-         var plrImg = img as PolarLightsImg<T, CanvasBitmap>;
+         var plrImg = img as PolarLightsImg<T, TImage>;
          if (plrImg != null) {
             plrImg.PolarLights = true;
          }
 
-         var logoImg = img as Logo<CanvasBitmap>;
+         var logoImg = img as Logo<TImage>;
          if (logoImg != null) {
-            var vals = (LogoCanvasBmp.ERotateMode[])Enum.GetValues(typeof(LogoCanvasBmp.ERotateMode));
+            var vals = (Logo<TImage>.ERotateMode[])Enum.GetValues(typeof(LogoCanvasBmp.ERotateMode));
             logoImg.RotateMode = vals[R(vals.Length)];
             logoImg.UseGradient = Bl;
          }
 
-         var mosaicsImg = img as MosaicsImgCanvasBmp;
+         var mosaicsImg = img as MosaicsImg<TImage>;
          if (mosaicsImg != null) {
-            var vals = (MosaicsImgCanvasBmp.ERotateMode[])Enum.GetValues(typeof(MosaicsImgCanvasBmp.ERotateMode));
+            var vals = (MosaicsImg<TImage>.ERotateMode[])Enum.GetValues(typeof(MosaicsImg<TImage>.ERotateMode));
             mosaicsImg.RotateMode = vals[R(vals.Length)];
          }
 
