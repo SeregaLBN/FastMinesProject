@@ -1,6 +1,6 @@
 using fmg.data.controller.types;
 
-namespace fmg.uwp.res.img {
+namespace fmg.uwp.draw.img {
 
    /// <summary> representable <see cref="ESkillLevel"/> as CHAR </summary>
    public class MosaicsSkillCharImg : core.img.StaticImg<ESkillLevel, string> {

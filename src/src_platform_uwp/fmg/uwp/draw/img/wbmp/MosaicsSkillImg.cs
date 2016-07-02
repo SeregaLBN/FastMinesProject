@@ -7,7 +7,7 @@ using fmg.core.img;
 using fmg.data.controller.types;
 using fmg.uwp.utils;
 
-namespace fmg.uwp.res.img {
+namespace fmg.uwp.draw.img.wbmp {
 
    /// <summary> Representable <see cref="ESkillLevel"/> as image.
    /// <br/>
@@ -19,7 +19,7 @@ namespace fmg.uwp.res.img {
          if (StaticImgConsts.DeferrInvoker == null)
             StaticImgConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
          if (RotatedImgConst.TimerCreator == null)
-            RotatedImgConst.TimerCreator = () => new ui.Timer();
+            RotatedImgConst.TimerCreator = () => new Timer();
       }
 
       public MosaicsSkillImg(ESkillLevel group)

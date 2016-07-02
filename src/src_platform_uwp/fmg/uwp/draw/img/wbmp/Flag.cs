@@ -4,7 +4,7 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.uwp.utils;
 
-namespace fmg.uwp.res.img {
+namespace fmg.uwp.draw.img.wbmp {
 
    /// <summary> flag image </summary>
    public class Flag {

@@ -1,59 +1,55 @@
 using System;
 using System.Linq;
 using System.ComponentModel;
-using Windows.Graphics.Display;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.UI.Xaml;
+using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
 using fmg.core.mosaic.draw;
 using fmg.uwp.draw.mosaic;
-using fmg.uwp.draw.mosaic.win2d;
+using fmg.uwp.draw.mosaic.wbmp;
 using fmg.uwp.utils;
 
-namespace fmg.uwp.res.img.win2d {
+namespace fmg.uwp.draw.img.wbmp {
 
    /// <summary> Representable <see cref="EMosaic"/> as image.
    /// <br/>
-   /// Win2D impl
+   /// WriteableBitmap impl
    /// </summary>
-   public abstract class MosaicsImg<TImage> : AMosaicsImg<PaintableWin2D, TImage, PaintUwpContext<CanvasBitmap>, CanvasBitmap>
-      where TImage : DependencyObject, ICanvasResourceCreator
-   {
+   public class MosaicsImg : AMosaicsImg<PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>, WriteableBitmap> {
+
       static MosaicsImg() {
          if (StaticImgConsts.DeferrInvoker == null)
             StaticImgConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
          if (RotatedImgConst.TimerCreator == null)
-            RotatedImgConst.TimerCreator = () => new ui.Timer();
+            RotatedImgConst.TimerCreator = () => new Timer();
       }
 
       private const bool RandomCellBkColor = true;
       private Random Rand => new Random(Guid.NewGuid().GetHashCode());
 
-      protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField)
+      public MosaicsImg(EMosaic mosaicType, Matrisize sizeField)
          : base(mosaicType, sizeField)
       {
          SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
       }
 
-      private ICellPaint<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> _cellPaint;
-      public override ICellPaint<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> CellPaint {
+      private ICellPaint<PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> _cellPaint;
+      public override ICellPaint<PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> CellPaint {
          get {
             if (_cellPaint == null)
-               _cellPaint = new CellPaintWin2D();
+               _cellPaint = new CellPaintWBmp(); // call this setter
             return _cellPaint;
          }
       }
 
-      private PaintUwpContext<CanvasBitmap> _paintContext;
-      protected PaintUwpContext<CanvasBitmap> PaintContext {
+      private PaintUwpContext<WriteableBitmap> _paintContext;
+      protected PaintUwpContext<WriteableBitmap> PaintContext {
          get {
             if (_paintContext == null)
-               PaintContext = new PaintUwpContext<CanvasBitmap>(true); // call this setter
+               PaintContext = new PaintUwpContext<WriteableBitmap>(true); // call this setter
             return _paintContext;
          }
          set {
@@ -143,13 +139,17 @@ namespace fmg.uwp.res.img.win2d {
       //   base.Dispose(disposing);
       //}
 
-      protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
+      protected override WriteableBitmap CreateImage() {
+         return BitmapFactory.New(Width, Height); // new WriteableBitmap(w, h); // 
+      }
+
+      protected override void DrawBody() {
          switch (RotateMode) {
          case ERotateMode.FullMatrix:
-            DrawBodyFullMatrix(ds, fillBk);
+            DrawBodyFullMatrix();
             break;
          case ERotateMode.SomeCells:
-            DrawBodySomeCells(ds, fillBk);
+            DrawBodySomeCells();
             break;
          }
       }
@@ -160,14 +160,16 @@ namespace fmg.uwp.res.img.win2d {
       /// if (!OnlySyncDraw) {
       ///   Сама картинка возвращается сразу.
       ///   Но вот её отрисовка - в фоне.
-      ///   Т.к. TImage есть DependencyObject, то его владелец может сам отслеживать отрисовку...
+      ///   Т.к. WriteableBitmap есть DependencyObject, то его владелец может сам отслеживать отрисовку...
       /// }
       /// </summary>
-      protected void DrawBodyFullMatrix(CanvasDrawingSession ds, bool fillBk) {
-         Action funcFillBk = () => { if (fillBk) ds.Clear(BackgroundColor.ToWinColor()); };
+      protected void DrawBodyFullMatrix() {
+         var img = Image;
+
+         Action funcFillBk = () => img.Clear(BackgroundColor.ToWinColor());
 
          var matrix = Matrix;
-         var paint = new PaintableWin2D(ds);
+         var paint = new PaintableWBmp(img);
          var paintContext = PaintContext;
          var cp = CellPaint;
          if (SyncDraw || LiveImage()) {
@@ -175,21 +177,14 @@ namespace fmg.uwp.res.img.win2d {
             funcFillBk();
             foreach (var cell in matrix)
                cp.Paint(cell, paint, paintContext);
-            ds.Dispose();
          } else {
             // async draw
             AsyncRunner.InvokeFromUiLater(() => {
                funcFillBk();
-               var max = matrix.Count;
-               var i = 0;
                foreach (var cell in matrix) {
                   var tmp = cell;
                   AsyncRunner.InvokeFromUiLater(
-                     () => {
-                        cp.Paint(tmp, paint, paintContext);
-                        if (++i == max)
-                           ds.Dispose();
-                     },
+                     () => cp.Paint(tmp, paint, paintContext),
                      ((Rand.Next() & 1) == 0)
                         ? CoreDispatcherPriority.Low
                         : CoreDispatcherPriority.Normal
@@ -203,7 +198,7 @@ namespace fmg.uwp.res.img.win2d {
 
       #region PART ERotateMode.SomeCells
 
-      protected bool UseCache = true;
+      private const bool UseCache = true;
 
       /// <summary> need redraw the static part of the cache </summary>
       private bool _invalidateCache = true;
@@ -211,41 +206,35 @@ namespace fmg.uwp.res.img.win2d {
       /// Cached static part of the picture.
       /// ! Recreated only when changing the original image size (minimizing CreateImage calls).
       /// </summary>
-      private CanvasBitmap _imageCache;
-      private CanvasBitmap ImageCache {
+      private WriteableBitmap _imageCache;
+      private WriteableBitmap ImageCache {
          get {
             if (_imageCache == null) {
-               var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-               ICanvasResourceCreator rc = Image;
-               _imageCache = new CanvasRenderTarget(rc, Width, Height, dpi);
+               _imageCache = CreateImage();
                _invalidateCache = true;
             }
             if (_invalidateCache) {
                _invalidateCache = false;
-               using (var ds = ((CanvasRenderTarget)_imageCache).CreateDrawingSession()) {
-                  DrawCache(ds);
-               }
+               DrawCache();
             }
             return _imageCache;
          }
       }
 
       /// <summary> copy cached image to original </summary>
-      protected void CopyFromCache(CanvasDrawingSession ds) {
-         if (UseCache) {
-            var rc = new Windows.Foundation.Rect(0, 0, Width, Height);
-            ds.DrawImage(ImageCache, rc, rc, 1.0f, CanvasImageInterpolation.NearestNeighbor, CanvasComposite.Copy);
-         } else {
-            ds.DrawImage(ImageCache);
-         }
+      private void CopyFromCache() {
+         var rc = new Windows.Foundation.Rect(0, 0, Width, Height);
+         Image.Blit(rc, ImageCache, rc, WriteableBitmapExtensions.BlendMode.None);
       }
 
-      private void DrawCache(CanvasDrawingSession ds) { DrawStaticPart(ds); }
+      private void DrawCache() { DrawStaticPart(_imageCache); }
 
-      protected void DrawStaticPart(CanvasDrawingSession ds) {
-         ds.Clear(BackgroundColor.ToWinColor());
+      private void DrawStaticPart(WriteableBitmap targetImage) {
+         var w = Width;
+         var h = Height;
+         targetImage.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
 
-         var paint0 = new PaintableWin2D(ds);
+         var paint0 = new PaintableWBmp(targetImage);
          var paintContext = PaintContext;
          var matrix = Matrix;
          var indexes = _rotatedElements.Select(cntxt => cntxt.index).ToList();
@@ -254,11 +243,12 @@ namespace fmg.uwp.res.img.win2d {
                CellPaint.Paint(matrix[i], paint0, paintContext);
       }
 
-      protected void DrawRotatedPart(CanvasDrawingSession ds) {
+      protected void DrawRotatedPart() {
          if (!_rotatedElements.Any())
             return;
 
-         var paint = new PaintableWin2D(ds);
+         var img = Image;
+         var paint = new PaintableWBmp(img);
          var paintContext = PaintContext;
          var pb = PaintContext.PenBorder;
          // save
@@ -277,17 +267,17 @@ namespace fmg.uwp.res.img.win2d {
          pb.ColorLight = pb.ColorShadow = borderColor; //BorderColor = borderColor;
       }
 
-      protected void DrawBodySomeCells(CanvasDrawingSession ds, bool fillBk) {
+      protected void DrawBodySomeCells() {
          if (SyncDraw || LiveImage()) {
             // sync draw
             if (UseCache)
-               CopyFromCache(ds);
+               CopyFromCache();
             else
-               DrawStaticPart(ds);
-            DrawRotatedPart(ds);
+               DrawStaticPart(Image);
+            DrawRotatedPart();
          } else {
             // async draw
-            DrawBodyFullMatrix(ds, fillBk);
+            DrawBodyFullMatrix();
          }
       }
 
@@ -297,61 +287,6 @@ namespace fmg.uwp.res.img.win2d {
          base.Dispose(disposing);
          if (disposing)
             PaintContext.Dispose();
-      }
-
-      /////////////////////////////////////////////////////////////////////////////////////////////////////
-      //    custom implementations
-      /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-      /// <summary> Representable <see cref="EMosaic"/> as image.
-      /// <br/>
-      /// CanvasBitmap impl
-      /// </summary>
-      public class CanvasBmp : MosaicsImg<CanvasBitmap> {
-
-         private readonly ICanvasResourceCreator _rc;
-
-         public CanvasBmp(EMosaic mosaicType, Matrisize sizeField, ICanvasResourceCreator resourceCreator)
-            : base(mosaicType, sizeField)
-         {
-            _rc = resourceCreator;
-         }
-
-         protected override CanvasBitmap CreateImage() {
-            var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            return new CanvasRenderTarget(_rc, Width, Height, dpi);
-         }
-
-         protected override void DrawBody() {
-            using (var ds = ((CanvasRenderTarget)Image).CreateDrawingSession()) {
-               DrawBody(ds, true);
-            }
-         }
-
-      }
-
-      /// <summary> Representable <see cref="EMosaic"/> as image.
-      /// <br/>
-      /// CanvasImageSource impl (XAML ImageSource compatible)
-      /// </summary>
-      public class CanvasImgSrc : MosaicsImg<CanvasImageSource> {
-
-         public CanvasImgSrc(EMosaic mosaicType, Matrisize sizeField)
-            : base(mosaicType, sizeField)
-         { }
-
-         protected override CanvasImageSource CreateImage() {
-            var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            var device = CanvasDevice.GetSharedDevice();
-            return new CanvasImageSource(device, Width, Height, dpi);
-         }
-
-         protected override void DrawBody() {
-            using (var ds = Image.CreateDrawingSession(BackgroundColor.ToWinColor())) {
-               DrawBody(ds, false);
-            }
-         }
-
       }
 
    }

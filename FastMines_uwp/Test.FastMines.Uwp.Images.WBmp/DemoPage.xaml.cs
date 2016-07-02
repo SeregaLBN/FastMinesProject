@@ -6,7 +6,7 @@ using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
 using fmg.data.controller.types;
-using fmg.uwp.res.img;
+using fmg.uwp.draw.img.wbmp;
 
 namespace Test.FastMines.Uwp.Images.WBmp {
 

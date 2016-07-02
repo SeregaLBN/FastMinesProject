@@ -3,7 +3,7 @@ using System.ComponentModel;
 using Windows.UI.Xaml.Media;
 using fmg.common.geom;
 using fmg.core.types;
-using fmg.uwp.res.img;
+using fmg.uwp.draw.img.wbmp;
 
 namespace fmg.DataModel.Items {
 

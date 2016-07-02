@@ -7,12 +7,12 @@ using Windows.Foundation;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.uwp.utils;
 
-namespace fmg.uwp.draw {
+namespace fmg.uwp.draw.mosaic.wbmp {
 
    /// <summary>
    ///  http://stackoverflow.com/questions/5666772/how-can-i-render-text-on-a-writeablebitmap-on-a-background-thread-in-windows-ph
    /// </summary>
-   public static class BitmapFont {
+   internal static class BitmapFont {
       private const string DRAW_BMP_FONT_NAME = "NirmalaUI";
       private const int DRAW_BMP_FONT_SIZE = 30;
 

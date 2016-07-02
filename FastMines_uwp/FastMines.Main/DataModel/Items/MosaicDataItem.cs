@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
 using Windows.UI.Xaml.Media;
 using fmg.common.geom;
+using fmg.common.notyfier;
 using fmg.core.types;
 using fmg.data.controller.types;
-using fmg.uwp.res.img;
-using fmg.common.notyfier;
+using fmg.uwp.draw.img.wbmp;
 
 namespace fmg.DataModel.Items {
 

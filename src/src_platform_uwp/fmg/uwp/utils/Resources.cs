@@ -8,10 +8,9 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.Graphics.Imaging;
 using fmg.common.geom;
 using fmg.core.types;
-using fmg.uwp.utils;
-using fmg.uwp.res.img;
+using fmg.uwp.draw.img.wbmp;
 
-namespace fmg.uwp.res {
+namespace fmg.uwp.utils {
 
    /// <summary> Мультимедиа ресурсы программы </summary>
    public static class Resources {

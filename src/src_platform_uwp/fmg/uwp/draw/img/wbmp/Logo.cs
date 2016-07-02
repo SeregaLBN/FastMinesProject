@@ -6,7 +6,7 @@ using fmg.common.geom;
 using fmg.core.img;
 using fmg.uwp.utils;
 
-namespace fmg.uwp.res.img {
+namespace fmg.uwp.draw.img.wbmp {
 
    /// <summary> main logos image </summary>
    public class Logo : ALogo<WriteableBitmap> {
@@ -15,7 +15,7 @@ namespace fmg.uwp.res.img {
          if (StaticImgConsts.DeferrInvoker == null)
             StaticImgConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
          if (RotatedImgConst.TimerCreator == null)
-            RotatedImgConst.TimerCreator = () => new ui.Timer();
+            RotatedImgConst.TimerCreator = () => new Timer();
       }
 
       public Logo() {

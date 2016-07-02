@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;

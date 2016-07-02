@@ -11,8 +11,8 @@ using fmg.common.geom;
 using fmg.core.types;
 using Size = fmg.common.geom.Size;
 using Rect = Windows.Foundation.Rect;
-using fmg.uwp.res;
-using fmg.uwp.res.img;
+using fmg.uwp.utils;
+using fmg.uwp.draw.img.wbmp;
 using FastMines.BackgroundTasks.Win81;
 
 namespace FastMines {

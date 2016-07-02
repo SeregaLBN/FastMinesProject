@@ -1,6 +1,6 @@
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace fmg.uwp.res.img {
+namespace fmg.uwp.draw.img.wbmp {
 
    /// <summary> mine image </summary>
    public class Mine {

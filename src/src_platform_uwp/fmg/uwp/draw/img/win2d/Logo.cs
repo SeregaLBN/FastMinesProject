@@ -24,7 +24,7 @@ namespace fmg.uwp.res.img.win2d {
          if (StaticImgConsts.DeferrInvoker == null)
             StaticImgConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
          if (RotatedImgConst.TimerCreator == null)
-            RotatedImgConst.TimerCreator = () => new ui.Timer();
+            RotatedImgConst.TimerCreator = () => new Timer();
       }
 
       protected Logo() {

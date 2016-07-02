@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
 using FastMines.Common;
-using fmg.uwp.draw;
+using fmg.uwp.draw.mosaic.wbmp;
 using fmg.uwp.utils;
 
 // The Grid App template is documented at http://go.microsoft.com/fwlink/?LinkId=234226
