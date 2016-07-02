@@ -33,7 +33,7 @@ import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
  */
-public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, TImage, PaintSwingContext<TImage>> {
+public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, TImage, PaintSwingContext<TImage>, TImage> {
 
    static {
       if (DEFERR_INVOKER == null)
