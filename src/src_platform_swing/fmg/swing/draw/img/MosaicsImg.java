@@ -1,4 +1,4 @@
-package fmg.swing.res.img;
+package fmg.swing.draw.img;
 
 import java.awt.AlphaComposite;
 import java.awt.Component;
@@ -39,7 +39,7 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
       if (DEFERR_INVOKER == null)
          DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
       if (TIMER_CREATOR == null)
-         TIMER_CREATOR = () -> new fmg.swing.ui.Timer();
+         TIMER_CREATOR = () -> new fmg.swing.utils.Timer();
    }
 
    private static final boolean RandomCellBkColor = true;

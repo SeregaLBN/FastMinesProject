@@ -1,4 +1,4 @@
-package fmg.swing.res;
+package fmg.swing.utils;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -6,10 +6,9 @@ import java.util.Map;
 
 import javax.swing.Icon;
 
-import fmg.swing.res.img.BackgroundPause;
-import fmg.swing.res.img.Flag;
-import fmg.swing.res.img.Mine;
-import fmg.swing.utils.ImgUtils;
+import fmg.swing.draw.img.BackgroundPause;
+import fmg.swing.draw.img.Flag;
+import fmg.swing.draw.img.Mine;
 
 /** Мультимедиа ресурсы программы */
 public final class Resources {

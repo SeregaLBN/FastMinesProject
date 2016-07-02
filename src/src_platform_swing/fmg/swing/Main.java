@@ -96,18 +96,18 @@ import fmg.swing.dialogs.CustomSkillDlg;
 import fmg.swing.dialogs.ManageDlg;
 import fmg.swing.dialogs.SelectMosaicDlg;
 import fmg.swing.dialogs.StatisticDlg;
+import fmg.swing.draw.img.Logo;
+import fmg.swing.draw.img.MosaicsGroupImg;
+import fmg.swing.draw.img.MosaicsImg;
+import fmg.swing.draw.img.MosaicsSkillImg;
 import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.mosaic.Mosaic;
-import fmg.swing.res.Resources;
-import fmg.swing.res.Resources.EBtnNewGameState;
-import fmg.swing.res.Resources.EBtnPauseState;
-import fmg.swing.res.img.Logo;
-import fmg.swing.res.img.MosaicsGroupImg;
-import fmg.swing.res.img.MosaicsImg;
-import fmg.swing.res.img.MosaicsSkillImg;
 import fmg.swing.serializable.SerializeProjData;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
+import fmg.swing.utils.Resources;
+import fmg.swing.utils.Resources.EBtnNewGameState;
+import fmg.swing.utils.Resources.EBtnPauseState;
 
 /** Главное окно программы */
 public class Main extends JFrame implements PropertyChangeListener {

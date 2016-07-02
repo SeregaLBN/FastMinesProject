@@ -1,4 +1,4 @@
-package fmg.swing.res.img;
+package fmg.swing.draw.img;
 
 import java.awt.Component;
 import java.awt.Graphics;

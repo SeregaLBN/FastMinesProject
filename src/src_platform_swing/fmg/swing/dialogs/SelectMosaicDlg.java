@@ -31,9 +31,9 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
 import fmg.swing.Cast;
 import fmg.swing.Main;
+import fmg.swing.draw.img.MosaicsImg;
 import fmg.swing.model.SpinNumberDocListener;
 import fmg.swing.model.SpinnerDiapasonModel;
-import fmg.swing.res.img.MosaicsImg;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
 

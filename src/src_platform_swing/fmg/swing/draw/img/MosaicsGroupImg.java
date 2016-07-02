@@ -1,4 +1,4 @@
-package fmg.swing.res.img;
+package fmg.swing.draw.img;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -9,34 +9,33 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.swing.SwingUtilities;
 
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.AMosaicsSkillImg;
-import fmg.data.controller.types.ESkillLevel;
+import fmg.core.img.AMosaicsGroupImg;
+import fmg.core.types.EMosaicGroup;
 import fmg.swing.Cast;
 
 /**
- * Representable {@link fmg.data.controller.types.ESkillLevel} as image
+ * Representable {@link fmg.core.types.EMosaicGroup} as image
  * <br>
  * SWING impl
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon})
  **/
-public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
+public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
 
    static {
       if (DEFERR_INVOKER == null)
          DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
       if (TIMER_CREATOR == null)
-         TIMER_CREATOR = () -> new fmg.swing.ui.Timer();
+         TIMER_CREATOR = () -> new fmg.swing.utils.Timer();
    }
 
-   public MosaicsSkillImg(ESkillLevel skill) { super(skill); }
+   public MosaicsGroupImg(EMosaicGroup group) { super(group); }
 
    protected void drawBody(Graphics g) {
       Graphics2D g2 = (Graphics2D) g;
@@ -44,35 +43,32 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
       g.setColor(Cast.toColor(getBackgroundColor()));
       g.fillRect(0, 0, getWidth(), getHeight());
 
-      Stream<Stream<PointDouble>> stars = getCoords();
-      stars.forEach(coords -> {
-         g.setColor(Cast.toColor(getForegroundColorAttenuate()));
-         List<PointDouble> points = coords.collect(Collectors.toList());
-         g.fillPolygon(Cast.toPolygon(points));
+      g.setColor(Cast.toColor(getForegroundColorAttenuate()));
+      List<PointDouble> points = getCoords().collect(Collectors.toList());
+      g.fillPolygon(Cast.toPolygon(points));
 
-         // draw perimeter border
-         Color clr = getBorderColor();
-         if (clr.getA() != Color.Transparent.getA()) {
-            g.setColor(Cast.toColor(clr));
-            int bw = getBorderWidth();
-            g2.setStroke(new BasicStroke(bw));
+      // draw perimeter border
+      Color clr = getBorderColor();
+      if (clr.getA() != Color.Transparent.getA()) {
+         g.setColor(Cast.toColor(clr));
+         int bw = getBorderWidth();
+         g2.setStroke(new BasicStroke(bw));
 
-            for (int i = 0; i < points.size(); i++) {
-               PointDouble p1 = points.get(i);
-               PointDouble p2 = (i != (points.size() - 1)) ? points.get(i + 1) : points.get(0);
-               g.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
-            }
+         for (int i = 0; i < points.size(); i++) {
+            PointDouble p1 = points.get(i);
+            PointDouble p2 = (i != (points.size() - 1)) ? points.get(i + 1) : points.get(0);
+            g.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
          }
-      });
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    //    custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   public static class Icon extends MosaicsSkillImg<javax.swing.Icon> {
+   public static class Icon extends MosaicsGroupImg<javax.swing.Icon> {
 
-      public Icon(ESkillLevel skill) { super(skill); }
+      public Icon(EMosaicGroup group) { super(group); }
 
       private BufferedImage buffImg;
       private Graphics2D gBuffImg;
@@ -85,6 +81,7 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
          gBuffImg = buffImg.createGraphics();
          gBuffImg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
          gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+         gBuffImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
          return new javax.swing.Icon() {
             @Override
@@ -111,9 +108,9 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
 
    }
 
-   public static class Image extends MosaicsSkillImg<java.awt.Image> {
+   public static class Image extends MosaicsGroupImg<java.awt.Image> {
 
-      public Image(ESkillLevel skill) { super(skill); }
+      public Image(EMosaicGroup group) { super(group); }
 
       @Override
       protected java.awt.Image createImage() {
@@ -126,6 +123,7 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
          Graphics2D g = img.createGraphics();
          g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
          g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
          drawBody(g);
          g.dispose();
       }
@@ -134,12 +132,12 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.<ESkillLevel>testApp(rnd -> {
-         ESkillLevel skill = ESkillLevel.fromOrdinal(rnd.nextInt(ESkillLevel.values().length));
-         MosaicsSkillImg.Icon img1 = new MosaicsSkillImg.Icon(skill);
+      TestDrawing.<EMosaicGroup>testApp(rnd -> {
+         EMosaicGroup eGroup = EMosaicGroup.fromOrdinal(rnd.nextInt(EMosaicGroup.values().length));
+         MosaicsGroupImg.Icon img1 = new MosaicsGroupImg.Icon(eGroup);
 
-         skill = ESkillLevel.fromOrdinal(rnd.nextInt(ESkillLevel.values().length));
-         MosaicsSkillImg.Image img2 = new MosaicsSkillImg.Image(skill);
+         eGroup = EMosaicGroup.fromOrdinal(rnd.nextInt(EMosaicGroup.values().length));
+         MosaicsGroupImg.Image img2 = new MosaicsGroupImg.Image(eGroup);
 
          return new Pair<>(img1, img2);
       });

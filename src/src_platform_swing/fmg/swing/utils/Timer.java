@@ -1,4 +1,4 @@
-package fmg.swing.ui;
+package fmg.swing.utils;
 
 import java.awt.event.ActionListener;
 

@@ -27,11 +27,11 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
 
-import fmg.swing.res.Resources;
-import fmg.swing.res.Resources.EBtnNewGameState;
-import fmg.swing.res.img.Logo;
+import fmg.swing.draw.img.Logo;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
+import fmg.swing.utils.Resources;
+import fmg.swing.utils.Resources.EBtnNewGameState;
 
 public class AboutDlg extends JDialog {
 

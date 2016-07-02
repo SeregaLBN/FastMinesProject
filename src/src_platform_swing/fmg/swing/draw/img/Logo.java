@@ -1,4 +1,4 @@
-package fmg.swing.res.img;
+package fmg.swing.draw.img;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -29,7 +29,7 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
       if (DEFERR_INVOKER == null)
          DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
       if (TIMER_CREATOR == null)
-         TIMER_CREATOR = () -> new fmg.swing.ui.Timer();
+         TIMER_CREATOR = () -> new fmg.swing.utils.Timer();
    }
 
    protected void drawBody(Graphics2D g) {
