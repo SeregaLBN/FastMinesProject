@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -9,10 +9,10 @@
     <Import_RootNamespace>FastMines.Uwp.Draw.WBmp</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\bmp\CellPaintBmp.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\wbmp\CellPaintWBmp.cs">
       <Link>src_fmg.uwp\draw\mosaic\bmp\CellPaintBmp.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\bmp\PaintableBmp.cs">
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\wbmp\PaintableWBmp.cs">
       <Link>src_fmg.uwp\draw\mosaic\bmp\PaintableBmp.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsSkillImg.cs">

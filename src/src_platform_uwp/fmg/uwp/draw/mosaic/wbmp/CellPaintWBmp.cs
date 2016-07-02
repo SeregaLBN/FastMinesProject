@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
@@ -7,12 +7,12 @@ using fmg.core.types;
 using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
 
-namespace fmg.uwp.draw.mosaic.bmp {
+namespace fmg.uwp.draw.mosaic.wbmp {
 
    /// <summary> Class for drawing cell into (ower <see cref="WriteableBitmap"/>) </summary>
-   public class CellPaintBmp : CellPaint<PaintableBmp, WriteableBitmap> {
+   public class CellPaintWBmp : CellPaint<PaintableWBmp, WriteableBitmap> {
 
-      public override void Paint(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext)
+      public override void Paint(BaseCell cell, PaintableWBmp paint, PaintUwpContext<WriteableBitmap> paintContext)
       {
          // TODO ограничиваю рисование только границами своей фигуры
          //...
@@ -22,7 +22,7 @@ namespace fmg.uwp.draw.mosaic.bmp {
          PaintBorder(cell, paint, paintContext);
       }
 
-      protected override void PaintBorder(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext) {
+      protected override void PaintBorder(BaseCell cell, PaintableWBmp paint, PaintUwpContext<WriteableBitmap> paintContext) {
          // TODO set pen width
          //... = PaintContext.PenBorder.Width;
 
@@ -35,7 +35,7 @@ namespace fmg.uwp.draw.mosaic.bmp {
       }
 
       /// <summary> draw border lines </summary>
-      protected override void PaintBorderLines(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext) {
+      protected override void PaintBorderLines(BaseCell cell, PaintableWBmp paint, PaintUwpContext<WriteableBitmap> paintContext) {
          var region = cell.getRegion();
          var down = cell.State.Down || (cell.State.Status == EState._Open);
          var color = (down ? paintContext.PenBorder.ColorLight : paintContext.PenBorder.ColorShadow).ToWinColor();
@@ -64,7 +64,7 @@ namespace fmg.uwp.draw.mosaic.bmp {
          }
       }
 
-      protected override void PaintComponent(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext)
+      protected override void PaintComponent(BaseCell cell, PaintableWBmp paint, PaintUwpContext<WriteableBitmap> paintContext)
       {
          PaintComponentBackground(cell, paint, paintContext);
 
@@ -124,7 +124,7 @@ namespace fmg.uwp.draw.mosaic.bmp {
       }
 
       /// <summary> залить ячейку нужным цветом </summary>
-      protected override void PaintComponentBackground(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext)
+      protected override void PaintComponentBackground(BaseCell cell, PaintableWBmp paint, PaintUwpContext<WriteableBitmap> paintContext)
       {
          //if (PaintContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
          //   return;
@@ -136,7 +136,7 @@ namespace fmg.uwp.draw.mosaic.bmp {
          paint.Bmp.FillPolygon(cell.getRegion().RegionDoubleAsXyxyxySequence(paintContext.Padding, true).ToArray(), color.ToWinColor());
       }
 
-      protected override void PaintImage(BaseCell cell, PaintableBmp paint, PaintUwpContext<WriteableBitmap> paintContext, WriteableBitmap img) {
+      protected override void PaintImage(BaseCell cell, PaintableWBmp paint, PaintUwpContext<WriteableBitmap> paintContext, WriteableBitmap img) {
          var rcInner = cell.getRcInner(paintContext.PenBorder.Width);
          rcInner.MoveXY(paintContext.Padding.Left, paintContext.Padding.Top);
          var destRc = rcInner.ToWinRect();

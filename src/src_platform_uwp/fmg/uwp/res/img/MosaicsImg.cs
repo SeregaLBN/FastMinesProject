@@ -9,7 +9,7 @@ using fmg.core.img;
 using fmg.core.types;
 using fmg.core.mosaic.draw;
 using fmg.uwp.draw.mosaic;
-using fmg.uwp.draw.mosaic.bmp;
+using fmg.uwp.draw.mosaic.wbmp;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.res.img {
@@ -18,7 +18,7 @@ namespace fmg.uwp.res.img {
    /// <br/>
    /// WriteableBitmap impl
    /// </summary>
-   public class MosaicsImg : AMosaicsImg<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>, WriteableBitmap> {
+   public class MosaicsImg : AMosaicsImg<PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>, WriteableBitmap> {
 
       static MosaicsImg() {
          if (StaticImgConsts.DeferrInvoker == null)
@@ -36,11 +36,11 @@ namespace fmg.uwp.res.img {
          SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
       }
 
-      private ICellPaint<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> _cellPaint;
-      public override ICellPaint<PaintableBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> CellPaint {
+      private ICellPaint<PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> _cellPaint;
+      public override ICellPaint<PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> CellPaint {
          get {
             if (_cellPaint == null)
-               _cellPaint = new CellPaintBmp(); // call this setter
+               _cellPaint = new CellPaintWBmp(); // call this setter
             return _cellPaint;
          }
       }
@@ -169,7 +169,7 @@ namespace fmg.uwp.res.img {
          Action funcFillBk = () => img.Clear(BackgroundColor.ToWinColor());
 
          var matrix = Matrix;
-         var paint = new PaintableBmp(img);
+         var paint = new PaintableWBmp(img);
          var paintContext = PaintContext;
          var cp = CellPaint;
          if (SyncDraw || LiveImage()) {
@@ -234,7 +234,7 @@ namespace fmg.uwp.res.img {
          var h = Height;
          targetImage.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
 
-         var paint0 = new PaintableBmp(targetImage);
+         var paint0 = new PaintableWBmp(targetImage);
          var paintContext = PaintContext;
          var matrix = Matrix;
          var indexes = _rotatedElements.Select(cntxt => cntxt.index).ToList();
@@ -248,7 +248,7 @@ namespace fmg.uwp.res.img {
             return;
 
          var img = Image;
-         var paint = new PaintableBmp(img);
+         var paint = new PaintableWBmp(img);
          var paintContext = PaintContext;
          var pb = PaintContext.PenBorder;
          // save
