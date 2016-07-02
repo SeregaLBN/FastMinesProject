@@ -12,13 +12,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Common", "FastMin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Core", "FastMines.Core\FastMines.Core.csproj", "{9DFD73DB-D187-4471-98BA-713996C8A257}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Uwp.Win10", "FastMines.Uwp.Win10\FastMines.Uwp.Win10.csproj", "{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Demo.Win81", "FastMines.Demo.Win81\FastMines.Demo.Win81.csproj", "{F05946AE-58B1-4A84-9AD1-07954F90AE31}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Shared", "FastMines.Uwp.Shared\FastMines.Uwp.Shared.shproj", "{3AB77D5F-33DA-4867-B97B-9E0DA4901DDE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Uwp.Win81", "FastMines.Uwp.Win81\FastMines.Uwp.Win81.csproj", "{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.BackgroundTasks.Shared", "FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.shproj", "{020235C5-21FE-43DF-BB41-60C6EB25E047}"
 EndProject
@@ -34,14 +30,31 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FastMines.Uwp", "FastMines.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Uwp.Images.Win2D", "Test.FastMines.Uwp.Images.Win2D\Test.FastMines.Uwp.Images.Win2D.csproj", "{10F79DED-68DD-484D-93D0-162C71ECC56C}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Draw.WBmp", "FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.shproj", "{3DE6E1BD-606B-41C8-99AC-6FC22AFEC0B4}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Draw.Win2D", "FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.shproj", "{C8694177-A4FB-44DD-AFAF-DB029E94F037}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Draw.XamlElem", "FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.shproj", "{9DB7237D-BFAE-4767-8202-8E54977978A0}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{3ab77d5f-33da-4867-b97b-9e0da4901dde}*SharedItemsImports = 13
-		FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{6df9a247-aeac-4d0e-9949-1781d44bd2c9}*SharedItemsImports = 4
+		FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{9db7237d-bfae-4767-8202-8e54977978a0}*SharedItemsImports = 13
+		FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{f05946ae-58b1-4a84-9ad1-07954f90ae31}*SharedItemsImports = 4
+		FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{f05946ae-58b1-4a84-9ad1-07954f90ae31}*SharedItemsImports = 4
+		FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems*{f05946ae-58b1-4a84-9ad1-07954f90ae31}*SharedItemsImports = 4
+		FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{c8694177-a4fb-44dd-afaf-db029e94f037}*SharedItemsImports = 13
 		FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.projitems*{4f75c36e-7157-449f-9686-dea20f83bbdb}*SharedItemsImports = 4
 		FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.projitems*{c5fd4289-0f00-4868-9c16-3517923fb64a}*SharedItemsImports = 4
+		FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems*{3de6e1bd-606b-41c8-99ac-6fc22afec0b4}*SharedItemsImports = 13
 		FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.projitems*{020235c5-21fe-43df-bb41-60c6eb25e047}*SharedItemsImports = 13
-		FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{6ba7a25c-04e6-4108-acd4-0084d6b019b2}*SharedItemsImports = 4
+		FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
+		FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
+		FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
+		FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
+		FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
+		FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{10f79ded-68dd-484d-93d0-162c71ecc56c}*SharedItemsImports = 4
+		FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{10f79ded-68dd-484d-93d0-162c71ecc56c}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -176,30 +189,6 @@ Global
 		{9DFD73DB-D187-4471-98BA-713996C8A257}.Release|x64.Build.0 = Release|Any CPU
 		{9DFD73DB-D187-4471-98BA-713996C8A257}.Release|x86.ActiveCfg = Release|Any CPU
 		{9DFD73DB-D187-4471-98BA-713996C8A257}.Release|x86.Build.0 = Release|Any CPU
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Debug|ARM.ActiveCfg = Debug|ARM
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Debug|ARM.Build.0 = Debug|ARM
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Debug|Win32.ActiveCfg = Debug|x86
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Debug|Win32.Build.0 = Debug|x86
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Debug|x64.ActiveCfg = Debug|x64
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Debug|x64.Build.0 = Debug|x64
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Debug|x86.ActiveCfg = Debug|x86
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Debug|x86.Build.0 = Debug|x86
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Release|ARM.ActiveCfg = Release|ARM
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Release|ARM.Build.0 = Release|ARM
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Release|Mixed Platforms.Build.0 = Release|x86
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Release|Win32.ActiveCfg = Release|x86
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Release|Win32.Build.0 = Release|x86
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Release|x64.ActiveCfg = Release|x64
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Release|x64.Build.0 = Release|x64
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Release|x86.ActiveCfg = Release|x86
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9}.Release|x86.Build.0 = Release|x86
 		{F05946AE-58B1-4A84-9AD1-07954F90AE31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F05946AE-58B1-4A84-9AD1-07954F90AE31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F05946AE-58B1-4A84-9AD1-07954F90AE31}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
@@ -236,30 +225,6 @@ Global
 		{F05946AE-58B1-4A84-9AD1-07954F90AE31}.Release|x86.ActiveCfg = Release|x86
 		{F05946AE-58B1-4A84-9AD1-07954F90AE31}.Release|x86.Build.0 = Release|x86
 		{F05946AE-58B1-4A84-9AD1-07954F90AE31}.Release|x86.Deploy.0 = Release|x86
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Debug|ARM.ActiveCfg = Debug|ARM
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Debug|ARM.Build.0 = Debug|ARM
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Debug|Win32.ActiveCfg = Debug|x86
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Debug|Win32.Build.0 = Debug|x86
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Debug|x64.ActiveCfg = Debug|x64
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Debug|x64.Build.0 = Debug|x64
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Debug|x86.ActiveCfg = Debug|x86
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Debug|x86.Build.0 = Debug|x86
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Release|ARM.ActiveCfg = Release|ARM
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Release|ARM.Build.0 = Release|ARM
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Release|Mixed Platforms.Build.0 = Release|x86
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Release|Win32.ActiveCfg = Release|x86
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Release|Win32.Build.0 = Release|x86
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Release|x64.ActiveCfg = Release|x64
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Release|x64.Build.0 = Release|x64
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Release|x86.ActiveCfg = Release|x86
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2}.Release|x86.Build.0 = Release|x86
 		{C5FD4289-0F00-4868-9C16-3517923FB64A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C5FD4289-0F00-4868-9C16-3517923FB64A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5FD4289-0F00-4868-9C16-3517923FB64A}.Debug|ARM.ActiveCfg = Debug|ARM
@@ -354,12 +319,13 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4F75C36E-7157-449F-9686-DEA20F83BBDB} = {0585F288-2040-4CC2-8289-31B7D5C28D29}
-		{6DF9A247-AEAC-4D0E-9949-1781D44BD2C9} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
 		{3AB77D5F-33DA-4867-B97B-9E0DA4901DDE} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
-		{6BA7A25C-04E6-4108-ACD4-0084D6B019B2} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
 		{020235C5-21FE-43DF-BB41-60C6EB25E047} = {0585F288-2040-4CC2-8289-31B7D5C28D29}
 		{C5FD4289-0F00-4868-9C16-3517923FB64A} = {0585F288-2040-4CC2-8289-31B7D5C28D29}
 		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF} = {6C78E2F6-4321-4C89-9312-AA367B07205C}
 		{10F79DED-68DD-484D-93D0-162C71ECC56C} = {6C78E2F6-4321-4C89-9312-AA367B07205C}
+		{3DE6E1BD-606B-41C8-99AC-6FC22AFEC0B4} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
+		{C8694177-A4FB-44DD-AFAF-DB029E94F037} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
+		{9DB7237D-BFAE-4767-8202-8E54977978A0} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
 	EndGlobalSection
 EndGlobal

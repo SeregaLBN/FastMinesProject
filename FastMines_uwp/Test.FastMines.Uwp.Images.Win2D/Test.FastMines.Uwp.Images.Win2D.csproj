@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -93,30 +93,6 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\win2d\CanvasExt.cs">
-      <Link>CanvasExt.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\win2d\CellPaintWin2D.cs">
-      <Link>CellPaintWin2D.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\win2d\PaintableWin2d.cs">
-      <Link>PaintableWin2d.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\win2d\Logo.cs">
-      <Link>Logo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\win2d\MosaicsGroupImg.cs">
-      <Link>MosaicsGroupImg.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\win2d\MosaicsImg.cs">
-      <Link>MosaicsImg.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\win2d\MosaicsSkillImg.cs">
-      <Link>MosaicsSkillImg.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\Vector2Ext.cs">
-      <Link>Vector2Ext.cs</Link>
-    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -174,12 +150,10 @@
       <Project>{9dfd73db-d187-4471-98ba-713996c8a257}</Project>
       <Name>FastMines.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FastMines.Uwp.Win10\FastMines.Uwp.Win10.csproj">
-      <Project>{6df9a247-aeac-4d0e-9949-1781d44bd2c9}</Project>
-      <Name>FastMines.Uwp.Win10</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
+  <Import Project="..\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems" Label="Shared" />
+  <Import Project="..\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

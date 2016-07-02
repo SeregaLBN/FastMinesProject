@@ -610,16 +610,15 @@
       <Project>{9dfd73db-d187-4471-98ba-713996c8a257}</Project>
       <Name>FastMines.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FastMines.Uwp.Win10\FastMines.Uwp.Win10.csproj">
-      <Project>{6df9a247-aeac-4d0e-9949-1781d44bd2c9}</Project>
-      <Name>FastMines.Uwp.Win10</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="WindowsMobile, Version=10.0.10240.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
+  <Import Project="..\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems" Label="Shared" />
+  <Import Project="..\FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems" Label="Shared" />
+  <Import Project="..\FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

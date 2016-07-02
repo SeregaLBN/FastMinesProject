@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -12,62 +12,14 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\ui\Timer.cs">
       <Link>src_fmg.uwp\ui\Timer.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\bmp\CellPaintBmp.cs">
-      <Link>src_fmg.uwp\draw\mosaic\bmp\CellPaintBmp.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\bmp\PaintableBmp.cs">
-      <Link>src_fmg.uwp\draw\mosaic\bmp\PaintableBmp.cs</Link>
-    </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\CellPaint.cs">
       <Link>src_fmg.uwp\draw\mosaic\CellPaint.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\xaml\CellPaintShapes.cs">
-      <Link>src_fmg.uwp\draw\mosaic\xaml\CellPaintShapes.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\xaml\PaintableShapes.cs">
-      <Link>src_fmg.uwp\draw\mosaic\xaml\PaintableShapes.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\Mosaic.cs">
-      <Link>src_fmg.uwp\mosaic\Mosaic.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsSkillImg.cs">
-      <Link>src_fmg.uwp\res\img\MosaicsSkillImg.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsSkillCharImg.cs">
-      <Link>src_fmg.uwp\res\img\MosaicsSkillCharImg.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\BitmapFont.cs">
-      <Link>src_fmg.uwp\draw\BitmapFont.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\PaintUwpContext.cs">
       <Link>src_fmg.uwp\draw\mosaic\PaintUwpContext.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\MosaicPageInitParam.cs">
       <Link>src_fmg.uwp\mosaic\MosaicPageInitParam.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\BackgroundPause.cs">
-      <Link>src_fmg.uwp\res\img\BackgroundPause.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\Logo.cs">
-      <Link>src_fmg.uwp\res\img\Logo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\Flag.cs">
-      <Link>src_fmg.uwp\res\img\Flag.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\Mine.cs">
-      <Link>src_fmg.uwp\res\img\Mine.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsGroupImg.cs">
-      <Link>src_fmg.uwp\res\img\MosaicsGroupImg.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\MosaicsImg.cs">
-      <Link>src_fmg.uwp\res\img\MosaicsImg.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\Resources.cs">
-      <Link>src_fmg.uwp\res\Resources.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\ImgUtils.cs">
-      <Link>src_fmg.uwp\utils\ImgUtils.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\Cast.cs">
       <Link>src_fmg.uwp\utils\Cast.cs</Link>

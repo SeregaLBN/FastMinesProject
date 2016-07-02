@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>c8694177-a4fb-44dd-afaf-db029e94f037</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>FastMines.Uwp.Draw.Win2D</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\win2d\CanvasExt.cs">
+      <Link>src_fmg.uwp\draw\mosaic\win2d\CanvasExt.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\win2d\CellPaintWin2D.cs">
+      <Link>src_fmg.uwp\draw\mosaic\win2d\CellPaintWin2D.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\win2d\PaintableWin2d.cs">
+      <Link>src_fmg.uwp\draw\mosaic\win2d\PaintableWin2d.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\win2d\Logo.cs">
+      <Link>src_fmg.uwp\res\img\win2d\Logo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\win2d\MosaicsGroupImg.cs">
+      <Link>src_fmg.uwp\res\img\win2d\MosaicsGroupImg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\win2d\MosaicsImg.cs">
+      <Link>src_fmg.uwp\res\img\win2d\MosaicsImg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\res\img\win2d\MosaicsSkillImg.cs">
+      <Link>src_fmg.uwp\res\img\win2d\MosaicsSkillImg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\Vector2Ext.cs">
+      <Link>src_fmg.uwp\utils\Vector2Ext.cs</Link>
+    </Compile>
+  </ItemGroup>
+</Project>

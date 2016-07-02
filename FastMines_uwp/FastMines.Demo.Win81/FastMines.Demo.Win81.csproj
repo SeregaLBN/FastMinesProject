@@ -556,11 +556,10 @@
       <Project>{9dfd73db-d187-4471-98ba-713996c8a257}</Project>
       <Name>FastMines.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FastMines.Uwp.Win81\FastMines.Uwp.Win81.csproj">
-      <Project>{6ba7a25c-04e6-4108-acd4-0084d6b019b2}</Project>
-      <Name>FastMines.Uwp.Win81</Name>
-    </ProjectReference>
   </ItemGroup>
+  <Import Project="..\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems" Label="Shared" />
+  <Import Project="..\FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems" Label="Shared" />
+  <Import Project="..\FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>
