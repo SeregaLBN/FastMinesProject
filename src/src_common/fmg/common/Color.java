@@ -90,6 +90,9 @@ public class Color {
          rnd.nextInt(256));
    }
 
+   /** Creates grayscale version of this Color */
+   public Color grayscale() { return new Color(a, (int)(r * 0.2126), (int)(g * 0.7152), (int)(b * 0.0722)); }
+
    /**
     * Creates brighter version of this Color
     * @param percent - 0.0 - as is; 1 - WHITE

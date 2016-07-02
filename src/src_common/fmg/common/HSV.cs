@@ -46,21 +46,26 @@ namespace fmg.common
          Fix();
       }
 
-      public HSV(Color rgba) {
+      public HSV(Color rgba)
+         : this()
+      {
          a = rgba.A;
+         FromColorDouble(rgba.R, rgba.G, rgba.B);
+      }
 
-         double max = Math.Max(Math.Max(rgba.R, rgba.G), rgba.B);
-         double min = Math.Min(Math.Min(rgba.R, rgba.G), rgba.B);
+      private void FromColorDouble(double r, double g, double b) {
+         double max = Math.Max(Math.Max(r, g), b);
+         double min = Math.Min(Math.Min(r, g), b);
 
          { // calc H
             if (max.HasMinDiff(min))
                h = 0;
-            else if (max.HasMinDiff(rgba.R))
-               h = 60 * (rgba.G - rgba.B) / (max - min) + ((rgba.G < rgba.B) ? 360 : 0);
-            else if (max.HasMinDiff(rgba.G))
-               h = 60 * (rgba.B - rgba.R) / (max - min) + 120;
-            else if (max.HasMinDiff(rgba.B))
-               h = 60 * (rgba.R - rgba.G) / (max - min) + 240;
+            else if (max.HasMinDiff(r))
+               h = 60 * (g - b) / (max - min) + ((g < b) ? 360 : 0);
+            else if (max.HasMinDiff(g))
+               h = 60 * (b - r) / (max - min) + 120;
+            else if (max.HasMinDiff(b))
+               h = 60 * (r - g) / (max - min) + 240;
             else
                throw new Exception();
          }
@@ -71,6 +76,12 @@ namespace fmg.common
       }
 
       public Color ToColor() {
+         double r, g, b;
+         ToColorDouble(out r, out g, out b);
+         return new Color(a, (byte)(r * 255 / 100), (byte)(g * 255 / 100), (byte)(b * 255 / 100));
+      }
+
+      private void ToColorDouble(out double r, out double g, out double b) {
          Fix();
 
          var vMin = (100 - s) * v / 100;
@@ -78,7 +89,6 @@ namespace fmg.common
          var vInc = vMin + delta;
          var vDec = v - delta;
 
-         double r, g, b;
          switch (((int)(h / 60)) % 6) {
          case 0:
             r = v; g = vInc; b = vMin;
@@ -101,7 +111,16 @@ namespace fmg.common
          default:
             throw new Exception();
          }
-         return new Color(a, (byte)(r * 255 / 100), (byte)(g * 255 / 100), (byte)(b * 255 / 100));
+      }
+
+      /// <summary> Update HSV to grayscale </summary>
+      public void Grayscale() {
+         double r, g, b;
+         ToColorDouble(out r, out g, out b);
+         r *= 0.2126;
+         g *= 0.7152;
+         b *= 0.0722;
+         FromColorDouble(r, g, b);
       }
 
       private void Fix() {

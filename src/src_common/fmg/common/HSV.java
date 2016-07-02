@@ -62,19 +62,22 @@ public class HSV {
 
    public HSV(Color rgba) {
       this.a = rgba.a;
+      fromColorDouble(rgba.r, rgba.g, rgba.b);
+   }
 
-      double max = Math.max(Math.max(rgba.r, rgba.g), rgba.b);
-      double min = Math.min(Math.min(rgba.r, rgba.g), rgba.b);
+   private void fromColorDouble(double r, double g, double b) {
+      double max = Math.max(Math.max(r, g), b);
+      double min = Math.min(Math.min(r, g), b);
 
       { // calc H
          if (DoubleExt.hasMinDiff(max, min))
             h = 0;
-         else if (DoubleExt.hasMinDiff(max, rgba.r))
-            h = 60 * (rgba.g - rgba.b) / (max - min) + ((rgba.g < rgba.b) ? 360 : 0);
-         else if (DoubleExt.hasMinDiff(max, rgba.g))
-            h = 60 * (rgba.b - rgba.r) / (max - min) + 120;
-         else if (DoubleExt.hasMinDiff(max, rgba.b))
-            h = 60 * (rgba.r - rgba.g) / (max - min) + 240;
+         else if (DoubleExt.hasMinDiff(max, r))
+            h = 60 * (g - b) / (max - min) + ((g < b) ? 360 : 0);
+         else if (DoubleExt.hasMinDiff(max, g))
+            h = 60 * (b - r) / (max - min) + 120;
+         else if (DoubleExt.hasMinDiff(max, b))
+            h = 60 * (r - g) / (max - min) + 240;
          else
             throw new RuntimeException();
       }
@@ -85,6 +88,14 @@ public class HSV {
    }
 
    public Color toColor() {
+      double[] rgb = toColorDouble();
+      double r = rgb[0];
+      double g = rgb[1];
+      double b = rgb[2];
+      return new Color(a, (int)(r*255/100), (int)(g*255/100), (int)(b*255/100));
+   }
+
+   private double[] toColorDouble() {
       fix();
 
       double vMin = (100 - s) * v / 100;
@@ -115,7 +126,16 @@ public class HSV {
       default:
          throw new RuntimeException();
       }
-      return new Color(a, (int)(r*255/100), (int)(g*255/100), (int)(b*255/100));
+      return new double[] {r, g, b};
+   }
+
+   /** Update HSV to grayscale */
+   public void grayscale() {
+      double[] rgb = toColorDouble();
+      double r = rgb[0] * 0.2126;
+      double g = rgb[1] * 0.7152;
+      double b = rgb[2] * 0.0722;
+      fromColorDouble(r, g, b);
    }
 
    private final void fix() {

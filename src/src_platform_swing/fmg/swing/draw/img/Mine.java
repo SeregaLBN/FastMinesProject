@@ -5,6 +5,8 @@ import java.awt.Graphics;
 
 import javax.swing.Icon;
 
+import fmg.common.HSV;
+
 /** mine image */
 public class Mine implements Icon {
 
@@ -20,8 +22,9 @@ public class Mine implements Icon {
          logo.setUseGradient(false);
          logo.setSize(150);
          logo.setPadding(10);
-         for (int i = 0; i < logo.Palette.length; i++)
-            logo.Palette[i].v = 75;
+         for (HSV item : logo.Palette)
+            //item.v = 75;
+            item.grayscale();
          logo.getImage().paintIcon(c, g, x, y);
       }
    }

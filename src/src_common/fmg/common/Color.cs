@@ -57,6 +57,9 @@ namespace fmg.common {
             A = 255};
       }
 
+      /// <summary> Creates grayscale version of this Color </summary>
+      public static Color Grayscale(this Color clr) { return new Color(clr.A, (byte)(clr.R * 0.2126), (byte)(clr.G * 0.7152), (byte)(clr.B * 0.0722)); }
+
       /// <summary> Creates brighter version of this Color </summary>
       /// <param name="clr">from</param>
       /// <param name="percent">0.0 - as is; 1 - WHITE</param>
