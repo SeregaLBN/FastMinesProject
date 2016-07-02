@@ -9,12 +9,11 @@ using Windows.ApplicationModel.Background;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
-using fmg.core.mosaic;
-using fmg.uwp.utils;
-using fmg.uwp.draw.img.wbmp;
+using fmg.uwp.utils.win2d;
 using Size = fmg.common.geom.Size;
 using Rect = Windows.Foundation.Rect;
 using FastMines.BackgroundTasks.Uwp;
+using MosaicsImg = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
 
 namespace fmg {
    public static class TileHelper {

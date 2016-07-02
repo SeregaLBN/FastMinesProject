@@ -10,7 +10,7 @@ using fmg.uwp.utils;
 using fmg.uwp.draw.mosaic.win2d;
 using fmg.core.img;
 
-namespace fmg.uwp.res.img.win2d {
+namespace fmg.uwp.draw.img.win2d {
 
    /// <summary> Main logos image
    /// <br/>

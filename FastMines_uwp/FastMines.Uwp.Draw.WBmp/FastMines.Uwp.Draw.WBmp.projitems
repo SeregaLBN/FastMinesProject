@@ -39,11 +39,11 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\MosaicsImg.cs">
       <Link>src_fmg.uwp\draw\img\wbmp\MosaicsImg.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\Resources.cs">
-      <Link>src_fmg.uwp\utils\Resources.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\wbmp\Resources.cs">
+      <Link>src_fmg.uwp\utils\wbmp\Resources.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\ImgUtils.cs">
-      <Link>src_fmg.uwp\utils\ImgUtils.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\wbmp\ImgUtils.cs">
+      <Link>src_fmg.uwp\utils\wbmp\ImgUtils.cs</Link>
     </Compile>
   </ItemGroup>
 </Project>

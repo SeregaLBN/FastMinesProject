@@ -30,8 +30,14 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\win2d\MosaicsSkillImg.cs">
       <Link>src_fmg.uwp\draw\img\win2d\MosaicsSkillImg.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\Vector2Ext.cs">
-      <Link>src_fmg.uwp\utils\Vector2Ext.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\win2d\Vector2Ext.cs">
+      <Link>src_fmg.uwp\utils\win2d\Vector2Ext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\win2d\Resources.cs">
+      <Link>src_fmg.uwp\utils\win2d\Resources.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\win2d\ImgUtils.cs">
+      <Link>src_fmg.uwp\utils\win2d\ImgUtils.cs</Link>
     </Compile>
   </ItemGroup>
 </Project>

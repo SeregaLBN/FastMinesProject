@@ -11,7 +11,7 @@ using fmg.data.controller.types;
 using fmg.uwp.utils;
 using fmg.uwp.draw.mosaic.win2d;
 
-namespace fmg.uwp.res.img.win2d {
+namespace fmg.uwp.draw.img.win2d {
 
    /// <summary> Representable <see cref="ESkillLevel"/> as image.
    /// <br/>

@@ -1,6 +1,6 @@
 using fmg.common.geom;
 
-namespace fmg.uwp.utils {
+namespace fmg.uwp.utils.win2d {
 
    public static class Vector2Ext {
 

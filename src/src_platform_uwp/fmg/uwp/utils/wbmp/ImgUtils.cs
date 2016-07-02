@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 
-namespace fmg.uwp.utils {
+namespace fmg.uwp.utils.wbmp {
 
    /// <summary>
    /// вспомогательный класс для преобразований картинок
@@ -56,8 +56,8 @@ namespace fmg.uwp.utils {
    // Decode pixel data
    //var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
                 var file = await Package.Current.InstalledLocation.GetFileAsync(resourceName);
-                var ra = file.OpenAsync(FileAccessMode.Read).GetResults();
-                var decoder = BitmapDecoder.CreateAsync(ra).GetResults();
+                var stream = await file.OpenAsync(FileAccessMode.Read);
+                var decoder = await BitmapDecoder.CreateAsync(stream);
                 var transform = new global::Windows.Graphics.Imaging.BitmapTransform();
                 var pixelData =
                     await

@@ -9,15 +9,15 @@ using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
 using fmg.data.controller.types;
-using fmg.uwp.res.img.win2d;
-using LogoCanvasBmp            = fmg.uwp.res.img.win2d.Logo           <Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using LogoCanvasImgSrc         = fmg.uwp.res.img.win2d.Logo           <Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using MosaicsSkillCanvasBmp    = fmg.uwp.res.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using MosaicsSkillCanvasImgSrc = fmg.uwp.res.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using MosaicsGroupCanvasBmp    = fmg.uwp.res.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using MosaicsGroupCanvasImgSrc = fmg.uwp.res.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using MosaicsCanvasBmp         = fmg.uwp.res.img.win2d.MosaicsImg     <Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using MosaicsCanvasImgSrc      = fmg.uwp.res.img.win2d.MosaicsImg     <Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using fmg.uwp.draw.img.win2d;
+using LogoCanvasBmp            = fmg.uwp.draw.img.win2d.Logo           <Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using LogoCanvasImgSrc         = fmg.uwp.draw.img.win2d.Logo           <Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using MosaicsSkillCanvasBmp    = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsSkillCanvasImgSrc = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using MosaicsGroupCanvasBmp    = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsGroupCanvasImgSrc = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using MosaicsCanvasBmp         = fmg.uwp.draw.img.win2d.MosaicsImg     <Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsCanvasImgSrc      = fmg.uwp.draw.img.win2d.MosaicsImg     <Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 

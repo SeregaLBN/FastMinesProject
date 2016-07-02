@@ -4,7 +4,7 @@ using fmg.common.geom;
 using fmg.common.notyfier;
 using fmg.core.types;
 using fmg.data.controller.types;
-using fmg.uwp.draw.img.wbmp;
+using MosaicsImg = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
 
 namespace fmg.DataModel.Items {
 

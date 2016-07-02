@@ -41,8 +41,8 @@ Global
 		FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{3ab77d5f-33da-4867-b97b-9e0da4901dde}*SharedItemsImports = 13
 		FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{9db7237d-bfae-4767-8202-8e54977978a0}*SharedItemsImports = 13
 		FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{f05946ae-58b1-4a84-9ad1-07954f90ae31}*SharedItemsImports = 4
-		FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{f05946ae-58b1-4a84-9ad1-07954f90ae31}*SharedItemsImports = 4
 		FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems*{f05946ae-58b1-4a84-9ad1-07954f90ae31}*SharedItemsImports = 4
+		FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{f05946ae-58b1-4a84-9ad1-07954f90ae31}*SharedItemsImports = 4
 		FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{c8694177-a4fb-44dd-afaf-db029e94f037}*SharedItemsImports = 13
 		FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.projitems*{4f75c36e-7157-449f-9686-dea20f83bbdb}*SharedItemsImports = 4
 		FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.projitems*{c5fd4289-0f00-4868-9c16-3517923fb64a}*SharedItemsImports = 4
@@ -51,8 +51,7 @@ Global
 		FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
 		FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
 		FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
-		FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
-		FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
+		FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
 		FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{10f79ded-68dd-484d-93d0-162c71ecc56c}*SharedItemsImports = 4
 		FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{10f79ded-68dd-484d-93d0-162c71ecc56c}*SharedItemsImports = 4
 	EndGlobalSection

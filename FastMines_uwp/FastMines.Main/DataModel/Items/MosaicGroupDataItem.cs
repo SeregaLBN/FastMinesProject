@@ -3,7 +3,7 @@ using System.ComponentModel;
 using Windows.UI.Xaml.Media;
 using fmg.common.geom;
 using fmg.core.types;
-using fmg.uwp.draw.img.wbmp;
+using MosaicsGroupImg = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
 
 namespace fmg.DataModel.Items {
 

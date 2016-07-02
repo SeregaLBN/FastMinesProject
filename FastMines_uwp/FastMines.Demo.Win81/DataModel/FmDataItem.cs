@@ -3,7 +3,7 @@ using Windows.UI.Xaml.Media;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
-using fmg.uwp.utils;
+using fmg.uwp.utils.wbmp;
 using fmg.uwp.draw.img.wbmp;
 
 // The data model defined by this file serves as a representative example of a strongly-typed

@@ -15,7 +15,7 @@ using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.mosaic.win2d;
 using fmg.uwp.utils;
 
-namespace fmg.uwp.res.img.win2d {
+namespace fmg.uwp.draw.img.win2d {
 
    /// <summary> Representable <see cref="EMosaic"/> as image.
    /// <br/>

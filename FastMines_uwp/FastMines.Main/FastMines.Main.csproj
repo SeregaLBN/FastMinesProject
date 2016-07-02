@@ -112,9 +112,6 @@
     <Compile Include="Presentation\Converters\ObjectToMosaicSkillMenuItemConverter.cs" />
     <Compile Include="Presentation\Controls\MosaicSkillMenuItem.cs" />
     <Compile Include="Common\TileHelper.cs" />
-    <Compile Include="MosaicPage.xaml.cs">
-      <DependentUpon>MosaicPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\Page1.xaml.cs">
       <DependentUpon>Page1.xaml</DependentUpon>
     </Compile>
@@ -572,10 +569,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MosaicPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Pages\Page1.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -617,8 +610,7 @@
     </SDKReference>
   </ItemGroup>
   <Import Project="..\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems" Label="Shared" />
-  <Import Project="..\FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems" Label="Shared" />
-  <Import Project="..\FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems" Label="Shared" />
+  <Import Project="..\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
