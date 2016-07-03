@@ -61,7 +61,7 @@ namespace fmg.DataModel.Items {
                if (value != null) {
                   value.PropertyChanged += OnMosaicImagePropertyChanged;
                }
-               OnPropertyChanged("Image");
+               OnPropertyChanged(nameof(this.Image));
             }
          }
       }
@@ -79,7 +79,7 @@ namespace fmg.DataModel.Items {
       private void OnMosaicImagePropertyChanged(object sender, PropertyChangedEventArgs ev) {
          var pn = ev.PropertyName;
          //LoggerSimple.Put(GetType().Name+"::OnPropertyChanged: " + ev.PropertyName);
-         if (pn == "Image") {
+         if (pn == nameof(MosaicImage.Image)) {
             OnPropertyChanged(this, ev); // ! notify parent container
          }
       }
@@ -87,12 +87,12 @@ namespace fmg.DataModel.Items {
       protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          base.OnPropertyChanged(sender, ev);
          switch(ev.PropertyName) {
-         case "UniqueId":
+         case nameof(this.UniqueId):
             var ev2 = ev as PropertyChangedExEventArgs<EMosaic>;
             if (ev2 == null)
-               OnPropertyChanged("MosaicType");
+               OnPropertyChanged(nameof(this.MosaicType));
             else
-               OnPropertyChanged(this, new PropertyChangedExEventArgs<EMosaic>(ev2.NewValue, ev2.OldValue, "MosaicType"));
+               OnPropertyChanged(this, new PropertyChangedExEventArgs<EMosaic>(ev2.NewValue, ev2.OldValue, nameof(this.MosaicType)));
             MosaicImage.MosaicType = MosaicType;
             MosaicImage.SizeField = MosaicType.SizeTileField(SkillLevel);
             Title = MosaicType.GetDescription(false);

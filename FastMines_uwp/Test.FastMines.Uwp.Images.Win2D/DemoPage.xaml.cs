@@ -10,6 +10,7 @@ using fmg.core.img;
 using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.uwp.draw.img.win2d;
+using StaticImg                = fmg.core.img.StaticImg<object, object>;
 using LogoCanvasBmp            = fmg.uwp.draw.img.win2d.Logo           <Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 using LogoCanvasImgSrc         = fmg.uwp.draw.img.win2d.Logo           <Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
 using MosaicsSkillCanvasBmp    = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
@@ -96,7 +97,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          if (canvasControl != null) {
             // TImage is CanvasBitmap
             img.PropertyChanged += (sender, ev) => {
-               if (ev.PropertyName == "Image")
+               if (ev.PropertyName == nameof(StaticImg.Image))
                   canvasControl.Invalidate();
             };
          } else {
@@ -131,7 +132,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
             // test transparent
             var bkClr = new HSV(ColorExt.RandomColor(Rnd)) { a = (byte)(50 + R(10)) };
             img.PropertyChanged += (o, ev) => {
-               if ("RotateAngle" == ev.PropertyName) {
+               if (ev.PropertyName == nameof(StaticImg.RotateAngle)) {
                   bkClr.h = img.RotateAngle;
                   img.BackgroundColor = bkClr.ToColor();
                }

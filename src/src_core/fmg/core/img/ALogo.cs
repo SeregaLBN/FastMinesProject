@@ -92,7 +92,7 @@ namespace fmg.core.img {
       }
 
       protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         if ((RotateMode != ERotateMode.Classic) && ("RotateAngle" == ev.PropertyName)) {
+         if ((RotateMode != ERotateMode.Classic) && (nameof(this.RotateAngle) == ev.PropertyName)) {
             var delta = RotateAngleDelta;
             for (var i = 0; i < Palette.Length; ++i) {
                Palette[i].h += delta;

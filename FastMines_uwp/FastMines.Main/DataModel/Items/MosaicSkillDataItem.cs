@@ -23,10 +23,8 @@ namespace fmg.DataModel.Items {
 
       public override ImageSource Image => MosaicSkillImage.Image;
       private MosaicsSkillImg _mosaicSkillImg;
-      public MosaicsSkillImg MosaicSkillImage
-      {
-         get
-         {
+      public MosaicsSkillImg MosaicSkillImage {
+         get {
             if (_mosaicSkillImg == null) {
                var tmp = new MosaicsSkillImg(SkillLevel, CanvasDevice.GetSharedDevice()) {
                   SizeInt = ImageSize * ZoomKoef,
@@ -40,18 +38,17 @@ namespace fmg.DataModel.Items {
             }
             return _mosaicSkillImg;
          }
-         private set
-         {
+         private set {
             var old = _mosaicSkillImg;
             if (SetProperty(ref _mosaicSkillImg, value)) {
                if (old != null) {
-                  old.PropertyChanged -= OnImagePropertyChanged;
+                  old.PropertyChanged -= OnMosaicsSkillImgPropertyChanged;
                   old.Dispose();
                }
                if (value != null) {
-                  value.PropertyChanged += OnImagePropertyChanged;
+                  value.PropertyChanged += OnMosaicsSkillImgPropertyChanged;
                }
-               OnPropertyChanged("Image");
+               OnPropertyChanged(nameof(this.Image));
             }
          }
       }
@@ -66,9 +63,9 @@ namespace fmg.DataModel.Items {
          }
       }
 
-      private void OnImagePropertyChanged(object sender, PropertyChangedEventArgs ev) {
+      private void OnMosaicsSkillImgPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          var pn = ev.PropertyName;
-         if (pn == "Image") {
+         if (pn == nameof(MosaicsSkillImg.Image)) {
             OnPropertyChanged(this, ev); // ! notify parent container
          }
       }

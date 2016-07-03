@@ -89,7 +89,7 @@ namespace fmg.core.img {
                for (var i = 0; i < size.m; i++)
                   for (var j = 0; j < size.n; j++)
                      _matrix.Add(MosaicHelper.CreateCellInstance(attr, type, new Coord(i, j)));
-               OnPropertyChanged(this, new PropertyChangedEventArgs("Matrix"));
+               OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(this.Matrix)));
                Invalidate();
             }
             return _matrix;
@@ -152,17 +152,17 @@ namespace fmg.core.img {
          //LoggerSimple.Put("OnPropertyChanged: {0}: PropertyName={1}", Entity, ev.PropertyName);
          base.OnPropertyChanged(sender, ev);
          switch (ev.PropertyName) {
-         case "Entity":
+         case nameof(this.Entity):
             var ev2 = ev as PropertyChangedExEventArgs<EMosaic>;
             Dependency_MosaicType_As_Entity(ev2?.NewValue, ev2?.OldValue);
             break;
-         case "Size":
-         case "Padding":
+         case nameof(this.Size):
+         case nameof(this.Padding):
             RecalcArea();
             break;
-         case "Rotate":
-         case "RotateMode":
-         case "SizeField":
+         case nameof(this.Rotate):
+         case nameof(this.RotateMode):
+         case nameof(this.SizeField):
             if (RotateMode == ERotateMode.SomeCells)
                RandomRotateElemenIndex();
             break;
@@ -184,9 +184,9 @@ namespace fmg.core.img {
          _matrix.Clear();
          CellAttr = null;
          if ((newValue == null) || (oldValue == null))
-            OnPropertyChanged(this, new PropertyChangedEventArgs("MosaicType"));
+            OnPropertyChanged(this, new PropertyChangedEventArgs(nameof(this.MosaicType)));
          else
-            OnPropertyChanged(this, new PropertyChangedExEventArgs<EMosaic>(newValue.Value, oldValue.Value, "MosaicType"));
+            OnPropertyChanged(this, new PropertyChangedExEventArgs<EMosaic>(newValue.Value, oldValue.Value, nameof(this.MosaicType)));
       }
       #endregion
 
@@ -240,7 +240,7 @@ namespace fmg.core.img {
          var angle = RotateAngle;
          var area = Area;
 
-         foreach (var cntxt in _rotatedElements) {
+         foreach (var cntxt in RotatedElements) {
             System.Diagnostics.Debug.Assert(cntxt.angleOffset >= 0);
             var angle2 = angle - cntxt.angleOffset;
             if (angle2 < 0)
@@ -274,18 +274,18 @@ namespace fmg.core.img {
          }
 
          // Z-ordering
-         _rotatedElements.Sort((x, y) => x.area.CompareTo(y.area));
+         RotatedElements.Sort((x, y) => x.area.CompareTo(y.area));
       }
 
       /// <summary> list of offsets rotation angles prepared for cells </summary>
       private readonly IList<double /* angle offset */ > _prepareList = new List<double>();
-      protected readonly List<RotatedCellContext> _rotatedElements = new List<RotatedCellContext>();
+      protected List<RotatedCellContext> RotatedElements { get; } = new List<RotatedCellContext>();
 
       private void RandomRotateElemenIndex() {
          _prepareList.Clear();
-         if (_rotatedElements.Any()) {
-            _rotatedElements.Clear();
-            OnPropertyChanged("RotatedElements");
+         if (RotatedElements.Any()) {
+            RotatedElements.Clear();
+            OnPropertyChanged(nameof(this.RotatedElements));
          }
 
          if (!Rotate)
@@ -308,10 +308,10 @@ namespace fmg.core.img {
 
       private int NextRandomIndex(Random rand) {
          var len = Matrix.Count;
-         System.Diagnostics.Debug.Assert(_rotatedElements.Count < len);
+         System.Diagnostics.Debug.Assert(RotatedElements.Count < len);
          do {
             var index = rand.Next(len);
-            if (_rotatedElements.Any(ctxt => ctxt.index == index))
+            if (RotatedElements.Any(ctxt => ctxt.index == index))
                continue;
             return index;
          } while (true);
@@ -336,14 +336,14 @@ namespace fmg.core.img {
                      (angleOld >= angleOffset && angleOffset <= angleNew && angleOld < angleNew)))  // example: old=5    offset=0    new=355
                {
                   _prepareList.RemoveAt(i);
-                  _rotatedElements.Add(new RotatedCellContext(NextRandomIndex(rand), angleOffset, area));
-                  OnPropertyChanged("RotatedElements");
+                  RotatedElements.Add(new RotatedCellContext(NextRandomIndex(rand), angleOffset, area));
+                  OnPropertyChanged(nameof(this.RotatedElements));
                }
             }
          }
 
          List<RotatedCellContext> toRemove = null;
-         foreach (var cntxt in _rotatedElements) {
+         foreach (var cntxt in RotatedElements) {
             var angle2 = angleNew - cntxt.angleOffset;
             if (angle2 < 0)
                angle2 += 360;
@@ -361,10 +361,10 @@ namespace fmg.core.img {
          if (toRemove != null) {
             foreach (var cntxt in toRemove ) {
                Matrix[cntxt.index].Init(); // restore original region coords
-               _rotatedElements.Remove(cntxt);
+               RotatedElements.Remove(cntxt);
                AddRandomToPrepareList(false, rand);
             }
-            OnPropertyChanged("RotatedElements");
+            OnPropertyChanged(nameof(this.RotatedElements));
          }
       }
 

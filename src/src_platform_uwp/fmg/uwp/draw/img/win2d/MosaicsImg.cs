@@ -69,30 +69,30 @@ namespace fmg.uwp.draw.img.win2d {
       protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          base.OnPropertyChanged(sender, ev);
          switch (ev.PropertyName) {
-         case "PaddingFull":
+         case nameof(this.PaddingFull):
             Dependency_PContext_PaddingFull();
             break;
-         case "CellAttr":
+         case nameof(this.CellAttr):
             Dependency_PContext_CellAttribute();
             break;
-         case "BorderWidth":
+         case nameof(this.BorderWidth):
             Dependency_PContext_BorderWidth();
             break;
-         case "BorderColor":
+         case nameof(this.BorderColor):
             Dependency_PContext_BorderColor();
             break;
-         case "BackgroundColor":
+         case nameof(this.BackgroundColor):
             Dependency_PContext_BkColor();
             break;
          }
 
          if (RotateMode == ERotateMode.SomeCells) {
             switch (ev.PropertyName) {
-            case "Size":
+            case nameof(this.Size):
                _imageCache = null;
                break;
-            case "RotatedElements":
-            case "BackgroundColor":
+            case nameof(this.RotatedElements):
+            case nameof(this.BackgroundColor):
                _invalidateCache = true;
                break;
             }
@@ -222,14 +222,14 @@ namespace fmg.uwp.draw.img.win2d {
          var paint0 = new PaintableWin2D(ds);
          var paintContext = PaintContext;
          var matrix = Matrix;
-         var indexes = _rotatedElements.Select(cntxt => cntxt.index).ToList();
+         var indexes = RotatedElements.Select(cntxt => cntxt.index).ToList();
          for (var i = 0; i < matrix.Count; ++i)
             if (!indexes.Contains(i))
                CellPaint.Paint(matrix[i], paint0, paintContext);
       }
 
       protected void DrawRotatedPart(CanvasDrawingSession ds) {
-         if (!_rotatedElements.Any())
+         if (!RotatedElements.Any())
             return;
 
          var paint = new PaintableWin2D(ds);
@@ -243,7 +243,7 @@ namespace fmg.uwp.draw.img.win2d {
          pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5);
 
          var matrix = Matrix;
-         foreach (var cntxt in _rotatedElements)
+         foreach (var cntxt in RotatedElements)
             CellPaint.Paint(matrix[cntxt.index], paint, paintContext);
 
          // restore

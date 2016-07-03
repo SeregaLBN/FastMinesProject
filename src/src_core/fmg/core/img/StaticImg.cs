@@ -158,7 +158,7 @@ namespace fmg.core.img {
          //if (_invalidate == EInvalidate.NeedRedraw)
          //   return;
          _invalidate = EInvalidate.NeedRedraw;
-         OnPropertyChanged("Image");
+         OnPropertyChanged(nameof(this.Image));
       }
 
       private void Draw() {
