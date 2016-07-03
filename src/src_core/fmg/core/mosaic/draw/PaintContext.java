@@ -41,6 +41,16 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       this.padding = new BoundDouble(0, 0, 0, 0);
    }
 
+   public static final String PROPERTY_PADDING           = "Padding";
+   public static final String PROPERTY_IMG_MINE          = "ImgMine";
+   public static final String PROPERTY_IMG_FLAG          = "ImgFlag";
+   public static final String PROPERTY_COLOR_TEXT        = "ColorText";
+   public static final String PROPERTY_PEN_BORDER        = "PenBorder";
+   public static final String PROPERTY_BACKGROUND_FILL   = "BackgroundFill";
+   public static final String PROPERTY_FONT_INFO         = "FontInfo";
+   public static final String PROPERTY_BACKGROUND_COLOR  = "BackgroundColor";
+   public static final String PROPERTY_IMG_BCKGRND       = "ImgBckgrnd";
+
    public TImage getImgMine() {
       return imgMine;
    }
@@ -48,7 +58,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       Object old = this.imgMine;
       if (old != img) { // references compare
          this.imgMine = img;
-         onPropertyChanged(old, img, "ImgMine");
+         onPropertyChanged(old, img, PROPERTY_IMG_MINE);
       }
    }
 
@@ -59,7 +69,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       Object old = this.imgFlag;
       if (old != img) { // references compare
          this.imgFlag = img;
-         onPropertyChanged(old, img, "ImgFlag");
+         onPropertyChanged(old, img, PROPERTY_IMG_FLAG);
       }
    }
 
@@ -78,7 +88,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       this.colorText = colorText;
       if (colorText != null)
          colorText.addListener(this);
-      onPropertyChanged(old, colorText, "ColorText");
+      onPropertyChanged(old, colorText, PROPERTY_COLOR_TEXT);
    }
 
    public PenBorder getPenBorder() {
@@ -96,7 +106,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       this.penBorder = penBorder;
       if (penBorder != null)
          penBorder.addListener(this);
-      onPropertyChanged(old, penBorder, "PenBorder");
+      onPropertyChanged(old, penBorder, PROPERTY_PEN_BORDER);
    }
 
    /** всё что относиться к заливке фоном ячееек */
@@ -105,6 +115,8 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       private int mode = 0;
       /** кэшированные цвета фона ячеек */
       private Map<Integer, Color> colors;
+
+      public static final String PROPERTY_MODE = "Mode";
 
       /** режим заливки фона ячеек */
       public int getMode() {
@@ -121,7 +133,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
          int old = this.mode;
          if (old != newFillMode) {
             this.mode = newFillMode;
-            onPropertyChanged(old, newFillMode, "Mode");
+            onPropertyChanged(old, newFillMode, PROPERTY_MODE);
             getColors().clear();
          }
       }
@@ -163,7 +175,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       this._backgroundFill = backgroundFill;
       if (backgroundFill != null)
          backgroundFill.addListener(this);
-      onPropertyChanged(oldBkFill, backgroundFill, "BackgroundFill");
+      onPropertyChanged(oldBkFill, backgroundFill, PROPERTY_BACKGROUND_FILL);
    }
 
    public boolean isIconicMode() {
@@ -177,7 +189,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       BoundDouble old = this.padding;
       if (!padding.equals(old)) {
          this.padding = padding;
-         onPropertyChanged(old, padding, "Padding");
+         onPropertyChanged(old, padding, PROPERTY_PADDING);
       }
    }
 
@@ -197,7 +209,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       this.fontInfo = fontInfo;
       if (fontInfo != null)
          fontInfo.addListener(this);
-      onPropertyChanged(oldFont, fontInfo, "FontInfo");
+      onPropertyChanged(oldFont, fontInfo, PROPERTY_FONT_INFO);
    }
 
    public Color getBackgroundColor() {
@@ -211,7 +223,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       if (color.equals(old))
          return;
       this.backgroundColor = color;
-      onPropertyChanged(old, color, "BackgroundColor");
+      onPropertyChanged(old, color, PROPERTY_BACKGROUND_COLOR);
    }
 
    public TImage getImgBckgrnd() {
@@ -223,20 +235,20 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       if (old == imgBckgrnd) // references compare
          return;
       this.imgBckgrnd = imgBckgrnd;
-      onPropertyChanged(old, imgBckgrnd, "ImgBckgrnd");
+      onPropertyChanged(old, imgBckgrnd, PROPERTY_IMG_BCKGRND);
    }
 
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
       Object source = ev.getSource();
       if (source instanceof FontInfo)
-         onInnerPropertyChanged((FontInfo)ev.getSource(), ev, "FontInfo");
+         onInnerPropertyChanged((FontInfo)ev.getSource(), ev, PROPERTY_FONT_INFO);
       if (source instanceof BackgroundFill)
-         onInnerPropertyChanged((BackgroundFill)ev.getSource(), ev, "BackgroundFill");
+         onInnerPropertyChanged((BackgroundFill)ev.getSource(), ev, PROPERTY_BACKGROUND_FILL);
       if (source instanceof ColorText)
-         onInnerPropertyChanged((ColorText)ev.getSource(), ev, "ColorText");
+         onInnerPropertyChanged((ColorText)ev.getSource(), ev, PROPERTY_COLOR_TEXT);
       if (source instanceof PenBorder)
-         onInnerPropertyChanged((PenBorder)ev.getSource(), ev, "PenBorder");
+         onInnerPropertyChanged((PenBorder)ev.getSource(), ev, PROPERTY_PEN_BORDER);
    }
 
    @Override

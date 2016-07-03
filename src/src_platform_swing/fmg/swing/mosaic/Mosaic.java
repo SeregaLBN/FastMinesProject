@@ -31,6 +31,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.mosaic.draw.PaintContext;
 import fmg.core.types.EMosaic;
 import fmg.core.types.click.ClickResult;
 import fmg.data.view.draw.PenBorder;
@@ -54,6 +55,8 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
    public Mosaic(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) {
       super(sizeField, mosaicType, minesCount, area);
    }
+
+   public static final String PROPERTY_PAINT_CONTEXT = "PaintContext";
 
    public JPanel getContainer() {
       if (_container == null) {
@@ -306,10 +309,10 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       super.onPropertyChanged(oldValue, newValue, propertyName);
       switch (propertyName) {
-      case "MosaicType":
+      case PROPERTY_MOSAIC_TYPE:
          changeFontSize();
          break;
-      case "Matrix":
+      case PROPERTY_MATRIX:
          revalidate();
          break;
       }
@@ -325,7 +328,7 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
    @Override
    protected void onCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) {
       super.onCellAttributePropertyChanged(source, ev);
-      if ("Area".equals(ev.getPropertyName())) {
+      if (BaseCell.BaseAttribute.PROPERTY_AREA.equals(ev.getPropertyName())) {
          changeFontSize(getPaintContext().getPenBorder());
 
          revalidate();
@@ -335,18 +338,18 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
    private void onPaintContextPropertyChanged(PaintSwingContext<?> source, PropertyChangeEvent ev) {
       String propName = ev.getPropertyName();
       switch (propName) {
-      case "PenBorder":
+      case PaintContext.PROPERTY_PEN_BORDER:
          PenBorder penBorder = (PenBorder)ev.getNewValue();
          changeFontSize(penBorder);
          break;
-      //case "Font":
-      //case "BackgroundFill":
+      //case PaintSwingContext.PROPERTY_FONT:
+      //case PaintContext.PROPERTY_BACKGROUND_FILL:
       //   //Repaint(null);
       //   break;
       }
       repaint(null);
-      onPropertyChanged("GraphicContext");
-      onPropertyChanged("GraphicContext." + propName);
+      onPropertyChanged(PROPERTY_PAINT_CONTEXT);
+      onPropertyChanged(PROPERTY_PAINT_CONTEXT + "." + propName);
    }
 
    /** пересчитать и установить новую высоту шрифта */

@@ -241,7 +241,7 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
    private void onImagePropertyChanged(EMosaic mosaicType, PropertyChangeEvent ev) {
       if (!isVisible())
          return;
-      if (ev.getPropertyName().equalsIgnoreCase("Image")) {
+      if (ev.getPropertyName().equalsIgnoreCase(MosaicsImg.PROPERTY_IMAGE)) {
          int i = mosaicType.ordinal();
          MosaicsImg.Icon img = images.get(mosaicType);
          tabPanel.setIconAt(i, ImgUtils.zoom(img.getImage(), ImgSize, ImgSize));

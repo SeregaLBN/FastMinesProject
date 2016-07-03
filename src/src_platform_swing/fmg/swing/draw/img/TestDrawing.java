@@ -61,7 +61,7 @@ final class TestDrawing {
          // test transparent
          HSV bkClr = new HSV(Color.RandomColor(rnd)); bkClr.a = 50 + r(10);
          img.addListener(ev -> {
-            if ("RotateAngle".equals(ev.getPropertyName())) {
+            if (RotatedImg.PROPERTY_ROTATE_ANGLE.equals(ev.getPropertyName())) {
                bkClr.h = img.getRotateAngle();
                img.setBackgroundColor(bkClr.toColor());
             }
@@ -106,7 +106,7 @@ final class TestDrawing {
             add(jPanel);
 
             PropertyChangeListener l = evt -> {
-               if ("Image".equals(evt.getPropertyName())) {
+               if (RotatedImg.PROPERTY_IMAGE.equals(evt.getPropertyName())) {
                   //jPanel.invalidate();
                   //jPanel.revalidate();
                   jPanel.repaint();

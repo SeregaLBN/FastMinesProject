@@ -16,11 +16,15 @@ public abstract class RotatedImg<T, TImage> extends StaticImg<T, TImage> {
 
    protected RotatedImg(T entity) { super(entity); }
 
+   public static final String PROPERTY_REDRAW_INTERVAL    = "RedrawInterval";
+   public static final String PROPERTY_ROTATE             = "Rotate";
+   public static final String PROPERTY_ROTATE_ANGLE_DELTA = "RotateAngleDelta";
+
    private long _redrawInterval = 100;
    /** frequency of redrawing (in milliseconds) */
    public long getRedrawInterval() { return _redrawInterval; }
    public void setRedrawInterval(long value) {
-      if (setProperty(_redrawInterval, value, "RedrawInterval") && (_timer != null))
+      if (setProperty(_redrawInterval, value, PROPERTY_REDRAW_INTERVAL) && (_timer != null))
          _timer.setInterval(_redrawInterval);
    }
 
@@ -29,7 +33,7 @@ public abstract class RotatedImg<T, TImage> extends StaticImg<T, TImage> {
    private boolean _rotate;
    public boolean isRotate() { return _rotate; }
    public void setRotate(boolean value) {
-      if (setProperty(_rotate, value, "Rotate")) {
+      if (setProperty(_rotate, value, PROPERTY_ROTATE)) {
          if (value)
             startTimer();
          else
@@ -40,7 +44,7 @@ public abstract class RotatedImg<T, TImage> extends StaticImg<T, TImage> {
    private double _rotateAngleDelta = 1.4;
    public double getRotateAngleDelta() { return _rotateAngleDelta; }
    public void setRotateAngleDelta(double value) {
-      if (setProperty(_rotateAngleDelta, value, "RotateAngleDelta") && isRotate())
+      if (setProperty(_rotateAngleDelta, value, PROPERTY_ROTATE_ANGLE_DELTA) && isRotate())
          invalidate();
    }
 

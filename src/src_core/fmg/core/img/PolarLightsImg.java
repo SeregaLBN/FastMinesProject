@@ -13,11 +13,13 @@ public abstract class PolarLightsImg<T, TImage> extends RotatedImg<T, TImage> {
 
    protected PolarLightsImg(T entity) { super(entity); }
 
+   public static final String PROPERTY_POLAR_LIGHTS = "PolarLights";
+
    private boolean _polarLights;
    /** shimmering filling */
    public boolean isPolarLights() { return _polarLights; }
    public void setPolarLights(boolean value) {
-      if (setProperty(_polarLights, value, "PolarLights")) {
+      if (setProperty(_polarLights, value, PROPERTY_POLAR_LIGHTS)) {
          if (value)
             startTimer();
          else

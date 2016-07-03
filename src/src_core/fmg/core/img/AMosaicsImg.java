@@ -44,6 +44,15 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
       _sizeField = sizeField;
    }
 
+   public static final String PROPERTY_MOSAIC_TYPE      = "MosaicType";
+   public static final String PROPERTY_SIZE_FIELD       = "SizeField";
+   public static final String PROPERTY_CELL_ATTR        = "CellAttr";
+   public static final String PROPERTY_MATRIX           = "Matrix";
+   public static final String PROPERTY_AREA             = "Area";
+   public static final String PROPERTY_PADDING_FULL     = "PaddingFull";
+   public static final String PROPERTY_ROTATE_MODE      = "RotateMode";
+   public static final String PROPERTY_ROTATED_ELEMENTS = "RotatedElements";
+
    /** из каких фигур состоит мозаика поля */
    @Override
    public EMosaic getMosaicType() { return getEntity(); }
@@ -61,7 +70,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
    public Matrisize getSizeField() { return _sizeField; }
    @Override
    public void setSizeField(Matrisize value) {
-      if (setProperty(_sizeField, value, "SizeField")) {
+      if (setProperty(_sizeField, value, PROPERTY_SIZE_FIELD)) {
          recalcArea();
          _matrix.clear();
          invalidate();
@@ -82,7 +91,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
       return _cellAttr;
    }
    private void setCellAttr(BaseCell.BaseAttribute value) {
-      if (setProperty(_cellAttr, value, "CellAttr")) {
+      if (setProperty(_cellAttr, value, PROPERTY_CELL_ATTR)) {
          dependency_CellAttribute_Area();
          invalidate();
       }
@@ -99,7 +108,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
          for (int i = 0; i < size.m; i++)
             for (int j = 0; j < size.n; j++)
                _matrix.add(MosaicHelper.createCellInstance(attr, type, new Coord(i, j)));
-         onPropertyChanged("Matrix");
+         onPropertyChanged(PROPERTY_MATRIX);
          invalidate();
       }
       return _matrix;
@@ -135,7 +144,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
    }
    @Override
    public void setArea(double value) {
-      if (setProperty(_area, value, "Area")) {
+      if (setProperty(_area, value, PROPERTY_AREA)) {
          dependency_CellAttribute_Area();
          invalidate();
       }
@@ -144,30 +153,30 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
    private BoundDouble _paddingFull;
    public BoundDouble getPaddingFull() { return _paddingFull; }
    protected void setPaddingFull(BoundDouble value) {
-      if (setProperty(_paddingFull, value, "PaddingFull")) {
+      if (setProperty(_paddingFull, value, PROPERTY_PADDING_FULL)) {
          invalidate();
       }
    }
 
    private ERotateMode _rotateMode = ERotateMode.fullMatrix;
    public ERotateMode getRotateMode() { return _rotateMode; }
-   public void setRotateMode(ERotateMode value) { setProperty(_rotateMode, value, "RotateMode"); }
+   public void setRotateMode(ERotateMode value) { setProperty(_rotateMode, value, PROPERTY_ROTATE_MODE); }
 
    @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       //LoggerSimple.Put("OnPropertyChanged: {0}: PropertyName={1}", Entity, ev.PropertyName);
       super.onPropertyChanged(oldValue, newValue, propertyName);
       switch (propertyName) {
-      case "Entity":
+      case PROPERTY_ENTITY:
          dependency_MosaicType_As_Entity((EMosaic) newValue, (EMosaic) oldValue);
          break;
-      case "Size":
-      case "Padding":
+      case PROPERTY_SIZE:
+      case PROPERTY_PADDING:
          recalcArea();
          break;
-      case "Rotate":
-      case "RotateMode":
-      case "SizeField":
+      case PROPERTY_ROTATE:
+      case PROPERTY_ROTATE_MODE:
+      case PROPERTY_SIZE_FIELD:
          if (getRotateMode() == ERotateMode.someCells)
             randomRotateElemenIndex();
          break;
@@ -188,7 +197,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
       setArea(0);
       _matrix.clear();
       setCellAttr(null);
-      onPropertyChanged(oldValue, newValue, "MosaicType");
+      onPropertyChanged(oldValue, newValue, PROPERTY_MOSAIC_TYPE);
    }
    ////////////// #endregion
 
@@ -286,7 +295,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
       _prepareList.clear();
       if (!_rotatedElements.isEmpty()) {
          _rotatedElements.clear();
-         onPropertyChanged("RotatedElements");
+         onPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
       }
 
       if (!isRotate())
@@ -338,7 +347,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
             {
                _prepareList.remove(i);
                _rotatedElements.add(new RotatedCellContext(nextRandomIndex(rand), angleOffset, area));
-               onPropertyChanged("RotatedElements");
+               onPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
             }
          }
       }
@@ -364,7 +373,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
                            _rotatedElements.remove(cntxt);
                            addRandomToPrepareList(false, rand);
                         });
-         onPropertyChanged("RotatedElements");
+         onPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
       }
    }
 

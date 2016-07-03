@@ -26,6 +26,8 @@ public class PaintSwingContext<TImage> extends PaintContext<TImage> {
       super(iconicMode);
    }
 
+   public static final String PROPERTY_FONT = "Font";
+
    public static Color getDefaultBackgroundColor() {
       return PaintContext.getDefaultBackgroundColor();
    }
@@ -65,9 +67,9 @@ public class PaintSwingContext<TImage> extends PaintContext<TImage> {
    @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       super.onPropertyChanged(oldValue, newValue, propertyName);
-      if ("FontInfo".equals(propertyName)) {
+      if (PaintContext.PROPERTY_FONT_INFO.equals(propertyName)) {
          font = null;
-         onPropertyChanged("Font");
+         onPropertyChanged(PROPERTY_FONT);
       }
    }
 

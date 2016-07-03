@@ -52,8 +52,12 @@ public class ColorText extends NotifyPropertyChanged {
          default: throw new RuntimeException("add EClose value");
          }
    }
-   
-   
+
+   public static final String PROPERTY_COLOR_OPEN    = "ColorOpen";
+   public static final String PROPERTY_COLOR_OPEN_N_ = "ColorOpen.#";
+   public static final String PROPERTY_COLOR_CLOSE   = "ColorClose";
+   public static final String PROPERTY_COLOR_CLOSE_N = "ColorClose.#";
+
    public Color[] getColorOpen() {
       return colorOpen;
    }
@@ -64,14 +68,14 @@ public class ColorText extends NotifyPropertyChanged {
       Color[] old = this.colorOpen;
       if (!Arrays.equals(old, colorOpen)) {
          this.colorOpen = colorOpen;
-         onPropertyChanged(old, colorOpen, "ColorOpen");
+         onPropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN);
       }
    }
    public void setColorOpen(int i, Color colorOpen) {
       Color old = this.colorOpen[i];
       if (!old.equals(colorOpen)) {
          this.colorOpen[i] = colorOpen;
-         onPropertyChanged(old, colorOpen, "ColorOpen.#"+i);
+         onPropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN_N_ + i);
       }
    }
 
@@ -85,14 +89,14 @@ public class ColorText extends NotifyPropertyChanged {
       Color[] old = this.colorClose;
       if (!Arrays.equals(old, colorClose)) {
          this.colorClose = colorClose;
-         onPropertyChanged(old, colorClose, "ColorClose");
+         onPropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE);
       }
    }
    public void setColorClose(int i, Color colorClose) {
       Color old = this.colorClose[i];
       if (!old.equals(colorClose)) {
          this.colorClose[i] = colorClose;
-         onPropertyChanged(old, colorClose, "ColorClose.#"+i);
+         onPropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE_N + i);
       }
    }
 
@@ -110,6 +114,6 @@ public class ColorText extends NotifyPropertyChanged {
       return Arrays.equals(colorClose, other.colorClose) &&
              Arrays.equals(colorOpen, other.colorOpen);
    }
-   
-   
+
+
 }

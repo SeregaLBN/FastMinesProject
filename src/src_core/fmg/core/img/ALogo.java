@@ -26,6 +26,9 @@ public abstract class ALogo<TImage> extends PolarLightsImg<Object, TImage> {
       setBackgroundColor(Color.Transparent);
    }
 
+   public static final String PROPERTY_USE_GRADIENT = "UseGradient";
+   public static final String PROPERTY_ROTATE_MODE  = "RotateMode";
+
    public final HSV[] Palette = {
          new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100),
          new HSV(180, 100, 100), new HSV(225, 100, 100), new HSV(270, 100, 100), new HSV(315, 100, 100) };
@@ -33,13 +36,13 @@ public abstract class ALogo<TImage> extends PolarLightsImg<Object, TImage> {
    private boolean _useGradient;
    public boolean isUseGradient() { return _useGradient; }
    public void setUseGradient(boolean value) {
-      if (setProperty(_useGradient, value, "UseGradient"))
+      if (setProperty(_useGradient, value, PROPERTY_USE_GRADIENT))
          invalidate();
    }
 
    private ERotateMode _rotateMode = ERotateMode.combi;
    public ERotateMode getRotateMode() { return _rotateMode; }
-   public void setRotateMode(ERotateMode value) { setProperty(_rotateMode, value, "RotateMode"); }
+   public void setRotateMode(ERotateMode value) { setProperty(_rotateMode, value, PROPERTY_ROTATE_MODE); }
 
    protected double getZoomX() { return (getWidth()  - getPadding().getLeftAndRight()) / 200.0; }
    protected double getZoomY() { return (getHeight() - getPadding().getTopAndBottom()) / 200.0; }
@@ -92,7 +95,7 @@ public abstract class ALogo<TImage> extends PolarLightsImg<Object, TImage> {
 
    @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      if ((getRotateMode() != ERotateMode.classic) && "RotateAngle".equals(propertyName)) {
+      if ((getRotateMode() != ERotateMode.classic) && PROPERTY_ROTATE_ANGLE.equals(propertyName)) {
          double delta = getRotateAngleDelta();
          for (int i=0; i<Palette.length; ++i) {
             Palette[i].h += delta;

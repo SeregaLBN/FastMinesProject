@@ -61,16 +61,16 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
 
    private void initialize(JFrame parent) {
       Object keyBind = "OnOk";
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), keyBind);
-        getRootPane().getActionMap().put(keyBind, new AbstractAction() {
+      getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), keyBind);
+      getRootPane().getActionMap().put(keyBind, new AbstractAction() {
          private static final long serialVersionUID = 1L;
          @Override
          public void actionPerformed(ActionEvent e) { OnOk(); }
       });
 
-        keyBind = "CloseDialog";
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
-        getRootPane().getActionMap().put(keyBind, new AbstractAction() {
+      keyBind = "CloseDialog";
+      getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
+      getRootPane().getActionMap().put(keyBind, new AbstractAction() {
          private static final long serialVersionUID = 1L;
          @Override
          public void actionPerformed(ActionEvent e) { OnClose(); }
@@ -336,15 +336,15 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
    @Override
    public void propertyChange(PropertyChangeEvent evt) {
       switch (evt.getPropertyName()) {
-      case "MosaicType":
+      case MosaicBase.PROPERTY_MOSAIC_TYPE:
          if (isVisible())
             OnChangeMosaicType();
          break;
-      case "Area":
+      case MosaicBase.PROPERTY_AREA:
          if (radioFullScreenCurrSizeArea.isSelected())
             radioGroup.clearSelection();
          break;
-      //case "SizeField":
+      //case MosaicBase.PROPERTY_SIZE_FIELD:
       //   ...
       //   break;
       }

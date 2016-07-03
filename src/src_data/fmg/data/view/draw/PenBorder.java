@@ -24,6 +24,10 @@ public class PenBorder extends NotifyPropertyChanged {
       this.width = iWidth;
    }
 
+   public static final String PROPERTY_COLOR_SHADOW = "ColorShadow";
+   public static final String PROPERTY_COLOR_LIGHT  = "ColorLight";
+   public static final String PROPERTY_WIDTH        = "Width";
+
    public Color getColorShadow() {
       return colorShadow;
    }
@@ -32,7 +36,7 @@ public class PenBorder extends NotifyPropertyChanged {
       Color old = this.colorShadow;
       if (!old.equals(colorShadow)) {
          this.colorShadow = colorShadow;
-         onPropertyChanged(old, colorShadow, "ColorShadow");
+         onPropertyChanged(old, colorShadow, PROPERTY_COLOR_SHADOW);
       }
    }
 
@@ -44,7 +48,7 @@ public class PenBorder extends NotifyPropertyChanged {
       Color old = this.colorLight;
       if (!old.equals(colorLight)) {
          this.colorLight = colorLight;
-         onPropertyChanged(old, colorLight, "ColorLight");
+         onPropertyChanged(old, colorLight, PROPERTY_COLOR_LIGHT);
       }
    }
 
@@ -56,7 +60,7 @@ public class PenBorder extends NotifyPropertyChanged {
       int old = this.width;
       if (old != iWidth) {
          this.width = iWidth;
-         onPropertyChanged(old, iWidth, "Width");
+         onPropertyChanged(old, iWidth, PROPERTY_WIDTH);
       }
    }
 

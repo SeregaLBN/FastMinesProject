@@ -31,12 +31,22 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
       return super.setProperty(value, propertyName);
    }
 
+   public static final String PROPERTY_SIZE              = "Size";
+   public static final String PROPERTY_PADDING           = "Padding";
+   public static final String PROPERTY_ENTITY            = "Entity";
+   public static final String PROPERTY_IMAGE             = "Image";
+   public static final String PROPERTY_BACKGROUND_COLOR  = "BackgroundColor";
+   public static final String PROPERTY_BORDER_COLOR      = "BorderColor";
+   public static final String PROPERTY_BORDER_WIDTH      = "BorderWidth";
+   public static final String PROPERTY_ROTATE_ANGLE      = "RotateAngle";
+   public static final String PROPERTY_FOREGROUND_COLOR  = "ForegroundColor";
+
    private Size _size;
    /** width and height in pixel */
    public Size getSize() { return _size; }
    public void setSize(int widhtAndHeight) { setSize(new Size(widhtAndHeight, widhtAndHeight)) ; }
    public void setSize(Size value) {
-      if (setProperty(_size, value, "Size")) {
+      if (setProperty(_size, value, PROPERTY_SIZE)) {
          setImage(null);
          //invalidate();
       }
@@ -56,7 +66,7 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
          throw new IllegalArgumentException("Padding size is very large. Should be less than Width.");
       if (value.getTopAndBottom() >= getHeight())
          throw new IllegalArgumentException("Padding size is very large. Should be less than Height.");
-      if (setProperty(_padding, value, "Padding")) {
+      if (setProperty(_padding, value, PROPERTY_PADDING)) {
          invalidate();
       }
    }
@@ -64,7 +74,7 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
    public T _entity;
    public T getEntity() { return _entity; }
    public void setEntity(T value) {
-      if (setProperty(_entity, value, "Entity"))
+      if (setProperty(_entity, value, PROPERTY_ENTITY))
          invalidate();
    }
 
@@ -87,28 +97,28 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
       return _image;
    }
    protected void setImage(TImage value) {
-      setProperty(_image, value, "Image");
+      setProperty(_image, value, PROPERTY_IMAGE);
    }
 
    private Color _backgroundColor = DefaultBkColor;
    /** background fill color */
    public Color getBackgroundColor() { return _backgroundColor; }
    public void setBackgroundColor(Color value) {
-      if (setProperty(_backgroundColor, value, "BackgroundColor"))
+      if (setProperty(_backgroundColor, value, PROPERTY_BACKGROUND_COLOR))
          invalidate();
    }
 
    private Color _borderColor = Color.Maroon.clone().darker(0.5);
    public Color getBorderColor() { return _borderColor; }
    public void setBorderColor(Color value) {
-      if (setProperty(_borderColor, value, "BorderColor"))
+      if (setProperty(_borderColor, value, PROPERTY_BORDER_COLOR))
          invalidate();
    }
 
    private int _borderWidth = 3;
    public int getBorderWidth() { return _borderWidth; }
    public void setBorderWidth(int value) {
-      if (setProperty(_borderWidth, value, "BorderWidth"))
+      if (setProperty(_borderWidth, value, PROPERTY_BORDER_WIDTH))
          invalidate();
    }
 
@@ -121,14 +131,14 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
          if (value < 0)
             value += 360;
       }
-      if (setProperty(_rotateAngle, value, "RotateAngle"))
+      if (setProperty(_rotateAngle, value, PROPERTY_ROTATE_ANGLE))
          invalidate();
    }
 
    private Color _foregroundColor = Color.Aqua;
    public Color getForegroundColor() { return _foregroundColor; }
    public void setForegroundColor(Color value) {
-      if (setProperty(_foregroundColor, value, "ForegroundColor"))
+      if (setProperty(_foregroundColor, value, PROPERTY_FOREGROUND_COLOR))
          invalidate();
    }
 

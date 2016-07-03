@@ -149,7 +149,7 @@ public class AboutDlg extends JDialog {
       _logo.setRotateMode(Logo.ERotateMode.color);
       JButton btnLogo = new JButton(_logo.getImage());
       _logo.addListener(ev -> {
-         if ("Image".equals(ev.getPropertyName())) {
+         if (Logo.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
             btnLogo.setIcon(_logo.getImage());
             btnLogo.repaint();
          }

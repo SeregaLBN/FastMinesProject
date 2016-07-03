@@ -72,16 +72,18 @@ public abstract class BaseCell {
          this.area = area;
       }
 
+      public static final String PROPERTY_AREA = "Area";
+
       /** площадь ячейки/фигуры */
       private double area;
 
       /** площадь ячейки/фигуры */
       public void setArea(double area) {
-         //setProperty(area, "Area");
+         //setProperty(area, PROPERTY_AREA);
          double old = this.area;
          if (!DoubleExt.hasMinDiff(old, area)) {
             this.area = area;
-            onPropertyChanged(old, area, "Area");
+            onPropertyChanged(old, area, PROPERTY_AREA);
          }
       }
       /** площадь ячейки/фигуры */

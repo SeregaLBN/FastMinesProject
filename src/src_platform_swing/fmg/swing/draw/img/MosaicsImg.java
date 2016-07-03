@@ -64,30 +64,30 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       super.onPropertyChanged(oldValue, newValue, propertyName);
       switch (propertyName) {
-      case "PaddingFull":
+      case PROPERTY_PADDING_FULL:
          dependency_PContext_PaddingFull();
          break;
-      case "CellAttr":
+      case PROPERTY_CELL_ATTR:
          dependency_PContext_CellAttribute();
          break;
-      case "BorderWidth":
+      case PROPERTY_BORDER_WIDTH:
          dependency_PContext_BorderWidth();
          break;
-      case "BorderColor":
+      case PROPERTY_BORDER_COLOR:
          dependency_PContext_BorderColor();
          break;
-      case "BackgroundColor":
+      case PROPERTY_BACKGROUND_COLOR:
          dependency_PContext_BkColor();
          break;
       }
 
       if (getRotateMode() == ERotateMode.someCells) {
          switch (propertyName) {
-         case "Size":
+         case PROPERTY_SIZE:
             _imageCache = null;
             break;
-         case "RotatedElements":
-         case "BackgroundColor":
+         case PROPERTY_ROTATED_ELEMENTS:
+         case PROPERTY_BACKGROUND_COLOR:
             _invalidateCache = true;
             break;
          }

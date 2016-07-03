@@ -297,7 +297,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
    private void onMosaicsImgPropertyChanged(PropertyChangeEvent ev) {
       if (!isVisible())
          return;
-      if (ev.getPropertyName().equalsIgnoreCase("Image")) {
+      if (ev.getPropertyName().equalsIgnoreCase(MosaicsImg.PROPERTY_IMAGE)) {
          btnOk.setIcon(ImgUtils.toIco(mosaicsImg.getImage(), ImgSize, ImgSize));
       }
    }

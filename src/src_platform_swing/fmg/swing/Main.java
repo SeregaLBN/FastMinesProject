@@ -245,7 +245,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   img.addListener(ev -> {
                      if (!menuItem.getParent().isVisible())
                         return;
-                     if (ev.getPropertyName().equalsIgnoreCase("Image")) {
+                     if (ev.getPropertyName().equalsIgnoreCase(MosaicsSkillImg.PROPERTY_IMAGE)) {
                         setMenuItemIcon(menuItem, img.getImage());
                      }
                   });
@@ -340,7 +340,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   img.addListener(ev -> {
                      if (!menuItem.getParent().isVisible())
                         return;
-                     if (ev.getPropertyName().equalsIgnoreCase("Image")) {
+                     if (ev.getPropertyName().equalsIgnoreCase(MosaicsGroupImg.PROPERTY_IMAGE)) {
                         setMenuItemIcon(menuItem, img.getImage());
                      }
                   });
@@ -384,7 +384,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   img.addListener(ev -> {
                      if (!menuItem.getParent().isVisible())
                         return;
-                     if (ev.getPropertyName().equalsIgnoreCase("Image")) {
+                     if (ev.getPropertyName().equalsIgnoreCase(MosaicsImg.PROPERTY_IMAGE)) {
                         setMenuItemIcon(menuItem, img.getImage());
                      }
                   });
@@ -1056,7 +1056,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       this._logo.setRotateMode(Logo.ERotateMode.combi);
       this.setIconImage(_logo.getImage());
       this._logo.addListener(ev -> {
-         if ("Image".equals(ev.getPropertyName()))
+         if (Logo.PROPERTY_IMAGE.equals(ev.getPropertyName()))
             this.setIconImage(_logo.getImage());
       });
 
@@ -2439,25 +2439,22 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
    private void OnMosaicPropertyChanged(Mosaic source, PropertyChangeEvent ev) {
       switch (ev.getPropertyName()) {
-      case "Area":
-      case "SizeField":
-      case "MosaicType":
+      case Mosaic.PROPERTY_AREA:
+      case Mosaic.PROPERTY_SIZE_FIELD:
+      case Mosaic.PROPERTY_MOSAIC_TYPE:
          RecheckLocation();
        //break; // no break
-      case "MinesCount":
+      case Mosaic.PROPERTY_MINES_COUNT:
          getMenu().getMosaics().recheckSelectedMosaicType();
          getMenu().getGame().recheckSelectedSkillLevel();
          break;
       }
 
       switch (ev.getPropertyName()) {
-      case "Area":
+      case Mosaic.PROPERTY_AREA:
          ChangeSizeImagesMineFlag();
          break;
-      //case "SizeField":
-      //case "MosaicType":
-      //   break;
-      case "GameStatus":
+      case Mosaic.PROPERTY_GAME_STATUS:
          {
             getToolbar().getBtnPause().setEnabled(getMosaic().getGameStatus() == EGameStatus.eGSPlay);
           //System.out.println("OnChangeGameStatus: " + e.getSource().getGameStatus());
@@ -2495,18 +2492,18 @@ public class Main extends JFrame implements PropertyChangeListener {
             }
          }
          break;
-      //case "SizeField":
+      //case Mosaic.PROPERTY_SIZE_FIELD:
       //   break;
-      //case "MinesCount":
+      //case Mosaic.PROPERTY_MINES_COUNT:
       //   break;
-      //case "CountFlag":
+      //case Mosaic.PROPERTY_COUNT_FLAG:
       //   break;
-      //case "CountOpen":
+      //case Mosaic.PROPERTY_COUNT_OPEN:
       //   break;
-      case "CountMinesLeft":
+      case Mosaic.PROPERTY_COUNT_MINES_LEFT:
          getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaic().getCountMinesLeft()));
          break;
-      case "CountClick":
+      case Mosaic.PROPERTY_COUNT_CLICK:
          getStatusBar().setClickCount(getMosaic().getCountClick());
          break;
       }
