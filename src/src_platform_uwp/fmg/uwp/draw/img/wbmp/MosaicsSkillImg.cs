@@ -21,9 +21,7 @@ namespace fmg.uwp.draw.img.wbmp {
 
       public MosaicsSkillImg(ESkillLevel group)
          : base(group)
-      {
-         SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
-      }
+      { }
 
       protected override WriteableBitmap CreateImage() {
          return new WriteableBitmap(Width, Height);

@@ -140,9 +140,6 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
    private boolean _deferredNotifications = true;
    public boolean isDeferredNotifications() { return _deferredNotifications; }
    public void setDeferredNotifications(boolean value) { _deferredNotifications = value; }
-   private boolean _syncDraw = true;
-   public boolean isSyncDraw() { return _syncDraw; }
-   public void setSyncDraw(boolean value) { _syncDraw = value; }
 
    protected void invalidate() {
       if (_invalidate == EInvalidate.redrawing)

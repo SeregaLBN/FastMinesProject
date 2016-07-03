@@ -156,7 +156,6 @@ namespace fmg.core.img {
       public Color ForegroundColorAttenuate => ForegroundColor.Brighter(0.25);
 
       public bool DeferredNotifications { get; set; } = true;
-      public bool SyncDraw { get; set; } = false;
 
       protected void Invalidate() {
          if (_invalidate == EInvalidate.Redrawing)

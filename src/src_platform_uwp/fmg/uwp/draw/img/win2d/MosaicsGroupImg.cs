@@ -30,7 +30,6 @@ namespace fmg.uwp.draw.img.win2d {
       protected MosaicsGroupImg(EMosaicGroup group, ICanvasResourceCreator resourceCreator)
          : base(group)
       {
-         SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
          _rc = resourceCreator;
       }
 

@@ -21,9 +21,7 @@ namespace fmg.uwp.draw.img.wbmp {
 
       public MosaicsGroupImg(EMosaicGroup group)
          : base(group)
-      {
-         SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
-      }
+      { }
 
       protected override WriteableBitmap CreateImage() {
          //LoggerSimple.Put("CreateImage: Width={0}; Height={1}: {2}", Width, Height, Entity);

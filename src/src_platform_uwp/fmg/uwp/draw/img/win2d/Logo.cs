@@ -26,7 +26,6 @@ namespace fmg.uwp.draw.img.win2d {
       protected readonly ICanvasResourceCreator _rc;
 
       protected Logo(ICanvasResourceCreator resourceCreator) {
-         SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
          _rc = resourceCreator;
       }
 

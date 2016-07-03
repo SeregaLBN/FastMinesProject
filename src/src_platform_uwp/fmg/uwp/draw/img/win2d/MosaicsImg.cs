@@ -35,7 +35,6 @@ namespace fmg.uwp.draw.img.win2d {
       protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField, ICanvasResourceCreator resourceCreator)
          : base(mosaicType, sizeField)
       {
-         SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
          _rc = resourceCreator;
       }
 
@@ -163,39 +162,15 @@ namespace fmg.uwp.draw.img.win2d {
       /// }
       /// </summary>
       protected void DrawBodyFullMatrix(CanvasDrawingSession ds, bool fillBk) {
-         Action funcFillBk = () => { if (fillBk) ds.Clear(BackgroundColor.ToWinColor()); };
-
          var matrix = Matrix;
          var paint = new PaintableWin2D(ds);
          var paintContext = PaintContext;
          var cp = CellPaint;
-         if (SyncDraw || LiveImage()) {
-            // sync draw
-            funcFillBk();
-            foreach (var cell in matrix)
-               cp.Paint(cell, paint, paintContext);
-            ds.Dispose();
-         } else {
-            // async draw
-            AsyncRunner.InvokeFromUiLater(() => {
-               funcFillBk();
-               var max = matrix.Count;
-               var i = 0;
-               foreach (var cell in matrix) {
-                  var tmp = cell;
-                  AsyncRunner.InvokeFromUiLater(
-                     () => {
-                        cp.Paint(tmp, paint, paintContext);
-                        if (++i == max)
-                           ds.Dispose();
-                     },
-                     ((Rand.Next() & 1) == 0)
-                        ? CoreDispatcherPriority.Low
-                        : CoreDispatcherPriority.Normal
-                  );
-               }
-            }, CoreDispatcherPriority.Normal);
-         }
+
+         if (fillBk)
+            ds.Clear(BackgroundColor.ToWinColor());
+         foreach (var cell in matrix)
+            cp.Paint(cell, paint, paintContext);
       }
 
       #endregion
@@ -277,17 +252,11 @@ namespace fmg.uwp.draw.img.win2d {
       }
 
       protected void DrawBodySomeCells(CanvasDrawingSession ds, bool fillBk) {
-         if (SyncDraw || LiveImage()) {
-            // sync draw
-            if (UseCache)
-               CopyFromCache(ds);
-            else
-               DrawStaticPart(ds);
-            DrawRotatedPart(ds);
-         } else {
-            // async draw
-            DrawBodyFullMatrix(ds, fillBk);
-         }
+         if (UseCache)
+            CopyFromCache(ds);
+         else
+            DrawStaticPart(ds);
+         DrawRotatedPart(ds);
       }
 
       #endregion

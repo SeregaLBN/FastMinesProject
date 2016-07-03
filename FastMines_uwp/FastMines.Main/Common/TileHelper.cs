@@ -168,8 +168,7 @@ namespace fmg {
          var img = new MosaicsImg(mosaicType, sizeField, Rc) {
             Size = new Size(w * zoomKoef, h * zoomKoef),
             Padding = new Bound(zoomKoef * bound),
-            BackgroundColor = bkClr,
-            SyncDraw = true
+            BackgroundColor = bkClr
          };
          var bmp = img.Image;
          var pw = bmp.Size.Width;

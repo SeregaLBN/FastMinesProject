@@ -11,8 +11,6 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.swing.SwingUtilities;
-
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.Matrisize;
@@ -41,7 +39,9 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
 
    private static final boolean RandomCellBkColor = true;
 
-   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField) { super(mosaicType, sizeField); }
+   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
+      super(mosaicType, sizeField);
+   }
 
    private PaintSwingContext<TImage> _paintContext;
    protected PaintSwingContext<TImage> getPaintContext() {
@@ -155,32 +155,15 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
       int w = getWidth();
       int h = getHeight();
 
-      //g.clearRect(0, 0, w, h);
-
-      Runnable funcFillBk = () -> {
-         g.setColor(Cast.toColor(getBackgroundColor()));
-         g.fillRect(0, 0, w, h);
-      };
-
       List<BaseCell> matrix = getMatrix();
       PaintableGraphics paint = new PaintableGraphics(null, g);
       PaintSwingContext<TImage> paintContext = getPaintContext();
       ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> cp = getCellPaint();
-      if (isSyncDraw() || isLiveImage()) {
-         // sync draw
-         funcFillBk.run();
-         for (BaseCell cell : matrix)
-            cp.paint(cell, paint, paintContext);
-      } else {
-         // async draw
-         SwingUtilities.invokeLater(() ->  {
-            funcFillBk.run();
-            for (BaseCell cell : matrix) {
-               BaseCell tmp = cell;
-               SwingUtilities.invokeLater(() -> cp.paint(tmp, paint, paintContext));
-            }
-         });
-      }
+
+      g.setColor(Cast.toColor(getBackgroundColor()));
+      g.fillRect(0, 0, w, h); //g.clearRect(0, 0, w, h);
+      for (BaseCell cell : matrix)
+         cp.paint(cell, paint, paintContext);
    }
 
    /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
@@ -255,17 +238,11 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
    }
 
    private void drawBodySomeCells(Graphics g) {
-      if (isSyncDraw() || isLiveImage()) {
-         // sync draw
-         if (USE_CACHE)
-            copyFromCache();
-         else
-            drawStaticPart(g);
-         drawRotatedPart(g);
-      } else {
-         // async draw
-         drawBodyFullMatrix(g);
-      }
+      if (USE_CACHE)
+         copyFromCache();
+      else
+         drawStaticPart(g);
+      drawRotatedPart(g);
    }
 
    @Override

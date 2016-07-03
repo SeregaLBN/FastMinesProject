@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
@@ -13,10 +12,6 @@ namespace fmg.uwp.draw.img.wbmp {
 
       static Logo() {
          StaticRotateImgConsts.Init();
-      }
-
-      public Logo() {
-         SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
       }
 
       protected override WriteableBitmap CreateImage() {

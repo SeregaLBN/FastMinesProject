@@ -27,11 +27,11 @@ namespace fmg.uwp.draw.img.wbmp {
       private const bool RandomCellBkColor = true;
       private Random Rand => new Random(Guid.NewGuid().GetHashCode());
 
+      public bool SyncDraw { get; set; } = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+
       public MosaicsImg(EMosaic mosaicType, Matrisize sizeField)
          : base(mosaicType, sizeField)
-      {
-         SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
-      }
+      { }
 
       private ICellPaint<PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> _cellPaint;
       public override ICellPaint<PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> CellPaint {
