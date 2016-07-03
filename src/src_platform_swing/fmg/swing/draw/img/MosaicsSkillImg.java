@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.swing.SwingUtilities;
-
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
@@ -30,10 +28,7 @@ import fmg.swing.Cast;
 public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
 
    static {
-      if (DEFERR_INVOKER == null)
-         DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
-      if (TIMER_CREATOR == null)
-         TIMER_CREATOR = () -> new fmg.swing.utils.Timer();
+      StaticRotateImgConsts.init();
    }
 
    public MosaicsSkillImg(ESkillLevel skill) { super(skill); }

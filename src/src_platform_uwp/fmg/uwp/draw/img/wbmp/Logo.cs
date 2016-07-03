@@ -12,10 +12,7 @@ namespace fmg.uwp.draw.img.wbmp {
    public class Logo : ALogo<WriteableBitmap> {
 
       static Logo() {
-         if (StaticImgConsts.DeferrInvoker == null)
-            StaticImgConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
-         if (RotatedImgConst.TimerCreator == null)
-            RotatedImgConst.TimerCreator = () => new Timer();
+         StaticRotateImgConsts.Init();
       }
 
       public Logo() {

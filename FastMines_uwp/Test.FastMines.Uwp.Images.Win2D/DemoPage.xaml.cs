@@ -16,8 +16,8 @@ using MosaicsSkillCanvasBmp    = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsof
 using MosaicsSkillCanvasImgSrc = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
 using MosaicsGroupCanvasBmp    = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 using MosaicsGroupCanvasImgSrc = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using MosaicsCanvasBmp         = fmg.uwp.draw.img.win2d.MosaicsImg     <Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using MosaicsCanvasImgSrc      = fmg.uwp.draw.img.win2d.MosaicsImg     <Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using MosaicsImgCanvasBmp      = fmg.uwp.draw.img.win2d.MosaicsImg     <Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsImgCanvasImgSrc   = fmg.uwp.draw.img.win2d.MosaicsImg     <Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -31,12 +31,12 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       private readonly LogoCanvasBmp         _logo;
       private readonly MosaicsSkillCanvasBmp _msi;
       private readonly MosaicsGroupCanvasBmp _mgi;
-      private readonly MosaicsCanvasBmp      _mi;
+      private readonly MosaicsImgCanvasBmp   _mi;
 
       public LogoCanvasImgSrc         DemoImg1 { get; }
       public MosaicsSkillCanvasImgSrc DemoImg2 { get; }
       public MosaicsGroupCanvasImgSrc DemoImg3 { get; }
-      public MosaicsCanvasImgSrc      DemoImg4 { get; }
+      public MosaicsImgCanvasImgSrc   DemoImg4 { get; }
 
       private static readonly Random Rnd = new Random(Guid.NewGuid().GetHashCode());
       private static int R(int max) => Rnd.Next(max);
@@ -58,14 +58,15 @@ namespace Test.FastMines.Uwp.Images.Win2D {
             DemoImg4.Dispose();
          };
 
+         var device = CanvasDevice.GetSharedDevice();
          _logo    = new LogoCanvasBmp(canvasControl1);
-         DemoImg1 = new LogoCanvasImgSrc();
+         DemoImg1 = new LogoCanvasImgSrc(device);
          _msi     = new MosaicsSkillCanvasBmp   (ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], canvasControl2);
-         DemoImg2 = new MosaicsSkillCanvasImgSrc(ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)]);
+         DemoImg2 = new MosaicsSkillCanvasImgSrc(ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], device);
          _mgi     = new MosaicsGroupCanvasBmp   (EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], canvasControl4);
-         DemoImg3 = new MosaicsGroupCanvasImgSrc(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)]);
-         _mi      = new MosaicsCanvasBmp        (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), canvasControl3);
-         DemoImg4 = new MosaicsCanvasImgSrc     (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)));
+         DemoImg3 = new MosaicsGroupCanvasImgSrc(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], device);
+         _mi      = new MosaicsImgCanvasBmp     (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), canvasControl3);
+         DemoImg4 = new MosaicsImgCanvasImgSrc  (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), device);
 
          ApplyRandom(_logo, canvasControl1);
          ApplyRandom(_msi , canvasControl2);

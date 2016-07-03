@@ -25,19 +25,18 @@ namespace fmg.uwp.draw.img.win2d {
       where TImage : DependencyObject, ICanvasResourceCreator
    {
       static MosaicsImg() {
-         if (StaticImgConsts.DeferrInvoker == null)
-            StaticImgConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
-         if (RotatedImgConst.TimerCreator == null)
-            RotatedImgConst.TimerCreator = () => new Timer();
+         StaticRotateImgConsts.Init();
       }
 
+      protected readonly ICanvasResourceCreator _rc;
       private const bool RandomCellBkColor = true;
       private Random Rand => new Random(Guid.NewGuid().GetHashCode());
 
-      protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField)
+      protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField, ICanvasResourceCreator resourceCreator)
          : base(mosaicType, sizeField)
       {
          SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+         _rc = resourceCreator;
       }
 
       private ICellPaint<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> _cellPaint;
@@ -309,13 +308,9 @@ namespace fmg.uwp.draw.img.win2d {
       /// </summary>
       public class CanvasBmp : MosaicsImg<CanvasBitmap> {
 
-         private readonly ICanvasResourceCreator _rc;
-
          public CanvasBmp(EMosaic mosaicType, Matrisize sizeField, ICanvasResourceCreator resourceCreator)
-            : base(mosaicType, sizeField)
-         {
-            _rc = resourceCreator;
-         }
+            : base(mosaicType, sizeField, resourceCreator)
+         { }
 
          protected override CanvasBitmap CreateImage() {
             var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
@@ -336,14 +331,13 @@ namespace fmg.uwp.draw.img.win2d {
       /// </summary>
       public class CanvasImgSrc : MosaicsImg<CanvasImageSource> {
 
-         public CanvasImgSrc(EMosaic mosaicType, Matrisize sizeField)
-            : base(mosaicType, sizeField)
+         public CanvasImgSrc(EMosaic mosaicType, Matrisize sizeField, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+            : base(mosaicType, sizeField, resourceCreator)
          { }
 
          protected override CanvasImageSource CreateImage() {
             var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            var device = CanvasDevice.GetSharedDevice();
-            return new CanvasImageSource(device, Width, Height, dpi);
+            return new CanvasImageSource(_rc, Width, Height, dpi);
          }
 
          protected override void DrawBody() {

@@ -30,5 +30,8 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\MosaicsSkillCharImg.cs">
       <Link>src_fmg.uwp\draw\img\MosaicsSkillCharImg.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\StaticRotateImgConsts.cs">
+      <Link>src_fmg.uwp\draw\img\StaticRotateImgConsts.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

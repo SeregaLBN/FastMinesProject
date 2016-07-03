@@ -36,10 +36,7 @@ import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, TImage, PaintSwingContext<TImage>, TImage> {
 
    static {
-      if (DEFERR_INVOKER == null)
-         DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
-      if (TIMER_CREATOR == null)
-         TIMER_CREATOR = () -> new fmg.swing.utils.Timer();
+      StaticRotateImgConsts.init();
    }
 
    private static final boolean RandomCellBkColor = true;

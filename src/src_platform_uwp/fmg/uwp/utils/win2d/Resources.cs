@@ -6,14 +6,14 @@ using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics.Display;
 using Windows.Storage;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Microsoft.Graphics.Canvas;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.uwp.draw.img.win2d;
 using MosaicsGroupImg = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 using Logo = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using BackgroundPause = fmg.uwp.draw.img.win2d.BackgroundPause<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using Flag = fmg.uwp.draw.img.win2d.Flag<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 
 namespace fmg.uwp.utils.win2d {
 
@@ -65,26 +65,26 @@ namespace fmg.uwp.utils.win2d {
       private static Dictionary<EMosaicGroup, CanvasBitmap> _imgsMosaicGroupPng;
       private static Dictionary<CultureInfo, CanvasBitmap> _imgsLang;
 
-      private static async Task<CanvasBitmap> GetImage(string path) {
-         return await ImgUtils.GetImage(new Uri("ms-appx:///res/" + path)) ??
-                await ImgUtils.GetImage(new Uri("ms-appx:///" + path));
+      private static async Task<CanvasBitmap> GetImage(string path, ICanvasResourceCreator rc) {
+         return await ImgUtils.GetImage(new Uri("ms-appx:///res/" + path), rc) ??
+                await ImgUtils.GetImage(new Uri("ms-appx:///" + path), rc);
       }
 
-      private static BitmapImage GetImageSync(string path) {
-         return ImgUtils.GetImageSync(new Uri("ms-appx:///res/" + path)) ??
-                ImgUtils.GetImageSync(new Uri("ms-appx:///" + path));
-      }
+      //private static CanvasBitmap GetImageSync(string path) {
+      //   return ImgUtils.GetImageSync(new Uri("ms-appx:///res/" + path)) ??
+      //          ImgUtils.GetImageSync(new Uri("ms-appx:///" + path));
+      //}
 
 
-      public static async Task<CanvasBitmap> GetImgLogoPng(string subdir = "TileSq150", int scale = 100) {
+      public static async Task<CanvasBitmap> GetImgLogoPng(string subdir /* = "TileSq150" */, int scale /* = 100 */, ICanvasResourceCreator rc /* = CanvasDevice.GetSharedDevice() */) {
          if (_imgLogoPng == null)
             //_imgLogoPng = await GetImage("Logo/Logo_128x128.png");
-            _imgLogoPng = await GetImage(string.Format("Logo/{0}/Logo.scale-{1}.png", subdir, scale));
+            _imgLogoPng = await GetImage(string.Format("Logo/{0}/Logo.scale-{1}.png", subdir, scale), rc);
          return _imgLogoPng;
       }
 
-      public static CanvasBitmap GetImgLogo(int sizeImage, int padding = 3) {
-         var imgLogo = new Logo {
+      public static CanvasBitmap GetImgLogo(int sizeImage, int padding /* = 3 */, ICanvasResourceCreator rc /* = CanvasDevice.GetSharedDevice() */) {
+         var imgLogo = new Logo(rc) {
             UseGradient = true,
             SizeInt = sizeImage,
             PaddingInt = padding
@@ -92,87 +92,86 @@ namespace fmg.uwp.utils.win2d {
          return imgLogo.Image;
       }
 
-      public static async Task<CanvasBitmap> GetImgFlag() {
+      public static async Task<CanvasBitmap> GetImgFlag(ICanvasResourceCreator rc) {
          if (_imgFlag == null) {
-            _imgFlag = await GetImage("CellState/Flag.png"); // сначала из ресурсов
+            _imgFlag = await GetImage("CellState/Flag.png", rc); // сначала из ресурсов
             if (_imgFlag == null)
-               _imgFlag = new Flag().Image; // иначе - своя картинка из кода
+               _imgFlag = new Flag(rc).Image; // иначе - своя картинка из кода
          }
          return _imgFlag;
       }
 
-      public static async Task<CanvasBitmap> GetImgMine() {
+      public static async Task<CanvasBitmap> GetImgMine(ICanvasResourceCreator rc) {
          if (_imgMine == null) {
-            _imgMine = await GetImage("CellState/Mine.png"); // сначала из ресурсов
+            _imgMine = await GetImage("CellState/Mine.png", rc); // сначала из ресурсов
             if (_imgMine == null)
-               _imgMine = new Mine().Image; // иначе - своя картинка из кода
+               _imgMine = new Mine(rc).Image; // иначе - своя картинка из кода
          }
          return _imgMine;
       }
 
-      public static async Task<CanvasBitmap> GetImgPause() {
+      public static async Task<CanvasBitmap> GetImgPause(ICanvasResourceCreator rc) {
          if (_imgPause == null) {
-            _imgPause = await GetImage("Background/Pause.png"); // сначала из ресурсов
+            _imgPause = await GetImage("Background/Pause.png", rc); // сначала из ресурсов
             if (_imgPause == null)
-               _imgPause = new BackgroundPause().Image; // иначе - своя картинка из кода
+               _imgPause = new BackgroundPause(rc).Image; // иначе - своя картинка из кода
          }
          return _imgPause;
       }
 
-      public static async Task<CanvasBitmap> GetImgBtnNew(EBtnNewGameState key) {
+      public static async Task<CanvasBitmap> GetImgBtnNew(EBtnNewGameState key, ICanvasResourceCreator rc) {
          if (_imgsBtnNew == null) {
             var vals = Enum.GetValues(typeof (EBtnNewGameState));
             _imgsBtnNew = new Dictionary<EBtnNewGameState, CanvasBitmap>(vals.Length);
 
             foreach (EBtnNewGameState val in vals)
-               _imgsBtnNew.Add(val, await GetImage("ToolBarButton/new" + val.GetDescription() + ".png"));
+               _imgsBtnNew.Add(val, await GetImage("ToolBarButton/new" + val.GetDescription() + ".png", rc));
          }
          return _imgsBtnNew[key];
       }
 
-      public static async Task<CanvasBitmap> GetImgBtnPause(EBtnPauseState key) {
+      public static async Task<CanvasBitmap> GetImgBtnPause(EBtnPauseState key, ICanvasResourceCreator rc) {
          if (_imgsBtnPause == null) {
             var vals = Enum.GetValues(typeof(EBtnPauseState));
             _imgsBtnPause = new Dictionary<EBtnPauseState, CanvasBitmap>(vals.Length);
 
             foreach (EBtnPauseState val in vals)
-               _imgsBtnPause.Add(val, await GetImage("ToolBarButton/pause" + val.GetDescription() + ".png"));
+               _imgsBtnPause.Add(val, await GetImage("ToolBarButton/pause" + val.GetDescription() + ".png", rc));
          }
          return _imgsBtnPause[key];
       }
 
       /// <summary> из ресурсов </summary>
-      public async static Task<CanvasBitmap> GetImgMosaicGroupPng(EMosaicGroup key) {
+      public async static Task<CanvasBitmap> GetImgMosaicGroupPng(EMosaicGroup key, ICanvasResourceCreator rc) {
          if (_imgsMosaicGroupPng == null)
             _imgsMosaicGroupPng = new Dictionary<EMosaicGroup, CanvasBitmap>(EMosaicGroupEx.GetValues().Length);
          if (_imgsMosaicGroupPng.ContainsKey(key))
             return _imgsMosaicGroupPng[key];
-         return _imgsMosaicGroupPng[key] = await GetImage("MosaicGroup/" + key.GetDescription() + ".png");
+         return _imgsMosaicGroupPng[key] = await GetImage("MosaicGroup/" + key.GetDescription() + ".png", rc);
       }
 
       /// <summary> самостоятельная отрисовка </summary>
       [Obsolete("???")]
-      public static MosaicsGroupImg GetImgMosaicGroup(EMosaicGroup key, int widthAndHeight = MosaicsGroupImg.DefaultImageSize) {
-         return new MosaicsGroupImg(key) { SizeInt = widthAndHeight, PolarLights = true };
+      public static MosaicsGroupImg GetImgMosaicGroup(EMosaicGroup key, int widthAndHeight /* = MosaicsGroupImg.DefaultImageSize */, ICanvasResourceCreator rc /* = CanvasDevice.GetSharedDevice() */) {
+         return new MosaicsGroupImg(key, rc) { SizeInt = widthAndHeight, PolarLights = true };
       }
 
       /// <summary> из ресурсов </summary>
-      public static async Task<CanvasBitmap> GetImgMosaicPng(EMosaic mosaicType, bool smallIco) {
-         return await GetImage("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.GetDescription(true) + ".png");
+      public static async Task<CanvasBitmap> GetImgMosaicPng(EMosaic mosaicType, bool smallIco, ICanvasResourceCreator rc) {
+         return await GetImage("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.GetDescription(true) + ".png", rc);
       }
 
-      public static BitmapImage GetImgMosaicPngSync(EMosaic mosaicType, bool smallIco)
-      {
-         return GetImageSync("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.GetDescription(true) + ".png");
-      }
+      //public static CanvasBitmap GetImgMosaicPngSync(EMosaic mosaicType, bool smallIco, ICanvasResourceCreator rc /* = CanvasDevice.GetSharedDevice() */) {
+      //   return GetImageSync("Mosaic/" + (smallIco ? "32x32" : "48x32") + '/' + mosaicType.GetDescription(true) + ".png", );
+      //}
 
-      public static async Task<Dictionary<CultureInfo, CanvasBitmap>> getImgsLang() {
+      public static async Task<Dictionary<CultureInfo, CanvasBitmap>> getImgsLang(ICanvasResourceCreator rc) {
          if (_imgsLang == null) {
             _imgsLang = new Dictionary<CultureInfo, CanvasBitmap>(4);
 
-            CanvasBitmap imgEng = await GetImage("Lang/English.png");
-            CanvasBitmap imgUkr = await GetImage("Lang/Ukrainian.png");
-            CanvasBitmap imgRus = await GetImage("Lang/Russian.png");
+            CanvasBitmap imgEng = await GetImage("Lang/English.png"  , rc);
+            CanvasBitmap imgUkr = await GetImage("Lang/Ukrainian.png", rc);
+            CanvasBitmap imgRus = await GetImage("Lang/Russian.png"  , rc);
 
             foreach (var lang in Windows.System.UserProfile.GlobalizationPreferences.Languages) {
                var locale = new CultureInfo(lang);

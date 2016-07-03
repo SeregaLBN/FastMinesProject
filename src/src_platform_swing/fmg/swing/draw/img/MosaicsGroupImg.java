@@ -10,8 +10,6 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.swing.SwingUtilities;
-
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
@@ -29,10 +27,7 @@ import fmg.swing.Cast;
 public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
 
    static {
-      if (DEFERR_INVOKER == null)
-         DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
-      if (TIMER_CREATOR == null)
-         TIMER_CREATOR = () -> new fmg.swing.utils.Timer();
+      StaticRotateImgConsts.init();
    }
 
    public MosaicsGroupImg(EMosaicGroup group) { super(group); }

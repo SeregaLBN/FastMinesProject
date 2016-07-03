@@ -16,16 +16,16 @@ import fmg.swing.utils.ImgUtils;
 
 /** flag image */
 public class Flag implements Icon {
-   private double _zoom = 1.7;
+   private static final double Zoom = 1.7;
 
    @Override
    public int getIconWidth() {
-      return (int) (100 * _zoom);
+      return (int) (100 * Zoom);
    }
 
    @Override
    public int getIconHeight() {
-      return (int) (100 * _zoom);
+      return (int) (100 * Zoom);
    }
 
    Icon _ico;
@@ -45,11 +45,11 @@ public class Flag implements Icon {
    private void draw(Graphics2D g) {
       // perimeter figure points
       Point2D.Double[] p = new Point2D.Double[] {
-            new Point2D.Double(13.5 *_zoom, 90*_zoom),
-            new Point2D.Double(17.44*_zoom, 51*_zoom),
-            new Point2D.Double(21   *_zoom, 16*_zoom),
-            new Point2D.Double(85   *_zoom, 15*_zoom),
-            new Point2D.Double(81.45*_zoom, 50*_zoom)};
+            new Point2D.Double(13.5 *Zoom, 90*Zoom),
+            new Point2D.Double(17.44*Zoom, 51*Zoom),
+            new Point2D.Double(21   *Zoom, 16*Zoom),
+            new Point2D.Double(85   *Zoom, 15*Zoom),
+            new Point2D.Double(81.45*Zoom, 50*Zoom)};
 
       BasicStroke penLine = new BasicStroke(15, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
       g.setStroke(penLine);
@@ -62,8 +62,8 @@ public class Flag implements Icon {
       g.setColor(Color.RED);
       CubicCurve2D curve = new CubicCurve2D.Double(
             p[2].x, p[2].y,
-            95*_zoom, 0*_zoom,
-            19.3*_zoom, 32*_zoom,
+            95*Zoom, 0*Zoom,
+            19.3*Zoom, 32*Zoom,
             p[3].x, p[3].y);
        g.draw(curve);
 //       if (false) {
@@ -76,15 +76,15 @@ public class Flag implements Icon {
 //       } else
        {
          curve = new CubicCurve2D.Double(
-               p[1].x, p[1].y,
-               91.45*_zoom, 35*_zoom,
-               15.83*_zoom, 67*_zoom,
-               p[4].x, p[4].y);
+               p[4].x, p[4].y,
+               15.83*Zoom, 67*Zoom,
+               91.45*Zoom, 35*Zoom,
+               p[1].x, p[1].y);
           g.draw(curve);
           curve = new CubicCurve2D.Double(
                p[3].x, p[3].y,
-               77.8*_zoom, 32.89*_zoom,
-               88.05*_zoom, 22.73*_zoom,
+               77.8*Zoom, 32.89*Zoom,
+               88.05*Zoom, 22.73*Zoom,
                p[4].x, p[4].y);
           g.draw(curve);
        }

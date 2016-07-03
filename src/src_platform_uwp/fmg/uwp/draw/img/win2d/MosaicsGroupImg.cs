@@ -21,18 +21,17 @@ namespace fmg.uwp.draw.img.win2d {
    public abstract class MosaicsGroupImg<TImage> : AMosaicsGroupImg<TImage>
       where TImage : DependencyObject, ICanvasResourceCreator
    {
-
       static MosaicsGroupImg() {
-         if (StaticImgConsts.DeferrInvoker == null)
-            StaticImgConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
-         if (RotatedImgConst.TimerCreator == null)
-            RotatedImgConst.TimerCreator = () => new Timer();
+         StaticRotateImgConsts.Init();
       }
 
-      protected MosaicsGroupImg(EMosaicGroup group)
+      protected readonly ICanvasResourceCreator _rc;
+
+      protected MosaicsGroupImg(EMosaicGroup group, ICanvasResourceCreator resourceCreator)
          : base(group)
       {
          SyncDraw = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+         _rc = resourceCreator;
       }
 
       protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
@@ -75,13 +74,9 @@ namespace fmg.uwp.draw.img.win2d {
       /// </summary>
       public class CanvasBmp : MosaicsGroupImg<CanvasBitmap> {
 
-         private readonly ICanvasResourceCreator _rc;
-
          public CanvasBmp(EMosaicGroup group, ICanvasResourceCreator resourceCreator)
-            : base(group)
-         {
-            _rc = resourceCreator;
-         }
+            : base(group, resourceCreator)
+         { }
 
          protected override CanvasBitmap CreateImage() {
             var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
@@ -101,14 +96,13 @@ namespace fmg.uwp.draw.img.win2d {
       /// </summary>
       public class CanvasImgSrc : MosaicsGroupImg<CanvasImageSource> {
 
-         public CanvasImgSrc(EMosaicGroup group)
-            : base(group)
+         public CanvasImgSrc(EMosaicGroup group, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+            : base(group, resourceCreator)
          { }
 
          protected override CanvasImageSource CreateImage() {
             var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            var device = CanvasDevice.GetSharedDevice();
-            return new CanvasImageSource(device, Width, Height, dpi);
+            return new CanvasImageSource(_rc, Width, Height, dpi);
          }
 
          protected override void DrawBody() {

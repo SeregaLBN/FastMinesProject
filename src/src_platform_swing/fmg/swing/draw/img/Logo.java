@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.SwingUtilities;
-
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.core.img.ALogo;
@@ -26,10 +24,7 @@ import fmg.swing.Cast;
 public abstract class Logo<TImage> extends ALogo<TImage> {
 
    static {
-      if (DEFERR_INVOKER == null)
-         DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
-      if (TIMER_CREATOR == null)
-         TIMER_CREATOR = () -> new fmg.swing.utils.Timer();
+      StaticRotateImgConsts.init();
    }
 
    protected void drawBody(Graphics2D g) {

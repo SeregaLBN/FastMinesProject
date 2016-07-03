@@ -16,10 +16,7 @@ namespace fmg.uwp.draw.img.wbmp {
    public class MosaicsGroupImg : AMosaicsGroupImg<WriteableBitmap> {
 
       static MosaicsGroupImg() {
-         if (StaticImgConsts.DeferrInvoker == null)
-            StaticImgConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
-         if (RotatedImgConst.TimerCreator == null)
-            RotatedImgConst.TimerCreator = () => new Timer();
+         StaticRotateImgConsts.Init();
       }
 
       public MosaicsGroupImg(EMosaicGroup group)

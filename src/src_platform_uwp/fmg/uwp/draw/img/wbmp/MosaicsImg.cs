@@ -21,10 +21,7 @@ namespace fmg.uwp.draw.img.wbmp {
    public class MosaicsImg : AMosaicsImg<PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>, WriteableBitmap> {
 
       static MosaicsImg() {
-         if (StaticImgConsts.DeferrInvoker == null)
-            StaticImgConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
-         if (RotatedImgConst.TimerCreator == null)
-            RotatedImgConst.TimerCreator = () => new Timer();
+         StaticRotateImgConsts.Init();
       }
 
       private const bool RandomCellBkColor = true;

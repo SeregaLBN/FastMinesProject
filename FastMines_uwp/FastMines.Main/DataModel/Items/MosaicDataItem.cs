@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using Windows.UI.Xaml.Media;
+using Microsoft.Graphics.Canvas;
 using fmg.common.geom;
 using fmg.common.notyfier;
 using fmg.core.types;
@@ -34,7 +35,7 @@ namespace fmg.DataModel.Items {
          get {
             if (_mosaicImg == null) {
                var sizeField = MosaicType.SizeTileField(SkillLevel);
-               var tmp = new MosaicsImg(MosaicType, sizeField) {
+               var tmp = new MosaicsImg(MosaicType, sizeField, CanvasDevice.GetSharedDevice()) {
                   SizeInt = ImageSize * ZoomKoef,
                   PaddingInt = 5 * ZoomKoef,
                   RotateMode = MosaicsImg.ERotateMode.SomeCells,

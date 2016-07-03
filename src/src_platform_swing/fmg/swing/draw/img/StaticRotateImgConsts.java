@@ -1,0 +1,19 @@
+package fmg.swing.draw.img;
+
+import javax.swing.SwingUtilities;
+
+import fmg.core.img.RotatedImg;
+import fmg.core.img.StaticImg;
+
+final class StaticRotateImgConsts {
+
+   static {
+      StaticImg.DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
+      RotatedImg.TIMER_CREATOR = () -> new fmg.swing.utils.Timer();
+   }
+
+   public static void init() {
+      // implicit call static block
+   }
+
+}

@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using Windows.UI.Xaml.Media;
+using Microsoft.Graphics.Canvas;
 using fmg.common.geom;
 using fmg.core.types;
 using MosaicsGroupImg = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
@@ -24,7 +25,7 @@ namespace fmg.DataModel.Items {
          get
          {
             if (_mosaicGroupImg == null) {
-               var tmp = new MosaicsGroupImg(MosaicGroup) {
+               var tmp = new MosaicsGroupImg(MosaicGroup, CanvasDevice.GetSharedDevice()) {
                   SizeInt = ImageSize * ZoomKoef,
                   BorderWidth = 3,
                   RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)

@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using Windows.UI.Xaml.Media;
+using Microsoft.Graphics.Canvas;
 using fmg.common.geom;
 using fmg.data.controller.types;
 using MosaicsSkillImg = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
@@ -27,7 +28,7 @@ namespace fmg.DataModel.Items {
          get
          {
             if (_mosaicSkillImg == null) {
-               var tmp = new MosaicsSkillImg(SkillLevel) {
+               var tmp = new MosaicsSkillImg(SkillLevel, CanvasDevice.GetSharedDevice()) {
                   SizeInt = ImageSize * ZoomKoef,
                   BorderWidth = 2,
                   RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)

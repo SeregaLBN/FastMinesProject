@@ -6,22 +6,28 @@ namespace fmg.uwp.draw.img.win2d {
    /// <summary> mine image </summary>
    public class Mine {
 
-      private readonly CanvasBitmap _bmp;
+      private CanvasBitmap _img;
+      private readonly ICanvasResourceCreator _rc;
 
-      public Mine() {
-         var img = new Logo {
-            UseGradient = false,
-            SizeInt = 150,
-            PaddingInt = 10
-         };
-         for (var i = 0; i < img.Palette.Length; ++i)
-            //img.Palette[i].v = 75;
-            img.Palette[i].Grayscale();
-         _bmp = img.Image;
+      public Mine(ICanvasResourceCreator resourceCreator) {
+         _rc = resourceCreator;
       }
 
       public CanvasBitmap Image {
-         get { return _bmp; }
+         get {
+            if (_img == null) {
+               var img = new Logo(_rc) {
+                  UseGradient = false,
+                  SizeInt = 150,
+                  PaddingInt = 10
+               };
+               for (var i = 0; i < img.Palette.Length; ++i)
+                  //img.Palette[i].v = 75;
+                  img.Palette[i].Grayscale();
+               _img = img.Image;
+            }
+            return _img;
+         }
       }
 
    }
