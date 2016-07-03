@@ -75,17 +75,17 @@ public class Flag implements Icon {
 //          g.draw(curve);
 //       } else
        {
-         curve = new CubicCurve2D.Double(
-               p[4].x, p[4].y,
-               15.83*Zoom, 67*Zoom,
-               91.45*Zoom, 35*Zoom,
-               p[1].x, p[1].y);
-          g.draw(curve);
           curve = new CubicCurve2D.Double(
                p[3].x, p[3].y,
                77.8*Zoom, 32.89*Zoom,
                88.05*Zoom, 22.73*Zoom,
                p[4].x, p[4].y);
+          g.draw(curve);
+          curve = new CubicCurve2D.Double(
+               p[4].x, p[4].y,
+               15.83*Zoom, 67*Zoom,
+               91.45*Zoom, 35*Zoom,
+               p[1].x, p[1].y);
           g.draw(curve);
        }
        g.setStroke(penLine);
