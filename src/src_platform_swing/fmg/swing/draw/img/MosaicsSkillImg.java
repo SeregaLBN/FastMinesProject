@@ -41,7 +41,7 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
 
       Stream<Stream<PointDouble>> stars = getCoords();
       stars.forEach(coords -> {
-         g.setColor(Cast.toColor(getForegroundColorAttenuate()));
+         g.setColor(Cast.toColor(getForegroundColor()));
          List<PointDouble> points = coords.collect(Collectors.toList());
          g.fillPolygon(Cast.toPolygon(points));
 

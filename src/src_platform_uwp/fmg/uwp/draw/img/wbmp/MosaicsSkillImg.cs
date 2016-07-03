@@ -34,7 +34,7 @@ namespace fmg.uwp.draw.img.wbmp {
          var stars = GetCoords();
          foreach (var coords in stars) {
             var points = coords.PointsAsXyxyxySequence(true).ToArray();
-            bmp.FillPolygon(points, ForegroundColorAttenuate.ToWinColor());
+            bmp.FillPolygon(points, ForegroundColor.ToWinColor());
 
             // draw perimeter border
             var clr = BorderColor;

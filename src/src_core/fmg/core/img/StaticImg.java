@@ -128,14 +128,9 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
    private Color _foregroundColor = Color.Aqua;
    public Color getForegroundColor() { return _foregroundColor; }
    public void setForegroundColor(Color value) {
-      if (setProperty(_foregroundColor, value, "ForegroundColor")) {
-         //OnPropertyChanged(this, new PropertyChangedExEventArgs<Color>(ForegroundColor, oldForegroundColor.Attenuate(160), "ForegroundColorAttenuate"));
-         onPropertyChanged("ForegroundColorAttenuate");
+      if (setProperty(_foregroundColor, value, "ForegroundColor"))
          invalidate();
-      }
    }
-
-   public Color getForegroundColorAttenuate() { return getForegroundColor().brighter(0.25); }
 
    private boolean _deferredNotifications = true;
    public boolean isDeferredNotifications() { return _deferredNotifications; }

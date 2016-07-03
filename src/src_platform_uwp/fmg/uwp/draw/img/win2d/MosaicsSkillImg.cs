@@ -43,7 +43,7 @@ namespace fmg.uwp.draw.img.win2d {
          foreach (var coords in stars) {
             var points = coords.ToArray();
             using (var geom = rc.BuildGeom(points)) {
-               ds.FillGeometry(geom, ForegroundColorAttenuate.ToWinColor());
+               ds.FillGeometry(geom, ForegroundColor.ToWinColor());
             }
 
             // draw perimeter border

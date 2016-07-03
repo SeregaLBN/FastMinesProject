@@ -38,7 +38,7 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
       g.setColor(Cast.toColor(getBackgroundColor()));
       g.fillRect(0, 0, getWidth(), getHeight());
 
-      g.setColor(Cast.toColor(getForegroundColorAttenuate()));
+      g.setColor(Cast.toColor(getForegroundColor()));
       List<PointDouble> points = getCoords().collect(Collectors.toList());
       g.fillPolygon(Cast.toPolygon(points));
 

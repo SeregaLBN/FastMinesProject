@@ -145,15 +145,10 @@ namespace fmg.core.img {
       public Color ForegroundColor {
          get { return _foregroundColor; }
          set {
-            if (SetProperty(ref _foregroundColor, value)) {
-               //OnPropertyChanged(this, new PropertyChangedExEventArgs<Color>(ForegroundColor, oldForegroundColor.Attenuate(160), "ForegroundColorAttenuate"));
-               OnPropertyChanged(this, new PropertyChangedEventArgs("ForegroundColorAttenuate"));
+            if (SetProperty(ref _foregroundColor, value))
                Invalidate();
-            }
          }
       }
-
-      public Color ForegroundColorAttenuate => ForegroundColor.Brighter(0.25);
 
       public bool DeferredNotifications { get; set; } = true;
 
