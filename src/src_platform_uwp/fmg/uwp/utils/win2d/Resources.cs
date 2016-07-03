@@ -12,7 +12,8 @@ using Microsoft.Graphics.Canvas;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.uwp.draw.img.win2d;
-using MosaicsGroupImg = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using MosaicsGroupImg = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using Logo = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 
 namespace fmg.uwp.utils.win2d {
 

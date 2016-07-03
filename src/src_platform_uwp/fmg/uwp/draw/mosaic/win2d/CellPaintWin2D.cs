@@ -7,6 +7,7 @@ using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
+using fmg.uwp.utils.win2d;
 
 namespace fmg.uwp.draw.mosaic.win2d {
 

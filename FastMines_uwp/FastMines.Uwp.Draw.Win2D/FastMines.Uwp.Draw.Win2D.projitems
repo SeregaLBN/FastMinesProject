@@ -18,8 +18,17 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\win2d\PaintableWin2d.cs">
       <Link>src_fmg.uwp\draw\mosaic\win2d\PaintableWin2d.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\win2d\BackgroundPause.cs">
+      <Link>src_fmg.uwp\draw\img\win2d\BackgroundPause.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\win2d\Logo.cs">
       <Link>src_fmg.uwp\draw\img\win2d\Logo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\win2d\Flag.cs">
+      <Link>src_fmg.uwp\draw\img\win2d\Flag.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\win2d\Mine.cs">
+      <Link>src_fmg.uwp\draw\img\win2d\Mine.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\win2d\MosaicsGroupImg.cs">
       <Link>src_fmg.uwp\draw\img\win2d\MosaicsGroupImg.cs</Link>

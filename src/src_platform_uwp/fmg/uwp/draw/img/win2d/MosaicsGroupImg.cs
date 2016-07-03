@@ -8,8 +8,9 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.core.types;
 using fmg.common;
 using fmg.core.img;
-using fmg.uwp.draw.mosaic.win2d;
 using fmg.uwp.utils;
+using fmg.uwp.utils.win2d;
+using fmg.uwp.draw.mosaic.win2d;
 
 namespace fmg.uwp.draw.img.win2d {
 

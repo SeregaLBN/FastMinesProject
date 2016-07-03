@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Foundation;
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.uwp.utils;
+using fmg.uwp.utils.wbmp;
 
 namespace fmg.uwp.draw.mosaic.wbmp {
 

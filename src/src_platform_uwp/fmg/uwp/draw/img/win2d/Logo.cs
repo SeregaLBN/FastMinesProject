@@ -6,9 +6,10 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.Graphics.Canvas;
 using fmg.common;
 using fmg.common.geom;
-using fmg.uwp.utils;
-using fmg.uwp.draw.mosaic.win2d;
 using fmg.core.img;
+using fmg.uwp.utils;
+using fmg.uwp.utils.win2d;
+using fmg.uwp.draw.mosaic.win2d;
 
 namespace fmg.uwp.draw.img.win2d {
 

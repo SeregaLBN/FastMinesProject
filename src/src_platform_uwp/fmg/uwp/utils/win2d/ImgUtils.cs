@@ -4,8 +4,6 @@ using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics.Display;
 using Windows.Storage;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Microsoft.Graphics.Canvas;
 using fmg.common;
 
@@ -21,8 +19,9 @@ namespace fmg.uwp.utils.win2d {
          return await LoadBitmap(uri);
       }
 
-      public static BitmapImage GetImageSync(Uri uri) {
-         return new BitmapImage(uri);
+      public static CanvasBitmap GetImageSync(Uri uri) {
+         //return GetImage(uri).Result;
+         throw new NotImplementedException();
       }
 
       /// <summary> загрузить картинку из локальных ресурсов </summary>
@@ -68,7 +67,7 @@ namespace fmg.uwp.utils.win2d {
          }
       }
 
-      public static ImageSource Rotate(ImageSource inputImage, double degrees) {
+      public static CanvasBitmap Rotate(CanvasBitmap inputImage, double degrees) {
          throw new NotImplementedException();
       }
 
