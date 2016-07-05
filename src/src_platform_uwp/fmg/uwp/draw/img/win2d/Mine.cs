@@ -1,33 +1,44 @@
 using Microsoft.Graphics.Canvas;
-using Logo = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using Microsoft.Graphics.Canvas.UI.Xaml;
+using Windows.UI.Xaml;
+using LogoBmp = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using LogoImg = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
 
 namespace fmg.uwp.draw.img.win2d {
 
    /// <summary> mine image </summary>
-   public class Mine {
+   public sealed class Mine {
 
-      private CanvasBitmap _img;
-      private readonly ICanvasResourceCreator _rc;
+      public class CanvasBmp : LogoBmp {
 
-      public Mine(ICanvasResourceCreator resourceCreator) {
-         _rc = resourceCreator;
+         public CanvasBmp(ICanvasResourceCreator resourceCreator)
+            : base(resourceCreator)
+         {
+            Mine.Update<LogoBmp, CanvasBitmap>(this);
+         }
+
       }
 
-      public CanvasBitmap Image {
-         get {
-            if (_img == null) {
-               var img = new Logo(_rc) {
-                  UseGradient = false,
-                  SizeInt = 150,
-                  PaddingInt = 10
-               };
-               for (var i = 0; i < img.Palette.Length; ++i)
-                  //img.Palette[i].v = 75;
-                  img.Palette[i].Grayscale();
-               _img = img.Image;
-            }
-            return _img;
+      public class CanvasImgSrc : LogoImg {
+
+         public CanvasImgSrc(ICanvasResourceCreator resourceCreator)
+            : base(resourceCreator)
+         {
+            Mine.Update<LogoImg, CanvasImageSource>(this);
          }
+
+      }
+
+      private static void Update<TLogoImage, TImage>(TLogoImage img)
+         where TLogoImage: Logo<TImage>
+         where TImage : DependencyObject, ICanvasResourceCreator
+      {
+         img.UseGradient = false;
+         img.SizeInt = 150;
+         img.PaddingInt = 10;
+         for (var i = 0; i < img.Palette.Length; ++i)
+            //img.Palette[i].v = 75;
+            img.Palette[i].Grayscale();
       }
 
    }

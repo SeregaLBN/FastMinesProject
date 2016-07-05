@@ -13,7 +13,6 @@ namespace fmg.uwp.draw.img.win2d {
    public abstract class Flag<TImage>
       where TImage : DependencyObject, ICanvasResourceCreator
    {
-      const int Width = 100, Height = 100;
       private const double Zoom = 0.7;
       protected readonly ICanvasResourceCreator _rc;
       private TImage _img;
@@ -29,6 +28,9 @@ namespace fmg.uwp.draw.img.win2d {
             return _img;
          }
       }
+
+      public int Width => 100;
+      public int Height => 100;
 
       protected abstract TImage CreateImage();
 

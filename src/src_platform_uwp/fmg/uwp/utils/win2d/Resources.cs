@@ -105,7 +105,7 @@ namespace fmg.uwp.utils.win2d {
          if (_imgMine == null) {
             _imgMine = await GetImage("CellState/Mine.png", rc); // сначала из ресурсов
             if (_imgMine == null)
-               _imgMine = new Mine(rc).Image; // иначе - своя картинка из кода
+               _imgMine = new Mine.CanvasBmp(rc).Image; // иначе - своя картинка из кода
          }
          return _imgMine;
       }

@@ -13,7 +13,6 @@ namespace fmg.uwp.draw.img.win2d {
    public abstract class BackgroundPause<TImage>
       where TImage : DependencyObject, ICanvasResourceCreator
    {
-      const int Width = 1000, Height = 1000;
       protected readonly ICanvasResourceCreator _rc;
       private TImage _img;
 
@@ -28,6 +27,9 @@ namespace fmg.uwp.draw.img.win2d {
             return _img;
          }
       }
+
+      public int Width => 1000;
+      public int Height => 1000;
 
       protected abstract TImage CreateImage();
 

@@ -13,6 +13,10 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -20,42 +24,55 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <canvas:CanvasControl x:Name="canvasControl1" Draw="canvasControl_Draw1" Grid.Row="0" Grid.Column="0" ClearColor="CornflowerBlue" />
-        <canvas:CanvasControl x:Name="canvasControl2" Draw="canvasControl_Draw2" Grid.Row="0" Grid.Column="1" ClearColor="DarkSeaGreen"   />
-        <canvas:CanvasControl x:Name="canvasControl3" Draw="canvasControl_Draw3" Grid.Row="1" Grid.Column="0" ClearColor="Firebrick"      />
-        <canvas:CanvasControl x:Name="canvasControl4" Draw="canvasControl_Draw4" Grid.Row="1" Grid.Column="1" ClearColor="DarkViolet"     />
+        <canvas:CanvasControl x:Name="canvasControl1" Draw="canvasControl_Draw1" Grid.Row="0" Grid.Column="0" ClearColor="CornflowerBlue"    />
+        <canvas:CanvasControl x:Name="canvasControl2" Draw="canvasControl_Draw2" Grid.Row="0" Grid.Column="1" ClearColor="DarkSeaGreen"      />
+        <canvas:CanvasControl x:Name="canvasControl3" Draw="canvasControl_Draw3" Grid.Row="0" Grid.Column="2" ClearColor="Firebrick"         />
+        <canvas:CanvasControl x:Name="canvasControl4" Draw="canvasControl_Draw4" Grid.Row="0" Grid.Column="3" ClearColor="DarkViolet"        />
+        <canvas:CanvasControl x:Name="canvasControl5" Draw="canvasControl_Draw5" Grid.Row="0" Grid.Column="4" ClearColor="OldLace"           />
+        <canvas:CanvasControl x:Name="canvasControl6" Draw="canvasControl_Draw6" Grid.Row="0" Grid.Column="5" ClearColor="Violet"            />
+        <canvas:CanvasControl x:Name="canvasControl7" Draw="canvasControl_Draw7" Grid.Row="0" Grid.Column="6" ClearColor="MediumSpringGreen" />
 
-        <Image VerticalAlignment="Top"
-               HorizontalAlignment="Left"
-               Source="{x:Bind DemoImg1.Image, Mode=OneWay}"
-               Height="{x:Bind DemoImg1.Height, Mode=OneWay}"
-               Width="{x:Bind DemoImg1.Width, Mode=OneWay}"
-               Margin="10,10,0,0"
-               Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" />
+        <Image Source="{x:Bind Img1.Image, Mode=OneWay}"
+               Height="{x:Bind Img1.Height, Mode=OneWay}"
+               Width="{x:Bind Img1.Width, Mode=OneWay}"
+               Margin="10,10,10,10"
+               Grid.Row="1" Grid.Column="0" />
 
-        <Image VerticalAlignment="Bottom"
-               HorizontalAlignment="Left"
-               Source="{x:Bind DemoImg2.Image, Mode=OneWay}"
-               Height="{x:Bind DemoImg2.Height, Mode=OneWay}"
-               Width="{x:Bind DemoImg2.Width, Mode=OneWay}"
-               Margin="10,0,0,10"
-               Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" />
+        <Image Source="{x:Bind Img2.Image, Mode=OneWay}"
+               Height="{x:Bind Img2.Height, Mode=OneWay}"
+               Width="{x:Bind Img2.Width, Mode=OneWay}"
+               Margin="10,10,10,10"
+               Grid.Row="1" Grid.Column="1" />
 
-        <Image VerticalAlignment="Top"
-               HorizontalAlignment="Right"
-               Source="{x:Bind DemoImg3.Image, Mode=OneWay}"
-               Height="{x:Bind DemoImg3.Height, Mode=OneWay}"
-               Width="{x:Bind DemoImg3.Width, Mode=OneWay}"
-               Margin="0,10,10,0"
-               Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" />
+        <Image Source="{x:Bind Img3.Image, Mode=OneWay}"
+               Height="{x:Bind Img3.Height, Mode=OneWay}"
+               Width="{x:Bind Img3.Width, Mode=OneWay}"
+               Margin="10,10,10,10"
+               Grid.Row="1" Grid.Column="2" />
 
-        <Image VerticalAlignment="Bottom"
-               HorizontalAlignment="Right"
-               Source="{x:Bind DemoImg4.Image, Mode=OneWay}"
-               Height="{x:Bind DemoImg4.Height, Mode=OneWay}"
-               Width="{x:Bind DemoImg4.Width, Mode=OneWay}"
-               Margin="0,0,10,10"
-               Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" />
+        <Image Source="{x:Bind Img4.Image, Mode=OneWay}"
+               Height="{x:Bind Img4.Height, Mode=OneWay}"
+               Width="{x:Bind Img4.Width, Mode=OneWay}"
+               Margin="10,10,10,10"
+               Grid.Row="1" Grid.Column="3" />
+
+        <Image Source="{x:Bind Img5.Image, Mode=OneWay}"
+               Height="{x:Bind Img5.Height, Mode=OneWay}"
+               Width="{x:Bind Img5.Width, Mode=OneWay}"
+               Margin="10,10,10,10"
+               Grid.Row="1" Grid.Column="4" />
+
+        <Image Source="{x:Bind Img6.Image, Mode=OneWay}"
+               Height="{x:Bind Img6.Height, Mode=OneWay}"
+               Width="{x:Bind Img6.Width, Mode=OneWay}"
+               Margin="10,10,10,10"
+               Grid.Row="1" Grid.Column="5" />
+
+        <Image Source="{x:Bind Img7.Image, Mode=OneWay}"
+               Height="{x:Bind Img7.Height, Mode=OneWay}"
+               Width="{x:Bind Img7.Width, Mode=OneWay}"
+               Margin="10,10,10,10"
+               Grid.Row="1" Grid.Column="6" />
 
     </Grid>
 
