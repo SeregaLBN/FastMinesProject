@@ -1,6 +1,7 @@
 using System;
-using Windows.UI.Xaml;
 using Rect = Windows.Foundation.Rect;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Controls;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
@@ -10,21 +11,21 @@ using fmg.core.img;
 using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.uwp.draw.img.win2d;
-using StaticImg                   = fmg.core.img.StaticImg<object, object>;
-using LogoCanvasBmp               = fmg.uwp.draw.img.win2d.Logo           <Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using LogoCanvasImgSrc            = fmg.uwp.draw.img.win2d.Logo           <Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using MosaicsSkillCanvasBmp       = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using MosaicsSkillCanvasImgSrc    = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using MosaicsGroupCanvasBmp       = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using MosaicsGroupCanvasImgSrc    = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using MosaicsCanvasBmp            = fmg.uwp.draw.img.win2d.MosaicsImg     <Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using MosaicsCanvasImgSrc         = fmg.uwp.draw.img.win2d.MosaicsImg     <Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using BackgroundPauseCanvasBmp    = fmg.uwp.draw.img.win2d.BackgroundPause<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using StaticImg = fmg.core.img.StaticImg<object, object>;
+using LogoCanvasBmp = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using LogoCanvasImgSrc = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using MosaicsSkillCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsSkillCanvasImgSrc = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using MosaicsGroupCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsGroupCanvasImgSrc = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using MosaicsCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsCanvasImgSrc = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using BackgroundPauseCanvasBmp = fmg.uwp.draw.img.win2d.BackgroundPause<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 using BackgroundPauseCanvasImgSrc = fmg.uwp.draw.img.win2d.BackgroundPause<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using FlagCanvasBmp               = fmg.uwp.draw.img.win2d.Flag<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using FlagCanvasImgSrc            = fmg.uwp.draw.img.win2d.Flag<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using MineCanvasBmp               = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
-using MineCanvasImgSrc            = fmg.uwp.draw.img.win2d.Mine.CanvasImgSrc;
+using FlagCanvasBmp = fmg.uwp.draw.img.win2d.Flag<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using FlagCanvasImgSrc = fmg.uwp.draw.img.win2d.Flag<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using MineCanvasBmp = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
+using MineCanvasImgSrc = fmg.uwp.draw.img.win2d.Mine.CanvasImgSrc;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -82,15 +83,15 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          Img1 = new LogoCanvasImgSrc(device);
          Bmp2 = new MosaicsSkillCanvasBmp   (ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], canvasControl2);
          Img2 = new MosaicsSkillCanvasImgSrc(ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], device);
-         Bmp3 = new MosaicsGroupCanvasBmp   (EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], canvasControl4);
+         Bmp3 = new MosaicsGroupCanvasBmp   (EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], canvasControl3);
          Img3 = new MosaicsGroupCanvasImgSrc(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], device);
-         Bmp4 = new MosaicsCanvasBmp        (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), canvasControl3);
+         Bmp4 = new MosaicsCanvasBmp        (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), canvasControl4);
          Img4 = new MosaicsCanvasImgSrc     (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), device);
-         Bmp5 = new BackgroundPauseCanvasBmp(canvasControl1);
+         Bmp5 = new BackgroundPauseCanvasBmp(canvasControl5);
          Img5 = new BackgroundPauseCanvasImgSrc(device);
-         Bmp6 = new FlagCanvasBmp(canvasControl1);
+         Bmp6 = new FlagCanvasBmp(canvasControl6);
          Img6 = new FlagCanvasImgSrc(device);
-         Bmp7 = new MineCanvasBmp(canvasControl1);
+         Bmp7 = new MineCanvasBmp(canvasControl7);
          Img7 = new MineCanvasImgSrc(device);
 
          ApplyRandom(Bmp1, canvasControl1);
@@ -105,13 +106,24 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          this.Loaded += (sender1, args) => {
             const int o = 2 * Offset;
             Action onSize = () => {
-               Bmp1.Size = new Size((int)canvasControl1.Size.Width - o, (int)canvasControl1.Size.Height - o);
-               Bmp2.Size = new Size((int)canvasControl2.Size.Width - o, (int)canvasControl2.Size.Height - o);
-               Bmp4.Size = new Size((int)canvasControl3.Size.Width - o, (int)canvasControl3.Size.Height - o);
-               Bmp3.Size = new Size((int)canvasControl4.Size.Width - o, (int)canvasControl4.Size.Height - o);
+               Bmp1.Size = new Size((int)canvasControl1.Size.Width - o,               (int)canvasControl1.Size.Height - o);
+               Bmp2.Size = new Size((int)canvasControl2.Size.Width - o,               (int)canvasControl2.Size.Height - o);
+               Bmp3.Size = new Size((int)canvasControl3.Size.Width - o,               (int)canvasControl3.Size.Height - o);
+               Bmp4.Size = new Size((int)canvasControl4.Size.Width - o,               (int)canvasControl4.Size.Height - o);
+               Bmp5.Width =         (int)canvasControl5.Size.Width - o; Bmp5.Height = (int)canvasControl5.Size.Height - o ;
+               Bmp6.Width =         (int)canvasControl6.Size.Width - o; Bmp6.Height = (int)canvasControl6.Size.Height - o ;
+               Bmp7.Size = new Size((int)canvasControl7.Size.Width - o,               (int)canvasControl7.Size.Height - o);
             };
             onSize();
             this.SizeChanged += (sender2, ev) => onSize();
+
+            //img1Cntrl.SizeChanged += (sender2, ev) => { Img1.Size = new Size((int)ev.NewSize.Width,               (int)ev.NewSize.Height); };
+            //img2Cntrl.SizeChanged += (sender2, ev) => { Img2.Size = new Size((int)ev.NewSize.Width,               (int)ev.NewSize.Height); };
+            //img3Cntrl.SizeChanged += (sender2, ev) => { Img3.Size = new Size((int)ev.NewSize.Width,               (int)ev.NewSize.Height); };
+            //img4Cntrl.SizeChanged += (sender2, ev) => { Img4.Size = new Size((int)ev.NewSize.Width,               (int)ev.NewSize.Height); };
+            //img5Cntrl.SizeChanged += (sender2, ev) => { Img5.Width =         (int)ev.NewSize.Width; Img5.Height = (int)ev.NewSize.Height ; };
+            //img6Cntrl.SizeChanged += (sender2, ev) => { Img6.Width =         (int)ev.NewSize.Width; Img6.Height = (int)ev.NewSize.Height ; };
+            //img7Cntrl.SizeChanged += (sender2, ev) => { Img7.Size = new Size((int)ev.NewSize.Width,               (int)ev.NewSize.Height); };
          };
       }
 

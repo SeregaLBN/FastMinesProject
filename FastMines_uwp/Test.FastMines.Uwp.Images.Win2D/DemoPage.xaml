@@ -32,43 +32,50 @@
         <canvas:CanvasControl x:Name="canvasControl6" Draw="canvasControl_Draw6" Grid.Row="0" Grid.Column="5" ClearColor="Violet"            />
         <canvas:CanvasControl x:Name="canvasControl7" Draw="canvasControl_Draw7" Grid.Row="0" Grid.Column="6" ClearColor="MediumSpringGreen" />
 
-        <Image Source="{x:Bind Img1.Image, Mode=OneWay}"
+        <Image x:Name="img1Cntrl"
+               Source="{x:Bind Img1.Image, Mode=OneWay}"
                Height="{x:Bind Img1.Height, Mode=OneWay}"
                Width="{x:Bind Img1.Width, Mode=OneWay}"
                Margin="10,10,10,10"
                Grid.Row="1" Grid.Column="0" />
 
-        <Image Source="{x:Bind Img2.Image, Mode=OneWay}"
+        <Image x:Name="img2Cntrl"
+               Source="{x:Bind Img2.Image, Mode=OneWay}"
                Height="{x:Bind Img2.Height, Mode=OneWay}"
                Width="{x:Bind Img2.Width, Mode=OneWay}"
                Margin="10,10,10,10"
                Grid.Row="1" Grid.Column="1" />
 
-        <Image Source="{x:Bind Img3.Image, Mode=OneWay}"
+        <Image x:Name="img3Cntrl"
+               Source="{x:Bind Img3.Image, Mode=OneWay}"
                Height="{x:Bind Img3.Height, Mode=OneWay}"
                Width="{x:Bind Img3.Width, Mode=OneWay}"
                Margin="10,10,10,10"
                Grid.Row="1" Grid.Column="2" />
 
-        <Image Source="{x:Bind Img4.Image, Mode=OneWay}"
+        <Image x:Name="img4Cntrl"
+               Source="{x:Bind Img4.Image, Mode=OneWay}"
                Height="{x:Bind Img4.Height, Mode=OneWay}"
                Width="{x:Bind Img4.Width, Mode=OneWay}"
                Margin="10,10,10,10"
                Grid.Row="1" Grid.Column="3" />
 
-        <Image Source="{x:Bind Img5.Image, Mode=OneWay}"
+        <Image x:Name="img5Cntrl"
+               Source="{x:Bind Img5.Image, Mode=OneWay}"
                Height="{x:Bind Img5.Height, Mode=OneWay}"
                Width="{x:Bind Img5.Width, Mode=OneWay}"
                Margin="10,10,10,10"
                Grid.Row="1" Grid.Column="4" />
 
-        <Image Source="{x:Bind Img6.Image, Mode=OneWay}"
+        <Image x:Name="img6Cntrl"
+               Source="{x:Bind Img6.Image, Mode=OneWay}"
                Height="{x:Bind Img6.Height, Mode=OneWay}"
                Width="{x:Bind Img6.Width, Mode=OneWay}"
                Margin="10,10,10,10"
                Grid.Row="1" Grid.Column="5" />
 
-        <Image Source="{x:Bind Img7.Image, Mode=OneWay}"
+        <Image x:Name="img7Cntrl"
+               Source="{x:Bind Img7.Image, Mode=OneWay}"
                Height="{x:Bind Img7.Height, Mode=OneWay}"
                Width="{x:Bind Img7.Width, Mode=OneWay}"
                Margin="10,10,10,10"

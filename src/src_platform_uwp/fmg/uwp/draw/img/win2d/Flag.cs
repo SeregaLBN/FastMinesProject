@@ -13,9 +13,10 @@ namespace fmg.uwp.draw.img.win2d {
    public abstract class Flag<TImage>
       where TImage : DependencyObject, ICanvasResourceCreator
    {
-      private const double Zoom = 0.7;
       protected readonly ICanvasResourceCreator _rc;
       private TImage _img;
+      private int _width = 100;
+      private int _height = 100;
 
       protected Flag(ICanvasResourceCreator resourceCreator) {
          _rc = resourceCreator;
@@ -23,33 +24,46 @@ namespace fmg.uwp.draw.img.win2d {
 
       public TImage Image {
          get {
-            if (_img == null)
+            if (_img == null) {
                _img = CreateImage();
+               DrawBody();
+            }
             return _img;
          }
       }
 
-      public int Width => 100;
-      public int Height => 100;
+      public int Width {
+         get { return _width; }
+         set { _width = value; _img = null; }
+      }
+      public int Height {
+         get { return _height; }
+         set { _height = value; _img = null; }
+      }
 
       protected abstract TImage CreateImage();
 
       protected abstract void DrawBody();
 
       protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
+         var w = _width / 100.0f;
+         var h = _height / 100.0f;
+
+         ds.DrawRectangle(0, 0, Width, Height, Windows.UI.Colors.Red, 1); // test
+
          var p = new[] {
-            new Vector2((float)(13.50 * Zoom), (float)(90 * Zoom)),
-            new Vector2((float)(17.44 * Zoom), (float)(51 * Zoom)),
-            new Vector2((float)(21.00 * Zoom), (float)(16 * Zoom)),
-            new Vector2((float)(85.00 * Zoom), (float)(15 * Zoom)),
-            new Vector2((float)(81.45 * Zoom), (float)(50 * Zoom))
+            new Vector2(13.50f * w, 90 * h),
+            new Vector2(17.44f * w, 51 * h),
+            new Vector2(21.00f * w, 16 * h),
+            new Vector2(85.00f * w, 15 * h),
+            new Vector2(81.45f * w, 50 * h)
          };
 
          using (var cssLine = new CanvasStrokeStyle {
             StartCap = CanvasCapStyle.Square,
             EndCap = CanvasCapStyle.Flat
          }) {
-            ds.DrawLine(p[0], p[1], Color.Black.ToWinColor(), 15, cssLine);
+            ds.DrawLine(p[0], p[1], Color.Black.ToWinColor(), System.Math.Max(1, 15*(w+h)/2), cssLine);
 
             var clrRed = Color.Red.ToWinColor();
             using (var cssCurve = new CanvasStrokeStyle {
@@ -59,23 +73,24 @@ namespace fmg.uwp.draw.img.win2d {
                using (var builder = new CanvasPathBuilder(_rc)) {
                   builder.BeginFigure(p[2]);
                   builder.AddCubicBezier(
-                     new Vector2((float)(95.0 * Zoom), (float)( 0 * Zoom)),
-                     new Vector2((float)(19.3 * Zoom), (float)(32 * Zoom)),
+                     new Vector2(95.0f * w,  0 * h),
+                     new Vector2(19.3f * w, 32 * h),
                      p[3]);
                   builder.AddCubicBezier(
-                     new Vector2((float)(77.80 * Zoom), (float)(32.89 * Zoom)),
-                     new Vector2((float)(88.05 * Zoom), (float)(22.73 * Zoom)),
+                     new Vector2(77.80f * w, 32.89f * h),
+                     new Vector2(88.05f * w, 22.73f * h),
                      p[4]);
                   builder.AddCubicBezier(
-                     new Vector2((float)(15.83 * Zoom), (float)(67 * Zoom)),
-                     new Vector2((float)(91.45 * Zoom), (float)(35 * Zoom)),
+                     new Vector2(15.83f * w, 67 * h),
+                     new Vector2(91.45f * w, 35 * h),
                      p[1]);
-                  builder.EndFigure(CanvasFigureLoop.Open);
+                  builder.AddLine(p[2]);
+                  builder.EndFigure(CanvasFigureLoop.Closed);
 
-                  ds.DrawGeometry(CanvasGeometry.CreatePath(builder), clrRed, 12, cssCurve);
+                  ds.DrawGeometry(CanvasGeometry.CreatePath(builder), clrRed, System.Math.Max(1, 12 * (w+h)/2), cssCurve);
                }
             }
-            ds.DrawLine(p[1], p[2], clrRed, 15, cssLine);
+            //ds.DrawLine(p[1], p[2], clrRed, 15, cssLine);
          }
       }
 
