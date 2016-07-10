@@ -44,7 +44,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
          var color = (down ? paintContext.PenBorder.ColorLight : paintContext.PenBorder.ColorShadow).ToWinColor();
          var borderWidth = paintContext.PenBorder.Width;
          if (paintContext.IconicMode) {
-            using (var geom = ds.BuildGeom(region)) {
+            using (var geom = ds.BuildLines(region)) {
                ds.DrawGeometry(geom, paintContext.Padding.LeftTopOffset.ToVector2(), color, borderWidth);
             }
          } else {
@@ -147,7 +147,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
             paintContext.BackgroundColor,
             paintContext.BkFill.GetColor
             );
-         using (var geom = ds.BuildGeom(cell.getRegion())) {
+         using (var geom = ds.BuildLines(cell.getRegion())) {
             ds.FillGeometry(geom, paintContext.Padding.LeftTopOffset.ToVector2(), color.ToWinColor());
          }
       }

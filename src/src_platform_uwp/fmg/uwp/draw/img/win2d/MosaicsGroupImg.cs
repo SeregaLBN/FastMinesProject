@@ -40,7 +40,7 @@ namespace fmg.uwp.draw.img.win2d {
             ds.Clear(BackgroundColor.ToWinColor());
 
          var points = GetCoords().ToArray();
-         using (var geom = rc.BuildGeom(points)) {
+         using (var geom = rc.BuildLines(points)) {
             ds.FillGeometry(geom, ForegroundColor.ToWinColor());
          }
 

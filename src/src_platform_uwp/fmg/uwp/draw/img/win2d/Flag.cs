@@ -60,15 +60,15 @@ namespace fmg.uwp.draw.img.win2d {
          };
 
          using (var cssLine = new CanvasStrokeStyle {
-            StartCap = CanvasCapStyle.Square,
+            StartCap = CanvasCapStyle.Flat,
             EndCap = CanvasCapStyle.Flat
          }) {
-            ds.DrawLine(p[0], p[1], Color.Black.ToWinColor(), System.Math.Max(1, 15*(w+h)/2), cssLine);
+            ds.DrawLine(p[0], p[1], Color.Black.ToWinColor(), System.Math.Max(1, 12*(w+h)/2), cssLine);
 
             var clrRed = Color.Red.ToWinColor();
             using (var cssCurve = new CanvasStrokeStyle {
-               StartCap = CanvasCapStyle.Round,
-               EndCap = CanvasCapStyle.Flat
+               StartCap = CanvasCapStyle.Triangle,
+               EndCap = CanvasCapStyle.Triangle
             }) {
                using (var builder = new CanvasPathBuilder(_rc)) {
                   builder.BeginFigure(p[2]);

@@ -68,8 +68,8 @@ public class BackgroundPause implements Icon {
       g.drawArc(103, -133, 795, 1003, 207, 126);
 
       // ямочки на щеках
-      g.drawArc(90, 580, 180, 180, 85, 57);
-      g.drawArc(730, 580, 180, 180, 38, 57);
+      g.drawArc(90, 580, 180, 180, 90, 45);
+      g.drawArc(730, 580, 180, 180, 45, 45);
    }
 
    @Override
@@ -87,7 +87,7 @@ public class BackgroundPause implements Icon {
    }
 
    public static void main(String[] args) {
-      TestDrawing.testApp2(size -> ImgUtils.zoom(new BackgroundPause(), size, size));
+      TestDrawing.testApp2(size -> ImgUtils.zoom(new BackgroundPause(false), size, size));
    }
 
 }

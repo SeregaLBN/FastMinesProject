@@ -51,7 +51,7 @@ public class Flag implements Icon {
             new Point2D.Double(85   *Zoom, 15*Zoom),
             new Point2D.Double(81.45*Zoom, 50*Zoom)};
 
-      BasicStroke penLine = new BasicStroke(15, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
+      BasicStroke penLine = new BasicStroke(12, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
       g.setStroke(penLine);
       g.setColor(Color.BLACK);
     //g.drawLine((int)p[0].x, (int)p[0].y, (int)p[2].x, (int)p[2].y);

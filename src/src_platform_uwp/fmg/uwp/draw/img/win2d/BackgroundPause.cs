@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using Windows.UI.Xaml;
 using Windows.Graphics.Display;
@@ -5,11 +6,13 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.Graphics.Canvas.Geometry;
 using fmg.common;
+using fmg.common.geom.util;
 using fmg.uwp.utils;
+using fmg.uwp.draw.mosaic.win2d;
 
 namespace fmg.uwp.draw.img.win2d {
 
-   /// <summary> картинка для фоновой паузы </summary>
+   /// <summary> РєР°СЂС‚РёРЅРєР° РґР»СЏ С„РѕРЅРѕРІРѕР№ РїР°СѓР·С‹ </summary>
    public abstract class BackgroundPause<TImage>
       where TImage : DependencyObject, ICanvasResourceCreator
    {
@@ -56,47 +59,29 @@ namespace fmg.uwp.draw.img.win2d {
             //ds.FillRectangle(5, 5, Width - 10, Height - 10, Color.Transparent.ToWinColor());
          }
 
-         // тело смайла
-         ds.FillEllipse(5*w, 5*h, Width - 10*w, Height - 10*h, new Color(0xFFFFE600).ToWinColor());
+         // С‚РµР»Рѕ СЃРјР°Р№Р»Р°
+         ds.FillEllipse(Width / 2f, Height / 2f, Width / 2f - 5 * w, Height / 2f - 5 * h, new Color(0xFFFFE600).ToWinColor());
 
-         // глаза
+         // РіР»Р°Р·Р°
          var clr = new Color(0xFF000000).ToWinColor();
-         ds.FillEllipse(330*w, 150*h, 98*w, 296*h, clr);
-         ds.FillEllipse(570*w, 150*h, 98*w, 296*h, clr);
+         ds.FillEllipse((330 + 98 / 2f) * w, (150 + 296 / 2f) * h, 98 / 2f * w, 296 / 2f * h, clr);
+         ds.FillEllipse((570 + 98 / 2f) * w, (150 + 296 / 2f) * h, 98 / 2f * w, 296 / 2f * h, clr);
 
          // smile
          using (var css = new CanvasStrokeStyle {
             StartCap = CanvasCapStyle.Round,
             EndCap = CanvasCapStyle.Round
          }) {
-            using (var builder = new CanvasPathBuilder(_rc)) {
-               builder.BeginFigure(103*w, -133*h);
-               float radiusX = 795*w / 2;
-               float radiusY = 1003*h / 2;
-               builder.AddArc(new Vector2(103*w + radiusX, -133*h + radiusY), radiusX, radiusY, 207, 126);
-               builder.EndFigure(CanvasFigureLoop.Open);
-
-               ds.DrawGeometry(CanvasGeometry.CreatePath(builder), clr, System.Math.Max(1, 14*(w+h)/2), css);
+            using (var g = _rc.BuildArc(103 * w, -133 * h, 795 * w, 1003 * h, 207, 126, false)) {
+               ds.DrawGeometry(g, clr, Math.Max(1, 14 * (w + h) / 2), css);
             }
 
-            // ямочки на щеках
-            using (var builder = new CanvasPathBuilder(_rc)) {
-               builder.BeginFigure(90*w, 580*h);
-               float radiusX = 180*w / 2;
-               float radiusY = 180*h / 2;
-               builder.AddArc(new Vector2(90*w + radiusX, 580*h + radiusY), radiusX, radiusY, 85, 57);
-               builder.EndFigure(CanvasFigureLoop.Open);
-
-               ds.DrawGeometry(CanvasGeometry.CreatePath(builder), clr, System.Math.Max(1, 14*(w+h)/2), css);
+            // СЏРјРѕС‡РєРё РЅР° С‰РµРєР°С…
+            using (var g = _rc.BuildArc(90 * w, 580 * h, 180 * w, 180 * h, 90, 45, false)) {
+               ds.DrawGeometry(g, clr, Math.Max(1, 14 * (w + h) / 2), css);
             }
-            using (var builder = new CanvasPathBuilder(_rc)) {
-               builder.BeginFigure(730*w, 580*h);
-               float radiusX = 180*w / 2;
-               float radiusY = 180*h / 2;
-               builder.AddArc(new Vector2(730*w + radiusX, 580*h + radiusY), radiusX, radiusY, 38, 57);
-               builder.EndFigure(CanvasFigureLoop.Open);
-
-               ds.DrawGeometry(CanvasGeometry.CreatePath(builder), clr, System.Math.Max(1, 14*(w+h)/2), css);
+            using (var g = _rc.BuildArc(730 * w, 580 * h, 180 * w, 180 * h, 45, 145, false)) {
+               ds.DrawGeometry(g, clr, Math.Max(1, 14 * (w + h) / 2), css);
             }
          }
       }

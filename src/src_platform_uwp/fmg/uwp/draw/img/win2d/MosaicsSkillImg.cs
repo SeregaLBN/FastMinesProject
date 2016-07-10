@@ -42,7 +42,7 @@ namespace fmg.uwp.draw.img.win2d {
          var stars = GetCoords();
          foreach (var coords in stars) {
             var points = coords.ToArray();
-            using (var geom = rc.BuildGeom(points)) {
+            using (var geom = rc.BuildLines(points)) {
                ds.FillGeometry(geom, ForegroundColor.ToWinColor());
             }
 
