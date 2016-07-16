@@ -61,8 +61,8 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
    }
 
    @Override
-   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      super.onPropertyChanged(oldValue, newValue, propertyName);
+   protected void onSelfPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+      super.onSelfPropertyChanged(oldValue, newValue, propertyName);
       switch (propertyName) {
       case PROPERTY_PADDING_FULL:
          dependency_PContext_PaddingFull();

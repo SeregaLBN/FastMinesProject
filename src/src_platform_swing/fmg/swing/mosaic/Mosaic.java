@@ -306,8 +306,8 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
    }
 
    @Override
-   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      super.onPropertyChanged(oldValue, newValue, propertyName);
+   protected void onSelfPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+      super.onSelfPropertyChanged(oldValue, newValue, propertyName);
       switch (propertyName) {
       case PROPERTY_MOSAIC_TYPE:
          changeFontSize();
@@ -348,8 +348,8 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
       //   break;
       }
       repaint(null);
-      onPropertyChanged(PROPERTY_PAINT_CONTEXT);
-      onPropertyChanged(PROPERTY_PAINT_CONTEXT + "." + propName);
+      onSelfPropertyChanged(PROPERTY_PAINT_CONTEXT);
+      onSelfPropertyChanged(PROPERTY_PAINT_CONTEXT + "." + propName);
    }
 
    /** пересчитать и установить новую высоту шрифта */

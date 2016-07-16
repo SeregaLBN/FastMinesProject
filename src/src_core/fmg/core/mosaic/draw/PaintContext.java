@@ -58,7 +58,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       Object old = this.imgMine;
       if (old != img) { // references compare
          this.imgMine = img;
-         onPropertyChanged(old, img, PROPERTY_IMG_MINE);
+         onSelfPropertyChanged(old, img, PROPERTY_IMG_MINE);
       }
    }
 
@@ -69,7 +69,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       Object old = this.imgFlag;
       if (old != img) { // references compare
          this.imgFlag = img;
-         onPropertyChanged(old, img, PROPERTY_IMG_FLAG);
+         onSelfPropertyChanged(old, img, PROPERTY_IMG_FLAG);
       }
    }
 
@@ -88,7 +88,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       this.colorText = colorText;
       if (colorText != null)
          colorText.addListener(this);
-      onPropertyChanged(old, colorText, PROPERTY_COLOR_TEXT);
+      onSelfPropertyChanged(old, colorText, PROPERTY_COLOR_TEXT);
    }
 
    public PenBorder getPenBorder() {
@@ -106,7 +106,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       this.penBorder = penBorder;
       if (penBorder != null)
          penBorder.addListener(this);
-      onPropertyChanged(old, penBorder, PROPERTY_PEN_BORDER);
+      onSelfPropertyChanged(old, penBorder, PROPERTY_PEN_BORDER);
    }
 
    /** всё что относиться к заливке фоном ячееек */
@@ -133,7 +133,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
          int old = this.mode;
          if (old != newFillMode) {
             this.mode = newFillMode;
-            onPropertyChanged(old, newFillMode, PROPERTY_MODE);
+            onSelfPropertyChanged(old, newFillMode, PROPERTY_MODE);
             getColors().clear();
          }
       }
@@ -175,7 +175,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       this._backgroundFill = backgroundFill;
       if (backgroundFill != null)
          backgroundFill.addListener(this);
-      onPropertyChanged(oldBkFill, backgroundFill, PROPERTY_BACKGROUND_FILL);
+      onSelfPropertyChanged(oldBkFill, backgroundFill, PROPERTY_BACKGROUND_FILL);
    }
 
    public boolean isIconicMode() {
@@ -189,7 +189,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       BoundDouble old = this.padding;
       if (!padding.equals(old)) {
          this.padding = padding;
-         onPropertyChanged(old, padding, PROPERTY_PADDING);
+         onSelfPropertyChanged(old, padding, PROPERTY_PADDING);
       }
    }
 
@@ -209,7 +209,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       this.fontInfo = fontInfo;
       if (fontInfo != null)
          fontInfo.addListener(this);
-      onPropertyChanged(oldFont, fontInfo, PROPERTY_FONT_INFO);
+      onSelfPropertyChanged(oldFont, fontInfo, PROPERTY_FONT_INFO);
    }
 
    public Color getBackgroundColor() {
@@ -223,7 +223,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       if (color.equals(old))
          return;
       this.backgroundColor = color;
-      onPropertyChanged(old, color, PROPERTY_BACKGROUND_COLOR);
+      onSelfPropertyChanged(old, color, PROPERTY_BACKGROUND_COLOR);
    }
 
    public TImage getImgBckgrnd() {
@@ -235,20 +235,20 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       if (old == imgBckgrnd) // references compare
          return;
       this.imgBckgrnd = imgBckgrnd;
-      onPropertyChanged(old, imgBckgrnd, PROPERTY_IMG_BCKGRND);
+      onSelfPropertyChanged(old, imgBckgrnd, PROPERTY_IMG_BCKGRND);
    }
 
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
       Object source = ev.getSource();
       if (source instanceof FontInfo)
-         onInnerPropertyChanged((FontInfo)ev.getSource(), ev, PROPERTY_FONT_INFO);
+         onSelfPropertyChangedRethrow((FontInfo)ev.getSource(), ev, PROPERTY_FONT_INFO);
       if (source instanceof BackgroundFill)
-         onInnerPropertyChanged((BackgroundFill)ev.getSource(), ev, PROPERTY_BACKGROUND_FILL);
+         onSelfPropertyChangedRethrow((BackgroundFill)ev.getSource(), ev, PROPERTY_BACKGROUND_FILL);
       if (source instanceof ColorText)
-         onInnerPropertyChanged((ColorText)ev.getSource(), ev, PROPERTY_COLOR_TEXT);
+         onSelfPropertyChangedRethrow((ColorText)ev.getSource(), ev, PROPERTY_COLOR_TEXT);
       if (source instanceof PenBorder)
-         onInnerPropertyChanged((PenBorder)ev.getSource(), ev, PROPERTY_PEN_BORDER);
+         onSelfPropertyChangedRethrow((PenBorder)ev.getSource(), ev, PROPERTY_PEN_BORDER);
    }
 
    @Override

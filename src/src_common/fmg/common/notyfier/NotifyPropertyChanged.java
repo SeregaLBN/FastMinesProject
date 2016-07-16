@@ -35,32 +35,32 @@ public abstract class NotifyPropertyChanged implements AutoCloseable // implemen
          throw new RuntimeException(ex);
       }
 
-      onPropertyChanged(oldValue, newValue, propertyName);
+      onSelfPropertyChanged(oldValue, newValue, propertyName);
       return true;
    }
 
-   protected final void onPropertyChanged(int oldValue, int newValue, String propertyName) {
-      onPropertyChanged(Integer.valueOf(oldValue), Integer.valueOf(newValue), propertyName);
+   protected final void onSelfPropertyChanged(int oldValue, int newValue, String propertyName) {
+      onSelfPropertyChanged(Integer.valueOf(oldValue), Integer.valueOf(newValue), propertyName);
    }
 
-   protected final void onPropertyChanged(boolean oldValue, boolean newValue, String propertyName) {
-      onPropertyChanged(Boolean.valueOf(oldValue), Boolean.valueOf(newValue), propertyName);
+   protected final void onSelfPropertyChanged(boolean oldValue, boolean newValue, String propertyName) {
+      onSelfPropertyChanged(Boolean.valueOf(oldValue), Boolean.valueOf(newValue), propertyName);
    }
 
-   protected final void onPropertyChanged(String propertyName) {
-      onPropertyChanged(null, null, propertyName);
+   protected final void onSelfPropertyChanged(String propertyName) {
+      onSelfPropertyChanged(null, null, propertyName);
    }
 
-   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+   protected void onSelfPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       if (_disposed)
          return;
-    //System.out.println("onPropertyChanged: " + propertyName + ": " + newValue);
+    //System.out.println("onSelfPropertyChanged: " + propertyName + ": " + newValue);
       propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
    }
 
-   protected <TProperty> void onInnerPropertyChanged(TProperty source, PropertyChangeEvent ev, String propertyName) {
-      onPropertyChanged(null, source, propertyName);
-      onPropertyChanged(ev.getOldValue(), ev.getNewValue(), propertyName + "." + ev.getPropertyName());
+   protected <TProperty> void onSelfPropertyChangedRethrow(TProperty source, PropertyChangeEvent ev, String propertyName) {
+      onSelfPropertyChanged(null, source, propertyName);
+      onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), propertyName + "." + ev.getPropertyName());
    }
 
    private Field findField(String propertyName) {

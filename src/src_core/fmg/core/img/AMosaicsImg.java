@@ -108,7 +108,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
          for (int i = 0; i < size.m; i++)
             for (int j = 0; j < size.n; j++)
                _matrix.add(MosaicHelper.createCellInstance(attr, type, new Coord(i, j)));
-         onPropertyChanged(PROPERTY_MATRIX);
+         onSelfPropertyChanged(PROPERTY_MATRIX);
          invalidate();
       }
       return _matrix;
@@ -163,9 +163,9 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
    public void setRotateMode(ERotateMode value) { setProperty(_rotateMode, value, PROPERTY_ROTATE_MODE); }
 
    @Override
-   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      //LoggerSimple.Put("OnPropertyChanged: {0}: PropertyName={1}", Entity, ev.PropertyName);
-      super.onPropertyChanged(oldValue, newValue, propertyName);
+   protected void onSelfPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+      //LoggerSimple.Put("onSelfPropertyChanged: {0}: PropertyName={1}", Entity, ev.PropertyName);
+      super.onSelfPropertyChanged(oldValue, newValue, propertyName);
       switch (propertyName) {
       case PROPERTY_ENTITY:
          dependency_MosaicType_As_Entity((EMosaic) newValue, (EMosaic) oldValue);
@@ -197,7 +197,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
       setArea(0);
       _matrix.clear();
       setCellAttr(null);
-      onPropertyChanged(oldValue, newValue, PROPERTY_MOSAIC_TYPE);
+      onSelfPropertyChanged(oldValue, newValue, PROPERTY_MOSAIC_TYPE);
    }
    ////////////// #endregion
 
@@ -295,7 +295,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
       _prepareList.clear();
       if (!_rotatedElements.isEmpty()) {
          _rotatedElements.clear();
-         onPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
+         onSelfPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
       }
 
       if (!isRotate())
@@ -347,7 +347,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
             {
                _prepareList.remove(i);
                _rotatedElements.add(new RotatedCellContext(nextRandomIndex(rand), angleOffset, area));
-               onPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
+               onSelfPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
             }
          }
       }
@@ -373,7 +373,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
                            _rotatedElements.remove(cntxt);
                            addRandomToPrepareList(false, rand);
                         });
-         onPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
+         onSelfPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
       }
    }
 

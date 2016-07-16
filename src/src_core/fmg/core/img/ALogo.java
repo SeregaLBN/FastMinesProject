@@ -94,7 +94,7 @@ public abstract class ALogo<TImage> extends PolarLightsImg<Object, TImage> {
    }
 
    @Override
-   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+   protected void onSelfPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       if ((getRotateMode() != ERotateMode.classic) && PROPERTY_ROTATE_ANGLE.equals(propertyName)) {
          double delta = getRotateAngleDelta();
          for (int i=0; i<Palette.length; ++i) {
@@ -102,7 +102,7 @@ public abstract class ALogo<TImage> extends PolarLightsImg<Object, TImage> {
          }
 
       }
-      super.onPropertyChanged(oldValue, newValue, propertyName);
+      super.onSelfPropertyChanged(oldValue, newValue, propertyName);
    }
 
 }

@@ -65,11 +65,11 @@ public class PaintSwingContext<TImage> extends PaintContext<TImage> {
    }
 
    @Override
-   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      super.onPropertyChanged(oldValue, newValue, propertyName);
+   protected void onSelfPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+      super.onSelfPropertyChanged(oldValue, newValue, propertyName);
       if (PaintContext.PROPERTY_FONT_INFO.equals(propertyName)) {
          font = null;
-         onPropertyChanged(PROPERTY_FONT);
+         onSelfPropertyChanged(PROPERTY_FONT);
       }
    }
 

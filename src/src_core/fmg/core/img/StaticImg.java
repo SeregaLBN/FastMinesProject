@@ -152,7 +152,7 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
       //if (_invalidate == EInvalidate.needRedraw)
       //   return;
       _invalidate = EInvalidate.needRedraw;
-      onPropertyChanged("Image");
+      onSelfPropertyChanged("Image");
    }
 
    private void draw() {
@@ -167,11 +167,11 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
 
    /** Deferr notifications */
    @Override
-   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+   protected void onSelfPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       if (!isDeferredNotifications())
-         super.onPropertyChanged(oldValue, newValue, propertyName);
+         super.onSelfPropertyChanged(oldValue, newValue, propertyName);
       else
-         DEFERR_INVOKER.accept( () -> super.onPropertyChanged(oldValue, newValue, propertyName) );
+         DEFERR_INVOKER.accept( () -> super.onSelfPropertyChanged(oldValue, newValue, propertyName) );
    }
 
    @Override

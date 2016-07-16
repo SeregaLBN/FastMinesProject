@@ -100,7 +100,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
          throw new IllegalArgumentException("Bad argument - support only null value!");
       _cellAttr.removeListener(this);
       _cellAttr = null;
-      onPropertyChanged(PROPERTY_CELL_ATTR);
+      onSelfPropertyChanged(PROPERTY_CELL_ATTR);
    }
    @Override
    public BaseCell.BaseAttribute getCellAttr() {
@@ -139,10 +139,10 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
 
       setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
       this._size = newSizeField;
-      onPropertyChanged(old, newSizeField, PROPERTY_SIZE_FIELD);
+      onSelfPropertyChanged(old, newSizeField, PROPERTY_SIZE_FIELD);
 
       _matrix.clear();
-      onPropertyChanged(PROPERTY_MATRIX);
+      onSelfPropertyChanged(PROPERTY_MATRIX);
 
       GameNew();
    }
@@ -158,13 +158,13 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
          return;
 
       this._mosaicType = newMosaicType;
-      onPropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
+      onSelfPropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
 
       double saveArea = getArea(); // save
       setCellAttr(null); // lost area
 
       _matrix.clear();
-      onPropertyChanged("Matrix");
+      onSelfPropertyChanged("Matrix");
 
       setArea(saveArea); // restore
 
@@ -183,8 +183,8 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
          this._oldMinesCount = this._minesCount; // save
 
       _minesCount = Math.max(1, Math.min(newMinesCount, GetMaxMines(getSizeField())));
-      onPropertyChanged(old, _minesCount, PROPERTY_MINES_COUNT);
-      onPropertyChanged(null, _minesCount, PROPERTY_COUNT_MINES_LEFT);
+      onSelfPropertyChanged(old, _minesCount, PROPERTY_MINES_COUNT);
+      onSelfPropertyChanged(null, _minesCount, PROPERTY_COUNT_MINES_LEFT);
 
       GameNew();
    }
@@ -259,7 +259,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       int old = _countClick;
       if (old != clickCount) {
          _countClick = clickCount;
-         onPropertyChanged(old, clickCount, PROPERTY_COUNT_CLICK);
+         onSelfPropertyChanged(old, clickCount, PROPERTY_COUNT_CLICK);
       }
    }
 
@@ -298,7 +298,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       EGameStatus old = _gameStatus;
       if (old != newStatus) {
          _gameStatus = newStatus;
-         onPropertyChanged(old, newStatus, PROPERTY_GAME_STATUS);
+         onSelfPropertyChanged(old, newStatus, PROPERTY_GAME_STATUS);
       }
    }
 
@@ -313,7 +313,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       if (old == newVal)
          return;
       _playInfo = newVal;
-      onPropertyChanged(old, newVal, PROPERTY_PLAY_INFO);
+      onSelfPropertyChanged(old, newVal, PROPERTY_PLAY_INFO);
    }
 
    public List<Coord> getRepositoryMines() {
@@ -328,7 +328,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
          if ((newMines != null) && !newMines.isEmpty())
             current.addAll(newMines);
       }
-      onPropertyChanged(PROPERTY_REPOSITORY_MINES);
+      onSelfPropertyChanged(PROPERTY_REPOSITORY_MINES);
       //setGameStatus(EGameStatus.eGSEnd);
       GameNew();
    }
@@ -378,9 +378,9 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
          }
 
       setGameStatus(EGameStatus.eGSEnd);
-      onPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
-      onPropertyChanged(PROPERTY_COUNT_FLAG);
-      onPropertyChanged(PROPERTY_COUNT_OPEN);
+      onSelfPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+      onSelfPropertyChanged(PROPERTY_COUNT_FLAG);
+      onSelfPropertyChanged(PROPERTY_COUNT_OPEN);
    }
 
    private void VerifyFlag() {
@@ -460,11 +460,11 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
             setCountClick(getCountClick()+1);
             setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
             if (countOpen > 0)
-               onPropertyChanged(PROPERTY_COUNT_OPEN);
+               onSelfPropertyChanged(PROPERTY_COUNT_OPEN);
             if ((countFlag > 0) || (countUnknown > 0)) {
-               onPropertyChanged(PROPERTY_COUNT_FLAG);
-               onPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
-               onPropertyChanged(PROPERTY_COUNT_UNKNOWN);
+               onSelfPropertyChanged(PROPERTY_COUNT_FLAG);
+               onSelfPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+               onSelfPropertyChanged(PROPERTY_COUNT_UNKNOWN);
             }
          }
 
@@ -510,9 +510,9 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       if (any) {
          setCountClick(getCountClick()+1);
          setPlayInfo(EPlayInfo.ePlayerUser); // то считаю что юзер играл
-         onPropertyChanged(PROPERTY_COUNT_FLAG);
-         onPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
-         onPropertyChanged(PROPERTY_COUNT_UNKNOWN);
+         onSelfPropertyChanged(PROPERTY_COUNT_FLAG);
+         onSelfPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+         onSelfPropertyChanged(PROPERTY_COUNT_UNKNOWN);
       }
 
       VerifyFlag();
@@ -657,11 +657,11 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       String propName = ev.getPropertyName();
       if (BaseCell.BaseAttribute.PROPERTY_AREA.equals(propName)) {
          getMatrix().forEach(cell -> cell.Init());
-         onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
+         onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
          repaint(null);
       }
-      onPropertyChanged(PROPERTY_CELL_ATTR);
-      onPropertyChanged(PROPERTY_CELL_ATTR + "." + propName);
+      onSelfPropertyChanged(PROPERTY_CELL_ATTR);
+      onSelfPropertyChanged(PROPERTY_CELL_ATTR + "." + propName);
    }
 
 }
