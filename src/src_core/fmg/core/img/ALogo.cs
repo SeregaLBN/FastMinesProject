@@ -91,14 +91,14 @@ namespace fmg.core.img {
          }
       }
 
-      protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+      protected override void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
          if ((RotateMode != ERotateMode.Classic) && (nameof(this.RotateAngle) == ev.PropertyName)) {
             var delta = RotateAngleDelta;
             for (var i = 0; i < Palette.Length; ++i) {
                Palette[i].h += delta;
             }
          }
-         base.OnPropertyChanged(sender, ev);
+         base.OnSelfPropertyChanged(ev);
       }
 
    }

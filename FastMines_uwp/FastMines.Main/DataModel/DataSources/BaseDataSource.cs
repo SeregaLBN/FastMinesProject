@@ -24,7 +24,7 @@ namespace fmg.DataModel.DataSources
       }
 
       protected virtual void FillDataSource() {
-         OnPropertyChanged(nameof(DataSource));
+         OnSelfPropertyChanged(nameof(DataSource));
       }
 
       /// <summary> Selected element </summary>
@@ -47,7 +47,7 @@ namespace fmg.DataModel.DataSources
                mi.ImageSize = value;
             }
             if (old != value)
-               OnPropertyChanged(this, new PropertyChangedExEventArgs<int>(value, old));
+               OnSelfPropertyChanged(new PropertyChangedExEventArgs<int>(value, old));
          }
       }
 

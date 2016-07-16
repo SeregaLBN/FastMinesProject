@@ -180,13 +180,13 @@ namespace fmg.uwp.mosaic {
          }
       }
 
-      protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         base.OnPropertyChanged(sender, ev);
+      protected override void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
+         base.OnSelfPropertyChanged(ev);
          switch (ev.PropertyName) {
-         case "MosaicType":
+         case nameof(this.MosaicType):
             ChangeFontSize();
             break;
-         case "Matrix":
+         case nameof(this.Matrix):
             UnbindXaml();
             BindXamlToMosaic();
             Repaint();
@@ -196,7 +196,7 @@ namespace fmg.uwp.mosaic {
 
       protected override void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
          base.OnCellAttributePropertyChanged(sender, ev);
-         if ("Area" == ev.PropertyName) {
+         if (nameof(this.Area) == ev.PropertyName) {
             ChangeFontSize(PaintContext.PenBorder);
 
             //revalidate();
@@ -209,7 +209,7 @@ namespace fmg.uwp.mosaic {
             return;
 
          switch (ev.PropertyName) {
-         case "PenBorder":
+         case nameof(PaintContext.PenBorder):
             var evex = ev as PropertyChangedExEventArgs<PenBorder>;
             var penBorder = evex?.NewValue ?? PaintContext.PenBorder;
             ChangeFontSize(penBorder);
@@ -220,8 +220,8 @@ namespace fmg.uwp.mosaic {
          //   break;
          }
          Repaint(null);
-         OnPropertyChanged("PaintContext");
-         OnPropertyChanged("PaintContext." + ev.PropertyName);
+         OnSelfPropertyChanged(nameof(PaintContext));
+         OnSelfPropertyChanged(nameof(PaintContext) + "." + ev.PropertyName);
       }
 
       /// <summary> пересчитать и установить новую высоту шрифта </summary>

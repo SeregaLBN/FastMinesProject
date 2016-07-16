@@ -65,9 +65,9 @@ namespace fmg.uwp.draw.img.win2d {
          }
       }
 
-      protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         //LoggerSimple.Put($">  OnPropertyChanged: {GetType().Name}.{Entity}: PropertyName={ev.PropertyName}");
-         base.OnPropertyChanged(sender, ev);
+      protected override void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
+         //LoggerSimple.Put($">  OnSelfPropertyChanged: {GetType().Name}.{Entity}: PropertyName={ev.PropertyName}");
+         base.OnSelfPropertyChanged(ev);
          switch (ev.PropertyName) {
          case nameof(this.PaddingFull):
             Dependency_PContext_PaddingFull();
@@ -99,11 +99,11 @@ namespace fmg.uwp.draw.img.win2d {
          }
       }
 
-      //protected override void OnPropertyChangedAfter(bool sync, object sender, PropertyChangedEventArgs ev) {
+      //protected override void OnSelfPropertyChangedAfter(bool sync, object sender, PropertyChangedEventArgs ev) {
       //   if (sync)
-      //      LoggerSimple.Put($"<S OnPropertyChanged: {GetType().Name}.{Entity}: PropertyName={ev.PropertyName}");
+      //      LoggerSimple.Put($"<S OnSelfPropertyChanged: {GetType().Name}.{Entity}: PropertyName={ev.PropertyName}");
       //   else
-      //      LoggerSimple.Put($"<A OnPropertyChanged: {GetType().Name}.{Entity}: PropertyName={ev.PropertyName}");
+      //      LoggerSimple.Put($"<A OnSelfPropertyChanged: {GetType().Name}.{Entity}: PropertyName={ev.PropertyName}");
       //}
 
       #region Dependencys

@@ -61,8 +61,8 @@ namespace fmg.uwp.draw.img.wbmp {
          }
       }
 
-      protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         base.OnPropertyChanged(sender, ev);
+      protected override void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
+         base.OnSelfPropertyChanged(ev);
          switch (ev.PropertyName) {
          case nameof(this.PaddingFull):
             Dependency_PContext_PaddingFull();

@@ -24,9 +24,9 @@ namespace fmg.common {
          if (ev.PropertyName == nameof(MosaicsDataSource.ImageSize)) {
             var evi = ev as PropertyChangedExEventArgs<int>;
             if (evi == null)
-               OnPropertyChanged(nameof(this.ImageSize));
+               OnSelfPropertyChanged(nameof(this.ImageSize));
             else
-               OnPropertyChanged(evi.OldValue, evi.NewValue, nameof(this.ImageSize));
+               OnSelfPropertyChanged(evi.OldValue, evi.NewValue, nameof(this.ImageSize));
          }
       }
 

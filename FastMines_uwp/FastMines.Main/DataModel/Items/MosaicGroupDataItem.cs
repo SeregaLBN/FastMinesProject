@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Windows.UI.Xaml.Media;
 using Microsoft.Graphics.Canvas;
 using fmg.common.geom;
+using fmg.common.notyfier;
 using fmg.core.types;
 using MosaicsGroupImg = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
 
@@ -45,7 +46,7 @@ namespace fmg.DataModel.Items {
                if (value != null) {
                   value.PropertyChanged += OnMosaicsGroupImgPropertyChanged;
                }
-               OnPropertyChanged(nameof(this.Image));
+               OnSelfPropertyChanged(nameof(this.Image));
             }
          }
       }
@@ -63,7 +64,12 @@ namespace fmg.DataModel.Items {
       private void OnMosaicsGroupImgPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          var pn = ev.PropertyName;
          if (pn == nameof(MosaicsGroupImg.Image)) {
-            OnPropertyChanged(this, ev); // ! notify parent container
+            // ! notify parent container
+            var ev2 = ev as PropertyChangedExEventArgs<ImageSource>;
+            if (ev2 == null)
+               OnSelfPropertyChanged(nameof(this.Image));
+            else
+               OnSelfPropertyChanged(new PropertyChangedExEventArgs<ImageSource>(ev2.NewValue, ev2.OldValue, nameof(this.Image)));
          }
       }
 

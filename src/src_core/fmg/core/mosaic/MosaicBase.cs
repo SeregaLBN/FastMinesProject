@@ -76,7 +76,7 @@ namespace fmg.core.mosaic {
                throw new ArgumentException("Bad argument - support only null value!");
             _cellAttr.PropertyChanged -= OnCellAttributePropertyChanged;
             _cellAttr = null;
-            OnPropertyChanged();
+            OnSelfPropertyChanged();
          }
          get {
             if (_cellAttr == null) {
@@ -115,7 +115,7 @@ namespace fmg.core.mosaic {
             CellDown = null; // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
 
             _matrix.Clear();
-            OnPropertyChanged("Matrix");
+            OnSelfPropertyChanged(nameof(this.Matrix));
 
             GameNew();
          }
@@ -132,7 +132,7 @@ namespace fmg.core.mosaic {
             CellAttr = null; // lost area
 
             _matrix.Clear();
-            OnPropertyChanged("Matrix");
+            OnSelfPropertyChanged(nameof(this.Matrix));
 
             Area = saveArea; // restore
             GameNew();
@@ -150,7 +150,7 @@ namespace fmg.core.mosaic {
                _oldMinesCount = _minesCount; // save
 
             _minesCount = Math.Max(1, Math.Min(value, GetMaxMines(SizeField)));
-            OnPropertyChanged(-1, _minesCount, "CountMinesLeft");
+            OnSelfPropertyChanged(-1, _minesCount, nameof(this.CountMinesLeft));
 
             GameNew();
          }
@@ -258,7 +258,7 @@ namespace fmg.core.mosaic {
                   foreach (var itm in value)
                      current.Add(itm);
             }
-            OnPropertyChanged();
+            OnSelfPropertyChanged();
             //setGameStatus(EGameStatus.eGSEnd);
             GameNew();
          }
@@ -309,9 +309,9 @@ namespace fmg.core.mosaic {
             }
 
          GameStatus = EGameStatus.eGSEnd;
-         OnPropertyChanged("CountMinesLeft");
-         OnPropertyChanged("CountFlag");
-         OnPropertyChanged("CountOpen");
+         OnSelfPropertyChanged(nameof(this.CountMinesLeft));
+         OnSelfPropertyChanged(nameof(this.CountFlag));
+         OnSelfPropertyChanged(nameof(this.CountOpen));
       }
 
       private void VerifyFlag() {
@@ -397,11 +397,11 @@ namespace fmg.core.mosaic {
                CountClick++;
                PlayInfo = EPlayInfo.ePlayerUser;  // юзер играл
                if (countOpen > 0)
-                  OnPropertyChanged("CountOpen");
+                  OnSelfPropertyChanged(nameof(this.CountOpen));
                if ((countFlag > 0) || (countUnknown > 0)) {
-                  OnPropertyChanged("CountFlag");
-                  OnPropertyChanged("CountMinesLeft");
-                  OnPropertyChanged("CountUnknown");
+                  OnSelfPropertyChanged(nameof(this.CountFlag));
+                  OnSelfPropertyChanged(nameof(this.CountMinesLeft));
+                  OnSelfPropertyChanged(nameof(this.CountUnknown));
                }
             }
 
@@ -449,9 +449,9 @@ namespace fmg.core.mosaic {
             if (any) {
                CountClick++;
                PlayInfo = EPlayInfo.ePlayerUser; // то считаю что юзер играл
-               OnPropertyChanged("CountFlag");
-               OnPropertyChanged("CountMinesLeft");
-               OnPropertyChanged("CountUnknown");
+               OnSelfPropertyChanged(nameof(this.CountFlag));
+               OnSelfPropertyChanged(nameof(this.CountMinesLeft));
+               OnSelfPropertyChanged(nameof(this.CountUnknown));
             }
 
             VerifyFlag();
@@ -595,14 +595,21 @@ namespace fmg.core.mosaic {
 
       protected virtual void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
          var pn = ev.PropertyName;
-         if (pn == "Area") {
+         if (pn == nameof(_cellAttr.Area)) {
             foreach (var cell in Matrix)
                cell.Init();
-            OnPropertyChanged(this, ev); // ! rethrow event - notify parent class
+
+            OnSelfPropertyChanged(ev); // ! rethrow event - notify parent class
+            var ev2 = ev as PropertyChangedExEventArgs<double>;
+            if (ev2 == null)
+               OnSelfPropertyChanged(nameof(this.Area));
+            else
+               OnSelfPropertyChanged(new PropertyChangedExEventArgs<double>(ev2.NewValue, ev2.OldValue, nameof(this.Area)));
+
             Repaint(null);
          }
-         OnPropertyChanged("CellAttr");
-         OnPropertyChanged("CellAttr." + pn);
+         OnSelfPropertyChanged(nameof(this.CellAttr));
+         OnSelfPropertyChanged(nameof(this.CellAttr) + "." + pn);
       }
 
    }

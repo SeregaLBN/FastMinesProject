@@ -24,7 +24,7 @@ namespace fmg.common.notyfier {
 
          var tmp = storage;
          storage = value;
-         OnPropertyChanged(tmp, value, propertyName);
+         OnSelfPropertyChanged(tmp, value, propertyName);
          return true;
       }
 
@@ -33,20 +33,20 @@ namespace fmg.common.notyfier {
       /// <param name="newValue">new value</param>
       /// <param name="propertyName">Name of the property used to notify listeners.  This value is optional and can be provided automatically
       /// when invoked from compilers that support <see cref="CallerMemberNameAttribute"/>.</param>
-      protected void OnPropertyChanged<T>(T oldValue, T newValue, [CallerMemberName] string propertyName = null) {
-         OnPropertyChanged(this, new PropertyChangedExEventArgs<T>(newValue, oldValue, propertyName));
+      protected void OnSelfPropertyChanged<T>(T oldValue, T newValue, [CallerMemberName] string propertyName = null) {
+         OnSelfPropertyChanged(new PropertyChangedExEventArgs<T>(newValue, oldValue, propertyName));
       }
 
-      protected void OnPropertyChanged([CallerMemberName] string propertyName = null) {
-         OnPropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+      protected void OnSelfPropertyChanged([CallerMemberName] string propertyName = null) {
+         OnSelfPropertyChanged(new PropertyChangedEventArgs(propertyName));
       }
 
-      protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+      protected virtual void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
          if (Disposed)
             return;
          var eventHandler = PropertyChanged;
-         eventHandler?.Invoke(sender, ev);
-         //LoggerSimple.Put($"< OnPropertyChanged: {GetType().Name}: PropertyName={ev.PropertyName}");
+         eventHandler?.Invoke(this, ev);
+         //LoggerSimple.Put($"< OnSelfPropertyChanged: {GetType().Name}: PropertyName={ev.PropertyName}");
       }
 
    }

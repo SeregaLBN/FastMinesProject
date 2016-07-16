@@ -161,7 +161,7 @@ namespace fmg.core.img {
          //if (_invalidate == EInvalidate.NeedRedraw)
          //   return;
          _invalidate = EInvalidate.NeedRedraw;
-         OnPropertyChanged(nameof(this.Image));
+         OnSelfPropertyChanged(nameof(this.Image));
       }
 
       private void Draw() {
@@ -176,11 +176,10 @@ namespace fmg.core.img {
       protected abstract void DrawBody();
       protected virtual void DrawEnd() { _invalidate = EInvalidate.Redrawed; }
 
-      /// <summary> Deferr notifications </summary>
-      protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+      protected override void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
          if (!DeferredNotifications) {
-            base.OnPropertyChanged(sender, ev);
-            //OnPropertyChangedAfter(true, sender, ev);
+            base.OnSelfPropertyChanged(ev);
+            //OnPropertyChangingAfter(true, ev);
          } else {
             bool first = DeferredNotificationsMap.Any();
             if (!DeferredNotificationsMap.ContainsKey(ev.PropertyName))
@@ -190,17 +189,15 @@ namespace fmg.core.img {
             if (first)
                StaticImgConsts.DeferrInvoker(() => {
                   foreach (PropertyChangedEventArgs item in DeferredNotificationsMap.Values.ToList()) {
-                     base.OnPropertyChanged(this, item);
-                     //OnPropertyChangedAfter(false, this, item);
+                     base.OnSelfPropertyChanged(item);
+                     //OnSelfPropertyChangedAfter(false, item);
                   }
                   DeferredNotificationsMap.Clear();
                });
          }
       }
 
-      //protected virtual void OnPropertyChangedAfter(bool sync, object sender, PropertyChangedEventArgs ev) {
-      //   //LoggerSimple.Put($"<S OnPropertyChanged: {GetType().Name}.{Entity}: PropertyName={ev.PropertyName}");
-      //}
+      //protected abstract void OnSelfPropertyChangedAfter(bool sync, object sender, PropertyChangedEventArgs ev);
 
    }
 

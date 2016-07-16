@@ -23,8 +23,8 @@ namespace fmg.DataModel.DataSources
 
       protected override void OnCurrentElementChanged() {
          if (CurrentElement != null)  // if unselected item
-            OnPropertyChanged("SelectedPageType");
-         OnPropertyChanged("UnicodeChars");
+            OnSelfPropertyChanged(nameof(this.SelectedPageType));
+         OnSelfPropertyChanged(nameof(this.UnicodeChars));
 
          // for one selected - start animate; for all other - stop animate
          foreach (var mi in DataSource) {
