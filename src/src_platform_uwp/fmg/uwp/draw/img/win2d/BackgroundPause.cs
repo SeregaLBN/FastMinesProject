@@ -1,12 +1,10 @@
 using System;
-using System.Numerics;
 using Windows.UI.Xaml;
 using Windows.Graphics.Display;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.Graphics.Canvas.Geometry;
 using fmg.common;
-using fmg.common.geom.util;
 using fmg.uwp.utils;
 using fmg.uwp.draw.mosaic.win2d;
 
@@ -80,7 +78,7 @@ namespace fmg.uwp.draw.img.win2d {
             using (var g = _rc.BuildArc(90 * w, 580 * h, 180 * w, 180 * h, 90, 45, false)) {
                ds.DrawGeometry(g, clr, Math.Max(1, 14 * (w + h) / 2), css);
             }
-            using (var g = _rc.BuildArc(730 * w, 580 * h, 180 * w, 180 * h, 45, 145, false)) {
+            using (var g = _rc.BuildArc(730 * w, 580 * h, 180 * w, 180 * h, 45, 45, false)) {
                ds.DrawGeometry(g, clr, Math.Max(1, 14 * (w + h) / 2), css);
             }
          }

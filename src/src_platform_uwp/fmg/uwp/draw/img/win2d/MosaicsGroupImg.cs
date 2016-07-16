@@ -1,12 +1,11 @@
 using System.Linq;
 using Windows.Graphics.Display;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using fmg.core.types;
 using fmg.common;
+using fmg.core.types;
 using fmg.core.img;
 using fmg.uwp.utils;
 using fmg.uwp.utils.win2d;

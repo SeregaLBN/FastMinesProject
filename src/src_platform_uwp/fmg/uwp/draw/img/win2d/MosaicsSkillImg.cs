@@ -1,5 +1,4 @@
 using System.Linq;
-using Windows.UI.Core;
 using Windows.Graphics.Display;
 using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;

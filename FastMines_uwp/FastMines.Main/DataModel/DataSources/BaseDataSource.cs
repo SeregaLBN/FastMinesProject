@@ -24,7 +24,7 @@ namespace fmg.DataModel.DataSources
       }
 
       protected virtual void FillDataSource() {
-         OnPropertyChanged("DataSource");
+         OnPropertyChanged(nameof(DataSource));
       }
 
       /// <summary> Selected element </summary>

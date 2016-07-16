@@ -1,6 +1,6 @@
-﻿using System;
-using fmg.DataModel.DataSources;
+﻿using System.ComponentModel;
 using fmg.common.notyfier;
+using fmg.DataModel.DataSources;
 
 namespace fmg.common {
 
@@ -10,24 +10,23 @@ namespace fmg.common {
 
       public MosaicsViewModel() {
          //_mosaicsDs.ImageSize = 150; // TODO убрать, если будет зависимость ImageSize от размеров окна // see Shell.xaml.cs: Shell.OnSizeChanged
-
-         //_mosaicsDs.PropertyChanged += (sender, args) => {
-         //   if (args.PropertyName == "SelectedMenuItem") {
-         //      // auto-close split view pane
-         //      //this.IsSplitViewPaneOpen = false;
-         //   }
-         //};
+         _mosaicsDs.PropertyChanged += OnMosaicsDsPropertyChanged;
       }
 
       public MosaicsDataSource MosaicsDs => _mosaicsDs;
 
       public int ImageSize {
          get { return _mosaicsDs.ImageSize; }
-         set {
-            var old = ImageSize;
-            _mosaicsDs.ImageSize = value;
-            if (old != value)
-               OnPropertyChanged(this, new PropertyChangedExEventArgs<int>(value, old));
+         set { _mosaicsDs.ImageSize = value; }
+      }
+
+      private void OnMosaicsDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         if (ev.PropertyName == nameof(MosaicsDataSource.ImageSize)) {
+            var evi = ev as PropertyChangedExEventArgs<int>;
+            if (evi == null)
+               OnPropertyChanged(nameof(this.ImageSize));
+            else
+               OnPropertyChanged(evi.OldValue, evi.NewValue, nameof(this.ImageSize));
          }
       }
 
@@ -37,6 +36,7 @@ namespace fmg.common {
 
          base.Dispose(disposing);
 
+         _mosaicsDs.PropertyChanged -= OnMosaicsDsPropertyChanged;
          _mosaicsDs.Dispose();
       }
 

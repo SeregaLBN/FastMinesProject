@@ -59,12 +59,13 @@ namespace fmg
       private void MosaicGroupDsOnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          //LoggerSimple.Put("MosaicGroupsDataSource::" + ev.PropertyName);
          switch (ev.PropertyName) {
-         case "CurrentElement":
+         case nameof(ViewModel.MosaicGroupDs.CurrentElement):
             var smp = RootFrame?.Content as SelectMosaicPage;
             var ds = (MosaicGroupsDataSource)sender;
             if (smp == null) {
                SelectMosaicPage.DefaultMosaicGroup = ds.CurrentElement.MosaicGroup;
             } else {
+               smp.CurrentElement = null;
                smp.CurrentMosaicGroup = ds.CurrentElement.MosaicGroup;
             }
             break;
@@ -74,12 +75,13 @@ namespace fmg
       private void MosaicSkillDsOnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          //LoggerSimple.Put("MosaicSkillsDataSource::" + ev.PropertyName);
          switch(ev.PropertyName) {
-         case "CurrentElement":
+         case nameof(ViewModel.MosaicSkillDs.CurrentElement):
             var smp = RootFrame?.Content as SelectMosaicPage;
             var ds = (MosaicSkillsDataSource)sender;
             if (smp == null) {
                SelectMosaicPage.DefaultSkillLevel = ds.CurrentElement.SkillLevel;
             } else {
+               smp.CurrentElement = null;
                smp.CurrentSkillLevel = ds.CurrentElement.SkillLevel;
             }
             break;

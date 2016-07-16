@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.ComponentModel;
 using Windows.Graphics.Display;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
@@ -67,6 +66,7 @@ namespace fmg.uwp.draw.img.win2d {
       }
 
       protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         //LoggerSimple.Put($">  OnPropertyChanged: {GetType().Name}.{Entity}: PropertyName={ev.PropertyName}");
          base.OnPropertyChanged(sender, ev);
          switch (ev.PropertyName) {
          case nameof(this.PaddingFull):
@@ -98,6 +98,13 @@ namespace fmg.uwp.draw.img.win2d {
             }
          }
       }
+
+      //protected override void OnPropertyChangedAfter(bool sync, object sender, PropertyChangedEventArgs ev) {
+      //   if (sync)
+      //      LoggerSimple.Put($"<S OnPropertyChanged: {GetType().Name}.{Entity}: PropertyName={ev.PropertyName}");
+      //   else
+      //      LoggerSimple.Put($"<A OnPropertyChanged: {GetType().Name}.{Entity}: PropertyName={ev.PropertyName}");
+      //}
 
       #region Dependencys
       void Dependency_PContext_CellAttribute() {
@@ -132,14 +139,6 @@ namespace fmg.uwp.draw.img.win2d {
          PaintContext.BackgroundColor = BackgroundColor;
       }
       #endregion
-
-      //protected override void Dispose(bool disposing) {
-      //   if (disposing) {
-      //      PContext = null; // call setter
-      //   }
-
-      //   base.Dispose(disposing);
-      //}
 
       protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
          switch (RotateMode) {

@@ -2,6 +2,7 @@
 using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.common;
+using fmg.common.Controls;
 
 namespace fmg {
    /// <summary>
@@ -39,6 +40,11 @@ namespace fmg {
       public ESkillLevel CurrentSkillLevel {
          //get { return ViewModel.MosaicsDs.CurrentSkill; }
          set { ViewModel.MosaicsDs.CurrentSkill = value; }
+      }
+
+      public MosaicTailItem CurrentElement {
+         //get { return ViewModel.MosaicsDs.CurrentElement; }
+         set { ViewModel.MosaicsDs.CurrentElement = value; }
       }
 
    }

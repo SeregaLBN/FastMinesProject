@@ -7,7 +7,7 @@ using LogoImg = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.UI.Xaml.Ca
 namespace fmg.uwp.draw.img.win2d {
 
    /// <summary> mine image </summary>
-   public sealed class Mine {
+   public static class Mine {
 
       public class CanvasBmp : LogoBmp {
 

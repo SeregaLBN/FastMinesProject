@@ -46,6 +46,7 @@ namespace fmg.common.notyfier {
             return;
          var eventHandler = PropertyChanged;
          eventHandler?.Invoke(sender, ev);
+         //LoggerSimple.Put($"< OnPropertyChanged: {GetType().Name}: PropertyName={ev.PropertyName}");
       }
 
    }

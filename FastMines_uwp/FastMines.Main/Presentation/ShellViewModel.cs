@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.ComponentModel;
 using System.Windows.Input;
 using fmg.DataModel.DataSources;
 using fmg.common.notyfier;
@@ -14,18 +14,13 @@ namespace fmg.common {
       public ShellViewModel() {
          ToggleSplitViewPaneCommand = new Command(() => IsSplitViewPaneOpen = !IsSplitViewPaneOpen);
 
-         //_mosaicGroupDs.PropertyChanged += (sender, args) => {
-         //   if (args.PropertyName == "SelectedMenuItem") {
-         //      // auto-close split view pane
-         //      //this.IsSplitViewPaneOpen = false;
-         //   }
-         //};
+         _mosaicGroupDs.PropertyChanged += OnMosaicGroupDsPropertyChanged;
+         _mosaicSkillDs.PropertyChanged += OnMosaicSkillDsPropertyChanged;
       }
 
       public ICommand ToggleSplitViewPaneCommand { get; private set; }
 
-      public bool IsSplitViewPaneOpen
-      {
+      public bool IsSplitViewPaneOpen {
          get { return _isSplitViewPaneOpen; }
          set { SetProperty(ref _isSplitViewPaneOpen, value); }
       }
@@ -36,11 +31,31 @@ namespace fmg.common {
       public int ImageSize {
          get { return _mosaicGroupDs.ImageSize; }
          set {
-            var old = ImageSize;
             _mosaicGroupDs.ImageSize = value;
             _mosaicSkillDs.ImageSize = value;
-            if (old != value)
-               OnPropertyChanged(this, new PropertyChangedExEventArgs<int>(value, old));
+         }
+      }
+
+      private void OnMosaicSkillDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         if (ev.PropertyName == nameof(MosaicsDataSource.ImageSize)) {
+            var evi = ev as PropertyChangedExEventArgs<int>;
+            if (evi == null)
+               OnPropertyChanged(nameof(this.ImageSize));
+            else
+               OnPropertyChanged(evi.OldValue, evi.NewValue, nameof(this.ImageSize));
+         }
+      }
+
+      private void OnMosaicGroupDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         if (ev.PropertyName == nameof(MosaicsDataSource.ImageSize)) {
+            var evi = ev as PropertyChangedExEventArgs<int>;
+            if (evi == null)
+               OnPropertyChanged(nameof(this.ImageSize));
+            else
+               OnPropertyChanged(evi.OldValue, evi.NewValue, nameof(this.ImageSize));
+         } else if (ev.PropertyName == nameof(MosaicsDataSource.CurrentElement)) {
+            //// auto-close split view pane
+            //this.IsSplitViewPaneOpen = false;
          }
       }
 
@@ -50,6 +65,8 @@ namespace fmg.common {
 
          base.Dispose(disposing);
 
+         _mosaicGroupDs.PropertyChanged -= OnMosaicGroupDsPropertyChanged;
+         _mosaicSkillDs.PropertyChanged -= OnMosaicSkillDsPropertyChanged;
          _mosaicGroupDs.Dispose();
          _mosaicSkillDs.Dispose();
       }

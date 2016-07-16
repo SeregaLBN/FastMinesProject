@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.ComponentModel;
+using System.Collections.Generic;
 using fmg.common;
 using fmg.common.geom;
 using fmg.common.notyfier;
@@ -151,6 +153,7 @@ namespace fmg.core.img {
       }
 
       public bool DeferredNotifications { get; set; } = true;
+      private readonly Dictionary<string, PropertyChangedEventArgs> DeferredNotificationsMap = new Dictionary<string, PropertyChangedEventArgs>();
 
       protected void Invalidate() {
          if (_invalidate == EInvalidate.Redrawing)
@@ -175,11 +178,29 @@ namespace fmg.core.img {
 
       /// <summary> Deferr notifications </summary>
       protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         if (!DeferredNotifications)
+         if (!DeferredNotifications) {
             base.OnPropertyChanged(sender, ev);
-         else
-            StaticImgConsts.DeferrInvoker(() => base.OnPropertyChanged(sender, ev));
+            //OnPropertyChangedAfter(true, sender, ev);
+         } else {
+            bool first = DeferredNotificationsMap.Any();
+            if (!DeferredNotificationsMap.ContainsKey(ev.PropertyName))
+               DeferredNotificationsMap.Add(ev.PropertyName, ev);
+            else
+               DeferredNotificationsMap[ev.PropertyName] = ev;
+            if (first)
+               StaticImgConsts.DeferrInvoker(() => {
+                  foreach (PropertyChangedEventArgs item in DeferredNotificationsMap.Values.ToList()) {
+                     base.OnPropertyChanged(this, item);
+                     //OnPropertyChangedAfter(false, this, item);
+                  }
+                  DeferredNotificationsMap.Clear();
+               });
+         }
       }
+
+      //protected virtual void OnPropertyChangedAfter(bool sync, object sender, PropertyChangedEventArgs ev) {
+      //   //LoggerSimple.Put($"<S OnPropertyChanged: {GetType().Name}.{Entity}: PropertyName={ev.PropertyName}");
+      //}
 
    }
 

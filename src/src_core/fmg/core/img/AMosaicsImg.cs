@@ -149,7 +149,7 @@ namespace fmg.core.img {
       }
 
       protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         //LoggerSimple.Put("OnPropertyChanged: {0}: PropertyName={1}", Entity, ev.PropertyName);
+         //LoggerSimple.Put($"OnPropertyChanged: {Entity}: PropertyName={ev.PropertyName}");
          base.OnPropertyChanged(sender, ev);
          switch (ev.PropertyName) {
          case nameof(this.Entity):

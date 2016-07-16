@@ -33,35 +33,37 @@ namespace fmg.DataModel.DataSources {
          }
       }
 
+      private void ReloadDataSource() {
+         DataSourceInternal.Clear();
+         FillDataSource();
+         //var size = ImageSize; // save
+         //CurrentElement = null;
+         //var dataSource = DataSourceInternal;
+         //var newEntities = CurrentGroup.GetBind().ToList();
+         //var max = Math.Max(dataSource.Count, newEntities.Count);
+         //var min = Math.Min(dataSource.Count, newEntities.Count);
+         //var remove = (dataSource.Count > newEntities.Count);
+         //for (var i = 0; i < max; ++i) {
+         //   if ((i >= min) && remove) {
+         //      dataSource.RemoveAt(min);
+         //      continue;
+         //   }
+         //   var mosaicType = newEntities[i];
+         //   if (i < min) {
+         //      var mi = dataSource[i];
+         //      mi.UniqueId = mosaicType;
+         //      mi.SkillLevel = CurrentSkill;
+         //   } else {
+         //      var mi = AddItem(mosaicType);
+         //      mi.ImageSize = size; //  restore
+         //   }
+         //}
+         //base.FillDataSource();
+      }
+
       protected override void FillDataSource() {
          foreach (var mosaicType in CurrentGroup.GetBind()) {
             AddItem(mosaicType);
-         }
-         base.FillDataSource();
-      }
-
-      private void ReloadDataSource() {
-         var size = ImageSize; // save
-         CurrentElement = null;
-         var dataSource = DataSourceInternal;
-         var newEntities = CurrentGroup.GetBind().ToList();
-         var max = Math.Max(dataSource.Count, newEntities.Count);
-         var min = Math.Min(dataSource.Count, newEntities.Count);
-         var remove = (dataSource.Count > newEntities.Count);
-         for (var i = 0; i < max; ++i) {
-            if ((i >= min) && remove) {
-               dataSource.RemoveAt(min);
-               continue;
-            }
-            var mosaicType = newEntities[i];
-            if (i < min) {
-               var mi = dataSource[i];
-               mi.UniqueId = mosaicType;
-               mi.SkillLevel = CurrentSkill;
-            } else {
-               var mi = AddItem(mosaicType);
-               mi.ImageSize = size; //  restore
-            }
          }
          base.FillDataSource();
       }

@@ -1,5 +1,4 @@
 using System.Linq;
-using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
