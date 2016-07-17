@@ -34,31 +34,39 @@ namespace fmg.DataModel.DataSources {
       }
 
       private void ReloadDataSource() {
-         DataSourceInternal.Clear();
-         FillDataSource();
-         //var size = ImageSize; // save
-         //CurrentElement = null;
-         //var dataSource = DataSourceInternal;
-         //var newEntities = CurrentGroup.GetBind().ToList();
-         //var max = Math.Max(dataSource.Count, newEntities.Count);
-         //var min = Math.Min(dataSource.Count, newEntities.Count);
-         //var remove = (dataSource.Count > newEntities.Count);
-         //for (var i = 0; i < max; ++i) {
-         //   if ((i >= min) && remove) {
-         //      dataSource.RemoveAt(min);
-         //      continue;
-         //   }
-         //   var mosaicType = newEntities[i];
-         //   if (i < min) {
-         //      var mi = dataSource[i];
-         //      mi.UniqueId = mosaicType;
-         //      mi.SkillLevel = CurrentSkill;
-         //   } else {
-         //      var mi = AddItem(mosaicType);
-         //      mi.ImageSize = size; //  restore
-         //   }
-         //}
-         //base.FillDataSource();
+         if (true) {
+            var size = ImageSize; // save
+            DataSourceInternal.Clear();
+            FillDataSource();
+            foreach (var mi in DataSourceInternal)
+               mi.ImageSize = size; //  restore
+         } else {
+            // Пытался не перегружать всё, а создавать только то, что нужно. Остальное - обновлять.
+            // Но не получилось - на xaml не всегда перерисовывалась картинка (где то затык с уведомлением?).
+            var size = ImageSize; // save
+            CurrentElement = null;
+            var dataSource = DataSourceInternal;
+            var newEntities = CurrentGroup.GetBind().ToList();
+            var max = Math.Max(dataSource.Count, newEntities.Count);
+            var min = Math.Min(dataSource.Count, newEntities.Count);
+            var remove = (dataSource.Count > newEntities.Count);
+            for (var i = 0; i < max; ++i) {
+               if ((i >= min) && remove) {
+                  dataSource.RemoveAt(min);
+                  continue;
+               }
+               var mosaicType = newEntities[i];
+               if (i < min) {
+                  var mi = dataSource[i];
+                  mi.UniqueId = mosaicType;
+                  mi.SkillLevel = CurrentSkill;
+               } else {
+                  var mi = AddItem(mosaicType);
+                  mi.ImageSize = size; //  restore
+               }
+            }
+            OnSelfPropertyChanged(nameof(DataSource));
+         }
       }
 
       protected override void FillDataSource() {
