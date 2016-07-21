@@ -31,7 +31,7 @@ final class TestDrawing {
    private static boolean bl() { return (r(2) == 1); } // random bool
    private static int np() { return (bl() ? -1 : +1); } // negative or positive
 
-   static <TEntity, TImage> void applyRandom(RotatedImg<TEntity, TImage> img) {
+   static <TImage> void applyRandom(RotatedImg<TImage> img) {
       int maxSize = (int)(SIZE/2.0 * 1.2);
       int minSize = (int)(maxSize * 0.8);
       img.setSize(new Size(minSize+r(maxSize-minSize), minSize+r(maxSize-minSize)));
@@ -42,7 +42,7 @@ final class TestDrawing {
       img.setBorderWidth(bl() ? 1 : 2);
 
       if (img instanceof PolarLightsImg) {
-         PolarLightsImg<TEntity, ?> plImg = (PolarLightsImg<TEntity, ?>)img;
+         PolarLightsImg<?> plImg = (PolarLightsImg<?>)img;
          plImg.setPolarLights(true);
       }
 
@@ -71,13 +71,13 @@ final class TestDrawing {
       }
    }
 
-   static <TEntity> void testApp(Function<Random, Pair<RotatedImg<TEntity, ?>, RotatedImg<TEntity, ?>>> funcGetImages) {
+   static void testApp(Function<Random, Pair<RotatedImg<?>, RotatedImg<?>>> funcGetImages) {
       new JFrame() {
          private static final long serialVersionUID = 1L;
          {
-            Pair<RotatedImg<TEntity, ?>, RotatedImg<TEntity, ?>> icoImg = funcGetImages.apply(rnd);
-            RotatedImg<TEntity, ?> img1 = icoImg.first;
-            RotatedImg<TEntity, ?> img2 = icoImg.second;
+            Pair<RotatedImg<?>, RotatedImg<?>> icoImg = funcGetImages.apply(rnd);
+            RotatedImg<?> img1 = icoImg.first;
+            RotatedImg<?> img2 = icoImg.second;
 
             setSize(SIZE+30, SIZE+50);
             setTitle("test paints " + img1.getClass().getName() + " & " + img2.getClass().getName());

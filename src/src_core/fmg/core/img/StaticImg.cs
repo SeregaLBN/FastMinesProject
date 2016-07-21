@@ -16,15 +16,13 @@ namespace fmg.core.img {
    }
 
    /// <summary> Abstract, platform independent, image characteristics </summary>
-   /// <typeparam name="T">the entity of image</typeparam>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class StaticImg<T, TImage> : NotifyPropertyChanged
+   public abstract class StaticImg<TImage> : NotifyPropertyChanged
       where TImage : class
    {
       public const int DefaultImageSize = 100;
 
-      protected StaticImg(T entity) {
-         _entity = entity;
+      protected StaticImg() {
          _size = new Size(DefaultImageSize, DefaultImageSize);
          _padding = new Bound((int)(DefaultImageSize * 0.05)); // 5%
       }
@@ -65,15 +63,6 @@ namespace fmg.core.img {
       }
       public int PaddingInt {
          set { Padding = new Bound(value); }
-      }
-
-      private T _entity;
-      public T Entity {
-         get { return _entity; }
-         set {
-            if (SetProperty(ref _entity, value))
-               Invalidate();
-         }
       }
 
       private enum EInvalidate {

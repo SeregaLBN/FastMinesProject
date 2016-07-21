@@ -10,18 +10,16 @@ import fmg.common.notyfier.NotifyPropertyChanged;
 /**
  * Abstract, platform independent, image characteristics
  *
- * @param <T> the entity of image
  * @param <TImage> plaform specific image
  **/
-public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged implements AutoCloseable {
+public abstract class StaticImg<TImage> extends NotifyPropertyChanged implements AutoCloseable {
 
    public static Consumer<Runnable> DEFERR_INVOKER;
 
    public static final Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
    public static final int DefaultImageSize = 100;
 
-   protected StaticImg(T entity) {
-      _entity = entity;
+   protected StaticImg() {
       _size = new Size(DefaultImageSize, DefaultImageSize);
       _padding = new Bound((int)(DefaultImageSize * 0.05)); // 5%
    }
@@ -33,7 +31,6 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
 
    public static final String PROPERTY_SIZE              = "Size";
    public static final String PROPERTY_PADDING           = "Padding";
-   public static final String PROPERTY_ENTITY            = "Entity";
    public static final String PROPERTY_IMAGE             = "Image";
    public static final String PROPERTY_BACKGROUND_COLOR  = "BackgroundColor";
    public static final String PROPERTY_BORDER_COLOR      = "BorderColor";
@@ -69,13 +66,6 @@ public abstract class StaticImg<T, TImage> extends NotifyPropertyChanged impleme
       if (setProperty(_padding, value, PROPERTY_PADDING)) {
          invalidate();
       }
-   }
-
-   public T _entity;
-   public T getEntity() { return _entity; }
-   public void setEntity(T value) {
-      if (setProperty(_entity, value, PROPERTY_ENTITY))
-         invalidate();
    }
 
    private enum EInvalidate {

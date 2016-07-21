@@ -2,15 +2,14 @@ using fmg.common;
 
 namespace fmg.core.img {
 
-   /// <summary> <see cref="RotatedImg{T, TImage}"/> with hue rotation effect.
+   /// <summary> <see cref="RotatedImg{TImage}"/> with hue rotation effect.
    /// Alters the color of an image by rotating its hue values.
    /// </summary>
-   /// <typeparam name="T">the entity of image</typeparam>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class PolarLightsImg<T, TImage> : RotatedImg<T, TImage>
+   public abstract class PolarLightsImg<TImage> : RotatedImg<TImage>
       where TImage : class
    {
-      protected PolarLightsImg(T entity) : base(entity) { }
+      //protected PolarLightsImg() : base() { }
 
       private bool _polarLights;
       /// <summary> shimmering filling </summary>

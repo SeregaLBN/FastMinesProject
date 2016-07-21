@@ -15,12 +15,17 @@ import fmg.data.controller.types.ESkillLevel;
  *
  * @param <TImage> plaform specific image
  */
-public abstract class AMosaicsSkillImg<TImage> extends RotatedImg<ESkillLevel, TImage> {
+public abstract class AMosaicsSkillImg<TImage> extends RotatedImg<TImage> {
 
-   protected AMosaicsSkillImg(ESkillLevel skill) { super(skill); }
+   protected AMosaicsSkillImg(ESkillLevel skill) {
+      _mosaicSkill = skill;
+   }
 
-   public ESkillLevel getMosaicSkill() { return getEntity(); }
-   public void setMosaicSkill(ESkillLevel value) { setEntity(value); }
+   public static final String PROPERTY_MOSAIC_SKILL = "MosaicSkill";
+
+   private ESkillLevel _mosaicSkill;
+   public ESkillLevel getMosaicSkill() { return _mosaicSkill; }
+   public void setMosaicSkill(ESkillLevel value) { setProperty(_mosaicSkill, value, PROPERTY_MOSAIC_SKILL); }
 
    protected Stream<Stream<PointDouble>> getCoords() {
       double sq = Math.min( // size inner square

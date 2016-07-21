@@ -7,14 +7,13 @@ import fmg.common.ui.ITimer;
 /**
  * {@link StaticImg} with rotated properties
  *
- * @param <T> the entity of image
  * @param <TImage> plaform specific image
  */
-public abstract class RotatedImg<T, TImage> extends StaticImg<T, TImage> {
+public abstract class RotatedImg<TImage> extends StaticImg<TImage> {
 
    public static Supplier<ITimer> TIMER_CREATOR;
 
-   protected RotatedImg(T entity) { super(entity); }
+//   protected RotatedImg() { super(); }
 
    public static final String PROPERTY_REDRAW_INTERVAL    = "RedrawInterval";
    public static final String PROPERTY_ROTATE             = "Rotate";

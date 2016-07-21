@@ -1,7 +1,6 @@
 using System;
 using Rect = Windows.Foundation.Rect;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Controls;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
@@ -11,7 +10,7 @@ using fmg.core.img;
 using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.uwp.draw.img.win2d;
-using StaticImg = fmg.core.img.StaticImg<object, object>;
+using StaticImg = fmg.core.img.StaticImg<object>;
 using LogoCanvasBmp = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 using LogoCanvasImgSrc = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
 using MosaicsSkillCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
@@ -127,7 +126,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          };
       }
 
-      private static void ApplyRandom<T, TImage>(RotatedImg<T, TImage> img, CanvasControl canvasControl)
+      private static void ApplyRandom<TImage>(RotatedImg<TImage> img, CanvasControl canvasControl)
          where TImage : DependencyObject, ICanvasResourceCreator
       {
          if (canvasControl != null) {
@@ -146,7 +145,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          img.RedrawInterval = 50;
          img.BorderWidth = Bl ? 1 : 2;
 
-         var plrImg = img as PolarLightsImg<T, TImage>;
+         var plrImg = img as PolarLightsImg<TImage>;
          if (plrImg != null) {
             plrImg.PolarLights = true;
          }

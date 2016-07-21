@@ -11,12 +11,17 @@ import fmg.core.types.EMosaicGroup;
  *
  * @param <TImage> plaform specific image
  */
-public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<EMosaicGroup, TImage> {
+public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
 
-   protected AMosaicsGroupImg(EMosaicGroup group) { super(group); }
+   protected AMosaicsGroupImg(EMosaicGroup group) {
+      _mosaicGroup = group;
+   }
 
-   public EMosaicGroup getMosaicGroup() { return getEntity(); }
-   public void setMosaicGroup(EMosaicGroup value) { setEntity(value); }
+   public static final String PROPERTY_MOSAIC_GROUP = "MosaicGroup";
+
+   private EMosaicGroup _mosaicGroup;
+   public EMosaicGroup getMosaicGroup() { return _mosaicGroup; }
+   public void setMosaicGroup(EMosaicGroup value) { setProperty(_mosaicGroup, value, PROPERTY_MOSAIC_GROUP); }
 
    protected Stream<PointDouble> getCoords() {
       double sq = Math.min( // size inner square

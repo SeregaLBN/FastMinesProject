@@ -9,13 +9,18 @@ namespace fmg.core.img {
 
    /// <summary> Abstract representable <see cref="ESkillLevel"/> as image </summary>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class AMosaicsSkillImg<TImage> : RotatedImg<ESkillLevel, TImage>
+   public abstract class AMosaicsSkillImg<TImage> : RotatedImg<TImage>
       where TImage : class
    {
-      protected AMosaicsSkillImg(ESkillLevel group)
-         : base(group) {}
+      protected AMosaicsSkillImg(ESkillLevel skill) {
+         _mosaicSkill = skill;
+      }
 
-      public ESkillLevel MosaicSkill => Entity;
+      private ESkillLevel _mosaicSkill;
+      public ESkillLevel MosaicSkill {
+         get { return _mosaicSkill; }
+         set { SetProperty(ref _mosaicSkill, value); }
+      }
 
       protected IEnumerable<IEnumerable<PointDouble>> GetCoords() {
          double sq = Math.Min( // size inner square

@@ -172,7 +172,7 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.<Object>testApp(rnd ->
+      TestDrawing.testApp(rnd ->
          new Pair<>(new Logo.Icon(), new Logo.Image())
       );
    }

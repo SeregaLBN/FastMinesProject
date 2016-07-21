@@ -8,7 +8,6 @@ using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
-using fmg.common.notyfier;
 
 namespace fmg.core.img {
 
@@ -17,15 +16,14 @@ namespace fmg.core.img {
    /// <typeparam name="TImage">plaform specific image</typeparam>
    /// <typeparam name="TPaintContext">see <see cref="PaintContext{TImage}"/></typeparam>
    /// <typeparam name="TImageInner">plaform specific image (see <see cref="PaintContext{TImage}"/>)</typeparam>
-   public abstract class AMosaicsImg<TPaintable, TImage, TPaintContext, TImageInner> : RotatedImg<EMosaic, TImage>, IMosaic<TPaintable, TImageInner, TPaintContext>
+   public abstract class AMosaicsImg<TPaintable, TImage, TPaintContext, TImageInner> : RotatedImg<TImage>, IMosaic<TPaintable, TImageInner, TPaintContext>
       where TPaintable : IPaintable
       where TImage : class
       where TImageInner : class
       where TPaintContext : PaintContext<TImageInner>
    {
-      protected AMosaicsImg(EMosaic mosaicType, Matrisize sizeField)
-         : base(mosaicType)
-      {
+      protected AMosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
+         _mosaicType = mosaicType;
          _sizeField = sizeField;
       }
 
@@ -34,14 +32,15 @@ namespace fmg.core.img {
          SomeCells
       }
 
+      private EMosaic _mosaicType;
       /// <summary>из каких фигур состоит мозаика поля</summary>
       public EMosaic MosaicType {
-         get { return Entity; }
+         get { return _mosaicType; }
          set {
-            if (value != Entity) {
-               var old = Entity;
-               Entity = value;
-               Dependency_MosaicType_As_Entity(value, old);
+            if (SetProperty(ref _mosaicType, value)) {
+               Area = 0;
+               _matrix.Clear();
+               CellAttr = null;
             }
          }
       }
@@ -152,10 +151,6 @@ namespace fmg.core.img {
          //LoggerSimple.Put($"OnSelfPropertyChanged: {Entity}: PropertyName={ev.PropertyName}");
          base.OnSelfPropertyChanged(ev);
          switch (ev.PropertyName) {
-         case nameof(this.Entity):
-            var ev2 = ev as PropertyChangedExEventArgs<EMosaic>;
-            Dependency_MosaicType_As_Entity(ev2?.NewValue, ev2?.OldValue);
-            break;
          case nameof(this.Size):
          case nameof(this.Padding):
             RecalcArea();
@@ -177,16 +172,6 @@ namespace fmg.core.img {
          if (_matrix.Any())
             foreach (var cell in Matrix)
                cell.Init();
-      }
-
-      void Dependency_MosaicType_As_Entity(EMosaic? newValue, EMosaic? oldValue) {
-         Area = 0;
-         _matrix.Clear();
-         CellAttr = null;
-         if ((newValue == null) || (oldValue == null))
-            OnSelfPropertyChanged(new PropertyChangedEventArgs(nameof(this.MosaicType)));
-         else
-            OnSelfPropertyChanged(new PropertyChangedExEventArgs<EMosaic>(newValue.Value, oldValue.Value, nameof(this.MosaicType)));
       }
       #endregion
 

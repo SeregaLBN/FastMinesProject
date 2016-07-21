@@ -127,7 +127,7 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.<EMosaicGroup>testApp(rnd -> {
+      TestDrawing.testApp(rnd -> {
          EMosaicGroup eGroup = EMosaicGroup.fromOrdinal(rnd.nextInt(EMosaicGroup.values().length));
          MosaicsGroupImg.Icon img1 = new MosaicsGroupImg.Icon(eGroup);
 

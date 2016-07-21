@@ -8,12 +8,18 @@ namespace fmg.core.img {
 
    /// <summary> Abstract representable <see cref="EMosaicGroup"/> as image </summary>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class AMosaicsGroupImg<TImage> : PolarLightsImg<EMosaicGroup, TImage>
+   public abstract class AMosaicsGroupImg<TImage> : PolarLightsImg<TImage>
       where TImage : class
    {
-      protected AMosaicsGroupImg(EMosaicGroup group) : base(group) {}
+      protected AMosaicsGroupImg(EMosaicGroup group) {
+         _mosaicGroup = group;
+      }
 
-      public EMosaicGroup MosaicGroup => Entity;
+      private EMosaicGroup _mosaicGroup;
+      public EMosaicGroup MosaicGroup {
+         get { return _mosaicGroup; }
+         set { SetProperty(ref _mosaicGroup, value); }
+      }
 
       protected IEnumerable<PointDouble> GetCoords() {
          double sq = Math.Min( // size inner square

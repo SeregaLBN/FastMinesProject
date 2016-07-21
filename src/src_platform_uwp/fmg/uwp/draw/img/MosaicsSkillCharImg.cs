@@ -3,12 +3,17 @@ using fmg.data.controller.types;
 namespace fmg.uwp.draw.img {
 
    /// <summary> representable <see cref="ESkillLevel"/> as CHAR </summary>
-   public class MosaicsSkillCharImg : core.img.StaticImg<ESkillLevel, string> {
+   public class MosaicsSkillCharImg : core.img.StaticImg<string> {
 
-      public MosaicsSkillCharImg(ESkillLevel group)
-         : base(group) {}
+      protected MosaicsSkillCharImg(ESkillLevel skill) {
+         _mosaicSkill = skill;
+      }
 
-      public ESkillLevel MosaicSkill => Entity;
+      private ESkillLevel _mosaicSkill;
+      public ESkillLevel MosaicSkill {
+         get { return _mosaicSkill; }
+         set { SetProperty(ref _mosaicSkill, value); }
+      }
 
       protected override void DrawBody() { }
 

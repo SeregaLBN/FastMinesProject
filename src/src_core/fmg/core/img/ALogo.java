@@ -8,7 +8,7 @@ import fmg.common.geom.PointDouble;
 import fmg.common.geom.util.FigureHelper;
 
 /** Abstract main logos image */
-public abstract class ALogo<TImage> extends PolarLightsImg<Object, TImage> {
+public abstract class ALogo<TImage> extends PolarLightsImg<TImage> {
 
    public enum ERotateMode {
       /** rotate image */
@@ -22,7 +22,6 @@ public abstract class ALogo<TImage> extends PolarLightsImg<Object, TImage> {
    }
 
    protected ALogo() {
-      super(0);
       setBackgroundColor(Color.Transparent);
    }
 

@@ -6,12 +6,11 @@ import fmg.common.HSV;
  * {@link RotatedImg} with hue rotation effect.
  * Alters the color of an image by rotating its hue values.
  *
- * @param <T> the entity of image
  * @param <TImage> plaform specific image
  */
-public abstract class PolarLightsImg<T, TImage> extends RotatedImg<T, TImage> {
+public abstract class PolarLightsImg<TImage> extends RotatedImg<TImage> {
 
-   protected PolarLightsImg(T entity) { super(entity); }
+//   protected PolarLightsImg() { super(); }
 
    public static final String PROPERTY_POLAR_LIGHTS = "PolarLights";
 

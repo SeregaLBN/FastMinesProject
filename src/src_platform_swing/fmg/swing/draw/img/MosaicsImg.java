@@ -362,7 +362,7 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.<EMosaic>testApp(rnd -> {
+      TestDrawing.testApp(rnd -> {
          EMosaic eMosaic = EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length));
          MosaicsImg.Icon img1 = new MosaicsImg.Icon(eMosaic, new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2)));
          img1.setRotateMode(ERotateMode.values()[rnd.nextInt(ERotateMode.values().length)]);

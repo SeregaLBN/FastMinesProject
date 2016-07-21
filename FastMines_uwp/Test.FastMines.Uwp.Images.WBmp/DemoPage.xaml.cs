@@ -31,7 +31,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          ApplyRandom(DemoImg4);
       }
 
-      private static void ApplyRandom<T>(RotatedImg<T, WriteableBitmap> img) {
+      private static void ApplyRandom(RotatedImg<WriteableBitmap> img) {
          img.SizeInt = 175 + R(50);
 
          img.Rotate = true;
@@ -39,7 +39,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          img.RedrawInterval = 50;
          img.BorderWidth = Bl ? 1 : 2;
 
-         var plrImg = img as PolarLightsImg<T, WriteableBitmap>;
+         var plrImg = img as PolarLightsImg<WriteableBitmap>;
          if (plrImg != null) {
             plrImg.PolarLights = true;
          }

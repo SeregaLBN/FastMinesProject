@@ -31,7 +31,7 @@ import fmg.core.types.EMosaic;
  * @param <TPaintContext> see {@link PaintContext}
  */
 public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintContext extends PaintContext<TImageInner>, TImageInner>
-      extends RotatedImg<EMosaic, TImage>
+      extends RotatedImg<TImage>
       implements IMosaic<TPaintable, TImageInner, TPaintContext>
 {
    public enum ERotateMode {
@@ -40,7 +40,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
    }
 
    protected AMosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
-      super(mosaicType);
+      _mosaicType = mosaicType;
       _sizeField = sizeField;
    }
 
@@ -53,15 +53,16 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
    public static final String PROPERTY_ROTATE_MODE      = "RotateMode";
    public static final String PROPERTY_ROTATED_ELEMENTS = "RotatedElements";
 
+   private EMosaic _mosaicType;
    /** из каких фигур состоит мозаика поля */
    @Override
-   public EMosaic getMosaicType() { return getEntity(); }
+   public EMosaic getMosaicType() { return _mosaicType; }
    @Override
    public void setMosaicType(EMosaic value) {
-      if (value != getEntity()) {
-         EMosaic old = getEntity();
-         setEntity(value);
-         dependency_MosaicType_As_Entity(value, old);
+      if (setProperty(_mosaicType, value, PROPERTY_MOSAIC_TYPE)) {
+         setArea(0);
+         _matrix.clear();
+         setCellAttr(null);
       }
    }
 
@@ -167,9 +168,6 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
       //LoggerSimple.Put("onSelfPropertyChanged: {0}: PropertyName={1}", Entity, ev.PropertyName);
       super.onSelfPropertyChanged(oldValue, newValue, propertyName);
       switch (propertyName) {
-      case PROPERTY_ENTITY:
-         dependency_MosaicType_As_Entity((EMosaic) newValue, (EMosaic) oldValue);
-         break;
       case PROPERTY_SIZE:
       case PROPERTY_PADDING:
          recalcArea();
@@ -191,13 +189,6 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
       if (!_matrix.isEmpty())
          for (BaseCell cell : getMatrix())
             cell.Init();
-   }
-
-   void dependency_MosaicType_As_Entity(EMosaic newValue, EMosaic oldValue) {
-      setArea(0);
-      _matrix.clear();
-      setCellAttr(null);
-      onSelfPropertyChanged(oldValue, newValue, PROPERTY_MOSAIC_TYPE);
    }
    ////////////// #endregion
 

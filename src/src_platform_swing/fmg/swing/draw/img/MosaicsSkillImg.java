@@ -129,7 +129,7 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.<ESkillLevel>testApp(rnd -> {
+      TestDrawing.testApp(rnd -> {
          ESkillLevel skill = ESkillLevel.fromOrdinal(rnd.nextInt(ESkillLevel.values().length));
          MosaicsSkillImg.Icon img1 = new MosaicsSkillImg.Icon(skill);
 

@@ -9,13 +9,12 @@ namespace fmg.core.img {
 
    }
 
-   /// <summary> <see cref="StaticImg{T, TImage}"/> with rotated properties </summary>
-   /// <typeparam name="T">the entity of image</typeparam>
+   /// <summary> <see cref="StaticImg{TImage}"/> with rotated properties </summary>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class RotatedImg<T, TImage> : StaticImg<T, TImage>
+   public abstract class RotatedImg<TImage> : StaticImg<TImage>
       where TImage : class
    {
-      protected RotatedImg(T entity) : base(entity) { }
+      //protected RotatedImg() : base() { }
 
       private long _redrawInterval = 100;
       /// <summary> frequency of redrawing (in milliseconds) </summary>
