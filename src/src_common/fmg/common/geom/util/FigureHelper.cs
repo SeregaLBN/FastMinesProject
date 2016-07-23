@@ -45,6 +45,33 @@ namespace fmg.common.geom.util {
                Select(a => GetPointOnCircleRadian(radius, a, center));
       }
 
+      /// <summary>
+      /// Анимация для преобразования простого N-многоугольника в M-многоугольник (где N &lt; M).
+      /// </summary>
+      /// <param name="n">кол-во вершин с которых начинается преобразование фигуры</param>
+      /// <param name="m">кол-во вершин к которой преобразовывается фигуру</param>
+      /// <param name="radius"></param>
+      /// <param name="center"></param>
+      /// <param name="incrementSpeedAngle">угловая скорость приращения: 0°..360°.
+      /// При 0°..180° - N стремится к M.
+      /// При 180°..360° - M стремится к N. </param>
+      /// <param name="offsetAngle"></param>
+      /// <returns></returns>
+      public static IEnumerable<PointDouble> GetFlowingToTheRightPolygonCoords(int n, int m, double radius, PointDouble center, double incrementSpeedAngle, double offsetAngle = 0) {
+         incrementSpeedAngle = incrementSpeedAngle.ToRadian();
+         offsetAngle = offsetAngle.ToRadian();
+         var angle = 2 * Math.PI / m; // 360° / m
+         var angleM = angle * Math.Sin(incrementSpeedAngle / 2); // 0(0°)..angle(180°)..0(360°)
+         System.Diagnostics.Debug.Assert(angleM >= 0, nameof(incrementSpeedAngle) + " parameter must have a value of 0°..360°");
+         var angleN = (360.0.ToRadian() - angleM * (m - n)) / n;
+         return Enumerable.Range(0, m).
+               Select(i => (i < n)
+                  ? i * angleN + offsetAngle                    // 0..n
+                  : n * angleN + (i - n) * angleM + offsetAngle // n..m
+               ).
+               Select(a => FigureHelper.GetPointOnCircleRadian(radius, a, center));
+      }
+
       /// <summary> https://en.wikipedia.org/wiki/Star_polygon
       /// Суть:
       ///  * два круга - внешний и внутр

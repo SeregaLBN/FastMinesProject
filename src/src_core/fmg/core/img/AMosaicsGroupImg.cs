@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using fmg.core.types;
 using fmg.common.geom;
 using fmg.common.geom.util;
+using System.Linq;
 
 namespace fmg.core.img {
 
@@ -29,7 +30,8 @@ namespace fmg.core.img {
          var center = new PointDouble(Width / 2.0, Height / 2.0);
          return (MosaicGroup != EMosaicGroup.eOthers)
             ? FigureHelper.GetRegularPolygonCoords(vertices, sq/2, center, RotateAngle)
-            : FigureHelper.GetRegularStarCoords(4, sq/2, sq/5, center, RotateAngle);
+          //: FigureHelper.GetRegularStarCoords(4, sq / 2, sq / 5, center, RotateAngle);
+            : FigureHelper.GetFlowingToTheRightPolygonCoords(3, vertices + 1, sq / 2, center, RotateAngle, RotateAngle);
       }
 
    }
