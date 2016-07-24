@@ -66,7 +66,8 @@ namespace fmg
                SelectMosaicPage.DefaultMosaicGroup = ds.CurrentElement.MosaicGroup;
             } else {
                smp.CurrentElement = null;
-               smp.CurrentMosaicGroup = ds.CurrentElement.MosaicGroup;
+               if (ds.CurrentElement != null)
+                  smp.CurrentMosaicGroup = ds.CurrentElement.MosaicGroup;
             }
             break;
          }

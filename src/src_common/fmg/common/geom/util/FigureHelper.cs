@@ -6,8 +6,11 @@ namespace fmg.common.geom.util {
 
    public static class FigureHelper {
 
-      public static double ToRadian(this double degreeAngle) {
-         return degreeAngle * Math.PI / 180; // to radians
+      public static double ToRadian(this double degreesAngle) {
+         return degreesAngle * Math.PI / 180;
+      }
+      public static double ToDegrees(this double radianAngle) {
+         return radianAngle * 180 / Math.PI;
       }
 
       /// <summary> Получить координаты точки на периметре круга </summary>
@@ -22,11 +25,11 @@ namespace fmg.common.geom.util {
 
       /// <summary> Получить координаты точки на периметре круга </summary>
       /// <param name="radius">радиус круга</param>
-      /// <param name="degreeAngle">угол: -360° .. 0° .. +360°</param>
+      /// <param name="degreesAngle">угол: -360° .. 0° .. +360°</param>
       /// <param name="center">центр круга</param>
       /// <returns>координаты точки на круге</returns>
-      public static PointDouble GetPointOnCircle(double radius, double degreeAngle, PointDouble center) {
-         return GetPointOnCircleRadian(radius, degreeAngle.ToRadian(), center);
+      public static PointDouble GetPointOnCircle(double radius, double degreesAngle, PointDouble center) {
+         return GetPointOnCircleRadian(radius, degreesAngle.ToRadian(), center);
       }
 
       /// <summary> https://en.wikipedia.org/wiki/Regular_polygon
@@ -35,7 +38,7 @@ namespace fmg.common.geom.util {
       /// <param name="n">edges / vertices</param>
       /// <param name="radius"></param>
       /// <param name="center">центр фигуры</param>
-      /// <param name="offsetAngle">-360° .. 0° .. +360°</param>
+      /// <param name="offsetAngle">additional rotation angle in degrees: -360° .. 0° .. +360°</param>
       /// <returns>координаты правильного многоугольника</returns>
       public static IEnumerable<PointDouble> GetRegularPolygonCoords(int n, double radius, PointDouble center, double offsetAngle = 0) {
          var angle = 2*Math.PI/n; // 360° / n
@@ -55,7 +58,7 @@ namespace fmg.common.geom.util {
       /// <param name="incrementSpeedAngle">угловая скорость приращения: 0°..360°.
       /// При 0°..180° - N стремится к M.
       /// При 180°..360° - M стремится к N. </param>
-      /// <param name="offsetAngle"></param>
+      /// <param name="offsetAngle">additional rotation angle in degrees: -360° .. 0° .. +360°</param>
       /// <returns></returns>
       public static IEnumerable<PointDouble> GetFlowingToTheRightPolygonCoords(int n, int m, double radius, PointDouble center, double incrementSpeedAngle, double offsetAngle = 0) {
          incrementSpeedAngle = incrementSpeedAngle.ToRadian();
@@ -69,7 +72,7 @@ namespace fmg.common.geom.util {
                   ? i * angleN + offsetAngle                    // 0..n
                   : n * angleN + (i - n) * angleM + offsetAngle // n..m
                ).
-               Select(a => FigureHelper.GetPointOnCircleRadian(radius, a, center));
+               Select(a => GetPointOnCircleRadian(radius, a, center));
       }
 
       /// <summary> https://en.wikipedia.org/wiki/Star_polygon
@@ -84,7 +87,7 @@ namespace fmg.common.geom.util {
       /// <param name="radiusOut">external radius</param>
       /// <param name="radiusIn">internal radius</param>
       /// <param name="center">центр фигуры</param>
-      /// <param name="offsetAngle">-360° .. 0° .. +360°</param>
+      /// <param name="offsetAngle">additional rotation angle in degrees: -360° .. 0° .. +360°</param>
       /// <returns>координаты правильной звезды</returns>
       public static IEnumerable<PointDouble> GetRegularStarCoords(int rays, double radiusOut, double radiusIn, PointDouble center, double offsetAngle = 0) {
          var pointsExt = GetRegularPolygonCoords(rays, radiusOut, center, offsetAngle);
@@ -117,7 +120,7 @@ namespace fmg.common.geom.util {
       /// <param name="angle">angle of rotation: -360° .. 0° .. +360°</param>
       /// <param name="center">центр фигуры</param>
       /// <param name="additionalDeltaOffset">дополнительное смещение координат</param>
-      public static void Rotate(this IList<PointDouble> coords, double angle, PointDouble center, PointDouble additionalDeltaOffset= default(PointDouble)) {
+      public static void RotateList(this IList<PointDouble> coords, double angle, PointDouble center, PointDouble additionalDeltaOffset = default(PointDouble)) {
          angle = angle.ToRadian();
          var cos = Math.Cos(angle);
          var sin = Math.Sin(angle);
@@ -133,5 +136,35 @@ namespace fmg.common.geom.util {
          }
       }
 
+      /// <summary>
+      /// Повернуть / выровнять заданную фигуру по указанной грани относительно X координаты.
+      /// </summary>
+      /// <param name="coords">Фигура заданная координатами</param>
+      /// <param name="sideNum">Номер грани фигуры (начиная с 1)</param>
+      /// <param name="center">центр вращения</param>
+      /// <param name="alignmentAngle">угол на который необходимо выровнять (в градусах)</param>
+      /// <returns>Координаты выровняной фигуры</returns>
+      public static IEnumerable<PointDouble> RotateBySide(this IEnumerable<PointDouble> coords, int sideNum, PointDouble center, double alignmentAngle = 0) {
+         var list = coords.ToList();
+         var p1 = list[sideNum - 1];
+         var p2 = list[sideNum];
+
+         var dx = p2.X - p1.X; // cathetus x
+         var dy = p2.Y - p1.Y; // cathetus y
+         var h = Math.Sqrt(dx * dx + dy * dy); // hypotenuse
+
+         var cos = dx / h;
+         var angle = Math.Acos(cos).ToDegrees();
+         if (angle < 0)
+            angle += 360;
+         if (dy < 0)
+            angle = 360 - angle;
+
+         //LoggerSimple.Put($"vector=[{dx:0.00},{dy:0.00}]; cos={cos:0.000000}; angle={angle:0.00}");
+
+         return list.Rotate(-angle + alignmentAngle, center);
+      }
+
    }
+
 }

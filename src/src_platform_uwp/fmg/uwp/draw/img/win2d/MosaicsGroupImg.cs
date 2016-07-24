@@ -60,6 +60,13 @@ namespace fmg.uwp.draw.img.win2d {
                }
             }
          }
+
+#if DEBUG
+         //// test
+         //using (var ctf = new Microsoft.Graphics.Canvas.Text.CanvasTextFormat { FontSize = 25 }) {
+         //   ds.DrawText(string.Format($"{RotateAngle:0.##}"), 0f, 0f, Color.Black.ToWinColor(), ctf);
+         //}
+#endif
       }
 
       /////////////////////////////////////////////////////////////////////////////////////////////////////

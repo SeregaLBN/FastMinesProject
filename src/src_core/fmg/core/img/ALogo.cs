@@ -83,9 +83,9 @@ namespace fmg.core.img {
 
          if (RotateMode != ERotateMode.Color) {
             var ra = RotateAngle;
-            rays.Rotate(ra, center, none);
-            inn.Rotate(ra, center, none);
-            oct.Rotate(ra, center, none);
+            rays.RotateList(ra, center, none);
+            inn.RotateList(ra, center, none);
+            oct.RotateList(ra, center, none);
          }
       }
 

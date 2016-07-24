@@ -200,7 +200,7 @@ namespace fmg.core.img {
          var center = new PointDouble(Width / 2.0 - _paddingFull.Left, Height / 2.0 - _paddingFull.Top);
          foreach (var cell in Matrix) {
             cell.Init(); // restore base coords
-            cell.getRegion().Points.Rotate(RotateAngle, center);
+            cell.getRegion().Points.RotateList(RotateAngle, center);
          }
       }
 
@@ -252,7 +252,7 @@ namespace fmg.core.img {
             cell.Init();
             var centerNew = cell.getCenter();
             var delta = new PointDouble(center.X - centerNew.X, center.Y - centerNew.Y);
-            cell.getRegion().Points.Rotate((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, centerNew, delta); // TODO: centerNew to replace center and look result changes...
+            cell.getRegion().Points.RotateList((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, centerNew, delta); // TODO: centerNew to replace center and look result changes...
 
             // restore
             attr.Area = area;

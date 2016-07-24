@@ -25,7 +25,7 @@ namespace fmg.common.geom {
       }
 
       public override string ToString() {
-         return "{x:" + X + ", y:" + Y + "}";
+         return string.Format("{{x:{0:0.00}, y:{1:0.00}}}", X, Y);
       }
 
       public PointDouble Move(SizeDouble s) { return Move(s.Width, s.Height); }
