@@ -217,7 +217,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
       for (BaseCell cell : getMatrix()) {
          cell.Init(); // restore base coords
 
-         FigureHelper.rotate(cell.getRegion().getPoints(), getRotateAngle(), center, new PointDouble());
+         FigureHelper.rotateCollection(cell.getRegion().getPoints(), getRotateAngle(), center, new PointDouble());
       }
    }
 
@@ -268,7 +268,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
          cell.Init();
          PointDouble centerNew = cell.getCenter();
          PointDouble delta = new PointDouble(center.x - centerNew.x, center.y - centerNew.y);
-         FigureHelper.rotate(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, centerNew, delta); // TODO: centerNew to replace center and look result changes...
+         FigureHelper.rotateCollection(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, centerNew, delta); // TODO: centerNew to replace center and look result changes...
 
          // restore
          attr.setArea(area);

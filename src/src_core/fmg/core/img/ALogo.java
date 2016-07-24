@@ -86,9 +86,9 @@ public abstract class ALogo<TImage> extends PolarLightsImg<TImage> {
 
       if (getRotateMode() != ERotateMode.color) {
          double ra = getRotateAngle();
-         FigureHelper.rotate(rays, ra, center, none);
-         FigureHelper.rotate(inn, ra, center, none);
-         FigureHelper.rotate(oct, ra, center, none);
+         FigureHelper.rotateCollection(rays, ra, center, none);
+         FigureHelper.rotateCollection(inn, ra, center, none);
+         FigureHelper.rotateCollection(oct, ra, center, none);
       }
    }
 

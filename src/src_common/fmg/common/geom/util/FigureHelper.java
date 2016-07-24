@@ -102,7 +102,7 @@ public final class FigureHelper {
     * @param center центр фигуры
     * @param additionalDeltaOffset дополнительное смещение координат
     */
-   public static void rotate(Collection<PointDouble> coords, double angle, PointDouble center, PointDouble additionalDeltaOffset) {
+   public static void rotateCollection(Collection<PointDouble> coords, double angle, PointDouble center, PointDouble additionalDeltaOffset) {
       angle = toRadian(angle);
       double cos = Math.cos(angle);
       double sin = Math.sin(angle);
