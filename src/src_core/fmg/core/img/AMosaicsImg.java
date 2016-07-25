@@ -223,6 +223,8 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
 
    /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
 
+   private boolean rotateCellSubMode;
+
    protected static final class RotatedCellContext {
       public RotatedCellContext(int index, double angleOffset, double area) {
          this.index = index;
@@ -268,7 +270,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
          cell.Init();
          PointDouble centerNew = cell.getCenter();
          PointDouble delta = new PointDouble(center.x - centerNew.x, center.y - centerNew.y);
-         FigureHelper.rotateCollection(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, centerNew, delta); // TODO: centerNew to replace center and look result changes...
+         FigureHelper.rotateCollection(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, rotateCellSubMode ? center : centerNew, delta);
 
          // restore
          attr.setArea(area);
@@ -362,6 +364,8 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
          toRemove.forEach(cntxt -> {
                            matrix.get(cntxt.index).Init(); // restore original region coords
                            _rotatedElements.remove(cntxt);
+                           if (_rotatedElements.isEmpty())
+                              rotateCellSubMode = !rotateCellSubMode;
                            addRandomToPrepareList(false, rand);
                         });
          onSelfPropertyChanged(PROPERTY_ROTATED_ELEMENTS);

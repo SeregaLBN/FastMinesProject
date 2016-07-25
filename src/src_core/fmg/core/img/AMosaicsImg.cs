@@ -208,6 +208,8 @@ namespace fmg.core.img {
 
       #region PART ERotateMode.SomeCells
 
+      private bool rotateCellSubMode;
+
       protected class RotatedCellContext {
          public RotatedCellContext(int index, double angleOffset, double area) {
             this.index = index;
@@ -252,7 +254,7 @@ namespace fmg.core.img {
             cell.Init();
             var centerNew = cell.getCenter();
             var delta = new PointDouble(center.X - centerNew.X, center.Y - centerNew.Y);
-            cell.getRegion().Points.RotateList((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, centerNew, delta); // TODO: centerNew to replace center and look result changes...
+            cell.getRegion().Points.RotateList((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, rotateCellSubMode ? center : centerNew, delta);
 
             // restore
             attr.Area = area;
@@ -344,9 +346,11 @@ namespace fmg.core.img {
             }
          }
          if (toRemove != null) {
-            foreach (var cntxt in toRemove ) {
+            foreach (var cntxt in toRemove) {
                Matrix[cntxt.index].Init(); // restore original region coords
                RotatedElements.Remove(cntxt);
+               if (!RotatedElements.Any())
+                  rotateCellSubMode = !rotateCellSubMode;
                AddRandomToPrepareList(false, rand);
             }
             OnSelfPropertyChanged(nameof(this.RotatedElements));
