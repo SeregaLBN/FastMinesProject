@@ -34,14 +34,11 @@ namespace fmg.core.img {
          //return FigureHelper.GetRegularStarCoords(4, sq / 2, sq / 5, center, RotateAngle);
          //return FigureHelper.GetFlowingToTheRightPolygonCoords(3, vertices + 1, sq / 2, center, RotateAngle, RotateAngle);
          //return FigureHelper.GetFlowingToTheRightPolygonCoords(3, vertices + 1, sq / 2, center, RotateAngle, 0).RotateBySide(2, center, 0);
-         var n = _nToMarray[_nToMindex];
-         var m = ((_nToMindex+1) < _nToMarray.Length) ? _nToMarray[_nToMindex+1] : _nToMarray[0];
-         if (n > m) {
-            var tmp = m;
-            m = n;
-            n = tmp;
-         }
-         return FigureHelper.GetFlowingToTheRightPolygonCoords(n, m, sq / 2, center, _incrementSpeedAngle, 0).RotateBySide(2, center, 0);
+         var n = _n_to_m_array[_n_to_m_index];
+         var m = _n_to_m_array[(_n_to_m_index+1) % _n_to_m_array.Length];
+         if (_incrementSpeedAngle >= 180)
+            n = m;
+         return FigureHelper.GetFlowingToTheRightPolygonCoords(n, m, sq / 2, center, _incrementSpeedAngle, 0);//.RotateBySide(2, center, 0);
       }
 
       protected Tuple<IEnumerable<PointDouble>, IEnumerable<PointDouble>> GetDoubleCoords() {
@@ -55,8 +52,8 @@ namespace fmg.core.img {
             FigureHelper.GetFlowingToTheRightPolygonCoords(3, vertices + 1, sq / 2, center, RotateAngle, 0).RotateBySide(2, center, 0));
       }
 
-      private int[] _nToMarray = { 3, 3, 4, 4, 6, 6 };
-      private int _nToMindex = 1;
+      private int[] _n_to_m_array = { 3, 4, 6 };
+      private int _n_to_m_index = 0;
       private double _incrementSpeedAngle;
 
       protected override void OnTimer() {
@@ -73,11 +70,8 @@ namespace fmg.core.img {
                }
             }
             _incrementSpeedAngle = incrementSpeedAngle;
-            if (castling) {
-               ++_nToMindex;
-               if (_nToMindex >= _nToMarray.Length)
-                  _nToMindex = 0;
-            }
+            if (castling)
+               _n_to_m_index = ++_n_to_m_index % _n_to_m_array.Length;
          }
          base.OnTimer();
       }

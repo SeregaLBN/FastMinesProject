@@ -61,6 +61,14 @@ namespace fmg.common.geom.util {
       /// <param name="offsetAngle">additional rotation angle in degrees: -360° .. 0° .. +360°</param>
       /// <returns></returns>
       public static IEnumerable<PointDouble> GetFlowingToTheRightPolygonCoords(int n, int m, double radius, PointDouble center, double incrementSpeedAngle, double offsetAngle = 0) {
+         if (n > m) {
+            var tmp = m;
+            m = n;
+            n = tmp;
+            incrementSpeedAngle += 180;
+            if (incrementSpeedAngle >= 360)
+               incrementSpeedAngle -= 360;
+         }
          incrementSpeedAngle = incrementSpeedAngle.ToRadian();
          offsetAngle = offsetAngle.ToRadian();
          var angle = 2 * Math.PI / m; // 360° / m
