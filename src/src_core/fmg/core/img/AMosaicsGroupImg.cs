@@ -34,10 +34,8 @@ namespace fmg.core.img {
          //return FigureHelper.GetRegularStarCoords(4, sq / 2, sq / 5, center, RotateAngle);
          //return FigureHelper.GetFlowingToTheRightPolygonCoords(3, vertices + 1, sq / 2, center, RotateAngle, RotateAngle);
          //return FigureHelper.GetFlowingToTheRightPolygonCoords(3, vertices + 1, sq / 2, center, RotateAngle, 0).RotateBySide(2, center, 0);
-         var n = _n_to_m_array[_n_to_m_index];
          var m = _n_to_m_array[(_n_to_m_index+1) % _n_to_m_array.Length];
-         if (_incrementSpeedAngle >= 180)
-            n = m;
+         var n = (_incrementSpeedAngle >= 180) ? m : _n_to_m_array[_n_to_m_index];
          return FigureHelper.GetFlowingToTheRightPolygonCoords(n, m, sq / 2, center, _incrementSpeedAngle, 0);//.RotateBySide(2, center, 0);
       }
 
@@ -52,7 +50,7 @@ namespace fmg.core.img {
             FigureHelper.GetFlowingToTheRightPolygonCoords(3, vertices + 1, sq / 2, center, RotateAngle, 0).RotateBySide(2, center, 0));
       }
 
-      private int[] _n_to_m_array = { 3, 4, 6 };
+      private readonly int[] _n_to_m_array = { 3, 4, 6 }; //  triangle -> quadrangle -> hexagon -> anew triangle -> ...
       private int _n_to_m_index = 0;
       private double _incrementSpeedAngle;
 
