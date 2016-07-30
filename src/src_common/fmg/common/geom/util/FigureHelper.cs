@@ -49,7 +49,8 @@ namespace fmg.common.geom.util {
       }
 
       /// <summary>
-      /// Анимация для преобразования простого N-многоугольника в M-многоугольник (где N &lt; M).
+      /// Очередной шаг анимации преобразования простого N-многоугольника в M-многоугольник (где N &lt; M).
+      /// Вся анимация - при изменении параметра incrementSpeedAngle от 0° до 360°
       /// </summary>
       /// <param name="n">кол-во вершин с которых начинается преобразование фигуры</param>
       /// <param name="m">кол-во вершин к которой преобразовывается фигуру</param>
@@ -107,18 +108,18 @@ namespace fmg.common.geom.util {
       /// <param name="coords">coordinates for transformation</param>
       /// <param name="angle">angle of rotation: -360° .. 0° .. +360°</param>
       /// <param name="center">центр фигуры</param>
-      /// <param name="additionalDeltaOffset">дополнительное смещение координат</param>
       /// <returns>new rotated points</returns>
-      public static IEnumerable<PointDouble> Rotate(this IEnumerable<PointDouble> coords, double angle, PointDouble center, PointDouble additionalDeltaOffset = default(PointDouble)) {
+      public static IEnumerable<PointDouble> Rotate(this IEnumerable<PointDouble> coords, double angle, PointDouble center) {
          angle = angle.ToRadian();
          var cos = Math.Cos(angle);
          var sin = Math.Sin(angle);
-         return coords.Select(p => { //new PointDouble(i.X*cos - i.Y*sin, i.X*sin + i.Y*cos));
-            p = new PointDouble(p.X - center.X, p.Y - center.Y);
+         return coords.Select(p => {
+            p.X -= center.X;
+            p.Y -= center.Y;
             var x = (p.X * cos) - (p.Y * sin);
             var y = (p.X * sin) + (p.Y * cos);
-            p.X = x + center.X + additionalDeltaOffset.X;
-            p.Y = y + center.Y + additionalDeltaOffset.Y;
+            p.X = x + center.X;
+            p.Y = y + center.Y;
             return p;
          });
       }
@@ -127,21 +128,41 @@ namespace fmg.common.geom.util {
       /// <param name="coords">coordinates for transformation</param>
       /// <param name="angle">angle of rotation: -360° .. 0° .. +360°</param>
       /// <param name="center">центр фигуры</param>
-      /// <param name="additionalDeltaOffset">дополнительное смещение координат</param>
-      public static void RotateList(this IList<PointDouble> coords, double angle, PointDouble center, PointDouble additionalDeltaOffset = default(PointDouble)) {
+      public static IList<PointDouble> RotateList(this IList<PointDouble> coords, double angle, PointDouble center) {
          angle = angle.ToRadian();
          var cos = Math.Cos(angle);
          var sin = Math.Sin(angle);
-         for (var i=0; i<coords.Count; ++i) {
+         for (var i = 0; i < coords.Count; ++i) {
             var p = coords[i];
             p.X -= center.X;
             p.Y -= center.Y;
             var x = (p.X * cos) - (p.Y * sin);
             var y = (p.X * sin) + (p.Y * cos);
-            p.X = x + center.X + additionalDeltaOffset.X;
-            p.Y = y + center.Y + additionalDeltaOffset.Y;
+            p.X = x + center.X;
+            p.Y = y + center.Y;
             coords[i] = p;
          }
+         return coords;
+      }
+
+      /// <summary> adds an offset to each point </summary>
+      public static IEnumerable<PointDouble> Move(this IEnumerable<PointDouble> coords, PointDouble offset) {
+         return coords.Select(p => {
+            p.X += offset.X;
+            p.Y += offset.Y;
+            return p;
+         });
+      }
+
+      /// <summary> adds an offset to each point. !!Modify existed collection!! </summary>
+      public static IList<PointDouble> MoveList(this IList<PointDouble> coords, PointDouble offset) {
+         for (var i = 0; i < coords.Count; ++i) {
+            var p = coords[i];
+            p.X += offset.X;
+            p.Y += offset.Y;
+            coords[i] = p;
+         }
+         return coords;
       }
 
       /// <summary>

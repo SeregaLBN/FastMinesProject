@@ -10,6 +10,8 @@ using fmg.core.img;
 using fmg.uwp.utils;
 using fmg.uwp.utils.win2d;
 using fmg.uwp.draw.mosaic.win2d;
+using fmg.common.geom;
+using System.Collections.Generic;
 
 namespace fmg.uwp.draw.img.win2d {
 
@@ -33,12 +35,28 @@ namespace fmg.uwp.draw.img.win2d {
       }
 
       protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
-         ICanvasResourceCreator rc = Image;
-
          if (fillBk)
             ds.Clear(BackgroundColor.ToWinColor());
 
-         var points = GetCoords().ToArray();
+         if (MosaicGroup != EMosaicGroup.eOthers) {
+            DrawBody(ds, GetCoords());
+         } else {
+            var coords = GetDoubleCoords();
+            DrawBody(ds, coords.Item1);
+            DrawBody(ds, coords.Item2);
+         }
+#if DEBUG
+         //// test
+         //using (var ctf = new Microsoft.Graphics.Canvas.Text.CanvasTextFormat { FontSize = 25 }) {
+         //   ds.DrawText(string.Format($"{RotateAngle:0.##}"), 0f, 0f, Color.Black.ToWinColor(), ctf);
+         //}
+#endif
+      }
+
+      private void DrawBody(CanvasDrawingSession ds, IEnumerable<PointDouble> coords) {
+         ICanvasResourceCreator rc = Image;
+
+         var points = coords.ToArray();
          using (var geom = rc.BuildLines(points)) {
             ds.FillGeometry(geom, ForegroundColor.ToWinColor());
          }
@@ -60,13 +78,6 @@ namespace fmg.uwp.draw.img.win2d {
                }
             }
          }
-
-#if DEBUG
-         //// test
-         //using (var ctf = new Microsoft.Graphics.Canvas.Text.CanvasTextFormat { FontSize = 25 }) {
-         //   ds.DrawText(string.Format($"{RotateAngle:0.##}"), 0f, 0f, Color.Black.ToWinColor(), ctf);
-         //}
-#endif
       }
 
       /////////////////////////////////////////////////////////////////////////////////////////////////////

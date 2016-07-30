@@ -49,7 +49,6 @@ namespace fmg.core.img {
          var zx = ZoomX;
          var zy = ZoomY;
          var center = new PointDouble(Width / 2.0, Height / 2.0);
-         var none = new PointDouble();
 
          rays.Clear();
          rays.Add(new PointDouble(pl + 100.0000 * zx, pt + 200.0000 * zy));
@@ -83,9 +82,9 @@ namespace fmg.core.img {
 
          if (RotateMode != ERotateMode.Color) {
             var ra = RotateAngle;
-            rays.RotateList(ra, center, none);
-            inn.RotateList(ra, center, none);
-            oct.RotateList(ra, center, none);
+            rays.RotateList(ra, center);
+            inn.RotateList(ra, center);
+            oct.RotateList(ra, center);
          }
       }
 

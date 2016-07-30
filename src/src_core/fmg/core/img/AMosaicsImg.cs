@@ -254,7 +254,9 @@ namespace fmg.core.img {
             cell.Init();
             var centerNew = cell.getCenter();
             var delta = new PointDouble(center.X - centerNew.X, center.Y - centerNew.Y);
-            cell.getRegion().Points.RotateList((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, rotateCellSubMode ? center : centerNew, delta);
+            cell.getRegion().Points
+               .RotateList((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, rotateCellSubMode ? center : centerNew)
+               .MoveList(delta);
 
             // restore
             attr.Area = area;
