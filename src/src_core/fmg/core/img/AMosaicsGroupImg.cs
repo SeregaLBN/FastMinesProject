@@ -54,13 +54,13 @@ namespace fmg.core.img {
          var m2 = _nmArray[(_nmIndex2 + 1) % _nmArray.Length];
          var n2 = (isa >= 180) ? m2 : _nmArray[_nmIndex2];
          var ra = RotateAngle;
-         var radius = sq / 4;
 
          var sideNum = 2;
-         var res1 = FigureHelper.GetFlowingToTheRightPolygonCoords(n1, m1, radius, center, isa, 0)
+         var sizeSide = sq / 4;
+         var res1 = FigureHelper.GetFlowingToTheRightPolygonCoords2(n1, m1, sizeSide, sideNum, center, isa, 0)
                   .RotateBySide(sideNum, center, ra)
                   .ToList();
-         var res2 = FigureHelper.GetFlowingToTheRightPolygonCoords(n2, m2, radius, center, isa, 0)
+         var res2 = FigureHelper.GetFlowingToTheRightPolygonCoords2(n2, m2, sizeSide, sideNum, center, isa, 0)
                   .RotateBySide(sideNum, center, ra+180)
                   .ToList();
          var p11 = res1[sideNum - 1]; var p12 = res1[sideNum];

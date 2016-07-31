@@ -39,11 +39,11 @@ namespace fmg.uwp.draw.img.win2d {
             ds.Clear(BackgroundColor.ToWinColor());
 
          if (MosaicGroup != EMosaicGroup.eOthers) {
-            DrawBody(ds, GetCoords());
+            DrawBody(ds, GetCoords(), 0);
          } else {
             var coords = GetDoubleCoords();
-            DrawBody(ds, coords.Item1);
-            DrawBody(ds, coords.Item2);
+            DrawBody(ds, coords.Item1, 0);
+            DrawBody(ds, coords.Item2, 180);
          }
 #if DEBUG
          //// test
@@ -53,12 +53,18 @@ namespace fmg.uwp.draw.img.win2d {
 #endif
       }
 
-      private void DrawBody(CanvasDrawingSession ds, IEnumerable<PointDouble> coords) {
+      private void DrawBody(CanvasDrawingSession ds, IEnumerable<PointDouble> coords, double addonToRotateColor) {
          ICanvasResourceCreator rc = Image;
 
          var points = coords.ToArray();
          using (var geom = rc.BuildLines(points)) {
-            ds.FillGeometry(geom, ForegroundColor.ToWinColor());
+            if (addonToRotateColor.HasMinDiff(0))
+               ds.FillGeometry(geom, ForegroundColor.ToWinColor());
+            else {
+               var hsv = new HSV(ForegroundColor);
+               hsv.h += addonToRotateColor;
+               ds.FillGeometry(geom, hsv.ToColor().ToWinColor());
+            }
          }
 
          // draw perimeter border

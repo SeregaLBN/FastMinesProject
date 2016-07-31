@@ -70,17 +70,67 @@ namespace fmg.common.geom.util {
             if (incrementSpeedAngle >= 360)
                incrementSpeedAngle -= 360;
          }
+         System.Diagnostics.Debug.Assert(n > 2);
          incrementSpeedAngle = incrementSpeedAngle.ToRadian();
          offsetAngle = offsetAngle.ToRadian();
          var angle = 2 * Math.PI / m; // 360° / m
          var angleM = angle * Math.Sin(incrementSpeedAngle / 2); // 0(0°)..angle(180°)..0(360°)
          System.Diagnostics.Debug.Assert(angleM >= 0, nameof(incrementSpeedAngle) + " parameter must have a value of 0°..360°");
-         var angleN = (360.0.ToRadian() - angleM * (m - n)) / n;
+         var angleN = (2 * Math.PI - angleM * (m - n)) / n;
          return Enumerable.Range(0, m).
                Select(i => (i < n)
                   ? i * angleN + offsetAngle                    // 0..n
                   : n * angleN + (i - n) * angleM + offsetAngle // n..m
                ).
+               Select(a => GetPointOnCircleRadian(radius, a, center));
+      }
+
+      /// <summary>
+      /// Очередной шаг анимации преобразования простого N-многоугольника в M-многоугольник (где N &lt; M).
+      /// Вся анимация - при изменении параметра incrementSpeedAngle от 0° до 360°
+      /// </summary>
+      /// <param name="n">кол-во вершин с которых начинается преобразование фигуры</param>
+      /// <param name="m">кол-во вершин к которой преобразовывается фигуру</param>
+      /// <param name="sizeSide">размер стороны многоугольника</param>
+      /// <param name="sideNum">номер грани многоугольника, длина которой должен быть постоянным</param>
+      /// <param name="center"></param>
+      /// <param name="incrementSpeedAngle">угловая скорость приращения: 0°..360°.
+      /// При 0°..180° - N стремится к M.
+      /// При 180°..360° - M стремится к N. </param>
+      /// <param name="offsetAngle">additional rotation angle in degrees: -360° .. 0° .. +360°</param>
+      /// <returns></returns>
+      public static IEnumerable<PointDouble> GetFlowingToTheRightPolygonCoords2(int n, int m, double sizeSide, int sideNum, PointDouble center, double incrementSpeedAngle, double offsetAngle = 0) {
+         if (n > m) {
+            var tmp = m;
+            m = n;
+            n = tmp;
+            incrementSpeedAngle += 180;
+            if (incrementSpeedAngle >= 360)
+               incrementSpeedAngle -= 360;
+         }
+         System.Diagnostics.Debug.Assert(n > 2);
+         System.Diagnostics.Debug.Assert(sideNum <= n);
+         incrementSpeedAngle = incrementSpeedAngle.ToRadian();
+         offsetAngle = offsetAngle.ToRadian();
+         var angle = 2 * Math.PI / m; // 360° / m
+         var radius = sizeSide * Math.Sin((Math.PI - angle) / 2) / Math.Sin(angle); // from formula 'Law of sines':   sizeSide/sin(angle) == radius/sin((180°-angle)/2)
+         var angleM = angle * Math.Sin(incrementSpeedAngle / 2); // 0(0°)..angle(180°)..0(360°)
+         System.Diagnostics.Debug.Assert(angleM >= 0, nameof(incrementSpeedAngle) + " parameter must have a value of 0°..360°");
+         var angleN = (2 * Math.PI - angleM * (m - n) - angle) / (n-1);
+         System.Diagnostics.Debug.Assert((2 * Math.PI).HasMinDiff((n - 1) * angleN + angle + (m - n) * angleM));
+         return Enumerable.Range(0, m).
+               Select(i => {
+                  if (i < n) {
+                     // 0..n
+                     if (i < sideNum)
+                        return i * angleN + offsetAngle;
+                     if (i == sideNum)
+                        return (i-1) * angleN + angle + offsetAngle;
+                     return (i-1) * angleN + angle + offsetAngle;
+                  }
+                  // n..m
+                  return (n - 1) * angleN + angle + (i - n) * angleM + offsetAngle;
+               }).
                Select(a => GetPointOnCircleRadian(radius, a, center));
       }
 
@@ -167,6 +217,7 @@ namespace fmg.common.geom.util {
 
       /// <summary>
       /// Повернуть / выровнять заданную фигуру по указанной грани относительно X координаты.
+      /// (Узнаю насколько повёрнута грань и разворачиваю всю фигуру в обратную сторону)
       /// </summary>
       /// <param name="coords">Фигура заданная координатами</param>
       /// <param name="sideNum">Номер грани фигуры (начиная с 1)</param>
