@@ -56,7 +56,7 @@ namespace fmg.core.img {
          var ra = RotateAngle;
 
          var sideNum = 2;
-         var sizeSide = sq / 4;
+         var sizeSide = sq / 3.5;
          var res1 = FigureHelper.GetFlowingToTheRightPolygonCoords2(n1, m1, sizeSide, sideNum, center, isa, 0)
                   .RotateBySide(sideNum, center, ra)
                   .ToList();

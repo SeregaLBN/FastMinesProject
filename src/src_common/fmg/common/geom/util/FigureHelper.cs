@@ -100,6 +100,11 @@ namespace fmg.common.geom.util {
       /// <param name="offsetAngle">additional rotation angle in degrees: -360° .. 0° .. +360°</param>
       /// <returns></returns>
       public static IEnumerable<PointDouble> GetFlowingToTheRightPolygonCoords2(int n, int m, double sizeSide, int sideNum, PointDouble center, double incrementSpeedAngle, double offsetAngle = 0) {
+         //incrementSpeedAngle = incrementSpeedAngle % 360;
+         //if (incrementSpeedAngle < 0)
+         //   incrementSpeedAngle += 360;
+         System.Diagnostics.Debug.Assert(incrementSpeedAngle >= 0);
+         System.Diagnostics.Debug.Assert(incrementSpeedAngle <  360);
          if (n > m) {
             var tmp = m;
             m = n;
@@ -112,7 +117,9 @@ namespace fmg.common.geom.util {
          System.Diagnostics.Debug.Assert(sideNum <= n);
          incrementSpeedAngle = incrementSpeedAngle.ToRadian();
          offsetAngle = offsetAngle.ToRadian();
-         var angle = 2 * Math.PI / m; // 360° / m
+         var angleNpart = 2 * Math.PI / n; // 360° / n
+         var angleMpart = 2 * Math.PI / m; // 360° / m
+         var angle = angleNpart + (angleMpart - angleNpart) * Math.Sin(incrementSpeedAngle/2);
          var radius = sizeSide * Math.Sin((Math.PI - angle) / 2) / Math.Sin(angle); // from formula 'Law of sines':   sizeSide/sin(angle) == radius/sin((180°-angle)/2)
          var angleM = angle * Math.Sin(incrementSpeedAngle / 2); // 0(0°)..angle(180°)..0(360°)
          System.Diagnostics.Debug.Assert(angleM >= 0, nameof(incrementSpeedAngle) + " parameter must have a value of 0°..360°");
