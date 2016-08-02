@@ -27,18 +27,18 @@ namespace fmg.core.img {
          double sq = Math.Min( // size inner square
             Width - Padding.LeftAndRight,
             Height - Padding.TopAndBottom);
-         var vertices = 3 + MosaicGroup.Ordinal(); // vertices count
+         var vertices = 3 + MosaicGroup.Ordinal(); // verticles count
          var center = new PointDouble(Width / 2.0, Height / 2.0);
 
          if (MosaicGroup != EMosaicGroup.eOthers)
             return FigureHelper.GetRegularPolygonCoords(vertices, sq / 2, center, RotateAngle);
 
          //return FigureHelper.GetRegularStarCoords(4, sq / 2, sq / 5, center, RotateAngle);
-         //return FigureHelper.GetFlowingToTheRightPolygonCoords(3, vertices + 1, sq / 2, center, RotateAngle, RotateAngle);
-         //return FigureHelper.GetFlowingToTheRightPolygonCoords(3, vertices + 1, sq / 2, center, RotateAngle, 0).RotateBySide(2, center, 0);
+         //return FigureHelper.GetFlowingToTheRightPolygonCoordsByRadius(3, vertices + 1, sq / 2, center, RotateAngle, RotateAngle);
+         //return FigureHelper.GetFlowingToTheRightPolygonCoordsByRadius(3, vertices + 1, sq / 2, center, RotateAngle, 0).RotateBySide(2, center, 0);
          var m = _nmArray[(_nmIndex1+1) % _nmArray.Length];
          var n = (_incrementSpeedAngle >= 180) ? m : _nmArray[_nmIndex1];
-         return FigureHelper.GetFlowingToTheRightPolygonCoords(n, m, sq / 2, center, _incrementSpeedAngle, 0);//.RotateBySide(2, center, 0);
+         return FigureHelper.GetFlowingToTheRightPolygonCoordsByRadius(n, m, sq / 2, center, _incrementSpeedAngle, 0);//.RotateBySide(2, center, 0);
       }
 
       protected Tuple<IEnumerable<PointDouble>, IEnumerable<PointDouble>> GetDoubleCoords() {
@@ -56,23 +56,30 @@ namespace fmg.core.img {
          var ra = RotateAngle;
 
          var sideNum = 2;
-         var sizeSide = sq / 3.5;
-         var res1 = FigureHelper.GetFlowingToTheRightPolygonCoords2(n1, m1, sizeSide, sideNum, center, isa, 0)
+         var sizeSide = sq / 3.5; // подобрал.., чтобы не вылазило за периметр изображения
+
+         // высчитываю координаты двух фигур.
+         // с одинаковым размером одной из граней.
+         var res1 = FigureHelper.GetFlowingToTheRightPolygonCoordsBySide(n1, m1, sizeSide, sideNum, center, isa, 0)
                   .RotateBySide(sideNum, center, ra)
                   .ToList();
-         var res2 = FigureHelper.GetFlowingToTheRightPolygonCoords2(n2, m2, sizeSide, sideNum, center, isa, 0)
-                  .RotateBySide(sideNum, center, ra+180)
+         var res2 = FigureHelper.GetFlowingToTheRightPolygonCoordsBySide(n2, m2, sizeSide, sideNum, center, isa, 0)
+                  .RotateBySide(sideNum, center, ra+180) // +180° - разворачиваю вторую фигуру, чтобы не пересекалась с первой фигурой
                   .ToList();
+
+         // и склеиваю грани:
+         //  * нахожу середины граней
          var p11 = res1[sideNum - 1]; var p12 = res1[sideNum];
          var p21 = res2[sideNum - 1]; var p22 = res2[sideNum];
          var centerPoint1 = new PointDouble((p11.X + p12.X) / 2, (p11.Y + p12.Y) / 2);
          var centerPoint2 = new PointDouble((p21.X + p22.X) / 2, (p21.Y + p22.Y) / 2);
-         var delta1 = new PointDouble(center.X - centerPoint1.X, center.Y - centerPoint1.Y);
-         var delta2 = new PointDouble(center.X - centerPoint2.X, center.Y - centerPoint2.Y);
 
+         //  * и совмещаю их по центру изображения
+         var offsetToCenter1 = new PointDouble(center.X - centerPoint1.X, center.Y - centerPoint1.Y);
+         var offsetToCenter2 = new PointDouble(center.X - centerPoint2.X, center.Y - centerPoint2.Y);
          return new Tuple<IEnumerable<PointDouble>, IEnumerable<PointDouble>>(
-               res1.Move(delta1),
-               res2.Move(delta2)
+               res1.Move(offsetToCenter1),
+               res2.Move(offsetToCenter2)
             );
       }
 

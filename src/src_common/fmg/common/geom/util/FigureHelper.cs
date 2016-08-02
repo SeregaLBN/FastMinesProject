@@ -48,99 +48,6 @@ namespace fmg.common.geom.util {
                Select(a => GetPointOnCircleRadian(radius, a, center));
       }
 
-      /// <summary>
-      /// Очередной шаг анимации преобразования простого N-многоугольника в M-многоугольник (где N &lt; M).
-      /// Вся анимация - при изменении параметра incrementSpeedAngle от 0° до 360°
-      /// </summary>
-      /// <param name="n">кол-во вершин с которых начинается преобразование фигуры</param>
-      /// <param name="m">кол-во вершин к которой преобразовывается фигуру</param>
-      /// <param name="radius"></param>
-      /// <param name="center"></param>
-      /// <param name="incrementSpeedAngle">угловая скорость приращения: 0°..360°.
-      /// При 0°..180° - N стремится к M.
-      /// При 180°..360° - M стремится к N. </param>
-      /// <param name="offsetAngle">additional rotation angle in degrees: -360° .. 0° .. +360°</param>
-      /// <returns></returns>
-      public static IEnumerable<PointDouble> GetFlowingToTheRightPolygonCoords(int n, int m, double radius, PointDouble center, double incrementSpeedAngle, double offsetAngle = 0) {
-         if (n > m) {
-            var tmp = m;
-            m = n;
-            n = tmp;
-            incrementSpeedAngle += 180;
-            if (incrementSpeedAngle >= 360)
-               incrementSpeedAngle -= 360;
-         }
-         System.Diagnostics.Debug.Assert(n > 2);
-         incrementSpeedAngle = incrementSpeedAngle.ToRadian();
-         offsetAngle = offsetAngle.ToRadian();
-         var angle = 2 * Math.PI / m; // 360° / m
-         var angleM = angle * Math.Sin(incrementSpeedAngle / 2); // 0(0°)..angle(180°)..0(360°)
-         System.Diagnostics.Debug.Assert(angleM >= 0, nameof(incrementSpeedAngle) + " parameter must have a value of 0°..360°");
-         var angleN = (2 * Math.PI - angleM * (m - n)) / n;
-         return Enumerable.Range(0, m).
-               Select(i => (i < n)
-                  ? i * angleN + offsetAngle                    // 0..n
-                  : n * angleN + (i - n) * angleM + offsetAngle // n..m
-               ).
-               Select(a => GetPointOnCircleRadian(radius, a, center));
-      }
-
-      /// <summary>
-      /// Очередной шаг анимации преобразования простого N-многоугольника в M-многоугольник (где N &lt; M).
-      /// Вся анимация - при изменении параметра incrementSpeedAngle от 0° до 360°
-      /// </summary>
-      /// <param name="n">кол-во вершин с которых начинается преобразование фигуры</param>
-      /// <param name="m">кол-во вершин к которой преобразовывается фигуру</param>
-      /// <param name="sizeSide">размер стороны многоугольника</param>
-      /// <param name="sideNum">номер грани многоугольника, длина которой должен быть постоянным</param>
-      /// <param name="center"></param>
-      /// <param name="incrementSpeedAngle">угловая скорость приращения: 0°..360°.
-      /// При 0°..180° - N стремится к M.
-      /// При 180°..360° - M стремится к N. </param>
-      /// <param name="offsetAngle">additional rotation angle in degrees: -360° .. 0° .. +360°</param>
-      /// <returns></returns>
-      public static IEnumerable<PointDouble> GetFlowingToTheRightPolygonCoords2(int n, int m, double sizeSide, int sideNum, PointDouble center, double incrementSpeedAngle, double offsetAngle = 0) {
-         //incrementSpeedAngle = incrementSpeedAngle % 360;
-         //if (incrementSpeedAngle < 0)
-         //   incrementSpeedAngle += 360;
-         System.Diagnostics.Debug.Assert(incrementSpeedAngle >= 0);
-         System.Diagnostics.Debug.Assert(incrementSpeedAngle <  360);
-         if (n > m) {
-            var tmp = m;
-            m = n;
-            n = tmp;
-            incrementSpeedAngle += 180;
-            if (incrementSpeedAngle >= 360)
-               incrementSpeedAngle -= 360;
-         }
-         System.Diagnostics.Debug.Assert(n > 2);
-         System.Diagnostics.Debug.Assert(sideNum <= n);
-         incrementSpeedAngle = incrementSpeedAngle.ToRadian();
-         offsetAngle = offsetAngle.ToRadian();
-         var angleNpart = 2 * Math.PI / n; // 360° / n
-         var angleMpart = 2 * Math.PI / m; // 360° / m
-         var angle = angleNpart + (angleMpart - angleNpart) * Math.Sin(incrementSpeedAngle/2);
-         var radius = sizeSide * Math.Sin((Math.PI - angle) / 2) / Math.Sin(angle); // from formula 'Law of sines':   sizeSide/sin(angle) == radius/sin((180°-angle)/2)
-         var angleM = angle * Math.Sin(incrementSpeedAngle / 2); // 0(0°)..angle(180°)..0(360°)
-         System.Diagnostics.Debug.Assert(angleM >= 0, nameof(incrementSpeedAngle) + " parameter must have a value of 0°..360°");
-         var angleN = (2 * Math.PI - angleM * (m - n) - angle) / (n-1);
-         System.Diagnostics.Debug.Assert((2 * Math.PI).HasMinDiff((n - 1) * angleN + angle + (m - n) * angleM));
-         return Enumerable.Range(0, m).
-               Select(i => {
-                  if (i < n) {
-                     // 0..n
-                     if (i < sideNum)
-                        return i * angleN + offsetAngle;
-                     if (i == sideNum)
-                        return (i-1) * angleN + angle + offsetAngle;
-                     return (i-1) * angleN + angle + offsetAngle;
-                  }
-                  // n..m
-                  return (n - 1) * angleN + angle + (i - n) * angleM + offsetAngle;
-               }).
-               Select(a => GetPointOnCircleRadian(radius, a, center));
-      }
-
       /// <summary> https://en.wikipedia.org/wiki/Star_polygon
       /// Суть:
       ///  * два круга - внешний и внутр
@@ -159,6 +66,114 @@ namespace fmg.common.geom.util {
          var pointsExt = GetRegularPolygonCoords(rays, radiusOut, center, offsetAngle);
          var pointsInt = GetRegularPolygonCoords(rays, radiusIn, center, offsetAngle + 180.0/rays);
          return pointsExt.Zip(pointsInt, (p1, p2) => new[] {p1, p2}).SelectMany(x => x);
+      }
+
+      /// <summary>
+      /// Очередной шаг анимации преобразования простого N-многоугольника в M-многоугольник (где N &lt; M).
+      /// Вся анимация - при изменении параметра incrementSpeedAngle от 0° до 360°.
+      /// Анимация заключается в том, что последние M-N вершин плавно расходятся из одной точки (при incrementSpeedAngle 0°..180°), и наоборот - плавно сходятся в одну точку (при incrementSpeedAngle 180°..360°) при постоянном радиусе.
+      /// Оба многоугольника расчитываются через радиусом круга в который они вписываются (радиус задан как параметр).
+      ///
+      /// Т.к. M-многоугольник описывается вписанными в круг М-треугольниками, то манипулируя внутренними (у центра круга) углами треугольников, можно создать плавную анимацию.
+      /// Плавность обеспечиваю изменением угла (у последних M-N треугольников) от 0° до 360°/M (ускорение делаю через функцию синуса параметра incrementSpeedAngle/2).
+      /// </summary>
+      /// <param name="n">кол-во вершин с которых начинается преобразование фигуры</param>
+      /// <param name="m">кол-во вершин к которой преобразовывается фигуру</param>
+      /// <param name="radius"></param>
+      /// <param name="center"></param>
+      /// <param name="incrementSpeedAngle">угловая скорость приращения: 0°..360°.
+      /// При 0°..180° - N стремится к M.
+      /// При 180°..360° - M стремится к N. </param>
+      /// <param name="offsetAngle">additional rotation angle in degrees: -360° .. 0° .. +360°</param>
+      /// <returns></returns>
+      public static IEnumerable<PointDouble> GetFlowingToTheRightPolygonCoordsByRadius(int n, int m, double radius, PointDouble center, double incrementSpeedAngle, double offsetAngle = 0) {
+         System.Diagnostics.Debug.Assert(incrementSpeedAngle >= 0);
+         System.Diagnostics.Debug.Assert(incrementSpeedAngle < 360);
+         if (n > m) {
+            var tmp = m;
+            m = n;
+            n = tmp;
+            incrementSpeedAngle += 180;
+            if (incrementSpeedAngle >= 360)
+               incrementSpeedAngle -= 360;
+         }
+         System.Diagnostics.Debug.Assert(n > 2);
+         incrementSpeedAngle = incrementSpeedAngle.ToRadian();
+         offsetAngle = offsetAngle.ToRadian();
+         var angle = 2 * Math.PI / m; // 360° / m
+         var angleLastNM = angle * Math.Sin(incrementSpeedAngle / 2); // angleLastNM|incrementSpeedAngle == 0°|0° .. angle|180° .. 0°|360°
+         System.Diagnostics.Debug.Assert(angleLastNM >= 0, nameof(incrementSpeedAngle) + " parameter must have a value of 0°..360°");
+         var angleFirstN = (2 * Math.PI - angleLastNM * (m - n)) / n;
+         System.Diagnostics.Debug.Assert((2 * Math.PI).HasMinDiff(n * angleFirstN + (m - n) * angleLastNM));
+         return Enumerable.Range(0, m).
+               Select(i => (i < n)
+                  ? i * angleFirstN + offsetAngle                         // 0..n
+                  : n * angleFirstN + (i - n) * angleLastNM + offsetAngle // n..m
+               ).
+               Select(a => GetPointOnCircleRadian(radius, a, center));
+      }
+
+      /// <summary>
+      /// Очередной шаг анимации преобразования простого N-многоугольника в M-многоугольник (где N &lt; M).
+      /// Вся анимация - при изменении параметра incrementSpeedAngle от 0° до 360°.
+      /// Анимация заключается в том, что последние M-N вершин плавно расходятся из одной точки (при incrementSpeedAngle 0°..180°), и наоборот - плавно сходятся в одну точку (при incrementSpeedAngle 180°..360°) при постоянном размере одной из сторон.
+      /// Оба многоугольника определяются размером стороны (задаётся как параметр), а также номером стороны, размер которой будет постоянным при анимации.
+      ///
+      /// Стартовый N- и конечный M-многоугольник расчитываются через радиус круга (в который они вписаны). Но т.к. многоугольники определяются размером стороны, то радусы у них различны.
+      /// Поэтому плавность анимации обеспечиваю:
+      ///  * изменением угла (у последних M-N треугольников) от 0° до 360°/M (ускорение делаю через функцию синуса параметра incrementSpeedAngle/2).
+      ///  * изменением радиуса от rN до rM
+      /// </summary>
+      /// <param name="n">кол-во вершин с которых начинается преобразование фигуры</param>
+      /// <param name="m">кол-во вершин к которой преобразовывается фигуру</param>
+      /// <param name="sizeSide">размер стороны многоугольника</param>
+      /// <param name="sideNum">номер грани многоугольника, длина которой должен быть постоянным</param>
+      /// <param name="center"></param>
+      /// <param name="incrementSpeedAngle">угловая скорость приращения: 0°..360°.
+      /// При 0°..180° - N стремится к M.
+      /// При 180°..360° - M стремится к N. </param>
+      /// <param name="offsetAngle">additional rotation angle in degrees: -360° .. 0° .. +360°</param>
+      /// <returns></returns>
+      public static IEnumerable<PointDouble> GetFlowingToTheRightPolygonCoordsBySide(int n, int m, double sizeSide, int sideNum, PointDouble center, double incrementSpeedAngle, double offsetAngle = 0) {
+         //incrementSpeedAngle = incrementSpeedAngle % 360;
+         //if (incrementSpeedAngle < 0)
+         //   incrementSpeedAngle += 360;
+         System.Diagnostics.Debug.Assert(incrementSpeedAngle >= 0);
+         System.Diagnostics.Debug.Assert(incrementSpeedAngle < 360);
+         if (n > m) {
+            var tmp = m;
+            m = n;
+            n = tmp;
+            incrementSpeedAngle += 180;
+            if (incrementSpeedAngle >= 360)
+               incrementSpeedAngle -= 360;
+         }
+         System.Diagnostics.Debug.Assert(n > 2);
+         System.Diagnostics.Debug.Assert(sideNum <= n);
+         incrementSpeedAngle = incrementSpeedAngle.ToRadian();
+         offsetAngle = offsetAngle.ToRadian();
+         var angleNpart = 2 * Math.PI / n; // 360° / n
+         var angleMpart = 2 * Math.PI / m; // 360° / m
+         var angle = angleNpart + (angleMpart - angleNpart) * Math.Sin(incrementSpeedAngle / 2); // angle|incrementSpeedAngle == angleNpart|0° .. angleMpart|180° .. angleNpart|360°
+         var radius = sizeSide * Math.Sin((Math.PI - angle) / 2) / Math.Sin(angle); // from formula 'Law of sines':   sizeSide/sin(angle) == radius/sin((180°-angle)/2)
+         var angleLastNM = angle * Math.Sin(incrementSpeedAngle / 2); // angleLastNM|incrementSpeedAngle == 0°|0° .. angle|180° .. 0°|360°
+         System.Diagnostics.Debug.Assert(angleLastNM >= 0, nameof(incrementSpeedAngle) + " parameter must have a value of 0°..360°");
+         var angleFirstN = (2 * Math.PI - angleLastNM * (m - n) - angle) / (n - 1);
+         System.Diagnostics.Debug.Assert((2 * Math.PI).HasMinDiff((n - 1) * angleFirstN + angle + (m - n) * angleLastNM));
+         return Enumerable.Range(0, m).
+               Select(i => {
+                  if (i < n) {
+                     // 0..n
+                     if (i < sideNum)
+                        return i * angleFirstN + offsetAngle;
+                     if (i == sideNum)
+                        return (i - 1) * angleFirstN + angle + offsetAngle;
+                     return (i - 1) * angleFirstN + angle + offsetAngle;
+                  }
+                  // n..m
+                  return (n - 1) * angleFirstN + angle + (i - n) * angleLastNM + offsetAngle;
+               }).
+               Select(a => GetPointOnCircleRadian(radius, a, center));
       }
 
       /// <summary> rotate around the center coordinates </summary>
