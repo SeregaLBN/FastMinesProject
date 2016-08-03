@@ -9,9 +9,12 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import fmg.common.Color;
+import fmg.common.HSV;
 import fmg.common.Pair;
+import fmg.common.geom.DoubleExt;
 import fmg.common.geom.PointDouble;
 import fmg.core.img.AMosaicsGroupImg;
 import fmg.core.types.EMosaicGroup;
@@ -32,14 +35,28 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
 
    public MosaicsGroupImg(EMosaicGroup group) { super(group); }
 
-   protected void drawBody(Graphics g) {
-      Graphics2D g2 = (Graphics2D) g;
+   protected void drawBody(Graphics2D g) {
+      if (getMosaicGroup() != EMosaicGroup.eOthers) {
+         drawBody(g, getCoords(), 0);
+      } else {
+         Pair<Stream<PointDouble>, Stream<PointDouble>> coords = getDoubleCoords();
+         drawBody(g, coords.first, 0);
+         drawBody(g, coords.second, 180);
+      }
+   }
 
-      g.setColor(Cast.toColor(getBackgroundColor()));
+   protected void drawBody(Graphics2D g, Stream<PointDouble> pointsS, double addonToRotateColor) {
+      if (DoubleExt.hasMinDiff(addonToRotateColor, 0)) {
+         g.setColor(Cast.toColor(getBackgroundColor()));
+      } else {
+         HSV hsv = new HSV(getForegroundColor());
+         hsv.h += addonToRotateColor;
+         g.setColor(Cast.toColor(hsv.toColor()));
+      }
       g.fillRect(0, 0, getWidth(), getHeight());
 
       g.setColor(Cast.toColor(getForegroundColor()));
-      List<PointDouble> points = getCoords().collect(Collectors.toList());
+      List<PointDouble> points = pointsS.collect(Collectors.toList());
       g.fillPolygon(Cast.toPolygon(points));
 
       // draw perimeter border
@@ -47,7 +64,7 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
       if (clr.getA() != Color.Transparent.getA()) {
          g.setColor(Cast.toColor(clr));
          int bw = getBorderWidth();
-         g2.setStroke(new BasicStroke(bw));
+         g.setStroke(new BasicStroke(bw));
 
          for (int i = 0; i < points.size(); i++) {
             PointDouble p1 = points.get(i);

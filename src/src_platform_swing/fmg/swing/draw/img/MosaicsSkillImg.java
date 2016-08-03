@@ -33,9 +33,7 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
 
    public MosaicsSkillImg(ESkillLevel skill) { super(skill); }
 
-   protected void drawBody(Graphics g) {
-      Graphics2D g2 = (Graphics2D) g;
-
+   protected void drawBody(Graphics2D g) {
       g.setColor(Cast.toColor(getBackgroundColor()));
       g.fillRect(0, 0, getWidth(), getHeight());
 
@@ -50,7 +48,7 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
          if (clr.getA() != Color.Transparent.getA()) {
             g.setColor(Cast.toColor(clr));
             int bw = getBorderWidth();
-            g2.setStroke(new BasicStroke(bw));
+            g.setStroke(new BasicStroke(bw));
 
             for (int i = 0; i < points.size(); i++) {
                PointDouble p1 = points.get(i);

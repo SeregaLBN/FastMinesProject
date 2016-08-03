@@ -1,18 +1,8 @@
 package fmg.core.img;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
-import fmg.common.geom.Bound;
-import fmg.common.geom.BoundDouble;
-import fmg.common.geom.Coord;
-import fmg.common.geom.DoubleExt;
-import fmg.common.geom.Matrisize;
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.SizeDouble;
+import fmg.common.geom.*;
 import fmg.common.geom.util.FigureHelper;
 import fmg.core.mosaic.IMosaic;
 import fmg.core.mosaic.MosaicHelper;
@@ -217,7 +207,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
       for (BaseCell cell : getMatrix()) {
          cell.Init(); // restore base coords
 
-         FigureHelper.rotateCollection(cell.getRegion().getPoints(), getRotateAngle(), center, new PointDouble());
+         FigureHelper.rotateCollection(cell.getRegion().getPoints(), getRotateAngle(), center);
       }
    }
 
@@ -270,7 +260,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
          cell.Init();
          PointDouble centerNew = cell.getCenter();
          PointDouble delta = new PointDouble(center.x - centerNew.x, center.y - centerNew.y);
-         FigureHelper.rotateCollection(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, rotateCellSubMode ? center : centerNew, delta);
+         FigureHelper.moveCollection(FigureHelper.rotateCollection(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, rotateCellSubMode ? center : centerNew), delta);
 
          // restore
          attr.setArea(area);

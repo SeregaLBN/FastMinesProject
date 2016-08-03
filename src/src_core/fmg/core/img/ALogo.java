@@ -52,7 +52,6 @@ public abstract class ALogo<TImage> extends PolarLightsImg<TImage> {
       double zx = getZoomX();
       double zy = getZoomY();
       PointDouble center = new PointDouble(getWidth()/2.0, getHeight()/2.0);
-      PointDouble none = new PointDouble();
 
       rays.clear();
       rays.add(new PointDouble(pl + 100.0000*zx, pt + 200.0000*zy));
@@ -86,9 +85,9 @@ public abstract class ALogo<TImage> extends PolarLightsImg<TImage> {
 
       if (getRotateMode() != ERotateMode.color) {
          double ra = getRotateAngle();
-         FigureHelper.rotateCollection(rays, ra, center, none);
-         FigureHelper.rotateCollection(inn, ra, center, none);
-         FigureHelper.rotateCollection(oct, ra, center, none);
+         FigureHelper.rotateCollection(rays, ra, center);
+         FigureHelper.rotateCollection(inn, ra, center);
+         FigureHelper.rotateCollection(oct, ra, center);
       }
    }
 

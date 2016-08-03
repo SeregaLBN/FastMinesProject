@@ -131,7 +131,7 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
 
    ////////////// #endregion
 
-   protected void drawBody(Graphics g) {
+   protected void drawBody(Graphics2D g) {
       switch (getRotateMode()) {
       case fullMatrix:
          drawBodyFullMatrix(g);
@@ -151,7 +151,7 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
     *    Т.к. WriteableBitmap есть DependencyObject, то его владелец может сам отслеживать отрисовку...
     *  }
     */
-   private void drawBodyFullMatrix(Graphics g) {
+   private void drawBodyFullMatrix(Graphics2D g) {
       int w = getWidth();
       int h = getHeight();
 
@@ -194,9 +194,9 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
 
    protected abstract void drawCache();
 
-   protected void drawCache(Graphics g) { drawStaticPart(g); }
+   protected void drawCache(Graphics2D g) { drawStaticPart(g); }
 
-   private void drawStaticPart(Graphics g) {
+   private void drawStaticPart(Graphics2D g) {
       int w = getWidth();
       int h = getHeight();
 
@@ -213,7 +213,7 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
             getCellPaint().paint(matrix.get(i), paint, paintContext);
    }
 
-   private void drawRotatedPart(Graphics g) {
+   private void drawRotatedPart(Graphics2D g) {
       if (_rotatedElements.isEmpty())
          return;
 
@@ -237,7 +237,7 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
       pb.setColorShadow(borderColor); //BorderColor = borderColor;
    }
 
-   private void drawBodySomeCells(Graphics g) {
+   private void drawBodySomeCells(Graphics2D g) {
       if (USE_CACHE)
          copyFromCache();
       else
