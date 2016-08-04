@@ -1,6 +1,11 @@
 package fmg.common.geom.util;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -113,8 +118,8 @@ public final class FigureHelper {
       int nn = n;
       return IntStream.range(0, m).
             mapToObj(i -> (i < nn)
-               ? i * angleFirstN + offsetAngleRad                        // 0..n
-               : nn * angleFirstN + (i - nn) * angleLastNM + offsetAngle // n..m
+               ? i * angleFirstN + offsetAngleRad                           // 0..n
+               : nn * angleFirstN + (i - nn) * angleLastNM + offsetAngleRad // n..m
             ).
             map(a -> getPointOnCircleRadian(radius, a, center));
    }
@@ -131,7 +136,7 @@ public final class FigureHelper {
     * @param n кол-во вершин с которых начинается преобразование фигуры
     * @param m кол-во вершин к которой преобразовывается фигуру
     * @param sizeSide размер стороны многоугольника
-    * @param sideNum номер грани многоугольника, длина которой должен быть постоянным
+    * @param sideNum номер грани многоугольника, длина которой должен быть постоянным (начиная с 1)
     * @param center
     * @param incrementSpeedAngle угловая скорость приращения: 0°..360°.
     * <br> При 0°..180° - N стремится к M.
@@ -173,11 +178,11 @@ public final class FigureHelper {
                   if (i < sideNum)
                      return i * angleFirstN + offsetAngleRad;
                   if (i == sideNum)
-                     return (i - 1) * angleFirstN + angle + offsetAngle;
-                  return (i - 1) * angleFirstN + angle + offsetAngle;
+                     return (i - 1) * angleFirstN + angle + offsetAngleRad;
+                  return (i - 1) * angleFirstN + angle + offsetAngleRad;
                }
                // n..m
-               return (nn - 1) * angleFirstN + angle + (i - nn) * angleLastNM + offsetAngle;
+               return (nn - 1) * angleFirstN + angle + (i - nn) * angleLastNM + offsetAngleRad;
             }).
             map(a -> getPointOnCircleRadian(radius, a, center));
    }

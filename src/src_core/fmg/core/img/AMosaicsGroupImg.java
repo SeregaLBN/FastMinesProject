@@ -32,15 +32,21 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
       int vertices = 3 + getMosaicGroup().ordinal(); // vertices count
       PointDouble center = new PointDouble(getWidth() / 2.0, getHeight() / 2.0);
 
+      double ra = getRotateAngle();
       if (getMosaicGroup() != EMosaicGroup.eOthers)
-         return FigureHelper.getRegularPolygonCoords(vertices, sq/2, center, getRotateAngle());
+         return FigureHelper.getRegularPolygonCoords(vertices, sq/2, center, ra);
 
-      //return FigureHelper.getRegularStarCoords(4, sq/2, sq/5, center, getRotateAngle());
-      //return FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(3, vertices + 1, sq / 2, center, RotateAngle, RotateAngle);
-      //return FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(3, vertices + 1, sq / 2, center, RotateAngle, 0).RotateBySide(2, center, 0);
+    //return FigureHelper.getRegularStarCoords(4, sq/2, sq/5, center, ra);
+
+    //return                           FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(3, vertices, sq / 2, center, getRotateAngle(), ra);
+    //return FigureHelper.rotateBySide(FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(3, vertices, sq / 2, center, getRotateAngle(), 0), 2, center, ra);
+
+    //return                           FigureHelper.getFlowingToTheRightPolygonCoordsBySide(3, vertices, sq / 3.5, 2, center, getRotateAngle(), ra);
+    //return FigureHelper.rotateBySide(FigureHelper.getFlowingToTheRightPolygonCoordsBySide(3, vertices, sq / 3.5, 2, center, getRotateAngle(), 0), 2, center, ra);
+
       int m = _nmArray[(_nmIndex1+1) % _nmArray.length];
       int n = (_incrementSpeedAngle >= 180) ? m : _nmArray[_nmIndex1];
-      return FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(n, m, sq / 2, center, _incrementSpeedAngle, 0);//.RotateBySide(2, center, 0);
+      return FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(n, m, sq / 2, center, _incrementSpeedAngle, ra);//.RotateBySide(2, center, 0);
    }
 
    protected Pair<Stream<PointDouble>, Stream<PointDouble>> getDoubleCoords() {

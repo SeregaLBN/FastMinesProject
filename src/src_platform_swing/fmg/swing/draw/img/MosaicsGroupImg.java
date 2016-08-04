@@ -36,26 +36,26 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
    public MosaicsGroupImg(EMosaicGroup group) { super(group); }
 
    protected void drawBody(Graphics2D g) {
-      if (getMosaicGroup() != EMosaicGroup.eOthers) {
+      g.setColor(Cast.toColor(getBackgroundColor()));
+      g.fillRect(0, 0, getWidth(), getHeight());
+
+//      if (getMosaicGroup() != EMosaicGroup.eOthers) {
          drawBody(g, getCoords(), 0);
-      } else {
-         Pair<Stream<PointDouble>, Stream<PointDouble>> coords = getDoubleCoords();
-         drawBody(g, coords.first, 0);
-         drawBody(g, coords.second, 180);
-      }
+//      } else {
+//         Pair<Stream<PointDouble>, Stream<PointDouble>> coords = getDoubleCoords();
+//         drawBody(g, coords.first, 0);
+//         drawBody(g, coords.second, 180);
+//      }
    }
 
    protected void drawBody(Graphics2D g, Stream<PointDouble> pointsS, double addonToRotateColor) {
       if (DoubleExt.hasMinDiff(addonToRotateColor, 0)) {
-         g.setColor(Cast.toColor(getBackgroundColor()));
+         g.setColor(Cast.toColor(getForegroundColor()));
       } else {
          HSV hsv = new HSV(getForegroundColor());
          hsv.h += addonToRotateColor;
          g.setColor(Cast.toColor(hsv.toColor()));
       }
-      g.fillRect(0, 0, getWidth(), getHeight());
-
-      g.setColor(Cast.toColor(getForegroundColor()));
       List<PointDouble> points = pointsS.collect(Collectors.toList());
       g.fillPolygon(Cast.toPolygon(points));
 
@@ -145,10 +145,10 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
    ////////////// TEST //////////////
    public static void main(String[] args) {
       TestDrawing.testApp(rnd -> {
-         EMosaicGroup eGroup = EMosaicGroup.fromOrdinal(rnd.nextInt(EMosaicGroup.values().length));
+         EMosaicGroup eGroup = EMosaicGroup.eOthers;// fromOrdinal(rnd.nextInt(EMosaicGroup.values().length));
          MosaicsGroupImg.Icon img1 = new MosaicsGroupImg.Icon(eGroup);
 
-         eGroup = EMosaicGroup.fromOrdinal(rnd.nextInt(EMosaicGroup.values().length));
+         eGroup = EMosaicGroup.eOthers;// .fromOrdinal(rnd.nextInt(EMosaicGroup.values().length));
          MosaicsGroupImg.Image img2 = new MosaicsGroupImg.Image(eGroup);
 
          return new Pair<>(img1, img2);
