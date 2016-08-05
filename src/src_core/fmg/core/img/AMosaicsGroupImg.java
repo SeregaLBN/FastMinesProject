@@ -36,7 +36,7 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
       if (getMosaicGroup() != EMosaicGroup.eOthers)
          return FigureHelper.getRegularPolygonCoords(vertices, sq/2, center, ra);
 
-    //return FigureHelper.getRegularStarCoords(4, sq/2, sq/5, center, ra);
+      return FigureHelper.getRegularStarCoords(4, sq/2, sq/5, center, ra);
 
     //return                           FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(3, vertices, sq / 2, center, getRotateAngle(), ra);
     //return FigureHelper.rotateBySide(FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(3, vertices, sq / 2, center, getRotateAngle(), 0), 2, center, ra);
@@ -44,9 +44,9 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
     //return                           FigureHelper.getFlowingToTheRightPolygonCoordsBySide(3, vertices, sq / 3.5, 2, center, getRotateAngle(), ra);
     //return FigureHelper.rotateBySide(FigureHelper.getFlowingToTheRightPolygonCoordsBySide(3, vertices, sq / 3.5, 2, center, getRotateAngle(), 0), 2, center, ra);
 
-      int m = _nmArray[(_nmIndex1+1) % _nmArray.length];
-      int n = (_incrementSpeedAngle >= 180) ? m : _nmArray[_nmIndex1];
-      return FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(n, m, sq / 2, center, _incrementSpeedAngle, ra);//.RotateBySide(2, center, 0);
+    //Pair<Integer, Integer> nm = getNM(_nmIndex1);
+    //return                           FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(nm.first, nm.second, sq / 2, center, _incrementSpeedAngle, ra);
+    //return FigureHelper.rotateBySide(FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(nm.first, nm.second, sq / 2, center, _incrementSpeedAngle, 0), 2, center, ra);
    }
 
    protected Pair<Stream<PointDouble>, Stream<PointDouble>> getDoubleCoords() {
@@ -56,22 +56,25 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
       PointDouble center = new PointDouble(getWidth() / 2.0, getHeight() / 2.0);
 
 
+      Pair<Integer, Integer> nm1 = getNM(_nmIndex1);
+      Pair<Integer, Integer> nm2 = getNM(_nmIndex2);
       double isa = _incrementSpeedAngle;
-      int m1 = _nmArray[(_nmIndex1 + 1) % _nmArray.length];
-      int n1 = (isa >= 180) ? m1 : _nmArray[_nmIndex1];
-      int m2 = _nmArray[(_nmIndex2 + 1) % _nmArray.length];
-      int n2 = (isa >= 180) ? m2 : _nmArray[_nmIndex2];
       double ra = getRotateAngle();
-
       int sideNum = 2;
+      double radius = sq / 3.7; // подобрал.., чтобы не вылазило за периметр изображения
       double sizeSide = sq / 3.5; // подобрал.., чтобы не вылазило за периметр изображения
 
+      final boolean byRadius = false;
       // высчитываю координаты двух фигур.
       // с одинаковым размером одной из граней.
-      Stream<PointDouble> resS1 = FigureHelper.getFlowingToTheRightPolygonCoordsBySide(n1, m1, sizeSide, sideNum, center, isa, 0);
+      Stream<PointDouble> resS1 = byRadius
+            ? FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(nm1.first, nm1.second, radius, center, isa, 0)
+            : FigureHelper.getFlowingToTheRightPolygonCoordsBySide(nm1.first, nm1.second, sizeSide, sideNum, center, isa, 0);
       List<PointDouble> res1 = FigureHelper.rotateBySide(resS1, sideNum, center, ra)
             .collect(Collectors.toList());
-      Stream<PointDouble> resS2 = FigureHelper.getFlowingToTheRightPolygonCoordsBySide(n2, m2, sizeSide, sideNum, center, isa, 0);
+      Stream<PointDouble> resS2 = byRadius
+            ? FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(nm2.first, nm2.second, radius, center, isa, 0)
+            : FigureHelper.getFlowingToTheRightPolygonCoordsBySide(nm2.first, nm2.second, sizeSide, sideNum, center, isa, 0);
       List<PointDouble> res2 = FigureHelper.rotateBySide(resS2, sideNum, center, ra+180) // +180° - разворачиваю вторую фигуру, чтобы не пересекалась с первой фигурой
             .collect(Collectors.toList());
 
@@ -94,6 +97,24 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
    private final int[] _nmArray = { 3, 4, 6 }; //  triangle -> quadrangle -> hexagon -> anew triangle -> ...
    private int _nmIndex1 = 0, _nmIndex2 = 1;
    private double _incrementSpeedAngle;
+
+   private Pair<Integer, Integer> getNM(int index) {
+      int n = _nmArray[index];
+      int m = _nmArray[(index + 1) % _nmArray.length];
+
+      // Во вторую половину вращения фиксирую значение N равно M.
+      // Т.к. в прервую половину, с 0 до 180, N стремится к M - см. описание FigureHelper.getFlowingToTheRightPolygonCoordsByXxx...
+      // Т.е. при значении 180 значение N уже достигло M.
+      // Фиксирую для того, чтобы при следующем инкременте параметра index, значение N не менялось. Т.о. обеспечиваю плавность анимации.
+      if (_incrementSpeedAngle >= 180) {
+         if (getRotateAngleDelta() > 0)
+            n = m;
+      } else {
+         if (getRotateAngleDelta() < 0)
+            n = m;
+      }
+      return new Pair<Integer, Integer>(n, m);
+   }
 
    @Override
    protected void onTimer() {
