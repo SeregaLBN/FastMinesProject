@@ -30,15 +30,20 @@ namespace fmg.core.img {
          var vertices = 3 + MosaicGroup.Ordinal(); // verticles count
          var center = new PointDouble(Width / 2.0, Height / 2.0);
 
+         var ra = RotateAngle;
          if (MosaicGroup != EMosaicGroup.eOthers)
-            return FigureHelper.GetRegularPolygonCoords(vertices, sq / 2, center, RotateAngle);
+            return FigureHelper.GetRegularPolygonCoords(vertices, sq / 2, center, ra);
 
-         //return FigureHelper.GetRegularStarCoords(4, sq / 2, sq / 5, center, RotateAngle);
-         //return FigureHelper.GetFlowingToTheRightPolygonCoordsByRadius(3, vertices + 1, sq / 2, center, RotateAngle, RotateAngle);
-         //return FigureHelper.GetFlowingToTheRightPolygonCoordsByRadius(3, vertices + 1, sq / 2, center, RotateAngle, 0).RotateBySide(2, center, 0);
-         var m = _nmArray[(_nmIndex1+1) % _nmArray.Length];
-         var n = (_incrementSpeedAngle >= 180) ? m : _nmArray[_nmIndex1];
-         return FigureHelper.GetFlowingToTheRightPolygonCoordsByRadius(n, m, sq / 2, center, _incrementSpeedAngle, 0);//.RotateBySide(2, center, 0);
+         return FigureHelper.GetRegularStarCoords(4, sq / 2, sq / 5, center, ra);
+
+         //return FigureHelper.GetFlowingToTheRightPolygonCoordsByRadius(3, vertices, sq / 2, center, RotateAngle, ra);
+         //return FigureHelper.GetFlowingToTheRightPolygonCoordsByRadius(3, vertices, sq / 2, center, RotateAngle, 0).RotateBySide(2, center, ra);
+
+         //return FigureHelper.GetFlowingToTheRightPolygonCoordsBySide(3, vertices, sq / 3.5, 2, center, RotateAngle, ra);
+         //return FigureHelper.GetFlowingToTheRightPolygonCoordsByRadius(3, vertices, sq / 3.5, 2, center, RotateAngle, 0).RotateBySide(2, center, ra);
+
+         //var nm = GetNM(_nmIndex1);
+         //return FigureHelper.GetFlowingToTheRightPolygonCoordsByRadius(nm.Item1, nm.Item2, sq / 2, center, _incrementSpeedAngle, 0).RotateBySide(2, center, ra);
       }
 
       protected Tuple<IEnumerable<PointDouble>, IEnumerable<PointDouble>> GetDoubleCoords() {
@@ -48,22 +53,25 @@ namespace fmg.core.img {
          var center = new PointDouble(Width / 2.0, Height / 2.0);
 
 
+         var nm1 = GetNM(_nmIndex1);
+         var nm2 = GetNM(_nmIndex2);
          var isa = _incrementSpeedAngle;
-         var m1 = _nmArray[(_nmIndex1 + 1) % _nmArray.Length];
-         var n1 = (isa >= 180) ? m1 : _nmArray[_nmIndex1];
-         var m2 = _nmArray[(_nmIndex2 + 1) % _nmArray.Length];
-         var n2 = (isa >= 180) ? m2 : _nmArray[_nmIndex2];
          var ra = RotateAngle;
-
          var sideNum = 2;
+         var radius = sq / 3.7; // подобрал.., чтобы не вылазило за периметр изображения
          var sizeSide = sq / 3.5; // подобрал.., чтобы не вылазило за периметр изображения
 
+         const bool byRadius = false;
          // высчитываю координаты двух фигур.
          // с одинаковым размером одной из граней.
-         var res1 = FigureHelper.GetFlowingToTheRightPolygonCoordsBySide(n1, m1, sizeSide, sideNum, center, isa, 0)
+         var res1 = (byRadius
+                     ? FigureHelper.GetFlowingToTheRightPolygonCoordsByRadius(nm1.Item1, nm1.Item2, radius, center, isa, 0)
+                     : FigureHelper.GetFlowingToTheRightPolygonCoordsBySide(nm1.Item1, nm1.Item2, sizeSide, sideNum, center, isa, 0))
                   .RotateBySide(sideNum, center, ra)
                   .ToList();
-         var res2 = FigureHelper.GetFlowingToTheRightPolygonCoordsBySide(n2, m2, sizeSide, sideNum, center, isa, 0)
+         var res2 = (byRadius
+                     ? FigureHelper.GetFlowingToTheRightPolygonCoordsByRadius(nm2.Item1, nm2.Item2, radius, center, isa, 0)
+                     : FigureHelper.GetFlowingToTheRightPolygonCoordsBySide(nm2.Item1, nm2.Item2, sizeSide, sideNum, center, isa, 0))
                   .RotateBySide(sideNum, center, ra+180) // +180° - разворачиваю вторую фигуру, чтобы не пересекалась с первой фигурой
                   .ToList();
 
@@ -86,6 +94,24 @@ namespace fmg.core.img {
       private readonly int[] _nmArray = { 3, 4, 6 }; //  triangle -> quadrangle -> hexagon -> anew triangle -> ...
       private int _nmIndex1 = 0, _nmIndex2 = 1;
       private double _incrementSpeedAngle;
+
+      private Tuple<int, int> GetNM(int index) {
+         int n = _nmArray[index];
+         int m = _nmArray[(index + 1) % _nmArray.Length];
+
+         // Во вторую половину вращения фиксирую значение N равно M.
+         // Т.к. в прервую половину, с 0 до 180, N стремится к M - см. описание FigureHelper.GetFlowingToTheRightPolygonCoordsByXxx...
+         // Т.е. при значении 180 значение N уже достигло M.
+         // Фиксирую для того, чтобы при следующем инкременте параметра index, значение N не менялось. Т.о. обеспечиваю плавность анимации.
+         if (_incrementSpeedAngle >= 180) {
+            if (RotateAngleDelta > 0)
+               n = m;
+         } else {
+            if (RotateAngleDelta < 0)
+               n = m;
+         }
+         return new Tuple<int, int>(n, m);
+      }
 
       protected override void OnTimer() {
          if (Rotate) {
