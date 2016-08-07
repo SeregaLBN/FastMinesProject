@@ -185,6 +185,24 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       void canvasControl_Draw6(CanvasControl sender, CanvasDrawEventArgs args) { args.DrawingSession.DrawImage(Bmp6.Image, new Rect(Offset, Offset, Bmp6.Width, Bmp6.Height)); }
       void canvasControl_Draw7(CanvasControl sender, CanvasDrawEventArgs args) { args.DrawingSession.DrawImage(Bmp7.Image, new Rect(Offset, Offset, Bmp7.Width, Bmp7.Height)); }
 
+      public void Animation(bool enable) {
+         Bmp1.Rotate =   Bmp1.PolarLights =
+         Bmp2.Rotate = //Bmp2.PolarLights =
+         Bmp3.Rotate =   Bmp3.PolarLights =
+         Bmp4.Rotate = //Bmp4.PolarLights =
+       //Bmp5.Rotate =   Bmp5.PolarLights =
+       //Bmp6.Rotate =   Bmp6.PolarLights =
+         Bmp7.Rotate =   Bmp7.PolarLights =
+         Img1.Rotate =   Img1.PolarLights =
+         Img2.Rotate = //Img2.PolarLights =
+         Img3.Rotate =   Img3.PolarLights =
+         Img4.Rotate = //Img4.PolarLights =
+       //Img5.Rotate =   Img5.PolarLights =
+       //Img6.Rotate =   Img6.PolarLights =
+         Img7.Rotate =   Img7.PolarLights =
+            enable;
+      }
+
    }
 
 }

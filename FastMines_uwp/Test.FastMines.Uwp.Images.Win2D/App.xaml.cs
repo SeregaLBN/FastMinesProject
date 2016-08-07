@@ -77,6 +77,12 @@ namespace Test.FastMines.Uwp.Images.Win2D
                 // Ensure the current window is active
                 Window.Current.Activate();
             }
+
+            Window.Current.VisibilityChanged += (sender, ev) => {
+               var currFrame = Window.Current.Content as Frame;
+               var demoPage  = currFrame?.Content as DemoPage;
+               demoPage?.Animation(ev.Visible);
+            };
         }
 
         /// <summary>
