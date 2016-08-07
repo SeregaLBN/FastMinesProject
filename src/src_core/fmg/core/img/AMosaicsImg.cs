@@ -185,18 +185,18 @@ namespace fmg.core.img {
 
          switch (rotateMode) {
          case ERotateMode.FullMatrix:
-            RotatedMatrix();
+            RotateMatrix();
             break;
          case ERotateMode.SomeCells:
             UpdateAnglesOffsets(anglePrevis.Value);
-            RotatedCells();
+            RotateCells();
             break;
          }
       }
 
       #region PART ERotateMode.FullMatrix
 
-      private void RotatedMatrix() {
+      private void RotateMatrix() {
          var center = new PointDouble(Width / 2.0 - _paddingFull.Left, Height / 2.0 - _paddingFull.Top);
          foreach (var cell in Matrix) {
             cell.Init(); // restore base coords
@@ -208,7 +208,7 @@ namespace fmg.core.img {
 
       #region PART ERotateMode.SomeCells
 
-      private bool rotateCellSubMode;
+      private bool rotateCellAlterantive;
 
       protected class RotatedCellContext {
          public RotatedCellContext(int index, double angleOffset, double area) {
@@ -221,7 +221,7 @@ namespace fmg.core.img {
          public double area;
       }
 
-      private void RotatedCells() {
+      private void RotateCells() {
          var attr = CellAttr;
          var matrix = Matrix;
          var angle = RotateAngle;
@@ -255,7 +255,7 @@ namespace fmg.core.img {
             var centerNew = cell.getCenter();
             var delta = new PointDouble(center.X - centerNew.X, center.Y - centerNew.Y);
             cell.getRegion().Points
-               .RotateList((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, rotateCellSubMode ? center : centerNew)
+               .RotateList((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, rotateCellAlterantive ? center : centerNew)
                .MoveList(delta);
 
             // restore
@@ -352,7 +352,7 @@ namespace fmg.core.img {
                Matrix[cntxt.index].Init(); // restore original region coords
                RotatedElements.Remove(cntxt);
                if (!RotatedElements.Any())
-                  rotateCellSubMode = !rotateCellSubMode;
+                  rotateCellAlterantive = !rotateCellAlterantive;
                AddRandomToPrepareList(false, rand);
             }
             OnSelfPropertyChanged(nameof(this.RotatedElements));
