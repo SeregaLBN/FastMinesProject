@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using fmg.common.notyfier;
 using fmg.DataModel.DataSources;
+using fmg.common.geom;
 
 namespace fmg.common {
 
@@ -15,7 +16,7 @@ namespace fmg.common {
 
       public MosaicsDataSource MosaicsDs => _mosaicsDs;
 
-      public int ImageSize {
+      public Size ImageSize {
          get { return _mosaicsDs.ImageSize; }
          set { _mosaicsDs.ImageSize = value; }
       }

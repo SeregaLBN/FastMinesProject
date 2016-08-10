@@ -5,12 +5,12 @@ using fmg.common.geom;
 using fmg.common.notyfier;
 using fmg.core.types;
 using fmg.data.controller.types;
-using MosaicsImg = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using MosaicsImg = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 
 namespace fmg.DataModel.Items {
 
    /// <summary> Mosaic item for data model </summary>
-   public class MosaicDataItem : BaseData<EMosaic> {
+   public class MosaicDataItem : BaseData<EMosaic, MosaicsImg> {
       private const int ZoomKoef = 2;
 
       public MosaicDataItem(EMosaic mosaicType) : base(mosaicType) {
@@ -24,19 +24,18 @@ namespace fmg.DataModel.Items {
          get { return _skillLevel; }
          set {
             if (SetProperty(ref _skillLevel, value)) {
-               MosaicImage.SizeField = MosaicType.SizeTileField(value);
+               Image.SizeField = MosaicType.SizeTileField(value);
             }
          }
       }
 
-      public override ImageSource Image => MosaicImage.Image;
       private MosaicsImg _mosaicImg;
-      public MosaicsImg MosaicImage {
+      public override MosaicsImg Image {
          get {
             if (_mosaicImg == null) {
                var sizeField = MosaicType.SizeTileField(SkillLevel);
                var tmp = new MosaicsImg(MosaicType, sizeField, CanvasDevice.GetSharedDevice()) {
-                  SizeInt = ImageSize * ZoomKoef,
+                  Size = new Size(ImageSize.Width * ZoomKoef, ImageSize.Height * ZoomKoef),
                   PaddingInt = 5 * ZoomKoef,
                   RotateMode = MosaicsImg.ERotateMode.SomeCells,
                   //BackgroundColor = MosaicsImg.DefaultBkColor,
@@ -47,11 +46,11 @@ namespace fmg.DataModel.Items {
                //var bmp = tmp.Image;
                //System.Diagnostics.Debug.Assert(bmp.PixelWidth == ImageSize * ZoomKoef);
                //System.Diagnostics.Debug.Assert(bmp.PixelHeight == ImageSize * ZoomKoef);
-               MosaicImage = tmp; // call this setter
+               Image = tmp; // call this setter
             }
             return _mosaicImg;
          }
-         private set {
+         protected set {
             var old = _mosaicImg;
             if (SetProperty(ref _mosaicImg, value)) {
                if (old != null) {
@@ -66,12 +65,12 @@ namespace fmg.DataModel.Items {
          }
       }
 
-      private int _imageSize = 100; // MosaicsImg.DefaultImageSize;
-      public override int ImageSize {
+      private Size _imageSize = new Size(MosaicsImg.DefaultImageSize, MosaicsImg.DefaultImageSize);
+      public override Size ImageSize {
          get { return _imageSize; }
          set {
             if (SetProperty(ref _imageSize, value)) {
-               MosaicImage.Size = new Size(_imageSize * ZoomKoef, _imageSize * ZoomKoef);
+               Image.Size = new Size(_imageSize.Width * ZoomKoef, _imageSize.Height * ZoomKoef);
             }
          }
       }
@@ -79,7 +78,7 @@ namespace fmg.DataModel.Items {
       private void OnMosaicImagePropertyChanged(object sender, PropertyChangedEventArgs ev) {
          var pn = ev.PropertyName;
          //LoggerSimple.Put(GetType().Name+"::OnPropertyChanged: " + ev.PropertyName);
-         if (pn == nameof(MosaicImage.Image)) {
+         if (pn == nameof(Image.Image)) {
             // ! notify parent container
             var ev2 = ev as PropertyChangedExEventArgs<ImageSource>;
             if (ev2 == null)
@@ -98,8 +97,8 @@ namespace fmg.DataModel.Items {
                OnSelfPropertyChanged(nameof(this.MosaicType));
             else
                OnSelfPropertyChanged(new PropertyChangedExEventArgs<EMosaic>(ev2.NewValue, ev2.OldValue, nameof(this.MosaicType)));
-            MosaicImage.MosaicType = MosaicType;
-            MosaicImage.SizeField = MosaicType.SizeTileField(SkillLevel);
+            Image.MosaicType = MosaicType;
+            Image.SizeField = MosaicType.SizeTileField(SkillLevel);
             Title = MosaicType.GetDescription(false);
             break;
          }
@@ -111,7 +110,7 @@ namespace fmg.DataModel.Items {
 
          base.Dispose(disposing);
 
-         _mosaicImg = null; // call setter
+         Image = null; // call setter
       }
 
    }

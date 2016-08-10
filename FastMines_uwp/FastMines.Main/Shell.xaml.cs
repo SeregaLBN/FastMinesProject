@@ -2,13 +2,19 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.UI;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.uwp.utils;
 using fmg.DataModel.DataSources;
+using MosaicsSkillImg = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsGroupImg = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 
 namespace fmg
 {
@@ -103,13 +109,15 @@ namespace fmg
          var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
          {
             var size1 = size/7;
-            ViewModel.ImageSize = (int)Math.Min(Math.Max(50, size1), 100); // TODO: DPI dependency
+            var wh = (int)Math.Min(Math.Max(50, size1), 100); // TODO: DPI dependency
+            ViewModel.ImageSize = new common.geom.Size(wh, wh);
          }
          {
             var smp = RootFrame?.Content as SelectMosaicPage;
             if (smp != null) {
                var size2 = size/4;
-               smp.ViewModel.ImageSize = (int)Math.Min(Math.Max(100, size2), 200); // TODO: DPI dependency
+               var wh = (int)Math.Min(Math.Max(100, size2), 200); // TODO: DPI dependency
+               smp.ViewModel.ImageSize = new common.geom.Size(wh, wh);
             }
          }
       }
@@ -129,6 +137,42 @@ namespace fmg
       //         yield return c;
       //   }
       //}
+
+      private void CanvasControl_CreateResources_MosaicsSkillImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
+         if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
+            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsSkillImg);
+            var img = canvasControl.DataContext as MosaicsSkillImg;
+            if (img == null)
+               return;
+            canvasControl.Draw += (sender2, ev2) => {
+               ev2.DrawingSession.DrawImage(img.Image, new Rect(0, 0, sender2.Width, sender2.Height));
+            };
+            img.PropertyChanged += (sender3, ev3) => {
+               if (ev3.PropertyName == nameof(img.Image))
+                  canvasControl.Invalidate();
+            };
+         } else {
+            System.Diagnostics.Debug.Assert(false, "Support me"); // TODO
+         }
+      }
+
+      private void CanvasControl_CreateResources_MosaicsGroupImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
+         if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
+            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsGroupImg);
+            var img = canvasControl.DataContext as MosaicsGroupImg;
+            if (img == null)
+               return;
+            canvasControl.Draw += (sender2, ev2) => {
+               ev2.DrawingSession.DrawImage(img.Image, new Rect(0, 0, sender2.Width, sender2.Height));
+            };
+            img.PropertyChanged += (sender3, ev3) => {
+               if (ev3.PropertyName == nameof(img.Image))
+                  canvasControl.Invalidate();
+            };
+         } else {
+            System.Diagnostics.Debug.Assert(false, "Support me"); // TODO
+         }
+      }
 
    }
 }

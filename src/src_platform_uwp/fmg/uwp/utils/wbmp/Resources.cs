@@ -78,10 +78,10 @@ namespace fmg.uwp.utils.wbmp {
          return _imgLogoPng;
       }
 
-      public static WriteableBitmap GetImgLogo(int sizeImage, int padding = 3) {
+      public static WriteableBitmap GetImgLogo(Size sizeImage, int padding = 3) {
          var imgLogo = new Logo {
             UseGradient = true,
-            SizeInt = sizeImage,
+            Size = sizeImage,
             PaddingInt = padding
          };
          return imgLogo.Image;
@@ -148,7 +148,7 @@ namespace fmg.uwp.utils.wbmp {
       /// <summary> самостоятельная отрисовка </summary>
       [Obsolete("???")]
       public static MosaicsGroupImg GetImgMosaicGroup(EMosaicGroup key, int widthAndHeight = MosaicsGroupImg.DefaultImageSize) {
-         return new MosaicsGroupImg(key) { SizeInt = widthAndHeight, PolarLights = true };
+         return new MosaicsGroupImg(key) { Size = new Size(widthAndHeight, widthAndHeight), PolarLights = true };
       }
 
       /// <summary> из ресурсов </summary>

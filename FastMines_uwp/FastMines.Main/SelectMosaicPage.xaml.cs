@@ -1,8 +1,14 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using Windows.Foundation;
+using Windows.UI.Xaml.Controls;
+using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.UI;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.common;
 using fmg.common.Controls;
+using MosaicsImg = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using System.Collections.Generic;
 
 namespace fmg {
    /// <summary>
@@ -47,5 +53,24 @@ namespace fmg {
          set { ViewModel.MosaicsDs.CurrentElement = value; }
       }
 
+      private void CanvasControl_DataContextChanged(Windows.UI.Xaml.FrameworkElement sender, Windows.UI.Xaml.DataContextChangedEventArgs ev) {
+         if (ev.NewValue == null)
+            return;
+         var canvasControl = sender as CanvasControl;
+         System.Diagnostics.Debug.Assert(ev.NewValue is MosaicsImg);
+         if (map.ContainsKey(canvasControl))
+            map[canvasControl] = ev.NewValue as MosaicsImg;
+         else
+            map.Add(canvasControl, ev.NewValue as MosaicsImg);
+         canvasControl.Invalidate();
+         ev.Handled = true;
+      }
+
+      IDictionary<CanvasControl, MosaicsImg> map = new Dictionary<CanvasControl, MosaicsImg>();
+      private void CanvasControl_Draw(CanvasControl canvasControl, CanvasDrawEventArgs ev) {
+         var img = map[canvasControl];
+         ev.DrawingSession.DrawImage(img.Image, new Rect(0, 0, canvasControl.Width, canvasControl.Height));
+      }
    }
+
 }

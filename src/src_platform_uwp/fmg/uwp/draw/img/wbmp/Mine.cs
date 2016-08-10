@@ -12,7 +12,7 @@ namespace fmg.uwp.draw.img.wbmp {
             if (_bmp == null) {
                var img = new Logo {
                   UseGradient = false,
-                  SizeInt = 150,
+                  Size = new common.geom.Size(150, 150),
                   PaddingInt = 10
                };
                for (var i = 0; i < img.Palette.Length; ++i)

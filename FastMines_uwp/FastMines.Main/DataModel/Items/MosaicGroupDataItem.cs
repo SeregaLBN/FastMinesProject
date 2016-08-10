@@ -5,12 +5,12 @@ using Microsoft.Graphics.Canvas;
 using fmg.common.geom;
 using fmg.common.notyfier;
 using fmg.core.types;
-using MosaicsGroupImg = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using MosaicsGroupImg = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 
 namespace fmg.DataModel.Items {
 
    /// <summary> Mosaic group item for data model </summary>
-   public class MosaicGroupDataItem : BaseData<EMosaicGroup> {
+   public class MosaicGroupDataItem : BaseData<EMosaicGroup, MosaicsGroupImg> {
       private const int ZoomKoef = 2;
 
       public MosaicGroupDataItem(EMosaicGroup eMosaicGroup) : base(eMosaicGroup) {
@@ -19,24 +19,23 @@ namespace fmg.DataModel.Items {
 
       public EMosaicGroup MosaicGroup => UniqueId;
 
-      public override ImageSource Image => MosaicGroupImage.Image;
       private MosaicsGroupImg _mosaicGroupImg;
-      public MosaicsGroupImg MosaicGroupImage {
+      public override MosaicsGroupImg Image {
          get {
             if (_mosaicGroupImg == null) {
                var tmp = new MosaicsGroupImg(MosaicGroup, CanvasDevice.GetSharedDevice()) {
-                  SizeInt = ImageSize * ZoomKoef,
+                  Size = new Size(ImageSize.Width * ZoomKoef, ImageSize.Height * ZoomKoef),
                   BorderWidth = 3,
                   RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
                   //, OnlySyncDraw = true
                };
-               System.Diagnostics.Debug.Assert(tmp.Width == ImageSize * ZoomKoef);
-               System.Diagnostics.Debug.Assert(tmp.Height == ImageSize * ZoomKoef);
-               MosaicGroupImage = tmp; // call this setter
+               System.Diagnostics.Debug.Assert(tmp.Width == ImageSize.Width * ZoomKoef);
+               System.Diagnostics.Debug.Assert(tmp.Height == ImageSize.Height * ZoomKoef);
+               Image = tmp; // call this setter
             }
             return _mosaicGroupImg;
          }
-         private set {
+         protected set {
             var old = _mosaicGroupImg;
             if (SetProperty(ref _mosaicGroupImg, value)) {
                if (old != null) {
@@ -51,12 +50,12 @@ namespace fmg.DataModel.Items {
          }
       }
 
-      private int _imageSize = MosaicsGroupImg.DefaultImageSize;
-      public override int ImageSize {
+      private Size _imageSize = new Size(MosaicsGroupImg.DefaultImageSize, MosaicsGroupImg.DefaultImageSize);
+      public override Size ImageSize {
          get { return _imageSize; }
          set {
             if (SetProperty(ref _imageSize, value)) {
-               MosaicGroupImage.Size = new Size(_imageSize * ZoomKoef, _imageSize * ZoomKoef);
+               Image.Size = new Size(_imageSize.Width * ZoomKoef, _imageSize.Height * ZoomKoef);
             }
          }
       }
@@ -79,7 +78,7 @@ namespace fmg.DataModel.Items {
 
          base.Dispose(disposing);
 
-         MosaicGroupImage = null; // call setter
+         Image = null; // call setter
       }
 
    }

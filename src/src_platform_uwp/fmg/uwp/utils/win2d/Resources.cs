@@ -83,10 +83,10 @@ namespace fmg.uwp.utils.win2d {
          return _imgLogoPng;
       }
 
-      public static CanvasBitmap GetImgLogo(int sizeImage, int padding /* = 3 */, ICanvasResourceCreator rc /* = CanvasDevice.GetSharedDevice() */) {
+      public static CanvasBitmap GetImgLogo(common.geom.Size sizeImage, int padding /* = 3 */, ICanvasResourceCreator rc /* = CanvasDevice.GetSharedDevice() */) {
          var imgLogo = new Logo(rc) {
             UseGradient = true,
-            SizeInt = sizeImage,
+            Size = sizeImage,
             PaddingInt = padding
          };
          return imgLogo.Image;
@@ -153,7 +153,7 @@ namespace fmg.uwp.utils.win2d {
       /// <summary> самостоятельная отрисовка </summary>
       [Obsolete("???")]
       public static MosaicsGroupImg GetImgMosaicGroup(EMosaicGroup key, int widthAndHeight /* = MosaicsGroupImg.DefaultImageSize */, ICanvasResourceCreator rc /* = CanvasDevice.GetSharedDevice() */) {
-         return new MosaicsGroupImg(key, rc) { SizeInt = widthAndHeight, PolarLights = true };
+         return new MosaicsGroupImg(key, rc) { Size = new common.geom.Size(widthAndHeight, widthAndHeight), PolarLights = true };
       }
 
       /// <summary> из ресурсов </summary>

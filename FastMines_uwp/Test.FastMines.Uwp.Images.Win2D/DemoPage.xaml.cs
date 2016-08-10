@@ -137,7 +137,8 @@ namespace Test.FastMines.Uwp.Images.Win2D {
             };
          } else {
             // TImage is CanvasImageSource
-            img.SizeInt = 175 + R(50);
+            var wh = 175 + R(50);
+            img.Size = new Size(wh, wh);
          }
 
          img.Rotate = true;

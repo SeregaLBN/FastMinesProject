@@ -6,6 +6,7 @@
     xmlns:PresentationControls="using:fmg.common.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     mc:Ignorable="d">
 
 
@@ -14,10 +15,12 @@
             <StackPanel Margin="4,4,4,8">
                 <TextBlock Text="{x:Bind Title, Mode=OneWay}"
                        Margin="8,4" Style="{StaticResource BaseTextBlockStyle}" HorizontalAlignment="Left"/>
-                <Image Source="{x:Bind Image, Mode=OneWay}"
-                       Height="{x:Bind ImageSize, Mode=OneWay}"
-                       Width="{x:Bind ImageSize, Mode=OneWay}"
-                       Margin="8,0,8,8" Stretch="UniformToFill"/>
+                <canvas:CanvasControl DataContext="{x:Bind Image, Mode=OneWay}"
+                       Height="{x:Bind ImageSize.Height, Mode=OneWay}"
+                       Width="{x:Bind ImageSize.Width, Mode=OneWay}"
+                       Margin="8,0,8,8"
+                       DataContextChanged="CanvasControl_DataContextChanged"
+                       Draw="CanvasControl_Draw" />
             </StackPanel>
         </DataTemplate>
     </Page.Resources>

@@ -7,6 +7,7 @@
     xmlns:PresentationControls="using:fmg.common.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     mc:Ignorable="d"
     d:DesignHeight="600"
     d:DesignWidth="800">
@@ -22,10 +23,10 @@
                    IsPaneOpen="{x:Bind ViewModel.IsSplitViewPaneOpen, Mode=TwoWay}"
                    DisplayMode="CompactInline"
                    PaneBackground="Beige"
-                   OpenPaneLength="{x:Bind ViewModel.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeOpenPaneConverter}}"
-                   CompactPaneLength="{x:Bind ViewModel.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}">
+                   OpenPaneLength="{x:Bind ViewModel.ImageSize.Width, Mode=OneWay, Converter={StaticResource ImageSizeOpenPaneConverter}}"
+                   CompactPaneLength="{x:Bind ViewModel.ImageSize.Width, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}">
             <SplitView.Pane>
-                <ScrollViewer HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="{x:Bind ViewModel.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeOpenPaneConverter}}" >
+                <ScrollViewer HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="{x:Bind ViewModel.ImageSize.Width, Mode=OneWay, Converter={StaticResource ImageSizeOpenPaneConverter}}" >
 
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}">
@@ -33,7 +34,7 @@
                                           TabIndex="1"
                                           Content="&#xE700;"
                                           Style="{StaticResource ToggleButtonExtStyle}"
-                                          Width="{x:Bind ViewModel.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}"
+                                          Width="{x:Bind ViewModel.ImageSize.Width, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}"
                                           IsChecked="{x:Bind _splitView.IsPaneOpen, Mode=TwoWay, Converter={StaticResource BooleanNullableConverter}}"
                                           AutomationProperties.Name="Menu"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.MosaicGroupDs.UnicodeChars, Mode=OneWay}" >
@@ -56,13 +57,13 @@
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="PresentationControls:MosaicGroupMenuItem">
-                                    <StackPanel Orientation="Horizontal" Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}">
-                                        <Image Grid.RowSpan="1"
-                                               Source="{x:Bind Image, Mode=OneWay}"
-                                               Height="{x:Bind ImageSize, Mode=OneWay}"
-                                               Width="{x:Bind ImageSize, Mode=OneWay}"
+                                    <StackPanel Orientation="Horizontal" Height="{x:Bind ImageSize.Width, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}">
+                                        <canvas:CanvasControl Grid.RowSpan="1"
+                                               DataContext="{x:Bind Image, Mode=OneWay}"
+                                               Height="{x:Bind ImageSize.Height, Mode=OneWay}"
+                                               Width="{x:Bind ImageSize.Width, Mode=OneWay}"
                                                Margin="1,1,1,1"
-                                               Stretch="Fill"
+                                               CreateResources="CanvasControl_CreateResources_MosaicsGroupImg"
                                                AutomationProperties.Name="{x:Bind Title, Mode=OneWay}" />
                                         <TextBlock Grid.Column="1" Text="{x:Bind Title, Mode=OneWay}" Style="{StaticResource MenuTitleTextBlockStyle}"/>
                                     </StackPanel>
@@ -72,7 +73,7 @@
 
                         <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}" Margin="0,15,0,0">
                             <ToggleButton Style="{StaticResource ToggleButtonExtStyle}"
-                                          Width="{x:Bind ViewModel.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}"
+                                          Width="{x:Bind ViewModel.ImageSize.Width, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}"
                                           Content="&#xE728;"
                                           IsChecked="{x:Bind _listViewSkillLevelMenu.Visibility, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                           AutomationProperties.Name="Menu"
@@ -97,13 +98,13 @@
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="PresentationControls:MosaicSkillMenuItem">
                                     <StackPanel Orientation="Horizontal"
-                                                Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}" >
-                                        <Image Grid.RowSpan="1"
-                                               Source="{x:Bind Image, Mode=OneWay}"
-                                               Height="{x:Bind ImageSize, Mode=OneWay}"
-                                               Width="{x:Bind ImageSize, Mode=OneWay}"
+                                                Height="{x:Bind ImageSize.Width, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}" >
+                                        <canvas:CanvasControl Grid.RowSpan="1"
+                                               DataContext="{x:Bind Image, Mode=OneWay}"
+                                               Height="{x:Bind ImageSize.Height, Mode=OneWay}"
+                                               Width="{x:Bind ImageSize.Width, Mode=OneWay}"
                                                Margin="1,1,1,1"
-                                               Stretch="Fill"
+                                               CreateResources="CanvasControl_CreateResources_MosaicsSkillImg"
                                                AutomationProperties.Name="{x:Bind Title, Mode=OneWay}" />
                                         <TextBlock Grid.Column="1" Text="{x:Bind Title, Mode=OneWay}" Style="{StaticResource MenuTitleTextBlockStyle}"/>
                                     </StackPanel>

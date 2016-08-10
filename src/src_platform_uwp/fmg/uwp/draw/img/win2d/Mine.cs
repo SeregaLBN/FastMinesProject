@@ -34,7 +34,7 @@ namespace fmg.uwp.draw.img.win2d {
          where TImage : DependencyObject, ICanvasResourceCreator
       {
          img.UseGradient = false;
-         img.SizeInt = 150;
+         img.Size = new common.geom.Size(150, 150);
          img.PaddingInt = 10;
          for (var i = 0; i < img.Palette.Length; ++i)
             //img.Palette[i].v = 75;

@@ -3,12 +3,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using fmg.DataModel.Items;
 using fmg.common.notyfier;
+using fmg.common.geom;
 
 namespace fmg.DataModel.DataSources
 {
    /// <summary> base DataSource menu items </summary>
-   public abstract class BaseDataSource<TItem, T> : NotifyPropertyChanged, IDisposable
-      where TItem : BaseData<T>
+   public abstract class BaseDataSource<TItem, T, TImage> : NotifyPropertyChanged, IDisposable
+      where TItem : BaseData<T, TImage>
+      where TImage : class
    {
       private readonly ObservableCollection<TItem> _dataSource = new ObservableCollection<TItem>();
       private TItem _currentElement;
@@ -39,7 +41,7 @@ namespace fmg.DataModel.DataSources
 
       protected abstract void OnCurrentElementChanged();
 
-      public int ImageSize {
+      public Size ImageSize {
          get { return DataSource.First().ImageSize; }
          set {
             var old = ImageSize;
@@ -47,7 +49,7 @@ namespace fmg.DataModel.DataSources
                mi.ImageSize = value;
             }
             if (old != value)
-               OnSelfPropertyChanged(new PropertyChangedExEventArgs<int>(value, old));
+               OnSelfPropertyChanged(new PropertyChangedExEventArgs<Size>(value, old));
          }
       }
 

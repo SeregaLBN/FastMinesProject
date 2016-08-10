@@ -6,11 +6,12 @@ using fmg.core.types;
 using fmg.core.img;
 using fmg.uwp.draw.mosaic;
 using fmg.common.Controls;
+using MosaicsGroupImg = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 
 namespace fmg.DataModel.DataSources
 {
    /// <summary> DataSource menu items (mosaic groups) </summary>
-   public class MosaicGroupsDataSource : BaseDataSource<MosaicGroupMenuItem, EMosaicGroup> {
+   public class MosaicGroupsDataSource : BaseDataSource<MosaicGroupMenuItem, EMosaicGroup, MosaicsGroupImg> {
 
       protected override void FillDataSource() {
          var dataSource = DataSourceInternal;
@@ -29,7 +30,7 @@ namespace fmg.DataModel.DataSources
          // for one selected - start animate; for all other - stop animate
          foreach (var mi in DataSource) {
             var selected = ReferenceEquals(mi, CurrentElement);
-            var img = mi.MosaicGroupImage;
+            var img = mi.Image;
             img.PolarLights = selected;
             img.Rotate = selected;
             img.BorderColor = selected ? Color.Red : Color.Green;
@@ -42,8 +43,8 @@ namespace fmg.DataModel.DataSources
          get {
             var smi = CurrentElement;
             return string.Join(" ", DataSource.Select(mi => {
-               var selected = (smi != null) && (mi.MosaicGroupImage.MosaicGroup == smi.MosaicGroupImage.MosaicGroup);
-               return mi.MosaicGroupImage.MosaicGroup.UnicodeChar(selected);
+               var selected = (smi != null) && (mi.Image.MosaicGroup == smi.Image.MosaicGroup);
+               return mi.Image.MosaicGroup.UnicodeChar(selected);
             }));
          }
       }

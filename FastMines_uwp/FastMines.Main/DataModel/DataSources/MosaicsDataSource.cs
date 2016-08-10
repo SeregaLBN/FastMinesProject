@@ -7,11 +7,12 @@ using fmg.core.img;
 using fmg.data.controller.types;
 using fmg.uwp.draw.mosaic;
 using fmg.common.Controls;
+using MosaicsImg = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 
 namespace fmg.DataModel.DataSources {
 
    /// <summary> DataSource mosaics items </summary>
-   public class MosaicsDataSource : BaseDataSource<MosaicTailItem, EMosaic> {
+   public class MosaicsDataSource : BaseDataSource<MosaicTailItem, EMosaic, MosaicsImg> {
 
       private EMosaicGroup _currentGroup;
       public EMosaicGroup CurrentGroup {
@@ -79,7 +80,7 @@ namespace fmg.DataModel.DataSources {
       private MosaicTailItem AddItem(EMosaic mosaicType) {
          var mi = new MosaicTailItem(mosaicType) {
             SkillLevel = CurrentSkill,
-            MosaicImage = {
+            Image = {
                   BorderWidth = 1,
                   BorderColor = Color.Dark,
                   BackgroundColor = PaintUwpContext<object>.DefaultBackgroundColor,
@@ -97,7 +98,7 @@ namespace fmg.DataModel.DataSources {
          // for one selected- start animate; for all other - stop animate
          foreach (var mi in DataSource) {
             var selected = ReferenceEquals(mi, CurrentElement);
-            var img = mi.MosaicImage;
+            var img = mi.Image;
             img.Rotate = selected;
             img.BorderColor = selected ? Color.White : Color.Dark;
             img.BackgroundColor = selected ? StaticImgConsts.DefaultBkColor : PaintUwpContext<object>.DefaultBackgroundColor;

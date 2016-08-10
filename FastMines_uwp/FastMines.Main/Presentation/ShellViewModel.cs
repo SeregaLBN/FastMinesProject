@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using fmg.DataModel.DataSources;
 using fmg.common.notyfier;
+using fmg.common.geom;
 
 namespace fmg.common {
 
@@ -28,7 +29,7 @@ namespace fmg.common {
       public MosaicGroupsDataSource MosaicGroupDs => _mosaicGroupDs;
       public MosaicSkillsDataSource MosaicSkillDs => _mosaicSkillDs;
 
-      public int ImageSize {
+      public Size ImageSize {
          get { return _mosaicGroupDs.ImageSize; }
          set {
             _mosaicGroupDs.ImageSize = value;

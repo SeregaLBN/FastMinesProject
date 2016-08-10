@@ -38,9 +38,6 @@ namespace fmg.core.img {
             }
          }
       }
-      public int SizeInt {
-         set { Size = new Size(value, value); }
-      }
 
       /// <summary> width image </summary>
       public int Width => Size.Width;

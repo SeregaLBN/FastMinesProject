@@ -1,11 +1,13 @@
-﻿using Windows.UI.Xaml.Media;
-using fmg.common.notyfier;
+﻿using fmg.common.notyfier;
+using fmg.common.geom;
 
 namespace fmg.DataModel.Items {
 
    /// <summary> Base item class for <see cref="MosaicDataItem"/> and <see cref="MosaicGroupDataItem"/> and <see cref="MosaicSkillDataItem"/> </summary>
    [Windows.Foundation.Metadata.WebHostHidden]
-   public abstract class BaseData<T> : NotifyPropertyChanged {
+   public abstract class BaseData<T, TImage> : NotifyPropertyChanged
+      where TImage : class
+   {
       protected BaseData(T uniqueId) {
          UniqueId = uniqueId;
       }
@@ -22,8 +24,8 @@ namespace fmg.DataModel.Items {
          set { SetProperty(ref _title, value); }
       }
 
-      public abstract ImageSource Image { get; }
-      public abstract int ImageSize { get; set; }
+      public abstract TImage Image { get; protected set; }
+      public abstract Size ImageSize { get; set; }
 
       public override string ToString() {
          return Title;

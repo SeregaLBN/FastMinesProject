@@ -32,7 +32,8 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       }
 
       private static void ApplyRandom(RotatedImg<WriteableBitmap> img) {
-         img.SizeInt = 175 + R(50);
+         var wh = 175 + R(50);
+         img.Size = new Size(wh, wh);
 
          img.Rotate = true;
          img.RotateAngleDelta = (3 + R(5)) * Np;
