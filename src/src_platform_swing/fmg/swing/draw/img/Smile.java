@@ -1,7 +1,22 @@
 package fmg.swing.draw.img;
 
-import java.awt.*;
-import java.awt.geom.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.Icon;
@@ -92,24 +107,16 @@ public class Smile implements Icon {
    }
 
    private void drawBody(Graphics2D g) {
+      if (_type == EType.Eyes_OpenDisabled || _type == EType.Eyes_ClosedDisabled)
+         return;
+
       Color yellowBody = new Color(0xFF, 0xCC, 0x00);
       Color yellowGlint = new Color(0xFF, 0xFF, 0x33);
       Color yellowBorder = new Color(0xFF, 0x6C, 0x0A);
 
       { // рисую затемненный круг
-         { // variant 1
-            g.setColor(yellowBorder);
-            g.fillOval(0, 0, (int)_size, (int)_size);
-         }
-         //{ // variant 2: рисую не круг, а кольцо
-         //   double wh = _size;
-         //   Ellipse2D ellipse1 = new Ellipse2D.Double(0, 0, wh, wh);
-         //   double pad = _size/30; // offset
-         //   wh -= 2*pad;
-         //   Ellipse2D ellipse2 = new Ellipse2D.Double(pad, pad, wh, wh);
-         //   g.setColor(yellowBorder);
-         //   g.fill(intersectExclude(ellipse1, ellipse2));
-         //}
+         g.setColor(yellowBorder);
+         g.fillOval(0, 0, (int)_size, (int)_size);
       }
       { // поверх него, внутри - градиентный круг
          double pad = _size/30; // offset
@@ -149,6 +156,7 @@ public class Smile implements Icon {
    private void drawEyes(Graphics2D g) {
       Stroke strokeOld = g.getStroke();
       switch (_type) {
+      case Face_Assistant:
       case Face_SmilingWithSunglasses: {
             // glasses
             Stroke strokeNew = new BasicStroke((float)Math.max(1, 0.03*_size), BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
@@ -163,6 +171,7 @@ public class Smile implements Icon {
             g.draw(new Arc2D.Double((1-0.864-0.100)*_size, 0.047*_size, 0.100*_size, 0.100*_size, 55, 125, Arc2D.OPEN));
          }
          //break; // ! no break
+      case Face_SavouringDeliciousFood:
       case Face_WhiteSmiling:
       case Face_Grinning: {
             g.setColor(Color.BLACK);
@@ -219,6 +228,20 @@ public class Smile implements Icon {
             g.draw(nose);
          }
          break;
+      case Eyes_OpenDisabled: {
+            g.setColor(Color.GRAY);
+            Area pupil = intersectInclude(intersectInclude(
+                       new Ellipse2D.Double(0.500*_size, 0.166*_size, 0.180*_size, 0.324*_size),
+                rotate(new Ellipse2D.Double(0.486*_size, 0.227*_size, 0.180*_size, 0.273*_size),
+                       new      PointDouble(0.486*_size, 0.227*_size), -35)),
+                rotate(new Ellipse2D.Double(0.646*_size, 0.211*_size, 0.180*_size, 0.266*_size),
+                       new      PointDouble(0.646*_size, 0.211*_size), 36));
+            Shape hole = rotate(new Ellipse2D.Double(0.610*_size, 0.209*_size, 0.120*_size, 0.160*_size),
+                               new       PointDouble(0.610*_size, 0.209*_size), 25);
+            pupil = intersectExclude(pupil, hole);
+            g.fill(pupil);
+         }
+         break;
       default:
          throw new UnsupportedOperationException("Not implemented");
       }
@@ -226,19 +249,31 @@ public class Smile implements Icon {
    }
 
    private void drawMouth(Graphics2D g) {
+      switch (_type) {
+      case Face_Assistant:
+      case Eyes_OpenDisabled:
+      case Eyes_ClosedDisabled:
+      case Face_EyesOpen:
+      case Face_WinkingEye:
+      case Face_EyesClosed:
+         return;
+      default:
+      }
+
       Stroke strokeOld = g.getStroke();
       Stroke strokeNew = new BasicStroke((float)Math.max(1, 0.044*_size), BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
       g.setStroke(strokeNew);
       g.setColor(Color.BLACK);
 
       switch (_type) {
+      case Face_SavouringDeliciousFood:
       case Face_SmilingWithSunglasses:
       case Face_WhiteSmiling: {
             // smile
             Arc2D arcSmile = new Arc2D.Double(0.103*_size, -0.133*_size, 0.795*_size, 1.003*_size, 207, 126, Arc2D.OPEN);
             g.draw(arcSmile);
-            Ellipse2D ellipse = new Ellipse2D.Double(0.060*_size, 0.475*_size, 0.877*_size, 0.330*_size);
-            g.fill(intersectExclude(arcSmile, ellipse));
+            Ellipse2D lip = new Ellipse2D.Double(0.060*_size, 0.475*_size, 0.877*_size, 0.330*_size);
+            g.fill(intersectExclude(arcSmile, lip));
 
             // test
             //g.setStroke(strokeOld);
@@ -250,6 +285,17 @@ public class Smile implements Icon {
             g.setColor(Color.BLACK);
             g.draw(new Arc2D.Double(+0.020*_size, 0.420*_size, 0.180*_size, 0.180*_size, 85+180, 57, Arc2D.OPEN));
             g.draw(new Arc2D.Double(+0.800*_size, 0.420*_size, 0.180*_size, 0.180*_size, 38+180, 57, Arc2D.OPEN));
+
+            // tongue / язык
+            if (_type == EType.Face_SavouringDeliciousFood) {
+//               Ellipse2D tongue = new Ellipse2D.Double(0.470*_size, 0.250*_size, 0.240*_size, 0.760*_size);
+//               Shape tongueRotated = rotate(tongue, new PointDouble(0.470*_size, 0.250*_size), 25);
+               Ellipse2D tongue = new Ellipse2D.Double(0.350*_size, 0.510*_size, 0.240*_size, 0.475*_size);
+               Shape tongueRotated = rotate(tongue, new PointDouble(0.350*_size, 0.510*_size), 25);
+               g.setColor(Color.RED);
+               Ellipse2D eclSmile = new Ellipse2D.Double(0.103*_size, -0.133*_size, 0.795*_size, 1.003*_size);
+               g.fill(intersectExclude(tongueRotated, eclSmile));
+            }
          }
          break;
       case Face_Disappointed: {
@@ -259,14 +305,14 @@ public class Smile implements Icon {
             arcSmile.setAngleStart(0); arcSmile.setAngleExtent(360); // arc as circle
 
             // tongue / язык
-            Area area = intersectInclude(new Ellipse2D.Double(0.338*_size, 0.637*_size, 0.325*_size, 0.325*_size),    // кончик языка
-                                         new Rectangle2D.Double(0.338*_size, 0.594*_size, 0.325*_size, 0.206*_size)); // тело языка
+            Area tongue = intersectInclude(new   Ellipse2D.Double(0.338*_size, 0.637*_size, 0.325*_size, 0.325*_size),  // кончик языка
+                                           new Rectangle2D.Double(0.338*_size, 0.594*_size, 0.325*_size, 0.206*_size)); // тело языка
             Area hole = intersectExclude(new Rectangle2D.Double(0, 0, _size, _size), arcSmile);
-            area = intersectExclude(area, hole);
+            tongue = intersectExclude(tongue, hole);
             g.setColor(Color.RED);
-            g.fill(area);
+            g.fill(tongue);
             g.setColor(Color.BLACK);
-            g.draw(area);
+            g.draw(tongue);
           //g.draw(intersectExclude(new Line2D.Double(_size/2.0, 0.637*_size, _size/2.0, 0.800*_size), hole)); // don't working
             g.draw(intersectExclude(new Rectangle2D.Double(_size/2.0, 0.637*_size, 0.0001, 0.200*_size), hole)); // its works
 
@@ -323,8 +369,8 @@ public class Smile implements Icon {
    // test
    public static void main(String[] args) {
 //      TestDrawing.testApp2(size -> ImgUtils.zoom(new Smile(size, EType.Face_SmilingWithSunglasses), 24, 24));
-//      TestDrawing.testApp2(size -> new Smile(size, EType.Face_SmilingWithSunglasses));
-
+      TestDrawing.testApp2(size -> new Smile(size, EType.Eyes_OpenDisabled));
+/*
       TestDrawing.testApp2(size -> new Icon(){
          @Override
          public void paintIcon(Component c, Graphics g, int x, int y) {
@@ -335,8 +381,8 @@ public class Smile implements Icon {
             int dy = size / maxJ;
 
             int icoPadding = 5;
-            int wIco = Math.min(dx, dy) - 2*icoPadding;
-            int hIco = Math.min(dx, dy) - 2*icoPadding;
+            int wIco = 24;//Math.min(dx, dy) - 2*icoPadding;
+            int hIco = 24;//Math.min(dx, dy) - 2*icoPadding;
             for (int i=0; i<maxI; ++i)
                for (int j=0; j<maxJ; ++j) {
                   int pos = maxI*j+i;
