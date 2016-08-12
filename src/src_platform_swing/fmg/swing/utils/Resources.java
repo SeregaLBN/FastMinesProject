@@ -9,6 +9,8 @@ import javax.swing.Icon;
 import fmg.swing.draw.img.BackgroundPause;
 import fmg.swing.draw.img.Flag;
 import fmg.swing.draw.img.Mine;
+import fmg.swing.draw.img.Smile;
+import fmg.swing.draw.img.Smile.EType;
 
 /** Мультимедиа ресурсы программы */
 public final class Resources {
@@ -33,6 +35,22 @@ public final class Resources {
       public String getDescription() {
          return this.toString().substring(1);
       }
+
+      public Smile.EType mapToSmileType() {
+         switch (this) {
+         case eNormal          : return EType.Face_WhiteSmiling;
+         case ePressed         : return EType.Face_SavouringDeliciousFood; // +1,1
+         case eSelected        : return null;
+         case eDisabled        : return null;
+         case eDisabledSelected: return null;
+         case eRollover        : return EType.Face_WhiteSmiling; // +1,1
+         case eRolloverSelected: return null;
+         case eNormalMosaic    : return EType.Face_Grinning;
+         case eNormalWin       : return EType.Face_SmilingWithSunglasses;
+         case eNormalLoss      : return EType.Face_Disappointed;
+         }
+         throw new RuntimeException("Map me...");
+      }
    }
    public enum EBtnPauseState {
       eNormal,
@@ -48,6 +66,20 @@ public final class Resources {
 
       public String getDescription() {
          return this.toString().substring(1);
+      }
+
+      public Smile.EType mapToSmileType() {
+         switch (this) {
+         case eNormal          : return EType.Face_EyesOpen;
+         case ePressed         : return EType.Face_WinkingEyeLeft; // +1,1
+         case eSelected        : return EType.Face_EyesClosed;
+         case eDisabled        : return EType.Eyes_OpenDisabled;
+         case eDisabledSelected: return EType.Eyes_ClosedDisabled;
+         case eRollover        : return EType.Face_EyesOpen; // +1,1
+         case eRolloverSelected: return EType.Face_WinkingEyeLeft;
+         case eAssistant       : return EType.Face_Assistant;
+         }
+         throw new RuntimeException("Map me...");
       }
    }
 
@@ -91,10 +123,19 @@ public final class Resources {
 
    public Icon getImgBtnNew(EBtnNewGameState key) {
       if (imgsBtnNew == null) {
-         imgsBtnNew = new HashMap<Resources.EBtnNewGameState, Icon>(EBtnNewGameState.values().length);
+         imgsBtnNew = new HashMap<>(EBtnNewGameState.values().length);
 
-         for (EBtnNewGameState val: EBtnNewGameState.values())
-            imgsBtnNew.put(val, getIcon("ToolBarButton/new" + val.getDescription() + ".png"));
+         for (EBtnNewGameState val: EBtnNewGameState.values()) {
+            Icon ico = getIcon("ToolBarButton/new" + val.getDescription() + ".png"); // сначала из ресурсов
+            if (ico == null) {
+               // иначе - своя картинка из кода
+               Smile.EType type = val.mapToSmileType();
+               if (type != null) {
+                  ico = ImgUtils.zoom(new Smile(300, type), 24, 24);
+               }
+            }
+            imgsBtnNew.put(val, ico);
+         }
       }
       return imgsBtnNew.get(key);
    }
@@ -106,10 +147,19 @@ public final class Resources {
 
    public Icon getImgBtnPause(EBtnPauseState key) {
       if (imgsBtnPause == null) {
-         imgsBtnPause = new HashMap<EBtnPauseState, Icon>(EBtnPauseState.values().length);
+         imgsBtnPause = new HashMap<>(EBtnPauseState.values().length);
 
-         for (EBtnPauseState val: EBtnPauseState.values())
-            imgsBtnPause.put(val, getIcon("ToolBarButton/pause" + val.getDescription() + ".png"));
+         for (EBtnPauseState val: EBtnPauseState.values()) {
+            Icon ico = getIcon("ToolBarButton/pause" + val.getDescription() + ".png"); // сначала из ресурсов
+            if (ico == null) {
+               // иначе - своя картинка из кода
+               Smile.EType type = val.mapToSmileType();
+               if (type != null) {
+                  ico = ImgUtils.zoom(new Smile(300, type), 24, 24);
+               }
+            }
+            imgsBtnPause.put(val, ico);
+         }
       }
       return imgsBtnPause.get(key);
    }
@@ -121,7 +171,7 @@ public final class Resources {
 
    public Map<Locale, Icon> getImgsLang() {
       if (imgsLang == null) {
-         imgsLang = new HashMap<Locale, Icon>(4);
+         imgsLang = new HashMap<>(4);
 
          Icon imgEng = getIcon("Lang/English.png");
          Icon imgUkr = getIcon("Lang/Ukrainian.png");
