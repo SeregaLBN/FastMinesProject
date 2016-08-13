@@ -100,14 +100,14 @@ import fmg.swing.draw.img.Logo;
 import fmg.swing.draw.img.MosaicsGroupImg;
 import fmg.swing.draw.img.MosaicsImg;
 import fmg.swing.draw.img.MosaicsSkillImg;
+import fmg.swing.draw.img.Smile;
+import fmg.swing.draw.img.Smile.EType;
 import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.mosaic.Mosaic;
 import fmg.swing.serializable.SerializeProjData;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
 import fmg.swing.utils.Resources;
-import fmg.swing.utils.Resources.EBtnNewGameState;
-import fmg.swing.utils.Resources.EBtnPauseState;
 
 /** Главное окно программы */
 public class Main extends JFrame implements PropertyChangeListener {
@@ -653,12 +653,93 @@ public class Main extends JFrame implements PropertyChangeListener {
          return dim;
       }
    }
+
+   public enum EBtnNewGameState {
+      eNormal,
+      ePressed,
+      eSelected,
+      eDisabled,
+      eDisabledSelected,
+      eRollover,
+      eRolloverSelected,
+
+      // addons
+      eNormalMosaic,
+      eNormalWin,
+      eNormalLoss;
+
+      public Smile.EType mapToSmileType() {
+         switch (this) {
+         case eNormal          : return EType.Face_WhiteSmiling;
+         case ePressed         : return EType.Face_SavouringDeliciousFood; // +1,1
+         case eSelected        : return null;
+         case eDisabled        : return null;
+         case eDisabledSelected: return null;
+         case eRollover        : return EType.Face_WhiteSmiling; // +1,1
+         case eRolloverSelected: return null;
+         case eNormalMosaic    : return EType.Face_Grinning;
+         case eNormalWin       : return EType.Face_SmilingWithSunglasses;
+         case eNormalLoss      : return EType.Face_Disappointed;
+         }
+         throw new RuntimeException("Map me...");
+      }
+   }
+   public enum EBtnPauseState {
+      eNormal,
+      ePressed,
+      eSelected,
+      eDisabled,
+      eDisabledSelected,
+      eRollover,
+      eRolloverSelected,
+
+      /** типа ход ассистента - задел на будущее */
+      eAssistant;
+
+      public Smile.EType mapToSmileType() {
+         switch (this) {
+         case eNormal          : return EType.Face_EyesOpen;
+         case ePressed         : return EType.Face_WinkingEyeLeft; // +1,1
+         case eSelected        : return EType.Face_EyesClosed;
+         case eDisabled        : return EType.Eyes_OpenDisabled;
+         case eDisabledSelected: return EType.Eyes_ClosedDisabled;
+         case eRollover        : return EType.Face_EyesOpen; // +1,1
+         case eRolloverSelected: return EType.Face_WinkingEyeLeft;
+         case eAssistant       : return EType.Face_Assistant;
+         }
+         throw new RuntimeException("Map me...");
+      }
+   }
+
    class Toolbar extends JPanel {
       private static final long serialVersionUID = 1L;
 
       private JTextField edtMinesLeft, edtTimePlay;
       private BtnNew btnNew;
       private BtnPause btnPause;
+      private Map<Smile.EType, Smile>  mapSmiles;
+
+      private Icon getSmileIco(Smile.EType smileType) {
+         if (mapSmiles == null)
+            mapSmiles = new HashMap<>(Smile.EType.values().length);
+         if (!mapSmiles.containsKey(smileType))
+            mapSmiles.put(smileType, new Smile(new Size(24, 24), smileType));
+         return mapSmiles.get(smileType);
+      }
+      public Icon getSmileIco(EBtnNewGameState btnNewGameState) {
+         Smile.EType smileType = btnNewGameState.mapToSmileType();
+         if (smileType == null)
+            return null;
+         Icon ico = getSmileIco(smileType);
+         return ico;
+      }
+      public Icon getSmileIco(EBtnPauseState btnPauseState) {
+         Smile.EType smileType = btnPauseState.mapToSmileType();
+         if (smileType == null)
+            return null;
+         Icon ico = getSmileIco(smileType);
+         return ico;
+      }
 
       class BtnNew extends JButton {
          private static final long serialVersionUID = 1L;
@@ -671,17 +752,17 @@ public class Main extends JFrame implements PropertyChangeListener {
             this.setAction(Main.this.getHandlers().getGameNewAction());
             this.setFocusable(false);
 
-            if (getResources().getImgBtnNew(EBtnNewGameState.eNormal) == null) {
+            if (getSmileIco(EBtnNewGameState.eNormal) == null) {
                this.setText("N");
             } else {
-               this.setIcon(getResources().getImgBtnNew(EBtnNewGameState.eNormal));
-               this.setPressedIcon(getResources().getImgBtnNew(EBtnNewGameState.ePressed));
-               this.setSelectedIcon(getResources().getImgBtnNew(EBtnNewGameState.eSelected));
-               this.setRolloverIcon(getResources().getImgBtnNew(EBtnNewGameState.eRollover));
-               this.setRolloverSelectedIcon(getResources().getImgBtnNew(EBtnNewGameState.eRolloverSelected));
+               this.setIcon(getSmileIco(EBtnNewGameState.eNormal));
+               this.setPressedIcon(getSmileIco(EBtnNewGameState.ePressed));
+               this.setSelectedIcon(getSmileIco(EBtnNewGameState.eSelected));
+               this.setRolloverIcon(getSmileIco(EBtnNewGameState.eRollover));
+               this.setRolloverSelectedIcon(getSmileIco(EBtnNewGameState.eRolloverSelected));
                this.setRolloverEnabled(true);
-               this.setDisabledIcon(getResources().getImgBtnNew(EBtnNewGameState.eDisabled));
-               this.setDisabledSelectedIcon(getResources().getImgBtnNew(EBtnNewGameState.eDisabledSelected));
+               this.setDisabledIcon(getSmileIco(EBtnNewGameState.eDisabled));
+               this.setDisabledSelectedIcon(getSmileIco(EBtnNewGameState.eDisabledSelected));
             }
             this.setToolTipText("new Game");
          }
@@ -704,17 +785,17 @@ public class Main extends JFrame implements PropertyChangeListener {
             this.setFocusable(false);
             this.setEnabled(false);
 
-            if (getResources().getImgBtnPause(EBtnPauseState.eNormal) == null) {
+            if (getSmileIco(EBtnPauseState.eNormal) == null) {
                this.setText("P");
             } else {
-               this.setIcon(getResources().getImgBtnPause(EBtnPauseState.eNormal));
-               this.setPressedIcon(getResources().getImgBtnPause(EBtnPauseState.ePressed));
-               this.setSelectedIcon(getResources().getImgBtnPause(EBtnPauseState.eSelected));
-               this.setRolloverIcon(getResources().getImgBtnPause(EBtnPauseState.eRollover));
-               this.setRolloverSelectedIcon(getResources().getImgBtnPause(EBtnPauseState.eRolloverSelected));
+               this.setIcon(getSmileIco(EBtnPauseState.eNormal));
+               this.setPressedIcon(getSmileIco(EBtnPauseState.ePressed));
+               this.setSelectedIcon(getSmileIco(EBtnPauseState.eSelected));
+               this.setRolloverIcon(getSmileIco(EBtnPauseState.eRollover));
+               this.setRolloverSelectedIcon(getSmileIco(EBtnPauseState.eRolloverSelected));
                this.setRolloverEnabled(true);
-               this.setDisabledIcon(getResources().getImgBtnPause(EBtnPauseState.eDisabled));
-               this.setDisabledSelectedIcon(getResources().getImgBtnPause(EBtnPauseState.eDisabledSelected));
+               this.setDisabledIcon(getSmileIco(EBtnPauseState.eDisabled));
+               this.setDisabledSelectedIcon(getSmileIco(EBtnPauseState.eDisabledSelected));
             }
             this.setToolTipText("Pause");
          }
@@ -2004,7 +2085,7 @@ public class Main extends JFrame implements PropertyChangeListener {
             mosaicClickHandler = (clickResult) -> {
                //System.out.println("OnMosaicClick: down=" + clickResult.isDown() + "; leftClick=" + clickResult.isLeft());
                if (clickResult.isLeft() && (Main.this.getMosaic().getGameStatus() == EGameStatus.eGSPlay)) {
-                  Icon img = Main.this.getResources().getImgBtnNew(
+                  Icon img = Main.this.getToolbar().getSmileIco(
                         clickResult.isDown() ?
                            EBtnNewGameState.eNormalMosaic :
                            EBtnNewGameState.eNormal);
@@ -2039,7 +2120,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                      if (Main.this.isUsePause())
                         Main.this.ChangePause();
 
-                     Icon img = Main.this.getResources().getImgBtnNew(EBtnNewGameState.eNormal);
+                     Icon img = Main.this.getToolbar().getSmileIco(EBtnNewGameState.eNormal);
                      if (img != null)
                         Main.this.getToolbar().getBtnNew().setIcon(img);
                   }
@@ -2464,7 +2545,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                {
                   getTimerGame().stop();
                   getToolbar().getEdtTimePlay().setText("0");
-                  Icon img = getResources().getImgBtnNew(EBtnNewGameState.eNormal);
+                  Icon img = getToolbar().getSmileIco(EBtnNewGameState.eNormal);
                   if (img != null)
                      getToolbar().getBtnNew().setIcon(img);
                }
@@ -2477,7 +2558,7 @@ public class Main extends JFrame implements PropertyChangeListener {
             case eGSEnd:
                {
                   getTimerGame().stop();
-                  Icon img = getResources().getImgBtnNew(
+                  Icon img = getToolbar().getSmileIco(
                         getMosaic().isVictory() ?
                            EBtnNewGameState.eNormalWin :
                            EBtnNewGameState.eNormalLoss);

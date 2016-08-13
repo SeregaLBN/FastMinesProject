@@ -28,10 +28,9 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
 
 import fmg.swing.draw.img.Logo;
+import fmg.swing.draw.img.Smile.EType;
 import fmg.swing.utils.GuiTools;
-import fmg.swing.utils.ImgUtils;
 import fmg.swing.utils.Resources;
-import fmg.swing.utils.Resources.EBtnNewGameState;
 
 public class AboutDlg extends JDialog {
 
@@ -154,7 +153,7 @@ public class AboutDlg extends JDialog {
             btnLogo.repaint();
          }
       });
-      btnLogo.setPressedIcon(ImgUtils.zoom(getResources().getImgBtnNew(EBtnNewGameState.eNormalLoss), icoSize,icoSize));
+      btnLogo.setPressedIcon(getResources().getImgSmile(EType.Face_Disappointed, icoSize, icoSize));
       btnLogo.setFocusable(false);
 
       Insets margin = btnLogo.getMargin();
@@ -186,7 +185,7 @@ public class AboutDlg extends JDialog {
 
       panel.add(Box.createVerticalStrut(2));
 
-      JLabel lblVersion = new JLabel("Version 2011.09.30 (Java SE, SWING)");
+      JLabel lblVersion = new JLabel("Version 2016.08.13 (Java SWING)");
       lblVersion.setAlignmentX(Component.CENTER_ALIGNMENT);
 //      lblVersion.setBorder(BorderFactory.createEtchedBorder());
       panel.add(lblVersion);
@@ -297,7 +296,6 @@ public class AboutDlg extends JDialog {
    }
 
    public static boolean OpenURI(String uri) {
-      // http://johnbokma.com/mexit/2008/08/19/java-open-url-default-browser.html
       if (!Desktop.isDesktopSupported()) {
          System.err.println("Fail - Desktop is not supported.");
          return false;
