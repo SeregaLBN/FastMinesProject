@@ -21,8 +21,8 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\wbmp\BitmapFont.cs">
       <Link>src_fmg.uwp\draw\mosaic\wbmp\BitmapFont.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\BackgroundPause.cs">
-      <Link>src_fmg.uwp\draw\img\wbmp\BackgroundPause.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\Smile.cs">
+      <Link>src_fmg.uwp\draw\img\wbmp\Smile.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\Logo.cs">
       <Link>src_fmg.uwp\draw\img\wbmp\Logo.cs</Link>
