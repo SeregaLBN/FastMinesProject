@@ -277,57 +277,20 @@
     <Content Include="..\..\res\Logo\UWP\WideTile\Logo.scale-400.png">
       <Link>res\Logo\UWP\WideTile\Logo.scale-400.png</Link>
     </Content>
-    <Content Include="..\..\res\ToolBarButton\newNormal.png">
-      <Link>res\ToolBarButton\newNormal.png</Link>
-    </Content>
-    <Content Include="..\..\res\ToolBarButton\newNormalLoss.png">
-      <Link>res\ToolBarButton\newNormalLoss.png</Link>
-    </Content>
-    <Content Include="..\..\res\ToolBarButton\newNormalMosaic.png">
-      <Link>res\ToolBarButton\newNormalMosaic.png</Link>
-    </Content>
-    <Content Include="..\..\res\ToolBarButton\newNormalWin.png">
-      <Link>res\ToolBarButton\newNormalWin.png</Link>
-    </Content>
-    <Content Include="..\..\res\ToolBarButton\newPressed.png">
-      <Link>res\ToolBarButton\newPressed.png</Link>
-    </Content>
-    <Content Include="..\..\res\ToolBarButton\newPressed~.png">
-      <Link>res\ToolBarButton\newPressed~.png</Link>
-    </Content>
-    <Content Include="..\..\res\ToolBarButton\newRollover.png">
-      <Link>res\ToolBarButton\newRollover.png</Link>
-    </Content>
-    <Content Include="..\..\res\ToolBarButton\newRollover~.png">
-      <Link>res\ToolBarButton\newRollover~.png</Link>
-    </Content>
-    <Content Include="..\..\res\ToolBarButton\pauseAssistant.png">
-      <Link>res\ToolBarButton\pauseAssistant.png</Link>
-    </Content>
-    <Content Include="..\..\res\ToolBarButton\pauseDisabled.png">
-      <Link>res\ToolBarButton\pauseDisabled.png</Link>
-    </Content>
-    <Content Include="..\..\res\ToolBarButton\pauseDisabledSelected.png">
-      <Link>res\ToolBarButton\pauseDisabledSelected.png</Link>
-    </Content>
-    <Content Include="..\..\res\ToolBarButton\pauseNormal.png">
-      <Link>res\ToolBarButton\pauseNormal.png</Link>
-    </Content>
-    <Content Include="..\..\res\ToolBarButton\pausePressed.png">
-      <Link>res\ToolBarButton\pausePressed.png</Link>
-    </Content>
-    <Content Include="..\..\res\ToolBarButton\pausePressed~.png">
-      <Link>res\ToolBarButton\pausePressed~.png</Link>
-    </Content>
-    <Content Include="..\..\res\ToolBarButton\pauseRollover.png">
-      <Link>res\ToolBarButton\pauseRollover.png</Link>
-    </Content>
-    <Content Include="..\..\res\ToolBarButton\pauseRolloverSelected.png">
-      <Link>res\ToolBarButton\pauseRolloverSelected.png</Link>
-    </Content>
-    <Content Include="..\..\res\ToolBarButton\pauseSelected.png">
-      <Link>res\ToolBarButton\pauseSelected.png</Link>
-    </Content>
+
+    <Content Include="..\..\res\Smiles\Eyes_ClosedDisabled.png"><Link>res\Smiles\Eyes_ClosedDisabled.png</Link></Content>
+    <Content Include="..\..\res\Smiles\Eyes_OpenDisabled.png"><Link>res\Smiles\Eyes_OpenDisabled.png</Link></Content>
+    <Content Include="..\..\res\Smiles\Face_Assistant.png"><Link>res\Smiles\Face_Assistant.png</Link></Content>
+    <Content Include="..\..\res\Smiles\Face_Disappointed.png"><Link>res\Smiles\Face_Disappointed.png</Link></Content>
+    <Content Include="..\..\res\Smiles\Face_EyesClosed.png"><Link>res\Smiles\Face_EyesClosed.png</Link></Content>
+    <Content Include="..\..\res\Smiles\Face_EyesOpen.png"><Link>res\Smiles\Face_EyesOpen.png</Link></Content>
+    <Content Include="..\..\res\Smiles\Face_Grinning.png"><Link>res\Smiles\Face_Grinning.png</Link></Content>
+    <Content Include="..\..\res\Smiles\Face_SavouringDeliciousFood.png"><Link>res\Smiles\Face_SavouringDeliciousFood.png</Link></Content>
+    <Content Include="..\..\res\Smiles\Face_SmilingWithSunglasses.png"><Link>res\Smiles\Face_SmilingWithSunglasses.png</Link></Content>
+    <Content Include="..\..\res\Smiles\Face_WhiteSmiling.png"><Link>res\Smiles\Face_WhiteSmiling.png</Link></Content>
+    <Content Include="..\..\res\Smiles\Face_WinkingEyeLeft.png"><Link>res\Smiles\Face_WinkingEyeLeft.png</Link></Content>
+    <Content Include="..\..\res\Smiles\Face_WinkingEyeRight.png"><Link>res\Smiles\Face_WinkingEyeRight.png</Link></Content>
+
     <Content Include="..\..\res\Lang\English.png">
       <Link>res\Lang\English.png</Link>
     </Content>
