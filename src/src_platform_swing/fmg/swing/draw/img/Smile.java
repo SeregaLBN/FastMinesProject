@@ -28,38 +28,40 @@ import fmg.swing.utils.ImgUtils;
 
 public class Smile implements Icon {
 
-   // http://unicode-table.com/blocks/emoticons/
-   // http://unicode-table.com/blocks/miscellaneous-symbols-and-pictographs/
+   /** @see http://unicode-table.com/blocks/emoticons/
+    * <br>  http://unicode-table.com/blocks/miscellaneous-symbols-and-pictographs/
+   */
    public enum EType {
-      /** :) ☺ -  Незакрашенное улыбающееся лицо U+263A */
-      Face_WhiteSmiling,             // newNormal
+      /** :) ☺ -  White Smiling Face (Незакрашенное улыбающееся лицо) U+263A */
+      Face_WhiteSmiling,
 
-      /** :( 😞 - Разочарованное лицо U+1F61E */
-      Face_Disappointed,             // newNormalLoss
+      /** :( 😞 - Disappointed Face (Разочарованное лицо) U+1F61E */
+      Face_Disappointed,
 
-      /** 😀 - Ухмыляющееся лицо U+1F600 */
-      Face_Grinning,                 // newNormalMosaic
+      /** 😀 - Grinning Face (Ухмыляющееся лицо) U+1F600 */
+      Face_Grinning,
 
-      /** 😎 - Улыбающееся лицо в солнечных очках U+1F60E */
-      Face_SmilingWithSunglasses,    // newNormalWin
+      /** 😎 - Smiling Face with Sunglasses (Улыбающееся лицо в солнечных очках) U+1F60E */
+      Face_SmilingWithSunglasses,
 
-      /** 😋 - Лицо, смакующее деликатес U+1F60B */
-      Face_SavouringDeliciousFood,   // newPressed
+      /** 😋 - Face Savouring Delicious Food (Лицо, смакующее деликатес) U+1F60B */
+      Face_SavouringDeliciousFood,
 
 
-      Face_Assistant,         // pauseAssistant
+      /** like as Professor: 🎓 - Graduation Cap (Выпускная шапочка) U+1F393 */
+      Face_Assistant,
 
-      /** 👀 - Глаза U+1F440 */
-      Eyes_OpenDisabled,      // pauseDisabled
+      /** 👀 - Eyes (Глаза) U+1F440 */
+      Eyes_OpenDisabled,
 
-      Eyes_ClosedDisabled,    // pauseDisabledSelected
+      Eyes_ClosedDisabled,
 
-      Face_EyesOpen,          // pauseNormal
+      Face_EyesOpen,
 
-      Face_WinkingEyeLeft,    // pausePressed
+      Face_WinkingEyeLeft,
       Face_WinkingEyeRight,
 
-      Face_EyesClosed         // pauseSelected
+      Face_EyesClosed
    }
 
    private final Size _size;

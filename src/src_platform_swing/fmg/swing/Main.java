@@ -723,7 +723,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          if (mapSmiles == null)
             mapSmiles = new HashMap<>(Smile.EType.values().length);
          if (!mapSmiles.containsKey(smileType))
-            mapSmiles.put(smileType, new Smile(new Size(24, 24), smileType));
+            mapSmiles.put(smileType, new Smile(new Size(32, 32), smileType));
          return mapSmiles.get(smileType);
       }
       public Icon getSmileIco(EBtnNewGameState btnNewGameState) {
@@ -731,6 +731,9 @@ public class Main extends JFrame implements PropertyChangeListener {
          if (smileType == null)
             return null;
          Icon ico = getSmileIco(smileType);
+         if ((btnNewGameState == EBtnNewGameState.ePressed) ||
+             (btnNewGameState == EBtnNewGameState.eRollover))
+            return ImgUtils.move(ico, 1, 1);
          return ico;
       }
       public Icon getSmileIco(EBtnPauseState btnPauseState) {
@@ -738,6 +741,9 @@ public class Main extends JFrame implements PropertyChangeListener {
          if (smileType == null)
             return null;
          Icon ico = getSmileIco(smileType);
+         if ((btnPauseState == EBtnPauseState.ePressed) ||
+             (btnPauseState == EBtnPauseState.eRollover))
+              return ImgUtils.move(ico, 1, 1);
          return ico;
       }
 

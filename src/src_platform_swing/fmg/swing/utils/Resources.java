@@ -54,7 +54,7 @@ public final class Resources {
    }
 
    public Icon getImgSmile(Smile.EType type, int width, int height) {
-      Icon ico = getIcon("ToolBarButton/" + type + ".png"); // сначала из ресурсов
+      Icon ico = getIcon("Smiles/" + type + ".png"); // сначала из ресурсов
       if (ico != null)
          return ImgUtils.zoom(ico, width, height);
 
