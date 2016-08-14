@@ -671,11 +671,11 @@ public class Main extends JFrame implements PropertyChangeListener {
       public Smile.EType mapToSmileType() {
          switch (this) {
          case eNormal          : return EType.Face_WhiteSmiling;
-         case ePressed         : return EType.Face_SavouringDeliciousFood; // +1,1
+         case ePressed         : return EType.Face_SavouringDeliciousFood;
          case eSelected        : return null;
          case eDisabled        : return null;
          case eDisabledSelected: return null;
-         case eRollover        : return EType.Face_WhiteSmiling; // +1,1
+         case eRollover        : return EType.Face_WhiteSmiling;
          case eRolloverSelected: return null;
          case eNormalMosaic    : return EType.Face_Grinning;
          case eNormalWin       : return EType.Face_SmilingWithSunglasses;
@@ -699,12 +699,12 @@ public class Main extends JFrame implements PropertyChangeListener {
       public Smile.EType mapToSmileType() {
          switch (this) {
          case eNormal          : return EType.Face_EyesOpen;
-         case ePressed         : return EType.Face_WinkingEyeLeft; // +1,1
+         case ePressed         : return EType.Face_WinkingEyeLeft;
          case eSelected        : return EType.Face_EyesClosed;
          case eDisabled        : return EType.Eyes_OpenDisabled;
          case eDisabledSelected: return EType.Eyes_ClosedDisabled;
-         case eRollover        : return EType.Face_EyesOpen; // +1,1
-         case eRolloverSelected: return EType.Face_WinkingEyeLeft;
+         case eRollover        : return EType.Face_EyesOpen;
+         case eRolloverSelected: return EType.Face_WinkingEyeRight;
          case eAssistant       : return EType.Face_Assistant;
          }
          throw new RuntimeException("Map me...");
@@ -717,34 +717,29 @@ public class Main extends JFrame implements PropertyChangeListener {
       private JTextField edtMinesLeft, edtTimePlay;
       private BtnNew btnNew;
       private BtnPause btnPause;
-      private Map<Smile.EType, Smile>  mapSmiles;
 
-      private Icon getSmileIco(Smile.EType smileType) {
-         if (mapSmiles == null)
-            mapSmiles = new HashMap<>(Smile.EType.values().length);
-         if (!mapSmiles.containsKey(smileType))
-            mapSmiles.put(smileType, new Smile(new Size(32, 32), smileType));
-         return mapSmiles.get(smileType);
+      private Icon getSmileIco(Smile.EType smileType, int sizeX, int sizeY) {
+         return new Smile(new Size(sizeX, sizeY), smileType);
+         //return ImgUtils.zoom(new Smile(new Size(300, 300), smileType), sizeX, sizeY);
       }
       public Icon getSmileIco(EBtnNewGameState btnNewGameState) {
          Smile.EType smileType = btnNewGameState.mapToSmileType();
          if (smileType == null)
             return null;
-         Icon ico = getSmileIco(smileType);
-         if ((btnNewGameState == EBtnNewGameState.ePressed) ||
-             (btnNewGameState == EBtnNewGameState.eRollover))
-            return ImgUtils.move(ico, 1, 1);
-         return ico;
+         int size = (btnNewGameState == EBtnNewGameState.ePressed) ||
+                    (btnNewGameState == EBtnNewGameState.eRollover)
+                  ? 25 : 24;
+         return getSmileIco(smileType, size, size);
       }
       public Icon getSmileIco(EBtnPauseState btnPauseState) {
          Smile.EType smileType = btnPauseState.mapToSmileType();
          if (smileType == null)
             return null;
-         Icon ico = getSmileIco(smileType);
-         if ((btnPauseState == EBtnPauseState.ePressed) ||
-             (btnPauseState == EBtnPauseState.eRollover))
-              return ImgUtils.move(ico, 1, 1);
-         return ico;
+         int size = (btnPauseState == EBtnPauseState.ePressed) ||
+                    (btnPauseState == EBtnPauseState.eRollover) ||
+                    (btnPauseState == EBtnPauseState.eRolloverSelected)
+                  ? 25 : 24;
+         return getSmileIco(smileType, size, size);
       }
 
       class BtnNew extends JButton {
