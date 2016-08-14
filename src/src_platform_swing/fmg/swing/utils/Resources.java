@@ -7,16 +7,11 @@ import java.util.Map;
 import javax.swing.Icon;
 
 import fmg.common.geom.Size;
-import fmg.swing.draw.img.BackgroundPause;
-import fmg.swing.draw.img.Flag;
-import fmg.swing.draw.img.Mine;
 import fmg.swing.draw.img.Smile;
 
 /** Мультимедиа ресурсы программы */
 public final class Resources {
 
-   private Icon imgFlag, imgMine;
-   private Icon imgPause;
    private Map<Locale, Icon> imgsLang;
 
    private Icon getIcon(String path) {
@@ -24,33 +19,6 @@ public final class Resources {
       if (img == null)
          img = ImgUtils.getIcon(path);
       return img;
-   }
-
-   public Icon getImgFlag(int width, int height) {
-      if (imgFlag == null) {
-         imgFlag = getIcon("CellState/Flag.png"); // сначала из ресурсов
-         if (imgFlag == null)
-            // иначе - своя картинка из кода
-            imgFlag = new Flag();
-      }
-      return ImgUtils.zoom(imgFlag, width, height);
-   }
-   public Icon getImgMine(int width, int height) {
-      if (imgMine == null) {
-         imgMine = getIcon("CellState/Mine.png"); // сначала из ресурсов
-         if (imgMine == null)
-            // иначе - своя картинка из кода
-            imgMine = new Mine();
-      }
-      return ImgUtils.zoom(imgMine, width, height);
-   }
-   public Icon getImgPause() {
-      if (imgPause == null) {
-         imgPause = getIcon("Background/Pause.png"); // сначала из ресурсов
-         if (imgPause == null)
-            imgPause = ImgUtils.toIco(ImgUtils.toImg(new BackgroundPause())); // иначе - своя картинка из кода
-      }
-      return imgPause;
    }
 
    public Icon getImgSmile(Smile.EType type, int width, int height) {

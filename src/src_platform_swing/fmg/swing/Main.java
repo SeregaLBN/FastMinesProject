@@ -96,7 +96,9 @@ import fmg.swing.dialogs.CustomSkillDlg;
 import fmg.swing.dialogs.ManageDlg;
 import fmg.swing.dialogs.SelectMosaicDlg;
 import fmg.swing.dialogs.StatisticDlg;
+import fmg.swing.draw.img.Flag;
 import fmg.swing.draw.img.Logo;
+import fmg.swing.draw.img.Mine;
 import fmg.swing.draw.img.MosaicsGroupImg;
 import fmg.swing.draw.img.MosaicsImg;
 import fmg.swing.draw.img.MosaicsSkillImg;
@@ -904,11 +906,12 @@ public class Main extends JFrame implements PropertyChangeListener {
 
       @Override
       protected void paintComponent(Graphics g) {
-         Icon img = Main.this.getResources().getImgPause();
-         if (img == null) {
-            super.paintComponent(g);
-         } else {
-            Icon imgIco = getCachedImg(img);
+         try (Logo.Icon logo = new Logo.Icon()) {
+            logo.setUseGradient(true);
+            logo.setSize(550);
+            logo.setPadding(10);
+
+            Icon imgIco = getCachedPauseImg(logo.getImage());
             Dimension sizeOutward = this.getSize();
             imgIco.paintIcon(this, g,
                   (sizeOutward.width -imgIco.getIconWidth())>>1,
@@ -924,7 +927,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
       /** кэшированная картинка */
       private Icon cachedImg;
-      public Icon getCachedImg(Icon img) {
+      public Icon getCachedPauseImg(Icon img) {
          if (cachedImg == null)
             cachedImg = img;
 
@@ -2355,8 +2358,8 @@ public class Main extends JFrame implements PropertyChangeListener {
          System.err.println("Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");
          sq = 3; // ат балды...
       }
-      pc.setImgFlag(getResources().getImgFlag(sq, sq));
-      pc.setImgMine(getResources().getImgMine(sq, sq));
+      pc.setImgFlag(ImgUtils.zoom(new Flag(), sq, sq));
+      pc.setImgMine(ImgUtils.zoom(new Mine(), sq, sq));
    }
 
    public static void Beep() {
