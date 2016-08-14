@@ -893,6 +893,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          }
       }
    }
+
    class PausePanel extends JLabel {
       private static final long serialVersionUID = 1L;
 
@@ -904,19 +905,40 @@ public class Main extends JFrame implements PropertyChangeListener {
          this.setFont(font);
       }
 
+      Logo.Icon _logo;
+      private Logo.Icon getLogo() {
+         if (_logo == null) {
+            _logo = new Logo.Icon();
+            _logo.setUseGradient(true);
+            _logo.setPadding(10);
+            _logo.setRotateMode(Logo.ERotateMode.color);
+            _logo.setRedrawInterval(50);
+
+            _logo.addListener(ev -> {
+               if (Logo.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
+                  PausePanel.this.repaint();
+               }
+            });
+         }
+         return _logo;
+      }
+
       @Override
       protected void paintComponent(Graphics g) {
-         try (Logo.Icon logo = new Logo.Icon()) {
-            logo.setUseGradient(true);
-            logo.setSize(550);
-            logo.setPadding(10);
+         Dimension sizeOutward = this.getSize();
+         Logo.Icon logo = getLogo();
+         logo.setSize((int)Math.min(sizeOutward.getWidth(), sizeOutward.getHeight()));
 
-            Icon imgIco = getCachedPauseImg(logo.getImage());
-            Dimension sizeOutward = this.getSize();
-            imgIco.paintIcon(this, g,
-                  (sizeOutward.width -imgIco.getIconWidth())>>1,
-                  (sizeOutward.height-imgIco.getIconHeight())>>1);
-         }
+         logo.getImage().paintIcon(this, g,
+               (sizeOutward.width -logo.getWidth())>>1,
+               (sizeOutward.height-logo.getHeight())>>1);
+      }
+
+      public void animateLogo(boolean start) {
+         getLogo().setRotate(start);
+      }
+      public void closeLogo() {
+         getLogo().close();
       }
 
       @Override
@@ -924,24 +946,8 @@ public class Main extends JFrame implements PropertyChangeListener {
 //         return super.getPreferredSize();
          return getMosaic().getContainer().getPreferredSize();
       }
-
-      /** кэшированная картинка */
-      private Icon cachedImg;
-      public Icon getCachedPauseImg(Icon img) {
-         if (cachedImg == null)
-            cachedImg = img;
-
-         Dimension sizeOutward = this.getSize();
-         Dimension sizeInner = new Dimension(img.getIconWidth(), img.getIconHeight());
-
-         Rect newRect = Rect.CalcInnerRect(Cast.toSize(sizeInner), Cast.toSize(sizeOutward));
-         if ((cachedImg.getIconHeight() != newRect.height) ||
-            (cachedImg.getIconWidth() != newRect.width))
-            cachedImg = ImgUtils.zoom(img, newRect.width, newRect.height);
-
-         return cachedImg;
-      }
    }
+
    class StatusBar extends JLabel {
       private static final long serialVersionUID = 1L;
 
@@ -1413,7 +1419,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
       boolean paused = isPaused();
       getToolbar().getBtnPause().setSelected(!paused);
-
+      getPausePanel().animateLogo(!paused);
       if (paused) {
          getTimerGame().restart();
 
@@ -1474,6 +1480,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          ex.printStackTrace();
       }
 
+      getPausePanel().closeLogo();
       getMenu().getGame().close();
       getMenu().getMosaics().close();
       if (isStatisticDialogExist())
