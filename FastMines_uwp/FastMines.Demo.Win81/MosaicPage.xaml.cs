@@ -19,6 +19,7 @@ using fmg.core.types.click;
 using fmg.data.controller.types;
 using fmg.uwp.mosaic;
 using fmg.uwp.utils;
+using fmg.uwp.draw.img.wbmp;
 using Size = fmg.common.geom.Size;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -92,8 +93,8 @@ namespace FastMines {
             ToolTipService.SetToolTip(bttnSkillCrazy, new ToolTip { Content = "3" });
             ToolTipService.SetToolTip(bttnSkillProfi, new ToolTip {Content = "4"});
          }
-         MosaicField.PaintContext.ImgMine = await fmg.uwp.utils.wbmp.Resources.GetImgMine();
-         //MosaicField.PaintContext.ImgFlag = await fmg.uwp.utils.wbmp.Resources.GetImgFlag();
+         MosaicField.PaintContext.ImgMine = new Mine().Image;
+         //MosaicField.PaintContext.ImgFlag = new Flag().Image;
       }
 
       /// <summary> Поменять игру на новый уровень сложности </summary>

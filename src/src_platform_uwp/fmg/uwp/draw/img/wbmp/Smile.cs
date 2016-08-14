@@ -4,11 +4,11 @@ using fmg.uwp.utils;
 
 namespace fmg.uwp.draw.img.wbmp {
 
-   /// <summary> картинка для фоновой паузы </summary>
-   public class BackgroundPause {
+   /// <summary> Smile image </summary>
+   public class Smile {
       private readonly WriteableBitmap _bmp;
 
-      public BackgroundPause() {
+      public Smile() {
          const int iconWidth = 1000, iconHeight = 1000;
          _bmp = new WriteableBitmap(iconWidth, iconHeight);
 

@@ -109,7 +109,10 @@ namespace FastMines.Data {
       public MosaicsGroupImg MosaicGroupImage {
          get {
             if (_mosaicsGroupImg == null) {
-               _mosaicsGroupImg = Resources.GetImgMosaicGroup(UniqueId);
+               _mosaicsGroupImg = new MosaicsGroupImg(UniqueId) {
+                  Size = new fmg.common.geom.Size(MosaicsGroupImg.DefaultImageSize, MosaicsGroupImg.DefaultImageSize),
+                  PolarLights = true
+               }; 
                base.Image = _mosaicsGroupImg.Image;
             }
             return _mosaicsGroupImg;

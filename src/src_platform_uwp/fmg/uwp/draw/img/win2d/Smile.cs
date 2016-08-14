@@ -10,17 +10,56 @@ using fmg.uwp.draw.mosaic.win2d;
 
 namespace fmg.uwp.draw.img.win2d {
 
-   /// <summary> картинка для фоновой паузы </summary>
-   public abstract class BackgroundPause<TImage>
+   /// <summary> Smile image </summary>
+   public abstract class Smile<TImage>
       where TImage : DependencyObject, ICanvasResourceCreator
    {
+
+      /// <summary> http://unicode-table.com/blocks/emoticons/
+      ///           http://unicode-table.com/blocks/miscellaneous-symbols-and-pictographs/
+      /// </summary>
+      public enum EType {
+         /// <summary> :) ☺ -  White Smiling Face (Незакрашенное улыбающееся лицо) U+263A </summary>
+         Face_WhiteSmiling,
+
+         /// <summary> :( 😞 - Disappointed Face (Разочарованное лицо) U+1F61E </summary>
+         Face_Disappointed,
+
+         /// <summary> 😀 - Grinning Face (Ухмыляющееся лицо) U+1F600 </summary>
+         Face_Grinning,
+
+         /// <summary> 😎 - Smiling Face with Sunglasses (Улыбающееся лицо в солнечных очках) U+1F60E </summary>
+         Face_SmilingWithSunglasses,
+
+         /// <summary> 😋 - Face Savouring Delicious Food (Лицо, смакующее деликатес) U+1F60B </summary>
+         Face_SavouringDeliciousFood,
+
+
+         /// <summary> like as Professor: 🎓 - Graduation Cap (Выпускная шапочка) U+1F393 </summary>
+         Face_Assistant,
+
+         /// <summary> 👀 - Eyes (Глаза) U+1F440 </summary>
+         Eyes_OpenDisabled,
+
+         Eyes_ClosedDisabled,
+
+         Face_EyesOpen,
+
+         Face_WinkingEyeLeft,
+         Face_WinkingEyeRight,
+
+         Face_EyesClosed
+      }
+
       protected readonly ICanvasResourceCreator _rc;
       private TImage _img;
+      private EType _type;
       private int _width = 100;
       private int _height = 100;
 
-      protected BackgroundPause(ICanvasResourceCreator resourceCreator) {
+      protected Smile(ICanvasResourceCreator resourceCreator, EType type) {
          _rc = resourceCreator;
+         _type = type;
       }
 
       public TImage Image {
@@ -40,6 +79,10 @@ namespace fmg.uwp.draw.img.win2d {
       public int Height {
          get { return _height; }
          set { _height = value; _img = null; }
+      }
+      public EType Type {
+         get { return _type; }
+         set { _type = value; _img = null; }
       }
 
       protected abstract TImage CreateImage();
@@ -88,14 +131,14 @@ namespace fmg.uwp.draw.img.win2d {
       //    custom implementations
       /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      /// <summary> Main pause image
+      /// <summary> Smile image
       /// <br/>
       /// CanvasBitmap impl
       /// </summary>
-      public class CanvasBmp : BackgroundPause<CanvasBitmap> {
+      public class CanvasBmp : Smile<CanvasBitmap> {
 
-         public CanvasBmp(ICanvasResourceCreator resourceCreator)
-            : base(resourceCreator)
+         public CanvasBmp(EType type, ICanvasResourceCreator resourceCreator)
+            : base(resourceCreator, type)
          { }
 
          protected override CanvasBitmap CreateImage() {
@@ -111,14 +154,14 @@ namespace fmg.uwp.draw.img.win2d {
 
       }
 
-      /// <summary> Main pause image
+      /// <summary> Smile image
       /// <br/>
       /// CanvasImageSource impl (XAML ImageSource compatible)
       /// </summary>
-      public class CanvasImgSrc : BackgroundPause<CanvasImageSource> {
+      public class CanvasImgSrc : Smile<CanvasImageSource> {
 
-         public CanvasImgSrc(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
-            : base(resourceCreator)
+         public CanvasImgSrc(EType type, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+            : base(resourceCreator, type)
          { }
 
          protected override CanvasImageSource CreateImage() {

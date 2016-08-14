@@ -10,21 +10,21 @@ using fmg.core.img;
 using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.uwp.draw.img.win2d;
-using StaticImg = fmg.core.img.StaticImg<object>;
-using LogoCanvasBmp = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using LogoCanvasImgSrc = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using MosaicsSkillCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using StaticImg                = fmg.core.img.StaticImg<object>;
+using LogoCanvasBmp            = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.        CanvasBitmap     >.CanvasBmp;
+using LogoCanvasImgSrc         = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using MosaicsSkillCanvasBmp    = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.        CanvasBitmap     >.CanvasBmp;
 using MosaicsSkillCanvasImgSrc = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using MosaicsGroupCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsGroupCanvasBmp    = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.        CanvasBitmap     >.CanvasBmp;
 using MosaicsGroupCanvasImgSrc = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using MosaicsCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using MosaicsCanvasImgSrc = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using BackgroundPauseCanvasBmp = fmg.uwp.draw.img.win2d.BackgroundPause<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using BackgroundPauseCanvasImgSrc = fmg.uwp.draw.img.win2d.BackgroundPause<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using FlagCanvasBmp = fmg.uwp.draw.img.win2d.Flag<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using FlagCanvasImgSrc = fmg.uwp.draw.img.win2d.Flag<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using MineCanvasBmp = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
-using MineCanvasImgSrc = fmg.uwp.draw.img.win2d.Mine.CanvasImgSrc;
+using MosaicsCanvasBmp         = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.        CanvasBitmap     >.CanvasBmp;
+using MosaicsCanvasImgSrc      = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using SmileCanvasBmp           = fmg.uwp.draw.img.win2d.Smile<Microsoft.Graphics.Canvas.        CanvasBitmap     >.CanvasBmp;
+using SmileCanvasImgSrc        = fmg.uwp.draw.img.win2d.Smile<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using FlagCanvasBmp            = fmg.uwp.draw.img.win2d.Flag<Microsoft.Graphics.Canvas.        CanvasBitmap      >.CanvasBmp;
+using FlagCanvasImgSrc         = fmg.uwp.draw.img.win2d.Flag<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource >.CanvasImgSrc;
+using MineCanvasBmp            = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
+using MineCanvasImgSrc         = fmg.uwp.draw.img.win2d.Mine.CanvasImgSrc;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -39,7 +39,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       private readonly MosaicsSkillCanvasBmp    Bmp2;
       private readonly MosaicsGroupCanvasBmp    Bmp3;
       private readonly MosaicsCanvasBmp         Bmp4;
-      private readonly BackgroundPauseCanvasBmp Bmp5;
+      private readonly SmileCanvasBmp           Bmp5;
       private readonly FlagCanvasBmp            Bmp6;
       private readonly MineCanvasBmp            Bmp7;
 
@@ -47,7 +47,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       public MosaicsSkillCanvasImgSrc    Img2 { get; }
       public MosaicsGroupCanvasImgSrc    Img3 { get; }
       public MosaicsCanvasImgSrc         Img4 { get; }
-      public BackgroundPauseCanvasImgSrc Img5 { get; }
+      public SmileCanvasImgSrc           Img5 { get; }
       public FlagCanvasImgSrc            Img6 { get; }
       public MineCanvasImgSrc            Img7 { get; }
 
@@ -86,8 +86,8 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          Img3 = new MosaicsGroupCanvasImgSrc(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], device);
          Bmp4 = new MosaicsCanvasBmp        (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), canvasControl4);
          Img4 = new MosaicsCanvasImgSrc     (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), device);
-         Bmp5 = new BackgroundPauseCanvasBmp(canvasControl5);
-         Img5 = new BackgroundPauseCanvasImgSrc(device);
+         Bmp5 = new SmileCanvasBmp   (((SmileCanvasBmp   .EType[])Enum.GetValues(typeof(SmileCanvasBmp   .EType)))[R(Enum.GetValues(typeof(SmileCanvasBmp   .EType)).Length)], canvasControl5);
+         Img5 = new SmileCanvasImgSrc(((SmileCanvasImgSrc.EType[])Enum.GetValues(typeof(SmileCanvasImgSrc.EType)))[R(Enum.GetValues(typeof(SmileCanvasImgSrc.EType)).Length)], device);
          Bmp6 = new FlagCanvasBmp(canvasControl6);
          Img6 = new FlagCanvasImgSrc(device);
          Bmp7 = new MineCanvasBmp(canvasControl7);

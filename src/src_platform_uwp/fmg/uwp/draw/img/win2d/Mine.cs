@@ -1,7 +1,7 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Windows.UI.Xaml;
-using LogoBmp = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using LogoBmp = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.        CanvasBitmap     >.CanvasBmp;
 using LogoImg = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
 
 namespace fmg.uwp.draw.img.win2d {
