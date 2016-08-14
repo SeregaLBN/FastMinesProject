@@ -6,9 +6,6 @@ import java.util.Map;
 
 import javax.swing.Icon;
 
-import fmg.common.geom.Size;
-import fmg.swing.draw.img.Smile;
-
 /** Мультимедиа ресурсы программы */
 public final class Resources {
 
@@ -19,15 +16,6 @@ public final class Resources {
       if (img == null)
          img = ImgUtils.getIcon(path);
       return img;
-   }
-
-   public Icon getImgSmile(Smile.EType type, int width, int height) {
-      Icon ico = getIcon("Smiles/" + type + ".png"); // сначала из ресурсов
-      if (ico != null)
-         return ImgUtils.zoom(ico, width, height);
-
-      // иначе - своя картинка из кода
-      return new Smile(new Size(width, height), type);
    }
 
    public Map<Locale, Icon> getImgsLang() {

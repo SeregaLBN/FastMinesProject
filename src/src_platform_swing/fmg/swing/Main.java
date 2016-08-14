@@ -109,7 +109,6 @@ import fmg.swing.mosaic.Mosaic;
 import fmg.swing.serializable.SerializeProjData;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
-import fmg.swing.utils.Resources;
 
 /** Главное окно программы */
 public class Main extends JFrame implements PropertyChangeListener {
@@ -122,7 +121,6 @@ public class Main extends JFrame implements PropertyChangeListener {
    private PausePanel pausePanel;
    private StatusBar  statusBar;
 
-   private Resources resources;
    private Logo.Image _logo;
    private PlayersModel players;
    private UUID activeUserId; // current user
@@ -153,7 +151,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
    private AboutDlg getAboutDialog() {
       if (_aboutDialog == null)
-         _aboutDialog = new AboutDlg(this, false, getResources());
+         _aboutDialog = new AboutDlg(this, false);
       return _aboutDialog;
    }
    private boolean isChampionDialogExist() { return _championDialog != null; }
@@ -721,8 +719,8 @@ public class Main extends JFrame implements PropertyChangeListener {
       private BtnPause btnPause;
 
       private Icon getSmileIco(Smile.EType smileType, int sizeX, int sizeY) {
-         return new Smile(new Size(sizeX, sizeY), smileType);
-         //return ImgUtils.zoom(new Smile(new Size(300, 300), smileType), sizeX, sizeY);
+         return new Smile(smileType, sizeX, sizeY);
+//         return ImgUtils.zoom(new Smile(smileType, 300, 300), sizeX, sizeY);
       }
       public Icon getSmileIco(EBtnNewGameState btnNewGameState) {
          Smile.EType smileType = btnNewGameState.mapToSmileType();
@@ -1925,12 +1923,6 @@ public class Main extends JFrame implements PropertyChangeListener {
 //      }
 //      return sb.toString();
 //   }
-
-   private Resources getResources() {
-      if (resources == null)
-         resources = new Resources();
-      return resources;
-   }
 
    private Handlers handlers;
    /** all Action handlers */

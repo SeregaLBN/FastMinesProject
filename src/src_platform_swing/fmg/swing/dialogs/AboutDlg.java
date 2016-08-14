@@ -28,32 +28,21 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
 
 import fmg.swing.draw.img.Logo;
+import fmg.swing.draw.img.Smile;
 import fmg.swing.draw.img.Smile.EType;
 import fmg.swing.utils.GuiTools;
-import fmg.swing.utils.Resources;
 
 public class AboutDlg extends JDialog {
 
    private static final long serialVersionUID = 1L;
 
    private Logo.Icon _logo;
-   private Resources resources;
-
-   private Resources getResources() {
-      if (resources == null)
-         resources = new Resources();
-      return resources;
-   }
 
    public AboutDlg(JFrame parent, boolean modal) {
       super(parent, "About", modal);
       initialize(parent);
    }
-   public AboutDlg(JFrame parent, boolean modal, Resources resources) {
-      super(parent, "About", modal);
-      this.resources = resources;
-      initialize(parent);
-   }
+
    private void initialize(JFrame parent) {
       Object keyBind = "CloseDialog";
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
@@ -153,7 +142,7 @@ public class AboutDlg extends JDialog {
             btnLogo.repaint();
          }
       });
-      btnLogo.setPressedIcon(getResources().getImgSmile(EType.Face_Disappointed, icoSize, icoSize));
+      btnLogo.setPressedIcon(new Smile(EType.Face_Disappointed, icoSize, icoSize));
       btnLogo.setFocusable(false);
 
       Insets margin = btnLogo.getMargin();
