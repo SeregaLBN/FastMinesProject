@@ -907,7 +907,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       private Logo.Icon getLogo() {
          if (_logo == null) {
             _logo = new Logo.Icon();
-            _logo.setUseGradient(true);
+            _logo.setUseGradient(!true);
             _logo.setPadding(10);
             _logo.setRotateMode(Logo.ERotateMode.color);
             _logo.setRedrawInterval(50);

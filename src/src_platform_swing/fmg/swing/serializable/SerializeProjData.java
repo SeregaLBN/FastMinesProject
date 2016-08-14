@@ -39,7 +39,7 @@ public class SerializeProjData implements Externalizable {
    private boolean systemTheme;
 
    public SerializeProjData() { setDefaults(); }
-   
+
    private void setDefaults() {
       mosaicType = EMosaic.eMosaicSquare1;
       sizeField = ESkillLevel.eBeginner.DefaultSize();
@@ -56,12 +56,12 @@ public class SerializeProjData implements Externalizable {
 
       zoomAlwaysMax = false;
       useUnknown = true;
-      usePause = false;
+      usePause = true;
 
       if (location == null)
          location = new Point(0, 0);
       else
-         location.x = location.y = 0; 
+         location.x = location.y = 0;
 
       systemTheme = true;
    }
@@ -82,8 +82,8 @@ public class SerializeProjData implements Externalizable {
       out.writeBoolean(doNotAskStartup);
 
       out.writeBoolean(systemTheme);
-      for (int i=0; i<eShowElements.length; i++)
-         out.writeBoolean(eShowElements[i]);
+      for (boolean eShowElement : eShowElements)
+         out.writeBoolean(eShowElement);
       out.writeBoolean(zoomAlwaysMax);
       out.writeBoolean(useUnknown);
       out.writeBoolean(usePause);
