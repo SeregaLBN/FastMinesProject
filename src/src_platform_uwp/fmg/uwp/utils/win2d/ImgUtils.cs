@@ -1,18 +1,18 @@
 using System;
 using System.Threading.Tasks;
+using Windows.UI;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics.Display;
 using Windows.Storage;
 using Microsoft.Graphics.Canvas;
-using fmg.common;
 
 namespace fmg.uwp.utils.win2d {
 
    /// <summary>
    /// вспомогательный класс для преобразований картинок
    /// </summary>
-   public class ImgUtils {
+   public static class ImgUtils {
 
       /// <summary> загрузить картинку из локальных ресурсов </summary>
       public static async Task<CanvasBitmap> GetImage(Uri uri, ICanvasResourceCreator rc) {
@@ -79,10 +79,10 @@ namespace fmg.uwp.utils.win2d {
             using (var ds = image.CreateDrawingSession()) {
                ds.FillRectangle(new Rect(10, 10, maxX, maxY),
                   DesignMode.DesignModeEnabled
-                     ? Color.Green.ToWinColor()
-                     : Color.Red.ToWinColor());
+                     ? Colors.Green
+                     : Colors.Red);
                //image.DrawRectangle(...);
-               var clr = new Color(0xFFFFFFFF).ToWinColor();
+               var clr = Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
                ds.DrawLine(10, 10, 200, 200, clr);
                ds.DrawLine(10, 10, 10, maxY, clr);
                ds.DrawLine(10, maxY, maxY, maxY, clr);
@@ -94,5 +94,7 @@ namespace fmg.uwp.utils.win2d {
          }
          return _failedImage;
       }
+
    }
+
 }

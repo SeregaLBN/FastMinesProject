@@ -65,6 +65,43 @@ namespace fmg.uwp.draw.mosaic.win2d {
          }
       }
 
+      /// <summary>
+      /// Constructs and initializes an Ellipse {CanvasGeometry} from the specified coordinates
+      /// </summary>
+      /// <param name="resourceCreator"></param>
+      /// <param name="x">the X coordinate of the upper-left corner of the framing rectangle</param>
+      /// <param name="y">the Y coordinate of the upper-left corner of the framing rectangle</param>
+      /// <param name="w">the width of the framing rectangle</param>
+      /// <param name="h">the height of the framing rectangle</param>
+      /// <returns></returns>
+      public static CanvasGeometry CreateEllipse(this ICanvasResourceCreator resourceCreator, double x, double y, double w, double h) {
+         return CanvasGeometry.CreateEllipse(resourceCreator, (float)(x + w / 2), (float)(x + h / 2), (float)(w / 2), (float)(h / 2));
+      }
+
+
+
+
+      /// <summary>
+      /// Fills an oval bounded by the specified rectangle with the current color
+      /// </summary>
+      /// <param name="ds"></param>
+      /// <param name="x">coordinate of the upper left corner of the oval to be filled</param>
+      /// <param name="y">coordinate of the upper left corner of the oval to be filled</param>
+      /// <param name="width">width the width of the oval to be filled</param>
+      /// <param name="height">height the height of the oval to be filled</param>
+      /// <param name="clr">Fills the interior of a ellipse with the specified color</param>
+      public static void FillOval(this CanvasDrawingSession ds, double x, double y, double width, double height, Color clr) {
+         ds.FillEllipse((float)(x + width / 2), (float)(y + height / 2), (float)(width / 2), (float)(height / 2), clr.ToWinColor());
+      }
+
+      public static void FillOval(this CanvasDrawingSession ds, double x, double y, double width, double height, ICanvasBrush brush) {
+         ds.FillEllipse((float)(x + width / 2), (float)(y + height / 2), (float)(width / 2), (float)(height / 2), brush);
+      }
+
+      public static CanvasGeometry IntersectExclude(this CanvasGeometry shape1, CanvasGeometry shape2) {
+         return shape1.CombineWith(shape2, Matrix3x2.CreateTranslation(0, 0), CanvasGeometryCombine.Exclude);
+      }
+
    }
 
 }

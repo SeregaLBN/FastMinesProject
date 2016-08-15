@@ -29,6 +29,9 @@ namespace fmg.uwp.utils {
       public static Color ToFmColor(this Windows.UI.Color self) { return new Color(self.A, self.R, self.G, self.B); }
       public static Windows.UI.Color ToWinColor(this Color self) { return new Windows.UI.Color { A = self.A, B = self.B, G = self.G, R = self.R }; }
 
+      public static HSV ToHsvColor(this Windows.UI.Color self) { return new HSV(self.ToFmColor()); }
+      public static Windows.UI.Color ToWinColor(this HSV self) { return self.ToColor().ToWinColor(); }
+
    }
 
 }
