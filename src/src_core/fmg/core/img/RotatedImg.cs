@@ -84,6 +84,11 @@ namespace fmg.core.img {
       }
 
       protected override void Dispose(bool disposing) {
+         if (Disposed)
+            return;
+
+         base.Dispose(disposing);
+
          if (disposing) {
             // free managed resources
             _timer?.Dispose();

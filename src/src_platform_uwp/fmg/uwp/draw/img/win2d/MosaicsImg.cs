@@ -261,7 +261,11 @@ namespace fmg.uwp.draw.img.win2d {
       #endregion
 
       protected override void Dispose(bool disposing) {
+         if (Disposed)
+            return;
+
          base.Dispose(disposing);
+
          if (disposing)
             PaintContext.Dispose();
       }

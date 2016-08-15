@@ -281,7 +281,11 @@ namespace fmg.uwp.draw.img.wbmp {
       #endregion
 
       protected override void Dispose(bool disposing) {
+         if (Disposed)
+            return;
+
          base.Dispose(disposing);
+
          if (disposing)
             PaintContext.Dispose();
       }
