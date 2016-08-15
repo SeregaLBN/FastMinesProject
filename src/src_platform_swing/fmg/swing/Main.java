@@ -24,6 +24,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.PrintStream;
@@ -252,6 +253,8 @@ public class Main extends JFrame implements PropertyChangeListener {
 
                   skillLevel.put(val, menuItem);
                }
+
+               recheckSelectedSkillLevel();
             }
             return skillLevel.get(key);
          }
@@ -352,6 +355,8 @@ public class Main extends JFrame implements PropertyChangeListener {
 
                   mosaicsGroup.put(val, menuItem);
                }
+
+               recheckSelectedMosaicType();
             }
             return mosaicsGroup.get(key);
          }
@@ -901,6 +906,10 @@ public class Main extends JFrame implements PropertyChangeListener {
          Font font = this.getFont();
          font = new Font(font.getName(), font.getStyle(), 45);
          this.setFont(font);
+         this.setBorder(BorderFactory.createRaisedBevelBorder());
+//       this.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+//       this.setFocusable(true);
+         this.addMouseListener(Main.this.getHandlers().getPausePanelMouseListener());
       }
 
       Logo.Icon _logo;
@@ -935,7 +944,9 @@ public class Main extends JFrame implements PropertyChangeListener {
       public void animateLogo(boolean start) {
          getLogo().setRotate(start);
       }
-      public void closeLogo() {
+
+      public void close() {
+         removeMouseListener(Main.this.getHandlers().getPausePanelMouseListener());
          getLogo().close();
       }
 
@@ -1015,12 +1026,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    private PausePanel getPausePanel() {
       if (pausePanel == null) {
          pausePanel = new PausePanel("Pause");
-         pausePanel.setBorder(BorderFactory.createRaisedBevelBorder());
-//         pausePanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-//         pausePanel.setFocusable(true);
          pausePanel.setVisible(false);
-
-         pausePanel.addMouseListener(this.getHandlers().getPausePanelMouseListener());
       }
       return pausePanel;
    }
@@ -1155,12 +1161,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       getToolbar().getEdtTimePlay().setText("0");
 
       //setDefaultCloseOperation(EXIT_ON_CLOSE);
-      this.addWindowListener(new WindowAdapter() {
-         @Override
-         public void windowClosing(WindowEvent we) {
-            Main.this.OnClose();
-         }
-      });
+      this.addWindowListener(this.getHandlers().getWindowListener());
 //      this.addKeyListener(new KeyListener() {
 //         @Override public void keyTyped   (KeyEvent e) { System.out.println("Main::KeyListener:keyTyped: "    + e); }
 //         @Override public void keyReleased(KeyEvent e) { System.out.println("Main::KeyListener:keyReleased: " + e); }
@@ -1209,6 +1210,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       CustomKeyBinding();
 
       pack();
+      changeSizeImagesMineFlag();
 //      System.out.println("ThreadId=" + Thread.currentThread().getId() + ": Main::initialize: after pack");
       if (defaultData)
          setLocationRelativeTo(null);
@@ -1478,7 +1480,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          ex.printStackTrace();
       }
 
-      getPausePanel().closeLogo();
+      getPausePanel().close();
       getMenu().getGame().close();
       getMenu().getMosaics().close();
       if (isStatisticDialogExist())
@@ -1491,6 +1493,11 @@ public class Main extends JFrame implements PropertyChangeListener {
 //      setVisible(false);
       getMosaic().close();
       _logo.close();
+
+      this.removeWindowListener     (this.getHandlers().getWindowListener());
+      this.removeWindowFocusListener(this.getHandlers().getWindowFocusListener());
+      this.removeMouseWheelListener (this.getHandlers().getMouseWheelListener());
+
       dispose();
 //      System.exit(0);
    }
@@ -1657,7 +1664,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
 
    /** проверить что находится в рамках экрана */
-   void RecheckLocation() {
+   void recheckLocation() {
       if (!_shedulePack) {
          _shedulePack = true;
          invokeLater(() -> {
@@ -2113,6 +2120,18 @@ public class Main extends JFrame implements PropertyChangeListener {
          return pausePanelMouseListener;
       }
 
+      private WindowListener windowListener;
+      public WindowListener getWindowListener() {
+         if (windowListener == null)
+            windowListener = new WindowAdapter() {
+               @Override
+               public void windowClosing(WindowEvent we) {
+                  Main.this.OnClose();
+               }
+            };
+         return windowListener;
+      }
+
       private WindowFocusListener windowFocusListener;
       public WindowFocusListener getWindowFocusListener() {
          if (windowFocusListener == null)
@@ -2349,7 +2368,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
 
    /** переустанавливаю заного размер мины/флага для мозаики */
-   private void ChangeSizeImagesMineFlag() {
+   private void changeSizeImagesMineFlag() {
       Mosaic m = getMosaic();
       PaintSwingContext<Icon> pc = m.getPaintContext();
       int sq = (int)m.getCellAttr().getSq(pc.getPenBorder().getWidth());
@@ -2364,9 +2383,6 @@ public class Main extends JFrame implements PropertyChangeListener {
    public static void Beep() {
       java.awt.Toolkit.getDefaultToolkit().beep();
       //ASCII value 7 is a beep. So just print that character
-
-      // http://www.jfugue.org
-      // Fugue is an open-source Java API for programming music without the complexities of MIDI.
    }
 
    static void printSystemProperties() {
@@ -2526,7 +2542,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       case Mosaic.PROPERTY_AREA:
       case Mosaic.PROPERTY_SIZE_FIELD:
       case Mosaic.PROPERTY_MOSAIC_TYPE:
-         RecheckLocation();
+         recheckLocation();
        //break; // no break
       case Mosaic.PROPERTY_MINES_COUNT:
          getMenu().getMosaics().recheckSelectedMosaicType();
@@ -2536,7 +2552,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
       switch (ev.getPropertyName()) {
       case Mosaic.PROPERTY_AREA:
-         ChangeSizeImagesMineFlag();
+         changeSizeImagesMineFlag();
          break;
       case Mosaic.PROPERTY_GAME_STATUS:
          {
