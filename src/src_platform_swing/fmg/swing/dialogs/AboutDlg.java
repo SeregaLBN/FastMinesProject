@@ -32,7 +32,7 @@ import fmg.swing.draw.img.Smile;
 import fmg.swing.draw.img.Smile.EType;
 import fmg.swing.utils.GuiTools;
 
-public class AboutDlg extends JDialog {
+public class AboutDlg extends JDialog implements AutoCloseable {
 
    private static final long serialVersionUID = 1L;
 
@@ -281,7 +281,9 @@ public class AboutDlg extends JDialog {
 
    // тестовый метод для проверки диалогового окна
    public static void main(String[] args) {
-      new AboutDlg(null, true).setVisible(true);
+      try (AboutDlg dlg = new AboutDlg(null, true)) {
+         dlg.setVisible(true);
+      }
    }
 
    public static boolean OpenURI(String uri) {
@@ -302,6 +304,7 @@ public class AboutDlg extends JDialog {
          return false;
       }
    }
+
    public static boolean OpenMail(String mailTo) {
       if (!Desktop.isDesktopSupported()) {
          System.err.println("Fail - Desktop is not supported.");
@@ -320,5 +323,11 @@ public class AboutDlg extends JDialog {
          return false;
       }
    }
-}
 
+   @Override
+   public void close() {
+      _logo.setRotate(false);
+      _logo.close();
+   }
+
+}

@@ -139,28 +139,34 @@ public class Main extends JFrame implements PropertyChangeListener {
          _playerManageDialog = new ManageDlg(this, false, getPlayers());
       return _playerManageDialog;
    }
+
    private CustomSkillDlg getCustomSkillDialog() {
       if (_customSkillDialog == null)
          _customSkillDialog = new CustomSkillDlg(this, false);
       return _customSkillDialog;
    }
+
    private boolean isSelectMosaicDialogExist() { return _selectMosaicDialog != null; }
    private SelectMosaicDlg getSelectMosaicDialog() {
       if (_selectMosaicDialog == null)
          _selectMosaicDialog = new SelectMosaicDlg(this, false);
       return _selectMosaicDialog;
    }
+
+   private boolean isAboutDialogExist() { return _aboutDialog != null; }
    private AboutDlg getAboutDialog() {
       if (_aboutDialog == null)
          _aboutDialog = new AboutDlg(this, false);
       return _aboutDialog;
    }
+
    private boolean isChampionDialogExist() { return _championDialog != null; }
    private ChampionDlg getChampionDialog() {
       if (_championDialog == null)
          _championDialog = new ChampionDlg(this, false, getChampions());
       return _championDialog;
    }
+
    private boolean isStatisticDialogExist() { return _statisticDialog != null; }
    private StatisticDlg getStatisticDialog() {
       if (_statisticDialog == null)
@@ -168,7 +174,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       return _statisticDialog;
    }
 
-   class MainMenu extends JMenuBar {
+   class MainMenu extends JMenuBar implements AutoCloseable {
       private static final long serialVersionUID = 1L;
       private static final int MenuHeightWithIcon = 32;
       private static final int ZoomQualityFactor = 2; // 1 - as is
@@ -657,6 +663,13 @@ public class Main extends JFrame implements PropertyChangeListener {
          dim.width = getMosaic().getContainer().getPreferredSize().width;
          return dim;
       }
+
+      @Override
+      public void close() {
+         this.getGame().close();
+         this.getMosaics().close();
+      }
+
    }
 
    public enum EBtnNewGameState {
@@ -897,7 +910,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       }
    }
 
-   class PausePanel extends JLabel {
+   class PausePanel extends JLabel implements AutoCloseable {
       private static final long serialVersionUID = 1L;
 
       public PausePanel(String text) {
@@ -945,6 +958,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          getLogo().setRotate(start);
       }
 
+      @Override
       public void close() {
          removeMouseListener(Main.this.getHandlers().getPausePanelMouseListener());
          getLogo().close();
@@ -1010,11 +1024,13 @@ public class Main extends JFrame implements PropertyChangeListener {
          menu = new MainMenu();
       return menu;
    }
+
    private Toolbar getToolbar() {
       if (toolbar == null)
          toolbar = new Toolbar();
       return toolbar;
    }
+
    /** мозаика */
    public Mosaic getMosaic() {
       if (mosaic == null) {
@@ -1023,6 +1039,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       }
       return mosaic;
    }
+
    private PausePanel getPausePanel() {
       if (pausePanel == null) {
          pausePanel = new PausePanel("Pause");
@@ -1030,6 +1047,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       }
       return pausePanel;
    }
+
    private StatusBar getStatusBar() {
       if (statusBar == null)
          statusBar = new StatusBar();
@@ -1442,7 +1460,8 @@ public class Main extends JFrame implements PropertyChangeListener {
       else
          getMosaic().GameNew();
    }
-   void OnClose() {
+
+   void onClose() {
       try {
          getPlayers().Save();
       } catch (Exception ex) {
@@ -1481,18 +1500,20 @@ public class Main extends JFrame implements PropertyChangeListener {
       }
 
       getPausePanel().close();
-      getMenu().getGame().close();
-      getMenu().getMosaics().close();
+      getMenu().close();
       if (isStatisticDialogExist())
          getStatisticDialog().close();
       if (isChampionDialogExist())
          getChampionDialog().close();
       if (isSelectMosaicDialogExist())
          getSelectMosaicDialog().close();
+      if (isAboutDialogExist())
+         getAboutDialog().close();
 
 //      setVisible(false);
       getMosaic().close();
       _logo.close();
+
 
       this.removeWindowListener     (this.getHandlers().getWindowListener());
       this.removeWindowFocusListener(this.getHandlers().getWindowFocusListener());
@@ -1938,6 +1959,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          handlers = new Handlers();
       return handlers;
    }
+
    /** В обработчиках минимум логики. Вся логика в соотв Main.this.ZZZ функциях... */
    class Handlers {
       private Action gameNewAction;
@@ -1994,7 +2016,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                private static final long serialVersionUID = 1L;
                @Override
                public void actionPerformed(ActionEvent e) {
-                  Main.this.OnClose();
+                  Main.this.onClose();
                }
             };
 
@@ -2126,7 +2148,7 @@ public class Main extends JFrame implements PropertyChangeListener {
             windowListener = new WindowAdapter() {
                @Override
                public void windowClosing(WindowEvent we) {
-                  Main.this.OnClose();
+                  Main.this.onClose();
                }
             };
          return windowListener;
