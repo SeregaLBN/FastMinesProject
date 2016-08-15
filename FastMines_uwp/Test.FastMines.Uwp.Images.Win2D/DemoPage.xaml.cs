@@ -95,12 +95,18 @@ namespace Test.FastMines.Uwp.Images.Win2D {
 
          ApplyRandom(Bmp1, canvasControl1);
          ApplyRandom(Bmp2, canvasControl2);
-         ApplyRandom(Bmp4, canvasControl3);
-         ApplyRandom(Bmp3, canvasControl4);
+         ApplyRandom(Bmp3, canvasControl3);
+         ApplyRandom(Bmp4, canvasControl4);
+       //ApplyRandom(Bmp5, canvasControl5);
+       //ApplyRandom(Bmp6, canvasControl6);
+         ApplyRandom(Bmp7, canvasControl7);
          ApplyRandom(Img1, null);
          ApplyRandom(Img2, null);
          ApplyRandom(Img3, null);
          ApplyRandom(Img4, null);
+       //ApplyRandom(Img5, null);
+       //ApplyRandom(Img6, null);
+         ApplyRandom(Img7, null);
 
          this.Loaded += (sender1, args) => {
             const int o = 2 * Offset;
