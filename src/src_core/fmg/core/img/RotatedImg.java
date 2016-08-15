@@ -81,6 +81,7 @@ public abstract class RotatedImg<TImage> extends StaticImg<TImage> {
 
    @Override
    public void close() {
+      super.close();
       ITimer t = _timer;
       if (t != null)
          t.close();

@@ -12,7 +12,7 @@ import fmg.common.notyfier.NotifyPropertyChanged;
  *
  * @param <TImage> plaform specific image
  **/
-public abstract class StaticImg<TImage> extends NotifyPropertyChanged implements AutoCloseable {
+public abstract class StaticImg<TImage> extends NotifyPropertyChanged {
 
    public static Consumer<Runnable> DEFERR_INVOKER;
 
@@ -163,8 +163,5 @@ public abstract class StaticImg<TImage> extends NotifyPropertyChanged implements
       else
          DEFERR_INVOKER.accept( () -> super.onSelfPropertyChanged(oldValue, newValue, propertyName) );
    }
-
-   @Override
-   public void close() { }
 
 }
