@@ -41,11 +41,11 @@ namespace fmg.uwp.draw.mosaic.win2d {
          };
       }
 
-      public static CanvasGeometry BuildArc(this ICanvasResourceCreator resourceCreator, float x, float y, float width, float height, double startAngle, double arcAngle, bool clockwise) {
+      public static CanvasGeometry BuildArc(this ICanvasResourceCreator resourceCreator, double x, double y, double width, double height, double startAngle, double arcAngle, bool clockwise) {
          using (var builder = new CanvasPathBuilder(resourceCreator)) {
             Vector2[] arcPoints = new Vector2[2] {
-                     new Vector2(x, y),
-                     new Vector2(x+width, y+height)
+                     new Vector2((float)x, (float)y),
+                     new Vector2((float)(x+width), (float)(y+height))
                };
             var centerPoint = (arcPoints[0] + arcPoints[1]) / 2;
             var ellipseRadius = (arcPoints[1] - arcPoints[0]) / 2;
@@ -74,8 +74,8 @@ namespace fmg.uwp.draw.mosaic.win2d {
       /// <param name="w">the width of the framing rectangle</param>
       /// <param name="h">the height of the framing rectangle</param>
       /// <returns></returns>
-      public static CanvasGeometry CreateEllipse(this ICanvasResourceCreator resourceCreator, double x, double y, double w, double h) {
-         return CanvasGeometry.CreateEllipse(resourceCreator, (float)(x + w / 2), (float)(x + h / 2), (float)(w / 2), (float)(h / 2));
+      public static CanvasGeometry CreateEllipseInRect(this ICanvasResourceCreator resourceCreator, double x, double y, double w, double h) {
+         return CanvasGeometry.CreateEllipse(resourceCreator, (float)(x + w / 2), (float)(y + h / 2), (float)(w / 2), (float)(h / 2));
       }
 
 
@@ -90,7 +90,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
       /// <param name="width">width the width of the oval to be filled</param>
       /// <param name="height">height the height of the oval to be filled</param>
       /// <param name="clr">Fills the interior of a ellipse with the specified color</param>
-      public static void FillOval(this CanvasDrawingSession ds, double x, double y, double width, double height, Color clr) {
+      public static void FillEllipseInRect(this CanvasDrawingSession ds, double x, double y, double width, double height, Color clr) {
          ds.FillEllipse((float)(x + width / 2), (float)(y + height / 2), (float)(width / 2), (float)(height / 2), clr.ToWinColor());
       }
 
@@ -102,13 +102,48 @@ namespace fmg.uwp.draw.mosaic.win2d {
       /// <param name="y">coordinate of the upper left corner of the oval to be filled</param>
       /// <param name="width">width the width of the oval to be filled</param>
       /// <param name="height">height the height of the oval to be filled</param>
-      /// <param name="clr">Fills the interior of a ellipse with the specified color</param>
-      public static void FillOval(this CanvasDrawingSession ds, double x, double y, double width, double height, ICanvasBrush brush) {
+      /// <param name="brush">Fills the interior of a ellipse with the specified brush</param>
+      public static void FillEllipseInRect(this CanvasDrawingSession ds, double x, double y, double width, double height, ICanvasBrush brush) {
          ds.FillEllipse((float)(x + width / 2), (float)(y + height / 2), (float)(width / 2), (float)(height / 2), brush);
+      }
+
+      /// <summary>
+      /// Draw an oval bounded by the specified rectangle with the specified color and stroke
+      /// </summary>
+      /// <param name="ds"></param>
+      /// <param name="x">coordinate of the upper left corner of the oval to be filled</param>
+      /// <param name="y">coordinate of the upper left corner of the oval to be filled</param>
+      /// <param name="width">width the width of the oval to be filled</param>
+      /// <param name="height">height the height of the oval to be filled</param>
+      /// <param name="color"></param>
+      /// <param name="strokeWidth"></param>
+      /// <param name="strokeStyle"></param>
+      public static void DrawEllipseInRect(this CanvasDrawingSession ds, double x, double y, double width, double height, Color color, double strokeWidth, CanvasStrokeStyle strokeStyle) {
+         ds.DrawEllipse((float)(x + width / 2), (float)(y + height / 2), (float)(width / 2), (float)(height / 2), color.ToWinColor(), (float)strokeWidth, strokeStyle);
       }
 
       public static CanvasGeometry IntersectExclude(this CanvasGeometry shape1, CanvasGeometry shape2) {
          return shape1.CombineWith(shape2, Matrix3x2.CreateTranslation(0, 0), CanvasGeometryCombine.Exclude);
+      }
+
+      public static void DrawLine(this CanvasDrawingSession ds, double x0, double y0, double x1, double y1, Color color, double strokeWidth, CanvasStrokeStyle strokeStyle) {
+         ds.DrawLine((float)x0, (float)y0, (float)x1, (float)y1, color.ToWinColor(), (float)strokeWidth, strokeStyle);
+      }
+
+      public static void DrawArc(this CanvasDrawingSession ds, ICanvasResourceCreator resourceCreator,
+                                 double x, double y, double w, double h, double start, double extent, bool clockwise,
+                                 Color color, double strokeWidth, CanvasStrokeStyle strokeStyle) {
+         using (var arc = resourceCreator.BuildArc(x, y, w, h, start, extent, clockwise)) {
+            ds.DrawGeometry(arc, Color.Black, strokeWidth, strokeStyle);
+         }
+      }
+
+      public static void FillGeometry(this CanvasDrawingSession ds, CanvasGeometry geometry, Color color) {
+         ds.FillGeometry(geometry, color.ToWinColor());
+      }
+
+      public static void DrawGeometry(this CanvasDrawingSession ds, CanvasGeometry geometry, Color color, double strokeWidth, CanvasStrokeStyle strokeStyle) {
+         ds.DrawGeometry(geometry, color.ToWinColor(), (float)strokeWidth, strokeStyle);
       }
 
    }

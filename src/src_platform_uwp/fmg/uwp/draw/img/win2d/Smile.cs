@@ -8,7 +8,6 @@ using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Geometry;
 using fmg.common;
 using fmg.uwp.utils;
-using fmg.uwp.utils.win2d;
 using fmg.uwp.draw.mosaic.win2d;
 
 namespace fmg.uwp.draw.img.win2d {
@@ -114,7 +113,7 @@ namespace fmg.uwp.draw.img.win2d {
          Color yellowBorder = new Color(0xFF, 0x6C, 0x0A);
 
          { // рисую затемненный круг
-            ds.FillOval(0, 0, _width, _height, yellowBorder);
+            ds.FillEllipseInRect(0, 0, _width, _height, yellowBorder);
          }
          var padX = 0.033 * _width;
          var padY = 0.033 * _height;
@@ -122,9 +121,9 @@ namespace fmg.uwp.draw.img.win2d {
          var hInt = _height - 2 * padY;
          var wExt = 1.133 * _width;
          var hExt = 1.133 * _height;
-         using (var ellipseInternal = _rc.CreateEllipse(padX, padY, wInt, hInt)) {
+         using (var ellipseInternal = _rc.CreateEllipseInRect(padX, padY, wInt, hInt)) {
             { // поверх него, внутри - градиентный круг
-                  using (var brush = new CanvasLinearGradientBrush(_rc, yellowBody.ToWinColor(), yellowBorder.ToWinColor()) {
+               using (var brush = new CanvasLinearGradientBrush(_rc, yellowBody.ToWinColor(), yellowBorder.ToWinColor()) {
                   StartPoint = new Vector2(0, 0),
                   EndPoint = new Vector2(_width, _height),
                }) {
@@ -133,38 +132,136 @@ namespace fmg.uwp.draw.img.win2d {
                }
             }
             { // верхний левый блик
-               using (var ellipseExternal = _rc.CreateEllipse(padX, padY, wExt, hExt)) {
+               using (var ellipseExternal = _rc.CreateEllipseInRect(padX, padY, wExt, hExt)) {
                   using (var intersect = ellipseInternal.IntersectExclude(ellipseExternal)) {
-                     ds.FillGeometry(intersect, yellowGlint.ToWinColor()); // Colors.DarkGray
+                     ds.FillGeometry(intersect, yellowGlint); // Colors.DarkGray
                   }
 
                   // test
-                  //ds.DrawGeometry(ellipseInternal, Color.Black.ToWinColor());
-                  //ds.DrawGeometry(ellipseExternal, Color.Black.ToWinColor());
+                  //ds.DrawGeometry(ellipseInternal, Color.Black);
+                  //ds.DrawGeometry(ellipseExternal, Color.Black);
                }
             }
             { // нижний правый блик
-               using (var ellipseExternal = _rc.CreateEllipse(padX + wInt - wExt, padY + hInt - hExt, wExt, hExt)) {
+               using (var ellipseExternal = _rc.CreateEllipseInRect(padX + wInt - wExt, padY + hInt - hExt, wExt, hExt)) {
                   using (var intersect = ellipseInternal.IntersectExclude(ellipseExternal)) {
-                     ds.FillGeometry(intersect, yellowBorder.Darker(0.4).ToWinColor());
+                     ds.FillGeometry(intersect, yellowBorder.Darker(0.4));
                   }
 
                   // test
-                  //ds.DrawGeometry(ellipseInternal, Color.Black.ToWinColor());
-                  //ds.DrawGeometry(ellipseExternal, Color.Black.ToWinColor());
+                  //ds.DrawGeometry(ellipseInternal, Color.Black);
+                  //ds.DrawGeometry(ellipseExternal, Color.Black);
                }
             }
          }
       }
 
       protected void DrawEyes(CanvasDrawingSession ds) {
-         var w = _width / 1000.0f;
-         var h = _height / 1000.0f;
+         using (var css = new CanvasStrokeStyle {
+            StartCap = CanvasCapStyle.Round,
+            EndCap = CanvasCapStyle.Round
+         }) {
+            switch (_type) {
+            case EType.Face_Assistant:
+            case EType.Face_SmilingWithSunglasses: {
+                  // glasses
+                  var strokeWidth = Math.Max(1, 0.03 * ((_width + _height) / 2.0));
+                  var clr = Color.Black;
+                  ds.DrawEllipseInRect(0.200 * _width, 0.100 * _height, 0.290 * _width, 0.440 * _height, clr, strokeWidth, css);
+                  ds.DrawEllipseInRect(0.510 * _width, 0.100 * _height, 0.290 * _width, 0.440 * _height, clr, strokeWidth, css);
+                  // дужки
+                  ds.DrawLine(0.746 * _width, 0.148 * _height, 0.885 * _width, 0.055 * _height, clr, strokeWidth, css);
+                  ds.DrawArc(_rc, 0.864 * _width, 0.047 * _height, 0.100 * _width, 0.100 * _height, 0, 125, false, clr, strokeWidth, css);
+                  ds.DrawLine((1 - 0.746) * _width, 0.148 * _height, (1 - 0.885) * _width, 0.055 * _height, clr, strokeWidth, css);
+                  ds.DrawArc(_rc, (1 - 0.864 - 0.100) * _width, 0.047 * _height, 0.100 * _width, 0.100 * _height, 55, 125, false, clr, strokeWidth, css);
+               }
+               //break; // ! no break
+               goto case EType.Face_SavouringDeliciousFood;
+            case EType.Face_SavouringDeliciousFood:
+            case EType.Face_WhiteSmiling:
+            case EType.Face_Grinning: {
+                  var clr = Color.Black;
+                  ds.FillEllipseInRect(0.270 * _width, 0.170 * _height, 0.150 * _width, 0.300 * _height, clr);
+                  ds.FillEllipseInRect(0.580 * _width, 0.170 * _height, 0.150 * _width, 0.300 * _height, clr);
+               }
+               break;
+            case EType.Face_Disappointed: {
+                  //Stroke strokeNew = new BasicStroke((float)Math.max(1, 0.02 * ((_width + _height) / 2.0)), BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
+                  //g.setStroke(strokeNew);
 
-         // глаза
-         var clr = Color.Black;
-         ds.FillEllipse((330 + 98 / 2f) * w, (150 + 296 / 2f) * h, 98 / 2f * w, 296 / 2f * h, clr.ToWinColor());
-         ds.FillEllipse((570 + 98 / 2f) * w, (150 + 296 / 2f) * h, 98 / 2f * w, 296 / 2f * h, clr.ToWinColor());
+                  //Rectangle2D rcHalfLeft = new Rectangle2D.Double(0, 0, _width / 2.0, _height);
+                  //Rectangle2D rcHalfRght = new Rectangle2D.Double(_width / 2.0, 0, _width, _height);
+
+                  //// глаз/eye
+                  //Area areaLeft1 = intersectExclude(new Ellipse2D.Double(0.417 * _width, 0.050 * _height, 0.384 * _width, 0.400 * _height), rcHalfLeft);
+                  //Area areaRght1 = intersectExclude(new Ellipse2D.Double(0.205 * _width, 0.050 * _height, 0.384 * _width, 0.400 * _height), rcHalfRght);
+                  //g.setColor(Color.RED);
+                  //g.fill(areaLeft1);
+                  //g.fill(areaRght1);
+                  //g.setColor(Color.BLACK);
+                  //g.draw(areaLeft1);
+                  //g.draw(areaRght1);
+
+                  //// зрачок/pupil
+                  //Area areaLeft2 = intersectExclude(new Ellipse2D.Double(0.550 * _width, 0.200 * _height, 0.172 * _width, 0.180 * _height), rcHalfLeft);
+                  //Area areaRght2 = intersectExclude(new Ellipse2D.Double(0.282 * _width, 0.200 * _height, 0.172 * _width, 0.180 * _height), rcHalfRght);
+                  //g.setColor(Color.BLUE);
+                  //g.fill(areaLeft2);
+                  //g.fill(areaRght2);
+                  //g.setColor(Color.BLACK);
+                  //g.draw(areaLeft2);
+                  //g.draw(areaRght2);
+
+                  //// веко/eyelid
+                  //Area areaLeft3 = intersectExclude(rotate(new Ellipse2D.Double(0.441 * _width, -0.236 * _height, 0.436 * _width, 0.560 * _height),
+                  //                                         new PointDouble(0.441 * _width, -0.236 * _height), 30), rcHalfLeft);
+                  //Area areaRght3 = intersectExclude(rotate(new Ellipse2D.Double(0.128 * _width, -0.236 * _height, 0.436 * _width, 0.560 * _height),
+                  //                                         new PointDouble(0.564 * _width, -0.236 * _height), -30), rcHalfRght);
+                  //areaLeft3 = intersect(areaLeft1, areaLeft3);
+                  //areaRght3 = intersect(areaRght1, areaRght3);
+                  //g.setColor(Color.GREEN);
+                  //g.fill(areaLeft3);
+                  //g.fill(areaRght3);
+                  //g.setColor(Color.BLACK);
+                  //g.draw(areaLeft3);
+                  //g.draw(areaRght3);
+
+                  //// nose
+                  //Ellipse2D nose = new Ellipse2D.Double(0.415 * _width, 0.400 * _height, 0.170 * _width, 0.170 * _height);
+                  //g.setColor(Color.GREEN);
+                  //g.fill(nose);
+                  //g.setColor(Color.BLACK);
+                  //g.draw(nose);
+               }
+               break;
+            case EType.Eyes_OpenDisabled:
+               //eyeOpened(g, true, true);
+               //eyeOpened(g, false, true);
+               break;
+            case EType.Eyes_ClosedDisabled:
+               //eyeClosed(g, true, true);
+               //eyeClosed(g, false, true);
+               break;
+            case EType.Face_EyesOpen:
+               //eyeOpened(g, true, false);
+               //eyeOpened(g, false, false);
+               break;
+            case EType.Face_WinkingEyeLeft:
+               //eyeClosed(g, true, false);
+               //eyeOpened(g, false, false);
+               break;
+            case EType.Face_WinkingEyeRight:
+               //eyeOpened(g, true, false);
+               //eyeClosed(g, false, false);
+               break;
+            case EType.Face_EyesClosed:
+               //eyeClosed(g, true, false);
+               //eyeClosed(g, false, false);
+               break;
+            default:
+               throw new NotImplementedException();
+            }
+         }
       }
 
       protected void DrawMouth(CanvasDrawingSession ds) {
