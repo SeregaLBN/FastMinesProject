@@ -78,6 +78,9 @@ namespace fmg.uwp.draw.mosaic.win2d {
          return CanvasGeometry.CreateEllipse(resourceCreator, (float)(x + w / 2), (float)(y + h / 2), (float)(w / 2), (float)(h / 2));
       }
 
+      public static CanvasGeometry CreateRectangle(this ICanvasResourceCreator resourceCreator, double x, double y, double w, double h) {
+         return CanvasGeometry.CreateRectangle(resourceCreator, (float)x, (float)y, (float)w, (float)h);
+      }
 
 
 
@@ -122,6 +125,9 @@ namespace fmg.uwp.draw.mosaic.win2d {
          ds.DrawEllipse((float)(x + width / 2), (float)(y + height / 2), (float)(width / 2), (float)(height / 2), color.ToWinColor(), (float)strokeWidth, strokeStyle);
       }
 
+      public static CanvasGeometry Intersect(this CanvasGeometry shape1, CanvasGeometry shape2) {
+         return shape1.CombineWith(shape2, Matrix3x2.CreateTranslation(0, 0), CanvasGeometryCombine.Intersect);
+      }
       public static CanvasGeometry IntersectExclude(this CanvasGeometry shape1, CanvasGeometry shape2) {
          return shape1.CombineWith(shape2, Matrix3x2.CreateTranslation(0, 0), CanvasGeometryCombine.Exclude);
       }
@@ -144,6 +150,13 @@ namespace fmg.uwp.draw.mosaic.win2d {
 
       public static void DrawGeometry(this CanvasDrawingSession ds, CanvasGeometry geometry, Color color, double strokeWidth, CanvasStrokeStyle strokeStyle) {
          ds.DrawGeometry(geometry, color.ToWinColor(), (float)strokeWidth, strokeStyle);
+      }
+
+      public static CanvasGeometry Rotate(this CanvasGeometry shape, PointDouble rotatePoint, double angle) {
+         Matrix3x2 placeNearOrigin = Matrix3x2.CreateTranslation(-(float)rotatePoint.X, -(float)rotatePoint.Y);
+         Matrix3x2 undoPlaceNearOrigin = Matrix3x2.CreateTranslation((float)rotatePoint.X, (float)rotatePoint.Y);
+         Matrix3x2 rotate = Matrix3x2.CreateRotation((float)angle.ToRadian());
+         return shape.Transform(placeNearOrigin * rotate * undoPlaceNearOrigin);
       }
 
    }

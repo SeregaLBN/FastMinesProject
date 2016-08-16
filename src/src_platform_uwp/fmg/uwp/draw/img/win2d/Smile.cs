@@ -186,52 +186,53 @@ namespace fmg.uwp.draw.img.win2d {
                }
                break;
             case EType.Face_Disappointed: {
-                  //Stroke strokeNew = new BasicStroke((float)Math.max(1, 0.02 * ((_width + _height) / 2.0)), BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
-                  //g.setStroke(strokeNew);
+                  var strokeWidth = Math.Max(1, 0.02 * ((_width + _height) / 2.0));
 
-                  //Rectangle2D rcHalfLeft = new Rectangle2D.Double(0, 0, _width / 2.0, _height);
-                  //Rectangle2D rcHalfRght = new Rectangle2D.Double(_width / 2.0, 0, _width, _height);
+                  using (var rcHalfLeft = _rc.CreateRectangle(0, 0, _width / 2.0, _height)) {
+                  using (var rcHalfRght = _rc.CreateRectangle(_width / 2.0, 0, _width, _height)) {
 
-                  //// глаз/eye
-                  //Area areaLeft1 = intersectExclude(new Ellipse2D.Double(0.417 * _width, 0.050 * _height, 0.384 * _width, 0.400 * _height), rcHalfLeft);
-                  //Area areaRght1 = intersectExclude(new Ellipse2D.Double(0.205 * _width, 0.050 * _height, 0.384 * _width, 0.400 * _height), rcHalfRght);
-                  //g.setColor(Color.RED);
-                  //g.fill(areaLeft1);
-                  //g.fill(areaRght1);
-                  //g.setColor(Color.BLACK);
-                  //g.draw(areaLeft1);
-                  //g.draw(areaRght1);
+                  // глаз/eye
+                  using (var ellipseLeft1 = _rc.CreateEllipseInRect(0.417 * _width, 0.050 * _height, 0.384 * _width, 0.400 * _height)) {
+                  using (var ellipseRght1 = _rc.CreateEllipseInRect(0.205 * _width, 0.050 * _height, 0.384 * _width, 0.400 * _height)) {
+                  using (var areaLeft1 = ellipseLeft1.IntersectExclude(rcHalfLeft)) {
+                  using (var areaRght1 = ellipseRght1.IntersectExclude(rcHalfRght)) {
+                     ds.FillGeometry(areaLeft1, Color.Red);
+                     ds.FillGeometry(areaRght1, Color.Red);
+                     ds.DrawGeometry(areaLeft1, Color.Black, strokeWidth, css);
+                     ds.DrawGeometry(areaRght1, Color.Black, strokeWidth, css);
 
-                  //// зрачок/pupil
-                  //Area areaLeft2 = intersectExclude(new Ellipse2D.Double(0.550 * _width, 0.200 * _height, 0.172 * _width, 0.180 * _height), rcHalfLeft);
-                  //Area areaRght2 = intersectExclude(new Ellipse2D.Double(0.282 * _width, 0.200 * _height, 0.172 * _width, 0.180 * _height), rcHalfRght);
-                  //g.setColor(Color.BLUE);
-                  //g.fill(areaLeft2);
-                  //g.fill(areaRght2);
-                  //g.setColor(Color.BLACK);
-                  //g.draw(areaLeft2);
-                  //g.draw(areaRght2);
+                     // зрачок/pupil
+                     using (var ellipseLeft2 = _rc.CreateEllipseInRect(0.550 * _width, 0.200 * _height, 0.172 * _width, 0.180 * _height)) {
+                     using (var ellipseRght2 = _rc.CreateEllipseInRect(0.282 * _width, 0.200 * _height, 0.172 * _width, 0.180 * _height)) {
+                     using (var areaLeft2 = ellipseLeft2.IntersectExclude(rcHalfLeft)) {
+                     using (var areaRght2 = ellipseRght2.IntersectExclude(rcHalfRght)) {
+                        ds.FillGeometry(areaLeft2, Color.Blue);
+                        ds.FillGeometry(areaRght2, Color.Blue);
+                        ds.DrawGeometry(areaLeft2, Color.Black, strokeWidth, css);
+                        ds.DrawGeometry(areaRght2, Color.Black, strokeWidth, css);
+                     }}}}
 
-                  //// веко/eyelid
-                  //Area areaLeft3 = intersectExclude(rotate(new Ellipse2D.Double(0.441 * _width, -0.236 * _height, 0.436 * _width, 0.560 * _height),
-                  //                                         new PointDouble(0.441 * _width, -0.236 * _height), 30), rcHalfLeft);
-                  //Area areaRght3 = intersectExclude(rotate(new Ellipse2D.Double(0.128 * _width, -0.236 * _height, 0.436 * _width, 0.560 * _height),
-                  //                                         new PointDouble(0.564 * _width, -0.236 * _height), -30), rcHalfRght);
-                  //areaLeft3 = intersect(areaLeft1, areaLeft3);
-                  //areaRght3 = intersect(areaRght1, areaRght3);
-                  //g.setColor(Color.GREEN);
-                  //g.fill(areaLeft3);
-                  //g.fill(areaRght3);
-                  //g.setColor(Color.BLACK);
-                  //g.draw(areaLeft3);
-                  //g.draw(areaRght3);
+                     // веко/eyelid
+                     using (var ellipseLeft3 = _rc.CreateEllipseInRect(0.441 * _width, -0.236 * _height, 0.436 * _width, 0.560 * _height)) {
+                     using (var ellipseRght3 = _rc.CreateEllipseInRect(0.128 * _width, -0.236 * _height, 0.436 * _width, 0.560 * _height)) {
+                     using (var rotatedLeft3 = ellipseLeft3.Rotate(new common.geom.PointDouble(0.441 * _width, -0.236 * _height), 30)) {
+                     using (var rotatedRght3 = ellipseRght3.Rotate(new common.geom.PointDouble(0.564 * _width, -0.236 * _height), -30)) {
+                     using (var areaLeft3 = rotatedLeft3.IntersectExclude(rcHalfLeft)) {
+                     using (var areaRght3 = rotatedRght3.IntersectExclude(rcHalfRght)) {
+                     using (var areaLeft31 = areaLeft1.Intersect(areaLeft3)) {
+                     using (var areaRght31 = areaRght1.Intersect(areaRght3)) {
+                        ds.FillGeometry(areaLeft31, Color.Green);
+                        ds.FillGeometry(areaRght31, Color.Green);
+                        ds.DrawGeometry(areaLeft31, Color.Black, strokeWidth, css);
+                        ds.DrawGeometry(areaRght31, Color.Black, strokeWidth, css);
+                     }}}}}}}}
+                  }}}}}}
 
-                  //// nose
-                  //Ellipse2D nose = new Ellipse2D.Double(0.415 * _width, 0.400 * _height, 0.170 * _width, 0.170 * _height);
-                  //g.setColor(Color.GREEN);
-                  //g.fill(nose);
-                  //g.setColor(Color.BLACK);
-                  //g.draw(nose);
+                  // nose
+                  using (var nose = _rc.CreateEllipseInRect(0.415 * _width, 0.400 * _height, 0.170 * _width, 0.170 * _height)) {
+                     ds.FillGeometry(nose, Color.Green);
+                     ds.DrawGeometry(nose, Color.Black, strokeWidth, css);
+                  }
                }
                break;
             case EType.Eyes_OpenDisabled:
