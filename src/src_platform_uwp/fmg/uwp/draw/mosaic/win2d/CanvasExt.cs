@@ -82,7 +82,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
 
 
       /// <summary>
-      /// Fills an oval bounded by the specified rectangle with the current color
+      /// Fills an oval bounded by the specified rectangle with the specified color
       /// </summary>
       /// <param name="ds"></param>
       /// <param name="x">coordinate of the upper left corner of the oval to be filled</param>
@@ -94,6 +94,15 @@ namespace fmg.uwp.draw.mosaic.win2d {
          ds.FillEllipse((float)(x + width / 2), (float)(y + height / 2), (float)(width / 2), (float)(height / 2), clr.ToWinColor());
       }
 
+      /// <summary>
+      /// Fills an oval bounded by the specified rectangle with the specified brush
+      /// </summary>
+      /// <param name="ds"></param>
+      /// <param name="x">coordinate of the upper left corner of the oval to be filled</param>
+      /// <param name="y">coordinate of the upper left corner of the oval to be filled</param>
+      /// <param name="width">width the width of the oval to be filled</param>
+      /// <param name="height">height the height of the oval to be filled</param>
+      /// <param name="clr">Fills the interior of a ellipse with the specified color</param>
       public static void FillOval(this CanvasDrawingSession ds, double x, double y, double width, double height, ICanvasBrush brush) {
          ds.FillEllipse((float)(x + width / 2), (float)(y + height / 2), (float)(width / 2), (float)(height / 2), brush);
       }

@@ -116,51 +116,42 @@ namespace fmg.uwp.draw.img.win2d {
          { // рисую затемненный круг
             ds.FillOval(0, 0, _width, _height, yellowBorder);
          }
-         { // поверх него, внутри - градиентный круг
-            double padX = _width / 30.0; // offset
-            double padY = _height / 30.0; // offset
-            using (var brush = new CanvasLinearGradientBrush(_rc, yellowBody.ToWinColor(), yellowBorder.ToWinColor()) {
-               StartPoint = new Vector2(0, 0),
-               EndPoint = new Vector2(_width, _height),
-            }) {
-               ds.FillOval(padX, padY, _width - padX * 2, _height - padY * 2, brush);
+         var padX = 0.033 * _width;
+         var padY = 0.033 * _height;
+         var wInt = _width - 2 * padX;
+         var hInt = _height - 2 * padY;
+         var wExt = 1.133 * _width;
+         var hExt = 1.133 * _height;
+         using (var ellipseInternal = _rc.CreateEllipse(padX, padY, wInt, hInt)) {
+            { // поверх него, внутри - градиентный круг
+                  using (var brush = new CanvasLinearGradientBrush(_rc, yellowBody.ToWinColor(), yellowBorder.ToWinColor()) {
+                  StartPoint = new Vector2(0, 0),
+                  EndPoint = new Vector2(_width, _height),
+               }) {
+                  //ds.FillOval(padX, padY, wInt, hInt, brush); // не совпадает с аналогичным _rc.CreateEllipse...
+                  ds.FillGeometry(ellipseInternal, brush);
+               }
             }
-         }
-         { // верхний левый блик
-            double padX = _width / 30.0; // offset
-            double padY = _height / 30.0; // offset
-            double w = _width - padX * 2;
-            double h = _height - padY * 2;
-            using (var ellipse1 = _rc.CreateEllipse(padX, padY, w, h)) {
-               w = 1.13 * _width;
-               h = 1.13 * _height;
-               using (var ellipse2 = _rc.CreateEllipse(padX, padY, w, h)) {
-                  using (var intersect = ellipse1.IntersectExclude(ellipse2)) {
+            { // верхний левый блик
+               using (var ellipseExternal = _rc.CreateEllipse(padX, padY, wExt, hExt)) {
+                  using (var intersect = ellipseInternal.IntersectExclude(ellipseExternal)) {
                      ds.FillGeometry(intersect, yellowGlint.ToWinColor()); // Colors.DarkGray
                   }
 
                   // test
-                  //ds.DrawGeometry(ellipse1, Color.Black.ToWinColor());
-                  //ds.DrawGeometry(ellipse2, Color.Black.ToWinColor());
+                  //ds.DrawGeometry(ellipseInternal, Color.Black.ToWinColor());
+                  //ds.DrawGeometry(ellipseExternal, Color.Black.ToWinColor());
                }
             }
-         }
-         { // нижний правый блик
-            double padX = _width / 30.0; // offset
-            double padY = _height / 30.0; // offset
-            double w1 = _width - padX * 2;
-            double h1 = _height - padY * 2;
-            using (var ellipse1 = _rc.CreateEllipse(padX, padY, w1, h1)) {
-               double w2 = 1.13 * _width;
-               double h2 = 1.13 * _height;
-               using (var ellipse2 = _rc.CreateEllipse(padX + w1 - w2, padY + h1 - h2, w2, h2)) {
-                  using (var intersect = ellipse1.IntersectExclude(ellipse2)) {
-                     ds.FillGeometry(intersect, yellowBorder.Darker().ToWinColor());
+            { // нижний правый блик
+               using (var ellipseExternal = _rc.CreateEllipse(padX + wInt - wExt, padY + hInt - hExt, wExt, hExt)) {
+                  using (var intersect = ellipseInternal.IntersectExclude(ellipseExternal)) {
+                     ds.FillGeometry(intersect, yellowBorder.Darker(0.4).ToWinColor());
                   }
 
                   // test
-                  //ds.DrawGeometry(ellipse1, Color.Black.ToWinColor());
-                  //ds.DrawGeometry(ellipse2, Color.Black.ToWinColor());
+                  //ds.DrawGeometry(ellipseInternal, Color.Black.ToWinColor());
+                  //ds.DrawGeometry(ellipseExternal, Color.Black.ToWinColor());
                }
             }
          }

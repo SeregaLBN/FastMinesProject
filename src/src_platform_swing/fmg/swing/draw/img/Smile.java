@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 import javax.swing.Icon;
 
 import fmg.common.geom.PointDouble;
+import fmg.swing.Cast;
 import fmg.swing.utils.ImgUtils;
 
 public class Smile implements Icon {
@@ -124,45 +125,37 @@ public class Smile implements Icon {
          g.setColor(yellowBorder);
          g.fillOval(0, 0, _width, _height);
       }
+
+      double padX = 0.033 * _width;
+      double padY = 0.033 * _height;
+      double wInt = _width - 2 * padX;
+      double hInt = _height - 2 * padY;
+      double wExt = 1.133 * _width;
+      double hExt = 1.133 * _height;
+      Ellipse2D ellipseInternal = new Ellipse2D.Double(padX, padY, _width-padX*2, _height-padY*2);
       { // поверх него, внутри - градиентный круг
-         double padX = _width/30.0; // offset
-         double padY = _height/30.0; // offset
          g.setPaint(new GradientPaint(0, 0, yellowBody, _width, _height, yellowBorder));
-         g.fill(new Ellipse2D.Double(padX, padY, _width-padX*2, _height-padY*2));
+         g.fill(ellipseInternal);
       }
       { // верхний левый блик
-         double padX = _width/30.0; // offset
-         double padY = _height/30.0; // offset
-         double w = _width-padX*2;
-         double h = _height-padY*2;
-         Ellipse2D ellipse1 = new Ellipse2D.Double(padX, padY, w, h);
-         w = 1.13*_width;
-         h = 1.13*_height;
-         Ellipse2D ellipse2 = new Ellipse2D.Double(padX, padY, w, h);
+         Ellipse2D ellipseExternal = new Ellipse2D.Double(padX, padY, wExt, hExt);
          g.setColor(yellowGlint); // Color.DARK_GRAY
-         g.fill(intersectExclude(ellipse1, ellipse2));
+         g.fill(intersectExclude(ellipseInternal, ellipseExternal));
 
          // test
          //g.setColor(Color.BLACK);
-         //g.draw(ellipse1);
-         //g.draw(ellipse2);
+         //g.draw(ellipseInternal);
+         //g.draw(ellipseExternal);
       }
       { // нижний правый блик
-         double padX = _width/30.0; // offset
-         double padY = _height/30.0; // offset
-         double w1 = _width-padX*2;
-         double h1 = _height-padY*2;
-         Ellipse2D ellipse1 = new Ellipse2D.Double(padX, padY, w1, h1);
-         double w2 = 1.13*_width;
-         double h2 = 1.13*_height;
-         Ellipse2D ellipse2 = new Ellipse2D.Double(padX+w1-w2, padY+h1-h2, w2, h2);
-         g.setColor(yellowBorder.darker());
-         g.fill(intersectExclude(ellipse1, ellipse2));
+         Ellipse2D ellipseExternal = new Ellipse2D.Double(padX + wInt - wExt, padY + hInt - hExt, wExt, hExt);
+         g.setColor(Cast.toColor(Cast.toColor(yellowBorder).darker(0.4)));
+         g.fill(intersectExclude(ellipseInternal, ellipseExternal));
 
          // test
          //g.setColor(Color.BLACK);
-         //g.draw(ellipse1);
-         //g.draw(ellipse2);
+         //g.draw(ellipseInternal);
+         //g.draw(ellipseExternal);
       }
    }
 
