@@ -41,7 +41,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
          };
       }
 
-      public static CanvasGeometry BuildArc(this ICanvasResourceCreator resourceCreator, double x, double y, double width, double height, double startAngle, double arcAngle, bool clockwise) {
+      public static CanvasGeometry BuildArc(this ICanvasResourceCreator resourceCreator, double x, double y, double width, double height, double startAngle, double arcAngle, bool clockwise, bool loopClosed) {
          using (var builder = new CanvasPathBuilder(resourceCreator)) {
             Vector2[] arcPoints = new Vector2[2] {
                      new Vector2((float)x, (float)y),
@@ -59,7 +59,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
 
             builder.BeginFigure(startPoint);
             builder.AddArc(centerPoint, ellipseRadius.X, ellipseRadius.Y, startAngleR, sweepAngleR);
-            builder.EndFigure(CanvasFigureLoop.Open);
+            builder.EndFigure(loopClosed ? CanvasFigureLoop.Closed : CanvasFigureLoop.Open);
 
             return CanvasGeometry.CreatePath(builder);
          }
@@ -140,9 +140,9 @@ namespace fmg.uwp.draw.mosaic.win2d {
       }
 
       public static void DrawArc(this CanvasDrawingSession ds, ICanvasResourceCreator resourceCreator,
-                                 double x, double y, double w, double h, double start, double extent, bool clockwise,
+                                 double x, double y, double w, double h, double start, double extent, bool clockwise, bool loopClosed,
                                  Color color, double strokeWidth, CanvasStrokeStyle strokeStyle) {
-         using (var arc = resourceCreator.BuildArc(x, y, w, h, start, extent, clockwise)) {
+         using (var arc = resourceCreator.BuildArc(x, y, w, h, start, extent, clockwise, loopClosed)) {
             ds.DrawGeometry(arc, Color.Black, strokeWidth, strokeStyle);
          }
       }

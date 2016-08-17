@@ -60,9 +60,9 @@ namespace fmg.uwp.draw.img.win2d {
       private int _width = 100;
       private int _height = 100;
 
-      protected Smile(ICanvasResourceCreator resourceCreator, EType type) {
+      protected Smile(EType type, ICanvasResourceCreator resourceCreator) {
+         _type = type;
          _rc = resourceCreator;
-         _type = EType.Face_Disappointed;
       }
 
       public TImage Image {
@@ -173,8 +173,8 @@ namespace fmg.uwp.draw.img.win2d {
                   // дужки
                   ds.DrawLine(     0.746  * _width, 0.148 * _height,      0.885  * _width, 0.055 * _height, clr, strokeWidth, css);
                   ds.DrawLine((1 - 0.746) * _width, 0.148 * _height, (1 - 0.885) * _width, 0.055 * _height, clr, strokeWidth, css);
-                  ds.DrawArc(_rc,      0.864          * _width, 0.047 * _height, 0.100 * _width, 0.100 * _height,  0, 125, false, clr, strokeWidth, css);
-                  ds.DrawArc(_rc, (1 - 0.864 - 0.100) * _width, 0.047 * _height, 0.100 * _width, 0.100 * _height, 55, 125, false, clr, strokeWidth, css);
+                  ds.DrawArc(_rc,      0.864          * _width, 0.047 * _height, 0.100 * _width, 0.100 * _height,  0, 125, false, false, clr, strokeWidth, css);
+                  ds.DrawArc(_rc, (1 - 0.864 - 0.100) * _width, 0.047 * _height, 0.100 * _width, 0.100 * _height, 55, 125, false, false, clr, strokeWidth, css);
                }
                //break; // ! no break
                goto case EType.Face_SavouringDeliciousFood;
@@ -289,7 +289,7 @@ namespace fmg.uwp.draw.img.win2d {
             case EType.Face_SmilingWithSunglasses:
             case EType.Face_WhiteSmiling: {
                   // smile
-                  var arcSmile = _rc.BuildArc(0.103 * _width, -0.133 * _height, 0.795 * _width, 1.003 * _height, 207, 126, false);
+                  var arcSmile = _rc.BuildArc(0.103 * _width, -0.133 * _height, 0.795 * _width, 1.003 * _height, 207, 126, false, false);
                   ds.DrawGeometry(arcSmile, Color.Black, strokeWidth, css);
                   var lip = _rc.CreateEllipseInRect(0.060 * _width, 0.475 * _height, 0.877 * _width, 0.330 * _height);
                   ds.FillGeometry(arcSmile.IntersectExclude(lip), Color.Black);
@@ -298,8 +298,8 @@ namespace fmg.uwp.draw.img.win2d {
                   //ds.DrawGeometry(lip, Color.Green.ToWinColor(), 1);
 
                   // dimples - ямочки на щеках
-                  ds.DrawArc(_rc, +0.020 * _width, 0.420 * _height, 0.180 * _width, 0.180 * _height, 85 + 180, 57, false, Color.Black, strokeWidth, css);
-                  ds.DrawArc(_rc, +0.800 * _width, 0.420 * _height, 0.180 * _width, 0.180 * _height, 38 + 180, 57, false, Color.Black, strokeWidth, css);
+                  ds.DrawArc(_rc, +0.020 * _width, 0.420 * _height, 0.180 * _width, 0.180 * _height, 85 + 180, 57, false, false, Color.Black, strokeWidth, css);
+                  ds.DrawArc(_rc, +0.800 * _width, 0.420 * _height, 0.180 * _width, 0.180 * _height, 38 + 180, 57, false, false, Color.Black, strokeWidth, css);
 
                   // tongue / язык
                   if (_type == EType.Face_SavouringDeliciousFood) {
@@ -312,7 +312,7 @@ namespace fmg.uwp.draw.img.win2d {
                break;
             case EType.Face_Disappointed: {
                   // smile
-                  var arcSmile = _rc.BuildArc(0.025 * _width, 0.655 * _height, 0.950 * _width, 0.950 * _height, 50, 80, false);
+                  var arcSmile = _rc.BuildArc(0.025 * _width, 0.655 * _height, 0.950 * _width, 0.950 * _height, 50, 80, false, false);
                   ds.DrawGeometry(arcSmile, Color.Black, strokeWidth, css);
                   arcSmile = _rc.CreateEllipseInRect(0.025 * _width, 0.655 * _height, 0.950 * _width, 0.950 * _height); // arc as circle
 
@@ -331,12 +331,12 @@ namespace fmg.uwp.draw.img.win2d {
                }
                break;
             case EType.Face_Grinning: {
-                  var arcSmile = _rc.BuildArc(0.103 * _width, -0.133 * _height, 0.795 * _width, 1.003 * _height, 207, 126, false); // TODO arc must be closed!
+                  var arcSmile = _rc.BuildArc(0.103 * _width, -0.133 * _height, 0.795 * _width, 1.003 * _height, 207, 126, false, true);
                   using (var brush = new CanvasLinearGradientBrush(_rc, Color.Gray.ToWinColor(), Color.White.ToWinColor()) {
                      StartPoint = new Vector2(0, 0),
                      EndPoint = new Vector2(_width / 2.0f, 0),
                   }) {
-                     //ds.FillGeometry(_rc.CreateRectangle(0, 0, _width, _height), brush); // test
+                   //ds.FillGeometry(_rc.CreateRectangle(0, 0, _width, _height), brush); // test
                      ds.FillGeometry(arcSmile, brush);
                   }
                   ds.DrawGeometry(arcSmile, Color.Black, strokeWidth, css);
@@ -407,7 +407,7 @@ namespace fmg.uwp.draw.img.win2d {
       public class CanvasBmp : Smile<CanvasBitmap> {
 
          public CanvasBmp(EType type, ICanvasResourceCreator resourceCreator)
-            : base(resourceCreator, type)
+            : base(type, resourceCreator)
          { }
 
          protected override CanvasBitmap CreateImage() {
@@ -430,7 +430,7 @@ namespace fmg.uwp.draw.img.win2d {
       public class CanvasImgSrc : Smile<CanvasImageSource> {
 
          public CanvasImgSrc(EType type, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
-            : base(resourceCreator, type)
+            : base(type, resourceCreator)
          { }
 
          protected override CanvasImageSource CreateImage() {
