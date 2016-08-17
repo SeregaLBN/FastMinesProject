@@ -42,6 +42,9 @@
     <Compile Include="..\..\src\src_common\fmg\common\ui\ITimer.cs">
       <Link>src_fmg.common\ui\ITimer.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\TaskExec.cs">
+      <Link>src_fmg.common\TaskExec.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_common\fmg\common\geom\Bound.cs">
       <Link>src_fmg.common\geom\Bound.cs</Link>
     </Compile>

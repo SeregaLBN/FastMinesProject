@@ -9,6 +9,7 @@ using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
 using fmg.data.controller.types;
+using fmg.uwp.utils;
 using fmg.uwp.draw.img.win2d;
 using StaticImg                = fmg.core.img.StaticImg<object>;
 using LogoCanvasBmp            = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.        CanvasBitmap     >.CanvasBmp;
@@ -86,8 +87,8 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          Img3 = new MosaicsGroupCanvasImgSrc(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], device);
          Bmp4 = new MosaicsCanvasBmp        (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), canvasControl4);
          Img4 = new MosaicsCanvasImgSrc     (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), device);
-         Bmp5 = new SmileCanvasBmp   (((SmileCanvasBmp   .EType[])Enum.GetValues(typeof(SmileCanvasBmp   .EType)))[R(Enum.GetValues(typeof(SmileCanvasBmp   .EType)).Length)], canvasControl5);
-         Img5 = new SmileCanvasImgSrc(((SmileCanvasImgSrc.EType[])Enum.GetValues(typeof(SmileCanvasImgSrc.EType)))[R(Enum.GetValues(typeof(SmileCanvasImgSrc.EType)).Length)], device);
+         Bmp5 = new SmileCanvasBmp   (SmileCanvasBmp   .EType.Face_WhiteSmiling, canvasControl5);
+         Img5 = new SmileCanvasImgSrc(SmileCanvasImgSrc.EType.Face_WhiteSmiling, device);
          Bmp6 = new FlagCanvasBmp(canvasControl6);
          Img6 = new FlagCanvasImgSrc(device);
          Bmp7 = new MineCanvasBmp(canvasControl7);
@@ -130,6 +131,8 @@ namespace Test.FastMines.Uwp.Images.Win2D {
             //img6Cntrl.SizeChanged += (sender2, ev) => { Img6.Width =         (int)ev.NewSize.Width; Img6.Height = (int)ev.NewSize.Height ; };
             //img7Cntrl.SizeChanged += (sender2, ev) => { Img7.Size = new Size((int)ev.NewSize.Width,               (int)ev.NewSize.Height); };
          };
+
+         NextImg5();
       }
 
       private static void ApplyRandom<TImage>(RotatedImg<TImage> img, CanvasControl canvasControl)
@@ -204,10 +207,35 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          Img2.Rotate = //Img2.PolarLights =
          Img3.Rotate =   Img3.PolarLights =
          Img4.Rotate = //Img4.PolarLights =
+         loopImg5 =
        //Img5.Rotate =   Img5.PolarLights =
        //Img6.Rotate =   Img6.PolarLights =
          Img7.Rotate =   Img7.PolarLights =
             enable;
+      }
+
+      private static Smile<TImage>.EType NextSmileType<TImage>(Smile<TImage>.EType smileType)
+         where TImage : DependencyObject, ICanvasResourceCreator
+      {
+         var vals = (Smile<TImage>.EType[])Enum.GetValues(typeof(Smile<TImage>.EType));
+         var pos = Array.IndexOf(vals, smileType);
+         return (pos < (vals.Length - 1)) ? vals[pos + 1] : vals[0];
+      }
+
+      private void canvasControl_Tapped5(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e) {
+         Bmp5.Type = NextSmileType(Bmp5.Type);
+         canvasControl5.Invalidate();
+      }
+
+      private bool loopImg5 = true;
+      private void NextImg5() {
+         TaskExec.DelayedStart(
+               TimeSpan.FromSeconds(1),
+               () => {
+                  Img5.Type = NextSmileType(Img5.Type);
+                  AsyncRunner.InvokeFromUiLater(() => { if (loopImg5) img5Cntrl.Source = Img5.Image; } );
+                  NextImg5();
+               });
       }
 
    }

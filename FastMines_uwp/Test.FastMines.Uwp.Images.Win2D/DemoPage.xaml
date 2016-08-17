@@ -28,7 +28,7 @@
         <canvas:CanvasControl x:Name="canvasControl2" Draw="canvasControl_Draw2" Grid.Row="0" Grid.Column="1" ClearColor="DarkSeaGreen"      />
         <canvas:CanvasControl x:Name="canvasControl3" Draw="canvasControl_Draw3" Grid.Row="0" Grid.Column="2" ClearColor="Firebrick"         />
         <canvas:CanvasControl x:Name="canvasControl4" Draw="canvasControl_Draw4" Grid.Row="0" Grid.Column="3" ClearColor="DarkViolet"        />
-        <canvas:CanvasControl x:Name="canvasControl5" Draw="canvasControl_Draw5" Grid.Row="0" Grid.Column="4" ClearColor="OldLace"           />
+        <canvas:CanvasControl x:Name="canvasControl5" Draw="canvasControl_Draw5" Grid.Row="0" Grid.Column="4" ClearColor="OldLace"           Tapped="canvasControl_Tapped5" />
         <canvas:CanvasControl x:Name="canvasControl6" Draw="canvasControl_Draw6" Grid.Row="0" Grid.Column="5" ClearColor="Violet"            />
         <canvas:CanvasControl x:Name="canvasControl7" Draw="canvasControl_Draw7" Grid.Row="0" Grid.Column="6" ClearColor="MediumSpringGreen" />
 
