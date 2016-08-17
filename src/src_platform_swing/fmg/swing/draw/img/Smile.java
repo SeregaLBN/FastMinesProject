@@ -171,9 +171,9 @@ public class Smile implements Icon {
             g.draw(new Ellipse2D.Double(0.200*_width, 0.100*_height, 0.290*_width, 0.440*_height));
             g.draw(new Ellipse2D.Double(0.510*_width, 0.100*_height, 0.290*_width, 0.440*_height));
             // дужки
-            g.draw(new Line2D.Double(0.746*_width, 0.148*_height, 0.885*_width, 0.055*_height));
-            g.draw(new  Arc2D.Double(0.864*_width, 0.047*_height, 0.100*_width, 0.100*_height, 0, 125, Arc2D.OPEN));
+            g.draw(new Line2D.Double(   0.746 *_width, 0.148*_height,    0.885 *_width, 0.055*_height));
             g.draw(new Line2D.Double((1-0.746)*_width, 0.148*_height, (1-0.885)*_width, 0.055*_height));
+            g.draw(new  Arc2D.Double(   0.864       *_width, 0.047*_height, 0.100*_width, 0.100*_height,  0, 125, Arc2D.OPEN));
             g.draw(new  Arc2D.Double((1-0.864-0.100)*_width, 0.047*_height, 0.100*_width, 0.100*_height, 55, 125, Arc2D.OPEN));
          }
          //break; // ! no break

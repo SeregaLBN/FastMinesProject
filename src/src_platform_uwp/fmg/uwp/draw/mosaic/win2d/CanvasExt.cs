@@ -131,6 +131,9 @@ namespace fmg.uwp.draw.mosaic.win2d {
       public static CanvasGeometry IntersectExclude(this CanvasGeometry shape1, CanvasGeometry shape2) {
          return shape1.CombineWith(shape2, Matrix3x2.CreateTranslation(0, 0), CanvasGeometryCombine.Exclude);
       }
+      public static CanvasGeometry IntersectInclude(this CanvasGeometry shape1, CanvasGeometry shape2) {
+         return shape1.CombineWith(shape2, Matrix3x2.CreateTranslation(0, 0), CanvasGeometryCombine.Union);
+      }
 
       public static void DrawLine(this CanvasDrawingSession ds, double x0, double y0, double x1, double y1, Color color, double strokeWidth, CanvasStrokeStyle strokeStyle) {
          ds.DrawLine((float)x0, (float)y0, (float)x1, (float)y1, color.ToWinColor(), (float)strokeWidth, strokeStyle);

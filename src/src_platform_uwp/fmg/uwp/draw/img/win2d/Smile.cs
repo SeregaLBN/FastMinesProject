@@ -7,6 +7,7 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Geometry;
 using fmg.common;
+using fmg.common.geom;
 using fmg.uwp.utils;
 using fmg.uwp.draw.mosaic.win2d;
 
@@ -170,9 +171,9 @@ namespace fmg.uwp.draw.img.win2d {
                   ds.DrawEllipseInRect(0.200 * _width, 0.100 * _height, 0.290 * _width, 0.440 * _height, clr, strokeWidth, css);
                   ds.DrawEllipseInRect(0.510 * _width, 0.100 * _height, 0.290 * _width, 0.440 * _height, clr, strokeWidth, css);
                   // дужки
-                  ds.DrawLine(0.746 * _width, 0.148 * _height, 0.885 * _width, 0.055 * _height, clr, strokeWidth, css);
-                  ds.DrawArc(_rc, 0.864 * _width, 0.047 * _height, 0.100 * _width, 0.100 * _height, 0, 125, false, clr, strokeWidth, css);
+                  ds.DrawLine(     0.746  * _width, 0.148 * _height,      0.885  * _width, 0.055 * _height, clr, strokeWidth, css);
                   ds.DrawLine((1 - 0.746) * _width, 0.148 * _height, (1 - 0.885) * _width, 0.055 * _height, clr, strokeWidth, css);
+                  ds.DrawArc(_rc,      0.864          * _width, 0.047 * _height, 0.100 * _width, 0.100 * _height,  0, 125, false, clr, strokeWidth, css);
                   ds.DrawArc(_rc, (1 - 0.864 - 0.100) * _width, 0.047 * _height, 0.100 * _width, 0.100 * _height, 55, 125, false, clr, strokeWidth, css);
                }
                //break; // ! no break
@@ -215,8 +216,8 @@ namespace fmg.uwp.draw.img.win2d {
                      // веко/eyelid
                      using (var ellipseLeft3 = _rc.CreateEllipseInRect(0.441 * _width, -0.236 * _height, 0.436 * _width, 0.560 * _height)) {
                      using (var ellipseRght3 = _rc.CreateEllipseInRect(0.128 * _width, -0.236 * _height, 0.436 * _width, 0.560 * _height)) {
-                     using (var rotatedLeft3 = ellipseLeft3.Rotate(new common.geom.PointDouble(0.441 * _width, -0.236 * _height), 30)) {
-                     using (var rotatedRght3 = ellipseRght3.Rotate(new common.geom.PointDouble(0.564 * _width, -0.236 * _height), -30)) {
+                     using (var rotatedLeft3 = ellipseLeft3.Rotate(new PointDouble(0.441 * _width, -0.236 * _height), 30)) {
+                     using (var rotatedRght3 = ellipseRght3.Rotate(new PointDouble(0.564 * _width, -0.236 * _height), -30)) {
                      using (var areaLeft3 = rotatedLeft3.IntersectExclude(rcHalfLeft)) {
                      using (var areaRght3 = rotatedRght3.IntersectExclude(rcHalfRght)) {
                      using (var areaLeft31 = areaLeft1.Intersect(areaLeft3)) {
@@ -236,28 +237,28 @@ namespace fmg.uwp.draw.img.win2d {
                }
                break;
             case EType.Eyes_OpenDisabled:
-               //eyeOpened(g, true, true);
-               //eyeOpened(g, false, true);
+               EyeOpened(ds, true, true);
+               EyeOpened(ds, false, true);
                break;
             case EType.Eyes_ClosedDisabled:
-               //eyeClosed(g, true, true);
-               //eyeClosed(g, false, true);
+               EyeClosed(ds, true, true);
+               EyeClosed(ds, false, true);
                break;
             case EType.Face_EyesOpen:
-               //eyeOpened(g, true, false);
-               //eyeOpened(g, false, false);
+               EyeOpened(ds, true, false);
+               EyeOpened(ds, false, false);
                break;
             case EType.Face_WinkingEyeLeft:
-               //eyeClosed(g, true, false);
-               //eyeOpened(g, false, false);
+               EyeClosed(ds, true, false);
+               EyeOpened(ds, false, false);
                break;
             case EType.Face_WinkingEyeRight:
-               //eyeOpened(g, true, false);
-               //eyeClosed(g, false, false);
+               EyeOpened(ds, true, false);
+               EyeClosed(ds, false, false);
                break;
             case EType.Face_EyesClosed:
-               //eyeClosed(g, true, false);
-               //eyeClosed(g, false, false);
+               EyeClosed(ds, true, false);
+               EyeClosed(ds, false, false);
                break;
             default:
                throw new NotImplementedException();
@@ -287,6 +288,54 @@ namespace fmg.uwp.draw.img.win2d {
                ds.DrawGeometry(g, clr.ToWinColor(), Math.Max(1, 14 * (w + h) / 2), css);
             }
          }
+      }
+
+      private void EyeOpened(CanvasDrawingSession ds, bool right, bool disabled) {
+         Action<PointDouble, Color> draw = (offset, holeColor) => {
+            var pupil = right
+                  ? _rc.CreateEllipseInRect((offset.X + 0.273) * _width, (offset.Y + 0.166) * _height, 0.180 * _width, 0.324 * _height).IntersectInclude(
+                    _rc.CreateEllipseInRect((offset.X + 0.320) * _width, (offset.Y + 0.124) * _height, 0.180 * _width, 0.273 * _height).Rotate(
+                            new PointDouble((offset.X + 0.320) * _width, (offset.Y + 0.124) * _height),  35)                          ).IntersectInclude(
+                    _rc.CreateEllipseInRect((offset.X + 0.163) * _width, (offset.Y + 0.313) * _height, 0.180 * _width, 0.266 * _height).Rotate(
+                            new PointDouble((offset.X + 0.163) * _width, (offset.Y + 0.313) * _height), -36))
+                  : _rc.CreateEllipseInRect((offset.X + 0.500) * _width, (offset.Y + 0.166) * _height, 0.180 * _width, 0.324 * _height).IntersectInclude(
+                    _rc.CreateEllipseInRect((offset.X + 0.486) * _width, (offset.Y + 0.227) * _height, 0.180 * _width, 0.273 * _height).Rotate(
+                            new PointDouble((offset.X + 0.486) * _width, (offset.Y + 0.227) * _height), -35)                          ).IntersectInclude(
+                    _rc.CreateEllipseInRect((offset.X + 0.646) * _width, (offset.Y + 0.211) * _height, 0.180 * _width, 0.266 * _height).Rotate(
+                            new PointDouble((offset.X + 0.646) * _width, (offset.Y + 0.211) * _height),  36));
+            if (!disabled) {
+               ds.FillGeometry(pupil, Color.Black);
+            }
+            var hole = right
+                  ? _rc.CreateEllipseInRect((offset.X + 0.303 * _width), (offset.Y + 0.209) * _height, 0.120 * _width, 0.160 * _height).Rotate(
+                            new PointDouble((offset.X + 0.303 * _width), (offset.Y + 0.209) * _height), 25)
+                  : _rc.CreateEllipseInRect((offset.X + 0.610 * _width), (offset.Y + 0.209) * _height, 0.120 * _width, 0.160 * _height).Rotate(
+                            new PointDouble((offset.X + 0.610 * _width), (offset.Y + 0.209) * _height), 25);
+            if (!disabled) {
+               ds.FillGeometry(hole, holeColor);
+            } else {
+               ds.FillGeometry(pupil.IntersectExclude(hole), holeColor);
+            }
+         };
+         if (disabled) {
+            draw(new PointDouble(0.034, 0.027), Color.White);
+            draw(new PointDouble(), Color.Gray);
+         } else {
+            draw(new PointDouble(), Color.White);
+         }
+      }
+
+      private void EyeClosed(CanvasDrawingSession ds, bool right, bool disabled) {
+         Action<PointDouble> eye = offset => {
+            if (disabled) {
+               ds.FillGeometry(_rc.CreateEllipseInRect((offset.X + 0.532) * _width, (offset.Y + 0.248) * _height, 0.313 * _width, 0.068 * _height).IntersectInclude(
+                               _rc.CreateEllipseInRect((offset.X + 0.655) * _width, (offset.Y + 0.246) * _height, 0.205 * _width, 0.130 * _height)), Color.White);
+            }
+            ds.FillGeometry(_rc.CreateEllipseInRect((offset.X + 0.517) * _width, (offset.Y + 0.248) * _height, 0.313 * _width, 0.034 * _height).IntersectInclude(
+                            _rc.CreateEllipseInRect((offset.X + 0.640) * _width, (offset.Y + 0.246) * _height, 0.205 * _width, 0.075 * _height)), disabled ? Color.Gray : Color.Black);
+         };
+         eye(right ? new PointDouble(-0.410, 0)
+                   : new PointDouble());
       }
 
       /////////////////////////////////////////////////////////////////////////////////////////////////////
