@@ -62,7 +62,7 @@ namespace fmg.uwp.draw.img.win2d {
 
       protected Smile(ICanvasResourceCreator resourceCreator, EType type) {
          _rc = resourceCreator;
-         _type = type;
+         _type = EType.Face_Disappointed;
       }
 
       public TImage Image {
@@ -267,25 +267,83 @@ namespace fmg.uwp.draw.img.win2d {
       }
 
       protected void DrawMouth(CanvasDrawingSession ds) {
-         var w = _width / 1000.0f;
-         var h = _height / 1000.0f;
+         switch (_type) {
+         case EType.Face_Assistant:
+         case EType.Eyes_OpenDisabled:
+         case EType.Eyes_ClosedDisabled:
+         case EType.Face_EyesOpen:
+         case EType.Face_WinkingEyeLeft:
+         case EType.Face_WinkingEyeRight:
+         case EType.Face_EyesClosed:
+            return;
+         }
 
-         // smile
          using (var css = new CanvasStrokeStyle {
             StartCap = CanvasCapStyle.Round,
             EndCap = CanvasCapStyle.Round
          }) {
-            var clr = Color.Black;
-            using (var g = _rc.BuildArc(103 * w, -133 * h, 795 * w, 1003 * h, 207, 126, false)) {
-               ds.DrawGeometry(g, clr.ToWinColor(), Math.Max(1, 14 * (w + h) / 2), css);
-            }
+            var strokeWidth = Math.Max(1, 0.044 * ((_width + _height) / 2.0));
 
-            // ямочки на щеках
-            using (var g = _rc.BuildArc(90 * w, 580 * h, 180 * w, 180 * h, 90, 45, false)) {
-               ds.DrawGeometry(g, clr.ToWinColor(), Math.Max(1, 14 * (w + h) / 2), css);
-            }
-            using (var g = _rc.BuildArc(730 * w, 580 * h, 180 * w, 180 * h, 45, 45, false)) {
-               ds.DrawGeometry(g, clr.ToWinColor(), Math.Max(1, 14 * (w + h) / 2), css);
+            switch (_type) {
+            case EType.Face_SavouringDeliciousFood:
+            case EType.Face_SmilingWithSunglasses:
+            case EType.Face_WhiteSmiling: {
+                  // smile
+                  var arcSmile = _rc.BuildArc(0.103 * _width, -0.133 * _height, 0.795 * _width, 1.003 * _height, 207, 126, false);
+                  ds.DrawGeometry(arcSmile, Color.Black, strokeWidth, css);
+                  var lip = _rc.CreateEllipseInRect(0.060 * _width, 0.475 * _height, 0.877 * _width, 0.330 * _height);
+                  ds.FillGeometry(arcSmile.IntersectExclude(lip), Color.Black);
+
+                  // test
+                  //ds.DrawGeometry(lip, Color.Green.ToWinColor(), 1);
+
+                  // dimples - ямочки на щеках
+                  ds.DrawArc(_rc, +0.020 * _width, 0.420 * _height, 0.180 * _width, 0.180 * _height, 85 + 180, 57, false, Color.Black, strokeWidth, css);
+                  ds.DrawArc(_rc, +0.800 * _width, 0.420 * _height, 0.180 * _width, 0.180 * _height, 38 + 180, 57, false, Color.Black, strokeWidth, css);
+
+                  // tongue / язык
+                  if (_type == EType.Face_SavouringDeliciousFood) {
+                     var tongue = _rc.CreateEllipseInRect(0.470 * _width, 0.406 * _height, 0.281 * _width, 0.628 * _height).Rotate(
+                                          new PointDouble(0.470 * _width, 0.406 * _height), 40);
+                     var ellipseSmile = _rc.CreateEllipseInRect(0.103 * _width, -0.133 * _height, 0.795 * _width, 1.003 * _height);
+                     ds.FillGeometry(tongue.IntersectExclude(ellipseSmile), Color.Red);
+                  }
+               }
+               break;
+            case EType.Face_Disappointed: {
+                  // smile
+                  var arcSmile = _rc.BuildArc(0.025 * _width, 0.655 * _height, 0.950 * _width, 0.950 * _height, 50, 80, false);
+                  ds.DrawGeometry(arcSmile, Color.Black, strokeWidth, css);
+                  arcSmile = _rc.CreateEllipseInRect(0.025 * _width, 0.655 * _height, 0.950 * _width, 0.950 * _height); // arc as circle
+
+                  // tongue / язык
+                  var tongue = _rc.CreateEllipseInRect(0.338 * _width, 0.637 * _height, 0.325 * _width, 0.325 * _height).IntersectInclude( // кончик языка
+                               _rc.CreateRectangle    (0.338 * _width, 0.594 * _height, 0.325 * _width, 0.206 * _height)); // тело языка
+                  var hole = _rc.CreateRectangle(0, 0, _width, _height).IntersectExclude(arcSmile);
+                  tongue = tongue.IntersectExclude(hole);
+                  ds.FillGeometry(tongue, Color.Red);
+                  ds.DrawGeometry(tongue, Color.Black, strokeWidth, css);
+                  ds.DrawGeometry(_rc.CreateRectangle(_width / 2.0, 0.637 * _height, 0.0001, 0.200 * _height).IntersectExclude(hole), Color.Black, strokeWidth, css);
+
+                  // test
+                  //ds.DrawGeometry(arcSmile, Color.Black, 1, css);
+                  //ds.DrawGeometry(hole, Color.Black, 1, css);
+               }
+               break;
+            case EType.Face_Grinning: {
+                  var arcSmile = _rc.BuildArc(0.103 * _width, -0.133 * _height, 0.795 * _width, 1.003 * _height, 207, 126, false); // TODO arc must be closed!
+                  using (var brush = new CanvasLinearGradientBrush(_rc, Color.Gray.ToWinColor(), Color.White.ToWinColor()) {
+                     StartPoint = new Vector2(0, 0),
+                     EndPoint = new Vector2(_width / 2.0f, 0),
+                  }) {
+                     //ds.FillGeometry(_rc.CreateRectangle(0, 0, _width, _height), brush); // test
+                     ds.FillGeometry(arcSmile, brush);
+                  }
+                  ds.DrawGeometry(arcSmile, Color.Black, strokeWidth, css);
+               }
+               break;
+            default:
+               throw new NotImplementedException();
             }
          }
       }

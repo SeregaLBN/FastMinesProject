@@ -295,7 +295,7 @@ public class Smile implements Icon {
             // test
             //g.setStroke(strokeOld);
             //g.setColor(Color.GREEN);
-            //g.draw(ellipse);
+            //g.draw(lip);
 
             // dimples - ямочки на щеках
             g.setStroke(strokeNew);
@@ -317,7 +317,7 @@ public class Smile implements Icon {
             // smile
             Arc2D arcSmile = new Arc2D.Double(0.025*_width, 0.655*_height, 0.950*_width, 0.950*_height, 50, 80, Arc2D.OPEN);
             g.draw(arcSmile);
-            arcSmile.setAngleStart(0); arcSmile.setAngleExtent(360); // arc as circle
+            arcSmile.setAngleStart(0); arcSmile.setAngleExtent(360); // arc as ellipse
 
             // tongue / язык
             Area tongue = intersectInclude(new   Ellipse2D.Double(0.338*_width, 0.637*_height, 0.325*_width, 0.325*_height),  // кончик языка
@@ -341,7 +341,7 @@ public class Smile implements Icon {
             Arc2D arcSmile = new Arc2D.Double(0.103*_width, -0.133*_height, 0.795*_width, 1.003*_height, 207, 126, Arc2D.CHORD);
             Paint paintOld = g.getPaint();
             g.setPaint(new GradientPaint(0, 0, Color.GRAY, (float)(_width/2.0), 0, Color.WHITE));
-//            g.fill(new Rectangle2D.Double(0, 0, _width, _height)); // test
+          //g.fill(new Rectangle2D.Double(0, 0, _width, _height)); // test
             g.fill(arcSmile);
             g.setPaint(paintOld);
             g.setStroke(strokeNew);
