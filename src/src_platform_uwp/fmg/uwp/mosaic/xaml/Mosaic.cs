@@ -18,7 +18,7 @@ using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.mosaic.xaml;
 using fmg.uwp.utils;
 
-namespace fmg.uwp.mosaic {
+namespace fmg.uwp.mosaic.xaml {
 
    public class Mosaic : MosaicBase<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> {
 

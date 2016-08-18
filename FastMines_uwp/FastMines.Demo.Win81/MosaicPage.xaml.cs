@@ -18,9 +18,9 @@ using fmg.core.mosaic.cells;
 using fmg.core.types.click;
 using fmg.data.controller.types;
 using fmg.uwp.mosaic;
+using fmg.uwp.mosaic.xaml;
 using fmg.uwp.utils;
 using fmg.uwp.draw.img.wbmp;
-using Size = fmg.common.geom.Size;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace FastMines {
