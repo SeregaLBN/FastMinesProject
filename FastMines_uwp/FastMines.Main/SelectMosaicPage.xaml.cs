@@ -9,8 +9,10 @@ using fmg.common;
 using fmg.common.Controls;
 using MosaicsImg = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 using System.Collections.Generic;
+using fmg.uwp.mosaic;
 
 namespace fmg {
+
    /// <summary>
    /// An empty page that can be used on its own or navigated to within a Frame.
    /// </summary>
@@ -44,12 +46,12 @@ namespace fmg {
       }
 
       public ESkillLevel CurrentSkillLevel {
-         //get { return ViewModel.MosaicsDs.CurrentSkill; }
+         private get { return ViewModel.MosaicsDs.CurrentSkill; }
          set { ViewModel.MosaicsDs.CurrentSkill = value; }
       }
 
       public MosaicTailItem CurrentElement {
-         //get { return ViewModel.MosaicsDs.CurrentElement; }
+         private get { return ViewModel.MosaicsDs.CurrentElement; }
          set { ViewModel.MosaicsDs.CurrentElement = value; }
       }
 
@@ -71,6 +73,17 @@ namespace fmg {
          var img = map[canvasControl];
          ev.DrawingSession.DrawImage(img.Image, new Rect(0, 0, canvasControl.Width, canvasControl.Height));
       }
+
+      private void gridMosaics_DoubleTapped(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs e) {
+         var eMosaic = CurrentElement.MosaicType;
+         //this.Frame.Navigate(typeof(ItemDetailPage), eMosaic);
+         this.Frame.Navigate(typeof(MosaicPage), new MosaicPageInitParam {
+            MosaicTypes = eMosaic,
+            MinesCount = CurrentSkillLevel.GetNumberMines(eMosaic),
+            SizeField = CurrentSkillLevel.DefaultSize()
+         });
+      }
+
    }
 
 }

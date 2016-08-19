@@ -34,6 +34,7 @@
                   IsItemClickEnabled="True" 
                   SelectionMode="Single"
                   SelectionChanged="Selector_OnSelectionChanged"
-                  ItemClick="ListViewBase_OnItemClick" />
+                  ItemClick="ListViewBase_OnItemClick"
+                  DoubleTapped="gridMosaics_DoubleTapped" />
     </Grid>
 </Page>
