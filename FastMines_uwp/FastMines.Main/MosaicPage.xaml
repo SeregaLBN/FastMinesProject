@@ -5,12 +5,17 @@
     xmlns:local="using:fmg"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     mc:Ignorable="d"
     Background="Coral">
 
     <Grid x:Name="ContentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}"  Margin="3">
-        <!--Canvas x:Name="ContentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}" Margin="5,5,5,5">
-        </Canvas-->
+        <canvas:CanvasVirtualControl x:Name="virtualControl"
+                                     Width="1000"
+                                     Height="1000"
+                                     RegionsInvalidated="OnRegionsInvalidated"
+                                     ClearColor="{StaticResource ApplicationPageBackgroundThemeBrush}"
+                                     Margin="5,5,5,5" />
     </Grid>
 
 

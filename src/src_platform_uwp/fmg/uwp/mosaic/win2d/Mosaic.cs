@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.ComponentModel;
-using System.Collections.Generic;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
@@ -25,7 +24,9 @@ namespace fmg.uwp.mosaic.win2d {
       private CellPaintWin2D _cellPaint;
       private readonly CanvasVirtualControl _container;
 
-      public Mosaic() {}
+      public Mosaic(CanvasVirtualControl container) {
+         _container = container;
+      }
 
       public Mosaic(CanvasVirtualControl container, Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) :
          base(sizeField, mosaicType, minesCount, area)
@@ -39,6 +40,10 @@ namespace fmg.uwp.mosaic.win2d {
 #else
          base.OnError(msg);
 #endif
+      }
+
+      public CanvasVirtualControl Container {
+         get { return _container; }
       }
 
       public PaintUwpContext<CanvasBitmap> PaintContext {
@@ -55,7 +60,7 @@ namespace fmg.uwp.mosaic.win2d {
       public override ICellPaint<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> CellPaint => CellPaintFigures;
       protected CellPaintWin2D CellPaintFigures => _cellPaint ?? (_cellPaint = new CellPaintWin2D());
 
-
+      public void Repaint() { Repaint((BaseCell)null); }
       protected override void Repaint(BaseCell cell) {
          if (cell == null)
             _container.Invalidate();

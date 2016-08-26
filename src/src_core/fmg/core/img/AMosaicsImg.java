@@ -29,6 +29,7 @@ import fmg.core.types.EMosaic;
  * @param <TPaintable> see {@link IPaintable}
  * @param <TImage> plaform specific image
  * @param <TPaintContext> see {@link PaintContext}
+ * @param <TImageInner> plaform specific image (see {@link PaintContext})
  */
 public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintContext extends PaintContext<TImageInner>, TImageInner>
       extends RotatedImg<TImage>

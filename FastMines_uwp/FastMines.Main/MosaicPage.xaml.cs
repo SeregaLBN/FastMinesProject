@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using Windows.System;
 using Windows.Devices.Input;
 using Windows.UI.Core;
@@ -9,20 +8,24 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
-using fmg.common.geom;
-using fmg.core.types;
-using fmg.core.mosaic.cells;
-using fmg.uwp.mosaic;
-using fmg.uwp.draw.mosaic.xaml;
-using fmg.data.controller.types;
+using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
+using fmg.common.geom;
+using fmg.common.notyfier;
+using fmg.core.types;
+using fmg.core.types.click;
+using fmg.core.mosaic;
+using fmg.core.mosaic.cells;
+using fmg.data.controller.types;
+using fmg.uwp.utils;
+using fmg.uwp.mosaic;
+using fmg.uwp.mosaic.win2d;
 using Log = fmg.common.LoggerSimple;
 using Size = fmg.common.geom.Size;
 using Thickness = Windows.UI.Xaml.Thickness;
-using fmg.core.mosaic;
-using fmg.core.types.click;
-using fmg.common.notyfier;
-using fmg.uwp.utils;
+using FlagImage = fmg.uwp.draw.img.win2d.Flag<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MineImage = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace fmg {
@@ -42,12 +45,13 @@ namespace fmg {
       private DateTime _dtInertiaStarting;
       private Windows.Foundation.Point? _mouseDevicePosition_AreaChanging = null;
       private static double? _baseWheelDelta;
+      private MineImage _mineImage;
+      private FlagImage _flagImage;
 
       public Mosaic MosaicField {
          get {
             if (_mosaic == null) {
-               _mosaic = new Mosaic();
-               ContentRoot.Children.Add(_mosaic.Container);
+               _mosaic = new Mosaic(virtualControl);
 
                _mosaic.PropertyChanged += OnMosaicPropertyChanged;
             }
@@ -79,11 +83,11 @@ namespace fmg {
          }
       }
 
-      protected override async void OnNavigatedTo(NavigationEventArgs e) {
+      protected override void OnNavigatedTo(NavigationEventArgs e) {
          base.OnNavigatedTo(e);
 
          var initParam = e.Parameter as MosaicPageInitParam;
-         Debug.Assert(initParam != null);
+         System.Diagnostics.Debug.Assert(initParam != null);
          MosaicField.SizeField = initParam.SizeField;
          MosaicField.MosaicType = initParam.MosaicTypes;
          MosaicField.MinesCount = initParam.MinesCount;
@@ -96,8 +100,9 @@ namespace fmg {
             ToolTipService.SetToolTip(bttnSkillCrazy, new ToolTip { Content = "3" });
             ToolTipService.SetToolTip(bttnSkillProfi, new ToolTip {Content = "4"});
          }
-         MosaicField.PaintContext.ImgMine = await fmg.uwp.utils.Resources.GetImgMine();
-         //MosaicField.PaintContext.ImgFlag = await fmg.uwp.utils.Resources.GetImgFlag();
+
+         MosaicField.PaintContext.ImgMine = MineImg.Image;
+         MosaicField.PaintContext.ImgFlag = FlagImg.Image;
       }
 
       /// <summary> Поменять игру на новый уровень сложности </summary>
@@ -257,6 +262,9 @@ namespace fmg {
 
       private void OnPageUnloaded(object sender, RoutedEventArgs e) {
          Window.Current.CoreWindow.KeyUp -= OnKeyUp_CoreWindow;
+
+         MineImg.Dispose();
+       //FlagImg.Dispose();
       }
 
       private void OnPageSizeChanged(object sender, RoutedEventArgs e) {
@@ -274,7 +282,7 @@ namespace fmg {
       }
 
       private void Mosaic_OnChangedGameStatus(Mosaic sender, PropertyChangedExEventArgs<EGameStatus> ev) {
-         Debug.Assert(ReferenceEquals(sender, MosaicField));
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField));
          if (sender.GameStatus == EGameStatus.eGSEnd) {
             //this.bottomAppBar.Focus(FocusState.Programmatic);
             bottomAppBar.IsOpen = true;
@@ -286,7 +294,7 @@ namespace fmg {
       private void Mosaic_OnChangedCountMinesLeft(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
       private void Mosaic_OnChangedCountClick(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
       private void Mosaic_OnChangedArea(Mosaic sender, PropertyChangedExEventArgs<double> ev) {
-         Debug.Assert(ReferenceEquals(sender, MosaicField));
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField));
          using (new Tracer("Mosaic_OnChangedArea")) {
             //ChangeSizeImagesMineFlag();
 
@@ -321,14 +329,14 @@ namespace fmg {
          }
       }
       private void Mosaic_OnChangedMosaicType(Mosaic sender, PropertyChangedExEventArgs<EMosaic> ev) {
-         Debug.Assert(ReferenceEquals(sender, MosaicField));
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField));
          using (new Tracer("Mosaic_OnChangedMosaicType")) {
             //ChangeSizeImagesMineFlag();
          }
       }
 
       private void Mosaic_OnChangedSizeField(Mosaic sender, PropertyChangedExEventArgs<Matrisize> ev) {
-         Debug.Assert(ReferenceEquals(sender, MosaicField));
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField));
          using (new Tracer("Mosaic_OnChangedSizeField")) {
          }
       }
@@ -438,7 +446,7 @@ namespace fmg {
             if (ev.Pointer.PointerDeviceType == PointerDeviceType.Mouse) {
                var isLeftClick = (pointerPoint.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased);
                var isRightClick = (pointerPoint.Properties.PointerUpdateKind == PointerUpdateKind.RightButtonReleased);
-               Debug.Assert(isLeftClick != isRightClick);
+               System.Diagnostics.Debug.Assert(isLeftClick != isRightClick);
                ev.Handled = OnClick(pointerPoint.Position, isLeftClick, false, true);
             } else {
                AsyncRunner.InvokeFromUiLater(() => {
@@ -682,6 +690,38 @@ namespace fmg {
 
          return margin;
       }
+
+      private MineImage MineImg {
+         get {
+            if (_mineImage == null) {
+               var device = CanvasDevice.GetSharedDevice();
+               _mineImage = new MineImage(device);
+            }
+            return _mineImage;
+         }
+      }
+
+      private FlagImage FlagImg {
+         get {
+            if (_flagImage == null) {
+               var device = CanvasDevice.GetSharedDevice();
+               _flagImage = new FlagImage(device);
+            }
+            return _flagImage;
+         }
+      }
+
+      private void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, virtualControl));
+
+         var invalidatedRegions = ev.InvalidatedRegions;
+         foreach (var region in invalidatedRegions) {
+            using (var ds = sender.CreateDrawingSession(region)) {
+               MosaicField.Repaint(ds, region);
+            }
+         }
+      }
+
    }
 
    class ClickInfo {
@@ -693,4 +733,5 @@ namespace fmg {
       public bool UpHandled { get; set; }
       //public PointerDeviceType PointerDevice { get; set; }
    }
+
 }
