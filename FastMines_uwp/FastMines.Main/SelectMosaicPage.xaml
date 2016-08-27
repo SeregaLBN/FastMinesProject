@@ -47,7 +47,7 @@
         <Button Grid.Row="1" x:Name="bttnBeginGame"
                 HorizontalAlignment="Right" FontSize="15" Margin="0,0,14,12"
                 Click="OnClickBttnStartGame"
-                IsEnabled="False"
+                IsEnabled="{x:Bind gridMosaics.SelectedItem, Mode=OneWay, Converter={StaticResource SelectedItemToBoolConverter}}"
                 Content="Start Game" AutomationProperties.Name="Play" ToolTipService.ToolTip="just do it!"
         />
     </Grid>

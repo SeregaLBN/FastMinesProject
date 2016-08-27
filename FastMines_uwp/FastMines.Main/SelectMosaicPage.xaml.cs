@@ -1,14 +1,14 @@
-﻿using Windows.Foundation;
+﻿using System.Collections.Generic;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.core.types;
-using fmg.data.controller.types;
 using fmg.common;
 using fmg.common.Controls;
-using MosaicsImg = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using System.Collections.Generic;
+using fmg.data.controller.types;
 using fmg.uwp.mosaic;
+using MosaicsImg = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 
 namespace fmg {
 
@@ -73,9 +73,8 @@ namespace fmg {
          ev.DrawingSession.DrawImage(img.Image, new Rect(0, 0, canvasControl.Width, canvasControl.Height));
       }
 
-      private void gridMosaics_DoubleTapped(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs e) {
+      private void StartNewGame() {
          var eMosaic = CurrentElement.MosaicType;
-         //this.Frame.Navigate(typeof(ItemDetailPage), eMosaic);
          this.Frame.Navigate(typeof(MosaicPage), new MosaicPageInitParam {
             MosaicTypes = eMosaic,
             MinesCount = CurrentSkillLevel.GetNumberMines(eMosaic),
@@ -83,8 +82,13 @@ namespace fmg {
          });
       }
 
+      private void gridMosaics_DoubleTapped(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs e) {
+         StartNewGame();
+      }
+
       private void OnClickBttnStartGame(object sender, RoutedEventArgs ev) {
          LoggerSimple.Put("OnClickBttnStartGame");
+         StartNewGame();
       }
 
    }

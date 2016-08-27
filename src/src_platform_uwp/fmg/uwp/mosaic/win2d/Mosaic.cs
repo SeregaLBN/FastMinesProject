@@ -62,6 +62,12 @@ namespace fmg.uwp.mosaic.win2d {
 
       public void Repaint() { Repaint((BaseCell)null); }
       protected override void Repaint(BaseCell cell) {
+         if (_container == null)
+            return;
+
+         if (_alreadyPainted)
+            return;
+
          if (cell == null)
             _container.Invalidate();
          else

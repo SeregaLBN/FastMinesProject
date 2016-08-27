@@ -159,6 +159,7 @@
             </Setter>
         </Style>
 
+        <converters:SelectedItemToBoolConverter x:Key="SelectedItemToBoolConverter"/>
         <converters:ObjectToMosaicTailItemConverter x:Key="ObjectToMosaicTailItemConverter"/>
         <converters:ObjectToMosaicGroupMenuItemConverter x:Key="ObjectToMosaicGroupMenuItemConverter"/>
         <converters:ObjectToMosaicSkillMenuItemConverter x:Key="ObjectToMosaicSkillMenuItemConverter"/>

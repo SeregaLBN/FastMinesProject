@@ -8,6 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
@@ -21,7 +22,6 @@ using fmg.uwp.utils;
 using fmg.uwp.mosaic;
 using fmg.uwp.mosaic.win2d;
 using Log = fmg.common.LoggerSimple;
-using Size = fmg.common.geom.Size;
 using Thickness = Windows.UI.Xaml.Thickness;
 using FlagImage = fmg.uwp.draw.img.win2d.Flag<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 using MineImage = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
@@ -698,8 +698,8 @@ namespace fmg {
       private MineImage MineImg {
          get {
             if (_mineImage == null) {
-               //var device = CanvasDevice.GetSharedDevice();
-               var device = virtualControl.Device;
+               var device = CanvasDevice.GetSharedDevice();
+               //var device = virtualControl.Device;
                _mineImage = new MineImage(device);
             }
             return _mineImage;
@@ -709,8 +709,8 @@ namespace fmg {
       private FlagImage FlagImg {
          get {
             if (_flagImage == null) {
-               //var device = CanvasDevice.GetSharedDevice();
-               var device = virtualControl.Device;
+               var device = CanvasDevice.GetSharedDevice();
+               //var device = virtualControl.Device;
                _flagImage = new FlagImage(device);
             }
             return _flagImage;
