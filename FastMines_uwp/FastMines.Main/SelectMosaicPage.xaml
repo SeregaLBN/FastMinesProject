@@ -13,28 +13,43 @@
     <Page.Resources>
         <DataTemplate x:Key="TailTemplate" x:DataType="PresentationControls:MosaicTailItem">
             <StackPanel Margin="4,4,4,8">
-                <TextBlock Text="{x:Bind Title, Mode=OneWay}"
-                       Margin="8,4" Style="{StaticResource BaseTextBlockStyle}" HorizontalAlignment="Left"/>
                 <canvas:CanvasControl DataContext="{x:Bind Image, Mode=OneWay}"
                        Height="{x:Bind ImageSize.Height, Mode=OneWay}"
                        Width="{x:Bind ImageSize.Width, Mode=OneWay}"
                        Margin="8,0,8,8"
                        DataContextChanged="CanvasControl_DataContextChanged"
                        Draw="CanvasControl_Draw" />
+                <TextBlock Text="{x:Bind Title, Mode=OneWay}"
+                       Margin="8,4" Style="{StaticResource BaseTextBlockStyle}" HorizontalAlignment="Left"/>
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
-    
+
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <GridView x:Name="gridMosaics"
-                  ItemsSource="{x:Bind ViewModel.MosaicsDs.DataSource}"
-                  SelectedItem="{x:Bind ViewModel.MosaicsDs.CurrentElement, Mode=TwoWay, Converter={StaticResource ObjectToMosaicTailItemConverter}}"
-                  ItemTemplate="{StaticResource TailTemplate}"
-                  IsItemClickEnabled="True" 
-                  SelectionMode="Single"
-                  SelectionChanged="Selector_OnSelectionChanged"
-                  ItemClick="ListViewBase_OnItemClick"
-                  DoubleTapped="gridMosaics_DoubleTapped" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="90*"/>
+            <RowDefinition MinHeight="40" MaxHeight="50"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" Margin="4,4,4,8" >
+            <GridView x:Name="gridMosaics"
+                          ItemsSource="{x:Bind ViewModel.MosaicsDs.DataSource}"
+                          SelectedItem="{x:Bind ViewModel.MosaicsDs.CurrentElement, Mode=TwoWay, Converter={StaticResource ObjectToMosaicTailItemConverter}}"
+                          ItemTemplate="{StaticResource TailTemplate}"
+                          IsItemClickEnabled="True" 
+                          SelectionMode="Single"
+                          SelectionChanged="Selector_OnSelectionChanged"
+                          ItemClick="ListViewBase_OnItemClick"
+                          DoubleTapped="gridMosaics_DoubleTapped" />
+        </ScrollViewer>
+
+        <Button Grid.Row="1" x:Name="bttnBeginGame"
+                HorizontalAlignment="Right" FontSize="15" Margin="0,0,14,12"
+                Click="OnClickBttnStartGame"
+                IsEnabled="False"
+                Content="Start Game" AutomationProperties.Name="Play" ToolTipService.ToolTip="just do it!"
+        />
     </Grid>
+
 </Page>

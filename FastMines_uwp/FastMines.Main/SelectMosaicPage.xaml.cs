@@ -1,7 +1,6 @@
 ﻿using Windows.Foundation;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.core.types;
 using fmg.data.controller.types;
@@ -55,7 +54,7 @@ namespace fmg {
          set { ViewModel.MosaicsDs.CurrentElement = value; }
       }
 
-      private void CanvasControl_DataContextChanged(Windows.UI.Xaml.FrameworkElement sender, Windows.UI.Xaml.DataContextChangedEventArgs ev) {
+      private void CanvasControl_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs ev) {
          if (ev.NewValue == null)
             return;
          var canvasControl = sender as CanvasControl;
@@ -82,6 +81,10 @@ namespace fmg {
             MinesCount = CurrentSkillLevel.GetNumberMines(eMosaic),
             SizeField = CurrentSkillLevel.DefaultSize()
          });
+      }
+
+      private void OnClickBttnStartGame(object sender, RoutedEventArgs ev) {
+         LoggerSimple.Put("OnClickBttnStartGame");
       }
 
    }

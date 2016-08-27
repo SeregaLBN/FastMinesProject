@@ -8,7 +8,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
-using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
@@ -136,13 +135,13 @@ namespace fmg {
       }
 
       /// <summary> узнать размер окна проекта при указанном размере окна мозаики </summary>
-      [Obsolete]
-      Size CalcSize(Size sizeMosaicInPixel) {
-         // под UWP окно проекта === текущая страница
-         // и т.к. нет ни меню, ни заголовка, ни тулбара, ни строки состояния
-         // то размер окна равен как есть размеру в пикселях самой мозаики
-         return sizeMosaicInPixel;
-      }
+      //[Obsolete]
+      //Size CalcSize(Size sizeMosaicInPixel) {
+      //   // под UWP окно проекта === текущая страница
+      //   // и т.к. нет ни меню, ни заголовка, ни тулбара, ни строки состояния
+      //   // то размер окна равен как есть размеру в пикселях самой мозаики
+      //   return sizeMosaicInPixel;
+      //}
 
       /// <summary> узнаю мах размер площади ячеек мозаики, при котором ... удобно... </summary>
       /// <param name="mosaicSizeField">интересуемый размер поля мозаики</param>
@@ -162,8 +161,8 @@ namespace fmg {
          }
       }
 
-      double Area { get
-         {
+      double Area {
+         get {
             return MosaicField.Area;
          }
          set {
@@ -209,31 +208,31 @@ namespace fmg {
 
       private void OnMosaicPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          switch (ev.PropertyName) {
-         case "MosaicType":
+         case nameof(Mosaic.MosaicType):
             Mosaic_OnChangedMosaicType(sender as Mosaic, ev as PropertyChangedExEventArgs<EMosaic>);
             break;
-         case "Area":
+         case nameof(Mosaic.Area):
             Mosaic_OnChangedArea(sender as Mosaic, ev as PropertyChangedExEventArgs<double>);
             break;
-         case "GameStatus":
+         case nameof(Mosaic.GameStatus):
             Mosaic_OnChangedGameStatus(sender as Mosaic, ev as PropertyChangedExEventArgs<EGameStatus>);
             break;
-         case "SizeField":
+         case nameof(Mosaic.SizeField):
             Mosaic_OnChangedSizeField(sender as Mosaic, ev as PropertyChangedExEventArgs<Matrisize>);
             break;
-         case "MinesCount":
+         case nameof(Mosaic.MinesCount):
             Mosaic_OnChangedMinesCount(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
-         case "CountFlag":
+         case nameof(Mosaic.CountFlag):
             Mosaic_OnChangedCountFlag(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
-         case "CountOpen":
+         case nameof(Mosaic.CountOpen):
             Mosaic_OnChangedCountOpen(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
-         case "CountMinesLeft":
+         case nameof(Mosaic.CountMinesLeft):
             Mosaic_OnChangedCountMinesLeft(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
-         case "CountClick":
+         case nameof(Mosaic.CountClick):
             Mosaic_OnChangedCountClick(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
          }
@@ -265,6 +264,10 @@ namespace fmg {
 
          MineImg.Dispose();
        //FlagImg.Dispose();
+
+         // Explicitly remove references to allow the Win2D controls to get garbage collected
+         virtualControl.RemoveFromVisualTree();
+         virtualControl = null;
       }
 
       private void OnPageSizeChanged(object sender, RoutedEventArgs e) {
@@ -328,6 +331,7 @@ namespace fmg {
             MosaicField.Container.Margin = m;
          }
       }
+
       private void Mosaic_OnChangedMosaicType(Mosaic sender, PropertyChangedExEventArgs<EMosaic> ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField));
          using (new Tracer("Mosaic_OnChangedMosaicType")) {
@@ -694,7 +698,8 @@ namespace fmg {
       private MineImage MineImg {
          get {
             if (_mineImage == null) {
-               var device = CanvasDevice.GetSharedDevice();
+               //var device = CanvasDevice.GetSharedDevice();
+               var device = virtualControl.Device;
                _mineImage = new MineImage(device);
             }
             return _mineImage;
@@ -704,7 +709,8 @@ namespace fmg {
       private FlagImage FlagImg {
          get {
             if (_flagImage == null) {
-               var device = CanvasDevice.GetSharedDevice();
+               //var device = CanvasDevice.GetSharedDevice();
+               var device = virtualControl.Device;
                _flagImage = new FlagImage(device);
             }
             return _flagImage;
