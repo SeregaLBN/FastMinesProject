@@ -80,6 +80,10 @@ namespace fmg {
             MinesCount = CurrentSkillLevel.GetNumberMines(eMosaic),
             SizeField = CurrentSkillLevel.DefaultSize()
          });
+
+         //Window.Current.Content = new MosaicPage();
+         //// Ensure the current window is active
+         //Window.Current.Activate();
       }
 
       private void gridMosaics_DoubleTapped(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs e) {

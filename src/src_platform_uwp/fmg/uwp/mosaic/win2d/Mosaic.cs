@@ -65,13 +65,17 @@ namespace fmg.uwp.mosaic.win2d {
          if (_container == null)
             return;
 
-         if (_alreadyPainted)
-            return;
+         Action run = () => {
+            if (cell == null)
+               _container.Invalidate();
+            else
+               _container.Invalidate(cell.getRcOuter().ToWinRect());
+         };
 
-         if (cell == null)
-            _container.Invalidate();
+         if (_alreadyPainted)
+            AsyncRunner.InvokeFromUiLater(() => run(), Windows.UI.Core.CoreDispatcherPriority.High);
          else
-            _container.Invalidate(cell.getRcOuter().ToWinRect());
+            run();
       }
 
       private bool _alreadyPainted;

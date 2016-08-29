@@ -132,11 +132,9 @@ namespace fmg
       {
          var shell = (Shell)Window.Current.Content;
 
-         var visibility = AppViewBackButtonVisibility.Collapsed;
-         if (shell.RootFrame.CanGoBack)
-         {
-            visibility = AppViewBackButtonVisibility.Visible;
-         }
+         var visibility = shell.RootFrame.CanGoBack
+            ? AppViewBackButtonVisibility.Visible
+            : AppViewBackButtonVisibility.Collapsed;
 
          SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = visibility;
       }
