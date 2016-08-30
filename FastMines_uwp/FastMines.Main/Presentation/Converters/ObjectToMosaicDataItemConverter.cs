@@ -1,16 +1,16 @@
-﻿using System;
+﻿using fmg.DataModel.Items;
+using System;
 using Windows.UI.Xaml.Data;
-using fmg.common.Controls;
 
 namespace fmg.common.Converters {
 
-   public class ObjectToMosaicSkillMenuItemConverter : IValueConverter {
+   public class ObjectToMosaicDataItemConverter : IValueConverter {
       public object Convert(object value, Type targetType, object parameter, string language) {
          return value;
       }
 
       public object ConvertBack(object value, Type targetType, object parameter, string language) {
-         return value as MosaicSkillMenuItem;
+         return value as MosaicDataItem;
       }
    }
 

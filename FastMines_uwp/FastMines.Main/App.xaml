@@ -160,9 +160,9 @@
         </Style>
 
         <converters:SelectedItemToBoolConverter x:Key="SelectedItemToBoolConverter"/>
-        <converters:ObjectToMosaicTailItemConverter x:Key="ObjectToMosaicTailItemConverter"/>
-        <converters:ObjectToMosaicGroupMenuItemConverter x:Key="ObjectToMosaicGroupMenuItemConverter"/>
-        <converters:ObjectToMosaicSkillMenuItemConverter x:Key="ObjectToMosaicSkillMenuItemConverter"/>
+        <converters:ObjectToMosaicDataItemConverter x:Key="ObjectToMosaicDataItemConverter"/>
+        <converters:ObjectToMosaicGroupDataItemConverter x:Key="ObjectToMosaicGroupDataItemConverter"/>
+        <converters:ObjectToMosaicSkillDataItemConverter x:Key="ObjectToMosaicSkillDataItemConverter"/>
         <converters:ImageSizeWithMarginConverter x:Key="ImageSizeWithMarginConverter"/>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:ImageSizeFontSizeConverter x:Key="ImageSizeFontSizeConverter"/>

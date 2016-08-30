@@ -5,10 +5,10 @@ using Windows.UI.Xaml.Controls;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.core.types;
 using fmg.common;
-using fmg.common.Controls;
 using fmg.data.controller.types;
 using fmg.uwp.mosaic;
 using MosaicsImg = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using fmg.DataModel.Items;
 
 namespace fmg {
 
@@ -16,15 +16,10 @@ namespace fmg {
    /// An empty page that can be used on its own or navigated to within a Frame.
    /// </summary>
    public sealed partial class SelectMosaicPage : Page {
-      public static EMosaicGroup DefaultMosaicGroup;
-      public static ESkillLevel DefaultSkillLevel;
 
       public SelectMosaicPage() {
          this.InitializeComponent();
          ViewModel = new MosaicsViewModel();
-
-         CurrentMosaicGroup = DefaultMosaicGroup;
-         CurrentSkillLevel = DefaultSkillLevel;
       }
 
       public MosaicsViewModel ViewModel { get; private set; }
@@ -49,7 +44,7 @@ namespace fmg {
          set { ViewModel.MosaicsDs.CurrentSkill = value; }
       }
 
-      public MosaicTailItem CurrentElement {
+      public MosaicDataItem CurrentElement {
          private get { return ViewModel.MosaicsDs.CurrentElement; }
          set { ViewModel.MosaicsDs.CurrentElement = value; }
       }

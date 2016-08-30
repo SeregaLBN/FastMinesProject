@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:fmg"
     xmlns:presentation="using:fmg.common"
-    xmlns:PresentationControls="using:fmg.common.Controls"
+    xmlns:DataModel="using:fmg.DataModel.Items"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
@@ -49,14 +49,14 @@
 
                         <ListView x:Name="_listViewMosaicGroupMenu"
                                   ItemsSource="{x:Bind ViewModel.MosaicGroupDs.DataSource}"
-                                  SelectedItem="{x:Bind ViewModel.MosaicGroupDs.CurrentElement, Mode=TwoWay, Converter={StaticResource ObjectToMosaicGroupMenuItemConverter}}">
+                                  SelectedItem="{x:Bind ViewModel.MosaicGroupDs.CurrentElement, Mode=TwoWay, Converter={StaticResource ObjectToMosaicGroupDataItemConverter}}">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="Padding" Value="0" />
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="PresentationControls:MosaicGroupMenuItem">
+                                <DataTemplate x:DataType="DataModel:MosaicGroupDataItem">
                                     <StackPanel Orientation="Horizontal" Height="{x:Bind ImageSize.Width, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}">
                                         <canvas:CanvasControl Grid.RowSpan="1"
                                                DataContext="{x:Bind Image, Mode=OneWay}"
@@ -89,14 +89,14 @@
                         <ListView x:Name="_listViewSkillLevelMenu"
                               Visibility="Collapsed"
                               ItemsSource="{x:Bind ViewModel.MosaicSkillDs.DataSource}"
-                              SelectedItem="{x:Bind ViewModel.MosaicSkillDs.CurrentElement, Mode=TwoWay, Converter={StaticResource ObjectToMosaicSkillMenuItemConverter}}">
+                              SelectedItem="{x:Bind ViewModel.MosaicSkillDs.CurrentElement, Mode=TwoWay, Converter={StaticResource ObjectToMosaicSkillDataItemConverter}}">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="Padding" Value="0" />
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="PresentationControls:MosaicSkillMenuItem">
+                                <DataTemplate x:DataType="DataModel:MosaicSkillDataItem">
                                     <StackPanel Orientation="Horizontal"
                                                 Height="{x:Bind ImageSize.Width, Mode=OneWay, Converter={StaticResource ImageSizeWithMarginConverter}}" >
                                         <canvas:CanvasControl Grid.RowSpan="1"
@@ -117,7 +117,7 @@
                 </ScrollViewer>
             </SplitView.Pane>
             <SplitView.Content>
-                <Frame x:Name="_frame" SourcePageType="{x:Bind ViewModel.MosaicGroupDs.SelectedPageType, Mode=OneWay}" >
+                <Frame x:Name="_frame" >
                 </Frame>
             </SplitView.Content>
         </SplitView>

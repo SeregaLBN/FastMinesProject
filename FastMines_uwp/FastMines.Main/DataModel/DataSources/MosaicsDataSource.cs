@@ -6,13 +6,13 @@ using fmg.core.types;
 using fmg.core.img;
 using fmg.data.controller.types;
 using fmg.uwp.draw.mosaic;
-using fmg.common.Controls;
 using MosaicsImg = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using fmg.DataModel.Items;
 
 namespace fmg.DataModel.DataSources {
 
    /// <summary> DataSource mosaics items </summary>
-   public class MosaicsDataSource : BaseDataSource<MosaicTailItem, EMosaic, MosaicsImg> {
+   public class MosaicsDataSource : BaseDataSource<MosaicDataItem, EMosaic, MosaicsImg> {
 
       private EMosaicGroup _currentGroup;
       public EMosaicGroup CurrentGroup {
@@ -77,8 +77,8 @@ namespace fmg.DataModel.DataSources {
          base.FillDataSource();
       }
 
-      private MosaicTailItem AddItem(EMosaic mosaicType) {
-         var mi = new MosaicTailItem(mosaicType) {
+      private MosaicDataItem AddItem(EMosaic mosaicType) {
+         var mi = new MosaicDataItem(mosaicType) {
             SkillLevel = CurrentSkill,
             Image = {
                   BorderWidth = 1,

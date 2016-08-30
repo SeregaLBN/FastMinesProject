@@ -5,7 +5,6 @@ using System.Reactive.Linq;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
@@ -15,6 +14,7 @@ using fmg.uwp.utils;
 using fmg.DataModel.DataSources;
 using MosaicsSkillImg = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
 using MosaicsGroupImg = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using fmg.DataModel.Items;
 
 namespace fmg
 {
@@ -51,10 +51,6 @@ namespace fmg
             }
          };
 
-         foreach (var mi in ViewModel.MosaicGroupDs.DataSource) {
-            mi.PageType = typeof(SelectMosaicPage);
-         }
-
          //this.SizeChanged += OnSizeChanged;
          _sizeChangedObservable = Observable
             .FromEventPattern<SizeChangedEventHandler, SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h) // equals .FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
@@ -62,19 +58,30 @@ namespace fmg
             .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low));
       }
 
+      private void OnPropertyCurrentElementChanged(MosaicGroupDataItem currentGroupItem, MosaicSkillDataItem currentSkillItem) {
+         if ((currentGroupItem  == null) || (currentSkillItem == null)) {
+            LoggerSimple.Put("TODO:  redirect to ShowHypnosisLogoPage...");
+            return;
+         }
+         if (currentSkillItem.SkillLevel == ESkillLevel.eCustom) {
+            LoggerSimple.Put("TODO:  redirect to CustomSizePage...");
+            return;
+         }
+         var smp = RootFrame.Content as SelectMosaicPage;
+         if (smp == null) {
+            RootFrame.SourcePageType = typeof(SelectMosaicPage);
+            smp = RootFrame.Content as SelectMosaicPage;
+         }
+         smp.CurrentElement = null;
+         smp.CurrentMosaicGroup = currentGroupItem.MosaicGroup;
+         smp.CurrentSkillLevel = currentSkillItem.SkillLevel;
+      }
+
       private void MosaicGroupDsOnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          //LoggerSimple.Put("MosaicGroupsDataSource::" + ev.PropertyName);
          switch (ev.PropertyName) {
          case nameof(ViewModel.MosaicGroupDs.CurrentElement):
-            var smp = RootFrame?.Content as SelectMosaicPage;
-            var ds = (MosaicGroupsDataSource)sender;
-            if (smp == null) {
-               SelectMosaicPage.DefaultMosaicGroup = ds.CurrentElement.MosaicGroup;
-            } else {
-               smp.CurrentElement = null;
-               if (ds.CurrentElement != null)
-                  smp.CurrentMosaicGroup = ds.CurrentElement.MosaicGroup;
-            }
+            OnPropertyCurrentElementChanged(((MosaicGroupsDataSource)sender).CurrentElement, ViewModel.MosaicSkillDs.CurrentElement);
             break;
          }
       }
@@ -83,14 +90,7 @@ namespace fmg
          //LoggerSimple.Put("MosaicSkillsDataSource::" + ev.PropertyName);
          switch(ev.PropertyName) {
          case nameof(ViewModel.MosaicSkillDs.CurrentElement):
-            var smp = RootFrame?.Content as SelectMosaicPage;
-            var ds = (MosaicSkillsDataSource)sender;
-            if (smp == null) {
-               SelectMosaicPage.DefaultSkillLevel = ds.CurrentElement.SkillLevel;
-            } else {
-               smp.CurrentElement = null;
-               smp.CurrentSkillLevel = ds.CurrentElement.SkillLevel;
-            }
+            OnPropertyCurrentElementChanged(ViewModel.MosaicGroupDs.CurrentElement, ((MosaicSkillsDataSource)sender).CurrentElement);
             break;
          }
       }

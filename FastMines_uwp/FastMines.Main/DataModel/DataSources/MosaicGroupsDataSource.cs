@@ -1,30 +1,27 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.img;
 using fmg.uwp.draw.mosaic;
-using fmg.common.Controls;
 using MosaicsGroupImg = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using fmg.DataModel.Items;
 
 namespace fmg.DataModel.DataSources
 {
    /// <summary> DataSource menu items (mosaic groups) </summary>
-   public class MosaicGroupsDataSource : BaseDataSource<MosaicGroupMenuItem, EMosaicGroup, MosaicsGroupImg> {
+   public class MosaicGroupsDataSource : BaseDataSource<MosaicGroupDataItem, EMosaicGroup, MosaicsGroupImg> {
 
       protected override void FillDataSource() {
          var dataSource = DataSourceInternal;
          foreach (var g in EMosaicGroupEx.GetValues()) {
-            var mi = new MosaicGroupMenuItem(g);
+            var mi = new MosaicGroupDataItem(g);
             dataSource.Add(mi);
          }
          base.FillDataSource();
       }
 
       protected override void OnCurrentElementChanged() {
-         if (CurrentElement != null)  // if unselected item
-            OnSelfPropertyChanged(nameof(this.SelectedPageType));
          OnSelfPropertyChanged(nameof(this.UnicodeChars));
 
          // for one selected - start animate; for all other - stop animate
@@ -49,6 +46,5 @@ namespace fmg.DataModel.DataSources
          }
       }
 
-      public Type SelectedPageType => CurrentElement?.PageType;
    }
 }
