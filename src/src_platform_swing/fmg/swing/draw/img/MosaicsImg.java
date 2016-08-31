@@ -39,7 +39,7 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
 
    private static final boolean RandomCellBkColor = true;
 
-   public MosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
+   protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
       super(mosaicType, sizeField);
    }
 

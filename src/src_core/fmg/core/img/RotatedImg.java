@@ -68,15 +68,8 @@ public abstract class RotatedImg<TImage> extends StaticImg<TImage> {
    public boolean isLiveImage() { return isRotate(); }
 
    private void rotateStep() {
-      double rotateAngle = getRotateAngle() + getRotateAngleDelta();
-      if (rotateAngle >= 360) {
-         rotateAngle -= 360;
-      } else {
-         if (rotateAngle < 0)
-            rotateAngle += 360;
-      }
+      double rotateAngle = fixAngle(getRotateAngle() + getRotateAngleDelta());
       setRotateAngle(rotateAngle);
-      assert (rotateAngle >= 0) && (rotateAngle < 360);
    }
 
    @Override

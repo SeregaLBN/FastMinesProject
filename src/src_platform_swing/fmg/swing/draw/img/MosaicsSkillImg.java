@@ -31,7 +31,8 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
       StaticRotateImgConsts.init();
    }
 
-   public MosaicsSkillImg(ESkillLevel skill) { super(skill); }
+   /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
+   protected MosaicsSkillImg(ESkillLevel skill) { super(skill); }
 
    protected void drawBody(Graphics2D g) {
       g.setColor(Cast.toColor(getBackgroundColor()));
@@ -65,6 +66,7 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
 
    public static class Icon extends MosaicsSkillImg<javax.swing.Icon> {
 
+      /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
       public Icon(ESkillLevel skill) { super(skill); }
 
       private BufferedImage buffImg;
@@ -106,6 +108,7 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
 
    public static class Image extends MosaicsSkillImg<java.awt.Image> {
 
+      /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
       public Image(ESkillLevel skill) { super(skill); }
 
       @Override
@@ -128,10 +131,12 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
    ////////////// TEST //////////////
    public static void main(String[] args) {
       TestDrawing.testApp(rnd -> {
-         ESkillLevel skill = ESkillLevel.fromOrdinal(rnd.nextInt(ESkillLevel.values().length));
+         int r = rnd.nextInt(ESkillLevel.values().length + 1);
+         ESkillLevel skill = (r==0) ? null : ESkillLevel.fromOrdinal(r-1);
          MosaicsSkillImg.Icon img1 = new MosaicsSkillImg.Icon(skill);
 
-         skill = ESkillLevel.fromOrdinal(rnd.nextInt(ESkillLevel.values().length));
+         r = rnd.nextInt(ESkillLevel.values().length + 1);
+         skill = (r==0) ? null : ESkillLevel.fromOrdinal(r-1);
          MosaicsSkillImg.Image img2 = new MosaicsSkillImg.Image(skill);
 
          return new Pair<>(img1, img2);

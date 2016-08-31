@@ -33,7 +33,7 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
       StaticRotateImgConsts.init();
    }
 
-   public MosaicsGroupImg(EMosaicGroup group) { super(group); }
+   protected MosaicsGroupImg(EMosaicGroup group) { super(group); }
 
    protected void drawBody(Graphics2D g) {
       g.setColor(Cast.toColor(getBackgroundColor()));
