@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import fmg.common.Color;
+import fmg.common.HSV;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.util.FigureHelper;
@@ -29,13 +31,13 @@ public abstract class AMosaicsSkillImg<TImage> extends PolarLightsImg<TImage> {
    public ESkillLevel getMosaicSkill() { return _mosaicSkill; }
    public void setMosaicSkill(ESkillLevel value) { setProperty(_mosaicSkill, value, PROPERTY_MOSAIC_SKILL); }
 
-   protected Stream<Stream<PointDouble>> getCoords() {
+   protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() {
       return (_mosaicSkill == null)
             ? getCoords_SkillLevelAsType()
             : getCoords_SkillLevelAsValue();
    }
 
-   protected Stream<Stream<PointDouble>> getCoords_SkillLevelAsType() {
+   protected Stream<Pair<Color, Stream<PointDouble>>> getCoords_SkillLevelAsType() {
       final boolean bigMaxStar = !true; // true - большая звезда - вне картинки; false - большая звезда - внутри картинки.
       final boolean accelerateRevert = !true; // ускорение под конец анимации, иначе - в начале...
 
@@ -43,6 +45,7 @@ public abstract class AMosaicsSkillImg<TImage> extends PolarLightsImg<TImage> {
       int stars = bigMaxStar ? 6 : 4;
 
       double angle = getRotateAngle();
+    //double[] angleAccumulative = { angle };
       double anglePart = 360.0/stars;
 
       double sqMax = Math.min( // размер квадрата куда будет вписана звезда при 0°
@@ -55,9 +58,10 @@ public abstract class AMosaicsSkillImg<TImage> extends PolarLightsImg<TImage> {
       PointDouble centerMin = new PointDouble(getPadding().left + sqMin/2, getPadding().top + sqMin/2);
       PointDouble centerDiff = new PointDouble(centerMax.x - centerMin.x, centerMax.y - centerMin.y);
 
-      Stream<Pair<Double, Stream<PointDouble>>> res = IntStream.range(0, stars)
+      Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, stars)
             .mapToObj(star -> {
                double angleStar = fixAngle(angle + star * anglePart);
+             //angleAccumulative[0] = Math.sin(FigureHelper.toRadian(angle/4))*angleAccumulative[0]; // accelerate / ускоряшка..
 
                double sq = angleStar * sqDiff / 360;
                // (un)comment next line to view result changes...
@@ -81,10 +85,22 @@ public abstract class AMosaicsSkillImg<TImage> extends PolarLightsImg<TImage> {
                      ? centerMin.y + centerStar.y
                      : centerMax.y - centerStar.y;
 
-               return new Pair<>(sq, FigureHelper.getRegularStarCoords(rays, r1, r2, bigMaxStar ? centerMax : centerStar, 0));
+               Color clr = getForegroundColor();
+               if (isPolarLights()) {
+                  HSV hsv = new HSV(clr);
+                  hsv.h += angleStar; // try: hsv.h -= angleStar;
+                  clr = hsv.toColor();
+               }
+               return new Pair<>(sq, new Pair<>(
+                     clr,
+                     FigureHelper.getRegularStarCoords(rays,
+                                                       r1, r2,
+                                                       bigMaxStar ? centerMax : centerStar,
+                                                       0 // try to view: angleAccumulative[0]
+                                                    )));
             });
 
-      List<Pair<Double, Stream<PointDouble>>> resL = res.collect(Collectors.toList());
+      List<Pair<Double, Pair<Color, Stream<PointDouble>>>> resL = res.collect(Collectors.toList());
       Collections.sort(resL, (o1, o2) -> {
          if (o1.first < o2.first) return bigMaxStar ?  1 : -1;
          if (o1.first > o2.first) return bigMaxStar ? -1 :  1;
@@ -93,33 +109,43 @@ public abstract class AMosaicsSkillImg<TImage> extends PolarLightsImg<TImage> {
       return resL.stream().map(x -> x.second);
    }
 
-   protected Stream<Stream<PointDouble>> getCoords_SkillLevelAsValue() {
+   protected Stream<Pair<Color, Stream<PointDouble>>> getCoords_SkillLevelAsValue() {
       double sq = Math.min( // size inner square
             getWidth()  - getPadding().getLeftAndRight(),
             getHeight() - getPadding().getTopAndBottom());
       double r1 = sq/7; // external radius
       double r2 = sq/12; // internal radius
+
       int ordinal = getMosaicSkill().ordinal();
       int rays = 5 + ordinal; // rays count
       int stars = 4 + ordinal; // number of stars on the perimeter of the circle
-      double[] angle = { getRotateAngle() };
-      double starAngle = 360.0/stars;
+
+      double angle = getRotateAngle();
+      double[] angleAccumulative = { angle };
+      double anglePart = 360.0/stars;
+
       final PointDouble center = new PointDouble(getWidth() / 2.0, getHeight() / 2.0);
       final PointDouble zero = new PointDouble(0, 0);
-      Stream<Stream<PointDouble>> res = IntStream.range(0, stars)
+      Stream<Pair<Color, Stream<PointDouble>>> res = IntStream.range(0, stars)
             .mapToObj(star -> {
                // (un)comment next line to view result changes...
-               angle[0] = Math.sin(FigureHelper.toRadian(angle[0]/4))*angle[0]; // accelerate / ускоряшка..
+               angleAccumulative[0] = Math.sin(FigureHelper.toRadian(angleAccumulative[0]/4))*angleAccumulative[0]; // accelerate / ускоряшка..
 
                // adding offset
-               PointDouble offset = FigureHelper.getPointOnCircle(sq / 3, angle[0] + (star * starAngle), zero);
+               PointDouble offset = FigureHelper.getPointOnCircle(sq / 3, angleAccumulative[0] + (star * anglePart), zero);
                PointDouble centerStar = new PointDouble(center.x + offset.x, center.y + offset.y);
 
-               return (getMosaicSkill() == ESkillLevel.eCustom)
-                     ? FigureHelper.getRegularPolygonCoords(3 + (star % 4), r1, centerStar, -angle[0])
-                     : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angle[0]);
+               Color clr = getForegroundColor();
+               if (isPolarLights()) {
+                   HSV hsv = new HSV(clr);
+                   hsv.h += star * anglePart;
+                   clr = hsv.toColor();
+                }
+               return new Pair<>(clr, (getMosaicSkill() == ESkillLevel.eCustom)
+                     ? FigureHelper.getRegularPolygonCoords(3 + (star % 4), r1, centerStar, -angleAccumulative[0])
+                     : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative[0]));
             });
-      List<Stream<PointDouble>> resL = res.collect(Collectors.toList());
+      List<Pair<Color, Stream<PointDouble>>> resL = res.collect(Collectors.toList());
       Collections.reverse(resL); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
       return resL.stream();
    }

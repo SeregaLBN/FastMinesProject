@@ -289,7 +289,10 @@ public class Main extends JFrame implements PropertyChangeListener {
          void recheckSelectedSkillLevel() {
             ESkillLevel skill = getSkillLevel();
             getMenuItemSkillLevel(skill).setSelected(true);
-            skillLevelImages.forEach((key, img) -> img.setRotate(key == skill));
+            skillLevelImages.forEach((key, img) -> {
+               img.setRotate(key == skill);
+               //img.setPolarLights(key == skill); // не видно особо разници - маленькая картинка
+            });
          }
 
          @Override

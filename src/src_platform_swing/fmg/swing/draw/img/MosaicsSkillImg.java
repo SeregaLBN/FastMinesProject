@@ -38,10 +38,10 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
       g.setColor(Cast.toColor(getBackgroundColor()));
       g.fillRect(0, 0, getWidth(), getHeight());
 
-      Stream<Stream<PointDouble>> stars = getCoords();
-      stars.forEach(coords -> {
-         g.setColor(Cast.toColor(getForegroundColor()));
-         List<PointDouble> points = coords.collect(Collectors.toList());
+      Stream<Pair<Color, Stream<PointDouble>>> stars = getCoords();
+      stars.forEach(pair -> {
+         g.setColor(Cast.toColor(pair.first));
+         List<PointDouble> points = pair.second.collect(Collectors.toList());
          g.fillPolygon(Cast.toPolygon(points));
 
          // draw perimeter border
