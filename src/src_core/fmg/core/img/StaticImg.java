@@ -17,6 +17,7 @@ public abstract class StaticImg<TImage> extends NotifyPropertyChanged {
    public static Consumer<Runnable> DEFERR_INVOKER;
 
    public static final Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
+   public static final Color DefaultForegroundColor = Color.Orchid;
    public static final int DefaultImageSize = 100;
 
    protected StaticImg() {
@@ -130,7 +131,7 @@ public abstract class StaticImg<TImage> extends NotifyPropertyChanged {
               :            value;
    }
 
-   private Color _foregroundColor = Color.Aqua;
+   private Color _foregroundColor = DefaultForegroundColor;
    public Color getForegroundColor() { return _foregroundColor; }
    public void setForegroundColor(Color value) {
       if (setProperty(_foregroundColor, value, PROPERTY_FOREGROUND_COLOR))

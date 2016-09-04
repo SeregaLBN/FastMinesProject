@@ -13,7 +13,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
    public sealed partial class DemoPage : Page {
 
       public Logo            DemoImg1 { get; } = new Logo();
-      public MosaicsSkillImg DemoImg2 { get; } = new MosaicsSkillImg(ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)]);
+      public MosaicsSkillImg DemoImg2 { get; } = new MosaicsSkillImg(Bl ? (ESkillLevel?)null : ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)]);
       public MosaicsGroupImg DemoImg3 { get; } = new MosaicsGroupImg(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)]);
       public MosaicsImg      DemoImg4 { get; } = new MosaicsImg(EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)));
 

@@ -12,7 +12,7 @@ namespace fmg.core.img {
 
       public static Action<Action> DeferrInvoker;
       public static readonly Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
-      public static readonly Color DefaultForegroundColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
+      public static readonly Color DefaultForegroundColor = Color.Orchid;
 
    }
 
@@ -136,7 +136,7 @@ namespace fmg.core.img {
       }
 
 
-      private Color _foregroundColor = Color.Aqua;
+      private Color _foregroundColor = StaticImgConsts.DefaultForegroundColor;
       public Color ForegroundColor {
          get { return _foregroundColor; }
          set {

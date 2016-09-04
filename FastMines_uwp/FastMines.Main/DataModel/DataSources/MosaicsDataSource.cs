@@ -82,7 +82,7 @@ namespace fmg.DataModel.DataSources {
             SkillLevel = CurrentSkill,
             Image = {
                   BorderWidth = 1,
-                  BorderColor = Color.Dark,
+                  BorderColor = Color.Black,
                   BackgroundColor = PaintUwpContext<object>.DefaultBackgroundColor,
                   Padding = new Bound(15),
                   RedrawInterval = 5,
@@ -100,7 +100,7 @@ namespace fmg.DataModel.DataSources {
             var selected = ReferenceEquals(mi, CurrentElement);
             var img = mi.Image;
             img.Rotate = selected;
-            img.BorderColor = selected ? Color.White : Color.Dark;
+            img.BorderColor = selected ? Color.White : Color.Black;
             img.BackgroundColor = selected ? StaticImgConsts.DefaultBkColor : PaintUwpContext<object>.DefaultBackgroundColor;
             img.Padding = new Bound(img.Width*(selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*//100);
             img.RotateAngle = 0;

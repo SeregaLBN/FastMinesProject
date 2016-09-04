@@ -31,9 +31,17 @@ namespace fmg.DataModel.DataSources
             var selected = ReferenceEquals(mi, CurrentElement);
             var img = mi.Image;
             img.Rotate = selected;
+            img.PolarLights = selected;
             img.BorderColor = selected ? Color.Red : Color.Green;
             img.BackgroundColor = selected ? StaticImgConsts.DefaultBkColor : PaintUwpContext<object>.DefaultBackgroundColor;
             img.Padding = new Bound(selected ? 5 : 15);
+            if (!selected)
+               img.ForegroundColor = StaticImgConsts.DefaultForegroundColor;
+            //else {
+            //   HSV hsv = new HSV(StaticImgConsts.DefaultForegroundColor);
+            //   hsv.s = hsv.v = 100;
+            //   img.ForegroundColor = hsv.ToColor();
+            //}
          }
       }
 

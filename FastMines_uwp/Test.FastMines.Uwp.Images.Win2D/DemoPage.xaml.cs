@@ -81,8 +81,8 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          var device = CanvasDevice.GetSharedDevice();
          Bmp1 = new LogoCanvasBmp(canvasControl1);
          Img1 = new LogoCanvasImgSrc(device);
-         Bmp2 = new MosaicsSkillCanvasBmp   (ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], canvasControl2);
-         Img2 = new MosaicsSkillCanvasImgSrc(ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], device);
+         Bmp2 = new MosaicsSkillCanvasBmp   (Bl ? (ESkillLevel?)null : ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], canvasControl2);
+         Img2 = new MosaicsSkillCanvasImgSrc(Bl ? (ESkillLevel?)null : ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], device);
          Bmp3 = new MosaicsGroupCanvasBmp   (EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], canvasControl3);
          Img3 = new MosaicsGroupCanvasImgSrc(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], device);
          Bmp4 = new MosaicsCanvasBmp        (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), canvasControl4);
