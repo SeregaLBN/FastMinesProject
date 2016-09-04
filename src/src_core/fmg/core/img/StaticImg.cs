@@ -12,6 +12,7 @@ namespace fmg.core.img {
 
       public static Action<Action> DeferrInvoker;
       public static readonly Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
+      public static readonly Color DefaultForegroundColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
 
    }
 
@@ -119,15 +120,21 @@ namespace fmg.core.img {
       public double RotateAngle {
          get { return _rotateAngle; }
          set {
-            if (value > 360 || value < 0) {
-               value %= 360;
-               if (value < 0)
-                  value += 360;
-            }
+            value = FixAngle(value);
             if (SetProperty(ref _rotateAngle, value))
                Invalidate();
          }
       }
+
+      /// <summary> to diapason (0° .. +360°] </summary>
+      protected static double FixAngle(double value) {
+         return (value >= 360)
+              ?               (value % 360)
+              : (value < 0)
+                 ?            (value % 360) + 360
+                 :             value;
+      }
+
 
       private Color _foregroundColor = Color.Aqua;
       public Color ForegroundColor {

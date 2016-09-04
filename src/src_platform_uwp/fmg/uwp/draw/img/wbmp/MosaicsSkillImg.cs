@@ -18,7 +18,8 @@ namespace fmg.uwp.draw.img.wbmp {
          StaticRotateImgConsts.Init();
       }
 
-      public MosaicsSkillImg(ESkillLevel group)
+      /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
+      public MosaicsSkillImg(ESkillLevel? group)
          : base(group)
       { }
 
@@ -31,9 +32,9 @@ namespace fmg.uwp.draw.img.wbmp {
          bmp.Clear(BackgroundColor.ToWinColor());
 
          var stars = GetCoords();
-         foreach (var coords in stars) {
-            var points = coords.PointsAsXyxyxySequence(true).ToArray();
-            bmp.FillPolygon(points, ForegroundColor.ToWinColor());
+         foreach (var data in stars) {
+            var points = data.Item2.PointsAsXyxyxySequence(true).ToArray();
+            bmp.FillPolygon(points, data.Item1.ToWinColor());
 
             // draw perimeter border
             var clr = BorderColor;

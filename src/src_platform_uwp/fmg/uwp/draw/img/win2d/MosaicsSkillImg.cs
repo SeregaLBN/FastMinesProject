@@ -26,7 +26,8 @@ namespace fmg.uwp.draw.img.win2d {
 
       protected readonly ICanvasResourceCreator _rc;
 
-      protected MosaicsSkillImg(ESkillLevel group, ICanvasResourceCreator resourceCreator)
+      /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
+      protected MosaicsSkillImg(ESkillLevel? group, ICanvasResourceCreator resourceCreator)
          : base(group)
       {
          _rc = resourceCreator;
@@ -39,10 +40,10 @@ namespace fmg.uwp.draw.img.win2d {
             ds.Clear(BackgroundColor.ToWinColor());
 
          var stars = GetCoords();
-         foreach (var coords in stars) {
-            var points = coords.ToArray();
+         foreach (var data in stars) {
+            var points = data.Item2.ToArray();
             using (var geom = rc.BuildLines(points)) {
-               ds.FillGeometry(geom, ForegroundColor.ToWinColor());
+               ds.FillGeometry(geom, data.Item1.ToWinColor());
             }
 
             // draw perimeter border
@@ -75,7 +76,8 @@ namespace fmg.uwp.draw.img.win2d {
       /// </summary>
       public class CanvasBmp : MosaicsSkillImg<CanvasBitmap> {
 
-         public CanvasBmp(ESkillLevel group, ICanvasResourceCreator resourceCreator)
+         /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
+         public CanvasBmp(ESkillLevel? group, ICanvasResourceCreator resourceCreator)
             : base(group, resourceCreator)
          { }
 
@@ -97,7 +99,8 @@ namespace fmg.uwp.draw.img.win2d {
       /// </summary>
       public class CanvasImgSrc : MosaicsSkillImg<CanvasImageSource> {
 
-         public CanvasImgSrc(ESkillLevel group, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+         /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
+         public CanvasImgSrc(ESkillLevel? group, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
             : base(group, resourceCreator)
          { }
 
