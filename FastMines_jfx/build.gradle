@@ -1,0 +1,94 @@
+// Declares binary plugin and its required JavaFX classpath
+apply from: "http://dl.bintray.com/content/shemnon/javafx-gradle/8.1.1/javafx.plugin"
+apply plugin: 'java'
+//apply plugin: 'application'
+apply plugin: 'idea'; apply plugin: 'eclipse'
+
+group = 'fmg'
+version = '2.0.2'
+
+compileJava.options.encoding = 'UTF-8'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+
+defaultTasks 'clean', 'build'
+
+repositories {
+   mavenCentral()
+}
+
+sourceSets {
+   main {
+      java {
+         srcDir '../src/src_common'
+         srcDir '../src/src_core'
+         srcDir '../src/src_data'
+         srcDir '../src/src_platform_jfx'
+         include '**/*.java'
+      }
+//      resources {
+//         srcDir '../res'
+//         exclude '**/*~*'
+//         include '**/*.gif'
+//         include '**/*.jpeg'
+//         include '**/*.jpg'
+//       //include '**/*.ico'
+//         include '**/*.png'
+//      }
+   }
+}
+
+//jar {
+//   into('res') {
+//      from '../res'
+//      exclude '**/*~*'
+//      include '**/*.png'
+//   }
+//}
+
+//mainClassName = "fmg.jfx.Main"
+
+//jar {
+//   manifest {
+//      attributes 'Main-Class': 'fmg.jfx.Main'
+//   }
+//}
+
+// Configures plugin
+javafx {
+    // Points to JDK and its JavaFX libraries, also declares target runtime JDK
+    javaRuntime = file("$System.env.JAVA_HOME")
+    
+    // Application name and ID presented by target OS
+    appID 'FastMinesApp'
+    appName 'Fast Mines Application'
+    
+    // Main class of application
+    mainClass 'fmg.jfx.Main'
+    
+    // JVM arguments, system properties, application command line arguments
+    jvmArgs = ['-XX:+AggressiveOpts', '-XX:CompileThreshold=1']
+    systemProperties = ['prism.disableRegionCaching':'true']
+    arguments = ['-l', '--fast']
+
+    // Keystore credentials for signing JAR
+    // Generate key: keytool -genkey -alias release -keyalg RSA -keystore keystore.jks -keysize 2048
+    releaseKey {
+        alias = 'release'
+        keyPass = getProjectProperty('keyStorePassword')
+        keyStore = file("${System.properties['user.home']}/keystore/keystore.jks")
+        storePass = getProjectProperty('storePassword')
+    }
+    
+    signingMode 'release'
+    
+    // ...
+}
+
+String getProjectProperty(String propertyName) {
+    project.hasProperty(propertyName)
+      ? project.property(propertyName)
+      : null
+}
