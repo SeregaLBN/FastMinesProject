@@ -7,7 +7,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -144,14 +146,12 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(rnd -> {
-         EMosaicGroup eGroup = EMosaicGroup.fromOrdinal(rnd.nextInt(EMosaicGroup.values().length));
-         MosaicsGroupImg.Icon img1 = new MosaicsGroupImg.Icon(eGroup);
-
-         eGroup = EMosaicGroup.fromOrdinal(rnd.nextInt(EMosaicGroup.values().length));
-         MosaicsGroupImg.Image img2 = new MosaicsGroupImg.Image(eGroup);
-
-         return new Pair<>(img1, img2);
+      TestDrawing.testApp(p -> {
+         Random rnd = p.second;
+         return Arrays.asList(
+               new MosaicsGroupImg.Icon (EMosaicGroup.fromOrdinal(rnd.nextInt(EMosaicGroup.values().length))),
+               new MosaicsGroupImg.Image(EMosaicGroup.fromOrdinal(rnd.nextInt(EMosaicGroup.values().length)))
+         );
       });
    }
    //////////////////////////////////

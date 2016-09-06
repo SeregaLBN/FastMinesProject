@@ -1,16 +1,11 @@
-package fmg.swing.draw.img;
+package fmg.jfx.draw.img;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.swing.Icon;
 import javax.swing.JFrame;
@@ -22,10 +17,16 @@ import fmg.common.Pair;
 import fmg.common.geom.Size;
 import fmg.core.img.PolarLightsImg;
 import fmg.core.img.RotatedImg;
-import fmg.swing.utils.ImgUtils;
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.geometry.Point2D;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.stage.Stage;
 
 /** @see {@link MosaicsSkillImg#main}, {@link MosaicsGroupImg#main}, {@link MosaicsImg#main} */
-final class TestDrawing {
+final class TestDrawing extends Application {
    static final int SIZE = 300;
    static final int offset = 10;
 
@@ -55,10 +56,10 @@ final class TestDrawing {
          logoImg.setUseGradient(bl());
       }
 
-      if (img instanceof MosaicsImg) {
-         MosaicsImg<?> mosaicsImg = (MosaicsImg<?>)img;
-         mosaicsImg.setRotateMode(MosaicsImg.ERotateMode.values()[r(MosaicsImg.ERotateMode.values().length)]);
-      }
+//      if (img instanceof MosaicsImg) {
+//         MosaicsImg<?> mosaicsImg = (MosaicsImg<?>)img;
+//         mosaicsImg.setRotateMode(MosaicsImg.ERotateMode.values()[r(MosaicsImg.ERotateMode.values().length)]);
+//      }
 
       if (bl()) {
          // test transparent
@@ -74,15 +75,58 @@ final class TestDrawing {
       }
    }
 
-   static void testApp(Function<Pair<Size, Random>, List<RotatedImg<?>>> funcGetImages) {
+   Canvas canvas;
+   @Override
+   public void start(Stage primaryStage) {
+
+      primaryStage.setScene(
+                     new Scene(
+                         new Group(
+                             canvas = new Canvas(SIZE + 2*offset, SIZE + 2*offset)
+                         )
+                     )
+                 );
+      primaryStage.show();
+
+
+       AnimationTimer timer = new AnimationTimer() {
+
+           @Override
+           public void handle(long now) {
+
+               if( mousePressed) {
+
+                   // try this
+                   // graphicsContext.drawImage( brush, mouseLocation.getX() - brushWidthHalf, mouseLocation.getY() - brushHeightHalf);
+
+                   // then this
+                   bresenhamLine( prevMouseLocation.getX(), prevMouseLocation.getY(), mouseLocation.getX(), mouseLocation.getY());
+
+               }
+
+               prevMouseLocation = new Point2D( mouseLocation.getX(), mouseLocation.getY());
+
+               copyCanvas();
+           }
+       };
+
+       timer.start();
+   }
+
+   static void testApp(Function<Random, Pair<RotatedImg<?>, RotatedImg<?>>> funcGetImages) {
+      (new Application() {
+
+      }).
+      launch();
       new JFrame() {
          private static final long serialVersionUID = 1L;
          {
-            Size size = new Size(SIZE-offset*2, SIZE-offset*2);
-            List<RotatedImg<?>> images = funcGetImages.apply(new Pair<>(size, rnd));
+            Pair<RotatedImg<?>, RotatedImg<?>> icoImg = funcGetImages.apply(rnd);
+            RotatedImg<?> img1 = icoImg.first;
+            RotatedImg<?> img2 = icoImg.second;
 
             setSize(SIZE+30, SIZE+50);
-            setTitle("test paints: " + images.stream().map(i -> i.getClass().getCanonicalName()).collect(Collectors.joining(" & ")));
+            setTitle("test paints " + img1.getClass().getName() + " & " + img2.getClass().getName());
             setLocationRelativeTo(null);
 
             JPanel jPanel = new JPanel() {
@@ -96,67 +140,13 @@ final class TestDrawing {
                   //g.clearRect(offset, offset, SIZE-offset*2, SIZE-offset*2);
                   g.drawRect(offset, offset, SIZE-offset*2, SIZE-offset*2);
 
-                  int valCnt = images.size();
-                  /*valCnt maxI  maxJ
-                   *-----------------
-                   *  1     1    1
-                   *  2     2    1
-                   *  3     2    2
-                   *  4     2    2
-                   *  5     3    2
-                   *  6     3    2
-                   *  7     3    3
-                   *  8     3    3
-                   *  9     3    3
-                   * 10     4    3
-                   * 11     4    3
-                   * 12     4    3
-                   * 13     4    4
-                   * 14     4    4
-                   * 15     4    4
-                   * 16     4    4
-                   * 17     5    4
-                   * 18     5    4
-                   * 19     5    4
-                   * 20     5    4
-                   * 21     5    5
-                   * 22     5    5
-                   * 23     5    5
-                   * 24     5    5
-                   * 25     5    5
-                   * 26     6    5
-                   * 27     6    5
-                   * 28     6    5
-                   * 29     6    5
-                   * 30     6    5
-                   * 31     6    6
-                   */
-                  int maxI = (int)Math.round(Math.sqrt(valCnt) + 0.4999999999);
-                  int maxJ = (int)Math.round(valCnt/maxI + 0.4999999999);//(int)Math.round(maxI/2.0 + 0.5);//(int)Math.round(Math.sqrt(valCnt) - 0.5);
-                  int dx = size.width / maxI;
-                  int dy = size.height / maxJ;
+                  Object img = img1.getImage();
+                  if (img instanceof Icon)
+                     ((Icon)img).paintIcon(this, g, 2*offset, 2*offset);
 
-                  int icoPadding = 5;
-                  int wIco = Math.min(dx, dy) - 2*icoPadding;
-                  int hIco = Math.min(dx, dy) - 2*icoPadding;
-                  for (int i=0; i<maxI; ++i)
-                     for (int j=0; j<maxJ; ++j) {
-                        int pos = maxI*j+i;
-                        if (pos >= valCnt)
-                           break;
-                        Object img = images.get(pos).getImage();
-                        if (img instanceof Icon) {
-                           Icon ico = (Icon)img;
-                           ico = ImgUtils.zoom((Icon)img, wIco, hIco);
-                           ico.paintIcon(null, g, offset+i*dx+icoPadding, offset+j*dy+icoPadding);
-                        }
-                        else
-                        if (img instanceof Image) {
-                           Image imag = (Image)img;
-                           imag = ImgUtils.zoom(imag, wIco, hIco);
-                           g.drawImage(imag, offset+i*dx+icoPadding, offset+j*dy+icoPadding, null);
-                        }
-                     }
+                  img = img2.getImage();
+                  if (img instanceof Image)
+                     g.drawImage((Image)img, SIZE-2*offset-img2.getWidth(), SIZE-2*offset-img2.getHeight(), null);
                }
             };
             add(jPanel);
@@ -168,19 +158,20 @@ final class TestDrawing {
                   jPanel.repaint();
                }
             };
-            images.forEach(img -> {
-               img.addListener(l);
-               applyRandom(img);
-            });
+            img1.addListener(l);
+            img2.addListener(l);
+
+            applyRandom(img1);
+            applyRandom(img2);
 
             //setDefaultCloseOperation(EXIT_ON_CLOSE);
             addWindowListener(new WindowAdapter() {
                @Override
                public void windowClosing(WindowEvent we) {
-                  images.forEach(img -> {
-                     img.removeListener(l);
-                     img.close();
-                  });
+                  img1.removeListener(l);
+                  img2.removeListener(l);
+                  img1.close();
+                  img2.close();
                   dispose();
                }
             });

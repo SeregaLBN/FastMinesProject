@@ -6,13 +6,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import fmg.common.Color;
-import fmg.common.Pair;
 import fmg.common.geom.Matrisize;
 import fmg.core.img.AMosaicsImg;
 import fmg.core.mosaic.cells.BaseCell;
@@ -362,16 +362,12 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(rnd -> {
-         EMosaic eMosaic = EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length));
-         MosaicsImg.Icon img1 = new MosaicsImg.Icon(eMosaic, new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2)));
-         img1.setRotateMode(ERotateMode.values()[rnd.nextInt(ERotateMode.values().length)]);
-
-         eMosaic = EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length));
-         MosaicsImg.Image img2 = new MosaicsImg.Image(eMosaic, new Matrisize(3+rnd.nextInt(3), 3 + rnd.nextInt(3)));
-         img2.setRotateMode(ERotateMode.values()[rnd.nextInt(ERotateMode.values().length)]);
-
-         return new Pair<>(img1, img2);
+      TestDrawing.testApp(p -> {
+         Random rnd = p.second;
+         return Arrays.asList(
+               new MosaicsImg.Icon (EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length)), new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))),
+               new MosaicsImg.Image(EMosaic.fromOrdinal(rnd.nextInt(EMosaic.values().length)), new Matrisize(3+rnd.nextInt(3), 3 + rnd.nextInt(3)))
+         );
       });
    }
    //////////////////////////////////

@@ -64,6 +64,10 @@ public final class ImgUtils {
             newWidth, newHeight);
    }
 
+   public static Image zoom(Image img, int newWidth, int newHeight) {
+      return img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+   }
+
    /** convert Icon -> Image */
    public static Image toImg(Icon ico) {
        if (ico instanceof ImageIcon)
@@ -76,16 +80,6 @@ public final class ImgUtils {
         ico.paintIcon(null, g, 0, 0);
         g.dispose();
         return img;
-   }
-
-   public static Icon move(Icon ico, int x, int y) {
-      BufferedImage img = new BufferedImage(ico.getIconWidth(), ico.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-      Graphics2D g = img.createGraphics();
-      g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-      ico.paintIcon(null, g, x, y);
-      g.dispose();
-      return toIco(img);
    }
 
    public static Image rotate(Image inputImage, double degrees) {

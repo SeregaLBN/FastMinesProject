@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.core.img.ALogo;
 import fmg.swing.Cast;
@@ -172,9 +171,7 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(rnd ->
-         new Pair<>(new Logo.Icon(), new Logo.Image())
-      );
+      TestDrawing.testApp(p -> Arrays.asList(new Logo.Icon(), new Logo.Image(), new Logo.Icon(), new Logo.Image()));
    }
 
 //   public static void main(String[] args) {

@@ -7,7 +7,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -130,16 +133,21 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(rnd -> {
-         int r = rnd.nextInt(ESkillLevel.values().length + 1);
-         ESkillLevel skill = (r==0) ? null : ESkillLevel.fromOrdinal(r-1);
-         MosaicsSkillImg.Icon img1 = new MosaicsSkillImg.Icon(skill);
-
-         r = rnd.nextInt(ESkillLevel.values().length + 1);
-         skill = (r==0) ? null : ESkillLevel.fromOrdinal(r-1);
-         MosaicsSkillImg.Image img2 = new MosaicsSkillImg.Image(skill);
-
-         return new Pair<>(img1, img2);
+      TestDrawing.testApp(p -> {
+         Random rnd = p.second;
+         Supplier<ESkillLevel> getSkill = () -> {
+            int r = rnd.nextInt(ESkillLevel.values().length + 1);
+            return (r==0) ? null : ESkillLevel.fromOrdinal(r-1);
+         };
+         return Arrays.asList(  new MosaicsSkillImg.Icon (getSkill.get())
+                              , new MosaicsSkillImg.Image(getSkill.get())
+                              , new MosaicsSkillImg.Icon (getSkill.get())
+//                              , new MosaicsSkillImg.Image(getSkill.get())
+//                              , new MosaicsSkillImg.Icon (getSkill.get())
+//                              , new MosaicsSkillImg.Image(getSkill.get())
+//                              , new MosaicsSkillImg.Icon (getSkill.get())
+//                              , new MosaicsSkillImg.Image(getSkill.get())
+         );
       });
    }
    //////////////////////////////////

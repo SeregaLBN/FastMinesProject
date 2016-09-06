@@ -1,16 +1,21 @@
 package fmg.common.geom;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Region {
+
    protected final List<Point> points;
 
    public Region(int size) {
-      points = new ArrayList<>(size);
+      List<Point> points = new ArrayList<>(size);
       for (int i=0; i<size; i++)
          points.add(new Point());
+      this.points = Collections.unmodifiableList(points);
    }
+
+   public List<Point> getPoints() { return points; }
 
    public Point getPoint(int index) { return points.get(index); }
    public void setPoint(int index, int x, int y) {

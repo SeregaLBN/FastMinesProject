@@ -1,24 +1,29 @@
 package fmg.common.geom;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class RegionDouble {
 
+   protected final List<PointDouble> points;
+
    public RegionDouble(int size) {
-      points = new ArrayList<>(size);
+      List<PointDouble> points = new ArrayList<>(size);
       for (int i=0; i<size; i++)
          points.add( new PointDouble() );
+      this.points = Collections.unmodifiableList(points);
    }
 
-   protected final List<PointDouble> points;
    public List<PointDouble> getPoints() { return points; }
+
    public PointDouble getPoint(int index) { return points.get(index); }
    public void setPoint(int index, double x, double y) {
       PointDouble p = points.get(index);
       p.x = x;
       p.y = y;
    }
+
    public int getCountPoints() { return points.size(); }
 
    public RectDouble getBounds() {
@@ -33,7 +38,7 @@ public class RegionDouble {
          maxY = Math.max(maxY, p.y);
       }
       return new RectDouble(minX, minY, maxX-minX, maxY-minY);
-    }
+   }
 
    /** PointInPolygon */
    public boolean contains(PointDouble point) {
