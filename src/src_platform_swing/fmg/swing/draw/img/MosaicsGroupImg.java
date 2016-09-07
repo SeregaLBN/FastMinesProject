@@ -1,15 +1,8 @@
 package fmg.swing.draw.img;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -146,13 +139,13 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(p -> {
-         Random rnd = p.second;
-         return Arrays.asList(
-               new MosaicsGroupImg.Icon (EMosaicGroup.fromOrdinal(rnd.nextInt(EMosaicGroup.values().length))),
-               new MosaicsGroupImg.Image(EMosaicGroup.fromOrdinal(rnd.nextInt(EMosaicGroup.values().length)))
-         );
-      });
+      TestDrawing.testApp(p ->
+         Stream.of(EMosaicGroup.values())
+               .map(e -> new Pair<>(new MosaicsGroupImg.Icon (e),
+                                    new MosaicsGroupImg.Image(e)))
+               .flatMap(x -> Stream.of(x.first, x.second))
+               .collect(Collectors.toList())
+      );
    }
    //////////////////////////////////
 

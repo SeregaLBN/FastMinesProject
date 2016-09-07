@@ -1,16 +1,8 @@
 package fmg.swing.draw.img;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -133,22 +125,14 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(p -> {
-         Random rnd = p.second;
-         Supplier<ESkillLevel> getSkill = () -> {
-            int r = rnd.nextInt(ESkillLevel.values().length + 1);
-            return (r==0) ? null : ESkillLevel.fromOrdinal(r-1);
-         };
-         return Arrays.asList(  new MosaicsSkillImg.Icon (getSkill.get())
-                              , new MosaicsSkillImg.Image(getSkill.get())
-                              , new MosaicsSkillImg.Icon (getSkill.get())
-//                              , new MosaicsSkillImg.Image(getSkill.get())
-//                              , new MosaicsSkillImg.Icon (getSkill.get())
-//                              , new MosaicsSkillImg.Image(getSkill.get())
-//                              , new MosaicsSkillImg.Icon (getSkill.get())
-//                              , new MosaicsSkillImg.Image(getSkill.get())
-         );
-      });
+      TestDrawing.testApp(p ->
+         Stream.concat(Stream.of((ESkillLevel)null),
+                       Stream.of(ESkillLevel.values()))
+               .map(e -> new Pair<>(new MosaicsSkillImg.Icon (e),
+                                    new MosaicsSkillImg.Image(e)))
+               .flatMap(x -> Stream.of(x.first, x.second))
+               .collect(Collectors.toList())
+      );
    }
    //////////////////////////////////
 

@@ -1,24 +1,11 @@
 package fmg.swing.draw.img;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Arc2D;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.*;
+import java.awt.geom.*;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import javax.swing.Icon;
 
@@ -442,40 +429,14 @@ public class Smile implements Icon {
 
    // test
    public static void main(String[] args) {
-//      TestDrawing.testApp2(size -> ImgUtils.zoom(new Smile(EType.Face_SmilingWithSunglasses, size, size), 24, 24));
-//      TestDrawing.testApp2(size -> new Smile(EType.Face_SavouringDeliciousFood, size, size));
-
-      TestDrawing.testApp2(size -> new Icon(){
-         @Override
-         public void paintIcon(Component c, Graphics g, int x, int y) {
-            int valCnt = EType.values().length;
-            int maxI = (int)Math.round(Math.sqrt(valCnt) + 0.5);
-            int maxJ = (int)Math.round(Math.sqrt(valCnt) - 0.5);
-            int dx = size / maxI;
-            int dy = size / maxJ;
-
-            int icoPadding = 5;
-            int wIco = Math.min(dx, dy) - 2*icoPadding;
-            int hIco = Math.min(dx, dy) - 2*icoPadding;
-            for (int i=0; i<maxI; ++i)
-               for (int j=0; j<maxJ; ++j) {
-                  int pos = maxI*j+i;
-                  if (pos >= valCnt)
-                     break;
-                  try {
-                     Icon ico = ImgUtils.zoom(new Smile(EType.values()[pos], size, size), wIco, hIco);
-                     ico.paintIcon(c, g, x+i*dx+icoPadding, y+j*dy+icoPadding);
-                  } catch (UnsupportedOperationException ex) {
-                     continue;
-                  }
-               }
+      TestDrawing.testApp(p -> {
+            int x = p.first.width;
+            int y = p.first.height;
+            return Arrays.asList(EType.values()).stream()
+                  .map(e -> new Smile(e, x, y))
+                  .collect(Collectors.toList());
          }
-         @Override
-         public int getIconWidth() { return size; }
-         @Override
-         public int getIconHeight() { return size; }
-      });
-/**/
+      );
    }
 
 }

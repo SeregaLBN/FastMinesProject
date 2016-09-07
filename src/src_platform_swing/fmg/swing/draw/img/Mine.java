@@ -2,6 +2,7 @@ package fmg.swing.draw.img;
 
 import java.awt.Component;
 import java.awt.Graphics;
+import java.util.Arrays;
 
 import javax.swing.Icon;
 
@@ -28,5 +29,11 @@ public class Mine implements Icon {
          logo.getImage().paintIcon(c, g, x, y);
       }
    }
+
+   ////////////// TEST //////////////
+   public static void main(String[] args) {
+      TestDrawing.testApp(p -> Arrays.asList( new Mine() ));
+   }
+   //////////////////////////////////
 
 }

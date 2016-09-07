@@ -1,14 +1,6 @@
 package fmg.swing.draw.img;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Composite;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -171,14 +163,12 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(p -> Arrays.asList(new Logo.Icon(), new Logo.Image(), new Logo.Icon(), new Logo.Image()));
+      TestDrawing.testApp(p -> Arrays.asList(  new Logo.Icon()
+                                             , new Logo.Image()
+                                             , new Logo.Icon()
+                                             , new Logo.Image()
+                                          ));
    }
-
-//   public static void main(String[] args) {
-//      TestDrawing.testApp2(size -> new Logo.Icon(true, size).getImage());
-//      //TestDrawing.testApp2(size -> ImgUtils.zoom((new Logo.Icon(true, size)).getImage(), size, size));
-//   }
-
    //////////////////////////////////
 
 }

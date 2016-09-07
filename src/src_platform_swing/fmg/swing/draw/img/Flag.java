@@ -9,6 +9,7 @@ import java.awt.RenderingHints;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 import javax.swing.Icon;
 
@@ -97,8 +98,10 @@ public class Flag implements Icon {
       getIcon().paintIcon(c, g, x, y);
    }
 
+   ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp2(size -> ImgUtils.zoom(new Flag(), size, size));
+      TestDrawing.testApp(p -> Arrays.asList( new Flag() ));
    }
+   //////////////////////////////////
 
 }
