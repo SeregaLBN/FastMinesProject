@@ -117,10 +117,10 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
       @Override
       protected void drawBody() { drawBody(getImage().getGraphicsContext2D()); }
 
-      public static Image castToImage(Canvas self) {
+      public static Image castToImage(javafx.scene.canvas.Canvas self) {
          SnapshotParameters params = new SnapshotParameters();
          params.setFill(Color.TRANSPARENT);
-         WritableImage image = self.getImage().snapshot(params, null);
+         WritableImage image = self.snapshot(params, null);
          return image;
       }
 
@@ -128,16 +128,10 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-//      TestDrawing.testApp(rnd ->
-//         new Pair<>(new Logo.Icon(), new Logo.Image())
-//      );
+      TestDrawing.testApp(p -> Arrays.asList(new Logo.Canvas()
+                                           , new Logo.Canvas()
+                         ));
    }
-
-//   public static void main(String[] args) {
-//      TestDrawing.testApp2(size -> new Logo.Icon(true, size).getImage());
-//      //TestDrawing.testApp2(size -> ImgUtils.zoom((new Logo.Icon(true, size)).getImage(), size, size));
-//   }
-
    //////////////////////////////////
 
 }

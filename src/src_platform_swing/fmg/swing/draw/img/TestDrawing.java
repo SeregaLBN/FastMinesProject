@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.Pair;
+import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
 import fmg.core.img.PolarLightsImg;
 import fmg.core.img.RotatedImg;
@@ -28,7 +29,7 @@ import fmg.swing.utils.ImgUtils;
 /** @see {@link MosaicsSkillImg#main}, {@link MosaicsGroupImg#main}, {@link MosaicsImg#main} */
 final class TestDrawing {
    static final int SIZE = 300;
-   static final int offset = 10;
+   static final int margin = 10;
 
    private static Random rnd = new Random(UUID.randomUUID().hashCode());
    private static int r(int max){ return rnd.nextInt(max); }
@@ -81,13 +82,19 @@ final class TestDrawing {
    static void testApp(Function<Pair<Size, Random>, List<?>> funcGetImages) {
       new JFrame() {
          private static final long serialVersionUID = 1L;
-         {
-            Size size = new Size(SIZE-offset*2, SIZE-offset*2);
-            List<?> images = funcGetImages.apply(new Pair<>(size, rnd));
 
-            setSize(SIZE+30, SIZE+50);
-            setTitle("test paints: " + images.stream().map(i -> i.getClass().getSimpleName()).collect(Collectors.joining(" & ")));
-            setLocationRelativeTo(null);
+         {
+            Rect rc = new Rect(margin, margin, SIZE-margin*2, SIZE-margin*2); // inner rect where drawing images as tiles
+            List<?> images = funcGetImages.apply(new Pair<>(rc.size(), rnd));
+            int len = images.size();
+            int cols = (int)Math.round( Math.sqrt(len)  + 0.4999999999); // columns
+            int rows = (int)Math.round(len/(double)cols + 0.4999999999);
+            int dx = rc.width  / cols; // cell tile width
+            int dy = rc.height / rows; // cell tile height
+
+            int pad = 2; // cell padding
+            int w = Math.min(dx, dy) - 2*pad; // dx - 2*pad;
+            int h = Math.min(dx, dy) - 2*pad; // dy - 2*pad;
 
             JPanel jPanel = new JPanel() {
 
@@ -99,23 +106,15 @@ final class TestDrawing {
                @Override
                public void paintComponent(Graphics g) {
                   super.paintComponent(g);
-                  //g.clearRect(offset, offset, SIZE-offset*2, SIZE-offset*2);
-                  g.drawRect(offset, offset, SIZE-offset*2, SIZE-offset*2);
+                  //g.clearRect(rc.x, rc.y, rc.width, rc.height);
+                  g.drawRect(rc.x, rc.y, rc.width, rc.height);
 
-                  int len = images.size();
-                  int maxI = (int)Math.round(Math.sqrt(len) + 0.4999999999);
-                  int maxJ = (int)Math.round(len/(double)maxI + 0.4999999999);
-                  int dx = size.width / maxI;
-                  int dy = size.height / maxJ;
-
-                  int pad = 2;
-                  int w = Math.min(dx, dy) - 2*pad; // dx - 2*pad;
-                  int h = Math.min(dx, dy) - 2*pad; // dy - 2*pad;
-                  for (int i=0; i<maxI; ++i)
-                     for (int j=0; j<maxJ; ++j) {
-                        int pos = maxI*j+i;
+                  for (int i=0; i<cols; ++i)
+                     for (int j=0; j<rows; ++j) {
+                        int pos = cols*j+i;
                         if (pos >= len)
                            break;
+
                         Object obj = images.get(pos);
                         if (obj instanceof StaticImg) {
                            @SuppressWarnings("resource")
@@ -126,12 +125,12 @@ final class TestDrawing {
                         if (obj instanceof Icon) {
                            Icon ico = (Icon)obj;
                            ico = ImgUtils.zoom(ico, w, h);
-                           ico.paintIcon(null, g, offset+i*dx+pad, offset+j*dy+pad);
+                           ico.paintIcon(null, g, margin+i*dx+pad, margin+j*dy+pad);
                         } else
                         if (obj instanceof Image) {
                            Image img = (Image)obj;
                            img = ImgUtils.zoom(img, w, h);
-                           g.drawImage(img, offset+i*dx+pad, offset+j*dy+pad, null);
+                           g.drawImage(img, margin+i*dx+pad, margin+j*dy+pad, null);
                         } else
                            throw new IllegalArgumentException("Not supported image type is " + obj.getClass().getName());
                      }
@@ -166,6 +165,10 @@ final class TestDrawing {
                   dispose();
                }
             });
+
+            setTitle("test paints: " + images.stream().map(i -> i.getClass().getSimpleName()).collect(Collectors.joining(" & ")));
+            setLocationRelativeTo(null);
+            pack();
             setVisible(true);
          }
       };

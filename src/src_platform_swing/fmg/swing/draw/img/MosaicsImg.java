@@ -1,6 +1,10 @@
 package fmg.swing.draw.img;
 
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Random;
@@ -9,7 +13,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.common.Color;
-import fmg.common.Pair;
 import fmg.common.geom.Matrisize;
 import fmg.core.img.AMosaicsImg;
 import fmg.core.mosaic.cells.BaseCell;
@@ -362,9 +365,12 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
       TestDrawing.testApp(p -> {
          Random rnd = p.second;
          return Stream.of(EMosaic.values())
-               .map(e -> new Pair<>(new MosaicsImg.Icon (e, new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))),
-                                    new MosaicsImg.Image(e, new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2)))))
-               .flatMap(x -> Stream.of(x.first, x.second))
+//               .map(e -> new Pair<>(new MosaicsImg.Icon (e, new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))),
+//                                    new MosaicsImg.Image(e, new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2)))))
+//               .flatMap(x -> Stream.of(x.first, x.second))
+               .map(e ->  p.second.nextBoolean()
+                           ? new MosaicsImg.Icon (e, new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2)))
+                           : new MosaicsImg.Image(e, new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))))
                .collect(Collectors.toList());
       });
    }

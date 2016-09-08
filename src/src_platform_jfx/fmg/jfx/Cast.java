@@ -34,9 +34,9 @@ public final class Cast {
       return region.stream().mapToDouble(p -> xCoord ? p.x : p.y).toArray();
    }
 
-   public static javafx.scene.paint.Color toColor(        fmg.common.Color clr) { return javafx.scene.paint.Color.rgb( clr.getR(), clr.getG(), clr.getB(), 1 - clr.getA() / 255.); }
+   public static javafx.scene.paint.Color toColor(        fmg.common.Color clr) { return javafx.scene.paint.Color.rgb( clr.getR(), clr.getG(), clr.getB(), clr.getA() / 255.); }
    public static         fmg.common.Color toColor(javafx.scene.paint.Color clr) { return new fmg.common.Color(
-         (int)(255*(1 - clr.getOpacity())),
+         (int)(255*clr.getOpacity()),
          (int)(255*clr.getRed()),
          (int)(255*clr.getGreen()),
          (int)(255*clr.getBlue())); }
