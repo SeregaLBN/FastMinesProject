@@ -130,6 +130,8 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
    public static void main(String[] args) {
       TestDrawing.testApp(p -> Arrays.asList(new Logo.Canvas()
                                            , new Logo.Canvas()
+                                           , new Logo.Canvas()
+                                           , new Logo.Canvas()
                          ));
    }
    //////////////////////////////////

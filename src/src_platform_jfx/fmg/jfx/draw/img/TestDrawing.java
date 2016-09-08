@@ -99,9 +99,12 @@ public final class TestDrawing extends Application {
          public void handle(long now) {
             GraphicsContext gc = canvas.getGraphicsContext2D();
             gc.setLineWidth(1);
-            gc.setStroke(Cast.toColor(Color.Red));
+//            gc.setFill(javafx.scene.paint.Color.WHITE);
+//            gc.fillRect(rc.x, rc.y, rc.width, rc.height);
           //gc.clearRect(rc.x, rc.y, rc.width, rc.height);
+            gc.setStroke(Cast.toColor(Color.Red));
             gc.strokeRect(rc.x, rc.y, rc.width, rc.height);
+          //gc.setGlobalBlendMode(BlendMode.SRC_OVER); // see https://bugs.openjdk.java.net/browse/JDK-8092156
 
             for (int i=0; i<cols; ++i)
                for (int j=0; j<rows; ++j) {
