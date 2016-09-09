@@ -1,11 +1,6 @@
 package fmg.swing.draw.img;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -52,13 +47,13 @@ public class Flag implements Icon {
             new Point2D.Double(85   *Zoom, 15*Zoom),
             new Point2D.Double(81.45*Zoom, 50*Zoom)};
 
-      BasicStroke penLine = new BasicStroke(12, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
+      BasicStroke penLine = new BasicStroke((float)(7*Zoom), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
       g.setStroke(penLine);
       g.setColor(Color.BLACK);
     //g.drawLine((int)p[0].x, (int)p[0].y, (int)p[2].x, (int)p[2].y);
       g.drawLine((int)p[0].x, (int)p[0].y, (int)p[1].x, (int)p[1].y);
 
-      BasicStroke penCurve = new BasicStroke(12, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
+      BasicStroke penCurve = new BasicStroke((float)(7*Zoom), BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
       g.setStroke(penCurve);
       g.setColor(Color.RED);
       CubicCurve2D curve = new CubicCurve2D.Double(

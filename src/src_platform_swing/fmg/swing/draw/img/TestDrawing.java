@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.Icon;
 import javax.swing.JFrame;
@@ -93,8 +94,10 @@ final class TestDrawing {
             int dy = rc.height / rows; // cell tile height
 
             int pad = 2; // cell padding
-            int w = Math.min(dx, dy) - 2*pad; // dx - 2*pad;
-            int h = Math.min(dx, dy) - 2*pad; // dy - 2*pad;
+            int addonX = (cols==1) ? 0 : 20;//(cols==1) ? 0 : bl() ? 0 : Math.min(dx, dy)/3; // test intersection
+            int addonY = (rows==1) ? 0 : 20;//(rows==1) ? 0 : bl() ? 0 : Math.min(dx, dy)/3; // test intersection
+            int w = Math.min(dx, dy) - 2*pad + addonX; // dx - 2*pad;
+            int h = Math.min(dx, dy) - 2*pad + addonY; // dy - 2*pad;
 
             JPanel jPanel = new JPanel() {
 
@@ -122,15 +125,23 @@ final class TestDrawing {
                            simg.setSize(new Size(w, h));
                            obj = simg.getImage();
                         }
+
+                        int offsetX = margin + i*dx + pad;
+                        int offsetY = margin + j*dy + pad;
+                        if (i == (cols-1))
+                           offsetX -= addonX;
+                        if (j == (rows-1))
+                           offsetY -= addonY;
+
                         if (obj instanceof Icon) {
                            Icon ico = (Icon)obj;
                            ico = ImgUtils.zoom(ico, w, h);
-                           ico.paintIcon(null, g, margin+i*dx+pad, margin+j*dy+pad);
+                           ico.paintIcon(null, g, offsetX, offsetY);
                         } else
                         if (obj instanceof Image) {
                            Image img = (Image)obj;
                            img = ImgUtils.zoom(img, w, h);
-                           g.drawImage(img, margin+i*dx+pad, margin+j*dy+pad, null);
+                           g.drawImage(img, offsetX, offsetY, null);
                         } else
                            throw new IllegalArgumentException("Not supported image type is " + obj.getClass().getName());
                      }
@@ -166,7 +177,10 @@ final class TestDrawing {
                }
             });
 
-            setTitle("test paints: " + images.stream().map(i -> i.getClass().getSimpleName()).collect(Collectors.joining(" & ")));
+            setTitle("test paints: " + images.stream()
+               .map(i -> i.getClass().getName())
+               .map(n -> Stream.of(n.split("\\.")).reduce((first, second) -> second).get().replaceAll("\\$", ".") )
+               .collect(Collectors.joining(" & ")));
             setLocationRelativeTo(null);
             pack();
             setVisible(true);

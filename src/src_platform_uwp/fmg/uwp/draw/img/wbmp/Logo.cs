@@ -23,7 +23,7 @@ namespace fmg.uwp.draw.img.wbmp {
 
          {
             var bkClr = BackgroundColor;
-            if (bkClr.A != Color.Transparent.A)
+            if (!bkClr.IsTransparent)
                img.Clear(bkClr.ToWinColor());
          }
 

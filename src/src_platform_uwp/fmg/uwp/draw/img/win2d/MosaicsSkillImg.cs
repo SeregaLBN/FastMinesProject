@@ -48,7 +48,7 @@ namespace fmg.uwp.draw.img.win2d {
 
             // draw perimeter border
             var clr = BorderColor;
-            if (clr.A != Color.Transparent.A) {
+            if (!clr.IsTransparent) {
                var clrWin = clr.ToWinColor();
                var bw = BorderWidth;
 

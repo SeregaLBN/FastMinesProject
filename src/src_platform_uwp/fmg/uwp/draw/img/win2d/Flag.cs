@@ -63,7 +63,7 @@ namespace fmg.uwp.draw.img.win2d {
             StartCap = CanvasCapStyle.Flat,
             EndCap = CanvasCapStyle.Flat
          }) {
-            ds.DrawLine(p[0], p[1], Color.Black.ToWinColor(), System.Math.Max(1, 12*(w+h)/2), cssLine);
+            ds.DrawLine(p[0], p[1], Color.Black.ToWinColor(), System.Math.Max(1, 7*(w+h)/2), cssLine);
 
             var clrRed = Color.Red.ToWinColor();
             using (var cssCurve = new CanvasStrokeStyle {
@@ -87,7 +87,7 @@ namespace fmg.uwp.draw.img.win2d {
                   builder.AddLine(p[2]);
                   builder.EndFigure(CanvasFigureLoop.Closed);
 
-                  ds.DrawGeometry(CanvasGeometry.CreatePath(builder), clrRed, System.Math.Max(1, 12 * (w+h)/2), cssCurve);
+                  ds.DrawGeometry(CanvasGeometry.CreatePath(builder), clrRed, System.Math.Max(1, 7*(w+h)/2), cssCurve);
                }
             }
             //ds.DrawLine(p[1], p[2], clrRed, 15, cssLine);

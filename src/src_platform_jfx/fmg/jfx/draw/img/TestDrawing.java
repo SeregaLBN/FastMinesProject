@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.HSV;
@@ -14,6 +16,7 @@ import fmg.core.img.PolarLightsImg;
 import fmg.core.img.RotatedImg;
 import fmg.core.img.StaticImg;
 import fmg.jfx.Cast;
+import fmg.jfx.utils.ImgUtils;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -91,8 +94,10 @@ public final class TestDrawing extends Application {
       int dy = rc.height / rows; // cell tile height
 
       int pad = 2; // cell padding
-      int w = Math.min(dx, dy) - 2*pad; // dx - 2*pad;
-      int h = Math.min(dx, dy) - 2*pad; // dy - 2*pad;
+      int addonX = (cols==1) ? 0 : 20;//(cols==1) ? 0 : bl() ? 0 : Math.min(dx, dy)/3; // test intersection
+      int addonY = (rows==1) ? 0 : 20;//(rows==1) ? 0 : bl() ? 0 : Math.min(dx, dy)/3; // test intersection
+      int w = Math.min(dx, dy) - 2*pad + addonX; // dx - 2*pad;
+      int h = Math.min(dx, dy) - 2*pad + addonY; // dy - 2*pad;
 
       AnimationTimer timer = new AnimationTimer() {
          @Override
@@ -102,7 +107,7 @@ public final class TestDrawing extends Application {
 //            gc.setFill(javafx.scene.paint.Color.WHITE);
 //            gc.fillRect(rc.x, rc.y, rc.width, rc.height);
           //gc.clearRect(rc.x, rc.y, rc.width, rc.height);
-            gc.setStroke(Cast.toColor(Color.Red));
+            gc.setStroke(Cast.toColor(Color.DarkGray));
             gc.strokeRect(rc.x, rc.y, rc.width, rc.height);
           //gc.setGlobalBlendMode(BlendMode.SRC_OVER); // see https://bugs.openjdk.java.net/browse/JDK-8092156
 
@@ -118,11 +123,27 @@ public final class TestDrawing extends Application {
                      StaticImg<?> simg = (StaticImg<?>)obj;
                      simg.setSize(new Size(w, h));
                      obj = simg.getImage();
+                  } else
+                  if (obj instanceof Flag) {
+                     Flag<?> simg = (Flag<?>)obj;
+                     simg.setSize(new Size(w, h));
+                     obj = simg.getImage();
                   }
                   if (obj instanceof Canvas) {
                      Canvas canvasImg = (Canvas)obj;
-                     Image img = Logo.Canvas.castToImage(canvasImg);
-                     gc.drawImage(img, margin+i*dx+pad, margin+j*dy+pad);
+                     obj = ImgUtils.toImage(canvasImg);
+                  }
+
+                  int offsetX = margin + i*dx + pad;
+                  int offsetY = margin + j*dy + pad;
+                  if (i == (cols-1))
+                     offsetX -= addonX;
+                  if (j == (rows-1))
+                     offsetY -= addonY;
+
+                  if (obj instanceof Image) {
+                     Image img = (Image)obj;
+                     gc.drawImage(img, offsetX, offsetY);
                   } else
                      throw new IllegalArgumentException("Not supported image type is " + obj.getClass().getName());
                }
@@ -142,6 +163,10 @@ public final class TestDrawing extends Application {
             .forEach(img -> img.close() );
       });
 
+      primaryStage.setTitle("test paints: " + images.stream()
+         .map(i -> i.getClass().getName())
+         .map(n -> Stream.of(n.split("\\.")).reduce((first, second) -> second).get().replaceAll("\\$", ".") )
+         .collect(Collectors.joining(" & ")));
       primaryStage.setScene(
                       new Scene(
                           new Group(canvas = new Canvas(SIZE, SIZE)),

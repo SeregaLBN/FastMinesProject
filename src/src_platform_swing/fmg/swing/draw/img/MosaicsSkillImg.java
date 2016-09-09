@@ -41,7 +41,7 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
 
          // draw perimeter border
          Color clr = getBorderColor();
-         if (clr.getA() != Color.Transparent.getA()) {
+         if (!clr.isTransparent()) {
             g.setColor(Cast.toColor(clr));
             int bw = getBorderWidth();
             g.setStroke(new BasicStroke(bw));

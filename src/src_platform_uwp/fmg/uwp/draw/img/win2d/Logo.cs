@@ -34,7 +34,7 @@ namespace fmg.uwp.draw.img.win2d {
 
          if (fillBk) {
             var bkClr = BackgroundColor;
-            if (bkClr.A != Color.Transparent.A)
+            if (!bkClr.IsTransparent)
                ds.Clear(bkClr.ToWinColor());
          }
 

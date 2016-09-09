@@ -37,7 +37,7 @@ namespace fmg.uwp.draw.img.wbmp {
 
          // draw perimeter border
          var clr = BorderColor;
-         if (clr.A != Color.Transparent.A) {
+         if (!clr.IsTransparent) {
             var clrWin = clr.ToWinColor();
             var bw = BorderWidth;
             for (var i = 0; i < points.Length - 2; i += 2) {

@@ -8,12 +8,13 @@ import fmg.common.geom.PointDouble;
 import fmg.common.geom.Size;
 import fmg.core.img.ALogo;
 import fmg.jfx.Cast;
+import fmg.jfx.utils.ImgUtils;
 import javafx.geometry.Point2D;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 
 /** Main logos image */
 public abstract class Logo<TImage> extends ALogo<TImage> {
@@ -25,8 +26,11 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
    protected void drawBody(GraphicsContext g) {
       { // fill background
          fmg.common.Color bkClr = getBackgroundColor();
-         //if (bkClr.getA() != fmg.common.Color.Transparent.getA())
-         {
+         if (!bkClr.isOpaque()) { // fix not supporting in jFx the mode equals java.awt.AlphaComposite.SRC
+            g.setFill(Color.WHITE);
+            g.fillRect(0, 0, getWidth(), getHeight());
+         }
+         if (!bkClr.isTransparent()) {
             g.setFill(Cast.toColor(bkClr));
             g.fillRect(0, 0, getWidth(), getHeight());
          }
@@ -48,23 +52,22 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
 
       // paint owner gradient rays
       for (int i=0; i<8; i++) {
-//         if (isUseGradient()) {
-//            // rectangle gragient
-//            g.setPaint(new GradientPaint(oct[(i+5)%8], palette[(i+0)%8], oct[i], palette[(i+3)%8]));
-//            fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
-//
-//            // emulate triangle gradient (see BmpLogo.cpp C++ source code)
-//            Composite composite = g.getComposite();
-//            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-//            Color clr = palette[(i+6)%8];
-//            clr = new Color(clr.getRed(), clr.getGreen(), clr.getBlue(), 0);
-//            g.setPaint(new GradientPaint(center, clr, inn[(i+6)%8], palette[(i+3)%8]));
-//            fillPolygon(g, rays[i], oct[i], inn[i]);
-//            g.setPaint(new GradientPaint(center, clr, inn[(i+2)%8], palette[(i+0)%8]));
-//            fillPolygon(g, rays[i], oct[(i+5)%8], inn[i]);
-//            g.setComposite(composite);
-//         } else
-         {
+         if (isUseGradient()) {
+            // rectangle gragient
+            setGradientFill(g, oct[(i+5)%8], palette[(i+0)%8], oct[i], palette[(i+3)%8]);
+            fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
+
+            // emulate triangle gradient (see BmpLogo.cpp C++ source code)
+//            BlendMode bm = g.getGlobalBlendMode();
+//            g.setGlobalBlendMode(BlendMode.SRC_OVER);
+            Color clr = palette[(i+6)%8];
+            clr = new Color(clr.getRed(), clr.getGreen(), clr.getBlue(), 0);
+            setGradientFill(g, center, clr, inn[(i+6)%8], palette[(i+3)%8]);
+            fillPolygon(g, rays[i], oct[i], inn[i]);
+            setGradientFill(g, center, clr, inn[(i+2)%8], palette[(i+0)%8]);
+            fillPolygon(g, rays[i], oct[(i+5)%8], inn[i]);
+//            g.setGlobalBlendMode(bm);
+         } else {
             g.setFill(Cast.toColor(Palette[i].toColor().darker()));
             fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
          }
@@ -83,16 +86,27 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
 
       // paint inner gradient triangles
       for (int i=0; i<8; i++) {
-//         if (isUseGradient())
-//            g.setPaint(new GradientPaint(
-//                  inn[i], palette[(i+6)%8],
-//                  center, ((i&1)==0) ? Color.BLACK : Color.WHITE));
-//         else
+         if (isUseGradient())
+            setGradientFill(g,
+                  inn[i], palette[(i+6)%8],
+                  center, ((i&1)==0) ? Color.BLACK : Color.WHITE);
+         else
             g.setFill(((i & 1) == 0)
                   ? Cast.toColor(Palette[(i + 6)%8].toColor().brighter())
                   : Cast.toColor(Palette[(i + 6)%8].toColor().darker()));
          fillPolygon(g, inn[(i + 0)%8], inn[(i + 3)%8], center);
       }
+   }
+
+   private static void setGradientFill(GraphicsContext g, Point2D start, Color startClr, Point2D end, Color endClr) {
+      g.setFill(new LinearGradient(start.getX(), start.getY(),
+                                   end  .getX(), end  .getY(),
+                                   false,
+                                   CycleMethod.NO_CYCLE,
+                                   new Stop[] {
+                                      new Stop(0, startClr),
+                                      new Stop(1, endClr)
+                                   }));
    }
 
    private static void fillPolygon(GraphicsContext g, Point2D... p) {
@@ -117,21 +131,36 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
       @Override
       protected void drawBody() { drawBody(getImage().getGraphicsContext2D()); }
 
-      public static Image castToImage(javafx.scene.canvas.Canvas self) {
-         SnapshotParameters params = new SnapshotParameters();
-         params.setFill(Color.TRANSPARENT);
-         WritableImage image = self.snapshot(params, null);
-         return image;
+   }
+
+   public static class Image extends Logo<javafx.scene.image.Image> {
+
+      private javafx.scene.canvas.Canvas canvas;
+
+      @Override
+      protected javafx.scene.image.Image createImage() {
+         Size size = getSize();
+         canvas = new javafx.scene.canvas.Canvas(size.width, size.height);
+         return ImgUtils.toImage(canvas);
       }
+
+      @Override
+      protected void drawEnd() {
+         super.drawEnd();
+         setImage(ImgUtils.toImage(canvas));
+      }
+
+      @Override
+      protected void drawBody() { drawBody(canvas.getGraphicsContext2D()); }
 
    }
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
       TestDrawing.testApp(p -> Arrays.asList(new Logo.Canvas()
+                                           , new Logo.Image()
                                            , new Logo.Canvas()
-                                           , new Logo.Canvas()
-                                           , new Logo.Canvas()
+                                           , new Logo.Image()
                          ));
    }
    //////////////////////////////////

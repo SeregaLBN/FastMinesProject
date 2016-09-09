@@ -221,6 +221,9 @@ public class Color {
    /** set ALPHA chanel */
    public void setA(int a) { this.a = checkA(a); }
 
+   public boolean isOpaque()      { return this.a == 255; }
+   public boolean isTransparent() { return this.a == 0; }
+
    public static Color RandomColor(Random rnd) {
       return new Color(
          rnd.nextInt(256),

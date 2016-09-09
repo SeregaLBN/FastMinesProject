@@ -168,6 +168,9 @@ namespace fmg.common {
          B = (byte)(aarrggbb & 0xFF);
       }
 
+      public bool IsOpaque      => A == 255;
+      public bool IsTransparent => A == 0;
+
       public static bool operator !=(Color c1, Color c2) { return (c1.A != c2.A) || (c1.R != c2.R) || (c1.G != c2.G) || (c1.B != c2.B); }
       public static bool operator ==(Color c1, Color c2) { return (c1.A == c2.A) && (c1.R == c2.R) && (c1.G == c2.G) && (c1.B == c2.B); }
 
