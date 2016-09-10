@@ -18,7 +18,7 @@ using fmg.DataModel.Items;
 
 namespace fmg
 {
-   public sealed partial class Shell : UserControl
+   public sealed partial class Main : UserControl
    {
       internal const int MenuTextWidth = 110;
 
@@ -29,7 +29,7 @@ namespace fmg
       public Frame RootFrame => this._frame;
 
 
-      public Shell() {
+      public Main() {
          this.InitializeComponent();
          Unloaded += OnClosing;
          //Loaded += (sender, ev) => { // unit test

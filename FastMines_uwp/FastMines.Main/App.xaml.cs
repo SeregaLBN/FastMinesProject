@@ -41,14 +41,14 @@ namespace fmg
          }
 #endif
 
-         var shell = Window.Current.Content as Shell;
+         var shell = Window.Current.Content as Main;
 
          // Do not repeat app initialization when the Window already has content,
          // just ensure that the window is active
          if (shell == null)
          {
-            // Create a Shell which navigates to the first page
-            shell = new Shell();
+            // Create a Main which navigates to the first page
+            shell = new Main();
 
             // hook-up shell root frame navigation events
             shell.RootFrame.NavigationFailed += OnNavigationFailed;
@@ -80,22 +80,22 @@ namespace fmg
       // handle hardware back button press
       void OnBackPressed(object sender, BackPressedEventArgs e)
       {
-         var shell = (Shell)Window.Current.Content;
-         if (shell.RootFrame.CanGoBack)
+         var main = (Main)Window.Current.Content;
+         if (main.RootFrame.CanGoBack)
          {
             e.Handled = true;
-            shell.RootFrame.GoBack();
+            main.RootFrame.GoBack();
          }
       }
 
       // handle software back button press
       void OnBackRequested(object sender, BackRequestedEventArgs e)
       {
-         var shell = (Shell)Window.Current.Content;
-         if (shell.RootFrame.CanGoBack)
+         var main = (Main)Window.Current.Content;
+         if (main.RootFrame.CanGoBack)
          {
             e.Handled = true;
-            shell.RootFrame.GoBack();
+            main.RootFrame.GoBack();
          }
       }
 
@@ -130,9 +130,9 @@ namespace fmg
 
       private void UpdateBackButtonVisibility()
       {
-         var shell = (Shell)Window.Current.Content;
+         var main = (Main)Window.Current.Content;
 
-         var visibility = shell.RootFrame.CanGoBack
+         var visibility = main.RootFrame.CanGoBack
             ? AppViewBackButtonVisibility.Visible
             : AppViewBackButtonVisibility.Collapsed;
 
