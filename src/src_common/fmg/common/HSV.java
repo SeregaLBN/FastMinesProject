@@ -65,6 +65,12 @@ public class HSV {
       fromColorDouble(rgba.r, rgba.g, rgba.b);
    }
 
+   public HSV addHue(double addonH) {
+      h += addonH;
+      fix();
+      return this;
+   }
+
    private void fromColorDouble(double r, double g, double b) {
       double max = Math.max(Math.max(r, g), b);
       double min = Math.min(Math.min(r, g), b);

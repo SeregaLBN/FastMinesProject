@@ -7,9 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.common.Color;
-import fmg.common.HSV;
 import fmg.common.Pair;
-import fmg.common.geom.DoubleExt;
 import fmg.common.geom.PointDouble;
 import fmg.core.img.AMosaicsGroupImg;
 import fmg.core.types.EMosaicGroup;
@@ -28,45 +26,33 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
       StaticRotateImgConsts.init();
    }
 
+   /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
    protected MosaicsGroupImg(EMosaicGroup group) { super(group); }
 
    protected void drawBody(Graphics2D g) {
       g.setColor(Cast.toColor(getBackgroundColor()));
       g.fillRect(0, 0, getWidth(), getHeight());
 
-      if (getMosaicGroup() != EMosaicGroup.eOthers) {
-         drawBody(g, getCoords(), 0);
-      } else {
-         Pair<Stream<PointDouble>, Stream<PointDouble>> coords = getDoubleCoords();
-         drawBody(g, coords.first, 0);
-         drawBody(g, coords.second, 180);
-      }
-   }
+      Stream<Pair<Color, Stream<PointDouble>>> stars = getCoords();
+      stars.forEach(pair -> {
+         g.setColor(Cast.toColor(pair.first));
+         List<PointDouble> points = pair.second.collect(Collectors.toList());
+         g.fillPolygon(Cast.toPolygon(points));
 
-   protected void drawBody(Graphics2D g, Stream<PointDouble> pointsS, double addonToRotateColor) {
-      if (DoubleExt.hasMinDiff(addonToRotateColor, 0)) {
-         g.setColor(Cast.toColor(getForegroundColor()));
-      } else {
-         HSV hsv = new HSV(getForegroundColor());
-         hsv.h += addonToRotateColor;
-         g.setColor(Cast.toColor(hsv.toColor()));
-      }
-      List<PointDouble> points = pointsS.collect(Collectors.toList());
-      g.fillPolygon(Cast.toPolygon(points));
+         // draw perimeter border
+         Color clr = getBorderColor();
+         if (!clr.isTransparent()) {
+            g.setColor(Cast.toColor(clr));
+            int bw = getBorderWidth();
+            g.setStroke(new BasicStroke(bw));
 
-      // draw perimeter border
-      Color clr = getBorderColor();
-      if (!clr.isTransparent()) {
-         g.setColor(Cast.toColor(clr));
-         int bw = getBorderWidth();
-         g.setStroke(new BasicStroke(bw));
-
-         for (int i = 0; i < points.size(); i++) {
-            PointDouble p1 = points.get(i);
-            PointDouble p2 = (i != (points.size() - 1)) ? points.get(i + 1) : points.get(0);
-            g.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
+            for (int i = 0; i < points.size(); i++) {
+               PointDouble p1 = points.get(i);
+               PointDouble p2 = (i != (points.size() - 1)) ? points.get(i + 1) : points.get(0);
+               g.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
+            }
          }
-      }
+      });
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,6 +61,7 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
 
    public static class Icon extends MosaicsGroupImg<javax.swing.Icon> {
 
+      /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
       public Icon(EMosaicGroup group) { super(group); }
 
       private BufferedImage buffImg;
@@ -117,6 +104,7 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
 
    public static class Image extends MosaicsGroupImg<java.awt.Image> {
 
+      /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
       public Image(EMosaicGroup group) { super(group); }
 
       @Override
@@ -140,7 +128,8 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
    ////////////// TEST //////////////
    public static void main(String[] args) {
       TestDrawing.testApp(p ->
-         Stream.of(EMosaicGroup.values())
+         Stream.concat(Stream.of((EMosaicGroup)null),
+                       Stream.of(EMosaicGroup.values()))
                .map(e -> new Pair<>(new MosaicsGroupImg.Icon (e),
                                     new MosaicsGroupImg.Image(e)))
                .flatMap(x -> Stream.of(x.first, x.second))

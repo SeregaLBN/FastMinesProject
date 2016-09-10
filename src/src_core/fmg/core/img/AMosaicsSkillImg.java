@@ -86,11 +86,9 @@ public abstract class AMosaicsSkillImg<TImage> extends PolarLightsImg<TImage> {
                      : centerMax.y - centerStar.y;
 
                Color clr = getForegroundColor();
-               if (isPolarLights()) {
-                  HSV hsv = new HSV(clr);
-                  hsv.h += angleStar; // try: hsv.h -= angleStar;
-                  clr = hsv.toColor();
-               }
+               if (isPolarLights())
+                  clr = new HSV(clr).addHue(+angleStar).toColor();// try: -angleShape
+
                return new Pair<>(sq, new Pair<>(
                      clr,
                      FigureHelper.getRegularStarCoords(rays,
@@ -136,11 +134,9 @@ public abstract class AMosaicsSkillImg<TImage> extends PolarLightsImg<TImage> {
                PointDouble centerStar = new PointDouble(center.x + offset.x, center.y + offset.y);
 
                Color clr = getForegroundColor();
-               if (isPolarLights()) {
-                   HSV hsv = new HSV(clr);
-                   hsv.h += starNum * anglePart;
-                   clr = hsv.toColor();
-               }
+               if (isPolarLights())
+                  clr = new HSV(clr).addHue(starNum * anglePart).toColor();
+
                return new Pair<>(clr, (getMosaicSkill() == ESkillLevel.eCustom)
                      ? FigureHelper.getRegularPolygonCoords(3 + (starNum % 4), r1, centerStar, -angleAccumulative[0])
                      : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative[0]));

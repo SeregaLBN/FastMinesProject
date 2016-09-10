@@ -1,9 +1,13 @@
 package fmg.core.img;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import fmg.common.Color;
+import fmg.common.HSV;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.util.FigureHelper;
@@ -15,6 +19,7 @@ import fmg.core.types.EMosaicGroup;
  */
 public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
 
+   /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
    protected AMosaicsGroupImg(EMosaicGroup group) {
       _mosaicGroup = group;
    }
@@ -25,7 +30,15 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
    public EMosaicGroup getMosaicGroup() { return _mosaicGroup; }
    public void setMosaicGroup(EMosaicGroup value) { setProperty(_mosaicGroup, value, PROPERTY_MOSAIC_GROUP); }
 
-   protected Stream<PointDouble> getCoords() {
+   protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() {
+      return (_mosaicGroup == null)
+            ? getCoords_MosaicGroupAsType()
+            : (_mosaicGroup != EMosaicGroup.eOthers)
+               ? Stream.of(new Pair<>(getForegroundColor(), getCoords_MosaicGroupAsValue()))
+               : getCoords_MosaicGroupAsValueOthers();
+   }
+
+   private Stream<PointDouble> getCoords_MosaicGroupAsValue() {
       double sq = Math.min( // size inner square
             getWidth()  - getPadding().getLeftAndRight(),
             getHeight() - getPadding().getTopAndBottom());
@@ -49,7 +62,7 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
     //return FigureHelper.rotateBySide(FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(nm.first, nm.second, sq / 2, center, _incrementSpeedAngle, 0), 2, center, ra);
    }
 
-   protected Pair<Stream<PointDouble>, Stream<PointDouble>> getDoubleCoords() {
+   private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsValueOthers() {
       double sq = Math.min( // size inner square
          getWidth() - getPadding().getLeftAndRight(),
          getHeight() - getPadding().getTopAndBottom());
@@ -88,9 +101,11 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
       //  * и совмещаю их по центру изображения
       PointDouble offsetToCenter1 = new PointDouble(center.x - centerPoint1.x, center.y - centerPoint1.y);
       PointDouble offsetToCenter2 = new PointDouble(center.x - centerPoint2.x, center.y - centerPoint2.y);
-      return new Pair<Stream<PointDouble>, Stream<PointDouble>>(
-            FigureHelper.move(res1.stream(), offsetToCenter1),
-            FigureHelper.move(res2.stream(), offsetToCenter2)
+      return Stream.of(
+            new Pair<>(        getForegroundColor()                       , FigureHelper.move(res1.stream(), offsetToCenter1)),
+            new Pair<>(isPolarLights() ?
+                       new HSV(getForegroundColor()).addHue(180).toColor()
+                       :       getForegroundColor()                       , FigureHelper.move(res2.stream(), offsetToCenter2))
          );
    }
 
@@ -118,7 +133,7 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
 
    @Override
    protected void onTimer() {
-      if (isRotate()) {
+      if (isRotate() && (_mosaicGroup == EMosaicGroup.eOthers)) {
          boolean castling = false;
          double incrementSpeedAngle = _incrementSpeedAngle + 3*getRotateAngleDelta();
          if (incrementSpeedAngle >= 360) {
@@ -137,6 +152,60 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
          }
       }
       super.onTimer();
+   }
+
+   private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsType() {
+      final boolean accelerateRevert = true; // ускорение под конец анимации, иначе - в начале...
+
+      int shapes = EMosaicGroup.values().length;
+
+      double angle = getRotateAngle();
+    //double[] angleAccumulative = { angle };
+      double anglePart = 360.0/shapes;
+
+      double sqMax = Math.min( // размер квадрата куда будет вписана фигура при 0°
+            getWidth()  - getPadding().getLeftAndRight(),
+            getHeight() - getPadding().getTopAndBottom());
+      double sqMin = sqMax / 7; // размер квадрата куда будет вписана фигура при 360°
+      double sqDiff = sqMax - sqMin;
+
+      PointDouble center = new PointDouble(getWidth() / 2.0, getHeight() / 2.0);
+
+      Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, shapes)
+            .mapToObj(shapeNum -> {
+               int vertices = 3+shapeNum;
+               double angleShape = fixAngle(angle + shapeNum * anglePart);
+             //angleAccumulative[0] = Math.sin(FigureHelper.toRadian(angle/4))*angleAccumulative[0]; // accelerate / ускоряшка..
+
+               double sq = angleShape * sqDiff / 360;
+               // (un)comment next line to view result changes...
+               sq = Math.sin(FigureHelper.toRadian(angleShape/4))*sq; // accelerate / ускоряшка..
+               sq = accelerateRevert
+                     ? sqMin + sq
+                     : sqMax - sq;
+
+               double radius = sq/1.8;
+
+               Color clr = getForegroundColor();
+               if (isPolarLights())
+                  clr = new HSV(clr).addHue(+angleShape).toColor(); // try: -angleShape
+
+               return new Pair<>(sq, new Pair<>(
+                     clr,
+                     FigureHelper.getRegularPolygonCoords(vertices,
+                                                          radius,
+                                                          center,
+                                                          45 // try to view: angleAccumulative[0]
+                                                          )));
+            });
+
+      List<Pair<Double, Pair<Color, Stream<PointDouble>>>> resL = res.collect(Collectors.toList());
+      Collections.sort(resL, (o1, o2) -> {
+         if (o1.first < o2.first) return 1;
+         if (o1.first > o2.first) return -1;
+         return 0;
+      });
+      return resL.stream().map(x -> x.second);
    }
 
 }

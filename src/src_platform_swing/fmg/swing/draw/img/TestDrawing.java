@@ -34,10 +34,10 @@ final class TestDrawing {
 
    private static Random rnd = new Random(UUID.randomUUID().hashCode());
    private static int r(int max){ return rnd.nextInt(max); }
-   private static boolean bl() { return (r(2) == 1); } // random bool
+   private static boolean bl() { return rnd.nextBoolean(); } // random bool
    private static int np() { return (bl() ? -1 : +1); } // negative or positive
 
-   static void applyRandom(StaticImg<?> img) {
+   static void applyRandom(StaticImg<?> img, boolean testTransparent) {
       int maxSize = (int)(SIZE/2.0 * 1.2);
       int minSize = (int)(maxSize * 0.8);
       img.setSize(new Size(minSize+r(maxSize-minSize), minSize+r(maxSize-minSize)));
@@ -66,9 +66,10 @@ final class TestDrawing {
          mosaicsImg.setRotateMode(MosaicsImg.ERotateMode.values()[r(MosaicsImg.ERotateMode.values().length)]);
       }
 
-      if (bl()) {
+      if (testTransparent || bl()) {
          // test transparent
-         HSV bkClr = new HSV(Color.RandomColor(rnd)); bkClr.a = 50 + r(10);
+         HSV bkClr = new HSV(Color.RandomColor(rnd));
+         bkClr.a = 50 + r(10);
          img.addListener(ev -> {
             if (RotatedImg.PROPERTY_ROTATE_ANGLE.equals(ev.getPropertyName())) {
                bkClr.h = img.getRotateAngle();
@@ -93,11 +94,12 @@ final class TestDrawing {
             int dx = rc.width  / cols; // cell tile width
             int dy = rc.height / rows; // cell tile height
 
+            boolean testTransparent = bl();
             int pad = 2; // cell padding
-            int addonX = (cols==1) ? 0 : 20;//(cols==1) ? 0 : bl() ? 0 : Math.min(dx, dy)/3; // test intersection
-            int addonY = (rows==1) ? 0 : 20;//(rows==1) ? 0 : bl() ? 0 : Math.min(dx, dy)/3; // test intersection
-            int w = Math.min(dx, dy) - 2*pad + addonX; // dx - 2*pad;
-            int h = Math.min(dx, dy) - 2*pad + addonY; // dy - 2*pad;
+            int addonX = (cols==1) ? 0 : !testTransparent ? 0 : dx/4; // test intersection
+            int addonY = (rows==1) ? 0 : !testTransparent ? 0 : dy/4; // test intersection
+            int w = dx - 2*pad + addonX; // dx - 2*pad;
+            int h = dy - 2*pad + addonY; // dy - 2*pad;
 
             JPanel jPanel = new JPanel() {
 
@@ -159,7 +161,7 @@ final class TestDrawing {
                .map(x -> (StaticImg<?>)x)
                .forEach(img -> {
                   img.addListener(l);
-                  applyRandom(img);
+                  applyRandom(img, testTransparent);
                });
 
             //setDefaultCloseOperation(EXIT_ON_CLOSE);
