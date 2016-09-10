@@ -31,11 +31,14 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
    public void setMosaicGroup(EMosaicGroup value) { setProperty(_mosaicGroup, value, PROPERTY_MOSAIC_GROUP); }
 
    protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() {
+      final boolean varMosaicGroupAsValueOthers1 = !true;
       return (_mosaicGroup == null)
             ? getCoords_MosaicGroupAsType()
             : (_mosaicGroup != EMosaicGroup.eOthers)
                ? Stream.of(new Pair<>(getForegroundColor(), getCoords_MosaicGroupAsValue()))
-               : getCoords_MosaicGroupAsValueOthers();
+               : varMosaicGroupAsValueOthers1
+                  ? getCoords_MosaicGroupAsValueOthers1()
+                  : getCoords_MosaicGroupAsValueOthers2();
    }
 
    private Stream<PointDouble> getCoords_MosaicGroupAsValue() {
@@ -62,7 +65,7 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
     //return FigureHelper.rotateBySide(FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(nm.first, nm.second, sq / 2, center, _incrementSpeedAngle, 0), 2, center, ra);
    }
 
-   private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsValueOthers() {
+   private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsValueOthers1() {
       double sq = Math.min( // size inner square
          getWidth() - getPadding().getLeftAndRight(),
          getHeight() - getPadding().getTopAndBottom());
@@ -197,6 +200,52 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
                                                           center,
                                                           45 // try to view: angleAccumulative[0]
                                                           )));
+            });
+
+      List<Pair<Double, Pair<Color, Stream<PointDouble>>>> resL = res.collect(Collectors.toList());
+      Collections.sort(resL, (o1, o2) -> {
+         if (o1.first < o2.first) return 1;
+         if (o1.first > o2.first) return -1;
+         return 0;
+      });
+      return resL.stream().map(x -> x.second);
+   }
+
+   private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsValueOthers2() {
+      double sq = Math.min( // size inner square
+            getWidth()  - getPadding().getLeftAndRight(),
+            getHeight() - getPadding().getTopAndBottom());
+      double radius = sq/2.7;
+
+      int shapes = 3; // мозаики из группы EMosaicGroup.eOthers состоят из 3 типов фигур: треугольники, квадраты и шестигранники
+
+      double angle = getRotateAngle();
+      double anglePart = 360.0/shapes;
+
+      final PointDouble center = new PointDouble(getWidth() / 2.0, getHeight() / 2.0);
+      final PointDouble zero = new PointDouble(0, 0);
+      Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, shapes)
+            .mapToObj(shapeNum -> {
+               double angleShape = angle*shapeNum;
+
+               // adding offset
+               PointDouble offset = FigureHelper.getPointOnCircle(sq / 5, angleShape + shapeNum * anglePart, zero);
+               PointDouble centerStar = new PointDouble(center.x + offset.x, center.y + offset.y);
+
+               Color clr = getForegroundColor();
+               if (isPolarLights())
+                  clr = new HSV(clr).addHue(shapeNum * anglePart).toColor();
+
+               int vertices;
+               switch (shapeNum) { // мозаики из группы EMosaicGroup.eOthers состоят из 3 типов фигур:
+               case 0: vertices = 6; break; // шестигранники
+               case 1: vertices = 4; break; // квадраты
+               case 2: vertices = 3; break; // и треугольники
+               default: throw new RuntimeException();
+               }
+               return new Pair<>(1.0, new Pair<>(
+                     clr,
+                     FigureHelper.getRegularPolygonCoords(vertices, radius, centerStar, -angle)));
             });
 
       List<Pair<Double, Pair<Color, Stream<PointDouble>>>> resL = res.collect(Collectors.toList());
