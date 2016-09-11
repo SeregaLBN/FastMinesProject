@@ -15,7 +15,11 @@ namespace fmg.DataModel.DataSources
       protected override void FillDataSource() {
          var dataSource = DataSourceInternal;
          foreach (var g in EMosaicGroupEx.GetValues()) {
-            var mi = new MosaicGroupDataItem(g);
+            var mi = new MosaicGroupDataItem(g) {
+               Image = {
+                  RedrawInterval = 70
+               }
+            };
             dataSource.Add(mi);
          }
          base.FillDataSource();

@@ -1,19 +1,17 @@
 package fmg.common.geom.util;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import fmg.common.Pair;
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
 
 public final class FigureHelper {
 
@@ -23,6 +21,16 @@ public final class FigureHelper {
    public static double toDegrees(double radianAngle) {
       return radianAngle * 180 / Math.PI;
    }
+
+   /** to diapason (0° .. +360°] */
+   public static double fixAngle(double value) {
+      return (value >= 360)
+           ?              (value % 360)
+           : (value < 0)
+              ?           (value % 360) + 360
+              :            value;
+   }
+
 
    /** Получить координаты точки на периметре круга
     * @param radius радиус круга
@@ -302,4 +310,27 @@ public final class FigureHelper {
             : StreamSupport.stream(split, false);
    }
 
+   public static Stream<Pair<PointDouble /* startLinePoint */, PointDouble /* endLinePoint */>> getBurgerMenu(
+            RectDouble rc,          // new RectDouble(0,0, 100, 100)
+            BoundDouble padding,    // new BoundDouble(5)
+            int layers,             // 4
+            double alignmentAngle   // 0
+         )
+   {
+      double stepAngle = 360.0 / layers;
+      double heightMenu = rc.bottom()-padding.bottom - (rc.top()+padding.top);
+
+      return IntStream.range(0, layers)
+         .mapToObj(layer -> {
+            double layerAlignmentAngle = fixAngle(layer*stepAngle + alignmentAngle);
+            double offsetTop = layerAlignmentAngle*heightMenu/360;
+            PointDouble start = new PointDouble(rc.left()  + padding.left,
+                                                rc.top()   + padding.top   + offsetTop);
+            PointDouble end   = new PointDouble(rc.right() - padding.right,
+                                                rc.top()   + padding.top   + offsetTop);
+
+            return new Pair<>(start, end);
+         });
+
+   }
 }

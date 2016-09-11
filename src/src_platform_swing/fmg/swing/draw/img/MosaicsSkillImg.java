@@ -8,7 +8,10 @@ import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.Pair;
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.common.geom.util.FigureHelper;
 import fmg.core.img.AMosaicsSkillImg;
 import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Cast;
@@ -53,6 +56,18 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
             }
          }
       });
+
+      if (getMosaicSkill() == null) {
+         g.setColor(java.awt.Color.BLACK);
+         g.setStroke(new BasicStroke(Math.max(1, getHeight() / 15)));
+         FigureHelper.getBurgerMenu(
+            new RectDouble(getWidth()/2.0, getHeight()/2.0,
+                           getWidth()/2.0, getHeight()/2.0),
+            new BoundDouble(0,0, getPadding().right, getPadding().bottom),
+            4,
+            getRotateAngle())
+         .forEach(p -> g.drawLine((int)p.first.x, (int)p.first.y, (int)p.second.x, (int)p.second.y) );
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////

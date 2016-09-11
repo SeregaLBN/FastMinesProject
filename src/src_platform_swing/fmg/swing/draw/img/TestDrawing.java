@@ -48,6 +48,7 @@ final class TestDrawing {
          rImg.setRotateAngleDelta((3 + r(5)) * np());
          rImg.setRedrawInterval(50);
          rImg.setBorderWidth(bl() ? 1 : 2);
+         rImg.setPadding(4);
       }
 
       if (img instanceof PolarLightsImg) {

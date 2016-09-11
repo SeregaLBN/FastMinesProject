@@ -178,7 +178,7 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
       Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, shapes)
             .mapToObj(shapeNum -> {
                int vertices = 3+shapeNum;
-               double angleShape = fixAngle(angle + shapeNum * anglePart);
+               double angleShape = FigureHelper.fixAngle(angle + shapeNum * anglePart);
              //angleAccumulative[0] = Math.sin(FigureHelper.toRadian(angle/4))*angleAccumulative[0]; // accelerate / ускоряшка..
 
                double sq = angleShape * sqDiff / 360;

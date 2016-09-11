@@ -4,14 +4,11 @@ using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using fmg.common;
 using fmg.core.types;
 using fmg.core.img;
 using fmg.uwp.utils;
 using fmg.uwp.utils.win2d;
 using fmg.uwp.draw.mosaic.win2d;
-using fmg.common.geom;
-using System.Collections.Generic;
 
 namespace fmg.uwp.draw.img.win2d {
 
