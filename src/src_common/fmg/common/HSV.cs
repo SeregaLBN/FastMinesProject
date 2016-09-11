@@ -53,6 +53,12 @@ namespace fmg.common
          FromColorDouble(rgba.R, rgba.G, rgba.B);
       }
 
+      public HSV AddHue(double addonH) {
+         h += addonH;
+         Fix();
+         return this;
+      }
+
       private void FromColorDouble(double r, double g, double b) {
          double max = Math.Max(Math.Max(r, g), b);
          double min = Math.Min(Math.Min(r, g), b);

@@ -28,62 +28,51 @@ namespace fmg.uwp.draw.img.win2d {
 
       protected readonly ICanvasResourceCreator _rc;
 
-      protected MosaicsGroupImg(EMosaicGroup group, ICanvasResourceCreator resourceCreator)
+      /// <param name="skill">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
+      protected MosaicsGroupImg(EMosaicGroup? group, ICanvasResourceCreator resourceCreator)
          : base(group)
       {
          _rc = resourceCreator;
       }
 
       protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
+         ICanvasResourceCreator rc = Image;
+
          if (fillBk)
             ds.Clear(BackgroundColor.ToWinColor());
 
-         if (MosaicGroup != EMosaicGroup.eOthers) {
-            DrawBody(ds, GetCoords(), 0);
-         } else {
-            var coords = GetDoubleCoords();
-            DrawBody(ds, coords.Item1, 0);
-            DrawBody(ds, coords.Item2, 180);
+         var shapes = GetCoords();
+         foreach (var data in shapes) {
+            var points = data.Item2.ToArray();
+            using (var geom = rc.BuildLines(points)) {
+               ds.FillGeometry(geom, data.Item1.ToWinColor());
+            }
+
+            // draw perimeter border
+            var clr = BorderColor;
+            if (!clr.IsTransparent) {
+               var clrWin = clr.ToWinColor();
+               var bw = BorderWidth;
+
+               using (var css = new CanvasStrokeStyle {
+                  StartCap = CanvasCapStyle.Triangle,
+                  EndCap = CanvasCapStyle.Triangle
+               }) {
+                  for (var i = 0; i < points.Length; ++i) {
+                     var p1 = points[i];
+                     var p2 = (i < points.Length - 1) ? points[i + 1] : points[0];
+                     ds.DrawLine(p1.ToVector2(), p2.ToVector2(), clrWin, bw, css);
+                  }
+               }
+            }
          }
+
 #if DEBUG
          //// test
          //using (var ctf = new Microsoft.Graphics.Canvas.Text.CanvasTextFormat { FontSize = 25 }) {
          //   ds.DrawText(string.Format($"{RotateAngle:0.##}"), 0f, 0f, Color.Black.ToWinColor(), ctf);
          //}
 #endif
-      }
-
-      private void DrawBody(CanvasDrawingSession ds, IEnumerable<PointDouble> coords, double addonToRotateColor) {
-         ICanvasResourceCreator rc = Image;
-
-         var points = coords.ToArray();
-         using (var geom = rc.BuildLines(points)) {
-            if (addonToRotateColor.HasMinDiff(0))
-               ds.FillGeometry(geom, ForegroundColor.ToWinColor());
-            else {
-               var hsv = new HSV(ForegroundColor);
-               hsv.h += addonToRotateColor;
-               ds.FillGeometry(geom, hsv.ToColor().ToWinColor());
-            }
-         }
-
-         // draw perimeter border
-         var clr = BorderColor;
-         if (!clr.IsTransparent) {
-            var clrWin = clr.ToWinColor();
-            var bw = BorderWidth;
-
-            using (var css = new CanvasStrokeStyle {
-               StartCap = CanvasCapStyle.Triangle,
-               EndCap = CanvasCapStyle.Triangle
-            }) {
-               for (var i = 0; i < points.Length; ++i) {
-                  var p1 = points[i];
-                  var p2 = (i < points.Length-1) ? points[i+1] : points[0];
-                  ds.DrawLine(p1.ToVector2(), p2.ToVector2(), clrWin, bw, css);
-               }
-            }
-         }
       }
 
       /////////////////////////////////////////////////////////////////////////////////////////////////////

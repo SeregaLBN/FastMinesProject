@@ -87,7 +87,7 @@ public abstract class AMosaicsSkillImg<TImage> extends PolarLightsImg<TImage> {
 
                Color clr = getForegroundColor();
                if (isPolarLights())
-                  clr = new HSV(clr).addHue(+angleStar).toColor();// try: -angleShape
+                  clr = new HSV(clr).addHue(+angleStar).toColor();// try: -angleStar
 
                return new Pair<>(sq, new Pair<>(
                      clr,

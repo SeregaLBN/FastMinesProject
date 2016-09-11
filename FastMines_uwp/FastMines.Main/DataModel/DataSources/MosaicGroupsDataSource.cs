@@ -48,7 +48,7 @@ namespace fmg.DataModel.DataSources
             var smi = CurrentElement;
             return string.Join(" ", DataSource.Select(mi => {
                var selected = (smi != null) && (mi.Image.MosaicGroup == smi.Image.MosaicGroup);
-               return mi.Image.MosaicGroup.UnicodeChar(selected);
+               return mi.Image.MosaicGroup.Value.UnicodeChar(selected);
             }));
          }
       }

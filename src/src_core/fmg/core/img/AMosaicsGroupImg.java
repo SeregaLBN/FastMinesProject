@@ -30,8 +30,8 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
    public EMosaicGroup getMosaicGroup() { return _mosaicGroup; }
    public void setMosaicGroup(EMosaicGroup value) { setProperty(_mosaicGroup, value, PROPERTY_MOSAIC_GROUP); }
 
+   private static final boolean varMosaicGroupAsValueOthers1 = !true;
    protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() {
-      final boolean varMosaicGroupAsValueOthers1 = !true;
       return (_mosaicGroup == null)
             ? getCoords_MosaicGroupAsType()
             : (_mosaicGroup != EMosaicGroup.eOthers)
@@ -134,9 +134,10 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
       return new Pair<Integer, Integer>(n, m);
    }
 
+   @SuppressWarnings("unused")
    @Override
    protected void onTimer() {
-      if (isRotate() && (_mosaicGroup == EMosaicGroup.eOthers)) {
+      if (isRotate() && varMosaicGroupAsValueOthers1 && (_mosaicGroup == EMosaicGroup.eOthers)) {
          boolean castling = false;
          double incrementSpeedAngle = _incrementSpeedAngle + 3*getRotateAngleDelta();
          if (incrementSpeedAngle >= 360) {

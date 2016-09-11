@@ -4,7 +4,6 @@ using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using fmg.common;
 using fmg.core.img;
 using fmg.data.controller.types;
 using fmg.uwp.utils;

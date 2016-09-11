@@ -18,7 +18,8 @@ namespace fmg.uwp.draw.img.wbmp {
          StaticRotateImgConsts.Init();
       }
 
-      public MosaicsGroupImg(EMosaicGroup group)
+      /// <param name="skill">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
+      public MosaicsGroupImg(EMosaicGroup? group)
          : base(group)
       { }
 
@@ -32,16 +33,19 @@ namespace fmg.uwp.draw.img.wbmp {
 
          bmp.Clear(BackgroundColor.ToWinColor());
 
-         var points = GetCoords().PointsAsXyxyxySequence(true).ToArray();
-         bmp.FillPolygon(points, ForegroundColor.ToWinColor());
+         var shapes = GetCoords();
+         foreach (var data in shapes) {
+            var points = data.Item2.PointsAsXyxyxySequence(true).ToArray();
+            bmp.FillPolygon(points, data.Item1.ToWinColor());
 
-         // draw perimeter border
-         var clr = BorderColor;
-         if (!clr.IsTransparent) {
-            var clrWin = clr.ToWinColor();
-            var bw = BorderWidth;
-            for (var i = 0; i < points.Length - 2; i += 2) {
-               bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], clrWin, bw);
+            // draw perimeter border
+            var clr = BorderColor;
+            if (!clr.IsTransparent) {
+               var clrWin = clr.ToWinColor();
+               var bw = BorderWidth;
+               for (var i = 0; i < points.Length - 2; i += 2) {
+                  bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], clrWin, bw);
+               }
             }
          }
       }

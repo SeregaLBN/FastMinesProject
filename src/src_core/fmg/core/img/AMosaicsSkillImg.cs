@@ -79,11 +79,9 @@ namespace fmg.core.img {
                      : centerMax.Y - centerStar.Y;
 
                var clr = ForegroundColor;
-               if (PolarLights) {
-                  HSV hsv = new HSV(clr);
-                  hsv.h += angleStar; // try: hsv.h -= angleStar;
-                  clr = hsv.ToColor();
-               }
+               if (PolarLights)
+                  clr = new HSV(clr).AddHue(+angleStar).ToColor(); // try: -angleStar
+
                return new Tuple<double, Tuple<Color, IEnumerable<PointDouble>>>(sq, new Tuple<Color, IEnumerable<PointDouble>>(
                      clr,
                      FigureHelper.GetRegularStarCoords(rays,
@@ -123,11 +121,9 @@ namespace fmg.core.img {
                var centerStar = new PointDouble(center.X + offset.X, center.Y + offset.Y);
 
                var clr = ForegroundColor;
-               if (PolarLights) {
-                  HSV hsv = new HSV(clr);
-                  hsv.h += starNum * anglePart;
-                  clr = hsv.ToColor();
-               }
+               if (PolarLights)
+                  clr = new HSV(clr).AddHue(starNum * anglePart).ToColor();
+
                return new Tuple<Color, IEnumerable<PointDouble>>(clr, (MosaicSkill == ESkillLevel.eCustom)
                   ? FigureHelper.GetRegularPolygonCoords(3 + starNum % 4, r1, centerStar, -angleAccumulative)
                   : FigureHelper.GetRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative));
