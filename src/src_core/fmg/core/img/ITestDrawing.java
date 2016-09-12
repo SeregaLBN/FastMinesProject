@@ -80,8 +80,8 @@ public interface ITestDrawing {
          if (pos == -1)
             throw new RuntimeException("Illegal usage...");
 
-         int i = pos / rows;
-         int j = pos % rows;
+         int i = pos % cols;
+         int j = pos / cols;
          PointDouble offset = new PointDouble(rc.x + i*dx + pad,
                                               rc.y + j*dy + pad);
          if (i == (cols-1))

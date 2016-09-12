@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.Pair;
-import fmg.common.geom.BoundDouble;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.util.FigureHelper;
@@ -57,16 +56,23 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
          }
       });
 
-      if (getMosaicSkill() == null) {
-         g.setColor(java.awt.Color.BLACK);
-         g.setStroke(new BasicStroke(Math.max(1, getHeight() / 15)));
-         FigureHelper.getBurgerMenu(
-            new RectDouble(getWidth()/2.0, getHeight()/2.0,
-                           getWidth()/2.0, getHeight()/2.0),
-            new BoundDouble(0,0, getPadding().right, getPadding().bottom),
-            4,
-            getRotateAngle())
-         .forEach(p -> g.drawLine((int)p.first.x, (int)p.first.y, (int)p.second.x, (int)p.second.y) );
+      if (isShowBurgerMenu()) {
+         boolean horizontalMenu = isHorizontalBurgerMenu();
+         int layers = getLayersInBurgerMenu();
+         RectDouble rcMenu = new RectDouble(getWidth() /2.0,
+                                            getHeight()/2.0,
+                                            getWidth() /2.0 - getPadding().right,
+                                            getHeight()/2.0 - getPadding().bottom);
+         double penWidth = (horizontalMenu ? rcMenu.height : rcMenu.width) / (2 * layers);
+         g.setStroke(new BasicStroke((float)Math.max(1, penWidth)));
+         double angle = isRotateBurgerMenu() ? getRotateAngle() : 0;
+         FigureHelper.getBurgerMenu(rcMenu, layers, angle, horizontalMenu)
+            .forEach(t -> {
+               g.setColor(Cast.toColor(t.first));
+               PointDouble p1 = t.second.first;
+               PointDouble p2 = t.second.second;
+               g.drawLine((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y);
+            });
       }
    }
 

@@ -7,8 +7,9 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import fmg.common.Color;
+import fmg.common.HSV;
 import fmg.common.Pair;
-import fmg.common.geom.BoundDouble;
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
@@ -310,26 +311,28 @@ public final class FigureHelper {
             : StreamSupport.stream(split, false);
    }
 
-   public static Stream<Pair<PointDouble /* startLinePoint */, PointDouble /* endLinePoint */>> getBurgerMenu(
+   public static Stream<Pair<Color /* line color */, Pair<PointDouble /* startLinePoint */, PointDouble /* endLinePoint */>>> getBurgerMenu(
             RectDouble rc,          // new RectDouble(0,0, 100, 100)
-            BoundDouble padding,    // new BoundDouble(5)
             int layers,             // 4
-            double alignmentAngle   // 0
+            double alignmentAngle,  // 0
+            boolean horizontal      // true
          )
    {
       double stepAngle = 360.0 / layers;
-      double heightMenu = rc.bottom()-padding.bottom - (rc.top()+padding.top);
 
       return IntStream.range(0, layers)
          .mapToObj(layer -> {
             double layerAlignmentAngle = fixAngle(layer*stepAngle + alignmentAngle);
-            double offsetTop = layerAlignmentAngle*heightMenu/360;
-            PointDouble start = new PointDouble(rc.left()  + padding.left,
-                                                rc.top()   + padding.top   + offsetTop);
-            PointDouble end   = new PointDouble(rc.right() - padding.right,
-                                                rc.top()   + padding.top   + offsetTop);
+            double offsetTop  = !horizontal ? 0 : layerAlignmentAngle*rc.height/360;
+            double offsetLeft =  horizontal ? 0 : layerAlignmentAngle*rc.width /360;
+            PointDouble start = new PointDouble(rc.left() + offsetLeft,
+                                                rc.top()  + offsetTop);
+            PointDouble end   = new PointDouble((horizontal ? rc.right() : rc.left()) + offsetLeft,
+                                                (horizontal ? rc.top() : rc.bottom()) + offsetTop);
 
-            return new Pair<>(start, end);
+            HSV hsv = new HSV(Color.Gray);
+            hsv.v *= Math.sin(layer*stepAngle / layers);
+            return new Pair<>(hsv.toColor(), new Pair<>(start, end));
          });
 
    }
