@@ -64,6 +64,15 @@ namespace fmg.uwp.draw.img.win2d {
             }
          }
 
+         using (var css = new CanvasStrokeStyle {
+            StartCap = CanvasCapStyle.Flat,
+            EndCap = CanvasCapStyle.Flat
+         }) {
+            foreach (var li in GetCoordsBurgerMenu()) {
+               ds.DrawLine(li.from.ToVector2(), li.to.ToVector2(), li.clr.ToWinColor(), (float)li.penWidht, css);
+            }
+         }
+
 #if DEBUG
          //// test
          //using (var ctf = new Microsoft.Graphics.Canvas.Text.CanvasTextFormat { FontSize = 25 }) {

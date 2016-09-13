@@ -10,12 +10,16 @@ namespace fmg.core.img {
 
    /// <summary> Abstract representable <see cref="ESkillLevel"/> as image </summary>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class AMosaicsSkillImg<TImage> : PolarLightsImg<TImage>
+   public abstract class AMosaicsSkillImg<TImage> : BurgerMenuImg<TImage>
       where TImage : class
    {
       /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
       protected AMosaicsSkillImg(ESkillLevel? skill) {
          _mosaicSkill = skill;
+         ShowBurgerMenu = (skill == null);
+         LayersInBurgerMenu = 3;
+         HorizontalBurgerMenu = true;
+         RotateBurgerMenu = true;
       }
 
       private ESkillLevel? _mosaicSkill;

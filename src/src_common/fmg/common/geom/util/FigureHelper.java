@@ -7,12 +7,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import fmg.common.Color;
-import fmg.common.HSV;
-import fmg.common.Pair;
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.RectDouble;
 
 /**
  * Трансформеры для фигур - манипуляции с координатами...
@@ -25,15 +21,6 @@ public final class FigureHelper {
    }
    public static double toDegrees(double radianAngle) {
       return radianAngle * 180 / Math.PI;
-   }
-
-   /** to diapason (0° .. +360°] */
-   public static double fixAngle(double value) {
-      return (value >= 360)
-           ?              (value % 360)
-           : (value < 0)
-              ?           (value % 360) + 360
-              :            value;
    }
 
 
@@ -315,29 +302,4 @@ public final class FigureHelper {
             : StreamSupport.stream(split, false);
    }
 
-   public static Stream<Pair<Integer /* line number */, Pair<PointDouble /* startLinePoint */, PointDouble /* endLinePoint */>>> getBurgerMenu(
-            RectDouble rc,          // new RectDouble(0,0, 100, 100)
-            int layers,             // 4
-            double alignmentAngle,  // 0
-            boolean horizontal      // true
-         )
-   {
-      double stepAngle = 360.0 / layers;
-
-      return IntStream.range(0, layers)
-         .mapToObj(layer -> {
-            double layerAlignmentAngle = fixAngle(layer*stepAngle + alignmentAngle);
-            double offsetTop  = !horizontal ? 0 : layerAlignmentAngle*rc.height/360;
-            double offsetLeft =  horizontal ? 0 : layerAlignmentAngle*rc.width /360;
-            PointDouble start = new PointDouble(rc.left() + offsetLeft,
-                                                rc.top()  + offsetTop);
-            PointDouble end   = new PointDouble((horizontal ? rc.right() : rc.left()) + offsetLeft,
-                                                (horizontal ? rc.top() : rc.bottom()) + offsetTop);
-
-            HSV hsv = new HSV(Color.Gray);
-            hsv.v *= Math.sin(layer*stepAngle / layers);
-            return new Pair<>(layer, new Pair<>(start, end));
-         });
-
-   }
 }

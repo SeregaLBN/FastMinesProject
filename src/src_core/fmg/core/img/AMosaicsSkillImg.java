@@ -65,7 +65,7 @@ public abstract class AMosaicsSkillImg<TImage> extends BurgerMenuImg<TImage> {
 
       Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, stars)
             .mapToObj(starNum -> {
-               double angleStar = FigureHelper.fixAngle(angle + starNum * anglePart);
+               double angleStar = fixAngle(angle + starNum * anglePart);
              //angleAccumulative[0] = Math.sin(FigureHelper.toRadian(angle/4))*angleAccumulative[0]; // accelerate / ускоряшка..
 
                double sq = angleStar * sqDiff / 360;

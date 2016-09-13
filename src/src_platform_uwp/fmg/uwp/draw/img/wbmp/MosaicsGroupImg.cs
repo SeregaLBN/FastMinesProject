@@ -48,6 +48,10 @@ namespace fmg.uwp.draw.img.wbmp {
                }
             }
          }
+
+         foreach (var li in GetCoordsBurgerMenu()) {
+            bmp.DrawLineAa((int)li.from.X, (int)li.from.Y, (int)li.to.X, (int)li.to.Y, li.clr.ToWinColor(), (int)li.penWidht);
+         }
       }
 
    }

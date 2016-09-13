@@ -10,12 +10,16 @@ namespace fmg.core.img {
 
    /// <summary> Abstract representable <see cref="EMosaicGroup"/> as image </summary>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class AMosaicsGroupImg<TImage> : PolarLightsImg<TImage>
+   public abstract class AMosaicsGroupImg<TImage> : BurgerMenuImg<TImage>
       where TImage : class
    {
       /// <param name="skill">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
       protected AMosaicsGroupImg(EMosaicGroup? group) {
          _mosaicGroup = group;
+         ShowBurgerMenu = (group == null);
+         LayersInBurgerMenu = 3;
+         HorizontalBurgerMenu  = !true;
+         RotateBurgerMenu = true;
       }
 
       private EMosaicGroup? _mosaicGroup;

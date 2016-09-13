@@ -60,6 +60,9 @@
     <Compile Include="..\..\src\src_core\fmg\core\img\AMosaicsSkillImg.cs">
       <Link>src_fmg.core\img\AMosaicsSkillImg.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\BurgerMenuImg.cs">
+      <Link>src_fmg.core\img\BurgerMenuImg.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\AMosaicsGroupImg.cs">
       <Link>src_fmg.core\img\AMosaicsGroupImg.cs</Link>
     </Compile>

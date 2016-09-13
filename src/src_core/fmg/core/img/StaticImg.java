@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 import fmg.common.Color;
 import fmg.common.geom.Bound;
 import fmg.common.geom.Size;
-import fmg.common.geom.util.FigureHelper;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /**
@@ -118,9 +117,18 @@ public abstract class StaticImg<TImage> extends NotifyPropertyChanged {
    /** 0° .. +360° */
    public double getRotateAngle() { return _rotateAngle; }
    public void setRotateAngle(double value) {
-      value = FigureHelper.fixAngle(value);
+      value = fixAngle(value);
       if (setProperty(_rotateAngle, value, PROPERTY_ROTATE_ANGLE))
          invalidate();
+   }
+
+   /** to diapason (0° .. +360°] */
+   public static double fixAngle(double value) {
+      return (value >= 360)
+           ?              (value % 360)
+           : (value < 0)
+              ?           (value % 360) + 360
+              :            value;
    }
 
    private Color _foregroundColor = DefaultForegroundColor;

@@ -1,12 +1,12 @@
 package fmg.core.img;
 
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
-import fmg.common.geom.util.FigureHelper;
 
 /**
  * Abstract representable menu as horizontal or vertical lines
@@ -60,23 +60,31 @@ public abstract class BurgerMenuImg<TImage> extends PolarLightsImg<TImage> {
       if (!isShowBurgerMenu())
          return Stream.empty();
 
-      boolean horizontalMenu = isHorizontalBurgerMenu();
+      boolean horizontal = isHorizontalBurgerMenu();
       int layers = getLayersInBurgerMenu();
-      RectDouble rcMenu = getBurgerMenuRegion();
-      double penWidth = Math.max(1, (horizontalMenu ? rcMenu.height : rcMenu.width) / (2 * layers));
-      double angle = isRotateBurgerMenu() ? getRotateAngle() : 0;
+      RectDouble rc = getBurgerMenuRegion();
+      double penWidth = Math.max(1, (horizontal ? rc.height : rc.width) / (2 * layers));
+      double rotateAngle = isRotateBurgerMenu() ? getRotateAngle() : 0;
       double stepAngle = 360.0 / layers;
-      return FigureHelper.getBurgerMenu(rcMenu, layers, angle, horizontalMenu)
-         .map(t -> {
-            int layerNum = t.first;
+
+      return IntStream.range(0, layers)
+         .mapToObj(layerNum -> {
+            double layerAlignmentAngle = fixAngle(layerNum*stepAngle + rotateAngle);
+            double offsetTop  = !horizontal ? 0 : layerAlignmentAngle*rc.height/360;
+            double offsetLeft =  horizontal ? 0 : layerAlignmentAngle*rc.width /360;
+            PointDouble start = new PointDouble(rc.left() + offsetLeft,
+                                                rc.top()  + offsetTop);
+            PointDouble end   = new PointDouble((horizontal ? rc.right() : rc.left()) + offsetLeft,
+                                                (horizontal ? rc.top() : rc.bottom()) + offsetTop);
+
             HSV hsv = new HSV(Color.Gray);
             hsv.v *= Math.sin(layerNum*stepAngle / layers);
 
             LineInfo li = new LineInfo();
             li.clr = hsv.toColor();
             li.penWidht = penWidth;
-            li.from = t.second.first;
-            li.to = t.second.second;
+            li.from = start;
+            li.to = end;
             return li;
          });
    }

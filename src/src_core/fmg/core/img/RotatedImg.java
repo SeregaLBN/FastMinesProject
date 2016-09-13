@@ -2,7 +2,6 @@ package fmg.core.img;
 
 import java.util.function.Supplier;
 
-import fmg.common.geom.util.FigureHelper;
 import fmg.common.ui.ITimer;
 
 /**
@@ -69,7 +68,7 @@ public abstract class RotatedImg<TImage> extends StaticImg<TImage> {
    public boolean isLiveImage() { return isRotate(); }
 
    private void rotateStep() {
-      double rotateAngle = FigureHelper.fixAngle(getRotateAngle() + getRotateAngleDelta());
+      double rotateAngle = fixAngle(getRotateAngle() + getRotateAngleDelta());
       setRotateAngle(rotateAngle);
    }
 
