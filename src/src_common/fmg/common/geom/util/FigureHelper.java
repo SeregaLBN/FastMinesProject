@@ -14,6 +14,10 @@ import fmg.common.geom.DoubleExt;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 
+/**
+ * Трансформеры для фигур - манипуляции с координатами...
+ * ! Избегать использования цветов - это удел конкретной реализации.
+ */
 public final class FigureHelper {
 
    public static double toRadian(double degreesAngle) {
@@ -311,7 +315,7 @@ public final class FigureHelper {
             : StreamSupport.stream(split, false);
    }
 
-   public static Stream<Pair<Color /* line color */, Pair<PointDouble /* startLinePoint */, PointDouble /* endLinePoint */>>> getBurgerMenu(
+   public static Stream<Pair<Integer /* line number */, Pair<PointDouble /* startLinePoint */, PointDouble /* endLinePoint */>>> getBurgerMenu(
             RectDouble rc,          // new RectDouble(0,0, 100, 100)
             int layers,             // 4
             double alignmentAngle,  // 0
@@ -332,7 +336,7 @@ public final class FigureHelper {
 
             HSV hsv = new HSV(Color.Gray);
             hsv.v *= Math.sin(layer*stepAngle / layers);
-            return new Pair<>(hsv.toColor(), new Pair<>(start, end));
+            return new Pair<>(layer, new Pair<>(start, end));
          });
 
    }

@@ -9,8 +9,6 @@ import java.util.stream.Stream;
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.RectDouble;
-import fmg.common.geom.util.FigureHelper;
 import fmg.core.img.AMosaicsGroupImg;
 import fmg.core.types.EMosaicGroup;
 import fmg.swing.Cast;
@@ -56,24 +54,12 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
          }
       });
 
-      if (isShowBurgerMenu()) {
-         boolean horizontalMenu = isHorizontalBurgerMenu();
-         int layers = getLayersInBurgerMenu();
-         RectDouble rcMenu = new RectDouble(getWidth() /2.0,
-                                            getHeight()/2.0,
-                                            getWidth() /2.0 - getPadding().right,
-                                            getHeight()/2.0 - getPadding().bottom);
-         double penWidth = (horizontalMenu ? rcMenu.height : rcMenu.width) / (2 * layers);
-         g.setStroke(new BasicStroke((float)Math.max(1, penWidth)));
-         double angle = isRotateBurgerMenu() ? getRotateAngle() : 0;
-         FigureHelper.getBurgerMenu(rcMenu, layers, angle, horizontalMenu)
-            .forEach(t -> {
-               g.setColor(Cast.toColor(t.first));
-               PointDouble p1 = t.second.first;
-               PointDouble p2 = t.second.second;
-               g.drawLine((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y);
-            });
-      }
+      getCoordsBurgerMenu()
+         .forEach(li -> {
+            g.setStroke(new BasicStroke((float)li.penWidht));
+            g.setColor(Cast.toColor(li.clr));
+            g.drawLine((int)li.from.x, (int)li.from.y, (int)li.to.x, (int)li.to.y);
+         });
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////

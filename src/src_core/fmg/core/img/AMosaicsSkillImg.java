@@ -18,42 +18,22 @@ import fmg.data.controller.types.ESkillLevel;
  *
  * @param <TImage> plaform specific image
  */
-public abstract class AMosaicsSkillImg<TImage> extends PolarLightsImg<TImage> {
+public abstract class AMosaicsSkillImg<TImage> extends BurgerMenuImg<TImage> {
 
    /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
    protected AMosaicsSkillImg(ESkillLevel skill) {
       _mosaicSkill = skill;
-      _showBurgerMenu = (skill == null);
-      _layersInBurgerMenu = 3;
-      _horizontalBurgerMenu = true;
-      _rotateBurgerMenu = true;
+      setShowBurgerMenu(skill == null);
+      setLayersInBurgerMenu(3);
+      setHorizontalBurgerMenu(true);
+      setRotateBurgerMenu(true);
    }
 
    public static final String PROPERTY_MOSAIC_SKILL = "MosaicSkill";
-   public static final String PROPERTY_SHOW_BURGER_MENU = "ShowBurgerMenu";
-   public static final String PROPERTY_HORIZONTAL_BURGER_MENU = "HorizontalBurgerMenu";
-   public static final String PROPERTY_LAYERS_IN_BURGER_MENU = "LayersInBurgerMenu";
-   public static final String PROPERTY_ROTATE_BURGER_MENU = "RotateBurgerMenu";
 
    private ESkillLevel _mosaicSkill;
    public ESkillLevel getMosaicSkill() { return _mosaicSkill; }
    public void setMosaicSkill(ESkillLevel value) { setProperty(_mosaicSkill, value, PROPERTY_MOSAIC_SKILL); }
-
-   private boolean _showBurgerMenu;
-   public boolean isShowBurgerMenu() { return _showBurgerMenu; }
-   public void   setShowBurgerMenu(boolean value) { setProperty(_showBurgerMenu, value, PROPERTY_SHOW_BURGER_MENU); }
-
-   private boolean _horizontalBurgerMenu;
-   public boolean isHorizontalBurgerMenu() { return _horizontalBurgerMenu; }
-   public void   setHorizontalBurgerMenu(boolean value) { setProperty(_horizontalBurgerMenu, value, PROPERTY_HORIZONTAL_BURGER_MENU); }
-
-   private int   _layersInBurgerMenu;
-   public int  getLayersInBurgerMenu() { return _layersInBurgerMenu; }
-   public void setLayersInBurgerMenu(int value) { setProperty(_layersInBurgerMenu, value, PROPERTY_LAYERS_IN_BURGER_MENU); }
-
-   private boolean _rotateBurgerMenu;
-   public boolean isRotateBurgerMenu() { return _rotateBurgerMenu; }
-   public void   setRotateBurgerMenu(boolean value) { setProperty(_rotateBurgerMenu, value, PROPERTY_ROTATE_BURGER_MENU); }
 
 
    protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() {

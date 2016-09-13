@@ -17,42 +17,22 @@ import fmg.core.types.EMosaicGroup;
  * Abstract representable {@link fmg.core.types.EMosaicGroup} as image
  * @param <TImage> plaform specific image
  */
-public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
+public abstract class AMosaicsGroupImg<TImage> extends BurgerMenuImg<TImage> {
 
    /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
    protected AMosaicsGroupImg(EMosaicGroup group) {
       _mosaicGroup = group;
-      _showBurgerMenu = (group == null);
-      _layersInBurgerMenu = 3;
-      _horizontalBurgerMenu = !true;
-      _rotateBurgerMenu = true;
+      setShowBurgerMenu(group == null);
+      setLayersInBurgerMenu(3);
+      setHorizontalBurgerMenu(!true);
+      setRotateBurgerMenu(true);
    }
 
    public static final String PROPERTY_MOSAIC_GROUP = "MosaicGroup";
-   public static final String PROPERTY_SHOW_BURGER_MENU = "ShowBurgerMenu";
-   public static final String PROPERTY_HORIZONTAL_BURGER_MENU = "HorizontalBurgerMenu";
-   public static final String PROPERTY_LAYERS_IN_BURGER_MENU = "LayersInBurgerMenu";
-   public static final String PROPERTY_ROTATE_BURGER_MENU = "RotateBurgerMenu";
 
    private EMosaicGroup _mosaicGroup;
    public EMosaicGroup getMosaicGroup() { return _mosaicGroup; }
    public void setMosaicGroup(EMosaicGroup value) { setProperty(_mosaicGroup, value, PROPERTY_MOSAIC_GROUP); }
-
-   private boolean _showBurgerMenu;
-   public boolean isShowBurgerMenu() { return _showBurgerMenu; }
-   public void   setShowBurgerMenu(boolean value) { setProperty(_showBurgerMenu, value, PROPERTY_SHOW_BURGER_MENU); }
-
-   private boolean _horizontalBurgerMenu;
-   public boolean isHorizontalBurgerMenu() { return _horizontalBurgerMenu; }
-   public void   setHorizontalBurgerMenu(boolean value) { setProperty(_horizontalBurgerMenu, value, PROPERTY_HORIZONTAL_BURGER_MENU); }
-
-   private int   _layersInBurgerMenu;
-   public int  getLayersInBurgerMenu() { return _layersInBurgerMenu; }
-   public void setLayersInBurgerMenu(int value) { setProperty(_layersInBurgerMenu, value, PROPERTY_LAYERS_IN_BURGER_MENU); }
-
-   private boolean _rotateBurgerMenu;
-   public boolean isRotateBurgerMenu() { return _rotateBurgerMenu; }
-   public void   setRotateBurgerMenu(boolean value) { setProperty(_rotateBurgerMenu, value, PROPERTY_ROTATE_BURGER_MENU); }
 
 
    private static final boolean varMosaicGroupAsValueOthers1 = !true;
@@ -156,7 +136,7 @@ public abstract class AMosaicsGroupImg<TImage> extends PolarLightsImg<TImage> {
          if (getRotateAngleDelta() < 0)
             n = m;
       }
-      return new Pair<Integer, Integer>(n, m);
+      return new Pair<>(n, m);
    }
 
    @SuppressWarnings("unused")
