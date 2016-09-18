@@ -1,11 +1,14 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.Foundation.Metadata;
+using Windows.Phone.UI.Input;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
@@ -17,75 +20,75 @@ using fmg.uwp.draw.mosaic.wbmp;
 
 namespace Test.FastMines.Uwp.Images.WBmp {
 
-   public sealed partial class DemoPage : Page {
-
+   public sealed partial class DemoPage : Page
+   {
 
       class TestDrawing : ATestDrawing { }
 
       TestDrawing _td;
       Panel _panel;
       static readonly int margin = 10; // panel margin - padding to inner images
+      Action _onCloseImages;
+      Action[] _onCreateImages; // images factory
+      int _nextCreateImagesIndex;
 
       #region images Fabrica
-      public Action TestLogos() {
-         return TestAppW(rnd => new Logo[] {
+      public void TestLogos() {
+         TestAppW(rnd => new Logo[] {
             new Logo(),
             new Logo(),
             new Logo(),
             new Logo()
          });
       }
-      public Action TestMosaicsSkillImg() {
-         return TestAppW(rnd => (new MosaicsSkillImg[] { new MosaicsSkillImg(null), new MosaicsSkillImg(null) })
+      public void TestMosaicsSkillImg() {
+         TestAppW(rnd => (new MosaicsSkillImg[] { new MosaicsSkillImg(null), new MosaicsSkillImg(null) })
                .Concat(ESkillLevelEx.GetValues()
                                     .Select(e => new MosaicsSkillImg[] { new MosaicsSkillImg(e), new MosaicsSkillImg(e) })
                                     .SelectMany(m => m)));
       }
-      public Action TestMosaicsGroupImg() {
-         return TestAppW(rnd => (new MosaicsGroupImg[] { new MosaicsGroupImg(null), new MosaicsGroupImg(null) })
+      public void TestMosaicsGroupImg() {
+         TestAppW(rnd => (new MosaicsGroupImg[] { new MosaicsGroupImg(null), new MosaicsGroupImg(null) })
                .Concat(EMosaicGroupEx.GetValues()
                                      .Select(e => new MosaicsGroupImg[] { new MosaicsGroupImg(e), new MosaicsGroupImg(e) })
                                      .SelectMany(m => m)));
       }
-      public Action TestMosaicsImg() {
-         return TestAppW(rnd =>
+      public void TestMosaicsImg() {
+         TestAppW(rnd =>
             EMosaicEx.GetValues().Select(e => new MosaicsImg(e, new Matrisize(3 + _td.R(4), 4 + _td.R(3))))
          );
       }
-      public Action TestFlag() {
-         return TestAppW(rnd => new Flag[] { new Flag() });
-      }
-      public Action TestMine() {
-         return TestAppW(rnd => new Mine[] { new Mine() });
-      }
-      public Action TestSmile() {
-         return TestAppW(rnd => new Smile[] { new Smile() });
-      }
+      public void TestFlag()  { TestAppW(rnd => new Flag[]  { new Flag() }); }
+      public void TestMine()  { TestAppW(rnd => new Mine[]  { new Mine() }); }
+      public void TestSmile() { TestAppW(rnd => new Smile[] { new Smile() }); }
       #endregion
 
 
       public DemoPage() {
+         _td = new TestDrawing();
+
+         _onCreateImages = new Action[] { TestLogos, TestMosaicsSkillImg, TestMosaicsGroupImg, TestMosaicsImg, TestFlag, TestMine, TestSmile };
+
          InitializeComponent();
+
          _page.Content = _panel = new Canvas();
 
-         _td = new TestDrawing();
-         TestLogos();
-         //TestMosaicsSkillImg();
-         //TestMosaicsGroupImg();
-         //TestMosaicsImg();
-         //TestFlag();
-         //TestMine();
-         //TestSmile();
+         SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+         SystemNavigationManager.GetForCurrentView().BackRequested += (s, ev) => OnNewImages();
+         if (ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons")) {
+            HardwareButtons.BackPressed += (s, ev) => OnNewImages();
+         }
+         _page.Loaded   += (s, ev) => OnNewImages();
+         _page.Unloaded += (s, ev) => _onCloseImages();
       }
 
       #region main part
-      Action TestAppW<TImageEx>(Func<Random, IEnumerable<TImageEx>> funcGetImages)
-         where TImageEx : class
-      {
-         return TestApp<TImageEx, PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>, WriteableBitmap>(funcGetImages);
+      void TestAppW<TImageEx>(Func<Random, IEnumerable<TImageEx>> funcGetImages)
+         where TImageEx : class {
+         TestApp<TImageEx, PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>, WriteableBitmap>(funcGetImages);
       }
 
-      Action TestApp<TImageEx, TPaintable, TImage, TPaintContext, TImageInner>(Func<Random, IEnumerable<TImageEx>> funcGetImages)
+      void TestApp<TImageEx, TPaintable, TImage, TPaintContext, TImageInner>(Func<Random, IEnumerable<TImageEx>> funcGetImages)
          where TImageEx : class
          where TPaintable : IPaintable
          where TImage : class
@@ -104,8 +107,8 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          Image[,] imgControls;
 
          {
-            double sizeW = _panel.ActualWidth;  if (sizeW <= 0) sizeW = 300;
-            double sizeH = _panel.ActualHeight; if (sizeH <= 0) sizeH = 300;
+            double sizeW = _panel.ActualWidth;  if (sizeW <= 0) sizeW = 100;
+            double sizeH = _panel.ActualHeight; if (sizeH <= 0) sizeH = 100;
             RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
             ATestDrawing.CellTilingResult<TImageEx> ctr = _td.CellTiling(rc, images, testTransparent);
@@ -200,7 +203,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
             }
          };
 
-         Action onClose = () => {
+         _onCloseImages = () => {
             images.Select(x => x as StaticImg<TImage>)
                .Where(x => x != null)
                .ToList()
@@ -209,10 +212,18 @@ namespace Test.FastMines.Uwp.Images.WBmp {
             images = null;
             imgControls = null;
          };
-         _page.Unloaded += (s, ev) => onClose();
-         return onClose;
       }
       #endregion
+
+
+      void OnNewImages() {
+         _onCloseImages?.Invoke();
+
+         Action onCreate = _onCreateImages[_nextCreateImagesIndex];
+         if (++_nextCreateImagesIndex >= _onCreateImages.Length)
+            _nextCreateImagesIndex = 0;
+         onCreate();
+      }
 
    }
 
