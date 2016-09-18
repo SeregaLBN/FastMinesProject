@@ -16,18 +16,18 @@ namespace fmg.uwp.draw.img.wbmp {
          //_bmp.FillRectangle(5, 5, IconWidth - 10, IconHeight - 10, (Windows.UI.Color)new Color(0x00123456);
 
          // тело смайла
-         _bmp.FillEllipse(5, 5, iconWidth - 10, iconHeight - 10, new Color(0x00FFE600).ToWinColor());
+         _bmp.FillEllipse(5, 5, iconWidth - 10, iconHeight - 10, new Color(0xFFFFE600).ToWinColor());
 
          // глаза
-         var clr = new Color(0x00000000);
-         _bmp.FillEllipse(330, 150, 98, 296, clr.ToWinColor());
-         _bmp.FillEllipse(570, 150, 98, 296, clr.ToWinColor());
+         var clr = Color.Black;
+         _bmp.FillEllipse(330, 150, 330+98, 150+296, clr.ToWinColor());
+         _bmp.FillEllipse(570, 150, 570+98, 150+296, clr.ToWinColor());
 
          // @TODO:  not implemented...
 
          // smile
          //g2d.setStroke(new BasicStroke(14, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
-         //_bmp.DrawCurve(103, -133, 795, 1003, 207, 126);
+         //_bmp.DrawArc(new int[] { 103, -133, 795, 1003, 207, 126 }, clr.ToWinColor());
 
          // ямочки на щеках
          //g.drawArc(90, 580, 180, 180, 90, 45);

@@ -33,8 +33,11 @@ namespace fmg.core.img {
       public Size Size {
          get { return _size; }
          set {
+            var old = _size;
             if (SetProperty(ref _size, value)) {
                Image = null;
+               OnSelfPropertyChanged(old.Width, _size.Width, nameof(this.Width));
+               OnSelfPropertyChanged(old.Height, _size.Height, nameof(this.Height));
                //Invalidate();
             }
          }

@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
@@ -45,9 +46,13 @@ namespace fmg.uwp.draw.mosaic.wbmp {
             if (borderWidth == 1)
                paint.Bmp.DrawPolyline(points, color);
             else
-               for (var i = 0; i < points.Length - 2; i += 2) {
-                  paint.Bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], color, borderWidth);
-               }
+               for (var i = 0; i < points.Length - 2; i += 2)
+                  try {
+                     paint.Bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], color, borderWidth);
+                  } catch(IndexOutOfRangeException ex) {
+                     System.Diagnostics.Debug.WriteLine("WTF! " + ex);
+                     paint.Bmp.DrawLine(points[i], points[i + 1], points[i + 2], points[i + 3], color);
+                  }
          } else {
             var s = cell.getShiftPointBorderIndex();
             var v = cell.Attr.getVertexNumber(cell.getDirection());
@@ -58,7 +63,12 @@ namespace fmg.uwp.draw.mosaic.wbmp {
                p2.Move(paintContext.Padding.Left, paintContext.Padding.Top);
                if (i == s)
                   color = (down ? paintContext.PenBorder.ColorShadow : paintContext.PenBorder.ColorLight).ToWinColor();
-               paint.Bmp.DrawLineAa((int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y, color, borderWidth);
+               try {
+                  paint.Bmp.DrawLineAa((int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y, color, borderWidth);
+               } catch (IndexOutOfRangeException ex) {
+                  System.Diagnostics.Debug.WriteLine("WTF! " + ex);
+                  paint.Bmp.DrawLine((int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y, color);
+               }
             }
          }
       }

@@ -28,30 +28,38 @@ namespace Test.FastMines.Uwp.Images.WBmp {
 
       #region images Fabrica
       public Action TestLogos() {
-         return TestApp<Logo, IPaintable, WriteableBitmap, PaintContext<object>, object>(rnd => new Logo[] {
+         return TestAppW(rnd => new Logo[] {
+            new Logo(),
             new Logo(),
             new Logo(),
             new Logo()
          });
       }
       public Action TestMosaicsSkillImg() {
-         return TestAppW(rnd =>
-            (new MosaicsSkillImg[] { new MosaicsSkillImg(null) })
+         return TestAppW(rnd => (new MosaicsSkillImg[] { new MosaicsSkillImg(null), new MosaicsSkillImg(null) })
                .Concat(ESkillLevelEx.GetValues()
-                                    .Select(e => new MosaicsSkillImg(e)))
-         );
+                                    .Select(e => new MosaicsSkillImg[] { new MosaicsSkillImg(e), new MosaicsSkillImg(e) })
+                                    .SelectMany(m => m)));
       }
       public Action TestMosaicsGroupImg() {
-         return TestAppW(rnd =>
-            (new MosaicsGroupImg[] { new MosaicsGroupImg(null) })
+         return TestAppW(rnd => (new MosaicsGroupImg[] { new MosaicsGroupImg(null), new MosaicsGroupImg(null) })
                .Concat(EMosaicGroupEx.GetValues()
-                                     .Select(e => new MosaicsGroupImg(e)))
-         );
+                                     .Select(e => new MosaicsGroupImg[] { new MosaicsGroupImg(e), new MosaicsGroupImg(e) })
+                                     .SelectMany(m => m)));
       }
       public Action TestMosaicsImg() {
          return TestAppW(rnd =>
             EMosaicEx.GetValues().Select(e => new MosaicsImg(e, new Matrisize(3 + _td.R(4), 4 + _td.R(3))))
          );
+      }
+      public Action TestFlag() {
+         return TestAppW(rnd => new Flag[] { new Flag() });
+      }
+      public Action TestMine() {
+         return TestAppW(rnd => new Mine[] { new Mine() });
+      }
+      public Action TestSmile() {
+         return TestAppW(rnd => new Smile[] { new Smile() });
       }
       #endregion
 
@@ -62,6 +70,12 @@ namespace Test.FastMines.Uwp.Images.WBmp {
 
          _td = new TestDrawing();
          TestLogos();
+         //TestMosaicsSkillImg();
+         //TestMosaicsGroupImg();
+         //TestMosaicsImg();
+         //TestFlag();
+         //TestMine();
+         //TestSmile();
       }
 
       #region main part
@@ -115,23 +129,34 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                   StaticImg<TImage> simg = imgObj as StaticImg<TImage>;
                   simg.Size = imgSize;
 
-                  #region binding
                   imgCntrl.SetBinding(Image.SourceProperty, new Binding {
                      Source = simg,
-                     Path = new PropertyPath(nameof(simg.Image)),
+                     Path = new PropertyPath(nameof(StaticImg<TImage>.Image)),
                      Mode = BindingMode.OneWay
                   });
-                  imgCntrl.SetBinding(Image.WidthProperty, new Binding {
-                     Source = simg,
-                     Path = new PropertyPath(nameof(simg.Width)),
+               } else
+               if (imgObj is Flag) {
+                  imgCntrl.SetBinding(Image.SourceProperty, new Binding {
+                     Source = imgObj,
+                     Path = new PropertyPath(nameof(Flag.Image)),
                      Mode = BindingMode.OneWay
                   });
-                  imgCntrl.SetBinding(Image.HeightProperty, new Binding {
-                     Source = simg,
-                     Path = new PropertyPath(nameof(simg.Height)),
+               } else
+               if (imgObj is Mine) {
+                  imgCntrl.SetBinding(Image.SourceProperty, new Binding {
+                     Source = imgObj,
+                     Path = new PropertyPath(nameof(Mine.Image)),
                      Mode = BindingMode.OneWay
                   });
-                  #endregion
+               } else
+               if (imgObj is Smile) {
+                  imgCntrl.SetBinding(Image.SourceProperty, new Binding {
+                     Source = imgObj,
+                     Path = new PropertyPath(nameof(Smile.Image)),
+                     Mode = BindingMode.OneWay
+                  });
+               } else {
+                  throw new Exception("Unsupported image type");
                }
 
                _panel.Children.Add(imgCntrl);
@@ -155,6 +180,17 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                if (imgObj is StaticImg<TImage>) {
                   StaticImg<TImage> simg = imgObj as StaticImg<TImage>;
                   simg.Size = imgSize;
+               } else
+               if (imgObj is Flag) {
+                  // none
+               } else
+               if (imgObj is Mine) {
+                  // none
+               } else
+               if (imgObj is Smile) {
+                  // none
+               } else {
+                  throw new Exception("Unsupported image type");
                }
 
                imgControls[cti.i, cti.j].Margin = new Thickness {

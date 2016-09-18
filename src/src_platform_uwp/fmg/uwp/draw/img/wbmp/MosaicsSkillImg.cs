@@ -1,6 +1,6 @@
+using System;
 using System.Linq;
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.data.controller.types;
@@ -41,15 +41,23 @@ namespace fmg.uwp.draw.img.wbmp {
             if (!clr.IsTransparent) {
                var clrWin = clr.ToWinColor();
                var bw = BorderWidth;
-               for (var i = 0; i < points.Length - 2; i += 2) {
-                  bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], clrWin, bw);
-               }
+               for (var i = 0; i < points.Length - 2; i += 2)
+                  try {
+                     bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], clrWin, bw);
+                  } catch (IndexOutOfRangeException ex) {
+                     System.Diagnostics.Debug.WriteLine("WTF! " + ex);
+                     bmp.DrawLine(points[i], points[i + 1], points[i + 2], points[i + 3], clrWin);
+                  }
             }
          }
 
-         foreach (var li in GetCoordsBurgerMenu()) {
-            bmp.DrawLineAa((int)li.from.X, (int)li.from.Y, (int)li.to.X, (int)li.to.Y, li.clr.ToWinColor(), (int)li.penWidht);
-         }
+         foreach (var li in GetCoordsBurgerMenu())
+            try {
+               bmp.DrawLineAa((int)li.from.X, (int)li.from.Y, (int)li.to.X, (int)li.to.Y, li.clr.ToWinColor(), (int)li.penWidht);
+            } catch (IndexOutOfRangeException ex) {
+               System.Diagnostics.Debug.WriteLine("WTF! " + ex);
+               bmp.DrawLine((int)li.from.X, (int)li.from.Y, (int)li.to.X, (int)li.to.Y, li.clr.ToWinColor());
+            }
       }
 
    }
