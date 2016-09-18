@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.Rect;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
 
 public abstract class ATestDrawing {
@@ -76,13 +76,13 @@ public abstract class ATestDrawing {
       public Function<? /* image */, CellTilingInfo> itemCallback;
    }
 
-   public CellTilingResult cellTiling(Rect rc, List<?> images, boolean testTransparent)
+   public CellTilingResult cellTiling(RectDouble rc, List<?> images, boolean testTransparent)
    {
       int len = images.size();
       int cols = (int)Math.round( Math.sqrt(len)  + 0.4999999999); // columns
       int rows = (int)Math.round(len/(double)cols + 0.4999999999);
-      double dx = rc.width  / (double)cols; // cell tile width
-      double dy = rc.height / (double)rows; // cell tile height
+      double dx = rc.width  / cols; // cell tile width
+      double dy = rc.height / rows; // cell tile height
 
       int pad = 2; // cell padding
       double addonX = (cols==1) ? 0 : !testTransparent ? 0 : dx/4; // test intersection

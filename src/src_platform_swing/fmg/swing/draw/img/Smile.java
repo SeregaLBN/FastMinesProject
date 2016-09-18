@@ -429,11 +429,9 @@ public class Smile implements Icon {
 
    // test
    public static void main(String[] args) {
-      TestDrawing.testApp(p -> {
-            int x = p.first.width;
-            int y = p.first.height;
+      TestDrawing.testApp(rnd -> {
             return Arrays.asList(EType.values()).stream()
-                  .map(e -> new Smile(e, x, y))
+                  .map(e -> new Smile(e, 100, 100))
                   .collect(Collectors.toList());
          }
       );

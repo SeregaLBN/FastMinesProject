@@ -14,9 +14,8 @@ import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.Rect;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
 import fmg.core.img.ATestDrawing;
 import fmg.core.img.RotatedImg;
@@ -28,15 +27,15 @@ final class TestDrawing extends ATestDrawing {
    static final int SIZE = 300;
    static final int margin = 10;
 
-   static void testApp(Function<Pair<Size, Random>, List<?>> funcGetImages) {
+   static void testApp(Function<Random, List<?>> funcGetImages) {
       new JFrame() {
          private static final long serialVersionUID = 1L;
 
          {
             TestDrawing td = new TestDrawing();
 
-            Rect rc = new Rect(margin, margin, SIZE-margin*2, SIZE-margin*2); // inner rect where drawing images as tiles
-            List<?> images = funcGetImages.apply(new Pair<>(rc.size(), td.getRandom()));
+            RectDouble rc = new RectDouble(margin, margin, SIZE-margin*2, SIZE-margin*2); // inner rect where drawing images as tiles
+            List<?> images = funcGetImages.apply(td.getRandom());
 
             boolean testTransparent = td.bl();
             CellTilingResult ctr = td.cellTiling(rc, images, testTransparent);
@@ -52,8 +51,8 @@ final class TestDrawing extends ATestDrawing {
                @Override
                public void paintComponent(Graphics g) {
                   super.paintComponent(g);
-                  //g.clearRect(rc.x, rc.y, rc.width, rc.height);
-                  g.drawRect(rc.x, rc.y, rc.width, rc.height);
+                  //g.clearRect((int)rc.x, (int)rc.y, (int)rc.width, (int)rc.height);
+                  g.drawRect((int)rc.x, (int)rc.y, (int)rc.width, (int)rc.height);
 
                   Size imgSize = ctr.imageSize;
                   Function<? /* image */, CellTilingInfo> callback = ctr.itemCallback;

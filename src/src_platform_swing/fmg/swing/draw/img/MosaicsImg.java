@@ -1,10 +1,6 @@
 package fmg.swing.draw.img;
 
-import java.awt.AlphaComposite;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Random;
@@ -362,13 +358,12 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(p -> {
-         Random rnd = p.second;
+      TestDrawing.testApp(rnd -> {
          return Stream.of(EMosaic.values())
 //               .map(e -> new Pair<>(new MosaicsImg.Icon (e, new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))),
 //                                    new MosaicsImg.Image(e, new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2)))))
 //               .flatMap(x -> Stream.of(x.first, x.second))
-               .map(e ->  p.second.nextBoolean()
+               .map(e ->  rnd.nextBoolean()
                            ? new MosaicsImg.Icon (e, new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2)))
                            : new MosaicsImg.Image(e, new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))))
                .collect(Collectors.toList());

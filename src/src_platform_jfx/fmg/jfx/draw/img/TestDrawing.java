@@ -5,9 +5,8 @@ import java.util.Random;
 import java.util.function.Function;
 
 import fmg.common.Color;
-import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.Rect;
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
 import fmg.core.img.ATestDrawing;
 import fmg.core.img.ATestDrawing.CellTilingInfo;
@@ -29,7 +28,7 @@ public final class TestDrawing extends Application {
    static final int SIZE = 300;
    static final int margin = 10;
 
-   static Function<Pair<Size, Random>, List<?>> funcGetImages;
+   static Function<Random, List<?>> funcGetImages;
    Canvas canvas;
 
    @Override
@@ -37,8 +36,8 @@ public final class TestDrawing extends Application {
 
       ATestDrawing td = new ATestDrawing() { };
 
-      Rect rc = new Rect(margin, margin, SIZE-margin*2, SIZE-margin*2); // inner rect where drawing images as tiles
-      List<?> images = funcGetImages.apply(new Pair<>(rc.size(), td.getRandom()));
+      RectDouble rc = new RectDouble(margin, margin, SIZE-margin*2, SIZE-margin*2); // inner rect where drawing images as tiles
+      List<?> images = funcGetImages.apply(td.getRandom());
       boolean testTransparent = td.bl();
       CellTilingResult ctr = td.cellTiling(rc, images, testTransparent);
       Size imgSize = ctr.imageSize;
@@ -109,7 +108,7 @@ public final class TestDrawing extends Application {
       primaryStage.show();
    }
 
-   static void testApp(Function<Pair<Size, Random>, List<?>> funcGetImages) {
+   static void testApp(Function<Random, List<?>> funcGetImages) {
       TestDrawing.funcGetImages = funcGetImages;
       launch();
    }

@@ -81,14 +81,14 @@ namespace fmg.core.img {
          public Func<TImageEx, CellTilingInfo> itemCallback;
       }
 
-      public CellTilingResult<TImageEx> CellTiling<TImageEx>(Rect rc, IList<TImageEx> images, bool testTransparent)
+      public CellTilingResult<TImageEx> CellTiling<TImageEx>(RectDouble rc, IList<TImageEx> images, bool testTransparent)
             where TImageEx : class
       {
          int len = images.Count;
          int cols = (int)Math.Round(Math.Sqrt(len) + 0.4999999999); // columns
          int rows = (int)Math.Round(len / (double)cols + 0.4999999999);
-         double dx = rc.Width / (double)cols; // cell tile width
-         double dy = rc.Height / (double)rows; // cell tile height
+         double dx = rc.Width / cols; // cell tile width
+         double dy = rc.Height / rows; // cell tile height
 
          int pad = 2; // cell padding
          double addonX = (cols == 1) ? 0 : !testTransparent ? 0 : dx / 4; // test intersection

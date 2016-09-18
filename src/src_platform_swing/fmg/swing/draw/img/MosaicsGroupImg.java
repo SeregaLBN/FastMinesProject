@@ -134,7 +134,7 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(p ->
+      TestDrawing.testApp(rnd ->
          Stream.concat(Stream.of((EMosaicGroup)null),
                        Stream.of(EMosaicGroup.values()))
                .map(e -> new Pair<>(new MosaicsGroupImg.Icon (e),

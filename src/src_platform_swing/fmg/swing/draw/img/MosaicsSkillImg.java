@@ -132,7 +132,7 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(p ->
+      TestDrawing.testApp(rnd ->
          Stream.concat(Stream.of((ESkillLevel)null),
                        Stream.of(ESkillLevel.values()))
                .map(e -> new Pair<>(new MosaicsSkillImg.Icon (e),
