@@ -2,23 +2,26 @@ package fmg.core.img;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.HSV;
-import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
 
-public interface ITestDrawing {
+public abstract class ATestDrawing {
 
-   Random getRandom();
-   default int r(int max) { return getRandom().nextInt(max); }
-   default boolean bl() { return getRandom().nextBoolean(); } // random bool
-   default int np() { return (bl() ? -1 : +1); } // negative or positive
+   private static final Random rnd = new Random(UUID.randomUUID().hashCode());
+   public Random getRandom() { return rnd; }
+   public int r(int max) { return getRandom().nextInt(max); }
+   public boolean bl() { return getRandom().nextBoolean(); } // random bool
+   public int np() { return (bl() ? -1 : +1); } // negative or positive
 
-   default void applyRandom(StaticImg<?> img, boolean testTransparent) {
+   public void applyRandom(StaticImg<?> img, boolean testTransparent) {
       if (img instanceof RotatedImg) {
          RotatedImg<?> rImg = (RotatedImg<?>)img;
          rImg.setRotate(true);
@@ -59,9 +62,21 @@ public interface ITestDrawing {
       }
    }
 
-   default Pair<Size, // image size
-               Function<? /* image */, PointDouble /* image offset */>> // Stream mapper
-           cellTiling(Rect rc, List<?> images, boolean testTransparent)
+   public static class CellTilingInfo {
+      /** index of column */
+      public int i;
+      /** index of row */
+      public int j;
+      public PointDouble imageOffset;
+   }
+
+   public static class CellTilingResult {
+      public Size imageSize;
+      public Size tableSize;
+      public Function<? /* image */, CellTilingInfo> itemCallback;
+   }
+
+   public CellTilingResult cellTiling(Rect rc, List<?> images, boolean testTransparent)
    {
       int len = images.size();
       int cols = (int)Math.round( Math.sqrt(len)  + 0.4999999999); // columns
@@ -75,7 +90,7 @@ public interface ITestDrawing {
       Size imgSize = new Size((int)(dx - 2*pad + addonX),  // dx - 2*pad;
                               (int)(dy - 2*pad + addonY)); // dy - 2*pad;
 
-      Function<? /* image */, PointDouble /* image offset */> mapper = item -> {
+      Function<? /* image */, CellTilingInfo> itemCallback = item -> {
          int pos = images.indexOf(item);
          if (pos == -1)
             throw new RuntimeException("Illegal usage...");
@@ -89,10 +104,28 @@ public interface ITestDrawing {
          if (j == (rows-1))
             offset.y -= addonY;
 
-         return offset;
+         CellTilingInfo cti = new CellTilingInfo();
+         cti.i = i;
+         cti.j = j;
+         cti.imageOffset = offset;
+         return cti;
       };
 
-      return new Pair<>(imgSize, mapper);
+      CellTilingResult ctr = new CellTilingResult();
+      ctr.imageSize = imgSize;
+      ctr.tableSize = new Size(cols, rows);
+      ctr.itemCallback = itemCallback;
+      return ctr;
+   }
+
+   public String getTitle(List<?> images) {
+      return "test paints: " + images.stream()
+         .map(i -> i.getClass().getName())
+         .map(n -> Stream.of(n.split("\\.")).reduce((first, second) -> second).get().replaceAll("\\$", ".") )
+         .collect(Collectors.groupingBy(z -> z))
+         .entrySet().stream()
+         .map(x -> x.getKey())
+         .collect(Collectors.joining(" & "));
    }
 
 }

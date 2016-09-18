@@ -2,17 +2,16 @@ package fmg.jfx.draw.img;
 
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.Rect;
 import fmg.common.geom.Size;
-import fmg.core.img.ITestDrawing;
+import fmg.core.img.ATestDrawing;
+import fmg.core.img.ATestDrawing.CellTilingInfo;
+import fmg.core.img.ATestDrawing.CellTilingResult;
 import fmg.core.img.StaticImg;
 import fmg.jfx.Cast;
 import fmg.jfx.utils.ImgUtils;
@@ -26,13 +25,9 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /** @see {@link MosaicsSkillImg#main}, {@link MosaicsGroupImg#main}, {@link MosaicsImg#main} */
-public final class TestDrawing extends Application implements ITestDrawing {
+public final class TestDrawing extends Application {
    static final int SIZE = 300;
    static final int margin = 10;
-
-   static Random rnd = new Random(UUID.randomUUID().hashCode());
-   @Override
-   public Random getRandom() { return rnd; }
 
    static Function<Pair<Size, Random>, List<?>> funcGetImages;
    Canvas canvas;
@@ -40,14 +35,14 @@ public final class TestDrawing extends Application implements ITestDrawing {
    @Override
    public void start(Stage primaryStage) {
 
+      ATestDrawing td = new ATestDrawing() { };
+
       Rect rc = new Rect(margin, margin, SIZE-margin*2, SIZE-margin*2); // inner rect where drawing images as tiles
-      List<?> images = funcGetImages.apply(new Pair<>(rc.size(), rnd));
-      boolean testTransparent = bl();
-      Pair<Size, // image size
-           Function<? /* image */, PointDouble /* image offset */>> // Stream mapper
-         cellTilings = cellTiling(rc, images, testTransparent);
-      Size imgSize = cellTilings.first;
-      Function<? /* image */, PointDouble /* image offset */> mapper = cellTilings.second;
+      List<?> images = funcGetImages.apply(new Pair<>(rc.size(), td.getRandom()));
+      boolean testTransparent = td.bl();
+      CellTilingResult ctr = td.cellTiling(rc, images, testTransparent);
+      Size imgSize = ctr.imageSize;
+      Function<? /* image */, CellTilingInfo> callback = ctr.itemCallback;
 
       AnimationTimer timer = new AnimationTimer() {
          @Override
@@ -66,8 +61,9 @@ public final class TestDrawing extends Application implements ITestDrawing {
                .forEach(imgObj -> {
 
                   @SuppressWarnings("unchecked")
-                  Function<Object, PointDouble> mapper2 = (Function<Object, PointDouble>)mapper;
-                  PointDouble offset = mapper2.apply(imgObj);
+                  Function<Object, CellTilingInfo> callback2 = (Function<Object, CellTilingInfo>)callback;
+                  CellTilingInfo cti = callback2.apply(imgObj);
+                  PointDouble offset  = cti.imageOffset;
 
                   if (imgObj instanceof StaticImg) {
                      StaticImg<?> simg = (StaticImg<?>)imgObj;
@@ -96,7 +92,7 @@ public final class TestDrawing extends Application implements ITestDrawing {
       images.stream()
          .filter(x -> x instanceof StaticImg)
          .map(x -> (StaticImg<?>)x)
-         .forEach(img -> applyRandom(img, testTransparent) );
+         .forEach(img -> td.applyRandom(img, testTransparent) );
 
       primaryStage.setOnCloseRequest(event -> {
          images.stream()
@@ -105,10 +101,7 @@ public final class TestDrawing extends Application implements ITestDrawing {
             .forEach(img -> img.close() );
       });
 
-      primaryStage.setTitle("test paints: " + images.stream()
-         .map(i -> i.getClass().getName())
-         .map(n -> Stream.of(n.split("\\.")).reduce((first, second) -> second).get().replaceAll("\\$", ".") )
-         .collect(Collectors.joining(" & ")));
+      primaryStage.setTitle(td.getTitle(images));
       primaryStage.setScene(
                       new Scene(
                           new Group(canvas = new Canvas(SIZE, SIZE)),

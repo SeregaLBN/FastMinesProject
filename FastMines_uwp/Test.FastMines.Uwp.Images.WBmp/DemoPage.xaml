@@ -7,9 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid x:Name="_grid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-        <Image VerticalAlignment="Top"
+        <!--<Image VerticalAlignment="Top"
                HorizontalAlignment="Left"
                Source="{x:Bind DemoImg1.Image, Mode=OneWay}"
                Height="{x:Bind DemoImg1.Height, Mode=OneWay}"
@@ -35,7 +35,7 @@
                Source="{x:Bind DemoImg4.Image, Mode=OneWay}"
                Height="{x:Bind DemoImg4.Height, Mode=OneWay}"
                Width="{x:Bind DemoImg4.Width, Mode=OneWay}"
-               Margin="0,0,10,10" />
+               Margin="0,0,10,10" />-->
 
     </Grid>
 </Page>
