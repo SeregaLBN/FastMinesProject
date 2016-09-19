@@ -20,8 +20,7 @@ using fmg.uwp.draw.mosaic.wbmp;
 
 namespace Test.FastMines.Uwp.Images.WBmp {
 
-   public sealed partial class DemoPage : Page
-   {
+   public sealed partial class DemoPage : Page {
 
       class TestDrawing : ATestDrawing { }
 

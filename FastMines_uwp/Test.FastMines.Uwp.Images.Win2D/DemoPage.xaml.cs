@@ -1,16 +1,26 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using Rect = Windows.Foundation.Rect;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using Windows.Foundation.Metadata;
+using Windows.Phone.UI.Input;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
+using fmg.core.mosaic.draw;
 using fmg.data.controller.types;
 using fmg.uwp.utils;
+using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.img.win2d;
+using fmg.uwp.draw.mosaic.win2d;
 using StaticImg                = fmg.core.img.StaticImg<object>;
 using LogoCanvasBmp            = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.        CanvasBitmap     >.CanvasBmp;
 using LogoCanvasImgSrc         = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
@@ -27,15 +37,266 @@ using FlagCanvasImgSrc         = fmg.uwp.draw.img.win2d.Flag<Microsoft.Graphics.
 using MineCanvasBmp            = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
 using MineCanvasImgSrc         = fmg.uwp.draw.img.win2d.Mine.CanvasImgSrc;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
-
 namespace Test.FastMines.Uwp.Images.Win2D {
 
-   /// <summary>
-   /// An empty page that can be used on its own or navigated to within a Frame.
-   /// </summary>
    public sealed partial class DemoPage : Page {
 
+      class TestDrawing : ATestDrawing { }
+
+      TestDrawing _td;
+      Panel _panel;
+      static readonly int margin = 10; // panel margin - padding to inner images
+      Action _onCloseImages;
+      Action[] _onCreateImages; // images factory
+      int _nextCreateImagesIndex;
+
+      #region images Fabrica
+      public void TestLogos1(ICanvasResourceCreator resourceCreator) {
+         TestAppCanvasBmp(rnd => new LogoCanvasBmp[] {
+            new LogoCanvasBmp(resourceCreator),
+            new LogoCanvasBmp(resourceCreator),
+            new LogoCanvasBmp(resourceCreator),
+            new LogoCanvasBmp(resourceCreator)
+         });
+      }
+      public void TestLogos2(ICanvasResourceCreator resourceCreator) {
+         TestAppCanvasImgSrc(rnd => new LogoCanvasImgSrc[] {
+            new LogoCanvasImgSrc(resourceCreator),
+            new LogoCanvasImgSrc(resourceCreator),
+            new LogoCanvasImgSrc(resourceCreator),
+            new LogoCanvasImgSrc(resourceCreator)
+         });
+      }
+      public void TestMosaicsSkillImg1(ICanvasResourceCreator resourceCreator) {
+         TestAppCanvasBmp(rnd => (new MosaicsSkillCanvasBmp[] { new MosaicsSkillCanvasBmp(null, resourceCreator), new MosaicsSkillCanvasBmp(null, resourceCreator) })
+               .Concat(ESkillLevelEx.GetValues()
+                                    .Select(e => new MosaicsSkillCanvasBmp[] { new MosaicsSkillCanvasBmp(e, resourceCreator), new MosaicsSkillCanvasBmp(e, resourceCreator) })
+                                    .SelectMany(m => m)));
+      }
+      public void TestMosaicsSkillImg2(ICanvasResourceCreator resourceCreator) {
+         TestAppCanvasImgSrc(rnd => (new MosaicsSkillCanvasImgSrc[] { new MosaicsSkillCanvasImgSrc(null, resourceCreator), new MosaicsSkillCanvasImgSrc(null, resourceCreator) })
+               .Concat(ESkillLevelEx.GetValues()
+                                    .Select(e => new MosaicsSkillCanvasImgSrc[] { new MosaicsSkillCanvasImgSrc(e, resourceCreator), new MosaicsSkillCanvasImgSrc(e, resourceCreator) })
+                                    .SelectMany(m => m)));
+      }
+      public void TestMosaicsGroupImg1(ICanvasResourceCreator resourceCreator) {
+         TestAppCanvasBmp(rnd => (new MosaicsGroupCanvasBmp[] { new MosaicsGroupCanvasBmp(null, resourceCreator), new MosaicsGroupCanvasBmp(null, resourceCreator) })
+               .Concat(EMosaicGroupEx.GetValues()
+                                     .Select(e => new MosaicsGroupCanvasBmp[] { new MosaicsGroupCanvasBmp(e, resourceCreator), new MosaicsGroupCanvasBmp(e, resourceCreator) })
+                                     .SelectMany(m => m)));
+      }
+      public void TestMosaicsGroupImg2(ICanvasResourceCreator resourceCreator) {
+         TestAppCanvasImgSrc(rnd => (new MosaicsGroupCanvasImgSrc[] { new MosaicsGroupCanvasImgSrc(null, resourceCreator), new MosaicsGroupCanvasImgSrc(null, resourceCreator) })
+               .Concat(EMosaicGroupEx.GetValues()
+                                     .Select(e => new MosaicsGroupCanvasImgSrc[] { new MosaicsGroupCanvasImgSrc(e, resourceCreator), new MosaicsGroupCanvasImgSrc(e, resourceCreator) })
+                                     .SelectMany(m => m)));
+      }
+      public void TestMosaicsImg1(ICanvasResourceCreator resourceCreator) {
+         TestAppCanvasBmp(rnd =>
+            EMosaicEx.GetValues().Select(e => new MosaicsCanvasBmp(e, new Matrisize(3 + _td.R(4), 4 + _td.R(3)), resourceCreator))
+         );
+      }
+      public void TestMosaicsImg2(ICanvasResourceCreator resourceCreator) {
+         TestAppCanvasImgSrc(rnd =>
+            EMosaicEx.GetValues().Select(e => new MosaicsCanvasImgSrc(e, new Matrisize(3 + _td.R(4), 4 + _td.R(3)), resourceCreator))
+         );
+      }
+      public void TestFlag1 (ICanvasResourceCreator resourceCreator) { TestAppCanvasBmp   (rnd => new FlagCanvasBmp    [] { new FlagCanvasBmp    (resourceCreator) }); }
+      public void TestFlag2 (ICanvasResourceCreator resourceCreator) { TestAppCanvasImgSrc(rnd => new FlagCanvasImgSrc [] { new FlagCanvasImgSrc (resourceCreator) }); }
+      public void TestMine1 (ICanvasResourceCreator resourceCreator) { TestAppCanvasBmp   (rnd => new MineCanvasBmp    [] { new MineCanvasBmp    (resourceCreator) }); }
+      public void TestMine2 (ICanvasResourceCreator resourceCreator) { TestAppCanvasImgSrc(rnd => new MineCanvasImgSrc [] { new MineCanvasImgSrc (resourceCreator) }); }
+      public void TestSmile1(ICanvasResourceCreator resourceCreator) {
+         var vals = (SmileCanvasBmp.EType[])Enum.GetValues(typeof(SmileCanvasBmp.EType));
+         TestAppCanvasBmp(rnd =>
+            vals.Select(e => new SmileCanvasBmp(e, resourceCreator))
+         );
+      }
+      public void TestSmile2(ICanvasResourceCreator resourceCreator) {
+         var vals = (SmileCanvasImgSrc.EType[])Enum.GetValues(typeof(SmileCanvasImgSrc.EType));
+         TestAppCanvasImgSrc(rnd =>
+            vals.Select(e => new SmileCanvasImgSrc(e, resourceCreator))
+         );
+      }
+      #endregion
+
+
+      public DemoPage() {
+         _td = new TestDrawing();
+
+         var device = CanvasDevice.GetSharedDevice();
+         _onCreateImages = new Action[] {
+            () => TestLogos1          (device),
+            () => TestLogos2          (device),
+            () => TestMosaicsSkillImg1(device),
+            () => TestMosaicsSkillImg2(device),
+            () => TestMosaicsGroupImg1(device),
+            () => TestMosaicsGroupImg2(device),
+            () => TestMosaicsImg1     (device),
+            () => TestMosaicsImg2     (device),
+            () => TestFlag1           (device),
+            () => TestFlag2           (device),
+            () => TestMine1           (device),
+            () => TestMine2           (device),
+            () => TestSmile1          (device),
+            () => TestSmile2          (device)
+         };
+
+         InitializeComponent();
+
+         _page.Content = _panel = new Canvas();
+
+         SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+         SystemNavigationManager.GetForCurrentView().BackRequested += (s, ev) => OnNewImages();
+         if (ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons")) {
+            HardwareButtons.BackPressed += (s, ev) => OnNewImages();
+         }
+         _page.Loaded   += (s, ev) => OnNewImages();
+         _page.Unloaded += (s, ev) => _onCloseImages();
+      }
+
+      #region main part
+      void TestAppCanvasBmp<TImageEx>(Func<Random, IEnumerable<TImageEx>> funcGetImages)
+         where TImageEx : class
+      {
+         TestApp<TImageEx, PaintableWin2D, Microsoft.Graphics.Canvas.CanvasBitmap, PaintUwpContext<CanvasBitmap>, CanvasBitmap>(funcGetImages);
+      }
+      void TestAppCanvasImgSrc<TImageEx>(Func<Random, IEnumerable<TImageEx>> funcGetImages)
+         where TImageEx : class
+      {
+         TestApp<TImageEx, PaintableWin2D, Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource, PaintUwpContext<CanvasBitmap>, CanvasBitmap>(funcGetImages);
+      }
+
+      void TestApp<TImageEx, TPaintable, TImage, TPaintContext, TImageInner>(Func<Random, IEnumerable<TImageEx>> funcGetImages)
+         where TImageEx : class
+         where TPaintable : IPaintable
+         where TImage : DependencyObject, ICanvasResourceCreator
+         where TImageInner : class
+         where TPaintContext : PaintContext<TImageInner>
+      {
+         _panel.Children.Clear();
+         List<TImageEx> images = funcGetImages(_td.GetRandom).ToList();
+
+         bool testTransparent = _td.Bl;
+         images.Select(x => x as StaticImg<TImage>)
+            .Where(x => x != null)
+            .ToList()
+            .ForEach(img => _td.ApplyRandom<TPaintable, TImage, TPaintContext, TImageInner>(img, testTransparent));
+
+         Image[,] imgControls;
+
+         {
+            double sizeW = _panel.ActualWidth;  if (sizeW <= 0) sizeW = 100;
+            double sizeH = _panel.ActualHeight; if (sizeH <= 0) sizeH = 100;
+            RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
+
+            ATestDrawing.CellTilingResult<TImageEx> ctr = _td.CellTiling(rc, images, testTransparent);
+            Size imgSize = ctr.imageSize;
+            imgControls = new Image[ctr.tableSize.Width, ctr.tableSize.Height];
+
+            var callback = ctr.itemCallback;
+            foreach (var imgObj in images) {
+               ATestDrawing.CellTilingInfo cti = callback(imgObj);
+               PointDouble offset = cti.imageOffset;
+
+               Image imgCntrl = new Image {
+                  Margin = new Thickness {
+                     Left = offset.X,
+                     Top = offset.Y
+                  },
+                  Stretch = Stretch.None
+               };
+
+               if (imgObj is StaticImg<TImage>) {
+                  StaticImg<TImage> simg = imgObj as StaticImg<TImage>;
+                  simg.Size = imgSize;
+
+                  imgCntrl.SetBinding(Image.SourceProperty, new Binding {
+                     Source = simg,
+                     Path = new PropertyPath(nameof(StaticImg<TImage>.Image)),
+                     Mode = BindingMode.OneWay
+                  });
+               } else
+               if (imgObj is Flag<TImage>) {
+                  imgCntrl.SetBinding(Image.SourceProperty, new Binding {
+                     Source = imgObj,
+                     Path = new PropertyPath(nameof(Flag<TImage>.Image)),
+                     Mode = BindingMode.OneWay
+                  });
+               } else
+               if (imgObj is Smile<TImage>) {
+                  imgCntrl.SetBinding(Image.SourceProperty, new Binding {
+                     Source = imgObj,
+                     Path = new PropertyPath(nameof(Smile<TImage>.Image)),
+                     Mode = BindingMode.OneWay
+                  });
+               } else {
+                  throw new Exception("Unsupported image type");
+               }
+
+               _panel.Children.Add(imgCntrl);
+               imgControls[cti.i, cti.j] = imgCntrl;
+            }
+         }
+
+         _panel.SizeChanged += (s, ev) => {
+            double sizeW = ev.NewSize.Width;
+            double sizeH = ev.NewSize.Height;
+            RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
+
+            ATestDrawing.CellTilingResult<TImageEx> ctr = _td.CellTiling(rc, images, testTransparent);
+            Size imgSize = ctr.imageSize;
+
+            var callback = ctr.itemCallback;
+            foreach (var imgObj in images) {
+               ATestDrawing.CellTilingInfo cti = callback(imgObj);
+               PointDouble offset = cti.imageOffset;
+
+               if (imgObj is StaticImg<TImage>) {
+                  StaticImg<TImage> simg = imgObj as StaticImg<TImage>;
+                  simg.Size = imgSize;
+               } else
+               if (imgObj is Flag<TImage>) {
+                  // none
+               } else
+               if (imgObj is Smile<TImage>) {
+                  // none
+               } else {
+                  throw new Exception("Unsupported image type");
+               }
+
+               imgControls[cti.i, cti.j].Margin = new Thickness {
+                  Left = offset.X,
+                  Top = offset.Y
+               };
+            }
+         };
+
+         _onCloseImages = () => {
+            images.Select(x => x as StaticImg<TImage>)
+               .Where(x => x != null)
+               .ToList()
+               .ForEach(img => img.Dispose());
+            images.Clear();
+            images = null;
+            imgControls = null;
+         };
+      }
+      #endregion
+
+
+      void OnNewImages() {
+         _onCloseImages?.Invoke();
+
+         Action onCreate = _onCreateImages[_nextCreateImagesIndex];
+         if (++_nextCreateImagesIndex >= _onCreateImages.Length)
+            _nextCreateImagesIndex = 0;
+         onCreate();
+      }
+
+      public void Animation(bool enable) {
+      }
+
+/*
       private readonly LogoCanvasBmp            Bmp1;
       private readonly MosaicsSkillCanvasBmp    Bmp2;
       private readonly MosaicsGroupCanvasBmp    Bmp3;
@@ -237,7 +498,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                   NextImg5();
                });
       }
-
+*/
    }
 
 }

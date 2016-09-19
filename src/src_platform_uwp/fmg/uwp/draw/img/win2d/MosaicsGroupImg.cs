@@ -25,7 +25,7 @@ namespace fmg.uwp.draw.img.win2d {
 
       protected readonly ICanvasResourceCreator _rc;
 
-      /// <param name="skill">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
+      /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
       protected MosaicsGroupImg(EMosaicGroup? group, ICanvasResourceCreator resourceCreator)
          : base(group)
       {
@@ -91,7 +91,8 @@ namespace fmg.uwp.draw.img.win2d {
       /// </summary>
       public class CanvasBmp : MosaicsGroupImg<CanvasBitmap> {
 
-         public CanvasBmp(EMosaicGroup group, ICanvasResourceCreator resourceCreator)
+         /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
+         public CanvasBmp(EMosaicGroup? group, ICanvasResourceCreator resourceCreator)
             : base(group, resourceCreator)
          { }
 
@@ -113,7 +114,8 @@ namespace fmg.uwp.draw.img.win2d {
       /// </summary>
       public class CanvasImgSrc : MosaicsGroupImg<CanvasImageSource> {
 
-         public CanvasImgSrc(EMosaicGroup group, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+         /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
+         public CanvasImgSrc(EMosaicGroup? group, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
             : base(group, resourceCreator)
          { }
 
