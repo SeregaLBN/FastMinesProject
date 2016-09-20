@@ -16,6 +16,7 @@ import fmg.jfx.Cast;
 import fmg.jfx.utils.ImgUtils;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -25,7 +26,7 @@ import javafx.stage.Stage;
 
 /** @see {@link MosaicsSkillImg#main}, {@link MosaicsGroupImg#main}, {@link MosaicsImg#main} */
 public final class TestDrawing extends Application {
-   static final int SIZE = 300;
+
    static final int margin = 10;
 
    static Function<Random, List<?>> funcGetImages;
@@ -36,33 +37,59 @@ public final class TestDrawing extends Application {
 
       ATestDrawing td = new ATestDrawing() { };
 
-      RectDouble rc = new RectDouble(margin, margin, SIZE-margin*2, SIZE-margin*2); // inner rect where drawing images as tiles
       List<?> images = funcGetImages.apply(td.getRandom());
       boolean testTransparent = td.bl();
-      CellTilingResult ctr = td.cellTiling(rc, images, testTransparent);
-      Size imgSize = ctr.imageSize;
-      Function<? /* image */, CellTilingInfo> callback = ctr.itemCallback;
+      final RectDouble[] rc = { new RectDouble() };
+      final CellTilingResult[] ctr = { new CellTilingResult() };
+
+      ChangeListener<Number> onSize = (observable, oldValue, newValue) -> {
+         double w = primaryStage.widthProperty().doubleValue();
+         double h = primaryStage.heightProperty().doubleValue();
+         if (Double.isNaN(w) || Double.isNaN(h))
+            return;
+         w -= 2*margin; // ???
+         h -= 4*margin; // ???
+         canvas.setWidth(w);
+         canvas.setHeight(h);
+         rc[0] = new RectDouble(margin, margin, w-margin*2, h-margin*2); // inner rect where drawing images as tiles
+         ctr[0] = td.cellTiling(rc[0], images, testTransparent);
+      };
+      primaryStage.widthProperty().addListener(onSize);
+      primaryStage.heightProperty().addListener(onSize);
 
       AnimationTimer timer = new AnimationTimer() {
+
          @Override
          public void handle(long now) {
+            if (rc[0] == null)
+               return;
+
+            if ((rc[0].width <= 0) || (rc[0].height <= 0))
+               return;
+
+            Size imgSize = ctr[0].imageSize;
+            if ((imgSize.width <= 0) || (imgSize.height <= 0))
+               return;
+
             GraphicsContext gc = canvas.getGraphicsContext2D();
             gc.setLineWidth(1);
 //            gc.setFill(javafx.scene.paint.Color.WHITE);
-//            gc.fillRect(rc.x, rc.y, rc.width, rc.height);
-          //gc.clearRect(rc.x, rc.y, rc.width, rc.height);
+//            gc.fillRect(rc[0].x, rc[0].y, rc[0].width, rc[0].height);
+//            gc.clearRect(rc[0].x, rc[0].y, rc[0].width, rc[0].height);
+            gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
             gc.setStroke(Cast.toColor(Color.DarkGray));
-            gc.strokeRect(rc.x, rc.y, rc.width, rc.height);
+            gc.strokeRect(rc[0].x, rc[0].y, rc[0].width, rc[0].height);
           //gc.setGlobalBlendMode(BlendMode.SRC_OVER); // see https://bugs.openjdk.java.net/browse/JDK-8092156
 
+//            if (!false) return;
             images.stream()
                .map(x -> (Object)x)
                .forEach(imgObj -> {
 
                   @SuppressWarnings("unchecked")
-                  Function<Object, CellTilingInfo> callback2 = (Function<Object, CellTilingInfo>)callback;
-                  CellTilingInfo cti = callback2.apply(imgObj);
-                  PointDouble offset  = cti.imageOffset;
+                  Function<Object, CellTilingInfo> callback = (Function<Object, CellTilingInfo>)ctr[0].itemCallback;
+                  CellTilingInfo cti = callback.apply(imgObj);
+                  PointDouble offset = cti.imageOffset;
 
                   if (imgObj instanceof StaticImg) {
                      StaticImg<?> simg = (StaticImg<?>)imgObj;
@@ -101,10 +128,7 @@ public final class TestDrawing extends Application {
       });
 
       primaryStage.setTitle(td.getTitle(images));
-      primaryStage.setScene(
-                      new Scene(
-                          new Group(canvas = new Canvas(SIZE, SIZE)),
-                          SIZE, SIZE));
+      primaryStage.setScene(new Scene(new Group(canvas = new Canvas(300, 300))));
       primaryStage.show();
    }
 

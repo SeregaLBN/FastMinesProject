@@ -3,6 +3,8 @@ package fmg.swing.draw.img;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeListener;
@@ -20,11 +22,10 @@ import fmg.common.geom.Size;
 import fmg.core.img.ATestDrawing;
 import fmg.core.img.RotatedImg;
 import fmg.core.img.StaticImg;
-import fmg.swing.utils.ImgUtils;
 
 /** @see {@link MosaicsSkillImg#main}, {@link MosaicsGroupImg#main}, {@link MosaicsImg#main} */
 final class TestDrawing extends ATestDrawing {
-   static final int SIZE = 300;
+
    static final int margin = 10;
 
    static void testApp(Function<Random, List<?>> funcGetImages) {
@@ -34,35 +35,45 @@ final class TestDrawing extends ATestDrawing {
          {
             TestDrawing td = new TestDrawing();
 
-            RectDouble rc = new RectDouble(margin, margin, SIZE-margin*2, SIZE-margin*2); // inner rect where drawing images as tiles
             List<?> images = funcGetImages.apply(td.getRandom());
 
             boolean testTransparent = td.bl();
-            CellTilingResult ctr = td.cellTiling(rc, images, testTransparent);
+
+
+            final RectDouble[] rc = new RectDouble[1];
+            final CellTilingResult[] ctr = new CellTilingResult[1];
 
             JPanel jPanel = new JPanel() {
 
                private static final long serialVersionUID = 1L;
 
                {
-                  setPreferredSize(new Dimension(SIZE, SIZE));
+                  setPreferredSize(new Dimension(300, 300));
                }
 
                @Override
                public void paintComponent(Graphics g) {
                   super.paintComponent(g);
-                  //g.clearRect((int)rc.x, (int)rc.y, (int)rc.width, (int)rc.height);
-                  g.drawRect((int)rc.x, (int)rc.y, (int)rc.width, (int)rc.height);
+                  if (rc[0] == null)
+                     return;
 
-                  Size imgSize = ctr.imageSize;
-                  Function<? /* image */, CellTilingInfo> callback = ctr.itemCallback;
+                  if ((rc[0].width <= 0) || (rc[0].height <= 0))
+                     return;
+
+                //g.clearRect((int)rc[0].x, (int)rc[0].y, (int)rc[0].width, (int)rc[0].height);
+                  g.drawRect((int)rc[0].x, (int)rc[0].y, (int)rc[0].width, (int)rc[0].height);
+
+                  Size imgSize = ctr[0].imageSize;
+                  if ((imgSize.width <= 0) || (imgSize.height <= 0))
+                     return;
+
                   images.stream()
                      .map(x -> (Object)x)
                      .forEach(imgObj -> {
 
                         @SuppressWarnings("unchecked")
-                        Function<Object, CellTilingInfo> callback2 = (Function<Object, CellTilingInfo>)callback;
-                        CellTilingInfo cti = callback2.apply(imgObj);
+                        Function<Object, CellTilingInfo> callback = (Function<Object, CellTilingInfo>)ctr[0].itemCallback;
+                        CellTilingInfo cti = callback.apply(imgObj);
                         PointDouble offset = cti.imageOffset;
 
                         if (imgObj instanceof StaticImg) {
@@ -73,12 +84,12 @@ final class TestDrawing extends ATestDrawing {
 
                         if (imgObj instanceof Icon) {
                            Icon ico = (Icon)imgObj;
-                           ico = ImgUtils.zoom(ico, imgSize.width, imgSize.height);
+                         //ico = ImgUtils.zoom(ico, imgSize.width, imgSize.height);
                            ico.paintIcon(null, g, (int)offset.x, (int)offset.y);
                         } else
                         if (imgObj instanceof Image) {
                            Image img = (Image)imgObj;
-                           img = ImgUtils.zoom(img, imgSize.width, imgSize.height);
+                         //img = ImgUtils.zoom(img, imgSize.width, imgSize.height);
                            g.drawImage(img, (int)offset.x, (int)offset.y, null);
                         } else
                            throw new IllegalArgumentException("Not supported image type is " + imgObj.getClass().getName());
@@ -86,6 +97,15 @@ final class TestDrawing extends ATestDrawing {
                }
             };
             add(jPanel);
+
+            jPanel.addComponentListener(new ComponentAdapter() {
+                @Override
+                public void componentResized(ComponentEvent ev) {
+                    Dimension size = jPanel.getSize();
+                    rc[0] = new RectDouble(margin, margin, size.getWidth()-margin*2, size.getHeight()-margin*2); // inner rect where drawing images as tiles
+                    ctr[0] = td.cellTiling(rc[0], images, testTransparent);
+                }
+            });
 
             PropertyChangeListener l = evt -> {
                if (RotatedImg.PROPERTY_IMAGE.equals(evt.getPropertyName())) {
