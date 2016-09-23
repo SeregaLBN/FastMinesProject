@@ -124,11 +124,21 @@ namespace fmg.core.img {
          };
       }
 
-      string getTitle<TImage>(List<TImage> images)
+      public string GetTitle<TImage>(List<TImage> images)
          where TImage : class
       {
+         Func<Type, string> friendlyName = type => {
+            if (type.IsConstructedGenericType) {
+               var namePrefix = type.Name.Split(new[] { '`' }, StringSplitOptions.RemoveEmptyEntries)[0];
+               Type decType = type.DeclaringType;
+               var namePrefixDec = decType.Name.Split(new[] { '`' }, StringSplitOptions.RemoveEmptyEntries)[0];
+               return namePrefixDec + '.' + namePrefix;
+            }
+            return type.Name;
+         };
+
          return "test paints: " + string.Join(" & ", images
-            .Select(i => i.GetType().Name)
+            .Select(i => friendlyName(i.GetType()))
             .GroupBy(x => x)
             .Select(x => x.First()));
       }

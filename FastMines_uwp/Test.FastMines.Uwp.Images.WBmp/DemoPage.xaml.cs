@@ -7,6 +7,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.ViewManagement;
 using Windows.Foundation.Metadata;
 using Windows.Phone.UI.Input;
 using fmg.common.geom;
@@ -96,6 +97,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       {
          _panel.Children.Clear();
          List<TImageEx> images = funcGetImages(_td.GetRandom).ToList();
+         ApplicationView.GetForCurrentView().Title = _td.GetTitle(images);
 
          bool testTransparent = _td.Bl;
          images.Select(x => x as StaticImg<TImage>)
@@ -166,7 +168,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
             }
          }
 
-         _panel.SizeChanged += (s, ev) => {
+         SizeChangedEventHandler sceh = (s, ev) => {
             double sizeW = ev.NewSize.Width;
             double sizeH = ev.NewSize.Height;
             RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
@@ -201,8 +203,10 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                };
             }
          };
+         _panel.SizeChanged += sceh;
 
          _onCloseImages = () => {
+            _panel.SizeChanged -= sceh;
             images.Select(x => x as StaticImg<TImage>)
                .Where(x => x != null)
                .ToList()

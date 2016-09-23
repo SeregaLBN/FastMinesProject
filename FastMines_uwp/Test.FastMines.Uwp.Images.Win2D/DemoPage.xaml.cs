@@ -7,24 +7,24 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.ViewManagement;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Windows.Foundation.Metadata;
 using Windows.Phone.UI.Input;
-using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
 using fmg.core.mosaic.draw;
 using fmg.data.controller.types;
-using fmg.uwp.utils;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.img.win2d;
 using fmg.uwp.draw.mosaic.win2d;
-using StaticImg                = fmg.core.img.StaticImg<object>;
+using StaticCanvasBmp          = fmg.core.img.StaticImg<Microsoft.Graphics.Canvas.        CanvasBitmap     >;
+using StaticCanvasImgSrc       = fmg.core.img.StaticImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>;
 using LogoCanvasBmp            = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.        CanvasBitmap     >.CanvasBmp;
 using LogoCanvasImgSrc         = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using MosaicsSkillCanvasBmp    = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.        CanvasBitmap     >.CanvasBmp;
+using MosaicsSkillCanvasBmp    = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasBmp;
 using MosaicsSkillCanvasImgSrc = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
 using MosaicsGroupCanvasBmp    = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.        CanvasBitmap     >.CanvasBmp;
 using MosaicsGroupCanvasImgSrc = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
@@ -49,6 +49,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       Action _onCloseImages;
       Action[] _onCreateImages; // images factory
       int _nextCreateImagesIndex;
+      bool _enableAnimation;
 
       #region images Fabrica
       public void TestLogos1(ICanvasResourceCreator resourceCreator) {
@@ -158,12 +159,12 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       void TestAppCanvasBmp<TImageEx>(Func<Random, IEnumerable<TImageEx>> funcGetImages)
          where TImageEx : class
       {
-         TestApp<TImageEx, PaintableWin2D, Microsoft.Graphics.Canvas.CanvasBitmap, PaintUwpContext<CanvasBitmap>, CanvasBitmap>(funcGetImages);
+         TestApp<TImageEx, PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>, CanvasBitmap>(funcGetImages);
       }
       void TestAppCanvasImgSrc<TImageEx>(Func<Random, IEnumerable<TImageEx>> funcGetImages)
          where TImageEx : class
       {
-         TestApp<TImageEx, PaintableWin2D, Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource, PaintUwpContext<CanvasBitmap>, CanvasBitmap>(funcGetImages);
+         TestApp<TImageEx, PaintableWin2D, CanvasImageSource, PaintUwpContext<CanvasBitmap>, CanvasBitmap>(funcGetImages);
       }
 
       void TestApp<TImageEx, TPaintable, TImage, TPaintContext, TImageInner>(Func<Random, IEnumerable<TImageEx>> funcGetImages)
@@ -175,6 +176,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       {
          _panel.Children.Clear();
          List<TImageEx> images = funcGetImages(_td.GetRandom).ToList();
+         ApplicationView.GetForCurrentView().Title = _td.GetTitle(images);
 
          bool testTransparent = _td.Bl;
          images.Select(x => x as StaticImg<TImage>)
@@ -182,7 +184,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
             .ToList()
             .ForEach(img => _td.ApplyRandom<TPaintable, TImage, TPaintContext, TImageInner>(img, testTransparent));
 
-         Image[,] imgControls;
+         FrameworkElement[,] imgControls;
 
          {
             double sizeW = _panel.ActualWidth;  if (sizeW <= 0) sizeW = 100;
@@ -191,45 +193,135 @@ namespace Test.FastMines.Uwp.Images.Win2D {
 
             ATestDrawing.CellTilingResult<TImageEx> ctr = _td.CellTiling(rc, images, testTransparent);
             Size imgSize = ctr.imageSize;
-            imgControls = new Image[ctr.tableSize.Width, ctr.tableSize.Height];
+            imgControls = new FrameworkElement[ctr.tableSize.Width, ctr.tableSize.Height];
 
             var callback = ctr.itemCallback;
             foreach (var imgObj in images) {
                ATestDrawing.CellTilingInfo cti = callback(imgObj);
                PointDouble offset = cti.imageOffset;
 
-               Image imgCntrl = new Image {
-                  Margin = new Thickness {
-                     Left = offset.X,
-                     Top = offset.Y
-                  },
-                  Stretch = Stretch.None
-               };
+               FrameworkElement imgCntrl = null;
+               #region CanvasImageSource
+               if (typeof(TImage) == typeof(CanvasImageSource)) {
+                  imgCntrl = new Image {
+                     Margin = new Thickness {
+                        Left = offset.X,
+                        Top = offset.Y
+                     },
+                     Stretch = Stretch.None
+                  };
 
-               if (imgObj is StaticImg<TImage>) {
-                  StaticImg<TImage> simg = imgObj as StaticImg<TImage>;
-                  simg.Size = imgSize;
+                  if (imgObj is StaticCanvasImgSrc) {
+                     StaticCanvasImgSrc simg = imgObj as StaticCanvasImgSrc;
+                     simg.Size = imgSize;
 
-                  imgCntrl.SetBinding(Image.SourceProperty, new Binding {
-                     Source = simg,
-                     Path = new PropertyPath(nameof(StaticImg<TImage>.Image)),
-                     Mode = BindingMode.OneWay
-                  });
+                     imgCntrl.SetBinding(Image.SourceProperty, new Binding {
+                        Source = simg,
+                        Path = new PropertyPath(nameof(StaticCanvasImgSrc.Image)),
+                        Mode = BindingMode.OneWay
+                     });
+                  } else
+                  if (imgObj is FlagCanvasImgSrc) {
+                     imgCntrl.SetBinding(Image.SourceProperty, new Binding {
+                        Source = imgObj,
+                        Path = new PropertyPath(nameof(FlagCanvasImgSrc.Image)),
+                        Mode = BindingMode.OneWay
+                     });
+                  } else
+                  if (imgObj is SmileCanvasImgSrc) {
+                     imgCntrl.SetBinding(Image.SourceProperty, new Binding {
+                        Source = imgObj,
+                        Path = new PropertyPath(nameof(SmileCanvasImgSrc.Image)),
+                        Mode = BindingMode.OneWay
+                     });
+                  } else {
+                     throw new Exception("Unsupported image type");
+                  }
+
                } else
-               if (imgObj is Flag<TImage>) {
-                  imgCntrl.SetBinding(Image.SourceProperty, new Binding {
-                     Source = imgObj,
-                     Path = new PropertyPath(nameof(Flag<TImage>.Image)),
-                     Mode = BindingMode.OneWay
-                  });
+               #endregion
+               #region CanvasBitmap
+               if (typeof(TImage) == typeof(CanvasBitmap)) {
+                  var cnvsCtrl= new CanvasControl {
+                     Margin = new Thickness {
+                        Left = offset.X,
+                        Top = offset.Y
+                     },
+                     //ClearColor = ColorExt.RandomColor(_td.GetRandom).Brighter().ToWinColor(),
+                  };
+                  imgCntrl = cnvsCtrl;
+
+                  if (imgObj is StaticCanvasBmp) {
+                     StaticCanvasBmp simg = imgObj as StaticCanvasBmp;
+                     simg.Size = imgSize;
+                     simg.PropertyChanged += (s, ev) => {
+                        if (ev.PropertyName == nameof(simg.Image))
+                           cnvsCtrl.Invalidate();
+                     };
+                     cnvsCtrl.SetBinding(CanvasControl.WidthProperty, new Binding {
+                        Source = simg,
+                        Path = new PropertyPath(nameof(StaticCanvasBmp.Width)),
+                        Mode = BindingMode.OneWay
+                     });
+                     cnvsCtrl.SetBinding(CanvasControl.HeightProperty, new Binding {
+                        Source = simg,
+                        Path = new PropertyPath(nameof(StaticCanvasBmp.Height)),
+                        Mode = BindingMode.OneWay
+                     });
+                  } else
+                  if (imgObj is FlagCanvasBmp) {
+                     FlagCanvasBmp fimg = imgObj as FlagCanvasBmp;
+                     fimg.Width = imgSize.Width;
+                     fimg.Height = imgSize.Height;
+                     cnvsCtrl.SetBinding(CanvasControl.WidthProperty, new Binding {
+                        Source = fimg,
+                        Path = new PropertyPath(nameof(FlagCanvasBmp.Width)),
+                        Mode = BindingMode.OneWay
+                     });
+                     cnvsCtrl.SetBinding(CanvasControl.HeightProperty, new Binding {
+                        Source = fimg,
+                        Path = new PropertyPath(nameof(FlagCanvasBmp.Height)),
+                        Mode = BindingMode.OneWay
+                     });
+                  } else
+                  if (imgObj is SmileCanvasBmp) {
+                     SmileCanvasBmp simg = imgObj as SmileCanvasBmp;
+                     simg.Width = imgSize.Width;
+                     simg.Height = imgSize.Height;
+                     cnvsCtrl.SetBinding(CanvasControl.WidthProperty, new Binding {
+                        Source = simg,
+                        Path = new PropertyPath(nameof(SmileCanvasBmp.Width)),
+                        Mode = BindingMode.OneWay
+                     });
+                     cnvsCtrl.SetBinding(CanvasControl.HeightProperty, new Binding {
+                        Source = simg,
+                        Path = new PropertyPath(nameof(SmileCanvasBmp.Height)),
+                        Mode = BindingMode.OneWay
+                     });
+                  } else {
+                     throw new Exception("Unsupported image type");
+                  }
+
+                  cnvsCtrl.Draw += (s, ev) => {
+
+                     CanvasBitmap cnvsBmp;
+                     if (imgObj is StaticCanvasBmp) {
+                        cnvsBmp = (imgObj as StaticCanvasBmp).Image;
+                     } else
+                     if (imgObj is FlagCanvasBmp) {
+                        cnvsBmp = (imgObj as FlagCanvasBmp).Image;
+                     } else
+                     if (imgObj is SmileCanvasBmp) {
+                        cnvsBmp = (imgObj as SmileCanvasBmp).Image;
+                     } else {
+                        throw new Exception("Unsupported image type");
+                     }
+
+                     ev.DrawingSession.DrawImage(cnvsBmp, new Rect(0, 0, cnvsCtrl.Width, cnvsCtrl.Height));
+                  };
                } else
-               if (imgObj is Smile<TImage>) {
-                  imgCntrl.SetBinding(Image.SourceProperty, new Binding {
-                     Source = imgObj,
-                     Path = new PropertyPath(nameof(Smile<TImage>.Image)),
-                     Mode = BindingMode.OneWay
-                  });
-               } else {
+               #endregion
+               {
                   throw new Exception("Unsupported image type");
                }
 
@@ -238,7 +330,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
             }
          }
 
-         _panel.SizeChanged += (s, ev) => {
+         SizeChangedEventHandler sceh = (s, ev) => {
             double sizeW = ev.NewSize.Width;
             double sizeH = ev.NewSize.Height;
             RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
@@ -256,10 +348,14 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                   simg.Size = imgSize;
                } else
                if (imgObj is Flag<TImage>) {
-                  // none
+                  Flag<TImage> fimg = imgObj as Flag<TImage>;
+                  fimg.Width = imgSize.Width;
+                  fimg.Height = imgSize.Height;
                } else
                if (imgObj is Smile<TImage>) {
-                  // none
+                  Smile<TImage> simg = imgObj as Smile<TImage>;
+                  simg.Width = imgSize.Width;
+                  simg.Height = imgSize.Height;
                } else {
                   throw new Exception("Unsupported image type");
                }
@@ -270,8 +366,10 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                };
             }
          };
+         _panel.SizeChanged += sceh;
 
          _onCloseImages = () => {
+            _panel.SizeChanged -= sceh;
             images.Select(x => x as StaticImg<TImage>)
                .Where(x => x != null)
                .ToList()
