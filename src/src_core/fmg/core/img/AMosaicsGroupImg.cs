@@ -197,7 +197,7 @@ namespace fmg.core.img {
                                                             45 // try to view: angleAccumulative
                                                             )));
             })
-            .OrderBy(x => x.Item1)
+            .OrderBy(x => -x.Item1)
             .Select(x => x.Item2);
       }
 

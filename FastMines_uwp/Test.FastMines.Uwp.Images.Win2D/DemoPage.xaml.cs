@@ -175,10 +175,10 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          where TPaintContext : PaintContext<TImageInner>
       {
          _panel.Children.Clear();
-         List<TImageEx> images = funcGetImages(_td.GetRandom).ToList();
+         var images = funcGetImages(_td.GetRandom).ToList();
          ApplicationView.GetForCurrentView().Title = _td.GetTitle(images);
 
-         bool testTransparent = _td.Bl;
+         var testTransparent = _td.Bl;
          images.Select(x => x as StaticImg<TImage>)
             .Where(x => x != null)
             .ToList()
@@ -187,18 +187,18 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          FrameworkElement[,] imgControls;
 
          {
-            double sizeW = _panel.ActualWidth;  if (sizeW <= 0) sizeW = 100;
-            double sizeH = _panel.ActualHeight; if (sizeH <= 0) sizeH = 100;
-            RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
+            var sizeW = _panel.ActualWidth;  if (sizeW <= 0) sizeW = 100;
+            var sizeH = _panel.ActualHeight; if (sizeH <= 0) sizeH = 100;
+            var rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
-            ATestDrawing.CellTilingResult<TImageEx> ctr = _td.CellTiling(rc, images, testTransparent);
-            Size imgSize = ctr.imageSize;
+            var ctr = _td.CellTiling(rc, images, testTransparent);
+            var imgSize = ctr.imageSize;
             imgControls = new FrameworkElement[ctr.tableSize.Width, ctr.tableSize.Height];
 
             var callback = ctr.itemCallback;
             foreach (var imgObj in images) {
-               ATestDrawing.CellTilingInfo cti = callback(imgObj);
-               PointDouble offset = cti.imageOffset;
+               var cti = callback(imgObj);
+               var offset = cti.imageOffset;
 
                FrameworkElement imgCntrl = null;
                #region CanvasImageSource
@@ -212,7 +212,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                   };
 
                   if (imgObj is StaticCanvasImg) {
-                     StaticCanvasImg simg = imgObj as StaticCanvasImg;
+                     var simg = imgObj as StaticCanvasImg;
                      simg.Size = imgSize;
 
                      imgCntrl.SetBinding(Image.SourceProperty, new Binding {
@@ -252,7 +252,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                   imgCntrl = cnvsCtrl;
 
                   if (imgObj is StaticCanvasBmp) {
-                     StaticCanvasBmp simg = imgObj as StaticCanvasBmp;
+                     var simg = imgObj as StaticCanvasBmp;
                      simg.Size = imgSize;
                      simg.PropertyChanged += (s, ev) => {
                         if (ev.PropertyName == nameof(simg.Image))
@@ -270,7 +270,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                      });
                   } else
                   if (imgObj is FlagCanvasBmp) {
-                     FlagCanvasBmp fimg = imgObj as FlagCanvasBmp;
+                     var fimg = imgObj as FlagCanvasBmp;
                      fimg.Width = imgSize.Width;
                      fimg.Height = imgSize.Height;
                      cnvsCtrl.SetBinding(CanvasControl.WidthProperty, new Binding {
@@ -285,7 +285,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                      });
                   } else
                   if (imgObj is SmileCanvasBmp) {
-                     SmileCanvasBmp simg = imgObj as SmileCanvasBmp;
+                     var simg = imgObj as SmileCanvasBmp;
                      simg.Width = imgSize.Width;
                      simg.Height = imgSize.Height;
                      cnvsCtrl.SetBinding(CanvasControl.WidthProperty, new Binding {
@@ -331,29 +331,29 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          }
 
          SizeChangedEventHandler sceh = (s, ev) => {
-            double sizeW = ev.NewSize.Width;
-            double sizeH = ev.NewSize.Height;
-            RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
+            var sizeW = ev.NewSize.Width;
+            var sizeH = ev.NewSize.Height;
+            var rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
-            ATestDrawing.CellTilingResult<TImageEx> ctr = _td.CellTiling(rc, images, testTransparent);
-            Size imgSize = ctr.imageSize;
+            var ctr = _td.CellTiling(rc, images, testTransparent);
+            var imgSize = ctr.imageSize;
 
             var callback = ctr.itemCallback;
             foreach (var imgObj in images) {
-               ATestDrawing.CellTilingInfo cti = callback(imgObj);
-               PointDouble offset = cti.imageOffset;
+               var cti = callback(imgObj);
+               var offset = cti.imageOffset;
 
                if (imgObj is StaticImg<TImage>) {
-                  StaticImg<TImage> simg = imgObj as StaticImg<TImage>;
+                  var simg = imgObj as StaticImg<TImage>;
                   simg.Size = imgSize;
                } else
                if (imgObj is Flag.CommonImpl<TImage>) {
-                  Flag.CommonImpl<TImage> fimg = imgObj as Flag.CommonImpl<TImage>;
+                  var fimg = imgObj as Flag.CommonImpl<TImage>;
                   fimg.Width = imgSize.Width;
                   fimg.Height = imgSize.Height;
                } else
                if (imgObj is Smile.CommonImpl<TImage>) {
-                  Smile.CommonImpl<TImage> simg = imgObj as Smile.CommonImpl<TImage>;
+                  var simg = imgObj as Smile.CommonImpl<TImage>;
                   simg.Width = imgSize.Width;
                   simg.Height = imgSize.Height;
                } else {
@@ -385,7 +385,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       void OnNewImages() {
          _onCloseImages?.Invoke();
 
-         Action onCreate = _onCreateImages[_nextCreateImagesIndex];
+         var onCreate = _onCreateImages[_nextCreateImagesIndex];
          if (++_nextCreateImagesIndex >= _onCreateImages.Length)
             _nextCreateImagesIndex = 0;
          onCreate();
