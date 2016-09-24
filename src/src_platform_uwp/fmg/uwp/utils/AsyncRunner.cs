@@ -1,4 +1,6 @@
-﻿using Windows.Foundation;
+﻿using System;
+using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.UI.Core;
 
 namespace fmg.uwp.utils {
@@ -21,6 +23,17 @@ namespace fmg.uwp.utils {
       public static void InvokeLater(Windows.System.Threading.WorkItemHandler handler, Windows.System.Threading.WorkItemPriority priority = Windows.System.Threading.WorkItemPriority.Normal) {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
          Windows.System.Threading.ThreadPool.RunAsync(handler, priority);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+      }
+
+      public async static Task Delay(this Action callback, TimeSpan delay) {
+         await Task.Delay(delay);
+         callback();
+      }
+
+      public static void DelayNoWait(this Action callback, TimeSpan delay) {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+         Delay(callback, delay);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
       }
 

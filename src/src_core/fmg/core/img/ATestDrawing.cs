@@ -128,13 +128,9 @@ namespace fmg.core.img {
          where TImage : class
       {
          Func<Type, string> friendlyName = type => {
-            if (type.IsConstructedGenericType) {
-               var namePrefix = type.Name.Split(new[] { '`' }, StringSplitOptions.RemoveEmptyEntries)[0];
-               Type decType = type.DeclaringType;
-               var namePrefixDec = decType.Name.Split(new[] { '`' }, StringSplitOptions.RemoveEmptyEntries)[0];
-               return namePrefixDec + '.' + namePrefix;
-            }
-            return type.Name;
+            var all = type.FullName.Split('.');
+            return string.Join(".", all.Skip(all.Length - 2)
+               .Select(s => s.Replace('+', '.')));
          };
 
          return "test paints: " + string.Join(" & ", images
