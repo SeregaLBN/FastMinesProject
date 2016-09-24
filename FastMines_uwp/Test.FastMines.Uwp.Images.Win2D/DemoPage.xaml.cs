@@ -49,7 +49,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       Action _onCloseImages;
       Action[] _onCreateImages; // images factory
       int _nextCreateImagesIndex;
-      bool _enableAnimation;
+      Action<bool> _onActivated;
 
       #region images Fabrica
       public void TestLogos1(ICanvasResourceCreator resourceCreator) {
@@ -378,6 +378,18 @@ namespace Test.FastMines.Uwp.Images.Win2D {
             images = null;
             imgControls = null;
          };
+
+         _onActivated = enable => {
+            images.Select(x => x as RotatedImg<TImage>)
+               .Where(x => x != null)
+               .Where(x => typeof(TImage) == typeof(CanvasImageSource))
+               .ToList()
+               .ForEach(img => {
+                  img.Rotate = enable;
+                  if (img is PolarLightsImg<TImage>)
+                     (img as PolarLightsImg<TImage>).PolarLights = enable;
+               });
+         };
       }
       #endregion
 
@@ -392,211 +404,9 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       }
 
       public void Animation(bool enable) {
+         _onActivated?.Invoke(enable);
       }
 
-/*
-      private readonly LogoCanvasBmp            Bmp1;
-      private readonly MosaicsSkillCanvasBmp    Bmp2;
-      private readonly MosaicsGroupCanvasBmp    Bmp3;
-      private readonly MosaicsCanvasBmp         Bmp4;
-      private readonly SmileCanvasBmp           Bmp5;
-      private readonly FlagCanvasBmp            Bmp6;
-      private readonly MineCanvasBmp            Bmp7;
-
-      public LogoCanvasImgSrc            Img1 { get; }
-      public MosaicsSkillCanvasImg    Img2 { get; }
-      public MosaicsGroupCanvasImg    Img3 { get; }
-      public MosaicsCanvasImg         Img4 { get; }
-      public SmileCanvasImg           Img5 { get; }
-      public FlagCanvasImg            Img6 { get; }
-      public MineCanvasImg            Img7 { get; }
-
-      private static readonly Random Rnd = new Random(Guid.NewGuid().GetHashCode());
-      private static int R(int max) => Rnd.Next(max);
-      private static bool Bl => (R(2) == 1); // random bool
-      private static int Np => (Bl ? -1 : +1); // negative or positive
-
-      private const int Offset = 25;
-
-      public DemoPage() {
-         this.InitializeComponent();
-         this.Unloaded += (sender, ev) => {
-            Bmp1.Dispose();
-            Bmp2.Dispose();
-            Bmp3.Dispose();
-            Bmp4.Dispose();
-          //Bmp5.Dispose();
-          //Bmp6.Dispose();
-            Bmp7.Dispose();
-            Img1.Dispose();
-            Img2.Dispose();
-            Img3.Dispose();
-            Img4.Dispose();
-          //Img5.Dispose();
-          //Img6.Dispose();
-            Img7.Dispose();
-         };
-
-         var device = CanvasDevice.GetSharedDevice();
-         Bmp1 = new LogoCanvasBmp(canvasControl1);
-         Img1 = new LogoCanvasImgSrc(device);
-         Bmp2 = new MosaicsSkillCanvasBmp   (Bl ? (ESkillLevel?)null : ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], canvasControl2);
-         Img2 = new MosaicsSkillCanvasImg(Bl ? (ESkillLevel?)null : ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], device);
-         Bmp3 = new MosaicsGroupCanvasBmp   (EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], canvasControl3);
-         Img3 = new MosaicsGroupCanvasImg(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], device);
-         Bmp4 = new MosaicsCanvasBmp        (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), canvasControl4);
-         Img4 = new MosaicsCanvasImg     (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), device);
-         Bmp5 = new SmileCanvasBmp   (SmileCanvasBmp   .EType.Face_WhiteSmiling, canvasControl5);
-         Img5 = new SmileCanvasImg(SmileCanvasImg.EType.Face_WhiteSmiling, device);
-         Bmp6 = new FlagCanvasBmp(canvasControl6);
-         Img6 = new FlagCanvasImg(device);
-         Bmp7 = new MineCanvasBmp(canvasControl7);
-         Img7 = new MineCanvasImg(device);
-
-         ApplyRandom(Bmp1, canvasControl1);
-         ApplyRandom(Bmp2, canvasControl2);
-         ApplyRandom(Bmp3, canvasControl3);
-         ApplyRandom(Bmp4, canvasControl4);
-       //ApplyRandom(Bmp5, canvasControl5);
-       //ApplyRandom(Bmp6, canvasControl6);
-         ApplyRandom(Bmp7, canvasControl7);
-         ApplyRandom(Img1, null);
-         ApplyRandom(Img2, null);
-         ApplyRandom(Img3, null);
-         ApplyRandom(Img4, null);
-       //ApplyRandom(Img5, null);
-       //ApplyRandom(Img6, null);
-         ApplyRandom(Img7, null);
-
-         this.Loaded += (sender1, args) => {
-            const int o = 2 * Offset;
-            Action onSize = () => {
-               Bmp1.Size = new Size((int)canvasControl1.Size.Width - o,               (int)canvasControl1.Size.Height - o);
-               Bmp2.Size = new Size((int)canvasControl2.Size.Width - o,               (int)canvasControl2.Size.Height - o);
-               Bmp3.Size = new Size((int)canvasControl3.Size.Width - o,               (int)canvasControl3.Size.Height - o);
-               Bmp4.Size = new Size((int)canvasControl4.Size.Width - o,               (int)canvasControl4.Size.Height - o);
-               Bmp5.Width =         (int)canvasControl5.Size.Width - o; Bmp5.Height = (int)canvasControl5.Size.Height - o ;
-               Bmp6.Width =         (int)canvasControl6.Size.Width - o; Bmp6.Height = (int)canvasControl6.Size.Height - o ;
-               Bmp7.Size = new Size((int)canvasControl7.Size.Width - o,               (int)canvasControl7.Size.Height - o);
-            };
-            onSize();
-            this.SizeChanged += (sender2, ev) => onSize();
-
-            //img1Cntrl.SizeChanged += (sender2, ev) => { Img1.Size = new Size((int)ev.NewSize.Width,               (int)ev.NewSize.Height); };
-            //img2Cntrl.SizeChanged += (sender2, ev) => { Img2.Size = new Size((int)ev.NewSize.Width,               (int)ev.NewSize.Height); };
-            //img3Cntrl.SizeChanged += (sender2, ev) => { Img3.Size = new Size((int)ev.NewSize.Width,               (int)ev.NewSize.Height); };
-            //img4Cntrl.SizeChanged += (sender2, ev) => { Img4.Size = new Size((int)ev.NewSize.Width,               (int)ev.NewSize.Height); };
-            //img5Cntrl.SizeChanged += (sender2, ev) => { Img5.Width =         (int)ev.NewSize.Width; Img5.Height = (int)ev.NewSize.Height ; };
-            //img6Cntrl.SizeChanged += (sender2, ev) => { Img6.Width =         (int)ev.NewSize.Width; Img6.Height = (int)ev.NewSize.Height ; };
-            //img7Cntrl.SizeChanged += (sender2, ev) => { Img7.Size = new Size((int)ev.NewSize.Width,               (int)ev.NewSize.Height); };
-         };
-
-         NextImg5();
-      }
-
-      private static void ApplyRandom<TImage>(RotatedImg<TImage> img, CanvasControl canvasControl)
-         where TImage : DependencyObject, ICanvasResourceCreator
-      {
-         if (canvasControl != null) {
-            // TImage is CanvasBitmap
-            img.PropertyChanged += (sender, ev) => {
-               if (ev.PropertyName == nameof(StaticImg.Image))
-                  canvasControl.Invalidate();
-            };
-         } else {
-            // TImage is CanvasImageSource
-            var wh = 175 + R(50);
-            img.Size = new Size(wh, wh);
-         }
-
-         img.Rotate = true;
-         img.RotateAngleDelta = (3 + R(5)) * Np;
-         img.RedrawInterval = 50;
-         img.BorderWidth = Bl ? 1 : 2;
-
-         var plrImg = img as PolarLightsImg<TImage>;
-         if (plrImg != null) {
-            plrImg.PolarLights = true;
-         }
-
-         var logoImg = img as Logo<TImage>;
-         if (logoImg != null) {
-            var vals = (Logo<TImage>.ERotateMode[])Enum.GetValues(typeof(LogoCanvasBmp.ERotateMode));
-            logoImg.RotateMode = vals[R(vals.Length)];
-            logoImg.UseGradient = Bl;
-         }
-
-         var mosaicsImg = img as MosaicsImg<TImage>;
-         if (mosaicsImg != null) {
-            var vals = (MosaicsImg<TImage>.ERotateMode[])Enum.GetValues(typeof(MosaicsImg<TImage>.ERotateMode));
-            mosaicsImg.RotateMode = vals[R(vals.Length)];
-         }
-
-         if (Bl) {
-            // test transparent
-            var bkClr = new HSV(ColorExt.RandomColor(Rnd)) { a = (byte)(50 + R(10)) };
-            img.PropertyChanged += (o, ev) => {
-               if (ev.PropertyName == nameof(StaticImg.RotateAngle)) {
-                  bkClr.h = img.RotateAngle;
-                  img.BackgroundColor = bkClr.ToColor();
-               }
-            };
-         } else {
-            img.BackgroundColor = ColorExt.RandomColor(Rnd).Brighter();
-         }
-      }
-
-      void canvasControl_Draw1(CanvasControl sender, CanvasDrawEventArgs args) { args.DrawingSession.DrawImage(Bmp1.Image, new Rect(Offset, Offset, Bmp1.Width, Bmp1.Height)); }
-      void canvasControl_Draw2(CanvasControl sender, CanvasDrawEventArgs args) { args.DrawingSession.DrawImage(Bmp2.Image, new Rect(Offset, Offset, Bmp2.Width, Bmp2.Height)); }
-      void canvasControl_Draw3(CanvasControl sender, CanvasDrawEventArgs args) { args.DrawingSession.DrawImage(Bmp3.Image, new Rect(Offset, Offset, Bmp3.Width, Bmp3.Height)); }
-      void canvasControl_Draw4(CanvasControl sender, CanvasDrawEventArgs args) { args.DrawingSession.DrawImage(Bmp4.Image, new Rect(Offset, Offset, Bmp4.Width, Bmp4.Height)); }
-      void canvasControl_Draw5(CanvasControl sender, CanvasDrawEventArgs args) { args.DrawingSession.DrawImage(Bmp5.Image, new Rect(Offset, Offset, Bmp5.Width, Bmp5.Height)); }
-      void canvasControl_Draw6(CanvasControl sender, CanvasDrawEventArgs args) { args.DrawingSession.DrawImage(Bmp6.Image, new Rect(Offset, Offset, Bmp6.Width, Bmp6.Height)); }
-      void canvasControl_Draw7(CanvasControl sender, CanvasDrawEventArgs args) { args.DrawingSession.DrawImage(Bmp7.Image, new Rect(Offset, Offset, Bmp7.Width, Bmp7.Height)); }
-
-      public void Animation(bool enable) {
-         Bmp1.Rotate =   Bmp1.PolarLights =
-         Bmp2.Rotate = //Bmp2.PolarLights =
-         Bmp3.Rotate =   Bmp3.PolarLights =
-         Bmp4.Rotate = //Bmp4.PolarLights =
-       //Bmp5.Rotate =   Bmp5.PolarLights =
-       //Bmp6.Rotate =   Bmp6.PolarLights =
-         Bmp7.Rotate =   Bmp7.PolarLights =
-         Img1.Rotate =   Img1.PolarLights =
-         Img2.Rotate = //Img2.PolarLights =
-         Img3.Rotate =   Img3.PolarLights =
-         Img4.Rotate = //Img4.PolarLights =
-         loopImg5 =
-       //Img5.Rotate =   Img5.PolarLights =
-       //Img6.Rotate =   Img6.PolarLights =
-         Img7.Rotate =   Img7.PolarLights =
-            enable;
-      }
-
-      private static Smile<TImage>.EType NextSmileType<TImage>(Smile<TImage>.EType smileType)
-         where TImage : DependencyObject, ICanvasResourceCreator
-      {
-         var vals = (Smile<TImage>.EType[])Enum.GetValues(typeof(Smile<TImage>.EType));
-         var pos = Array.IndexOf(vals, smileType);
-         return (pos < (vals.Length - 1)) ? vals[pos + 1] : vals[0];
-      }
-
-      private void canvasControl_Tapped5(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e) {
-         Bmp5.Type = NextSmileType(Bmp5.Type);
-         canvasControl5.Invalidate();
-      }
-
-      private bool loopImg5 = true;
-      private void NextImg5() {
-         TaskExec.DelayedStart(
-               TimeSpan.FromSeconds(1),
-               () => {
-                  Img5.Type = NextSmileType(Img5.Type);
-                  AsyncRunner.InvokeFromUiLater(() => { if (loopImg5) img5Cntrl.Source = Img5.Image; } );
-                  NextImg5();
-               });
-      }
-*/
    }
 
 }
