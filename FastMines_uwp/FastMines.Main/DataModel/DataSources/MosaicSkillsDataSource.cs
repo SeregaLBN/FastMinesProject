@@ -3,13 +3,13 @@ using fmg.common.geom;
 using fmg.core.img;
 using fmg.uwp.draw.mosaic;
 using fmg.data.controller.types;
-using MosaicsSkillImg = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsSkillCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsSkillImg.CanvasBmp;
 using fmg.DataModel.Items;
 
 namespace fmg.DataModel.DataSources
 {
    /// <summary> DataSource menu items (mosaic skills) </summary>
-   public class MosaicSkillsDataSource : BaseDataSource<MosaicSkillDataItem, ESkillLevel, MosaicsSkillImg> {
+   public class MosaicSkillsDataSource : BaseDataSource<MosaicSkillDataItem, ESkillLevel, MosaicsSkillCanvasBmp> {
 
       protected override void FillDataSource() {
          var dataSource = DataSourceInternal;

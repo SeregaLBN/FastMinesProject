@@ -1,8 +1,8 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Windows.UI.Xaml;
-using LogoBmp = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.        CanvasBitmap     >.CanvasBmp;
-using LogoImg = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
+using LogoBmp = fmg.uwp.draw.img.win2d.Logo.CanvasBmp;
+using LogoImg = fmg.uwp.draw.img.win2d.Logo.CanvasImgSrc;
 
 namespace fmg.uwp.draw.img.win2d {
 
@@ -30,7 +30,7 @@ namespace fmg.uwp.draw.img.win2d {
       }
 
       private static void Update<TLogoImage, TImage>(TLogoImage img)
-         where TLogoImage: Logo<TImage>
+         where TLogoImage: Logo.CommonImpl<TImage>
          where TImage : DependencyObject, ICanvasResourceCreator
       {
          img.UseGradient = false;

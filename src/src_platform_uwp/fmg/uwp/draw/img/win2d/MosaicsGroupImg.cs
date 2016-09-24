@@ -16,69 +16,74 @@ namespace fmg.uwp.draw.img.win2d {
    /// <br/>
    /// Win2D impl
    /// </summary>
-   public abstract class MosaicsGroupImg<TImage> : AMosaicsGroupImg<TImage>
-      where TImage : DependencyObject, ICanvasResourceCreator
-   {
-      static MosaicsGroupImg() {
-         StaticRotateImgConsts.Init();
-      }
+   public static class MosaicsGroupImg {
 
-      protected readonly ICanvasResourceCreator _rc;
-
-      /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
-      protected MosaicsGroupImg(EMosaicGroup? group, ICanvasResourceCreator resourceCreator)
-         : base(group)
+      /// <summary> Representable <see cref="EMosaicGroup"/> as image: common implementation part </summary>
+      public abstract class CommonImpl<TImage> : AMosaicsGroupImg<TImage>
+         where TImage : DependencyObject, ICanvasResourceCreator
       {
-         _rc = resourceCreator;
-      }
+         static CommonImpl() {
+            StaticRotateImgConsts.Init();
+         }
 
-      protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
-         ICanvasResourceCreator rc = Image;
+         protected readonly ICanvasResourceCreator _rc;
 
-         if (fillBk)
-            ds.Clear(BackgroundColor.ToWinColor());
+         /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
+         protected CommonImpl(EMosaicGroup? group, ICanvasResourceCreator resourceCreator)
+            : base(group)
+         {
+            _rc = resourceCreator;
+         }
 
-         var shapes = GetCoords();
-         foreach (var data in shapes) {
-            var points = data.Item2.ToArray();
-            using (var geom = rc.BuildLines(points)) {
-               ds.FillGeometry(geom, data.Item1.ToWinColor());
-            }
+         protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
+            ICanvasResourceCreator rc = Image;
 
-            // draw perimeter border
-            var clr = BorderColor;
-            if (!clr.IsTransparent) {
-               var clrWin = clr.ToWinColor();
-               var bw = BorderWidth;
+            if (fillBk)
+               ds.Clear(BackgroundColor.ToWinColor());
 
-               using (var css = new CanvasStrokeStyle {
-                  StartCap = CanvasCapStyle.Triangle,
-                  EndCap = CanvasCapStyle.Triangle
-               }) {
-                  for (var i = 0; i < points.Length; ++i) {
-                     var p1 = points[i];
-                     var p2 = (i < points.Length - 1) ? points[i + 1] : points[0];
-                     ds.DrawLine(p1.ToVector2(), p2.ToVector2(), clrWin, bw, css);
+            var shapes = GetCoords();
+            foreach (var data in shapes) {
+               var points = data.Item2.ToArray();
+               using (var geom = rc.BuildLines(points)) {
+                  ds.FillGeometry(geom, data.Item1.ToWinColor());
+               }
+
+               // draw perimeter border
+               var clr = BorderColor;
+               if (!clr.IsTransparent) {
+                  var clrWin = clr.ToWinColor();
+                  var bw = BorderWidth;
+
+                  using (var css = new CanvasStrokeStyle {
+                     StartCap = CanvasCapStyle.Triangle,
+                     EndCap = CanvasCapStyle.Triangle
+                  }) {
+                     for (var i = 0; i < points.Length; ++i) {
+                        var p1 = points[i];
+                        var p2 = (i < points.Length - 1) ? points[i + 1] : points[0];
+                        ds.DrawLine(p1.ToVector2(), p2.ToVector2(), clrWin, bw, css);
+                     }
                   }
                }
             }
-         }
 
-         using (var css = new CanvasStrokeStyle {
-            StartCap = CanvasCapStyle.Flat,
-            EndCap = CanvasCapStyle.Flat
-         }) {
-            foreach (var li in GetCoordsBurgerMenu()) {
-               ds.DrawLine(li.from.ToVector2(), li.to.ToVector2(), li.clr.ToWinColor(), (float)li.penWidht, css);
+            using (var css = new CanvasStrokeStyle {
+               StartCap = CanvasCapStyle.Flat,
+               EndCap = CanvasCapStyle.Flat
+            }) {
+               foreach (var li in GetCoordsBurgerMenu()) {
+                  ds.DrawLine(li.from.ToVector2(), li.to.ToVector2(), li.clr.ToWinColor(), (float)li.penWidht, css);
+               }
             }
+
+   #if DEBUG
+            //// test
+            //using (var ctf = new Microsoft.Graphics.Canvas.Text.CanvasTextFormat { FontSize = 25 }) {
+            //   ds.DrawText(string.Format($"{RotateAngle:0.##}"), 0f, 0f, Color.Black.ToWinColor(), ctf);
+            //}
+   #endif
          }
 
-#if DEBUG
-         //// test
-         //using (var ctf = new Microsoft.Graphics.Canvas.Text.CanvasTextFormat { FontSize = 25 }) {
-         //   ds.DrawText(string.Format($"{RotateAngle:0.##}"), 0f, 0f, Color.Black.ToWinColor(), ctf);
-         //}
-#endif
       }
 
       /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,7 +94,7 @@ namespace fmg.uwp.draw.img.win2d {
       /// <br/>
       /// CanvasBitmap impl
       /// </summary>
-      public class CanvasBmp : MosaicsGroupImg<CanvasBitmap> {
+      public class CanvasBmp : CommonImpl<CanvasBitmap> {
 
          /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
          public CanvasBmp(EMosaicGroup? group, ICanvasResourceCreator resourceCreator)
@@ -112,7 +117,7 @@ namespace fmg.uwp.draw.img.win2d {
       /// <br/>
       /// CanvasImageSource impl (XAML ImageSource compatible)
       /// </summary>
-      public class CanvasImgSrc : MosaicsGroupImg<CanvasImageSource> {
+      public class CanvasImgSrc : CommonImpl<CanvasImageSource> {
 
          /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
          public CanvasImgSrc(EMosaicGroup? group, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)

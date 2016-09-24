@@ -5,12 +5,12 @@ using Microsoft.Graphics.Canvas;
 using fmg.common.geom;
 using fmg.common.notyfier;
 using fmg.data.controller.types;
-using MosaicsSkillImg = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsSkillCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsSkillImg.CanvasBmp;
 
 namespace fmg.DataModel.Items {
 
    /// <summary> Mosaic skill level item for data model </summary>
-   public class MosaicSkillDataItem : BaseData<ESkillLevel, MosaicsSkillImg> {
+   public class MosaicSkillDataItem : BaseData<ESkillLevel, MosaicsSkillCanvasBmp> {
       private const int ZoomKoef = 2;
 
       public MosaicSkillDataItem(ESkillLevel eSkill) : base(eSkill) {
@@ -22,11 +22,11 @@ namespace fmg.DataModel.Items {
       [Obsolete]
       public string UnicodeChar => SkillLevel.UnicodeChar().ToString();
 
-      private MosaicsSkillImg _mosaicSkillImg;
-      public override MosaicsSkillImg Image {
+      private MosaicsSkillCanvasBmp _mosaicSkillImg;
+      public override MosaicsSkillCanvasBmp Image {
          get {
             if (_mosaicSkillImg == null) {
-               var tmp = new MosaicsSkillImg(SkillLevel, CanvasDevice.GetSharedDevice()) {
+               var tmp = new MosaicsSkillCanvasBmp(SkillLevel, CanvasDevice.GetSharedDevice()) {
                   Size = new Size(ImageSize.Width * ZoomKoef, ImageSize.Height * ZoomKoef),
                   BorderWidth = 2,
                   RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
@@ -53,7 +53,7 @@ namespace fmg.DataModel.Items {
          }
       }
 
-      private Size _imageSize = new Size(MosaicsSkillImg.DefaultImageSize, MosaicsSkillImg.DefaultImageSize);
+      private Size _imageSize = new Size(MosaicsSkillCanvasBmp.DefaultImageSize, MosaicsSkillCanvasBmp.DefaultImageSize);
       public override Size ImageSize {
          get { return _imageSize; }
          set {
@@ -65,7 +65,7 @@ namespace fmg.DataModel.Items {
 
       private void OnMosaicsSkillImgPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          var pn = ev.PropertyName;
-         if (pn == nameof(MosaicsSkillImg.Image)) {
+         if (pn == nameof(MosaicsSkillCanvasBmp.Image)) {
             // ! notify parent container
             var ev2 = ev as PropertyChangedExEventArgs<ImageSource>;
             if (ev2 == null)

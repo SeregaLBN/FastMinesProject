@@ -14,7 +14,7 @@ using fmg.uwp.utils.win2d;
 using Size = fmg.common.geom.Size;
 using Rect = Windows.Foundation.Rect;
 using FastMines.BackgroundTasks.Uwp;
-using MosaicsImg = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsImg.CanvasBmp;
 
 namespace fmg {
    public static class TileHelper {
@@ -165,7 +165,7 @@ namespace fmg {
          sizeField.n += Random.Next() % 3;
          const int bound = 3;
          const int zoomKoef = 1;
-         var img = new MosaicsImg(mosaicType, sizeField, Rc) {
+         var img = new MosaicsCanvasBmp(mosaicType, sizeField, Rc) {
             Size = new Size(w * zoomKoef, h * zoomKoef),
             Padding = new Bound(zoomKoef * bound),
             BackgroundColor = bkClr

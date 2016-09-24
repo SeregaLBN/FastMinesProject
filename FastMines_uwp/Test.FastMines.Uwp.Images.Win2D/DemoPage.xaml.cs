@@ -20,22 +20,22 @@ using fmg.data.controller.types;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.img.win2d;
 using fmg.uwp.draw.mosaic.win2d;
-using StaticCanvasBmp          = fmg.core.img.StaticImg<Microsoft.Graphics.Canvas.        CanvasBitmap     >;
-using StaticCanvasImgSrc       = fmg.core.img.StaticImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>;
-using LogoCanvasBmp            = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.        CanvasBitmap     >.CanvasBmp;
-using LogoCanvasImgSrc         = fmg.uwp.draw.img.win2d.Logo<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using MosaicsSkillCanvasBmp    = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasBmp;
-using MosaicsSkillCanvasImgSrc = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using MosaicsGroupCanvasBmp    = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.        CanvasBitmap     >.CanvasBmp;
-using MosaicsGroupCanvasImgSrc = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using MosaicsCanvasBmp         = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.        CanvasBitmap     >.CanvasBmp;
-using MosaicsCanvasImgSrc      = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using SmileCanvasBmp           = fmg.uwp.draw.img.win2d.Smile<Microsoft.Graphics.Canvas.        CanvasBitmap     >.CanvasBmp;
-using SmileCanvasImgSrc        = fmg.uwp.draw.img.win2d.Smile<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>.CanvasImgSrc;
-using FlagCanvasBmp            = fmg.uwp.draw.img.win2d.Flag<Microsoft.Graphics.Canvas.        CanvasBitmap      >.CanvasBmp;
-using FlagCanvasImgSrc         = fmg.uwp.draw.img.win2d.Flag<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource >.CanvasImgSrc;
-using MineCanvasBmp            = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
-using MineCanvasImgSrc         = fmg.uwp.draw.img.win2d.Mine.CanvasImgSrc;
+using StaticCanvasBmp       = fmg.core.img.StaticImg<Microsoft.Graphics.Canvas.        CanvasBitmap     >;
+using StaticCanvasImg       = fmg.core.img.StaticImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>;
+using LogoCanvasBmp         = fmg.uwp.draw.img.win2d.Logo.CanvasBmp;
+using LogoCanvasImg         = fmg.uwp.draw.img.win2d.Logo.CanvasImgSrc;
+using MosaicsSkillCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsSkillImg.CanvasBmp;
+using MosaicsSkillCanvasImg = fmg.uwp.draw.img.win2d.MosaicsSkillImg.CanvasImgSrc;
+using MosaicsGroupCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsGroupImg.CanvasBmp;
+using MosaicsGroupCanvasImg = fmg.uwp.draw.img.win2d.MosaicsGroupImg.CanvasImgSrc;
+using MosaicsCanvasBmp      = fmg.uwp.draw.img.win2d.MosaicsImg.CanvasBmp;
+using MosaicsCanvasImg      = fmg.uwp.draw.img.win2d.MosaicsImg.CanvasImgSrc;
+using SmileCanvasBmp        = fmg.uwp.draw.img.win2d.Smile.CanvasBmp;
+using SmileCanvasImg        = fmg.uwp.draw.img.win2d.Smile.CanvasImgSrc;
+using FlagCanvasBmp         = fmg.uwp.draw.img.win2d.Flag.CanvasBmp;
+using FlagCanvasImg         = fmg.uwp.draw.img.win2d.Flag.CanvasImgSrc;
+using MineCanvasBmp         = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
+using MineCanvasImg         = fmg.uwp.draw.img.win2d.Mine.CanvasImgSrc;
 
 namespace Test.FastMines.Uwp.Images.Win2D {
 
@@ -61,11 +61,11 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          });
       }
       public void TestLogos2(ICanvasResourceCreator resourceCreator) {
-         TestAppCanvasImgSrc(rnd => new LogoCanvasImgSrc[] {
-            new LogoCanvasImgSrc(resourceCreator),
-            new LogoCanvasImgSrc(resourceCreator),
-            new LogoCanvasImgSrc(resourceCreator),
-            new LogoCanvasImgSrc(resourceCreator)
+         TestAppCanvasImg(rnd => new LogoCanvasImg[] {
+            new LogoCanvasImg(resourceCreator),
+            new LogoCanvasImg(resourceCreator),
+            new LogoCanvasImg(resourceCreator),
+            new LogoCanvasImg(resourceCreator)
          });
       }
       public void TestMosaicsSkillImg1(ICanvasResourceCreator resourceCreator) {
@@ -75,9 +75,9 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                                     .SelectMany(m => m)));
       }
       public void TestMosaicsSkillImg2(ICanvasResourceCreator resourceCreator) {
-         TestAppCanvasImgSrc(rnd => (new MosaicsSkillCanvasImgSrc[] { new MosaicsSkillCanvasImgSrc(null, resourceCreator), new MosaicsSkillCanvasImgSrc(null, resourceCreator) })
+         TestAppCanvasImg(rnd => (new MosaicsSkillCanvasImg[] { new MosaicsSkillCanvasImg(null, resourceCreator), new MosaicsSkillCanvasImg(null, resourceCreator) })
                .Concat(ESkillLevelEx.GetValues()
-                                    .Select(e => new MosaicsSkillCanvasImgSrc[] { new MosaicsSkillCanvasImgSrc(e, resourceCreator), new MosaicsSkillCanvasImgSrc(e, resourceCreator) })
+                                    .Select(e => new MosaicsSkillCanvasImg[] { new MosaicsSkillCanvasImg(e, resourceCreator), new MosaicsSkillCanvasImg(e, resourceCreator) })
                                     .SelectMany(m => m)));
       }
       public void TestMosaicsGroupImg1(ICanvasResourceCreator resourceCreator) {
@@ -87,9 +87,9 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                                      .SelectMany(m => m)));
       }
       public void TestMosaicsGroupImg2(ICanvasResourceCreator resourceCreator) {
-         TestAppCanvasImgSrc(rnd => (new MosaicsGroupCanvasImgSrc[] { new MosaicsGroupCanvasImgSrc(null, resourceCreator), new MosaicsGroupCanvasImgSrc(null, resourceCreator) })
+         TestAppCanvasImg(rnd => (new MosaicsGroupCanvasImg[] { new MosaicsGroupCanvasImg(null, resourceCreator), new MosaicsGroupCanvasImg(null, resourceCreator) })
                .Concat(EMosaicGroupEx.GetValues()
-                                     .Select(e => new MosaicsGroupCanvasImgSrc[] { new MosaicsGroupCanvasImgSrc(e, resourceCreator), new MosaicsGroupCanvasImgSrc(e, resourceCreator) })
+                                     .Select(e => new MosaicsGroupCanvasImg[] { new MosaicsGroupCanvasImg(e, resourceCreator), new MosaicsGroupCanvasImg(e, resourceCreator) })
                                      .SelectMany(m => m)));
       }
       public void TestMosaicsImg1(ICanvasResourceCreator resourceCreator) {
@@ -98,24 +98,24 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          );
       }
       public void TestMosaicsImg2(ICanvasResourceCreator resourceCreator) {
-         TestAppCanvasImgSrc(rnd =>
-            EMosaicEx.GetValues().Select(e => new MosaicsCanvasImgSrc(e, new Matrisize(3 + _td.R(4), 4 + _td.R(3)), resourceCreator))
+         TestAppCanvasImg(rnd =>
+            EMosaicEx.GetValues().Select(e => new MosaicsCanvasImg(e, new Matrisize(3 + _td.R(4), 4 + _td.R(3)), resourceCreator))
          );
       }
-      public void TestFlag1 (ICanvasResourceCreator resourceCreator) { TestAppCanvasBmp   (rnd => new FlagCanvasBmp    [] { new FlagCanvasBmp    (resourceCreator) }); }
-      public void TestFlag2 (ICanvasResourceCreator resourceCreator) { TestAppCanvasImgSrc(rnd => new FlagCanvasImgSrc [] { new FlagCanvasImgSrc (resourceCreator) }); }
-      public void TestMine1 (ICanvasResourceCreator resourceCreator) { TestAppCanvasBmp   (rnd => new MineCanvasBmp    [] { new MineCanvasBmp    (resourceCreator) }); }
-      public void TestMine2 (ICanvasResourceCreator resourceCreator) { TestAppCanvasImgSrc(rnd => new MineCanvasImgSrc [] { new MineCanvasImgSrc (resourceCreator) }); }
+      public void TestFlag1 (ICanvasResourceCreator resourceCreator) { TestAppCanvasBmp(rnd => new FlagCanvasBmp [] { new FlagCanvasBmp(resourceCreator) }); }
+      public void TestFlag2 (ICanvasResourceCreator resourceCreator) { TestAppCanvasImg(rnd => new FlagCanvasImg [] { new FlagCanvasImg(resourceCreator) }); }
+      public void TestMine1 (ICanvasResourceCreator resourceCreator) { TestAppCanvasBmp(rnd => new MineCanvasBmp [] { new MineCanvasBmp(resourceCreator) }); }
+      public void TestMine2 (ICanvasResourceCreator resourceCreator) { TestAppCanvasImg(rnd => new MineCanvasImg [] { new MineCanvasImg(resourceCreator) }); }
       public void TestSmile1(ICanvasResourceCreator resourceCreator) {
-         var vals = (SmileCanvasBmp.EType[])Enum.GetValues(typeof(SmileCanvasBmp.EType));
+         var vals = (Smile.EType[])Enum.GetValues(typeof(Smile.EType));
          TestAppCanvasBmp(rnd =>
             vals.Select(e => new SmileCanvasBmp(e, resourceCreator))
          );
       }
       public void TestSmile2(ICanvasResourceCreator resourceCreator) {
-         var vals = (SmileCanvasImgSrc.EType[])Enum.GetValues(typeof(SmileCanvasImgSrc.EType));
-         TestAppCanvasImgSrc(rnd =>
-            vals.Select(e => new SmileCanvasImgSrc(e, resourceCreator))
+         var vals = (Smile.EType[])Enum.GetValues(typeof(Smile.EType));
+         TestAppCanvasImg(rnd =>
+            vals.Select(e => new SmileCanvasImg(e, resourceCreator))
          );
       }
       #endregion
@@ -161,7 +161,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       {
          TestApp<TImageEx, PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>, CanvasBitmap>(funcGetImages);
       }
-      void TestAppCanvasImgSrc<TImageEx>(Func<Random, IEnumerable<TImageEx>> funcGetImages)
+      void TestAppCanvasImg<TImageEx>(Func<Random, IEnumerable<TImageEx>> funcGetImages)
          where TImageEx : class
       {
          TestApp<TImageEx, PaintableWin2D, CanvasImageSource, PaintUwpContext<CanvasBitmap>, CanvasBitmap>(funcGetImages);
@@ -211,27 +211,27 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                      Stretch = Stretch.None
                   };
 
-                  if (imgObj is StaticCanvasImgSrc) {
-                     StaticCanvasImgSrc simg = imgObj as StaticCanvasImgSrc;
+                  if (imgObj is StaticCanvasImg) {
+                     StaticCanvasImg simg = imgObj as StaticCanvasImg;
                      simg.Size = imgSize;
 
                      imgCntrl.SetBinding(Image.SourceProperty, new Binding {
                         Source = simg,
-                        Path = new PropertyPath(nameof(StaticCanvasImgSrc.Image)),
+                        Path = new PropertyPath(nameof(StaticCanvasImg.Image)),
                         Mode = BindingMode.OneWay
                      });
                   } else
-                  if (imgObj is FlagCanvasImgSrc) {
+                  if (imgObj is FlagCanvasImg) {
                      imgCntrl.SetBinding(Image.SourceProperty, new Binding {
                         Source = imgObj,
-                        Path = new PropertyPath(nameof(FlagCanvasImgSrc.Image)),
+                        Path = new PropertyPath(nameof(FlagCanvasImg.Image)),
                         Mode = BindingMode.OneWay
                      });
                   } else
-                  if (imgObj is SmileCanvasImgSrc) {
+                  if (imgObj is SmileCanvasImg) {
                      imgCntrl.SetBinding(Image.SourceProperty, new Binding {
                         Source = imgObj,
-                        Path = new PropertyPath(nameof(SmileCanvasImgSrc.Image)),
+                        Path = new PropertyPath(nameof(SmileCanvasImg.Image)),
                         Mode = BindingMode.OneWay
                      });
                   } else {
@@ -347,13 +347,13 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                   StaticImg<TImage> simg = imgObj as StaticImg<TImage>;
                   simg.Size = imgSize;
                } else
-               if (imgObj is Flag<TImage>) {
-                  Flag<TImage> fimg = imgObj as Flag<TImage>;
+               if (imgObj is Flag.CommonImpl<TImage>) {
+                  Flag.CommonImpl<TImage> fimg = imgObj as Flag.CommonImpl<TImage>;
                   fimg.Width = imgSize.Width;
                   fimg.Height = imgSize.Height;
                } else
-               if (imgObj is Smile<TImage>) {
-                  Smile<TImage> simg = imgObj as Smile<TImage>;
+               if (imgObj is Smile.CommonImpl<TImage>) {
+                  Smile.CommonImpl<TImage> simg = imgObj as Smile.CommonImpl<TImage>;
                   simg.Width = imgSize.Width;
                   simg.Height = imgSize.Height;
                } else {
@@ -404,12 +404,12 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       private readonly MineCanvasBmp            Bmp7;
 
       public LogoCanvasImgSrc            Img1 { get; }
-      public MosaicsSkillCanvasImgSrc    Img2 { get; }
-      public MosaicsGroupCanvasImgSrc    Img3 { get; }
-      public MosaicsCanvasImgSrc         Img4 { get; }
-      public SmileCanvasImgSrc           Img5 { get; }
-      public FlagCanvasImgSrc            Img6 { get; }
-      public MineCanvasImgSrc            Img7 { get; }
+      public MosaicsSkillCanvasImg    Img2 { get; }
+      public MosaicsGroupCanvasImg    Img3 { get; }
+      public MosaicsCanvasImg         Img4 { get; }
+      public SmileCanvasImg           Img5 { get; }
+      public FlagCanvasImg            Img6 { get; }
+      public MineCanvasImg            Img7 { get; }
 
       private static readonly Random Rnd = new Random(Guid.NewGuid().GetHashCode());
       private static int R(int max) => Rnd.Next(max);
@@ -441,17 +441,17 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          Bmp1 = new LogoCanvasBmp(canvasControl1);
          Img1 = new LogoCanvasImgSrc(device);
          Bmp2 = new MosaicsSkillCanvasBmp   (Bl ? (ESkillLevel?)null : ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], canvasControl2);
-         Img2 = new MosaicsSkillCanvasImgSrc(Bl ? (ESkillLevel?)null : ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], device);
+         Img2 = new MosaicsSkillCanvasImg(Bl ? (ESkillLevel?)null : ESkillLevelEx.GetValues()[R(ESkillLevelEx.GetValues().Length)], device);
          Bmp3 = new MosaicsGroupCanvasBmp   (EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], canvasControl3);
-         Img3 = new MosaicsGroupCanvasImgSrc(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], device);
+         Img3 = new MosaicsGroupCanvasImg(EMosaicGroupEx.GetValues()[R(EMosaicGroupEx.GetValues().Length)], device);
          Bmp4 = new MosaicsCanvasBmp        (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), canvasControl4);
-         Img4 = new MosaicsCanvasImgSrc     (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), device);
+         Img4 = new MosaicsCanvasImg     (EMosaicEx.GetValues()[R(EMosaicEx.GetValues().Length)], new Matrisize(3 + R(4), 4 + R(3)), device);
          Bmp5 = new SmileCanvasBmp   (SmileCanvasBmp   .EType.Face_WhiteSmiling, canvasControl5);
-         Img5 = new SmileCanvasImgSrc(SmileCanvasImgSrc.EType.Face_WhiteSmiling, device);
+         Img5 = new SmileCanvasImg(SmileCanvasImg.EType.Face_WhiteSmiling, device);
          Bmp6 = new FlagCanvasBmp(canvasControl6);
-         Img6 = new FlagCanvasImgSrc(device);
+         Img6 = new FlagCanvasImg(device);
          Bmp7 = new MineCanvasBmp(canvasControl7);
-         Img7 = new MineCanvasImgSrc(device);
+         Img7 = new MineCanvasImg(device);
 
          ApplyRandom(Bmp1, canvasControl1);
          ApplyRandom(Bmp2, canvasControl2);

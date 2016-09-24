@@ -12,8 +12,8 @@ using fmg.core.types;
 using fmg.data.controller.types;
 using fmg.uwp.utils;
 using fmg.DataModel.DataSources;
-using MosaicsSkillImg = fmg.uwp.draw.img.win2d.MosaicsSkillImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using MosaicsGroupImg = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsSkillCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsSkillImg.CanvasBmp;
+using MosaicsGroupCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsGroupImg.CanvasBmp;
 using fmg.DataModel.Items;
 
 namespace fmg
@@ -140,8 +140,8 @@ namespace fmg
 
       private void CanvasControl_CreateResources_MosaicsSkillImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
          if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
-            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsSkillImg);
-            var img = canvasControl.DataContext as MosaicsSkillImg;
+            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsSkillCanvasBmp);
+            var img = canvasControl.DataContext as MosaicsSkillCanvasBmp;
             if (img == null)
                return;
             canvasControl.Draw += (sender2, ev2) => {
@@ -158,8 +158,8 @@ namespace fmg
 
       private void CanvasControl_CreateResources_MosaicsGroupImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
          if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
-            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsGroupImg);
-            var img = canvasControl.DataContext as MosaicsGroupImg;
+            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsGroupCanvasBmp);
+            var img = canvasControl.DataContext as MosaicsGroupCanvasBmp;
             if (img == null)
                return;
             canvasControl.Draw += (sender2, ev2) => {

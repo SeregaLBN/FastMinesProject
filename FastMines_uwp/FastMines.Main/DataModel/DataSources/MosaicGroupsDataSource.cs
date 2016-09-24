@@ -4,13 +4,13 @@ using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.img;
 using fmg.uwp.draw.mosaic;
-using MosaicsGroupImg = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsGroupCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsGroupImg.CanvasBmp;
 using fmg.DataModel.Items;
 
 namespace fmg.DataModel.DataSources
 {
    /// <summary> DataSource menu items (mosaic groups) </summary>
-   public class MosaicGroupsDataSource : BaseDataSource<MosaicGroupDataItem, EMosaicGroup, MosaicsGroupImg> {
+   public class MosaicGroupsDataSource : BaseDataSource<MosaicGroupDataItem, EMosaicGroup, MosaicsGroupCanvasBmp> {
 
       protected override void FillDataSource() {
          var dataSource = DataSourceInternal;

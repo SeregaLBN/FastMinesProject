@@ -5,12 +5,12 @@ using fmg.common.geom;
 using fmg.common.notyfier;
 using fmg.core.types;
 using fmg.data.controller.types;
-using MosaicsImg = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsImg.CanvasBmp;
 
 namespace fmg.DataModel.Items {
 
    /// <summary> Mosaic item for data model </summary>
-   public class MosaicDataItem : BaseData<EMosaic, MosaicsImg> {
+   public class MosaicDataItem : BaseData<EMosaic, MosaicsCanvasBmp> {
       private const int ZoomKoef = 2;
 
       public MosaicDataItem(EMosaic mosaicType) : base(mosaicType) {
@@ -29,16 +29,16 @@ namespace fmg.DataModel.Items {
          }
       }
 
-      private MosaicsImg _mosaicImg;
-      public override MosaicsImg Image {
+      private MosaicsCanvasBmp _mosaicImg;
+      public override MosaicsCanvasBmp Image {
          get {
             if (_mosaicImg == null) {
                var sizeField = MosaicType.SizeTileField(SkillLevel);
-               var tmp = new MosaicsImg(MosaicType, sizeField, CanvasDevice.GetSharedDevice()) {
+               var tmp = new MosaicsCanvasBmp(MosaicType, sizeField, CanvasDevice.GetSharedDevice()) {
                   Size = new Size(ImageSize.Width * ZoomKoef, ImageSize.Height * ZoomKoef),
                   PaddingInt = 5 * ZoomKoef,
-                  RotateMode = MosaicsImg.ERotateMode.SomeCells,
-                  //BackgroundColor = MosaicsImg.DefaultBkColor,
+                  RotateMode = MosaicsCanvasBmp.ERotateMode.SomeCells,
+                  //BackgroundColor = MosaicsCanvasBmp.DefaultBkColor,
                   BorderWidth = 3*ZoomKoef//,
                   //RotateAngle = 45 * new Random(Guid.NewGuid().GetHashCode()).Next(7)
                   //, OnlySyncDraw = true
@@ -65,7 +65,7 @@ namespace fmg.DataModel.Items {
          }
       }
 
-      private Size _imageSize = new Size(MosaicsImg.DefaultImageSize, MosaicsImg.DefaultImageSize);
+      private Size _imageSize = new Size(MosaicsCanvasBmp.DefaultImageSize, MosaicsCanvasBmp.DefaultImageSize);
       public override Size ImageSize {
          get { return _imageSize; }
          set {

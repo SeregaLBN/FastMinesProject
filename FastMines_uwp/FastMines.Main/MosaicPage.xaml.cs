@@ -23,8 +23,8 @@ using fmg.uwp.mosaic;
 using fmg.uwp.mosaic.win2d;
 using Log = fmg.common.LoggerSimple;
 using Thickness = Windows.UI.Xaml.Thickness;
-using FlagImage = fmg.uwp.draw.img.win2d.Flag<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
-using MineImage = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
+using FlagCanvasBmp = fmg.uwp.draw.img.win2d.Flag.CanvasBmp;
+using MineCanvasBmp = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace fmg {
@@ -44,8 +44,8 @@ namespace fmg {
       private DateTime _dtInertiaStarting;
       private Windows.Foundation.Point? _mouseDevicePosition_AreaChanging = null;
       private static double? _baseWheelDelta;
-      private MineImage _mineImage;
-      private FlagImage _flagImage;
+      private MineCanvasBmp _mineImage;
+      private FlagCanvasBmp _flagImage;
 
       public Mosaic MosaicField {
          get {
@@ -695,23 +695,23 @@ namespace fmg {
          return margin;
       }
 
-      private MineImage MineImg {
+      private MineCanvasBmp MineImg {
          get {
             if (_mineImage == null) {
                var device = CanvasDevice.GetSharedDevice();
                //var device = virtualControl.Device;
-               _mineImage = new MineImage(device);
+               _mineImage = new MineCanvasBmp(device);
             }
             return _mineImage;
          }
       }
 
-      private FlagImage FlagImg {
+      private FlagCanvasBmp FlagImg {
          get {
             if (_flagImage == null) {
                var device = CanvasDevice.GetSharedDevice();
                //var device = virtualControl.Device;
-               _flagImage = new FlagImage(device);
+               _flagImage = new FlagCanvasBmp(device);
             }
             return _flagImage;
          }

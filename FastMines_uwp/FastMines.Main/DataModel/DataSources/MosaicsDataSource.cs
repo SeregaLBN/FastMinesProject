@@ -6,13 +6,13 @@ using fmg.core.types;
 using fmg.core.img;
 using fmg.data.controller.types;
 using fmg.uwp.draw.mosaic;
-using MosaicsImg = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsImg.CanvasBmp;
 using fmg.DataModel.Items;
 
 namespace fmg.DataModel.DataSources {
 
    /// <summary> DataSource mosaics items </summary>
-   public class MosaicsDataSource : BaseDataSource<MosaicDataItem, EMosaic, MosaicsImg> {
+   public class MosaicsDataSource : BaseDataSource<MosaicDataItem, EMosaic, MosaicsCanvasBmp> {
 
       private EMosaicGroup _currentGroup;
       public EMosaicGroup CurrentGroup {

@@ -5,12 +5,12 @@ using Microsoft.Graphics.Canvas;
 using fmg.common.geom;
 using fmg.common.notyfier;
 using fmg.core.types;
-using MosaicsGroupImg = fmg.uwp.draw.img.win2d.MosaicsGroupImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsGroupCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsGroupImg.CanvasBmp;
 
 namespace fmg.DataModel.Items {
 
    /// <summary> Mosaic group item for data model </summary>
-   public class MosaicGroupDataItem : BaseData<EMosaicGroup, MosaicsGroupImg> {
+   public class MosaicGroupDataItem : BaseData<EMosaicGroup, MosaicsGroupCanvasBmp> {
       private const int ZoomKoef = 2;
 
       public MosaicGroupDataItem(EMosaicGroup eMosaicGroup) : base(eMosaicGroup) {
@@ -19,11 +19,11 @@ namespace fmg.DataModel.Items {
 
       public EMosaicGroup MosaicGroup => UniqueId;
 
-      private MosaicsGroupImg _mosaicGroupImg;
-      public override MosaicsGroupImg Image {
+      private MosaicsGroupCanvasBmp _mosaicGroupImg;
+      public override MosaicsGroupCanvasBmp Image {
          get {
             if (_mosaicGroupImg == null) {
-               var tmp = new MosaicsGroupImg(MosaicGroup, CanvasDevice.GetSharedDevice()) {
+               var tmp = new MosaicsGroupCanvasBmp(MosaicGroup, CanvasDevice.GetSharedDevice()) {
                   Size = new Size(ImageSize.Width * ZoomKoef, ImageSize.Height * ZoomKoef),
                   BorderWidth = 3,
                   RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
@@ -50,7 +50,7 @@ namespace fmg.DataModel.Items {
          }
       }
 
-      private Size _imageSize = new Size(MosaicsGroupImg.DefaultImageSize, MosaicsGroupImg.DefaultImageSize);
+      private Size _imageSize = new Size(MosaicsGroupCanvasBmp.DefaultImageSize, MosaicsGroupCanvasBmp.DefaultImageSize);
       public override Size ImageSize {
          get { return _imageSize; }
          set {
@@ -62,7 +62,7 @@ namespace fmg.DataModel.Items {
 
       private void OnMosaicsGroupImgPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          var pn = ev.PropertyName;
-         if (pn == nameof(MosaicsGroupImg.Image)) {
+         if (pn == nameof(MosaicsGroupCanvasBmp.Image)) {
             // ! notify parent container
             var ev2 = ev as PropertyChangedExEventArgs<ImageSource>;
             if (ev2 == null)

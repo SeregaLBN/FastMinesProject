@@ -7,7 +7,7 @@ using fmg.core.types;
 using fmg.common;
 using fmg.data.controller.types;
 using fmg.uwp.mosaic;
-using MosaicsImg = fmg.uwp.draw.img.win2d.MosaicsImg<Microsoft.Graphics.Canvas.CanvasBitmap>.CanvasBmp;
+using MosaicsCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsImg.CanvasBmp;
 using fmg.DataModel.Items;
 
 namespace fmg {
@@ -53,16 +53,16 @@ namespace fmg {
          if (ev.NewValue == null)
             return;
          var canvasControl = sender as CanvasControl;
-         System.Diagnostics.Debug.Assert(ev.NewValue is MosaicsImg);
+         System.Diagnostics.Debug.Assert(ev.NewValue is MosaicsCanvasBmp);
          if (map.ContainsKey(canvasControl))
-            map[canvasControl] = ev.NewValue as MosaicsImg;
+            map[canvasControl] = ev.NewValue as MosaicsCanvasBmp;
          else
-            map.Add(canvasControl, ev.NewValue as MosaicsImg);
+            map.Add(canvasControl, ev.NewValue as MosaicsCanvasBmp);
          canvasControl.Invalidate();
          ev.Handled = true;
       }
 
-      IDictionary<CanvasControl, MosaicsImg> map = new Dictionary<CanvasControl, MosaicsImg>();
+      IDictionary<CanvasControl, MosaicsCanvasBmp> map = new Dictionary<CanvasControl, MosaicsCanvasBmp>();
       private void CanvasControl_Draw(CanvasControl canvasControl, CanvasDrawEventArgs ev) {
          var img = map[canvasControl];
          ev.DrawingSession.DrawImage(img.Image, new Rect(0, 0, canvasControl.Width, canvasControl.Height));

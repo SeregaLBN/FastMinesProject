@@ -16,62 +16,67 @@ namespace fmg.uwp.draw.img.win2d {
    /// <br/>
    /// Win2D impl
    /// </summary>
-   public abstract class MosaicsSkillImg<TImage> : AMosaicsSkillImg<TImage>
-      where TImage : DependencyObject, ICanvasResourceCreator
-   {
-      static MosaicsSkillImg() {
-         StaticRotateImgConsts.Init();
-      }
+   public static class MosaicsSkillImg {
 
-      protected readonly ICanvasResourceCreator _rc;
-
-      /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
-      protected MosaicsSkillImg(ESkillLevel? group, ICanvasResourceCreator resourceCreator)
-         : base(group)
+      /// <summary> Representable <see cref="ESkillLevel"/> as image: common implementation part </summary>
+      public abstract class CommonImpl<TImage> : AMosaicsSkillImg<TImage>
+         where TImage : DependencyObject, ICanvasResourceCreator
       {
-         _rc = resourceCreator;
-      }
+         static CommonImpl() {
+            StaticRotateImgConsts.Init();
+         }
 
-      protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
-         ICanvasResourceCreator rc = Image;
+         protected readonly ICanvasResourceCreator _rc;
 
-         if (fillBk)
-            ds.Clear(BackgroundColor.ToWinColor());
+         /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
+         protected CommonImpl(ESkillLevel? group, ICanvasResourceCreator resourceCreator)
+            : base(group)
+         {
+            _rc = resourceCreator;
+         }
 
-         var stars = GetCoords();
-         foreach (var data in stars) {
-            var points = data.Item2.ToArray();
-            using (var geom = rc.BuildLines(points)) {
-               ds.FillGeometry(geom, data.Item1.ToWinColor());
-            }
+         protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
+            ICanvasResourceCreator rc = Image;
 
-            // draw perimeter border
-            var clr = BorderColor;
-            if (!clr.IsTransparent) {
-               var clrWin = clr.ToWinColor();
-               var bw = BorderWidth;
+            if (fillBk)
+               ds.Clear(BackgroundColor.ToWinColor());
+
+            var stars = GetCoords();
+            foreach (var data in stars) {
+               var points = data.Item2.ToArray();
+               using (var geom = rc.BuildLines(points)) {
+                  ds.FillGeometry(geom, data.Item1.ToWinColor());
+               }
+
+               // draw perimeter border
+               var clr = BorderColor;
+               if (!clr.IsTransparent) {
+                  var clrWin = clr.ToWinColor();
+                  var bw = BorderWidth;
+
+                  using (var css = new CanvasStrokeStyle {
+                     StartCap = CanvasCapStyle.Triangle,
+                     EndCap = CanvasCapStyle.Triangle
+                  }) {
+                     for (var i = 0; i < points.Length; ++i) {
+                        var p1 = points[i];
+                        var p2 = (i < points.Length - 1) ? points[i + 1] : points[0];
+                        ds.DrawLine(p1.ToVector2(), p2.ToVector2(), clrWin, bw, css);
+                     }
+                  }
+               }
 
                using (var css = new CanvasStrokeStyle {
-                  StartCap = CanvasCapStyle.Triangle,
-                  EndCap = CanvasCapStyle.Triangle
+                  StartCap = CanvasCapStyle.Flat,
+                  EndCap = CanvasCapStyle.Flat
                }) {
-                  for (var i = 0; i < points.Length; ++i) {
-                     var p1 = points[i];
-                     var p2 = (i < points.Length - 1) ? points[i + 1] : points[0];
-                     ds.DrawLine(p1.ToVector2(), p2.ToVector2(), clrWin, bw, css);
+                  foreach (var li in GetCoordsBurgerMenu()) {
+                     ds.DrawLine(li.from.ToVector2(), li.to.ToVector2(), li.clr.ToWinColor(), (float)li.penWidht, css);
                   }
                }
             }
-
-            using (var css = new CanvasStrokeStyle {
-               StartCap = CanvasCapStyle.Flat,
-               EndCap = CanvasCapStyle.Flat
-            }) {
-               foreach (var li in GetCoordsBurgerMenu()) {
-                  ds.DrawLine(li.from.ToVector2(), li.to.ToVector2(), li.clr.ToWinColor(), (float)li.penWidht, css);
-               }
-            }
          }
+
       }
 
       /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,7 +87,7 @@ namespace fmg.uwp.draw.img.win2d {
       /// <br/>
       /// CanvasBitmap impl
       /// </summary>
-      public class CanvasBmp : MosaicsSkillImg<CanvasBitmap> {
+      public class CanvasBmp : CommonImpl<CanvasBitmap> {
 
          /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
          public CanvasBmp(ESkillLevel? group, ICanvasResourceCreator resourceCreator)
@@ -105,7 +110,7 @@ namespace fmg.uwp.draw.img.win2d {
       /// <br/>
       /// CanvasImageSource impl (XAML ImageSource compatible)
       /// </summary>
-      public class CanvasImgSrc : MosaicsSkillImg<CanvasImageSource> {
+      public class CanvasImgSrc : CommonImpl<CanvasImageSource> {
 
          /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
          public CanvasImgSrc(ESkillLevel? group, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
