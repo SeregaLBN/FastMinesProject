@@ -102,7 +102,7 @@ namespace fmg.DataModel.DataSources {
             img.Rotate = selected;
             img.BorderColor = selected ? Color.White : Color.Black;
             img.BackgroundColor = selected ? StaticImgConsts.DefaultBkColor : PaintUwpContext<object>.DefaultBackgroundColor;
-            img.Padding = new Bound(img.Width*(selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*//100);
+            img.Padding = new Bound(img.Size.Width *(selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*//100);
             img.RotateAngle = 0;
          }
       }

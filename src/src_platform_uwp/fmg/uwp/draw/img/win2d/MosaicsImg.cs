@@ -193,7 +193,7 @@ namespace fmg.uwp.draw.img.win2d {
                if (_imageCache == null) {
                   var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
                   ICanvasResourceCreator rc = Image;
-                  _imageCache = new CanvasRenderTarget(rc, Width, Height, dpi);
+                  _imageCache = new CanvasRenderTarget(rc, Size.Width, Size.Height, dpi);
                   _invalidateCache = true;
                }
                if (_invalidateCache) {
@@ -209,7 +209,7 @@ namespace fmg.uwp.draw.img.win2d {
          /// <summary> copy cached image to original </summary>
          protected void CopyFromCache(CanvasDrawingSession ds) {
             if (UseCache) {
-               var rc = new Windows.Foundation.Rect(0, 0, Width, Height);
+               var rc = new Windows.Foundation.Rect(0, 0, Size.Width, Size.Height);
                ds.DrawImage(ImageCache, rc, rc, 1.0f, CanvasImageInterpolation.NearestNeighbor, CanvasComposite.Copy);
             } else {
                ds.DrawImage(ImageCache);
@@ -291,7 +291,7 @@ namespace fmg.uwp.draw.img.win2d {
 
          protected override CanvasBitmap CreateImage() {
             var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            return new CanvasRenderTarget(_rc, Width, Height, dpi);
+            return new CanvasRenderTarget(_rc, Size.Width, Size.Height, dpi);
          }
 
          protected override void DrawBody() {
@@ -314,7 +314,7 @@ namespace fmg.uwp.draw.img.win2d {
 
          protected override CanvasImageSource CreateImage() {
             var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            return new CanvasImageSource(_rc, Width, Height, dpi);
+            return new CanvasImageSource(_rc, Size.Width, Size.Height, dpi);
          }
 
          protected override void DrawBody() {

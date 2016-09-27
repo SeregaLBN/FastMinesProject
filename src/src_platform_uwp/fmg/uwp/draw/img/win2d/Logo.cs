@@ -44,7 +44,7 @@ namespace fmg.uwp.draw.img.win2d {
             IList<PointDouble> rays = new List<PointDouble>(), inn = new List<PointDouble>(), oct = new List<PointDouble>();
             GetCoords(rays, inn, oct);
 
-            var center = new PointDouble(Width / 2.0, Height / 2.0);
+            var center = new PointDouble(Size.Width / 2.0, Size.Height / 2.0);
 
             // paint owner rays
             for (var i = 0; i < 8; i++) {
@@ -117,7 +117,7 @@ namespace fmg.uwp.draw.img.win2d {
 
          protected override CanvasBitmap CreateImage() {
             var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            return new CanvasRenderTarget(_rc, Width, Height, dpi);
+            return new CanvasRenderTarget(_rc, Size.Width, Size.Height, dpi);
          }
 
          protected override void DrawBody() {
@@ -140,7 +140,7 @@ namespace fmg.uwp.draw.img.win2d {
 
          protected override CanvasImageSource CreateImage() {
             var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            return new CanvasImageSource(_rc, Width, Height, dpi);
+            return new CanvasImageSource(_rc, Size.Width, Size.Height, dpi);
          }
 
          protected override void DrawBody() {

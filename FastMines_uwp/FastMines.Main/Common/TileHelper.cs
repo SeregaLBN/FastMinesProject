@@ -173,8 +173,8 @@ namespace fmg {
          var bmp = img.Image;
          var pw = bmp.Size.Width;
          var ph = bmp.Size.Height;
-         System.Diagnostics.Debug.Assert(img.Width == pw);
-         System.Diagnostics.Debug.Assert(img.Height == ph);
+         System.Diagnostics.Debug.Assert(img.Size.Width == pw);
+         System.Diagnostics.Debug.Assert(img.Size.Height == ph);
          System.Diagnostics.Debug.Assert(w * zoomKoef == pw);
          System.Diagnostics.Debug.Assert(h * zoomKoef == ph);
          return new Tuple<EMosaic, CanvasBitmap>(mosaicType, bmp);

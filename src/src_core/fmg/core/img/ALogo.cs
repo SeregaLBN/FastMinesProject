@@ -40,15 +40,15 @@ namespace fmg.core.img {
          set { SetProperty(ref _rotateMode, value); }
       }
 
-      protected double ZoomX => (Width  - Padding.LeftAndRight) / 200.0;
-      protected double ZoomY => (Height - Padding.TopAndBottom) / 200.0;
+      protected double ZoomX => (Size.Width  - Padding.LeftAndRight) / 200.0;
+      protected double ZoomY => (Size.Height - Padding.TopAndBottom) / 200.0;
 
       protected void GetCoords(IList<PointDouble> rays, IList<PointDouble> inn, IList<PointDouble> oct) {
          var pl = Padding.Left;
          var pt = Padding.Top;
          var zx = ZoomX;
          var zy = ZoomY;
-         var center = new PointDouble(Width / 2.0, Height / 2.0);
+         var center = new PointDouble(Size.Width / 2.0, Size.Height / 2.0);
 
          rays.Clear();
          rays.Add(new PointDouble(pl + 100.0000 * zx, pt + 200.0000 * zy));

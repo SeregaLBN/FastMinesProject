@@ -103,7 +103,7 @@ namespace fmg.uwp.draw.img.win2d {
 
          protected override CanvasBitmap CreateImage() {
             var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            return new CanvasRenderTarget(_rc, Width, Height, dpi);
+            return new CanvasRenderTarget(_rc, Size.Width, Size.Height, dpi);
          }
 
          protected override void DrawBody() {
@@ -126,7 +126,7 @@ namespace fmg.uwp.draw.img.win2d {
 
          protected override CanvasImageSource CreateImage() {
             var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            return new CanvasImageSource(_rc, Width, Height, dpi);
+            return new CanvasImageSource(_rc, Size.Width, Size.Height, dpi);
          }
 
          protected override void DrawBody() {

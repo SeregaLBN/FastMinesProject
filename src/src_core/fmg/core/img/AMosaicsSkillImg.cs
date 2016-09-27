@@ -46,12 +46,12 @@ namespace fmg.core.img {
          var anglePart = 360.0 / stars;
 
          var sqMax = Math.Min( // размер квадрата куда будет вписана звезда при 0°
-               Width - Padding.LeftAndRight,
-               Height - Padding.TopAndBottom);
+               Size.Width - Padding.LeftAndRight,
+               Size.Height - Padding.TopAndBottom);
          var sqMin = sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
          var sqDiff = sqMax - sqMin;
 
-         var centerMax = new PointDouble(Width / 2.0, Height / 2.0);
+         var centerMax = new PointDouble(Size.Width / 2.0, Size.Height / 2.0);
          var centerMin = new PointDouble(Padding.Left + sqMin / 2, Padding.Top + sqMin / 2);
          var centerDiff = new PointDouble(centerMax.X - centerMin.X, centerMax.Y - centerMin.Y);
 
@@ -100,8 +100,8 @@ namespace fmg.core.img {
 
       private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> GetCoords_SkillLevelAsValue() {
          var sq = Math.Min( // size inner square
-            Width - Padding.LeftAndRight,
-            Height - Padding.TopAndBottom);
+            Size.Width - Padding.LeftAndRight,
+            Size.Height - Padding.TopAndBottom);
          var r1 = sq/7; // external radius
          var r2 = sq/12; // internal radius
 
@@ -113,7 +113,7 @@ namespace fmg.core.img {
          var angleAccumulative = angle;
          var anglePart = 360.0/stars;
 
-         var center = new PointDouble(Width / 2.0, Height / 2.0);
+         var center = new PointDouble(Size.Width / 2.0, Size.Height / 2.0);
          var zero = new PointDouble(0, 0);
          return Enumerable.Range(0, stars)
             .Select(starNum => {

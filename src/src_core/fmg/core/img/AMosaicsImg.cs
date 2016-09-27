@@ -96,8 +96,8 @@ namespace fmg.core.img {
       }
 
       private void RecalcArea() {
-         var w = Width;
-         var h = Height;
+         var w = Size.Width;
+         var h = Size.Height;
          var pad = Padding;
          var sizeImageIn = new Size(w - pad.LeftAndRight, h - pad.TopAndBottom);
          var sizeImageOut = new SizeDouble(sizeImageIn.Width, sizeImageIn.Height);
@@ -197,7 +197,7 @@ namespace fmg.core.img {
       #region PART ERotateMode.FullMatrix
 
       private void RotateMatrix() {
-         var center = new PointDouble(Width / 2.0 - _paddingFull.Left, Height / 2.0 - _paddingFull.Top);
+         var center = new PointDouble(Size.Width / 2.0 - _paddingFull.Left, Size.Height / 2.0 - _paddingFull.Top);
          foreach (var cell in Matrix) {
             cell.Init(); // restore base coords
             cell.getRegion().Points.RotateList(RotateAngle, center);

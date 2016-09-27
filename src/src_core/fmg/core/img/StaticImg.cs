@@ -36,26 +36,19 @@ namespace fmg.core.img {
             var old = _size;
             if (SetProperty(ref _size, value)) {
                Image = null;
-               OnSelfPropertyChanged(old.Width, _size.Width, nameof(this.Width));
-               OnSelfPropertyChanged(old.Height, _size.Height, nameof(this.Height));
                //Invalidate();
             }
          }
       }
-
-      /// <summary> width image </summary>
-      public int Width => Size.Width;
-      /// <summary> height image </summary>
-      public int Height => Size.Height;
 
       private Bound _padding;
       /// <summary> inside padding </summary>
       public Bound Padding {
          get { return _padding; }
          set {
-            if (value.LeftAndRight >= Width)
+            if (value.LeftAndRight >= Size.Width)
                throw new ArgumentException("Padding size is very large. Should be less than Width.");
-            if (value.TopAndBottom >= Height)
+            if (value.TopAndBottom >= Size.Height)
                throw new ArgumentException("Padding size is very large. Should be less than Height.");
             if (SetProperty(ref _padding, value)) {
                Invalidate();

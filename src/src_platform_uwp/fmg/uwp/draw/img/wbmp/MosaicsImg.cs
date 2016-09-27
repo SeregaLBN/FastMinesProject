@@ -137,7 +137,7 @@ namespace fmg.uwp.draw.img.wbmp {
       //}
 
       protected override WriteableBitmap CreateImage() {
-         return BitmapFactory.New(Width, Height); // new WriteableBitmap(w, h); // 
+         return BitmapFactory.New(Size.Width, Size.Height); // new WriteableBitmap(w, h); // 
       }
 
       protected override void DrawBody() {
@@ -220,15 +220,15 @@ namespace fmg.uwp.draw.img.wbmp {
 
       /// <summary> copy cached image to original </summary>
       private void CopyFromCache() {
-         var rc = new Windows.Foundation.Rect(0, 0, Width, Height);
+         var rc = new Windows.Foundation.Rect(0, 0, Size.Width, Size.Height);
          Image.Blit(rc, ImageCache, rc, WriteableBitmapExtensions.BlendMode.None);
       }
 
       private void DrawCache() { DrawStaticPart(_imageCache); }
 
       private void DrawStaticPart(WriteableBitmap targetImage) {
-         var w = Width;
-         var h = Height;
+         var w = Size.Width;
+         var h = Size.Height;
          targetImage.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, BackgroundColor.ToWinColor());
 
          var paint0 = new PaintableWBmp(targetImage);

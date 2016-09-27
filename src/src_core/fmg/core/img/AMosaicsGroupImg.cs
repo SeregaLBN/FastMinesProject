@@ -41,10 +41,10 @@ namespace fmg.core.img {
 
       private IEnumerable<PointDouble> GetCoords_MosaicGroupAsValue() {
          double sq = Math.Min( // size inner square
-            Width - Padding.LeftAndRight,
-            Height - Padding.TopAndBottom);
+            Size.Width - Padding.LeftAndRight,
+            Size.Height - Padding.TopAndBottom);
          var vertices = 3 + MosaicGroup.Value.Ordinal(); // verticles count
-         var center = new PointDouble(Width / 2.0, Height / 2.0);
+         var center = new PointDouble(Size.Width / 2.0, Size.Height / 2.0);
 
          var ra = RotateAngle;
          if (MosaicGroup != EMosaicGroup.eOthers)
@@ -64,9 +64,9 @@ namespace fmg.core.img {
 
       private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> GetCoords_MosaicGroupAsValueOthers1() {
          double sq = Math.Min( // size inner square
-            Width - Padding.LeftAndRight,
-            Height - Padding.TopAndBottom);
-         var center = new PointDouble(Width / 2.0, Height / 2.0);
+            Size.Width - Padding.LeftAndRight,
+            Size.Height - Padding.TopAndBottom);
+         var center = new PointDouble(Size.Width / 2.0, Size.Height / 2.0);
 
 
          var nm1 = GetNM(_nmIndex1);
@@ -163,12 +163,12 @@ namespace fmg.core.img {
          var anglePart = 360.0 / shapes;
 
          var sqMax = Math.Min( // размер квадрата куда будет вписана фигура при 0°
-               Width - Padding.LeftAndRight,
-               Height - Padding.TopAndBottom);
+               Size.Width - Padding.LeftAndRight,
+               Size.Height - Padding.TopAndBottom);
          var sqMin = sqMax / 7; // размер квадрата куда будет вписана фигура при 360°
          var sqDiff = sqMax - sqMin;
 
-         var center = new PointDouble(Width / 2.0, Height / 2.0);
+         var center = new PointDouble(Size.Width / 2.0, Size.Height / 2.0);
 
          return Enumerable.Range(0, shapes)
             .Select(shapeNum => {
@@ -203,8 +203,8 @@ namespace fmg.core.img {
 
       private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> GetCoords_MosaicGroupAsValueOthers2() {
          var sq = Math.Min( // size inner square
-               Width - Padding.LeftAndRight,
-               Height - Padding.TopAndBottom);
+               Size.Width - Padding.LeftAndRight,
+               Size.Height - Padding.TopAndBottom);
          var radius = sq / 2.7;
 
          var shapes = 3; // мозаики из группы EMosaicGroup.eOthers состоят из 3 типов фигур: треугольники, квадраты и шестигранники
@@ -212,7 +212,7 @@ namespace fmg.core.img {
          var angle = RotateAngle;
          var anglePart = 360.0 / shapes;
 
-         var center = new PointDouble(Width / 2.0, Height / 2.0);
+         var center = new PointDouble(Size.Width / 2.0, Size.Height / 2.0);
          var zero = new PointDouble(0, 0);
          return Enumerable.Range(0, shapes)
             .Select(shapeNum => {

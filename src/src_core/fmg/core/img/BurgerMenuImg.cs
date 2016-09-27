@@ -44,11 +44,11 @@ namespace fmg.core.img {
          set { SetProperty(ref _rotateBurgerMenu, value); }
       }
 
-      protected RectDouble BurgerMenuRegion => new RectDouble(
-         Width  / 2.0,
-         Height / 2.0,
-         Width  / 2.0 - Padding.Right,
-         Height / 2.0 - Padding.Bottom);
+      protected virtual RectDouble BurgerMenuRegion => new RectDouble(
+         Size.Width  / 2.0,
+         Size.Height / 2.0,
+         Size.Width  / 2.0 - Padding.Right,
+         Size.Height / 2.0 - Padding.Bottom);
 
       protected struct LineInfo {
          public Color clr;

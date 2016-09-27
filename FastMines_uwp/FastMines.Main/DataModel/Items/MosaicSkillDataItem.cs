@@ -32,8 +32,8 @@ namespace fmg.DataModel.Items {
                   RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
                   //, OnlySyncDraw = true
                };
-               System.Diagnostics.Debug.Assert(tmp.Width == ImageSize.Width * ZoomKoef);
-               System.Diagnostics.Debug.Assert(tmp.Height == ImageSize.Height * ZoomKoef);
+               System.Diagnostics.Debug.Assert(tmp.Size.Width == ImageSize.Width * ZoomKoef);
+               System.Diagnostics.Debug.Assert(tmp.Size.Height == ImageSize.Height * ZoomKoef);
                Image = tmp; // call this setter
             }
             return _mosaicSkillImg;

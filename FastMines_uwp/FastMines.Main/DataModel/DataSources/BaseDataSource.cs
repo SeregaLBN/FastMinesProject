@@ -50,13 +50,9 @@ namespace fmg.DataModel.DataSources
             }
             if (old != value) {
                OnSelfPropertyChanged(new PropertyChangedExEventArgs<Size>(value, old));
-               OnSelfPropertyChanged(old.Width, value.Width, nameof(this.ImageWidth));
-               OnSelfPropertyChanged(old.Height, value.Height, nameof(this.ImageHeight));
             }
          }
       }
-      public int ImageWidth => ImageSize.Width;
-      public int ImageHeight => ImageSize.Height;
 
       protected override void Dispose(bool disposing) {
          if (Disposed)

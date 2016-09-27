@@ -163,12 +163,15 @@
         <converters:ObjectToMosaicDataItemConverter x:Key="ObjectToMosaicDataItemConverter"/>
         <converters:ObjectToMosaicGroupDataItemConverter x:Key="ObjectToMosaicGroupDataItemConverter"/>
         <converters:ObjectToMosaicSkillDataItemConverter x:Key="ObjectToMosaicSkillDataItemConverter"/>
-        <converters:ImageSizeWithMarginConverter x:Key="ImageSizeWithMarginConverter"/>
+        <converters:ImageSizeWidthWithMarginConverter  x:Key="ImageSizeWidthWithMarginConverter"/>
+        <converters:ImageSizeHeightWithMarginConverter x:Key="ImageSizeHeightWithMarginConverter"/>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:ImageSizeFontSizeConverter x:Key="ImageSizeFontSizeConverter"/>
-        <converters:ImageSizeOpenPaneConverter x:Key="ImageSizeOpenPaneConverter"/>
+        <converters:ImageSizeWidthOpenPaneConverter x:Key="ImageSizeWidthOpenPaneConverter"/>
         <converters:FmColorToBrushConverter x:Key="FmColorToBrushConverter"/>
         <converters:BooleanNullableConverter x:Key="BooleanNullableConverter"/>
+        <converters:SizeToWidthConverter  x:Key="SizeToWidthConverter"/>
+        <converters:SizeToHeightConverter x:Key="SizeToHeightConverter"/>
 
     </Application.Resources>
 </Application>

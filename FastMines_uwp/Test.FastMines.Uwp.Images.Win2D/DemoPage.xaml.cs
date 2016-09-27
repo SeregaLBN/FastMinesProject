@@ -260,12 +260,14 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                      };
                      cnvsCtrl.SetBinding(CanvasControl.WidthProperty, new Binding {
                         Source = simg,
-                        Path = new PropertyPath(nameof(StaticCanvasBmp.Width)),
+                        Path = new PropertyPath(nameof(StaticCanvasBmp.Size)),
+                        Converter = new SizeConverter(true),
                         Mode = BindingMode.OneWay
                      });
                      cnvsCtrl.SetBinding(CanvasControl.HeightProperty, new Binding {
                         Source = simg,
-                        Path = new PropertyPath(nameof(StaticCanvasBmp.Height)),
+                        Path = new PropertyPath(nameof(StaticCanvasBmp.Size)),
+                        Converter = new SizeConverter(false),
                         Mode = BindingMode.OneWay
                      });
                   } else
@@ -407,6 +409,21 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          _onActivated?.Invoke(enable);
       }
 
+   }
+
+   public sealed class SizeConverter : IValueConverter {
+      private bool _width;
+      public SizeConverter(bool width) {
+         _width = width;
+      }
+      public object Convert(object value, Type targetType, object parameter, string language) {
+         return System.Convert.ToDouble(_width
+            ? ((Size)value).Width
+            : ((Size)value).Height);
+      }
+      public object ConvertBack(object value, Type targetType, object parameter, string language) {
+         throw new NotImplementedException("Not supported...");
+      }
    }
 
 }

@@ -24,7 +24,7 @@ namespace fmg.uwp.draw.img.wbmp {
       { }
 
       protected override WriteableBitmap CreateImage() {
-         return new WriteableBitmap(Width, Height);
+         return new WriteableBitmap(Size.Width, Size.Height);
       }
 
       protected override void DrawBody() {

@@ -102,6 +102,9 @@
     <Compile Include="MosaicPage.xaml.cs">
       <DependentUpon>MosaicPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Presentation\Converters\ImageSizeWidthWithMarginConverter.cs" />
+    <Compile Include="Presentation\Converters\SizeToHeightConverter.cs" />
+    <Compile Include="Presentation\Converters\SizeToWidthConverter.cs" />
     <Compile Include="Presentation\Converters\ObjectToMosaicDataItemConverter.cs" />
     <Compile Include="Presentation\MosaicsViewModel.cs" />
     <Compile Include="SelectMosaicPage.xaml.cs">
@@ -113,8 +116,8 @@
     <Compile Include="Presentation\Converters\ObjectToMosaicSkillDataItemConverter.cs" />
     <Compile Include="Common\TileHelper.cs" />
     <Compile Include="Presentation\Command.cs" />
-    <Compile Include="Presentation\Converters\ImageSizeOpenPaneConverter.cs" />
-    <Compile Include="Presentation\Converters\ImageSizeWithMarginConverter.cs" />
+    <Compile Include="Presentation\Converters\ImageSizeWidthOpenPaneConverter.cs" />
+    <Compile Include="Presentation\Converters\ImageSizeHeightWithMarginConverter.cs" />
     <Compile Include="Presentation\Converters\ObjectToMosaicGroupDataItemConverter.cs" />
     <Compile Include="Presentation\ShellViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -31,8 +31,8 @@ namespace fmg.DataModel.Items {
                   RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
                   //, OnlySyncDraw = true
                };
-               System.Diagnostics.Debug.Assert(tmp.Width == ImageSize.Width * ZoomKoef);
-               System.Diagnostics.Debug.Assert(tmp.Height == ImageSize.Height * ZoomKoef);
+               System.Diagnostics.Debug.Assert(tmp.Size.Width == ImageSize.Width * ZoomKoef);
+               System.Diagnostics.Debug.Assert(tmp.Size.Height == ImageSize.Height * ZoomKoef);
                Image = tmp; // call this setter
             }
             return _mosaicGroupImg;
@@ -56,16 +56,11 @@ namespace fmg.DataModel.Items {
       public override Size ImageSize {
          get { return _imageSize; }
          set {
-            var old = _imageSize;
             if (SetProperty(ref _imageSize, value)) {
                Image.Size = new Size(_imageSize.Width * ZoomKoef, _imageSize.Height * ZoomKoef);
-               OnSelfPropertyChanged(old.Width, value.Width, nameof(this.ImageWidth));
-               OnSelfPropertyChanged(old.Height, value.Height, nameof(this.ImageHeight));
             }
          }
       }
-      public int ImageWidth => ImageSize.Width;
-      public int ImageHeight => ImageSize.Height;
 
       private void OnMosaicsGroupImgPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          System.Diagnostics.Debug.Assert(sender is MosaicsGroupCanvasBmp);
