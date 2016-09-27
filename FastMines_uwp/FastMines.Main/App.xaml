@@ -169,7 +169,6 @@
         <converters:ImageSizeOpenPaneConverter x:Key="ImageSizeOpenPaneConverter"/>
         <converters:FmColorToBrushConverter x:Key="FmColorToBrushConverter"/>
         <converters:BooleanNullableConverter x:Key="BooleanNullableConverter"/>
-        <converters:ScaleXToggleButtonConverter x:Key="ScaleXToggleButtonConverter"/>
 
     </Application.Resources>
 </Application>

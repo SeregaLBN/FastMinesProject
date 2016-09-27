@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using Windows.UI.Xaml.Media;
 using Microsoft.Graphics.Canvas;
 using fmg.common.geom;
 using fmg.common.notyfier;
@@ -10,14 +9,17 @@ using MosaicsGroupCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsGroupImg.CanvasBmp;
 namespace fmg.DataModel.Items {
 
    /// <summary> Mosaic group item for data model </summary>
-   public class MosaicGroupDataItem : BaseData<EMosaicGroup, MosaicsGroupCanvasBmp> {
+   public class MosaicGroupDataItem : BaseData<EMosaicGroup?, MosaicsGroupCanvasBmp> {
+
       private const int ZoomKoef = 2;
 
-      public MosaicGroupDataItem(EMosaicGroup eMosaicGroup) : base(eMosaicGroup) {
-         Title = eMosaicGroup.GetDescription();
+      public MosaicGroupDataItem(EMosaicGroup? eMosaicGroup)
+         : base(eMosaicGroup)
+      {
+         Title = eMosaicGroup?.GetDescription();
       }
 
-      public EMosaicGroup MosaicGroup => UniqueId;
+      public EMosaicGroup? MosaicGroup => UniqueId;
 
       private MosaicsGroupCanvasBmp _mosaicGroupImg;
       public override MosaicsGroupCanvasBmp Image {
@@ -54,21 +56,27 @@ namespace fmg.DataModel.Items {
       public override Size ImageSize {
          get { return _imageSize; }
          set {
+            var old = _imageSize;
             if (SetProperty(ref _imageSize, value)) {
                Image.Size = new Size(_imageSize.Width * ZoomKoef, _imageSize.Height * ZoomKoef);
+               OnSelfPropertyChanged(old.Width, value.Width, nameof(this.ImageWidth));
+               OnSelfPropertyChanged(old.Height, value.Height, nameof(this.ImageHeight));
             }
          }
       }
+      public int ImageWidth => ImageSize.Width;
+      public int ImageHeight => ImageSize.Height;
 
       private void OnMosaicsGroupImgPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         System.Diagnostics.Debug.Assert(sender is MosaicsGroupCanvasBmp);
          var pn = ev.PropertyName;
          if (pn == nameof(MosaicsGroupCanvasBmp.Image)) {
             // ! notify parent container
-            var ev2 = ev as PropertyChangedExEventArgs<ImageSource>;
+            var ev2 = ev as PropertyChangedExEventArgs<CanvasBitmap>;
             if (ev2 == null)
                OnSelfPropertyChanged(nameof(this.Image));
             else
-               OnSelfPropertyChanged(new PropertyChangedExEventArgs<ImageSource>(ev2.NewValue, ev2.OldValue, nameof(this.Image)));
+               OnSelfPropertyChanged(new PropertyChangedExEventArgs<CanvasBitmap>(ev2.NewValue, ev2.OldValue, nameof(this.Image)));
          }
       }
 

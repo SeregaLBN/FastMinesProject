@@ -26,15 +26,26 @@ namespace fmg.uwp.utils {
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
       }
 
-      public async static Task Delay(this Action callback, TimeSpan delay) {
+      public async static Task RunWithDelay(this Action run, TimeSpan delay) {
          await Task.Delay(delay);
-         callback();
+         run();
       }
 
-      public static void DelayNoWait(this Action callback, TimeSpan delay) {
+      public static void RunWithDelayNoWait(this Action run, TimeSpan delay) {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-         Delay(callback, delay);
+         RunWithDelay(run, delay);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+      }
+
+      public static void RepeatNoWait(this Action run, TimeSpan delay, Func<bool> cancelation) {
+         Action run2 = () => { };
+         run2 = () => {
+            if (cancelation())
+               return;
+            run();
+            run2.RunWithDelayNoWait(delay);
+         };
+         run2.RunWithDelayNoWait(delay);
       }
 
    }

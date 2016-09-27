@@ -10,9 +10,21 @@ using fmg.DataModel.Items;
 namespace fmg.DataModel.DataSources
 {
    /// <summary> DataSource menu items (mosaic groups) </summary>
-   public class MosaicGroupsDataSource : BaseDataSource<MosaicGroupDataItem, EMosaicGroup, MosaicsGroupCanvasBmp> {
+   public class MosaicGroupsDataSource : BaseDataSource<MosaicGroupDataItem, EMosaicGroup?, MosaicsGroupCanvasBmp> {
+
+      MosaicGroupDataItem _itemOfType;
 
       protected override void FillDataSource() {
+         _itemOfType = new MosaicGroupDataItem(null) {
+            Image = {
+               PaddingInt = 30,
+               BackgroundColor = Color.Transparent,
+               RedrawInterval = 50,
+               PolarLights = true,
+               Rotate = true
+            }
+         };
+
          var dataSource = DataSourceInternal;
          foreach (var g in EMosaicGroupEx.GetValues()) {
             var mi = new MosaicGroupDataItem(g) {
@@ -24,6 +36,9 @@ namespace fmg.DataModel.DataSources
          }
          base.FillDataSource();
       }
+
+      /// <summary> representative typeof(MosaicGroup) </summary>
+      public MosaicGroupDataItem MosaicGroupsRepresentativeElement => _itemOfType;
 
       protected override void OnCurrentElementChanged() {
          OnSelfPropertyChanged(nameof(this.UnicodeChars));
@@ -46,6 +61,7 @@ namespace fmg.DataModel.DataSources
             //}
          }
       }
+
 
       public string UnicodeChars {
          get {

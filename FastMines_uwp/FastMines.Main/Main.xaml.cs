@@ -5,16 +5,21 @@ using System.Reactive.Linq;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
+using fmg.common.geom;
+using fmg.common.geom.util;
 using fmg.core.types;
+using fmg.core.img;
 using fmg.data.controller.types;
 using fmg.uwp.utils;
+using fmg.DataModel.Items;
 using fmg.DataModel.DataSources;
 using MosaicsSkillCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsSkillImg.CanvasBmp;
 using MosaicsGroupCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsGroupImg.CanvasBmp;
-using fmg.DataModel.Items;
 
 namespace fmg
 {
@@ -41,14 +46,16 @@ namespace fmg
 
          ViewModel.MosaicGroupDs.PropertyChanged += MosaicGroupDsOnPropertyChanged;
          ViewModel.MosaicSkillDs.PropertyChanged += MosaicSkillDsOnPropertyChanged;
-         ViewModel.MosaicGroupDs.CurrentElement = ViewModel.MosaicGroupDs.DataSource.First(x => x.MosaicGroup == EMosaicGroup.ePentagons);
-         ViewModel.MosaicSkillDs.CurrentElement = ViewModel.MosaicSkillDs.DataSource.First(x => x.SkillLevel == ESkillLevel.eCrazy);
+         ViewModel.MosaicGroupDs.CurrentElement = ViewModel.MosaicGroupDs.DataSource.First(x => x.MosaicGroup == EMosaicGroup.eQuadrangles);
+         ViewModel.MosaicSkillDs.CurrentElement = ViewModel.MosaicSkillDs.DataSource.First(x => x.SkillLevel == ESkillLevel.eBeginner);
          Loaded += (sender, ev) => {
             var smp = RootFrame?.Content as SelectMosaicPage;
             if (smp != null) {
                var ds = smp.ViewModel.MosaicsDs;
                ds.CurrentElement = ds.DataSource.First();
             }
+
+            ApplyButtonColorSmoothTransition(_togglePaneButton, ViewModel.MosaicGroupDs.MosaicGroupsRepresentativeElement.Image);
          };
 
          //this.SizeChanged += OnSizeChanged;
@@ -73,7 +80,7 @@ namespace fmg
             smp = RootFrame.Content as SelectMosaicPage;
          }
          smp.CurrentElement = null;
-         smp.CurrentMosaicGroup = currentGroupItem.MosaicGroup;
+         smp.CurrentMosaicGroup = currentGroupItem.MosaicGroup.Value;
          smp.CurrentSkillLevel = currentSkillItem.SkillLevel;
       }
 
@@ -139,31 +146,22 @@ namespace fmg
       //}
 
       private void CanvasControl_CreateResources_MosaicsSkillImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
-         if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
-            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsSkillCanvasBmp);
-            var img = canvasControl.DataContext as MosaicsSkillCanvasBmp;
-            if (img == null)
-               return;
-            canvasControl.Draw += (sender2, ev2) => {
-               ev2.DrawingSession.DrawImage(img.Image, new Rect(0, 0, sender2.Width, sender2.Height));
-            };
-            img.PropertyChanged += (sender3, ev3) => {
-               if (ev3.PropertyName == nameof(img.Image))
-                  canvasControl.Invalidate();
-            };
-         } else {
-            System.Diagnostics.Debug.Assert(false, "Support me"); // TODO
-         }
+         System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsSkillCanvasBmp);
+         CanvasControl_CreateResources(canvasControl, ev);
       }
 
       private void CanvasControl_CreateResources_MosaicsGroupImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
+         System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsGroupCanvasBmp);
+         CanvasControl_CreateResources(canvasControl, ev);
+      }
+      private void CanvasControl_CreateResources(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
          if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
-            System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsGroupCanvasBmp);
-            var img = canvasControl.DataContext as MosaicsGroupCanvasBmp;
+            var img = canvasControl.DataContext as StaticImg<CanvasBitmap>;
             if (img == null)
                return;
             canvasControl.Draw += (sender2, ev2) => {
-               ev2.DrawingSession.DrawImage(img.Image, new Rect(0, 0, sender2.Width, sender2.Height));
+               ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, sender2.Width, sender2.Height)); // zoomed size
+               //ev2.DrawingSession.DrawImage(img.Image, new Windows.Foundation.Rect(0, 0, img.Width, img.Height)); // real size
             };
             img.PropertyChanged += (sender3, ev3) => {
                if (ev3.PropertyName == nameof(img.Image))
@@ -174,5 +172,53 @@ namespace fmg
          }
       }
 
+      private void ApplyButtonColorSmoothTransition(ToggleButton bttn, StaticImg<CanvasBitmap> image) {
+         int flag = 0;
+         var clrFrom = image.BackgroundColor; //Color.Coral;
+         var clrTo = Color.BlueViolet;
+         double fullTimeMsec = 1500, repeatTimeMsec = 100;
+         double currStepAngle = 0;
+         double deltaStepAngle = 360.0 / (fullTimeMsec / repeatTimeMsec);
+         bttn.PointerEntered += (s, ev3) => {
+            flag = 1; // start entered
+            Action r = () => {
+               Color clrCurr;
+               if (currStepAngle >= 360) {
+                  flag = 0; // stop
+                  clrCurr = clrTo;
+               } else {
+                  currStepAngle += deltaStepAngle;
+                  var sin = Math.Sin((currStepAngle / 4).ToRadian());
+                  clrCurr.A = (byte)(clrFrom.A + sin * (clrTo.A - clrFrom.A));
+                  clrCurr.R = (byte)(clrFrom.R + sin * (clrTo.R - clrFrom.R));
+                  clrCurr.G = (byte)(clrFrom.G + sin * (clrTo.G - clrFrom.G));
+                  clrCurr.B = (byte)(clrFrom.B + sin * (clrTo.B - clrFrom.B));
+               }
+               image.BackgroundColor = clrCurr;
+            };
+            r.RepeatNoWait(TimeSpan.FromMilliseconds(repeatTimeMsec), () => flag != 1);
+         };
+         bttn.PointerExited += (s, ev3) => {
+            flag = 2;
+            Action r = () => {
+               Color clrCurr;
+               if (currStepAngle <= 0) {
+                  flag = 0; // stop
+                  clrCurr = clrFrom;
+               } else {
+                  currStepAngle -= deltaStepAngle;
+                  var cos = Math.Cos((currStepAngle / 4).ToRadian());
+                  clrCurr.A = (byte)(clrTo.A - (1 - cos * (clrFrom.A - clrTo.A)));
+                  clrCurr.R = (byte)(clrTo.R - (1 - cos * (clrFrom.R - clrTo.R)));
+                  clrCurr.G = (byte)(clrTo.G - (1 - cos * (clrFrom.G - clrTo.G)));
+                  clrCurr.B = (byte)(clrTo.B - (1 - cos * (clrFrom.B - clrTo.B)));
+               }
+               image.BackgroundColor = clrCurr;
+            };
+            r.RepeatNoWait(TimeSpan.FromMilliseconds(repeatTimeMsec), () => flag != 2);
+         };
+      }
+
    }
+
 }

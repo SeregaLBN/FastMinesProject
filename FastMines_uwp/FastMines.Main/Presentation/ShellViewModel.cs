@@ -36,6 +36,8 @@ namespace fmg.common {
             _mosaicSkillDs.ImageSize = value;
          }
       }
+      public int ImageWidth  => ImageSize.Width;
+      public int ImageHeight => ImageSize.Height;
 
       private void OnMosaicSkillDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          if (ev.PropertyName == nameof(MosaicsDataSource.ImageSize)) {
@@ -48,15 +50,37 @@ namespace fmg.common {
       }
 
       private void OnMosaicGroupDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         if (ev.PropertyName == nameof(MosaicsDataSource.ImageSize)) {
-            var evi = ev as PropertyChangedExEventArgs<int>;
-            if (evi == null)
-               OnSelfPropertyChanged(nameof(this.ImageSize));
-            else
-               OnSelfPropertyChanged(evi.OldValue, evi.NewValue, nameof(this.ImageSize));
-         } else if (ev.PropertyName == nameof(MosaicsDataSource.CurrentElement)) {
-            //// auto-close split view pane
-            //this.IsSplitViewPaneOpen = false;
+         System.Diagnostics.Debug.Assert(sender is MosaicGroupsDataSource);
+         switch (ev.PropertyName) {
+         case nameof(MosaicGroupsDataSource.ImageSize): {
+               var ev2 = ev as PropertyChangedExEventArgs<Size>;
+               if (ev2 == null)
+                  OnSelfPropertyChanged(nameof(this.ImageSize));
+               else
+                  OnSelfPropertyChanged(ev2.OldValue, ev2.NewValue, nameof(this.ImageSize));
+            }
+            break;
+         case nameof(MosaicGroupsDataSource.ImageWidth): {
+               var ev2 = ev as PropertyChangedExEventArgs<int>;
+               if (ev2 == null)
+                  OnSelfPropertyChanged(nameof(this.ImageWidth));
+               else
+                  OnSelfPropertyChanged(ev2.OldValue, ev2.NewValue, nameof(this.ImageWidth));
+            }
+            break;
+         case nameof(MosaicGroupsDataSource.ImageHeight): {
+               var ev2 = ev as PropertyChangedExEventArgs<int>;
+               if (ev2 == null)
+                  OnSelfPropertyChanged(nameof(this.ImageHeight));
+               else
+                  OnSelfPropertyChanged(ev2.OldValue, ev2.NewValue, nameof(this.ImageHeight));
+            }
+            break;
+         case nameof(MosaicsDataSource.CurrentElement): {
+               //// auto-close split view pane
+               //this.IsSplitViewPaneOpen = false;
+            }
+            break;
          }
       }
 

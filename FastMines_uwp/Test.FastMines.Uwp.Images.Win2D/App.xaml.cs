@@ -62,14 +62,11 @@ namespace Test.FastMines.Uwp.Images.Win2D
 
          if (applyColor != null) {
             HSV hsv = Colors.DarkBlue.ToHsvColor();
-            Action<Action> repeat = a => a.DelayNoWait(TimeSpan.FromMilliseconds(100));
-            Action run = () => { };
-            run = () => {
+            Action run = () => {
                hsv.h += 10;
                applyColor(hsv.ToWinColor());
-               repeat(run);
             };
-            repeat(run);
+            run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => false);
          }
          /**/
 

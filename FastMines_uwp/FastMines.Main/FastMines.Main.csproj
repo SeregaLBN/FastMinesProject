@@ -109,7 +109,6 @@
     </Compile>
     <Compile Include="Presentation\Converters\FmColorToWinColorConverter.cs" />
     <Compile Include="Presentation\Converters\FmColorToBrushConverter.cs" />
-    <Compile Include="Presentation\Converters\ScaleXToggleButtonConverter.cs" />
     <Compile Include="Presentation\Converters\ImageSizeFontSizeConverter.cs" />
     <Compile Include="Presentation\Converters\ObjectToMosaicSkillDataItemConverter.cs" />
     <Compile Include="Common\TileHelper.cs" />
