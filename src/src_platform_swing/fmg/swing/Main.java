@@ -1,72 +1,17 @@
 package fmg.swing;
 
-import java.awt.AWTEvent;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Event;
-import java.awt.EventQueue;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.LayoutManager;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
-import java.awt.event.WindowListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
-import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ActionMap;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.ComponentInputMap;
-import javax.swing.Icon;
-import javax.swing.InputMap;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.Timer;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -91,19 +36,8 @@ import fmg.data.controller.types.ESkillLevel;
 import fmg.data.controller.types.User;
 import fmg.data.view.draw.EShowElement;
 import fmg.data.view.draw.EZoomInterface;
-import fmg.swing.dialogs.AboutDlg;
-import fmg.swing.dialogs.ChampionDlg;
-import fmg.swing.dialogs.CustomSkillDlg;
-import fmg.swing.dialogs.ManageDlg;
-import fmg.swing.dialogs.SelectMosaicDlg;
-import fmg.swing.dialogs.StatisticDlg;
-import fmg.swing.draw.img.Flag;
-import fmg.swing.draw.img.Logo;
-import fmg.swing.draw.img.Mine;
-import fmg.swing.draw.img.MosaicsGroupImg;
-import fmg.swing.draw.img.MosaicsImg;
-import fmg.swing.draw.img.MosaicsSkillImg;
-import fmg.swing.draw.img.Smile;
+import fmg.swing.dialogs.*;
+import fmg.swing.draw.img.*;
 import fmg.swing.draw.img.Smile.EType;
 import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.mosaic.Mosaic;
@@ -953,8 +887,8 @@ public class Main extends JFrame implements PropertyChangeListener {
          logo.setSize((int)Math.min(sizeOutward.getWidth(), sizeOutward.getHeight()));
 
          logo.getImage().paintIcon(this, g,
-               (sizeOutward.width -logo.getWidth())>>1,
-               (sizeOutward.height-logo.getHeight())>>1);
+               (sizeOutward.width -logo.getSize().width)>>1,
+               (sizeOutward.height-logo.getSize().height)>>1);
       }
 
       public void animateLogo(boolean start) {

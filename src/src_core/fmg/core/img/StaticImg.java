@@ -50,19 +50,14 @@ public abstract class StaticImg<TImage> extends NotifyPropertyChanged {
       }
    }
 
-   /** width image */
-   public int getWidth() { return getSize().width; }
-   /** height image */
-   public int getHeight() { return getSize().height; }
-
    private Bound _padding;
    /** inside padding */
    public Bound getPadding() { return _padding; }
    public void setPadding(int bound) { setPadding(new Bound(bound)); }
    public void setPadding(Bound value) {
-      if (value.getLeftAndRight() >= getWidth())
+      if (value.getLeftAndRight() >= getSize().width)
          throw new IllegalArgumentException("Padding size is very large. Should be less than Width.");
-      if (value.getTopAndBottom() >= getHeight())
+      if (value.getTopAndBottom() >= getSize().height)
          throw new IllegalArgumentException("Padding size is very large. Should be less than Height.");
       if (setProperty(_padding, value, PROPERTY_PADDING)) {
          invalidate();

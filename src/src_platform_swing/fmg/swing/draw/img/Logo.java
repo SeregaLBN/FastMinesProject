@@ -24,7 +24,7 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
          //if (bkClr.getA() != fmg.common.Color.Transparent.getA())
          {
             g.setColor(Cast.toColor(bkClr));
-            g.fillRect(0, 0, getWidth(), getHeight());
+            g.fillRect(0, 0, getSize().width, getSize().height);
          }
       }
 
@@ -36,7 +36,7 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
       Point2D.Double [] rays = rays0.stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
       Point2D.Double [] inn  = inn0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
       Point2D.Double [] oct  = oct0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
-      Point2D.Double center = new Point2D.Double(getWidth()/2.0, getHeight()/2.0);
+      Point2D.Double center = new Point2D.Double(getSize().width/2.0, getSize().height/2.0);
 
       Color [] palette = Arrays.stream(Palette)
          .map(hsv -> Cast.toColor(hsv.toColor()))
@@ -110,7 +110,7 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
          if (gBuffImg != null)
             gBuffImg.dispose();
 
-         buffImg = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+         buffImg = new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_ARGB);
          gBuffImg = buffImg.createGraphics();
          gBuffImg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
          gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -118,9 +118,9 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
 
          return new javax.swing.Icon() {
             @Override
-            public int getIconWidth() { return Icon.this.getWidth(); }
+            public int getIconWidth() { return Icon.this.getSize().width; }
             @Override
-            public int getIconHeight() { return Icon.this.getHeight(); }
+            public int getIconHeight() { return Icon.this.getSize().height; }
             @Override
             public void paintIcon(Component c, Graphics g, int x, int y) {
                g.drawImage(buffImg, x,y, c);
@@ -145,7 +145,7 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
 
       @Override
       protected java.awt.Image createImage() {
-         return new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+         return new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_ARGB);
       }
 
       @Override

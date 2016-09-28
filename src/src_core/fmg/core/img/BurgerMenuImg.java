@@ -43,10 +43,10 @@ public abstract class BurgerMenuImg<TImage> extends PolarLightsImg<TImage> {
    public void   setRotateBurgerMenu(boolean value) { setProperty(_rotateBurgerMenu, value, PROPERTY_ROTATE_BURGER_MENU); }
 
    protected RectDouble getBurgerMenuRegion() {
-      return new RectDouble(getWidth() /2.0,
-                            getHeight()/2.0,
-                            getWidth() /2.0 - getPadding().right,
-                            getHeight()/2.0 - getPadding().bottom);
+      return new RectDouble(getSize().width /2.0,
+                            getSize().height/2.0,
+                            getSize().width /2.0 - getPadding().right,
+                            getSize().height/2.0 - getPadding().bottom);
    }
 
    protected static class LineInfo {

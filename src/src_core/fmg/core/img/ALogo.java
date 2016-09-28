@@ -43,15 +43,15 @@ public abstract class ALogo<TImage> extends PolarLightsImg<TImage> {
    public ERotateMode getRotateMode() { return _rotateMode; }
    public void setRotateMode(ERotateMode value) { setProperty(_rotateMode, value, PROPERTY_ROTATE_MODE); }
 
-   protected double getZoomX() { return (getWidth()  - getPadding().getLeftAndRight()) / 200.0; }
-   protected double getZoomY() { return (getHeight() - getPadding().getTopAndBottom()) / 200.0; }
+   protected double getZoomX() { return (getSize().width  - getPadding().getLeftAndRight()) / 200.0; }
+   protected double getZoomY() { return (getSize().height - getPadding().getTopAndBottom()) / 200.0; }
 
    protected void getCoords(List<PointDouble> rays, List<PointDouble> inn, List<PointDouble> oct) {
       int pl = getPadding().left;
       int pt = getPadding().top;
       double zx = getZoomX();
       double zy = getZoomY();
-      PointDouble center = new PointDouble(getWidth()/2.0, getHeight()/2.0);
+      PointDouble center = new PointDouble(getSize().width/2.0, getSize().height/2.0);
 
       rays.clear();
       rays.add(new PointDouble(pl + 100.0000*zx, pt + 200.0000*zy));

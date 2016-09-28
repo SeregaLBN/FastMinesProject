@@ -28,11 +28,11 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
          fmg.common.Color bkClr = getBackgroundColor();
          if (!bkClr.isOpaque()) { // fix not supporting in jFx the mode equals java.awt.AlphaComposite.SRC
             g.setFill(Color.WHITE);
-            g.fillRect(0, 0, getWidth(), getHeight());
+            g.fillRect(0, 0, getSize().width, getSize().height);
          }
          if (!bkClr.isTransparent()) {
             g.setFill(Cast.toColor(bkClr));
-            g.fillRect(0, 0, getWidth(), getHeight());
+            g.fillRect(0, 0, getSize().width, getSize().height);
          }
       }
 
@@ -44,7 +44,7 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
       Point2D [] rays = rays0.stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D[size]);
       Point2D [] inn  = inn0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D[size]);
       Point2D [] oct  = oct0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D[size]);
-      Point2D center = new Point2D(getWidth()/2.0, getHeight()/2.0);
+      Point2D center = new Point2D(getSize().width/2.0, getSize().height/2.0);
 
       Color [] palette = Arrays.stream(Palette)
          .map(hsv -> Cast.toColor(hsv.toColor()))

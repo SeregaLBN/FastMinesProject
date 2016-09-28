@@ -148,8 +148,8 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
     *  }
     */
    private void drawBodyFullMatrix(Graphics2D g) {
-      int w = getWidth();
-      int h = getHeight();
+      int w = getSize().width;
+      int h = getSize().height;
 
       List<BaseCell> matrix = getMatrix();
       PaintableGraphics paint = new PaintableGraphics(null, g);
@@ -193,8 +193,8 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
    protected void drawCache(Graphics2D g) { drawStaticPart(g); }
 
    private void drawStaticPart(Graphics2D g) {
-      int w = getWidth();
-      int h = getHeight();
+      int w = getSize().width;
+      int h = getSize().height;
 
       g.setColor(Cast.toColor(getBackgroundColor()));
       //g.clearRect(0, 0, w, h);
@@ -270,16 +270,16 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
          if (gBuffImg != null)
             gBuffImg.dispose();
 
-         buffImg = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+         buffImg = new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_ARGB);
          gBuffImg = buffImg.createGraphics();
          gBuffImg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
          gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
          return new javax.swing.Icon() {
             @Override
-            public int getIconWidth() { return Icon.this.getWidth(); }
+            public int getIconWidth() { return Icon.this.getSize().width; }
             @Override
-            public int getIconHeight() { return Icon.this.getHeight(); }
+            public int getIconHeight() { return Icon.this.getSize().height; }
             @Override
             public void paintIcon(Component c, Graphics g, int x, int y) {
                g.drawImage(buffImg, x,y, c);
@@ -312,7 +312,7 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
 
       @Override
       protected java.awt.Image createImage() {
-         return new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+         return new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_ARGB);
       }
 
       private ICellPaint<PaintableGraphics, java.awt.Image, PaintSwingContext<java.awt.Image>> _cellPaint;

@@ -54,12 +54,12 @@ public abstract class AMosaicsSkillImg<TImage> extends BurgerMenuImg<TImage> {
       double anglePart = 360.0/stars;
 
       double sqMax = Math.min( // размер квадрата куда будет вписана звезда при 0°
-            getWidth()  - getPadding().getLeftAndRight(),
-            getHeight() - getPadding().getTopAndBottom());
+            getSize().width  - getPadding().getLeftAndRight(),
+            getSize().height - getPadding().getTopAndBottom());
       double sqMin = sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
       double sqDiff = sqMax - sqMin;
 
-      PointDouble centerMax = new PointDouble(getWidth() / 2.0, getHeight() / 2.0);
+      PointDouble centerMax = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
       PointDouble centerMin = new PointDouble(getPadding().left + sqMin/2, getPadding().top + sqMin/2);
       PointDouble centerDiff = new PointDouble(centerMax.x - centerMin.x, centerMax.y - centerMin.y);
 
@@ -114,8 +114,8 @@ public abstract class AMosaicsSkillImg<TImage> extends BurgerMenuImg<TImage> {
 
    private Stream<Pair<Color, Stream<PointDouble>>> getCoords_SkillLevelAsValue() {
       double sq = Math.min( // size inner square
-            getWidth()  - getPadding().getLeftAndRight(),
-            getHeight() - getPadding().getTopAndBottom());
+            getSize().width  - getPadding().getLeftAndRight(),
+            getSize().height - getPadding().getTopAndBottom());
       double r1 = sq/7; // external radius
       double r2 = sq/12; // internal radius
 
@@ -127,7 +127,7 @@ public abstract class AMosaicsSkillImg<TImage> extends BurgerMenuImg<TImage> {
       double[] angleAccumulative = { angle };
       double anglePart = 360.0/stars;
 
-      final PointDouble center = new PointDouble(getWidth() / 2.0, getHeight() / 2.0);
+      final PointDouble center = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
       final PointDouble zero = new PointDouble(0, 0);
       Stream<Pair<Color, Stream<PointDouble>>> res = IntStream.range(0, stars)
             .mapToObj(starNum -> {

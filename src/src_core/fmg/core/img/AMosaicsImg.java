@@ -1,18 +1,8 @@
 package fmg.core.img;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
-import fmg.common.geom.Bound;
-import fmg.common.geom.BoundDouble;
-import fmg.common.geom.Coord;
-import fmg.common.geom.DoubleExt;
-import fmg.common.geom.Matrisize;
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.SizeDouble;
+import fmg.common.geom.*;
 import fmg.common.geom.util.FigureHelper;
 import fmg.core.mosaic.IMosaic;
 import fmg.core.mosaic.MosaicHelper;
@@ -117,8 +107,8 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
    }
 
    private void recalcArea() {
-      int w = getWidth();
-      int h = getHeight();
+      int w = getSize().width;
+      int h = getSize().height;
       Bound pad = getPadding();
       SizeDouble sizeImageIn = new SizeDouble(w - pad.getLeftAndRight(), h - pad.getTopAndBottom());
       SizeDouble sizeImageOut = new SizeDouble();
@@ -214,7 +204,7 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
    /** ///////////// ================= PART {@link ERotateMode#fullMatrix} ======================= ///////////// */
 
    public void rotateMatrix() {
-      PointDouble center = new PointDouble(getWidth() / 2.0 - _paddingFull.left, getHeight() / 2.0 - _paddingFull.top);
+      PointDouble center = new PointDouble(getSize().width / 2.0 - _paddingFull.left, getSize().height / 2.0 - _paddingFull.top);
       for (BaseCell cell : getMatrix()) {
          cell.Init(); // restore base coords
 

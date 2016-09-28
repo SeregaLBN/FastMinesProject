@@ -48,10 +48,10 @@ public abstract class AMosaicsGroupImg<TImage> extends BurgerMenuImg<TImage> {
 
    private Stream<PointDouble> getCoords_MosaicGroupAsValue() {
       double sq = Math.min( // size inner square
-            getWidth()  - getPadding().getLeftAndRight(),
-            getHeight() - getPadding().getTopAndBottom());
+            getSize().width  - getPadding().getLeftAndRight(),
+            getSize().height - getPadding().getTopAndBottom());
       int vertices = 3 + getMosaicGroup().ordinal(); // vertices count
-      PointDouble center = new PointDouble(getWidth() / 2.0, getHeight() / 2.0);
+      PointDouble center = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
 
       double ra = getRotateAngle();
       if (getMosaicGroup() != EMosaicGroup.eOthers)
@@ -72,9 +72,9 @@ public abstract class AMosaicsGroupImg<TImage> extends BurgerMenuImg<TImage> {
 
    private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsValueOthers1() {
       double sq = Math.min( // size inner square
-         getWidth() - getPadding().getLeftAndRight(),
-         getHeight() - getPadding().getTopAndBottom());
-      PointDouble center = new PointDouble(getWidth() / 2.0, getHeight() / 2.0);
+         getSize().width - getPadding().getLeftAndRight(),
+         getSize().height - getPadding().getTopAndBottom());
+      PointDouble center = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
 
 
       Pair<Integer, Integer> nm1 = getNM(_nmIndex1);
@@ -173,12 +173,12 @@ public abstract class AMosaicsGroupImg<TImage> extends BurgerMenuImg<TImage> {
       double anglePart = 360.0/shapes;
 
       double sqMax = Math.min( // размер квадрата куда будет вписана фигура при 0°
-            getWidth()  - getPadding().getLeftAndRight(),
-            getHeight() - getPadding().getTopAndBottom());
+            getSize().width  - getPadding().getLeftAndRight(),
+            getSize().height - getPadding().getTopAndBottom());
       double sqMin = sqMax / 7; // размер квадрата куда будет вписана фигура при 360°
       double sqDiff = sqMax - sqMin;
 
-      PointDouble center = new PointDouble(getWidth() / 2.0, getHeight() / 2.0);
+      PointDouble center = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
 
       Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, shapes)
             .mapToObj(shapeNum -> {
@@ -219,8 +219,8 @@ public abstract class AMosaicsGroupImg<TImage> extends BurgerMenuImg<TImage> {
 
    private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsValueOthers2() {
       double sq = Math.min( // size inner square
-            getWidth()  - getPadding().getLeftAndRight(),
-            getHeight() - getPadding().getTopAndBottom());
+            getSize().width  - getPadding().getLeftAndRight(),
+            getSize().height - getPadding().getTopAndBottom());
       double radius = sq/2.7;
 
       int shapes = 3; // мозаики из группы EMosaicGroup.eOthers состоят из 3 типов фигур: треугольники, квадраты и шестигранники
@@ -228,7 +228,7 @@ public abstract class AMosaicsGroupImg<TImage> extends BurgerMenuImg<TImage> {
       double angle = getRotateAngle();
       double anglePart = 360.0/shapes;
 
-      final PointDouble center = new PointDouble(getWidth() / 2.0, getHeight() / 2.0);
+      final PointDouble center = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
       final PointDouble zero = new PointDouble(0, 0);
       Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, shapes)
             .mapToObj(shapeNum -> {
