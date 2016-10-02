@@ -1,6 +1,5 @@
 ﻿using fmg.common;
 using fmg.common.geom;
-using fmg.common.notyfier;
 using fmg.core.img;
 using fmg.uwp.draw.mosaic;
 using fmg.data.controller.types;
@@ -40,17 +39,6 @@ namespace fmg.DataModel.DataSources
 
       /// <summary> representative typeof(ESkillLevel) </summary>
       public MosaicSkillDataItem TopElement => _itemOfType;
-
-      public Size TopImageSize {
-         get { return TopElement.ImageSize; }
-         set {
-            var old = TopImageSize;
-            TopElement.ImageSize = value;
-            if (old != value) {
-               OnSelfPropertyChanged(new PropertyChangedExEventArgs<Size>(value, old));
-            }
-         }
-      }
 
       protected override void OnCurrentElementChanged() {
          // for one selected- start animate; for all other - stop animate

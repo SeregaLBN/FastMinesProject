@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using fmg.common;
 using fmg.common.geom;
-using fmg.common.notyfier;
 using fmg.core.types;
 using fmg.core.img;
 using fmg.uwp.draw.mosaic;
@@ -40,17 +39,6 @@ namespace fmg.DataModel.DataSources
 
       /// <summary> representative typeof(EMosaicGroup) </summary>
       public MosaicGroupDataItem TopElement => _itemOfType;
-
-      public Size TopImageSize {
-         get { return TopElement.ImageSize; }
-         set {
-            var old = TopImageSize;
-            TopElement.ImageSize = value;
-            if (old != value) {
-               OnSelfPropertyChanged(new PropertyChangedExEventArgs<Size>(value, old));
-            }
-         }
-      }
 
       protected override void OnCurrentElementChanged() {
          OnSelfPropertyChanged(nameof(this.UnicodeChars));

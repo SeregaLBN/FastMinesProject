@@ -9,6 +9,7 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
+using fmg.common.geom;
 using fmg.common.geom.util;
 using fmg.core.types;
 using fmg.core.img;
@@ -53,7 +54,8 @@ namespace fmg
                ds.CurrentElement = ds.DataSource.First();
             }
 
-            ApplyButtonColorSmoothTransition(_togglePaneButton, ViewModel.MosaicGroupDs.TopElement.Image);
+            ApplyButtonColorSmoothTransition(_toggleBttnGroupPane, ViewModel.MosaicGroupDs.TopElement.Image);
+            ApplyButtonColorSmoothTransition(_toggleBttnSkillPane, ViewModel.MosaicSkillDs.TopElement.Image);
          };
 
          //this.SizeChanged += OnSizeChanged;
@@ -113,19 +115,27 @@ namespace fmg
          //System.Diagnostics.Debug.WriteLine("OnSizeChanged");
          var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
          {
+            const int minSize = 50;
+            const int topElemHeight = 48;
+            const int pad = 3;
+            System.Diagnostics.Debug.Assert(topElemHeight <= minSize);
+
             var size1 = size/7;
-            var wh = (int)Math.Min(Math.Max(50, size1), 100); // TODO: DPI dependency
+            var wh = (int)Math.Min(Math.Max(minSize, size1), 100); // TODO: DPI dependency
             ViewModel.MosaicGroupDs.ImageSize =
-            ViewModel.MosaicSkillDs.ImageSize = new common.geom.Size(wh, wh);
-            ViewModel.MosaicGroupDs.TopImageSize =
-            ViewModel.MosaicSkillDs.TopImageSize = new common.geom.Size(wh, 48);
+            ViewModel.MosaicSkillDs.ImageSize = new Size(wh, wh);
+
+            ViewModel.MosaicGroupDs.TopElement.ImageSize =
+            ViewModel.MosaicSkillDs.TopElement.ImageSize = new Size(wh, topElemHeight);
+            //ViewModel.MosaicGroupDs.TopElement.Image.Padding =
+            //ViewModel.MosaicSkillDs.TopElement.Image.Padding = new Bound(pad, pad, wh - topElemHeight + pad, pad);
          }
          {
             var smp = RootFrame?.Content as SelectMosaicPage;
             if (smp != null) {
                var size2 = size/4;
                var wh = (int)Math.Min(Math.Max(100, size2), 200); // TODO: DPI dependency
-               smp.ViewModel.ImageSize = new common.geom.Size(wh, wh);
+               smp.ViewModel.ImageSize = new Size(wh, wh);
             }
          }
       }

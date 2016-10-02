@@ -30,7 +30,7 @@
 
                     <StackPanel Orientation="Vertical" >
                         <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}">
-                            <ToggleButton x:Name="_togglePaneButton"
+                            <ToggleButton x:Name="_toggleBttnGroupPane"
                                           TabIndex="1"
                                           Style="{StaticResource ToggleButtonExtStyle}"
                                           IsChecked="{x:Bind _splitView.IsPaneOpen, Mode=TwoWay, Converter={StaticResource BooleanNullableConverter}}"
@@ -72,7 +72,8 @@
                         </ListView>
 
                         <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}" Margin="0,15,0,0">
-                            <ToggleButton Style="{StaticResource ToggleButtonExtStyle}"
+                            <ToggleButton x:Name="_toggleBttnSkillPane"
+                                          Style="{StaticResource ToggleButtonExtStyle}"
                                           Width="{x:Bind ViewModel.MosaicSkillDs.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWidthWithMarginConverter}}"
                                           IsChecked="{x:Bind _listViewSkillLevelMenu.Visibility, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                           AutomationProperties.Name="Menu"
