@@ -79,7 +79,7 @@ namespace fmg
          }
          smp.CurrentElement = null;
          smp.CurrentMosaicGroup = currentGroupItem.MosaicGroup.Value;
-         smp.CurrentSkillLevel = currentSkillItem.SkillLevel;
+         smp.CurrentSkillLevel = currentSkillItem.SkillLevel.Value;
       }
 
       private void MosaicGroupDsOnPropertyChanged(object sender, PropertyChangedEventArgs ev) {

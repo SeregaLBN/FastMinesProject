@@ -40,7 +40,7 @@ namespace fmg.common {
          get { return _mosaicGroupDs.TopImageSize; }
          set {
             _mosaicGroupDs.TopImageSize = value;
-            //_mosaicSkillDs.ImageSize = value;
+            _mosaicSkillDs.TopImageSize = value;
          }
       }
 

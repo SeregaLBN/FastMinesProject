@@ -1,5 +1,6 @@
 ﻿using fmg.common;
 using fmg.common.geom;
+using fmg.common.notyfier;
 using fmg.core.img;
 using fmg.uwp.draw.mosaic;
 using fmg.data.controller.types;
@@ -9,9 +10,21 @@ using fmg.DataModel.Items;
 namespace fmg.DataModel.DataSources
 {
    /// <summary> DataSource menu items (mosaic skills) </summary>
-   public class MosaicSkillsDataSource : BaseDataSource<MosaicSkillDataItem, ESkillLevel, MosaicsSkillCanvasBmp> {
+   public class MosaicSkillsDataSource : BaseDataSource<MosaicSkillDataItem, ESkillLevel?, MosaicsSkillCanvasBmp> {
+
+      MosaicSkillDataItem _itemOfType;
 
       protected override void FillDataSource() {
+         _itemOfType = new MosaicSkillDataItem(null) {
+            Image = {
+               PaddingInt = 3,
+               BackgroundColor = Color.Transparent,
+               RedrawInterval = 50,
+               PolarLights = true,
+               Rotate = true
+            }
+         };
+
          var dataSource = DataSourceInternal;
          foreach (var s in ESkillLevelEx.GetValues()) {
             var mi = new MosaicSkillDataItem(s) {
@@ -23,6 +36,20 @@ namespace fmg.DataModel.DataSources
             dataSource.Add(mi);
          }
          base.FillDataSource();
+      }
+
+      /// <summary> representative typeof(ESkillLevel) </summary>
+      public MosaicSkillDataItem TopElement => _itemOfType;
+
+      public Size TopImageSize {
+         get { return TopElement.ImageSize; }
+         set {
+            var old = TopImageSize;
+            TopElement.ImageSize = value;
+            if (old != value) {
+               OnSelfPropertyChanged(new PropertyChangedExEventArgs<Size>(value, old));
+            }
+         }
       }
 
       protected override void OnCurrentElementChanged() {

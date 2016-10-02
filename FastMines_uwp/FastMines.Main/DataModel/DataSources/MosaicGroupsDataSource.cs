@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.ComponentModel;
 using fmg.common;
 using fmg.common.geom;
 using fmg.common.notyfier;
@@ -39,7 +38,7 @@ namespace fmg.DataModel.DataSources
          base.FillDataSource();
       }
 
-      /// <summary> representative typeof(MosaicGroup) </summary>
+      /// <summary> representative typeof(EMosaicGroup) </summary>
       public MosaicGroupDataItem TopElement => _itemOfType;
 
       public Size TopImageSize {
@@ -52,7 +51,6 @@ namespace fmg.DataModel.DataSources
             }
          }
       }
-
 
       protected override void OnCurrentElementChanged() {
          OnSelfPropertyChanged(nameof(this.UnicodeChars));

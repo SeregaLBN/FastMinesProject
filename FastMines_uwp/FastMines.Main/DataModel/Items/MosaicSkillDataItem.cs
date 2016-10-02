@@ -10,17 +10,17 @@ using MosaicsSkillCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsSkillImg.CanvasBmp;
 namespace fmg.DataModel.Items {
 
    /// <summary> Mosaic skill level item for data model </summary>
-   public class MosaicSkillDataItem : BaseData<ESkillLevel, MosaicsSkillCanvasBmp> {
+   public class MosaicSkillDataItem : BaseData<ESkillLevel?, MosaicsSkillCanvasBmp> {
       private const int ZoomKoef = 2;
 
-      public MosaicSkillDataItem(ESkillLevel eSkill) : base(eSkill) {
-         Title = eSkill.GetDescription();
+      public MosaicSkillDataItem(ESkillLevel? eSkill) : base(eSkill) {
+         Title = eSkill?.GetDescription();
       }
 
-      public ESkillLevel SkillLevel => UniqueId;
+      public ESkillLevel? SkillLevel => UniqueId;
 
       [Obsolete]
-      public string UnicodeChar => SkillLevel.UnicodeChar().ToString();
+      public string UnicodeChar => SkillLevel?.UnicodeChar().ToString();
 
       private MosaicsSkillCanvasBmp _mosaicSkillImg;
       public override MosaicsSkillCanvasBmp Image {
