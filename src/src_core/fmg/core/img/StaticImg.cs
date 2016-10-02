@@ -22,10 +22,11 @@ namespace fmg.core.img {
       where TImage : class
    {
       public const int DefaultImageSize = 100;
+      public const int DefaultPaddingInt = (int)(DefaultImageSize* 0.05); // 5%
 
       protected StaticImg() {
          _size = new Size(DefaultImageSize, DefaultImageSize);
-         _padding = new Bound((int)(DefaultImageSize * 0.05)); // 5%
+         _padding = new Bound(DefaultPaddingInt);
       }
 
       private Size _size;

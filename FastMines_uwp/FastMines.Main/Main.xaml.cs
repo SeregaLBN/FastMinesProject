@@ -127,8 +127,8 @@ namespace fmg
 
             ViewModel.MosaicGroupDs.TopElement.ImageSize =
             ViewModel.MosaicSkillDs.TopElement.ImageSize = new Size(wh, topElemHeight);
-            //ViewModel.MosaicGroupDs.TopElement.Image.Padding =
-            //ViewModel.MosaicSkillDs.TopElement.Image.Padding = new Bound(pad, pad, wh - topElemHeight + pad, pad);
+            ViewModel.MosaicGroupDs.TopElement.ImagePadding =
+            ViewModel.MosaicSkillDs.TopElement.ImagePadding = new Bound(pad, pad, wh - topElemHeight + pad, pad);
          }
          {
             var smp = RootFrame?.Content as SelectMosaicPage;

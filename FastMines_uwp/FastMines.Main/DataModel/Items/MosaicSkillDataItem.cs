@@ -52,7 +52,17 @@ namespace fmg.DataModel.Items {
          get { return _imageSize; }
          set {
             if (SetProperty(ref _imageSize, value)) {
-               Image.Size = new Size(_imageSize.Height * ZoomKoef, _imageSize.Width * ZoomKoef);
+               Image.Size = new Size(_imageSize.Width * ZoomKoef, _imageSize.Height * ZoomKoef);
+            }
+         }
+      }
+
+      private Bound _imagePadding = new Bound(MosaicsSkillCanvasBmp.DefaultPaddingInt);
+      public Bound ImagePadding {
+         get { return _imagePadding; }
+         set {
+            if (SetProperty(ref _imagePadding, value)) {
+               Image.Padding = new Bound(_imagePadding.Left * ZoomKoef, _imagePadding.Top * ZoomKoef, _imagePadding.Right * ZoomKoef, _imagePadding.Bottom * ZoomKoef);
             }
          }
       }

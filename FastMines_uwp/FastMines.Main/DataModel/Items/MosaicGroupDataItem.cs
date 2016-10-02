@@ -57,6 +57,16 @@ namespace fmg.DataModel.Items {
          }
       }
 
+      private Bound _imagePadding = new Bound(MosaicsGroupCanvasBmp.DefaultPaddingInt);
+      public Bound ImagePadding {
+         get { return _imagePadding; }
+         set {
+            if (SetProperty(ref _imagePadding, value)) {
+               Image.Padding = new Bound(_imagePadding.Left * ZoomKoef, _imagePadding.Top * ZoomKoef, _imagePadding.Right * ZoomKoef, _imagePadding.Bottom * ZoomKoef);
+            }
+         }
+      }
+
       private void OnMosaicsGroupImgPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          System.Diagnostics.Debug.Assert(sender is MosaicsGroupCanvasBmp);
          switch (ev.PropertyName) {
