@@ -166,7 +166,7 @@ public abstract class AMosaicsGroupImg<TImage> extends BurgerMenuImg<TImage> {
    private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsType() {
       final boolean accelerateRevert = true; // ускорение под конец анимации, иначе - в начале...
 
-      int shapes = EMosaicGroup.values().length;
+      int shapes = 4; // 3х-, 4х-, 5ти- и 6ти-угольники
 
       double angle = getRotateAngle();
     //double[] angleAccumulative = { angle };
@@ -178,7 +178,8 @@ public abstract class AMosaicsGroupImg<TImage> extends BurgerMenuImg<TImage> {
       double sqMin = sqMax / 7; // размер квадрата куда будет вписана фигура при 360°
       double sqDiff = sqMax - sqMin;
 
-      PointDouble center = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
+      PointDouble center = new PointDouble(getPadding().left + (getSize().width  - getPadding().getLeftAndRight()) / 2.0,
+                                           getPadding().top  + (getSize().height - getPadding().getTopAndBottom()) / 2.0);
 
       Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, shapes)
             .mapToObj(shapeNum -> {
@@ -249,9 +250,11 @@ public abstract class AMosaicsGroupImg<TImage> extends BurgerMenuImg<TImage> {
                case 2: vertices = 3; break; // и треугольники
                default: throw new RuntimeException();
                }
-               return new Pair<>(1.0, new Pair<>(
-                     clr,
-                     FigureHelper.getRegularPolygonCoords(vertices, radius, centerStar, -angle)));
+               return new Pair<>(
+                     1.0, // const value (no sorting). Provided for the future...
+                     new Pair<>(
+                        clr,
+                        FigureHelper.getRegularPolygonCoords(vertices, radius, centerStar, -angle)));
             });
 
       List<Pair<Double, Pair<Color, Stream<PointDouble>>>> resL = res.collect(Collectors.toList());

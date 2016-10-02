@@ -156,7 +156,7 @@ namespace fmg.core.img {
       private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> GetCoords_MosaicGroupAsType() {
          const bool accelerateRevert = true; // ускорение под конец анимации, иначе - в начале...
 
-         var shapes = EMosaicGroupEx.GetValues().Length;
+         var shapes = 4; // 3х-, 4х-, 5ти- и 6ти-угольники
 
          var angle = RotateAngle;
          //var angleAccumulative = angle;
@@ -168,7 +168,8 @@ namespace fmg.core.img {
          var sqMin = sqMax / 7; // размер квадрата куда будет вписана фигура при 360°
          var sqDiff = sqMax - sqMin;
 
-         var center = new PointDouble(Size.Width / 2.0, Size.Height / 2.0);
+         var center = new PointDouble(Padding.Left + (Size.Width  - Padding.LeftAndRight) / 2.0,
+                                      Padding.Top  + (Size.Height - Padding.TopAndBottom) / 2.0);
 
          return Enumerable.Range(0, shapes)
             .Select(shapeNum => {
@@ -233,9 +234,11 @@ namespace fmg.core.img {
                case 2: vertices = 3; break; // и треугольники
                default: throw new Exception();
                }
-               return new Tuple<double, Tuple<Color, IEnumerable<PointDouble>>>(1.0, new Tuple<Color, IEnumerable<PointDouble>>(
-                     clr,
-                     FigureHelper.GetRegularPolygonCoords(vertices, radius, centerStar, -angle)));
+               return new Tuple<double, Tuple<Color, IEnumerable<PointDouble>>>(
+                     1.0, // const value (no ordering). Provided for the future...
+                     new Tuple<Color, IEnumerable<PointDouble>>(
+                        clr,
+                        FigureHelper.GetRegularPolygonCoords(vertices, radius, centerStar, -angle)));
             })
             .OrderBy(x => x.Item1)
             .Select(x => x.Item2);

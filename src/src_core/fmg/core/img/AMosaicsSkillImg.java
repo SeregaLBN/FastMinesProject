@@ -59,7 +59,8 @@ public abstract class AMosaicsSkillImg<TImage> extends BurgerMenuImg<TImage> {
       double sqMin = sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
       double sqDiff = sqMax - sqMin;
 
-      PointDouble centerMax = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
+      PointDouble centerMax = new PointDouble(getPadding().left + (getSize().width  - getPadding().getLeftAndRight()) / 2.0,
+                                              getPadding().top  + (getSize().height - getPadding().getTopAndBottom()) / 2.0);
       PointDouble centerMin = new PointDouble(getPadding().left + sqMin/2, getPadding().top + sqMin/2);
       PointDouble centerDiff = new PointDouble(centerMax.x - centerMin.x, centerMax.y - centerMin.y);
 

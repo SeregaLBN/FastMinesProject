@@ -51,7 +51,8 @@ namespace fmg.core.img {
          var sqMin = sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
          var sqDiff = sqMax - sqMin;
 
-         var centerMax = new PointDouble(Size.Width / 2.0, Size.Height / 2.0);
+         var centerMax = new PointDouble(Padding.Left + (Size.Width  - Padding.LeftAndRight) / 2.0,
+                                         Padding.Top  + (Size.Height - Padding.TopAndBottom) / 2.0);
          var centerMin = new PointDouble(Padding.Left + sqMin / 2, Padding.Top + sqMin / 2);
          var centerDiff = new PointDouble(centerMax.X - centerMin.X, centerMax.Y - centerMin.Y);
 
