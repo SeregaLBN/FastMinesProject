@@ -97,6 +97,11 @@ namespace fmg.core.img {
                                  (int)(dy - 2 * pad + addonY)); // dy - 2*pad;
 
          Func<TImageEx, CellTilingInfo> itemCallback = item => {
+            if (item is BurgerMenuImg<TImageEx>) {
+               BurgerMenuImg<TImageEx> brgrImg = item as BurgerMenuImg<TImageEx>;
+               brgrImg.ResetPaddingBurgerMenu();
+            }
+
             int pos = images.IndexOf(item);
             if (pos == -1)
                throw new Exception("Illegal usage...");

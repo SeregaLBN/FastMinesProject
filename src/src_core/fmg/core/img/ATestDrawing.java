@@ -91,6 +91,11 @@ public abstract class ATestDrawing {
                               (int)(dy - 2*pad + addonY)); // dy - 2*pad;
 
       Function<? /* image */, CellTilingInfo> itemCallback = item -> {
+         if (item instanceof BurgerMenuImg) {
+            BurgerMenuImg<?> brgrImg = (BurgerMenuImg<?>)item;
+            brgrImg.resetPaddingBurgerMenu();
+         }
+
          int pos = images.indexOf(item);
          if (pos == -1)
             throw new RuntimeException("Illegal usage...");

@@ -19,10 +19,11 @@ public abstract class StaticImg<TImage> extends NotifyPropertyChanged {
    public static final Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
    public static final Color DefaultForegroundColor = Color.Orchid;
    public static final int DefaultImageSize = 100;
+   public static final int DefaultPaddingInt = (int)(DefaultImageSize* 0.05); // 5%
 
    protected StaticImg() {
       _size = new Size(DefaultImageSize, DefaultImageSize);
-      _padding = new Bound((int)(DefaultImageSize * 0.05)); // 5%
+      _padding = new Bound(DefaultPaddingInt);
    }
 
    @SuppressWarnings("deprecation")
