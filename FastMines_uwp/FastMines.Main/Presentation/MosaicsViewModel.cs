@@ -23,11 +23,8 @@ namespace fmg.common {
 
       private void OnMosaicsDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          if (ev.PropertyName == nameof(MosaicsDataSource.ImageSize)) {
-            var evi = ev as PropertyChangedExEventArgs<int>;
-            if (evi == null)
-               OnSelfPropertyChanged(nameof(this.ImageSize));
-            else
-               OnSelfPropertyChanged(evi.OldValue, evi.NewValue, nameof(this.ImageSize));
+            // ! notify parent container
+            OnSelfPropertyChanged<Size>(ev, nameof(this.ImageSize));
          }
       }
 

@@ -49,6 +49,15 @@ namespace fmg.common.notyfier {
          //LoggerSimple.Put($"< OnSelfPropertyChanged: {GetType().Name}: PropertyName={ev.PropertyName}");
       }
 
+      /// <summary> rethrow another/my event - notify parent class/container </summary>
+      protected void OnSelfPropertyChanged<T>(PropertyChangedEventArgs from, string propertyName) {
+         var ev = from as PropertyChangedExEventArgs<T>;
+         if (ev == null)
+            OnSelfPropertyChanged(propertyName);
+         else
+            OnSelfPropertyChanged(new PropertyChangedExEventArgs<T>(ev.NewValue, ev.OldValue, propertyName));
+      }
+
    }
 
 }

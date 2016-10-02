@@ -80,11 +80,7 @@ namespace fmg.DataModel.Items {
          //LoggerSimple.Put(GetType().Name+"::OnPropertyChanged: " + ev.PropertyName);
          if (pn == nameof(Image.Image)) {
             // ! notify parent container
-            var ev2 = ev as PropertyChangedExEventArgs<ImageSource>;
-            if (ev2 == null)
-               OnSelfPropertyChanged(nameof(this.Image));
-            else
-               OnSelfPropertyChanged(new PropertyChangedExEventArgs<ImageSource>(ev2.NewValue, ev2.OldValue, nameof(this.Image)));
+            OnSelfPropertyChanged<MosaicsCanvasBmp>(ev, nameof(this.Image));
          }
       }
 
@@ -92,11 +88,7 @@ namespace fmg.DataModel.Items {
          base.OnSelfPropertyChanged(ev);
          switch(ev.PropertyName) {
          case nameof(this.UniqueId):
-            var ev2 = ev as PropertyChangedExEventArgs<EMosaic>;
-            if (ev2 == null)
-               OnSelfPropertyChanged(nameof(this.MosaicType));
-            else
-               OnSelfPropertyChanged(new PropertyChangedExEventArgs<EMosaic>(ev2.NewValue, ev2.OldValue, nameof(this.MosaicType)));
+            OnSelfPropertyChanged<EMosaic>(ev, nameof(this.MosaicType)); // recall with another property name
             Image.MosaicType = MosaicType;
             Image.SizeField = MosaicType.SizeTileField(SkillLevel);
             Title = MosaicType.GetDescription(false);

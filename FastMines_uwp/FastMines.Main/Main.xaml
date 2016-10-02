@@ -86,7 +86,7 @@
                                 />
                                 <!--
                                 <ToggleButton.RenderTransform>
-                                    <CompositeTransform ScaleX=".4"/>
+                                    <CompositeTransform ScaleX=".4" ScaleY=".4"/>
                                 </ToggleButton.RenderTransform>
                                 -->
                             </ToggleButton>

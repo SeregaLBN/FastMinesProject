@@ -599,12 +599,7 @@ namespace fmg.core.mosaic {
             foreach (var cell in Matrix)
                cell.Init();
 
-            OnSelfPropertyChanged(ev); // ! rethrow event - notify parent class
-            var ev2 = ev as PropertyChangedExEventArgs<double>;
-            if (ev2 == null)
-               OnSelfPropertyChanged(nameof(this.Area));
-            else
-               OnSelfPropertyChanged(new PropertyChangedExEventArgs<double>(ev2.NewValue, ev2.OldValue, nameof(this.Area)));
+            OnSelfPropertyChanged<double>(ev, nameof(this.Area));
 
             Repaint(null);
          }
