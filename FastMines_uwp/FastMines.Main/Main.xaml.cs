@@ -115,8 +115,10 @@ namespace fmg
          {
             var size1 = size/7;
             var wh = (int)Math.Min(Math.Max(50, size1), 100); // TODO: DPI dependency
-            ViewModel.ImageSize = new common.geom.Size(wh, wh);
-            ViewModel.TopImageSize = new common.geom.Size(wh, 48);
+            ViewModel.MosaicGroupDs.ImageSize =
+            ViewModel.MosaicSkillDs.ImageSize = new common.geom.Size(wh, wh);
+            ViewModel.MosaicGroupDs.TopImageSize =
+            ViewModel.MosaicSkillDs.TopImageSize = new common.geom.Size(wh, 48);
          }
          {
             var smp = RootFrame?.Content as SelectMosaicPage;
