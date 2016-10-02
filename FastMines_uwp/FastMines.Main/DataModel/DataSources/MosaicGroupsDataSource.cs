@@ -1,6 +1,8 @@
 ﻿using System.Linq;
+using System.ComponentModel;
 using fmg.common;
 using fmg.common.geom;
+using fmg.common.notyfier;
 using fmg.core.types;
 using fmg.core.img;
 using fmg.uwp.draw.mosaic;
@@ -17,7 +19,7 @@ namespace fmg.DataModel.DataSources
       protected override void FillDataSource() {
          _itemOfType = new MosaicGroupDataItem(null) {
             Image = {
-               PaddingInt = 30,
+               PaddingInt = 3,
                BackgroundColor = Color.Transparent,
                RedrawInterval = 50,
                PolarLights = true,
@@ -38,7 +40,19 @@ namespace fmg.DataModel.DataSources
       }
 
       /// <summary> representative typeof(MosaicGroup) </summary>
-      public MosaicGroupDataItem MosaicGroupsRepresentativeElement => _itemOfType;
+      public MosaicGroupDataItem TopElement => _itemOfType;
+
+      public Size TopImageSize {
+         get { return TopElement.ImageSize; }
+         set {
+            var old = TopImageSize;
+            TopElement.ImageSize = value;
+            if (old != value) {
+               OnSelfPropertyChanged(new PropertyChangedExEventArgs<Size>(value, old));
+            }
+         }
+      }
+
 
       protected override void OnCurrentElementChanged() {
          OnSelfPropertyChanged(nameof(this.UnicodeChars));

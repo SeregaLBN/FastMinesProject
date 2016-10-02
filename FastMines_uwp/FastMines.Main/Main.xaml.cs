@@ -53,7 +53,7 @@ namespace fmg
                ds.CurrentElement = ds.DataSource.First();
             }
 
-            ApplyButtonColorSmoothTransition(_togglePaneButton, ViewModel.MosaicGroupDs.MosaicGroupsRepresentativeElement.Image);
+            ApplyButtonColorSmoothTransition(_togglePaneButton, ViewModel.MosaicGroupDs.TopElement.Image);
          };
 
          //this.SizeChanged += OnSizeChanged;
@@ -116,6 +116,7 @@ namespace fmg
             var size1 = size/7;
             var wh = (int)Math.Min(Math.Max(50, size1), 100); // TODO: DPI dependency
             ViewModel.ImageSize = new common.geom.Size(wh, wh);
+            ViewModel.TopImageSize = new common.geom.Size(wh, 48);
          }
          {
             var smp = RootFrame?.Content as SelectMosaicPage;

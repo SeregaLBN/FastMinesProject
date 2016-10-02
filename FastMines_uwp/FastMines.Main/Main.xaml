@@ -36,9 +36,9 @@
                                           IsChecked="{x:Bind _splitView.IsPaneOpen, Mode=TwoWay, Converter={StaticResource BooleanNullableConverter}}"
                                           AutomationProperties.Name="Menu"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.MosaicGroupDs.UnicodeChars, Mode=OneWay}" >
-                                <canvas:CanvasControl DataContext="{x:Bind ViewModel.MosaicGroupDs.MosaicGroupsRepresentativeElement.Image, Mode=OneWay}"
-                                                      Height="{x:Bind ViewModel.ImageSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
-                                                      Width="{x:Bind  ViewModel.ImageSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
+                                <canvas:CanvasControl DataContext="{x:Bind ViewModel.MosaicGroupDs.TopElement.Image, Mode=OneWay}"
+                                                      Height="{x:Bind ViewModel.MosaicGroupDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
+                                                      Width="{x:Bind  ViewModel.MosaicGroupDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
                                                       Margin="1,1,1,1"
                                                       CreateResources="CanvasControl_CreateResources_MosaicsGroupImg"
                                 />

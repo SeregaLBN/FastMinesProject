@@ -36,14 +36,21 @@ namespace fmg.common {
             _mosaicSkillDs.ImageSize = value;
          }
       }
+      public Size TopImageSize {
+         get { return _mosaicGroupDs.TopImageSize; }
+         set {
+            _mosaicGroupDs.TopImageSize = value;
+            //_mosaicSkillDs.ImageSize = value;
+         }
+      }
 
       private void OnMosaicSkillDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          if (ev.PropertyName == nameof(MosaicsDataSource.ImageSize)) {
-            var evi = ev as PropertyChangedExEventArgs<int>;
-            if (evi == null)
+            var ev2 = ev as PropertyChangedExEventArgs<Size>;
+            if (ev2 == null)
                OnSelfPropertyChanged(nameof(this.ImageSize));
             else
-               OnSelfPropertyChanged(evi.OldValue, evi.NewValue, nameof(this.ImageSize));
+               OnSelfPropertyChanged(ev2.OldValue, ev2.NewValue, nameof(this.ImageSize));
          }
       }
 
