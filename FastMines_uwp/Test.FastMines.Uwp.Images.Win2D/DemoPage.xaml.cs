@@ -191,7 +191,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
             var sizeH = _panel.ActualHeight; if (sizeH <= 0) sizeH = 100;
             var rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
-            var ctr = _td.CellTiling(rc, images, testTransparent);
+            var ctr = _td.CellTiling<TImageEx, TImage>(rc, images, testTransparent);
             var imgSize = ctr.imageSize;
             imgControls = new FrameworkElement[ctr.tableSize.Width, ctr.tableSize.Height];
 
@@ -337,7 +337,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
             var sizeH = ev.NewSize.Height;
             var rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
-            var ctr = _td.CellTiling(rc, images, testTransparent);
+            var ctr = _td.CellTiling<TImageEx, TImage>(rc, images, testTransparent);
             var imgSize = ctr.imageSize;
 
             var callback = ctr.itemCallback;

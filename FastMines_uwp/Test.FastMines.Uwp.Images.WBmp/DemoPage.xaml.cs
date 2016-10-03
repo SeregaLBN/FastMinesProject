@@ -112,7 +112,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
             double sizeH = _panel.ActualHeight; if (sizeH <= 0) sizeH = 100;
             RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
-            ATestDrawing.CellTilingResult<TImageEx> ctr = _td.CellTiling(rc, images, testTransparent);
+            ATestDrawing.CellTilingResult<TImageEx> ctr = _td.CellTiling<TImageEx, TImage>(rc, images, testTransparent);
             Size imgSize = ctr.imageSize;
             imgControls = new Image[ctr.tableSize.Width, ctr.tableSize.Height];
 
@@ -173,7 +173,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
             double sizeH = ev.NewSize.Height;
             RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
-            ATestDrawing.CellTilingResult<TImageEx> ctr = _td.CellTiling(rc, images, testTransparent);
+            ATestDrawing.CellTilingResult<TImageEx> ctr = _td.CellTiling<TImageEx, TImage>(rc, images, testTransparent);
             Size imgSize = ctr.imageSize;
 
             var callback = ctr.itemCallback;

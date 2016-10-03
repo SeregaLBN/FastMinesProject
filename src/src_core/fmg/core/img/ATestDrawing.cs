@@ -81,8 +81,9 @@ namespace fmg.core.img {
          public Func<TImageEx, CellTilingInfo> itemCallback;
       }
 
-      public CellTilingResult<TImageEx> CellTiling<TImageEx>(RectDouble rc, IList<TImageEx> images, bool testTransparent)
+      public CellTilingResult<TImageEx> CellTiling<TImageEx, TImage>(RectDouble rc, IList<TImageEx> images, bool testTransparent)
             where TImageEx : class
+            where TImage : class
       {
          int len = images.Count;
          int cols = (int)Math.Round(Math.Sqrt(len) + 0.4999999999); // columns
@@ -97,8 +98,8 @@ namespace fmg.core.img {
                                  (int)(dy - 2 * pad + addonY)); // dy - 2*pad;
 
          Func<TImageEx, CellTilingInfo> itemCallback = item => {
-            if (item is BurgerMenuImg<TImageEx>) {
-               BurgerMenuImg<TImageEx> brgrImg = item as BurgerMenuImg<TImageEx>;
+            if (item is BurgerMenuImg<TImage>) {
+               var brgrImg = item as BurgerMenuImg<TImage>;
                brgrImg.ResetPaddingBurgerMenu();
             }
 

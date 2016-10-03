@@ -6,10 +6,10 @@ using fmg.common.geom;
 
 namespace fmg.core.img {
 
-   /**
-    * Abstract representable menu as horizontal or vertical lines
-    * @param <TImage> plaform specific image
-    */
+   /// <summary>
+   /// Abstract representable menu as horizontal or vertical lines
+   /// </summary>
+   /// <typeparam name="TImage">plaform specific image</typeparam>
    public abstract class BurgerMenuImg<TImage> : PolarLightsImg<TImage>
       where TImage : class
    {
