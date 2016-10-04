@@ -47,33 +47,33 @@ namespace fmg.DataModel.Items {
          }
       }
 
-      private Size _imageSize = new Size(MosaicsSkillCanvasBmp.DefaultImageSize, MosaicsSkillCanvasBmp.DefaultImageSize);
       public override Size ImageSize {
-         get { return _imageSize; }
+         get {
+            var size = Image.Size;
+            return new Size(size.Width / ZoomKoef, size.Height / ZoomKoef);
+         }
          set {
-            if (SetProperty(ref _imageSize, value)) {
-               Image.Size = new Size(_imageSize.Width * ZoomKoef, _imageSize.Height * ZoomKoef);
-            }
+            Image.Size = new Size(value.Width * ZoomKoef, value.Height * ZoomKoef);
          }
       }
 
-      private Bound _imagePadding = new Bound(MosaicsSkillCanvasBmp.DefaultPaddingInt);
       public Bound ImagePadding {
-         get { return _imagePadding; }
+         get {
+            var pad = Image.Padding;
+            return new Bound(pad.Left / ZoomKoef, pad.Top / ZoomKoef, pad.Right / ZoomKoef, pad.Bottom / ZoomKoef);
+         }
          set {
-            if (SetProperty(ref _imagePadding, value)) {
-               Image.Padding = new Bound(_imagePadding.Left * ZoomKoef, _imagePadding.Top * ZoomKoef, _imagePadding.Right * ZoomKoef, _imagePadding.Bottom * ZoomKoef);
-            }
+            Image.Padding = new Bound(value.Left * ZoomKoef, value.Top * ZoomKoef, value.Right * ZoomKoef, value.Bottom * ZoomKoef);
          }
       }
 
-      private Bound _imagePaddingBurgerMenu = new Bound(MosaicsSkillCanvasBmp.DefaultPaddingInt);
       public Bound ImagePaddingBurgerMenu {
-         get { return _imagePaddingBurgerMenu; }
+         get {
+            var pad = Image.PaddingBurgerMenu;
+            return new Bound(pad.Left / ZoomKoef, pad.Top / ZoomKoef, pad.Right / ZoomKoef, pad.Bottom / ZoomKoef);
+         }
          set {
-            if (SetProperty(ref _imagePaddingBurgerMenu, value)) {
-               Image.PaddingBurgerMenu = new Bound(_imagePaddingBurgerMenu.Left * ZoomKoef, _imagePaddingBurgerMenu.Top * ZoomKoef, _imagePaddingBurgerMenu.Right * ZoomKoef, _imagePaddingBurgerMenu.Bottom * ZoomKoef);
-            }
+            Image.PaddingBurgerMenu = new Bound(value.Left * ZoomKoef, value.Top * ZoomKoef, value.Right * ZoomKoef, value.Bottom * ZoomKoef);
          }
       }
 
@@ -85,6 +85,12 @@ namespace fmg.DataModel.Items {
             break;
          case nameof(MosaicsSkillCanvasBmp.Image):
             OnSelfPropertyChanged<MosaicsSkillCanvasBmp>(ev, nameof(this.Image));
+            break;
+         case nameof(MosaicsSkillCanvasBmp.Padding):
+            OnSelfPropertyChanged<Bound>(ev, nameof(this.ImagePadding));
+            break;
+         case nameof(MosaicsSkillCanvasBmp.PaddingBurgerMenu):
+            OnSelfPropertyChanged<Bound>(ev, nameof(this.ImagePaddingBurgerMenu));
             break;
          }
       }

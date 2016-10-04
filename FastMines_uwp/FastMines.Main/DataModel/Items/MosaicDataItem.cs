@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel;
-using Windows.UI.Xaml.Media;
 using Microsoft.Graphics.Canvas;
 using fmg.common.geom;
-using fmg.common.notyfier;
 using fmg.core.types;
 using fmg.data.controller.types;
 using MosaicsCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsImg.CanvasBmp;
@@ -35,13 +33,11 @@ namespace fmg.DataModel.Items {
             if (_mosaicImg == null) {
                var sizeField = MosaicType.SizeTileField(SkillLevel);
                var tmp = new MosaicsCanvasBmp(MosaicType, sizeField, CanvasDevice.GetSharedDevice()) {
-                  Size = new Size(ImageSize.Width * ZoomKoef, ImageSize.Height * ZoomKoef),
                   PaddingInt = 5 * ZoomKoef,
                   RotateMode = MosaicsCanvasBmp.ERotateMode.SomeCells,
                   //BackgroundColor = MosaicsCanvasBmp.DefaultBkColor,
-                  BorderWidth = 3*ZoomKoef//,
+                  BorderWidth = 3 * ZoomKoef//,
                   //RotateAngle = 45 * new Random(Guid.NewGuid().GetHashCode()).Next(7)
-                  //, OnlySyncDraw = true
                };
                //var bmp = tmp.Image;
                //System.Diagnostics.Debug.Assert(bmp.PixelWidth == ImageSize * ZoomKoef);
@@ -65,22 +61,26 @@ namespace fmg.DataModel.Items {
          }
       }
 
-      private Size _imageSize = new Size(MosaicsCanvasBmp.DefaultImageSize, MosaicsCanvasBmp.DefaultImageSize);
       public override Size ImageSize {
-         get { return _imageSize; }
+         get {
+            var size = Image.Size;
+            return new Size(size.Width / ZoomKoef, size.Height / ZoomKoef);
+         }
          set {
-            if (SetProperty(ref _imageSize, value)) {
-               Image.Size = new Size(_imageSize.Width * ZoomKoef, _imageSize.Height * ZoomKoef);
-            }
+            Image.Size = new Size(value.Width * ZoomKoef, value.Height * ZoomKoef);
          }
       }
 
       private void OnMosaicImagePropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         var pn = ev.PropertyName;
          //LoggerSimple.Put(GetType().Name+"::OnPropertyChanged: " + ev.PropertyName);
-         if (pn == nameof(Image.Image)) {
-            // ! notify parent container
+         System.Diagnostics.Debug.Assert(sender is MosaicsCanvasBmp);
+         switch (ev.PropertyName) {
+         case nameof(MosaicsCanvasBmp.Size):
+            OnSelfPropertyChanged<Size>(ev, nameof(this.ImageSize));
+            break;
+         case nameof(MosaicsCanvasBmp.Image):
             OnSelfPropertyChanged<MosaicsCanvasBmp>(ev, nameof(this.Image));
+            break;
          }
       }
 
