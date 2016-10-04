@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.Graphics.Canvas;
 using fmg.DataModel.Items;
 using fmg.common.notyfier;
 using fmg.common.geom;
+using fmg.core.img;
 
 namespace fmg.DataModel.DataSources
 {
    /// <summary> base DataSource menu items </summary>
    public abstract class BaseDataSource<TItem, T, TImage> : NotifyPropertyChanged, IDisposable
       where TItem : BaseData<T, TImage>
-      where TImage : class
+      where TImage : StaticImg<CanvasBitmap>
    {
       private readonly ObservableCollection<TItem> _dataSource = new ObservableCollection<TItem>();
       private TItem _currentElement;

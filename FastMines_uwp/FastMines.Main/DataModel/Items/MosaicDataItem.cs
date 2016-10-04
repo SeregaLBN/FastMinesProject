@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using Microsoft.Graphics.Canvas;
-using fmg.common.geom;
 using fmg.core.types;
 using fmg.data.controller.types;
 using MosaicsCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsImg.CanvasBmp;
@@ -9,9 +8,10 @@ namespace fmg.DataModel.Items {
 
    /// <summary> Mosaic item for data model </summary>
    public class MosaicDataItem : BaseData<EMosaic, MosaicsCanvasBmp> {
-      private const int ZoomKoef = 2;
 
-      public MosaicDataItem(EMosaic mosaicType) : base(mosaicType) {
+      public MosaicDataItem(EMosaic mosaicType)
+         : base(mosaicType)
+      {
          Title = mosaicType.GetDescription(false);
       }
 
@@ -27,16 +27,18 @@ namespace fmg.DataModel.Items {
          }
       }
 
+      public override int Zoom() { return 2; }
+
       private MosaicsCanvasBmp _mosaicImg;
       public override MosaicsCanvasBmp Image {
          get {
             if (_mosaicImg == null) {
                var sizeField = MosaicType.SizeTileField(SkillLevel);
                var tmp = new MosaicsCanvasBmp(MosaicType, sizeField, CanvasDevice.GetSharedDevice()) {
-                  PaddingInt = 5 * ZoomKoef,
+                  PaddingInt = 5 * Zoom(),
                   RotateMode = MosaicsCanvasBmp.ERotateMode.SomeCells,
                   //BackgroundColor = MosaicsCanvasBmp.DefaultBkColor,
-                  BorderWidth = 3 * ZoomKoef//,
+                  BorderWidth = 3 * Zoom()//,
                   //RotateAngle = 45 * new Random(Guid.NewGuid().GetHashCode()).Next(7)
                };
                //var bmp = tmp.Image;
@@ -50,37 +52,14 @@ namespace fmg.DataModel.Items {
             var old = _mosaicImg;
             if (SetProperty(ref _mosaicImg, value)) {
                if (old != null) {
-                  old.PropertyChanged -= OnMosaicImagePropertyChanged;
+                  old.PropertyChanged -= OnImagePropertyChanged;
                   old.Dispose();
                }
                if (value != null) {
-                  value.PropertyChanged += OnMosaicImagePropertyChanged;
+                  value.PropertyChanged += OnImagePropertyChanged;
                }
                OnSelfPropertyChanged(nameof(this.Image));
             }
-         }
-      }
-
-      public override Size ImageSize {
-         get {
-            var size = Image.Size;
-            return new Size(size.Width / ZoomKoef, size.Height / ZoomKoef);
-         }
-         set {
-            Image.Size = new Size(value.Width * ZoomKoef, value.Height * ZoomKoef);
-         }
-      }
-
-      private void OnMosaicImagePropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         //LoggerSimple.Put(GetType().Name+"::OnPropertyChanged: " + ev.PropertyName);
-         System.Diagnostics.Debug.Assert(sender is MosaicsCanvasBmp);
-         switch (ev.PropertyName) {
-         case nameof(MosaicsCanvasBmp.Size):
-            OnSelfPropertyChanged<Size>(ev, nameof(this.ImageSize));
-            break;
-         case nameof(MosaicsCanvasBmp.Image):
-            OnSelfPropertyChanged<MosaicsCanvasBmp>(ev, nameof(this.Image));
-            break;
          }
       }
 
@@ -94,15 +73,6 @@ namespace fmg.DataModel.Items {
             Title = MosaicType.GetDescription(false);
             break;
          }
-      }
-
-      protected override void Dispose(bool disposing) {
-         if (Disposed)
-            return;
-
-         base.Dispose(disposing);
-
-         Image = null; // call setter
       }
 
    }
