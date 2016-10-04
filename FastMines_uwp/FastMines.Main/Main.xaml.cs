@@ -128,7 +128,12 @@ namespace fmg
             ViewModel.MosaicGroupDs.TopElement.ImageSize =
             ViewModel.MosaicSkillDs.TopElement.ImageSize = new Size(wh, topElemHeight);
             ViewModel.MosaicGroupDs.TopElement.ImagePadding =
-            ViewModel.MosaicSkillDs.TopElement.ImagePadding = new Bound(pad, pad, wh - topElemHeight + pad, pad);
+            ViewModel.MosaicSkillDs.TopElement.ImagePadding = new Bound(pad, pad, wh - topElemHeight + pad, pad); // left margin
+
+            int whBurger = topElemHeight / 2 + Math.Min(topElemHeight / 2 - pad, Math.Max(0, (int)(wh - 1.5 * topElemHeight)));
+            Bound padBurger = new Bound(wh - whBurger, topElemHeight - whBurger, pad, pad);
+            ViewModel.MosaicGroupDs.TopElement.ImagePaddingBurgerMenu =
+            ViewModel.MosaicSkillDs.TopElement.ImagePaddingBurgerMenu = padBurger; // right-bottom margin
          }
          {
             var smp = RootFrame?.Content as SelectMosaicPage;
