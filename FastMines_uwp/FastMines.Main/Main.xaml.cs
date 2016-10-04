@@ -235,6 +235,13 @@ namespace fmg
          };
       }
 
+      private void OnTappedToggleBttnGroupPane(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e) {
+         ViewModel.MosaicGroupDs.TopElement.Image.RotateAngleDelta = -ViewModel.MosaicGroupDs.TopElement.Image.RotateAngleDelta;
+      }
+
+      private void OnTappedToggleBttnSkillPane(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e) {
+         ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta = -ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta;
+      }
    }
 
 }

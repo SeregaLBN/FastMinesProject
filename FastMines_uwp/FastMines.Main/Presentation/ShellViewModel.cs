@@ -2,12 +2,12 @@
 using System.Windows.Input;
 using fmg.DataModel.DataSources;
 using fmg.common.notyfier;
-using fmg.common.geom;
 
 namespace fmg.common {
 
    /// <summary> ViewModel for main page </summary>
    public class ShellViewModel : NotifyPropertyChanged {
+
       private readonly MosaicGroupsDataSource _mosaicGroupDs = new MosaicGroupsDataSource();
       private readonly MosaicSkillsDataSource _mosaicSkillDs = new MosaicSkillsDataSource();
       private bool _isSplitViewPaneOpen;

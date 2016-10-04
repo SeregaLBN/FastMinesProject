@@ -35,7 +35,8 @@
                                           Style="{StaticResource ToggleButtonExtStyle}"
                                           IsChecked="{x:Bind _splitView.IsPaneOpen, Mode=TwoWay, Converter={StaticResource BooleanNullableConverter}}"
                                           AutomationProperties.Name="Menu"
-                                          ToolTipService.ToolTip="{x:Bind ViewModel.MosaicGroupDs.UnicodeChars, Mode=OneWay}" >
+                                          ToolTipService.ToolTip="{x:Bind ViewModel.MosaicGroupDs.UnicodeChars, Mode=OneWay}"
+                                          Tapped="OnTappedToggleBttnGroupPane" >
                                 <canvas:CanvasControl DataContext="{x:Bind ViewModel.MosaicGroupDs.TopElement.Image, Mode=OneWay}"
                                                       Height="{x:Bind ViewModel.MosaicGroupDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
                                                       Width="{x:Bind  ViewModel.MosaicGroupDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
@@ -77,7 +78,8 @@
                                           Width="{x:Bind ViewModel.MosaicSkillDs.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWidthWithMarginConverter}}"
                                           IsChecked="{x:Bind _listViewSkillLevelMenu.Visibility, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                           AutomationProperties.Name="Menu"
-                                          ToolTipService.ToolTip="Difficulty level" >
+                                          ToolTipService.ToolTip="Difficulty level"
+                                          Tapped="OnTappedToggleBttnSkillPane" >
                                 <canvas:CanvasControl DataContext="{x:Bind ViewModel.MosaicSkillDs.TopElement.Image, Mode=OneWay}"
                                                       Height="{x:Bind ViewModel.MosaicSkillDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
                                                       Width="{x:Bind  ViewModel.MosaicSkillDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
