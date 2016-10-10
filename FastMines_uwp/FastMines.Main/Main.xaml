@@ -41,7 +41,7 @@
                                                       Height="{x:Bind ViewModel.MosaicGroupDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
                                                       Width="{x:Bind  ViewModel.MosaicGroupDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
                                                       Margin="1,1,1,1"
-                                                      CreateResources="CanvasControl_CreateResources_MosaicsGroupImg"
+                                                      CreateResources="OnCreateResourcesCanvasControl_MosaicsGroupImg"
                                 />
                                                <!--AutomationProperties.Name="{x:Bind Title, Mode=OneWay}" />-->
                             </ToggleButton>
@@ -64,7 +64,7 @@
                                                Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
                                                Width="{x:Bind  ImageSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
                                                Margin="1,1,1,1"
-                                               CreateResources="CanvasControl_CreateResources_MosaicsGroupImg"
+                                               CreateResources="OnCreateResourcesCanvasControl_MosaicsGroupImg"
                                                AutomationProperties.Name="{x:Bind Title, Mode=OneWay}" />
                                         <TextBlock Grid.Column="1" Text="{x:Bind Title, Mode=OneWay}" Style="{StaticResource MenuTitleTextBlockStyle}"/>
                                     </StackPanel>
@@ -84,7 +84,7 @@
                                                       Height="{x:Bind ViewModel.MosaicSkillDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
                                                       Width="{x:Bind  ViewModel.MosaicSkillDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
                                                       Margin="1,1,1,1"
-                                                      CreateResources="CanvasControl_CreateResources_MosaicsSkillImg"
+                                                      CreateResources="OnCreateResourcesCanvasControl_MosaicsSkillImg"
                                 />
                                 <!--
                                 <ToggleButton.RenderTransform>
@@ -112,7 +112,7 @@
                                                Height="{x:Bind ImageSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
                                                Width="{x:Bind  ImageSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
                                                Margin="1,1,1,1"
-                                               CreateResources="CanvasControl_CreateResources_MosaicsSkillImg"
+                                               CreateResources="OnCreateResourcesCanvasControl_MosaicsSkillImg"
                                                AutomationProperties.Name="{x:Bind Title, Mode=OneWay}" />
                                         <TextBlock Grid.Column="1" Text="{x:Bind Title, Mode=OneWay}" Style="{StaticResource MenuTitleTextBlockStyle}"/>
                                     </StackPanel>

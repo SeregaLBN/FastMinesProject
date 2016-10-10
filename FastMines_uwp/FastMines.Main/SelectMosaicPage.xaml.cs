@@ -24,12 +24,12 @@ namespace fmg {
 
       public MosaicsViewModel ViewModel { get; private set; }
 
-      private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+      private void OnSelectionChangedGridViewMosaics(object sender, SelectionChangedEventArgs e)
       {
          //throw new NotImplementedException();
       }
 
-      private void ListViewBase_OnItemClick(object sender, ItemClickEventArgs e)
+      private void OnItemClickGridViewMosaics(object sender, ItemClickEventArgs e)
       {
          //throw new NotImplementedException();
       }
@@ -49,7 +49,7 @@ namespace fmg {
          set { ViewModel.MosaicsDs.CurrentElement = value; }
       }
 
-      private void CanvasControl_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs ev) {
+      private void OnDataContextChangedCanvasControl(FrameworkElement sender, DataContextChangedEventArgs ev) {
          if (ev.NewValue == null)
             return;
          var canvasControl = sender as CanvasControl;
@@ -63,7 +63,7 @@ namespace fmg {
       }
 
       IDictionary<CanvasControl, MosaicsCanvasBmp> map = new Dictionary<CanvasControl, MosaicsCanvasBmp>();
-      private void CanvasControl_Draw(CanvasControl canvasControl, CanvasDrawEventArgs ev) {
+      private void OnDrawCanvasControl(CanvasControl canvasControl, CanvasDrawEventArgs ev) {
          var img = map[canvasControl];
          ev.DrawingSession.DrawImage(img.Image, new Rect(0, 0, canvasControl.Width, canvasControl.Height));
       }
@@ -81,7 +81,7 @@ namespace fmg {
          //Window.Current.Activate();
       }
 
-      private void gridMosaics_DoubleTapped(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs e) {
+      private void OnDoubleTappedGridViewMosaics(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs e) {
          StartNewGame();
       }
 

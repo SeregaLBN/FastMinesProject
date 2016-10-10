@@ -43,8 +43,8 @@ namespace fmg
          //   }
          //};
 
-         ViewModel.MosaicGroupDs.PropertyChanged += MosaicGroupDsOnPropertyChanged;
-         ViewModel.MosaicSkillDs.PropertyChanged += MosaicSkillDsOnPropertyChanged;
+         ViewModel.MosaicGroupDs.PropertyChanged += OnMosaicGroupDsPropertyChanged;
+         ViewModel.MosaicSkillDs.PropertyChanged += OnMosaicSkillDsPropertyChanged;
          ViewModel.MosaicGroupDs.CurrentElement = ViewModel.MosaicGroupDs.DataSource.First(x => x.MosaicGroup == EMosaicGroup.eQuadrangles);
          ViewModel.MosaicSkillDs.CurrentElement = ViewModel.MosaicSkillDs.DataSource.First(x => x.SkillLevel == ESkillLevel.eBeginner);
          Loaded += (sender, ev) => {
@@ -84,7 +84,7 @@ namespace fmg
          smp.CurrentSkillLevel = currentSkillItem.SkillLevel.Value;
       }
 
-      private void MosaicGroupDsOnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+      private void OnMosaicGroupDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          //LoggerSimple.Put("MosaicGroupsDataSource::" + ev.PropertyName);
          switch (ev.PropertyName) {
          case nameof(ViewModel.MosaicGroupDs.CurrentElement):
@@ -93,7 +93,7 @@ namespace fmg
          }
       }
 
-      private void MosaicSkillDsOnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+      private void OnMosaicSkillDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          //LoggerSimple.Put("MosaicSkillsDataSource::" + ev.PropertyName);
          switch(ev.PropertyName) {
          case nameof(ViewModel.MosaicSkillDs.CurrentElement):
@@ -104,8 +104,8 @@ namespace fmg
 
       private void OnClosing(object sender, RoutedEventArgs ev) {
          //System.Diagnostics.Debug.WriteLine("OnClosing");
-         ViewModel.MosaicGroupDs.PropertyChanged -= MosaicGroupDsOnPropertyChanged;
-         ViewModel.MosaicSkillDs.PropertyChanged -= MosaicSkillDsOnPropertyChanged;
+         ViewModel.MosaicGroupDs.PropertyChanged -= OnMosaicGroupDsPropertyChanged;
+         ViewModel.MosaicSkillDs.PropertyChanged -= OnMosaicSkillDsPropertyChanged;
 
          ViewModel.Dispose();
          _sizeChangedObservable.Dispose();
@@ -161,16 +161,16 @@ namespace fmg
       //   }
       //}
 
-      private void CanvasControl_CreateResources_MosaicsSkillImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
+      private void OnCreateResourcesCanvasControl_MosaicsSkillImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
          System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsSkillCanvasBmp);
-         CanvasControl_CreateResources(canvasControl, ev);
+         OnCreateResourcesCanvasControl(canvasControl, ev);
       }
 
-      private void CanvasControl_CreateResources_MosaicsGroupImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
+      private void OnCreateResourcesCanvasControl_MosaicsGroupImg(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
          System.Diagnostics.Debug.Assert(canvasControl.DataContext is MosaicsGroupCanvasBmp);
-         CanvasControl_CreateResources(canvasControl, ev);
+         OnCreateResourcesCanvasControl(canvasControl, ev);
       }
-      private void CanvasControl_CreateResources(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
+      private void OnCreateResourcesCanvasControl(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
          if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
             var img = canvasControl.DataContext as StaticImg<CanvasBitmap>;
             if (img == null)
@@ -241,6 +241,10 @@ namespace fmg
 
       private void OnTappedToggleBttnSkillPane(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e) {
          ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta = -ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta;
+         //_listViewMosaicGroupMenu.Visibility =
+         //   (_listViewMosaicGroupMenu.Visibility == Visibility.Collapsed)
+         //      ? Visibility.Visible
+         //      : Visibility.Collapsed;
       }
    }
 

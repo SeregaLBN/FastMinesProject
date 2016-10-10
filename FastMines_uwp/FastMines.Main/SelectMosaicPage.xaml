@@ -17,8 +17,8 @@
                        Height="{x:Bind ImageSize.Height, Mode=OneWay}"
                        Width="{x:Bind ImageSize.Width, Mode=OneWay}"
                        Margin="8,0,8,8"
-                       DataContextChanged="CanvasControl_DataContextChanged"
-                       Draw="CanvasControl_Draw" />
+                       DataContextChanged="OnDataContextChangedCanvasControl"
+                       Draw="OnDrawCanvasControl" />
                 <TextBlock Text="{x:Bind Title, Mode=OneWay}"
                        Margin="8,4" Style="{StaticResource BaseTextBlockStyle}" HorizontalAlignment="Left"/>
             </StackPanel>
@@ -39,9 +39,9 @@
                           ItemTemplate="{StaticResource TailTemplate}"
                           IsItemClickEnabled="True" 
                           SelectionMode="Single"
-                          SelectionChanged="Selector_OnSelectionChanged"
-                          ItemClick="ListViewBase_OnItemClick"
-                          DoubleTapped="gridMosaics_DoubleTapped" />
+                          SelectionChanged="OnSelectionChangedGridViewMosaics"
+                          ItemClick="OnItemClickGridViewMosaics"
+                          DoubleTapped="OnDoubleTappedGridViewMosaics" />
         </ScrollViewer>
 
         <Button Grid.Row="1" x:Name="bttnBeginGame"
