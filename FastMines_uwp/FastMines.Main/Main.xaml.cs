@@ -54,8 +54,8 @@ namespace fmg
                ds.CurrentElement = ds.DataSource.First();
             }
 
-            ApplyButtonColorSmoothTransition(_toggleBttnGroupPane, ViewModel.MosaicGroupDs.TopElement.Image);
-            ApplyButtonColorSmoothTransition(_toggleBttnSkillPane, ViewModel.MosaicSkillDs.TopElement.Image);
+            ApplyButtonColorSmoothTransition(_bttnGroupPanel, ViewModel.MosaicGroupDs.TopElement.Image);
+            ApplyButtonColorSmoothTransition(_bttnSkillPanel, ViewModel.MosaicSkillDs.TopElement.Image);
          };
 
          //this.SizeChanged += OnSizeChanged;
@@ -188,7 +188,7 @@ namespace fmg
          }
       }
 
-      private void ApplyButtonColorSmoothTransition(ToggleButton bttn, StaticImg<CanvasBitmap> image) {
+      private void ApplyButtonColorSmoothTransition(Button bttn, StaticImg<CanvasBitmap> image) {
          int flag = 0;
          var clrFrom = image.BackgroundColor; //Color.Coral;
          var clrTo = Color.BlueViolet;
@@ -235,17 +235,18 @@ namespace fmg
          };
       }
 
-      private void OnTappedToggleBttnGroupPane(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e) {
+      private void OnClickBttnGroupPanel(object sender, RoutedEventArgs e) {
+         _splitView.IsPaneOpen = !_splitView.IsPaneOpen;
          ViewModel.MosaicGroupDs.TopElement.Image.RotateAngleDelta = -ViewModel.MosaicGroupDs.TopElement.Image.RotateAngleDelta;
       }
 
-      private void OnTappedToggleBttnSkillPane(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e) {
+      private void OnClickBttnSkillPanel(object sender, RoutedEventArgs e) {
+         _listViewSkillLevelMenu.Visibility = (_listViewSkillLevelMenu.Visibility == Visibility.Collapsed)
+            ? Visibility.Visible
+            : Visibility.Collapsed;
          ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta = -ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta;
-         //_listViewMosaicGroupMenu.Visibility =
-         //   (_listViewMosaicGroupMenu.Visibility == Visibility.Collapsed)
-         //      ? Visibility.Visible
-         //      : Visibility.Collapsed;
       }
+
    }
 
 }

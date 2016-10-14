@@ -30,13 +30,12 @@
 
                     <StackPanel Orientation="Vertical" >
                         <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}">
-                            <ToggleButton x:Name="_toggleBttnGroupPane"
+                            <Button x:Name="_bttnGroupPanel"
                                           TabIndex="1"
-                                          Style="{StaticResource ToggleButtonExtStyle}"
-                                          IsChecked="{x:Bind _splitView.IsPaneOpen, Mode=TwoWay, Converter={StaticResource BooleanNullableConverter}}"
+                                          Style="{StaticResource ButtonExtStyle}"
                                           AutomationProperties.Name="Menu"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.MosaicGroupDs.UnicodeChars, Mode=OneWay}"
-                                          Tapped="OnTappedToggleBttnGroupPane" >
+                                          Click="OnClickBttnGroupPanel" >
                                 <canvas:CanvasControl DataContext="{x:Bind ViewModel.MosaicGroupDs.TopElement.Image, Mode=OneWay}"
                                                       Height="{x:Bind ViewModel.MosaicGroupDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
                                                       Width="{x:Bind  ViewModel.MosaicGroupDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
@@ -44,7 +43,7 @@
                                                       CreateResources="OnCreateResourcesCanvasControl_MosaicsGroupImg"
                                 />
                                                <!--AutomationProperties.Name="{x:Bind Title, Mode=OneWay}" />-->
-                            </ToggleButton>
+                            </Button>
                             <TextBlock Text="Mosaics" Style="{StaticResource AppTitleTextBlockStyle}" />
                         </StackPanel>
 
@@ -73,13 +72,12 @@
                         </ListView>
 
                         <StackPanel Orientation="Horizontal" Background="{ThemeResource SystemChromeMediumColor}" Margin="0,15,0,0">
-                            <ToggleButton x:Name="_toggleBttnSkillPane"
-                                          Style="{StaticResource ToggleButtonExtStyle}"
+                            <Button x:Name="_bttnSkillPanel"
+                                          Style="{StaticResource ButtonExtStyle}"
                                           Width="{x:Bind ViewModel.MosaicSkillDs.ImageSize, Mode=OneWay, Converter={StaticResource ImageSizeWidthWithMarginConverter}}"
-                                          IsChecked="{x:Bind _listViewSkillLevelMenu.Visibility, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                           AutomationProperties.Name="Menu"
                                           ToolTipService.ToolTip="Difficulty level"
-                                          Tapped="OnTappedToggleBttnSkillPane" >
+                                          Click="OnClickBttnSkillPanel" >
                                 <canvas:CanvasControl DataContext="{x:Bind ViewModel.MosaicSkillDs.TopElement.Image, Mode=OneWay}"
                                                       Height="{x:Bind ViewModel.MosaicSkillDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
                                                       Width="{x:Bind  ViewModel.MosaicSkillDs.TopElement.ImageSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
@@ -87,11 +85,11 @@
                                                       CreateResources="OnCreateResourcesCanvasControl_MosaicsSkillImg"
                                 />
                                 <!--
-                                <ToggleButton.RenderTransform>
+                                <Button.RenderTransform>
                                     <CompositeTransform ScaleX=".4" ScaleY=".4"/>
-                                </ToggleButton.RenderTransform>
+                                </Button.RenderTransform>
                                 -->
-                            </ToggleButton>
+                            </Button>
                             <TextBlock Text="Skill" Style="{StaticResource AppTitleTextBlockStyle}" />
                         </StackPanel>
                         <ListView x:Name="_listViewSkillLevelMenu"
