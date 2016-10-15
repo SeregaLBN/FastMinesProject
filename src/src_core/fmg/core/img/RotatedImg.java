@@ -62,15 +62,10 @@ public abstract class RotatedImg<TImage> extends StaticImg<TImage> {
 
    protected void onTimer() {
       if (isRotate())
-         rotateStep();
+         setRotateAngle(getRotateAngle() + getRotateAngleDelta());
    }
 
    public boolean isLiveImage() { return isRotate(); }
-
-   private void rotateStep() {
-      double rotateAngle = fixAngle(getRotateAngle() + getRotateAngleDelta());
-      setRotateAngle(rotateAngle);
-   }
 
    @Override
    public void close() {

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Microsoft.Graphics.Canvas;
@@ -215,7 +216,7 @@ namespace fmg
             r.RepeatNoWait(TimeSpan.FromMilliseconds(repeatTimeMsec), () => flag != 1);
          };
          bttn.PointerExited += (s, ev3) => {
-            flag = 2;
+            flag = 2; // start exited
             Action r = () => {
                Color clrCurr;
                if (currStepAngle <= 0) {
@@ -236,15 +237,65 @@ namespace fmg
       }
 
       private void OnClickBttnGroupPanel(object sender, RoutedEventArgs e) {
-         _splitView.IsPaneOpen = !_splitView.IsPaneOpen;
-         ViewModel.MosaicGroupDs.TopElement.Image.RotateAngleDelta = -ViewModel.MosaicGroupDs.TopElement.Image.RotateAngleDelta;
+         if (_listViewMosaicGroupMenu.Visibility == Visibility.Collapsed) {
+            ApplySmoothVisibilityOverScale(_listViewMosaicGroupMenu, Visibility.Visible);
+            ViewModel.MosaicGroupDs.TopElement.Image.HorizontalBurgerMenu = false;
+         } else {
+            _splitView.IsPaneOpen = !_splitView.IsPaneOpen;
+            ViewModel.MosaicGroupDs.TopElement.Image.RotateAngleDelta = -ViewModel.MosaicGroupDs.TopElement.Image.RotateAngleDelta;
+         }
       }
 
       private void OnClickBttnSkillPanel(object sender, RoutedEventArgs e) {
-         _listViewSkillLevelMenu.Visibility = (_listViewSkillLevelMenu.Visibility == Visibility.Collapsed)
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-         ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta = -ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta;
+         if (_listViewSkillLevelMenu.Visibility == Visibility.Collapsed) {
+            ApplySmoothVisibilityOverScale(_listViewSkillLevelMenu, Visibility.Visible);
+            ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta = -ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta;
+         } else {
+            if (!_scroller.ScrollableHeight.HasMinDiff(_scroller.VerticalOffset) && (_listViewMosaicGroupMenu.Visibility == Visibility.Visible)) {
+               ApplySmoothVisibilityOverScale(_listViewMosaicGroupMenu, Visibility.Collapsed);
+               ViewModel.MosaicGroupDs.TopElement.Image.HorizontalBurgerMenu = true;
+            } else {
+               ApplySmoothVisibilityOverScale(_listViewSkillLevelMenu, Visibility.Collapsed);
+               ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta = -ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta;
+            }
+         }
+      }
+
+      private void ApplySmoothVisibilityOverScale(ListView lv, Visibility target) {
+         if (lv.Visibility == target)
+            return;
+
+         var original = lv.RenderTransform;
+         if (original is CompositeTransform)
+            return;
+
+         var transformer = new CompositeTransform();
+         lv.RenderTransform = transformer;
+
+         if (target == Visibility.Visible) {
+            transformer.ScaleX = transformer.ScaleY = 0.01;
+            lv.Visibility = target;
+         } else {
+            transformer.ScaleX = transformer.ScaleY = 1;
+         }
+
+         var angle = 0.0;
+         Action r = () => {
+            angle += 12.345;
+            if (target == Visibility.Visible) {
+               transformer.ScaleX = transformer.ScaleY = 1 - Math.Cos(angle.ToRadian());
+               if (angle >= 90)
+                  lv.RenderTransform = original;
+            } else {
+               transformer.ScaleX = transformer.ScaleY = Math.Cos(angle.ToRadian());
+               if (angle >= 90) {
+                  lv.Visibility = Visibility.Collapsed;
+                  lv.RenderTransform = original;
+               }
+            }
+         };
+         r.RepeatNoWait(TimeSpan.FromMilliseconds(50), () => ReferenceEquals(lv.RenderTransform, original));
+
       }
 
    }

@@ -64,23 +64,11 @@ namespace fmg.core.img {
 
       protected virtual void OnTimer() {
          if (Rotate)
-            RotateStep();
+            RotateAngle += RotateAngleDelta;
       }
 
       protected virtual bool LiveImage() {
          return Rotate;
-      }
-
-      private void RotateStep() {
-         var rotateAngle = RotateAngle + RotateAngleDelta;
-         if (rotateAngle >= 360) {
-            rotateAngle -= 360;
-         } else {
-            if (rotateAngle < 0)
-               rotateAngle += 360;
-         }
-         RotateAngle = rotateAngle;
-         System.Diagnostics.Debug.Assert((rotateAngle >= 0) && (rotateAngle < 360));
       }
 
       protected override void Dispose(bool disposing) {
