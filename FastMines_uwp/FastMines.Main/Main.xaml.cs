@@ -5,7 +5,6 @@ using System.Reactive.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
@@ -238,7 +237,7 @@ namespace fmg
 
       private void OnClickBttnGroupPanel(object sender, RoutedEventArgs e) {
          if (_listViewMosaicGroupMenu.Visibility == Visibility.Collapsed) {
-            ApplySmoothVisibilityOverScale(_listViewMosaicGroupMenu, Visibility.Visible);
+            ApplySmoothVisibilityOverScale(typeof(EMosaicGroup), _listViewMosaicGroupMenu, Visibility.Visible);
             ViewModel.MosaicGroupDs.TopElement.Image.HorizontalBurgerMenu = false;
          } else {
             _splitView.IsPaneOpen = !_splitView.IsPaneOpen;
@@ -248,32 +247,41 @@ namespace fmg
 
       private void OnClickBttnSkillPanel(object sender, RoutedEventArgs e) {
          if (_listViewSkillLevelMenu.Visibility == Visibility.Collapsed) {
-            ApplySmoothVisibilityOverScale(_listViewSkillLevelMenu, Visibility.Visible);
+            ApplySmoothVisibilityOverScale(typeof(ESkillLevel), _listViewSkillLevelMenu, Visibility.Visible);
             ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta = -ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta;
          } else {
             if (!_scroller.ScrollableHeight.HasMinDiff(_scroller.VerticalOffset) && (_listViewMosaicGroupMenu.Visibility == Visibility.Visible)) {
-               ApplySmoothVisibilityOverScale(_listViewMosaicGroupMenu, Visibility.Collapsed);
+               ApplySmoothVisibilityOverScale(typeof(EMosaicGroup), _listViewMosaicGroupMenu, Visibility.Collapsed);
                ViewModel.MosaicGroupDs.TopElement.Image.HorizontalBurgerMenu = true;
             } else {
-               ApplySmoothVisibilityOverScale(_listViewSkillLevelMenu, Visibility.Collapsed);
+               ApplySmoothVisibilityOverScale(typeof(ESkillLevel), _listViewSkillLevelMenu, Visibility.Collapsed);
                ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta = -ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta;
             }
          }
       }
 
-      private void ApplySmoothVisibilityOverScale(ListView lv, Visibility target) {
+      /// <summary> set pseudo-async ListView.Visibility = target </summary>
+      private void ApplySmoothVisibilityOverScale(Type enumType, ListView lv, Visibility target) {
          if (lv.Visibility == target)
             return;
 
+         // save
          var original = lv.RenderTransform;
          if (original is CompositeTransform)
-            return;
+            return; // already called for this list
+         var h0 = lv.Height;
+
+         var h1 = h0;
+         if (double.IsNaN(h1)) // WTF!
+            h1 = Enum.GetValues(enumType).Length * (ViewModel.MosaicGroupDs.ImageSize.Height + 2 /* padding */);
 
          var transformer = new CompositeTransform();
          lv.RenderTransform = transformer;
 
-         if (target == Visibility.Visible) {
+         var toVisible = (target == Visibility.Visible);
+         if (toVisible) {
             transformer.ScaleX = transformer.ScaleY = 0.01;
+            lv.Height = 0.1;
             lv.Visibility = target;
          } else {
             transformer.ScaleX = transformer.ScaleY = 1;
@@ -282,20 +290,25 @@ namespace fmg
          var angle = 0.0;
          Action r = () => {
             angle += 12.345;
-            if (target == Visibility.Visible) {
-               transformer.ScaleX = transformer.ScaleY = 1 - Math.Cos(angle.ToRadian());
-               if (angle >= 90)
-                  lv.RenderTransform = original;
+
+            if (angle < 90) { // repeat?
+               var scale = toVisible
+                  ? Math.Sin(angle.ToRadian())
+                  : Math.Cos(angle.ToRadian());
+               transformer.ScaleX = transformer.ScaleY = scale;
+               lv.Height = h1 * scale;
             } else {
-               transformer.ScaleX = transformer.ScaleY = Math.Cos(angle.ToRadian());
-               if (angle >= 90) {
+               // stop it
+
+               if (!toVisible)
                   lv.Visibility = Visibility.Collapsed;
-                  lv.RenderTransform = original;
-               }
+
+               // restore
+               lv.RenderTransform = original; // mark to stop repeat
+               lv.Height = h0;
             }
          };
          r.RepeatNoWait(TimeSpan.FromMilliseconds(50), () => ReferenceEquals(lv.RenderTransform, original));
-
       }
 
    }
