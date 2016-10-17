@@ -281,8 +281,8 @@ namespace fmg
          var toVisible = (target == Visibility.Visible);
          if (toVisible) {
             transformer.ScaleX = transformer.ScaleY = 0.01;
-            lv.Height = 0.1;
-            lv.Visibility = target;
+            lv.Height = 0.1;        // first  - set min height
+            lv.Visibility = target; // second - set Visibility.Visible before smooting
          } else {
             transformer.ScaleX = transformer.ScaleY = 1;
          }
@@ -301,11 +301,11 @@ namespace fmg
                // stop it
 
                if (!toVisible)
-                  lv.Visibility = Visibility.Collapsed;
+                  lv.Visibility = target;          // first - set Visibility.Collapsed after smooting
 
                // restore
                lv.RenderTransform = original; // mark to stop repeat
-               lv.Height = h0;
+               lv.Height = h0;                     // second - restore original height
             }
          };
          r.RepeatNoWait(TimeSpan.FromMilliseconds(50), () => ReferenceEquals(lv.RenderTransform, original));
