@@ -41,6 +41,15 @@ namespace fmg.uwp.draw.mosaic.win2d {
          };
       }
 
+      public static CanvasGeometry CreatePolygon(this ICanvasResourceCreator resourceCreator, RegionDouble region) {
+         var points = new Vector2[region.CountPoints];
+         for (var i = 0; i < region.CountPoints; ++i) {
+            var p = region.GetPoint(i);
+            points[i] = new Vector2((float)p.X, (float)p.Y);
+         }
+         return CanvasGeometry.CreatePolygon(resourceCreator, points);
+      }
+
       public static CanvasGeometry BuildArc(this ICanvasResourceCreator resourceCreator, double x, double y, double width, double height, double startAngle, double arcAngle, bool clockwise, bool loopClosed) {
          using (var builder = new CanvasPathBuilder(resourceCreator)) {
             Vector2[] arcPoints = new Vector2[2] {

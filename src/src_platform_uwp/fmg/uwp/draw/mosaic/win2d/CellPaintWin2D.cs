@@ -16,12 +16,18 @@ namespace fmg.uwp.draw.mosaic.win2d {
 
       public override void Paint(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext)
       {
-         // TODO ограничиваю рисование только границами своей фигуры
-         //...
+         // ограничиваю рисование только границами своей фигуры
+         var ds = paint.DrawingSession;
+         var region = cell.getRegion();
+         using (var polygon = ds.CreatePolygon(region)) {
+            using (var layer = ds.CreateLayer(1, polygon)) {
 
-         // all paint
-         PaintComponent(cell, paint, paintContext);
-         PaintBorder(cell, paint, paintContext);
+               // all paint
+               PaintComponent(cell, paint, paintContext);
+               PaintBorder(cell, paint, paintContext);
+
+            }
+         }
       }
 
       protected override void PaintBorder(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext) {
@@ -60,8 +66,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
                   var p2 = (i != (v - 1)) ? region.GetPoint(i + 1) : region.GetPoint(0);
                   p2.Move(paintContext.Padding.Left, paintContext.Padding.Top);
                   if (i == s)
-                     color =
-                        (down ? paintContext.PenBorder.ColorShadow : paintContext.PenBorder.ColorLight).ToWinColor();
+                     color = (down ? paintContext.PenBorder.ColorShadow : paintContext.PenBorder.ColorLight).ToWinColor();
                   ds.DrawLine(p1.ToVector2(), p2.ToVector2(), color, borderWidth, css);
                }
             }
