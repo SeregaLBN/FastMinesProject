@@ -19,7 +19,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
          // ограничиваю рисование только границами своей фигуры
          var ds = paint.DrawingSession;
          var region = cell.getRegion();
-         using (var polygon = ds.CreatePolygon(region)) {
+         using (var polygon = ds.CreatePolygon(region, paintContext.Padding)) {
             using (var layer = ds.CreateLayer(1, polygon)) {
 
                // all paint

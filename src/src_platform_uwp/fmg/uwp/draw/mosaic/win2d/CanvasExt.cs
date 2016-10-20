@@ -41,11 +41,13 @@ namespace fmg.uwp.draw.mosaic.win2d {
          };
       }
 
-      public static CanvasGeometry CreatePolygon(this ICanvasResourceCreator resourceCreator, RegionDouble region) {
+      public static CanvasGeometry CreatePolygon(this ICanvasResourceCreator resourceCreator, RegionDouble region, BoundDouble? padding = null) {
+         var x = padding?.Left;
+         var y = padding?.Top;
          var points = new Vector2[region.CountPoints];
          for (var i = 0; i < region.CountPoints; ++i) {
             var p = region.GetPoint(i);
-            points[i] = new Vector2((float)p.X, (float)p.Y);
+            points[i] = new Vector2((float)(p.X + x), (float)(p.Y + y));
          }
          return CanvasGeometry.CreatePolygon(resourceCreator, points);
       }
