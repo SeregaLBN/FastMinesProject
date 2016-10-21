@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Sergey Krivulya (SeregaLBN aka KSerg)")]
 [assembly: AssemblyProduct("FastMines")]
-[assembly: AssemblyCopyright("Copyright ©  2013-2015")]
+[assembly: AssemblyCopyright("Copyright ©  2013-2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

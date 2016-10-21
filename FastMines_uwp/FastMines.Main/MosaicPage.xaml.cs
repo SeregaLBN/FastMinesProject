@@ -91,15 +91,6 @@ namespace fmg {
          MosaicField.MosaicType = initParam.MosaicTypes;
          MosaicField.MinesCount = initParam.MinesCount;
 
-         // if () // TODO: check if no tablet
-         {
-            ToolTipService.SetToolTip(bttnNewGame, new ToolTip {Content = "F2"});
-            ToolTipService.SetToolTip(bttnSkillBeginner, new ToolTip {Content = "1"});
-            ToolTipService.SetToolTip(bttnSkillAmateur, new ToolTip { Content = "2" });
-            ToolTipService.SetToolTip(bttnSkillCrazy, new ToolTip { Content = "3" });
-            ToolTipService.SetToolTip(bttnSkillProfi, new ToolTip {Content = "4"});
-         }
-
          MosaicField.PaintContext.ImgMine = MineImg.Image;
          MosaicField.PaintContext.ImgFlag = FlagImg.Image;
       }
@@ -284,13 +275,7 @@ namespace fmg {
          _clickInfo.Released = !clickResult.IsDown;
       }
 
-      private void Mosaic_OnChangedGameStatus(Mosaic sender, PropertyChangedExEventArgs<EGameStatus> ev) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField));
-         if (sender.GameStatus == EGameStatus.eGSEnd) {
-            //this.bottomAppBar.Focus(FocusState.Programmatic);
-            bottomAppBar.IsOpen = true;
-         }
-      }
+      private void Mosaic_OnChangedGameStatus(Mosaic sender, PropertyChangedExEventArgs<EGameStatus> ev) { }
       private void Mosaic_OnChangedMinesCount(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
       private void Mosaic_OnChangedCountFlag(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
       private void Mosaic_OnChangedCountOpen(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
@@ -646,25 +631,23 @@ namespace fmg {
          //}
       }
 
-      private void OnClickBttnBack(object sender, RoutedEventArgs ev) {
+      private void OnClickBttnBack___________not_bindet(object sender, RoutedEventArgs ev) {
          GoBack();
       }
-      private void OnClickBttnNewGame(object sender, RoutedEventArgs ev) {
-         topAppBar.IsOpen = false;
-         bottomAppBar.IsOpen = false;
+      private void OnClickBttnNewGame___________not_bindet(object sender, RoutedEventArgs ev) {
          MosaicField.GameNew();
       }
 
-      private void OnClickBttnSkillBeginner(object sender, RoutedEventArgs ev) {
+      private void OnClickBttnSkillBeginner___________not_bindet(object sender, RoutedEventArgs ev) {
          SetGame(ESkillLevel.eBeginner);
       }
-      private void OnClickBttnSkillAmateur(object sender, RoutedEventArgs ev) {
+      private void OnClickBttnSkillAmateur___________not_bindet(object sender, RoutedEventArgs ev) {
          SetGame(ESkillLevel.eAmateur);
       }
-      private void OnClickBttnSkillProfi(object sender, RoutedEventArgs ev) {
+      private void OnClickBttnSkillProfi___________not_bindet(object sender, RoutedEventArgs ev) {
          SetGame(ESkillLevel.eProfi);
       }
-      private void OnClickBttnSkillCrazy(object sender, RoutedEventArgs ev) {
+      private void OnClickBttnSkillCrazy___________not_bindet(object sender, RoutedEventArgs ev) {
          SetGame(ESkillLevel.eCrazy);
       }
 
