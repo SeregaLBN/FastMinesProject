@@ -21,17 +21,13 @@ using fmg.data.controller.types;
 using fmg.uwp.utils;
 using fmg.uwp.mosaic;
 using fmg.uwp.mosaic.win2d;
-using Log = fmg.common.LoggerSimple;
+using Logger = fmg.common.LoggerSimple;
 using Thickness = Windows.UI.Xaml.Thickness;
 using FlagCanvasBmp = fmg.uwp.draw.img.win2d.Flag.CanvasBmp;
 using MineCanvasBmp = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace fmg {
 
-   /// <summary>
-   /// An empty page that can be used on its own or navigated to within a Frame.
-   /// </summary>
    public sealed partial class MosaicPage : Page {
       /// <summary> мин отступ от краев экрана для мозаики </summary>
       private const int MinIndent = 30;
@@ -50,7 +46,7 @@ namespace fmg {
       public Mosaic MosaicField {
          get {
             if (_mosaic == null) {
-               _mosaic = new Mosaic(virtualControl);
+               _mosaic = new Mosaic(_canvasVirtualControl);
 
                _mosaic.PropertyChanged += OnMosaicPropertyChanged;
             }
@@ -67,7 +63,7 @@ namespace fmg {
          this.ManipulationMode =
             ManipulationModes.TranslateX |
             ManipulationModes.TranslateY |
-            ManipulationModes.Rotate |
+               ManipulationModes.Rotate |
             ManipulationModes.Scale |
             ManipulationModes.TranslateInertia;
 
@@ -257,8 +253,8 @@ namespace fmg {
        //FlagImg.Dispose();
 
          // Explicitly remove references to allow the Win2D controls to get garbage collected
-         virtualControl.RemoveFromVisualTree();
-         virtualControl = null;
+         _canvasVirtualControl.RemoveFromVisualTree();
+         _canvasVirtualControl = null;
       }
 
       private void OnPageSizeChanged(object sender, RoutedEventArgs e) {
@@ -440,7 +436,7 @@ namespace fmg {
             } else {
                AsyncRunner.InvokeFromUiLater(() => {
                   if (!_clickInfo.Released) {
-                     Log.Put("ã OnPointerReleased: forced left release click...");
+                     Logger.Put("ã OnPointerReleased: forced left release click...");
                      OnClick(pointerPoint.Position, true, false, true);
                   }
                }, CoreDispatcherPriority.High);
@@ -682,7 +678,7 @@ namespace fmg {
          get {
             if (_mineImage == null) {
                var device = CanvasDevice.GetSharedDevice();
-               //var device = virtualControl.Device;
+               //var device = _canvasVirtualControl.Device;
                _mineImage = new MineCanvasBmp(device);
             }
             return _mineImage;
@@ -693,7 +689,7 @@ namespace fmg {
          get {
             if (_flagImage == null) {
                var device = CanvasDevice.GetSharedDevice();
-               //var device = virtualControl.Device;
+               //var device = _canvasVirtualControl.Device;
                _flagImage = new FlagCanvasBmp(device);
             }
             return _flagImage;
@@ -701,7 +697,7 @@ namespace fmg {
       }
 
       private void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, virtualControl));
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _canvasVirtualControl));
 
          var invalidatedRegions = ev.InvalidatedRegions;
          foreach (var region in invalidatedRegions) {

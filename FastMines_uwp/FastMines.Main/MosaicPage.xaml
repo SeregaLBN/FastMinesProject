@@ -9,13 +9,11 @@
     mc:Ignorable="d"
     Background="Coral">
 
-    <Grid x:Name="ContentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}"  Margin="3">
-        <canvas:CanvasVirtualControl x:Name="virtualControl"
-                                     Width="1000"
-                                     Height="1000"
-                                     RegionsInvalidated="OnRegionsInvalidated"
-                                     ClearColor="Bisque"
-                                     Margin="5,5,5,5" />
-    </Grid>
+    <canvas:CanvasVirtualControl x:Name="_canvasVirtualControl"
+                                 Width="1000"
+                                 Height="1000"
+                                 RegionsInvalidated="OnRegionsInvalidated"
+                                 ClearColor="Bisque"
+                                 Margin="5,5,5,5" />
 
 </Page>

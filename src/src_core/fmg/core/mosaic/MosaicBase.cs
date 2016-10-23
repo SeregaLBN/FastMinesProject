@@ -431,11 +431,11 @@ namespace fmg.core.mosaic {
                return result;
             }
             if (GameStatus == EGameStatus.eGSReady)
-               return null;
+               return result;
             if (GameStatus == EGameStatus.eGSCreateGame)
-               return null;
+               return result;
             if (cellRightDown == null)
-               return null;
+               return result;
 
             CellDown = cellRightDown;
             var resultCell = cellRightDown.RButtonDown(cellRightDown.State.Close.NextState(UseUnknown));
