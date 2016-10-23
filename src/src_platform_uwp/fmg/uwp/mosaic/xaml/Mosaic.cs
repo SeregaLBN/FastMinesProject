@@ -136,7 +136,7 @@ namespace fmg.uwp.mosaic.xaml {
 
       /// <summary> преобразовать экранные координаты в ячейку поля мозаики </summary>
       private BaseCell CursorPointToCell(PointDouble point) {
-         return Matrix.AsParallel().FirstOrDefault(cell =>
+         return Matrix.FirstOrDefault(cell =>
             //cell.getRcOuter().Contains(point) && // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
             cell.PointInRegion(point));
       }

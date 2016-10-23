@@ -107,7 +107,7 @@ namespace fmg.uwp.mosaic.win2d {
       public override bool GameNew() {
          var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(MosaicHelper.CreateAttributeInstance(MosaicType, Area).getMaxBackgroundFillModeValue());
          //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
-         PaintContext.BkFill.Mode = (int)mode;
+         PaintContext.BkFill.Mode = mode;
          var res = base.GameNew();
          if (!res)
             Repaint(null);
@@ -121,7 +121,7 @@ namespace fmg.uwp.mosaic.win2d {
 
       /// <summary> преобразовать экранные координаты в ячейку поля мозаики </summary>
       private BaseCell CursorPointToCell(PointDouble point) {
-         return Matrix.AsParallel().FirstOrDefault(cell =>
+         return Matrix.FirstOrDefault(cell =>
             //cell.getRcOuter().Contains(point) && // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
             cell.PointInRegion(point));
       }
@@ -140,7 +140,7 @@ namespace fmg.uwp.mosaic.win2d {
       }
 
       public ClickResult MousePressed(PointDouble clickPoint, bool isLeftMouseButton) {
-         using (new Tracer("MosaicExt::MousePressed", "isLeftMouseButton="+isLeftMouseButton)) {
+         using (new Tracer("Mosaic::MousePressed", "isLeftMouseButton="+isLeftMouseButton)) {
             return isLeftMouseButton
                ? OnLeftButtonDown(CursorPointToCell(clickPoint))
                : OnRightButtonDown(CursorPointToCell(clickPoint));
@@ -148,7 +148,7 @@ namespace fmg.uwp.mosaic.win2d {
       }
 
       public ClickResult MouseReleased(PointDouble clickPoint, bool isLeftMouseButton) {
-         using (new Tracer("MosaicExt::MouseReleased", "isLeftMouseButton="+isLeftMouseButton)) {
+         using (new Tracer("Mosaic::MouseReleased", "isLeftMouseButton="+isLeftMouseButton)) {
             return isLeftMouseButton
                ? OnLeftButtonUp(CursorPointToCell(clickPoint))
                : OnRightButtonUp(CursorPointToCell(clickPoint));
@@ -156,7 +156,7 @@ namespace fmg.uwp.mosaic.win2d {
       }
 
       public ClickResult MouseFocusLost() {
-         using (new Tracer("MosaicExt::MouseFocusLost")) {
+         using (new Tracer("Mosaic::MouseFocusLost")) {
             if (CellDown == null)
                return null;
             return CellDown.State.Down
