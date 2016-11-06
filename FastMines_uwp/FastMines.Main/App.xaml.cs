@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation.Metadata;
@@ -7,7 +6,8 @@ using Windows.Phone.UI.Input;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
-using fmg.data.controller.types;
+using Windows.UI.Xaml.Controls;
+using fmg.uwp.utils;
 
 namespace fmg
 {
@@ -19,7 +19,7 @@ namespace fmg
       /// <summary>
       /// Initializes the singleton application object.  This is the first line of authored code
       /// executed, and as such is the logical equivalent of main() or WinMain().
-      /// </summary>
+         /// </summary>
       public App()
       {
          this.InitializeComponent();
@@ -31,7 +31,7 @@ namespace fmg
       /// will be used such as when the application is launched to open a specific file.
       /// </summary>
       /// <param name="e">Details about the launch request and process.</param>
-      protected override void OnLaunched(LaunchActivatedEventArgs e)
+      protected override void OnLaunched(LaunchActivatedEventArgs ev)
       {
 #if DEBUG
          if (System.Diagnostics.Debugger.IsAttached)
@@ -41,61 +41,65 @@ namespace fmg
          }
 #endif
 
-         var shell = Window.Current.Content as Main;
-
+         Frame rootFrame = Window.Current.Content as Frame;
          // Do not repeat app initialization when the Window already has content,
          // just ensure that the window is active
-         if (shell == null)
-         {
-            // Create a Main which navigates to the first page
-            shell = new Main();
+         if (rootFrame == null) {
+            // Create a Frame which navigates to the first page
+            rootFrame = new Frame();
 
-            // hook-up shell root frame navigation events
-            shell.RootFrame.NavigationFailed += OnNavigationFailed;
-            shell.RootFrame.Navigated += OnNavigated;
+            // hook-up root frame navigation events
+            rootFrame.NavigationFailed += OnNavigationFailed;
+            rootFrame.Navigated += OnNavigated;
 
-            if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-            {
-               //TODO: Load state from previously suspended application
+            if (ev.PreviousExecutionState == ApplicationExecutionState.Terminated) {
+               // TODO: Load state from previously suspended application
             }
+            // set the Frame as content
+            Window.Current.Content = rootFrame;
 
-            // set the Shell as content
-            Window.Current.Content = shell;
 
             // listen for back button clicks (both soft- and hardware)
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
 
-            if (ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
-            {
+            if (ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons")) {
                HardwareButtons.BackPressed += OnBackPressed;
             }
 
             UpdateBackButtonVisibility();
          }
 
+         if (rootFrame.Content == null) {
+            if (!rootFrame.Navigate(typeof(Main), null)) {
+               throw new Exception("Failed to create initial page ;(");
+            }
+         }
+
          // Ensure the current window is active
          Window.Current.Activate();
+
+         //AsyncRunner.InvokeLater(x => TileHelper.RegisterBackgroundTask(), Windows.System.Threading.WorkItemPriority.Low);
       }
 
       // handle hardware back button press
       void OnBackPressed(object sender, BackPressedEventArgs e)
       {
-         var main = (Main)Window.Current.Content;
-         if (main.RootFrame.CanGoBack)
+         var frame = (Frame)Window.Current.Content;
+         if (frame.CanGoBack)
          {
             e.Handled = true;
-            main.RootFrame.GoBack();
+            frame.GoBack();
          }
       }
 
       // handle software back button press
       void OnBackRequested(object sender, BackRequestedEventArgs e)
       {
-         var main = (Main)Window.Current.Content;
-         if (main.RootFrame.CanGoBack)
+         var frame = (Frame)Window.Current.Content;
+         if (frame.CanGoBack)
          {
             e.Handled = true;
-            main.RootFrame.GoBack();
+            frame.GoBack();
          }
       }
 
@@ -130,9 +134,9 @@ namespace fmg
 
       private void UpdateBackButtonVisibility()
       {
-         var main = (Main)Window.Current.Content;
+         var frame = (Frame)Window.Current.Content;
 
-         var visibility = main.RootFrame.CanGoBack
+         var visibility = frame.CanGoBack
             ? AppViewBackButtonVisibility.Visible
             : AppViewBackButtonVisibility.Collapsed;
 

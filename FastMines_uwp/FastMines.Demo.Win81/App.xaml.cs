@@ -29,46 +29,6 @@ namespace FastMines {
       public App() {
          this.InitializeComponent();
          this.Suspending += OnSuspending;
-
-#if DEBUG
-         var testString = "Hello World! Чпунтику привет!";
-         var bs = System.Text.Encoding.UTF8.GetBytes(testString);
-         var text2 =
-            Windows.Security.Cryptography.CryptographicBuffer.ConvertBinaryToString(
-               Windows.Security.Cryptography.BinaryStringEncoding.Utf8,
-               System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeBufferExtensions.AsBuffer(bs));
-         System.Diagnostics.Debug.Assert(testString == text2);
-
-         var omg =
-            Windows.Security.Cryptography.CryptographicBuffer.EncodeToHexString(
-               System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeBufferExtensions.AsBuffer(new byte[]
-               {0x01, 0x02, 0x1d, 0x55, 0xFF}));
-
-         {
-            // 3DES
-            //{
-            //   var secKey = "super-puper mega Password";
-            //   var tdes1 = new fmg.common.crypt.TripleDESOperations() {SecurityKeyStr = secKey, DataStr = testString};
-            //   var encrypted = tdes1.EncryptB64();
-            //   var decrypted =
-            //      new fmg.common.crypt.TripleDESOperations() {SecurityKeyStr = secKey, DataB64 = encrypted}.DecryptStr();
-            //   System.Diagnostics.Debug.Assert(decrypted == testString, "Triple DES failed!");
-            //}
-            //{
-            //   var secKey = fmg.common.TripleDESOperations.GenerateKey();
-            //   var encrypted = new fmg.common.TripleDESOperations() { SecurityKey = secKey, DataStr = testString }.EncryptB64();
-            //   var decrypted = new fmg.common.TripleDESOperations() { SecurityKey = secKey, DataB64 = encrypted }.DecryptStr();
-            //   System.Diagnostics.Debug.Assert(decrypted == testString, "Triple DES failed!");
-            //}
-            //{
-            //   var secKey = fmg.common.TripleDESOperations.GenerateKey();
-            //   var iv = fmg.common.TripleDESOperations.GenerateInitVector(CipherMode.CBC);
-            //   var encrypted = new fmg.common.TripleDESOperations() { InitVector = iv, Mode = CipherMode.CBC, SecurityKey = secKey, DataStr = testString }.EncryptB64();
-            //   var decrypted = new fmg.common.TripleDESOperations() { InitVector = iv, Mode = CipherMode.CBC, SecurityKey = secKey, DataB64 = encrypted }.DecryptStr();
-            //   System.Diagnostics.Debug.Assert(decrypted == testString, "Triple DES failed!");
-            //}
-         }
-#endif
       }
 
       /// <summary>
@@ -114,7 +74,7 @@ namespace FastMines {
          // Ensure the current window is active
          Window.Current.Activate();
 
-         AsyncRunner.InvokeLater((x) => TileHelper.RegisterBackgroundTask(), Windows.System.Threading.WorkItemPriority.Low);
+         AsyncRunner.InvokeLater(x => TileHelper.RegisterBackgroundTask(), Windows.System.Threading.WorkItemPriority.Low);
       }
 
       /// <summary>
@@ -134,7 +94,7 @@ namespace FastMines {
          var frame = (Frame) Windows.UI.Xaml.Window.Current.Content;
          //var page = (Windows.UI.Xaml.Controls.Page)frame.Content;
          switch (args.VirtualKey) {
-            case (VirtualKey) 166: // VirtualKey.GoBack:
+            case VirtualKey.GoBack:
             case VirtualKey.Back:
                if (frame != null) {
                   if (frame.CanGoBack) {

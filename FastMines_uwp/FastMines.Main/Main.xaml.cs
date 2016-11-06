@@ -22,7 +22,7 @@ using MosaicsGroupCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsGroupImg.CanvasBmp;
 
 namespace fmg
 {
-   public sealed partial class Main : UserControl
+   public sealed partial class Main : Page
    {
       internal const int MenuTextWidth = 110;
 
@@ -30,7 +30,7 @@ namespace fmg
 
       public ShellViewModel ViewModel { get; } = new ShellViewModel();
 
-      public Frame RootFrame => this._frame;
+      public Frame RightFrame => this._frame;
 
 
       public Main() {
@@ -48,7 +48,7 @@ namespace fmg
          ViewModel.MosaicGroupDs.CurrentElement = ViewModel.MosaicGroupDs.DataSource.First(x => x.MosaicGroup == EMosaicGroup.eQuadrangles);
          ViewModel.MosaicSkillDs.CurrentElement = ViewModel.MosaicSkillDs.DataSource.First(x => x.SkillLevel == ESkillLevel.eBeginner);
          Loaded += (sender, ev) => {
-            var smp = RootFrame?.Content as SelectMosaicPage;
+            var smp = RightFrame?.Content as SelectMosaicPage;
             if (smp != null) {
                var ds = smp.ViewModel.MosaicsDs;
                ds.CurrentElement = ds.DataSource.First();
@@ -74,10 +74,10 @@ namespace fmg
             LoggerSimple.Put("TODO:  redirect to CustomSizePage...");
             return;
          }
-         var smp = RootFrame.Content as SelectMosaicPage;
+         var smp = RightFrame.Content as SelectMosaicPage;
          if (smp == null) {
-            RootFrame.SourcePageType = typeof(SelectMosaicPage);
-            smp = RootFrame.Content as SelectMosaicPage;
+            RightFrame.SourcePageType = typeof(SelectMosaicPage);
+            smp = RightFrame.Content as SelectMosaicPage;
          }
          smp.CurrentElement = null;
          smp.CurrentMosaicGroup = currentGroupItem.MosaicGroup.Value;
@@ -136,7 +136,7 @@ namespace fmg
             ViewModel.MosaicSkillDs.TopElement.ImagePaddingBurgerMenu = padBurger; // right-bottom margin
          }
          {
-            var smp = RootFrame?.Content as SelectMosaicPage;
+            var smp = RightFrame?.Content as SelectMosaicPage;
             if (smp != null) {
                var size2 = size/4;
                var wh = (int)Math.Min(Math.Max(100, size2), 200); // TODO: DPI dependency
