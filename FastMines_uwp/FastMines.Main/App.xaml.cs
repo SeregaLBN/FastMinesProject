@@ -70,7 +70,7 @@ namespace fmg
          }
 
          if (rootFrame.Content == null) {
-            if (!rootFrame.Navigate(typeof(Main), null)) {
+            if (!rootFrame.Navigate(typeof(MainPage), null)) {
                throw new Exception("Failed to create initial page ;(");
             }
          }

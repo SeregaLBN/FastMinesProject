@@ -22,7 +22,7 @@ using MosaicsGroupCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsGroupImg.CanvasBmp;
 
 namespace fmg
 {
-   public sealed partial class Main : Page
+   public sealed partial class MainPage : Page
    {
       internal const int MenuTextWidth = 110;
 
@@ -33,7 +33,7 @@ namespace fmg
       public Frame RightFrame => this._frame;
 
 
-      public Main() {
+      public MainPage() {
          this.InitializeComponent();
          Unloaded += OnClosing;
          //Loaded += (sender, ev) => { // unit test

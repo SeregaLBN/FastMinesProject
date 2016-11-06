@@ -124,8 +124,8 @@
     <Compile Include="Presentation\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Presentation\Converters\BooleanNullableConverter.cs" />
     <Compile Include="Presentation\Converters\SelectedItemToBoolConverter.cs" />
-    <Compile Include="Main.xaml.cs">
-      <DependentUpon>Main.xaml</DependentUpon>
+    <Compile Include="MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -549,7 +549,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Main.xaml">
+    <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
