@@ -1,4 +1,5 @@
 ﻿using System;
+using Windows.System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation.Metadata;
@@ -7,7 +8,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Controls;
-using fmg.uwp.utils;
+using fmg.common;
 
 namespace fmg
 {
@@ -61,10 +62,10 @@ namespace fmg
 
             // listen for back button clicks (both soft- and hardware)
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
-
             if (ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons")) {
                HardwareButtons.BackPressed += OnBackPressed;
             }
+            Window.Current.CoreWindow.KeyDown += OnKeyDown;
 
             UpdateBackButtonVisibility();
          }
@@ -82,24 +83,36 @@ namespace fmg
       }
 
       // handle hardware back button press
-      void OnBackPressed(object sender, BackPressedEventArgs e)
-      {
+      void OnBackPressed(object sender, BackPressedEventArgs ev) {
+         LoggerSimple.Put("App.OnBackPressed:");
          var frame = (Frame)Window.Current.Content;
-         if (frame.CanGoBack)
-         {
-            e.Handled = true;
+         if (frame.CanGoBack) {
+            ev.Handled = true;
             frame.GoBack();
          }
       }
 
       // handle software back button press
-      void OnBackRequested(object sender, BackRequestedEventArgs e)
-      {
+      void OnBackRequested(object sender, BackRequestedEventArgs ev) {
+         LoggerSimple.Put("App.OnBackRequested:");
          var frame = (Frame)Window.Current.Content;
-         if (frame.CanGoBack)
-         {
-            e.Handled = true;
+         if (frame.CanGoBack) {
+            ev.Handled = true;
             frame.GoBack();
+         }
+      }
+
+      void OnKeyDown(CoreWindow sender, KeyEventArgs ev) {
+         LoggerSimple.Put("App.OnKeyDown: VirtualKey=" + ev.VirtualKey);
+         var frame = (Frame)Window.Current.Content;
+         switch (ev.VirtualKey) {
+       //case VirtualKey.GoBack: // System.Diagnostics.Debug.Assert(false, "must be handled in " + nameof(App) + "." + nameof(OnBackRequested));
+         case VirtualKey.Back:
+            if (frame.CanGoBack) {
+               ev.Handled = true;
+               frame.GoBack();
+            }
+            break;
          }
       }
 

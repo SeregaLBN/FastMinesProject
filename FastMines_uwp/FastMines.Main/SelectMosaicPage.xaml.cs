@@ -69,8 +69,12 @@ namespace fmg {
       }
 
       private void StartNewGame() {
+         //Frame frame = this.Frame;
+         Frame frame = Window.Current.Content as Frame;
+         System.Diagnostics.Debug.Assert(frame != null);
+
          var eMosaic = CurrentElement.MosaicType;
-         this.Frame.Navigate(typeof(MosaicPage), new MosaicPageInitParam {
+         frame.Navigate(typeof(MosaicPage), new MosaicPageInitParam {
             MosaicTypes = eMosaic,
             MinesCount = CurrentSkillLevel.GetNumberMines(eMosaic),
             SizeField = CurrentSkillLevel.DefaultSize()
