@@ -35,11 +35,8 @@ namespace fmg.uwp.draw.img.win2d {
          protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
             ICanvasResourceCreator rc = Image;
 
-            if (fillBk) {
-               var bkClr = BackgroundColor;
-               if (!bkClr.IsTransparent)
-                  ds.Clear(bkClr.ToWinColor());
-            }
+            if (fillBk)
+               ds.Clear(BackgroundColor.ToWinColor());
 
             IList<PointDouble> rays = new List<PointDouble>(), inn = new List<PointDouble>(), oct = new List<PointDouble>();
             GetCoords(rays, inn, oct);

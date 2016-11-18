@@ -49,6 +49,9 @@ namespace fmg.uwp.draw.img.win2d {
          protected abstract void DrawBody();
 
          protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
+            if (fillBk)
+               ds.Clear(Windows.UI.Colors.Transparent);
+
             var w = _width / 100.0f;
             var h = _height / 100.0f;
 
