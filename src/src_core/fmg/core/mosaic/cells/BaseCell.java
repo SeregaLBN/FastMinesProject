@@ -27,14 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import fmg.common.Color;
-import fmg.common.geom.Coord;
-import fmg.common.geom.DoubleExt;
-import fmg.common.geom.Matrisize;
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.RectDouble;
-import fmg.common.geom.RegionDouble;
-import fmg.common.geom.Size;
-import fmg.common.geom.SizeDouble;
+import fmg.common.geom.*;
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
@@ -135,7 +128,7 @@ public abstract class BaseCell {
    /** вернёт прямоугольник в который вписана фигура ячейки */
    public RectDouble getRcOuter() {
       RectDouble rcOuter = region.getBounds();
-      rcOuter.height++; rcOuter.width++; // чтобы при repaint'е захватило и крайние границы
+    //rcOuter.height++; rcOuter.width++; // чтобы при repaint'е захватило и крайние границы
       return rcOuter;
    }
 

@@ -37,12 +37,7 @@ import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.IPaintable;
 import fmg.core.mosaic.draw.PaintContext;
-import fmg.core.types.EClose;
-import fmg.core.types.EGameStatus;
-import fmg.core.types.EMosaic;
-import fmg.core.types.EOpen;
-import fmg.core.types.EPlayInfo;
-import fmg.core.types.EState;
+import fmg.core.types.*;
 import fmg.core.types.click.ClickCellResult;
 import fmg.core.types.click.ClickResult;
 
@@ -78,6 +73,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
    private boolean _useUnknown = true;
 
    public static final String PROPERTY_AREA              = BaseCell.BaseAttribute.PROPERTY_AREA;
+   public static final String PROPERTY_WINDOW_SIZE       = "WindowSize";
    public static final String PROPERTY_CELL_ATTR         = "CellAttr";
    public static final String PROPERTY_SIZE_FIELD        = "SizeField";
    public static final String PROPERTY_MATRIX            = "Matrix";
@@ -577,21 +573,12 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
    public double getArea() {
       if (_cellAttr == null)
          return AREA_MINIMUM;
-      double area = getCellAttr().getArea();
-      if (area < AREA_MINIMUM) {
-         area = AREA_MINIMUM;
-         getCellAttr().setArea(AREA_MINIMUM);
-      }
-      return area;
+      return getCellAttr().getArea();
    }
    /** установить новую площадь ячеек */
    @Override
    public void setArea(double newArea)  {
-      double oldArea = getCellAttr().getArea();
-      newArea = Math.max(AREA_MINIMUM, newArea);
-      if (DoubleExt.hasMinDiff(oldArea, newArea))
-         return;
-      getCellAttr().setArea(newArea);
+      getCellAttr().setArea(Math.max(AREA_MINIMUM, newArea));
    }
 
    public void setUseUnknown(boolean val) { _useUnknown = val; }
@@ -644,7 +631,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       setSizeField(sizeField);
       setMosaicType(mosaicType);
       setMinesCount(minesCount);
-      setArea(area); // ...провера на валидность есть только при установке из класса Main. Так что, не нуна тут задавать громадные велечины.
+      setArea(area); // ...провера на валидность есть только при установке из класса Main. Так что, не нуна тут задавать громадные величины.
    }
 
 
@@ -653,12 +640,14 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       if (ev.getSource() instanceof BaseCell.BaseAttribute)
          onCellAttributePropertyChanged((BaseCell.BaseAttribute)ev.getSource(), ev);
    }
+
    protected void onCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) {
       String propName = ev.getPropertyName();
       if (BaseCell.BaseAttribute.PROPERTY_AREA.equals(propName)) {
          getMatrix().forEach(cell -> cell.Init());
-         onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
          repaint(null);
+         onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
+         onSelfPropertyChanged(PROPERTY_WINDOW_SIZE);
       }
       onSelfPropertyChanged(PROPERTY_CELL_ATTR);
       onSelfPropertyChanged(PROPERTY_CELL_ATTR + "." + propName);

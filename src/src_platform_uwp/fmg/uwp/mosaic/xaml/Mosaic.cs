@@ -141,19 +141,6 @@ namespace fmg.uwp.mosaic.xaml {
             cell.PointInRegion(point));
       }
 
-      public override double Area {
-         //get { return base.Area; }
-         set {
-            var oldVal = Area;
-            base.Area = value;
-            var newVal = Area;
-            if (!oldVal.HasMinDiff(newVal)) {
-               ChangeFontSize(PaintContext.PenBorder);
-               Repaint();
-            }
-         }
-      }
-
       public ClickResult MousePressed(PointDouble clickPoint, bool isLeftMouseButton) {
          using (new Tracer("MosaicExt::MousePressed", "isLeftMouseButton="+isLeftMouseButton)) {
             return isLeftMouseButton
@@ -186,6 +173,9 @@ namespace fmg.uwp.mosaic.xaml {
          case nameof(this.MosaicType):
             ChangeFontSize();
             break;
+         case nameof(this.Area):
+            ChangeFontSize(PaintContext.PenBorder);
+            break;
          case nameof(this.Matrix):
             UnbindXaml();
             BindXamlToMosaic();
@@ -194,19 +184,8 @@ namespace fmg.uwp.mosaic.xaml {
          }
       }
 
-      protected override void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         base.OnCellAttributePropertyChanged(sender, ev);
-         if (nameof(this.Area) == ev.PropertyName) {
-            ChangeFontSize(PaintContext.PenBorder);
-
-            //revalidate();
-         }
-      }
-
       private void OnPaintContextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         var pc = sender as PaintContext<ImageSource>;
-         if (pc == null)
-            return;
+         System.Diagnostics.Debug.Assert(sender is PaintContext<ImageSource>);
 
          switch (ev.PropertyName) {
          case nameof(PaintContext.PenBorder):

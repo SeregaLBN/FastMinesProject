@@ -112,7 +112,7 @@ namespace fmg.core.mosaic.cells {
       /// <summary>вернёт прямоугольник в который вписана фигура ячейки</summary>
       public RectDouble getRcOuter() {
          var rcOuter = region.GetBounds();
-         rcOuter.Height++; rcOuter.Width++; // чтобы при repaint'е захватило и крайние границы
+       //rcOuter.Height++; rcOuter.Width++; // чтобы при repaint'е захватило и крайние границы
          return rcOuter;
       }
 

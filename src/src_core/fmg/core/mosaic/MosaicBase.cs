@@ -116,6 +116,7 @@ namespace fmg.core.mosaic {
 
             _matrix.Clear();
             OnSelfPropertyChanged(nameof(this.Matrix));
+            OnSelfPropertyChanged(nameof(this.WindowSize));
 
             GameNew();
          }
@@ -504,7 +505,7 @@ namespace fmg.core.mosaic {
       }
 
          /// <summary>создать игру игроком - он сам расставит мины</summary>
-         public void GameCreate() {
+      public void GameCreate() {
          GameNew();
          if (RepositoryMines.Count == 0) {
             MinesCount = 0;
@@ -517,19 +518,10 @@ namespace fmg.core.mosaic {
          get {
             if (_cellAttr == null)
                return AREA_MINIMUM;
-            var area = CellAttr.Area;
-            if (area < AREA_MINIMUM) {
-               area = AREA_MINIMUM;
-               CellAttr.Area = AREA_MINIMUM;
-            }
-            return area;
+            return CellAttr.Area;
          }
          set {
-            var oldArea = CellAttr.Area;
-            value = Math.Max(AREA_MINIMUM, value);
-            if (oldArea.HasMinDiff(value))
-               return;
-            CellAttr.Area = value;
+            CellAttr.Area = Math.Max(AREA_MINIMUM, value);
          }
       }
       public bool UseUnknown {
@@ -590,7 +582,7 @@ namespace fmg.core.mosaic {
          SizeField = sizeField;
          MosaicType = mosaicType;
          MinesCount = minesCount;
-         Area = area; // ...провера на валидность есть только при установке из класса Main. Так что, не нуна тут задавать громадные велечины.
+         Area = area; // ...провера на валидность есть только при установке из класса Main. Так что, не нуна тут задавать громадные величины.
       }
 
       protected virtual void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
@@ -599,9 +591,10 @@ namespace fmg.core.mosaic {
             foreach (var cell in Matrix)
                cell.Init();
 
-            OnSelfPropertyChanged<double>(ev, nameof(this.Area));
-
             Repaint(null);
+
+            OnSelfPropertyChanged<double>(ev, nameof(this.Area));
+            OnSelfPropertyChanged(nameof(this.WindowSize));
          }
          OnSelfPropertyChanged(nameof(this.CellAttr));
          OnSelfPropertyChanged(nameof(this.CellAttr) + "." + pn);

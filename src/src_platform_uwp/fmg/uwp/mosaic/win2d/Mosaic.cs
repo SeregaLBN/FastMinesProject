@@ -47,8 +47,7 @@ namespace fmg.uwp.mosaic.win2d {
       }
 
       public PaintUwpContext<CanvasBitmap> PaintContext {
-         get
-         {
+         get {
             if (_paintContext == null) {
                _paintContext = new PaintUwpContext<CanvasBitmap>(false);
                _paintContext.PropertyChanged += OnPaintContextPropertyChanged; // изменение контекста -> перерисовка мозаики
@@ -68,8 +67,20 @@ namespace fmg.uwp.mosaic.win2d {
          Action run = () => {
             if (cell == null)
                _container.Invalidate();
-            else
+            else {
+#if DEBUG
+               var size = _container.Size;
+               var rc = cell.getRcOuter();
+               var tmp = new Windows.Foundation.Rect(0, 0, size.Width, size.Height);
+               var containsLT = tmp.Contains(rc.PointLT().ToWinPoint());
+               var containsLB = tmp.Contains(rc.PointLB().ToWinPoint());
+               var containsRT = tmp.Contains(rc.PointRT().ToWinPoint());
+               var containsRB = tmp.Contains(rc.PointRB().ToWinPoint());
+               bool intersect = (tmp != Windows.Foundation.Rect.Empty);
+               LoggerSimple.Put($"intersect={intersect}; containsLT={containsLT}; containsLB={containsLB}; containsRT={containsRT}; containsRB={containsRB}");
+#endif
                _container.Invalidate(cell.getRcOuter().ToWinRect());
+            }
          };
 
          if (_alreadyPainted)
@@ -126,19 +137,6 @@ namespace fmg.uwp.mosaic.win2d {
             cell.PointInRegion(point));
       }
 
-      public override double Area {
-         //get { return base.Area; }
-         set {
-            var oldVal = Area;
-            base.Area = value;
-            var newVal = Area;
-            if (!oldVal.HasMinDiff(newVal)) {
-               ChangeFontSize(PaintContext.PenBorder);
-               Repaint(null);
-            }
-         }
-      }
-
       public ClickResult MousePressed(PointDouble clickPoint, bool isLeftMouseButton) {
          using (new Tracer("Mosaic::MousePressed", "isLeftMouseButton="+isLeftMouseButton)) {
             return isLeftMouseButton
@@ -171,25 +169,17 @@ namespace fmg.uwp.mosaic.win2d {
          case nameof(this.MosaicType):
             ChangeFontSize();
             break;
+         case nameof(this.Area):
+            ChangeFontSize(PaintContext.PenBorder);
+            break;
          case nameof(this.Matrix):
             Repaint(null);
             break;
          }
       }
 
-      protected override void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         base.OnCellAttributePropertyChanged(sender, ev);
-         if (nameof(this.Area) == ev.PropertyName) {
-            ChangeFontSize(PaintContext.PenBorder);
-
-            //revalidate();
-         }
-      }
-
       private void OnPaintContextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         var pc = sender as PaintContext<CanvasBitmap>;
-         if (pc == null)
-            return;
+         System.Diagnostics.Debug.Assert(sender is PaintContext<CanvasBitmap>);
 
          switch (ev.PropertyName) {
          case nameof(PaintContext.PenBorder):

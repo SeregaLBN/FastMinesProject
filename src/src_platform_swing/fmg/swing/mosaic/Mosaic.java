@@ -1,28 +1,13 @@
 package fmg.swing.mosaic;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Window;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.util.Objects;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import javax.swing.Icon;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 
 import fmg.common.geom.Matrisize;
@@ -312,6 +297,9 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
       case PROPERTY_MOSAIC_TYPE:
          changeFontSize();
          break;
+      case PROPERTY_AREA:
+         changeFontSize(getPaintContext().getPenBorder());
+         break;
       case PROPERTY_MATRIX:
          revalidate();
          break;
@@ -323,16 +311,6 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
       super.propertyChange(ev);
       if (ev.getSource() instanceof PaintSwingContext)
          onPaintContextPropertyChanged((PaintSwingContext<?>)ev.getSource(), ev);
-   }
-
-   @Override
-   protected void onCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) {
-      super.onCellAttributePropertyChanged(source, ev);
-      if (BaseCell.BaseAttribute.PROPERTY_AREA.equals(ev.getPropertyName())) {
-         changeFontSize(getPaintContext().getPenBorder());
-
-         revalidate();
-      }
    }
 
    private void onPaintContextPropertyChanged(PaintSwingContext<?> source, PropertyChangeEvent ev) {

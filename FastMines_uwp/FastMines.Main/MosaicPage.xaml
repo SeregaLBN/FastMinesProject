@@ -10,8 +10,8 @@
     Background="Coral">
 
     <canvas:CanvasVirtualControl x:Name="_canvasVirtualControl"
-                                 Width="1000"
-                                 Height="1000"
+                                 Height="{x:Bind MosaicField.WindowSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
+                                 Width="{x:Bind  MosaicField.WindowSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
                                  RegionsInvalidated="OnRegionsInvalidated"
                                  ClearColor="Bisque"
                                  Margin="5,5,5,5" />

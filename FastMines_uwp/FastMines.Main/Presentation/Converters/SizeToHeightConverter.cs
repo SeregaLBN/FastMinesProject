@@ -1,12 +1,19 @@
-﻿using fmg.common.geom;
-using System;
+﻿using System;
 using Windows.UI.Xaml.Data;
+using fmg.common.geom;
 
 namespace fmg.common.Converters {
 
    public sealed class SizeToHeightConverter : IValueConverter {
       public object Convert(object value, Type targetType, object parameter, string language) {
-         return System.Convert.ToDouble(((Size)value).Height);
+         LoggerSimple.Put($"SizeToHeightConverter::Convert: value={value}, targetType={targetType}, parameter={parameter}, language={language}");
+         var size = value as Size?;
+         if (size != null)
+            return System.Convert.ToDouble(size.Value.Height);
+         var sizeD = value as SizeDouble?;
+         if (sizeD != null)
+            return sizeD.Value.Height;
+         throw new NotImplementedException("Not supported...");
       }
 
       public object ConvertBack(object value, Type targetType, object parameter, string language) {
