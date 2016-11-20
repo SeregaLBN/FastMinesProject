@@ -16,6 +16,7 @@ using fmg.core.types.click;
 using fmg.data.view.draw;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.mosaic.xaml;
+using fmg.uwp.draw.img.wbmp;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.mosaic.xaml {
@@ -71,6 +72,8 @@ namespace fmg.uwp.mosaic.xaml {
          {
             if (_paintContext == null) {
                _paintContext = new PaintUwpContext<ImageSource>(false);
+               _paintContext.ImgMine = new Mine().Image;
+             //_paintContext.ImgFlag = new Flag().Image;
                _paintContext.PropertyChanged += OnPaintContextPropertyChanged; // изменение контекста -> перерисовка мозаики
             }
             return _paintContext;

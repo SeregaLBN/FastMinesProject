@@ -39,7 +39,6 @@ import fmg.data.view.draw.EZoomInterface;
 import fmg.swing.dialogs.*;
 import fmg.swing.draw.img.*;
 import fmg.swing.draw.img.Smile.EType;
-import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.mosaic.Mosaic;
 import fmg.swing.serializable.SerializeProjData;
 import fmg.swing.utils.GuiTools;
@@ -1165,7 +1164,6 @@ public class Main extends JFrame implements PropertyChangeListener {
       CustomKeyBinding();
 
       pack();
-      changeSizeImagesMineFlag();
 //      System.out.println("ThreadId=" + Thread.currentThread().getId() + ": Main::initialize: after pack");
       if (defaultData)
          setLocationRelativeTo(null);
@@ -2326,19 +2324,6 @@ public class Main extends JFrame implements PropertyChangeListener {
       }
    }
 
-   /** переустанавливаю заного размер мины/флага для мозаики */
-   private void changeSizeImagesMineFlag() {
-      Mosaic m = getMosaic();
-      PaintSwingContext<Icon> pc = m.getPaintContext();
-      int sq = (int)m.getCellAttr().getSq(pc.getPenBorder().getWidth());
-      if (sq <= 0) {
-         System.err.println("Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");
-         sq = 3; // ат балды...
-      }
-      pc.setImgFlag(ImgUtils.zoom(new Flag(), sq, sq));
-      pc.setImgMine(ImgUtils.zoom(new Mine(), sq, sq));
-   }
-
    public static void Beep() {
       java.awt.Toolkit.getDefaultToolkit().beep();
       //ASCII value 7 is a beep. So just print that character
@@ -2510,9 +2495,6 @@ public class Main extends JFrame implements PropertyChangeListener {
       }
 
       switch (ev.getPropertyName()) {
-      case Mosaic.PROPERTY_AREA:
-         changeSizeImagesMineFlag();
-         break;
       case Mosaic.PROPERTY_GAME_STATUS:
          {
             getToolbar().getBtnPause().setEnabled(getMosaic().getGameStatus() == EGameStatus.eGSPlay);

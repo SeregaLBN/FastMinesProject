@@ -15,6 +15,8 @@ using fmg.data.view.draw;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.mosaic.win2d;
 using fmg.uwp.utils;
+using FlagCanvasBmp = fmg.uwp.draw.img.win2d.Flag.CanvasBmp;
+using MineCanvasBmp = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
 
 namespace fmg.uwp.mosaic.win2d {
 
@@ -23,6 +25,8 @@ namespace fmg.uwp.mosaic.win2d {
       private PaintUwpContext<CanvasBitmap> _paintContext;
       private CellPaintWin2D _cellPaint;
       private readonly CanvasVirtualControl _container;
+      private MineCanvasBmp _mineImage;
+      private FlagCanvasBmp _flagImage;
 
       public Mosaic(CanvasVirtualControl container) {
          _container = container;
@@ -32,6 +36,28 @@ namespace fmg.uwp.mosaic.win2d {
          base(sizeField, mosaicType, minesCount, area)
       {
          _container = container;
+      }
+
+      private MineCanvasBmp MineImg {
+         get {
+            if (_mineImage == null) {
+               var device = CanvasDevice.GetSharedDevice();
+               //var device = _canvasVirtualControl.Device;
+               _mineImage = new MineCanvasBmp(device);
+            }
+            return _mineImage;
+         }
+      }
+
+      private FlagCanvasBmp FlagImg {
+         get {
+            if (_flagImage == null) {
+               var device = CanvasDevice.GetSharedDevice();
+               //var device = _canvasVirtualControl.Device;
+               _flagImage = new FlagCanvasBmp(device);
+            }
+            return _flagImage;
+         }
       }
 
       protected override void OnError(string msg) {
@@ -50,6 +76,8 @@ namespace fmg.uwp.mosaic.win2d {
          get {
             if (_paintContext == null) {
                _paintContext = new PaintUwpContext<CanvasBitmap>(false);
+               _paintContext.ImgMine = MineImg.Image;
+               _paintContext.ImgFlag = FlagImg.Image;
                _paintContext.PropertyChanged += OnPaintContextPropertyChanged; // изменение контекста -> перерисовка мозаики
             }
             return _paintContext;
@@ -77,7 +105,8 @@ namespace fmg.uwp.mosaic.win2d {
                var containsRT = tmp.Contains(rc.PointRT().ToWinPoint());
                var containsRB = tmp.Contains(rc.PointRB().ToWinPoint());
                bool intersect = (tmp != Windows.Foundation.Rect.Empty);
-               LoggerSimple.Put($"intersect={intersect}; containsLT={containsLT}; containsLB={containsLB}; containsRT={containsRT}; containsRB={containsRB}");
+             //LoggerSimple.Put($"intersect={intersect}; containsLT={containsLT}; containsLB={containsLB}; containsRT={containsRT}; containsRB={containsRB}");
+               System.Diagnostics.Debug.Assert(intersect && containsLT && containsRT && containsLB && containsRB);
 #endif
                _container.Invalidate(cell.getRcOuter().ToWinRect());
             }
@@ -211,6 +240,8 @@ namespace fmg.uwp.mosaic.win2d {
          base.Dispose(disposing);
 
          if (disposing) {
+            MineImg.Dispose();
+          //FlagImg.Dispose();
             PaintContext.Dispose();
          }
       }

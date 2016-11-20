@@ -21,9 +21,12 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.click.ClickResult;
 import fmg.data.view.draw.PenBorder;
 import fmg.swing.Cast;
+import fmg.swing.draw.img.Flag;
+import fmg.swing.draw.img.Mine;
 import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
+import fmg.swing.utils.ImgUtils;
 
 public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContext<Icon>> implements AutoCloseable {
 
@@ -299,6 +302,7 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
          break;
       case PROPERTY_AREA:
          changeFontSize(getPaintContext().getPenBorder());
+         changeSizeImagesMineFlag();
          break;
       case PROPERTY_MATRIX:
          revalidate();
@@ -335,6 +339,18 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
    /** пересчитать и установить новую высоту шрифта */
    private void changeFontSize(PenBorder penBorder) {
       getPaintContext().getFontInfo().setSize((int) getCellAttr().getSq(penBorder.getWidth()));
+   }
+
+   /** переустанавливаю заного размер мины/флага для мозаики */
+   private void changeSizeImagesMineFlag() {
+      PaintSwingContext<Icon> pc = getPaintContext();
+      int sq = (int)getCellAttr().getSq(pc.getPenBorder().getWidth());
+      if (sq <= 0) {
+         System.err.println("Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");
+         sq = 3; // ат балды...
+      }
+      pc.setImgFlag(ImgUtils.zoom(new Flag(), sq, sq));
+      pc.setImgMine(ImgUtils.zoom(new Mine(), sq, sq));
    }
 
    @Override

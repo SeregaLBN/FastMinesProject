@@ -8,7 +8,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
-using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
@@ -23,8 +22,6 @@ using fmg.uwp.mosaic;
 using fmg.uwp.mosaic.win2d;
 using Logger = fmg.common.LoggerSimple;
 using Thickness = Windows.UI.Xaml.Thickness;
-using FlagCanvasBmp = fmg.uwp.draw.img.win2d.Flag.CanvasBmp;
-using MineCanvasBmp = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
 
 namespace fmg {
 
@@ -40,8 +37,6 @@ namespace fmg {
       private DateTime _dtInertiaStarting;
       private Windows.Foundation.Point? _mouseDevicePosition_AreaChanging = null;
       private static double? _baseWheelDelta;
-      private MineCanvasBmp _mineImage;
-      private FlagCanvasBmp _flagImage;
 
       public Mosaic MosaicField {
          get {
@@ -86,9 +81,6 @@ namespace fmg {
          MosaicField.SizeField = initParam.SizeField;
          MosaicField.MosaicType = initParam.MosaicTypes;
          MosaicField.MinesCount = initParam.MinesCount;
-
-         MosaicField.PaintContext.ImgMine = MineImg.Image;
-         MosaicField.PaintContext.ImgFlag = FlagImg.Image;
       }
 
       /// <summary> Поменять игру на новый уровень сложности </summary>
@@ -248,9 +240,6 @@ namespace fmg {
 
       private void OnPageUnloaded(object sender, RoutedEventArgs e) {
          Window.Current.CoreWindow.KeyUp -= OnKeyUp_CoreWindow;
-
-         MineImg.Dispose();
-       //FlagImg.Dispose();
 
          // Explicitly remove references to allow the Win2D controls to get garbage collected
          _canvasVirtualControl.RemoveFromVisualTree();
@@ -672,28 +661,6 @@ namespace fmg {
             }
 
          return margin;
-      }
-
-      private MineCanvasBmp MineImg {
-         get {
-            if (_mineImage == null) {
-               var device = CanvasDevice.GetSharedDevice();
-               //var device = _canvasVirtualControl.Device;
-               _mineImage = new MineCanvasBmp(device);
-            }
-            return _mineImage;
-         }
-      }
-
-      private FlagCanvasBmp FlagImg {
-         get {
-            if (_flagImage == null) {
-               var device = CanvasDevice.GetSharedDevice();
-               //var device = _canvasVirtualControl.Device;
-               _flagImage = new FlagCanvasBmp(device);
-            }
-            return _flagImage;
-         }
       }
 
       private void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {

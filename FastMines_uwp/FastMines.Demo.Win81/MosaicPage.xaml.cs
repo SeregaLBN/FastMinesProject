@@ -76,7 +76,7 @@ namespace FastMines {
          }
       }
 
-      protected override async void OnNavigatedTo(NavigationEventArgs e) {
+      protected override void OnNavigatedTo(NavigationEventArgs e) {
          base.OnNavigatedTo(e);
 
          var initParam = e.Parameter as MosaicPageInitParam;
@@ -93,8 +93,6 @@ namespace FastMines {
             ToolTipService.SetToolTip(bttnSkillCrazy, new ToolTip { Content = "3" });
             ToolTipService.SetToolTip(bttnSkillProfi, new ToolTip {Content = "4"});
          }
-         MosaicField.PaintContext.ImgMine = new Mine().Image;
-         //MosaicField.PaintContext.ImgFlag = new Flag().Image;
       }
 
       /// <summary> Поменять игру на новый уровень сложности </summary>
