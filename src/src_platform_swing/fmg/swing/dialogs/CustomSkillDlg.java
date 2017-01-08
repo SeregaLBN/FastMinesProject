@@ -274,12 +274,12 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       } else {
          miniSizeX = miniSizeY = 5;
 
-         Matrisize s = parent.CalcMaxMosaicSize(MosaicBase.AREA_MINIMUM);
+         Matrisize s = parent.calcMaxMosaicSize(MosaicBase.AREA_MINIMUM);
          maxiSizeX = s.m; maxiSizeY = s.n;
 
          if (isFullScreen) {
             if (isFullScreenAtCurrArea)
-               s = parent.CalcMaxMosaicSize(parent.getMosaic().getArea());
+               s = parent.calcMaxMosaicSize(parent.getMosaic().getArea());
          } else
             s = parent.getMosaic().getSizeField();
          currSizeX = s.m; currSizeY = s.n;

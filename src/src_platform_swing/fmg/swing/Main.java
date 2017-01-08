@@ -20,7 +20,6 @@ import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
-import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.AMosaicsImg.ERotateMode;
 import fmg.core.mosaic.MosaicBase;
@@ -43,6 +42,7 @@ import fmg.swing.mosaic.Mosaic;
 import fmg.swing.serializable.SerializeProjData;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
+import fmg.swing.utils.ScreenResolutionHelper;
 
 /** Главное окно программы */
 public class Main extends JFrame implements PropertyChangeListener {
@@ -1516,6 +1516,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       getMosaic().setMinesCount(numberMines);
    }
 
+   /** get margin around mosaic control */
    Insets getMosaicMargin() {
       Insets mainPadding = getMenu().getOptions().getShowElement(EShowElement.eCaption).isSelected()
             ? this.getInsets()
@@ -1536,62 +1537,20 @@ public class Main extends JFrame implements PropertyChangeListener {
             mainPadding.right);
    }
 
-   public Dimension getFullSize() {
-//      Dimension res = super.getSize();
-      Insets mosaicMargin = getMosaicMargin();
-      Dimension mosaicSize = getMosaic().getContainer().getSize();
-      Dimension res2 = new Dimension(
-            mosaicMargin.left + mosaicSize.width + mosaicMargin.right,
-            mosaicMargin.top + mosaicSize.height + mosaicMargin.bottom);
-//      if (res2.equals(res))
-//         System.out.println("res1="+res+"; res2="+res2);
-//      else
-//         System.err.println("res1="+res+"; res2="+res2);
-      return res2;
-  }
-
-   /** узнать размер окна проекта при указанном размере окна мозаики */
-   Dimension CalcSize(Size sizeMosaicInPixel) {
-//    // variant algorithm #1
-//      Dimension currSizeWin = getFullSize();
-//
-//      if ((currSizeWin.height == 0) && (currSizeWin.width == 0) && !this.isVisible())
-//         throw new RuntimeException("Invalid method call.  Нельзя высчитать размер окна, когда оно даже не выведено на экран...");
-//
-//      SizeDouble currSizeMosaicInPixel = getMosaic().getWindowSize();
+//   /** узнать размер окна проекта при указанном размере окна мозаики */
+//   Dimension calcMainSize(Size sizeMosaicInPixel) {
+//      Insets mosaicMargin = getMosaicMargin();
 //      return new Dimension(
-//            (int)(sizeMosaicInPixel.width  + (currSizeWin.width  - currSizeMosaicInPixel.width)),
-//            (int)(sizeMosaicInPixel.height + (currSizeWin.height - currSizeMosaicInPixel.height)));
-
-      // variant algorithm #2
-      Insets mosaicMargin = getMosaicMargin();
-      return new Dimension(
-            mosaicMargin.left + sizeMosaicInPixel.width + mosaicMargin.right,
-            mosaicMargin.top + sizeMosaicInPixel.height + mosaicMargin.bottom);
-   }
+//            mosaicMargin.left + sizeMosaicInPixel.width  + mosaicMargin.right,
+//            mosaicMargin.top  + sizeMosaicInPixel.height + mosaicMargin.bottom);
+//   }
 
    /** узнать размер окна мозаики при указанном размере окна проекта */
-   SizeDouble CalcMosaicWindowSize(Dimension sizeWindow) {
-//      // variant algorithm #1
-//      Dimension currSizeWin = getFullSize();
-//      if ((currSizeWin.width == 0) || (currSizeWin.height == 0))
-//         throw new RuntimeException("Invalid method call.  Нельзя высчитать размер окна, когда оно даже не выведено на экран...");
-//
-//      SizeDouble currSizeMosaicInPixel = getMosaic().getWindowSize();
-//      SizeDouble res = new SizeDouble(
-//            sizeWindow.width  - (currSizeWin.width  - currSizeMosaicInPixel.width),
-//            sizeWindow.height - (currSizeWin.height - currSizeMosaicInPixel.height));
-//
-//      if (res.height < 0 || res.width < 0)
-//         throw new RuntimeException("Bad algorithm... :(");
-//
-//      return res;
-
-      // variant algorithm #2
+   SizeDouble calcMosaicWindowSize(Dimension sizeMainWindow) {
       Insets mosaicMargin = getMosaicMargin();
       SizeDouble res = new SizeDouble(
-            sizeWindow.width - (mosaicMargin.left + mosaicMargin.right),
-            sizeWindow.height - (mosaicMargin.top + mosaicMargin.bottom));
+            sizeMainWindow.width  - (mosaicMargin.left + mosaicMargin.right),
+            sizeMainWindow.height - (mosaicMargin.top + mosaicMargin.bottom));
       if (res.height < 0 || res.width < 0)
          throw new RuntimeException("Bad algorithm... :(");
       return res;
@@ -1601,11 +1560,11 @@ public class Main extends JFrame implements PropertyChangeListener {
     * @param mosaicSizeField - интересуемый размер поля мозаики
     * @return макс площадь ячейки
     */
-   double CalcMaxArea(Matrisize mosaicSizeField) {
-      SizeDouble sizeMosaicIn = CalcMosaicWindowSize(getDesktopSize());
+   double calcMaxArea(Matrisize mosaicSizeField) {
+      SizeDouble sizeMosaicIn = calcMosaicWindowSize(ScreenResolutionHelper.getDesktopSize(this.getGraphicsConfiguration()));
       SizeDouble sizeMosaicOut = new SizeDouble();
       double area = MosaicHelper.findAreaBySize(getMosaic().getMosaicType(), mosaicSizeField, sizeMosaicIn, sizeMosaicOut);
-      //System.out.println("Main.CalcMaxArea: area="+area);
+      //System.out.println("Main.calcMaxArea: area="+area);
       return area;
    }
 
@@ -1614,8 +1573,8 @@ public class Main extends JFrame implements PropertyChangeListener {
     * @param area - интересуемая площадь ячеек мозаики
     * @return max размер поля мозаики
     */
-   public Matrisize CalcMaxMosaicSize(double area) {
-      SizeDouble sizeMosaic = CalcMosaicWindowSize(getDesktopSize());
+   public Matrisize calcMaxMosaicSize(double area) {
+      SizeDouble sizeMosaic = calcMosaicWindowSize(ScreenResolutionHelper.getDesktopSize(this.getGraphicsConfiguration()));
       return MosaicHelper.findSizeByArea(getMosaic().getCellAttr(), sizeMosaic);
    }
 
@@ -1645,15 +1604,15 @@ public class Main extends JFrame implements PropertyChangeListener {
                   if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected()) {
                      AreaMax();
                   } else {
-                     double maxArea = CalcMaxArea(getMosaic().getSizeField());
+                     double maxArea = calcMaxArea(getMosaic().getSizeField());
                      if (maxArea < getMosaic().getArea())
                         setArea(maxArea);
                   }
 
                   // check that within the screen
                   {
-                     Dimension screenSize = getScreenSize();
-                     Insets padding = getScreenPadding();
+                     Dimension screenSize = ScreenResolutionHelper.getScreenSize();
+                     Insets padding = ScreenResolutionHelper.getScreenPadding(this.getGraphicsConfiguration());
                      Rect rcThis = Cast.toRect(this.getBounds());
 
                      boolean changed = false;
@@ -1696,7 +1655,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    /** getMosaic().setArea(...) */
    void setArea(double newArea) {
       //System.out.println("Mosaic.setArea: newArea=" + newArea);
-      double maxArea = CalcMaxArea(getMosaic().getSizeField());
+      double maxArea = calcMaxArea(getMosaic().getSizeField());
       getMosaic().setArea(Math.min(maxArea, newArea));
    }
 
@@ -1715,7 +1674,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    /** Zoom maximum */
    void AreaMax() {
-      double maxArea = CalcMaxArea(getMosaic().getSizeField());
+      double maxArea = calcMaxArea(getMosaic().getSizeField());
       setArea(maxArea);
 
 //      {
@@ -2550,20 +2509,6 @@ public class Main extends JFrame implements PropertyChangeListener {
       }
    }
 
-
-   static Dimension getScreenSize() {
-      return Toolkit.getDefaultToolkit().getScreenSize();
-   }
-   Insets getScreenPadding() {
-      return Toolkit.getDefaultToolkit().getScreenInsets(this.getGraphicsConfiguration());
-   }
-   Dimension getDesktopSize() {
-      Dimension screenSize = getScreenSize();
-      Insets screenPadding = getScreenPadding();
-      return new Dimension(
-         screenSize.width - (screenPadding.left + screenPadding.right),
-         screenSize.height - (screenPadding.top + screenPadding.bottom));
-   }
 
    void invokeLater(Runnable doRun) {
       if (!_initialized)

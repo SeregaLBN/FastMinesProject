@@ -1,13 +1,17 @@
 using System;
+using System.Linq;
+using System.Reflection;
 using System.ComponentModel;
 using Windows.System;
 using Windows.Devices.Input;
+using Windows.Graphics.Display;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.ViewManagement;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
@@ -21,7 +25,6 @@ using fmg.uwp.utils;
 using fmg.uwp.mosaic;
 using fmg.uwp.mosaic.win2d;
 using Logger = fmg.common.LoggerSimple;
-using Thickness = Windows.UI.Xaml.Thickness;
 
 namespace fmg {
 
@@ -40,12 +43,19 @@ namespace fmg {
 
       public Mosaic MosaicField {
          get {
-            if (_mosaic == null) {
-               _mosaic = new Mosaic(_canvasVirtualControl);
-
+            if (_mosaic == null)
+               MosaicField = new Mosaic(_canvasVirtualControl); // call this setter
+            return _mosaic;
+         }
+         private set {
+            if (_mosaic != null) {
+               _mosaic.PropertyChanged -= OnMosaicPropertyChanged;
+               _mosaic.Dispose();
+            }
+            _mosaic = value;
+            if (_mosaic != null) {
                _mosaic.PropertyChanged += OnMosaicPropertyChanged;
             }
-            return _mosaic;
          }
       }
 
@@ -103,41 +113,51 @@ namespace fmg {
          MosaicField.MosaicType = MosaicField.MosaicType;
          MosaicField.MinesCount = numberMines;
 
-         //if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected()) {
-         //   AreaMax();
-         //   RecheckLocation(false, false);
-         //} else
-            RecheckLocation(true, true);
-
-         //if (!isMenuEvent(e))
-         //   RecheckSelectedMenuSkillLevel();
+         RecheckLocation();
       }
 
-      /// <summary> узнать размер окна проекта при указанном размере окна мозаики </summary>
-      //[Obsolete]
-      //Size CalcSize(Size sizeMosaicInPixel) {
-      //   // под UWP окно проекта === текущая страница
-      //   // и т.к. нет ни меню, ни заголовка, ни тулбара, ни строки состояния
-      //   // то размер окна равен как есть размеру в пикселях самой мозаики
-      //   return sizeMosaicInPixel;
+      /// <summary> get margin around mosaic control </summary>
+      Bound GetMosaicMargin() {
+         // @TODO: not implemented...
+         return new Bound();
+      }
+
+      ///// <summary> узнать размер окна проекта при указанном размере окна мозаики </summary>
+      //Size CalcMainSize(Size sizeMosaicInPixel) {
+      //   var mosaicMargin = GetMosaicMargin();
+      //   return new Size(
+      //         mosaicMargin.LeftAndRight + sizeMosaicInPixel.Width,
+      //         mosaicMargin.TopAndBottom + sizeMosaicInPixel.Height);
       //}
 
-      /// <summary> узнаю мах размер площади ячеек мозаики, при котором ... удобно... </summary>
+      /// <summary> узнать размер окна мозаики при указанном размере окна проекта </summary>
+      SizeDouble CalcMosaicWindowSize(Size sizeMainWindow) {
+         var mosaicMargin = GetMosaicMargin();
+         SizeDouble res = new SizeDouble(
+               sizeMainWindow.Width  - mosaicMargin.LeftAndRight,
+               sizeMainWindow.Height - mosaicMargin.TopAndBottom);
+         if (res.Height < 0 || res.Width < 0)
+            throw new Exception("Bad algorithm... :(");
+         return res;
+      }
+
+      /// <summary> узнаю мах размер площади ячеек мозаики, при котором окно проекта вмещается в текущее разрешение экрана </summary>
       /// <param name="mosaicSizeField">интересуемый размер поля мозаики</param>
       /// <returns>макс площадь ячейки</returns>
       private double CalcMaxArea(Matrisize mosaicSizeField) {
-         var sizePage = Window.Current.Bounds;
-         return sizePage.Width/3 * sizePage.Height/3;
+         // TODO на самом деле узнаю размер площади ячеек мозаики, для размера поля мозаики 3x3
+         mosaicSizeField = new Matrisize(3, 3);
+         var sizeMosaic = CalcMosaicWindowSize(ScreenResolutionHelper.GetDesktopSize());
+         double area = MosaicHelper.FindAreaBySize(MosaicField.MosaicType, mosaicSizeField, ref sizeMosaic);
+         //System.Diagnostics.Debug.WriteLine("Main.CalcMaxArea: area="+area);
+         return area;
       }
 
       /// <summary> проверить что находится в рамках экрана </summary>
-      /// <param name="checkArea">заодно проверить что влазит в текущее разрешение экрана</param>
-      private void RecheckLocation(bool checkArea, bool pack) {
-         if (checkArea) {
-            var maxArea = CalcMaxArea(MosaicField.SizeField);
-            if (maxArea < Area)
-               Area = maxArea;
-         }
+      private void RecheckLocation() {
+         var maxArea = CalcMaxArea(MosaicField.SizeField);
+         if (maxArea < Area)
+            Area = maxArea;
       }
 
       double Area {
@@ -240,6 +260,8 @@ namespace fmg {
 
       private void OnPageUnloaded(object sender, RoutedEventArgs e) {
          Window.Current.CoreWindow.KeyUp -= OnKeyUp_CoreWindow;
+
+         MosaicField = null; // call explicit setter
 
          // Explicitly remove references to allow the Win2D controls to get garbage collected
          _canvasVirtualControl.RemoveFromVisualTree();

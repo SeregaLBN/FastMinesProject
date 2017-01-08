@@ -27,11 +27,14 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\AsyncRunner.cs">
       <Link>src_fmg.uwp\utils\AsyncRunner.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\ScreenResolutionHelper.cs">
+      <Link>src_fmg.uwp\utils\ScreenResolutionHelper.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\MosaicsSkillCharImg.cs">
       <Link>src_fmg.uwp\draw\img\MosaicsSkillCharImg.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\StaticRotateImgConsts.cs">
       <Link>src_fmg.uwp\draw\img\StaticRotateImgConsts.cs</Link>
-    </Compile>
+    </Compile>                                           
   </ItemGroup>
 </Project>
