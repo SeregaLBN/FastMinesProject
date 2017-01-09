@@ -30,7 +30,7 @@ public class LoginDlg extends JDialog {
         getRootPane().getActionMap().put(keyBind, new AbstractAction() {
          private static final long serialVersionUID = 1L;
          @Override
-         public void actionPerformed(ActionEvent e) { LoginDlg.this.OnOk(e); }
+         public void actionPerformed(ActionEvent e) { LoginDlg.this.onOk(e); }
       });
 
         keyBind = "CloseDialog";
@@ -38,15 +38,15 @@ public class LoginDlg extends JDialog {
         getRootPane().getActionMap().put(keyBind, new AbstractAction() {
          private static final long serialVersionUID = 1L;
          @Override
-         public void actionPerformed(ActionEvent e) { LoginDlg.this.OnCancel(e); }
+         public void actionPerformed(ActionEvent e) { LoginDlg.this.onCancel(e); }
       });
 
       addWindowListener(new WindowAdapter() {
-         public void windowClosing(WindowEvent we) { LoginDlg.this.OnCancel(new ActionEvent(we.getSource(), we.getID(), "windowClosing")); }
+         public void windowClosing(WindowEvent we) { LoginDlg.this.onCancel(new ActionEvent(we.getSource(), we.getID(), "windowClosing")); }
       });
 
       // добавляем расположение в центр окна
-      getContentPane().add(CreateComponents(username, usePassword));
+      getContentPane().add(createComponents(username, usePassword));
    
       // задаем предпочтительный размер
       pack();
@@ -54,7 +54,7 @@ public class LoginDlg extends JDialog {
    }
 
    /** этот метод будет возвращать панель с созданным расположением */
-   private JComponent CreateComponents(String username, boolean usePassword) {
+   private JComponent createComponents(String username, boolean usePassword) {
       // 1. Создается панель, которая будет содержать все остальные элементы и панели расположения
       Box main = Box.createVerticalBox();
 
@@ -96,13 +96,13 @@ public class LoginDlg extends JDialog {
       ok.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            LoginDlg.this.OnOk(e);
+            LoginDlg.this.onOk(e);
          }
       });
       cancel.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            LoginDlg.this.OnCancel(e);
+            LoginDlg.this.onCancel(e);
          }
       });
 
@@ -142,21 +142,21 @@ public class LoginDlg extends JDialog {
       dlg.setVisible(true);
    }
 
-   private void OnOk(ActionEvent e) {
+   private void onOk(ActionEvent e) {
 //      System.out.println("OnOk");
       if (onOkActionListener != null)
          onOkActionListener.actionPerformed(e);
-      OnClose();
+      onClose();
    }
-   private void OnCancel(ActionEvent e) {
+   private void onCancel(ActionEvent e) {
 //      System.out.println("OnCancel");
       nameField.setText(null);
       passwrdField.setText(null);
       if (onCancelActionListener != null)
          onCancelActionListener.actionPerformed(e);
-      OnClose();
+      onClose();
    }
-   private void OnClose() {
+   private void onClose() {
       // при выходе из диалогового окна - освобождаю ресурсы
       dispose();
       //System.exit(0);

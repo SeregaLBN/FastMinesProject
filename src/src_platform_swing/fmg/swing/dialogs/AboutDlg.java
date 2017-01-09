@@ -49,22 +49,22 @@ public class AboutDlg extends JDialog implements AutoCloseable {
         getRootPane().getActionMap().put(keyBind, new AbstractAction() {
          private static final long serialVersionUID = 1L;
          @Override
-         public void actionPerformed(ActionEvent e) { OnClose(); }
+         public void actionPerformed(ActionEvent e) { onClose(); }
       });
 
       addWindowListener(new WindowAdapter() {
          @Override
-         public void windowClosing(WindowEvent we) { OnClose(); }
+         public void windowClosing(WindowEvent we) { onClose(); }
       });
 
       this.setResizable(false);
-      CreateComponents();
+      createComponents();
       // задаю предпочтительный размер
       pack();
       this.setLocationRelativeTo(parent);
    }
 
-   private void OnClose() {
+   private void onClose() {
       // при выходе из диалогового окна - освобождаю ресурсы
       if (_logo != null)
          _logo.close();
@@ -73,7 +73,7 @@ public class AboutDlg extends JDialog implements AutoCloseable {
    }
 
    // создаю панели с нужным расположением
-   private void CreateComponents() {
+   private void createComponents() {
       // 1. Создаю панель, которая будет содержать все остальные элементы и панели расположения
       Box boxCenter = Box.createVerticalBox();
       // Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов.
@@ -94,19 +94,19 @@ public class AboutDlg extends JDialog implements AutoCloseable {
 //         firstLine.setBorder(GuiTools.getDummyBorder(Color.RED));
 
          // слева - кнопка иконки
-         JComponent logo = CreatePanelLogo();
+         JComponent logo = createPanelLogo();
          logo.setAlignmentY(Component.TOP_ALIGNMENT);
          firstLine.add(logo);
 
          firstLine.add(Box.createHorizontalStrut(5));
 
          // справа - в отдельных стороках тексты НазвыПроги, версии, авторства и лицензии
-         JComponent title = CreatePanelTitle();
+         JComponent title = createPanelTitle();
          title.setAlignmentY(Component.TOP_ALIGNMENT);
          firstLine.add(title);
       }
       // б) вторая строка - контакты
-      JComponent secondLine = CreatePanelContatcs();
+      JComponent secondLine = createPanelContatcs();
 
       // 4. Окончательный "сбор" полос в интерфейс
       boxCenter.add(firstLine);
@@ -117,11 +117,11 @@ public class AboutDlg extends JDialog implements AutoCloseable {
       // добавляю расположение в центр окна
       getContentPane().add(boxCenter, BorderLayout.CENTER);
       // ряд кнопок внизу
-      getContentPane().add(CreatePanelOk(), BorderLayout.SOUTH);
+      getContentPane().add(createPanelOk(), BorderLayout.SOUTH);
    }
 
    /** логотип */
-   private JComponent CreatePanelLogo() {
+   private JComponent createPanelLogo() {
       JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
 //      panel.setBorder(BorderFactory.createTitledBorder("Logos"));// getDefaultBorder());
 
@@ -153,7 +153,7 @@ public class AboutDlg extends JDialog implements AutoCloseable {
       return panel;
    }
    /** тексты НазвыПроги, версии, авторства и лицензии */
-   private JComponent CreatePanelTitle() {
+   private JComponent createPanelTitle() {
       Box panel = Box.createVerticalBox();
 //      panel.setBorder(BorderFactory.createTitledBorder("titles"));// getDefaultBorder());
 
@@ -204,7 +204,7 @@ public class AboutDlg extends JDialog implements AutoCloseable {
       return panel;
    }
    /** контакты */
-   private JComponent CreatePanelContatcs() {
+   private JComponent createPanelContatcs() {
       Border customBorder = new CompoundBorder(
             new EtchedBorder(EtchedBorder.RAISED), //BorderFactory.createBevelBorder(BevelBorder.RAISED),
             BorderFactory.createEmptyBorder(1,5,1,5));
@@ -261,7 +261,7 @@ public class AboutDlg extends JDialog implements AutoCloseable {
       return panel;
    }
    /** кнопка Ок */
-   private JComponent CreatePanelOk() {
+   private JComponent createPanelOk() {
       JPanel panel = new JPanel( new FlowLayout(FlowLayout.CENTER, 12, 12) );
 //      panel.setBorder(GuiTools.getDummyBorder(Color.LIGHT_GRAY));
 
@@ -273,7 +273,7 @@ public class AboutDlg extends JDialog implements AutoCloseable {
       // стандартный вид для кнопок
 //      createRecommendedMargin(new JButton[] { ok } );
 
-      ok.addActionListener(evt -> OnClose());
+      ok.addActionListener(evt -> onClose());
 
       panel.add(ok);
       return panel;

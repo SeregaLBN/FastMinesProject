@@ -63,22 +63,22 @@ public class ManageDlg extends JDialog {
         getRootPane().getActionMap().put(keyBind, new AbstractAction() {
          private static final long serialVersionUID = 1L;
          @Override
-         public void actionPerformed(ActionEvent e) { ManageDlg.this.OnCancel(); }
+         public void actionPerformed(ActionEvent e) { ManageDlg.this.onCancel(); }
       });
 
       addWindowListener(new WindowAdapter() {
-         public void windowClosing(WindowEvent we) { ManageDlg.this.OnCancel(); }
+         public void windowClosing(WindowEvent we) { ManageDlg.this.onCancel(); }
       });
 
       this.setResizable(!false);
-      CreateComponents();
+      createComponents();
 
       // задаю предпочтительный размер
       pack();
       this.setLocationRelativeTo(parent);
    }
 
-   private void OnOk() {
+   private void onOk() {
 //      System.out.println("OnOk");
       int rowIndex = table.getSelectedRow();
       if (rowIndex == -1) {
@@ -93,18 +93,18 @@ public class ManageDlg extends JDialog {
          if (parent != null)
             parent.setActiveUserId(activeUserId);
       }
-      OnClose();
+      onClose();
    }
-   private void OnCancel() {
+   private void onCancel() {
 //      System.out.println("OnCancel");
-      OnClose();
+      onClose();
    }
-   private void OnClose() {
+   private void onClose() {
       // при выходе из диалогового окна - освобождаю ресурсы
       dispose();
    }
 
-   private void OnNewPlayer() {
+   private void onNewPlayer() {
 //      System.out.println("OnNewPlayer");
       final LoginDlg loginDialog = new LoginDlg(this.isVisible() ? this : parent, true, null, false);
       final Runnable anew = new Runnable() {
@@ -132,7 +132,7 @@ public class ManageDlg extends JDialog {
       anew.run();
    }
 
-   private void OnDeleteRow() {
+   private void onDeleteRow() {
 //      System.out.println("OnDeleteRow");
       int rowIndex = table.getSelectedRow();
       if (rowIndex == -1)
@@ -142,7 +142,7 @@ public class ManageDlg extends JDialog {
    }
 
    /** создаю панели с нужным расположением */
-   private void CreateComponents() {
+   private void createComponents() {
       // 1. Центральная панель
       Box boxCenter = Box.createVerticalBox();
       {
@@ -209,7 +209,7 @@ public class ManageDlg extends JDialog {
          actionMap.put(mapKey, new AbstractAction() {
             private static final long serialVersionUID = 1L;
             public void actionPerformed(ActionEvent e) {
-               OnDeleteRow();
+               onDeleteRow();
             }
          });
          table.addMouseListener(new MouseAdapter() {
@@ -221,7 +221,7 @@ public class ManageDlg extends JDialog {
                   break;
                case 2:
 //                  System.out.println(" double click" );
-                  ManageDlg.this.OnOk();
+                  ManageDlg.this.onOk();
                   break;
                }
             }
@@ -265,7 +265,7 @@ public class ManageDlg extends JDialog {
          JButton btnNp = new JButton("New Player");
          btnNp.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) { ManageDlg.this.OnNewPlayer(); }
+            public void actionPerformed(ActionEvent e) { ManageDlg.this.onNewPlayer(); }
          });
          panelLeft.add(btnNp);
 
@@ -284,7 +284,7 @@ public class ManageDlg extends JDialog {
          btnCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               ManageDlg.this.OnClose();
+               ManageDlg.this.onClose();
             }
          });
 
@@ -292,7 +292,7 @@ public class ManageDlg extends JDialog {
          btnOk.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               ManageDlg.this.OnOk();
+               ManageDlg.this.onOk();
             }
          });
 
@@ -341,7 +341,7 @@ public class ManageDlg extends JDialog {
             SwingUtilities.invokeLater(new Runnable() {
                @Override
                public void run() {
-                  ManageDlg.this.OnNewPlayer();
+                  ManageDlg.this.onNewPlayer();
                }
             });
       }

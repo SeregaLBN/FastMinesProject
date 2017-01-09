@@ -1084,7 +1084,7 @@ public class Main extends JFrame implements PropertyChangeListener {
             getMenu().getOptions().getShowElement(key).setSelected(spm.getShowElement(key));
          }
          getMenu().     setVisible(spm.getShowElement(EShowElement.eMenu));
-         ApplyInputActionMenuMap  (spm.getShowElement(EShowElement.eMenu));
+         applyInputActionMenuMap  (spm.getShowElement(EShowElement.eMenu));
          getToolbar().  setVisible(spm.getShowElement(EShowElement.eToolbar));
          getStatusBar().setVisible(spm.getShowElement(EShowElement.eStatusbar));
 
@@ -1161,7 +1161,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 //         }
 //      });
 
-      CustomKeyBinding();
+      customKeyBinding();
 
       pack();
 //      System.out.println("ThreadId=" + Thread.currentThread().getId() + ": Main::initialize: after pack");
@@ -1173,7 +1173,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
       _initialized = true;
       if (isZoomAlwaysMax)
-         invokeLater(() -> AreaAlwaysMax(new ActionEvent(Main.this, 0, null)));
+         invokeLater(() -> areaAlwaysMax(new ActionEvent(Main.this, 0, null)));
       if (!doNotAskStartup)
          invokeLater(() ->
             getHandlers().getPlayerManageAction().actionPerformed(new ActionEvent(Main.this, 0, "Main::initialize"))
@@ -1283,7 +1283,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 }
 
    /** прочие комбинации клавиш (не из меню) */
-   void CustomKeyBinding() {
+   void customKeyBinding() {
       if (getRootPane().getInputMap().size() == 0) {
          // on ESC key iconic frame
          Object keyBind = "Minimized";
@@ -1364,7 +1364,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
 
    /** pause on/off */
-   void ChangePause() {
+   void changePause() {
       if (getMosaic().getGameStatus() != EGameStatus.eGSPlay)
          return;
 
@@ -1389,9 +1389,9 @@ public class Main extends JFrame implements PropertyChangeListener {
 //      System.out.println("< FMG::ChangePause: " + KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() );
    }
 
-   void GameNew() {
+   void gameNew() {
       if (isPaused())
-         ChangePause();
+         changePause();
       else
          getMosaic().GameNew();
    }
@@ -1470,7 +1470,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    /** Поменять игру на новую мозаику */
    public void changeGame(EMosaic mosaicType) {
       if (isPaused())
-         ChangePause();
+         changePause();
 
       ESkillLevel skill = getSkillLevel();
       getMosaic().setMosaicType(mosaicType);
@@ -1492,7 +1492,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       }
 
       if (isPaused())
-         ChangePause();
+         changePause();
 
       getMosaic().setSizeField(newSize);
       getMosaic().setMinesCount(numberMines);
@@ -1507,7 +1507,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       }
 
       if (isPaused())
-         ChangePause();
+         changePause();
 
       int numberMines = skill.GetNumberMines(getMosaic().getMosaicType());
       Matrisize sizeFld = skill.DefaultSize();
@@ -1602,7 +1602,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 //                  if (!this.isVisible())
 //                     return;
                   if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected()) {
-                     AreaMax();
+                     areaMax();
                   } else {
                      double maxArea = calcMaxArea(getMosaic().getSizeField());
                      if (maxArea < getMosaic().getArea())
@@ -1655,25 +1655,25 @@ public class Main extends JFrame implements PropertyChangeListener {
    /** getMosaic().setArea(...) */
    void setArea(double newArea) {
       //System.out.println("Mosaic.setArea: newArea=" + newArea);
-      double maxArea = calcMaxArea(getMosaic().getSizeField());
-      getMosaic().setArea(Math.min(maxArea, newArea));
+      newArea = Math.min(newArea, calcMaxArea(getMosaic().getSizeField()));
+      getMosaic().setArea(newArea);
    }
 
    /** Zoom + */
-   void AreaInc() {
+   void areaInc() {
       setArea(getMosaic().getArea() * 1.05);
    }
    /** Zoom - */
-   void AreaDec() {
+   void areaDec() {
       setArea(getMosaic().getArea() * 0.95);
    }
    /** Zoom minimum */
-   void AreaMin() {
+   void areaMin() {
       setArea(0);
    }
 
    /** Zoom maximum */
-   void AreaMax() {
+   void areaMax() {
       double maxArea = calcMaxArea(getMosaic().getSizeField());
       setArea(maxArea);
 
@@ -1688,14 +1688,14 @@ public class Main extends JFrame implements PropertyChangeListener {
 //      }
    }
    /** Zoom always maximum */
-   public void AreaAlwaysMax(ActionEvent e) {
+   public void areaAlwaysMax(ActionEvent e) {
 //      if (!isMenuEvent(e))
 //         getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).setSelected(!getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected());
 
       boolean checked = getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected();
 
       if (checked)
-         AreaMax();
+         areaMax();
 
       for (EZoomInterface key: EZoomInterface.values())
          switch (key ) {
@@ -1704,7 +1704,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          }
    }
 
-   void OptionsThemeDefault() {
+   void optionsThemeDefault() {
       try {
          UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
          SwingUtilities.updateComponentTreeUI(Main.this);
@@ -1714,7 +1714,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       }
    }
 
-   void OptionsThemeSystem() {
+   void optionsThemeSystem() {
       try {
          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
          SwingUtilities.updateComponentTreeUI(Main.this);
@@ -1724,7 +1724,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       }
    }
 
-   void OptionsUseUnknown(ActionEvent e) {
+   void optionsUseUnknown(ActionEvent e) {
       if (!isMenuEvent(e))
          getMenu().getOptions().getUseUnknown().setSelected(!getMenu().getOptions().getUseUnknown().isSelected());
 
@@ -1734,7 +1734,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    boolean isUsePause() {
       return getMenu().getOptions().getUsePause().isSelected();
    }
-   void OptionsUsePause(ActionEvent e) {
+   void optionsUsePause(ActionEvent e) {
       if (!isMenuEvent(e))
          getMenu().getOptions().getUsePause().setSelected(!getMenu().getOptions().getUsePause().isSelected());
 
@@ -1743,10 +1743,10 @@ public class Main extends JFrame implements PropertyChangeListener {
 //      this.getToolbar().revalidate();
 
       if (!usePause && isPaused())
-         ChangePause();
+         changePause();
    }
 
-   void OptionsShowElement(EShowElement key, final ActionEvent e) {
+   void optionsShowElement(EShowElement key, final ActionEvent e) {
       if (!isMenuEvent(e))
          getMenu().getOptions().getShowElement(key).setSelected(!getMenu().getOptions().getShowElement(key).isSelected());
 
@@ -1771,7 +1771,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   Main.this.getStatusBar().setVisible(mapShow.get(EShowElement.eStatusbar).booleanValue());
 
                   if (isNotPaused && isUsePause())
-                     Main.this.ChangePause();
+                     Main.this.changePause();
 
                   Main.this.setVisible(true);
                   Main.this.pack();
@@ -1782,7 +1782,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          {
             boolean show = getMenu().getOptions().getShowElement(key).isSelected();
             getMenu().setVisible(show);
-            ApplyInputActionMenuMap(show);
+            applyInputActionMenuMap(show);
             pack();
          }
          break;
@@ -1801,7 +1801,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          break;
       }
    }
-   void ApplyInputActionMenuMap(boolean visibleMenu) {
+   void applyInputActionMenuMap(boolean visibleMenu) {
 //      if (visibleMenu) {
 //         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).setParent(null);
 //         getRootPane().getActionMap().setParent(null);
@@ -1863,7 +1863,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                private static final long serialVersionUID = 1L;
                @Override
                public void actionPerformed(ActionEvent e) {
-                  Main.this.GameNew();
+                  Main.this.gameNew();
                }
             };
 
@@ -1926,7 +1926,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                @Override
                public void actionPerformed(ActionEvent e) {
                   if (Main.this.isUsePause())
-                     Main.this.ChangePause();
+                     Main.this.changePause();
                }
             };
          return pauseAction;
@@ -1970,7 +1970,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   private static final long serialVersionUID = 1L;
                   @Override
                   public void actionPerformed(ActionEvent e) {
-                     Main.this.OptionsShowElement(val, e);
+                     Main.this.optionsShowElement(val, e);
                   }
                });
          }
@@ -1984,7 +1984,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                private static final long serialVersionUID = 1L;
                @Override
                public void actionPerformed(ActionEvent e) {
-                  OptionsThemeDefault();
+                  optionsThemeDefault();
                }
             };
 
@@ -1998,7 +1998,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                private static final long serialVersionUID = 1L;
                @Override
                public void actionPerformed(ActionEvent e) {
-                  OptionsThemeSystem();
+                  optionsThemeSystem();
                }
             };
 
@@ -2030,7 +2030,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                @Override
                public void mousePressed(MouseEvent e) {
                   if (SwingUtilities.isRightMouseButton(e) && Main.this.isPaused())
-                     Main.this.ChangePause();
+                     Main.this.changePause();
                }
             };
          return pausePanelMouseListener;
@@ -2056,7 +2056,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                public void windowLostFocus(WindowEvent e) {
                   if (!Main.this.isPaused()) {
                      if (Main.this.isUsePause())
-                        Main.this.ChangePause();
+                        Main.this.changePause();
 
                      Icon img = Main.this.getToolbar().getSmileIco(EBtnNewGameState.eNormal);
                      if (img != null)
@@ -2077,8 +2077,8 @@ public class Main extends JFrame implements PropertyChangeListener {
 //                  System.out.println("FMG::mouseWheelMoved: " + evt);
                if (!Main.this.getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected())
                   switch (evt.getWheelRotation()) {
-                  case  1: Main.this.AreaDec(); break;
-                  case -1: Main.this.AreaInc(); break;
+                  case  1: Main.this.areaDec(); break;
+                  case -1: Main.this.areaInc(); break;
                   }
             };
 
@@ -2097,11 +2097,11 @@ public class Main extends JFrame implements PropertyChangeListener {
                   public void actionPerformed(ActionEvent e) {
                      boolean alwaysMax = Main.this.getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected();
                      switch (val) {
-                     case eAlwaysMax:           Main.this.AreaAlwaysMax(e); break;
-                     case eMax: if (!alwaysMax) Main.this.AreaMax(); break;
-                     case eMin: if (!alwaysMax) Main.this.AreaMin(); break;
-                     case eInc: if (!alwaysMax) Main.this.AreaInc(); break;
-                     case eDec: if (!alwaysMax) Main.this.AreaDec(); break;
+                     case eAlwaysMax:           Main.this.areaAlwaysMax(e); break;
+                     case eMax: if (!alwaysMax) Main.this.areaMax(); break;
+                     case eMin: if (!alwaysMax) Main.this.areaMin(); break;
+                     case eInc: if (!alwaysMax) Main.this.areaInc(); break;
+                     case eDec: if (!alwaysMax) Main.this.areaDec(); break;
                      }
                   }
                });
@@ -2185,7 +2185,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                private static final long serialVersionUID = 1L;
                @Override
                public void actionPerformed(ActionEvent e) {
-                  Main.this.OptionsUseUnknown(e);
+                  Main.this.optionsUseUnknown(e);
                }
             };
 
@@ -2198,7 +2198,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                private static final long serialVersionUID = 1L;
                @Override
                public void actionPerformed(ActionEvent e) {
-                  Main.this.OptionsUsePause(e);
+                  Main.this.optionsUsePause(e);
                }
             };
 
@@ -2438,9 +2438,9 @@ public class Main extends JFrame implements PropertyChangeListener {
    public void propertyChange(PropertyChangeEvent ev) {
 //      System.out.println("ThreadId=" + Thread.currentThread().getId() + ": Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
       if (ev.getSource() instanceof Mosaic)
-         OnMosaicPropertyChanged((Mosaic)ev.getSource(), ev);
+         onMosaicPropertyChanged((Mosaic)ev.getSource(), ev);
    }
-   private void OnMosaicPropertyChanged(Mosaic source, PropertyChangeEvent ev) {
+   private void onMosaicPropertyChanged(Mosaic source, PropertyChangeEvent ev) {
       switch (ev.getPropertyName()) {
       case Mosaic.PROPERTY_AREA:
       case Mosaic.PROPERTY_SIZE_FIELD:

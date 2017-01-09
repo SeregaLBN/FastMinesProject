@@ -42,7 +42,7 @@ namespace fmg.uwp.mosaic.win2d {
          get {
             if (_mineImage == null) {
                var device = CanvasDevice.GetSharedDevice();
-               //var device = _canvasVirtualControl.Device;
+               //var device = _container.Device;
                _mineImage = new MineCanvasBmp(device);
             }
             return _mineImage;
@@ -53,7 +53,7 @@ namespace fmg.uwp.mosaic.win2d {
          get {
             if (_flagImage == null) {
                var device = CanvasDevice.GetSharedDevice();
-               //var device = _canvasVirtualControl.Device;
+               //var device = _container.Device;
                _flagImage = new FlagCanvasBmp(device);
             }
             return _flagImage;

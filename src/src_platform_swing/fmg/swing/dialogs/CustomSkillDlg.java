@@ -65,7 +65,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       getRootPane().getActionMap().put(keyBind, new AbstractAction() {
          private static final long serialVersionUID = 1L;
          @Override
-         public void actionPerformed(ActionEvent e) { OnOk(); }
+         public void actionPerformed(ActionEvent e) { onOk(); }
       });
 
       keyBind = "CloseDialog";
@@ -73,23 +73,23 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       getRootPane().getActionMap().put(keyBind, new AbstractAction() {
          private static final long serialVersionUID = 1L;
          @Override
-         public void actionPerformed(ActionEvent e) { OnClose(); }
+         public void actionPerformed(ActionEvent e) { onClose(); }
       });
 
       addWindowListener(new WindowAdapter() {
          @Override
-         public void windowClosing(WindowEvent we) { OnClose(); }
+         public void windowClosing(WindowEvent we) { onClose(); }
       });
 
       this.setResizable(false);
-      CreateComponents();
+      createComponents();
       // задаю предпочтительный размер
       pack();
       this.setLocationRelativeTo(parent);
    }
 
    // создаю панели с нужным расположением
-   private void CreateComponents() {
+   private void createComponents() {
       // 1. Создаю панель, которая будет содержать все остальные элементы и панели расположения
       Box boxCenter = Box.createHorizontalBox();
       Box boxBottom = Box.createHorizontalBox();
@@ -116,7 +116,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       spinMines.setToolTipText("Mines count");
 
       // отслеживаю изменения
-      ChangeListener changeSizeListener = e -> OnChangeSizeField();
+      ChangeListener changeSizeListener = e -> onChangeSizeField();
       spinX.addChangeListener(changeSizeListener);
       spinY.addChangeListener(changeSizeListener);
 
@@ -130,21 +130,21 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       Insets margin = btnPopup.getMargin();
       margin.left = margin.right = 0; margin.top = margin.bottom = 0;
       btnPopup.setMargin(margin);
-      btnPopup.addActionListener(e -> OnPopup());
+      btnPopup.addActionListener(e -> onPopup());
 
       btnOk = new JButton();
       btnOk.setText("Ok");
       margin = btnOk.getMargin();
       margin.left = margin.right = 5; margin.top = margin.bottom = 2;
       btnOk.setMargin(margin);
-      btnOk.addActionListener(e -> OnOk());
+      btnOk.addActionListener(e -> onOk());
 
       btnCancel = new JButton();
       btnCancel.setText("Cancel");
       margin = btnCancel.getMargin();
       margin.left = margin.right = 5; margin.top = margin.bottom = 2;
       btnCancel.setMargin(margin);
-      btnCancel.addActionListener(e -> OnClose());
+      btnCancel.addActionListener(e -> onClose());
 
 
       JPanel panel4Radio = new JPanel(new GridLayout(0, 1, 0, 5));
@@ -156,8 +156,8 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       panel4Radio.add(radioFullScreenMiniSizeArea);
       radioGroup.add(radioFullScreenCurrSizeArea);
       radioGroup.add(radioFullScreenMiniSizeArea);
-      radioFullScreenCurrSizeArea.addActionListener(e -> OnFullScreenCurrArea());
-      radioFullScreenMiniSizeArea.addActionListener(e -> OnFullScreenMiniArea());
+      radioFullScreenCurrSizeArea.addActionListener(e -> onFullScreenCurrArea());
+      radioFullScreenMiniSizeArea.addActionListener(e -> onFullScreenMiniArea());
 
       JPanel panel4Left = new JPanel(new GridLayout(0, 1, 0, 5));
       panel4Left.setBorder(BorderFactory.createEmptyBorder(7,0,2,0));
@@ -195,7 +195,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       getContentPane().add(boxBottom, BorderLayout.SOUTH);
    }
 
-   private void OnChangeSizeField() {
+   private void onChangeSizeField() {
 //      System.out.println("OnChangeSizeField");
       int max = (Integer)spinX.getValue() * (Integer)spinY.getValue() - getNeighborNumber();
       ((SpinnerNumberModel )spinMines.getModel()).setMaximum(max);
@@ -205,13 +205,13 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       radioGroup.clearSelection();
    }
 
-   private void OnChangeMosaicType() {
-      RecalcModelValueXY(false, false);
-      RecalcModelValueMines();
+   private void onChangeMosaicType() {
+      recalcModelValueXY(false, false);
+      recalcModelValueMines();
       radioGroup.clearSelection();
    }
 
-   private void OnPopup() {
+   private void onPopup() {
 //      System.out.println("CustomSkill::OnPopup: ");
       if (popupMenu == null) {
          popupMenu = new JPopupMenu();
@@ -222,7 +222,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
             JMenuItem menuItem = new JMenuItem();
 
             menuItem.setText(val.getDescription());
-            menuItem.addActionListener(e -> OnPopupSetSize(val));
+            menuItem.addActionListener(e -> onPopupSetSize(val));
             popupMenu.add(menuItem);
          }
       }
@@ -230,7 +230,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       popupMenu.show(this, rc.x, rc.y + rc.height);
    }
 
-   private void OnOk() {
+   private void onOk() {
 //      System.out.println("OnOk");
 
       if (parent != null) {
@@ -240,9 +240,9 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
          SwingUtilities.invokeLater(() -> parent.changeGame(new Matrisize(x,y), m) );
       }
 
-      OnClose();
+      onClose();
    }
-   private void OnClose() {
+   private void onClose() {
       // при выходе из диалогового окна - освобождаю ресурсы
       dispose();
 //      System.exit(0);
@@ -265,7 +265,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       return max + 1; // +thisCell
    }
 
-   private void RecalcModelValueXY(boolean isFullScreen, boolean isFullScreenAtCurrArea) {
+   private void recalcModelValueXY(boolean isFullScreen, boolean isFullScreenAtCurrArea) {
       int currSizeX, currSizeY, miniSizeX, miniSizeY, maxiSizeX, maxiSizeY;
       if (parent == null) {
          currSizeX = currSizeY = 10;
@@ -294,7 +294,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       spinY.setModel(new SpinnerNumberModel(currSizeY, miniSizeY, maxiSizeY, 1));
    }
 
-   private void RecalcModelValueMines() {
+   private void recalcModelValueMines() {
       int minesCurr = (parent == null) ? 15 : parent.getMosaic().getMinesCount();
       int minesMin = 1;
       int minesMax = (Integer)spinX.getValue() * (Integer)spinY.getValue() - getNeighborNumber();
@@ -309,23 +309,23 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
    public void setVisible(boolean b) {
 //      System.out.println("setVisible: " + b);
       if (b) {
-         RecalcModelValueXY(false, false);
-         RecalcModelValueMines();
+         recalcModelValueXY(false, false);
+         recalcModelValueMines();
          radioGroup.clearSelection();
       }
       super.setVisible(b);
    }
 
-   private void OnFullScreenCurrArea() {
+   private void onFullScreenCurrArea() {
 //      System.out.println("OnFullScreenCurrArea");
-      RecalcModelValueXY(true, true);
+      recalcModelValueXY(true, true);
    }
-   private void OnFullScreenMiniArea() {
+   private void onFullScreenMiniArea() {
 //      System.out.println("OnFullScreenMiniArea");
-      RecalcModelValueXY(true, false);
+      recalcModelValueXY(true, false);
    }
 
-   private void OnPopupSetSize(ESkillLevel eSkill) {
+   private void onPopupSetSize(ESkillLevel eSkill) {
       if (parent == null)
          return;
       Matrisize size = new Matrisize((Integer)spinX.getValue(), (Integer)spinY.getValue());
@@ -338,7 +338,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       switch (evt.getPropertyName()) {
       case MosaicBase.PROPERTY_MOSAIC_TYPE:
          if (isVisible())
-            OnChangeMosaicType();
+            onChangeMosaicType();
          break;
       case MosaicBase.PROPERTY_AREA:
          if (radioFullScreenCurrSizeArea.isSelected())
