@@ -66,7 +66,11 @@ namespace fmg.core.mosaic.cells {
          /// <summary>площадь ячейки/фигуры</summary>
          public double Area {
             get { return _area; }
-            set { this.SetProperty(ref this._area, value); }
+            set {
+               if (_area.HasMinDiff(value))
+                  return;
+               this.SetProperty(ref this._area, value);
+            }
          }
 
          /// <summary>размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст

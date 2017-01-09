@@ -83,11 +83,11 @@ namespace fmg {
          }
       }
 
-      protected override void OnNavigatedTo(NavigationEventArgs e) {
-         base.OnNavigatedTo(e);
+      protected override void OnNavigatedTo(NavigationEventArgs ev) {
+         base.OnNavigatedTo(ev);
 
-         var initParam = e.Parameter as MosaicPageInitParam;
-         System.Diagnostics.Debug.Assert(initParam != null);
+         System.Diagnostics.Debug.Assert(ev.Parameter is MosaicPageInitParam);
+         var initParam = ev.Parameter as MosaicPageInitParam;
          MosaicField.SizeField = initParam.SizeField;
          MosaicField.MosaicType = initParam.MosaicTypes;
          MosaicField.MinesCount = initParam.MinesCount;
@@ -110,7 +110,7 @@ namespace fmg {
          }
 
          MosaicField.SizeField = sizeFld;
-         MosaicField.MosaicType = MosaicField.MosaicType;
+       //MosaicField.MosaicType = MosaicField.MosaicType;
          MosaicField.MinesCount = numberMines;
 
          RecheckLocation();
@@ -153,6 +153,14 @@ namespace fmg {
          return area;
       }
 
+      /// <summary> узнаю max размер поля мозаики, при котором окно проекта вмещается в текущее разрешение экрана </summary>
+      /// <param name="area">интересуемая площадь ячеек мозаики</param>
+      /// <returns>max размер поля мозаики</returns>
+      public Matrisize CalcMaxMosaicSize(double area) {
+         var sizeMosaic = CalcMosaicWindowSize(ScreenResolutionHelper.GetDesktopSize());
+         return MosaicHelper.FindSizeByArea(MosaicField.CellAttr, sizeMosaic);
+      }
+
       /// <summary> проверить что находится в рамках экрана </summary>
       private void RecheckLocation() {
          var maxArea = CalcMaxArea(MosaicField.SizeField);
@@ -166,11 +174,6 @@ namespace fmg {
          }
          set {
             value = Math.Min(value, CalcMaxArea(MosaicField.SizeField)); // recheck
-
-            var curArea = MosaicField.Area;
-            if (curArea.HasMinDiff(value))
-               return;
-
             MosaicField.Area = value;
          }
       }
@@ -195,8 +198,6 @@ namespace fmg {
       /// <summary> Zoom maximum </summary>
       void AreaMax() {
          var maxArea = CalcMaxArea(MosaicField.SizeField);
-         if (maxArea.HasMinDiff(Area))
-            return;
          Area = maxArea;
       }
 
