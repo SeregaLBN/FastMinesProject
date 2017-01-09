@@ -15,18 +15,18 @@ namespace fmg.uwp.utils {
          var props = t.DeclaredProperties.Where(x => x.Name.StartsWith("Screen") && x.Name.EndsWith("InRawPixels")).ToArray();
          var w = props.Where(x => x.Name.Contains("Width")).First().GetValue(displayInformation);
          var h = props.Where(x => x.Name.Contains("Height")).First().GetValue(displayInformation);
-         var size = new Windows.Foundation.Size(System.Convert.ToDouble(w), System.Convert.ToDouble(h));
+         var size = new Size(System.Convert.ToInt32(w), System.Convert.ToInt32(h));
          switch (displayInformation.CurrentOrientation) {
          case DisplayOrientations.Landscape:
          case DisplayOrientations.LandscapeFlipped:
-            size = new Windows.Foundation.Size(Math.Max(size.Width, size.Height), Math.Min(size.Width, size.Height));
+            size = new Size(Math.Max(size.Width, size.Height), Math.Min(size.Width, size.Height));
             break;
          case DisplayOrientations.Portrait:
          case DisplayOrientations.PortraitFlipped:
-            size = new Windows.Foundation.Size(Math.Min(size.Width, size.Height), Math.Max(size.Width, size.Height));
+            size = new Size(Math.Min(size.Width, size.Height), Math.Max(size.Width, size.Height));
             break;
          }
-         return size.ToFmSize();
+         return size;
       }
 
       public static Bound GetScreenPadding() {
