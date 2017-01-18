@@ -49,11 +49,10 @@ namespace fmg.core.mosaic.cells {
       public static readonly double TAN45_2 = Math.Tan(PI/180.0*45.0/2);
       public static readonly double SIN135a = Math.Sin(PI/180.0*135.0-Math.Atan(8.0/3));
 
-      /*
-       * Контекст/метаданные, описывающий общие хар-ки для каждого из экземпляров BaseCell.
-       * <br> (Полные данные о конкретной мозаике) <br>
-       * Доопределаяется наследниками BaseCell
-       */
+      /// <summary>
+      /// Контекст/метаданные, описывающий общие хар-ки для каждого из экземпляров BaseCell.
+      /// (Полные данные о конкретной мозаике)
+      /// Доопределаяется наследниками BaseCell</summary>
       public abstract class BaseAttribute : fmg.common.notyfier.NotifyPropertyChanged {
 
          public BaseAttribute(double area) {

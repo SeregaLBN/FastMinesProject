@@ -25,6 +25,7 @@ using fmg.uwp.utils;
 using fmg.uwp.mosaic;
 using fmg.uwp.mosaic.win2d;
 using Logger = fmg.common.LoggerSimple;
+using Windows.UI.Xaml.Media;
 
 namespace fmg {
 
@@ -338,6 +339,20 @@ namespace fmg {
          }
       }
 
+#if DEBUG
+      protected override void OnPointerMoved(PointerRoutedEventArgs ev) {
+         var ttv = this.TransformToVisual(_canvasVirtualControl);
+         using (new Tracer("MosaicPage.OnPointerMoved",
+                 "pos1=" + ev.GetCurrentPoint(null).Position.ToFmPointDouble() +
+               "; pos2=" + ev.GetCurrentPoint(_canvasVirtualControl).Position.ToFmPointDouble() +
+               "; pos3=" + ttv.TransformPoint(ev.GetCurrentPoint(null).Position).ToFmPointDouble(),
+               () => "handled="+ev.Handled))
+         {
+            base.OnPointerMoved(ev);
+         }
+      }
+#endif
+
       protected override void OnPointerWheelChanged(PointerRoutedEventArgs ev) {
          //using (new Tracer("OnPointerWheelChanged")) {
          var wheelDelta = ev.GetCurrentPoint(this).Properties.MouseWheelDelta;
@@ -360,9 +375,10 @@ namespace fmg {
          var margin = MosaicField.Container.Margin;
          //if ((pos.X >= margin.Left) && (pos.Y >= margin.Top)) {
          var point = pos.ToFmPointDouble().Move(-margin.Left, -margin.Top);
+         var point2 = this.TransformToVisual(_canvasVirtualControl).TransformPoint(pos).ToFmPointDouble();
          //   var winSize = MosaicField.WindowSize;
          //   if ((point.x <= winSize.width) && (point.y <= winSize.height)) {
-            var handled = false;
+         var handled = false;
             if (downHandling) {
                var clickResult = MosaicField.MousePressed(point, leftClick);
                Mosaic_OnClick(clickResult);

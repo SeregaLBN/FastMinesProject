@@ -167,7 +167,7 @@ namespace fmg.uwp.mosaic.win2d {
       }
 
       public ClickResult MousePressed(PointDouble clickPoint, bool isLeftMouseButton) {
-         using (new Tracer("Mosaic::MousePressed", "isLeftMouseButton="+isLeftMouseButton)) {
+         using (new Tracer("Mosaic.MousePressed", "clickPoint" + clickPoint + "; isLeftMouseButton="+isLeftMouseButton)) {
             return isLeftMouseButton
                ? OnLeftButtonDown(CursorPointToCell(clickPoint))
                : OnRightButtonDown(CursorPointToCell(clickPoint));

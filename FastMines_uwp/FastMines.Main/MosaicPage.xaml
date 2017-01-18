@@ -9,11 +9,14 @@
     mc:Ignorable="d"
     Background="Coral">
 
-    <canvas:CanvasVirtualControl x:Name="_canvasVirtualControl"
-                                 Height="{x:Bind MosaicField.WindowSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
-                                 Width="{x:Bind  MosaicField.WindowSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
-                                 RegionsInvalidated="OnRegionsInvalidated"
-                                 ClearColor="Bisque"
-                                 Margin="5,5,5,5" />
+    <Grid x:Name="_contentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}"  Margin="3">
+        <canvas:CanvasVirtualControl x:Name="_canvasVirtualControl"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Top"
+                                     Height="{x:Bind MosaicField.WindowSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
+                                     Width="{x:Bind  MosaicField.WindowSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
+                                     RegionsInvalidated="OnRegionsInvalidated"
+                                     ClearColor="Bisque" />
+    </Grid>
 
 </Page>
