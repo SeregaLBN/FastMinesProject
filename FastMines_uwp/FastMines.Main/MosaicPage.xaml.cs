@@ -298,9 +298,7 @@ namespace fmg {
          using (new Tracer("Mosaic_OnChangedArea")) {
             //ChangeSizeImagesMineFlag();
 
-            //_canvasVirtualControl.Margin = new Thickness();
-
-            var m = _canvasVirtualControl.Margin;
+            var o = GetOffset();
             if (_mouseDevicePosition_AreaChanging.HasValue) {
                var devicePos = _mouseDevicePosition_AreaChanging.Value;
 
@@ -315,17 +313,17 @@ namespace fmg {
                point = new PointDouble(newWinSize.Width*percent.Item1/100, newWinSize.Height*percent.Item2/100);
 
                // смещаю игровое поле так, чтобы точка была на том же месте экрана
-               m.Left = devicePos.X - point.X;
-               m.Top = devicePos.Y - point.Y;
+               o.Left = devicePos.X - point.X;
+               o.Top = devicePos.Y - point.Y;
 
-               m = CheckMosaicMargin(m, newWinSize);
+               RecheckOffset(ref o, newWinSize);
             } else {
                var sizeWinMosaic = MosaicField.WindowSize;
                var sizePage = GetPageSize();
-               m.Left = (sizePage.Width - sizeWinMosaic.Width)/2;
-               m.Top = (sizePage.Height - sizeWinMosaic.Height)/2;
+               o.Left = (sizePage.Width - sizeWinMosaic.Width)/2;
+               o.Top = (sizePage.Height - sizeWinMosaic.Height)/2;
             }
-            _canvasVirtualControl.Margin = m;
+            ApplyOffset(o);
          }
       }
 
@@ -375,7 +373,7 @@ namespace fmg {
       }
 
       bool OnClick(Windows.Foundation.Point pos, bool leftClick, bool downHandling, bool upHandling) {
-         var margin = _canvasVirtualControl.Margin;
+         var o = GetOffset();
          //if ((pos.X >= margin.Left) && (pos.Y >= margin.Top)) {
          var point = ToCanvasPoint(pos);
          //   var winSize = MosaicField.WindowSize;
@@ -513,7 +511,7 @@ namespace fmg {
             } else {
 #region drag
                var needDrag = true;
-               var margin = _canvasVirtualControl.Margin;
+               var o = GetOffset();
 #region check possibility dragging
                if (_clickInfo.CellDown != null)
                {
@@ -549,45 +547,45 @@ namespace fmg {
 
                   var sizeWinMosaic = MosaicField.WindowSize;
                   var sizePage = GetPageSize();
-                  if ((margin.Left + sizeWinMosaic.Width + deltaTrans.X) < MinIndent) {
+                  if ((o.Left + sizeWinMosaic.Width + deltaTrans.X) < MinIndent) {
                      // правый край мозаики пересёк левую сторону страницы/экрана
                      if (ev.IsInertial)
                         _turnX = !_turnX; // разворачиавю по оси X
                      else
-                        margin.Left = MinIndent - sizeWinMosaic.Width; // привязываю к левой стороне страницы/экрана
+                        o.Left = MinIndent - sizeWinMosaic.Width; // привязываю к левой стороне страницы/экрана
                      applyDelta = ev.IsInertial;
                   } else
-                  if ((margin.Left + deltaTrans.X) > (sizePage.Width - MinIndent)) {
+                  if ((o.Left + deltaTrans.X) > (sizePage.Width - MinIndent)) {
                      // левый край мозаики пересёк правую сторону страницы/экрана
                      if (ev.IsInertial)
                         _turnX = !_turnX; // разворачиавю по оси X
                      else
-                        margin.Left = sizePage.Width - MinIndent; // привязываю к правой стороне страницы/экрана
+                        o.Left = sizePage.Width - MinIndent; // привязываю к правой стороне страницы/экрана
                      applyDelta = ev.IsInertial;
                   }
-                  if ((margin.Top + sizeWinMosaic.Height + deltaTrans.Y) < MinIndent) {
+                  if ((o.Top + sizeWinMosaic.Height + deltaTrans.Y) < MinIndent) {
                      // нижний край мозаики пересёк верхнюю сторону страницы/экрана
                      if (ev.IsInertial)
                         _turnY = !_turnY; // разворачиавю по оси Y
                      else
-                        margin.Top = MinIndent - sizeWinMosaic.Height; // привязываю к верхней стороне страницы/экрана
+                        o.Top = MinIndent - sizeWinMosaic.Height; // привязываю к верхней стороне страницы/экрана
                      applyDelta = ev.IsInertial;
                   } else
-                  if ((margin.Top + deltaTrans.Y) > (sizePage.Height - MinIndent)) {
+                  if ((o.Top + deltaTrans.Y) > (sizePage.Height - MinIndent)) {
                      // вержний край мозаики пересёк нижнюю сторону страницы/экрана
                      if (ev.IsInertial)
                         _turnY = !_turnY; // разворачиавю по оси Y
                      else
-                        margin.Top = sizePage.Height - MinIndent; // привязываю к нижней стороне страницы/экрана
+                        o.Top = sizePage.Height - MinIndent; // привязываю к нижней стороне страницы/экрана
                      applyDelta = ev.IsInertial;
                   }
 #endregion
                   if (applyDelta) {
-                     margin.Left += deltaTrans.X;
-                     margin.Top += deltaTrans.Y;
+                     o.Left += deltaTrans.X;
+                     o.Top += deltaTrans.Y;
                   }
-                  margin = CheckMosaicMargin(margin, sizeWinMosaic);
-                  _canvasVirtualControl.Margin = margin;
+                  RecheckOffset(ref o, sizeWinMosaic);
+                  ApplyOffset(o);
                }
 #endregion
             }
@@ -653,51 +651,57 @@ namespace fmg {
          //}
       }
 
-      private void OnClickBttnBack___________not_bindet(object sender, RoutedEventArgs ev) {
+      private void OnClickBttnBack___________not_binded(object sender, RoutedEventArgs ev) {
          GoBack();
       }
-      private void OnClickBttnNewGame___________not_bindet(object sender, RoutedEventArgs ev) {
+      private void OnClickBttnNewGame___________not_binded(object sender, RoutedEventArgs ev) {
          MosaicField.GameNew();
       }
 
-      private void OnClickBttnSkillBeginner___________not_bindet(object sender, RoutedEventArgs ev) {
+      private void OnClickBttnSkillBeginner___________not_binded(object sender, RoutedEventArgs ev) {
          SetGame(ESkillLevel.eBeginner);
       }
-      private void OnClickBttnSkillAmateur___________not_bindet(object sender, RoutedEventArgs ev) {
+      private void OnClickBttnSkillAmateur___________not_binded(object sender, RoutedEventArgs ev) {
          SetGame(ESkillLevel.eAmateur);
       }
-      private void OnClickBttnSkillProfi___________not_bindet(object sender, RoutedEventArgs ev) {
+      private void OnClickBttnSkillProfi___________not_binded(object sender, RoutedEventArgs ev) {
          SetGame(ESkillLevel.eProfi);
       }
-      private void OnClickBttnSkillCrazy___________not_bindet(object sender, RoutedEventArgs ev) {
+      private void OnClickBttnSkillCrazy___________not_binded(object sender, RoutedEventArgs ev) {
          SetGame(ESkillLevel.eCrazy);
       }
 
-      /// <summary> Перепроверить Margin поля мозаики так, что бы при нём поле мозаки было в пределах страницы </summary>
-      private Thickness CheckMosaicMargin(Thickness? newMargin = null, SizeDouble? sizeWinMosaic = null) {
-         var margin = newMargin ?? _canvasVirtualControl.Margin;
-         if (!sizeWinMosaic.HasValue)
-            sizeWinMosaic = MosaicField.WindowSize;
+      Thickness GetOffset() {
+         return _contentRoot.Padding;           // variant 1
+         //return _canvasVirtualControl.Margin; // variant 2
+      }
+
+      private void ApplyOffset(Thickness offset) {
+         var pad = _contentRoot.Padding;           // variant 1
+         //var pad = _canvasVirtualControl.Margin; // variant 2
+         pad.Left = offset.Left;
+         pad.Top = offset.Top;
+         _contentRoot.Padding = pad;           // variant 1
+         //_canvasVirtualControl.Margin = pad; // variant 2
+      }
+
+      /// <summary> Перепроверить смещение к полю мозаики так, что поле мозаики было в пределах страницы </summary>
+      private void RecheckOffset(ref Thickness offset, SizeDouble sizeWinMosaic) {
          var sizePage = GetPageSize();
 
-         if ((margin.Left + sizeWinMosaic.Value.Width) < MinIndent) {
-            // правый край мозаики пересёк левую сторону страницы/экрана
-            margin.Left = MinIndent - sizeWinMosaic.Value.Width; // привязываю к левой стороне страницы/экрана
-         } else
-            if (margin.Left > (sizePage.Width - MinIndent)) {
-               // левый край мозаики пересёк правую сторону страницы/экрана
-               margin.Left = sizePage.Width - MinIndent; // привязываю к правой стороне страницы/экрана
-            }
-         if ((margin.Top + sizeWinMosaic.Value.Height) < MinIndent) {
-            // нижний край мозаики пересёк верхнюю сторону страницы/экрана
-            margin.Top = MinIndent - sizeWinMosaic.Value.Height; // привязываю к верхней стороне страницы/экрана
-         } else
-            if (margin.Top > (sizePage.Height - MinIndent)) {
-               // вержний край мозаики пересёк нижнюю сторону страницы/экрана
-               margin.Top = sizePage.Height - MinIndent; // привязываю к нижней стороне страницы/экрана
-            }
+         if (offset.Left < (MinIndent - sizeWinMosaic.Width)) { // правый край мозаики пересёк левую сторону страницы/экрана?
+            offset.Left = MinIndent - sizeWinMosaic.Width; // привязываю к левой стороне страницы/экрана
+         } else {
+            if (offset.Left > (sizePage.Width - MinIndent)) // левый край мозаики пересёк правую сторону страницы/экрана?
+               offset.Left = sizePage.Width - MinIndent; // привязываю к правой стороне страницы/экрана
+         }
 
-         return margin;
+         if (offset.Top < (MinIndent - sizeWinMosaic.Height)) { // нижний край мозаики пересёк верхнюю сторону страницы/экрана?
+            offset.Top = MinIndent - sizeWinMosaic.Height; // привязываю к верхней стороне страницы/экрана
+         } else {
+            if (offset.Top > (sizePage.Height - MinIndent)) // вержний край мозаики пересёк нижнюю сторону страницы/экрана?
+               offset.Top = sizePage.Height - MinIndent; // привязываю к нижней стороне страницы/экрана
+         }
       }
 
       private void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
