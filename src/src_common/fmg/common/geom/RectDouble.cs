@@ -49,7 +49,8 @@ namespace fmg.common.geom {
       }
 
       public override string ToString() {
-         return "{x:" + X + ", y:" + Y + ", w:" + Width + ", h:" + Height + "}";
+         //return "{x:" + X + ", y:" + Y + ", w:" + Width + ", h:" + Height + "}";
+         return string.Format("{{x:{0:0.00}, y:{1:0.00}, w:{2:0.00}, h:{3:0.00}}}", X, Y, Width, Height);
       }
    }
 

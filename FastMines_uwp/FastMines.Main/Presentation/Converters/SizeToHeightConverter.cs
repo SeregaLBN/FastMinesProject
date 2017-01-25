@@ -6,7 +6,7 @@ namespace fmg.common.Converters {
 
    public sealed class SizeToHeightConverter : IValueConverter {
       public object Convert(object value, Type targetType, object parameter, string language) {
-         LoggerSimple.Put($"SizeToHeightConverter::Convert: value={value}, targetType={targetType}, parameter={parameter}, language={language}");
+         //LoggerSimple.Put($"SizeToHeightConverter::Convert: value={value}, targetType={targetType}, parameter={parameter}, language={language}");
          var size = value as Size?;
          if (size != null)
             return System.Convert.ToDouble(size.Value.Height);

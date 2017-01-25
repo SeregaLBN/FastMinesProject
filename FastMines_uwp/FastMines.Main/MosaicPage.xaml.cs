@@ -275,6 +275,13 @@ namespace fmg {
 
       private void OnPageSizeChanged(object sender, RoutedEventArgs e) {
          AreaOptimal();
+
+         var o = GetOffset();
+         var sizeWinMosaic = MosaicField.WindowSize;
+         var sizePage = GetPageSize();
+         o.Left = (sizePage.Width - sizeWinMosaic.Width) / 2;
+         o.Top = (sizePage.Height - sizeWinMosaic.Height) / 2;
+         ApplyOffset(o);
       }
 
       private void Mosaic_OnClick(ClickResult clickResult) {
@@ -295,15 +302,14 @@ namespace fmg {
       private void Mosaic_OnChangedCountClick(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
       private void Mosaic_OnChangedArea(Mosaic sender, PropertyChangedExEventArgs<double> ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField));
-         using (new Tracer("Mosaic_OnChangedArea")) {
+         using (var tracer = new Tracer()) {
             //ChangeSizeImagesMineFlag();
 
-            var o = GetOffset();
             if (_mouseDevicePosition_AreaChanging.HasValue) {
                var devicePos = _mouseDevicePosition_AreaChanging.Value;
 
                var oldWinSize = MosaicField.GetWindowSize(MosaicField.SizeField, ev.OldValue);
-               var newWinSize = MosaicField.GetWindowSize(MosaicField.SizeField, Area);
+               var newWinSize = MosaicField.WindowSize;
 
                // точка над игровым полем со старой площадью ячеек
                var point = ToCanvasPoint(devicePos);
@@ -312,18 +318,14 @@ namespace fmg {
                // таже точка над игровым полем, но с учётом zoom'а (новой площади)
                point = new PointDouble(newWinSize.Width*percent.Item1/100, newWinSize.Height*percent.Item2/100);
 
+               var o = GetOffset();
                // смещаю игровое поле так, чтобы точка была на том же месте экрана
                o.Left = devicePos.X - point.X;
                o.Top = devicePos.Y - point.Y;
 
                RecheckOffset(ref o, newWinSize);
-            } else {
-               var sizeWinMosaic = MosaicField.WindowSize;
-               var sizePage = GetPageSize();
-               o.Left = (sizePage.Width - sizeWinMosaic.Width)/2;
-               o.Top = (sizePage.Height - sizeWinMosaic.Height)/2;
+               ApplyOffset(o);
             }
-            ApplyOffset(o);
          }
       }
 
@@ -340,19 +342,19 @@ namespace fmg {
          }
       }
 
-#if DEBUG
-      protected override void OnPointerMoved(PointerRoutedEventArgs ev) {
-         var ttv = this.TransformToVisual(_canvasVirtualControl);
-         using (new Tracer("MosaicPage.OnPointerMoved",
-                 "pos1=" + ev.GetCurrentPoint(null).Position.ToFmPointDouble() +
-               "; pos2=" + ev.GetCurrentPoint(_canvasVirtualControl).Position.ToFmPointDouble() +
-               "; pos3=" + ttv.TransformPoint(ev.GetCurrentPoint(null).Position).ToFmPointDouble(),
-               () => "handled="+ev.Handled))
-         {
-            base.OnPointerMoved(ev);
-         }
-      }
-#endif
+//#if DEBUG
+//      protected override void OnPointerMoved(PointerRoutedEventArgs ev) {
+//         var ttv = this.TransformToVisual(_canvasVirtualControl);
+//         using (new Tracer("MosaicPage.OnPointerMoved",
+//                 "pos1=" + ev.GetCurrentPoint(null).Position.ToFmPointDouble() +
+//               "; pos2=" + ev.GetCurrentPoint(_canvasVirtualControl).Position.ToFmPointDouble() +
+//               "; pos3=" + ttv.TransformPoint(ev.GetCurrentPoint(null).Position).ToFmPointDouble(),
+//               () => "handled="+ev.Handled))
+//         {
+//            base.OnPointerMoved(ev);
+//         }
+//      }
+//#endif
 
       protected override void OnPointerWheelChanged(PointerRoutedEventArgs ev) {
          //using (new Tracer("OnPointerWheelChanged")) {

@@ -24,7 +24,8 @@ namespace fmg.common.geom {
       }
 
       public override string ToString() {
-         return "{width:" + Width + ", height:" + Height + "}";
+         //return "{width:" + Width + ", height:" + Height + "}";
+         return string.Format("{{w:{0:0.00}, h:{1:0.00}}}", Width, Height);
       }
    }
 
