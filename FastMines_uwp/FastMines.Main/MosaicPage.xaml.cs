@@ -167,9 +167,9 @@ namespace fmg {
 
       /// <summary> проверить что находится в рамках экрана </summary>
       private void RecheckLocation() {
-         var maxArea = CalcMaxArea(MosaicField.SizeField);
-         if (maxArea < Area)
-            Area = maxArea;
+         //var maxArea = CalcMaxArea(MosaicField.SizeField);
+         //if (maxArea < Area)
+         //   Area = maxArea;
       }
 
       double Area {
@@ -177,7 +177,7 @@ namespace fmg {
             return MosaicField.Area;
          }
          set {
-            value = Math.Min(value, CalcMaxArea(MosaicField.SizeField)); // recheck
+            //value = Math.Min(value, CalcMaxArea(MosaicField.SizeField)); // recheck
             MosaicField.Area = value;
          }
       }
@@ -387,17 +387,13 @@ namespace fmg {
          }
 
          var point = ToCanvasPoint(pos);
-         var handled = false;
-         if (down) {
-            var clickResult = MosaicField.MousePressed(point, leftClick);
-            Mosaic_OnClick(clickResult);
-            handled |= _clickInfo.DownHandled;
-         } else {
-            var clickResult = MosaicField.MouseReleased(point, leftClick);
-            Mosaic_OnClick(clickResult);
-            handled |= _clickInfo.UpHandled;
-         }
-         return handled;
+         var clickResult = down
+            ? MosaicField.MousePressed(point, leftClick)
+            : MosaicField.MouseReleased(point, leftClick);
+         Mosaic_OnClick(clickResult);
+         return down
+            ? _clickInfo.DownHandled
+            : _clickInfo.UpHandled;
       }
 
       protected override void OnTapped(TappedRoutedEventArgs ev) {
@@ -523,9 +519,9 @@ namespace fmg {
 #region check possibility dragging
                if (_clickInfo.CellDown != null)
                {
-                  var noMarginPoint = ToCanvasPoint(ev.Position); // new Windows.Foundation.Point(ev.Position.X - margin.Left, ev.Position.Y - margin.Top);
+                  var noMarginPoint = ToCanvasPoint(ev.Position); // new Windows.Foundation.Point(ev.Position.X - o.Left, ev.Position.Y - o.Top);
                   //var inCellRegion = _tmpClickedCell.PointInRegion(noMarginPoint.ToFmRect());
-                  //this.ContentRoot.Background = new SolidColorBrush(inCellRegion ? Colors.Aquamarine : Colors.DeepPink);
+                  //this._contentRoot.Background = new SolidColorBrush(inCellRegion ? Colors.Aquamarine : Colors.DeepPink);
                   var rcOuter = _clickInfo.CellDown.getRcOuter();
                   var delta = Math.Min(sizePage.Width/20, sizePage.Height/20);
                   rcOuter.MoveXY(-delta, -delta);
