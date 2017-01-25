@@ -331,14 +331,14 @@ namespace fmg {
 
       private void Mosaic_OnChangedMosaicType(Mosaic sender, PropertyChangedExEventArgs<EMosaic> ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField));
-         using (new Tracer("Mosaic_OnChangedMosaicType")) {
+         using (new Tracer()) {
             //ChangeSizeImagesMineFlag();
          }
       }
 
       private void Mosaic_OnChangedSizeField(Mosaic sender, PropertyChangedExEventArgs<Matrisize> ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField));
-         using (new Tracer("Mosaic_OnChangedSizeField")) {
+         using (new Tracer()) {
          }
       }
 
@@ -483,14 +483,14 @@ namespace fmg {
       }
 
       protected override void OnManipulationStarting(ManipulationStartingRoutedEventArgs ev) {
-         using (new Tracer("OnManipulationStarting")) {
+         using (new Tracer()) {
             base.OnManipulationStarting(ev);
             _manipulationStarted = false;
          }
       }
 
       protected override void OnManipulationStarted(ManipulationStartedRoutedEventArgs ev) {
-         using (new Tracer("OnManipulationStarted")) {
+         using (new Tracer()) {
             _turnX = _turnY = false;
             _dtInertiaStarting = DateTime.MinValue;
             base.OnManipulationStarted(ev);

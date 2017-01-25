@@ -282,7 +282,7 @@ namespace FastMines {
       private void Mosaic_OnChangedCountClick(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
       private void Mosaic_OnChangedArea(Mosaic sender, PropertyChangedExEventArgs<double> ev) {
          Debug.Assert(ReferenceEquals(sender, MosaicField));
-         using (new Tracer("Mosaic_OnChangedArea")) {
+         using (new Tracer()) {
             //ChangeSizeImagesMineFlag();
 
             //MosaicField.Container.Margin = new Thickness();
@@ -317,7 +317,7 @@ namespace FastMines {
       }
       private void Mosaic_OnChangedMosaicType(Mosaic sender, PropertyChangedExEventArgs<EMosaic> ev) {
          Debug.Assert(ReferenceEquals(sender, MosaicField));
-         using (new Tracer("Mosaic_OnChangedMosaicType")) {
+         using (new Tracer()) {
             //sender.ChangeFontSize();
             //ChangeSizeImagesMineFlag();
          }
@@ -325,12 +325,12 @@ namespace FastMines {
 
       private void Mosaic_OnChangedSizeField(Mosaic sender, PropertyChangedExEventArgs<Matrisize> ev) {
          Debug.Assert(ReferenceEquals(sender, MosaicField));
-         using (new Tracer("Mosaic_OnChangedSizeField")) {
+         using (new Tracer()) {
          }
       }
 
       protected override void OnPointerWheelChanged(PointerRoutedEventArgs ev) {
-         //using (new Tracer("OnPointerWheelChanged")) {
+         //using (new Tracer()) {
          var wheelDelta = ev.GetCurrentPoint(this).Properties.MouseWheelDelta;
          if (!_baseWheelDelta.HasValue)
             _baseWheelDelta = Math.Abs(wheelDelta);
@@ -373,7 +373,7 @@ namespace FastMines {
       }
 
       protected override void OnTapped(TappedRoutedEventArgs ev) {
-         using (new Tracer("OnTapped", () => string.Format("ev.Handled = " + ev.Handled))) {
+         using (new Tracer("OnTapped", () => "ev.Handled = " + ev.Handled)) {
             //if (!_manipulationStarted) {
             if (ev.PointerDeviceType != PointerDeviceType.Mouse) {
                ev.Handled = OnClick(ev.GetPosition(this), true, false, true);
@@ -384,7 +384,7 @@ namespace FastMines {
       }
 
       protected override void OnRightTapped(RightTappedRoutedEventArgs ev) {
-         using (new Tracer("OnRightTapped", () => string.Format("ev.Handled = " + ev.Handled))) {
+         using (new Tracer("OnRightTapped", () => "ev.Handled = " + ev.Handled)) {
             if (ev.PointerDeviceType == PointerDeviceType.Mouse)
                ev.Handled = _clickInfo.DownHandled || _clickInfo.UpHandled; // TODO: для избежания появления appBar'ов при установке '?'
             else if (!_manipulationStarted) {
@@ -404,7 +404,7 @@ namespace FastMines {
       }
 
       protected override void OnPointerPressed(PointerRoutedEventArgs ev) {
-         using (new Tracer("OnPointerPressed", () => string.Format("ev.Handled = " + ev.Handled))) {
+         using (new Tracer("OnPointerPressed", () => "ev.Handled = " + ev.Handled)) {
 
             var pointerPoint = ev.GetCurrentPoint(this);
             //_clickInfo.PointerDevice = pointerPoint.PointerDevice.PointerDeviceType;
@@ -430,7 +430,7 @@ namespace FastMines {
       }
 
       protected override void OnPointerReleased(PointerRoutedEventArgs ev) {
-         using (new Tracer("OnPointerReleased", "_manipulationStarted = " + _manipulationStarted, () => string.Format("ev.Handled = " + ev.Handled))) {
+         using (new Tracer("OnPointerReleased", "_manipulationStarted = " + _manipulationStarted, () => "ev.Handled = " + ev.Handled)) {
             var pointerPoint = ev.GetCurrentPoint(this);
             //if (_manipulationStarted)
             if (ev.Pointer.PointerDeviceType == PointerDeviceType.Mouse) {
@@ -455,14 +455,14 @@ namespace FastMines {
       }
 
       protected override void OnManipulationStarting(ManipulationStartingRoutedEventArgs ev) {
-         using (new Tracer("OnManipulationStarting")) {
+         using (new Tracer()) {
             base.OnManipulationStarting(ev);
             _manipulationStarted = false;
          }
       }
 
       protected override void OnManipulationStarted(ManipulationStartedRoutedEventArgs ev) {
-         using (new Tracer("OnManipulationStarted")) {
+         using (new Tracer()) {
             _turnX = _turnY = false;
             _dtInertiaStarting = DateTime.MinValue;
             base.OnManipulationStarted(ev);
