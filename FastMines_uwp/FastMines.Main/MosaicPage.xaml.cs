@@ -1,10 +1,7 @@
 using System;
-using System.Linq;
-using System.Reflection;
 using System.ComponentModel;
 using Windows.System;
 using Windows.Devices.Input;
-using Windows.Graphics.Display;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
@@ -25,13 +22,12 @@ using fmg.uwp.utils;
 using fmg.uwp.mosaic;
 using fmg.uwp.mosaic.win2d;
 using Logger = fmg.common.LoggerSimple;
-using Windows.UI.Xaml.Media;
 
 namespace fmg {
 
    public sealed partial class MosaicPage : Page {
       /// <summary> мин отступ от краев экрана для мозаики </summary>
-      private const int MinIndent = 30;
+      private const double MinIndent = 30;
 
       private Mosaic _mosaic;
       private readonly ClickInfo _clickInfo = new ClickInfo();
@@ -115,6 +111,13 @@ namespace fmg {
          MosaicField.MinesCount = numberMines;
 
          RecheckLocation();
+      }
+
+      /// <summary> get this Page size </summary>
+      SizeDouble GetPageSize() {
+         var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
+         System.Diagnostics.Debug.Assert(bounds == Window.Current.Bounds);
+         return bounds.ToFmRectDouble().SizeDouble();
       }
 
       /// <summary> get margin around mosaic control </summary>
@@ -203,7 +206,7 @@ namespace fmg {
       }
 
       void AreaOptimal() {
-         var sizePage = Window.Current.Bounds.ToFmRectDouble().SizeDouble();
+         var sizePage = GetPageSize();
          Area = MosaicHelper.FindAreaBySize(MosaicField.MosaicType, MosaicField.SizeField, ref sizePage);
       }
 
@@ -295,9 +298,9 @@ namespace fmg {
          using (new Tracer("Mosaic_OnChangedArea")) {
             //ChangeSizeImagesMineFlag();
 
-            //MosaicField.Container.Margin = new Thickness();
+            //_canvasVirtualControl.Margin = new Thickness();
 
-            var m = MosaicField.Container.Margin;
+            var m = _canvasVirtualControl.Margin;
             if (_mouseDevicePosition_AreaChanging.HasValue) {
                var devicePos = _mouseDevicePosition_AreaChanging.Value;
 
@@ -305,7 +308,7 @@ namespace fmg {
                var newWinSize = MosaicField.GetWindowSize(MosaicField.SizeField, Area);
 
                // точка над игровым полем со старой площадью ячеек
-               var point = new PointDouble(devicePos.X - m.Left, devicePos.Y - m.Top);
+               var point = ToCanvasPoint(devicePos);
                var percent = new Tuple<double, double>(point.X*100/oldWinSize.Width, point.Y*100/oldWinSize.Height);
 
                // таже точка над игровым полем, но с учётом zoom'а (новой площади)
@@ -318,11 +321,11 @@ namespace fmg {
                m = CheckMosaicMargin(m, newWinSize);
             } else {
                var sizeWinMosaic = MosaicField.WindowSize;
-               var sizePage = Window.Current.Bounds;
+               var sizePage = GetPageSize();
                m.Left = (sizePage.Width - sizeWinMosaic.Width)/2;
                m.Top = (sizePage.Height - sizeWinMosaic.Height)/2;
             }
-            MosaicField.Container.Margin = m;
+            _canvasVirtualControl.Margin = m;
          }
       }
 
@@ -372,10 +375,9 @@ namespace fmg {
       }
 
       bool OnClick(Windows.Foundation.Point pos, bool leftClick, bool downHandling, bool upHandling) {
-         var margin = MosaicField.Container.Margin;
+         var margin = _canvasVirtualControl.Margin;
          //if ((pos.X >= margin.Left) && (pos.Y >= margin.Top)) {
-         var point = pos.ToFmPointDouble().Move(-margin.Left, -margin.Top);
-         var point2 = this.TransformToVisual(_canvasVirtualControl).TransformPoint(pos).ToFmPointDouble();
+         var point = ToCanvasPoint(pos);
          //   var winSize = MosaicField.WindowSize;
          //   if ((point.x <= winSize.width) && (point.y <= winSize.height)) {
          var handled = false;
@@ -511,20 +513,20 @@ namespace fmg {
             } else {
 #region drag
                var needDrag = true;
-               var margin = MosaicField.Container.Margin;
+               var margin = _canvasVirtualControl.Margin;
 #region check possibility dragging
                if (_clickInfo.CellDown != null)
                {
-                  var noMarginPoint = new Windows.Foundation.Point(ev.Position.X - margin.Left, ev.Position.Y - margin.Top);
+                  var noMarginPoint = ToCanvasPoint(ev.Position); // new Windows.Foundation.Point(ev.Position.X - margin.Left, ev.Position.Y - margin.Top);
                   //var inCellRegion = _tmpClickedCell.PointInRegion(noMarginPoint.ToFmRect());
                   //this.ContentRoot.Background = new SolidColorBrush(inCellRegion ? Colors.Aquamarine : Colors.DeepPink);
                   var rcOuter = _clickInfo.CellDown.getRcOuter();
-                  var sizePage = Window.Current.Bounds.ToFmRect().Size();
+                  var sizePage = GetPageSize();
                   var delta = Math.Min(sizePage.Width/20, sizePage.Height/20);
                   rcOuter.MoveXY(-delta, -delta);
                   rcOuter.Width  += delta*2;
                   rcOuter.Height += delta*2;
-                  needDrag = !rcOuter.Contains(noMarginPoint.ToFmPointDouble());
+                  needDrag = !rcOuter.Contains(noMarginPoint);
                }
 #endregion
 
@@ -546,7 +548,7 @@ namespace fmg {
                   }
 
                   var sizeWinMosaic = MosaicField.WindowSize;
-                  var sizePage = Window.Current.Bounds.ToFmRect().Size();
+                  var sizePage = GetPageSize();
                   if ((margin.Left + sizeWinMosaic.Width + deltaTrans.X) < MinIndent) {
                      // правый край мозаики пересёк левую сторону страницы/экрана
                      if (ev.IsInertial)
@@ -584,12 +586,8 @@ namespace fmg {
                      margin.Left += deltaTrans.X;
                      margin.Top += deltaTrans.Y;
                   }
-#if DEBUG
-                  var tmp = margin;
                   margin = CheckMosaicMargin(margin, sizeWinMosaic);
-                  System.Diagnostics.Debug.Assert(tmp == margin);
-#endif
-                  MosaicField.Container.Margin = margin;
+                  _canvasVirtualControl.Margin = margin;
                }
 #endregion
             }
@@ -599,7 +597,7 @@ namespace fmg {
 
       protected override void OnManipulationCompleted(ManipulationCompletedRoutedEventArgs ev) {
 #if DEBUG
-         var pnt1 = this.TransformToVisual(MosaicField.Container).TransformPoint(ev.Position);
+         var pnt1 = this.TransformToVisual(_canvasVirtualControl).TransformPoint(ev.Position);
 #else
          var pnt1 = new Windows.Foundation.Point();
 #endif
@@ -677,10 +675,10 @@ namespace fmg {
 
       /// <summary> Перепроверить Margin поля мозаики так, что бы при нём поле мозаки было в пределах страницы </summary>
       private Thickness CheckMosaicMargin(Thickness? newMargin = null, SizeDouble? sizeWinMosaic = null) {
-         var margin = newMargin ?? MosaicField.Container.Margin;
+         var margin = newMargin ?? _canvasVirtualControl.Margin;
          if (!sizeWinMosaic.HasValue)
             sizeWinMosaic = MosaicField.WindowSize;
-         var sizePage = Window.Current.Bounds.ToFmRect().Size();
+         var sizePage = GetPageSize();
 
          if ((margin.Left + sizeWinMosaic.Value.Width) < MinIndent) {
             // правый край мозаики пересёк левую сторону страницы/экрана
@@ -711,6 +709,14 @@ namespace fmg {
                MosaicField.Repaint(ds, region);
             }
          }
+      }
+
+
+      private PointDouble ToCanvasPoint(Windows.Foundation.Point pagePoint) {
+         var point = TransformToVisual(_canvasVirtualControl).TransformPoint(pagePoint).ToFmPointDouble();
+         //var point2 = new PointDouble(pagePoint.X - _offset.Left, pagePoint.Y - _offset.Top);
+         //System.Diagnostics.Debug.Assert(point == point2);
+         return point;
       }
 
    }

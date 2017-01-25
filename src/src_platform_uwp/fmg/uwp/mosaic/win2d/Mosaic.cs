@@ -68,10 +68,6 @@ namespace fmg.uwp.mosaic.win2d {
 #endif
       }
 
-      public CanvasVirtualControl Container {
-         get { return _container; }
-      }
-
       public PaintUwpContext<CanvasBitmap> PaintContext {
          get {
             if (_paintContext == null) {
