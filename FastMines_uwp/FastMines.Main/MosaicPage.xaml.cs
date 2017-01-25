@@ -116,8 +116,9 @@ namespace fmg {
       /// <summary> get this Page size </summary>
       SizeDouble GetPageSize() {
          var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
-         System.Diagnostics.Debug.Assert(bounds == Window.Current.Bounds);
-         return bounds.ToFmRectDouble().SizeDouble();
+         //var scale = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
+         //return new SizeDouble(bounds.Width * scale, bounds.Height * scale);
+         return new SizeDouble(bounds.Width, bounds.Height);
       }
 
       /// <summary> get margin around mosaic control </summary>
