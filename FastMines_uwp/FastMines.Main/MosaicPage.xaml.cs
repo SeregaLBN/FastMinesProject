@@ -372,34 +372,39 @@ namespace fmg {
          //}
       }
 
-      bool OnClick(Windows.Foundation.Point pos, bool leftClick, bool downHandling, bool upHandling) {
+      bool OnClick(Windows.Foundation.Point pos, bool leftClick, bool down) {
          var o = GetOffset();
-         //if ((pos.X >= margin.Left) && (pos.Y >= margin.Top)) {
+
+         if ((pos.X < o.Left) || (pos.Y < o.Top)) {
+            Mosaic_OnClick(new ClickResult(null, leftClick, down));
+            return false;
+         }
+
+         var winSize = MosaicField.WindowSize;
+         if ((pos.X > (o.Left + winSize.Width)) || (pos.Y > (o.Top + winSize.Height))) {
+            Mosaic_OnClick(new ClickResult(null, leftClick, down));
+            return false;
+         }
+
          var point = ToCanvasPoint(pos);
-         //   var winSize = MosaicField.WindowSize;
-         //   if ((point.x <= winSize.width) && (point.y <= winSize.height)) {
          var handled = false;
-            if (downHandling) {
-               var clickResult = MosaicField.MousePressed(point, leftClick);
-               Mosaic_OnClick(clickResult);
-               handled |= _clickInfo.DownHandled;
-            }
-            if (upHandling) {
-               var clickResult = MosaicField.MouseReleased(point, leftClick);
-               Mosaic_OnClick(clickResult);
-               handled |= _clickInfo.UpHandled;
-            }
+         if (down) {
+            var clickResult = MosaicField.MousePressed(point, leftClick);
+            Mosaic_OnClick(clickResult);
+            handled |= _clickInfo.DownHandled;
+         } else {
+            var clickResult = MosaicField.MouseReleased(point, leftClick);
+            Mosaic_OnClick(clickResult);
+            handled |= _clickInfo.UpHandled;
+         }
          return handled;
-         //   }
-         //}
-         //return false;
       }
 
       protected override void OnTapped(TappedRoutedEventArgs ev) {
          using (new Tracer("OnTapped", () => string.Format("ev.Handled = " + ev.Handled))) {
             //if (!_manipulationStarted) {
             if (ev.PointerDeviceType != PointerDeviceType.Mouse) {
-               ev.Handled = OnClick(ev.GetPosition(this), true, false, true);
+               ev.Handled = OnClick(ev.GetPosition(this), true, false);
             }
             if (!ev.Handled)
                base.OnTapped(ev);
@@ -413,11 +418,13 @@ namespace fmg {
             else if (!_manipulationStarted) {
 
                // 1. release left click in invalid coord
-               OnClick(new Windows.Foundation.Point(-1, -1), true, false, true);
+               OnClick(new Windows.Foundation.Point(-1, -1), true, false);
 
                // 2. make right click - up & down
                var pos = ev.GetPosition(this);
-               ev.Handled = OnClick(pos, false, true, true);
+               var handled1 = OnClick(pos, false, true);
+               var handled2 = OnClick(pos, false, false);
+               ev.Handled = handled1 || handled2;
             }
 
             if (!ev.Handled)
@@ -443,7 +450,7 @@ namespace fmg {
             }
 
             if (!ev.Handled)
-               ev.Handled = OnClick(pointerPoint.Position, props.IsLeftButtonPressed, true, false);
+               ev.Handled = OnClick(pointerPoint.Position, props.IsLeftButtonPressed, true);
 
             _clickInfo.DownHandled = ev.Handled;
             if (!ev.Handled)
@@ -460,12 +467,12 @@ namespace fmg {
                var isLeftClick = (pointerPoint.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased);
                var isRightClick = (pointerPoint.Properties.PointerUpdateKind == PointerUpdateKind.RightButtonReleased);
                System.Diagnostics.Debug.Assert(isLeftClick != isRightClick);
-               ev.Handled = OnClick(pointerPoint.Position, isLeftClick, false, true);
+               ev.Handled = OnClick(pointerPoint.Position, isLeftClick, false);
             } else {
                AsyncRunner.InvokeFromUiLater(() => {
                   if (!_clickInfo.Released) {
                      Logger.Put("ã OnPointerReleased: forced left release click...");
-                     OnClick(pointerPoint.Position, true, false, true);
+                     OnClick(pointerPoint.Position, true, false);
                   }
                }, CoreDispatcherPriority.High);
             }
@@ -512,6 +519,7 @@ namespace fmg {
 #region drag
                var needDrag = true;
                var o = GetOffset();
+               var sizePage = GetPageSize();
 #region check possibility dragging
                if (_clickInfo.CellDown != null)
                {
@@ -519,7 +527,6 @@ namespace fmg {
                   //var inCellRegion = _tmpClickedCell.PointInRegion(noMarginPoint.ToFmRect());
                   //this.ContentRoot.Background = new SolidColorBrush(inCellRegion ? Colors.Aquamarine : Colors.DeepPink);
                   var rcOuter = _clickInfo.CellDown.getRcOuter();
-                  var sizePage = GetPageSize();
                   var delta = Math.Min(sizePage.Width/20, sizePage.Height/20);
                   rcOuter.MoveXY(-delta, -delta);
                   rcOuter.Width  += delta*2;
@@ -546,7 +553,6 @@ namespace fmg {
                   }
 
                   var sizeWinMosaic = MosaicField.WindowSize;
-                  var sizePage = GetPageSize();
                   if ((o.Left + sizeWinMosaic.Width + deltaTrans.X) < MinIndent) {
                      // правый край мозаики пересёк левую сторону страницы/экрана
                      if (ev.IsInertial)
@@ -718,7 +724,7 @@ namespace fmg {
 
       private PointDouble ToCanvasPoint(Windows.Foundation.Point pagePoint) {
          var point = TransformToVisual(_canvasVirtualControl).TransformPoint(pagePoint).ToFmPointDouble();
-         //var point2 = new PointDouble(pagePoint.X - _offset.Left, pagePoint.Y - _offset.Top);
+         //var point2 = new PointDouble(pagePoint.X - o.Left, pagePoint.Y - o.Top);
          //System.Diagnostics.Debug.Assert(point == point2);
          return point;
       }
