@@ -275,6 +275,10 @@ namespace fmg {
       }
 
       private void OnPageSizeChanged(object sender, RoutedEventArgs e) {
+         MosaicFieldOnPageOptimal();
+      }
+
+      private void MosaicFieldOnPageOptimal() {
          AreaOptimal();
 
          var o = GetOffset();
@@ -407,6 +411,14 @@ namespace fmg {
             }
             if (!ev.Handled)
                base.OnTapped(ev);
+         }
+      }
+
+      protected override void OnDoubleTapped(DoubleTappedRoutedEventArgs ev) {
+         using (new Tracer("OnDoubleTapped", () => string.Format("ev.Handled = " + ev.Handled))) {
+            //base.OnDoubleTapped(ev);
+            ev.Handled = true;
+            MosaicFieldOnPageOptimal();
          }
       }
 
