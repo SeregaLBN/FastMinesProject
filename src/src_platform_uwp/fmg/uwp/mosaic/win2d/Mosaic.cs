@@ -97,10 +97,10 @@ namespace fmg.uwp.mosaic.win2d {
              //var size = _container.Size; // int values
                var rc = cell.getRcOuter();
                var tmp = new Windows.Foundation.Rect(0, 0, size.Width, size.Height);
-               var containsLT = tmp.Contains(rc.PointLT().ToWinPoint());
-               var containsLB = tmp.Contains(rc.PointLB().ToWinPoint());
-               var containsRT = tmp.Contains(rc.PointRT().ToWinPoint());
-               var containsRB = tmp.Contains(rc.PointRB().ToWinPoint());
+               var containsLT = tmp.Contains(rc.PointLT().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left())  && tmp.Top.HasMinDiff(rc.Top()));
+               var containsLB = tmp.Contains(rc.PointLB().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left())  && tmp.Top.HasMinDiff(rc.Bottom()));
+               var containsRT = tmp.Contains(rc.PointRT().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Right()) && tmp.Top.HasMinDiff(rc.Top()));
+               var containsRB = tmp.Contains(rc.PointRB().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Right()) && tmp.Top.HasMinDiff(rc.Bottom()));
                bool intersect = (tmp != Windows.Foundation.Rect.Empty);
              //LoggerSimple.Put($"intersect={intersect}; containsLT={containsLT}; containsLB={containsLB}; containsRT={containsRT}; containsRB={containsRB}");
                System.Diagnostics.Debug.Assert(intersect && containsLT && containsRT && containsLB && containsRB);

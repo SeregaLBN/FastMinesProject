@@ -166,11 +166,16 @@ namespace fmg {
          return MosaicHelper.FindSizeByArea(MosaicField.CellAttr, sizeMosaic);
       }
 
-      /// <summary> проверить что находится в рамках экрана </summary>
+      /// <summary> check that mosaic field is placed in the window/page </summary>
       private void RecheckLocation() {
-         //var maxArea = CalcMaxArea(MosaicField.SizeField);
-         //if (maxArea < Area)
-         //   Area = maxArea;
+         AreaOptimal();
+
+         var o = GetOffset();
+         var sizeWinMosaic = MosaicField.WindowSize;
+         var sizePage = GetPageSize();
+         o.Left = (sizePage.Width - sizeWinMosaic.Width) / 2;
+         o.Top = (sizePage.Height - sizeWinMosaic.Height) / 2;
+         ApplyOffset(o);
       }
 
       double Area {
@@ -275,18 +280,7 @@ namespace fmg {
       }
 
       private void OnPageSizeChanged(object sender, RoutedEventArgs e) {
-         MosaicFieldOnPageOptimal();
-      }
-
-      private void MosaicFieldOnPageOptimal() {
-         AreaOptimal();
-
-         var o = GetOffset();
-         var sizeWinMosaic = MosaicField.WindowSize;
-         var sizePage = GetPageSize();
-         o.Left = (sizePage.Width - sizeWinMosaic.Width) / 2;
-         o.Top = (sizePage.Height - sizeWinMosaic.Height) / 2;
-         ApplyOffset(o);
+         RecheckLocation();
       }
 
       private void Mosaic_OnClick(ClickResult clickResult) {
@@ -416,9 +410,13 @@ namespace fmg {
 
       protected override void OnDoubleTapped(DoubleTappedRoutedEventArgs ev) {
          using (new Tracer("OnDoubleTapped", () => string.Format("ev.Handled = " + ev.Handled))) {
-            //base.OnDoubleTapped(ev);
-            ev.Handled = true;
-            MosaicFieldOnPageOptimal();
+            var rcCanvas = new Windows.Foundation.Rect(0, 0, _canvasVirtualControl.Width, _canvasVirtualControl.Height);
+            if (rcCanvas.Contains(ev.GetPosition(_canvasVirtualControl))) {
+               base.OnDoubleTapped(ev);
+            } else {
+               ev.Handled = true;
+               RecheckLocation();
+            }
          }
       }
 
