@@ -93,7 +93,8 @@ namespace fmg.uwp.mosaic.win2d {
                _container.Invalidate();
             else {
 #if DEBUG
-               var size = _container.Size;
+               var size = new SizeDouble(_container.Width, _container.Height); // double values
+             //var size = _container.Size; // int values
                var rc = cell.getRcOuter();
                var tmp = new Windows.Foundation.Rect(0, 0, size.Width, size.Height);
                var containsLT = tmp.Contains(rc.PointLT().ToWinPoint());
