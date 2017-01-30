@@ -50,7 +50,7 @@ namespace fmg.DataModel.DataSources
             img.PolarLights = selected;
             img.Rotate = selected;
             img.BorderColor = selected ? Color.Red : Color.Green;
-            img.BackgroundColor = selected ? StaticImgConsts.DefaultBkColor : PaintUwpContext<object>.DefaultBackgroundColor;
+            img.BackgroundColor = selected ? StaticImgConsts.DefaultBkColor : PaintUwpContext<Microsoft.Graphics.Canvas.CanvasBitmap>.DefaultBackgroundColor;
             img.Padding = new Bound(selected ? 5 : 15);
             if (!selected)
                img.ForegroundColor = StaticImgConsts.DefaultForegroundColor;

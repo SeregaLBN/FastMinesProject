@@ -83,7 +83,7 @@ namespace fmg.DataModel.DataSources {
             Image = {
                   BorderWidth = 1,
                   BorderColor = Color.Black,
-                  BackgroundColor = PaintUwpContext<object>.DefaultBackgroundColor,
+                  BackgroundColor = PaintUwpContext<Microsoft.Graphics.Canvas.CanvasBitmap>.DefaultBackgroundColor,
                   Padding = new Bound(15),
                   RedrawInterval = 5,
                   RotateAngleDelta = 3.37
@@ -101,7 +101,7 @@ namespace fmg.DataModel.DataSources {
             var img = mi.Image;
             img.Rotate = selected;
             img.BorderColor = selected ? Color.White : Color.Black;
-            img.BackgroundColor = selected ? StaticImgConsts.DefaultBkColor : PaintUwpContext<object>.DefaultBackgroundColor;
+            img.BackgroundColor = selected ? StaticImgConsts.DefaultBkColor : PaintUwpContext<Microsoft.Graphics.Canvas.CanvasBitmap>.DefaultBackgroundColor;
             img.Padding = new Bound(img.Size.Width *(selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*//100);
             img.RotateAngle = 0;
          }
