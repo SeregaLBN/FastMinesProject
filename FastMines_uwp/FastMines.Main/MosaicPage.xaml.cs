@@ -374,20 +374,20 @@ namespace fmg {
       }
 
       bool OnClick(Windows.Foundation.Point pos, bool leftClick, bool down) {
-         var o = GetOffset();
+         var point = ToCanvasPoint(pos);
 
-         if ((pos.X < o.Left) || (pos.Y < o.Top)) {
+#if false // otherwise not work the long tapping (to setting flag label)
+         if (point.X < 0 || point.Y < 0) {
             Mosaic_OnClick(new ClickResult(null, leftClick, down));
             return false;
          }
 
          var winSize = MosaicField.WindowSize;
-         if ((pos.X > (o.Left + winSize.Width)) || (pos.Y > (o.Top + winSize.Height))) {
+         if (point.X > winSize.Width || point.Y > winSize.Height) {
             Mosaic_OnClick(new ClickResult(null, leftClick, down));
             return false;
          }
-
-         var point = ToCanvasPoint(pos);
+#endif
          var clickResult = down
             ? MosaicField.MousePressed(point, leftClick)
             : MosaicField.MouseReleased(point, leftClick);
@@ -547,7 +547,7 @@ namespace fmg {
                if (needDrag) {
                   var deltaTrans = ev.Delta.Translation;
                   var applyDelta = true;
- #region Compound motion
+#region Compound motion
                   if (_turnX)
                      deltaTrans.X *= -1;
                   if (_turnY)
@@ -733,6 +733,7 @@ namespace fmg {
 
       private PointDouble ToCanvasPoint(Windows.Foundation.Point pagePoint) {
          var point = TransformToVisual(_canvasVirtualControl).TransformPoint(pagePoint).ToFmPointDouble();
+         //var o = GetOffset();
          //var point2 = new PointDouble(pagePoint.X - o.Left, pagePoint.Y - o.Top);
          //System.Diagnostics.Debug.Assert(point == point2);
          return point;

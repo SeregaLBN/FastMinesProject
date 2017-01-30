@@ -425,7 +425,7 @@ namespace fmg.core.mosaic {
       protected ClickResult OnRightButtonDown(BaseCell cellRightDown) {
          using (var tracer = new fmg.common.Tracer("Mosaic::OnRightButtonDown")) {
             CellDown = null;
-            var result = new ClickResult(cellRightDown, false, true); ;
+            var result = new ClickResult(cellRightDown, false, true);
             if (GameStatus == EGameStatus.eGSEnd) {
                GameNew();
                result.Modified.AddRange(Matrix); // ??? TODO optimize
