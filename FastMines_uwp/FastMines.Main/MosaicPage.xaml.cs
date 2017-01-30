@@ -412,11 +412,17 @@ namespace fmg {
          using (new Tracer("OnDoubleTapped", () => string.Format("ev.Handled = " + ev.Handled))) {
             var rcCanvas = new Windows.Foundation.Rect(0, 0, _canvasVirtualControl.Width, _canvasVirtualControl.Height);
             if (rcCanvas.Contains(ev.GetPosition(_canvasVirtualControl))) {
-               base.OnDoubleTapped(ev);
+               if (MosaicField.GameStatus == EGameStatus.eGSEnd) {
+                  MosaicField.GameNew();
+                  ev.Handled = true;
+               }
             } else {
-               ev.Handled = true;
                RecheckLocation();
+               ev.Handled = true;
             }
+
+            if (!ev.Handled)
+               base.OnDoubleTapped(ev);
          }
       }
 
