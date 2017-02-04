@@ -18,8 +18,6 @@ namespace fmg.uwp.draw.mosaic {
       {
       }
 
-      public new static Color DefaultBackgroundColor => PaintContext<TImage>.DefaultBackgroundColor;
-
       static PaintUwpContext() {
          try {
             var uiSettings = new UISettings();
@@ -38,7 +36,7 @@ namespace fmg.uwp.draw.mosaic {
                   clr = Color.Gray; // wtf??
                }
             }
-            PaintContext<TImage>.DefaultBackgroundColor = clr;
+            PaintContextCommon.DefaultBackgroundColor = clr;
          } catch (Exception ex) {
             System.Diagnostics.Debug.WriteLine(ex.Message);
          }

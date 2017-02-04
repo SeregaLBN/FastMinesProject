@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using fmg.common;
 using fmg.common.geom;
-using fmg.data.view.draw;
 using fmg.common.notyfier;
+using fmg.data.view.draw;
 
 namespace fmg.core.mosaic.draw {
 
-   static class PaintContextInternal {
+   public static class PaintContextCommon {
 
       /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется классом наследником <see cref="PaintContext{TImage}"/>. </summary>
       public static Color DefaultBackgroundColor { get; set; } = Color.Gray;
-      public static readonly Random Rand = new Random(Guid.NewGuid().GetHashCode());
 
    }
 
@@ -29,14 +28,9 @@ namespace fmg.core.mosaic.draw {
       private Color _backgroundColor;
       private TImage _imgBckgrnd;
 
-      protected static Color DefaultBackgroundColor {
-         get { return PaintContextInternal.DefaultBackgroundColor; }
-         set { PaintContextInternal.DefaultBackgroundColor = value; }
-      }
-
       public PaintContext(bool iconicMode) {
          IconicMode = iconicMode;
-         _backgroundColor = DefaultBackgroundColor.Darker(0.1);
+         _backgroundColor = PaintContextCommon.DefaultBackgroundColor.Darker(0.1);
       }
 
       public TImage ImgMine {
@@ -109,13 +103,12 @@ namespace fmg.core.mosaic.draw {
             if (_colors.ContainsKey(index))
                return _colors[index];
 
-            var res = ColorExt.RandomColor(Rand).Brighter(0.45);
+            var rand = new Random(Guid.NewGuid().GetHashCode());
+            var res = ColorExt.RandomColor(rand).Brighter(0.45);
             _colors.Add(index, res);
             return res;
          }
       }
-
-      private static Random Rand => PaintContextInternal.Rand;
 
       private BackgroundFill _backgroundFill;
       public BackgroundFill BkFill {
