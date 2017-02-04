@@ -394,7 +394,7 @@ namespace fmg {
       }
 
       protected override void OnTapped(TappedRoutedEventArgs ev) {
-         using (new Tracer("OnTapped", () => string.Format("ev.Handled = " + ev.Handled))) {
+         using (new Tracer("OnTapped", () => "ev.Handled = " + ev.Handled)) {
             //if (!_manipulationStarted) {
             if (ev.PointerDeviceType != PointerDeviceType.Mouse) {
                ev.Handled = OnClick(ev.GetPosition(this), true, false);
@@ -405,7 +405,7 @@ namespace fmg {
       }
 
       protected override void OnDoubleTapped(DoubleTappedRoutedEventArgs ev) {
-         using (new Tracer("OnDoubleTapped", () => string.Format("ev.Handled = " + ev.Handled))) {
+         using (new Tracer("OnDoubleTapped", () => "ev.Handled = " + ev.Handled)) {
             var rcCanvas = new Windows.Foundation.Rect(0, 0, _canvasVirtualControl.Width, _canvasVirtualControl.Height);
             if (rcCanvas.Contains(ev.GetPosition(_canvasVirtualControl))) {
                if (MosaicField.GameStatus == EGameStatus.eGSEnd) {
@@ -423,7 +423,7 @@ namespace fmg {
       }
 
       protected override void OnRightTapped(RightTappedRoutedEventArgs ev) {
-         using (new Tracer("OnRightTapped", () => string.Format("ev.Handled = " + ev.Handled))) {
+         using (new Tracer("OnRightTapped", () => "ev.Handled = " + ev.Handled)) {
             if (ev.PointerDeviceType == PointerDeviceType.Mouse)
                ev.Handled = _clickInfo.DownHandled || _clickInfo.UpHandled; // TODO: для избежания появления appBar'ов при установке '?'
             else if (!_manipulationStarted) {
@@ -445,7 +445,7 @@ namespace fmg {
       }
 
       protected override void OnPointerPressed(PointerRoutedEventArgs ev) {
-         using (new Tracer("OnPointerPressed", () => string.Format("ev.Handled = " + ev.Handled))) {
+         using (new Tracer("OnPointerPressed", () => "ev.Handled = " + ev.Handled)) {
 
             var pointerPoint = ev.GetCurrentPoint(this);
             //_clickInfo.PointerDevice = pointerPoint.PointerDevice.PointerDeviceType;
@@ -471,7 +471,7 @@ namespace fmg {
       }
 
       protected override void OnPointerReleased(PointerRoutedEventArgs ev) {
-         using (new Tracer("OnPointerReleased", "_manipulationStarted = " + _manipulationStarted, () => string.Format("ev.Handled = " + ev.Handled))) {
+         using (new Tracer("OnPointerReleased", "_manipulationStarted = " + _manipulationStarted, () => "ev.Handled = " + ev.Handled)) {
             var pointerPoint = ev.GetCurrentPoint(this);
             //if (_manipulationStarted)
             if (ev.Pointer.PointerDeviceType == PointerDeviceType.Mouse) {
@@ -491,7 +491,19 @@ namespace fmg {
             _clickInfo.UpHandled = ev.Handled;
             if (!ev.Handled)
                base.OnPointerReleased(ev);
+         }
+      }
 
+      protected override void OnPointerCaptureLost(PointerRoutedEventArgs ev) {
+         using (new Tracer("OnPointerCaptureLost", "_manipulationStarted = " + _manipulationStarted, () => "ev.Handled = " + ev.Handled)) {
+            if (!_clickInfo.Released) {
+               Logger.Put("ã OnPointerCaptureLost: forced left release click...");
+               var pointerPoint = ev.GetCurrentPoint(this);
+               OnClick(pointerPoint.Position, true, false);
+            }
+
+            if (!ev.Handled)
+               base.OnPointerCaptureLost(ev);
          }
       }
 
