@@ -283,16 +283,6 @@ namespace fmg {
          RecheckLocation();
       }
 
-      private void Mosaic_OnClick(ClickResult clickResult) {
-         _clickInfo.CellDown = clickResult.CellDown;
-         //_clickInfo.IsLeft = clickResult.IsLeft;
-         if (clickResult.IsDown)
-            _clickInfo.DownHandled = clickResult.IsAnyChanges;
-         else
-            _clickInfo.UpHandled = clickResult.IsAnyChanges;
-         _clickInfo.Released = !clickResult.IsDown;
-      }
-
       private void Mosaic_OnChangedGameStatus(Mosaic sender, PropertyChangedExEventArgs<EGameStatus> ev) { }
       private void Mosaic_OnChangedMinesCount(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
       private void Mosaic_OnChangedCountFlag(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
@@ -374,27 +364,33 @@ namespace fmg {
       }
 
       bool OnClick(Windows.Foundation.Point pos, bool leftClick, bool down) {
-         var point = ToCanvasPoint(pos);
 
+         Func<ClickResult, bool> clickHandler = clickResult => {
+            _clickInfo.CellDown = clickResult.CellDown;
+            //_clickInfo.IsLeft = clickResult.IsLeft;
+            var handled = clickResult.IsAnyChanges;
+            if (clickResult.IsDown)
+               _clickInfo.DownHandled = handled;
+            else
+               _clickInfo.UpHandled = handled;
+            _clickInfo.Released = !clickResult.IsDown;
+            return handled;
+         };
+
+         var point = ToCanvasPoint(pos);
 #if false // otherwise not work the long tapping (to setting flag label)
          if (point.X < 0 || point.Y < 0) {
-            Mosaic_OnClick(new ClickResult(null, leftClick, down));
-            return false;
+            return clickHandler(new ClickResult(null, leftClick, down));
          }
 
          var winSize = MosaicField.WindowSize;
          if (point.X > winSize.Width || point.Y > winSize.Height) {
-            Mosaic_OnClick(new ClickResult(null, leftClick, down));
-            return false;
+            return clickHandler(new ClickResult(null, leftClick, down));
          }
 #endif
-         var clickResult = down
-            ? MosaicField.MousePressed(point, leftClick)
-            : MosaicField.MouseReleased(point, leftClick);
-         Mosaic_OnClick(clickResult);
-         return down
-            ? _clickInfo.DownHandled
-            : _clickInfo.UpHandled;
+         return clickHandler(down
+               ? MosaicField.MousePressed(point, leftClick)
+               : MosaicField.MouseReleased(point, leftClick));
       }
 
       protected override void OnTapped(TappedRoutedEventArgs ev) {
