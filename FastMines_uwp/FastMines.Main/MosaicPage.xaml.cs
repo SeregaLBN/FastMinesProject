@@ -480,19 +480,19 @@ namespace fmg {
       }
 
       protected override void OnPointerReleased(PointerRoutedEventArgs ev) {
-         using (new Tracer("OnPointerReleased", "_manipulationStarted = " + _manipulationStarted, () => "ev.Handled = " + ev.Handled)) {
-            var pointerPoint = ev.GetCurrentPoint(this);
+         var currPoint = ev.GetCurrentPoint(this);
+         using (new Tracer("OnPointerReleased", string.Format($"_manipulationStarted={_manipulationStarted}, pointerId={currPoint.PointerId}"), () => "ev.Handled=" + ev.Handled)) {
             //if (_manipulationStarted)
             if (ev.Pointer.PointerDeviceType == PointerDeviceType.Mouse) {
-               var isLeftClick = (pointerPoint.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased);
-               var isRightClick = (pointerPoint.Properties.PointerUpdateKind == PointerUpdateKind.RightButtonReleased);
+               var isLeftClick = (currPoint.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased);
+               var isRightClick = (currPoint.Properties.PointerUpdateKind == PointerUpdateKind.RightButtonReleased);
                System.Diagnostics.Debug.Assert(isLeftClick != isRightClick);
-               ev.Handled = OnClick(pointerPoint.Position, isLeftClick, false);
+               ev.Handled = OnClick(currPoint.Position, isLeftClick, false);
             } else {
                AsyncRunner.InvokeFromUiLater(() => {
                   if (!_clickInfo.Released) {
                      Logger.Put("ã OnPointerReleased: forced left release click...");
-                     OnClick(pointerPoint.Position, true, false);
+                     OnClick(currPoint.Position, true, false);
                   }
                }, CoreDispatcherPriority.High);
             }
@@ -545,6 +545,51 @@ namespace fmg {
                   //tracer.Put("Right button: " + ptrPt.PointerId);
                   Logger.Put("  OnPointerMoved: Right button: " + ptrPt.PointerId);
                }
+            } else {
+               if (_manipulationStarted) {
+                  var currPoint = ev.GetCurrentPoint(null);
+                  var currProp = currPoint.Properties;
+                  if (/*currProp.IsPrimary && */currProp.IsLeftButtonPressed) {
+                     Action<PointerPoint> log = t => {
+                        var prop = t.Properties;
+                        Logger.Put($"  OnPointerMoved: point={{PointerId(frame)={t.PointerId}({t.FrameId}), "
+                           + $"IsInContact={t.IsInContact}, "
+                           + $"Position={t.Position.ToFmPointDouble()}, "
+                           //+ $"RawPosition={t.RawPosition.ToFmPointDouble()}, "
+                           + $"Properties={{ "
+                           + $"ContactRect={prop.ContactRect.ToFmRectDouble()}, "
+                           //+ $"ContactRectRaw={prop.ContactRectRaw.ToFmRectDouble()}, "
+                           //+ $"IsCanceled={prop.IsCanceled}, "
+                           //+ $"IsBarrelButtonPressed={prop.IsBarrelButtonPressed}, "
+                           //+ $"IsEraser={prop.IsEraser}, "
+                           //+ $"IsHorizontalMouseWheel={prop.IsHorizontalMouseWheel}, "
+                           //+ $"IsInRange={prop.IsInRange}, "
+                           //+ $"IsInverted={prop.IsInverted}, "
+                           //+ $"IsLeftButtonPressed={prop.IsLeftButtonPressed}, "
+                           //+ $"IsRightButtonPressed={prop.IsRightButtonPressed}, "
+                           //+ $"IsMiddleButtonPressed={prop.IsMiddleButtonPressed}, "
+                           + $"IsPrimary={prop.IsPrimary}, "
+                           //+ $"IsXButton1Pressed={prop.IsXButton1Pressed}, "
+                           //+ $"IsXButton2Pressed={prop.IsXButton2Pressed}, "
+                           //+ $"MouseWheelDelta={prop.MouseWheelDelta}, "
+                           //+ $"Orientation={prop.Orientation:0.00}, "
+                           //+ $"PointerUpdateKind={prop.PointerUpdateKind}, "
+                           //+ $"Pressure={prop.Pressure:0.00}, "
+                           //+ $"TouchConfidence={prop.TouchConfidence}, "
+                           //+ $"Twist={prop.Twist:0.00}, "
+                           //+ $"XTilt={prop.XTilt:0.00}, "
+                           //+ $"YTilt={prop.YTilt:0.00}, "
+                           //+ $"ZDistance={prop.ZDistance:0.00} "
+                           + $"}}, "
+                           + $"Timestamp={t.Timestamp}}}");
+                     };
+                     log(currPoint);
+                     //foreach (var p in ev.GetIntermediatePoints(null)) {
+                     //   log(p);
+                     //}
+                     //Logger.Put("  OnPointerMoved: ----------");
+                  }
+               }
             }
 
             if (!ev.Handled)
@@ -575,14 +620,15 @@ namespace fmg {
       }
 
       protected override void OnManipulationDelta(ManipulationDeltaRoutedEventArgs ev) {
-         using (var tracer = new Tracer("OnManipulationDelta", string.Format("Scale={0}; Expansion={1}, Rotation={2}", ev.Delta.Scale, ev.Delta.Expansion, ev.Delta.Rotation))) {
+         var delta = ev.Delta;
+         using (var tracer = new Tracer("OnManipulationDelta", string.Format($"pos={ev.Position}; Scale={delta.Scale}; Expansion={delta.Expansion}, Rotation={delta.Rotation}"))) {
             ev.Handled = true;
-            if (Math.Abs(1 - ev.Delta.Scale) > 0.009) {
+            if (Math.Abs(1 - delta.Scale) > 0.009) {
 #region scale / zoom
-               if (ev.Delta.Scale > 0)
-                  AreaInc(ev.Delta.Scale, ev.Position);
+               if (delta.Scale > 0)
+                  AreaInc(delta.Scale, ev.Position);
                else
-                  AreaDec(2 + ev.Delta.Scale, ev.Position);
+                  AreaDec(2 + delta.Scale, ev.Position);
 #endregion
             } else {
 #region drag
@@ -596,16 +642,16 @@ namespace fmg {
                   //var inCellRegion = _tmpClickedCell.PointInRegion(noMarginPoint.ToFmRect());
                   //this._contentRoot.Background = new SolidColorBrush(inCellRegion ? Colors.Aquamarine : Colors.DeepPink);
                   var rcOuter = _clickInfo.CellDown.getRcOuter();
-                  var delta = Math.Min(sizePage.Width/20, sizePage.Height/20);
-                  rcOuter.MoveXY(-delta, -delta);
-                  rcOuter.Width  += delta*2;
-                  rcOuter.Height += delta*2;
+                  var min = Math.Min(sizePage.Width/20, sizePage.Height/20);
+                  rcOuter.MoveXY(-min, -min);
+                  rcOuter.Width  += min*2;
+                  rcOuter.Height += min*2;
                   needDrag = !rcOuter.Contains(noMarginPoint);
                }
 #endregion
 
                if (needDrag) {
-                  var deltaTrans = ev.Delta.Translation;
+                  var deltaTrans = delta.Translation;
                   var applyDelta = true;
 #region Compound motion
                   if (_turnX)
