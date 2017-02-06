@@ -291,7 +291,7 @@ namespace fmg {
       private void Mosaic_OnChangedCountClick(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
       private void Mosaic_OnChangedArea(Mosaic sender, PropertyChangedExEventArgs<double> ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField));
-         using (var tracer = new Tracer()) {
+         using (var tracer = new Tracer("Mosaic_OnChangedArea", string.Format("newArea={0:0.00}", ev.NewValue))) {
             //ChangeSizeImagesMineFlag();
 
             if (_mouseDevicePosition_AreaChanging.HasValue) {
@@ -367,7 +367,7 @@ namespace fmg {
 
          Func<ClickResult, bool> clickHandler = clickResult => {
             _clickInfo.CellDown = clickResult.CellDown;
-            //_clickInfo.IsLeft = clickResult.IsLeft;
+            _clickInfo.IsLeft = clickResult.IsLeft;
             var handled = clickResult.IsAnyChanges;
             if (clickResult.IsDown)
                _clickInfo.DownHandled = handled;
@@ -445,7 +445,7 @@ namespace fmg {
       }
 
       protected override void OnPointerPressed(PointerRoutedEventArgs ev) {
-         using (new Tracer("OnPointerPressed", () => "ev.Handled = " + ev.Handled)) {
+         using (new Tracer("OnPointerPressed", () => "ev.Handled = " + ev.Handled)) {  
 
             var pointerPoint = ev.GetCurrentPoint(this);
             //_clickInfo.PointerDevice = pointerPoint.PointerDevice.PointerDeviceType;
@@ -460,13 +460,22 @@ namespace fmg {
                }
             }
 
+            if (_manipulationStarted) {
+               // touch two-finger
+               if (!_clickInfo.Released) {
+                  // release of the first finger touch
+                  Logger.Put("ã OnPointerPressed: forced release of the first finger click...");
+                  OnClick(new Windows.Foundation.Point(-1, -1), _clickInfo.IsLeft, false);
+               }
+               ev.Handled = true;
+            }
+
             if (!ev.Handled)
                ev.Handled = OnClick(pointerPoint.Position, props.IsLeftButtonPressed, true);
 
             _clickInfo.DownHandled = ev.Handled;
             if (!ev.Handled)
                base.OnPointerPressed(ev);
-
          }
       }
 
@@ -506,6 +515,43 @@ namespace fmg {
                base.OnPointerCaptureLost(ev);
          }
       }
+
+#if DEBUG
+      protected override void OnPointerMoved(PointerRoutedEventArgs ev) {
+         //using (var tracer = new Tracer("OnPointerMoved", () => "ev.Handled = " + ev.Handled))
+         {
+            Pointer ptr = ev.Pointer;
+
+            // Multiple, simultaneous mouse button inputs are processed here.
+            // Mouse input is associated with a single pointer assigned when mouse input is first detected. 
+            // Clicking additional mouse buttons (left, wheel, or right) during the interaction creates secondary
+            // associations between those buttons and the pointer through the pointer pressed event. 
+            // The pointer released event is fired only when the last mouse button  associated with the
+            // interaction (not necessarily the initial button) is released. 
+            // Because of this exclusive association, other mouse button clicks are routed through the pointer move event.
+            if (ptr.PointerDeviceType == PointerDeviceType.Mouse) {
+               // To get mouse state, we need extended pointer details.
+               // We get the pointer info through the getCurrentPoint method of the event argument.
+               PointerPoint ptrPt = ev.GetCurrentPoint(null);
+               if (ptrPt.Properties.IsLeftButtonPressed) {
+                  //tracer.Put("Left button: " + ptrPt.PointerId);
+                  Logger.Put("  OnPointerMoved: Left button: " + ptrPt.PointerId);
+               }
+               if (ptrPt.Properties.IsMiddleButtonPressed) {
+                  //tracer.Put("Wheel button: " + ptrPt.PointerId);
+                  Logger.Put("  OnPointerMoved: Wheel button: " + ptrPt.PointerId);
+               }
+               if (ptrPt.Properties.IsRightButtonPressed) {
+                  //tracer.Put("Right button: " + ptrPt.PointerId);
+                  Logger.Put("  OnPointerMoved: Right button: " + ptrPt.PointerId);
+               }
+            }
+
+            if (!ev.Handled)
+               base.OnPointerMoved(ev);
+         }
+      }
+#endif
 
       protected override void OnManipulationStarting(ManipulationStartingRoutedEventArgs ev) {
          using (new Tracer()) {
@@ -757,7 +803,7 @@ namespace fmg {
 
    class ClickInfo {
       public BaseCell CellDown { get; set; }
-      //public bool IsLeft { get; set; }
+      public bool IsLeft { get; set; }
       /// <summary> pressed or released </summary>
       public bool Released { get; set; }
       public bool DownHandled { get; set; }
