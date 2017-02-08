@@ -291,7 +291,7 @@ namespace fmg {
       private void Mosaic_OnChangedCountClick(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
       private void Mosaic_OnChangedArea(Mosaic sender, PropertyChangedExEventArgs<double> ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField));
-         using (var tracer = new Tracer("Mosaic_OnChangedArea", string.Format("newArea={0:0.00}", ev.NewValue))) {
+         using (var tracer = new Tracer("Mosaic_OnChangedArea", string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {
             //ChangeSizeImagesMineFlag();
 
             if (_mouseDevicePosition_AreaChanging.HasValue) {
@@ -301,16 +301,16 @@ namespace fmg {
                var newWinSize = MosaicField.WindowSize;
 
                // точка над игровым полем со старой площадью ячеек
-               var point = ToCanvasPoint(devicePos);
-               var percent = new Tuple<double, double>(point.X*100/oldWinSize.Width, point.Y*100/oldWinSize.Height);
+               var pointOld = ToCanvasPoint(devicePos);
+               var percent = new Tuple<double, double>(pointOld.X * 100 / oldWinSize.Width, pointOld.Y * 100 / oldWinSize.Height);
 
                // таже точка над игровым полем, но с учётом zoom'а (новой площади)
-               point = new PointDouble(newWinSize.Width*percent.Item1/100, newWinSize.Height*percent.Item2/100);
+               var pointNew = new PointDouble(newWinSize.Width * percent.Item1 / 100, newWinSize.Height * percent.Item2 / 100);
 
                var o = GetOffset();
                // смещаю игровое поле так, чтобы точка была на том же месте экрана
-               o.Left = devicePos.X - point.X;
-               o.Top = devicePos.Y - point.Y;
+               o.Left += pointOld.X - pointNew.X;
+               o.Top  += pointOld.Y - pointNew.Y;
 
                RecheckOffset(ref o, newWinSize);
                ApplyOffset(o);
@@ -583,7 +583,7 @@ namespace fmg {
                            + $"}}, "
                            + $"Timestamp={t.Timestamp}}}");
                      };
-                     log(currPoint);
+                     //log(currPoint);
                      //foreach (var p in ev.GetIntermediatePoints(null)) {
                      //   log(p);
                      //}
@@ -832,6 +832,15 @@ namespace fmg {
          foreach (var region in invalidatedRegions) {
             using (var ds = sender.CreateDrawingSession(region)) {
                MosaicField.Repaint(ds, region);
+
+#if DEBUG
+               if (_mouseDevicePosition_AreaChanging.HasValue) {
+                  var p = ToCanvasPoint(_mouseDevicePosition_AreaChanging.Value);
+                  if (region.Contains(p.ToWinPoint())) {
+                     ds.DrawEllipse(new System.Numerics.Vector2((float)p.X, (float)p.Y), 3, 3, Windows.UI.Colors.Red, 2);
+                  }
+               }
+#endif
             }
          }
       }
