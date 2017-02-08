@@ -8,10 +8,11 @@ using fmg.data.view.draw;
 
 namespace fmg.core.mosaic.draw {
 
-   public static class PaintContextCommon {
+   /// <summary> Common draw information </summary>
+   public class PaintContextCommon {
 
-      /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется классом наследником <see cref="PaintContext{TImage}"/>. </summary>
-      public static Color DefaultBackgroundColor { get; set; } = Color.Gray;
+      /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется классом наследником. </summary>
+      public static Color DefaultBackgroundColor { get; protected set; } = Color.Gray;
 
    }
 

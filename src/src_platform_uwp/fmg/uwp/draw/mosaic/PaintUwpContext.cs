@@ -17,8 +17,14 @@ namespace fmg.uwp.draw.mosaic {
          base(iconicMode)
       {
       }
+   }
 
-      static PaintUwpContext() {
+   public class PaintUwpContextCommon : PaintContextCommon {
+
+      public static new Color DefaultBackgroundColor => PaintContextCommon.DefaultBackgroundColor;
+
+      /// <summary> Init PaintContextCommon members </summary>
+      static PaintUwpContextCommon() {
          try {
             var uiSettings = new UISettings();
 
@@ -30,8 +36,9 @@ namespace fmg.uwp.draw.mosaic {
             } catch (ArgumentException) {
                try {
                   // mobile
-                  clr = uiSettings.UIElementColor(1000 + UIElementType.ButtonFace).ToFmColor();
-                  //clr = uiSettings.UIElementColor(1000 + UIElementType.Window).ToFmColor();
+                  const int magic = 1000;
+                  clr = uiSettings.UIElementColor(magic + UIElementType.ButtonFace).ToFmColor();
+                  //clr = uiSettings.UIElementColor(magic + UIElementType.Window).ToFmColor();
                } catch (Exception) {
                   clr = Color.Gray; // wtf??
                }
@@ -39,6 +46,7 @@ namespace fmg.uwp.draw.mosaic {
             PaintContextCommon.DefaultBackgroundColor = clr;
          } catch (Exception ex) {
             System.Diagnostics.Debug.WriteLine(ex.Message);
+            System.Diagnostics.Debug.Assert(false, ex.Message);
          }
       }
 

@@ -3,7 +3,7 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.img;
-using fmg.core.mosaic.draw;
+using fmg.uwp.draw.mosaic;
 using MosaicsGroupCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsGroupImg.CanvasBmp;
 using fmg.DataModel.Items;
 
@@ -50,7 +50,7 @@ namespace fmg.DataModel.DataSources
             img.PolarLights = selected;
             img.Rotate = selected;
             img.BorderColor = selected ? Color.Red : Color.Green;
-            img.BackgroundColor = selected ? StaticImgConsts.DefaultBkColor : PaintContextCommon.DefaultBackgroundColor;
+            img.BackgroundColor = selected ? StaticImgConsts.DefaultBkColor : PaintUwpContextCommon.DefaultBackgroundColor;
             img.Padding = new Bound(selected ? 5 : 15);
             if (!selected)
                img.ForegroundColor = StaticImgConsts.DefaultForegroundColor;

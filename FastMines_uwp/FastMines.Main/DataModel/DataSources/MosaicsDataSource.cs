@@ -4,7 +4,6 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.img;
-using fmg.core.mosaic.draw;
 using fmg.data.controller.types;
 using fmg.uwp.draw.mosaic;
 using MosaicsCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsImg.CanvasBmp;
@@ -84,7 +83,7 @@ namespace fmg.DataModel.DataSources {
             Image = {
                   BorderWidth = 1,
                   BorderColor = Color.Black,
-                  BackgroundColor = PaintContextCommon.DefaultBackgroundColor,
+                  BackgroundColor = PaintUwpContextCommon.DefaultBackgroundColor,
                   Padding = new Bound(15),
                   RedrawInterval = 5,
                   RotateAngleDelta = 3.37
@@ -102,7 +101,7 @@ namespace fmg.DataModel.DataSources {
             var img = mi.Image;
             img.Rotate = selected;
             img.BorderColor = selected ? Color.White : Color.Black;
-            img.BackgroundColor = selected ? StaticImgConsts.DefaultBkColor : PaintContextCommon.DefaultBackgroundColor;
+            img.BackgroundColor = selected ? StaticImgConsts.DefaultBkColor : PaintUwpContextCommon.DefaultBackgroundColor;
             img.Padding = new Bound(img.Size.Width *(selected ? 10 : 5) /*/(mi.SkillLevel.Ordinal() + 1)*//100);
             img.RotateAngle = 0;
          }
