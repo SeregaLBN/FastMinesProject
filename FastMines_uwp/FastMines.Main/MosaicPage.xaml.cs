@@ -151,12 +151,16 @@ namespace fmg {
       /// <returns>макс площадь ячейки</returns>
       private double CalcMaxArea(Matrisize mosaicSizeField) {
          // TODO на самом деле узнаю размер площади ячеек мозаики, для размера поля мозаики 3x3
+         if (_maxArea.HasValue)
+            return _maxArea.Value;
          mosaicSizeField = new Matrisize(3, 3);
          var sizeMosaic = CalcMosaicWindowSize(ScreenResolutionHelper.GetDesktopSize());
          double area = MosaicHelper.FindAreaBySize(MosaicField.MosaicType, mosaicSizeField, ref sizeMosaic);
          //System.Diagnostics.Debug.WriteLine("Main.CalcMaxArea: area="+area);
+         _maxArea = area; // caching value
          return area;
       }
+      double? _maxArea; // cached value
 
       /// <summary> узнаю max размер поля мозаики, при котором окно проекта вмещается в текущее разрешение экрана </summary>
       /// <param name="area">интересуемая площадь ячеек мозаики</param>
@@ -183,7 +187,7 @@ namespace fmg {
             return MosaicField.Area;
          }
          set {
-            //value = Math.Min(value, CalcMaxArea(MosaicField.SizeField)); // recheck
+            value = Math.Min(value, CalcMaxArea(MosaicField.SizeField)); // recheck
             MosaicField.Area = value;
          }
       }
@@ -346,7 +350,7 @@ namespace fmg {
 //#endif
 
       protected override void OnPointerWheelChanged(PointerRoutedEventArgs ev) {
-         //using (new Tracer("OnPointerWheelChanged")) {
+         //using (new Tracer()) {
          var wheelDelta = ev.GetCurrentPoint(this).Properties.MouseWheelDelta;
          if (!_baseWheelDelta.HasValue)
             _baseWheelDelta = Math.Abs(wheelDelta);
@@ -394,7 +398,7 @@ namespace fmg {
       }
 
       protected override void OnTapped(TappedRoutedEventArgs ev) {
-         using (new Tracer("OnTapped", () => "ev.Handled = " + ev.Handled)) {
+         using (new Tracer(GetCallerName(), () => "ev.Handled = " + ev.Handled)) {
             //if (!_manipulationStarted) {
             if (ev.PointerDeviceType != PointerDeviceType.Mouse) {
                ev.Handled = OnClick(ev.GetPosition(this), true, false);
@@ -405,7 +409,7 @@ namespace fmg {
       }
 
       protected override void OnDoubleTapped(DoubleTappedRoutedEventArgs ev) {
-         using (new Tracer("OnDoubleTapped", () => "ev.Handled = " + ev.Handled)) {
+         using (new Tracer(GetCallerName(), () => "ev.Handled = " + ev.Handled)) {
             var rcCanvas = new Windows.Foundation.Rect(0, 0, _canvasVirtualControl.Width, _canvasVirtualControl.Height);
             if (rcCanvas.Contains(ev.GetPosition(_canvasVirtualControl))) {
                if (MosaicField.GameStatus == EGameStatus.eGSEnd) {
@@ -423,7 +427,7 @@ namespace fmg {
       }
 
       protected override void OnRightTapped(RightTappedRoutedEventArgs ev) {
-         using (new Tracer("OnRightTapped", () => "ev.Handled = " + ev.Handled)) {
+         using (new Tracer(GetCallerName(), () => "ev.Handled = " + ev.Handled)) {
             if (ev.PointerDeviceType == PointerDeviceType.Mouse)
                ev.Handled = _clickInfo.DownHandled || _clickInfo.UpHandled; // TODO: для избежания появления appBar'ов при установке '?'
             else if (!_manipulationStarted) {
@@ -445,9 +449,9 @@ namespace fmg {
       }
 
       protected override void OnPointerPressed(PointerRoutedEventArgs ev) {
-         using (new Tracer("OnPointerPressed", () => "ev.Handled = " + ev.Handled)) {  
+         var pointerPoint = ev.GetCurrentPoint(this);
+         using (new Tracer(GetCallerName(), "pointerId=" + pointerPoint.PointerId, () => "ev.Handled = " + ev.Handled)) {  
 
-            var pointerPoint = ev.GetCurrentPoint(this);
             //_clickInfo.PointerDevice = pointerPoint.PointerDevice.PointerDeviceType;
             var props = pointerPoint.Properties;
             // Ignore button chords with the left, right, and middle buttons
@@ -481,7 +485,7 @@ namespace fmg {
 
       protected override void OnPointerReleased(PointerRoutedEventArgs ev) {
          var currPoint = ev.GetCurrentPoint(this);
-         using (new Tracer("OnPointerReleased", string.Format($"_manipulationStarted={_manipulationStarted}, pointerId={currPoint.PointerId}"), () => "ev.Handled=" + ev.Handled)) {
+         using (new Tracer(GetCallerName(), string.Format($"_manipulationStarted={_manipulationStarted}, pointerId={currPoint.PointerId}"), () => "ev.Handled=" + ev.Handled)) {
             //if (_manipulationStarted)
             if (ev.Pointer.PointerDeviceType == PointerDeviceType.Mouse) {
                var isLeftClick = (currPoint.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased);
@@ -504,7 +508,7 @@ namespace fmg {
       }
 
       protected override void OnPointerCaptureLost(PointerRoutedEventArgs ev) {
-         using (new Tracer("OnPointerCaptureLost", "_manipulationStarted = " + _manipulationStarted, () => "ev.Handled = " + ev.Handled)) {
+         using (new Tracer(GetCallerName(), "_manipulationStarted = " + _manipulationStarted, () => "ev.Handled = " + ev.Handled)) {
             if (!_clickInfo.Released) {
                Logger.Put("ã OnPointerCaptureLost: forced left release click...");
                var pointerPoint = ev.GetCurrentPoint(this);
@@ -518,7 +522,7 @@ namespace fmg {
 
 #if DEBUG
       protected override void OnPointerMoved(PointerRoutedEventArgs ev) {
-         //using (var tracer = new Tracer("OnPointerMoved", () => "ev.Handled = " + ev.Handled))
+         //using (var tracer = new Tracer(GetCallerName(), () => "ev.Handled = " + ev.Handled))
          {
             Pointer ptr = ev.Pointer;
 
@@ -621,7 +625,7 @@ namespace fmg {
 
       protected override void OnManipulationDelta(ManipulationDeltaRoutedEventArgs ev) {
          var delta = ev.Delta;
-         using (var tracer = new Tracer("OnManipulationDelta", string.Format($"pos={ev.Position}; Scale={delta.Scale}; Expansion={delta.Expansion}, Rotation={delta.Rotation}"))) {
+         using (var tracer = new Tracer(GetCallerName(), string.Format($"pos={ev.Position}; Scale={delta.Scale}; Expansion={delta.Expansion}, Rotation={delta.Rotation}"))) {
             ev.Handled = true;
             if (Math.Abs(1 - delta.Scale) > 0.009) {
 #region scale / zoom
@@ -722,10 +726,10 @@ namespace fmg {
 #endif
          //var pnt2 = ContentRoot.TransformToVisual(Mosaic.Container).TransformPoint(ev.Position);
          //var content = Window.Current.Content;
-         using (new Tracer("OnManipulationCompleted", $"Pos=[{ev.Position} / {pnt1}]; " +
-                                                      $"Container=[" +
-                                                         $"{((ev.Container == null) ? "null" : ev.Container.GetType().ToString())}" +
-                                                      $"]; Cumulative.Translation=[{ev.Cumulative.Translation}]"))
+         using (new Tracer(GetCallerName(), $"Pos=[{ev.Position} / {pnt1}]; " +
+                                            $"Container=[" +
+                                            $"{((ev.Container == null) ? "null" : ev.Container.GetType().ToString())}" +
+                                            $"]; Cumulative.Translation=[{ev.Cumulative.Translation}]"))
          {
             //e.Handled = true;
             base.OnManipulationCompleted(ev);
@@ -733,13 +737,13 @@ namespace fmg {
          }
       }
       protected override void OnKeyUp(KeyRoutedEventArgs ev) {
-         using (new Tracer("OnKeyUp", "virtKey=" + ev.Key)) {
+         using (new Tracer(GetCallerName(), "virtKey=" + ev.Key)) {
             base.OnKeyUp(ev);
          }
       }
 
       private void OnKeyUp_CoreWindow(CoreWindow win, KeyEventArgs ev) {
-         //using (new Tracer("OnKeyUp_CoreWindow", "virtKey=" + ev.Key)) {
+         //using (new Tracer(GetCallerName(), "virtKey=" + ev.Key)) {
          ev.Handled = true;
          switch (ev.VirtualKey) {
             case VirtualKey.F2:
@@ -854,6 +858,7 @@ namespace fmg {
          return point;
       }
 
+      static string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) { return callerName; }
    }
 
    class ClickInfo {
