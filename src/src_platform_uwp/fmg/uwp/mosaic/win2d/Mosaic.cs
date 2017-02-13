@@ -180,10 +180,11 @@ namespace fmg.uwp.mosaic.win2d {
       }
 
       public ClickResult MouseFocusLost() {
-         using (new Tracer("Mosaic::MouseFocusLost")) {
-            if (CellDown == null)
-               return null;
-            return CellDown.State.Down
+         if (CellDown == null)
+            return null;
+         bool isLeft = CellDown.State.Down; // hint: State.Down used only for the left click
+         using (new Tracer("Mosaic::MouseFocusLost", string.Format("CellDown.Coord={0}; isLeft={1}", CellDown.getCoord(), isLeft))) {
+            return isLeft
                ? OnLeftButtonUp(null)
                : OnRightButtonUp(null);
          }

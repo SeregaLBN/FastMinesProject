@@ -367,20 +367,25 @@ namespace fmg {
          //}
       }
 
+      bool ClickHandler(ClickResult clickResult) {
+         if (clickResult == null)
+            return false;
+         _clickInfo.CellDown = clickResult.CellDown;
+         _clickInfo.IsLeft = clickResult.IsLeft;
+         var handled = clickResult.IsAnyChanges;
+         if (clickResult.IsDown)
+            _clickInfo.DownHandled = handled;
+         else
+            _clickInfo.UpHandled = handled;
+         _clickInfo.Released = !clickResult.IsDown;
+         return handled;
+      }
+
+      bool OnClickLost() {
+         return ClickHandler(MosaicField.MouseFocusLost());
+      }
+
       bool OnClick(Windows.Foundation.Point pos, bool leftClick, bool down) {
-
-         Func<ClickResult, bool> clickHandler = clickResult => {
-            _clickInfo.CellDown = clickResult.CellDown;
-            _clickInfo.IsLeft = clickResult.IsLeft;
-            var handled = clickResult.IsAnyChanges;
-            if (clickResult.IsDown)
-               _clickInfo.DownHandled = handled;
-            else
-               _clickInfo.UpHandled = handled;
-            _clickInfo.Released = !clickResult.IsDown;
-            return handled;
-         };
-
          var point = ToCanvasPoint(pos);
 #if false // otherwise not work the long tapping (to setting flag label)
          if (point.X < 0 || point.Y < 0) {
@@ -392,7 +397,7 @@ namespace fmg {
             return clickHandler(new ClickResult(null, leftClick, down));
          }
 #endif
-         return clickHandler(down
+         return ClickHandler(down
                ? MosaicField.MousePressed(point, leftClick)
                : MosaicField.MouseReleased(point, leftClick));
       }
@@ -449,11 +454,11 @@ namespace fmg {
       }
 
       protected override void OnPointerPressed(PointerRoutedEventArgs ev) {
-         var pointerPoint = ev.GetCurrentPoint(this);
-         using (new Tracer(GetCallerName(), "pointerId=" + pointerPoint.PointerId, () => "ev.Handled = " + ev.Handled)) {  
+         var currPoint = ev.GetCurrentPoint(this);
+         using (new Tracer(GetCallerName(), "pointerId=" + currPoint.PointerId, () => "ev.Handled = " + ev.Handled)) {
 
             //_clickInfo.PointerDevice = pointerPoint.PointerDevice.PointerDeviceType;
-            var props = pointerPoint.Properties;
+            var props = currPoint.Properties;
             // Ignore button chords with the left, right, and middle buttons
             if (!props.IsLeftButtonPressed && !props.IsRightButtonPressed && !props.IsMiddleButtonPressed) {
                // If back or foward are pressed (but not both) navigate appropriately
@@ -464,18 +469,14 @@ namespace fmg {
                }
             }
 
-            if (_manipulationStarted) {
-               // touch two-finger
-               if (!_clickInfo.Released) {
-                  // release of the first finger touch
-                  Logger.Put("ã OnPointerPressed: forced release of the first finger click...");
-                  OnClick(new Windows.Foundation.Point(-1, -1), _clickInfo.IsLeft, false);
-               }
-               ev.Handled = true;
-            }
+            ev.Handled = OnClickLost(); // Protection from the two-finger click.
+            //if (_manipulationStarted) {
+            //   // touch two-finger
+            //   OnClickLost(); // Protection from the two-finger click.
+            //}
 
             if (!ev.Handled)
-               ev.Handled = OnClick(pointerPoint.Position, props.IsLeftButtonPressed, true);
+               ev.Handled = OnClick(currPoint.Position, props.IsLeftButtonPressed, true);
 
             _clickInfo.DownHandled = ev.Handled;
             if (!ev.Handled)
@@ -485,7 +486,7 @@ namespace fmg {
 
       protected override void OnPointerReleased(PointerRoutedEventArgs ev) {
          var currPoint = ev.GetCurrentPoint(this);
-         using (new Tracer(GetCallerName(), string.Format($"_manipulationStarted={_manipulationStarted}, pointerId={currPoint.PointerId}"), () => "ev.Handled=" + ev.Handled)) {
+         using (new Tracer(GetCallerName(), string.Format($"pointerId={currPoint.PointerId}, _manipulationStarted={_manipulationStarted}"), () => "ev.Handled=" + ev.Handled)) {
             //if (_manipulationStarted)
             if (ev.Pointer.PointerDeviceType == PointerDeviceType.Mouse) {
                var isLeftClick = (currPoint.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased);
@@ -508,11 +509,11 @@ namespace fmg {
       }
 
       protected override void OnPointerCaptureLost(PointerRoutedEventArgs ev) {
-         using (new Tracer(GetCallerName(), "_manipulationStarted = " + _manipulationStarted, () => "ev.Handled = " + ev.Handled)) {
+         var currPoint = ev.GetCurrentPoint(this);
+         using (new Tracer(GetCallerName(), string.Format($"pointerId={currPoint.PointerId}, _manipulationStarted={_manipulationStarted}"), () => "ev.Handled=" + ev.Handled)) {
             if (!_clickInfo.Released) {
                Logger.Put("ã OnPointerCaptureLost: forced left release click...");
-               var pointerPoint = ev.GetCurrentPoint(this);
-               OnClick(pointerPoint.Position, true, false);
+               OnClick(currPoint.Position, true, false);
             }
 
             if (!ev.Handled)
@@ -731,9 +732,9 @@ namespace fmg {
                                             $"{((ev.Container == null) ? "null" : ev.Container.GetType().ToString())}" +
                                             $"]; Cumulative.Translation=[{ev.Cumulative.Translation}]"))
          {
-            //e.Handled = true;
+            //ev.Handled = true;
             base.OnManipulationCompleted(ev);
-            MosaicField.MouseFocusLost();
+            OnClickLost();
          }
       }
       protected override void OnKeyUp(KeyRoutedEventArgs ev) {
