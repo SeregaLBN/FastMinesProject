@@ -71,7 +71,7 @@ public enum EMosaic {
    private EMosaic(int index) {
       this.index = index;
    }
-   
+
    public static EMosaic fromOrdinal(int ordinal) {
       if ((ordinal < 0) || (ordinal >= EMosaic.values().length))
          throw new IndexOutOfBoundsException("Invalid ordinal");
