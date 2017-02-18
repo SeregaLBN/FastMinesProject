@@ -126,13 +126,15 @@ namespace fmg.core.mosaic {
       public EMosaic MosaicType {
          get { return _mosaicType; }
          set {
-            if (!SetProperty(ref _mosaicType, value))
+            if (_mosaicType == value)
                return;
 
             var saveArea = Area; // save
-            CellAttr = null; // lost area
 
+            CellAttr = null; //  // clean BaseCell.BaseAttribute before changing _mosaicType
             _matrix.Clear();
+
+            SetProperty(ref _mosaicType, value);
             OnSelfPropertyChanged(nameof(this.Matrix));
 
             Area = saveArea; // restore

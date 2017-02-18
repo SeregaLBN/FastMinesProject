@@ -153,13 +153,13 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       if (old == newMosaicType)
          return;
 
+      double saveArea = getArea(); // save
+
+      setCellAttr(null); // clean BaseCell.BaseAttribute before changing _mosaicType
+      _matrix.clear();
+
       this._mosaicType = newMosaicType;
       onSelfPropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
-
-      double saveArea = getArea(); // save
-      setCellAttr(null); // lost area
-
-      _matrix.clear();
       onSelfPropertyChanged("Matrix");
 
       setArea(saveArea); // restore
