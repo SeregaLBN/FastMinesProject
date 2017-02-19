@@ -20,7 +20,7 @@ using fmg.data.controller.types;
 using fmg.uwp.mosaic;
 using fmg.uwp.mosaic.xaml;
 using fmg.uwp.utils;
-using fmg.uwp.draw.img.wbmp;
+using fmg.uwp.draw.mosaic;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace FastMines {
@@ -84,6 +84,8 @@ namespace FastMines {
          MosaicField.SizeField = initParam.SizeField;
          MosaicField.MosaicType = initParam.MosaicTypes;
          MosaicField.MinesCount = initParam.MinesCount;
+
+         MosaicField.PaintContext.BackgroundColor = PaintUwpContextCommon.DefaultBackgroundColor;
 
          // if () // TODO: check if no tablet
          {
