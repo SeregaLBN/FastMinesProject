@@ -73,6 +73,10 @@ public final class ImgUtils {
        if (ico instanceof ImageIcon)
            return ((ImageIcon) ico).getImage();
 
+      //GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+      //GraphicsDevice gd = ge.getDefaultScreenDevice();
+      //GraphicsConfiguration gc = gd.getDefaultConfiguration();
+      //BufferedImage img = gc.createCompatibleImage(ico.getIconWidth(), ico.getIconHeight());
         BufferedImage img = new BufferedImage(ico.getIconWidth(), ico.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = img.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
