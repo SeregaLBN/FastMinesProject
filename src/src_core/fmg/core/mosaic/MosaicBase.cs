@@ -267,8 +267,8 @@ namespace fmg.core.mosaic {
          }
       }
 
-      /// <summary>перерисовать ячейку; если null - перерисовать всё поле </summary>
-      protected abstract void Repaint(BaseCell cell);
+      /// <summary>перерисовать ячейки; если null - перерисовать всё поле </summary>
+      protected abstract void Repaint(IList<BaseCell> needRepaint);
    
       /// <summary>Начать игру, т.к. произошёл первый клик на поле</summary>
       protected virtual void GameBegin(BaseCell firstClickCell) {
@@ -288,8 +288,9 @@ namespace fmg.core.mosaic {
       /// <summary>Завершить игру</summary>
       private void GameEnd(bool victory) {
          if (GameStatus == EGameStatus.eGSEnd)
-   return;
+            return;
 
+         var toRepaint = new List<BaseCell>();
          // открыть оставшeеся
          foreach (var cell in Matrix)
             if (cell.State.Status == EState._Close) {
@@ -301,15 +302,19 @@ namespace fmg.core.mosaic {
                      cell.State.Status = EState._Open;
                      cell.State.Down = true;
                   }
+                  toRepaint.Add(cell);
                } else {
                   if ((cell.State.Open != EOpen._Mine) ||
                      (cell.State.Close != EClose._Flag))
                   {
                      cell.State.Status = EState._Open;
+                     toRepaint.Add(cell);
                   }
                }
-               Repaint(cell);
             }
+
+         if (toRepaint.Any())
+            Repaint(toRepaint);
 
          GameStatus = EGameStatus.eGSEnd;
          OnSelfPropertyChanged(nameof(this.CountMinesLeft));
@@ -358,14 +363,12 @@ namespace fmg.core.mosaic {
                   MinesCount = MinesCount - 1;
                   RepositoryMines.Remove(cellLeftDown.getCoord());
                }
-               Repaint(cellLeftDown);
                result.Modified.Add(cellLeftDown);
             } else {
                var resultCell = cellLeftDown.LButtonDown(this);
                result.Modified = resultCell.Modified; // copy reference; TODO result.Modified.AddRange(resultCell.Modified);
-               foreach (var cellMod in result.Modified)
-                  Repaint(cellMod);
             }
+            Repaint(result.Modified);
             return result;
          }
       }
@@ -390,8 +393,6 @@ namespace fmg.core.mosaic {
             var resultCell = cellDown.LButtonUp(ReferenceEquals(cellDown, cellLeftUp), this);
             result.Modified = resultCell.Modified; // copy reference; TODO result.Modified.AddRange(resultCell.Modified);
             tracer.Put(" result.Modified=" + result.Modified.Count);
-            foreach (var cellMod in result.Modified)
-               Repaint(cellMod);
             var countOpen = result.CountOpen;
             var countFlag = result.CountFlag;
             var countUnknown = result.CountUnknown;
@@ -418,6 +419,7 @@ namespace fmg.core.mosaic {
                   VerifyFlag();
                }
             }
+            Repaint(result.Modified);
             return result;
          } finally {
             CellDown = null;
@@ -443,8 +445,6 @@ namespace fmg.core.mosaic {
             CellDown = cellRightDown;
             var resultCell = cellRightDown.RButtonDown(cellRightDown.State.Close.NextState(UseUnknown));
             result.Modified = resultCell.Modified; // copy reference; TODO result.Modified.AddRange(resultCell.Modified);
-            foreach (var cellMod in result.Modified)
-               Repaint(cellMod);
 
             var countFlag = result.CountFlag;
             var countUnknown = result.CountUnknown;
@@ -462,6 +462,7 @@ namespace fmg.core.mosaic {
                //...
             }
             tracer.Put("any=" + any);
+            Repaint(result.Modified);
             return result;
          }
       }

@@ -85,11 +85,12 @@ namespace fmg.uwp.mosaic.xaml {
 
       private IDictionary<BaseCell, PaintableShapes> XamlBinder => _xamlBinder ?? (_xamlBinder = new Dictionary<BaseCell, PaintableShapes>());
 
-      protected override void Repaint(BaseCell cell) {
-         if (cell == null)
+      protected override void Repaint(IList<BaseCell> needRepaint) {
+         if (needRepaint == null)
             Repaint();
          else
-            CellPaint.Paint(cell, XamlBinder[cell], PaintContext);
+            foreach (var cell in needRepaint)
+               CellPaint.Paint(cell, XamlBinder[cell], PaintContext);
       }
 
       private bool _alreadyPainted;

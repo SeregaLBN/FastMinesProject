@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.ComponentModel;
+using System.Collections.Generic;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
@@ -83,39 +84,67 @@ namespace fmg.uwp.mosaic.win2d {
       public override ICellPaint<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> CellPaint => CellPaintFigures;
       protected CellPaintWin2D CellPaintFigures => _cellPaint ?? (_cellPaint = new CellPaintWin2D());
 
-      public void Repaint() { Repaint((BaseCell)null); }
-      protected override void Repaint(BaseCell cell) {
+      const bool ASYNC_PAINT = !true;
+      public void Repaint() { Repaint((IList<BaseCell>)null); }
+      protected override void Repaint(IList<BaseCell> needRepaint) {
          if (_container == null)
             return;
 
-         Action run = () => {
-            if (cell == null)
-               _container.Invalidate();
-            else {
-#if DEBUG
-               var size = new SizeDouble(_container.Width, _container.Height); // double values
-             //var size = _container.Size; // int values
-               var rc = cell.getRcOuter();
-               var tmp = new Windows.Foundation.Rect(0, 0, size.Width, size.Height);
-               var containsLT = tmp.Contains(rc.PointLT().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left())  && tmp.Top.HasMinDiff(rc.Top()));
-               var containsLB = tmp.Contains(rc.PointLB().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left())  && tmp.Top.HasMinDiff(rc.Bottom()));
-               var containsRT = tmp.Contains(rc.PointRT().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Right()) && tmp.Top.HasMinDiff(rc.Top()));
-               var containsRB = tmp.Contains(rc.PointRB().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Right()) && tmp.Top.HasMinDiff(rc.Bottom()));
-               bool intersect = (tmp != Windows.Foundation.Rect.Empty);
-             //LoggerSimple.Put($"intersect={intersect}; containsLT={containsLT}; containsLB={containsLB}; containsRT={containsRT}; containsRB={containsRB}");
-               System.Diagnostics.Debug.Assert(intersect && containsLT && containsRT && containsLB && containsRB);
-#endif
-               _container.Invalidate(cell.getRcOuter().ToWinRect());
-            }
-         };
-
          if (_alreadyPainted)
-            AsyncRunner.InvokeFromUiLater(() => run(), Windows.UI.Core.CoreDispatcherPriority.High);
+            throw new Exception("Bad algorithm... (");
+
+         if (needRepaint == null)
+            _fullRepaint = true;
          else
-            run();
+            foreach (var c in needRepaint)
+               _toRepaint.Add(c);
+
+         if (ASYNC_PAINT)
+            AsyncRunner.InvokeFromUiLater(RepaintAllMarked, Windows.UI.Core.CoreDispatcherPriority.High);
+         else
+            RepaintAllMarked();
       }
 
       private bool _alreadyPainted;
+      private bool _fullRepaint = true;
+      private readonly ISet<BaseCell> _toRepaint = new HashSet<BaseCell>();
+      protected void RepaintAllMarked() {
+         if (_alreadyPainted)
+            throw new Exception("Bad algorithm... (");
+
+         _alreadyPainted = true;
+         try {
+            if (_fullRepaint) {
+               // redraw all of mosaic
+               _container.Invalidate();
+            } else {
+#if DEBUG
+               var size = new SizeDouble(_container.Width, _container.Height); // double values
+             //var size = _container.Size;                                     // int values
+               var tmp = new Windows.Foundation.Rect(0, 0, size.Width, size.Height);
+#endif
+               foreach (var cell in _toRepaint) {
+                  var rc = cell.getRcOuter();
+#if DEBUG
+                  var containsLT = tmp.Contains(rc.PointLT().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left())  && tmp.Top.HasMinDiff(rc.Top()));
+                  var containsLB = tmp.Contains(rc.PointLB().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left())  && tmp.Top.HasMinDiff(rc.Bottom()));
+                  var containsRT = tmp.Contains(rc.PointRT().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Right()) && tmp.Top.HasMinDiff(rc.Top()));
+                  var containsRB = tmp.Contains(rc.PointRB().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Right()) && tmp.Top.HasMinDiff(rc.Bottom()));
+                  bool intersect = (tmp != Windows.Foundation.Rect.Empty);
+                //LoggerSimple.Put($"intersect={intersect}; containsLT={containsLT}; containsLB={containsLB}; containsRT={containsRT}; containsRB={containsRB}");
+                  System.Diagnostics.Debug.Assert(intersect && containsLT && containsRT && containsLB && containsRB);
+#endif
+                  _container.Invalidate(rc.ToWinRect());
+               }
+            }
+         } finally {
+            _fullRepaint = false;
+            if (_toRepaint != null)
+               _toRepaint.Clear();
+            _alreadyPainted = false;
+         }
+      }
+
       public void Repaint(CanvasDrawingSession ds, Windows.Foundation.Rect region) {
          if (_alreadyPainted) {
             System.Diagnostics.Debug.Assert(false, "Review this..");

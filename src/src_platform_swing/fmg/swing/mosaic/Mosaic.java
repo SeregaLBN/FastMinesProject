@@ -3,8 +3,10 @@ package fmg.swing.mosaic;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import javax.swing.*;
@@ -128,23 +130,47 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
       //getContainer().revalidate();
    }
 
+   static final boolean ASYNC_PAINT = true;
    @Override
-   protected void repaint(BaseCell cell) {
-      if (_sheduleRepaint)
-         return;
+   protected void repaint(java.util.List<BaseCell> needRepaint) {
+      if (_alreadyPainted)
+         throw new RuntimeException("Bad algorithm... (");
 
-      if (cell == null) {
-         _sheduleRepaint = true;
+      if (needRepaint == null)
+         _fullRepaint = true;
+      else
+         _toRepaint.addAll(needRepaint);
+
+      if (ASYNC_PAINT)
          SwingUtilities.invokeLater(() -> {
-            getContainer().repaint();
-            _sheduleRepaint = false;
+            repaintAllMarked();
          });
-      } else {
-         //getCellPaint().paint(cell, getContainer().getGraphics());
-         getContainer().repaint(Cast.toRect(cell.getRcOuter()));
+      else
+         repaintAllMarked();
+   }
+
+   private boolean _alreadyPainted;
+   private boolean _fullRepaint = true;
+   private final Set<BaseCell> _toRepaint = new HashSet<>();
+   protected void repaintAllMarked() {
+      if (_alreadyPainted)
+         throw new RuntimeException("Bad algorithm... (");
+
+      _alreadyPainted = true;
+      try {
+         if (_fullRepaint) {
+            // redraw all of mosaic
+            getContainer().repaint();
+         } else {
+            _toRepaint.forEach(cell -> getContainer().repaint(Cast.toRect(cell.getRcOuter())) );
+         }
+      } finally {
+         _fullRepaint = false;
+         if (_toRepaint != null)
+            _toRepaint.clear();
+         _alreadyPainted = false;
       }
    }
-   private boolean _sheduleRepaint;
 
    @Override
    public boolean GameNew() {
@@ -326,7 +352,7 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
          break;
       //case PaintSwingContext.PROPERTY_FONT:
       //case PaintContext.PROPERTY_BACKGROUND_FILL:
-      //   //Repaint(null);
+      //   //repaint(null);
       //   break;
       }
       repaint(null);

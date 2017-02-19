@@ -329,8 +329,8 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       GameNew();
    }
 
-   /** перерисовать ячейку; если null - перерисовать всё поле */
-   protected abstract void repaint(BaseCell cell);
+   /** перерисовать ячейки; если null - перерисовать всё поле */
+   protected abstract void repaint(List<BaseCell> needRepaint);
 
    /** Начать игру, т.к. произошёл первый клик на поле */
    protected void GameBegin(BaseCell firstClickCell) {
@@ -352,6 +352,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       if (getGameStatus() == EGameStatus.eGSEnd)
          return;
 
+      List<BaseCell> toRepaint = new ArrayList<>();
       // открыть оставшeеся
       for (BaseCell cell: _matrix)
          if (cell.getState().getStatus() == EState._Close) {
@@ -363,15 +364,19 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
                   cell.getState().setStatus(EState._Open);
                   cell.getState().setDown(true);
                }
+               toRepaint.add(cell);
             } else {
                if ((cell.getState().getOpen() != EOpen._Mine) ||
                   (cell.getState().getClose() != EClose._Flag))
                {
                   cell.getState().setStatus(EState._Open);
+                  toRepaint.add(cell);
                }
             }
-            repaint(cell);
          }
+
+      if (!toRepaint.isEmpty())
+         repaint(toRepaint);
 
       setGameStatus(EGameStatus.eGSEnd);
       onSelfPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
@@ -419,13 +424,12 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
             setMinesCount(getMinesCount()-1);
             getRepositoryMines().remove(cellLeftDown.getCoord());
          }
-         repaint(cellLeftDown);
          result.modified.add(cellLeftDown);
       } else {
          ClickCellResult resultCell = cellLeftDown.LButtonDown(this);
          result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
-         result.modified.forEach(cell -> repaint(cell));
       }
+      repaint(result.modified);
       return result;
    }
 
@@ -447,7 +451,6 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
          }
          ClickCellResult resultCell = cellDown.LButtonUp(cellDown == cellLeftUp, this);
          result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
-         result.modified.forEach(c -> repaint(c));
          int countOpen = result.getCountOpen();
          int countFlag = result.getCountFlag();
          int countUnknown = result.getCountUnknown();
@@ -474,6 +477,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
                VerifyFlag();
             }
          }
+         repaint(result.modified);
          return result;
       } finally {
          setCellDown(null);
@@ -498,7 +502,6 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       setCellDown(cellRightDown);
       ClickCellResult resultCell = cellRightDown.RButtonDown(cellRightDown.getState().getClose().nextState(getUseUnknown()));
       result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
-      result.modified.forEach(c -> repaint(c));
 
       int countFlag = result.getCountFlag();
       int countUnknown = result.getCountUnknown();
@@ -515,6 +518,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       if (getGameStatus() != EGameStatus.eGSEnd) {
          //...
       }
+      repaint(result.modified);
       return result;
    }
 
