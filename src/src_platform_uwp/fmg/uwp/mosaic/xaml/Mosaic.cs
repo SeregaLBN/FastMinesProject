@@ -174,6 +174,8 @@ namespace fmg.uwp.mosaic.xaml {
          base.OnSelfPropertyChanged(ev);
          switch (ev.PropertyName) {
          case nameof(this.MosaicType):
+            UnbindXaml();
+            BindXamlToMosaic();
             ChangeFontSize();
             break;
          case nameof(this.Area):
