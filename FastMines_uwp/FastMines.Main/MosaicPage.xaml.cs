@@ -834,6 +834,7 @@ namespace fmg {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _canvasVirtualControl));
 
          var invalidatedRegions = ev.InvalidatedRegions;
+         System.Diagnostics.Debug.Assert(invalidatedRegions.Length == 1);
          foreach (var region in invalidatedRegions) {
             using (var ds = sender.CreateDrawingSession(region)) {
                MosaicField.Repaint(ds, region);

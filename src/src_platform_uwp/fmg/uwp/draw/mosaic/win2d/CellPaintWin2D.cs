@@ -16,6 +16,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
 
       public override void Paint(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext)
       {
+         //LoggerSimple.Put("Paint cell=[{0},{1}]", cell.getCoord().x, cell.getCoord().y);
          // ограничиваю рисование только границами своей фигуры
          var ds = paint.DrawingSession;
          var region = cell.getRegion();

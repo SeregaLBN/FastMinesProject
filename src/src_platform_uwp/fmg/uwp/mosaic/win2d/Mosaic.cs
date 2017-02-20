@@ -90,32 +90,46 @@ namespace fmg.uwp.mosaic.win2d {
          if (_container == null)
             return;
 
-         if (_alreadyPainted)
-            throw new Exception("Bad algorithm... (");
+         if (_alreadyPainted) {
+            LoggerSimple.Put("  Already painted! {0}={1}", nameof(needRepaint), (needRepaint == null) ? "null" : needRepaint.ToString());
+            if ((needRepaint != null) || _toRepaint.Any()){
+               System.Diagnostics.Debug.Assert(false, "Review this..");
+               //throw new Exception("Bad algorithm... (");
+            }
+            return;
+         }
 
-         if (needRepaint == null)
-            _fullRepaint = true;
-         else
+         if (needRepaint == null) {
+            System.Diagnostics.Debug.Assert(!_toRepaint.Any(), "How so? Review this..");
+            _toRepaint.Clear();
+         } else {
             foreach (var c in needRepaint)
                _toRepaint.Add(c);
+         }
 
          if (ASYNC_PAINT)
-            AsyncRunner.InvokeFromUiLater(RepaintAllMarked, Windows.UI.Core.CoreDispatcherPriority.High);
+            AsyncRunner.InvokeFromUiLater(MarkAllToRepaint, Windows.UI.Core.CoreDispatcherPriority.High);
          else
-            RepaintAllMarked();
+            MarkAllToRepaint();
       }
 
       private bool _alreadyPainted;
-      private bool _fullRepaint = true;
       private readonly ISet<BaseCell> _toRepaint = new HashSet<BaseCell>();
-      protected void RepaintAllMarked() {
-         if (_alreadyPainted)
-            throw new Exception("Bad algorithm... (");
+      /// <summary> Invaliadate all needed </summary>
+      protected void MarkAllToRepaint() {
+         if (_alreadyPainted) {
+            System.Diagnostics.Debug.Assert(false, "Review this..");
+            //throw new Exception("Bad algorithm... (");
+            return;
+         }
 
          _alreadyPainted = true;
          try {
-            if (_fullRepaint) {
+            bool fullRepaint = !_toRepaint.Any();
+            if (fullRepaint) {
                // redraw all of mosaic
+               //var size = WindowSize;
+               //_container.Invalidate(new Windows.Foundation.Rect(0, 0, size.Width, size.Height));
                _container.Invalidate();
             } else {
 #if DEBUG
@@ -138,13 +152,13 @@ namespace fmg.uwp.mosaic.win2d {
                }
             }
          } finally {
-            _fullRepaint = false;
-            if (_toRepaint != null)
+            if (!USE_HEURISTICS_REPAINT)
                _toRepaint.Clear();
             _alreadyPainted = false;
          }
       }
 
+      const bool USE_HEURISTICS_REPAINT = !true;
       public void Repaint(CanvasDrawingSession ds, Windows.Foundation.Rect region) {
          if (_alreadyPainted) {
             System.Diagnostics.Debug.Assert(false, "Review this..");
@@ -155,17 +169,27 @@ namespace fmg.uwp.mosaic.win2d {
             _alreadyPainted = true;
 
             var p = new PaintableWin2D(ds);
+            var pc = PaintContext;
             // paint all cells
-            var sizeMosaic = SizeField;
-            for (var i = 0; i < sizeMosaic.m; i++)
-               for (var j = 0; j < sizeMosaic.n; j++) {
-                  var cell = base.getCell(i, j);
-                  var tmp = new Windows.Foundation.Rect(region.X, region.Y, region.Width, region.Height);
-                  tmp.Intersect(cell.getRcOuter().ToWinRect());
-                  if (tmp != Windows.Foundation.Rect.Empty)
-                     CellPaint.Paint(cell, p, PaintContext);
-               }
+            if (USE_HEURISTICS_REPAINT) {
+               bool fullRepaint = !_toRepaint.Any();
+               foreach (var cell in (fullRepaint ? (ICollection<BaseCell>)Matrix : (ICollection<BaseCell>)_toRepaint))
+                  CellPaint.Paint(cell, p, pc);
+            } else {
+               var sizeMosaic = SizeField;
+               for (var i = 0; i < sizeMosaic.m; i++)
+                  for (var j = 0; j < sizeMosaic.n; j++) {
+                     var cell = base.getCell(i, j);
+                     var tmp = new Windows.Foundation.Rect(region.X, region.Y, region.Width, region.Height);
+                     tmp.Intersect(cell.getRcOuter().ToWinRect());
+                     var intersected = (tmp != Windows.Foundation.Rect.Empty);
+                     if (intersected)
+                        CellPaint.Paint(cell, p, pc);
+                  }
+            }
          } finally {
+            if (USE_HEURISTICS_REPAINT)
+               _toRepaint.Clear();
             _alreadyPainted = false;
          }
       }

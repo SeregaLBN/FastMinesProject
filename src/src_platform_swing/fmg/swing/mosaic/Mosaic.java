@@ -130,7 +130,7 @@ public class Mosaic extends MosaicBase<PaintableGraphics, Icon, PaintSwingContex
       //getContainer().revalidate();
    }
 
-   static final boolean ASYNC_PAINT = true;
+   static final boolean ASYNC_PAINT = !true;
    @Override
    protected void repaint(java.util.List<BaseCell> needRepaint) {
       if (_alreadyPainted)
