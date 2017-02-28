@@ -17,47 +17,19 @@ using fmg.data.view.draw;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.mosaic.xaml;
 using fmg.uwp.draw.img.wbmp;
-using fmg.uwp.utils;
 
 namespace fmg.uwp.mosaic.xaml {
 
    public class Mosaic : MosaicBase<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> {
 
-      private IDictionary<BaseCell, PaintableShapes> _xamlBinder;
       private PaintUwpContext<ImageSource> _paintContext;
       private CellPaintShapes _cellPaint;
-      private Panel _container;
 
       public Mosaic() {}
 
       public Mosaic(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) :
          base(sizeField, mosaicType, minesCount, area)
       {}
-
-      private void UnbindXaml() {
-         Container.Children.Clear();
-         XamlBinder.Clear();
-      }
-
-      private void BindXamlToMosaic() {
-         //UnbindXaml();
-         var sizeMosaic = SizeField;
-         for (var i = 0; i < sizeMosaic.m; i++)
-            for (var j = 0; j < sizeMosaic.n; j++) {
-               var cell = base.getCell(i, j);
-               var shape = new Polygon();
-               var txt = new TextBlock();
-               var img = new Image();
-               XamlBinder.Add(cell, new PaintableShapes(shape, txt, img));
-               Container.Children.Add(shape);
-               Container.Children.Add(txt);
-               Container.Children.Add(img);
-            }
-      }
-
-      public Panel Container {
-         get { return _container ?? (_container = new Canvas()); }
-      }
 
       protected override void OnError(string msg) {
 #if DEBUG
@@ -83,8 +55,7 @@ namespace fmg.uwp.mosaic.xaml {
       public override ICellPaint<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> CellPaint => CellPaintFigures;
       protected CellPaintShapes CellPaintFigures => _cellPaint ?? (_cellPaint = new CellPaintShapes());
 
-      private IDictionary<BaseCell, PaintableShapes> XamlBinder => _xamlBinder ?? (_xamlBinder = new Dictionary<BaseCell, PaintableShapes>());
-
+      /*
       protected override void Repaint(IList<BaseCell> needRepaint) {
          if (needRepaint == null)
             Repaint();
@@ -122,20 +93,21 @@ namespace fmg.uwp.mosaic.xaml {
             _alreadyPainted = false;
          }
       }
+      */
 
-      public override bool GameNew() {
+      public override bool GameNew(ISet<BaseCell> modified) {
          var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(MosaicHelper.CreateAttributeInstance(MosaicType, Area).getMaxBackgroundFillModeValue());
          //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
          PaintContext.BkFill.Mode = (int)mode;
-         var res = base.GameNew();
+         var res = base.GameNew(modified);
          if (!res)
-            Repaint(null);
+            modified.UnionWith(this.Matrix);
          return res;
       }
 
-      protected override void GameBegin(BaseCell firstClickCell) {
+      protected override void GameBegin(BaseCell firstClickCell, ISet<BaseCell> modified) {
          PaintContext.BkFill.Mode = 0;
-         base.GameBegin(firstClickCell);
+         base.GameBegin(firstClickCell, modified);
       }
 
       /// <summary> преобразовать экранные координаты в ячейку поля мозаики </summary>
@@ -175,17 +147,13 @@ namespace fmg.uwp.mosaic.xaml {
          base.OnSelfPropertyChanged(ev);
          switch (ev.PropertyName) {
          case nameof(this.MosaicType):
-            UnbindXaml();
-            BindXamlToMosaic();
             ChangeFontSize();
             break;
          case nameof(this.Area):
             ChangeFontSize(PaintContext.PenBorder);
             break;
          case nameof(this.Matrix):
-            UnbindXaml();
-            BindXamlToMosaic();
-            Repaint();
+            OnSelfPropertyChanged(null, this.Matrix, PROPERTY_MODIFIED_CELLS);
             break;
          }
       }
@@ -204,7 +172,7 @@ namespace fmg.uwp.mosaic.xaml {
          //   //Repaint(null);
          //   break;
          }
-         Repaint(null);
+         OnSelfPropertyChanged(null, this.Matrix, PROPERTY_MODIFIED_CELLS);
          OnSelfPropertyChanged(nameof(PaintContext));
          OnSelfPropertyChanged(nameof(PaintContext) + "." + ev.PropertyName);
       }

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using Windows.System;
 using Windows.Devices.Input;
 using Windows.UI.Core;
@@ -9,6 +10,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.ViewManagement;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
@@ -21,6 +23,7 @@ using fmg.data.controller.types;
 using fmg.uwp.utils;
 using fmg.uwp.mosaic;
 using fmg.uwp.mosaic.win2d;
+using fmg.uwp.draw.mosaic.win2d;
 using Logger = fmg.common.LoggerSimple;
 
 namespace fmg {
@@ -41,7 +44,7 @@ namespace fmg {
       public Mosaic MosaicField {
          get {
             if (_mosaic == null)
-               MosaicField = new Mosaic(_canvasVirtualControl); // call this setter
+               MosaicField = new Mosaic(); // call this setter
             return _mosaic;
          }
          private set {
@@ -75,7 +78,7 @@ namespace fmg {
                MosaicField.MosaicType = EMosaic.eMosaicRhombus1;
                MosaicField.MinesCount = 3;
                MosaicField.Area = 1500;
-               MosaicField.Repaint();
+               //MosaicField.Repaint();
             }, CoreDispatcherPriority.High);
          }
       }
@@ -249,6 +252,9 @@ namespace fmg {
          case nameof(Mosaic.CountClick):
             Mosaic_OnChangedCountClick(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
+         case Mosaic.PROPERTY_MODIFIED_CELLS:
+            InvalidateCells((ev as PropertyChangedExEventArgs<ICollection<BaseCell>>).NewValue);
+            break;
          }
 
       }
@@ -418,7 +424,7 @@ namespace fmg {
             var rcCanvas = new Windows.Foundation.Rect(0, 0, _canvasVirtualControl.Width, _canvasVirtualControl.Height);
             if (rcCanvas.Contains(ev.GetPosition(_canvasVirtualControl))) {
                if (MosaicField.GameStatus == EGameStatus.eGSEnd) {
-                  MosaicField.GameNew();
+                  MosaicField.GameNew(new HashSet<BaseCell>());
                   ev.Handled = true;
                }
             } else {
@@ -748,7 +754,7 @@ namespace fmg {
          ev.Handled = true;
          switch (ev.VirtualKey) {
             case VirtualKey.F2:
-               MosaicField.GameNew();
+               MosaicField.GameNew(new HashSet<BaseCell>());
                break;
             case VirtualKey.Number1:
                SetGame(ESkillLevel.eBeginner);
@@ -781,7 +787,7 @@ namespace fmg {
          GoBack();
       }
       private void OnClickBttnNewGame___________not_binded(object sender, RoutedEventArgs ev) {
-         MosaicField.GameNew();
+         MosaicField.GameNew(new HashSet<BaseCell>());
       }
 
       private void OnClickBttnSkillBeginner___________not_binded(object sender, RoutedEventArgs ev) {
@@ -830,14 +836,34 @@ namespace fmg {
          }
       }
 
+      private void InvalidateCells(ICollection<BaseCell> modifiedCells) {
+#if DEBUG
+         var size = new SizeDouble(_canvasVirtualControl.Width, _canvasVirtualControl.Height); // double values
+       //var size = _canvasVirtualControl.Size;                                                // int values
+         var tmp = new Windows.Foundation.Rect(0, 0, size.Width, size.Height);
+#endif
+         foreach (var cell in modifiedCells) {
+            var rc = cell.getRcOuter();
+#if DEBUG
+            var containsLT = tmp.Contains(rc.PointLT().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left()) && tmp.Top.HasMinDiff(rc.Top()));
+            var containsLB = tmp.Contains(rc.PointLB().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left()) && tmp.Top.HasMinDiff(rc.Bottom()));
+            var containsRT = tmp.Contains(rc.PointRT().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Right()) && tmp.Top.HasMinDiff(rc.Top()));
+            var containsRB = tmp.Contains(rc.PointRB().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Right()) && tmp.Top.HasMinDiff(rc.Bottom()));
+            bool intersect = (tmp != Windows.Foundation.Rect.Empty);
+            //LoggerSimple.Put($"intersect={intersect}; containsLT={containsLT}; containsLB={containsLB}; containsRT={containsRT}; containsRB={containsRB}");
+            System.Diagnostics.Debug.Assert(intersect && containsLT && containsRT && containsLB && containsRB);
+#endif
+            _canvasVirtualControl.Invalidate(rc.ToWinRect());
+         }
+      }
+
       private void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _canvasVirtualControl));
 
          var invalidatedRegions = ev.InvalidatedRegions;
-         System.Diagnostics.Debug.Assert(invalidatedRegions.Length == 1);
          foreach (var region in invalidatedRegions) {
             using (var ds = sender.CreateDrawingSession(region)) {
-               MosaicField.Repaint(ds, region);
+               Repaint(ds, region);
 
 #if DEBUG
                if (_mouseDevicePosition_AreaChanging.HasValue) {
@@ -851,6 +877,23 @@ namespace fmg {
          }
       }
 
+      private void Repaint(CanvasDrawingSession ds, Windows.Foundation.Rect region) {
+         var p = new PaintableWin2D(ds);
+         var pc = MosaicField.PaintContext;
+         // paint all cells
+         var sizeMosaic = MosaicField.SizeField;
+         var cellPaint = MosaicField.CellPaint;
+         for (var i = 0; i < sizeMosaic.m; i++)
+            for (var j = 0; j < sizeMosaic.n; j++) {
+               var cell = MosaicField.getCell(i, j);
+               var tmp = new Windows.Foundation.Rect(region.X, region.Y, region.Width, region.Height);
+               tmp.Intersect(cell.getRcOuter().ToWinRect());
+               var intersected = (tmp != Windows.Foundation.Rect.Empty);
+               if (intersected)
+                  cellPaint.Paint(cell, p, pc);
+            }
+      }
+
 
       private PointDouble ToCanvasPoint(Windows.Foundation.Point pagePoint) {
          var point = TransformToVisual(_canvasVirtualControl).TransformPoint(pagePoint).ToFmPointDouble();
@@ -861,6 +904,7 @@ namespace fmg {
       }
 
       static string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) { return callerName; }
+
    }
 
    class ClickInfo {

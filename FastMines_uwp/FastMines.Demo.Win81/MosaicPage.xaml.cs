@@ -1,11 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Windows.System;
 using Windows.Devices.Input;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Shapes;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
@@ -21,6 +24,7 @@ using fmg.uwp.mosaic;
 using fmg.uwp.mosaic.xaml;
 using fmg.uwp.utils;
 using fmg.uwp.draw.mosaic;
+using fmg.uwp.draw.mosaic.xaml;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace FastMines {
@@ -40,11 +44,40 @@ namespace FastMines {
       private Windows.Foundation.Point? _mouseDevicePosition_AreaChanging = null;
       private static double? _baseWheelDelta;
 
+      private Panel _mosaicContainer;
+      private IDictionary<BaseCell, PaintableShapes> _xamlBinder;
+      private IDictionary<BaseCell, PaintableShapes> XamlBinder => _xamlBinder ?? (_xamlBinder = new Dictionary<BaseCell, PaintableShapes>());
+
+      private void UnbindXaml() {
+         MosaicContainer.Children.Clear();
+         XamlBinder.Clear();
+      }
+
+      private void BindXamlToMosaic() {
+         //UnbindXaml();
+         var sizeMosaic = MosaicField.SizeField;
+         for (var i = 0; i < sizeMosaic.m; i++)
+            for (var j = 0; j < sizeMosaic.n; j++) {
+               var cell = MosaicField.getCell(i, j);
+               var shape = new Polygon();
+               var txt = new TextBlock();
+               var img = new Image();
+               XamlBinder.Add(cell, new PaintableShapes(shape, txt, img));
+               MosaicContainer.Children.Add(shape);
+               MosaicContainer.Children.Add(txt);
+               MosaicContainer.Children.Add(img);
+            }
+      }
+
+      public Panel MosaicContainer {
+         get { return _mosaicContainer ?? (_mosaicContainer = new Canvas()); }
+      }
+
       public Mosaic MosaicField {
          get {
             if (_mosaic == null) {
                _mosaic = new Mosaic();
-               ContentRoot.Children.Add(_mosaic.Container);
+               ContentRoot.Children.Add(MosaicContainer);
 
                _mosaic.PropertyChanged += OnMosaicPropertyChanged;
             }
@@ -71,7 +104,7 @@ namespace FastMines {
                MosaicField.MosaicType = EMosaic.eMosaicRhombus1;
                MosaicField.MinesCount = 3;
                MosaicField.Area = 1500;
-               MosaicField.Repaint();
+               //MosaicField.Repaint();
             }, CoreDispatcherPriority.High);
          }
       }
@@ -201,32 +234,41 @@ namespace FastMines {
 
       private void OnMosaicPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          switch (ev.PropertyName) {
-         case "MosaicType":
+         case nameof(Mosaic.MosaicType):
+            UnbindXaml();
+            BindXamlToMosaic();
             Mosaic_OnChangedMosaicType(sender as Mosaic, ev as PropertyChangedExEventArgs<EMosaic>);
             break;
-         case "Area":
+         case nameof(Mosaic.Area):
             Mosaic_OnChangedArea(sender as Mosaic, ev as PropertyChangedExEventArgs<double>);
             break;
-         case "GameStatus":
+         case nameof(Mosaic.Matrix):
+            UnbindXaml();
+            BindXamlToMosaic();
+            break;
+         case nameof(Mosaic.GameStatus):
             Mosaic_OnChangedGameStatus(sender as Mosaic, ev as PropertyChangedExEventArgs<EGameStatus>);
             break;
-         case "SizeField":
+         case nameof(Mosaic.SizeField):
             Mosaic_OnChangedSizeField(sender as Mosaic, ev as PropertyChangedExEventArgs<Matrisize>);
             break;
-         case "MinesCount":
+         case nameof(Mosaic.MinesCount):
             Mosaic_OnChangedMinesCount(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
-         case "CountFlag":
+         case nameof(Mosaic.CountFlag):
             Mosaic_OnChangedCountFlag(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
-         case "CountOpen":
+         case nameof(Mosaic.CountOpen):
             Mosaic_OnChangedCountOpen(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
-         case "CountMinesLeft":
+         case nameof(Mosaic.CountMinesLeft):
             Mosaic_OnChangedCountMinesLeft(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
-         case "CountClick":
+         case nameof(Mosaic.CountClick):
             Mosaic_OnChangedCountClick(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
+            break;
+         case Mosaic.PROPERTY_MODIFIED_CELLS:
+            InvalidateCells((ev as PropertyChangedExEventArgs<ICollection<BaseCell>>).NewValue);
             break;
          }
       }
@@ -289,7 +331,7 @@ namespace FastMines {
 
             //MosaicField.Container.Margin = new Thickness();
 
-            var m = MosaicField.Container.Margin;
+            var m = MosaicContainer.Margin;
             if (_mouseDevicePosition_AreaChanging.HasValue) {
                var devicePos = _mouseDevicePosition_AreaChanging.Value;
 
@@ -314,7 +356,7 @@ namespace FastMines {
                m.Left = (sizePage.Width - sizeWinMosaic.Width)/2;
                m.Top = (sizePage.Height - sizeWinMosaic.Height)/2;
             }
-            MosaicField.Container.Margin = m;
+            MosaicContainer.Margin = m;
          }
       }
       private void Mosaic_OnChangedMosaicType(Mosaic sender, PropertyChangedExEventArgs<EMosaic> ev) {
@@ -350,7 +392,7 @@ namespace FastMines {
       }
 
       bool OnClick(Windows.Foundation.Point pos, bool leftClick, bool downHandling, bool upHandling) {
-         var margin = MosaicField.Container.Margin;
+         var margin = MosaicContainer.Margin;
          //if ((pos.X >= margin.Left) && (pos.Y >= margin.Top)) {
          var point = pos.ToFmPointDouble().Move(-margin.Left, -margin.Top);
          //   var winSize = MosaicField.WindowSize;
@@ -490,7 +532,7 @@ namespace FastMines {
             } else {
 #region drag
                var needDrag = true;
-               var margin = MosaicField.Container.Margin;
+               var margin = MosaicContainer.Margin;
 #region check possibility dragging
                if (_clickInfo.CellDown != null)
                {
@@ -568,7 +610,7 @@ namespace FastMines {
                   margin = CheckMosaicMargin(margin, sizeWinMosaic);
                   System.Diagnostics.Debug.Assert(tmp == margin);
 #endif
-                  MosaicField.Container.Margin = margin;
+                  MosaicContainer.Margin = margin;
                }
 #endregion
             }
@@ -578,7 +620,7 @@ namespace FastMines {
 
       protected override void OnManipulationCompleted(ManipulationCompletedRoutedEventArgs ev) {
 #if DEBUG
-         var pnt1 = this.TransformToVisual(MosaicField.Container).TransformPoint(ev.Position);
+         var pnt1 = this.TransformToVisual(MosaicContainer).TransformPoint(ev.Position);
 #else
          var pnt1 = new Windows.Foundation.Point();
 #endif
@@ -605,7 +647,7 @@ namespace FastMines {
          ev.Handled = true;
          switch (ev.VirtualKey) {
             case VirtualKey.F2:
-               MosaicField.GameNew();
+               MosaicField.GameNew(new HashSet<BaseCell>());
                break;
             case VirtualKey.Number1:
                SetGame(ESkillLevel.eBeginner);
@@ -634,13 +676,33 @@ namespace FastMines {
          //}
       }
 
+      private void InvalidateCells(ICollection<BaseCell> modifiedCells) {
+         var container = MosaicContainer;
+         var paintContext = MosaicField.PaintContext;
+         { // paint background
+            var bkb = container.Background as SolidColorBrush;
+            var bkc = paintContext.BackgroundColor.ToWinColor();
+            if ((bkb == null) || (bkb.Color != bkc))
+               container.Background = new SolidColorBrush(bkc);
+         }
+
+         // paint all cells
+         var sizeMosaic = MosaicField.SizeField;
+         var cellPaint  = MosaicField.CellPaint;
+         for (var i = 0; i < sizeMosaic.m; i++)
+            for (var j = 0; j < sizeMosaic.n; j++) {
+               var cell = MosaicField.getCell(i, j);
+               cellPaint.Paint(cell, XamlBinder[cell], paintContext);
+            }
+      }
+
       private void OnClickBttnBack(object sender, RoutedEventArgs ev) {
          GoBack();
       }
       private void OnClickBttnNewGame(object sender, RoutedEventArgs ev) {
          topAppBar.IsOpen = false;
          bottomAppBar.IsOpen = false;
-         MosaicField.GameNew();
+         MosaicField.GameNew(new HashSet<BaseCell>());
       }
 
       private void OnClickBttnSkillBeginner(object sender, RoutedEventArgs ev) {
@@ -658,7 +720,7 @@ namespace FastMines {
 
       /// <summary> Перепроверить Margin поля мозаики так, что бы при нём поле мозаки было в пределах страницы </summary>
       private Thickness CheckMosaicMargin(Thickness? newMargin = null, SizeDouble? sizeWinMosaic = null) {
-         var margin = newMargin ?? MosaicField.Container.Margin;
+         var margin = newMargin ?? MosaicContainer.Margin;
          if (!sizeWinMosaic.HasValue)
             sizeWinMosaic = MosaicField.WindowSize;
          var sizePage = Window.Current.Bounds.ToFmRect().Size();

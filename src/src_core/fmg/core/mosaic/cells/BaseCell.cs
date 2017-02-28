@@ -331,7 +331,7 @@ namespace fmg.core.mosaic.cells {
                result.Modified.Add(nCell);
                if (nCell.state.Open == EOpen._Nil) {
                   var result2 = nCell.LButtonUp(true, matrix);
-                  result.Modified.AddRange(result2.Modified);
+                  result.Modified.UnionWith(result2.Modified);
                }
                if (nCell.state.Open == EOpen._Mine) {
                   return result;

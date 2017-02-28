@@ -6,7 +6,7 @@ namespace fmg.core.types.click {
 
    public class ClickCellResult {
 
-      public List<BaseCell> Modified = new List<BaseCell>();
+      public ISet<BaseCell> Modified = new HashSet<BaseCell>();
 
       /// <summary> были ли изменени€ на поле? Ѕыла ли открыта хоть одна €чейка или выставлен/сн€т флажЄк / знак вопроса </summary>
       public bool IsAnyChanges => Modified.Any();
