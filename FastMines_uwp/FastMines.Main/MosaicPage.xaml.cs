@@ -88,7 +88,7 @@ namespace fmg {
 
          System.Diagnostics.Debug.Assert(ev.Parameter is MosaicPageInitParam);
          var initParam = ev.Parameter as MosaicPageInitParam;
-         MosaicField.SizeField = initParam.SizeField;
+         MosaicField.SizeField  = initParam.SizeField;
          MosaicField.MosaicType = initParam.MosaicTypes;
          MosaicField.MinesCount = initParam.MinesCount;
       }
@@ -253,7 +253,33 @@ namespace fmg {
             Mosaic_OnChangedCountClick(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
          case Mosaic.PROPERTY_MODIFIED_CELLS:
-            InvalidateCells((ev as PropertyChangedExEventArgs<ICollection<BaseCell>>).NewValue);
+            try {
+               {
+                  PropertyChangedExEventArgs<IList<BaseCell>> evList = (ev as PropertyChangedExEventArgs<IList<BaseCell>>);
+                  if (evList != null) {
+                     InvalidateCells(evList.NewValue);
+                     return;
+                  }
+               }
+               {
+                  PropertyChangedExEventArgs<HashSet<BaseCell>> evSet = (ev as PropertyChangedExEventArgs<HashSet<BaseCell>>);
+                  if (evSet != null) {
+                     InvalidateCells(evSet.NewValue);
+                     return;
+                  }
+               }
+               {
+                  PropertyChangedExEventArgs<ISet<BaseCell>> evSet = (ev as PropertyChangedExEventArgs<ISet<BaseCell>>);
+                  if (evSet != null) {
+                     InvalidateCells(evSet.NewValue);
+                     return;
+                  }
+               }
+               System.Diagnostics.Debug.Assert(false, "Suppot this: " + ev.GetType().Name);
+               InvalidateCells((ev as PropertyChangedExEventArgs<ICollection<BaseCell>>).NewValue);
+            } catch(Exception ex) {
+               System.Diagnostics.Debug.Assert(false, ex.Message);
+            }
             break;
          }
 
@@ -837,6 +863,12 @@ namespace fmg {
       }
 
       private void InvalidateCells(ICollection<BaseCell> modifiedCells) {
+         if (double.IsNaN(_canvasVirtualControl.Width) || double.IsNaN(_canvasVirtualControl.Height))
+            return;
+
+         if (_alreadyPainted)
+            return;
+
 #if DEBUG
          var size = new SizeDouble(_canvasVirtualControl.Width, _canvasVirtualControl.Height); // double values
        //var size = _canvasVirtualControl.Size;                                                // int values
@@ -851,15 +883,22 @@ namespace fmg {
             var containsRB = tmp.Contains(rc.PointRB().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Right()) && tmp.Top.HasMinDiff(rc.Bottom()));
             bool intersect = (tmp != Windows.Foundation.Rect.Empty);
             //LoggerSimple.Put($"intersect={intersect}; containsLT={containsLT}; containsLB={containsLB}; containsRT={containsRT}; containsRB={containsRB}");
-            System.Diagnostics.Debug.Assert(intersect && containsLT && containsRT && containsLB && containsRB);
+            //System.Diagnostics.Debug.Assert(intersect && containsLT && containsRT && containsLB && containsRB);
+            if (!(intersect && containsLT && containsRT && containsLB && containsRB))
+               return;
 #endif
             _canvasVirtualControl.Invalidate(rc.ToWinRect());
          }
       }
 
+      bool _alreadyPainted;
       private void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _canvasVirtualControl));
 
+         if (_alreadyPainted)
+            return;
+
+         _alreadyPainted = true;
          var invalidatedRegions = ev.InvalidatedRegions;
          foreach (var region in invalidatedRegions) {
             using (var ds = sender.CreateDrawingSession(region)) {
@@ -875,6 +914,7 @@ namespace fmg {
 #endif
             }
          }
+         _alreadyPainted = false;
       }
 
       private void Repaint(CanvasDrawingSession ds, Windows.Foundation.Rect region) {
