@@ -253,33 +253,7 @@ namespace fmg {
             Mosaic_OnChangedCountClick(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
          case Mosaic.PROPERTY_MODIFIED_CELLS:
-            try {
-               {
-                  PropertyChangedExEventArgs<IList<BaseCell>> evList = (ev as PropertyChangedExEventArgs<IList<BaseCell>>);
-                  if (evList != null) {
-                     InvalidateCells(evList.NewValue);
-                     return;
-                  }
-               }
-               {
-                  PropertyChangedExEventArgs<HashSet<BaseCell>> evSet = (ev as PropertyChangedExEventArgs<HashSet<BaseCell>>);
-                  if (evSet != null) {
-                     InvalidateCells(evSet.NewValue);
-                     return;
-                  }
-               }
-               {
-                  PropertyChangedExEventArgs<ISet<BaseCell>> evSet = (ev as PropertyChangedExEventArgs<ISet<BaseCell>>);
-                  if (evSet != null) {
-                     InvalidateCells(evSet.NewValue);
-                     return;
-                  }
-               }
-               System.Diagnostics.Debug.Assert(false, "Suppot this: " + ev.GetType().Name);
-               InvalidateCells((ev as PropertyChangedExEventArgs<ICollection<BaseCell>>).NewValue);
-            } catch(Exception ex) {
-               System.Diagnostics.Debug.Assert(false, ex.Message);
-            }
+            InvalidateCells((ev as IPropertyChangedExEventArgs<ICollection<BaseCell>>).NewValue);
             break;
          }
 
