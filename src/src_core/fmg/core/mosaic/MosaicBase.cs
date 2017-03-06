@@ -66,6 +66,9 @@ namespace fmg.core.mosaic {
       private bool _useUnknown = true;
 
       private BaseCell.BaseAttribute _cellAttr;
+
+      public const string PROPERTY_MODIFIED_CELLS = "ToRepaint";
+
    #endregion
 
       public BaseCell.BaseAttribute CellAttr {
@@ -88,8 +91,6 @@ namespace fmg.core.mosaic {
       }
 
       public abstract ICellPaint<TPaintable, TImage, TPaintContext> CellPaint { get; }
-
-      public const string PROPERTY_MODIFIED_CELLS = "ToRepaint";
 
       public IList<BaseCell> Matrix { get {
             if (!_matrix.Any()) {
@@ -120,9 +121,7 @@ namespace fmg.core.mosaic {
             OnSelfPropertyChanged(nameof(this.Matrix));
             OnSelfPropertyChanged(nameof(this.WindowSize));
 
-            var modified = new HashSet<BaseCell>();
-            GameNew(modified);
-            OnSelfPropertyChanged(null, modified, PROPERTY_MODIFIED_CELLS);
+            GameNew();
          }
       }
 
@@ -142,9 +141,7 @@ namespace fmg.core.mosaic {
             OnSelfPropertyChanged(nameof(this.Matrix));
 
             Area = saveArea; // restore
-            var modified = new HashSet<BaseCell>();
-            GameNew(modified);
-            OnSelfPropertyChanged(null, modified, PROPERTY_MODIFIED_CELLS);
+            GameNew();
          }
       }
 
@@ -161,9 +158,7 @@ namespace fmg.core.mosaic {
             _minesCount = Math.Max(1, Math.Min(value, GetMaxMines(SizeField)));
             OnSelfPropertyChanged(-1, _minesCount, nameof(this.CountMinesLeft));
 
-            var modified = new HashSet<BaseCell>();
-            GameNew(modified);
-            OnSelfPropertyChanged(null, modified, PROPERTY_MODIFIED_CELLS);
+            GameNew();
          }
       }
 
@@ -271,14 +266,12 @@ namespace fmg.core.mosaic {
             }
             OnSelfPropertyChanged();
             //setGameStatus(EGameStatus.eGSEnd);
-            var modified = new HashSet<BaseCell>();
-            GameNew(modified);
-            OnSelfPropertyChanged(null, modified, PROPERTY_MODIFIED_CELLS);
+            GameNew();
          }
       }
 
       /// <summary>Начать игру, т.к. произошёл первый клик на поле</summary>
-      protected virtual void GameBegin(BaseCell firstClickCell, ISet<BaseCell> modified) {
+      protected virtual void GameBegin(BaseCell firstClickCell) {
          GameStatus = EGameStatus.eGSPlay;
 
          // set mines
@@ -288,16 +281,14 @@ namespace fmg.core.mosaic {
          } else {
             setMines_random(firstClickCell);
          }
-
-         modified.UnionWith(this.Matrix);
       }
 
       /// <summary>Завершить игру</summary>
-      private void GameEnd(bool victory, ISet<BaseCell> modified) {
+      private IEnumerable<BaseCell> GameEnd(bool victory) {
          if (GameStatus == EGameStatus.eGSEnd)
-            return;
+            return Enumerable.Empty<BaseCell>();
 
-         var toRepaint = new List<BaseCell>();
+         var toRepaint = new HashSet<BaseCell>();
          // открыть оставшeеся
          foreach (var cell in Matrix)
             if (cell.State.Status == EState._Close) {
@@ -320,32 +311,33 @@ namespace fmg.core.mosaic {
                }
             }
 
-         modified.UnionWith(toRepaint);
-
          GameStatus = EGameStatus.eGSEnd;
          OnSelfPropertyChanged(nameof(this.CountMinesLeft));
          OnSelfPropertyChanged(nameof(this.CountFlag));
          OnSelfPropertyChanged(nameof(this.CountOpen));
+
+         return toRepaint;
       }
 
-      private void VerifyFlag(ISet<BaseCell> modified) {
-         if (GameStatus == EGameStatus.eGSEnd) return;
+      private IEnumerable<BaseCell> VerifyFlag() {
+         if (GameStatus == EGameStatus.eGSEnd) return Enumerable.Empty<BaseCell>();
          if (MinesCount == CountFlag) {
             foreach (BaseCell cell in Matrix)
                if ((cell.State.Close == EClose._Flag) &&
                   (cell.State.Open != EOpen._Mine))
-                  return; // неверно проставленный флажок - на выход
-            GameEnd(true, modified);
+                  return Enumerable.Empty<BaseCell>(); // неверно проставленный флажок - на выход
+            return GameEnd(true);
          } else {
             if (MinesCount == (CountFlag + CountUnknown)) {
                foreach (BaseCell cell in Matrix)
                   if (((cell.State.Close == EClose._Unknown) ||
                      ( cell.State.Close == EClose._Flag)) &&
                      ( cell.State.Open != EOpen._Mine))
-                     return; // неверно проставленный флажок или '?'- на выход
-               GameEnd(true, modified);
+                     return Enumerable.Empty<BaseCell>(); // неверно проставленный флажок или '?'- на выход
+               return GameEnd(true);
             }
          }
+         return Enumerable.Empty<BaseCell>();
       }
 
       protected ClickResult OnLeftButtonDown(BaseCell cellLeftDown) {
@@ -374,12 +366,13 @@ namespace fmg.core.mosaic {
                var resultCell = cellLeftDown.LButtonDown(this);
                result.Modified = resultCell.Modified; // copy reference; TODO result.Modified.AddRange(resultCell.Modified);
             }
+            OnSelfModifiedCellsPropertyChanged(result.Modified);
             return result;
          }
       }
 
       protected ClickResult OnLeftButtonUp(BaseCell cellLeftUp) {
-         using (var tracer = new fmg.common.Tracer("Mosaic::OnLeftButtonUp"))
+         using (var tracer = new fmg.common.Tracer("Mosaic::OnLeftButtonUp", "coordLUp=" + cellLeftUp.getCoord()))
          try {
             var cellDown = CellDown;
             var result = new ClickResult(cellDown, true, false);
@@ -390,13 +383,14 @@ namespace fmg.core.mosaic {
             if (GameStatus == EGameStatus.eGSCreateGame)
                return result;
 
-      //      System.out.println("OnLeftButtonUp: coordLUp="+coordLUp);
-            if ((GameStatus == EGameStatus.eGSReady) && ReferenceEquals(cellDown, cellLeftUp))
-            {
-               GameBegin(CellDown, result.Modified);
+            bool gameBegin = (GameStatus == EGameStatus.eGSReady) && ReferenceEquals(cellDown, cellLeftUp);
+            if (gameBegin) {
+               GameBegin(CellDown);
+               result.Modified.UnionWith(this.Matrix);
             }
             var resultCell = cellDown.LButtonUp(ReferenceEquals(cellDown, cellLeftUp), this);
-            result.Modified = resultCell.Modified; // copy reference; TODO result.Modified.AddRange(resultCell.Modified);
+            if (!gameBegin)
+               result.Modified.UnionWith(resultCell.Modified);
             tracer.Put(" result.Modified=" + result.Modified.Count);
             var countOpen = result.CountOpen;
             var countFlag = result.CountFlag;
@@ -414,16 +408,22 @@ namespace fmg.core.mosaic {
                }
             }
 
+            IEnumerable<BaseCell> modified;
             if (result.IsAnyOpenMine) {
-               GameEnd(false, result.Modified);
+               modified = GameEnd(false);
             } else {
                var sizeField = SizeField;
                if ((CountOpen + MinesCount) == sizeField.m*sizeField.n) {
-                  GameEnd(true, result.Modified);
+                  modified = GameEnd(true);
                } else {
-                  VerifyFlag(result.Modified);
+                  modified = VerifyFlag();
                }
             }
+
+            if (!gameBegin)
+               result.Modified.UnionWith(modified);
+            OnSelfModifiedCellsPropertyChanged(result.Modified);
+
             return result;
          } finally {
             CellDown = null;
@@ -435,7 +435,7 @@ namespace fmg.core.mosaic {
             CellDown = null;
             var result = new ClickResult(cellRightDown, false, true);
             if (GameStatus == EGameStatus.eGSEnd) {
-               GameNew(result.Modified);
+               GameNew();
                return result;
             }
             if (GameStatus == EGameStatus.eGSReady)
@@ -447,7 +447,7 @@ namespace fmg.core.mosaic {
 
             CellDown = cellRightDown;
             var resultCell = cellRightDown.RButtonDown(cellRightDown.State.Close.NextState(UseUnknown));
-            result.Modified = resultCell.Modified; // copy reference; TODO result.Modified.AddRange(resultCell.Modified);
+            result.Modified = resultCell.Modified; // copy reference; TODO modify to result.Modified.Add(resultCell.Modified);
 
             var countFlag = result.CountFlag;
             var countUnknown = result.CountUnknown;
@@ -460,11 +460,13 @@ namespace fmg.core.mosaic {
                OnSelfPropertyChanged(nameof(this.CountUnknown));
             }
 
-            VerifyFlag(result.Modified);
+            result.Modified.UnionWith(VerifyFlag());
             if (GameStatus != EGameStatus.eGSEnd) {
                //...
             }
             tracer.Put("any=" + any);
+
+            OnSelfModifiedCellsPropertyChanged(result.Modified);
             return result;
          }
       }
@@ -484,7 +486,7 @@ namespace fmg.core.mosaic {
       protected virtual bool CheckNeedRestoreLastGame() { return false; }
 
       /// <summary>Подготовиться к началу игры - сбросить все ячейки</summary>
-      public virtual bool GameNew(ISet<BaseCell> modified) {
+      public virtual bool GameNew() {
          //System.out.println("Mosaic::GameNew()");
 
          if (GameStatus == EGameStatus.eGSReady)
@@ -504,14 +506,15 @@ namespace fmg.core.mosaic {
 
          GameStatus = EGameStatus.eGSReady;
          PlayInfo = EPlayInfo.ePlayerUnknown; // пока не знаю кто будет играть
-         modified.UnionWith(this.Matrix);
+
+         OnSelfModifiedCellsPropertyChanged(this.Matrix);
 
          return true;
       }
 
          /// <summary>создать игру игроком - он сам расставит мины</summary>
-      public void GameCreate(ISet<BaseCell> modified) {
-         GameNew(modified);
+      public void GameCreate() {
+         GameNew();
          if (RepositoryMines.Count == 0) {
             MinesCount = 0;
             GameStatus = EGameStatus.eGSCreateGame;
@@ -596,13 +599,17 @@ namespace fmg.core.mosaic {
             foreach (var cell in Matrix)
                cell.Init();
 
-            OnSelfPropertyChanged(null, this.Matrix, PROPERTY_MODIFIED_CELLS);
-
-            OnSelfPropertyChanged<double>(ev, nameof(this.Area));
             OnSelfPropertyChanged(nameof(this.WindowSize));
+            OnSelfPropertyChanged<double>(ev, nameof(this.Area));
+
+            OnSelfModifiedCellsPropertyChanged(this.Matrix);
          }
          OnSelfPropertyChanged(nameof(this.CellAttr));
          OnSelfPropertyChanged(nameof(this.CellAttr) + "." + pn);
+      }
+
+      protected void OnSelfModifiedCellsPropertyChanged(ICollection<BaseCell> cells) {
+         OnSelfPropertyChanged(null, cells, PROPERTY_MODIFIED_CELLS);
       }
 
    }

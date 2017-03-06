@@ -77,19 +77,19 @@ namespace fmg.uwp.mosaic.win2d {
       public override ICellPaint<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> CellPaint => CellPaintFigures;
       protected CellPaintWin2D CellPaintFigures => _cellPaint ?? (_cellPaint = new CellPaintWin2D());
 
-      public override bool GameNew(ISet<BaseCell> modified) {
+      public override bool GameNew() {
          var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(MosaicHelper.CreateAttributeInstance(MosaicType, Area).getMaxBackgroundFillModeValue());
          //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
          PaintContext.BkFill.Mode = mode;
-         var res = base.GameNew(modified);
+         var res = base.GameNew();
          if (!res)
-               modified.UnionWith(this.Matrix);
+            OnSelfModifiedCellsPropertyChanged(this.Matrix);
          return res;
       }
 
-      protected override void GameBegin(BaseCell firstClickCell, ISet<BaseCell> modified) {
+      protected override void GameBegin(BaseCell firstClickCell) {
          PaintContext.BkFill.Mode = 0;
-         base.GameBegin(firstClickCell, modified);
+         base.GameBegin(firstClickCell);
       }
 
       /// <summary> преобразовать экранные координаты в ячейку поля мозаики </summary>

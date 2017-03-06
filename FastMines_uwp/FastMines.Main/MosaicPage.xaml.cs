@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
 using Windows.System;
@@ -253,7 +254,7 @@ namespace fmg {
             Mosaic_OnChangedCountClick(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
          case Mosaic.PROPERTY_MODIFIED_CELLS:
-            InvalidateCells((ev as IPropertyChangedExEventArgs<ICollection<BaseCell>>).NewValue);
+            InvalidateCells((ev as IPropertyChangedExEventArgs<IEnumerable<BaseCell>>).NewValue);
             break;
          }
 
@@ -424,7 +425,7 @@ namespace fmg {
             var rcCanvas = new Windows.Foundation.Rect(0, 0, _canvasVirtualControl.Width, _canvasVirtualControl.Height);
             if (rcCanvas.Contains(ev.GetPosition(_canvasVirtualControl))) {
                if (MosaicField.GameStatus == EGameStatus.eGSEnd) {
-                  MosaicField.GameNew(new HashSet<BaseCell>());
+                  MosaicField.GameNew();
                   ev.Handled = true;
                }
             } else {
@@ -754,7 +755,7 @@ namespace fmg {
          ev.Handled = true;
          switch (ev.VirtualKey) {
             case VirtualKey.F2:
-               MosaicField.GameNew(new HashSet<BaseCell>());
+               MosaicField.GameNew();
                break;
             case VirtualKey.Number1:
                SetGame(ESkillLevel.eBeginner);
@@ -787,7 +788,7 @@ namespace fmg {
          GoBack();
       }
       private void OnClickBttnNewGame___________not_binded(object sender, RoutedEventArgs ev) {
-         MosaicField.GameNew(new HashSet<BaseCell>());
+         MosaicField.GameNew();
       }
 
       private void OnClickBttnSkillBeginner___________not_binded(object sender, RoutedEventArgs ev) {
@@ -836,69 +837,98 @@ namespace fmg {
          }
       }
 
-      private void InvalidateCells(ICollection<BaseCell> modifiedCells) {
-         if (double.IsNaN(_canvasVirtualControl.Width) || double.IsNaN(_canvasVirtualControl.Height))
-            return;
-
-         if (_alreadyPainted)
-            return;
-
-#if DEBUG
-         var size = new SizeDouble(_canvasVirtualControl.Width, _canvasVirtualControl.Height); // double values
-       //var size = _canvasVirtualControl.Size;                                                // int values
-         var tmp = new Windows.Foundation.Rect(0, 0, size.Width, size.Height);
-#endif
-         foreach (var cell in modifiedCells) {
-            var rc = cell.getRcOuter();
-#if DEBUG
-            var containsLT = tmp.Contains(rc.PointLT().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left()) && tmp.Top.HasMinDiff(rc.Top()));
-            var containsLB = tmp.Contains(rc.PointLB().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left()) && tmp.Top.HasMinDiff(rc.Bottom()));
-            var containsRT = tmp.Contains(rc.PointRT().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Right()) && tmp.Top.HasMinDiff(rc.Top()));
-            var containsRB = tmp.Contains(rc.PointRB().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Right()) && tmp.Top.HasMinDiff(rc.Bottom()));
-            bool intersect = (tmp != Windows.Foundation.Rect.Empty);
-            //LoggerSimple.Put($"intersect={intersect}; containsLT={containsLT}; containsLB={containsLB}; containsRT={containsRT}; containsRB={containsRB}");
-            //System.Diagnostics.Debug.Assert(intersect && containsLT && containsRT && containsLB && containsRB);
-            if (!(intersect && containsLT && containsRT && containsLB && containsRB))
+      private void InvalidateCells(IEnumerable<BaseCell> modifiedCells) {
+         using (new Tracer()) {
+            if (double.IsNaN(_canvasVirtualControl.Width) || double.IsNaN(_canvasVirtualControl.Height))
                return;
+            //if ((_canvasVirtualControl.Size.Width == 0) || (_canvasVirtualControl.Size.Height == 0))
+            //   return;
+            if (!modifiedCells.Any())
+               return;
+
+            if (_alreadyPainted && ReferenceEquals(MosaicField.Matrix, modifiedCells)) {
+               return;
+            } else {
+               System.Diagnostics.Debug.Assert(!_alreadyPainted);
+            }
+
+            _toRepaint.UnionWith(modifiedCells);
+
+#if DEBUG
+            var size = new SizeDouble(_canvasVirtualControl.Width, _canvasVirtualControl.Height); // double values
+          //var size = _canvasVirtualControl.Size;                                                // int values
+            var tmp = new Windows.Foundation.Rect(0, 0, size.Width, size.Height);
 #endif
-            _canvasVirtualControl.Invalidate(rc.ToWinRect());
+            foreach (var cell in modifiedCells) {
+               var rc = cell.getRcOuter();
+#if DEBUG
+               var containsLT = tmp.Contains(rc.PointLT().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left()) && tmp.Top.HasMinDiff(rc.Top()));
+               var containsLB = tmp.Contains(rc.PointLB().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left()) && tmp.Top.HasMinDiff(rc.Bottom()));
+               var containsRT = tmp.Contains(rc.PointRT().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Right()) && tmp.Top.HasMinDiff(rc.Top()));
+               var containsRB = tmp.Contains(rc.PointRB().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Right()) && tmp.Top.HasMinDiff(rc.Bottom()));
+               bool intersect = (tmp != Windows.Foundation.Rect.Empty);
+               //LoggerSimple.Put($"intersect={intersect}; containsLT={containsLT}; containsLB={containsLB}; containsRT={containsRT}; containsRB={containsRB}");
+               System.Diagnostics.Debug.Assert(intersect && containsLT && containsRT && containsLB && containsRB);
+               if (!(intersect && containsLT && containsRT && containsLB && containsRB))
+                  return;
+#endif
+               _canvasVirtualControl.Invalidate(rc.ToWinRect());
+            }
          }
       }
 
-      bool _alreadyPainted;
+      ISet<BaseCell> _toRepaint = new HashSet<BaseCell>();
+      bool _alreadyPainted = false;
       private void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _canvasVirtualControl));
+         using (new Tracer()) {
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _canvasVirtualControl));
+            if (!_toRepaint.Any())
+               return;
 
-         if (_alreadyPainted)
-            return;
-
-         _alreadyPainted = true;
-         var invalidatedRegions = ev.InvalidatedRegions;
-         foreach (var region in invalidatedRegions) {
-            using (var ds = sender.CreateDrawingSession(region)) {
-               Repaint(ds, region);
+            _alreadyPainted = true;
+            var invalidatedRegions = ev.InvalidatedRegions;
+            foreach (var region in invalidatedRegions) {
+               using (var ds = sender.CreateDrawingSession(region)) {
+                  Repaint(ds, region);
 
 #if DEBUG
-               if (_mouseDevicePosition_AreaChanging.HasValue) {
-                  var p = ToCanvasPoint(_mouseDevicePosition_AreaChanging.Value);
-                  if (region.Contains(p.ToWinPoint())) {
-                     ds.DrawEllipse(new System.Numerics.Vector2((float)p.X, (float)p.Y), 3, 3, Windows.UI.Colors.Red, 2);
+                  if (_mouseDevicePosition_AreaChanging.HasValue) {
+                     var p = ToCanvasPoint(_mouseDevicePosition_AreaChanging.Value);
+                     if (region.Contains(p.ToWinPoint())) {
+                        ds.DrawEllipse(new System.Numerics.Vector2((float)p.X, (float)p.Y), 3, 3, Windows.UI.Colors.Red, 2);
+                     }
                   }
-               }
 #endif
+               }
             }
+            _alreadyPainted = false;
+            System.Diagnostics.Debug.Assert(!_toRepaint.Any());
          }
-         _alreadyPainted = false;
       }
 
       private void Repaint(CanvasDrawingSession ds, Windows.Foundation.Rect region) {
-         var p = new PaintableWin2D(ds);
-         var pc = MosaicField.PaintContext;
-         // paint all cells
-         var sizeMosaic = MosaicField.SizeField;
-         var cellPaint = MosaicField.CellPaint;
-         for (var i = 0; i < sizeMosaic.m; i++)
-            for (var j = 0; j < sizeMosaic.n; j++) {
+         using (new Tracer()) {
+            var p = new PaintableWin2D(ds);
+            var pc = MosaicField.PaintContext;
+            // paint all cells
+            var sizeMosaic = MosaicField.SizeField;
+            var cellPaint = MosaicField.CellPaint;
+#if true
+            var toRepaintAfter = new HashSet<BaseCell>();
+            foreach (var cell in _toRepaint) {
+               var tmp = new Windows.Foundation.Rect(region.X, region.Y, region.Width, region.Height);
+               tmp.Intersect(cell.getRcOuter().ToWinRect());
+               var intersected = (tmp != Windows.Foundation.Rect.Empty);
+               if (intersected) {
+                  cellPaint.Paint(cell, p, pc);
+               } else {
+                  toRepaintAfter.Add(cell);
+               }
+            }
+            _toRepaint.Clear();
+            _toRepaint = toRepaintAfter;
+#else
+            foreach (var cell in MosaicField.Matrix) {
                var cell = MosaicField.getCell(i, j);
                var tmp = new Windows.Foundation.Rect(region.X, region.Y, region.Width, region.Height);
                tmp.Intersect(cell.getRcOuter().ToWinRect());
@@ -906,6 +936,8 @@ namespace fmg {
                if (intersected)
                   cellPaint.Paint(cell, p, pc);
             }
+#endif
+         }
       }
 
 

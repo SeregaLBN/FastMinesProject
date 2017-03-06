@@ -647,7 +647,7 @@ namespace FastMines {
          ev.Handled = true;
          switch (ev.VirtualKey) {
             case VirtualKey.F2:
-               MosaicField.GameNew(new HashSet<BaseCell>());
+               MosaicField.GameNew();
                break;
             case VirtualKey.Number1:
                SetGame(ESkillLevel.eBeginner);
@@ -702,7 +702,7 @@ namespace FastMines {
       private void OnClickBttnNewGame(object sender, RoutedEventArgs ev) {
          topAppBar.IsOpen = false;
          bottomAppBar.IsOpen = false;
-         MosaicField.GameNew(new HashSet<BaseCell>());
+         MosaicField.GameNew();
       }
 
       private void OnClickBttnSkillBeginner(object sender, RoutedEventArgs ev) {
