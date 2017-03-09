@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.ComponentModel;
-using System.Collections.Generic;
 using Microsoft.Graphics.Canvas;
 using fmg.common;
 using fmg.common.geom;
@@ -136,7 +135,7 @@ namespace fmg.uwp.mosaic.win2d {
             ChangeFontSize(PaintContext.PenBorder);
             break;
          case nameof(this.Matrix):
-            OnSelfPropertyChanged(null, this.Matrix, PROPERTY_MODIFIED_CELLS);
+            OnSelfModifiedCellsPropertyChanged(this.Matrix);
             break;
          }
       }
@@ -155,7 +154,7 @@ namespace fmg.uwp.mosaic.win2d {
          //   //Repaint(null);
          //   break;
          }
-         OnSelfPropertyChanged(null, this.Matrix, PROPERTY_MODIFIED_CELLS);
+         OnSelfModifiedCellsPropertyChanged(this.Matrix);
          OnSelfPropertyChanged(nameof(PaintContext));
          OnSelfPropertyChanged(nameof(PaintContext) + "." + ev.PropertyName);
       }

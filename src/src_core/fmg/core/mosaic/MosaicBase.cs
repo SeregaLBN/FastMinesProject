@@ -609,6 +609,11 @@ namespace fmg.core.mosaic {
       }
 
       protected void OnSelfModifiedCellsPropertyChanged(ICollection<BaseCell> cells) {
+         // mark NULL if all mosaic is changed
+         if (cells.Count == Matrix.Count)
+            cells = null;
+         if (ReferenceEquals(cells, Matrix))
+            cells = null;
          OnSelfPropertyChanged(null, cells, PROPERTY_MODIFIED_CELLS);
       }
 
