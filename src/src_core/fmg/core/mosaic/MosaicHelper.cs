@@ -146,7 +146,7 @@ namespace fmg.core.mosaic {
 
          var sizeClientCopy = sizeClient;
          var sizeIter = new SizeDouble();
-         var res = Finder(MosaicBase<IPaintable, object, PaintContext<object>>.AREA_MINIMUM,
+         var res = Finder(MosaicBase.AREA_MINIMUM,
             area => {
                cellAttr.Area = area;
                sizeIter = cellAttr.GetOwnerSize(mosaicSizeField);

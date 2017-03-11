@@ -23,7 +23,7 @@ namespace fmg.uwp.draw.img.win2d {
    public static class MosaicsImg {
 
       /// <summary> Representable <see cref="EMosaic"/> as image: common implementation part </summary>
-      public abstract class CommonImpl<TImage> : AMosaicsImg<PaintableWin2D, TImage, PaintUwpContext<CanvasBitmap>, CanvasBitmap>
+      public abstract class CommonImpl<TImage> : AMosaicsImg<TImage>
          where TImage : DependencyObject, ICanvasResourceCreator
       {
          static CommonImpl() {
@@ -41,7 +41,7 @@ namespace fmg.uwp.draw.img.win2d {
          }
 
          private ICellPaint<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> _cellPaint;
-         public override ICellPaint<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> CellPaint {
+         public ICellPaint<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> CellPaint {
             get {
                if (_cellPaint == null)
                   _cellPaint = new CellPaintWin2D();

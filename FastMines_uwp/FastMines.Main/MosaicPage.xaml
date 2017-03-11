@@ -13,9 +13,9 @@
         <canvas:CanvasVirtualControl x:Name="_canvasVirtualControl"
                                      HorizontalAlignment="Left"
                                      VerticalAlignment="Top"
-                                     Height="{x:Bind MosaicField.WindowSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
-                                     Width="{x:Bind  MosaicField.WindowSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
-                                     RegionsInvalidated="OnRegionsInvalidated"
+                                     Height="{x:Bind MosaicField.Mosaic.WindowSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
+                                     Width="{x:Bind  MosaicField.Mosaic.WindowSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
+                                     RegionsInvalidated="MosaicField.View.OnRegionsInvalidated"
                                      ClearColor="Bisque" />
     </Grid>
 </Page>

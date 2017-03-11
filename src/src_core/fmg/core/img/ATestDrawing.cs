@@ -44,11 +44,11 @@ namespace fmg.core.img {
             logoImg.UseGradient = Bl;
          }
 
-         if (img is AMosaicsImg<TPaintable, TImage, TPaintContext, TImageInner>) {
-            AMosaicsImg<TPaintable, TImage, TPaintContext, TImageInner> mosaicsImg = (AMosaicsImg<TPaintable, TImage, TPaintContext, TImageInner>)img;
-            AMosaicsImg<TPaintable, TImage, TPaintContext, TImageInner>.ERotateMode[] vals =
-               (AMosaicsImg<TPaintable, TImage, TPaintContext, TImageInner>.ERotateMode[])
-               Enum.GetValues(typeof(AMosaicsImg<TPaintable, TImage, TPaintContext, TImageInner>.ERotateMode));
+         if (img is AMosaicsImg<TImage>) {
+            AMosaicsImg<TImage> mosaicsImg = (AMosaicsImg<TImage>)img;
+            AMosaicsImg<TImage>.ERotateMode[] vals =
+               (AMosaicsImg<TImage>.ERotateMode[])
+               Enum.GetValues(typeof(AMosaicsImg<TImage>.ERotateMode));
             mosaicsImg.RotateMode = vals[R(vals.Length)];
          }
 

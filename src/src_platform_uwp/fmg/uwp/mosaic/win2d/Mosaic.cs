@@ -282,7 +282,7 @@ namespace fmg.uwp.mosaic.win2d {
 
       ISet<BaseCell> _toRepaint = new HashSet<BaseCell>();
       bool _alreadyPainted = false;
-      private void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
+      public void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
          using (new Tracer()) {
             System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _canvasVirtualControl));
             if (!_toRepaint.Any())
