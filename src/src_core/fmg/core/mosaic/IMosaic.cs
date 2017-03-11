@@ -22,20 +22,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 using System.Collections.Generic;
 using fmg.core.types;
-using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
 
 namespace fmg.core.mosaic {
 
    /// <summary> interface of mosaic field </summary>
-   public interface IMosaic<in TPaintable, TImage, in TPaintContext> : BaseCell.IMatrixCells
-      where TPaintable : IPaintable
-      where TImage : class
-      where TPaintContext : PaintContext<TImage>
-   {
-      BaseCell.BaseAttribute CellAttr { get; }
+   public interface IMosaic : BaseCell.IMatrixCells {
 
-      ICellPaint<TPaintable, TImage, TPaintContext> CellPaint { get; }
+      BaseCell.BaseAttribute CellAttr { get; }
 
       /// <summary>матрица ячеек, представленная(развёрнута) в виде вектора</summary>
       IList<BaseCell> Matrix { get; }

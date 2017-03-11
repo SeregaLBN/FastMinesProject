@@ -27,18 +27,13 @@ using System.ComponentModel;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic.cells;
-using fmg.core.mosaic.draw;
 using fmg.core.types.click;
 using fmg.common.notyfier;
 
 namespace fmg.core.mosaic {
 
    /// <summary> Mosaic field: класс окна мозаики поля </summary>
-   public abstract class MosaicBase<TPaintable, TImage, TPaintContext> : NotifyPropertyChanged, IMosaic<TPaintable, TImage, TPaintContext>
-      where TPaintable : IPaintable
-      where TImage : class
-      where TPaintContext : PaintContext<TImage>
-   {
+   public class MosaicBase : NotifyPropertyChanged, IMosaic {
 
    #region Members
 
@@ -47,11 +42,11 @@ namespace fmg.core.mosaic {
       /// <summary>матрица List &lt; List &lt; BaseCell &gt; &gt; , представленная(развёрнута) в виде вектора</summary>
       private readonly List<BaseCell> _matrix = new List<BaseCell>(0);
       /// <summary>размер поля в ячейках</summary>
-      protected Matrisize _size = new Matrisize(0, 0);
+      protected Matrisize _size = new Matrisize(10, 10);
       /// <summary>из каких фигур состоит мозаика поля</summary>
       protected EMosaic _mosaicType = EMosaic.eMosaicSquare1;
       /// <summary>кол-во мин на поле</summary>
-      protected int _minesCount = 1;
+      protected int _minesCount = 10;
       /// <summary>кол-во мин на поле до создания игры. Используется когда игра была создана, но ни одной мины не проставлено.</summary>
       protected int _oldMinesCount = 1;
 
@@ -89,8 +84,6 @@ namespace fmg.core.mosaic {
             return _cellAttr;
          }
       }
-
-      public abstract ICellPaint<TPaintable, TImage, TPaintContext> CellPaint { get; }
 
       public IList<BaseCell> Matrix { get {
             if (!_matrix.Any()) {
@@ -162,16 +155,11 @@ namespace fmg.core.mosaic {
          }
       }
 
-      protected virtual void OnError(string msg) {
-         System.Diagnostics.Debug.WriteLine(msg);
-      }
-
       /// <summary>arrange Mines</summary>
       public void setMines_LoadRepository(IList<Coord> repository) {
          foreach (var c in repository) {
             var suc = getCell(c).State.SetMine();
-            if (!suc)
-               OnError("Проблемы с установкой мин... :(");
+            System.Diagnostics.Debug.Assert(suc, "Проблемы с установкой мин... :(");
          }
          // set other CellOpen and set all Caption
          foreach (var cell in Matrix)
@@ -192,7 +180,7 @@ namespace fmg.core.mosaic {
          do {
             var len = matrixClone.Count;
             if (len == 0) {
-               OnError("ээээ..... лажа......\r\nЗахотели установить больше мин чем возможно");
+               System.Diagnostics.Debug.Assert(false, "ээээ..... лажа......\r\nЗахотели установить больше мин чем возможно");
                _minesCount = count;
                break;
             }
@@ -202,7 +190,7 @@ namespace fmg.core.mosaic {
                count++;
                matrixClone.Remove(cellToSetMines);
             } else
-               OnError("Мины должны всегда устанавливаться...");
+               System.Diagnostics.Debug.Assert(false, "Мины должны всегда устанавливаться...");
          } while (count < _minesCount);
 
          // set other CellOpen and set all Caption
@@ -227,7 +215,7 @@ namespace fmg.core.mosaic {
       public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
 
       /// <summary> ячейка на которой было нажато (но не обязательно что отпущено) </summary>
-      protected BaseCell CellDown { get; set; }
+      public BaseCell CellDown { get; set; }
 
       /**
          *<br> Этапы игры:
@@ -271,7 +259,7 @@ namespace fmg.core.mosaic {
       }
 
       /// <summary>Начать игру, т.к. произошёл первый клик на поле</summary>
-      protected virtual void GameBegin(BaseCell firstClickCell) {
+      public void GameBegin(BaseCell firstClickCell) {
          GameStatus = EGameStatus.eGSPlay;
 
          // set mines
@@ -340,7 +328,7 @@ namespace fmg.core.mosaic {
          return Enumerable.Empty<BaseCell>();
       }
 
-      protected ClickResult OnLeftButtonDown(BaseCell cellLeftDown) {
+      public ClickResult OnLeftButtonDown(BaseCell cellLeftDown) {
          using (new fmg.common.Tracer("Mosaic::OnLeftButtonDown")) {
             var result = new ClickResult(cellLeftDown, true, true);
             CellDown = null;
@@ -371,7 +359,7 @@ namespace fmg.core.mosaic {
          }
       }
 
-      protected ClickResult OnLeftButtonUp(BaseCell cellLeftUp) {
+      public ClickResult OnLeftButtonUp(BaseCell cellLeftUp) {
          using (var tracer = new fmg.common.Tracer("Mosaic::OnLeftButtonUp", "coordLUp=" + cellLeftUp.getCoord()))
          try {
             var cellDown = CellDown;
@@ -430,7 +418,7 @@ namespace fmg.core.mosaic {
          }
       }
 
-      protected ClickResult OnRightButtonDown(BaseCell cellRightDown) {
+      public ClickResult OnRightButtonDown(BaseCell cellRightDown) {
          using (var tracer = new fmg.common.Tracer("Mosaic::OnRightButtonDown")) {
             CellDown = null;
             var result = new ClickResult(cellRightDown, false, true);
@@ -471,7 +459,7 @@ namespace fmg.core.mosaic {
          }
       }
 
-      protected ClickResult OnRightButtonUp(BaseCell cellRightUp) {
+      public ClickResult OnRightButtonUp(BaseCell cellRightUp) {
          using (var tracer = new fmg.common.Tracer("Mosaic::OnRightButtonUp"))
          try {
             var cellDown = CellDown;
@@ -486,7 +474,7 @@ namespace fmg.core.mosaic {
       protected virtual bool CheckNeedRestoreLastGame() { return false; }
 
       /// <summary>Подготовиться к началу игры - сбросить все ячейки</summary>
-      public virtual bool GameNew() {
+      public bool GameNew() {
          //System.out.println("Mosaic::GameNew()");
 
          if (GameStatus == EGameStatus.eGSReady)
@@ -525,7 +513,7 @@ namespace fmg.core.mosaic {
       public virtual double Area {
          get {
             if (_cellAttr == null)
-               return AREA_MINIMUM;
+               return 10 * AREA_MINIMUM;
             return CellAttr.Area;
          }
          set {
@@ -569,28 +557,6 @@ namespace fmg.core.mosaic {
          get {
             return (GameStatus == EGameStatus.eGSEnd) && (0 == CountMinesLeft);
          }
-      }
-
-      /// <summary>Mosaic field: класс окна мозаики поля</summary>
-      public MosaicBase() {
-         Initialize();
-      }
-      /// <summary>Mosaic field: класс окна мозаики поля</summary>
-      public MosaicBase(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) {
-         Initialize(sizeField, mosaicType, minesCount, area);
-      }
-
-      protected void Initialize() {
-         Initialize(new Matrisize(5, 5),
-               EMosaic.eMosaicPenrousePeriodic1, 
-               1, AREA_MINIMUM);
-      }
-
-      protected void Initialize(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) {
-         SizeField = sizeField;
-         MosaicType = mosaicType;
-         MinesCount = minesCount;
-         Area = area; // ...провера на валидность есть только при установке из класса Main. Так что, не нуна тут задавать громадные величины.
       }
 
       protected virtual void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
