@@ -8,52 +8,211 @@ using Windows.UI.Xaml.Shapes;
 using fmg.common;
 using fmg.common.geom;
 using fmg.common.notyfier;
-using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
 using fmg.core.types.click;
 using fmg.data.view.draw;
+using fmg.uwp.utils;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.mosaic.xaml;
 using fmg.uwp.draw.img.wbmp;
 
 namespace fmg.uwp.mosaic.xaml {
 
-   public class Mosaic : MosaicBase<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> {
+   /// <summary> MVC: controller </summary>
+   public class MosaicController : Disposable {
 
+      /// <summary> MVC: model </summary>
+      private MosaicBase _mosaic;
+      /// <summary> MVC: view </summary>
+      private MosaicView _view;
+
+      /// <summary> MVC: model </summary>
+      public MosaicBase Mosaic {
+         get {
+            if (_mosaic == null)
+               Mosaic = new MosaicBase(); // call setter
+            return _mosaic;
+         }
+         private set {
+            if (_mosaic != null) {
+               _mosaic.Dispose();
+            }
+            _mosaic = value;
+         }
+      }
+
+      /// <summary> MVC: view </summary>
+      public MosaicView View {
+         get {
+            if (_view == null)
+               View = new MosaicView(); // call setter
+            return _view;
+         }
+         private set {
+            if (_view != null)
+               _view.Dispose();
+            _view = value;
+            if (_view != null)
+               _view.Mosaic = Mosaic;
+         }
+      }
+
+      public bool GameNew() {
+         var mosaic = Mosaic;
+         var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(MosaicHelper.CreateAttributeInstance(mosaic.MosaicType, mosaic.Area).getMaxBackgroundFillModeValue());
+         //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
+         View.PaintContext.BkFill.Mode = (int)mode;
+         var res = mosaic.GameNew();
+         if (!res)
+            View.InvalidateCells(mosaic.Matrix);
+         return res;
+      }
+
+      protected void GameBegin(BaseCell firstClickCell) {
+         View.PaintContext.BkFill.Mode = 0;
+         Mosaic.GameBegin(firstClickCell);
+      }
+
+      /// <summary> преобразовать экранные координаты в ячейку поля мозаики </summary>
+      private BaseCell CursorPointToCell(PointDouble point) {
+         return Mosaic.Matrix.FirstOrDefault(cell =>
+            //cell.getRcOuter().Contains(point) && // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
+            cell.PointInRegion(point));
+      }
+
+      public ClickResult MousePressed(PointDouble clickPoint, bool isLeftMouseButton) {
+         using (new Tracer("MosaicExt::MousePressed", "isLeftMouseButton="+isLeftMouseButton)) {
+            return isLeftMouseButton
+               ? Mosaic.OnLeftButtonDown(CursorPointToCell(clickPoint))
+               : Mosaic.OnRightButtonDown(CursorPointToCell(clickPoint));
+         }
+      }
+
+      public ClickResult MouseReleased(PointDouble clickPoint, bool isLeftMouseButton) {
+         using (new Tracer("MosaicExt::MouseReleased", "isLeftMouseButton="+isLeftMouseButton)) {
+            return isLeftMouseButton
+               ? Mosaic.OnLeftButtonUp(CursorPointToCell(clickPoint))
+               : Mosaic.OnRightButtonUp(CursorPointToCell(clickPoint));
+         }
+      }
+
+      public ClickResult MouseFocusLost() {
+         using (new Tracer("MosaicExt::MouseFocusLost")) {
+            if (Mosaic.CellDown == null)
+               return null;
+            return Mosaic.CellDown.State.Down
+               ? Mosaic.OnLeftButtonUp(null)
+               : Mosaic.OnRightButtonUp(null);
+         }
+      }
+
+      protected override void Dispose(bool disposing) {
+         if (Disposed)
+            return;
+
+         base.Dispose(disposing);
+
+         if (disposing) {
+            Mosaic = null; // call setter - unsubscribe & dispose
+            View = null; // call setter - unsubscribe & dispose
+         }
+      }
+
+   }
+
+   public class MosaicView : Disposable {
+
+      private MosaicBase _mosaic;
+      private Panel _mosaicContainer;
       private PaintUwpContext<ImageSource> _paintContext;
       private CellPaintShapes _cellPaint;
+      private IDictionary<BaseCell, PaintableShapes> _xamlBinder;
+      private IDictionary<BaseCell, PaintableShapes> XamlBinder => _xamlBinder ?? (_xamlBinder = new Dictionary<BaseCell, PaintableShapes>());
 
-      public Mosaic() {}
+      public Panel MosaicContainer {
+         get { return _mosaicContainer; }
+         set { _mosaicContainer = value; }
+      }
 
-      public Mosaic(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) :
-         base(sizeField, mosaicType, minesCount, area)
-      {}
+      public MosaicBase Mosaic {
+         get { return _mosaic; }
+         set {
+            if (_mosaic != null) {
+               _mosaic.PropertyChanged -= OnMosaicPropertyChanged;
+               _mosaic.Dispose();
+            }
+            _mosaic = value;
+            if (_mosaic != null)
+               _mosaic.PropertyChanged += OnMosaicPropertyChanged;
+         }
+      }
 
-      protected override void OnError(string msg) {
-#if DEBUG
-         System.Diagnostics.Debug.Assert(false, msg);
-#else
-         base.OnError(msg);
-#endif
+      private void UnbindXaml() {
+         MosaicContainer.Children.Clear();
+         XamlBinder.Clear();
+      }
+
+      private void BindXamlToMosaic() {
+         //UnbindXaml();
+         var sizeMosaic = Mosaic.SizeField;
+         for (var i = 0; i < sizeMosaic.m; i++)
+            for (var j = 0; j < sizeMosaic.n; j++) {
+               var cell = Mosaic.getCell(i, j);
+               var shape = new Polygon();
+               var txt = new TextBlock();
+               var img = new Image();
+               XamlBinder.Add(cell, new PaintableShapes(shape, txt, img));
+               MosaicContainer.Children.Add(shape);
+               MosaicContainer.Children.Add(txt);
+               MosaicContainer.Children.Add(img);
+            }
       }
 
       public PaintUwpContext<ImageSource> PaintContext {
-         get
-         {
-            if (_paintContext == null) {
-               _paintContext = new PaintUwpContext<ImageSource>(false);
+         get {
+            if (_paintContext == null)
+               PaintContext = new PaintUwpContext<ImageSource>(false); // call setter
+            return _paintContext;
+         }
+         private set {
+            if (_paintContext != null) {
+               _paintContext.PropertyChanged -= OnPaintContextPropertyChanged;
+               _paintContext.Dispose();
+            }
+            _paintContext = value;
+            if (_paintContext != null) {
                _paintContext.ImgMine = new Mine().Image;
              //_paintContext.ImgFlag = new Flag().Image;
                _paintContext.PropertyChanged += OnPaintContextPropertyChanged; // изменение контекста -> перерисовка мозаики
             }
-            return _paintContext;
          }
       }
 
-      public override ICellPaint<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> CellPaint => CellPaintFigures;
+      public ICellPaint<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> CellPaint => CellPaintFigures;
       protected CellPaintShapes CellPaintFigures => _cellPaint ?? (_cellPaint = new CellPaintShapes());
+
+
+      public void InvalidateCells(IEnumerable<BaseCell> modifiedCells) {
+         var container = MosaicContainer;
+         var paintContext = PaintContext;
+         { // paint background
+            var bkb = container.Background as SolidColorBrush;
+            var bkc = paintContext.BackgroundColor.ToWinColor();
+            if ((bkb == null) || (bkb.Color != bkc))
+               container.Background = new SolidColorBrush(bkc);
+         }
+
+         // paint all cells
+         var sizeMosaic = Mosaic.SizeField;
+         var cellPaint = CellPaint;
+         for (var i = 0; i < sizeMosaic.m; i++)
+            for (var j = 0; j < sizeMosaic.n; j++) {
+               var cell = Mosaic.getCell(i, j);
+               cellPaint.Paint(cell, XamlBinder[cell], paintContext);
+            }
+      }
 
       /*
       protected override void Repaint(IList<BaseCell> needRepaint) {
@@ -95,65 +254,24 @@ namespace fmg.uwp.mosaic.xaml {
       }
       */
 
-      public override bool GameNew() {
-         var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(MosaicHelper.CreateAttributeInstance(MosaicType, Area).getMaxBackgroundFillModeValue());
-         //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
-         PaintContext.BkFill.Mode = (int)mode;
-         var res = base.GameNew();
-         if (!res)
-            OnSelfModifiedCellsPropertyChanged(this.Matrix);
-         return res;
-      }
-
-      protected override void GameBegin(BaseCell firstClickCell) {
-         PaintContext.BkFill.Mode = 0;
-         base.GameBegin(firstClickCell);
-      }
-
-      /// <summary> преобразовать экранные координаты в ячейку поля мозаики </summary>
-      private BaseCell CursorPointToCell(PointDouble point) {
-         return Matrix.FirstOrDefault(cell =>
-            //cell.getRcOuter().Contains(point) && // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
-            cell.PointInRegion(point));
-      }
-
-      public ClickResult MousePressed(PointDouble clickPoint, bool isLeftMouseButton) {
-         using (new Tracer("MosaicExt::MousePressed", "isLeftMouseButton="+isLeftMouseButton)) {
-            return isLeftMouseButton
-               ? OnLeftButtonDown(CursorPointToCell(clickPoint))
-               : OnRightButtonDown(CursorPointToCell(clickPoint));
-         }
-      }
-
-      public ClickResult MouseReleased(PointDouble clickPoint, bool isLeftMouseButton) {
-         using (new Tracer("MosaicExt::MouseReleased", "isLeftMouseButton="+isLeftMouseButton)) {
-            return isLeftMouseButton
-               ? OnLeftButtonUp(CursorPointToCell(clickPoint))
-               : OnRightButtonUp(CursorPointToCell(clickPoint));
-         }
-      }
-
-      public ClickResult MouseFocusLost() {
-         using (new Tracer("MosaicExt::MouseFocusLost")) {
-            if (CellDown == null)
-               return null;
-            return CellDown.State.Down
-               ? OnLeftButtonUp(null)
-               : OnRightButtonUp(null);
-         }
-      }
-
-      protected override void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
-         base.OnSelfPropertyChanged(ev);
+      private void OnMosaicPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Mosaic));
          switch (ev.PropertyName) {
-         case nameof(this.MosaicType):
+         case nameof(Mosaic.MosaicType):
+            UnbindXaml();
+            BindXamlToMosaic();
             ChangeFontSize();
             break;
-         case nameof(this.Area):
+         case nameof(Mosaic.Area):
             ChangeFontSize(PaintContext.PenBorder);
             break;
-         case nameof(this.Matrix):
-            OnSelfPropertyChanged(null, this.Matrix, PROPERTY_MODIFIED_CELLS);
+         case nameof(Mosaic.Matrix):
+            UnbindXaml();
+            BindXamlToMosaic();
+            InvalidateCells(Mosaic.Matrix);
+            break;
+         case MosaicBase.PROPERTY_MODIFIED_CELLS:
+            InvalidateCells((ev as IPropertyChangedExEventArgs<IEnumerable<BaseCell>>).NewValue);
             break;
          }
       }
@@ -167,21 +285,17 @@ namespace fmg.uwp.mosaic.xaml {
             var penBorder = evex?.NewValue ?? PaintContext.PenBorder;
             ChangeFontSize(penBorder);
             break;
-         //case "Font":
-         //case "BackgroundFill":
-         //   //Repaint(null);
-         //   break;
          }
-         OnSelfPropertyChanged(null, this.Matrix, PROPERTY_MODIFIED_CELLS);
-         OnSelfPropertyChanged(nameof(PaintContext));
-         OnSelfPropertyChanged(nameof(PaintContext) + "." + ev.PropertyName);
+         //this.InvalidateCells(Mosaic.Matrix);
+         //OnSelfPropertyChanged(nameof(PaintContext));
+         //OnSelfPropertyChanged(nameof(PaintContext) + "." + ev.PropertyName);
       }
 
       /// <summary> пересчитать и установить новую высоту шрифта </summary>
       public void ChangeFontSize() { ChangeFontSize(PaintContext.PenBorder); }
       /// <summary> пересчитать и установить новую высоту шрифта </summary>
       private void ChangeFontSize(PenBorder penBorder) {
-         PaintContext.FontInfo.Size = (int)CellAttr.GetSq(penBorder.Width);
+         PaintContext.FontInfo.Size = (int)Mosaic.CellAttr.GetSq(penBorder.Width);
       }
 
       protected override void Dispose(bool disposing) {
@@ -191,7 +305,7 @@ namespace fmg.uwp.mosaic.xaml {
          base.Dispose(disposing);
 
          if (disposing) {
-            PaintContext.Dispose();
+            PaintContext = null; // call setter - unsubscribe & dispose
          }
       }
 

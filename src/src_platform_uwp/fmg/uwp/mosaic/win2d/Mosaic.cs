@@ -40,8 +40,6 @@ namespace fmg.uwp.mosaic.win2d {
                _mosaic.Dispose();
             }
             _mosaic = value;
-            if (_mosaic != null)
-               View.Mosaic = _mosaic;
          }
       }
 
@@ -56,6 +54,8 @@ namespace fmg.uwp.mosaic.win2d {
             if (_view != null)
                _view.Dispose();
             _view = value;
+            if (_view != null)
+               _view.Mosaic = Mosaic;
          }
       }
 
@@ -127,16 +127,16 @@ namespace fmg.uwp.mosaic.win2d {
 
    public class MosaicView : Disposable {
 
-      private CanvasVirtualControl _canvasVirtualControl;
+      private MosaicBase _mosaic;
+      private CanvasVirtualControl _mosaicContainer;
       private PaintUwpContext<CanvasBitmap> _paintContext;
       private CellPaintWin2D _cellPaint;
       private MineCanvasBmp _mineImage;
       private FlagCanvasBmp _flagImage;
-      private MosaicBase _mosaic;
 
-      public CanvasVirtualControl CanvasVirtualControl {
-         get { return _canvasVirtualControl; }
-         set { _canvasVirtualControl = value; }
+      public CanvasVirtualControl MosaicContainer {
+         get { return _mosaicContainer; }
+         set { _mosaicContainer = value; }
       }
 
       public MosaicBase Mosaic {
@@ -197,52 +197,12 @@ namespace fmg.uwp.mosaic.win2d {
       public ICellPaint<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> CellPaint => CellPaintFigures;
       protected CellPaintWin2D CellPaintFigures => _cellPaint ?? (_cellPaint = new CellPaintWin2D());
 
-      protected void OnMosaicPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Mosaic));
-         switch (ev.PropertyName) {
-         case nameof(Mosaic.MosaicType):
-            ChangeFontSize();
-            break;
-         case nameof(Mosaic.Area):
-            ChangeFontSize(PaintContext.PenBorder);
-            break;
-         case nameof(Mosaic.Matrix):
-            InvalidateCells(Mosaic.Matrix);
-            break;
-         case MosaicBase.PROPERTY_MODIFIED_CELLS:
-            InvalidateCells((ev as IPropertyChangedExEventArgs<IEnumerable<BaseCell>>).NewValue);
-            break;
-         }
-      }
-
-      private void OnPaintContextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         System.Diagnostics.Debug.Assert(sender is PaintContext<CanvasBitmap>);
-
-         switch (ev.PropertyName) {
-         case nameof(PaintContext.PenBorder):
-            var evex = ev as PropertyChangedExEventArgs<PenBorder>;
-            var penBorder = evex?.NewValue ?? PaintContext.PenBorder;
-            ChangeFontSize(penBorder);
-            break;
-         }
-         //this.InvalidateCells(Mosaic.Matrix);
-         //OnSelfPropertyChanged(nameof(PaintContext));
-         //OnSelfPropertyChanged(nameof(PaintContext) + "." + ev.PropertyName);
-      }
-
-      /// <summary> пересчитать и установить новую высоту шрифта </summary>
-      public void ChangeFontSize() { ChangeFontSize(PaintContext.PenBorder); }
-      /// <summary> пересчитать и установить новую высоту шрифта </summary>
-      public void ChangeFontSize(PenBorder penBorder) {
-         PaintContext.FontInfo.Size = (int)Mosaic.CellAttr.GetSq(penBorder.Width);
-      }
-
 
       public void InvalidateCells(IEnumerable<BaseCell> modifiedCells) {
          using (new Tracer()) {
-            if (_canvasVirtualControl == null)
+            if (_mosaicContainer == null)
                return;
-            if (double.IsNaN(_canvasVirtualControl.Width) || double.IsNaN(_canvasVirtualControl.Height))
+            if (double.IsNaN(_mosaicContainer.Width) || double.IsNaN(_mosaicContainer.Height))
                return;
             //if ((_canvasVirtualControl.Size.Width == 0) || (_canvasVirtualControl.Size.Height == 0))
             //   return;
@@ -258,7 +218,7 @@ namespace fmg.uwp.mosaic.win2d {
             _toRepaint.UnionWith(modifiedCells);
 
 #if DEBUG
-            var size = new SizeDouble(_canvasVirtualControl.Width, _canvasVirtualControl.Height); // double values
+            var size = new SizeDouble(_mosaicContainer.Width, _mosaicContainer.Height); // double values
                                                                                                   //var size = _canvasVirtualControl.Size;                                                // int values
             var tmp = new Windows.Foundation.Rect(0, 0, size.Width, size.Height);
 #endif
@@ -275,7 +235,7 @@ namespace fmg.uwp.mosaic.win2d {
                if (!(intersect && containsLT && containsRT && containsLB && containsRB))
                   return;
 #endif
-               _canvasVirtualControl.Invalidate(rc.ToWinRect());
+               _mosaicContainer.Invalidate(rc.ToWinRect());
             }
          }
       }
@@ -284,7 +244,7 @@ namespace fmg.uwp.mosaic.win2d {
       bool _alreadyPainted = false;
       public void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
          using (new Tracer()) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _canvasVirtualControl));
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _mosaicContainer));
             if (!_toRepaint.Any())
                return;
 
@@ -335,6 +295,47 @@ namespace fmg.uwp.mosaic.win2d {
       }
 
 
+      private void OnMosaicPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Mosaic));
+         switch (ev.PropertyName) {
+         case nameof(Mosaic.MosaicType):
+            ChangeFontSize();
+            break;
+         case nameof(Mosaic.Area):
+            ChangeFontSize(PaintContext.PenBorder);
+            break;
+         case nameof(Mosaic.Matrix):
+            InvalidateCells(Mosaic.Matrix);
+            break;
+         case MosaicBase.PROPERTY_MODIFIED_CELLS:
+            InvalidateCells((ev as IPropertyChangedExEventArgs<IEnumerable<BaseCell>>).NewValue);
+            break;
+         }
+      }
+
+      private void OnPaintContextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         System.Diagnostics.Debug.Assert(sender is PaintContext<CanvasBitmap>);
+
+         switch (ev.PropertyName) {
+         case nameof(PaintContext.PenBorder):
+            var evex = ev as PropertyChangedExEventArgs<PenBorder>;
+            var penBorder = evex?.NewValue ?? PaintContext.PenBorder;
+            ChangeFontSize(penBorder);
+            break;
+         }
+         //this.InvalidateCells(Mosaic.Matrix);
+         //OnSelfPropertyChanged(nameof(PaintContext));
+         //OnSelfPropertyChanged(nameof(PaintContext) + "." + ev.PropertyName);
+      }
+
+      /// <summary> пересчитать и установить новую высоту шрифта </summary>
+      public void ChangeFontSize() { ChangeFontSize(PaintContext.PenBorder); }
+      /// <summary> пересчитать и установить новую высоту шрифта </summary>
+      public void ChangeFontSize(PenBorder penBorder) {
+         PaintContext.FontInfo.Size = (int)Mosaic.CellAttr.GetSq(penBorder.Width);
+      }
+
+
       protected override void Dispose(bool disposing) {
          if (Disposed)
             return;
@@ -343,7 +344,7 @@ namespace fmg.uwp.mosaic.win2d {
 
          if (disposing) {
             MineImg.Dispose();
-            //FlagImg.Dispose();
+          //FlagImg.Dispose();
             PaintContext = null; // call setter - unsubscribe & dispose
          }
       }

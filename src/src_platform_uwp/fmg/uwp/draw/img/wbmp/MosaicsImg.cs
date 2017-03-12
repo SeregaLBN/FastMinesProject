@@ -18,7 +18,7 @@ namespace fmg.uwp.draw.img.wbmp {
    /// <br/>
    /// WriteableBitmap impl
    /// </summary>
-   public class MosaicsImg : AMosaicsImg<PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>, WriteableBitmap> {
+   public class MosaicsImg : AMosaicsImg<WriteableBitmap> {
 
       static MosaicsImg() {
          StaticRotateImgConsts.Init();
@@ -34,7 +34,7 @@ namespace fmg.uwp.draw.img.wbmp {
       { }
 
       private ICellPaint<PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> _cellPaint;
-      public override ICellPaint<PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> CellPaint {
+      public ICellPaint<PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> CellPaint {
          get {
             if (_cellPaint == null)
                _cellPaint = new CellPaintWBmp(); // call this setter

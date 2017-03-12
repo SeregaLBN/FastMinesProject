@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using System.ComponentModel;
-using System.Collections.Generic;
 using Windows.System;
 using Windows.Devices.Input;
 using Windows.UI.Core;
@@ -11,8 +9,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.ViewManagement;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
 using fmg.common.notyfier;
@@ -24,7 +20,6 @@ using fmg.data.controller.types;
 using fmg.uwp.utils;
 using fmg.uwp.mosaic;
 using fmg.uwp.mosaic.win2d;
-using fmg.uwp.draw.mosaic.win2d;
 using Logger = fmg.common.LoggerSimple;
 
 namespace fmg {
@@ -57,7 +52,7 @@ namespace fmg {
             _mosaicCtrl = value;
             if (_mosaicCtrl != null) {
                _mosaicCtrl.Mosaic.PropertyChanged += OnMosaicPropertyChanged;
-               _mosaicCtrl.View.CanvasVirtualControl = _canvasVirtualControl;
+               _mosaicCtrl.View.MosaicContainer = _canvasVirtualControl;
             }
          }
       }
@@ -81,7 +76,6 @@ namespace fmg {
                MosaicField.Mosaic.MosaicType = EMosaic.eMosaicRhombus1;
                MosaicField.Mosaic.MinesCount = 3;
                MosaicField.Mosaic.Area = 1500;
-               //MosaicField.Repaint();
             }, CoreDispatcherPriority.High);
          }
       }
@@ -112,7 +106,7 @@ namespace fmg {
          }
 
          MosaicField.Mosaic.SizeField = sizeFld;
-       //MosaicField.Mosaic.MosaicType = MosaicField.MosaicType;
+       //MosaicField.Mosaic.MosaicType = MosaicField.Mosaic.MosaicType;
          MosaicField.Mosaic.MinesCount = numberMines;
 
          RecheckLocation();
@@ -286,7 +280,7 @@ namespace fmg {
          // Explicitly remove references to allow the Win2D controls to get garbage collected
          _canvasVirtualControl.RemoveFromVisualTree();
          _canvasVirtualControl = null;
-         MosaicField.View.CanvasVirtualControl = null;
+         MosaicField.View.MosaicContainer = null;
       }
 
       private void OnPageSizeChanged(object sender, RoutedEventArgs e) {

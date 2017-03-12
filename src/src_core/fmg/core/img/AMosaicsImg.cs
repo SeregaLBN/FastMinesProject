@@ -6,16 +6,12 @@ using fmg.common.geom;
 using fmg.common.geom.util;
 using fmg.core.types;
 using fmg.core.mosaic;
-using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
 
 namespace fmg.core.img {
 
    /// <summary> Abstract representable <see cref="EMosaic"/> as image </summary>
-   /// <typeparam name="TPaintable">see <see cref="IPaintable"/></typeparam>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   /// <typeparam name="TPaintContext">see <see cref="PaintContext{TImage}"/></typeparam>
-   /// <typeparam name="TImageInner">plaform specific image (see <see cref="PaintContext{TImage}"/>)</typeparam>
    public abstract class AMosaicsImg<TImage> : RotatedImg<TImage>, IMosaic
       where TImage : class
    {
