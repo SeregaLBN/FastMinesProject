@@ -59,15 +59,14 @@ namespace fmg.uwp.mosaic.xaml {
          }
       }
 
-      public bool GameNew() {
+      public void GameNew() {
          var mosaic = Mosaic;
          var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(MosaicHelper.CreateAttributeInstance(mosaic.MosaicType, mosaic.Area).getMaxBackgroundFillModeValue());
          //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
-         View.PaintContext.BkFill.Mode = (int)mode;
+         View.PaintContext.BkFill.Mode = mode;
          var res = mosaic.GameNew();
          if (!res)
             View.InvalidateCells(mosaic.Matrix);
-         return res;
       }
 
       protected void GameBegin(BaseCell firstClickCell) {
@@ -133,7 +132,13 @@ namespace fmg.uwp.mosaic.xaml {
 
       public Panel MosaicContainer {
          get { return _mosaicContainer; }
-         set { _mosaicContainer = value; }
+         set {
+            if (_mosaicContainer != null)
+               UnbindXaml();
+            _mosaicContainer = value;
+            if (_mosaicContainer != null)
+               BindXamlToMosaic();
+         }
       }
 
       public MosaicBase Mosaic {
@@ -150,24 +155,28 @@ namespace fmg.uwp.mosaic.xaml {
       }
 
       private void UnbindXaml() {
-         MosaicContainer.Children.Clear();
+         MosaicContainer?.Children.Clear();
          XamlBinder.Clear();
       }
 
       private void BindXamlToMosaic() {
+         var container = MosaicContainer;
+
+         //System.Diagnostics.Debug.Assert(container != null);
+         if (container == null)
+            return;
+
          //UnbindXaml();
-         var sizeMosaic = Mosaic.SizeField;
-         for (var i = 0; i < sizeMosaic.m; i++)
-            for (var j = 0; j < sizeMosaic.n; j++) {
-               var cell = Mosaic.getCell(i, j);
-               var shape = new Polygon();
-               var txt = new TextBlock();
-               var img = new Image();
-               XamlBinder.Add(cell, new PaintableShapes(shape, txt, img));
-               MosaicContainer.Children.Add(shape);
-               MosaicContainer.Children.Add(txt);
-               MosaicContainer.Children.Add(img);
-            }
+         var xamlBinder = XamlBinder;
+         foreach (var cell in Mosaic.Matrix) {
+            var shape = new Polygon();
+            var txt = new TextBlock();
+            var img = new Image();
+            xamlBinder.Add(cell, new PaintableShapes(shape, txt, img));
+            container.Children.Add(shape);
+            container.Children.Add(txt);
+            container.Children.Add(img);
+         }
       }
 
       public PaintUwpContext<ImageSource> PaintContext {
@@ -196,6 +205,11 @@ namespace fmg.uwp.mosaic.xaml {
 
       public void InvalidateCells(IEnumerable<BaseCell> modifiedCells) {
          var container = MosaicContainer;
+
+         //System.Diagnostics.Debug.Assert(container != null);
+         if (container == null)
+            return;
+
          var paintContext = PaintContext;
          { // paint background
             var bkb = container.Background as SolidColorBrush;
@@ -205,13 +219,11 @@ namespace fmg.uwp.mosaic.xaml {
          }
 
          // paint all cells
-         var sizeMosaic = Mosaic.SizeField;
          var cellPaint = CellPaint;
-         for (var i = 0; i < sizeMosaic.m; i++)
-            for (var j = 0; j < sizeMosaic.n; j++) {
-               var cell = Mosaic.getCell(i, j);
-               cellPaint.Paint(cell, XamlBinder[cell], paintContext);
-            }
+         var xamlBinder = XamlBinder;
+         foreach (var cell in modifiedCells ?? Mosaic.Matrix) {
+            cellPaint.Paint(cell, xamlBinder[cell], paintContext);
+         }
       }
 
       /*
@@ -234,20 +246,20 @@ namespace fmg.uwp.mosaic.xaml {
          try {
             _alreadyPainted = true;
 
+            var paintContext = PaintContext;
             { // paint background
                var bkb = Container.Background as SolidColorBrush;
-               var bkc = PaintContext.BackgroundColor.ToWinColor();
+               var bkc = paintContext.BackgroundColor.ToWinColor();
                if ((bkb == null) || (bkb.Color != bkc))
                   Container.Background = new SolidColorBrush(bkc);
             }
 
             // paint all cells
-            var sizeMosaic = SizeField;
-            for (var i = 0; i < sizeMosaic.m; i++)
-               for (var j = 0; j < sizeMosaic.n; j++) {
-                  var cell = base.getCell(i, j);
-                  CellPaint.Paint(cell, XamlBinder[cell], PaintContext);
-               }
+            var cellPaint = CellPaint;
+            var xamlBinder = XamlBinder;
+            foreach (var cell in Mosaic.Matrix) {
+               cellPaint.Paint(cell, xamlBinder[cell], paintContext);
+            }
          } finally {
             _alreadyPainted = false;
          }
@@ -292,7 +304,7 @@ namespace fmg.uwp.mosaic.xaml {
       }
 
       /// <summary> пересчитать и установить новую высоту шрифта </summary>
-      public void ChangeFontSize() { ChangeFontSize(PaintContext.PenBorder); }
+      private void ChangeFontSize() { ChangeFontSize(PaintContext.PenBorder); }
       /// <summary> пересчитать и установить новую высоту шрифта </summary>
       private void ChangeFontSize(PenBorder penBorder) {
          PaintContext.FontInfo.Size = (int)Mosaic.CellAttr.GetSq(penBorder.Width);
@@ -305,6 +317,7 @@ namespace fmg.uwp.mosaic.xaml {
          base.Dispose(disposing);
 
          if (disposing) {
+            UnbindXaml();
             PaintContext = null; // call setter - unsubscribe & dispose
          }
       }

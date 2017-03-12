@@ -59,7 +59,6 @@ namespace fmg.uwp.mosaic.win2d {
          }
       }
 
-
       public void GameNew() {
          var mosaic = Mosaic;
          var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(MosaicHelper.CreateAttributeInstance(mosaic.MosaicType, mosaic.Area).getMaxBackgroundFillModeValue());
@@ -283,7 +282,6 @@ namespace fmg.uwp.mosaic.win2d {
             _toRepaint = toRepaintAfter;
 #else
             foreach (var cell in Mosaic.Matrix) {
-               var cell = Mosaic.getCell(i, j);
                var tmp = new Windows.Foundation.Rect(region.X, region.Y, region.Width, region.Height);
                tmp.Intersect(cell.getRcOuter().ToWinRect());
                var intersected = (tmp != Windows.Foundation.Rect.Empty);
@@ -329,9 +327,9 @@ namespace fmg.uwp.mosaic.win2d {
       }
 
       /// <summary> пересчитать и установить новую высоту шрифта </summary>
-      public void ChangeFontSize() { ChangeFontSize(PaintContext.PenBorder); }
+      private void ChangeFontSize() { ChangeFontSize(PaintContext.PenBorder); }
       /// <summary> пересчитать и установить новую высоту шрифта </summary>
-      public void ChangeFontSize(PenBorder penBorder) {
+      private void ChangeFontSize(PenBorder penBorder) {
          PaintContext.FontInfo.Size = (int)Mosaic.CellAttr.GetSq(penBorder.Width);
       }
 

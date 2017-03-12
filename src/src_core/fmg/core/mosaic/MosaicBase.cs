@@ -360,7 +360,7 @@ namespace fmg.core.mosaic {
       }
 
       public ClickResult OnLeftButtonUp(BaseCell cellLeftUp) {
-         using (var tracer = new fmg.common.Tracer("Mosaic::OnLeftButtonUp", "coordLUp=" + cellLeftUp.getCoord()))
+         using (var tracer = new fmg.common.Tracer("Mosaic::OnLeftButtonUp", "coordLUp=" + cellLeftUp?.getCoord()))
          try {
             var cellDown = CellDown;
             var result = new ClickResult(cellDown, true, false);
