@@ -198,30 +198,28 @@ namespace fmg.uwp.mosaic.win2d {
 
 
       public void InvalidateCells(IEnumerable<BaseCell> modifiedCells) {
+         System.Diagnostics.Debug.Assert((modifiedCells == null) || modifiedCells.Any());
          using (new Tracer()) {
-            if (_mosaicContainer == null)
+            var canvasVirtualControl = MosaicContainer;
+            if (canvasVirtualControl == null)
                return;
-            if (double.IsNaN(_mosaicContainer.Width) || double.IsNaN(_mosaicContainer.Height))
+            if (double.IsNaN(canvasVirtualControl.Width) || double.IsNaN(canvasVirtualControl.Height))
                return;
-            //if ((_canvasVirtualControl.Size.Width == 0) || (_canvasVirtualControl.Size.Height == 0))
+            //if ((canvasVirtualControl.Size.Width == 0) || (canvasVirtualControl.Size.Height == 0))
             //   return;
-            if (!modifiedCells.Any())
-               return;
 
-            if (_alreadyPainted && ReferenceEquals(Mosaic.Matrix, modifiedCells)) {
-               return;
-            } else {
+            //if (_alreadyPainted && ReferenceEquals(Mosaic.Matrix, modifiedCells)) {
+            //   return;
+            //} else {
                System.Diagnostics.Debug.Assert(!_alreadyPainted);
-            }
-
-            _toRepaint.UnionWith(modifiedCells);
+            //}
 
 #if DEBUG
-            var size = new SizeDouble(_mosaicContainer.Width, _mosaicContainer.Height); // double values
-                                                                                                  //var size = _canvasVirtualControl.Size;                                                // int values
+            var size = new SizeDouble(canvasVirtualControl.Width, canvasVirtualControl.Height); // double values
+          //var size = canvasVirtualControl.Size;                                               // int values
             var tmp = new Windows.Foundation.Rect(0, 0, size.Width, size.Height);
 #endif
-            foreach (var cell in modifiedCells) {
+            foreach (var cell in modifiedCells ?? Mosaic.Matrix) {
                var rc = cell.getRcOuter();
 #if DEBUG
                var containsLT = tmp.Contains(rc.PointLT().ToWinPoint()) || (tmp.Left.HasMinDiff(rc.Left()) && tmp.Top.HasMinDiff(rc.Top()));
@@ -234,28 +232,23 @@ namespace fmg.uwp.mosaic.win2d {
                if (!(intersect && containsLT && containsRT && containsLB && containsRB))
                   return;
 #endif
-               _mosaicContainer.Invalidate(rc.ToWinRect());
+               canvasVirtualControl.Invalidate(rc.ToWinRect());
             }
          }
       }
 
-      ISet<BaseCell> _toRepaint = new HashSet<BaseCell>();
       bool _alreadyPainted = false;
       public void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
          using (new Tracer()) {
             System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _mosaicContainer));
-            if (!_toRepaint.Any())
-               return;
 
             _alreadyPainted = true;
-            var invalidatedRegions = ev.InvalidatedRegions;
-            foreach (var region in invalidatedRegions) {
+            foreach (var region in ev.InvalidatedRegions) {
                using (var ds = sender.CreateDrawingSession(region)) {
                   Repaint(ds, region);
                }
             }
             _alreadyPainted = false;
-            System.Diagnostics.Debug.Assert(!_toRepaint.Any());
          }
       }
 
@@ -266,21 +259,6 @@ namespace fmg.uwp.mosaic.win2d {
             // paint all cells
             var sizeMosaic = Mosaic.SizeField;
             var cellPaint = CellPaint;
-#if true
-            var toRepaintAfter = new HashSet<BaseCell>();
-            foreach (var cell in _toRepaint) {
-               var tmp = new Windows.Foundation.Rect(region.X, region.Y, region.Width, region.Height);
-               tmp.Intersect(cell.getRcOuter().ToWinRect());
-               var intersected = (tmp != Windows.Foundation.Rect.Empty);
-               if (intersected) {
-                  cellPaint.Paint(cell, p, pc);
-               } else {
-                  toRepaintAfter.Add(cell);
-               }
-            }
-            _toRepaint.Clear();
-            _toRepaint = toRepaintAfter;
-#else
             foreach (var cell in Mosaic.Matrix) {
                var tmp = new Windows.Foundation.Rect(region.X, region.Y, region.Width, region.Height);
                tmp.Intersect(cell.getRcOuter().ToWinRect());
@@ -288,7 +266,6 @@ namespace fmg.uwp.mosaic.win2d {
                if (intersected)
                   cellPaint.Paint(cell, p, pc);
             }
-#endif
          }
       }
 

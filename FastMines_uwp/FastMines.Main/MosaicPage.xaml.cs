@@ -294,7 +294,7 @@ namespace fmg {
       private void Mosaic_OnChangedCountMinesLeft(MosaicBase sender, PropertyChangedExEventArgs<int> ev) { }
       private void Mosaic_OnChangedCountClick(MosaicBase sender, PropertyChangedExEventArgs<int> ev) { }
       private void Mosaic_OnChangedArea(MosaicBase sender, PropertyChangedExEventArgs<double> ev) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField));
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField.Mosaic));
          using (var tracer = new Tracer("Mosaic_OnChangedArea", string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {
             //ChangeSizeImagesMineFlag();
 
@@ -323,14 +323,14 @@ namespace fmg {
       }
 
       private void Mosaic_OnChangedMosaicType(MosaicBase sender, PropertyChangedExEventArgs<EMosaic> ev) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField));
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField.Mosaic));
          using (new Tracer()) {
             //ChangeSizeImagesMineFlag();
          }
       }
 
       private void Mosaic_OnChangedSizeField(MosaicBase sender, PropertyChangedExEventArgs<Matrisize> ev) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField));
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField.Mosaic));
          using (new Tracer()) {
          }
       }
