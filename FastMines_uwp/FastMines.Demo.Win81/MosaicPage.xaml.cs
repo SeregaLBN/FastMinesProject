@@ -1,14 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Windows.System;
 using Windows.Devices.Input;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
