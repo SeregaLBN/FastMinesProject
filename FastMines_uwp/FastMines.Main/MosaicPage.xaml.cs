@@ -418,7 +418,7 @@ namespace fmg {
             var rcCanvas = new Windows.Foundation.Rect(0, 0, _canvasVirtualControl.Width, _canvasVirtualControl.Height);
             if (rcCanvas.Contains(ev.GetPosition(_canvasVirtualControl))) {
                if (MosaicField.Mosaic.GameStatus == EGameStatus.eGSEnd) {
-                  MosaicField.GameNew();
+                  MosaicField.Mosaic.GameNew();
                   ev.Handled = true;
                }
             } else {
@@ -748,7 +748,7 @@ namespace fmg {
          ev.Handled = true;
          switch (ev.VirtualKey) {
             case VirtualKey.F2:
-               MosaicField.GameNew();
+               MosaicField.Mosaic.GameNew();
                break;
             case VirtualKey.Number1:
                SetGame(ESkillLevel.eBeginner);
@@ -781,7 +781,7 @@ namespace fmg {
          GoBack();
       }
       private void OnClickBttnNewGame___________not_binded(object sender, RoutedEventArgs ev) {
-         MosaicField.GameNew();
+         MosaicField.Mosaic.GameNew();
       }
 
       private void OnClickBttnSkillBeginner___________not_binded(object sender, RoutedEventArgs ev) {

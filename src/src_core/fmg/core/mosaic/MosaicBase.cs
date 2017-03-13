@@ -259,7 +259,7 @@ namespace fmg.core.mosaic {
       }
 
       /// <summary>Начать игру, т.к. произошёл первый клик на поле</summary>
-      public void GameBegin(BaseCell firstClickCell) {
+      public virtual void GameBegin(BaseCell firstClickCell) {
          GameStatus = EGameStatus.eGSPlay;
 
          // set mines
@@ -474,7 +474,7 @@ namespace fmg.core.mosaic {
       protected virtual bool CheckNeedRestoreLastGame() { return false; }
 
       /// <summary>Подготовиться к началу игры - сбросить все ячейки</summary>
-      public bool GameNew() {
+      public virtual bool GameNew() {
          //System.out.println("Mosaic::GameNew()");
 
          if (GameStatus == EGameStatus.eGSReady)

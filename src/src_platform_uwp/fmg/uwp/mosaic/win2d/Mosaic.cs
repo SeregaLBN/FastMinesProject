@@ -32,7 +32,7 @@ namespace fmg.uwp.mosaic.win2d {
       public MosaicBase Mosaic {
          get {
             if (_mosaic == null)
-               Mosaic = new MosaicBase(); // call setter
+               Mosaic = new MosaicIntenal(); // call setter
             return _mosaic;
          }
          private set {
@@ -54,24 +54,32 @@ namespace fmg.uwp.mosaic.win2d {
             if (_view != null)
                _view.Dispose();
             _view = value;
-            if (_view != null)
-               _view.Mosaic = Mosaic;
+            if (_view != null) {
+               var mosaic = Mosaic;
+               _view.Mosaic = mosaic;
+               (mosaic as MosaicIntenal).View = _view;
+            }
          }
       }
 
-      public void GameNew() {
-         var mosaic = Mosaic;
-         var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(MosaicHelper.CreateAttributeInstance(mosaic.MosaicType, mosaic.Area).getMaxBackgroundFillModeValue());
-         //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
-         View.PaintContext.BkFill.Mode = mode;
-         var res = mosaic.GameNew();
-         if (!res)
-            View.InvalidateCells(mosaic.Matrix);
-      }
+      private class MosaicIntenal : MosaicBase {
 
-      protected void GameBegin(BaseCell firstClickCell) {
-         View.PaintContext.BkFill.Mode = 0;
-         Mosaic.GameBegin(firstClickCell);
+         public MosaicView View { get; set; }
+
+         public override bool GameNew() {
+            var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(MosaicHelper.CreateAttributeInstance(MosaicType, Area).getMaxBackgroundFillModeValue());
+            //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
+            View.PaintContext.BkFill.Mode = mode;
+            var res = base.GameNew();
+            if (!res)
+               View.InvalidateCells(Matrix);
+            return res;
+         }
+
+         public override void GameBegin(BaseCell firstClickCell) {
+            View.PaintContext.BkFill.Mode = 0;
+            base.GameBegin(firstClickCell);
+         }
       }
 
       /// <summary> преобразовать экранные координаты в ячейку поля мозаики </summary>
