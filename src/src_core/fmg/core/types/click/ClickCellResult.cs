@@ -8,13 +8,13 @@ namespace fmg.core.types.click {
 
       public ISet<BaseCell> Modified = new HashSet<BaseCell>();
 
-      /// <summary> были ли изменения на поле? Была ли открыта хоть одна ячейка или выставлен/снят флажёк / знак вопроса </summary>
+      /// <summary> Р±С‹Р»Рё Р»Рё РёР·РјРµРЅРµРЅРёСЏ РЅР° РїРѕР»Рµ? Р‘С‹Р»Р° Р»Рё РѕС‚РєСЂС‹С‚Р° С…РѕС‚СЊ РѕРґРЅР° СЏС‡РµР№РєР° РёР»Рё РІС‹СЃС‚Р°РІР»РµРЅ/СЃРЅСЏС‚ С„Р»Р°Р¶С‘Рє / Р·РЅР°Рє РІРѕРїСЂРѕСЃР° </summary>
       public bool IsAnyChanges => Modified.Any();
       public bool IsAnyOpenMine => Modified
          .Where(x => x.State.Status == EState._Open)
          .Any(x => x.State.Open == EOpen._Mine);
 
-      ///// <summary> множество ячеек (нулевых) открытых при последнем клике </summary>
+      ///// <summary> РјРЅРѕР¶РµСЃС‚РІРѕ СЏС‡РµРµРє (РЅСѓР»РµРІС‹С…) РѕС‚РєСЂС‹С‚С‹С… РїСЂРё РїРѕСЃР»РµРґРЅРµРј РєР»РёРєРµ </summary>
       //public List<BaseCell> GetOpenNils() {
       //   return Modified
       //      .Where(x => x.State.Status == EState._Open)
@@ -22,7 +22,7 @@ namespace fmg.core.types.click {
       //      .ToList();
       //}
 
-      ///// <summary> множество ячеек (ненулевых) открытых при последнем клике </summary>
+      ///// <summary> РјРЅРѕР¶РµСЃС‚РІРѕ СЏС‡РµРµРє (РЅРµРЅСѓР»РµРІС‹С…) РѕС‚РєСЂС‹С‚С‹С… РїСЂРё РїРѕСЃР»РµРґРЅРµРј РєР»РёРєРµ </summary>
       //public List<BaseCell> GetOpens() {
       //   return Modified
       //      .Where(x => x.State.Status == EState._Open)
@@ -30,7 +30,7 @@ namespace fmg.core.types.click {
       //      .ToList();
       //}
 
-      ///// <summary> множество ячеек с флажками снятых/уставленных при последнем клике </summary>
+      ///// <summary> РјРЅРѕР¶РµСЃС‚РІРѕ СЏС‡РµРµРє СЃ С„Р»Р°Р¶РєР°РјРё СЃРЅСЏС‚С‹С…/СѓСЃС‚Р°РІР»РµРЅРЅС‹С… РїСЂРё РїРѕСЃР»РµРґРЅРµРј РєР»РёРєРµ </summary>
       //public List<BaseCell> GetFlags() {
       //   return Modified
       //      .Where(x => x.State.Status == EState._Close)
