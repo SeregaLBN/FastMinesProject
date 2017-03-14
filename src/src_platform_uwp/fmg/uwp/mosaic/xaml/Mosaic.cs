@@ -73,7 +73,7 @@ namespace fmg.uwp.mosaic.xaml {
             View.PaintContext.BkFill.Mode = mode;
             var res = base.GameNew();
             if (!res)
-               View.InvalidateCells(Matrix);
+               View.InvalidateCells();
             return res;
          }
 
@@ -213,7 +213,7 @@ namespace fmg.uwp.mosaic.xaml {
       protected CellPaintShapes CellPaintFigures => _cellPaint ?? (_cellPaint = new CellPaintShapes());
 
 
-      public void InvalidateCells(IEnumerable<BaseCell> modifiedCells) {
+      public void InvalidateCells(IEnumerable<BaseCell> modifiedCells = null) {
          var container = MosaicContainer;
 
          //System.Diagnostics.Debug.Assert(container != null);
@@ -290,7 +290,7 @@ namespace fmg.uwp.mosaic.xaml {
          case nameof(Mosaic.Matrix):
             UnbindXaml();
             BindXamlToMosaic();
-            InvalidateCells(Mosaic.Matrix);
+            InvalidateCells();
             break;
          case MosaicBase.PROPERTY_MODIFIED_CELLS:
             InvalidateCells((ev as IPropertyChangedExEventArgs<IEnumerable<BaseCell>>).NewValue);
@@ -308,7 +308,7 @@ namespace fmg.uwp.mosaic.xaml {
             ChangeFontSize(penBorder);
             break;
          }
-         this.InvalidateCells(Mosaic.Matrix);
+         //this.InvalidateCells();
          //OnSelfPropertyChanged(nameof(PaintContext));
          //OnSelfPropertyChanged(nameof(PaintContext) + "." + ev.PropertyName);
       }

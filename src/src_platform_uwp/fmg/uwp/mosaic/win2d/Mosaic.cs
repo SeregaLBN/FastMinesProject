@@ -72,7 +72,7 @@ namespace fmg.uwp.mosaic.win2d {
             View.PaintContext.BkFill.Mode = mode;
             var res = base.GameNew();
             if (!res)
-               View.InvalidateCells(Matrix);
+               View.InvalidateCells();
             return res;
          }
 
@@ -205,7 +205,7 @@ namespace fmg.uwp.mosaic.win2d {
       protected CellPaintWin2D CellPaintFigures => _cellPaint ?? (_cellPaint = new CellPaintWin2D());
 
 
-      public void InvalidateCells(IEnumerable<BaseCell> modifiedCells) {
+      public void InvalidateCells(IEnumerable<BaseCell> modifiedCells = null) {
          System.Diagnostics.Debug.Assert((modifiedCells == null) || modifiedCells.Any());
          using (new Tracer()) {
             var canvasVirtualControl = MosaicContainer;
@@ -216,17 +216,19 @@ namespace fmg.uwp.mosaic.win2d {
             //if ((canvasVirtualControl.Size.Width == 0) || (canvasVirtualControl.Size.Height == 0))
             //   return;
 
-            //if (_alreadyPainted && ReferenceEquals(Mosaic.Matrix, modifiedCells)) {
-            //   return;
-            //} else {
-               System.Diagnostics.Debug.Assert(!_alreadyPainted);
-            //}
+            System.Diagnostics.Debug.Assert(!_alreadyPainted);
+
+            if (modifiedCells == null) {
+               canvasVirtualControl.Invalidate();
+               return;
+            }
 
 #if DEBUG
             var size = new SizeDouble(canvasVirtualControl.Width, canvasVirtualControl.Height); // double values
           //var size = canvasVirtualControl.Size;                                               // int values
             var tmp = new Windows.Foundation.Rect(0, 0, size.Width, size.Height);
 #endif
+
             foreach (var cell in modifiedCells ?? Mosaic.Matrix) {
                var rc = cell.getRcOuter();
 #if DEBUG
@@ -288,7 +290,7 @@ namespace fmg.uwp.mosaic.win2d {
             ChangeFontSize(PaintContext.PenBorder);
             break;
          case nameof(Mosaic.Matrix):
-            InvalidateCells(Mosaic.Matrix);
+            InvalidateCells();
             break;
          case MosaicBase.PROPERTY_MODIFIED_CELLS:
             InvalidateCells((ev as IPropertyChangedExEventArgs<IEnumerable<BaseCell>>).NewValue);
@@ -306,7 +308,7 @@ namespace fmg.uwp.mosaic.win2d {
             ChangeFontSize(penBorder);
             break;
          }
-         //this.InvalidateCells(Mosaic.Matrix);
+         //this.InvalidateCells();
          //OnSelfPropertyChanged(nameof(PaintContext));
          //OnSelfPropertyChanged(nameof(PaintContext) + "." + ev.PropertyName);
       }
