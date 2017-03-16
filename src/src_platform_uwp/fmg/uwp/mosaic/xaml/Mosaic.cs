@@ -134,19 +134,19 @@ namespace fmg.uwp.mosaic.xaml {
    public class MosaicView : Disposable {
 
       private MosaicBase _mosaic;
-      private Panel _mosaicContainer;
+      private Panel _control;
       private PaintUwpContext<ImageSource> _paintContext;
       private CellPaintShapes _cellPaint;
       private IDictionary<BaseCell, PaintableShapes> _xamlBinder;
       private IDictionary<BaseCell, PaintableShapes> XamlBinder => _xamlBinder ?? (_xamlBinder = new Dictionary<BaseCell, PaintableShapes>());
 
-      public Panel MosaicContainer {
-         get { return _mosaicContainer; }
+      public Panel Control {
+         get { return _control; }
          set {
-            if (_mosaicContainer != null)
+            if (_control != null)
                UnbindXaml();
-            _mosaicContainer = value;
-            if (_mosaicContainer != null)
+            _control = value;
+            if (_control != null)
                BindXamlToMosaic();
          }
       }
@@ -165,12 +165,12 @@ namespace fmg.uwp.mosaic.xaml {
       }
 
       private void UnbindXaml() {
-         MosaicContainer?.Children.Clear();
+         Control?.Children.Clear();
          XamlBinder.Clear();
       }
 
       private void BindXamlToMosaic() {
-         var container = MosaicContainer;
+         var container = Control;
 
          //System.Diagnostics.Debug.Assert(container != null);
          if (container == null)
@@ -214,7 +214,7 @@ namespace fmg.uwp.mosaic.xaml {
 
 
       public void InvalidateCells(IEnumerable<BaseCell> modifiedCells = null) {
-         var container = MosaicContainer;
+         var container = Control;
 
          //System.Diagnostics.Debug.Assert(container != null);
          if (container == null)

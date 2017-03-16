@@ -135,15 +135,15 @@ namespace fmg.uwp.mosaic.win2d {
    public class MosaicView : Disposable {
 
       private MosaicBase _mosaic;
-      private CanvasVirtualControl _mosaicContainer;
+      private CanvasVirtualControl _control;
       private PaintUwpContext<CanvasBitmap> _paintContext;
       private CellPaintWin2D _cellPaint;
       private MineCanvasBmp _mineImage;
       private FlagCanvasBmp _flagImage;
 
-      public CanvasVirtualControl MosaicContainer {
-         get { return _mosaicContainer; }
-         set { _mosaicContainer = value; }
+      public CanvasVirtualControl Control {
+         get { return _control; }
+         set { _control = value; }
       }
 
       public MosaicBase Mosaic {
@@ -163,7 +163,7 @@ namespace fmg.uwp.mosaic.win2d {
          get {
             if (_mineImage == null) {
                var device = CanvasDevice.GetSharedDevice();
-             //var device = _container.Device;
+             //var device = _control.Device;
                _mineImage = new MineCanvasBmp(device);
             }
             return _mineImage;
@@ -174,7 +174,7 @@ namespace fmg.uwp.mosaic.win2d {
          get {
             if (_flagImage == null) {
                var device = CanvasDevice.GetSharedDevice();
-             //var device = _container.Device;
+               //var device = _control.Device;
                _flagImage = new FlagCanvasBmp(device);
             }
             return _flagImage;
@@ -208,7 +208,7 @@ namespace fmg.uwp.mosaic.win2d {
       public void InvalidateCells(IEnumerable<BaseCell> modifiedCells = null) {
          System.Diagnostics.Debug.Assert((modifiedCells == null) || modifiedCells.Any());
          using (new Tracer()) {
-            var canvasVirtualControl = MosaicContainer;
+            var canvasVirtualControl = Control;
             if (canvasVirtualControl == null)
                return;
             if (double.IsNaN(canvasVirtualControl.Width) || double.IsNaN(canvasVirtualControl.Height))
@@ -219,7 +219,7 @@ namespace fmg.uwp.mosaic.win2d {
             System.Diagnostics.Debug.Assert(!_alreadyPainted);
 
             if (modifiedCells == null) {
-               canvasVirtualControl.Invalidate();
+               canvasVirtualControl.Invalidate(); // redraw all of mosaic
                return;
             }
 
@@ -250,7 +250,7 @@ namespace fmg.uwp.mosaic.win2d {
       bool _alreadyPainted = false;
       public void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
          using (new Tracer()) {
-            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _mosaicContainer));
+            System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _control));
 
             _alreadyPainted = true;
             foreach (var region in ev.InvalidatedRegions) {
@@ -283,13 +283,14 @@ namespace fmg.uwp.mosaic.win2d {
       private void OnMosaicPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Mosaic));
          switch (ev.PropertyName) {
-         case nameof(Mosaic.MosaicType):
+         case nameof(MosaicBase.MosaicType):
             ChangeFontSize();
             break;
-         case nameof(Mosaic.Area):
+         case nameof(MosaicBase.Area):
             ChangeFontSize(PaintContext.PenBorder);
+            ChangeSizeImagesMineFlag();
             break;
-         case nameof(Mosaic.Matrix):
+         case nameof(MosaicBase.Matrix):
             InvalidateCells();
             break;
          case MosaicBase.PROPERTY_MODIFIED_CELLS:
@@ -320,6 +321,21 @@ namespace fmg.uwp.mosaic.win2d {
          PaintContext.FontInfo.Size = (int)Mosaic.CellAttr.GetSq(penBorder.Width);
       }
 
+      /// <summary> переустанавливаю заного размер мины/флага для мозаики </summary>
+      private void ChangeSizeImagesMineFlag() {
+         // PS: картинки не зависят от размера ячейки...
+
+         //PaintUwpContext<CanvasBitmap> pc = PaintContext;
+         //int sq = (int)Mosaic.CellAttr.GetSq(pc.PenBorder.Width);
+         //if (sq <= 0) {
+         //   System.Diagnostics.Debug.Assert(false, "Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");
+         //   sq = 3; // ат балды...
+         //}
+         //MineImg = null;
+         //FlagImg = null;
+         //pc.ImgFlag = FlagImg.Image;
+         //pc.ImgMine = MineImg.Image;
+      }
 
       protected override void Dispose(bool disposing) {
          if (Disposed)

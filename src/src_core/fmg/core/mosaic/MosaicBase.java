@@ -24,9 +24,7 @@ package fmg.core.mosaic;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import fmg.common.geom.Coord;
@@ -35,30 +33,25 @@ import fmg.common.geom.Matrisize;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.mosaic.draw.IPaintable;
-import fmg.core.mosaic.draw.PaintContext;
 import fmg.core.types.*;
 import fmg.core.types.click.ClickCellResult;
 import fmg.core.types.click.ClickResult;
 
 /** Mosaic field: класс окна мозаики поля */
-public abstract class MosaicBase<TPaintable extends IPaintable,
-                                 TImage,
-                                 TPaintContext extends PaintContext<TImage>>
-                  extends NotifyPropertyChanged
-                  implements IMosaic<TPaintable, TImage, TPaintContext>,
-                             PropertyChangeListener
+public class MosaicBase
+       extends NotifyPropertyChanged
+       implements IMosaic, PropertyChangeListener
 {
    public static final double AREA_MINIMUM = 230;
 
    /** матрица List &lt; List &lt; BaseCell &gt; &gt; , представленная(развёрнута) в виде вектора */
    private final List<BaseCell> _matrix = new ArrayList<BaseCell>(0);
    /** размер поля в ячейках */
-   protected Matrisize _size = new Matrisize(0, 0);
+   protected Matrisize _size = new Matrisize(10, 10);
    /** из каких фигур состоит мозаика поля */
    protected EMosaic _mosaicType = EMosaic.eMosaicSquare1;
    /** кол-во мин на поле */
-   protected int _minesCount = 1;
+   protected int _minesCount = 10;
    /** кол-во мин на поле до создания игры. Используется когда игра была создана, но ни одной мины не проставлено. */
    protected int _oldMinesCount = 1;
 
@@ -87,6 +80,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
    public static final String PROPERTY_PLAY_INFO         = "PlayInfo";
    public static final String PROPERTY_REPOSITORY_MINES  = "RepositoryMines";
    public static final String PROPERTY_GAME_STATUS       = "GameStatus";
+   public static final String PROPERTY_MODIFIED_CELLS    = "ToRepaint";
 
    private BaseCell.BaseAttribute _cellAttr;
    private void setCellAttr(BaseCell.BaseAttribute newValue) {
@@ -185,16 +179,12 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       GameNew();
    }
 
-   protected void OnError(String msg) {
-      System.err.println(msg);
-   }
-
    /** arrange Mines */
    public void setMines_LoadRepository(List<Coord> repository) {
       for (Coord c: repository) {
          boolean suc = getCell(c).getState().SetMine();
          if (!suc)
-            OnError("Проблемы с установкой мин... :(");
+            System.err.println("Проблемы с установкой мин... :(");
       }
       // set other CellOpen and set all Caption
       getMatrix().forEach(cell -> cell.getState().calcOpenState(this));
@@ -213,7 +203,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       do {
          int len = matrixClone.size();
          if (len == 0) {
-            OnError("ээээ..... лажа......\r\nЗахотели установить больше мин чем возможно");
+            System.err.println("ээээ..... лажа......\r\nЗахотели установить больше мин чем возможно");
             _minesCount = count;
             break;
          }
@@ -223,7 +213,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
             count++;
             matrixClone.remove(cellToSetMines);
          } else
-            OnError("Мины должны всегда устанавливаться...");
+            System.err.println("Мины должны всегда устанавливаться...");
       } while (count < _minesCount);
 
       // set other CellOpen and set all Caption
@@ -329,11 +319,8 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       GameNew();
    }
 
-   /** перерисовать ячейки; если null - перерисовать всё поле */
-   protected abstract void repaint(List<BaseCell> needRepaint);
-
    /** Начать игру, т.к. произошёл первый клик на поле */
-   protected void GameBegin(BaseCell firstClickCell) {
+   public void GameBegin(BaseCell firstClickCell) {
       setGameStatus(EGameStatus.eGSPlay);
 
       // set mines
@@ -343,16 +330,14 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       } else {
          setMines_random(firstClickCell);
       }
-
-      repaint(null);
    }
 
    /** Завершить игру */
-   private void GameEnd(boolean victory) {
+   private Collection<BaseCell> GameEnd(boolean victory) {
       if (getGameStatus() == EGameStatus.eGSEnd)
-         return;
+         return Collections.emptySet();
 
-      List<BaseCell> toRepaint = new ArrayList<>();
+      Set<BaseCell> toRepaint = new HashSet<>();
       // открыть оставшeеся
       for (BaseCell cell: _matrix)
          if (cell.getState().getStatus() == EState._Close) {
@@ -375,36 +360,36 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
             }
          }
 
-      if (!toRepaint.isEmpty())
-         repaint(toRepaint);
-
       setGameStatus(EGameStatus.eGSEnd);
       onSelfPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
       onSelfPropertyChanged(PROPERTY_COUNT_FLAG);
       onSelfPropertyChanged(PROPERTY_COUNT_OPEN);
+
+      return toRepaint;
    }
 
-   private void VerifyFlag() {
-      if (getGameStatus() == EGameStatus.eGSEnd) return;
+   private Collection<BaseCell> VerifyFlag() {
+      if (getGameStatus() == EGameStatus.eGSEnd) return Collections.emptySet();
       if (getMinesCount() == getCountFlag()) {
          for (BaseCell cell: _matrix)
             if ((cell.getState().getClose() == EClose._Flag) &&
                (cell.getState().getOpen() != EOpen._Mine))
-               return; // неверно проставленный флажок - на выход
-         GameEnd(true);
+               return Collections.emptySet(); // неверно проставленный флажок - на выход
+         return GameEnd(true);
       } else {
          if (getMinesCount() == (getCountFlag() + getCountUnknown())) {
             for (BaseCell cell: _matrix)
                if (((cell.getState().getClose() == EClose._Unknown) ||
                   ( cell.getState().getClose() == EClose._Flag)) &&
                   ( cell.getState().getOpen() != EOpen._Mine))
-                  return; // неверно проставленный флажок или '?'- на выход
-            GameEnd(true);
+                  return Collections.emptySet(); // неверно проставленный флажок или '?'- на выход
+            return GameEnd(true);
          }
       }
+      return Collections.emptySet();
    }
 
-   protected ClickResult onLeftButtonDown(BaseCell cellLeftDown) {
+   public ClickResult onLeftButtonDown(BaseCell cellLeftDown) {
       ClickResult result = new ClickResult(cellLeftDown, true, true);
       setCellDown(null);
       if (getGameStatus() == EGameStatus.eGSEnd)
@@ -429,11 +414,11 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
          ClickCellResult resultCell = cellLeftDown.LButtonDown(this);
          result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
       }
-      repaint(result.modified);
+      onSelfModifiedCellsPropertyChanged(result.modified);
       return result;
    }
 
-   protected ClickResult onLeftButtonUp(BaseCell cellLeftUp) {
+   public ClickResult onLeftButtonUp(BaseCell cellLeftUp) {
       try {
          BaseCell cellDown = getCellDown();
          ClickResult result = new ClickResult(cellDown, true, false);
@@ -445,12 +430,15 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
             return result;
 
    //      System.out.println("OnLeftButtonUp: coordLUp="+coordLUp);
-         if ((getGameStatus() == EGameStatus.eGSReady) && (cellDown == cellLeftUp))
+         boolean gameBegin = (getGameStatus() == EGameStatus.eGSReady) && (cellDown == cellLeftUp);
+         if (gameBegin)
          {
             GameBegin(cellDown);
+            result.modified.addAll(this.getMatrix());
          }
          ClickCellResult resultCell = cellDown.LButtonUp(cellDown == cellLeftUp, this);
-         result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
+         if (!gameBegin)
+            result.modified.addAll(resultCell.modified);
          int countOpen = result.getCountOpen();
          int countFlag = result.getCountFlag();
          int countUnknown = result.getCountUnknown();
@@ -467,29 +455,33 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
             }
          }
 
+         Collection<BaseCell> modified;
          if (result.isAnyOpenMine()) {
-            GameEnd(false);
+            modified = GameEnd(false);
          } else {
             Matrisize sizeField = getSizeField();
             if ((getCountOpen() + getMinesCount()) == sizeField.m*sizeField.n) {
-               GameEnd(true);
+               modified = GameEnd(true);
             } else {
-               VerifyFlag();
+               modified = VerifyFlag();
             }
          }
-         repaint(result.modified);
+
+         if (!gameBegin)
+            result.modified.addAll(modified);
+         onSelfModifiedCellsPropertyChanged(result.modified);
+
          return result;
       } finally {
          setCellDown(null);
       }
    }
 
-   protected ClickResult onRightButtonDown(BaseCell cellRightDown) {
+   public ClickResult onRightButtonDown(BaseCell cellRightDown) {
       setCellDown(null);
       ClickResult result = new ClickResult(cellRightDown, false, true);
       if (getGameStatus() == EGameStatus.eGSEnd) {
          GameNew();
-         result.modified.addAll(getMatrix()); // ??? TODO optimize
          return result;
       }
       if (getGameStatus() == EGameStatus.eGSReady)
@@ -501,7 +493,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
 
       setCellDown(cellRightDown);
       ClickCellResult resultCell = cellRightDown.RButtonDown(cellRightDown.getState().getClose().nextState(getUseUnknown()));
-      result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
+      result.modified = resultCell.modified; // copy reference; TODO modify to result.modified.addAll(resultCell.modified);
 
       int countFlag = result.getCountFlag();
       int countUnknown = result.getCountUnknown();
@@ -514,15 +506,16 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
          onSelfPropertyChanged(PROPERTY_COUNT_UNKNOWN);
       }
 
-      VerifyFlag();
+      result.modified.addAll(VerifyFlag());
       if (getGameStatus() != EGameStatus.eGSEnd) {
          //...
       }
-      repaint(result.modified);
+
+      onSelfModifiedCellsPropertyChanged(result.modified);
       return result;
    }
 
-   protected ClickResult onRightButtonUp(BaseCell cellRightUp) {
+   public ClickResult onRightButtonUp(BaseCell cellRightUp) {
       try {
          BaseCell cellDown = getCellDown();
          return new ClickResult(cellDown, false, false);
@@ -558,7 +551,8 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
 
       setGameStatus(EGameStatus.eGSReady);
       setPlayInfo(EPlayInfo.ePlayerUnknown); // пока не знаю кто будет играть
-      repaint(null);
+
+      onSelfModifiedCellsPropertyChanged(this.getMatrix());
 
       return true;
    }
@@ -576,7 +570,7 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
    @Override
    public double getArea() {
       if (_cellAttr == null)
-         return AREA_MINIMUM;
+         return 10 * AREA_MINIMUM;
       return getCellAttr().getArea();
    }
    /** установить новую площадь ячеек */
@@ -617,28 +611,6 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       return (getGameStatus() == EGameStatus.eGSEnd) && (0 == getCountMinesLeft());
    }
 
-   /** Mosaic field: класс окна мозаики поля */
-   public MosaicBase() {
-      initialize();
-   }
-   /** Mosaic field: класс окна мозаики поля */
-   public MosaicBase(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) {
-      initialize(sizeField, mosaicType, minesCount, area);
-   }
-
-   protected void initialize() {
-      initialize(new Matrisize(10, 10),
-            EMosaic.eMosaicSquare1,//EMosaic.eMosaicPenrousePeriodic1, //
-            15, AREA_MINIMUM*10);
-   }
-   protected void initialize(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) {
-      setSizeField(sizeField);
-      setMosaicType(mosaicType);
-      setMinesCount(minesCount);
-      setArea(area); // ...провера на валидность есть только при установке из класса Main. Так что, не нуна тут задавать громадные величины.
-   }
-
-
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
       if (ev.getSource() instanceof BaseCell.BaseAttribute)
@@ -649,12 +621,23 @@ public abstract class MosaicBase<TPaintable extends IPaintable,
       String propName = ev.getPropertyName();
       if (BaseCell.BaseAttribute.PROPERTY_AREA.equals(propName)) {
          getMatrix().forEach(cell -> cell.Init());
-         repaint(null);
-         onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
+
          onSelfPropertyChanged(PROPERTY_WINDOW_SIZE);
+         onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
+
+         onSelfModifiedCellsPropertyChanged(this.getMatrix());
       }
       onSelfPropertyChanged(PROPERTY_CELL_ATTR);
       onSelfPropertyChanged(PROPERTY_CELL_ATTR + "." + propName);
+   }
+
+   protected void onSelfModifiedCellsPropertyChanged(Collection<BaseCell> cells) {
+      // mark NULL if all mosaic is changed
+      if (cells.size() == getMatrix().size())
+         cells = null;
+      if (cells == getMatrix()) // ReferenceEquals
+         cells = null;
+      onSelfPropertyChanged(null, cells, PROPERTY_MODIFIED_CELLS);
    }
 
 }

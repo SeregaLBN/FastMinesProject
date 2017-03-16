@@ -39,6 +39,8 @@ import fmg.swing.dialogs.*;
 import fmg.swing.draw.img.*;
 import fmg.swing.draw.img.Smile.EType;
 import fmg.swing.mosaic.Mosaic;
+import fmg.swing.mosaic.Mosaic.MosaicView;
+import fmg.swing.mosaic.MosaicControllerSwing;
 import fmg.swing.serializable.SerializeProjData;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
@@ -51,7 +53,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    private JPanel     contentPane;
    private MainMenu   menu;
    private Toolbar    toolbar;
-   private Mosaic     mosaic;
+   private MosaicControllerSwing mosaicCtrl;
    private PausePanel pausePanel;
    private StatusBar  statusBar;
 
@@ -596,7 +598,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       @Override
       public Dimension getPreferredSize() {
          Dimension dim = super.getPreferredSize();
-         dim.width = getMosaic().getContainer().getPreferredSize().width;
+         dim.width = getMosaicView().getControl().getPreferredSize().width;
          return dim;
       }
 
@@ -903,7 +905,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       @Override
       public Dimension getPreferredSize() {
 //         return super.getPreferredSize();
-         return getMosaic().getContainer().getPreferredSize();
+         return getMosaicView().getControl().getPreferredSize();
       }
    }
 
@@ -949,7 +951,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          } else
             centerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0,0));
 
-         centerPanel.add(getMosaic().getContainer());
+         centerPanel.add(getMosaic().getControl());
          centerPanel.add(getPausePanel());
       }
       return contentPane;
@@ -967,13 +969,19 @@ public class Main extends JFrame implements PropertyChangeListener {
       return toolbar;
    }
 
-   /** мозаика */
-   public Mosaic getMosaic() {
-      if (mosaic == null) {
-         mosaic = new Mosaic();
-         mosaic.addListener(this);
+   public MosaicControllerSwing getMosaicField() {
+      if (mosaicCtrl == null) {
+         mosaicCtrl = new MosaicControllerSwing();
+         mosaicCtrl.addListener(this);
       }
-      return mosaic;
+      return mosaicCtrl;
+   }
+   /** мозаика */
+   public MosaicBase getMosaic() {
+      return getMosaicField().getMosaic();
+   }
+   public MosaicView getMosaicView() {
+      return getMosaicField().getView();
    }
 
    private PausePanel getPausePanel() {
@@ -1056,13 +1064,11 @@ public class Main extends JFrame implements PropertyChangeListener {
             }
          this.setUndecorated(!spm.getShowElement(EShowElement.eCaption));
 
-         Mosaic mosaic = getMosaic();
-         {
-            mosaic.setSizeField(spm.getSizeField());
-            mosaic.setMosaicType(spm.getMosaicType());
-            mosaic.setMinesCount(spm.getMinesCount());
-            mosaic.setArea(spm.getArea());
-         }
+         MosaicBase mosaic = getMosaic();
+         mosaic.setSizeField(spm.getSizeField());
+         mosaic.setMosaicType(spm.getMosaicType());
+         mosaic.setMinesCount(spm.getMinesCount());
+         mosaic.setArea(spm.getArea());
 
          setActiveUserId(spm.getActiveUserId());
          getPlayerManageDlg().setDoNotAskStartupChecked(spm.isDoNotAskStartup());
@@ -1109,7 +1115,7 @@ public class Main extends JFrame implements PropertyChangeListener {
             this.setIconImage(_logo.getImage());
       });
 
-      getMosaic().setOnClickEvent(this.getHandlers().getMosaicClickHandler());
+      getMosaicField().setOnClickEvent(this.getHandlers().getMosaicClickHandler());
 //      this.getHandlers().getMosaicListener().OnChangedArea(new MosaicEvent(getMosaic())); // TODO: это нужно только тогда, когда нет десериализации
       getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaic().getCountMinesLeft()));
       getToolbar().getEdtTimePlay().setText("0");
@@ -1377,12 +1383,12 @@ public class Main extends JFrame implements PropertyChangeListener {
          getTimerGame().restart();
 
          getPausePanel().setVisible(false);
-         getMosaic().getContainer().setVisible(true);
-         getMosaic().getContainer().requestFocusInWindow();
+         getMosaicView().getControl().setVisible(true);
+         getMosaicView().getControl().requestFocusInWindow();
       } else {
          getTimerGame().stop();
 
-         getMosaic().getContainer().setVisible(false);
+         getMosaicView().getControl().setVisible(false);
          getPausePanel().setVisible(true);
          getRootPane().requestFocusInWindow(); // ! иначе на компонентах нат фокуса, и mouse wheel не пашет...
       }
@@ -1819,7 +1825,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 //   }
 
    boolean isPaused() {
-      return !getMosaic().getContainer().isVisible();
+      return !getMosaicView().getControl().isVisible();
    }
    boolean isMenuEvent(ActionEvent e) {
       Object src = e.getSource();
@@ -2378,7 +2384,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    /** Сохранить чемпиона && Установить статистику */
    public void setStatisticAndChampion(PropertyChangeEvent ev) {
-      MosaicBase<?,?,?> mosaic = (MosaicBase<?,?,?>)ev.getSource();
+      MosaicBase mosaic = (MosaicBase)ev.getSource();
       if (mosaic.getGameStatus() != EGameStatus.eGSEnd)
          throw new RuntimeException("Invalid method state call");
 
@@ -2442,19 +2448,19 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
    private void onMosaicPropertyChanged(Mosaic source, PropertyChangeEvent ev) {
       switch (ev.getPropertyName()) {
-      case Mosaic.PROPERTY_AREA:
-      case Mosaic.PROPERTY_SIZE_FIELD:
-      case Mosaic.PROPERTY_MOSAIC_TYPE:
+      case MosaicBase.PROPERTY_AREA:
+      case MosaicBase.PROPERTY_SIZE_FIELD:
+      case MosaicBase.PROPERTY_MOSAIC_TYPE:
          recheckLocation();
        //break; // no break
-      case Mosaic.PROPERTY_MINES_COUNT:
+      case MosaicBase.PROPERTY_MINES_COUNT:
          getMenu().getMosaics().recheckSelectedMosaicType();
          getMenu().getGame().recheckSelectedSkillLevel();
          break;
       }
 
       switch (ev.getPropertyName()) {
-      case Mosaic.PROPERTY_GAME_STATUS:
+      case MosaicBase.PROPERTY_GAME_STATUS:
          {
             getToolbar().getBtnPause().setEnabled(getMosaic().getGameStatus() == EGameStatus.eGSPlay);
           //System.out.println("OnChangeGameStatus: " + e.getSource().getGameStatus());
@@ -2500,10 +2506,10 @@ public class Main extends JFrame implements PropertyChangeListener {
       //   break;
       //case Mosaic.PROPERTY_COUNT_OPEN:
       //   break;
-      case Mosaic.PROPERTY_COUNT_MINES_LEFT:
+      case MosaicBase.PROPERTY_COUNT_MINES_LEFT:
          getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaic().getCountMinesLeft()));
          break;
-      case Mosaic.PROPERTY_COUNT_CLICK:
+      case MosaicBase.PROPERTY_COUNT_CLICK:
          getStatusBar().setClickCount(getMosaic().getCountClick());
          break;
       }
@@ -2518,3 +2524,13 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
 
 }
+
+/*
+
+@Override
+protected boolean checkNeedRestoreLastGame() {
+   int iRes = JOptionPane.showOptionDialog(getContainer(), "Restore last game?", "Question", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+   return (iRes == JOptionPane.NO_OPTION);
+}
+
+*/

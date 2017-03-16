@@ -52,7 +52,7 @@ namespace fmg {
             _mosaicCtrl = value;
             if (_mosaicCtrl != null) {
                _mosaicCtrl.Mosaic.PropertyChanged += OnMosaicPropertyChanged;
-               _mosaicCtrl.View.MosaicContainer = _canvasVirtualControl;
+               _mosaicCtrl.View.Control = _canvasVirtualControl;
             }
          }
       }
@@ -280,7 +280,7 @@ namespace fmg {
          // Explicitly remove references to allow the Win2D controls to get garbage collected
          _canvasVirtualControl.RemoveFromVisualTree();
          _canvasVirtualControl = null;
-         MosaicField.View.MosaicContainer = null;
+         MosaicField.View.Control = null;
       }
 
       private void OnPageSizeChanged(object sender, RoutedEventArgs e) {

@@ -43,7 +43,7 @@ public abstract class ATestDrawing {
       }
 
       if (img instanceof AMosaicsImg) {
-         AMosaicsImg<?,?,?,?> mosaicsImg = (AMosaicsImg<?,?,?,?>)img;
+         AMosaicsImg<?> mosaicsImg = (AMosaicsImg<?>)img;
          mosaicsImg.setRotateMode(AMosaicsImg.ERotateMode.values()[r(AMosaicsImg.ERotateMode.values().length)]);
       }
 

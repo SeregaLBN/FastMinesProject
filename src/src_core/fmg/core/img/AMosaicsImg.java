@@ -8,22 +8,16 @@ import fmg.core.mosaic.IMosaic;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
-import fmg.core.mosaic.draw.ICellPaint;
-import fmg.core.mosaic.draw.IPaintable;
-import fmg.core.mosaic.draw.PaintContext;
 import fmg.core.types.EMosaic;
 
 /**
  * Abstract representable {@link fmg.core.types.EMosaic} as image
  *
- * @param <TPaintable> see {@link IPaintable}
  * @param <TImage> plaform specific image
- * @param <TPaintContext> see {@link PaintContext}
- * @param <TImageInner> plaform specific image (see {@link PaintContext})
  */
-public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintContext extends PaintContext<TImageInner>, TImageInner>
+public abstract class AMosaicsImg<TImage>
       extends RotatedImg<TImage>
-      implements IMosaic<TPaintable, TImageInner, TPaintContext>
+      implements IMosaic
 {
    public enum ERotateMode {
       fullMatrix,
@@ -71,9 +65,6 @@ public abstract class AMosaicsImg<TPaintable extends IPaintable, TImage, TPaintC
 
    @Override
    public BaseCell getCell(Coord coord) { return getMatrix().get(coord.x * getSizeField().n + coord.y); }
-
-   @Override
-   public abstract ICellPaint<TPaintable, TImageInner, TPaintContext> getCellPaint();
 
    private BaseCell.BaseAttribute _cellAttr;
    @Override

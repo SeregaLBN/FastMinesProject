@@ -259,6 +259,10 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       setBackgroundFill(null);
       setColorText(null);
       setPenBorder(null);
+
+      setImgBckgrnd(null);
+      setImgFlag(null);
+      setImgMine(null);
    }
 
 }

@@ -66,7 +66,7 @@ namespace FastMines {
             _mosaicCtrl = value;
             if (_mosaicCtrl != null) {
                _mosaicCtrl.Mosaic.PropertyChanged += OnMosaicPropertyChanged;
-               _mosaicCtrl.View.MosaicContainer = MosaicContainer;
+               _mosaicCtrl.View.Control = MosaicContainer;
              //_mosaicCtrl.View.InvalidateCells(null); // TODO: try remove it
             }
          }

@@ -27,7 +27,7 @@ import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
  */
-public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, TImage, PaintSwingContext<TImage>, TImage> {
+public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
 
    static {
       StaticRotateImgConsts.init();
@@ -38,6 +38,8 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<PaintableGraphics, 
    protected MosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
       super(mosaicType, sizeField);
    }
+
+   public abstract ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> getCellPaint();
 
    private PaintSwingContext<TImage> _paintContext;
    protected PaintSwingContext<TImage> getPaintContext() {

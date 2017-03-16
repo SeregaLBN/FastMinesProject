@@ -1,7 +1,7 @@
 package fmg.core.types.click;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EClose;
@@ -9,7 +9,8 @@ import fmg.core.types.EOpen;
 import fmg.core.types.EState;
 
 public class ClickCellResult {
-   public List<BaseCell> modified = new ArrayList<BaseCell>();
+
+   public Set<BaseCell> modified = new HashSet<BaseCell>();
 
    /** были ли изменения на поле? Была ли открыта хоть одна ячейка или выставлен/снят флажёк / знак вопроса */
    public boolean isAnyChanges() { return !modified.isEmpty(); }
@@ -18,7 +19,7 @@ public class ClickCellResult {
             .filter(x -> x.getState().getStatus() == EState._Open)
             .anyMatch(x -> x.getState().getOpen() == EOpen._Mine);
    }
-   
+
 //   /** множество ячеек (нулевых  ) открытых при последнем клике */
 //   public Set<BaseCell> getOpenNils() {
 //      return modified.stream()

@@ -192,6 +192,10 @@ namespace fmg.core.mosaic.draw {
             ColorText = null;
             PenBorder = null;
             FontInfo = null;
+
+            ImgBckgrnd = null;
+            ImgFlag = null;
+            ImgMine = null;
          }
       }
    }
