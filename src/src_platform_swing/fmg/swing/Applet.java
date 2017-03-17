@@ -9,8 +9,8 @@ public class Applet extends JApplet {
 
    @Override
    public void init() {
-      try (Mosaic m = new Mosaic()) {
-         setContentPane(m.getControl());
+      try (Mosaic.MosaicController m = new Mosaic.MosaicController()) {
+         setContentPane(m.getView().getControl());
       }
    }
 

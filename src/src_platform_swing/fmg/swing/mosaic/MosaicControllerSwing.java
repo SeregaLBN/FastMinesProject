@@ -6,11 +6,10 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
-import fmg.common.geom.Matrisize;
-import fmg.core.types.EMosaic;
 import fmg.swing.mosaic.Mosaic.MosaicController;
 
 public class MosaicControllerSwing extends MosaicController {
@@ -25,10 +24,10 @@ public class MosaicControllerSwing extends MosaicController {
       @Override
       public void mousePressed(MouseEvent e) {
          if (SwingUtilities.isLeftMouseButton(e)) {
-            MosaicController.this.mousePressed(e.getPoint(), true);
+            MosaicControllerSwing.this.mousePressed(e.getPoint(), true);
          } else
          if (SwingUtilities.isRightMouseButton(e)) {
-            MosaicController.this.mousePressed(e.getPoint(), false);
+            MosaicControllerSwing.this.mousePressed(e.getPoint(), false);
          }
       }
 
@@ -44,10 +43,10 @@ public class MosaicControllerSwing extends MosaicController {
          }
 
          if (SwingUtilities.isLeftMouseButton(e)) {
-             MosaicController.this.mouseReleased(e.getPoint(), true);
+            MosaicControllerSwing.this.mouseReleased(e.getPoint(), true);
          } else
          if (SwingUtilities.isRightMouseButton(e)) {
-             MosaicController.this.mouseReleased(e.getPoint(), false);
+            MosaicControllerSwing.this.mouseReleased(e.getPoint(), false);
          }
        }
 
@@ -62,7 +61,7 @@ public class MosaicControllerSwing extends MosaicController {
       @Override
       public void focusLost(FocusEvent e) {
          //System.out.println("Mosaic::MosaicMouseListeners::focusLost: " + e);
-         MosaicController.this.mouseFocusLost();
+         MosaicControllerSwing.this.mouseFocusLost();
       }
       @Override
       public void focusGained(FocusEvent e) {}
@@ -74,27 +73,26 @@ public class MosaicControllerSwing extends MosaicController {
       return _mosaicMouseListener;
    }
 
-   @Override
-   protected void initialize(Matrisize sizeField, EMosaic mosaicType, int minesCount, double area) {
-      this.getControl().setFocusable(true); // иначе не будет срабатывать FocusListener
+   protected void initialize() {
+      JPanel control = this.getView().getControl();
+      control.setFocusable(true); // иначе не будет срабатывать FocusListener
 
-      this.getControl().addMouseListener(getMosaicMouseListeners());
-      this.getControl().addMouseMotionListener(getMosaicMouseListeners());
-      this.getControl().addFocusListener(getMosaicMouseListeners());
+      control.addMouseListener(getMosaicMouseListeners());
+      control.addMouseMotionListener(getMosaicMouseListeners());
+      control.addFocusListener(getMosaicMouseListeners());
 
-      super.initialize(sizeField, mosaicType, minesCount, area);
-
-      getControl().setSize(getControl().getPreferredSize()); // for run as java been
+      control.setSize(control.getPreferredSize()); // for run as java been
    }
 
 
    @Override
    public void close() {
-      getPaintContext().close();
+      JPanel control = this.getView().getControl();
+      control.removeMouseListener(getMosaicMouseListeners());
+      control.removeMouseMotionListener(getMosaicMouseListeners());
+      control.removeFocusListener(getMosaicMouseListeners());
 
-      getControl().removeMouseListener(getMosaicMouseListeners());
-      getControl().removeMouseMotionListener(getMosaicMouseListeners());
-      getControl().removeFocusListener(getMosaicMouseListeners());
+      super.close();
    }
 
 }

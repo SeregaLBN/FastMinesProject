@@ -32,7 +32,7 @@ import fmg.swing.utils.ImgUtils;
 public final class Mosaic {
 
 /** MVC: controller */
-public class MosaicController implements AutoCloseable {
+public static class MosaicController implements AutoCloseable {
 
    /** MVC: model */
    private MosaicBase _mosaic;
@@ -147,7 +147,7 @@ public class MosaicController implements AutoCloseable {
    }
 }
 
-public class MosaicView implements AutoCloseable, PropertyChangeListener {
+public static class MosaicView implements AutoCloseable, PropertyChangeListener {
 
    private MosaicBase _mosaic;
    private JPanel _control;

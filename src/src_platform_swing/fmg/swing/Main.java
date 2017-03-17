@@ -951,7 +951,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          } else
             centerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0,0));
 
-         centerPanel.add(getMosaic().getControl());
+         centerPanel.add(getMosaicView().getControl());
          centerPanel.add(getPausePanel());
       }
       return contentPane;
@@ -972,7 +972,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    public MosaicControllerSwing getMosaicField() {
       if (mosaicCtrl == null) {
          mosaicCtrl = new MosaicControllerSwing();
-         mosaicCtrl.addListener(this);
+         mosaicCtrl.getMosaic().addListener(this);
       }
       return mosaicCtrl;
    }
@@ -2442,7 +2442,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
-//      System.out.println("ThreadId=" + Thread.currentThread().getId() + ": Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
+//      System.out.println("Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
       if (ev.getSource() instanceof Mosaic)
          onMosaicPropertyChanged((Mosaic)ev.getSource(), ev);
    }
