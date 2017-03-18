@@ -32,10 +32,6 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrTriangle2 : BaseAttribute {
 
-         public AttrTriangle2(double area)
-            : base(area)
-         {}
-
          public override SizeDouble GetOwnerSize(Matrisize sizeField) {
             return new SizeDouble(
                   B * (sizeField.m+1),

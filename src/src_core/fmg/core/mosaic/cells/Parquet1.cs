@@ -32,10 +32,6 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrParquet1 : BaseAttribute {
 
-         public AttrParquet1(double area)
-            : base(area)
-         {}
-
          public override SizeDouble GetOwnerSize(Matrisize sizeField) {
             var a = A;
             var result = new SizeDouble(

@@ -10,7 +10,7 @@ namespace fmg.core.mosaic {
       private static string GetPackageName() { return typeof(MosaicHelper).Namespace; }
 
       /// <summary>Создать экземпляр атрибута для конкретного типа мозаики</summary>
-      public static BaseCell.BaseAttribute CreateAttributeInstance(EMosaic mosaicType, double area) {
+      public static BaseCell.BaseAttribute CreateAttributeInstance(EMosaic mosaicType) {
          //switch (mosaicType) {
          //case eMosaicTriangle1: return new Triangle1.AttrTriangle1(area);
          //   // ...
@@ -22,8 +22,7 @@ namespace fmg.core.mosaic {
          try {
             var className = GetPackageName() + ".cells." + mosaicType.GetMosaicClassName() + "+Attr" + mosaicType.GetMosaicClassName();
             var cellAttrClass = Type.GetType(className);
-            object[] args = { area };
-            var attr = (BaseCell.BaseAttribute)Activator.CreateInstance(cellAttrClass, args);
+            var attr = (BaseCell.BaseAttribute)Activator.CreateInstance(cellAttrClass, null);
             return attr;
          } catch (Exception ex) {
             System.Diagnostics.Debug.Assert(false, ex.Message);
@@ -202,7 +201,7 @@ namespace fmg.core.mosaic {
       /// </param>
       /// <returns>площадь ячейки</returns>
       public static double FindAreaBySize(EMosaic mosaicType, Matrisize mosaicSizeField, ref SizeDouble sizeClient) {
-         return FindAreaBySize(CreateAttributeInstance(mosaicType, 0), mosaicSizeField, ref sizeClient);
+         return FindAreaBySize(CreateAttributeInstance(mosaicType), mosaicSizeField, ref sizeClient);
       }
 
       /// <summary> узнаю max размер поля мозаики, при котором вся мозаика помещается в заданную область </summary>
@@ -210,12 +209,16 @@ namespace fmg.core.mosaic {
       /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
       /// <returns>размер поля мозаики</returns>
       public static Matrisize FindSizeByArea(EMosaic mosaicType, double area, SizeDouble sizeClient) {
-         return FindSizeByArea(CreateAttributeInstance(mosaicType, area), sizeClient);
+         var attr = CreateAttributeInstance(mosaicType);
+         attr.Area = area;
+         return FindSizeByArea(attr, sizeClient);
       }
 
       /// <summary>get parent container (owner window) size in pixels</summary>
       public static SizeDouble GetOwnerSize(EMosaic mosaicType, double area, Matrisize mosaicSizeField) {
-         return CreateAttributeInstance(mosaicType, area).GetOwnerSize(mosaicSizeField);
+         var attr = CreateAttributeInstance(mosaicType);
+         attr.Area = area;
+         return attr.GetOwnerSize(mosaicSizeField);
       }
 
       #endregion

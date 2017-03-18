@@ -55,10 +55,6 @@ namespace fmg.core.mosaic.cells {
       /// Доопределаяется наследниками BaseCell</summary>
       public abstract class BaseAttribute : fmg.common.notyfier.NotifyPropertyChanged {
 
-         public BaseAttribute(double area) {
-            _area = area;
-         }
-
          /// <summary>площадь ячейки/фигуры</summary>
          private double _area;
 

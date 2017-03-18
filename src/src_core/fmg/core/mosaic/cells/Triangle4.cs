@@ -39,9 +39,6 @@ namespace fmg.core.mosaic.cells {
       }
 
       public class AttrTriangle4 : BaseAttribute {
-         public AttrTriangle4(double area)
-            : base(area)
-         {}
 
          public static readonly ComplexityMode Mode = ComplexityMode.eOptimalMode; // TODO: check others to view...
 

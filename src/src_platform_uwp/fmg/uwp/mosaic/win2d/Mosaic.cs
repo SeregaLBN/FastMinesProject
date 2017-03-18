@@ -66,8 +66,13 @@ namespace fmg.uwp.mosaic.win2d {
 
          public MosaicView View { get; set; }
 
+         protected override bool CheckNeedRestoreLastGame() {
+            // TODO: override
+            return base.CheckNeedRestoreLastGame();
+         }
+
          public override bool GameNew() {
-            var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(MosaicHelper.CreateAttributeInstance(MosaicType, Area).getMaxBackgroundFillModeValue());
+            var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(MosaicHelper.CreateAttributeInstance(MosaicType).getMaxBackgroundFillModeValue());
             //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
             View.PaintContext.BkFill.Mode = mode;
             var res = base.GameNew();
@@ -194,9 +199,8 @@ namespace fmg.uwp.mosaic.win2d {
             }
             _paintContext = value;
             if (_paintContext != null) {
-               _paintContext.ImgMine = MineImg.Image;
-               _paintContext.ImgFlag = FlagImg.Image;
                _paintContext.PropertyChanged += OnPaintContextPropertyChanged; // изменение контекста -> перерисовка мозаики
+               ChangeSizeImagesMineFlag();
             }
          }
       }
@@ -324,8 +328,7 @@ namespace fmg.uwp.mosaic.win2d {
       /// <summary> переустанавливаю заного размер мины/флага для мозаики </summary>
       private void ChangeSizeImagesMineFlag() {
          // PS: картинки не зависят от размера ячейки...
-
-         //PaintUwpContext<CanvasBitmap> pc = PaintContext;
+         PaintUwpContext<CanvasBitmap> pc = PaintContext;
          //int sq = (int)Mosaic.CellAttr.GetSq(pc.PenBorder.Width);
          //if (sq <= 0) {
          //   System.Diagnostics.Debug.Assert(false, "Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");
@@ -333,8 +336,8 @@ namespace fmg.uwp.mosaic.win2d {
          //}
          //MineImg = null;
          //FlagImg = null;
-         //pc.ImgFlag = FlagImg.Image;
-         //pc.ImgMine = MineImg.Image;
+         pc.ImgFlag = FlagImg.Image;
+         pc.ImgMine = MineImg.Image;
       }
 
       protected override void Dispose(bool disposing) {

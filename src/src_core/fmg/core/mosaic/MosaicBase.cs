@@ -78,10 +78,21 @@ namespace fmg.core.mosaic {
          }
          get {
             if (_cellAttr == null) {
-               _cellAttr = MosaicHelper.CreateAttributeInstance(MosaicType, Area);
+               _cellAttr = MosaicHelper.CreateAttributeInstance(MosaicType);
+               _cellAttr.Area = 10 * AREA_MINIMUM;
                _cellAttr.PropertyChanged += OnCellAttributePropertyChanged;
             }
             return _cellAttr;
+         }
+      }
+
+      /// <summary>площадь ячеек</summary>
+      public virtual double Area {
+         get {
+            return CellAttr.Area;
+         }
+         set {
+            CellAttr.Area = Math.Max(AREA_MINIMUM, value);
          }
       }
 
@@ -509,17 +520,6 @@ namespace fmg.core.mosaic {
          }
       }
 
-      /// <summary>площадь ячеек</summary>
-      public virtual double Area {
-         get {
-            if (_cellAttr == null)
-               return 10 * AREA_MINIMUM;
-            return CellAttr.Area;
-         }
-         set {
-            CellAttr.Area = Math.Max(AREA_MINIMUM, value);
-         }
-      }
       public bool UseUnknown {
          set { _useUnknown = value; }
          get { return _useUnknown; }

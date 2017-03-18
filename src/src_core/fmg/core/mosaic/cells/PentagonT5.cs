@@ -33,10 +33,6 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrPentagonT5 : BaseAttribute {
 
-         public AttrPentagonT5(double area)
-            : base(area)
-         {}
-
          public override SizeDouble GetOwnerSize(Matrisize sizeField) {
             var a = A;
             var h = H;

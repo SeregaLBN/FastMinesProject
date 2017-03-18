@@ -56,7 +56,7 @@ namespace fmg.core.img {
       public BaseCell.BaseAttribute CellAttr {
          get {
             if (_cellAttr == null)
-               CellAttr = MosaicHelper.CreateAttributeInstance(MosaicType, Area); // call this setter
+               CellAttr = MosaicHelper.CreateAttributeInstance(MosaicType); // call this setter
             return _cellAttr;
          }
          private set {

@@ -29,9 +29,8 @@ namespace fmg.data.controller.types {
       static ESkillLevelEx() {
          var values = EMosaicEx.GetValues();
          mosaicCoefficient = new Dictionary<EMosaic, double>(values.Length);
-         const double area = 200; // пох
          foreach (EMosaic mosaicType in values) {
-            BaseCell.BaseAttribute attr = MosaicHelper.CreateAttributeInstance(mosaicType, area);
+            BaseCell.BaseAttribute attr = MosaicHelper.CreateAttributeInstance(mosaicType);
 
             // variant 1 - сложность в зависимости от кол-ва пересечений ячеек в одной точке
             //mosaicCoefficient.put(mosaicType, attr.getVertexIntersection());

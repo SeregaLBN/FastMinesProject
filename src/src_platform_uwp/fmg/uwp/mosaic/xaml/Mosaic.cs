@@ -68,7 +68,7 @@ namespace fmg.uwp.mosaic.xaml {
          public MosaicView View { get; set; }
 
          public override bool GameNew() {
-            var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(MosaicHelper.CreateAttributeInstance(MosaicType, Area).getMaxBackgroundFillModeValue());
+            var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(MosaicHelper.CreateAttributeInstance(MosaicType).getMaxBackgroundFillModeValue());
             //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
             View.PaintContext.BkFill.Mode = mode;
             var res = base.GameNew();

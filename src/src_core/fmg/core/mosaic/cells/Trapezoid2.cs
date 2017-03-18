@@ -32,10 +32,6 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrTrapezoid2 : BaseAttribute {
 
-         public AttrTrapezoid2(double area)
-            : base(area)
-         {}
-
          public override SizeDouble GetOwnerSize(Matrisize sizeField) {
             var a = A;
             var c = C;

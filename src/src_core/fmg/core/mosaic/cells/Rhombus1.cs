@@ -33,10 +33,6 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrRhombus1 : BaseAttribute {
 
-         public AttrRhombus1(double area)
-            : base(area)
-         {}
-
          public override SizeDouble GetOwnerSize(Matrisize sizeField) {
             var a = A;
             var r = R;

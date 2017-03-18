@@ -32,10 +32,6 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrSqTrHex : BaseAttribute {
 
-         public AttrSqTrHex(double area)
-            : base(area)
-         {}
-
          public override SizeDouble GetOwnerSize(Matrisize sizeField) {
             var a = A;
             var h = H;
