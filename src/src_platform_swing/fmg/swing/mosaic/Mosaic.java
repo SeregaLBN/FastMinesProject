@@ -37,7 +37,7 @@ public static class MosaicController implements AutoCloseable {
    /** MVC: model */
    private MosaicBase _mosaic;
    /** MVC: view */
-   private MosaicView _view;
+   protected MosaicView _view;
 
    /** get model */
    public MosaicBase getMosaic() {
@@ -66,11 +66,10 @@ public static class MosaicController implements AutoCloseable {
       return _mosaic;
    }
    /** set model */
-   protected void setMosaic(MosaicBase value) {
-      if (_mosaic != null) {
+   protected void setMosaic(MosaicBase model) {
+      if (_mosaic != null)
          _mosaic.close();
-      }
-      _mosaic = value;
+      _mosaic = model;
    }
 
    /** get view */
@@ -79,16 +78,14 @@ public static class MosaicController implements AutoCloseable {
          setView(new MosaicView());
       return _view;
    }
-   /** get view */
-   public void setView(MosaicView value) {
+   /** set view */
+   public void setView(MosaicView view) {
       if (_view != null)
          _view.close();
-      _view = value;
-      if (_view != null) {
+      _view = view;
+      if (_view != null)
          _view.setMosaic(getMosaic());
-      }
    }
-
 
 
    /** преобразовать экранные координаты в ячейку поля мозаики */
@@ -246,18 +243,21 @@ public static class MosaicView implements AutoCloseable, PropertyChangeListener 
    private void repaint(Graphics g) {
       _alreadyPainted = true;
       try {
+         PaintSwingContext<Icon> pc = getPaintContext();
+
          // background color
          Rectangle rcFill = g.getClipBounds();
-         g.setColor(Cast.toColor(getPaintContext().getBackgroundColor().darker(0.2)));
+         g.setColor(Cast.toColor(pc.getBackgroundColor().darker(0.2)));
          g.fillRect(rcFill.x, rcFill.y, rcFill.width, rcFill.height);
 
          // paint cells
-         g.setFont(getPaintContext().getFont());
+         g.setFont(pc.getFont());
          PaintableGraphics p = new PaintableGraphics(getControl(), g);
          RectDouble clipBounds = Cast.toRectDouble(g.getClipBounds());
+         CellPaintGraphics<Icon> cellPaint = getCellPaint();
          for (BaseCell cell: getMosaic().getMatrix())
             if (cell.getRcOuter().Intersects(clipBounds)) // redraw only when needed - when the cells and update region intersect
-               getCellPaint().paint(cell, p, getPaintContext());
+               cellPaint.paint(cell, p, pc);
       } finally {
          _alreadyPainted = false;
       }
@@ -334,14 +334,14 @@ public static class MosaicView implements AutoCloseable, PropertyChangeListener 
    /// TEST
    public static void main(String[] args) {
       JFrame frame = new JFrame();
-      MosaicControllerSwing m = new MosaicControllerSwing();
+      MosaicController m = new MosaicControllerSwing();
       frame.add(m.getView().getControl());
       //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.addWindowListener(new WindowAdapter() {
          @Override
          public void windowClosing(WindowEvent we) {
-            frame.dispose();
             m.close();
+            frame.dispose();
          }
       });
 

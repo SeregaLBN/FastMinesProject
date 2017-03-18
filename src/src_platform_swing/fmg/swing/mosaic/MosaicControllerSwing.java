@@ -11,12 +11,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
 import fmg.swing.mosaic.Mosaic.MosaicController;
+import fmg.swing.mosaic.Mosaic.MosaicView;
 
 public class MosaicControllerSwing extends MosaicController {
 
-   private MosaicMouseListeners _mosaicMouseListener;
+   private MosaicMouseListener _mosaicMouseListener;
 
-   private class MosaicMouseListeners implements MouseInputListener, FocusListener {
+   private class MosaicMouseListener implements MouseInputListener, FocusListener {
 
       @Override
       public void mouseClicked(MouseEvent e) {}
@@ -67,32 +68,40 @@ public class MosaicControllerSwing extends MosaicController {
       public void focusGained(FocusEvent e) {}
    }
 
-   public MosaicMouseListeners getMosaicMouseListeners() {
+   public MosaicMouseListener getMosaicMouseListener() {
       if (_mosaicMouseListener == null)
-         _mosaicMouseListener = new MosaicMouseListeners();
+         _mosaicMouseListener = new MosaicMouseListener();
       return _mosaicMouseListener;
    }
 
-   protected void initialize() {
+   /** set view */
+   @Override
+   public void setView(MosaicView view) {
+      if (_view != null)
+         unsubscribe();
+      super.setView(view);
+      if (_view != null)
+         subscribe();
+   }
+
+   private void subscribe() {
       JPanel control = this.getView().getControl();
       control.setFocusable(true); // иначе не будет срабатывать FocusListener
 
-      control.addMouseListener(getMosaicMouseListeners());
-      control.addMouseMotionListener(getMosaicMouseListeners());
-      control.addFocusListener(getMosaicMouseListeners());
+      MosaicMouseListener listener = getMosaicMouseListener();
+      control.addMouseListener(listener);
+      control.addMouseMotionListener(listener);
+      control.addFocusListener(listener);
 
-      control.setSize(control.getPreferredSize()); // for run as java been
+      control.setSize(control.getPreferredSize());
    }
 
-
-   @Override
-   public void close() {
+   private void unsubscribe() {
       JPanel control = this.getView().getControl();
-      control.removeMouseListener(getMosaicMouseListeners());
-      control.removeMouseMotionListener(getMosaicMouseListeners());
-      control.removeFocusListener(getMosaicMouseListeners());
-
-      super.close();
+      MosaicMouseListener listener = getMosaicMouseListener();
+      control.removeMouseListener(listener);
+      control.removeMouseMotionListener(listener);
+      control.removeFocusListener(listener);
    }
 
 }
