@@ -26,12 +26,7 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.Coord;
-import fmg.common.geom.Matrisize;
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.RectDouble;
-import fmg.common.geom.Size;
-import fmg.common.geom.SizeDouble;
+import fmg.common.geom.*;
 
 /**
  * Треугольник. Вариант 4 - треугольник 30°-30°-120°
@@ -46,9 +41,6 @@ public class Triangle4 extends BaseCell {
       eSimpeMode
    }
    public static class AttrTriangle4 extends BaseAttribute {
-      public AttrTriangle4(double area) {
-         super(area);
-      }
 
       private final static ComplexityMode Mode = ComplexityMode.eOptimalMode; // TODO: check others to view...
 

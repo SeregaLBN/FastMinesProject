@@ -45,7 +45,7 @@ public abstract class AMosaicsImg<TImage>
    @Override
    public void setMosaicType(EMosaic value) {
       if (setProperty(_mosaicType, value, PROPERTY_MOSAIC_TYPE)) {
-         setArea(0);
+         setArea(0); // mark to recalc
          _matrix.clear();
          setCellAttr(null);
       }
@@ -70,7 +70,7 @@ public abstract class AMosaicsImg<TImage>
    @Override
    public BaseCell.BaseAttribute getCellAttr() {
       if (_cellAttr == null)
-         setCellAttr(MosaicHelper.createAttributeInstance(getMosaicType(), getArea()));
+         setCellAttr(MosaicHelper.createAttributeInstance(getMosaicType()));
       return _cellAttr;
    }
    private void setCellAttr(BaseCell.BaseAttribute value) {

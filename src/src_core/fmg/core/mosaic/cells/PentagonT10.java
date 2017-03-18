@@ -28,12 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import fmg.common.Color;
-import fmg.common.geom.Coord;
-import fmg.common.geom.Matrisize;
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.RectDouble;
-import fmg.common.geom.Size;
-import fmg.common.geom.SizeDouble;
+import fmg.common.geom.*;
 
 /**
  * Пятиугольник. Тип №10
@@ -41,9 +36,6 @@ import fmg.common.geom.SizeDouble;
  **/
 public class PentagonT10 extends BaseCell {
    public static class AttrPentagonT10 extends BaseAttribute {
-      public AttrPentagonT10(double area) {
-         super(area);
-      }
 
       @Override
       public SizeDouble getOwnerSize(Matrisize sizeField) {

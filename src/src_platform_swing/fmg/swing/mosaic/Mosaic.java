@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 
 import javax.swing.Icon;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import fmg.common.geom.RectDouble;
@@ -45,11 +46,18 @@ public static class MosaicController implements AutoCloseable {
          setMosaic(new MosaicBase() {
 
             private MosaicView getView() { return MosaicController.this.getView(); }
+
+            @Override
+            protected boolean checkNeedRestoreLastGame() {
+               int iRes = JOptionPane.showOptionDialog(getView().getControl(), "Restore last game?", "Question", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+               return (iRes == JOptionPane.NO_OPTION);
+            }
+
             @Override
             public boolean GameNew() {
                getView().getPaintContext().getBackgroundFill().setMode(
                      1 + new Random().nextInt(
-                           MosaicHelper.createAttributeInstance(getMosaicType(), getArea()).getMaxBackgroundFillModeValue()));
+                           MosaicHelper.createAttributeInstance(getMosaicType()).getMaxBackgroundFillModeValue()));
                boolean res = super.GameNew();
                if (!res)
                   getView().invalidateCells();
@@ -212,9 +220,8 @@ public static class MosaicView implements AutoCloseable, PropertyChangeListener 
       }
       _paintContext = paintContext;
       if (_paintContext != null) {
-         _paintContext.setImgMine(new Mine());
-         _paintContext.setImgFlag(new Flag());
          _paintContext.addListener(this); // изменение контекста -> перерисовка мозаики
+         changeSizeImagesMineFlag();
       }
    }
 
@@ -335,6 +342,7 @@ public static class MosaicView implements AutoCloseable, PropertyChangeListener 
    public static void main(String[] args) {
       JFrame frame = new JFrame();
       MosaicController m = new MosaicControllerSwing();
+      m.getMosaic().GameNew();
       frame.add(m.getView().getControl());
       //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.addWindowListener(new WindowAdapter() {

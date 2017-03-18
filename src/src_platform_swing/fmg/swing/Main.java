@@ -1453,7 +1453,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          getAboutDialog().close();
 
 //      setVisible(false);
-      getMosaic().close();
+      getMosaicField().close();
       _logo.close();
 
 
@@ -2525,13 +2525,3 @@ public class Main extends JFrame implements PropertyChangeListener {
    }
 
 }
-
-/*
-
-@Override
-protected boolean checkNeedRestoreLastGame() {
-   int iRes = JOptionPane.showOptionDialog(getContainer(), "Restore last game?", "Question", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-   return (iRes == JOptionPane.NO_OPTION);
-}
-
-*/

@@ -1,11 +1,6 @@
 package fmg.swing.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -14,23 +9,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.stream.IntStream;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButton;
-import javax.swing.JSpinner;
-import javax.swing.KeyStroke;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ChangeListener;
 
 import fmg.common.geom.Matrisize;
@@ -257,8 +236,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
    private int getNeighborNumber() {
       if (parent == null)
          return 21;
-      final int area = 200; // пох
-      BaseCell.BaseAttribute attr = MosaicHelper.createAttributeInstance(parent.getMosaic().getMosaicType(), area);
+      BaseCell.BaseAttribute attr = MosaicHelper.createAttributeInstance(parent.getMosaic().getMosaicType());
       int max = IntStream.range(0, attr.GetDirectionCount())
             .map(i -> attr.getNeighborNumber(i))
             .max().getAsInt();

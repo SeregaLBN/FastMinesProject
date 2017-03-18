@@ -26,7 +26,7 @@ public final class MosaicHelper {
    }
 
    /** Создать экземпляр атрибута для конкретного типа мозаики */
-   public static final BaseCell.BaseAttribute createAttributeInstance(EMosaic mosaicType, double area) {
+   public static final BaseCell.BaseAttribute createAttributeInstance(EMosaic mosaicType) {
 //      switch (mosaicType) {
 //      case eMosaicTriangle1        : return new Triangle1        .AttrTriangle1        (area);
 //      case eMosaicTriangle2        : return new Triangle2        .AttrTriangle2        (area);
@@ -57,8 +57,8 @@ public final class MosaicHelper {
          String className = getPackageName() + ".cells." + mosaicType.getMosaicClassName() + "$Attr"+mosaicType.getMosaicClassName();
          @SuppressWarnings("unchecked")
          Class<? extends BaseCell.BaseAttribute> cellAttrClass = (Class<? extends BaseCell.BaseAttribute>)Class.forName(className);
-         Constructor<? extends BaseCell.BaseAttribute> constructor = cellAttrClass.getConstructor(double.class); //(Constructor<? extends BaseAttribute>) cellClass.getConstructors()[0]; //
-         BaseCell.BaseAttribute attr = constructor.newInstance(area);
+         Constructor<? extends BaseCell.BaseAttribute> constructor = cellAttrClass.getConstructor(); //(Constructor<? extends BaseAttribute>) cellClass.getConstructors()[0]; //
+         BaseCell.BaseAttribute attr = constructor.newInstance();
          return attr;
       } catch (Exception ex) {
          System.err.println(ex.getMessage());
@@ -252,7 +252,7 @@ public final class MosaicHelper {
     * @return площадь ячейки
     */
    public static double findAreaBySize(EMosaic mosaicType, Matrisize mosaicSizeField, SizeDouble sizeClientIn, SizeDouble sizeClientOut) {
-      return findAreaBySize(createAttributeInstance(mosaicType, 0), mosaicSizeField, sizeClientIn, sizeClientOut);
+      return findAreaBySize(createAttributeInstance(mosaicType), mosaicSizeField, sizeClientIn, sizeClientOut);
    }
 
    /** узнаю max размер поля мозаики, при котором окно проекта вмещается в в заданную область
@@ -261,12 +261,16 @@ public final class MosaicHelper {
     * @return размер поля мозаики
     */
    public static Matrisize findSizeByArea(EMosaic mosaicType, double area, SizeDouble sizeClient) {
-      return findSizeByArea(createAttributeInstance(mosaicType, area), sizeClient);
+      BaseCell.BaseAttribute attr = createAttributeInstance(mosaicType);
+      attr.setArea(area);
+      return findSizeByArea(attr, sizeClient);
    }
 
     /** get parent container (owner window) size in pixels */
     public static SizeDouble getOwnerSize(EMosaic mosaicType, double area, Matrisize mosaicSizeField) {
-       return createAttributeInstance(mosaicType, area).getOwnerSize(mosaicSizeField);
+       BaseCell.BaseAttribute attr = createAttributeInstance(mosaicType);
+       attr.setArea(area);
+       return attr.getOwnerSize(mosaicSizeField);
     }
 
 }

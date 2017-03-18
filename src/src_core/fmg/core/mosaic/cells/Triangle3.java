@@ -26,12 +26,7 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.Coord;
-import fmg.common.geom.Matrisize;
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.RectDouble;
-import fmg.common.geom.Size;
-import fmg.common.geom.SizeDouble;
+import fmg.common.geom.*;
 
 /**
  * Треугольник. Вариант 3 - треугольник 45°-90°-45°(квадрат разделённый на 4 части)
@@ -39,9 +34,6 @@ import fmg.common.geom.SizeDouble;
  **/
 public class Triangle3 extends BaseCell {
    public static class AttrTriangle3 extends BaseAttribute {
-      public AttrTriangle3(double area) {
-         super(area);
-      }
 
       @Override
       public SizeDouble getOwnerSize(Matrisize sizeField) {

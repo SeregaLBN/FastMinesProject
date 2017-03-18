@@ -26,11 +26,7 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.Coord;
-import fmg.common.geom.Matrisize;
-import fmg.common.geom.RectDouble;
-import fmg.common.geom.Size;
-import fmg.common.geom.SizeDouble;
+import fmg.common.geom.*;
 
 /**
  * Паркет. Вариант №2
@@ -38,9 +34,6 @@ import fmg.common.geom.SizeDouble;
  **/
 public class Parquet2 extends BaseCell {
    public static class AttrParquet2 extends BaseAttribute {
-      public AttrParquet2(double area) {
-         super(area);
-      }
 
       @Override
       public SizeDouble getOwnerSize(Matrisize sizeField) {

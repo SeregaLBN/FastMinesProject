@@ -28,12 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import fmg.common.Color;
-import fmg.common.geom.Coord;
-import fmg.common.geom.Matrisize;
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.RectDouble;
-import fmg.common.geom.Size;
-import fmg.common.geom.SizeDouble;
+import fmg.common.geom.*;
 
 /**
  * PenrousePeriodic1 - один из вариантов периодической мозаики Пенроуза (ромбы 72°-108° & 36°- 144°)
@@ -41,9 +36,6 @@ import fmg.common.geom.SizeDouble;
  **/
 public class PenrousePeriodic1 extends BaseCell {
    public static class AttrPenrousePeriodic1 extends BaseAttribute {
-      public AttrPenrousePeriodic1(double area) {
-         super(area);
-      }
 
       @Override
       public SizeDouble getOwnerSize(Matrisize sizeField) {

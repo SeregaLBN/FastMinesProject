@@ -95,10 +95,22 @@ public class MosaicBase
    @Override
    public BaseCell.BaseAttribute getCellAttr() {
       if (_cellAttr == null) {
-         _cellAttr = MosaicHelper.createAttributeInstance(getMosaicType(), getArea());
+         _cellAttr = MosaicHelper.createAttributeInstance(getMosaicType());
+         _cellAttr.setArea(10 * AREA_MINIMUM);
          _cellAttr.addListener(this);
       }
       return _cellAttr;
+   }
+
+   /** площадь ячеек */
+   @Override
+   public double getArea() {
+      return getCellAttr().getArea();
+   }
+   /** установить новую площадь ячеек */
+   @Override
+   public void setArea(double newArea)  {
+      getCellAttr().setArea(Math.max(AREA_MINIMUM, newArea));
    }
 
    @Override
@@ -564,19 +576,6 @@ public class MosaicBase
          setMinesCount(0);
          setGameStatus(EGameStatus.eGSCreateGame);
       }
-   }
-
-   /** площадь ячеек */
-   @Override
-   public double getArea() {
-      if (_cellAttr == null)
-         return 10 * AREA_MINIMUM;
-      return getCellAttr().getArea();
-   }
-   /** установить новую площадь ячеек */
-   @Override
-   public void setArea(double newArea)  {
-      getCellAttr().setArea(Math.max(AREA_MINIMUM, newArea));
    }
 
    public void setUseUnknown(boolean val) { _useUnknown = val; }

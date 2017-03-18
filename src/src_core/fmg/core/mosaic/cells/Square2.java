@@ -26,12 +26,7 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.Coord;
-import fmg.common.geom.Matrisize;
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.RectDouble;
-import fmg.common.geom.Size;
-import fmg.common.geom.SizeDouble;
+import fmg.common.geom.*;
 
 /**
  * Квадрат. Вариант 2 - сдвинутые ряды
@@ -39,9 +34,6 @@ import fmg.common.geom.SizeDouble;
  **/
 public class Square2 extends BaseCell {
    public static class AttrSquare2 extends BaseAttribute {
-      public AttrSquare2(double area) {
-         super(area);
-      }
 
       @Override
       public SizeDouble getOwnerSize(Matrisize sizeField) {

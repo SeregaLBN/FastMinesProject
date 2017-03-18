@@ -20,9 +20,8 @@ public enum ESkillLevel {
    private static final Map<EMosaic, Double> mosaicCoefficient; // skill level coefficient
    static {
       mosaicCoefficient = new HashMap<EMosaic, Double>(EMosaic.values().length);
-      final int area = 200; // пох
       for (EMosaic mosaicType : EMosaic.values()) {
-         BaseCell.BaseAttribute attr = MosaicHelper.createAttributeInstance(mosaicType, area);
+         BaseCell.BaseAttribute attr = MosaicHelper.createAttributeInstance(mosaicType);
 
          // variant 1 - сложность в зависимости от кол-ва пересечений ячеек в одной точке
 //         mosaicCoefficient.put(mosaicType, attr.getVertexIntersection());

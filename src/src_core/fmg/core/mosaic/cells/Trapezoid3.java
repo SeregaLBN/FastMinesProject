@@ -26,12 +26,7 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.Coord;
-import fmg.common.geom.Matrisize;
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.RectDouble;
-import fmg.common.geom.Size;
-import fmg.common.geom.SizeDouble;
+import fmg.common.geom.*;
 
 /**
  * Trapezoid3 - 8 трапеций, складывающихся в шестигранник
@@ -39,9 +34,6 @@ import fmg.common.geom.SizeDouble;
  **/
 public class Trapezoid3 extends BaseCell {
    public static class AttrTrapezoid3 extends BaseAttribute {
-      public AttrTrapezoid3(double area) {
-         super(area);
-      }
 
       @Override
       public SizeDouble getOwnerSize(Matrisize sizeField) {

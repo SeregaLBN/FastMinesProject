@@ -60,11 +60,6 @@ public abstract class BaseCell {
     */
    public static abstract class BaseAttribute extends NotifyPropertyChanged {
 
-      public BaseAttribute(double area) {
-         super();
-         this.area = area;
-      }
-
       public static final String PROPERTY_AREA = "Area";
 
       /** площадь ячейки/фигуры */
@@ -80,7 +75,9 @@ public abstract class BaseCell {
          }
       }
       /** площадь ячейки/фигуры */
-      public double getArea() { return area; }
+      public double getArea() {
+         return area;
+      }
 
       /** размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
        * на основе заданных параметров */

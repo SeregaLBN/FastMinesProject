@@ -26,12 +26,7 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.Coord;
-import fmg.common.geom.Matrisize;
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.RectDouble;
-import fmg.common.geom.Size;
-import fmg.common.geom.SizeDouble;
+import fmg.common.geom.*;
 
 /**
  * Комбинация. Мозаика из 4х треугольников и 2х квадратов
@@ -39,9 +34,6 @@ import fmg.common.geom.SizeDouble;
  **/
 public class TrSq1 extends BaseCell {
    public static class AttrTrSq1 extends BaseAttribute {
-      public AttrTrSq1(double area) {
-         super(area);
-      }
 
       @Override
       public SizeDouble getOwnerSize(Matrisize sizeField) {

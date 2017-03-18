@@ -26,11 +26,7 @@ package fmg.core.mosaic.cells;
 import java.util.ArrayList;
 import java.util.List;
 
-import fmg.common.geom.Coord;
-import fmg.common.geom.Matrisize;
-import fmg.common.geom.RectDouble;
-import fmg.common.geom.Size;
-import fmg.common.geom.SizeDouble;
+import fmg.common.geom.*;
 
 /**
  * Пятиугольник. Тип №2 и №4 - равносторонний
@@ -38,9 +34,6 @@ import fmg.common.geom.SizeDouble;
  **/
 public class PentagonT24 extends BaseCell {
    public static class AttrPentagonT24 extends BaseAttribute {
-      public AttrPentagonT24(double area) {
-         super(area);
-      }
 
       @Override
       public SizeDouble getOwnerSize(Matrisize sizeField) {
