@@ -38,7 +38,6 @@ import fmg.data.view.draw.EZoomInterface;
 import fmg.swing.dialogs.*;
 import fmg.swing.draw.img.*;
 import fmg.swing.draw.img.Smile.EType;
-import fmg.swing.mosaic.Mosaic;
 import fmg.swing.mosaic.Mosaic.MosaicController;
 import fmg.swing.mosaic.Mosaic.MosaicView;
 import fmg.swing.mosaic.MosaicControllerSwing;
@@ -2444,10 +2443,10 @@ public class Main extends JFrame implements PropertyChangeListener {
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
 //      System.out.println("Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
-      if (ev.getSource() instanceof Mosaic)
-         onMosaicPropertyChanged((Mosaic)ev.getSource(), ev);
+      if (ev.getSource() instanceof MosaicBase)
+         onMosaicPropertyChanged((MosaicBase)ev.getSource(), ev);
    }
-   private void onMosaicPropertyChanged(Mosaic source, PropertyChangeEvent ev) {
+   private void onMosaicPropertyChanged(MosaicBase source, PropertyChangeEvent ev) {
       switch (ev.getPropertyName()) {
       case MosaicBase.PROPERTY_AREA:
       case MosaicBase.PROPERTY_SIZE_FIELD:

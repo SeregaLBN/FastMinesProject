@@ -14,13 +14,16 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import fmg.common.geom.Matrisize;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicBase;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.PaintContext;
+import fmg.core.types.EMosaic;
 import fmg.core.types.click.ClickResult;
+import fmg.data.controller.types.ESkillLevel;
 import fmg.data.view.draw.PenBorder;
 import fmg.swing.Cast;
 import fmg.swing.draw.img.Flag;
@@ -341,14 +344,26 @@ public static class MosaicView implements AutoCloseable, PropertyChangeListener 
    /// TEST
    public static void main(String[] args) {
       JFrame frame = new JFrame();
-      MosaicController m = new MosaicControllerSwing();
-      m.getMosaic().GameNew();
-      frame.add(m.getView().getControl());
+
+      MosaicController ctrllr = new MosaicControllerSwing();
+      MosaicBase m = ctrllr.getMosaic();
+
+      EMosaic mosaicType = EMosaic.values()[new Random().nextInt(EMosaic.values().length)];
+      ESkillLevel skill = ESkillLevel.values()[new Random().nextInt(ESkillLevel.values().length - 3)];
+      int numberMines = skill.GetNumberMines(mosaicType);
+      Matrisize sizeFld = skill.DefaultSize();
+
+      m.setMosaicType(mosaicType);
+      m.setSizeField(sizeFld);
+      m.setMinesCount(numberMines);
+      m.GameNew();
+
+      frame.add(ctrllr.getView().getControl());
       //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.addWindowListener(new WindowAdapter() {
          @Override
          public void windowClosing(WindowEvent we) {
-            m.close();
+            ctrllr.close();
             frame.dispose();
          }
       });
