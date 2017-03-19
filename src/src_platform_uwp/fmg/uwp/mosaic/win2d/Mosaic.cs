@@ -189,7 +189,7 @@ namespace fmg.uwp.mosaic.win2d {
       public PaintUwpContext<CanvasBitmap> PaintContext {
          get {
             if (_paintContext == null)
-               PaintContext = new PaintUwpContext<CanvasBitmap>(false); // call setter
+               PaintContext = new PaintUwpContext<CanvasBitmap>(); // call setter
             return _paintContext;
          }
          private set {

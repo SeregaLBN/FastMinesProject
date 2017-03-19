@@ -213,7 +213,7 @@ public static class MosaicView implements AutoCloseable, PropertyChangeListener 
 
    public PaintSwingContext<Icon> getPaintContext() {
       if (_paintContext == null)
-         setPaintContext(new PaintSwingContext<>(false));
+         setPaintContext(new PaintSwingContext<>());
       return _paintContext;
    }
    private void setPaintContext(PaintSwingContext<Icon> paintContext) {

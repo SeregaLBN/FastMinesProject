@@ -43,8 +43,11 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
 
    private PaintSwingContext<TImage> _paintContext;
    protected PaintSwingContext<TImage> getPaintContext() {
-      if (_paintContext == null)
-         setPaintContext(new PaintSwingContext<>(true));
+      if (_paintContext == null) {
+         PaintSwingContext<TImage> paintContext = new PaintSwingContext<>();
+         paintContext.setIconicMode(true);
+         setPaintContext(paintContext);
+      }
       return _paintContext;
    }
    protected void setPaintContext(PaintSwingContext<TImage> paintContext) {

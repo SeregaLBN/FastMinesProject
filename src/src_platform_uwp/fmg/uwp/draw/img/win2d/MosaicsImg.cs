@@ -53,7 +53,9 @@ namespace fmg.uwp.draw.img.win2d {
          protected PaintUwpContext<CanvasBitmap> PaintContext {
             get {
                if (_paintContext == null)
-                  PaintContext = new PaintUwpContext<CanvasBitmap>(true); // call this setter
+                  PaintContext = new PaintUwpContext<CanvasBitmap>() { // call this setter
+                     IconicMode = true
+                  };
                return _paintContext;
             }
             set {

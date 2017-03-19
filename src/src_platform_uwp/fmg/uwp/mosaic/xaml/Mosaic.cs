@@ -192,7 +192,7 @@ namespace fmg.uwp.mosaic.xaml {
       public PaintUwpContext<ImageSource> PaintContext {
          get {
             if (_paintContext == null)
-               PaintContext = new PaintUwpContext<ImageSource>(false); // call setter
+               PaintContext = new PaintUwpContext<ImageSource>(); // call setter
             return _paintContext;
          }
          private set {

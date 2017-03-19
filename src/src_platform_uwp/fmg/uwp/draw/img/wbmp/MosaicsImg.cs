@@ -46,7 +46,9 @@ namespace fmg.uwp.draw.img.wbmp {
       protected PaintUwpContext<WriteableBitmap> PaintContext {
          get {
             if (_paintContext == null)
-               PaintContext = new PaintUwpContext<WriteableBitmap>(true); // call this setter
+               PaintContext = new PaintUwpContext<WriteableBitmap>() { // call this setter
+                  IconicMode = true
+               };
             return _paintContext;
          }
          set {

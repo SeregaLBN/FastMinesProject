@@ -25,8 +25,8 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
    private ColorText colorText;
    private PenBorder penBorder;
    private FontInfo  fontInfo;
-   private final boolean iconicMode;
-   private BoundDouble padding;
+   private boolean iconicMode;
+   private BoundDouble padding = new BoundDouble(0, 0, 0, 0);
    private Color  backgroundColor;
    private TImage imgBckgrnd;
 
@@ -34,11 +34,6 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
    /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется классом-наследником. */
    protected static Color getDefaultBackgroundColor() {
       return _defaultBkColor;
-   }
-
-   public PaintContext(boolean iconicMode) {
-      this.iconicMode = iconicMode;
-      this.padding = new BoundDouble(0, 0, 0, 0);
    }
 
    public static final String PROPERTY_PADDING           = "Padding";
@@ -50,6 +45,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
    public static final String PROPERTY_FONT_INFO         = "FontInfo";
    public static final String PROPERTY_BACKGROUND_COLOR  = "BackgroundColor";
    public static final String PROPERTY_IMG_BCKGRND       = "ImgBckgrnd";
+   public static final String PROPERTY_ICONIC_MODE       = "IconicMode";
 
    public TImage getImgMine() {
       return imgMine;
@@ -180,6 +176,12 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
 
    public boolean isIconicMode() {
       return iconicMode;
+   }
+   public void setIconicMode(boolean iconicMode) {
+      if (this.iconicMode == iconicMode)
+         return;
+      this.iconicMode = iconicMode;
+      onSelfPropertyChanged(!iconicMode, iconicMode, PROPERTY_ICONIC_MODE);
    }
 
    public BoundDouble getPadding() {

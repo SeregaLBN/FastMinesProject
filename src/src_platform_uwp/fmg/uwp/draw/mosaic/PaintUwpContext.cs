@@ -13,10 +13,6 @@ namespace fmg.uwp.draw.mosaic {
    public class PaintUwpContext<TImage> : PaintContext<TImage>
       where TImage : class
    {
-      public PaintUwpContext(bool iconicMode) :
-         base(iconicMode)
-      {
-      }
    }
 
    public class PaintUwpContextCommon : PaintContextCommon {

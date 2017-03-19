@@ -22,10 +22,6 @@ public class PaintSwingContext<TImage> extends PaintContext<TImage> {
 
    private Font font;
 
-   public PaintSwingContext(boolean iconicMode) {
-      super(iconicMode);
-   }
-
    public static final String PROPERTY_FONT = "Font";
 
    public static Color getDefaultBackgroundColor() {
