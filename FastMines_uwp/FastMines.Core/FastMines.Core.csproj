@@ -216,6 +216,18 @@
     <Compile Include="..\..\src\src_data\fmg\data\view\draw\PenBorder.cs">
       <Link>src_fmg.data\view\draw\PenBorder.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicController.cs">
+      <Link>src_fmg.core\mosaic\MosaicController.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\AMosaicController.cs">
+      <Link>src_fmg.core\mosaic\AMosaicController.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\AMosaicView.cs">
+      <Link>src_fmg.core\mosaic\AMosaicView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\IMosaicView.cs">
+      <Link>src_fmg.core\mosaic\IMosaicView.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FastMines.Common\FastMines.Common.csproj">

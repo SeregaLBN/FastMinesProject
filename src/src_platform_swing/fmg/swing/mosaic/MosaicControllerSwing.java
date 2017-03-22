@@ -2,18 +2,27 @@ package fmg.swing.mosaic;
 
 import java.awt.Component;
 import java.awt.Window;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.util.Random;
 
+import javax.swing.Icon;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
-import fmg.swing.mosaic.Mosaic.MosaicController;
+import fmg.common.geom.Matrisize;
+import fmg.core.mosaic.MosaicBase;
+import fmg.core.mosaic.MosaicController;
+import fmg.core.types.EMosaic;
+import fmg.data.controller.types.ESkillLevel;
+import fmg.swing.Cast;
+import fmg.swing.draw.mosaic.PaintSwingContext;
+import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 import fmg.swing.mosaic.Mosaic.MosaicView;
 
-public class MosaicControllerSwing extends MosaicController {
+/** MVC: controller. SWING inplementation */
+public class MosaicControllerSwing extends MosaicController<MosaicView, PaintableGraphics, Icon, PaintSwingContext<Icon>> {
 
    private MosaicMouseListener _mosaicMouseListener;
 
@@ -25,10 +34,10 @@ public class MosaicControllerSwing extends MosaicController {
       @Override
       public void mousePressed(MouseEvent e) {
          if (SwingUtilities.isLeftMouseButton(e)) {
-            MosaicControllerSwing.this.mousePressed(e.getPoint(), true);
+            MosaicControllerSwing.this.mousePressed(Cast.toPointDouble(e.getPoint()), true);
          } else
          if (SwingUtilities.isRightMouseButton(e)) {
-            MosaicControllerSwing.this.mousePressed(e.getPoint(), false);
+            MosaicControllerSwing.this.mousePressed(Cast.toPointDouble(e.getPoint()), false);
          }
       }
 
@@ -44,10 +53,10 @@ public class MosaicControllerSwing extends MosaicController {
          }
 
          if (SwingUtilities.isLeftMouseButton(e)) {
-            MosaicControllerSwing.this.mouseReleased(e.getPoint(), true);
+            MosaicControllerSwing.this.mouseReleased(Cast.toPointDouble(e.getPoint()), true);
          } else
          if (SwingUtilities.isRightMouseButton(e)) {
-            MosaicControllerSwing.this.mouseReleased(e.getPoint(), false);
+            MosaicControllerSwing.this.mouseReleased(Cast.toPointDouble(e.getPoint()), false);
          }
        }
 
@@ -102,6 +111,37 @@ public class MosaicControllerSwing extends MosaicController {
       control.removeMouseListener(listener);
       control.removeMouseMotionListener(listener);
       control.removeFocusListener(listener);
+   }
+
+   /// TEST
+   public static void main(String[] args) {
+      JFrame frame = new JFrame();
+
+      MosaicControllerSwing ctrllr = new MosaicControllerSwing();
+      MosaicBase m = ctrllr.getMosaic();
+
+      EMosaic mosaicType = EMosaic.values()[new Random().nextInt(EMosaic.values().length)];
+      ESkillLevel skill = ESkillLevel.values()[new Random().nextInt(ESkillLevel.values().length - 3)];
+      int numberMines = skill.GetNumberMines(mosaicType);
+      Matrisize sizeFld = skill.DefaultSize();
+
+      m.setMosaicType(mosaicType);
+      m.setSizeField(sizeFld);
+      m.setMinesCount(numberMines);
+      m.GameNew();
+
+      frame.add(ctrllr.getView().getControl());
+      //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      frame.addWindowListener(new WindowAdapter() {
+         @Override
+         public void windowClosing(WindowEvent we) {
+            ctrllr.close();
+            frame.dispose();
+         }
+      });
+
+      frame.pack();
+      frame.setVisible(true);
    }
 
 }

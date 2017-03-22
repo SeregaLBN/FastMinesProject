@@ -38,7 +38,6 @@ import fmg.data.view.draw.EZoomInterface;
 import fmg.swing.dialogs.*;
 import fmg.swing.draw.img.*;
 import fmg.swing.draw.img.Smile.EType;
-import fmg.swing.mosaic.Mosaic.MosaicController;
 import fmg.swing.mosaic.Mosaic.MosaicView;
 import fmg.swing.mosaic.MosaicControllerSwing;
 import fmg.swing.serializable.SerializeProjData;
@@ -53,7 +52,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    private JPanel     contentPane;
    private MainMenu   menu;
    private Toolbar    toolbar;
-   private MosaicController mosaicCtrl;
+   private MosaicControllerSwing mosaicCtrl;
    private PausePanel pausePanel;
    private StatusBar  statusBar;
 
@@ -969,7 +968,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       return toolbar;
    }
 
-   public MosaicController getMosaicField() {
+   public MosaicControllerSwing getMosaicField() {
       if (mosaicCtrl == null) {
          mosaicCtrl = new MosaicControllerSwing();
          mosaicCtrl.getMosaic().addListener(this);
@@ -1333,7 +1332,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       if (keyPairBindAsMenuAccelerator == null) {
          InputMap inputMap = new ComponentInputMap(getRootPane());
          ActionMap actionMap = new ActionMap();
-         keyPairBindAsMenuAccelerator = new Pair<InputMap, ActionMap>(inputMap, actionMap);
+         keyPairBindAsMenuAccelerator = new Pair<>(inputMap, actionMap);
 
          BiConsumer<KeyStroke, Action> bind = (key, action) -> {
             String name = UUID.randomUUID().toString();
@@ -2372,7 +2371,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       return null;
    }
    /** Единоразовые callback методы, вызывамые после выбора и установки текущего юзера */
-   private List<ActionToUser> oneTimeSelectActiveUserActions = new ArrayList<ActionToUser>();
+   private List<ActionToUser> oneTimeSelectActiveUserActions = new ArrayList<>();
    public void setActiveUserId(UUID userId) {
       if (getPlayers().isExist(userId)) {
          this.activeUserId = userId;

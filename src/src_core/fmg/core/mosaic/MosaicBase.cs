@@ -575,6 +575,9 @@ namespace fmg.core.mosaic {
       }
 
       protected void OnSelfModifiedCellsPropertyChanged(ICollection<BaseCell> cells) {
+         if (!cells.Any())
+            return;
+
          // mark NULL if all mosaic is changed
          if (cells.Count == Matrix.Count)
             cells = null;

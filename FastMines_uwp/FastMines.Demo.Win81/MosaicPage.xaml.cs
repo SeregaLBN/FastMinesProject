@@ -18,9 +18,12 @@ using fmg.core.mosaic.cells;
 using fmg.core.types.click;
 using fmg.data.controller.types;
 using fmg.uwp.mosaic;
-using fmg.uwp.mosaic.xaml;
 using fmg.uwp.utils;
 using fmg.uwp.draw.mosaic;
+using MosaicController = fmg.core.mosaic.MosaicController<fmg.uwp.mosaic.xaml.MosaicView,
+                                                          fmg.uwp.draw.mosaic.xaml.PaintableShapes,
+                                                          Windows.UI.Xaml.Media.ImageSource,
+                                                          fmg.uwp.draw.mosaic.PaintUwpContext<Windows.UI.Xaml.Media.ImageSource>>;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 namespace FastMines {

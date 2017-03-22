@@ -19,8 +19,12 @@ using fmg.core.mosaic.cells;
 using fmg.data.controller.types;
 using fmg.uwp.utils;
 using fmg.uwp.mosaic;
-using fmg.uwp.mosaic.win2d;
 using Logger = fmg.common.LoggerSimple;
+using MosaicController = fmg.core.mosaic.MosaicController<fmg.uwp.mosaic.win2d.MosaicView,
+                                                          fmg.uwp.draw.mosaic.win2d.PaintableWin2D,
+                                                          Microsoft.Graphics.Canvas.CanvasBitmap,
+                                                          fmg.uwp.draw.mosaic.PaintUwpContext<Microsoft.Graphics.Canvas.CanvasBitmap>>;
+
 
 namespace fmg {
 

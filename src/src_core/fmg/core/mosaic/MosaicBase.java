@@ -631,6 +631,9 @@ public class MosaicBase
    }
 
    protected void onSelfModifiedCellsPropertyChanged(Collection<BaseCell> cells) {
+      if (cells.isEmpty())
+         return;
+
       // mark NULL if all mosaic is changed
       if (cells.size() == getMatrix().size())
          cells = null;
