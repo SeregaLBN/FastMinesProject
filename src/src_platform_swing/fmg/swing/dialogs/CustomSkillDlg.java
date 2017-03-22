@@ -13,7 +13,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 
 import fmg.common.geom.Matrisize;
-import fmg.core.mosaic.MosaicBase;
+import fmg.core.mosaic.Mosaic;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.data.controller.types.ESkillLevel;
@@ -252,7 +252,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       } else {
          miniSizeX = miniSizeY = 5;
 
-         Matrisize s = parent.calcMaxMosaicSize(MosaicBase.AREA_MINIMUM);
+         Matrisize s = parent.calcMaxMosaicSize(Mosaic.AREA_MINIMUM);
          maxiSizeX = s.m; maxiSizeY = s.n;
 
          if (isFullScreen) {
@@ -314,15 +314,15 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
    @Override
    public void propertyChange(PropertyChangeEvent evt) {
       switch (evt.getPropertyName()) {
-      case MosaicBase.PROPERTY_MOSAIC_TYPE:
+      case Mosaic.PROPERTY_MOSAIC_TYPE:
          if (isVisible())
             onChangeMosaicType();
          break;
-      case MosaicBase.PROPERTY_AREA:
+      case Mosaic.PROPERTY_AREA:
          if (radioFullScreenCurrSizeArea.isSelected())
             radioGroup.clearSelection();
          break;
-      //case MosaicBase.PROPERTY_SIZE_FIELD:
+      //case Mosaic.PROPERTY_SIZE_FIELD:
       //   ...
       //   break;
       }

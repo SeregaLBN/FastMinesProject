@@ -24,7 +24,7 @@ public abstract class AMosaicView<TPaintable extends IPaintable,
                implements AutoCloseable, IMosaicView, PropertyChangeListener
 {
 
-   private MosaicBase _mosaic;
+   private Mosaic _mosaic;
    private TPaintContext _paintContext;
 
    public static final String PROPERTY_PAINT_CONTEXT = "PaintContext";
@@ -36,10 +36,10 @@ public abstract class AMosaicView<TPaintable extends IPaintable,
    @Override
    public abstract void invalidate(Collection<BaseCell> modifiedCells);
 
-   public MosaicBase getMosaic() {
+   public Mosaic getMosaic() {
       return _mosaic;
    }
-   public void setMosaic(MosaicBase mosaic) {
+   public void setMosaic(Mosaic mosaic) {
       if (_mosaic != null)
          _mosaic.removeListener(this);
       _mosaic = mosaic;
@@ -89,8 +89,8 @@ public abstract class AMosaicView<TPaintable extends IPaintable,
 
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
-      if (ev.getSource() instanceof MosaicBase)
-         onMosaicPropertyChanged((MosaicBase)ev.getSource(), ev);
+      if (ev.getSource() instanceof Mosaic)
+         onMosaicPropertyChanged((Mosaic)ev.getSource(), ev);
       if (getTPaintContextType().isAssignableFrom(ev.getSource().getClass())) // if (ev.getSource() instanceof TPaintContext)
       {
          @SuppressWarnings("unchecked")
@@ -99,20 +99,20 @@ public abstract class AMosaicView<TPaintable extends IPaintable,
       }
    }
 
-   protected void onMosaicPropertyChanged(MosaicBase source, PropertyChangeEvent ev) {
+   protected void onMosaicPropertyChanged(Mosaic source, PropertyChangeEvent ev) {
       String propertyName = ev.getPropertyName();
       switch (propertyName) {
-      case MosaicBase.PROPERTY_MOSAIC_TYPE:
+      case Mosaic.PROPERTY_MOSAIC_TYPE:
          changeFontSize();
          break;
-      case MosaicBase.PROPERTY_AREA:
+      case Mosaic.PROPERTY_AREA:
          changeFontSize(getPaintContext().getPenBorder());
          changeSizeImagesMineFlag();
          break;
-      case MosaicBase.PROPERTY_MATRIX:
+      case Mosaic.PROPERTY_MATRIX:
          invalidate();
          break;
-      case MosaicBase.PROPERTY_MODIFIED_CELLS:
+      case Mosaic.PROPERTY_MODIFIED_CELLS:
          @SuppressWarnings("unchecked")
          Collection<BaseCell> modifiedCells = (Collection<BaseCell>)ev.getNewValue();
          invalidate(modifiedCells);

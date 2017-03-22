@@ -37,8 +37,8 @@ import fmg.core.types.*;
 import fmg.core.types.click.ClickCellResult;
 import fmg.core.types.click.ClickResult;
 
-/** Mosaic field: класс окна мозаики поля */
-public class MosaicBase
+/** MVC: model (mosaic field). Default implementation. */
+public class Mosaic
        extends NotifyPropertyChanged
        implements IMosaic, PropertyChangeListener
 {

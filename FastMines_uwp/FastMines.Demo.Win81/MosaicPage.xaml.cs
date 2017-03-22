@@ -220,34 +220,34 @@ namespace FastMines {
 
       private void OnMosaicPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          switch (ev.PropertyName) {
-         case nameof(MosaicBase.MosaicType):
-            Mosaic_OnChangedMosaicType(sender as MosaicBase, ev as PropertyChangedExEventArgs<EMosaic>);
+         case nameof(Mosaic.MosaicType):
+            Mosaic_OnChangedMosaicType(sender as Mosaic, ev as PropertyChangedExEventArgs<EMosaic>);
             break;
-         case nameof(MosaicBase.Area):
-            Mosaic_OnChangedArea(sender as MosaicBase, ev as PropertyChangedExEventArgs<double>);
+         case nameof(Mosaic.Area):
+            Mosaic_OnChangedArea(sender as Mosaic, ev as PropertyChangedExEventArgs<double>);
             break;
-         case nameof(MosaicBase.Matrix):
+         case nameof(Mosaic.Matrix):
             break;
-         case nameof(MosaicBase.GameStatus):
-            Mosaic_OnChangedGameStatus(sender as MosaicBase, ev as PropertyChangedExEventArgs<EGameStatus>);
+         case nameof(Mosaic.GameStatus):
+            Mosaic_OnChangedGameStatus(sender as Mosaic, ev as PropertyChangedExEventArgs<EGameStatus>);
             break;
-         case nameof(MosaicBase.SizeField):
-            Mosaic_OnChangedSizeField(sender as MosaicBase, ev as PropertyChangedExEventArgs<Matrisize>);
+         case nameof(Mosaic.SizeField):
+            Mosaic_OnChangedSizeField(sender as Mosaic, ev as PropertyChangedExEventArgs<Matrisize>);
             break;
-         case nameof(MosaicBase.MinesCount):
-            Mosaic_OnChangedMinesCount(sender as MosaicBase, ev as PropertyChangedExEventArgs<int>);
+         case nameof(Mosaic.MinesCount):
+            Mosaic_OnChangedMinesCount(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
-         case nameof(MosaicBase.CountFlag):
-            Mosaic_OnChangedCountFlag(sender as MosaicBase, ev as PropertyChangedExEventArgs<int>);
+         case nameof(Mosaic.CountFlag):
+            Mosaic_OnChangedCountFlag(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
-         case nameof(MosaicBase.CountOpen):
-            Mosaic_OnChangedCountOpen(sender as MosaicBase, ev as PropertyChangedExEventArgs<int>);
+         case nameof(Mosaic.CountOpen):
+            Mosaic_OnChangedCountOpen(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
-         case nameof(MosaicBase.CountMinesLeft):
-            Mosaic_OnChangedCountMinesLeft(sender as MosaicBase, ev as PropertyChangedExEventArgs<int>);
+         case nameof(Mosaic.CountMinesLeft):
+            Mosaic_OnChangedCountMinesLeft(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
-         case nameof(MosaicBase.CountClick):
-            Mosaic_OnChangedCountClick(sender as MosaicBase, ev as PropertyChangedExEventArgs<int>);
+         case nameof(Mosaic.CountClick):
+            Mosaic_OnChangedCountClick(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
             break;
          }
       }
@@ -291,19 +291,19 @@ namespace FastMines {
          _clickInfo.Released = !clickResult.IsDown;
       }
 
-      private void Mosaic_OnChangedGameStatus(MosaicBase sender, PropertyChangedExEventArgs<EGameStatus> ev) {
+      private void Mosaic_OnChangedGameStatus(Mosaic sender, PropertyChangedExEventArgs<EGameStatus> ev) {
          Debug.Assert(ReferenceEquals(sender, MosaicField));
          if (sender.GameStatus == EGameStatus.eGSEnd) {
             //this.bottomAppBar.Focus(FocusState.Programmatic);
             bottomAppBar.IsOpen = true;
          }
       }
-      private void Mosaic_OnChangedMinesCount(MosaicBase sender, PropertyChangedExEventArgs<int> ev) { }
-      private void Mosaic_OnChangedCountFlag(MosaicBase sender, PropertyChangedExEventArgs<int> ev) { }
-      private void Mosaic_OnChangedCountOpen(MosaicBase sender, PropertyChangedExEventArgs<int> ev) { }
-      private void Mosaic_OnChangedCountMinesLeft(MosaicBase sender, PropertyChangedExEventArgs<int> ev) { }
-      private void Mosaic_OnChangedCountClick(MosaicBase sender, PropertyChangedExEventArgs<int> ev) { }
-      private void Mosaic_OnChangedArea(MosaicBase sender, PropertyChangedExEventArgs<double> ev) {
+      private void Mosaic_OnChangedMinesCount(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
+      private void Mosaic_OnChangedCountFlag(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
+      private void Mosaic_OnChangedCountOpen(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
+      private void Mosaic_OnChangedCountMinesLeft(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
+      private void Mosaic_OnChangedCountClick(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
+      private void Mosaic_OnChangedArea(Mosaic sender, PropertyChangedExEventArgs<double> ev) {
          Debug.Assert(ReferenceEquals(sender, MosaicField));
          using (new Tracer()) {
             //ChangeSizeImagesMineFlag();
@@ -338,7 +338,7 @@ namespace FastMines {
             MosaicContainer.Margin = m;
          }
       }
-      private void Mosaic_OnChangedMosaicType(MosaicBase sender, PropertyChangedExEventArgs<EMosaic> ev) {
+      private void Mosaic_OnChangedMosaicType(Mosaic sender, PropertyChangedExEventArgs<EMosaic> ev) {
          Debug.Assert(ReferenceEquals(sender, MosaicField));
          using (new Tracer()) {
             //sender.ChangeFontSize();
@@ -346,7 +346,7 @@ namespace FastMines {
          }
       }
 
-      private void Mosaic_OnChangedSizeField(MosaicBase sender, PropertyChangedExEventArgs<Matrisize> ev) {
+      private void Mosaic_OnChangedSizeField(Mosaic sender, PropertyChangedExEventArgs<Matrisize> ev) {
          Debug.Assert(ReferenceEquals(sender, MosaicField));
          using (new Tracer()) {
          }

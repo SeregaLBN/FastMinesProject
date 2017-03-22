@@ -17,7 +17,7 @@ public class MosaicController<TMosaicView extends AMosaicView<TPaintable, TImage
 
    /** get model */
    @Override
-   public MosaicBase getMosaic() {
+   public Mosaic getMosaic() {
       if (_mosaic == null)
          setMosaic(new MosaicIntenal());
       return _mosaic;
@@ -49,7 +49,7 @@ public class MosaicController<TMosaicView extends AMosaicView<TPaintable, TImage
          _view.setMosaic(getMosaic());
    }
 
-   protected class MosaicIntenal extends MosaicBase {
+   protected class MosaicIntenal extends Mosaic {
 
       private TMosaicView getView() { return MosaicController.this.getView(); }
 

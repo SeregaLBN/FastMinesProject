@@ -196,7 +196,7 @@ public final class MosaicHelper {
          throw new InvalidParameterException("sizeClientIn must be positive");
 
       final SizeDouble sizeIter = new SizeDouble();
-      double res = Finder(MosaicBase.AREA_MINIMUM, (Comparable<Double>)area -> {
+      double res = Finder(Mosaic.AREA_MINIMUM, (Comparable<Double>)area -> {
          cellAttr.setArea(area);
          SizeDouble tmp = cellAttr.getOwnerSize(mosaicSizeField);
          sizeIter.width = tmp.width;

@@ -22,7 +22,7 @@ import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.AMosaicsImg.ERotateMode;
-import fmg.core.mosaic.MosaicBase;
+import fmg.core.mosaic.Mosaic;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
@@ -976,7 +976,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       return mosaicCtrl;
    }
    /** мозаика */
-   public MosaicBase getMosaic() {
+   public Mosaic getMosaic() {
       return getMosaicField().getMosaic();
    }
    public MosaicView getMosaicView() {
@@ -1063,7 +1063,7 @@ public class Main extends JFrame implements PropertyChangeListener {
             }
          this.setUndecorated(!spm.getShowElement(EShowElement.eCaption));
 
-         MosaicBase mosaic = getMosaic();
+         Mosaic mosaic = getMosaic();
          mosaic.setSizeField(spm.getSizeField());
          mosaic.setMosaicType(spm.getMosaicType());
          mosaic.setMinesCount(spm.getMinesCount());
@@ -2383,7 +2383,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    /** Сохранить чемпиона && Установить статистику */
    public void setStatisticAndChampion(PropertyChangeEvent ev) {
-      MosaicBase mosaic = (MosaicBase)ev.getSource();
+      Mosaic mosaic = (Mosaic)ev.getSource();
       if (mosaic.getGameStatus() != EGameStatus.eGSEnd)
          throw new RuntimeException("Invalid method state call");
 
@@ -2442,24 +2442,24 @@ public class Main extends JFrame implements PropertyChangeListener {
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
 //      System.out.println("Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
-      if (ev.getSource() instanceof MosaicBase)
-         onMosaicPropertyChanged((MosaicBase)ev.getSource(), ev);
+      if (ev.getSource() instanceof Mosaic)
+         onMosaicPropertyChanged((Mosaic)ev.getSource(), ev);
    }
-   private void onMosaicPropertyChanged(MosaicBase source, PropertyChangeEvent ev) {
+   private void onMosaicPropertyChanged(Mosaic source, PropertyChangeEvent ev) {
       switch (ev.getPropertyName()) {
-      case MosaicBase.PROPERTY_AREA:
-      case MosaicBase.PROPERTY_SIZE_FIELD:
-      case MosaicBase.PROPERTY_MOSAIC_TYPE:
+      case Mosaic.PROPERTY_AREA:
+      case Mosaic.PROPERTY_SIZE_FIELD:
+      case Mosaic.PROPERTY_MOSAIC_TYPE:
          recheckLocation();
        //break; // no break
-      case MosaicBase.PROPERTY_MINES_COUNT:
+      case Mosaic.PROPERTY_MINES_COUNT:
          getMenu().getMosaics().recheckSelectedMosaicType();
          getMenu().getGame().recheckSelectedSkillLevel();
          break;
       }
 
       switch (ev.getPropertyName()) {
-      case MosaicBase.PROPERTY_GAME_STATUS:
+      case Mosaic.PROPERTY_GAME_STATUS:
          {
             getToolbar().getBtnPause().setEnabled(getMosaic().getGameStatus() == EGameStatus.eGSPlay);
           //System.out.println("OnChangeGameStatus: " + e.getSource().getGameStatus());
@@ -2505,10 +2505,10 @@ public class Main extends JFrame implements PropertyChangeListener {
       //   break;
       //case Mosaic.PROPERTY_COUNT_OPEN:
       //   break;
-      case MosaicBase.PROPERTY_COUNT_MINES_LEFT:
+      case Mosaic.PROPERTY_COUNT_MINES_LEFT:
          getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaic().getCountMinesLeft()));
          break;
-      case MosaicBase.PROPERTY_COUNT_CLICK:
+      case Mosaic.PROPERTY_COUNT_CLICK:
          getStatusBar().setClickCount(getMosaic().getCountClick());
          break;
       }

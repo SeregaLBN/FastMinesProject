@@ -5,9 +5,7 @@ import java.util.List;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
 
-/**
- * interface of mosaic field
- */
+/** interface of mosaic field */
 public interface IMosaic extends BaseCell.IMatrixCells {
 
    BaseCell.BaseAttribute getCellAttr();

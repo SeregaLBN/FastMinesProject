@@ -11,15 +11,15 @@ namespace fmg.core.mosaic {
       where TMosaicView : class, IMosaicView
    {
       /// <summary> MVC: model </summary>
-      protected MosaicBase _mosaic;
+      protected Mosaic _mosaic;
       /// <summary> MVC: view </summary>
       protected TMosaicView _view;
 
       /// <summary> MVC: model </summary>
-      public virtual MosaicBase Mosaic {
+      public virtual Mosaic Mosaic {
          get {
             if (_mosaic == null)
-               Mosaic = new MosaicBase(); // call setter
+               Mosaic = new Mosaic(); // call setter
             return _mosaic;
          }
          protected set {

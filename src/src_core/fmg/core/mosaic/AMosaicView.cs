@@ -18,14 +18,14 @@ namespace fmg.core.mosaic {
       where TPaintContext : PaintContext<TImage>, new()
    {
 
-      private MosaicBase _mosaic;
+      private Mosaic _mosaic;
       private TPaintContext _paintContext;
 
       public abstract ICellPaint<TPaintable, TImage, TPaintContext> CellPaint { get; }
 
       public abstract void Invalidate(IEnumerable<BaseCell> modifiedCells = null);
 
-      public MosaicBase Mosaic {
+      public Mosaic Mosaic {
          get { return _mosaic; }
          set {
             if (_mosaic != null)
@@ -56,20 +56,20 @@ namespace fmg.core.mosaic {
       }
 
       protected virtual void OnMosaicPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         System.Diagnostics.Debug.Assert(sender is MosaicBase);
+         System.Diagnostics.Debug.Assert(sender is Mosaic);
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Mosaic));
          switch (ev.PropertyName) {
-         case nameof(MosaicBase.MosaicType):
+         case nameof(mosaic.Mosaic.MosaicType):
             ChangeFontSize();
             break;
-         case nameof(MosaicBase.Area):
+         case nameof(mosaic.Mosaic.Area):
             ChangeFontSize(PaintContext.PenBorder);
             ChangeSizeImagesMineFlag();
             break;
-         case nameof(MosaicBase.Matrix):
+         case nameof(mosaic.Mosaic.Matrix):
             Invalidate();
             break;
-         case MosaicBase.PROPERTY_MODIFIED_CELLS:
+         case Mosaic.PROPERTY_MODIFIED_CELLS:
             Invalidate((ev as IPropertyChangedExEventArgs<IEnumerable<BaseCell>>).NewValue);
             break;
          }

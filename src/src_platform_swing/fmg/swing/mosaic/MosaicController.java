@@ -12,7 +12,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
 import fmg.common.geom.Matrisize;
-import fmg.core.mosaic.MosaicBase;
+import fmg.core.mosaic.Mosaic;
 import fmg.core.types.EMosaic;
 import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Cast;
@@ -116,7 +116,7 @@ public class MosaicController extends fmg.core.mosaic.MosaicController<MosaicVie
       JFrame frame = new JFrame();
 
       MosaicController ctrllr = new MosaicController();
-      MosaicBase m = ctrllr.getMosaic();
+      Mosaic m = ctrllr.getMosaic();
 
       EMosaic mosaicType = EMosaic.values()[new Random().nextInt(EMosaic.values().length)];
       ESkillLevel skill = ESkillLevel.values()[new Random().nextInt(ESkillLevel.values().length - 3)];

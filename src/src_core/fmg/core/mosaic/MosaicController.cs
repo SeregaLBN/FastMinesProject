@@ -13,7 +13,7 @@ namespace fmg.core.mosaic {
    {
 
       /// <summary> MVC: model </summary>
-      public override MosaicBase Mosaic {
+      public override Mosaic Mosaic {
          get {
             if (_mosaic == null)
                Mosaic = new MosaicIntenal(); // call setter
@@ -40,7 +40,7 @@ namespace fmg.core.mosaic {
          }
       }
 
-      protected class MosaicIntenal : MosaicBase {
+      protected class MosaicIntenal : Mosaic {
 
          public TMosaicView View { get; set; }
 

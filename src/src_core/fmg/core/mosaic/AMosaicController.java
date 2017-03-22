@@ -10,18 +10,18 @@ import fmg.core.types.click.ClickResult;
 public abstract class AMosaicController<TMosaicView extends IMosaicView> implements AutoCloseable {
 
    /** MVC: model */
-   protected MosaicBase _mosaic;
+   protected Mosaic _mosaic;
    /** MVC: view */
    protected TMosaicView _view;
 
    /** get model */
-   public MosaicBase getMosaic() {
+   public Mosaic getMosaic() {
       if (_mosaic == null)
-         setMosaic(new MosaicBase());
+         setMosaic(new Mosaic());
       return _mosaic;
    }
    /** set model */
-   protected void setMosaic(MosaicBase model) {
+   protected void setMosaic(Mosaic model) {
       if (_mosaic != null)
          _mosaic.close();
       _mosaic = model;

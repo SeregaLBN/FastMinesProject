@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
 //                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
-// file name: "MosaicBase.cs"
+// file name: "Mosaic.cs"
 //
 // реализация алгоритма Мозаики состоящей из ячеек
 // Copyright (C) 2011 Sergey Krivulya
@@ -30,10 +30,11 @@ using fmg.core.mosaic.cells;
 using fmg.core.types.click;
 using fmg.common.notyfier;
 
-namespace fmg.core.mosaic {
+namespace fmg.core.mosaic
+{
 
-   /// <summary> Mosaic field: класс окна мозаики поля </summary>
-   public class MosaicBase : NotifyPropertyChanged, IMosaic {
+   /// <summary> MVC: model (mosaic field). Default implementation. </summary>
+   public class Mosaic : NotifyPropertyChanged, IMosaic {
 
    #region Members
 
