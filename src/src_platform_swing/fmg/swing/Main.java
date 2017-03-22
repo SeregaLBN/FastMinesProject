@@ -38,7 +38,7 @@ import fmg.data.view.draw.EZoomInterface;
 import fmg.swing.dialogs.*;
 import fmg.swing.draw.img.*;
 import fmg.swing.draw.img.Smile.EType;
-import fmg.swing.mosaic.MosaicControllerSwing;
+import fmg.swing.mosaic.MosaicController;
 import fmg.swing.mosaic.MosaicView;
 import fmg.swing.serializable.SerializeProjData;
 import fmg.swing.utils.GuiTools;
@@ -52,7 +52,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    private JPanel     contentPane;
    private MainMenu   menu;
    private Toolbar    toolbar;
-   private MosaicControllerSwing mosaicCtrl;
+   private MosaicController mosaicCtrl;
    private PausePanel pausePanel;
    private StatusBar  statusBar;
 
@@ -968,9 +968,9 @@ public class Main extends JFrame implements PropertyChangeListener {
       return toolbar;
    }
 
-   public MosaicControllerSwing getMosaicField() {
+   public MosaicController getMosaicField() {
       if (mosaicCtrl == null) {
-         mosaicCtrl = new MosaicControllerSwing();
+         mosaicCtrl = new MosaicController();
          mosaicCtrl.getMosaic().addListener(this);
       }
       return mosaicCtrl;

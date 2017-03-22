@@ -21,6 +21,9 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicView.cs">
       <Link>src_fmg.uwp\mosaic\win2d\MosaicView.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicController.cs">
+      <Link>src_fmg.uwp\mosaic\win2d\MosaicController.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\win2d\Smile.cs">
       <Link>src_fmg.uwp\draw\img\win2d\Smile.cs</Link>
     </Compile>

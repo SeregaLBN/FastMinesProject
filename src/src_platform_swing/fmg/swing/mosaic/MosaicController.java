@@ -13,15 +13,14 @@ import javax.swing.event.MouseInputListener;
 
 import fmg.common.geom.Matrisize;
 import fmg.core.mosaic.MosaicBase;
-import fmg.core.mosaic.MosaicController;
 import fmg.core.types.EMosaic;
 import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Cast;
 import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
-/** MVC: controller. SWING inplementation */
-public class MosaicControllerSwing extends MosaicController<MosaicView, PaintableGraphics, Icon, PaintSwingContext<Icon>> {
+/** MVC: controller. SWING implementation */
+public class MosaicController extends fmg.core.mosaic.MosaicController<MosaicView, PaintableGraphics, Icon, PaintSwingContext<Icon>> {
 
    private MosaicMouseListener _mosaicMouseListener;
 
@@ -33,10 +32,10 @@ public class MosaicControllerSwing extends MosaicController<MosaicView, Paintabl
       @Override
       public void mousePressed(MouseEvent e) {
          if (SwingUtilities.isLeftMouseButton(e)) {
-            MosaicControllerSwing.this.mousePressed(Cast.toPointDouble(e.getPoint()), true);
+            MosaicController.this.mousePressed(Cast.toPointDouble(e.getPoint()), true);
          } else
          if (SwingUtilities.isRightMouseButton(e)) {
-            MosaicControllerSwing.this.mousePressed(Cast.toPointDouble(e.getPoint()), false);
+            MosaicController.this.mousePressed(Cast.toPointDouble(e.getPoint()), false);
          }
       }
 
@@ -52,10 +51,10 @@ public class MosaicControllerSwing extends MosaicController<MosaicView, Paintabl
          }
 
          if (SwingUtilities.isLeftMouseButton(e)) {
-            MosaicControllerSwing.this.mouseReleased(Cast.toPointDouble(e.getPoint()), true);
+            MosaicController.this.mouseReleased(Cast.toPointDouble(e.getPoint()), true);
          } else
          if (SwingUtilities.isRightMouseButton(e)) {
-            MosaicControllerSwing.this.mouseReleased(Cast.toPointDouble(e.getPoint()), false);
+            MosaicController.this.mouseReleased(Cast.toPointDouble(e.getPoint()), false);
          }
        }
 
@@ -70,7 +69,7 @@ public class MosaicControllerSwing extends MosaicController<MosaicView, Paintabl
       @Override
       public void focusLost(FocusEvent e) {
          //System.out.println("Mosaic::MosaicMouseListeners::focusLost: " + e);
-         MosaicControllerSwing.this.mouseFocusLost();
+         MosaicController.this.mouseFocusLost();
       }
       @Override
       public void focusGained(FocusEvent e) {}
@@ -116,7 +115,7 @@ public class MosaicControllerSwing extends MosaicController<MosaicView, Paintabl
    public static void main(String[] args) {
       JFrame frame = new JFrame();
 
-      MosaicControllerSwing ctrllr = new MosaicControllerSwing();
+      MosaicController ctrllr = new MosaicController();
       MosaicBase m = ctrllr.getMosaic();
 
       EMosaic mosaicType = EMosaic.values()[new Random().nextInt(EMosaic.values().length)];
