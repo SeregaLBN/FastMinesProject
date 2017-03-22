@@ -19,7 +19,6 @@ import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Cast;
 import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
-import fmg.swing.mosaic.Mosaic.MosaicView;
 
 /** MVC: controller. SWING inplementation */
 public class MosaicControllerSwing extends MosaicController<MosaicView, PaintableGraphics, Icon, PaintSwingContext<Icon>> {

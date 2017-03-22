@@ -18,10 +18,8 @@ import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 import fmg.swing.utils.ImgUtils;
 
-public final class Mosaic {
-
 /** MVC: view. SWING inplementation */
-public static class MosaicView extends AMosaicView<PaintableGraphics, Icon, PaintSwingContext<Icon>> {
+public class MosaicView extends AMosaicView<PaintableGraphics, Icon, PaintSwingContext<Icon>> {
 
    private JPanel _control;
    private CellPaintGraphics<Icon> _cellPaint;
@@ -124,7 +122,5 @@ public static class MosaicView extends AMosaicView<PaintableGraphics, Icon, Pain
    public void close() {
       super.close();
    }
-
-}
 
 }

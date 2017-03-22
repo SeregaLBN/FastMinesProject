@@ -12,6 +12,7 @@ using fmg.uwp.draw.mosaic.xaml;
 
 namespace fmg.uwp.mosaic.xaml {
 
+   /// <summary> MVC view. UWP Xaml shapes implementation </summary>
    public class MosaicView : AMosaicView<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> {
 
       private Panel _control;
