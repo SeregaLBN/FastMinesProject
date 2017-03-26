@@ -15,14 +15,6 @@ public class MosaicController<TMosaicView extends AMosaicView<TPaintable, TImage
                               TPaintContext extends PaintContext<TImage>> extends AMosaicController<TMosaicView>
 {
 
-   /** get model */
-   @Override
-   public Mosaic getMosaic() {
-      if (_mosaic == null)
-         setMosaic(new MosaicIntenal());
-      return _mosaic;
-   }
-
    /** get view */
    @Override
    public TMosaicView getView() {
@@ -49,35 +41,21 @@ public class MosaicController<TMosaicView extends AMosaicView<TPaintable, TImage
          _view.setMosaic(getMosaic());
    }
 
-   protected class MosaicIntenal extends Mosaic {
+   @Override
+   public boolean GameNew() {
+      getView().getPaintContext().getBackgroundFill().setMode(
+            1 + new Random().nextInt(
+                  MosaicHelper.createAttributeInstance(getMosaic().getMosaicType()).getMaxBackgroundFillModeValue()));
+      boolean res = super.GameNew();
+      if (!res)
+         getView().invalidate();
+      return res;
+   }
 
-      private TMosaicView getView() { return MosaicController.this.getView(); }
-
-      @Override
-      protected boolean checkNeedRestoreLastGame() {
-         // TODO: override in child classes
-//         int iRes = JOptionPane.showOptionDialog(getView().getControl(), "Restore last game?", "Question", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-//         return (iRes == JOptionPane.NO_OPTION);
-         return super.checkNeedRestoreLastGame();
-      }
-
-      @Override
-      public boolean GameNew() {
-         getView().getPaintContext().getBackgroundFill().setMode(
-               1 + new Random().nextInt(
-                     MosaicHelper.createAttributeInstance(getMosaicType()).getMaxBackgroundFillModeValue()));
-         boolean res = super.GameNew();
-         if (!res)
-            getView().invalidate();
-         return res;
-      }
-
-      @Override
-      public void GameBegin(BaseCell firstClickCell) {
-         getView().getPaintContext().getBackgroundFill().setMode(0);
-         super.GameBegin(firstClickCell);
-      }
-
+   @Override
+   public void GameBegin(BaseCell firstClickCell) {
+      getView().getPaintContext().getBackgroundFill().setMode(0);
+      super.GameBegin(firstClickCell);
    }
 
 }

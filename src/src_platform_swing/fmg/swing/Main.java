@@ -22,7 +22,7 @@ import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.AMosaicsImg.ERotateMode;
-import fmg.core.mosaic.Mosaic;
+import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
@@ -38,8 +38,8 @@ import fmg.data.view.draw.EZoomInterface;
 import fmg.swing.dialogs.*;
 import fmg.swing.draw.img.*;
 import fmg.swing.draw.img.Smile.EType;
-import fmg.swing.mosaic.MosaicController;
-import fmg.swing.mosaic.MosaicView;
+import fmg.swing.mosaic.MosaicControllerSwing;
+import fmg.swing.mosaic.MosaicViewSwing;
 import fmg.swing.serializable.SerializeProjData;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
@@ -52,7 +52,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    private JPanel     contentPane;
    private MainMenu   menu;
    private Toolbar    toolbar;
-   private MosaicController mosaicCtrl;
+   private MosaicControllerSwing _mosaicController;
    private PausePanel pausePanel;
    private StatusBar  statusBar;
 
@@ -350,7 +350,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
          /** Выставить верный bullet для меню мозаики */
          void recheckSelectedMosaicType() {
-            EMosaic currentMosaicType = getMosaic().getMosaicType();
+            EMosaic currentMosaicType = getMosaicController().getMosaicType();
             getMenuItemMosaic(currentMosaicType).setSelected(true);
 
             mosaicsImages.forEach((eMosaic, img) -> img.setRotate(eMosaic == currentMosaicType));
@@ -968,19 +968,27 @@ public class Main extends JFrame implements PropertyChangeListener {
       return toolbar;
    }
 
-   public MosaicController getMosaicField() {
-      if (mosaicCtrl == null) {
-         mosaicCtrl = new MosaicController();
-         mosaicCtrl.getMosaic().addListener(this);
-      }
-      return mosaicCtrl;
+   /** mosaic controller */
+   public void setMosaicController(MosaicControllerSwing mosaicController) {
+      if (_mosaicController != null)
+         _mosaicController.removeListener(this);
+      _mosaicController = mosaicController;
+      if (_mosaicController != null)
+         _mosaicController.addListener(this);
    }
-   /** мозаика */
-   public Mosaic getMosaic() {
-      return getMosaicField().getMosaic();
+   /** mosaic controller */
+   public MosaicControllerSwing getMosaicController() {
+      if (_mosaicController == null)
+         setMosaicController(new MosaicControllerSwing());
+      return _mosaicController;
    }
-   public MosaicView getMosaicView() {
-      return getMosaicField().getView();
+//   /** mosaic data */
+//   public Mosaic getMosaic() {
+//      return getMosaicController().getMosaic();
+//   }
+   /** mosaic view */
+   public MosaicViewSwing getMosaicView() {
+      return getMosaicController().getView();
    }
 
    private PausePanel getPausePanel() {
@@ -1045,6 +1053,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       final Point startLocation = new Point();
       boolean defaultData;
       boolean doNotAskStartup;
+      MosaicControllerSwing mosaicCtrllr;
       { // aplly data from SerializeProjModel
          final SerializeProjData spm = new SerializeProjData();
          defaultData = !spm.Load();
@@ -1063,11 +1072,11 @@ public class Main extends JFrame implements PropertyChangeListener {
             }
          this.setUndecorated(!spm.getShowElement(EShowElement.eCaption));
 
-         Mosaic mosaic = getMosaic();
-         mosaic.setSizeField(spm.getSizeField());
-         mosaic.setMosaicType(spm.getMosaicType());
-         mosaic.setMinesCount(spm.getMinesCount());
-         mosaic.setArea(spm.getArea());
+         mosaicCtrllr = getMosaicController();
+         mosaicCtrllr.setSizeField(spm.getSizeField());
+         mosaicCtrllr.setMosaicType(spm.getMosaicType());
+         mosaicCtrllr.setMinesCount(spm.getMinesCount());
+         mosaicCtrllr.setArea(spm.getArea());
 
          setActiveUserId(spm.getActiveUserId());
          getPlayerManageDlg().setDoNotAskStartupChecked(spm.isDoNotAskStartup());
@@ -1083,7 +1092,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          getMenu().getOptions().getUsePause()  .setSelected(spm.isUsePause());
          getMenu().getOptions().getUseUnknown().setSelected(spm.isUseUnknown());
          getToolbar().getBtnPause().setVisible(spm.isUsePause());
-         getMosaic().setUseUnknown(            spm.isUseUnknown());
+         mosaicCtrllr.setUseUnknown(           spm.isUseUnknown());
 
          for (EShowElement key: EShowElement.values()) {
             getMenu().getOptions().getShowElement(key).setSelected(spm.getShowElement(key));
@@ -1114,11 +1123,11 @@ public class Main extends JFrame implements PropertyChangeListener {
             this.setIconImage(_logo.getImage());
       });
 
-      getMosaicField().setOnClickEvent(this.getHandlers().getMosaicClickHandler());
 //      this.getHandlers().getMosaicListener().OnChangedArea(new MosaicEvent(getMosaic())); // TODO: это нужно только тогда, когда нет десериализации
-      getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaic().getCountMinesLeft()));
+      getToolbar().getEdtMinesLeft().setText(Integer.toString(mosaicCtrllr.getCountMinesLeft()));
       getToolbar().getEdtTimePlay().setText("0");
 
+      mosaicCtrllr.setOnClickEvent(this.getHandlers().getMosaicClickHandler());
       //setDefaultCloseOperation(EXIT_ON_CLOSE);
       this.addWindowListener(this.getHandlers().getWindowListener());
 //      this.addKeyListener(new KeyListener() {
@@ -1187,9 +1196,9 @@ public class Main extends JFrame implements PropertyChangeListener {
    boolean _initialized;
 
    ESkillLevel getSkillLevel() {
-      EMosaic eMosaic = getMosaic().getMosaicType();
-      Matrisize sizeFld = getMosaic().getSizeField();
-      int numberMines = getMosaic().getMinesCount();
+      EMosaic eMosaic = getMosaicController().getMosaicType();
+      Matrisize sizeFld = getMosaicController().getSizeField();
+      int numberMines = getMosaicController().getMinesCount();
 
       if (sizeFld.equals(ESkillLevel.eBeginner.DefaultSize()) && (numberMines == ESkillLevel.eBeginner.GetNumberMines(eMosaic)))
          return ESkillLevel.eBeginner;
@@ -1370,7 +1379,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    /** pause on/off */
    void changePause() {
-      if (getMosaic().getGameStatus() != EGameStatus.eGSPlay)
+      if (getMosaicController().getGameStatus() != EGameStatus.eGSPlay)
          return;
 
 //      System.out.println("> FMG::ChangePause: " + KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() );
@@ -1398,7 +1407,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       if (isPaused())
          changePause();
       else
-         getMosaic().GameNew();
+         getMosaicController().GameNew();
    }
 
    void onClose() {
@@ -1416,10 +1425,10 @@ public class Main extends JFrame implements PropertyChangeListener {
       try {
          SerializeProjData spm = new SerializeProjData();
 
-         spm.setSizeField(getMosaic().getSizeField());
-         spm.setMosaicType(getMosaic().getMosaicType());
-         spm.setMinesCount(getMosaic().getMinesCount());
-         spm.setArea(getMosaic().getArea());
+         spm.setSizeField(getMosaicController().getSizeField());
+         spm.setMosaicType(getMosaicController().getMosaicType());
+         spm.setMinesCount(getMosaicController().getMinesCount());
+         spm.setArea(getMosaicController().getArea());
 
          spm.setActiveUserId(getActiveUserId());
          spm.setDoNotAskStartup(getPlayerManageDlg().isDoNotAskStartupChecked());
@@ -1451,7 +1460,8 @@ public class Main extends JFrame implements PropertyChangeListener {
          getAboutDialog().close();
 
 //      setVisible(false);
-      getMosaicField().close();
+      getMosaicController().close();
+      setMosaicController(null);
       _logo.close();
 
 
@@ -1468,8 +1478,8 @@ public class Main extends JFrame implements PropertyChangeListener {
       ESkillLevel skill = getSkillLevel();
       changeGame(newSize,
             (skill == ESkillLevel.eCustom)
-               ? getMosaic().getMinesCount()
-               : skill.GetNumberMines(getMosaic().getMosaicType()));
+               ? getMosaicController().getMinesCount()
+               : skill.GetNumberMines(getMosaicController().getMosaicType()));
    }
 
    /** Поменять игру на новую мозаику */
@@ -1478,10 +1488,10 @@ public class Main extends JFrame implements PropertyChangeListener {
          changePause();
 
       ESkillLevel skill = getSkillLevel();
-      getMosaic().setMosaicType(mosaicType);
+      getMosaicController().setMosaicType(mosaicType);
       if (skill != ESkillLevel.eCustom) {
          int numberMines = skill.GetNumberMines(mosaicType);
-         getMosaic().setMinesCount(numberMines);
+         getMosaicController().setMinesCount(numberMines);
       }
    }
 
@@ -1499,8 +1509,8 @@ public class Main extends JFrame implements PropertyChangeListener {
       if (isPaused())
          changePause();
 
-      getMosaic().setSizeField(newSize);
-      getMosaic().setMinesCount(numberMines);
+      getMosaicController().setSizeField(newSize);
+      getMosaicController().setMinesCount(numberMines);
    }
 
    /** Поменять игру на новый уровень сложности */
@@ -1514,11 +1524,11 @@ public class Main extends JFrame implements PropertyChangeListener {
       if (isPaused())
          changePause();
 
-      int numberMines = skill.GetNumberMines(getMosaic().getMosaicType());
+      int numberMines = skill.GetNumberMines(getMosaicController().getMosaicType());
       Matrisize sizeFld = skill.DefaultSize();
 
-      getMosaic().setSizeField(sizeFld);
-      getMosaic().setMinesCount(numberMines);
+      getMosaicController().setSizeField(sizeFld);
+      getMosaicController().setMinesCount(numberMines);
    }
 
    /** get margin around mosaic control */
@@ -1568,7 +1578,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    double calcMaxArea(Matrisize mosaicSizeField) {
       SizeDouble sizeMosaicIn = calcMosaicWindowSize(ScreenResolutionHelper.getDesktopSize(this.getGraphicsConfiguration()));
       SizeDouble sizeMosaicOut = new SizeDouble();
-      double area = MosaicHelper.findAreaBySize(getMosaic().getMosaicType(), mosaicSizeField, sizeMosaicIn, sizeMosaicOut);
+      double area = MosaicHelper.findAreaBySize(getMosaicController().getMosaicType(), mosaicSizeField, sizeMosaicIn, sizeMosaicOut);
       //System.out.println("Main.calcMaxArea: area="+area);
       return area;
    }
@@ -1580,7 +1590,7 @@ public class Main extends JFrame implements PropertyChangeListener {
     */
    public Matrisize calcMaxMosaicSize(double area) {
       SizeDouble sizeMosaic = calcMosaicWindowSize(ScreenResolutionHelper.getDesktopSize(this.getGraphicsConfiguration()));
-      return MosaicHelper.findSizeByArea(getMosaic().getCellAttr(), sizeMosaic);
+      return MosaicHelper.findSizeByArea(getMosaicController().getMosaic().getCellAttr(), sizeMosaic);
    }
 
    /** проверить что находится в рамках экрана */
@@ -1609,8 +1619,8 @@ public class Main extends JFrame implements PropertyChangeListener {
                   if (getMenu().getOptions().getZoomItem(EZoomInterface.eAlwaysMax).isSelected()) {
                      areaMax();
                   } else {
-                     double maxArea = calcMaxArea(getMosaic().getSizeField());
-                     if (maxArea < getMosaic().getArea())
+                     double maxArea = calcMaxArea(getMosaicController().getSizeField());
+                     if (maxArea < getMosaicController().getArea())
                         setArea(maxArea);
                   }
 
@@ -1660,17 +1670,17 @@ public class Main extends JFrame implements PropertyChangeListener {
    /** getMosaic().setArea(...) */
    void setArea(double newArea) {
       //System.out.println("Mosaic.setArea: newArea=" + newArea);
-      newArea = Math.min(newArea, calcMaxArea(getMosaic().getSizeField()));
-      getMosaic().setArea(newArea);
+      newArea = Math.min(newArea, calcMaxArea(getMosaicController().getSizeField()));
+      getMosaicController().setArea(newArea);
    }
 
    /** Zoom + */
    void areaInc() {
-      setArea(getMosaic().getArea() * 1.05);
+      setArea(getMosaicController().getArea() * 1.05);
    }
    /** Zoom - */
    void areaDec() {
-      setArea(getMosaic().getArea() * 0.95);
+      setArea(getMosaicController().getArea() * 0.95);
    }
    /** Zoom minimum */
    void areaMin() {
@@ -1679,7 +1689,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    /** Zoom maximum */
    void areaMax() {
-      double maxArea = calcMaxArea(getMosaic().getSizeField());
+      double maxArea = calcMaxArea(getMosaicController().getSizeField());
       setArea(maxArea);
 
 //      {
@@ -1733,7 +1743,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       if (!isMenuEvent(e))
          getMenu().getOptions().getUseUnknown().setSelected(!getMenu().getOptions().getUseUnknown().isSelected());
 
-      getMosaic().setUseUnknown(getMenu().getOptions().getUseUnknown().isSelected());
+      getMosaicController().setUseUnknown(getMenu().getOptions().getUseUnknown().isSelected());
    }
 
    boolean isUsePause() {
@@ -1765,7 +1775,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
             // вызов this.dispose(); приводит к потере фокуса, т.е, когда идёт игра, - к срабатыванию паузы
             // т.е. нужно позже снять паузу...
-            final boolean isNotPaused = (getMosaic().getGameStatus() == EGameStatus.eGSPlay) && !isPaused();
+            final boolean isNotPaused = (getMosaicController().getGameStatus() == EGameStatus.eGSPlay) && !isPaused();
             //if (this.isDisplayable())
                this.dispose();
             invokeLater(() -> {
@@ -2015,7 +2025,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          if (mosaicClickHandler == null)
             mosaicClickHandler = (clickResult) -> {
                //System.out.println("OnMosaicClick: down=" + clickResult.isDown() + "; leftClick=" + clickResult.isLeft());
-               if (clickResult.isLeft() && (Main.this.getMosaic().getGameStatus() == EGameStatus.eGSPlay)) {
+               if (clickResult.isLeft() && (Main.this.getMosaicController().getGameStatus() == EGameStatus.eGSPlay)) {
                   Icon img = Main.this.getToolbar().getSmileIco(
                         clickResult.isDown() ?
                            EBtnNewGameState.eNormalMosaic :
@@ -2126,7 +2136,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   else {
                      Main.this.getChampionDialog().showData(
                            Main.this.getSkillLevel(),
-                           Main.this.getMosaic().getMosaicType());
+                           Main.this.getMosaicController().getMosaicType());
                   }
                }
             };
@@ -2144,7 +2154,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                   if (Main.this.getStatisticDialog().isVisible())
                      Main.this.getStatisticDialog().setVisible(false);
                   else
-                     Main.this.getStatisticDialog().showData(Main.this.getSkillLevel(), Main.this.getMosaic().getMosaicType());
+                     Main.this.getStatisticDialog().showData(Main.this.getSkillLevel(), Main.this.getMosaicController().getMosaicType());
                }
             };
 
@@ -2236,7 +2246,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                private static final long serialVersionUID = 1L;
                @Override
                public void actionPerformed(ActionEvent e) {
-                  Matrisize size = Main.this.getMosaic().getSizeField();
+                  Matrisize size = Main.this.getMosaicController().getSizeField();
                   size.m++;
                   Main.this.changeGame(size);
                }
@@ -2250,7 +2260,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                private static final long serialVersionUID = 1L;
                @Override
                public void actionPerformed(ActionEvent e) {
-                  Matrisize size = Main.this.getMosaic().getSizeField();
+                  Matrisize size = Main.this.getMosaicController().getSizeField();
                   size.m--;
                   Main.this.changeGame(size);
                }
@@ -2264,7 +2274,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                private static final long serialVersionUID = 1L;
                @Override
                public void actionPerformed(ActionEvent e) {
-                  Matrisize size = Main.this.getMosaic().getSizeField();
+                  Matrisize size = Main.this.getMosaicController().getSizeField();
                   size.n++;
                   Main.this.changeGame(size);
                }
@@ -2278,7 +2288,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                private static final long serialVersionUID = 1L;
                @Override
                public void actionPerformed(ActionEvent e) {
-                  Matrisize size = Main.this.getMosaic().getSizeField();
+                  Matrisize size = Main.this.getMosaicController().getSizeField();
                   size.n--;
                   Main.this.changeGame(size);
                }
@@ -2383,12 +2393,12 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    /** Сохранить чемпиона && Установить статистику */
    public void setStatisticAndChampion(PropertyChangeEvent ev) {
-      Mosaic mosaic = (Mosaic)ev.getSource();
-      if (mosaic.getGameStatus() != EGameStatus.eGSEnd)
+      MosaicControllerSwing mosaicCtrllr = (MosaicControllerSwing)ev.getSource();
+      if (mosaicCtrllr.getGameStatus() != EGameStatus.eGSEnd)
          throw new RuntimeException("Invalid method state call");
 
       // сохраняю все нужные данные
-      final boolean victory = mosaic.isVictory();
+      final boolean victory = mosaicCtrllr.isVictory();
       if (!victory && (getActiveUserId() == null))
          return; // не напрягаю игрока окном выбора пользователя, пока он не выиграет разок...
 
@@ -2396,10 +2406,10 @@ public class Main extends JFrame implements PropertyChangeListener {
       if (eSkill == ESkillLevel.eCustom)
          return;
 
-      final EMosaic eMosaic = mosaic.getMosaicType();
-      final long realCountOpen = mosaic.isVictory() ? mosaic.getMinesCount() : mosaic.getCountOpen();
+      final EMosaic eMosaic = mosaicCtrllr.getMosaicType();
+      final long realCountOpen = mosaicCtrllr.isVictory() ? mosaicCtrllr.getMinesCount() : mosaicCtrllr.getCountOpen();
       final long playTime = Long.parseLong(Main.this.getToolbar().getEdtTimePlay().getText());
-      final long clickCount = mosaic.getCountClick();
+      final long clickCount = mosaicCtrllr.getCountClick();
 
       // логика сохранения...
       ActionToUser onActionToUser = userId -> {
@@ -2442,26 +2452,26 @@ public class Main extends JFrame implements PropertyChangeListener {
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
 //      System.out.println("Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
-      if (ev.getSource() instanceof Mosaic)
-         onMosaicPropertyChanged((Mosaic)ev.getSource(), ev);
+      if (ev.getSource() instanceof MosaicControllerSwing)
+         onMosaicPropertyChanged((MosaicControllerSwing)ev.getSource(), ev);
    }
-   private void onMosaicPropertyChanged(Mosaic source, PropertyChangeEvent ev) {
+   private void onMosaicPropertyChanged(MosaicControllerSwing source, PropertyChangeEvent ev) {
       switch (ev.getPropertyName()) {
-      case Mosaic.PROPERTY_AREA:
-      case Mosaic.PROPERTY_SIZE_FIELD:
-      case Mosaic.PROPERTY_MOSAIC_TYPE:
+      case MosaicController.PROPERTY_AREA:
+      case MosaicController.PROPERTY_SIZE_FIELD:
+      case MosaicController.PROPERTY_MOSAIC_TYPE:
          recheckLocation();
        //break; // no break
-      case Mosaic.PROPERTY_MINES_COUNT:
+      case MosaicController.PROPERTY_MINES_COUNT:
          getMenu().getMosaics().recheckSelectedMosaicType();
          getMenu().getGame().recheckSelectedSkillLevel();
          break;
       }
 
       switch (ev.getPropertyName()) {
-      case Mosaic.PROPERTY_GAME_STATUS:
+      case MosaicController.PROPERTY_GAME_STATUS:
          {
-            getToolbar().getBtnPause().setEnabled(getMosaic().getGameStatus() == EGameStatus.eGSPlay);
+            getToolbar().getBtnPause().setEnabled(getMosaicController().getGameStatus() == EGameStatus.eGSPlay);
           //System.out.println("OnChangeGameStatus: " + e.getSource().getGameStatus());
             switch ((EGameStatus)ev.getNewValue()) {
             case eGSCreateGame:
@@ -2483,7 +2493,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                {
                   getTimerGame().stop();
                   Icon img = getToolbar().getSmileIco(
-                        getMosaic().isVictory() ?
+                        getMosaicController().isVictory() ?
                            EBtnNewGameState.eNormalWin :
                            EBtnNewGameState.eNormalLoss);
                   if (img != null)
@@ -2497,19 +2507,19 @@ public class Main extends JFrame implements PropertyChangeListener {
             }
          }
          break;
-      //case Mosaic.PROPERTY_SIZE_FIELD:
+      //case MosaicController.PROPERTY_SIZE_FIELD:
       //   break;
-      //case Mosaic.PROPERTY_MINES_COUNT:
+      //case MosaicController.PROPERTY_MINES_COUNT:
       //   break;
-      //case Mosaic.PROPERTY_COUNT_FLAG:
+      //case MosaicController.PROPERTY_COUNT_FLAG:
       //   break;
-      //case Mosaic.PROPERTY_COUNT_OPEN:
+      //case MosaicController.PROPERTY_COUNT_OPEN:
       //   break;
-      case Mosaic.PROPERTY_COUNT_MINES_LEFT:
-         getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaic().getCountMinesLeft()));
+      case MosaicController.PROPERTY_COUNT_MINES_LEFT:
+         getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaicController().getCountMinesLeft()));
          break;
-      case Mosaic.PROPERTY_COUNT_CLICK:
-         getStatusBar().setClickCount(getMosaic().getCountClick());
+      case MosaicController.PROPERTY_COUNT_CLICK:
+         getStatusBar().setClickCount(getMosaicController().getCountClick());
          break;
       }
    }

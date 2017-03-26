@@ -14,6 +14,7 @@ import javax.swing.event.ChangeListener;
 
 import fmg.common.geom.Matrisize;
 import fmg.core.mosaic.Mosaic;
+import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.data.controller.types.ESkillLevel;
@@ -65,6 +66,9 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       // задаю предпочтительный размер
       pack();
       this.setLocationRelativeTo(parent);
+
+      if (this.parent != null)
+         this.parent.getMosaicController().addListener(this);;
    }
 
    // создаю панели с нужным расположением
@@ -224,7 +228,6 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
    private void onClose() {
       // при выходе из диалогового окна - освобождаю ресурсы
       dispose();
-//      System.exit(0);
    }
 
    // тестовый метод для проверки диалогового окна
@@ -236,7 +239,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
    private int getNeighborNumber() {
       if (parent == null)
          return 21;
-      BaseCell.BaseAttribute attr = MosaicHelper.createAttributeInstance(parent.getMosaic().getMosaicType());
+      BaseCell.BaseAttribute attr = MosaicHelper.createAttributeInstance(parent.getMosaicController().getMosaicType());
       int max = IntStream.range(0, attr.GetDirectionCount())
             .map(i -> attr.getNeighborNumber(i))
             .max().getAsInt();
@@ -257,9 +260,9 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
 
          if (isFullScreen) {
             if (isFullScreenAtCurrArea)
-               s = parent.calcMaxMosaicSize(parent.getMosaic().getArea());
+               s = parent.calcMaxMosaicSize(parent.getMosaicController().getArea());
          } else
-            s = parent.getMosaic().getSizeField();
+            s = parent.getMosaicController().getSizeField();
          currSizeX = s.m; currSizeY = s.n;
       }
 //      // recheck
@@ -273,7 +276,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
    }
 
    private void recalcModelValueMines() {
-      int minesCurr = (parent == null) ? 15 : parent.getMosaic().getMinesCount();
+      int minesCurr = (parent == null) ? 15 : parent.getMosaicController().getMinesCount();
       int minesMin = 1;
       int minesMax = (Integer)spinX.getValue() * (Integer)spinY.getValue() - getNeighborNumber();
 //      // recheck
@@ -307,22 +310,22 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       if (parent == null)
          return;
       Matrisize size = new Matrisize((Integer)spinX.getValue(), (Integer)spinY.getValue());
-      int mines = eSkill.GetNumberMines(parent.getMosaic().getMosaicType(), size);
+      int mines = eSkill.GetNumberMines(parent.getMosaicController().getMosaicType(), size);
       spinMines.setValue(mines);
    }
 
    @Override
    public void propertyChange(PropertyChangeEvent evt) {
       switch (evt.getPropertyName()) {
-      case Mosaic.PROPERTY_MOSAIC_TYPE:
+      case MosaicController.PROPERTY_MOSAIC_TYPE:
          if (isVisible())
             onChangeMosaicType();
          break;
-      case Mosaic.PROPERTY_AREA:
+      case MosaicController.PROPERTY_AREA:
          if (radioFullScreenCurrSizeArea.isSelected())
             radioGroup.clearSelection();
          break;
-      //case Mosaic.PROPERTY_SIZE_FIELD:
+      //case MosaicController.PROPERTY_SIZE_FIELD:
       //   ...
       //   break;
       }

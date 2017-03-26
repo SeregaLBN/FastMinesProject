@@ -14,6 +14,7 @@ import fmg.data.view.draw.PenBorder;
 
 /**
  * MVC: view. Base implementation
+ * @param <TMosaic> see {@link Mosaic}
  * @param <TPaintable> see {@link IPaintable}
  * @param <TImage> plaform specific image
  * @param <TPaintContext> see {@link PaintContext}
@@ -51,7 +52,10 @@ public abstract class AMosaicView<TPaintable extends IPaintable,
    private Class<TPaintContext> getTPaintContextType() {
       if (_paintContextClass != null)
          return _paintContextClass;
-      Type type = getClass().getGenericSuperclass();
+      Type type = getClass();
+      do {
+         type = ((Class<?>)type).getGenericSuperclass();
+      } while (type instanceof Class<?>);
       ParameterizedType paramType = (ParameterizedType) type;
       ParameterizedType param3 = (ParameterizedType)paramType.getActualTypeArguments()[2];
       @SuppressWarnings("unchecked")
@@ -111,11 +115,6 @@ public abstract class AMosaicView<TPaintable extends IPaintable,
          break;
       case Mosaic.PROPERTY_MATRIX:
          invalidate();
-         break;
-      case Mosaic.PROPERTY_MODIFIED_CELLS:
-         @SuppressWarnings("unchecked")
-         Collection<BaseCell> modifiedCells = (Collection<BaseCell>)ev.getNewValue();
-         invalidate(modifiedCells);
          break;
       }
    }

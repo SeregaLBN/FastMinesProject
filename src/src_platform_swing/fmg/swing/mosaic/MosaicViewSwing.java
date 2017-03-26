@@ -8,21 +8,21 @@ import javax.swing.JPanel;
 
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.mosaic.AMosaicView;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.swing.Cast;
-import fmg.swing.draw.img.Flag;
-import fmg.swing.draw.img.Mine;
 import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
-import fmg.swing.utils.ImgUtils;
 
-/** MVC: view. SWING inplementation */
-public class MosaicView extends AMosaicView<PaintableGraphics, Icon, PaintSwingContext<Icon>> {
+/** MVC: view. SWING implementation */
+public class MosaicViewSwing extends AMosaicViewSwing {
 
    private JPanel _control;
-   private CellPaintGraphics<Icon> _cellPaint;
+   private MosaicControllerSwing _controller;
+
+   public void setMosaicController(MosaicControllerSwing controller) {
+      this._controller = controller;
+   }
 
    public JPanel getControl() {
       if (_control == null) {
@@ -36,17 +36,21 @@ public class MosaicView extends AMosaicView<PaintableGraphics, Icon, PaintSwingC
                   g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                }
 
-               MosaicView.this.repaint(g);
+               MosaicViewSwing.this.repaint(g);
             }
 
              @Override
              public Dimension getPreferredSize() {
-                SizeDouble size = getMosaic().getWindowSize();
+                if (_controller == null)
+                   return super.getPreferredSize();
+
+                SizeDouble size = _controller.getWindowSize();
                 size.height++;
                 size.width++;
 //                System.out.println("Mosaic::getPreferredSize: size="+size);
                 return Cast.toSize(size);
              }
+
              @Override
              public Dimension getMinimumSize() {
                 return getPreferredSize();
@@ -55,14 +59,6 @@ public class MosaicView extends AMosaicView<PaintableGraphics, Icon, PaintSwingC
          };
       }
       return _control;
-   }
-
-   @Override
-   public CellPaintGraphics<Icon> getCellPaint() {
-      if (_cellPaint == null) {
-         _cellPaint = new CellPaintGraphics.Icon();
-      }
-      return _cellPaint;
    }
 
    @Override
@@ -103,24 +99,6 @@ public class MosaicView extends AMosaicView<PaintableGraphics, Icon, PaintSwingC
       } finally {
          _alreadyPainted = false;
       }
-   }
-
-   /** переустанавливаю заного размер мины/флага для мозаики */
-   @Override
-   protected void changeSizeImagesMineFlag() {
-      PaintSwingContext<Icon> pc = getPaintContext();
-      int sq = (int)getMosaic().getCellAttr().getSq(pc.getPenBorder().getWidth());
-      if (sq <= 0) {
-         System.err.println("Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");
-         sq = 3; // ат балды...
-      }
-      pc.setImgFlag(ImgUtils.zoom(new Flag(), sq, sq));
-      pc.setImgMine(ImgUtils.zoom(new Mine(), sq, sq));
-   }
-
-   @Override
-   public void close() {
-      super.close();
    }
 
 }

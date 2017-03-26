@@ -5,14 +5,11 @@ import java.awt.Window;
 import java.awt.event.*;
 import java.util.Random;
 
-import javax.swing.Icon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 
 import fmg.common.geom.Matrisize;
-import fmg.core.mosaic.Mosaic;
+import fmg.core.mosaic.MosaicController;
 import fmg.core.types.EMosaic;
 import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Cast;
@@ -20,7 +17,7 @@ import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
 /** MVC: controller. SWING implementation */
-public class MosaicController extends fmg.core.mosaic.MosaicController<MosaicView, PaintableGraphics, Icon, PaintSwingContext<Icon>> {
+public class MosaicControllerSwing extends MosaicController<MosaicViewSwing, PaintableGraphics, Icon, PaintSwingContext<Icon>> {
 
    private MosaicMouseListener _mosaicMouseListener;
 
@@ -32,10 +29,10 @@ public class MosaicController extends fmg.core.mosaic.MosaicController<MosaicVie
       @Override
       public void mousePressed(MouseEvent e) {
          if (SwingUtilities.isLeftMouseButton(e)) {
-            MosaicController.this.mousePressed(Cast.toPointDouble(e.getPoint()), true);
+            MosaicControllerSwing.this.mousePressed(Cast.toPointDouble(e.getPoint()), true);
          } else
          if (SwingUtilities.isRightMouseButton(e)) {
-            MosaicController.this.mousePressed(Cast.toPointDouble(e.getPoint()), false);
+            MosaicControllerSwing.this.mousePressed(Cast.toPointDouble(e.getPoint()), false);
          }
       }
 
@@ -51,10 +48,10 @@ public class MosaicController extends fmg.core.mosaic.MosaicController<MosaicVie
          }
 
          if (SwingUtilities.isLeftMouseButton(e)) {
-            MosaicController.this.mouseReleased(Cast.toPointDouble(e.getPoint()), true);
+            MosaicControllerSwing.this.mouseReleased(Cast.toPointDouble(e.getPoint()), true);
          } else
          if (SwingUtilities.isRightMouseButton(e)) {
-            MosaicController.this.mouseReleased(Cast.toPointDouble(e.getPoint()), false);
+            MosaicControllerSwing.this.mouseReleased(Cast.toPointDouble(e.getPoint()), false);
          }
        }
 
@@ -69,7 +66,7 @@ public class MosaicController extends fmg.core.mosaic.MosaicController<MosaicVie
       @Override
       public void focusLost(FocusEvent e) {
          //System.out.println("Mosaic::MosaicMouseListeners::focusLost: " + e);
-         MosaicController.this.mouseFocusLost();
+         MosaicControllerSwing.this.mouseFocusLost();
       }
       @Override
       public void focusGained(FocusEvent e) {}
@@ -81,14 +78,24 @@ public class MosaicController extends fmg.core.mosaic.MosaicController<MosaicVie
       return _mosaicMouseListener;
    }
 
+   @Override
+   protected boolean checkNeedRestoreLastGame() {
+      int iRes = JOptionPane.showOptionDialog(getView().getControl(), "Restore last game?", "Question", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+      return (iRes == JOptionPane.NO_OPTION);
+   }
+
    /** set view */
    @Override
-   public void setView(MosaicView view) {
-      if (_view != null)
+   public void setView(MosaicViewSwing view) {
+      if (_view != null) {
+         _view.setMosaicController(null);
          unsubscribe();
+      }
       super.setView(view);
-      if (_view != null)
+      if (_view != null) {
+         _view.setMosaicController(this);
          subscribe();
+      }
    }
 
    private void subscribe() {
@@ -115,18 +122,17 @@ public class MosaicController extends fmg.core.mosaic.MosaicController<MosaicVie
    public static void main(String[] args) {
       JFrame frame = new JFrame();
 
-      MosaicController ctrllr = new MosaicController();
-      Mosaic m = ctrllr.getMosaic();
+      MosaicControllerSwing ctrllr = new MosaicControllerSwing();
 
       EMosaic mosaicType = EMosaic.values()[new Random().nextInt(EMosaic.values().length)];
       ESkillLevel skill = ESkillLevel.values()[new Random().nextInt(ESkillLevel.values().length - 3)];
       int numberMines = skill.GetNumberMines(mosaicType);
       Matrisize sizeFld = skill.DefaultSize();
 
-      m.setMosaicType(mosaicType);
-      m.setSizeField(sizeFld);
-      m.setMinesCount(numberMines);
-      m.GameNew();
+      ctrllr.setMosaicType(mosaicType);
+      ctrllr.setSizeField(sizeFld);
+      ctrllr.setMinesCount(numberMines);
+      ctrllr.GameNew();
 
       frame.add(ctrllr.getView().getControl());
       //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
