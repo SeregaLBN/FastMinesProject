@@ -28,7 +28,7 @@ namespace fmg {
       /// <summary> мин отступ от краев экрана для мозаики </summary>
       private const double MinIndent = 30;
 
-      private MosaicController _mosaicCtrl;
+      private MosaicControllerWin2D _mosaicController;
       private readonly ClickInfo _clickInfo = new ClickInfo();
       private bool _manipulationStarted;
       private bool _turnX;
@@ -37,22 +37,22 @@ namespace fmg {
       private Windows.Foundation.Point? _mouseDevicePosition_AreaChanging = null;
       private static double? _baseWheelDelta;
 
-      /// <summary> Mosaic control </summary> TODO rename to MosaicCtrl
-      public MosaicController MosaicField {
+      /// <summary> Mosaic controller </summary>
+      public MosaicControllerWin2D MosaicController {
          get {
-            if (_mosaicCtrl == null)
-               MosaicField = new MosaicController(); // call setter
-            return _mosaicCtrl;
+            if (_mosaicController == null)
+               MosaicController = new MosaicControllerWin2D(); // call setter
+            return _mosaicController;
          }
          private set {
-            if (_mosaicCtrl != null) {
-               _mosaicCtrl.Mosaic.PropertyChanged -= OnMosaicPropertyChanged;
-               _mosaicCtrl.Dispose();
+            if (_mosaicController != null) {
+               _mosaicController.PropertyChanged -= OnMosaicControllerPropertyChanged;
+               _mosaicController.Dispose();
             }
-            _mosaicCtrl = value;
-            if (_mosaicCtrl != null) {
-               _mosaicCtrl.Mosaic.PropertyChanged += OnMosaicPropertyChanged;
-               _mosaicCtrl.View.Control = _canvasVirtualControl;
+            _mosaicController = value;
+            if (_mosaicController != null) {
+               _mosaicController.PropertyChanged += OnMosaicControllerPropertyChanged;
+               _mosaicController.View.Control = _canvasVirtualControl;
             }
          }
       }
@@ -72,10 +72,10 @@ namespace fmg {
 
          if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) {
             AsyncRunner.InvokeFromUiLater(() => {
-               MosaicField.Mosaic.SizeField = new Matrisize(10, 10);
-               MosaicField.Mosaic.MosaicType = EMosaic.eMosaicRhombus1;
-               MosaicField.Mosaic.MinesCount = 3;
-               MosaicField.Mosaic.Area = 1500;
+               MosaicController.SizeField = new Matrisize(10, 10);
+               MosaicController.MosaicType = EMosaic.eMosaicRhombus1;
+               MosaicController.MinesCount = 3;
+               MosaicController.Area = 1500;
             }, CoreDispatcherPriority.High);
          }
       }
@@ -85,9 +85,9 @@ namespace fmg {
 
          System.Diagnostics.Debug.Assert(ev.Parameter is MosaicPageInitParam);
          var initParam = ev.Parameter as MosaicPageInitParam;
-         MosaicField.Mosaic.SizeField  = initParam.SizeField;
-         MosaicField.Mosaic.MosaicType = initParam.MosaicTypes;
-         MosaicField.Mosaic.MinesCount = initParam.MinesCount;
+         MosaicController.SizeField  = initParam.SizeField;
+         MosaicController.MosaicType = initParam.MosaicTypes;
+         MosaicController.MinesCount = initParam.MinesCount;
       }
 
       /// <summary> Поменять игру на новый уровень сложности </summary>
@@ -101,13 +101,13 @@ namespace fmg {
             // TODO ... dialog box 'Select custom skill level...'
             return;
          } else {
-            numberMines = skill.GetNumberMines(MosaicField.Mosaic.MosaicType);
+            numberMines = skill.GetNumberMines(MosaicController.MosaicType);
             sizeFld = skill.DefaultSize();
          }
 
-         MosaicField.Mosaic.SizeField = sizeFld;
-       //MosaicField.Mosaic.MosaicType = MosaicField.Mosaic.MosaicType;
-         MosaicField.Mosaic.MinesCount = numberMines;
+         MosaicController.SizeField = sizeFld;
+       //MosaicField.MosaicType = MosaicField.MosaicType;
+         MosaicController.MinesCount = numberMines;
 
          RecheckLocation();
       }
@@ -154,7 +154,7 @@ namespace fmg {
             return _maxArea.Value;
          mosaicSizeField = new Matrisize(3, 3);
          var sizeMosaic = CalcMosaicWindowSize(ScreenResolutionHelper.GetDesktopSize());
-         double area = MosaicHelper.FindAreaBySize(MosaicField.Mosaic.MosaicType, mosaicSizeField, ref sizeMosaic);
+         double area = MosaicHelper.FindAreaBySize(MosaicController.MosaicType, mosaicSizeField, ref sizeMosaic);
          //System.Diagnostics.Debug.WriteLine("Main.CalcMaxArea: area="+area);
          _maxArea = area; // caching value
          return area;
@@ -166,7 +166,7 @@ namespace fmg {
       /// <returns>max размер поля мозаики</returns>
       public Matrisize CalcMaxMosaicSize(double area) {
          var sizeMosaic = CalcMosaicWindowSize(ScreenResolutionHelper.GetDesktopSize());
-         return MosaicHelper.FindSizeByArea(MosaicField.Mosaic.CellAttr, sizeMosaic);
+         return MosaicHelper.FindSizeByArea(MosaicController.Mosaic.CellAttr, sizeMosaic);
       }
 
       /// <summary> check that mosaic field is placed in the window/page </summary>
@@ -174,7 +174,7 @@ namespace fmg {
          AreaOptimal();
 
          var o = GetOffset();
-         var sizeWinMosaic = MosaicField.Mosaic.WindowSize;
+         var sizeWinMosaic = MosaicController.WindowSize;
          var sizePage = GetPageSize();
          o.Left = (sizePage.Width - sizeWinMosaic.Width) / 2;
          o.Top = (sizePage.Height - sizeWinMosaic.Height) / 2;
@@ -183,11 +183,11 @@ namespace fmg {
 
       double Area {
          get {
-            return MosaicField.Mosaic.Area;
+            return MosaicController.Area;
          }
          set {
-            value = Math.Min(value, CalcMaxArea(MosaicField.Mosaic.SizeField)); // recheck
-            MosaicField.Mosaic.Area = value;
+            value = Math.Min(value, CalcMaxArea(MosaicController.SizeField)); // recheck
+            MosaicController.Area = value;
          }
       }
 
@@ -210,43 +210,43 @@ namespace fmg {
 
       /// <summary> Zoom maximum </summary>
       void AreaMax() {
-         var maxArea = CalcMaxArea(MosaicField.Mosaic.SizeField);
+         var maxArea = CalcMaxArea(MosaicController.SizeField);
          Area = maxArea;
       }
 
       void AreaOptimal() {
          var sizePage = GetPageSize();
-         Area = MosaicHelper.FindAreaBySize(MosaicField.Mosaic.MosaicType, MosaicField.Mosaic.SizeField, ref sizePage);
+         Area = MosaicHelper.FindAreaBySize(MosaicController.MosaicType, MosaicController.SizeField, ref sizePage);
       }
 
-      private void OnMosaicPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+      private void OnMosaicControllerPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          switch (ev.PropertyName) {
-         case nameof(Mosaic.MosaicType):
-            Mosaic_OnChangedMosaicType(sender as Mosaic, ev as PropertyChangedExEventArgs<EMosaic>);
+         case nameof(MosaicControllerWin2D.MosaicType):
+            Mosaic_OnChangedMosaicType(sender as MosaicControllerWin2D, ev as PropertyChangedExEventArgs<EMosaic>);
             break;
-         case nameof(Mosaic.Area):
-            Mosaic_OnChangedArea(sender as Mosaic, ev as PropertyChangedExEventArgs<double>);
+         case nameof(MosaicControllerWin2D.Area):
+            Mosaic_OnChangedArea(sender as MosaicControllerWin2D, ev as PropertyChangedExEventArgs<double>);
             break;
-         case nameof(Mosaic.GameStatus):
-            Mosaic_OnChangedGameStatus(sender as Mosaic, ev as PropertyChangedExEventArgs<EGameStatus>);
+         case nameof(MosaicControllerWin2D.GameStatus):
+            Mosaic_OnChangedGameStatus(sender as MosaicControllerWin2D, ev as PropertyChangedExEventArgs<EGameStatus>);
             break;
-         case nameof(Mosaic.SizeField):
-            Mosaic_OnChangedSizeField(sender as Mosaic, ev as PropertyChangedExEventArgs<Matrisize>);
+         case nameof(MosaicControllerWin2D.SizeField):
+            Mosaic_OnChangedSizeField(sender as MosaicControllerWin2D, ev as PropertyChangedExEventArgs<Matrisize>);
             break;
-         case nameof(Mosaic.MinesCount):
-            Mosaic_OnChangedMinesCount(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
+         case nameof(MosaicControllerWin2D.MinesCount):
+            Mosaic_OnChangedMinesCount(sender as MosaicControllerWin2D, ev as PropertyChangedExEventArgs<int>);
             break;
-         case nameof(Mosaic.CountFlag):
-            Mosaic_OnChangedCountFlag(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
+         case nameof(MosaicControllerWin2D.CountFlag):
+            Mosaic_OnChangedCountFlag(sender as MosaicControllerWin2D, ev as PropertyChangedExEventArgs<int>);
             break;
-         case nameof(Mosaic.CountOpen):
-            Mosaic_OnChangedCountOpen(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
+         case nameof(MosaicControllerWin2D.CountOpen):
+            Mosaic_OnChangedCountOpen(sender as MosaicControllerWin2D, ev as PropertyChangedExEventArgs<int>);
             break;
-         case nameof(Mosaic.CountMinesLeft):
-            Mosaic_OnChangedCountMinesLeft(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
+         case nameof(MosaicControllerWin2D.CountMinesLeft):
+            Mosaic_OnChangedCountMinesLeft(sender as MosaicControllerWin2D, ev as PropertyChangedExEventArgs<int>);
             break;
-         case nameof(Mosaic.CountClick):
-            Mosaic_OnChangedCountClick(sender as Mosaic, ev as PropertyChangedExEventArgs<int>);
+         case nameof(MosaicControllerWin2D.CountClick):
+            Mosaic_OnChangedCountClick(sender as MosaicControllerWin2D, ev as PropertyChangedExEventArgs<int>);
             break;
          }
 
@@ -275,34 +275,34 @@ namespace fmg {
       private void OnPageUnloaded(object sender, RoutedEventArgs e) {
          Window.Current.CoreWindow.KeyUp -= OnKeyUp_CoreWindow;
 
-         MosaicField = null; // call explicit setter
+         MosaicController = null; // call explicit setter
 
          // Explicitly remove references to allow the Win2D controls to get garbage collected
          _canvasVirtualControl.RemoveFromVisualTree();
          _canvasVirtualControl = null;
-         MosaicField.View.Control = null;
+         MosaicController.View.Control = null;
       }
 
       private void OnPageSizeChanged(object sender, RoutedEventArgs e) {
          RecheckLocation();
       }
 
-      private void Mosaic_OnChangedGameStatus(Mosaic sender, PropertyChangedExEventArgs<EGameStatus> ev) { }
-      private void Mosaic_OnChangedMinesCount(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
-      private void Mosaic_OnChangedCountFlag(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
-      private void Mosaic_OnChangedCountOpen(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
-      private void Mosaic_OnChangedCountMinesLeft(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
-      private void Mosaic_OnChangedCountClick(Mosaic sender, PropertyChangedExEventArgs<int> ev) { }
-      private void Mosaic_OnChangedArea(Mosaic sender, PropertyChangedExEventArgs<double> ev) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField.Mosaic));
+      private void Mosaic_OnChangedGameStatus(MosaicControllerWin2D sender, PropertyChangedExEventArgs<EGameStatus> ev) { }
+      private void Mosaic_OnChangedMinesCount(MosaicControllerWin2D sender, PropertyChangedExEventArgs<int> ev) { }
+      private void Mosaic_OnChangedCountFlag(MosaicControllerWin2D sender, PropertyChangedExEventArgs<int> ev) { }
+      private void Mosaic_OnChangedCountOpen(MosaicControllerWin2D sender, PropertyChangedExEventArgs<int> ev) { }
+      private void Mosaic_OnChangedCountMinesLeft(MosaicControllerWin2D sender, PropertyChangedExEventArgs<int> ev) { }
+      private void Mosaic_OnChangedCountClick(MosaicControllerWin2D sender, PropertyChangedExEventArgs<int> ev) { }
+      private void Mosaic_OnChangedArea(MosaicControllerWin2D sender, PropertyChangedExEventArgs<double> ev) {
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicController));
          using (var tracer = new Tracer("Mosaic_OnChangedArea", string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {
             //ChangeSizeImagesMineFlag();
 
             if (_mouseDevicePosition_AreaChanging.HasValue) {
                var devicePos = _mouseDevicePosition_AreaChanging.Value;
 
-               var oldWinSize = MosaicField.Mosaic.GetWindowSize(MosaicField.Mosaic.SizeField, ev.OldValue);
-               var newWinSize = MosaicField.Mosaic.WindowSize;
+               var oldWinSize = MosaicController.GetWindowSize(MosaicController.SizeField, ev.OldValue);
+               var newWinSize = MosaicController.WindowSize;
 
                // точка над игровым полем со старой площадью ячеек
                var pointOld = ToCanvasPoint(devicePos);
@@ -322,15 +322,15 @@ namespace fmg {
          }
       }
 
-      private void Mosaic_OnChangedMosaicType(Mosaic sender, PropertyChangedExEventArgs<EMosaic> ev) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField.Mosaic));
+      private void Mosaic_OnChangedMosaicType(MosaicControllerWin2D sender, PropertyChangedExEventArgs<EMosaic> ev) {
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicController));
          using (new Tracer()) {
             //ChangeSizeImagesMineFlag();
          }
       }
 
-      private void Mosaic_OnChangedSizeField(Mosaic sender, PropertyChangedExEventArgs<Matrisize> ev) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicField.Mosaic));
+      private void Mosaic_OnChangedSizeField(MosaicControllerWin2D sender, PropertyChangedExEventArgs<Matrisize> ev) {
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicController));
          using (new Tracer()) {
          }
       }
@@ -382,7 +382,7 @@ namespace fmg {
       }
 
       bool OnClickLost() {
-         return ClickHandler(MosaicField.MouseFocusLost());
+         return ClickHandler(MosaicController.MouseFocusLost());
       }
 
       bool OnClick(Windows.Foundation.Point pos, bool leftClick, bool down) {
@@ -398,8 +398,8 @@ namespace fmg {
          }
 #endif
          return ClickHandler(down
-               ? MosaicField.MousePressed(point, leftClick)
-               : MosaicField.MouseReleased(point, leftClick));
+               ? MosaicController.MousePressed(point, leftClick)
+               : MosaicController.MouseReleased(point, leftClick));
       }
 
       protected override void OnTapped(TappedRoutedEventArgs ev) {
@@ -417,8 +417,8 @@ namespace fmg {
          using (new Tracer(GetCallerName(), () => "ev.Handled = " + ev.Handled)) {
             var rcCanvas = new Windows.Foundation.Rect(0, 0, _canvasVirtualControl.Width, _canvasVirtualControl.Height);
             if (rcCanvas.Contains(ev.GetPosition(_canvasVirtualControl))) {
-               if (MosaicField.Mosaic.GameStatus == EGameStatus.eGSEnd) {
-                  MosaicField.Mosaic.GameNew();
+               if (MosaicController.GameStatus == EGameStatus.eGSEnd) {
+                  MosaicController.GameNew();
                   ev.Handled = true;
                }
             } else {
@@ -672,7 +672,7 @@ namespace fmg {
                      deltaTrans.Y *= coefFading;
                   }
 
-                  var sizeWinMosaic = MosaicField.Mosaic.WindowSize;
+                  var sizeWinMosaic = MosaicController.WindowSize;
                   if ((o.Left + sizeWinMosaic.Width + deltaTrans.X) < MinIndent) {
                      // правый край мозаики пересёк левую сторону страницы/экрана
                      if (ev.IsInertial)
@@ -748,7 +748,7 @@ namespace fmg {
          ev.Handled = true;
          switch (ev.VirtualKey) {
             case VirtualKey.F2:
-               MosaicField.Mosaic.GameNew();
+               MosaicController.GameNew();
                break;
             case VirtualKey.Number1:
                SetGame(ESkillLevel.eBeginner);
@@ -781,7 +781,7 @@ namespace fmg {
          GoBack();
       }
       private void OnClickBttnNewGame___________not_binded(object sender, RoutedEventArgs ev) {
-         MosaicField.Mosaic.GameNew();
+         MosaicController.GameNew();
       }
 
       private void OnClickBttnSkillBeginner___________not_binded(object sender, RoutedEventArgs ev) {

@@ -13,7 +13,7 @@ using fmg.uwp.draw.mosaic.xaml;
 namespace fmg.uwp.mosaic.xaml {
 
    /// <summary> MVC view. UWP Xaml shapes implementation </summary>
-   public class MosaicView : AMosaicView<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> {
+   public class MosaicViewXaml : AMosaicView<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> {
 
       private Panel _control;
       private CellPaintShapes _cellPaint;
@@ -59,6 +59,10 @@ namespace fmg.uwp.mosaic.xaml {
       public override ICellPaint<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> CellPaint => _cellPaint ?? (_cellPaint = new CellPaintShapes());
 
       public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {
+         AsyncRunner.InvokeFromUiLater(() => InvalidateAsync(modifiedCells));
+      }
+
+      private void InvalidateAsync(IEnumerable<BaseCell> modifiedCells = null) {
          var container = Control;
 
          //System.Diagnostics.Debug.Assert(container != null);

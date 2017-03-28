@@ -69,9 +69,6 @@ namespace fmg.core.mosaic {
          case nameof(mosaic.Mosaic.Matrix):
             Invalidate();
             break;
-         case Mosaic.PROPERTY_MODIFIED_CELLS:
-            Invalidate((ev as IPropertyChangedExEventArgs<IEnumerable<BaseCell>>).NewValue);
-            break;
          }
       }
 

@@ -16,7 +16,7 @@ using MineCanvasBmp = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
 namespace fmg.uwp.mosaic.win2d {
 
    /// <summary> MVC view. UWP Win2D implementation </summary>
-   public class MosaicView : AMosaicView<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> {
+   public class MosaicViewWin2D : AMosaicView<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> {
 
       private CanvasVirtualControl _control;
       private CellPaintWin2D _cellPaint;

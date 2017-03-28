@@ -15,11 +15,11 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\xaml\PaintableShapes.cs">
       <Link>src_fmg.uwp\draw\mosaic\xaml\PaintableShapes.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\xaml\MosaicView.cs">
-      <Link>src_fmg.uwp\mosaic\xaml\MosaicView.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\xaml\MosaicViewXaml.cs">
+      <Link>src_fmg.uwp\mosaic\xaml\MosaicViewXaml.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\xaml\MosaicController.cs">
-      <Link>src_fmg.uwp\mosaic\xaml\MosaicController.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\xaml\MosaicControllerXaml.cs">
+      <Link>src_fmg.uwp\mosaic\xaml\MosaicControllerXaml.cs</Link>
     </Compile>
   </ItemGroup>
 </Project>

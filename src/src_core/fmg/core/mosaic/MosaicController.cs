@@ -12,15 +12,6 @@ namespace fmg.core.mosaic {
       where TPaintContext : PaintContext<TImage>, new()
    {
 
-      /// <summary> MVC: model </summary>
-      public override Mosaic Mosaic {
-         get {
-            if (_mosaic == null)
-               Mosaic = new MosaicIntenal(); // call setter
-            return _mosaic;
-         }
-      }
-
       /// <summary> MVC: view </summary>
       public override TMosaicView View {
          get {
@@ -32,38 +23,24 @@ namespace fmg.core.mosaic {
             if (_view != null)
                _view.Dispose();
             _view = value;
-            if (_view != null) {
-               var mosaic = Mosaic;
-               _view.Mosaic = mosaic;
-               (mosaic as MosaicIntenal).View = _view;
-            }
+            if (_view != null)
+               _view.Mosaic = Mosaic;
          }
       }
 
-      protected class MosaicIntenal : Mosaic {
+      public override bool GameNew() {
+         var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(MosaicHelper.CreateAttributeInstance(MosaicType).getMaxBackgroundFillModeValue());
+         //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
+         View.PaintContext.BkFill.Mode = mode;
+         var res = base.GameNew();
+         if (!res)
+            View.Invalidate();
+         return res;
+      }
 
-         public TMosaicView View { get; set; }
-
-         protected override bool CheckNeedRestoreLastGame() {
-            // TODO: override in child classes
-            return base.CheckNeedRestoreLastGame();
-         }
-
-         public override bool GameNew() {
-            var mode = 1 + new Random(Guid.NewGuid().GetHashCode()).Next(MosaicHelper.CreateAttributeInstance(MosaicType).getMaxBackgroundFillModeValue());
-            //System.Diagnostics.Debug.WriteLine("GameNew: new bkFill mode " + mode);
-            View.PaintContext.BkFill.Mode = mode;
-            var res = base.GameNew();
-            if (!res)
-               View.Invalidate();
-            return res;
-         }
-
-         public override void GameBegin(BaseCell firstClickCell) {
-            View.PaintContext.BkFill.Mode = 0;
-            base.GameBegin(firstClickCell);
-         }
-
+      public override void GameBegin(BaseCell firstClickCell) {
+         View.PaintContext.BkFill.Mode = 0;
+         base.GameBegin(firstClickCell);
       }
 
    }

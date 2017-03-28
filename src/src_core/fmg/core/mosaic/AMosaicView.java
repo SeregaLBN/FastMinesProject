@@ -14,7 +14,6 @@ import fmg.data.view.draw.PenBorder;
 
 /**
  * MVC: view. Base implementation
- * @param <TMosaic> see {@link Mosaic}
  * @param <TPaintable> see {@link IPaintable}
  * @param <TImage> plaform specific image
  * @param <TPaintContext> see {@link PaintContext}

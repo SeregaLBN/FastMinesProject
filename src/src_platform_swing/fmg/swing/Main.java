@@ -2453,9 +2453,9 @@ public class Main extends JFrame implements PropertyChangeListener {
    public void propertyChange(PropertyChangeEvent ev) {
 //      System.out.println("Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
       if (ev.getSource() instanceof MosaicControllerSwing)
-         onMosaicPropertyChanged((MosaicControllerSwing)ev.getSource(), ev);
+         onMosaicControllerPropertyChanged((MosaicControllerSwing)ev.getSource(), ev);
    }
-   private void onMosaicPropertyChanged(MosaicControllerSwing source, PropertyChangeEvent ev) {
+   private void onMosaicControllerPropertyChanged(MosaicControllerSwing source, PropertyChangeEvent ev) {
       switch (ev.getPropertyName()) {
       case MosaicController.PROPERTY_AREA:
       case MosaicController.PROPERTY_SIZE_FIELD:

@@ -16,7 +16,7 @@ import fmg.core.types.click.ClickResult;
 /** MVC: controller. Base implementation */
 public abstract class AMosaicController<TMosaicView extends IMosaicView>
                         extends NotifyPropertyChanged
-                        implements AutoCloseable, PropertyChangeListener
+                        implements PropertyChangeListener
 {
 
    /** MVC: model */
@@ -33,8 +33,8 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
    /** set model */
    protected void setMosaic(Mosaic model) {
       if (_mosaic != null) {
-         _mosaic.close();
          _mosaic.removeListener(this);
+         _mosaic.close();
       }
       _mosaic = model;
       if (_mosaic != null) {
@@ -53,8 +53,8 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
    /** кол-во мин на поле до создания игры. Используется когда игра была создана, но ни одной мины не проставлено. */
    protected int _oldMinesCount = 1;
 
-   private EGameStatus _gameStatus;
-   private EPlayInfo _playInfo;
+   private EGameStatus _gameStatus = EGameStatus.eGSEnd;
+   private EPlayInfo _playInfo = EPlayInfo.ePlayerUnknown;
    private int _countClick;
 
    /** для load'a - координаты ячеек с минами */
@@ -124,7 +124,8 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
             System.err.println("Проблемы с установкой мин... :(");
       }
       // set other CellOpen and set all Caption
-      getMatrix().forEach(cell -> cell.getState().calcOpenState(mosaic));
+      for (BaseCell cell : getMatrix())
+         cell.getState().calcOpenState(mosaic);
    }
 
    /** arrange Mines - set random mines */
@@ -155,7 +156,8 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
       } while (count < _minesCount);
 
       // set other CellOpen and set all Caption
-      getMatrix().forEach(cell -> cell.getState().calcOpenState(mosaic));
+      for (BaseCell cell : getMatrix())
+         cell.getState().calcOpenState(mosaic);
    }
 
    public int getCountOpen() {
@@ -274,8 +276,7 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
       for (BaseCell cell: getMatrix())
          if (cell.getState().getStatus() == EState._Close) {
             if (victory) {
-               if (cell.getState().getOpen() == EOpen._Mine)
-               {
+               if (cell.getState().getOpen() == EOpen._Mine) {
                   cell.getState().setClose(EClose._Flag);
                } else {
                   cell.getState().setStatus(EState._Open);
@@ -283,8 +284,8 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
                }
                toRepaint.add(cell);
             } else {
-               if ((cell.getState().getOpen() != EOpen._Mine) ||
-                  (cell.getState().getClose() != EClose._Flag))
+               if ((cell.getState().getOpen()  != EOpen._Mine) ||
+                   (cell.getState().getClose() != EClose._Flag))
                {
                   cell.getState().setStatus(EState._Open);
                   toRepaint.add(cell);
@@ -321,7 +322,7 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
       return Collections.emptySet();
    }
 
-   public ClickResult onLeftButtonDown(BaseCell cellLeftDown) {
+   protected ClickResult onLeftButtonDown(BaseCell cellLeftDown) {
       ClickResult result = new ClickResult(cellLeftDown, true, true);
       setCellDown(null);
       if (getGameStatus() == EGameStatus.eGSEnd)
@@ -350,7 +351,7 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
       return result;
    }
 
-   public ClickResult onLeftButtonUp(BaseCell cellLeftUp) {
+   protected ClickResult onLeftButtonUp(BaseCell cellLeftUp) {
       try {
          BaseCell cellDown = getCellDown();
          ClickResult result = new ClickResult(cellDown, true, false);
@@ -363,8 +364,7 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
 
    //      System.out.println("OnLeftButtonUp: coordLUp="+coordLUp);
          boolean gameBegin = (getGameStatus() == EGameStatus.eGSReady) && (cellDown == cellLeftUp);
-         if (gameBegin)
-         {
+         if (gameBegin) {
             GameBegin(cellDown);
             result.modified.addAll(this.getMatrix());
          }
@@ -409,7 +409,7 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
       }
    }
 
-   public ClickResult onRightButtonDown(BaseCell cellRightDown) {
+   protected ClickResult onRightButtonDown(BaseCell cellRightDown) {
       setCellDown(null);
       ClickResult result = new ClickResult(cellRightDown, false, true);
       if (getGameStatus() == EGameStatus.eGSEnd) {
@@ -447,7 +447,7 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
       return result;
    }
 
-   public ClickResult onRightButtonUp(BaseCell cellRightUp) {
+   protected ClickResult onRightButtonUp(BaseCell cellRightUp) {
       try {
          BaseCell cellDown = getCellDown();
          return new ClickResult(cellDown, false, false);
@@ -477,7 +477,8 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
                getRepositoryMines().clear();
          }
 
-      getMatrix().forEach(cell -> cell.Reset());
+      for (BaseCell cell : getMatrix())
+         cell.Reset();
 
       setCountClick(0);
 
@@ -543,12 +544,13 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
       switch (propertyName) {
       case Mosaic.PROPERTY_SIZE_FIELD:
          setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
+         onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_SIZE_FIELD);
+         onSelfPropertyChanged(PROPERTY_WINDOW_SIZE);
          GameNew();
-         onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_WINDOW_SIZE);
          break;
       case Mosaic.PROPERTY_MOSAIC_TYPE:
-         GameNew();
          onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MOSAIC_TYPE);
+         GameNew();
          break;
       case Mosaic.PROPERTY_AREA:
          onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA);
@@ -605,7 +607,8 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
       BaseCell cellDown = this.getCellDown();
       if (cellDown == null)
          return null;
-      ClickResult res = cellDown.getState().isDown()
+      boolean isLeft = cellDown.getState().isDown(); // hint: State.Down used only for the left click
+      ClickResult res = isLeft
          ? this.onLeftButtonUp(null)
          : this.onRightButtonUp(null);
       acceptClickEvent(res);

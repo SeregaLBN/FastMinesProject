@@ -65,6 +65,7 @@ public class Mosaic
       _cellAttr = null;
       _matrix.clear();
       onSelfPropertyChanged(PROPERTY_CELL_ATTR);
+      onSelfPropertyChanged(PROPERTY_MATRIX);
    }
    @Override
    public BaseCell.BaseAttribute getCellAttr() {
@@ -97,7 +98,7 @@ public class Mosaic
          for (int i=0; i < size.m; i++)
             for (int j=0; j < size.n; j++) {
                BaseCell cell = MosaicHelper.createCellInstance(attr, mosaicType, new Coord(i, j));
-               _matrix.add(i*_size.n + j, cell);
+               _matrix.add(/* i*_size.n + j, */ cell);
             }
       }
       return _matrix;
@@ -113,8 +114,8 @@ public class Mosaic
       if (old.equals(newSizeField))
          return;
 
-      this._size = newSizeField;
       _matrix.clear();
+      this._size = newSizeField;
 
       onSelfPropertyChanged(old, newSizeField, PROPERTY_SIZE_FIELD);
       onSelfPropertyChanged(PROPERTY_MATRIX);
@@ -133,17 +134,16 @@ public class Mosaic
 
       double saveArea = getArea(); // save
 
-      setCellAttr(null); // clean BaseCell.BaseAttribute before changing _mosaicType
       this._mosaicType = newMosaicType;
+      setCellAttr(null);
 
       onSelfPropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
-      onSelfPropertyChanged(PROPERTY_MATRIX);
 
       setArea(saveArea); // restore
    }
 
    /** доступ к заданной ячейке */
-   public BaseCell getCell(int x, int y) { return _matrix.get(x*_size.n + y); }
+   public BaseCell getCell(int x, int y) { return getMatrix().get(x*_size.n + y); }
    /** доступ к заданной ячейке */
    @Override
    public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
@@ -168,7 +168,6 @@ public class Mosaic
    @Override
    public void close() {
       setCellAttr(null);
-      _matrix.clear();
       super.close();
    }
 

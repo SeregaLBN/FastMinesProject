@@ -18,11 +18,11 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\win2d\PaintableWin2d.cs">
       <Link>src_fmg.uwp\draw\mosaic\win2d\PaintableWin2d.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicView.cs">
-      <Link>src_fmg.uwp\mosaic\win2d\MosaicView.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicViewWin2D.cs">
+      <Link>src_fmg.uwp\mosaic\win2d\MosaicViewWin2D.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicController.cs">
-      <Link>src_fmg.uwp\mosaic\win2d\MosaicController.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicControllerWin2D.cs">
+      <Link>src_fmg.uwp\mosaic\win2d\MosaicControllerWin2D.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\win2d\Smile.cs">
       <Link>src_fmg.uwp\draw\img\win2d\Smile.cs</Link>
