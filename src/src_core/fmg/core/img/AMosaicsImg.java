@@ -1,10 +1,12 @@
 package fmg.core.img;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 
 import fmg.common.geom.*;
 import fmg.common.geom.util.FigureHelper;
-import fmg.core.mosaic.IMosaic;
+import fmg.core.mosaic.Mosaic;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
@@ -17,85 +19,56 @@ import fmg.core.types.EMosaic;
  */
 public abstract class AMosaicsImg<TImage>
       extends RotatedImg<TImage>
-      implements IMosaic
+      implements PropertyChangeListener
 {
    public enum ERotateMode {
       fullMatrix,
       someCells
    }
 
-   protected AMosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
-      _mosaicType = mosaicType;
-      _sizeField = sizeField;
+   /** MVC: model */
+   private Mosaic _mosaic;
+
+   /** get model */
+   public Mosaic getMosaic() {
+      if (_mosaic == null)
+         setMosaic(new Mosaic());
+      return _mosaic;
+   }
+   /** set model */
+   protected void setMosaic(Mosaic model) {
+      if (_mosaic != null) {
+         _mosaic.removeListener(this);
+         _mosaic.close();
+      }
+      _mosaic = model;
+      if (_mosaic != null) {
+         _mosaic.addListener(this);
+      }
    }
 
-   public static final String PROPERTY_MOSAIC_TYPE      = "MosaicType";
-   public static final String PROPERTY_SIZE_FIELD       = "SizeField";
-   public static final String PROPERTY_CELL_ATTR        = "CellAttr";
-   public static final String PROPERTY_MATRIX           = "Matrix";
-   public static final String PROPERTY_AREA             = "Area";
+   public static final String PROPERTY_MOSAIC_TYPE      = Mosaic.PROPERTY_MOSAIC_TYPE;
+   public static final String PROPERTY_SIZE_FIELD       = Mosaic.PROPERTY_SIZE_FIELD;
+   public static final String PROPERTY_CELL_ATTR        = Mosaic.PROPERTY_CELL_ATTR;
+   public static final String PROPERTY_MATRIX           = Mosaic.PROPERTY_MATRIX;
+   public static final String PROPERTY_AREA             = Mosaic.PROPERTY_AREA;
    public static final String PROPERTY_PADDING_FULL     = "PaddingFull";
    public static final String PROPERTY_ROTATE_MODE      = "RotateMode";
    public static final String PROPERTY_ROTATED_ELEMENTS = "RotatedElements";
 
-   private EMosaic _mosaicType;
    /** из каких фигур состоит мозаика поля */
-   @Override
-   public EMosaic getMosaicType() { return _mosaicType; }
-   @Override
-   public void setMosaicType(EMosaic value) {
-      if (setProperty(_mosaicType, value, PROPERTY_MOSAIC_TYPE)) {
-         setArea(0); // mark to recalc
-         _matrix.clear();
-         setCellAttr(null);
-      }
-   }
+   public EMosaic getMosaicType() { return getMosaic().getMosaicType(); }
+   public void setMosaicType(EMosaic newMosaicType) { getMosaic().setMosaicType(newMosaicType); }
 
-   private Matrisize _sizeField;
-   @Override
-   public Matrisize getSizeField() { return _sizeField; }
-   @Override
-   public void setSizeField(Matrisize value) {
-      if (setProperty(_sizeField, value, PROPERTY_SIZE_FIELD)) {
-         recalcArea();
-         _matrix.clear();
-         invalidate();
-      }
-   }
+   public Matrisize getSizeField() { return getMosaic().getSizeField(); }
+   public void setSizeField(Matrisize newSizeField) { getMosaic().setSizeField(newSizeField); }
 
-   @Override
-   public BaseCell getCell(Coord coord) { return getMatrix().get(coord.x * getSizeField().n + coord.y); }
+   public BaseCell getCell(Coord coord) { return getMosaic().getMatrix().get(coord.x * getSizeField().n + coord.y); }
 
-   private BaseCell.BaseAttribute _cellAttr;
-   @Override
-   public BaseCell.BaseAttribute getCellAttr() {
-      if (_cellAttr == null)
-         setCellAttr(MosaicHelper.createAttributeInstance(getMosaicType()));
-      return _cellAttr;
-   }
-   private void setCellAttr(BaseCell.BaseAttribute value) {
-      if (setProperty(_cellAttr, value, PROPERTY_CELL_ATTR)) {
-         dependency_CellAttribute_Area();
-         invalidate();
-      }
-   }
+   public BaseCell.BaseAttribute getCellAttr() { return getMosaic().getCellAttr(); }
 
-   private final List<BaseCell> _matrix = new ArrayList<BaseCell>();
    /** матрица ячеек, представленная(развёрнута) в виде вектора */
-   @Override
-   public List<BaseCell> getMatrix() {
-      if (_matrix.isEmpty()) {
-         BaseAttribute attr = getCellAttr();
-         EMosaic type = getMosaicType();
-         Matrisize size = getSizeField();
-         for (int i = 0; i < size.m; i++)
-            for (int j = 0; j < size.n; j++)
-               _matrix.add(MosaicHelper.createCellInstance(attr, type, new Coord(i, j)));
-         onSelfPropertyChanged(PROPERTY_MATRIX);
-         invalidate();
-      }
-      return _matrix;
-   }
+   public List<BaseCell> getMatrix() { return getMosaic().getMatrix(); }
 
    private void recalcArea() {
       int w = getSize().width;
@@ -118,20 +91,8 @@ public abstract class AMosaicsImg<TImage>
       setPaddingFull(paddingOut);
    }
 
-   private double _area;
-   @Override
-   public double getArea() {
-      if (_area <= 0)
-         recalcArea();
-      return _area;
-   }
-   @Override
-   public void setArea(double value) {
-      if (setProperty(_area, value, PROPERTY_AREA)) {
-         dependency_CellAttribute_Area();
-         invalidate();
-      }
-   }
+   public double getArea() { return getMosaic().getArea(); }
+   public void setArea(double newArea) { getMosaic().setArea(newArea); }
 
    private BoundDouble _paddingFull;
    public BoundDouble getPaddingFull() { return _paddingFull; }
@@ -144,6 +105,42 @@ public abstract class AMosaicsImg<TImage>
    private ERotateMode _rotateMode = ERotateMode.fullMatrix;
    public ERotateMode getRotateMode() { return _rotateMode; }
    public void setRotateMode(ERotateMode value) { setProperty(_rotateMode, value, PROPERTY_ROTATE_MODE); }
+
+   @Override
+   public void propertyChange(PropertyChangeEvent ev) {
+      if (ev.getSource() instanceof Mosaic)
+         onMosaicPropertyChanged((Mosaic)ev.getSource(), ev);
+   }
+
+   protected void onMosaicPropertyChanged(Mosaic source, PropertyChangeEvent ev) {
+      String propertyName = ev.getPropertyName();
+      switch (propertyName) {
+      case Mosaic.PROPERTY_SIZE_FIELD:
+         recalcArea();
+         onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_SIZE_FIELD);
+         invalidate();
+         break;
+      case Mosaic.PROPERTY_MOSAIC_TYPE:
+         recalcArea();
+         onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MOSAIC_TYPE);
+         invalidate();
+         break;
+      case Mosaic.PROPERTY_AREA:
+         onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA);
+         invalidate();
+         break;
+      case Mosaic.PROPERTY_CELL_ATTR:
+         onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_CELL_ATTR);
+         invalidate();
+         break;
+      case Mosaic.PROPERTY_MATRIX:
+         onSelfPropertyChanged(PROPERTY_MATRIX);
+         invalidate();
+         break;
+      default:
+         break;
+      }
+   }
 
    @Override
    protected void onSelfPropertyChanged(Object oldValue, Object newValue, String propertyName) {
@@ -162,17 +159,6 @@ public abstract class AMosaicsImg<TImage>
          break;
       }
    }
-
-   ///////////// #region Dependencys
-   void dependency_CellAttribute_Area() {
-      if (_cellAttr == null)
-         return;
-      getCellAttr().setArea(getArea());
-      if (!_matrix.isEmpty())
-         for (BaseCell cell : getMatrix())
-            cell.Init();
-   }
-   ////////////// #endregion
 
    @Override
    protected void onTimer() {
@@ -245,7 +231,9 @@ public abstract class AMosaicsImg<TImage>
          PointDouble center = cell.getCenter();
          Coord coord = cell.getCoord();
 
+         Mosaic m = getMosaic();
          // modify
+         m.getCellAttr().removeListener(m); // disable handling Mosaic.onCellAttributePropertyChanged(where event.propertyName == BaseCell.BaseAttribute.PROPERTY_AREA)
          attr.setArea(cntxt.area);
 
          // rotate
@@ -256,6 +244,7 @@ public abstract class AMosaicsImg<TImage>
 
          // restore
          attr.setArea(area);
+         m.getCellAttr().addListener(m);
       });
 
       // Z-ordering

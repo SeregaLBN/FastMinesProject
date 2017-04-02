@@ -196,7 +196,7 @@ public final class MosaicHelper {
          throw new InvalidParameterException("sizeClientIn must be positive");
 
       final SizeDouble sizeIter = new SizeDouble();
-      double res = Finder(Mosaic.AREA_MINIMUM, (Comparable<Double>)area -> {
+      double res = Finder(2000, (Comparable<Double>)area -> {
          cellAttr.setArea(area);
          SizeDouble tmp = cellAttr.getOwnerSize(mosaicSizeField);
          sizeIter.width = tmp.width;
@@ -222,9 +222,9 @@ public final class MosaicHelper {
     * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
     * @return размер поля мозаики
     */
-   public static Matrisize findSizeByArea(BaseCell.BaseAttribute cellAttr, final SizeDouble sizeClient) {
+   public static Matrisize findSizeByArea(final BaseCell.BaseAttribute cellAttr, final SizeDouble sizeClient) {
       final Matrisize result = new Matrisize();
-      Finder(10, (Comparable<Integer>)newWidth -> {
+      Finder(2000, (Comparable<Integer>)newWidth -> {
          result.m = newWidth;
          SizeDouble sizeWnd = cellAttr.getOwnerSize(result);
          if (DoubleExt.hasMinDiff(sizeWnd.width, sizeClient.width))
@@ -233,7 +233,7 @@ public final class MosaicHelper {
             return -1;
          return +1;
       });
-      Finder(10, (Comparable<Integer>)newHeight -> {
+      Finder(2000, (Comparable<Integer>)newHeight -> {
          result.n = newHeight;
          SizeDouble sizeWnd = cellAttr.getOwnerSize(result);
          if (DoubleExt.hasMinDiff(sizeWnd.height, sizeClient.height))

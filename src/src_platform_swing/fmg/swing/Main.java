@@ -49,6 +49,8 @@ import fmg.swing.utils.ScreenResolutionHelper;
 public class Main extends JFrame implements PropertyChangeListener {
    public static final long serialVersionUID = -3441735484862759425L;
 
+   public static final double AREA_MINIMUM = 230;
+
    private JPanel     contentPane;
    private MainMenu   menu;
    private Toolbar    toolbar;
@@ -319,7 +321,9 @@ public class Main extends JFrame implements PropertyChangeListener {
                   menuItem.setAccelerator(Main.KeyCombo.getKeyStroke_Mosaic(val));
                   menuItem.addActionListener(ev -> Main.this.changeGame(val));
 
-                  MosaicsImg.Icon img = new MosaicsImg.Icon(val, val.sizeIcoField(true));
+                  MosaicsImg.Icon img = new MosaicsImg.Icon();
+                  img.setMosaicType(val);
+                  img.setSizeField(val.sizeIcoField(true));
                   img.setSize(MenuHeightWithIcon*ZoomQualityFactor);
                   mosaicsImages.put(val, img);
                   img.setRotateMode(ERotateMode.someCells);
@@ -1076,7 +1080,7 @@ public class Main extends JFrame implements PropertyChangeListener {
          mosaicCtrllr.setSizeField(spm.getSizeField());
          mosaicCtrllr.setMosaicType(spm.getMosaicType());
          mosaicCtrllr.setMinesCount(spm.getMinesCount());
-         mosaicCtrllr.setArea(spm.getArea());
+         setArea(spm.getArea());
 
          setActiveUserId(spm.getActiveUserId());
          getPlayerManageDlg().setDoNotAskStartupChecked(spm.isDoNotAskStartup());
@@ -1671,7 +1675,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    void setArea(double newArea) {
       //System.out.println("Mosaic.setArea: newArea=" + newArea);
       newArea = Math.min(newArea, calcMaxArea(getMosaicController().getSizeField()));
-      getMosaicController().setArea(newArea);
+      getMosaicController().setArea(Math.max(AREA_MINIMUM, newArea));
    }
 
    /** Zoom + */

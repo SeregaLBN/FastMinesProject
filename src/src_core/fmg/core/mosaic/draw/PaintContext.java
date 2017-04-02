@@ -27,7 +27,8 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
    private FontInfo  fontInfo;
    private boolean iconicMode;
    private BoundDouble padding = new BoundDouble(0, 0, 0, 0);
-   private Color  backgroundColor;
+   private Color      backgroundColor;
+   private boolean useBackgroundColor = true;
    private TImage imgBckgrnd;
 
    protected static Color _defaultBkColor = Color.Gray;
@@ -36,16 +37,17 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       return _defaultBkColor;
    }
 
-   public static final String PROPERTY_PADDING           = "Padding";
-   public static final String PROPERTY_IMG_MINE          = "ImgMine";
-   public static final String PROPERTY_IMG_FLAG          = "ImgFlag";
-   public static final String PROPERTY_COLOR_TEXT        = "ColorText";
-   public static final String PROPERTY_PEN_BORDER        = "PenBorder";
-   public static final String PROPERTY_BACKGROUND_FILL   = "BackgroundFill";
-   public static final String PROPERTY_FONT_INFO         = "FontInfo";
-   public static final String PROPERTY_BACKGROUND_COLOR  = "BackgroundColor";
-   public static final String PROPERTY_IMG_BCKGRND       = "ImgBckgrnd";
-   public static final String PROPERTY_ICONIC_MODE       = "IconicMode";
+   public static final String PROPERTY_PADDING               = "Padding";
+   public static final String PROPERTY_IMG_MINE              = "ImgMine";
+   public static final String PROPERTY_IMG_FLAG              = "ImgFlag";
+   public static final String PROPERTY_COLOR_TEXT            = "ColorText";
+   public static final String PROPERTY_PEN_BORDER            = "PenBorder";
+   public static final String PROPERTY_BACKGROUND_FILL       = "BackgroundFill";
+   public static final String PROPERTY_FONT_INFO             = "FontInfo";
+   public static final String PROPERTY_BACKGROUND_COLOR      = "BackgroundColor";
+   public static final String PROPERTY_USE_BACKGROUND_COLOR  = "UseBackgroundColor";
+   public static final String PROPERTY_IMG_BCKGRND           = "ImgBckgrnd";
+   public static final String PROPERTY_ICONIC_MODE           = "IconicMode";
 
    public TImage getImgMine() {
       return imgMine;
@@ -226,6 +228,16 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
          return;
       this.backgroundColor = color;
       onSelfPropertyChanged(old, color, PROPERTY_BACKGROUND_COLOR);
+   }
+
+   public boolean isUseBackgroundColor() {
+      return useBackgroundColor;
+   }
+   public void setUseBackgroundColor(boolean useBackgroundColor) {
+      if (this.useBackgroundColor == useBackgroundColor)
+         return;
+      this.useBackgroundColor = useBackgroundColor;
+      onSelfPropertyChanged(!useBackgroundColor, useBackgroundColor, PROPERTY_BACKGROUND_COLOR);
    }
 
    public TImage getImgBckgrnd() {

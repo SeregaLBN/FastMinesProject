@@ -12,7 +12,8 @@ import fmg.core.mosaic.draw.PaintContext;
 public class MosaicController<TMosaicView extends AMosaicView<TPaintable, TImage, TPaintContext>,
                               TPaintable  extends IPaintable,
                               TImage,
-                              TPaintContext extends PaintContext<TImage>> extends AMosaicController<TMosaicView>
+                              TPaintContext extends PaintContext<TImage>>
+      extends AMosaicController<TMosaicView>
 {
 
    /** get view */

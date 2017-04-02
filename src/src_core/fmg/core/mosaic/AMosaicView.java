@@ -2,8 +2,6 @@ package fmg.core.mosaic;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Collection;
 
 import fmg.core.mosaic.cells.BaseCell;
@@ -32,7 +30,7 @@ public abstract class AMosaicView<TPaintable extends IPaintable,
    public abstract ICellPaint<TPaintable, TImage, TPaintContext> getCellPaint();
 
    @Override
-   public abstract void invalidate();
+   public void invalidate() { invalidate(null); }
    @Override
    public abstract void invalidate(Collection<BaseCell> modifiedCells);
 
@@ -47,31 +45,8 @@ public abstract class AMosaicView<TPaintable extends IPaintable,
          _mosaic.addListener(this);
    }
 
-   private Class<TPaintContext> _paintContextClass;
-   private Class<TPaintContext> getTPaintContextType() {
-      if (_paintContextClass != null)
-         return _paintContextClass;
-      Type type = getClass();
-      do {
-         type = ((Class<?>)type).getGenericSuperclass();
-      } while (type instanceof Class<?>);
-      ParameterizedType paramType = (ParameterizedType) type;
-      ParameterizedType param3 = (ParameterizedType)paramType.getActualTypeArguments()[2];
-      @SuppressWarnings("unchecked")
-      Class<TPaintContext> clazz = (Class<TPaintContext>)param3.getRawType();
-      _paintContextClass = clazz;
-      return clazz;
-   }
    /** @return new TPaintContext() */
-   protected TPaintContext createPaintContext() {
-      try {
-         Class<TPaintContext> clazz = getTPaintContextType();
-         TPaintContext pc = clazz.newInstance();
-         return pc;
-      } catch (Exception ex) {
-         throw new RuntimeException(ex);
-      }
-   }
+   protected abstract TPaintContext createPaintContext();
 
    public TPaintContext getPaintContext() {
       if (_paintContext == null)
@@ -94,7 +69,8 @@ public abstract class AMosaicView<TPaintable extends IPaintable,
    public void propertyChange(PropertyChangeEvent ev) {
       if (ev.getSource() instanceof Mosaic)
          onMosaicPropertyChanged((Mosaic)ev.getSource(), ev);
-      if (getTPaintContextType().isAssignableFrom(ev.getSource().getClass())) // if (ev.getSource() instanceof TPaintContext)
+      else
+      if (getPaintContext().getClass().isAssignableFrom(ev.getSource().getClass())) // if (ev.getSource() instanceof TPaintContext)
       {
          @SuppressWarnings("unchecked")
          TPaintContext pc = (TPaintContext)ev.getSource();

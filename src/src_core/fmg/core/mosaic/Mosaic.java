@@ -33,13 +33,11 @@ import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
 
-/** MVC: model (mosaic field). Base implementation. */
+/** MVC: model (mosaic field). Default implementation. */
 public class Mosaic
        extends NotifyPropertyChanged
        implements IMosaic, PropertyChangeListener
 {
-   public static final double AREA_MINIMUM = 230;
-
    private BaseCell.BaseAttribute _cellAttr;
    /** Matrix of cells, is represented as a vector {@link List<BaseCell>}.
      * Матрица ячеек, представленная(развёрнута) в виде вектора */
@@ -71,7 +69,7 @@ public class Mosaic
    public BaseCell.BaseAttribute getCellAttr() {
       if (_cellAttr == null) {
          _cellAttr = MosaicHelper.createAttributeInstance(getMosaicType());
-         _cellAttr.setArea(10 * AREA_MINIMUM);
+         _cellAttr.setArea(500);
          _cellAttr.addListener(this);
       }
       return _cellAttr;
@@ -85,7 +83,9 @@ public class Mosaic
    /** установить новую площадь ячеек */
    @Override
    public void setArea(double newArea)  {
-      getCellAttr().setArea(Math.max(AREA_MINIMUM, newArea));
+      if (newArea < 1)
+         throw new IllegalArgumentException("newArea");
+      getCellAttr().setArea(newArea);
    }
 
    @Override

@@ -1,24 +1,48 @@
 package fmg.swing.mosaic;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.util.Collection;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
-import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.swing.Cast;
+import fmg.swing.draw.img.Flag;
+import fmg.swing.draw.img.Mine;
 import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
+import fmg.swing.utils.ImgUtils;
 
-/** MVC: view. SWING implementation */
-public class MosaicViewSwing extends AMosaicViewSwing {
+/** MVC: view. SWING implementation for {@link Icon} */ // TODO rename to MosaicViewSwingIcon
+public class MosaicViewSwing extends AMosaicViewSwing<Icon> {
 
    private JPanel _control;
    private MosaicControllerSwing _controller;
+   private CellPaintGraphics<Icon> _cellPaint;
+
+   @Override
+   public CellPaintGraphics<Icon> getCellPaint() {
+      if (_cellPaint == null) {
+         _cellPaint = new CellPaintGraphics.Icon();
+      }
+      return _cellPaint;
+   }
+
+   @Override
+   protected PaintSwingContext<Icon> createPaintContext() {
+      return new PaintSwingContext<>();
+   }
+
+   @Override
+   protected PaintableGraphics createPaintableGraphics(Graphics g) {
+      return new PaintableGraphics(getControl(), g);
+   }
 
    public void setMosaicController(MosaicControllerSwing controller) {
       this._controller = controller;
@@ -36,7 +60,8 @@ public class MosaicViewSwing extends AMosaicViewSwing {
                   g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                }
 
-               MosaicViewSwing.this.repaint(g);
+               MosaicViewSwing.this.setGraphics(g);
+               MosaicViewSwing.this.repaint(null);
             }
 
              @Override
@@ -62,8 +87,6 @@ public class MosaicViewSwing extends AMosaicViewSwing {
    }
 
    @Override
-   public void invalidate() { invalidate(null); }
-   @Override
    public void invalidate(Collection<BaseCell> modifiedCells) {
       JPanel control = getControl();
       if (control == null)
@@ -77,28 +100,17 @@ public class MosaicViewSwing extends AMosaicViewSwing {
          modifiedCells.forEach(cell -> control.repaint(Cast.toRect(cell.getRcOuter())) );
    }
 
-   boolean _alreadyPainted = false;
-   private void repaint(Graphics g) {
-      _alreadyPainted = true;
-      try {
-         PaintSwingContext<Icon> pc = getPaintContext();
-
-         // background color
-         Rectangle rcFill = g.getClipBounds();
-         g.setColor(Cast.toColor(pc.getBackgroundColor().darker(0.2)));
-         g.fillRect(rcFill.x, rcFill.y, rcFill.width, rcFill.height);
-
-         // paint cells
-         g.setFont(pc.getFont());
-         PaintableGraphics p = new PaintableGraphics(getControl(), g);
-         RectDouble clipBounds = Cast.toRectDouble(g.getClipBounds());
-         CellPaintGraphics<Icon> cellPaint = getCellPaint();
-         for (BaseCell cell: getMosaic().getMatrix())
-            if (cell.getRcOuter().Intersects(clipBounds)) // redraw only when needed - when the cells and update region intersect
-               cellPaint.paint(cell, p, pc);
-      } finally {
-         _alreadyPainted = false;
+   /** переустанавливаю заного размер мины/флага для мозаики */
+   @Override
+   protected void changeSizeImagesMineFlag() {
+      PaintSwingContext<Icon> pc = getPaintContext();
+      int sq = (int)getMosaic().getCellAttr().getSq(pc.getPenBorder().getWidth());
+      if (sq <= 0) {
+         System.err.println("Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");
+         sq = 3; // ат балды...
       }
+      pc.setImgFlag(ImgUtils.zoom(new Flag(), sq, sq));
+      pc.setImgMine(ImgUtils.zoom(new Mine(), sq, sq));
    }
 
 }

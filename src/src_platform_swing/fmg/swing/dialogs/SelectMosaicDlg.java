@@ -4,27 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 
 import fmg.core.types.EMosaic;
@@ -270,7 +253,9 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
    }
    private void setBtnOkIcons(EMosaic mosaicType) {
       if (mosaicsImg == null) {
-         mosaicsImg = new MosaicsImg.Image(mosaicType, mosaicType.sizeIcoField(false));
+         mosaicsImg = new MosaicsImg.Image();
+         mosaicsImg.setMosaicType(mosaicType);
+         mosaicsImg.setSizeField(mosaicType.sizeIcoField(false));
          mosaicsImg.setSize(ImgSize*ImgZoomQuality);
          mosaicsImg.setPadding(10);
          mosaicsImg.setBackgroundColor(Cast.toColor(bkTabBkColor));
@@ -284,7 +269,9 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
       btnOk.setIcon(ImgUtils.toIco(mosaicsImg.getImage(), ImgSize, ImgSize));
 
       if (mosaicsImgRollover == null) {
-         mosaicsImgRollover = new MosaicsImg.Image(mosaicType, mosaicType.sizeIcoField(false));
+         mosaicsImgRollover = new MosaicsImg.Image();
+         mosaicsImgRollover.setMosaicType(mosaicType);
+         mosaicsImgRollover.setSizeField(mosaicType.sizeIcoField(false));
          mosaicsImgRollover.setSize(ImgSize*ImgZoomQuality);
          mosaicsImgRollover.setPadding(3);
          mosaicsImgRollover.setBackgroundColor(Cast.toColor(bkTabBkColorSelected));

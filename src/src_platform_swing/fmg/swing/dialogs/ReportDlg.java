@@ -12,23 +12,7 @@ import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.ButtonModel;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
@@ -110,7 +94,9 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
 
          for (EMosaic eMosaic: EMosaic.values()) {
             JScrollPane scroll = new JScrollPane();
-            MosaicsImg.Icon img = new MosaicsImg.Icon(eMosaic, eMosaic.sizeIcoField(false));
+            MosaicsImg.Icon img = new MosaicsImg.Icon();
+            img.setMosaicType(eMosaic);
+            img.setSizeField(eMosaic.sizeIcoField(false));
             img.setSize(ImgSize*ImgZoomQuality);
             images.put(eMosaic, img);
             img.addListener(ev -> onImagePropertyChanged(eMosaic, ev));

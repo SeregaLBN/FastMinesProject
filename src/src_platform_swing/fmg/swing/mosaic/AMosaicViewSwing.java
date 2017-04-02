@@ -1,39 +1,65 @@
 package fmg.swing.mosaic;
 
-import javax.swing.Icon;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.util.Collection;
 
+import fmg.common.geom.RectDouble;
 import fmg.core.mosaic.AMosaicView;
-import fmg.swing.draw.img.Flag;
-import fmg.swing.draw.img.Mine;
+import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.mosaic.draw.ICellPaint;
+import fmg.swing.Cast;
 import fmg.swing.draw.mosaic.PaintSwingContext;
-import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
-import fmg.swing.utils.ImgUtils;
 
-/** MVC: view. SWING implementation */
-public abstract class AMosaicViewSwing extends AMosaicView<PaintableGraphics, Icon, PaintSwingContext<Icon>> {
+/** MVC: view. Abstract SWING implementation */
+public abstract class AMosaicViewSwing<TImage> extends AMosaicView<PaintableGraphics, TImage, PaintSwingContext<TImage>> {
 
-   private CellPaintGraphics<Icon> _cellPaint;
-
-   @Override
-   public CellPaintGraphics<Icon> getCellPaint() {
-      if (_cellPaint == null) {
-         _cellPaint = new CellPaintGraphics.Icon();
-      }
-      return _cellPaint;
+   protected PaintableGraphics createPaintableGraphics(Graphics g) {
+      return new PaintableGraphics(null, g);
    }
 
-   /** переустанавливаю заного размер мины/флага для мозаики */
-   @Override
-   protected void changeSizeImagesMineFlag() {
-      PaintSwingContext<Icon> pc = getPaintContext();
-      int sq = (int)getMosaic().getCellAttr().getSq(pc.getPenBorder().getWidth());
-      if (sq <= 0) {
-         System.err.println("Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");
-         sq = 3; // ат балды...
+   private Graphics _graphics;
+   public Graphics getGraphics() {
+      return _graphics;
+   }
+   public void setGraphics(Graphics graphics) {
+      this._graphics = graphics;
+   }
+
+   protected boolean _alreadyPainted = false;
+   protected void repaint(Collection<BaseCell> modifiedCells) {
+      Graphics g = getGraphics();
+      if (g == null)
+         return;
+
+      assert !_alreadyPainted;
+
+      _alreadyPainted = true;
+      try {
+         PaintSwingContext<TImage> pc = getPaintContext();
+
+         Rectangle rcFill = g.getClipBounds();
+         if (pc.isUseBackgroundColor()) {
+            // background color
+            g.setColor(Cast.toColor(pc.getBackgroundColor().darker(0.2)));
+            g.fillRect(rcFill.x, rcFill.y, rcFill.width, rcFill.height);
+         }
+
+         if (modifiedCells == null)
+            modifiedCells = getMosaic().getMatrix(); // check to redraw all mosaic cells
+
+         // paint cells
+         g.setFont(pc.getFont());
+         PaintableGraphics p = createPaintableGraphics(g);
+         RectDouble clipBounds = Cast.toRectDouble(rcFill);
+         ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> cellPaint = getCellPaint();
+         for (BaseCell cell: modifiedCells)
+            if (cell.getRcOuter().Intersects(clipBounds)) // redraw only when needed - when the cells and update region intersect
+               cellPaint.paint(cell, p, pc);
+      } finally {
+         _alreadyPainted = false;
       }
-      pc.setImgFlag(ImgUtils.zoom(new Flag(), sq, sq));
-      pc.setImgMine(ImgUtils.zoom(new Mine(), sq, sq));
    }
 
 }
