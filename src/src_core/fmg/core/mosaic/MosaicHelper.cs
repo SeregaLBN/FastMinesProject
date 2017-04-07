@@ -145,7 +145,7 @@ namespace fmg.core.mosaic {
 
          var sizeClientCopy = sizeClient;
          var sizeIter = new SizeDouble();
-         var res = Finder(Mosaic.AREA_MINIMUM,
+         var res = Finder(2000,
             area => {
                cellAttr.Area = area;
                sizeIter = cellAttr.GetOwnerSize(mosaicSizeField);
@@ -172,7 +172,7 @@ namespace fmg.core.mosaic {
       /// <returns>размер поля мозаики</returns>
       public static Matrisize FindSizeByArea(BaseCell.BaseAttribute cellAttr, SizeDouble sizeClient) {
          var result = new Matrisize();
-         Finder(10, newWidth => {
+         Finder(2000, newWidth => {
             result.m = newWidth;
             var sizeWnd = cellAttr.GetOwnerSize(result);
             if (sizeWnd.Width.HasMinDiff(sizeClient.Width))
@@ -181,7 +181,7 @@ namespace fmg.core.mosaic {
                return -1;
             return +1;
          });
-         Finder(10, newHeight => {
+         Finder(2000, newHeight => {
             result.n = newHeight;
             var sizeWnd = cellAttr.GetOwnerSize(result);
             if (sizeWnd.Height.HasMinDiff(sizeClient.Height))

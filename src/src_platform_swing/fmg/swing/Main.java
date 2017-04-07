@@ -38,6 +38,7 @@ import fmg.data.view.draw.EZoomInterface;
 import fmg.swing.dialogs.*;
 import fmg.swing.draw.img.*;
 import fmg.swing.draw.img.Smile.EType;
+import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.mosaic.MosaicControllerSwing;
 import fmg.swing.mosaic.MosaicViewSwing;
 import fmg.swing.serializable.SerializeProjData;
@@ -977,8 +978,11 @@ public class Main extends JFrame implements PropertyChangeListener {
       if (_mosaicController != null)
          _mosaicController.removeListener(this);
       _mosaicController = mosaicController;
-      if (_mosaicController != null)
+      if (_mosaicController != null) {
          _mosaicController.addListener(this);
+         PaintSwingContext<Icon> pc = _mosaicController.getView().getPaintContext();
+         pc.setBackgroundColor(pc.getBackgroundColor().darker(0.2));
+      }
    }
    /** mosaic controller */
    public MosaicControllerSwing getMosaicController() {

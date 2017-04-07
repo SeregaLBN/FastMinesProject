@@ -36,10 +36,13 @@ namespace fmg.core.mosaic {
          }
       }
 
-      public virtual TPaintContext PaintContext {
+      protected virtual TPaintContext CreatePaintContext() {
+         return new TPaintContext();
+      }
+      public TPaintContext PaintContext {
          get {
             if (_paintContext == null)
-               PaintContext = new TPaintContext(); // call setter
+               PaintContext = CreatePaintContext(); // call setter
             return _paintContext;
          }
          private set {

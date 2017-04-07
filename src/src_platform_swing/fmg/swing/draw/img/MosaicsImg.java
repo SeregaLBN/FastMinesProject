@@ -28,11 +28,8 @@ import fmg.swing.mosaic.AMosaicViewSwing;
  * base SWING impl
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
- * @param <TMosaicView> MVC: view. (Model -  {@link AMosaicsImg#getMosaic()}; Controller - this {@link MosaicsImg})
  */
-public abstract class MosaicsImg<TImage, TMosaicView extends AMosaicViewSwing<TImage>>
-               extends AMosaicsImg<TImage>
-{
+public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
 
    static {
       StaticRotateImgConsts.init();
@@ -40,19 +37,59 @@ public abstract class MosaicsImg<TImage, TMosaicView extends AMosaicViewSwing<TI
 
    private static final boolean RandomCellBkColor = true;
 
-   protected TMosaicView _view;
+   protected abstract class AMosaicImgView extends AMosaicViewSwing<TImage> {
+
+      private CellPaintGraphics<TImage> _cellPaint;
+
+      public abstract CellPaintGraphics<TImage> createCellPaint();
+
+      @Override
+      public ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> getCellPaint() {
+         if (_cellPaint == null)
+            _cellPaint = createCellPaint();
+         return _cellPaint;
+      }
+
+      @Override
+      protected PaintSwingContext<TImage> createPaintContext() {
+         PaintSwingContext<TImage> cntxt = new PaintSwingContext<>();
+         cntxt.setIconicMode(true);
+         if (RandomCellBkColor)
+            cntxt.getBackgroundFill().setMode(1 + new Random(UUID.randomUUID().hashCode()).nextInt(getMosaic().getCellAttr().getMaxBackgroundFillModeValue()));
+         return cntxt;
+      }
+
+      @Override
+      public void invalidate(Collection<BaseCell> modifiedCells) {
+         repaint(modifiedCells);
+      }
+
+      @Override
+      protected void changeSizeImagesMineFlag() {
+         // none
+      }
+
+   }
+
+   protected AMosaicImgView _view;
+
+   protected abstract AMosaicImgView createView();
+
    /** get view */
-   protected abstract TMosaicView getView();
+   protected AMosaicImgView getView() {
+      if (_view == null) {
+         setView(createView());
+      }
+      return _view;
+   }
    /** set view */
-   protected void setView(TMosaicView view) {
+   protected void setView(AMosaicImgView view) {
       if (_view != null)
          _view.close();
       _view = view;
       if (_view != null)
          _view.setMosaic(getMosaic());
    }
-
-   protected ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> getCellPaint() { return getView().getCellPaint(); }
 
    protected PaintSwingContext<TImage> getPaintContext() { return getView().getPaintContext(); }
 
@@ -90,14 +127,13 @@ public abstract class MosaicsImg<TImage, TMosaicView extends AMosaicViewSwing<TI
       }
    }
 
-   @Override
-   protected void drawBody() {
+   protected void drawBody(Graphics paintableGraphics) {
       switch (getRotateMode()) {
       case fullMatrix:
-         drawBodyFullMatrix();
+         drawBodyFullMatrix(paintableGraphics);
          break;
       case someCells:
-         drawBodySomeCells();
+         drawBodySomeCells(paintableGraphics);
          break;
       }
    }
@@ -111,8 +147,9 @@ public abstract class MosaicsImg<TImage, TMosaicView extends AMosaicViewSwing<TI
     *    Т.к. WriteableBitmap есть DependencyObject, то его владелец может сам отслеживать отрисовку...
     *  }
     */
-   private void drawBodyFullMatrix() {
+   private void drawBodyFullMatrix(Graphics paintableGraphics) {
       getView().getPaintContext().setUseBackgroundColor(true);
+      getView().setPaintable(paintableGraphics);
       getView().invalidate(getMatrix());
    }
 
@@ -134,17 +171,19 @@ public abstract class MosaicsImg<TImage, TMosaicView extends AMosaicViewSwing<TI
       }
       if (_invalidateCache) {
          _invalidateCache = false;
-         drawCache();
+       //Graphics paintableGraphics = _imageCache as Graphics; // not implement in SWING :(
+         Graphics paintableGraphics = getView().getPaintable();
+         drawCache(paintableGraphics);
       }
       return _imageCache;
    }
 
    /** copy cached image to original */
-   protected abstract void copyFromCache();
+   protected abstract void copyFromCache(Graphics paintableGraphics);
 
-   protected void drawCache() { drawStaticPart(); }
+   protected void drawCache(Graphics paintableGraphics) { drawStaticPart(paintableGraphics); }
 
-   private void drawStaticPart() {
+   private void drawStaticPart(Graphics paintableGraphics) {
       getView().getPaintContext().setUseBackgroundColor(true);
 
       List<BaseCell> notRotated;
@@ -161,10 +200,11 @@ public abstract class MosaicsImg<TImage, TMosaicView extends AMosaicViewSwing<TI
             ++i;
          }
       }
+      getView().setPaintable(paintableGraphics);
       getView().invalidate(notRotated);
    }
 
-   private void drawRotatedPart() {
+   private void drawRotatedPart(Graphics paintableGraphics) {
       if (_rotatedElements.isEmpty())
          return;
 
@@ -182,6 +222,7 @@ public abstract class MosaicsImg<TImage, TMosaicView extends AMosaicViewSwing<TI
       List<BaseCell> rotatedCells = new ArrayList<>(_rotatedElements.size());
       for (RotatedCellContext cntxt : _rotatedElements)
          rotatedCells.add(matrix.get(cntxt.index));
+      getView().setPaintable(paintableGraphics);
       getView().invalidate(rotatedCells);
 
       // restore
@@ -190,12 +231,12 @@ public abstract class MosaicsImg<TImage, TMosaicView extends AMosaicViewSwing<TI
       pb.setColorShadow(borderColor); //BorderColor = borderColor;
    }
 
-   private void drawBodySomeCells() {
+   private void drawBodySomeCells(Graphics paintableGraphics) {
       if (USE_CACHE)
-         copyFromCache();
+         copyFromCache(paintableGraphics);
       else
-         drawStaticPart();
-      drawRotatedPart();
+         drawStaticPart(paintableGraphics);
+      drawRotatedPart(paintableGraphics);
    }
 
    @Override
@@ -208,7 +249,7 @@ public abstract class MosaicsImg<TImage, TMosaicView extends AMosaicViewSwing<TI
    //    custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   public static class Icon extends MosaicsImg<javax.swing.Icon, AMosaicViewSwing<javax.swing.Icon>> {
+   public static class Icon extends MosaicsImg<javax.swing.Icon> {
 
       private BufferedImage buffImg;
       private Graphics2D gBuffImg;
@@ -222,7 +263,7 @@ public abstract class MosaicsImg<TImage, TMosaicView extends AMosaicViewSwing<TI
          gBuffImg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
          gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
          gBuffImg.setClip(0, 0, getSize().width, getSize().height);
-         getView().setGraphics(gBuffImg);
+         getView().setPaintable(gBuffImg);
 
          return new javax.swing.Icon() {
             @Override
@@ -237,45 +278,27 @@ public abstract class MosaicsImg<TImage, TMosaicView extends AMosaicViewSwing<TI
       }
 
       @Override
-      protected AMosaicViewSwing<javax.swing.Icon> getView() {
-         if (_view == null) {
-            setView(new AMosaicViewSwing<javax.swing.Icon>() {
+      protected AMosaicImgView createView() {
+         return new AMosaicImgView() {
 
-               private CellPaintGraphics<javax.swing.Icon> _cellPaint;
+            @Override
+            public CellPaintGraphics<javax.swing.Icon> createCellPaint() {
+               return new CellPaintGraphics.Icon();
+            }
 
-               @Override
-               public ICellPaint<PaintableGraphics, javax.swing.Icon, PaintSwingContext<javax.swing.Icon>> getCellPaint() {
-                  if (_cellPaint == null)
-                     _cellPaint = new CellPaintGraphics.Icon();
-                  return _cellPaint;
-               }
-
-               @Override
-               protected PaintSwingContext<javax.swing.Icon> createPaintContext() {
-                  PaintSwingContext<javax.swing.Icon> cntxt = new PaintSwingContext<>();
-                  cntxt.setIconicMode(true);
-                  if (RandomCellBkColor)
-                     cntxt.getBackgroundFill().setMode(1 + new Random(UUID.randomUUID().hashCode()).nextInt(getCellAttr().getMaxBackgroundFillModeValue()));
-                  return cntxt;
-               }
-
-               @Override
-               public void invalidate(Collection<BaseCell> modifiedCells) {
-                  repaint(modifiedCells);
-               }
-
-               @Override
-               protected void changeSizeImagesMineFlag() {
-                  // none
-               }
-
-            });
-         }
-         return _view;
+         };
       }
 
       @Override
-      protected void copyFromCache() { throw new UnsupportedOperationException("not implemented..."); }
+      protected void copyFromCache(Graphics paintableGraphics) {
+//       paintableGraphics.drawImage(getImageCache(), 0, 0, getSize().width, getSize().height, null);
+         throw new UnsupportedOperationException("not implemented...");
+      }
+
+      @Override
+      protected void drawBody() {
+         drawBody(gBuffImg);
+      }
 
       @Override
       public void close() {
@@ -287,7 +310,7 @@ public abstract class MosaicsImg<TImage, TMosaicView extends AMosaicViewSwing<TI
 
    }
 
-   public static class Image extends MosaicsImg<java.awt.Image, AMosaicViewSwing<java.awt.Image>> {
+   public static class Image extends MosaicsImg<java.awt.Image> {
 
       @Override
       protected java.awt.Image createImage() {
@@ -295,63 +318,21 @@ public abstract class MosaicsImg<TImage, TMosaicView extends AMosaicViewSwing<TI
       }
 
       @Override
-      protected AMosaicViewSwing<java.awt.Image> getView() {
-         if (_view == null) {
-            setView(new AMosaicViewSwing<java.awt.Image>() {
+      protected AMosaicImgView createView() {
+         return new AMosaicImgView() {
 
-               private CellPaintGraphics<java.awt.Image> _cellPaint;
-               @Override
-               public ICellPaint<PaintableGraphics, java.awt.Image, PaintSwingContext<java.awt.Image>> getCellPaint() {
-                  if (_cellPaint == null)
-                     _cellPaint = new CellPaintGraphics.Image();
-                  return _cellPaint;
-               }
+            @Override
+            public CellPaintGraphics<java.awt.Image> createCellPaint() {
+               return new CellPaintGraphics.Image();
+            }
 
-               @Override
-               public PaintSwingContext<java.awt.Image> createPaintContext() {
-                  PaintSwingContext<java.awt.Image> cntxt = new PaintSwingContext<>();
-                  cntxt.setIconicMode(true);
-                  if (RandomCellBkColor)
-                     cntxt.getBackgroundFill().setMode(1 + new Random(UUID.randomUUID().hashCode()).nextInt(getCellAttr().getMaxBackgroundFillModeValue()));
-                  return cntxt;
-               }
-
-               @Override
-               public void invalidate(Collection<BaseCell> modifiedCells) {
-                  repaint(modifiedCells);
-               }
-
-               @Override
-               protected void changeSizeImagesMineFlag() {
-                  // none
-               }
-
-            });
-         }
-         return _view;
+         };
       }
 
       @Override
-      protected void copyFromCache() {
+      protected void copyFromCache(Graphics paintableGraphics) {
+//         paintableGraphics.drawImage(getImageCache(), 0, 0, getSize().width, getSize().height, null);
          throw new UnsupportedOperationException("not implemented...");
-//         BufferedImage img = (BufferedImage) getImage();
-//         Graphics2D g = img.createGraphics();
-////         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
-////         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//         g.drawImage(getImageCache(), 0, 0, getWidth(), getHeight(), null);
-//         g.dispose();
-      }
-
-      @Override
-      protected void drawCache() {
-         BufferedImage img = (BufferedImage) getImageCache();
-         Graphics2D g = img.createGraphics();
-         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
-         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-         g.setClip(0, 0, getSize().width, getSize().height);
-         getView().setGraphics(g);
-         super.drawCache();
-         g.dispose();
       }
 
       @Override
@@ -361,8 +342,8 @@ public abstract class MosaicsImg<TImage, TMosaicView extends AMosaicViewSwing<TI
          g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
          g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
          g.setClip(0, 0, getSize().width, getSize().height);
-         getView().setGraphics(g);
-         super.drawBody();
+         getView().setPaintable(g);
+         super.drawBody(g);
          g.dispose();
       }
 
@@ -372,12 +353,17 @@ public abstract class MosaicsImg<TImage, TMosaicView extends AMosaicViewSwing<TI
    public static void main(String[] args) {
       TestDrawing.testApp(rnd -> {
          return Stream.of(EMosaic.values())
-//               .map(e -> new Pair<>(new MosaicsImg.Icon (e, new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))),
-//                                    new MosaicsImg.Image(e, new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2)))))
+
+               // variant 1
+//               .map(e -> new Pair<>(new MosaicsImg.Icon () { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }},
+//                                    new MosaicsImg.Image() { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }}))
 //               .flatMap(x -> Stream.of(x.first, x.second))
+
+               // variant 2
                .map(e ->  rnd.nextBoolean()
                            ? new MosaicsImg.Icon () { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }}
                            : new MosaicsImg.Image() { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }})
+
                .collect(Collectors.toList());
       });
    }

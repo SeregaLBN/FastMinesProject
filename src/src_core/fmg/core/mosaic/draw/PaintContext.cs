@@ -26,7 +26,8 @@ namespace fmg.core.mosaic.draw {
       private PenBorder _penBorder;
       private FontInfo _fontInfo;
       private BoundDouble _padding;
-      private Color _backgroundColor = PaintContextCommon.DefaultBackgroundColor.Darker(0.1);
+      private Color   _backgroundColor = PaintContextCommon.DefaultBackgroundColor;
+      private bool _useBackgroundColor = true;
       private TImage _imgBckgrnd;
       private bool _iconicMode;
 
@@ -155,6 +156,11 @@ namespace fmg.core.mosaic.draw {
       public Color BackgroundColor {
          get { return _backgroundColor; }
          set { SetProperty(ref _backgroundColor, value); }
+      }
+
+      public bool IsUseBackgroundColor {
+         get { return _useBackgroundColor; }
+         set { SetProperty(ref _useBackgroundColor, value); }
       }
 
       public TImage ImgBckgrnd {

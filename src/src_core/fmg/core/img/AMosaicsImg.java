@@ -49,7 +49,6 @@ public abstract class AMosaicsImg<TImage>
 
    public static final String PROPERTY_MOSAIC_TYPE      = Mosaic.PROPERTY_MOSAIC_TYPE;
    public static final String PROPERTY_SIZE_FIELD       = Mosaic.PROPERTY_SIZE_FIELD;
-   public static final String PROPERTY_CELL_ATTR        = Mosaic.PROPERTY_CELL_ATTR;
    public static final String PROPERTY_MATRIX           = Mosaic.PROPERTY_MATRIX;
    public static final String PROPERTY_AREA             = Mosaic.PROPERTY_AREA;
    public static final String PROPERTY_PADDING_FULL     = "PaddingFull";
@@ -64,8 +63,6 @@ public abstract class AMosaicsImg<TImage>
    public void setSizeField(Matrisize newSizeField) { getMosaic().setSizeField(newSizeField); }
 
    public BaseCell getCell(Coord coord) { return getMosaic().getMatrix().get(coord.x * getSizeField().n + coord.y); }
-
-   public BaseCell.BaseAttribute getCellAttr() { return getMosaic().getCellAttr(); }
 
    /** матрица ячеек, представленная(развёрнута) в виде вектора */
    public List<BaseCell> getMatrix() { return getMosaic().getMatrix(); }
@@ -112,7 +109,7 @@ public abstract class AMosaicsImg<TImage>
          onMosaicPropertyChanged((Mosaic)ev.getSource(), ev);
    }
 
-   protected void onMosaicPropertyChanged(Mosaic source, PropertyChangeEvent ev) {
+   private void onMosaicPropertyChanged(Mosaic source, PropertyChangeEvent ev) {
       String propertyName = ev.getPropertyName();
       switch (propertyName) {
       case Mosaic.PROPERTY_SIZE_FIELD:
@@ -130,7 +127,6 @@ public abstract class AMosaicsImg<TImage>
          invalidate();
          break;
       case Mosaic.PROPERTY_CELL_ATTR:
-         onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_CELL_ATTR);
          invalidate();
          break;
       case Mosaic.PROPERTY_MATRIX:
@@ -206,7 +202,7 @@ public abstract class AMosaicsImg<TImage>
 
    /** rotate BaseCell from original Matrix with modified Region */
    protected void rotateCells() {
-      BaseAttribute attr = getCellAttr();
+      BaseAttribute attr = getMosaic().getCellAttr();
       List<BaseCell> matrix = getMatrix();
       final double area = getArea();
       final double angle = getRotateAngle();

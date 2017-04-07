@@ -32,12 +32,10 @@ using fmg.core.mosaic.cells;
 namespace fmg.core.mosaic
 {
 
-   /// <summary> MVC: model (mosaic field). Base implementation. </summary>
+   /// <summary> MVC: model (mosaic field). Default implementation. </summary>
    public class Mosaic : NotifyPropertyChanged, IMosaic {
 
    #region Members
-
-      public const double AREA_MINIMUM = 230;
 
       private BaseCell.BaseAttribute _cellAttr;
       /// <summary>Matrix of cells, is represented as a vector <see cref="List{BaseCell}"/>.
@@ -66,7 +64,7 @@ namespace fmg.core.mosaic
          get {
             if (_cellAttr == null) {
                _cellAttr = MosaicHelper.CreateAttributeInstance(MosaicType);
-               _cellAttr.Area = 10 * AREA_MINIMUM;
+               _cellAttr.Area = 500;
                _cellAttr.PropertyChanged += OnCellAttributePropertyChanged;
             }
             return _cellAttr;
@@ -79,11 +77,13 @@ namespace fmg.core.mosaic
             return CellAttr.Area;
          }
          set {
-            CellAttr.Area = Math.Max(AREA_MINIMUM, value);
+            System.Diagnostics.Debug.Assert(value >= 1);
+            CellAttr.Area = value;
          }
       }
 
-      public IList<BaseCell> Matrix { get {
+      public IList<BaseCell> Matrix {
+         get {
             if (!_matrix.Any()) {
                var attr = CellAttr;
                var size = SizeField;
@@ -146,6 +146,13 @@ namespace fmg.core.mosaic
          }
          OnSelfPropertyChanged(nameof(this.CellAttr));
          OnSelfPropertyChanged(nameof(this.CellAttr) + "." + pn);
+      }
+
+      public void EnableCellAttributePropertyListener(bool enable) {
+         if (enable)
+            CellAttr.PropertyChanged += OnCellAttributePropertyChanged;
+         else
+            CellAttr.PropertyChanged -= OnCellAttributePropertyChanged;
       }
 
       protected override void Dispose(bool disposing) {

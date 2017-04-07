@@ -5,21 +5,18 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.mosaic;
-using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
 using fmg.uwp.draw.mosaic;
-using fmg.uwp.draw.mosaic.win2d;
 using FlagCanvasBmp = fmg.uwp.draw.img.win2d.Flag.CanvasBmp;
 using MineCanvasBmp = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
 
 namespace fmg.uwp.mosaic.win2d {
 
-   /// <summary> MVC view. UWP Win2D implementation </summary>
-   public class MosaicViewWin2D : AMosaicView<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> {
+   /// summary> MVC: view. UWP Win2D implementation. View located into control <see cref="CanvasVirtualControl"/> */
+   public class MosaicViewWin2D : AMosaicViewWin2D {
 
       private CanvasVirtualControl _control;
-      private CellPaintWin2D _cellPaint;
       private MineCanvasBmp _mineImage;
       private FlagCanvasBmp _flagImage;
 
@@ -49,8 +46,6 @@ namespace fmg.uwp.mosaic.win2d {
             return _flagImage;
          }
       }
-
-      public override ICellPaint<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> CellPaint => _cellPaint ?? (_cellPaint = new CellPaintWin2D());
 
       public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {
          System.Diagnostics.Debug.Assert((modifiedCells == null) || modifiedCells.Any());
@@ -94,35 +89,19 @@ namespace fmg.uwp.mosaic.win2d {
          }
       }
 
-      bool _alreadyPainted = false;
+      bool _alreadyPainted2 = false;
       public void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
          using (new Tracer()) {
             System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _control));
 
-            _alreadyPainted = true;
+            _alreadyPainted2 = true;
             foreach (var region in ev.InvalidatedRegions) {
                using (var ds = sender.CreateDrawingSession(region)) {
-                  Repaint(ds, region);
+                  Paintable = ds;
+                  Repaint(null, region);
                }
             }
-            _alreadyPainted = false;
-         }
-      }
-
-      private void Repaint(CanvasDrawingSession ds, Windows.Foundation.Rect region) {
-         using (new Tracer()) {
-            var p = new PaintableWin2D(ds);
-            var pc = PaintContext;
-            // paint all cells
-            var sizeMosaic = Mosaic.SizeField;
-            var cellPaint = CellPaint;
-            foreach (var cell in Mosaic.Matrix) {
-               var tmp = new Windows.Foundation.Rect(region.X, region.Y, region.Width, region.Height);
-               tmp.Intersect(cell.getRcOuter().ToWinRect());
-               var intersected = (tmp != Windows.Foundation.Rect.Empty);
-               if (intersected)
-                  cellPaint.Paint(cell, p, pc);
-            }
+            _alreadyPainted2 = false;
          }
       }
 

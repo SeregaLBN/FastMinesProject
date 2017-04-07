@@ -55,7 +55,14 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       }
       public void TestMosaicsImg() {
          TestAppW(rnd =>
-            EMosaicEx.GetValues().Select(e => new MosaicsImg(e, new Matrisize(3 + _td.R(4), 4 + _td.R(3))))
+            EMosaicEx.GetValues().Select(e => new MosaicsImg() {
+               MosaicType = e,
+               SizeField = new Matrisize(2 + _td.R(2), 2 + _td.R(2))
+            })
+            //new List<MosaicsImg>() { new MosaicsImg() {
+            //   MosaicType = EMosaic.eMosaicSquare1,
+            //   SizeField = new Matrisize(3 + _td.R(4), 4 + _td.R(3))
+            //} }
          );
       }
       public void TestFlag()  { TestAppW(rnd => new Flag[]  { new Flag() }); }

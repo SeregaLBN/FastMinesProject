@@ -19,17 +19,17 @@ public abstract class AMosaicViewSwing<TImage> extends AMosaicView<PaintableGrap
       return new PaintableGraphics(null, g);
    }
 
-   private Graphics _graphics;
-   public Graphics getGraphics() {
-      return _graphics;
+   private Graphics _paintable;
+   public Graphics getPaintable() {
+      return _paintable;
    }
-   public void setGraphics(Graphics graphics) {
-      this._graphics = graphics;
+   public void setPaintable(Graphics paintable) {
+      this._paintable = paintable;
    }
 
    protected boolean _alreadyPainted = false;
    protected void repaint(Collection<BaseCell> modifiedCells) {
-      Graphics g = getGraphics();
+      Graphics g = getPaintable();
       if (g == null)
          return;
 
@@ -42,7 +42,7 @@ public abstract class AMosaicViewSwing<TImage> extends AMosaicView<PaintableGrap
          Rectangle rcFill = g.getClipBounds();
          if (pc.isUseBackgroundColor()) {
             // background color
-            g.setColor(Cast.toColor(pc.getBackgroundColor().darker(0.2)));
+            g.setColor(Cast.toColor(pc.getBackgroundColor()));
             g.fillRect(rcFill.x, rcFill.y, rcFill.width, rcFill.height);
          }
 

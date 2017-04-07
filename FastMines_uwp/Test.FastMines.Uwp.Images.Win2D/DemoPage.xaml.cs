@@ -94,12 +94,18 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       }
       public void TestMosaicsImg1(ICanvasResourceCreator resourceCreator) {
          TestAppCanvasBmp(rnd =>
-            EMosaicEx.GetValues().Select(e => new MosaicsCanvasBmp(e, new Matrisize(3 + _td.R(4), 4 + _td.R(3)), resourceCreator))
+            EMosaicEx.GetValues().Select(e => new MosaicsCanvasBmp(resourceCreator) {
+               MosaicType = e,
+               SizeField = new Matrisize(3 + _td.R(4), 4 + _td.R(3))
+            })
          );
       }
       public void TestMosaicsImg2(ICanvasResourceCreator resourceCreator) {
          TestAppCanvasImg(rnd =>
-            EMosaicEx.GetValues().Select(e => new MosaicsCanvasImg(e, new Matrisize(3 + _td.R(4), 4 + _td.R(3)), resourceCreator))
+            EMosaicEx.GetValues().Select(e => new MosaicsCanvasImg(resourceCreator) {
+               MosaicType = e,
+               SizeField = new Matrisize(3 + _td.R(4), 4 + _td.R(3))
+            })
          );
       }
       public void TestFlag1 (ICanvasResourceCreator resourceCreator) { TestAppCanvasBmp(rnd => new FlagCanvasBmp [] { new FlagCanvasBmp(resourceCreator) }); }

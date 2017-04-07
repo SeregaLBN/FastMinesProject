@@ -34,7 +34,9 @@ namespace fmg.DataModel.Items {
          get {
             if (_mosaicImg == null) {
                var sizeField = MosaicType.SizeTileField(SkillLevel);
-               var tmp = new MosaicsCanvasBmp(MosaicType, sizeField, CanvasDevice.GetSharedDevice()) {
+               var tmp = new MosaicsCanvasBmp(CanvasDevice.GetSharedDevice()) {
+                  MosaicType = MosaicType,
+                  SizeField = sizeField,
                   PaddingInt = 5 * Zoom(),
                   RotateMode = MosaicsCanvasBmp.ERotateMode.SomeCells,
                   //BackgroundColor = MosaicsCanvasBmp.DefaultBkColor,

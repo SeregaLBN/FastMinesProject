@@ -218,7 +218,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
 
    public Color getBackgroundColor() {
       if (backgroundColor == null)
-         setBackgroundColor(getDefaultBackgroundColor().darker(0.1));
+         setBackgroundColor(getDefaultBackgroundColor());
       return backgroundColor;
    }
 

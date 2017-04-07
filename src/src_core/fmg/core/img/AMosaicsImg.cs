@@ -12,79 +12,52 @@ namespace fmg.core.img {
 
    /// <summary> Abstract representable <see cref="EMosaic"/> as image </summary>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class AMosaicsImg<TImage> : RotatedImg<TImage>, IMosaic
+   public abstract class AMosaicsImg<TImage> : RotatedImg<TImage>
       where TImage : class
    {
-      protected AMosaicsImg(EMosaic mosaicType, Matrisize sizeField) {
-         _mosaicType = mosaicType;
-         _sizeField = sizeField;
-      }
 
       public enum ERotateMode {
          FullMatrix,
          SomeCells
       }
 
-      private EMosaic _mosaicType;
-      /// <summary>из каких фигур состоит мозаика поля</summary>
-      public EMosaic MosaicType {
-         get { return _mosaicType; }
-         set {
-            if (SetProperty(ref _mosaicType, value)) {
-               Area = 0;
-               _matrix.Clear();
-               CellAttr = null;
+      /// <summary> MVC: model </summary>
+      private Mosaic _mosaic;
+
+      /// <summary> MVC: model </summary>
+      public Mosaic Mosaic {
+         get {
+            if (_mosaic == null)
+               Mosaic = new Mosaic(); // call this setter
+            return _mosaic;
+         }
+         protected set {
+            if (_mosaic != null) {
+               _mosaic.PropertyChanged -= OnMosaicPropertyChanged;
+               _mosaic.Dispose();
+            }
+            _mosaic = value;
+            if (_mosaic != null) {
+               _mosaic.PropertyChanged += OnMosaicPropertyChanged;
             }
          }
       }
 
-      private Matrisize _sizeField;
+      /// <summary>из каких фигур состоит мозаика поля</summary>
+      public EMosaic MosaicType {
+         get { return Mosaic.MosaicType; }
+         set { Mosaic.MosaicType = value; }
+      }
+
       public Matrisize SizeField {
-         get { return _sizeField; }
-         set {
-            if (SetProperty(ref _sizeField, value)) {
-               RecalcArea();
-               _matrix.Clear();
-               Invalidate();
-            }
-         }
+         get { return Mosaic.SizeField; }
+         set { Mosaic.SizeField = value; }
       }
 
       public BaseCell getCell(Coord coord) { return Matrix[coord.x * SizeField.n + coord.y]; }
 
-      private BaseCell.BaseAttribute _cellAttr;
-      public BaseCell.BaseAttribute CellAttr {
-         get {
-            if (_cellAttr == null)
-               CellAttr = MosaicHelper.CreateAttributeInstance(MosaicType); // call this setter
-            return _cellAttr;
-         }
-         private set {
-            if (SetProperty(ref _cellAttr, value)) {
-               Dependency_CellAttribute_Area();
-               Invalidate();
-            }
-         }
-      }
-
-      /// <summary> caching rotated values </summary>
-      private readonly List<BaseCell> _matrix = new List<BaseCell>();
       /// <summary>матрица ячеек, представленная(развёрнута) в виде вектора</summary>
-      public IList<BaseCell> Matrix {
-         get {
-            if (!_matrix.Any()) {
-               var attr = CellAttr;
-               var type = MosaicType;
-               var size = SizeField;
-               for (var i = 0; i < size.m; i++)
-                  for (var j = 0; j < size.n; j++)
-                     _matrix.Add(MosaicHelper.CreateCellInstance(attr, type, new Coord(i, j)));
-               OnSelfPropertyChanged();
-               Invalidate();
-            }
-            return _matrix;
-         }
-      }
+      public IList<BaseCell> Matrix => Mosaic.Matrix;
 
       private void RecalcArea() {
          var w = Size.Width;
@@ -107,19 +80,9 @@ namespace fmg.core.img {
          PaddingFull = paddingOut;
       }
 
-      private double _area;
       public double Area {
-         get {
-            if (_area <= 0)
-               RecalcArea();
-            return _area;
-         }
-         set {
-            if (SetProperty(ref _area, value)) {
-               Dependency_CellAttribute_Area();
-               Invalidate();
-            }
-         }
+         get { return Mosaic.Area; }
+         set { Mosaic.Area = value; }
       }
 
       private BoundDouble _paddingFull;
@@ -136,6 +99,34 @@ namespace fmg.core.img {
       public ERotateMode RotateMode {
          get { return _rotateMode; }
          set { SetProperty(ref _rotateMode, value); }
+      }
+
+      private void OnMosaicPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         switch (ev.PropertyName) {
+         case nameof(Mosaic.SizeField):
+            RecalcArea();
+            OnSelfPropertyChanged<Matrisize>(ev, nameof(this.SizeField));
+            Invalidate();
+            break;
+         case nameof(Mosaic.MosaicType):
+            RecalcArea();
+            OnSelfPropertyChanged<EMosaic>(ev, nameof(this.MosaicType));
+            Invalidate();
+            break;
+         case nameof(Mosaic.Area):
+            OnSelfPropertyChanged<double>(ev, nameof(this.Area));
+            Invalidate();
+            break;
+         case nameof(Mosaic.CellAttr):
+            Invalidate();
+            break;
+         case nameof(Mosaic.Matrix):
+            OnSelfPropertyChanged(nameof(this.Matrix));
+            Invalidate();
+            break;
+         default:
+            break;
+         }
       }
 
       protected override void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
@@ -155,16 +146,6 @@ namespace fmg.core.img {
          }
       }
 
-      #region Dependencys
-      void Dependency_CellAttribute_Area() {
-         if (_cellAttr == null)
-            return;
-         CellAttr.Area = Area;
-         if (_matrix.Any())
-            foreach (var cell in Matrix)
-               cell.Init();
-      }
-      #endregion
 
       protected override void OnTimer() {
          var rotateMode = RotateMode;
@@ -213,7 +194,7 @@ namespace fmg.core.img {
       }
 
       private void RotateCells() {
-         var attr = CellAttr;
+         var attr = Mosaic.CellAttr;
          var matrix = Matrix;
          var angle = RotateAngle;
          var area = Area;
@@ -238,7 +219,9 @@ namespace fmg.core.img {
             var center = cell.getCenter();
             var coord = cell.getCoord();
 
+            var m = Mosaic;
             // modify
+            m.EnableCellAttributePropertyListener(false); // disable handling Mosaic.OnCellAttributePropertyChanged(where event.PropertyName == BaseCell.BaseAttribute.Area)
             attr.Area = cntxt.area;
 
             // rotate
@@ -251,6 +234,7 @@ namespace fmg.core.img {
 
             // restore
             attr.Area = area;
+            m.EnableCellAttributePropertyListener(true);
          }
 
          // Z-ordering

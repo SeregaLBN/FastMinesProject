@@ -83,8 +83,7 @@ public class Mosaic
    /** установить новую площадь ячеек */
    @Override
    public void setArea(double newArea)  {
-      if (newArea < 1)
-         throw new IllegalArgumentException("newArea");
+      assert (newArea >= 1);
       getCellAttr().setArea(newArea);
    }
 

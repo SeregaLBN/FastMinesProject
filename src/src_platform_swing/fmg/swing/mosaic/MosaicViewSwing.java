@@ -19,7 +19,7 @@ import fmg.swing.draw.mosaic.graphics.CellPaintGraphics;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 import fmg.swing.utils.ImgUtils;
 
-/** MVC: view. SWING implementation for {@link Icon} */ // TODO rename to MosaicViewSwingIcon
+/** MVC: view. SWING implementation for {@link Icon}. View located into control {@link JPanel} */ // TODO rename to MosaicViewSwingIcon
 public class MosaicViewSwing extends AMosaicViewSwing<Icon> {
 
    private JPanel _control;
@@ -60,7 +60,7 @@ public class MosaicViewSwing extends AMosaicViewSwing<Icon> {
                   g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                }
 
-               MosaicViewSwing.this.setGraphics(g);
+               MosaicViewSwing.this.setPaintable(g);
                MosaicViewSwing.this.repaint(null);
             }
 

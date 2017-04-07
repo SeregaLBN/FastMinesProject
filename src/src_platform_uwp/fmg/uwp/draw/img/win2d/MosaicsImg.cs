@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.ComponentModel;
+using System.Collections.Generic;
 using Windows.Graphics.Display;
 using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;
@@ -8,11 +9,10 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
-using fmg.core.types;
-using fmg.core.mosaic.draw;
 using fmg.uwp.draw.mosaic;
-using fmg.uwp.draw.mosaic.win2d;
 using fmg.uwp.utils;
+using fmg.uwp.mosaic.win2d;
+using fmg.core.mosaic.cells;
 
 namespace fmg.uwp.draw.img.win2d {
 
@@ -22,74 +22,83 @@ namespace fmg.uwp.draw.img.win2d {
    /// </summary>
    public static class MosaicsImg {
 
+      static MosaicsImg() {
+         StaticRotateImgConsts.Init();
+      }
+
+      private const bool RandomCellBkColor = true;
+      private static Random Rand => new Random(Guid.NewGuid().GetHashCode());
+
       /// <summary> Representable <see cref="EMosaic"/> as image: common implementation part </summary>
       public abstract class CommonImpl<TImage> : AMosaicsImg<TImage>
          where TImage : DependencyObject, ICanvasResourceCreator
       {
-         static CommonImpl() {
-            StaticRotateImgConsts.Init();
-         }
-
          protected readonly ICanvasResourceCreator _rc;
-         private const bool RandomCellBkColor = true;
-         private Random Rand => new Random(Guid.NewGuid().GetHashCode());
+         private MosaicImgView _view;
 
-         protected CommonImpl(EMosaic mosaicType, Matrisize sizeField, ICanvasResourceCreator resourceCreator)
-            : base(mosaicType, sizeField)
-         {
+         protected CommonImpl(ICanvasResourceCreator resourceCreator) {
             _rc = resourceCreator;
          }
 
-         private ICellPaint<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> _cellPaint;
-         public ICellPaint<PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>> CellPaint {
-            get {
-               if (_cellPaint == null)
-                  _cellPaint = new CellPaintWin2D();
-               return _cellPaint;
+         protected class MosaicImgView : AMosaicViewWin2D {
+
+            readonly CommonImpl<TImage> _owner;
+            public MosaicImgView(CommonImpl<TImage> owner) {
+               _owner = owner;
+            }
+
+            protected override PaintUwpContext<CanvasBitmap> CreatePaintContext() {
+               var cntxt = base.CreatePaintContext();
+               cntxt.IconicMode = true;
+               if (RandomCellBkColor)
+                  cntxt.BkFill.Mode = 1 + Rand.Next(Mosaic.CellAttr.getMaxBackgroundFillModeValue());
+               return cntxt;
+            }
+            public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {
+               Repaint(modifiedCells, (new Windows.Foundation.Rect(0,0,_owner.Size.Width, _owner.Size.Width)));
+            }
+
+            protected override void ChangeSizeImagesMineFlag() {
+               // none...
             }
          }
 
-         private PaintUwpContext<CanvasBitmap> _paintContext;
-         protected PaintUwpContext<CanvasBitmap> PaintContext {
+         protected MosaicImgView View {
             get {
-               if (_paintContext == null)
-                  PaintContext = new PaintUwpContext<CanvasBitmap>() { // call this setter
-                     IconicMode = true
-                  };
-               return _paintContext;
+               if (_view == null)
+                  View = new MosaicImgView(this); // call this setter
+               return _view;
             }
             set {
-               if (SetProperty(ref _paintContext, value)) {
-                  Dependency_PContext_CellAttribute();
-                  Dependency_PContext_PaddingFull();
-                  Dependency_PContext_BorderWidth();
-                  Dependency_PContext_BorderColor();
-                  Dependency_PContext_BkColor();
-                  Invalidate();
-               }
+               if (_view != null)
+                  _view.Dispose();
+               _view = value;
+               if (_view != null)
+                  _view.Mosaic = Mosaic;
             }
          }
+
+         protected PaintUwpContext<CanvasBitmap> PaintContext => View.PaintContext;
 
          protected override void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
             //LoggerSimple.Put($">  OnSelfPropertyChanged: {GetType().Name}.{Entity}: PropertyName={ev.PropertyName}");
-            base.OnSelfPropertyChanged(ev);
             switch (ev.PropertyName) {
             case nameof(this.PaddingFull):
-               Dependency_PContext_PaddingFull();
-               break;
-            case nameof(this.CellAttr):
-               Dependency_PContext_CellAttribute();
+               PaintContext.Padding = PaddingFull;
                break;
             case nameof(this.BorderWidth):
-               Dependency_PContext_BorderWidth();
+               PaintContext.PenBorder.Width = BorderWidth;
                break;
             case nameof(this.BorderColor):
-               Dependency_PContext_BorderColor();
+               var pb = PaintContext.PenBorder;
+               pb.ColorLight = pb.ColorShadow = BorderColor;
                break;
             case nameof(this.BackgroundColor):
-               Dependency_PContext_BkColor();
+               PaintContext.BackgroundColor = BackgroundColor;
                break;
             }
+
+            base.OnSelfPropertyChanged(ev);
 
             if (RotateMode == ERotateMode.SomeCells) {
                switch (ev.PropertyName) {
@@ -104,54 +113,13 @@ namespace fmg.uwp.draw.img.win2d {
             }
          }
 
-         //protected override void OnSelfPropertyChangedAfter(bool sync, object sender, PropertyChangedEventArgs ev) {
-         //   if (sync)
-         //      LoggerSimple.Put($"<S OnSelfPropertyChanged: {GetType().Name}.{Entity}: PropertyName={ev.PropertyName}");
-         //   else
-         //      LoggerSimple.Put($"<A OnSelfPropertyChanged: {GetType().Name}.{Entity}: PropertyName={ev.PropertyName}");
-         //}
-
-         #region Dependencys
-         void Dependency_PContext_CellAttribute() {
-            if (_paintContext == null)
-               return;
-            if (RandomCellBkColor)
-               PaintContext.BkFill.Mode = 1 + Rand.Next(CellAttr.getMaxBackgroundFillModeValue());
-         }
-
-         void Dependency_PContext_PaddingFull() {
-            if (_paintContext == null)
-               return;
-            PaintContext.Padding = PaddingFull;
-         }
-
-         void Dependency_PContext_BorderWidth() {
-            if (_paintContext == null)
-               return;
-            PaintContext.PenBorder.Width = BorderWidth;
-         }
-
-         void Dependency_PContext_BorderColor() {
-            if (_paintContext == null)
-               return;
-            var pb = PaintContext.PenBorder;
-            pb.ColorLight = pb.ColorShadow = BorderColor;
-         }
-
-         void Dependency_PContext_BkColor() {
-            if (_paintContext == null)
-               return;
-            PaintContext.BackgroundColor = BackgroundColor;
-         }
-         #endregion
-
-         protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
+         protected void DrawBody(CanvasDrawingSession paintableDS) {
             switch (RotateMode) {
             case ERotateMode.FullMatrix:
-               DrawBodyFullMatrix(ds, fillBk);
+               DrawBodyFullMatrix(paintableDS);
                break;
             case ERotateMode.SomeCells:
-               DrawBodySomeCells(ds, fillBk);
+               DrawBodySomeCells(paintableDS);
                break;
             }
          }
@@ -165,16 +133,9 @@ namespace fmg.uwp.draw.img.win2d {
          ///   Т.к. TImage есть DependencyObject, то его владелец может сам отслеживать отрисовку...
          /// }
          /// </summary>
-         protected void DrawBodyFullMatrix(CanvasDrawingSession ds, bool fillBk) {
-            var matrix = Matrix;
-            var paint = new PaintableWin2D(ds);
-            var paintContext = PaintContext;
-            var cp = CellPaint;
-
-            if (fillBk)
-               ds.Clear(BackgroundColor.ToWinColor());
-            foreach (var cell in matrix)
-               cp.Paint(cell, paint, paintContext);
+         protected void DrawBodyFullMatrix(CanvasDrawingSession paintableDS) {
+            View.Paintable = paintableDS;
+            View.Invalidate(Matrix);
          }
 
          #endregion
@@ -209,7 +170,8 @@ namespace fmg.uwp.draw.img.win2d {
          }
 
          /// <summary> copy cached image to original </summary>
-         protected void CopyFromCache(CanvasDrawingSession ds) {
+         protected void CopyFromCache(CanvasDrawingSession paintableDS) {
+            CanvasDrawingSession ds = paintableDS; // View.Paintable;
             if (UseCache) {
                var rc = new Windows.Foundation.Rect(0, 0, Size.Width, Size.Height);
                ds.DrawImage(ImageCache, rc, rc, 1.0f, CanvasImageInterpolation.NearestNeighbor, CanvasComposite.Copy);
@@ -218,26 +180,33 @@ namespace fmg.uwp.draw.img.win2d {
             }
          }
 
-         private void DrawCache(CanvasDrawingSession ds) { DrawStaticPart(ds); }
+         private void DrawCache(CanvasDrawingSession paintableDS) { DrawStaticPart(paintableDS); }
 
-         protected void DrawStaticPart(CanvasDrawingSession ds) {
-            ds.Clear(BackgroundColor.ToWinColor());
+         protected void DrawStaticPart(CanvasDrawingSession paintableDS) {
+            View.PaintContext.IsUseBackgroundColor = true;
 
-            var paint0 = new PaintableWin2D(ds);
-            var paintContext = PaintContext;
-            var matrix = Matrix;
-            var indexes = RotatedElements.Select(cntxt => cntxt.index).ToList();
-            for (var i = 0; i < matrix.Count; ++i)
-               if (!indexes.Contains(i))
-                  CellPaint.Paint(matrix[i], paint0, paintContext);
+            IList<BaseCell> notRotated;
+            if (!RotatedElements.Any()) {
+               notRotated = Matrix;
+            } else {
+               var matrix = Matrix;
+               var indexes = RotatedElements.Select(cntxt => cntxt.index).ToList();
+               notRotated = new List<BaseCell>(matrix.Count - indexes.Count);
+               int i = 0;
+               foreach (BaseCell cell in matrix) {
+                  if (!indexes.Contains(i))
+                     notRotated.Add(cell);
+                  ++i;
+               }
+            }
+            View.Paintable = paintableDS;
+            View.Invalidate(notRotated);
          }
 
-         protected void DrawRotatedPart(CanvasDrawingSession ds) {
+         protected void DrawRotatedPart(CanvasDrawingSession paintableDS) {
             if (!RotatedElements.Any())
                return;
 
-            var paint = new PaintableWin2D(ds);
-            var paintContext = PaintContext;
             var pb = PaintContext.PenBorder;
             // save
             var borderWidth = BorderWidth;
@@ -246,21 +215,25 @@ namespace fmg.uwp.draw.img.win2d {
             pb.Width = 2 * borderWidth;
             pb.ColorLight = pb.ColorShadow = borderColor.Darker(0.5);
 
+            View.PaintContext.IsUseBackgroundColor = false;
             var matrix = Matrix;
-            foreach (var cntxt in RotatedElements)
-               CellPaint.Paint(matrix[cntxt.index], paint, paintContext);
+            var rotatedCells = new List<BaseCell>(RotatedElements.Count);
+            foreach (RotatedCellContext cntxt in RotatedElements)
+               rotatedCells.Add(matrix[cntxt.index]);
+            View.Paintable = paintableDS;
+            View.Invalidate(rotatedCells);
 
             // restore
             pb.Width = borderWidth; //BorderWidth = borderWidth;
             pb.ColorLight = pb.ColorShadow = borderColor; //BorderColor = borderColor;
          }
 
-         protected void DrawBodySomeCells(CanvasDrawingSession ds, bool fillBk) {
+         protected void DrawBodySomeCells(CanvasDrawingSession paintableDS) {
             if (UseCache)
-               CopyFromCache(ds);
+               CopyFromCache(paintableDS);
             else
-               DrawStaticPart(ds);
-            DrawRotatedPart(ds);
+               DrawStaticPart(paintableDS);
+            DrawRotatedPart(paintableDS);
          }
 
          #endregion
@@ -287,8 +260,8 @@ namespace fmg.uwp.draw.img.win2d {
       /// </summary>
       public class CanvasBmp : CommonImpl<CanvasBitmap> {
 
-         public CanvasBmp(EMosaic mosaicType, Matrisize sizeField, ICanvasResourceCreator resourceCreator)
-            : base(mosaicType, sizeField, resourceCreator)
+         public CanvasBmp(ICanvasResourceCreator resourceCreator)
+            : base(resourceCreator)
          { }
 
          protected override CanvasBitmap CreateImage() {
@@ -298,7 +271,8 @@ namespace fmg.uwp.draw.img.win2d {
 
          protected override void DrawBody() {
             using (var ds = ((CanvasRenderTarget)Image).CreateDrawingSession()) {
-               DrawBody(ds, true);
+               View.PaintContext.IsUseBackgroundColor = true;
+               DrawBody(ds);
             }
          }
 
@@ -310,8 +284,8 @@ namespace fmg.uwp.draw.img.win2d {
       /// </summary>
       public class CanvasImgSrc : CommonImpl<CanvasImageSource> {
 
-         public CanvasImgSrc(EMosaic mosaicType, Matrisize sizeField, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
-            : base(mosaicType, sizeField, resourceCreator)
+         public CanvasImgSrc(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+            : base(resourceCreator)
          { }
 
          protected override CanvasImageSource CreateImage() {
@@ -321,7 +295,8 @@ namespace fmg.uwp.draw.img.win2d {
 
          protected override void DrawBody() {
             using (var ds = Image.CreateDrawingSession(BackgroundColor.ToWinColor())) {
-               DrawBody(ds, false);
+               View.PaintContext.IsUseBackgroundColor = false;
+               DrawBody(ds);
             }
          }
 
