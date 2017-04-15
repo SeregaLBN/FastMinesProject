@@ -124,13 +124,13 @@ namespace fmg.uwp.draw.img.win2d {
             }
          }
 
-         protected void DrawBody(CanvasDrawingSession paintableDS) {
+         protected override void DrawBody() {
             switch (RotateMode) {
             case ERotateMode.FullMatrix:
-               DrawBodyFullMatrix(paintableDS);
+               DrawBodyFullMatrix();
                break;
             case ERotateMode.SomeCells:
-               DrawBodySomeCells(paintableDS);
+               DrawBodySomeCells();
                break;
             }
          }
@@ -144,8 +144,7 @@ namespace fmg.uwp.draw.img.win2d {
          ///   Т.к. TImage есть DependencyObject, то его владелец может сам отслеживать отрисовку...
          /// }
          /// </summary>
-         protected void DrawBodyFullMatrix(CanvasDrawingSession paintableDS) {
-            View.Paintable = paintableDS;
+         protected void DrawBodyFullMatrix() {
             View.Invalidate(Matrix);
          }
 
@@ -153,7 +152,7 @@ namespace fmg.uwp.draw.img.win2d {
 
          #region PART ERotateMode.SomeCells
 
-         protected bool UseCache = true;
+         private const bool UseCache = true;
 
          /// <summary> need redraw the static part of the cache </summary>
          private bool _invalidateCache = true;
@@ -173,7 +172,10 @@ namespace fmg.uwp.draw.img.win2d {
                if (_invalidateCache) {
                   _invalidateCache = false;
                   using (var ds = ((CanvasRenderTarget)_imageCache).CreateDrawingSession()) {
-                     DrawCache(ds);
+                     var save = View.Paintable;
+                     View.Paintable = ds;
+                     DrawCache();
+                     View.Paintable = save; // restore
                   }
                }
                return _imageCache;
@@ -181,19 +183,15 @@ namespace fmg.uwp.draw.img.win2d {
          }
 
          /// <summary> copy cached image to original </summary>
-         protected void CopyFromCache(CanvasDrawingSession paintableDS) {
-            CanvasDrawingSession ds = paintableDS; // View.Paintable;
-            if (UseCache) {
-               var rc = new Windows.Foundation.Rect(0, 0, Size.Width, Size.Height);
-               ds.DrawImage(ImageCache, rc, rc, 1.0f, CanvasImageInterpolation.NearestNeighbor, CanvasComposite.Copy);
-            } else {
-               ds.DrawImage(ImageCache);
-            }
+         protected void CopyFromCache() {
+            CanvasDrawingSession ds = View.Paintable;
+            var rc = new Windows.Foundation.Rect(0, 0, Size.Width, Size.Height);
+            ds.DrawImage(ImageCache, rc, rc, 1.0f, CanvasImageInterpolation.NearestNeighbor, CanvasComposite.Copy);
          }
 
-         private void DrawCache(CanvasDrawingSession paintableDS) { DrawStaticPart(paintableDS); }
+         private void DrawCache() { DrawStaticPart(); }
 
-         protected void DrawStaticPart(CanvasDrawingSession paintableDS) {
+         protected void DrawStaticPart() {
             View.PaintContext.IsUseBackgroundColor = true;
 
             IList<BaseCell> notRotated;
@@ -210,11 +208,10 @@ namespace fmg.uwp.draw.img.win2d {
                   ++i;
                }
             }
-            View.Paintable = paintableDS;
             View.Invalidate(notRotated);
          }
 
-         protected void DrawRotatedPart(CanvasDrawingSession paintableDS) {
+         protected void DrawRotatedPart() {
             if (!RotatedElements.Any())
                return;
 
@@ -231,7 +228,6 @@ namespace fmg.uwp.draw.img.win2d {
             var rotatedCells = new List<BaseCell>(RotatedElements.Count);
             foreach (RotatedCellContext cntxt in RotatedElements)
                rotatedCells.Add(matrix[cntxt.index]);
-            View.Paintable = paintableDS;
             View.Invalidate(rotatedCells);
 
             // restore
@@ -239,12 +235,12 @@ namespace fmg.uwp.draw.img.win2d {
             pb.ColorLight = pb.ColorShadow = borderColor; //BorderColor = borderColor;
          }
 
-         protected void DrawBodySomeCells(CanvasDrawingSession paintableDS) {
+         protected void DrawBodySomeCells() {
             if (UseCache)
-               CopyFromCache(paintableDS);
+               CopyFromCache();
             else
-               DrawStaticPart(paintableDS);
-            DrawRotatedPart(paintableDS);
+               DrawStaticPart();
+            DrawRotatedPart();
          }
 
          #endregion
@@ -283,7 +279,9 @@ namespace fmg.uwp.draw.img.win2d {
          protected override void DrawBody() {
             using (var ds = ((CanvasRenderTarget)Image).CreateDrawingSession()) {
                View.PaintContext.IsUseBackgroundColor = true;
-               DrawBody(ds);
+               View.Paintable = ds;
+               base.DrawBody();
+               View.Paintable = null;
             }
          }
 
@@ -307,7 +305,9 @@ namespace fmg.uwp.draw.img.win2d {
          protected override void DrawBody() {
             using (var ds = Image.CreateDrawingSession(BackgroundColor.ToWinColor())) {
                View.PaintContext.IsUseBackgroundColor = false;
-               DrawBody(ds);
+               View.Paintable = ds;
+               base.DrawBody();
+               View.Paintable = null;
             }
          }
 

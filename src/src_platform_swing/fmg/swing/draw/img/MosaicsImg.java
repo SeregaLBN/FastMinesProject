@@ -133,13 +133,14 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
       }
    }
 
-   protected void drawBody(Graphics paintableGraphics) {
+   @Override
+   protected void drawBody() {
       switch (getRotateMode()) {
       case fullMatrix:
-         drawBodyFullMatrix(paintableGraphics);
+         drawBodyFullMatrix();
          break;
       case someCells:
-         drawBodySomeCells(paintableGraphics);
+         drawBodySomeCells();
          break;
       }
    }
@@ -153,15 +154,14 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
     *    Т.к. WriteableBitmap есть DependencyObject, то его владелец может сам отслеживать отрисовку...
     *  }
     */
-   private void drawBodyFullMatrix(Graphics paintableGraphics) {
+   private void drawBodyFullMatrix() {
       getView().getPaintContext().setUseBackgroundColor(true);
-      getView().setPaintable(paintableGraphics);
       getView().invalidate(getMatrix());
    }
 
    /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
 
-   private static final boolean USE_CACHE = false;
+   private static final boolean USE_CACHE = false; // true is not supported in SWING
 
    /** need redraw the static part of the cache */
    private boolean _invalidateCache = true;
@@ -177,19 +177,20 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
       }
       if (_invalidateCache) {
          _invalidateCache = false;
-       //Graphics paintableGraphics = _imageCache as Graphics; // not implement in SWING :(
-         Graphics paintableGraphics = getView().getPaintable();
-         drawCache(paintableGraphics);
+         //Graphics save = getView().getPaintable();
+         //getView().setPaintable(_imageCache as Graphics); // not implement in SWING :(
+         drawCache();
+         //getView().setPaintable(save); // restore
       }
       return _imageCache;
    }
 
    /** copy cached image to original */
-   protected abstract void copyFromCache(Graphics paintableGraphics);
+   protected abstract void copyFromCache();
 
-   protected void drawCache(Graphics paintableGraphics) { drawStaticPart(paintableGraphics); }
+   protected void drawCache() { drawStaticPart(); }
 
-   private void drawStaticPart(Graphics paintableGraphics) {
+   private void drawStaticPart() {
       getView().getPaintContext().setUseBackgroundColor(true);
 
       List<BaseCell> notRotated;
@@ -206,11 +207,10 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
             ++i;
          }
       }
-      getView().setPaintable(paintableGraphics);
       getView().invalidate(notRotated);
    }
 
-   private void drawRotatedPart(Graphics paintableGraphics) {
+   private void drawRotatedPart() {
       if (_rotatedElements.isEmpty())
          return;
 
@@ -228,7 +228,6 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
       List<BaseCell> rotatedCells = new ArrayList<>(_rotatedElements.size());
       for (RotatedCellContext cntxt : _rotatedElements)
          rotatedCells.add(matrix.get(cntxt.index));
-      getView().setPaintable(paintableGraphics);
       getView().invalidate(rotatedCells);
 
       // restore
@@ -237,12 +236,12 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
       pb.setColorShadow(borderColor); //BorderColor = borderColor;
    }
 
-   private void drawBodySomeCells(Graphics paintableGraphics) {
+   private void drawBodySomeCells() {
       if (USE_CACHE)
-         copyFromCache(paintableGraphics);
+         copyFromCache();
       else
-         drawStaticPart(paintableGraphics);
-      drawRotatedPart(paintableGraphics);
+         drawStaticPart();
+      drawRotatedPart();
    }
 
    @Override
@@ -296,15 +295,17 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
       }
 
       @Override
-      protected void copyFromCache(Graphics paintableGraphics) {
+      protected void copyFromCache() {
 //       paintableGraphics.drawImage(getImageCache(), 0, 0, getSize().width, getSize().height, null);
          throw new UnsupportedOperationException("not implemented...");
       }
 
-      @Override
-      protected void drawBody() {
-         drawBody(gBuffImg);
-      }
+//      @Override
+//      protected void drawBody() {
+//         getView().setPaintable(gBuffImg);
+//         super.drawBody();
+//         getView().setPaintable(null);
+//      }
 
       @Override
       public void close() {
@@ -336,7 +337,7 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
       }
 
       @Override
-      protected void copyFromCache(Graphics paintableGraphics) {
+      protected void copyFromCache() {
 //         paintableGraphics.drawImage(getImageCache(), 0, 0, getSize().width, getSize().height, null);
          throw new UnsupportedOperationException("not implemented...");
       }
@@ -349,7 +350,8 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
          g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
          g.setClip(0, 0, getSize().width, getSize().height);
          getView().setPaintable(g);
-         super.drawBody(g);
+         super.drawBody();
+         getView().setPaintable(null);
          g.dispose();
       }
 

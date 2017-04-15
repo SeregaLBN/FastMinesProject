@@ -185,17 +185,16 @@ namespace fmg.uwp.draw.img.wbmp {
       }
 
       protected override void DrawBody() {
-         DrawBody(Image);
-      }
-      protected void DrawBody(WriteableBitmap paintableImg) {
+         View.Paintable = Image;
          switch (RotateMode) {
          case ERotateMode.FullMatrix:
-            DrawBodyFullMatrix(paintableImg);
+            DrawBodyFullMatrix();
             break;
          case ERotateMode.SomeCells:
-            DrawBodySomeCells(paintableImg);
+            DrawBodySomeCells();
             break;
          }
+         View.Paintable = null;
       }
 
       #region PART ERotateMode.FullMatrix
@@ -207,10 +206,9 @@ namespace fmg.uwp.draw.img.wbmp {
       ///   Т.к. WriteableBitmap есть DependencyObject, то его владелец может сам отслеживать отрисовку...
       /// }
       /// </summary>
-      protected void DrawBodyFullMatrix(WriteableBitmap paintableImg) {
+      protected void DrawBodyFullMatrix() {
          View.PaintContext.IsUseBackgroundColor = true;
          View.SyncDraw = (SyncDraw || LiveImage());
-         View.Paintable = paintableImg;
          View.Invalidate(Matrix);
       }
 
@@ -235,21 +233,25 @@ namespace fmg.uwp.draw.img.wbmp {
             }
             if (_invalidateCache) {
                _invalidateCache = false;
+               var save = View.Paintable;
+               View.Paintable = _imageCache;
                DrawCache();
+               View.Paintable = save; // restore
             }
             return _imageCache;
          }
       }
 
       /// <summary> copy cached image to original </summary>
-      private void CopyFromCache(WriteableBitmap paintableImg) {
+      private void CopyFromCache() {
+         WriteableBitmap paintableImg = View.Paintable;
          var rc = new Windows.Foundation.Rect(0, 0, Size.Width, Size.Height);
          paintableImg.Blit(rc, ImageCache, rc, WriteableBitmapExtensions.BlendMode.None);
       }
 
-      private void DrawCache() { DrawStaticPart(_imageCache); }
+      private void DrawCache() { DrawStaticPart(); }
 
-      private void DrawStaticPart(WriteableBitmap paintableImg) {
+      private void DrawStaticPart() {
          View.PaintContext.IsUseBackgroundColor = true;
 
          IList<BaseCell> notRotated;
@@ -267,11 +269,10 @@ namespace fmg.uwp.draw.img.wbmp {
             }
          }
          View.SyncDraw = true;
-         View.Paintable = paintableImg;
          View.Invalidate(notRotated);
       }
 
-      protected void DrawRotatedPart(WriteableBitmap paintableImg) {
+      protected void DrawRotatedPart() {
          if (!RotatedElements.Any())
             return;
 
@@ -289,7 +290,6 @@ namespace fmg.uwp.draw.img.wbmp {
          foreach (RotatedCellContext cntxt in RotatedElements)
             rotatedCells.Add(matrix[cntxt.index]);
          View.SyncDraw = true;
-         View.Paintable = paintableImg;
          View.Invalidate(rotatedCells);
 
          // restore
@@ -297,17 +297,17 @@ namespace fmg.uwp.draw.img.wbmp {
          pb.ColorLight = pb.ColorShadow = borderColor; //BorderColor = borderColor;
       }
 
-      protected void DrawBodySomeCells(WriteableBitmap paintableImg) {
+      protected void DrawBodySomeCells() {
          if (SyncDraw || LiveImage()) {
             // sync draw
             if (UseCache)
-               CopyFromCache(paintableImg);
+               CopyFromCache();
             else
-               DrawStaticPart(paintableImg);
-            DrawRotatedPart(Image);
+               DrawStaticPart();
+            DrawRotatedPart();
          } else {
             // async draw
-            DrawBodyFullMatrix(paintableImg);
+            DrawBodyFullMatrix();
          }
       }
 

@@ -100,6 +100,7 @@ namespace fmg.uwp.mosaic.win2d {
                using (var ds = sender.CreateDrawingSession(region)) {
                   Paintable = ds;
                   Repaint(null, region.ToFmRectDouble());
+                  Paintable = null;
                }
             }
             _alreadyPainted2 = false;
