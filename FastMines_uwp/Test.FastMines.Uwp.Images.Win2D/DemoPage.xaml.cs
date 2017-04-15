@@ -355,13 +355,13 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                   var simg = imgObj as StaticImg<TImage>;
                   simg.Size = imgSize;
                } else
-               if (imgObj is Flag.CommonImpl<TImage>) {
-                  var fimg = imgObj as Flag.CommonImpl<TImage>;
+               if (imgObj is Flag.AFlagImageWin2D<TImage>) {
+                  var fimg = imgObj as Flag.AFlagImageWin2D<TImage>;
                   fimg.Width = imgSize.Width;
                   fimg.Height = imgSize.Height;
                } else
-               if (imgObj is Smile.CommonImpl<TImage>) {
-                  var simg = imgObj as Smile.CommonImpl<TImage>;
+               if (imgObj is Smile.ASmileImageWin2D<TImage>) {
+                  var simg = imgObj as Smile.ASmileImageWin2D<TImage>;
                   simg.Width = imgSize.Width;
                   simg.Height = imgSize.Height;
                } else {

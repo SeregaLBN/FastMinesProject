@@ -69,6 +69,12 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
          // none
       }
 
+      @Override
+      public void close() {
+         super.close();
+         _cellPaint = null;
+      }
+
    }
 
    protected AMosaicImgView _view;
@@ -242,7 +248,7 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
    @Override
    public void close() {
       super.close();
-      getPaintContext().close();
+      setView(null);
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////

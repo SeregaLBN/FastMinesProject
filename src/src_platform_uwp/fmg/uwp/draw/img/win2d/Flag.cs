@@ -13,8 +13,8 @@ namespace fmg.uwp.draw.img.win2d {
    /// <summary> Flag image </summary>
    public static class Flag {
 
-      /// <summary> Flag image: common implementation part </summary>
-      public abstract class CommonImpl<TImage> : Disposable
+      /// <summary> Flag image: common Win2D implementation part </summary>
+      public abstract class AFlagImageWin2D<TImage> : Disposable
          where TImage : DependencyObject, ICanvasResourceCreator
       {
          protected readonly ICanvasResourceCreator _rc;
@@ -22,7 +22,7 @@ namespace fmg.uwp.draw.img.win2d {
          private int _width = 100;
          private int _height = 100;
 
-         protected CommonImpl(ICanvasResourceCreator resourceCreator) {
+         protected AFlagImageWin2D(ICanvasResourceCreator resourceCreator) {
             _rc = resourceCreator;
          }
 
@@ -126,7 +126,7 @@ namespace fmg.uwp.draw.img.win2d {
       /// <br/>
       /// CanvasBitmap impl
       /// </summary>
-      public class CanvasBmp : CommonImpl<CanvasBitmap> {
+      public class CanvasBmp : AFlagImageWin2D<CanvasBitmap> {
 
          public CanvasBmp(ICanvasResourceCreator resourceCreator)
             : base(resourceCreator)
@@ -149,7 +149,7 @@ namespace fmg.uwp.draw.img.win2d {
       /// <br/>
       /// CanvasImageSource impl (XAML ImageSource compatible)
       /// </summary>
-      public class CanvasImgSrc : CommonImpl<CanvasImageSource> {
+      public class CanvasImgSrc : AFlagImageWin2D<CanvasImageSource> {
 
          public CanvasImgSrc(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
             : base(resourceCreator)

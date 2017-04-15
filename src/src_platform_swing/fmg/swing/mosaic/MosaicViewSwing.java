@@ -113,4 +113,12 @@ public class MosaicViewSwing extends AMosaicViewSwing<Icon> {
       pc.setImgMine(ImgUtils.zoom(new Mine(), sq, sq));
    }
 
+   @Override
+   public void close() {
+      super.close();
+      _controller = null;
+      _control    = null;
+      _cellPaint  = null;
+   }
+
 }

@@ -84,7 +84,15 @@ public abstract class StaticImg<TImage> extends NotifyPropertyChanged {
       return _image;
    }
    protected void setImage(TImage value) {
-      setProperty(_image, value, PROPERTY_IMAGE);
+      TImage old = _image;
+      if (setProperty(_image, value, PROPERTY_IMAGE)) {
+         if (old instanceof AutoCloseable)
+            try {
+               ((AutoCloseable)old).close();
+            } catch (Exception ex) {
+               ex.printStackTrace();
+            }
+      }
    }
 
    private Color _backgroundColor = DefaultBkColor;
@@ -164,6 +172,12 @@ public abstract class StaticImg<TImage> extends NotifyPropertyChanged {
          super.onSelfPropertyChanged(oldValue, newValue, propertyName);
       else
          DEFERR_INVOKER.accept( () -> super.onSelfPropertyChanged(oldValue, newValue, propertyName) );
+   }
+
+   @Override
+   public void close() {
+      super.close();
+      setImage(null);
    }
 
 }

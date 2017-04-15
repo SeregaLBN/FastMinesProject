@@ -25,25 +25,25 @@ namespace fmg.uwp.draw.img.win2d {
       private const bool RandomCellBkColor = true;
       private static Random Rand => new Random(Guid.NewGuid().GetHashCode());
 
-      /// <summary> Representable <see cref="EMosaic"/> as image: common implementation part </summary>
-      public abstract class CommonImpl<TImage> : AMosaicsImg<TImage>
+      /// <summary> Representable <see cref="EMosaic"/> as image: common Win2D implementation part </summary>
+      public abstract class AMosaicImgWin2D<TImage> : AMosaicsImg<TImage>
          where TImage : DependencyObject, ICanvasResourceCreator
       {
          protected readonly ICanvasResourceCreator _rc;
          private MosaicImgView _view;
 
-         static CommonImpl() {
+         static AMosaicImgWin2D() {
             StaticRotateImgConsts.Init();
          }
 
-         protected CommonImpl(ICanvasResourceCreator resourceCreator) {
+         protected AMosaicImgWin2D(ICanvasResourceCreator resourceCreator) {
             _rc = resourceCreator;
          }
 
          protected class MosaicImgView : AMosaicViewWin2D {
 
-            private CommonImpl<TImage> _owner;
-            public MosaicImgView(CommonImpl<TImage> owner) {
+            private AMosaicImgWin2D<TImage> _owner;
+            public MosaicImgView(AMosaicImgWin2D<TImage> owner) {
                _owner = owner;
             }
 
@@ -66,10 +66,10 @@ namespace fmg.uwp.draw.img.win2d {
                if (Disposed)
                   return;
 
+               base.Dispose(disposing);
+
                if (disposing)
                   _owner = null;
-
-               base.Dispose(disposing);
             }
 
          }
@@ -269,7 +269,7 @@ namespace fmg.uwp.draw.img.win2d {
       /// <br/>
       /// CanvasBitmap impl
       /// </summary>
-      public class CanvasBmp : CommonImpl<CanvasBitmap> {
+      public class CanvasBmp : AMosaicImgWin2D<CanvasBitmap> {
 
          public CanvasBmp(ICanvasResourceCreator resourceCreator)
             : base(resourceCreator)
@@ -293,7 +293,7 @@ namespace fmg.uwp.draw.img.win2d {
       /// <br/>
       /// CanvasImageSource impl (XAML ImageSource compatible)
       /// </summary>
-      public class CanvasImgSrc : CommonImpl<CanvasImageSource> {
+      public class CanvasImgSrc : AMosaicImgWin2D<CanvasImageSource> {
 
          public CanvasImgSrc(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
             : base(resourceCreator)

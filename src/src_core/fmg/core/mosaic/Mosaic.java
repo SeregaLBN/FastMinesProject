@@ -54,6 +54,15 @@ public class Mosaic
    public static final String PROPERTY_MATRIX      = "Matrix";
    public static final String PROPERTY_MOSAIC_TYPE = "MosaicType";
 
+   @Override
+   public BaseCell.BaseAttribute getCellAttr() {
+      if (_cellAttr == null) {
+         _cellAttr = MosaicHelper.createAttributeInstance(getMosaicType());
+         _cellAttr.setArea(500);
+         _cellAttr.addListener(this);
+      }
+      return _cellAttr;
+   }
    private void setCellAttr(BaseCell.BaseAttribute newValue) {
       if (_cellAttr == null)
          return;
@@ -64,15 +73,6 @@ public class Mosaic
       _matrix.clear();
       onSelfPropertyChanged(PROPERTY_CELL_ATTR);
       onSelfPropertyChanged(PROPERTY_MATRIX);
-   }
-   @Override
-   public BaseCell.BaseAttribute getCellAttr() {
-      if (_cellAttr == null) {
-         _cellAttr = MosaicHelper.createAttributeInstance(getMosaicType());
-         _cellAttr.setArea(500);
-         _cellAttr.addListener(this);
-      }
-      return _cellAttr;
    }
 
    /** площадь ячеек */
@@ -166,8 +166,8 @@ public class Mosaic
 
    @Override
    public void close() {
-      setCellAttr(null);
       super.close();
+      setCellAttr(null);
    }
 
 }

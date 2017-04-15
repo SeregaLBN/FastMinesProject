@@ -339,4 +339,10 @@ public abstract class AMosaicsImg<TImage>
       }
    }
 
+   @Override
+   public void close() {
+      super.close();
+      setMosaic(null);
+   }
+
 }

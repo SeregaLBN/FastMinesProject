@@ -52,8 +52,8 @@ namespace fmg.uwp.draw.img.win2d {
          Face_EyesClosed
       }
 
-      /// <summary> Smile image: common implementation part </summary>
-      public abstract class CommonImpl<TImage> : Disposable
+      /// <summary> Smile image: common Win2D implementation part </summary>
+      public abstract class ASmileImageWin2D<TImage> : Disposable
          where TImage : DependencyObject, ICanvasResourceCreator
       {
 
@@ -63,7 +63,7 @@ namespace fmg.uwp.draw.img.win2d {
          private int _width = 100;
          private int _height = 100;
 
-         protected CommonImpl(EType type, ICanvasResourceCreator resourceCreator) {
+         protected ASmileImageWin2D(EType type, ICanvasResourceCreator resourceCreator) {
             _type = type;
             _rc = resourceCreator;
          }
@@ -424,7 +424,7 @@ namespace fmg.uwp.draw.img.win2d {
       /// <br/>
       /// CanvasBitmap impl
       /// </summary>
-      public class CanvasBmp : CommonImpl<CanvasBitmap> {
+      public class CanvasBmp : ASmileImageWin2D<CanvasBitmap> {
 
          public CanvasBmp(EType type, ICanvasResourceCreator resourceCreator)
             : base(type, resourceCreator)
@@ -447,7 +447,7 @@ namespace fmg.uwp.draw.img.win2d {
       /// <br/>
       /// CanvasImageSource impl (XAML ImageSource compatible)
       /// </summary>
-      public class CanvasImgSrc : CommonImpl<CanvasImageSource> {
+      public class CanvasImgSrc : ASmileImageWin2D<CanvasImageSource> {
 
          public CanvasImgSrc(EType type, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
             : base(type, resourceCreator)

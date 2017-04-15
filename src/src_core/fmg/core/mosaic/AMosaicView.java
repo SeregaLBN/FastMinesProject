@@ -119,7 +119,9 @@ public abstract class AMosaicView<TPaintable extends IPaintable,
 
    @Override
    public void close() {
+      //super.close();
       setPaintContext(null); // unsubscribe & dispose
+      setMosaic(null);
    }
 
 }

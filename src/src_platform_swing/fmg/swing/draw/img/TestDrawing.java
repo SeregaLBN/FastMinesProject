@@ -127,9 +127,16 @@ final class TestDrawing extends ATestDrawing {
                   images.stream()
                      .filter(x -> x instanceof StaticImg)
                      .map(x -> (StaticImg<?>)x)
-                     .forEach(img -> {
-                        img.removeListener(l);
-                        img.close();
+                     .forEach(img -> img.removeListener(l));
+                  images.stream()
+                     .filter(x -> x instanceof AutoCloseable)
+                     .map(x -> (AutoCloseable)x)
+                     .forEach(x -> {
+                        try {
+                           x.close();
+                        } catch (Exception ex) {
+                           ex.printStackTrace();
+                        }
                      });
                   dispose();
                }

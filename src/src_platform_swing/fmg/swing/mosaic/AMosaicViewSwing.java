@@ -62,4 +62,10 @@ public abstract class AMosaicViewSwing<TImage> extends AMosaicView<PaintableGrap
       }
    }
 
+   @Override
+   public void close() {
+      super.close();
+      setPaintable(null);
+   }
+
 }
