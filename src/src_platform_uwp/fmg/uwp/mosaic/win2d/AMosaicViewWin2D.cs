@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.Graphics.Canvas;
-using fmg.common;
+using fmg.common.geom;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 using fmg.core.mosaic.draw;
@@ -19,7 +19,7 @@ namespace fmg.uwp.mosaic.win2d {
       public CanvasDrawingSession Paintable { get; set; }
 
       protected bool _alreadyPainted = false;
-      protected void Repaint(IEnumerable<BaseCell> modifiedCells, Windows.Foundation.Rect clipRegion) {
+      protected void Repaint(IEnumerable<BaseCell> modifiedCells, RectDouble clipRegion) {
          var ds = Paintable;
          if (ds == null)
             return;
@@ -46,15 +46,23 @@ namespace fmg.uwp.mosaic.win2d {
             var sizeMosaic = Mosaic.SizeField;
             var cellPaint = CellPaint;
             foreach (var cell in modifiedCells) {
-               var tmp = new Windows.Foundation.Rect(clipRegion.X, clipRegion.Y, clipRegion.Width, clipRegion.Height);
-               tmp.Intersect(cell.getRcOuter().ToWinRect());
-               var intersected = (tmp != Windows.Foundation.Rect.Empty);
-               if (intersected)
+               var rco = cell.getRcOuter();
+               if (rco.Intersects(clipRegion))
                   cellPaint.Paint(cell, p, pc);
             }
          }
 
          _alreadyPainted = false;
+      }
+
+      protected override void Dispose(bool disposing) {
+         if (Disposed)
+            return;
+
+         base.Dispose(disposing);
+
+         if (disposing)
+            _cellPaint = null;
       }
 
    }

@@ -9,10 +9,10 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
-using fmg.uwp.draw.mosaic;
-using fmg.uwp.utils;
-using fmg.uwp.mosaic.win2d;
 using fmg.core.mosaic.cells;
+using fmg.uwp.utils;
+using fmg.uwp.draw.mosaic;
+using fmg.uwp.mosaic.win2d;
 
 namespace fmg.uwp.draw.img.win2d {
 
@@ -21,10 +21,6 @@ namespace fmg.uwp.draw.img.win2d {
    /// Win2D impl
    /// </summary>
    public static class MosaicsImg {
-
-      static MosaicsImg() {
-         StaticRotateImgConsts.Init();
-      }
 
       private const bool RandomCellBkColor = true;
       private static Random Rand => new Random(Guid.NewGuid().GetHashCode());
@@ -36,13 +32,17 @@ namespace fmg.uwp.draw.img.win2d {
          protected readonly ICanvasResourceCreator _rc;
          private MosaicImgView _view;
 
+         static CommonImpl() {
+            StaticRotateImgConsts.Init();
+         }
+
          protected CommonImpl(ICanvasResourceCreator resourceCreator) {
             _rc = resourceCreator;
          }
 
          protected class MosaicImgView : AMosaicViewWin2D {
 
-            readonly CommonImpl<TImage> _owner;
+            private CommonImpl<TImage> _owner;
             public MosaicImgView(CommonImpl<TImage> owner) {
                _owner = owner;
             }
@@ -55,12 +55,23 @@ namespace fmg.uwp.draw.img.win2d {
                return cntxt;
             }
             public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {
-               Repaint(modifiedCells, (new Windows.Foundation.Rect(0,0,_owner.Size.Width, _owner.Size.Width)));
+               Repaint(modifiedCells, new RectDouble(_owner.Size.Width, _owner.Size.Width));
             }
 
             protected override void ChangeSizeImagesMineFlag() {
                // none...
             }
+
+            protected override void Dispose(bool disposing) {
+               if (Disposed)
+                  return;
+
+               if (disposing)
+                  _owner = null;
+
+               base.Dispose(disposing);
+            }
+
          }
 
          protected MosaicImgView View {
@@ -242,10 +253,10 @@ namespace fmg.uwp.draw.img.win2d {
             if (Disposed)
                return;
 
-            base.Dispose(disposing);
-
             if (disposing)
-               PaintContext.Dispose();
+               View = null;
+
+            base.Dispose(disposing);
          }
 
       }

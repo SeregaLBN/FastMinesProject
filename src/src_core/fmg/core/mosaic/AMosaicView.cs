@@ -108,6 +108,7 @@ namespace fmg.core.mosaic {
 
          if (disposing) {
             PaintContext = null; // call setter - unsubscribe & dispose
+            Mosaic = null;
          }
       }
 

@@ -80,7 +80,10 @@ namespace fmg.core.img {
             return _image;
          }
          protected set {
-            SetProperty(ref _image, value);
+            var old = _image;
+            if (SetProperty(ref _image, value)) {
+               (old as IDisposable)?.Dispose();
+            }
          }
       }
 
@@ -188,6 +191,16 @@ namespace fmg.core.img {
       }
 
       //protected abstract void OnSelfPropertyChangedAfter(bool sync, object sender, PropertyChangedEventArgs ev);
+
+      protected override void Dispose(bool disposing) {
+         if (Disposed)
+            return;
+
+         base.Dispose(disposing);
+
+         if (disposing)
+            Image = null;
+      }
 
    }
 

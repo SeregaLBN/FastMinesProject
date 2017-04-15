@@ -41,7 +41,7 @@ namespace fmg.uwp.draw.img.wbmp {
          public WriteableBitmap Paintable { get; set; }
          public bool SyncDraw { get; set; }
 
-         readonly MosaicsImg _owner;
+         private MosaicsImg _owner;
          public MosaicImgView(MosaicsImg owner) {
             _owner = owner;
          }
@@ -56,11 +56,11 @@ namespace fmg.uwp.draw.img.wbmp {
 
          public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {
             var size = _owner.Size;
-            Repaint(modifiedCells, (new Windows.Foundation.Rect(0, 0, size.Width, size.Width)));
+            Repaint(modifiedCells, (new RectDouble(size.Width, size.Width)));
          }
 
          protected bool _alreadyPainted = false;
-         protected void Repaint(IEnumerable<BaseCell> modifiedCells, Windows.Foundation.Rect clipRegion) {
+         protected void Repaint(IEnumerable<BaseCell> modifiedCells, RectDouble clipRegion) {
             var img = Paintable;
             if (img == null)
                return;
@@ -69,7 +69,8 @@ namespace fmg.uwp.draw.img.wbmp {
 
             _alreadyPainted = true;
 
-            using (new Tracer()) {
+            //using (new Tracer())
+            {
 
                if (modifiedCells == null)
                   modifiedCells = Mosaic.Matrix; // check to redraw all mosaic cells
@@ -88,13 +89,16 @@ namespace fmg.uwp.draw.img.wbmp {
                   if (pc.IsUseBackgroundColor)
                      funcFillBk();
                   foreach (var cell in modifiedCells)
-                     cp.Paint(cell, paint, paintContext);
+                     if (cell.getRcOuter().Intersects(clipRegion))
+                        cp.Paint(cell, paint, paintContext);
                } else {
                   // async draw
                   AsyncRunner.InvokeFromUiLater(() => {
                      if (pc.IsUseBackgroundColor)
                         funcFillBk();
                      foreach (var cell in modifiedCells) {
+                        if (!cell.getRcOuter().Intersects(clipRegion))
+                           continue;
                         var tmp = cell;
                         AsyncRunner.InvokeFromUiLater(
                            () => cp.Paint(tmp, paint, paintContext),
@@ -114,6 +118,17 @@ namespace fmg.uwp.draw.img.wbmp {
          protected override void ChangeSizeImagesMineFlag() {
             // none...
          }
+
+         protected override void Dispose(bool disposing) {
+            if (Disposed)
+               return;
+
+            base.Dispose(disposing);
+
+            if (disposing)
+               _owner = null;
+         }
+
       }
 
       protected MosaicImgView View {
@@ -305,7 +320,7 @@ namespace fmg.uwp.draw.img.wbmp {
          base.Dispose(disposing);
 
          if (disposing)
-            PaintContext.Dispose();
+            View = null;
       }
 
    }

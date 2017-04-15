@@ -53,7 +53,7 @@ namespace fmg.uwp.draw.img.win2d {
       }
 
       /// <summary> Smile image: common implementation part </summary>
-      public abstract class CommonImpl<TImage>
+      public abstract class CommonImpl<TImage> : Disposable
          where TImage : DependencyObject, ICanvasResourceCreator
       {
 
@@ -78,17 +78,22 @@ namespace fmg.uwp.draw.img.win2d {
             }
          }
 
+         protected void ResetImage() {
+            (_img as IDisposable)?.Dispose();
+            _img = null;
+         }
+
          public int Width {
             get { return _width; }
-            set { _width = value; _img = null; }
+            set { _width = value; ResetImage(); }
          }
          public int Height {
             get { return _height; }
-            set { _height = value; _img = null; }
+            set { _height = value; ResetImage(); }
          }
          public EType Type {
             get { return _type; }
-            set { _type = value; _img = null; }
+            set { _type = value; ResetImage(); }
          }
 
          protected abstract TImage CreateImage();
@@ -397,6 +402,16 @@ namespace fmg.uwp.draw.img.win2d {
             };
             eye(right ? new PointDouble(-0.410, 0)
                       : new PointDouble());
+         }
+
+         protected override void Dispose(bool disposing) {
+            if (Disposed)
+               return;
+
+            base.Dispose(disposing);
+
+            if (disposing)
+               ResetImage();
          }
 
       }

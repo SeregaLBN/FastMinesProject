@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using Windows.UI.Xaml;
 using Windows.Graphics.Display;
@@ -13,7 +14,7 @@ namespace fmg.uwp.draw.img.win2d {
    public static class Flag {
 
       /// <summary> Flag image: common implementation part </summary>
-      public abstract class CommonImpl<TImage>
+      public abstract class CommonImpl<TImage> : Disposable
          where TImage : DependencyObject, ICanvasResourceCreator
       {
          protected readonly ICanvasResourceCreator _rc;
@@ -35,13 +36,18 @@ namespace fmg.uwp.draw.img.win2d {
             }
          }
 
+         protected void ResetImage() {
+            (_img as IDisposable)?.Dispose();
+            _img = null;
+         }
+
          public int Width {
             get { return _width; }
-            set { _width = value; _img = null; }
+            set { _width = value; ResetImage(); }
          }
          public int Height {
             get { return _height; }
-            set { _height = value; _img = null; }
+            set { _height = value; ResetImage(); }
          }
 
          protected abstract TImage CreateImage();
@@ -98,6 +104,16 @@ namespace fmg.uwp.draw.img.win2d {
                }
                //ds.DrawLine(p[1], p[2], clrRed, 15, cssLine);
             }
+         }
+
+         protected override void Dispose(bool disposing) {
+            if (Disposed)
+               return;
+
+            base.Dispose(disposing);
+
+            if (disposing)
+               ResetImage();
          }
 
       }

@@ -93,12 +93,13 @@ namespace fmg.uwp.mosaic.win2d {
       public void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
          using (new Tracer()) {
             System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _control));
+            System.Diagnostics.Debug.Assert(!_alreadyPainted2);
 
             _alreadyPainted2 = true;
             foreach (var region in ev.InvalidatedRegions) {
                using (var ds = sender.CreateDrawingSession(region)) {
                   Paintable = ds;
-                  Repaint(null, region);
+                  Repaint(null, region.ToFmRectDouble());
                }
             }
             _alreadyPainted2 = false;
@@ -128,7 +129,9 @@ namespace fmg.uwp.mosaic.win2d {
 
          if (disposing) {
             MineImg.Dispose();
-          //FlagImg.Dispose();
+            FlagImg.Dispose();
+            _mineImage = null;
+            _flagImage = null;
          }
       }
 

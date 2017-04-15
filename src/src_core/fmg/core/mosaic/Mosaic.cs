@@ -50,6 +50,14 @@ namespace fmg.core.mosaic
    #endregion
 
       public BaseCell.BaseAttribute CellAttr {
+         get {
+            if (_cellAttr == null) {
+               _cellAttr = MosaicHelper.CreateAttributeInstance(MosaicType);
+               _cellAttr.Area = 500;
+               _cellAttr.PropertyChanged += OnCellAttributePropertyChanged;
+            }
+            return _cellAttr;
+         }
          private set {
             if (_cellAttr == null)
                return;
@@ -60,14 +68,6 @@ namespace fmg.core.mosaic
             _matrix.Clear();
             OnSelfPropertyChanged();
             OnSelfPropertyChanged(nameof(this.Matrix));
-         }
-         get {
-            if (_cellAttr == null) {
-               _cellAttr = MosaicHelper.CreateAttributeInstance(MosaicType);
-               _cellAttr.Area = 500;
-               _cellAttr.PropertyChanged += OnCellAttributePropertyChanged;
-            }
-            return _cellAttr;
          }
       }
 
@@ -161,9 +161,8 @@ namespace fmg.core.mosaic
 
          base.Dispose(disposing);
 
-         if (disposing) {
+         if (disposing)
             CellAttr = null; // call setter - unsubscribe & dispose
-         }
       }
 
    }

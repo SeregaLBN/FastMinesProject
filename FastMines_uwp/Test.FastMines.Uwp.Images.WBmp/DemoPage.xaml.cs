@@ -214,7 +214,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
 
          _onCloseImages = () => {
             _panel.SizeChanged -= sceh;
-            images.Select(x => x as StaticImg<TImage>)
+            images.Select(x => x as IDisposable)
                .Where(x => x != null)
                .ToList()
                .ForEach(img => img.Dispose());

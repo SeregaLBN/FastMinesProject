@@ -378,7 +378,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
 
          _onCloseImages = () => {
             _panel.SizeChanged -= sceh;
-            images.Select(x => x as StaticImg<TImage>)
+            images.Select(x => x as IDisposable)
                .Where(x => x != null)
                .ToList()
                .ForEach(img => img.Dispose());
@@ -418,7 +418,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
    }
 
    public sealed class SizeConverter : IValueConverter {
-      private bool _width;
+      private readonly bool _width;
       public SizeConverter(bool width) {
          _width = width;
       }
