@@ -55,7 +55,7 @@ namespace fmg.uwp.draw.img.win2d {
                return cntxt;
             }
             public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {
-               Repaint(modifiedCells, new RectDouble(_owner.Size.Width, _owner.Size.Width));
+               Repaint(modifiedCells, new RectDouble(_owner.Size.Width, _owner.Size.Height));
             }
 
             protected override void ChangeSizeImagesMineFlag() {

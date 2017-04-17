@@ -56,7 +56,7 @@ namespace fmg.uwp.draw.img.wbmp {
 
          public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {
             var size = _owner.Size;
-            Repaint(modifiedCells, (new RectDouble(size.Width, size.Width)));
+            Repaint(modifiedCells, new RectDouble(size.Width, size.Height));
          }
 
          protected bool _alreadyPainted = false;
@@ -84,20 +84,26 @@ namespace fmg.uwp.draw.img.wbmp {
                var paint = new PaintableWBmp(img);
                var paintContext = PaintContext;
                var cp = CellPaint;
+               double padX = pc.Padding.Left, padY = pc.Padding.Top;
                if (SyncDraw) {
                   // sync draw
                   if (pc.IsUseBackgroundColor)
                      funcFillBk();
-                  foreach (var cell in modifiedCells)
-                     if (cell.getRcOuter().Intersects(clipRegion))
+                  foreach (var cell in modifiedCells) {
+                     var rco = cell.getRcOuter();
+                     rco = rco.MoveXY(padX, padY);
+                     if (rco.Intersection(clipRegion))
                         cp.Paint(cell, paint, paintContext);
+                  }
                } else {
                   // async draw
                   AsyncRunner.InvokeFromUiLater(() => {
                      if (pc.IsUseBackgroundColor)
                         funcFillBk();
                      foreach (var cell in modifiedCells) {
-                        if (!cell.getRcOuter().Intersects(clipRegion))
+                        var rco = cell.getRcOuter();
+                        rco = rco.MoveXY(padX, padY);
+                        if (!rco.Intersection(clipRegion))
                            continue;
                         var tmp = cell;
                         AsyncRunner.InvokeFromUiLater(

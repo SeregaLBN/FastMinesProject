@@ -54,9 +54,13 @@ public abstract class AMosaicViewSwing<TImage> extends AMosaicView<PaintableGrap
          PaintableGraphics p = createPaintableGraphics(g);
          RectDouble clipBounds = Cast.toRectDouble(rcFill);
          ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> cellPaint = getCellPaint();
-         for (BaseCell cell: modifiedCells)
-            if (cell.getRcOuter().Intersects(clipBounds)) // redraw only when needed - when the cells and update region intersect
+         double padX = pc.getPadding().left, padY = pc.getPadding().top;
+         for (BaseCell cell: modifiedCells) {
+            RectDouble rco = cell.getRcOuter();
+            rco = rco.moveXY(padX, padY);
+            if (rco.intersection(clipBounds)) // redraw only when needed - when the cells and update region intersect
                cellPaint.paint(cell, p, pc);
+         }
       } finally {
          _alreadyPainted = false;
       }

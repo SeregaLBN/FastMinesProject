@@ -359,8 +359,9 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(rnd -> {
-         return Stream.of(EMosaic.values())
+      TestDrawing.testApp(rnd ->
+         // test all
+         Stream.of(EMosaic.values())
 
                // variant 1
 //               .map(e -> new Pair<>(new MosaicsImg.Icon () { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }},
@@ -372,8 +373,11 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
                            ? new MosaicsImg.Icon () { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }}
                            : new MosaicsImg.Image() { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }})
 
-               .collect(Collectors.toList());
-      });
+               .collect(Collectors.toList())
+
+//       // test single
+//       Arrays.asList(new MosaicsImg.Image() { { setMosaicType(EMosaic.eMosaicPentagonT24); setSizeField(new Matrisize(3, 7)); }})
+      );
    }
    //////////////////////////////////
 

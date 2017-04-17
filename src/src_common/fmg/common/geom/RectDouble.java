@@ -79,8 +79,8 @@ public class RectDouble {
             sizeOutward.width / sizeInner.width,
             sizeOutward.height / sizeInner.height);
       RectDouble rect = new RectDouble();
-      rect.width = (double) (sizeInner.width * percent);
-      rect.height = (double) (sizeInner.height * percent);
+      rect.width = sizeInner.width * percent;
+      rect.height = sizeInner.height * percent;
       rect.x = (sizeOutward.width-rect.width) / 2;
       rect.y = (sizeOutward.height-rect.height) / 2;
       return rect;
@@ -102,12 +102,13 @@ public class RectDouble {
             newCenter.y - rc.height/2,
             rc.width, rc.height);
    }
-   
-   public boolean Intersects(RectDouble rc) {
-      return ((x >= rc.x) || (x < rc.right())) && ((y >= rc.y) || (y < rc.bottom()));
+
+   public boolean intersection(RectDouble rc) {
+      return (x < (rc.x + rc.width )) && ((x + width ) > rc.x) &&
+             (y < (rc.y + rc.height)) && ((y + height) > rc.y);
    }
 
-   public boolean Contains(PointDouble point) {
+   public boolean contains(PointDouble point) {
       return (point.x >= left()) && (point.x < right()) && (point.y >= top()) && (point.y < bottom());
    }
 

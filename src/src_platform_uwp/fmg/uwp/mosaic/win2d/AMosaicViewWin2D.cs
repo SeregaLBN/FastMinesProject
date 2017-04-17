@@ -35,7 +35,7 @@ namespace fmg.uwp.mosaic.win2d {
             if (pc.IsUseBackgroundColor) {
                // background color
                ds.Clear(pc.BackgroundColor.ToWinColor());
-               //ds.FillRectangle(clipRegion, pc.BackgroundColor.ToWinColor());
+               //ds.FillRectangle(clipRegion.ToWinRect(), pc.BackgroundColor.ToWinColor());
             }
 
             if (modifiedCells == null)
@@ -45,9 +45,11 @@ namespace fmg.uwp.mosaic.win2d {
             // paint all cells
             var sizeMosaic = Mosaic.SizeField;
             var cellPaint = CellPaint;
+            double padX = pc.Padding.Left, padY = pc.Padding.Top;
             foreach (var cell in modifiedCells) {
                var rco = cell.getRcOuter();
-               if (rco.Intersects(clipRegion))
+               rco = rco.MoveXY(padX, padY);
+               if (rco.Intersection(clipRegion))
                   cellPaint.Paint(cell, p, pc);
             }
          }

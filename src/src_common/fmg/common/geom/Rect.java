@@ -104,12 +104,13 @@ public class Rect {
             newCenter.y - (rc.height>>1),
             rc.width, rc.height);
    }
-   
-   public boolean Intersects(Rect rc) {
-      return ((x >= rc.x) || (x < rc.right())) && ((y >= rc.y) || (y < rc.bottom()));
+
+   public boolean intersection(Rect rc) {
+      return (x < (rc.x + rc.width )) && ((x + width ) > rc.x) &&
+             (y < (rc.y + rc.height)) && ((y + height) > rc.y);
    }
 
-   public boolean Contains(Point point) {
+   public boolean contains(Point point) {
       return (point.x >= left()) && (point.x < right()) && (point.y >= top()) && (point.y < bottom());
    }
 

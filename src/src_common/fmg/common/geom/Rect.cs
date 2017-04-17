@@ -23,8 +23,9 @@ namespace fmg.common.geom {
       public Rect(Size size) { X = Y = 0; Width = size.Width; Height = size.Height; }
       public Rect(int width, int height) { X = Y = 0; Width = width; Height = height; }
 
-      public bool Intersects(Rect rc) {
-         return ((X >= rc.X) || (X < rc.Right())) && ((Y >= rc.Y) || (Y < rc.Bottom()));
+      public bool Intersection(RectDouble rc) {
+         return (X < (rc.X + rc.Width )) && ((X + Width ) > rc.X) &&
+                (Y < (rc.Y + rc.Height)) && ((Y + Height) > rc.Y);
       }
 
       public bool Contains(Point point) {
