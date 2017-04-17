@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -55,7 +55,7 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
          PaintSwingContext<TImage> cntxt = new PaintSwingContext<>();
          cntxt.setIconicMode(true);
          if (RandomCellBkColor)
-            cntxt.getBackgroundFill().setMode(1 + new Random(UUID.randomUUID().hashCode()).nextInt(getMosaic().getCellAttr().getMaxBackgroundFillModeValue()));
+            cntxt.getBackgroundFill().setMode(1 + ThreadLocalRandom.current().nextInt(getMosaic().getCellAttr().getMaxBackgroundFillModeValue()));
          return cntxt;
       }
 
@@ -359,7 +359,11 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(rnd ->
+      Random rnd = ThreadLocalRandom.current();
+      TestDrawing.testApp(() ->
+//       // test single
+//       Arrays.asList(new MosaicsImg.Image() { { setMosaicType(EMosaic.eMosaicPentagonT24); setSizeField(new Matrisize(3, 7)); }})
+
          // test all
          Stream.of(EMosaic.values())
 
@@ -374,9 +378,6 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
                            : new MosaicsImg.Image() { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }})
 
                .collect(Collectors.toList())
-
-//       // test single
-//       Arrays.asList(new MosaicsImg.Image() { { setMosaicType(EMosaic.eMosaicPentagonT24); setSizeField(new Matrisize(3, 7)); }})
       );
    }
    //////////////////////////////////

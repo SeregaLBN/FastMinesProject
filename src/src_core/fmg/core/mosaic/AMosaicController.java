@@ -3,6 +3,7 @@ package fmg.core.mosaic;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
@@ -138,7 +139,7 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
       matrixClone.remove(firstClickCell); // исключаю на которой кликал юзер
       matrixClone.removeAll(firstClickCell.getNeighbors(mosaic)); // и их соседей
       int count = 0;
-      Random rand = new Random();
+      Random rand = ThreadLocalRandom.current();
       do {
          int len = matrixClone.size();
          if (len == 0) {

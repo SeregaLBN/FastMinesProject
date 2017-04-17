@@ -2,7 +2,7 @@ package fmg.core.img;
 
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -15,8 +15,7 @@ import fmg.common.geom.Size;
 
 public abstract class ATestDrawing {
 
-   private static final Random rnd = new Random(UUID.randomUUID().hashCode());
-   public Random getRandom() { return rnd; }
+   public Random getRandom() { return ThreadLocalRandom.current(); }
    public int r(int max) { return getRandom().nextInt(max); }
    public boolean bl() { return getRandom().nextBoolean(); } // random bool
    public int np() { return (bl() ? -1 : +1); } // negative or positive

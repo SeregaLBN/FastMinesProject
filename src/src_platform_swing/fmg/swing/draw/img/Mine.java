@@ -32,7 +32,7 @@ public class Mine implements Icon {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(rnd -> Arrays.asList( new Mine() ));
+      TestDrawing.testApp(() -> Arrays.asList( new Mine() ));
    }
    //////////////////////////////////
 

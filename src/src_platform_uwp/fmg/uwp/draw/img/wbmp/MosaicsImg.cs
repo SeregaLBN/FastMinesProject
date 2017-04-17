@@ -27,7 +27,6 @@ namespace fmg.uwp.draw.img.wbmp {
       }
 
       private const bool RandomCellBkColor = true;
-      private static Random Rand => new Random(Guid.NewGuid().GetHashCode());
 
       public bool SyncDraw { get; set; } = Windows.ApplicationModel.DesignMode.DesignModeEnabled;
 
@@ -50,7 +49,7 @@ namespace fmg.uwp.draw.img.wbmp {
             var cntxt = base.CreatePaintContext();
             cntxt.IconicMode = true;
             if (RandomCellBkColor)
-               cntxt.BkFill.Mode = 1 + Rand.Next(Mosaic.CellAttr.getMaxBackgroundFillModeValue());
+               cntxt.BkFill.Mode = 1 + ThreadLocalRandom.Current.Next(Mosaic.CellAttr.getMaxBackgroundFillModeValue());
             return cntxt;
          }
 
@@ -100,6 +99,7 @@ namespace fmg.uwp.draw.img.wbmp {
                   AsyncRunner.InvokeFromUiLater(() => {
                      if (pc.IsUseBackgroundColor)
                         funcFillBk();
+                     var rnd = ThreadLocalRandom.Current;
                      foreach (var cell in modifiedCells) {
                         var rco = cell.getRcOuter();
                         rco = rco.MoveXY(padX, padY);
@@ -108,7 +108,7 @@ namespace fmg.uwp.draw.img.wbmp {
                         var tmp = cell;
                         AsyncRunner.InvokeFromUiLater(
                            () => cp.Paint(tmp, paint, paintContext),
-                           ((Rand.Next() & 1) == 0)
+                           ((rnd.Next() & 1) == 0)
                               ? CoreDispatcherPriority.Low
                               : CoreDispatcherPriority.Normal
                         );

@@ -10,6 +10,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.ViewManagement;
 using Windows.Foundation.Metadata;
 using Windows.Phone.UI.Input;
+using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
@@ -34,7 +35,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
 
       #region images Fabrica
       public void TestLogos() {
-         TestAppW(rnd => new Logo[] {
+         TestAppW(() => new Logo[] {
             new Logo(),
             new Logo(),
             new Logo(),
@@ -42,32 +43,33 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          });
       }
       public void TestMosaicsSkillImg() {
-         TestAppW(rnd => (new MosaicsSkillImg[] { new MosaicsSkillImg(null), new MosaicsSkillImg(null) })
+         TestAppW(() => (new MosaicsSkillImg[] { new MosaicsSkillImg(null), new MosaicsSkillImg(null) })
                .Concat(ESkillLevelEx.GetValues()
                                     .Select(e => new MosaicsSkillImg[] { new MosaicsSkillImg(e), new MosaicsSkillImg(e) })
                                     .SelectMany(m => m)));
       }
       public void TestMosaicsGroupImg() {
-         TestAppW(rnd => (new MosaicsGroupImg[] { new MosaicsGroupImg(null), new MosaicsGroupImg(null) })
+         TestAppW(() => (new MosaicsGroupImg[] { new MosaicsGroupImg(null), new MosaicsGroupImg(null) })
                .Concat(EMosaicGroupEx.GetValues()
                                      .Select(e => new MosaicsGroupImg[] { new MosaicsGroupImg(e), new MosaicsGroupImg(e) })
                                      .SelectMany(m => m)));
       }
       public void TestMosaicsImg() {
-         TestAppW(rnd =>
+         var rnd = ThreadLocalRandom.Current;
+         TestAppW(() =>
             EMosaicEx.GetValues().Select(e => new MosaicsImg() {
                MosaicType = e,
-               SizeField = new Matrisize(2 + _td.R(2), 2 + _td.R(2))
+               SizeField = new Matrisize(2 + rnd.Next(2), 2 + rnd.Next(2))
             })
             //new List<MosaicsImg>() { new MosaicsImg() {
             //   MosaicType = EMosaic.eMosaicSquare1,
-            //   SizeField = new Matrisize(3 + _td.R(4), 4 + _td.R(3))
+            //   SizeField = new Matrisize(3 + rnd.Next(4), 4 + rnd.Next(3))
             //} }
          );
       }
-      public void TestFlag()  { TestAppW(rnd => new Flag[]  { new Flag() }); }
-      public void TestMine()  { TestAppW(rnd => new Mine[]  { new Mine() }); }
-      public void TestSmile() { TestAppW(rnd => new Smile[] { new Smile() }); }
+      public void TestFlag()  { TestAppW(() => new Flag[]  { new Flag() }); }
+      public void TestMine()  { TestAppW(() => new Mine[]  { new Mine() }); }
+      public void TestSmile() { TestAppW(() => new Smile[] { new Smile() }); }
       #endregion
 
 
@@ -90,12 +92,12 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       }
 
       #region main part
-      void TestAppW<TImageEx>(Func<Random, IEnumerable<TImageEx>> funcGetImages)
+      void TestAppW<TImageEx>(Func<IEnumerable<TImageEx>> funcGetImages)
          where TImageEx : class {
          TestApp<TImageEx, PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>, WriteableBitmap>(funcGetImages);
       }
 
-      void TestApp<TImageEx, TPaintable, TImage, TPaintContext, TImageInner>(Func<Random, IEnumerable<TImageEx>> funcGetImages)
+      void TestApp<TImageEx, TPaintable, TImage, TPaintContext, TImageInner>(Func<IEnumerable<TImageEx>> funcGetImages)
          where TImageEx : class
          where TPaintable : IPaintable
          where TImage : class
@@ -103,7 +105,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          where TPaintContext : PaintContext<TImageInner>
       {
          _panel.Children.Clear();
-         List<TImageEx> images = funcGetImages(_td.GetRandom).ToList();
+         List<TImageEx> images = funcGetImages().ToList();
          ApplicationView.GetForCurrentView().Title = _td.GetTitle(images);
 
          bool testTransparent = _td.Bl;

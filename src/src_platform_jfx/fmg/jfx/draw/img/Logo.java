@@ -157,10 +157,10 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(rnd -> Arrays.asList(new Logo.Canvas()
-                                             , new Logo.Image()
-                                             , new Logo.Canvas()
-                                             , new Logo.Image()
+      TestDrawing.testApp(() -> Arrays.asList(new Logo.Canvas()
+                                            , new Logo.Image()
+                                            , new Logo.Canvas()
+                                            , new Logo.Image()
                          ));
    }
    //////////////////////////////////

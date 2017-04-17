@@ -1,6 +1,7 @@
 package fmg.jfx;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -120,7 +121,7 @@ public class Main extends Application {
         double width = gc.getCanvas().getWidth();
         double height = gc.getCanvas().getHeight();
 
-        Random random = new Random(System.currentTimeMillis());
+        Random random = ThreadLocalRandom.current();
 
         gc.setFill(Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255), 0.9));
         gc.translate(width / 2, height / 2);

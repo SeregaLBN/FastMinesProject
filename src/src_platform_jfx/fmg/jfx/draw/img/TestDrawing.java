@@ -1,8 +1,8 @@
 package fmg.jfx.draw.img;
 
 import java.util.List;
-import java.util.Random;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import fmg.common.Color;
 import fmg.common.geom.PointDouble;
@@ -29,7 +29,7 @@ public final class TestDrawing extends Application {
 
    static final int margin = 10;
 
-   static Function<Random, List<?>> funcGetImages;
+   static Supplier<List<?>> funcGetImages;
    Canvas canvas;
 
    @Override
@@ -37,7 +37,7 @@ public final class TestDrawing extends Application {
 
       ATestDrawing td = new ATestDrawing() { };
 
-      List<?> images = funcGetImages.apply(td.getRandom());
+      List<?> images = funcGetImages.get();
       boolean testTransparent = td.bl();
       final RectDouble[] rc = { new RectDouble() };
       final CellTilingResult[] ctr = { new CellTilingResult() };
@@ -132,7 +132,7 @@ public final class TestDrawing extends Application {
       primaryStage.show();
    }
 
-   static void testApp(Function<Random, List<?>> funcGetImages) {
+   static void testApp(Supplier<List<?>> funcGetImages) {
       TestDrawing.funcGetImages = funcGetImages;
       launch();
    }

@@ -23,7 +23,6 @@ namespace fmg.uwp.draw.img.win2d {
    public static class MosaicsImg {
 
       private const bool RandomCellBkColor = true;
-      private static Random Rand => new Random(Guid.NewGuid().GetHashCode());
 
       /// <summary> Representable <see cref="EMosaic"/> as image: common Win2D implementation part </summary>
       public abstract class AMosaicImgWin2D<TImage> : AMosaicsImg<TImage>
@@ -51,7 +50,7 @@ namespace fmg.uwp.draw.img.win2d {
                var cntxt = base.CreatePaintContext();
                cntxt.IconicMode = true;
                if (RandomCellBkColor)
-                  cntxt.BkFill.Mode = 1 + Rand.Next(Mosaic.CellAttr.getMaxBackgroundFillModeValue());
+                  cntxt.BkFill.Mode = 1 + ThreadLocalRandom.Current.Next(Mosaic.CellAttr.getMaxBackgroundFillModeValue());
                return cntxt;
             }
             public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {

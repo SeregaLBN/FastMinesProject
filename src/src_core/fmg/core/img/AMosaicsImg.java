@@ -2,7 +2,11 @@ package fmg.core.img;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import fmg.common.geom.*;
 import fmg.common.geom.util.FigureHelper;
@@ -263,7 +267,7 @@ public abstract class AMosaicsImg<TImage>
 
       // create random cells indexes  and  base rotate offset (negative)
       int len = getMatrix().size();
-      Random rand = new Random(UUID.randomUUID().hashCode());
+      Random rand = ThreadLocalRandom.current();
       for (int i = 0; i < len/4.5; ++i) {
          addRandomToPrepareList(i==0, rand);
       }
@@ -291,7 +295,7 @@ public abstract class AMosaicsImg<TImage>
       double angleNew = getRotateAngle();
       double rotateDelta = getRotateAngleDelta();
       double area = getArea();
-      Random rand = new Random(UUID.randomUUID().hashCode());
+      Random rand = ThreadLocalRandom.current();
 
       if (!_prepareList.isEmpty()) {
          List<Double> copyList = new ArrayList<Double>(_prepareList);

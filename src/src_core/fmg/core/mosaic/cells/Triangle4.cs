@@ -151,7 +151,7 @@ namespace fmg.core.mosaic.cells {
          public double B => A / 2;
          public double ROut => A / SQRT3;
          public double RIn => ROut / 2;
-         //private double __snip  = 2.3456789 + new Random(Guid.NewGuid().GetHashCode()).Next(15);
+         //private double __snip  = 2.3456789 + ThreadLocalRandom.Current.Next(15);
          public double CalcSnip() { return A / (/*12*/6.789012345 /*__snip*/); }
          public override double GetSq(int borderWidth) {
             var w = borderWidth/2.0;

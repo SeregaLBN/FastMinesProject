@@ -9,8 +9,7 @@ namespace fmg.core.img {
 
    public abstract class ATestDrawing {
 
-      private static readonly Random Rnd = new Random(Guid.NewGuid().GetHashCode());
-      public Random GetRandom => Rnd;
+      public Random GetRandom => ThreadLocalRandom.Current;
       public int R(int max) { return GetRandom.Next(max); }
       public bool Bl => GetRandom.Next(2) == 1; // random bool
       public int NP => Bl ? -1 : +1; // negative or positive

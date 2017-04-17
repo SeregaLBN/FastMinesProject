@@ -17,7 +17,6 @@ using FastMines.BackgroundTasks.Win81;
 
 namespace FastMines {
    public static class TileHelper {
-      private static readonly Random Random = new Random(Guid.NewGuid().GetHashCode());
       private static readonly string TaskName = typeof(FastMinesTileUpdater).Name;
       private static readonly string TaskEntryPoint = typeof(FastMinesTileUpdater).FullName;
 
@@ -189,11 +188,12 @@ namespace FastMines {
       }
 
       public static Tuple<EMosaic, WriteableBitmap> CreateRandomMosaicImage(int w, int h) {
-         var mosaicType = EMosaicEx.FromOrdinal(Random.Next() % EMosaicEx.GetValues().Length);
-         var bkClr = ColorExt.RandomColor(Random).Brighter(0.45);
+         Random rnd = ThreadLocalRandom.Current;
+         var mosaicType = EMosaicEx.FromOrdinal(rnd.Next() % EMosaicEx.GetValues().Length);
+         var bkClr = ColorExt.RandomColor(rnd).Brighter(0.45);
          var sizeField = mosaicType.SizeIcoField(true);
-         sizeField.m += Random.Next() % 2;
-         sizeField.n += Random.Next() % 3;
+         sizeField.m += rnd.Next() % 2;
+         sizeField.n += rnd.Next() % 3;
          const int bound = 3;
          const int zoomKoef = 1;
          var img = new MosaicsImg {

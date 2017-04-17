@@ -7,6 +7,7 @@ import java.beans.PropertyChangeListener;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -163,7 +164,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                skillLevel = new HashMap<>(ESkillLevel.values().length);
                skillLevelImages = new HashMap<>(ESkillLevel.values().length);
 
-               Random rnd = new Random(UUID.randomUUID().hashCode());
+               Random rnd = ThreadLocalRandom.current();
                for (ESkillLevel val: ESkillLevel.values()) {
                   JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem();
 
@@ -267,7 +268,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                mosaicsGroup = new HashMap<>(EMosaicGroup.values().length);
                mosaicsGroupImages = new HashMap<>(EMosaicGroup.values().length);
 
-               Random rnd = new Random(UUID.randomUUID().hashCode());
+               Random rnd = ThreadLocalRandom.current();
                for (EMosaicGroup val: EMosaicGroup.values()) {
                   JMenu menuItem = new JMenu(val.getDescription());// + (experimentalMenuMnemonic ?  "                      " : ""));
                   for (EMosaic mosaic: val.getBind()) {
@@ -312,7 +313,7 @@ public class Main extends JFrame implements PropertyChangeListener {
                mosaics = new HashMap<>(EMosaic.values().length);
                mosaicsImages = new HashMap<>(EMosaic.values().length);
 
-               Random rnd = new Random(UUID.randomUUID().hashCode());
+               Random rnd = ThreadLocalRandom.current();
                for (EMosaic val: EMosaic.values()) {
                   String menuItemTxt = val.getDescription(false);
                   if (experimentalMenuMnemonic)

@@ -118,7 +118,7 @@ namespace fmg.core.mosaic {
          foreach (var x in firstClickCell.GetNeighbors(mosaic))
             matrixClone.Remove(x); // и их соседей
          var count = 0;
-         var rand = new Random(Guid.NewGuid().GetHashCode());
+         var rand = ThreadLocalRandom.Current;
          do {
             var len = matrixClone.Count;
             if (len == 0) {

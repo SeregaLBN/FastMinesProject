@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.*;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
@@ -124,8 +125,9 @@ public class MosaicControllerSwing extends MosaicController<MosaicViewSwing, Pai
 
       MosaicControllerSwing ctrllr = new MosaicControllerSwing();
 
-      EMosaic mosaicType = EMosaic.values()[new Random().nextInt(EMosaic.values().length)];
-      ESkillLevel skill = ESkillLevel.values()[new Random().nextInt(ESkillLevel.values().length - 3)];
+      Random rnd = ThreadLocalRandom.current();
+      EMosaic mosaicType = EMosaic.values()[rnd.nextInt(EMosaic.values().length)];
+      ESkillLevel skill = ESkillLevel.values()[rnd.nextInt(ESkillLevel.values().length - 3)];
       int numberMines = skill.GetNumberMines(mosaicType);
       Matrisize sizeFld = skill.DefaultSize();
 

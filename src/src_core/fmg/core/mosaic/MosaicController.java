@@ -2,7 +2,7 @@ package fmg.core.mosaic;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.IPaintable;
@@ -45,7 +45,7 @@ public class MosaicController<TMosaicView extends AMosaicView<TPaintable, TImage
    @Override
    public boolean GameNew() {
       getView().getPaintContext().getBackgroundFill().setMode(
-            1 + new Random().nextInt(
+            1 + ThreadLocalRandom.current().nextInt(
                   MosaicHelper.createAttributeInstance(getMosaic().getMosaicType()).getMaxBackgroundFillModeValue()));
       boolean res = super.GameNew();
       if (!res)

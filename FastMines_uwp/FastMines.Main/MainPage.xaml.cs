@@ -37,7 +37,7 @@ namespace fmg
          this.InitializeComponent();
          Unloaded += OnClosing;
          //Loaded += (sender, ev) => { // unit test
-         //   var r = new Random(Guid.NewGuid().GetHashCode());
+         //   var r = ThreadLocalRandom.Current;
          //   for (int i = 0; i < 100; ++i) {
          //      TileHelper.CreateRandomMosaicImage(10 + r.Next(100), 10+r.Next(100));
          //   }

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
+using fmg.common;
 using fmg.common.geom;
 using fmg.common.geom.util;
 using fmg.core.types;
@@ -257,7 +258,7 @@ namespace fmg.core.img {
 
          // create random cells indexes  and  base rotate offset (negative)
          var len = Matrix.Count;
-         var rand = new Random(Guid.NewGuid().GetHashCode());
+         var rand = ThreadLocalRandom.Current;
          for (var i = 0; i < len / 4.5; ++i) {
             AddRandomToPrepareList(i == 0, rand);
          }
@@ -285,7 +286,7 @@ namespace fmg.core.img {
          var angleNew = RotateAngle;
          var rotateDelta = RotateAngleDelta;
          var area = Area;
-         Random rand = new Random(Guid.NewGuid().GetHashCode());
+         Random rand = ThreadLocalRandom.Current;
 
          if (_prepareList.Any()) {
             var copyList = new List<double>(_prepareList);

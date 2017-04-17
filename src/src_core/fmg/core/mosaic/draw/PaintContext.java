@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
@@ -142,7 +143,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
          if (colors == null)
             colors = new HashMap<Integer, Color>() {
                private static final long serialVersionUID = 1L;
-               private Random rnd = new Random();
+               private Random rnd = ThreadLocalRandom.current();
 
                @Override
                public Color get(Object key) {

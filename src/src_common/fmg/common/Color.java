@@ -271,42 +271,4 @@ public class Color {
    }
    public Color darker() { return darker(0.7); }
 
-/*
-   // test
-   public static void main(String[] args) {
-      Random rnd = new Random(java.util.UUID.randomUUID().hashCode());
-
-      try {
-         Color clr = Color.RandomColor(rnd);
-         System.out.println("original: " + new HSV(clr));
-         for (int i=0; i<=10; ++i) {
-            double prcnt = 0.1 * i;
-            Color darker = clr.darker(prcnt);
-            Color brighter = clr.brighter(prcnt);
-            HSV hsvD = new HSV(darker);
-            HSV hsvB = new HSV(brighter);
-            System.out.println(hsvD + "  <-D  " + String.format("%.2f", prcnt) + "  B->  " + hsvB);
-         }
-      } catch(Exception ex) {
-         ex.printStackTrace(System.err);
-      }
-
-      try {
-         Color clr = Color.RandomColor(rnd);
-
-         Color black = clr.darker(1);
-         System.out.println("Test darker max - black("+black+").equals(Black) is " + black.equals(Black));
-         Color copy1 = clr.darker(0);
-         System.out.println("Test darker min - copy("+copy1+").equals(original("+clr+")) is " + copy1.equals(clr));
-
-         Color white = clr.brighter(1);
-         System.out.println("Test brighter max - white("+white+").equals(White) is " + white.equals(White));
-         Color copy2 = clr.brighter(0);
-         System.out.println("Test brighter min - copy("+copy2+").equals(original("+clr+")) is " + copy2.equals(clr));
-      } catch(Exception ex) {
-         ex.printStackTrace(System.err);
-      }
-   }
-*/
-
 }

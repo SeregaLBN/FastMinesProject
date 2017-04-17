@@ -95,9 +95,9 @@ public abstract class Flag<TImage> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(rnd -> Arrays.asList(new Flag.Canvas()
-                                           //, new Flag.Image()
-                                     ));
+      TestDrawing.testApp(() -> Arrays.asList(new Flag.Canvas()
+                                          //, new Flag.Image()
+                         ));
    }
    //////////////////////////////////
 

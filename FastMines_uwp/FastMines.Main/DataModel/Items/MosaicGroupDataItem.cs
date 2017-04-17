@@ -1,6 +1,6 @@
-using System;
 using System.ComponentModel;
 using Microsoft.Graphics.Canvas;
+using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using MosaicsGroupCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsGroupImg.CanvasBmp;
@@ -27,7 +27,7 @@ namespace fmg.DataModel.Items {
                // call this setter
                Image = new MosaicsGroupCanvasBmp(MosaicGroup, CanvasDevice.GetSharedDevice()) {
                   BorderWidth = 3,
-                  RotateAngle = new Random(Guid.NewGuid().GetHashCode()).Next(90)
+                  RotateAngle = ThreadLocalRandom.Current.Next(90)
                };
             }
             return _mosaicGroupImg;

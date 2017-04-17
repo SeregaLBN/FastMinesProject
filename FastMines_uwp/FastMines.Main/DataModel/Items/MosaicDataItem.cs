@@ -41,7 +41,7 @@ namespace fmg.DataModel.Items {
                   RotateMode = MosaicsCanvasBmp.ERotateMode.SomeCells,
                   //BackgroundColor = MosaicsCanvasBmp.DefaultBkColor,
                   BorderWidth = 3 * Zoom()//,
-                  //RotateAngle = 45 * new Random(Guid.NewGuid().GetHashCode()).Next(7)
+                  //RotateAngle = 45 * ThreadLocalRandom.Current.Next(7)
                };
                //var bmp = tmp.Image;
                //System.Diagnostics.Debug.Assert(bmp.PixelWidth == ImageSize * ZoomKoef);

@@ -57,6 +57,9 @@
     <Compile Include="..\..\src\src_common\fmg\common\HSV.cs">
       <Link>src_fmg.common\HSV.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\ThreadLocalRandom.cs">
+      <Link>src_fmg.common\ThreadLocalRandom.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_common\fmg\common\geom\Coord.cs">
       <Link>src_fmg.common\geom\Coord.cs</Link>
     </Compile>

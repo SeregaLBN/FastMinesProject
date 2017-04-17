@@ -101,7 +101,7 @@ namespace fmg.core.mosaic.draw {
             if (_colors.ContainsKey(index))
                return _colors[index];
 
-            var rand = new Random(Guid.NewGuid().GetHashCode());
+            var rand = ThreadLocalRandom.Current;
             var res = ColorExt.RandomColor(rand).Brighter(0.45);
             _colors.Add(index, res);
             return res;

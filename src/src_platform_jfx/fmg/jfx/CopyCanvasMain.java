@@ -1,7 +1,5 @@
 package fmg.jfx;
 
-import java.util.Random;
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Point2D;
@@ -23,8 +21,6 @@ public class CopyCanvasMain extends Application {
 
     private static double SCENE_WIDTH = 1280;
     private static double SCENE_HEIGHT = 720;
-
-    static Random random = new Random();
 
     Canvas canvas;
     Canvas copyCanvas;

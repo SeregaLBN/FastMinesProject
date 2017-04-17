@@ -1,5 +1,6 @@
 using System;
 using Windows.UI.Xaml.Media;
+using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
@@ -17,7 +18,6 @@ namespace FastMines.Data {
 
    /// <summary> Generic item data model. </summary>
    public class FmDataItem : FmDataCommon<EMosaic> {
-      private static readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
       private readonly Matrisize _sizeField;
       private MosaicsImg _mosaicsImg;
 
@@ -27,8 +27,9 @@ namespace FastMines.Data {
          this.Subtitle = "Subtitle item " + eMosaic.GetDescription(false);
          this.Description = "Description item ...";
          _sizeField = eMosaic.SizeIcoField(true);
-         _sizeField.n += _random.Next() & 3;
-         _sizeField.m += _random.Next() & 3;
+         var rnd = ThreadLocalRandom.Current;
+         _sizeField.n += rnd.Next() & 3;
+         _sizeField.m += rnd.Next() & 3;
       }
 
       private FmDataGroup _group;
@@ -38,10 +39,11 @@ namespace FastMines.Data {
       public override ImageSource Image {
          get {
             if (_mosaicsImg == null) {
+               var rnd = ThreadLocalRandom.Current;
                _mosaicsImg = new MosaicsImg {
                   MosaicType = UniqueId,
                   SizeField = _sizeField,
-                  Size = new Size(75 + new Random().Next(200), 75 + new Random().Next(200)),
+                  Size = new Size(75 + rnd.Next(200), 75 + rnd.Next(200)),
                   PaddingInt = 7,
                   BackgroundColor = StaticImgConsts.DefaultBkColor
                };

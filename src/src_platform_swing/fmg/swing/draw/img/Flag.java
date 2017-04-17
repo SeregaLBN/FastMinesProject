@@ -95,7 +95,7 @@ public class Flag implements Icon {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(rnd -> Arrays.asList( new Flag() ));
+      TestDrawing.testApp(() -> Arrays.asList( new Flag() ));
    }
    //////////////////////////////////
 
