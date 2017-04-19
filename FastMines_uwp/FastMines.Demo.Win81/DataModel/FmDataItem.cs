@@ -39,11 +39,11 @@ namespace FastMines.Data {
       public override ImageSource Image {
          get {
             if (_mosaicsImg == null) {
-               var rnd = ThreadLocalRandom.Current;
+               var rnd = ThreadLocalRandom.Current.Next(200);
                _mosaicsImg = new MosaicsImg {
                   MosaicType = UniqueId,
                   SizeField = _sizeField,
-                  Size = new Size(75 + rnd.Next(200), 75 + rnd.Next(200)),
+                  Size = new Size(75 + rnd, 75 + rnd),
                   PaddingInt = 7,
                   BackgroundColor = StaticImgConsts.DefaultBkColor
                };
