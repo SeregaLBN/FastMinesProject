@@ -72,7 +72,7 @@ namespace fmg.core.mosaic
       }
 
       /// <summary>площадь ячеек</summary>
-      public virtual double Area {
+      public double Area {
          get {
             return CellAttr.Area;
          }

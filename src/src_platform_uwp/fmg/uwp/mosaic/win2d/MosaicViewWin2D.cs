@@ -111,15 +111,19 @@ namespace fmg.uwp.mosaic.win2d {
       protected override void ChangeSizeImagesMineFlag() {
          // PS: картинки не зависят от размера ячейки...
          PaintUwpContext<CanvasBitmap> pc = PaintContext;
-         //int sq = (int)Mosaic.CellAttr.GetSq(pc.PenBorder.Width);
-         //if (sq <= 0) {
-         //   System.Diagnostics.Debug.Assert(false, "Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");
-         //   sq = 3; // ат балды...
-         //}
+         int sq = (int)Mosaic.CellAttr.GetSq(pc.PenBorder.Width);
+         if (sq <= 0) {
+            System.Diagnostics.Debug.Assert(false, "Error: слишком толстое перо! Нет области для вывода картиники флага/мины...");
+            sq = 3; // ат балды...
+         }
          //MineImg = null;
          //FlagImg = null;
-         pc.ImgFlag = FlagImg.Image;
+
+         if (sq >= 50) { // ignore small sizes
+            MineImg.Size = new Size(sq, sq);
+         }
          pc.ImgMine = MineImg.Image;
+         pc.ImgFlag = FlagImg.Image;
       }
 
       protected override void Dispose(bool disposing) {

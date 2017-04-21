@@ -186,7 +186,7 @@ namespace fmg {
             return MosaicController.Area;
          }
          set {
-            value = Math.Min(value, CalcMaxArea(MosaicController.SizeField)); // recheck
+            value = Math.Min(Math.Max(230, value), CalcMaxArea(MosaicController.SizeField)); // recheck
             MosaicController.Area = value;
          }
       }

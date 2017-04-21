@@ -3,13 +3,10 @@ package fmg.swing.mosaic;
 import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.*;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 
-import fmg.common.geom.Matrisize;
 import fmg.core.mosaic.MosaicController;
 import fmg.core.types.EMosaic;
 import fmg.data.controller.types.ESkillLevel;
@@ -125,15 +122,13 @@ public class MosaicControllerSwing extends MosaicController<MosaicViewSwing, Pai
 
       MosaicControllerSwing ctrllr = new MosaicControllerSwing();
 
-      Random rnd = ThreadLocalRandom.current();
-      EMosaic mosaicType = EMosaic.values()[rnd.nextInt(EMosaic.values().length)];
-      ESkillLevel skill = ESkillLevel.values()[rnd.nextInt(ESkillLevel.values().length - 3)];
-      int numberMines = skill.GetNumberMines(mosaicType);
-      Matrisize sizeFld = skill.DefaultSize();
+      EMosaic mosaicType = EMosaic.eMosaicSquare1;
+      ESkillLevel skill  = ESkillLevel.eBeginner;
 
+      ctrllr.setArea(500);
       ctrllr.setMosaicType(mosaicType);
-      ctrllr.setSizeField(sizeFld);
-      ctrllr.setMinesCount(numberMines);
+      ctrllr.setSizeField(skill.DefaultSize());
+      ctrllr.setMinesCount(skill.GetNumberMines(mosaicType));
       ctrllr.GameNew();
 
       frame.add(ctrllr.getView().getControl());
