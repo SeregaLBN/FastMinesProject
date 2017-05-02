@@ -24,6 +24,9 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicViewInCanvasVirtualControl.cs">
       <Link>src_fmg.uwp\mosaic\win2d\MosaicViewInCanvasVirtualControl.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicViewInCanvasSwapChainPanel.cs">
+      <Link>src_fmg.uwp\mosaic\win2d\MosaicViewInCanvasSwapChainPanel.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicControllerWin2D.cs">
       <Link>src_fmg.uwp\mosaic\win2d\MosaicControllerWin2D.cs</Link>
     </Compile>

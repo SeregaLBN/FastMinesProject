@@ -74,7 +74,7 @@ namespace fmg {
          System.Diagnostics.Debug.Assert(frame != null);
 
          var eMosaic = CurrentElement.MosaicType;
-         frame.Navigate(typeof(MosaicPage), new MosaicPageInitParam {
+         frame.Navigate(typeof(MosaicPage2), new MosaicPageInitParam {
             MosaicTypes = eMosaic,
             MinesCount = CurrentSkillLevel.GetNumberMines(eMosaic),
             SizeField = CurrentSkillLevel.DefaultSize()

@@ -19,7 +19,7 @@ namespace fmg.uwp.mosaic.win2d {
       public CanvasDrawingSession Paintable { get; set; }
 
       protected bool _alreadyPainted = false;
-      protected void Repaint(IEnumerable<BaseCell> modifiedCells, RectDouble clipRegion) {
+      protected void Repaint(IEnumerable<BaseCell> modifiedCells, RectDouble? clipRegion) {
          var ds = Paintable;
          if (ds == null)
             return;
@@ -47,9 +47,7 @@ namespace fmg.uwp.mosaic.win2d {
             var cellPaint = CellPaint;
             double padX = pc.Padding.Left, padY = pc.Padding.Top;
             foreach (var cell in modifiedCells) {
-               var rco = cell.getRcOuter();
-               rco = rco.MoveXY(padX, padY);
-               if (rco.Intersection(clipRegion))
+               if (!clipRegion.HasValue || cell.getRcOuter().MoveXY(padX, padY).Intersection(clipRegion.Value))
                   cellPaint.Paint(cell, p, pc);
             }
          }

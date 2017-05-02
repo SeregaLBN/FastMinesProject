@@ -20,11 +20,11 @@ using fmg.data.controller.types;
 using fmg.uwp.utils;
 using fmg.uwp.mosaic;
 using Logger = fmg.common.LoggerSimple;
-using MosaicControllerWin2D = fmg.uwp.mosaic.win2d.MosaicControllerWin2D<fmg.uwp.mosaic.win2d.MosaicViewInCanvasVirtualControl>;
+using MosaicControllerWin2D = fmg.uwp.mosaic.win2d.MosaicControllerWin2D<fmg.uwp.mosaic.win2d.MosaicViewInCanvasSwapChainPanel>;
 
 namespace fmg {
 
-   public sealed partial class MosaicPage : Page {
+   public sealed partial class MosaicPage2 : Page {
       /// <summary> мин отступ от краев экрана для мозаики </summary>
       private const double MinIndent = 30;
 
@@ -52,12 +52,12 @@ namespace fmg {
             _mosaicController = value;
             if (_mosaicController != null) {
                _mosaicController.PropertyChanged += OnMosaicControllerPropertyChanged;
-               _mosaicController.View.Control = _canvasVirtualControl;
+               _mosaicController.View.Control = _canvasSwapChainPanel;
             }
          }
       }
 
-      public MosaicPage() {
+      public MosaicPage2() {
          this.InitializeComponent();
 
          this.Loaded += OnPageLoaded;
@@ -278,8 +278,8 @@ namespace fmg {
          MosaicController = null; // call explicit setter
 
          // Explicitly remove references to allow the Win2D controls to get garbage collected
-         _canvasVirtualControl.RemoveFromVisualTree();
-         _canvasVirtualControl = null;
+         _canvasSwapChainPanel.RemoveFromVisualTree();
+         _canvasSwapChainPanel = null;
          MosaicController.View.Control = null;
       }
 
@@ -337,10 +337,10 @@ namespace fmg {
 
 //#if DEBUG
 //      protected override void OnPointerMoved(PointerRoutedEventArgs ev) {
-//         var ttv = this.TransformToVisual(_canvasVirtualControl);
+//         var ttv = this.TransformToVisual(_canvasSwapChainPanel);
 //         using (new Tracer("MosaicPage.OnPointerMoved",
 //                 "pos1=" + ev.GetCurrentPoint(null).Position.ToFmPointDouble() +
-//               "; pos2=" + ev.GetCurrentPoint(_canvasVirtualControl).Position.ToFmPointDouble() +
+//               "; pos2=" + ev.GetCurrentPoint(_canvasSwapChainPanel).Position.ToFmPointDouble() +
 //               "; pos3=" + ttv.TransformPoint(ev.GetCurrentPoint(null).Position).ToFmPointDouble(),
 //               () => "handled="+ev.Handled))
 //         {
@@ -415,8 +415,8 @@ namespace fmg {
 
       protected override void OnDoubleTapped(DoubleTappedRoutedEventArgs ev) {
          using (new Tracer(GetCallerName(), () => "ev.Handled = " + ev.Handled)) {
-            var rcCanvas = new Windows.Foundation.Rect(0, 0, _canvasVirtualControl.Width, _canvasVirtualControl.Height);
-            if (rcCanvas.Contains(ev.GetPosition(_canvasVirtualControl))) {
+            var rcCanvas = new Windows.Foundation.Rect(0, 0, _canvasSwapChainPanel.Width, _canvasSwapChainPanel.Height);
+            if (rcCanvas.Contains(ev.GetPosition(_canvasSwapChainPanel))) {
                if (MosaicController.GameStatus == EGameStatus.eGSEnd) {
                   MosaicController.GameNew();
                   ev.Handled = true;
@@ -721,7 +721,7 @@ namespace fmg {
 
       protected override void OnManipulationCompleted(ManipulationCompletedRoutedEventArgs ev) {
 #if DEBUG
-         var pnt1 = this.TransformToVisual(_canvasVirtualControl).TransformPoint(ev.Position);
+         var pnt1 = this.TransformToVisual(_canvasSwapChainPanel).TransformPoint(ev.Position);
 #else
          var pnt1 = new Windows.Foundation.Point();
 #endif
@@ -799,16 +799,16 @@ namespace fmg {
 
       Thickness GetOffset() {
          return _contentRoot.Padding;           // variant 1
-         //return _canvasVirtualControl.Margin; // variant 2
+         //return _canvasSwapChainPanel.Margin; // variant 2
       }
 
       private void ApplyOffset(Thickness offset) {
          var pad = _contentRoot.Padding;           // variant 1
-         //var pad = _canvasVirtualControl.Margin; // variant 2
+         //var pad = _canvasSwapChainPanel.Margin; // variant 2
          pad.Left = offset.Left;
          pad.Top = offset.Top;
          _contentRoot.Padding = pad;           // variant 1
-         //_canvasVirtualControl.Margin = pad; // variant 2
+         //_canvasSwapChainPanel.Margin = pad; // variant 2
       }
 
       /// <summary> Перепроверить смещение к полю мозаики так, что поле мозаики было в пределах страницы </summary>
@@ -831,7 +831,7 @@ namespace fmg {
       }
 
       private PointDouble ToCanvasPoint(Windows.Foundation.Point pagePoint) {
-         var point = TransformToVisual(_canvasVirtualControl).TransformPoint(pagePoint).ToFmPointDouble();
+         var point = TransformToVisual(_canvasSwapChainPanel).TransformPoint(pagePoint).ToFmPointDouble();
          //var o = GetOffset();
          //var point2 = new PointDouble(pagePoint.X - o.Left, pagePoint.Y - o.Top);
          //System.Diagnostics.Debug.Assert(point == point2);
@@ -842,6 +842,7 @@ namespace fmg {
 
    }
 
+   /*
    class ClickInfo {
       public BaseCell CellDown { get; set; }
       public bool IsLeft { get; set; }
@@ -851,5 +852,6 @@ namespace fmg {
       public bool UpHandled { get; set; }
       //public PointerDeviceType PointerDevice { get; set; }
    }
+   */
 
 }
