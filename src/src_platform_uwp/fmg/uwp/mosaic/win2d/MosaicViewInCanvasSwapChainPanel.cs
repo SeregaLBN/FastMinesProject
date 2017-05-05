@@ -20,13 +20,14 @@ namespace fmg.uwp.mosaic.win2d {
    public class MosaicViewInCanvasSwapChainPanel : AMosaicViewWin2D {
 
       private CanvasDevice _device;
-      private CanvasRenderTarget _renderImage;
+      private CanvasRenderTarget[] _drawDblBuffer = new CanvasRenderTarget[2];
+      private int _bufferIndex = 0;
       private CanvasSwapChain _swapChain;
       private CanvasSwapChainPanel _control;
       private MineCanvasBmp _mineImage;
       private FlagCanvasBmp _flagImage;
       private long _tokenPropWidth, _tokenPropHeight;
-      private bool _needResizeSC, _needResizeRI;
+      private bool _needResizeSwapChain, _needResizeFirstBuffer, _needResizeSecondBuffer;
 
       public CanvasSwapChainPanel Control {
          get { return _control; }
@@ -51,7 +52,7 @@ namespace fmg.uwp.mosaic.win2d {
          if (ReferenceEquals(dp, CanvasSwapChainPanel.WidthProperty) ||
              ReferenceEquals(dp, CanvasSwapChainPanel.HeightProperty))
          {
-            _needResizeSC = _needResizeRI = true;
+            _needResizeSwapChain = _needResizeFirstBuffer = _needResizeSecondBuffer = true;
          }
       }
 
@@ -62,12 +63,12 @@ namespace fmg.uwp.mosaic.win2d {
             if (_swapChain == null) {
                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
                SwapChain = new CanvasSwapChain(Device, (float)Control.Width, (float)Control.Height, dpi);
-               _needResizeSC = false;
+               _needResizeSwapChain = false;
             }
-            if (_needResizeSC) {
+            if (_needResizeSwapChain) {
                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
                _swapChain.ResizeBuffers((float)Control.Width, (float)Control.Height, dpi);
-               _needResizeSC = false;
+               _needResizeSwapChain = false;
             }
             return _swapChain;
          }
@@ -78,32 +79,52 @@ namespace fmg.uwp.mosaic.win2d {
          }
       }
 
+      private CanvasRenderTarget FrontBuffer { get { return _drawDblBuffer[_bufferIndex]; } }
+      private CanvasRenderTarget  BackBuffer { get { return _drawDblBuffer[1 - _bufferIndex]; } }
+      private void SwapDrawBuffer() {
+         _bufferIndex = 1 - _bufferIndex;
+      }
+
+      private void DisplayBackBufferInFrontBuffer(CanvasDrawingSession dsFrontBuffer) {
+         if (BackBuffer == null)
+            return;
+
+         dsFrontBuffer.DrawImage(BackBuffer);
+      }
+
       private CanvasRenderTarget RenderImage {
          get {
             System.Diagnostics.Debug.Assert(_control != null);
             System.Diagnostics.Debug.Assert(!Disposed);
-            CanvasRenderTarget old = null;
-            if (_needResizeRI) {
-               old = _renderImage;
-               _renderImage = null;
-               _needResizeRI = false;
+
+            if (_bufferIndex == 0) {
+               if (_needResizeFirstBuffer) {
+                  if (_drawDblBuffer[0] != null) {
+                     _drawDblBuffer[0].Dispose();
+                     _drawDblBuffer[0] = null;
+                  }
+                  _needResizeFirstBuffer = false;
+               }
+            } else { // _bufferIndex == 1
+               if (_needResizeSecondBuffer) {
+                  if (_drawDblBuffer[1] != null) {
+                     _drawDblBuffer[1].Dispose();
+                     _drawDblBuffer[1] = null;
+                  }
+                  _needResizeSecondBuffer = false;
+               }
             }
-            if (_renderImage == null) {
+
+            if (_drawDblBuffer[_bufferIndex] == null) {
                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
                RenderImage = new CanvasRenderTarget(Device, (float)Control.Width, (float)Control.Height, dpi);
             }
-            if (old != null) {
-               //using (var ds = _renderImage.CreateDrawingSession()) {
-               //   ds.DrawImage(old);
-               //}
-               old.Dispose();
-            }
-            return _renderImage;
+            return FrontBuffer;
          }
          set {
-            if (_renderImage != null)
-               _renderImage.Dispose();
-            _renderImage = value;
+            if (FrontBuffer != null)
+               FrontBuffer.Dispose();
+            _drawDblBuffer[_bufferIndex] = value;
          }
       }
 
@@ -148,7 +169,12 @@ namespace fmg.uwp.mosaic.win2d {
             //if ((canvasVirtualControl.Size.Width == 0) || (canvasVirtualControl.Size.Height == 0))
             //   return;
 
+            SwapDrawBuffer();
             using (var ds = RenderImage.CreateDrawingSession()) {
+               ds.Clear(Colors.Transparent);
+
+               DisplayBackBufferInFrontBuffer(ds);
+
                Paintable = ds;
                Repaint(modifiedCells, null);
                Paintable = null;
@@ -193,6 +219,8 @@ namespace fmg.uwp.mosaic.win2d {
             _mineImage = null;
             _flagImage = null;
 
+            RenderImage = null;
+            SwapDrawBuffer();
             RenderImage = null;
             SwapChain = null;
             Device = null;
