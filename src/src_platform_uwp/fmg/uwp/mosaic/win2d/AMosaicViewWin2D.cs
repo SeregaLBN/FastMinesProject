@@ -19,7 +19,7 @@ namespace fmg.uwp.mosaic.win2d {
       public CanvasDrawingSession Paintable { get; set; }
 
       protected bool _alreadyPainted = false;
-      protected void Repaint(IEnumerable<BaseCell> modifiedCells, RectDouble? clipRegion) {
+      public override void Repaint(IEnumerable<BaseCell> modifiedCells, RectDouble? clipRegion) {
          var ds = Paintable;
          if (ds == null)
             return;
@@ -34,8 +34,11 @@ namespace fmg.uwp.mosaic.win2d {
 
             if (pc.IsUseBackgroundColor) {
                // background color
-               ds.Clear(pc.BackgroundColor.ToWinColor());
-               //ds.FillRectangle(clipRegion.ToWinRect(), pc.BackgroundColor.ToWinColor());
+               if (clipRegion.HasValue)
+                  ds.FillRectangle(clipRegion.Value.ToWinRect(), pc.BackgroundColor.ToWinColor());
+               else
+                  //ds.FillRectangle(new Windows.Foundation.Rect(0, 0, Size.Width, Size.Height), pc.BackgroundColor.ToWinColor());
+                  ds.Clear(pc.BackgroundColor.ToWinColor());
             }
 
             if (modifiedCells == null)

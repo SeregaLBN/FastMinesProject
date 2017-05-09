@@ -53,14 +53,21 @@ namespace fmg.uwp.draw.img.wbmp {
             return cntxt;
          }
 
+         public override SizeDouble Size {
+            get {
+               var size = _owner.Size;
+               return new SizeDouble(size.Width, size.Height);
+            }
+         }
+
          public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {
-            var size = _owner.Size;
-            Repaint(modifiedCells, new RectDouble(size.Width, size.Height));
+            Repaint(modifiedCells, null /* new RectDouble(_owner.Size.Width, _owner.Size.Height) */);
          }
 
          protected bool _alreadyPainted = false;
-         protected void Repaint(IEnumerable<BaseCell> modifiedCells, RectDouble clipRegion) {
+         public override void Repaint(IEnumerable<BaseCell> modifiedCells, RectDouble? clipRegion) {
             var img = Paintable;
+            //System.Diagnostics.Debug.Assert(img != null);
             if (img == null)
                return;
 
@@ -76,8 +83,18 @@ namespace fmg.uwp.draw.img.wbmp {
 
                var pc = PaintContext;
 
-               Action funcFillBk = () => img.Clear(pc.BackgroundColor.ToWinColor());
-             //Action funcFillBk = () => img.FillPolygon(new[] { 0, 0, w, 0, w, h, 0, h, 0, 0 }, pc.BackgroundColor.ToWinColor());
+               Action funcFillBk = () => {
+                  if (clipRegion.HasValue) {
+                     var rc = clipRegion.Value;
+                     int lft = (int)rc.Left();
+                     int top = (int)rc.Top();
+                     int rgt = (int)rc.Right();
+                     int btm = (int)rc.Bottom();
+                     img.FillPolygon(new[] { lft, top,  rgt, top,  rgt, btm,  lft, btm, lft, top }, pc.BackgroundColor.ToWinColor());
+                  } else {
+                     img.Clear(pc.BackgroundColor.ToWinColor());
+                  }
+               };
 
                var matrix = Mosaic.Matrix;
                var paint = new PaintableWBmp(img);
@@ -89,9 +106,7 @@ namespace fmg.uwp.draw.img.wbmp {
                   if (pc.IsUseBackgroundColor)
                      funcFillBk();
                   foreach (var cell in modifiedCells) {
-                     var rco = cell.getRcOuter();
-                     rco = rco.MoveXY(padX, padY);
-                     if (rco.Intersection(clipRegion))
+                     if (!clipRegion.HasValue || cell.getRcOuter().MoveXY(padX, padY).Intersection(clipRegion.Value))
                         cp.Paint(cell, paint, paintContext);
                   }
                } else {
@@ -101,9 +116,7 @@ namespace fmg.uwp.draw.img.wbmp {
                         funcFillBk();
                      var rnd = ThreadLocalRandom.Current;
                      foreach (var cell in modifiedCells) {
-                        var rco = cell.getRcOuter();
-                        rco = rco.MoveXY(padX, padY);
-                        if (!rco.Intersection(clipRegion))
+                        if (clipRegion.HasValue && !cell.getRcOuter().MoveXY(padX, padY).Intersection(clipRegion.Value))
                            continue;
                         var tmp = cell;
                         AsyncRunner.InvokeFromUiLater(

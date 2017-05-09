@@ -49,7 +49,7 @@ public class MosaicController<TMosaicView extends AMosaicView<TPaintable, TImage
                   MosaicHelper.createAttributeInstance(getMosaic().getMosaicType()).getMaxBackgroundFillModeValue()));
       boolean res = super.GameNew();
       if (!res)
-         getView().invalidate();
+         getView().invalidate(null);
       return res;
    }
 

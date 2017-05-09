@@ -13,7 +13,6 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 
 import fmg.common.geom.Matrisize;
-import fmg.core.mosaic.Mosaic;
 import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
@@ -68,7 +67,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       this.setLocationRelativeTo(parent);
 
       if (this.parent != null)
-         this.parent.getMosaicController().addListener(this);;
+         this.parent.getMosaicController().addListener(this);
    }
 
    // создаю панели с нужным расположением

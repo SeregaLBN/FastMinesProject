@@ -12,6 +12,8 @@ import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.geom.Matrisize;
+import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.core.img.AMosaicsImg;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.ICellPaint;
@@ -61,12 +63,18 @@ public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
 
       @Override
       public void invalidate(Collection<BaseCell> modifiedCells) {
-         repaint(modifiedCells);
+         repaint(modifiedCells, null);
       }
 
       @Override
       protected void changeSizeImagesMineFlag() {
          // none
+      }
+
+      @Override
+      public SizeDouble getSize() {
+         Size sz = MosaicsImg.this.getSize();
+         return new SizeDouble(sz.width, sz.height);
       }
 
       @Override

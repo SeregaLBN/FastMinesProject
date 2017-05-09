@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ using fmg.uwp.mosaic.win2d;
 
 namespace fmg.uwp.draw.img.win2d {
 
-   /// <summary> Representable <see cref="EMosaic"/> as image.
+   /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image.
    /// <br/>
    /// Win2D impl
    /// </summary>
@@ -24,7 +23,7 @@ namespace fmg.uwp.draw.img.win2d {
 
       private const bool RandomCellBkColor = true;
 
-      /// <summary> Representable <see cref="EMosaic"/> as image: common Win2D implementation part </summary>
+      /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image: common Win2D implementation part </summary>
       public abstract class AMosaicImgWin2D<TImage> : AMosaicsImg<TImage>
          where TImage : DependencyObject, ICanvasResourceCreator
       {
@@ -53,8 +52,16 @@ namespace fmg.uwp.draw.img.win2d {
                   cntxt.BkFill.Mode = 1 + ThreadLocalRandom.Current.Next(Mosaic.CellAttr.getMaxBackgroundFillModeValue());
                return cntxt;
             }
+
+            public override SizeDouble Size {
+               get {
+                  var size = _owner.Size;
+                  return new SizeDouble(size.Width, size.Height);
+               }
+            }
+
             public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {
-               Repaint(modifiedCells, new RectDouble(_owner.Size.Width, _owner.Size.Height));
+               Repaint(modifiedCells, null /* new RectDouble(_owner.Size.Width, _owner.Size.Height) */);
             }
 
             protected override void ChangeSizeImagesMineFlag() {
@@ -260,7 +267,7 @@ namespace fmg.uwp.draw.img.win2d {
       //    custom implementations
       /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      /// <summary> Representable <see cref="EMosaic"/> as image.
+      /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image.
       /// <br/>
       /// CanvasBitmap impl
       /// </summary>
@@ -286,7 +293,7 @@ namespace fmg.uwp.draw.img.win2d {
 
       }
 
-      /// <summary> Representable <see cref="EMosaic"/> as image.
+      /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image.
       /// <br/>
       /// CanvasImageSource impl (XAML ImageSource compatible)
       /// </summary>

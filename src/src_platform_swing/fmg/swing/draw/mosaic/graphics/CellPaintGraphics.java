@@ -42,7 +42,7 @@ public abstract class CellPaintGraphics<TImage> extends CellPaint<PaintableGraph
 //         This.paint(g);
 //      } else
       {
-         Graphics2D g2d = (Graphics2D)p.getGraphics();;
+         Graphics2D g2d = (Graphics2D)p.getGraphics();
 
          // save
          Shape shapeOld = g2d.getClip();

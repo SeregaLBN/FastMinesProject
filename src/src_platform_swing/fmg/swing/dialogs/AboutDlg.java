@@ -133,7 +133,7 @@ public class AboutDlg extends JDialog implements AutoCloseable {
          _logo.setPadding(1);
       }
       _logo.setRotate(true);
-      _logo.setRedrawInterval(50);;
+      _logo.setRedrawInterval(50);
       _logo.setRotateMode(Logo.ERotateMode.color);
       JButton btnLogo = new JButton(_logo.getImage());
       _logo.addListener(ev -> {
@@ -168,7 +168,7 @@ public class AboutDlg extends JDialog implements AutoCloseable {
        *     fantasy — декоративные шрифты;
        *     monospace — моноширинные шрифты, ширина каждого символа в таком семействе одинакова (шрифт Courier).
        **/
-      lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);;
+      lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 //      lblTitle.setBorder(BorderFactory.createEtchedBorder());
       panel.add(lblTitle);
 
@@ -197,7 +197,7 @@ public class AboutDlg extends JDialog implements AutoCloseable {
          public void mousePressed(MouseEvent e) {
             OpenURI(licenseUrl);
          }});
-      lblFreeSoft.setAlignmentX(Component.CENTER_ALIGNMENT);;
+      lblFreeSoft.setAlignmentX(Component.CENTER_ALIGNMENT);
 //      lblFreeSoft.setBorder(BorderFactory.createEtchedBorder());
       panel.add(lblFreeSoft);
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
+using fmg.common.geom;
 using fmg.core.mosaic;
 using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
@@ -58,11 +59,17 @@ namespace fmg.uwp.mosaic.xaml {
 
       public override ICellPaint<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> CellPaint => _cellPaint ?? (_cellPaint = new CellPaintShapes());
 
-      public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {
-         AsyncRunner.InvokeFromUiLater(() => InvalidateAsync(modifiedCells));
+      public override SizeDouble Size {
+         get {
+            return new SizeDouble(Control?.Width ?? 0, Control?.Height ?? 0);
+         }
       }
 
-      private void InvalidateAsync(IEnumerable<BaseCell> modifiedCells = null) {
+      public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {
+         AsyncRunner.InvokeFromUiLater(() => Repaint(modifiedCells, null));
+      }
+
+      public override void Repaint(IEnumerable<BaseCell> modifiedCells = null, common.geom.RectDouble? __ignore__ = null) {
          var container = Control;
 
          //System.Diagnostics.Debug.Assert(container != null);

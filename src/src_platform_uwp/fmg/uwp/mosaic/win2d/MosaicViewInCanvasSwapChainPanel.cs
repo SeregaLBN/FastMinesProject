@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Collections.Generic;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.Graphics.Display;
 using Microsoft.Graphics.Canvas;
@@ -12,7 +13,6 @@ using fmg.uwp.utils;
 using fmg.uwp.draw.mosaic;
 using FlagCanvasBmp = fmg.uwp.draw.img.win2d.Flag.CanvasBmp;
 using MineCanvasBmp = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
-using Windows.UI;
 
 namespace fmg.uwp.mosaic.win2d {
 
@@ -20,7 +20,7 @@ namespace fmg.uwp.mosaic.win2d {
    public class MosaicViewInCanvasSwapChainPanel : AMosaicViewWin2D {
 
       private CanvasDevice _device;
-      private CanvasRenderTarget[] _drawDblBuffer = new CanvasRenderTarget[2];
+      private CanvasRenderTarget[] _doubleBuffer = new CanvasRenderTarget[2];
       private int _bufferIndex = 0;
       private CanvasSwapChain _swapChain;
       private CanvasSwapChainPanel _control;
@@ -79,52 +79,44 @@ namespace fmg.uwp.mosaic.win2d {
          }
       }
 
-      private CanvasRenderTarget FrontBuffer { get { return _drawDblBuffer[_bufferIndex]; } }
-      private CanvasRenderTarget  BackBuffer { get { return _drawDblBuffer[1 - _bufferIndex]; } }
       private void SwapDrawBuffer() {
          _bufferIndex = 1 - _bufferIndex;
       }
-
-      private void DisplayBackBufferInFrontBuffer(CanvasDrawingSession dsFrontBuffer) {
-         if (BackBuffer == null)
-            return;
-
-         dsFrontBuffer.DrawImage(BackBuffer);
-      }
-
-      private CanvasRenderTarget RenderImage {
+      private CanvasRenderTarget  FrontBuffer { get { return _doubleBuffer[_bufferIndex]; } }
+      private CanvasRenderTarget   BackBuffer { get { return _doubleBuffer[1 - _bufferIndex]; } }
+      private CanvasRenderTarget ActualBuffer {
          get {
             System.Diagnostics.Debug.Assert(_control != null);
             System.Diagnostics.Debug.Assert(!Disposed);
 
             if (_bufferIndex == 0) {
                if (_needResizeFirstBuffer) {
-                  if (_drawDblBuffer[0] != null) {
-                     _drawDblBuffer[0].Dispose();
-                     _drawDblBuffer[0] = null;
+                  if (_doubleBuffer[0] != null) {
+                     _doubleBuffer[0].Dispose();
+                     _doubleBuffer[0] = null;
                   }
                   _needResizeFirstBuffer = false;
                }
             } else { // _bufferIndex == 1
                if (_needResizeSecondBuffer) {
-                  if (_drawDblBuffer[1] != null) {
-                     _drawDblBuffer[1].Dispose();
-                     _drawDblBuffer[1] = null;
+                  if (_doubleBuffer[1] != null) {
+                     _doubleBuffer[1].Dispose();
+                     _doubleBuffer[1] = null;
                   }
                   _needResizeSecondBuffer = false;
                }
             }
 
-            if (_drawDblBuffer[_bufferIndex] == null) {
+            if (_doubleBuffer[_bufferIndex] == null) {
                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-               RenderImage = new CanvasRenderTarget(Device, (float)Control.Width, (float)Control.Height, dpi);
+               ActualBuffer = new CanvasRenderTarget(Device, (float)Control.Width, (float)Control.Height, dpi);
             }
             return FrontBuffer;
          }
          set {
             if (FrontBuffer != null)
                FrontBuffer.Dispose();
-            _drawDblBuffer[_bufferIndex] = value;
+            _doubleBuffer[_bufferIndex] = value;
          }
       }
 
@@ -158,6 +150,13 @@ namespace fmg.uwp.mosaic.win2d {
          }
       }
 
+      public override SizeDouble Size {
+         get {
+            // TODO: return get controller.WindowSize
+            return new SizeDouble(Control?.Width ?? 0, Control?.Height ?? 0);
+         }
+      }
+
       public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {
          System.Diagnostics.Debug.Assert((modifiedCells == null) || modifiedCells.Any());
          using (new Tracer()) {
@@ -169,23 +168,47 @@ namespace fmg.uwp.mosaic.win2d {
             //if ((canvasVirtualControl.Size.Width == 0) || (canvasVirtualControl.Size.Height == 0))
             //   return;
 
-            SwapDrawBuffer();
-            using (var ds = RenderImage.CreateDrawingSession()) {
-               ds.Clear(Colors.Transparent);
-
-               DisplayBackBufferInFrontBuffer(ds);
-
-               Paintable = ds;
-               Repaint(modifiedCells, null);
-               Paintable = null;
-            }
-
-            var sc = SwapChain;
-            using (var ds = sc.CreateDrawingSession(Colors.Transparent)) {
-               ds.DrawImage(RenderImage);
-            }
-            sc.Present();
+            AsyncRunner.InvokeFromUiLater(() => {
+               Repaint(modifiedCells);
+            });
          }
+      }
+
+      //int cnt = 0;
+      public void Repaint(IEnumerable<BaseCell> modifiedCells) {
+         SwapDrawBuffer();
+         using (var ds = ActualBuffer.CreateDrawingSession()) {
+
+            bool needRedrawAll = (modifiedCells == null);
+            if (!needRedrawAll) {
+               if (BackBuffer == null) {
+                  ds.Clear(Colors.Transparent);
+                  LoggerSimple.Put("{0} BackBuffer is null: ds.Clear(Colors.Transparent): modifiedCells={1}", _bufferIndex, modifiedCells == null ? "null" : modifiedCells.Count().ToString());
+               } else {
+                  ds.DrawImage(BackBuffer);
+                  LoggerSimple.Put("{0} BackBuffer != null: ds.DrawImage(BackBuffer): modifiedCells={1}", _bufferIndex, modifiedCells == null ? "null" : modifiedCells.Count().ToString());
+               }
+            }
+
+            Paintable = ds;
+            PaintContext.IsUseBackgroundColor = needRedrawAll;
+            Repaint(modifiedCells, null);
+            Paintable = null;
+         }
+
+         var sc = SwapChain;
+         using (var ds = sc.CreateDrawingSession(Colors.Transparent)) {
+            ds.DrawImage(ActualBuffer);
+         }
+         //{
+         //   var canvasSwapChainPanel = Control;
+         //   var filename = string.Format("tmp-{0}x{1}-{2}.png",
+         //                          (int)canvasSwapChainPanel.Width,
+         //                          (int)canvasSwapChainPanel.Height,
+         //                          DateTime.Now.ToString("dd-MM-yyyy HH_mm_ss_fff"));
+         //   ActualBuffer.SaveAsync(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename), CanvasBitmapFileFormat.Png);
+         //}
+         sc.Present();
       }
 
       /// <summary> переустанавливаю заного размер мины/флага для мозаики </summary>
@@ -219,9 +242,9 @@ namespace fmg.uwp.mosaic.win2d {
             _mineImage = null;
             _flagImage = null;
 
-            RenderImage = null;
+            ActualBuffer = null;
             SwapDrawBuffer();
-            RenderImage = null;
+            ActualBuffer = null;
             SwapChain = null;
             Device = null;
             Control = null;

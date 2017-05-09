@@ -28,6 +28,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
    private FontInfo  fontInfo;
    private boolean iconicMode;
    private BoundDouble padding = new BoundDouble(0, 0, 0, 0);
+   private BackgroundFill _backgroundFill;
    private Color      backgroundColor;
    private boolean useBackgroundColor = true;
    private TImage imgBckgrnd;
@@ -159,7 +160,6 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       }
    }
 
-   private BackgroundFill _backgroundFill;
    public BackgroundFill getBackgroundFill() {
       if (_backgroundFill == null)
          setBackgroundFill(new BackgroundFill());

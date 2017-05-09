@@ -5,6 +5,7 @@ import java.awt.Rectangle;
 import java.util.Collection;
 
 import fmg.common.geom.RectDouble;
+import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.AMosaicView;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.ICellPaint;
@@ -28,7 +29,8 @@ public abstract class AMosaicViewSwing<TImage> extends AMosaicView<PaintableGrap
    }
 
    protected boolean _alreadyPainted = false;
-   protected void repaint(Collection<BaseCell> modifiedCells) {
+   @Override
+   public void repaint(Collection<BaseCell> modifiedCells, RectDouble clipRegion) {
       Graphics g = getPaintable();
       if (g == null)
          return;
@@ -39,11 +41,20 @@ public abstract class AMosaicViewSwing<TImage> extends AMosaicView<PaintableGrap
       try {
          PaintSwingContext<TImage> pc = getPaintContext();
 
-         Rectangle rcFill = g.getClipBounds();
          if (pc.isUseBackgroundColor()) {
             // background color
             g.setColor(Cast.toColor(pc.getBackgroundColor()));
-            g.fillRect(rcFill.x, rcFill.y, rcFill.width, rcFill.height);
+            if (clipRegion == null) {
+               Rectangle rcBounds = g.getClipBounds();
+               if (rcBounds != null) {
+                  g.fillRect(rcBounds.x, rcBounds.y, rcBounds.width, rcBounds.height);
+               } else {
+                  SizeDouble sz = getSize();
+                  g.fillRect(0, 0, (int)sz.width, (int)sz.height);
+               }
+            } else {
+               g.fillRect((int)clipRegion.x, (int)clipRegion.y, (int)clipRegion.width, (int)clipRegion.height);
+            }
          }
 
          if (modifiedCells == null)
@@ -52,13 +63,10 @@ public abstract class AMosaicViewSwing<TImage> extends AMosaicView<PaintableGrap
          // paint cells
          g.setFont(pc.getFont());
          PaintableGraphics p = createPaintableGraphics(g);
-         RectDouble clipBounds = Cast.toRectDouble(rcFill);
          ICellPaint<PaintableGraphics, TImage, PaintSwingContext<TImage>> cellPaint = getCellPaint();
          double padX = pc.getPadding().left, padY = pc.getPadding().top;
          for (BaseCell cell: modifiedCells) {
-            RectDouble rco = cell.getRcOuter();
-            rco = rco.moveXY(padX, padY);
-            if (rco.intersection(clipBounds)) // redraw only when needed - when the cells and update region intersect
+            if ((clipRegion == null) || cell.getRcOuter().moveXY(padX, padY).intersection(clipRegion)) // redraw only when needed - when the cells and update region intersect
                cellPaint.paint(cell, p, pc);
          }
       } finally {

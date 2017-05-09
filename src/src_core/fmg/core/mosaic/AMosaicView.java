@@ -19,7 +19,7 @@ import fmg.data.view.draw.PenBorder;
 public abstract class AMosaicView<TPaintable extends IPaintable,
                                   TImage,
                                   TPaintContext extends PaintContext<TImage>>
-               implements AutoCloseable, IMosaicView, PropertyChangeListener
+               implements IMosaicView, AutoCloseable, PropertyChangeListener
 {
 
    private Mosaic _mosaic;
@@ -29,8 +29,6 @@ public abstract class AMosaicView<TPaintable extends IPaintable,
 
    public abstract ICellPaint<TPaintable, TImage, TPaintContext> getCellPaint();
 
-   @Override
-   public void invalidate() { invalidate(null); }
    @Override
    public abstract void invalidate(Collection<BaseCell> modifiedCells);
 
@@ -89,7 +87,7 @@ public abstract class AMosaicView<TPaintable extends IPaintable,
          changeSizeImagesMineFlag();
          break;
       case Mosaic.PROPERTY_MATRIX:
-         invalidate();
+         invalidate(null);
          break;
       }
    }

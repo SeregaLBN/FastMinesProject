@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using fmg.common;
@@ -26,6 +25,7 @@ namespace fmg.core.mosaic.draw {
       private PenBorder _penBorder;
       private FontInfo _fontInfo;
       private BoundDouble _padding;
+      private BackgroundFill _backgroundFill;
       private Color   _backgroundColor = PaintContextCommon.DefaultBackgroundColor;
       private bool _useBackgroundColor = true;
       private TImage _imgBckgrnd;
@@ -108,7 +108,6 @@ namespace fmg.core.mosaic.draw {
          }
       }
 
-      private BackgroundFill _backgroundFill;
       public BackgroundFill BkFill {
          get {
             if (_backgroundFill == null)

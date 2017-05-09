@@ -47,6 +47,13 @@ namespace fmg.uwp.mosaic.win2d {
          }
       }
 
+      public override SizeDouble Size {
+         get {
+            // TODO: return get controller.WindowSize
+            return new SizeDouble(Control?.Width ?? 0, Control?.Height ?? 0);
+         }
+      }
+
       public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {
          System.Diagnostics.Debug.Assert((modifiedCells == null) || modifiedCells.Any());
          using (new Tracer()) {

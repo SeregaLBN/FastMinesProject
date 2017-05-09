@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using fmg.common;
 using fmg.common.notyfier;
+using fmg.common.geom;
 using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
 using fmg.data.view.draw;
@@ -23,7 +24,12 @@ namespace fmg.core.mosaic {
 
       public abstract ICellPaint<TPaintable, TImage, TPaintContext> CellPaint { get; }
 
+      /// <summary><see cref="IMosaicView.Size"/> </summary>
+      public abstract SizeDouble Size { get; }
+      /// <summary><see cref="IMosaicView.Invalidate"/> </summary>
       public abstract void Invalidate(IEnumerable<BaseCell> modifiedCells = null);
+      /// <summary><see cref="IMosaicView.Repaint"/> </summary>
+      public abstract void Repaint(IEnumerable<BaseCell> modifiedCells = null, RectDouble? clipRegion = null);
 
       public Mosaic Mosaic {
          get { return _mosaic; }

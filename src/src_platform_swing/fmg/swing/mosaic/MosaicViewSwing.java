@@ -61,7 +61,7 @@ public class MosaicViewSwing extends AMosaicViewSwing<Icon> {
                }
 
                MosaicViewSwing.this.setPaintable(g);
-               MosaicViewSwing.this.repaint(null);
+               MosaicViewSwing.this.repaint(null, Cast.toRectDouble(g.getClipBounds()));
             }
 
              @Override
@@ -84,6 +84,17 @@ public class MosaicViewSwing extends AMosaicViewSwing<Icon> {
          };
       }
       return _control;
+   }
+
+   @Override
+   public SizeDouble getSize() {
+      if (_controller != null)
+         return _controller.getWindowSize();
+
+      if (_control == null)
+         return null;
+      Dimension dim = _control.getSize();
+      return new SizeDouble(dim.width, dim.height);
    }
 
    @Override
