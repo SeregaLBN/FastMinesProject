@@ -15,7 +15,6 @@ using fmg.common.notyfier;
 using fmg.core.types;
 using fmg.core.types.click;
 using fmg.core.mosaic;
-using fmg.core.mosaic.cells;
 using fmg.data.controller.types;
 using fmg.uwp.utils;
 using fmg.uwp.mosaic;

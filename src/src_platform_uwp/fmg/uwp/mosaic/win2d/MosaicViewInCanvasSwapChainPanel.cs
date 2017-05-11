@@ -122,9 +122,9 @@ namespace fmg.uwp.mosaic.win2d {
             //if ((canvasVirtualControl.Size.Width == 0) || (canvasVirtualControl.Size.Height == 0))
             //   return;
 
-            AsyncRunner.InvokeFromUiLater(() => {
+            //AsyncRunner.InvokeFromUiLater(() => {
                Repaint(modifiedCells);
-            });
+            //}, Windows.UI.Core.CoreDispatcherPriority.High);
          }
       }
 
@@ -154,15 +154,9 @@ namespace fmg.uwp.mosaic.win2d {
          using (var ds = sc.CreateDrawingSession(Colors.Transparent)) {
             ds.DrawImage(ActualBuffer);
          }
-         //{
-         //   var canvasSwapChainPanel = Control;
-         //   var filename = string.Format("tmp-{0}x{1}-{2}.png",
-         //                          (int)canvasSwapChainPanel.Width,
-         //                          (int)canvasSwapChainPanel.Height,
-         //                          DateTime.Now.ToString("dd-MM-yyyy HH_mm_ss_fff"));
-         //   ActualBuffer.SaveAsync(Path.Combine(ApplicationData.Current.LocalFolder.Path, filename), CanvasBitmapFileFormat.Png);
-         //}
-         sc.Present();
+         //AsyncRunner.InvokeFromUiLater(() => { // TODO: Removes blink artifacts when zooming.  Need remove....
+            sc.Present();
+         //}, Windows.UI.Core.CoreDispatcherPriority.High);
       }
 
       protected override void Dispose(bool disposing) {
