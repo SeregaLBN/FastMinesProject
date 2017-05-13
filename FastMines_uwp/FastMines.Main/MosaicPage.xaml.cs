@@ -1,10 +1,12 @@
 using System;
 using System.ComponentModel;
+using System.Reactive.Linq;
 using Windows.System;
 using Windows.Devices.Input;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
@@ -27,6 +29,7 @@ namespace fmg {
    public sealed partial class MosaicPage : Page {
       /// <summary> мин отступ от краев экрана для мозаики </summary>
       private const double MinIndent = 30;
+      private const bool DeferredZoom = true;
 
       private MosaicControllerWin2D _mosaicController;
       private readonly ClickInfo _clickInfo = new ClickInfo();
@@ -36,6 +39,10 @@ namespace fmg {
       private DateTime _dtInertiaStarting;
       private Windows.Foundation.Point? _mouseDevicePosition_AreaChanging = null;
       private static double? _baseWheelDelta;
+      private readonly IDisposable _areaScaleObservable;
+      private Transform _originalTransform;
+      private CompositeTransform _scaleTransform;
+      private double _deferredArea;
 
       /// <summary> Mosaic controller </summary>
       public MosaicControllerWin2D MosaicController {
@@ -78,7 +85,17 @@ namespace fmg {
                MosaicController.Area = 1500;
             }, CoreDispatcherPriority.High);
          }
+
+         //this.SizeChanged += OnSizeChanged;
+         _areaScaleObservable = Observable
+            .FromEventPattern<NeedAreaChangingEventHandler, NeedAreaChangingEventArgs>(h => NeedAreaChanging += h, h => NeedAreaChanging -= h)
+            .Throttle(TimeSpan.FromSeconds(0.4)) // debounce events
+            .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnDeferredAreaChanging(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.High));
       }
+
+      private sealed class NeedAreaChangingEventArgs { }
+      private delegate void NeedAreaChangingEventHandler(object sender, NeedAreaChangingEventArgs ev);
+      private event NeedAreaChangingEventHandler NeedAreaChanging;
 
       protected override void OnNavigatedTo(NavigationEventArgs ev) {
          base.OnNavigatedTo(ev);
@@ -194,13 +211,48 @@ namespace fmg {
       /// <summary> Zoom + </summary>
       void AreaInc(double zoomPower = 1.3, Windows.Foundation.Point? mouseDevicePosition = null) {
          _mouseDevicePosition_AreaChanging = mouseDevicePosition;
-         Area *= 1.01 * zoomPower;
+         if (DeferredZoom) {
+            Scale(1.01 * zoomPower);
+         } else {
+            Area *= 1.01 * zoomPower;
+         }
       }
 
       /// <summary> Zoom - </summary>
       void AreaDec(double zoomPower = 1.3, Windows.Foundation.Point? mouseDevicePosition = null) {
          _mouseDevicePosition_AreaChanging = mouseDevicePosition;
-         Area *= 0.99 / zoomPower;
+         if (DeferredZoom) {
+            Scale(0.99 / zoomPower);
+         } else {
+            Area *= 0.99 / zoomPower;
+         }
+      }
+
+      private void Scale(double scaleMul) {
+         var transformer = (_canvasVirtualControl.RenderTransform as CompositeTransform);
+         if (transformer == null) {
+            _canvasVirtualControl.RenderTransform = transformer = _scaleTransform = _scaleTransform ?? new CompositeTransform();
+            _deferredArea = Area;
+         }
+
+         _deferredArea *= scaleMul;
+
+         var deferredWinSize = MosaicController.GetWindowSize(MosaicController.SizeField, _deferredArea);
+         var  currentWinSize = MosaicController.WindowSize;
+
+         transformer.ScaleX = deferredWinSize.Width  / currentWinSize.Width;
+         transformer.ScaleY = deferredWinSize.Height / currentWinSize.Height;
+
+         _mouseDevicePosition_AreaChanging = null;
+         NeedAreaChanging(this, null); // fire event
+      }
+
+      private void OnDeferredAreaChanging(object sender, NeedAreaChangingEventArgs ev) {
+         Area = _deferredArea;
+
+         var transformer = (_canvasVirtualControl.RenderTransform as CompositeTransform);
+         transformer.ScaleX = transformer.ScaleY = 1;
+         _canvasVirtualControl.RenderTransform = _originalTransform;
       }
 
       /// <summary> Zoom minimum </summary>
@@ -281,6 +333,8 @@ namespace fmg {
          _canvasVirtualControl.RemoveFromVisualTree();
          _canvasVirtualControl = null;
          MosaicController.View.Control = null;
+
+         _areaScaleObservable.Dispose();
       }
 
       private void OnPageSizeChanged(object sender, RoutedEventArgs e) {

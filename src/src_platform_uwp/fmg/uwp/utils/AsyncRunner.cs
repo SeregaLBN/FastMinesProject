@@ -38,7 +38,7 @@ namespace fmg.uwp.utils {
       }
 
       public static void RepeatNoWait(this Action run, TimeSpan delay, Func<bool> cancelation) {
-         Action run2 = () => { };
+         Action run2 = null;
          run2 = () => {
             if (cancelation())
                return;
