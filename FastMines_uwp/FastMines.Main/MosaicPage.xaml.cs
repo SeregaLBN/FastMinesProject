@@ -29,6 +29,7 @@ namespace fmg {
    public sealed partial class MosaicPage : Page {
       /// <summary> мин отступ от краев экрана для мозаики </summary>
       private const double MinIndent = 30;
+      private const double AREA_MIN = 230;
       private const bool DeferredZoom = true;
 
       private MosaicControllerWin2D _mosaicController;
@@ -89,7 +90,7 @@ namespace fmg {
          //this.SizeChanged += OnSizeChanged;
          _areaScaleObservable = Observable
             .FromEventPattern<NeedAreaChangingEventHandler, NeedAreaChangingEventArgs>(h => NeedAreaChanging += h, h => NeedAreaChanging -= h)
-            .Throttle(TimeSpan.FromSeconds(0.4)) // debounce events
+            .Throttle(TimeSpan.FromSeconds(0.7)) // debounce events
             .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnDeferredAreaChanging(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.High));
       }
 
@@ -203,7 +204,7 @@ namespace fmg {
             return MosaicController.Area;
          }
          set {
-            value = Math.Min(Math.Max(230, value), CalcMaxArea(MosaicController.SizeField)); // recheck
+            value = Math.Min(Math.Max(AREA_MIN, value), CalcMaxArea(MosaicController.SizeField)); // recheck
             MosaicController.Area = value;
          }
       }
@@ -229,19 +230,34 @@ namespace fmg {
       }
 
       private void Scale(double scaleMul) {
-         var transformer = (_canvasVirtualControl.RenderTransform as CompositeTransform);
-         if (transformer == null) {
-            _canvasVirtualControl.RenderTransform = transformer = _scaleTransform = _scaleTransform ?? new CompositeTransform();
+         if (!(_canvasVirtualControl.RenderTransform is CompositeTransform)) {
+            if (_scaleTransform == null) {
+               _scaleTransform = new CompositeTransform();
+               _originalTransform = _canvasVirtualControl.RenderTransform;
+            }
+            _canvasVirtualControl.RenderTransform = _scaleTransform;
             _deferredArea = Area;
          }
 
+
+         SizeDouble preDeferredWinSize ;
+         if (_mouseDevicePosition_AreaChanging.HasValue)
+            preDeferredWinSize = MosaicController.GetWindowSize(MosaicController.SizeField, _deferredArea);
+         else
+            preDeferredWinSize = new SizeDouble{ }; // never mind
+
          _deferredArea *= scaleMul;
+         _deferredArea = Math.Min(Math.Max(AREA_MIN, _deferredArea), CalcMaxArea(MosaicController.SizeField)); // recheck
 
          var deferredWinSize = MosaicController.GetWindowSize(MosaicController.SizeField, _deferredArea);
          var  currentWinSize = MosaicController.WindowSize;
 
-         transformer.ScaleX = deferredWinSize.Width  / currentWinSize.Width;
-         transformer.ScaleY = deferredWinSize.Height / currentWinSize.Height;
+         _scaleTransform.ScaleX = _scaleTransform.ScaleY = 1;
+         if (_mouseDevicePosition_AreaChanging.HasValue)
+            CenterMouseDevicePositionOverField(_mouseDevicePosition_AreaChanging.Value, preDeferredWinSize, deferredWinSize);
+
+         _scaleTransform.ScaleX = deferredWinSize.Width  / currentWinSize.Width;
+         _scaleTransform.ScaleY = deferredWinSize.Height / currentWinSize.Height;
 
          _mouseDevicePosition_AreaChanging = null;
          NeedAreaChanging(this, null); // fire event
@@ -250,14 +266,14 @@ namespace fmg {
       private void OnDeferredAreaChanging(object sender, NeedAreaChangingEventArgs ev) {
          Area = _deferredArea;
 
-         var transformer = (_canvasVirtualControl.RenderTransform as CompositeTransform);
-         transformer.ScaleX = transformer.ScaleY = 1;
+         // restore
+         _scaleTransform.ScaleX = _scaleTransform.ScaleY = 1;
          _canvasVirtualControl.RenderTransform = _originalTransform;
       }
 
       /// <summary> Zoom minimum </summary>
       void AreaMin() {
-         Area = 0;
+         Area = AREA_MIN;
       }
 
       /// <summary> Zoom maximum </summary>
@@ -335,6 +351,7 @@ namespace fmg {
          MosaicController.View.Control = null;
 
          _areaScaleObservable.Dispose();
+         _scaleTransform = null;
       }
 
       private void OnPageSizeChanged(object sender, RoutedEventArgs e) {
@@ -358,22 +375,30 @@ namespace fmg {
                var oldWinSize = MosaicController.GetWindowSize(MosaicController.SizeField, ev.OldValue);
                var newWinSize = MosaicController.WindowSize;
 
-               // точка над игровым полем со старой площадью ячеек
-               var pointOld = ToCanvasPoint(devicePos);
-               var percent = new Tuple<double, double>(pointOld.X * 100 / oldWinSize.Width, pointOld.Y * 100 / oldWinSize.Height);
-
-               // таже точка над игровым полем, но с учётом zoom'а (новой площади)
-               var pointNew = new PointDouble(newWinSize.Width * percent.Item1 / 100, newWinSize.Height * percent.Item2 / 100);
-
-               var o = GetOffset();
-               // смещаю игровое поле так, чтобы точка была на том же месте экрана
-               o.Left += pointOld.X - pointNew.X;
-               o.Top  += pointOld.Y - pointNew.Y;
-
-               RecheckOffset(ref o, newWinSize);
-               ApplyOffset(o);
+               CenterMouseDevicePositionOverField(devicePos, oldWinSize, newWinSize);
             }
          }
+      }
+
+      private void CenterMouseDevicePositionOverField(Windows.Foundation.Point devicePos, SizeDouble oldWinSize, SizeDouble newWinSize) {
+         // точка над игровым полем со старой площадью ячеек
+         var pointOld = ToCanvasPoint(devicePos);
+         var percentX = pointOld.X / oldWinSize.Width;  // 0.0 .. 1.0
+         var percentY = pointOld.Y / oldWinSize.Height; // 0.0 .. 1.0
+
+         // таже точка над игровым полем, но с учётом zoom'а (новой площади)
+         var pointNew = new PointDouble(newWinSize.Width * percentX, newWinSize.Height * percentY);
+
+         var o = GetOffset();
+         // смещаю игровое поле так, чтобы точка была на том же месте экрана
+         o.Left += pointOld.X - pointNew.X;
+         o.Top += pointOld.Y - pointNew.Y;
+
+         RecheckOffset(ref o, newWinSize);
+         ApplyOffset(o);
+
+         //_canvasVirtualControl.Width  = newWinSize.Width;
+         //_canvasVirtualControl.Height = newWinSize.Height;
       }
 
       private void Mosaic_OnChangedMosaicType(MosaicControllerWin2D sender, PropertyChangedExEventArgs<EMosaic> ev) {
