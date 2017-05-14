@@ -14,6 +14,7 @@ namespace fmg.uwp.mosaic.win2d {
    /// summary> MVC: view. UWP Win2D implementation. View located into control <see cref="CanvasSwapChainPanel"/> */
    public class MosaicViewInCanvasSwapChainPanel : AMosaicViewInControl<CanvasSwapChainPanel> {
 
+      private CanvasDevice _device;
       private CanvasRenderTarget[] _doubleBuffer = new CanvasRenderTarget[2];
       private int _bufferIndex = 0;
       private CanvasSwapChain _swapChain;
@@ -35,6 +36,23 @@ namespace fmg.uwp.mosaic.win2d {
                _tokenPropWidth = _control.RegisterPropertyChangedCallback(CanvasSwapChainPanel.WidthProperty, OnControlPropertyChanged);
                _tokenPropHeight = _control.RegisterPropertyChangedCallback(CanvasSwapChainPanel.HeightProperty, OnControlPropertyChanged);
             }
+         }
+      }
+
+      protected override CanvasDevice GetCanvasDevice() {
+         return Device;
+      }
+
+      private CanvasDevice Device {
+         get {
+            if (_device == null)
+               Device = new CanvasDevice();
+            return _device;
+         }
+         set {
+            if (_device != null)
+               _device.Dispose();
+            _device = value;
          }
       }
 
@@ -170,6 +188,7 @@ namespace fmg.uwp.mosaic.win2d {
             SwapDrawBuffer();
             ActualBuffer = null;
             SwapChain = null;
+            Device = null;
          }
       }
 

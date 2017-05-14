@@ -12,7 +12,6 @@ namespace fmg.uwp.mosaic.win2d {
    public abstract class AMosaicViewInControl<TControl> : AMosaicViewWin2D
       where TControl : FrameworkElement
    {
-      private CanvasDevice _device;
       protected TControl _control;
       private MineCanvasBmp _mineImage;
       private FlagCanvasBmp _flagImage;
@@ -22,24 +21,14 @@ namespace fmg.uwp.mosaic.win2d {
          set { _control = value; }
       }
 
-      protected CanvasDevice Device {
-         get {
-            //return CanvasDevice.GetSharedDevice();
-            if (_device == null)
-               Device = new CanvasDevice();
-            return _device;
-         }
-         set {
-            if (_device != null)
-               _device.Dispose();
-            _device = value;
-         }
+      protected virtual CanvasDevice GetCanvasDevice() {
+         return CanvasDevice.GetSharedDevice();
       }
 
       private MineCanvasBmp MineImg {
          get {
             if (_mineImage == null)
-               _mineImage = new MineCanvasBmp(Device);
+               _mineImage = new MineCanvasBmp(GetCanvasDevice());
             return _mineImage;
          }
       }
@@ -47,7 +36,7 @@ namespace fmg.uwp.mosaic.win2d {
       private FlagCanvasBmp FlagImg {
          get {
             if (_flagImage == null)
-               _flagImage = new FlagCanvasBmp(Device);
+               _flagImage = new FlagCanvasBmp(GetCanvasDevice());
             return _flagImage;
          }
       }
@@ -90,7 +79,6 @@ namespace fmg.uwp.mosaic.win2d {
             _mineImage = null;
             _flagImage = null;
 
-            Device = null;
             Control = null;
          }
       }
