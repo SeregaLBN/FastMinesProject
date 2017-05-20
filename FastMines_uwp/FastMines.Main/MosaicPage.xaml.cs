@@ -253,8 +253,12 @@ namespace fmg {
          var  currentWinSize = MosaicController.WindowSize;
 
          _scaleTransform.ScaleX = _scaleTransform.ScaleY = 1;
-         if (_mouseDevicePosition_AreaChanging.HasValue)
-            CenterMouseDevicePositionOverField(_mouseDevicePosition_AreaChanging.Value, preDeferredWinSize, deferredWinSize);
+         if (_mouseDevicePosition_AreaChanging.HasValue) {
+            var devicePos = _mouseDevicePosition_AreaChanging.Value;
+            //AsyncRunner.InvokeFromUiLater(() => {
+               CenterMouseDevicePositionOverField(devicePos, preDeferredWinSize, deferredWinSize);
+            //});
+         }
 
          _scaleTransform.ScaleX = deferredWinSize.Width  / currentWinSize.Width;
          _scaleTransform.ScaleY = deferredWinSize.Height / currentWinSize.Height;
@@ -397,6 +401,7 @@ namespace fmg {
          RecheckOffset(ref o, newWinSize);
          ApplyOffset(o);
 
+         Logger.Put("canvasVirtualControl.Size: {{{0}, {1}}}", _canvasVirtualControl.Width, _canvasVirtualControl.Height);
          //_canvasVirtualControl.Width  = newWinSize.Width;
          //_canvasVirtualControl.Height = newWinSize.Height;
       }
@@ -877,17 +882,23 @@ namespace fmg {
       }
 
       Thickness GetOffset() {
-         return _contentRoot.Padding;           // variant 1
-         //return _canvasVirtualControl.Margin; // variant 2
+         //return _canvasVirtualControl.Padding;   // variant 1
+         return _canvasVirtualControl.Margin;      // variant 2
+         //return _contentRoot.Margin;             // variant 3
+         //return _contentRoot.Padding;           // variant 4
       }
 
       private void ApplyOffset(Thickness offset) {
-         var pad = _contentRoot.Padding;           // variant 1
-         //var pad = _canvasVirtualControl.Margin; // variant 2
+         //var pad = _canvasVirtualControl.Padding; // variant 1
+         var pad = _canvasVirtualControl.Margin;    // variant 2
+         //var pad = _contentRoot.Margin;           // variant 3
+         //var pad = _contentRoot.Padding;          // variant 4
          pad.Left = offset.Left;
          pad.Top = offset.Top;
-         _contentRoot.Padding = pad;           // variant 1
-         //_canvasVirtualControl.Margin = pad; // variant 2
+         //_canvasVirtualControl.Padding = pad; // variant 1
+         _canvasVirtualControl.Margin = pad;    // variant 2
+         //_contentRoot.Margin = pad;           // variant 3
+         //_contentRoot.Padding = pad;          // variant 4
       }
 
       /// <summary> Перепроверить смещение к полю мозаики так, что поле мозаики было в пределах страницы </summary>
