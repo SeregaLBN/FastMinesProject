@@ -240,30 +240,21 @@ namespace fmg {
          }
 
 
-         SizeDouble preDeferredWinSize ;
-         if (_mouseDevicePosition_AreaChanging.HasValue)
-            preDeferredWinSize = MosaicController.GetWindowSize(MosaicController.SizeField, _deferredArea);
-         else
-            preDeferredWinSize = new SizeDouble{ }; // never mind
-
          _deferredArea *= scaleMul;
          _deferredArea = Math.Min(Math.Max(AREA_MIN, _deferredArea), CalcMaxArea(MosaicController.SizeField)); // recheck
 
          var deferredWinSize = MosaicController.GetWindowSize(MosaicController.SizeField, _deferredArea);
          var  currentWinSize = MosaicController.WindowSize;
 
-         _scaleTransform.ScaleX = _scaleTransform.ScaleY = 1;
          if (_mouseDevicePosition_AreaChanging.HasValue) {
-            var devicePos = _mouseDevicePosition_AreaChanging.Value;
-            //AsyncRunner.InvokeFromUiLater(() => {
-               CenterMouseDevicePositionOverField(devicePos, preDeferredWinSize, deferredWinSize);
-            //});
+            var p = ToCanvasPoint(_mouseDevicePosition_AreaChanging.Value);
+            _scaleTransform.CenterX = p.X;
+            _scaleTransform.CenterY = p.Y;
          }
 
          _scaleTransform.ScaleX = deferredWinSize.Width  / currentWinSize.Width;
          _scaleTransform.ScaleY = deferredWinSize.Height / currentWinSize.Height;
 
-         _mouseDevicePosition_AreaChanging = null;
          NeedAreaChanging(this, null); // fire event
       }
 
@@ -271,6 +262,7 @@ namespace fmg {
          Area = _deferredArea;
 
          // restore
+         _scaleTransform.CenterX = _scaleTransform.CenterY = 0;
          _scaleTransform.ScaleX = _scaleTransform.ScaleY = 1;
          _canvasVirtualControl.RenderTransform = _originalTransform;
       }
@@ -373,13 +365,15 @@ namespace fmg {
          using (var tracer = new Tracer("Mosaic_OnChangedArea", string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {
             //ChangeSizeImagesMineFlag();
 
+            var newWinSize = MosaicController.WindowSize;
             if (_mouseDevicePosition_AreaChanging.HasValue) {
                var devicePos = _mouseDevicePosition_AreaChanging.Value;
-
                var oldWinSize = MosaicController.GetWindowSize(MosaicController.SizeField, ev.OldValue);
-               var newWinSize = MosaicController.WindowSize;
-
                CenterMouseDevicePositionOverField(devicePos, oldWinSize, newWinSize);
+            } else {
+               var o = GetOffset();
+               RecheckOffset(ref o, newWinSize);
+               ApplyOffset(o);
             }
          }
       }
