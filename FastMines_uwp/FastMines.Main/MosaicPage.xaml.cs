@@ -87,7 +87,6 @@ namespace fmg {
             }, CoreDispatcherPriority.High);
          }
 
-         //this.SizeChanged += OnSizeChanged;
          _areaScaleObservable = Observable
             .FromEventPattern<NeedAreaChangingEventHandler, NeedAreaChangingEventArgs>(h => NeedAreaChanging += h, h => NeedAreaChanging -= h)
             .Throttle(TimeSpan.FromSeconds(0.7)) // debounce events
@@ -363,47 +362,34 @@ namespace fmg {
       private void Mosaic_OnChangedArea(MosaicControllerWin2D sender, PropertyChangedExEventArgs<double> ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicController));
          using (var tracer = new Tracer("Mosaic_OnChangedArea", string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {
-            //ChangeSizeImagesMineFlag();
+            var o = GetOffset();
 
             var newWinSize = MosaicController.WindowSize;
             if (_mouseDevicePosition_AreaChanging.HasValue) {
                var devicePos = _mouseDevicePosition_AreaChanging.Value;
                var oldWinSize = MosaicController.GetWindowSize(MosaicController.SizeField, ev.OldValue);
-               CenterMouseDevicePositionOverField(devicePos, oldWinSize, newWinSize);
-            } else {
-               var o = GetOffset();
-               RecheckOffset(ref o, newWinSize);
-               ApplyOffset(o);
+
+               // точка над игровым полем со старой площадью ячеек
+               var pointOld = ToCanvasPoint(devicePos);
+               var percentX = pointOld.X / oldWinSize.Width;  // 0.0 .. 1.0
+               var percentY = pointOld.Y / oldWinSize.Height; // 0.0 .. 1.0
+
+               // таже точка над игровым полем, но с учётом zoom'а (новой площади)
+               var pointNew = new PointDouble(newWinSize.Width * percentX, newWinSize.Height * percentY);
+
+               // смещаю игровое поле так, чтобы точка была на том же месте экрана
+               o.Left += pointOld.X - pointNew.X;
+               o.Top  += pointOld.Y - pointNew.Y;
             }
+
+            RecheckOffset(ref o, newWinSize);
+            ApplyOffset(o);
          }
-      }
-
-      private void CenterMouseDevicePositionOverField(Windows.Foundation.Point devicePos, SizeDouble oldWinSize, SizeDouble newWinSize) {
-         // точка над игровым полем со старой площадью ячеек
-         var pointOld = ToCanvasPoint(devicePos);
-         var percentX = pointOld.X / oldWinSize.Width;  // 0.0 .. 1.0
-         var percentY = pointOld.Y / oldWinSize.Height; // 0.0 .. 1.0
-
-         // таже точка над игровым полем, но с учётом zoom'а (новой площади)
-         var pointNew = new PointDouble(newWinSize.Width * percentX, newWinSize.Height * percentY);
-
-         var o = GetOffset();
-         // смещаю игровое поле так, чтобы точка была на том же месте экрана
-         o.Left += pointOld.X - pointNew.X;
-         o.Top += pointOld.Y - pointNew.Y;
-
-         RecheckOffset(ref o, newWinSize);
-         ApplyOffset(o);
-
-         Logger.Put("canvasVirtualControl.Size: {{{0}, {1}}}", _canvasVirtualControl.Width, _canvasVirtualControl.Height);
-         //_canvasVirtualControl.Width  = newWinSize.Width;
-         //_canvasVirtualControl.Height = newWinSize.Height;
       }
 
       private void Mosaic_OnChangedMosaicType(MosaicControllerWin2D sender, PropertyChangedExEventArgs<EMosaic> ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicController));
          using (new Tracer()) {
-            //ChangeSizeImagesMineFlag();
          }
       }
 

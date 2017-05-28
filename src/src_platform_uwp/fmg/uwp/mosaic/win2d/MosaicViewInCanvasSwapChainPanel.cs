@@ -5,9 +5,9 @@ using Windows.UI.Xaml;
 using Windows.Graphics.Display;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using fmg.uwp.utils;
 using fmg.common;
 using fmg.core.mosaic.cells;
-using fmg.uwp.utils;
 
 namespace fmg.uwp.mosaic.win2d {
 
@@ -33,8 +33,8 @@ namespace fmg.uwp.mosaic.win2d {
             }
             _control = value;
             if (_control != null) {
-               _tokenPropWidth = _control.RegisterPropertyChangedCallback(CanvasSwapChainPanel.WidthProperty, OnControlPropertyChanged);
-               _tokenPropHeight = _control.RegisterPropertyChangedCallback(CanvasSwapChainPanel.HeightProperty, OnControlPropertyChanged);
+               _tokenPropWidth  = _control.RegisterPropertyChangedCallback(CanvasSwapChainPanel.WidthProperty , (s, p) => _needResizeSwapChain = _needResizeFirstBuffer = _needResizeSecondBuffer = true);
+               _tokenPropHeight = _control.RegisterPropertyChangedCallback(CanvasSwapChainPanel.HeightProperty, (s, p) => _needResizeSwapChain = _needResizeFirstBuffer = _needResizeSecondBuffer = true);
             }
          }
       }
@@ -53,15 +53,6 @@ namespace fmg.uwp.mosaic.win2d {
             if (_device != null)
                _device.Dispose();
             _device = value;
-         }
-      }
-
-      private void OnControlPropertyChanged(DependencyObject sender, DependencyProperty dp) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _control));
-         if (ReferenceEquals(dp, CanvasSwapChainPanel.WidthProperty) ||
-             ReferenceEquals(dp, CanvasSwapChainPanel.HeightProperty))
-         {
-            _needResizeSwapChain = _needResizeFirstBuffer = _needResizeSecondBuffer = true;
          }
       }
 
@@ -93,7 +84,7 @@ namespace fmg.uwp.mosaic.win2d {
       }
       private CanvasRenderTarget  FrontBuffer { get { return _doubleBuffer[_bufferIndex]; } }
       private CanvasRenderTarget   BackBuffer { get { return _doubleBuffer[1 - _bufferIndex]; } }
-      private CanvasRenderTarget ActualBuffer {
+      public CanvasRenderTarget ActualBuffer {
          get {
             System.Diagnostics.Debug.Assert(_control != null);
             System.Diagnostics.Debug.Assert(!Disposed);
@@ -122,7 +113,7 @@ namespace fmg.uwp.mosaic.win2d {
             }
             return FrontBuffer;
          }
-         set {
+         private set {
             if (FrontBuffer != null)
                FrontBuffer.Dispose();
             _doubleBuffer[_bufferIndex] = value;
@@ -140,13 +131,12 @@ namespace fmg.uwp.mosaic.win2d {
             //if ((canvasVirtualControl.Size.Width == 0) || (canvasVirtualControl.Size.Height == 0))
             //   return;
 
-            //AsyncRunner.InvokeFromUiLater(() => {
+            AsyncRunner.InvokeFromUiLater(() => {
                Repaint(modifiedCells);
-            //}, Windows.UI.Core.CoreDispatcherPriority.High);
+            }, Windows.UI.Core.CoreDispatcherPriority.High);
          }
       }
 
-      //int cnt = 0;
       public void Repaint(IEnumerable<BaseCell> modifiedCells) {
          SwapDrawBuffer();
          using (var ds = ActualBuffer.CreateDrawingSession()) {
@@ -189,6 +179,8 @@ namespace fmg.uwp.mosaic.win2d {
             ActualBuffer = null;
             SwapChain = null;
             Device = null;
+            if (_control != null)
+               Control.SwapChain = null;
          }
       }
 
