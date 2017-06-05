@@ -9,7 +9,6 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
-using MosaicControllerWin2D = fmg.uwp.mosaic.win2d.MosaicControllerWin2D<fmg.uwp.mosaic.win2d.MosaicViewInCanvasSwapChainPanel>;
 
 namespace fmg.uwp.mosaic.win2d {
 
@@ -21,7 +20,12 @@ namespace fmg.uwp.mosaic.win2d {
       private int _bufferIndex = 0;
       private CanvasSwapChain _swapChain;
       public SizeDouble Offset { get; set; }
-      public MosaicControllerWin2D Controller { get; set; } // TODO exclude this... Controller contains View, but not vice versa.
+
+      public Func<SizeDouble> GetterMosaicWindnowSize { get; set; }
+      public void OnMosaicWindowSizeChanged() {
+         _needResizeFirstBuffer = _needResizeSecondBuffer = true;
+      }
+      private bool _needResizeFirstBuffer = true, _needResizeSecondBuffer = true;
 
       protected override CanvasDevice GetCanvasDevice() {
          return Device;
@@ -75,18 +79,19 @@ namespace fmg.uwp.mosaic.win2d {
             System.Diagnostics.Debug.Assert(_control != null);
             System.Diagnostics.Debug.Assert(!Disposed);
 
-            var mosaicWinSize = Controller.WindowSize;
-            //Func<Windows.Foundation.Size, bool> hasMinDiff = size => mosaicWinSize.Width.HasMinDiff(size.Width, 4) && mosaicWinSize.Height.HasMinDiff(size.Height, 4);
-            Func<Windows.Foundation.Size, bool> hasMinDiff = size => (Math.Abs(mosaicWinSize.Width  - size.Width ) < 0.5) &&
-                                                                     (Math.Abs(mosaicWinSize.Height - size.Height) < 0.5);
-            if ((_doubleBuffer[_bufferIndex] != null) && !hasMinDiff(_doubleBuffer[_bufferIndex].Size)) {
-               _doubleBuffer[_bufferIndex].Dispose();
+            if ((_bufferIndex == 0) ? _needResizeFirstBuffer : _needResizeSecondBuffer) {
+               _doubleBuffer[_bufferIndex]?.Dispose();
                _doubleBuffer[_bufferIndex] = null;
+               if (_bufferIndex == 0)
+                  _needResizeFirstBuffer = false;
+               else
+                  _needResizeSecondBuffer = false;
             }
 
             if (_doubleBuffer[_bufferIndex] == null) {
                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-               ActualBuffer = new CanvasRenderTarget(Device, (float)mosaicWinSize.Width, (float)mosaicWinSize.Height, dpi);
+               var size = GetterMosaicWindnowSize();
+               ActualBuffer = new CanvasRenderTarget(Device, (float)size.Width, (float)size.Height, dpi);
             }
             return FrontBuffer;
          }

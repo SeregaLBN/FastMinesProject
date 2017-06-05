@@ -54,14 +54,14 @@ namespace fmg {
          private set {
             if (_mosaicController != null) {
                _mosaicController.PropertyChanged -= OnMosaicControllerPropertyChanged;
-               _mosaicController.View.Controller = null;
+               _mosaicController.View.GetterMosaicWindnowSize = null;
                _mosaicController.Dispose();
             }
             _mosaicController = value;
             if (_mosaicController != null) {
                _mosaicController.PropertyChanged += OnMosaicControllerPropertyChanged;
                _mosaicController.View.Control = _canvasSwapChainPanel;
-               _mosaicController.View.Controller = _mosaicController;
+               _mosaicController.View.GetterMosaicWindnowSize = () => MosaicController.WindowSize;
             }
          }
       }
@@ -71,7 +71,6 @@ namespace fmg {
 
          this.Loaded += OnPageLoaded;
          this.Unloaded += OnPageUnloaded;
-         this.SizeChanged += OnPageSizeChanged;
          this.ManipulationMode =
             ManipulationModes.TranslateX |
             ManipulationModes.TranslateY |
@@ -88,11 +87,11 @@ namespace fmg {
             }, CoreDispatcherPriority.High);
          }
 
-         this.SizeChanged += OnSizeChanged;
+         this.SizeChanged += OnPageSizeChanged;
          //_sizeChangedObservable = Observable
          //   .FromEventPattern<SizeChangedEventHandler, SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h) // equals .FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
          //   .Throttle(TimeSpan.FromSeconds(0.2)) // debounce events
-         //   .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low));
+         //   .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnPageSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low));
          _areaScaleObservable = Observable
             .FromEventPattern<NeedAreaChangingEventHandler, NeedAreaChangingEventArgs>(h => NeedAreaChanging += h, h => NeedAreaChanging -= h)
             .Throttle(TimeSpan.FromSeconds(0.7)) // debounce events
@@ -291,8 +290,9 @@ namespace fmg {
 
       private void OnMosaicControllerPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          switch (ev.PropertyName) {
-       //case nameof(MosaicControllerWin2D.WindowSize):
-       //   break;
+         case nameof(MosaicControllerWin2D.WindowSize):
+            _mosaicController.View.OnMosaicWindowSizeChanged();
+            break;
          case nameof(MosaicControllerWin2D.MosaicType):
             Mosaic_OnChangedMosaicType(sender as MosaicControllerWin2D, ev as PropertyChangedExEventArgs<EMosaic>);
             break;
@@ -340,10 +340,11 @@ namespace fmg {
             this.Frame.GoBack();
       }
 
-      private void OnSizeChanged(object sender, SizeChangedEventArgs ev) {
+      private void OnPageSizeChanged(object sender, SizeChangedEventArgs ev) {
          _canvasSwapChainPanel.Width = ev.NewSize.Width;
          _canvasSwapChainPanel.Height = ev.NewSize.Height;
-         MosaicController.View.RepaintOffset();
+         //MosaicController.View.RepaintOffset();
+         RecheckLocation();
       }
 
       private void OnPageLoaded(object sender, RoutedEventArgs e) {
@@ -360,10 +361,6 @@ namespace fmg {
          // Explicitly remove references to allow the Win2D controls to get garbage collected
          _canvasSwapChainPanel.RemoveFromVisualTree();
          _canvasSwapChainPanel = null;
-      }
-
-      private void OnPageSizeChanged(object sender, RoutedEventArgs e) {
-         RecheckLocation();
       }
 
       private void Mosaic_OnChangedGameStatus(MosaicControllerWin2D sender, PropertyChangedExEventArgs<EGameStatus> ev) { }
@@ -891,7 +888,7 @@ namespace fmg {
          //_canvasSwapChainPanel.Margin = pad; // variant 2
 
          var old = MosaicController.View.Offset;
-         if (old.Width.HasMinDiff(offset.Left) || old.Height.HasMinDiff(offset.Top)) {
+         if (!old.Width.HasMinDiff(offset.Left) || !old.Height.HasMinDiff(offset.Top)) {
             MosaicController.View.Offset = new SizeDouble(offset.Left, offset.Top);
             MosaicController.View.RepaintOffset();
          }
