@@ -1,13 +1,15 @@
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using Windows.UI;
-using Windows.UI.Xaml;
 using Windows.Graphics.Display;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using fmg.uwp.utils;
 using fmg.common;
+using fmg.common.geom;
 using fmg.core.mosaic.cells;
+using fmg.uwp.utils;
+using MosaicControllerWin2D = fmg.uwp.mosaic.win2d.MosaicControllerWin2D<fmg.uwp.mosaic.win2d.MosaicViewInCanvasSwapChainPanel>;
 
 namespace fmg.uwp.mosaic.win2d {
 
@@ -18,26 +20,8 @@ namespace fmg.uwp.mosaic.win2d {
       private CanvasRenderTarget[] _doubleBuffer = new CanvasRenderTarget[2];
       private int _bufferIndex = 0;
       private CanvasSwapChain _swapChain;
-      private long _tokenPropWidth, _tokenPropHeight;
-      private bool _needResizeSwapChain, _needResizeFirstBuffer, _needResizeSecondBuffer;
-
-      public override CanvasSwapChainPanel Control {
-         //get { return _control; }
-         set {
-            if (_control != null) {
-               if (_tokenPropWidth != 0)
-                  _control.UnregisterPropertyChangedCallback(CanvasSwapChainPanel.WidthProperty, _tokenPropWidth);
-               if (_tokenPropHeight != 0)
-                  _control.UnregisterPropertyChangedCallback(CanvasSwapChainPanel.HeightProperty, _tokenPropHeight);
-               _tokenPropWidth = _tokenPropHeight = 0;
-            }
-            _control = value;
-            if (_control != null) {
-               _tokenPropWidth  = _control.RegisterPropertyChangedCallback(CanvasSwapChainPanel.WidthProperty , (s, p) => _needResizeSwapChain = _needResizeFirstBuffer = _needResizeSecondBuffer = true);
-               _tokenPropHeight = _control.RegisterPropertyChangedCallback(CanvasSwapChainPanel.HeightProperty, (s, p) => _needResizeSwapChain = _needResizeFirstBuffer = _needResizeSecondBuffer = true);
-            }
-         }
-      }
+      public SizeDouble Offset { get; set; }
+      public MosaicControllerWin2D Controller { get; set; } // TODO exclude this... Controller contains View, but not vice versa.
 
       protected override CanvasDevice GetCanvasDevice() {
          return Device;
@@ -60,15 +44,17 @@ namespace fmg.uwp.mosaic.win2d {
          get {
             System.Diagnostics.Debug.Assert(_control != null);
             System.Diagnostics.Debug.Assert(!Disposed);
+            var cw = Control.Width;
+            var ch = Control.Height;
             if (_swapChain == null) {
                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-               SwapChain = new CanvasSwapChain(Device, (float)Control.Width, (float)Control.Height, dpi);
-               _needResizeSwapChain = false;
-            }
-            if (_needResizeSwapChain) {
-               var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-               _swapChain.ResizeBuffers((float)Control.Width, (float)Control.Height, dpi);
-               _needResizeSwapChain = false;
+               SwapChain = new CanvasSwapChain(Device, (float)cw, (float)ch, dpi);
+            } else {
+               var size = _swapChain.Size;
+               if (!size.Width.HasMinDiff(cw) || !size.Height.HasMinDiff(ch)) {
+                  var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+                  _swapChain.ResizeBuffers((float)cw, (float)ch, dpi);
+               }
             }
             return _swapChain;
          }
@@ -89,27 +75,18 @@ namespace fmg.uwp.mosaic.win2d {
             System.Diagnostics.Debug.Assert(_control != null);
             System.Diagnostics.Debug.Assert(!Disposed);
 
-            if (_bufferIndex == 0) {
-               if (_needResizeFirstBuffer) {
-                  if (_doubleBuffer[0] != null) {
-                     _doubleBuffer[0].Dispose();
-                     _doubleBuffer[0] = null;
-                  }
-                  _needResizeFirstBuffer = false;
-               }
-            } else { // _bufferIndex == 1
-               if (_needResizeSecondBuffer) {
-                  if (_doubleBuffer[1] != null) {
-                     _doubleBuffer[1].Dispose();
-                     _doubleBuffer[1] = null;
-                  }
-                  _needResizeSecondBuffer = false;
-               }
+            var mosaicWinSize = Controller.WindowSize;
+            //Func<Windows.Foundation.Size, bool> hasMinDiff = size => mosaicWinSize.Width.HasMinDiff(size.Width, 4) && mosaicWinSize.Height.HasMinDiff(size.Height, 4);
+            Func<Windows.Foundation.Size, bool> hasMinDiff = size => (Math.Abs(mosaicWinSize.Width  - size.Width ) < 0.5) &&
+                                                                     (Math.Abs(mosaicWinSize.Height - size.Height) < 0.5);
+            if ((_doubleBuffer[_bufferIndex] != null) && !hasMinDiff(_doubleBuffer[_bufferIndex].Size)) {
+               _doubleBuffer[_bufferIndex].Dispose();
+               _doubleBuffer[_bufferIndex] = null;
             }
 
             if (_doubleBuffer[_bufferIndex] == null) {
                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-               ActualBuffer = new CanvasRenderTarget(Device, (float)Control.Width, (float)Control.Height, dpi);
+               ActualBuffer = new CanvasRenderTarget(Device, (float)mosaicWinSize.Width, (float)mosaicWinSize.Height, dpi);
             }
             return FrontBuffer;
          }
@@ -122,10 +99,10 @@ namespace fmg.uwp.mosaic.win2d {
 
       public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {
          System.Diagnostics.Debug.Assert((modifiedCells == null) || modifiedCells.Any());
-         using (new Tracer()) {
+         using (var tr = new Tracer()) {
             var canvasSwapChainPanel = Control;
-            if (canvasSwapChainPanel == null)
-               return;
+            //if (canvasSwapChainPanel == null)
+            //   return;
             if (double.IsNaN(canvasSwapChainPanel.Width) || double.IsNaN(canvasSwapChainPanel.Height))
                return;
             //if ((canvasVirtualControl.Size.Width == 0) || (canvasVirtualControl.Size.Height == 0))
@@ -139,7 +116,8 @@ namespace fmg.uwp.mosaic.win2d {
 
       public void Repaint(IEnumerable<BaseCell> modifiedCells) {
          SwapDrawBuffer();
-         using (var ds = ActualBuffer.CreateDrawingSession()) {
+         var ab = ActualBuffer;
+         using (var ds = ab.CreateDrawingSession()) {
 
             bool needRedrawAll = (modifiedCells == null);
             if (!needRedrawAll) {
@@ -157,13 +135,26 @@ namespace fmg.uwp.mosaic.win2d {
             Repaint(modifiedCells, null);
             Paintable = null;
          }
+         RepaintOffsetInternal(ab);
+      }
 
+      public void RepaintOffset() {
+         var canvasSwapChainPanel = Control;
+         //if (canvasSwapChainPanel == null)
+         //   return;
+         if (double.IsNaN(canvasSwapChainPanel.Width) || double.IsNaN(canvasSwapChainPanel.Height))
+            return;
+
+         RepaintOffsetInternal(ActualBuffer);
+      }
+
+      private void RepaintOffsetInternal(CanvasRenderTarget actualBuffer) {
          var sc = SwapChain;
          using (var ds = sc.CreateDrawingSession(Colors.Transparent)) {
-            ds.DrawImage(ActualBuffer);
+            ds.DrawImage(actualBuffer, (float)Offset.Width, (float)Offset.Height);
          }
          //AsyncRunner.InvokeFromUiLater(() => { // TODO: Removes blink artifacts when zooming.  Need remove....
-            sc.Present();
+         sc.Present();
          //}, Windows.UI.Core.CoreDispatcherPriority.High);
       }
 
@@ -171,16 +162,17 @@ namespace fmg.uwp.mosaic.win2d {
          if (Disposed)
             return;
 
+         if (disposing) {
+            SwapChain = null;
+         }
+
          base.Dispose(disposing);
 
          if (disposing) {
             ActualBuffer = null;
             SwapDrawBuffer();
             ActualBuffer = null;
-            SwapChain = null;
             Device = null;
-            if (_control != null)
-               Control.SwapChain = null;
          }
       }
 

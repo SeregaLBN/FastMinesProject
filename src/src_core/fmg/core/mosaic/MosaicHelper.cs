@@ -149,11 +149,8 @@ namespace fmg.core.mosaic {
             area => {
                cellAttr.Area = area;
                sizeIter = cellAttr.GetOwnerSize(mosaicSizeField);
-               if (sizeIter.Width.HasMinDiff(sizeClientCopy.Width) &&
-                   (sizeIter.Height <= sizeClientCopy.Height))
-                  return 0;
-               if ((sizeIter.Width <= sizeClientCopy.Width) &&
-                   sizeIter.Height.HasMinDiff(sizeClientCopy.Height))
+               if ((sizeIter.Width  <= sizeClientCopy.Width ) && sizeIter.Width .HasMinDiff(sizeClientCopy.Width) && // меньше с минимальными различиями
+                   (sizeIter.Height <= sizeClientCopy.Height) && sizeIter.Height.HasMinDiff(sizeClientCopy.Height))  // less with minimal differences
                   return 0;
                if ((sizeIter.Width < sizeClientCopy.Width) &&
                    (sizeIter.Height < sizeClientCopy.Height))

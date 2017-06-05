@@ -9,12 +9,7 @@
     mc:Ignorable="d"
     Background="Coral">
 
-    <Grid x:Name="_contentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}" >
-        <canvas:CanvasSwapChainPanel x:Name="_canvasSwapChainPanel" 
-                                     HorizontalAlignment="Left"
-                                     VerticalAlignment="Top"
-                                     Height="{x:Bind MosaicController.WindowSize, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
-                                     Width="{x:Bind  MosaicController.WindowSize, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
-                                    />
+    <Grid x:Name="_contentRoot" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+        <canvas:CanvasSwapChainPanel x:Name="_canvasSwapChainPanel" />
     </Grid>
 </Page>

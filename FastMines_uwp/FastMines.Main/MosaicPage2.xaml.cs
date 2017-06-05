@@ -30,7 +30,7 @@ namespace fmg {
       /// <summary> мин отступ от краев экрана для мозаики </summary>
       private const double MinIndent = 30;
       private const double AREA_MIN = 230;
-      private const bool DeferredZoom = true;
+      private const bool DeferredZoom = !true;
 
       private MosaicControllerWin2D _mosaicController;
       private readonly ClickInfo _clickInfo = new ClickInfo();
@@ -40,7 +40,7 @@ namespace fmg {
       private DateTime _dtInertiaStarting;
       private Windows.Foundation.Point? _mouseDevicePosition_AreaChanging = null;
       private static double? _baseWheelDelta;
-      private readonly IDisposable _areaScaleObservable;
+      private readonly IDisposable _sizeChangedObservable, _areaScaleObservable;
       private double _deferredArea = double.NaN;
       private Matrix3x2 _origTransformMatrix;
 
@@ -54,12 +54,14 @@ namespace fmg {
          private set {
             if (_mosaicController != null) {
                _mosaicController.PropertyChanged -= OnMosaicControllerPropertyChanged;
+               _mosaicController.View.Controller = null;
                _mosaicController.Dispose();
             }
             _mosaicController = value;
             if (_mosaicController != null) {
                _mosaicController.PropertyChanged += OnMosaicControllerPropertyChanged;
                _mosaicController.View.Control = _canvasSwapChainPanel;
+               _mosaicController.View.Controller = _mosaicController;
             }
          }
       }
@@ -86,6 +88,11 @@ namespace fmg {
             }, CoreDispatcherPriority.High);
          }
 
+         this.SizeChanged += OnSizeChanged;
+         //_sizeChangedObservable = Observable
+         //   .FromEventPattern<SizeChangedEventHandler, SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h) // equals .FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
+         //   .Throttle(TimeSpan.FromSeconds(0.2)) // debounce events
+         //   .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low));
          _areaScaleObservable = Observable
             .FromEventPattern<NeedAreaChangingEventHandler, NeedAreaChangingEventArgs>(h => NeedAreaChanging += h, h => NeedAreaChanging -= h)
             .Throttle(TimeSpan.FromSeconds(0.7)) // debounce events
@@ -284,7 +291,9 @@ namespace fmg {
 
       private void OnMosaicControllerPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          switch (ev.PropertyName) {
-         case nameof(MosaicController.MosaicType):
+       //case nameof(MosaicControllerWin2D.WindowSize):
+       //   break;
+         case nameof(MosaicControllerWin2D.MosaicType):
             Mosaic_OnChangedMosaicType(sender as MosaicControllerWin2D, ev as PropertyChangedExEventArgs<EMosaic>);
             break;
          case nameof(MosaicControllerWin2D.Area):
@@ -331,19 +340,26 @@ namespace fmg {
             this.Frame.GoBack();
       }
 
+      private void OnSizeChanged(object sender, SizeChangedEventArgs ev) {
+         _canvasSwapChainPanel.Width = ev.NewSize.Width;
+         _canvasSwapChainPanel.Height = ev.NewSize.Height;
+         MosaicController.View.RepaintOffset();
+      }
+
       private void OnPageLoaded(object sender, RoutedEventArgs e) {
          Window.Current.CoreWindow.KeyUp += OnKeyUp_CoreWindow;
       }
 
       private void OnPageUnloaded(object sender, RoutedEventArgs e) {
          Window.Current.CoreWindow.KeyUp -= OnKeyUp_CoreWindow;
+         _sizeChangedObservable?.Dispose();
+         _areaScaleObservable.Dispose();
 
          MosaicController = null; // call explicit setter
 
          // Explicitly remove references to allow the Win2D controls to get garbage collected
          _canvasSwapChainPanel.RemoveFromVisualTree();
          _canvasSwapChainPanel = null;
-         MosaicController.View.Control = null;
       }
 
       private void OnPageSizeChanged(object sender, RoutedEventArgs e) {
@@ -859,17 +875,26 @@ namespace fmg {
       }
 
       Thickness GetOffset() {
-         return _contentRoot.Padding;           // variant 1
+         //return _contentRoot.Padding;           // variant 1
          //return _canvasSwapChainPanel.Margin; // variant 2
+
+         var offset = MosaicController.View.Offset;
+         return new Thickness(offset.Width, offset.Height, 0, 0);
       }
 
       private void ApplyOffset(Thickness offset) {
-         var pad = _contentRoot.Padding;           // variant 1
+         //var pad = _contentRoot.Padding;           // variant 1
          //var pad = _canvasSwapChainPanel.Margin; // variant 2
-         pad.Left = offset.Left;
-         pad.Top = offset.Top;
-         _contentRoot.Padding = pad;           // variant 1
+         //pad.Left = offset.Left;
+         //pad.Top = offset.Top;
+         //_contentRoot.Padding = pad;           // variant 1
          //_canvasSwapChainPanel.Margin = pad; // variant 2
+
+         var old = MosaicController.View.Offset;
+         if (old.Width.HasMinDiff(offset.Left) || old.Height.HasMinDiff(offset.Top)) {
+            MosaicController.View.Offset = new SizeDouble(offset.Left, offset.Top);
+            MosaicController.View.RepaintOffset();
+         }
       }
 
       /// <summary> Перепроверить смещение к полю мозаики так, что поле мозаики было в пределах страницы </summary>
@@ -901,6 +926,10 @@ namespace fmg {
 
       static string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) { return callerName; }
 
+      //private void _contentRoot_SizeChanged(object sender, SizeChangedEventArgs ev) {
+      //   _canvasSwapChainPanel.Width  = ev.NewSize.Width;
+      //   _canvasSwapChainPanel.Height = ev.NewSize.Height;
+      //}
    }
 
    /*

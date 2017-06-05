@@ -464,7 +464,14 @@ namespace fmg.core.mosaic {
             : MosaicHelper.GetOwnerSize(MosaicType, area, sizeField);
       }
       /// <summary> размер в пикселях </summary>
-      public SizeDouble WindowSize { get { return GetWindowSize(SizeField, Area); } }
+      public SizeDouble WindowSize {
+         get {
+            if (!_cachedWindowSize.HasValue)
+               _cachedWindowSize = GetWindowSize(SizeField, Area);
+            return _cachedWindowSize.Value;
+         }
+      }
+      private SizeDouble? _cachedWindowSize = null;
 
       /// <summary> узнать количество соседей для текущей мозаики </summary>
       public int MaxNeighborNumber {
@@ -488,16 +495,19 @@ namespace fmg.core.mosaic {
          var mosaic = sender as Mosaic;
          switch (ev.PropertyName) {
          case nameof(Mosaic.SizeField):
+            _cachedWindowSize = null;
             CellDown = null; // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
             OnSelfPropertyChanged<Matrisize>(ev, nameof(SizeField));
             OnSelfPropertyChanged(nameof(WindowSize));
             GameNew();
             break;
          case nameof(Mosaic.MosaicType):
+            _cachedWindowSize = null;
             OnSelfPropertyChanged<EMosaic>(ev, nameof(MosaicType));
             GameNew();
             break;
          case nameof(Mosaic.Area):
+            _cachedWindowSize = null;
             OnSelfPropertyChanged<double>(ev, nameof(Area));
             OnSelfPropertyChanged(nameof(WindowSize));
             OnSelfModifiedCellsPropertyChanged(mosaic.Matrix);
