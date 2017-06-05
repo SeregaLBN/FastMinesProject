@@ -21,7 +21,7 @@ namespace fmg.uwp.mosaic.win2d {
       private CanvasSwapChain _swapChain;
       public SizeDouble Offset { get; set; }
 
-      public Func<SizeDouble> GetterMosaicWindnowSize { get; set; }
+      public Func<SizeDouble> GetterMosaicWindowSize { get; set; }
       public void OnMosaicWindowSizeChanged() {
          _needResizeFirstBuffer = _needResizeSecondBuffer = true;
       }
@@ -74,31 +74,28 @@ namespace fmg.uwp.mosaic.win2d {
       }
       private CanvasRenderTarget  FrontBuffer { get { return _doubleBuffer[_bufferIndex]; } }
       private CanvasRenderTarget   BackBuffer { get { return _doubleBuffer[1 - _bufferIndex]; } }
-      public CanvasRenderTarget ActualBuffer {
+      public  CanvasRenderTarget ActualBuffer {
          get {
             System.Diagnostics.Debug.Assert(_control != null);
             System.Diagnostics.Debug.Assert(!Disposed);
 
-            if ((_bufferIndex == 0) ? _needResizeFirstBuffer : _needResizeSecondBuffer) {
-               _doubleBuffer[_bufferIndex]?.Dispose();
-               _doubleBuffer[_bufferIndex] = null;
-               if (_bufferIndex == 0)
+            var i = _bufferIndex;
+            if ((i == 0) ? _needResizeFirstBuffer : _needResizeSecondBuffer) {
+               _doubleBuffer[i]?.Dispose();
+               _doubleBuffer[i] = null;
+               if (i == 0)
                   _needResizeFirstBuffer = false;
                else
                   _needResizeSecondBuffer = false;
             }
 
-            if (_doubleBuffer[_bufferIndex] == null) {
+            if (_doubleBuffer[i] == null) {
                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-               var size = GetterMosaicWindnowSize();
-               ActualBuffer = new CanvasRenderTarget(Device, (float)size.Width, (float)size.Height, dpi);
+               var size = GetterMosaicWindowSize();
+               _doubleBuffer[i] = new CanvasRenderTarget(Device, (float)size.Width, (float)size.Height, dpi);
             }
+
             return FrontBuffer;
-         }
-         private set {
-            if (FrontBuffer != null)
-               FrontBuffer.Dispose();
-            _doubleBuffer[_bufferIndex] = value;
          }
       }
 
@@ -120,27 +117,29 @@ namespace fmg.uwp.mosaic.win2d {
       }
 
       public void Repaint(IEnumerable<BaseCell> modifiedCells) {
-         SwapDrawBuffer();
-         var ab = ActualBuffer;
-         using (var ds = ab.CreateDrawingSession()) {
+         using (var tr = new Tracer()) {
+            SwapDrawBuffer();
+            var ab = ActualBuffer;
+            using (var ds = ab.CreateDrawingSession()) {
 
-            bool needRedrawAll = (modifiedCells == null);
-            if (!needRedrawAll) {
-               if (BackBuffer == null) {
-                  ds.Clear(Colors.Transparent);
-                  LoggerSimple.Put("{0} BackBuffer is null: ds.Clear(Colors.Transparent): modifiedCells={1}", _bufferIndex, modifiedCells == null ? "null" : modifiedCells.Count().ToString());
-               } else {
-                  ds.DrawImage(BackBuffer);
-                  LoggerSimple.Put("{0} BackBuffer != null: ds.DrawImage(BackBuffer): modifiedCells={1}", _bufferIndex, modifiedCells == null ? "null" : modifiedCells.Count().ToString());
+               bool needRedrawAll = (modifiedCells == null);
+               if (!needRedrawAll) {
+                  if (BackBuffer == null) {
+                     ds.Clear(Colors.Transparent);
+                     LoggerSimple.Put("{0} BackBuffer is null: ds.Clear(Colors.Transparent): modifiedCells={1}", _bufferIndex, modifiedCells == null ? "null" : modifiedCells.Count().ToString());
+                  } else {
+                     ds.DrawImage(BackBuffer);
+                     LoggerSimple.Put("{0} BackBuffer != null: ds.DrawImage(BackBuffer): modifiedCells={1}", _bufferIndex, modifiedCells == null ? "null" : modifiedCells.Count().ToString());
+                  }
                }
-            }
 
-            Paintable = ds;
-            PaintContext.IsUseBackgroundColor = needRedrawAll;
-            Repaint(modifiedCells, null);
-            Paintable = null;
+               Paintable = ds;
+               PaintContext.IsUseBackgroundColor = needRedrawAll;
+               Repaint(modifiedCells, null);
+               Paintable = null;
+            }
+            RepaintOffsetInternal(ab);
          }
-         RepaintOffsetInternal(ab);
       }
 
       public void RepaintOffset() {
@@ -174,9 +173,8 @@ namespace fmg.uwp.mosaic.win2d {
          base.Dispose(disposing);
 
          if (disposing) {
-            ActualBuffer = null;
-            SwapDrawBuffer();
-            ActualBuffer = null;
+            _doubleBuffer[0]?.Dispose();
+            _doubleBuffer[1]?.Dispose();
             Device = null;
          }
       }

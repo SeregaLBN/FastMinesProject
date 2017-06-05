@@ -54,14 +54,14 @@ namespace fmg {
          private set {
             if (_mosaicController != null) {
                _mosaicController.PropertyChanged -= OnMosaicControllerPropertyChanged;
-               _mosaicController.View.GetterMosaicWindnowSize = null;
+               _mosaicController.View.GetterMosaicWindowSize = null;
                _mosaicController.Dispose();
             }
             _mosaicController = value;
             if (_mosaicController != null) {
                _mosaicController.PropertyChanged += OnMosaicControllerPropertyChanged;
                _mosaicController.View.Control = _canvasSwapChainPanel;
-               _mosaicController.View.GetterMosaicWindnowSize = () => MosaicController.WindowSize;
+               _mosaicController.View.GetterMosaicWindowSize = () => MosaicController.WindowSize;
             }
          }
       }
@@ -90,8 +90,8 @@ namespace fmg {
          this.SizeChanged += OnPageSizeChanged;
          //_sizeChangedObservable = Observable
          //   .FromEventPattern<SizeChangedEventHandler, SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h) // equals .FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
-         //   .Throttle(TimeSpan.FromSeconds(0.2)) // debounce events
-         //   .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnPageSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low));
+         //   .Throttle(TimeSpan.FromSeconds(0.4)) // debounce events
+         //   .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnPageSizeChanged(x.Sender, x.EventArgs), CoreDispatcherPriority.Low));
          _areaScaleObservable = Observable
             .FromEventPattern<NeedAreaChangingEventHandler, NeedAreaChangingEventArgs>(h => NeedAreaChanging += h, h => NeedAreaChanging -= h)
             .Throttle(TimeSpan.FromSeconds(0.7)) // debounce events
@@ -131,7 +131,7 @@ namespace fmg {
        //MosaicField.MosaicType = MosaicField.MosaicType;
          MosaicController.MinesCount = numberMines;
 
-         RecheckLocation();
+         RecheckLocation(false);
       }
 
       /// <summary> get this Page size </summary>
@@ -172,16 +172,16 @@ namespace fmg {
       /// <returns>макс площадь ячейки</returns>
       private double CalcMaxArea(Matrisize mosaicSizeField) {
          // TODO на самом деле узнаю размер площади ячеек мозаики, для размера поля мозаики 3x3
-         if (_maxArea.HasValue)
-            return _maxArea.Value;
+         if (_cachedMaxArea.HasValue)
+            return _cachedMaxArea.Value;
          mosaicSizeField = new Matrisize(3, 3);
          var sizeMosaic = CalcMosaicWindowSize(ScreenResolutionHelper.GetDesktopSize());
          double area = MosaicHelper.FindAreaBySize(MosaicController.MosaicType, mosaicSizeField, ref sizeMosaic);
          //System.Diagnostics.Debug.WriteLine("Main.CalcMaxArea: area="+area);
-         _maxArea = area; // caching value
+         _cachedMaxArea = area; // caching value
          return area;
       }
-      double? _maxArea; // cached value
+      double? _cachedMaxArea; // cached value
 
       /// <summary> узнаю max размер поля мозаики, при котором окно проекта вмещается в текущее разрешение экрана </summary>
       /// <param name="area">интересуемая площадь ячеек мозаики</param>
@@ -192,7 +192,7 @@ namespace fmg {
       }
 
       /// <summary> check that mosaic field is placed in the window/page </summary>
-      private void RecheckLocation() {
+      private void RecheckLocation(bool redraw) {
          AreaOptimal();
 
          var o = GetOffset();
@@ -200,7 +200,7 @@ namespace fmg {
          var sizePage = GetPageSize();
          o.Left = (sizePage.Width - sizeWinMosaic.Width) / 2;
          o.Top = (sizePage.Height - sizeWinMosaic.Height) / 2;
-         ApplyOffset(o);
+         ApplyOffset(o, redraw);
       }
 
       double Area {
@@ -208,7 +208,7 @@ namespace fmg {
             return MosaicController.Area;
          }
          set {
-            value = Math.Min(Math.Max(230, value), CalcMaxArea(MosaicController.SizeField)); // recheck
+            value = Math.Min(Math.Max(AREA_MIN, value), CalcMaxArea(MosaicController.SizeField)); // recheck
             MosaicController.Area = value;
          }
       }
@@ -344,7 +344,7 @@ namespace fmg {
          _canvasSwapChainPanel.Width = ev.NewSize.Width;
          _canvasSwapChainPanel.Height = ev.NewSize.Height;
          //MosaicController.View.RepaintOffset();
-         RecheckLocation();
+         RecheckLocation(false);
       }
 
       private void OnPageLoaded(object sender, RoutedEventArgs e) {
@@ -381,11 +381,15 @@ namespace fmg {
 
                // точка над игровым полем со старой площадью ячеек
                var pointOld = ToCanvasPoint(devicePos);
+               //pointOld.X -= o.Left;
+               //pointOld.Y -= o.Top;
                var percentX = pointOld.X / oldWinSize.Width;  // 0.0 .. 1.0
                var percentY = pointOld.Y / oldWinSize.Height; // 0.0 .. 1.0
 
                // таже точка над игровым полем, но с учётом zoom'а (новой площади)
                var pointNew = new PointDouble(newWinSize.Width * percentX, newWinSize.Height * percentY);
+               //pointNew.X += o.Left;
+               //pointNew.Y += o.Top;
 
                // смещаю игровое поле так, чтобы точка была на том же месте экрана
                o.Left += pointOld.X - pointNew.X;
@@ -393,12 +397,13 @@ namespace fmg {
             }
 
             RecheckOffset(ref o, newWinSize);
-            ApplyOffset(o);
+            ApplyOffset(o, false);
          }
       }
 
       private void Mosaic_OnChangedMosaicType(MosaicControllerWin2D sender, PropertyChangedExEventArgs<EMosaic> ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicController));
+            _cachedMaxArea = null;
          using (new Tracer()) {
          }
       }
@@ -460,7 +465,7 @@ namespace fmg {
       }
 
       bool OnClick(Windows.Foundation.Point pos, bool leftClick, bool down) {
-         var point = ToCanvasPoint(pos);
+         var point = ToMosaicFieldPoint(pos);
 #if false // otherwise not work the long tapping (to setting flag label)
          if (point.X < 0 || point.Y < 0) {
             return clickHandler(new ClickResult(null, leftClick, down));
@@ -489,14 +494,16 @@ namespace fmg {
 
       protected override void OnDoubleTapped(DoubleTappedRoutedEventArgs ev) {
          using (new Tracer(GetCallerName(), () => "ev.Handled = " + ev.Handled)) {
-            var rcCanvas = new Windows.Foundation.Rect(0, 0, _canvasSwapChainPanel.Width, _canvasSwapChainPanel.Height);
-            if (rcCanvas.Contains(ev.GetPosition(_canvasSwapChainPanel))) {
+            var o = GetOffset();
+            var mosaicSizeField = MosaicController.WindowSize;
+            var rcMosaicField = new Windows.Foundation.Rect(o.Left, o.Top, mosaicSizeField.Width, mosaicSizeField.Height);
+            if (rcMosaicField.Contains(ev.GetPosition(_canvasSwapChainPanel))) {
                if (MosaicController.GameStatus == EGameStatus.eGSEnd) {
                   MosaicController.GameNew();
                   ev.Handled = true;
                }
             } else {
-               RecheckLocation();
+               RecheckLocation(true);
                ev.Handled = true;
             }
 
@@ -785,7 +792,7 @@ namespace fmg {
                      o.Top += deltaTrans.Y;
                   }
                   RecheckOffset(ref o, sizeWinMosaic);
-                  ApplyOffset(o);
+                  ApplyOffset(o, true);
                }
 #endregion
             }
@@ -879,7 +886,7 @@ namespace fmg {
          return new Thickness(offset.Width, offset.Height, 0, 0);
       }
 
-      private void ApplyOffset(Thickness offset) {
+      private void ApplyOffset(Thickness offset, bool redraw) {
          //var pad = _contentRoot.Padding;           // variant 1
          //var pad = _canvasSwapChainPanel.Margin; // variant 2
          //pad.Left = offset.Left;
@@ -890,7 +897,8 @@ namespace fmg {
          var old = MosaicController.View.Offset;
          if (!old.Width.HasMinDiff(offset.Left) || !old.Height.HasMinDiff(offset.Top)) {
             MosaicController.View.Offset = new SizeDouble(offset.Left, offset.Top);
-            MosaicController.View.RepaintOffset();
+            if (redraw)
+               MosaicController.View.RepaintOffset();
          }
       }
 
@@ -915,10 +923,15 @@ namespace fmg {
 
       private PointDouble ToCanvasPoint(Windows.Foundation.Point pagePoint) {
          var point = TransformToVisual(_canvasSwapChainPanel).TransformPoint(pagePoint).ToFmPointDouble();
-         //var o = GetOffset();
-         //var point2 = new PointDouble(pagePoint.X - o.Left, pagePoint.Y - o.Top);
-         //System.Diagnostics.Debug.Assert(point == point2);
          return point;
+      }
+
+      private PointDouble ToMosaicFieldPoint(Windows.Foundation.Point pagePoint) {
+         var p = ToCanvasPoint(pagePoint);
+         var o = GetOffset();
+         p.X -= o.Left;
+         p.Y -= o.Top;
+         return p;
       }
 
       static string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) { return callerName; }

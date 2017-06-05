@@ -178,7 +178,7 @@ namespace FastMines {
             return MosaicController.Area;
          }
          set {
-            value = Math.Min(Math.Max(230, value), CalcMaxArea(MosaicController.SizeField)); // recheck
+            value = Math.Min(Math.Max(AREA_MIN, value), CalcMaxArea(MosaicController.SizeField)); // recheck
             MosaicController.Area = value;
          }
       }
