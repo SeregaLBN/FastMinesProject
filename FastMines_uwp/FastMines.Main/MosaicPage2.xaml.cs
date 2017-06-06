@@ -337,13 +337,13 @@ namespace fmg {
       }
 
       private void OnPageSizeChanged(object sender, SizeChangedEventArgs ev) {
-         //if (_sizeChangedObservable == null) {
-         //   this.SizeChanged -= OnPageSizeChanged;
-         //   _sizeChangedObservable = Observable
-         //      .FromEventPattern<SizeChangedEventHandler, SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h) // equals .FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
-         //      .Throttle(TimeSpan.FromSeconds(0.4)) // debounce events
-         //      .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnPageSizeChanged(x.Sender, x.EventArgs), CoreDispatcherPriority.Low));
-         //}
+         if (_sizeChangedObservable == null) {
+            this.SizeChanged -= OnPageSizeChanged;
+            _sizeChangedObservable = Observable
+               .FromEventPattern<SizeChangedEventHandler, SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h) // equals .FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
+               .Throttle(TimeSpan.FromSeconds(0.4)) // debounce events
+               .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnPageSizeChanged(x.Sender, x.EventArgs), CoreDispatcherPriority.Low));
+         }
 
          _canvasSwapChainPanel.Width = ev.NewSize.Width;
          _canvasSwapChainPanel.Height = ev.NewSize.Height;
