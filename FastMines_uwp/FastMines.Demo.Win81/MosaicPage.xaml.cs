@@ -30,6 +30,7 @@ namespace FastMines {
    public sealed partial class MosaicPage : Page {
       /// <summary> мин отступ от краев экрана для мозаики </summary>
       private const int MinIndent = 30;
+      private const double AREA_MIN = 230;
 
       private MosaicControllerXaml _mosaicController;
       private Panel _mosaicContainer;

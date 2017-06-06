@@ -343,7 +343,6 @@ namespace fmg {
       private void OnPageSizeChanged(object sender, SizeChangedEventArgs ev) {
          _canvasSwapChainPanel.Width = ev.NewSize.Width;
          _canvasSwapChainPanel.Height = ev.NewSize.Height;
-         //MosaicController.View.RepaintOffset();
          RecheckLocation(false);
       }
 
@@ -380,16 +379,12 @@ namespace fmg {
                var oldWinSize = MosaicController.GetWindowSize(MosaicController.SizeField, ev.OldValue);
 
                // точка над игровым полем со старой площадью ячеек
-               var pointOld = ToCanvasPoint(devicePos);
-               //pointOld.X -= o.Left;
-               //pointOld.Y -= o.Top;
+               var pointOld = ToMosaicFieldPoint(devicePos);
                var percentX = pointOld.X / oldWinSize.Width;  // 0.0 .. 1.0
                var percentY = pointOld.Y / oldWinSize.Height; // 0.0 .. 1.0
 
                // таже точка над игровым полем, но с учётом zoom'а (новой площади)
                var pointNew = new PointDouble(newWinSize.Width * percentX, newWinSize.Height * percentY);
-               //pointNew.X += o.Left;
-               //pointNew.Y += o.Top;
 
                // смещаю игровое поле так, чтобы точка была на том же месте экрана
                o.Left += pointOld.X - pointNew.X;
