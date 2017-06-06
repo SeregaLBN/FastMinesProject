@@ -40,7 +40,7 @@ namespace fmg {
       private DateTime _dtInertiaStarting;
       private Windows.Foundation.Point? _mouseDevicePosition_AreaChanging = null;
       private static double? _baseWheelDelta;
-      private readonly IDisposable _sizeChangedObservable, _areaScaleObservable;
+      private IDisposable _sizeChangedObservable, _areaScaleObservable;
       private double _deferredArea = double.NaN;
       private Matrix3x2 _origTransformMatrix;
 
@@ -88,10 +88,6 @@ namespace fmg {
          }
 
          this.SizeChanged += OnPageSizeChanged;
-         //_sizeChangedObservable = Observable
-         //   .FromEventPattern<SizeChangedEventHandler, SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h) // equals .FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
-         //   .Throttle(TimeSpan.FromSeconds(0.4)) // debounce events
-         //   .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnPageSizeChanged(x.Sender, x.EventArgs), CoreDispatcherPriority.Low));
          _areaScaleObservable = Observable
             .FromEventPattern<NeedAreaChangingEventHandler, NeedAreaChangingEventArgs>(h => NeedAreaChanging += h, h => NeedAreaChanging -= h)
             .Throttle(TimeSpan.FromSeconds(0.7)) // debounce events
@@ -341,6 +337,14 @@ namespace fmg {
       }
 
       private void OnPageSizeChanged(object sender, SizeChangedEventArgs ev) {
+         //if (_sizeChangedObservable == null) {
+         //   this.SizeChanged -= OnPageSizeChanged;
+         //   _sizeChangedObservable = Observable
+         //      .FromEventPattern<SizeChangedEventHandler, SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h) // equals .FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
+         //      .Throttle(TimeSpan.FromSeconds(0.4)) // debounce events
+         //      .Subscribe(x => AsyncRunner.InvokeFromUiLater(() => OnPageSizeChanged(x.Sender, x.EventArgs), CoreDispatcherPriority.Low));
+         //}
+
          _canvasSwapChainPanel.Width = ev.NewSize.Width;
          _canvasSwapChainPanel.Height = ev.NewSize.Height;
          RecheckLocation(false);
