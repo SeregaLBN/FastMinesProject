@@ -333,7 +333,7 @@ namespace fmg {
       private void Mosaic_OnChangedCountClick(MosaicControllerWin2D sender, PropertyChangedExEventArgs<int> ev) { }
 
       private void Scale(double scaleMul) {
-         if (double.IsNaN(_deferredArea))
+         if (!IsDeferredScaling)
             _deferredArea = Area;
 
          _deferredArea *= scaleMul;
@@ -362,28 +362,31 @@ namespace fmg {
       }
 
       private void OnDeferredAreaChanging(object sender, NeedAreaChangingEventArgs ev) {
-         Area = _deferredArea;
+         var tmp = _deferredArea;
 
          // restore
          _deferredArea = double.NaN;
+
+         Area = tmp;
       }
+
+      /// <summary> Deferred scaling in progress </summary>
+      bool IsDeferredScaling => !double.IsNaN(_deferredArea);
 
       private void Mosaic_OnChangedArea(MosaicControllerWin2D sender, PropertyChangedExEventArgs<double> ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicController));
          using (var tracer = new Tracer("Mosaic_OnChangedArea", string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {
             Thickness o;
 
-            var newWinSize = MosaicController.WindowSize;
             if (_mouseDevicePosition_AreaChanging.HasValue) {
                var devicePos = _mouseDevicePosition_AreaChanging.Value;
+               var newWinSize = MosaicController.WindowSize;
                var oldWinSize = MosaicController.GetWindowSize(MosaicController.SizeField, ev.OldValue);
-
                o = ScaledOffset(devicePos, newWinSize, oldWinSize);
             } else {
                o = GetOffset();
             }
 
-            RecheckOffset(ref o, newWinSize);
             ApplyOffset(o, false);
          }
       }
@@ -435,17 +438,19 @@ namespace fmg {
 
       protected override void OnPointerWheelChanged(PointerRoutedEventArgs ev) {
          //using (new Tracer()) {
-         var wheelDelta = ev.GetCurrentPoint(this).Properties.MouseWheelDelta;
-         if (!_baseWheelDelta.HasValue)
-            _baseWheelDelta = Math.Abs(wheelDelta);
+         if (!_manipulationStarted) {
+            var wheelDelta = ev.GetCurrentPoint(this).Properties.MouseWheelDelta;
+            if (!_baseWheelDelta.HasValue)
+               _baseWheelDelta = Math.Abs(wheelDelta);
 
-         var wheelPower = 1 + ((Math.Abs(wheelDelta)/_baseWheelDelta.Value) - 1)/10;
+            var wheelPower = 1 + ((Math.Abs(wheelDelta) / _baseWheelDelta.Value) - 1) / 10;
 
-         if (wheelDelta > 0)
-            AreaInc(wheelPower, ev.GetCurrentPoint(null).Position);
-         else
-            AreaDec(wheelPower, ev.GetCurrentPoint(null).Position);
+            if (wheelDelta > 0)
+               AreaInc(wheelPower, ev.GetCurrentPoint(null).Position);
+            else
+               AreaDec(wheelPower, ev.GetCurrentPoint(null).Position);
 
+         }
          ev.Handled = true;
          base.OnPointerWheelChanged(ev);
          //}
@@ -796,7 +801,6 @@ namespace fmg {
                      o.Left += deltaTrans.X;
                      o.Top += deltaTrans.Y;
                   }
-                  RecheckOffset(ref o, sizeWinMosaic);
                   ApplyOffset(o, true);
                }
 #endregion
@@ -884,45 +888,40 @@ namespace fmg {
       }
 
       Thickness GetOffset() {
-         //return _contentRoot.Padding;           // variant 1
-         //return _canvasSwapChainPanel.Margin; // variant 2
-
          var offset = MosaicController.View.Offset;
          return new Thickness(offset.Width, offset.Height, 0, 0);
       }
 
       private void ApplyOffset(Thickness offset, bool redraw) {
-         //var pad = _contentRoot.Padding;           // variant 1
-         //var pad = _canvasSwapChainPanel.Margin; // variant 2
-         //pad.Left = offset.Left;
-         //pad.Top = offset.Top;
-         //_contentRoot.Padding = pad;           // variant 1
-         //_canvasSwapChainPanel.Margin = pad; // variant 2
+         if (IsDeferredScaling)
+            return;
 
+#region RecheckOffset
+         // Перепроверить смещение к полю мозаики так, что поле мозаики было в пределах страницы
+         {
+            var sizeWinMosaic = MosaicController.WindowSize;
+            var sizePage = GetPageSize();
+
+            if (offset.Left < (MinIndent - sizeWinMosaic.Width)) { // правый край мозаики пересёк левую сторону страницы/экрана?
+               offset.Left = MinIndent - sizeWinMosaic.Width; // привязываю к левой стороне страницы/экрана
+            } else {
+               if (offset.Left > (sizePage.Width - MinIndent)) // левый край мозаики пересёк правую сторону страницы/экрана?
+                  offset.Left = sizePage.Width - MinIndent; // привязываю к правой стороне страницы/экрана
+            }
+
+            if (offset.Top < (MinIndent - sizeWinMosaic.Height)) { // нижний край мозаики пересёк верхнюю сторону страницы/экрана?
+               offset.Top = MinIndent - sizeWinMosaic.Height; // привязываю к верхней стороне страницы/экрана
+            } else {
+               if (offset.Top > (sizePage.Height - MinIndent)) // вержний край мозаики пересёк нижнюю сторону страницы/экрана?
+                  offset.Top = sizePage.Height - MinIndent; // привязываю к нижней стороне страницы/экрана
+            }
+         }
+         #endregion
          var old = MosaicController.View.Offset;
          if (!old.Width.HasMinDiff(offset.Left) || !old.Height.HasMinDiff(offset.Top)) {
             MosaicController.View.Offset = new SizeDouble(offset.Left, offset.Top);
             if (redraw)
                MosaicController.View.RepaintOffset();
-         }
-      }
-
-      /// <summary> Перепроверить смещение к полю мозаики так, что поле мозаики было в пределах страницы </summary>
-      private void RecheckOffset(ref Thickness offset, SizeDouble sizeWinMosaic) {
-         var sizePage = GetPageSize();
-
-         if (offset.Left < (MinIndent - sizeWinMosaic.Width)) { // правый край мозаики пересёк левую сторону страницы/экрана?
-            offset.Left = MinIndent - sizeWinMosaic.Width; // привязываю к левой стороне страницы/экрана
-         } else {
-            if (offset.Left > (sizePage.Width - MinIndent)) // левый край мозаики пересёк правую сторону страницы/экрана?
-               offset.Left = sizePage.Width - MinIndent; // привязываю к правой стороне страницы/экрана
-         }
-
-         if (offset.Top < (MinIndent - sizeWinMosaic.Height)) { // нижний край мозаики пересёк верхнюю сторону страницы/экрана?
-            offset.Top = MinIndent - sizeWinMosaic.Height; // привязываю к верхней стороне страницы/экрана
-         } else {
-            if (offset.Top > (sizePage.Height - MinIndent)) // вержний край мозаики пересёк нижнюю сторону страницы/экрана?
-               offset.Top = sizePage.Height - MinIndent; // привязываю к нижней стороне страницы/экрана
          }
       }
 
