@@ -1,5 +1,4 @@
 using System;
-using System.Numerics;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using Windows.System;
@@ -30,7 +29,7 @@ namespace fmg {
       /// <summary> мин отступ от краев экрана для мозаики </summary>
       private const double MinIndent = 30;
       private const double AREA_MIN = 230;
-      private const bool DeferredZoom = !true;
+      private const bool DeferredZoom = true;
 
       private MosaicControllerWin2D _mosaicController;
       private readonly ClickInfo _clickInfo = new ClickInfo();
@@ -42,7 +41,6 @@ namespace fmg {
       private static double? _baseWheelDelta;
       private IDisposable _sizeChangedObservable, _areaScaleObservable;
       private double _deferredArea = double.NaN;
-      private Matrix3x2 _origTransformMatrix;
 
       /// <summary> Mosaic controller </summary>
       public MosaicControllerWin2D MosaicController {
@@ -229,45 +227,6 @@ namespace fmg {
          }
       }
 
-      private void Scale(double scaleMul) {
-         var sc = _canvasSwapChainPanel.SwapChain;
-         if (double.IsNaN(_deferredArea)) {
-            _deferredArea = Area;
-            _origTransformMatrix = sc.TransformMatrix;
-         }
-
-         _deferredArea *= scaleMul;
-         _deferredArea = Math.Min(Math.Max(AREA_MIN, _deferredArea), CalcMaxArea(MosaicController.SizeField)); // recheck
-
-         var deferredWinSize = MosaicController.GetWindowSize(MosaicController.SizeField, _deferredArea);
-         var currentWinSize = MosaicController.WindowSize;
-
-         var scaleX = deferredWinSize.Width / currentWinSize.Width;
-         var scaleY = deferredWinSize.Height / currentWinSize.Height;
-
-         if (_mouseDevicePosition_AreaChanging.HasValue) {
-            PointDouble centerPoint = ToCanvasPoint(_mouseDevicePosition_AreaChanging.Value);
-            sc.TransformMatrix = Matrix3x2.CreateScale((float)scaleX, (float)scaleY, centerPoint.ToWinPoint().ToVector2());
-         } else {
-            sc.TransformMatrix = Matrix3x2.CreateScale((float)scaleX, (float)scaleY);
-         }
-         using (var ds = sc.CreateDrawingSession(Colors.Transparent)) {
-            ds.DrawImage(MosaicController.View.ActualBuffer);
-         }
-         sc.Present();
-
-         NeedAreaChanging(this, null); // fire event
-      }
-
-      private void OnDeferredAreaChanging(object sender, NeedAreaChangingEventArgs ev) {
-         // restore
-         _canvasSwapChainPanel.SwapChain.TransformMatrix = _origTransformMatrix;
-
-         Area = _deferredArea;
-
-         _deferredArea = double.NaN;
-      }
-
       /// <summary> Zoom minimum </summary>
       void AreaMin() {
          Area = 0;
@@ -372,32 +331,79 @@ namespace fmg {
       private void Mosaic_OnChangedCountOpen(MosaicControllerWin2D sender, PropertyChangedExEventArgs<int> ev) { }
       private void Mosaic_OnChangedCountMinesLeft(MosaicControllerWin2D sender, PropertyChangedExEventArgs<int> ev) { }
       private void Mosaic_OnChangedCountClick(MosaicControllerWin2D sender, PropertyChangedExEventArgs<int> ev) { }
+
+      private void Scale(double scaleMul) {
+         if (double.IsNaN(_deferredArea))
+            _deferredArea = Area;
+
+         _deferredArea *= scaleMul;
+         _deferredArea = Math.Min(Math.Max(AREA_MIN, _deferredArea), CalcMaxArea(MosaicController.SizeField)); // recheck
+
+         var deferredWinSize = MosaicController.GetWindowSize(MosaicController.SizeField, _deferredArea);
+
+         var o = GetOffset();
+
+         if (_mouseDevicePosition_AreaChanging.HasValue) {
+            var devicePos = _mouseDevicePosition_AreaChanging.Value;
+            var currentWinSize = MosaicController.WindowSize;
+
+            o = ScaledOffset(devicePos, deferredWinSize, currentWinSize);
+         } else {
+            o = GetOffset();
+         }
+
+         var sc = _canvasSwapChainPanel.SwapChain;
+         using (var ds = sc.CreateDrawingSession(Colors.Transparent)) {
+            ds.DrawImage(MosaicController.View.ActualBuffer, new RectDouble(o.Left, o.Top, deferredWinSize.Width, deferredWinSize.Height).ToWinRect());
+         }
+         sc.Present();
+
+         NeedAreaChanging(this, null); // fire event
+      }
+
+      private void OnDeferredAreaChanging(object sender, NeedAreaChangingEventArgs ev) {
+         Area = _deferredArea;
+
+         // restore
+         _deferredArea = double.NaN;
+      }
+
       private void Mosaic_OnChangedArea(MosaicControllerWin2D sender, PropertyChangedExEventArgs<double> ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, MosaicController));
          using (var tracer = new Tracer("Mosaic_OnChangedArea", string.Format("newArea={0:0.00}, oldValue={1:0.00}", ev.NewValue, ev.OldValue))) {
-            var o = GetOffset();
+            Thickness o;
 
             var newWinSize = MosaicController.WindowSize;
             if (_mouseDevicePosition_AreaChanging.HasValue) {
                var devicePos = _mouseDevicePosition_AreaChanging.Value;
                var oldWinSize = MosaicController.GetWindowSize(MosaicController.SizeField, ev.OldValue);
 
-               // точка над игровым полем со старой площадью ячеек
-               var pointOld = ToMosaicFieldPoint(devicePos);
-               var percentX = pointOld.X / oldWinSize.Width;  // 0.0 .. 1.0
-               var percentY = pointOld.Y / oldWinSize.Height; // 0.0 .. 1.0
-
-               // таже точка над игровым полем, но с учётом zoom'а (новой площади)
-               var pointNew = new PointDouble(newWinSize.Width * percentX, newWinSize.Height * percentY);
-
-               // смещаю игровое поле так, чтобы точка была на том же месте экрана
-               o.Left += pointOld.X - pointNew.X;
-               o.Top  += pointOld.Y - pointNew.Y;
+               o = ScaledOffset(devicePos, newWinSize, oldWinSize);
+            } else {
+               o = GetOffset();
             }
 
             RecheckOffset(ref o, newWinSize);
             ApplyOffset(o, false);
          }
+      }
+
+      private Thickness ScaledOffset(Windows.Foundation.Point devicePos, SizeDouble newWinSize, SizeDouble oldWinSize) {
+         var o = GetOffset();
+
+         // точка над игровым полем со старой площадью ячеек
+         var pointOld = ToMosaicFieldPoint(devicePos);
+         var percentX = pointOld.X / oldWinSize.Width;  // 0.0 .. 1.0
+         var percentY = pointOld.Y / oldWinSize.Height; // 0.0 .. 1.0
+
+         // таже точка над игровым полем, но с учётом zoom'а (новой площади)
+         var pointNew = new PointDouble(newWinSize.Width * percentX, newWinSize.Height * percentY);
+
+         // смещаю игровое поле так, чтобы точка была на том же месте экрана
+         o.Left += pointOld.X - pointNew.X;
+         o.Top  += pointOld.Y - pointNew.Y;
+
+         return o;
       }
 
       private void Mosaic_OnChangedMosaicType(MosaicControllerWin2D sender, PropertyChangedExEventArgs<EMosaic> ev) {

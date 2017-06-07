@@ -154,8 +154,9 @@ namespace fmg.uwp.mosaic.win2d {
 
       private void RepaintOffsetInternal(CanvasRenderTarget actualBuffer) {
          var sc = SwapChain;
+         var o = Offset;
          using (var ds = sc.CreateDrawingSession(Colors.Transparent)) {
-            ds.DrawImage(actualBuffer, (float)Offset.Width, (float)Offset.Height);
+            ds.DrawImage(actualBuffer, (float)o.Width, (float)o.Height);
          }
          //AsyncRunner.InvokeFromUiLater(() => { // TODO: Removes blink artifacts when zooming.  Need remove....
          sc.Present();
