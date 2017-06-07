@@ -74,7 +74,7 @@ namespace fmg.uwp.mosaic.win2d {
       }
       private CanvasRenderTarget  FrontBuffer { get { return _doubleBuffer[_bufferIndex]; } }
       private CanvasRenderTarget   BackBuffer { get { return _doubleBuffer[1 - _bufferIndex]; } }
-      public  CanvasRenderTarget ActualBuffer {
+      private CanvasRenderTarget ActualBuffer {
          get {
             System.Diagnostics.Debug.Assert(_control != null);
             System.Diagnostics.Debug.Assert(!Disposed);
@@ -150,6 +150,14 @@ namespace fmg.uwp.mosaic.win2d {
             return;
 
          RepaintOffsetInternal(ActualBuffer);
+      }
+
+      public void RepaintScaled(RectDouble rcDestination) {
+         var sc = SwapChain;
+         using (var ds = sc.CreateDrawingSession(Colors.Transparent)) {
+            ds.DrawImage(ActualBuffer, rcDestination.ToWinRect());
+         }
+         sc.Present();
       }
 
       private void RepaintOffsetInternal(CanvasRenderTarget actualBuffer) {
