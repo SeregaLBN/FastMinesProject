@@ -92,7 +92,20 @@ namespace fmg.uwp.mosaic.win2d {
             if (_doubleBuffer[i] == null) {
                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
                var size = GetterMosaicWindowSize();
-               _doubleBuffer[i] = new CanvasRenderTarget(Device, (float)size.Width, (float)size.Height, dpi);
+               try {
+                  _doubleBuffer[i] = new CanvasRenderTarget(Device, (float)size.Width, (float)size.Height, dpi);
+               } catch(ArgumentException) {
+                  // :(((
+                  try {
+                     _doubleBuffer[i] = new CanvasRenderTarget(Device, (float)size.Width, (float)size.Height, dpi/2);
+                  } catch (ArgumentException) {
+                     try {
+                        _doubleBuffer[i] = new CanvasRenderTarget(Device, (float)size.Width, (float)size.Height, dpi / 4);
+                     } catch (ArgumentException) {
+                        _doubleBuffer[i] = new CanvasRenderTarget(Device, (float)size.Width, (float)size.Height, dpi / 8);
+                     }
+                  }
+               }
             }
 
             return FrontBuffer;
