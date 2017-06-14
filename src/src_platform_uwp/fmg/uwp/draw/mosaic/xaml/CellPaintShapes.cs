@@ -12,7 +12,7 @@ using fmg.uwp.utils;
 namespace fmg.uwp.draw.mosaic.xaml {
 
    /// <summary> Class for drawing cell into <see cref="ImageSource"/> (over xaml shapes) </summary>
-   public class CellPaintShapes : CellPaint<PaintableShapes, ImageSource> {
+   public class CellPaintShapes : CellPaint<PaintableShapes, ImageSource, PaintUwpContext<ImageSource>> {
 
       private readonly IDictionary<Color, Brush> _brushCacheMap;
 

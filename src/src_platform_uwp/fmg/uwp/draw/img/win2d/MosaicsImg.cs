@@ -11,6 +11,7 @@ using fmg.core.img;
 using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
 using fmg.uwp.draw.mosaic;
+using fmg.uwp.draw.mosaic.win2d;
 using fmg.uwp.mosaic.win2d;
 
 namespace fmg.uwp.draw.img.win2d {
@@ -45,7 +46,7 @@ namespace fmg.uwp.draw.img.win2d {
                _owner = owner;
             }
 
-            protected override PaintUwpContext<CanvasBitmap> CreatePaintContext() {
+            protected override PaintWin2DContext CreatePaintContext() {
                var cntxt = base.CreatePaintContext();
                cntxt.IconicMode = true;
                if (RandomCellBkColor)

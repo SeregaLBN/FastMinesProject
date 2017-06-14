@@ -10,7 +10,7 @@ using fmg.uwp.utils;
 namespace fmg.uwp.draw.mosaic.wbmp {
 
    /// <summary> Class for drawing cell into (ower <see cref="WriteableBitmap"/>) </summary>
-   public class CellPaintWBmp : CellPaint<PaintableWBmp, WriteableBitmap> {
+   public class CellPaintWBmp : CellPaint<PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> {
 
       public override void Paint(BaseCell cell, PaintableWBmp paint, PaintUwpContext<WriteableBitmap> paintContext)
       {

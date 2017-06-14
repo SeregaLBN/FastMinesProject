@@ -12,9 +12,9 @@ using fmg.uwp.utils.win2d;
 namespace fmg.uwp.draw.mosaic.win2d {
 
    /// <summary> Class for drawing cell into (ower <see cref="CanvasBitmap"/>) </summary>
-   public class CellPaintWin2D : CellPaint<PaintableWin2D, CanvasBitmap> {
+   public class CellPaintWin2D : CellPaint<PaintableWin2D, CanvasBitmap, PaintWin2DContext> {
 
-      public override void Paint(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext)
+      public override void Paint(BaseCell cell, PaintableWin2D paint, PaintWin2DContext paintContext)
       {
          //LoggerSimple.Put("Paint cell=[{0},{1}]", cell.getCoord().x, cell.getCoord().y);
          // ограничиваю рисование только границами своей фигуры
@@ -31,7 +31,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
          }
       }
 
-      protected override void PaintBorder(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext) {
+      protected override void PaintBorder(BaseCell cell, PaintableWin2D paint, PaintWin2DContext paintContext) {
          // TODO set pen width
          //... = PaintContext.PenBorder.Width;
 
@@ -44,7 +44,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
       }
 
       /// <summary> draw border lines </summary>
-      protected override void PaintBorderLines(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext) {
+      protected override void PaintBorderLines(BaseCell cell, PaintableWin2D paint, PaintWin2DContext paintContext) {
          var ds = paint.DrawingSession;
          var region = cell.getRegion();
          var down = cell.State.Down || (cell.State.Status == EState._Open);
@@ -74,7 +74,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
          }
       }
 
-      protected override void PaintComponent(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext) {
+      protected override void PaintComponent(BaseCell cell, PaintableWin2D paint, PaintWin2DContext paintContext) {
          var ds = paint.DrawingSession;
          PaintComponentBackground(cell, paint, paintContext);
 
@@ -127,23 +127,14 @@ namespace fmg.uwp.draw.mosaic.win2d {
 //                  }
 //               }
 //#endif
-               using (var ctf = new CanvasTextFormat() {
-                  FontSize = paintContext.FontInfo.Size,
-                  FontFamily = paintContext.FontInfo.Name,
-                  FontStyle = FontStyle.Normal,
-                  FontWeight = paintContext.FontInfo.Bold ? FontWeights.Bold : FontWeights.Normal,
-                  HorizontalAlignment = CanvasHorizontalAlignment.Center,
-                  VerticalAlignment = CanvasVerticalAlignment.Center,
-               }) {
-                  ds.DrawText(szCaption, rcInner.ToWinRect(), txtColor.ToWinColor(), ctf);
-               }
+               ds.DrawText(szCaption, rcInner.ToWinRect(), txtColor.ToWinColor(), paintContext.Font);
                //ds.DrawRectangle(rcInner.ToWinRect(), Color.Red.ToWinColor()); // debug
             }
          }
       }
 
       /// <summary> залить ячейку нужным цветом </summary>
-      protected override void PaintComponentBackground(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext)
+      protected override void PaintComponentBackground(BaseCell cell, PaintableWin2D paint, PaintWin2DContext paintContext)
       {
          //if (PaintContext.IconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
          //   return;
@@ -158,7 +149,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
          }
       }
 
-      protected override void PaintImage(BaseCell cell, PaintableWin2D paint, PaintUwpContext<CanvasBitmap> paintContext, CanvasBitmap img) {
+      protected override void PaintImage(BaseCell cell, PaintableWin2D paint, PaintWin2DContext paintContext, CanvasBitmap img) {
          var ds = paint.DrawingSession;
          var rcInner = cell.getRcInner(paintContext.PenBorder.Width);
          rcInner.MoveXY(paintContext.Padding.Left, paintContext.Padding.Top);
