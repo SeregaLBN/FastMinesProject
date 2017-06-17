@@ -1,7 +1,4 @@
-﻿using Windows.UI.Text;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.Graphics.Canvas.Text;
+﻿using Microsoft.Graphics.Canvas;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
@@ -57,19 +54,14 @@ namespace fmg.uwp.draw.mosaic.win2d {
          } else {
             var s = cell.getShiftPointBorderIndex();
             var v = cell.Attr.getVertexNumber(cell.getDirection());
-            using (var css = new CanvasStrokeStyle {
-               StartCap = CanvasCapStyle.Triangle,
-               EndCap = CanvasCapStyle.Triangle,
-            }) {
-               for (var i = 0; i < v; i++) {
-                  var p1 = region.GetPoint(i);
-                  p1.Move(paintContext.Padding.Left, paintContext.Padding.Top);
-                  var p2 = (i != (v - 1)) ? region.GetPoint(i + 1) : region.GetPoint(0);
-                  p2.Move(paintContext.Padding.Left, paintContext.Padding.Top);
-                  if (i == s)
-                     color = (down ? paintContext.PenBorder.ColorShadow : paintContext.PenBorder.ColorLight).ToWinColor();
-                  ds.DrawLine(p1.ToVector2(), p2.ToVector2(), color, borderWidth, css);
-               }
+            for (var i = 0; i < v; i++) {
+               var p1 = region.GetPoint(i);
+               p1.Move(paintContext.Padding.Left, paintContext.Padding.Top);
+               var p2 = (i != (v - 1)) ? region.GetPoint(i + 1) : region.GetPoint(0);
+               p2.Move(paintContext.Padding.Left, paintContext.Padding.Top);
+               if (i == s)
+                  color = (down ? paintContext.PenBorder.ColorShadow : paintContext.PenBorder.ColorLight).ToWinColor();
+               ds.DrawLine(p1.ToVector2(), p2.ToVector2(), color, borderWidth, paintContext.CssBorderLine);
             }
          }
       }

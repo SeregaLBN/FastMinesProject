@@ -61,7 +61,7 @@ namespace fmg.uwp.draw.img.win2d {
             var w = _width / 100.0f;
             var h = _height / 100.0f;
 
-            ds.DrawRectangle(0, 0, Width, Height, Windows.UI.Colors.Red, 1); // test
+            //ds.DrawRectangle(0, 0, Width, Height, Windows.UI.Colors.Red, 1); // test
 
             var p = new[] {
                new Vector2(13.50f * w, 90 * h),
