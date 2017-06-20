@@ -121,10 +121,11 @@ namespace fmg.uwp.draw.img.win2d {
             if (RotateMode == ERotateMode.SomeCells) {
                switch (ev.PropertyName) {
                case nameof(this.Size):
-                  _imageCache = null;
+                  ImageCache = null;
                   break;
                case nameof(this.RotatedElements):
                case nameof(this.BackgroundColor):
+               case nameof(this.MosaicType):
                   _invalidateCache = true;
                   break;
                }
@@ -169,12 +170,18 @@ namespace fmg.uwp.draw.img.win2d {
          /// </summary>
          private CanvasBitmap _imageCache;
          private CanvasBitmap ImageCache {
+            set {
+               if (!ReferenceEquals(_imageCache, value)) {
+                  _imageCache?.Dispose();
+                  _imageCache = value;
+                  _invalidateCache = true;
+               }
+            }
             get {
                if (_imageCache == null) {
                   var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
                   ICanvasResourceCreator rc = Image;
-                  _imageCache = new CanvasRenderTarget(rc, Size.Width, Size.Height, dpi);
-                  _invalidateCache = true;
+                  ImageCache = new CanvasRenderTarget(rc, Size.Width, Size.Height, dpi);
                }
                if (_invalidateCache) {
                   _invalidateCache = false;
@@ -256,8 +263,10 @@ namespace fmg.uwp.draw.img.win2d {
             if (Disposed)
                return;
 
-            if (disposing)
+            if (disposing) {
                View = null;
+               ImageCache = null;
+            }
 
             base.Dispose(disposing);
          }
