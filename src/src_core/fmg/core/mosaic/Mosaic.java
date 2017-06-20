@@ -136,9 +136,9 @@ public class Mosaic
       this._mosaicType = newMosaicType;
       setCellAttr(null);
 
-      onSelfPropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
-
       setArea(saveArea); // restore
+
+      onSelfPropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
    }
 
    /** доступ к заданной ячейке */

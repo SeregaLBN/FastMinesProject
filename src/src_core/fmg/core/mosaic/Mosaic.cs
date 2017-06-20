@@ -125,9 +125,10 @@ namespace fmg.core.mosaic
             var old = _mosaicType;
             _mosaicType = value;
             CellAttr = null;
-            OnSelfPropertyChanged(old, value, nameof(this.MosaicType));
 
             Area = saveArea; // restore
+
+            OnSelfPropertyChanged(old, value, nameof(this.MosaicType));
          }
       }
 

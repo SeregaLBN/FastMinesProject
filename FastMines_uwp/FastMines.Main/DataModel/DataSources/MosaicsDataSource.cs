@@ -35,15 +35,15 @@ namespace fmg.DataModel.DataSources {
       }
 
       private void ReloadDataSource() {
-         if (true) {
+         if (!true) {
+            // reload all
             var size = ImageSize; // save
             DataSourceInternal.Clear();
             FillDataSource();
             foreach (var mi in DataSourceInternal)
                mi.ImageSize = size; //  restore
          } else {
-            // Пытался не перегружать всё, а создавать только то, что нужно. Остальное - обновлять.
-            // Но не получилось - на xaml не всегда перерисовывалась картинка (где то затык с уведомлением?).
+            // Перегружаю не всё, а только то, что нужно. Остальное - обновляю.
             var size = ImageSize; // save
             CurrentElement = null;
             var dataSource = DataSourceInternal;
