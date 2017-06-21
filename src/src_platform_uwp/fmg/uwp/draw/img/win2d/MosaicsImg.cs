@@ -126,6 +126,7 @@ namespace fmg.uwp.draw.img.win2d {
                case nameof(this.RotatedElements):
                case nameof(this.BackgroundColor):
                case nameof(this.MosaicType):
+               case nameof(this.SizeField):
                   _invalidateCache = true;
                   break;
                }
