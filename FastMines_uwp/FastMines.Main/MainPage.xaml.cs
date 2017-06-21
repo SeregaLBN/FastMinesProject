@@ -246,11 +246,22 @@ namespace fmg
       }
 
       private void OnClickBttnSkillPanel(object sender, RoutedEventArgs e) {
+         Func<bool> isVisibleScrollerFunc = () => !_scroller.ScrollableHeight.HasMinDiff(_scroller.VerticalOffset);
+         bool isVisibleScroller = isVisibleScrollerFunc();
          if (_listViewSkillLevelMenu.Visibility == Visibility.Collapsed) {
-            ApplySmoothVisibilityOverScale(typeof(ESkillLevel), _listViewSkillLevelMenu, Visibility.Visible);
+            if (isVisibleScroller) {
+               ApplySmoothVisibilityOverScale(typeof(ESkillLevel), _listViewSkillLevelMenu, Visibility.Visible);
+               ApplySmoothVisibilityOverScale(typeof(EMosaicGroup), _listViewMosaicGroupMenu, Visibility.Collapsed);
+            } else {
+               ApplySmoothVisibilityOverScale(typeof(ESkillLevel), _listViewSkillLevelMenu, Visibility.Visible,
+                  () => {
+                     if (isVisibleScrollerFunc())
+                        ApplySmoothVisibilityOverScale(typeof(EMosaicGroup), _listViewMosaicGroupMenu, Visibility.Collapsed);
+                  });
+            }
             ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta = -ViewModel.MosaicSkillDs.TopElement.Image.RotateAngleDelta;
          } else {
-            if (!_scroller.ScrollableHeight.HasMinDiff(_scroller.VerticalOffset) && (_listViewMosaicGroupMenu.Visibility == Visibility.Visible)) {
+            if (isVisibleScroller && (_listViewMosaicGroupMenu.Visibility == Visibility.Visible)) {
                ApplySmoothVisibilityOverScale(typeof(EMosaicGroup), _listViewMosaicGroupMenu, Visibility.Collapsed);
                ViewModel.MosaicGroupDs.TopElement.Image.HorizontalBurgerMenu = true;
             } else {
@@ -261,7 +272,7 @@ namespace fmg
       }
 
       /// <summary> set pseudo-async ListView.Visibility = target </summary>
-      private void ApplySmoothVisibilityOverScale(Type enumType, ListView lv, Visibility target) {
+      private void ApplySmoothVisibilityOverScale(Type enumType, ListView lv, Visibility target, Action postAction = null) {
          if (lv.Visibility == target)
             return;
 
@@ -306,6 +317,8 @@ namespace fmg
                // restore
                lv.RenderTransform = original; // mark to stop repeat
                lv.Height = h0;                     // second - restore original height
+
+               postAction?.Invoke();
             }
          };
          r.RepeatNoWait(TimeSpan.FromMilliseconds(50), () => ReferenceEquals(lv.RenderTransform, original));
