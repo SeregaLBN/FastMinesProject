@@ -12,7 +12,7 @@ namespace fmg.DataModel.Items {
       public MosaicDataItem(EMosaic mosaicType)
          : base(mosaicType)
       {
-         Title = mosaicType.GetDescription(false);
+         Title = FixTitle(mosaicType);
       }
 
       public EMosaic MosaicType => UniqueId;
@@ -72,9 +72,13 @@ namespace fmg.DataModel.Items {
             OnSelfPropertyChanged<EMosaic>(ev, nameof(this.MosaicType)); // recall with another property name
             Image.MosaicType = MosaicType;
             Image.SizeField = MosaicType.SizeTileField(SkillLevel);
-            Title = MosaicType.GetDescription(false);
+            Title = FixTitle(MosaicType);
             break;
          }
+      }
+
+      private static string FixTitle(EMosaic mosaicType) {
+         return mosaicType.GetDescription(false);//.Replace("-", "\u2006-\u2006");
       }
 
    }

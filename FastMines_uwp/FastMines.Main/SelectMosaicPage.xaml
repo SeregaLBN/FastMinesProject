@@ -20,7 +20,12 @@
                        DataContextChanged="OnDataContextChangedCanvasControl"
                        Draw="OnDrawCanvasControl" />
                 <TextBlock Text="{x:Bind Title, Mode=OneWay}"
-                       Margin="8,4" Style="{StaticResource BaseTextBlockStyle}" HorizontalAlignment="Left"/>
+                           TextWrapping="Wrap"
+                           Width="{x:Bind ImageSize.Width, Mode=OneWay}"
+                           Height="40"
+                           Margin="8,4"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           HorizontalAlignment="Center"/>
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
