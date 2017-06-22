@@ -134,8 +134,7 @@ namespace fmg.uwp.draw.mosaic.win2d {
          var color = cell.getBackgroundFillColor(
             paintContext.BkFill.Mode,
             paintContext.BackgroundColor,
-            paintContext.BkFill.GetColor
-            );
+            paintContext.BkFill.GetColor);
          using (var geom = ds.BuildLines(cell.getRegion())) {
             ds.FillGeometry(geom, paintContext.Padding.LeftTopOffset.ToVector2(), color.ToWinColor());
          }
