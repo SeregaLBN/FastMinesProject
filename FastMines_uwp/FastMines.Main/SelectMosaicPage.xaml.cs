@@ -1,12 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using fmg.core.types;
 using fmg.common;
+using fmg.core.types;
+using fmg.core.img;
 using fmg.data.controller.types;
 using fmg.uwp.mosaic;
+using fmg.uwp.utils;
 using MosaicsCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsImg.CanvasBmp;
 using fmg.DataModel.Items;
 
@@ -20,9 +24,24 @@ namespace fmg {
       public SelectMosaicPage() {
          this.InitializeComponent();
          ViewModel = new MosaicsViewModel();
+
+         HSV hsv = new HSV(StaticImgConsts.DefaultForegroundColor);
+         hsv.s = 80;
+         hsv.v = 70;
+         hsv.a = 170;
+         BorderColorStartBttn = new SolidColorBrush(hsv.ToColor().ToWinColor());
+
+         Action run = () => {
+            if (gridMosaics.SelectedItem == null)
+               return;
+            hsv.h += 10;
+            BorderColorStartBttn.Color = hsv.ToColor().ToWinColor();
+         };
+         run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => false);
       }
 
       public MosaicsViewModel ViewModel { get; private set; }
+      public SolidColorBrush BorderColorStartBttn;
 
       private void OnSelectionChangedGridViewMosaics(object sender, SelectionChangedEventArgs e)
       {
@@ -63,6 +82,7 @@ namespace fmg {
       }
 
       IDictionary<CanvasControl, MosaicsCanvasBmp> map = new Dictionary<CanvasControl, MosaicsCanvasBmp>();
+
       private void OnDrawCanvasControl(CanvasControl canvasControl, CanvasDrawEventArgs ev) {
          var img = map[canvasControl];
          ev.DrawingSession.DrawImage(img.Image, new Rect(0, 0, canvasControl.Width, canvasControl.Height));
