@@ -1,22 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Core;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using FastMines.Data;
-using fmg.data.controller.types;
 using fmg.core.types;
-using fmg.uwp.mosaic;
-using FastMines.Common;
+using fmg.core.mosaic;
+using FastMines.Data;
 
 // The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229
 
@@ -70,10 +58,10 @@ namespace FastMines {
          // by passing required information as a navigation parameter
          var eMosaic = ((FmDataItem) e.ClickedItem).UniqueId;
          //this.Frame.Navigate(typeof(ItemDetailPage), eMosaic);
-         this.Frame.Navigate(typeof(MosaicPage), new MosaicPageInitParam {
-            MosaicTypes = eMosaic,
+         this.Frame.Navigate(typeof(MosaicPage), new MosaicInitData {
+            MosaicType = eMosaic,
             MinesCount = FmDataSource.MinesCount = FmDataSource.SkillLevel.GetNumberMines(eMosaic),
-            SizeField = FmDataSource.SizeField = FmDataSource.SkillLevel.DefaultSize()
+            SizeField = FmDataSource.SizeField = FmDataSource.SkillLevel.GetDefaultSize()
          });
       }
 

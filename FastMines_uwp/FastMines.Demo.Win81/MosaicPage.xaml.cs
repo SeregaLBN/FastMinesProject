@@ -16,8 +16,6 @@ using fmg.core.mosaic;
 using fmg.core.types;
 using fmg.core.mosaic.cells;
 using fmg.core.types.click;
-using fmg.data.controller.types;
-using fmg.uwp.mosaic;
 using fmg.uwp.utils;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.mosaic.xaml;
@@ -99,10 +97,10 @@ namespace FastMines {
       protected override void OnNavigatedTo(NavigationEventArgs e) {
          base.OnNavigatedTo(e);
 
-         var initParam = e.Parameter as MosaicPageInitParam;
+         var initParam = e.Parameter as MosaicInitData;
          Debug.Assert(initParam != null);
          MosaicController.SizeField = initParam.SizeField;
-         MosaicController.MosaicType = initParam.MosaicTypes;
+         MosaicController.MosaicType = initParam.MosaicType;
          MosaicController.MinesCount = initParam.MinesCount;
 
          MosaicController.View.PaintContext.BackgroundColor = PaintUwpContextCommon.DefaultBackgroundColor;
@@ -130,7 +128,7 @@ namespace FastMines {
             return;
          } else {
             numberMines = skill.GetNumberMines(MosaicController.MosaicType);
-            sizeFld = skill.DefaultSize();
+            sizeFld = skill.GetDefaultSize();
          }
 
          MosaicController.SizeField = sizeFld;

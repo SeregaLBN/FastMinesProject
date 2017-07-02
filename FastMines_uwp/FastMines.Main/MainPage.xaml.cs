@@ -14,7 +14,6 @@ using fmg.common.geom;
 using fmg.common.geom.util;
 using fmg.core.types;
 using fmg.core.img;
-using fmg.data.controller.types;
 using fmg.uwp.utils;
 using fmg.DataModel.Items;
 using fmg.DataModel.DataSources;

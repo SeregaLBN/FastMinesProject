@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using fmg.core.types;
+using fmg.core.mosaic;
 using FastMines.Data;
-using fmg.data.controller.types;
-using fmg.uwp.mosaic;
 
 // The Grouped Items Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234231
 
@@ -57,10 +57,10 @@ namespace FastMines {
          // by passing required information as a navigation parameter
          var eMosaic = ((FmDataItem)e.ClickedItem).UniqueId;
          //this.Frame.Navigate(typeof(ItemDetailPage), eMosaic);
-         this.Frame.Navigate(typeof(MosaicPage), new MosaicPageInitParam {
-            MosaicTypes = eMosaic,
+         this.Frame.Navigate(typeof(MosaicPage), new MosaicInitData {
+            MosaicType = eMosaic,
             MinesCount = FmDataSource.MinesCount = FmDataSource.SkillLevel.GetNumberMines(eMosaic),
-            SizeField = FmDataSource.SizeField = FmDataSource.SkillLevel.DefaultSize()
+            SizeField = FmDataSource.SizeField = FmDataSource.SkillLevel.GetDefaultSize()
          });
       }
 

@@ -3,7 +3,7 @@ using System.ComponentModel;
 using Microsoft.Graphics.Canvas;
 using fmg.common;
 using fmg.common.geom;
-using fmg.data.controller.types;
+using fmg.core.types;
 using MosaicsSkillCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsSkillImg.CanvasBmp;
 
 namespace fmg.DataModel.Items {

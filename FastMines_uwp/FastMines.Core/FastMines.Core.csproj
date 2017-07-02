@@ -54,6 +54,9 @@
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\Mosaic.cs">
       <Link>src_fmg.core\mosaic\Mosaic.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicInitData.cs">
+      <Link>src_fmg.core\mosaic\MosaicInitData.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\ALogo.cs">
       <Link>src_fmg.core\img\ALogo.cs</Link>
     </Compile>
@@ -183,8 +186,8 @@
     <Compile Include="..\..\src\src_data\fmg\data\view\draw\FontInfo.cs">
       <Link>src_fmg.data\view\draw\FontInfo.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_data\fmg\data\controller\types\ESkillLevel.cs">
-      <Link>src_fmg.data\controller\types\ESkillLevel.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\types\ESkillLevel.cs">
+      <Link>src_fmg.core\types\ESkillLevel.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_data\fmg\data\controller\serializable\ChampionsModel.cs">
       <Link>src_fmg.data\controller\serializable\ChampionsModel.cs</Link>

@@ -7,9 +7,8 @@ using Windows.UI.Xaml.Media;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.core.types;
+using fmg.core.mosaic;
 using fmg.core.img;
-using fmg.data.controller.types;
-using fmg.uwp.mosaic;
 using fmg.uwp.utils;
 using MosaicsCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsImg.CanvasBmp;
 using fmg.DataModel.Items;
@@ -94,10 +93,10 @@ namespace fmg {
          System.Diagnostics.Debug.Assert(frame != null);
 
          var eMosaic = CurrentElement.MosaicType;
-         frame.Navigate(typeof(MosaicPage2), new MosaicPageInitParam {
-            MosaicTypes = eMosaic,
+         frame.Navigate(typeof(MosaicPage2), new MosaicInitData {
+            MosaicType = eMosaic,
             MinesCount = CurrentSkillLevel.GetNumberMines(eMosaic),
-            SizeField = CurrentSkillLevel.DefaultSize()
+            SizeField = CurrentSkillLevel.GetDefaultSize()
          });
 
          //Window.Current.Content = new MosaicPage();

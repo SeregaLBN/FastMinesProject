@@ -5,16 +5,14 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 
 /** Mosaic data */
-public class MosaicData {
+public class MosaicInitData {
 
    private Matrisize sizeField;
    private EMosaic mosaicType;
    private int minesCount;
    private double area;
 
-   public MosaicData() { setDefaults(); }
-
-   protected void setDefaults() {
+   public MosaicInitData() {
       mosaicType = EMosaic.eMosaicSquare1;
       sizeField = ESkillLevel.eBeginner.getDefaultSize();
       minesCount = ESkillLevel.eBeginner.getNumberMines(mosaicType);

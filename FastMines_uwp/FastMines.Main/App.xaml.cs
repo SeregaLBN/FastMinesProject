@@ -9,6 +9,9 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Controls;
 using fmg.common;
+using fmg.core.types;
+using fmg.data.controller.types;
+using fmg.uwp.mosaic;
 
 namespace fmg
 {
@@ -141,7 +144,33 @@ namespace fmg
       private void OnSuspending(object sender, SuspendingEventArgs e)
       {
          var deferral = e.SuspendingOperation.GetDeferral();
+
          //TODO: Save application state and stop any background activity
+         var lsv = Windows.Storage.ApplicationData.Current.LocalSettings.Values;
+         Frame rootFrame = Window.Current.Content as Frame;
+         if (rootFrame.Content is MainPage) {
+            MainPage mp = rootFrame.Content as MainPage;
+
+            EMosaicGroup mosaicGroup = mp.ViewModel.MosaicGroupDs.CurrentElement?.MosaicGroup ?? EMosaicGroup.eQuadrangles;
+            ESkillLevel  mosaicSkill = mp.ViewModel.MosaicSkillDs.CurrentElement?.SkillLevel  ?? ESkillLevel.eBeginner;
+
+            Windows.Storage.ApplicationDataCompositeValue compositeMosaic = new Windows.Storage.ApplicationDataCompositeValue();
+            compositeMosaic[nameof(EMosaicGroup)] = mosaicGroup.Ordinal();
+            compositeMosaic[nameof(ESkillLevel) ] = mosaicSkill.Ordinal();
+            if (mosaicSkill == ESkillLevel.eCustom) {
+               // MinesCount = CurrentSkillLevel.GetNumberMines(eMosaic),
+               // SizeField = CurrentSkillLevel.DefaultSize()
+               compositeMosaic["SizeFieldX"] = 2;
+               compositeMosaic["SizeFieldY"] = 1;
+               compositeMosaic["MinesCount"] = 1;
+            }
+            lsv["MosaiSettings"] = compositeMosaic;
+
+            if (mp.RightFrame.SourcePageType == typeof(SelectMosaicPage)) {
+               var smp = mp.RightFrame.Content as SelectMosaicPage;
+            }
+         }
+
          deferral.Complete();
       }
 

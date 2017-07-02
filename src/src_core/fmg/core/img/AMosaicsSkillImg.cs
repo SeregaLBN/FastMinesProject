@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using fmg.common;
 using fmg.common.geom;
 using fmg.common.geom.util;
-using fmg.data.controller.types;
+using fmg.core.types;
 
 namespace fmg.core.img {
 

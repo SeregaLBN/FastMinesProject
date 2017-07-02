@@ -1,4 +1,4 @@
-using fmg.data.controller.types;
+using fmg.core.types;
 
 namespace fmg.uwp.draw.img {
 

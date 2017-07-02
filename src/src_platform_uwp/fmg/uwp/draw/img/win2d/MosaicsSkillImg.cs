@@ -5,7 +5,7 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.core.img;
-using fmg.data.controller.types;
+using fmg.core.types;
 using fmg.uwp.utils;
 using fmg.uwp.utils.win2d;
 using fmg.uwp.draw.mosaic.win2d;

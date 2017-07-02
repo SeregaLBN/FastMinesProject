@@ -50,6 +50,8 @@ import fmg.swing.utils.ScreenResolutionHelper;
 /** Главное окно программы */
 public class Main extends JFrame implements PropertyChangeListener {
 
+   private static final long serialVersionUID = 3L;
+
    public static final double AREA_MINIMUM = 230;
 
    private JPanel     contentPane;

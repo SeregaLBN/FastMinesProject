@@ -6,14 +6,12 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import fmg.common.geom.Matrisize;
-import fmg.core.mosaic.MosaicData;
+import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EMosaic;
 
 /** Mosaic data. For save/restore to/from settings/storage */
-public class SerializeMosaicData extends MosaicData implements Externalizable {
+public class SerializeMosaicData extends MosaicInitData implements Externalizable {
    private static final long version = 1;
-
-   public SerializeMosaicData() { setDefaults(); }
 
    @Override
    public void writeExternal(ObjectOutput out) throws IOException {

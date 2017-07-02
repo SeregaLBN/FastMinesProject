@@ -18,9 +18,7 @@ using fmg.core.types;
 using fmg.core.types.click;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
-using fmg.data.controller.types;
 using fmg.uwp.utils;
-using fmg.uwp.mosaic;
 using Logger = fmg.common.LoggerSimple;
 using MosaicControllerWin2D = fmg.uwp.mosaic.win2d.MosaicControllerWin2D<fmg.uwp.mosaic.win2d.MosaicViewInCanvasVirtualControl>;
 
@@ -100,10 +98,10 @@ namespace fmg {
       protected override void OnNavigatedTo(NavigationEventArgs ev) {
          base.OnNavigatedTo(ev);
 
-         System.Diagnostics.Debug.Assert(ev.Parameter is MosaicPageInitParam);
-         var initParam = ev.Parameter as MosaicPageInitParam;
+         System.Diagnostics.Debug.Assert(ev.Parameter is MosaicInitData);
+         var initParam = ev.Parameter as MosaicInitData;
          MosaicController.SizeField  = initParam.SizeField;
-         MosaicController.MosaicType = initParam.MosaicTypes;
+         MosaicController.MosaicType = initParam.MosaicType;
          MosaicController.MinesCount = initParam.MinesCount;
       }
 
@@ -119,7 +117,7 @@ namespace fmg {
             return;
          } else {
             numberMines = skill.GetNumberMines(MosaicController.MosaicType);
-            sizeFld = skill.DefaultSize();
+            sizeFld = skill.GetDefaultSize();
          }
 
          MosaicController.SizeField = sizeFld;

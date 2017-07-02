@@ -3,7 +3,7 @@ using System.Linq;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common.geom;
 using fmg.core.img;
-using fmg.data.controller.types;
+using fmg.core.types;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.draw.img.wbmp {
