@@ -9,7 +9,7 @@ import javax.swing.event.MouseInputListener;
 
 import fmg.core.mosaic.MosaicController;
 import fmg.core.types.EMosaic;
-import fmg.data.controller.types.ESkillLevel;
+import fmg.core.types.ESkillLevel;
 import fmg.swing.Cast;
 import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
@@ -127,8 +127,8 @@ public class MosaicControllerSwing extends MosaicController<MosaicViewSwing, Pai
 
       ctrllr.setArea(500);
       ctrllr.setMosaicType(mosaicType);
-      ctrllr.setSizeField(skill.DefaultSize());
-      ctrllr.setMinesCount(skill.GetNumberMines(mosaicType));
+      ctrllr.setSizeField(skill.getDefaultSize());
+      ctrllr.setMinesCount(skill.getNumberMines(mosaicType));
       ctrllr.GameNew();
 
       frame.add(ctrllr.getView().getControl());

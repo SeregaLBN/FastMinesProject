@@ -10,11 +10,11 @@ import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.core.img.AMosaicsSkillImg;
-import fmg.data.controller.types.ESkillLevel;
+import fmg.core.types.ESkillLevel;
 import fmg.swing.Cast;
 
 /**
- * Representable {@link fmg.data.controller.types.ESkillLevel} as image
+ * Representable {@link fmg.core.types.ESkillLevel} as image
  * <br>
  * SWING impl
  *

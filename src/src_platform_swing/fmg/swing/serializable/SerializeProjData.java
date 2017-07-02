@@ -1,32 +1,18 @@
 package fmg.swing.serializable;
 
-import java.io.Externalizable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.UUID;
 
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Point;
 import fmg.core.types.EMosaic;
-import fmg.data.controller.types.ESkillLevel;
 import fmg.data.view.draw.EShowElement;
-import fmg.swing.Main;
 
 /** Данные проекта, записываемые/считываемые в/из файл(а) */
 public class SerializeProjData implements Externalizable {
-   private static final long version = Main.serialVersionUID;
+   private static final long version = 2;
 
-   private Matrisize sizeField;
-   private EMosaic mosaicType;
-   private int minesCount;
-   private double area;
+   private SerializeMosaicData mosaicData;
 
    private UUID activeUserId;
    private boolean doNotAskStartup; // manage dialog
@@ -41,10 +27,7 @@ public class SerializeProjData implements Externalizable {
    public SerializeProjData() { setDefaults(); }
 
    private void setDefaults() {
-      mosaicType = EMosaic.eMosaicSquare1;
-      sizeField = ESkillLevel.eBeginner.DefaultSize();
-      minesCount = ESkillLevel.eBeginner.GetNumberMines(mosaicType);
-      area = 2300;
+      mosaicData = new SerializeMosaicData();
 
       activeUserId = null;
       doNotAskStartup = true;
@@ -70,11 +53,7 @@ public class SerializeProjData implements Externalizable {
    public void writeExternal(ObjectOutput out) throws IOException {
       out.writeLong(version);
 
-      out.writeDouble(area);
-      out.writeInt(mosaicType.getIndex());
-      out.writeInt(sizeField.m);
-      out.writeInt(sizeField.n);
-      out.writeInt(minesCount);
+      mosaicData.writeExternal(out);
 
       out.writeBoolean(activeUserId != null);
       if (activeUserId != null)
@@ -96,10 +75,7 @@ public class SerializeProjData implements Externalizable {
       if (version != in.readLong())
          throw new RuntimeException("Unknown version!");
 
-      area = in.readDouble();
-      mosaicType = EMosaic.fromIndex(in.readInt());
-      sizeField = new Matrisize(in.readInt(), in.readInt());
-      minesCount = in.readInt();
+      mosaicData.readExternal(in);
 
       if (in.readBoolean())
          activeUserId = UUID.fromString(in.readUTF());
@@ -147,17 +123,17 @@ public class SerializeProjData implements Externalizable {
       return new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "Mines.dat");
    }
 
-   public Matrisize getSizeField() { return sizeField; }
-   public void setSizeField(Matrisize sizeField) { this.sizeField = sizeField; }
+   public Matrisize getSizeField() { return mosaicData.getSizeField(); }
+   public void setSizeField(Matrisize sizeField) { mosaicData.setSizeField(sizeField); }
 
-   public EMosaic getMosaicType() { return mosaicType; }
-   public void setMosaicType(EMosaic mosaicType) { this.mosaicType = mosaicType; }
+   public EMosaic getMosaicType() { return mosaicData.getMosaicType(); }
+   public void setMosaicType(EMosaic mosaicType) { mosaicData.setMosaicType(mosaicType); }
 
-   public int getMinesCount() { return minesCount; }
-   public void setMinesCount(int minesCount) { this.minesCount = minesCount; }
+   public int getMinesCount() { return mosaicData.getMinesCount(); }
+   public void setMinesCount(int minesCount) { mosaicData.setMinesCount(minesCount); }
 
-   public double getArea() { return area; }
-   public void setArea(double area) { this.area = area; }
+   public double getArea() { return mosaicData.getArea(); }
+   public void setArea(double area) { mosaicData.setArea(area); }
 
    public boolean getShowElement(EShowElement key) { return eShowElements[key.ordinal()]; }
    public void setShowElement(EShowElement key, boolean val) { this.eShowElements[key.ordinal()] = val; }

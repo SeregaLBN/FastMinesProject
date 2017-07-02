@@ -16,7 +16,7 @@ import fmg.common.geom.Matrisize;
 import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.data.controller.types.ESkillLevel;
+import fmg.core.types.ESkillLevel;
 import fmg.swing.Main;
 import fmg.swing.utils.GuiTools;
 
@@ -309,7 +309,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       if (parent == null)
          return;
       Matrisize size = new Matrisize((Integer)spinX.getValue(), (Integer)spinY.getValue());
-      int mines = eSkill.GetNumberMines(parent.getMosaicController().getMosaicType(), size);
+      int mines = eSkill.getNumberMines(parent.getMosaicController().getMosaicType(), size);
       spinMines.setValue(mines);
    }
 

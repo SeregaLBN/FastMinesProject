@@ -3,8 +3,8 @@ package fmg.data.controller.event;
 import java.util.EventObject;
 
 import fmg.core.types.EMosaic;
+import fmg.core.types.ESkillLevel;
 import fmg.data.controller.serializable.ChampionsModel;
-import fmg.data.controller.types.ESkillLevel;
 
 public class ChampionModelEvent extends EventObject {
    private static final long serialVersionUID = 1L;

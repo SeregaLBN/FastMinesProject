@@ -5,8 +5,8 @@ import java.awt.Dimension;
 import javax.swing.SwingConstants;
 
 import fmg.core.types.EMosaic;
+import fmg.core.types.ESkillLevel;
 import fmg.data.controller.serializable.ChampionsModel;
-import fmg.data.controller.types.ESkillLevel;
 import fmg.swing.Main;
 import fmg.swing.model.view.ChampionTblModel;
 import fmg.swing.model.view.ReportTableModel;
@@ -42,7 +42,7 @@ public class ChampionDlg extends ReportDlg {
 
    // тестовый метод для проверки диалогового окна
    public static void main(String[] args) {
-      ChampionsModel champions = new ChampionsModel(Main.serialVersionUID, null);
+      ChampionsModel champions = new ChampionsModel(null);
       champions.Load();
       try (ChampionDlg dlg = new ChampionDlg(null, true, champions)) {
          dlg.showData(ESkillLevel.eBeginner, EMosaic.eMosaicSquare1);

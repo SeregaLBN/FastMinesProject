@@ -28,11 +28,11 @@ import fmg.core.mosaic.MosaicHelper;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
+import fmg.core.types.ESkillLevel;
 import fmg.core.types.click.ClickResult;
 import fmg.data.controller.event.ActionToUser;
 import fmg.data.controller.serializable.ChampionsModel;
 import fmg.data.controller.serializable.PlayersModel;
-import fmg.data.controller.types.ESkillLevel;
 import fmg.data.controller.types.User;
 import fmg.data.view.draw.EShowElement;
 import fmg.data.view.draw.EZoomInterface;
@@ -49,7 +49,6 @@ import fmg.swing.utils.ScreenResolutionHelper;
 
 /** Главное окно программы */
 public class Main extends JFrame implements PropertyChangeListener {
-   public static final long serialVersionUID = -3441735484862759425L;
 
    public static final double AREA_MINIMUM = 230;
 
@@ -1209,13 +1208,13 @@ public class Main extends JFrame implements PropertyChangeListener {
       Matrisize sizeFld = getMosaicController().getSizeField();
       int numberMines = getMosaicController().getMinesCount();
 
-      if (sizeFld.equals(ESkillLevel.eBeginner.DefaultSize()) && (numberMines == ESkillLevel.eBeginner.GetNumberMines(eMosaic)))
+      if (sizeFld.equals(ESkillLevel.eBeginner.getDefaultSize()) && (numberMines == ESkillLevel.eBeginner.getNumberMines(eMosaic)))
          return ESkillLevel.eBeginner;
-      if (sizeFld.equals(ESkillLevel.eAmateur.DefaultSize()) && (numberMines == ESkillLevel.eAmateur.GetNumberMines(eMosaic)))
+      if (sizeFld.equals(ESkillLevel.eAmateur.getDefaultSize()) && (numberMines == ESkillLevel.eAmateur.getNumberMines(eMosaic)))
          return ESkillLevel.eAmateur;
-      if (sizeFld.equals(ESkillLevel.eProfi.DefaultSize()) && (numberMines == ESkillLevel.eProfi.GetNumberMines(eMosaic)))
+      if (sizeFld.equals(ESkillLevel.eProfi.getDefaultSize()) && (numberMines == ESkillLevel.eProfi.getNumberMines(eMosaic)))
          return ESkillLevel.eProfi;
-      if (sizeFld.equals(ESkillLevel.eCrazy.DefaultSize()) && (numberMines == ESkillLevel.eCrazy.GetNumberMines(eMosaic)))
+      if (sizeFld.equals(ESkillLevel.eCrazy.getDefaultSize()) && (numberMines == ESkillLevel.eCrazy.getNumberMines(eMosaic)))
          return ESkillLevel.eCrazy;
       return ESkillLevel.eCustom;
    }
@@ -1488,7 +1487,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       changeGame(newSize,
             (skill == ESkillLevel.eCustom)
                ? getMosaicController().getMinesCount()
-               : skill.GetNumberMines(getMosaicController().getMosaicType()));
+               : skill.getNumberMines(getMosaicController().getMosaicType()));
    }
 
    /** Поменять игру на новую мозаику */
@@ -1499,7 +1498,7 @@ public class Main extends JFrame implements PropertyChangeListener {
       ESkillLevel skill = getSkillLevel();
       getMosaicController().setMosaicType(mosaicType);
       if (skill != ESkillLevel.eCustom) {
-         int numberMines = skill.GetNumberMines(mosaicType);
+         int numberMines = skill.getNumberMines(mosaicType);
          getMosaicController().setMinesCount(numberMines);
       }
    }
@@ -1533,8 +1532,8 @@ public class Main extends JFrame implements PropertyChangeListener {
       if (isPaused())
          changePause();
 
-      int numberMines = skill.GetNumberMines(getMosaicController().getMosaicType());
-      Matrisize sizeFld = skill.DefaultSize();
+      int numberMines = skill.getNumberMines(getMosaicController().getMosaicType());
+      Matrisize sizeFld = skill.getDefaultSize();
 
       getMosaicController().setSizeField(sizeFld);
       getMosaicController().setMinesCount(numberMines);
@@ -2371,14 +2370,14 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    public PlayersModel getPlayers() {
       if (players == null) {
-         players = new PlayersModel(Main.serialVersionUID);
+         players = new PlayersModel();
          players.Load();
       }
       return players;
    }
    public ChampionsModel getChampions() {
       if (champions == null) {
-         champions = new ChampionsModel(Main.serialVersionUID, getPlayers());
+         champions = new ChampionsModel(getPlayers());
          champions.Load();
       }
       return champions;

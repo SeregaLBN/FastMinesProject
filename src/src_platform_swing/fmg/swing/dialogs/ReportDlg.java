@@ -18,7 +18,7 @@ import javax.swing.table.TableCellRenderer;
 
 import fmg.common.Color;
 import fmg.core.types.EMosaic;
-import fmg.data.controller.types.ESkillLevel;
+import fmg.core.types.ESkillLevel;
 import fmg.swing.Cast;
 import fmg.swing.Main;
 import fmg.swing.draw.img.MosaicsImg;

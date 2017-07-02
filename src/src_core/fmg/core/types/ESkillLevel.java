@@ -1,4 +1,4 @@
-package fmg.data.controller.types;
+package fmg.core.types;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +7,6 @@ import java.util.stream.IntStream;
 import fmg.common.geom.Matrisize;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.types.EMosaic;
 
 public enum ESkillLevel {
    eBeginner,
@@ -91,7 +90,7 @@ eCrazy      281
    }
 
    /** размеры полей */
-   public Matrisize DefaultSize() {
+   public Matrisize getDefaultSize() {
       switch (this) {
       case eBeginner: return new Matrisize(10, 10); // 15
       case eAmateur : return new Matrisize(20, 15); // 54
@@ -103,12 +102,12 @@ eCrazy      281
    }
 
    /** Узнать кол-во мин на размере поля по-умолчанию */
-   public int GetNumberMines(EMosaic eMosaic) {
-      return GetNumberMines(eMosaic, this.DefaultSize());
+   public int getNumberMines(EMosaic eMosaic) {
+      return getNumberMines(eMosaic, this.getDefaultSize());
    }
 
    /** Узнать кол-во мин на заданном размере поля */
-   public int GetNumberMines(EMosaic eMosaic, Matrisize customSizeMosaic) {
+   public int getNumberMines(EMosaic eMosaic, Matrisize customSizeMosaic) {
       if (customSizeMosaic == null)
          throw new IllegalArgumentException("customSizeMosaic must be not null");
       if (this == eCustom)

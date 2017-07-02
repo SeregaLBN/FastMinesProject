@@ -11,10 +11,10 @@ import fmg.common.HSV;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.util.FigureHelper;
-import fmg.data.controller.types.ESkillLevel;
+import fmg.core.types.ESkillLevel;
 
 /**
- * Abstract representable {@link fmg.data.controller.types.ESkillLevel} as image
+ * Abstract representable {@link fmg.core.types.ESkillLevel} as image
  *
  * @param <TImage> plaform specific image
  */

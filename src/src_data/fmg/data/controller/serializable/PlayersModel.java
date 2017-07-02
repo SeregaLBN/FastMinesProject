@@ -1,34 +1,23 @@
 package fmg.data.controller.serializable;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.Externalizable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
+import java.io.*;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import fmg.common.crypt.Simple3DES;
 import fmg.core.types.EMosaic;
+import fmg.core.types.ESkillLevel;
 import fmg.data.controller.event.PlayerModelEvent;
 import fmg.data.controller.event.PlayerModelListener;
-import fmg.data.controller.types.ESkillLevel;
 import fmg.data.controller.types.User;
 
 /** хранилище пользователей и их игровой статистики */
 public class PlayersModel implements Externalizable {
-   //private static final long version = Main.serialVersionUID;
-   private final long version;
-   
-   public PlayersModel(long version) { this.version = version; }
+   private static final long version = 2;
 
    private class Record implements Externalizable {
       private User user;
@@ -240,7 +229,7 @@ public class PlayersModel implements Externalizable {
 
          // 2. decrypt data
          try {
-            data = new Simple3DES(Long.toString(version)).decrypt(data);
+            data = new Simple3DES(getSerializeKey()).decrypt(data);
          } catch (Exception ex) {
             throw new RuntimeException(ex);
          }
@@ -259,6 +248,11 @@ public class PlayersModel implements Externalizable {
       }
    }
 
+   private static String getSerializeKey() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+      byte[] digest = MessageDigest.getInstance("MD5").digest(Long.toString(version).getBytes("UTF-8"));
+      return String.format("%032X", new BigInteger(1, digest));
+   }
+
    public void Save() throws FileNotFoundException, IOException {
       // 1. serializable object
       ByteArrayOutputStream byteRaw = new ByteArrayOutputStream();
@@ -269,7 +263,7 @@ public class PlayersModel implements Externalizable {
       // 2. crypt data
       byte[] cryptData;
       try {
-         cryptData = new Simple3DES(Long.toString(version)).encrypt(byteRaw.toByteArray());
+         cryptData = new Simple3DES(getSerializeKey()).encrypt(byteRaw.toByteArray());
       } catch (Exception ex) {
          throw new RuntimeException(ex);
       }

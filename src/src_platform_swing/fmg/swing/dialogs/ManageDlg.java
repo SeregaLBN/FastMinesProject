@@ -3,32 +3,10 @@ package fmg.swing.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.UUID;
 
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.InputMap;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
+import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
 
@@ -67,6 +45,7 @@ public class ManageDlg extends JDialog {
       });
 
       addWindowListener(new WindowAdapter() {
+         @Override
          public void windowClosing(WindowEvent we) { ManageDlg.this.onCancel(); }
       });
 
@@ -107,27 +86,22 @@ public class ManageDlg extends JDialog {
    private void onNewPlayer() {
 //      System.out.println("OnNewPlayer");
       final LoginDlg loginDialog = new LoginDlg(this.isVisible() ? this : parent, true, null, false);
-      final Runnable anew = new Runnable() {
-         @Override
-         public void run() { loginDialog.setVisible(true); }};
+      final Runnable anew = () -> loginDialog.setVisible(true);
 
       loginDialog.setOkActionListener(
-         new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               String name = loginDialog.getName();
-               if ((name == null) || name.isEmpty())
+         e -> {
+            String name = loginDialog.getName();
+            if ((name == null) || name.isEmpty())
+               SwingUtilities.invokeLater(anew);
+            else
+               try {
+                  ManageDlg.this.players.addNewPlayer(name, loginDialog.getPass());
+                  int maxPos = ManageDlg.this.players.size()-1; // new user added to end list
+                  ManageDlg.this.table.getSelectionModel().setSelectionInterval(maxPos, maxPos);
+               } catch (Exception ex) {
+                  GuiTools.alert(ManageDlg.this, ex.getMessage());
                   SwingUtilities.invokeLater(anew);
-               else
-                  try {
-                     ManageDlg.this.players.addNewPlayer(name, loginDialog.getPass());
-                     int maxPos = ManageDlg.this.players.size()-1; // new user added to end list
-                     ManageDlg.this.table.getSelectionModel().setSelectionInterval(maxPos, maxPos);
-                  } catch (Exception ex) {
-                     GuiTools.alert(ManageDlg.this, ex.getMessage());
-                     SwingUtilities.invokeLater(anew);
-                  }
-            }
+               }
          });
       anew.run();
    }
@@ -146,8 +120,8 @@ public class ManageDlg extends JDialog {
       // 1. Центральная панель
       Box boxCenter = Box.createVerticalBox();
       {
-         // Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов. 
-         // использую пустую рамку 
+         // Чтобы интерфейс отвечал требованиям Java, необходимо отделить его содержимое от границ окна на 12 пикселов.
+         // использую пустую рамку
          boxCenter.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
 
          table = new JTable(new ManageTblModel(players)) {
@@ -167,7 +141,7 @@ public class ManageDlg extends JDialog {
 //         // выравниваю текст заголовка таблицы по центру
 //         // TODO Хоть текст и выравнивается, но сами ячейки заголовка таблицы уже выглядят хуже чем
 //         //      в оригинальном рендере (особо заметно под Маком).
-//         //      Т.е. DefaultTableCellRenderer выглядит паршиво, а как достать орининальный рендер заголовка - хз 
+//         //      Т.е. DefaultTableCellRenderer выглядит паршиво, а как достать орининальный рендер заголовка - хз
 //         table.getColumnModel().getColumn(0).setHeaderRenderer(new javax.swing.table.DefaultTableCellRenderer() {
 //            private static final long serialVersionUID = 1L;
 //            @Override
@@ -208,11 +182,13 @@ public class ManageDlg extends JDialog {
          inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), mapKey);
          actionMap.put(mapKey, new AbstractAction() {
             private static final long serialVersionUID = 1L;
+            @Override
             public void actionPerformed(ActionEvent e) {
                onDeleteRow();
             }
          });
          table.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                switch (e.getClickCount()) {
                case 1:
@@ -226,10 +202,8 @@ public class ManageDlg extends JDialog {
                }
             }
          });
-         ListSelectionListener changeTblLineListener = new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-               btnOk.setEnabled(table.getSelectedRow() != -1);
+         ListSelectionListener changeTblLineListener = e -> {
+            btnOk.setEnabled(table.getSelectedRow() != -1);
 //               // If cell selection is enabled, both row and column change events are fired
 //               if (e.getSource() == table.getSelectionModel() && table.getRowSelectionAllowed()) {
 //                  int first = e.getFirstIndex();
@@ -247,11 +221,10 @@ public class ManageDlg extends JDialog {
 //               if (e.getValueIsAdjusting()) {
 //                  // The mouse button has not yet been released
 //               }
-            }
          };
          table.getSelectionModel().addListSelectionListener(changeTblLineListener);
 //         table.getColumnModel().getSelectionModel().addListSelectionListener(changeTblLineListener);
-         
+
          boxCenter.add(Box.createVerticalStrut(6));
 
          boxCenter.add(doNotAskStartup = new JCheckBox("Do not ask at startup", true));
@@ -263,10 +236,7 @@ public class ManageDlg extends JDialog {
          panelLeft.setBorder(BorderFactory.createEmptyBorder(12,0,12,12));
 
          JButton btnNp = new JButton("New Player");
-         btnNp.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) { ManageDlg.this.onNewPlayer(); }
-         });
+         btnNp.addActionListener(e -> ManageDlg.this.onNewPlayer());
          panelLeft.add(btnNp);
 
 //         btn = new JButton("Change password");
@@ -281,20 +251,10 @@ public class ManageDlg extends JDialog {
          panelLeft.add(Box.createVerticalGlue());
 
          JButton btnCancel = new JButton("Cancel");
-         btnCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               ManageDlg.this.onClose();
-            }
-         });
+         btnCancel.addActionListener(e -> ManageDlg.this.onClose());
 
          btnOk = new JButton("Ok");
-         btnOk.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               ManageDlg.this.onOk();
-            }
-         });
+         btnOk.addActionListener(e -> ManageDlg.this.onOk());
 
          panelLeft.add(btnOk);
          panelLeft.add(Box.createVerticalStrut(5));
@@ -312,7 +272,7 @@ public class ManageDlg extends JDialog {
    // тестовый метод для проверки диалогового окна
    public static void main(String[] args) {
       try {
-         PlayersModel players = new PlayersModel(Main.serialVersionUID);
+         PlayersModel players = new PlayersModel();
          players.Load();
          ManageDlg manage = new ManageDlg(null, true, players);
          manage.setVisible(true);
@@ -338,12 +298,7 @@ public class ManageDlg extends JDialog {
          }
 
          if (players.size() == 0)
-            SwingUtilities.invokeLater(new Runnable() {
-               @Override
-               public void run() {
-                  ManageDlg.this.onNewPlayer();
-               }
-            });
+            SwingUtilities.invokeLater(() -> ManageDlg.this.onNewPlayer());
       }
       super.setVisible(b);
    }
@@ -354,5 +309,5 @@ public class ManageDlg extends JDialog {
    public void setDoNotAskStartupChecked(boolean checked) {
       doNotAskStartup.setSelected(checked);
    }
-   
+
 }

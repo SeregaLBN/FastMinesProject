@@ -6,8 +6,8 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 
 import fmg.core.types.EMosaic;
+import fmg.core.types.ESkillLevel;
 import fmg.data.controller.serializable.PlayersModel;
-import fmg.data.controller.types.ESkillLevel;
 import fmg.data.controller.types.User;
 import fmg.swing.Main;
 import fmg.swing.model.view.ReportTableModel;
@@ -56,7 +56,7 @@ public class StatisticDlg extends ReportDlg {
 
    // тестовый метод для проверки диалогового окна
    public static void main(String[] args) {
-      PlayersModel players = new PlayersModel(Main.serialVersionUID);
+      PlayersModel players = new PlayersModel();
       players.Load();
       try (StatisticDlg dlg = new StatisticDlg(null, true, players)) {
          dlg.showData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle3);
