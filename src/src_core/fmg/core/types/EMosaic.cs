@@ -210,8 +210,40 @@ namespace fmg.core.types {
          return null;
       }
 
-      public static String GetMosaicClassName(this EMosaic self) {
+      public static string GetMosaicClassName(this EMosaic self) {
          return self.ToString().Substring(7);
+      }
+
+      public static EMosaicGroup GetGroup(this EMosaic self) {
+         switch (self) {
+         case EMosaic.eMosaicTriangle1:
+         case EMosaic.eMosaicTriangle2:
+         case EMosaic.eMosaicTriangle3:
+         case EMosaic.eMosaicTriangle4:
+            return EMosaicGroup.eTriangles;
+         case EMosaic.eMosaicSquare1:
+         case EMosaic.eMosaicSquare2:
+         case EMosaic.eMosaicParquet1:
+         case EMosaic.eMosaicParquet2:
+         case EMosaic.eMosaicTrapezoid1:
+         case EMosaic.eMosaicTrapezoid2:
+         case EMosaic.eMosaicTrapezoid3:
+         case EMosaic.eMosaicRhombus1:
+         case EMosaic.eMosaicQuadrangle1:
+         case EMosaic.eMosaicPenrousePeriodic1:
+            return EMosaicGroup.eQuadrangles;
+         case EMosaic.eMosaicPentagonT24:
+         case EMosaic.eMosaicPentagonT5:
+         case EMosaic.eMosaicPentagonT10:
+            return EMosaicGroup.ePentagons;
+         case EMosaic.eMosaicHexagon1:
+            return EMosaicGroup.eHexagons;
+         case EMosaic.eMosaicTrSq1:
+         case EMosaic.eMosaicTrSq2:
+         case EMosaic.eMosaicSqTrHex:
+            return EMosaicGroup.eOthers;
+         }
+         throw new ArgumentException("Invalid paramenter value " + self);
       }
 
       /// <summary> Для рисование иконки: минимальный размер поля, по которому будет визуально ясно, что это за мозаика... </summary>

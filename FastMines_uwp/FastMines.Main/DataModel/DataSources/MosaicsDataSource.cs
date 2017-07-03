@@ -47,7 +47,7 @@ namespace fmg.DataModel.DataSources {
             var size = ImageSize; // save
             CurrentElement = null;
             var dataSource = DataSourceInternal;
-            var newEntities = CurrentGroup.GetBind().ToList();
+            var newEntities = CurrentGroup.GetMosaics().ToList();
             var max = Math.Max(dataSource.Count, newEntities.Count);
             var min = Math.Min(dataSource.Count, newEntities.Count);
             var remove = (dataSource.Count > newEntities.Count);
@@ -71,7 +71,7 @@ namespace fmg.DataModel.DataSources {
       }
 
       protected override void FillDataSource() {
-         foreach (var mosaicType in CurrentGroup.GetBind()) {
+         foreach (var mosaicType in CurrentGroup.GetMosaics()) {
             AddItem(mosaicType);
          }
          base.FillDataSource();

@@ -38,7 +38,7 @@ namespace FastMines.Data {
                {
                   _allGroups.Add(g);
                   var gTmp = g;
-                  var items = g.UniqueId.GetBind().Select(x => new FmDataItem(x, gTmp));
+                  var items = g.UniqueId.GetMosaics().Select(x => new FmDataItem(x, gTmp));
                   if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
                      items = items.OrderBy(x => Guid.NewGuid()); // random sort
                   foreach (var i in items)

@@ -362,7 +362,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
             mosaicsImages.forEach((eMosaic, img) -> img.setRotate(eMosaic == currentMosaicType));
             mosaicsGroupImages.forEach((mosaicGroup, img) -> {
-               boolean isCurrentGroup = mosaicGroup.getBind().contains(currentMosaicType);
+               boolean isCurrentGroup = mosaicGroup == currentMosaicType.getGroup();
                img.setPolarLights(isCurrentGroup);
                img.setRotate(isCurrentGroup);
             });

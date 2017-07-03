@@ -183,6 +183,38 @@ public enum EMosaic {
       return this.toString().substring(7);
    }
 
+   public EMosaicGroup getGroup() {
+      switch (this) {
+      case eMosaicTriangle1:
+      case eMosaicTriangle2:
+      case eMosaicTriangle3:
+      case eMosaicTriangle4:
+         return EMosaicGroup.eTriangles;
+      case eMosaicSquare1:
+      case eMosaicSquare2:
+      case eMosaicParquet1:
+      case eMosaicParquet2:
+      case eMosaicTrapezoid1:
+      case eMosaicTrapezoid2:
+      case eMosaicTrapezoid3:
+      case eMosaicRhombus1:
+      case eMosaicQuadrangle1:
+      case eMosaicPenrousePeriodic1:
+         return EMosaicGroup.eQuadrangles;
+      case eMosaicPentagonT24:
+      case eMosaicPentagonT5:
+      case eMosaicPentagonT10:
+         return EMosaicGroup.ePentagons;
+      case eMosaicHexagon1:
+         return EMosaicGroup.eHexagons;
+      case eMosaicTrSq1:
+      case eMosaicTrSq2:
+      case eMosaicSqTrHex:
+         return EMosaicGroup.eOthers;
+      }
+      throw new IllegalArgumentException("Invalid paramenter value " + this);
+   }
+
    /** Для рисование иконки: минимальный размер поля, по которому будет визуально ясно, что это за мозаика... */
    public Matrisize sizeIcoField(boolean smallSize) {
       Matrisize res = new Matrisize();

@@ -45,43 +45,14 @@ namespace fmg.core.types {
          throw new ArgumentException("Index not found");
       }
 
-      public static IEnumerable<EMosaic> GetBind(this EMosaicGroup self) {
-         switch (self) {
-         case EMosaicGroup.eTriangles:
-            yield return EMosaic.eMosaicTriangle1;
-            yield return EMosaic.eMosaicTriangle2;
-            yield return EMosaic.eMosaicTriangle3;
-            yield return EMosaic.eMosaicTriangle4;
-            break;
-         case EMosaicGroup.eQuadrangles:
-            yield return EMosaic.eMosaicSquare1;
-            yield return EMosaic.eMosaicSquare2;
-            yield return EMosaic.eMosaicParquet1;
-            yield return EMosaic.eMosaicParquet2;
-            yield return EMosaic.eMosaicTrapezoid1;
-            yield return EMosaic.eMosaicTrapezoid2;
-            yield return EMosaic.eMosaicTrapezoid3;
-            yield return EMosaic.eMosaicRhombus1;
-            yield return EMosaic.eMosaicQuadrangle1;
-            yield return EMosaic.eMosaicPenrousePeriodic1;
-            break;
-         case EMosaicGroup.ePentagons:
-            yield return EMosaic.eMosaicPentagonT24;
-            yield return EMosaic.eMosaicPentagonT5;
-            yield return EMosaic.eMosaicPentagonT10;
-            break;
-         case EMosaicGroup.eHexagons:
-            yield return EMosaic.eMosaicHexagon1;
-            break;
-         case EMosaicGroup.eOthers:
-            yield return EMosaic.eMosaicTrSq1;
-            yield return EMosaic.eMosaicTrSq2;
-            yield return EMosaic.eMosaicSqTrHex;
-            break;
-         }
+      /// <summary> return mosaics in this group </summary>
+      public static IEnumerable<EMosaic> GetMosaics(this EMosaicGroup self) {
+         foreach (var mosaic in EMosaicEx.GetValues())
+            if (mosaic.GetGroup() == self)
+               yield return mosaic;
       }
 
-      /// <summary> Описание для пользователя </summary>
+      /// <summary> РћРїРёСЃР°РЅРёРµ РґР»СЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ </summary>
       public static string GetDescription(this EMosaicGroup self) {
          return self.ToString().Substring(1);
       }
