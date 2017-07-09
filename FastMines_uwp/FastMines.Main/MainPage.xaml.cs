@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
@@ -13,6 +14,7 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.common.geom.util;
 using fmg.core.types;
+using fmg.core.mosaic;
 using fmg.core.img;
 using fmg.uwp.utils;
 using fmg.DataModel.Items;
@@ -36,17 +38,9 @@ namespace fmg
       public MainPage() {
          this.InitializeComponent();
          Unloaded += OnClosing;
-         //Loaded += (sender, ev) => { // unit test
-         //   var r = ThreadLocalRandom.Current;
-         //   for (int i = 0; i < 100; ++i) {
-         //      TileHelper.CreateRandomMosaicImage(10 + r.Next(100), 10+r.Next(100));
-         //   }
-         //};
 
          ViewModel.MosaicGroupDs.PropertyChanged += OnMosaicGroupDsPropertyChanged;
          ViewModel.MosaicSkillDs.PropertyChanged += OnMosaicSkillDsPropertyChanged;
-         ViewModel.MosaicGroupDs.CurrentElement = ViewModel.MosaicGroupDs.DataSource.First(x => x.MosaicGroup == EMosaicGroup.eQuadrangles);
-         ViewModel.MosaicSkillDs.CurrentElement = ViewModel.MosaicSkillDs.DataSource.First(x => x.SkillLevel == ESkillLevel.eBeginner);
          Loaded += (sender, ev) => {
             var smp = RightFrame?.Content as SelectMosaicPage;
             if (smp != null) {
@@ -67,6 +61,20 @@ namespace fmg
             });
       }
 
+      protected override void OnNavigatedTo(NavigationEventArgs ev) {
+         base.OnNavigatedTo(ev);
+
+         //System.Diagnostics.Debug.Assert(ev.Parameter is MosaicInitData);
+         var initParam = ev.Parameter as MosaicInitData;
+         if (initParam == null)
+            initParam = new MosaicInitData();
+         ViewModel.MosaicGroupDs.CurrentElement = ViewModel.MosaicGroupDs.DataSource.First(x => x.MosaicGroup == initParam.MosaicType.GetGroup());
+         ViewModel.MosaicSkillDs.CurrentElement = ViewModel.MosaicSkillDs.DataSource.First(x => x.SkillLevel == initParam.SkillLevel);
+         //MosaicController.SizeField = initParam.SizeField;
+         //MosaicController.MosaicType = initParam.MosaicType;
+         //MosaicController.MinesCount = initParam.MinesCount;
+      }
+
       private void OnPropertyCurrentElementChanged(MosaicGroupDataItem currentGroupItem, MosaicSkillDataItem currentSkillItem) {
          if ((currentGroupItem  == null) || (currentSkillItem == null)) {
             LoggerSimple.Put("TODO:  redirect to ShowHypnosisLogoPage...");
@@ -74,6 +82,7 @@ namespace fmg
          }
          if (currentSkillItem.SkillLevel == ESkillLevel.eCustom) {
             LoggerSimple.Put("TODO:  redirect to CustomSizePage...");
+            RightFrame.SourcePageType = typeof(CustomSkillPage);
             return;
          }
          var smp = RightFrame.Content as SelectMosaicPage;

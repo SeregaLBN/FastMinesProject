@@ -16,6 +16,9 @@
         <Style x:Key="TitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource TitleTextBlockStyle}">
             <Setter Property="Margin" Value="0,1,0,18" />
         </Style>
+        <Style x:Key="OutputTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}" >
+            <Setter Property="Margin" Value="8,8,0,0"/>
+        </Style>
 
         <Style x:Key="ParagraphTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
             <Setter Property="Margin" Value="0,1,0,34" />
@@ -236,6 +239,8 @@
         <converters:BooleanNullableConverter x:Key="BooleanNullableConverter"/>
         <converters:SizeToWidthConverter  x:Key="SizeToWidthConverter"/>
         <converters:SizeToHeightConverter x:Key="SizeToHeightConverter"/>
+        <converters:IntToDoubleConverter x:Key="IntToDoubleConverter"/>
+        <converters:ValueToStringConverter x:Key="ValueToStringConverter"/>
 
     </Application.Resources>
 </Application>

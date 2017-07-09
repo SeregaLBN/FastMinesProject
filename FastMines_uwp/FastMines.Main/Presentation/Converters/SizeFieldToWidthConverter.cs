@@ -13,9 +13,6 @@ namespace fmg.common.Converters {
          var sizeD = value as SizeDouble?;
          if (sizeD != null)
             return sizeD.Value.Width;
-         var sizeM = value as Matrisize?;
-         if (sizeM != null)
-            return System.Convert.ToDouble(sizeM.Value.m);
          throw new NotImplementedException("Not supported...");
       }
 

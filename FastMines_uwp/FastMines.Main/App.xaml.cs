@@ -10,8 +10,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Controls;
 using fmg.common;
 using fmg.core.types;
-using fmg.data.controller.types;
-using fmg.uwp.mosaic;
+using fmg.core.mosaic;
 
 namespace fmg
 {
@@ -151,6 +150,8 @@ namespace fmg
          if (rootFrame.Content is MainPage) {
             MainPage mp = rootFrame.Content as MainPage;
 
+            MosaicInitData saveData = new MosaicInitData { };
+            //... @TODO
             EMosaicGroup mosaicGroup = mp.ViewModel.MosaicGroupDs.CurrentElement?.MosaicGroup ?? EMosaicGroup.eQuadrangles;
             ESkillLevel  mosaicSkill = mp.ViewModel.MosaicSkillDs.CurrentElement?.SkillLevel  ?? ESkillLevel.eBeginner;
 
@@ -164,7 +165,7 @@ namespace fmg
                compositeMosaic["SizeFieldY"] = 1;
                compositeMosaic["MinesCount"] = 1;
             }
-            lsv["MosaiSettings"] = compositeMosaic;
+            lsv[nameof(MosaicInitData)] = compositeMosaic;
 
             if (mp.RightFrame.SourcePageType == typeof(SelectMosaicPage)) {
                var smp = mp.RightFrame.Content as SelectMosaicPage;

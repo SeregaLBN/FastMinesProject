@@ -1,21 +1,69 @@
 using fmg.common.geom;
+using fmg.common.notyfier;
 using fmg.core.types;
 
 namespace fmg.core.mosaic {
 
-   /** Mosaic data */
-   public class MosaicInitData {
+   /// <summary> Mosaic data </summary>
+   public class MosaicInitData : NotifyPropertyChanged {
 
-      public Matrisize SizeField { get; set; }
-      public EMosaic MosaicType { get; set; }
-      public int MinesCount { get; set; }
-      public double Area { get; set; }
+      private EMosaic   _mosaicType;
+      private Matrisize _sizeField;
+      private int       _minesCount;
+      private double    _area;
+
+      private bool _lock;
 
       public MosaicInitData() {
          MosaicType = EMosaic.eMosaicSquare1;
          SizeField = ESkillLevel.eBeginner.GetDefaultSize();
          MinesCount = ESkillLevel.eBeginner.GetNumberMines(MosaicType);
          Area = 2300;
+      }
+
+      public EMosaic MosaicType {
+         get { return _mosaicType; }
+         set {
+            var skillOld = SkillLevel;
+            if (SetProperty(ref _mosaicType, value)) {
+               if (skillOld == ESkillLevel.eCustom) {
+                  var skillNew = SkillLevel;
+                  if (skillNew != skillOld)
+                     OnSelfPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
+               }  else {
+                  SkillLevel = skillOld;
+               }
+            }
+         }
+      }
+
+      public Matrisize SizeField {
+         get { return _sizeField; }
+         set {
+            var skillOld = SkillLevel;
+            if (SetProperty(ref _sizeField, value)) {
+               var skillNew= SkillLevel;
+               if (!_lock && (skillNew != skillOld))
+                  OnSelfPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
+            }
+         }
+      }
+
+      public int MinesCount {
+         get { return _minesCount; }
+         set {
+            var skillOld = SkillLevel;
+            if (SetProperty(ref _minesCount, value)) {
+               var skillNew = SkillLevel;
+               if (!_lock && (skillNew != skillOld))
+                  OnSelfPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
+            }
+         }
+      }
+
+      public double Area {
+         get { return _area; }
+         set { SetProperty(ref _area, value); }
       }
 
       public ESkillLevel SkillLevel {
@@ -31,8 +79,16 @@ namespace fmg.core.mosaic {
             return ESkillLevel.eCustom;
          }
          set {
-            MinesCount = value.GetNumberMines(MosaicType);
-            SizeField = value.GetDefaultSize();
+            var skillOld = SkillLevel;
+            _lock = true;
+            {
+               MinesCount = value.GetNumberMines(MosaicType);
+               SizeField = value.GetDefaultSize();
+            }
+            _lock = false;
+            var skillNew = SkillLevel;
+            if (skillNew != skillOld)
+               OnSelfPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
          }
       }
 

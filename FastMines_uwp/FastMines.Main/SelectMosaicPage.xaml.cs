@@ -36,11 +36,13 @@ namespace fmg {
             hsv.h += 10;
             BorderColorStartBttn.Color = hsv.ToColor().ToWinColor();
          };
-         run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => false);
+         run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => _closed);
+         this.Unloaded += (s,e) => _closed = true;
       }
 
       public MosaicsViewModel ViewModel { get; private set; }
       public SolidColorBrush BorderColorStartBttn;
+      private bool _closed;
 
       private void OnSelectionChangedGridViewMosaics(object sender, SelectionChangedEventArgs e)
       {

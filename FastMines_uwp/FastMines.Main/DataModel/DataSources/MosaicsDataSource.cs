@@ -4,7 +4,6 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.img;
-using fmg.data.controller.types;
 using fmg.uwp.draw.mosaic;
 using MosaicsCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsImg.CanvasBmp;
 using fmg.DataModel.Items;
