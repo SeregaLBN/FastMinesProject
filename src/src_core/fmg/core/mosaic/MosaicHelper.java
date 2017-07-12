@@ -223,6 +223,8 @@ public final class MosaicHelper {
     * @return размер поля мозаики
     */
    public static Matrisize findSizeByArea(final BaseCell.BaseAttribute cellAttr, final SizeDouble sizeClient) {
+      if (cellAttr.getArea() < 10)
+         throw new IllegalArgumentException("Very small area...");
       final Matrisize result = new Matrisize();
       Finder(2000, (Comparable<Integer>)newWidth -> {
          result.m = newWidth;

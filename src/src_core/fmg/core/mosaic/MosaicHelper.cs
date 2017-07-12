@@ -167,6 +167,8 @@ namespace fmg.core.mosaic {
       /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
       /// <returns>размер поля мозаики</returns>
       public static Matrisize FindSizeByArea(BaseCell.BaseAttribute cellAttr, SizeDouble sizeClient) {
+         if (cellAttr.Area < 10)
+            throw new ArgumentException("Very small area...");
          var result = new Matrisize();
          Finder(2000, newWidth => {
             result.m = newWidth;

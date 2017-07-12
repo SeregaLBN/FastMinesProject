@@ -22,7 +22,7 @@
         <ScrollViewer Margin="4,4,4,8" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="2" VerticalScrollMode="Auto" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
             <StackPanel>
 
-                <Grid Grid.Row="0" Grid.Column="0" BorderBrush="{ThemeResource SystemControlDisabledBaseLowBrush}" BorderThickness="{ThemeResource ButtonBorderThemeThickness}" Margin="4" Padding="6">
+                <Grid BorderBrush="{ThemeResource SystemControlDisabledBaseLowBrush}" BorderThickness="{ThemeResource ButtonBorderThemeThickness}" Margin="4" Padding="6">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -64,7 +64,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Complexity of the mosaic" Style="{ThemeResource BaseTextBlockStyle}" Margin="0,4,0,8" />
+                    <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Skill" Style="{ThemeResource BaseTextBlockStyle}" Margin="0,4,0,8" />
 
                     <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" >Mines:</TextBlock>
                     <Slider Grid.Row="2" Grid.Column="0"

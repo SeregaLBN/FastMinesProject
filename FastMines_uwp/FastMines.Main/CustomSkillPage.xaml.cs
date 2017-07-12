@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -30,11 +31,20 @@ namespace fmg {
          };
          run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => _closed);
          this.Unloaded += (s, e) => _closed = true;
+
+         this.Loaded += OnPageLoaded;
       }
 
       public MosaicInitData MosaicData { get; private set; }
       public SolidColorBrush BorderColorStartBttn;
       private bool _closed;
+
+      private void OnPageLoaded(object sender, RoutedEventArgs e) {
+         this.Loaded -= OnPageLoaded;
+         var maxSizeField = CalcMaxMosaicSize(MosaicData.Area);
+         SliderWidth .Maximum = maxSizeField.m;
+         SliderHeight.Maximum = maxSizeField.n;
+      }
 
       private void StartNewGame() {
          //Frame frame = this.Frame;
@@ -55,11 +65,56 @@ namespace fmg {
 
       private void OnSliderValueChangedSizeFieldWidth(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs ev) {
          MosaicData.SizeField = new Matrisize(Convert.ToInt32(ev.NewValue), MosaicData.SizeField.n);
+         OnChangeSizeField();
       }
 
       private void OnSliderValueChangedSizeFieldHeight(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs ev) {
          MosaicData.SizeField = new Matrisize(MosaicData.SizeField.m, Convert.ToInt32(ev.NewValue));
+         OnChangeSizeField();
       }
+
+      private void OnChangeSizeField() {
+         int max = MosaicData.SizeField.m * MosaicData.SizeField.n - GetNeighborNumber();
+         SliderMines.Maximum = max;
+         if (SliderMines.Value > max)
+            SliderMines.Value = max;
+
+         //radioGroup.clearSelection();
+      }
+
+      private int GetNeighborNumber() {
+         var attr = MosaicHelper.CreateAttributeInstance(MosaicData.MosaicType);
+         int max = Enumerable.Range(0, attr.GetDirectionCount())
+               .Select(i => attr.getNeighborNumber(i))
+               .Max();
+         return max + 1; // +thisCell
+      }
+
+      /// <summary> узнаю max размер поля мозаики, при котором окно проекта вмещается в текущее разрешение экрана </summary>
+      /// <param name="area">интересуемая площадь ячеек мозаики</param>
+      /// <returns>max размер поля мозаики</returns>
+      public Matrisize CalcMaxMosaicSize(double area) {
+         var sizeMosaic = CalcMosaicWindowSize(ScreenResolutionHelper.GetDesktopSize());
+         var attr = MosaicHelper.CreateAttributeInstance(MosaicData.MosaicType);
+         attr.Area = area;
+         return MosaicHelper.FindSizeByArea(attr, sizeMosaic);
+      }
+      /// <summary> узнать размер окна мозаики при указанном размере окна проекта </summary>
+      SizeDouble CalcMosaicWindowSize(Size sizeMainWindow) {
+         var mosaicMargin = GetMosaicMargin();
+         SizeDouble res = new SizeDouble(
+               sizeMainWindow.Width - mosaicMargin.LeftAndRight,
+               sizeMainWindow.Height - mosaicMargin.TopAndBottom);
+         if (res.Height < 0 || res.Width < 0)
+            throw new Exception("Bad algorithm... :(");
+         return res;
+      }
+      /// <summary> get margin around mosaic control </summary>
+      Bound GetMosaicMargin() {
+         // @TODO: not implemented...
+         return new Bound();
+      }
+
 
    }
 
