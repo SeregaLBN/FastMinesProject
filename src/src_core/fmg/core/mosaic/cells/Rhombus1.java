@@ -66,7 +66,7 @@ public class Rhombus1 extends BaseCell {
       @Override
       public double getVertexIntersection() { return 4.5; } // (3+3+6+6)/4.
       @Override
-      public Size GetDirectionSizeField() { return new Size(3, 2); }
+      public Size getDirectionSizeField() { return new Size(3, 2); }
       @Override
       protected double getA() { return Math.sqrt(getArea()*2/SQRT3); }
       protected double getC() { return getA()/2; }
@@ -179,7 +179,7 @@ public class Rhombus1 extends BaseCell {
    }
 
    @Override
-   protected void CalcRegion() {
+   protected void calcRegion() {
       AttrRhombus1 attr = getAttr();
       double a = attr.getA();
       double c = attr.getC();

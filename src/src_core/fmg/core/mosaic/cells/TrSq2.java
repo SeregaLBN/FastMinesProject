@@ -109,7 +109,7 @@ public class TrSq2 extends BaseCell {
       @Override
       public double getVertexIntersection() { return 5.; }
       @Override
-      public Size GetDirectionSizeField() { return new Size(6, 6); }
+      public Size getDirectionSizeField() { return new Size(6, 6); }
       /** размер стороны треугольника и квадрата */
       @Override
       protected double getA() { return Math.sqrt(6*getArea()/(2+SQRT3)); }
@@ -401,7 +401,7 @@ public class TrSq2 extends BaseCell {
    }
 
    @Override
-   protected void CalcRegion() {
+   protected void calcRegion() {
       AttrTrSq2 attr = getAttr();
       double a = attr.getA();
       double b = attr.getB();

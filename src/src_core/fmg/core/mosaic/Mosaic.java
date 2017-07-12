@@ -156,7 +156,7 @@ public class Mosaic
    protected void onCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) {
       String propName = ev.getPropertyName();
       if (BaseCell.BaseAttribute.PROPERTY_AREA.equals(propName)) {
-         getMatrix().forEach(cell -> cell.Init());
+         getMatrix().forEach(cell -> cell.init());
 
          onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
       }

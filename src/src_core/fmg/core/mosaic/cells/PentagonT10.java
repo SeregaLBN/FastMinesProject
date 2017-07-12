@@ -84,7 +84,7 @@ public class PentagonT10 extends BaseCell {
       @Override
       public double getVertexIntersection() {
          if (vertexIntersection < 1) {
-            final int cntDirection = GetDirectionCount(); // 0..11
+            final int cntDirection = getDirectionCount(); // 0..11
             double sum = 0;
             for (int dir=0; dir<cntDirection; dir++)
                switch (dir) {
@@ -104,7 +104,7 @@ public class PentagonT10 extends BaseCell {
       }
 
       @Override
-      public Size GetDirectionSizeField() { return new Size(2, 6); }
+      public Size getDirectionSizeField() { return new Size(2, 6); }
       @Override
       protected double getA() { return Math.sqrt(getArea()/7); }
       @Override
@@ -264,7 +264,7 @@ public class PentagonT10 extends BaseCell {
    }
 
    @Override
-   protected void CalcRegion() {
+   protected void calcRegion() {
       AttrPentagonT10 attr = getAttr();
       double a = attr.getA();
 

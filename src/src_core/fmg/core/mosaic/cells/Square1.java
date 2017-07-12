@@ -52,7 +52,7 @@ public class Square1 extends BaseCell {
       @Override
       public double getVertexIntersection() { return 4; }
       @Override
-      public Size GetDirectionSizeField() { return new Size(1,1); }
+      public Size getDirectionSizeField() { return new Size(1,1); }
       @Override
       protected double getA() { return Math.sqrt(getArea()); }
       @Override
@@ -89,7 +89,7 @@ public class Square1 extends BaseCell {
    }
 
    @Override
-   public boolean PointInRegion(PointDouble point) {
+   public boolean pointInRegion(PointDouble point) {
       if ((point.x < region.getPoint(3).x) || (point.x >= region.getPoint(0).x) ||
          (point.y < region.getPoint(0).y) || (point.y >= region.getPoint(2).y))
          return false;
@@ -97,7 +97,7 @@ public class Square1 extends BaseCell {
    }
 
    @Override
-   protected void CalcRegion() {
+   protected void calcRegion() {
       AttrSquare1 attr = getAttr();
       double a = attr.getA();
 

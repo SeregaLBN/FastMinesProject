@@ -183,7 +183,7 @@ public abstract class AMosaicsImg<TImage>
    public void rotateMatrix() {
       PointDouble center = new PointDouble(getSize().width / 2.0 - _paddingFull.left, getSize().height / 2.0 - _paddingFull.top);
       for (BaseCell cell : getMatrix()) {
-         cell.Init(); // restore base coords
+         cell.init(); // restore base coords
 
          FigureHelper.rotateCollection(cell.getRegion().getPoints(), getRotateAngle(), center);
       }
@@ -227,7 +227,7 @@ public abstract class AMosaicsImg<TImage>
 
          BaseCell cell = matrix.get(cntxt.index);
 
-         cell.Init();
+         cell.init();
          PointDouble center = cell.getCenter();
          Coord coord = cell.getCoord();
 
@@ -237,7 +237,7 @@ public abstract class AMosaicsImg<TImage>
          attr.setArea(cntxt.area);
 
          // rotate
-         cell.Init();
+         cell.init();
          PointDouble centerNew = cell.getCenter();
          PointDouble delta = new PointDouble(center.x - centerNew.x, center.y - centerNew.y);
          FigureHelper.moveCollection(FigureHelper.rotateCollection(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, rotateCellAlterantive ? center : centerNew), delta);
@@ -333,7 +333,7 @@ public abstract class AMosaicsImg<TImage>
       if (!toRemove.isEmpty()) {
          List<BaseCell> matrix = getMatrix();
          toRemove.forEach(cntxt -> {
-                           matrix.get(cntxt.index).Init(); // restore original region coords
+                           matrix.get(cntxt.index).init(); // restore original region coords
                            _rotatedElements.remove(cntxt);
                            if (_rotatedElements.isEmpty())
                               rotateCellAlterantive = !rotateCellAlterantive;

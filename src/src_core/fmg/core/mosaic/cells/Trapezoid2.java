@@ -62,7 +62,7 @@ public class Trapezoid2 extends BaseCell {
       @Override
       public double getVertexIntersection() { return 4.25; } // (6+4+4+3)/4.
       @Override
-      public Size GetDirectionSizeField() { return new Size(3, 4); }
+      public Size getDirectionSizeField() { return new Size(3, 4); }
       @Override
       protected double getA   () { return Math.sqrt(getArea()/SQRT27)*2; }
       protected double getB   () { return getA()*2; }
@@ -231,7 +231,7 @@ public class Trapezoid2 extends BaseCell {
    }
 
    @Override
-   protected void CalcRegion() {
+   protected void calcRegion() {
       AttrTrapezoid2 attr = getAttr();
       double a = attr.getA();
       double b = attr.getB();

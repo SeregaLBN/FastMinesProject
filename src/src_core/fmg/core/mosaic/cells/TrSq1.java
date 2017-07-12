@@ -79,7 +79,7 @@ public class TrSq1 extends BaseCell {
       @Override
       public double getVertexIntersection() { return 5.; }
       @Override
-      public Size GetDirectionSizeField() { return new Size(3, 2); }
+      public Size getDirectionSizeField() { return new Size(3, 2); }
       @Override
       protected double getA() { return Math.sqrt(3*getArea()/(1+SQRT3/2)); }
       protected double getB() { return getN()+getM(); }
@@ -188,7 +188,7 @@ public class TrSq1 extends BaseCell {
    }
 
    @Override
-   protected void CalcRegion() {
+   protected void calcRegion() {
       AttrTrSq1 attr = getAttr();
       double b = attr.getB();
       double k = attr.getK();

@@ -95,7 +95,7 @@ public class SqTrHex extends BaseCell {
       @Override
       public double getVertexIntersection() { return 4.; }
       @Override
-      public Size GetDirectionSizeField() { return new Size(3, 4); }
+      public Size getDirectionSizeField() { return new Size(3, 4); }
       @Override
       protected double getA() { return Math.sqrt(getArea()/(0.5+1/SQRT3)); }
       protected double getH() { return getA()*SQRT3/2; }
@@ -259,7 +259,7 @@ public class SqTrHex extends BaseCell {
    }
 
    @Override
-   protected void CalcRegion() {
+   protected void calcRegion() {
       AttrSqTrHex attr = getAttr();
       double a = attr.getA();
       double b = a/2;

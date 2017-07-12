@@ -75,7 +75,7 @@ public class Trapezoid3 extends BaseCell {
       @Override
       public double getVertexIntersection() {
          if (vertexIntersection < 1) {
-            final int cntDirection = GetDirectionCount(); // 0..11
+            final int cntDirection = getDirectionCount(); // 0..11
             double sum = 0;
             for (int dir=0; dir<cntDirection; dir++)
                switch (dir) {
@@ -99,7 +99,7 @@ public class Trapezoid3 extends BaseCell {
       }
 
       @Override
-      public Size GetDirectionSizeField() { return new Size(4, 4); }
+      public Size getDirectionSizeField() { return new Size(4, 4); }
       @Override
       protected double getA   () { return Math.sqrt(getArea()/SQRT27)*2; }
       protected double getB   () { return getA()*2; }
@@ -320,7 +320,7 @@ public class Trapezoid3 extends BaseCell {
    }
 
    @Override
-   protected void CalcRegion() {
+   protected void calcRegion() {
       AttrTrapezoid3 attr = getAttr();
       double a = attr.getA();
       double b = attr.getB();

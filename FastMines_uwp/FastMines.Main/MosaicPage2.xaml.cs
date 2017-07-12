@@ -175,9 +175,8 @@ namespace fmg {
       double? _cachedMaxArea; // cached value
 
       /// <summary> узнаю max размер поля мозаики, при котором окно проекта вмещается в текущее разрешение экрана </summary>
-      /// <param name="area">интересуемая площадь ячеек мозаики</param>
       /// <returns>max размер поля мозаики</returns>
-      public Matrisize CalcMaxMosaicSize(double area) {
+      public Matrisize CalcMaxMosaicSize() {
          var sizeMosaic = CalcMosaicWindowSize(ScreenResolutionHelper.GetDesktopSize());
          return MosaicHelper.FindSizeByArea(MosaicController.Mosaic.CellAttr, sizeMosaic);
       }

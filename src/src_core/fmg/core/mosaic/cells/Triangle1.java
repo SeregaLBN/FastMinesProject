@@ -51,7 +51,7 @@ public class Triangle1 extends BaseCell {
       @Override
       public double getVertexIntersection() { return 6; }
       @Override
-      public Size GetDirectionSizeField() { return new Size(2, 2); }
+      public Size getDirectionSizeField() { return new Size(2, 2); }
       @Override
       protected double getA() { return getB() * 2.f; } // размер стороны треугольника
       /** пол стороны треугольника */
@@ -117,7 +117,7 @@ public class Triangle1 extends BaseCell {
    }
 
    @Override
-   protected void CalcRegion() {
+   protected void calcRegion() {
       AttrTriangle1 attr = getAttr();
       double a = attr.getA();
       double b = attr.getB();

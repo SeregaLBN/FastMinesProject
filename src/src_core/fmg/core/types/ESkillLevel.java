@@ -33,7 +33,7 @@ public enum ESkillLevel {
 //         mosaicCoefficient.put(mosaicType, ((double)neighbors)/cntDir);
 
          // variant 3 - сложность в зависимости от кол-ва соседних ячеек и кол-ва точек пересечения
-         double neighbors = IntStream.range(0, attr.GetDirectionCount())
+         double neighbors = IntStream.range(0, attr.getDirectionCount())
                .map(i -> attr.getNeighborNumber(i))
                .average().getAsDouble();
          mosaicCoefficient.put(mosaicType, attr.getVertexIntersection()/neighbors);

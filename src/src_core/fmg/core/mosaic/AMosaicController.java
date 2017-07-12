@@ -345,7 +345,7 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
          }
          result.modified.add(cellLeftDown);
       } else {
-         ClickCellResult resultCell = cellLeftDown.LButtonDown(getMosaic());
+         ClickCellResult resultCell = cellLeftDown.leftButtonDown(getMosaic());
          result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
       }
       onSelfModifiedCellsPropertyChanged(result.modified);
@@ -369,7 +369,7 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
             GameBegin(cellDown);
             result.modified.addAll(this.getMatrix());
          }
-         ClickCellResult resultCell = cellDown.LButtonUp(cellDown == cellLeftUp, getMosaic());
+         ClickCellResult resultCell = cellDown.leftButtonUp(cellDown == cellLeftUp, getMosaic());
          if (!gameBegin)
             result.modified.addAll(resultCell.modified);
          int countOpen = result.getCountOpen();
@@ -425,7 +425,7 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
          return result;
 
       setCellDown(cellRightDown);
-      ClickCellResult resultCell = cellRightDown.RButtonDown(cellRightDown.getState().getClose().nextState(getUseUnknown()));
+      ClickCellResult resultCell = cellRightDown.rightButtonDown(cellRightDown.getState().getClose().nextState(getUseUnknown()));
       result.modified = resultCell.modified; // copy reference; TODO modify to result.modified.addAll(resultCell.modified);
 
       int countFlag = result.getCountFlag();
@@ -524,7 +524,7 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
    /** узнать max количество соседей для текущей мозаики */
    public int GetMaxNeighborNumber() {
       BaseCell.BaseAttribute attr = getMosaic().getCellAttr();
-      return IntStream.range(0, attr.GetDirectionCount())
+      return IntStream.range(0, attr.getDirectionCount())
             .map(i -> attr.getNeighborNumber(i))
             .max().getAsInt();
    }
@@ -583,7 +583,7 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
             return null;
       for (BaseCell cell: getMosaic(). getMatrix())
          //if (cell.getRcOuter().contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
-            if (cell.PointInRegion(point))
+            if (cell.pointInRegion(point))
                return cell;
       return null;
    }

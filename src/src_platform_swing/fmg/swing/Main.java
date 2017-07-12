@@ -1595,10 +1595,9 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    /**
     * узнаю max размер поля мозаики, при котором окно проекта вмещается в текущее разрешение экрана
-    * @param area - интересуемая площадь ячеек мозаики
     * @return max размер поля мозаики
     */
-   public Matrisize calcMaxMosaicSize(double area) {
+   public Matrisize calcMaxMosaicSize() {
       SizeDouble sizeMosaic = calcMosaicWindowSize(ScreenResolutionHelper.getDesktopSize(this.getGraphicsConfiguration()));
       return MosaicHelper.findSizeByArea(getMosaicController().getMosaic().getCellAttr(), sizeMosaic);
    }

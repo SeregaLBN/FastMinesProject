@@ -119,7 +119,7 @@ public class PentagonT5 extends BaseCell {
       @Override
       public double getVertexIntersection() { return 3.6; } // (3+3+3+3+6)/5.
       @Override
-      public Size GetDirectionSizeField() { return new Size(14, 6); }
+      public Size getDirectionSizeField() { return new Size(14, 6); }
       @Override
       protected double getA() { return 2*Math.sqrt(getArea()/SQRT147); }
       protected double getH() { return getA()*SQRT3/2; }
@@ -529,7 +529,7 @@ public class PentagonT5 extends BaseCell {
    }
 
    @Override
-   protected void CalcRegion() {
+   protected void calcRegion() {
       AttrPentagonT5 attr = getAttr();
       double a = attr.getA();
       double h = attr.getH();

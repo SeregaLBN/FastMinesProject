@@ -90,9 +90,9 @@ public abstract class BaseCell {
       public abstract SizeDouble getOwnerSize(Matrisize sizeField);
 
       /** размер поля из группы ячеек состоящих из разных direction */
-      public abstract Size GetDirectionSizeField();
+      public abstract Size getDirectionSizeField();
       /** кол-во direction'ов, которые знает данный тип мозаики */
-      public int GetDirectionCount() { Size s = GetDirectionSizeField(); return s.width*s.height; }
+      public int getDirectionCount() { Size s = getDirectionSizeField(); return s.width*s.height; }
 
       /** кол-во соседей у ячейки конкретной направленности */
       public abstract int getNeighborNumber(int direction);
@@ -207,8 +207,8 @@ public abstract class BaseCell {
       Reset();
    }
 
-   public void Init() {
-      CalcRegion();
+   public void init() {
+      calcRegion();
    }
 
    /** координаты соседей */
@@ -246,12 +246,12 @@ public abstract class BaseCell {
    public PointDouble getCenter() { return getRcInner(1).center(); }
 
    /** принадлежат ли эти экранные координаты ячейке */
-   public boolean PointInRegion(PointDouble point) { return region.contains(point); }
+   public boolean pointInRegion(PointDouble point) { return region.contains(point); }
 
    public RegionDouble getRegion() { return region; }
 
    /** определить координаты точек из которых состоит фигура */
-   protected abstract void CalcRegion();
+   protected abstract void calcRegion();
 
    public void Reset() {
       state.Reset();
@@ -262,7 +262,7 @@ public abstract class BaseCell {
    public abstract int getShiftPointBorderIndex();
 
 
-   public ClickCellResult LButtonDown(IMatrixCells matrix) {
+   public ClickCellResult leftButtonDown(IMatrixCells matrix) {
       ClickCellResult result = new ClickCellResult();
       if (state.getClose() == EClose._Flag)
          return result;
@@ -287,7 +287,7 @@ public abstract class BaseCell {
       return result;
    }
 
-   public ClickCellResult LButtonUp(boolean isMy, IMatrixCells matrix) {
+   public ClickCellResult leftButtonUp(boolean isMy, IMatrixCells matrix) {
       ClickCellResult result = new ClickCellResult();
 
       if (state.getClose() == EClose._Flag)
@@ -349,7 +349,7 @@ public abstract class BaseCell {
             nCell.state.setStatus(EState._Open);
             result.modified.add(nCell);
             if (nCell.state.getOpen() == EOpen._Nil) {
-               ClickCellResult result2 = nCell.LButtonUp(true, matrix);
+               ClickCellResult result2 = nCell.leftButtonUp(true, matrix);
                result.modified.addAll(result2.modified);
             }
             if (nCell.state.getOpen() == EOpen._Mine)
@@ -358,7 +358,7 @@ public abstract class BaseCell {
       return result;
    }
 
-   public ClickCellResult RButtonDown(EClose close) {
+   public ClickCellResult rightButtonDown(EClose close) {
       ClickCellResult result = new ClickCellResult();
       if ((state.getStatus() == EState._Open) || state.isDown())
          return result;
@@ -441,8 +441,8 @@ public abstract class BaseCell {
          return repositoryColor.get(getCoord().x % (-fillMode) - fillMode + getCoord().y % (+fillMode));
       case 19:
          // подсветить direction
-         int zx = getCoord().x / getAttr().GetDirectionSizeField().width +1;
-         int zy = getCoord().y / getAttr().GetDirectionSizeField().height +1;
+         int zx = getCoord().x / getAttr().getDirectionSizeField().width +1;
+         int zy = getCoord().y / getAttr().getDirectionSizeField().height +1;
          return repositoryColor.get(zx*zy);
       }
    }

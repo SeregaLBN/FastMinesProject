@@ -173,7 +173,7 @@ public class PenrousePeriodic1 extends BaseCell {
       @Override
       public double getVertexIntersection() {
          if (vertexIntersection < 1) {
-            final int cntDirection = GetDirectionCount(); // 0..125
+            final int cntDirection = getDirectionCount(); // 0..125
             int sum = 0;
             for (int dir=0; dir<cntDirection; dir++)
                sum += getNeighborNumber(dir) +
@@ -186,7 +186,7 @@ public class PenrousePeriodic1 extends BaseCell {
       }
 
       @Override
-      public Size GetDirectionSizeField() { return new Size(9, 14); }
+      public Size getDirectionSizeField() { return new Size(9, 14); }
       @Override
       protected double getA() { return Math.sqrt(getArea()*63/(39*SIN72 + 24*SIN36)); }
       protected double getB() { return getA()+getC(); }
@@ -1701,7 +1701,7 @@ public class PenrousePeriodic1 extends BaseCell {
    }
 
    @Override
-   protected void CalcRegion() {
+   protected void calcRegion() {
       AttrPenrousePeriodic1 attr = getAttr();
       double a = attr.getA();
       double c = attr.getC();

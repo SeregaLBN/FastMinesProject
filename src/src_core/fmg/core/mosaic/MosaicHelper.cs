@@ -2,7 +2,6 @@ using System;
 using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic.cells;
-using fmg.core.mosaic.draw;
 
 namespace fmg.core.mosaic {
 

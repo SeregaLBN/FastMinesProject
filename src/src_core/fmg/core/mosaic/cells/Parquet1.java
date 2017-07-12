@@ -55,7 +55,7 @@ public class Parquet1 extends BaseCell {
       @Override
       public double getVertexIntersection() { return 3; }
       @Override
-      public Size GetDirectionSizeField() { return new Size(2, 1); }
+      public Size getDirectionSizeField() { return new Size(2, 1); }
       @Override
       protected double getA() { return Math.sqrt(getArea())/2; }
       @Override
@@ -93,7 +93,7 @@ public class Parquet1 extends BaseCell {
    }
 
    @Override
-   protected void CalcRegion() {
+   protected void calcRegion() {
       AttrParquet1 attr = getAttr();
       double a = attr.getA();
 

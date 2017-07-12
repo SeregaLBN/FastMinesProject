@@ -71,7 +71,7 @@ public class Quadrangle1 extends BaseCell {
       @Override
       public double getVertexIntersection() { return 4.25; } // (3+4+4+6)/4.
       @Override
-      public Size GetDirectionSizeField() { return new Size(3, 4); }
+      public Size getDirectionSizeField() { return new Size(3, 4); }
       @Override
       protected double getA() { return Math.sqrt(getArea()/SQRT3)*2; }
       protected double getB() { return getA()/2; }
@@ -243,7 +243,7 @@ public class Quadrangle1 extends BaseCell {
    }
 
    @Override
-   protected void CalcRegion() {
+   protected void calcRegion() {
       AttrQuadrangle1 attr = getAttr();
       double a = attr.getA();
       double b = attr.getB();

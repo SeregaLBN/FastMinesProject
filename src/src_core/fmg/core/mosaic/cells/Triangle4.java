@@ -151,7 +151,7 @@ public class Triangle4 extends BaseCell {
          }
       }
       @Override
-      public Size GetDirectionSizeField() { return new Size(3, 4); }
+      public Size getDirectionSizeField() { return new Size(3, 4); }
       @Override
       protected double getA   () { return Math.sqrt(getArea()*SQRT48); }
       protected double getB   () { return getA()/2; }
@@ -721,7 +721,7 @@ public class Triangle4 extends BaseCell {
    }
 
    @Override
-   protected void CalcRegion() {
+   protected void calcRegion() {
       AttrTriangle4 attr = getAttr();
       double a = attr.getA();
       double b = attr.getB();

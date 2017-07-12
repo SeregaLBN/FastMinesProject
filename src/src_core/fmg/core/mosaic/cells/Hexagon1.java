@@ -55,7 +55,7 @@ public class Hexagon1 extends BaseCell {
       @Override
       public double getVertexIntersection() { return 3; }
       @Override
-      public Size GetDirectionSizeField() { return new Size(1, 2); }
+      public Size getDirectionSizeField() { return new Size(1, 2); }
       @Override
       protected double getA() { return Math.sqrt(2*getArea()/SQRT27); }
       /** пол стороны треугольника */
@@ -94,7 +94,7 @@ public class Hexagon1 extends BaseCell {
    }
 
    @Override
-   protected void CalcRegion() {
+   protected void calcRegion() {
       AttrHexagon1 attr = getAttr();
       double a = attr.getA();
       double b = attr.getB();
