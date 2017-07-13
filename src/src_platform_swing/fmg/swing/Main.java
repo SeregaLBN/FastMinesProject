@@ -25,6 +25,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.core.img.AMosaicsImg.ERotateMode;
 import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicHelper;
+import fmg.core.mosaic.MosaicInitData;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
@@ -51,8 +52,6 @@ import fmg.swing.utils.ScreenResolutionHelper;
 public class Main extends JFrame implements PropertyChangeListener {
 
    private static final long serialVersionUID = 3L;
-
-   public static final double AREA_MINIMUM = 230;
 
    private JPanel     contentPane;
    private MainMenu   menu;
@@ -1595,11 +1594,12 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    /**
     * узнаю max размер поля мозаики, при котором окно проекта вмещается в текущее разрешение экрана
+    * @param area - интересуемая площадь ячеек мозаики
     * @return max размер поля мозаики
     */
-   public Matrisize calcMaxMosaicSize() {
+   public Matrisize calcMaxMosaicSize(double area) {
       SizeDouble sizeMosaic = calcMosaicWindowSize(ScreenResolutionHelper.getDesktopSize(this.getGraphicsConfiguration()));
-      return MosaicHelper.findSizeByArea(getMosaicController().getMosaic().getCellAttr(), sizeMosaic);
+      return MosaicHelper.findSizeByArea(getMosaicController().getMosaicType(), area, sizeMosaic);
    }
 
    /** проверить что находится в рамках экрана */
@@ -1680,7 +1680,7 @@ public class Main extends JFrame implements PropertyChangeListener {
    void setArea(double newArea) {
       //System.out.println("Mosaic.setArea: newArea=" + newArea);
       newArea = Math.min(newArea, calcMaxArea(getMosaicController().getSizeField()));
-      getMosaicController().setArea(Math.max(AREA_MINIMUM, newArea));
+      getMosaicController().setArea(Math.max(MosaicInitData.AREA_MINIMUM, newArea));
    }
 
    /** Zoom + */

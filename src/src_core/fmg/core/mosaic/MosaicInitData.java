@@ -7,6 +7,8 @@ import fmg.core.types.ESkillLevel;
 /** Mosaic data */
 public class MosaicInitData {
 
+   public static final double AREA_MINIMUM = 230;
+
    private Matrisize sizeField;
    private EMosaic mosaicType;
    private int minesCount;
@@ -16,7 +18,7 @@ public class MosaicInitData {
       mosaicType = EMosaic.eMosaicSquare1;
       sizeField = ESkillLevel.eBeginner.getDefaultSize();
       minesCount = ESkillLevel.eBeginner.getNumberMines(mosaicType);
-      area = 2300;
+      area = AREA_MINIMUM * 10;
    }
 
    public Matrisize getSizeField() { return sizeField; }

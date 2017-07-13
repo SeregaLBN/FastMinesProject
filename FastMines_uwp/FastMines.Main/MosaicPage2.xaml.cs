@@ -25,7 +25,6 @@ namespace fmg {
    public sealed partial class MosaicPage2 : Page {
       /// <summary> мин отступ от краев экрана для мозаики </summary>
       private const double MinIndent = 30;
-      private const double AREA_MIN = 230;
       private const bool DeferredZoom = true;
 
       private MosaicControllerWin2D _mosaicController;
@@ -175,10 +174,11 @@ namespace fmg {
       double? _cachedMaxArea; // cached value
 
       /// <summary> узнаю max размер поля мозаики, при котором окно проекта вмещается в текущее разрешение экрана </summary>
+      /// <param name="area">интересуемая площадь ячеек мозаики</param>
       /// <returns>max размер поля мозаики</returns>
-      public Matrisize CalcMaxMosaicSize() {
+      public Matrisize CalcMaxMosaicSize(double area) {
          var sizeMosaic = CalcMosaicWindowSize(ScreenResolutionHelper.GetDesktopSize());
-         return MosaicHelper.FindSizeByArea(MosaicController.Mosaic.CellAttr, sizeMosaic);
+         return MosaicHelper.FindSizeByArea(MosaicController.MosaicType, area, sizeMosaic);
       }
 
       /// <summary> check that mosaic field is placed in the window/page </summary>
@@ -198,7 +198,7 @@ namespace fmg {
             return MosaicController.Area;
          }
          set {
-            value = Math.Min(Math.Max(AREA_MIN, value), CalcMaxArea(MosaicController.SizeField)); // recheck
+            value = Math.Min(Math.Max(MosaicInitData.AREA_MINIMUM, value), CalcMaxArea(MosaicController.SizeField)); // recheck
             MosaicController.Area = value;
          }
       }
@@ -333,7 +333,7 @@ namespace fmg {
             _deferredArea = Area;
 
          _deferredArea *= scaleMul;
-         _deferredArea = Math.Min(Math.Max(AREA_MIN, _deferredArea), CalcMaxArea(MosaicController.SizeField)); // recheck
+         _deferredArea = Math.Min(Math.Max(MosaicInitData.AREA_MINIMUM, _deferredArea), CalcMaxArea(MosaicController.SizeField)); // recheck
 
          var deferredWinSize = MosaicController.GetWindowSize(MosaicController.SizeField, _deferredArea);
 

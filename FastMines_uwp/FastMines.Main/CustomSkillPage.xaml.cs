@@ -41,7 +41,7 @@ namespace fmg {
 
       private void OnPageLoaded(object sender, RoutedEventArgs e) {
          this.Loaded -= OnPageLoaded;
-         var maxSizeField = CalcMaxMosaicSize(MosaicData.Area);
+         var maxSizeField = CalcMaxMosaicSize(MosaicInitData.AREA_MINIMUM);
          SliderWidth .Maximum = maxSizeField.m;
          SliderHeight.Maximum = maxSizeField.n;
       }
@@ -95,9 +95,7 @@ namespace fmg {
       /// <returns>max размер поля мозаики</returns>
       public Matrisize CalcMaxMosaicSize(double area) {
          var sizeMosaic = CalcMosaicWindowSize(ScreenResolutionHelper.GetDesktopSize());
-         var attr = MosaicHelper.CreateAttributeInstance(MosaicData.MosaicType);
-         attr.Area = area;
-         return MosaicHelper.FindSizeByArea(attr, sizeMosaic);
+         return MosaicHelper.FindSizeByArea(MosaicData.MosaicType, area, sizeMosaic);
       }
       /// <summary> узнать размер окна мозаики при указанном размере окна проекта </summary>
       SizeDouble CalcMosaicWindowSize(Size sizeMainWindow) {

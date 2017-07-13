@@ -163,12 +163,13 @@ namespace fmg.core.mosaic {
       }
 
       /// <summary> узнаю max размер поля мозаики, при котором вся мозаика помещается в заданную область </summary>
-      /// <param name="cellAttr">метаданные ячеек</param>
+      /// <param name="mosaicType">mosaic type</param>
+      /// <param name="area">cell area of interest</param>
       /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
       /// <returns>размер поля мозаики</returns>
-      public static Matrisize FindSizeByArea(BaseCell.BaseAttribute cellAttr, SizeDouble sizeClient) {
-         if (cellAttr.Area < 10)
-            throw new ArgumentException("Very small area...");
+      public static Matrisize FindSizeByArea(EMosaic mosaicType, double area, SizeDouble sizeClient) {
+         var cellAttr = CreateAttributeInstance(mosaicType);
+         cellAttr.Area = area;
          var result = new Matrisize();
          Finder(2000, newWidth => {
             result.m = newWidth;
@@ -200,16 +201,6 @@ namespace fmg.core.mosaic {
       /// <returns>площадь ячейки</returns>
       public static double FindAreaBySize(EMosaic mosaicType, Matrisize mosaicSizeField, ref SizeDouble sizeClient) {
          return FindAreaBySize(CreateAttributeInstance(mosaicType), mosaicSizeField, ref sizeClient);
-      }
-
-      /// <summary> узнаю max размер поля мозаики, при котором вся мозаика помещается в заданную область </summary>
-      /// <param name="area">интересуемая площадь ячеек мозаики</param>
-      /// <param name="sizeClient">размер окна/области (в пикселях) в которую должна вписаться мозаика</param>
-      /// <returns>размер поля мозаики</returns>
-      public static Matrisize FindSizeByArea(EMosaic mosaicType, double area, SizeDouble sizeClient) {
-         var attr = CreateAttributeInstance(mosaicType);
-         attr.Area = area;
-         return FindSizeByArea(attr, sizeClient);
       }
 
       /// <summary>get parent container (owner window) size in pixels</summary>

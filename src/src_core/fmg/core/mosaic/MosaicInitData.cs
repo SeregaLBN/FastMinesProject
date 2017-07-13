@@ -7,6 +7,8 @@ namespace fmg.core.mosaic {
    /// <summary> Mosaic data </summary>
    public class MosaicInitData : NotifyPropertyChanged {
 
+      public const double AREA_MINIMUM = 230;
+
       private EMosaic   _mosaicType;
       private Matrisize _sizeField;
       private int       _minesCount;
@@ -18,7 +20,7 @@ namespace fmg.core.mosaic {
          MosaicType = EMosaic.eMosaicSquare1;
          SizeField = ESkillLevel.eBeginner.GetDefaultSize();
          MinesCount = ESkillLevel.eBeginner.GetNumberMines(MosaicType);
-         Area = 2300;
+         Area = AREA_MINIMUM * 10;
       }
 
       public EMosaic MosaicType {

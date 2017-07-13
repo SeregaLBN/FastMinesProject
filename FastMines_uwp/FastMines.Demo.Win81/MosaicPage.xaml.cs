@@ -28,7 +28,6 @@ namespace FastMines {
    public sealed partial class MosaicPage : Page {
       /// <summary> мин отступ от краев экрана для мозаики </summary>
       private const int MinIndent = 30;
-      private const double AREA_MIN = 230;
 
       private MosaicControllerXaml _mosaicController;
       private Panel _mosaicContainer;
@@ -177,7 +176,7 @@ namespace FastMines {
             return MosaicController.Area;
          }
          set {
-            value = Math.Min(Math.Max(AREA_MIN, value), CalcMaxArea(MosaicController.SizeField)); // recheck
+            value = Math.Min(Math.Max(MosaicInitData.AREA_MINIMUM, value), CalcMaxArea(MosaicController.SizeField)); // recheck
             MosaicController.Area = value;
          }
       }

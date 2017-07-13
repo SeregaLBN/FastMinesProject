@@ -218,13 +218,13 @@ public final class MosaicHelper {
    }
 
    /** узнаю max размер поля мозаики, при котором окно проекта вмещается в в заданную область
-    * @param cellAttr - метаданные ячеек
+    * @param area - интересуемая площадь ячеек мозаики
     * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
     * @return размер поля мозаики
     */
-   public static Matrisize findSizeByArea(final BaseCell.BaseAttribute cellAttr, final SizeDouble sizeClient) {
-      if (cellAttr.getArea() < 10)
-         throw new IllegalArgumentException("Very small area...");
+   public static Matrisize findSizeByArea(EMosaic mosaicType, double area, SizeDouble sizeClient) {
+      BaseCell.BaseAttribute cellAttr = createAttributeInstance(mosaicType);
+      cellAttr.setArea(area);
       final Matrisize result = new Matrisize();
       Finder(2000, (Comparable<Integer>)newWidth -> {
          result.m = newWidth;
@@ -255,17 +255,6 @@ public final class MosaicHelper {
     */
    public static double findAreaBySize(EMosaic mosaicType, Matrisize mosaicSizeField, SizeDouble sizeClientIn, SizeDouble sizeClientOut) {
       return findAreaBySize(createAttributeInstance(mosaicType), mosaicSizeField, sizeClientIn, sizeClientOut);
-   }
-
-   /** узнаю max размер поля мозаики, при котором окно проекта вмещается в в заданную область
-    * @param area - интересуемая площадь ячеек мозаики
-    * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
-    * @return размер поля мозаики
-    */
-   public static Matrisize findSizeByArea(EMosaic mosaicType, double area, SizeDouble sizeClient) {
-      BaseCell.BaseAttribute attr = createAttributeInstance(mosaicType);
-      attr.setArea(area);
-      return findSizeByArea(attr, sizeClient);
    }
 
     /** get parent container (owner window) size in pixels */

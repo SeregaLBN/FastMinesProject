@@ -349,7 +349,7 @@ public abstract class BaseCell {
             nCell.state.setStatus(EState._Open);
             result.modified.add(nCell);
             if (nCell.state.getOpen() == EOpen._Nil) {
-               ClickCellResult result2 = nCell.leftButtonUp(true, matrix);
+               ClickCellResult result2 = nCell.leftButtonUp(true, matrix); // TODO на больших размерах поля и при маленьком числе мин, приводит к StackOverflowException
                result.modified.addAll(result2.modified);
             }
             if (nCell.state.getOpen() == EOpen._Mine)

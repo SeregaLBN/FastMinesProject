@@ -27,7 +27,6 @@ namespace fmg {
    public sealed partial class MosaicPage : Page {
       /// <summary> мин отступ от краев экрана для мозаики </summary>
       private const double MinIndent = 30;
-      private const double AREA_MIN = 230;
       private const bool DeferredZoom = true;
 
       private MosaicControllerWin2D _mosaicController;
@@ -181,7 +180,7 @@ namespace fmg {
       /// <returns>max размер поля мозаики</returns>
       public Matrisize CalcMaxMosaicSize(double area) {
          var sizeMosaic = CalcMosaicWindowSize(ScreenResolutionHelper.GetDesktopSize());
-         return MosaicHelper.FindSizeByArea(MosaicController.Mosaic.CellAttr, sizeMosaic);
+         return MosaicHelper.FindSizeByArea(MosaicController.MosaicType, area, sizeMosaic);
       }
 
       /// <summary> check that mosaic field is placed in the window/page </summary>
@@ -201,7 +200,7 @@ namespace fmg {
             return MosaicController.Area;
          }
          set {
-            value = Math.Min(Math.Max(AREA_MIN, value), CalcMaxArea(MosaicController.SizeField)); // recheck
+            value = Math.Min(Math.Max(MosaicInitData.AREA_MINIMUM, value), CalcMaxArea(MosaicController.SizeField)); // recheck
             MosaicController.Area = value;
          }
       }
@@ -238,7 +237,7 @@ namespace fmg {
 
 
          _deferredArea *= scaleMul;
-         _deferredArea = Math.Min(Math.Max(AREA_MIN, _deferredArea), CalcMaxArea(MosaicController.SizeField)); // recheck
+         _deferredArea = Math.Min(Math.Max(MosaicInitData.AREA_MINIMUM, _deferredArea), CalcMaxArea(MosaicController.SizeField)); // recheck
 
          var deferredWinSize = MosaicController.GetWindowSize(MosaicController.SizeField, _deferredArea);
          var  currentWinSize = MosaicController.WindowSize;
@@ -266,7 +265,7 @@ namespace fmg {
 
       /// <summary> Zoom minimum </summary>
       void AreaMin() {
-         Area = AREA_MIN;
+         Area = MosaicInitData.AREA_MINIMUM;
       }
 
       /// <summary> Zoom maximum </summary>
