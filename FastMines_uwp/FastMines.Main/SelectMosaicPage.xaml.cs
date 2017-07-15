@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -20,9 +21,22 @@ namespace fmg {
    /// </summary>
    public sealed partial class SelectMosaicPage : Page {
 
+      public MosaicsViewModel ViewModel { get; private set; }
+      public SolidColorBrush BorderColorStartBttn;
+      private bool _closed;
+      private IDisposable _sizeChangedObservable;
+
       public SelectMosaicPage() {
          this.InitializeComponent();
          ViewModel = new MosaicsViewModel();
+
+         this.Loaded += OnPageLoaded;
+         this.Unloaded += OnPageUnloaded;
+         this.SizeChanged += OnPageSizeChanged;
+      }
+
+      private void OnPageLoaded(object sender, RoutedEventArgs e) {
+         this.Loaded -= OnPageLoaded;
 
          HSV hsv = new HSV(StaticImgConsts.DefaultForegroundColor);
          hsv.s = 80;
@@ -37,19 +51,38 @@ namespace fmg {
             BorderColorStartBttn.Color = hsv.ToColor().ToWinColor();
          };
          run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => _closed);
-         this.Unloaded += (s,e) => _closed = true;
       }
 
-      public MosaicsViewModel ViewModel { get; private set; }
-      public SolidColorBrush BorderColorStartBttn;
-      private bool _closed;
+      private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
+         this.Unloaded -= OnPageUnloaded;
+         _closed = true;
+         _sizeChangedObservable?.Dispose();
+      }
 
-      private void OnSelectionChangedGridViewMosaics(object sender, SelectionChangedEventArgs e)
+      private void OnPageSizeChanged(object sender, SizeChangedEventArgs ev) {
+         if (_sizeChangedObservable == null) {
+            this.SizeChanged -= OnPageSizeChanged;
+            _sizeChangedObservable = Observable
+               .FromEventPattern<SizeChangedEventHandler, SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h) // equals .FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
+               .Throttle(TimeSpan.FromSeconds(0.2)) // debounce events
+               .Subscribe(x => {
+                  System.Threading.Tasks.Task.Run(() => AsyncRunner.InvokeFromUiLater(() => OnPageSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low));
+                  //AsyncRunner.InvokeFromUiLater(() => OnPageSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low);
+               });
+         }
+
+         var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
+         var size2 = size / 3.5;
+         var wh = (int)Math.Min(Math.Max(100, size2), 200); // TODO: DPI dependency
+         ViewModel.ImageSize = new fmg.common.geom.Size(wh, wh);
+      }
+
+      private void OnSelectionChangedGridViewMosaics(object sender, SelectionChangedEventArgs ev)
       {
          //throw new NotImplementedException();
       }
 
-      private void OnItemClickGridViewMosaics(object sender, ItemClickEventArgs e)
+      private void OnItemClickGridViewMosaics(object sender, ItemClickEventArgs ev)
       {
          //throw new NotImplementedException();
       }

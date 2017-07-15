@@ -30,9 +30,9 @@ namespace fmg {
             BorderColorStartBttn.Color = hsv.ToColor().ToWinColor();
          };
          run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => _closed);
-         this.Unloaded += (s, e) => _closed = true;
 
-         this.Loaded += OnPageLoaded;
+         this.Loaded   += OnPageLoaded;
+         this.Unloaded += OnPageUnloaded;
       }
 
       public MosaicInitData MosaicData { get; private set; }
@@ -44,6 +44,14 @@ namespace fmg {
          var maxSizeField = CalcMaxMosaicSize(MosaicInitData.AREA_MINIMUM);
          SliderWidth .Maximum = maxSizeField.m;
          SliderHeight.Maximum = maxSizeField.n;
+
+         MosaicData.PropertyChanged += OnMosaicDataPropertyChanged;
+      }
+
+      private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
+         this.Loaded -= OnPageUnloaded;
+         MosaicData.PropertyChanged -= OnMosaicDataPropertyChanged;
+         _closed = true;
       }
 
       private void StartNewGame() {
@@ -65,15 +73,23 @@ namespace fmg {
 
       private void OnSliderValueChangedSizeFieldWidth(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs ev) {
          MosaicData.SizeField = new Matrisize(Convert.ToInt32(ev.NewValue), MosaicData.SizeField.n);
-         OnChangeSizeField();
+         ChangeSlideMinesMax();
       }
 
       private void OnSliderValueChangedSizeFieldHeight(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs ev) {
          MosaicData.SizeField = new Matrisize(MosaicData.SizeField.m, Convert.ToInt32(ev.NewValue));
-         OnChangeSizeField();
+         ChangeSlideMinesMax();
       }
 
-      private void OnChangeSizeField() {
+      private void OnMosaicDataPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs ev) {
+         switch (ev.PropertyName) {
+         case nameof(MosaicData.MosaicType):
+            ChangeSlideMinesMax();
+            break;
+         }
+      }
+
+      private void ChangeSlideMinesMax() {
          int max = MosaicData.SizeField.m * MosaicData.SizeField.n - GetNeighborNumber();
          SliderMines.Maximum = max;
          if (SliderMines.Value > max)

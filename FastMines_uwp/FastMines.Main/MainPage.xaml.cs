@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
@@ -28,41 +27,24 @@ namespace fmg
    {
       internal const int MenuTextWidth = 110;
 
-      readonly IDisposable _sizeChangedObservable;
-
+      private IDisposable _sizeChangedObservable;
       public ShellViewModel ViewModel { get; } = new ShellViewModel();
-
       public Frame RightFrame => this._frame;
 
 
       public MainPage() {
          this.InitializeComponent();
-         Unloaded += OnClosing;
 
-         ViewModel.MosaicGroupDs.PropertyChanged += OnMosaicGroupDsPropertyChanged;
-         ViewModel.MosaicSkillDs.PropertyChanged += OnMosaicSkillDsPropertyChanged;
-         Loaded += (sender, ev) => {
-            var smp = RightFrame?.Content as SelectMosaicPage;
-            if (smp != null) {
-               var ds = smp.ViewModel.MosaicsDs;
-               ds.CurrentElement = ds.DataSource.First();
-            }
-
-            ApplyButtonColorSmoothTransition(_bttnGroupPanel, ViewModel.MosaicGroupDs.TopElement.Image);
-            ApplyButtonColorSmoothTransition(_bttnSkillPanel, ViewModel.MosaicSkillDs.TopElement.Image);
-         };
-
-         //this.SizeChanged += OnSizeChanged;
-         _sizeChangedObservable = Observable
-            .FromEventPattern<SizeChangedEventHandler, SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h) // equals .FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
-            .Throttle(TimeSpan.FromSeconds(0.2)) // debounce events
-            .Subscribe(x => {
-               Task.Run(() => AsyncRunner.InvokeFromUiLater(() => OnSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low));
-            });
+         this.Loaded += OnPageLoaded;
+         this.Unloaded += OnPageUnloaded;
+         this.SizeChanged += OnPageSizeChanged;
       }
 
       protected override void OnNavigatedTo(NavigationEventArgs ev) {
          base.OnNavigatedTo(ev);
+
+         ViewModel.MosaicGroupDs.PropertyChanged += OnMosaicGroupDsPropertyChanged;
+         ViewModel.MosaicSkillDs.PropertyChanged += OnMosaicSkillDsPropertyChanged;
 
          //System.Diagnostics.Debug.Assert(ev.Parameter is MosaicInitData);
          var initParam = ev.Parameter as MosaicInitData;
@@ -75,12 +57,36 @@ namespace fmg
          //MosaicController.MinesCount = initParam.MinesCount;
       }
 
-      private void OnPropertyCurrentElementChanged(MosaicGroupDataItem currentGroupItem, MosaicSkillDataItem currentSkillItem) {
+      private void OnPageLoaded(object sender, RoutedEventArgs e) {
+         this.Loaded -= OnPageLoaded;
+
+         var smp = RightFrame?.Content as SelectMosaicPage;
+         if (smp != null) {
+            var ds = smp.ViewModel.MosaicsDs;
+            ds.CurrentElement = ds.DataSource.First();
+         }
+
+         ApplyButtonColorSmoothTransition(_bttnGroupPanel, ViewModel.MosaicGroupDs.TopElement.Image);
+         ApplyButtonColorSmoothTransition(_bttnSkillPanel, ViewModel.MosaicSkillDs.TopElement.Image);
+      }
+
+      private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
+         this.Unloaded -= OnPageUnloaded;
+
+         //System.Diagnostics.Debug.WriteLine("OnClosing");
+         ViewModel.MosaicGroupDs.PropertyChanged -= OnMosaicGroupDsPropertyChanged;
+         ViewModel.MosaicSkillDs.PropertyChanged -= OnMosaicSkillDsPropertyChanged;
+
+         ViewModel.Dispose();
+         _sizeChangedObservable?.Dispose();
+      }
+
+      private void OnPropertyCurrentElementChanged(bool senderIsMosaicGroup, MosaicGroupDataItem currentGroupItem, MosaicSkillDataItem currentSkillItem) {
          if ((currentGroupItem  == null) || (currentSkillItem == null)) {
             LoggerSimple.Put("TODO:  redirect to ShowHypnosisLogoPage...");
             return;
          }
-         if (currentSkillItem.SkillLevel == ESkillLevel.eCustom) {
+         if (!senderIsMosaicGroup && (currentSkillItem.SkillLevel == ESkillLevel.eCustom)) {
             LoggerSimple.Put("TODO:  redirect to CustomSizePage...");
             RightFrame.SourcePageType = typeof(CustomSkillPage);
             return;
@@ -99,7 +105,7 @@ namespace fmg
          //LoggerSimple.Put("MosaicGroupsDataSource::" + ev.PropertyName);
          switch (ev.PropertyName) {
          case nameof(ViewModel.MosaicGroupDs.CurrentElement):
-            OnPropertyCurrentElementChanged(((MosaicGroupsDataSource)sender).CurrentElement, ViewModel.MosaicSkillDs.CurrentElement);
+            OnPropertyCurrentElementChanged(true, ((MosaicGroupsDataSource)sender).CurrentElement, ViewModel.MosaicSkillDs.CurrentElement);
             break;
          }
       }
@@ -108,52 +114,44 @@ namespace fmg
          //LoggerSimple.Put("MosaicSkillsDataSource::" + ev.PropertyName);
          switch(ev.PropertyName) {
          case nameof(ViewModel.MosaicSkillDs.CurrentElement):
-            OnPropertyCurrentElementChanged(ViewModel.MosaicGroupDs.CurrentElement, ((MosaicSkillsDataSource)sender).CurrentElement);
+            OnPropertyCurrentElementChanged(false, ViewModel.MosaicGroupDs.CurrentElement, ((MosaicSkillsDataSource)sender).CurrentElement);
             break;
          }
       }
 
-      private void OnClosing(object sender, RoutedEventArgs ev) {
-         //System.Diagnostics.Debug.WriteLine("OnClosing");
-         ViewModel.MosaicGroupDs.PropertyChanged -= OnMosaicGroupDsPropertyChanged;
-         ViewModel.MosaicSkillDs.PropertyChanged -= OnMosaicSkillDsPropertyChanged;
+      void OnPageSizeChanged(object sender, SizeChangedEventArgs ev) {
+         if (_sizeChangedObservable == null) {
+            this.SizeChanged -= OnPageSizeChanged;
+            _sizeChangedObservable = Observable
+               .FromEventPattern<SizeChangedEventHandler, SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h) // equals .FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
+               .Throttle(TimeSpan.FromSeconds(0.2)) // debounce events
+               .Subscribe(x => {
+                  System.Threading.Tasks.Task.Run(() => AsyncRunner.InvokeFromUiLater(() => OnPageSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low));
+                  //AsyncRunner.InvokeFromUiLater(() => OnPageSizeChanged(x.Sender, x.EventArgs), Windows.UI.Core.CoreDispatcherPriority.Low);
+               });
+         }
 
-         ViewModel.Dispose();
-         _sizeChangedObservable.Dispose();
-      }
-
-      void OnSizeChanged(object sender, SizeChangedEventArgs ev) {
          //System.Diagnostics.Debug.WriteLine("OnSizeChanged");
+         const int minSize = 50;
+         const int topElemHeight = 48;
+         const int pad = 3;
+         System.Diagnostics.Debug.Assert(topElemHeight <= minSize);
+
          var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
-         {
-            const int minSize = 50;
-            const int topElemHeight = 48;
-            const int pad = 3;
-            System.Diagnostics.Debug.Assert(topElemHeight <= minSize);
+         var size1 = size/7;
+         var wh = (int)Math.Min(Math.Max(minSize, size1), 100); // TODO: DPI dependency
+         ViewModel.MosaicGroupDs.ImageSize =
+         ViewModel.MosaicSkillDs.ImageSize = new Size(wh, wh);
 
-            var size1 = size/7;
-            var wh = (int)Math.Min(Math.Max(minSize, size1), 100); // TODO: DPI dependency
-            ViewModel.MosaicGroupDs.ImageSize =
-            ViewModel.MosaicSkillDs.ImageSize = new Size(wh, wh);
+         ViewModel.MosaicGroupDs.TopElement.ImageSize =
+         ViewModel.MosaicSkillDs.TopElement.ImageSize = new Size(wh, topElemHeight);
+         ViewModel.MosaicGroupDs.TopElement.ImagePadding =
+         ViewModel.MosaicSkillDs.TopElement.ImagePadding = new Bound(pad, pad, wh - topElemHeight + pad, pad); // left margin
 
-            ViewModel.MosaicGroupDs.TopElement.ImageSize =
-            ViewModel.MosaicSkillDs.TopElement.ImageSize = new Size(wh, topElemHeight);
-            ViewModel.MosaicGroupDs.TopElement.ImagePadding =
-            ViewModel.MosaicSkillDs.TopElement.ImagePadding = new Bound(pad, pad, wh - topElemHeight + pad, pad); // left margin
-
-            int whBurger = topElemHeight / 2 + Math.Min(topElemHeight / 2 - pad, Math.Max(0, (int)(wh - 1.5 * topElemHeight)));
-            Bound padBurger = new Bound(wh - whBurger, topElemHeight - whBurger, pad, pad);
-            ViewModel.MosaicGroupDs.TopElement.ImagePaddingBurgerMenu =
-            ViewModel.MosaicSkillDs.TopElement.ImagePaddingBurgerMenu = padBurger; // right-bottom margin
-         }
-         {
-            var smp = RightFrame?.Content as SelectMosaicPage;
-            if (smp != null) {
-               var size2 = size/4;
-               var wh = (int)Math.Min(Math.Max(100, size2), 200); // TODO: DPI dependency
-               smp.ViewModel.ImageSize = new Size(wh, wh);
-            }
-         }
+         int whBurger = topElemHeight / 2 + Math.Min(topElemHeight / 2 - pad, Math.Max(0, (int)(wh - 1.5 * topElemHeight)));
+         Bound padBurger = new Bound(wh - whBurger, topElemHeight - whBurger, pad, pad);
+         ViewModel.MosaicGroupDs.TopElement.ImagePaddingBurgerMenu =
+         ViewModel.MosaicSkillDs.TopElement.ImagePaddingBurgerMenu = padBurger; // right-bottom margin
       }
 
       //public static IEnumerable<T> FindChilds<T>(FrameworkElement parent, int depth = 1, Func<T, bool> filter = null)

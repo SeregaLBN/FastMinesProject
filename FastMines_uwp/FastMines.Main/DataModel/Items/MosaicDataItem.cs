@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using Microsoft.Graphics.Canvas;
+using fmg.common.geom;
 using fmg.core.types;
-using fmg.data.controller.types;
 using MosaicsCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsImg.CanvasBmp;
 
 namespace fmg.DataModel.Items {
@@ -22,7 +22,7 @@ namespace fmg.DataModel.Items {
          get { return _skillLevel; }
          set {
             if (SetProperty(ref _skillLevel, value)) {
-               Image.SizeField = MosaicType.SizeTileField(value);
+               Image.SizeField = CaclSizeField(value);
             }
          }
       }
@@ -71,7 +71,7 @@ namespace fmg.DataModel.Items {
          case nameof(this.UniqueId):
             OnSelfPropertyChanged<EMosaic>(ev, nameof(this.MosaicType)); // recall with another property name
             Image.MosaicType = MosaicType;
-            Image.SizeField = MosaicType.SizeTileField(SkillLevel);
+            Image.SizeField = CaclSizeField(SkillLevel);
             Title = FixTitle(MosaicType);
             break;
          }
@@ -79,6 +79,12 @@ namespace fmg.DataModel.Items {
 
       private static string FixTitle(EMosaic mosaicType) {
          return mosaicType.GetDescription(false);//.Replace("-", "\u2006-\u2006");
+      }
+
+      private Matrisize CaclSizeField(ESkillLevel skill) {
+         return MosaicType.SizeTileField((skill == ESkillLevel.eCustom)
+                                                 ? ESkillLevel.eBeginner
+                                                 : skill);
       }
 
    }
