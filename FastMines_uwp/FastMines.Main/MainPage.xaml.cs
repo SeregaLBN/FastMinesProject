@@ -81,6 +81,13 @@ namespace fmg
          _sizeChangedObservable?.Dispose();
       }
 
+      private void OnListViewSkillLevelMenuTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs ev) {
+         //LoggerSimple.Put("OnListViewSkillLevelMenuTapped");
+         if (!(RightFrame.Content is CustomSkillPage)) {
+            RightFrame.SourcePageType = typeof(CustomSkillPage);
+         }
+      }
+
       private void OnPropertyCurrentElementChanged(bool senderIsMosaicGroup, MosaicGroupDataItem currentGroupItem, MosaicSkillDataItem currentSkillItem) {
          if ((currentGroupItem  == null) || (currentSkillItem == null)) {
             LoggerSimple.Put("TODO:  redirect to ShowHypnosisLogoPage...");

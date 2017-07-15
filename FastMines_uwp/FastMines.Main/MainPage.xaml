@@ -86,9 +86,10 @@
                             <TextBlock Text="Skill" Style="{StaticResource AppTitleTextBlockStyle}" />
                         </StackPanel>
                         <ListView x:Name="_listViewSkillLevelMenu"
-                              Visibility="Collapsed"
-                              ItemsSource="{x:Bind ViewModel.MosaicSkillDs.DataSource}"
-                              SelectedItem="{x:Bind ViewModel.MosaicSkillDs.CurrentElement, Mode=TwoWay, Converter={StaticResource ObjectToMosaicSkillDataItemConverter}}">
+                                  Visibility="Collapsed"
+                                  Tapped="OnListViewSkillLevelMenuTapped"
+                                  ItemsSource="{x:Bind ViewModel.MosaicSkillDs.DataSource}"
+                                  SelectedItem="{x:Bind ViewModel.MosaicSkillDs.CurrentElement, Mode=TwoWay, Converter={StaticResource ObjectToMosaicSkillDataItemConverter}}">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="Padding" Value="0" />

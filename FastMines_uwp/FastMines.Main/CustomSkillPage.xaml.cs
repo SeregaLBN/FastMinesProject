@@ -13,31 +13,18 @@ namespace fmg {
 
    public sealed partial class CustomSkillPage : Page {
 
+      public MosaicInitData MosaicData { get; private set; }
+      public SolidColorBrush BorderColorStartBttn;
+      private bool _closed;
+
+
       public CustomSkillPage() {
          this.InitializeComponent();
          MosaicData = new MosaicInitData();
 
-         HSV hsv = new HSV(StaticImgConsts.DefaultForegroundColor);
-         hsv.s = 80;
-         hsv.v = 70;
-         hsv.a = 170;
-         BorderColorStartBttn = new SolidColorBrush(hsv.ToColor().ToWinColor());
-
-         Action run = () => {
-            //if (gridMosaics.SelectedItem == null)
-            //   return;
-            hsv.h += 10;
-            BorderColorStartBttn.Color = hsv.ToColor().ToWinColor();
-         };
-         run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => _closed);
-
          this.Loaded   += OnPageLoaded;
          this.Unloaded += OnPageUnloaded;
       }
-
-      public MosaicInitData MosaicData { get; private set; }
-      public SolidColorBrush BorderColorStartBttn;
-      private bool _closed;
 
       private void OnPageLoaded(object sender, RoutedEventArgs e) {
          this.Loaded -= OnPageLoaded;
@@ -46,6 +33,23 @@ namespace fmg {
          SliderHeight.Maximum = maxSizeField.n;
 
          MosaicData.PropertyChanged += OnMosaicDataPropertyChanged;
+
+         {
+            HSV hsv = new HSV(StaticImgConsts.DefaultForegroundColor) {
+               s = 80,
+               v = 70,
+               a = 170
+            };
+            BorderColorStartBttn = new SolidColorBrush(hsv.ToColor().ToWinColor());
+
+            Action run = () => {
+               //if (gridMosaics.SelectedItem == null)
+               //   return;
+               hsv.h += 10;
+               BorderColorStartBttn.Color = hsv.ToColor().ToWinColor();
+            };
+            run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => _closed);
+         }
       }
 
       private void OnPageUnloaded(object sender, RoutedEventArgs ev) {

@@ -38,19 +38,22 @@ namespace fmg {
       private void OnPageLoaded(object sender, RoutedEventArgs e) {
          this.Loaded -= OnPageLoaded;
 
-         HSV hsv = new HSV(StaticImgConsts.DefaultForegroundColor);
-         hsv.s = 80;
-         hsv.v = 70;
-         hsv.a = 170;
-         BorderColorStartBttn = new SolidColorBrush(hsv.ToColor().ToWinColor());
+         {
+            HSV hsv = new HSV(StaticImgConsts.DefaultForegroundColor) {
+               s = 80,
+               v = 70,
+               a = 170
+            };
+            BorderColorStartBttn = new SolidColorBrush(hsv.ToColor().ToWinColor());
 
-         Action run = () => {
-            if (gridMosaics.SelectedItem == null)
-               return;
-            hsv.h += 10;
-            BorderColorStartBttn.Color = hsv.ToColor().ToWinColor();
-         };
-         run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => _closed);
+            Action run = () => {
+               if (gridMosaics.SelectedItem == null)
+                  return;
+               hsv.h += 10;
+               BorderColorStartBttn.Color = hsv.ToColor().ToWinColor();
+            };
+            run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => _closed);
+         }
       }
 
       private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
@@ -72,7 +75,7 @@ namespace fmg {
          }
 
          var size = Math.Min(ev.NewSize.Height, ev.NewSize.Width);
-         var size2 = size / 3.5;
+         var size2 = size / 3.9;
          var wh = (int)Math.Min(Math.Max(100, size2), 200); // TODO: DPI dependency
          ViewModel.ImageSize = new fmg.common.geom.Size(wh, wh);
       }
