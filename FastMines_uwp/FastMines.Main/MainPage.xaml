@@ -42,6 +42,7 @@
 
                         <ListView x:Name="_listViewMosaicGroupMenu"
                                   ItemsSource="{x:Bind ViewModel.MosaicGroupDs.DataSource}"
+                                  Tapped="OnListViewMosaicGroupMenuTapped"
                                   SelectedItem="{x:Bind ViewModel.MosaicGroupDs.CurrentElement, Mode=TwoWay, Converter={StaticResource ObjectToMosaicGroupDataItemConverter}}">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">

@@ -40,13 +40,13 @@
                     <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" >Width:</TextBlock>
                     <Slider Grid.Row="2" Grid.Column="0"
                             x:Name="SliderWidth" Value="{x:Bind MosaicData.SizeField, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
-                            Minimum="0" Maximum="3000"
+                            TickFrequency="10" TickPlacement="Outside" Minimum="0" Maximum="3000"
                             ValueChanged="OnSliderValueChangedSizeFieldWidth" />
                     <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource OutputTextBlockStyle}" Text="{x:Bind SliderWidth.Value, Mode=OneWay, Converter={StaticResource ValueToStringConverter}}"/>
 
                     <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" >Height:</TextBlock>
                     <Slider Grid.Row="4" Grid.Column="0" x:Name="SliderHeight" Value="{x:Bind MosaicData.SizeField, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
-                            Minimum="0" Maximum="3000"
+                            TickFrequency="10" TickPlacement="Outside" Minimum="0" Maximum="3000"
                             ValueChanged="OnSliderValueChangedSizeFieldHeight" />
                     <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource OutputTextBlockStyle}" Text="{x:Bind SliderHeight.Value, Mode=OneWay, Converter={StaticResource ValueToStringConverter}}"/>
 
@@ -69,7 +69,7 @@
                     <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" >Mines:</TextBlock>
                     <Slider Grid.Row="2" Grid.Column="0"
                             x:Name="SliderMines" Value="{x:Bind MosaicData.MinesCount, Mode=TwoWay, Converter={StaticResource IntToDoubleConverter}}"
-                            Minimum="0" Maximum="3000" />
+                            TickFrequency="100" TickPlacement="Outside" Minimum="0" Maximum="3000" />
                     <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource OutputTextBlockStyle}" Text="{x:Bind SliderMines.Value, Converter={StaticResource ValueToStringConverter}, Mode=OneWay}"/>
 
                 </Grid>

@@ -14,7 +14,7 @@ namespace fmg.core.mosaic {
       private int       _minesCount;
       private double    _area;
 
-      private bool _lock;
+      private bool _lockFireSkill;
 
       public MosaicInitData() {
          MosaicType = EMosaic.eMosaicSquare1;
@@ -45,7 +45,7 @@ namespace fmg.core.mosaic {
             var skillOld = SkillLevel;
             if (SetProperty(ref _sizeField, value)) {
                var skillNew= SkillLevel;
-               if (!_lock && (skillNew != skillOld))
+               if (!_lockFireSkill && (skillNew != skillOld))
                   OnSelfPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
             }
          }
@@ -57,7 +57,7 @@ namespace fmg.core.mosaic {
             var skillOld = SkillLevel;
             if (SetProperty(ref _minesCount, value)) {
                var skillNew = SkillLevel;
-               if (!_lock && (skillNew != skillOld))
+               if (!_lockFireSkill && (skillNew != skillOld))
                   OnSelfPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
             }
          }
@@ -81,16 +81,23 @@ namespace fmg.core.mosaic {
             return ESkillLevel.eCustom;
          }
          set {
+            if (value == ESkillLevel.eCustom)
+               throw new System.ArgumentException();
             var skillOld = SkillLevel;
-            _lock = true;
+            if (skillOld == value)
+               return;
+
+            _lockFireSkill = true;
             {
                MinesCount = value.GetNumberMines(MosaicType);
                SizeField = value.GetDefaultSize();
             }
-            _lock = false;
+            _lockFireSkill = false;
+
             var skillNew = SkillLevel;
-            if (skillNew != skillOld)
-               OnSelfPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
+            System.Diagnostics.Debug.Assert(value == skillNew);
+            System.Diagnostics.Debug.Assert(value != skillOld);
+            OnSelfPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
          }
       }
 

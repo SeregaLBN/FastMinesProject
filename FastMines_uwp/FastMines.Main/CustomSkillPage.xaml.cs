@@ -13,7 +13,7 @@ namespace fmg {
 
    public sealed partial class CustomSkillPage : Page {
 
-      public MosaicInitData MosaicData { get; private set; }
+      public MosaicInitData MosaicData { get; set; }
       public SolidColorBrush BorderColorStartBttn;
       private bool _closed;
 
@@ -28,9 +28,17 @@ namespace fmg {
 
       private void OnPageLoaded(object sender, RoutedEventArgs e) {
          this.Loaded -= OnPageLoaded;
+
+         SliderWidth.Minimum = 5;
+         SliderHeight.Minimum = 5;
+         SliderMines.Minimum = 1;
+
          var maxSizeField = CalcMaxMosaicSize(MosaicInitData.AREA_MINIMUM);
          SliderWidth .Maximum = maxSizeField.m;
          SliderHeight.Maximum = maxSizeField.n;
+
+         //SliderWidth .TickFrequency = SliderWidth .Maximum - SliderWidth .Minimum;
+         //SliderHeight.TickFrequency = SliderHeight.Maximum - SliderHeight.Minimum;
 
          MosaicData.PropertyChanged += OnMosaicDataPropertyChanged;
 
@@ -96,6 +104,7 @@ namespace fmg {
       private void ChangeSlideMinesMax() {
          int max = MosaicData.SizeField.m * MosaicData.SizeField.n - GetNeighborNumber();
          SliderMines.Maximum = max;
+         //SliderMines.TickFrequency = SliderMines.Maximum - SliderMines.Minimum;
          if (SliderMines.Value > max)
             SliderMines.Value = max;
 

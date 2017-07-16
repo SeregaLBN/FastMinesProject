@@ -21,6 +21,7 @@ namespace fmg {
    /// </summary>
    public sealed partial class SelectMosaicPage : Page {
 
+      public MosaicInitData MosaicData { get; set; }
       public MosaicsViewModel ViewModel { get; private set; }
       public SolidColorBrush BorderColorStartBttn;
       private bool _closed;
@@ -28,6 +29,7 @@ namespace fmg {
 
       public SelectMosaicPage() {
          this.InitializeComponent();
+         MosaicData = new MosaicInitData();
          ViewModel = new MosaicsViewModel();
 
          this.Loaded += OnPageLoaded;
@@ -85,9 +87,13 @@ namespace fmg {
          //throw new NotImplementedException();
       }
 
-      private void OnItemClickGridViewMosaics(object sender, ItemClickEventArgs ev)
-      {
-         //throw new NotImplementedException();
+      private void OnItemClickGridViewMosaics(object sender, ItemClickEventArgs ev) {
+         // invoke afeter set/change ViewModel.MosaicsDs.CurrentElement
+         AsyncRunner.InvokeFromUiLater(() => {
+            var cu = ViewModel.MosaicsDs.CurrentElement;
+            if (cu != null)
+               MosaicData.MosaicType = cu.MosaicType;
+         });
       }
 
       public EMosaicGroup CurrentMosaicGroup {
@@ -131,11 +137,7 @@ namespace fmg {
          System.Diagnostics.Debug.Assert(frame != null);
 
          var eMosaic = CurrentElement.MosaicType;
-         frame.Navigate(typeof(MosaicPage2), new MosaicInitData {
-            MosaicType = eMosaic,
-            MinesCount = CurrentSkillLevel.GetNumberMines(eMosaic),
-            SizeField = CurrentSkillLevel.GetDefaultSize()
-         });
+         frame.Navigate(typeof(MosaicPage2), MosaicData);
 
          //Window.Current.Content = new MosaicPage();
          //// Ensure the current window is active

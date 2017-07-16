@@ -105,7 +105,7 @@ namespace fmg
       }
 
       void OnKeyDown(CoreWindow sender, KeyEventArgs ev) {
-         LoggerSimple.Put("App.OnKeyDown: VirtualKey=" + ev.VirtualKey);
+         //LoggerSimple.Put("App.OnKeyDown: VirtualKey=" + ev.VirtualKey);
          var frame = (Frame)Window.Current.Content;
          switch (ev.VirtualKey) {
        //case VirtualKey.GoBack: // System.Diagnostics.Debug.Assert(false, "must be handled in " + nameof(App) + "." + nameof(OnBackRequested));
