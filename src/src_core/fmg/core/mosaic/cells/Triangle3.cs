@@ -34,15 +34,8 @@ namespace fmg.core.mosaic.cells {
 
          public override SizeDouble GetOwnerSize(Matrisize sizeField) {
             var a = A;
-            var result = new SizeDouble(
-                  a * (sizeField.m+1)/2,
-                  a * (sizeField.n+1)/2);
-
-            if (sizeField.m == 1)
-               if ((sizeField.n & 1) == 1)
-                  result.Height -= a*0.5;
-
-            return result;
+            return new SizeDouble(a * ((sizeField.m + (sizeField.m & 1)) / 2),
+                                  a * ((sizeField.n + (sizeField.n & 1)) / 2));
          }
 
          public override int getNeighborNumber(int direction) { return 14; }

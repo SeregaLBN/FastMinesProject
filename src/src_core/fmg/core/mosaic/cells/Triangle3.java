@@ -38,15 +38,8 @@ public class Triangle3 extends BaseCell {
       @Override
       public SizeDouble getOwnerSize(Matrisize sizeField) {
          double a = getA();
-         SizeDouble result = new SizeDouble(
-               a * ((sizeField.m+1)>>1),
-               a * ((sizeField.n+1)>>1));
-
-         if (sizeField.m == 1)
-            if ((sizeField.n & 1) == 1)
-               result.height -= a*0.5;
-
-         return result;
+         return new SizeDouble(a * ((sizeField.m + (sizeField.m & 1)) / 2),
+                               a * ((sizeField.n + (sizeField.n & 1)) / 2));
       }
 
       @Override
