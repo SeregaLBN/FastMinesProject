@@ -73,7 +73,11 @@ namespace fmg
          }
 
          if (rootFrame.Content == null) {
-            if (!rootFrame.Navigate(typeof(MainPage), null)) {
+            // create a common model between all the pages in the application
+            var mosaicData = new MosaicInitData() { // TODO restore from local settings
+               MosaicType = EMosaic.eMosaicSquare2
+            };
+            if (!rootFrame.Navigate(typeof(MainPage), mosaicData)) {
                throw new Exception("Failed to create initial page ;(");
             }
          }

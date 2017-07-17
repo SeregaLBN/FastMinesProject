@@ -34,13 +34,9 @@ namespace fmg {
          MosaicData = new MosaicInitData();
          ViewModel = new MosaicGroupViewModel();
 
-         this.Loaded += OnPageLoaded;
+       //this.Loaded += OnPageLoaded;
          this.Unloaded += OnPageUnloaded;
          this.SizeChanged += OnPageSizeChanged;
-      }
-
-      private void OnPageLoaded(object sender, RoutedEventArgs e) {
-         this.Loaded -= OnPageLoaded;
 
          {
             HSV hsv = new HSV(StaticImgConsts.DefaultForegroundColor) {
@@ -59,6 +55,10 @@ namespace fmg {
             run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => _closed);
          }
       }
+
+    //private void OnPageLoaded(object sender, RoutedEventArgs e) {
+    //   this.Loaded -= OnPageLoaded;
+    //}
 
       private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
          this.Unloaded -= OnPageUnloaded;

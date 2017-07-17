@@ -46,7 +46,7 @@ namespace fmg
       protected override void OnNavigatedTo(NavigationEventArgs ev) {
          base.OnNavigatedTo(ev);
 
-         //System.Diagnostics.Debug.Assert(ev.Parameter is MosaicInitData);
+         System.Diagnostics.Debug.Assert(ev.Parameter is MosaicInitData);
          MosaicData = (ev.Parameter as MosaicInitData) ?? new MosaicInitData();
       }
 

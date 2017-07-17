@@ -26,23 +26,6 @@ namespace fmg {
 
          this.Loaded   += OnPageLoaded;
          this.Unloaded += OnPageUnloaded;
-      }
-
-      private void OnPageLoaded(object sender, RoutedEventArgs e) {
-         this.Loaded -= OnPageLoaded;
-
-         SliderWidth.Minimum = 5;
-         SliderHeight.Minimum = 5;
-         SliderMines.Minimum = 1;
-
-         var maxSizeField = CalcMaxMosaicSize(MosaicInitData.AREA_MINIMUM);
-         SliderWidth .Maximum = maxSizeField.m;
-         SliderHeight.Maximum = maxSizeField.n;
-
-         //SliderWidth .TickFrequency = SliderWidth .Maximum - SliderWidth .Minimum;
-         //SliderHeight.TickFrequency = SliderHeight.Maximum - SliderHeight.Minimum;
-
-         MosaicData.PropertyChanged += OnMosaicDataPropertyChanged;
 
          {
             HSV hsv = new HSV(StaticImgConsts.DefaultForegroundColor) {
@@ -60,6 +43,23 @@ namespace fmg {
             };
             run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => _closed);
          }
+      }
+
+      private void OnPageLoaded(object sender, RoutedEventArgs e) {
+         this.Loaded -= OnPageLoaded;
+
+         SliderWidth.Minimum = 5;
+         SliderHeight.Minimum = 5;
+         SliderMines.Minimum = 1;
+
+         var maxSizeField = CalcMaxMosaicSize(MosaicInitData.AREA_MINIMUM);
+         SliderWidth .Maximum = maxSizeField.m;
+         SliderHeight.Maximum = maxSizeField.n;
+
+         //SliderWidth .TickFrequency = SliderWidth .Maximum - SliderWidth .Minimum;
+         //SliderHeight.TickFrequency = SliderHeight.Maximum - SliderHeight.Minimum;
+
+         MosaicData.PropertyChanged += OnMosaicDataPropertyChanged;
       }
 
       private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
