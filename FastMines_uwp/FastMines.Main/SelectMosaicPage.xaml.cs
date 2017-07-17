@@ -21,8 +21,10 @@ namespace fmg {
    /// </summary>
    public sealed partial class SelectMosaicPage : Page {
 
+      /// <summary> Model (a common model between all the pages in the application) </summary>
       public MosaicInitData MosaicData { get; set; }
-      public MosaicsViewModel ViewModel { get; private set; }
+      /// <summary> View-Model </summary>
+      public MosaicGroupViewModel ViewModel { get; private set; }
       public SolidColorBrush BorderColorStartBttn;
       private bool _closed;
       private IDisposable _sizeChangedObservable;
@@ -30,7 +32,7 @@ namespace fmg {
       public SelectMosaicPage() {
          this.InitializeComponent();
          MosaicData = new MosaicInitData();
-         ViewModel = new MosaicsViewModel();
+         ViewModel = new MosaicGroupViewModel();
 
          this.Loaded += OnPageLoaded;
          this.Unloaded += OnPageUnloaded;

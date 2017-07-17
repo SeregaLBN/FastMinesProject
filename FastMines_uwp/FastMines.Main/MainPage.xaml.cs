@@ -27,8 +27,10 @@ namespace fmg
    {
       internal const int MenuTextWidth = 110;
 
+      /// <summary> Model (a common model between all the pages in the application) </summary>
       public MosaicInitData MosaicData { get; private set; }
-      public ShellViewModel ViewModel { get; } = new ShellViewModel();
+      /// <summary> View-Model </summary>
+      public MainMenuViewModel ViewModel { get; } = new MainMenuViewModel();
       public Frame RightFrame => this._frame;
       private IDisposable _sizeChangedObservable;
 

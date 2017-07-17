@@ -5,12 +5,12 @@ using fmg.common.geom;
 
 namespace fmg.common {
 
-   /// <summary> ViewModel for SelectMosaicPage </summary>
-   public class MosaicsViewModel : NotifyPropertyChanged {
+   /// <summary> ViewModel for <see cref="SelectMosaicPage"/> </summary>
+   public class MosaicGroupViewModel : NotifyPropertyChanged {
+
       private readonly MosaicsDataSource _mosaicsDs = new MosaicsDataSource();
 
-      public MosaicsViewModel() {
-         //_mosaicsDs.ImageSize = 150; // TODO убрать, если будет зависимость ImageSize от размеров окна // see Shell.xaml.cs: Shell.OnSizeChanged
+      public MosaicGroupViewModel() {
          _mosaicsDs.PropertyChanged += OnMosaicsDsPropertyChanged;
       }
 

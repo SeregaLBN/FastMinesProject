@@ -13,7 +13,9 @@ namespace fmg {
 
    public sealed partial class CustomSkillPage : Page {
 
+      /// <summary> Model (a common model between all the pages in the application) </summary>
       public MosaicInitData MosaicData { get; set; }
+
       public SolidColorBrush BorderColorStartBttn;
       private bool _closed;
 

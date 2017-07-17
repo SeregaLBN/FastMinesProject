@@ -5,14 +5,14 @@ using fmg.common.notyfier;
 
 namespace fmg.common {
 
-   /// <summary> ViewModel for main page </summary>
-   public class ShellViewModel : NotifyPropertyChanged {
+   /// <summary> ViewModel for <see cref="MainPage"/> </summary>
+   public class MainMenuViewModel : NotifyPropertyChanged {
 
       private readonly MosaicGroupsDataSource _mosaicGroupDs = new MosaicGroupsDataSource();
       private readonly MosaicSkillsDataSource _mosaicSkillDs = new MosaicSkillsDataSource();
       private bool _isSplitViewPaneOpen;
 
-      public ShellViewModel() {
+      public MainMenuViewModel() {
          ToggleSplitViewPaneCommand = new Command(() => IsSplitViewPaneOpen = !IsSplitViewPaneOpen);
 
          _mosaicGroupDs.PropertyChanged += OnMosaicGroupDsPropertyChanged;
