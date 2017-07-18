@@ -16,9 +16,7 @@ using fmg.DataModel.Items;
 
 namespace fmg {
 
-   /// <summary>
-   /// An empty page that can be used on its own or navigated to within a Frame.
-   /// </summary>
+   /// <summary> Page for selecting the type of mosaic in the current group </summary>
    public sealed partial class SelectMosaicPage : Page {
 
       /// <summary> Model (a common model between all the pages in the application) </summary>
