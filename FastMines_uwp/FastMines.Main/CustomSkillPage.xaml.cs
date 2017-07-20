@@ -5,6 +5,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using fmg.common;
 using fmg.common.geom;
+using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.img;
 using fmg.uwp.utils;
@@ -48,18 +49,19 @@ namespace fmg {
       private void OnPageLoaded(object sender, RoutedEventArgs e) {
          this.Loaded -= OnPageLoaded;
 
-         SliderWidth.Minimum = 5;
+         SliderWidth .Minimum = 5;
          SliderHeight.Minimum = 5;
-         SliderMines.Minimum = 1;
+         SliderMines .Minimum = 1;
 
          var maxSizeField = CalcMaxMosaicSize(MosaicInitData.AREA_MINIMUM);
          SliderWidth .Maximum = maxSizeField.m;
          SliderHeight.Maximum = maxSizeField.n;
 
-         //SliderWidth .TickFrequency = SliderWidth .Maximum - SliderWidth .Minimum;
-         //SliderHeight.TickFrequency = SliderHeight.Maximum - SliderHeight.Minimum;
-
          MosaicData.PropertyChanged += OnMosaicDataPropertyChanged;
+
+         SliderWidth .Value = MosaicData.SizeField.m;
+         SliderHeight.Value = MosaicData.SizeField.n;
+         SliderMines .Value = MosaicData.MinesCount;
       }
 
       private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
@@ -87,26 +89,28 @@ namespace fmg {
 
       private void OnSliderValueChangedSizeFieldWidth(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs ev) {
          MosaicData.SizeField = new Matrisize(Convert.ToInt32(ev.NewValue), MosaicData.SizeField.n);
-         ChangeSlideMinesMax();
       }
 
       private void OnSliderValueChangedSizeFieldHeight(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs ev) {
          MosaicData.SizeField = new Matrisize(MosaicData.SizeField.m, Convert.ToInt32(ev.NewValue));
-         ChangeSlideMinesMax();
       }
 
       private void OnMosaicDataPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs ev) {
          switch (ev.PropertyName) {
+         case nameof(MosaicData.SizeField):
          case nameof(MosaicData.MosaicType):
-            ChangeSlideMinesMax();
+            CalcSliderMinesMax();
+            CheckRadioButtons();
+            break;
+         case nameof(MosaicData.MinesCount):
+            CheckRadioButtons();
             break;
          }
       }
 
-      private void ChangeSlideMinesMax() {
+      private void CalcSliderMinesMax() {
          int max = MosaicData.SizeField.m * MosaicData.SizeField.n - GetNeighborNumber();
          SliderMines.Maximum = max;
-         //SliderMines.TickFrequency = SliderMines.Maximum - SliderMines.Minimum;
          if (SliderMines.Value > max)
             SliderMines.Value = max;
 
@@ -124,7 +128,7 @@ namespace fmg {
       /// <summary> узнаю max размер поля мозаики, при котором окно проекта вмещается в текущее разрешение экрана </summary>
       /// <param name="area">интересуемая площадь ячеек мозаики</param>
       /// <returns>max размер поля мозаики</returns>
-      public Matrisize CalcMaxMosaicSize(double area) {
+      private Matrisize CalcMaxMosaicSize(double area) {
          var sizeMosaic = CalcMosaicWindowSize(ScreenResolutionHelper.GetDesktopSize());
          return MosaicHelper.FindSizeByArea(MosaicData.MosaicType, area, sizeMosaic);
       }
@@ -144,6 +148,22 @@ namespace fmg {
          return new Bound();
       }
 
+      private void OnRadioButtonSkillMinesChecked(object sender, RoutedEventArgs ev) {
+         System.Diagnostics.Debug.Assert(sender is RadioButton);
+         var rb = (RadioButton)sender;
+         var skillLevel = ESkillLevelEx.FromOrdinal(Convert.ToInt32(rb.Tag.ToString()));
+         MosaicData.MinesCount = skillLevel.GetNumberMines(MosaicData.MosaicType, MosaicData.SizeField);
+      }
+
+      private void CheckRadioButtons() {
+         var mines = MosaicData.MinesCount;
+         var type  = MosaicData.MosaicType;
+         var size  = MosaicData.SizeField;
+         rbBeginner    .IsChecked = (mines == ESkillLevel.eBeginner.GetNumberMines(type, size));
+         rbAmateur     .IsChecked = (mines == ESkillLevel.eAmateur .GetNumberMines(type, size));
+         rbProfessional.IsChecked = (mines == ESkillLevel.eProfi   .GetNumberMines(type, size));
+         rbCrazy       .IsChecked = (mines == ESkillLevel.eCrazy   .GetNumberMines(type, size));
+      }
 
    }
 
