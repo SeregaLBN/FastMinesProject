@@ -37,8 +37,6 @@ namespace fmg {
             BorderColorStartBttn = new SolidColorBrush(hsv.ToColor().ToWinColor());
 
             Action run = () => {
-               //if (gridMosaics.SelectedItem == null)
-               //   return;
                hsv.h += 10;
                BorderColorStartBttn.Color = hsv.ToColor().ToWinColor();
             };
@@ -62,6 +60,7 @@ namespace fmg {
          SliderWidth .Value = MosaicData.SizeField.m;
          SliderHeight.Value = MosaicData.SizeField.n;
          SliderMines .Value = MosaicData.MinesCount;
+         CheckRadioButtons();
       }
 
       private void OnPageUnloaded(object sender, RoutedEventArgs ev) {

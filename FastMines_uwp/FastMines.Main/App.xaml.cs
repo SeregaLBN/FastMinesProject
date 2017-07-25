@@ -9,6 +9,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Controls;
 using fmg.common;
+using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.mosaic;
 
@@ -19,10 +20,14 @@ namespace fmg
    /// </summary>
    sealed partial class App : Application
    {
+
+      /// <summary> Model (a common model between all the pages in the application) </summary>
+      public MosaicInitData MosaicData { get; private set; }
+
       /// <summary>
       /// Initializes the singleton application object.  This is the first line of authored code
       /// executed, and as such is the logical equivalent of main() or WinMain().
-         /// </summary>
+      /// </summary>
       public App()
       {
          this.InitializeComponent();
@@ -74,10 +79,8 @@ namespace fmg
 
          if (rootFrame.Content == null) {
             // create a common model between all the pages in the application
-            var mosaicData = new MosaicInitData() { // TODO restore from local settings
-               MosaicType = EMosaic.eMosaicSquare2
-            };
-            if (!rootFrame.Navigate(typeof(MainPage), mosaicData)) {
+            this.MosaicData = LoadAppData();
+            if (!rootFrame.Navigate(typeof(MainPage), this.MosaicData)) {
                throw new Exception("Failed to create initial page ;(");
             }
          }
@@ -148,36 +151,56 @@ namespace fmg
       {
          var deferral = e.SuspendingOperation.GetDeferral();
 
-         //TODO: Save application state and stop any background activity
-         var lsv = Windows.Storage.ApplicationData.Current.LocalSettings.Values;
-         Frame rootFrame = Window.Current.Content as Frame;
-         if (rootFrame.Content is MainPage) {
-            MainPage mp = rootFrame.Content as MainPage;
+         // Save application state and stop any background activity
+         SaveAppData();
 
-            MosaicInitData saveData = new MosaicInitData { };
-            //... @TODO
-            EMosaicGroup mosaicGroup = mp.ViewModel.MosaicGroupDs.CurrentElement?.MosaicGroup ?? EMosaicGroup.eQuadrangles;
-            ESkillLevel  mosaicSkill = mp.ViewModel.MosaicSkillDs.CurrentElement?.SkillLevel  ?? ESkillLevel.eBeginner;
-
-            Windows.Storage.ApplicationDataCompositeValue compositeMosaic = new Windows.Storage.ApplicationDataCompositeValue();
-            compositeMosaic[nameof(EMosaicGroup)] = mosaicGroup.Ordinal();
-            compositeMosaic[nameof(ESkillLevel) ] = mosaicSkill.Ordinal();
-            if (mosaicSkill == ESkillLevel.eCustom) {
-               // MinesCount = CurrentSkillLevel.GetNumberMines(eMosaic),
-               // SizeField = CurrentSkillLevel.DefaultSize()
-               compositeMosaic["SizeFieldX"] = 2;
-               compositeMosaic["SizeFieldY"] = 1;
-               compositeMosaic["MinesCount"] = 1;
-            }
-            lsv[nameof(MosaicInitData)] = compositeMosaic;
-
-            if (mp.RightFrame.SourcePageType == typeof(SelectMosaicPage)) {
-               var smp = mp.RightFrame.Content as SelectMosaicPage;
-            }
-         }
+         //Frame rootFrame = Window.Current.Content as Frame;
+         //var mp = rootFrame.Content as MainPage;
+         //if (mp?.RightFrame?.SourcePageType == typeof(SelectMosaicPage)) {
+         //   var smp = mp.RightFrame.Content as SelectMosaicPage;
+         //}
 
          deferral.Complete();
       }
+
+      private void SaveAppData() {
+         MosaicInitData saveData = this.MosaicData;
+
+         Windows.Storage.ApplicationDataCompositeValue compositeMosaic = new Windows.Storage.ApplicationDataCompositeValue();
+         compositeMosaic[nameof(MosaicInitData.MosaicType)                           ] = saveData.MosaicType.Ordinal();
+         compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.m)] = saveData.SizeField.m;
+         compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.n)] = saveData.SizeField.n;
+         compositeMosaic[nameof(MosaicInitData.MinesCount)                           ] = saveData.MinesCount;
+         compositeMosaic[nameof(MosaicInitData.Area)                                 ] = saveData.Area;
+
+         var lsv = Windows.Storage.ApplicationData.Current.LocalSettings.Values;
+         lsv[nameof(MosaicInitData)] = compositeMosaic;
+      }
+
+      private MosaicInitData LoadAppData() {
+         var lsv = Windows.Storage.ApplicationData.Current.LocalSettings.Values;
+         if (lsv.ContainsKey(nameof(MosaicInitData))) 
+            try {
+               Windows.Storage.ApplicationDataCompositeValue compositeMosaic = (Windows.Storage.ApplicationDataCompositeValue)lsv[nameof(MosaicInitData)];
+               int mosaicTypeOrdinal = (int)   compositeMosaic[nameof(MosaicInitData.MosaicType)];
+               int sizeFieldM        = (int)   compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.m)];
+               int sizeFieldN        = (int)   compositeMosaic[nameof(MosaicInitData.SizeField) + '.' + nameof(Matrisize.n)];
+               int minesCount        = (int)   compositeMosaic[nameof(MosaicInitData.MinesCount)];
+               double area           = (double)compositeMosaic[nameof(MosaicInitData.Area)];
+
+               MosaicInitData loadData = new MosaicInitData();
+               loadData.MosaicType = EMosaicEx.FromOrdinal(mosaicTypeOrdinal);
+               loadData.SizeField  = new Matrisize(sizeFieldM, sizeFieldN);
+               loadData.MinesCount = minesCount;
+               loadData.Area       = area;
+               return loadData;
+            } catch (Exception ex) {
+               LoggerSimple.Put($"Fail load data: {ex.Message}");
+               System.Diagnostics.Debug.Assert(false, ex.Message);
+            }
+         return new MosaicInitData();
+      }
+
 
       private void UpdateBackButtonVisibility()
       {
@@ -189,5 +212,6 @@ namespace fmg
 
          SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = visibility;
       }
+
    }
 }
