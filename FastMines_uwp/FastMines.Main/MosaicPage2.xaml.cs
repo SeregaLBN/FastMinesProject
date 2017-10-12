@@ -319,6 +319,8 @@ namespace fmg {
          // Explicitly remove references to allow the Win2D controls to get garbage collected
          _canvasSwapChainPanel.RemoveFromVisualTree();
          _canvasSwapChainPanel = null;
+
+         Bindings.StopTracking();
       }
 
       private void Mosaic_OnChangedGameStatus(MosaicControllerWin2D sender, PropertyChangedExEventArgs<EGameStatus> ev) { }

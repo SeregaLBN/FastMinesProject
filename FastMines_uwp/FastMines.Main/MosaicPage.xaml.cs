@@ -344,6 +344,8 @@ namespace fmg {
 
          _areaScaleObservable.Dispose();
          _scaleTransform = null;
+
+         Bindings.StopTracking();
       }
 
       private void OnPageSizeChanged(object sender, RoutedEventArgs e) {

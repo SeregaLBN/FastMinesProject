@@ -78,6 +78,8 @@ namespace fmg
 
          ViewModel.Dispose();
          _sizeChangedObservable?.Dispose();
+
+         Bindings.StopTracking();
       }
 
       private void OnListViewMosaicGroupMenuTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs ev) {

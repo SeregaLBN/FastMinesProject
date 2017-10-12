@@ -23,7 +23,7 @@ namespace fmg {
 
       public CustomSkillPage() {
          this.InitializeComponent();
-         MosaicData = new MosaicInitData();
+         //MosaicData = new MosaicInitData();
 
          this.Loaded   += OnPageLoaded;
          this.Unloaded += OnPageUnloaded;
@@ -66,7 +66,9 @@ namespace fmg {
       private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
          this.Loaded -= OnPageUnloaded;
          MosaicData.PropertyChanged -= OnMosaicDataPropertyChanged;
+         MosaicData = null;
          _closed = true;
+         Bindings.StopTracking();
       }
 
       private void StartNewGame() {

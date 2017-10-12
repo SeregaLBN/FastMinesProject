@@ -62,6 +62,8 @@ namespace fmg {
          this.Unloaded -= OnPageUnloaded;
          _closed = true;
          _sizeChangedObservable?.Dispose();
+
+         Bindings.StopTracking();
       }
 
       private void OnPageSizeChanged(object sender, SizeChangedEventArgs ev) {
@@ -88,7 +90,7 @@ namespace fmg {
       }
 
       private void OnItemClickGridViewMosaics(object sender, ItemClickEventArgs ev) {
-         // invoke afeter set/change ViewModel.MosaicsDs.CurrentElement
+         // invoke after set/change ViewModel.MosaicsDs.CurrentElement
          AsyncRunner.InvokeFromUiLater(() => {
             var cu = ViewModel.MosaicsDs.CurrentElement;
             if (cu != null)

@@ -9,19 +9,13 @@ namespace fmg.core.mosaic {
 
       public const double AREA_MINIMUM = 230;
 
-      private EMosaic   _mosaicType;
-      private Matrisize _sizeField;
-      private int       _minesCount;
-      private double    _area;
+      private EMosaic   _mosaicType = EMosaic.eMosaicSquare1;
+      private Matrisize _sizeField  = ESkillLevel.eBeginner.GetDefaultSize();
+      private int       _minesCount = ESkillLevel.eBeginner.GetNumberMines(EMosaic.eMosaicSquare1);
+      private double    _area       = AREA_MINIMUM * 10;
 
-      private bool _lockFireSkill;
+      private bool _lockFireSkill = false;
 
-      public MosaicInitData() {
-         MosaicType = EMosaic.eMosaicSquare1;
-         SizeField = ESkillLevel.eBeginner.GetDefaultSize();
-         MinesCount = ESkillLevel.eBeginner.GetNumberMines(MosaicType);
-         Area = AREA_MINIMUM * 10;
-      }
 
       public EMosaic MosaicType {
          get { return _mosaicType; }
@@ -44,7 +38,7 @@ namespace fmg.core.mosaic {
          set {
             var skillOld = SkillLevel;
             if (SetProperty(ref _sizeField, value)) {
-               var skillNew= SkillLevel;
+               var skillNew = SkillLevel;
                if (!_lockFireSkill && (skillNew != skillOld))
                   OnSelfPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
             }
