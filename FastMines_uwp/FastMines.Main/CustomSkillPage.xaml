@@ -29,28 +29,53 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Mosaic field size" Style="{ThemeResource BaseTextBlockStyle}" Margin="0,4,0,8" />
+                    <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Text="Mosaic field size" Style="{ThemeResource BaseTextBlockStyle}" Margin="0,4,0,8" />
 
-                    <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" >Width:</TextBlock>
-                    <Slider Grid.Row="2" Grid.Column="0"
+                    <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" >
+                        <TextBlock>Width (</TextBlock>
+                        <TextBlock Text="{x:Bind SliderWidth.Value, Converter={StaticResource ValueToStringConverter}, Mode=OneWay}" />
+                        <TextBlock>):</TextBlock>
+                    </StackPanel>
+                    <Slider Grid.Row="2" Grid.Column="1" Margin="7,0,0,0"
                             x:Name="SliderWidth" Value="{x:Bind MosaicData.SizeField, Mode=OneWay, Converter={StaticResource SizeToWidthConverter}}"
                             TickFrequency="10" TickPlacement="Outside" Minimum="0" Maximum="3000"
                             ValueChanged="OnSliderValueChangedSizeFieldWidth" />
-                    <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource OutputTextBlockStyle}" Text="{x:Bind SliderWidth.Value, Mode=OneWay, Converter={StaticResource ValueToStringConverter}}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource OutputTextBlockStyle}" Text="{x:Bind SliderWidth.Minimum, Mode=OneWay, Converter={StaticResource ValueToStringConverter}}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="2" Style="{StaticResource OutputTextBlockStyle}" Text="{x:Bind SliderWidth.Maximum, Mode=OneWay, Converter={StaticResource ValueToStringConverter}}"/>
 
-                    <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" >Height:</TextBlock>
-                    <Slider Grid.Row="4" Grid.Column="0"
+                    <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" >
+                        <TextBlock>Height (</TextBlock>
+                        <TextBlock Text="{x:Bind SliderHeight.Value, Converter={StaticResource ValueToStringConverter}, Mode=OneWay}" />
+                        <TextBlock>):</TextBlock>
+                    </StackPanel>
+                    <Slider Grid.Row="4" Grid.Column="1" Margin="7,0,0,0"
                             x:Name="SliderHeight" Value="{x:Bind MosaicData.SizeField, Mode=OneWay, Converter={StaticResource SizeToHeightConverter}}"
                             TickFrequency="10" TickPlacement="Outside" Minimum="0" Maximum="3000"
                             ValueChanged="OnSliderValueChangedSizeFieldHeight" />
-                    <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource OutputTextBlockStyle}" Text="{x:Bind SliderHeight.Value, Mode=OneWay, Converter={StaticResource ValueToStringConverter}}"/>
+                    <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource OutputTextBlockStyle}" Text="{x:Bind SliderHeight.Minimum, Mode=OneWay, Converter={StaticResource ValueToStringConverter}}"/>
+                    <TextBlock Grid.Row="4" Grid.Column="2" Style="{StaticResource OutputTextBlockStyle}" Text="{x:Bind SliderHeight.Maximum, Mode=OneWay, Converter={StaticResource ValueToStringConverter}}"/>
 
+                    <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" >
+                        <TextBlock Text="Size" Style="{ThemeResource BaseTextBlockStyle}"/>
+                        <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center">
+                            <StackPanel>
+                                <RadioButton Content="Beginner"     x:Name="rbSizeBeginner"     GroupName="SkillSize" Tag="0" Checked="OnRadioButtonSkillSizeChecked" />
+                                <RadioButton Content="Amateur"      x:Name="rbSizeAmateur"      GroupName="SkillSize" Tag="1" Checked="OnRadioButtonSkillSizeChecked" />
+                            </StackPanel>
+                            <StackPanel>
+                                <RadioButton Content="Professional" x:Name="rbSizeProfessional" GroupName="SkillSize" Tag="2" Checked="OnRadioButtonSkillSizeChecked" />
+                                <RadioButton Content="Crazy"        x:Name="rbSizeCrazy"        GroupName="SkillSize" Tag="3" Checked="OnRadioButtonSkillSizeChecked" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
                 </Grid>
 
 
@@ -62,28 +87,33 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Complexity for a given field size" Style="{ThemeResource BaseTextBlockStyle}" Margin="0,4,0,8" />
-
-                    <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" >Mines:</TextBlock>
-                    <Slider Grid.Row="2" Grid.Column="0"
+                    <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Text="Complexity for a given field size" Style="{ThemeResource BaseTextBlockStyle}" Margin="0,4,0,8" />
+                    <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" >
+                        <TextBlock>Mines (</TextBlock>
+                        <TextBlock Text="{x:Bind SliderMines.Value, Converter={StaticResource ValueToStringConverter}, Mode=OneWay}" />
+                        <TextBlock>):</TextBlock>
+                    </StackPanel>
+                    <Slider Grid.Row="2" Grid.Column="1" Margin="7,0,0,0"
                             x:Name="SliderMines" Value="{x:Bind MosaicData.MinesCount, Mode=TwoWay, Converter={StaticResource IntToDoubleConverter}}"
                             TickFrequency="100" TickPlacement="Outside" Minimum="0" Maximum="3000" />
-                    <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource OutputTextBlockStyle}" Text="{x:Bind SliderMines.Value, Converter={StaticResource ValueToStringConverter}, Mode=OneWay}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource OutputTextBlockStyle}" Text="{x:Bind SliderMines.Minimum, Converter={StaticResource ValueToStringConverter}, Mode=OneWay}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="2" Style="{StaticResource OutputTextBlockStyle}" Text="{x:Bind SliderMines.Maximum, Converter={StaticResource ValueToStringConverter}, Mode=OneWay}"/>
 
                     <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" >
                         <TextBlock Text="Skill" Style="{ThemeResource BaseTextBlockStyle}"/>
                         <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center">
                             <StackPanel>
-                                <RadioButton Content="Beginner"     x:Name="rbBeginner"     GroupName="SkillMines" Tag="0" Checked="OnRadioButtonSkillMinesChecked" />
-                                <RadioButton Content="Amateur"      x:Name="rbAmateur"      GroupName="SkillMines" Tag="1" Checked="OnRadioButtonSkillMinesChecked" />
+                                <RadioButton Content="Beginner"     x:Name="rbMinesBeginner"     GroupName="SkillMines" Tag="0" Checked="OnRadioButtonSkillMinesChecked" />
+                                <RadioButton Content="Amateur"      x:Name="rbMinesAmateur"      GroupName="SkillMines" Tag="1" Checked="OnRadioButtonSkillMinesChecked" />
                             </StackPanel>
                             <StackPanel>
-                                <RadioButton Content="Professional" x:Name="rbProfessional" GroupName="SkillMines" Tag="2" Checked="OnRadioButtonSkillMinesChecked" />
-                                <RadioButton Content="Crazy"        x:Name="rbCrazy"        GroupName="SkillMines" Tag="3" Checked="OnRadioButtonSkillMinesChecked" />
+                                <RadioButton Content="Professional" x:Name="rbMinesProfessional" GroupName="SkillMines" Tag="2" Checked="OnRadioButtonSkillMinesChecked" />
+                                <RadioButton Content="Crazy"        x:Name="rbMinesCrazy"        GroupName="SkillMines" Tag="3" Checked="OnRadioButtonSkillMinesChecked" />
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>

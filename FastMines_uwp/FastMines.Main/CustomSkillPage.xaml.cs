@@ -60,7 +60,8 @@ namespace fmg {
          SliderWidth .Value = MosaicData.SizeField.m;
          SliderHeight.Value = MosaicData.SizeField.n;
          SliderMines .Value = MosaicData.MinesCount;
-         CheckRadioButtons();
+         CheckSkillSizeRadioButtons();
+         CheckSkillMinesRadioButtons();
       }
 
       private void OnPageUnloaded(object sender, RoutedEventArgs ev) {
@@ -99,12 +100,16 @@ namespace fmg {
       private void OnMosaicDataPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs ev) {
          switch (ev.PropertyName) {
          case nameof(MosaicData.SizeField):
+            CalcSliderMinesMax();
+            CheckSkillSizeRadioButtons();
+            CheckSkillMinesRadioButtons();
+            break;
          case nameof(MosaicData.MosaicType):
             CalcSliderMinesMax();
-            CheckRadioButtons();
+            CheckSkillMinesRadioButtons();
             break;
          case nameof(MosaicData.MinesCount):
-            CheckRadioButtons();
+            CheckSkillMinesRadioButtons();
             break;
          }
       }
@@ -156,14 +161,29 @@ namespace fmg {
          MosaicData.MinesCount = skillLevel.GetNumberMines(MosaicData.MosaicType, MosaicData.SizeField);
       }
 
-      private void CheckRadioButtons() {
+      private void OnRadioButtonSkillSizeChecked(object sender, RoutedEventArgs ev) {
+         System.Diagnostics.Debug.Assert(sender is RadioButton);
+         var rb = (RadioButton)sender;
+         var skillLevel = ESkillLevelEx.FromOrdinal(Convert.ToInt32(rb.Tag.ToString()));
+         MosaicData.SizeField = skillLevel.GetDefaultSize();
+      }
+
+      private void CheckSkillSizeRadioButtons() {
+         var size = MosaicData.SizeField;
+         rbSizeBeginner    .IsChecked = (size == ESkillLevel.eBeginner.GetDefaultSize());
+         rbSizeAmateur     .IsChecked = (size == ESkillLevel.eAmateur .GetDefaultSize());
+         rbSizeProfessional.IsChecked = (size == ESkillLevel.eProfi   .GetDefaultSize());
+         rbSizeCrazy       .IsChecked = (size == ESkillLevel.eCrazy   .GetDefaultSize());
+      }
+
+      private void CheckSkillMinesRadioButtons() {
          var mines = MosaicData.MinesCount;
          var type  = MosaicData.MosaicType;
          var size  = MosaicData.SizeField;
-         rbBeginner    .IsChecked = (mines == ESkillLevel.eBeginner.GetNumberMines(type, size));
-         rbAmateur     .IsChecked = (mines == ESkillLevel.eAmateur .GetNumberMines(type, size));
-         rbProfessional.IsChecked = (mines == ESkillLevel.eProfi   .GetNumberMines(type, size));
-         rbCrazy       .IsChecked = (mines == ESkillLevel.eCrazy   .GetNumberMines(type, size));
+         rbMinesBeginner    .IsChecked = (mines == ESkillLevel.eBeginner.GetNumberMines(type, size));
+         rbMinesAmateur     .IsChecked = (mines == ESkillLevel.eAmateur.GetNumberMines(type, size));
+         rbMinesProfessional.IsChecked = (mines == ESkillLevel.eProfi.GetNumberMines(type, size));
+         rbMinesCrazy       .IsChecked = (mines == ESkillLevel.eCrazy.GetNumberMines(type, size));
       }
 
    }
