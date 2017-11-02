@@ -320,7 +320,7 @@ namespace fmg {
          _canvasSwapChainPanel.RemoveFromVisualTree();
          _canvasSwapChainPanel = null;
 
-         Bindings.StopTracking();
+         //Bindings.StopTracking();
       }
 
       private void Mosaic_OnChangedGameStatus(MosaicControllerWin2D sender, PropertyChangedExEventArgs<EGameStatus> ev) { }
