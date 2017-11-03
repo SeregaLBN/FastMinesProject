@@ -9,4 +9,5 @@ FastMines_xxx - проекты конкретной языковой реали�
  * FastMines_swing    - Java desktop SWING project                                      (open from Eclipse workspace)
  * FastMines_uwp      - C# desktop/tablet/mobile Universal Windows Platform application (open from Visual Studio workspace)
  * FastMines_Logo     - C++ Win32 proj (generate logo project - raw bitmap)             (open from Visual Studio workspace)
+ * FastMines_SVG      - js - animation SVG images over JS
  * ...
