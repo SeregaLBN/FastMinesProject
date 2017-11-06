@@ -185,7 +185,7 @@ class AMosaicSkillImg {
     this.mosaicSkill = ESkillLevel.eBeginner,
     this.rotateAngle = 0; // 27.0;
     this.isPolarLights = true;
-    this.foregroundColor = new Color(0xFFDA70D6);
+    this.foregroundColor = new Color(0xBFDA70D6);
   }
 
   getCoords_SkillLevelAsValue() {
@@ -450,6 +450,7 @@ function init(evt) {
   var createPolygon = function(parent, /*Color*/color, /*[{x, y}, ...]*/polygonPoints, /*Point*/ offset) {
     var polygon = svgDoc.createElementNS(svgNS, "polygon");
     polygon.setAttributeNS(null, "fill", "#" + color.asHexString.substr(2));
+    polygon.setAttributeNS(null, "opacity", parseInt(color.asHexString.substr(0, 2), 16) / 256.0);
     // console.log("crl = " + color + "; asHexString=" + color.asHexString);
     polygon.setAttributeNS(null, "points", polygonPoints.map(function(i) { return round(i.x + offset.x, 2) + ',' + round(i.y + offset.y, 2)}).join(' '));
     // g.setAttributeNS(null, "transform", "translate(0, 20)");
