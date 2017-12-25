@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="500" height="500" style="border: solid 1px red;" >
+
+<g transform="translate(100,100) ">
+
+  <circle r="5" fill="orange" fill-opacity=".6">
+    <animate attributeName="cx" dur="3s" values="0; 200" calcMode="linear" repeatCount="indefinite" />
+    <animate attributeName="cy" dur="3s" values="100; 0; 100" 
+        keyTimes="0; .5; 1" calcMode="spline" 
+        keySplines="0.37 0.59 0.66 1; 0.34 0 0.63 0.41"
+        repeatCount="indefinite" />
+  </circle>
+
+  <circle r="5" fill="green" fill-opacity=".6">
+    <animate attributeName="cx" dur="3s" values="0; 100; 200"   
+        keyTimes="0; .5; 1" calcMode="spline" 
+        keySplines="0.59 0.37 1 0.66; 0 0.34 0.41 0.63"
+        repeatCount="indefinite" />
+    <animate attributeName="cy" dur="3s" values="100; 0; 100" calcMode="linear" repeatCount="indefinite" />
+  </circle>
+
+  <path d="M0 100 C 37 41, 66 0, 100 0 C 134 0, 163 41, 200 100" stroke="black" fill="transparent"/>
+
+</g>
+</svg>
