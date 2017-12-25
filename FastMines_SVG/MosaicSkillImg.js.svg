@@ -396,7 +396,7 @@ function addRotateTransform(element_to_rotate, speed, direction, center) {
   center.y = round(center.y, 2);
 
   transform.setAttributeNS(null, "attributeName", "transform");
-  transform.setAttributeNS(null, "attributeType", "XML");
+//transform.setAttributeNS(null, "attributeType", "XML");
   transform.setAttributeNS(null, "type", "rotate");
   transform.setAttributeNS(null, "dur", speed + "s");
   transform.setAttributeNS(null, "repeatCount", "indefinite");
