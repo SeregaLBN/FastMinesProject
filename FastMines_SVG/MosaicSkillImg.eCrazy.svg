@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100" height="100" style="border: solid 1px red;" preserveAspectRatio="none" onload="init(evt)" viewBox="0 0 100 100">
   <g>
     <animateTransform attributeName="transform" type="rotate" dur="2.5s" repeatCount="indefinite" from="0 50 50" to="360 50 50"/>
-    <polygon fill="#332B55" points="26.55,18.44 29.42,24.37 35.64,22.2 33.47,28.43 39.4,31.3 33.47,34.17 35.64,40.39 29.42,38.22 26.55,44.15 23.67,38.22 17.45,40.39 19.62,34.17 13.69,31.3 19.62,28.43 17.45,22.2 23.67,24.37">
+    <path fill="#332B55" d="M26.55 18.44 L 29.42 24.37 L 35.64 22.2 L 33.47 28.43 L 39.4 31.3 L 33.47 34.17 L 35.64 40.39 L 29.42 38.22 L 26.55 44.15 L 23.67 38.22 L 17.45 40.39 L 19.62 34.17 L 13.69 31.3 L 19.62 28.43 L 17.45 22.2 L 23.67 24.37 Z">
       <animateTransform attributeName="transform" type="rotate" dur="1.5s" repeatCount="indefinite" from="0 26.55 31.3" to="-360 26.55 31.3"/>
-    </polygon>
+    </path>
   </g>
   <g>
     <animateTransform attributeName="transform" type="rotate" dur="2.5s" repeatCount="indefinite" from="0 50 50" to="360 50 50"/>

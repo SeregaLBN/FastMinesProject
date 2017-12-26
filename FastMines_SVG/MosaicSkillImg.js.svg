@@ -57,11 +57,6 @@ class Color {
    }
 
    toString() {
-     var h = function(v) {
-       var s = (+v).toString(16);
-       if (s.length < 2) s = '0' + s;
-       return s.toUpperCase();
-      };
       return "argb[" + this.asHexString + "]";
    }
 
@@ -184,8 +179,16 @@ class AMosaicSkillImg {
   constructor() {
     this.mosaicSkill = ESkillLevel.eBeginner,
     this.rotateAngle = 0; // 27.0;
+    this.rotate = true;
+    this.redrawInterval = 100; // in ms
+    this.rotateAngleDelta = 1.4; // 
     this.isPolarLights = true;
-    this.foregroundColor = new Color(0xBFDA70D6);
+    this.foregroundColor = new Color(0xFFDA70D6); // color Orchid
+  }
+
+  onTimer() {
+    if (this.rotate)
+      this.rotateAngle = this.rotateAngle + this.rotateAngleDelta;
   }
 
   getCoords_SkillLevelAsValue() {
@@ -460,6 +463,17 @@ function init(evt) {
 
   var img = new AMosaicSkillImg();
   img.mosaicSkill = ESkillLevel.eCrazy;
+  var polygonsTimeScale = [];
+  for (var i=0; Math.abs(i * img.rotateAngleDelta) < 360; ++i) {
+    var res = img.getCoords_SkillLevelAsValue();
+    polygonsTimeScale.push({
+      timeStamp: i * img.redrawInterval,
+      angle    : img.rotateAngle,
+      color    : res.clr,
+      polygon  : res.polygon
+    });
+    img.onTimer();
+  }
   var res = img.getCoords_SkillLevelAsValue();
   // console.log(JSON.stringify(res, null, 3));
   for (var item of res)   {
