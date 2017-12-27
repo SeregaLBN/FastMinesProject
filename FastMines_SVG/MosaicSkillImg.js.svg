@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
-     width="100" height="100"
-     style='border: solid 1px red;'
-     preserveAspectRatio="none"
-     onload="init(evt)">
-  
-  <script type="text/ecmascript"><![CDATA[
+   width="100" height="100"
+   style='border: solid 1px red;'
+   preserveAspectRatio="none"
+   onload="init(evt)">
+
+<script type="text/ecmascript"><![CDATA[
 const svgNS = "http://www.w3.org/2000/svg";
 
 const /* enum */ ESkillLevel = {
@@ -221,7 +221,7 @@ class AMosaicSkillImg {
       if (this.isPolarLights)
         clr = new HSV(clr).addHue(starNum * anglePart).toColor();
 
-      res.push({ clr: clr,
+      res.push({ color: clr,
                  polygon: (this.mosaicSkill == ESkillLevel.eCustom)
                                     ? FigureHelper.getRegularPolygonCoords(3 + starNum % 4, r1, centerStar, -angleAccumulative)
                                     : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative),
@@ -463,22 +463,55 @@ function init(evt) {
 
   var img = new AMosaicSkillImg();
   img.mosaicSkill = ESkillLevel.eCrazy;
+  img.rotateAngleDelta = 17;
+  
   var polygonsTimeScale = [];
-  for (var i=0; Math.abs(i * img.rotateAngleDelta) < 360; ++i) {
+  const fullRotateAngle = 360.0 * 1.0;
+  for (var i=0; Math.abs(i * img.rotateAngleDelta) < fullRotateAngle; ++i) {
     var res = img.getCoords_SkillLevelAsValue();
     polygonsTimeScale.push({
-      timeStamp: i * img.redrawInterval,
-      angle    : img.rotateAngle,
-      color    : res.clr,
-      polygon  : res.polygon
+      timeStamp : i * img.redrawInterval,
+      angle     : img.rotateAngle,
+      clrAndPoly: res // [{color, polygon}, ...]
     });
     img.onTimer();
   }
+//console.log(JSON.stringify(polygonsTimeScale, null, 3));
+
+  var polygonsCount = polygonsTimeScale[0].clrAndPoly.length;
+  var paths = [];
+  const animate_duration = fullRotateAngle/img.rotateAngleDelta * img.redrawInterval;
+  for (var i=0; i < polygonsCount; ++i) {
+    var animate_d = {
+      attributeName: 'd', 
+      dur: round(animate_duration, 0) + 'ms',
+      repeatCount: 'indefinite',
+      keyTimes: polygonsTimeScale.map(function(item) { return round(item.timeStamp/animate_duration, 4); }).join(';') + ';1',
+      values: polygonsTimeScale.map(function(item) {
+                var polygon = item.clrAndPoly[i].polygon;
+                return 'M ' + polygon.map(function(p) { return round(p.x, 2) + ' ' + round(p.y, 2); }).join(' L ')  + ' Z';
+              }).join('; ')
+    };
+    var animate_fill = {
+      attributeName: 'fill', 
+      dur: animate_d.dur,
+      repeatCount: 'indefinite',
+      keyTimes: animate_d.keyTimes,
+      values: polygonsTimeScale.map(function(item) { return '#' + item.clrAndPoly[i].color.asHexString.substr(2); }).join('; ')
+    };
+
+    paths.push({ animate_d: animate_d, animate_fill: animate_fill});
+
+    break;
+  }
+  console.log(JSON.stringify(paths, null, 3));
+
+
   var res = img.getCoords_SkillLevelAsValue();
   // console.log(JSON.stringify(res, null, 3));
   for (var item of res)   {
       // console.log(JSON.stringify(item, null, 3));
-    var clr = item.clr;
+    var clr = item.color;
     var polygon = item.polygon;
     var c = item.centerStar;
     var rc = item.rcOuterStar;
