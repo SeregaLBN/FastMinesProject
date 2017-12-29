@@ -1,9 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
-   width="100" height="100"
-   style='border: solid 1px red;'
-   preserveAspectRatio="none"
-   onload="init(evt)">
-
+     width="100" height="100"
+     style='border: solid 1px red;'
+     preserveAspectRatio="none"
+     onload="init(evt)">
 <script type="text/ecmascript"><![CDATA[
 const svgNS = "http://www.w3.org/2000/svg";
 
@@ -498,11 +497,14 @@ function format(node, level) {
   var indentBefore = new Array(level++ + 1).join('  '),
       indentAfter  = new Array(level - 1).join('  '),
       textNode;
+  if (node.nodeName === 'svg') {
+    node.removeAttribute('onload');
+  } else
+  if (node.nodeName === 'script') {
+    node.remove();
+    return;
+  }
   for (var i = 0; i < node.children.length; i++) {
-    if (node.children[i].nodeName === 'script') {
-      node.children[i].remove();
-      continue;
-    }
     textNode = document.createTextNode('\n' + indentBefore);
     node.insertBefore(textNode, node.children[i]);
     format(node.children[i], level);
