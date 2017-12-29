@@ -390,26 +390,6 @@ class HSV {
    }
 }
 
-function addRotateTransform(element_to_rotate, speed, direction, center) {
-  var transform = svgDoc.createElementNS(svgNS, "animateTransform");
-
-  var bb = element_to_rotate.getBBox();
-  center = center || { x: bb.x + bb.width/2, y: bb.y + bb.height/2 };
-  center.x = round(center.x, 2);
-  center.y = round(center.y, 2);
-
-  transform.setAttributeNS(null, "attributeName", "transform");
-//transform.setAttributeNS(null, "attributeType", "XML");
-  transform.setAttributeNS(null, "type", "rotate");
-  transform.setAttributeNS(null, "dur", speed + "s");
-  transform.setAttributeNS(null, "repeatCount", "indefinite");
-  transform.setAttributeNS(null, "from", "0 "+center.x+" "+center.y);
-  transform.setAttributeNS(null, "to", 360*direction+" "+center.x+" "+center.y);
-
-  element_to_rotate.appendChild(transform);
-  transform.beginElement();
-}
-
 function round(n, digits) {
   if (arguments.length < 2)
     digits = 2;
@@ -443,24 +423,6 @@ function init(evt) {
   // var clr = new HSV(clr).addHue(starNum, anglePart).toColor();
   console.log("clr = " + Color.RandomColor());
 
-  var createGroup = function(/*Rect*/rc) {
-    var g = svgDoc.createElementNS(svgNS, "g");
-    // g.setAttributeNS(null, "transform", "translate(" + rc.x + ", " + rc.y + ")");
-    svg.appendChild(g);
-    return g;
-  };
-
-  var createPolygon = function(parent, /*Color*/color, /*[{x, y}, ...]*/polygonPoints, /*Point*/ offset) {
-    var polygon = svgDoc.createElementNS(svgNS, "polygon");
-    polygon.setAttributeNS(null, "fill", "#" + color.asHexString.substr(2));
-    polygon.setAttributeNS(null, "opacity", parseInt(color.asHexString.substr(0, 2), 16) / 256.0);
-    // console.log("crl = " + color + "; asHexString=" + color.asHexString);
-    polygon.setAttributeNS(null, "points", polygonPoints.map(function(i) { return round(i.x + offset.x, 2) + ',' + round(i.y + offset.y, 2)}).join(' '));
-    // g.setAttributeNS(null, "transform", "translate(0, 20)");
-    parent.appendChild(polygon);
-    return polygon;
-  };
-
   var img = new AMosaicSkillImg();
   img.mosaicSkill = ESkillLevel.eCrazy;
   img.rotateAngleDelta = 17;
@@ -468,25 +430,27 @@ function init(evt) {
   var polygonsTimeScale = [];
   const fullRotateAngle = 360.0 * 1.0;
   for (var i=0; Math.abs(i * img.rotateAngleDelta) < fullRotateAngle; ++i) {
-    var res = img.getCoords_SkillLevelAsValue();
     polygonsTimeScale.push({
       timeStamp : i * img.redrawInterval,
-      angle     : img.rotateAngle,
-      clrAndPoly: res // [{color, polygon}, ...]
+      clrAndPoly: img.getCoords_SkillLevelAsValue() // [{color, polygon}, ...]
     });
     img.onTimer();
   }
+  const animate_duration = fullRotateAngle/img.rotateAngleDelta * img.redrawInterval;
+  polygonsTimeScale.push({
+    timeStamp : animate_duration,
+    clrAndPoly: polygonsTimeScale[0].clrAndPoly
+  });
 //console.log(JSON.stringify(polygonsTimeScale, null, 3));
 
   var polygonsCount = polygonsTimeScale[0].clrAndPoly.length;
   var paths = [];
-  const animate_duration = fullRotateAngle/img.rotateAngleDelta * img.redrawInterval;
   for (var i=0; i < polygonsCount; ++i) {
     var animate_d = {
       attributeName: 'd', 
       dur: round(animate_duration, 0) + 'ms',
       repeatCount: 'indefinite',
-      keyTimes: polygonsTimeScale.map(function(item) { return round(item.timeStamp/animate_duration, 4); }).join(';') + ';1',
+      keyTimes: polygonsTimeScale.map(function(item) { return round(item.timeStamp/animate_duration, 4); }).join(';'),// + ';1',
       values: polygonsTimeScale.map(function(item) {
                 var polygon = item.clrAndPoly[i].polygon;
                 return 'M ' + polygon.map(function(p) { return round(p.x, 2) + ' ' + round(p.y, 2); }).join(' L ')  + ' Z';
@@ -500,36 +464,45 @@ function init(evt) {
       values: polygonsTimeScale.map(function(item) { return '#' + item.clrAndPoly[i].color.asHexString.substr(2); }).join('; ')
     };
 
-    paths.push({ animate_d: animate_d, animate_fill: animate_fill});
-
-    break;
+    paths.push({ animate_d: animate_d, animate_fill: animate_fill });
   }
-  console.log(JSON.stringify(paths, null, 3));
+  // console.log(JSON.stringify(paths, null, 3));
 
-
-  var res = img.getCoords_SkillLevelAsValue();
-  // console.log(JSON.stringify(res, null, 3));
-  for (var item of res)   {
-      // console.log(JSON.stringify(item, null, 3));
-    var clr = item.color;
-    var polygon = item.polygon;
-    var c = item.centerStar;
-    var rc = item.rcOuterStar;
-    var g = createGroup(rc);
-    // console.log(JSON.stringify(c, null, 3));
-    addRotateTransform(g, 2.5, 1, { x: Settings.width/2, y: Settings.height/2 });
-    // console.log(JSON.stringify(g, null, 3));
-    var poly = createPolygon(g, clr, polygon, { x: 0* -rc.x, y: 0* -rc.y });
-    addRotateTransform(poly, 1.5, -1, { x: c.x, y: c.y });
-    // console.log(JSON.stringify(poly, null, 3));
+  var createPath = function(path) {
+    var pathDom = svgDoc.createElementNS(svgNS, "path");
+    pathDom.appendChild(createAnimate(path.animate_d))
+    pathDom.appendChild(createAnimate(path.animate_fill));
+    return pathDom;
+  };
+  var createAnimate = function(animate) {
+    var animateDom = svgDoc.createElementNS(svgNS, "animate");
+    animateDom.setAttributeNS(null, "attributeName", animate.attributeName);
+    animateDom.setAttributeNS(null, "dur"          , animate.dur);
+    animateDom.setAttributeNS(null, "repeatCount"  , animate.repeatCount);
+    animateDom.setAttributeNS(null, "keyTimes"     , animate.keyTimes);
+    animateDom.setAttributeNS(null, "values"       , animate.values);
+    return animateDom;
+  };
+  for (var i in paths) {
+    var path = paths[i];
+    var pathDom = createPath(path);
+    svg.appendChild(pathDom);
+    //pathDom.beginElement();
   }
+
+  console.log(format(svg, 4).outerHTML);
+
 }
-    
+
 function format(node, level) {
   var indentBefore = new Array(level++ + 1).join('  '),
       indentAfter  = new Array(level - 1).join('  '),
       textNode;
   for (var i = 0; i < node.children.length; i++) {
+    if (node.children[i].nodeName === 'script') {
+      node.children[i].remove();
+      continue;
+    }
     textNode = document.createTextNode('\n' + indentBefore);
     node.insertBefore(textNode, node.children[i]);
     format(node.children[i], level);
