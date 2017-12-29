@@ -180,12 +180,20 @@ class AMosaicSkillImg {
     this.rotateAngle = 0; // 27.0;
     this.rotate = true;
     this.redrawInterval = 100; // in ms
-    this.rotateAngleDelta = 1.4; // 
+    this.rotateAngleDelta = 1.4;
     this.isPolarLights = true;
     this.foregroundColor = new Color(0xFFDA70D6); // color Orchid
   }
 
+  nextForegroundColor() {
+      var hsv = new HSV(this.foregroundColor);
+      hsv.h += this.rotateAngleDelta;
+      this.foregroundColor = hsv.toColor();
+  }
+
   onTimer() {
+    if (this.isPolarLights)
+      this.nextForegroundColor();
     if (this.rotate)
       this.rotateAngle = this.rotateAngle + this.rotateAngleDelta;
   }
@@ -304,7 +312,7 @@ class HSV {
       var r = rgb[0];
       var g = rgb[1];
       var b = rgb[2];
-      return new Color(this.a, toInt(r), toInt(g), toInt(b));
+      return new Color(this.a, toInt(r*255/100), toInt(g*255/100), toInt(b*255/100));
    }
   
    toColorDouble() {
@@ -490,7 +498,6 @@ function init(evt) {
   }
 
   console.log(format(svg, 4).outerHTML);
-
 }
 
 function format(node, level) {
@@ -499,6 +506,7 @@ function format(node, level) {
       textNode;
   if (node.nodeName === 'svg') {
     node.removeAttribute('onload');
+    node.removeAttribute('style');
   } else
   if (node.nodeName === 'script') {
     node.remove();
