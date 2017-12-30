@@ -1,18 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
-     width="100" height="100"
      style='border: solid 1px red;'
      preserveAspectRatio="none"
-     onload="init(evt)">
+     onload="Promise.resolve().then(function() { init(evt); } )">
 <script type="text/ecmascript"><![CDATA[
-const svgNS = "http://www.w3.org/2000/svg";
+/** common settings this SVG */
+var Settings = {};
+Promise.resolve()
+  .then(function() {
+    Settings = {
+      width: 100,  // view width
+      height: 100, // view height
+      pad: 5,  // padding
+      mosaicSkill: ESkillLevel.eCrazy,
 
-const /* enum */ ESkillLevel = {
-   eBeginner: { ordinal: 0 },
-   eAmateur : { ordinal: 1 },
-   eProfi   : { ordinal: 2 },
-   eCrazy   : { ordinal: 3 },
-   eCustom  : { ordinal: 4 }
-};
+      rotateAngleDelta: 17, // in °
+      borderWidth: 0.7,
+
+      backroundColor : Color.RandomColor().brighter(0.4),
+      foregroundAlpha: 200  // 0..255 - foreground alpha-chanel color
+    };
+  });
+
+const svgNS = "http://www.w3.org/2000/svg";
 
 /** RGBA color */
 class Color {
@@ -130,124 +139,6 @@ class Color {
    }
 
 }
-
-/** common settings this SVG */
-const Settings = {
-  width: 100,  // view width
-  height: 100, // view height
-  pad: 5,  // padding
-  mosaicSkill: ESkillLevel.eCrazy,
-
-  rotateAngleDelta: 17, // in °
-  borderWidth: 0.7,
-
-  backroundColor : Color.RandomColor().brighter(0.4),
-  foregroundAlpha: 200  // 0..255 - foreground alpha-chanel color
-};
-
-const FigureHelper = {
-  toRadian: function(/*double*/ degreesAngle) {
-    return (degreesAngle * Math.PI) / 180; // to radians
-  },
-  toDegrees: function(/*double*/ radianAngle) {
-    return radianAngle * 180 / Math.PI;
-  },
-  getPointOnCircleRadian: function(/*double*/ radius, /*double*/ radAngle, /*PointDouble{x,y}*/ center) {
-    return { x: radius * Math.sin(radAngle) + center.x, y: -radius * Math.cos(radAngle) + center.y };
-  },
-  getPointOnCircle(/*double*/ radius, /*double*/ degreesAngle, /*PointDouble*/ center) {
-    return FigureHelper.getPointOnCircleRadian(radius, FigureHelper.toRadian(degreesAngle), center);
-  },
-  getRegularPolygonCoords: function(/*int*/ n, /*double*/ radius, /*PointDouble{x,y}*/ center, /*double*/ offsetAngle) {
-    var angle = (2 * Math.PI)/n; // 360° / n
-    var offsetAngle2 = FigureHelper.toRadian(offsetAngle);
-    var polygon = [];
-    for (var i=0; i<n; ++i) {
-      var a = (i * angle) + offsetAngle2;
-      polygon[i] = FigureHelper.getPointOnCircleRadian(radius, a, center);
-    }
-    return polygon;
-  },
-  getRegularStarCoords: function(/*int*/ rays, /*double*/ radiusOut, /*double*/ radiusIn, /*PointDouble*/ center, /*double*/ offsetAngle) {
-    var pointsExternal = FigureHelper.getRegularPolygonCoords(rays, radiusOut, center, offsetAngle);
-    var pointsInternal = FigureHelper.getRegularPolygonCoords(rays, radiusIn, center, offsetAngle + (180.0/rays));
-    var polygon = [];
-    for (var i=0; i<rays; ++i) {
-      polygon[i*2+0] = pointsExternal[i];
-      polygon[i*2+1] = pointsInternal[i];
-    }
-    return polygon;
-  }
-};
-
-class AMosaicSkillImg {
-  constructor() {
-    this.mosaicSkill = ESkillLevel.eBeginner,
-    this.rotateAngle = 0; // 27.0;
-    this.rotateAngleDelta = 1.4;
-    this.rotate = true;
-    this.redrawInterval = 100; // in ms
-    this.borderColor = new Color(0xFF800000).darker(0.5); // Color.Maroon.clone().darker(0.5);
-    this.borderWidth = 3;
-    this.isPolarLights = true;
-    this.foregroundColor = new Color(0xFFDA70D6); // color Orchid
-    this.foregroundColor.a = Settings.foregroundAlpha;
-  }
-
-  nextForegroundColor() {
-      var hsv = new HSV(this.foregroundColor);
-      hsv.h += this.rotateAngleDelta;
-      this.foregroundColor = hsv.toColor();
-  }
-
-  onTimer() {
-    if (this.isPolarLights)
-      this.nextForegroundColor();
-    if (this.rotate)
-      this.rotateAngle = this.rotateAngle + this.rotateAngleDelta;
-  }
-
-  getCoords_SkillLevelAsValue() {
-    var sq = Math.min( // size inner square
-      Settings.width  - Settings.pad*2,
-      Settings.height - Settings.pad*2);
-    var r1 = sq/7; // external radius
-    var r2 = sq/12; // internal radius
-
-    var ordinal = this.mosaicSkill.ordinal;
-    var rays = 5 + ordinal; // rays count
-    var stars = 4 + ordinal; // number of stars on the perimeter of the circle
-
-    var angle = this.rotateAngle;
-    var angleAccumulative = angle;
-    var anglePart = 360.0/stars;
-
-    var center = { x: Settings.width / 2.0, y: Settings.height / 2.0 };
-    var zero = { x: 0, y: 0 };
-    var res = []; // array of Pair<Color bkColor, PointDouble[] polygonCoords >
-    for (var starNum=0; starNum < stars; ++starNum) {
-      // (un)comment next line to view result changes...
-      angleAccumulative = Math.sin(FigureHelper.toRadian(angleAccumulative/4))*angleAccumulative; // accelerate / ускоряшка..
-
-      // adding offset
-      var offset = FigureHelper.getPointOnCircle(sq/3, angleAccumulative + starNum * anglePart, zero);
-      var centerStar = { x: center.x + offset.x, y: center.y + offset.y };
-
-      var clr = this.foregroundColor;
-      if (this.isPolarLights)
-        clr = new HSV(clr).addHue(starNum * anglePart).toColor();
-
-      res.push({ color: clr,
-                 polygon: (this.mosaicSkill == ESkillLevel.eCustom)
-                                    ? FigureHelper.getRegularPolygonCoords(3 + starNum % 4, r1, centerStar, -angleAccumulative)
-                                    : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative),
-                 centerStar: centerStar,
-                 rcOuterStar : { x: centerStar.x - r1, y: centerStar.y - r1, wudth: r1*2, height: r1*2 } });
-    }
-    res.reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
-    return res;
-  }
-};
 
 /**
  * Сylindrical-coordinate representations of points in an RGB color model
@@ -406,6 +297,118 @@ class HSV {
    }
 }
 
+const FigureHelper = {
+  toRadian: function(/*double*/ degreesAngle) {
+    return (degreesAngle * Math.PI) / 180; // to radians
+  },
+  toDegrees: function(/*double*/ radianAngle) {
+    return radianAngle * 180 / Math.PI;
+  },
+  getPointOnCircleRadian: function(/*double*/ radius, /*double*/ radAngle, /*PointDouble{x,y}*/ center) {
+    return { x: radius * Math.sin(radAngle) + center.x, y: -radius * Math.cos(radAngle) + center.y };
+  },
+  getPointOnCircle(/*double*/ radius, /*double*/ degreesAngle, /*PointDouble*/ center) {
+    return FigureHelper.getPointOnCircleRadian(radius, FigureHelper.toRadian(degreesAngle), center);
+  },
+  getRegularPolygonCoords: function(/*int*/ n, /*double*/ radius, /*PointDouble{x,y}*/ center, /*double*/ offsetAngle) {
+    var angle = (2 * Math.PI)/n; // 360° / n
+    var offsetAngle2 = FigureHelper.toRadian(offsetAngle);
+    var polygon = [];
+    for (var i=0; i<n; ++i) {
+      var a = (i * angle) + offsetAngle2;
+      polygon[i] = FigureHelper.getPointOnCircleRadian(radius, a, center);
+    }
+    return polygon;
+  },
+  getRegularStarCoords: function(/*int*/ rays, /*double*/ radiusOut, /*double*/ radiusIn, /*PointDouble*/ center, /*double*/ offsetAngle) {
+    var pointsExternal = FigureHelper.getRegularPolygonCoords(rays, radiusOut, center, offsetAngle);
+    var pointsInternal = FigureHelper.getRegularPolygonCoords(rays, radiusIn, center, offsetAngle + (180.0/rays));
+    var polygon = [];
+    for (var i=0; i<rays; ++i) {
+      polygon[i*2+0] = pointsExternal[i];
+      polygon[i*2+1] = pointsInternal[i];
+    }
+    return polygon;
+  }
+};
+
+const /* enum */ ESkillLevel = {
+  eBeginner: { ordinal: 0 },
+  eAmateur : { ordinal: 1 },
+  eProfi   : { ordinal: 2 },
+  eCrazy   : { ordinal: 3 },
+  eCustom  : { ordinal: 4 }
+};
+
+class AMosaicSkillImg {
+  constructor() {
+    this.mosaicSkill = ESkillLevel.eBeginner,
+    this.rotateAngle = 0; // 27.0;
+    this.rotateAngleDelta = 1.4;
+    this.rotate = true;
+    this.redrawInterval = 100; // in ms
+    this.borderColor = new Color(0xFF800000).darker(0.5); // Color.Maroon.clone().darker(0.5);
+    this.borderWidth = 3;
+    this.isPolarLights = true;
+    this.foregroundColor = new Color(0xFFDA70D6); // color Orchid
+    this.foregroundColor.a = Settings.foregroundAlpha;
+  }
+
+  nextForegroundColor() {
+      var hsv = new HSV(this.foregroundColor);
+      hsv.h += this.rotateAngleDelta;
+      this.foregroundColor = hsv.toColor();
+  }
+
+  onTimer() {
+    if (this.isPolarLights)
+      this.nextForegroundColor();
+    if (this.rotate)
+      this.rotateAngle = this.rotateAngle + this.rotateAngleDelta;
+  }
+
+  getCoords_SkillLevelAsValue() {
+    var sq = Math.min( // size inner square
+      Settings.width  - Settings.pad*2,
+      Settings.height - Settings.pad*2);
+    var r1 = sq/7; // external radius
+    var r2 = sq/12; // internal radius
+
+    var ordinal = this.mosaicSkill.ordinal;
+    var rays = 5 + ordinal; // rays count
+    var stars = 4 + ordinal; // number of stars on the perimeter of the circle
+
+    var angle = this.rotateAngle;
+    var angleAccumulative = angle;
+    var anglePart = 360.0/stars;
+
+    var center = { x: Settings.width / 2.0, y: Settings.height / 2.0 };
+    var zero = { x: 0, y: 0 };
+    var res = []; // array of Pair<Color bkColor, PointDouble[] polygonCoords >
+    for (var starNum=0; starNum < stars; ++starNum) {
+      // (un)comment next line to view result changes...
+      angleAccumulative = Math.sin(FigureHelper.toRadian(angleAccumulative/4))*angleAccumulative; // accelerate / ускоряшка..
+
+      // adding offset
+      var offset = FigureHelper.getPointOnCircle(sq/3, angleAccumulative + starNum * anglePart, zero);
+      var centerStar = { x: center.x + offset.x, y: center.y + offset.y };
+
+      var clr = this.foregroundColor;
+      if (this.isPolarLights)
+        clr = new HSV(clr).addHue(starNum * anglePart).toColor();
+
+      res.push({ color: clr,
+                 polygon: (this.mosaicSkill == ESkillLevel.eCustom)
+                                    ? FigureHelper.getRegularPolygonCoords(3 + starNum % 4, r1, centerStar, -angleAccumulative)
+                                    : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative),
+                 centerStar: centerStar,
+                 rcOuterStar : { x: centerStar.x - r1, y: centerStar.y - r1, wudth: r1*2, height: r1*2 } });
+    }
+    res.reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
+    return res;
+  }
+};
+
 function round(n, digits) {
   if (arguments.length < 2)
     digits = 2;
@@ -429,7 +432,7 @@ function toInt (value) {
 
 function init(evt) {
   if (!window.svgDoc)
-			svgDoc = evt.target.ownerDocument;
+    svgDoc = evt.target.ownerDocument;
   var svg = evt.target;
   svg.setAttributeNS(null, "viewBox", "0 0 " + Settings.width + " " + Settings.height);
   svg.setAttributeNS(null, "width"  , Settings.width);
