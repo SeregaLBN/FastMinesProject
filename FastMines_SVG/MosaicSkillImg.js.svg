@@ -1,27 +1,34 @@
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
      style='border: solid 1px red;'
      preserveAspectRatio="none"
-     onload="Promise.resolve().then(function() { init(evt); } )">
+     onload="init(evt)">
 <script type="text/ecmascript"><![CDATA[
 /** common settings this SVG */
-var Settings = {};
+var Settings = {
+  width: 100,  // view width
+  height: 100, // view height
+  pad: 5, // padding
+  mosaicSkill: null, // ESkillLevel
+
+  rotatePeriod: 2000, // in msec
+  iterations: 30, // the number of parts of which the one turn
+
+  borderWidth: 0.7,
+  backroundColor : null,
+  foregroundAlpha: 200  // 0..255 - foreground alpha-chanel color
+};
 Promise.resolve()
   .then(function() {
-    Settings = {
-      width: 100,  // view width
-      height: 100, // view height
-      pad: 5,  // padding
-      mosaicSkill: ESkillLevel.eCrazy,
-
-      rotateAngleDelta: 17, // in °
-      borderWidth: 0.7,
-
-      backroundColor : Color.RandomColor().brighter(0.4),
-      foregroundAlpha: 200  // 0..255 - foreground alpha-chanel color
-    };
+    Settings.backroundColor = Color.RandomColor().brighter(0.4);
+    switch (Math.floor(Math.random() * 5)) {
+    case 0: Settings.mosaicSkill = ESkillLevel.eBeginner; break;
+    case 1: Settings.mosaicSkill = ESkillLevel.eAmateur ; break;
+    case 2: Settings.mosaicSkill = ESkillLevel.eProfi   ; break;
+    case 3: Settings.mosaicSkill = ESkillLevel.eCrazy   ; break;
+    case 4: Settings.mosaicSkill = ESkillLevel.eCustom  ; break;
+    default: throw new Error('Bad value');
+    }
   });
-
-const svgNS = "http://www.w3.org/2000/svg";
 
 /** RGBA color */
 class Color {
@@ -431,6 +438,9 @@ function toInt (value) {
 }
 
 function init(evt) {
+  Promise.resolve().then(function() { initA(evt); } )
+}
+function initA(evt) {
   if (!window.svgDoc)
     svgDoc = evt.target.ownerDocument;
   var svg = evt.target;
@@ -442,50 +452,44 @@ function init(evt) {
 
   var img = new AMosaicSkillImg();
   img.mosaicSkill      = Settings.mosaicSkill;
-  img.rotateAngleDelta = Settings.rotateAngleDelta;
+  img.rotateAngleDelta = 360.0 / Settings.iterations;
+  img.redrawInterval   = Settings.rotatePeriod / Settings.iterations;
   img.borderWidth      = Settings.borderWidth;
   
   var polygonsTimeScale = [];
-  const fullRotateAngle = 360.0 * 1.0;
-  for (var i=0; Math.abs(i * img.rotateAngleDelta) < fullRotateAngle; ++i) {
+  for (var i=0; i < Settings.iterations+1; ++i) {
     polygonsTimeScale.push({
       timeStamp : i * img.redrawInterval,
       clrAndPoly: img.getCoords_SkillLevelAsValue() // [{color, polygon}, ...]
     });
     img.onTimer();
   }
-  const animate_duration = fullRotateAngle/img.rotateAngleDelta * img.redrawInterval;
-  polygonsTimeScale.push({
-    timeStamp : animate_duration,
-    clrAndPoly: polygonsTimeScale[0].clrAndPoly
-  });
-//console.log(JSON.stringify(polygonsTimeScale, null, 3));
 
   var polygonsCount = polygonsTimeScale[0].clrAndPoly.length;
   var paths = [];
   for (var i=0; i < polygonsCount; ++i) {
     var animate_d = {
       attributeName: 'd', 
-      dur: round(animate_duration, 0) + 'ms',
+      dur: Settings.rotatePeriod + 'ms',
       repeatCount: 'indefinite',
-      keyTimes: polygonsTimeScale.map(function(item) { return round(item.timeStamp/animate_duration, 4); }).join(';'),// + ';1',
+      keyTimes: polygonsTimeScale.map(function(item) { return round(item.timeStamp/Settings.rotatePeriod, 4); }).join(';'),// + ';1',
       values: polygonsTimeScale.map(function(item) {
                 var polygon = item.clrAndPoly[i].polygon;
-                return 'M ' + polygon.map(function(p) { return round(p.x, 2) + ' ' + round(p.y, 2); }).join(' L ')  + ' Z';
-              }).join('; ')
+                return 'M' + polygon.map(function(p) { return round(p.x, 2) + ' ' + round(p.y, 2); }).join(' L')  + ' Z';
+              }).join(';')
     };
     var animate_fill = {
       attributeName: 'fill', 
       dur: animate_d.dur,
       repeatCount: 'indefinite',
       keyTimes: animate_d.keyTimes,
-      values: polygonsTimeScale.map(function(item) { return '#' + item.clrAndPoly[i].color.asHexString.substr(2); }).join('; ')
+      values: polygonsTimeScale.map(function(item) { return '#' + item.clrAndPoly[i].color.asHexString.substr(2); }).join(';')
     };
 
     paths.push({ animate_d: animate_d, animate_fill: animate_fill });
   }
-  // console.log(JSON.stringify(paths, null, 3));
 
+  const svgNS = "http://www.w3.org/2000/svg";
   var createPath = function(path) {
     var pathNode = svgDoc.createElementNS(svgNS, "path");
     pathNode.appendChild(createAnimate(path.animate_d))
@@ -501,7 +505,10 @@ function init(evt) {
     animateNode.setAttributeNS(null, "attributeName", animate.attributeName);
     animateNode.setAttributeNS(null, "dur"          , animate.dur);
     animateNode.setAttributeNS(null, "repeatCount"  , animate.repeatCount);
-    animateNode.setAttributeNS(null, "keyTimes"     , animate.keyTimes);
+    if (!true)
+      animateNode.setAttributeNS(null, "keyTimes"   , animate.keyTimes);
+    else
+      animateNode.setAttributeNS(null, "calcMode"   , "linear");
     animateNode.setAttributeNS(null, "values"       , animate.values);
     return animateNode;
   };
