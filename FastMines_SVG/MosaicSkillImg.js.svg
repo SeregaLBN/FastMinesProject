@@ -133,10 +133,16 @@ class Color {
 
 /** common settings this SVG */
 const Settings = {
-   width: 100,  // view width
-   height: 100, // view height
-   pad: 5,  // padding
-   mosaicSkill: ESkillLevel.eCrazy
+  width: 100,  // view width
+  height: 100, // view height
+  pad: 5,  // padding
+  mosaicSkill: ESkillLevel.eCrazy,
+
+  rotateAngleDelta: 17, // in °
+  borderWidth: 0.7,
+
+  backroundColor : Color.RandomColor().brighter(0.4),
+  foregroundAlpha: 200  // 0..255 - foreground alpha-chanel color
 };
 
 const FigureHelper = {
@@ -178,11 +184,14 @@ class AMosaicSkillImg {
   constructor() {
     this.mosaicSkill = ESkillLevel.eBeginner,
     this.rotateAngle = 0; // 27.0;
+    this.rotateAngleDelta = 1.4;
     this.rotate = true;
     this.redrawInterval = 100; // in ms
-    this.rotateAngleDelta = 1.4;
+    this.borderColor = new Color(0xFF800000).darker(0.5); // Color.Maroon.clone().darker(0.5);
+    this.borderWidth = 3;
     this.isPolarLights = true;
     this.foregroundColor = new Color(0xFFDA70D6); // color Orchid
+    this.foregroundColor.a = Settings.foregroundAlpha;
   }
 
   nextForegroundColor() {
@@ -411,7 +420,7 @@ var hasMinDiff = function(double1, double2) {
 };
 
 function toInt (value) {
-    return value | 0;
+  return value | 0;
 // var intvalue = Math.floor( floatvalue );
 // var intvalue = Math.ceil( floatvalue ); 
 // var intvalue = Math.round( floatvalue );
@@ -423,16 +432,15 @@ function init(evt) {
 			svgDoc = evt.target.ownerDocument;
   var svg = evt.target;
   svg.setAttributeNS(null, "viewBox", "0 0 " + Settings.width + " " + Settings.height);
+  svg.setAttributeNS(null, "width"  , Settings.width);
+  svg.setAttributeNS(null, "height" , Settings.height);
 
-  // var clr = Color.RandomColor();//new Color(0xFF00FF00);//
-  // var starNum = 5;
-  // var anglePart = 27;
-  // var clr = new HSV(clr).addHue(starNum, anglePart).toColor();
-  console.log("clr = " + Color.RandomColor());
+  // console.log("clr = " + Color.RandomColor()); // test
 
   var img = new AMosaicSkillImg();
-  img.mosaicSkill = ESkillLevel.eCrazy;
-  img.rotateAngleDelta = 17;
+  img.mosaicSkill      = Settings.mosaicSkill;
+  img.rotateAngleDelta = Settings.rotateAngleDelta;
+  img.borderWidth      = Settings.borderWidth;
   
   var polygonsTimeScale = [];
   const fullRotateAngle = 360.0 * 1.0;
@@ -476,25 +484,38 @@ function init(evt) {
   // console.log(JSON.stringify(paths, null, 3));
 
   var createPath = function(path) {
-    var pathDom = svgDoc.createElementNS(svgNS, "path");
-    pathDom.appendChild(createAnimate(path.animate_d))
-    pathDom.appendChild(createAnimate(path.animate_fill));
-    return pathDom;
+    var pathNode = svgDoc.createElementNS(svgNS, "path");
+    pathNode.appendChild(createAnimate(path.animate_d))
+    pathNode.appendChild(createAnimate(path.animate_fill));
+    pathNode.setAttributeNS(null, "stroke"        , '#' + img.borderColor.asHexString.substr(2));
+    pathNode.setAttributeNS(null, "stroke-width"  , img.borderWidth);
+  //pathNode.setAttributeNS(null, "stroke-opacity", round(img.borderColor.a/255.0, 2));
+    pathNode.setAttributeNS(null, "fill-opacity"  , round(Settings.foregroundAlpha/255.0, 2));
+    return pathNode;
   };
   var createAnimate = function(animate) {
-    var animateDom = svgDoc.createElementNS(svgNS, "animate");
-    animateDom.setAttributeNS(null, "attributeName", animate.attributeName);
-    animateDom.setAttributeNS(null, "dur"          , animate.dur);
-    animateDom.setAttributeNS(null, "repeatCount"  , animate.repeatCount);
-    animateDom.setAttributeNS(null, "keyTimes"     , animate.keyTimes);
-    animateDom.setAttributeNS(null, "values"       , animate.values);
-    return animateDom;
+    var animateNode = svgDoc.createElementNS(svgNS, "animate");
+    animateNode.setAttributeNS(null, "attributeName", animate.attributeName);
+    animateNode.setAttributeNS(null, "dur"          , animate.dur);
+    animateNode.setAttributeNS(null, "repeatCount"  , animate.repeatCount);
+    animateNode.setAttributeNS(null, "keyTimes"     , animate.keyTimes);
+    animateNode.setAttributeNS(null, "values"       , animate.values);
+    return animateNode;
   };
+  if (Settings.backroundColor && !Settings.backroundColor.isTransparent) {
+    var rcNode = svgDoc.createElementNS(svgNS, "rect");
+    rcNode.setAttributeNS(null, "x"     , 0);
+    rcNode.setAttributeNS(null, "y"     , 0);
+    rcNode.setAttributeNS(null, "width" , Settings.width);
+    rcNode.setAttributeNS(null, "height", Settings.height);
+    var bc = new HSV(Settings.backroundColor);
+    rcNode.setAttributeNS(null, "fill"  , 'hsla(' + round(bc.h, 2) + ', ' + round(bc.s, 2) + '%, ' + round(bc.v, 2) + '%, ' + round(bc.a/255.0, 2) + ')');
+    svg.appendChild(rcNode);
+  }
   for (var i in paths) {
     var path = paths[i];
-    var pathDom = createPath(path);
-    svg.appendChild(pathDom);
-    //pathDom.beginElement();
+    var pathNode = createPath(path);
+    svg.appendChild(pathNode);
   }
 
   console.log(format(svg, 4).outerHTML);
