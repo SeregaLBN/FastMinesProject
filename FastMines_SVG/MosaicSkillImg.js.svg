@@ -10,6 +10,7 @@ var Settings = {
   pad: 5, // padding
   mosaicSkill: null, // ESkillLevel
 
+  clockwise: (Math.random() < 0.5), // ↻ or ↺
   rotatePeriod: 2000, // in msec
   iterations: 30, // the number of parts of which the one turn
 
@@ -371,10 +372,19 @@ class AMosaicSkillImg {
     if (this.isPolarLights)
       this.nextForegroundColor();
     if (this.rotate)
-      this.rotateAngle = this.rotateAngle + this.rotateAngleDelta;
+      this.rotateAngle = AMosaicSkillImg.fixAngle(this.rotateAngle + this.rotateAngleDelta);
   }
 
-  getCoords_SkillLevelAsValue() {
+  /** to diapason (0° .. +360°] */
+  static /* double */ fixAngle(/* double */ value) {
+      return (value >= 360)
+           ?              (value % 360)
+           : (value < 0)
+              ?           (value % 360) + 360
+              :            value;
+  }
+
+   getCoords_SkillLevelAsValue() {
     var sq = Math.min( // size inner square
       Settings.width  - Settings.pad*2,
       Settings.height - Settings.pad*2);
@@ -407,9 +417,7 @@ class AMosaicSkillImg {
       res.push({ color: clr,
                  polygon: (this.mosaicSkill == ESkillLevel.eCustom)
                                     ? FigureHelper.getRegularPolygonCoords(3 + starNum % 4, r1, centerStar, -angleAccumulative)
-                                    : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative),
-                 centerStar: centerStar,
-                 rcOuterStar : { x: centerStar.x - r1, y: centerStar.y - r1, wudth: r1*2, height: r1*2 } });
+                                    : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative) });
     }
     res.reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
     return res;
@@ -452,7 +460,7 @@ function initA(evt) {
 
   var img = new AMosaicSkillImg();
   img.mosaicSkill      = Settings.mosaicSkill;
-  img.rotateAngleDelta = 360.0 / Settings.iterations;
+  img.rotateAngleDelta = 360.0 / Settings.iterations * (Settings.clockwise ? 1 : -1);
   img.redrawInterval   = Settings.rotatePeriod / Settings.iterations;
   img.borderWidth      = Settings.borderWidth;
   
@@ -505,9 +513,9 @@ function initA(evt) {
     animateNode.setAttributeNS(null, "attributeName", animate.attributeName);
     animateNode.setAttributeNS(null, "dur"          , animate.dur);
     animateNode.setAttributeNS(null, "repeatCount"  , animate.repeatCount);
-    if (!true)
-      animateNode.setAttributeNS(null, "keyTimes"   , animate.keyTimes);
-    else
+    // if (true)
+    //   animateNode.setAttributeNS(null, "keyTimes"   , animate.keyTimes);
+    // else
       animateNode.setAttributeNS(null, "calcMode"   , "linear");
     animateNode.setAttributeNS(null, "values"       , animate.values);
     return animateNode;
