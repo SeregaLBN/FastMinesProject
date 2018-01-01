@@ -92,7 +92,7 @@ namespace fmg.core.img {
                      FigureHelper.GetRegularStarCoords(rays,
                                                        r1, r2,
                                                        bigMaxStar ? centerMax : centerStar,
-                                                       0 // try to view: angleAccumulative[0]
+                                                       0 // try to view: angleAccumulative
                                                     )));
             })
             .OrderBy(x => bigMaxStar ? -x.Item1 : x.Item1)

@@ -21,12 +21,13 @@ var Settings = {
 Promise.resolve()
   .then(function() {
     Settings.backroundColor = Color.RandomColor().brighter(0.4);
-    switch (Math.floor(Math.random() * 5)) {
+    switch (Math.floor(Math.random() * 6)) {
     case 0: Settings.mosaicSkill = ESkillLevel.eBeginner; break;
     case 1: Settings.mosaicSkill = ESkillLevel.eAmateur ; break;
     case 2: Settings.mosaicSkill = ESkillLevel.eProfi   ; break;
     case 3: Settings.mosaicSkill = ESkillLevel.eCrazy   ; break;
     case 4: Settings.mosaicSkill = ESkillLevel.eCustom  ; break;
+    case 5: Settings.mosaicSkill = null;                  break;
     default: throw new Error('Bad value');
     }
   });
@@ -384,7 +385,83 @@ class AMosaicSkillImg {
               :            value;
   }
 
-   getCoords_SkillLevelAsValue() {
+  getCoords() {
+    return (this.mosaicSkill == null)
+          ? this.getCoords_SkillLevelAsType()
+          : this.getCoords_SkillLevelAsValue();
+  }
+
+  getCoords_SkillLevelAsType() {
+    const bigMaxStar = !true; // true - большая звезда - вне картинки; false - большая звезда - внутри картинки.
+    const accelerateRevert = !true; // ускорение под конец анимации, иначе - в начале...
+
+    var rays = 5;
+    var stars = bigMaxStar ? 6 : 4;
+
+    var angle = this.rotateAngle;
+    //var angleAccumulative = angle;
+    var anglePart = 360.0 / stars;
+
+    var sqMax = Math.min( // размер квадрата куда будет вписана звезда при 0°
+          Settings.width  - Settings.pad*2,
+          Settings.height - Settings.pad*2);
+    var sqMin = sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
+    var sqDiff = sqMax - sqMin;
+
+    var centerMax  = { x: Settings.pad + (Settings.width  - Settings.pad*2) / 2.0,
+                       y: Settings.pad + (Settings.height - Settings.pad*2) / 2.0 };
+    var centerMin  = { x: Settings.pad + sqMin / 2, y: Settings.pad + sqMin / 2 };
+    var centerDiff = { x: centerMax.x - centerMin.x, y: centerMax.y - centerMin.y };
+
+    var res = []; // array of Pair<Color bkColor, PointDouble[] polygonCoords >
+    for (var starNum=0; starNum < stars; ++starNum) {
+      var angleStar = AMosaicSkillImg.fixAngle(angle + starNum * anglePart);
+      //angleAccumulative = Math.sin(FigureHelper.toRadian(angle / 4)) * angleAccumulative; // accelerate / ускоряшка..
+
+      var sq = angleStar * sqDiff / 360;
+      // (un)comment next line to view result changes...
+      sq = Math.sin(FigureHelper.toRadian(angleStar / 4)) * sq; // accelerate / ускоряшка..
+      sq = accelerateRevert
+            ? sqMin + sq
+            : sqMax - sq;
+
+      var r1 = bigMaxStar ? sq * 2.2 : sq / 2; // external radius
+      var r2 = r1 / 2.6; // internal radius
+
+      var centerStar = { x: angleStar * centerDiff.x / 360,
+                         y: angleStar * centerDiff.y / 360 };
+      // (un)comment next 2 lines to view result changes...
+      centerStar.x = Math.sin(FigureHelper.toRadian(angleStar / 4)) * centerStar.y; // accelerate / ускоряшка..
+      centerStar.y = Math.sin(FigureHelper.toRadian(angleStar / 4)) * centerStar.y; // accelerate / ускоряшка..
+      centerStar.x = accelerateRevert
+            ? centerMin.x + centerStar.x
+            : centerMax.x - centerStar.x;
+      centerStar.y = accelerateRevert
+            ? centerMin.y + centerStar.y
+            : centerMax.y - centerStar.y;
+
+      var clr = this.foregroundColor;
+      if (this.isPolarLights)
+          clr = new HSV(clr).addHue(+angleStar).toColor(); // try: -angleStar
+
+      res.push( { priority: sq,
+                  clrAndPoly: {
+                    color: clr,
+                    polygon: FigureHelper.getRegularStarCoords(rays,
+                                                               r1, r2,
+                                                               bigMaxStar ? centerMax : centerStar,
+                                                               0 // try to view: angleAccumulative
+                                                             )} } );
+    }
+    // res.sort(function(o1, o2) {
+    //   if (o1.priority < o2.priority) return bigMaxStar ?  1 : -1;
+    //   if (o1.priority > o2.priority) return bigMaxStar ? -1 :  1;
+    //   return 0;
+    // });
+    return res.map(function(x) { return x.clrAndPoly; });
+  }
+
+  getCoords_SkillLevelAsValue() {
     var sq = Math.min( // size inner square
       Settings.width  - Settings.pad*2,
       Settings.height - Settings.pad*2);
@@ -468,7 +545,7 @@ function initA(evt) {
   for (var i=0; i < Settings.iterations+1; ++i) {
     polygonsTimeScale.push({
       timeStamp : i * img.redrawInterval,
-      clrAndPoly: img.getCoords_SkillLevelAsValue() // [{color, polygon}, ...]
+      clrAndPoly: img.getCoords() // [{color, polygon}, ...]
     });
     img.onTimer();
   }
