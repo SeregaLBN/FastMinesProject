@@ -30,6 +30,9 @@ Promise.resolve()
     case 5: Settings.mosaicSkill = null;                  break;
     default: throw new Error('Bad value');
     }
+    if (Settings.mosaicSkill==null)
+      // что бы при calcMode="discrete" не 'дёргалось'
+      Settings.iterations = Math.max(Settings.iterations, 120);
   });
 
 /** RGBA color */
@@ -453,11 +456,14 @@ class AMosaicSkillImg {
                                                                0 // try to view: angleAccumulative
                                                              )} } );
     }
-    // res.sort(function(o1, o2) {
-    //   if (o1.priority < o2.priority) return bigMaxStar ?  1 : -1;
-    //   if (o1.priority > o2.priority) return bigMaxStar ? -1 :  1;
-    //   return 0;
-    // });
+    var saveColorSequence = res.map(function(x) { return x.clrAndPoly.color; });
+    res.sort(function(o1, o2) {
+      if (o1.priority < o2.priority) return bigMaxStar ?  1 : -1;
+      if (o1.priority > o2.priority) return bigMaxStar ? -1 :  1;
+      return 0;
+    });
+    for (var i=0; i<res.length; ++i)
+      res[i].clrAndPoly.color = saveColorSequence[i]; // restore color sequence; only for SVG
     return res.map(function(x) { return x.clrAndPoly; });
   }
 
@@ -593,7 +599,7 @@ function initA(evt) {
     // if (true)
     //   animateNode.setAttributeNS(null, "keyTimes"   , animate.keyTimes);
     // else
-      animateNode.setAttributeNS(null, "calcMode"   , "linear");
+      animateNode.setAttributeNS(null, "calcMode"   , (Settings.mosaicSkill==null) ? "discrete" : "linear"); // discrete linear paced spline
     animateNode.setAttributeNS(null, "values"       , animate.values);
     return animateNode;
   };
