@@ -349,7 +349,19 @@ const /* enum */ ESkillLevel = {
   eAmateur : { ordinal: 1 },
   eProfi   : { ordinal: 2 },
   eCrazy   : { ordinal: 3 },
-  eCustom  : { ordinal: 4 }
+  eCustom  : { ordinal: 4 },
+
+  getName: function(/* ESkillLevel */ skill) {
+    if (skill == null)
+      return 'typeESkillLevel';
+    for (var e in ESkillLevel) {
+      var val = ESkillLevel[e];
+      if (val === skill)
+        return e;
+    }
+    throw new Error('Bad argument skill: value is ' + skill);
+  }
+
 };
 
 class AMosaicSkillImg {
@@ -619,31 +631,39 @@ function initA(evt) {
     svg.appendChild(pathNode);
   }
 
-  console.log(format(svg, 4).outerHTML);
+  var getFileName = function() {
+    return "MosaicSkillImg."
+      + ESkillLevel.getName(Settings.mosaicSkill)
+    //+ '.' + Settings.width + 'x' + Settings.height
+    //+ '.iters' + Settings.iterations
+      + '.' + (Settings.clockwise ? 'clockwise' : 'counterclockwise') // '↻' : '↺') // 
+      + '.svg';
+  };
+  console.log(getFileName() + '\n' + format(clean(svg), 1).outerHTML);
 }
 
-function format(node, level) {
-  var indentBefore = new Array(level++ + 1).join('  '),
-      indentAfter  = new Array(level - 1).join('  '),
-      textNode;
-  if (node.nodeName === 'svg') {
-    node.removeAttribute('onload');
-    node.removeAttribute('style');
-  } else
-  if (node.nodeName === 'script') {
-    node.remove();
-    return;
-  }
+function clean(svg) {
+  svg.removeAttribute('onload');
+  svg.removeAttribute('style');
+  var script = svg.querySelector('script');
+  script.remove();
+  return svg;
+}
+function format(node, value) {
+  var indentBefore = new Array(value++ + 1).join('  '),
+      indentAfter  = new Array(value - 1).join('  '),
+      textNode, childNode;
   for (var i = 0; i < node.children.length; i++) {
     textNode = document.createTextNode('\n' + indentBefore);
-    node.insertBefore(textNode, node.children[i]);
-    format(node.children[i], level);
-    if (node.lastElementChild == node.children[i]) {
+    childNode = node.children[i]; 
+    node.insertBefore(textNode, childNode);
+    format(childNode, value);
+    if (node.lastElementChild == childNode) {
       textNode = document.createTextNode('\n' + indentAfter);
       node.appendChild(textNode);
     }
   }
-  textNode = null;
+  textNode = childNode = null;
   return node;
 }
 ]]></script>
