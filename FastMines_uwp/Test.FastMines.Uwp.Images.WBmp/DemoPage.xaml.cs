@@ -15,7 +15,6 @@ using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
 using fmg.core.mosaic.draw;
-using fmg.data.controller.types;
 using fmg.uwp.draw.img.wbmp;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.mosaic.wbmp;

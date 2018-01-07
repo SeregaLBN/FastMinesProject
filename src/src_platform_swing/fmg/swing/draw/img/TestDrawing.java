@@ -1,8 +1,6 @@
 package fmg.swing.draw.img;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
@@ -54,6 +52,7 @@ final class TestDrawing extends ATestDrawing {
                @Override
                public void paintComponent(Graphics g) {
                   super.paintComponent(g);
+                  ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
                   if (rc[0] == null)
                      return;
 

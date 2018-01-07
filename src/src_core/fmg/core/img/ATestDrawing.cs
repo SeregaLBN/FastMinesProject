@@ -25,7 +25,7 @@ namespace fmg.core.img {
             rImg.Rotate = true;
             rImg.RotateAngleDelta = (3 + R(5)) * NP;
             rImg.RedrawInterval = 50;
-            rImg.BorderWidth = Bl ? 1 : 2;
+            rImg.BorderWidth = R(3);
             rImg.PaddingInt = 4;
          }
 
@@ -61,6 +61,13 @@ namespace fmg.core.img {
                   img.BackgroundColor = bkClr.ToColor();
                }
             };
+            if ((img.BorderWidth != 0) && (R(4) == 0)) {
+               img.ForegroundColor = Color.Transparent;
+            } else {
+               var clr = img.ForegroundColor;
+               clr.A = (byte)(150);// + R(255-150));
+               img.ForegroundColor = clr;
+            }
          } else {
             img.BackgroundColor = ColorExt.RandomColor(GetRandom).Brighter();
          }
