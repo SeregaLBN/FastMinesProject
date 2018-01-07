@@ -21,7 +21,8 @@ var Settings = {
 Promise.resolve()
   .then(function() {
     Settings.backroundColor = Color.RandomColor().brighter(0.4);
-    switch (Math.floor(Math.random() * 6)) {
+    Settings.foregroundAlpha = 150 + random(255-150);
+    switch (random(6)) {
     case 0: Settings.mosaicSkill = ESkillLevel.eBeginner; break;
     case 1: Settings.mosaicSkill = ESkillLevel.eAmateur ; break;
     case 2: Settings.mosaicSkill = ESkillLevel.eProfi   ; break;
@@ -34,6 +35,10 @@ Promise.resolve()
       // что бы при calcMode="discrete" не 'дёргалось'
       Settings.iterations = Math.max(Settings.iterations, 120);
   });
+
+var random = function(upDiapazon) {
+  return Math.floor(Math.random() * upDiapazon);
+}
 
 /** RGBA color */
 class Color {
@@ -102,10 +107,7 @@ class Color {
    get isTransparent() { return this.a == 0; }
 
    static RandomColor() {
-      return new Color(
-         Math.floor(Math.random() * 256),
-         Math.floor(Math.random() * 256),
-         Math.floor(Math.random() * 256));
+      return new Color(random(256), random(256), random(256));
    }
 
    // Creates grayscale version of this Color
