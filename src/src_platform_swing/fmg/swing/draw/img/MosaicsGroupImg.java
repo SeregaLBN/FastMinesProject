@@ -2,7 +2,6 @@ package fmg.swing.draw.img;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,27 +29,28 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
    protected MosaicsGroupImg(EMosaicGroup group) { super(group); }
 
    protected void drawBody(Graphics2D g) {
+      g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
       g.setColor(Cast.toColor(getBackgroundColor()));
       g.fillRect(0, 0, getSize().width, getSize().height);
 
+      g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+      int bw = getBorderWidth();
+      boolean needDrawPerimeterBorder = (!getBorderColor().isTransparent() && (bw > 0));
+      java.awt.Color borderColor = Cast.toColor(getBorderColor());
+      BasicStroke bs = !needDrawPerimeterBorder ? null : new BasicStroke(bw);
       Stream<Pair<Color, Stream<PointDouble>>> stars = getCoords();
       stars.forEach(pair -> {
-         g.setColor(Cast.toColor(pair.first));
-         List<PointDouble> points = pair.second.collect(Collectors.toList());
-         g.fillPolygon(Cast.toPolygon(points));
+         Polygon poly = Cast.toPolygon(pair.second.collect(Collectors.toList()));
+         if (!pair.first.isTransparent()) {
+            g.setColor(Cast.toColor(pair.first));
+            g.fillPolygon(poly);
+         }
 
          // draw perimeter border
-         Color clr = getBorderColor();
-         if (!clr.isTransparent()) {
-            g.setColor(Cast.toColor(clr));
-            int bw = getBorderWidth();
-            g.setStroke(new BasicStroke(bw));
-
-            for (int i = 0; i < points.size(); i++) {
-               PointDouble p1 = points.get(i);
-               PointDouble p2 = (i != (points.size() - 1)) ? points.get(i + 1) : points.get(0);
-               g.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
-            }
+         if (needDrawPerimeterBorder) {
+            g.setColor(borderColor);
+            g.setStroke(bs);
+            g.drawPolygon(poly);
          }
       });
 
@@ -80,7 +80,6 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
 
          buffImg = new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_ARGB);
          gBuffImg = buffImg.createGraphics();
-         gBuffImg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
          gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
          gBuffImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
@@ -123,7 +122,6 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
       protected void drawBody() {
          BufferedImage img = (BufferedImage) getImage();
          Graphics2D g = img.createGraphics();
-         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
          g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
          g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
          drawBody(g);

@@ -41,39 +41,32 @@ namespace fmg.uwp.draw.img.win2d {
             if (fillBk)
                ds.Clear(BackgroundColor.ToWinColor());
 
-            var shapes = GetCoords();
-            foreach (var data in shapes) {
-               var points = data.Item2.ToArray();
-               using (var geom = rc.BuildLines(points)) {
-                  ds.FillGeometry(geom, data.Item1.ToWinColor());
-               }
+            var bw = BorderWidth;
+            var needDrawPerimeterBorder = (!BorderColor.IsTransparent && (bw > 0));
+            var borderColor = BorderColor.ToWinColor();
+            using (var css = new CanvasStrokeStyle {
+               StartCap = CanvasCapStyle.Triangle,
+               EndCap = CanvasCapStyle.Triangle
+            }) {
+               var shapes = GetCoords();
+               foreach (var data in shapes) {
+                  var points = data.Item2.ToArray();
+                  using (var geom = rc.BuildLines(points)) {
+                     if (!data.Item1.IsTransparent)
+                        ds.FillGeometry(geom, data.Item1.ToWinColor());
 
-               // draw perimeter border
-               var clr = BorderColor;
-               if (!clr.IsTransparent) {
-                  var clrWin = clr.ToWinColor();
-                  var bw = BorderWidth;
-
-                  using (var css = new CanvasStrokeStyle {
-                     StartCap = CanvasCapStyle.Triangle,
-                     EndCap = CanvasCapStyle.Triangle
-                  }) {
-                     for (var i = 0; i < points.Length; ++i) {
-                        var p1 = points[i];
-                        var p2 = (i < points.Length - 1) ? points[i + 1] : points[0];
-                        ds.DrawLine(p1.ToVector2(), p2.ToVector2(), clrWin, bw, css);
-                     }
+                     // draw perimeter border
+                     if (needDrawPerimeterBorder)
+                        ds.DrawGeometry(geom, borderColor, bw, css);
                   }
                }
             }
-
             using (var css = new CanvasStrokeStyle {
                StartCap = CanvasCapStyle.Flat,
                EndCap = CanvasCapStyle.Flat
             }) {
-               foreach (var li in GetCoordsBurgerMenu()) {
+               foreach (var li in GetCoordsBurgerMenu())
                   ds.DrawLine(li.from.ToVector2(), li.to.ToVector2(), li.clr.ToWinColor(), (float)li.penWidht, css);
-               }
             }
 
    #if DEBUG

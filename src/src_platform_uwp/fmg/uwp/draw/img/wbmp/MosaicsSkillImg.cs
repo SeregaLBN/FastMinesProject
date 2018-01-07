@@ -31,22 +31,23 @@ namespace fmg.uwp.draw.img.wbmp {
          var bmp = Image;
          bmp.Clear(BackgroundColor.ToWinColor());
 
+         var bw = BorderWidth;
+         var needDrawPerimeterBorder = (!BorderColor.IsTransparent && (bw > 0));
+         var borderColor = BorderColor.ToWinColor();
          var stars = GetCoords();
          foreach (var data in stars) {
             var points = data.Item2.PointsAsXyxyxySequence(true).ToArray();
-            bmp.FillPolygon(points, data.Item1.ToWinColor());
+            if (!data.Item1.IsTransparent)
+               bmp.FillPolygon(points, data.Item1.ToWinColor());
 
             // draw perimeter border
-            var clr = BorderColor;
-            if (!clr.IsTransparent) {
-               var clrWin = clr.ToWinColor();
-               var bw = BorderWidth;
+            if (needDrawPerimeterBorder) {
                for (var i = 0; i < points.Length - 2; i += 2)
                   try {
-                     bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], clrWin, bw);
+                     bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], borderColor, bw);
                   } catch (IndexOutOfRangeException ex) {
                      System.Diagnostics.Debug.WriteLine("WTF! " + ex);
-                     bmp.DrawLine(points[i], points[i + 1], points[i + 2], points[i + 3], clrWin);
+                     bmp.DrawLine(points[i], points[i + 1], points[i + 2], points[i + 3], borderColor);
                   }
             }
          }

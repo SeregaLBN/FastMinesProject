@@ -26,7 +26,7 @@ public abstract class ATestDrawing {
          rImg.setRotate(true);
          rImg.setRotateAngleDelta((3 + r(5)) * np());
          rImg.setRedrawInterval(50);
-         rImg.setBorderWidth(bl() ? 1 : 2);
+         rImg.setBorderWidth(r(3));
          rImg.setPadding(4);
       }
 
@@ -56,6 +56,13 @@ public abstract class ATestDrawing {
                img.setBackgroundColor(bkClr.toColor());
             }
          });
+         if ((img.getBorderWidth() != 0) && (r(4) == 0)) {
+            img.setForegroundColor(Color.Transparent);
+         } else {
+            Color clr = img.getForegroundColor();
+            clr.setA(150 + r(255-150));
+            img.setForegroundColor(clr);
+         }
       } else {
          img.setBackgroundColor(Color.RandomColor(getRandom()).brighter());
       }
