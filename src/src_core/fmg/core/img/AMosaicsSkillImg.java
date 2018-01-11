@@ -47,27 +47,48 @@ public abstract class AMosaicsSkillImg<TImage> extends BurgerMenuImg<TImage> {
       final boolean accelerateRevert = !true; // ускорение под конец анимации, иначе - в начале...
 
       int rays = 5;
-      int stars = bigMaxStar ? 6 : 4;
-
+      int stars = bigMaxStar ? 6 : 8;
       double angle = getRotateAngle();
-    //double[] angleAccumulative = { angle };
-      double anglePart = 360.0/stars;
 
       double sqMax = Math.min( // размер квадрата куда будет вписана звезда при 0°
             getSize().width  - getPadding().getLeftAndRight(),
             getSize().height - getPadding().getTopAndBottom());
-      double sqMin = sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
-      double sqDiff = sqMax - sqMin;
+      double sqMin = 1;//sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
+      double sqExt = sqMax * 3;
 
       PointDouble centerMax = new PointDouble(getPadding().left + (getSize().width  - getPadding().getLeftAndRight()) / 2.0,
                                               getPadding().top  + (getSize().height - getPadding().getTopAndBottom()) / 2.0);
       PointDouble centerMin = new PointDouble(getPadding().left + sqMin/2, getPadding().top + sqMin/2);
+      PointDouble centerExt = new PointDouble(getSize().width * 1.5, getSize().height * 1.5);
+
+      return Stream.concat(
+         getCoords_SkillLevelAsType_2(true , bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax),
+         getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMax, sqExt, centerMax, centerExt));
+    //return getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax); // old
+   }
+   private Stream<Pair<Color, Stream<PointDouble>>> getCoords_SkillLevelAsType_2(
+         boolean accumulative,
+         boolean bigMaxStar,
+         boolean accelerateRevert,
+         int rays,
+         int stars,
+         double angle,
+         double sqMin,
+         double sqMax,
+         PointDouble centerMin,
+         PointDouble centerMax
+      )
+   {
+      double[] angleAccumulative = { angle };
+      double anglePart = 360.0/stars;
+      double sqDiff = sqMax - sqMin;
       PointDouble centerDiff = new PointDouble(centerMax.x - centerMin.x, centerMax.y - centerMin.y);
 
       Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, stars)
             .mapToObj(starNum -> {
                double angleStar = fixAngle(angle + starNum * anglePart);
-             //angleAccumulative[0] = Math.sin(FigureHelper.toRadian(angle/4))*angleAccumulative[0]; // accelerate / ускоряшка..
+               if (accumulative)
+                  angleAccumulative[0] = Math.sin(FigureHelper.toRadian(angle/4))*angleAccumulative[0]; // accelerate / ускоряшка..
 
                double sq = angleStar * sqDiff / 360;
                // (un)comment next line to view result changes...
@@ -100,7 +121,7 @@ public abstract class AMosaicsSkillImg<TImage> extends BurgerMenuImg<TImage> {
                      FigureHelper.getRegularStarCoords(rays,
                                                        r1, r2,
                                                        bigMaxStar ? centerMax : centerStar,
-                                                       0 // try to view: angleAccumulative[0]
+                                                       accumulative ? angleAccumulative[0] : 0
                                                     )));
             });
 

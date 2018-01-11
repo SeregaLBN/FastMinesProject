@@ -39,29 +39,50 @@ namespace fmg.core.img {
          const bool accelerateRevert = !true; // ускорение под конец анимации, иначе - в начале...
 
          var rays = 5;
-         var stars = bigMaxStar ? 6 : 4;
-
+         var stars = bigMaxStar ? 6 : 8;
          var angle = RotateAngle;
-         //var angleAccumulative = angle;
-         var anglePart = 360.0 / stars;
 
          var sqMax = Math.Min( // размер квадрата куда будет вписана звезда при 0°
                Size.Width - Padding.LeftAndRight,
                Size.Height - Padding.TopAndBottom);
          var sqMin = sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
-         var sqDiff = sqMax - sqMin;
+         var sqExt = sqMax * 3;
 
          var centerMax = new PointDouble(Padding.Left + (Size.Width  - Padding.LeftAndRight) / 2.0,
                                          Padding.Top  + (Size.Height - Padding.TopAndBottom) / 2.0);
          var centerMin = new PointDouble(Padding.Left + sqMin / 2, Padding.Top + sqMin / 2);
+         var centerExt = new PointDouble(Size.Width * 1.5, Size.Height * 1.5);
+
+         return GetCoords_SkillLevelAsType_2(true, bigMaxStar, accelerateRevert, rays, stars / 2, angle, sqMin, sqMax, centerMin, centerMax)
+            .Concat(
+                GetCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars / 2, angle, sqMax, sqExt, centerMax, centerExt));
+         //return GetCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax); // old
+      }
+
+      private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> GetCoords_SkillLevelAsType_2(
+          bool accumulative,
+          bool bigMaxStar,
+          bool accelerateRevert,
+          int rays,
+          int stars,
+          double angle,
+          double sqMin,
+          double sqMax,
+          PointDouble centerMin,
+          PointDouble centerMax
+      ) {
+         var angleAccumulative = angle;
+         var anglePart = 360.0 / stars;
+         var sqDiff = sqMax - sqMin;
          var centerDiff = new PointDouble(centerMax.X - centerMin.X, centerMax.Y - centerMin.Y);
 
          return Enumerable.Range(0, stars)
             .Select(starNum => {
                var angleStar = FixAngle(angle + starNum * anglePart);
-               //angleAccumulative = Math.Sin((angle / 4).ToRadian()) * angleAccumulative; // accelerate / ускоряшка..
+               if (accumulative)
+                  angleAccumulative = Math.Sin((angle / 4).ToRadian()) * angleAccumulative; // accelerate / ускоряшка..
 
-               var sq = angleStar * sqDiff / 360;
+                  var sq = angleStar * sqDiff / 360;
                // (un)comment next line to view result changes...
                sq = Math.Sin((angleStar / 4).ToRadian()) * sq; // accelerate / ускоряшка..
                sq = accelerateRevert
@@ -92,7 +113,7 @@ namespace fmg.core.img {
                      FigureHelper.GetRegularStarCoords(rays,
                                                        r1, r2,
                                                        bigMaxStar ? centerMax : centerStar,
-                                                       0 // try to view: angleAccumulative
+                                                       accumulative ? angleAccumulative : 0
                                                     )));
             })
             .OrderBy(x => bigMaxStar ? -x.Item1 : x.Item1)

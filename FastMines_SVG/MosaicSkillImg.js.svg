@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
-     style='border: solid 1px red;'
-     preserveAspectRatio="none"
-     onload="init(evt)">
-<script type="text/ecmascript"><![CDATA[
+//<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+//     style='border: solid 1px red;'
+//     preserveAspectRatio="none"
+//     onload="init(evt)">
+//<script type="text/ecmascript"><![CDATA[
 /** common settings this SVG */
 var Settings = {
   width: 100,  // view width
@@ -11,8 +11,8 @@ var Settings = {
   mosaicSkill: null, // ESkillLevel
 
   clockwise: (Math.random() < 0.5), // ↻ or ↺
-  rotatePeriod: 2000, // in msec
-  iterations: 30, // the number of parts of which the one turn
+  rotatePeriod: 20000, // in msec
+  iterations: 300, // the number of parts of which the one turn
 
   borderWidth: 0.7,
   backroundColor : null,
@@ -22,7 +22,7 @@ Promise.resolve()
   .then(function() {
     Settings.backroundColor = Color.RandomColor().brighter(0.4);
     Settings.foregroundAlpha = 150 + random(255-150);
-    switch (random(6)) {
+    switch (5) {//random(6)) {
     case 0: Settings.mosaicSkill = ESkillLevel.eBeginner; break;
     case 1: Settings.mosaicSkill = ESkillLevel.eAmateur ; break;
     case 2: Settings.mosaicSkill = ESkillLevel.eProfi   ; break;
@@ -413,27 +413,52 @@ class AMosaicSkillImg {
     const accelerateRevert = !true; // ускорение под конец анимации, иначе - в начале...
 
     var rays = 5;
-    var stars = bigMaxStar ? 6 : 4;
-
+    var stars = bigMaxStar ? 6 : 8;
     var angle = this.rotateAngle;
-    //var angleAccumulative = angle;
-    var anglePart = 360.0 / stars;
 
     var sqMax = Math.min( // размер квадрата куда будет вписана звезда при 0°
           Settings.width  - Settings.pad*2,
           Settings.height - Settings.pad*2);
-    var sqMin = sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
-    var sqDiff = sqMax - sqMin;
+    var sqMin = 1;//sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
+    var sqExt = sqMax * 3;
 
-    var centerMax  = { x: Settings.pad + (Settings.width  - Settings.pad*2) / 2.0,
-                       y: Settings.pad + (Settings.height - Settings.pad*2) / 2.0 };
-    var centerMin  = { x: Settings.pad + sqMin / 2, y: Settings.pad + sqMin / 2 };
+    var centerMax = { x: Settings.pad + (Settings.width  - Settings.pad*2) / 2.0,
+                      y: Settings.pad + (Settings.height - Settings.pad*2) / 2.0 };
+    var centerMin = { x: Settings.pad + sqMin / 2, y: Settings.pad + sqMin / 2 };
+    var centerExt = { x: Settings.width * 1.5, y: Settings.height * 1.5 };
+
+    // return this.getCoords_SkillLevelAsType_2(true , bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax)
+    //     .concat(
+    //        this.getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMax, sqExt, centerMax, centerExt));
+    // return this.getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax); // old
+    return this.getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax)
+      .map(function(x) {
+        return x;
+      });
+  }
+
+  getCoords_SkillLevelAsType_2(
+    /* bool */ accumulative,
+    /* bool */ bigMaxStar,
+    /* bool */ accelerateRevert,
+    /* int */ rays,
+    /* int */ stars,
+    /* double */ angle,
+    /* double */ sqMin,
+    /* double */ sqMax,
+    /* PointDouble */ centerMin,
+    /* PointDouble */ centerMax
+  ) {
+    var angleAccumulative = angle;
+    var anglePart = 360.0 / stars;
+    var sqDiff = sqMax - sqMin;
     var centerDiff = { x: centerMax.x - centerMin.x, y: centerMax.y - centerMin.y };
 
     var res = []; // array of Pair<Color bkColor, PointDouble[] polygonCoords >
     for (var starNum=0; starNum < stars; ++starNum) {
       var angleStar = AMosaicSkillImg.fixAngle(angle + starNum * anglePart);
-      //angleAccumulative = Math.sin(FigureHelper.toRadian(angle / 4)) * angleAccumulative; // accelerate / ускоряшка..
+      if (accumulative)
+        angleAccumulative = Math.sin(FigureHelper.toRadian(angle / 4)) * angleAccumulative; // accelerate / ускоряшка..
 
       var sq = angleStar * sqDiff / 360;
       // (un)comment next line to view result changes...
@@ -467,7 +492,7 @@ class AMosaicSkillImg {
                     polygon: FigureHelper.getRegularStarCoords(rays,
                                                                r1, r2,
                                                                bigMaxStar ? centerMax : centerStar,
-                                                               0 // try to view: angleAccumulative
+                                                               accumulative ? angleAccumulative : 0
                                                              )} } );
     }
     var saveColorSequence = res.map(function(x) { return x.clrAndPoly.color; });
