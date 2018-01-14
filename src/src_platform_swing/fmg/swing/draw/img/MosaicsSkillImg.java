@@ -29,11 +29,11 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
    protected MosaicsSkillImg(ESkillLevel skill) { super(skill); }
 
    protected void drawBody(Graphics2D g) {
-      g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
+      g.setComposite(AlphaComposite.Src);
       g.setColor(Cast.toColor(getBackgroundColor()));
       g.fillRect(0, 0, getSize().width, getSize().height);
 
-      g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+      g.setComposite(AlphaComposite.SrcOver);
       int bw = getBorderWidth();
       boolean needDrawPerimeterBorder = (!getBorderColor().isTransparent() && (bw > 0));
       java.awt.Color borderColor = Cast.toColor(getBorderColor());
@@ -81,6 +81,7 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
          buffImg = new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_ARGB);
          gBuffImg = buffImg.createGraphics();
          gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+         gBuffImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
          return new javax.swing.Icon() {
             @Override
@@ -122,6 +123,7 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
          BufferedImage img = (BufferedImage) getImage();
          Graphics2D g = img.createGraphics();
          g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
          drawBody(g);
          g.dispose();
       }

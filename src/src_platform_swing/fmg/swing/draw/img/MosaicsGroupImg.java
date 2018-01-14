@@ -29,11 +29,11 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
    protected MosaicsGroupImg(EMosaicGroup group) { super(group); }
 
    protected void drawBody(Graphics2D g) {
-      g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
+      g.setComposite(AlphaComposite.Src);
       g.setColor(Cast.toColor(getBackgroundColor()));
       g.fillRect(0, 0, getSize().width, getSize().height);
 
-      g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+      g.setComposite(AlphaComposite.SrcOver);
       int bw = getBorderWidth();
       boolean needDrawPerimeterBorder = (!getBorderColor().isTransparent() && (bw > 0));
       java.awt.Color borderColor = Cast.toColor(getBorderColor());
