@@ -20,14 +20,15 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
 
    protected void drawBody(Graphics2D g) {
       { // fill background
+         g.setComposite(AlphaComposite.Src);
          fmg.common.Color bkClr = getBackgroundColor();
-         //if (bkClr.getA() != fmg.common.Color.Transparent.getA())
-         {
+         if (!bkClr.isTransparent()) {
             g.setColor(Cast.toColor(bkClr));
             g.fillRect(0, 0, getSize().width, getSize().height);
          }
       }
 
+      g.setComposite(AlphaComposite.SrcOver);
       List<PointDouble> rays0 = new ArrayList<>();
       List<PointDouble> inn0 = new ArrayList<>();
       List<PointDouble> oct0 = new ArrayList<>();
@@ -112,7 +113,6 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
 
          buffImg = new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_ARGB);
          gBuffImg = buffImg.createGraphics();
-         gBuffImg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
          gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
          gBuffImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
@@ -152,7 +152,6 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
       protected void drawBody() {
          BufferedImage img = (BufferedImage) getImage();
          Graphics2D g = img.createGraphics();
-         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
          g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
          g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
          drawBody(g);

@@ -26,10 +26,8 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
    protected void drawBody(GraphicsContext g) {
       { // fill background
          fmg.common.Color bkClr = getBackgroundColor();
-         if (!bkClr.isOpaque()) { // fix not supporting in jFx the mode equals java.awt.AlphaComposite.SRC
-            g.setFill(Color.WHITE);
-            g.fillRect(0, 0, getSize().width, getSize().height);
-         }
+         if (!bkClr.isOpaque())
+            g.clearRect(0, 0, getSize().width, getSize().height);
          if (!bkClr.isTransparent()) {
             g.setFill(Cast.toColor(bkClr));
             g.fillRect(0, 0, getSize().width, getSize().height);

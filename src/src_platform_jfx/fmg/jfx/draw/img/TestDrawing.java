@@ -73,15 +73,10 @@ public final class TestDrawing extends Application {
 
             GraphicsContext gc = canvas.getGraphicsContext2D();
             gc.setLineWidth(1);
-//            gc.setFill(javafx.scene.paint.Color.WHITE);
-//            gc.fillRect(rc[0].x, rc[0].y, rc[0].width, rc[0].height);
-//            gc.clearRect(rc[0].x, rc[0].y, rc[0].width, rc[0].height);
             gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
             gc.setStroke(Cast.toColor(Color.DarkGray));
             gc.strokeRect(rc[0].x, rc[0].y, rc[0].width, rc[0].height);
-          //gc.setGlobalBlendMode(BlendMode.SRC_OVER); // see https://bugs.openjdk.java.net/browse/JDK-8092156
 
-//            if (!false) return;
             images.stream()
                .map(x -> (Object)x)
                .forEach(imgObj -> {

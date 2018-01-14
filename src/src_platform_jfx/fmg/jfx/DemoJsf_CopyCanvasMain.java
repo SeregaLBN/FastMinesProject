@@ -17,7 +17,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-public class CopyCanvasMain extends Application {
+/** from https://stackoverflow.com/questions/33988596/how-to-copy-contents-of-one-canvas-to-another */
+public class DemoJsf_CopyCanvasMain extends Application {
 
     private static double SCENE_WIDTH = 1280;
     private static double SCENE_HEIGHT = 720;

@@ -24,7 +24,7 @@ import javafx.scene.shape.Ellipse;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class Main extends Application {
+public class DemoJsf_Main extends Application {
 
     public static void main(String[] args) {
         launch(args);
@@ -38,7 +38,8 @@ public class Main extends Application {
 // ellipseExample(primaryStage);
 // imageExample(primaryStage);
 //        drawShapesExample(primaryStage);
-        drawAnimationExample(primaryStage);
+        drawTransparencyExample(primaryStage);
+//        drawAnimationExample(primaryStage);
     }
 
     private void onClickExample(Stage stage) {
@@ -107,6 +108,25 @@ public class Main extends Application {
         stage.show();
     }
 
+    private void drawTransparencyExample(Stage stage) {
+       stage.setTitle("Graphics in JavaFX");
+       Group root = new Group();
+       Canvas canvas = new Canvas(650, 600);
+       GraphicsContext g = canvas.getGraphicsContext2D();
+
+//       g.clearRect(0, 0, 650, 600);
+//       g.fillRect(0, 0, 650, 600);
+
+       g.setFill(Color.AQUAMARINE);
+       g.fillRect(10, 10, 100, 100);
+       g.setFill(new Color(0, 1, 0, 0.5));
+       g.fillRect(50, 50, 100, 100);
+
+       root.getChildren().add(canvas);
+       stage.setScene(new Scene(root, Color.BURLYWOOD));
+       stage.show();
+    }
+
     private void drawShapesExample(Stage stage) {
         stage.setTitle("Graphics in JavaFX");
         Group root = new Group();
@@ -117,6 +137,7 @@ public class Main extends Application {
         stage.setScene(new Scene(root));
         stage.show();
     }
+
     private void draw2DShapes(GraphicsContext gc) {
         double width = gc.getCanvas().getWidth();
         double height = gc.getCanvas().getHeight();
