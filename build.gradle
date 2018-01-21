@@ -1,0 +1,29 @@
+apply plugin: 'java'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+defaultTasks 'clean', 'build'
+
+subprojects {
+    apply plugin: 'java'
+
+    compileJava.options.encoding = 'UTF-8'
+
+    group = 'fmg' // FastMinesGame
+    defaultTasks 'clean', 'build'
+
+    repositories {
+        mavenCentral()
+    }
+
+    task uberjar(type: Jar) {
+        from files(sourceSets.main.output.classesDir)
+        from configurations.runtime.asFileTree.files.collect { zipTree(it) }
+
+        // manifest {
+        //     attributes 'Main-Class': 'test.tree.App'
+        // }
+    }
+
+}

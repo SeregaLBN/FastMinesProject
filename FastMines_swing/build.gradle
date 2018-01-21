@@ -1,21 +1,7 @@
-apply plugin: 'java'
-apply plugin: 'application'
-apply plugin: 'idea'; apply plugin: 'eclipse'
+apply plugin:'application'
+mainClassName = "fmg.swing.Main"
 
-group = 'fmg'
-version = '2.0.2'
-
-compileJava.options.encoding = 'UTF-8'
-
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-
-
-defaultTasks 'clean', 'build'
-
-repositories {
-   mavenCentral()
-}
+//version = '2.0.2'
 
 sourceSets {
    main {
@@ -46,10 +32,12 @@ sourceSets {
 //   }
 //}
 
-mainClassName = "fmg.swing.Main"
-
 jar {
    manifest {
-      attributes 'Main-Class': 'fmg.swing.Main'
+      attributes 'Main-Class': 'fmg.swing.Main',
+                 'Title': 'FastMines game - Java SWING desktop application',
+                 'Version': '2.0.2',
+                 'Vendor': 'SeregaLBN',
+                 'Build-Date': new Date().format("yyyy-MM-dd'T 'HH:mm:ss.SSSZZ")
    }
 }
