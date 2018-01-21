@@ -6,8 +6,10 @@ IDE Workspaces / Solutions:
 ./res - shared resources projects
 
 FastMines_xxx - проекты конкретной языковой реализации, под конкретную UI платформу:
- * FastMines_swing    - Java desktop SWING project                                      (open from Eclipse workspace)
- * FastMines_uwp      - C# desktop/tablet/mobile Universal Windows Platform application (open from Visual Studio workspace)
- * FastMines_Logo     - C++ Win32 proj (generate logo project - raw bitmap)             (open from Visual Studio workspace)
- * FastMines_SVG      - js - animation SVG images over JS
+ * FastMines_swing    - ( stable ) - Java desktop SWING project (multiplatform)                      (open from Eclipse workspace)
+ * FastMines_jfx      - (  demo  ) - Java FX desktop project                                         (open from Eclipse workspace)
+ * FastMines_uwp      - ( stable ) - C# desktop/tablet/mobile Universal Windows Platform application (open from Visual Studio workspace)
+ * FastMines_Logo     - (release ) - C++ Win32 proj (generate logo project - raw bitmap)             (open from Visual Studio workspace)
+ * FastMines_SVG      - (  demo  ) - SVG-animation FastMines images over JS
+ * FastMines_Ava      - (  demo  ) - C# desktop Avalon project (multiplatform)                       (open in VS code)
  * ...
