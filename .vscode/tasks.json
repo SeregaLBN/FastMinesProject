@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build Test.FastMines.Ava.Images.WBmp",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/FastMines_Ava/Test.FastMines.Ava.Images.WBmp/Test.FastMines.Ava.Images.WBmp.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
