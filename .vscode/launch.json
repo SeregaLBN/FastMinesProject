@@ -15,6 +15,36 @@
             "console": "internalConsole",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Java fmg.swing.Main - Debug (Launch)",
+            "type": "java",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/FastMines_swing",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "fmg.swing.Main",
+            "args": ""
+        },
+        {
+            "name": "Java TEST fmg.jfx.draw.img.Logo - Debug (Launch)",
+            "type": "java",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/FastMines_jfx",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "fmg.jfx.draw.img.Logo",
+            "args": ""
+        },
+        {
+            "name": "Java TEST fmg.swing.draw.img.MosaicsSkillImg - Debug (Launch)",
+            "type": "java",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/FastMines_swing",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "fmg.swing.draw.img.MosaicsSkillImg",
+            "args": ""
         }
     ]
 }
