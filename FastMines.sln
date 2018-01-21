@@ -1,51 +1,51 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Main", "FastMines.Main\FastMines.Main.csproj", "{758FC9E6-177D-4231-8AFF-2BDA5B7DAB54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Main", "FastMines_uwp\FastMines.Main\FastMines.Main.csproj", "{758FC9E6-177D-4231-8AFF-2BDA5B7DAB54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.BackgroundTasks.Uwp", "FastMines.BackgroundTasks.Uwp\FastMines.BackgroundTasks.Uwp.csproj", "{4F75C36E-7157-449F-9686-DEA20F83BBDB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.BackgroundTasks.Uwp", "FastMines_uwp\FastMines.BackgroundTasks.Uwp\FastMines.BackgroundTasks.Uwp.csproj", "{4F75C36E-7157-449F-9686-DEA20F83BBDB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastMines.Logo", "..\FastMines_Logo\FastMines_Logo.vcxproj", "{709C5B80-F59C-4E4C-AED6-6CDEBA3D8E9C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastMines.Logo", "FastMines_Logo\FastMines_Logo.vcxproj", "{709C5B80-F59C-4E4C-AED6-6CDEBA3D8E9C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Common", "FastMines.Common\FastMines.Common.csproj", "{4132C01A-1666-4F2E-B0A7-59285953F4B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Common", "FastMines_uwp\FastMines.Common\FastMines.Common.csproj", "{4132C01A-1666-4F2E-B0A7-59285953F4B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Core", "FastMines.Core\FastMines.Core.csproj", "{9DFD73DB-D187-4471-98BA-713996C8A257}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Core", "FastMines_uwp\FastMines.Core\FastMines.Core.csproj", "{9DFD73DB-D187-4471-98BA-713996C8A257}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Shared", "FastMines.Uwp.Shared\FastMines.Uwp.Shared.shproj", "{3AB77D5F-33DA-4867-B97B-9E0DA4901DDE}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Shared", "FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.shproj", "{3AB77D5F-33DA-4867-B97B-9E0DA4901DDE}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.BackgroundTasks.Shared", "FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.shproj", "{020235C5-21FE-43DF-BB41-60C6EB25E047}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.BackgroundTasks.Shared", "FastMines_uwp\FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.shproj", "{020235C5-21FE-43DF-BB41-60C6EB25E047}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{6C78E2F6-4321-4C89-9312-AA367B07205C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Uwp.Images.WBmp", "Test.FastMines.Uwp.Images.WBmp\Test.FastMines.Uwp.Images.WBmp.csproj", "{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Uwp.Images.WBmp", "FastMines_uwp\Test.FastMines.Uwp.Images.WBmp\Test.FastMines.Uwp.Images.WBmp.csproj", "{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FastMines.BackgroundTasks", "FastMines.BackgroundTasks", "{0585F288-2040-4CC2-8289-31B7D5C28D29}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FastMines.Uwp", "FastMines.Uwp", "{D47E7AF7-77FF-43A6-949A-6B98EB51499D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Uwp.Images.Win2D", "Test.FastMines.Uwp.Images.Win2D\Test.FastMines.Uwp.Images.Win2D.csproj", "{10F79DED-68DD-484D-93D0-162C71ECC56C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Uwp.Images.Win2D", "FastMines_uwp\Test.FastMines.Uwp.Images.Win2D\Test.FastMines.Uwp.Images.Win2D.csproj", "{10F79DED-68DD-484D-93D0-162C71ECC56C}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Draw.WBmp", "FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.shproj", "{3DE6E1BD-606B-41C8-99AC-6FC22AFEC0B4}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Draw.WBmp", "FastMines_uwp\FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.shproj", "{3DE6E1BD-606B-41C8-99AC-6FC22AFEC0B4}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Draw.Win2D", "FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.shproj", "{C8694177-A4FB-44DD-AFAF-DB029E94F037}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Draw.Win2D", "FastMines_uwp\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.shproj", "{C8694177-A4FB-44DD-AFAF-DB029E94F037}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Draw.XamlElem", "FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.shproj", "{9DB7237D-BFAE-4767-8202-8E54977978A0}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Draw.XamlElem", "FastMines_uwp\FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.shproj", "{9DB7237D-BFAE-4767-8202-8E54977978A0}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{3ab77d5f-33da-4867-b97b-9e0da4901dde}*SharedItemsImports = 13
-		FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{9db7237d-bfae-4767-8202-8e54977978a0}*SharedItemsImports = 13
-		FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{c8694177-a4fb-44dd-afaf-db029e94f037}*SharedItemsImports = 13
-		FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.projitems*{4f75c36e-7157-449f-9686-dea20f83bbdb}*SharedItemsImports = 4
-		FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems*{3de6e1bd-606b-41c8-99ac-6fc22afec0b4}*SharedItemsImports = 13
-		FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.projitems*{020235c5-21fe-43df-bb41-60c6eb25e047}*SharedItemsImports = 13
-		FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
-		FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
-		FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
-		FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
-		FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{10f79ded-68dd-484d-93d0-162c71ecc56c}*SharedItemsImports = 4
-		FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{10f79ded-68dd-484d-93d0-162c71ecc56c}*SharedItemsImports = 4
+		FastMines_uwp\FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.projitems*{020235c5-21fe-43df-bb41-60c6eb25e047}*SharedItemsImports = 13
+		FastMines_uwp\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{10f79ded-68dd-484d-93d0-162c71ecc56c}*SharedItemsImports = 4
+		FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{10f79ded-68dd-484d-93d0-162c71ecc56c}*SharedItemsImports = 4
+		FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{3ab77d5f-33da-4867-b97b-9e0da4901dde}*SharedItemsImports = 13
+		FastMines_uwp\FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems*{3de6e1bd-606b-41c8-99ac-6fc22afec0b4}*SharedItemsImports = 13
+		FastMines_uwp\FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.projitems*{4f75c36e-7157-449f-9686-dea20f83bbdb}*SharedItemsImports = 4
+		FastMines_uwp\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
+		FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
+		FastMines_uwp\FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{9db7237d-bfae-4767-8202-8e54977978a0}*SharedItemsImports = 13
+		FastMines_uwp\FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
+		FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
+		FastMines_uwp\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{c8694177-a4fb-44dd-afaf-db029e94f037}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -257,5 +257,8 @@ Global
 		{3DE6E1BD-606B-41C8-99AC-6FC22AFEC0B4} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
 		{C8694177-A4FB-44DD-AFAF-DB029E94F037} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
 		{9DB7237D-BFAE-4767-8202-8E54977978A0} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {03A3D190-56B2-48D0-8228-09E6621B36AC}
 	EndGlobalSection
 EndGlobal

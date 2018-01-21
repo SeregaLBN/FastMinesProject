@@ -15,9 +15,8 @@
 **/Release
 FastMines_uwp/*.VC.db
 FastMines_uwp/*.VC.opendb
-FastMines_uwp/.vs/*
+.vs/*
 FastMines_uwp/FastMines.Main/res
-FastMines_uwp/FastMines.Demo.Win81/res
 FastMines_uwp/FastMines.*/src_*
 FastMines_uwp/packages/*
 *proj.user
@@ -25,3 +24,5 @@ Mines*.bst
 Mines*.dat
 Mines*.stc
 *project.lock.json
+**/*FastMines.*.nuget.targets
+**/*FastMines.*.nuget.props

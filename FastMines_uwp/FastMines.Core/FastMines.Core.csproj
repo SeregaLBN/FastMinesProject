@@ -242,8 +242,8 @@
   <PropertyGroup>
     <PreBuildEvent>rd /s /q $(ProjectDir)src_fmg.core
 rd /s /q $(ProjectDir)src_fmg.data
-mklink /j $(ProjectDir)src_fmg.core   $(SolutionDir)..\src\src_core\fmg\core
-mklink /j $(ProjectDir)src_fmg.data   $(SolutionDir)..\src\src_data\fmg\data</PreBuildEvent>
+mklink /j $(ProjectDir)src_fmg.core   $(SolutionDir)src\src_core\fmg\core
+mklink /j $(ProjectDir)src_fmg.data   $(SolutionDir)src\src_data\fmg\data</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
