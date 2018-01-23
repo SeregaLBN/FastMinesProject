@@ -13,8 +13,16 @@ subprojects {
     group = 'fmg' // FastMinesGame
     defaultTasks 'clean', 'build'
 
+    jar {
+        manifest {
+            attributes 'Vendor': 'SeregaLBN',
+                       'Build-Date': new Date().format("yyyy-MM-dd'T 'HH:mm:ss.SSSZZ")
+        }
+    }
+
     repositories {
-        mavenCentral()
+        //mavenCentral()
+        //jcenter()
     }
 
     task uberjar(type: Jar) {
