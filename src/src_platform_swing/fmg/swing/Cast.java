@@ -3,7 +3,7 @@ package fmg.swing;
 import java.util.List;
 
 /**
- * Приведение типов от платформонезависемых читых Java классов fmg.common.geom.* к библиотечным SWING/AWT классам java.awt.*\java.swing.*
+ * Приведение типов от платформо-независимых чистых Java классов fmg.common.geom.* к библиотечным SWING/AWT классам java.awt.*\java.swing.*
  */
 public final class Cast {
 
