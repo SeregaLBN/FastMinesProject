@@ -15,6 +15,12 @@ import fmg.common.geom.Size;
 
 public abstract class ATestDrawing {
 
+   private final String titlePrefix;
+
+   protected ATestDrawing(String titlePrefix) {
+      this.titlePrefix = titlePrefix;
+   }
+
    public Random getRandom() { return ThreadLocalRandom.current(); }
    public int r(int max) { return getRandom().nextInt(max); }
    public boolean bl() { return getRandom().nextBoolean(); } // random bool
@@ -130,7 +136,7 @@ public abstract class ATestDrawing {
    }
 
    public String getTitle(List<?> images) {
-      return "test paints: " + images.stream()
+      return titlePrefix + " test paints: " + images.stream()
          .map(i -> i.getClass().getName())
          .map(n -> Stream.of(n.split("\\.")).reduce((first, second) -> second).get().replaceAll("\\$", ".") )
          .collect(Collectors.groupingBy(z -> z))

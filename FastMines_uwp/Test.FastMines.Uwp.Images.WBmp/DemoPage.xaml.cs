@@ -23,7 +23,9 @@ namespace Test.FastMines.Uwp.Images.WBmp {
 
    public sealed partial class DemoPage : Page {
 
-      class TestDrawing : ATestDrawing { }
+      class TestDrawing : ATestDrawing {
+         public TestDrawing() : base("WBmp") { }
+      }
 
       TestDrawing _td;
       Panel _panel;

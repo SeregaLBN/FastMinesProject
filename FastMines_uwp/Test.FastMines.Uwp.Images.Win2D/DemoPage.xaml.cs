@@ -17,7 +17,6 @@ using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
 using fmg.core.mosaic.draw;
-using fmg.data.controller.types;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.img.win2d;
 using fmg.uwp.draw.mosaic.win2d;
@@ -42,7 +41,9 @@ namespace Test.FastMines.Uwp.Images.Win2D {
 
    public sealed partial class DemoPage : Page {
 
-      class TestDrawing : ATestDrawing { }
+      class TestDrawing : ATestDrawing {
+         public TestDrawing() : base("Win2D") { }
+      }
 
       TestDrawing _td;
       Panel _panel;

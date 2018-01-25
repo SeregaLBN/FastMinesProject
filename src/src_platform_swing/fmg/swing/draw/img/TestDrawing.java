@@ -26,6 +26,10 @@ final class TestDrawing extends ATestDrawing {
 
    static final int margin = 10;
 
+   public TestDrawing() {
+      super("Swing");
+   }
+
    static void testApp(Supplier<List<?>> funcGetImages) {
       new JFrame() {
          private static final long serialVersionUID = 1L;
