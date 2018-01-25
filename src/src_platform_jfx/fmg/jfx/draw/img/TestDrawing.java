@@ -35,7 +35,7 @@ public final class TestDrawing extends Application {
    @Override
    public void start(Stage primaryStage) {
 
-      ATestDrawing td = new ATestDrawing() { };
+      ATestDrawing td = new ATestDrawing("JFX") {};
 
       List<?> images = funcGetImages.get();
       boolean testTransparent = td.bl();

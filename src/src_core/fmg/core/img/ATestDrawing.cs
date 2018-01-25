@@ -14,6 +14,12 @@ namespace fmg.core.img {
       public bool Bl => GetRandom.Next(2) == 1; // random bool
       public int NP => Bl ? -1 : +1; // negative or positive
 
+      private readonly string titlePrefix;
+
+      protected ATestDrawing(string titlePrefix) {
+         this.titlePrefix = titlePrefix;
+      }
+
       public void ApplyRandom<TPaintable, TImage, TPaintContext, TImageInner>(StaticImg<TImage> img, bool testTransparent)
          where TPaintable : IPaintable
          where TImage : class
@@ -145,7 +151,7 @@ namespace fmg.core.img {
                .Select(s => s.Replace('+', '.')));
          };
 
-         return "test paints: " + string.Join(" & ", images
+         return titlePrefix + " test paints: " + string.Join(" & ", images
             .Select(i => friendlyName(i.GetType()))
             .GroupBy(x => x)
             .Select(x => x.First()));
