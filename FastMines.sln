@@ -4,7 +4,7 @@ VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Uwp.Main", "FastMines_uwp\FastMines.Uwp.Main\FastMines.Uwp.Main.csproj", "{758FC9E6-177D-4231-8AFF-2BDA5B7DAB54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.BackgroundTasks.Uwp", "FastMines_uwp\FastMines.BackgroundTasks.Uwp\FastMines.BackgroundTasks.Uwp.csproj", "{4F75C36E-7157-449F-9686-DEA20F83BBDB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Uwp.BackgroundTasks", "FastMines_uwp\FastMines.Uwp.BackgroundTasks\FastMines.Uwp.BackgroundTasks.csproj", "{4F75C36E-7157-449F-9686-DEA20F83BBDB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastMines.Logo", "FastMines_Logo\FastMines_Logo.vcxproj", "{709C5B80-F59C-4E4C-AED6-6CDEBA3D8E9C}"
 EndProject

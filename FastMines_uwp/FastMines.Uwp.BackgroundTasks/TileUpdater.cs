@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
@@ -8,11 +8,7 @@ using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
 using Windows.ApplicationModel.Background;
 
-#if WINDOWS_UWP
-namespace FastMines.BackgroundTasks.Uwp {
-#elif WINDOWS_RT
-namespace FastMines.BackgroundTasks.Win81 {
-#endif
+namespace FastMines.Uwp.BackgroundTasks {
 
     /// <summary> http://msdn.microsoft.com/en-us/library/windows/apps/xaml/jj991805.aspx </summary>
    public sealed class FastMinesTileUpdater : IBackgroundTask {

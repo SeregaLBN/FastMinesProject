@@ -571,9 +571,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FastMines.BackgroundTasks.Uwp\FastMines.BackgroundTasks.Uwp.csproj">
+    <ProjectReference Include="..\FastMines.Uwp.BackgroundTasks\FastMines.Uwp.BackgroundTasks.csproj">
       <Project>{4f75c36e-7157-449f-9686-dea20f83bbdb}</Project>
-      <Name>FastMines.BackgroundTasks.Uwp</Name>
+      <Name>FastMines.Uwp.BackgroundTasks</Name>
     </ProjectReference>
     <ProjectReference Include="..\FastMines.Core\FastMines.Core.csproj">
       <Project>{9dfd73db-d187-4471-98ba-713996c8a257}</Project>
