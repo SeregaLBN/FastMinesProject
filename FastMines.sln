@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Main", "FastMines_uwp\FastMines.Main\FastMines.Main.csproj", "{758FC9E6-177D-4231-8AFF-2BDA5B7DAB54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Uwp.Main", "FastMines_uwp\FastMines.Uwp.Main\FastMines.Uwp.Main.csproj", "{758FC9E6-177D-4231-8AFF-2BDA5B7DAB54}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.BackgroundTasks.Uwp", "FastMines_uwp\FastMines.BackgroundTasks.Uwp\FastMines.BackgroundTasks.Uwp.csproj", "{4F75C36E-7157-449F-9686-DEA20F83BBDB}"
 EndProject
@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{6C78E2F6-4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Uwp.Images.WBmp", "FastMines_uwp\Test.FastMines.Uwp.Images.WBmp\Test.FastMines.Uwp.Images.WBmp.csproj", "{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FastMines.Uwp", "FastMines.Uwp", "{D47E7AF7-77FF-43A6-949A-6B98EB51499D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Uwp", "Uwp", "{D47E7AF7-77FF-43A6-949A-6B98EB51499D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Uwp.Images.Win2D", "FastMines_uwp\Test.FastMines.Uwp.Images.Win2D\Test.FastMines.Uwp.Images.Win2D.csproj", "{10F79DED-68DD-484D-93D0-162C71ECC56C}"
 EndProject
@@ -243,6 +243,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{758FC9E6-177D-4231-8AFF-2BDA5B7DAB54} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
 		{4F75C36E-7157-449F-9686-DEA20F83BBDB} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
 		{3AB77D5F-33DA-4867-B97B-9E0DA4901DDE} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
 		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF} = {6C78E2F6-4321-4C89-9312-AA367B07205C}
