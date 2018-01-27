@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2024
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Main", "FastMines_uwp\FastMines.Main\FastMines.Main.csproj", "{758FC9E6-177D-4231-8AFF-2BDA5B7DAB54}"
 EndProject
@@ -8,19 +8,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.BackgroundTasks.U
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastMines.Logo", "FastMines_Logo\FastMines_Logo.vcxproj", "{709C5B80-F59C-4E4C-AED6-6CDEBA3D8E9C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Common", "FastMines_uwp\FastMines.Common\FastMines.Common.csproj", "{4132C01A-1666-4F2E-B0A7-59285953F4B6}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Core", "FastMines_uwp\FastMines.Core\FastMines.Core.csproj", "{9DFD73DB-D187-4471-98BA-713996C8A257}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Shared", "FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.shproj", "{3AB77D5F-33DA-4867-B97B-9E0DA4901DDE}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.BackgroundTasks.Shared", "FastMines_uwp\FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.shproj", "{020235C5-21FE-43DF-BB41-60C6EB25E047}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{6C78E2F6-4321-4C89-9312-AA367B07205C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Uwp.Images.WBmp", "FastMines_uwp\Test.FastMines.Uwp.Images.WBmp\Test.FastMines.Uwp.Images.WBmp.csproj", "{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FastMines.BackgroundTasks", "FastMines.BackgroundTasks", "{0585F288-2040-4CC2-8289-31B7D5C28D29}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FastMines.Uwp", "FastMines.Uwp", "{D47E7AF7-77FF-43A6-949A-6B98EB51499D}"
 EndProject
@@ -36,12 +30,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.FastMines.Ava.Images.W
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		FastMines_uwp\FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.projitems*{020235c5-21fe-43df-bb41-60c6eb25e047}*SharedItemsImports = 13
 		FastMines_uwp\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{10f79ded-68dd-484d-93d0-162c71ecc56c}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{10f79ded-68dd-484d-93d0-162c71ecc56c}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{3ab77d5f-33da-4867-b97b-9e0da4901dde}*SharedItemsImports = 13
 		FastMines_uwp\FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems*{3de6e1bd-606b-41c8-99ac-6fc22afec0b4}*SharedItemsImports = 13
-		FastMines_uwp\FastMines.BackgroundTasks.Shared\FastMines.BackgroundTasks.Shared.projitems*{4f75c36e-7157-449f-9686-dea20f83bbdb}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{9db7237d-bfae-4767-8202-8e54977978a0}*SharedItemsImports = 13
@@ -134,30 +126,6 @@ Global
 		{709C5B80-F59C-4E4C-AED6-6CDEBA3D8E9C}.Release|x64.ActiveCfg = Release|Win32
 		{709C5B80-F59C-4E4C-AED6-6CDEBA3D8E9C}.Release|x86.ActiveCfg = Release|Win32
 		{709C5B80-F59C-4E4C-AED6-6CDEBA3D8E9C}.Release|x86.Build.0 = Release|Win32
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Debug|ARM.Build.0 = Debug|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Debug|Win32.Build.0 = Debug|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Debug|x64.Build.0 = Debug|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Debug|x86.Build.0 = Debug|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Release|ARM.ActiveCfg = Release|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Release|ARM.Build.0 = Release|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Release|Win32.ActiveCfg = Release|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Release|Win32.Build.0 = Release|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Release|x64.ActiveCfg = Release|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Release|x64.Build.0 = Release|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Release|x86.ActiveCfg = Release|Any CPU
-		{4132C01A-1666-4F2E-B0A7-59285953F4B6}.Release|x86.Build.0 = Release|Any CPU
 		{9DFD73DB-D187-4471-98BA-713996C8A257}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9DFD73DB-D187-4471-98BA-713996C8A257}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DFD73DB-D187-4471-98BA-713996C8A257}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -275,9 +243,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{4F75C36E-7157-449F-9686-DEA20F83BBDB} = {0585F288-2040-4CC2-8289-31B7D5C28D29}
+		{4F75C36E-7157-449F-9686-DEA20F83BBDB} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
 		{3AB77D5F-33DA-4867-B97B-9E0DA4901DDE} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
-		{020235C5-21FE-43DF-BB41-60C6EB25E047} = {0585F288-2040-4CC2-8289-31B7D5C28D29}
 		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF} = {6C78E2F6-4321-4C89-9312-AA367B07205C}
 		{10F79DED-68DD-484D-93D0-162C71ECC56C} = {6C78E2F6-4321-4C89-9312-AA367B07205C}
 		{3DE6E1BD-606B-41C8-99AC-6FC22AFEC0B4} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}

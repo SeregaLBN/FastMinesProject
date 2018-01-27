@@ -128,10 +128,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FastMines.Common\FastMines.Common.csproj">
-      <Project>{4132c01a-1666-4f2e-b0a7-59285953f4b6}</Project>
-      <Name>FastMines.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FastMines.Core\FastMines.Core.csproj">
       <Project>{9dfd73db-d187-4471-98ba-713996c8a257}</Project>
       <Name>FastMines.Core</Name>

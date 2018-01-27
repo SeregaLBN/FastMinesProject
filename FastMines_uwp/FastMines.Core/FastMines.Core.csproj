@@ -39,6 +39,84 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\src\src_common\fmg\common\ui\ITimer.cs">
+      <Link>src_fmg.common\ui\ITimer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\TaskExec.cs">
+      <Link>src_fmg.common\TaskExec.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\geom\Bound.cs">
+      <Link>src_fmg.common\geom\Bound.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\geom\BoundDouble.cs">
+      <Link>src_fmg.common\geom\BoundDouble.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\geom\util\FigureHelper.cs">
+      <Link>src_fmg.common\geom\util\FigureHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\HSV.cs">
+      <Link>src_fmg.common\HSV.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\ThreadLocalRandom.cs">
+      <Link>src_fmg.common\ThreadLocalRandom.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\geom\Coord.cs">
+      <Link>src_fmg.common\geom\Coord.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\geom\Point.cs">
+      <Link>src_fmg.common\geom\Point.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\geom\PointDouble.cs">
+      <Link>src_fmg.common\geom\PointDouble.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\geom\DoubleExt.cs">
+      <Link>src_fmg.common\geom\DoubleExt.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\geom\Rect.cs">
+      <Link>src_fmg.common\geom\Rect.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\geom\RectDouble.cs">
+      <Link>src_fmg.common\geom\RectDouble.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\geom\Region.cs">
+      <Link>src_fmg.common\geom\Region.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\geom\RegionDouble.cs">
+      <Link>src_fmg.common\geom\RegionDouble.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\geom\Size.cs">
+      <Link>src_fmg.common\geom\Size.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\geom\Matrisize.cs">
+      <Link>src_fmg.common\geom\Matrisize.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\geom\SizeDouble.cs">
+      <Link>src_fmg.common\geom\SizeDouble.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\Color.cs">
+      <Link>src_fmg.common\Color.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\IExternalizable.cs">
+      <Link>src_fmg.common\IExternalizable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\ISerializable.cs">
+      <Link>src_fmg.common\ISerializable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\crypt\DES.cs">
+      <Link>src_fmg.common\crypt\DES.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\Disposable.cs">
+      <Link>src_fmg.common\Disposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\LoggerSimple.cs">
+      <Link>src_fmg.common\LoggerSimple.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\notyfier\NotifyPropertyChanged.cs">
+      <Link>src_fmg.common\notyfier\NotifyPropertyChanged.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\notyfier\PropertyChangedExEventArgs.cs">
+      <Link>src_fmg.common\notyfier\PropertyChangedExEventArgs.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\draw\PaintContext.cs">
       <Link>src_fmg.core\mosaic\draw\PaintContext.cs</Link>
     </Compile>
@@ -232,16 +310,12 @@
       <Link>src_fmg.core\mosaic\IMosaicView.cs</Link>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FastMines.Common\FastMines.Common.csproj">
-      <Project>{4132c01a-1666-4f2e-b0a7-59285953f4b6}</Project>
-      <Name>FastMines.Common</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>rd /s /q $(ProjectDir)src_fmg.core
+    <PreBuildEvent>rd /s /q $(ProjectDir)src_fmg.common
+rd /s /q $(ProjectDir)src_fmg.core
 rd /s /q $(ProjectDir)src_fmg.data
+mklink /j $(ProjectDir)src_fmg.common   $(SolutionDir)src\src_common\fmg\common
 mklink /j $(ProjectDir)src_fmg.core   $(SolutionDir)src\src_core\fmg\core
 mklink /j $(ProjectDir)src_fmg.data   $(SolutionDir)src\src_data\fmg\data</PreBuildEvent>
   </PropertyGroup>
