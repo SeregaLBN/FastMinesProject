@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -11,11 +11,12 @@
     <AssemblyName>Test.FastMines.Uwp.Images.Win2D</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.16299.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
     <PackageCertificateKeyFile>Test.FastMines.Uwp.Images.Win2D_TemporaryKey.pfx</PackageCertificateKeyFile>
     <PackageCertificateThumbprint>2B48A0452AEE9D559EED1BD846B78BA4AEBBCF1D</PackageCertificateThumbprint>
   </PropertyGroup>
@@ -88,10 +89,9 @@
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
-  <ItemGroup>
-    <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <None Include="project.json" />
-  </ItemGroup>
+  <PropertyGroup>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -142,21 +142,24 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FastMines.Core\FastMines.Core.csproj">
-      <Project>{9dfd73db-d187-4471-98ba-713996c8a257}</Project>
-      <Name>FastMines.Core</Name>
-    </ProjectReference>
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
+      <Version>6.0.6</Version>
+    </PackageReference>
+    <PackageReference Include="Win2D.uwp">
+      <Version>1.21.0</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="WindowsDesktop, Version=10.0.16299.0">
-      <Name>Windows Desktop Extensions for the UWP %28WindowsDesktop, Version=10.0.16299.0%29</Name>
+      <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
     <SDKReference Include="WindowsMobile, Version=10.0.16299.0">
-      <Name>Windows Mobile Extensions for the UWP %28WindowsMobile, Version=10.0.16299.0%29</Name>
+      <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
   <Import Project="..\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems" Label="Shared" />
   <Import Project="..\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems" Label="Shared" />
+  <Import Project="..\FastMines.Core\FastMines.Core.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

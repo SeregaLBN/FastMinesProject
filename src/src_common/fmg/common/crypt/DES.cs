@@ -1,37 +1,43 @@
-namespace fmg.common.crypt {
-   public interface I3DES {
-      // TODO
-      byte[] Encrypt(byte[] data);
-      byte[] Decrypt(byte[] data);
-   }
-}
-/*
 #if WINDOWS_RT || WINDOWS_UWP
 using System;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
 using System.Runtime.InteropServices.WindowsRuntime;
+#elif WINDOWS_FORMS
+using System;
+using System.Text;
+using System.Security.Cryptography;
+#endif
 
 namespace fmg.common.crypt {
+
+   public interface I3DES {
+      // TODO
+      byte[] Encrypt(byte[] data);
+      byte[] Decrypt(byte[] data);
+   }
+
+#if WINDOWS_RT || WINDOWS_UWP
    public class TripleDESOperations {
+
       public BinaryStringEncoding Encoding { get; set; }
       /// <summary> Symmetric algorithm name </summary>
       public string Algorithm { get; set; }
 
       public IBuffer DataBuf { get; set; }
       /// <summary> Data to encription or decription </summary>
-      public byte[] Data { get { return (DataBuf == null) ? null : DataBuf.ToArray(); } set { DataBuf = (value == null) ? null : value.AsBuffer(); } }
+      public byte[] Data { get { return DataBuf?.ToArray(); } set { DataBuf = value?.AsBuffer(); } }
       public string DataStr { set { DataBuf = CryptographicBuffer.ConvertStringToBinary(value, Encoding); } }
       public string DataB64 { set { DataBuf = CryptographicBuffer.DecodeFromBase64String(value); } }
       public string DataHex { set { DataBuf = CryptographicBuffer.DecodeFromHexString(value); } }
 
       public IBuffer InitVectorBuf { get; set; }
-      public byte[] InitVector { get { return (InitVectorBuf == null) ? null : InitVectorBuf.ToArray(); } set { InitVectorBuf = (value == null) ? null : value.AsBuffer(); } }
+      public byte[] InitVector { get { return InitVectorBuf?.ToArray(); } set { InitVectorBuf = value?.AsBuffer(); } }
 
       public Func<BinaryStringEncoding, string, byte[]> SecKeyBinTransformer { get; set; }
       public IBuffer SecurityKeyBuf { get; set; }
-      public byte[] SecurityKey { get { return (SecurityKeyBuf == null) ? null : SecurityKeyBuf.ToArray(); } set { SecurityKeyBuf = (value == null) ? null : value.AsBuffer(); } }
+      public byte[] SecurityKey { get { return (SecurityKeyBuf == null) ? null : SecurityKeyBuf.ToArray(); } set { SecurityKeyBuf = value?.AsBuffer(); } }
       public string SecurityKeyBinStr { set { SecurityKeyBuf = CryptographicBuffer.ConvertStringToBinary(value, Encoding); } }
       public string SecurityKeyB64 { set { SecurityKeyBuf = CryptographicBuffer.DecodeFromBase64String(value); } }
       public string SecurityKeyHex { set { SecurityKeyBuf = CryptographicBuffer.DecodeFromHexString(value); } }
@@ -87,14 +93,9 @@ namespace fmg.common.crypt {
       public static IBuffer GenerateInitVectorBuf() { return CryptographicBuffer.GenerateRandom(8); }
       public static byte[] GenerateInitVector() { return GenerateInitVectorBuf().ToArray(); }
    }
-}
-#elif WINDOWS_FORMS
-using System;
-using System.Text;
-using System.Security.Cryptography;
 
-namespace IBox.Client.Common.Crypto
-{
+#elif WINDOWS_FORMS
+
     /// <summary>
     /// Using:
     /// var encrypted = new TripleDESOperations() { SecurityKeyStr = secKey, DataStr = testString }.EncryptB64();
@@ -213,6 +214,6 @@ namespace IBox.Client.Common.Crypto
             }
         }
     }
-}
 #endif
-*/
+
+}
