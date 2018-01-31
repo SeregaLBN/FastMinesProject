@@ -1,0 +1,3 @@
+rootProject.name = 'FastMinesProject'
+
+include 'FastMines_swing', 'FastMines_jfx'

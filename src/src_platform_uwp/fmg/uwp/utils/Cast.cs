@@ -4,7 +4,7 @@ using fmg.common.geom;
 namespace fmg.uwp.utils {
 
    /// <summary>
-   /// Приведение типов от платформонезависемых чистых C# классов fmg.common.* к библиотечным Windows.Foundation классам
+   /// Приведение типов от платформо-независимых чистых C# классов fmg.common.* к библиотечным Windows.Foundation классам
    /// </summary>
    public static class Cast {
 

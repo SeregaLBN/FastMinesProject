@@ -3,7 +3,7 @@ package fmg.jfx;
 import java.util.List;
 
 /**
- * Приведение типов от платформонезависемых читых Java классов fmg.common.geom.* к библиотечным javafx классам
+ * Приведение типов от платформо-независимых чистых Java классов fmg.common.geom.* к библиотечным javafx классам
  */
 public final class Cast {
 
