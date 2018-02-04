@@ -18,4 +18,5 @@
         <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0002" />
     </ItemGroup>
     <Import Project="..\..\FastMines_uwp\FastMines.Core\FastMines.Core.projitems" Label="Shared" />
+    <Import Project="..\FastMines.Ava.Draw\FastMines.Ava.Draw.projitems" Label="Shared" />
 </Project>

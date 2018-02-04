@@ -1,6 +1,6 @@
-﻿<Window xmlns="https://github.com/avaloniaui" Title=".NET Core Snow Demo"
-        Background="Black" MinWidth="640" MinHeight="480" Width="640" Height="480">
-    <Grid MinWidth="640" MinHeight="480">
-        <Image Source="{Binding Bitmap}" Stretch="Fill" Cursor="Hand" />
-    </Grid>
+﻿<Window xmlns="https://github.com/avaloniaui" Title="Avalon test paints: "
+        Background="Red" MinWidth="640" MinHeight="480" Width="640" Height="480">
+    <StackPanel Orientation="Vertical" >
+        <Image Source="{Binding Bitmap}" />
+    </StackPanel>
 </Window>

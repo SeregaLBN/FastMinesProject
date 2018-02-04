@@ -1,13 +1,13 @@
-using Windows.UI.Core;
+﻿using Avalonia.Threading;
 using fmg.core.img;
-using fmg.uwp.utils;
+using fmg.ava.utils;
 
-namespace fmg.uwp.draw.img {
+namespace fmg.ava.draw.img {
 
    static class StaticRotateImgConsts {
 
       static StaticRotateImgConsts() {
-         StaticImgConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
+         StaticImgConsts.DeferrInvoker = doRun => Dispatcher.UIThread.InvokeTaskAsync(() => doRun(), DispatcherPriority.Normal);
          RotatedImgConst.TimerCreator = () => new Timer();
       }
 
