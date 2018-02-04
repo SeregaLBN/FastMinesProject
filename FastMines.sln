@@ -26,7 +26,7 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Draw.Win2D", 
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Draw.XamlElem", "FastMines_uwp\FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.shproj", "{9DB7237D-BFAE-4767-8202-8E54977978A0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.FastMines.Ava.Images.WBmp", "FastMines_Ava\Test.FastMines.Ava.Images.WBmp\Test.FastMines.Ava.Images.WBmp.csproj", "{A897306A-DB7F-41B4-8D53-B64F928E258C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.FastMines.Ava.Images", "FastMines_Ava\Test.FastMines.Ava.Images\Test.FastMines.Ava.Images.csproj", "{A897306A-DB7F-41B4-8D53-B64F928E258C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ava", "Ava", "{E8D26177-F66D-4F97-9AB4-A02C30D77CFD}"
 EndProject

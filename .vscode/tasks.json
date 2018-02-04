@@ -2,12 +2,12 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build Test.FastMines.Ava.Images.WBmp",
+            "label": "build Test.FastMines.Ava.Images",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/FastMines_Ava/Test.FastMines.Ava.Images.WBmp/Test.FastMines.Ava.Images.WBmp.csproj"
+                "${workspaceFolder}/FastMines_Ava/Test.FastMines.Ava.Images/Test.FastMines.Ava.Images.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

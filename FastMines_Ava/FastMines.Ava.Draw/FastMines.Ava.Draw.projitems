@@ -9,8 +9,17 @@
     <Import_RootNamespace>FastMines.Ava.Draw</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)MosaicsGroupImg.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)StaticRotateImgConsts.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)util\Timer.cs" />
+    <Compile Include="..\..\src\src_platform_ava\fmg\ava\draw\img\MosaicsGroupImg.cs">
+      <Link>src_fmg.ava\draw\img\MosaicsGroupImg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_ava\fmg\ava\draw\img\StaticRotateImgConsts.cs">
+      <Link>src_fmg.ava\draw\img\StaticRotateImgConsts.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_ava\fmg\ava\utils\Cast.cs">
+      <Link>src_fmg.ava\utils\Cast.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_ava\fmg\ava\utils\Timer.cs">
+      <Link>src_fmg.ava\utils\Timer.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -9,7 +9,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using fmg.ava.draw.img;
 
-namespace Test.FastMines.Ava.Images.WBmp
+namespace Test.FastMines.Ava.Images
 {
 
    public class DemoWindow : Window
