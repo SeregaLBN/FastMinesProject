@@ -18,7 +18,15 @@ namespace Test.FastMines.Ava.Images
       {
          public Modelka(IControl img)
          {
-            MosaicImg = new MosaicsGroupImg.CanvasBmp(null, img);
+            var mosaicImg = new MosaicsGroupImg.CanvasBmp(null, img);
+            mosaicImg.Rotate = true;
+            MosaicImg = mosaicImg;
+
+            //mosaicImg.PropertyChanged += (sender, ev) => {
+            //   if (ev.PropertyName == nameof(MosaicImg.Image)) {
+            //      Dispatcher.UIThread.InvokeTaskAsync(() => img.InvalidateVisual());//.Wait()
+            //   }
+            //};
          }
 
          public MosaicsGroupImg.CanvasBmp MosaicImg { get; }

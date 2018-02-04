@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Rendering;
 using fmg.core.img;
 using fmg.core.types;
+using fmg.uwp.utils;
 
 namespace fmg.ava.draw.img {
 
@@ -28,8 +30,38 @@ namespace fmg.ava.draw.img {
          { }
 
          protected void DrawBody(DrawingContext dc, bool fillBk) {
-            //dc.FillRectangle
-            dc.DrawRectangle(new Pen(0xFFFFFFFF), new Avalonia.Rect(0,0,20,20));
+            if (fillBk)
+               dc.FillRectangle(new SolidColorBrush(BackgroundColor.ToAvaColor()), new Avalonia.Rect(Size.ToAvaSize()));
+
+            var bw = BorderWidth;
+            var needDrawPerimeterBorder = (!BorderColor.IsTransparent && (bw > 0));
+            var borderColor = BorderColor.ToAvaColor();
+
+            var shapes = GetCoords();
+            foreach (var data in shapes) {
+               IBrush brush = null;
+               if (!data.Item1.IsTransparent)
+                  brush = new SolidColorBrush(data.Item1.ToAvaColor());
+               Pen pen = null;
+               if (needDrawPerimeterBorder)
+                  pen = new Pen(borderColor.ToUint32(), bw);
+
+               var points = data.Item2.ToArray();
+               var figure = new PathFigure {
+                  StartPoint = points[0].ToAvaPoint(),
+                  IsClosed = true,
+                  IsFilled = false // TODO ??
+               };
+               for (int i = 1; i < points.Length; ++i)
+                  figure.Segments.Add(new LineSegment {
+                     Point = points[i].ToAvaPoint()
+                  });
+
+               PathGeometry geom = new PathGeometry();
+               geom.Figures.Add(figure);
+
+               dc.DrawGeometry(brush, pen, geom);
+            }
          }
 
       }
