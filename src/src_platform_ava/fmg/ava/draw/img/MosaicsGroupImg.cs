@@ -6,7 +6,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Rendering;
 using fmg.core.img;
 using fmg.core.types;
-using fmg.uwp.utils;
+using fmg.ava.utils;
 
 namespace fmg.ava.draw.img {
 

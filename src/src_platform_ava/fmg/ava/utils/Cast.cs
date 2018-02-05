@@ -1,7 +1,7 @@
 using fmg.common;
 using fmg.common.geom;
 
-namespace fmg.uwp.utils {
+namespace fmg.ava.utils {
 
    /// <summary>
    /// Приведение типов от платформо-независимых чистых C# классов fmg.common.* к библиотечным Avalonia классам
