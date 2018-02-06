@@ -7,6 +7,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using fmg.common.notyfier;
 using fmg.ava.draw.img;
 
 namespace Test.FastMines.Ava.Images
@@ -14,19 +15,24 @@ namespace Test.FastMines.Ava.Images
 
    public class DemoWindow : Window
    {
-      private class Modelka
+      private class Modelka : NotifyPropertyChanged
       {
          public Modelka(IControl img)
          {
-            var mosaicImg = new MosaicsGroupImg.CanvasBmp(null, img);
-            mosaicImg.Rotate = true;
+            var mosaicImg = new MosaicsGroupImg.CanvasBmp(null, img)
+            {
+               RotateAngleDelta = 300,
+               Rotate = true,
+               PolarLights = true
+            };
             MosaicImg = mosaicImg;
 
-            //mosaicImg.PropertyChanged += (sender, ev) => {
-            //   if (ev.PropertyName == nameof(MosaicImg.Image)) {
-            //      Dispatcher.UIThread.InvokeTaskAsync(() => img.InvalidateVisual());//.Wait()
-            //   }
-            //};
+            mosaicImg.PropertyChanged += (sender, ev) => {
+               if (ev.PropertyName == nameof(MosaicImg.Image)) {
+                  this.OnSelfPropertyChanged(nameof(Modelka.Bitmap));
+                  Dispatcher.UIThread.InvokeTaskAsync(() => img.InvalidateVisual());//.Wait()
+               }
+            };
          }
 
          public MosaicsGroupImg.CanvasBmp MosaicImg { get; }
