@@ -19,9 +19,9 @@ namespace Test.FastMines.Ava.Images
       {
          public Modelka(IControl img)
          {
-            var mosaicImg = new MosaicsGroupImg.CanvasBmp(null, img)
+            var mosaicImg = new MosaicsGroupImg.RenderTargetBmp(null, img)
             {
-               RotateAngleDelta = 300,
+               RotateAngleDelta = 5,
                Rotate = true,
                PolarLights = true
             };
@@ -35,7 +35,7 @@ namespace Test.FastMines.Ava.Images
             };
          }
 
-         public MosaicsGroupImg.CanvasBmp MosaicImg { get; }
+         public MosaicsGroupImg.RenderTargetBmp MosaicImg { get; }
          public IBitmap Bitmap { get => MosaicImg.Image; }
       }
 

@@ -73,14 +73,14 @@ namespace fmg.ava.draw.img {
 
       /// <summary> Representable <see cref="EMosaicGroup"/> as image.
       /// <br/>
-      /// CanvasBitmap impl
+      /// RenderTargetBitmap impl
       /// </summary>
-      public class CanvasBmp : CommonImpl<RenderTargetBitmap> {
+      public class RenderTargetBmp : CommonImpl<RenderTargetBitmap> {
 
          private IVisualBrushRenderer _vbr;
 
          /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
-         public CanvasBmp(EMosaicGroup? group, IControl ctrl)
+         public RenderTargetBmp(EMosaicGroup? group, IControl ctrl)
             : base(group)
          {
             _vbr = new ImmediateRenderer(ctrl);
