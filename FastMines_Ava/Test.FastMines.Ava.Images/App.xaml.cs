@@ -1,9 +1,9 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Diagnostics;
 using Avalonia.Markup.Xaml;
 
-namespace Test.FastMines.Ava.Images.WBmp
+namespace Test.FastMines.Ava.Images
 {
     class App : Application
     {

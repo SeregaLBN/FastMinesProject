@@ -5,13 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "C# Test.FastMines.Ava.Images.WBmp - .NET Core Launch (console)",
+            "name": "C# Test.FastMines.Ava.Images - .NET Core Launch (console)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build Test.FastMines.Ava.Images.WBmp",
-            "program": "${workspaceFolder}/FastMines_Ava/Test.FastMines.Ava.Images.WBmp/bin/Debug/netcoreapp2.0/Test.FastMines.Ava.Images.WBmp.dll",
+            "preLaunchTask": "build Test.FastMines.Ava.Images",
+            "program": "${workspaceFolder}/FastMines_Ava/Test.FastMines.Ava.Images/bin/Debug/netcoreapp2.0/Test.FastMines.Ava.Images.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/FastMines_Ava/Test.FastMines.Ava.Images.WBmp",
+            "cwd": "${workspaceFolder}/FastMines_Ava/Test.FastMines.Ava.Images",
             "console": "internalConsole",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart"
