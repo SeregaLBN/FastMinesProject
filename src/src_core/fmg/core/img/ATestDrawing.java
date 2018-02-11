@@ -27,8 +27,8 @@ public abstract class ATestDrawing {
    public int np() { return (bl() ? -1 : +1); } // negative or positive
 
    public void applyRandom(StaticImg<?> img, boolean testTransparent) {
-      if (img instanceof RotatedImg) {
-         RotatedImg<?> rImg = (RotatedImg<?>)img;
+      if (img instanceof AnimatedImg) {
+         AnimatedImg<?> rImg = (AnimatedImg<?>)img;
          rImg.setRotate(true);
          rImg.setRotateAngleDelta((3 + r(5)) * np());
          rImg.setRedrawInterval(50);
@@ -57,7 +57,7 @@ public abstract class ATestDrawing {
          HSV bkClr = new HSV(Color.RandomColor(getRandom()));
          bkClr.a = 50 + r(10);
          img.addListener(ev -> {
-            if (RotatedImg.PROPERTY_ROTATE_ANGLE.equals(ev.getPropertyName())) {
+            if (AnimatedImg.PROPERTY_ROTATE_ANGLE.equals(ev.getPropertyName())) {
                bkClr.h = img.getRotateAngle();
                img.setBackgroundColor(bkClr.toColor());
             }

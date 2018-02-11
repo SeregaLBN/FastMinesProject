@@ -2,9 +2,9 @@ package fmg.common.ui;
 
 public interface ITimer extends AutoCloseable {
 
-   /** miliseconds */
+   /** milliseconds */
    long getInterval();
-   /** miliseconds */
+   /** milliseconds */
    void setInterval(long delay);
 
    /** set null - stop timer; otherwise - started */

@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
-     style='border: solid 1px red;'
-     preserveAspectRatio="none"
-     onload="init(evt)">
-<script type="text/ecmascript"><![CDATA[
+..<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+..     style='border: solid 1px red;'
+..     preserveAspectRatio="none"
+..     onload="init(evt)">
+..<script type="text/ecmascript"><![CDATA[
 /** common settings this SVG */
 var Settings = {
   width: 100,  // view width

@@ -3,12 +3,12 @@ package fmg.core.img;
 import fmg.common.HSV;
 
 /**
- * {@link RotatedImg} with hue rotation effect.
+ * {@link AnimatedImg} with hue rotation effect.
  * Alters the color of an image by rotating its hue values.
  *
  * @param <TImage> plaform specific image
  */
-public abstract class PolarLightsImg<TImage> extends RotatedImg<TImage> {
+public abstract class PolarLightsImg<TImage> extends AnimatedImg<TImage> {
 
 //   protected PolarLightsImg() { super(); }
 

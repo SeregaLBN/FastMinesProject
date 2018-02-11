@@ -2,78 +2,70 @@ package fmg.core.img;
 
 import java.util.function.Supplier;
 
-import fmg.common.ui.ITimer;
-
 /**
- * {@link StaticImg} with rotated properties
+ * {@link StaticImg} with animated properties
  *
  * @param <TImage> plaform specific image
  */
-public abstract class RotatedImg<TImage> extends StaticImg<TImage> {
+public abstract class AnimatedImg<TImage> extends StaticImg<TImage> {
 
-   public static Supplier<ITimer> TIMER_CREATOR;
+   /** Platform-dependent factory of {@link IAnimator}. Set from outside... */
+   public static Supplier<IAnimator> GET_ANIMATOR;
 
-//   protected RotatedImg() { super(); }
+//   protected AnimatedImg() { super(); }
 
-   public static final String PROPERTY_REDRAW_INTERVAL    = "RedrawInterval";
-   public static final String PROPERTY_ROTATE             = "Rotate";
-   public static final String PROPERTY_ROTATE_ANGLE_DELTA = "RotateAngleDelta";
+   public static final String PROPERTY_ANIMATED       = "Animated";
+   public static final String PROPERTY_ANIMATE_PERIOD = "AnimatePeriod";
+   public static final String PROPERTY_TOTAL_FRAMES   = "TotalFrames";
+   public static final String PROPERTY_CURRENT_FRAME  = "CurrentFrame";
 
-   private long _redrawInterval = 100;
-   /** frequency of redrawing (in milliseconds) */
-   public long getRedrawInterval() { return _redrawInterval; }
-   public void setRedrawInterval(long value) {
-      if (setProperty(_redrawInterval, value, PROPERTY_REDRAW_INTERVAL) && (_timer != null))
-         _timer.setInterval(_redrawInterval);
-   }
 
-   private ITimer _timer;
-
-   private boolean _rotate;
-   public boolean isRotate() { return _rotate; }
-   public void setRotate(boolean value) {
-      if (setProperty(_rotate, value, PROPERTY_ROTATE)) {
+   private boolean _animated = false;
+   public boolean isAnimated() { return _animated; }
+   public void setAnimated(boolean value) {
+      if (setProperty(_animated, value, PROPERTY_ANIMATED)) {
+         //invalidate();
          if (value)
-            startTimer();
+            GET_ANIMATOR.get().subscribe(this, timeFromStartSubscribe -> {
+               long animatePeriod = getAnimatePeriod();
+               long mod = timeFromStartSubscribe % animatePeriod;
+               long frame = mod * getTotalFrames() / animatePeriod;
+               setCurrentFrame((int)frame);
+            });
          else
-            stopTimer();
+            GET_ANIMATOR.get().unsubscribe(this);
       }
    }
 
-   private double _rotateAngleDelta = 1.4;
-   public double getRotateAngleDelta() { return _rotateAngleDelta; }
-   public void setRotateAngleDelta(double value) {
-      if (setProperty(_rotateAngleDelta, value, PROPERTY_ROTATE_ANGLE_DELTA) && isRotate())
+   private long _animatePeriod = 3000;
+   /** Overall animation period (in milliseconds) */
+   public long getAnimatePeriod() { return _animatePeriod; }
+   public void setAnimatePeriod(long value) {
+      setProperty(_animatePeriod, value, PROPERTY_ANIMATE_PERIOD);
+   }
+
+   private int _totalFrames = 5;
+   /** Total frames of the animated period */
+   public int getTotalFrames() { return _totalFrames; }
+   public void setTotalFrames(int value) {
+      if (setProperty(_totalFrames, value, PROPERTY_TOTAL_FRAMES))
+         setCurrentFrame(0);
+   }
+
+   private int _currentFrame = 0;
+   public int getCurrentFrame() { return _currentFrame; }
+   protected void setCurrentFrame(int value) {
+      if (setProperty(_currentFrame, value, PROPERTY_CURRENT_FRAME))
          invalidate();
    }
 
-   protected void startTimer() {
-      if (_timer == null) {
-         _timer = TIMER_CREATOR.get();
-         _timer.setInterval(_redrawInterval);
-      }
-      _timer.setCallback(() -> onTimer()); //  start
-   }
-
-   protected void stopTimer() {
-      if ((_timer != null) && !isLiveImage())
-         _timer.setCallback(null); // stop
-   }
-
-   protected void onTimer() {
-      if (isRotate())
-         setRotateAngle(getRotateAngle() + getRotateAngleDelta());
-   }
-
-   public boolean isLiveImage() { return isRotate(); }
+   @Deprecated
+   public boolean isLiveImage() { return isAnimated(); }
 
    @Override
    public void close() {
+      setAnimated(false); // unsubscribe
       super.close();
-      ITimer t = _timer;
-      if (t != null)
-         t.close();
-      _timer = null;
    }
 
 }

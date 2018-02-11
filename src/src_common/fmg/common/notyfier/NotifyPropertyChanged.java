@@ -5,9 +5,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 /** Notifies clients that a property value has changed */
@@ -63,12 +61,18 @@ public abstract class NotifyPropertyChanged implements AutoCloseable // implemen
       onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), propertyName + "." + ev.getPropertyName());
    }
 
+   private Map<String /* propertyName */, Field> _cachedFields = new HashMap<>();
    private Field findField(String propertyName) {
-      return getPlainFields(this)
-         .filter(fld -> fld.getName().equalsIgnoreCase(propertyName) ||
-                        fld.getName().equalsIgnoreCase("_" + propertyName))
-         .findAny()
-         .orElseThrow(()-> new RuntimeException("Property '" + propertyName + "' not found"));
+      Field field = _cachedFields.get(propertyName);
+      if (field == null) {
+         field = getPlainFields(this)
+            .filter(fld -> fld.getName().equalsIgnoreCase(propertyName) ||
+                           fld.getName().equalsIgnoreCase("_" + propertyName))
+            .findAny()
+            .orElseThrow(()-> new RuntimeException("Property '" + propertyName + "' not found"));
+         _cachedFields.put(propertyName, field);
+      }
+      return field;
    }
 
    private static <T> Stream<Field> getDeclaredFields(T obj) {
@@ -92,6 +96,7 @@ public abstract class NotifyPropertyChanged implements AutoCloseable // implemen
    @Override
    public void close() {
       _disposed = true;
+      _cachedFields.clear();
    }
 
 }

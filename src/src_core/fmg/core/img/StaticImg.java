@@ -19,7 +19,7 @@ public abstract class StaticImg<TImage> extends NotifyPropertyChanged {
    public static final Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
    public static final Color DefaultForegroundColor = Color.Orchid;
    public static final int DefaultImageSize = 100;
-   public static final int DefaultPaddingInt = (int)(DefaultImageSize* 0.05); // 5%
+   public static final int DefaultPaddingInt = (int)(DefaultImageSize * 0.05); // 5%
 
    protected StaticImg() {
       _size = new Size(DefaultImageSize, DefaultImageSize);
@@ -31,14 +31,13 @@ public abstract class StaticImg<TImage> extends NotifyPropertyChanged {
       return super.setProperty(value, propertyName);
    }
 
-   public static final String PROPERTY_SIZE              = "Size";
-   public static final String PROPERTY_PADDING           = "Padding";
-   public static final String PROPERTY_IMAGE             = "Image";
-   public static final String PROPERTY_BACKGROUND_COLOR  = "BackgroundColor";
-   public static final String PROPERTY_BORDER_COLOR      = "BorderColor";
-   public static final String PROPERTY_BORDER_WIDTH      = "BorderWidth";
-   public static final String PROPERTY_ROTATE_ANGLE      = "RotateAngle";
-   public static final String PROPERTY_FOREGROUND_COLOR  = "ForegroundColor";
+   public static final String PROPERTY_SIZE             = "Size";
+   public static final String PROPERTY_PADDING          = "Padding";
+   public static final String PROPERTY_IMAGE            = "Image";
+   public static final String PROPERTY_BACKGROUND_COLOR = "BackgroundColor";
+   public static final String PROPERTY_BORDER_COLOR     = "BorderColor";
+   public static final String PROPERTY_BORDER_WIDTH     = "BorderWidth";
+   public static final String PROPERTY_FOREGROUND_COLOR = "ForegroundColor";
 
    private Size _size;
    /** width and height in pixel */
@@ -115,24 +114,6 @@ public abstract class StaticImg<TImage> extends NotifyPropertyChanged {
    public void setBorderWidth(int value) {
       if (setProperty(_borderWidth, value, PROPERTY_BORDER_WIDTH))
          invalidate();
-   }
-
-   private double _rotateAngle;
-   /** 0° .. +360° */
-   public double getRotateAngle() { return _rotateAngle; }
-   public void setRotateAngle(double value) {
-      value = fixAngle(value);
-      if (setProperty(_rotateAngle, value, PROPERTY_ROTATE_ANGLE))
-         invalidate();
-   }
-
-   /** to diapason (0° .. +360°] */
-   public static double fixAngle(double value) {
-      return (value >= 360)
-           ?              (value % 360)
-           : (value < 0)
-              ?           (value % 360) + 360
-              :            value;
    }
 
    private Color _foregroundColor = DefaultForegroundColor;
