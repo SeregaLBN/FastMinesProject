@@ -26,7 +26,7 @@ public abstract class ATestDrawing {
    public boolean bl() { return getRandom().nextBoolean(); } // random bool
    public int np() { return (bl() ? -1 : +1); } // negative or positive
 
-   public void applyRandom(StaticImg<?> img, boolean testTransparent) {
+   public void applyRandom(ImageProperties<?> img, boolean testTransparent) {
       if (img instanceof AnimatedImg) {
          AnimatedImg<?> rImg = (AnimatedImg<?>)img;
          rImg.setRotate(true);

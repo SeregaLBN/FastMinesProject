@@ -3,11 +3,11 @@ package fmg.core.img;
 import java.util.function.Supplier;
 
 /**
- * {@link StaticImg} with animated properties
+ * {@link ImageProperties} with animated properties
  *
  * @param <TImage> plaform specific image
  */
-public abstract class AnimatedImg<TImage> extends StaticImg<TImage> {
+public abstract class AnimatedImg<TImage> extends ImageProperties<TImage> {
 
    /** Platform-dependent factory of {@link IAnimator}. Set from outside... */
    public static Supplier<IAnimator> GET_ANIMATOR;

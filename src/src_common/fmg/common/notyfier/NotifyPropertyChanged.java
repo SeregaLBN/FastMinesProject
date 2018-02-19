@@ -9,12 +9,14 @@ import java.util.*;
 import java.util.stream.Stream;
 
 /** Notifies clients that a property value has changed */
-public abstract class NotifyPropertyChanged implements AutoCloseable // implements INotifyPropertyChanged
+public abstract class NotifyPropertyChanged implements AutoCloseable, INotifyPropertyChanged
 {
    private PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
    private boolean _disposed = false;
 
+   @Override
    public void addListener(PropertyChangeListener l) { propertyChanges.addPropertyChangeListener(l); }
+   @Override
    public void removeListener(PropertyChangeListener l) { propertyChanges.removePropertyChangeListener(l); }
 
    @Deprecated // used reflection :(
@@ -33,32 +35,32 @@ public abstract class NotifyPropertyChanged implements AutoCloseable // implemen
          throw new RuntimeException(ex);
       }
 
-      onSelfPropertyChanged(oldValue, newValue, propertyName);
+      onPropertyChanged(oldValue, newValue, propertyName);
       return true;
    }
 
-   protected final void onSelfPropertyChanged(int oldValue, int newValue, String propertyName) {
-      onSelfPropertyChanged(Integer.valueOf(oldValue), Integer.valueOf(newValue), propertyName);
+   protected final void onPropertyChanged(int oldValue, int newValue, String propertyName) {
+      onPropertyChanged(Integer.valueOf(oldValue), Integer.valueOf(newValue), propertyName);
    }
 
-   protected final void onSelfPropertyChanged(boolean oldValue, boolean newValue, String propertyName) {
-      onSelfPropertyChanged(Boolean.valueOf(oldValue), Boolean.valueOf(newValue), propertyName);
+   protected final void onPropertyChanged(boolean oldValue, boolean newValue, String propertyName) {
+      onPropertyChanged(Boolean.valueOf(oldValue), Boolean.valueOf(newValue), propertyName);
    }
 
-   protected final void onSelfPropertyChanged(String propertyName) {
-      onSelfPropertyChanged(null, null, propertyName);
+   protected final void onPropertyChanged(String propertyName) {
+      onPropertyChanged(null, null, propertyName);
    }
 
-   protected void onSelfPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       if (_disposed)
          return;
-    //System.out.println("onSelfPropertyChanged: " + propertyName + ": " + newValue);
+    //System.out.println("onPropertyChanged: " + propertyName + ": " + newValue);
       propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
    }
 
-   protected <TProperty> void onSelfPropertyChangedRethrow(TProperty source, PropertyChangeEvent ev, String propertyName) {
-      onSelfPropertyChanged(null, source, propertyName);
-      onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), propertyName + "." + ev.getPropertyName());
+   protected <TProperty> void onPropertyChangedRethrow(TProperty source, PropertyChangeEvent ev, String propertyName) {
+      onPropertyChanged(null, source, propertyName);
+      onPropertyChanged(ev.getOldValue(), ev.getNewValue(), propertyName + "." + ev.getPropertyName());
    }
 
    private Map<String /* propertyName */, Field> _cachedFields = new HashMap<>();

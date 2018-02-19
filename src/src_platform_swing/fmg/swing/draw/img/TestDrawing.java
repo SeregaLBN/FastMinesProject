@@ -19,7 +19,7 @@ import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
 import fmg.core.img.ATestDrawing;
 import fmg.core.img.RotatedImg;
-import fmg.core.img.StaticImg;
+import fmg.core.img.ImageProperties;
 
 /** @see {@link MosaicsSkillImg#main}, {@link MosaicsGroupImg#main}, {@link MosaicsImg#main} */
 final class TestDrawing extends ATestDrawing {
@@ -79,8 +79,8 @@ final class TestDrawing extends ATestDrawing {
                         CellTilingInfo cti = callback.apply(imgObj);
                         PointDouble offset = cti.imageOffset;
 
-                        if (imgObj instanceof StaticImg) {
-                           StaticImg<?> simg = (StaticImg<?>)imgObj;
+                        if (imgObj instanceof ImageProperties) {
+                           ImageProperties<?> simg = (ImageProperties<?>)imgObj;
                            simg.setSize(imgSize);
                            imgObj = simg.getImage();
                         }
@@ -116,8 +116,8 @@ final class TestDrawing extends ATestDrawing {
                }
             };
             images.stream()
-               .filter(x -> x instanceof StaticImg)
-               .map(x -> (StaticImg<?>)x)
+               .filter(x -> x instanceof ImageProperties)
+               .map(x -> (ImageProperties<?>)x)
                .forEach(img -> {
                   img.addListener(l);
                   td.applyRandom(img, testTransparent);
@@ -128,8 +128,8 @@ final class TestDrawing extends ATestDrawing {
                @Override
                public void windowClosing(WindowEvent we) {
                   images.stream()
-                     .filter(x -> x instanceof StaticImg)
-                     .map(x -> (StaticImg<?>)x)
+                     .filter(x -> x instanceof ImageProperties)
+                     .map(x -> (ImageProperties<?>)x)
                      .forEach(img -> img.removeListener(l));
                   images.stream()
                      .filter(x -> x instanceof AutoCloseable)

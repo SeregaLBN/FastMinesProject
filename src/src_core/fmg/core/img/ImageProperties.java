@@ -1,27 +1,22 @@
 package fmg.core.img;
 
-import java.util.function.Consumer;
-
 import fmg.common.Color;
 import fmg.common.geom.Bound;
 import fmg.common.geom.Size;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /**
- * Abstract, platform independent, image characteristics
- *
- * @param <TImage> plaform specific image
+ * Base common image characteristics.
+ * MVC: model
  **/
-public abstract class StaticImg<TImage> extends NotifyPropertyChanged {
-
-   public static Consumer<Runnable> DEFERR_INVOKER;
+public abstract class ImageProperties extends NotifyPropertyChanged implements IImageModel {
 
    public static final Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
    public static final Color DefaultForegroundColor = Color.Orchid;
    public static final int DefaultImageSize = 100;
    public static final int DefaultPaddingInt = (int)(DefaultImageSize * 0.05); // 5%
 
-   protected StaticImg() {
+   protected ImageProperties() {
       _size = new Size(DefaultImageSize, DefaultImageSize);
       _padding = new Bound(DefaultPaddingInt);
    }
@@ -31,7 +26,6 @@ public abstract class StaticImg<TImage> extends NotifyPropertyChanged {
       return super.setProperty(value, propertyName);
    }
 
-   public static final String PROPERTY_SIZE             = "Size";
    public static final String PROPERTY_PADDING          = "Padding";
    public static final String PROPERTY_IMAGE            = "Image";
    public static final String PROPERTY_BACKGROUND_COLOR = "BackgroundColor";
@@ -41,13 +35,12 @@ public abstract class StaticImg<TImage> extends NotifyPropertyChanged {
 
    private Size _size;
    /** width and height in pixel */
+   @Override
    public Size getSize() { return _size; }
    public void setSize(int widhtAndHeight) { setSize(new Size(widhtAndHeight, widhtAndHeight)) ; }
+   @Override
    public void setSize(Size value) {
-      if (setProperty(_size, value, PROPERTY_SIZE)) {
-         setImage(null);
-         //invalidate();
-      }
+      setProperty(_size, value, PROPERTY_SIZE);
    }
 
    private Bound _padding;
@@ -59,106 +52,32 @@ public abstract class StaticImg<TImage> extends NotifyPropertyChanged {
          throw new IllegalArgumentException("Padding size is very large. Should be less than Width.");
       if (value.getTopAndBottom() >= getSize().height)
          throw new IllegalArgumentException("Padding size is very large. Should be less than Height.");
-      if (setProperty(_padding, value, PROPERTY_PADDING)) {
-         invalidate();
-      }
-   }
-
-   private enum EInvalidate {
-      needRedraw,
-      redrawing,
-      redrawed
-   }
-   private EInvalidate _invalidate = EInvalidate.needRedraw;
-
-   protected abstract TImage createImage();
-   private TImage _image;
-   public TImage getImage() {
-      if (_image == null) {
-         setImage(createImage());
-         _invalidate = EInvalidate.needRedraw;
-      }
-      if (_invalidate == EInvalidate.needRedraw)
-         draw();
-      return _image;
-   }
-   protected void setImage(TImage value) {
-      TImage old = _image;
-      if (setProperty(_image, value, PROPERTY_IMAGE)) {
-         if (old instanceof AutoCloseable)
-            try {
-               ((AutoCloseable)old).close();
-            } catch (Exception ex) {
-               ex.printStackTrace();
-            }
-      }
+      setProperty(_padding, value, PROPERTY_PADDING);
    }
 
    private Color _backgroundColor = DefaultBkColor;
    /** background fill color */
    public Color getBackgroundColor() { return _backgroundColor; }
    public void setBackgroundColor(Color value) {
-      if (setProperty(_backgroundColor, value, PROPERTY_BACKGROUND_COLOR))
-         invalidate();
+      setProperty(_backgroundColor, value, PROPERTY_BACKGROUND_COLOR);
    }
 
    private Color _borderColor = Color.Maroon.clone().darker(0.5);
    public Color getBorderColor() { return _borderColor; }
    public void setBorderColor(Color value) {
-      if (setProperty(_borderColor, value, PROPERTY_BORDER_COLOR))
-         invalidate();
+      setProperty(_borderColor, value, PROPERTY_BORDER_COLOR);
    }
 
    private int _borderWidth = 3;
    public int getBorderWidth() { return _borderWidth; }
    public void setBorderWidth(int value) {
-      if (setProperty(_borderWidth, value, PROPERTY_BORDER_WIDTH))
-         invalidate();
+      setProperty(_borderWidth, value, PROPERTY_BORDER_WIDTH);
    }
 
    private Color _foregroundColor = DefaultForegroundColor;
    public Color getForegroundColor() { return _foregroundColor; }
    public void setForegroundColor(Color value) {
-      if (setProperty(_foregroundColor, value, PROPERTY_FOREGROUND_COLOR))
-         invalidate();
-   }
-
-   private boolean _deferredNotifications = true;
-   public boolean isDeferredNotifications() { return _deferredNotifications; }
-   public void setDeferredNotifications(boolean value) { _deferredNotifications = value; }
-
-   protected void invalidate() {
-      if (_invalidate == EInvalidate.redrawing)
-         return;
-      //if (_invalidate == EInvalidate.needRedraw)
-      //   return;
-      _invalidate = EInvalidate.needRedraw;
-      onSelfPropertyChanged("Image");
-   }
-
-   private void draw() {
-      drawBegin();
-      drawBody();
-      drawEnd();
-   }
-
-   protected void drawBegin() { _invalidate = EInvalidate.redrawing; }
-   protected abstract void drawBody();
-   protected void drawEnd() { _invalidate = EInvalidate.redrawed; }
-
-   /** Deferr notifications */
-   @Override
-   protected void onSelfPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      if (!isDeferredNotifications())
-         super.onSelfPropertyChanged(oldValue, newValue, propertyName);
-      else
-         DEFERR_INVOKER.accept( () -> super.onSelfPropertyChanged(oldValue, newValue, propertyName) );
-   }
-
-   @Override
-   public void close() {
-      super.close();
-      setImage(null);
+      setProperty(_foregroundColor, value, PROPERTY_FOREGROUND_COLOR);
    }
 
 }
