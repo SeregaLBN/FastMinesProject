@@ -1,9 +1,7 @@
 package fmg.core.img;
 
-import fmg.common.HSV;
-
-/** Transforming of foreground color */
-public class PolarLightFgTransformer implements IModelTransformer {
+/** Transforming of rotate angle */
+public class RotateTransformer implements IModelTransformer {
 
    @Override
    public void execute(int currentFrame, int totalFrames, IImageModel model) {
@@ -12,10 +10,8 @@ public class PolarLightFgTransformer implements IModelTransformer {
       ImageProperties ip = (ImageProperties)model;
 
       double rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
-
-      HSV hsv = new HSV(ip.getForegroundColor());
-      hsv.h += rotateAngleDelta;
-      ip.setForegroundColor(hsv.toColor());
+      double rotateAngle = currentFrame * rotateAngleDelta;
+      ip.setRotateAngle(rotateAngle);
    }
 
 }

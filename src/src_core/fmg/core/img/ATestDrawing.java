@@ -26,52 +26,61 @@ public abstract class ATestDrawing {
    public boolean bl() { return getRandom().nextBoolean(); } // random bool
    public int np() { return (bl() ? -1 : +1); } // negative or positive
 
-   public void applyRandom(ImageProperties<?> img, boolean testTransparent) {
-      if (img instanceof AnimatedImg) {
-         AnimatedImg<?> rImg = (AnimatedImg<?>)img;
-         rImg.setRotate(true);
-         rImg.setRotateAngleDelta((3 + r(5)) * np());
-         rImg.setRedrawInterval(50);
-         rImg.setBorderWidth(r(3));
-         rImg.setPadding(4);
-      }
+   public void applyRandom(AImageController<?,?,?> cntrller, boolean testTransparent) {
+      testTransparent = testTransparent || bl();
 
-      if (img instanceof PolarLightsImg) {
-         PolarLightsImg<?> plImg = (PolarLightsImg<?>)img;
-         plImg.setPolarLights(true);
-      }
+      if (cntrller instanceof AAnimatedImgController) {
+         AAnimatedImgController<?,?,?> aCtrller = (AAnimatedImgController<?,?,?>)cntrller;
+         aCtrller.setAnimated(bl() && bl()); // 25%
+         aCtrller.setAnimatePeriod((1000 + r(2000)) * np());
+         aCtrller.setTotalFrames(3 + r(50));
 
-      if (img instanceof ALogo) {
-         ALogo<?> logoImg = (ALogo<?>)img;
-         logoImg.setRotateMode(ALogo.ERotateMode.values()[r(ALogo.ERotateMode.values().length)]);
-         logoImg.setUseGradient(bl());
-      }
+         aCtrller.usePolarLightTransforming(bl());
+         aCtrller.useRotateTransforming(bl());
 
-      if (img instanceof AMosaicsImg) {
-         AMosaicsImg<?> mosaicsImg = (AMosaicsImg<?>)img;
-         mosaicsImg.setRotateMode(AMosaicsImg.ERotateMode.values()[r(AMosaicsImg.ERotateMode.values().length)]);
-      }
-
-      if (testTransparent || bl()) {
-         // test transparent
-         HSV bkClr = new HSV(Color.RandomColor(getRandom()));
-         bkClr.a = 50 + r(10);
-         img.addListener(ev -> {
-            if (AnimatedImg.PROPERTY_ROTATE_ANGLE.equals(ev.getPropertyName())) {
-               bkClr.h = img.getRotateAngle();
-               img.setBackgroundColor(bkClr.toColor());
-            }
-         });
-         if ((img.getBorderWidth() != 0) && (r(4) == 0)) {
-            img.setForegroundColor(Color.Transparent);
-         } else {
-            Color clr = img.getForegroundColor();
-            clr.setA(150 + r(255-150));
-            img.setForegroundColor(clr);
+         if (testTransparent) {
+            HSV bkClr = new HSV(Color.RandomColor(getRandom()));
+            bkClr.a = 50 + r(10);
+            double rotateAngleDelta = 360.0 / aCtrller.getTotalFrames(); // 360° / TotalFrames
+            cntrller.addListener(ev -> {
+               if (AAnimatedImgController.PROPERTY_CURRENT_FRAME.equals(ev.getPropertyName())) {
+                  bkClr.h += rotateAngleDelta;
+                  aCtrller.getModel().setBackgroundColor(bkClr.toColor());
+               }
+            });
          }
-      } else {
-         img.setBackgroundColor(Color.RandomColor(getRandom()).brighter());
       }
+
+      IImageModel model = cntrller.getModel();
+      if (model instanceof ImageProperties) {
+         @SuppressWarnings("resource")
+         ImageProperties ip = (ImageProperties)model;
+         ip.setBorderWidth(r(3));
+         ip.setPadding(4);
+
+         if (testTransparent) {
+            // test transparent
+            if ((ip.getBorderWidth() != 0) && (r(4) == 0)) {
+               ip.setForegroundColor(Color.Transparent);
+            } else {
+               Color clr = ip.getForegroundColor();
+               clr.setA(150 + r(255-150));
+               ip.setForegroundColor(clr);
+            }
+         } else {
+            ip.setBackgroundColor(Color.RandomColor(getRandom()).brighter());
+         }
+      }
+      if (model instanceof LogoModel) {
+         @SuppressWarnings("resource")
+         LogoModel lm = (LogoModel)model;
+         lm.setUseGradient(bl());
+      }
+
+//      if (img instanceof AMosaicsImg) {
+//         AMosaicsImg<?> mosaicsImg = (AMosaicsImg<?>)img;
+//         mosaicsImg.setRotateMode(AMosaicsImg.ERotateMode.values()[r(AMosaicsImg.ERotateMode.values().length)]);
+//      }
    }
 
    public static class CellTilingInfo {

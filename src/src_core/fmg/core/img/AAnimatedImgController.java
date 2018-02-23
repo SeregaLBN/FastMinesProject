@@ -1,5 +1,7 @@
 package fmg.core.img;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -7,18 +9,28 @@ import java.util.function.Supplier;
  *
  * @param <TImage> plaform specific image
  */
-public abstract class AnimatedImg<TImage> extends ImageProperties<TImage> {
+public abstract class AAnimatedImgController<TImage,
+                                             TImageView  extends IImageView<TImage, TImageModel>,
+                                             TImageModel extends ImageProperties>
+                extends AImageController<TImage, TImageView, TImageModel>
+{
 
    /** Platform-dependent factory of {@link IAnimator}. Set from outside... */
    public static Supplier<IAnimator> GET_ANIMATOR;
 
-//   protected AnimatedImg() { super(); }
+   protected AAnimatedImgController(TImageView imageView) {
+      super(imageView);
+   }
+
+   @SuppressWarnings("deprecation")
+   protected <TI>boolean setProperty(TI storage, TI value, String propertyName) {
+      return super.setProperty(value, propertyName);
+   }
 
    public static final String PROPERTY_ANIMATED       = "Animated";
    public static final String PROPERTY_ANIMATE_PERIOD = "AnimatePeriod";
    public static final String PROPERTY_TOTAL_FRAMES   = "TotalFrames";
    public static final String PROPERTY_CURRENT_FRAME  = "CurrentFrame";
-
 
    private boolean _animated = false;
    public boolean isAnimated() { return _animated; }
@@ -27,9 +39,8 @@ public abstract class AnimatedImg<TImage> extends ImageProperties<TImage> {
          //invalidate();
          if (value)
             GET_ANIMATOR.get().subscribe(this, timeFromStartSubscribe -> {
-               long animatePeriod = getAnimatePeriod();
-               long mod = timeFromStartSubscribe % animatePeriod;
-               long frame = mod * getTotalFrames() / animatePeriod;
+               long mod = timeFromStartSubscribe % _animatePeriod;
+               long frame = mod * getTotalFrames() / _animatePeriod;
                setCurrentFrame((int)frame);
             });
          else
@@ -40,6 +51,7 @@ public abstract class AnimatedImg<TImage> extends ImageProperties<TImage> {
    private long _animatePeriod = 3000;
    /** Overall animation period (in milliseconds) */
    public long getAnimatePeriod() { return _animatePeriod; }
+   /** Overall animation period (in milliseconds) */
    public void setAnimatePeriod(long value) {
       setProperty(_animatePeriod, value, PROPERTY_ANIMATE_PERIOD);
    }
@@ -53,18 +65,42 @@ public abstract class AnimatedImg<TImage> extends ImageProperties<TImage> {
    }
 
    private int _currentFrame = 0;
-   public int getCurrentFrame() { return _currentFrame; }
+   protected int getCurrentFrame() { return _currentFrame; }
    protected void setCurrentFrame(int value) {
-      if (setProperty(_currentFrame, value, PROPERTY_CURRENT_FRAME))
-         invalidate();
+      if (setProperty(_currentFrame, value, PROPERTY_CURRENT_FRAME)) {
+         _transformers.forEach(x -> x.execute(_currentFrame, _totalFrames, getModel()));
+         getView().invalidate();
+      }
    }
 
-   @Deprecated
-   public boolean isLiveImage() { return isAnimated(); }
+   private Set<IModelTransformer> _transformers = new HashSet<>();
+
+   protected <TModelTransformer extends IModelTransformer> void useTransforming(boolean enable, Class<TModelTransformer> clazz, Supplier<TModelTransformer> newInstance) {
+      if (enable) {
+         if (!_transformers.stream().anyMatch(e -> e.getClass() == clazz))
+            _transformers.add(newInstance.get());
+      } else {
+         IModelTransformer rt = _transformers.stream()
+               .filter(e -> e.getClass() == clazz)
+               .findAny()
+               .orElse(null);
+         if (rt != null)
+            _transformers.remove(rt);
+      }
+   }
+
+   public void useRotateTransforming(boolean enable) {
+      useTransforming(enable, RotateTransformer.class, () -> new RotateTransformer());
+   }
+
+   public void usePolarLightTransforming(boolean enable) {
+      useTransforming(enable, PolarLightFgTransformer.class, () -> new PolarLightFgTransformer());
+   }
 
    @Override
    public void close() {
       setAnimated(false); // unsubscribe
+      _transformers.clear();
       super.close();
    }
 

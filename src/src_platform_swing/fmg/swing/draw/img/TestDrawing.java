@@ -17,9 +17,8 @@ import javax.swing.JPanel;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
+import fmg.core.img.AImageController;
 import fmg.core.img.ATestDrawing;
-import fmg.core.img.RotatedImg;
-import fmg.core.img.ImageProperties;
 
 /** @see {@link MosaicsSkillImg#main}, {@link MosaicsGroupImg#main}, {@link MosaicsImg#main} */
 final class TestDrawing extends ATestDrawing {
@@ -79,10 +78,10 @@ final class TestDrawing extends ATestDrawing {
                         CellTilingInfo cti = callback.apply(imgObj);
                         PointDouble offset = cti.imageOffset;
 
-                        if (imgObj instanceof ImageProperties) {
-                           ImageProperties<?> simg = (ImageProperties<?>)imgObj;
-                           simg.setSize(imgSize);
-                           imgObj = simg.getImage();
+                        if (imgObj instanceof AImageController) {
+                           AImageController<?,?,?> ctrller = (AImageController<?,?,?>)imgObj;
+                           ctrller.getModel().setSize(imgSize);
+                           imgObj = ctrller.getImage();
                         }
 
                         if (imgObj instanceof Icon) {
@@ -111,13 +110,13 @@ final class TestDrawing extends ATestDrawing {
             });
 
             PropertyChangeListener l = evt -> {
-               if (RotatedImg.PROPERTY_IMAGE.equals(evt.getPropertyName())) {
+               if (AImageController.PROPERTY_IMAGE.equals(evt.getPropertyName())) {
                   jPanel.repaint();
                }
             };
             images.stream()
-               .filter(x -> x instanceof ImageProperties)
-               .map(x -> (ImageProperties<?>)x)
+             //.filter(x -> x instanceof AImageController)
+               .map(x -> (AImageController<?,?,?>)x)
                .forEach(img -> {
                   img.addListener(l);
                   td.applyRandom(img, testTransparent);
@@ -128,8 +127,8 @@ final class TestDrawing extends ATestDrawing {
                @Override
                public void windowClosing(WindowEvent we) {
                   images.stream()
-                     .filter(x -> x instanceof ImageProperties)
-                     .map(x -> (ImageProperties<?>)x)
+                   //.filter(x -> x instanceof AImageController)
+                     .map(x -> (AImageController<?,?,?>)x)
                      .forEach(img -> img.removeListener(l));
                   images.stream()
                      .filter(x -> x instanceof AutoCloseable)

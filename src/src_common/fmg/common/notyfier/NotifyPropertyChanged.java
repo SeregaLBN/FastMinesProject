@@ -1,6 +1,5 @@
 package fmg.common.notyfier;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.lang.reflect.Field;
@@ -58,10 +57,10 @@ public abstract class NotifyPropertyChanged implements AutoCloseable, INotifyPro
       propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
    }
 
-   protected <TProperty> void onPropertyChangedRethrow(TProperty source, PropertyChangeEvent ev, String propertyName) {
-      onPropertyChanged(null, source, propertyName);
-      onPropertyChanged(ev.getOldValue(), ev.getNewValue(), propertyName + "." + ev.getPropertyName());
-   }
+//   protected <TProperty> void onPropertyChangedRethrow(TProperty source, PropertyChangeEvent ev, String propertyName) {
+//      onPropertyChanged(null, source, propertyName);
+//      onPropertyChanged(ev.getOldValue(), ev.getNewValue(), propertyName + "." + ev.getPropertyName());
+//   }
 
    private Map<String /* propertyName */, Field> _cachedFields = new HashMap<>();
    private Field findField(String propertyName) {

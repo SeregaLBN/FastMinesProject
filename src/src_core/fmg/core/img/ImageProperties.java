@@ -6,17 +6,17 @@ import fmg.common.geom.Size;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /**
- * Base common image characteristics.
+ * Common image characteristics.
  * MVC: model
  **/
-public abstract class ImageProperties extends NotifyPropertyChanged implements IImageModel {
+public class ImageProperties extends NotifyPropertyChanged implements IImageModel {
 
    public static final Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
    public static final Color DefaultForegroundColor = Color.Orchid;
    public static final int DefaultImageSize = 100;
    public static final int DefaultPaddingInt = (int)(DefaultImageSize * 0.05); // 5%
 
-   protected ImageProperties() {
+   public ImageProperties() {
       _size = new Size(DefaultImageSize, DefaultImageSize);
       _padding = new Bound(DefaultPaddingInt);
    }
@@ -27,11 +27,11 @@ public abstract class ImageProperties extends NotifyPropertyChanged implements I
    }
 
    public static final String PROPERTY_PADDING          = "Padding";
-   public static final String PROPERTY_IMAGE            = "Image";
    public static final String PROPERTY_BACKGROUND_COLOR = "BackgroundColor";
    public static final String PROPERTY_BORDER_COLOR     = "BorderColor";
    public static final String PROPERTY_BORDER_WIDTH     = "BorderWidth";
    public static final String PROPERTY_FOREGROUND_COLOR = "ForegroundColor";
+   public static final String PROPERTY_ROTATE_ANGLE     = "RotateAngle";
 
    private Size _size;
    /** width and height in pixel */
@@ -78,6 +78,23 @@ public abstract class ImageProperties extends NotifyPropertyChanged implements I
    public Color getForegroundColor() { return _foregroundColor; }
    public void setForegroundColor(Color value) {
       setProperty(_foregroundColor, value, PROPERTY_FOREGROUND_COLOR);
+   }
+
+   private double _rotateAngle;
+   /** 0° .. +360° */
+   public double getRotateAngle() { return _rotateAngle; }
+   public void setRotateAngle(double value) {
+      value = fixAngle(value);
+      setProperty(_rotateAngle, value, PROPERTY_ROTATE_ANGLE);
+   }
+
+   /** to diapason (0° .. +360°] */
+   public static double fixAngle(double value) {
+      return (value >= 360)
+           ?              (value % 360)
+           : (value < 0)
+              ?           (value % 360) + 360
+              :            value;
    }
 
 }

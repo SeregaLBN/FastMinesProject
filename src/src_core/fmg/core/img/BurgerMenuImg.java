@@ -13,7 +13,7 @@ import fmg.common.geom.Rect;
  * Abstract representable menu as horizontal or vertical lines
  * @param <TImage> plaform specific image
  */
-public abstract class BurgerMenuImg<TImage> extends PolarLightsImg<TImage> {
+public abstract class BurgerMenuImg<TImage> extends PolarLightFgTransformer<TImage> {
 
    protected BurgerMenuImg() {
       _showBurgerMenu = true;

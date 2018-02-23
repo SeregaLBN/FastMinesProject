@@ -22,7 +22,7 @@ import fmg.core.types.EMosaic;
  * @param <TImage> plaform specific image
  */
 public abstract class AMosaicsImg<TImage>
-      extends AnimatedImg<TImage>
+      extends AAnimatedImgController<TImage>
       implements PropertyChangeListener
 {
    public enum ERotateMode {

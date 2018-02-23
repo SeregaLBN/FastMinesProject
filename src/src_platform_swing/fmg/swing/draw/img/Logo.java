@@ -3,25 +3,32 @@ package fmg.swing.draw.img;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.ALogo;
+import fmg.core.img.AImageView;
+import fmg.core.img.LogoModel;
 import fmg.swing.Cast;
 
 /** Main logos image */
-public abstract class Logo<TImage> extends ALogo<TImage> {
+public abstract class Logo<TImage> extends AImageView<TImage, LogoModel> {
+
+   protected Logo() {
+      super(new LogoModel());
+      // TODO Auto-generated constructor stub
+   }
 
    static {
       StaticRotateImgConsts.init();
    }
 
    protected void drawBody(Graphics2D g) {
+      LogoModel lm = this.getModel();
       { // fill background
          g.setComposite(AlphaComposite.Src);
-         fmg.common.Color bkClr = getBackgroundColor();
+         fmg.common.Color bkClr = lm.getBackgroundColor();
          if (!bkClr.isTransparent()) {
             g.setColor(Cast.toColor(bkClr));
             g.fillRect(0, 0, getSize().width, getSize().height);
@@ -29,23 +36,23 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
       }
 
       g.setComposite(AlphaComposite.SrcOver);
-      List<PointDouble> rays0 = new ArrayList<>();
-      List<PointDouble> inn0 = new ArrayList<>();
-      List<PointDouble> oct0 = new ArrayList<>();
-      getCoords(rays0, inn0, oct0);
+      List<PointDouble> rays0 = lm.getRays();
+      List<PointDouble> inn0  = lm.getInn();
+      List<PointDouble> oct0  = lm.getOct();
 
       Point2D.Double [] rays = rays0.stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
       Point2D.Double [] inn  = inn0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
       Point2D.Double [] oct  = oct0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
       Point2D.Double center = new Point2D.Double(getSize().width/2.0, getSize().height/2.0);
 
-      Color [] palette = Arrays.stream(Palette)
+      HSV[] Palette = lm.getPalette();
+      Color[] palette = Arrays.stream(Palette)
          .map(hsv -> Cast.toColor(hsv.toColor()))
          .toArray(size -> new Color[size]);
 
       // paint owner gradient rays
       for (int i=0; i<8; i++) {
-         if (isUseGradient()) {
+         if (lm.isUseGradient()) {
             // rectangle gragient
             g.setPaint(new GradientPaint(oct[(i+5)%8], palette[(i+0)%8], oct[i], palette[(i+3)%8]));
             fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
@@ -61,13 +68,13 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
             fillPolygon(g, rays[i], oct[(i+5)%8], inn[i]);
             g.setComposite(composite);
          } else {
-            g.setColor(Cast.toColor(Palette[i].toColor().darker()));
+            g.setColor(Cast.toColor(lm.getPalette()[i].toColor().darker()));
             fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
          }
       }
 
       // paint star perimeter
-      double zoomAverage = (getZoomX() + getZoomY())/2;
+      double zoomAverage = (lm.getZoomX() + lm.getZoomY())/2;
       final double penWidth = Math.max(1, 2 * zoomAverage);
       g.setStroke(new BasicStroke((float)penWidth));
       for (int i=0; i<8; i++) {
@@ -79,7 +86,7 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
 
       // paint inner gradient triangles
       for (int i=0; i<8; i++) {
-         if (isUseGradient())
+         if (lm.isUseGradient())
             g.setPaint(new GradientPaint(
                   inn[i], palette[(i+6)%8],
                   center, ((i&1)==0) ? Color.BLACK : Color.WHITE));

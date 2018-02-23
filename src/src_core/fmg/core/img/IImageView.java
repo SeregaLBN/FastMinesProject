@@ -7,11 +7,15 @@ import fmg.common.notyfier.INotifyPropertyChanged;
  * Image MVC: view
  *
  * @param <TImage> plaform specific image
+ * @param <TImageModel> model data for display
  **/
-public interface IImageView<TImage> extends AutoCloseable, INotifyPropertyChanged {
+public interface IImageView<TImage, TImageModel extends IImageModel> extends AutoCloseable, INotifyPropertyChanged {
 
    public static final String PROPERTY_SIZE  = IImageModel.PROPERTY_SIZE;
    public static final String PROPERTY_IMAGE = "Image";
+
+   /** model data for display */
+   TImageModel getModel();
 
    /** image size in pixels */
    Size getSize();
