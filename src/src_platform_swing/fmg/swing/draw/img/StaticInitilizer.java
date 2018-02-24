@@ -2,14 +2,14 @@ package fmg.swing.draw.img;
 
 import javax.swing.SwingUtilities;
 
-import fmg.core.img.RotatedImg;
-import fmg.core.img.ImageProperties;
+import fmg.core.img.AAnimatedImgController;
+import fmg.core.img.AImageController;
 
-final class StaticRotateImgConsts {
+final class StaticInitilizer {
 
    static {
-      ImageProperties.DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
-      RotatedImg.TIMER_CREATOR = () -> new fmg.swing.utils.Timer();
+      AImageController.DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
+      AAnimatedImgController.GET_ANIMATOR = () -> Animator.getSingleton();
    }
 
    public static void init() {

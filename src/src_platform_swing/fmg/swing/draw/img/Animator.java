@@ -1,8 +1,8 @@
 package fmg.swing.draw.img;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.Consumer;
 
 import fmg.common.Pair;
@@ -20,7 +20,7 @@ public class Animator implements IAnimator, AutoCloseable {
    }
 
    private Animator() {
-      _subscribers = new TreeMap<>();
+      _subscribers = new HashMap<>();
       _timer = new Timer();
       _timer.setInterval(1000/60); // The number of frames per second
       _timer.setCallback(() -> {

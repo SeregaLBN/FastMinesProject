@@ -22,7 +22,7 @@ import fmg.swing.Cast;
 public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
 
    static {
-      StaticRotateImgConsts.init();
+      StaticInitilizer.init();
    }
 
    /** @param group - may be null. if Null - representable image of EMosaicGroup.class */

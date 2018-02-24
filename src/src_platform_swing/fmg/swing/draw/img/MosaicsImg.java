@@ -34,7 +34,7 @@ import fmg.swing.mosaic.AMosaicViewSwing;
 public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
 
    static {
-      StaticRotateImgConsts.init();
+      StaticInitilizer.init();
    }
 
    private static final boolean RandomCellBkColor = true;

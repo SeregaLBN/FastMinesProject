@@ -9,6 +9,7 @@ import java.util.List;
 import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
 import fmg.core.img.AImageView;
+import fmg.core.img.LogoController;
 import fmg.core.img.LogoModel;
 import fmg.swing.Cast;
 
@@ -21,7 +22,7 @@ public abstract class Logo<TImage> extends AImageView<TImage, LogoModel> {
    }
 
    static {
-      StaticRotateImgConsts.init();
+      StaticInitilizer.init();
    }
 
    protected void drawBody(Graphics2D g) {
@@ -167,12 +168,23 @@ public abstract class Logo<TImage> extends AImageView<TImage, LogoModel> {
 
    }
 
+   public static class ControllerIcon extends LogoController<javax.swing.Icon, Logo.Icon> {
+      public ControllerIcon() {
+         super(new Logo.Icon());
+      }
+   }
+   public static class ControllerImage extends LogoController<java.awt.Image, Logo.Image> {
+      public ControllerImage() {
+         super(new Logo.Image());
+      }
+   }
+
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(() -> Arrays.asList(new Logo.Icon()
-                                            , new Logo.Image()
-                                            , new Logo.Icon()
-                                            , new Logo.Image()
+      TestDrawing.testApp(() -> Arrays.asList(new Logo.ControllerIcon()
+                                            , new Logo.ControllerImage()
+                                            , new Logo.ControllerIcon()
+                                            , new Logo.ControllerImage()
                          ));
    }
    //////////////////////////////////

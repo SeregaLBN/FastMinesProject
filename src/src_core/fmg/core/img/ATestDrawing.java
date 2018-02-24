@@ -31,12 +31,12 @@ public abstract class ATestDrawing {
 
       if (cntrller instanceof AAnimatedImgController) {
          AAnimatedImgController<?,?,?> aCtrller = (AAnimatedImgController<?,?,?>)cntrller;
-         aCtrller.setAnimated(bl() && bl()); // 25%
+         aCtrller.setAnimated(bl());// || bl());
          aCtrller.setAnimatePeriod((1000 + r(2000)) * np());
-         aCtrller.setTotalFrames(3 + r(50));
+         aCtrller.setTotalFrames(20 + r(30));
 
          aCtrller.usePolarLightTransforming(bl());
-         aCtrller.useRotateTransforming(bl());
+         aCtrller.useRotateTransforming(true);
 
          if (testTransparent) {
             HSV bkClr = new HSV(Color.RandomColor(getRandom()));
@@ -94,10 +94,10 @@ public abstract class ATestDrawing {
    public static class CellTilingResult {
       public Size imageSize;
       public Size tableSize;
-      public Function<? /* image */, CellTilingInfo> itemCallback;
+      public Function<AImageController<?,?,?> /* image */, CellTilingInfo> itemCallback;
    }
 
-   public CellTilingResult cellTiling(RectDouble rc, List<?> images, boolean testTransparent)
+   public CellTilingResult cellTiling(RectDouble rc, List<AImageController<?,?,?>> images, boolean testTransparent)
    {
       int len = images.size();
       int cols = (int)Math.round( Math.sqrt(len)  + 0.4999999999); // columns
@@ -111,9 +111,9 @@ public abstract class ATestDrawing {
       Size imgSize = new Size((int)(dx - 2*pad + addonX),  // dx - 2*pad;
                               (int)(dy - 2*pad + addonY)); // dy - 2*pad;
 
-      Function<? /* image */, CellTilingInfo> itemCallback = item -> {
-         if (item instanceof BurgerMenuImg) {
-            BurgerMenuImg<?> brgrImg = (BurgerMenuImg<?>)item;
+      Function<AImageController<?,?,?>, CellTilingInfo> itemCallback = item -> {
+         if (item.getModel() instanceof BurgerMenuImg) {
+            BurgerMenuImg<?> brgrImg = (BurgerMenuImg<?>)item.getModel();
             brgrImg.resetPaddingBurgerMenu();
          }
 
@@ -144,7 +144,7 @@ public abstract class ATestDrawing {
       return ctr;
    }
 
-   public String getTitle(List<?> images) {
+   public String getTitle(List<AImageController<?,?,?>> images) {
       return titlePrefix + " test paints: " + images.stream()
          .map(i -> i.getClass().getName())
          .map(n -> Stream.of(n.split("\\.")).reduce((first, second) -> second).get().replaceAll("\\$", ".") )

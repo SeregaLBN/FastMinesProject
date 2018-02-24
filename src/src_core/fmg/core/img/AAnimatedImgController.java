@@ -41,6 +41,7 @@ public abstract class AAnimatedImgController<TImage,
             GET_ANIMATOR.get().subscribe(this, timeFromStartSubscribe -> {
                long mod = timeFromStartSubscribe % _animatePeriod;
                long frame = mod * getTotalFrames() / _animatePeriod;
+               //System.out.println("ANIMATOR : " + getClass().getSimpleName() + ": "+ timeFromStartSubscribe);
                setCurrentFrame((int)frame);
             });
          else
@@ -56,7 +57,7 @@ public abstract class AAnimatedImgController<TImage,
       setProperty(_animatePeriod, value, PROPERTY_ANIMATE_PERIOD);
    }
 
-   private int _totalFrames = 5;
+   private int _totalFrames = 30;
    /** Total frames of the animated period */
    public int getTotalFrames() { return _totalFrames; }
    public void setTotalFrames(int value) {

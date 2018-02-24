@@ -29,14 +29,14 @@ final class TestDrawing extends ATestDrawing {
       super("Swing");
    }
 
-   static void testApp(Supplier<List<?>> funcGetImages) {
+   static void testApp(Supplier<List<AImageController<?,?,?>>> funcGetImages) {
       new JFrame() {
          private static final long serialVersionUID = 1L;
 
          {
             TestDrawing td = new TestDrawing();
 
-            List<?> images = funcGetImages.get();
+            List<AImageController<?,?,?>> images = funcGetImages.get();
 
             boolean testTransparent = td.bl();
 
@@ -70,19 +70,14 @@ final class TestDrawing extends ATestDrawing {
                      return;
 
                   images.stream()
-                     .map(x -> (Object)x)
-                     .forEach(imgObj -> {
+                     .forEach(imgController -> {
 
-                        @SuppressWarnings("unchecked")
-                        Function<Object, CellTilingInfo> callback = (Function<Object, CellTilingInfo>)ctr[0].itemCallback;
-                        CellTilingInfo cti = callback.apply(imgObj);
+                        Function<AImageController<?,?,?>, CellTilingInfo> callback = ctr[0].itemCallback;
+                        CellTilingInfo cti = callback.apply(imgController);
                         PointDouble offset = cti.imageOffset;
 
-                        if (imgObj instanceof AImageController) {
-                           AImageController<?,?,?> ctrller = (AImageController<?,?,?>)imgObj;
-                           ctrller.getModel().setSize(imgSize);
-                           imgObj = ctrller.getImage();
-                        }
+                        imgController.getModel().setSize(imgSize);
+                        Object imgObj = imgController.getImage();
 
                         if (imgObj instanceof Icon) {
                            Icon ico = (Icon)imgObj;
@@ -116,7 +111,9 @@ final class TestDrawing extends ATestDrawing {
             };
             images.stream()
              //.filter(x -> x instanceof AImageController)
-               .map(x -> (AImageController<?,?,?>)x)
+               .map(x -> {
+                  return (AImageController<?,?,?>)x;
+               })
                .forEach(img -> {
                   img.addListener(l);
                   td.applyRandom(img, testTransparent);
@@ -126,6 +123,7 @@ final class TestDrawing extends ATestDrawing {
             addWindowListener(new WindowAdapter() {
                @Override
                public void windowClosing(WindowEvent we) {
+                  Animator.getSingleton().close();
                   images.stream()
                    //.filter(x -> x instanceof AImageController)
                      .map(x -> (AImageController<?,?,?>)x)
