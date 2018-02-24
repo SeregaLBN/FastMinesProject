@@ -1,7 +1,7 @@
 package fmg.core.img;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -69,34 +69,36 @@ public abstract class AAnimatedImgController<TImage,
    protected int getCurrentFrame() { return _currentFrame; }
    protected void setCurrentFrame(int value) {
       if (setProperty(_currentFrame, value, PROPERTY_CURRENT_FRAME)) {
-         _transformers.forEach(x -> x.execute(_currentFrame, _totalFrames, getModel()));
+         _transformers.forEach((k,v) -> v.execute(_currentFrame, _totalFrames, getModel()));
          getView().invalidate();
       }
    }
 
-   private Set<IModelTransformer> _transformers = new HashSet<>();
+   private Map<Class<? extends IModelTransformer>, IModelTransformer> _transformers = new HashMap<>();
 
-   protected <TModelTransformer extends IModelTransformer> void useTransforming(boolean enable, Class<TModelTransformer> clazz, Supplier<TModelTransformer> newInstance) {
-      if (enable) {
-         if (!_transformers.stream().anyMatch(e -> e.getClass() == clazz))
-            _transformers.add(newInstance.get());
-      } else {
-         IModelTransformer rt = _transformers.stream()
-               .filter(e -> e.getClass() == clazz)
-               .findAny()
-               .orElse(null);
-         if (rt != null)
-            _transformers.remove(rt);
-      }
+   public void removeModelTransformer(Class<? extends IModelTransformer> transformerClass) {
+      if (_transformers.keySet().contains(transformerClass))
+         _transformers.remove(transformerClass);
+   }
+   public void addModelTransformer(IModelTransformer transformer) {
+      if (!_transformers.keySet().contains(transformer.getClass()))
+         _transformers.put(transformer.getClass(), transformer);
    }
 
    public void useRotateTransforming(boolean enable) {
-      useTransforming(enable, RotateTransformer.class, () -> new RotateTransformer());
+      if (enable)
+         addModelTransformer(new RotateTransformer());
+      else
+         removeModelTransformer(RotateTransformer.class);
    }
 
    public void usePolarLightTransforming(boolean enable) {
-      useTransforming(enable, PolarLightFgTransformer.class, () -> new PolarLightFgTransformer());
+      if (enable)
+         addModelTransformer(new PolarLightFgTransformer());
+      else
+         removeModelTransformer(PolarLightFgTransformer.class);
    }
+
 
    @Override
    public void close() {

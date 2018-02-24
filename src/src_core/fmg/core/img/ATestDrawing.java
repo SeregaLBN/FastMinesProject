@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.common.Color;
-import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
@@ -26,32 +25,30 @@ public abstract class ATestDrawing {
    public boolean bl() { return getRandom().nextBoolean(); } // random bool
    public int np() { return (bl() ? -1 : +1); } // negative or positive
 
-   public void applyRandom(AImageController<?,?,?> cntrller, boolean testTransparent) {
+   public void applyRandom(AImageController<?,?,?> ctrller, boolean testTransparent) {
       testTransparent = testTransparent || bl();
 
-      if (cntrller instanceof AAnimatedImgController) {
-         AAnimatedImgController<?,?,?> aCtrller = (AAnimatedImgController<?,?,?>)cntrller;
-         aCtrller.setAnimated(bl());// || bl());
-         aCtrller.setAnimatePeriod((1000 + r(2000)) * np());
-         aCtrller.setTotalFrames(20 + r(30));
+      if (ctrller instanceof AAnimatedImgController) {
+         AAnimatedImgController<?,?,?> aCtrller = (AAnimatedImgController<?,?,?>)ctrller;
+         aCtrller.setAnimated(bl() || bl());
+         if (aCtrller.isAnimated()) {
+            aCtrller.setAnimatePeriod((1000 + r(2000)) * np());
+            aCtrller.setTotalFrames(40 + r(20));
 
-         aCtrller.usePolarLightTransforming(bl());
-         aCtrller.useRotateTransforming(true);
+            aCtrller.usePolarLightTransforming(bl());
+            aCtrller.useRotateTransforming(bl());
 
-         if (testTransparent) {
-            HSV bkClr = new HSV(Color.RandomColor(getRandom()));
-            bkClr.a = 50 + r(10);
-            double rotateAngleDelta = 360.0 / aCtrller.getTotalFrames(); // 360° / TotalFrames
-            cntrller.addListener(ev -> {
-               if (AAnimatedImgController.PROPERTY_CURRENT_FRAME.equals(ev.getPropertyName())) {
-                  bkClr.h += rotateAngleDelta;
-                  aCtrller.getModel().setBackgroundColor(bkClr.toColor());
-               }
-            });
+            if (testTransparent) {
+               // Rotate the transparent background color
+               Color clr = Color.RandomColor(getRandom());
+               clr.setA(50 + r(10));
+               aCtrller.getModel().setBackgroundColor(clr);
+               aCtrller.addModelTransformer(new PolarLightBkTransformer());
+            }
          }
       }
 
-      IImageModel model = cntrller.getModel();
+      IImageModel model = ctrller.getModel();
       if (model instanceof ImageProperties) {
          @SuppressWarnings("resource")
          ImageProperties ip = (ImageProperties)model;

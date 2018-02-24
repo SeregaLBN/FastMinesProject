@@ -8,7 +8,8 @@ public class PolarLightLogoTransformer implements IModelTransformer {
    @Override
    public void execute(int currentFrame, int totalFrames, IImageModel model) {
       if (!(model instanceof LogoModel))
-         return;
+         throw new RuntimeException("Illegal usage transformer");
+
       LogoModel lm = (LogoModel)model;
 
       double rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames

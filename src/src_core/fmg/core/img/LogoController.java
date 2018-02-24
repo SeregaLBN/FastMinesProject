@@ -12,12 +12,18 @@ public class LogoController<TImage,
    @Override
    public void useRotateTransforming(boolean enable) {
       super.useRotateTransforming(enable);
-      useTransforming(enable, RotateLogoTransformer.class, () -> new RotateLogoTransformer());
+      if (enable)
+         addModelTransformer(new RotateLogoTransformer());
+      else
+         removeModelTransformer(RotateLogoTransformer.class);
    }
 
    @Override
    public void usePolarLightTransforming(boolean enable) {
-      useTransforming(enable, PolarLightLogoTransformer.class, () -> new PolarLightLogoTransformer());
+      if (enable)
+         addModelTransformer(new PolarLightLogoTransformer());
+      else
+         removeModelTransformer(PolarLightLogoTransformer.class);
    }
 
 }
