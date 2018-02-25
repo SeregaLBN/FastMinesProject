@@ -2,7 +2,6 @@ package fmg.swing.draw.img;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,7 +12,7 @@ import fmg.core.img.LogoController;
 import fmg.core.img.LogoModel;
 import fmg.swing.Cast;
 
-/** Main logos image */
+/** Main logos image - base Logo image view implementation */
 public abstract class Logo<TImage> extends AImageView<TImage, LogoModel> {
 
    protected Logo() {
@@ -110,69 +109,51 @@ public abstract class Logo<TImage> extends AImageView<TImage, LogoModel> {
    //    custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   public static class Icon extends Logo<javax.swing.Icon> {
+   /** Logo image view implementation over {@link javax.swing.Icon} */
+   static class Icon extends Logo<javax.swing.Icon> {
 
-      private BufferedImage buffImg;
-      private Graphics2D gBuffImg;
-      @Override
-      protected javax.swing.Icon createImage() {
-         if (gBuffImg != null)
-            gBuffImg.dispose();
-
-         buffImg = new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_ARGB);
-         gBuffImg = buffImg.createGraphics();
-         gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-         gBuffImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-         return new javax.swing.Icon() {
-            @Override
-            public int getIconWidth() { return Icon.this.getSize().width; }
-            @Override
-            public int getIconHeight() { return Icon.this.getSize().height; }
-            @Override
-            public void paintIcon(Component c, Graphics g, int x, int y) {
-               g.drawImage(buffImg, x,y, c);
-            }
-         };
-      }
+      private IconSwing<LogoModel> ico = new IconSwing<>(this);
 
       @Override
-      protected void drawBody() { drawBody(gBuffImg); }
+      protected javax.swing.Icon createImage() { return ico.createImage(); }
+
+      @Override
+      protected void drawBody() { drawBody(ico.getGraphics()); }
 
       @Override
       public void close() {
+         ico.close();
          super.close();
-         if (gBuffImg != null)
-            gBuffImg.dispose();
-         gBuffImg = null;
+         ico = null;
       }
 
    }
 
-   public static class Image extends Logo<java.awt.Image> {
+   /** Logo image view implementation over {@link java.awt.Image} */
+   static class Image extends Logo<java.awt.Image> {
+
+      private ImageAwt<LogoModel> img = new ImageAwt<>(this);
 
       @Override
       protected java.awt.Image createImage() {
-         return new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_ARGB);
+         return img.createImage();
       }
 
       @Override
       protected void drawBody() {
-         BufferedImage img = (BufferedImage) getImage();
-         Graphics2D g = img.createGraphics();
-         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-         drawBody(g);
-         g.dispose();
+         img.draw(g -> drawBody(g));
       }
 
    }
 
+   /** Logo image controller implementation for {@link Icon} */
    public static class ControllerIcon extends LogoController<javax.swing.Icon, Logo.Icon> {
       public ControllerIcon() {
          super(new Logo.Icon());
       }
    }
+
+   /** Logo image controller implementation for {@link Image} */
    public static class ControllerImage extends LogoController<java.awt.Image, Logo.Image> {
       public ControllerImage() {
          super(new Logo.Image());

@@ -1,0 +1,57 @@
+package fmg.swing.draw.img;
+
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+
+import fmg.common.geom.Size;
+import fmg.core.img.IImageModel;
+import fmg.core.img.IImageView;
+
+/** Internal wrapper-image imlementation over javax.swing.Icon
+ * @param <TImageModel> - model of image
+ */
+class IconSwing<TImageModel extends IImageModel> implements AutoCloseable {
+
+   private IImageView<javax.swing.Icon, TImageModel> _imageView;
+
+   IconSwing(IImageView<javax.swing.Icon, TImageModel> imageView) {
+      this._imageView = imageView;
+   }
+
+   private BufferedImage buffImg;
+   private Graphics2D gBuffImg;
+   public javax.swing.Icon createImage() {
+      if (gBuffImg != null)
+         gBuffImg.dispose();
+
+      Size s = _imageView.getSize();
+      buffImg = new BufferedImage(s.width, s.height, BufferedImage.TYPE_INT_ARGB);
+      gBuffImg = buffImg.createGraphics();
+      gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+      gBuffImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+      return new javax.swing.Icon() {
+         @Override
+         public int getIconWidth() { return _imageView.getSize().width; }
+         @Override
+         public int getIconHeight() { return _imageView.getSize().height; }
+         @Override
+         public void paintIcon(Component c, Graphics g, int x, int y) {
+            g.drawImage(buffImg, x,y, c);
+         }
+      };
+   }
+
+   public Graphics2D getGraphics() { return gBuffImg; }
+
+   @Override
+   public void close() {
+      if (gBuffImg != null)
+         gBuffImg.dispose();
+      gBuffImg = null;
+   }
+
+}
