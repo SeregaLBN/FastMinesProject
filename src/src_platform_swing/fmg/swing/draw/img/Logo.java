@@ -17,14 +17,13 @@ public abstract class Logo<TImage> extends AImageView<TImage, LogoModel> {
 
    protected Logo() {
       super(new LogoModel());
-      // TODO Auto-generated constructor stub
    }
 
    static {
       StaticInitilizer.init();
    }
 
-   protected void drawBody(Graphics2D g) {
+   protected void draw(Graphics2D g) {
       LogoModel lm = this.getModel();
       { // fill background
          g.setComposite(AlphaComposite.Src);
@@ -118,7 +117,7 @@ public abstract class Logo<TImage> extends AImageView<TImage, LogoModel> {
       protected javax.swing.Icon createImage() { return ico.createImage(); }
 
       @Override
-      protected void drawBody() { drawBody(ico.getGraphics()); }
+      protected void drawBody() { draw(ico.getGraphics()); }
 
       @Override
       public void close() {
@@ -135,29 +134,21 @@ public abstract class Logo<TImage> extends AImageView<TImage, LogoModel> {
       private ImageAwt<LogoModel> img = new ImageAwt<>(this);
 
       @Override
-      protected java.awt.Image createImage() {
-         return img.createImage();
-      }
+      protected java.awt.Image createImage() { return img.createImage(); }
 
       @Override
-      protected void drawBody() {
-         img.draw(g -> drawBody(g));
-      }
+      protected void drawBody() { img.draw(g -> draw(g)); }
 
    }
 
    /** Logo image controller implementation for {@link Icon} */
    public static class ControllerIcon extends LogoController<javax.swing.Icon, Logo.Icon> {
-      public ControllerIcon() {
-         super(new Logo.Icon());
-      }
+      public ControllerIcon() { super(new Logo.Icon()); }
    }
 
    /** Logo image controller implementation for {@link Image} */
    public static class ControllerImage extends LogoController<java.awt.Image, Logo.Image> {
-      public ControllerImage() {
-         super(new Logo.Image());
-      }
+      public ControllerImage() { super(new Logo.Image()); }
    }
 
    ////////////// TEST //////////////
