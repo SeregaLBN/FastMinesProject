@@ -428,14 +428,10 @@ public abstract class Smile<TImage> extends AImageView<TImage, SmileModel> {
       public Image(EFaceType faceType) { super(faceType); }
 
       @Override
-      protected java.awt.Image createImage() {
-         return img.createImage();
-      }
+      protected java.awt.Image createImage() { return img.createImage(); }
 
       @Override
-      protected void drawBody() {
-         img.draw(g -> draw(g));
-      }
+      protected void drawBody() { img.draw(g -> draw(g)); }
 
    }
 

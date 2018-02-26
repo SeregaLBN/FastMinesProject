@@ -3,6 +3,7 @@ package fmg.core.img;
 import fmg.common.geom.Size;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
+/** Model of the smile/face image */
 public class SmileModel extends NotifyPropertyChanged implements IImageModel {
 
    /** @see http://unicode-table.com/blocks/emoticons/
