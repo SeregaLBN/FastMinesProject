@@ -93,9 +93,9 @@ public abstract class AImageView<TImage, TImageModel extends IImageModel>
       drawEnd();
    }
 
-   protected void drawBegin() { _invalidate = EInvalidate.redrawing; }
+   protected final void drawBegin() { _invalidate = EInvalidate.redrawing; }
    protected abstract void drawBody();
-   protected void drawEnd() { _invalidate = EInvalidate.redrawed; }
+   protected final void drawEnd() { _invalidate = EInvalidate.redrawed; }
 
    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
       if (IImageModel.PROPERTY_SIZE.equals(propertyName)) {

@@ -5,6 +5,7 @@ import java.awt.geom.*;
 import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import fmg.common.geom.PointDouble;
 import fmg.core.img.AImageController;
@@ -300,7 +301,6 @@ public abstract class Smile<TImage> extends AImageView<TImage, SmileModel> {
 
    private void eyeOpened(Graphics2D g, boolean right, boolean disabled) {
       SmileModel sm = this.getModel();
-      SmileModel.EFaceType type = sm.getFaceType();
       int width = sm.getSize().width;
       int height = sm.getSize().height;
 
@@ -346,7 +346,6 @@ public abstract class Smile<TImage> extends AImageView<TImage, SmileModel> {
 
    private void eyeClosed(Graphics2D g, boolean right, boolean disabled) {
       SmileModel sm = this.getModel();
-      SmileModel.EFaceType type = sm.getFaceType();
       int width = sm.getSize().width;
       int height = sm.getSize().height;
 
@@ -456,7 +455,9 @@ public abstract class Smile<TImage> extends AImageView<TImage, SmileModel> {
    public static void main(String[] args) {
       TestDrawing.testApp(() -> {
             return Arrays.asList(EFaceType.values()).stream()
-                  .map(e -> new Smile.ControllerImage(e))
+                  .map(e -> Stream.of(new Smile.ControllerIcon(e),
+                                      new Smile.ControllerImage(e)))
+                  .flatMap(x -> x)
                   .collect(Collectors.toList());
          }
       );
