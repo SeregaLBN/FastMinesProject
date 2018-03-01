@@ -7,7 +7,7 @@ import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
 
-/** Abstract main logos image */
+/** MVC: model for FastMines logo image */
 public class LogoModel extends ImageProperties {
 
    public enum ERotateMode {

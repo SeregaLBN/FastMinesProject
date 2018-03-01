@@ -53,7 +53,8 @@ public abstract class ATestDrawing {
          @SuppressWarnings("resource")
          ImageProperties ip = (ImageProperties)model;
          ip.setBorderWidth(r(3));
-         ip.setPadding(4);
+         int pad = Math.min(ip.getSize().height/3, ip.getSize().width/3);
+         ip.setPadding(-pad/4 + r(pad));
 
          if (testTransparent) {
             // test transparent

@@ -2,6 +2,7 @@ package fmg.core.img;
 
 import fmg.common.Color;
 import fmg.common.geom.Bound;
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Size;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
@@ -18,7 +19,7 @@ public class ImageProperties extends NotifyPropertyChanged implements IImageMode
 
    public ImageProperties() {
       _size = new Size(DefaultImageSize, DefaultImageSize);
-      _padding = new Bound(DefaultPaddingInt);
+      _padding = new BoundDouble(DefaultPaddingInt, DefaultPaddingInt, DefaultPaddingInt, DefaultPaddingInt);
    }
 
    @SuppressWarnings("deprecation")
@@ -40,19 +41,29 @@ public class ImageProperties extends NotifyPropertyChanged implements IImageMode
    public void setSize(int widhtAndHeight) { setSize(new Size(widhtAndHeight, widhtAndHeight)) ; }
    @Override
    public void setSize(Size value) {
-      setProperty(_size, value, PROPERTY_SIZE);
+      Size old = _size;
+      if (setProperty(_size, value, PROPERTY_SIZE))
+         recalcPadding(old);
    }
 
-   private Bound _padding;
+   private BoundDouble _padding;
    /** inside padding */
-   public Bound getPadding() { return _padding; }
+   public Bound getPadding() { return new Bound((int)_padding.left, (int)_padding.top, (int)_padding.right, (int)_padding.bottom); }
    public void setPadding(int bound) { setPadding(new Bound(bound)); }
    public void setPadding(Bound value) {
       if (value.getLeftAndRight() >= getSize().width)
          throw new IllegalArgumentException("Padding size is very large. Should be less than Width.");
       if (value.getTopAndBottom() >= getSize().height)
          throw new IllegalArgumentException("Padding size is very large. Should be less than Height.");
-      setProperty(_padding, value, PROPERTY_PADDING);
+      BoundDouble paddingNew = new BoundDouble(value.left, value.top, value.right, value.bottom);
+      setProperty(_padding, paddingNew, PROPERTY_PADDING);
+   }
+   private void recalcPadding(Size old) {
+      BoundDouble paddingNew = new BoundDouble(_padding.left   * _size.width  / old.width,
+                                               _padding.top    * _size.height / old.height,
+                                               _padding.right  * _size.width  / old.width,
+                                               _padding.bottom * _size.height / old.height);
+      setProperty(_padding, paddingNew, PROPERTY_PADDING);
    }
 
    private Color _backgroundColor = DefaultBkColor;

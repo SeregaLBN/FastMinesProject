@@ -1,38 +1,39 @@
 package fmg.swing.draw.img;
 
-import java.awt.Component;
-import java.awt.Graphics;
 import java.util.Arrays;
 
-import javax.swing.Icon;
-
 import fmg.common.HSV;
+import fmg.core.img.LogoModel;
 
-/** mine image */
-public class Mine implements Icon {
+/** Mine image on the playing field */
+public final class Mine {
 
-   @Override
-   public int getIconWidth() { return 150; }
+   /** Mine image controller implementation for {@link Icon} */
+   public static class ControllerIcon extends Logo.ControllerIcon {
+      public ControllerIcon() { updateModel(getModel()); }
+   }
 
-   @Override
-   public int getIconHeight() { return 150; }
+   /** Mine image controller implementation for {@link Image} */
+   public static class ControllerImage extends Logo.ControllerImage {
+      public ControllerImage() { updateModel(getModel()); }
+   }
 
-   @Override
-   public void paintIcon(Component c, Graphics g, int x, int y) {
-      try (Logo.Icon logo = new Logo.Icon()) {
-         logo.setUseGradient(false);
-         logo.setSize(150);
-         logo.setPadding(10);
-         for (HSV item : logo.Palette)
-            //item.v = 75;
-            item.grayscale();
-         logo.getImage().paintIcon(c, g, x, y);
-      }
+   private static void updateModel(LogoModel m) {
+      m.setUseGradient(false);
+      m.setSize(150);
+      m.setPadding(50);
+      for (HSV item : m.getPalette())
+         //item.v = 75;
+         item.grayscale();
    }
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(() -> Arrays.asList( new Mine() ));
+      TestDrawing.testApp(() -> Arrays.asList(new Mine.ControllerIcon()
+                                            , new Mine.ControllerImage()
+                                            , new Mine.ControllerIcon()
+                                            , new Mine.ControllerImage()
+                         ));
    }
    //////////////////////////////////
 
