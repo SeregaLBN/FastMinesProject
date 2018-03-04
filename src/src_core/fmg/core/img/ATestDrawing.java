@@ -110,8 +110,8 @@ public abstract class ATestDrawing {
                               (int)(dy - 2*pad + addonY)); // dy - 2*pad;
 
       Function<AImageController<?,?,?>, CellTilingInfo> itemCallback = item -> {
-         if (item.getModel() instanceof BurgerMenuImg) {
-            BurgerMenuImg<?> brgrImg = (BurgerMenuImg<?>)item.getModel();
+         if (item.getModel() instanceof BurgerMenuModel) {
+            BurgerMenuModel<?> brgrImg = (BurgerMenuModel<?>)item.getModel();
             brgrImg.resetPaddingBurgerMenu();
          }
 

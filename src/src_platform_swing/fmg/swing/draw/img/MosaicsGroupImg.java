@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.AMosaicsGroupImg;
+import fmg.core.img.AMosaicsGroupView;
 import fmg.core.types.EMosaicGroup;
 import fmg.swing.Cast;
 
@@ -19,7 +19,7 @@ import fmg.swing.Cast;
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon})
  **/
-public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupImg<TImage> {
+public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupView<TImage> {
 
    static {
       StaticInitilizer.init();

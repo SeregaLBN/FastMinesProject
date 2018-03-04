@@ -9,61 +9,62 @@ import java.util.stream.Stream;
 import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.Pair;
+import fmg.common.geom.Bound;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.util.FigureHelper;
 import fmg.core.types.EMosaicGroup;
 
 /**
- * Abstract representable {@link fmg.core.types.EMosaicGroup} as image
+ * MVC: view. Abstract representable {@link fmg.core.types.EMosaicGroup} as image
  * @param <TImage> plaform specific image
  */
-public abstract class AMosaicsGroupImg<TImage> extends BurgerMenuImg<TImage> {
+public abstract class AMosaicsGroupView<TImage> extends BurgerMenuView<TImage, MosaicsGroupModel> {
 
    /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
-   protected AMosaicsGroupImg(EMosaicGroup group) {
-      _mosaicGroup = group;
-      setShowBurgerMenu(group == null);
-      setLayersInBurgerMenu(3);
-      setHorizontalBurgerMenu(!true);
-      setRotateBurgerMenu(true);
+   protected AMosaicsGroupView(EMosaicGroup group) {
+      super(new MosaicsGroupModel(group));
+      BurgerMenuModel bm = getBurgerMenuModel();
+      bm.setShow(group == null);
+      bm.setLayers(3);
+      bm.setHorizontal(!true);
+      bm.setRotate(true);
    }
 
-   public static final String PROPERTY_MOSAIC_GROUP = "MosaicGroup";
-
-   private EMosaicGroup _mosaicGroup;
-   public EMosaicGroup getMosaicGroup() { return _mosaicGroup; }
-   public void setMosaicGroup(EMosaicGroup value) { setProperty(_mosaicGroup, value, PROPERTY_MOSAIC_GROUP); }
-
-
    private static final boolean varMosaicGroupAsValueOthers1 = !true;
+   @Override
    protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() {
-      return (_mosaicGroup == null)
+      MosaicsGroupModel m = getModel();
+      EMosaicGroup mosaicGroup = m.getMosaicGroup();
+      return (mosaicGroup == null)
             ? getCoords_MosaicGroupAsType()
-            : (_mosaicGroup != EMosaicGroup.eOthers)
-               ? Stream.of(new Pair<>(getForegroundColor(), getCoords_MosaicGroupAsValue()))
+            : (mosaicGroup != EMosaicGroup.eOthers)
+               ? Stream.of(new Pair<>(m.getForegroundColor(), getCoords_MosaicGroupAsValue()))
                : varMosaicGroupAsValueOthers1
                   ? getCoords_MosaicGroupAsValueOthers1()
                   : getCoords_MosaicGroupAsValueOthers2();
    }
 
    private Stream<PointDouble> getCoords_MosaicGroupAsValue() {
+      MosaicsGroupModel m = getModel();
+      Bound pad = m.getPadding();
       double sq = Math.min( // size inner square
-            getSize().width  - getPadding().getLeftAndRight(),
-            getSize().height - getPadding().getTopAndBottom());
-      int vertices = 3 + getMosaicGroup().ordinal(); // vertices count
+            getSize().width  - pad.getLeftAndRight(),
+            getSize().height - pad.getTopAndBottom());
+      EMosaicGroup mosaicGroup = m.getMosaicGroup();
+      int vertices = 3 + mosaicGroup.ordinal(); // vertices count
       PointDouble center = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
 
-      double ra = getRotateAngle();
-      if (getMosaicGroup() != EMosaicGroup.eOthers)
+      double ra = m.getRotateAngle();
+      if (mosaicGroup != EMosaicGroup.eOthers)
          return FigureHelper.getRegularPolygonCoords(vertices, sq/2, center, ra);
 
       return FigureHelper.getRegularStarCoords(4, sq/2, sq/5, center, ra);
 
-    //return                           FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(3, vertices, sq / 2, center, getRotateAngle(), ra);
-    //return FigureHelper.rotateBySide(FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(3, vertices, sq / 2, center, getRotateAngle(), 0), 2, center, ra);
+    //return                           FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(3, vertices, sq / 2, center, m.getRotateAngle(), ra);
+    //return FigureHelper.rotateBySide(FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(3, vertices, sq / 2, center, m.getRotateAngle(), 0), 2, center, ra);
 
-    //return                           FigureHelper.getFlowingToTheRightPolygonCoordsBySide(3, vertices, sq / 3.5, 2, center, getRotateAngle(), ra);
-    //return FigureHelper.rotateBySide(FigureHelper.getFlowingToTheRightPolygonCoordsBySide(3, vertices, sq / 3.5, 2, center, getRotateAngle(), 0), 2, center, ra);
+    //return                           FigureHelper.getFlowingToTheRightPolygonCoordsBySide(3, vertices, sq / 3.5, 2, center, m.getRotateAngle(), ra);
+    //return FigureHelper.rotateBySide(FigureHelper.getFlowingToTheRightPolygonCoordsBySide(3, vertices, sq / 3.5, 2, center, m.getRotateAngle(), 0), 2, center, ra);
 
     //Pair<Integer, Integer> nm = getNM(_nmIndex1);
     //return                           FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(nm.first, nm.second, sq / 2, center, _incrementSpeedAngle, ra);
@@ -71,16 +72,18 @@ public abstract class AMosaicsGroupImg<TImage> extends BurgerMenuImg<TImage> {
    }
 
    private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsValueOthers1() {
+      MosaicsGroupModel m = getModel();
+      Bound pad = m.getPadding();
       double sq = Math.min( // size inner square
-         getSize().width - getPadding().getLeftAndRight(),
-         getSize().height - getPadding().getTopAndBottom());
+         getSize().width  - pad.getLeftAndRight(),
+         getSize().height - pad.getTopAndBottom());
       PointDouble center = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
 
 
       Pair<Integer, Integer> nm1 = getNM(_nmIndex1);
       Pair<Integer, Integer> nm2 = getNM(_nmIndex2);
       double isa = _incrementSpeedAngle;
-      double ra = getRotateAngle();
+      double ra = m.getRotateAngle();
       int sideNum = 2;
       double radius = sq / 3.7; // подобрал.., чтобы не вылазило за периметр изображения
       double sizeSide = sq / 3.5; // подобрал.., чтобы не вылазило за периметр изображения
@@ -109,11 +112,12 @@ public abstract class AMosaicsGroupImg<TImage> extends BurgerMenuImg<TImage> {
       //  * и совмещаю их по центру изображения
       PointDouble offsetToCenter1 = new PointDouble(center.x - centerPoint1.x, center.y - centerPoint1.y);
       PointDouble offsetToCenter2 = new PointDouble(center.x - centerPoint2.x, center.y - centerPoint2.y);
+      Color fgClr = m.getForegroundColor();
       return Stream.of(
-            new Pair<>(        getForegroundColor()                       , FigureHelper.move(res1.stream(), offsetToCenter1)),
-            new Pair<>(isPolarLights() ?
-                       new HSV(getForegroundColor()).addHue(180).toColor()
-                       :       getForegroundColor()                       , FigureHelper.move(res2.stream(), offsetToCenter2))
+            new Pair<>(        fgClr                       , FigureHelper.move(res1.stream(), offsetToCenter1)),
+            new Pair<>(true ?//isPolarLights() ?
+                       new HSV(fgClr).addHue(180).toColor()
+                       :       fgClr                       , FigureHelper.move(res2.stream(), offsetToCenter2))
          );
    }
 
@@ -164,27 +168,30 @@ public abstract class AMosaicsGroupImg<TImage> extends BurgerMenuImg<TImage> {
    }
 
    private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsType() {
+      MosaicsGroupModel m = getModel();
       final boolean accelerateRevert = true; // ускорение под конец анимации, иначе - в начале...
 
       int shapes = 4; // 3х-, 4х-, 5ти- и 6ти-угольники
 
-      double angle = getRotateAngle();
+      double angle = m.getRotateAngle();
     //double[] angleAccumulative = { angle };
       double anglePart = 360.0/shapes;
 
+      Bound pad = m.getPadding();
       double sqMax = Math.min( // размер квадрата куда будет вписана фигура при 0°
-            getSize().width  - getPadding().getLeftAndRight(),
-            getSize().height - getPadding().getTopAndBottom());
+            getSize().width  - pad.getLeftAndRight(),
+            getSize().height - pad.getTopAndBottom());
       double sqMin = sqMax / 7; // размер квадрата куда будет вписана фигура при 360°
       double sqDiff = sqMax - sqMin;
 
-      PointDouble center = new PointDouble(getPadding().left + (getSize().width  - getPadding().getLeftAndRight()) / 2.0,
-                                           getPadding().top  + (getSize().height - getPadding().getTopAndBottom()) / 2.0);
+      PointDouble center = new PointDouble(pad.left + (getSize().width  - pad.getLeftAndRight()) / 2.0,
+                                           pad.top  + (getSize().height - pad.getTopAndBottom()) / 2.0);
 
+      Color fgClr = m.getForegroundColor();
       Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, shapes)
             .mapToObj(shapeNum -> {
                int vertices = 3+shapeNum;
-               double angleShape = fixAngle(angle + shapeNum * anglePart);
+               double angleShape = ImageProperties.fixAngle(angle + shapeNum * anglePart);
              //angleAccumulative[0] = Math.sin(FigureHelper.toRadian(angle/4))*angleAccumulative[0]; // accelerate / ускоряшка..
 
                double sq = angleShape * sqDiff / 360;
@@ -196,9 +203,9 @@ public abstract class AMosaicsGroupImg<TImage> extends BurgerMenuImg<TImage> {
 
                double radius = sq/1.8;
 
-               Color clr = getForegroundColor();
-               if (isPolarLights())
-                  clr = new HSV(clr).addHue(+angleShape).toColor(); // try: -angleShape
+               Color clr = fgClr;
+             //if (isPolarLights())
+                  clr = new HSV(fgClr).addHue(+angleShape).toColor(); // try: -angleShape
 
                return new Pair<>(sq, new Pair<>(
                      clr,
@@ -219,18 +226,21 @@ public abstract class AMosaicsGroupImg<TImage> extends BurgerMenuImg<TImage> {
    }
 
    private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsValueOthers2() {
+      MosaicsGroupModel m = getModel();
+      Bound pad = m.getPadding();
       double sq = Math.min( // size inner square
-            getSize().width  - getPadding().getLeftAndRight(),
-            getSize().height - getPadding().getTopAndBottom());
+            getSize().width  - pad.getLeftAndRight(),
+            getSize().height - pad.getTopAndBottom());
       double radius = sq/2.7;
 
       int shapes = 3; // мозаики из группы EMosaicGroup.eOthers состоят из 3 типов фигур: треугольники, квадраты и шестигранники
 
-      double angle = getRotateAngle();
+      double angle = m.getRotateAngle();
       double anglePart = 360.0/shapes;
 
       final PointDouble center = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
       final PointDouble zero = new PointDouble(0, 0);
+      Color fgClr = m.getForegroundColor();
       Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, shapes)
             .mapToObj(shapeNum -> {
                double angleShape = angle*shapeNum;
@@ -239,9 +249,9 @@ public abstract class AMosaicsGroupImg<TImage> extends BurgerMenuImg<TImage> {
                PointDouble offset = FigureHelper.getPointOnCircle(sq / 5, angleShape + shapeNum * anglePart, zero);
                PointDouble centerStar = new PointDouble(center.x + offset.x, center.y + offset.y);
 
-               Color clr = getForegroundColor();
-               if (isPolarLights())
-                  clr = new HSV(clr).addHue(shapeNum * anglePart).toColor();
+               Color clr = fgClr;
+             //if (isPolarLights())
+                  clr = new HSV(fgClr).addHue(shapeNum * anglePart).toColor();
 
                int vertices;
                switch (shapeNum) { // мозаики из группы EMosaicGroup.eOthers состоят из 3 типов фигур:

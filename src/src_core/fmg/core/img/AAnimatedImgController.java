@@ -57,6 +57,8 @@ public abstract class AAnimatedImgController<TImage,
       setProperty(_animatePeriod, value, PROPERTY_ANIMATE_PERIOD);
    }
 
+//   private boolean _reverseDirection = false;
+
    private int _totalFrames = 30;
    /** Total frames of the animated period */
    public int getTotalFrames() { return _totalFrames; }

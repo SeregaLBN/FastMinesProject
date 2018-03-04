@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.AMosaicsSkillImg;
+import fmg.core.img.AMosaicsSkillView;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.Cast;
 
@@ -19,7 +19,7 @@ import fmg.swing.Cast;
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon})
  **/
-public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
+public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillView<TImage> {
 
    static {
       StaticInitilizer.init();
