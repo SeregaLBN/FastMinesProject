@@ -8,7 +8,7 @@ import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
 
 /** MVC: model for FastMines logo image */
-public class LogoModel extends ImageProperties {
+public class LogoModel extends AnimatedImageModel {
 
    public enum ERotateMode {
       /** rotate image */

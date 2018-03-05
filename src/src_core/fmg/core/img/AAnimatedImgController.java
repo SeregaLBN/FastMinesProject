@@ -11,7 +11,7 @@ import java.util.function.Supplier;
  */
 public abstract class AAnimatedImgController<TImage,
                                              TImageView  extends IImageView<TImage, TImageModel>,
-                                             TImageModel extends ImageProperties>
+                                             TImageModel extends AnimatedImageModel>
                 extends AImageController<TImage, TImageView, TImageModel>
 {
 

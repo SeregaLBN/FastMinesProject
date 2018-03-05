@@ -32,7 +32,7 @@ public abstract class ATestDrawing {
          AAnimatedImgController<?,?,?> aCtrller = (AAnimatedImgController<?,?,?>)ctrller;
          aCtrller.setAnimated(bl() || bl());
          if (aCtrller.isAnimated()) {
-            aCtrller.setAnimatePeriod((1000 + r(2000)) * np());
+            aCtrller.setAnimatePeriod(1000 + r(2000));
             aCtrller.setTotalFrames(40 + r(20));
 
             aCtrller.usePolarLightTransforming(bl());
@@ -50,7 +50,6 @@ public abstract class ATestDrawing {
 
       IImageModel model = ctrller.getModel();
       if (model instanceof ImageProperties) {
-         @SuppressWarnings("resource")
          ImageProperties ip = (ImageProperties)model;
          ip.setBorderWidth(r(3));
          int pad = Math.min(ip.getSize().height/3, ip.getSize().width/3);
@@ -69,8 +68,12 @@ public abstract class ATestDrawing {
             ip.setBackgroundColor(Color.RandomColor(getRandom()).brighter());
          }
       }
+      if (model instanceof AnimatedImageModel) {
+         AnimatedImageModel aim = (AnimatedImageModel)model;
+         aim.setPolarLights(bl());
+         aim.setAnimeDirection(bl());
+      }
       if (model instanceof LogoModel) {
-         @SuppressWarnings("resource")
          LogoModel lm = (LogoModel)model;
          lm.setUseGradient(bl());
       }
@@ -111,8 +114,8 @@ public abstract class ATestDrawing {
 
       Function<AImageController<?,?,?>, CellTilingInfo> itemCallback = item -> {
          if (item.getModel() instanceof BurgerMenuModel) {
-            BurgerMenuModel<?> brgrImg = (BurgerMenuModel<?>)item.getModel();
-            brgrImg.resetPaddingBurgerMenu();
+            BurgerMenuModel brgrModel = (BurgerMenuModel)item.getModel();
+            brgrModel.resetPadding();
          }
 
          int pos = images.indexOf(item);

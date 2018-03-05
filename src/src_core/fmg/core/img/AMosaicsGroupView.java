@@ -30,7 +30,6 @@ public abstract class AMosaicsGroupView<TImage> extends BurgerMenuView<TImage, M
       bm.setRotate(true);
    }
 
-   private static final boolean varMosaicGroupAsValueOthers1 = !true;
    @Override
    protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() {
       MosaicsGroupModel m = getModel();
@@ -39,7 +38,7 @@ public abstract class AMosaicsGroupView<TImage> extends BurgerMenuView<TImage, M
             ? getCoords_MosaicGroupAsType()
             : (mosaicGroup != EMosaicGroup.eOthers)
                ? Stream.of(new Pair<>(m.getForegroundColor(), getCoords_MosaicGroupAsValue()))
-               : varMosaicGroupAsValueOthers1
+               : MosaicsGroupModel.varMosaicGroupAsValueOthers1
                   ? getCoords_MosaicGroupAsValueOthers1()
                   : getCoords_MosaicGroupAsValueOthers2();
    }
@@ -66,9 +65,9 @@ public abstract class AMosaicsGroupView<TImage> extends BurgerMenuView<TImage, M
     //return                           FigureHelper.getFlowingToTheRightPolygonCoordsBySide(3, vertices, sq / 3.5, 2, center, m.getRotateAngle(), ra);
     //return FigureHelper.rotateBySide(FigureHelper.getFlowingToTheRightPolygonCoordsBySide(3, vertices, sq / 3.5, 2, center, m.getRotateAngle(), 0), 2, center, ra);
 
-    //Pair<Integer, Integer> nm = getNM(_nmIndex1);
-    //return                           FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(nm.first, nm.second, sq / 2, center, _incrementSpeedAngle, ra);
-    //return FigureHelper.rotateBySide(FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(nm.first, nm.second, sq / 2, center, _incrementSpeedAngle, 0), 2, center, ra);
+    //Pair<Integer, Integer> nm = getNM(m.getNmIndex1());
+    //return                           FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(nm.first, nm.second, sq / 2, center, m.getIncrementSpeedAngle(), ra);
+    //return FigureHelper.rotateBySide(FigureHelper.getFlowingToTheRightPolygonCoordsByRadius(nm.first, nm.second, sq / 2, center, m.getIncrementSpeedAngle(), 0), 2, center, ra);
    }
 
    private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsValueOthers1() {
@@ -80,9 +79,9 @@ public abstract class AMosaicsGroupView<TImage> extends BurgerMenuView<TImage, M
       PointDouble center = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
 
 
-      Pair<Integer, Integer> nm1 = getNM(_nmIndex1);
-      Pair<Integer, Integer> nm2 = getNM(_nmIndex2);
-      double isa = _incrementSpeedAngle;
+      Pair<Integer, Integer> nm1 = getNM(m.getNmIndex1());
+      Pair<Integer, Integer> nm2 = getNM(m.getNmIndex2());
+      double isa = m.getIncrementSpeedAngle();
       double ra = m.getRotateAngle();
       int sideNum = 2;
       double radius = sq / 3.7; // подобрал.., чтобы не вылазило за периметр изображения
@@ -113,58 +112,33 @@ public abstract class AMosaicsGroupView<TImage> extends BurgerMenuView<TImage, M
       PointDouble offsetToCenter1 = new PointDouble(center.x - centerPoint1.x, center.y - centerPoint1.y);
       PointDouble offsetToCenter2 = new PointDouble(center.x - centerPoint2.x, center.y - centerPoint2.y);
       Color fgClr = m.getForegroundColor();
+      boolean pl = m.isPolarLights();
       return Stream.of(
             new Pair<>(        fgClr                       , FigureHelper.move(res1.stream(), offsetToCenter1)),
-            new Pair<>(true ?//isPolarLights() ?
+            new Pair<>(pl ?
                        new HSV(fgClr).addHue(180).toColor()
                        :       fgClr                       , FigureHelper.move(res2.stream(), offsetToCenter2))
          );
    }
 
-   private final int[] _nmArray = { 3, 4, 6 }; //  triangle -> quadrangle -> hexagon -> anew triangle -> ...
-   private int _nmIndex1 = 0, _nmIndex2 = 1;
-   private double _incrementSpeedAngle;
-
    private Pair<Integer, Integer> getNM(int index) {
-      int n = _nmArray[index];
-      int m = _nmArray[(index + 1) % _nmArray.length];
+      MosaicsGroupModel model = getModel();
+      int[] nmArray = model.getNmArray();
+      int n = nmArray[index];
+      int m = nmArray[(index + 1) % nmArray.length];
 
       // Во вторую половину вращения фиксирую значение N равно M.
       // Т.к. в прервую половину, с 0 до 180, N стремится к M - см. описание FigureHelper.getFlowingToTheRightPolygonCoordsByXxx...
       // Т.е. при значении 180 значение N уже достигло M.
       // Фиксирую для того, чтобы при следующем инкременте параметра index, значение N не менялось. Т.о. обеспечиваю плавность анимации.
-      if (_incrementSpeedAngle >= 180) {
-         if (getRotateAngleDelta() > 0)
+      if (model.getIncrementSpeedAngle() >= 180) {
+         if (model.getAnimeDirection())
             n = m;
       } else {
-         if (getRotateAngleDelta() < 0)
+         if (!model.getAnimeDirection())
             n = m;
       }
       return new Pair<>(n, m);
-   }
-
-   @SuppressWarnings("unused")
-   @Override
-   protected void onTimer() {
-      if (isRotate() && varMosaicGroupAsValueOthers1 && (_mosaicGroup == EMosaicGroup.eOthers)) {
-         boolean castling = false;
-         double incrementSpeedAngle = _incrementSpeedAngle + 3*getRotateAngleDelta();
-         if (incrementSpeedAngle >= 360) {
-            incrementSpeedAngle -= 360;
-            castling = true;
-         } else {
-            if (incrementSpeedAngle < 0) {
-               incrementSpeedAngle += 360;
-               castling = true;
-            }
-         }
-         _incrementSpeedAngle = incrementSpeedAngle;
-         if (castling) {
-            _nmIndex1 = ++_nmIndex1 % _nmArray.length;
-            _nmIndex2 = ++_nmIndex2 % _nmArray.length;
-         }
-      }
-      super.onTimer();
    }
 
    private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsType() {
@@ -188,6 +162,7 @@ public abstract class AMosaicsGroupView<TImage> extends BurgerMenuView<TImage, M
                                            pad.top  + (getSize().height - pad.getTopAndBottom()) / 2.0);
 
       Color fgClr = m.getForegroundColor();
+      boolean pl = m.isPolarLights();
       Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, shapes)
             .mapToObj(shapeNum -> {
                int vertices = 3+shapeNum;
@@ -203,9 +178,9 @@ public abstract class AMosaicsGroupView<TImage> extends BurgerMenuView<TImage, M
 
                double radius = sq/1.8;
 
-               Color clr = fgClr;
-             //if (isPolarLights())
-                  clr = new HSV(fgClr).addHue(+angleShape).toColor(); // try: -angleShape
+               Color clr = !pl
+                     ? fgClr
+                     : new HSV(fgClr).addHue(+angleShape).toColor(); // try: -angleShape
 
                return new Pair<>(sq, new Pair<>(
                      clr,
@@ -241,6 +216,7 @@ public abstract class AMosaicsGroupView<TImage> extends BurgerMenuView<TImage, M
       final PointDouble center = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
       final PointDouble zero = new PointDouble(0, 0);
       Color fgClr = m.getForegroundColor();
+      boolean pl = m.isPolarLights();
       Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, shapes)
             .mapToObj(shapeNum -> {
                double angleShape = angle*shapeNum;
@@ -249,9 +225,9 @@ public abstract class AMosaicsGroupView<TImage> extends BurgerMenuView<TImage, M
                PointDouble offset = FigureHelper.getPointOnCircle(sq / 5, angleShape + shapeNum * anglePart, zero);
                PointDouble centerStar = new PointDouble(center.x + offset.x, center.y + offset.y);
 
-               Color clr = fgClr;
-             //if (isPolarLights())
-                  clr = new HSV(fgClr).addHue(shapeNum * anglePart).toColor();
+               Color clr = !pl
+                     ? fgClr
+                     : new HSV(fgClr).addHue(shapeNum * anglePart).toColor();
 
                int vertices;
                switch (shapeNum) { // мозаики из группы EMosaicGroup.eOthers состоят из 3 типов фигур:

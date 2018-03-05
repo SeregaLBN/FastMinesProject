@@ -6,10 +6,7 @@ import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Size;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
-/**
- * Common image characteristics.
- * MVC: model
- **/
+/** MVC: model. Common image characteristics. */
 public class ImageProperties extends NotifyPropertyChanged implements IImageModel {
 
    public static final Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);

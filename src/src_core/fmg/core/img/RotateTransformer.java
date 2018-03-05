@@ -4,15 +4,12 @@ package fmg.core.img;
 public class RotateTransformer implements IModelTransformer {
 
    @Override
-   public void execute(int currentFrame, int totalFrames, IImageModel model) {
-      if (!(model instanceof ImageProperties))
-         throw new RuntimeException("Illegal usage transformer");
-
-      ImageProperties ip = (ImageProperties)model;
-
+   public void execute(int currentFrame, int totalFrames, AnimatedImageModel model) {
       double rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
+      if (!model.getAnimeDirection())
+         rotateAngleDelta = -rotateAngleDelta;
       double rotateAngle = currentFrame * rotateAngleDelta;
-      ip.setRotateAngle(rotateAngle);
+      model.setRotateAngle(rotateAngle);
    }
 
 }

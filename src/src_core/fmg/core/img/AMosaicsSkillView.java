@@ -82,6 +82,7 @@ public abstract class AMosaicsSkillView<TImage> extends BurgerMenuView<TImage, M
       double sqDiff = sqMax - sqMin;
       PointDouble centerDiff = new PointDouble(centerMax.x - centerMin.x, centerMax.y - centerMin.y);
       Color fgClr = m.getForegroundColor();
+      boolean pl = m.isPolarLights();
       Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, stars)
             .mapToObj(starNum -> {
                double angleStar = ImageProperties.fixAngle(angle + starNum * anglePart);
@@ -110,9 +111,9 @@ public abstract class AMosaicsSkillView<TImage> extends BurgerMenuView<TImage, M
                      ? centerMin.y + centerStar.y
                      : centerMax.y - centerStar.y;
 
-               Color clr = fgClr;
-             //if (m.isPolarLights())
-               clr = new HSV(fgClr).addHue(+angleStar).toColor();// try: -angleStar
+               Color clr = !pl
+                     ? fgClr
+                     : new HSV(fgClr).addHue(+angleStar).toColor();// try: -angleStar
 
                return new Pair<>(sq, new Pair<>(
                      clr,
@@ -153,6 +154,7 @@ public abstract class AMosaicsSkillView<TImage> extends BurgerMenuView<TImage, M
       final PointDouble center = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
       final PointDouble zero = new PointDouble(0, 0);
       Color fgClr = m.getForegroundColor();
+      boolean pl = m.isPolarLights();
       Stream<Pair<Color, Stream<PointDouble>>> res = IntStream.range(0, stars)
             .mapToObj(starNum -> {
                // (un)comment next line to view result changes...
@@ -162,9 +164,9 @@ public abstract class AMosaicsSkillView<TImage> extends BurgerMenuView<TImage, M
                PointDouble offset = FigureHelper.getPointOnCircle(sq / 3, angleAccumulative[0] + starNum * anglePart, zero);
                PointDouble centerStar = new PointDouble(center.x + offset.x, center.y + offset.y);
 
-               Color clr = fgClr;
-             //if (isPolarLights())
-               clr = new HSV(fgClr).addHue(starNum * anglePart).toColor();
+               Color clr = !pl
+                     ? fgClr
+                     : new HSV(fgClr).addHue(starNum * anglePart).toColor();
 
                return new Pair<>(clr, (skill == ESkillLevel.eCustom)
                      ? FigureHelper.getRegularPolygonCoords(3 + (starNum % 4), r1, centerStar, -angleAccumulative[0])

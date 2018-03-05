@@ -3,7 +3,7 @@ package fmg.core.img;
 import fmg.core.types.ESkillLevel;
 
 /** MVC model of {@link ESkillLevel} representable as image */
-public class MosaicsSkillModel extends ImageProperties {
+public class MosaicsSkillModel extends AnimatedImageModel {
 
    public static final String PROPERTY_MOSAIC_SKILL = "MosaicSkill";
 
