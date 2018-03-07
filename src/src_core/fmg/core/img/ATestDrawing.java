@@ -50,6 +50,7 @@ public abstract class ATestDrawing {
 
       IImageModel model = ctrller.getModel();
       if (model instanceof ImageProperties) {
+         @SuppressWarnings("resource")
          ImageProperties ip = (ImageProperties)model;
          ip.setBorderWidth(r(3));
          int pad = Math.min(ip.getSize().height/3, ip.getSize().width/3);
@@ -69,11 +70,13 @@ public abstract class ATestDrawing {
          }
       }
       if (model instanceof AnimatedImageModel) {
+         @SuppressWarnings("resource")
          AnimatedImageModel aim = (AnimatedImageModel)model;
          aim.setPolarLights(bl());
          aim.setAnimeDirection(bl());
       }
       if (model instanceof LogoModel) {
+         @SuppressWarnings("resource")
          LogoModel lm = (LogoModel)model;
          lm.setUseGradient(bl());
       }
@@ -113,11 +116,6 @@ public abstract class ATestDrawing {
                               (int)(dy - 2*pad + addonY)); // dy - 2*pad;
 
       Function<AImageController<?,?,?>, CellTilingInfo> itemCallback = item -> {
-         if (item.getModel() instanceof BurgerMenuModel) {
-            BurgerMenuModel brgrModel = (BurgerMenuModel)item.getModel();
-            brgrModel.resetPadding();
-         }
-
          int pos = images.indexOf(item);
          if (pos == -1)
             throw new RuntimeException("Illegal usage...");

@@ -1,5 +1,11 @@
 package fmg.core.img;
 
+/**
+ * MVC controlle of logo image
+ *
+ * @param <TImage> plaform specific image
+ * @param <TImageView> MVC view
+ */
 public class LogoController<TImage,
                             TImageView extends IImageView<TImage, LogoModel>>
       extends AAnimatedImgController<TImage, TImageView, LogoModel>

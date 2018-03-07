@@ -19,7 +19,6 @@ public class MosaicsSkillModel extends AnimatedImageModel {
 
    public static final String PROPERTY_MOSAIC_SKILL = "MosaicSkill";
 
-//   public MosaicsSkillModel() {}
    public MosaicsSkillModel(ESkillLevel mosaicSkill) { _mosaicSkill = mosaicSkill; }
 
    private ESkillLevel _mosaicSkill;

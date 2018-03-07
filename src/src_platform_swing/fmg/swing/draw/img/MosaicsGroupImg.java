@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.AImageController;
+import fmg.core.img.MosaicsGroupController;
 import fmg.core.img.MosaicsGroupModel;
 import fmg.core.types.EMosaicGroup;
 
@@ -67,12 +67,12 @@ public abstract class MosaicsGroupImg<TImage> extends MosaicsSkillOrGroupView<TI
    }
 
    /** MosaicsGroup image controller implementation for {@link Icon} */
-   public static class ControllerIcon extends AImageController<javax.swing.Icon, MosaicsGroupImg.Icon, MosaicsGroupModel> {
+   public static class ControllerIcon extends MosaicsGroupController<javax.swing.Icon, MosaicsGroupImg.Icon> {
       public ControllerIcon(EMosaicGroup group) { super(new MosaicsGroupImg.Icon(group)); }
    }
 
    /** MosaicsGroup image controller implementation for {@link Image} */
-   public static class ControllerImage extends AImageController<java.awt.Image, MosaicsGroupImg.Image, MosaicsGroupModel> {
+   public static class ControllerImage extends MosaicsGroupController<java.awt.Image, MosaicsGroupImg.Image> {
       public ControllerImage(EMosaicGroup group) { super(new MosaicsGroupImg.Image(group)); }
    }
 

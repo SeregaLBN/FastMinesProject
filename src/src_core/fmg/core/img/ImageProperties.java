@@ -55,11 +55,14 @@ public class ImageProperties extends NotifyPropertyChanged implements IImageMode
       BoundDouble paddingNew = new BoundDouble(value.left, value.top, value.right, value.bottom);
       setProperty(_padding, paddingNew, PROPERTY_PADDING);
    }
+   static BoundDouble recalcPadding(BoundDouble padding, Size current, Size old) {
+      return new BoundDouble(padding.left   * current.width  / old.width,
+                             padding.top    * current.height / old.height,
+                             padding.right  * current.width  / old.width,
+                             padding.bottom * current.height / old.height);
+   }
    private void recalcPadding(Size old) {
-      BoundDouble paddingNew = new BoundDouble(_padding.left   * _size.width  / old.width,
-                                               _padding.top    * _size.height / old.height,
-                                               _padding.right  * _size.width  / old.width,
-                                               _padding.bottom * _size.height / old.height);
+      BoundDouble paddingNew = recalcPadding(_padding, _size, old);
       setProperty(_padding, paddingNew, PROPERTY_PADDING);
    }
 

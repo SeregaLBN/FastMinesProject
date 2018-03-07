@@ -19,10 +19,9 @@ public class MosaicsGroupModel extends AnimatedImageModel {
 
    public static final String PROPERTY_MOSAIC_GROUP = "MosaicGroup";
 
-//   public MosaicsGroupModel() {}
    public MosaicsGroupModel(EMosaicGroup mosaicGroup) { _mosaicGroup = mosaicGroup; }
 
-   public static final boolean varMosaicGroupAsValueOthers1 = !true;
+   public static boolean varMosaicGroupAsValueOthers1 = !true;
 
    private EMosaicGroup _mosaicGroup;
    public EMosaicGroup getMosaicGroup() { return _mosaicGroup; }

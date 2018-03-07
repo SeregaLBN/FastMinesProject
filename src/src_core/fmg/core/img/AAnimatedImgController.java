@@ -5,9 +5,10 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * {@link ImageProperties} with animated properties
- *
+ * MVC controller. Base animation controller.
  * @param <TImage> plaform specific image
+ * @param <TImageView> MVC view
+ * @param <TImageModel> MVC model
  */
 public abstract class AAnimatedImgController<TImage,
                                              TImageView  extends IImageView<TImage, TImageModel>,

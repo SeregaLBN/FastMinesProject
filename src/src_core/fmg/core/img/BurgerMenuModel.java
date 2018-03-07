@@ -1,31 +1,37 @@
 package fmg.core.img;
 
-import java.util.function.Supplier;
+import java.beans.PropertyChangeListener;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.HSV;
-import fmg.common.geom.Bound;
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.Rect;
-import fmg.common.geom.Size;
+import fmg.common.geom.*;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /** MVC: model of representable menu as horizontal or vertical lines */
 public class BurgerMenuModel extends NotifyPropertyChanged implements IImageModel {
 
    /**
-    * @param sizeGetter - getSize of another basic model
+    * @param generalModel - another basic model
     */
-   protected BurgerMenuModel(Supplier<Size> sizeGetter) {
+   protected BurgerMenuModel(ImageProperties generalModel) {
       _show = true;
       _layers = 3;
       _horizontal = true;
       _rotate = true;
 
-      _sizeGetter = sizeGetter;
+      _generalModel = generalModel;
+      _generalModelListener = event -> {
+         assert event.getSource() == _generalModel; // by reference
+         if (ImageProperties.PROPERTY_SIZE.equals(event.getPropertyName()))
+            recalcPadding((Size)event.getOldValue());
+      };
+      _generalModel.addListener(_generalModelListener);
    }
+
+   private ImageProperties _generalModel;
+   private PropertyChangeListener _generalModelListener;
 
    @SuppressWarnings("deprecation")
    protected <TI>boolean setProperty(TI storage, TI value, String propertyName) {
@@ -33,18 +39,17 @@ public class BurgerMenuModel extends NotifyPropertyChanged implements IImageMode
    }
 
 
-   public static final String PROPERTY_SHOW = "Show";
+   public static final String PROPERTY_SHOW       = "Show";
    public static final String PROPERTY_HORIZONTAL = "Horizontal";
-   public static final String PROPERTY_LAYERS = "LayersIn";
-   public static final String PROPERTY_ROTATE = "Rotate";
-   public static final String PROPERTY_PADDING = "Padding";
+   public static final String PROPERTY_LAYERS     = "Layers";
+   public static final String PROPERTY_ROTATE     = "Rotate";
+   public static final String PROPERTY_PADDING    = "Padding";
 
-   private Supplier<Size> _sizeGetter;
    /** image width and height in pixel */
    @Override
-   public Size getSize() { return _sizeGetter.get(); }
+   public Size getSize() { return _generalModel.getSize(); }
    @Override
-   public void setSize(Size size) { throw new RuntimeException("Illegal call. Must usage another model"); }
+   public void setSize(Size size) { _generalModel.setSize(size); }
 
    private boolean _show;
    public boolean isShow() { return _show; }
@@ -62,26 +67,30 @@ public class BurgerMenuModel extends NotifyPropertyChanged implements IImageMode
    public boolean isRotate() { return _rotate; }
    public void   setRotate(boolean value) { setProperty(_rotate, value, PROPERTY_ROTATE); }
 
-   private Bound _padding;
+   private BoundDouble _padding;
+   /** inside padding */
    public Bound getPadding() {
       if (_padding == null)
-         setPadding(new Bound(getSize().width / 2,
-                              getSize().height / 2,
-                              getPadding().right,
-                              getPadding().bottom));
-      return _padding;
+         recalcPadding(null);
+      return new Bound((int)_padding.left, (int)_padding.top, (int)_padding.right, (int)_padding.bottom);
    }
-   public void  setPadding(Bound value) {
+   public void setPadding(Bound value) {
       if (value.getLeftAndRight() >= getSize().width)
          throw new IllegalArgumentException("Padding size is very large. Should be less than Width.");
       if (value.getTopAndBottom() >= getSize().height)
          throw new IllegalArgumentException("Padding size is very large. Should be less than Height.");
-      setProperty(_padding, value, PROPERTY_PADDING);
+      BoundDouble paddingNew = new BoundDouble(value.left, value.top, value.right, value.bottom);
+      setProperty(_padding, paddingNew, PROPERTY_PADDING);
    }
-   public void resetPadding() {
-      if (_padding == null)
-         return;
-      _padding = null;
+   private void recalcPadding(Size old) {
+      Size size = getSize();
+      BoundDouble paddingNew = (_padding == null)
+            ? new BoundDouble(size.width / 2,
+                              size.height / 2,
+                              _generalModel.getPadding().right,
+                              _generalModel.getPadding().bottom)
+            : ImageProperties.recalcPadding(_padding, size, old);
+      setProperty(_padding, paddingNew, PROPERTY_PADDING);
    }
 
    public static class LineInfo {
@@ -127,6 +136,14 @@ public class BurgerMenuModel extends NotifyPropertyChanged implements IImageMode
             li.to = end;
             return li;
          });
+   }
+
+   @Override
+   public void close() {
+      _generalModel.removeListener(_generalModelListener);
+      super.close();
+      _generalModelListener = null;
+      _generalModel = null;
    }
 
 }

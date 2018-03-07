@@ -15,7 +15,7 @@ public abstract class WithBurgerMenuView<TImage, TImageModel extends ImageProper
 
    protected WithBurgerMenuView(TImageModel imageModel) {
       super(imageModel);
-      _burgerMenuModel = new BurgerMenuModel(() -> imageModel.getSize());
+      _burgerMenuModel = new BurgerMenuModel(imageModel);
       _burgerMenuModelListener = event -> {
          assert event.getSource() == _burgerMenuModel; // by reference
          onPropertyBurgerMenuModelChanged(event.getOldValue(), event.getNewValue(), event.getPropertyName());

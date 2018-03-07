@@ -3,9 +3,8 @@ package fmg.core.img;
 import fmg.core.types.EMosaicGroup;
 
 /** Transforming of {@link MosaicsGroupModel} */
-public class MosaicGroupTransformer implements IModelTransformer {
+public class MosaicsGroupTransformer implements IModelTransformer {
 
-   @SuppressWarnings("unused")
    @Override
    public void execute(int currentFrame, int totalFrames, AnimatedImageModel model) {
       if (!(model instanceof MosaicsGroupModel))
