@@ -1,16 +1,14 @@
 package fmg.swing.draw.img;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.AMosaicsSkillView;
+import fmg.core.img.AImageController;
+import fmg.core.img.MosaicsSkillModel;
 import fmg.core.types.ESkillLevel;
-import fmg.swing.Cast;
 
 /**
  * Representable {@link fmg.core.types.ESkillLevel} as image
@@ -19,115 +17,63 @@ import fmg.swing.Cast;
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon})
  **/
-public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillView<TImage> {
-
-   static {
-      StaticInitilizer.init();
-   }
+public abstract class MosaicsSkillImg<TImage> extends MosaicsSkillOrGroupView<TImage, MosaicsSkillModel> {
 
    /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
-   protected MosaicsSkillImg(ESkillLevel skill) { super(skill); }
+   protected MosaicsSkillImg(ESkillLevel skill) { super(new MosaicsSkillModel(skill)); }
 
-   protected void drawBody(Graphics2D g) {
-      g.setComposite(AlphaComposite.Src);
-      g.setColor(Cast.toColor(getBackgroundColor()));
-      g.fillRect(0, 0, getSize().width, getSize().height);
-
-      g.setComposite(AlphaComposite.SrcOver);
-      int bw = getBorderWidth();
-      boolean needDrawPerimeterBorder = (!getBorderColor().isTransparent() && (bw > 0));
-      java.awt.Color borderColor = Cast.toColor(getBorderColor());
-      BasicStroke bs = !needDrawPerimeterBorder ? null : new BasicStroke(bw);
-      Stream<Pair<Color, Stream<PointDouble>>> stars = getCoords();
-      stars.forEach(pair -> {
-         Polygon poly = Cast.toPolygon(pair.second.collect(Collectors.toList()));
-         if (!pair.first.isTransparent()) {
-            g.setColor(Cast.toColor(pair.first));
-            g.fillPolygon(poly);
-         }
-
-         // draw perimeter border
-         if (needDrawPerimeterBorder) {
-            g.setColor(borderColor);
-            g.setStroke(bs);
-            g.drawPolygon(poly);
-         }
-      });
-
-      getCoordsBurgerMenu()
-         .forEach(li -> {
-            g.setStroke(new BasicStroke((float)li.penWidht));
-            g.setColor(Cast.toColor(li.clr));
-            g.drawLine((int)li.from.x, (int)li.from.y, (int)li.to.x, (int)li.to.y);
-         });
-   }
+   @Override
+   protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    //    custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   public static class Icon extends MosaicsSkillImg<javax.swing.Icon> {
+   /** MosaicsSkill image view implementation over {@link javax.swing.Icon} */
+   static class Icon extends MosaicsSkillImg<javax.swing.Icon> {
 
-      /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
+      private IconSwing<MosaicsSkillModel> ico = new IconSwing<>(this);
+
       public Icon(ESkillLevel skill) { super(skill); }
 
-      private BufferedImage buffImg;
-      private Graphics2D gBuffImg;
       @Override
-      protected javax.swing.Icon createImage() {
-         if (gBuffImg != null)
-            gBuffImg.dispose();
-
-         buffImg = new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_ARGB);
-         gBuffImg = buffImg.createGraphics();
-         gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-         gBuffImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-         return new javax.swing.Icon() {
-            @Override
-            public int getIconWidth() { return Icon.this.getSize().width; }
-            @Override
-            public int getIconHeight() { return Icon.this.getSize().height; }
-            @Override
-            public void paintIcon(Component c, Graphics g, int x, int y) {
-               g.drawImage(buffImg, x,y, c);
-            }
-         };
-      }
+      protected javax.swing.Icon createImage() { return ico.createImage(); }
 
       @Override
-      protected void drawBody() { drawBody(gBuffImg); }
+      protected void drawBody() { draw(ico.getGraphics()); }
 
       @Override
       public void close() {
+         ico.close();
          super.close();
-         if (gBuffImg != null)
-            gBuffImg.dispose();
-         gBuffImg = null;
+         ico = null;
       }
 
    }
 
-   public static class Image extends MosaicsSkillImg<java.awt.Image> {
+   /** MosaicsSkill image view implementation over {@link java.awt.Image} */
+   static class Image extends MosaicsSkillImg<java.awt.Image> {
 
-      /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
+      private ImageAwt<MosaicsSkillModel> img = new ImageAwt<>(this);
+
       public Image(ESkillLevel skill) { super(skill); }
 
       @Override
-      protected java.awt.Image createImage() {
-         return new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_ARGB);
-      }
+      protected java.awt.Image createImage() { return img.createImage(); }
 
       @Override
-      protected void drawBody() {
-         BufferedImage img = (BufferedImage) getImage();
-         Graphics2D g = img.createGraphics();
-         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-         drawBody(g);
-         g.dispose();
-      }
+      protected void drawBody() { img.draw(g -> draw(g)); }
 
+   }
+
+   /** MosaicsSkill image controller implementation for {@link Icon} */
+   public static class ControllerIcon extends AImageController<javax.swing.Icon, MosaicsSkillImg.Icon, MosaicsSkillModel> {
+      public ControllerIcon(ESkillLevel skill) { super(new MosaicsSkillImg.Icon(skill)); }
+   }
+
+   /** MosaicsSkill image controller implementation for {@link Image} */
+   public static class ControllerImage extends AImageController<java.awt.Image, MosaicsSkillImg.Image, MosaicsSkillModel> {
+      public ControllerImage(ESkillLevel skill) { super(new MosaicsSkillImg.Image(skill)); }
    }
 
    ////////////// TEST //////////////
@@ -135,8 +81,8 @@ public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillView<TImage> 
       TestDrawing.testApp(() ->
          Stream.concat(Stream.of((ESkillLevel)null),
                        Stream.of(ESkillLevel.values()))
-               .map(e -> new Pair<>(new MosaicsSkillImg.Icon (e),
-                                    new MosaicsSkillImg.Image(e)))
+               .map(e -> new Pair<>(new MosaicsSkillImg.ControllerIcon (e),
+                                    new MosaicsSkillImg.ControllerImage(e)))
                .flatMap(x -> Stream.of(x.first, x.second))
                .collect(Collectors.toList())
       );

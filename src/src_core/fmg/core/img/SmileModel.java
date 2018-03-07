@@ -47,10 +47,6 @@ public class SmileModel extends NotifyPropertyChanged implements IImageModel {
    private EFaceType _faceType;
    private Size _size;
 
-   public SmileModel() {
-      this(EFaceType.Face_WhiteSmiling);
-   }
-
    public SmileModel(EFaceType faceType) {
       _faceType = faceType;
       _size = new Size(40, 40);

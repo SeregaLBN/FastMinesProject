@@ -16,9 +16,6 @@ import fmg.swing.Cast;
 
 public abstract class Smile<TImage> extends AImageView<TImage, SmileModel> {
 
-   public Smile() {
-      super(new SmileModel());
-   }
    public Smile(EFaceType faceType) {
       super(new SmileModel(faceType));
    }
@@ -401,7 +398,6 @@ public abstract class Smile<TImage> extends AImageView<TImage, SmileModel> {
 
       private IconSwing<SmileModel> ico = new IconSwing<>(this);
 
-      public Icon() { super(); }
       public Icon(EFaceType faceType) { super(faceType); }
 
       @Override
@@ -424,7 +420,6 @@ public abstract class Smile<TImage> extends AImageView<TImage, SmileModel> {
 
       private ImageAwt<SmileModel> img = new ImageAwt<>(this);
 
-      public Image() { super(); }
       public Image(EFaceType faceType) { super(faceType); }
 
       @Override
@@ -437,13 +432,11 @@ public abstract class Smile<TImage> extends AImageView<TImage, SmileModel> {
 
    /** Smile image controller implementation for {@link Icon} */
    public static class ControllerIcon extends AImageController<javax.swing.Icon, Smile.Icon, SmileModel> {
-      public ControllerIcon() { super(new Smile.Icon()); }
       public ControllerIcon(EFaceType faceType) { super(new Smile.Icon(faceType)); }
    }
 
    /** Smile image controller implementation for {@link Image} */
    public static class ControllerImage extends AImageController<java.awt.Image, Smile.Image, SmileModel> {
-      public ControllerImage() { super(new Smile.Image()); }
       public ControllerImage(EFaceType faceType) { super(new Smile.Image(faceType)); }
    }
 

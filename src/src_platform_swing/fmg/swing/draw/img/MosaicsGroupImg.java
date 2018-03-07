@@ -1,16 +1,14 @@
 package fmg.swing.draw.img;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.AMosaicsGroupView;
+import fmg.core.img.AImageController;
+import fmg.core.img.MosaicsGroupModel;
 import fmg.core.types.EMosaicGroup;
-import fmg.swing.Cast;
 
 /**
  * Representable {@link fmg.core.types.EMosaicGroup} as image
@@ -19,115 +17,63 @@ import fmg.swing.Cast;
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon})
  **/
-public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupView<TImage> {
-
-   static {
-      StaticInitilizer.init();
-   }
+public abstract class MosaicsGroupImg<TImage> extends MosaicsSkillOrGroupView<TImage, MosaicsGroupModel> {
 
    /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
-   protected MosaicsGroupImg(EMosaicGroup group) { super(group); }
+   protected MosaicsGroupImg(EMosaicGroup group) { super(new MosaicsGroupModel(group)); }
 
-   protected void drawBody(Graphics2D g) {
-      g.setComposite(AlphaComposite.Src);
-      g.setColor(Cast.toColor(getBackgroundColor()));
-      g.fillRect(0, 0, getSize().width, getSize().height);
-
-      g.setComposite(AlphaComposite.SrcOver);
-      int bw = getBorderWidth();
-      boolean needDrawPerimeterBorder = (!getBorderColor().isTransparent() && (bw > 0));
-      java.awt.Color borderColor = Cast.toColor(getBorderColor());
-      BasicStroke bs = !needDrawPerimeterBorder ? null : new BasicStroke(bw);
-      Stream<Pair<Color, Stream<PointDouble>>> stars = getCoords();
-      stars.forEach(pair -> {
-         Polygon poly = Cast.toPolygon(pair.second.collect(Collectors.toList()));
-         if (!pair.first.isTransparent()) {
-            g.setColor(Cast.toColor(pair.first));
-            g.fillPolygon(poly);
-         }
-
-         // draw perimeter border
-         if (needDrawPerimeterBorder) {
-            g.setColor(borderColor);
-            g.setStroke(bs);
-            g.drawPolygon(poly);
-         }
-      });
-
-      getCoordsBurgerMenu()
-         .forEach(li -> {
-            g.setStroke(new BasicStroke((float)li.penWidht));
-            g.setColor(Cast.toColor(li.clr));
-            g.drawLine((int)li.from.x, (int)li.from.y, (int)li.to.x, (int)li.to.y);
-         });
-   }
+   @Override
+   protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    //    custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   public static class Icon extends MosaicsGroupImg<javax.swing.Icon> {
+   /** MosaicsGroup image view implementation over {@link javax.swing.Icon} */
+   static class Icon extends MosaicsGroupImg<javax.swing.Icon> {
 
-      /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
+      private IconSwing<MosaicsGroupModel> ico = new IconSwing<>(this);
+
       public Icon(EMosaicGroup group) { super(group); }
 
-      private BufferedImage buffImg;
-      private Graphics2D gBuffImg;
       @Override
-      protected javax.swing.Icon createImage() {
-         if (gBuffImg != null)
-            gBuffImg.dispose();
-
-         buffImg = new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_ARGB);
-         gBuffImg = buffImg.createGraphics();
-         gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-         gBuffImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-         return new javax.swing.Icon() {
-            @Override
-            public int getIconWidth() { return Icon.this.getSize().width; }
-            @Override
-            public int getIconHeight() { return Icon.this.getSize().height; }
-            @Override
-            public void paintIcon(Component c, Graphics g, int x, int y) {
-               g.drawImage(buffImg, x,y, c);
-            }
-         };
-      }
+      protected javax.swing.Icon createImage() { return ico.createImage(); }
 
       @Override
-      protected void drawBody() { drawBody(gBuffImg); }
+      protected void drawBody() { draw(ico.getGraphics()); }
 
       @Override
       public void close() {
+         ico.close();
          super.close();
-         if (gBuffImg != null)
-            gBuffImg.dispose();
-         gBuffImg = null;
+         ico = null;
       }
 
    }
 
-   public static class Image extends MosaicsGroupImg<java.awt.Image> {
+   /** MosaicsGroup image view implementation over {@link java.awt.Image} */
+   static class Image extends MosaicsGroupImg<java.awt.Image> {
 
-      /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
+      private ImageAwt<MosaicsGroupModel> img = new ImageAwt<>(this);
+
       public Image(EMosaicGroup group) { super(group); }
 
       @Override
-      protected java.awt.Image createImage() {
-         return new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_INT_ARGB);
-      }
+      protected java.awt.Image createImage() { return img.createImage(); }
 
       @Override
-      protected void drawBody() {
-         BufferedImage img = (BufferedImage) getImage();
-         Graphics2D g = img.createGraphics();
-         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-         drawBody(g);
-         g.dispose();
-      }
+      protected void drawBody() { img.draw(g -> draw(g)); }
 
+   }
+
+   /** MosaicsGroup image controller implementation for {@link Icon} */
+   public static class ControllerIcon extends AImageController<javax.swing.Icon, MosaicsGroupImg.Icon, MosaicsGroupModel> {
+      public ControllerIcon(EMosaicGroup group) { super(new MosaicsGroupImg.Icon(group)); }
+   }
+
+   /** MosaicsGroup image controller implementation for {@link Image} */
+   public static class ControllerImage extends AImageController<java.awt.Image, MosaicsGroupImg.Image, MosaicsGroupModel> {
+      public ControllerImage(EMosaicGroup group) { super(new MosaicsGroupImg.Image(group)); }
    }
 
    ////////////// TEST //////////////
@@ -135,8 +81,8 @@ public abstract class MosaicsGroupImg<TImage> extends AMosaicsGroupView<TImage> 
       TestDrawing.testApp(() ->
          Stream.concat(Stream.of((EMosaicGroup)null),
                        Stream.of(EMosaicGroup.values()))
-               .map(e -> new Pair<>(new MosaicsGroupImg.Icon (e),
-                                    new MosaicsGroupImg.Image(e)))
+               .map(e -> new Pair<>(new MosaicsGroupImg.ControllerIcon (e),
+                                    new MosaicsGroupImg.ControllerImage(e)))
                .flatMap(x -> Stream.of(x.first, x.second))
                .collect(Collectors.toList())
       );
