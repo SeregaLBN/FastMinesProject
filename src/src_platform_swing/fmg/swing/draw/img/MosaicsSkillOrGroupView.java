@@ -10,7 +10,10 @@ import java.util.stream.Stream;
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.*;
+import fmg.core.img.AnimatedImageModel;
+import fmg.core.img.MosaicsGroupModel;
+import fmg.core.img.MosaicsSkillModel;
+import fmg.core.img.WithBurgerMenuView;
 import fmg.swing.Cast;
 
 /**
@@ -26,10 +29,6 @@ public abstract class MosaicsSkillOrGroupView<TImage, TImageModel extends Animat
 
    protected MosaicsSkillOrGroupView(TImageModel imageModel) {
       super(imageModel);
-      BurgerMenuModel bm = getBurgerMenuModel();
-      bm.setLayers(3);
-      bm.setHorizontal(true);
-      bm.setRotate(true);
    }
 
    /** get paint information of drawing basic image model */
@@ -64,7 +63,7 @@ public abstract class MosaicsSkillOrGroupView<TImage, TImageModel extends Animat
       });
 
       // draw burger menu
-      getBurgerMenuModel().getCoords(m)
+      getBurgerMenuModel().getCoords()
          .forEach(li -> {
             g.setStroke(new BasicStroke((float)li.penWidht));
             g.setColor(Cast.toColor(li.clr));

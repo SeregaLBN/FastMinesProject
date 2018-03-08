@@ -101,7 +101,7 @@ public class BurgerMenuModel extends NotifyPropertyChanged implements IImageMode
    }
 
    /** get paint information of drawing burger menu model image */
-   public Stream<LineInfo> getCoords(ImageProperties generalModel) {
+   public Stream<LineInfo> getCoords() {
       if (!isShow())
          return Stream.empty();
 
@@ -113,7 +113,7 @@ public class BurgerMenuModel extends NotifyPropertyChanged implements IImageMode
                          getSize().width  - pad.getLeftAndRight(),
                          getSize().height - pad.getTopAndBottom());
       double penWidth = Math.max(1, (horizontal ? rc.height : rc.width) / (2.0 * layers));
-      double rotateAngle = isRotate() ? generalModel.getRotateAngle() : 0;
+      double rotateAngle = isRotate() ? _generalModel.getRotateAngle() : 0;
       double stepAngle = 360.0 / layers;
 
       return IntStream.range(0, layers)

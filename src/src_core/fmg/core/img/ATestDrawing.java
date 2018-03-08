@@ -58,13 +58,13 @@ public abstract class ATestDrawing {
 
          if (testTransparent) {
             // test transparent
+            Color clr = ip.getForegroundColor();
             if ((ip.getBorderWidth() != 0) && (r(4) == 0)) {
-               ip.setForegroundColor(Color.Transparent);
+               clr.setA(Color.Transparent.getA());
             } else {
-               Color clr = ip.getForegroundColor();
                clr.setA(150 + r(255-150));
-               ip.setForegroundColor(clr);
             }
+            ip.setForegroundColor(clr);
          } else {
             ip.setBackgroundColor(Color.RandomColor(getRandom()).brighter());
          }
@@ -101,7 +101,7 @@ public abstract class ATestDrawing {
       public Function<AImageController<?,?,?> /* image */, CellTilingInfo> itemCallback;
    }
 
-   public CellTilingResult cellTiling(RectDouble rc, List<AImageController<?,?,?>> images, boolean testTransparent)
+   public CellTilingResult cellTiling(RectDouble rc, List<AImageController<?,?,?>> images, boolean testIntersection)
    {
       int len = images.size();
       int cols = (int)Math.round( Math.sqrt(len)  + 0.4999999999); // columns
@@ -110,8 +110,8 @@ public abstract class ATestDrawing {
       double dy = rc.height / rows; // cell tile height
 
       int pad = 2; // cell padding
-      double addonX = (cols==1) ? 0 : !testTransparent ? 0 : dx/4; // test intersection
-      double addonY = (rows==1) ? 0 : !testTransparent ? 0 : dy/4; // test intersection
+      double addonX = (cols==1) ? 0 : !testIntersection ? 0 : dx/4; // test intersection
+      double addonY = (rows==1) ? 0 : !testIntersection ? 0 : dy/4; // test intersection
       Size imgSize = new Size((int)(dx - 2*pad + addonX),  // dx - 2*pad;
                               (int)(dy - 2*pad + addonY)); // dy - 2*pad;
 
