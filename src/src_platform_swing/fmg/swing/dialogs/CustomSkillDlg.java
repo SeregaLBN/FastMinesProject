@@ -21,7 +21,7 @@ import fmg.core.types.ESkillLevel;
 import fmg.swing.Main;
 import fmg.swing.utils.GuiTools;
 
-public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
+public class CustomSkillDlg extends JDialog {
    private static final long serialVersionUID = 1L;
 
    private JSpinner spinX, spinY, spinMines;
@@ -31,9 +31,11 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
    private ButtonGroup radioGroup;
    private JPopupMenu popupMenu;
    private Main parent;
+   private final PropertyChangeListener _mosaicListener;
 
    public CustomSkillDlg(JFrame parent, boolean modal) {
       super(parent, "Select skill", modal);
+      _mosaicListener = ev -> onMosaicPropertyChanged(ev);
       if (parent instanceof Main)
          this.parent = (Main) parent;
       initialize(parent);
@@ -68,7 +70,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       this.setLocationRelativeTo(parent);
 
       if (this.parent != null)
-         this.parent.getMosaicController().addListener(this);
+         this.parent.getMosaicController().addListener(_mosaicListener);
    }
 
    // создаю панели с нужным расположением
@@ -226,6 +228,8 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       onClose();
    }
    private void onClose() {
+      if (this.parent != null)
+         this.parent.getMosaicController().removeListener(_mosaicListener);
       // при выходе из диалогового окна - освобождаю ресурсы
       dispose();
    }
@@ -314,8 +318,7 @@ public class CustomSkillDlg extends JDialog implements PropertyChangeListener {
       spinMines.setValue(mines);
    }
 
-   @Override
-   public void propertyChange(PropertyChangeEvent evt) {
+   private void onMosaicPropertyChanged(PropertyChangeEvent evt) {
       switch (evt.getPropertyName()) {
       case MosaicController.PROPERTY_MOSAIC_TYPE:
          if (isVisible())

@@ -37,6 +37,7 @@ import fmg.data.controller.serializable.PlayersModel;
 import fmg.data.controller.types.User;
 import fmg.data.view.draw.EShowElement;
 import fmg.data.view.draw.EZoomInterface;
+import fmg.swing.Main.PausePanel;
 import fmg.swing.dialogs.*;
 import fmg.swing.draw.img.*;
 import fmg.swing.draw.img.Smile.EType;
@@ -48,8 +49,8 @@ import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
 import fmg.swing.utils.ScreenResolutionHelper;
 
-/** Главное окно программы */
-public class Main extends JFrame implements PropertyChangeListener {
+/** Main window (Главное окно программы) */
+public class Main extends JFrame {
 
    private static final long serialVersionUID = 3L;
 
@@ -71,6 +72,8 @@ public class Main extends JFrame implements PropertyChangeListener {
    private AboutDlg        _aboutDialog;
    private SelectMosaicDlg _selectMosaicDialog;
    private CustomSkillDlg  _customSkillDialog;
+
+   private final PropertyChangeListener _mosaicListener;
 
    private ManageDlg getPlayerManageDlg() {
       if (_playerManageDialog == null)
@@ -977,10 +980,10 @@ public class Main extends JFrame implements PropertyChangeListener {
    /** mosaic controller */
    public void setMosaicController(MosaicControllerSwing mosaicController) {
       if (_mosaicController != null)
-         _mosaicController.removeListener(this);
+         _mosaicController.removeListener(_mosaicListener);
       _mosaicController = mosaicController;
       if (_mosaicController != null) {
-         _mosaicController.addListener(this);
+         _mosaicController.addListener(_mosaicListener);
          PaintSwingContext<Icon> pc = _mosaicController.getView().getPaintContext();
          pc.setBackgroundColor(pc.getBackgroundColor().darker(0.2));
       }
@@ -1025,6 +1028,7 @@ public class Main extends JFrame implements PropertyChangeListener {
 
    public Main() {
       super();
+      _mosaicListener = ev -> onMosaicPropertyChanged(ev);
       initialize();
    }
 
@@ -2458,13 +2462,9 @@ public class Main extends JFrame implements PropertyChangeListener {
       return getPlayers().getUser(userId);
    }
 
-   @Override
-   public void propertyChange(PropertyChangeEvent ev) {
-//      System.out.println("Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
-      if (ev.getSource() instanceof MosaicControllerSwing)
-         onMosaicControllerPropertyChanged((MosaicControllerSwing)ev.getSource(), ev);
-   }
-   private void onMosaicControllerPropertyChanged(MosaicControllerSwing source, PropertyChangeEvent ev) {
+   private void onMosaicPropertyChanged(PropertyChangeEvent ev) {
+//    System.out.println("Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
+      MosaicControllerSwing source = (MosaicControllerSwing)ev.getSource();
       switch (ev.getPropertyName()) {
       case MosaicController.PROPERTY_AREA:
       case MosaicController.PROPERTY_SIZE_FIELD:

@@ -68,14 +68,14 @@ public class ColorText extends NotifyPropertyChanged {
       Color[] old = this.colorOpen;
       if (!Arrays.equals(old, colorOpen)) {
          this.colorOpen = colorOpen;
-         onSelfPropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN);
+         onPropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN);
       }
    }
    public void setColorOpen(int i, Color colorOpen) {
       Color old = this.colorOpen[i];
       if (!old.equals(colorOpen)) {
          this.colorOpen[i] = colorOpen;
-         onSelfPropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN_N_ + i);
+         onPropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN_N_ + i);
       }
    }
 
@@ -89,14 +89,14 @@ public class ColorText extends NotifyPropertyChanged {
       Color[] old = this.colorClose;
       if (!Arrays.equals(old, colorClose)) {
          this.colorClose = colorClose;
-         onSelfPropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE);
+         onPropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE);
       }
    }
    public void setColorClose(int i, Color colorClose) {
       Color old = this.colorClose[i];
       if (!old.equals(colorClose)) {
          this.colorClose[i] = colorClose;
-         onSelfPropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE_N + i);
+         onPropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE_N + i);
       }
    }
 

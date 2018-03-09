@@ -71,7 +71,7 @@ public abstract class BaseCell {
          double old = this.area;
          if (!DoubleExt.hasMinDiff(old, area)) {
             this.area = area;
-            onSelfPropertyChanged(old, area, PROPERTY_AREA);
+            onPropertyChanged(old, area, PROPERTY_AREA);
          }
       }
       /** площадь ячейки/фигуры */

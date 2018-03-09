@@ -29,7 +29,7 @@ public class FontInfo extends NotifyPropertyChanged {
          return;
       String old = _name;
       _name = fontName;
-      onSelfPropertyChanged(old, fontName, PROPERTY_NAME);
+      onPropertyChanged(old, fontName, PROPERTY_NAME);
    }
 
    public boolean isBold() { return _bold; }
@@ -38,7 +38,7 @@ public class FontInfo extends NotifyPropertyChanged {
          return;
       boolean old = _bold;
       _bold = isBold;
-      onSelfPropertyChanged(old, isBold, PROPERTY_BOLD);
+      onPropertyChanged(old, isBold, PROPERTY_BOLD);
    }
 
    public int getSize() { return _size; }
@@ -47,7 +47,7 @@ public class FontInfo extends NotifyPropertyChanged {
          return;
       int old = _size;
       _size = size;
-      onSelfPropertyChanged(old, size, PROPERTY_SIZE);
+      onPropertyChanged(old, size, PROPERTY_SIZE);
    }
 
    @Override

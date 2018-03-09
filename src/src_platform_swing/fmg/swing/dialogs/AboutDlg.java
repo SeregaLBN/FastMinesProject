@@ -1,42 +1,27 @@
 package fmg.swing.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Desktop;
-import java.awt.FlowLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.net.URI;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
 
+import fmg.core.img.LogoModel;
+import fmg.core.img.SmileModel;
 import fmg.swing.draw.img.Logo;
 import fmg.swing.draw.img.Smile;
-import fmg.swing.draw.img.Smile.EType;
 import fmg.swing.utils.GuiTools;
 
 public class AboutDlg extends JDialog implements AutoCloseable {
 
    private static final long serialVersionUID = 1L;
+   private static final int ImgZoomQuality = 3;
 
-   private Logo.Icon _logo;
+   private Logo.ControllerIcon _logo;
+   private Smile.ControllerIcon _smile;
 
    public AboutDlg(JFrame parent, boolean modal) {
       super(parent, "About", modal);
@@ -125,16 +110,17 @@ public class AboutDlg extends JDialog implements AutoCloseable {
       JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
 //      panel.setBorder(BorderFactory.createTitledBorder("Logos"));// getDefaultBorder());
 
-      int icoSize = 48;
-      if (_logo == null) {
-         _logo = new Logo.Icon();
-         _logo.setUseGradient(true);
-         _logo.setSize(icoSize);
-         _logo.setPadding(1);
-      }
-      _logo.setRotate(true);
-      _logo.setRedrawInterval(50);
-      _logo.setRotateMode(Logo.ERotateMode.color);
+      int icoSize = 48 * ImgZoomQuality;
+      if (_logo == null)
+         _logo = new Logo.ControllerIcon();
+      LogoModel lm = _logo.getModel();
+      lm.setUseGradient(true);
+      lm.setSize(icoSize);
+      lm.setPadding(1);
+      lm.setRotateMode(LogoModel.ERotateMode.color);
+
+      _logo.setAnimated(true);
+      _logo.setAnimatePeriod(12);
       JButton btnLogo = new JButton(_logo.getImage());
       _logo.addListener(ev -> {
          if (Logo.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
@@ -142,7 +128,10 @@ public class AboutDlg extends JDialog implements AutoCloseable {
             btnLogo.repaint();
          }
       });
-      btnLogo.setPressedIcon(new Smile(EType.Face_Disappointed, icoSize, icoSize));
+
+      _smile = new Smile.ControllerIcon(SmileModel.EFaceType.Face_Disappointed);
+      _smile.getModel().setSize(icoSize, icoSize);
+      btnLogo.setPressedIcon(_smile.getImage());
       btnLogo.setFocusable(false);
 
       Insets margin = btnLogo.getMargin();
@@ -236,7 +225,7 @@ public class AboutDlg extends JDialog implements AutoCloseable {
          web.add(Box.createHorizontalStrut(20));
          web.add(lblLeftWeb);
          web.add(Box.createHorizontalStrut(2));
-         final String webPage = "http://kserg77.narod.ru/FastMines.html";
+         final String webPage = "https://github.com/seregalbn/FastMines";
          JLabel lblWeb = new JLabel("<html><body " +
 //               "bgcolor='#FEEF98'" +
                "><center width='"+htmpWidth+"'><a href='"+webPage+"'>"+webPage);
@@ -326,8 +315,8 @@ public class AboutDlg extends JDialog implements AutoCloseable {
 
    @Override
    public void close() {
-      _logo.setRotate(false);
       _logo.close();
+      _smile.close();
    }
 
 }
