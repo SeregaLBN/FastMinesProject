@@ -9,13 +9,13 @@ import fmg.common.notyfier.NotifyPropertyChanged;
  * MVC: controller.
  * Base implementation of image controller (manipulations with the image).
  *
- * @param <TImage> plaform specific image
+ * @param <TImage> plaform specific image or picture or other display context/canvas/window/panel
  * @param <TImageView> image view
  * @param <TImageModel> image model
  **/
-public abstract class AImageController<TImage,
-                                       TImageView  extends IImageView<TImage, TImageModel>,
-                                       TImageModel extends IImageModel>
+public abstract class ImageController<TImage,
+                                      TImageView  extends IImageView<TImage, TImageModel>,
+                                      TImageModel extends IImageModel>
                 extends NotifyPropertyChanged
                 implements AutoCloseable
 {
@@ -27,7 +27,7 @@ public abstract class AImageController<TImage,
    private final TImageView  _imageView;
    private final PropertyChangeListener _imageViewListener;
 
-   protected AImageController(TImageView imageView) {
+   protected ImageController(TImageView imageView) {
       _imageView = imageView;
 
       _imageViewListener = event -> {

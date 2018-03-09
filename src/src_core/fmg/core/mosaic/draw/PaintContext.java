@@ -18,7 +18,7 @@ import fmg.data.view.draw.PenBorder;
 /**
  * Information required for drawing the entire mosaic and cells
  *
- * @param <TImage> plaform specific image
+ * @param <TImage> plaform specific image or picture or other display context/canvas/window/panel
  **/
 public class PaintContext<TImage> extends NotifyPropertyChanged implements PropertyChangeListener, AutoCloseable {
 

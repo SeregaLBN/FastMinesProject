@@ -9,10 +9,10 @@ import fmg.common.notyfier.NotifyPropertyChanged;
  * MVC: view.
  * Base implementation of image view.
  *
- * @param <TImage> plaform specific image
+ * @param <TImage> plaform specific image or picture or other display context/canvas/window/panel
  * @param <TImageModel> model data for display
  **/
-public abstract class AImageView<TImage, TImageModel extends IImageModel>
+public abstract class ImageView<TImage, TImageModel extends IImageModel>
                 extends NotifyPropertyChanged
                 implements IImageView<TImage, TImageModel>
 {
@@ -20,7 +20,7 @@ public abstract class AImageView<TImage, TImageModel extends IImageModel>
    private final TImageModel _imageModel;
    private final PropertyChangeListener _imageModelListener;
 
-   protected AImageView(TImageModel imageModel) {
+   protected ImageView(TImageModel imageModel) {
       _imageModel = imageModel;
       _imageModelListener = event -> {
          assert event.getSource() == _imageModel; // by reference

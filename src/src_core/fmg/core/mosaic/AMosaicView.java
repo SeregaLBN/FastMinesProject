@@ -13,7 +13,7 @@ import fmg.data.view.draw.PenBorder;
 /**
  * MVC: view. Base implementation
  * @param <TPaintable> see {@link IPaintable}
- * @param <TImage> plaform specific image
+ * @param <TImage> plaform specific image or picture or other display context/canvas/window/panel
  * @param <TPaintContext> see {@link PaintContext}
  */
 public abstract class AMosaicView<TPaintable extends IPaintable,

@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.common.geom.PointDouble;
-import fmg.core.img.AImageController;
-import fmg.core.img.AImageView;
+import fmg.core.img.ImageController;
+import fmg.core.img.ImageView;
 import fmg.core.img.SmileModel;
 import fmg.core.img.SmileModel.EFaceType;
 import fmg.swing.Cast;
 
-public abstract class Smile<TImage> extends AImageView<TImage, SmileModel> {
+public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
    public Smile(EFaceType faceType) {
       super(new SmileModel(faceType));
@@ -431,12 +431,12 @@ public abstract class Smile<TImage> extends AImageView<TImage, SmileModel> {
    }
 
    /** Smile image controller implementation for {@link Icon} */
-   public static class ControllerIcon extends AImageController<javax.swing.Icon, Smile.Icon, SmileModel> {
+   public static class ControllerIcon extends ImageController<javax.swing.Icon, Smile.Icon, SmileModel> {
       public ControllerIcon(EFaceType faceType) { super(new Smile.Icon(faceType)); }
    }
 
    /** Smile image controller implementation for {@link Image} */
-   public static class ControllerImage extends AImageController<java.awt.Image, Smile.Image, SmileModel> {
+   public static class ControllerImage extends ImageController<java.awt.Image, Smile.Image, SmileModel> {
       public ControllerImage(EFaceType faceType) { super(new Smile.Image(faceType)); }
    }
 

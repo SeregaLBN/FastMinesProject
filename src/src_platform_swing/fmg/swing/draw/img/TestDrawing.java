@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
-import fmg.core.img.AImageController;
+import fmg.core.img.ImageController;
 import fmg.core.img.ATestDrawing;
 
 /** @see {@link MosaicsSkillImg#main}, {@link MosaicsGroupImg#main}, {@link MosaicsImg#main} */
@@ -26,14 +26,14 @@ final class TestDrawing extends ATestDrawing {
       super("Swing");
    }
 
-   static void testApp(Supplier<List<AImageController<?,?,?>>> funcGetImages) {
+   static void testApp(Supplier<List<ImageController<?,?,?>>> funcGetImages) {
       new JFrame() {
          private static final long serialVersionUID = 1L;
 
          {
             TestDrawing td = new TestDrawing();
 
-            List<AImageController<?,?,?>> images = funcGetImages.get();
+            List<ImageController<?,?,?>> images = funcGetImages.get();
 
             boolean[] testTransparent = { td.bl() };
 
@@ -67,7 +67,7 @@ final class TestDrawing extends ATestDrawing {
                      return;
 
                   images.forEach(imgController -> {
-                     Function<AImageController<?,?,?>, CellTilingInfo> callback = ctr[0].itemCallback;
+                     Function<ImageController<?,?,?>, CellTilingInfo> callback = ctr[0].itemCallback;
                      CellTilingInfo cti = callback.apply(imgController);
                      PointDouble offset = cti.imageOffset;
 
@@ -109,7 +109,7 @@ final class TestDrawing extends ATestDrawing {
                }
             };
             PropertyChangeListener propertyChangeListener = evt -> {
-               if (AImageController.PROPERTY_IMAGE.equals(evt.getPropertyName()))
+               if (ImageController.PROPERTY_IMAGE.equals(evt.getPropertyName()))
                   jPanel.repaint();
             };
 

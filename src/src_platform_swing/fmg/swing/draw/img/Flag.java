@@ -7,11 +7,11 @@ import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Point2D;
 import java.util.Arrays;
 
-import fmg.core.img.AImageController;
-import fmg.core.img.AImageView;
+import fmg.core.img.ImageController;
+import fmg.core.img.ImageView;
 import fmg.core.img.FlagModel;
 
-public abstract class Flag<TImage> extends AImageView<TImage, FlagModel> {
+public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
 
    public Flag() {
       super(new FlagModel());
@@ -114,12 +114,12 @@ public abstract class Flag<TImage> extends AImageView<TImage, FlagModel> {
    }
 
    /** Flag image controller implementation for {@link Icon} */
-   public static class ControllerIcon extends AImageController<javax.swing.Icon, Flag.Icon, FlagModel> {
+   public static class ControllerIcon extends ImageController<javax.swing.Icon, Flag.Icon, FlagModel> {
       public ControllerIcon() { super(new Flag.Icon()); }
    }
 
    /** Flag image controller implementation for {@link Image} */
-   public static class ControllerImage extends AImageController<java.awt.Image, Flag.Image, FlagModel> {
+   public static class ControllerImage extends ImageController<java.awt.Image, Flag.Image, FlagModel> {
       public ControllerImage() { super(new Flag.Image()); }
    }
 

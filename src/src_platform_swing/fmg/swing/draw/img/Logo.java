@@ -7,13 +7,13 @@ import java.util.List;
 
 import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.AImageView;
+import fmg.core.img.ImageView;
 import fmg.core.img.LogoController;
 import fmg.core.img.LogoModel;
 import fmg.swing.Cast;
 
 /** Main logos image - base Logo image view implementation */
-public abstract class Logo<TImage> extends AImageView<TImage, LogoModel> {
+public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
    protected Logo() {
       super(new LogoModel());

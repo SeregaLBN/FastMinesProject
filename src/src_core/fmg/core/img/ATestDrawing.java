@@ -25,11 +25,11 @@ public abstract class ATestDrawing {
    public boolean bl() { return getRandom().nextBoolean(); } // random bool
    public int np() { return (bl() ? -1 : +1); } // negative or positive
 
-   public void applyRandom(AImageController<?,?,?> ctrller, boolean testTransparent) {
+   public void applyRandom(ImageController<?,?,?> ctrller, boolean testTransparent) {
       testTransparent = testTransparent || bl();
 
-      if (ctrller instanceof AAnimatedImgController) {
-         AAnimatedImgController<?,?,?> aCtrller = (AAnimatedImgController<?,?,?>)ctrller;
+      if (ctrller instanceof AnimatedImgController) {
+         AnimatedImgController<?,?,?> aCtrller = (AnimatedImgController<?,?,?>)ctrller;
          aCtrller.setAnimated(bl() || bl());
          if (aCtrller.isAnimated()) {
             aCtrller.setAnimatePeriod(1000 + r(2000));
@@ -98,10 +98,10 @@ public abstract class ATestDrawing {
    public static class CellTilingResult {
       public Size imageSize;
       public Size tableSize;
-      public Function<AImageController<?,?,?> /* image */, CellTilingInfo> itemCallback;
+      public Function<ImageController<?,?,?> /* image */, CellTilingInfo> itemCallback;
    }
 
-   public CellTilingResult cellTiling(RectDouble rc, List<AImageController<?,?,?>> images, boolean testIntersection)
+   public CellTilingResult cellTiling(RectDouble rc, List<ImageController<?,?,?>> images, boolean testIntersection)
    {
       int len = images.size();
       int cols = (int)Math.round( Math.sqrt(len)  + 0.4999999999); // columns
@@ -115,7 +115,7 @@ public abstract class ATestDrawing {
       Size imgSize = new Size((int)(dx - 2*pad + addonX),  // dx - 2*pad;
                               (int)(dy - 2*pad + addonY)); // dy - 2*pad;
 
-      Function<AImageController<?,?,?>, CellTilingInfo> itemCallback = item -> {
+      Function<ImageController<?,?,?>, CellTilingInfo> itemCallback = item -> {
          int pos = images.indexOf(item);
          if (pos == -1)
             throw new RuntimeException("Illegal usage...");
@@ -143,7 +143,7 @@ public abstract class ATestDrawing {
       return ctr;
    }
 
-   public String getTitle(List<AImageController<?,?,?>> images) {
+   public String getTitle(List<ImageController<?,?,?>> images) {
       return titlePrefix + " test paints: " + images.stream()
          .map(i -> i.getClass().getName())
          .map(n -> Stream.of(n.split("\\.")).reduce((first, second) -> second).get().replaceAll("\\$", ".") )

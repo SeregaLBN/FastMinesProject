@@ -3,12 +3,12 @@ package fmg.core.img;
 /**
  * MVC controlle of logo image
  *
- * @param <TImage> plaform specific image
+ * @param <TImage> plaform specific image or picture or other display context/canvas/window/panel
  * @param <TImageView> MVC view
  */
 public class LogoController<TImage,
                             TImageView extends IImageView<TImage, LogoModel>>
-      extends AAnimatedImgController<TImage, TImageView, LogoModel>
+      extends AnimatedImgController<TImage, TImageView, LogoModel>
 {
 
    protected LogoController(TImageView imageView) {

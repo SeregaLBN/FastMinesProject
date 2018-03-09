@@ -19,10 +19,10 @@ import fmg.core.types.EMosaic;
 /**
  * Abstract representable {@link fmg.core.types.EMosaic} as image
  *
- * @param <TImage> plaform specific image
+ * @param <TImage> plaform specific image or picture or other display context/canvas/window/panel
  */
 public abstract class AMosaicsImg<TImage>
-      extends AAnimatedImgController<TImage>
+      extends AnimatedImgController<TImage>
       implements PropertyChangeListener
 {
    public enum ERotateMode {

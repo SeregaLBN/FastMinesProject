@@ -2,14 +2,14 @@ package fmg.swing.draw.img;
 
 import javax.swing.SwingUtilities;
 
-import fmg.core.img.AAnimatedImgController;
-import fmg.core.img.AImageController;
+import fmg.core.img.AnimatedImgController;
+import fmg.core.img.ImageController;
 
 final class StaticInitilizer {
 
    static {
-      AImageController.DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
-      AAnimatedImgController.GET_ANIMATOR = () -> Animator.getSingleton();
+      ImageController.DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
+      AnimatedImgController.GET_ANIMATOR = () -> Animator.getSingleton();
    }
 
    public static void init() {

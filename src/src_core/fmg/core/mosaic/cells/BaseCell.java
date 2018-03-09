@@ -54,6 +54,7 @@ public abstract class BaseCell {
    public static final double SIN135a = java.lang.Math.sin(java.lang.Math.PI/180.*135.-java.lang.Math.atan(8./3));
 
    /**
+    * Cell model.
     * Контекст/метаданные, описывающий общие хар-ки для каждого из экземпляров BaseCell.
     * <br> (Полные данные о конкретной мозаике) <br>
     * Доопределаяется наследниками BaseCell

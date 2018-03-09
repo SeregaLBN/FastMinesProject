@@ -6,20 +6,20 @@ import java.util.function.Supplier;
 
 /**
  * MVC controller. Base animation controller.
- * @param <TImage> plaform specific image
+ * @param <TImage> plaform specific image or picture or other display context/canvas/window/panel
  * @param <TImageView> MVC view
  * @param <TImageModel> MVC model
  */
-public abstract class AAnimatedImgController<TImage,
-                                             TImageView  extends IImageView<TImage, TImageModel>,
-                                             TImageModel extends AnimatedImageModel>
-                extends AImageController<TImage, TImageView, TImageModel>
+public abstract class AnimatedImgController<TImage,
+                                            TImageView  extends IImageView<TImage, TImageModel>,
+                                            TImageModel extends AnimatedImageModel>
+                extends ImageController<TImage, TImageView, TImageModel>
 {
 
    /** Platform-dependent factory of {@link IAnimator}. Set from outside... */
    public static Supplier<IAnimator> GET_ANIMATOR;
 
-   protected AAnimatedImgController(TImageView imageView) {
+   protected AnimatedImgController(TImageView imageView) {
       super(imageView);
    }
 
