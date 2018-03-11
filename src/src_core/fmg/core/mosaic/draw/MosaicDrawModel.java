@@ -47,6 +47,7 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       return _defaultBkColor;
    }
 
+   public static final String PROPERTY_INNER_SIZE       = "InnerSize";
    public static final String PROPERTY_SIZE_DOUBLE      = "SizeDouble";
    public static final String PROPERTY_MARGIN           = "Margin";
    public static final String PROPERTY_PADDING          = "Padding";
@@ -60,8 +61,13 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    public static final String PROPERTY_IMG_BCKGRND      = "ImgBckgrnd";
    public static final String PROPERTY_ICONIC_MODE      = "IconicMode";
 
+   /** размер в пикселях поля мозаики. Inner, т.к. снаружи есть ещё padding и margin */
+   public SizeDouble getInnerSize() {
+      return getCellAttr().getSize(getSizeField());
+   }
+   /** общий размер в пискелях */
    public SizeDouble getSizeDouble() {
-      SizeDouble size = getCellAttr().getOwnerSize(getSizeField());
+      SizeDouble size = getInnerSize();
       BoundDouble m = getMargin();
       BoundDouble p = getPadding();
       size.width  += m.getLeftAndRight() + p.getLeftAndRight();
@@ -286,10 +292,12 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
 
       switch (propertyName) {
       case PROPERTY_AREA:
-      case PROPERTY_MARGIN:
-      case PROPERTY_PADDING:
       case PROPERTY_SIZE_FIELD:
       case PROPERTY_MOSAIC_TYPE:
+         onPropertyChanged(PROPERTY_INNER_SIZE);
+         // no break!
+      case PROPERTY_MARGIN:
+      case PROPERTY_PADDING:
          onPropertyChanged(PROPERTY_SIZE);
          onPropertyChanged(PROPERTY_SIZE_DOUBLE);
       }

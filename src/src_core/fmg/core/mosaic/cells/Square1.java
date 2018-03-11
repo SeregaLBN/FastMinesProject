@@ -38,7 +38,7 @@ public class Square1 extends BaseCell {
    public static class AttrSquare1 extends BaseAttribute {
 
       @Override
-      public SizeDouble getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getSize(Matrisize sizeField) {
          double a = getA(); // размер стороны квадрата
          return new SizeDouble(
                sizeField.m * a,

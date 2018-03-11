@@ -87,8 +87,8 @@ public abstract class BaseCell {
       /** значение A (базовая величина фигуры - обычно это размер одной из сторон фигуры) по заданной площади фигуры */
       protected abstract double getA();
 
-      /** get parent container (owner window) size in pixels */
-      public abstract SizeDouble getOwnerSize(Matrisize sizeField);
+      /** The size in pixels where to place the matrix */
+      public abstract SizeDouble getSize(Matrisize sizeField);
 
       /** размер поля из группы ячеек состоящих из разных direction */
       public abstract Size getDirectionSizeField();

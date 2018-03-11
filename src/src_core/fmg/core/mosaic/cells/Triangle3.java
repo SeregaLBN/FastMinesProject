@@ -36,7 +36,7 @@ public class Triangle3 extends BaseCell {
    public static class AttrTriangle3 extends BaseAttribute {
 
       @Override
-      public SizeDouble getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getSize(Matrisize sizeField) {
          double a = getA();
          return new SizeDouble(a * ((sizeField.m + (sizeField.m & 1)) / 2),
                                a * ((sizeField.n + (sizeField.n & 1)) / 2));

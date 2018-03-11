@@ -3,7 +3,7 @@ package fmg.core.img;
 /**
  * Representable {@link fmg.core.types.EMosaic} as animated image
  */
-public abstract class MosaicRotateTransformer  implements IModelTransformer {
+public abstract class MosaicRotateTransformer implements IModelTransformer {
 
    @Override
    public void execute(int currentFrame, int totalFrames, IImageModel model) {

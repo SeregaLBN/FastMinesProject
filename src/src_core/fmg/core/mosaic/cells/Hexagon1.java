@@ -36,7 +36,7 @@ public class Hexagon1 extends BaseCell {
    public static class AttrHexagon1 extends BaseAttribute {
 
       @Override
-      public SizeDouble getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getSize(Matrisize sizeField) {
          double a = getA();
          SizeDouble result = new SizeDouble(
                a * (sizeField.m    +0.5) * SQRT3,

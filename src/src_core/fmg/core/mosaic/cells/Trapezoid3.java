@@ -36,7 +36,7 @@ public class Trapezoid3 extends BaseCell {
    public static class AttrTrapezoid3 extends BaseAttribute {
 
       @Override
-      public SizeDouble getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getSize(Matrisize sizeField) {
          double a = getA();
          double b = getB();
          double R = getROut();

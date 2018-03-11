@@ -3,14 +3,18 @@ package fmg.core.mosaic;
 import java.util.Collection;
 
 import fmg.common.geom.RectDouble;
-import fmg.common.geom.SizeDouble;
+import fmg.core.img.IImageView;
 import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.mosaic.draw.MosaicDrawModel;
 
-/** MVC view interface of mosaic */
-public interface IMosaicView extends AutoCloseable {
-
-   /** Size of the View in pixels */
-   SizeDouble getSize();
+/** MVC view interface of mosaic
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImage2> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TMosaicModel> mosaic data model
+ */
+public interface IMosaicView<TImage, TImage2, TMosaicModel extends MosaicDrawModel<TImage2>>
+       extends IImageView<TImage, TMosaicModel>
+{
 
    /** Mark the cells needed for the repainting.
     * Performs a call to the Repaint method (synchronously or asynchronously or implicitly, depending on the implementation)

@@ -36,7 +36,7 @@ public class Parquet2 extends BaseCell {
    public static class AttrParquet2 extends BaseAttribute {
 
       @Override
-      public SizeDouble getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getSize(Matrisize sizeField) {
          double a = getA();
          SizeDouble result = new SizeDouble(
                (sizeField.m*2+2) * a,

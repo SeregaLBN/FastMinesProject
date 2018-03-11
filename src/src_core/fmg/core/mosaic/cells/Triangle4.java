@@ -45,7 +45,7 @@ public class Triangle4 extends BaseCell {
       private final static ComplexityMode Mode = ComplexityMode.eOptimalMode; // TODO: check others to view...
 
       @Override
-      public SizeDouble getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getSize(Matrisize sizeField) {
          double b = getB();
          double r = getRIn();
          double R = getROut();

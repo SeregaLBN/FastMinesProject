@@ -17,16 +17,13 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
                 implements IImageView<TImage, TImageModel>
 {
 
+   /** MVC: model */
    private final TImageModel _imageModel;
-   private final PropertyChangeListener _imageModelListener;
+   private final PropertyChangeListener _imageModelListener = ev -> onPropertyModelChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
 
    protected ImageView(TImageModel imageModel) {
       _imageModel = imageModel;
-      _imageModelListener = event -> {
-         assert event.getSource() == _imageModel; // by reference
-         onPropertyModelChanged(event.getOldValue(), event.getNewValue(), event.getPropertyName());
-      };
-      imageModel.addListener(_imageModelListener);
+      _imageModel.addListener(_imageModelListener);
    }
 
    @Override
@@ -96,6 +93,7 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
       if (IImageModel.PROPERTY_SIZE.equals(propertyName)) {
          setImage(null);
 //         invalidate();
+         onPropertyChanged(oldValue, newValue, PROPERTY_SIZE);
          onPropertyChanged(PROPERTY_IMAGE);
       } else {
          invalidate();

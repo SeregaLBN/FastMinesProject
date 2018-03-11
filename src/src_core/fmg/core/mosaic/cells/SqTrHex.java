@@ -36,7 +36,7 @@ public class SqTrHex extends BaseCell {
    public static class AttrSqTrHex extends BaseAttribute {
 
       @Override
-      public SizeDouble getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getSize(Matrisize sizeField) {
          double a = getA();
          double h = getH();
          SizeDouble result = new SizeDouble(

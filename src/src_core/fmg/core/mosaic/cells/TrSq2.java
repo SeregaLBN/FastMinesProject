@@ -36,7 +36,7 @@ public class TrSq2 extends BaseCell {
    public static class AttrTrSq2 extends BaseAttribute {
 
       @Override
-      public SizeDouble getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getSize(Matrisize sizeField) {
          double a = getA();
          double b = getB();
          double h = getH();

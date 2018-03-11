@@ -66,7 +66,7 @@ public class MosaicsAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
    /** ///////////// ================= PART {@link ERotateMode#fullMatrix} ======================= ///////////// */
 
    public void rotateMatrix() {
-      SizeDouble size = getCellAttr().getOwnerSize(getSizeField());
+      SizeDouble size = getCellAttr().getSize(getSizeField());
       BoundDouble margin = getMargin();
       BoundDouble padding = getPadding();
       PointDouble center = new PointDouble(margin.left + padding.left + size.width  / 2,

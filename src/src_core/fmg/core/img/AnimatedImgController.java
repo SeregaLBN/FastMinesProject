@@ -19,6 +19,14 @@ public abstract class AnimatedImgController<TImage,
    /** Platform-dependent factory of {@link IAnimator}. Set from outside... */
    public static Supplier<IAnimator> GET_ANIMATOR;
 
+   /** Image is animated? */
+   private boolean _animated = false;
+   /** Overall animation period (in milliseconds) */
+   private long _animatePeriod = 3000;
+   /** Total frames of the animated period */
+   private int _totalFrames = 30;
+   private int _currentFrame = 0;
+
    protected AnimatedImgController(TImageView imageView) {
       super(imageView);
    }
@@ -28,7 +36,6 @@ public abstract class AnimatedImgController<TImage,
    public static final String PROPERTY_TOTAL_FRAMES   = "TotalFrames";
    public static final String PROPERTY_CURRENT_FRAME  = "CurrentFrame";
 
-   private boolean _animated = false;
    public boolean isAnimated() { return _animated; }
    public void setAnimated(boolean value) {
       if (setProperty(_animated, value, PROPERTY_ANIMATED)) {
@@ -45,7 +52,6 @@ public abstract class AnimatedImgController<TImage,
       }
    }
 
-   private long _animatePeriod = 3000;
    /** Overall animation period (in milliseconds) */
    public long getAnimatePeriod() { return _animatePeriod; }
    /** Overall animation period (in milliseconds) */
@@ -53,9 +59,6 @@ public abstract class AnimatedImgController<TImage,
       setProperty(_animatePeriod, value, PROPERTY_ANIMATE_PERIOD);
    }
 
-//   private boolean _reverseDirection = false;
-
-   private int _totalFrames = 30;
    /** Total frames of the animated period */
    public int getTotalFrames() { return _totalFrames; }
    public void setTotalFrames(int value) {
@@ -63,7 +66,6 @@ public abstract class AnimatedImgController<TImage,
          setCurrentFrame(0);
    }
 
-   private int _currentFrame = 0;
    protected int getCurrentFrame() { return _currentFrame; }
    protected void setCurrentFrame(int value) {
       if (setProperty(_currentFrame, value, PROPERTY_CURRENT_FRAME)) {

@@ -38,7 +38,7 @@ public class PenrousePeriodic1 extends BaseCell {
    public static class AttrPenrousePeriodic1 extends BaseAttribute {
 
       @Override
-      public SizeDouble getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getSize(Matrisize sizeField) {
          double a = getA();
          double b = getB();
          double c = getC();

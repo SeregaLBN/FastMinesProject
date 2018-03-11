@@ -7,9 +7,9 @@ import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Point2D;
 import java.util.Arrays;
 
+import fmg.core.img.FlagModel;
 import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
-import fmg.core.img.FlagModel;
 
 public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
 
@@ -20,8 +20,6 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
    static {
       StaticInitilizer.init();
    }
-
-//   private static final double Zoom = 1.7;
 
    protected void draw(Graphics2D g) {
       double zoomX = getSize().width  / 100.0;

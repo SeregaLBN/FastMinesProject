@@ -5,10 +5,11 @@ import fmg.common.notyfier.INotifyPropertyChanged;
 
 /** MVC: model of image data/properties/characteristics */
 public interface IImageModel extends INotifyPropertyChanged {
+   // TODO refactoring - rename ImageModel to DisplayedModel
 
    public static final String PROPERTY_SIZE = "Size";
 
-   /** width and height in pixel */
+   /** width and height of the displayed part in pixels */
    Size getSize();
    void setSize(Size value);
 

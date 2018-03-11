@@ -198,7 +198,7 @@ public final class MosaicHelper {
       final SizeDouble sizeIter = new SizeDouble();
       double res = Finder(2000, (Comparable<Double>)area -> {
          cellAttr.setArea(area);
-         SizeDouble tmp = cellAttr.getOwnerSize(mosaicSizeField);
+         SizeDouble tmp = cellAttr.getSize(mosaicSizeField);
          sizeIter.width = tmp.width;
          sizeIter.height = tmp.height;
          if (DoubleExt.hasMinDiff(sizeIter.width, sizeClientIn.width) &&
@@ -228,7 +228,7 @@ public final class MosaicHelper {
       final Matrisize result = new Matrisize();
       Finder(2000, (Comparable<Integer>)newWidth -> {
          result.m = newWidth;
-         SizeDouble sizeWnd = cellAttr.getOwnerSize(result);
+         SizeDouble sizeWnd = cellAttr.getSize(result);
          if (DoubleExt.hasMinDiff(sizeWnd.width, sizeClient.width))
             return 0;
          if (sizeWnd.width <= sizeClient.width)
@@ -237,7 +237,7 @@ public final class MosaicHelper {
       });
       Finder(2000, (Comparable<Integer>)newHeight -> {
          result.n = newHeight;
-         SizeDouble sizeWnd = cellAttr.getOwnerSize(result);
+         SizeDouble sizeWnd = cellAttr.getSize(result);
          if (DoubleExt.hasMinDiff(sizeWnd.height, sizeClient.height))
             return 0;
          if (sizeWnd.height < sizeClient.height)
@@ -257,11 +257,11 @@ public final class MosaicHelper {
       return findAreaBySize(createAttributeInstance(mosaicType), mosaicSizeField, sizeClientIn, sizeClientOut);
    }
 
-    /** get parent container (owner window) size in pixels */
-    public static SizeDouble getOwnerSize(EMosaic mosaicType, double area, Matrisize mosaicSizeField) {
+   /** The size in pixels where to place the matrix */
+    public static SizeDouble getSize(EMosaic mosaicType, double area, Matrisize mosaicSizeField) {
        BaseCell.BaseAttribute attr = createAttributeInstance(mosaicType);
        attr.setArea(area);
-       return attr.getOwnerSize(mosaicSizeField);
+       return attr.getSize(mosaicSizeField);
     }
 
 }

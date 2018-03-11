@@ -38,7 +38,7 @@ public class Rhombus1 extends BaseCell {
    public static class AttrRhombus1 extends BaseAttribute {
 
       @Override
-      public SizeDouble getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getSize(Matrisize sizeField) {
          double a = getA();
          double r = getR();
          double c = getC();

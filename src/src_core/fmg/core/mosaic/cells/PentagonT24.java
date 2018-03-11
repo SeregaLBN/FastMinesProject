@@ -36,7 +36,7 @@ public class PentagonT24 extends BaseCell {
    public static class AttrPentagonT24 extends BaseAttribute {
 
       @Override
-      public SizeDouble getOwnerSize(Matrisize sizeField) {
+      public SizeDouble getSize(Matrisize sizeField) {
          double a = getA();
          double b = getB();
          SizeDouble result = new SizeDouble(

@@ -33,5 +33,4 @@ class ImageAwt<TImageModel extends IImageModel> {
       g.dispose();
    }
 
-
 }

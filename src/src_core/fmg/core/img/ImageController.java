@@ -1,6 +1,8 @@
 package fmg.core.img;
 
 import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import fmg.common.notyfier.NotifyPropertyChanged;
@@ -12,7 +14,7 @@ import fmg.common.notyfier.NotifyPropertyChanged;
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageView> image view
  * @param <TImageModel> image model
- **/
+ **/   // TODO refactoring - rename ImageController to DisplayedController
 public abstract class ImageController<TImage,
                                       TImageView  extends IImageView<TImage, TImageModel>,
                                       TImageModel extends IImageModel>
@@ -21,21 +23,18 @@ public abstract class ImageController<TImage,
 
    public static Consumer<Runnable> DEFERR_INVOKER;
 
-   public static final String PROPERTY_IMAGE = IImageView.PROPERTY_IMAGE;
-
-   private final TImageView  _imageView;
-   private final PropertyChangeListener _imageViewListener;
+   /** MVC: view */
+   private final TImageView _imageView;
+   private final PropertyChangeListener _imageViewListener = ev -> onPropertyViewChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+   private Map<String /* propertyName */, Boolean /* sheduled */> _deferrNotifications = new HashMap<>();
 
    protected ImageController(TImageView imageView) {
       _imageView = imageView;
-
-      _imageViewListener = event -> {
-         assert event.getSource() == _imageView; // by reference
-         onPropertyViewChanged(event.getOldValue(), event.getNewValue(), event.getPropertyName());
-      };
-
       _imageView.addListener(_imageViewListener);
    }
+
+   public static final String PROPERTY_IMAGE = IImageView.PROPERTY_IMAGE;
+   public static final String PROPERTY_SIZE  = IImageView.PROPERTY_SIZE;
 
    public    TImageModel getModel() { return getView().getModel(); }
    protected TImageView  getView()  { return _imageView; }
@@ -44,30 +43,47 @@ public abstract class ImageController<TImage,
       return getView().getImage();
    }
 
-   private boolean _deferredImageNotifications = true;
-   public boolean isDeferredImageNotifications() { return _deferredImageNotifications; }
-   public void setDeferredImageNotifications(boolean value) { _deferredImageNotifications = value; }
+   private boolean _deferredNotifications = true;
+   public boolean isDeferredNotifications() { return _deferredNotifications; }
+   public void setDeferredNotifications(boolean value) { _deferredNotifications = value; }
 
    /** Deferr notifications */
    @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      if (!PROPERTY_IMAGE.equals(propertyName) || !isDeferredImageNotifications()) {
+      if (!isDeferredNotifications()) {
          super.onPropertyChanged(oldValue, newValue, propertyName);
          return;
       }
-      if (_sheduled)
-         return;
-      _sheduled = true;
-      DEFERR_INVOKER.accept(() -> {
+
+      switch (propertyName) {
+      default:
          super.onPropertyChanged(oldValue, newValue, propertyName);
-         _sheduled = false;
-      });
+         break;
+
+      case PROPERTY_IMAGE:
+      case PROPERTY_SIZE:
+         if (Boolean.TRUE.equals(_deferrNotifications.get(propertyName)))
+            return;
+         _deferrNotifications.put(propertyName, true);
+         DEFERR_INVOKER.accept(() -> {
+            super.onPropertyChanged(oldValue, newValue, propertyName);
+            _deferrNotifications.put(propertyName, false);
+         });
+         break;
+      }
    }
-   private boolean _sheduled;
 
    protected void onPropertyViewChanged(Object oldValue, Object newValue, String propertyName) {
-      if (IImageView.PROPERTY_IMAGE.equals(propertyName))
+      switch (propertyName) {
+      case IImageView.PROPERTY_IMAGE:
          this.onPropertyChanged(oldValue, newValue, PROPERTY_IMAGE);
+         break;
+      case IImageView.PROPERTY_SIZE:
+         this.onPropertyChanged(oldValue, newValue, PROPERTY_SIZE);
+         break;
+      default:
+         break;
+      }
    }
 
    @Override
