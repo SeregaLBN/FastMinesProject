@@ -11,6 +11,7 @@ import fmg.common.Color;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
+import fmg.core.mosaic.draw.MosaicDrawModel;
 
 public abstract class ATestDrawing {
 
@@ -40,9 +41,13 @@ public abstract class ATestDrawing {
 
             if (testTransparent) {
                // Rotate the transparent background color
-               Color clr = Color.RandomColor(getRandom());
+               Color clr = Color.RandomColor();
                clr.setA(50 + r(10));
-               aCtrller.getModel().setBackgroundColor(clr);
+               IImageModel im = aCtrller.getModel();
+               if (im instanceof ImageProperties)
+                  ((ImageProperties)im).setBackgroundColor(clr);
+               else if (im instanceof MosaicDrawModel<?>)
+                  ((MosaicDrawModel<?>)im).setBackgroundColor(clr);
                aCtrller.addModelTransformer(new PolarLightBkTransformer());
             }
          }
@@ -66,7 +71,7 @@ public abstract class ATestDrawing {
             }
             ip.setForegroundColor(clr);
          } else {
-            ip.setBackgroundColor(Color.RandomColor(getRandom()).brighter());
+            ip.setBackgroundColor(Color.RandomColor().brighter());
          }
       }
       if (model instanceof AnimatedImageModel) {

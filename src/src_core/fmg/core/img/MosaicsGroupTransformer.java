@@ -6,7 +6,7 @@ import fmg.core.types.EMosaicGroup;
 public class MosaicsGroupTransformer implements IModelTransformer {
 
    @Override
-   public void execute(int currentFrame, int totalFrames, AnimatedImageModel model) {
+   public void execute(int currentFrame, int totalFrames, IImageModel model) {
       if (!(model instanceof MosaicsGroupModel))
          throw new RuntimeException("Illegal usage transformer");
 

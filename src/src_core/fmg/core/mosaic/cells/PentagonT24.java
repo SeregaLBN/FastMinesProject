@@ -46,7 +46,7 @@ public class PentagonT24 extends BaseCell {
          if (sizeField.n == 1)
             result.width -= getC();
 
-            return result;
+         return result;
       }
 
       @Override

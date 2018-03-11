@@ -18,7 +18,7 @@ import fmg.swing.Cast;
 
 /**
  * MVC: view. Abstract representable {@link fmg.core.types.ESkillLevel} or {@link fmg.core.types.EMosaicGroup} as image
- * @param <TImage> plaform specific image or picture or other display context/canvas/window/panel
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageModel> {@link MosaicsSkillModel} or {@link MosaicsGroupModel}
  */
 public abstract class MosaicsSkillOrGroupView<TImage, TImageModel extends AnimatedImageModel> extends WithBurgerMenuView<TImage, TImageModel> {

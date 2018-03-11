@@ -6,13 +6,13 @@ import java.util.function.Supplier;
 
 /**
  * MVC controller. Base animation controller.
- * @param <TImage> plaform specific image or picture or other display context/canvas/window/panel
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageView> MVC view
  * @param <TImageModel> MVC model
  */
 public abstract class AnimatedImgController<TImage,
                                             TImageView  extends IImageView<TImage, TImageModel>,
-                                            TImageModel extends AnimatedImageModel>
+                                            TImageModel extends IImageModel>
                 extends ImageController<TImage, TImageView, TImageModel>
 {
 
@@ -21,11 +21,6 @@ public abstract class AnimatedImgController<TImage,
 
    protected AnimatedImgController(TImageView imageView) {
       super(imageView);
-   }
-
-   @SuppressWarnings("deprecation")
-   protected <TI>boolean setProperty(TI storage, TI value, String propertyName) {
-      return super.setProperty(value, propertyName);
    }
 
    public static final String PROPERTY_ANIMATED       = "Animated";

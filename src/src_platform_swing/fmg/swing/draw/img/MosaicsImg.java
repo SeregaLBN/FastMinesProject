@@ -14,7 +14,7 @@ import fmg.common.Color;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.AMosaicsImg;
+import fmg.core.img.MosaicsAnimatedModel;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.ICellPaint;
 import fmg.core.types.EMosaic;
@@ -31,7 +31,7 @@ import fmg.swing.mosaic.AMosaicViewSwing;
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
  */
-public abstract class MosaicsImg<TImage> extends AMosaicsImg<TImage> {
+public abstract class MosaicsImg<TImage> extends MosaicsAnimatedModel<TImage> {
 
    static {
       StaticInitilizer.init();

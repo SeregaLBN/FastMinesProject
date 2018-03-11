@@ -9,7 +9,7 @@ import fmg.common.notyfier.NotifyPropertyChanged;
  * MVC: view.
  * Base implementation of image view.
  *
- * @param <TImage> plaform specific image or picture or other display context/canvas/window/panel
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageModel> model data for display
  **/
 public abstract class ImageView<TImage, TImageModel extends IImageModel>
@@ -32,11 +32,6 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
    @Override
    public TImageModel getModel() {
       return _imageModel;
-   }
-
-   @SuppressWarnings("deprecation")
-   protected <TI>boolean setProperty(TI storage, TI value, String propertyName) {
-      return super.setProperty(value, propertyName);
    }
 
    /** width and height in pixel */

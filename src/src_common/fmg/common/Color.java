@@ -1,6 +1,7 @@
 package fmg.common;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /** RGBA color */
 public class Color {
@@ -224,7 +225,8 @@ public class Color {
    public boolean isOpaque()      { return this.a == 255; }
    public boolean isTransparent() { return this.a == 0; }
 
-   public static Color RandomColor(Random rnd) {
+   public static Color RandomColor() {
+      Random rnd = ThreadLocalRandom.current();
       return new Color(
          rnd.nextInt(256),
          rnd.nextInt(256),

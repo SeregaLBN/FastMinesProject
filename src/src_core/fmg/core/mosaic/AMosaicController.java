@@ -21,18 +21,18 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
 {
 
    /** MVC: model */
-   protected Mosaic _mosaic;
+   protected MosaicGameModel _mosaic;
    /** MVC: view */
    protected TMosaicView _view;
 
    /** get model */
-   public Mosaic getMosaic() {
+   public MosaicGameModel getMosaic() {
       if (_mosaic == null)
-         setMosaic(new Mosaic());
+         setMosaic(new MosaicGameModel());
       return _mosaic;
    }
    /** set model */
-   protected void setMosaic(Mosaic model) {
+   protected void setMosaic(MosaicGameModel model) {
       if (_mosaic != null) {
          _mosaic.removeListener(this);
          _mosaic.close();
@@ -64,9 +64,9 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
    /** использовать ли флажок на поле */
    private boolean _useUnknown = true;
 
-   public static final String PROPERTY_AREA              = Mosaic.PROPERTY_AREA;
-   public static final String PROPERTY_SIZE_FIELD        = Mosaic.PROPERTY_SIZE_FIELD;
-   public static final String PROPERTY_MOSAIC_TYPE       = Mosaic.PROPERTY_MOSAIC_TYPE;
+   public static final String PROPERTY_AREA              = MosaicGameModel.PROPERTY_AREA;
+   public static final String PROPERTY_SIZE_FIELD        = MosaicGameModel.PROPERTY_SIZE_FIELD;
+   public static final String PROPERTY_MOSAIC_TYPE       = MosaicGameModel.PROPERTY_MOSAIC_TYPE;
    public static final String PROPERTY_WINDOW_SIZE       = "WindowSize";
    public static final String PROPERTY_MINES_COUNT       = "MinesCount";
    public static final String PROPERTY_COUNT_MINES_LEFT  = "CountMinesLeft";
@@ -118,7 +118,7 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
 
    /** arrange Mines */
    public void setMines_LoadRepository(List<Coord> repository) {
-      Mosaic mosaic = getMosaic();
+      MosaicGameModel mosaic = getMosaic();
       for (Coord c: repository) {
          boolean suc = mosaic.getCell(c).getState().SetMine();
          if (!suc)
@@ -134,7 +134,7 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
       if (_minesCount == 0)
          _minesCount = _oldMinesCount;
 
-      Mosaic mosaic = getMosaic();
+      MosaicGameModel mosaic = getMosaic();
       List<BaseCell> matrixClone = new ArrayList<BaseCell>(getMatrix());
       matrixClone.remove(firstClickCell); // исключаю на которой кликал юзер
       matrixClone.removeAll(firstClickCell.getNeighbors(mosaic)); // и их соседей
@@ -536,24 +536,24 @@ public abstract class AMosaicController<TMosaicView extends IMosaicView>
 
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
-      if (ev.getSource() instanceof Mosaic)
-         onMosaicPropertyChanged((Mosaic)ev.getSource(), ev);
+      if (ev.getSource() instanceof MosaicGameModel)
+         onMosaicPropertyChanged((MosaicGameModel)ev.getSource(), ev);
    }
 
-   protected void onMosaicPropertyChanged(Mosaic source, PropertyChangeEvent ev) {
+   protected void onMosaicPropertyChanged(MosaicGameModel source, PropertyChangeEvent ev) {
       String propertyName = ev.getPropertyName();
       switch (propertyName) {
-      case Mosaic.PROPERTY_SIZE_FIELD:
+      case MosaicGameModel.PROPERTY_SIZE_FIELD:
          setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
          onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_SIZE_FIELD);
          onSelfPropertyChanged(PROPERTY_WINDOW_SIZE);
          GameNew();
          break;
-      case Mosaic.PROPERTY_MOSAIC_TYPE:
+      case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
          onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_MOSAIC_TYPE);
          GameNew();
          break;
-      case Mosaic.PROPERTY_AREA:
+      case MosaicGameModel.PROPERTY_AREA:
          onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA);
          onSelfPropertyChanged(PROPERTY_WINDOW_SIZE);
          onSelfModifiedCellsPropertyChanged(source.getMatrix());

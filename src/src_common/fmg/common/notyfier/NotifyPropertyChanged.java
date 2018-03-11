@@ -1,7 +1,9 @@
 package fmg.common.notyfier;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.lang.annotation.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -19,7 +21,7 @@ public abstract class NotifyPropertyChanged implements AutoCloseable, INotifyPro
    public void removeListener(PropertyChangeListener l) { propertyChanges.removePropertyChangeListener(l); }
 
    @Deprecated // used reflection :(
-   protected <T> boolean setProperty(T newValue, String propertyName) {
+   private <T> boolean setProperty(T newValue, String propertyName) {
       Object oldValue;
       try {
          Field fld = findField(propertyName);
@@ -36,6 +38,16 @@ public abstract class NotifyPropertyChanged implements AutoCloseable, INotifyPro
 
       onPropertyChanged(oldValue, newValue, propertyName);
       return true;
+   }
+
+   /** Mark that the parameter is not used. */
+   @Documented
+   @Retention(RetentionPolicy.RUNTIME)
+   @Target(value={ElementType.PARAMETER})
+   @interface Unused { }
+
+   protected <T> boolean setProperty(@Unused T oldValue, T newValue, String propertyName) {
+      return setProperty(newValue, propertyName);
    }
 
    protected final void onPropertyChanged(int oldValue, int newValue, String propertyName) {
@@ -57,10 +69,10 @@ public abstract class NotifyPropertyChanged implements AutoCloseable, INotifyPro
       propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
    }
 
-//   protected <TProperty> void onPropertyChangedRethrow(TProperty source, PropertyChangeEvent ev, String propertyName) {
-//      onPropertyChanged(null, source, propertyName);
-//      onPropertyChanged(ev.getOldValue(), ev.getNewValue(), propertyName + "." + ev.getPropertyName());
-//   }
+   protected <TProperty> void onPropertyChangedRethrow(TProperty source, PropertyChangeEvent childEvent, String propertyName) {
+      onPropertyChanged(null, source, propertyName);
+      onPropertyChanged(childEvent.getOldValue(), childEvent.getNewValue(), propertyName + "." + childEvent.getPropertyName());
+   }
 
    private Map<String /* propertyName */, Field> _cachedFields = new HashMap<>();
    private Field findField(String propertyName) {

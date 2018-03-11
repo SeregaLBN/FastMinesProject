@@ -6,7 +6,7 @@ import fmg.common.HSV;
 public class PolarLightLogoTransformer implements IModelTransformer {
 
    @Override
-   public void execute(int currentFrame, int totalFrames, AnimatedImageModel model) {
+   public void execute(int currentFrame, int totalFrames, IImageModel model) {
       if (!(model instanceof LogoModel))
          throw new RuntimeException("Illegal usage transformer");
 

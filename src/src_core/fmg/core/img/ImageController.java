@@ -9,7 +9,7 @@ import fmg.common.notyfier.NotifyPropertyChanged;
  * MVC: controller.
  * Base implementation of image controller (manipulations with the image).
  *
- * @param <TImage> plaform specific image or picture or other display context/canvas/window/panel
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageView> image view
  * @param <TImageModel> image model
  **/
@@ -17,7 +17,6 @@ public abstract class ImageController<TImage,
                                       TImageView  extends IImageView<TImage, TImageModel>,
                                       TImageModel extends IImageModel>
                 extends NotifyPropertyChanged
-                implements AutoCloseable
 {
 
    public static Consumer<Runnable> DEFERR_INVOKER;
@@ -45,18 +44,26 @@ public abstract class ImageController<TImage,
       return getView().getImage();
    }
 
-   private boolean _deferredNotifications = true;
-   public boolean isDeferredNotifications() { return _deferredNotifications; }
-   public void setDeferredNotifications(boolean value) { _deferredNotifications = value; }
+   private boolean _deferredImageNotifications = true;
+   public boolean isDeferredImageNotifications() { return _deferredImageNotifications; }
+   public void setDeferredImageNotifications(boolean value) { _deferredImageNotifications = value; }
 
    /** Deferr notifications */
    @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      if (!isDeferredNotifications())
+      if (!PROPERTY_IMAGE.equals(propertyName) || !isDeferredImageNotifications()) {
          super.onPropertyChanged(oldValue, newValue, propertyName);
-      else
-         DEFERR_INVOKER.accept( () -> super.onPropertyChanged(oldValue, newValue, propertyName) );
+         return;
+      }
+      if (_sheduled)
+         return;
+      _sheduled = true;
+      DEFERR_INVOKER.accept(() -> {
+         super.onPropertyChanged(oldValue, newValue, propertyName);
+         _sheduled = false;
+      });
    }
+   private boolean _sheduled;
 
    protected void onPropertyViewChanged(Object oldValue, Object newValue, String propertyName) {
       if (IImageView.PROPERTY_IMAGE.equals(propertyName))

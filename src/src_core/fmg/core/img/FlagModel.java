@@ -12,12 +12,6 @@ public class FlagModel extends NotifyPropertyChanged implements IImageModel {
       _size = new Size(40, 40);
    }
 
-   @SuppressWarnings("deprecation")
-   protected <TI>boolean setProperty(TI storage, TI value, String propertyName) {
-      return super.setProperty(value, propertyName);
-   }
-
-
    /** width and height in pixel */
    @Override
    public Size getSize() { return _size; }

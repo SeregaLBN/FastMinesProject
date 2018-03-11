@@ -4,8 +4,8 @@ package fmg.common.geom;
 public class BoundDouble {
    public double left, right, top, bottom;
 
+   public BoundDouble(BoundDouble copy) { this.left = copy.left; this.top = copy.top; this.right = copy.right; this.bottom = copy.bottom; }
    public BoundDouble(double bound) { left = top = right = bottom = bound; }
-
    public BoundDouble(double left, double top, double right, double bottom) {
       this.left = left;
       this.top = top;
@@ -40,7 +40,7 @@ public class BoundDouble {
    }
 
    public boolean equals(BoundDouble other) {
-      return (other != null) && 
+      return (other != null) &&
              (Double.doubleToLongBits(bottom) == Double.doubleToLongBits(other.bottom)) &&
              (Double.doubleToLongBits(left)   == Double.doubleToLongBits(other.left)) &&
              (Double.doubleToLongBits(right)  == Double.doubleToLongBits(other.right)) &&

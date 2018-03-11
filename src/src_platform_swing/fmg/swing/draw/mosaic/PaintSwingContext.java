@@ -6,7 +6,7 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
 import fmg.common.Color;
-import fmg.core.mosaic.draw.PaintContext;
+import fmg.core.mosaic.draw.MosaicDrawModel;
 import fmg.data.view.draw.FontInfo;
 import fmg.swing.Cast;
 
@@ -16,7 +16,7 @@ import fmg.swing.Cast;
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
  */
-public class PaintSwingContext<TImage> extends PaintContext<TImage> {
+public class PaintSwingContext<TImage> extends MosaicDrawModel<TImage> {
 
    //public static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 10);
 
@@ -25,7 +25,7 @@ public class PaintSwingContext<TImage> extends PaintContext<TImage> {
    public static final String PROPERTY_FONT = "Font";
 
    public static Color getDefaultBackgroundColor() {
-      return PaintContext.getDefaultBackgroundColor();
+      return MosaicDrawModel.getDefaultBackgroundColor();
    }
 
    static {
@@ -63,7 +63,7 @@ public class PaintSwingContext<TImage> extends PaintContext<TImage> {
    @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       super.onPropertyChanged(oldValue, newValue, propertyName);
-      if (PaintContext.PROPERTY_FONT_INFO.equals(propertyName)) {
+      if (MosaicDrawModel.PROPERTY_FONT_INFO.equals(propertyName)) {
          font = null;
          onPropertyChanged(PROPERTY_FONT);
       }

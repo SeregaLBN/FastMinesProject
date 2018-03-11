@@ -64,7 +64,7 @@ public abstract class BaseCell {
       public static final String PROPERTY_AREA = "Area";
 
       /** площадь ячейки/фигуры */
-      private double area;
+      private double area = 500;
 
       /** площадь ячейки/фигуры */
       public void setArea(double area) {

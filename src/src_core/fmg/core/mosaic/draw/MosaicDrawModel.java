@@ -4,34 +4,42 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
+import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
+import fmg.core.img.IImageModel;
+import fmg.core.mosaic.MosaicGameModel;
+import fmg.core.mosaic.MosaicHelper;
 import fmg.data.view.draw.ColorText;
 import fmg.data.view.draw.FontInfo;
 import fmg.data.view.draw.PenBorder;
 
 /**
- * Information required for drawing the entire mosaic and cells
+ * MVC: draw model of mosaic field.
  *
- * @param <TImage> plaform specific image or picture or other display context/canvas/window/panel
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
  **/
-public class PaintContext<TImage> extends NotifyPropertyChanged implements PropertyChangeListener, AutoCloseable {
+public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageModel {
 
-   private TImage imgMine, imgFlag;
-   private ColorText colorText;
-   private PenBorder penBorder;
-   private FontInfo  fontInfo;
-   private boolean iconicMode;
-   private BoundDouble padding = new BoundDouble(0, 0, 0, 0);
+   private TImage         _imgMine, _imgFlag;
+   private ColorText      _colorText;
+   private PenBorder      _penBorder;
+   private FontInfo       _fontInfo;
+   private boolean        _iconicMode;
+   /** автоматически регулирую при явной установке размера */
+   private BoundDouble    _margin  = new BoundDouble(0, 0, 0, 0);
+   private BoundDouble    _padding = new BoundDouble(0, 0, 0, 0);
    private BackgroundFill _backgroundFill;
-   private Color      backgroundColor;
-   private boolean useBackgroundColor = true;
-   private TImage imgBckgrnd;
+   private Color          _backgroundColor;
+   private TImage         _imgBckgrnd;
+
+   private final PropertyChangeListener       _fontInfoListener = ev ->       onFontInfoPropertyChanged(ev);
+   private final PropertyChangeListener _backgroundFillListener = ev -> onBackgroundFillPropertyChanged(ev);
+   private final PropertyChangeListener      _colorTextListener = ev ->      onColorTextPropertyChanged(ev);
+   private final PropertyChangeListener      _penBorderListener = ev ->      onPenBorderPropertyChanged(ev);
 
    protected static Color _defaultBkColor = Color.Gray;
    /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется классом-наследником. */
@@ -39,74 +47,107 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       return _defaultBkColor;
    }
 
-   public static final String PROPERTY_PADDING               = "Padding";
-   public static final String PROPERTY_IMG_MINE              = "ImgMine";
-   public static final String PROPERTY_IMG_FLAG              = "ImgFlag";
-   public static final String PROPERTY_COLOR_TEXT            = "ColorText";
-   public static final String PROPERTY_PEN_BORDER            = "PenBorder";
-   public static final String PROPERTY_BACKGROUND_FILL       = "BackgroundFill";
-   public static final String PROPERTY_FONT_INFO             = "FontInfo";
-   public static final String PROPERTY_BACKGROUND_COLOR      = "BackgroundColor";
-   public static final String PROPERTY_USE_BACKGROUND_COLOR  = "UseBackgroundColor";
-   public static final String PROPERTY_IMG_BCKGRND           = "ImgBckgrnd";
-   public static final String PROPERTY_ICONIC_MODE           = "IconicMode";
+   public static final String PROPERTY_SIZE_DOUBLE      = "SizeDouble";
+   public static final String PROPERTY_MARGIN           = "Margin";
+   public static final String PROPERTY_PADDING          = "Padding";
+   public static final String PROPERTY_IMG_MINE         = "ImgMine";
+   public static final String PROPERTY_IMG_FLAG         = "ImgFlag";
+   public static final String PROPERTY_COLOR_TEXT       = "ColorText";
+   public static final String PROPERTY_PEN_BORDER       = "PenBorder";
+   public static final String PROPERTY_BACKGROUND_FILL  = "BackgroundFill";
+   public static final String PROPERTY_FONT_INFO        = "FontInfo";
+   public static final String PROPERTY_BACKGROUND_COLOR = "BackgroundColor";
+   public static final String PROPERTY_IMG_BCKGRND      = "ImgBckgrnd";
+   public static final String PROPERTY_ICONIC_MODE      = "IconicMode";
+
+   public SizeDouble getSizeDouble() {
+      SizeDouble size = getCellAttr().getOwnerSize(getSizeField());
+      BoundDouble m = getMargin();
+      BoundDouble p = getPadding();
+      size.width  += m.getLeftAndRight() + p.getLeftAndRight();
+      size.height += m.getTopAndBottom() + p.getTopAndBottom();
+      return size;
+   }
+   public void setSizeDouble(SizeDouble value) {
+      if (value.width < 1)
+         throw new IllegalArgumentException("Size value widht must be > 1");
+      if (value.height < 1)
+         throw new IllegalArgumentException("Size value height must be > 1");
+
+      BoundDouble padding = getPadding();
+      SizeDouble toCalc = new SizeDouble(value.height - padding.getTopAndBottom(),
+                                         value.height -= padding.getTopAndBottom());
+      SizeDouble out = new SizeDouble();
+      double area = MosaicHelper.findAreaBySize(getMosaicType(), getSizeField(), toCalc, out);
+      BoundDouble margin = new BoundDouble(0);
+      margin.left = margin.right  = (value.width  - out.width ) / 2;
+      margin.top  = margin.bottom = (value.height - out.height) / 2;
+
+      setArea(area);
+      setMargin(margin);
+      setPadding(padding);
+   }
+
+   @Override
+   public Size getSize() {
+      SizeDouble size = getSizeDouble();
+      return new Size((int)size.width, (int)size.height);
+   }
+   @Override
+   public void setSize(Size value) {
+      setSizeDouble(new SizeDouble(value.width, value.height));
+   }
 
    public TImage getImgMine() {
-      return imgMine;
+      return _imgMine;
    }
    public void setImgMine(TImage img) {
-      Object old = this.imgMine;
+      Object old = this._imgMine;
       if (old != img) { // references compare
-         this.imgMine = img;
-         onSelfPropertyChanged(old, img, PROPERTY_IMG_MINE);
+         this._imgMine = img;
+         onPropertyChanged(old, img, PROPERTY_IMG_MINE);
       }
    }
 
    public TImage getImgFlag() {
-      return imgFlag;
+      return _imgFlag;
    }
    public void setImgFlag(TImage img) {
-      Object old = this.imgFlag;
+      Object old = this._imgFlag;
       if (old != img) { // references compare
-         this.imgFlag = img;
-         onSelfPropertyChanged(old, img, PROPERTY_IMG_FLAG);
+         this._imgFlag = img;
+         onPropertyChanged(old, img, PROPERTY_IMG_FLAG);
       }
    }
 
    public ColorText getColorText() {
-      if (colorText == null)
+      if (_colorText == null)
          setColorText(new ColorText());
-      return colorText;
+      return _colorText;
    }
    public void setColorText(ColorText colorText) {
-      ColorText old = this.colorText;
-      if (Objects.equals(colorText, old))
-         return;
-
-      if (old != null)
-         old.removeListener(this);
-      this.colorText = colorText;
-      if (colorText != null)
-         colorText.addListener(this);
-      onSelfPropertyChanged(old, colorText, PROPERTY_COLOR_TEXT);
+      ColorText old = this._colorText;
+      if (setProperty(old, colorText, PROPERTY_COLOR_TEXT)) {
+         if (old != null)
+            old.removeListener(_colorTextListener);
+         if (colorText != null)
+            colorText.addListener(_colorTextListener);
+      }
    }
 
    public PenBorder getPenBorder() {
-      if (penBorder == null)
+      if (_penBorder == null)
          setPenBorder(new PenBorder());
-      return penBorder;
+      return _penBorder;
    }
    public void setPenBorder(PenBorder penBorder) {
-      PenBorder old = this.penBorder;
-      if (Objects.equals(penBorder, old))
-         return;
-
-      if (old != null)
-         old.removeListener(this);
-      this.penBorder = penBorder;
-      if (penBorder != null)
-         penBorder.addListener(this);
-      onSelfPropertyChanged(old, penBorder, PROPERTY_PEN_BORDER);
+      PenBorder old = this._penBorder;
+      if (setProperty(old, penBorder, PROPERTY_PEN_BORDER)) {
+         if (old != null)
+            old.removeListener(_penBorderListener);
+         if (penBorder != null)
+            penBorder.addListener(_penBorderListener);
+      }
    }
 
    /** всё что относиться к заливке фоном ячееек */
@@ -119,9 +160,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       public static final String PROPERTY_MODE = "Mode";
 
       /** режим заливки фона ячеек */
-      public int getMode() {
-         return mode;
-      }
+      public int getMode() { return mode; }
 
       /**
       /* режим заливки фона ячеек
@@ -130,12 +169,7 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
        *  <li> not 0 - радуга %)
        */
       public void setMode(int newFillMode) {
-         int old = this.mode;
-         if (old != newFillMode) {
-            this.mode = newFillMode;
-            onSelfPropertyChanged(old, newFillMode, PROPERTY_MODE);
-            getColors().clear();
-         }
+         setProperty(this.mode, newFillMode, PROPERTY_MODE);
       }
 
       /** кэшированные цвета фона ячеек
@@ -144,13 +178,12 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
          if (colors == null)
             colors = new HashMap<Integer, Color>() {
                private static final long serialVersionUID = 1L;
-               private Random rnd = ThreadLocalRandom.current();
-
                @Override
                public Color get(Object key) {
+                  assert key instanceof Integer;
                   Color res = super.get(key);
                   if (res == null) {
-                     res = Color.RandomColor(rnd).brighter(0.45);
+                     res = Color.RandomColor().brighter(0.45);
                      super.put((Integer)key, res);
                   }
                   return res;
@@ -166,104 +199,100 @@ public class PaintContext<TImage> extends NotifyPropertyChanged implements Prope
       return _backgroundFill;
    }
    private void setBackgroundFill(BackgroundFill backgroundFill) {
-      BackgroundFill oldBkFill = this._backgroundFill;
-      if (oldBkFill == backgroundFill) // ref eq
-         return;
-      if (oldBkFill != null)
-         oldBkFill.removeListener(this);
-      this._backgroundFill = backgroundFill;
-      if (backgroundFill != null)
-         backgroundFill.addListener(this);
-      onSelfPropertyChanged(oldBkFill, backgroundFill, PROPERTY_BACKGROUND_FILL);
-   }
-
-   public boolean isIconicMode() {
-      return iconicMode;
-   }
-   public void setIconicMode(boolean iconicMode) {
-      if (this.iconicMode == iconicMode)
-         return;
-      this.iconicMode = iconicMode;
-      onSelfPropertyChanged(!iconicMode, iconicMode, PROPERTY_ICONIC_MODE);
-   }
-
-   public BoundDouble getPadding() {
-      return padding;
-   }
-   public void setPadding(BoundDouble padding) {
-      BoundDouble old = this.padding;
-      if (!padding.equals(old)) {
-         this.padding = padding;
-         onSelfPropertyChanged(old, padding, PROPERTY_PADDING);
+      BackgroundFill old = this._backgroundFill;
+      if (setProperty(old, backgroundFill, PROPERTY_BACKGROUND_FILL)) {
+         if (old != null)
+            old.removeListener(_backgroundFillListener);
+         if (backgroundFill != null)
+            backgroundFill.addListener(_backgroundFillListener);
       }
    }
 
+   public boolean isIconicMode() {
+      return _iconicMode;
+   }
+   public void setIconicMode(boolean iconicMode) {
+      setProperty(_iconicMode, iconicMode, PROPERTY_ICONIC_MODE);
+   }
+
+   public BoundDouble getMargin() {
+      return _margin;
+   }
+   /** is only set when resizing. */
+   private void setMargin(BoundDouble margin) {
+      setProperty(_margin, margin, PROPERTY_MARGIN);
+   }
+
+   public BoundDouble getPadding() {
+      return _padding;
+   }
+   public void setPadding(BoundDouble padding) {
+      setProperty(_padding, padding, PROPERTY_PADDING);
+   }
+
    public FontInfo getFontInfo() {
-      if (fontInfo == null)
+      if (_fontInfo == null)
          setFontInfo(new FontInfo());
-      return fontInfo;
+      return _fontInfo;
    }
    public void setFontInfo(FontInfo fontInfo) {
-      FontInfo oldFont = this.fontInfo;
-      if ((oldFont == null) && (fontInfo == null))
-         return;
-      if ((oldFont != null) && oldFont.equals(fontInfo))
-         return;
-      if (oldFont != null)
-         oldFont.removeListener(this);
-      this.fontInfo = fontInfo;
-      if (fontInfo != null)
-         fontInfo.addListener(this);
-      onSelfPropertyChanged(oldFont, fontInfo, PROPERTY_FONT_INFO);
+      FontInfo old = this._fontInfo;
+      if (setProperty(old, fontInfo, PROPERTY_FONT_INFO)) {
+         if (old != null)
+            old.removeListener(_fontInfoListener);
+         if (fontInfo != null)
+            fontInfo.addListener(_fontInfoListener);
+      }
    }
 
    public Color getBackgroundColor() {
-      if (backgroundColor == null)
+      if (_backgroundColor == null)
          setBackgroundColor(getDefaultBackgroundColor());
-      return backgroundColor;
+      return _backgroundColor;
    }
 
    public void setBackgroundColor(Color color) {
-      Color old = this.backgroundColor;
-      if (color.equals(old))
-         return;
-      this.backgroundColor = color;
-      onSelfPropertyChanged(old, color, PROPERTY_BACKGROUND_COLOR);
-   }
-
-   public boolean isUseBackgroundColor() {
-      return useBackgroundColor;
-   }
-   public void setUseBackgroundColor(boolean useBackgroundColor) {
-      if (this.useBackgroundColor == useBackgroundColor)
-         return;
-      this.useBackgroundColor = useBackgroundColor;
-      onSelfPropertyChanged(!useBackgroundColor, useBackgroundColor, PROPERTY_BACKGROUND_COLOR);
+      setProperty(_backgroundColor, color, PROPERTY_BACKGROUND_COLOR);
    }
 
    public TImage getImgBckgrnd() {
-      return imgBckgrnd;
+      return _imgBckgrnd;
    }
 
    public void setImgBckgrnd(TImage imgBckgrnd) {
-      Object old = this.imgBckgrnd;
+      Object old = this._imgBckgrnd;
       if (old == imgBckgrnd) // references compare
          return;
-      this.imgBckgrnd = imgBckgrnd;
-      onSelfPropertyChanged(old, imgBckgrnd, PROPERTY_IMG_BCKGRND);
+      this._imgBckgrnd = imgBckgrnd;
+      onPropertyChanged(old, imgBckgrnd, PROPERTY_IMG_BCKGRND);
+   }
+
+   public void onFontInfoPropertyChanged(PropertyChangeEvent ev) {
+      onPropertyChangedRethrow(ev.getSource(), ev, PROPERTY_FONT_INFO);
+   }
+   public void onBackgroundFillPropertyChanged(PropertyChangeEvent ev) {
+      onPropertyChangedRethrow(ev.getSource(), ev, PROPERTY_BACKGROUND_FILL);
+   }
+   public void onColorTextPropertyChanged(PropertyChangeEvent ev) {
+      onPropertyChangedRethrow(ev.getSource(), ev, PROPERTY_COLOR_TEXT);
+   }
+   public void onPenBorderPropertyChanged(PropertyChangeEvent ev) {
+      onPropertyChangedRethrow(ev.getSource(), ev, PROPERTY_PEN_BORDER);
    }
 
    @Override
-   public void propertyChange(PropertyChangeEvent ev) {
-      Object source = ev.getSource();
-      if (source instanceof FontInfo)
-         onSelfPropertyChangedRethrow((FontInfo)ev.getSource(), ev, PROPERTY_FONT_INFO);
-      if (source instanceof BackgroundFill)
-         onSelfPropertyChangedRethrow((BackgroundFill)ev.getSource(), ev, PROPERTY_BACKGROUND_FILL);
-      if (source instanceof ColorText)
-         onSelfPropertyChangedRethrow((ColorText)ev.getSource(), ev, PROPERTY_COLOR_TEXT);
-      if (source instanceof PenBorder)
-         onSelfPropertyChangedRethrow((PenBorder)ev.getSource(), ev, PROPERTY_PEN_BORDER);
+   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+      super.onPropertyChanged(oldValue, newValue, propertyName);
+
+      switch (propertyName) {
+      case PROPERTY_AREA:
+      case PROPERTY_MARGIN:
+      case PROPERTY_PADDING:
+      case PROPERTY_SIZE_FIELD:
+      case PROPERTY_MOSAIC_TYPE:
+         onPropertyChanged(PROPERTY_SIZE);
+         onPropertyChanged(PROPERTY_SIZE_DOUBLE);
+      }
    }
 
    @Override

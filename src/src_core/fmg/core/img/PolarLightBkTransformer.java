@@ -6,17 +6,21 @@ import fmg.common.HSV;
 public class PolarLightBkTransformer implements IModelTransformer {
 
    @Override
-   public void execute(int currentFrame, int totalFrames, AnimatedImageModel model) {
-      if (!model.isPolarLights())
+   public void execute(int currentFrame, int totalFrames, IImageModel model) {
+      if (!(model instanceof AnimatedImageModel))
+         throw new RuntimeException("Illegal usage transformer");
+
+      AnimatedImageModel am = (AnimatedImageModel)model;
+      if (!am.isPolarLights())
          return;
 
       double rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
-      if (!model.getAnimeDirection())
+      if (!am.getAnimeDirection())
          rotateAngleDelta = -rotateAngleDelta;
 
-      HSV hsv = new HSV(model.getBackgroundColor());
+      HSV hsv = new HSV(am.getBackgroundColor());
       hsv.h += rotateAngleDelta;
-      model.setBackgroundColor(hsv.toColor());
+      am.setBackgroundColor(hsv.toColor());
    }
 
 }

@@ -22,7 +22,7 @@ import fmg.common.Pair;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.AMosaicsImg.ERotateMode;
+import fmg.core.img.MosaicsAnimatedModel.ERotateMode;
 import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicInitData;

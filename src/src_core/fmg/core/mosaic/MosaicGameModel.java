@@ -33,20 +33,21 @@ import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
 
-/** MVC: model (mosaic field). Default implementation. */
-public class Mosaic
+/** MVC: game model of mosaic field. Default implementation. */
+public class MosaicGameModel
        extends NotifyPropertyChanged
-       implements IMosaic, PropertyChangeListener
+       implements IMosaic
 {
    private BaseCell.BaseAttribute _cellAttr;
    /** Matrix of cells, is represented as a vector {@link List<BaseCell>}.
      * Матрица ячеек, представленная(развёрнута) в виде вектора */
    private final List<BaseCell> _matrix = new ArrayList<BaseCell>();
    /** Field size in cells */
-   protected Matrisize _size = new Matrisize(10, 10);
+   private Matrisize _sizeField = new Matrisize(10, 10);
    /** из каких фигур состоит мозаика поля */
-   protected EMosaic _mosaicType = EMosaic.eMosaicSquare1;
+   private EMosaic _mosaicType = EMosaic.eMosaicSquare1;
 
+   private final PropertyChangeListener _cellAttrListener = ev -> onCellAttributePropertyChanged(ev);
 
    public static final String PROPERTY_AREA        = BaseCell.BaseAttribute.PROPERTY_AREA;
    public static final String PROPERTY_CELL_ATTR   = "CellAttr";
@@ -58,8 +59,7 @@ public class Mosaic
    public BaseCell.BaseAttribute getCellAttr() {
       if (_cellAttr == null) {
          _cellAttr = MosaicHelper.createAttributeInstance(getMosaicType());
-         _cellAttr.setArea(500);
-         _cellAttr.addListener(this);
+         _cellAttr.addListener(_cellAttrListener);
       }
       return _cellAttr;
    }
@@ -68,11 +68,11 @@ public class Mosaic
          return;
       if (newValue != null)
          throw new IllegalArgumentException("Bad argument - support only null value!");
-      _cellAttr.removeListener(this);
+      _cellAttr.removeListener(_cellAttrListener);
       _cellAttr = null;
       _matrix.clear();
-      onSelfPropertyChanged(PROPERTY_CELL_ATTR);
-      onSelfPropertyChanged(PROPERTY_MATRIX);
+      onPropertyChanged(PROPERTY_CELL_ATTR);
+      onPropertyChanged(PROPERTY_MATRIX);
    }
 
    /** площадь ячеек */
@@ -105,19 +105,19 @@ public class Mosaic
 
    /** размер поля в ячейках */
    @Override
-   public Matrisize getSizeField() { return _size; }
+   public Matrisize getSizeField() { return _sizeField; }
    /** размер поля в ячейках */
    @Override
    public void setSizeField(Matrisize newSizeField) {
-      Matrisize old = this._size;
+      Matrisize old = this._sizeField;
       if (old.equals(newSizeField))
          return;
 
       _matrix.clear();
-      this._size = newSizeField;
+      this._sizeField = newSizeField;
 
-      onSelfPropertyChanged(old, newSizeField, PROPERTY_SIZE_FIELD);
-      onSelfPropertyChanged(PROPERTY_MATRIX);
+      onPropertyChanged(old, newSizeField, PROPERTY_SIZE_FIELD);
+      onPropertyChanged(PROPERTY_MATRIX);
    }
 
    /** узнать тип мозаики
@@ -138,30 +138,24 @@ public class Mosaic
 
       setArea(saveArea); // restore
 
-      onSelfPropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
+      onPropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
    }
 
    /** доступ к заданной ячейке */
-   public BaseCell getCell(int x, int y) { return getMatrix().get(x*_size.n + y); }
+   public BaseCell getCell(int x, int y) { return getMatrix().get(x*_sizeField.n + y); }
    /** доступ к заданной ячейке */
    @Override
    public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
 
-   @Override
-   public void propertyChange(PropertyChangeEvent ev) {
-      if (ev.getSource() instanceof BaseCell.BaseAttribute)
-         onCellAttributePropertyChanged((BaseCell.BaseAttribute)ev.getSource(), ev);
-   }
-
-   protected void onCellAttributePropertyChanged(BaseCell.BaseAttribute source, PropertyChangeEvent ev) {
+   protected void onCellAttributePropertyChanged(PropertyChangeEvent ev) {
       String propName = ev.getPropertyName();
       if (BaseCell.BaseAttribute.PROPERTY_AREA.equals(propName)) {
          getMatrix().forEach(cell -> cell.init());
 
-         onSelfPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
+         onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
       }
-      onSelfPropertyChanged(PROPERTY_CELL_ATTR);
-      onSelfPropertyChanged(PROPERTY_CELL_ATTR + "." + propName);
+      onPropertyChanged(PROPERTY_CELL_ATTR);
+      onPropertyChanged(PROPERTY_CELL_ATTR + "." + propName);
    }
 
    @Override

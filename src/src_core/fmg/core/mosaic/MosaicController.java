@@ -6,13 +6,13 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.IPaintable;
-import fmg.core.mosaic.draw.PaintContext;
+import fmg.core.mosaic.draw.MosaicDrawModel;
 
 /** MVC: controller. Default implementation */
 public class MosaicController<TMosaicView extends AMosaicView<TPaintable, TImage, TPaintContext>,
                               TPaintable  extends IPaintable,
                               TImage,
-                              TPaintContext extends PaintContext<TImage>>
+                              TPaintContext extends MosaicDrawModel<TImage>>
       extends AMosaicController<TMosaicView>
 {
 

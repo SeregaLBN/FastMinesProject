@@ -3,7 +3,7 @@ package fmg.core.img;
 /**
  * MVC controlle of logo image
  *
- * @param <TImage> plaform specific image or picture or other display context/canvas/window/panel
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageView> MVC view
  */
 public class LogoController<TImage,

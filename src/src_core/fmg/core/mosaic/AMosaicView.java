@@ -7,22 +7,22 @@ import java.util.Collection;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.ICellPaint;
 import fmg.core.mosaic.draw.IPaintable;
-import fmg.core.mosaic.draw.PaintContext;
+import fmg.core.mosaic.draw.MosaicDrawModel;
 import fmg.data.view.draw.PenBorder;
 
 /**
  * MVC: view. Base implementation
  * @param <TPaintable> see {@link IPaintable}
- * @param <TImage> plaform specific image or picture or other display context/canvas/window/panel
- * @param <TPaintContext> see {@link PaintContext}
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TPaintContext> see {@link MosaicDrawModel}
  */
 public abstract class AMosaicView<TPaintable extends IPaintable,
                                   TImage,
-                                  TPaintContext extends PaintContext<TImage>>
+                                  TPaintContext extends MosaicDrawModel<TImage>>
                implements IMosaicView, AutoCloseable, PropertyChangeListener
 {
 
-   private Mosaic _mosaic;
+   private MosaicGameModel _mosaic;
    private TPaintContext _paintContext;
 
    public static final String PROPERTY_PAINT_CONTEXT = "PaintContext";
@@ -32,10 +32,10 @@ public abstract class AMosaicView<TPaintable extends IPaintable,
    @Override
    public abstract void invalidate(Collection<BaseCell> modifiedCells);
 
-   public Mosaic getMosaic() {
+   public MosaicGameModel getMosaic() {
       return _mosaic;
    }
-   public void setMosaic(Mosaic mosaic) {
+   public void setMosaic(MosaicGameModel mosaic) {
       if (_mosaic != null)
          _mosaic.removeListener(this);
       _mosaic = mosaic;
@@ -65,8 +65,8 @@ public abstract class AMosaicView<TPaintable extends IPaintable,
 
    @Override
    public void propertyChange(PropertyChangeEvent ev) {
-      if (ev.getSource() instanceof Mosaic)
-         onMosaicPropertyChanged((Mosaic)ev.getSource(), ev);
+      if (ev.getSource() instanceof MosaicGameModel)
+         onMosaicPropertyChanged((MosaicGameModel)ev.getSource(), ev);
       else
       if (getPaintContext().getClass().isAssignableFrom(ev.getSource().getClass())) // if (ev.getSource() instanceof TPaintContext)
       {
@@ -76,17 +76,17 @@ public abstract class AMosaicView<TPaintable extends IPaintable,
       }
    }
 
-   protected void onMosaicPropertyChanged(Mosaic source, PropertyChangeEvent ev) {
+   protected void onMosaicPropertyChanged(MosaicGameModel source, PropertyChangeEvent ev) {
       String propertyName = ev.getPropertyName();
       switch (propertyName) {
-      case Mosaic.PROPERTY_MOSAIC_TYPE:
+      case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
          changeFontSize();
          break;
-      case Mosaic.PROPERTY_AREA:
+      case MosaicGameModel.PROPERTY_AREA:
          changeFontSize(getPaintContext().getPenBorder());
          changeSizeImagesMineFlag();
          break;
-      case Mosaic.PROPERTY_MATRIX:
+      case MosaicGameModel.PROPERTY_MATRIX:
          invalidate(null);
          break;
       }
@@ -95,7 +95,7 @@ public abstract class AMosaicView<TPaintable extends IPaintable,
    private void onPaintContextPropertyChanged(TPaintContext source, PropertyChangeEvent ev) {
       String propertyName = ev.getPropertyName();
       switch (propertyName) {
-      case PaintContext.PROPERTY_PEN_BORDER:
+      case MosaicDrawModel.PROPERTY_PEN_BORDER:
          PenBorder penBorder = (PenBorder)ev.getNewValue();
          changeFontSize(penBorder);
          break;

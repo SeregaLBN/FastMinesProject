@@ -33,11 +33,6 @@ public class BurgerMenuModel extends NotifyPropertyChanged implements IImageMode
    private ImageProperties _generalModel;
    private PropertyChangeListener _generalModelListener;
 
-   @SuppressWarnings("deprecation")
-   protected <TI>boolean setProperty(TI storage, TI value, String propertyName) {
-      return super.setProperty(value, propertyName);
-   }
-
 
    public static final String PROPERTY_SHOW       = "Show";
    public static final String PROPERTY_HORIZONTAL = "Horizontal";

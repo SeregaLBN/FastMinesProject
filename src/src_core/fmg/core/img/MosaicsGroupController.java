@@ -1,9 +1,11 @@
 package fmg.core.img;
 
+import fmg.core.types.EMosaicGroup;
+
 /**
- * MVC controlle of MosaicsGroup image
+ * MVC controller of {@link EMosaicGroup} image
  *
- * @param <TImage> plaform specific image or picture or other display context/canvas/window/panel
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageView> MVC view
  */
 public class MosaicsGroupController<TImage,
