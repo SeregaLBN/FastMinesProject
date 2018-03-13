@@ -26,6 +26,6 @@ public interface IMosaicView<TImage, TImage2, TMosaicModel extends MosaicDrawMod
     * @param modifiedCells - Cells to be redrawn. NULL - redraw the full mosaic, or only those that are included in the clipRegion.
     * @param clipRegion - Region for redrawing. NULL - Redraw everything that is specified in modifiedCells
     */
-   void repaint(Collection<BaseCell> modifiedCells, RectDouble clipRegion);
+   void draw(Collection<BaseCell> modifiedCells, RectDouble clipRegion);
 
 }

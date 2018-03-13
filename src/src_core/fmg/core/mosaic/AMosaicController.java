@@ -14,7 +14,7 @@ import fmg.core.types.*;
 import fmg.core.types.click.ClickCellResult;
 import fmg.core.types.click.ClickResult;
 
-/** MVC: controller. Base implementation */
+/** MVC: mosaic controller. Base implementation */
 public abstract class AMosaicController<TImage, TImage2,
                                         TMosaicView extends IMosaicView<TImage, TImage2, TMosaicModel>,
                                         TMosaicModel extends MosaicDrawModel<TImage2>>
@@ -237,6 +237,7 @@ public abstract class AMosaicController<TImage, TImage2,
 
    /** Начать игру, т.к. произошёл первый клик на поле */
    public void gameBegin(BaseCell firstClickCell) {
+      getModel().getBackgroundFill().setMode(0);
       setGameStatus(EGameStatus.eGSPlay);
 
       // set mines
@@ -448,6 +449,11 @@ public abstract class AMosaicController<TImage, TImage2,
    /** Подготовиться к началу игры - сбросить все ячейки */
    public boolean gameNew() {
 //      System.out.println("Mosaic::GameNew()");
+      TMosaicModel m = getModel();
+      m.getBackgroundFill().setMode(
+            1 + ThreadLocalRandom.current().nextInt(
+                      m.getCellAttr() // MosaicHelper.createAttributeInstance(m.getMosaicType())
+                     .getMaxBackgroundFillModeValue()));
 
       if (getGameStatus() == EGameStatus.eGSReady)
          return false;

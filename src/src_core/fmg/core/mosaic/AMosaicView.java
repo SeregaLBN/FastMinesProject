@@ -28,7 +28,13 @@ public abstract class AMosaicView<TImage,
    @Override
    public abstract void invalidate(Collection<BaseCell> modifiedCells);
    @Override
-   public abstract void repaint(Collection<BaseCell> modifiedCells, RectDouble clipRegion);
+   public abstract void draw(Collection<BaseCell> modifiedCells, RectDouble clipRegion);
+
+   /** repaint all */
+   @Override
+   public void drawBody() {
+      draw(null, null);
+   }
 
    @Override
    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
