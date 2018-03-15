@@ -8,12 +8,12 @@ import fmg.core.img.LogoModel;
 /** Mine image on the playing field */
 public final class Mine {
 
-   /** Mine image controller implementation for {@link Icon} */
+   /** Mine image controller implementation for {@link Logo.Icon} */
    public static class ControllerIcon extends Logo.ControllerIcon {
       public ControllerIcon() { updateModel(getModel()); }
    }
 
-   /** Mine image controller implementation for {@link Image} */
+   /** Mine image controller implementation for {@link Logo.Image} */
    public static class ControllerImage extends Logo.ControllerImage {
       public ControllerImage() { updateModel(getModel()); }
    }

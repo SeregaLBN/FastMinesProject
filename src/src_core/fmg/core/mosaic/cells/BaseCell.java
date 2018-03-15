@@ -379,7 +379,7 @@ public abstract class BaseCell {
       switch (fillMode) {
       default:
          System.err.println(getClass().getSimpleName()+".getBackgroundFillColor: fillMode="+fillMode+":  добавь цветовую обработку для этого режима!");
-         //break;// !!! без break'а
+         // !!! no break
       case 0:
          if ((getState().getStatus() == EState._Open) && (getState().getOpen() == EOpen._Mine) && getState().isDown())
             return Color.Red.brighter(0.05); // game ower: игра завершена - клик на мине

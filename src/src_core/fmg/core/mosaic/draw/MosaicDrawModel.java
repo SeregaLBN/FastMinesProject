@@ -28,7 +28,6 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    private ColorText      _colorText;
    private PenBorder      _penBorder;
    private FontInfo       _fontInfo;
-   private boolean        _iconicMode;
    /** автоматически регулирую при явной установке размера */
    private BoundDouble    _margin  = new BoundDouble(0, 0, 0, 0);
    private BoundDouble    _padding = new BoundDouble(0, 0, 0, 0);
@@ -43,8 +42,11 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
 
    protected static Color _defaultBkColor = Color.Gray;
    /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется одним из MVC-наследником. */
-   protected static Color getDefaultBackgroundColor() {
+   public static Color getDefaultBackgroundColor() {
       return _defaultBkColor;
+   }
+   public static void setDefaultBackgroundColor(Color defaultBkColor) {
+      _defaultBkColor = defaultBkColor;
    }
 
    public static final String PROPERTY_INNER_SIZE       = "InnerSize";
@@ -59,7 +61,6 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    public static final String PROPERTY_FONT_INFO        = "FontInfo";
    public static final String PROPERTY_BACKGROUND_COLOR = "BackgroundColor";
    public static final String PROPERTY_IMG_BCKGRND      = "ImgBckgrnd";
-   public static final String PROPERTY_ICONIC_MODE      = "IconicMode";
 
    /** размер в пикселях поля мозаики. Inner, т.к. снаружи есть ещё padding и margin */
    public SizeDouble getInnerSize() {
@@ -212,13 +213,6 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
          if (backgroundFill != null)
             backgroundFill.addListener(_backgroundFillListener);
       }
-   }
-
-   public boolean isIconicMode() {
-      return _iconicMode;
-   }
-   public void setIconicMode(boolean iconicMode) {
-      setProperty(_iconicMode, iconicMode, PROPERTY_ICONIC_MODE);
    }
 
    public BoundDouble getMargin() {
