@@ -32,6 +32,7 @@ class IconSwing<TImageModel extends IImageModel> implements AutoCloseable {
       gBuffImg = buffImg.createGraphics();
       gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       gBuffImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+    //gBuffImg.setClip(0, 0, s.width, s.height);
 
       return new javax.swing.Icon() {
          @Override

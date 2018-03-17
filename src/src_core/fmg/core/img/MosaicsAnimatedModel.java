@@ -31,7 +31,7 @@ public class MosaicsAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
    private double _rotateAngle;
    /** list of offsets rotation angles prepared for cells */
    private final List<Double /* angle offset */ > _prepareList = new ArrayList<>();
-   protected final List<RotatedCellContext> _rotatedElements = new ArrayList<>();
+   private final List<RotatedCellContext> _rotatedElements = new ArrayList<>();
    private boolean _disableCellAttributeListener = false;
 
 
@@ -83,7 +83,7 @@ public class MosaicsAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
 
    private boolean rotateCellAlterantive;
 
-   protected static final class RotatedCellContext {
+   public static final class RotatedCellContext {
       public RotatedCellContext(int index, double angleOffset, double area) {
          this.index = index;
          this.angleOffset = angleOffset;
@@ -138,6 +138,10 @@ public class MosaicsAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
 
       // Z-ordering
       Collections.sort(_rotatedElements, (e1, e2) -> Double.compare(e1.area, e2.area));
+   }
+
+   public List<RotatedCellContext> getRotatedElements() {
+      return _rotatedElements;
    }
 
    private void randomRotateElemenIndex() {

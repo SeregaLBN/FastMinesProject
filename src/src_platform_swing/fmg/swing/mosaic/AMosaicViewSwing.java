@@ -22,6 +22,7 @@ import fmg.core.types.EState;
 import fmg.data.view.draw.FontInfo;
 import fmg.data.view.draw.PenBorder;
 import fmg.swing.Cast;
+import fmg.swing.draw.img.StaticInitilizer;
 
 /** MVC: view. Abstract SWING implementation */
 public abstract class AMosaicViewSwing<TImage,
@@ -39,6 +40,8 @@ public abstract class AMosaicViewSwing<TImage,
 
 
    static {
+      StaticInitilizer.init();
+
       UIDefaults uiDef = UIManager.getDefaults();
       java.awt.Color clr = uiDef.getColor("Panel.background");
       if (clr != null)

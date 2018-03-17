@@ -5,7 +5,7 @@ import javax.swing.SwingUtilities;
 import fmg.core.img.AnimatedImgController;
 import fmg.core.img.ImageController;
 
-final class StaticInitilizer {
+public final class StaticInitilizer {
 
    static {
       ImageController.DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
