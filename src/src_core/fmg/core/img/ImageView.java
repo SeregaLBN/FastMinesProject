@@ -76,6 +76,10 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
       //if (_invalidate == EInvalidate.needRedraw)
       //   return;
       _invalidate = EInvalidate.needRedraw;
+
+      // Уведомляю владельца класса что поменялось изображение.
+      // Т.е. что нужно вызвать getImage()
+      // при котором и отрисуется новое изображение (через вызов draw)
       onPropertyChanged(PROPERTY_IMAGE);
    }
 

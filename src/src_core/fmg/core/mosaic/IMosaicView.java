@@ -17,7 +17,7 @@ public interface IMosaicView<TImage, TImage2, TMosaicModel extends MosaicDrawMod
 {
 
    /** Mark the cells needed for the repainting.
-    * Performs a call to the Repaint method (synchronously or asynchronously or implicitly, depending on the implementation)
+    * Performs a call to the {@link #draw} method (synchronously or asynchronously or implicitly, depending on the implementation)
     * @param modifiedCells - cells to invalidate. null value - make to redraw all mosaic field cells */
    void invalidate(Collection<BaseCell> modifiedCells);
 

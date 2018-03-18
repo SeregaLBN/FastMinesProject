@@ -224,7 +224,7 @@ public abstract class AMosaicViewSwing<TImage,
 //      return font.getStringBounds(text, new FontRenderContext(null, true, true));
    }
 
-   public static void drawText(Graphics g, String text, Rectangle rc) {
+   private static void drawText(Graphics g, String text, Rectangle rc) {
       if ((text == null) || text.trim().isEmpty())
          return;
       Rectangle2D bnd = getStringBounds(text, g.getFont());

@@ -1,6 +1,7 @@
 package fmg.core.mosaic;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import fmg.common.geom.RectDouble;
 import fmg.core.img.ImageView;
@@ -25,15 +26,22 @@ public abstract class AMosaicView<TImage,
       super(mosaicModel);
    }
 
+   private Collection<BaseCell> _modifiedCells = new HashSet<>();
+
    @Override
-   public abstract void invalidate(Collection<BaseCell> modifiedCells);
+   public void invalidate(Collection<BaseCell> modifiedCells) {
+      _modifiedCells.addAll(modifiedCells);
+      invalidate();
+   }
+
    @Override
    public abstract void draw(Collection<BaseCell> modifiedCells, RectDouble clipRegion);
 
    /** repaint all */
    @Override
-   public void drawBody() {
-      draw(null, null);
+   protected void drawBody() {
+      draw(_modifiedCells.isEmpty() ? null : _modifiedCells, null);
+      _modifiedCells.clear();
    }
 
    @Override
@@ -47,9 +55,6 @@ public abstract class AMosaicView<TImage,
          changeFontSize();
          changeSizeImagesMineFlag();
          break;
-//      case MosaicGameModel.PROPERTY_MATRIX:
-//         invalidate(null);
-//         break;
       case MosaicDrawModel.PROPERTY_PEN_BORDER:
          changeFontSize();
          break;

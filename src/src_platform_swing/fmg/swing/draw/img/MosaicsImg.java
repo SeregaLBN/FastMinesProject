@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import fmg.common.Color;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.RectDouble;
+import fmg.core.img.MosaicRotateTransformer;
 import fmg.core.img.MosaicsAnimatedModel;
 import fmg.core.img.MosaicsAnimatedModel.ERotateMode;
 import fmg.core.img.MosaicsAnimatedModel.RotatedCellContext;
@@ -80,7 +81,7 @@ public abstract class MosaicsImg<TImage>
    }
 
    @Override
-   public void drawBody() {
+   protected void drawBody() {
       switch (getModel().getRotateMode()) {
       case fullMatrix:
          drawBodyFullMatrix();
@@ -93,13 +94,6 @@ public abstract class MosaicsImg<TImage>
 
    /** ///////////// ================= PART {@link ERotateMode#fullMatrix} ======================= ///////////// */
 
-   /** Return painted mosaic bitmap
-    *  if (!OnlySyncDraw) {
-    *    Сама картинка возвращается сразу.
-    *    Но вот её отрисовка - в фоне.
-    *    Т.к. WriteableBitmap есть DependencyObject, то его владелец может сам отслеживать отрисовку...
-    *  }
-    */
    private void drawBodyFullMatrix() {
       // setUseBackgroundColor(true);
       invalidate(getModel().getMatrix());
@@ -208,7 +202,8 @@ public abstract class MosaicsImg<TImage>
       protected javax.swing.Icon createImage() { return ico.createImage(); }
 
       @Override
-      protected void drawBody() { draw(ico.getGraphics()); }
+      protected void drawBody() {
+         draw(ico.getGraphics()); }
 
       @Override
       public void draw(Collection<BaseCell> modifiedCells, RectDouble clipRegion) {
@@ -266,12 +261,18 @@ public abstract class MosaicsImg<TImage>
 
    /** Mosaics image controller implementation for {@link Icon} */
    public static class ControllerIcon extends AMosaicController<javax.swing.Icon, Void, MosaicsImg.Icon, MosaicsAnimatedModel<Void>> {
-      public ControllerIcon() { super(new MosaicsImg.Icon()); }
+      public ControllerIcon() {
+         super(new MosaicsImg.Icon());
+         addModelTransformer(new MosaicRotateTransformer());
+      }
    }
 
    /** Mosaics image controller implementation for {@link Image} */
    public static class ControllerImage extends AMosaicController<java.awt.Image, Void, MosaicsImg.Image, MosaicsAnimatedModel<Void>> {
-      public ControllerImage() { super(new MosaicsImg.Image()); }
+      public ControllerImage() {
+         super(new MosaicsImg.Image());
+         addModelTransformer(new MosaicRotateTransformer());
+      }
    }
 
    ////////////// TEST //////////////
