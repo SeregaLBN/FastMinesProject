@@ -396,7 +396,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
    /** Smile image view implementation over {@link javax.swing.Icon} */
    static class Icon extends Smile<javax.swing.Icon> {
 
-      private IconSwing<SmileModel> ico = new IconSwing<>(this);
+      private IconSwing ico = new IconSwing(this);
 
       public Icon(EFaceType faceType) { super(faceType); }
 
@@ -418,7 +418,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
    /** Smile image view implementation over {@link java.awt.Image} */
    static class Image extends Smile<java.awt.Image> {
 
-      private ImageAwt<SmileModel> img = new ImageAwt<>(this);
+      private ImageAwt img = new ImageAwt(this);
 
       public Image(EFaceType faceType) { super(faceType); }
 

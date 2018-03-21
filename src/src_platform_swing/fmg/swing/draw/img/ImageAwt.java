@@ -8,14 +8,12 @@ import fmg.common.geom.Size;
 import fmg.core.img.IImageModel;
 import fmg.core.img.IImageView;
 
-/** Internal wrapper-image imlementation over java.awt.Image
- * @param <TImageModel> - model of image
- */
-class ImageAwt<TImageModel extends IImageModel> {
+/** Internal wrapper-image imlementation over java.awt.Image */
+class ImageAwt {
 
-   private IImageView<java.awt.Image, TImageModel> _imageView;
+   private IImageView<java.awt.Image, ? extends IImageModel> _imageView;
 
-   ImageAwt(IImageView<java.awt.Image, TImageModel> imageView) {
+   ImageAwt(IImageView<java.awt.Image, ? extends IImageModel> imageView) {
       this._imageView = imageView;
    }
 

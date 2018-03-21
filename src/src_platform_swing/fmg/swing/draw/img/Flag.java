@@ -81,7 +81,7 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
    /** Flag image view implementation over {@link javax.swing.Icon} */
    static class Icon extends Flag<javax.swing.Icon> {
 
-      private IconSwing<FlagModel> ico = new IconSwing<>(this);
+      private IconSwing ico = new IconSwing(this);
 
       @Override
       protected javax.swing.Icon createImage() { return ico.createImage(); }
@@ -101,7 +101,7 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
    /** Flag image view implementation over {@link java.awt.Image} */
    static class Image extends Flag<java.awt.Image> {
 
-      private ImageAwt<FlagModel> img = new ImageAwt<>(this);
+      private ImageAwt img = new ImageAwt(this);
 
       @Override
       protected java.awt.Image createImage() { return img.createImage(); }

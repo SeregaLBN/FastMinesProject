@@ -111,7 +111,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
    /** Logo image view implementation over {@link javax.swing.Icon} */
    static class Icon extends Logo<javax.swing.Icon> {
 
-      private IconSwing<LogoModel> ico = new IconSwing<>(this);
+      private IconSwing ico = new IconSwing(this);
 
       @Override
       protected javax.swing.Icon createImage() { return ico.createImage(); }
@@ -131,7 +131,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
    /** Logo image view implementation over {@link java.awt.Image} */
    static class Image extends Logo<java.awt.Image> {
 
-      private ImageAwt<LogoModel> img = new ImageAwt<>(this);
+      private ImageAwt img = new ImageAwt(this);
 
       @Override
       protected java.awt.Image createImage() { return img.createImage(); }

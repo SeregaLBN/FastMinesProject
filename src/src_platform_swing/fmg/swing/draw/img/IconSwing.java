@@ -10,14 +10,12 @@ import fmg.common.geom.Size;
 import fmg.core.img.IImageModel;
 import fmg.core.img.IImageView;
 
-/** Internal wrapper-image imlementation over javax.swing.Icon
- * @param <TImageModel> - model of image
- */
-class IconSwing<TImageModel extends IImageModel> implements AutoCloseable {
+/** Internal wrapper-image imlementation over javax.swing.Icon */
+class IconSwing implements AutoCloseable {
 
-   private IImageView<javax.swing.Icon, TImageModel> _imageView;
+   private IImageView<javax.swing.Icon, ? extends IImageModel> _imageView;
 
-   IconSwing(IImageView<javax.swing.Icon, TImageModel> imageView) {
+   IconSwing(IImageView<javax.swing.Icon, ? extends IImageModel> imageView) {
       this._imageView = imageView;
    }
 

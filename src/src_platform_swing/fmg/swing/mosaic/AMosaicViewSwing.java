@@ -49,7 +49,7 @@ public abstract class AMosaicViewSwing<TImage,
    }
 
 
-   public void draw(Graphics2D g, Collection<BaseCell> modifiedCells, RectDouble clipRegion) {
+   protected void draw(Graphics2D g, Collection<BaseCell> modifiedCells, RectDouble clipRegion, boolean drawBk) {
       assert !_alreadyPainted;
       _alreadyPainted = true;
 
@@ -63,7 +63,7 @@ public abstract class AMosaicViewSwing<TImage,
 
       // 1. background color
       Color bkClr = model.getBackgroundColor();
-      if (!bkClr.isTransparent()) {
+      if (drawBk && !bkClr.isTransparent()) {
          Consumer<java.awt.Color> fillBk = bkColor -> {
             g.setColor(bkColor);
             if (clipRegion == null) {

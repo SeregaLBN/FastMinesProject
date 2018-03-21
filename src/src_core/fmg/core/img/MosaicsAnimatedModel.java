@@ -77,6 +77,7 @@ public class MosaicsAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
 
          FigureHelper.rotateCollection(cell.getRegion().getPoints(), rotateAngle, center);
       }
+      onPropertyChanged(PROPERTY_MATRIX);
    }
 
    /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */

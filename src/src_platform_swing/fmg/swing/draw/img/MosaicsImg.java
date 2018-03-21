@@ -82,6 +82,7 @@ public abstract class MosaicsImg<TImage>
 
    @Override
    protected void drawBody() {
+      //super.drawBody(); // !override super implementtation
       switch (getModel().getRotateMode()) {
       case fullMatrix:
          drawBodyFullMatrix();
@@ -92,11 +93,16 @@ public abstract class MosaicsImg<TImage>
       }
    }
 
+
+   protected boolean _useBackgroundColor = true;
+   protected boolean _drawOnCache = true;
+
    /** ///////////// ================= PART {@link ERotateMode#fullMatrix} ======================= ///////////// */
 
    private void drawBodyFullMatrix() {
-      // setUseBackgroundColor(true);
-      invalidate(getModel().getMatrix());
+      _drawOnCache = false;
+      _useBackgroundColor = true;
+      draw(getModel().getMatrix(), null);
    }
 
    /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
@@ -117,10 +123,10 @@ public abstract class MosaicsImg<TImage>
       }
       if (_invalidateCache) {
          _invalidateCache = false;
-         //Graphics save = getView().getPaintable();
+         //Graphics save = get...();
          //getView().setPaintable(_imageCache as Graphics); // not implement in SWING :(
          drawCache();
-         //getView().setPaintable(save); // restore
+         //set...(save); // restore
       }
       return _imageCache;
    }
@@ -132,8 +138,6 @@ public abstract class MosaicsImg<TImage>
 
    private void drawStaticPart() {
       MosaicsAnimatedModel<Void> model = getModel();
-
-      // setUseBackgroundColor(true);
 
       List<BaseCell> notRotated;
       if (model.getRotatedElements().isEmpty()) {
@@ -149,7 +153,7 @@ public abstract class MosaicsImg<TImage>
             ++i;
          }
       }
-      invalidate(notRotated);
+      draw(notRotated, null);
    }
 
    private void drawRotatedPart() {
@@ -168,12 +172,11 @@ public abstract class MosaicsImg<TImage>
       pb.setColorLight(colorLight.darker(0.5));
       pb.setColorShadow(colorShadow.darker(0.5));
 
-      // setUseBackgroundColor(false);
       List<BaseCell> matrix = model.getMatrix();
       List<BaseCell> rotatedCells = new ArrayList<>(model.getRotatedElements().size());
       for (RotatedCellContext cntxt : model.getRotatedElements())
          rotatedCells.add(matrix.get(cntxt.index));
-      invalidate(rotatedCells);
+      draw(rotatedCells, null);
 
       // restore
       pb.setWidth(borderWidth);
@@ -182,10 +185,15 @@ public abstract class MosaicsImg<TImage>
    }
 
    private void drawBodySomeCells() {
+      _drawOnCache = USE_CACHE;
+      _useBackgroundColor = true;
       if (USE_CACHE)
          copyFromCache();
       else
          drawStaticPart();
+
+      _drawOnCache = false;
+      _useBackgroundColor = false;
       drawRotatedPart();
    }
 
@@ -196,23 +204,14 @@ public abstract class MosaicsImg<TImage>
    /** Moisac image view implementation over {@link javax.swing.Icon} */
    static class Icon extends MosaicsImg<javax.swing.Icon> {
 
-      private IconSwing<MosaicsAnimatedModel<Void>> ico = new IconSwing<>(this);
+      private IconSwing ico = new IconSwing(this);
 
       @Override
       protected javax.swing.Icon createImage() { return ico.createImage(); }
 
       @Override
-      protected void drawBody() {
-         draw(ico.getGraphics()); }
-
-      @Override
       public void draw(Collection<BaseCell> modifiedCells, RectDouble clipRegion) {
-         // TODO Auto-generated method stub
-      }
-
-      @Override
-      public void invalidate(Collection<BaseCell> modifiedCells) {
-         // TODO Auto-generated method stub
+         draw(ico.getGraphics(), modifiedCells, clipRegion, _useBackgroundColor);
       }
 
       @Override
@@ -233,23 +232,15 @@ public abstract class MosaicsImg<TImage>
    /** Mosaics image view implementation over {@link java.awt.Image} */
    static class Image extends MosaicsImg<java.awt.Image> {
 
-      private ImageAwt<MosaicsAnimatedModel<Void>> img = new ImageAwt<>(this);
+      private ImageAwt img = new ImageAwt(this);
 
       @Override
       protected java.awt.Image createImage() { return img.createImage(); }
 
       @Override
-      protected void drawBody() { img.draw(g -> draw(g)); }
-
-      @Override
       public void draw(Collection<BaseCell> modifiedCells, RectDouble clipRegion) {
-         // TODO Auto-generated method stub
+         img.draw(g -> draw(g, modifiedCells, clipRegion, _useBackgroundColor));
      }
-
-      @Override
-      public void invalidate(Collection<BaseCell> modifiedCells) {
-         // TODO Auto-generated method stub
-      }
 
       @Override
       protected void copyFromCache() {

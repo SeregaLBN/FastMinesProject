@@ -33,7 +33,7 @@ public abstract class MosaicsSkillImg<TImage> extends MosaicsSkillOrGroupView<TI
    /** MosaicsSkill image view implementation over {@link javax.swing.Icon} */
    static class Icon extends MosaicsSkillImg<javax.swing.Icon> {
 
-      private IconSwing<MosaicsSkillModel> ico = new IconSwing<>(this);
+      private IconSwing ico = new IconSwing(this);
 
       public Icon(ESkillLevel skill) { super(skill); }
 
@@ -55,7 +55,7 @@ public abstract class MosaicsSkillImg<TImage> extends MosaicsSkillOrGroupView<TI
    /** MosaicsSkill image view implementation over {@link java.awt.Image} */
    static class Image extends MosaicsSkillImg<java.awt.Image> {
 
-      private ImageAwt<MosaicsSkillModel> img = new ImageAwt<>(this);
+      private ImageAwt img = new ImageAwt(this);
 
       public Image(ESkillLevel skill) { super(skill); }
 
