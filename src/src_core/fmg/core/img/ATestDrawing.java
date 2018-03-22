@@ -36,19 +36,22 @@ public abstract class ATestDrawing {
             aCtrller.setAnimatePeriod(1000 + r(2000));
             aCtrller.setTotalFrames(40 + r(20));
 
-            aCtrller.usePolarLightTransforming(bl());
-            aCtrller.useRotateTransforming(bl());
+            IImageModel im = aCtrller.getModel();
+            if (im instanceof AnimatedImageModel) {
+               aCtrller.usePolarLightTransforming(bl());
+               aCtrller.useRotateTransforming(bl());
+            }
 
             if (testTransparent) {
                // Rotate the transparent background color
                Color clr = Color.RandomColor();
                clr.setA(50 + r(10));
-               IImageModel im = aCtrller.getModel();
                if (im instanceof ImageProperties)
                   ((ImageProperties)im).setBackgroundColor(clr);
                else if (im instanceof MosaicDrawModel<?>)
                   ((MosaicDrawModel<?>)im).setBackgroundColor(clr);
-               aCtrller.addModelTransformer(new PolarLightBkTransformer());
+               if (im instanceof AnimatedImageModel)
+                  aCtrller.addModelTransformer(new PolarLightBkTransformer());
             }
          }
       }

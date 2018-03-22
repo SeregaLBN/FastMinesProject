@@ -30,7 +30,10 @@ public abstract class AMosaicView<TImage,
 
    @Override
    public void invalidate(Collection<BaseCell> modifiedCells) {
-      _modifiedCells.addAll(modifiedCells);
+      if (modifiedCells == null) // mark NULL if all mosaic is changed
+         _modifiedCells.clear();
+      else
+         _modifiedCells.addAll(modifiedCells);
       invalidate();
    }
 
