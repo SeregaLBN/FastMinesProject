@@ -81,9 +81,14 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       if (value.height < 1)
          throw new IllegalArgumentException("Size value height must be > 1");
 
+      SizeDouble oldSize = getSizeDouble();
       BoundDouble padding = getPadding();
-      SizeDouble toCalc = new SizeDouble(value.height - padding.getTopAndBottom(),
-                                         value.height -= padding.getTopAndBottom());
+      padding = new BoundDouble(padding.left   * value.width  / oldSize.width,
+                                padding.top    * value.height / oldSize.height,
+                                padding.right  * value.width  / oldSize.width,
+                                padding.bottom * value.height / oldSize.height);
+      SizeDouble toCalc = new SizeDouble(value.width  - padding.getLeftAndRight(),
+                                         value.height - padding.getTopAndBottom());
       SizeDouble out = new SizeDouble();
       double area = MosaicHelper.findAreaBySize(getMosaicType(), getSizeField(), toCalc, out);
       BoundDouble margin = new BoundDouble(0);
@@ -220,13 +225,32 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    }
    /** is only set when resizing. */
    private void setMargin(BoundDouble margin) {
+      if (margin.left < 0)
+         throw new IllegalArgumentException("Margin left value must be > 0");
+      if (margin.top < 0)
+         throw new IllegalArgumentException("Margin top value must be > 0");
+      if (margin.right < 0)
+         throw new IllegalArgumentException("Margin right value must be > 0");
+      if (margin.bottom < 0)
+         throw new IllegalArgumentException("Margin bottom value must be > 0");
+
       setProperty(_margin, margin, PROPERTY_MARGIN);
    }
 
    public BoundDouble getPadding() {
       return _padding;
    }
+   public void setPadding(double bound) { setPadding(new BoundDouble(bound)); }
    public void setPadding(BoundDouble padding) {
+      if (padding.left < 0)
+         throw new IllegalArgumentException("Padding left value must be > 0");
+      if (padding.top < 0)
+         throw new IllegalArgumentException("Padding top value must be > 0");
+      if (padding.right < 0)
+         throw new IllegalArgumentException("Padding right value must be > 0");
+      if (padding.bottom < 0)
+         throw new IllegalArgumentException("Padding bottom value must be > 0");
+
       setProperty(_padding, padding, PROPERTY_PADDING);
    }
 

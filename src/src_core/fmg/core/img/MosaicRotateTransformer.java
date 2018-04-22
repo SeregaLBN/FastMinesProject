@@ -13,14 +13,15 @@ public class MosaicRotateTransformer implements IModelTransformer {
       double rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
 //    //if (!mam.getAnimeDirection())
 //    //   rotateAngleDelta = -rotateAngleDelta;
-      double rotateAnglePrevious = (currentFrame-1) * rotateAngleDelta;
+      double rotateAngle = currentFrame * rotateAngleDelta;
+      mam.setRotateAngle(rotateAngle);
 
       switch (mam.getRotateMode()) {
       case fullMatrix:
          mam.rotateMatrix();
          break;
       case someCells:
-         mam.updateAnglesOffsets(rotateAnglePrevious, rotateAngleDelta);
+         mam.updateAnglesOffsets(rotateAngleDelta);
          mam.rotateCells();
          break;
       }

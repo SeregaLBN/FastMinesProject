@@ -14,8 +14,8 @@ import javax.swing.JPanel;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
-import fmg.core.img.ImageController;
 import fmg.core.img.ATestDrawing;
+import fmg.core.img.ImageController;
 
 /** @see {@link MosaicsSkillImg#main}, {@link MosaicsGroupImg#main}, {@link MosaicsImg#main} */
 final class TestDrawing extends ATestDrawing {
@@ -71,7 +71,6 @@ final class TestDrawing extends ATestDrawing {
                      CellTilingInfo cti = callback.apply(imgController);
                      PointDouble offset = cti.imageOffset;
 
-                     imgController.getModel().setSize(imgSize);
                      Object imgObj = imgController.getImage();
 
                      if (imgObj instanceof Icon) {
@@ -96,6 +95,12 @@ final class TestDrawing extends ATestDrawing {
                    Dimension size = jPanel.getSize();
                    rc[0] = new RectDouble(margin, margin, size.getWidth()-margin*2, size.getHeight()-margin*2); // inner rect where drawing images as tiles
                    ctr[0] = td.cellTiling(rc[0], images, testTransparent[0]);
+
+                   Size imgSize = ctr[0].imageSize;
+                   if (imgSize.height < 1 || imgSize.width < 1)
+                      return;
+                   for (var img : images)
+                      img.getModel().setSize(imgSize);
                }
             };
             MouseListener mouseListener = new MouseAdapter() {

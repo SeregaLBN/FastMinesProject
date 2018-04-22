@@ -11,6 +11,7 @@ import fmg.common.Color;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
+import fmg.core.img.MosaicsAnimatedModel.ERotateMode;
 import fmg.core.mosaic.draw.MosaicDrawModel;
 
 public abstract class ATestDrawing {
@@ -60,7 +61,9 @@ public abstract class ATestDrawing {
       if (model instanceof ImageProperties) {
          @SuppressWarnings("resource")
          ImageProperties ip = (ImageProperties)model;
+
          ip.setBorderWidth(r(3));
+
          int pad = Math.min(ip.getSize().height/3, ip.getSize().width/3);
          ip.setPadding(-pad/4 + r(pad));
 
@@ -88,11 +91,19 @@ public abstract class ATestDrawing {
          LogoModel lm = (LogoModel)model;
          lm.setUseGradient(bl());
       }
+      if (model instanceof MosaicsAnimatedModel) {
+         @SuppressWarnings("resource")
+         MosaicsAnimatedModel<?> mam = (MosaicsAnimatedModel<?>)model;
 
-//      if (img instanceof AMosaicsImg) {
-//         AMosaicsImg<?> mosaicsImg = (AMosaicsImg<?>)img;
-//         mosaicsImg.setRotateMode(AMosaicsImg.ERotateMode.values()[r(AMosaicsImg.ERotateMode.values().length)]);
-//      }
+         mam.getBackgroundFill().setMode(1 + r(mam.getCellAttr().getMaxBackgroundFillModeValue()));
+
+         ERotateMode[] eRotateModes = ERotateMode.values();
+         mam.setRotateMode(eRotateModes[r(eRotateModes.length)]);
+
+         mam.getPenBorder().setWidth(r(3));
+         double pad = Math.min(mam.getSizeDouble().height/3, mam.getSizeDouble().width/3);
+         mam.setPadding(-pad/4 + r((int)pad));
+      }
    }
 
    public static class CellTilingInfo {

@@ -321,7 +321,7 @@ public abstract class AMosaicController<TImage, TImage2,
             setMinesCount(getMinesCount()+1);
             getRepositoryMines().add(cellLeftDown.getCoord());
          } else {
-            cellLeftDown.Reset();
+            cellLeftDown.reset();
             setMinesCount(getMinesCount()-1);
             getRepositoryMines().remove(cellLeftDown.getCoord());
          }
@@ -466,7 +466,7 @@ public abstract class AMosaicController<TImage, TImage2,
          }
 
       for (BaseCell cell : getMatrix())
-         cell.Reset();
+         cell.reset();
 
       setCountClick(0);
 
@@ -500,7 +500,7 @@ public abstract class AMosaicController<TImage, TImage2,
    public int getMaxMines() { return getMaxMines(getSizeField()); }
    /** размер в пикселях для указанных параметров */
    public SizeDouble getInnerSize(Matrisize sizeField, double area) {
-      return (DoubleExt.hasMinDiff(area, getArea()))
+      return DoubleExt.hasMinDiff(area, getArea())
          ? getModel().getCellAttr().getSize(sizeField)
          : MosaicHelper.getSize(getMosaicType(), area, sizeField);
    }

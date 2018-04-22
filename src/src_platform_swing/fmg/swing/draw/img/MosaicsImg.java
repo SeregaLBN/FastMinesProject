@@ -16,7 +16,6 @@ import fmg.core.img.MosaicsAnimatedModel;
 import fmg.core.img.MosaicsAnimatedModel.ERotateMode;
 import fmg.core.img.MosaicsAnimatedModel.RotatedCellContext;
 import fmg.core.mosaic.AMosaicController;
-import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.MosaicDrawModel;
 import fmg.core.types.EMosaic;
@@ -51,6 +50,7 @@ public abstract class MosaicsImg<TImage>
       super.onPropertyModelChanged(oldValue, newValue, propertyName);
 
       MosaicsAnimatedModel<Void> model = getModel();
+      /*
       switch (propertyName) {
       case MosaicGameModel.PROPERTY_CELL_ATTR:
          if (RandomCellBkColor)
@@ -59,6 +59,7 @@ public abstract class MosaicsImg<TImage>
       default:
          break;
       }
+      */
 
       if (model.getRotateMode() == ERotateMode.someCells) {
          switch (propertyName) {
@@ -271,20 +272,20 @@ public abstract class MosaicsImg<TImage>
       Random rnd = ThreadLocalRandom.current();
       TestDrawing.testApp(() ->
 //       // test single
-//       Arrays.asList(new MosaicsImg.Image() { { setMosaicType(EMosaic.eMosaicPentagonT24); setSizeField(new Matrisize(3, 7)); }})
+//       Arrays.asList(new MosaicsImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); setSizeField(new Matrisize(3, 3)); }})
 
          // test all
          Stream.of(EMosaic.values())
 
                // variant 1
-//               .map(e -> new Pair<>(new MosaicsImg.ControllerIcon () { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }},
-//                                    new MosaicsImg.ControllerImage() { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }}))
-//               .flatMap(x -> Stream.of(x.first, x.second))
+               .map(e -> Stream.of(new MosaicsImg.ControllerIcon () { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }},
+                                   new MosaicsImg.ControllerImage() { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }}))
+               .flatMap(x -> x)
 
-               // variant 2
-               .map(e ->  rnd.nextBoolean()
-                           ? new MosaicsImg.ControllerIcon () { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }}
-                           : new MosaicsImg.ControllerImage() { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }})
+//               // variant 2
+//               .map(e ->  rnd.nextBoolean()
+//                           ? new MosaicsImg.ControllerIcon () { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }}
+//                           : new MosaicsImg.ControllerImage() { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }})
 
                .collect(Collectors.toList())
       );

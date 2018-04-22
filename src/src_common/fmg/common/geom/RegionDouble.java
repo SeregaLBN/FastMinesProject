@@ -79,7 +79,7 @@ public class RegionDouble {
 
    @Override
    public String toString() {
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       sb.append("{ ");
       boolean first = true;
       for (PointDouble p : points) {

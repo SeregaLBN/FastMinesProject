@@ -205,7 +205,7 @@ public abstract class BaseCell {
       this.region = new RegionDouble(attr.getVertexNumber(iDirection));
 
       this.state = new StateCell();
-      Reset();
+      reset();
    }
 
    public void init() {
@@ -254,7 +254,7 @@ public abstract class BaseCell {
    /** определить координаты точек из которых состоит фигура */
    protected abstract void calcRegion();
 
-   public void Reset() {
+   public void reset() {
       state.Reset();
       lockMine = false;
    }

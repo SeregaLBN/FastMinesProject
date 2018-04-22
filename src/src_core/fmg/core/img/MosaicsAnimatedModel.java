@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Coord;
+import fmg.common.geom.DoubleExt;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.geom.util.FigureHelper;
@@ -65,12 +65,11 @@ public class MosaicsAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
 
    /** ///////////// ================= PART {@link ERotateMode#fullMatrix} ======================= ///////////// */
 
-   public void rotateMatrix() {
+   public void rotateMatrix() { rotateMatrix(true); }
+   private void rotateMatrix(boolean reinit) {
       SizeDouble size = getCellAttr().getSize(getSizeField());
-      BoundDouble margin = getMargin();
-      BoundDouble padding = getPadding();
-      PointDouble center = new PointDouble(margin.left + padding.left + size.width  / 2,
-                                           margin.top  + padding.top  + size.height / 2);
+      PointDouble center = new PointDouble(size.width  / 2,
+                                           size.height / 2);
       double rotateAngle = getRotateAngle();
       for (BaseCell cell : getMatrix()) {
          cell.init(); // restore base coords
@@ -181,8 +180,9 @@ public class MosaicsAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
       } while(true);
    }
 
-   public void updateAnglesOffsets(double angleOld, double rotateAngleDelta) {
+   public void updateAnglesOffsets(double rotateAngleDelta) {
       double angleNew = getRotateAngle();
+      double angleOld = angleNew - rotateAngleDelta;
       double rotateDelta = rotateAngleDelta;
       double area = getArea();
 
@@ -237,6 +237,19 @@ public class MosaicsAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
       if (_disableCellAttributeListener)
          return;
       super.onCellAttributePropertyChanged(ev);
+
+      String propName = ev.getPropertyName();
+      if (BaseCell.BaseAttribute.PROPERTY_AREA.equals(propName))
+         switch (getRotateMode()) {
+         case fullMatrix:
+            if (!DoubleExt.hasMinDiff(_rotateAngle, 0))
+               rotateMatrix(false);
+            break;
+         case someCells:
+            //updateAnglesOffsets(rotateAngleDelta);
+            //rotateCells();
+            break;
+         }
    }
 
 }
