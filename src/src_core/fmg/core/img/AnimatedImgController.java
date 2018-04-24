@@ -92,7 +92,7 @@ public abstract class AnimatedImgController<TImage,
          removeModelTransformer(RotateTransformer.class);
    }
 
-   public void usePolarLightTransforming(boolean enable) {
+   public void usePolarLightFgTransforming(boolean enable) {
       if (enable)
          addModelTransformer(new PolarLightFgTransformer());
       else

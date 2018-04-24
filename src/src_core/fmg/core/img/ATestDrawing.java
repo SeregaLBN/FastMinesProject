@@ -30,6 +30,8 @@ public abstract class ATestDrawing {
    public void applyRandom(ImageController<?,?,?> ctrller, boolean testTransparent) {
       testTransparent = testTransparent || bl();
 
+      IImageModel model = ctrller.getModel();
+
       if (ctrller instanceof AnimatedImgController) {
          AnimatedImgController<?,?,?> aCtrller = (AnimatedImgController<?,?,?>)ctrller;
          aCtrller.setAnimated(bl() || bl());
@@ -37,27 +39,18 @@ public abstract class ATestDrawing {
             aCtrller.setAnimatePeriod(1000 + r(2000));
             aCtrller.setTotalFrames(40 + r(20));
 
-            IImageModel im = aCtrller.getModel();
-            if (im instanceof AnimatedImageModel) {
-               aCtrller.usePolarLightTransforming(bl());
+            if (model instanceof AnimatedImageModel) {
                aCtrller.useRotateTransforming(bl());
-            }
-
-            if (testTransparent) {
-               // Rotate the transparent background color
-               Color clr = Color.RandomColor();
-               clr.setA(50 + r(10));
-               if (im instanceof ImageProperties)
-                  ((ImageProperties)im).setBackgroundColor(clr);
-               else if (im instanceof MosaicDrawModel<?>)
-                  ((MosaicDrawModel<?>)im).setBackgroundColor(clr);
-               if (im instanceof AnimatedImageModel)
-                  aCtrller.addModelTransformer(new PolarLightBkTransformer());
+               aCtrller.usePolarLightFgTransforming(bl());
+               aCtrller.addModelTransformer(new PolarLightBkTransformer());
             }
          }
       }
 
-      IImageModel model = ctrller.getModel();
+      Color bkClr = Color.RandomColor();
+      if (testTransparent)
+         bkClr.setA(50 + r(10));
+
       if (model instanceof ImageProperties) {
          @SuppressWarnings("resource")
          ImageProperties ip = (ImageProperties)model;
@@ -66,6 +59,8 @@ public abstract class ATestDrawing {
 
          int pad = Math.min(ip.getSize().height/3, ip.getSize().width/3);
          ip.setPadding(-pad/4 + r(pad));
+
+         ip.setBackgroundColor(bkClr);
 
          if (testTransparent) {
             // test transparent
@@ -77,7 +72,7 @@ public abstract class ATestDrawing {
             }
             ip.setForegroundColor(clr);
          } else {
-            ip.setBackgroundColor(Color.RandomColor().brighter());
+            ip.setForegroundColor(Color.RandomColor()/*.brighter()*/);
          }
       }
       if (model instanceof AnimatedImageModel) {
@@ -91,18 +86,23 @@ public abstract class ATestDrawing {
          LogoModel lm = (LogoModel)model;
          lm.setUseGradient(bl());
       }
+      if (model instanceof MosaicDrawModel<?>) {
+         @SuppressWarnings("resource")
+         MosaicDrawModel<?> mdm = (MosaicDrawModel<?>)model;
+         mdm.setBackgroundColor(bkClr);
+
+         mdm.getBackgroundFill().setMode(1 + r(mdm.getCellAttr().getMaxBackgroundFillModeValue()));
+
+         mdm.getPenBorder().setWidth(r(3));
+         double pad = Math.min(mdm.getSizeDouble().height/3, mdm.getSizeDouble().width/3);
+         mdm.setPadding(pad);
+      }
       if (model instanceof MosaicsAnimatedModel) {
          @SuppressWarnings("resource")
          MosaicsAnimatedModel<?> mam = (MosaicsAnimatedModel<?>)model;
 
-         mam.getBackgroundFill().setMode(1 + r(mam.getCellAttr().getMaxBackgroundFillModeValue()));
-
          ERotateMode[] eRotateModes = ERotateMode.values();
          mam.setRotateMode(eRotateModes[r(eRotateModes.length)]);
-
-         mam.getPenBorder().setWidth(r(3));
-         double pad = Math.min(mam.getSizeDouble().height/3, mam.getSizeDouble().width/3);
-         mam.setPadding(-pad/4 + r((int)pad));
       }
    }
 
