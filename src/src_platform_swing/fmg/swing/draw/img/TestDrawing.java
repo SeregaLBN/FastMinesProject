@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
@@ -27,6 +28,11 @@ final class TestDrawing extends ATestDrawing {
    }
 
    static void testApp(Supplier<List<ImageController<?,?,?>>> funcGetImages) {
+      SwingUtilities.invokeLater(() ->
+         testApp2(funcGetImages)
+      );
+   }
+   static void testApp2(Supplier<List<ImageController<?,?,?>>> funcGetImages) {
       new JFrame() {
          private static final long serialVersionUID = 1L;
 
