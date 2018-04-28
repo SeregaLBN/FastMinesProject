@@ -1,6 +1,9 @@
 package fmg.common.geom;
 
+import java.util.Locale;
+
 public class SizeDouble {
+
    public double width, height;
 
    public SizeDouble() { width = height = 0; }
@@ -26,6 +29,6 @@ public class SizeDouble {
    }
 
    @Override
-   public String toString() { return "{ w:" + width + ", h:" + height + " }"; }
+   public String toString() { return String.format(Locale.US, "{w=%.2f, h=%.2f}", width, height); }
 
 }

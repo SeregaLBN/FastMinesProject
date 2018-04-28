@@ -1,7 +1,10 @@
 package fmg.common.geom;
 
+import java.util.Locale;
+
 /** Padding / Margin */
 public class BoundDouble {
+
    public double left, right, top, bottom;
 
    public BoundDouble(BoundDouble copy) { this.left = copy.left; this.top = copy.top; this.right = copy.right; this.bottom = copy.bottom; }
@@ -48,6 +51,6 @@ public class BoundDouble {
    }
 
    @Override
-   public String toString() { return "{ left:"+left+", right:"+right+", top:"+top+", bottom:"+bottom+" }"; }
+   public String toString() { return String.format(Locale.US, "{lft=%.2f, rght=%.2f, top=%.2f, bttm=%.2f}", left, right, top, bottom); }
 
 }

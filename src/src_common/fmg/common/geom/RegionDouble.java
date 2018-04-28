@@ -3,6 +3,7 @@ package fmg.common.geom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class RegionDouble {
 
@@ -79,18 +80,11 @@ public class RegionDouble {
 
    @Override
    public String toString() {
-      StringBuilder sb = new StringBuilder();
-      sb.append("{ ");
-      boolean first = true;
-      for (PointDouble p : points) {
-         if (!first)
-            first = false;
-         else
-            sb.append(", ");
-         sb.append(p.toString());
-      }
-      sb.append(" }");
-      return sb.toString();
+      if (points == null)
+         return "{null}";
+      StringJoiner sj = new StringJoiner(", ", "{points=[", "]}");
+      points.forEach(p -> sj.add(p.toString()));
+      return sj.toString();
    }
 
    public RegionDouble moveXY(SizeDouble offset) {

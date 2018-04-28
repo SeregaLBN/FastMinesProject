@@ -1,6 +1,9 @@
 package fmg.common.geom;
 
+import java.util.Locale;
+
 public class PointDouble {
+
    public double x, y;
 
    public PointDouble() { x = y = 0;    }
@@ -14,7 +17,7 @@ public class PointDouble {
       temp = Double.doubleToLongBits(y);
       return 31 * result + (int) (temp ^ (temp >>> 32));
    }
-   
+
    @Override
    public boolean equals(Object obj) {
       if (this == obj) return true;
@@ -26,6 +29,6 @@ public class PointDouble {
    }
 
    @Override
-   public String toString() { return "{ x:" + x + ", y:" + y + " }"; }
+   public String toString() { return String.format(Locale.US, "{x=%.2f, y=%.2f}", x, y); }
 
 }

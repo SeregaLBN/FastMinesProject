@@ -1,6 +1,9 @@
 package fmg.common.geom;
 
+import java.util.Locale;
+
 public class RectDouble {
+
    public double x, y, width, height;
 
    // Перемещение прямоугольника по X и/или Y (без изменений размеров прямоугольника)
@@ -142,6 +145,6 @@ public class RectDouble {
    }
 
    @Override
-   public String toString() { return "{ x:" + x + ", y:" + y + ", w:" + width + ", h:" + height + " }"; }
+   public String toString() { return String.format(Locale.US, "{x=%.2f, y=%.2f, w=%.2f, h=%.2f}", x, y, width, height); }
 
 }
