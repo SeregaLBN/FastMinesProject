@@ -54,6 +54,7 @@ public abstract class AMosaicViewSwing<TImage,
       _alreadyPainted = true;
 
       TMosaicModel model = getModel();
+      Size size = model.getSize();
 
       // save
       Shape oldShape = g.getClip();
@@ -64,6 +65,7 @@ public abstract class AMosaicViewSwing<TImage,
       // 1. background color
       Color bkClr = model.getBackgroundColor();
       if (drawBk && !bkClr.isTransparent()) {
+         g.setComposite(AlphaComposite.Src);
          Consumer<java.awt.Color> fillBk = bkColor -> {
             g.setColor(bkColor);
             if (clipRegion == null) {
@@ -71,19 +73,19 @@ public abstract class AMosaicViewSwing<TImage,
                if (rcBounds != null) {
                   g.fillRect(rcBounds.x, rcBounds.y, rcBounds.width, rcBounds.height);
                } else {
-                  Size sz = model.getSize();
-                  g.fillRect(0, 0, sz.width, sz.height);
+                  g.fillRect(0, 0, size.width, size.height);
                }
             } else {
                g.fillRect((int)clipRegion.x, (int)clipRegion.y, (int)clipRegion.width, (int)clipRegion.height);
             }
          };
-         if (!bkClr.isOpaque())
-            fillBk.accept(java.awt.Color.WHITE);
+//         if (!bkClr.isOpaque())
+//            fillBk.accept(java.awt.Color.WHITE);
          fillBk.accept(Cast.toColor(bkClr));
       }
 
       // 2. paint cells
+      g.setComposite(AlphaComposite.SrcOver);
       g.setFont(getFont());
       PenBorder pen = model.getPenBorder();
       g.setStroke(new BasicStroke(pen.getWidth())); // TODO глянуть расширенные параметры конструктора пера
@@ -208,6 +210,34 @@ public abstract class AMosaicViewSwing<TImage,
              //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
             }
          }
+
+      /** /
+      // test
+      {
+         g.setClip(oldShape);
+         //g.setComposite(AlphaComposite.SrcOver);
+
+         // test padding
+         g.setStroke(new BasicStroke(5));
+         Color clr = Color.DarkRed.clone();
+         clr.setA(120);
+         g.setColor(Cast.toColor(clr));
+         g.drawRect((int)padding.left,
+                    (int)padding.top,
+                    (int)(size.width  - padding.getLeftAndRight()),
+                    (int)(size.height - padding.getTopAndBottom()));
+
+         // test margin
+         g.setStroke(new BasicStroke(3));
+         clr = Color.DarkGreen.clone();
+         clr.setA(120);
+         g.setColor(Cast.toColor(clr));
+         g.drawRect((int)(padding.left + margin.left),
+                    (int)(padding.top  + margin.top),
+                    (int)(size.width  - padding.getLeftAndRight() - margin.getLeftAndRight()),
+                    (int)(size.height - padding.getTopAndBottom() - margin.getTopAndBottom()));
+      }
+      /**/
 
       // restore
       g.setFont(oldFont);

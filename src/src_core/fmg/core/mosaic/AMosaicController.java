@@ -45,10 +45,6 @@ public abstract class AMosaicController<TImage, TImage2,
    }
 
 
-//   public static final String PROPERTY_AREA              = MosaicGameModel.PROPERTY_AREA;
-//   public static final String PROPERTY_SIZE_FIELD        = MosaicGameModel.PROPERTY_SIZE_FIELD;
-//   public static final String PROPERTY_MOSAIC_TYPE       = MosaicGameModel.PROPERTY_MOSAIC_TYPE;
-   public static final String PROPERTY_INNER_SIZE        = MosaicDrawModel.PROPERTY_INNER_SIZE;
    public static final String PROPERTY_MINES_COUNT       = "MinesCount";
    public static final String PROPERTY_COUNT_MINES_LEFT  = "CountMinesLeft";
    public static final String PROPERTY_COUNT_UNKNOWN     = "CountUnknown";
@@ -525,19 +521,16 @@ public abstract class AMosaicController<TImage, TImage2,
       switch (propertyName) {
       case MosaicGameModel.PROPERTY_SIZE_FIELD:
          setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
-//         onPropertyChanged(oldValue, newValue, PROPERTY_SIZE_FIELD);
-         onPropertyChanged(PROPERTY_INNER_SIZE);
          gameNew();
          break;
       case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
-//         onPropertyChanged(oldValue, newValue, PROPERTY_MOSAIC_TYPE);
-         onPropertyChanged(PROPERTY_INNER_SIZE);
          gameNew();
          break;
       case MosaicGameModel.PROPERTY_AREA:
-//         onPropertyChanged(oldValue, newValue, PROPERTY_AREA);
-         onPropertyChanged(PROPERTY_INNER_SIZE);
          onModifiedCellsPropertyChanged(getModel().getMatrix());
+         break;
+      case MosaicDrawModel.PROPERTY_SIZE_DOUBLE:
+         onPropertyChanged(PROPERTY_SIZE);
          break;
       default:
          break;

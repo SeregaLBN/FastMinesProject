@@ -8,10 +8,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.common.Color;
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.RectDouble;
-import fmg.common.geom.Size;
+import fmg.common.geom.*;
 import fmg.core.img.MosaicsAnimatedModel.ERotateMode;
+import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.draw.MosaicDrawModel;
 
 public abstract class ATestDrawing {
@@ -74,35 +73,46 @@ public abstract class ATestDrawing {
          } else {
             ip.setForegroundColor(Color.RandomColor()/*.brighter()*/);
          }
-      }
-      if (model instanceof AnimatedImageModel) {
-         @SuppressWarnings("resource")
-         AnimatedImageModel aim = (AnimatedImageModel)model;
-         aim.setPolarLights(bl());
-         aim.setAnimeDirection(bl());
-      }
-      if (model instanceof LogoModel) {
-         @SuppressWarnings("resource")
-         LogoModel lm = (LogoModel)model;
-         lm.setUseGradient(bl());
-      }
-      if (model instanceof MosaicDrawModel<?>) {
-         @SuppressWarnings("resource")
-         MosaicDrawModel<?> mdm = (MosaicDrawModel<?>)model;
-         mdm.setBackgroundColor(bkClr);
 
-         mdm.getBackgroundFill().setMode(1 + r(mdm.getCellAttr().getMaxBackgroundFillModeValue()));
+         if (model instanceof AnimatedImageModel) {
+            @SuppressWarnings("resource")
+            AnimatedImageModel aim = (AnimatedImageModel)model;
+            aim.setPolarLights(bl());
+            aim.setAnimeDirection(bl());
 
-         mdm.getPenBorder().setWidth(r(3));
-         double pad = Math.min(mdm.getSizeDouble().height/3, mdm.getSizeDouble().width/3);
-         mdm.setPadding(pad);
+            if (model instanceof LogoModel) {
+               @SuppressWarnings("resource")
+               LogoModel lm = (LogoModel)model;
+               lm.setUseGradient(bl());
+            }
+         }
       }
-      if (model instanceof MosaicsAnimatedModel) {
+      if (model instanceof MosaicGameModel) {
          @SuppressWarnings("resource")
-         MosaicsAnimatedModel<?> mam = (MosaicsAnimatedModel<?>)model;
+         MosaicGameModel mgm = (MosaicGameModel)model;
+         mgm.setSizeField(new Matrisize(3+r(2), 3 + r(2)));
 
-         ERotateMode[] eRotateModes = ERotateMode.values();
-         mam.setRotateMode(eRotateModes[r(eRotateModes.length)]);
+         if (model instanceof MosaicDrawModel<?>) {
+            @SuppressWarnings("resource")
+            MosaicDrawModel<?> mdm = (MosaicDrawModel<?>)model;
+            mdm.setBackgroundColor(bkClr);
+
+            mdm.getBackgroundFill().setMode(1 + r(mdm.getCellAttr().getMaxBackgroundFillModeValue()));
+
+            mdm.getPenBorder().setWidth(r(3));
+            SizeDouble size = mdm.getSizeDouble();
+            double padLeftRight = r((int)(size.width /3));
+            double padTopBottom = r((int)(size.height/3));
+            mdm.setPadding(new BoundDouble(padLeftRight, padTopBottom, padLeftRight, padTopBottom));
+
+            if (model instanceof MosaicsAnimatedModel) {
+               @SuppressWarnings("resource")
+               MosaicsAnimatedModel<?> mam = (MosaicsAnimatedModel<?>)model;
+
+               ERotateMode[] eRotateModes = ERotateMode.values();
+               mam.setRotateMode(eRotateModes[r(eRotateModes.length)]);
+            }
+         }
       }
    }
 

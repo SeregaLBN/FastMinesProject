@@ -183,10 +183,10 @@ public final class MosaicHelper {
       return res;
    }
 
-   /** узнаю мах размер площади ячеек мозаики, при котором окно проекта вмещается в заданную область
+   /** узнаю мах размер площади ячеек мозаики, при котором вся мозаика вмещается в заданную область
     * @param mosaicSizeField - интересуемый размер (в ячейках) поля мозаики
-    * @param sizeClientIn - размер окна/области (в пикселях) в которую должна вписаться мозаика
-    * @param sizeClientOut - размер окна/области (в пикселях) в которую реально впишется мозаика
+    * @param sizeClientIn - размер области (в пикселях) в которую должна вписаться мозаика
+    * @param sizeClientOut - размер области (в пикселях) в которую реально впишется мозаика
     * @return площадь ячейки
     */
    private static double findAreaBySize(BaseCell.BaseAttribute cellAttr, final Matrisize mosaicSizeField, final SizeDouble sizeClientIn, SizeDouble sizeClientOut) {
@@ -217,9 +217,10 @@ public final class MosaicHelper {
       return res;
    }
 
-   /** узнаю max размер поля мозаики, при котором окно проекта вмещается в в заданную область
-    * @param area - интересуемая площадь ячеек мозаики
-    * @param sizeClient - размер окна/области (в пикселях) в которую должна вписаться мозаика
+   /** узнаю max размер поля мозаики, при котором вся мозаика вмещается в в заданную область
+    * @param mosaicType тип мозаики
+    * @param area интересуемая площадь ячеек мозаики
+    * @param sizeClient размер области (в пикселях) в которую должна вписаться мозаика
     * @return размер поля мозаики
     */
    public static Matrisize findSizeByArea(EMosaic mosaicType, double area, SizeDouble sizeClient) {
@@ -247,10 +248,11 @@ public final class MosaicHelper {
       return result;
    }
 
-   /** узнаю мах размер площади ячеек мозаики, при котором окно проекта вмещается в заданную область
-    * @param mosaicSizeField - интересуемый размер (в ячейках) поля мозаики
-    * @param sizeClientIn - размер окна/области (в пикселях) в которую должна вписаться мозаика
-    * @param sizeClientOut - размер окна/области (в пикселях) в которую реально впишется мозаика
+   /** узнаю мах размер площади ячеек мозаики, при котором вся мозаика вмещается в заданную область
+    * @param mosaicType тип мозаики
+    * @param mosaicSizeField интересуемый размер (в ячейках) поля мозаики
+    * @param sizeClientIn размер области (в пикселях) в которую должна вписаться мозаика
+    * @param sizeClientOut размер области (в пикселях) в которую реально впишется мозаика
     * @return площадь ячейки
     */
    public static double findAreaBySize(EMosaic mosaicType, Matrisize mosaicSizeField, SizeDouble sizeClientIn, SizeDouble sizeClientOut) {

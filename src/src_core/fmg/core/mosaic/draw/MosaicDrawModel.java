@@ -49,7 +49,7 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       _defaultBkColor = defaultBkColor;
    }
 
-   public static final String PROPERTY_INNER_SIZE       = "InnerSize";
+   public static final String PROPERTY_SIZE             = "Size";
    public static final String PROPERTY_SIZE_DOUBLE      = "SizeDouble";
    public static final String PROPERTY_MARGIN           = "Margin";
    public static final String PROPERTY_PADDING          = "Padding";
@@ -75,29 +75,29 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       size.height += m.getTopAndBottom() + p.getTopAndBottom();
       return size;
    }
-   public void setSizeDouble(SizeDouble value) {
-      if (value.width < 1)
+   public void setSizeDouble(SizeDouble size) {
+      if (size.width < 1)
          throw new IllegalArgumentException("Size value widht must be > 1");
-      if (value.height < 1)
+      if (size.height < 1)
          throw new IllegalArgumentException("Size value height must be > 1");
 
       SizeDouble oldSize = getSizeDouble();
-      BoundDouble padding = getPadding();
-      padding = new BoundDouble(padding.left   * value.width  / oldSize.width,
-                                padding.top    * value.height / oldSize.height,
-                                padding.right  * value.width  / oldSize.width,
-                                padding.bottom * value.height / oldSize.height);
-      SizeDouble toCalc = new SizeDouble(value.width  - padding.getLeftAndRight(),
-                                         value.height - padding.getTopAndBottom());
+      BoundDouble oldPadding = getPadding();
+      BoundDouble newPadding = new BoundDouble(oldPadding.left   * size.width  / oldSize.width,
+                                               oldPadding.top    * size.height / oldSize.height,
+                                               oldPadding.right  * size.width  / oldSize.width,
+                                               oldPadding.bottom * size.height / oldSize.height);
+      SizeDouble toCalc = new SizeDouble(size.width  - newPadding.getLeftAndRight(),
+                                         size.height - newPadding.getTopAndBottom());
       SizeDouble out = new SizeDouble();
       double area = MosaicHelper.findAreaBySize(getMosaicType(), getSizeField(), toCalc, out);
       BoundDouble margin = new BoundDouble(0);
-      margin.left = margin.right  = (value.width  - out.width ) / 2;
-      margin.top  = margin.bottom = (value.height - out.height) / 2;
+      margin.left = margin.right  = (size.width  - newPadding.getLeftAndRight() - out.width ) / 2;
+      margin.top  = margin.bottom = (size.height - newPadding.getTopAndBottom() - out.height) / 2;
 
       setArea(area);
       setMargin(margin);
-      setPadding(padding);
+      setPaddingInternal(newPadding);
    }
 
    @Override
@@ -251,6 +251,33 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       if (padding.bottom < 0)
          throw new IllegalArgumentException("Padding bottom value must be > 0");
 
+      SizeDouble size = getSizeDouble();
+      if ((size.width - padding.getLeftAndRight()) < 1)
+         throw new IllegalArgumentException("The left and right padding are very large");
+      if ((size.height - padding.getTopAndBottom()) < 1)
+         throw new IllegalArgumentException("The top and bottom padding are very large");
+
+      SizeDouble toCalc = new SizeDouble(size.width  - padding.getLeftAndRight(),
+                                         size.height - padding.getTopAndBottom());
+      SizeDouble out = new SizeDouble();
+      double area = MosaicHelper.findAreaBySize(getMosaicType(), getSizeField(), toCalc, out);
+      BoundDouble margin = new BoundDouble(0);
+      margin.left = margin.right  = (size.width  - padding.getLeftAndRight() - out.width ) / 2;
+      margin.top  = margin.bottom = (size.height - padding.getTopAndBottom() - out.height) / 2;
+
+      setArea(area);
+      setMargin(margin);
+      setPaddingInternal(padding);
+   }
+   private void setPaddingInternal(BoundDouble padding) {
+      //String stack = Stream.of(new Exception().getStackTrace())
+      //      .skip(1)
+      //      .map(st -> st.getLineNumber()
+      //                 + " " + Stream.of(st.getClassName().split("\\.")).reduce((first, second) -> second).get()
+      //                 + "." + st.getMethodName())
+      //      .limit(3)
+      //      .collect(Collectors.joining("\n\t "));
+      //System.out.println("setPaddingInternal(" + padding + ") call from: " + stack);
       setProperty(_padding, padding, PROPERTY_PADDING);
    }
 
@@ -312,12 +339,11 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       case PROPERTY_AREA:
       case PROPERTY_SIZE_FIELD:
       case PROPERTY_MOSAIC_TYPE:
-         onPropertyChanged(PROPERTY_INNER_SIZE);
-         // no break!
-      case PROPERTY_MARGIN:
       case PROPERTY_PADDING:
+      case PROPERTY_MARGIN:
          onPropertyChanged(PROPERTY_SIZE);
          onPropertyChanged(PROPERTY_SIZE_DOUBLE);
+         break;
       }
    }
 

@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.common.Color;
-import fmg.common.geom.Matrisize;
 import fmg.common.geom.RectDouble;
 import fmg.core.img.MosaicRotateTransformer;
 import fmg.core.img.MosaicsAnimatedModel;
@@ -277,15 +276,15 @@ public abstract class MosaicsImg<TImage>
          // test all
          Stream.of(EMosaic.values())
 
-               // variant 1
-               .map(e -> Stream.of(new MosaicsImg.ControllerIcon () { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }},
-                                   new MosaicsImg.ControllerImage() { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }}))
-               .flatMap(x -> x)
+//               // variant 1
+//               .map(e -> Stream.of(new MosaicsImg.ControllerIcon () { { setMosaicType(e); }},
+//                                   new MosaicsImg.ControllerImage() { { setMosaicType(e); }}))
+//               .flatMap(x -> x)
 
-//               // variant 2
-//               .map(e ->  rnd.nextBoolean()
-//                           ? new MosaicsImg.ControllerIcon () { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }}
-//                           : new MosaicsImg.ControllerImage() { { setMosaicType(e); setSizeField(new Matrisize(3+rnd.nextInt(2), 3 + rnd.nextInt(2))); }})
+               // variant 2
+               .map(e ->  rnd.nextBoolean()
+                           ? new MosaicsImg.ControllerIcon () { { setMosaicType(e); }}
+                           : new MosaicsImg.ControllerImage() { { setMosaicType(e); }})
 
                .collect(Collectors.toList())
       );
