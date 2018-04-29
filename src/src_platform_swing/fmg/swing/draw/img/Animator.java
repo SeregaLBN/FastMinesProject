@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import fmg.common.Pair;
 import fmg.common.ui.ITimer;
 import fmg.core.img.IAnimator;
 import fmg.swing.utils.Timer;
@@ -13,7 +12,7 @@ import fmg.swing.utils.Timer;
 public class Animator implements IAnimator, AutoCloseable {
 
    private static Animator _singleton;
-   public static Animator getSingleton() {
+   public static Animator getSingleton() { // not synchronized. since should work only in the thread of the UI.
       if (_singleton == null)
          _singleton = new Animator();
       return _singleton;
@@ -25,16 +24,38 @@ public class Animator implements IAnimator, AutoCloseable {
       _timer.setInterval(1000/60); // The number of frames per second
       _timer.setCallback(() -> {
          long currentTime = new Date().getTime();
-         _subscribers.forEach((k,v) -> v.second.accept(currentTime - v.first));
-      } );
+         _subscribers.forEach((k,v) -> {
+            if (v.active)
+               v.callback.accept(currentTime - v.startTime);
+         });
+      });
    }
 
+   private static class SubscribeInfo {
+      public boolean active = true;    // enabled?
+      public long    startTime = new Date().getTime(); // start time of subscribe
+      public Consumer<Long /* time from the beginning of the subscription */> callback;
+   }
    private final ITimer _timer;
-   private final Map<Object, Pair<Long /* start time of subscribe */, Consumer<Long /* time from the beginning of the subscription */>>> _subscribers;
+   private final Map<Object /* subscriber */, SubscribeInfo> _subscribers;
 
    @Override
    public void subscribe(Object subscriber, Consumer<Long /* time from start subscribe */> subscriberCallbackMethod) {
-      _subscribers.put(subscriber, new Pair<>(new Date().getTime(), subscriberCallbackMethod));
+      SubscribeInfo info = _subscribers.get(subscriber);
+      if (info == null) {
+         info = new SubscribeInfo();
+         info.callback = subscriberCallbackMethod;
+         _subscribers.put(subscriber, info);
+      } else {
+         info.active = true;
+      }
+   }
+
+   @Override
+   public void pause(Object subscriber) {
+      SubscribeInfo info = _subscribers.get(subscriber);
+      if (info != null)
+         info.active = false;
    }
 
    @Override

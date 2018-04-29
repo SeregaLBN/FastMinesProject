@@ -133,7 +133,7 @@ public class MosaicsAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
 
          // restore
          attr.setArea(area);
-         _disableCellAttributeListener = false;;
+         _disableCellAttributeListener = false;
       });
 
       // Z-ordering

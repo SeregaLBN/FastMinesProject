@@ -20,7 +20,7 @@ public abstract class AnimatedImgController<TImage,
    public static Supplier<IAnimator> GET_ANIMATOR;
 
    /** Image is animated? */
-   private boolean _animated = false;
+   private Boolean _animated = null;
    /** Overall animation period (in milliseconds) */
    private long _animatePeriod = 3000;
    /** Total frames of the animated period */
@@ -36,10 +36,9 @@ public abstract class AnimatedImgController<TImage,
    public static final String PROPERTY_TOTAL_FRAMES   = "TotalFrames";
    public static final String PROPERTY_CURRENT_FRAME  = "CurrentFrame";
 
-   public boolean isAnimated() { return _animated; }
+   public boolean isAnimated() { return (_animated == Boolean.TRUE); }
    public void setAnimated(boolean value) {
       if (setProperty(_animated, value, PROPERTY_ANIMATED)) {
-         //invalidate();
          if (value)
             GET_ANIMATOR.get().subscribe(this, timeFromStartSubscribe -> {
                long mod = timeFromStartSubscribe % _animatePeriod;
@@ -48,7 +47,7 @@ public abstract class AnimatedImgController<TImage,
                setCurrentFrame((int)frame);
             });
          else
-            GET_ANIMATOR.get().unsubscribe(this);
+            GET_ANIMATOR.get().pause(this);
       }
    }
 
@@ -102,7 +101,8 @@ public abstract class AnimatedImgController<TImage,
 
    @Override
    public void close() {
-      setAnimated(false); // unsubscribe
+      if (_animated != null)
+         GET_ANIMATOR.get().unsubscribe(this);
       _transformers.clear();
       super.close();
    }

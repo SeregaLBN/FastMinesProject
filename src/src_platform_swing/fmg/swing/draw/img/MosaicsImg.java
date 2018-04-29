@@ -270,8 +270,8 @@ public abstract class MosaicsImg<TImage>
    public static void main(String[] args) {
       Random rnd = ThreadLocalRandom.current();
       TestDrawing.testApp(() ->
-//       // test single
-//       Arrays.asList(new MosaicsImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); setSizeField(new Matrisize(3, 3)); }})
+//      // test single
+//      Arrays.asList(new MosaicsImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
 
          // test all
          Stream.of(EMosaic.values())
