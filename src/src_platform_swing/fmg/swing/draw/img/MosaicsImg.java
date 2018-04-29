@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.common.Color;
-import fmg.common.geom.RectDouble;
 import fmg.core.img.MosaicRotateTransformer;
 import fmg.core.img.MosaicsAnimatedModel;
 import fmg.core.img.MosaicsAnimatedModel.ERotateMode;
@@ -73,13 +72,6 @@ public abstract class MosaicsImg<TImage>
       }
    }
 
-
-   @Override
-   protected void changeSizeImagesMineFlag() {
-      // none
-      // inner images of mine and flag its void
-   }
-
    @Override
    protected void drawBody() {
       //super.drawBody(); // !override super implementtation
@@ -102,7 +94,7 @@ public abstract class MosaicsImg<TImage>
    private void drawBodyFullMatrix() {
       _drawOnCache = false;
       _useBackgroundColor = true;
-      draw(getModel().getMatrix(), null);
+      draw(getModel().getMatrix());
    }
 
    /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
@@ -153,7 +145,7 @@ public abstract class MosaicsImg<TImage>
             ++i;
          }
       }
-      draw(notRotated, null);
+      draw(notRotated);
    }
 
    private void drawRotatedPart() {
@@ -176,7 +168,7 @@ public abstract class MosaicsImg<TImage>
       List<BaseCell> rotatedCells = new ArrayList<>(model.getRotatedElements().size());
       for (RotatedCellContext cntxt : model.getRotatedElements())
          rotatedCells.add(matrix.get(cntxt.index));
-      draw(rotatedCells, null);
+      draw(rotatedCells);
 
       // restore
       pb.setWidth(borderWidth);
@@ -210,8 +202,8 @@ public abstract class MosaicsImg<TImage>
       protected javax.swing.Icon createImage() { return ico.createImage(); }
 
       @Override
-      public void draw(Collection<BaseCell> modifiedCells, RectDouble clipRegion) {
-         draw(ico.getGraphics(), modifiedCells, clipRegion, _useBackgroundColor);
+      public void draw(Collection<BaseCell> modifiedCells) {
+         draw(ico.getGraphics(), modifiedCells, null, _useBackgroundColor);
       }
 
       @Override
@@ -238,8 +230,8 @@ public abstract class MosaicsImg<TImage>
       protected java.awt.Image createImage() { return img.createImage(); }
 
       @Override
-      public void draw(Collection<BaseCell> modifiedCells, RectDouble clipRegion) {
-         img.draw(g -> draw(g, modifiedCells, clipRegion, _useBackgroundColor));
+      public void draw(Collection<BaseCell> modifiedCells) {
+         img.draw(g -> draw(g, modifiedCells, null, _useBackgroundColor));
      }
 
       @Override

@@ -2,7 +2,6 @@ package fmg.core.mosaic;
 
 import java.util.Collection;
 
-import fmg.common.geom.RectDouble;
 import fmg.core.img.IImageView;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.MosaicDrawModel;
@@ -21,11 +20,9 @@ public interface IMosaicView<TImage, TImage2, TMosaicModel extends MosaicDrawMod
     * @param modifiedCells - cells to invalidate. null value - make to redraw all mosaic field cells */
    void invalidate(Collection<BaseCell> modifiedCells);
 
-   /**
-    * Redraw the required cells
+   /** Redraw the required cells
     * @param modifiedCells - Cells to be redrawn. NULL - redraw the full mosaic, or only those that are included in the clipRegion.
-    * @param clipRegion - Region for redrawing. NULL - Redraw everything that is specified in modifiedCells
     */
-   void draw(Collection<BaseCell> modifiedCells, RectDouble clipRegion);
+   void draw(Collection<BaseCell> modifiedCells);
 
 }

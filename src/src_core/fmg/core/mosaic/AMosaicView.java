@@ -3,7 +3,6 @@ package fmg.core.mosaic;
 import java.util.Collection;
 import java.util.HashSet;
 
-import fmg.common.geom.RectDouble;
 import fmg.core.img.ImageView;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.MosaicDrawModel;
@@ -37,13 +36,10 @@ public abstract class AMosaicView<TImage,
       invalidate();
    }
 
-   @Override
-   public abstract void draw(Collection<BaseCell> modifiedCells, RectDouble clipRegion);
-
    /** repaint all */
    @Override
    protected void drawBody() {
-      draw(_modifiedCells.isEmpty() ? null : _modifiedCells, null);
+      draw(_modifiedCells.isEmpty() ? null : _modifiedCells);
       _modifiedCells.clear();
    }
 
@@ -56,7 +52,6 @@ public abstract class AMosaicView<TImage,
          break;
       case MosaicGameModel.PROPERTY_AREA:
          changeFontSize();
-         changeSizeImagesMineFlag();
          break;
       case MosaicDrawModel.PROPERTY_PEN_BORDER:
          changeFontSize();
@@ -70,8 +65,5 @@ public abstract class AMosaicView<TImage,
       PenBorder penBorder = model.getPenBorder();
       model.getFontInfo().setSize((int)model.getCellAttr().getSq(penBorder.getWidth()));
    }
-
-   /** переустанавливаю заного размер мины/флага для мозаики */
-   protected abstract void changeSizeImagesMineFlag();
 
 }

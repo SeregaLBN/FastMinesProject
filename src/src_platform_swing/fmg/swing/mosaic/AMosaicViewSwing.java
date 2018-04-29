@@ -96,7 +96,7 @@ public abstract class AMosaicViewSwing<TImage,
       boolean isIconicMode = pen.getColorLight().equals(pen.getColorShadow());
       BackgroundFill bkFill = model.getBackgroundFill();
 
-      if (modifiedCells == null)
+      if ((modifiedCells == null) || modifiedCells.isEmpty())
          modifiedCells = model.getMatrix(); // check to redraw all mosaic cells
       for (BaseCell cell: modifiedCells)
          // redraw only when needed - when the cells and update region intersect
