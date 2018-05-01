@@ -1,9 +1,6 @@
 package fmg.swing.mosaic;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.util.Collection;
 
 import javax.swing.Icon;
@@ -46,7 +43,8 @@ public class MosaicViewSwing extends AMosaicViewSwing<JPanel, Icon, MosaicDrawMo
                Graphics2D g2d = (Graphics2D) g;
                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-               MosaicViewSwing.this.draw(g2d, _modifiedCells, Cast.toRectDouble(g.getClipBounds()), true);
+               Rectangle clipBounds = g.getClipBounds();
+               MosaicViewSwing.this.draw(g2d, _modifiedCells, (clipBounds==null) ? null : Cast.toRectDouble(g.getClipBounds()), true);
                _modifiedCells = null;
             }
 

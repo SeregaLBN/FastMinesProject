@@ -13,7 +13,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 
 import fmg.common.geom.Matrisize;
-import fmg.core.mosaic.MosaicController;
+import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicInitData;
 import fmg.core.mosaic.cells.BaseCell;
@@ -35,7 +35,7 @@ public class CustomSkillDlg extends JDialog {
 
    public CustomSkillDlg(JFrame parent, boolean modal) {
       super(parent, "Select skill", modal);
-      _mosaicListener = ev -> onMosaicPropertyChanged(ev);
+      _mosaicListener = ev -> onMosaicModelPropertyChanged(ev);
       if (parent instanceof Main)
          this.parent = (Main) parent;
       initialize(parent);
@@ -70,7 +70,7 @@ public class CustomSkillDlg extends JDialog {
       this.setLocationRelativeTo(parent);
 
       if (this.parent != null)
-         this.parent.getMosaicController().addListener(_mosaicListener);
+         this.parent.getMosaicController().getModel().addListener(_mosaicListener);
    }
 
    // создаю панели с нужным расположением
@@ -230,14 +230,7 @@ public class CustomSkillDlg extends JDialog {
    private void onClose() {
       if (this.parent != null)
          this.parent.getMosaicController().removeListener(_mosaicListener);
-      // при выходе из диалогового окна - освобождаю ресурсы
       dispose();
-   }
-
-   // тестовый метод для проверки диалогового окна
-   public static void main(String[] args) {
-      CustomSkillDlg sm = new CustomSkillDlg(null, true);
-      sm.setVisible(true);
    }
 
    private int getNeighborNumber() {
@@ -318,13 +311,13 @@ public class CustomSkillDlg extends JDialog {
       spinMines.setValue(mines);
    }
 
-   private void onMosaicPropertyChanged(PropertyChangeEvent evt) {
+   private void onMosaicModelPropertyChanged(PropertyChangeEvent evt) {
       switch (evt.getPropertyName()) {
-      case MosaicController.PROPERTY_MOSAIC_TYPE:
+      case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
          if (isVisible())
             onChangeMosaicType();
          break;
-      case MosaicController.PROPERTY_AREA:
+      case MosaicGameModel.PROPERTY_AREA:
          if (radioFullScreenCurrSizeArea.isSelected())
             radioGroup.clearSelection();
          break;
@@ -332,6 +325,13 @@ public class CustomSkillDlg extends JDialog {
       //   ...
       //   break;
       }
+   }
+
+   //////////////////////////////////////////////////
+   // TEST
+   public static void main(String[] args) {
+      CustomSkillDlg sm = new CustomSkillDlg(null, true);
+      sm.setVisible(true);
    }
 
 }

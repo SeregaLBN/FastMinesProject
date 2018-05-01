@@ -7,17 +7,21 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 
-import fmg.core.mosaic.MosaicController;
+import fmg.core.mosaic.AMosaicController;
+import fmg.core.mosaic.draw.MosaicDrawModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.Cast;
-import fmg.swing.draw.mosaic.PaintSwingContext;
-import fmg.swing.draw.mosaic.graphics.PaintableGraphics;
 
 /** MVC: controller. SWING implementation */
-public class MosaicControllerSwing extends MosaicController<MosaicViewSwing, PaintableGraphics, Icon, PaintSwingContext<Icon>> {
+public class MosaicControllerSwing extends AMosaicController<JPanel, Icon, MosaicViewSwing, MosaicDrawModel<Icon>> {
 
    private MosaicMouseListener _mosaicMouseListener;
+
+   public MosaicControllerSwing() {
+      super(new MosaicViewSwing());
+      subscribeToViewControl();
+   }
 
    private class MosaicMouseListener implements MouseInputListener, FocusListener {
 
@@ -82,21 +86,7 @@ public class MosaicControllerSwing extends MosaicController<MosaicViewSwing, Pai
       return (iRes == JOptionPane.NO_OPTION);
    }
 
-   /** set view */
-   @Override
-   public void setView(MosaicViewSwing view) {
-      if (_view != null) {
-         _view.setMosaicController(null);
-         unsubscribe();
-      }
-      super.setView(view);
-      if (_view != null) {
-         _view.setMosaicController(this);
-         subscribe();
-      }
-   }
-
-   private void subscribe() {
+   private void subscribeToViewControl() {
       JPanel control = this.getView().getControl();
       control.setFocusable(true); // иначе не будет срабатывать FocusListener
 
@@ -108,7 +98,7 @@ public class MosaicControllerSwing extends MosaicController<MosaicViewSwing, Pai
       control.setSize(control.getPreferredSize());
    }
 
-   private void unsubscribe() {
+   private void unsubscribeToViewControl() {
       JPanel control = this.getView().getControl();
       MosaicMouseListener listener = getMosaicMouseListener();
       control.removeMouseListener(listener);
@@ -116,21 +106,25 @@ public class MosaicControllerSwing extends MosaicController<MosaicViewSwing, Pai
       control.removeFocusListener(listener);
    }
 
+   @Override
+   public void close() {
+      super.close();
+      unsubscribeToViewControl();
+   }
+
    /// TEST
    public static void main(String[] args) {
-      JFrame frame = new JFrame();
-
       MosaicControllerSwing ctrllr = new MosaicControllerSwing();
-
       EMosaic mosaicType = EMosaic.eMosaicSquare1;
       ESkillLevel skill  = ESkillLevel.eBeginner;
 
-      ctrllr.setArea(500);
+      ctrllr.setArea(1500);
       ctrllr.setMosaicType(mosaicType);
       ctrllr.setSizeField(skill.getDefaultSize());
       ctrllr.setMinesCount(skill.getNumberMines(mosaicType));
-      ctrllr.GameNew();
+      ctrllr.gameNew();
 
+      JFrame frame = new JFrame();
       frame.add(ctrllr.getView().getControl());
       //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.addWindowListener(new WindowAdapter() {

@@ -69,10 +69,13 @@ public abstract class AMosaicViewSwing<TImage,
          Consumer<java.awt.Color> fillBk = bkColor -> {
             g.setColor(bkColor);
             if (clipRegion == null) {
+               /*
                Rectangle rcBounds = g.getClipBounds();
                if (rcBounds != null) {
                   g.fillRect(rcBounds.x, rcBounds.y, rcBounds.width, rcBounds.height);
-               } else {
+               } else
+               */
+               {
                   g.fillRect(0, 0, size.width, size.height);
                }
             } else {
