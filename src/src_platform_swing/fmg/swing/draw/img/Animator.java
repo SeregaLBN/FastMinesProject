@@ -48,14 +48,17 @@ public class Animator implements IAnimator, AutoCloseable {
          _subscribers.put(subscriber, info);
       } else {
          info.active = true;
+         info.startTime = new Date().getTime() - info.startTime; // apply of pause delta time
       }
    }
 
    @Override
    public void pause(Object subscriber) {
       SubscribeInfo info = _subscribers.get(subscriber);
-      if (info != null)
-         info.active = false;
+      if (info == null)
+         return;
+      info.active = false;
+      info.startTime = new Date().getTime() - info.startTime; // set of pause delta time
    }
 
    @Override
