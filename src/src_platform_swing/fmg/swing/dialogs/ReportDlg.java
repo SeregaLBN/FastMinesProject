@@ -102,10 +102,10 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
             imgModel.setSize(new Size(ImgSize*ImgZoomQuality, ImgSize*ImgZoomQuality));
             imgModel.setPadding(5 * ImgZoomQuality);
             imgModel.setBackgroundColor(bkTabBkColor);
-            int redrawInterwal = 50;
+            int redrawInterval = 50;
             double rotateAngleDelta = 3.5;
             double totalFrames = 360 / rotateAngleDelta;
-            imgCntrllr.setAnimatePeriod((int)(totalFrames * redrawInterwal));
+            imgCntrllr.setAnimatePeriod((int)(totalFrames * redrawInterval));
             imgCntrllr.setTotalFrames((int)totalFrames);
             imgCntrllr.addListener(ev -> onImagePropertyChanged(eMosaic, ev));
             images.put(eMosaic, imgCntrllr);

@@ -7,7 +7,6 @@ import java.beans.PropertyChangeListener;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -21,11 +20,16 @@ import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
+import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
+import fmg.core.img.*;
 import fmg.core.img.MosaicsAnimatedModel.ERotateMode;
-import fmg.core.mosaic.MosaicController;
+import fmg.core.img.SmileModel.EFaceType;
+import fmg.core.mosaic.AMosaicController;
+import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicInitData;
+import fmg.core.mosaic.draw.MosaicDrawModel;
 import fmg.core.types.EGameStatus;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
@@ -37,13 +41,9 @@ import fmg.data.controller.serializable.PlayersModel;
 import fmg.data.controller.types.User;
 import fmg.data.view.draw.EShowElement;
 import fmg.data.view.draw.EZoomInterface;
-import fmg.swing.Main.PausePanel;
 import fmg.swing.dialogs.*;
 import fmg.swing.draw.img.*;
-import fmg.swing.draw.img.Smile.EType;
-import fmg.swing.draw.mosaic.PaintSwingContext;
 import fmg.swing.mosaic.MosaicControllerSwing;
-import fmg.swing.mosaic.MosaicViewSwing;
 import fmg.swing.serializable.SerializeProjData;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
@@ -61,7 +61,7 @@ public class Main extends JFrame {
    private PausePanel pausePanel;
    private StatusBar  statusBar;
 
-   private Logo.Image _logo;
+   private Logo.ControllerImage _logo;
    private PlayersModel players;
    private UUID activeUserId; // current user
    private ChampionsModel champions;
@@ -73,7 +73,8 @@ public class Main extends JFrame {
    private SelectMosaicDlg _selectMosaicDialog;
    private CustomSkillDlg  _customSkillDialog;
 
-   private final PropertyChangeListener _mosaicListener;
+   private final PropertyChangeListener _mosaicControllerListener = ev -> onMosaicControllerPropertyChanged(ev);
+   private final PropertyChangeListener _mosaicModelListener      = ev -> onMosaicModelPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
 
    private ManageDlg getPlayerManageDlg() {
       if (_playerManageDialog == null)
@@ -125,7 +126,7 @@ public class Main extends JFrame {
 
          private JMenuItem anew;
          private Map<ESkillLevel, JRadioButtonMenuItem> skillLevel;
-         private Map<ESkillLevel, MosaicsSkillImg.Icon> skillLevelImages;
+         private Map<ESkillLevel, MosaicsSkillImg.ControllerIcon> skillLevelImages;
          private JMenuItem playerManage;
          private JMenuItem exit;
 
@@ -167,7 +168,6 @@ public class Main extends JFrame {
                skillLevel = new HashMap<>(ESkillLevel.values().length);
                skillLevelImages = new HashMap<>(ESkillLevel.values().length);
 
-               Random rnd = ThreadLocalRandom.current();
                for (ESkillLevel val: ESkillLevel.values()) {
                   JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem();
 
@@ -180,15 +180,19 @@ public class Main extends JFrame {
                   menuItem.setAccelerator(Main.KeyCombo.getKeyStroke_SkillLevel(val));
                   menuItem.addActionListener(Main.this.getHandlers().getSkillLevelAction(val));
 
-                  MosaicsSkillImg.Icon img = new MosaicsSkillImg.Icon(val);
-                  img.setSize(MenuHeightWithIcon*ZoomQualityFactor);
+                  MosaicsSkillImg.ControllerIcon img = new MosaicsSkillImg.ControllerIcon(val);
+                  MosaicsSkillModel imgModel = img.getModel();
+                  imgModel.setSize(MenuHeightWithIcon*ZoomQualityFactor);
                   skillLevelImages.put(val, img);
-                  img.setBorderWidth(1*ZoomQualityFactor);
-                  img.setBorderColor(Color.RandomColor(rnd).darker(0.4));
-                  img.setForegroundColor(Color.RandomColor(rnd).brighter(0.4));
-                  img.setBackgroundColor(Color.Transparent);
-                  img.setRedrawInterval(50);
-                  img.setRotateAngleDelta(2*img.getRotateAngleDelta());
+                  imgModel.setBorderWidth(1*ZoomQualityFactor);
+                  imgModel.setBorderColor(Color.RandomColor().darker(0.4));
+                  imgModel.setForegroundColor(Color.RandomColor().brighter(0.4));
+                  imgModel.setBackgroundColor(Color.Transparent);
+                  int redrawInterval = 50;
+                  double rotateAngleDelta = 2.8;
+                  double totalFrames = 360 / rotateAngleDelta;
+                  img.setAnimatePeriod((int)(totalFrames * redrawInterval));
+                  img.setTotalFrames((int)totalFrames);
                   setMenuItemIcon(menuItem, img.getImage());
                   img.addListener(ev -> {
                      if (!menuItem.getParent().isVisible())
@@ -231,8 +235,8 @@ public class Main extends JFrame {
             ESkillLevel skill = getSkillLevel();
             getMenuItemSkillLevel(skill).setSelected(true);
             skillLevelImages.forEach((key, img) -> {
-               img.setRotate(key == skill);
-               img.setPolarLights(key == skill); // не видно особо разницы - маленькая картинка
+               img.setAnimated(key == skill);
+               img.usePolarLightFgTransforming(key == skill); // не видно особо разницы - маленькая картинка
             });
          }
 
@@ -247,9 +251,9 @@ public class Main extends JFrame {
          private static final long serialVersionUID = 1L;
 
          private Map<EMosaicGroup, JMenuItem> mosaicsGroup;
-         private Map<EMosaicGroup, MosaicsGroupImg.Icon> mosaicsGroupImages;
+         private Map<EMosaicGroup, MosaicsGroupImg.ControllerIcon> mosaicsGroupImages;
          private Map<EMosaic, JRadioButtonMenuItem> mosaics;
-         private Map<EMosaic, MosaicsImg.Icon> mosaicsImages;
+         private Map<EMosaic, MosaicsImg.ControllerIcon> mosaicsImages;
 
          Mosaics() {
             super("Mosaics");
@@ -271,7 +275,6 @@ public class Main extends JFrame {
                mosaicsGroup = new HashMap<>(EMosaicGroup.values().length);
                mosaicsGroupImages = new HashMap<>(EMosaicGroup.values().length);
 
-               Random rnd = ThreadLocalRandom.current();
                for (EMosaicGroup val: EMosaicGroup.values()) {
                   JMenu menuItem = new JMenu(val.getDescription());// + (experimentalMenuMnemonic ?  "                      " : ""));
                   for (EMosaic mosaic: val.getBind()) {
@@ -279,16 +282,21 @@ public class Main extends JFrame {
                      //menuItem.add(Box.createRigidArea(new Dimension(100,25)));
                   }
 //                  menuItem.setMnemonic(Main.KeyCombo.getMnemonic_MenuMosaicGroup(val));
-                  MosaicsGroupImg.Icon img = new MosaicsGroupImg.Icon(val);
-                  img.setSize(MenuHeightWithIcon*ZoomQualityFactor);
+                  MosaicsGroupImg.ControllerIcon img = new MosaicsGroupImg.ControllerIcon(val);
+                  MosaicsGroupModel imgModel = img.getModel();
+                  imgModel.setSize(MenuHeightWithIcon*ZoomQualityFactor);
                   mosaicsGroupImages.put(val, img);
-                  img.setPolarLights(true);
-                  img.setBorderWidth(1*ZoomQualityFactor);
-                  img.setBorderColor(Color.RandomColor(rnd).darker(0.4));
-                  img.setForegroundColor(Color.RandomColor(rnd).brighter(0.7));
-                  img.setBackgroundColor(Color.Transparent);
-                  img.setRotateAngleDelta(-img.getRotateAngleDelta());
-                  img.setRedrawInterval(50);
+                  imgModel.setPolarLights(true);
+                  imgModel.setBorderWidth(1*ZoomQualityFactor);
+                  imgModel.setBorderColor(Color.RandomColor().darker(0.4));
+                  imgModel.setForegroundColor(Color.RandomColor().brighter(0.7));
+                  imgModel.setBackgroundColor(Color.Transparent);
+                  int redrawInterval = 50;
+                  double rotateAngleDelta = 1.4;
+                  double totalFrames = 360 / rotateAngleDelta;
+                  img.setAnimatePeriod((int)(totalFrames * redrawInterval));
+                  img.setTotalFrames((int)totalFrames);
+                  imgModel.setAnimeDirection(false);
                   setMenuItemIcon(menuItem,  img.getImage());
                   img.addListener(ev -> {
                      if (!menuItem.getParent().isVisible())
@@ -316,7 +324,6 @@ public class Main extends JFrame {
                mosaics = new HashMap<>(EMosaic.values().length);
                mosaicsImages = new HashMap<>(EMosaic.values().length);
 
-               Random rnd = ThreadLocalRandom.current();
                for (EMosaic val: EMosaic.values()) {
                   String menuItemTxt = val.getDescription(false);
                   if (experimentalMenuMnemonic)
@@ -326,17 +333,23 @@ public class Main extends JFrame {
                   menuItem.setAccelerator(Main.KeyCombo.getKeyStroke_Mosaic(val));
                   menuItem.addActionListener(ev -> Main.this.changeGame(val));
 
-                  MosaicsImg.Icon img = new MosaicsImg.Icon();
-                  img.setMosaicType(val);
-                  img.setSizeField(val.sizeIcoField(true));
-                  img.setSize(MenuHeightWithIcon*ZoomQualityFactor);
+                  MosaicsImg.ControllerIcon img = new MosaicsImg.ControllerIcon();
+                  MosaicsAnimatedModel<?> imgModel = img.getModel();
+                  imgModel.setMosaicType(val);
+                  imgModel.setSizeField(val.sizeIcoField(true));
+                  imgModel.setSize(new Size(MenuHeightWithIcon*ZoomQualityFactor, MenuHeightWithIcon*ZoomQualityFactor));
                   mosaicsImages.put(val, img);
-                  img.setRotateMode(ERotateMode.someCells);
-                  img.setBorderWidth(1*ZoomQualityFactor);
-                  img.setBorderColor(Color.RandomColor(rnd).darker(0.4));
-                  img.setBackgroundColor(Color.Transparent);
-                  img.setRotateAngleDelta(3.333);
-                  img.setRedrawInterval(50);
+                  imgModel.setRotateMode(ERotateMode.someCells);
+                  imgModel.getPenBorder().setWidth(1*ZoomQualityFactor);
+                  Color borderColor = Color.RandomColor().darker(0.4);
+                  imgModel.getPenBorder().setColorLight(borderColor);
+                  imgModel.getPenBorder().setColorShadow(borderColor);
+                  imgModel.setBackgroundColor(Color.Transparent);
+                  int redrawInterval = 50;
+                  double rotateAngleDelta = 3.333;
+                  double totalFrames = 360 / rotateAngleDelta;
+                  img.setAnimatePeriod((int)(totalFrames * redrawInterval));
+                  img.setTotalFrames((int)totalFrames);
                   setMenuItemIcon(menuItem, img.getImage());
                   img.addListener(ev -> {
                      if (!menuItem.getParent().isVisible())
@@ -362,11 +375,11 @@ public class Main extends JFrame {
             EMosaic currentMosaicType = getMosaicController().getMosaicType();
             getMenuItemMosaic(currentMosaicType).setSelected(true);
 
-            mosaicsImages.forEach((eMosaic, img) -> img.setRotate(eMosaic == currentMosaicType));
+            mosaicsImages.forEach((eMosaic, img) -> img.setAnimated(eMosaic == currentMosaicType));
             mosaicsGroupImages.forEach((mosaicGroup, img) -> {
                boolean isCurrentGroup = mosaicGroup == currentMosaicType.getGroup();
-               img.setPolarLights(isCurrentGroup);
-               img.setRotate(isCurrentGroup);
+               img.usePolarLightFgTransforming(isCurrentGroup);
+               img.setAnimated(isCurrentGroup);
             });
          }
 
@@ -606,7 +619,7 @@ public class Main extends JFrame {
       @Override
       public Dimension getPreferredSize() {
          Dimension dim = super.getPreferredSize();
-         dim.width = getMosaicView().getControl().getPreferredSize().width;
+         dim.width = getMosaicPanel().getPreferredSize().width;
          return dim;
       }
 
@@ -632,18 +645,18 @@ public class Main extends JFrame {
       eNormalWin,
       eNormalLoss;
 
-      public Smile.EType mapToSmileType() {
+      public SmileModel.EFaceType mapToSmileType() {
          switch (this) {
-         case eNormal          : return EType.Face_WhiteSmiling;
-         case ePressed         : return EType.Face_SavouringDeliciousFood;
+         case eNormal          : return EFaceType.Face_WhiteSmiling;
+         case ePressed         : return EFaceType.Face_SavouringDeliciousFood;
          case eSelected        : return null;
          case eDisabled        : return null;
          case eDisabledSelected: return null;
-         case eRollover        : return EType.Face_WhiteSmiling;
+         case eRollover        : return EFaceType.Face_WhiteSmiling;
          case eRolloverSelected: return null;
-         case eNormalMosaic    : return EType.Face_Grinning;
-         case eNormalWin       : return EType.Face_SmilingWithSunglasses;
-         case eNormalLoss      : return EType.Face_Disappointed;
+         case eNormalMosaic    : return EFaceType.Face_Grinning;
+         case eNormalWin       : return EFaceType.Face_SmilingWithSunglasses;
+         case eNormalLoss      : return EFaceType.Face_Disappointed;
          }
          throw new RuntimeException("Map me...");
       }
@@ -660,16 +673,16 @@ public class Main extends JFrame {
       /** типа ход ассистента - задел на будущее */
       eAssistant;
 
-      public Smile.EType mapToSmileType() {
+      public SmileModel.EFaceType mapToSmileType() {
          switch (this) {
-         case eNormal          : return EType.Face_EyesOpen;
-         case ePressed         : return EType.Face_WinkingEyeLeft;
-         case eSelected        : return EType.Face_EyesClosed;
-         case eDisabled        : return EType.Eyes_OpenDisabled;
-         case eDisabledSelected: return EType.Eyes_ClosedDisabled;
-         case eRollover        : return EType.Face_EyesOpen;
-         case eRolloverSelected: return EType.Face_WinkingEyeRight;
-         case eAssistant       : return EType.Face_Assistant;
+         case eNormal          : return EFaceType.Face_EyesOpen;
+         case ePressed         : return EFaceType.Face_WinkingEyeLeft;
+         case eSelected        : return EFaceType.Face_EyesClosed;
+         case eDisabled        : return EFaceType.Eyes_OpenDisabled;
+         case eDisabledSelected: return EFaceType.Eyes_ClosedDisabled;
+         case eRollover        : return EFaceType.Face_EyesOpen;
+         case eRolloverSelected: return EFaceType.Face_WinkingEyeRight;
+         case eAssistant       : return EFaceType.Face_Assistant;
          }
          throw new RuntimeException("Map me...");
       }
@@ -682,28 +695,31 @@ public class Main extends JFrame {
       private BtnNew btnNew;
       private BtnPause btnPause;
 
-      private Icon getSmileIco(Smile.EType smileType, int sizeX, int sizeY) {
-         return new Smile(smileType, sizeX, sizeY);
-//         return ImgUtils.zoom(new Smile(smileType, 300, 300), sizeX, sizeY);
+      private Icon getSmileIco(SmileModel.EFaceType smileType, int size) {
+         try (Smile.ControllerIcon img = new Smile.ControllerIcon(smileType)) {
+            img.getModel().setSize(300, 300);//size, size);
+//          return smileImages.get(key).getImage();
+            return ImgUtils.zoom(img.getImage(), size, size);
+         }
       }
       public Icon getSmileIco(EBtnNewGameState btnNewGameState) {
-         Smile.EType smileType = btnNewGameState.mapToSmileType();
+         SmileModel.EFaceType smileType = btnNewGameState.mapToSmileType();
          if (smileType == null)
             return null;
          int size = (btnNewGameState == EBtnNewGameState.ePressed) ||
                     (btnNewGameState == EBtnNewGameState.eRollover)
                   ? 25 : 24;
-         return getSmileIco(smileType, size, size);
+         return getSmileIco(smileType, size);
       }
       public Icon getSmileIco(EBtnPauseState btnPauseState) {
-         Smile.EType smileType = btnPauseState.mapToSmileType();
+         SmileModel.EFaceType smileType = btnPauseState.mapToSmileType();
          if (smileType == null)
             return null;
          int size = (btnPauseState == EBtnPauseState.ePressed) ||
                     (btnPauseState == EBtnPauseState.eRollover) ||
                     (btnPauseState == EBtnPauseState.eRolloverSelected)
                   ? 25 : 24;
-         return getSmileIco(smileType, size, size);
+         return getSmileIco(smileType, size);
       }
 
       class BtnNew extends JButton {
@@ -854,6 +870,7 @@ public class Main extends JFrame {
             getEdtTimePlay().setAlignmentX(Component.CENTER_ALIGNMENT);
          }
       }
+
    }
 
    class PausePanel extends JLabel implements AutoCloseable {
@@ -871,14 +888,19 @@ public class Main extends JFrame {
          this.addMouseListener(Main.this.getHandlers().getPausePanelMouseListener());
       }
 
-      Logo.Icon _logo;
-      private Logo.Icon getLogo() {
+      Logo.ControllerIcon _logo;
+      private Logo.ControllerIcon getLogo() {
          if (_logo == null) {
-            _logo = new Logo.Icon();
-            _logo.setUseGradient(!true);
-            _logo.setPadding(10);
-            _logo.setRotateMode(Logo.ERotateMode.color);
-            _logo.setRedrawInterval(50);
+            _logo = new Logo.ControllerIcon();
+            LogoModel model = _logo.getModel();
+            model.setUseGradient(!true);
+            model.setPadding(10);
+            model.setRotateMode(LogoModel.ERotateMode.color);
+            int redrawInterval = 50;
+            double rotateAngleDelta = 1.4;
+            double totalFrames = 360 / rotateAngleDelta;
+            _logo.setAnimatePeriod((int)(totalFrames * redrawInterval));
+            _logo.setTotalFrames((int)totalFrames);
 
             _logo.addListener(ev -> {
                if (Logo.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
@@ -892,16 +914,16 @@ public class Main extends JFrame {
       @Override
       protected void paintComponent(Graphics g) {
          Dimension sizeOutward = this.getSize();
-         Logo.Icon logo = getLogo();
-         logo.setSize((int)Math.min(sizeOutward.getWidth(), sizeOutward.getHeight()));
+         Logo.ControllerIcon logo = getLogo();
+         logo.getModel().setSize((int)Math.min(sizeOutward.getWidth(), sizeOutward.getHeight()));
 
          logo.getImage().paintIcon(this, g,
-               (sizeOutward.width -logo.getSize().width)>>1,
-               (sizeOutward.height-logo.getSize().height)>>1);
+               (sizeOutward.width -logo.getModel().getSize().width)>>1,
+               (sizeOutward.height-logo.getModel().getSize().height)>>1);
       }
 
       public void animateLogo(boolean start) {
-         getLogo().setRotate(start);
+         getLogo().setAnimated(start);
       }
 
       @Override
@@ -913,7 +935,7 @@ public class Main extends JFrame {
       @Override
       public Dimension getPreferredSize() {
 //         return super.getPreferredSize();
-         return getMosaicView().getControl().getPreferredSize();
+         return getMosaicPanel().getPreferredSize();
       }
    }
 
@@ -959,7 +981,7 @@ public class Main extends JFrame {
          } else
             centerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0,0));
 
-         centerPanel.add(getMosaicView().getControl());
+         centerPanel.add(getMosaicPanel());
          centerPanel.add(getPausePanel());
       }
       return contentPane;
@@ -978,14 +1000,17 @@ public class Main extends JFrame {
    }
 
    /** mosaic controller */
-   public void setMosaicController(MosaicControllerSwing mosaicController) {
-      if (_mosaicController != null)
-         _mosaicController.removeListener(_mosaicListener);
+   private void setMosaicController(MosaicControllerSwing mosaicController) {
+      if (_mosaicController != null) {
+         _mosaicController.getModel().removeListener(_mosaicModelListener);
+         _mosaicController.removeListener(_mosaicControllerListener);
+      }
       _mosaicController = mosaicController;
       if (_mosaicController != null) {
-         _mosaicController.addListener(_mosaicListener);
-         PaintSwingContext<Icon> pc = _mosaicController.getView().getPaintContext();
-         pc.setBackgroundColor(pc.getBackgroundColor().darker(0.2));
+         MosaicDrawModel<?> model = mosaicController.getModel();
+         model.setBackgroundColor(model.getBackgroundColor().darker(0.2));
+         model.addListener(_mosaicModelListener);
+         _mosaicController.addListener(_mosaicControllerListener);
       }
    }
    /** mosaic controller */
@@ -998,9 +1023,9 @@ public class Main extends JFrame {
 //   public Mosaic getMosaic() {
 //      return getMosaicController().getMosaic();
 //   }
-   /** mosaic view */
-   public MosaicViewSwing getMosaicView() {
-      return getMosaicController().getView();
+   /** mosaic view panel */
+   public JPanel getMosaicPanel() {
+      return getMosaicController().getViewPanel();
    }
 
    private PausePanel getPausePanel() {
@@ -1028,7 +1053,6 @@ public class Main extends JFrame {
 
    public Main() {
       super();
-      _mosaicListener = ev -> onMosaicPropertyChanged(ev);
       initialize();
    }
 
@@ -1123,13 +1147,14 @@ public class Main extends JFrame {
 
       this.setJMenuBar(getMenu());
       this.setTitle("FastMines");
-      this._logo = new Logo.Image();
-      this._logo.setUseGradient(true);
-      this._logo.setSize(128);
-      this._logo.setPadding(1);
-      this._logo.setBackgroundColor(Logo.Image.DefaultBkColor);
-      this._logo.setRotate(true);
-      this._logo.setRotateMode(Logo.ERotateMode.combi);
+      this._logo = new Logo.ControllerImage();
+      LogoModel logoModel = this._logo.getModel();
+      logoModel.setUseGradient(true);
+      logoModel.setSize(128);
+      logoModel.setPadding(1);
+      logoModel.setBackgroundColor(ImageProperties.DefaultBkColor);
+      this._logo.setAnimated(true);
+      logoModel.setRotateMode(LogoModel.ERotateMode.combi);
       this.setIconImage(_logo.getImage());
       this._logo.addListener(ev -> {
          if (Logo.PROPERTY_IMAGE.equals(ev.getPropertyName()))
@@ -1404,12 +1429,12 @@ public class Main extends JFrame {
          getTimerGame().restart();
 
          getPausePanel().setVisible(false);
-         getMosaicView().getControl().setVisible(true);
-         getMosaicView().getControl().requestFocusInWindow();
+         getMosaicPanel().setVisible(true);
+         getMosaicPanel().requestFocusInWindow();
       } else {
          getTimerGame().stop();
 
-         getMosaicView().getControl().setVisible(false);
+         getMosaicPanel().setVisible(false);
          getPausePanel().setVisible(true);
          getRootPane().requestFocusInWindow(); // ! иначе на компонентах нат фокуса, и mouse wheel не пашет...
       }
@@ -1420,7 +1445,7 @@ public class Main extends JFrame {
       if (isPaused())
          changePause();
       else
-         getMosaicController().GameNew();
+         getMosaicController().gameNew();
    }
 
    void onClose() {
@@ -1847,7 +1872,7 @@ public class Main extends JFrame {
 //   }
 
    boolean isPaused() {
-      return !getMosaicView().getControl().isVisible();
+      return !getMosaicPanel().isVisible();
    }
    boolean isMenuEvent(ActionEvent e) {
       Object src = e.getSource();
@@ -2462,23 +2487,33 @@ public class Main extends JFrame {
       return getPlayers().getUser(userId);
    }
 
-   private void onMosaicPropertyChanged(PropertyChangeEvent ev) {
-//    System.out.println("Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
-      MosaicControllerSwing source = (MosaicControllerSwing)ev.getSource();
-      switch (ev.getPropertyName()) {
-      case MosaicController.PROPERTY_AREA:
-      case MosaicController.PROPERTY_SIZE_FIELD:
-      case MosaicController.PROPERTY_MOSAIC_TYPE:
+   private void onMosaicModelPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+      switch (propertyName) {
+      case MosaicGameModel.PROPERTY_AREA:
+      case MosaicGameModel.PROPERTY_SIZE_FIELD:
+      case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
          recheckLocation();
-       //break; // no break
-      case MosaicController.PROPERTY_MINES_COUNT:
-         getMenu().getMosaics().recheckSelectedMosaicType();
-         getMenu().getGame().recheckSelectedSkillLevel();
          break;
       }
 
+      switch (propertyName) {
+      case MosaicGameModel.PROPERTY_SIZE_FIELD:
+         getMenu().getGame().recheckSelectedSkillLevel();
+         break;
+      case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
+         getMenu().getMosaics().recheckSelectedMosaicType();
+         break;
+      }
+   }
+   private void onMosaicControllerPropertyChanged(PropertyChangeEvent ev) {
+//    System.out.println("Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
+      MosaicControllerSwing source = (MosaicControllerSwing)ev.getSource();
       switch (ev.getPropertyName()) {
-      case MosaicController.PROPERTY_GAME_STATUS:
+      case AMosaicController.PROPERTY_MINES_COUNT:
+         getMenu().getMosaics().recheckSelectedMosaicType();
+         getMenu().getGame().recheckSelectedSkillLevel();
+         break;
+      case AMosaicController.PROPERTY_GAME_STATUS:
          {
             getToolbar().getBtnPause().setEnabled(getMosaicController().getGameStatus() == EGameStatus.eGSPlay);
           //System.out.println("OnChangeGameStatus: " + e.getSource().getGameStatus());
@@ -2516,18 +2551,14 @@ public class Main extends JFrame {
             }
          }
          break;
-      //case MosaicController.PROPERTY_SIZE_FIELD:
+      //case AMosaicController.PROPERTY_COUNT_FLAG:
       //   break;
-      //case MosaicController.PROPERTY_MINES_COUNT:
+      //case AMosaicController.PROPERTY_COUNT_OPEN:
       //   break;
-      //case MosaicController.PROPERTY_COUNT_FLAG:
-      //   break;
-      //case MosaicController.PROPERTY_COUNT_OPEN:
-      //   break;
-      case MosaicController.PROPERTY_COUNT_MINES_LEFT:
+      case AMosaicController.PROPERTY_COUNT_MINES_LEFT:
          getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaicController().getCountMinesLeft()));
          break;
-      case MosaicController.PROPERTY_COUNT_CLICK:
+      case AMosaicController.PROPERTY_COUNT_CLICK:
          getStatusBar().setClickCount(getMosaicController().getCountClick());
          break;
       }

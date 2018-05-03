@@ -263,10 +263,10 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
          imgModel.setSize(new Size(ImgSize*ImgZoomQuality, ImgSize*ImgZoomQuality));
          imgModel.setPadding(10);
          imgModel.setBackgroundColor(Cast.toColor(bkTabBkColor));
-         int redrawInterwal = 50;
+         int redrawInterval = 50;
          double rotateAngleDelta = 3.5;
          double totalFrames = 360 / rotateAngleDelta;
-         mosaicsImg.setAnimatePeriod((int)(totalFrames * redrawInterwal));
+         mosaicsImg.setAnimatePeriod((int)(totalFrames * redrawInterval));
          mosaicsImg.setTotalFrames((int)totalFrames);
          mosaicsImg.setAnimated(true);
          mosaicsImg.addListener(ev -> onMosaicsImgPropertyChanged(ev));

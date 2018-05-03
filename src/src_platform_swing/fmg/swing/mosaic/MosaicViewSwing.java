@@ -73,7 +73,7 @@ public class MosaicViewSwing extends AMosaicViewSwing<JPanel, Icon, MosaicDrawMo
 
       assert !_alreadyPainted;
 
-      _modifiedCells = modifiedCells;;
+      _modifiedCells = modifiedCells;
       control.repaint();
     //control.invalidate();
    }

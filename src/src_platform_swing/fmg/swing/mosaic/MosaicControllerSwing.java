@@ -23,6 +23,10 @@ public class MosaicControllerSwing extends AMosaicController<JPanel, Icon, Mosai
       subscribeToViewControl();
    }
 
+   public JPanel getViewPanel() {
+      return getView().getControl();
+   }
+
    private class MosaicMouseListener implements MouseInputListener, FocusListener {
 
       @Override
