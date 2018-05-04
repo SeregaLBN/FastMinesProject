@@ -11,7 +11,7 @@ import fmg.common.geom.Size;
 import fmg.core.img.ATestDrawing;
 import fmg.core.img.ATestDrawing.CellTilingInfo;
 import fmg.core.img.ATestDrawing.CellTilingResult;
-import fmg.core.img.StaticImg;
+import fmg.core.img.ImageController;
 import fmg.jfx.Cast;
 import fmg.jfx.utils.ImgUtils;
 import javafx.animation.AnimationTimer;
@@ -29,7 +29,7 @@ public final class TestDrawing extends Application {
 
    static final int margin = 10;
 
-   static Supplier<List<?>> funcGetImages;
+   static Supplier<List<ImageController<?,?,?>>> funcGetImages;
    Canvas canvas;
 
    @Override
@@ -37,7 +37,7 @@ public final class TestDrawing extends Application {
 
       ATestDrawing td = new ATestDrawing("JFX") {};
 
-      List<?> images = funcGetImages.get();
+      List<ImageController<?,?,?>> images = funcGetImages.get();
       boolean testTransparent = td.bl();
       final RectDouble[] rc = { new RectDouble() };
       final CellTilingResult[] ctr = { new CellTilingResult() };
@@ -77,49 +77,37 @@ public final class TestDrawing extends Application {
             gc.setStroke(Cast.toColor(Color.DarkGray));
             gc.strokeRect(rc[0].x, rc[0].y, rc[0].width, rc[0].height);
 
-            images.stream()
-               .map(x -> (Object)x)
-               .forEach(imgObj -> {
+            images.forEach(imgController -> {
 
-                  @SuppressWarnings("unchecked")
-                  Function<Object, CellTilingInfo> callback = (Function<Object, CellTilingInfo>)ctr[0].itemCallback;
-                  CellTilingInfo cti = callback.apply(imgObj);
-                  PointDouble offset = cti.imageOffset;
+               Function<ImageController<?,?,?>, CellTilingInfo> callback = ctr[0].itemCallback;
+               CellTilingInfo cti = callback.apply(imgController);
+               PointDouble offset = cti.imageOffset;
 
-                  if (imgObj instanceof StaticImg) {
-                     StaticImg<?> simg = (StaticImg<?>)imgObj;
-                     simg.setSize(imgSize);
-                     imgObj = simg.getImage();
-                  } else
-                  if (imgObj instanceof Flag) {
-                     Flag<?> simg = (Flag<?>)imgObj;
-                     simg.setSize(imgSize);
-                     imgObj = simg.getImage();
-                  }
-                  if (imgObj instanceof Canvas) {
-                     Canvas canvasImg = (Canvas)imgObj;
-                     imgObj = ImgUtils.toImage(canvasImg);
-                  }
-                  if (imgObj instanceof Image) {
-                     Image img = (Image)imgObj;
-                     gc.drawImage(img, offset.x, offset.y);
-                  } else
-                     throw new IllegalArgumentException("Not supported image type is " + imgObj.getClass().getName());
-               });
+               Object imgObj = imgController.getImage();
+               if (imgObj instanceof Canvas) {
+                  Canvas canvasImg = (Canvas)imgObj;
+                  imgObj = ImgUtils.toImage(canvasImg);
+               }
+               if (imgObj instanceof Image) {
+                  Image img = (Image)imgObj;
+                  gc.drawImage(img, offset.x, offset.y);
+               } else
+                  throw new IllegalArgumentException("Not supported image type is " + imgObj.getClass().getName());
+            });
          }
       };
       timer.start();
 
-      images.stream()
-         .filter(x -> x instanceof StaticImg)
-         .map(x -> (StaticImg<?>)x)
-         .forEach(img -> td.applyRandom(img, testTransparent) );
+      images.forEach(img -> {
+          //img.addListener(propertyChangeListener);
+          td.applyRandom(img, testTransparent);
+       });
 
       primaryStage.setOnCloseRequest(event -> {
-         images.stream()
-            .filter(x -> x instanceof StaticImg)
-            .map(x -> (StaticImg<?>)x)
-            .forEach(img -> img.close() );
+          images.forEach(img -> {
+            //img.removeListener(propertyChangeListener);
+              img.close();
+           });
       });
 
       primaryStage.setTitle(td.getTitle(images));
@@ -127,7 +115,7 @@ public final class TestDrawing extends Application {
       primaryStage.show();
    }
 
-   static void testApp(Supplier<List<?>> funcGetImages) {
+   static void testApp(Supplier<List<ImageController<?,?,?>>> funcGetImages) {
       TestDrawing.funcGetImages = funcGetImages;
       launch();
    }

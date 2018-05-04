@@ -2,34 +2,35 @@ package fmg.jfx.draw.img;
 
 import java.util.Arrays;
 
-import fmg.common.geom.Size;
-import fmg.jfx.utils.ImgUtils;
+import fmg.core.img.FlagModel;
+import fmg.core.img.ImageController;
+import fmg.core.img.ImageView;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.paint.Color;
 
 /** Flag image */
-public abstract class Flag<TImage> {
+public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
 
-   protected javafx.scene.canvas.Canvas _canvas;
-   private Size _size = new Size(100, 100);
+   public Flag() {
+      super(new FlagModel());
+   }
 
-   public abstract TImage getImage();
+   static {
+      StaticInitilizer.init();
+   }
 
-   public Size getSize() { return _size; }
-   public void setSize(Size value) { _size = value; _canvas = null; }
-
-   protected void drawBody(GraphicsContext g) {
-      double w = _size.width / 100.0;
-      double h = _size.height / 100.0;
+   protected void draw(GraphicsContext g) {
+      double w = getSize().width  / 100.0;
+      double h = getSize().height / 100.0;
 
       g.setEffect(new BoxBlur());
 
       // test
 //      g.setLineWidth(1);
 //      g.setStroke(Color.RED);
-//      g.strokeRect(0, 0, _size.width, _size.height);
+//      g.strokeRect(0, 0, size.width, size.height);
 
       // perimeter figure points
       Point2D[] p = new Point2D[] {
@@ -65,38 +66,51 @@ public abstract class Flag<TImage> {
    //    custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+   /** Flag image view implementation over {@link javafx.scene.canvas.Canvas} */
    public static class Canvas extends Flag<javafx.scene.canvas.Canvas> {
 
+      private CanvasJfx canvas = new CanvasJfx(this);
+
       @Override
-      public javafx.scene.canvas.Canvas getImage() {
-         if (_canvas == null) {
-            _canvas = new javafx.scene.canvas.Canvas(getSize().width, getSize().height);
-            drawBody(_canvas.getGraphicsContext2D());
-         }
-         return _canvas;
-      }
+      protected javafx.scene.canvas.Canvas createImage() { return canvas.create(); }
+
+      @Override
+      protected void drawBody() { draw(canvas.getGraphics()); }
 
    }
 
    public static class Image extends Flag<javafx.scene.image.Image> {
 
-      @Override
-      public javafx.scene.image.Image getImage() {
-         if (_canvas == null) {
-            _canvas = new javafx.scene.canvas.Canvas(getSize().width, getSize().height);
-            drawBody(_canvas.getGraphicsContext2D());
-            _img = ImgUtils.toImage(_canvas);
-         }
-         return _img;
-      }
-      javafx.scene.image.Image _img;
+      private ImageJfx img = new ImageJfx(this);
 
+      @Override
+      protected javafx.scene.image.Image createImage() {
+         img.createCanvas();
+         return null; // img.createImage(); // fake empty image
+      }
+
+      @Override
+      protected void drawBody() {
+         draw(img.getGraphics());
+         setImage(img.createImage()); // real image
+      }
+
+   }
+
+   /** Flag image controller implementation for {@link Canvas} */
+   public static class ControllerCanvas extends ImageController<javafx.scene.canvas.Canvas, Flag.Canvas, FlagModel> {
+      public ControllerCanvas() { super(new Flag.Canvas()); }
+   }
+
+   /** Flag image controller implementation for {@link Image} */
+   public static class ControllerImage extends ImageController<javafx.scene.image.Image, Flag.Image, FlagModel> {
+      public ControllerImage() { super(new Flag.Image()); }
    }
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(() -> Arrays.asList(new Flag.Canvas()
-                                          //, new Flag.Image()
+      TestDrawing.testApp(() -> Arrays.asList(new Flag.ControllerCanvas()
+                                            , new Flag.ControllerImage()
                          ));
    }
    //////////////////////////////////

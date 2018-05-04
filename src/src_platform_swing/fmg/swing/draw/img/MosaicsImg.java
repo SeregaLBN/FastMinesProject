@@ -199,7 +199,7 @@ public abstract class MosaicsImg<TImage>
       private IconSwing ico = new IconSwing(this);
 
       @Override
-      protected javax.swing.Icon createImage() { return ico.createImage(); }
+      protected javax.swing.Icon createImage() { return ico.create(); }
 
       @Override
       public void draw(Collection<BaseCell> modifiedCells) {
@@ -227,7 +227,7 @@ public abstract class MosaicsImg<TImage>
       private ImageAwt img = new ImageAwt(this);
 
       @Override
-      protected java.awt.Image createImage() { return img.createImage(); }
+      protected java.awt.Image createImage() { return img.create(); }
 
       @Override
       public void draw(Collection<BaseCell> modifiedCells) {

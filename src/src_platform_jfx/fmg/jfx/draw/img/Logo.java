@@ -20,7 +20,7 @@ import javafx.scene.paint.Stop;
 public abstract class Logo<TImage> extends ALogo<TImage> {
 
    static {
-      StaticRotateImgConsts.init();
+      StaticInitilizer.init();
    }
 
    protected void drawBody(GraphicsContext g) {

@@ -38,7 +38,7 @@ public abstract class MosaicsGroupImg<TImage> extends MosaicsSkillOrGroupView<TI
       public Icon(EMosaicGroup group) { super(group); }
 
       @Override
-      protected javax.swing.Icon createImage() { return ico.createImage(); }
+      protected javax.swing.Icon createImage() { return ico.create(); }
 
       @Override
       protected void drawBody() { draw(ico.getGraphics()); }
@@ -60,7 +60,7 @@ public abstract class MosaicsGroupImg<TImage> extends MosaicsSkillOrGroupView<TI
       public Image(EMosaicGroup group) { super(group); }
 
       @Override
-      protected java.awt.Image createImage() { return img.createImage(); }
+      protected java.awt.Image createImage() { return img.create(); }
 
       @Override
       protected void drawBody() { img.draw(g -> draw(g)); }

@@ -78,7 +78,6 @@ final class TestDrawing extends ATestDrawing {
                      PointDouble offset = cti.imageOffset;
 
                      Object imgObj = imgController.getImage();
-
                      if (imgObj instanceof Icon) {
                         Icon ico = (Icon)imgObj;
                       //ico = ImgUtils.zoom(ico, imgSize.width, imgSize.height);
@@ -105,7 +104,7 @@ final class TestDrawing extends ATestDrawing {
                    Size imgSize = ctr[0].imageSize;
                    if (imgSize.height < 1 || imgSize.width < 1)
                       return;
-                   for (var img : images)
+                   for (ImageController<?, ?, ?> img : images)
                       img.getModel().setSize(imgSize);
                }
             };

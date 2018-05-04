@@ -114,7 +114,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
       private IconSwing ico = new IconSwing(this);
 
       @Override
-      protected javax.swing.Icon createImage() { return ico.createImage(); }
+      protected javax.swing.Icon createImage() { return ico.create(); }
 
       @Override
       protected void drawBody() { draw(ico.getGraphics()); }
@@ -134,7 +134,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
       private ImageAwt img = new ImageAwt(this);
 
       @Override
-      protected java.awt.Image createImage() { return img.createImage(); }
+      protected java.awt.Image createImage() { return img.create(); }
 
       @Override
       protected void drawBody() { img.draw(g -> draw(g)); }

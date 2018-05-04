@@ -3,6 +3,7 @@ package fmg.swing.draw.img;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.function.Consumer;
 
 import fmg.common.geom.Size;
 import fmg.core.img.IImageModel;
@@ -17,12 +18,12 @@ class ImageAwt {
       this._imageView = imageView;
    }
 
-   public java.awt.Image createImage() {
+   public java.awt.Image create() {
       Size s = _imageView.getSize();
       return new BufferedImage(s.width, s.height, BufferedImage.TYPE_INT_ARGB);
    }
 
-   public void draw(java.util.function.Consumer<Graphics2D> drawBody) {
+   public void draw(Consumer<Graphics2D> drawBody) {
       BufferedImage img = (BufferedImage)_imageView.getImage();
       Graphics2D g = img.createGraphics();
       g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

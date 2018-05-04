@@ -24,7 +24,7 @@ import javafx.scene.canvas.GraphicsContext;
 public abstract class MosaicsSkillImg<TImage> extends AMosaicsSkillImg<TImage> {
 
    static {
-      StaticRotateImgConsts.init();
+      StaticInitilizer.init();
    }
 
    /** @param skill - may be null. if Null - representable image of ESkillLevel.class */

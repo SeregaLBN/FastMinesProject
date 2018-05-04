@@ -1,14 +1,14 @@
 package fmg.jfx.draw.img;
 
-import fmg.core.img.AnimatedImg;
-import fmg.core.img.StaticImg;
+import fmg.core.img.AnimatedImgController;
+import fmg.core.img.ImageController;
 import javafx.application.Platform;
 
-final class StaticRotateImgConsts {
+public final class StaticInitilizer {
 
    static {
-      StaticImg.DEFERR_INVOKER = doRun -> Platform.runLater(doRun);
-      AnimatedImg.TIMER_CREATOR = () -> new fmg.jfx.utils.Timer();
+      ImageController.DEFERR_INVOKER = doRun -> Platform.runLater(doRun);
+      AnimatedImgController.GET_ANIMATOR = () -> Animator.getSingleton();
    }
 
    public static void init() {

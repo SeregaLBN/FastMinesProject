@@ -21,7 +21,7 @@ class IconSwing implements AutoCloseable {
 
    private BufferedImage buffImg;
    private Graphics2D gBuffImg;
-   public javax.swing.Icon createImage() {
+   public javax.swing.Icon create() {
       if (gBuffImg != null)
          gBuffImg.dispose();
 

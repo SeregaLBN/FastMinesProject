@@ -401,7 +401,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       public Icon(EFaceType faceType) { super(faceType); }
 
       @Override
-      protected javax.swing.Icon createImage() { return ico.createImage(); }
+      protected javax.swing.Icon createImage() { return ico.create(); }
 
       @Override
       protected void drawBody() { draw(ico.getGraphics()); }
@@ -423,7 +423,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       public Image(EFaceType faceType) { super(faceType); }
 
       @Override
-      protected java.awt.Image createImage() { return img.createImage(); }
+      protected java.awt.Image createImage() { return img.create(); }
 
       @Override
       protected void drawBody() { img.draw(g -> draw(g)); }
