@@ -1,11 +1,10 @@
 package fmg.swing;
 
-import javax.swing.JApplet;
-
 import fmg.swing.mosaic.MosaicControllerSwing;
 
-public class Applet extends JApplet {
-   private static final long serialVersionUID = -8406501303115617115L;
+@SuppressWarnings("deprecation")
+public class Applet extends javax.swing.JApplet {
+   private static final long serialVersionUID = 1;
 
    @Override
    public void init() {

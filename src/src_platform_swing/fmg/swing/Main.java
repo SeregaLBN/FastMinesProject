@@ -195,7 +195,8 @@ public class Main extends JFrame {
                   img.setTotalFrames((int)totalFrames);
                   setMenuItemIcon(menuItem, img.getImage());
                   img.addListener(ev -> {
-                     if (!menuItem.getParent().isVisible())
+                     Container parent = menuItem.getParent();
+                     if ((parent == null) || !parent.isVisible())
                         return;
                      if (ev.getPropertyName().equalsIgnoreCase(MosaicsSkillImg.PROPERTY_IMAGE)) {
                         setMenuItemIcon(menuItem, img.getImage());
@@ -299,7 +300,8 @@ public class Main extends JFrame {
                   imgModel.setAnimeDirection(false);
                   setMenuItemIcon(menuItem,  img.getImage());
                   img.addListener(ev -> {
-                     if (!menuItem.getParent().isVisible())
+                     Container parent = menuItem.getParent();
+                     if ((parent == null) || !parent.isVisible())
                         return;
                      if (ev.getPropertyName().equalsIgnoreCase(MosaicsGroupImg.PROPERTY_IMAGE)) {
                         setMenuItemIcon(menuItem, img.getImage());
@@ -1252,11 +1254,11 @@ public class Main extends JFrame {
    /** my key combinations */
    static final class KeyCombo {
       public static final KeyStroke getKeyStroke_Minimized      () { return KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false); }
-      public static final KeyStroke getKeyStroke_CenterScreenPos() { return KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD5, Event.CTRL_MASK, false); }
+      public static final KeyStroke getKeyStroke_CenterScreenPos() { return KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD5, InputEvent.CTRL_DOWN_MASK, false); }
       public static final KeyStroke getKeyStroke_NewGame        () { return KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, !false); }
       public static final KeyStroke getKeyStroke_SkillLevel(ESkillLevel key) { return KeyStroke.getKeyStroke(KeyEvent.VK_1+key.ordinal(), 0, !false); }
       public static final KeyStroke getKeyStroke_PlayerManage   () { return KeyStroke.getKeyStroke(KeyEvent.VK_BACK_QUOTE, 0, false); }
-      public static final KeyStroke getKeyStroke_Exit           () { return KeyStroke.getKeyStroke(KeyEvent.VK_Q, Event.ALT_MASK, false); }
+      public static final KeyStroke getKeyStroke_Exit           () { return KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.ALT_DOWN_MASK, false); }
       public static final KeyStroke getKeyStroke_Zoom(EZoomInterface key) {
          switch (key) {
          case eMax: return KeyStroke.getKeyStroke(KeyEvent.VK_MULTIPLY, 0, !false);
@@ -1268,8 +1270,8 @@ public class Main extends JFrame {
       }
       public static final KeyStroke getKeyStroke_ZoomIncAlternative() { return KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, 0, !false); }
       public static final KeyStroke getKeyStroke_ZoomDecAlternative() { return KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0, !false); }
-      public static final KeyStroke getKeyStroke_ThemeDefault   () { return KeyStroke.getKeyStroke(KeyEvent.VK_D, Event.CTRL_MASK, false); }
-      public static final KeyStroke getKeyStroke_ThemeSystem    () { return KeyStroke.getKeyStroke(KeyEvent.VK_Y, Event.CTRL_MASK, false); }
+      public static final KeyStroke getKeyStroke_ThemeDefault   () { return KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false); }
+      public static final KeyStroke getKeyStroke_ThemeSystem    () { return KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK, false); }
       public static final KeyStroke getKeyStroke_UseUnknown     () { return null; }
       public static final KeyStroke getKeyStroke_UsePause       () { return null; }
       public static final KeyStroke getKeyStroke_ShowElements   (EShowElement key) {
@@ -1290,10 +1292,10 @@ public class Main extends JFrame {
 
       public static final KeyStroke getKeyStroke_Mosaic(EMosaic key) { return null; }//KeyStroke.getKeyStroke(KeyEvent.VK_, 0, false); }
 
-      public static final KeyStroke getKeyStroke_MosaicFieldXInc() { return KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Event.ALT_MASK, true); }
-      public static final KeyStroke getKeyStroke_MosaicFieldXDec() { return KeyStroke.getKeyStroke(KeyEvent.VK_LEFT , Event.ALT_MASK, true); }
-      public static final KeyStroke getKeyStroke_MosaicFieldYInc() { return KeyStroke.getKeyStroke(KeyEvent.VK_DOWN , Event.ALT_MASK, true); }
-      public static final KeyStroke getKeyStroke_MosaicFieldYDec() { return KeyStroke.getKeyStroke(KeyEvent.VK_UP   , Event.ALT_MASK, true); }
+      public static final KeyStroke getKeyStroke_MosaicFieldXInc() { return KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_DOWN_MASK, true); }
+      public static final KeyStroke getKeyStroke_MosaicFieldXDec() { return KeyStroke.getKeyStroke(KeyEvent.VK_LEFT , InputEvent.ALT_DOWN_MASK, true); }
+      public static final KeyStroke getKeyStroke_MosaicFieldYInc() { return KeyStroke.getKeyStroke(KeyEvent.VK_DOWN , InputEvent.ALT_DOWN_MASK, true); }
+      public static final KeyStroke getKeyStroke_MosaicFieldYDec() { return KeyStroke.getKeyStroke(KeyEvent.VK_UP   , InputEvent.ALT_DOWN_MASK, true); }
 
       public static final KeyStroke getKeyStroke_SelectMosaic(EMosaicGroup key) { return KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD3+key.ordinal(), 0, false); }
 
@@ -1809,7 +1811,7 @@ public class Main extends JFrame {
             final Rectangle rc = getBounds();
             final Map<EShowElement, Boolean> mapShow = new HashMap<>(EShowElement.values().length);
             for (EShowElement val: EShowElement.values())
-               mapShow.put(val, new Boolean(getMenu().getOptions().getShowElement(val).isSelected()));
+               mapShow.put(val, getMenu().getOptions().getShowElement(val).isSelected());
 
             // вызов this.dispose(); приводит к потере фокуса, т.е, когда идёт игра, - к срабатыванию паузы
             // т.е. нужно позже снять паузу...
@@ -2507,7 +2509,7 @@ public class Main extends JFrame {
    }
    private void onMosaicControllerPropertyChanged(PropertyChangeEvent ev) {
 //    System.out.println("Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
-      MosaicControllerSwing source = (MosaicControllerSwing)ev.getSource();
+//      MosaicControllerSwing source = (MosaicControllerSwing)ev.getSource();
       switch (ev.getPropertyName()) {
       case AMosaicController.PROPERTY_MINES_COUNT:
          getMenu().getMosaics().recheckSelectedMosaicType();
