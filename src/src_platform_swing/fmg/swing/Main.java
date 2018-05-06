@@ -188,11 +188,9 @@ public class Main extends JFrame {
                   imgModel.setBorderColor(Color.RandomColor().darker(0.4));
                   imgModel.setForegroundColor(Color.RandomColor().brighter(0.4));
                   imgModel.setBackgroundColor(Color.Transparent);
-                  int redrawInterval = 50;
-                  double rotateAngleDelta = 2.8;
-                  double totalFrames = 360 / rotateAngleDelta;
-                  img.setAnimatePeriod((int)(totalFrames * redrawInterval));
-                  img.setTotalFrames((int)totalFrames);
+                  img.setAnimated(true);
+                  img.setAnimatePeriod(6400);
+                  img.setTotalFrames(130);
                   setMenuItemIcon(menuItem, img.getImage());
                   img.addListener(ev -> {
                      Container parent = menuItem.getParent();
@@ -236,8 +234,8 @@ public class Main extends JFrame {
             ESkillLevel skill = getSkillLevel();
             getMenuItemSkillLevel(skill).setSelected(true);
             skillLevelImages.forEach((key, img) -> {
-               img.setAnimated(key == skill);
-               img.usePolarLightFgTransforming(key == skill); // не видно особо разницы - маленькая картинка
+               img.useRotateTransforming(key == skill);
+               img.usePolarLightFgTransforming(key != skill); // не видно особо разницы - маленькая картинка
             });
          }
 
@@ -292,12 +290,10 @@ public class Main extends JFrame {
                   imgModel.setBorderColor(Color.RandomColor().darker(0.4));
                   imgModel.setForegroundColor(Color.RandomColor().brighter(0.7));
                   imgModel.setBackgroundColor(Color.Transparent);
-                  int redrawInterval = 50;
-                  double rotateAngleDelta = 1.4;
-                  double totalFrames = 360 / rotateAngleDelta;
-                  img.setAnimatePeriod((int)(totalFrames * redrawInterval));
-                  img.setTotalFrames((int)totalFrames);
                   imgModel.setAnimeDirection(false);
+                  img.setAnimated(true);
+                  img.setAnimatePeriod(13000);
+                  img.setTotalFrames(250);
                   setMenuItemIcon(menuItem,  img.getImage());
                   img.addListener(ev -> {
                      Container parent = menuItem.getParent();
@@ -347,11 +343,8 @@ public class Main extends JFrame {
                   imgModel.getPenBorder().setColorLight(borderColor);
                   imgModel.getPenBorder().setColorShadow(borderColor);
                   imgModel.setBackgroundColor(Color.Transparent);
-                  int redrawInterval = 50;
-                  double rotateAngleDelta = 3.333;
-                  double totalFrames = 360 / rotateAngleDelta;
-                  img.setAnimatePeriod((int)(totalFrames * redrawInterval));
-                  img.setTotalFrames((int)totalFrames);
+                  img.setAnimatePeriod(5400);
+                  img.setTotalFrames(110);
                   setMenuItemIcon(menuItem, img.getImage());
                   img.addListener(ev -> {
                      if (!menuItem.getParent().isVisible())
@@ -380,8 +373,8 @@ public class Main extends JFrame {
             mosaicsImages.forEach((eMosaic, img) -> img.setAnimated(eMosaic == currentMosaicType));
             mosaicsGroupImages.forEach((mosaicGroup, img) -> {
                boolean isCurrentGroup = mosaicGroup == currentMosaicType.getGroup();
-               img.usePolarLightFgTransforming(isCurrentGroup);
-               img.setAnimated(isCurrentGroup);
+               img.usePolarLightFgTransforming(!isCurrentGroup);
+               img.useRotateTransforming(isCurrentGroup);
             });
          }
 
@@ -896,15 +889,14 @@ public class Main extends JFrame {
             _logo = new Logo.ControllerIcon();
             LogoModel model = _logo.getModel();
             model.setUseGradient(!true);
-            model.setPadding(10);
+            model.setPadding(3);
             model.setRotateMode(LogoModel.ERotateMode.color);
-            int redrawInterval = 50;
-            double rotateAngleDelta = 1.4;
-            double totalFrames = 360 / rotateAngleDelta;
-            _logo.setAnimatePeriod((int)(totalFrames * redrawInterval));
-            _logo.setTotalFrames((int)totalFrames);
-
+            _logo.setAnimatePeriod(12500);
+            _logo.setTotalFrames(250);
+            _logo.usePolarLightFgTransforming(true);
             _logo.addListener(ev -> {
+               if (!PausePanel.this.isVisible())
+                  return;
                if (Logo.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
                   PausePanel.this.repaint();
                }
@@ -1155,8 +1147,12 @@ public class Main extends JFrame {
       logoModel.setSize(128);
       logoModel.setPadding(1);
       logoModel.setBackgroundColor(ImageProperties.DefaultBkColor);
-      this._logo.setAnimated(true);
       logoModel.setRotateMode(LogoModel.ERotateMode.combi);
+      this._logo.setAnimatePeriod(25000);
+      this._logo.setTotalFrames(260);
+      this._logo.useRotateTransforming(true);
+      this._logo.usePolarLightFgTransforming(true);
+      this._logo.setAnimated(true);
       this.setIconImage(_logo.getImage());
       this._logo.addListener(ev -> {
          if (Logo.PROPERTY_IMAGE.equals(ev.getPropertyName()))
@@ -1510,6 +1506,7 @@ public class Main extends JFrame {
       this.removeMouseWheelListener (this.getHandlers().getMouseWheelListener());
 
       dispose();
+      Animator.getSingleton().close();
 //      System.exit(0);
    }
 
