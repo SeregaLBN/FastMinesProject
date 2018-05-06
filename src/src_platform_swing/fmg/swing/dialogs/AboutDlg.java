@@ -14,6 +14,7 @@ import fmg.core.img.SmileModel;
 import fmg.swing.draw.img.Logo;
 import fmg.swing.draw.img.Smile;
 import fmg.swing.utils.GuiTools;
+import fmg.swing.utils.ImgUtils;
 
 public class AboutDlg extends JDialog implements AutoCloseable {
 
@@ -110,7 +111,8 @@ public class AboutDlg extends JDialog implements AutoCloseable {
       JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
 //      panel.setBorder(BorderFactory.createTitledBorder("Logos"));// getDefaultBorder());
 
-      int icoSize = 48 * ImgZoomQuality;
+      final int constSize = 48;
+      int icoSize = constSize * ImgZoomQuality;
       if (_logo == null)
          _logo = new Logo.ControllerIcon();
       LogoModel lm = _logo.getModel();
@@ -118,20 +120,21 @@ public class AboutDlg extends JDialog implements AutoCloseable {
       lm.setSize(icoSize);
       lm.setPadding(1);
       lm.setRotateMode(LogoModel.ERotateMode.color);
-
+      _logo.usePolarLightFgTransforming(true);
       _logo.setAnimated(true);
-      _logo.setAnimatePeriod(12);
-      JButton btnLogo = new JButton(_logo.getImage());
+      _logo.setAnimatePeriod(12000);
+      _logo.setTotalFrames(250);
+      JButton btnLogo = new JButton(ImgUtils.zoom(_logo.getImage(), constSize, constSize));
       _logo.addListener(ev -> {
          if (Logo.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
-            btnLogo.setIcon(_logo.getImage());
+            btnLogo.setIcon(ImgUtils.zoom(_logo.getImage(), constSize, constSize));
             btnLogo.repaint();
          }
       });
 
       _smile = new Smile.ControllerIcon(SmileModel.EFaceType.Face_Disappointed);
       _smile.getModel().setSize(icoSize, icoSize);
-      btnLogo.setPressedIcon(_smile.getImage());
+      btnLogo.setPressedIcon(ImgUtils.zoom(_smile.getImage(), constSize, constSize));
       btnLogo.setFocusable(false);
 
       Insets margin = btnLogo.getMargin();
