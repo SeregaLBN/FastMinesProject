@@ -1152,6 +1152,17 @@ public class Main extends JFrame {
       this._logo.setTotalFrames(260);
       this._logo.useRotateTransforming(true);
       this._logo.usePolarLightFgTransforming(true);
+      /** /
+      this._logo.addModelTransformer((currentFrame, totalFrames, model) -> {
+         double angle = currentFrame * 180.0 * 2 / totalFrames;
+         //System.out.println("sin("+angle+")=" + Math.sin(FigureHelper.toRadian(angle)));
+//         logoModel.setPadding(1);
+//         System.out.println(model.getSize());
+//         System.out.println(logoModel.getPadding());
+         double padding = -20 + 5 * Math.sin(FigureHelper.toRadian(angle));
+         logoModel.setPadding((int)padding);
+      });
+      /**/
       this._logo.setAnimated(true);
       this.setIconImage(_logo.getImage());
       this._logo.addListener(ev -> {
