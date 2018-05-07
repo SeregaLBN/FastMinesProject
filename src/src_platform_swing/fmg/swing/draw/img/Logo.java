@@ -55,15 +55,12 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
             fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
 
             // emulate triangle gradient (see BmpLogo.cpp C++ source code)
-            Composite composite = g.getComposite();
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
             Color clr = palette[(i+6)%8];
             clr = new Color(clr.getRed(), clr.getGreen(), clr.getBlue(), 0);
             g.setPaint(new GradientPaint(center, clr, inn[(i+6)%8], palette[(i+3)%8]));
             fillPolygon(g, rays[i], oct[i], inn[i]);
             g.setPaint(new GradientPaint(center, clr, inn[(i+2)%8], palette[(i+0)%8]));
             fillPolygon(g, rays[i], oct[(i+5)%8], inn[i]);
-            g.setComposite(composite);
          } else {
             g.setColor(Cast.toColor(lm.getPalette()[i].toColor().darker()));
             fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);

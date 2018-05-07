@@ -58,7 +58,7 @@ final class TestDrawing extends ATestDrawing {
                @Override
                public void paintComponent(Graphics g) {
                   super.paintComponent(g);
-                  ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+                  ((Graphics2D)g).setComposite(AlphaComposite.SrcOver);
                   if (rc[0] == null)
                      return;
 
