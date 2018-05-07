@@ -21,7 +21,6 @@ import fmg.common.geom.Size;
 import fmg.core.img.MosaicsAnimatedModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
-import fmg.swing.Cast;
 import fmg.swing.Main;
 import fmg.swing.draw.img.Animator;
 import fmg.swing.draw.img.MosaicsImg;
@@ -34,7 +33,7 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
    private static final int ImgSize = 40;
    private static final int ImgZoomQuality = 3;
    private static final Color bkTabBkColor = fmg.common.Color.Transparent; // Cast.toColor(UIManager.getColor("TabbedPane.light")); // Cast.toColor(getContentPane().getBackground());
-   private static final Color bkTabBkColorSelected = Cast.toColor(UIManager.getColor("TabbedPane.shadow")); // "TabbedPane.darkShadow"
+   private static final Color bkTabBkColorSelected = fmg.common.Color.Aquamarine.brighter();//Cast.toColor(UIManager.getColor("TabbedPane.shadow")); // "TabbedPane.darkShadow"
 
    protected JTabbedPane tabPanel;
    protected JToggleButton[] btns = new JToggleButton[ESkillLevel.values().length-1];

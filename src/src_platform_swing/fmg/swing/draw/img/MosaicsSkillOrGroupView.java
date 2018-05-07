@@ -37,9 +37,12 @@ public abstract class MosaicsSkillOrGroupView<TImage, TImageModel extends Animat
 
    protected void draw(Graphics2D g) {
       TImageModel m = getModel();
-      g.setComposite(AlphaComposite.Src);
-      g.setColor(Cast.toColor(m.getBackgroundColor()));
-      g.fillRect(0, 0, getSize().width, getSize().height);
+
+      { // fill background
+         g.setComposite(AlphaComposite.Src);
+         g.setColor(Cast.toColor(m.getBackgroundColor()));
+         g.fillRect(0, 0, getSize().width, getSize().height);
+      }
 
       g.setComposite(AlphaComposite.SrcOver);
       int bw = m.getBorderWidth();

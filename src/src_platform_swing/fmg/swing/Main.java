@@ -1146,7 +1146,7 @@ public class Main extends JFrame {
       logoModel.setUseGradient(true);
       logoModel.setSize(128);
       logoModel.setPadding(1);
-      logoModel.setBackgroundColor(ImageProperties.DefaultBkColor);
+      logoModel.setBackgroundColor(Color.Transparent);//ImageProperties.DefaultBkColor);
       logoModel.setRotateMode(LogoModel.ERotateMode.combi);
       this._logo.setAnimatePeriod(25000);
       this._logo.setTotalFrames(260);

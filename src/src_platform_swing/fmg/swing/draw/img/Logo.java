@@ -25,13 +25,11 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
    protected void draw(Graphics2D g) {
       LogoModel lm = this.getModel();
+
       { // fill background
          g.setComposite(AlphaComposite.Src);
-         fmg.common.Color bkClr = lm.getBackgroundColor();
-         if (!bkClr.isTransparent()) {
-            g.setColor(Cast.toColor(bkClr));
-            g.fillRect(0, 0, getSize().width, getSize().height);
-         }
+         g.setColor(Cast.toColor(lm.getBackgroundColor()));
+         g.fillRect(0, 0, getSize().width, getSize().height);
       }
 
       g.setComposite(AlphaComposite.SrcOver);

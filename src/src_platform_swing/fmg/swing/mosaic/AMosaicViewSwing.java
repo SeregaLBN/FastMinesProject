@@ -64,27 +64,20 @@ public abstract class AMosaicViewSwing<TImage,
 
       // 1. background color
       Color bkClr = model.getBackgroundColor();
-      if (drawBk && !bkClr.isTransparent()) {
+      if (drawBk) {
          g.setComposite(AlphaComposite.Src);
-         Consumer<java.awt.Color> fillBk = bkColor -> {
-            g.setColor(bkColor);
-            if (clipRegion == null) {
-               /*
-               Rectangle rcBounds = g.getClipBounds();
-               if (rcBounds != null) {
-                  g.fillRect(rcBounds.x, rcBounds.y, rcBounds.width, rcBounds.height);
-               } else
-               */
-               {
-                  g.fillRect(0, 0, size.width, size.height);
-               }
-            } else {
-               g.fillRect((int)clipRegion.x, (int)clipRegion.y, (int)clipRegion.width, (int)clipRegion.height);
-            }
-         };
-//         if (!bkClr.isOpaque())
-//            fillBk.accept(java.awt.Color.WHITE);
-         fillBk.accept(Cast.toColor(bkClr));
+         g.setColor(Cast.toColor(bkClr));
+         if (clipRegion == null) {
+            /*
+            Rectangle rcBounds = g.getClipBounds();
+            if (rcBounds != null)
+               g.fillRect(rcBounds.x, rcBounds.y, rcBounds.width, rcBounds.height);
+            else
+            */
+               g.fillRect(0, 0, size.width, size.height);
+         } else {
+            g.fillRect((int)clipRegion.x, (int)clipRegion.y, (int)clipRegion.width, (int)clipRegion.height);
+         }
       }
 
       // 2. paint cells
