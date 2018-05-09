@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 public abstract class AnimatedImgController<TImage,
                                             TImageView  extends IImageView<TImage, TImageModel>,
                                             TImageModel extends IImageModel>
-                extends ImageController<TImage, TImageView, TImageModel>
+                    extends ImageController<TImage, TImageView, TImageModel>
 {
 
    /** Platform-dependent factory of {@link IAnimator}. Set from outside... */

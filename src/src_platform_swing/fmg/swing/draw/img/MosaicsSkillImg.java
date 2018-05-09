@@ -6,8 +6,7 @@ import java.util.stream.Stream;
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.AnimatedImgController;
-import fmg.core.img.BurgerMenuModel;
+import fmg.core.img.MosaicSkillController;
 import fmg.core.img.MosaicsSkillModel;
 import fmg.core.types.ESkillLevel;
 
@@ -68,20 +67,16 @@ public abstract class MosaicsSkillImg<TImage> extends MosaicsSkillOrGroupView<TI
    }
 
    /** MosaicsSkill image controller implementation for {@link Icon} */
-   public static class ControllerIcon extends AnimatedImgController<javax.swing.Icon, MosaicsSkillImg.Icon, MosaicsSkillModel> {
+   public static class ControllerIcon extends MosaicSkillController<javax.swing.Icon, MosaicsSkillImg.Icon> {
       public ControllerIcon(ESkillLevel skill) {
-         super(new MosaicsSkillImg.Icon(skill));
-         BurgerMenuModel bm = getView().getBurgerMenuModel();
-         bm.setShow(skill == null);
+         super(skill == null, new MosaicsSkillImg.Icon(skill));
       }
    }
 
    /** MosaicsSkill image controller implementation for {@link Image} */
-   public static class ControllerImage extends AnimatedImgController<java.awt.Image, MosaicsSkillImg.Image, MosaicsSkillModel> {
+   public static class ControllerImage extends MosaicSkillController<java.awt.Image, MosaicsSkillImg.Image> {
       public ControllerImage(ESkillLevel skill) {
-         super(new MosaicsSkillImg.Image(skill));
-         BurgerMenuModel bm = getView().getBurgerMenuModel();
-         bm.setShow(skill == null);
+         super(skill == null, new MosaicsSkillImg.Image(skill));
       }
    }
 

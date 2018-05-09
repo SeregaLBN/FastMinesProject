@@ -47,18 +47,7 @@ public abstract class MosaicsImg<TImage>
    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
       super.onPropertyModelChanged(oldValue, newValue, propertyName);
 
-      MosaicsAnimatedModel<Void> model = getModel();
-      /*
-      switch (propertyName) {
-      case MosaicGameModel.PROPERTY_CELL_ATTR:
-         if (RandomCellBkColor)
-            model.getBackgroundFill().setMode(1 + ThreadLocalRandom.current().nextInt(model.getCellAttr().getMaxBackgroundFillModeValue()));
-         break;
-      default:
-         break;
-      }
-      */
-
+      MosaicsAnimatedModel<?> model = getModel();
       if (model.getRotateMode() == ERotateMode.someCells) {
          switch (propertyName) {
          case MosaicDrawModel.PROPERTY_SIZE:

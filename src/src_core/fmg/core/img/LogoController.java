@@ -26,6 +26,7 @@ public class LogoController<TImage,
 
    @Override
    public void usePolarLightFgTransforming(boolean enable) {
+      //super.usePolarLightFgTransforming(enable); // hide super implementation!
       if (enable)
          addModelTransformer(new PolarLightLogoTransformer());
       else

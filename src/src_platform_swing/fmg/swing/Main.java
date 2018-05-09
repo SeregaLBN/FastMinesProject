@@ -184,7 +184,7 @@ public class Main extends JFrame {
                   MosaicsSkillModel imgModel = img.getModel();
                   imgModel.setSize(MenuHeightWithIcon*ZoomQualityFactor);
                   skillLevelImages.put(val, img);
-                  imgModel.setBorderWidth(1*ZoomQualityFactor);
+                  imgModel.setBorderWidth(1); // *ZoomQualityFactor);
                   imgModel.setBorderColor(Color.RandomColor().darker(0.4));
                   imgModel.setForegroundColor(Color.RandomColor().brighter(0.4));
                   imgModel.setBackgroundColor(Color.Transparent);
@@ -233,10 +233,7 @@ public class Main extends JFrame {
          void recheckSelectedSkillLevel() {
             ESkillLevel skill = getSkillLevel();
             getMenuItemSkillLevel(skill).setSelected(true);
-            skillLevelImages.forEach((key, img) -> {
-               img.useRotateTransforming(key == skill);
-               img.usePolarLightFgTransforming(key != skill); // не видно особо разницы - маленькая картинка
-            });
+            skillLevelImages.forEach((key, img) -> img.useRotateTransforming(key == skill));
          }
 
          @Override
@@ -338,7 +335,7 @@ public class Main extends JFrame {
                   imgModel.setSize(new Size(MenuHeightWithIcon*ZoomQualityFactor, MenuHeightWithIcon*ZoomQualityFactor));
                   mosaicsImages.put(val, img);
                   imgModel.setRotateMode(ERotateMode.someCells);
-                  imgModel.getPenBorder().setWidth(1*ZoomQualityFactor);
+                  imgModel.getPenBorder().setWidth(1);// * ZoomQualityFactor);
                   Color borderColor = Color.RandomColor().darker(0.4);
                   imgModel.getPenBorder().setColorLight(borderColor);
                   imgModel.getPenBorder().setColorShadow(borderColor);
@@ -372,8 +369,7 @@ public class Main extends JFrame {
 
             mosaicsImages.forEach((eMosaic, img) -> img.setAnimated(eMosaic == currentMosaicType));
             mosaicsGroupImages.forEach((mosaicGroup, img) -> {
-               boolean isCurrentGroup = mosaicGroup == currentMosaicType.getGroup();
-               img.usePolarLightFgTransforming(!isCurrentGroup);
+               boolean isCurrentGroup = (mosaicGroup == currentMosaicType.getGroup());
                img.useRotateTransforming(isCurrentGroup);
             });
          }
