@@ -20,8 +20,6 @@ public final class Mine {
 
    private static void updateModel(LogoModel m) {
       m.setUseGradient(false);
-      m.setSize(150);
-      m.setPadding(50);
       for (HSV item : m.getPalette())
          //item.v = 75;
          item.grayscale();

@@ -13,13 +13,14 @@ import fmg.core.mosaic.draw.MosaicDrawModel;
 import fmg.swing.Cast;
 import fmg.swing.draw.img.Flag;
 import fmg.swing.draw.img.Mine;
+import fmg.swing.utils.ImgUtils;
 
 /** MVC: view. SWING implementation over control {@link JPanel} */ // TODO rename to MosaicViewSwingJPanel
 public class MosaicViewSwing extends AMosaicViewSwing<JPanel, Icon, MosaicDrawModel<Icon>> {
 
    private JPanel _control;
-   private Flag.ControllerIcon flagImage = new Flag.ControllerIcon();
-   private Mine.ControllerIcon mineImage = new Mine.ControllerIcon();
+   private Flag.ControllerIcon _flagImage = new Flag.ControllerIcon();
+   private Mine.ControllerIcon _mineImage = new Mine.ControllerIcon();
    private Collection<BaseCell> _modifiedCells;
 
    public MosaicViewSwing() {
@@ -109,18 +110,26 @@ public class MosaicViewSwing extends AMosaicViewSwing<JPanel, Icon, MosaicDrawMo
          sq = 3; // ат балды...
       }
 
-      flagImage.getModel().setSize(sq);
-      mineImage.getModel().setSize(sq);
-      model.setImgFlag(flagImage.getImage());
-      model.setImgMine(mineImage.getImage());
+      final int max = 30;
+      if (sq > max) {
+         _flagImage.getModel().setSize(sq);
+         _mineImage.getModel().setSize(sq);
+         model.setImgFlag(_flagImage.getImage());
+         model.setImgMine(_mineImage.getImage());
+      } else {
+         _flagImage.getModel().setSize(max);
+         _mineImage.getModel().setSize(max);
+         model.setImgFlag(ImgUtils.zoom(_flagImage.getImage(), sq, sq));
+         model.setImgMine(ImgUtils.zoom(_mineImage.getImage(), sq, sq));
+      }
    }
 
    @Override
    public void close() {
       super.close();
       _control = null;
-      flagImage.close();
-      mineImage.close();
+      _flagImage.close();
+      _mineImage.close();
    }
 
 }
