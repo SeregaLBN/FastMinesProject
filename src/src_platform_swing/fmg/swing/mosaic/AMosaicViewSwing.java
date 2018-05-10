@@ -5,6 +5,8 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.swing.UIDefaults;
@@ -32,6 +34,9 @@ public abstract class AMosaicViewSwing<TImage,
 {
 
    private Font _font;
+   private final FontRenderContext _frc = new FontRenderContext(null, true, true);
+   /** cached TextLayout for quick drawing */
+   private final Map<String /* text */, TextLayout> _mapTextLayout = new HashMap<>();
    protected boolean _alreadyPainted = false;
 
    protected AMosaicViewSwing(TMosaicModel mosaicModel) {
@@ -244,13 +249,17 @@ public abstract class AMosaicViewSwing<TImage,
       _alreadyPainted = false;
    }
 
-   private static Rectangle2D getStringBounds(String text, Font font) {
-      TextLayout tl = new TextLayout(text, font, new FontRenderContext(null, true, true));
+   private Rectangle2D getStringBounds(String text, Font font) {
+      TextLayout tl = _mapTextLayout.get(text);
+      if (tl == null) {
+         tl = new TextLayout(text, font, _frc);
+         _mapTextLayout.put(text, tl);
+      }
       return tl.getBounds();
 //      return font.getStringBounds(text, new FontRenderContext(null, true, true));
    }
 
-   private static void drawText(Graphics g, String text, Rectangle rc) {
+   private void drawText(Graphics g, String text, Rectangle rc) {
       if ((text == null) || text.trim().isEmpty())
          return;
       Rectangle2D bnd = getStringBounds(text, g.getFont());
@@ -277,8 +286,16 @@ public abstract class AMosaicViewSwing<TImage,
    @Override
    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
       super.onPropertyModelChanged(oldValue, newValue, propertyName);
-      if (MosaicDrawModel.PROPERTY_FONT_INFO.equals(propertyName))
+      if (MosaicDrawModel.PROPERTY_FONT_INFO.equals(propertyName)) {
          _font = null;
+         _mapTextLayout.clear();
+      }
+   }
+
+   @Override
+   public void close() {
+      _mapTextLayout.clear();
+      super.close();
    }
 
 }
