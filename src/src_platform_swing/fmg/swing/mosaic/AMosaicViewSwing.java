@@ -249,10 +249,10 @@ public abstract class AMosaicViewSwing<TImage,
       _alreadyPainted = false;
    }
 
-   private Rectangle2D getStringBounds(String text, Font font) {
+   private Rectangle2D getStringBounds(String text) {
       TextLayout tl = _mapTextLayout.get(text);
       if (tl == null) {
-         tl = new TextLayout(text, font, _frc);
+         tl = new TextLayout(text, getFont(), _frc);
          _mapTextLayout.put(text, tl);
       }
       return tl.getBounds();
@@ -262,7 +262,7 @@ public abstract class AMosaicViewSwing<TImage,
    private void drawText(Graphics g, String text, Rectangle rc) {
       if ((text == null) || text.trim().isEmpty())
          return;
-      Rectangle2D bnd = getStringBounds(text, g.getFont());
+      Rectangle2D bnd = getStringBounds(text);
 //      { // test
 //         Color clrOld = g.getColor();
 //         g.setColor(Color.BLUE);

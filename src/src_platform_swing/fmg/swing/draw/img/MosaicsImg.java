@@ -15,7 +15,6 @@ import fmg.core.img.MosaicsAnimatedModel.ERotateMode;
 import fmg.core.img.MosaicsAnimatedModel.RotatedCellContext;
 import fmg.core.mosaic.AMosaicController;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.mosaic.draw.MosaicDrawModel;
 import fmg.core.types.EMosaic;
 import fmg.data.view.draw.PenBorder;
 import fmg.swing.mosaic.AMosaicViewSwing;
@@ -32,6 +31,7 @@ public abstract class MosaicsImg<TImage>
 {
 
    private static final boolean RandomCellBkColor = true;
+   protected boolean _useBackgroundColor = true;
 
    protected MosaicsImg() {
       super(new MosaicsAnimatedModel<Void>());
@@ -44,26 +44,8 @@ public abstract class MosaicsImg<TImage>
    }
 
    @Override
-   protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
-      super.onPropertyModelChanged(oldValue, newValue, propertyName);
-
-      MosaicsAnimatedModel<?> model = getModel();
-      if (model.getRotateMode() == ERotateMode.someCells) {
-         switch (propertyName) {
-         case MosaicDrawModel.PROPERTY_SIZE:
-            _imageCache = null;
-            break;
-         case MosaicsAnimatedModel.PROPERTY_ROTATED_ELEMENTS:
-         case MosaicsAnimatedModel.PROPERTY_BACKGROUND_COLOR:
-            _invalidateCache = true;
-            break;
-         }
-      }
-   }
-
-   @Override
    protected void drawBody() {
-      //super.drawBody(); // !override super implementtation
+      //super.drawBody(); // !hide super implementtation
       switch (getModel().getRotateMode()) {
       case fullMatrix:
          drawBodyFullMatrix();
@@ -74,48 +56,14 @@ public abstract class MosaicsImg<TImage>
       }
    }
 
-
-   protected boolean _useBackgroundColor = true;
-   protected boolean _drawOnCache = true;
-
    /** ///////////// ================= PART {@link ERotateMode#fullMatrix} ======================= ///////////// */
 
    private void drawBodyFullMatrix() {
-      _drawOnCache = false;
       _useBackgroundColor = true;
       draw(getModel().getMatrix());
    }
 
    /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
-
-   private static final boolean USE_CACHE = false; // true is not supported in SWING
-
-   /** need redraw the static part of the cache */
-   private boolean _invalidateCache = true;
-   /**
-    * Cached static part of the picture.
-    * ! Recreated only when changing the original image size (minimizing CreateImage calls).
-    **/
-   private TImage _imageCache;
-   protected TImage getImageCache() {
-      if (_imageCache == null) {
-         _imageCache = createImage();
-         _invalidateCache = true;
-      }
-      if (_invalidateCache) {
-         _invalidateCache = false;
-         //Graphics save = get...();
-         //getView().setPaintable(_imageCache as Graphics); // not implement in SWING :(
-         drawCache();
-         //set...(save); // restore
-      }
-      return _imageCache;
-   }
-
-   /** copy cached image to original */
-   protected abstract void copyFromCache();
-
-   protected void drawCache() { drawStaticPart(); }
 
    private void drawStaticPart() {
       MosaicsAnimatedModel<Void> model = getModel();
@@ -166,14 +114,9 @@ public abstract class MosaicsImg<TImage>
    }
 
    private void drawBodySomeCells() {
-      _drawOnCache = USE_CACHE;
       _useBackgroundColor = true;
-      if (USE_CACHE)
-         copyFromCache();
-      else
-         drawStaticPart();
+      drawStaticPart();
 
-      _drawOnCache = false;
       _useBackgroundColor = false;
       drawRotatedPart();
    }
@@ -193,12 +136,6 @@ public abstract class MosaicsImg<TImage>
       @Override
       public void draw(Collection<BaseCell> modifiedCells) {
          draw(ico.getGraphics(), modifiedCells, null, _useBackgroundColor);
-      }
-
-      @Override
-      protected void copyFromCache() {
-       //drawImage(getImageCache(), 0, 0, getSize().width, getSize().height, null);
-         throw new UnsupportedOperationException("not implemented...");
       }
 
       @Override
@@ -222,12 +159,6 @@ public abstract class MosaicsImg<TImage>
       public void draw(Collection<BaseCell> modifiedCells) {
          img.draw(g -> draw(g, modifiedCells, null, _useBackgroundColor));
      }
-
-      @Override
-      protected void copyFromCache() {
-       //drawImage(getImageCache(), 0, 0, getSize().width, getSize().height, null);
-         throw new UnsupportedOperationException("not implemented...");
-      }
 
    }
 
@@ -265,8 +196,8 @@ public abstract class MosaicsImg<TImage>
                // variant 2
                .map(e ->  rnd.nextBoolean()
                            ? new MosaicsImg.ControllerIcon () { { setMosaicType(e); }}
-                           : new MosaicsImg.ControllerImage() { { setMosaicType(e); }})
-
+                           : new MosaicsImg.ControllerImage() { { setMosaicType(e); }}
+                   )
                .collect(Collectors.toList())
       );
    }
