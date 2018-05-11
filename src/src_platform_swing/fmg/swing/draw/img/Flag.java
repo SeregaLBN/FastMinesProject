@@ -22,17 +22,17 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
    }
 
    protected void draw(Graphics2D g) {
-      double zoomX = getSize().width  / 100.0;
-      double zoomY = getSize().height / 100.0;
+      double w = getSize().width  / 100.0;
+      double h = getSize().height / 100.0;
       // perimeter figure points
       Point2D.Double[] p = new Point2D.Double[] {
-            new Point2D.Double(13.5 *zoomX, 90*zoomY),
-            new Point2D.Double(17.44*zoomX, 51*zoomY),
-            new Point2D.Double(21   *zoomX, 16*zoomY),
-            new Point2D.Double(85   *zoomX, 15*zoomY),
-            new Point2D.Double(81.45*zoomX, 50*zoomY)};
+            new Point2D.Double(13.5 *w, 90*h),
+            new Point2D.Double(17.44*w, 51*h),
+            new Point2D.Double(21   *w, 16*h),
+            new Point2D.Double(85   *w, 15*h),
+            new Point2D.Double(81.45*w, 50*h)};
 
-      double penWidth = 7 * (zoomX + zoomY) / 2;
+      double penWidth = 7 * (w + h) / 2;
       BasicStroke penLine = new BasicStroke((float)penWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
       g.setStroke(penLine);
       g.setColor(Color.BLACK);
@@ -44,8 +44,8 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
       g.setColor(Color.RED);
       CubicCurve2D curve = new CubicCurve2D.Double(
             p[2].x, p[2].y,
-            95*zoomX, 0*zoomY,
-            19.3*zoomX, 32*zoomY,
+            95*w, 0*h,
+            19.3*w, 32*h,
             p[3].x, p[3].y);
        g.draw(curve);
 //       if (false) {
@@ -59,14 +59,14 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
        {
           curve = new CubicCurve2D.Double(
                p[3].x, p[3].y,
-               77.8*zoomX, 32.89*zoomY,
-               88.05*zoomX, 22.73*zoomY,
+               77.8*w, 32.89*h,
+               88.05*w, 22.73*h,
                p[4].x, p[4].y);
           g.draw(curve);
           curve = new CubicCurve2D.Double(
                p[4].x, p[4].y,
-               15.83*zoomX, 67*zoomY,
-               91.45*zoomX, 35*zoomY,
+               15.83*w, 67*h,
+               91.45*w, 35*h,
                p[1].x, p[1].y);
           g.draw(curve);
        }
@@ -123,11 +123,8 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(() -> {
-            return Arrays.asList(new Flag.ControllerIcon(),
-                                 new Flag.ControllerImage());
-         }
-      );
+      TestDrawing.testApp(() -> Arrays.asList(new Flag.ControllerIcon()
+                                            , new Flag.ControllerImage()));
    }
    //////////////////////////////////
 

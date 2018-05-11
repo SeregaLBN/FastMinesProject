@@ -7,7 +7,6 @@ import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.BoxBlur;
 import javafx.scene.paint.Color;
 
 /** Flag image */
@@ -25,7 +24,7 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
       double w = getSize().width  / 100.0;
       double h = getSize().height / 100.0;
 
-      g.setEffect(new BoxBlur());
+//      g.setEffect(new BoxBlur());
 
       // test
 //      g.setLineWidth(1);
@@ -110,8 +109,7 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
    ////////////// TEST //////////////
    public static void main(String[] args) {
       TestDrawing.testApp(() -> Arrays.asList(new Flag.ControllerCanvas()
-                                            , new Flag.ControllerImage()
-                         ));
+                                            , new Flag.ControllerImage()));
    }
    //////////////////////////////////
 

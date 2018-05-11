@@ -130,8 +130,7 @@ public abstract class ATestDrawing {
       public Function<ImageController<?,?,?> /* image */, CellTilingInfo> itemCallback;
    }
 
-   public CellTilingResult cellTiling(RectDouble rc, List<ImageController<?,?,?>> images, boolean testIntersection)
-   {
+   public CellTilingResult cellTiling(RectDouble rc, List<ImageController<?,?,?>> images, boolean testIntersection) {
       int len = images.size();
       int cols = (int)Math.round( Math.sqrt(len)  + 0.4999999999); // columns
       int rows = (int)Math.round(len/(double)cols + 0.4999999999);

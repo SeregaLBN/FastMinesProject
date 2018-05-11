@@ -94,37 +94,42 @@ final class TestDrawing extends ATestDrawing {
             };
             add(jPanel);
 
+            Runnable onCellTilingHandler = () -> {
+                Dimension size = jPanel.getSize();
+                rc[0] = new RectDouble(margin, margin, size.getWidth()-margin*2, size.getHeight()-margin*2); // inner rect where drawing images as tiles
+                ctr[0] = td.cellTiling(rc[0], images, testTransparent[0]);
+
+                Size imgSize = ctr[0].imageSize;
+                if (imgSize.height < 1 || imgSize.width < 1)
+                   return;
+                for (ImageController<?, ?, ?> img : images)
+                   img.getModel().setSize(imgSize);
+            };
             ComponentListener componentListener = new ComponentAdapter() {
                @Override
                public void componentResized(ComponentEvent ev) {
-                   Dimension size = jPanel.getSize();
-                   rc[0] = new RectDouble(margin, margin, size.getWidth()-margin*2, size.getHeight()-margin*2); // inner rect where drawing images as tiles
-                   ctr[0] = td.cellTiling(rc[0], images, testTransparent[0]);
-
-                   Size imgSize = ctr[0].imageSize;
-                   if (imgSize.height < 1 || imgSize.width < 1)
-                      return;
-                   for (ImageController<?, ?, ?> img : images)
-                      img.getModel().setSize(imgSize);
+                  onCellTilingHandler.run();
                }
             };
+            jPanel.addComponentListener(componentListener);
+
             MouseListener mouseListener = new MouseAdapter() {
                @Override
                public void mousePressed(MouseEvent e) {
                   testTransparent[0] = td.bl();
                   images.forEach(img -> {
                      td.applyRandom(img, testTransparent[0]);
-                     componentListener.componentResized(null);
+                     onCellTilingHandler.run();
                   });
                }
             };
-            PropertyChangeListener propertyChangeListener = evt -> {
-               if (ImageController.PROPERTY_IMAGE.equals(evt.getPropertyName()))
+            jPanel.addMouseListener(mouseListener);
+
+            PropertyChangeListener propertyChangeListener = ev -> {
+               if (ImageController.PROPERTY_IMAGE.equals(ev.getPropertyName()))
                   jPanel.repaint();
             };
 
-            jPanel.addMouseListener(mouseListener);
-            jPanel.addComponentListener(componentListener);
             images.forEach(img -> {
                img.addListener(propertyChangeListener);
                td.applyRandom(img, testTransparent[0]);
