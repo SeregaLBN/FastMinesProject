@@ -1,14 +1,14 @@
 package fmg.jfx.draw.img;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.Size;
-import fmg.core.img.ALogo;
+import fmg.core.img.ImageController;
+import fmg.core.img.ImageView;
+import fmg.core.img.LogoModel;
 import fmg.jfx.Cast;
-import fmg.jfx.utils.ImgUtils;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -16,16 +16,22 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 
-/** Main logos image */
-public abstract class Logo<TImage> extends ALogo<TImage> {
+/** Main logos image - base Logo image view implementation */
+public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
+
+   protected Logo() {
+      super(new LogoModel());
+   }
 
    static {
       StaticInitilizer.init();
    }
 
-   protected void drawBody(GraphicsContext g) {
+   protected void draw(GraphicsContext g) {
+      LogoModel lm = this.getModel();
+
       { // fill background
-         fmg.common.Color bkClr = getBackgroundColor();
+         fmg.common.Color bkClr = lm.getBackgroundColor();
          if (!bkClr.isOpaque())
             g.clearRect(0, 0, getSize().width, getSize().height);
          if (!bkClr.isTransparent()) {
@@ -34,23 +40,23 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
          }
       }
 
-      List<PointDouble> rays0 = new ArrayList<>();
-      List<PointDouble> inn0 = new ArrayList<>();
-      List<PointDouble> oct0 = new ArrayList<>();
-      getCoords(rays0, inn0, oct0);
+      List<PointDouble> rays0 = lm.getRays();
+      List<PointDouble> inn0  = lm.getInn();
+      List<PointDouble> oct0  = lm.getOct();
 
       Point2D [] rays = rays0.stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D[size]);
       Point2D [] inn  = inn0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D[size]);
       Point2D [] oct  = oct0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D[size]);
       Point2D center = new Point2D(getSize().width/2.0, getSize().height/2.0);
 
-      Color [] palette = Arrays.stream(Palette)
+      HSV[] hsvPalette = lm.getPalette();
+      Color[] palette = Arrays.stream(hsvPalette)
          .map(hsv -> Cast.toColor(hsv.toColor()))
          .toArray(size -> new Color[size]);
 
       // paint owner gradient rays
       for (int i=0; i<8; i++) {
-         if (isUseGradient()) {
+         if (lm.isUseGradient()) {
             // rectangle gragient
             setGradientFill(g, oct[(i+5)%8], palette[(i+0)%8], oct[i], palette[(i+3)%8]);
             fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
@@ -66,13 +72,13 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
             fillPolygon(g, rays[i], oct[(i+5)%8], inn[i]);
 //            g.setGlobalBlendMode(bm);
          } else {
-            g.setFill(Cast.toColor(Palette[i].toColor().darker()));
+            g.setFill(Cast.toColor(hsvPalette[i].toColor().darker()));
             fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
          }
       }
 
       // paint star perimeter
-      double zoomAverage = (getZoomX() + getZoomY())/2;
+      double zoomAverage = (lm.getZoomX() + lm.getZoomY())/2;
       final double penWidth = Math.max(1, 2 * zoomAverage);
       g.setLineWidth(penWidth);
       for (int i=0; i<8; i++) {
@@ -84,14 +90,14 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
 
       // paint inner gradient triangles
       for (int i=0; i<8; i++) {
-         if (isUseGradient())
+         if (lm.isUseGradient())
             setGradientFill(g,
                   inn[i], palette[(i+6)%8],
                   center, ((i&1)==0) ? Color.BLACK : Color.WHITE);
          else
             g.setFill(((i & 1) == 0)
-                  ? Cast.toColor(Palette[(i + 6)%8].toColor().brighter())
-                  : Cast.toColor(Palette[(i + 6)%8].toColor().darker()));
+                  ? Cast.toColor(hsvPalette[(i + 6)%8].toColor().brighter())
+                  : Cast.toColor(hsvPalette[(i + 6)%8].toColor().darker()));
          fillPolygon(g, inn[(i + 0)%8], inn[(i + 3)%8], center);
       }
    }
@@ -118,48 +124,53 @@ public abstract class Logo<TImage> extends ALogo<TImage> {
    //    custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+   /** Logo image view implementation over {@link javafx.scene.canvas.Canvas} */
    public static class Canvas extends Logo<javafx.scene.canvas.Canvas> {
 
-      @Override
-      protected javafx.scene.canvas.Canvas createImage() {
-         Size size = getSize();
-         return new javafx.scene.canvas.Canvas(size.width, size.height);
-      }
+      private CanvasJfx canvas = new CanvasJfx(this);
 
       @Override
-      protected void drawBody() { drawBody(getImage().getGraphicsContext2D()); }
+      protected javafx.scene.canvas.Canvas createImage() { return canvas.create(); }
+
+      @Override
+      protected void drawBody() { draw(canvas.getGraphics()); }
 
    }
 
    public static class Image extends Logo<javafx.scene.image.Image> {
 
-      private javafx.scene.canvas.Canvas canvas;
+      private ImageJfx img = new ImageJfx(this);
 
       @Override
       protected javafx.scene.image.Image createImage() {
-         Size size = getSize();
-         canvas = new javafx.scene.canvas.Canvas(size.width, size.height);
-         return ImgUtils.toImage(canvas);
+         img.createCanvas();
+         return null; // img.createImage(); // fake empty image
       }
 
       @Override
-      protected void drawEnd() {
-         super.drawEnd();
-         setImage(ImgUtils.toImage(canvas));
+      protected void drawBody() {
+         draw(img.getGraphics());
+         setImage(img.createImage()); // real image
       }
 
-      @Override
-      protected void drawBody() { drawBody(canvas.getGraphicsContext2D()); }
+   }
 
+   /** Logo image controller implementation for {@link Canvas} */
+   public static class ControllerCanvas extends ImageController<javafx.scene.canvas.Canvas, Logo.Canvas, LogoModel> {
+      public ControllerCanvas() { super(new Logo.Canvas()); }
+   }
+
+   /** Logo image controller implementation for {@link Image} */
+   public static class ControllerImage extends ImageController<javafx.scene.image.Image, Logo.Image, LogoModel> {
+      public ControllerImage() { super(new Logo.Image()); }
    }
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      TestDrawing.testApp(() -> Arrays.asList(new Logo.Canvas()
-                                            , new Logo.Image()
-                                            , new Logo.Canvas()
-                                            , new Logo.Image()
-                         ));
+      TestDrawing.testApp(() -> Arrays.asList(new Logo.ControllerCanvas()
+                                            , new Logo.ControllerImage()
+                                            , new Logo.ControllerCanvas()
+                                            , new Logo.ControllerImage()));
    }
    //////////////////////////////////
 

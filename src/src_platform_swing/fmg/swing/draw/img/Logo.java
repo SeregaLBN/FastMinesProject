@@ -42,8 +42,8 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
       Point2D.Double [] oct  = oct0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
       Point2D.Double center = new Point2D.Double(getSize().width/2.0, getSize().height/2.0);
 
-      HSV[] Palette = lm.getPalette();
-      Color[] palette = Arrays.stream(Palette)
+      HSV[] hsvPalette = lm.getPalette();
+      Color[] palette = Arrays.stream(hsvPalette)
          .map(hsv -> Cast.toColor(hsv.toColor()))
          .toArray(size -> new Color[size]);
 
@@ -62,7 +62,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
             g.setPaint(new GradientPaint(center, clr, inn[(i+2)%8], palette[(i+0)%8]));
             fillPolygon(g, rays[i], oct[(i+5)%8], inn[i]);
          } else {
-            g.setColor(Cast.toColor(lm.getPalette()[i].toColor().darker()));
+            g.setColor(Cast.toColor(hsvPalette[i].toColor().darker()));
             fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
          }
       }
@@ -86,8 +86,8 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
                   center, ((i&1)==0) ? Color.BLACK : Color.WHITE));
          else
             g.setColor(((i & 1) == 0)
-                  ? Cast.toColor(Palette[(i + 6)%8].toColor().brighter())
-                  : Cast.toColor(Palette[(i + 6)%8].toColor().darker()));
+                  ? Cast.toColor(hsvPalette[(i + 6)%8].toColor().brighter())
+                  : Cast.toColor(hsvPalette[(i + 6)%8].toColor().darker()));
          fillPolygon(g, inn[(i + 0)%8], inn[(i + 3)%8], center);
       }
    }
