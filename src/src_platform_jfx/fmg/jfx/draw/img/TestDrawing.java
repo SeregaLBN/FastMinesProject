@@ -123,7 +123,8 @@ public final class TestDrawing extends Application {
 
       PropertyChangeListener propertyChangeListener = ev -> {
          if (ImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
-          //  jPanel.repaint();
+            //canvas.repaint();
+            //System.out.println("propertyChangeListener: " + ev.getSource());
          }
       };
 

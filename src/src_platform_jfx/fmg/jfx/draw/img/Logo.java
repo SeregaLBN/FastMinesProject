@@ -5,8 +5,8 @@ import java.util.List;
 
 import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
+import fmg.core.img.LogoController;
 import fmg.core.img.LogoModel;
 import fmg.jfx.Cast;
 import javafx.geometry.Point2D;
@@ -156,12 +156,12 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
    }
 
    /** Logo image controller implementation for {@link Canvas} */
-   public static class ControllerCanvas extends ImageController<javafx.scene.canvas.Canvas, Logo.Canvas, LogoModel> {
+   public static class ControllerCanvas extends LogoController<javafx.scene.canvas.Canvas, Logo.Canvas> {
       public ControllerCanvas() { super(new Logo.Canvas()); }
    }
 
    /** Logo image controller implementation for {@link Image} */
-   public static class ControllerImage extends ImageController<javafx.scene.image.Image, Logo.Image, LogoModel> {
+   public static class ControllerImage extends LogoController<javafx.scene.image.Image, Logo.Image> {
       public ControllerImage() { super(new Logo.Image()); }
    }
 
