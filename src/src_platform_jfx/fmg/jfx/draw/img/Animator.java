@@ -24,7 +24,6 @@ public class Animator implements IAnimator, AutoCloseable {
           @Override
           public void handle(long now) {
               long currentTime = new Date().getTime();
-              System.out.println("currentTime=" + currentTime + "; now=" + now);
               _subscribers.forEach((k,v) -> {
                  if (v.active)
                     v.callback.accept(currentTime - v.startTime);

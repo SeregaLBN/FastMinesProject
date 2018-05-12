@@ -137,6 +137,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
    }
 
+   /** Logo image view implementation over {@link javafx.scene.image.Image} */
    public static class Image extends Logo<javafx.scene.image.Image> {
 
       private ImageJfx img = new ImageJfx(this);

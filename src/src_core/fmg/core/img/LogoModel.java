@@ -28,12 +28,19 @@ public class LogoModel extends AnimatedImageModel {
    public static final String PROPERTY_USE_GRADIENT = "UseGradient";
    public static final String PROPERTY_ROTATE_MODE  = "RotateMode";
 
-   private final HSV[] Palette = {
+   private final HSV[] palette = {
          new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100),
          new HSV(180, 100, 100), new HSV(225, 100, 100), new HSV(270, 100, 100), new HSV(315, 100, 100) };
 
    public HSV[] getPalette() {
-      return Palette;
+      return palette;
+   }
+
+   public static void toMineModel(LogoModel m) {
+      m.setUseGradient(false);
+      for (HSV item : m.getPalette())
+         //item.v = 75;
+         item.grayscale();
    }
 
    private boolean _useGradient;

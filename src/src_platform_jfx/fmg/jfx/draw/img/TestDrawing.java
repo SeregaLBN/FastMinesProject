@@ -27,7 +27,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-/** @see {@link MosaicsSkillImg#main}, {@link MosaicsGroupImg#main}, {@link MosaicsImg#main} */
+/** @see {@link MosaicsSkillImg#main}, {@link MosaicGroupImg#main}, {@link MosaicsImg#main} */
 public final class TestDrawing extends Application {
 
    static final int margin = 10;

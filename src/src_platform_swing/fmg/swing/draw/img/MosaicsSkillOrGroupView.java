@@ -17,7 +17,7 @@ import fmg.core.img.WithBurgerMenuView;
 import fmg.swing.Cast;
 
 /**
- * MVC: view. Abstract representable {@link fmg.core.types.ESkillLevel} or {@link fmg.core.types.EMosaicGroup} as image
+ * MVC: view. Abstract SWING representable {@link fmg.core.types.ESkillLevel} or {@link fmg.core.types.EMosaicGroup} as image
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageModel> {@link MosaicsSkillModel} or {@link MosaicsGroupModel}
  */
@@ -47,7 +47,7 @@ public abstract class MosaicsSkillOrGroupView<TImage, TImageModel extends Animat
       g.setComposite(AlphaComposite.SrcOver);
       int bw = m.getBorderWidth();
       boolean needDrawPerimeterBorder = (!m.getBorderColor().isTransparent() && (bw > 0));
-      java.awt.Color borderColor = Cast.toColor(m.getBorderColor());
+      java.awt.Color borderColor = needDrawPerimeterBorder ? null : Cast.toColor(m.getBorderColor());
       BasicStroke bs = !needDrawPerimeterBorder ? null : new BasicStroke(bw);
       Stream<Pair<Color, Stream<PointDouble>>> stars = getCoords();
       stars.forEach(pair -> {
@@ -73,4 +73,5 @@ public abstract class MosaicsSkillOrGroupView<TImage, TImageModel extends Animat
             g.drawLine((int)li.from.x, (int)li.from.y, (int)li.to.x, (int)li.to.y);
          });
    }
+
 }
