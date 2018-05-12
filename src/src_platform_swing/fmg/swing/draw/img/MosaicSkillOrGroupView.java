@@ -21,7 +21,7 @@ import fmg.swing.Cast;
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageModel> {@link MosaicSkillModel} or {@link MosaicGroupModel}
  */
-public abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageModel> extends WithBurgerMenuView<TImage, TImageModel> {
+abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageModel> extends WithBurgerMenuView<TImage, TImageModel> {
 
    static {
       StaticInitilizer.init();
@@ -47,7 +47,7 @@ public abstract class MosaicSkillOrGroupView<TImage, TImageModel extends Animate
       g.setComposite(AlphaComposite.SrcOver);
       int bw = m.getBorderWidth();
       boolean needDrawPerimeterBorder = (!m.getBorderColor().isTransparent() && (bw > 0));
-      java.awt.Color borderColor = needDrawPerimeterBorder ? null : Cast.toColor(m.getBorderColor());
+      java.awt.Color borderColor = !needDrawPerimeterBorder ? null : Cast.toColor(m.getBorderColor());
       BasicStroke bs = !needDrawPerimeterBorder ? null : new BasicStroke(bw);
       Stream<Pair<Color, Stream<PointDouble>>> stars = getCoords();
       stars.forEach(pair -> {

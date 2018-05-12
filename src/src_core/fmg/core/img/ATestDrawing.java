@@ -61,6 +61,7 @@ public abstract class ATestDrawing {
 
          ip.setBackgroundColor(bkClr);
 
+         ip.setForegroundColor(Color.RandomColor()/*.brighter()*/);
          if (testTransparent) {
             // test transparent
             Color clr = ip.getForegroundColor();
@@ -70,8 +71,6 @@ public abstract class ATestDrawing {
                clr.setA(150 + r(255-150));
             }
             ip.setForegroundColor(clr);
-         } else {
-            ip.setForegroundColor(Color.RandomColor()/*.brighter()*/);
          }
 
          if (model instanceof AnimatedImageModel) {

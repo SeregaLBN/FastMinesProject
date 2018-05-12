@@ -17,7 +17,7 @@ import javafx.scene.canvas.GraphicsContext;
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageModel> {@link MosaicsSkillModel} or {@link MosaicsGroupModel}
  */
-public abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageModel> extends WithBurgerMenuView<TImage, TImageModel> {
+abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageModel> extends WithBurgerMenuView<TImage, TImageModel> {
 
    static {
       StaticInitilizer.init();
@@ -46,7 +46,7 @@ public abstract class MosaicSkillOrGroupView<TImage, TImageModel extends Animate
 
       int bw = m.getBorderWidth();
       boolean needDrawPerimeterBorder = (!m.getBorderColor().isTransparent() && (bw > 0));
-      javafx.scene.paint.Color borderColor = needDrawPerimeterBorder ? null : Cast.toColor(m.getBorderColor());
+      javafx.scene.paint.Color borderColor = !needDrawPerimeterBorder ? null : Cast.toColor(m.getBorderColor());
       if (needDrawPerimeterBorder)
          g.setLineWidth(bw);
       Stream<Pair<Color, Stream<PointDouble>>> stars = getCoords();
