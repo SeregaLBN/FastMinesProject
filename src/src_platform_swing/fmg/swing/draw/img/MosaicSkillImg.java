@@ -7,7 +7,7 @@ import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.core.img.MosaicSkillController;
-import fmg.core.img.MosaicsSkillModel;
+import fmg.core.img.MosaicSkillModel;
 import fmg.core.types.ESkillLevel;
 
 /**
@@ -17,10 +17,10 @@ import fmg.core.types.ESkillLevel;
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon})
  **/
-public abstract class MosaicsSkillImg<TImage> extends MosaicsSkillOrGroupView<TImage, MosaicsSkillModel> {
+public abstract class MosaicSkillImg<TImage> extends MosaicSkillOrGroupView<TImage, MosaicSkillModel> {
 
    /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
-   protected MosaicsSkillImg(ESkillLevel skill) { super(new MosaicsSkillModel(skill)); }
+   protected MosaicSkillImg(ESkillLevel skill) { super(new MosaicSkillModel(skill)); }
 
    @Override
    protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
@@ -30,7 +30,7 @@ public abstract class MosaicsSkillImg<TImage> extends MosaicsSkillOrGroupView<TI
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
    /** MosaicsSkill image view implementation over {@link javax.swing.Icon} */
-   static class Icon extends MosaicsSkillImg<javax.swing.Icon> {
+   static class Icon extends MosaicSkillImg<javax.swing.Icon> {
 
       private IconSwing ico = new IconSwing(this);
 
@@ -52,7 +52,7 @@ public abstract class MosaicsSkillImg<TImage> extends MosaicsSkillOrGroupView<TI
    }
 
    /** MosaicsSkill image view implementation over {@link java.awt.Image} */
-   static class Image extends MosaicsSkillImg<java.awt.Image> {
+   static class Image extends MosaicSkillImg<java.awt.Image> {
 
       private ImageAwt img = new ImageAwt(this);
 
@@ -67,16 +67,16 @@ public abstract class MosaicsSkillImg<TImage> extends MosaicsSkillOrGroupView<TI
    }
 
    /** MosaicsSkill image controller implementation for {@link Icon} */
-   public static class ControllerIcon extends MosaicSkillController<javax.swing.Icon, MosaicsSkillImg.Icon> {
+   public static class ControllerIcon extends MosaicSkillController<javax.swing.Icon, MosaicSkillImg.Icon> {
       public ControllerIcon(ESkillLevel skill) {
-         super(skill == null, new MosaicsSkillImg.Icon(skill));
+         super(skill == null, new MosaicSkillImg.Icon(skill));
       }
    }
 
    /** MosaicsSkill image controller implementation for {@link Image} */
-   public static class ControllerImage extends MosaicSkillController<java.awt.Image, MosaicsSkillImg.Image> {
+   public static class ControllerImage extends MosaicSkillController<java.awt.Image, MosaicSkillImg.Image> {
       public ControllerImage(ESkillLevel skill) {
-         super(skill == null, new MosaicsSkillImg.Image(skill));
+         super(skill == null, new MosaicSkillImg.Image(skill));
       }
    }
 
@@ -85,8 +85,8 @@ public abstract class MosaicsSkillImg<TImage> extends MosaicsSkillOrGroupView<TI
       TestDrawing.testApp(() ->
          Stream.concat(Stream.of((ESkillLevel)null),
                        Stream.of(ESkillLevel.values()))
-               .map(e -> new Pair<>(new MosaicsSkillImg.ControllerIcon (e),
-                                    new MosaicsSkillImg.ControllerImage(e)))
+               .map(e -> new Pair<>(new MosaicSkillImg.ControllerIcon (e),
+                                    new MosaicSkillImg.ControllerImage(e)))
                .flatMap(x -> Stream.of(x.first, x.second))
                .collect(Collectors.toList())
       );

@@ -15,11 +15,11 @@ import fmg.common.geom.util.FigureHelper;
 import fmg.core.types.EMosaicGroup;
 
 /** MVC model of {@link EMosaicGroup} representable as image */
-public class MosaicsGroupModel extends AnimatedImageModel {
+public class MosaicGroupModel extends AnimatedImageModel {
 
    public static final String PROPERTY_MOSAIC_GROUP = "MosaicGroup";
 
-   public MosaicsGroupModel(EMosaicGroup mosaicGroup) { _mosaicGroup = mosaicGroup; }
+   public MosaicGroupModel(EMosaicGroup mosaicGroup) { _mosaicGroup = mosaicGroup; }
 
    public static boolean varMosaicGroupAsValueOthers1 = !true;
 
@@ -50,7 +50,7 @@ public class MosaicsGroupModel extends AnimatedImageModel {
             ? getCoords_MosaicGroupAsType()
             : (mosaicGroup != EMosaicGroup.eOthers)
                ? Stream.of(new Pair<>(getForegroundColor(), getCoords_MosaicGroupAsValue()))
-               : MosaicsGroupModel.varMosaicGroupAsValueOthers1
+               : MosaicGroupModel.varMosaicGroupAsValueOthers1
                   ? getCoords_MosaicGroupAsValueOthers1()
                   : getCoords_MosaicGroupAsValueOthers2();
    }

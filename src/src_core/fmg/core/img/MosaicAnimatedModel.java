@@ -19,7 +19,7 @@ import fmg.core.mosaic.draw.MosaicDrawModel;
 /**
  * Representable {@link fmg.core.types.EMosaic} as animated image
  */
-public class MosaicsAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
+public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
 
    public enum ERotateMode {
       fullMatrix,

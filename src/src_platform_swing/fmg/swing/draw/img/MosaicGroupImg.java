@@ -6,8 +6,8 @@ import java.util.stream.Stream;
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.MosaicsGroupController;
-import fmg.core.img.MosaicsGroupModel;
+import fmg.core.img.MosaicGroupController;
+import fmg.core.img.MosaicGroupModel;
 import fmg.core.types.EMosaicGroup;
 
 /**
@@ -17,10 +17,10 @@ import fmg.core.types.EMosaicGroup;
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon})
  **/
-public abstract class MosaicsGroupImg<TImage> extends MosaicsSkillOrGroupView<TImage, MosaicsGroupModel> {
+public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TImage, MosaicGroupModel> {
 
    /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
-   protected MosaicsGroupImg(EMosaicGroup group) { super(new MosaicsGroupModel(group)); }
+   protected MosaicGroupImg(EMosaicGroup group) { super(new MosaicGroupModel(group)); }
 
    @Override
    protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
@@ -30,7 +30,7 @@ public abstract class MosaicsGroupImg<TImage> extends MosaicsSkillOrGroupView<TI
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
    /** MosaicsGroup image view implementation over {@link javax.swing.Icon} */
-   static class Icon extends MosaicsGroupImg<javax.swing.Icon> {
+   static class Icon extends MosaicGroupImg<javax.swing.Icon> {
 
       private IconSwing ico = new IconSwing(this);
 
@@ -52,7 +52,7 @@ public abstract class MosaicsGroupImg<TImage> extends MosaicsSkillOrGroupView<TI
    }
 
    /** MosaicsGroup image view implementation over {@link java.awt.Image} */
-   static class Image extends MosaicsGroupImg<java.awt.Image> {
+   static class Image extends MosaicGroupImg<java.awt.Image> {
 
       private ImageAwt img = new ImageAwt(this);
 
@@ -67,16 +67,16 @@ public abstract class MosaicsGroupImg<TImage> extends MosaicsSkillOrGroupView<TI
    }
 
    /** MosaicsGroup image controller implementation for {@link Icon} */
-   public static class ControllerIcon extends MosaicsGroupController<javax.swing.Icon, MosaicsGroupImg.Icon> {
+   public static class ControllerIcon extends MosaicGroupController<javax.swing.Icon, MosaicGroupImg.Icon> {
       public ControllerIcon(EMosaicGroup group) {
-         super(group==null, new MosaicsGroupImg.Icon(group));
+         super(group==null, new MosaicGroupImg.Icon(group));
       }
    }
 
    /** MosaicsGroup image controller implementation for {@link Image} */
-   public static class ControllerImage extends MosaicsGroupController<java.awt.Image, MosaicsGroupImg.Image> {
+   public static class ControllerImage extends MosaicGroupController<java.awt.Image, MosaicGroupImg.Image> {
       public ControllerImage(EMosaicGroup group) {
-         super(group==null, new MosaicsGroupImg.Image(group));
+         super(group==null, new MosaicGroupImg.Image(group));
       }
    }
 
@@ -85,8 +85,8 @@ public abstract class MosaicsGroupImg<TImage> extends MosaicsSkillOrGroupView<TI
       TestDrawing.testApp(() ->
          Stream.concat(Stream.of((EMosaicGroup)null),
                        Stream.of(EMosaicGroup.values()))
-               .map(e -> new Pair<>(new MosaicsGroupImg.ControllerIcon (e),
-                                    new MosaicsGroupImg.ControllerImage(e)))
+               .map(e -> new Pair<>(new MosaicGroupImg.ControllerIcon (e),
+                                    new MosaicGroupImg.ControllerImage(e)))
                .flatMap(x -> Stream.of(x.first, x.second))
                .collect(Collectors.toList())
       );

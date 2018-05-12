@@ -10,9 +10,9 @@ import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.core.img.MosaicRotateTransformer;
-import fmg.core.img.MosaicsAnimatedModel;
-import fmg.core.img.MosaicsAnimatedModel.ERotateMode;
-import fmg.core.img.MosaicsAnimatedModel.RotatedCellContext;
+import fmg.core.img.MosaicAnimatedModel;
+import fmg.core.img.MosaicAnimatedModel.ERotateMode;
+import fmg.core.img.MosaicAnimatedModel.RotatedCellContext;
 import fmg.core.mosaic.AMosaicController;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
@@ -26,17 +26,17 @@ import fmg.swing.mosaic.AMosaicViewSwing;
  *
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
  */
-public abstract class MosaicsImg<TImage>
-                extends AMosaicViewSwing<TImage, Void, MosaicsAnimatedModel<Void>>
+public abstract class MosaicImg<TImage>
+                extends AMosaicViewSwing<TImage, Void, MosaicAnimatedModel<Void>>
 {
 
    private static final boolean RandomCellBkColor = true;
    protected boolean _useBackgroundColor = true;
 
-   protected MosaicsImg() {
-      super(new MosaicsAnimatedModel<Void>());
+   protected MosaicImg() {
+      super(new MosaicAnimatedModel<Void>());
 
-      MosaicsAnimatedModel<Void> model = getModel();
+      MosaicAnimatedModel<Void> model = getModel();
       PenBorder pen = model.getPenBorder();
       pen.setColorLight(pen.getColorShadow());
       if (RandomCellBkColor)
@@ -66,7 +66,7 @@ public abstract class MosaicsImg<TImage>
    /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
 
    private void drawStaticPart() {
-      MosaicsAnimatedModel<Void> model = getModel();
+      MosaicAnimatedModel<Void> model = getModel();
 
       List<BaseCell> notRotated;
       if (model.getRotatedElements().isEmpty()) {
@@ -86,7 +86,7 @@ public abstract class MosaicsImg<TImage>
    }
 
    private void drawRotatedPart() {
-      MosaicsAnimatedModel<Void> model = getModel();
+      MosaicAnimatedModel<Void> model = getModel();
 
       if (model.getRotatedElements().isEmpty())
          return;
@@ -126,7 +126,7 @@ public abstract class MosaicsImg<TImage>
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
    /** Moisac image view implementation over {@link javax.swing.Icon} */
-   static class Icon extends MosaicsImg<javax.swing.Icon> {
+   static class Icon extends MosaicImg<javax.swing.Icon> {
 
       private IconSwing ico = new IconSwing(this);
 
@@ -148,7 +148,7 @@ public abstract class MosaicsImg<TImage>
    }
 
    /** Mosaics image view implementation over {@link java.awt.Image} */
-   static class Image extends MosaicsImg<java.awt.Image> {
+   static class Image extends MosaicImg<java.awt.Image> {
 
       private ImageAwt img = new ImageAwt(this);
 
@@ -163,17 +163,17 @@ public abstract class MosaicsImg<TImage>
    }
 
    /** Mosaics image controller implementation for {@link Icon} */
-   public static class ControllerIcon extends AMosaicController<javax.swing.Icon, Void, MosaicsImg.Icon, MosaicsAnimatedModel<Void>> {
+   public static class ControllerIcon extends AMosaicController<javax.swing.Icon, Void, MosaicImg.Icon, MosaicAnimatedModel<Void>> {
       public ControllerIcon() {
-         super(new MosaicsImg.Icon());
+         super(new MosaicImg.Icon());
          addModelTransformer(new MosaicRotateTransformer());
       }
    }
 
    /** Mosaics image controller implementation for {@link Image} */
-   public static class ControllerImage extends AMosaicController<java.awt.Image, Void, MosaicsImg.Image, MosaicsAnimatedModel<Void>> {
+   public static class ControllerImage extends AMosaicController<java.awt.Image, Void, MosaicImg.Image, MosaicAnimatedModel<Void>> {
       public ControllerImage() {
-         super(new MosaicsImg.Image());
+         super(new MosaicImg.Image());
          addModelTransformer(new MosaicRotateTransformer());
       }
    }
@@ -195,8 +195,8 @@ public abstract class MosaicsImg<TImage>
 
                // variant 2
                .map(e ->  rnd.nextBoolean()
-                           ? new MosaicsImg.ControllerIcon () { { setMosaicType(e); }}
-                           : new MosaicsImg.ControllerImage() { { setMosaicType(e); }}
+                           ? new MosaicImg.ControllerIcon () { { setMosaicType(e); }}
+                           : new MosaicImg.ControllerImage() { { setMosaicType(e); }}
                    )
                .collect(Collectors.toList())
       );

@@ -8,17 +8,17 @@ import fmg.core.types.EMosaicGroup;
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageView> MVC view
  */
-public abstract class MosaicsGroupController< TImage,
-                                              TImageView extends WithBurgerMenuView<TImage, MosaicsGroupModel>>
-                extends AnimatedImgController<TImage, TImageView, MosaicsGroupModel>
+public abstract class MosaicGroupController< TImage,
+                                              TImageView extends WithBurgerMenuView<TImage, MosaicGroupModel>>
+                extends AnimatedImgController<TImage, TImageView, MosaicGroupModel>
 {
 
-   protected MosaicsGroupController(boolean showBurgerMenu, TImageView imageView) {
+   protected MosaicGroupController(boolean showBurgerMenu, TImageView imageView) {
       super(imageView);
 
       getView().getBurgerMenuModel().setShow(showBurgerMenu);
 
-      addModelTransformer(new MosaicsGroupTransformer());
+      addModelTransformer(new MosaicGroupTransformer());
       usePolarLightFgTransforming(true);
       useRotateTransforming(true);
    }

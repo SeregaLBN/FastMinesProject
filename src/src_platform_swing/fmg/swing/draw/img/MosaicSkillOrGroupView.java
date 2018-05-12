@@ -11,23 +11,23 @@ import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.core.img.AnimatedImageModel;
-import fmg.core.img.MosaicsGroupModel;
-import fmg.core.img.MosaicsSkillModel;
+import fmg.core.img.MosaicGroupModel;
+import fmg.core.img.MosaicSkillModel;
 import fmg.core.img.WithBurgerMenuView;
 import fmg.swing.Cast;
 
 /**
  * MVC: view. Abstract SWING representable {@link fmg.core.types.ESkillLevel} or {@link fmg.core.types.EMosaicGroup} as image
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
- * @param <TImageModel> {@link MosaicsSkillModel} or {@link MosaicsGroupModel}
+ * @param <TImageModel> {@link MosaicSkillModel} or {@link MosaicGroupModel}
  */
-public abstract class MosaicsSkillOrGroupView<TImage, TImageModel extends AnimatedImageModel> extends WithBurgerMenuView<TImage, TImageModel> {
+public abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageModel> extends WithBurgerMenuView<TImage, TImageModel> {
 
    static {
       StaticInitilizer.init();
    }
 
-   protected MosaicsSkillOrGroupView(TImageModel imageModel) {
+   protected MosaicSkillOrGroupView(TImageModel imageModel) {
       super(imageModel);
    }
 

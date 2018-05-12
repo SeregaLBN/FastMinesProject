@@ -9,8 +9,8 @@ import fmg.core.types.ESkillLevel;
  * @param <TImageView> MVC view
  */
 public abstract class MosaicSkillController<TImage,
-                                            TImageView extends WithBurgerMenuView<TImage, MosaicsSkillModel>>
-              extends AnimatedImgController<TImage, TImageView, MosaicsSkillModel>
+                                            TImageView extends WithBurgerMenuView<TImage, MosaicSkillModel>>
+              extends AnimatedImgController<TImage, TImageView, MosaicSkillModel>
 {
 
    protected MosaicSkillController(boolean showBurgerMenu, TImageView imageView) {

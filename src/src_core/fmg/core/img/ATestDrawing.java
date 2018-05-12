@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import fmg.common.Color;
 import fmg.common.geom.*;
-import fmg.core.img.MosaicsAnimatedModel.ERotateMode;
+import fmg.core.img.MosaicAnimatedModel.ERotateMode;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.draw.MosaicDrawModel;
 
@@ -105,9 +105,9 @@ public abstract class ATestDrawing {
             double padTopBottom = r((int)(size.height/3));
             mdm.setPadding(new BoundDouble(padLeftRight, padTopBottom, padLeftRight, padTopBottom));
 
-            if (model instanceof MosaicsAnimatedModel) {
+            if (model instanceof MosaicAnimatedModel) {
                @SuppressWarnings("resource")
-               MosaicsAnimatedModel<?> mam = (MosaicsAnimatedModel<?>)model;
+               MosaicAnimatedModel<?> mam = (MosaicAnimatedModel<?>)model;
 
                ERotateMode[] eRotateModes = ERotateMode.values();
                mam.setRotateMode(eRotateModes[r(eRotateModes.length)]);

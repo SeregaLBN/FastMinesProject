@@ -2,17 +2,17 @@ package fmg.core.img;
 
 import fmg.core.types.EMosaicGroup;
 
-/** Transforming of {@link MosaicsGroupModel} */
-public class MosaicsGroupTransformer implements IModelTransformer {
+/** Transforming of {@link MosaicGroupModel} */
+public class MosaicGroupTransformer implements IModelTransformer {
 
    @Override
    public void execute(int currentFrame, int totalFrames, IImageModel model) {
-      if (!(model instanceof MosaicsGroupModel))
+      if (!(model instanceof MosaicGroupModel))
          throw new RuntimeException("Illegal usage transformer");
 
-      MosaicsGroupModel m = (MosaicsGroupModel)model;
+      MosaicGroupModel m = (MosaicGroupModel)model;
 
-      if (MosaicsGroupModel.varMosaicGroupAsValueOthers1 && (m.getMosaicGroup() == EMosaicGroup.eOthers)) {
+      if (MosaicGroupModel.varMosaicGroupAsValueOthers1 && (m.getMosaicGroup() == EMosaicGroup.eOthers)) {
          boolean castling = false;
          double rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
          if (!m.getAnimeDirection())

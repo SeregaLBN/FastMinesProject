@@ -5,10 +5,10 @@ public class MosaicRotateTransformer implements IModelTransformer {
 
    @Override
    public void execute(int currentFrame, int totalFrames, IImageModel model) {
-      if (!(model instanceof MosaicsAnimatedModel<?>))
+      if (!(model instanceof MosaicAnimatedModel<?>))
          throw new RuntimeException("Illegal usage transformer");
 
-      MosaicsAnimatedModel<?> mam = (MosaicsAnimatedModel<?>)model;
+      MosaicAnimatedModel<?> mam = (MosaicAnimatedModel<?>)model;
 
       double rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
 //    //if (!mam.getAnimeDirection())

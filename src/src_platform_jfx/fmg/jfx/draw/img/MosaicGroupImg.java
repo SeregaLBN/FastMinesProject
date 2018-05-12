@@ -6,8 +6,8 @@ import java.util.stream.Stream;
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
-import fmg.core.img.MosaicsGroupController;
-import fmg.core.img.MosaicsGroupModel;
+import fmg.core.img.MosaicGroupController;
+import fmg.core.img.MosaicGroupModel;
 import fmg.core.types.EMosaicGroup;
 
 /**
@@ -17,10 +17,10 @@ import fmg.core.types.EMosaicGroup;
  *
  * @param <TImage> JFX specific image: {@link javafx.scene.image.Image} or {@link javafx.scene.canvas.Canvas})
  **/
-public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TImage, MosaicsGroupModel> {
+public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TImage, MosaicGroupModel> {
 
    /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
-   protected MosaicGroupImg(EMosaicGroup group) { super(new MosaicsGroupModel(group)); }
+   protected MosaicGroupImg(EMosaicGroup group) { super(new MosaicGroupModel(group)); }
 
    @Override
    protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
@@ -68,14 +68,14 @@ public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TIma
    }
 
    /** MosaicsGroup image controller implementation for {@link Canvas} */
-   public static class ControllerCanvas extends MosaicsGroupController<javafx.scene.canvas.Canvas, MosaicGroupImg.Canvas> {
+   public static class ControllerCanvas extends MosaicGroupController<javafx.scene.canvas.Canvas, MosaicGroupImg.Canvas> {
       public ControllerCanvas(EMosaicGroup group) {
          super(group==null, new MosaicGroupImg.Canvas(group));
       }
    }
 
    /** MosaicsGroup image controller implementation for {@link Image} */
-   public static class ControllerImage extends MosaicsGroupController<javafx.scene.image.Image, MosaicGroupImg.Image> {
+   public static class ControllerImage extends MosaicGroupController<javafx.scene.image.Image, MosaicGroupImg.Image> {
       public ControllerImage(EMosaicGroup group) {
          super(group==null, new MosaicGroupImg.Image(group));
       }

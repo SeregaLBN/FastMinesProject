@@ -8,8 +8,6 @@ import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.core.img.AnimatedImageModel;
-import fmg.core.img.MosaicsGroupModel;
-import fmg.core.img.MosaicsSkillModel;
 import fmg.core.img.WithBurgerMenuView;
 import fmg.jfx.Cast;
 import javafx.scene.canvas.GraphicsContext;

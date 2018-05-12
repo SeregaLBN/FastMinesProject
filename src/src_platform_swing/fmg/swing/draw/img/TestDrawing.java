@@ -18,7 +18,7 @@ import fmg.common.geom.Size;
 import fmg.core.img.ATestDrawing;
 import fmg.core.img.ImageController;
 
-/** @see {@link MosaicsSkillImg#main}, {@link MosaicsGroupImg#main}, {@link MosaicsImg#main} */
+/** @see {@link MosaicSkillImg#main}, {@link MosaicGroupImg#main}, {@link MosaicImg#main} */
 final class TestDrawing extends ATestDrawing {
 
    static final int margin = 10;
