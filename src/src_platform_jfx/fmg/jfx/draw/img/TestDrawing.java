@@ -1,5 +1,6 @@
 package fmg.jfx.draw.img;
 
+import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -11,7 +12,6 @@ import fmg.core.img.ATestDrawing;
 import fmg.core.img.ATestDrawing.CellTilingInfo;
 import fmg.core.img.ATestDrawing.CellTilingResult;
 import fmg.core.img.ImageController;
-import fmg.jfx.utils.ImgUtils;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -62,30 +62,33 @@ public final class TestDrawing extends Application {
           //gc.setLineWidth(1);
             gc.strokeRect(rc[0].x, rc[0].y, rc[0].width, rc[0].height);
 
+            Function<ImageController<?,?,?>, CellTilingInfo> callback = ctr[0].itemCallback;
             images.forEach(imgController -> {
-
-               Function<ImageController<?,?,?>, CellTilingInfo> callback = ctr[0].itemCallback;
                CellTilingInfo cti = callback.apply(imgController);
                PointDouble offset = cti.imageOffset;
 
                Object imgObj = imgController.getImage();
-               if (imgObj instanceof Canvas) {
-                  Canvas canvasImg = (Canvas)imgObj;
-                  imgObj = ImgUtils.toImage(canvasImg);
-               } // else // no else!
+//               if (imgObj instanceof Canvas) {
+//                  Canvas canvasImg = (Canvas)imgObj;
+//                  imgObj = ImgUtils.toImage(canvasImg);
+//               } // else // no else!
                if (imgObj instanceof Image) {
                   Image img = (Image)imgObj;
                   gc.drawImage(img, offset.x, offset.y);
-               } else
-                  throw new IllegalArgumentException("Not supported image type is " + imgObj.getClass().getName());
+               } //else
+//                  throw new IllegalArgumentException("Not supported image type is " + imgObj.getClass().getName());
             });
          }
       };
       timer.start();
 
-      Scene scene = new Scene(new Group(canvas = new Canvas(300, 300)));
+      Group group;
+      Scene scene = new Scene(group = new Group(canvas = new Canvas(300, 300)));
 
       Runnable onCellTilingHandler = () -> {
+         group.getChildren().clear();
+         group.getChildren().add(canvas);
+
          double w = canvas.getWidth();
          double h = canvas.getHeight();
          rc[0] = new RectDouble(margin, margin, w-margin*2, h-margin*2); // inner rect where drawing images as tiles
@@ -94,8 +97,19 @@ public final class TestDrawing extends Application {
          Size imgSize = ctr[0].imageSize;
          if (imgSize.height < 1 || imgSize.width < 1)
             return;
-         for (ImageController<?, ?, ?> img : images)
+
+         Function<ImageController<?,?,?>, CellTilingInfo> callback = ctr[0].itemCallback;
+         for (ImageController<?, ?, ?> img : images) {
             img.getModel().setSize(imgSize);
+
+            Object imgObj = img.getImage();
+            if (imgObj instanceof Canvas) {
+               Canvas imgCanvas = (Canvas)imgObj;
+               CellTilingInfo cti = callback.apply(img);
+               PointDouble offset = cti.imageOffset;
+               imgCanvas.relocate(offset.x, offset.y);
+            }
+         }
       };
       ChangeListener<Number> onSizeWListener = (observable, oldValue, newValue) -> {
          double w = (double)newValue;
@@ -119,28 +133,47 @@ public final class TestDrawing extends Application {
       };
       primaryStage.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
 
-//      PropertyChangeListener propertyChangeListener = ev -> {
-//         if (ImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
-//            //canvas.repaint();
-//            //System.out.println("propertyChangeListener: " + ev.getSource());
-//         }
-//      };
+      PropertyChangeListener propertyChangeListener = ev -> {
+       //System.out.println("propertyChangeListener: " + ev.getSource().getClass().getSimpleName());
+         if (ImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
+            ImageController<?,?,?> imgCntrllr = (ImageController<?,?,?>)ev.getSource();
+            Object imgObj = imgCntrllr.getImage();
+            if (imgObj instanceof Canvas) {
+               Canvas imgCanvas = (Canvas)imgObj;
+               if (!group.getChildren().contains(imgCanvas))
+                  group.getChildren().add(imgCanvas);
+            }
+         }
+      };
 
       images.forEach(img -> {
-//         img.addListener(propertyChangeListener);
+         img.addListener(propertyChangeListener);
          td.applyRandom(img, testTransparent[0]);
       });
 
 
       primaryStage.setOnCloseRequest(event -> {
          images.forEach(img -> {
-//            img.removeListener(propertyChangeListener);
+            img.removeListener(propertyChangeListener);
             img.close();
          });
          scene. widthProperty().removeListener(onSizeWListener);
          scene.heightProperty().removeListener(onSizeHListener);
          primaryStage.removeEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
       });
+
+
+//      Pane pane = new Pane();
+//      pane.setStyle("-fx-background-color: #55FFFF85;");
+//      pane.setPrefSize(200,200);
+//      pane.relocate(30, 30);
+//      Circle circle = new Circle(50, Color.BLUE);
+//      circle.relocate(20, 20);
+//      Rectangle rectangle = new Rectangle(100,100,Color.RED);
+//      rectangle.relocate(70,70);
+//      pane.getChildren().addAll(circle,rectangle);
+//
+//      group.getChildren().add(pane);
 
       primaryStage.setTitle(td.getTitle(images));
       primaryStage.setScene(scene);
