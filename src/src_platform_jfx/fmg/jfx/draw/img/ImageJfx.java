@@ -21,7 +21,12 @@ class ImageJfx {
 
    public void createCanvas() {
       Size s = _imageView.getSize();
-      _canvas = new Canvas(s.width, s.height);
+      if (_canvas == null)
+         _canvas = new Canvas(s.width, s.height);
+      else {
+         _canvas. setWidth(s.width);
+         _canvas.setHeight(s.height);
+      }
    }
 
    public Image createImage() {

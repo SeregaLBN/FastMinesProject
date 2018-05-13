@@ -86,9 +86,6 @@ public final class TestDrawing extends Application {
       Scene scene = new Scene(group = new Group(canvas = new Canvas(300, 300)));
 
       Runnable onCellTilingHandler = () -> {
-         group.getChildren().clear();
-         group.getChildren().add(canvas);
-
          double w = canvas.getWidth();
          double h = canvas.getHeight();
          rc[0] = new RectDouble(margin, margin, w-margin*2, h-margin*2); // inner rect where drawing images as tiles

@@ -19,7 +19,12 @@ class CanvasJfx {
 
    public Canvas create() {
       Size s = _imageView.getSize();
-      _canvas = new Canvas(s.width, s.height);
+      if (_canvas == null)
+         _canvas = new Canvas(s.width, s.height);
+      else {
+         _canvas. setWidth(s.width);
+         _canvas.setHeight(s.height);
+      }
       return _canvas;
    }
 
