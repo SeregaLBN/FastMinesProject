@@ -66,6 +66,7 @@ final class TestDrawing extends ATestDrawing {
                      return;
 
                 //g.clearRect((int)rc[0].x, (int)rc[0].y, (int)rc[0].width, (int)rc[0].height);
+                //g.setColor(Color.black);
                   g.drawRect((int)rc[0].x, (int)rc[0].y, (int)rc[0].width, (int)rc[0].height);
 
                   Size imgSize = ctr[0].imageSize;

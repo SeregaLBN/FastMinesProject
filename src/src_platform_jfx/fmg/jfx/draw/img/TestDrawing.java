@@ -1,11 +1,9 @@
 package fmg.jfx.draw.img;
 
-import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import fmg.common.Color;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
@@ -13,7 +11,6 @@ import fmg.core.img.ATestDrawing;
 import fmg.core.img.ATestDrawing.CellTilingInfo;
 import fmg.core.img.ATestDrawing.CellTilingResult;
 import fmg.core.img.ImageController;
-import fmg.jfx.Cast;
 import fmg.jfx.utils.ImgUtils;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -60,9 +57,9 @@ public final class TestDrawing extends Application {
                return;
 
             GraphicsContext gc = canvas.getGraphicsContext2D();
-            gc.setLineWidth(1);
             gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
-            gc.setStroke(Cast.toColor(Color.DarkGray));
+          //gc.setStroke(Cast.toColor(Color.Black));
+          //gc.setLineWidth(1);
             gc.strokeRect(rc[0].x, rc[0].y, rc[0].width, rc[0].height);
 
             images.forEach(imgController -> {
@@ -86,6 +83,8 @@ public final class TestDrawing extends Application {
       };
       timer.start();
 
+      Scene scene = new Scene(new Group(canvas = new Canvas(300, 300)));
+
       Runnable onCellTilingHandler = () -> {
          double w = canvas.getWidth();
          double h = canvas.getHeight();
@@ -98,19 +97,18 @@ public final class TestDrawing extends Application {
          for (ImageController<?, ?, ?> img : images)
             img.getModel().setSize(imgSize);
       };
-      ChangeListener<Number> onSizeListener = (observable, oldValue, newValue) -> {
-         double w = primaryStage.widthProperty().doubleValue();
-         double h = primaryStage.heightProperty().doubleValue();
-         if (Double.isNaN(w) || Double.isNaN(h))
-            return;
-         w -= 2*margin; // ???
-         h -= 4*margin; // ???
+      ChangeListener<Number> onSizeWListener = (observable, oldValue, newValue) -> {
+         double w = (double)newValue;
          canvas.setWidth(w);
+         onCellTilingHandler.run();
+      };
+      ChangeListener<Number> onSizeHListener = (observable, oldValue, newValue) -> {
+         double h = (double)newValue;
          canvas.setHeight(h);
          onCellTilingHandler.run();
       };
-      primaryStage.widthProperty().addListener(onSizeListener);
-      primaryStage.heightProperty().addListener(onSizeListener);
+      scene. widthProperty().addListener(onSizeWListener);
+      scene.heightProperty().addListener(onSizeHListener);
 
       EventHandler<MouseEvent> mouseHandler = ev -> {
          testTransparent[0] = td.bl();
@@ -121,31 +119,31 @@ public final class TestDrawing extends Application {
       };
       primaryStage.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
 
-      PropertyChangeListener propertyChangeListener = ev -> {
-         if (ImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
-            //canvas.repaint();
-            //System.out.println("propertyChangeListener: " + ev.getSource());
-         }
-      };
+//      PropertyChangeListener propertyChangeListener = ev -> {
+//         if (ImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
+//            //canvas.repaint();
+//            //System.out.println("propertyChangeListener: " + ev.getSource());
+//         }
+//      };
 
       images.forEach(img -> {
-         img.addListener(propertyChangeListener);
+//         img.addListener(propertyChangeListener);
          td.applyRandom(img, testTransparent[0]);
       });
 
 
       primaryStage.setOnCloseRequest(event -> {
          images.forEach(img -> {
-            img.removeListener(propertyChangeListener);
+//            img.removeListener(propertyChangeListener);
             img.close();
          });
-         primaryStage.widthProperty().removeListener(onSizeListener);
-         primaryStage.heightProperty().removeListener(onSizeListener);
+         scene. widthProperty().removeListener(onSizeWListener);
+         scene.heightProperty().removeListener(onSizeHListener);
          primaryStage.removeEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
       });
 
       primaryStage.setTitle(td.getTitle(images));
-      primaryStage.setScene(new Scene(new Group(canvas = new Canvas(300, 300))));
+      primaryStage.setScene(scene);
       primaryStage.show();
    }
 
