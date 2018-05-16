@@ -1,16 +1,19 @@
-package fmg.swing.mosaic;
+package fmg.jfx.mosaic;
 
-import java.awt.*;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
-import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
+import javafx.geometry.Bounds;
+import javafx.geometry.Rectangle2D;
+import javafx.geometry.VPos;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 import fmg.common.Color;
 import fmg.common.geom.*;
@@ -23,23 +26,22 @@ import fmg.core.types.EOpen;
 import fmg.core.types.EState;
 import fmg.data.view.draw.FontInfo;
 import fmg.data.view.draw.PenBorder;
-import fmg.swing.Cast;
-import fmg.swing.draw.img.StaticInitilizer;
+import fmg.jfx.Cast;
+import fmg.jfx.draw.img.StaticInitilizer;
 
-/** MVC: view. Abstract SWING implementation */
-public abstract class AMosaicViewSwing<TImage,
-                                       TImage2,
-                                       TMosaicModel extends MosaicDrawModel<TImage2>>
-                extends AMosaicView<TImage, TImage2, TMosaicModel>
+/** MVC: view. Abstract JFX implementation */
+public abstract class AMosaicViewJfx<TImage,
+                                     TImage2,
+                                     TMosaicModel extends MosaicDrawModel<TImage2>>
+                 extends AMosaicView<TImage, TImage2, TMosaicModel>
 {
 
    private Font _font;
-   private final FontRenderContext _frc = new FontRenderContext(null, true, true);
-   /** cached TextLayout for quick drawing */
-   private final Map<String /* text */, TextLayout> _mapTextLayout = new HashMap<>();
+   /** cached Text for quick drawing */
+   private final Map<String /* text */, Text> _mapText = new HashMap<>();
    protected boolean _alreadyPainted = false;
 
-   protected AMosaicViewSwing(TMosaicModel mosaicModel) {
+   protected AMosaicViewJfx(TMosaicModel mosaicModel) {
       super(mosaicModel);
    }
 
@@ -47,14 +49,15 @@ public abstract class AMosaicViewSwing<TImage,
    static {
       StaticInitilizer.init();
 
-      UIDefaults uiDef = UIManager.getDefaults();
-      java.awt.Color clr = uiDef.getColor("Panel.background");
-      if (clr != null)
-         MosaicDrawModel.setDefaultBackgroundColor(Cast.toColor(clr));
+//      panel.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+//      UIDefaults uiDef = UIManager.getDefaults();
+//      java.awt.Color clr = uiDef.getColor("Panel.background");
+//      if (clr != null)
+//         MosaicDrawModel.setDefaultBackgroundColor(Cast.toColor(clr));
    }
 
 
-   protected void draw(Graphics2D g, Collection<BaseCell> modifiedCells, RectDouble clipRegion, boolean drawBk) {
+   protected void draw(GraphicsContext g, Collection<BaseCell> modifiedCells, RectDouble clipRegion, boolean drawBk) {
       assert !_alreadyPainted;
       _alreadyPainted = true;
 
@@ -62,34 +65,29 @@ public abstract class AMosaicViewSwing<TImage,
       Size size = model.getSize();
 
       // save
-      Shape oldShape = g.getClip();
-      java.awt.Color oldColor = g.getColor();
-      Stroke oldStroke = g.getStroke();
+//      Shape oldShape = g.getClip();
+      Paint oldFill = g.getFill();
+      Paint oldStroke = g.getStroke();
       Font oldFont = g.getFont();
 
       // 1. background color
       Color bkClr = model.getBackgroundColor();
       if (drawBk) {
-         g.setComposite(AlphaComposite.Src);
-         g.setColor(Cast.toColor(bkClr));
-         if (clipRegion == null) {
-            /*
-            Rectangle rcBounds = g.getClipBounds();
-            if (rcBounds != null)
-               g.fillRect(rcBounds.x, rcBounds.y, rcBounds.width, rcBounds.height);
-            else
-            */
+         if (!bkClr.isOpaque())
+            g.clearRect(0, 0, size.width, size.height);
+         if (!bkClr.isTransparent()) {
+            g.setFill(Cast.toColor(bkClr));
+            if (clipRegion == null)
                g.fillRect(0, 0, size.width, size.height);
-         } else {
-            g.fillRect((int)clipRegion.x, (int)clipRegion.y, (int)clipRegion.width, (int)clipRegion.height);
+            else
+               g.fillRect(clipRegion.x, clipRegion.y, clipRegion.width, clipRegion.height);
          }
       }
 
       // 2. paint cells
-      g.setComposite(AlphaComposite.SrcOver);
       g.setFont(getFont());
       PenBorder pen = model.getPenBorder();
-      g.setStroke(new BasicStroke(pen.getWidth())); // TODO глянуть расширенные параметры конструктора пера
+      g.setLineWidth(pen.getWidth());
       BoundDouble padding = model.getPadding();
       BoundDouble margin  = model.getMargin();
       SizeDouble offset = new SizeDouble(margin.left + padding.left,
@@ -107,7 +105,7 @@ public abstract class AMosaicViewSwing<TImage,
             RectDouble rcInner = cell.getRcInner(pen.getWidth());
 
             // ограничиваю рисование только границами своей фигуры
-            g.setClip(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset)));
+//            g.setClip(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset)));
 
             { // 2.1. paint component
 
@@ -118,22 +116,22 @@ public abstract class AMosaicViewSwing<TImage,
                                                                 bkClr,
                                                                 bkFill.getColors());
                   if (!bkClrCell.equals(bkClr)) {
-                     g.setColor(Cast.toColor(bkClrCell));
-                     g.fillPolygon(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset)));
+                     RegionDouble poly = RegionDouble.moveXY(cell.getRegion(), offset);
+                     double[] polyX = Cast.toPolygon(poly, true);
+                     double[] polyY = Cast.toPolygon(poly, false);
+                     g.setFill(Cast.toColor(bkClrCell));
+                     g.fillPolygon(polyX, polyY, polyX.length);
                   }
                }
 
-             //g.setColor(java.awt.Color.MAGENTA);
-             //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
+//             g.setStroke(Cast.toColor(Color.Magenta));
+//             g.strokeRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
 
                Consumer<TImage2> paintImage = img -> {
-                  int x = (int)(rcInner.x + offset.width);
-                  int y = (int)(rcInner.y + offset.height);
-                  if (img instanceof javax.swing.Icon) {
-                     ((javax.swing.Icon)img).paintIcon(null/*p.getOwner()*/, g, x, y);
-                  } else
-                  if (img instanceof java.awt.Image) {
-                     g.drawImage((java.awt.Image)img, x, y, null);
+                  double x = rcInner.x + offset.width;
+                  double y = rcInner.y + offset.height;
+                  if (img instanceof Image) {
+                     g.drawImage((Image)img, x, y);
                   } else {
                      throw new RuntimeException("Unsupported image type " + img.getClass().getSimpleName());
                   }
@@ -156,12 +154,12 @@ public abstract class AMosaicViewSwing<TImage,
                {
                   String szCaption;
                   if (cell.getState().getStatus() == EState._Close) {
-                     g.setColor(Cast.toColor(model.getColorText().getColorClose(cell.getState().getClose().ordinal())));
+                     g.setFill(Cast.toColor(model.getColorText().getColorClose(cell.getState().getClose().ordinal())));
                      szCaption = cell.getState().getClose().toCaption();
                    //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
                    //szCaption = ""+cell.getDirection(); // debug
                   } else {
-                     g.setColor(Cast.toColor(model.getColorText().getColorOpen(cell.getState().getOpen().ordinal())));
+                     g.setFill(Cast.toColor(model.getColorText().getColorOpen(cell.getState().getOpen().ordinal())));
                      szCaption = cell.getState().getOpen().toCaption();
                   }
                   if ((szCaption != null) && (szCaption.length() > 0))
@@ -170,12 +168,12 @@ public abstract class AMosaicViewSwing<TImage,
                      if (cell.getState().isDown())
                         rcInner.moveXY(1, 1);
                      drawText(g, szCaption, Cast.toRect(rcInner));
-                   //{ // test
-                   //   java.awt.Color clrOld = g.getColor(); // test
-                   //   g.setColor(java.awt.Color.red);
-                   //   g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
-                   //   g.setColor(clrOld);
-                   //}
+                 //{ // test
+                 //   Paint clrOld = g.getStroke(); // test
+                 //   g.setStroke(Cast.toColor(Color.Red));
+                 //   g.strokeRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
+                 //   g.setStroke(clrOld);
+                 //}
                   }
                }
 
@@ -185,11 +183,14 @@ public abstract class AMosaicViewSwing<TImage,
             {
                // draw border lines
                boolean down = cell.getState().isDown() || (cell.getState().getStatus() == EState._Open);
-               g.setColor(Cast.toColor(down
+               g.setStroke(Cast.toColor(down
                                           ? pen.getColorLight()
                                           : pen.getColorShadow()));
                if (isIconicMode) {
-                  g.drawPolygon(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset)));
+                  RegionDouble poly = RegionDouble.moveXY(cell.getRegion(), offset);
+                  double[] polyX = Cast.toPolygon(poly, true);
+                  double[] polyY = Cast.toPolygon(poly, false);
+                  g.strokePolygon(polyX, polyY, polyX.length);
                } else {
                   int s = cell.getShiftPointBorderIndex();
                   int v = cell.getAttr().getVertexNumber(cell.getDirection());
@@ -199,16 +200,16 @@ public abstract class AMosaicViewSwing<TImage,
                                           ? cell.getRegion().getPoint(i+1)
                                           : cell.getRegion().getPoint(0);
                      if (i==s)
-                        g.setColor(Cast.toColor(down
+                        g.setStroke(Cast.toColor(down
                                                    ? pen.getColorShadow()
                                                    : pen.getColorLight()));
-                     g.drawLine((int)(p1.x+offset.width), (int)(p1.y+offset.height), (int)(p2.x+offset.width), (int)(p2.y+offset.height));
+                     g.strokeLine(p1.x+offset.width, p1.y+offset.height, p2.x+offset.width, p2.y+offset.height);
                   }
                }
 
                // debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
              //g.setColor(java.awt.Color.MAGENTA);
-             //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
+             //g.drawRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
             }
          }
 
@@ -223,61 +224,63 @@ public abstract class AMosaicViewSwing<TImage,
          Color clr = Color.DarkRed.clone();
          clr.setA(120);
          g.setColor(Cast.toColor(clr));
-         g.drawRect((int)padding.left,
-                    (int)padding.top,
-                    (int)(size.width  - padding.getLeftAndRight()),
-                    (int)(size.height - padding.getTopAndBottom()));
+         g.drawRect(padding.left,
+                    padding.top,
+                    size.width  - padding.getLeftAndRight(),
+                    size.height - padding.getTopAndBottom());
 
          // test margin
          g.setStroke(new BasicStroke(3));
          clr = Color.DarkGreen.clone();
          clr.setA(120);
          g.setColor(Cast.toColor(clr));
-         g.drawRect((int)(padding.left + margin.left),
-                    (int)(padding.top  + margin.top),
-                    (int)(size.width  - padding.getLeftAndRight() - margin.getLeftAndRight()),
-                    (int)(size.height - padding.getTopAndBottom() - margin.getTopAndBottom()));
+         g.drawRect(padding.left + margin.left,
+                    padding.top  + margin.top,
+                    size.width  - padding.getLeftAndRight() - margin.getLeftAndRight(),
+                    size.height - padding.getTopAndBottom() - margin.getTopAndBottom());
       }
       /**/
 
       // restore
       g.setFont(oldFont);
       g.setStroke(oldStroke);
-      g.setColor(oldColor);
-      g.setClip(oldShape);
+      g.setFill(oldFill);
+//      g.setClip(oldShape);
 
       _alreadyPainted = false;
    }
 
-   private Rectangle2D getStringBounds(String text) {
-      TextLayout tl = _mapTextLayout.get(text);
-      if (tl == null) {
-         tl = new TextLayout(text, getFont(), _frc);
-         _mapTextLayout.put(text, tl);
+   private Bounds getStringBounds(String text) {
+      Text t = _mapText.get(text);
+      if (t == null) {
+         t = new Text(text);
+         t.setFont(getFont());
+         _mapText.put(text, t);
       }
-      return tl.getBounds();
-//      return font.getStringBounds(text, new FontRenderContext(null, true, true));
+      return t.getLayoutBounds();
    }
 
-   private void drawText(Graphics g, String text, Rectangle rc) {
+   private void drawText(GraphicsContext g, String text, Rectangle2D rc) {
       if ((text == null) || text.trim().isEmpty())
          return;
-      Rectangle2D bnd = getStringBounds(text);
+      Bounds bnd = getStringBounds(text);
 //      { // test
-//         Color clrOld = g.getColor();
-//         g.setColor(Color.BLUE);
-//         g.fillRect(rc.x, rc.y, rc.width, rc.height);
-//         g.setColor(clrOld);
+//         Paint clrOld = g.getFill();
+//         g.setFill(Cast.toColor(Color.Blue));
+//         g.fillRect(rc.getMinX(), rc.getMinY(), rc.getWidth(), rc.getHeight());
+//         g.setFill(clrOld);
 //      }
-      g.drawString(text,
-            rc.x          +(int)((rc.width -bnd.getWidth ())/2.),
-            rc.y+rc.height-(int)((rc.height-bnd.getHeight())/2.));
+      g.setTextAlign(TextAlignment.CENTER);
+      g.setTextBaseline(VPos.CENTER);
+      g.fillText(text,
+                 rc.getMinX() + (rc.getWidth() -bnd.getWidth ())/2.,
+                 rc.getMaxY() - (rc.getHeight()-bnd.getHeight())/2.);
    }
 
    protected Font getFont() {
       if (_font == null) {
          FontInfo fi = getModel().getFontInfo();
-         _font = new Font(fi.getName(), fi.isBold() ? Font.BOLD : Font.PLAIN, fi.getSize());
+         _font = new Font(fi.getName(), /*fi.isBold() ? Font.BOLD : Font.PLAIN, */fi.getSize());
       }
       return _font;
    }
@@ -287,13 +290,13 @@ public abstract class AMosaicViewSwing<TImage,
       super.onPropertyModelChanged(oldValue, newValue, propertyName);
       if (MosaicDrawModel.PROPERTY_FONT_INFO.equals(propertyName)) {
          _font = null;
-         _mapTextLayout.clear();
+         _mapText.clear();
       }
    }
 
    @Override
    public void close() {
-      _mapTextLayout.clear();
+      _mapText.clear();
       super.close();
    }
 
