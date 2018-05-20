@@ -54,7 +54,7 @@ public class Square2 extends BaseCell {
       @Override
       protected double getA() { return Math.sqrt(getArea()); }
       @Override
-      public double getSq(int borderWidth) {
+      public double getSq(double borderWidth) {
          double w = borderWidth/2.;
          return getA()-2*w;
       }
@@ -111,7 +111,7 @@ public class Square2 extends BaseCell {
    }
 
    @Override
-   public RectDouble getRcInner(int borderWidth) {
+   public RectDouble getRcInner(double borderWidth) {
       AttrSquare2 attr = getAttr();
       double sq = attr.getSq(borderWidth);
       double w = borderWidth/2.;

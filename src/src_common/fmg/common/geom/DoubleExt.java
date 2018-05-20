@@ -9,6 +9,7 @@ public final class DoubleExt {
       return Math.abs(value1 - value1) <= precision;
    }
 
+   /** @return value1 == value2 */
    public static boolean hasMinDiff(double value1, double value2) {
       return hasMinDiff(value1, value2, 1);
    }

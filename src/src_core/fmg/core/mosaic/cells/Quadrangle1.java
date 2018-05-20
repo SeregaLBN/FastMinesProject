@@ -82,7 +82,7 @@ public class Quadrangle1 extends BaseCell {
       protected double getZx() { return getZ()*SQRT3/2; }
       protected double getZy() { return getZ()/2; }
       @Override
-      public double getSq(int borderWidth) {
+      public double getSq(double borderWidth) {
          double w = borderWidth/2.;
          return (getA()*SQRT3 - w*2*(1+SQRT3))/(SQRT3+2);
       }
@@ -332,7 +332,7 @@ public class Quadrangle1 extends BaseCell {
    }
 
    @Override
-   public RectDouble getRcInner(int borderWidth) {
+   public RectDouble getRcInner(double borderWidth) {
       AttrQuadrangle1 attr = getAttr();
       double a = attr.getA();
       double b = attr.getB();

@@ -124,7 +124,7 @@ public class PentagonT5 extends BaseCell {
       protected double getA() { return 2*Math.sqrt(getArea()/SQRT147); }
       protected double getH() { return getA()*SQRT3/2; }
       @Override
-      public double getSq(int borderWidth) {
+      public double getSq(double borderWidth) {
          double w = borderWidth/2.;
          return (getA()*2*SQRT3-4*w)/(SQRT3+1);
       }
@@ -600,7 +600,7 @@ public class PentagonT5 extends BaseCell {
    }
 
    @Override
-   public RectDouble getRcInner(int borderWidth) {
+   public RectDouble getRcInner(double borderWidth) {
       AttrPentagonT5 attr = getAttr();
       double a = attr.getA();
       double h = attr.getH();

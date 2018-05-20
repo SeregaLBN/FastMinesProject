@@ -73,7 +73,7 @@ public class Rhombus1 extends BaseCell {
       protected double getH() { return getA()*SQRT3; }
       protected double getR() { return getH()/2; }
       @Override
-      public double getSq(int borderWidth) {
+      public double getSq(double borderWidth) {
          double w = borderWidth/2.;
          return (getA()*SQRT3 - w*4)/(SQRT3+1);
       }
@@ -231,7 +231,7 @@ public class Rhombus1 extends BaseCell {
    }
 
    @Override
-   public RectDouble getRcInner(int borderWidth) {
+   public RectDouble getRcInner(double borderWidth) {
       AttrRhombus1 attr = getAttr();
       double a = attr.getA();
       double c = attr.getC();

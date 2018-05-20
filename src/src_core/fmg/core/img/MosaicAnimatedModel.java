@@ -168,7 +168,7 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
 
       PenBorder pb = getPenBorder();
       // save
-      int borderWidth = pb.getWidth();
+      double borderWidth = pb.getWidth();
       Color colorLight  = pb.getColorLight();
       Color colorShadow = pb.getColorShadow();
       // modify

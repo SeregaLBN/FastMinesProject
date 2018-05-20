@@ -107,7 +107,7 @@ public class Trapezoid3 extends BaseCell {
       protected double getROut() { return getA()*SQRT3; }
       protected double getRIn () { return getROut()/2; }
       @Override
-      public double getSq(int borderWidth) {
+      public double getSq(double borderWidth) {
          double w = borderWidth/2.;
          return (getA()*SQRT3 - w*4)/(SQRT3+1);
       }
@@ -433,7 +433,7 @@ public class Trapezoid3 extends BaseCell {
    }
 
    @Override
-   public RectDouble getRcInner(int borderWidth) {
+   public RectDouble getRcInner(double borderWidth) {
       AttrTrapezoid3 attr = getAttr();
       double a = attr.getA();
       double b = attr.getB();

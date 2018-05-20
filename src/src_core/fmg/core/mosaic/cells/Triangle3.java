@@ -55,7 +55,7 @@ public class Triangle3 extends BaseCell {
       /** пол стороны треугольника */
       protected double getB() { return Math.sqrt(getArea()); }
       @Override
-      public double getSq(int borderWidth) {
+      public double getSq(double borderWidth) {
          double w = borderWidth/2.;
          return (getA() - w*2 / TAN45_2 ) / 3;
       }
@@ -181,7 +181,7 @@ public class Triangle3 extends BaseCell {
    }
 
    @Override
-   public RectDouble getRcInner(int borderWidth) {
+   public RectDouble getRcInner(double borderWidth) {
       AttrTriangle3 attr = getAttr();
       double sq = attr.getSq(borderWidth);
       double w = borderWidth/2.;

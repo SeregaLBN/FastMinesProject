@@ -89,7 +89,7 @@ public abstract class AMosaicViewSwing<TImage,
       g.setComposite(AlphaComposite.SrcOver);
       g.setFont(getFont());
       PenBorder pen = model.getPenBorder();
-      g.setStroke(new BasicStroke(pen.getWidth())); // TODO глянуть расширенные параметры конструктора пера
+      g.setStroke(new BasicStroke((float)pen.getWidth())); // TODO глянуть расширенные параметры конструктора пера
       BoundDouble padding = model.getPadding();
       BoundDouble margin  = model.getMargin();
       SizeDouble offset = new SizeDouble(margin.left + padding.left,
@@ -277,7 +277,7 @@ public abstract class AMosaicViewSwing<TImage,
    protected Font getFont() {
       if (_font == null) {
          FontInfo fi = getModel().getFontInfo();
-         _font = new Font(fi.getName(), fi.isBold() ? Font.BOLD : Font.PLAIN, fi.getSize());
+         _font = new Font(fi.getName(), fi.isBold() ? Font.BOLD : Font.PLAIN, (int)fi.getSize());
       }
       return _font;
    }

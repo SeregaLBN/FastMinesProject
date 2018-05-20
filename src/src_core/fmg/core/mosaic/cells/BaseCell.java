@@ -82,7 +82,7 @@ public abstract class BaseCell {
 
       /** размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
        * на основе заданных параметров */
-      public abstract double getSq(int borderWidth);
+      public abstract double getSq(double borderWidth);
 
       /** значение A (базовая величина фигуры - обычно это размер одной из сторон фигуры) по заданной площади фигуры */
       protected abstract double getA();
@@ -122,7 +122,7 @@ public abstract class BaseCell {
    protected int direction;
 
    /** вписанный в фигуру квадрат - область в которую выводится изображение/текст */
-   public abstract RectDouble getRcInner(int borderWidth);
+   public abstract RectDouble getRcInner(double borderWidth);
    /** вернёт прямоугольник в который вписана фигура ячейки */
    public RectDouble getRcOuter() {
       RectDouble rcOuter = region.getBounds();

@@ -59,7 +59,7 @@ public class Parquet2 extends BaseCell {
       @Override
       protected double getA() { return Math.sqrt(getArea())/2; }
       @Override
-      public double getSq(int borderWidth) {
+      public double getSq(double borderWidth) {
          double w = borderWidth/2.;
          return getA()-w*SQRT2;
       }
@@ -157,7 +157,7 @@ public class Parquet2 extends BaseCell {
    }
 
    @Override
-   public RectDouble getRcInner(int borderWidth) {
+   public RectDouble getRcInner(double borderWidth) {
       AttrParquet2 attr = getAttr();
       double sq = attr.getSq(borderWidth);
       double w = borderWidth/2.;

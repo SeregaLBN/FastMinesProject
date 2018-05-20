@@ -62,7 +62,7 @@ public class PentagonT24 extends BaseCell {
       protected double getB() { return getA()*6/11; }
       protected double getC() { return getB()/2; }
       @Override
-      public double getSq(int borderWidth) {
+      public double getSq(double borderWidth) {
          double w = borderWidth/2.;
          return getA()*8/11-(w+w/SIN135a) / SQRT2;
       }
@@ -169,7 +169,7 @@ public class PentagonT24 extends BaseCell {
    }
 
    @Override
-   public RectDouble getRcInner(int borderWidth) {
+   public RectDouble getRcInner(double borderWidth) {
       AttrPentagonT24 attr = getAttr();
       double sq = attr.getSq(borderWidth);
       double w = borderWidth/2.;

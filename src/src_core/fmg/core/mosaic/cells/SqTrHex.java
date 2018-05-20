@@ -100,7 +100,7 @@ public class SqTrHex extends BaseCell {
       protected double getA() { return Math.sqrt(getArea()/(0.5+1/SQRT3)); }
       protected double getH() { return getA()*SQRT3/2; }
       @Override
-      public double getSq(int borderWidth) {
+      public double getSq(double borderWidth) {
          double w = borderWidth/2.;
          return (getA()*SQRT3 - w*6) / (2+SQRT3);
       }
@@ -343,7 +343,7 @@ public class SqTrHex extends BaseCell {
    }
 
    @Override
-   public RectDouble getRcInner(int borderWidth) {
+   public RectDouble getRcInner(double borderWidth) {
       AttrSqTrHex attr = getAttr();
       double a = attr.getA();
       double b = a/2;

@@ -4,13 +4,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javafx.scene.canvas.GraphicsContext;
+
 import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.core.img.AnimatedImageModel;
 import fmg.core.img.WithBurgerMenuView;
 import fmg.jfx.Cast;
-import javafx.scene.canvas.GraphicsContext;
 
 /**
  * MVC: view. Abstract JFX representable {@link fmg.core.types.ESkillLevel} or {@link fmg.core.types.EMosaicGroup} as image
@@ -44,7 +45,7 @@ abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageM
          }
       }
 
-      int bw = m.getBorderWidth();
+      double bw = m.getBorderWidth();
       boolean needDrawPerimeterBorder = (!m.getBorderColor().isTransparent() && (bw > 0));
       javafx.scene.paint.Color borderColor = !needDrawPerimeterBorder ? null : Cast.toColor(m.getBorderColor());
       if (needDrawPerimeterBorder)

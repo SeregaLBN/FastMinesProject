@@ -1,5 +1,6 @@
 package fmg.data.view.draw;
 
+import fmg.common.geom.DoubleExt;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /** minimal font descripton */
@@ -10,7 +11,7 @@ public class FontInfo extends NotifyPropertyChanged {
    /** font is bold? */
    private boolean _bold = false;
    /** font size */
-   private int _size = 10;
+   private double _size = 10;
 
    public FontInfo() { }
    public FontInfo(String fontName, boolean isBold, int fontSize) {
@@ -41,11 +42,11 @@ public class FontInfo extends NotifyPropertyChanged {
       onPropertyChanged(old, isBold, PROPERTY_BOLD);
    }
 
-   public int getSize() { return _size; }
-   public void setSize(int size) {
-      if (_size == size)
+   public double getSize() { return _size; }
+   public void setSize(double size) {
+      double old = _size;
+      if (DoubleExt.hasMinDiff(_size, size))
          return;
-      int old = _size;
       _size = size;
       onPropertyChanged(old, size, PROPERTY_SIZE);
    }
@@ -54,7 +55,8 @@ public class FontInfo extends NotifyPropertyChanged {
    public int hashCode() {
       int result = 31 + ((_name == null) ? 0 : _name.hashCode());
       result = 31 * result + (_bold ? 1231 : 1237);
-      return 31 * result + _size;
+      long temp = Double.doubleToLongBits(_size);
+      return 31 * result + (int)(temp ^ (temp >>> 32));
    }
 
    @Override
@@ -72,7 +74,7 @@ public class FontInfo extends NotifyPropertyChanged {
       }
       return _name.equals(other._name) &&
             (_bold == other._bold) &&
-            (_size == other._size);
+            DoubleExt.hasMinDiff(_size, other._size);
    }
 
    @Override

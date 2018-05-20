@@ -61,7 +61,7 @@ public class Hexagon1 extends BaseCell {
       /** пол стороны треугольника */
       protected double getB() { return getA()*SQRT3; }
       @Override
-      public double getSq(int borderWidth) {
+      public double getSq(double borderWidth) {
          double w = borderWidth/2.;
          return 2*(getB() - 2*w)/(SQRT3+1);
       }
@@ -123,7 +123,7 @@ public class Hexagon1 extends BaseCell {
    }
 
    @Override
-   public RectDouble getRcInner(int borderWidth) {
+   public RectDouble getRcInner(double borderWidth) {
       AttrHexagon1 attr = getAttr();
       double a = attr.getA();
       double b = attr.getB();

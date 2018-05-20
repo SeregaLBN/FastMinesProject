@@ -87,7 +87,7 @@ public class TrSq1 extends BaseCell {
       protected double getN() { return getA()*SIN75; }
       protected double getM() { return getA()*SIN15; }
       @Override
-      public double getSq(int borderWidth) {
+      public double getSq(double borderWidth) {
          double w = borderWidth/2.;
          return (getA()*SQRT3 - w*6) / (4*SIN75);
       }
@@ -235,7 +235,7 @@ public class TrSq1 extends BaseCell {
    }
 
    @Override
-   public RectDouble getRcInner(int borderWidth) {
+   public RectDouble getRcInner(double borderWidth) {
       AttrTrSq1 attr = getAttr();
       double b = attr.getB();
       double k = attr.getK();

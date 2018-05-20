@@ -54,6 +54,10 @@ public abstract class NotifyPropertyChanged implements AutoCloseable, INotifyPro
       onPropertyChanged(Integer.valueOf(oldValue), Integer.valueOf(newValue), propertyName);
    }
 
+   protected final void onPropertyChanged(double oldValue, double newValue, String propertyName) {
+      onPropertyChanged(Double.valueOf(oldValue), Double.valueOf(newValue), propertyName);
+   }
+
    protected final void onPropertyChanged(boolean oldValue, boolean newValue, String propertyName) {
       onPropertyChanged(Boolean.valueOf(oldValue), Boolean.valueOf(newValue), propertyName);
    }

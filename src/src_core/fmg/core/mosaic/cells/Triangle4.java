@@ -160,7 +160,7 @@ public class Triangle4 extends BaseCell {
       //private double __snip  = 2.3456789 + new java.util.Random(java.util.UUID.randomUUID().hashCode()).nextInt(15);
       protected double getSnip() { return getA()/(/*12*/6.789012345 /*__snip*/); }
       @Override
-      public double getSq(int borderWidth) {
+      public double getSq(double borderWidth) {
          double w = borderWidth/2.;
          return (getA()-w*2/TAN15)/(SQRT3+3);
       }
@@ -1057,7 +1057,7 @@ public class Triangle4 extends BaseCell {
    }
 
    @Override
-   public RectDouble getRcInner(int borderWidth) {
+   public RectDouble getRcInner(double borderWidth) {
       AttrTriangle4 attr = getAttr();
       double w = borderWidth/2.;
       double sq    = attr.getSq(borderWidth);

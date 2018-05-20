@@ -3,6 +3,7 @@ package fmg.core.img;
 import fmg.common.Color;
 import fmg.common.geom.Bound;
 import fmg.common.geom.BoundDouble;
+import fmg.common.geom.DoubleExt;
 import fmg.common.geom.Size;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
@@ -21,7 +22,7 @@ public class ImageModel extends NotifyPropertyChanged implements IImageModel {
    /** background fill color */
    private Color _backgroundColor = DefaultBkColor;
    private Color _borderColor = Color.Maroon.clone().darker(0.5);
-   private int _borderWidth = 3;
+   private double _borderWidth = 3;
    private Color _foregroundColor = DefaultForegroundColor;
    /** 0° .. +360° */
    private double _rotateAngle;
@@ -84,9 +85,13 @@ public class ImageModel extends NotifyPropertyChanged implements IImageModel {
       setProperty(_borderColor, value, PROPERTY_BORDER_COLOR);
    }
 
-   public int getBorderWidth() { return _borderWidth; }
-   public void setBorderWidth(int value) {
-      setProperty(_borderWidth, value, PROPERTY_BORDER_WIDTH);
+   public double getBorderWidth() { return _borderWidth; }
+   public void setBorderWidth(double value) {
+      if (!DoubleExt.hasMinDiff(_borderWidth, value)) {
+         double old = _borderWidth;
+         _borderWidth = value;
+         onPropertyChanged(old, value, PROPERTY_BORDER_WIDTH);
+      }
    }
 
    public Color getForegroundColor() { return _foregroundColor; }

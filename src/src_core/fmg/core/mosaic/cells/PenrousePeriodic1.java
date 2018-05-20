@@ -198,7 +198,7 @@ public class PenrousePeriodic1 extends BaseCell {
       protected double getZ() { return getA()*SIN36; }
       protected double getK() { return getZ()+getG(); }
       @Override
-      public double getSq(int borderWidth) {
+      public double getSq(double borderWidth) {
          //double w = borderWidth/2.;
          return getA()/SIN99 * SIN36 / SQRT2;
       }
@@ -1909,7 +1909,7 @@ public class PenrousePeriodic1 extends BaseCell {
    }
 
    @Override
-   public RectDouble getRcInner(int borderWidth) {
+   public RectDouble getRcInner(double borderWidth) {
       AttrPenrousePeriodic1 attr = getAttr();
 //      double w = borderWidth/2.;
       double sq  = attr.getSq(borderWidth);

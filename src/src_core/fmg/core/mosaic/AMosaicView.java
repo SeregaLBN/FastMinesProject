@@ -63,7 +63,7 @@ public abstract class AMosaicView<TImage,
    private void changeFontSize() {
       TMosaicModel model = getModel();
       PenBorder penBorder = model.getPenBorder();
-      model.getFontInfo().setSize((int)model.getCellAttr().getSq(penBorder.getWidth()));
+      model.getFontInfo().setSize(model.getCellAttr().getSq((int)penBorder.getWidth()));
    }
 
 }

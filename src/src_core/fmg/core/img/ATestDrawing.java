@@ -65,7 +65,7 @@ public abstract class ATestDrawing {
          if (testTransparent) {
             // test transparent
             Color clr = ip.getForegroundColor();
-            if ((ip.getBorderWidth() != 0) && (r(4) == 0)) {
+            if ((ip.getBorderWidth() > 0) && (r(4) == 0)) {
                clr.setA(Color.Transparent.getA());
             } else {
                clr.setA(150 + r(255-150));

@@ -59,7 +59,7 @@ public class Triangle1 extends BaseCell {
       /** высота треугольника */
       protected double getH() { return getB() * SQRT3; }
       @Override
-      public double getSq(int borderWidth) {
+      public double getSq(double borderWidth) {
          double w = borderWidth/2.;
          return (getH()*2 - 6*w)/(SQRT3+2);
          //return (getA()*SQRT3 - 6*w)/(SQRT3+2);
@@ -151,7 +151,7 @@ public class Triangle1 extends BaseCell {
    }
 
    @Override
-   public RectDouble getRcInner(int borderWidth) {
+   public RectDouble getRcInner(double borderWidth) {
       AttrTriangle1 attr = getAttr();
       double b = attr.getB();
       double sq = attr.getSq(borderWidth);

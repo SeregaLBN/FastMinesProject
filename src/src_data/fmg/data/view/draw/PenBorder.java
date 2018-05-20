@@ -1,13 +1,14 @@
 package fmg.data.view.draw;
 
 import fmg.common.Color;
+import fmg.common.geom.DoubleExt;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /** Характеристики кисти у рамки ячейки */
 public class PenBorder extends NotifyPropertyChanged {
 
    private Color colorShadow, colorLight;
-   private int width;
+   private double width;
 
    public PenBorder() {
       this(Color.Black, Color.White, 3);
@@ -52,15 +53,15 @@ public class PenBorder extends NotifyPropertyChanged {
       }
    }
 
-   public int getWidth() {
+   public double getWidth() {
       return width;
    }
 
-   public void setWidth(int iWidth) {
-      int old = this.width;
-      if (old != iWidth) {
-         this.width = iWidth;
-         onPropertyChanged(old, iWidth, PROPERTY_WIDTH);
+   public void setWidth(double width) {
+      double old = this.width;
+      if (!DoubleExt.hasMinDiff(old, width)) {
+         this.width = width;
+         onPropertyChanged(old, width, PROPERTY_WIDTH);
       }
    }
 
@@ -68,7 +69,8 @@ public class PenBorder extends NotifyPropertyChanged {
    public int hashCode() {
       int result = 31 + colorLight.hashCode();
       result = 31 * result + colorShadow.hashCode();
-      return 31 * result + width;
+      long temp = Double.doubleToLongBits(width);
+      return 31 * result + (int)(temp ^ (temp >>> 32));
    }
 
    @Override
@@ -76,7 +78,7 @@ public class PenBorder extends NotifyPropertyChanged {
       if (this == obj) return true;
       if (!(obj instanceof PenBorder)) return false;
       PenBorder penObj = (PenBorder) obj;
-      return (width == penObj.width)
+      return DoubleExt.hasMinDiff(width, penObj.width)
             && colorShadow.equals(penObj.colorShadow)
             && colorLight.equals(penObj.colorLight);
    }
