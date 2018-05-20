@@ -11,7 +11,7 @@ import fmg.data.view.draw.PenBorder;
 /**
  * MVC: view. Base mosaic view implementation
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
- * @param <TImage2> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImage2> image type of flag/mine into mosaic field
  * @param <TMosaicModel> mosaic data model
  */
 public abstract class AMosaicView<TImage,

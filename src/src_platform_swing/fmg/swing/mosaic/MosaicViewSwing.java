@@ -15,12 +15,12 @@ import fmg.swing.draw.img.Flag;
 import fmg.swing.draw.img.Mine;
 import fmg.swing.utils.ImgUtils;
 
-/** MVC: view. SWING implementation over control {@link JPanel} */ // TODO rename to MosaicViewSwingJPanel
+/** MVC: view. SWING implementation over control {@link JPanel} */ // TODO ?? rename to MosaicViewSwingJPanel
 public class MosaicViewSwing extends AMosaicViewSwing<JPanel, Icon, MosaicDrawModel<Icon>> {
 
    private JPanel _control;
-   private Flag.ControllerIcon _flagImage = new Flag.ControllerIcon();
-   private Mine.ControllerIcon _mineImage = new Mine.ControllerIcon();
+   private Flag.ControllerIcon _imgFlag = new Flag.ControllerIcon();
+   private Mine.ControllerIcon _imgMine = new Mine.ControllerIcon();
    private Collection<BaseCell> _modifiedCells;
 
    public MosaicViewSwing() {
@@ -112,15 +112,15 @@ public class MosaicViewSwing extends AMosaicViewSwing<JPanel, Icon, MosaicDrawMo
 
       final int max = 30;
       if (sq > max) {
-         _flagImage.getModel().setSize(sq);
-         _mineImage.getModel().setSize(sq);
-         model.setImgFlag(_flagImage.getImage());
-         model.setImgMine(_mineImage.getImage());
+         _imgFlag.getModel().setSize(sq);
+         _imgMine.getModel().setSize(sq);
+         model.setImgFlag(_imgFlag.getImage());
+         model.setImgMine(_imgMine.getImage());
       } else {
-         _flagImage.getModel().setSize(max);
-         _mineImage.getModel().setSize(max);
-         model.setImgFlag(ImgUtils.zoom(_flagImage.getImage(), sq, sq));
-         model.setImgMine(ImgUtils.zoom(_mineImage.getImage(), sq, sq));
+         _imgFlag.getModel().setSize(max);
+         model.setImgFlag(ImgUtils.zoom(_imgFlag.getImage(), sq, sq));
+         _imgMine.getModel().setSize(max);
+         model.setImgMine(ImgUtils.zoom(_imgMine.getImage(), sq, sq));
       }
    }
 
@@ -128,8 +128,8 @@ public class MosaicViewSwing extends AMosaicViewSwing<JPanel, Icon, MosaicDrawMo
    public void close() {
       super.close();
       _control = null;
-      _flagImage.close();
-      _mineImage.close();
+      _imgFlag.close();
+      _imgMine.close();
    }
 
 }

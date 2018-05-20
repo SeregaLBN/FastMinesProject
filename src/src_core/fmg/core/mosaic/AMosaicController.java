@@ -14,7 +14,12 @@ import fmg.core.types.*;
 import fmg.core.types.click.ClickCellResult;
 import fmg.core.types.click.ClickResult;
 
-/** MVC: mosaic controller. Base implementation */
+/** MVC: mosaic controller. Base implementation
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImage2> image type of flag/mine into mosaic field
+ * @param <TMosaicView> mosaic view
+ * @param <TMosaicModel> mosaic model
+ */
 public abstract class AMosaicController<TImage, TImage2,
                                         TMosaicView extends IMosaicView<TImage, TImage2, TMosaicModel>,
                                         TMosaicModel extends MosaicDrawModel<TImage2>>

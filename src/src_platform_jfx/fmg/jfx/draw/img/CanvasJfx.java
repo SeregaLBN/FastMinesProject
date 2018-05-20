@@ -8,12 +8,12 @@ import fmg.core.img.IImageModel;
 import fmg.core.img.IImageView;
 
 /** Internal wrapper-image imlementation over javafx.scene.canvas.Canvas */
-class CanvasJfx {
+public class CanvasJfx {
 
    private IImageView<Canvas, ? extends IImageModel> _imageView;
    private Canvas _canvas;
 
-   CanvasJfx(IImageView<Canvas, ? extends IImageModel> imageView) {
+   public CanvasJfx(IImageView<Canvas, ? extends IImageModel> imageView) {
       this._imageView = imageView;
    }
 
