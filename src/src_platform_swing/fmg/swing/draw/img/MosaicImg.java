@@ -1,22 +1,15 @@
 package fmg.swing.draw.img;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import fmg.common.Color;
-import fmg.core.img.MosaicRotateTransformer;
 import fmg.core.img.MosaicAnimatedModel;
-import fmg.core.img.MosaicAnimatedModel.ERotateMode;
-import fmg.core.img.MosaicAnimatedModel.RotatedCellContext;
-import fmg.core.mosaic.AMosaicController;
+import fmg.core.mosaic.AMosaicImageController;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
-import fmg.data.view.draw.PenBorder;
 import fmg.swing.mosaic.AMosaicViewSwing;
 
 /**
@@ -30,95 +23,32 @@ public abstract class MosaicImg<TImage>
                 extends AMosaicViewSwing<TImage, Void, MosaicAnimatedModel<Void>>
 {
 
-   private static final boolean RandomCellBkColor = true;
    protected boolean _useBackgroundColor = true;
 
    protected MosaicImg() {
       super(new MosaicAnimatedModel<Void>());
-
-      MosaicAnimatedModel<Void> model = getModel();
-      PenBorder pen = model.getPenBorder();
-      pen.setColorLight(pen.getColorShadow());
-      if (RandomCellBkColor)
-         model.getBackgroundFill().setMode(1 + ThreadLocalRandom.current().nextInt(model.getCellAttr().getMaxBackgroundFillModeValue()));
    }
 
    @Override
    protected void drawBody() {
       //super.drawBody(); // !hide super implementtation
+
+      MosaicAnimatedModel<Void> model = getModel();
+
+      _useBackgroundColor = true;
       switch (getModel().getRotateMode()) {
       case fullMatrix:
-         drawBodyFullMatrix();
+         draw(model.getMatrix());
          break;
       case someCells:
-         drawBodySomeCells();
+         // draw static part
+         draw(model.getStaticPart());
+
+         // draw rotated part
+         _useBackgroundColor = false;
+         model.getRotatedPart(rotatedCells -> draw(rotatedCells));
          break;
       }
-   }
-
-   /** ///////////// ================= PART {@link ERotateMode#fullMatrix} ======================= ///////////// */
-
-   private void drawBodyFullMatrix() {
-      _useBackgroundColor = true;
-      draw(getModel().getMatrix());
-   }
-
-   /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
-
-   private void drawStaticPart() {
-      MosaicAnimatedModel<Void> model = getModel();
-
-      List<BaseCell> notRotated;
-      if (model.getRotatedElements().isEmpty()) {
-         notRotated = model.getMatrix();
-      } else {
-         List<BaseCell> matrix = model.getMatrix();
-         List<Integer> indexes = model.getRotatedElements().stream().map(cntxt -> cntxt.index).collect(Collectors.toList());
-         notRotated = new ArrayList<>(matrix.size() - indexes.size());
-         int i = 0;
-         for (BaseCell cell : matrix) {
-            if (!indexes.contains(i))
-               notRotated.add(cell);
-            ++i;
-         }
-      }
-      draw(notRotated);
-   }
-
-   private void drawRotatedPart() {
-      MosaicAnimatedModel<Void> model = getModel();
-
-      if (model.getRotatedElements().isEmpty())
-         return;
-
-      PenBorder pb = model.getPenBorder();
-      // save
-      int borderWidth = pb.getWidth();
-      Color colorLight  = pb.getColorLight();
-      Color colorShadow = pb.getColorShadow();
-      // modify
-      pb.setWidth(2 * borderWidth);
-      pb.setColorLight(colorLight.darker(0.5));
-      pb.setColorShadow(colorShadow.darker(0.5));
-
-      List<BaseCell> matrix = model.getMatrix();
-      List<BaseCell> rotatedCells = new ArrayList<>(model.getRotatedElements().size());
-      for (RotatedCellContext cntxt : model.getRotatedElements())
-         rotatedCells.add(matrix.get(cntxt.index));
-      draw(rotatedCells);
-
-      // restore
-      pb.setWidth(borderWidth);
-      pb.setColorLight(colorLight);
-      pb.setColorShadow(colorShadow);
-   }
-
-   private void drawBodySomeCells() {
-      _useBackgroundColor = true;
-      drawStaticPart();
-
-      _useBackgroundColor = false;
-      drawRotatedPart();
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -162,19 +92,17 @@ public abstract class MosaicImg<TImage>
 
    }
 
-   /** Mosaics image controller implementation for {@link Icon} */
-   public static class ControllerIcon extends AMosaicController<javax.swing.Icon, Void, MosaicImg.Icon, MosaicAnimatedModel<Void>> {
+   /** Mosaic image controller implementation for {@link Icon} */
+   public static class ControllerIcon extends AMosaicImageController<javax.swing.Icon, MosaicImg.Icon> {
       public ControllerIcon() {
          super(new MosaicImg.Icon());
-         addModelTransformer(new MosaicRotateTransformer());
       }
    }
 
-   /** Mosaics image controller implementation for {@link Image} */
-   public static class ControllerImage extends AMosaicController<java.awt.Image, Void, MosaicImg.Image, MosaicAnimatedModel<Void>> {
+   /** Mosaic image controller implementation for {@link Image} */
+   public static class ControllerImage extends AMosaicImageController<java.awt.Image, MosaicImg.Image> {
       public ControllerImage() {
          super(new MosaicImg.Image());
-         addModelTransformer(new MosaicRotateTransformer());
       }
    }
 

@@ -116,7 +116,7 @@ public class MosaicControllerSwing extends AMosaicController<JPanel, Icon, Mosai
       unsubscribeToViewControl();
    }
 
-   /// TEST
+   ////////////// TEST //////////////
    public static void main(String[] args) {
       MosaicControllerSwing ctrllr = new MosaicControllerSwing();
       EMosaic mosaicType = EMosaic.eMosaicSquare1;
@@ -142,5 +142,6 @@ public class MosaicControllerSwing extends AMosaicController<JPanel, Icon, Mosai
       frame.pack();
       frame.setVisible(true);
    }
+   //////////////////////////////////
 
 }

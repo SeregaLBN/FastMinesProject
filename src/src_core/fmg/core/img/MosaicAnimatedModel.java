@@ -6,7 +6,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
+import fmg.common.Color;
 import fmg.common.geom.Coord;
 import fmg.common.geom.DoubleExt;
 import fmg.common.geom.PointDouble;
@@ -15,6 +17,7 @@ import fmg.common.geom.util.FigureHelper;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
 import fmg.core.mosaic.draw.MosaicDrawModel;
+import fmg.data.view.draw.PenBorder;
 
 /**
  * Representable {@link fmg.core.types.EMosaic} as animated image
@@ -22,7 +25,9 @@ import fmg.core.mosaic.draw.MosaicDrawModel;
 public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
 
    public enum ERotateMode {
+      /** rotate full matrix (all cells) */
       fullMatrix,
+      /** rotate some cells (independently of each other) */
       someCells
    }
 
@@ -33,6 +38,7 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
    private final List<Double /* angle offset */ > _prepareList = new ArrayList<>();
    private final List<RotatedCellContext> _rotatedElements = new ArrayList<>();
    private boolean _disableCellAttributeListener = false;
+   private boolean _disableListener = false;
 
 
    public static final String PROPERTY_ROTATE_ANGLE     = "RotateAngle";
@@ -53,6 +59,8 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
    @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       //LoggerSimple.Put("onPropertyChanged: {0}: PropertyName={1}", Entity, ev.PropertyName);
+      if (_disableListener)
+         return;
       super.onPropertyChanged(oldValue, newValue, propertyName);
       switch (propertyName) {
       case PROPERTY_ROTATE_MODE:
@@ -140,8 +148,48 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
       Collections.sort(_rotatedElements, (e1, e2) -> Double.compare(e1.area, e2.area));
    }
 
-   public List<RotatedCellContext> getRotatedElements() {
-      return _rotatedElements;
+   public List<BaseCell> getStaticPart() {
+      if (_rotatedElements.isEmpty())
+         return getMatrix();
+
+      List<BaseCell> matrix = getMatrix();
+      List<Integer> indexes = _rotatedElements.stream().map(cntxt -> cntxt.index).collect(Collectors.toList());
+      List<BaseCell> notRotated = new ArrayList<>(matrix.size() - indexes.size());
+      int i = 0;
+      for (BaseCell cell : matrix) {
+         if (!indexes.contains(i))
+            notRotated.add(cell);
+         ++i;
+      }
+      return notRotated;
+   }
+
+   public void getRotatedPart(java.util.function.Consumer<List<BaseCell>> rotatedCellsFunctor) {
+      if (_rotatedElements.isEmpty())
+         return;
+
+      PenBorder pb = getPenBorder();
+      // save
+      int borderWidth = pb.getWidth();
+      Color colorLight  = pb.getColorLight();
+      Color colorShadow = pb.getColorShadow();
+      // modify
+      _disableListener = true;
+      pb.setWidth(2 * borderWidth);
+      pb.setColorLight(colorLight.darker(0.5));
+      pb.setColorShadow(colorShadow.darker(0.5));
+
+      List<BaseCell> matrix = getMatrix();
+      List<BaseCell> rotatedCells = new ArrayList<>(_rotatedElements.size());
+      for (RotatedCellContext cntxt : _rotatedElements)
+         rotatedCells.add(matrix.get(cntxt.index));
+      rotatedCellsFunctor.accept(rotatedCells);
+
+      // restore
+      pb.setWidth(borderWidth);
+      pb.setColorLight(colorLight);
+      pb.setColorShadow(colorShadow);
+      _disableListener = false;
    }
 
    private void randomRotateElemenIndex() {
