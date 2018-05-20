@@ -7,7 +7,7 @@ import fmg.common.geom.Size;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /** MVC: model. Common image characteristics. */
-public class ImageProperties extends NotifyPropertyChanged implements IImageModel {
+public class ImageModel extends NotifyPropertyChanged implements IImageModel {
 
    public static final Color DefaultBkColor         = Color.DarkOrange;
    public static final Color DefaultForegroundColor = Color.Orchid;
@@ -27,7 +27,7 @@ public class ImageProperties extends NotifyPropertyChanged implements IImageMode
    private double _rotateAngle;
 
 
-   public ImageProperties() {
+   public ImageModel() {
       _size = new Size(DefaultImageSize, DefaultImageSize);
       _padding = new BoundDouble(DefaultPaddingInt, DefaultPaddingInt, DefaultPaddingInt, DefaultPaddingInt);
    }

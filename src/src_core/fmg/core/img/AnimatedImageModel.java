@@ -1,7 +1,7 @@
 package fmg.core.img;
 
 /** MVC: model. Animated image characteristics. */
-public class AnimatedImageModel extends ImageProperties {
+public class AnimatedImageModel extends ImageModel {
 
    public static final String PROPERTY_POLAR_LIGHTS    = "PolarLights";
    public static final String PROPERTY_ANIME_DIRECTION = "AnimeDirection";

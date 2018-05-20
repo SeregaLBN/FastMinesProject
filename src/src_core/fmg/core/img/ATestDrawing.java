@@ -50,9 +50,9 @@ public abstract class ATestDrawing {
       if (testTransparent)
          bkClr.setA(50 + r(10));
 
-      if (model instanceof ImageProperties) {
+      if (model instanceof ImageModel) {
          @SuppressWarnings("resource")
-         ImageProperties ip = (ImageProperties)model;
+         ImageModel ip = (ImageModel)model;
 
          ip.setBorderWidth(r(3));
 

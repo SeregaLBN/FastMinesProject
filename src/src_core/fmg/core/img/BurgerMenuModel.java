@@ -15,7 +15,7 @@ public class BurgerMenuModel extends NotifyPropertyChanged implements IImageMode
    /**
     * @param generalModel - another basic model
     */
-   protected BurgerMenuModel(ImageProperties generalModel) {
+   protected BurgerMenuModel(ImageModel generalModel) {
       _show = true;
       _layers = 3;
       _horizontal = true;
@@ -24,13 +24,13 @@ public class BurgerMenuModel extends NotifyPropertyChanged implements IImageMode
       _generalModel = generalModel;
       _generalModelListener = event -> {
          assert event.getSource() == _generalModel; // by reference
-         if (ImageProperties.PROPERTY_SIZE.equals(event.getPropertyName()))
+         if (ImageModel.PROPERTY_SIZE.equals(event.getPropertyName()))
             recalcPadding((Size)event.getOldValue());
       };
       _generalModel.addListener(_generalModelListener);
    }
 
-   private ImageProperties _generalModel;
+   private ImageModel _generalModel;
    private PropertyChangeListener _generalModelListener;
 
 
@@ -84,7 +84,7 @@ public class BurgerMenuModel extends NotifyPropertyChanged implements IImageMode
                               size.height / 2,
                               _generalModel.getPadding().right,
                               _generalModel.getPadding().bottom)
-            : ImageProperties.recalcPadding(_padding, size, old);
+            : ImageModel.recalcPadding(_padding, size, old);
       setProperty(_padding, paddingNew, PROPERTY_PADDING);
    }
 
@@ -113,7 +113,7 @@ public class BurgerMenuModel extends NotifyPropertyChanged implements IImageMode
 
       return IntStream.range(0, layers)
          .mapToObj(layerNum -> {
-            double layerAlignmentAngle = ImageProperties.fixAngle(layerNum*stepAngle + rotateAngle);
+            double layerAlignmentAngle = ImageModel.fixAngle(layerNum*stepAngle + rotateAngle);
             double offsetTop  = !horizontal ? 0 : layerAlignmentAngle*rc.height/360;
             double offsetLeft =  horizontal ? 0 : layerAlignmentAngle*rc.width /360;
             PointDouble start = new PointDouble(rc.left() + offsetLeft,

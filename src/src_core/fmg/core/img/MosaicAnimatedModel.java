@@ -50,7 +50,7 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
    /** 0° .. +360° */
    public double getRotateAngle() { return _rotateAngle; }
    public void setRotateAngle(double value) {
-      value = ImageProperties.fixAngle(value);
+      value = ImageModel.fixAngle(value);
       setProperty(_rotateAngle, value, PROPERTY_ROTATE_ANGLE);
    }
 
