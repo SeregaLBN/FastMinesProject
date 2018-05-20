@@ -1,4 +1,4 @@
-package fmg.swing.draw.img;
+package fmg.jfx.draw.img;
 
 import java.util.Collection;
 import java.util.Random;
@@ -10,17 +10,17 @@ import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.mosaic.AMosaicImageController;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
-import fmg.swing.mosaic.AMosaicViewSwing;
+import fmg.jfx.mosaic.AMosaicViewJfx;
 
 /**
  * Representable {@link fmg.core.types.EMosaic} as image
  * <br>
- * base SWING impl
+ * base JavaFX impl
  *
- * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
+ * @param <TImage> SWING specific image: {@link javafx.scene.image.Image} or {@link javafx.scene.canvas.Canvas}
  */
 public abstract class MosaicImg<TImage>
-                extends AMosaicViewSwing<TImage, Void, MosaicAnimatedModel<Void>>
+                extends AMosaicViewJfx<TImage, Void, MosaicAnimatedModel<Void>>
 {
 
    protected boolean _useBackgroundColor = true;
@@ -55,52 +55,49 @@ public abstract class MosaicImg<TImage>
    //    custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   /** Moisac image view implementation over {@link javax.swing.Icon} */
-   static class Icon extends MosaicImg<javax.swing.Icon> {
+   /** Moisac image view implementation over {@link javafx.scene.canvas.javafx.scene.canvas.Canvas} */
+   static class Canvas extends MosaicImg<javafx.scene.canvas.Canvas> {
 
-      private IconSwing ico = new IconSwing(this);
+      private CanvasJfx canvas = new CanvasJfx(this);
 
       @Override
-      protected javax.swing.Icon createImage() { return ico.create(); }
+      protected javafx.scene.canvas.Canvas createImage() { return canvas.create(); }
 
       @Override
       public void draw(Collection<BaseCell> modifiedCells) {
-         draw(ico.getGraphics(), modifiedCells, null, _useBackgroundColor);
-      }
-
-      @Override
-      public void close() {
-         ico.close();
-         super.close();
-         ico = null;
+         draw(canvas.getGraphics(), modifiedCells, null, _useBackgroundColor);
       }
 
    }
 
-   /** Mosaics image view implementation over {@link java.awt.Image} */
-   static class Image extends MosaicImg<java.awt.Image> {
+   /** Mosaics image view implementation over {@link javafx.scene.image.Image} */
+   static class Image extends MosaicImg<javafx.scene.image.Image> {
 
-      private ImageAwt img = new ImageAwt(this);
+      private ImageJfx img = new ImageJfx(this);
 
       @Override
-      protected java.awt.Image createImage() { return img.create(); }
+      protected javafx.scene.image.Image createImage() {
+         img.createCanvas();
+         return null; // img.createImage(); // fake empty image
+      }
 
       @Override
       public void draw(Collection<BaseCell> modifiedCells) {
-         img.draw(g -> draw(g, modifiedCells, null, _useBackgroundColor));
+         draw(img.getGraphics(), modifiedCells, null, _useBackgroundColor);
+         setImage(img.createImage()); // real image
       }
 
    }
 
-   /** Mosaic image controller implementation for {@link Icon} */
-   public static class ControllerIcon extends AMosaicImageController<javax.swing.Icon, MosaicImg.Icon> {
-      public ControllerIcon() {
-         super(new MosaicImg.Icon());
+   /** Mosaic image controller implementation for {@link Canvas} */
+   public static class ControllerCanvas extends AMosaicImageController<javafx.scene.canvas.Canvas, MosaicImg.Canvas> {
+      public ControllerCanvas() {
+         super(new MosaicImg.Canvas());
       }
    }
 
    /** Mosaic image controller implementation for {@link Image} */
-   public static class ControllerImage extends AMosaicImageController<java.awt.Image, MosaicImg.Image> {
+   public static class ControllerImage extends AMosaicImageController<javafx.scene.image.Image, MosaicImg.Image> {
       public ControllerImage() {
          super(new MosaicImg.Image());
       }
@@ -117,14 +114,14 @@ public abstract class MosaicImg<TImage>
          Stream.of(EMosaic.values())
 
 //               // variant 1
-//               .map(e -> Stream.of(new MosaicsImg.ControllerIcon () { { setMosaicType(e); }},
-//                                   new MosaicsImg.ControllerImage() { { setMosaicType(e); }}))
+//               .map(e -> Stream.of(new MosaicsImg.ControllerCanvas() { { setMosaicType(e); }},
+//                                   new MosaicsImg.ControllerImage () { { setMosaicType(e); }}))
 //               .flatMap(x -> x)
 
                // variant 2
                .map(e ->  rnd.nextBoolean()
-                           ? new MosaicImg.ControllerIcon () { { setMosaicType(e); }}
-                           : new MosaicImg.ControllerImage() { { setMosaicType(e); }}
+                           ? new MosaicImg.ControllerCanvas() { { setMosaicType(e); }}
+                           : new MosaicImg.ControllerImage () { { setMosaicType(e); }}
                    )
                .collect(Collectors.toList())
       );

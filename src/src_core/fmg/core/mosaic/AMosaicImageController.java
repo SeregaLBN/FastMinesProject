@@ -5,10 +5,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.img.MosaicRotateTransformer;
 import fmg.data.view.draw.PenBorder;
-import fmg.swing.draw.img.MosaicImg;
 
 /** MVC: mosaic image controller. Base implementation */
-public abstract class AMosaicImageController<TImage, TMosaicView extends MosaicImg<TImage>>
+public abstract class AMosaicImageController<TImage, TMosaicView extends AMosaicView<TImage, Void, MosaicAnimatedModel<Void>>>
               extends AMosaicController<TImage, Void, TMosaicView, MosaicAnimatedModel<Void>>
 {
 

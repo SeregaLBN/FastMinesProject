@@ -19,9 +19,7 @@ import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
 import fmg.core.mosaic.draw.MosaicDrawModel;
 import fmg.data.view.draw.PenBorder;
 
-/**
- * Representable {@link fmg.core.types.EMosaic} as animated image
- */
+/** Representable {@link fmg.core.types.EMosaic} as animated image */
 public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
 
    public enum ERotateMode {
@@ -148,7 +146,7 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
       Collections.sort(_rotatedElements, (e1, e2) -> Double.compare(e1.area, e2.area));
    }
 
-   public List<BaseCell> getStaticPart() {
+   public List<BaseCell> getNotRotatedCells() {
       if (_rotatedElements.isEmpty())
          return getMatrix();
 
@@ -164,7 +162,7 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
       return notRotated;
    }
 
-   public void getRotatedPart(java.util.function.Consumer<List<BaseCell>> rotatedCellsFunctor) {
+   public void getRotatedCells(java.util.function.Consumer<List<BaseCell>> rotatedCellsFunctor) {
       if (_rotatedElements.isEmpty())
          return;
 
