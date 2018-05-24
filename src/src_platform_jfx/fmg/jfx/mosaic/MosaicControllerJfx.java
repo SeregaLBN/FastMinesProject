@@ -13,6 +13,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
@@ -51,9 +52,11 @@ public class MosaicControllerJfx extends AMosaicController<Canvas, Image, Mosaic
          if (!((Node)ev.getSource()).getScene().getWindow().isFocused())
             return;
 
-         if (ev.isPrimaryButtonDown())
+         MouseButton eBttn = ev.getButton();
+         if (eBttn == MouseButton.PRIMARY)
             MosaicControllerJfx.this.mouseReleased(clickPoint, true);
-         if (ev.isSecondaryButtonDown())
+         else
+         if (eBttn == MouseButton.SECONDARY)
             MosaicControllerJfx.this.mouseReleased(clickPoint, false);
       }
    };

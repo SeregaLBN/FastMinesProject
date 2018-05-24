@@ -36,11 +36,9 @@ public class MosaicViewJfx extends AMosaicViewJfx<Canvas, Image, MosaicDrawModel
          return;
       }
       RectDouble rcClip = null;
-      boolean first = true;
       for (BaseCell cell : modifiedCells) {
          RectDouble rc = cell.getRcOuter();
-         if (first) {
-            first = false;
+         if (rcClip == null) {
             rcClip = rc;
          } else {
             rcClip.x    = Math.min(rcClip.x       , rc.x);
