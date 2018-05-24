@@ -5,6 +5,7 @@ import java.util.Collection;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 
+import fmg.common.geom.RectDouble;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.MosaicDrawModel;
@@ -30,7 +31,25 @@ public class MosaicViewJfx extends AMosaicViewJfx<Canvas, Image, MosaicDrawModel
 
    @Override
    public void draw(Collection<BaseCell> modifiedCells) {
-      draw(canvas.getGraphics(), modifiedCells, null, true);
+      if (modifiedCells == null) {
+         draw(canvas.getGraphics(), getModel().getMatrix(), null, true);
+         return;
+      }
+      RectDouble rcClip = null;
+      boolean first = true;
+      for (BaseCell cell : modifiedCells) {
+         RectDouble rc = cell.getRcOuter();
+         if (first) {
+            first = false;
+            rcClip = rc;
+         } else {
+            rcClip.x    = Math.min(rcClip.x       , rc.x);
+            rcClip.y    = Math.min(rcClip.y       , rc.y);
+            rcClip.right( Math.max(rcClip.right() , rc.right()));
+            rcClip.bottom(Math.max(rcClip.bottom(), rc.bottom()));
+         }
+      }
+      draw(canvas.getGraphics(), modifiedCells, rcClip, true);
    }
 
    @Override

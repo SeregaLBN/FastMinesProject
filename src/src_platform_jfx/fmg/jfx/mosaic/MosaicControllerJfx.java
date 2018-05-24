@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 
 import fmg.common.geom.PointDouble;
 import fmg.core.mosaic.AMosaicController;
+import fmg.core.mosaic.AMosaicView;
 import fmg.core.mosaic.draw.MosaicDrawModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
@@ -95,6 +96,7 @@ public class MosaicControllerJfx extends AMosaicController<Canvas, Image, Mosaic
 
       @Override
       public void start(Stage stage) {
+         AMosaicView._DEBUG_DRAW_FLOW = true;
          MosaicControllerJfx ctrllr = new MosaicControllerJfx();
          EMosaic mosaicType = EMosaic.eMosaicSquare1;
          ESkillLevel skill  = ESkillLevel.eBeginner;
