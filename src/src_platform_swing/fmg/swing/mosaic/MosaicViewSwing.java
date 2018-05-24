@@ -2,10 +2,12 @@ package fmg.swing.mosaic;
 
 import java.awt.*;
 import java.util.Collection;
+import java.util.HashSet;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
+import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.cells.BaseCell;
@@ -21,7 +23,7 @@ public class MosaicViewSwing extends AMosaicViewSwing<JPanel, Icon, MosaicDrawMo
    private JPanel _control;
    private Flag.ControllerIcon _imgFlag = new Flag.ControllerIcon();
    private Mine.ControllerIcon _imgMine = new Mine.ControllerIcon();
-   private Collection<BaseCell> _modifiedCells;
+   private final Collection<BaseCell> _modifiedCells = new HashSet<>();
 
    public MosaicViewSwing() {
       super(new MosaicDrawModel<Icon>());
@@ -45,8 +47,15 @@ public class MosaicViewSwing extends AMosaicViewSwing<JPanel, Icon, MosaicDrawMo
                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
                Rectangle clipBounds = g.getClipBounds();
-               MosaicViewSwing.this.draw(g2d, _modifiedCells, (clipBounds==null) ? null : Cast.toRectDouble(g.getClipBounds()), true);
-               _modifiedCells = null;
+               MosaicViewSwing.this.draw(g2d,
+                                         _modifiedCells.isEmpty()
+                                            ? null
+                                            : _modifiedCells,
+                                         (clipBounds==null)
+                                            ? null
+                                            : Cast.toRectDouble(g.getClipBounds()),
+                                         true/*_modifiedCells.isEmpty() || (_modifiedCells.size() == getModel().getMatrix().size())*/);
+               _modifiedCells.clear();
             }
 
              @Override
@@ -74,15 +83,33 @@ public class MosaicViewSwing extends AMosaicViewSwing<JPanel, Icon, MosaicDrawMo
 
       assert !_alreadyPainted;
 
-      _modifiedCells = modifiedCells;
-      control.repaint();
+      if (modifiedCells == null) { // mark NULL if all mosaic is changed
+         _modifiedCells.clear();
+         control.repaint();
+      } else {
+         double minX=0, minY=0, maxX=0, maxY=0;
+         _modifiedCells.addAll(modifiedCells);
+
+         boolean first = true;
+         for (BaseCell cell : modifiedCells) {
+            RectDouble rc = cell.getRcOuter();
+            if (first) {
+               first = false;
+               minX = rc.x;
+               minY = rc.y;
+               maxX = rc.right();
+               maxY = rc.bottom();
+            } else {
+               minX = Math.min(minX, rc.x);
+               minY = Math.min(minY, rc.y);
+               maxX = Math.max(maxX, rc.right());
+               maxY = Math.max(maxY, rc.bottom());
+            }
+         }
+         control.repaint((int)minX, (int)minY, (int)(maxX-minX), (int)(maxY-minY));
+      }
     //control.invalidate();
    }
-
-//   @Override
-//   public void invalidate(Collection<BaseCell> modifiedCells) {
-//      super.invalidate(modifiedCells);
-//   }
 
    @Override
    public void invalidate() {

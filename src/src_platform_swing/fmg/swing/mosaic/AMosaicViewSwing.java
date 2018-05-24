@@ -38,7 +38,7 @@ public abstract class AMosaicViewSwing<TImage,
 {
 
    private Font _font;
-   private final FontRenderContext _frc = new FontRenderContext(null, true, true);
+   private static final FontRenderContext _frc = new FontRenderContext(null, true, true);
    /** cached TextLayout for quick drawing */
    private final Map<String /* text */, TextLayout> _mapTextLayout = new HashMap<>();
    protected boolean _alreadyPainted = false;
@@ -76,24 +76,17 @@ public abstract class AMosaicViewSwing<TImage,
       if (drawBk) {
          g.setComposite(AlphaComposite.Src);
          g.setColor(Cast.toColor(bkClr));
-         if (clipRegion == null) {
-            /*
-            Rectangle rcBounds = g.getClipBounds();
-            if (rcBounds != null)
-               g.fillRect(rcBounds.x, rcBounds.y, rcBounds.width, rcBounds.height);
-            else
-            */
-               g.fillRect(0, 0, size.width, size.height);
-         } else {
+         if (clipRegion == null)
+            g.fillRect(0, 0, size.width, size.height);
+         else
             g.fillRect((int)clipRegion.x, (int)clipRegion.y, (int)clipRegion.width, (int)clipRegion.height);
-         }
       }
 
       // 2. paint cells
       g.setComposite(AlphaComposite.SrcOver);
       g.setFont(getFont());
       PenBorder pen = model.getPenBorder();
-      g.setStroke(new BasicStroke((float)pen.getWidth())); // TODO глянуть расширенные параметры конструктора пера
+      g.setStroke(new BasicStroke((float)pen.getWidth()));
       BoundDouble padding = model.getPadding();
       BoundDouble margin  = model.getMargin();
       SizeDouble offset = new SizeDouble(margin.left + padding.left,
@@ -101,13 +94,31 @@ public abstract class AMosaicViewSwing<TImage,
       boolean isIconicMode = pen.getColorLight().equals(pen.getColorShadow());
       BackgroundFill bkFill = model.getBackgroundFill();
 
-      if ((modifiedCells == null) || modifiedCells.isEmpty())
-         modifiedCells = model.getMatrix(); // check to redraw all mosaic cells
-      for (BaseCell cell: modifiedCells)
-         // redraw only when needed - when the cells and update region intersect
-         if ((clipRegion == null) ||
-              cell.getRcOuter().moveXY(offset.width, offset.height).intersection(clipRegion))
+      Collection<BaseCell> toCheck;
+      if ((clipRegion != null) || (modifiedCells == null))
+         toCheck = model.getMatrix(); // check to redraw all mosaic cells
+      else
+         toCheck = modifiedCells;
+
+      if (_DEBUG_DRAW_FLOW) {
+         String sufix = "; clipReg=" + clipRegion + "; drawBk=" + drawBk;
+         if (modifiedCells == null)
+            System.out.println("> AMosaicViewSwing.draw: all=" + toCheck.size() + sufix);
+         else
+         if ((modifiedCells == model.getMatrix()) || (modifiedCells.size() == model.getMatrix().size()))
+            System.out.println("> AMosaicViewSwing.draw: all=" + modifiedCells.size() + sufix);
+         else
+            System.out.println("> AMosaicViewSwing.draw: cnt=" + modifiedCells.size() + sufix);
+      }
+      int tmp = 0;
+
+      for (BaseCell cell: toCheck)
+         // redraw only when needed...
+         if ((toCheck == modifiedCells) || // check reference equals
+             ((modifiedCells != null) && (modifiedCells.contains(cell))) || // ..when the cell is explicitly specified
+             ((clipRegion != null) && cell.getRcOuter().moveXY(offset.width, offset.height).intersection(clipRegion))) // ...when the cells and update region intersect
          {
+            ++tmp;
             RectDouble rcInner = cell.getRcInner(pen.getWidth());
 
             // ограничиваю рисование только границами своей фигуры
@@ -121,7 +132,7 @@ public abstract class AMosaicViewSwing<TImage,
                   Color bkClrCell = cell.getBackgroundFillColor(bkFill.getMode(),
                                                                 bkClr,
                                                                 bkFill.getColors());
-                  if (!bkClrCell.equals(bkClr)) {
+                  if (!drawBk || !bkClrCell.equals(bkClr)) {
                      g.setColor(Cast.toColor(bkClrCell));
                      g.fillPolygon(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset)));
                   }
@@ -243,6 +254,11 @@ public abstract class AMosaicViewSwing<TImage,
                     (int)(size.height - padding.getTopAndBottom() - margin.getTopAndBottom()));
       }
       /**/
+
+      if (_DEBUG_DRAW_FLOW) {
+         System.out.println("< AMosaicViewSwing.draw: cnt=" + tmp);
+         System.out.println("-------------------------------");
+      }
 
       // restore
       g.setFont(oldFont);

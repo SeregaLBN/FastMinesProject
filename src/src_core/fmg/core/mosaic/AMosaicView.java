@@ -2,6 +2,7 @@ package fmg.core.mosaic;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import fmg.core.img.ImageView;
 import fmg.core.mosaic.cells.BaseCell;
@@ -25,7 +26,8 @@ public abstract class AMosaicView<TImage,
       super(mosaicModel);
    }
 
-   private Collection<BaseCell> _modifiedCells = new HashSet<>();
+   public static boolean _DEBUG_DRAW_FLOW = false;
+   private final Collection<BaseCell> _modifiedCells = new HashSet<>();
 
    @Override
    public void invalidate(Collection<BaseCell> modifiedCells) {
@@ -33,12 +35,16 @@ public abstract class AMosaicView<TImage,
          _modifiedCells.clear();
       else
          _modifiedCells.addAll(modifiedCells);
+      if (_DEBUG_DRAW_FLOW)
+         System.out.println("AMosaicView.invalidate: " + ((modifiedCells==null) ? "all" : ("cnt=" + modifiedCells.size()) + ": " + modifiedCells.stream().limit(5).collect(Collectors.toList())));
       invalidate();
    }
 
    /** repaint all */
    @Override
    protected void drawBody() {
+      if (_DEBUG_DRAW_FLOW)
+         System.out.println("AMosaicView.drawBody: " + (_modifiedCells.isEmpty() ? "all" : ("cnt=" + _modifiedCells.size()) + ": " + _modifiedCells.stream().limit(5).collect(Collectors.toList())));
       draw(_modifiedCells.isEmpty() ? null : _modifiedCells);
       _modifiedCells.clear();
    }

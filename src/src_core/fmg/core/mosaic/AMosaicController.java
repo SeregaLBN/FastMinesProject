@@ -331,7 +331,7 @@ public abstract class AMosaicController<TImage, TImage2,
          ClickCellResult resultCell = cellLeftDown.leftButtonDown(getModel());
          result.modified = resultCell.modified; // copy reference; TODO result.modified.addAll(resultCell.modified);
       }
-      onModifiedCellsPropertyChanged(result.modified);
+      invalidateView(result.modified);
       return result;
    }
 
@@ -385,7 +385,7 @@ public abstract class AMosaicController<TImage, TImage2,
 
          if (!gameBegin)
             result.modified.addAll(modified);
-         onModifiedCellsPropertyChanged(result.modified);
+         invalidateView(result.modified);
 
          return result;
       } finally {
@@ -427,7 +427,7 @@ public abstract class AMosaicController<TImage, TImage2,
          //...
       }
 
-      onModifiedCellsPropertyChanged(result.modified);
+      invalidateView(result.modified);
       return result;
    }
 
@@ -474,7 +474,7 @@ public abstract class AMosaicController<TImage, TImage2,
       setGameStatus(EGameStatus.eGSReady);
       setPlayInfo(EPlayInfo.ePlayerUnknown); // пока не знаю кто будет играть
 
-      onModifiedCellsPropertyChanged(this.getMatrix());
+      invalidateView(this.getMatrix());
 
       return true;
    }
@@ -532,7 +532,7 @@ public abstract class AMosaicController<TImage, TImage2,
          gameNew();
          break;
       case MosaicGameModel.PROPERTY_AREA:
-         onModifiedCellsPropertyChanged(getModel().getMatrix());
+         invalidateView(getModel().getMatrix());
          break;
       case MosaicDrawModel.PROPERTY_SIZE_DOUBLE:
          onPropertyChanged(PROPERTY_SIZE);
@@ -542,7 +542,7 @@ public abstract class AMosaicController<TImage, TImage2,
       }
    }
 
-   protected void onModifiedCellsPropertyChanged(Collection<BaseCell> cells) {
+   protected void invalidateView(Collection<BaseCell> cells) {
       if (cells.isEmpty())
          return;
 
