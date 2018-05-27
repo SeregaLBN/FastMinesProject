@@ -89,19 +89,26 @@ public class MosaicViewSwing extends AMosaicViewSwing<JPanel, Icon, MosaicDrawMo
       } else {
          _modifiedCells.addAll(modifiedCells);
 
-         RectDouble rcClip = null;
+         double minX=0, minY=0, maxX=0, maxY=0;
+         boolean first = true;
          for (BaseCell cell : modifiedCells) {
             RectDouble rc = cell.getRcOuter();
-            if (rcClip == null) {
-               rcClip = rc;
+            if (first) {
+               first = false;
+               minX = rc.x;
+               minY = rc.y;
+               maxX = rc.right();
+               maxY = rc.bottom();
             } else {
-               rcClip.x    = Math.min(rcClip.x       , rc.x);
-               rcClip.y    = Math.min(rcClip.y       , rc.y);
-               rcClip.right( Math.max(rcClip.right() , rc.right()));
-               rcClip.bottom(Math.max(rcClip.bottom(), rc.bottom()));
+               minX = Math.min(minX, rc.x);
+               minY = Math.min(minY, rc.y);
+               maxX = Math.max(maxX, rc.right());
+               maxY = Math.max(maxY, rc.bottom());
             }
          }
-         control.repaint((int)rcClip.x, (int)rcClip.y, (int)rcClip.width, (int)rcClip.height);
+         if (_DEBUG_DRAW_FLOW)
+            System.out.println("MosaicViewSwing.draw: repaint={" + (int)minX +","+ (int)minY +","+ (int)(maxX-minX) +","+ (int)(maxY-minY) + "}");
+         control.repaint((int)minX, (int)minY, (int)(maxX-minX), (int)(maxY-minY));
       }
     //control.invalidate();
    }

@@ -112,7 +112,7 @@ public abstract class AMosaicViewSwing<TImage,
       }
       int tmp = 0;
 
-      for (BaseCell cell: toCheck)
+      for (BaseCell cell: toCheck) {
          // redraw only when needed...
          if ((toCheck == modifiedCells) || // check reference equals
              ((modifiedCells != null) && (modifiedCells.contains(cell))) || // ..when the cell is explicitly specified
@@ -184,7 +184,7 @@ public abstract class AMosaicViewSwing<TImage,
                      rcInner.moveXY(offset.width, offset.height);
                      if (cell.getState().isDown())
                         rcInner.moveXY(1, 1);
-                     drawText(g, szCaption, Cast.toRect(rcInner));
+                     drawText(g, szCaption, rcInner);
                    //{ // test
                    //   java.awt.Color clrOld = g.getColor(); // test
                    //   g.setColor(java.awt.Color.red);
@@ -226,6 +226,7 @@ public abstract class AMosaicViewSwing<TImage,
              //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
             }
          }
+      }
 
       /** /
       // test
@@ -279,19 +280,19 @@ public abstract class AMosaicViewSwing<TImage,
 //      return font.getStringBounds(text, new FontRenderContext(null, true, true));
    }
 
-   private void drawText(Graphics g, String text, Rectangle rc) {
+   private void drawText(Graphics g, String text, RectDouble rc) {
       if ((text == null) || text.trim().isEmpty())
          return;
       Rectangle2D bnd = getStringBounds(text);
 //      { // test
-//         Color clrOld = g.getColor();
-//         g.setColor(Color.BLUE);
-//         g.fillRect(rc.x, rc.y, rc.width, rc.height);
+//         java.awt.Color clrOld = g.getColor();
+//         g.setColor(java.awt.Color.BLUE);
+//         g.fillRect((int)rc.x, (int)rc.y, (int)rc.width, (int)rc.height);
 //         g.setColor(clrOld);
 //      }
       g.drawString(text,
-            rc.x          +(int)((rc.width -bnd.getWidth ())/2.),
-            rc.y+rc.height-(int)((rc.height-bnd.getHeight())/2.));
+            (int)(rc.x       +(rc.width -bnd.getWidth ())/2.),
+            (int)(rc.bottom()-(rc.height-bnd.getHeight())/2.));
    }
 
    protected Font getFont() {

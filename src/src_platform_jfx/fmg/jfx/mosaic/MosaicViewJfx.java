@@ -35,18 +35,26 @@ public class MosaicViewJfx extends AMosaicViewJfx<Canvas, Image, MosaicDrawModel
          draw(canvas.getGraphics(), getModel().getMatrix(), null, true);
          return;
       }
-      RectDouble rcClip = null;
+      double minX=0, minY=0, maxX=0, maxY=0;
+      boolean first = true;
       for (BaseCell cell : modifiedCells) {
          RectDouble rc = cell.getRcOuter();
-         if (rcClip == null) {
-            rcClip = rc;
+         if (first) {
+            first = false;
+            minX = rc.x;
+            minY = rc.y;
+            maxX = rc.right();
+            maxY = rc.bottom();
          } else {
-            rcClip.x    = Math.min(rcClip.x       , rc.x);
-            rcClip.y    = Math.min(rcClip.y       , rc.y);
-            rcClip.right( Math.max(rcClip.right() , rc.right()));
-            rcClip.bottom(Math.max(rcClip.bottom(), rc.bottom()));
+            minX = Math.min(minX, rc.x);
+            minY = Math.min(minY, rc.y);
+            maxX = Math.max(maxX, rc.right());
+            maxY = Math.max(maxY, rc.bottom());
          }
       }
+      RectDouble rcClip = new RectDouble(minX, minY, maxX-minX, maxY-minY);
+//      if (_DEBUG_DRAW_FLOW)
+//         System.out.println("MosaicViewJfx.draw: repaint=" + rcClip);
       draw(canvas.getGraphics(), modifiedCells, rcClip, true);
    }
 

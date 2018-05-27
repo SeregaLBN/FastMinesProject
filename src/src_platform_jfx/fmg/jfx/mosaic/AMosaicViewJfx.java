@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import javafx.geometry.Bounds;
-import javafx.geometry.Rectangle2D;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -184,7 +183,7 @@ public abstract class AMosaicViewJfx<TImage,
                      rcInner.moveXY(offset.width, offset.height);
                      if (cell.getState().isDown())
                         rcInner.moveXY(1, 1);
-                     drawText(g, szCaption, Cast.toRect(rcInner));
+                     drawText(g, szCaption, rcInner);
                  //{ // test
                  //   Paint clrOld = g.getStroke(); // test
                  //   g.setStroke(Cast.toColor(Color.Red));
@@ -277,26 +276,31 @@ public abstract class AMosaicViewJfx<TImage,
       if (t == null) {
          t = new Text(text);
          t.setFont(getFont());
+       //t.setTextAlignment(TextAlignment.CENTER);
+       //t.setTextOrigin(VPos.CENTER);
          _mapText.put(text, t);
       }
       return t.getLayoutBounds();
    }
 
-   private void drawText(GraphicsContext g, String text, Rectangle2D rc) {
+   private void drawText(GraphicsContext g, String text, RectDouble rc) {
       if ((text == null) || text.trim().isEmpty())
          return;
       Bounds bnd = getStringBounds(text);
 //      { // test
-//         Paint clrOld = g.getFill();
-//         g.setFill(Cast.toColor(Color.Blue));
-//         g.fillRect(rc.getMinX(), rc.getMinY(), rc.getWidth(), rc.getHeight());
-//         g.setFill(clrOld);
+//         Paint clrOld = g.getStroke();
+//         g.setLineWidth(1);
+//         g.setStroke(Cast.toColor(Color.Blue));
+//         g.strokeRect(bnd.getMinX()+rc.x, bnd.getMinY()+rc.y, bnd.getWidth(), bnd.getHeight());
+//         g.setStroke(Cast.toColor(Color.Red));
+//         g.strokeRect(rc.x, rc.y, rc.width, rc.height);
+//         g.setStroke(clrOld);
 //      }
-      g.setTextAlign(TextAlignment.CENTER);
-      g.setTextBaseline(VPos.CENTER);
+      g.setTextAlign(TextAlignment.LEFT);
+      g.setTextBaseline(VPos.TOP);
       g.fillText(text,
-                 rc.getMinX() + (rc.getWidth() -bnd.getWidth ())/2.,
-                 rc.getMaxY() - (rc.getHeight()-bnd.getHeight())/2.);
+                 rc.x+(rc.width -bnd.getWidth ())/2.,
+                 rc.y+(rc.height-bnd.getHeight())/2.);
    }
 
    protected Font getFont() {
