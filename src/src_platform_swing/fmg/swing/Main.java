@@ -43,7 +43,7 @@ import fmg.data.view.draw.EShowElement;
 import fmg.data.view.draw.EZoomInterface;
 import fmg.swing.dialogs.*;
 import fmg.swing.draw.img.*;
-import fmg.swing.mosaic.MosaicControllerSwing;
+import fmg.swing.mosaic.MosaicJPanelController;
 import fmg.swing.serializable.SerializeProjData;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
@@ -57,7 +57,7 @@ public class Main extends JFrame {
    private JPanel     contentPane;
    private MainMenu   menu;
    private Toolbar    toolbar;
-   private MosaicControllerSwing _mosaicController;
+   private MosaicJPanelController _mosaicController;
    private PausePanel pausePanel;
    private StatusBar  statusBar;
 
@@ -990,7 +990,7 @@ public class Main extends JFrame {
    }
 
    /** mosaic controller */
-   private void setMosaicController(MosaicControllerSwing mosaicController) {
+   private void setMosaicController(MosaicJPanelController mosaicController) {
       if (_mosaicController != null) {
          _mosaicController.getModel().removeListener(_mosaicModelListener);
          _mosaicController.removeListener(_mosaicControllerListener);
@@ -1004,9 +1004,9 @@ public class Main extends JFrame {
       }
    }
    /** mosaic controller */
-   public MosaicControllerSwing getMosaicController() {
+   public MosaicJPanelController getMosaicController() {
       if (_mosaicController == null)
-         setMosaicController(new MosaicControllerSwing());
+         setMosaicController(new MosaicJPanelController());
       return _mosaicController;
    }
 //   /** mosaic data */
@@ -1080,7 +1080,7 @@ public class Main extends JFrame {
       final Point startLocation = new Point();
       boolean defaultData;
       boolean doNotAskStartup;
-      MosaicControllerSwing mosaicCtrllr;
+      MosaicJPanelController mosaicCtrllr;
       { // aplly data from SerializeProjModel
          final SerializeProjData spm = new SerializeProjData();
          defaultData = !spm.Load();
@@ -2437,7 +2437,7 @@ public class Main extends JFrame {
 
    /** Сохранить чемпиона && Установить статистику */
    public void setStatisticAndChampion(PropertyChangeEvent ev) {
-      MosaicControllerSwing mosaicCtrllr = (MosaicControllerSwing)ev.getSource();
+      MosaicJPanelController mosaicCtrllr = (MosaicJPanelController)ev.getSource();
       if (mosaicCtrllr.getGameStatus() != EGameStatus.eGSEnd)
          throw new RuntimeException("Invalid method state call");
 

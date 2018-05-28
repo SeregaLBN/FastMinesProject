@@ -1,6 +1,6 @@
 package fmg.swing;
 
-import fmg.swing.mosaic.MosaicControllerSwing;
+import fmg.swing.mosaic.MosaicJPanelController;
 
 @SuppressWarnings("deprecation")
 public class Applet extends javax.swing.JApplet {
@@ -8,7 +8,7 @@ public class Applet extends javax.swing.JApplet {
 
    @Override
    public void init() {
-      try (MosaicControllerSwing m = new MosaicControllerSwing()) {
+      try (MosaicJPanelController m = new MosaicJPanelController()) {
          setContentPane(m.getViewPanel());
       }
    }

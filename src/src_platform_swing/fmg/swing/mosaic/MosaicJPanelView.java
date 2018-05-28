@@ -17,15 +17,15 @@ import fmg.swing.draw.img.Flag;
 import fmg.swing.draw.img.Mine;
 import fmg.swing.utils.ImgUtils;
 
-/** MVC: view. SWING implementation over control {@link JPanel} */ // TODO ?? rename to MosaicViewSwingJPanel
-public class MosaicViewSwing extends AMosaicViewSwing<JPanel, Icon, MosaicDrawModel<Icon>> {
+/** MVC: view. SWING implementation over control {@link JPanel} */
+public class MosaicJPanelView extends AMosaicViewSwing<JPanel, Icon, MosaicDrawModel<Icon>> {
 
    private JPanel _control;
    private Flag.ControllerIcon _imgFlag = new Flag.ControllerIcon();
    private Mine.ControllerIcon _imgMine = new Mine.ControllerIcon();
    private final Collection<BaseCell> _modifiedCells = new HashSet<>();
 
-   public MosaicViewSwing() {
+   public MosaicJPanelView() {
       super(new MosaicDrawModel<Icon>());
    }
 
@@ -47,7 +47,7 @@ public class MosaicViewSwing extends AMosaicViewSwing<JPanel, Icon, MosaicDrawMo
                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
                Rectangle clipBounds = g.getClipBounds();
-               MosaicViewSwing.this.draw(g2d,
+               MosaicJPanelView.this.draw(g2d,
                                          _modifiedCells.isEmpty()
                                             ? null
                                             : _modifiedCells,

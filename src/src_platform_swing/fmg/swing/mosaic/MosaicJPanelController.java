@@ -15,12 +15,12 @@ import fmg.core.types.ESkillLevel;
 import fmg.swing.Cast;
 
 /** MVC: controller. SWING implementation */
-public class MosaicControllerSwing extends AMosaicController<JPanel, Icon, MosaicViewSwing, MosaicDrawModel<Icon>> {
+public class MosaicJPanelController extends AMosaicController<JPanel, Icon, MosaicJPanelView, MosaicDrawModel<Icon>> {
 
    private MosaicMouseListener _mosaicMouseListener;
 
-   public MosaicControllerSwing() {
-      super(new MosaicViewSwing());
+   public MosaicJPanelController() {
+      super(new MosaicJPanelView());
       subscribeToViewControl();
    }
 
@@ -36,10 +36,10 @@ public class MosaicControllerSwing extends AMosaicController<JPanel, Icon, Mosai
       @Override
       public void mousePressed(MouseEvent e) {
          if (SwingUtilities.isLeftMouseButton(e)) {
-            MosaicControllerSwing.this.mousePressed(Cast.toPointDouble(e.getPoint()), true);
+            MosaicJPanelController.this.mousePressed(Cast.toPointDouble(e.getPoint()), true);
          } else
          if (SwingUtilities.isRightMouseButton(e)) {
-            MosaicControllerSwing.this.mousePressed(Cast.toPointDouble(e.getPoint()), false);
+            MosaicJPanelController.this.mousePressed(Cast.toPointDouble(e.getPoint()), false);
          }
       }
 
@@ -55,10 +55,10 @@ public class MosaicControllerSwing extends AMosaicController<JPanel, Icon, Mosai
          }
 
          if (SwingUtilities.isLeftMouseButton(e)) {
-            MosaicControllerSwing.this.mouseReleased(Cast.toPointDouble(e.getPoint()), true);
+            MosaicJPanelController.this.mouseReleased(Cast.toPointDouble(e.getPoint()), true);
          } else
          if (SwingUtilities.isRightMouseButton(e)) {
-            MosaicControllerSwing.this.mouseReleased(Cast.toPointDouble(e.getPoint()), false);
+            MosaicJPanelController.this.mouseReleased(Cast.toPointDouble(e.getPoint()), false);
          }
        }
 
@@ -73,7 +73,7 @@ public class MosaicControllerSwing extends AMosaicController<JPanel, Icon, Mosai
       @Override
       public void focusLost(FocusEvent e) {
          //System.out.println("Mosaic::MosaicMouseListeners::focusLost: " + e);
-         MosaicControllerSwing.this.mouseFocusLost();
+         MosaicJPanelController.this.mouseFocusLost();
       }
       @Override
       public void focusGained(FocusEvent e) {}
@@ -120,7 +120,7 @@ public class MosaicControllerSwing extends AMosaicController<JPanel, Icon, Mosai
    ////////////// TEST //////////////
    public static void main(String[] args) {
       AMosaicView._DEBUG_DRAW_FLOW = true;
-      MosaicControllerSwing ctrllr = new MosaicControllerSwing();
+      MosaicJPanelController ctrllr = new MosaicJPanelController();
       EMosaic mosaicType = EMosaic.eMosaicSquare1;
       ESkillLevel skill  = ESkillLevel.eBeginner;
 

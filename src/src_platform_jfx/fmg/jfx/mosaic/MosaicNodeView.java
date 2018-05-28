@@ -1,38 +1,71 @@
 package fmg.jfx.mosaic;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Polygon;
 
-import fmg.common.geom.RectDouble;
+import fmg.common.geom.*;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.draw.MosaicDrawModel;
+import fmg.jfx.Cast;
 import fmg.jfx.draw.img.CanvasJfx;
 import fmg.jfx.draw.img.Flag;
 import fmg.jfx.draw.img.Mine;
 import fmg.jfx.utils.ImgUtils;
 
-/** MVC: view. JavaFX implementation over control {@link Canvas} */ // TODO ?? rename to MosaicViewJfxCanvas
-public class MosaicViewJfx extends AMosaicViewJfx<Canvas, Image, MosaicDrawModel<Image>> {
+/** MVC: view. JavaFX implementation over control {@link Canvas} or {@link Pane} */
+public class MosaicNodeView extends AMosaicViewJfx<Node, Image, MosaicDrawModel<Image>> {
 
-   private CanvasJfx canvas = new CanvasJfx(this);
+   private boolean _simpleDrawMode = !false;
+
+   private CanvasJfx _canvas = new CanvasJfx(this);
+   private Pane _pane = new Pane();
+   private List<Canvas> _cellViews = new ArrayList<>();
 
    private Flag.ControllerImage _imgFlag = new Flag.ControllerImage();
    private Mine.ControllerImage _imgMine = new Mine.ControllerImage();
 
-   public MosaicViewJfx() {
+   public MosaicNodeView() {
       super(new MosaicDrawModel<Image>());
    }
 
    @Override
-   protected javafx.scene.canvas.Canvas createImage() { return canvas.create(); }
+   protected Node createImage() { return _simpleDrawMode ? _canvas.create() : _pane; }
 
    @Override
    public void draw(Collection<BaseCell> modifiedCells) {
+      if (!_simpleDrawMode) {
+         MosaicDrawModel<Image> model = getModel();
+         BoundDouble padding = model.getPadding();
+         BoundDouble margin  = model.getMargin();
+         SizeDouble offset = new SizeDouble(margin.left + padding.left,
+                                            margin.top  + padding.top);
+         Matrisize sizeField = model.getSizeField();
+         for (BaseCell cell : modifiedCells) {
+            Coord c = cell.getCoord();
+            Canvas canvas = _cellViews.get(c.x*sizeField.n + c.y);
+
+            RegionDouble poly = RegionDouble.moveXY(cell.getRegion(), offset);
+
+            // ограничиваю рисование только границами своей фигуры
+            canvas.setClip(new Polygon(Cast.toPolygon(poly)));
+
+            draw(canvas.getGraphicsContext2D(), getModel().getMatrix(), null, false);
+         }
+
+         return;
+      }
+
+
       if (modifiedCells == null) {
-         draw(canvas.getGraphics(), getModel().getMatrix(), null, true);
+         draw(_canvas.getGraphics(), getModel().getMatrix(), null, true);
          return;
       }
       double minX=0, minY=0, maxX=0, maxY=0;
@@ -55,7 +88,7 @@ public class MosaicViewJfx extends AMosaicViewJfx<Canvas, Image, MosaicDrawModel
       RectDouble rcClip = new RectDouble(minX, minY, maxX-minX, maxY-minY);
 //      if (_DEBUG_DRAW_FLOW)
 //         System.out.println("MosaicViewJfx.draw: repaint=" + rcClip);
-      draw(canvas.getGraphics(), modifiedCells, rcClip, true);
+      draw(_canvas.getGraphics(), modifiedCells, rcClip, true);
    }
 
    @Override
@@ -66,6 +99,14 @@ public class MosaicViewJfx extends AMosaicViewJfx<Canvas, Image, MosaicDrawModel
 
    @Override
    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
+      if (!_simpleDrawMode)
+         switch (propertyName) {
+         case MosaicGameModel.PROPERTY_MATRIX:
+            // TODO uupdate _cellViews
+            break;
+         case MosaicGameModel.PROPERTY_AREA:
+            break;
+         }
       super.onPropertyModelChanged(oldValue, newValue, propertyName);
       switch (propertyName) {
       case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
@@ -101,7 +142,11 @@ public class MosaicViewJfx extends AMosaicViewJfx<Canvas, Image, MosaicDrawModel
    @Override
    public void close() {
       super.close();
-      canvas = null;
+      _pane = null;
+      _pane.getChildren().clear();
+      _cellViews.clear();
+      _cellViews = null;
+      _canvas = null;
       _imgFlag.close();
       _imgMine.close();
    }
