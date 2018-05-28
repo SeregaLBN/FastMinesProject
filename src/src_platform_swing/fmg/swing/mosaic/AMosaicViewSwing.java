@@ -120,9 +120,10 @@ public abstract class AMosaicViewSwing<TImage,
          {
             ++tmp;
             RectDouble rcInner = cell.getRcInner(pen.getWidth());
+            Polygon poly = Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset));
 
             // ограничиваю рисование только границами своей фигуры
-            g.setClip(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset)));
+            g.setClip(poly);
 
             { // 2.1. paint component
 
@@ -134,7 +135,7 @@ public abstract class AMosaicViewSwing<TImage,
                                                                 bkFill.getColors());
                   if (!drawBk || !bkClrCell.equals(bkClr)) {
                      g.setColor(Cast.toColor(bkClrCell));
-                     g.fillPolygon(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset)));
+                     g.fillPolygon(poly);
                   }
                }
 
@@ -204,7 +205,7 @@ public abstract class AMosaicViewSwing<TImage,
                                           ? pen.getColorLight()
                                           : pen.getColorShadow()));
                if (isIconicMode) {
-                  g.drawPolygon(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset)));
+                  g.drawPolygon(poly);
                } else {
                   int s = cell.getShiftPointBorderIndex();
                   int v = cell.getAttr().getVertexNumber(cell.getDirection());

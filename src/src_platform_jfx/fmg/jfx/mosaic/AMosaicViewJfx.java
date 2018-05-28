@@ -64,7 +64,7 @@ public abstract class AMosaicViewJfx<TImage,
       Size size = model.getSize();
 
       // save
-//      Shape oldShape = g.getClip();
+    //Node oldShape = canvas.getClip();
       Paint oldFill = g.getFill();
       Paint oldStroke = g.getStroke();
       Font oldFont = g.getFont();
@@ -118,11 +118,16 @@ public abstract class AMosaicViewJfx<TImage,
              ((modifiedCells != null) && (modifiedCells.contains(cell))) || // ..when the cell is explicitly specified
              ((clipRegion != null) && cell.getRcOuter().moveXY(offset.width, offset.height).intersection(clipRegion))) // ...when the cells and update region intersect
          {
+            ++tmp;
+
             RectDouble rcInner = cell.getRcInner(pen.getWidth());
+            RegionDouble poly = RegionDouble.moveXY(cell.getRegion(), offset);
 
             // ограничиваю рисование только границами своей фигуры
-//            g.setClip(Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset)));
+          //canvas.setClip(new Polygon(Cast.toPolygon(poly)));
 
+            double[] polyX = null;
+            double[] polyY = null;
             { // 2.1. paint component
 
                // 2.1.1. paint background
@@ -132,10 +137,9 @@ public abstract class AMosaicViewJfx<TImage,
                                                                 bkClr,
                                                                 bkFill.getColors());
                   if (!bkClrCell.equals(bkClr)) {
-                     RegionDouble poly = RegionDouble.moveXY(cell.getRegion(), offset);
-                     double[] polyX = Cast.toPolygon(poly, true);
-                     double[] polyY = Cast.toPolygon(poly, false);
                      g.setFill(Cast.toColor(bkClrCell));
+                     polyX = Cast.toPolygon(poly, true);
+                     polyY = Cast.toPolygon(poly, false);
                      g.fillPolygon(polyX, polyY, polyX.length);
                   }
                }
@@ -203,9 +207,10 @@ public abstract class AMosaicViewJfx<TImage,
                                           ? pen.getColorLight()
                                           : pen.getColorShadow()));
                if (isIconicMode) {
-                  RegionDouble poly = RegionDouble.moveXY(cell.getRegion(), offset);
-                  double[] polyX = Cast.toPolygon(poly, true);
-                  double[] polyY = Cast.toPolygon(poly, false);
+                  if (polyX == null)
+                     polyX = Cast.toPolygon(poly, true);
+                  if (polyY == null)
+                     polyY = Cast.toPolygon(poly, false);
                   g.strokePolygon(polyX, polyY, polyX.length);
                } else {
                   int s = cell.getShiftPointBorderIndex();
@@ -266,7 +271,7 @@ public abstract class AMosaicViewJfx<TImage,
       g.setFont(oldFont);
       g.setStroke(oldStroke);
       g.setFill(oldFill);
-//      g.setClip(oldShape);
+    //canvas.setClip(oldShape);
 
       _alreadyPainted = false;
    }

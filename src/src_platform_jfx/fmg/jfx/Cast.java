@@ -1,6 +1,7 @@
 package fmg.jfx;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Приведение типов от платформо-независимых чистых Java классов fmg.common.geom.* к библиотечным javafx классам
@@ -26,6 +27,12 @@ public final class Cast {
       return region.getPoints().stream().mapToDouble(p -> xCoord ? p.x : p.y).toArray();
    }
 
+   public static double[] toPolygon(fmg.common.geom.RegionDouble region) {
+      return region.getPoints().stream().map(p -> Stream.of(p.x, p.y))
+            .flatMap(z -> z)
+            .mapToDouble(x -> x)
+            .toArray();
+   }
    public static double[] toPolygon(fmg.common.geom.RegionDouble region, boolean xCoord) {
       return region.getPoints().stream().mapToDouble(p -> xCoord ? p.x : p.y).toArray();
    }
