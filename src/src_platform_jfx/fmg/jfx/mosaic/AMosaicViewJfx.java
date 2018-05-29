@@ -57,6 +57,9 @@ public abstract class AMosaicViewJfx<TImage,
 
 
    protected void draw(GraphicsContext g, Collection<BaseCell> modifiedCells, RectDouble clipRegion, boolean drawBk) {
+      draw(g, modifiedCells, clipRegion, drawBk, 0, 0);
+   }
+   protected void draw(GraphicsContext g, Collection<BaseCell> modifiedCells, RectDouble clipRegion, boolean drawBk, double addonOffsetX, double addonOffsetY) {
       assert !_alreadyPainted;
       _alreadyPainted = true;
 
@@ -89,8 +92,8 @@ public abstract class AMosaicViewJfx<TImage,
       g.setLineWidth(pen.getWidth());
       BoundDouble padding = model.getPadding();
       BoundDouble margin  = model.getMargin();
-      SizeDouble offset = new SizeDouble(margin.left + padding.left,
-                                         margin.top  + padding.top);
+      SizeDouble offset = new SizeDouble(margin.left + padding.left + addonOffsetX,
+                                         margin.top  + padding.top  + addonOffsetY);
       boolean isIconicMode = pen.getColorLight().equals(pen.getColorShadow());
       BackgroundFill bkFill = model.getBackgroundFill();
 
