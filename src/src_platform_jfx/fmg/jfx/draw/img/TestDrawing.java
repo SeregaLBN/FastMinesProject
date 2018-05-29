@@ -5,13 +5,6 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import fmg.common.geom.PointDouble;
-import fmg.common.geom.RectDouble;
-import fmg.common.geom.Size;
-import fmg.core.img.ATestDrawing;
-import fmg.core.img.ATestDrawing.CellTilingInfo;
-import fmg.core.img.ATestDrawing.CellTilingResult;
-import fmg.core.img.ImageController;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -23,6 +16,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.common.geom.Size;
+import fmg.core.img.ATestDrawing;
+import fmg.core.img.ATestDrawing.CellTilingInfo;
+import fmg.core.img.ATestDrawing.CellTilingResult;
+import fmg.core.img.ImageController;
 
 /** @see {@link MosaicSkillImg#main}, {@link MosaicGroupImg#main}, {@link MosaicsImg#main} */
 public final class TestDrawing extends Application {
@@ -159,21 +160,10 @@ public final class TestDrawing extends Application {
          primaryStage.removeEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
       });
 
-
-//      Pane pane = new Pane();
-//      pane.setStyle("-fx-background-color: #55FFFF85;");
-//      pane.setPrefSize(200,200);
-//      pane.relocate(30, 30);
-//      Circle circle = new Circle(50, Color.BLUE);
-//      circle.relocate(20, 20);
-//      Rectangle rectangle = new Rectangle(100,100,Color.RED);
-//      rectangle.relocate(70,70);
-//      pane.getChildren().addAll(circle,rectangle);
-//
-//      group.getChildren().add(pane);
-
       primaryStage.setTitle(td.getTitle(images));
       primaryStage.setScene(scene);
+      primaryStage.setMinHeight(125);
+      primaryStage.setMinWidth(100);
       primaryStage.show();
    }
 

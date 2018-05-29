@@ -27,6 +27,7 @@ public class MosaicJPanelView extends AMosaicViewSwing<JPanel, Icon, MosaicDrawM
 
    public MosaicJPanelView() {
       super(new MosaicDrawModel<Icon>());
+      changeSizeImagesMineFlag();
    }
 
    @Override

@@ -89,6 +89,7 @@ public abstract class ImageController<TImage,
    @Override
    public void close() {
       _imageView.removeListener(_imageViewListener);
+      _imageView.close();
       super.close();
    }
 

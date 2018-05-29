@@ -3,6 +3,7 @@ package fmg.swing.mosaic;
 import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
@@ -121,14 +122,19 @@ public class MosaicJPanelController extends AMosaicController<JPanel, Icon, Mosa
    public static void main(String[] args) {
       AMosaicView._DEBUG_DRAW_FLOW = true;
       MosaicJPanelController ctrllr = new MosaicJPanelController();
-      EMosaic mosaicType = EMosaic.eMosaicSquare1;
-      ESkillLevel skill  = ESkillLevel.eBeginner;
 
-      ctrllr.setArea(1500);
-      ctrllr.setMosaicType(mosaicType);
-      ctrllr.setSizeField(skill.getDefaultSize());
-      ctrllr.setMinesCount(skill.getNumberMines(mosaicType));
-      ctrllr.gameNew();
+      if (ThreadLocalRandom.current().nextBoolean()) {
+         // unmodified controller test
+      } else {
+          EMosaic mosaicType = EMosaic.eMosaicSquare1;
+          ESkillLevel skill  = ESkillLevel.eBeginner;
+
+          ctrllr.setArea(1500);
+          ctrllr.setMosaicType(mosaicType);
+          ctrllr.setSizeField(skill.getDefaultSize());
+          ctrllr.setMinesCount(skill.getNumberMines(mosaicType));
+          ctrllr.gameNew();
+      }
 
       JFrame frame = new JFrame();
       frame.add(ctrllr.getView().getControl());

@@ -2,12 +2,14 @@ package fmg.jfx.draw.img;
 
 import java.util.Arrays;
 
-import fmg.core.img.FlagModel;
-import fmg.core.img.ImageController;
-import fmg.core.img.ImageView;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+
+import fmg.common.geom.Size;
+import fmg.core.img.FlagModel;
+import fmg.core.img.ImageController;
+import fmg.core.img.ImageView;
 
 /** Flag image */
 public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
@@ -21,9 +23,11 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
    }
 
    protected void draw(GraphicsContext g) {
-      double w = getSize().width  / 100.0;
-      double h = getSize().height / 100.0;
+      Size size = getSize();
+      g.clearRect(0,0, size.width, size.height);
 
+      double h = size.height / 100.0;
+      double w = size.width  / 100.0;
 //      g.setEffect(new BoxBlur());
 
       // test

@@ -34,6 +34,7 @@ public class MosaicNodeView extends AMosaicViewJfx<Node, Image, MosaicDrawModel<
 
    public MosaicNodeView() {
       super(new MosaicDrawModel<Image>());
+      changeSizeImagesMineFlag();
    }
 
    @Override

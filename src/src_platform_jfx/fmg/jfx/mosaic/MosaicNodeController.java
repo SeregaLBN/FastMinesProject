@@ -1,6 +1,7 @@
 package fmg.jfx.mosaic;
 
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -47,6 +48,7 @@ public class MosaicNodeController extends AMosaicController<Node, Image, MosaicN
       else
       if (ev.getEventType() == MouseEvent.MOUSE_RELEASED) {
          // Получаю этот эвент на отпускание клавиши даже тогда, когда окно проги неактивно..
+         // TODO: на самом деле, под JavaFX, не получал этого эвента..
          // Избегаю срабатывания onClick'a
          if (!((Node)ev.getSource()).getScene().getWindow().isFocused())
             return;
@@ -89,8 +91,8 @@ public class MosaicNodeController extends AMosaicController<Node, Image, MosaicN
 
    @Override
    public void close() {
-      super.close();
       unsubscribeToViewControl();
+      super.close();
    }
 
    ////////////// TEST //////////////
@@ -100,14 +102,19 @@ public class MosaicNodeController extends AMosaicController<Node, Image, MosaicN
       public void start(Stage stage) {
          AMosaicView._DEBUG_DRAW_FLOW = true;
          MosaicNodeController ctrllr = new MosaicNodeController();
-         EMosaic mosaicType = EMosaic.eMosaicTrSq1;
-         ESkillLevel skill  = ESkillLevel.eBeginner;
 
-         ctrllr.setArea(1500);
-         ctrllr.setMosaicType(mosaicType);
-         ctrllr.setSizeField(skill.getDefaultSize());
-         ctrllr.setMinesCount(skill.getNumberMines(mosaicType));
-         ctrllr.gameNew();
+         if (ThreadLocalRandom.current().nextBoolean()) {
+            // unmodified controller test
+         } else {
+            EMosaic mosaicType = EMosaic.eMosaicTrSq1;
+            ESkillLevel skill  = ESkillLevel.eBeginner;
+
+            ctrllr.setArea(1500);
+            ctrllr.setMosaicType(mosaicType);
+            ctrllr.setSizeField(skill.getDefaultSize());
+            ctrllr.setMinesCount(skill.getNumberMines(mosaicType));
+            ctrllr.gameNew();
+         }
 
          stage.setScene(new Scene(new Group(ctrllr.getViewNode())));
          stage.setOnCloseRequest(event -> ctrllr.close());
