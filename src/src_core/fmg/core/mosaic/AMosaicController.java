@@ -31,7 +31,7 @@ public abstract class AMosaicController<TImage, TImage2,
    /** кол-во мин на поле до создания игры. Используется когда игра была создана, но ни одной мины не проставлено. */
    protected int _oldMinesCount = 1;
 
-   private EGameStatus _gameStatus = EGameStatus.eGSEnd;
+   private EGameStatus _gameStatus = EGameStatus.eGSReady;
    private EPlayInfo _playInfo = EPlayInfo.ePlayerUnknown;
    private int _countClick;
 

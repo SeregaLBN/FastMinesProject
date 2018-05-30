@@ -126,7 +126,7 @@ public class MosaicJPanelController extends AMosaicController<JPanel, Icon, Mosa
       if (ThreadLocalRandom.current().nextBoolean()) {
          // unmodified controller test
       } else {
-          EMosaic mosaicType = EMosaic.eMosaicSquare1;
+          EMosaic mosaicType = EMosaic.eMosaicTrSq1;
           ESkillLevel skill  = ESkillLevel.eBeginner;
 
           ctrllr.setArea(1500);
@@ -147,6 +147,7 @@ public class MosaicJPanelController extends AMosaicController<JPanel, Icon, Mosa
          }
       });
 
+      frame.setTitle("SWING: Demo " + MosaicJPanelController.class.getSimpleName());
       frame.pack();
       frame.setVisible(true);
    }

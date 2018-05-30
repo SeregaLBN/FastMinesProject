@@ -9,6 +9,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
@@ -25,14 +26,14 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 
 /** MVC: controller. JavaFX implementation */
-public class MosaicNodeController extends AMosaicController<Node, Image, MosaicNodeView, MosaicDrawModel<Image>> {
+public class MosaicCanvasController extends AMosaicController<Canvas, Image, MosaicCanvasView, MosaicDrawModel<Image>> {
 
-   public MosaicNodeController() {
-      super(new MosaicNodeView());
+   public MosaicCanvasController() {
+      super(new MosaicCanvasView());
       subscribeToViewControl();
    }
 
-   public Node getViewNode() {
+   public Canvas getViewCanvas() {
       return getView().getImage();
    }
 
@@ -41,9 +42,9 @@ public class MosaicNodeController extends AMosaicController<Node, Image, MosaicN
 
       if (ev.getEventType() == MouseEvent.MOUSE_PRESSED) {
          if (ev.isPrimaryButtonDown())
-            MosaicNodeController.this.mousePressed(clickPoint, true);
+            MosaicCanvasController.this.mousePressed(clickPoint, true);
          if (ev.isSecondaryButtonDown())
-            MosaicNodeController.this.mousePressed(clickPoint, false);
+            MosaicCanvasController.this.mousePressed(clickPoint, false);
       }
       else
       if (ev.getEventType() == MouseEvent.MOUSE_RELEASED) {
@@ -55,16 +56,16 @@ public class MosaicNodeController extends AMosaicController<Node, Image, MosaicN
 
          MouseButton eBttn = ev.getButton();
          if (eBttn == MouseButton.PRIMARY)
-            MosaicNodeController.this.mouseReleased(clickPoint, true);
+            MosaicCanvasController.this.mouseReleased(clickPoint, true);
          else
          if (eBttn == MouseButton.SECONDARY)
-            MosaicNodeController.this.mouseReleased(clickPoint, false);
+            MosaicCanvasController.this.mouseReleased(clickPoint, false);
       }
    };
 
    private ChangeListener<Boolean> focusHandler = (observableBoolValue, oldPropertyValue, newPropertyValue) -> {
       if (!newPropertyValue)
-         MosaicNodeController.this.mouseFocusLost();
+         MosaicCanvasController.this.mouseFocusLost();
    };
 
    @Override
@@ -76,14 +77,14 @@ public class MosaicNodeController extends AMosaicController<Node, Image, MosaicN
    }
 
    private void subscribeToViewControl() {
-      Node control = getViewNode();
+      Canvas control = getViewCanvas();
       control.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
       control.addEventFilter(MouseEvent.MOUSE_RELEASED, mouseHandler);
       control.focusedProperty().addListener(focusHandler);
    }
 
    private void unsubscribeToViewControl() {
-      Node control = getViewNode();
+      Canvas control = getViewCanvas();
       control.removeEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
       control.removeEventFilter(MouseEvent.MOUSE_RELEASED, mouseHandler);
       control.focusedProperty().removeListener(focusHandler);
@@ -101,7 +102,7 @@ public class MosaicNodeController extends AMosaicController<Node, Image, MosaicN
       @Override
       public void start(Stage stage) {
          AMosaicView._DEBUG_DRAW_FLOW = true;
-         MosaicNodeController ctrllr = new MosaicNodeController();
+         MosaicCanvasController ctrllr = new MosaicCanvasController();
 
          if (ThreadLocalRandom.current().nextBoolean()) {
             // unmodified controller test
@@ -116,8 +117,9 @@ public class MosaicNodeController extends AMosaicController<Node, Image, MosaicN
             ctrllr.gameNew();
          }
 
-         stage.setScene(new Scene(new Group(ctrllr.getViewNode())));
+         stage.setScene(new Scene(new Group(ctrllr.getViewCanvas())));
          stage.setOnCloseRequest(event -> ctrllr.close());
+         stage.setTitle("JFX: Demo " + MosaicCanvasController.class.getSimpleName());
          stage.show();
       }
 

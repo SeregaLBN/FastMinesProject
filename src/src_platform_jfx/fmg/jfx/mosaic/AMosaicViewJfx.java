@@ -57,9 +57,6 @@ public abstract class AMosaicViewJfx<TImage,
 
 
    protected void draw(GraphicsContext g, Collection<BaseCell> modifiedCells, RectDouble clipRegion, boolean drawBk) {
-      draw(g, modifiedCells, clipRegion, drawBk, 0, 0);
-   }
-   protected void draw(GraphicsContext g, Collection<BaseCell> modifiedCells, RectDouble clipRegion, boolean drawBk, double addonOffsetX, double addonOffsetY) {
       assert !_alreadyPainted;
       _alreadyPainted = true;
 
@@ -92,8 +89,8 @@ public abstract class AMosaicViewJfx<TImage,
       g.setLineWidth(pen.getWidth());
       BoundDouble padding = model.getPadding();
       BoundDouble margin  = model.getMargin();
-      SizeDouble offset = new SizeDouble(margin.left + padding.left + addonOffsetX,
-                                         margin.top  + padding.top  + addonOffsetY);
+      SizeDouble offset = new SizeDouble(margin.left + padding.left,
+                                         margin.top  + padding.top);
       boolean isIconicMode = pen.getColorLight().equals(pen.getColorShadow());
       BackgroundFill bkFill = model.getBackgroundFill();
 
@@ -115,19 +112,40 @@ public abstract class AMosaicViewJfx<TImage,
       }
       int tmp = 0;
 
-      for (BaseCell cell: toCheck)
+      for (BaseCell cell: toCheck) {
          // redraw only when needed...
          if ((toCheck == modifiedCells) || // check reference equals
              ((modifiedCells != null) && (modifiedCells.contains(cell))) || // ..when the cell is explicitly specified
              ((clipRegion != null) && cell.getRcOuter().moveXY(offset.width, offset.height).intersection(clipRegion))) // ...when the cells and update region intersect
          {
+            g.save();
             ++tmp;
 
             RectDouble rcInner = cell.getRcInner(pen.getWidth());
             RegionDouble poly = RegionDouble.moveXY(cell.getRegion(), offset);
 
             // ограничиваю рисование только границами своей фигуры
-          //canvas.setClip(new Polygon(Cast.toPolygon(poly)));
+            g.beginPath();
+//            if (false) {
+//               // variant 1
+//               StringJoiner sj = new StringJoiner(" L ", "M ", " z");
+//               poly.getPoints().forEach(p -> sj.add(String.format(Locale.US, "%.2f %.2f", p.x, p.y)));
+//               g.appendSVGPath(sj.toString());
+//            } else
+            {
+               // variant 2
+               boolean first = true;
+               for (PointDouble p : poly.getPoints()) {
+                  if (first) {
+                     first = false;
+                     g.moveTo(p.x, p.y);
+                  } else {
+                     g.lineTo(p.x, p.y);
+                  }
+               }
+            }
+            g.closePath();
+            g.clip();
 
             double[] polyX = null;
             double[] polyY = null;
@@ -139,7 +157,7 @@ public abstract class AMosaicViewJfx<TImage,
                   Color bkClrCell = cell.getBackgroundFillColor(bkFill.getMode(),
                                                                 bkClr,
                                                                 bkFill.getColors());
-                  if (!bkClrCell.equals(bkClr)) {
+                  if (!drawBk || !bkClrCell.equals(bkClr)) {
                      g.setFill(Cast.toColor(bkClrCell));
                      polyX = Cast.toPolygon(poly, true);
                      polyY = Cast.toPolygon(poly, false);
@@ -235,7 +253,10 @@ public abstract class AMosaicViewJfx<TImage,
              //g.setColor(java.awt.Color.MAGENTA);
              //g.drawRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
             }
+
+            g.restore();
          }
+      }
 
       /** /
       // test
@@ -274,7 +295,6 @@ public abstract class AMosaicViewJfx<TImage,
       g.setFont(oldFont);
       g.setStroke(oldStroke);
       g.setFill(oldFill);
-    //canvas.setClip(oldShape);
 
       _alreadyPainted = false;
    }
