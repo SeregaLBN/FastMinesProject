@@ -52,8 +52,6 @@ public class AboutDlg extends JDialog implements AutoCloseable {
 
    private void onClose() {
       // при выходе из диалогового окна - освобождаю ресурсы
-      if (_logo != null)
-         _logo.close();
       dispose();
 //      System.exit(0);
    }
@@ -166,7 +164,7 @@ public class AboutDlg extends JDialog implements AutoCloseable {
 
       panel.add(Box.createVerticalStrut(2));
 
-      JLabel lblVersion = new JLabel("Version 2016.08.13 (Java SWING)");
+      JLabel lblVersion = new JLabel("Version 2018.05.31 (Java SWING)");
       lblVersion.setAlignmentX(Component.CENTER_ALIGNMENT);
 //      lblVersion.setBorder(BorderFactory.createEtchedBorder());
       panel.add(lblVersion);
