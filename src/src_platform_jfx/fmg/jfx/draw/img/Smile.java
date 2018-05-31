@@ -1,18 +1,20 @@
-package fmg.swing.draw.img;
+package fmg.jfx.draw.img;
 
-import java.awt.*;
-import java.awt.geom.*;
 import java.util.Arrays;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.*;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Shape;
+
 import fmg.common.geom.PointDouble;
+import fmg.common.geom.Size;
 import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
 import fmg.core.img.SmileModel;
 import fmg.core.img.SmileModel.EFaceType;
-import fmg.swing.Cast;
 
 public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
@@ -24,22 +26,26 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       StaticInitilizer.init();
    }
 
-   protected void draw(Graphics2D g) {
-      Color oldColor = g.getColor();
-      Shape oldClip = g.getClip();
-      Paint oldPaint = g.getPaint();
+   protected void draw(GraphicsContext g) {
+      // save
+      Paint oldFill = g.getFill();
+      Paint oldStroke = g.getStroke();
 
       drawBody(g);
+      /** /
       drawEyes(g);
       drawMouth(g);
+      /**/
 
       // restore
-      g.setColor(oldColor);
-      g.setPaint(oldPaint);
-      g.setClip(oldClip);
+      g.setFill(oldFill);
+      g.setStroke(oldStroke);
    }
 
-   private void drawBody(Graphics2D g) {
+   private void drawBody(GraphicsContext g) {
+      Size size = getSize();
+      g.clearRect(0,0, size.width, size.height);
+
       SmileModel sm = this.getModel();
       SmileModel.EFaceType type = sm.getFaceType();
       int width = sm.getSize().width;
@@ -48,12 +54,12 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       if (type == EFaceType.Eyes_OpenDisabled || type == EFaceType.Eyes_ClosedDisabled)
          return;
 
-      Color yellowBody = new Color(0xFF, 0xCC, 0x00);
-      Color yellowGlint = new Color(0xFF, 0xFF, 0x33);
-      Color yellowBorder = new Color(0xFF, 0x6C, 0x0A);
+      Color yellowBody   = Color.rgb(0xFF, 0xCC, 0x00);
+      Color yellowGlint  = Color.rgb(0xFF, 0xFF, 0x33);
+      Color yellowBorder = Color.rgb(0xFF, 0x6C, 0x0A);
 
       { // рисую затемненный круг
-         g.setColor(yellowBorder);
+         g.setFill(yellowBorder);
          g.fillOval(0, 0, width, height);
       }
 
@@ -63,21 +69,28 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       double hInt = height - 2 * padY;
       double wExt = 1.133 * width;
       double hExt = 1.133 * height;
-      Ellipse2D ellipseInternal = new Ellipse2D.Double(padX, padY, width-padX*2, height-padY*2);
+      Ellipse ellipseInternal = new Ellipse(padX, padY, width-padX*2, height-padY*2);
       { // поверх него, внутри - градиентный круг
-         g.setPaint(new GradientPaint(0, 0, yellowBody, width, height, yellowBorder));
-         g.fill(ellipseInternal);
+         Stop[] stops = new Stop[] { new Stop(0, yellowBody), new Stop(1, yellowBorder)};
+         LinearGradient lg1 = new LinearGradient(0, 0, width, height, true, CycleMethod.NO_CYCLE, stops);
+         g.setFill(lg1);
+         g.fillOval(padX, padY, width-padX*2, height-padY*2);
       }
       { // верхний левый блик
-         Ellipse2D ellipseExternal = new Ellipse2D.Double(padX, padY, wExt, hExt);
-         g.setColor(yellowGlint); // Color.DARK_GRAY
+         Ellipse ellipseExternal = new Ellipse(padX, padY, wExt, hExt);
+         g.setFill(yellowGlint); // Color.DARK_GRAY
+         /** /
+         g.beginPath();
          g.fill(intersectExclude(ellipseInternal, ellipseExternal));
+         g.closePath();
+         /**/
 
          // test
          //g.setColor(Color.BLACK);
          //g.draw(ellipseInternal);
          //g.draw(ellipseExternal);
       }
+      /** /
       { // нижний правый блик
          Ellipse2D ellipseExternal = new Ellipse2D.Double(padX + wInt - wExt, padY + hInt - hExt, wExt, hExt);
          g.setColor(Cast.toColor(Cast.toColor(yellowBorder).darker(0.4)));
@@ -88,20 +101,21 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
          //g.draw(ellipseInternal);
          //g.draw(ellipseExternal);
       }
+      /**/
    }
-
-   private void drawEyes(Graphics2D g) {
+   /** /
+   private void drawEyes(GraphicsContext g) {
       SmileModel sm = this.getModel();
       SmileModel.EFaceType type = sm.getFaceType();
       int width = sm.getSize().width;
       int height = sm.getSize().height;
 
-      Stroke strokeOld = g.getStroke();
+      java.awt.Stroke strokeOld = g.getStroke();
       switch (type) {
       case Face_Assistant:
       case Face_SmilingWithSunglasses: {
             // glasses
-            Stroke strokeNew = new BasicStroke((float)Math.max(1, 0.03*((width+height)/2.0)), BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
+            java.awt.Stroke strokeNew = new java.awt.BasicStroke((float)Math.max(1, 0.03*((width+height)/2.0)), java.awt.BasicStroke.CAP_ROUND, java.awt.BasicStroke.JOIN_BEVEL);
             g.setStroke(strokeNew);
             g.setColor(Color.BLACK);
             g.draw(new Ellipse2D.Double(0.200*width, 0.100*height, 0.290*width, 0.440*height));
@@ -122,15 +136,15 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
          }
          break;
       case Face_Disappointed: {
-            Stroke strokeNew = new BasicStroke((float)Math.max(1, 0.02*((width+height)/2.0)), BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
+            java.awt.Stroke strokeNew = new java.awt.BasicStroke((float)Math.max(1, 0.02*((width+height)/2.0)), java.awt.BasicStroke.CAP_ROUND, java.awt.BasicStroke.JOIN_BEVEL);
             g.setStroke(strokeNew);
 
             Rectangle2D rcHalfLeft  = new Rectangle2D.Double(0, 0, width/2.0, height);
             Rectangle2D rcHalfRght = new Rectangle2D.Double(width/2.0, 0, width, height);
 
             // глаз/eye
-            Area areaLeft1 = intersectExclude(new Ellipse2D.Double(0.417*width, 0.050*height, 0.384*width, 0.400*height), rcHalfLeft);
-            Area areaRght1 = intersectExclude(new Ellipse2D.Double(0.205*width, 0.050*height, 0.384*width, 0.400*height), rcHalfRght);
+            Shape areaLeft1 = intersectExclude(new Ellipse2D.Double(0.417*width, 0.050*height, 0.384*width, 0.400*height), rcHalfLeft);
+            Shape areaRght1 = intersectExclude(new Ellipse2D.Double(0.205*width, 0.050*height, 0.384*width, 0.400*height), rcHalfRght);
             g.setColor(Color.RED);
             g.fill(areaLeft1);
             g.fill(areaRght1);
@@ -139,8 +153,8 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
             g.draw(areaRght1);
 
             // зрачок/pupil
-            Area areaLeft2 = intersectExclude(new Ellipse2D.Double(0.550*width, 0.200*height, 0.172*width, 0.180*height), rcHalfLeft);
-            Area areaRght2 = intersectExclude(new Ellipse2D.Double(0.282*width, 0.200*height, 0.172*width, 0.180*height), rcHalfRght);
+            Shape areaLeft2 = intersectExclude(new Ellipse2D.Double(0.550*width, 0.200*height, 0.172*width, 0.180*height), rcHalfLeft);
+            Shape areaRght2 = intersectExclude(new Ellipse2D.Double(0.282*width, 0.200*height, 0.172*width, 0.180*height), rcHalfRght);
             g.setColor(Color.BLUE);
             g.fill(areaLeft2);
             g.fill(areaRght2);
@@ -149,9 +163,9 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
             g.draw(areaRght2);
 
             // веко/eyelid
-            Area areaLeft3 = intersectExclude(rotate(new Ellipse2D.Double(0.441*width, -0.236*height, 0.436*width, 0.560*height),
+            Shape areaLeft3 = intersectExclude(rotate(new Ellipse2D.Double(0.441*width, -0.236*height, 0.436*width, 0.560*height),
                                                      new PointDouble     (0.441*width, -0.236*height), 30), rcHalfLeft);
-            Area areaRght3 = intersectExclude(rotate(new Ellipse2D.Double(0.128*width, -0.236*height, 0.436*width, 0.560*height),
+            Shape areaRght3 = intersectExclude(rotate(new Ellipse2D.Double(0.128*width, -0.236*height, 0.436*width, 0.560*height),
                                                      new PointDouble     (0.564*width, -0.236*height), -30), rcHalfRght);
             areaLeft3 = intersect(areaLeft1, areaLeft3);
             areaRght3 = intersect(areaRght1, areaRght3);
@@ -200,7 +214,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       g.setStroke(strokeOld);
    }
 
-   private void drawMouth(Graphics2D g) {
+   private void drawMouth(GraphicsContext g) {
       SmileModel sm = this.getModel();
       SmileModel.EFaceType type = sm.getFaceType();
       int width = sm.getSize().width;
@@ -218,8 +232,8 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       default:
       }
 
-      Stroke strokeOld = g.getStroke();
-      Stroke strokeNew = new BasicStroke((float)Math.max(1, 0.044*((width+height)/2.0)), BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
+      java.awt.Stroke strokeOld = g.getStroke();
+      java.awt.Stroke strokeNew = new java.awt.BasicStroke((float)Math.max(1, 0.044*((width+height)/2.0)), java.awt.BasicStroke.CAP_ROUND, java.awt.BasicStroke.JOIN_BEVEL);
       g.setStroke(strokeNew);
       g.setColor(Color.BLACK);
 
@@ -261,9 +275,9 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
             arcSmile.setAngleStart(0); arcSmile.setAngleExtent(360); // arc as ellipse
 
             // tongue / язык
-            Area tongue = intersectInclude(new   Ellipse2D.Double(0.338*width, 0.637*height, 0.325*width, 0.325*height),  // кончик языка
+            Shape tongue = intersectInclude(new   Ellipse2D.Double(0.338*width, 0.637*height, 0.325*width, 0.325*height),  // кончик языка
                                            new Rectangle2D.Double(0.338*width, 0.594*height, 0.325*width, 0.206*height)); // тело языка
-            Area hole = intersectExclude(new Rectangle2D.Double(0, 0, width, height), arcSmile);
+            Shape hole = intersectExclude(new Rectangle2D.Double(0, 0, width, height), arcSmile);
             tongue = intersectExclude(tongue, hole);
             g.setColor(Color.RED);
             g.fill(tongue);
@@ -273,15 +287,15 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
             g.draw(intersectExclude(new Rectangle2D.Double(width/2.0, 0.637*height, 0.0001, 0.200*height), hole)); // its works
 
             // test
-            //g.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+            //g.setStroke(new java.awt.BasicStroke(1, java.awt.BasicStroke.CAP_ROUND, java.awt.BasicStroke.JOIN_BEVEL));
             //g.draw(arcSmile);
             //g.draw(hole);
          }
          break;
       case Face_Grinning: {
             Arc2D arcSmile = new Arc2D.Double(0.103*width, -0.133*height, 0.795*width, 1.003*height, 207, 126, Arc2D.CHORD);
-            Paint paintOld = g.getPaint();
-            g.setPaint(new GradientPaint(0, 0, Color.GRAY, (float)(width/2.0), 0, Color.WHITE));
+            java.awt.GradientPaint paintOld = g.getPaint();
+            g.setPaint(new java.awt.GradientPaint(0, 0, Color.GRAY, (float)(width/2.0), 0, Color.WHITE));
           //g.fill(new Rectangle2D.Double(0, 0, width, height)); // test
             g.fill(arcSmile);
             g.setPaint(paintOld);
@@ -296,13 +310,13 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       g.setStroke(strokeOld);
    }
 
-   private void eyeOpened(Graphics2D g, boolean right, boolean disabled) {
+   private void eyeOpened(GraphicsContext g, boolean right, boolean disabled) {
       SmileModel sm = this.getModel();
       int width = sm.getSize().width;
       int height = sm.getSize().height;
 
       Consumer<PointDouble> draw = offset -> {
-         Area pupil = right
+         Shape pupil = right
                ? intersectInclude(intersectInclude(
                           new Ellipse2D.Double((offset.x+0.273)*width, (offset.y+0.166)*height, 0.180*width, 0.324*height),
                    rotate(new Ellipse2D.Double((offset.x+0.320)*width, (offset.y+0.124)*height, 0.180*width, 0.273*height),
@@ -341,7 +355,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       }
    }
 
-   private void eyeClosed(Graphics2D g, boolean right, boolean disabled) {
+   private void eyeClosed(GraphicsContext g, boolean right, boolean disabled) {
       SmileModel sm = this.getModel();
       int width = sm.getSize().width;
       int height = sm.getSize().height;
@@ -362,81 +376,72 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
                  ? new PointDouble(-0.410, 0)
                  : new PointDouble());
    }
+   /**/
 
    private static Shape rotate(Shape shape, PointDouble rotatePoint, double angle) {
-      AffineTransform tx = new AffineTransform();
-      tx.rotate(Math.toRadians(angle), rotatePoint.x, rotatePoint.y);
-      GeneralPath path = new GeneralPath();
-      path.append(tx.createTransformedShape(shape), false);
-      return path;
+      shape.getTransforms().add(new javafx.scene.transform.Rotate(angle, rotatePoint.x, rotatePoint.y));
+      return shape;
    }
 
-   private static Area intersect(Shape s1, Shape s2) {
-      Area outside = new Area(s1);
-      outside.intersect(new Area(s2));
-      return outside;
-    }
-
-   private static Area intersectExclude(Shape s1, Shape s2) {
-      Area outside = new Area(s1);
-      outside.subtract(new Area(s2));
-      return outside;
+   private static Shape intersect(Shape s1, Shape s2) {
+      return Shape.intersect(s1, s2);
    }
 
-   private static Area intersectInclude(Shape s1, Shape s2) {
-      Area outside = new Area(s1);
-      outside.add(new Area(s2));
-      return outside;
+   private static Shape intersectExclude(Shape s1, Shape s2) {
+      return Shape.subtract(s1, s2);
+   }
+
+   private static Shape intersectInclude(Shape s1, Shape s2) {
+      return Shape.union(s1, s2);
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    //    custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   /** Smile image view implementation over {@link javax.swing.Icon} */
-   static class Icon extends Smile<javax.swing.Icon> {
+   /** Smile image view implementation over {@link javafx.scene.canvas.Canvas} */
+   static class Canvas extends Smile<javafx.scene.canvas.Canvas> {
 
-      private IconSwing ico = new IconSwing(this);
+       private CanvasJfx canvas = new CanvasJfx(this);
 
-      public Icon(EFaceType faceType) { super(faceType); }
+       public Canvas(EFaceType faceType) { super(faceType); }
 
-      @Override
-      protected javax.swing.Icon createImage() { return ico.create(); }
+       @Override
+       protected javafx.scene.canvas.Canvas createImage() { return canvas.create(); }
 
-      @Override
-      protected void drawBody() { draw(ico.getGraphics()); }
-
-      @Override
-      public void close() {
-         ico.close();
-         super.close();
-         ico = null;
-      }
+       @Override
+       protected void drawBody() { draw(canvas.getGraphics()); }
 
    }
 
-   /** Smile image view implementation over {@link java.awt.Image} */
-   static class Image extends Smile<java.awt.Image> {
+   /** Smile image view implementation over {@link javafx.scene.image.Image} */
+   static class Image extends Smile<javafx.scene.image.Image> {
 
-      private ImageAwt img = new ImageAwt(this);
+       private ImageJfx img = new ImageJfx(this);
 
-      public Image(EFaceType faceType) { super(faceType); }
+       public Image(EFaceType faceType) { super(faceType); }
 
-      @Override
-      protected java.awt.Image createImage() { return img.create(); }
+       @Override
+       protected javafx.scene.image.Image createImage() {
+          img.createCanvas();
+          return null; // img.createImage(); // fake empty image
+       }
 
-      @Override
-      protected void drawBody() { img.draw(g -> draw(g)); }
+       @Override
+       protected void drawBody() {
+          draw(img.getGraphics());
+          setImage(img.createImage()); // real image
+       }
 
    }
 
-   /** Smile image controller implementation for {@link Icon} */
-   public static class ControllerIcon extends ImageController<javax.swing.Icon, Smile.Icon, SmileModel> {
-      public ControllerIcon(EFaceType faceType) { super(new Smile.Icon(faceType)); }
+   /** Smile image controller implementation for {@link Canvas} */
+   public static class ControllerCanvas extends ImageController<javafx.scene.canvas.Canvas, Smile.Canvas, SmileModel> {
+      public ControllerCanvas(EFaceType faceType) { super(new Smile.Canvas(faceType)); }
    }
 
    /** Smile image controller implementation for {@link Image} */
-   public static class ControllerImage extends ImageController<java.awt.Image, Smile.Image, SmileModel> {
+   public static class ControllerImage extends ImageController<javafx.scene.image.Image, Smile.Image, SmileModel> {
       public ControllerImage(EFaceType faceType) { super(new Smile.Image(faceType)); }
    }
 
@@ -444,7 +449,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
    public static void main(String[] args) {
       TestDrawing.testApp(() -> {
             return Arrays.asList(EFaceType.values()).stream()
-                  .map(e -> Stream.of(new Smile.ControllerIcon(e),
+                  .map(e -> Stream.of(new Smile.ControllerCanvas(e),
                                       new Smile.ControllerImage(e)))
                   .flatMap(x -> x)
                   .collect(Collectors.toList());
