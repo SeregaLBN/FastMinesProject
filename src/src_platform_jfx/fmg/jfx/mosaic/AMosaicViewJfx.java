@@ -64,7 +64,6 @@ public abstract class AMosaicViewJfx<TImage,
       Size size = model.getSize();
 
       // save
-    //Node oldShape = canvas.getClip();
       Paint oldFill = g.getFill();
       Paint oldStroke = g.getStroke();
       Font oldFont = g.getFont();
@@ -112,40 +111,47 @@ public abstract class AMosaicViewJfx<TImage,
       }
       int tmp = 0;
 
+      /** HINT: Using the {@link GraphicsContext#clip} method slows down drawing (animation).
+       * Especially noticeable at startup demo {@link MosaicCanvasController#main} */
+      boolean useClip = !isIconicMode;
+
       for (BaseCell cell: toCheck) {
          // redraw only when needed...
          if ((toCheck == modifiedCells) || // check reference equals
              ((modifiedCells != null) && (modifiedCells.contains(cell))) || // ..when the cell is explicitly specified
              ((clipRegion != null) && cell.getRcOuter().moveXY(offset.width, offset.height).intersection(clipRegion))) // ...when the cells and update region intersect
          {
-            g.save();
-            ++tmp;
+             ++tmp;
+            if (useClip)
+               g.save();
 
             RectDouble rcInner = cell.getRcInner(pen.getWidth());
             RegionDouble poly = RegionDouble.moveXY(cell.getRegion(), offset);
 
-            // ограничиваю рисование только границами своей фигуры
-            g.beginPath();
-//            if (false) {
-//               // variant 1
-//               StringJoiner sj = new StringJoiner(" L ", "M ", " z");
-//               poly.getPoints().forEach(p -> sj.add(String.format(Locale.US, "%.2f %.2f", p.x, p.y)));
-//               g.appendSVGPath(sj.toString());
-//            } else
-            {
-               // variant 2
-               boolean first = true;
-               for (PointDouble p : poly.getPoints()) {
-                  if (first) {
-                     first = false;
-                     g.moveTo(p.x, p.y);
-                  } else {
-                     g.lineTo(p.x, p.y);
+            if (useClip) {
+               // ограничиваю рисование только границами своей фигуры
+               g.beginPath();
+//               if (false) {
+//                  // variant 1
+//                  StringJoiner sj = new StringJoiner(" L ", "M ", " z");
+//                  poly.getPoints().forEach(p -> sj.add(String.format(Locale.US, "%.2f %.2f", p.x, p.y)));
+//                  g.appendSVGPath(sj.toString());
+//               } else
+               {
+                  // variant 2
+                  boolean first = true;
+                  for (PointDouble p : poly.getPoints()) {
+                     if (first) {
+                        first = false;
+                        g.moveTo(p.x, p.y);
+                     } else {
+                        g.lineTo(p.x, p.y);
+                     }
                   }
                }
+               g.closePath();
+               g.clip();
             }
-            g.closePath();
-            g.clip();
 
             double[] polyX = null;
             double[] polyY = null;
@@ -254,7 +260,8 @@ public abstract class AMosaicViewJfx<TImage,
              //g.drawRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
             }
 
-            g.restore();
+            if (useClip)
+               g.restore();
          }
       }
 
