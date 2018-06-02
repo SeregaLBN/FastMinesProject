@@ -15,6 +15,8 @@ import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
 import fmg.core.img.SmileModel;
 import fmg.core.img.SmileModel.EFaceType;
+import fmg.jfx.Cast;
+import fmg.jfx.utils.ShapeConverter;
 
 public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
@@ -69,39 +71,37 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       double hInt = height - 2 * padY;
       double wExt = 1.133 * width;
       double hExt = 1.133 * height;
-      Ellipse ellipseInternal = new Ellipse(padX, padY, width-padX*2, height-padY*2);
+      Ellipse ellipseInternal = new Ellipse(padX + (width/2-padX), padY + (height/2-padY), width/2-padX, height/2-padY);
       { // поверх него, внутри - градиентный круг
-         Stop[] stops = new Stop[] { new Stop(0, yellowBody), new Stop(1, yellowBorder)};
-         LinearGradient lg1 = new LinearGradient(0, 0, width, height, true, CycleMethod.NO_CYCLE, stops);
-         g.setFill(lg1);
+         g.setFill(new LinearGradient(0, 0, width, height, false, CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, yellowBody), new Stop(1, yellowBorder)}));
          g.fillOval(padX, padY, width-padX*2, height-padY*2);
       }
       { // верхний левый блик
-         Ellipse ellipseExternal = new Ellipse(padX, padY, wExt, hExt);
-         g.setFill(yellowGlint); // Color.DARK_GRAY
-         /** /
+         Ellipse ellipseExternal = new Ellipse(padX + wExt/2, padY + hExt/2, wExt/2, hExt/2);
          g.beginPath();
-         g.fill(intersectExclude(ellipseInternal, ellipseExternal));
+         g.appendSVGPath(ShapeConverter.toSvg(intersectExclude(ellipseInternal, ellipseExternal)));
          g.closePath();
-         /**/
+         g.setFill(yellowGlint); // Color.DARK_GRAY
+         g.fill();
 
          // test
          //g.setColor(Color.BLACK);
          //g.draw(ellipseInternal);
          //g.draw(ellipseExternal);
       }
-      /** /
       { // нижний правый блик
-         Ellipse2D ellipseExternal = new Ellipse2D.Double(padX + wInt - wExt, padY + hInt - hExt, wExt, hExt);
-         g.setColor(Cast.toColor(Cast.toColor(yellowBorder).darker(0.4)));
-         g.fill(intersectExclude(ellipseInternal, ellipseExternal));
+         Ellipse ellipseExternal = new Ellipse(padX + wInt - wExt/2, padY + hInt - hExt/2, wExt/2, hExt/2);
+         g.beginPath();
+         g.appendSVGPath(ShapeConverter.toSvg(intersectExclude(ellipseInternal, ellipseExternal)));
+         g.closePath();
+         g.setFill(Cast.toColor(Cast.toColor(yellowBorder).darker(0.4)));
+         g.fill();
 
          // test
          //g.setColor(Color.BLACK);
          //g.draw(ellipseInternal);
          //g.draw(ellipseExternal);
       }
-      /**/
    }
    /** /
    private void drawEyes(GraphicsContext g) {
