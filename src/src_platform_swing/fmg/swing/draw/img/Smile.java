@@ -125,7 +125,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
             Stroke strokeNew = new BasicStroke((float)Math.max(1, 0.02*((width+height)/2.0)), BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
             g.setStroke(strokeNew);
 
-            Rectangle2D rcHalfLeft  = new Rectangle2D.Double(0, 0, width/2.0, height);
+            Rectangle2D rcHalfLeft = new Rectangle2D.Double(0, 0, width/2.0, height);
             Rectangle2D rcHalfRght = new Rectangle2D.Double(width/2.0, 0, width, height);
 
             // глаз/eye
