@@ -17,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
+import fmg.common.Color;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.Size;
@@ -24,6 +25,7 @@ import fmg.core.img.ATestDrawing;
 import fmg.core.img.ATestDrawing.CellTilingInfo;
 import fmg.core.img.ATestDrawing.CellTilingResult;
 import fmg.core.img.ImageController;
+import fmg.jfx.Cast;
 
 /** @see {@link MosaicSkillImg#main}, {@link MosaicGroupImg#main}, {@link MosaicsImg#main} */
 public final class TestDrawing extends Application {
@@ -35,6 +37,8 @@ public final class TestDrawing extends Application {
 
    @Override
    public void start(Stage primaryStage) {
+    //setUserAgentStylesheet(STYLESHEET_MODENA);
+
 
       ATestDrawing td = new ATestDrawing("JFX") {};
 
@@ -58,7 +62,10 @@ public final class TestDrawing extends Application {
                return;
 
             GraphicsContext gc = canvas.getGraphicsContext2D();
-            gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
+          //gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
+            gc.setFill(Cast.toColor(Color.Gray.brighter()));
+            gc.fillRect(0,0, canvas.getWidth(), canvas.getHeight());
+
           //gc.setStroke(Cast.toColor(Color.Black));
           //gc.setLineWidth(1);
             gc.strokeRect(rc[0].x, rc[0].y, rc[0].width, rc[0].height);

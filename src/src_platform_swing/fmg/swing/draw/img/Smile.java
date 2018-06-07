@@ -319,11 +319,8 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
             g.setColor(Color.BLACK);
             g.fill(pupil);
          }
-         Shape hole = right
-               ? rotate(new Ellipse2D.Double((offset.x+0.303*width), (offset.y+0.209)*height, 0.120*width, 0.160*height),
-                        new      PointDouble((offset.x+0.303*width), (offset.y+0.209)*height), 25)
-               : rotate(new Ellipse2D.Double((offset.x+0.610*width), (offset.y+0.209)*height, 0.120*width, 0.160*height),
-                        new      PointDouble((offset.x+0.610*width), (offset.y+0.209)*height), 25);
+         Shape hole = rotate(new Ellipse2D.Double((offset.x+(right?0.303:0.610))*width, (offset.y+0.209)*height, 0.120*width, 0.160*height),
+                             new      PointDouble((offset.x+(right?0.303:0.610))*width, (offset.y+0.209)*height), 25);
          if (!disabled) {
             g.setColor(Color.WHITE);
             g.fill(hole);
@@ -346,21 +343,16 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       int width = sm.getSize().width;
       int height = sm.getSize().height;
 
-      Consumer<PointDouble> eye = offset -> {
-         if (disabled) {
-            g.setColor(Color.WHITE);
-            g.fill(intersectInclude(
-                       new Ellipse2D.Double((offset.x+0.532)*width, (offset.y+0.248)*height, 0.313*width, 0.068*height),
-                       new Ellipse2D.Double((offset.x+0.655)*width, (offset.y+0.246)*height, 0.205*width, 0.130*height)));
-         }
-         g.setColor(disabled ? Color.GRAY : Color.BLACK);
-         g.fill(intersectInclude(
-                    new Ellipse2D.Double((offset.x+0.517)*width, (offset.y+0.248)*height, 0.313*width, 0.034*height),
-                    new Ellipse2D.Double((offset.x+0.640)*width, (offset.y+0.246)*height, 0.205*width, 0.075*height)));
+      Consumer<Boolean> eye = increased -> {
+         g.fill(new Ellipse2D.Double(((right ? 0.107 : 0.517)+(increased?0.015:0))*width, 0.248*height, 0.313*width, 0.034*(increased?2:1)*height));
+         g.fill(new Ellipse2D.Double(((right ? 0.230 : 0.640)+(increased?0.015:0))*width, 0.246*height, 0.205*width, 0.065*(increased?2:1)*height));
       };
-      eye.accept(right
-                 ? new PointDouble(-0.410, 0)
-                 : new PointDouble());
+      if (disabled) {
+         g.setColor(Color.WHITE);
+         eye.accept(true);
+      }
+      g.setColor(disabled ? Color.GRAY : Color.BLACK);
+      eye.accept(false);
    }
 
    private static Shape rotate(Shape shape, PointDouble rotatePoint, double angle) {

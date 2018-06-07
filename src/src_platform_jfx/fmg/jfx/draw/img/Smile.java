@@ -35,9 +35,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
       drawBody(g);
       drawEyes(g);
-      /** /
       drawMouth(g);
-      /**/
 
       // restore
       g.setFill(oldFill);
@@ -115,8 +113,6 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       double lwOld = g.getLineWidth();
       StrokeLineCap slcOld = g.getLineCap();
       StrokeLineJoin sljOld = g.getLineJoin();
-
-      g.setGlobalAlpha(1);
 
       switch (type) {
       case Face_Assistant:
@@ -255,7 +251,6 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       g.setFill(fillOld);
    }
 
-   /** /
    private void drawMouth(GraphicsContext g) {
       SmileModel sm = this.getModel();
       SmileModel.EFaceType type = sm.getFaceType();
@@ -274,20 +269,31 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       default:
       }
 
-      java.awt.Stroke strokeOld = g.getStroke();
-      java.awt.Stroke strokeNew = new java.awt.BasicStroke((float)Math.max(1, 0.044*((width+height)/2.0)), java.awt.BasicStroke.CAP_ROUND, java.awt.BasicStroke.JOIN_BEVEL);
-      g.setStroke(strokeNew);
-      g.setColor(Color.BLACK);
+
+      Paint fillOld = g.getFill();
+      Paint strokeOld = g.getStroke();
+      double lwOld = g.getLineWidth();
+      StrokeLineCap slcOld = g.getLineCap();
+      StrokeLineJoin sljOld = g.getLineJoin();
+
+      g.setLineWidth(Math.max(1, 0.044*((width+height)/2.0)));
+      g.setLineCap(StrokeLineCap.ROUND);
+      g.setLineJoin(StrokeLineJoin.BEVEL);
+      g.setStroke(Color.BLACK);
+      g.setFill(Color.BLACK);
 
       switch (type) {
       case Face_SavouringDeliciousFood:
       case Face_SmilingWithSunglasses:
       case Face_WhiteSmiling: {
             // smile
-            Arc2D arcSmile = new Arc2D.Double(0.103*width, -0.133*height, 0.795*width, 1.003*height, 207, 126, Arc2D.OPEN);
-            g.draw(arcSmile);
-            Ellipse2D lip = newEllipse(0.060*width, 0.475*height, 0.877*width, 0.330*height);
-            g.fill(intersectExclude(arcSmile, lip));
+            g.strokeArc          (0.103*width, -0.133*height, 0.795*width, 1.003*height, 207, 126, ArcType.OPEN);
+            Arc arcSmile = newArc(0.103*width, -0.133*height, 0.795*width, 1.003*height, 207, 126);
+            Ellipse lip = newEllipse(0.060*width, 0.475*height, 0.877*width, 0.330*height);
+            g.beginPath();
+            g.appendSVGPath(ShapeConverter.toSvg(intersectExclude(arcSmile, lip)));
+            g.closePath();
+            g.fill();
 
             // test
             //g.setStroke(strokeOld);
@@ -295,38 +301,47 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
             //g.draw(lip);
 
             // dimples - ямочки на щеках
-            g.setStroke(strokeNew);
-            g.setColor(Color.BLACK);
-            g.draw(new Arc2D.Double(+0.020*width, 0.420*height, 0.180*width, 0.180*height, 85+180, 57, Arc2D.OPEN));
-            g.draw(new Arc2D.Double(+0.800*width, 0.420*height, 0.180*width, 0.180*height, 38+180, 57, Arc2D.OPEN));
+//            g.setStroke(strokeNew);
+//            g.setColor(Color.BLACK);
+            g.strokeArc(+0.020*width, 0.420*height, 0.180*width, 0.180*height, 85+180, 57, ArcType.OPEN);
+            g.strokeArc(+0.800*width, 0.420*height, 0.180*width, 0.180*height, 38+180, 57, ArcType.OPEN);
 
             // tongue / язык
             if (type == EFaceType.Face_SavouringDeliciousFood) {
                Shape tongue = rotate(newEllipse     (0.470*width, 0.406*height, 0.281*width, 0.628*height),
                                      new PointDouble(0.470*width, 0.406*height), 40);
-               g.setColor(Color.RED);
-               Ellipse2D ellipseSmile = newEllipse(0.103*width, -0.133*height, 0.795*width, 1.003*height);
-               g.fill(intersectExclude(tongue, ellipseSmile));
+               g.setFill(Color.RED);
+               Ellipse ellipseSmile = newEllipse(0.103*width, -0.133*height, 0.795*width, 1.003*height);
+               g.beginPath();
+               g.appendSVGPath(ShapeConverter.toSvg(intersectExclude(tongue, ellipseSmile)));
+               g.closePath();
+               g.fill();
             }
          }
          break;
       case Face_Disappointed: {
             // smile
-            Arc2D arcSmile = new Arc2D.Double(0.025*width, 0.655*height, 0.950*width, 0.950*height, 50, 80, Arc2D.OPEN);
-            g.draw(arcSmile);
-            arcSmile.setAngleStart(0); arcSmile.setAngleExtent(360); // arc as ellipse
+            g.strokeArc          (0.025*width, 0.655*height, 0.950*width, 0.950*height, 50, 80, ArcType.OPEN);
+            Arc arcSmile = newArc(0.025*width, 0.655*height, 0.950*width, 0.950*height, 0, 360); // arc as ellipse
 
             // tongue / язык
-            Shape tongue = intersectInclude(new   Ellipse2D.Double(0.338*width, 0.637*height, 0.325*width, 0.325*height),  // кончик языка
-                                           new Rectangle2D.Double(0.338*width, 0.594*height, 0.325*width, 0.206*height)); // тело языка
-            Shape hole = intersectExclude(new Rectangle2D.Double(0, 0, width, height), arcSmile);
+            Shape tongue = intersectInclude( newEllipse(0.338*width, 0.637*height, 0.325*width, 0.325*height),  // кончик языка
+                                          new Rectangle(0.338*width, 0.594*height, 0.325*width, 0.206*height)); // тело языка
+            Shape hole = intersectExclude(new Rectangle(0, 0, width, height), arcSmile);
             tongue = intersectExclude(tongue, hole);
-            g.setColor(Color.RED);
-            g.fill(tongue);
-            g.setColor(Color.BLACK);
-            g.draw(tongue);
-          //g.draw(intersectExclude(new Line2D.Double(width/2.0, 0.637*height, width/2.0, 0.800*height), hole)); // don't working
-            g.draw(intersectExclude(new Rectangle2D.Double(width/2.0, 0.637*height, 0.0001, 0.200*height), hole)); // its works
+            g.setFill(Color.RED);
+            g.beginPath();
+            g.appendSVGPath(ShapeConverter.toSvg(tongue));
+            g.closePath();
+            g.fill();
+            g.setStroke(Color.BLACK);
+            g.stroke();
+
+            g.beginPath();
+          //g.appendSVGPath(ShapeConverter.toSvg(intersectExclude(new Line(width/2.0, 0.637*height, width/2.0, 0.800*height), hole))); // don't working
+            g.appendSVGPath(ShapeConverter.toSvg(intersectExclude(new Rectangle(width/2.0, 0.637*height, 0.0001, 0.200*height), hole))); // its works
+            g.closePath();
+            g.stroke();
 
             // test
             //g.setStroke(new java.awt.BasicStroke(1, java.awt.BasicStroke.CAP_ROUND, java.awt.BasicStroke.JOIN_BEVEL));
@@ -335,23 +350,22 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
          }
          break;
       case Face_Grinning: {
-            Arc2D arcSmile = new Arc2D.Double(0.103*width, -0.133*height, 0.795*width, 1.003*height, 207, 126, Arc2D.CHORD);
-            java.awt.GradientPaint paintOld = g.getPaint();
-            g.setPaint(new java.awt.GradientPaint(0, 0, Color.GRAY, (float)(width/2.0), 0, Color.WHITE));
-          //g.fill(new Rectangle2D.Double(0, 0, width, height)); // test
-            g.fill(arcSmile);
-            g.setPaint(paintOld);
-            g.setStroke(strokeNew);
-            g.draw(arcSmile);
+            g.setFill(new LinearGradient(0, 0, width/2.0, 0, false, CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, Color.GRAY), new Stop(1, Color.WHITE)}));
+            g.fillArc(0.103*width, -0.133*height, 0.795*width, 1.003*height, 207, 126, ArcType.CHORD);
+            g.setStroke(Color.BLACK);
+            g.strokeArc(0.103*width, -0.133*height, 0.795*width, 1.003*height, 207, 126, ArcType.CHORD);
          }
          break;
       default:
          throw new UnsupportedOperationException("Not implemented");
       }
 
+      g.setLineWidth(lwOld);
+      g.setLineCap(slcOld);
+      g.setLineJoin(sljOld);
       g.setStroke(strokeOld);
+      g.setFill(fillOld);
    }
-   /**/
 
    private void eyeOpened(GraphicsContext g, boolean right, boolean disabled) {
       SmileModel sm = this.getModel();
@@ -379,15 +393,13 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
             g.closePath();
             g.fill();
          }
-         Shape hole = right
-               ? rotate(newEllipse((offset.x+0.303*width), (offset.y+0.209)*height, 0.120*width, 0.160*height),
-                        new      PointDouble((offset.x+0.303*width), (offset.y+0.209)*height), 25)
-               : rotate(newEllipse((offset.x+0.610*width), (offset.y+0.209)*height, 0.120*width, 0.160*height),
-                        new      PointDouble((offset.x+0.610*width), (offset.y+0.209)*height), 25);
+         Shape hole = rotate(     newEllipse((offset.x+(right?0.303:0.610))*width, (offset.y+0.209)*height, 0.120*width, 0.160*height),
+                             new PointDouble((offset.x+(right?0.303:0.610))*width, (offset.y+0.209)*height), 25);
          if (!disabled) {
             g.setFill(Color.WHITE);
             g.beginPath();
-            g.appendSVGPath(ShapeConverter.toSvg(hole));
+          //g.appendSVGPath(ShapeConverter.toSvg(hole)); // hm.... not forked
+            g.appendSVGPath(ShapeConverter.toSvg(intersectExclude(hole, new Rectangle(0,0,0,0)))); // ..must usage over dummy rect
             g.closePath();
             g.fill();
          } else {
@@ -412,25 +424,16 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       int width = sm.getSize().width;
       int height = sm.getSize().height;
 
-      Consumer<PointDouble> eye = offset -> {
-         if (disabled) {
-            g.setFill(Color.WHITE);
-            g.beginPath();
-            g.appendSVGPath(ShapeConverter.toSvg(intersectInclude(newEllipse((offset.x+0.532)*width, (offset.y+0.248)*height, 0.313*width, 0.068*height),
-                                                                  newEllipse((offset.x+0.655)*width, (offset.y+0.246)*height, 0.205*width, 0.130*height))));
-            g.closePath();
-            g.fill();
-         }
-         g.setFill(disabled ? Color.GRAY : Color.BLACK);
-         g.beginPath();
-         g.appendSVGPath(ShapeConverter.toSvg(intersectInclude(newEllipse((offset.x+0.517)*width, (offset.y+0.248)*height, 0.313*width, 0.034*height),
-                                                               newEllipse((offset.x+0.640)*width, (offset.y+0.246)*height, 0.205*width, 0.075*height))));
-         g.closePath();
-         g.fill();
+      Consumer<Boolean> eye = isFat -> {
+         g.fillOval(((right ? 0.107 : 0.517)+(isFat?0.015:0))*width, 0.248*height, 0.313*width, 0.034*(isFat?2:1)*height);
+         g.fillOval(((right ? 0.230 : 0.640)+(isFat?0.015:0))*width, 0.246*height, 0.205*width, 0.065*(isFat?2:1)*height);
       };
-      eye.accept(right
-                 ? new PointDouble(-0.410, 0)
-                 : new PointDouble());
+      if (disabled) {
+         g.setFill(Color.WHITE);
+         eye.accept(true);
+      }
+      g.setFill(disabled ? Color.GRAY : Color.BLACK);
+      eye.accept(false);
    }
 
    private static Shape rotate(Shape shape, PointDouble rotatePoint, double angle) {
@@ -452,6 +455,9 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
    private static Ellipse newEllipse(double x, double y, double w, double h) {
       return new Ellipse(x+w/2, y+h/2, w/2, h/2);
+   }
+   private static Arc newArc(double x, double y, double w, double h, double start, double extent) {
+       return new Arc(x+w/2, y+h/2, w/2, h/2, start, extent);
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
