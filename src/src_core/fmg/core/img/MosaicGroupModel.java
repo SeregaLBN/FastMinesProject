@@ -25,7 +25,7 @@ public class MosaicGroupModel extends AnimatedImageModel {
 
    private EMosaicGroup _mosaicGroup;
    public EMosaicGroup getMosaicGroup() { return _mosaicGroup; }
-   public void setMosaicGroup(EMosaicGroup value) { setProperty(_mosaicGroup, value, PROPERTY_MOSAIC_GROUP); }
+   public void setMosaicGroup(EMosaicGroup value) { _notifier.setProperty(_mosaicGroup, value, PROPERTY_MOSAIC_GROUP); }
 
    /**  triangle -> quadrangle -> hexagon -> anew triangle -> ... */
    private final int[] _nmArray = { 3, 4, 6 };

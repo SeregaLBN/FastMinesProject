@@ -45,13 +45,13 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
 
 
    public ERotateMode getRotateMode() { return _rotateMode; }
-   public void setRotateMode(ERotateMode value) { setProperty(_rotateMode, value, PROPERTY_ROTATE_MODE); }
+   public void setRotateMode(ERotateMode value) { _notifier.setProperty(_rotateMode, value, PROPERTY_ROTATE_MODE); }
 
    /** 0° .. +360° */
    public double getRotateAngle() { return _rotateAngle; }
    public void setRotateAngle(double value) {
       value = ImageModel.fixAngle(value);
-      setProperty(_rotateAngle, value, PROPERTY_ROTATE_ANGLE);
+      _notifier.setProperty(_rotateAngle, value, PROPERTY_ROTATE_ANGLE);
    }
 
    @Override
@@ -82,7 +82,7 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
 
          FigureHelper.rotateCollection(cell.getRegion().getPoints(), rotateAngle, center);
       }
-      onPropertyChanged(PROPERTY_MATRIX);
+      _notifier.onPropertyChanged(PROPERTY_MATRIX);
    }
 
    /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
@@ -194,7 +194,7 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
       _prepareList.clear();
       if (!_rotatedElements.isEmpty()) {
          _rotatedElements.clear();
-         onPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
+         _notifier.onPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
       }
 
 //      if (!isAnimated())
@@ -246,7 +246,7 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
             {
                _prepareList.remove(i);
                _rotatedElements.add(new RotatedCellContext(nextRandomIndex(), angleOffset, area));
-               onPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
+               _notifier.onPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
             }
          }
       }
@@ -274,7 +274,7 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
                               rotateCellAlterantive = !rotateCellAlterantive;
                            addRandomToPrepareList(false);
                         });
-         onPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
+         _notifier.onPropertyChanged(PROPERTY_ROTATED_ELEMENTS);
       }
    }
 

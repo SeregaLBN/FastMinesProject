@@ -10,7 +10,9 @@ import fmg.common.geom.*;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /** MVC: model of representable menu as horizontal or vertical lines */
-public class BurgerMenuModel extends NotifyPropertyChanged implements IImageModel {
+public class BurgerMenuModel implements IImageModel {
+
+   protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
    /**
     * @param generalModel - another basic model
@@ -48,19 +50,19 @@ public class BurgerMenuModel extends NotifyPropertyChanged implements IImageMode
 
    private boolean _show;
    public boolean isShow() { return _show; }
-   public void   setShow(boolean value) { setProperty(_show, value, PROPERTY_SHOW); }
+   public void   setShow(boolean value) { _notifier.setProperty(_show, value, PROPERTY_SHOW); }
 
    private boolean _horizontal = true;
    public boolean isHorizontal() { return _horizontal; }
-   public void   setHorizontal(boolean value) { setProperty(_horizontal, value, PROPERTY_HORIZONTAL); }
+   public void   setHorizontal(boolean value) { _notifier.setProperty(_horizontal, value, PROPERTY_HORIZONTAL); }
 
    private int   _layers = 3;
    public int  getLayers() { return _layers; }
-   public void setLayers(int value) { setProperty(_layers, value, PROPERTY_LAYERS); }
+   public void setLayers(int value) { _notifier.setProperty(_layers, value, PROPERTY_LAYERS); }
 
    private boolean _rotate;
    public boolean isRotate() { return _rotate; }
-   public void   setRotate(boolean value) { setProperty(_rotate, value, PROPERTY_ROTATE); }
+   public void   setRotate(boolean value) { _notifier.setProperty(_rotate, value, PROPERTY_ROTATE); }
 
    private BoundDouble _padding;
    /** inside padding */
@@ -75,7 +77,7 @@ public class BurgerMenuModel extends NotifyPropertyChanged implements IImageMode
       if (value.getTopAndBottom() >= getSize().height)
          throw new IllegalArgumentException("Padding size is very large. Should be less than Height.");
       BoundDouble paddingNew = new BoundDouble(value.left, value.top, value.right, value.bottom);
-      setProperty(_padding, paddingNew, PROPERTY_PADDING);
+      _notifier.setProperty(_padding, paddingNew, PROPERTY_PADDING);
    }
    private void recalcPadding(Size old) {
       Size size = getSize();
@@ -85,7 +87,7 @@ public class BurgerMenuModel extends NotifyPropertyChanged implements IImageMode
                               _generalModel.getPadding().right,
                               _generalModel.getPadding().bottom)
             : ImageModel.recalcPadding(_padding, size, old);
-      setProperty(_padding, paddingNew, PROPERTY_PADDING);
+      _notifier.setProperty(_padding, paddingNew, PROPERTY_PADDING);
    }
 
    public static class LineInfo {
@@ -136,9 +138,18 @@ public class BurgerMenuModel extends NotifyPropertyChanged implements IImageMode
    @Override
    public void close() {
       _generalModel.removeListener(_generalModelListener);
-      super.close();
+      _notifier.close();
       _generalModelListener = null;
       _generalModel = null;
+   }
+
+   @Override
+   public void addListener(PropertyChangeListener listener) {
+      _notifier.addListener(listener);
+   }
+   @Override
+   public void removeListener(PropertyChangeListener listener) {
+      _notifier.removeListener(listener);
    }
 
 }

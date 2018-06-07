@@ -4,7 +4,7 @@ import fmg.common.geom.Size;
 import fmg.common.notyfier.INotifyPropertyChanged;
 
 /** MVC: model of image data/properties/characteristics */
-public interface IImageModel extends INotifyPropertyChanged {
+public interface IImageModel extends INotifyPropertyChanged, AutoCloseable {
    // TODO refactoring - rename ImageModel to DisplayedModel
 
    public static final String PROPERTY_SIZE = "Size";
@@ -12,5 +12,8 @@ public interface IImageModel extends INotifyPropertyChanged {
    /** width and height of the displayed part in pixels */
    Size getSize();
    void setSize(Size value);
+
+   @Override
+   void close(); // hide throws Exception
 
 }

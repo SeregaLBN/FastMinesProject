@@ -10,15 +10,19 @@ import java.util.*;
 import java.util.stream.Stream;
 
 /** Notifies clients that a property value has changed */
-public abstract class NotifyPropertyChanged implements AutoCloseable, INotifyPropertyChanged
-{
+public class NotifyPropertyChanged implements AutoCloseable, INotifyPropertyChanged {
+
    private PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
    private boolean _disposed = false;
+   private Object _owner;
+
+   public NotifyPropertyChanged() { _owner = this; }
+   public NotifyPropertyChanged(Object owner) { _owner = owner; }
 
    @Override
-   public void addListener(PropertyChangeListener l) { propertyChanges.addPropertyChangeListener(l); }
+   public void addListener(PropertyChangeListener listener) { propertyChanges.addPropertyChangeListener(listener); }
    @Override
-   public void removeListener(PropertyChangeListener l) { propertyChanges.removePropertyChangeListener(l); }
+   public void removeListener(PropertyChangeListener listener) { propertyChanges.removePropertyChangeListener(listener); }
 
    @Deprecated // used reflection :(
    private <T> boolean setProperty(T newValue, String propertyName) {
@@ -26,12 +30,12 @@ public abstract class NotifyPropertyChanged implements AutoCloseable, INotifyPro
       try {
          Field fld = findField(propertyName);
          fld.setAccessible(true);
-         oldValue = fld.get(this);
+         oldValue = fld.get(_owner);
          if ((oldValue == null) && (newValue == null))
             return false;
          if ((oldValue != null) && oldValue.equals(newValue))
             return false;
-         fld.set(this, newValue);
+         fld.set(_owner, newValue);
       } catch (Exception ex) {
          throw new RuntimeException(ex);
       }
@@ -46,7 +50,7 @@ public abstract class NotifyPropertyChanged implements AutoCloseable, INotifyPro
    @Target(value={ElementType.PARAMETER})
    @interface Unused { }
 
-   protected <T> boolean setProperty(@Unused T oldValue, T newValue, String propertyName) {
+   public <T> boolean setProperty(@Unused T oldValue, T newValue, String propertyName) {
       return setProperty(newValue, propertyName);
    }
 
@@ -54,7 +58,7 @@ public abstract class NotifyPropertyChanged implements AutoCloseable, INotifyPro
       onPropertyChanged(Integer.valueOf(oldValue), Integer.valueOf(newValue), propertyName);
    }
 
-   protected final void onPropertyChanged(double oldValue, double newValue, String propertyName) {
+   public final void onPropertyChanged(double oldValue, double newValue, String propertyName) {
       onPropertyChanged(Double.valueOf(oldValue), Double.valueOf(newValue), propertyName);
    }
 
@@ -62,18 +66,18 @@ public abstract class NotifyPropertyChanged implements AutoCloseable, INotifyPro
       onPropertyChanged(Boolean.valueOf(oldValue), Boolean.valueOf(newValue), propertyName);
    }
 
-   protected final void onPropertyChanged(String propertyName) {
+   public final void onPropertyChanged(String propertyName) {
       onPropertyChanged(null, null, propertyName);
    }
 
-   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+   public void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       if (_disposed)
          return;
     //System.out.println("onPropertyChanged: " + propertyName + ": " + newValue);
       propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
    }
 
-   protected <TProperty> void onPropertyChangedRethrow(TProperty source, PropertyChangeEvent childEvent, String propertyName) {
+   public <TProperty> void onPropertyChangedRethrow(TProperty source, PropertyChangeEvent childEvent, String propertyName) {
       onPropertyChanged(null, source, propertyName);
       onPropertyChanged(childEvent.getOldValue(), childEvent.getNewValue(), propertyName + "." + childEvent.getPropertyName());
    }
@@ -82,7 +86,7 @@ public abstract class NotifyPropertyChanged implements AutoCloseable, INotifyPro
    private Field findField(String propertyName) {
       Field field = _cachedFields.get(propertyName);
       if (field == null) {
-         field = getPlainFields(this)
+         field = getPlainFields(_owner)
             .filter(fld -> fld.getName().equalsIgnoreCase(propertyName) ||
                            fld.getName().equalsIgnoreCase("_" + propertyName))
             .findAny()

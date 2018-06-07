@@ -1,10 +1,12 @@
 package fmg.core.img;
 
+import java.beans.PropertyChangeListener;
+
 import fmg.common.geom.Size;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /** Model of the smile/face image */
-public class SmileModel extends NotifyPropertyChanged implements IImageModel {
+public class SmileModel implements IImageModel {
 
    /** @see http://unicode-table.com/blocks/emoticons/
     * <br>  http://unicode-table.com/blocks/miscellaneous-symbols-and-pictographs/
@@ -46,6 +48,7 @@ public class SmileModel extends NotifyPropertyChanged implements IImageModel {
 
    private EFaceType _faceType;
    private Size _size;
+   protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
    public SmileModel(EFaceType faceType) {
       _faceType = faceType;
@@ -58,14 +61,28 @@ public class SmileModel extends NotifyPropertyChanged implements IImageModel {
    public void setSize(int widht, int height) { setSize(new Size(widht, height)) ; }
    @Override
    public void setSize(Size size) {
-      setProperty(_size, size, PROPERTY_SIZE);
+      _notifier.setProperty(_size, size, PROPERTY_SIZE);
    }
 
    public EFaceType getFaceType() {
       return _faceType;
    }
    public void setFaceType(EFaceType faceType) {
-      setProperty(_faceType, faceType, PROPERTY_SIZE);
+      _notifier.setProperty(_faceType, faceType, PROPERTY_SIZE);
+   }
+
+   @Override
+   public void close() {
+      _notifier.close();
+   }
+
+   @Override
+   public void addListener(PropertyChangeListener listener) {
+      _notifier.addListener(listener);
+   }
+   @Override
+   public void removeListener(PropertyChangeListener listener) {
+      _notifier.removeListener(listener);
    }
 
 }

@@ -1,5 +1,6 @@
 package fmg.core.img;
 
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,17 +24,20 @@ public class LogoModel extends AnimatedImageModel {
 
    public LogoModel() {
       setBackgroundColor(Color.Transparent);
+      _notifier.addListener(_selfListener);
    }
+
+   private final PropertyChangeListener _selfListener = ev -> onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
 
    public static final String PROPERTY_USE_GRADIENT = "UseGradient";
    public static final String PROPERTY_ROTATE_MODE  = "RotateMode";
 
-   private final HSV[] palette = {
+   private final HSV[] _palette = {
          new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100),
          new HSV(180, 100, 100), new HSV(225, 100, 100), new HSV(270, 100, 100), new HSV(315, 100, 100) };
 
    public HSV[] getPalette() {
-      return palette;
+      return _palette;
    }
 
    public static void toMineModel(LogoModel m) {
@@ -46,13 +50,13 @@ public class LogoModel extends AnimatedImageModel {
    private boolean _useGradient;
    public boolean isUseGradient() { return _useGradient; }
    public void setUseGradient(boolean value) {
-      setProperty(_useGradient, value, PROPERTY_USE_GRADIENT);
+      _notifier.setProperty(_useGradient, value, PROPERTY_USE_GRADIENT);
    }
 
    private ERotateMode _rotateMode = ERotateMode.combi;
    public ERotateMode getRotateMode() { return _rotateMode; }
    public void setRotateMode(ERotateMode value) {
-      setProperty(_rotateMode, value, PROPERTY_ROTATE_MODE);
+      _notifier.setProperty(_rotateMode, value, PROPERTY_ROTATE_MODE);
    }
 
    /** owner rays points */
@@ -122,7 +126,6 @@ public class LogoModel extends AnimatedImageModel {
    public double getZoomX() { return (getSize().width  - getPadding().getLeftAndRight()) / 200.0; }
    public double getZoomY() { return (getSize().height - getPadding().getTopAndBottom()) / 200.0; }
 
-   @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       switch (propertyName) {
       case PROPERTY_SIZE:
@@ -132,6 +135,12 @@ public class LogoModel extends AnimatedImageModel {
          _oct.clear();
          break;
       }
-      super.onPropertyChanged(oldValue, newValue, propertyName);
    }
+
+   @Override
+   public void close() {
+      _notifier.removeListener(_selfListener);
+      super.close();
+   }
+
 }

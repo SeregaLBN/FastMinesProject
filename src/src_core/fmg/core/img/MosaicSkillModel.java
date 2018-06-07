@@ -23,7 +23,7 @@ public class MosaicSkillModel extends AnimatedImageModel {
 
    private ESkillLevel _mosaicSkill;
    public ESkillLevel getMosaicSkill() { return _mosaicSkill; }
-   public void setMosaicSkill(ESkillLevel value) { setProperty(_mosaicSkill, value, PROPERTY_MOSAIC_SKILL); }
+   public void setMosaicSkill(ESkillLevel value) { _notifier.setProperty(_mosaicSkill, value, PROPERTY_MOSAIC_SKILL); }
 
 
    public Stream<Pair<Color, Stream<PointDouble>>> getCoords() {

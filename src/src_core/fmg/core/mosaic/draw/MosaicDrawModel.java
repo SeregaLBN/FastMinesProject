@@ -35,6 +35,7 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    private Color          _backgroundColor;
    private TImage         _imgBckgrnd;
 
+   private final PropertyChangeListener           _selfListener = ev -> onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
    private final PropertyChangeListener       _fontInfoListener = ev ->       onFontInfoPropertyChanged(ev);
    private final PropertyChangeListener _backgroundFillListener = ev -> onBackgroundFillPropertyChanged(ev);
    private final PropertyChangeListener      _colorTextListener = ev ->      onColorTextPropertyChanged(ev);
@@ -61,6 +62,10 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    public static final String PROPERTY_FONT_INFO        = "FontInfo";
    public static final String PROPERTY_BACKGROUND_COLOR = "BackgroundColor";
    public static final String PROPERTY_IMG_BCKGRND      = "ImgBckgrnd";
+
+   public MosaicDrawModel() {
+      _notifier.addListener(_selfListener);
+   }
 
    /** размер в пикселях поля мозаики. Inner, т.к. снаружи есть ещё padding и margin */
    public SizeDouble getInnerSize() {
@@ -139,7 +144,7 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    }
    public void setColorText(ColorText colorText) {
       ColorText old = this._colorText;
-      if (setProperty(old, colorText, PROPERTY_COLOR_TEXT)) {
+      if (_notifier.setProperty(old, colorText, PROPERTY_COLOR_TEXT)) {
          if (old != null)
             old.removeListener(_colorTextListener);
          if (colorText != null)
@@ -154,7 +159,7 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    }
    public void setPenBorder(PenBorder penBorder) {
       PenBorder old = this._penBorder;
-      if (setProperty(old, penBorder, PROPERTY_PEN_BORDER)) {
+      if (_notifier.setProperty(old, penBorder, PROPERTY_PEN_BORDER)) {
          if (old != null)
             old.removeListener(_penBorderListener);
          if (penBorder != null)
@@ -212,7 +217,7 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    }
    private void setBackgroundFill(BackgroundFill backgroundFill) {
       BackgroundFill old = this._backgroundFill;
-      if (setProperty(old, backgroundFill, PROPERTY_BACKGROUND_FILL)) {
+      if (_notifier.setProperty(old, backgroundFill, PROPERTY_BACKGROUND_FILL)) {
          if (old != null)
             old.removeListener(_backgroundFillListener);
          if (backgroundFill != null)
@@ -234,7 +239,7 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       if (margin.bottom < 0)
          throw new IllegalArgumentException("Margin bottom value must be > 0");
 
-      setProperty(_margin, margin, PROPERTY_MARGIN);
+      _notifier.setProperty(_margin, margin, PROPERTY_MARGIN);
    }
 
    public BoundDouble getPadding() {
@@ -278,7 +283,7 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       //      .limit(3)
       //      .collect(Collectors.joining("\n\t "));
       //System.out.println("setPaddingInternal(" + padding + ") call from: " + stack);
-      setProperty(_padding, padding, PROPERTY_PADDING);
+      _notifier.setProperty(_padding, padding, PROPERTY_PADDING);
    }
 
    public FontInfo getFontInfo() {
@@ -288,7 +293,7 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    }
    public void setFontInfo(FontInfo fontInfo) {
       FontInfo old = this._fontInfo;
-      if (setProperty(old, fontInfo, PROPERTY_FONT_INFO)) {
+      if (_notifier.setProperty(old, fontInfo, PROPERTY_FONT_INFO)) {
          if (old != null)
             old.removeListener(_fontInfoListener);
          if (fontInfo != null)
@@ -303,7 +308,7 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    }
 
    public void setBackgroundColor(Color color) {
-      setProperty(_backgroundColor, color, PROPERTY_BACKGROUND_COLOR);
+      _notifier.setProperty(_backgroundColor, color, PROPERTY_BACKGROUND_COLOR);
    }
 
    public TImage getImgBckgrnd() {
@@ -318,37 +323,35 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       onPropertyChanged(old, imgBckgrnd, PROPERTY_IMG_BCKGRND);
    }
 
-   public void onFontInfoPropertyChanged(PropertyChangeEvent ev) {
-      onPropertyChangedRethrow(ev.getSource(), ev, PROPERTY_FONT_INFO);
+   private void onFontInfoPropertyChanged(PropertyChangeEvent ev) {
+      _notifier.onPropertyChangedRethrow(ev.getSource(), ev, PROPERTY_FONT_INFO);
    }
-   public void onBackgroundFillPropertyChanged(PropertyChangeEvent ev) {
-      onPropertyChangedRethrow(ev.getSource(), ev, PROPERTY_BACKGROUND_FILL);
+   private void onBackgroundFillPropertyChanged(PropertyChangeEvent ev) {
+      _notifier.onPropertyChangedRethrow(ev.getSource(), ev, PROPERTY_BACKGROUND_FILL);
    }
-   public void onColorTextPropertyChanged(PropertyChangeEvent ev) {
-      onPropertyChangedRethrow(ev.getSource(), ev, PROPERTY_COLOR_TEXT);
+   private void onColorTextPropertyChanged(PropertyChangeEvent ev) {
+      _notifier.onPropertyChangedRethrow(ev.getSource(), ev, PROPERTY_COLOR_TEXT);
    }
-   public void onPenBorderPropertyChanged(PropertyChangeEvent ev) {
-      onPropertyChangedRethrow(ev.getSource(), ev, PROPERTY_PEN_BORDER);
+   private void onPenBorderPropertyChanged(PropertyChangeEvent ev) {
+      _notifier.onPropertyChangedRethrow(ev.getSource(), ev, PROPERTY_PEN_BORDER);
    }
 
-   @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      super.onPropertyChanged(oldValue, newValue, propertyName);
-
       switch (propertyName) {
       case PROPERTY_AREA:
       case PROPERTY_SIZE_FIELD:
       case PROPERTY_MOSAIC_TYPE:
       case PROPERTY_PADDING:
       case PROPERTY_MARGIN:
-         onPropertyChanged(PROPERTY_SIZE);
-         onPropertyChanged(PROPERTY_SIZE_DOUBLE);
+         _notifier.onPropertyChanged(PROPERTY_SIZE);
+         _notifier.onPropertyChanged(PROPERTY_SIZE_DOUBLE);
          break;
       }
    }
 
    @Override
    public void close() {
+      _notifier.removeListener(_selfListener);
       super.close();
       // unsubscribe from local notifications
       setFontInfo(null);

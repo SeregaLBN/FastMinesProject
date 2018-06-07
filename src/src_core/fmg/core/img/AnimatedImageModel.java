@@ -17,11 +17,11 @@ public class AnimatedImageModel extends ImageModel {
    public boolean getAnimeDirection() { return _animeDirection; }
 
    public void setPolarLights(boolean polarLights) {
-      setProperty(_polarLights, polarLights, PROPERTY_POLAR_LIGHTS);
+      _notifier.setProperty(_polarLights, polarLights, PROPERTY_POLAR_LIGHTS);
    }
 
    public void setAnimeDirection(boolean animeDirection) {
-      setProperty(_animeDirection, animeDirection, PROPERTY_ANIME_DIRECTION);
+      _notifier.setProperty(_animeDirection, animeDirection, PROPERTY_ANIME_DIRECTION);
    }
 
 }

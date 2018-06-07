@@ -1,5 +1,7 @@
 package fmg.core.img;
 
+import java.beans.PropertyChangeListener;
+
 import fmg.common.Color;
 import fmg.common.geom.Bound;
 import fmg.common.geom.BoundDouble;
@@ -8,7 +10,7 @@ import fmg.common.geom.Size;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /** MVC: model. Common image characteristics. */
-public class ImageModel extends NotifyPropertyChanged implements IImageModel {
+public class ImageModel implements IImageModel {
 
    public static final Color DefaultBkColor         = Color.DarkOrange;
    public static final Color DefaultForegroundColor = Color.Orchid;
@@ -27,6 +29,7 @@ public class ImageModel extends NotifyPropertyChanged implements IImageModel {
    /** 0° .. +360° */
    private double _rotateAngle;
 
+   protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
    public ImageModel() {
       _size = new Size(DefaultImageSize, DefaultImageSize);
@@ -48,7 +51,7 @@ public class ImageModel extends NotifyPropertyChanged implements IImageModel {
    @Override
    public void setSize(Size value) {
       Size old = _size;
-      if (setProperty(_size, value, PROPERTY_SIZE))
+      if (_notifier.setProperty(_size, value, PROPERTY_SIZE))
          recalcPadding(old);
    }
 
@@ -61,7 +64,7 @@ public class ImageModel extends NotifyPropertyChanged implements IImageModel {
       if (value.getTopAndBottom() >= getSize().height)
          throw new IllegalArgumentException("Padding size is very large. Should be less than Height.");
       BoundDouble paddingNew = new BoundDouble(value.left, value.top, value.right, value.bottom);
-      setProperty(_padding, paddingNew, PROPERTY_PADDING);
+      _notifier.setProperty(_padding, paddingNew, PROPERTY_PADDING);
    }
    static BoundDouble recalcPadding(BoundDouble padding, Size current, Size old) {
       return new BoundDouble(padding.left   * current.width  / old.width,
@@ -71,18 +74,18 @@ public class ImageModel extends NotifyPropertyChanged implements IImageModel {
    }
    private void recalcPadding(Size old) {
       BoundDouble paddingNew = recalcPadding(_padding, _size, old);
-      setProperty(_padding, paddingNew, PROPERTY_PADDING);
+      _notifier.setProperty(_padding, paddingNew, PROPERTY_PADDING);
    }
 
    /** background fill color */
    public Color getBackgroundColor() { return _backgroundColor; }
    public void setBackgroundColor(Color value) {
-      setProperty(_backgroundColor, value, PROPERTY_BACKGROUND_COLOR);
+      _notifier.setProperty(_backgroundColor, value, PROPERTY_BACKGROUND_COLOR);
    }
 
    public Color getBorderColor() { return _borderColor; }
    public void setBorderColor(Color value) {
-      setProperty(_borderColor, value, PROPERTY_BORDER_COLOR);
+      _notifier.setProperty(_borderColor, value, PROPERTY_BORDER_COLOR);
    }
 
    public double getBorderWidth() { return _borderWidth; }
@@ -90,20 +93,20 @@ public class ImageModel extends NotifyPropertyChanged implements IImageModel {
       if (!DoubleExt.hasMinDiff(_borderWidth, value)) {
          double old = _borderWidth;
          _borderWidth = value;
-         onPropertyChanged(old, value, PROPERTY_BORDER_WIDTH);
+         _notifier.onPropertyChanged(old, value, PROPERTY_BORDER_WIDTH);
       }
    }
 
    public Color getForegroundColor() { return _foregroundColor; }
    public void setForegroundColor(Color value) {
-      setProperty(_foregroundColor, value, PROPERTY_FOREGROUND_COLOR);
+      _notifier.setProperty(_foregroundColor, value, PROPERTY_FOREGROUND_COLOR);
    }
 
    /** 0° .. +360° */
    public double getRotateAngle() { return _rotateAngle; }
    public void setRotateAngle(double value) {
       value = fixAngle(value);
-      setProperty(_rotateAngle, value, PROPERTY_ROTATE_ANGLE);
+      _notifier.setProperty(_rotateAngle, value, PROPERTY_ROTATE_ANGLE);
    }
 
    /** to diapason (0° .. +360°] */
@@ -113,6 +116,20 @@ public class ImageModel extends NotifyPropertyChanged implements IImageModel {
            : (value < 0)
               ?           (value % 360) + 360
               :            value;
+   }
+
+   @Override
+   public void close() {
+      _notifier.close();
+   }
+
+   @Override
+   public void addListener(PropertyChangeListener listener) {
+      _notifier.addListener(listener);
+   }
+   @Override
+   public void removeListener(PropertyChangeListener listener) {
+      _notifier.removeListener(listener);
    }
 
 }

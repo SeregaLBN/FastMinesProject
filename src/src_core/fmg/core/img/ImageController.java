@@ -49,7 +49,7 @@ public abstract class ImageController<TImage,
 
    /** Deferr notifications */
    @Override
-   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+   public void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       if (!isDeferredNotifications()) {
          super.onPropertyChanged(oldValue, newValue, propertyName);
          return;

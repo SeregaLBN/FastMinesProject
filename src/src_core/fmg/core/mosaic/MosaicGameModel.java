@@ -29,15 +29,14 @@ import java.util.List;
 
 import fmg.common.geom.Coord;
 import fmg.common.geom.Matrisize;
+import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
 
 /** MVC: game model of mosaic field. Default implementation. */
-public class MosaicGameModel
-       extends NotifyPropertyChanged
-       implements IMosaic
-{
+public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoCloseable {
+
    private BaseCell.BaseAttribute _cellAttr;
    /** Matrix of cells, is represented as a vector {@link List<BaseCell>}.
      * Матрица ячеек, представленная(развёрнута) в виде вектора */
@@ -47,6 +46,7 @@ public class MosaicGameModel
    /** из каких фигур состоит мозаика поля */
    private EMosaic _mosaicType = EMosaic.eMosaicSquare1;
 
+   protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
    private final PropertyChangeListener _cellAttrListener = ev -> onCellAttributePropertyChanged(ev);
 
    public static final String PROPERTY_AREA        = BaseCell.BaseAttribute.PROPERTY_AREA;
@@ -71,8 +71,8 @@ public class MosaicGameModel
       _cellAttr.removeListener(_cellAttrListener);
       _cellAttr = null;
       _matrix.clear();
-      onPropertyChanged(PROPERTY_CELL_ATTR);
-      onPropertyChanged(PROPERTY_MATRIX);
+      _notifier.onPropertyChanged(PROPERTY_CELL_ATTR);
+      _notifier.onPropertyChanged(PROPERTY_MATRIX);
    }
 
    /** площадь ячеек */
@@ -116,8 +116,8 @@ public class MosaicGameModel
       _matrix.clear();
       this._sizeField = newSizeField;
 
-      onPropertyChanged(old, newSizeField, PROPERTY_SIZE_FIELD);
-      onPropertyChanged(PROPERTY_MATRIX);
+      _notifier.onPropertyChanged(old, newSizeField, PROPERTY_SIZE_FIELD);
+      _notifier.onPropertyChanged(PROPERTY_MATRIX);
    }
 
    /** узнать тип мозаики
@@ -138,7 +138,7 @@ public class MosaicGameModel
 
       setArea(saveArea); // restore
 
-      onPropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
+      _notifier.onPropertyChanged(old, newMosaicType, PROPERTY_MOSAIC_TYPE);
    }
 
    /** доступ к заданной ячейке */
@@ -152,16 +152,25 @@ public class MosaicGameModel
       if (BaseCell.BaseAttribute.PROPERTY_AREA.equals(propName)) {
          getMatrix().forEach(cell -> cell.init());
 
-         onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
+         _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
       }
-      onPropertyChanged(PROPERTY_CELL_ATTR);
-      onPropertyChanged(PROPERTY_CELL_ATTR + "." + propName);
+      _notifier.onPropertyChanged(PROPERTY_CELL_ATTR);
+      _notifier.onPropertyChanged(PROPERTY_CELL_ATTR + "." + propName);
    }
 
    @Override
    public void close() {
-      super.close();
+      _notifier.close();
       setCellAttr(null);
+   }
+
+   @Override
+   public void addListener(PropertyChangeListener listener) {
+      _notifier.addListener(listener);
+   }
+   @Override
+   public void removeListener(PropertyChangeListener listener) {
+      _notifier.removeListener(listener);
    }
 
 }

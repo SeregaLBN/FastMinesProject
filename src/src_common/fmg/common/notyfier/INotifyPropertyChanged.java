@@ -5,7 +5,7 @@ import java.beans.PropertyChangeListener;
 /** Notification of property changes */
 public interface INotifyPropertyChanged {
 
-   void addListener(PropertyChangeListener l);
-   void removeListener(PropertyChangeListener l);
+   void addListener(PropertyChangeListener listener);
+   void removeListener(PropertyChangeListener listener);
 
 }
