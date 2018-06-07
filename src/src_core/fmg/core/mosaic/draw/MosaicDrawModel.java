@@ -9,6 +9,7 @@ import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
+import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.img.IImageModel;
 import fmg.core.mosaic.MosaicGameModel;
@@ -168,13 +169,14 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    }
 
    /** всё что относиться к заливке фоном ячееек */
-   public static class BackgroundFill extends NotifyPropertyChanged {
+   public static class BackgroundFill implements AutoCloseable, INotifyPropertyChanged {
       /** режим заливки фона ячеек */
       private int mode = 0;
       /** кэшированные цвета фона ячеек */
       private Map<Integer, Color> colors;
 
       public static final String PROPERTY_MODE = "Mode";
+      protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
       /** режим заливки фона ячеек */
       public int getMode() { return mode; }
@@ -186,7 +188,7 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
        *  <li> not 0 - радуга %)
        */
       public void setMode(int newFillMode) {
-         setProperty(this.mode, newFillMode, PROPERTY_MODE);
+         _notifier.setProperty(this.mode, newFillMode, PROPERTY_MODE);
       }
 
       /** кэшированные цвета фона ячеек
@@ -208,6 +210,21 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
             };
          return colors;
       }
+
+      @Override
+      public void close() {
+         _notifier.close();
+      }
+
+      @Override
+      public void addListener(PropertyChangeListener listener) {
+         _notifier.addListener(listener);
+      }
+      @Override
+      public void removeListener(PropertyChangeListener listener) {
+         _notifier.removeListener(listener);
+      }
+
    }
 
    public BackgroundFill getBackgroundFill() {
@@ -352,6 +369,7 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    @Override
    public void close() {
       _notifier.removeListener(_selfListener);
+      getBackgroundFill().close();
       super.close();
       // unsubscribe from local notifications
       setFontInfo(null);
