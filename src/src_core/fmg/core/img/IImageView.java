@@ -4,13 +4,12 @@ import fmg.common.geom.Size;
 import fmg.common.notyfier.INotifyPropertyChanged;
 
 /**
- * Image MVC: view
+ * Image MVC: view (displayed view)
  *
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageModel> model data for display
  **/
 public interface IImageView<TImage, TImageModel extends IImageModel> extends AutoCloseable, INotifyPropertyChanged {
-   // TODO refactoring - rename ImageView to DisplayedView
 
    public static final String PROPERTY_SIZE  = IImageModel.PROPERTY_SIZE;
    public static final String PROPERTY_IMAGE = "Image";

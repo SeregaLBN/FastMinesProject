@@ -15,7 +15,7 @@ public class BurgerMenuModel implements IImageModel {
    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
    /**
-    * @param generalModel - another basic model
+    * @param generalModel another basic model
     */
    protected BurgerMenuModel(ImageModel generalModel) {
       _show = true;

@@ -6,13 +6,13 @@ import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /**
- * MVC: controller.
+ * Image MVC: controller
  * Base implementation of image controller (manipulations with the image).
  *
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageView> image view
  * @param <TImageModel> image model
- **/   // TODO refactoring - rename ImageController to DisplayedController
+ */
 public abstract class ImageController<TImage,
                                       TImageView  extends IImageView<TImage, TImageModel>,
                                       TImageModel extends IImageModel>

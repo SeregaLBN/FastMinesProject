@@ -48,11 +48,16 @@ public abstract class AMosaicViewJfx<TImage,
    static {
       StaticInitilizer.init();
 
-//      panel.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
-//      UIDefaults uiDef = UIManager.getDefaults();
-//      java.awt.Color clr = uiDef.getColor("Panel.background");
-//      if (clr != null)
-//         MosaicDrawModel.setDefaultBackgroundColor(Cast.toColor(clr));
+//      try {
+//         javafx.scene.layout.Region region = new Pane();
+//         Background bk = region.getBackground(); // its NULL :(
+//         List<javafx.scene.layout.BackgroundFill> fills = bk.getFills();
+//         javafx.scene.layout.BackgroundFill fill = fills.iterator().next();
+//         Paint p = fill.getFill();
+//         System.out.println("ButtonColor = " + p);
+//      } catch (Exception e) {
+//         MosaicDrawModel.setDefaultBackgroundColor(Color.Gray.brighter());
+//      }
    }
 
 

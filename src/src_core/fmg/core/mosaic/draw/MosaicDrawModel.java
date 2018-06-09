@@ -42,7 +42,7 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    private final PropertyChangeListener      _colorTextListener = ev ->      onColorTextPropertyChanged(ev);
    private final PropertyChangeListener      _penBorderListener = ev ->      onPenBorderPropertyChanged(ev);
 
-   protected static Color _defaultBkColor = Color.Gray;
+   protected static Color _defaultBkColor = Color.Gray.brighter();
    /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется одним из MVC-наследником. */
    public static Color getDefaultBackgroundColor() {
       return _defaultBkColor;

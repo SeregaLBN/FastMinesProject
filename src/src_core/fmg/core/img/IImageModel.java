@@ -3,9 +3,11 @@ package fmg.core.img;
 import fmg.common.geom.Size;
 import fmg.common.notyfier.INotifyPropertyChanged;
 
-/** MVC: model of image data/properties/characteristics */
+/**
+ * Image MVC: model
+ * Model of image data/properties/characteristics
+ */
 public interface IImageModel extends INotifyPropertyChanged, AutoCloseable {
-   // TODO refactoring - rename ImageModel to DisplayedModel
 
    public static final String PROPERTY_SIZE = "Size";
 
