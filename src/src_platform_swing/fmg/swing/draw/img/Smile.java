@@ -13,6 +13,7 @@ import fmg.core.img.ImageView;
 import fmg.core.img.SmileModel;
 import fmg.core.img.SmileModel.EFaceType;
 import fmg.swing.Cast;
+import fmg.swing.StaticInitilizer;
 
 public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 

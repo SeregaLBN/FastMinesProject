@@ -24,7 +24,7 @@ import fmg.core.types.EState;
 import fmg.data.view.draw.FontInfo;
 import fmg.data.view.draw.PenBorder;
 import fmg.swing.Cast;
-import fmg.swing.draw.img.StaticInitilizer;
+import fmg.swing.StaticInitilizer;
 
 /** MVC: view. Abstract SWING implementation
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel

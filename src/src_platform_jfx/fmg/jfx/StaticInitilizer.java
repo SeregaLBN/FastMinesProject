@@ -1,14 +1,15 @@
-package fmg.swing.draw.img;
+package fmg.jfx;
 
-import javax.swing.SwingUtilities;
+import javafx.application.Platform;
 
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.img.AnimatedImgController;
+import fmg.jfx.draw.img.Animator;
 
 public final class StaticInitilizer {
 
    static {
-      NotifyPropertyChanged.DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
+      NotifyPropertyChanged.DEFERR_INVOKER = doRun -> Platform.runLater(doRun);
       AnimatedImgController.GET_ANIMATOR = () -> Animator.getSingleton();
    }
 

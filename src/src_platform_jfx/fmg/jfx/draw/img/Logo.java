@@ -9,6 +9,8 @@ import fmg.core.img.ImageView;
 import fmg.core.img.LogoController;
 import fmg.core.img.LogoModel;
 import fmg.jfx.Cast;
+import fmg.jfx.StaticInitilizer;
+
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;

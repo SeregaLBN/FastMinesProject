@@ -10,6 +10,7 @@ import java.util.Arrays;
 import fmg.core.img.FlagModel;
 import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
+import fmg.swing.StaticInitilizer;
 
 public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
 

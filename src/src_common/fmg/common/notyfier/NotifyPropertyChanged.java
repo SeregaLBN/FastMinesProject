@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 import fmg.common.Pair;
 
 /** Notifies clients that a property value has changed */
-public class NotifyPropertyChanged implements AutoCloseable, INotifyPropertyChanged {
+public final class NotifyPropertyChanged implements AutoCloseable, INotifyPropertyChanged {
 
    public static Consumer<Runnable> DEFERR_INVOKER = run -> {
       System.out.println("need redefine!");
@@ -26,10 +26,8 @@ public class NotifyPropertyChanged implements AutoCloseable, INotifyPropertyChan
    private boolean _deferredNotifications = false;
    private Map<String /* propertyName */, Pair<Object /* old value */, Object /* new value */>> _deferrNotifications = new HashMap<>();
 
-   @Deprecated
-   public NotifyPropertyChanged()                                            { _owner = this ; _propertyChanges = new PropertyChangeSupport(_owner); }
-   public NotifyPropertyChanged(Object owner)                                { _owner = owner; _propertyChanges = new PropertyChangeSupport(_owner); }
-   public NotifyPropertyChanged(Object owner, boolean deferredNotifications) { _owner = owner; _propertyChanges = new PropertyChangeSupport(_owner); _deferredNotifications = deferredNotifications; }
+   public NotifyPropertyChanged(Object owner) { _owner = owner; _propertyChanges = new PropertyChangeSupport(_owner); }
+   public NotifyPropertyChanged(Object owner, boolean deferredNotifications) { this(owner); _deferredNotifications = deferredNotifications; }
 
    @Override
    public void addListener(PropertyChangeListener listener) { _propertyChanges.addPropertyChangeListener(listener); }

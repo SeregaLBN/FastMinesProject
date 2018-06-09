@@ -3,6 +3,7 @@ package fmg.core.img;
 import java.beans.PropertyChangeListener;
 
 import fmg.common.geom.Size;
+import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /**
@@ -13,13 +14,13 @@ import fmg.common.notyfier.NotifyPropertyChanged;
  * @param <TImageModel> model data for display
  **/
 public abstract class ImageView<TImage, TImageModel extends IImageModel>
-                extends NotifyPropertyChanged
-                implements IImageView<TImage, TImageModel>
+                implements IImageView<TImage, TImageModel>, INotifyPropertyChanged
 {
 
    /** MVC: model */
    private final TImageModel _imageModel;
    private final PropertyChangeListener _imageModelListener = ev -> onPropertyModelChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+   protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
    protected ImageView(TImageModel imageModel) {
       _imageModel = imageModel;
@@ -59,7 +60,7 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
    }
    protected void setImage(TImage value) {
       TImage old = _image;
-      if (setProperty(_image, value, PROPERTY_IMAGE)) {
+      if (_notifier.setProperty(_image, value, PROPERTY_IMAGE)) {
          if (old instanceof AutoCloseable)
             try {
                ((AutoCloseable)old).close();
@@ -80,7 +81,7 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
       // Уведомляю владельца класса что поменялось изображение.
       // Т.е. что нужно вызвать getImage()
       // при котором и отрисуется новое изображение (через вызов draw)
-      onPropertyChanged(PROPERTY_IMAGE);
+      _notifier.onPropertyChanged(PROPERTY_IMAGE);
    }
 
    private void draw() {
@@ -97,8 +98,8 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
       if (IImageModel.PROPERTY_SIZE.equals(propertyName)) {
          setImage(null);
 //         invalidate();
-         onPropertyChanged(oldValue, newValue, PROPERTY_SIZE);
-         onPropertyChanged(PROPERTY_IMAGE);
+         _notifier.onPropertyChanged(oldValue, newValue, PROPERTY_SIZE);
+         _notifier.onPropertyChanged(PROPERTY_IMAGE);
       } else {
          invalidate();
       }
@@ -107,8 +108,17 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
    @Override
    public void close() {
       _imageModel.removeListener(_imageModelListener);
-      super.close();
+      _notifier.close();
       setImage(null);
+   }
+
+   @Override
+   public void addListener(PropertyChangeListener listener) {
+      _notifier.addListener(listener);
+   }
+   @Override
+   public void removeListener(PropertyChangeListener listener) {
+      _notifier.removeListener(listener);
    }
 
 }

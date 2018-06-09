@@ -16,6 +16,7 @@ import fmg.core.img.ImageView;
 import fmg.core.img.SmileModel;
 import fmg.core.img.SmileModel.EFaceType;
 import fmg.jfx.Cast;
+import fmg.jfx.StaticInitilizer;
 import fmg.jfx.utils.ShapeConverter;
 
 public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {

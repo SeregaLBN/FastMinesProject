@@ -10,6 +10,7 @@ import fmg.common.geom.Size;
 import fmg.core.img.FlagModel;
 import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
+import fmg.jfx.StaticInitilizer;
 
 /** Flag image */
 public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {

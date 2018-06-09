@@ -12,6 +12,7 @@ import fmg.common.geom.PointDouble;
 import fmg.core.img.AnimatedImageModel;
 import fmg.core.img.WithBurgerMenuView;
 import fmg.jfx.Cast;
+import fmg.jfx.StaticInitilizer;
 
 /**
  * MVC: view. Abstract JFX representable {@link fmg.core.types.ESkillLevel} or {@link fmg.core.types.EMosaicGroup} as image

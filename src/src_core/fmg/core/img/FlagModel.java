@@ -11,7 +11,6 @@ public class FlagModel implements IImageModel {
    private Size _size;
    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
-
    public FlagModel() {
       _size = new Size(40, 40);
    }
