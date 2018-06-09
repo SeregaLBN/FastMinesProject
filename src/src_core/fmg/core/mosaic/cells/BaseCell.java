@@ -22,12 +22,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 package fmg.core.mosaic.cells;
 
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import fmg.common.Color;
 import fmg.common.geom.*;
+import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
@@ -59,12 +61,13 @@ public abstract class BaseCell {
     * <br> (Полные данные о конкретной мозаике) <br>
     * Доопределаяется наследниками BaseCell
     */
-   public static abstract class BaseAttribute extends NotifyPropertyChanged {
+   public static abstract class BaseAttribute implements INotifyPropertyChanged {
 
       public static final String PROPERTY_AREA = "Area";
 
       /** площадь ячейки/фигуры */
       private double area = 500;
+      protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
       /** площадь ячейки/фигуры */
       public void setArea(double area) {
@@ -72,7 +75,7 @@ public abstract class BaseCell {
          double old = this.area;
          if (!DoubleExt.hasMinDiff(old, area)) {
             this.area = area;
-            onPropertyChanged(old, area, PROPERTY_AREA);
+            _notifier.onPropertyChanged(old, area, PROPERTY_AREA);
          }
       }
       /** площадь ячейки/фигуры */
@@ -108,6 +111,15 @@ public abstract class BaseCell {
        */
       public int getMaxBackgroundFillModeValue() {
          return 19;
+      }
+
+      @Override
+      public void addListener(PropertyChangeListener listener) {
+         _notifier.addListener(listener);
+      }
+      @Override
+      public void removeListener(PropertyChangeListener listener) {
+         _notifier.removeListener(listener);
       }
 
    }
@@ -452,4 +464,5 @@ public abstract class BaseCell {
    public String toString() {
       return getClass().getSimpleName()+"{ x:"+coord.x+", y:"+coord.y+" }";
    }
+
 }

@@ -1,10 +1,8 @@
 package fmg.core.img;
 
 import java.beans.PropertyChangeListener;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Consumer;
 
+import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /**
@@ -18,15 +16,13 @@ import fmg.common.notyfier.NotifyPropertyChanged;
 public abstract class ImageController<TImage,
                                       TImageView  extends IImageView<TImage, TImageModel>,
                                       TImageModel extends IImageModel>
-                extends NotifyPropertyChanged
+                implements INotifyPropertyChanged, AutoCloseable
 {
-
-   public static Consumer<Runnable> DEFERR_INVOKER;
 
    /** MVC: view */
    private final TImageView _imageView;
    private final PropertyChangeListener _imageViewListener = ev -> onPropertyViewChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
-   private Map<String /* propertyName */, Boolean /* sheduled */> _deferrNotifications = new HashMap<>();
+   protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this, true);
 
    protected ImageController(TImageView imageView) {
       _imageView = imageView;
@@ -43,54 +39,33 @@ public abstract class ImageController<TImage,
       return getView().getImage();
    }
 
-   private boolean _deferredNotifications = true;
-   public boolean isDeferredNotifications() { return _deferredNotifications; }
-   public void setDeferredNotifications(boolean value) { _deferredNotifications = value; }
-
-   /** Deferr notifications */
-   @Override
-   public void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      if (!isDeferredNotifications()) {
-         super.onPropertyChanged(oldValue, newValue, propertyName);
-         return;
-      }
-
+   protected void onPropertyViewChanged(Object oldValue, Object newValue, String propertyName) {
       switch (propertyName) {
-      default:
-         super.onPropertyChanged(oldValue, newValue, propertyName);
+      case IImageView.PROPERTY_IMAGE:
+         _notifier.onPropertyChanged(oldValue, newValue, PROPERTY_IMAGE);
          break;
-
-      case PROPERTY_IMAGE:
-      case PROPERTY_SIZE:
-         if (Boolean.TRUE.equals(_deferrNotifications.get(propertyName)))
-            return;
-         _deferrNotifications.put(propertyName, true);
-         DEFERR_INVOKER.accept(() -> {
-            super.onPropertyChanged(oldValue, newValue, propertyName);
-            _deferrNotifications.put(propertyName, false);
-         });
+      case IImageView.PROPERTY_SIZE:
+         _notifier.onPropertyChanged(oldValue, newValue, PROPERTY_SIZE);
+         break;
+      default:
          break;
       }
    }
 
-   protected void onPropertyViewChanged(Object oldValue, Object newValue, String propertyName) {
-      switch (propertyName) {
-      case IImageView.PROPERTY_IMAGE:
-         this.onPropertyChanged(oldValue, newValue, PROPERTY_IMAGE);
-         break;
-      case IImageView.PROPERTY_SIZE:
-         this.onPropertyChanged(oldValue, newValue, PROPERTY_SIZE);
-         break;
-      default:
-         break;
-      }
+   @Override
+   public void addListener(PropertyChangeListener listener) {
+      _notifier.addListener(listener);
+   }
+   @Override
+   public void removeListener(PropertyChangeListener listener) {
+      _notifier.removeListener(listener);
    }
 
    @Override
    public void close() {
       _imageView.removeListener(_imageViewListener);
       _imageView.close();
-      super.close();
+      _notifier.close();
    }
 
 }

@@ -1,16 +1,19 @@
 package fmg.data.view.draw;
 
+import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 
 import fmg.common.Color;
+import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 
-public class ColorText extends NotifyPropertyChanged {
+public class ColorText implements INotifyPropertyChanged {
 
    private Color[] colorOpen;
    private Color[] colorClose;
+   protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
    public ColorText() {
       colorOpen = new Color[EOpen.values().length];
@@ -68,14 +71,14 @@ public class ColorText extends NotifyPropertyChanged {
       Color[] old = this.colorOpen;
       if (!Arrays.equals(old, colorOpen)) {
          this.colorOpen = colorOpen;
-         onPropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN);
+         _notifier.onPropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN);
       }
    }
    public void setColorOpen(int i, Color colorOpen) {
       Color old = this.colorOpen[i];
       if (!old.equals(colorOpen)) {
          this.colorOpen[i] = colorOpen;
-         onPropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN_N_ + i);
+         _notifier.onPropertyChanged(old, colorOpen, PROPERTY_COLOR_OPEN_N_ + i);
       }
    }
 
@@ -89,14 +92,14 @@ public class ColorText extends NotifyPropertyChanged {
       Color[] old = this.colorClose;
       if (!Arrays.equals(old, colorClose)) {
          this.colorClose = colorClose;
-         onPropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE);
+         _notifier.onPropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE);
       }
    }
    public void setColorClose(int i, Color colorClose) {
       Color old = this.colorClose[i];
       if (!old.equals(colorClose)) {
          this.colorClose[i] = colorClose;
-         onPropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE_N + i);
+         _notifier.onPropertyChanged(old, colorClose, PROPERTY_COLOR_CLOSE_N + i);
       }
    }
 
@@ -115,5 +118,13 @@ public class ColorText extends NotifyPropertyChanged {
              Arrays.equals(colorOpen, other.colorOpen);
    }
 
+   @Override
+   public void addListener(PropertyChangeListener listener) {
+      _notifier.addListener(listener);
+   }
+   @Override
+   public void removeListener(PropertyChangeListener listener) {
+      _notifier.removeListener(listener);
+   }
 
 }

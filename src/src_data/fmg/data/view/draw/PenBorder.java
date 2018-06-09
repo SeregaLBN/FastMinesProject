@@ -1,14 +1,18 @@
 package fmg.data.view.draw;
 
+import java.beans.PropertyChangeListener;
+
 import fmg.common.Color;
 import fmg.common.geom.DoubleExt;
+import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /** Характеристики кисти у рамки ячейки */
-public class PenBorder extends NotifyPropertyChanged {
+public class PenBorder implements INotifyPropertyChanged {
 
    private Color colorShadow, colorLight;
    private double width;
+   protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
    public PenBorder() {
       this(Color.Black, Color.White, 3);
@@ -37,7 +41,7 @@ public class PenBorder extends NotifyPropertyChanged {
       Color old = this.colorShadow;
       if (!old.equals(colorShadow)) {
          this.colorShadow = colorShadow;
-         onPropertyChanged(old, colorShadow, PROPERTY_COLOR_SHADOW);
+         _notifier.onPropertyChanged(old, colorShadow, PROPERTY_COLOR_SHADOW);
       }
    }
 
@@ -49,7 +53,7 @@ public class PenBorder extends NotifyPropertyChanged {
       Color old = this.colorLight;
       if (!old.equals(colorLight)) {
          this.colorLight = colorLight;
-         onPropertyChanged(old, colorLight, PROPERTY_COLOR_LIGHT);
+         _notifier.onPropertyChanged(old, colorLight, PROPERTY_COLOR_LIGHT);
       }
    }
 
@@ -61,7 +65,7 @@ public class PenBorder extends NotifyPropertyChanged {
       double old = this.width;
       if (!DoubleExt.hasMinDiff(old, width)) {
          this.width = width;
-         onPropertyChanged(old, width, PROPERTY_WIDTH);
+         _notifier.onPropertyChanged(old, width, PROPERTY_WIDTH);
       }
    }
 
@@ -81,6 +85,15 @@ public class PenBorder extends NotifyPropertyChanged {
       return DoubleExt.hasMinDiff(width, penObj.width)
             && colorShadow.equals(penObj.colorShadow)
             && colorLight.equals(penObj.colorLight);
+   }
+
+   @Override
+   public void addListener(PropertyChangeListener listener) {
+      _notifier.addListener(listener);
+   }
+   @Override
+   public void removeListener(PropertyChangeListener listener) {
+      _notifier.removeListener(listener);
    }
 
 }

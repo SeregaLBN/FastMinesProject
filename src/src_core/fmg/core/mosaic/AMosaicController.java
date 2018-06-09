@@ -92,8 +92,8 @@ public abstract class AMosaicController<TImage, TImage2,
          this._oldMinesCount = this._minesCount; // save
 
       _minesCount = Math.max(1, Math.min(newMinesCount, getMaxMines(getSizeField())));
-      onPropertyChanged(old, _minesCount, PROPERTY_MINES_COUNT);
-      onPropertyChanged(null, _minesCount, PROPERTY_COUNT_MINES_LEFT);
+      _notifier.onPropertyChanged(old, _minesCount, PROPERTY_MINES_COUNT);
+      _notifier.onPropertyChanged(null, _minesCount, PROPERTY_COUNT_MINES_LEFT);
 
       gameNew();
    }
@@ -168,7 +168,7 @@ public abstract class AMosaicController<TImage, TImage2,
       int old = _countClick;
       if (old != clickCount) {
          _countClick = clickCount;
-         onPropertyChanged(old, clickCount, PROPERTY_COUNT_CLICK);
+         _notifier.onPropertyChanged(old, clickCount, PROPERTY_COUNT_CLICK);
       }
    }
 
@@ -201,7 +201,7 @@ public abstract class AMosaicController<TImage, TImage2,
       EGameStatus old = _gameStatus;
       if (old != newStatus) {
          _gameStatus = newStatus;
-         onPropertyChanged(old, newStatus, PROPERTY_GAME_STATUS);
+         _notifier.onPropertyChanged(old, newStatus, PROPERTY_GAME_STATUS);
       }
    }
 
@@ -216,7 +216,7 @@ public abstract class AMosaicController<TImage, TImage2,
       if (old == newVal)
          return;
       _playInfo = newVal;
-      onPropertyChanged(old, newVal, PROPERTY_PLAY_INFO);
+      _notifier.onPropertyChanged(old, newVal, PROPERTY_PLAY_INFO);
    }
 
    public List<Coord> getRepositoryMines() {
@@ -231,7 +231,7 @@ public abstract class AMosaicController<TImage, TImage2,
          if ((newMines != null) && !newMines.isEmpty())
             current.addAll(newMines);
       }
-      onPropertyChanged(PROPERTY_REPOSITORY_MINES);
+      _notifier.onPropertyChanged(PROPERTY_REPOSITORY_MINES);
       //setGameStatus(EGameStatus.eGSEnd);
       gameNew();
    }
@@ -278,9 +278,9 @@ public abstract class AMosaicController<TImage, TImage2,
          }
 
       setGameStatus(EGameStatus.eGSEnd);
-      onPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
-      onPropertyChanged(PROPERTY_COUNT_FLAG);
-      onPropertyChanged(PROPERTY_COUNT_OPEN);
+      _notifier.onPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+      _notifier.onPropertyChanged(PROPERTY_COUNT_FLAG);
+      _notifier.onPropertyChanged(PROPERTY_COUNT_OPEN);
 
       return toRepaint;
    }
@@ -363,11 +363,11 @@ public abstract class AMosaicController<TImage, TImage2,
             setCountClick(getCountClick()+1);
             setPlayInfo(EPlayInfo.ePlayerUser);  // юзер играл
             if (countOpen > 0)
-               onPropertyChanged(PROPERTY_COUNT_OPEN);
+               _notifier.onPropertyChanged(PROPERTY_COUNT_OPEN);
             if ((countFlag > 0) || (countUnknown > 0)) {
-               onPropertyChanged(PROPERTY_COUNT_FLAG);
-               onPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
-               onPropertyChanged(PROPERTY_COUNT_UNKNOWN);
+               _notifier.onPropertyChanged(PROPERTY_COUNT_FLAG);
+               _notifier.onPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+               _notifier.onPropertyChanged(PROPERTY_COUNT_UNKNOWN);
             }
          }
 
@@ -417,9 +417,9 @@ public abstract class AMosaicController<TImage, TImage2,
       if (any) {
          setCountClick(getCountClick()+1);
          setPlayInfo(EPlayInfo.ePlayerUser); // то считаю что юзер играл
-         onPropertyChanged(PROPERTY_COUNT_FLAG);
-         onPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
-         onPropertyChanged(PROPERTY_COUNT_UNKNOWN);
+         _notifier.onPropertyChanged(PROPERTY_COUNT_FLAG);
+         _notifier.onPropertyChanged(PROPERTY_COUNT_MINES_LEFT);
+         _notifier.onPropertyChanged(PROPERTY_COUNT_UNKNOWN);
       }
 
       result.modified.addAll(verifyFlag());
@@ -535,7 +535,7 @@ public abstract class AMosaicController<TImage, TImage2,
          invalidateView(getModel().getMatrix());
          break;
       case MosaicDrawModel.PROPERTY_SIZE_DOUBLE:
-         onPropertyChanged(PROPERTY_SIZE);
+         _notifier.onPropertyChanged(PROPERTY_SIZE);
          break;
       default:
          break;

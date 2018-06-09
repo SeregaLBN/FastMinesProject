@@ -38,7 +38,7 @@ public abstract class AnimatedImgController<TImage,
 
    public boolean isAnimated() { return (_animated == Boolean.TRUE); }
    public void setAnimated(boolean value) {
-      if (setProperty(_animated, value, PROPERTY_ANIMATED)) {
+      if (_notifier.setProperty(_animated, value, PROPERTY_ANIMATED)) {
          if (value)
             GET_ANIMATOR.get().subscribe(this, timeFromStartSubscribe -> {
                long mod = timeFromStartSubscribe % _animatePeriod;
@@ -55,19 +55,19 @@ public abstract class AnimatedImgController<TImage,
    public long getAnimatePeriod() { return _animatePeriod; }
    /** Overall animation period (in milliseconds) */
    public void setAnimatePeriod(long value) {
-      setProperty(_animatePeriod, value, PROPERTY_ANIMATE_PERIOD);
+      _notifier.setProperty(_animatePeriod, value, PROPERTY_ANIMATE_PERIOD);
    }
 
    /** Total frames of the animated period */
    public int getTotalFrames() { return _totalFrames; }
    public void setTotalFrames(int value) {
-      if (setProperty(_totalFrames, value, PROPERTY_TOTAL_FRAMES))
+      if (_notifier.setProperty(_totalFrames, value, PROPERTY_TOTAL_FRAMES))
          setCurrentFrame(0);
    }
 
    protected int getCurrentFrame() { return _currentFrame; }
    protected void setCurrentFrame(int value) {
-      if (setProperty(_currentFrame, value, PROPERTY_CURRENT_FRAME)) {
+      if (_notifier.setProperty(_currentFrame, value, PROPERTY_CURRENT_FRAME)) {
          _transformers.forEach((k,v) -> v.execute(_currentFrame, _totalFrames, getModel()));
          getView().invalidate();
       }

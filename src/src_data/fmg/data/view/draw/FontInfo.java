@@ -1,10 +1,13 @@
 package fmg.data.view.draw;
 
+import java.beans.PropertyChangeListener;
+
 import fmg.common.geom.DoubleExt;
+import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /** minimal font descripton */
-public class FontInfo extends NotifyPropertyChanged {
+public class FontInfo implements INotifyPropertyChanged {
 
    /** font name */
    private String _name = "SansSerif"; // Arial
@@ -12,6 +15,7 @@ public class FontInfo extends NotifyPropertyChanged {
    private boolean _bold = false;
    /** font size */
    private double _size = 10;
+   protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
    public FontInfo() { }
    public FontInfo(String fontName, boolean isBold, int fontSize) {
@@ -30,7 +34,7 @@ public class FontInfo extends NotifyPropertyChanged {
          return;
       String old = _name;
       _name = fontName;
-      onPropertyChanged(old, fontName, PROPERTY_NAME);
+      _notifier.onPropertyChanged(old, fontName, PROPERTY_NAME);
    }
 
    public boolean isBold() { return _bold; }
@@ -39,7 +43,7 @@ public class FontInfo extends NotifyPropertyChanged {
          return;
       boolean old = _bold;
       _bold = isBold;
-      onPropertyChanged(old, isBold, PROPERTY_BOLD);
+      _notifier.onPropertyChanged(old, isBold, PROPERTY_BOLD);
    }
 
    public double getSize() { return _size; }
@@ -48,7 +52,7 @@ public class FontInfo extends NotifyPropertyChanged {
       if (DoubleExt.hasMinDiff(_size, size))
          return;
       _size = size;
-      onPropertyChanged(old, size, PROPERTY_SIZE);
+      _notifier.onPropertyChanged(old, size, PROPERTY_SIZE);
    }
 
    @Override
@@ -82,4 +86,12 @@ public class FontInfo extends NotifyPropertyChanged {
       return "FontInfo{fontName=" + _name + ", isBold=" + _bold + ", size=" + _size + "}";
    }
 
+   @Override
+   public void addListener(PropertyChangeListener listener) {
+      _notifier.addListener(listener);
+   }
+   @Override
+   public void removeListener(PropertyChangeListener listener) {
+      _notifier.removeListener(listener);
+   }
 }

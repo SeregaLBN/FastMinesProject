@@ -7,22 +7,37 @@ import java.lang.annotation.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
+
+import fmg.common.Pair;
 
 /** Notifies clients that a property value has changed */
 public class NotifyPropertyChanged implements AutoCloseable, INotifyPropertyChanged {
 
-   private PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
+   public static Consumer<Runnable> DEFERR_INVOKER = run -> {
+      System.out.println("need redefine!");
+      run.run();
+   };
+
+   private final PropertyChangeSupport _propertyChanges;
    private boolean _disposed = false;
-   private Object _owner;
+   private final Object _owner;
+   private boolean _deferredNotifications = false;
+   private Map<String /* propertyName */, Pair<Object /* old value */, Object /* new value */>> _deferrNotifications = new HashMap<>();
 
-   public NotifyPropertyChanged() { _owner = this; }
-   public NotifyPropertyChanged(Object owner) { _owner = owner; }
+   @Deprecated
+   public NotifyPropertyChanged()                                            { _owner = this ; _propertyChanges = new PropertyChangeSupport(_owner); }
+   public NotifyPropertyChanged(Object owner)                                { _owner = owner; _propertyChanges = new PropertyChangeSupport(_owner); }
+   public NotifyPropertyChanged(Object owner, boolean deferredNotifications) { _owner = owner; _propertyChanges = new PropertyChangeSupport(_owner); _deferredNotifications = deferredNotifications; }
 
    @Override
-   public void addListener(PropertyChangeListener listener) { propertyChanges.addPropertyChangeListener(listener); }
+   public void addListener(PropertyChangeListener listener) { _propertyChanges.addPropertyChangeListener(listener); }
    @Override
-   public void removeListener(PropertyChangeListener listener) { propertyChanges.removePropertyChangeListener(listener); }
+   public void removeListener(PropertyChangeListener listener) { _propertyChanges.removePropertyChangeListener(listener); }
+
+   public boolean isDeferredNotifications() { return _deferredNotifications; }
+   public void setDeferredNotifications(boolean value) { _deferredNotifications = value; }
 
    @Deprecated // used reflection :(
    private <T> boolean setProperty(T newValue, String propertyName) {
@@ -73,8 +88,30 @@ public class NotifyPropertyChanged implements AutoCloseable, INotifyPropertyChan
    public void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       if (_disposed)
          return;
-    //System.out.println("onPropertyChanged: " + propertyName + ": " + newValue);
-      propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
+
+      if (!_deferredNotifications) {
+         //System.out.println("onPropertyChanged: " + propertyName + ": " + newValue);
+         _propertyChanges.firePropertyChange(propertyName, oldValue, newValue);
+      } else {
+         boolean shedule;
+         {
+            Pair<Object /* old value */, Object /* new value */> event = _deferrNotifications.get(propertyName);
+            shedule = (event == null);
+            if (event == null)
+               event = new Pair<Object, Object>(oldValue, newValue);
+            else
+               event = new Pair<Object, Object>(event.first, newValue);
+            _deferrNotifications.put(propertyName, event);
+         }
+         if (shedule)
+            DEFERR_INVOKER.accept(() -> {
+               Pair<Object /* old value */, Object /* new value */> event = _deferrNotifications.remove(propertyName);
+               if (event == null)
+                  System.err.println("hmmm... invalid usage ;(");
+               else
+                  _propertyChanges.firePropertyChange(propertyName, event.first, event.second);
+            });
+      }
    }
 
    public <TProperty> void onPropertyChangedRethrow(TProperty source, PropertyChangeEvent childEvent, String propertyName) {
