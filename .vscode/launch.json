@@ -1,4 +1,13 @@
 {
+    // Install:
+    //  C#          : https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp
+    //  Code Runner : https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner
+    //  C# FixFormat: https://marketplace.visualstudio.com/items?itemName=Leopotam.csharpfixformat
+    //  C# XML Documentation Comments: https://marketplace.visualstudio.com/items?itemName=k--kato.docomment
+    //  
+    //  Language Support for Java(TM) by Red Hat: https://marketplace.visualstudio.com/items?itemName=redhat.java
+    //  Java Extension Pack: https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack
+
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
@@ -37,13 +46,13 @@
             "args": ""
         },
         {
-            "name": "Java TEST fmg.swing.draw.img.MosaicsSkillImg - Debug (Launch)",
+            "name": "Java TEST fmg.swing.draw.img.MosaicSkillImg - Debug (Launch)",
             "type": "java",
             "request": "launch",
             "cwd": "${workspaceFolder}/FastMines_swing",
             "console": "internalConsole",
             "stopOnEntry": false,
-            "mainClass": "fmg.swing.draw.img.MosaicsSkillImg",
+            "mainClass": "fmg.swing.draw.img.MosaicSkillImg",
             "args": ""
         }
     ]
