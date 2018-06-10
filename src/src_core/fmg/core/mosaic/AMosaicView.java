@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import fmg.core.img.ImageView;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.mosaic.draw.MosaicDrawModel;
 import fmg.data.view.draw.PenBorder;
 
 /**

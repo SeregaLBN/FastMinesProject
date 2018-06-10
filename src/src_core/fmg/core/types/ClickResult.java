@@ -1,4 +1,4 @@
-package fmg.core.types.click;
+package fmg.core.types;
 
 import fmg.core.mosaic.cells.BaseCell;
 

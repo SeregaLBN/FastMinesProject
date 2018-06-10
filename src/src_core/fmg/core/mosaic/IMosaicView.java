@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import fmg.core.img.IImageView;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.mosaic.draw.MosaicDrawModel;
 
 /** MVC view interface of mosaic
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel

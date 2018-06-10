@@ -1,12 +1,9 @@
-package fmg.core.types.click;
+package fmg.core.types;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.types.EClose;
-import fmg.core.types.EOpen;
-import fmg.core.types.EState;
 
 public class ClickCellResult {
 
