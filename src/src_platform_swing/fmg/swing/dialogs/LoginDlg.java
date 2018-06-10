@@ -1,12 +1,12 @@
 package fmg.swing.dialogs;
 
+import java.awt.*;
+import java.awt.event.*;
+
 import javax.swing.*;
 
 import fmg.swing.utils.BoxLayoutUtils;
 import fmg.swing.utils.GuiTools;
-
-import java.awt.*;
-import java.awt.event.*;
 
 public class LoginDlg extends JDialog {
    private static final long serialVersionUID = 1L;
@@ -42,12 +42,13 @@ public class LoginDlg extends JDialog {
       });
 
       addWindowListener(new WindowAdapter() {
+         @Override
          public void windowClosing(WindowEvent we) { LoginDlg.this.onCancel(new ActionEvent(we.getSource(), we.getID(), "windowClosing")); }
       });
 
       // добавляем расположение в центр окна
       getContentPane().add(createComponents(username, usePassword));
-   
+
       // задаем предпочтительный размер
       pack();
       this.setLocationRelativeTo(parent);
@@ -93,18 +94,8 @@ public class LoginDlg extends JDialog {
       grid.add(cancel);
       flow.add(grid);
 
-      ok.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            LoginDlg.this.onOk(e);
-         }
-      });
-      cancel.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            LoginDlg.this.onCancel(e);
-         }
-      });
+      ok.addActionListener(e -> LoginDlg.this.onOk(e));
+      cancel.addActionListener(e -> LoginDlg.this.onCancel(e));
 
       // 3. действия по выравниванию компонентов, уточнению их размеров, приданию одинаковых размеров
       // а) согласованное выравнивание вложенных панелей
@@ -136,12 +127,6 @@ public class LoginDlg extends JDialog {
       return main;
    }
 
-   /** тестовый метод для проверки диалогового окна */
-   public static void main(String[] args) {
-      LoginDlg dlg = new LoginDlg(null, true, "aasd", true);
-      dlg.setVisible(true);
-   }
-
    private void onOk(ActionEvent e) {
 //      System.out.println("OnOk");
       if (onOkActionListener != null)
@@ -162,9 +147,19 @@ public class LoginDlg extends JDialog {
       //System.exit(0);
    }
 
+   @Override
    public String getName() { return nameField.getText(); }
    public String getPass() { return passwrdField.getText(); }
 
    public void setOkActionListener(ActionListener onOkActionListener) { this.onOkActionListener = onOkActionListener; }
    public void setCancelActionListener(ActionListener CancelOkActionListener) { this.onCancelActionListener = CancelOkActionListener; }
+
+   //////////////////////////////////////////////////
+   // TEST
+   /** тестовый метод для проверки диалогового окна */
+   public static void main(String[] args) {
+      LoginDlg dlg = new LoginDlg(null, true, "aasd", true);
+      dlg.setVisible(true);
+   }
+
 }

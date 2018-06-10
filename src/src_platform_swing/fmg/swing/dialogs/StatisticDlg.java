@@ -10,6 +10,7 @@ import fmg.core.types.ESkillLevel;
 import fmg.data.controller.serializable.PlayersModel;
 import fmg.data.controller.types.User;
 import fmg.swing.Main;
+import fmg.swing.draw.img.Animator;
 import fmg.swing.model.view.ReportTableModel;
 import fmg.swing.model.view.StaticsticTblModel;
 
@@ -54,15 +55,6 @@ public class StatisticDlg extends ReportDlg {
       return super.getTableCellHorizontalAlignment(row, column);
    }
 
-   // тестовый метод для проверки диалогового окна
-   public static void main(String[] args) {
-      PlayersModel players = new PlayersModel();
-      players.Load();
-      try (StatisticDlg dlg = new StatisticDlg(null, true, players)) {
-         dlg.showData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle3);
-      }
-   }
-
    @Override
    protected Dimension getPreferredScrollPaneSize() {
       return new Dimension(800, 200);
@@ -75,4 +67,16 @@ public class StatisticDlg extends ReportDlg {
       int pos = players.getPos((parent==null) ? null : parent.getActiveUserId());
       super.showData(eSkill, eMosaic, pos);
    }
+
+   //////////////////////////////////////////////////
+   // TEST
+   public static void main(String[] args) {
+      PlayersModel players = new PlayersModel();
+      players.Load();
+      try (StatisticDlg dlg = new StatisticDlg(null, true, players)) {
+         dlg.showData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle3);
+      }
+      Animator.getSingleton().close();
+   }
+
 }

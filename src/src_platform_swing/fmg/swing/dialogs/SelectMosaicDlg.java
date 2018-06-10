@@ -342,7 +342,8 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
       mosaicsImgRollover.close();
    }
 
-   // test
+   //////////////////////////////////////////////////
+   // TEST
    public static void main(String[] args) {
       SwingUtilities.invokeLater(() -> {
          try (SelectMosaicDlg sm = new SelectMosaicDlg(null, true)) {

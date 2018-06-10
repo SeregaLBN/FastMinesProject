@@ -8,6 +8,7 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 import fmg.data.controller.serializable.ChampionsModel;
 import fmg.swing.Main;
+import fmg.swing.draw.img.Animator;
 import fmg.swing.model.view.ChampionTblModel;
 import fmg.swing.model.view.ReportTableModel;
 
@@ -40,15 +41,6 @@ public class ChampionDlg extends ReportDlg {
       return super.getTableCellHorizontalAlignment(row, column);
    }
 
-   // тестовый метод для проверки диалогового окна
-   public static void main(String[] args) {
-      ChampionsModel champions = new ChampionsModel(null);
-      champions.Load();
-      try (ChampionDlg dlg = new ChampionDlg(null, true, champions)) {
-         dlg.showData(ESkillLevel.eBeginner, EMosaic.eMosaicSquare1);
-      }
-   }
-
    @Override
    protected Dimension getPreferredScrollPaneSize() {
       return new Dimension(300, 10*getTableRowHeigt() + getTableHeaderHeigt() + 7);
@@ -63,4 +55,16 @@ public class ChampionDlg extends ReportDlg {
       // ...на этой позиции и фокусируюсь
       super.showData(eSkill, eMosaic, pos);
    }
+
+   //////////////////////////////////////////////////
+   // TEST
+   public static void main(String[] args) {
+      ChampionsModel champions = new ChampionsModel(null);
+      champions.Load();
+      try (ChampionDlg dlg = new ChampionDlg(null, true, champions)) {
+         dlg.showData(ESkillLevel.eBeginner, EMosaic.eMosaicSquare1);
+      }
+      Animator.getSingleton().close();
+   }
+
 }

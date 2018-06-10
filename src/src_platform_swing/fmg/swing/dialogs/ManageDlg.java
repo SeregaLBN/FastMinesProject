@@ -269,19 +269,6 @@ public class ManageDlg extends JDialog {
       getContentPane().add(panelLeft, BorderLayout.EAST);
    }
 
-   // тестовый метод для проверки диалогового окна
-   public static void main(String[] args) {
-      try {
-         PlayersModel players = new PlayersModel();
-         players.Load();
-         ManageDlg manage = new ManageDlg(null, true, players);
-         manage.setVisible(true);
-         players.Save();
-      } catch (Exception ex) {
-         System.err.println(ex);
-      }
-   }
-
    @Override
    public void setVisible(boolean b) {
       //System.out.println("> Manage::setVisible: " + b);
@@ -308,6 +295,20 @@ public class ManageDlg extends JDialog {
    }
    public void setDoNotAskStartupChecked(boolean checked) {
       doNotAskStartup.setSelected(checked);
+   }
+
+   //////////////////////////////////////////////////
+   // TEST
+   public static void main(String[] args) {
+      try {
+         PlayersModel players = new PlayersModel();
+         players.Load();
+         ManageDlg manage = new ManageDlg(null, true, players);
+         manage.setVisible(true);
+         players.Save();
+      } catch (Exception ex) {
+         System.err.println(ex);
+      }
    }
 
 }

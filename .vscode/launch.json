@@ -1,59 +1,290 @@
 {
-    // Install:
-    //  C#          : https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp
-    //  Code Runner : https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner
-    //  C# FixFormat: https://marketplace.visualstudio.com/items?itemName=Leopotam.csharpfixformat
-    //  C# XML Documentation Comments: https://marketplace.visualstudio.com/items?itemName=k--kato.docomment
-    //  
-    //  Language Support for Java(TM) by Red Hat: https://marketplace.visualstudio.com/items?itemName=redhat.java
-    //  Java Extension Pack: https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack
+   // Needed extensions:
+   //  C#          : https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp
+   //  Code Runner : https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner
+   //  C# FixFormat: https://marketplace.visualstudio.com/items?itemName=Leopotam.csharpfixformat
+   //  C# XML Documentation Comments: https://marketplace.visualstudio.com/items?itemName=k--kato.docomment
+   //
+   //  Language Support for Java(TM) by Red Hat: https://marketplace.visualstudio.com/items?itemName=redhat.java
+   //  Java Extension Pack: https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack
 
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "C# Test.FastMines.Ava.Images - .NET Core Launch (console)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build Test.FastMines.Ava.Images",
-            "program": "${workspaceFolder}/FastMines_Ava/Test.FastMines.Ava.Images/bin/Debug/netcoreapp2.0/Test.FastMines.Ava.Images.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/FastMines_Ava/Test.FastMines.Ava.Images",
-            "console": "internalConsole",
-            "stopAtEntry": false,
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
-            "name": "Java fmg.swing.Main - Debug (Launch)",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_swing",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.swing.Main",
-            "args": ""
-        },
-        {
-            "name": "Java TEST fmg.jfx.draw.img.Logo - Debug (Launch)",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_jfx",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.jfx.draw.img.Logo",
-            "args": ""
-        },
-        {
-            "name": "Java TEST fmg.swing.draw.img.MosaicSkillImg - Debug (Launch)",
-            "type": "java",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/FastMines_swing",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "fmg.swing.draw.img.MosaicSkillImg",
-            "args": ""
-        }
-    ]
+   // Use IntelliSense to learn about possible attributes.
+   // Hover to view descriptions of existing attributes.
+   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+   // Use IntelliSense to find out which attributes exist for C# debugging
+   // Use hover for the description of the existing attributes
+   // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+   "version": "0.2.0",
+   "configurations": [
+      {
+         "name": "C# Avalonia: test Images - .NET Core Launch (console)",
+         "type": "coreclr",
+         "request": "launch",
+         "preLaunchTask": "build Test.FastMines.Ava.Images",
+         "program": "${workspaceFolder}/FastMines_Ava/Test.FastMines.Ava.Images/bin/Debug/netcoreapp2.0/Test.FastMines.Ava.Images.dll",
+         "args": [],
+         // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+         "cwd": "${workspaceFolder}/FastMines_Ava/Test.FastMines.Ava.Images",
+         "console": "internalConsole",
+         "stopAtEntry": false,
+         "internalConsoleOptions": "openOnSessionStart"
+      },
+      {
+         "name": ".NET Core Attach",
+         "type": "coreclr",
+         "request": "attach",
+         "processId": "${command:pickProcess}"
+      },
+      {
+         "name": "Java SWING: Main app",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.Main",
+         "args": ""
+      },
+      {
+         "type": "java",
+         "name": "Java SWING: test MosaicJPanelController",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.mosaic.MosaicJPanelController",
+         "args": ""
+      },
+      {
+         "type": "java",
+         "name": "Java SWING: test MosaicImg",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.draw.img.MosaicImg",
+         "args": ""
+      },
+      {
+         "name": "Java SWING: test MosaicSkillImg",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.draw.img.MosaicSkillImg",
+         "args": ""
+      },
+      {
+         "name": "Java SWING: test MosaicGroupImg",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.draw.img.MosaicGroupImg",
+         "args": ""
+      },
+      {
+         "name": "Java SWING: test Logo images",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.draw.img.Logo",
+         "args": ""
+      },
+      {
+         "name": "Java SWING: test Mine images",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.draw.img.Mine",
+         "args": ""
+      },
+      {
+         "name": "Java SWING: test Smile images",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.draw.img.Smile",
+         "args": ""
+      },
+      {
+         "name": "Java SWING: test Flag images",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.draw.img.Flag",
+         "args": ""
+      },
+      {
+         "name": "Java SWING: test AboutDlg",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.dialogs.AboutDlg",
+         "args": ""
+      },
+      {
+         "name": "Java SWING: test ChampionDlg",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.dialogs.ChampionDlg",
+         "args": ""
+      },
+      {
+         "name": "Java SWING: test CustomSkillDlg",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.dialogs.CustomSkillDlg",
+         "args": ""
+      },
+      {
+         "name": "Java SWING: test LoginDlg",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.dialogs.LoginDlg",
+         "args": ""
+      },
+      {
+         "name": "Java SWING: test ManageDlg",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.dialogs.ManageDlg",
+         "args": ""
+      },
+      {
+         "name": "Java SWING: test ReportDlg",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.dialogs.ReportDlg",
+         "args": ""
+      },
+      {
+         "name": "Java SWING: test SelectMosaicDlg",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.dialogs.SelectMosaicDlg",
+         "args": ""
+      },
+      {
+         "name": "Java SWING: test StatisticDlg",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_swing",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.swing.dialogs.StatisticDlg",
+         "args": ""
+      },
+
+      {
+         "type": "java",
+         "name": "JavaFX: test MosaicCanvasController",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_jfx",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.jfx.mosaic.MosaicCanvasController",
+         "args": ""
+      },
+      {
+         "type": "java",
+         "name": "JavaFX: test MosaicImg",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_jfx",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.jfx.draw.img.MosaicImg",
+         "args": ""
+      },
+      {
+         "name": "JavaFX: test MosaicSkillImg",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_jfx",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.jfx.draw.img.MosaicSkillImg",
+         "args": ""
+      },
+      {
+         "name": "JavaFX: test MosaicGroupImg",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_jfx",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.jfx.draw.img.MosaicGroupImg",
+         "args": ""
+      },
+      {
+         "name": "JavaFX: test Logo images",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_jfx",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.jfx.draw.img.Logo",
+         "args": ""
+      },
+      {
+         "name": "JavaFX: test Mine images",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_jfx",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.jfx.draw.img.Mine",
+         "args": ""
+      },
+      {
+         "name": "JavaFX: test Smile images",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_jfx",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.jfx.draw.img.Smile",
+         "args": ""
+      },
+      {
+         "name": "JavaFX: test Flag images",
+         "type": "java",
+         "request": "launch",
+         "cwd": "${workspaceFolder}/FastMines_jfx",
+         "console": "internalConsole",
+         "stopOnEntry": false,
+         "mainClass": "fmg.jfx.draw.img.Flag",
+         "args": ""
+      }
+   ]
 }

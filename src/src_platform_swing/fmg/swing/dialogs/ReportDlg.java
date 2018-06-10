@@ -305,6 +305,7 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
       }
    }
 
+   //////////////////////////////////////////////////
    // TEST
    public static void main(String[] args) {
       try (ReportDlg dlg = new ReportDlg(null, true) { private static final long serialVersionUID = 1L; })
