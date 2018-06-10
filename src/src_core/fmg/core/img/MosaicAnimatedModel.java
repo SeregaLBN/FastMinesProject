@@ -14,9 +14,9 @@ import fmg.common.geom.DoubleExt;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.common.geom.util.FigureHelper;
+import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
-import fmg.core.mosaic.draw.MosaicDrawModel;
 import fmg.data.view.draw.PenBorder;
 
 /** Representable {@link fmg.core.types.EMosaic} as animated image */

@@ -1,4 +1,4 @@
-package fmg.core.mosaic.draw;
+package fmg.core.mosaic;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -12,8 +12,6 @@ import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.img.IImageModel;
-import fmg.core.mosaic.MosaicGameModel;
-import fmg.core.mosaic.MosaicHelper;
 import fmg.data.view.draw.ColorText;
 import fmg.data.view.draw.FontInfo;
 import fmg.data.view.draw.PenBorder;

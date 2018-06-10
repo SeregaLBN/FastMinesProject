@@ -9,10 +9,7 @@ import java.util.stream.IntStream;
 import fmg.common.geom.*;
 import fmg.core.img.AnimatedImgController;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.mosaic.draw.MosaicDrawModel;
 import fmg.core.types.*;
-import fmg.core.types.click.ClickCellResult;
-import fmg.core.types.click.ClickResult;
 
 /** MVC: mosaic controller. Base implementation
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel

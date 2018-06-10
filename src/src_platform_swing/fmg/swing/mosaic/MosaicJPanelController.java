@@ -10,7 +10,7 @@ import javax.swing.event.MouseInputListener;
 
 import fmg.core.mosaic.AMosaicController;
 import fmg.core.mosaic.AMosaicView;
-import fmg.core.mosaic.draw.MosaicDrawModel;
+import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.Cast;

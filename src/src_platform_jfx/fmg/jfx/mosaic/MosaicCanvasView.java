@@ -6,9 +6,9 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 
 import fmg.common.geom.RectDouble;
+import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.mosaic.draw.MosaicDrawModel;
 import fmg.jfx.draw.img.CanvasJfx;
 import fmg.jfx.draw.img.Flag;
 import fmg.jfx.draw.img.Mine;

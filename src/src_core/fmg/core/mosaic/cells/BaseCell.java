@@ -31,10 +31,10 @@ import fmg.common.Color;
 import fmg.common.geom.*;
 import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
+import fmg.core.types.ClickCellResult;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
-import fmg.core.types.click.ClickCellResult;
 
 /** Базовый класс фигуры-ячейки */
 public abstract class BaseCell {

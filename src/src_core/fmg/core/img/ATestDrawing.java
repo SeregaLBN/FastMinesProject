@@ -10,8 +10,8 @@ import java.util.stream.Stream;
 import fmg.common.Color;
 import fmg.common.geom.*;
 import fmg.core.img.MosaicAnimatedModel.ERotateMode;
+import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicGameModel;
-import fmg.core.mosaic.draw.MosaicDrawModel;
 
 public abstract class ATestDrawing {
 
