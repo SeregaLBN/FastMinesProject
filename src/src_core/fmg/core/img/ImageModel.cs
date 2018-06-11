@@ -8,7 +8,7 @@ using fmg.common.notyfier;
 
 namespace fmg.core.img {
 
-   public static class StaticImgConsts {
+   public static class ImageModelConsts {
 
       public static Action<Action> DeferrInvoker;
       public static readonly Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
@@ -18,13 +18,13 @@ namespace fmg.core.img {
 
    /// <summary> Abstract, platform independent, image characteristics </summary>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class StaticImg<TImage> : NotifyPropertyChanged
+   public abstract class ImageModel<TImage> : NotifyPropertyChanged
       where TImage : class
    {
       public const int DefaultImageSize = 100;
       public const int DefaultPaddingInt = (int)(DefaultImageSize * 0.05); // 5%
 
-      protected StaticImg() {
+      protected ImageModel() {
          _size = new Size(DefaultImageSize, DefaultImageSize);
          _padding = new Bound(DefaultPaddingInt);
       }
@@ -86,7 +86,7 @@ namespace fmg.core.img {
          }
       }
 
-      private Color _backgroundColor = StaticImgConsts.DefaultBkColor;
+      private Color _backgroundColor = ImageModelConsts.DefaultBkColor;
       /// <summary> background fill color </summary>
       public Color BackgroundColor {
          get { return _backgroundColor; }
@@ -135,7 +135,7 @@ namespace fmg.core.img {
       }
 
 
-      private Color _foregroundColor = StaticImgConsts.DefaultForegroundColor;
+      private Color _foregroundColor = ImageModelConsts.DefaultForegroundColor;
       public Color ForegroundColor {
          get { return _foregroundColor; }
          set {
@@ -179,7 +179,7 @@ namespace fmg.core.img {
             else
                DeferredNotificationsMap[ev.PropertyName] = ev;
             if (first)
-               StaticImgConsts.DeferrInvoker(() => {
+               ImageModelConsts.DeferrInvoker(() => {
                   foreach (PropertyChangedEventArgs item in DeferredNotificationsMap.Values.ToList()) {
                      base.OnSelfPropertyChanged(item);
                      //OnSelfPropertyChangedAfter(false, item);
