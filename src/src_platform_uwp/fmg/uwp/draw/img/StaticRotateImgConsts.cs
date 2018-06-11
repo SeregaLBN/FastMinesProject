@@ -7,7 +7,7 @@ namespace fmg.uwp.draw.img {
    static class StaticRotateImgConsts {
 
       static StaticRotateImgConsts() {
-         StaticImgConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
+         ImageModelConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
          RotatedImgConst.TimerCreator = () => new Timer();
       }
 

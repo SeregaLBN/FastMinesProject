@@ -215,7 +215,7 @@ namespace fmg
       }
       private void OnCreateResourcesCanvasControl(CanvasControl canvasControl, CanvasCreateResourcesEventArgs ev) {
          if (ev.Reason == CanvasCreateResourcesReason.FirstTime) {
-            var img = canvasControl.DataContext as StaticImg<CanvasBitmap>;
+            var img = canvasControl.DataContext as ImageModel<CanvasBitmap>;
             if (img == null)
                return;
             canvasControl.Draw += (sender2, ev2) => {
@@ -231,7 +231,7 @@ namespace fmg
          }
       }
 
-      private void ApplyButtonColorSmoothTransition(Button bttn, StaticImg<CanvasBitmap> image) {
+      private void ApplyButtonColorSmoothTransition(Button bttn, ImageModel<CanvasBitmap> image) {
          int flag = 0;
          var clrFrom = image.BackgroundColor; //Color.Coral;
          var clrTo = Color.BlueViolet;

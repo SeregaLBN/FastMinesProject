@@ -9,9 +9,9 @@ namespace fmg.core.img {
 
    }
 
-   /// <summary> <see cref="StaticImg{TImage}"/> with rotated properties </summary>
+   /// <summary> <see cref="ImageModel{TImage}"/> with rotated properties </summary>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class RotatedImg<TImage> : StaticImg<TImage>
+   public abstract class RotatedImg<TImage> : ImageModel<TImage>
       where TImage : class
    {
       //protected RotatedImg() : base() { }

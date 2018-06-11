@@ -110,7 +110,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          ApplicationView.GetForCurrentView().Title = _td.GetTitle(images);
 
          bool testTransparent = _td.Bl;
-         images.Select(x => x as StaticImg<TImage>)
+         images.Select(x => x as ImageModel<TImage>)
             .Where(x => x != null)
             .ToList()
             .ForEach(img => _td.ApplyRandom<TPaintable, TImage, TPaintContext, TImageInner>(img, testTransparent));
@@ -139,13 +139,13 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                   Stretch = Stretch.None
                };
 
-               if (imgObj is StaticImg<TImage>) {
-                  StaticImg<TImage> simg = imgObj as StaticImg<TImage>;
+               if (imgObj is ImageModel<TImage>) {
+                  ImageModel<TImage> simg = imgObj as ImageModel<TImage>;
                   simg.Size = imgSize;
 
                   imgCntrl.SetBinding(Image.SourceProperty, new Binding {
                      Source = simg,
-                     Path = new PropertyPath(nameof(StaticImg<TImage>.Image)),
+                     Path = new PropertyPath(nameof(ImageModel<TImage>.Image)),
                      Mode = BindingMode.OneWay
                   });
                } else
@@ -191,8 +191,8 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                ATestDrawing.CellTilingInfo cti = callback(imgObj);
                PointDouble offset = cti.imageOffset;
 
-               if (imgObj is StaticImg<TImage>) {
-                  StaticImg<TImage> simg = imgObj as StaticImg<TImage>;
+               if (imgObj is ImageModel<TImage>) {
+                  ImageModel<TImage> simg = imgObj as ImageModel<TImage>;
                   simg.Size = imgSize;
                } else
                if (imgObj is Flag) {

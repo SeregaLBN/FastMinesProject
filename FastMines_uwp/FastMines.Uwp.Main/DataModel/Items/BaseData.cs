@@ -9,7 +9,7 @@ namespace fmg.DataModel.Items {
    /// <summary> Base item class for <see cref="MosaicDataItem"/> and <see cref="MosaicGroupDataItem"/> and <see cref="MosaicSkillDataItem"/> </summary>
    [Windows.Foundation.Metadata.WebHostHidden]
    public abstract class BaseData<T, TImage> : NotifyPropertyChanged
-      where TImage : StaticImg<CanvasBitmap>
+      where TImage : ImageModel<CanvasBitmap>
    {
       protected BaseData(T uniqueId) {
          UniqueId = uniqueId;

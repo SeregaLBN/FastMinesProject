@@ -126,8 +126,8 @@
     <Compile Include="..\..\src\src_core\fmg\core\img\RotatedImg.cs">
       <Link>src_fmg.core\img\RotatedImg.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\img\StaticImg.cs">
-      <Link>src_fmg.core\img\StaticImg.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\img\ImageModel.cs">
+      <Link>src_fmg.core\img\ImageModel.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\ATestDrawing.cs">
       <Link>src_fmg.core\img\ATestDrawing.cs</Link>

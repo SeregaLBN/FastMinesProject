@@ -48,12 +48,12 @@ namespace fmg.DataModel.DataSources
             img.Rotate = selected;
             img.PolarLights = selected;
             img.BorderColor = selected ? Color.Red : Color.Green;
-            img.BackgroundColor = selected ? StaticImgConsts.DefaultBkColor : PaintUwpContextCommon.DefaultBackgroundColor;
+            img.BackgroundColor = selected ? ImageModelConsts.DefaultBkColor : PaintUwpContextCommon.DefaultBackgroundColor;
             img.Padding = new Bound(selected ? 5 : 15);
             if (!selected)
-               img.ForegroundColor = StaticImgConsts.DefaultForegroundColor;
+               img.ForegroundColor = ImageModelConsts.DefaultForegroundColor;
             //else {
-            //   HSV hsv = new HSV(StaticImgConsts.DefaultForegroundColor);
+            //   HSV hsv = new HSV(ImageModelConsts.DefaultForegroundColor);
             //   hsv.s = hsv.v = 100;
             //   img.ForegroundColor = hsv.ToColor();
             //}

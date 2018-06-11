@@ -29,7 +29,7 @@ namespace fmg {
          this.Unloaded += OnPageUnloaded;
 
          {
-            HSV hsv = new HSV(StaticImgConsts.DefaultForegroundColor) {
+            HSV hsv = new HSV(ImageModelConsts.DefaultForegroundColor) {
                s = 80,
                v = 70,
                a = 170

@@ -20,7 +20,7 @@ namespace fmg.core.img {
          this.titlePrefix = titlePrefix;
       }
 
-      public void ApplyRandom<TPaintable, TImage, TPaintContext, TImageInner>(StaticImg<TImage> img, bool testTransparent)
+      public void ApplyRandom<TPaintable, TImage, TPaintContext, TImageInner>(ImageModel<TImage> img, bool testTransparent)
          where TPaintable : IPaintable
          where TImage : class
          where TImageInner : class

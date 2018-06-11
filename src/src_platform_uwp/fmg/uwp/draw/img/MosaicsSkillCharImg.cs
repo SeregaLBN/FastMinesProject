@@ -3,7 +3,7 @@ using fmg.core.types;
 namespace fmg.uwp.draw.img {
 
    /// <summary> representable <see cref="ESkillLevel"/> as CHAR </summary>
-   public class MosaicsSkillCharImg : core.img.StaticImg<string> {
+   public class MosaicsSkillCharImg : core.img.ImageModel<string> {
 
       protected MosaicsSkillCharImg(ESkillLevel skill) {
          _mosaicSkill = skill;

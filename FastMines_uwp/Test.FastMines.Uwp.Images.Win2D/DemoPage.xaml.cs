@@ -20,8 +20,8 @@ using fmg.core.mosaic.draw;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.img.win2d;
 using fmg.uwp.draw.mosaic.win2d;
-using StaticCanvasBmp = fmg.core.img.StaticImg<Microsoft.Graphics.Canvas.CanvasBitmap>;
-using StaticCanvasImg = fmg.core.img.StaticImg<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>;
+using StaticCanvasBmp = fmg.core.img.ImageModel<Microsoft.Graphics.Canvas.CanvasBitmap>;
+using StaticCanvasImg = fmg.core.img.ImageModel<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>;
 using LogoCanvasBmp = fmg.uwp.draw.img.win2d.Logo.CanvasBmp;
 using LogoCanvasImg = fmg.uwp.draw.img.win2d.Logo.CanvasImgSrc;
 using MosaicsSkillCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsSkillImg.CanvasBmp;
@@ -203,7 +203,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          ApplicationView.GetForCurrentView().Title = _td.GetTitle(images);
 
          var testTransparent = _td.Bl;
-         images.Select(x => x as StaticImg<TImage>)
+         images.Select(x => x as ImageModel<TImage>)
             .Where(x => x != null)
             .ToList()
             .ForEach(img => _td.ApplyRandom<TPaintable, TImage, TPaintContext, TImageInner>(img, testTransparent));
@@ -369,8 +369,8 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                var cti = callback(imgObj);
                var offset = cti.imageOffset;
 
-               if (imgObj is StaticImg<TImage>) {
-                  var simg = imgObj as StaticImg<TImage>;
+               if (imgObj is ImageModel<TImage>) {
+                  var simg = imgObj as ImageModel<TImage>;
                   simg.Size = imgSize;
                } else
                if (imgObj is Flag.AFlagImageWin2D<TImage>) {
