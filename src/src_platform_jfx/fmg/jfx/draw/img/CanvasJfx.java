@@ -3,7 +3,7 @@ package fmg.jfx.draw.img;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
-import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageModel;
 import fmg.core.img.IImageView;
 
@@ -18,7 +18,7 @@ public class CanvasJfx {
    }
 
    public Canvas create() {
-      Size s = _imageView.getSize();
+      SizeDouble s = _imageView.getSize();
       if (_canvas == null)
          _canvas = new Canvas(s.width, s.height);
       else {

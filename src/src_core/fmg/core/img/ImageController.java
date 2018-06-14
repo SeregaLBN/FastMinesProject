@@ -2,6 +2,7 @@ package fmg.core.img;
 
 import java.beans.PropertyChangeListener;
 
+import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
@@ -32,12 +33,10 @@ public abstract class ImageController<TImage,
    public static final String PROPERTY_IMAGE = IImageView.PROPERTY_IMAGE;
    public static final String PROPERTY_SIZE  = IImageView.PROPERTY_SIZE;
 
-   public    TImageModel getModel() { return getView().getModel(); }
    protected TImageView  getView()  { return _imageView; }
-
-   public TImage getImage() {
-      return getView().getImage();
-   }
+   public    TImage      getImage() { return getView().getImage(); }
+   public    TImageModel getModel() { return getView().getModel(); }
+   public    SizeDouble  getSize()  { return getView().getSize(); }
 
    protected void onPropertyViewChanged(Object oldValue, Object newValue, String propertyName) {
       switch (propertyName) {

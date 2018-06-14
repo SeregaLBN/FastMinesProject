@@ -2,7 +2,7 @@ package fmg.core.img;
 
 import java.beans.PropertyChangeListener;
 
-import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /** Model of the smile/face image */
@@ -47,20 +47,20 @@ public class SmileModel implements IImageModel {
    public static final String PROPERTY_FACE_TYPE = "FaceType";
 
    private EFaceType _faceType;
-   private Size _size;
+   private SizeDouble _size;
    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
    public SmileModel(EFaceType faceType) {
       _faceType = faceType;
-      _size = new Size(40, 40);
+      _size = new SizeDouble(40, 40);
    }
 
    /** width and height in pixel */
    @Override
-   public Size getSize() { return _size; }
-   public void setSize(int widht, int height) { setSize(new Size(widht, height)) ; }
+   public SizeDouble getSize() { return _size; }
+   public void setSize(double widht, double height) { setSize(new SizeDouble(widht, height)) ; }
    @Override
-   public void setSize(Size size) {
+   public void setSize(SizeDouble size) {
       _notifier.setProperty(_size, size, PROPERTY_SIZE);
    }
 

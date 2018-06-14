@@ -68,8 +68,8 @@ public class LogoModel extends AnimatedImageModel {
 
    public List<PointDouble> getRays() {
       if (_rays.isEmpty()) {
-         int pl = getPadding().left;
-         int pt = getPadding().top;
+         double pl = getPadding().left;
+         double pt = getPadding().top;
          double zx = getZoomX();
          double zy = getZoomY();
 
@@ -87,8 +87,8 @@ public class LogoModel extends AnimatedImageModel {
 
    public List<PointDouble> getInn() {
       if (_inn.isEmpty()) {
-         int pl = getPadding().left;
-         int pt = getPadding().top;
+         double pl = getPadding().left;
+         double pt = getPadding().top;
          double zx = getZoomX();
          double zy = getZoomY();
 
@@ -106,8 +106,8 @@ public class LogoModel extends AnimatedImageModel {
 
    public List<PointDouble> getOct() {
       if (_oct.isEmpty()) {
-         int pl = getPadding().left;
-         int pt = getPadding().top;
+         double pl = getPadding().left;
+         double pt = getPadding().top;
          double zx = getZoomX();
          double zy = getZoomY();
 

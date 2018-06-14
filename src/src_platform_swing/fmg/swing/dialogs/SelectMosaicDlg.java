@@ -10,7 +10,7 @@ import java.beans.PropertyChangeEvent;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 
-import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
@@ -156,7 +156,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
 
       JLabel lbl2 = new JLabel("Type:");
 
-      cmbxMosaicTypes = new JComboBox<Object>(EMosaic.getDescriptionValues().toArray());
+      cmbxMosaicTypes = new JComboBox<>(EMosaic.getDescriptionValues().toArray());
 //      cmbxMosaicTypes.setPrototypeDisplayValue("aaaaaaaaaaaa");
       // слушатель смены выбранного элемента
       cmbxMosaicTypes.addItemListener(e -> onChangeMosaicType(e));
@@ -260,7 +260,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
          mosaicsImg.setMosaicType(mosaicType);
          mosaicsImg.setSizeField(mosaicType.sizeIcoField(true));
          MosaicAnimatedModel<?> imgModel = mosaicsImg.getModel();
-         imgModel.setSize(new Size(ImgSize*ImgZoomQuality, ImgSize*ImgZoomQuality));
+         imgModel.setSize(new SizeDouble(ImgSize*ImgZoomQuality, ImgSize*ImgZoomQuality));
          imgModel.setPadding(10);
          imgModel.setBackgroundColor(Cast.toColor(bkTabBkColor));
          int redrawInterval = 50;
@@ -280,7 +280,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
          mosaicsImgRollover.setMosaicType(mosaicType);
          mosaicsImgRollover.setSizeField(mosaicType.sizeIcoField(true));
          MosaicAnimatedModel<?> imgModel = mosaicsImg.getModel();
-         imgModel.setSize(new Size(ImgSize*ImgZoomQuality, ImgSize*ImgZoomQuality));
+         imgModel.setSize(new SizeDouble(ImgSize*ImgZoomQuality, ImgSize*ImgZoomQuality));
          imgModel.setPadding(3);
          imgModel.setBackgroundColor(Cast.toColor(bkTabBkColorSelected));
       } else {

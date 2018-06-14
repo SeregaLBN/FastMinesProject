@@ -56,8 +56,8 @@ public abstract class ATestDrawing {
 
          ip.setBorderWidth(r(3));
 
-         int pad = Math.min(ip.getSize().height/3, ip.getSize().width/3);
-         ip.setPadding(-pad/4 + r(pad));
+         double pad = Math.min(ip.getSize().height/3, ip.getSize().width/3);
+         ip.setPadding(-pad/4 + r((int)pad));
 
          ip.setBackgroundColor(bkClr);
 
@@ -99,7 +99,7 @@ public abstract class ATestDrawing {
             mdm.getBackgroundFill().setMode(1 + r(mdm.getCellAttr().getMaxBackgroundFillModeValue()));
 
             mdm.getPenBorder().setWidth(r(3));
-            SizeDouble size = mdm.getSizeDouble();
+            SizeDouble size = mdm.getSize();
             double padLeftRight = r((int)(size.width /3));
             double padTopBottom = r((int)(size.height/3));
             mdm.setPadding(new BoundDouble(padLeftRight, padTopBottom, padLeftRight, padTopBottom));
@@ -124,7 +124,7 @@ public abstract class ATestDrawing {
    }
 
    public static class CellTilingResult {
-      public Size imageSize;
+      public SizeDouble imageSize;
       public Size tableSize;
       public Function<ImageController<?,?,?> /* image */, CellTilingInfo> itemCallback;
    }
@@ -139,8 +139,8 @@ public abstract class ATestDrawing {
       int pad = 2; // cell padding
       double addonX = (cols==1) ? 0 : !testIntersection ? 0 : dx/4; // test intersection
       double addonY = (rows==1) ? 0 : !testIntersection ? 0 : dy/4; // test intersection
-      Size imgSize = new Size((int)(dx - 2*pad + addonX),  // dx - 2*pad;
-                              (int)(dy - 2*pad + addonY)); // dy - 2*pad;
+      SizeDouble imgSize = new SizeDouble(dx - 2*pad + addonX,  // dx - 2*pad;
+                                          dy - 2*pad + addonY); // dy - 2*pad;
 
       Function<ImageController<?,?,?>, CellTilingInfo> itemCallback = item -> {
          int pos = images.indexOf(item);

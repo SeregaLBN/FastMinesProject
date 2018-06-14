@@ -1,6 +1,6 @@
 package fmg.core.img;
 
-import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.INotifyPropertyChanged;
 
 /**
@@ -18,16 +18,16 @@ public interface IImageView<TImage, TImageModel extends IImageModel> extends Aut
    TImageModel getModel();
 
    /** image size in pixels */
-   Size getSize();
+   SizeDouble getSize();
    /** image size in pixels */
-   void setSize(Size size);
+   void setSize(SizeDouble size);
 
    /** plaform specific view/image/picture or other display context/canvas/window/panel */
    TImage getImage();
 
    /** Mark the need to redraw the picture
     * Performs a call to the inner draw method (synchronously or asynchronously or implicitly, depending on the implementation) */
-   public void invalidate();
+   void invalidate();
 
    @Override
    void close(); // hide throw Exception

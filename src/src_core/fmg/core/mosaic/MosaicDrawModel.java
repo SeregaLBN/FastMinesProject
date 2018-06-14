@@ -7,7 +7,6 @@ import java.util.Map;
 
 import fmg.common.Color;
 import fmg.common.geom.BoundDouble;
-import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
@@ -50,7 +49,6 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    }
 
    public static final String PROPERTY_SIZE             = "Size";
-   public static final String PROPERTY_SIZE_DOUBLE      = "SizeDouble";
    public static final String PROPERTY_MARGIN           = "Margin";
    public static final String PROPERTY_PADDING          = "Padding";
    public static final String PROPERTY_IMG_MINE         = "ImgMine";
@@ -71,7 +69,8 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       return getCellAttr().getSize(getSizeField());
    }
    /** общий размер в пискелях */
-   public SizeDouble getSizeDouble() {
+   @Override
+public SizeDouble getSize() {
       SizeDouble size = getInnerSize();
       BoundDouble m = getMargin();
       BoundDouble p = getPadding();
@@ -79,13 +78,14 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       size.height += m.getTopAndBottom() + p.getTopAndBottom();
       return size;
    }
-   public void setSizeDouble(SizeDouble size) {
+   @Override
+public void setSize(SizeDouble size) {
       if (size.width < 1)
          throw new IllegalArgumentException("Size value widht must be > 1");
       if (size.height < 1)
          throw new IllegalArgumentException("Size value height must be > 1");
 
-      SizeDouble oldSize = getSizeDouble();
+      SizeDouble oldSize = getSize();
       BoundDouble oldPadding = getPadding();
       BoundDouble newPadding = new BoundDouble(oldPadding.left   * size.width  / oldSize.width,
                                                oldPadding.top    * size.height / oldSize.height,
@@ -102,16 +102,6 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       setArea(area);
       setMargin(margin);
       setPaddingInternal(newPadding);
-   }
-
-   @Override
-   public Size getSize() {
-      SizeDouble size = getSizeDouble();
-      return new Size((int)size.width, (int)size.height);
-   }
-   @Override
-   public void setSize(Size value) {
-      setSizeDouble(new SizeDouble(value.width, value.height));
    }
 
    public TImage getImgMine() {
@@ -271,7 +261,7 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       if (padding.bottom < 0)
          throw new IllegalArgumentException("Padding bottom value must be > 0");
 
-      SizeDouble size = getSizeDouble();
+      SizeDouble size = getSize();
       if ((size.width - padding.getLeftAndRight()) < 1)
          throw new IllegalArgumentException("The left and right padding are very large");
       if ((size.height - padding.getTopAndBottom()) < 1)
@@ -339,16 +329,16 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    }
 
    private void onFontInfoPropertyChanged(PropertyChangeEvent ev) {
-      _notifier.onPropertyChangedRethrow(ev.getSource(), ev, PROPERTY_FONT_INFO);
+      _notifier.onPropertyChanged(null, ev.getSource(), PROPERTY_FONT_INFO);
    }
    private void onBackgroundFillPropertyChanged(PropertyChangeEvent ev) {
-      _notifier.onPropertyChangedRethrow(ev.getSource(), ev, PROPERTY_BACKGROUND_FILL);
+      _notifier.onPropertyChanged(null, ev.getSource(), PROPERTY_BACKGROUND_FILL);
    }
    private void onColorTextPropertyChanged(PropertyChangeEvent ev) {
-      _notifier.onPropertyChangedRethrow(ev.getSource(), ev, PROPERTY_COLOR_TEXT);
+      _notifier.onPropertyChanged(null, ev.getSource(), PROPERTY_COLOR_TEXT);
    }
    private void onPenBorderPropertyChanged(PropertyChangeEvent ev) {
-      _notifier.onPropertyChangedRethrow(ev.getSource(), ev, PROPERTY_PEN_BORDER);
+      _notifier.onPropertyChanged(null, ev.getSource(), PROPERTY_PEN_BORDER);
    }
 
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
@@ -359,7 +349,6 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       case PROPERTY_PADDING:
       case PROPERTY_MARGIN:
          _notifier.onPropertyChanged(PROPERTY_SIZE);
-         _notifier.onPropertyChanged(PROPERTY_SIZE_DOUBLE);
          break;
       }
    }

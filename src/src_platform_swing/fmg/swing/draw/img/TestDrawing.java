@@ -14,7 +14,7 @@ import javax.swing.SwingUtilities;
 
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
-import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.core.img.ATestDrawing;
 import fmg.core.img.ImageController;
 
@@ -69,7 +69,7 @@ final class TestDrawing extends ATestDrawing {
                 //g.setColor(Color.black);
                   g.drawRect((int)rc[0].x, (int)rc[0].y, (int)rc[0].width, (int)rc[0].height);
 
-                  Size imgSize = ctr[0].imageSize;
+                  SizeDouble imgSize = ctr[0].imageSize;
                   if ((imgSize.width <= 0) || (imgSize.height <= 0))
                      return;
 
@@ -100,7 +100,7 @@ final class TestDrawing extends ATestDrawing {
                 rc[0] = new RectDouble(margin, margin, size.getWidth()-margin*2, size.getHeight()-margin*2); // inner rect where drawing images as tiles
                 ctr[0] = td.cellTiling(rc[0], images, testTransparent[0]);
 
-                Size imgSize = ctr[0].imageSize;
+                SizeDouble imgSize = ctr[0].imageSize;
                 if (imgSize.height < 1 || imgSize.width < 1)
                    return;
                 for (ImageController<?, ?, ?> img : images)

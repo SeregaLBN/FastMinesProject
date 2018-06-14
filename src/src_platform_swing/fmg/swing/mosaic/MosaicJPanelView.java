@@ -61,7 +61,7 @@ public class MosaicJPanelView extends AMosaicViewSwing<JPanel, Icon, MosaicDrawM
 
              @Override
              public Dimension getPreferredSize() {
-                SizeDouble size = getModel().getSizeDouble();
+                SizeDouble size = getModel().getSize();
                 size.height++;
                 size.width++;
 //                System.out.println("Mosaic::getPreferredSize: size="+size);

@@ -4,7 +4,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageModel;
 import fmg.core.img.IImageView;
 import fmg.jfx.utils.ImgUtils;
@@ -20,7 +20,7 @@ class ImageJfx {
    }
 
    public void createCanvas() {
-      Size s = _imageView.getSize();
+      SizeDouble s = _imageView.getSize();
       if (_canvas == null)
          _canvas = new Canvas(s.width, s.height);
       else {

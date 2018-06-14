@@ -42,7 +42,7 @@ abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageM
       { // fill background
          g.setComposite(AlphaComposite.Src);
          g.setColor(Cast.toColor(m.getBackgroundColor()));
-         g.fillRect(0, 0, getSize().width, getSize().height);
+         g.fillRect(0, 0, (int)getSize().width, (int)getSize().height);
       }
 
       g.setComposite(AlphaComposite.SrcOver);

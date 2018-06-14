@@ -1,9 +1,7 @@
 package fmg.common.notyfier;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.lang.annotation.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -22,12 +20,12 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
 
    private final PropertyChangeSupport _propertyChanges;
    private boolean _disposed = false;
-   private final Object _owner;
+   private final INotifyPropertyChanged _owner;
    private boolean _deferredNotifications = false;
    private Map<String /* propertyName */, Pair<Object /* old value */, Object /* new value */>> _deferrNotifications = new HashMap<>();
 
-   public NotifyPropertyChanged(Object owner) { _owner = owner; _propertyChanges = new PropertyChangeSupport(_owner); }
-   public NotifyPropertyChanged(Object owner, boolean deferredNotifications) { this(owner); _deferredNotifications = deferredNotifications; }
+   public NotifyPropertyChanged(INotifyPropertyChanged owner) { _owner = owner; _propertyChanges = new PropertyChangeSupport(_owner); }
+   public NotifyPropertyChanged(INotifyPropertyChanged owner, boolean deferredNotifications) { this(owner); _deferredNotifications = deferredNotifications; }
 
    @Override
    public void addListener(PropertyChangeListener listener) { _propertyChanges.addPropertyChangeListener(listener); }
@@ -37,34 +35,29 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
    public boolean isDeferredNotifications() { return _deferredNotifications; }
    public void setDeferredNotifications(boolean value) { _deferredNotifications = value; }
 
-   @Deprecated // used reflection :(
-   private <T> boolean setProperty(T newValue, String propertyName) {
-      Object oldValue;
-      try {
-         Field fld = findField(propertyName);
-         fld.setAccessible(true);
-         oldValue = fld.get(_owner);
-         if ((oldValue == null) && (newValue == null))
-            return false;
-         if ((oldValue != null) && oldValue.equals(newValue))
-            return false;
-         fld.set(_owner, newValue);
-      } catch (Exception ex) {
-         throw new RuntimeException(ex);
-      }
+   /** Set the value to the specified property  and throw event to listeners */
+   public <T> boolean setProperty(T oldValue, T newValue, String propertyName) {
+       try {
+           Field fld = findField(propertyName);
+           fld.setAccessible(true);
+           Object oldValueReal = fld.get(_owner);
+           if (((oldValueReal == null) && (oldValue != null)) ||
+               ((oldValueReal != null) && !oldValueReal.equals(oldValue)))
+           {
+               // illegal usage
+               System.err.println("Different old values");
+           }
+           if ((oldValueReal == null) && (newValue == null))
+              return false;
+           if ((oldValueReal != null) && oldValueReal.equals(newValue))
+              return false;
+           fld.set(_owner, newValue);
+        } catch (Exception ex) {
+           throw new RuntimeException(ex);
+        }
 
-      onPropertyChanged(oldValue, newValue, propertyName);
-      return true;
-   }
-
-   /** Mark that the parameter is not used. */
-   @Documented
-   @Retention(RetentionPolicy.RUNTIME)
-   @Target(value={ElementType.PARAMETER})
-   @interface Unused { }
-
-   public <T> boolean setProperty(@Unused T oldValue, T newValue, String propertyName) {
-      return setProperty(newValue, propertyName);
+        onPropertyChanged(oldValue, newValue, propertyName);
+        return true;
    }
 
    protected final void onPropertyChanged(int oldValue, int newValue, String propertyName) {
@@ -96,9 +89,9 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
             Pair<Object /* old value */, Object /* new value */> event = _deferrNotifications.get(propertyName);
             shedule = (event == null);
             if (event == null)
-               event = new Pair<Object, Object>(oldValue, newValue);
+               event = new Pair<>(oldValue, newValue);
             else
-               event = new Pair<Object, Object>(event.first, newValue);
+               event = new Pair<>(event.first, newValue);
             _deferrNotifications.put(propertyName, event);
          }
          if (shedule)
@@ -110,11 +103,6 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
                   _propertyChanges.firePropertyChange(propertyName, event.first, event.second);
             });
       }
-   }
-
-   public <TProperty> void onPropertyChangedRethrow(TProperty source, PropertyChangeEvent childEvent, String propertyName) {
-      onPropertyChanged(null, source, propertyName);
-      onPropertyChanged(childEvent.getOldValue(), childEvent.getNewValue(), propertyName + "." + childEvent.getPropertyName());
    }
 
    private Map<String /* propertyName */, Field> _cachedFields = new HashMap<>();

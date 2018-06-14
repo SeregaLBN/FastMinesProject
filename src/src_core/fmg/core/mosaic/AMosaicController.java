@@ -531,9 +531,6 @@ public abstract class AMosaicController<TImage, TImage2,
       case MosaicGameModel.PROPERTY_AREA:
          invalidateView(getModel().getMatrix());
          break;
-      case MosaicDrawModel.PROPERTY_SIZE_DOUBLE:
-         _notifier.onPropertyChanged(PROPERTY_SIZE);
-         break;
       default:
          break;
       }

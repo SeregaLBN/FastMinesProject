@@ -30,7 +30,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
       { // fill background
          g.setComposite(AlphaComposite.Src);
          g.setColor(Cast.toColor(lm.getBackgroundColor()));
-         g.fillRect(0, 0, getSize().width, getSize().height);
+         g.fillRect(0, 0, (int)getSize().width, (int)getSize().height);
       }
 
       g.setComposite(AlphaComposite.SrcOver);

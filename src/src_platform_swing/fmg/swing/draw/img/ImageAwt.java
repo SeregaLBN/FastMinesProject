@@ -5,7 +5,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
 
-import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageModel;
 import fmg.core.img.IImageView;
 
@@ -19,8 +19,8 @@ class ImageAwt {
    }
 
    public java.awt.Image create() {
-      Size s = _imageView.getSize();
-      return new BufferedImage(s.width, s.height, BufferedImage.TYPE_INT_ARGB);
+      SizeDouble s = _imageView.getSize();
+      return new BufferedImage((int)s.width, (int)s.height, BufferedImage.TYPE_INT_ARGB);
    }
 
    public void draw(Consumer<Graphics2D> drawBody) {

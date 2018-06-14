@@ -2,7 +2,7 @@ package fmg.core.img;
 
 import java.beans.PropertyChangeListener;
 
-import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
@@ -34,10 +34,10 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
 
    /** width and height in pixel */
    @Override
-   public Size getSize() { return getModel().getSize(); }
-   public void setSize(int widhtAndHeight) { setSize(new Size(widhtAndHeight, widhtAndHeight)) ; }
+   public SizeDouble getSize() { return getModel().getSize(); }
+   public void setSize(double widhtAndHeight) { setSize(new SizeDouble(widhtAndHeight, widhtAndHeight)) ; }
    @Override
-   public void setSize(Size value) { getModel().setSize(value); }
+   public void setSize(SizeDouble value) { getModel().setSize(value); }
 
    private enum EInvalidate {
       needRedraw,

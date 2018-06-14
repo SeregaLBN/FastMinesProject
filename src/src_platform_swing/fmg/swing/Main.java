@@ -20,7 +20,6 @@ import fmg.common.Color;
 import fmg.common.Pair;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Rect;
-import fmg.common.geom.Size;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.*;
 import fmg.core.img.MosaicAnimatedModel.ERotateMode;
@@ -324,7 +323,7 @@ public class Main extends JFrame {
                   MosaicAnimatedModel<?> imgModel = img.getModel();
                   imgModel.setMosaicType(val);
                   imgModel.setSizeField(val.sizeIcoField(true));
-                  imgModel.setSize(new Size(MenuHeightWithIcon*ZoomQualityFactor, MenuHeightWithIcon*ZoomQualityFactor));
+                  imgModel.setSize(new SizeDouble(MenuHeightWithIcon*ZoomQualityFactor, MenuHeightWithIcon*ZoomQualityFactor));
                   mosaicsImages.put(val, img);
                   imgModel.setRotateMode(ERotateMode.someCells);
                   imgModel.getPenBorder().setWidth(1);// * ZoomQualityFactor);
@@ -900,8 +899,8 @@ public class Main extends JFrame {
          logo.getModel().setSize((int)Math.min(sizeOutward.getWidth(), sizeOutward.getHeight()));
 
          logo.getImage().paintIcon(this, g,
-               (sizeOutward.width -logo.getModel().getSize().width)>>1,
-               (sizeOutward.height-logo.getModel().getSize().height)>>1);
+                                   (int)((sizeOutward.width -logo.getModel().getSize().width)/2),
+                                   (int)((sizeOutward.height-logo.getModel().getSize().height)/2));
       }
 
       public void animateLogo(boolean start) {

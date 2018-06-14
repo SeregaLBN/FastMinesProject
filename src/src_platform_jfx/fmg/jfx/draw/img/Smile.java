@@ -10,7 +10,7 @@ import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
 import fmg.core.img.SmileModel;
@@ -44,13 +44,13 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
    }
 
    private void drawBody(GraphicsContext g) {
-      Size size = getSize();
+      SizeDouble size = getSize();
       g.clearRect(0,0, size.width, size.height);
 
       SmileModel sm = this.getModel();
       SmileModel.EFaceType type = sm.getFaceType();
-      int width = sm.getSize().width;
-      int height = sm.getSize().height;
+      double width  = size.width;
+      double height = size.height;
 
       if (type == EFaceType.Eyes_OpenDisabled || type == EFaceType.Eyes_ClosedDisabled)
          return;
@@ -106,8 +106,8 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
    private void drawEyes(GraphicsContext g) {
       SmileModel sm = this.getModel();
       SmileModel.EFaceType type = sm.getFaceType();
-      int width = sm.getSize().width;
-      int height = sm.getSize().height;
+      double width  = sm.getSize().width;
+      double height = sm.getSize().height;
 
       Paint fillOld = g.getFill();
       Paint strokeOld = g.getStroke();
@@ -255,8 +255,8 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
    private void drawMouth(GraphicsContext g) {
       SmileModel sm = this.getModel();
       SmileModel.EFaceType type = sm.getFaceType();
-      int width = sm.getSize().width;
-      int height = sm.getSize().height;
+      double width  = sm.getSize().width;
+      double height = sm.getSize().height;
 
       switch (type) {
       case Face_Assistant:
@@ -370,8 +370,8 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
    private void eyeOpened(GraphicsContext g, boolean right, boolean disabled) {
       SmileModel sm = this.getModel();
-      int width = sm.getSize().width;
-      int height = sm.getSize().height;
+      double width  = sm.getSize().width;
+      double height = sm.getSize().height;
 
       Consumer<PointDouble> draw = offset -> {
          Shape pupil = right
@@ -422,8 +422,8 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
    private void eyeClosed(GraphicsContext g, boolean right, boolean disabled) {
       SmileModel sm = this.getModel();
-      int width = sm.getSize().width;
-      int height = sm.getSize().height;
+      double width  = sm.getSize().width;
+      double height = sm.getSize().height;
 
       Consumer<Boolean> eye = isFat -> {
          g.fillOval(((right ? 0.107 : 0.517)+(isFat?0.015:0))*width, 0.248*height, 0.313*width, 0.034*(isFat?2:1)*height);

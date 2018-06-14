@@ -63,7 +63,7 @@ public abstract class AMosaicViewSwing<TImage,
       _alreadyPainted = true;
 
       TMosaicModel model = getModel();
-      Size size = model.getSize();
+      SizeDouble size = model.getSize();
 
       // save
       Shape oldShape = g.getClip();
@@ -77,7 +77,7 @@ public abstract class AMosaicViewSwing<TImage,
          g.setComposite(AlphaComposite.Src);
          g.setColor(Cast.toColor(bkClr));
          if (clipRegion == null)
-            g.fillRect(0, 0, size.width, size.height);
+            g.fillRect(0, 0, (int)size.width, (int)size.height);
          else
             g.fillRect((int)clipRegion.x, (int)clipRegion.y, (int)clipRegion.width, (int)clipRegion.height);
       }

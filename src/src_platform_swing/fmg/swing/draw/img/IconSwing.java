@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
-import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageModel;
 import fmg.core.img.IImageView;
 
@@ -25,8 +25,8 @@ class IconSwing implements AutoCloseable {
       if (gBuffImg != null)
          gBuffImg.dispose();
 
-      Size s = _imageView.getSize();
-      buffImg = new BufferedImage(s.width, s.height, BufferedImage.TYPE_INT_ARGB);
+      SizeDouble s = _imageView.getSize();
+      buffImg = new BufferedImage((int)s.width, (int)s.height, BufferedImage.TYPE_INT_ARGB);
       gBuffImg = buffImg.createGraphics();
       gBuffImg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       gBuffImg.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -34,9 +34,9 @@ class IconSwing implements AutoCloseable {
 
       return new javax.swing.Icon() {
          @Override
-         public int getIconWidth() { return _imageView.getSize().width; }
+         public int getIconWidth() { return (int)_imageView.getSize().width; }
          @Override
-         public int getIconHeight() { return _imageView.getSize().height; }
+         public int getIconHeight() { return (int)_imageView.getSize().height; }
          @Override
          public void paintIcon(Component c, Graphics g, int x, int y) {
             g.drawImage(buffImg, x,y, c);

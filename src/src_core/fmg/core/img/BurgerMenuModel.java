@@ -27,7 +27,7 @@ public class BurgerMenuModel implements IImageModel {
       _generalModelListener = event -> {
          assert event.getSource() == _generalModel; // by reference
          if (ImageModel.PROPERTY_SIZE.equals(event.getPropertyName()))
-            recalcPadding((Size)event.getOldValue());
+            recalcPadding((SizeDouble)event.getOldValue());
       };
       _generalModel.addListener(_generalModelListener);
    }
@@ -44,9 +44,9 @@ public class BurgerMenuModel implements IImageModel {
 
    /** image width and height in pixel */
    @Override
-   public Size getSize() { return _generalModel.getSize(); }
+   public SizeDouble getSize() { return _generalModel.getSize(); }
    @Override
-   public void setSize(Size size) { _generalModel.setSize(size); }
+   public void setSize(SizeDouble size) { _generalModel.setSize(size); }
 
    private boolean _show;
    public boolean isShow() { return _show; }
@@ -66,10 +66,10 @@ public class BurgerMenuModel implements IImageModel {
 
    private BoundDouble _padding;
    /** inside padding */
-   public Bound getPadding() {
+   public BoundDouble getPadding() {
       if (_padding == null)
          recalcPadding(null);
-      return new Bound((int)_padding.left, (int)_padding.top, (int)_padding.right, (int)_padding.bottom);
+      return _padding;
    }
    public void setPadding(Bound value) {
       if (value.getLeftAndRight() >= getSize().width)
@@ -79,8 +79,8 @@ public class BurgerMenuModel implements IImageModel {
       BoundDouble paddingNew = new BoundDouble(value.left, value.top, value.right, value.bottom);
       _notifier.setProperty(_padding, paddingNew, PROPERTY_PADDING);
    }
-   private void recalcPadding(Size old) {
-      Size size = getSize();
+   private void recalcPadding(SizeDouble old) {
+      SizeDouble size = getSize();
       BoundDouble paddingNew = (_padding == null)
             ? new BoundDouble(size.width / 2,
                               size.height / 2,
@@ -104,8 +104,8 @@ public class BurgerMenuModel implements IImageModel {
 
       boolean horizontal = isHorizontal();
       int layers = getLayers();
-      Bound pad = getPadding();
-      Rect rc = new Rect(pad.left,
+      BoundDouble pad = getPadding();
+      RectDouble rc = new RectDouble(pad.left,
                          pad.top,
                          getSize().width  - pad.getLeftAndRight(),
                          getSize().height - pad.getTopAndBottom());

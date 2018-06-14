@@ -6,7 +6,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.core.img.FlagModel;
 import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
@@ -24,7 +24,7 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
    }
 
    protected void draw(GraphicsContext g) {
-      Size size = getSize();
+      SizeDouble size = getSize();
       g.clearRect(0,0, size.width, size.height);
 
       double h = size.height / 100.0;

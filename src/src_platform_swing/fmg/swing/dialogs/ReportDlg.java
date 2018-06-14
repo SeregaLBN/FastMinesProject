@@ -17,7 +17,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 import fmg.common.Color;
-import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
@@ -98,7 +98,7 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
             MosaicAnimatedModel<?> imgModel = imgCntrllr.getModel();
             imgModel.setMosaicType(eMosaic);
             imgModel.setSizeField(eMosaic.sizeIcoField(true));
-            imgModel.setSize(new Size(ImgSize*ImgZoomQuality, ImgSize*ImgZoomQuality));
+            imgModel.setSize(new SizeDouble(ImgSize*ImgZoomQuality, ImgSize*ImgZoomQuality));
             imgModel.setPadding(5 * ImgZoomQuality);
             imgModel.setBackgroundColor(bkTabBkColor);
             int redrawInterval = 50;

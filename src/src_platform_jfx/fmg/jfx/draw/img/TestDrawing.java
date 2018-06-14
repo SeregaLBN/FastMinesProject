@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 import fmg.common.Color;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
-import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.core.img.ATestDrawing;
 import fmg.core.img.ATestDrawing.CellTilingInfo;
 import fmg.core.img.ATestDrawing.CellTilingResult;
@@ -57,7 +57,7 @@ public final class TestDrawing extends Application {
             if ((rc[0].width <= 0) || (rc[0].height <= 0))
                return;
 
-            Size imgSize = ctr[0].imageSize;
+            SizeDouble imgSize = ctr[0].imageSize;
             if ((imgSize.width <= 0) || (imgSize.height <= 0))
                return;
 
@@ -99,7 +99,7 @@ public final class TestDrawing extends Application {
          rc[0] = new RectDouble(margin, margin, w-margin*2, h-margin*2); // inner rect where drawing images as tiles
          ctr[0] = td.cellTiling(rc[0], images, testTransparent[0]);
 
-         Size imgSize = ctr[0].imageSize;
+         SizeDouble imgSize = ctr[0].imageSize;
          if (imgSize.height < 1 || imgSize.width < 1)
             return;
 

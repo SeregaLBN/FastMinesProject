@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.Pair;
-import fmg.common.geom.Bound;
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.util.FigureHelper;
 import fmg.core.types.EMosaicGroup;
@@ -56,7 +56,7 @@ public class MosaicGroupModel extends AnimatedImageModel {
    }
 
    private Stream<PointDouble> getCoords_MosaicGroupAsValue() {
-      Bound pad = getPadding();
+      BoundDouble pad = getPadding();
       double sq = Math.min( // size inner square
             getSize().width  - pad.getLeftAndRight(),
             getSize().height - pad.getTopAndBottom());
@@ -82,7 +82,7 @@ public class MosaicGroupModel extends AnimatedImageModel {
    }
 
    private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsValueOthers1() {
-      Bound pad = getPadding();
+      BoundDouble pad = getPadding();
       double sq = Math.min( // size inner square
          getSize().width  - pad.getLeftAndRight(),
          getSize().height - pad.getTopAndBottom());
@@ -159,7 +159,7 @@ public class MosaicGroupModel extends AnimatedImageModel {
     //double[] angleAccumulative = { angle };
       double anglePart = 360.0/shapes;
 
-      Bound pad = getPadding();
+      BoundDouble pad = getPadding();
       double sqMax = Math.min( // размер квадрата куда будет вписана фигура при 0°
             getSize().width  - pad.getLeftAndRight(),
             getSize().height - pad.getTopAndBottom());
@@ -209,7 +209,7 @@ public class MosaicGroupModel extends AnimatedImageModel {
    }
 
    private Stream<Pair<Color, Stream<PointDouble>>> getCoords_MosaicGroupAsValueOthers2() {
-      Bound pad = getPadding();
+      BoundDouble pad = getPadding();
       double sq = Math.min( // size inner square
             getSize().width  - pad.getLeftAndRight(),
             getSize().height - pad.getTopAndBottom());

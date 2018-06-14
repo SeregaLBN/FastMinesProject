@@ -66,7 +66,7 @@ public abstract class AMosaicViewJfx<TImage,
       _alreadyPainted = true;
 
       TMosaicModel model = getModel();
-      Size size = model.getSize();
+      SizeDouble size = model.getSize();
 
       // save
       Paint oldFill = g.getFill();

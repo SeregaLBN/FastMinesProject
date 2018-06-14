@@ -43,8 +43,8 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
    private void drawBody(Graphics2D g) {
       SmileModel sm = this.getModel();
       SmileModel.EFaceType type = sm.getFaceType();
-      int width = sm.getSize().width;
-      int height = sm.getSize().height;
+      double width  = sm.getSize().width;
+      double height = sm.getSize().height;
 
       if (type == EFaceType.Eyes_OpenDisabled || type == EFaceType.Eyes_ClosedDisabled)
          return;
@@ -55,7 +55,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
       { // рисую затемненный круг
          g.setColor(yellowBorder);
-         g.fillOval(0, 0, width, height);
+         g.fillOval(0, 0, (int)width, (int)height);
       }
 
       double padX = 0.033 * width;
@@ -66,7 +66,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       double hExt = 1.133 * height;
       Ellipse2D ellipseInternal = new Ellipse2D.Double(padX, padY, width-padX*2, height-padY*2);
       { // поверх него, внутри - градиентный круг
-         g.setPaint(new GradientPaint(0, 0, yellowBody, width, height, yellowBorder));
+         g.setPaint(new GradientPaint(0, 0, yellowBody, (int)width, (int)height, yellowBorder));
          g.fill(ellipseInternal);
       }
       { // верхний левый блик
@@ -94,8 +94,8 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
    private void drawEyes(Graphics2D g) {
       SmileModel sm = this.getModel();
       SmileModel.EFaceType type = sm.getFaceType();
-      int width = sm.getSize().width;
-      int height = sm.getSize().height;
+      double width  = sm.getSize().width;
+      double height = sm.getSize().height;
 
       Stroke strokeOld = g.getStroke();
       switch (type) {
@@ -204,8 +204,8 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
    private void drawMouth(Graphics2D g) {
       SmileModel sm = this.getModel();
       SmileModel.EFaceType type = sm.getFaceType();
-      int width = sm.getSize().width;
-      int height = sm.getSize().height;
+      double width  = sm.getSize().width;
+      double height = sm.getSize().height;
 
       switch (type) {
       case Face_Assistant:
@@ -299,8 +299,8 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
    private void eyeOpened(Graphics2D g, boolean right, boolean disabled) {
       SmileModel sm = this.getModel();
-      int width = sm.getSize().width;
-      int height = sm.getSize().height;
+      double width  = sm.getSize().width;
+      double height = sm.getSize().height;
 
       Consumer<PointDouble> draw = offset -> {
          Area pupil = right
@@ -341,8 +341,8 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
    private void eyeClosed(Graphics2D g, boolean right, boolean disabled) {
       SmileModel sm = this.getModel();
-      int width = sm.getSize().width;
-      int height = sm.getSize().height;
+      double width  = sm.getSize().width;
+      double height = sm.getSize().height;
 
       Consumer<Boolean> eye = increased -> {
          g.fill(new Ellipse2D.Double(((right ? 0.107 : 0.517)+(increased?0.015:0))*width, 0.248*height, 0.313*width, 0.034*(increased?2:1)*height));

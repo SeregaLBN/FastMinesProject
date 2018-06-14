@@ -3,10 +3,9 @@ package fmg.core.img;
 import java.beans.PropertyChangeListener;
 
 import fmg.common.Color;
-import fmg.common.geom.Bound;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.DoubleExt;
-import fmg.common.geom.Size;
+import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /** MVC: model. Common image characteristics. */
@@ -18,7 +17,7 @@ public class ImageModel implements IImageModel {
    public static final int   DefaultPaddingInt = (int)(DefaultImageSize * 0.05); // 5%
 
    /** width and height in pixel */
-   private Size _size;
+   private SizeDouble _size;
    /** inside padding. Автоматически пропорционально регулирую при измениях размеров */
    private BoundDouble _padding;
    /** background fill color */
@@ -32,7 +31,7 @@ public class ImageModel implements IImageModel {
    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
    public ImageModel() {
-      _size = new Size(DefaultImageSize, DefaultImageSize);
+      _size = new SizeDouble(DefaultImageSize, DefaultImageSize);
       _padding = new BoundDouble(DefaultPaddingInt, DefaultPaddingInt, DefaultPaddingInt, DefaultPaddingInt);
    }
 
@@ -46,19 +45,19 @@ public class ImageModel implements IImageModel {
 
    /** width and height in pixel */
    @Override
-   public Size getSize() { return _size; }
-   public void setSize(int widhtAndHeight) { setSize(new Size(widhtAndHeight, widhtAndHeight)) ; }
+   public SizeDouble getSize() { return _size; }
+   public void setSize(double widhtAndHeight) { setSize(new SizeDouble(widhtAndHeight, widhtAndHeight)) ; }
    @Override
-   public void setSize(Size value) {
-      Size old = _size;
+   public void setSize(SizeDouble value) {
+      SizeDouble old = _size;
       if (_notifier.setProperty(_size, value, PROPERTY_SIZE))
          recalcPadding(old);
    }
 
    /** inside padding */
-   public Bound getPadding() { return new Bound((int)_padding.left, (int)_padding.top, (int)_padding.right, (int)_padding.bottom); }
-   public void setPadding(int bound) { setPadding(new Bound(bound)); }
-   public void setPadding(Bound value) {
+   public BoundDouble getPadding() { return _padding; }
+   public void setPadding(double bound) { setPadding(new BoundDouble(bound)); }
+   public void setPadding(BoundDouble value) {
       if (value.getLeftAndRight() >= getSize().width)
          throw new IllegalArgumentException("Padding size is very large. Should be less than Width.");
       if (value.getTopAndBottom() >= getSize().height)
@@ -66,13 +65,13 @@ public class ImageModel implements IImageModel {
       BoundDouble paddingNew = new BoundDouble(value.left, value.top, value.right, value.bottom);
       _notifier.setProperty(_padding, paddingNew, PROPERTY_PADDING);
    }
-   static BoundDouble recalcPadding(BoundDouble padding, Size current, Size old) {
+   static BoundDouble recalcPadding(BoundDouble padding, SizeDouble current, SizeDouble old) {
       return new BoundDouble(padding.left   * current.width  / old.width,
                              padding.top    * current.height / old.height,
                              padding.right  * current.width  / old.width,
                              padding.bottom * current.height / old.height);
    }
-   private void recalcPadding(Size old) {
+   private void recalcPadding(SizeDouble old) {
       BoundDouble paddingNew = recalcPadding(_padding, _size, old);
       _notifier.setProperty(_padding, paddingNew, PROPERTY_PADDING);
    }
