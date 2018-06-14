@@ -7,10 +7,16 @@ namespace fmg.common.notyfier {
 #if WINDOWS_UWP
    [Windows.Foundation.Metadata.WebHostHidden]
 #endif
-   public abstract class NotifyPropertyChanged : Disposable, INotifyPropertyChanged {
+   public class NotifyPropertyChanged : Disposable, INotifyPropertyChanged {
 
+      private readonly INotifyPropertyChanged _owner;
       /// <summary> Multicast event for property change notifications. </summary>
       public event PropertyChangedEventHandler PropertyChanged;
+      private bool _deferredNotifications = false;
+
+      public NotifyPropertyChanged() { _owner = this; }
+      public NotifyPropertyChanged(INotifyPropertyChanged owner) { _owner = owner; }
+      public NotifyPropertyChanged(INotifyPropertyChanged owner, bool deferredNotifications) : this(owner) { _deferredNotifications = deferredNotifications; }
 
       /// <summary> Checks if a property already matches a desired value.  Sets the property and notifies listeners only when necessary. </summary>
       /// <typeparam name="T">Type of the property.</typeparam>
@@ -33,29 +39,30 @@ namespace fmg.common.notyfier {
       /// <param name="newValue">new value</param>
       /// <param name="propertyName">Name of the property used to notify listeners.  This value is optional and can be provided automatically
       /// when invoked from compilers that support <see cref="CallerMemberNameAttribute"/>.</param>
-      protected void OnSelfPropertyChanged<T>(T oldValue, T newValue, [CallerMemberName] string propertyName = null) {
-         OnSelfPropertyChanged(new PropertyChangedExEventArgs<T>(newValue, oldValue, propertyName));
+      public void OnSelfPropertyChanged<T>(T oldValue, T newValue, [CallerMemberName] string propertyName = null) {
+         OnSelfPropertyChanged(new PropertyChangedExEventArgs<T>(oldValue, newValue, propertyName));
       }
 
-      protected void OnSelfPropertyChanged([CallerMemberName] string propertyName = null) {
+      /// <summary> Notifies listeners that a property value has changed. </summary>
+      /// <param name="propertyName">Name of the property used to notify listeners.  This value is optional and can be provided automatically
+      /// when invoked from compilers that support <see cref="CallerMemberNameAttribute"/>.</param>
+      public void OnSelfPropertyChanged([CallerMemberName] string propertyName = null) {
          OnSelfPropertyChanged(new PropertyChangedEventArgs(propertyName));
       }
 
       protected virtual void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
          if (Disposed)
             return;
-         var eventHandler = PropertyChanged;
-         eventHandler?.Invoke(this, ev);
+         PropertyChanged?.Invoke(_owner, ev);
          //LoggerSimple.Put($"< OnSelfPropertyChanged: {GetType().Name}: PropertyName={ev.PropertyName}");
       }
 
-      /// <summary> rethrow another/my event - notify parent class/container </summary>
-      protected void OnSelfPropertyChanged<T>(PropertyChangedEventArgs from, string propertyName) {
-         var ev = from as PropertyChangedExEventArgs<T>;
-         if (ev == null)
-            OnSelfPropertyChanged(propertyName);
+      /// <summary> rethrow member event, notify parent class/container </summary>
+      public void OnSelfPropertyChanged<T>(PropertyChangedEventArgs from, [CallerMemberName] string propertyName = null) {
+         if (!(from is PropertyChangedExEventArgs<T> evEx))
+            OnSelfPropertyChanged(new PropertyChangedEventArgs(propertyName));
          else
-            OnSelfPropertyChanged(new PropertyChangedExEventArgs<T>(ev.NewValue, ev.OldValue, propertyName));
+            OnSelfPropertyChanged(new PropertyChangedExEventArgs<T>(evEx.OldValue, evEx.NewValue, propertyName));
       }
 
    }

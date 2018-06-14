@@ -129,6 +129,12 @@
     <Compile Include="..\..\src\src_core\fmg\core\img\IImageModel.cs">
       <Link>src_fmg.core\img\IImageModel.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\IImageView.cs">
+      <Link>src_fmg.core\img\IImageView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\ImageController.cs">
+      <Link>src_fmg.core\img\IImageController.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\ImageModel.cs">
       <Link>src_fmg.core\img\ImageModel.cs</Link>
     </Compile>

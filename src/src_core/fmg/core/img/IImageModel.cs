@@ -9,7 +9,7 @@ namespace fmg.core.img {
    public interface IImageModel : INotifyPropertyChanged, IDisposable {
 
       /// <summary> width and height of the displayed part in pixels </summary>
-      Size Size { get; set; }
+      SizeDouble Size { get; set; }
 
    }
 

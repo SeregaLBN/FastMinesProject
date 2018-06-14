@@ -18,7 +18,7 @@ namespace fmg.core.img {
 
    /// <summary> Abstract, platform independent, image characteristics </summary>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class ImageModel<TImage> : NotifyPropertyChanged, IImageModel
+   public abstract class ImageModel<TImage> : NotifyPropertyChanged//, IImageModel
       where TImage : class
    {
       public const int DefaultImageSize = 100;

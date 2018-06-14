@@ -497,19 +497,19 @@ namespace fmg.core.mosaic {
          case nameof(Mosaic.SizeField):
             _cachedWindowSize = null;
             CellDown = null; // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
-            OnSelfPropertyChanged<Matrisize>(ev, nameof(SizeField));
+            OnSelfPropertyChanged<Matrisize>(ev, nameof(this.SizeField));
             OnSelfPropertyChanged(nameof(WindowSize));
             GameNew();
             break;
          case nameof(Mosaic.MosaicType):
             _cachedWindowSize = null;
-            OnSelfPropertyChanged<EMosaic>(ev, nameof(MosaicType));
+            OnSelfPropertyChanged<EMosaic>(ev, nameof(this.MosaicType));
             GameNew();
             break;
          case nameof(Mosaic.Area):
             _cachedWindowSize = null;
             OnSelfPropertyChanged<double>(ev, nameof(Area));
-            OnSelfPropertyChanged(nameof(WindowSize));
+            OnSelfPropertyChanged(nameof(this.WindowSize));
             OnSelfModifiedCellsPropertyChanged(mosaic.Matrix);
             break;
          default:

@@ -2,27 +2,33 @@
 
 namespace fmg.common {
 
-    public abstract class Disposable : IDisposable {
+   public abstract class Disposable : IDisposable {
 
-        protected bool Disposed { get; private set; }
+      protected bool Disposed { get; private set; }
 
-        protected virtual void Dispose(bool disposing) {
-            Disposed = true;
-            if (disposing) {
-                // Dispose managed resources
-            }
+      protected virtual void Dispose(bool disposing) {
+   #if fasle && EXAMPLE
+         if (Disposed)
+            return;
 
-            // Dispose unmanaged resources
-        }
+         if (disposing) {
+            // Dispose managed resources
+         }
 
-        public void Dispose() {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+         // Dispose unmanaged resources
+   #endif
 
-        ~Disposable() {
-            Dispose(false);
-        }
+         Disposed = true;
+      }
+
+      public void Dispose() {
+         Dispose(true);
+         GC.SuppressFinalize(this);
+      }
+
+      ~Disposable() {
+         Dispose(false);
+      }
 
    }
 
