@@ -46,7 +46,7 @@ namespace fmg.DataModel.Items {
                if (value != null) {
                   value.PropertyChanged += OnImagePropertyChanged;
                }
-               OnSelfPropertyChanged(nameof(this.Image));
+               OnPropertyChanged(nameof(this.Image));
             }
          }
       }
@@ -67,7 +67,7 @@ namespace fmg.DataModel.Items {
          base.OnImagePropertyChanged(sender, ev);
          switch (ev.PropertyName) {
          case nameof(MosaicsSkillCanvasBmp.PaddingBurgerMenu):
-            OnSelfPropertyChanged<Bound>(ev, nameof(this.ImagePaddingBurgerMenu));
+            OnPropertyChanged<Bound>(ev, nameof(this.ImagePaddingBurgerMenu));
             break;
          }
       }

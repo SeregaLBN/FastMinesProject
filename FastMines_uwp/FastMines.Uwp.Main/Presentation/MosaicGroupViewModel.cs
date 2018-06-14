@@ -24,7 +24,7 @@ namespace fmg.common {
       private void OnMosaicsDsPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          if (ev.PropertyName == nameof(MosaicsDataSource.ImageSize)) {
             // ! notify parent container
-            OnSelfPropertyChanged<Size>(ev, nameof(this.ImageSize));
+            OnPropertyChanged<Size>(ev, nameof(this.ImageSize));
          }
       }
 

@@ -106,23 +106,23 @@ namespace fmg.core.img {
          switch (ev.PropertyName) {
          case nameof(Mosaic.SizeField):
             RecalcArea();
-            OnSelfPropertyChanged<Matrisize>(ev, nameof(this.SizeField));
+            OnPropertyChanged<Matrisize>(ev, nameof(this.SizeField));
             Invalidate();
             break;
          case nameof(Mosaic.MosaicType):
             RecalcArea();
-            OnSelfPropertyChanged<EMosaic>(ev, nameof(this.MosaicType));
+            OnPropertyChanged<EMosaic>(ev, nameof(this.MosaicType));
             Invalidate();
             break;
          case nameof(Mosaic.Area):
-            OnSelfPropertyChanged<double>(ev, nameof(this.Area));
+            OnPropertyChanged<double>(ev, nameof(this.Area));
             Invalidate();
             break;
          case nameof(Mosaic.CellAttr):
             Invalidate();
             break;
          case nameof(Mosaic.Matrix):
-            OnSelfPropertyChanged(nameof(this.Matrix));
+            OnPropertyChanged(nameof(this.Matrix));
             Invalidate();
             break;
          default:
@@ -130,9 +130,9 @@ namespace fmg.core.img {
          }
       }
 
-      protected override void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
-         //LoggerSimple.Put($"OnSelfPropertyChanged: {Entity}: PropertyName={ev.PropertyName}");
-         base.OnSelfPropertyChanged(ev);
+      protected override void OnPropertyChanged(PropertyChangedEventArgs ev) {
+         //LoggerSimple.Put($"OnPropertyChanged: {Entity}: PropertyName={ev.PropertyName}");
+         base.OnPropertyChanged(ev);
          switch (ev.PropertyName) {
          case nameof(this.Size):
          case nameof(this.Padding):
@@ -250,7 +250,7 @@ namespace fmg.core.img {
          _prepareList.Clear();
          if (RotatedElements.Any()) {
             RotatedElements.Clear();
-            OnSelfPropertyChanged(nameof(this.RotatedElements));
+            OnPropertyChanged(nameof(this.RotatedElements));
          }
 
          if (!Rotate)
@@ -302,7 +302,7 @@ namespace fmg.core.img {
                {
                   _prepareList.RemoveAt(i);
                   RotatedElements.Add(new RotatedCellContext(NextRandomIndex(rand), angleOffset, area));
-                  OnSelfPropertyChanged(nameof(this.RotatedElements));
+                  OnPropertyChanged(nameof(this.RotatedElements));
                }
             }
          }
@@ -331,7 +331,7 @@ namespace fmg.core.img {
                   rotateCellAlterantive = !rotateCellAlterantive;
                AddRandomToPrepareList(false, rand);
             }
-            OnSelfPropertyChanged(nameof(this.RotatedElements));
+            OnPropertyChanged(nameof(this.RotatedElements));
          }
       }
 

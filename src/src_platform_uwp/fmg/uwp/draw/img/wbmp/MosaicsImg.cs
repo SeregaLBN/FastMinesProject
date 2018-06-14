@@ -167,7 +167,7 @@ namespace fmg.uwp.draw.img.wbmp {
 
       protected PaintUwpContext<WriteableBitmap> PaintContext => View.PaintContext;
 
-      protected override void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
+      protected override void OnPropertyChanged(PropertyChangedEventArgs ev) {
          switch (ev.PropertyName) {
          case nameof(this.PaddingFull):
             PaintContext.Padding = PaddingFull;
@@ -184,7 +184,7 @@ namespace fmg.uwp.draw.img.wbmp {
             break;
          }
 
-         base.OnSelfPropertyChanged(ev);
+         base.OnPropertyChanged(ev);
 
          if (RotateMode == ERotateMode.SomeCells) {
             switch (ev.PropertyName) {

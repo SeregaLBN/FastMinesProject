@@ -60,16 +60,16 @@ namespace fmg.DataModel.Items {
                if (value != null) {
                   value.PropertyChanged += OnImagePropertyChanged;
                }
-               OnSelfPropertyChanged(nameof(this.Image));
+               OnPropertyChanged(nameof(this.Image));
             }
          }
       }
 
-      protected override void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
-         base.OnSelfPropertyChanged(ev);
+      protected override void OnPropertyChanged(PropertyChangedEventArgs ev) {
+         base.OnPropertyChanged(ev);
          switch(ev.PropertyName) {
          case nameof(this.UniqueId):
-            OnSelfPropertyChanged<EMosaic>(ev, nameof(this.MosaicType)); // recall with another property name
+            OnPropertyChanged<EMosaic>(ev, nameof(this.MosaicType)); // recall with another property name
             Image.MosaicType = MosaicType;
             Image.SizeField = CaclSizeField(SkillLevel);
             Title = FixTitle(MosaicType);

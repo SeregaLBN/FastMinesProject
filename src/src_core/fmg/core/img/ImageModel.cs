@@ -153,7 +153,7 @@ namespace fmg.core.img {
          //if (_invalidate == EInvalidate.NeedRedraw)
          //   return;
          _invalidate = EInvalidate.NeedRedraw;
-         OnSelfPropertyChanged(nameof(this.Image));
+         OnPropertyChanged(nameof(this.Image));
       }
 
       private void Draw() {
@@ -168,9 +168,9 @@ namespace fmg.core.img {
       protected abstract void DrawBody();
       protected virtual void DrawEnd() { _invalidate = EInvalidate.Redrawed; }
 
-      protected override void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
+      protected override void OnPropertyChanged(PropertyChangedEventArgs ev) {
          if (!DeferredNotifications) {
-            base.OnSelfPropertyChanged(ev);
+            base.OnPropertyChanged(ev);
             //OnPropertyChangingAfter(true, ev);
          } else {
             bool first = DeferredNotificationsMap.Any();
@@ -181,15 +181,15 @@ namespace fmg.core.img {
             if (first)
                ImageModelConsts.DeferrInvoker(() => {
                   foreach (PropertyChangedEventArgs item in DeferredNotificationsMap.Values.ToList()) {
-                     base.OnSelfPropertyChanged(item);
-                     //OnSelfPropertyChangedAfter(false, item);
+                     base.OnPropertyChanged(item);
+                     //OnPropertyChangedAfter(false, item);
                   }
                   DeferredNotificationsMap.Clear();
                });
          }
       }
 
-      //protected abstract void OnSelfPropertyChangedAfter(bool sync, object sender, PropertyChangedEventArgs ev);
+      //protected abstract void OnPropertyChangedAfter(bool sync, object sender, PropertyChangedEventArgs ev);
 
       protected override void Dispose(bool disposing) {
          if (Disposed)

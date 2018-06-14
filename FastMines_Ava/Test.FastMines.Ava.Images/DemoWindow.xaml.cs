@@ -29,7 +29,7 @@ namespace Test.FastMines.Ava.Images
 
             mosaicImg.PropertyChanged += (sender, ev) => {
                if (ev.PropertyName == nameof(MosaicImg.Image)) {
-                  this.OnSelfPropertyChanged(nameof(Modelka.Bitmap));
+                  this.OnPropertyChanged(nameof(Modelka.Bitmap));
                   Dispatcher.UIThread.InvokeTaskAsync(() => img.InvalidateVisual());//.Wait()
                }
             };

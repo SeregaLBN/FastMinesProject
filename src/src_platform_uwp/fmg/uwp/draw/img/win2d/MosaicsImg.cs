@@ -98,8 +98,8 @@ namespace fmg.uwp.draw.img.win2d {
 
          protected PaintUwpContext<CanvasBitmap> PaintContext => View.PaintContext;
 
-         protected override void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
-            //LoggerSimple.Put($">  OnSelfPropertyChanged: {GetType().Name}.{Entity}: PropertyName={ev.PropertyName}");
+         protected override void OnPropertyChanged(PropertyChangedEventArgs ev) {
+            //LoggerSimple.Put($">  OnPropertyChanged: {GetType().Name}.{Entity}: PropertyName={ev.PropertyName}");
             switch (ev.PropertyName) {
             case nameof(this.PaddingFull):
                PaintContext.Padding = PaddingFull;
@@ -116,7 +116,7 @@ namespace fmg.uwp.draw.img.win2d {
                break;
             }
 
-            base.OnSelfPropertyChanged(ev);
+            base.OnPropertyChanged(ev);
 
             if (RotateMode == ERotateMode.SomeCells) {
                switch (ev.PropertyName) {
@@ -146,7 +146,7 @@ namespace fmg.uwp.draw.img.win2d {
 
          #region PART ERotateMode.FullMatrix
 
-         /// <summary> Return painted mosaic bitmap 
+         /// <summary> Return painted mosaic bitmap
          /// if (!OnlySyncDraw) {
          ///   Сама картинка возвращается сразу.
          ///   Но вот её отрисовка - в фоне.

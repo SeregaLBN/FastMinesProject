@@ -65,7 +65,7 @@ namespace fmg.DataModel.DataSources {
                   mi.ImageSize = size; //  restore
                }
             }
-            OnSelfPropertyChanged(nameof(DataSource));
+            OnPropertyChanged(nameof(DataSource));
          }
       }
 

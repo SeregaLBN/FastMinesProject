@@ -168,20 +168,20 @@ namespace fmg.core.mosaic.draw {
       }
 
       private void OnBackgroundFillPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         OnSelfPropertyChanged(nameof(this.BkFill));
-         OnSelfPropertyChanged(nameof(this.BkFill) + "." + ev.PropertyName);
+         OnPropertyChanged(nameof(this.BkFill));
+         OnPropertyChanged(nameof(this.BkFill) + "." + ev.PropertyName);
       }
       private void OnColorTextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         OnSelfPropertyChanged(nameof(this.ColorText));
-         OnSelfPropertyChanged(nameof(this.ColorText) + "." + ev.PropertyName);
+         OnPropertyChanged(nameof(this.ColorText));
+         OnPropertyChanged(nameof(this.ColorText) + "." + ev.PropertyName);
       }
       private void OnPenBorderPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         OnSelfPropertyChanged(nameof(this.PenBorder));
-         OnSelfPropertyChanged(nameof(this.PenBorder) + "." + ev.PropertyName);
+         OnPropertyChanged(nameof(this.PenBorder));
+         OnPropertyChanged(nameof(this.PenBorder) + "." + ev.PropertyName);
       }
       private void OnFontInfoPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         OnSelfPropertyChanged(nameof(this.FontInfo));
-         OnSelfPropertyChanged(nameof(this.FontInfo) + "." + ev.PropertyName);
+         OnPropertyChanged(nameof(this.FontInfo));
+         OnPropertyChanged(nameof(this.FontInfo) + "." + ev.PropertyName);
       }
 
       protected override void Dispose(bool disposing) {

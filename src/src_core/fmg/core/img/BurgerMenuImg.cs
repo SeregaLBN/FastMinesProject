@@ -85,7 +85,7 @@ namespace fmg.core.img {
          if (_paddingBurgerMenu == null)
             return;
          _paddingBurgerMenu = null;
-         OnSelfPropertyChanged(nameof(this.PaddingBurgerMenu));
+         OnPropertyChanged(nameof(this.PaddingBurgerMenu));
          Invalidate();
       }
 

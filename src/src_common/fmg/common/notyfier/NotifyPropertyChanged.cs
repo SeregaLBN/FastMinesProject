@@ -30,7 +30,7 @@ namespace fmg.common.notyfier {
 
          var tmp = storage;
          storage = value;
-         OnSelfPropertyChanged(tmp, value, propertyName);
+         OnPropertyChanged(tmp, value, propertyName);
          return true;
       }
 
@@ -39,30 +39,30 @@ namespace fmg.common.notyfier {
       /// <param name="newValue">new value</param>
       /// <param name="propertyName">Name of the property used to notify listeners.  This value is optional and can be provided automatically
       /// when invoked from compilers that support <see cref="CallerMemberNameAttribute"/>.</param>
-      public void OnSelfPropertyChanged<T>(T oldValue, T newValue, [CallerMemberName] string propertyName = null) {
-         OnSelfPropertyChanged(new PropertyChangedExEventArgs<T>(oldValue, newValue, propertyName));
+      public void OnPropertyChanged<T>(T oldValue, T newValue, [CallerMemberName] string propertyName = null) {
+         OnPropertyChanged(new PropertyChangedExEventArgs<T>(oldValue, newValue, propertyName));
       }
 
       /// <summary> Notifies listeners that a property value has changed. </summary>
       /// <param name="propertyName">Name of the property used to notify listeners.  This value is optional and can be provided automatically
       /// when invoked from compilers that support <see cref="CallerMemberNameAttribute"/>.</param>
-      public void OnSelfPropertyChanged([CallerMemberName] string propertyName = null) {
-         OnSelfPropertyChanged(new PropertyChangedEventArgs(propertyName));
+      public void OnPropertyChanged([CallerMemberName] string propertyName = null) {
+         OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
       }
 
-      protected virtual void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
+      protected virtual void OnPropertyChanged(PropertyChangedEventArgs ev) {
          if (Disposed)
             return;
          PropertyChanged?.Invoke(_owner, ev);
-         //LoggerSimple.Put($"< OnSelfPropertyChanged: {GetType().Name}: PropertyName={ev.PropertyName}");
+         //LoggerSimple.Put($"< OnPropertyChanged: {GetType().Name}: PropertyName={ev.PropertyName}");
       }
 
       /// <summary> rethrow member event, notify parent class/container </summary>
-      public void OnSelfPropertyChanged<T>(PropertyChangedEventArgs from, [CallerMemberName] string propertyName = null) {
+      public void OnPropertyChanged<T>(PropertyChangedEventArgs from, [CallerMemberName] string propertyName = null) {
          if (!(from is PropertyChangedExEventArgs<T> evEx))
-            OnSelfPropertyChanged(new PropertyChangedEventArgs(propertyName));
+            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
          else
-            OnSelfPropertyChanged(new PropertyChangedExEventArgs<T>(evEx.OldValue, evEx.NewValue, propertyName));
+            OnPropertyChanged(new PropertyChangedExEventArgs<T>(evEx.OldValue, evEx.NewValue, propertyName));
       }
 
    }

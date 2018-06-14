@@ -66,8 +66,8 @@ namespace fmg.core.mosaic
             _cellAttr.PropertyChanged -= OnCellAttributePropertyChanged;
             _cellAttr = null;
             _matrix.Clear();
-            OnSelfPropertyChanged();
-            OnSelfPropertyChanged(nameof(this.Matrix));
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(this.Matrix));
          }
       }
 
@@ -108,7 +108,7 @@ namespace fmg.core.mosaic
             _matrix.Clear();
             var tmp = SetProperty(ref _size, value);
             System.Diagnostics.Debug.Assert(tmp);
-            OnSelfPropertyChanged(nameof(this.Matrix));
+            OnPropertyChanged(nameof(this.Matrix));
          }
       }
 
@@ -128,7 +128,7 @@ namespace fmg.core.mosaic
 
             Area = saveArea; // restore
 
-            OnSelfPropertyChanged(old, value, nameof(this.MosaicType));
+            OnPropertyChanged(old, value, nameof(this.MosaicType));
          }
       }
 
@@ -143,10 +143,10 @@ namespace fmg.core.mosaic
             foreach (var cell in Matrix)
                cell.Init();
 
-            OnSelfPropertyChanged<double>(ev, nameof(this.Area));
+            OnPropertyChanged<double>(ev, nameof(this.Area));
          }
-         OnSelfPropertyChanged(nameof(this.CellAttr));
-         OnSelfPropertyChanged(nameof(this.CellAttr) + "." + pn);
+         OnPropertyChanged(nameof(this.CellAttr));
+         OnPropertyChanged(nameof(this.CellAttr) + "." + pn);
       }
 
       public void EnableCellAttributePropertyListener(bool enable) {

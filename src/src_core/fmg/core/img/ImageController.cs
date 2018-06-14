@@ -45,10 +45,10 @@ namespace fmg.core.img {
       private void OnPropertyViewChanged(object sender, PropertyChangedEventArgs ev) {
          switch (ev.PropertyName) {
          case nameof(View.Image):
-            _notifier.OnSelfPropertyChanged<TImage>(ev, nameof(this.Image));
+            _notifier.OnPropertyChanged<TImage>(ev, nameof(this.Image));
             break;
          case nameof(View.Size):
-            _notifier.OnSelfPropertyChanged<SizeDouble>(ev, nameof(this.Size));
+            _notifier.OnPropertyChanged<SizeDouble>(ev, nameof(this.Size));
             break;
          }
       }

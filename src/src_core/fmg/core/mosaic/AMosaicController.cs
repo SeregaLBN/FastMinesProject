@@ -89,7 +89,7 @@ namespace fmg.core.mosaic {
                _oldMinesCount = _minesCount; // save
 
             _minesCount = Math.Max(1, Math.Min(value, GetMaxMines(SizeField)));
-            OnSelfPropertyChanged(-1, _minesCount, nameof(this.CountMinesLeft));
+            OnPropertyChanged(-1, _minesCount, nameof(this.CountMinesLeft));
 
             GameNew();
          }
@@ -188,7 +188,7 @@ namespace fmg.core.mosaic {
                if ((value != null) && value.Any())
                   (current as List<Coord>).AddRange(value);
             }
-            OnSelfPropertyChanged();
+            OnPropertyChanged();
             //setGameStatus(EGameStatus.eGSEnd);
             GameNew();
          }
@@ -235,9 +235,9 @@ namespace fmg.core.mosaic {
             }
 
          GameStatus = EGameStatus.eGSEnd;
-         OnSelfPropertyChanged(nameof(this.CountMinesLeft));
-         OnSelfPropertyChanged(nameof(this.CountFlag));
-         OnSelfPropertyChanged(nameof(this.CountOpen));
+         OnPropertyChanged(nameof(this.CountMinesLeft));
+         OnPropertyChanged(nameof(this.CountFlag));
+         OnPropertyChanged(nameof(this.CountOpen));
 
          return toRepaint;
       }
@@ -323,11 +323,11 @@ namespace fmg.core.mosaic {
                   CountClick++;
                   PlayInfo = EPlayInfo.ePlayerUser;  // юзер играл
                   if (countOpen > 0)
-                     OnSelfPropertyChanged(nameof(this.CountOpen));
+                     OnPropertyChanged(nameof(this.CountOpen));
                   if ((countFlag > 0) || (countUnknown > 0)) {
-                     OnSelfPropertyChanged(nameof(this.CountFlag));
-                     OnSelfPropertyChanged(nameof(this.CountMinesLeft));
-                     OnSelfPropertyChanged(nameof(this.CountUnknown));
+                     OnPropertyChanged(nameof(this.CountFlag));
+                     OnPropertyChanged(nameof(this.CountMinesLeft));
+                     OnPropertyChanged(nameof(this.CountUnknown));
                   }
                }
 
@@ -378,9 +378,9 @@ namespace fmg.core.mosaic {
             if (any) {
                CountClick++;
                PlayInfo = EPlayInfo.ePlayerUser; // то считаю что юзер играл
-               OnSelfPropertyChanged(nameof(this.CountFlag));
-               OnSelfPropertyChanged(nameof(this.CountMinesLeft));
-               OnSelfPropertyChanged(nameof(this.CountUnknown));
+               OnPropertyChanged(nameof(this.CountFlag));
+               OnPropertyChanged(nameof(this.CountMinesLeft));
+               OnPropertyChanged(nameof(this.CountUnknown));
             }
 
             result.Modified.UnionWith(VerifyFlag());
@@ -497,19 +497,19 @@ namespace fmg.core.mosaic {
          case nameof(Mosaic.SizeField):
             _cachedWindowSize = null;
             CellDown = null; // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
-            OnSelfPropertyChanged<Matrisize>(ev, nameof(this.SizeField));
-            OnSelfPropertyChanged(nameof(WindowSize));
+            OnPropertyChanged<Matrisize>(ev, nameof(this.SizeField));
+            OnPropertyChanged(nameof(WindowSize));
             GameNew();
             break;
          case nameof(Mosaic.MosaicType):
             _cachedWindowSize = null;
-            OnSelfPropertyChanged<EMosaic>(ev, nameof(this.MosaicType));
+            OnPropertyChanged<EMosaic>(ev, nameof(this.MosaicType));
             GameNew();
             break;
          case nameof(Mosaic.Area):
             _cachedWindowSize = null;
-            OnSelfPropertyChanged<double>(ev, nameof(Area));
-            OnSelfPropertyChanged(nameof(this.WindowSize));
+            OnPropertyChanged<double>(ev, nameof(Area));
+            OnPropertyChanged(nameof(this.WindowSize));
             OnSelfModifiedCellsPropertyChanged(mosaic.Matrix);
             break;
          default:

@@ -54,8 +54,8 @@ namespace fmg.uwp.draw.mosaic.win2d {
          }
       }
 
-      protected override void OnSelfPropertyChanged(PropertyChangedEventArgs ev) {
-         base.OnSelfPropertyChanged(ev);
+      protected override void OnPropertyChanged(PropertyChangedEventArgs ev) {
+         base.OnPropertyChanged(ev);
          switch (ev.PropertyName) {
          case nameof(FontInfo):
             Font = null;

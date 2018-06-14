@@ -59,13 +59,13 @@ namespace fmg.DataModel.Items {
          System.Diagnostics.Debug.Assert(sender is TImage);
          switch (ev.PropertyName) {
          case nameof(Image.Size):
-            OnSelfPropertyChanged<Size>(ev, nameof(this.ImageSize));
+            OnPropertyChanged<Size>(ev, nameof(this.ImageSize));
             break;
          case nameof(Image.Image):
-            OnSelfPropertyChanged<TImage>(ev, nameof(this.Image));
+            OnPropertyChanged<TImage>(ev, nameof(this.Image));
             break;
          case nameof(Image.Padding):
-            OnSelfPropertyChanged<Bound>(ev, nameof(this.ImagePadding));
+            OnPropertyChanged<Bound>(ev, nameof(this.ImagePadding));
             break;
          }
       }

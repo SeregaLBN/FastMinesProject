@@ -92,8 +92,8 @@ namespace fmg.core.mosaic {
             break;
          }
          //this.InvalidateCells();
-         //OnSelfPropertyChanged(nameof(PaintContext));
-         //OnSelfPropertyChanged(nameof(PaintContext) + "." + ev.PropertyName);
+         //OnPropertyChanged(nameof(PaintContext));
+         //OnPropertyChanged(nameof(PaintContext) + "." + ev.PropertyName);
       }
 
       /// <summary> пересчитать и установить новую высоту шрифта </summary>

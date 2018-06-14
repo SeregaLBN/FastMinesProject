@@ -25,7 +25,7 @@ namespace fmg.core.mosaic {
                if (skillOld == ESkillLevel.eCustom) {
                   var skillNew = SkillLevel;
                   if (skillNew != skillOld)
-                     OnSelfPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
+                     OnPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
                }  else {
                   SkillLevel = skillOld;
                }
@@ -40,7 +40,7 @@ namespace fmg.core.mosaic {
             if (SetProperty(ref _sizeField, value)) {
                var skillNew = SkillLevel;
                if (!_lockFireSkill && (skillNew != skillOld))
-                  OnSelfPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
+                  OnPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
             }
          }
       }
@@ -52,7 +52,7 @@ namespace fmg.core.mosaic {
             if (SetProperty(ref _minesCount, value)) {
                var skillNew = SkillLevel;
                if (!_lockFireSkill && (skillNew != skillOld))
-                  OnSelfPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
+                  OnPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
             }
          }
       }
@@ -91,7 +91,7 @@ namespace fmg.core.mosaic {
             var skillNew = SkillLevel;
             System.Diagnostics.Debug.Assert(value == skillNew);
             System.Diagnostics.Debug.Assert(value != skillOld);
-            OnSelfPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
+            OnPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
          }
       }
 

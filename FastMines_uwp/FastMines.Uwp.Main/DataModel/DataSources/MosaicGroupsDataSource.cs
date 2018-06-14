@@ -41,7 +41,7 @@ namespace fmg.DataModel.DataSources
       public MosaicGroupDataItem TopElement => _itemOfType;
 
       protected override void OnCurrentElementChanged() {
-         OnSelfPropertyChanged(nameof(this.UnicodeChars));
+         OnPropertyChanged(nameof(this.UnicodeChars));
 
          // for one selected - start animate; for all other - stop animate
          foreach (var mi in DataSource) {
