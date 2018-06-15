@@ -4,6 +4,7 @@
    //  Code Runner : https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner
    //  C# FixFormat: https://marketplace.visualstudio.com/items?itemName=Leopotam.csharpfixformat
    //  C# XML Documentation Comments: https://marketplace.visualstudio.com/items?itemName=k--kato.docomment
+   //  .NET Core Test Explorer:       https://marketplace.visualstudio.com/items?itemName=formulahendry.dotnet-test-explorer
    //
    //  Language Support for Java(TM) by Red Hat: https://marketplace.visualstudio.com/items?itemName=redhat.java
    //  Java Extension Pack: https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack
@@ -16,6 +17,18 @@
    // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
    "version": "0.2.0",
    "configurations": [
+      {
+         "name": "C# NUnit: test Common - .NET Core Launch (console)",
+         "type": "coreclr",
+         "request": "launch",
+         "preLaunchTask": "test Test.FastMines.Common",
+         "program": "${workspaceFolder}/FastMines_C#/Test.FastMines.Common/bin/Debug/netcoreapp2.0/Test.FastMines.Common.dll",
+         "args": [],
+         "cwd": "${workspaceFolder}/FastMines_C#/Test.FastMines.Common",
+         "console": "internalConsole",
+         "stopAtEntry": false,
+         "internalConsoleOptions": "openOnSessionStart"
+      },
       {
          "name": "C# Avalonia: test Images - .NET Core Launch (console)",
          "type": "coreclr",

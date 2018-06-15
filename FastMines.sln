@@ -34,6 +34,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Ava.Draw", "FastM
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaCoreSnow", "..\C#\let-it-snow\AvaloniaCoreSnow\AvaloniaCoreSnow.csproj", "{4FE0DDFD-EC7D-44F2-AA23-6F4C08E4DA15}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Common", "FastMines_C#\Test.FastMines.Common\Test.FastMines.Common.csproj", "{31716C7E-3D9D-45B7-A14B-4592DFA01B32}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		FastMines_uwp\FastMines.Core\FastMines.Core.projitems*{10f79ded-68dd-484d-93d0-162c71ecc56c}*SharedItemsImports = 4
@@ -250,6 +252,18 @@ Global
 		{4FE0DDFD-EC7D-44F2-AA23-6F4C08E4DA15}.Release|x64.Build.0 = Release|Any CPU
 		{4FE0DDFD-EC7D-44F2-AA23-6F4C08E4DA15}.Release|x86.ActiveCfg = Release|Any CPU
 		{4FE0DDFD-EC7D-44F2-AA23-6F4C08E4DA15}.Release|x86.Build.0 = Release|Any CPU
+		{31716C7E-3D9D-45B7-A14B-4592DFA01B32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31716C7E-3D9D-45B7-A14B-4592DFA01B32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31716C7E-3D9D-45B7-A14B-4592DFA01B32}.Debug|x64.ActiveCfg = Debug|x64
+		{31716C7E-3D9D-45B7-A14B-4592DFA01B32}.Debug|x64.Build.0 = Debug|x64
+		{31716C7E-3D9D-45B7-A14B-4592DFA01B32}.Debug|x86.ActiveCfg = Debug|x86
+		{31716C7E-3D9D-45B7-A14B-4592DFA01B32}.Debug|x86.Build.0 = Debug|x86
+		{31716C7E-3D9D-45B7-A14B-4592DFA01B32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31716C7E-3D9D-45B7-A14B-4592DFA01B32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31716C7E-3D9D-45B7-A14B-4592DFA01B32}.Release|x64.ActiveCfg = Release|x64
+		{31716C7E-3D9D-45B7-A14B-4592DFA01B32}.Release|x64.Build.0 = Release|x64
+		{31716C7E-3D9D-45B7-A14B-4592DFA01B32}.Release|x86.ActiveCfg = Release|x86
+		{31716C7E-3D9D-45B7-A14B-4592DFA01B32}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -265,6 +279,7 @@ Global
 		{9DB7237D-BFAE-4767-8202-8E54977978A0} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
 		{A897306A-DB7F-41B4-8D53-B64F928E258C} = {6C78E2F6-4321-4C89-9312-AA367B07205C}
 		{196FA595-153B-4435-8E9B-46C36BAC1A2E} = {E8D26177-F66D-4F97-9AB4-A02C30D77CFD}
+		{31716C7E-3D9D-45B7-A14B-4592DFA01B32} = {ADDC82BB-9A95-410B-A4C1-B262FCD6D7C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {03A3D190-56B2-48D0-8228-09E6621B36AC}

@@ -1,15 +1,25 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build Test.FastMines.Ava.Images",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/FastMines_Ava/Test.FastMines.Ava.Images/Test.FastMines.Ava.Images.csproj"
-            ],
-            "problemMatcher": "$msCompile"
-        }
-    ]
+   "version": "2.0.0",
+   "tasks": [
+      {
+         "label": "test Test.FastMines.Common",
+         "command": "dotnet",
+         "type": "process",
+         "args": [
+            "test",
+            "${workspaceFolder}/FastMines_C#/Test.FastMines.Common/Test.FastMines.Common.csproj"
+         ],
+         "problemMatcher": "$msCompile"
+      },
+      {
+         "label": "build Test.FastMines.Ava.Images",
+         "command": "dotnet",
+         "type": "process",
+         "args": [
+            "build",
+            "${workspaceFolder}/FastMines_Ava/Test.FastMines.Ava.Images/Test.FastMines.Ava.Images.csproj"
+         ],
+         "problemMatcher": "$msCompile"
+      }
+   ]
 }

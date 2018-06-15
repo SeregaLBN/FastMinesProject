@@ -22,7 +22,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
    private boolean _disposed = false;
    private final INotifyPropertyChanged _owner;
    private boolean _deferredNotifications = false;
-   private Map<String /* propertyName */, Pair<Object /* old value */, Object /* new value */>> _deferrNotifications = new HashMap<>();
+   private final Map<String /* propertyName */, Pair<Object /* old value */, Object /* new value */>> _deferrNotifications = new HashMap<>();
 
    public NotifyPropertyChanged(INotifyPropertyChanged owner) { _owner = owner; _propertyChanges = new PropertyChangeSupport(_owner); }
    public NotifyPropertyChanged(INotifyPropertyChanged owner, boolean deferredNotifications) { this(owner); _deferredNotifications = deferredNotifications; }
@@ -88,14 +88,14 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
          {
             Pair<Object /* old value */, Object /* new value */> event = _deferrNotifications.get(propertyName);
             shedule = (event == null);
-            if (event == null)
-               event = new Pair<>(oldValue, newValue);
-            else
-               event = new Pair<>(event.first, newValue);
+            event = new Pair<>((event == null) ? oldValue : event.first, newValue);
             _deferrNotifications.put(propertyName, event);
          }
          if (shedule)
             DEFERR_INVOKER.accept(() -> {
+               if (_disposed)
+                  return;
+
                Pair<Object /* old value */, Object /* new value */> event = _deferrNotifications.remove(propertyName);
                if (event == null)
                   System.err.println("hmmm... invalid usage ;(");
@@ -141,6 +141,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
    public void close() {
       _disposed = true;
       _cachedFields.clear();
+      _deferrNotifications.clear();
    }
 
 }

@@ -34,8 +34,8 @@ public abstract class ImageController<TImage,
    public static final String PROPERTY_SIZE  = IImageView.PROPERTY_SIZE;
 
    protected TImageView  getView()  { return _imageView; }
-   public    TImage      getImage() { return getView().getImage(); }
    public    TImageModel getModel() { return getView().getModel(); }
+   public    TImage      getImage() { return getView().getImage(); }
    public    SizeDouble  getSize()  { return getView().getSize(); }
 
    protected void onPropertyViewChanged(Object oldValue, Object newValue, String propertyName) {

@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace fmg.common.notyfier {
@@ -7,12 +9,20 @@ namespace fmg.common.notyfier {
 #if WINDOWS_UWP
    [Windows.Foundation.Metadata.WebHostHidden]
 #endif
-   public class NotifyPropertyChanged : Disposable, INotifyPropertyChanged {
+   public class NotifyPropertyChanged : INotifyPropertyChanged, IDisposable {
+
+      public static Action<Action> DEFERR_INVOKER = doRun => {
+         System.Diagnostics.Debug.WriteLine("need redefine!");
+         doRun();
+      };
+
+      protected bool Disposed { get; private set; }
 
       private readonly INotifyPropertyChanged _owner;
       /// <summary> Multicast event for property change notifications. </summary>
       public event PropertyChangedEventHandler PropertyChanged;
       private bool _deferredNotifications = false;
+      private readonly IDictionary<string /* propertyName */, PropertyChangedEventArgs> _deferrNotifications = new Dictionary<string, PropertyChangedEventArgs>();
 
       public NotifyPropertyChanged() { _owner = this; }
       public NotifyPropertyChanged(INotifyPropertyChanged owner) { _owner = owner; }
@@ -53,8 +63,25 @@ namespace fmg.common.notyfier {
       protected virtual void OnPropertyChanged(PropertyChangedEventArgs ev) {
          if (Disposed)
             return;
-         PropertyChanged?.Invoke(_owner, ev);
-         //LoggerSimple.Put($"< OnPropertyChanged: {GetType().Name}: PropertyName={ev.PropertyName}");
+
+         if (!_deferredNotifications) {
+            PropertyChanged?.Invoke(_owner, ev);
+            //LoggerSimple.Put($"< OnPropertyChanged: {GetType().Name}: PropertyName={ev.PropertyName}");
+         } else {
+            bool shedule = _deferrNotifications.ContainsKey(ev.PropertyName);
+            _deferrNotifications[ev.PropertyName] = ev;
+            if (shedule)
+               DEFERR_INVOKER(() => {
+                  if (Disposed)
+                     return;
+                  PropertyChangedEventArgs ev2 = _deferrNotifications[ev.PropertyName];
+                  if (_deferrNotifications.Remove(ev.PropertyName))
+                     //System.Diagnostics.Trace.TraceError("hmmm... invalid usage ;(");
+                     System.Diagnostics.Debug.Assert(false, "hmmm... invalid usage ;(");
+                  else
+                     PropertyChanged?.Invoke(_owner, ev2);
+               });
+         }
       }
 
       /// <summary> rethrow member event, notify parent class/container </summary>
@@ -65,6 +92,28 @@ namespace fmg.common.notyfier {
             OnPropertyChanged(new PropertyChangedExEventArgs<T>(evEx.OldValue, evEx.NewValue, propertyName));
       }
 
+      protected virtual void Dispose(bool disposing) {
+         if (Disposed)
+            return;
+
+         if (disposing) {
+            // Dispose managed resources
+            _deferrNotifications.Clear();
+         }
+
+         // Dispose unmanaged resources
+
+         Disposed = true;
+      }
+
+      public void Dispose() {
+         Dispose(true);
+         GC.SuppressFinalize(this);
+      }
+
+      ~NotifyPropertyChanged() {
+         Dispose(false);
+      }
    }
 
 }

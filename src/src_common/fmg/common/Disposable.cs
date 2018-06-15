@@ -2,12 +2,13 @@
 
 namespace fmg.common {
 
+   [Obsolete]
    public abstract class Disposable : IDisposable {
 
       protected bool Disposed { get; private set; }
 
       protected virtual void Dispose(bool disposing) {
-   #if fasle && EXAMPLE
+   #if false && EXAMPLE
          if (Disposed)
             return;
 
