@@ -159,7 +159,7 @@
   </ItemGroup>
   <Import Project="..\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems" Label="Shared" />
   <Import Project="..\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems" Label="Shared" />
-  <Import Project="..\FastMines.Core\FastMines.Core.projitems" Label="Shared" />
+  <Import Project="..\..\FastMines_C#\FastMines.Core\FastMines.Core.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
