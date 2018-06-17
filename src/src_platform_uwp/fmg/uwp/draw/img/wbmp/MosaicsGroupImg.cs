@@ -15,7 +15,7 @@ namespace fmg.uwp.draw.img.wbmp {
    public class MosaicsGroupImg : AMosaicsGroupImg<WriteableBitmap> {
 
       static MosaicsGroupImg() {
-         StaticRotateImgConsts.Init();
+         StaticInitilizer.Init();
       }
 
       /// <param name="skill">may be null. if Null - representable image of typeof(EMosaicGroup)</param>

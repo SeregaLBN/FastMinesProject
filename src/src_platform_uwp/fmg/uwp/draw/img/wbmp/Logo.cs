@@ -11,7 +11,7 @@ namespace fmg.uwp.draw.img.wbmp {
    public class Logo : ALogo<WriteableBitmap> {
 
       static Logo() {
-         StaticRotateImgConsts.Init();
+         StaticInitilizer.Init();
       }
 
       protected override WriteableBitmap CreateImage() {

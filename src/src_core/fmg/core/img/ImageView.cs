@@ -112,8 +112,8 @@ namespace fmg.core.img {
             // Dispose managed resources
             _notifier.PropertyChanged -= OnPropertyChanged;
             _notifier.Dispose();
-            Model.PropertyChanged += OnPropertyModelChanged;
-            Model.Dispose();
+            Model.PropertyChanged -= OnPropertyModelChanged;
+            Image = null;
          }
 
          // Dispose unmanaged resources

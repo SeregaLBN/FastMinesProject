@@ -23,7 +23,7 @@ namespace fmg.uwp.draw.img.win2d {
          where TImage : DependencyObject, ICanvasResourceCreator
       {
          static CommonImpl() {
-            StaticRotateImgConsts.Init();
+            StaticInitilizer.Init();
          }
 
          protected readonly ICanvasResourceCreator _rc;

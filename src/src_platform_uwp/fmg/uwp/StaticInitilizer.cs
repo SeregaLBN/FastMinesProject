@@ -2,11 +2,11 @@ using Windows.UI.Core;
 using fmg.core.img;
 using fmg.uwp.utils;
 
-namespace fmg.uwp.draw.img {
+namespace fmg.uwp {
 
-   static class StaticRotateImgConsts {
+   public static class StaticInitilizer {
 
-      static StaticRotateImgConsts() {
+      static StaticInitilizer() {
          ImageModelConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
          RotatedImgConst.TimerCreator = () => new Timer();
       }

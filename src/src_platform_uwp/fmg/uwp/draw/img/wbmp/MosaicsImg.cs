@@ -23,7 +23,7 @@ namespace fmg.uwp.draw.img.wbmp {
    public class MosaicsImg : AMosaicsImg<WriteableBitmap> {
 
       static MosaicsImg() {
-         StaticRotateImgConsts.Init();
+         StaticInitilizer.Init();
       }
 
       private const bool RandomCellBkColor = true;

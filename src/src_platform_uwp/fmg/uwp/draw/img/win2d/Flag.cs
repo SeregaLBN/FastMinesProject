@@ -6,12 +6,37 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.Graphics.Canvas.Geometry;
 using fmg.common;
+using fmg.core.img;
+using fmg.uwp;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.draw.img.win2d {
 
    /// <summary> Flag image </summary>
    public static class Flag {
+
+      static Flag() {
+         StaticInitilizer.Init();
+      }
+
+      /**
+       * Flag image
+       * @param <TImage> SWING specific image: {@link javax.swing.Icon} or {@link java.awt.Image}
+       */
+      public abstract class FlagView<TImage> : ImageView<TImage, FlagModel>
+         where TImage : class
+      {
+
+         public FlagView() : base(new FlagModel()) { }
+
+         protected override void Dispose(bool disposing) {
+            if (disposing) {
+               Model.Dispose();
+            }
+            base.Dispose(disposing);
+         }
+
+      }
 
       /// <summary> Flag image: common Win2D implementation part </summary>
       public abstract class AFlagImageWin2D<TImage> : Disposable

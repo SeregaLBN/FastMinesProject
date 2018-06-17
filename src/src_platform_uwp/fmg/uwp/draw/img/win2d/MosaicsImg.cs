@@ -32,7 +32,7 @@ namespace fmg.uwp.draw.img.win2d {
          private MosaicImgView _view;
 
          static AMosaicImgWin2D() {
-            StaticRotateImgConsts.Init();
+            StaticInitilizer.Init();
          }
 
          protected AMosaicImgWin2D(ICanvasResourceCreator resourceCreator) {
