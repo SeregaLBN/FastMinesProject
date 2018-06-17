@@ -156,6 +156,7 @@ public class MosaicJPanelView extends AMosaicViewSwing<JPanel, Icon, MosaicDrawM
 
    @Override
    public void close() {
+      getModel().close();
       super.close();
       _control = null;
       _imgFlag.close();

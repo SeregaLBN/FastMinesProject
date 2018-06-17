@@ -75,6 +75,12 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
        g.drawLine((int)p[1].x, (int)p[1].y, (int)p[2].x, (int)p[2].y);
    }
 
+   @Override
+   public void close() {
+      getModel().close();
+      super.close();
+   }
+
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    //    custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////

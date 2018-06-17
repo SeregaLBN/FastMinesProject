@@ -32,6 +32,7 @@ public abstract class WithBurgerMenuView<TImage, TImageModel extends ImageModel>
    @Override
    public void close() {
       _burgerMenuModel.removeListener(_burgerMenuModelListener);
+      _burgerMenuModel.close();
       super.close();
    }
 
