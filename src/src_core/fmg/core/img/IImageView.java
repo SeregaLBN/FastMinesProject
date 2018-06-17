@@ -9,8 +9,11 @@ import fmg.common.notyfier.INotifyPropertyChanged;
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageModel> model data for display
  **/
-public interface IImageView<TImage, TImageModel extends IImageModel> extends AutoCloseable, INotifyPropertyChanged {
+public interface IImageView<TImage, TImageModel extends IImageModel>
+                 extends INotifyPropertyChanged, AutoCloseable
+{
 
+   public static final String PROPERTY_MODEL = "Model";
    public static final String PROPERTY_SIZE  = IImageModel.PROPERTY_SIZE;
    public static final String PROPERTY_IMAGE = "Image";
 

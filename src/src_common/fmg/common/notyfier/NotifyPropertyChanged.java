@@ -37,27 +37,34 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
 
    /** Set the value to the specified property  and throw event to listeners */
    public <T> boolean setProperty(T oldValue, T newValue, String propertyName) {
-       try {
-           Field fld = findField(propertyName);
-           fld.setAccessible(true);
-           Object oldValueReal = fld.get(_owner);
-           if (((oldValueReal == null) && (oldValue != null)) ||
-               ((oldValueReal != null) && !oldValueReal.equals(oldValue)))
-           {
-               // illegal usage
-               System.err.println("Different old values");
-           }
-           if ((oldValueReal == null) && (newValue == null))
-              return false;
-           if ((oldValueReal != null) && oldValueReal.equals(newValue))
-              return false;
-           fld.set(_owner, newValue);
-        } catch (Exception ex) {
-           throw new RuntimeException(ex);
-        }
+      if (_disposed) {
+         if (newValue != null) {
+            System.err.println("Illegall call property " + _owner.getClass().getCanonicalName() + "."+ propertyName + ": object already disposed!");
+            return false;
+         }
+      }
 
-        onPropertyChanged(oldValue, newValue, propertyName);
-        return true;
+      try {
+         Field fld = findField(propertyName);
+         fld.setAccessible(true);
+         Object oldValueReal = fld.get(_owner);
+         if (((oldValueReal == null) && (oldValue != null)) ||
+             ((oldValueReal != null) && !oldValueReal.equals(oldValue)))
+         {
+             // illegal usage
+             System.err.println("Different old values");
+         }
+         if ((oldValueReal == null) && (newValue == null))
+            return false;
+         if ((oldValueReal != null) && oldValueReal.equals(newValue))
+            return false;
+         fld.set(_owner, newValue);
+      } catch (Exception ex) {
+         throw new RuntimeException(ex);
+      }
+
+      onPropertyChanged(oldValue, newValue, propertyName);
+      return true;
    }
 
    protected final void onPropertyChanged(int oldValue, int newValue, String propertyName) {

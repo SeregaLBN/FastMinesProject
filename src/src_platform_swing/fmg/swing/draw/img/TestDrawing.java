@@ -16,7 +16,7 @@ import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.ATestDrawing;
-import fmg.core.img.ImageController;
+import fmg.core.img.IImageController;
 
 /** @see {@link MosaicSkillImg#main}, {@link MosaicGroupImg#main}, {@link MosaicImg#main} */
 final class TestDrawing extends ATestDrawing {
@@ -27,19 +27,19 @@ final class TestDrawing extends ATestDrawing {
       super("Swing");
    }
 
-   static void testApp(Supplier<List<ImageController<?,?,?>>> funcGetImages) {
+   static void testApp(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
       SwingUtilities.invokeLater(() ->
          testApp2(funcGetImages)
       );
    }
-   static void testApp2(Supplier<List<ImageController<?,?,?>>> funcGetImages) {
+   static void testApp2(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
       new JFrame() {
          private static final long serialVersionUID = 1L;
 
          {
             TestDrawing td = new TestDrawing();
 
-            List<ImageController<?,?,?>> images = funcGetImages.get();
+            List<IImageController<?,?,?>> images = funcGetImages.get();
 
             boolean[] testTransparent = { td.bl() };
 
@@ -74,7 +74,7 @@ final class TestDrawing extends ATestDrawing {
                      return;
 
                   images.forEach(imgController -> {
-                     Function<ImageController<?,?,?>, CellTilingInfo> callback = ctr[0].itemCallback;
+                     Function<IImageController<?,?,?>, CellTilingInfo> callback = ctr[0].itemCallback;
                      CellTilingInfo cti = callback.apply(imgController);
                      PointDouble offset = cti.imageOffset;
 
@@ -103,7 +103,7 @@ final class TestDrawing extends ATestDrawing {
                 SizeDouble imgSize = ctr[0].imageSize;
                 if (imgSize.height < 1 || imgSize.width < 1)
                    return;
-                for (ImageController<?, ?, ?> img : images)
+                for (IImageController<?, ?, ?> img : images)
                    img.getModel().setSize(imgSize);
             };
             ComponentListener componentListener = new ComponentAdapter() {
@@ -127,7 +127,7 @@ final class TestDrawing extends ATestDrawing {
             jPanel.addMouseListener(mouseListener);
 
             PropertyChangeListener propertyChangeListener = ev -> {
-               if (ImageController.PROPERTY_IMAGE.equals(ev.getPropertyName()))
+               if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName()))
                   jPanel.repaint();
             };
 

@@ -3,7 +3,6 @@ package fmg.core.img;
 import java.beans.PropertyChangeListener;
 
 import fmg.common.geom.SizeDouble;
-import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /**
@@ -17,7 +16,7 @@ import fmg.common.notyfier.NotifyPropertyChanged;
 public abstract class ImageController<TImage,
                                       TImageView  extends IImageView<TImage, TImageModel>,
                                       TImageModel extends IImageModel>
-                implements INotifyPropertyChanged, AutoCloseable
+                implements IImageController<TImage, TImageView, TImageModel>
 {
 
    /** MVC: view */
@@ -30,16 +29,19 @@ public abstract class ImageController<TImage,
       _imageView.addListener(_imageViewListener);
    }
 
-   public static final String PROPERTY_IMAGE = IImageView.PROPERTY_IMAGE;
-   public static final String PROPERTY_SIZE  = IImageView.PROPERTY_SIZE;
-
    protected TImageView  getView()  { return _imageView; }
+   @Override
    public    TImageModel getModel() { return getView().getModel(); }
+   @Override
    public    TImage      getImage() { return getView().getImage(); }
+   @Override
    public    SizeDouble  getSize()  { return getView().getSize(); }
 
    protected void onPropertyViewChanged(Object oldValue, Object newValue, String propertyName) {
       switch (propertyName) {
+      case IImageView.PROPERTY_MODEL:
+         _notifier.onPropertyChanged(oldValue, newValue, PROPERTY_MODEL);
+         break;
       case IImageView.PROPERTY_IMAGE:
          _notifier.onPropertyChanged(oldValue, newValue, PROPERTY_IMAGE);
          break;

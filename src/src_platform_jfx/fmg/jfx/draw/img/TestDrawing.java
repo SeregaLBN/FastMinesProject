@@ -24,7 +24,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.core.img.ATestDrawing;
 import fmg.core.img.ATestDrawing.CellTilingInfo;
 import fmg.core.img.ATestDrawing.CellTilingResult;
-import fmg.core.img.ImageController;
+import fmg.core.img.IImageController;
 import fmg.jfx.Cast;
 
 /** @see {@link MosaicSkillImg#main}, {@link MosaicGroupImg#main}, {@link MosaicsImg#main} */
@@ -32,7 +32,7 @@ public final class TestDrawing extends Application {
 
    static final int margin = 10;
 
-   static Supplier<List<ImageController<?,?,?>>> funcGetImages;
+   static Supplier<List<IImageController<?,?,?>>> funcGetImages;
    Canvas canvas;
 
    @Override
@@ -42,7 +42,7 @@ public final class TestDrawing extends Application {
 
       ATestDrawing td = new ATestDrawing("JFX") {};
 
-      List<ImageController<?,?,?>> images = funcGetImages.get();
+      List<IImageController<?,?,?>> images = funcGetImages.get();
       boolean[] testTransparent = { td.bl() };
       final RectDouble[] rc = { new RectDouble() };
       final CellTilingResult[] ctr = { new CellTilingResult() };
@@ -70,7 +70,7 @@ public final class TestDrawing extends Application {
           //gc.setLineWidth(1);
             gc.strokeRect(rc[0].x, rc[0].y, rc[0].width, rc[0].height);
 
-            Function<ImageController<?,?,?>, CellTilingInfo> callback = ctr[0].itemCallback;
+            Function<IImageController<?,?,?>, CellTilingInfo> callback = ctr[0].itemCallback;
             images.forEach(imgController -> {
                CellTilingInfo cti = callback.apply(imgController);
                PointDouble offset = cti.imageOffset;
@@ -103,8 +103,8 @@ public final class TestDrawing extends Application {
          if (imgSize.height < 1 || imgSize.width < 1)
             return;
 
-         Function<ImageController<?,?,?>, CellTilingInfo> callback = ctr[0].itemCallback;
-         for (ImageController<?, ?, ?> img : images) {
+         Function<IImageController<?,?,?>, CellTilingInfo> callback = ctr[0].itemCallback;
+         for (IImageController<?, ?, ?> img : images) {
             img.getModel().setSize(imgSize);
 
             Object imgObj = img.getImage();
@@ -140,8 +140,8 @@ public final class TestDrawing extends Application {
 
       PropertyChangeListener propertyChangeListener = ev -> {
        //System.out.println("propertyChangeListener: " + ev.getSource().getClass().getSimpleName());
-         if (ImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
-            ImageController<?,?,?> imgCntrllr = (ImageController<?,?,?>)ev.getSource();
+         if (IImageController.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
+            IImageController<?,?,?> imgCntrllr = (IImageController<?,?,?>)ev.getSource();
             Object imgObj = imgCntrllr.getImage();
             if (imgObj instanceof Canvas) {
                Canvas imgCanvas = (Canvas)imgObj;
@@ -174,7 +174,7 @@ public final class TestDrawing extends Application {
       primaryStage.show();
    }
 
-   static void testApp(Supplier<List<ImageController<?,?,?>>> funcGetImages) {
+   static void testApp(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
       TestDrawing.funcGetImages = funcGetImages;
       launch();
    }

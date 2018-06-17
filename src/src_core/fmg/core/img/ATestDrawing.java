@@ -26,7 +26,7 @@ public abstract class ATestDrawing {
    public boolean bl() { return getRandom().nextBoolean(); } // random bool
    public int np() { return (bl() ? -1 : +1); } // negative or positive
 
-   public void applyRandom(ImageController<?,?,?> ctrller, boolean testTransparent) {
+   public void applyRandom(IImageController<?,?,?> ctrller, boolean testTransparent) {
       testTransparent = testTransparent || bl();
 
       IImageModel model = ctrller.getModel();
@@ -126,10 +126,10 @@ public abstract class ATestDrawing {
    public static class CellTilingResult {
       public SizeDouble imageSize;
       public Size tableSize;
-      public Function<ImageController<?,?,?> /* image */, CellTilingInfo> itemCallback;
+      public Function<IImageController<?,?,?> /* image */, CellTilingInfo> itemCallback;
    }
 
-   public CellTilingResult cellTiling(RectDouble rc, List<ImageController<?,?,?>> images, boolean testIntersection) {
+   public CellTilingResult cellTiling(RectDouble rc, List<IImageController<?,?,?>> images, boolean testIntersection) {
       int len = images.size();
       int cols = (int)Math.round( Math.sqrt(len)  + 0.4999999999); // columns
       int rows = (int)Math.round(len/(double)cols + 0.4999999999);
@@ -142,7 +142,7 @@ public abstract class ATestDrawing {
       SizeDouble imgSize = new SizeDouble(dx - 2*pad + addonX,  // dx - 2*pad;
                                           dy - 2*pad + addonY); // dy - 2*pad;
 
-      Function<ImageController<?,?,?>, CellTilingInfo> itemCallback = item -> {
+      Function<IImageController<?,?,?>, CellTilingInfo> itemCallback = item -> {
          int pos = images.indexOf(item);
          if (pos == -1)
             throw new RuntimeException("Illegal usage...");
@@ -170,7 +170,7 @@ public abstract class ATestDrawing {
       return ctr;
    }
 
-   public String getTitle(List<ImageController<?,?,?>> images) {
+   public String getTitle(List<IImageController<?,?,?>> images) {
       return titlePrefix + " test paints: " + images.stream()
          .map(i -> i.getClass().getName())
          .map(n -> Stream.of(n.split("\\.")).reduce((first, second) -> second).get().replaceAll("\\$", ".") )

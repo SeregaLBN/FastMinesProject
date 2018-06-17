@@ -3,7 +3,6 @@ package fmg.core.img;
 import java.beans.PropertyChangeListener;
 
 import fmg.common.geom.SizeDouble;
-import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /**
@@ -14,7 +13,7 @@ import fmg.common.notyfier.NotifyPropertyChanged;
  * @param <TImageModel> model data for display
  **/
 public abstract class ImageView<TImage, TImageModel extends IImageModel>
-                implements IImageView<TImage, TImageModel>, INotifyPropertyChanged
+                implements IImageView<TImage, TImageModel>
 {
 
    /** MVC: model */
@@ -103,6 +102,7 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
       } else {
          invalidate();
       }
+      _notifier.onPropertyChanged(null, getModel(), PROPERTY_MODEL);
    }
 
    @Override
