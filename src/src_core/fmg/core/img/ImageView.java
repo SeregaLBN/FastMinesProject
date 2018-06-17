@@ -15,9 +15,16 @@ import fmg.common.notyfier.NotifyPropertyChanged;
 public abstract class ImageView<TImage, TImageModel extends IImageModel>
                 implements IImageView<TImage, TImageModel>
 {
+   private enum EInvalidate {
+      needRedraw,
+      redrawing,
+      redrawed
+   }
 
    /** MVC: model */
    private final TImageModel _imageModel;
+   private TImage _image;
+   private EInvalidate _invalidate = EInvalidate.needRedraw;
    private final PropertyChangeListener _imageModelListener = ev -> onPropertyModelChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
@@ -38,15 +45,8 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
    @Override
    public void setSize(SizeDouble value) { getModel().setSize(value); }
 
-   private enum EInvalidate {
-      needRedraw,
-      redrawing,
-      redrawed
-   }
-   private EInvalidate _invalidate = EInvalidate.needRedraw;
 
    protected abstract TImage createImage();
-   private TImage _image;
    @Override
    public TImage getImage() {
       if (_image == null) {
@@ -94,6 +94,7 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
    protected final void drawEnd() { _invalidate = EInvalidate.redrawed; }
 
    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
+      _notifier.onPropertyChanged(null, getModel(), PROPERTY_MODEL);
       if (IImageModel.PROPERTY_SIZE.equals(propertyName)) {
          setImage(null);
 //         invalidate();
@@ -102,7 +103,6 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
       } else {
          invalidate();
       }
-      _notifier.onPropertyChanged(null, getModel(), PROPERTY_MODEL);
    }
 
    @Override

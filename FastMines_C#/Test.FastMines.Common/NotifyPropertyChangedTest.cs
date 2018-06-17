@@ -31,9 +31,10 @@ namespace fmg.common.notyfier {
 
       [Test]
       public void NotifyPropertyChangedAsyncTest() {
-         //ExecutorService scheduler = Executors.newScheduledThreadPool(1);
-         NotifyPropertyChanged.DEFERR_INVOKER = async doRun => {
-            await Task.Run(doRun);
+         var allTask = new List<Task>();
+         NotifyPropertyChanged.DEFERR_INVOKER = doRun => {
+            Task task = Task.Run(doRun); // Task.Delay(1).ContinueWith(t => doRun() );
+            allTask.Add(task);
          };
          using (NotifyPropertyChanged notifyPropertyChanged = new NotifyPropertyChanged(null, true)) {
             var rand = new Random(Environment.TickCount);
@@ -41,16 +42,16 @@ namespace fmg.common.notyfier {
             int countReceivedEvents = 0;
             object firedValue = null;
 
-            PropertyChangedEventHandler listener = (sender, ev) => {
+            void listener(object sender, PropertyChangedEventArgs ev) {
                ++countReceivedEvents;
                firedValue = (ev as PropertyChangedExEventArgs<string>).NewValue;
-            };
+            }
             notifyPropertyChanged.PropertyChanged += listener;
             const string prefix = " Value ";
             for (int i=0; i<countFiredEvents; ++i)
                notifyPropertyChanged.OnPropertyChanged(null, prefix + i, "propertyName");
 
-            // scheduler.awaitTermination(100, TimeUnit.MILLISECONDS);
+            Task.WaitAll(allTask.ToArray());
             notifyPropertyChanged.PropertyChanged -= listener;
 
             Assert.AreEqual(1, countReceivedEvents);

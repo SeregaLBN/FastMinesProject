@@ -108,6 +108,9 @@
     <Compile Include="..\..\src\src_core\fmg\core\img\ALogo.cs">
       <Link>src_fmg.core\img\ALogo.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\FlagModel.cs">
+      <Link>src_fmg.core\img\FlagModel.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\AMosaicsSkillImg.cs">
       <Link>src_fmg.core\img\AMosaicsSkillImg.cs</Link>
     </Compile>
@@ -132,7 +135,13 @@
     <Compile Include="..\..\src\src_core\fmg\core\img\IImageView.cs">
       <Link>src_fmg.core\img\IImageView.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\ImageView.cs">
+      <Link>src_fmg.core\img\ImageView.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\ImageController.cs">
+      <Link>src_fmg.core\img\ImageController.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\IImageController.cs">
       <Link>src_fmg.core\img\IImageController.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\ImageModel.cs">

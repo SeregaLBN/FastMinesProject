@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel;
 using fmg.common.geom;
-using fmg.common.notyfier;
 
 namespace fmg.core.img {
 
@@ -27,7 +26,7 @@ namespace fmg.core.img {
 
       ///</summary> Mark the need to redraw the picture
       /// Performs a call to the inner draw method (synchronously or asynchronously or implicitly, depending on the implementation) </summary>
-      void invalidate();
+      void Invalidate();
 
    }
 

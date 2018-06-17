@@ -12,6 +12,10 @@ import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
 import fmg.swing.StaticInitilizer;
 
+/**
+ * Flag image
+ * @param <TImage> SWING specific image: {@link javax.swing.Icon} or {@link java.awt.Image}
+ */
 public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
 
    public Flag() {

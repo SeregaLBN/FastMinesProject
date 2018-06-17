@@ -24,6 +24,7 @@ namespace fmg.common.notyfier {
       private bool _deferredNotifications = false;
       private readonly IDictionary<string /* propertyName */, PropertyChangedEventArgs> _deferrNotifications = new Dictionary<string, PropertyChangedEventArgs>();
 
+      [Obsolete]
       public NotifyPropertyChanged() { _owner = this; }
       public NotifyPropertyChanged(INotifyPropertyChanged owner) { _owner = owner; }
       public NotifyPropertyChanged(INotifyPropertyChanged owner, bool deferredNotifications) : this(owner) { _deferredNotifications = deferredNotifications; }
@@ -35,7 +36,14 @@ namespace fmg.common.notyfier {
       /// <param name="propertyName">Name of the property used to notify listeners.  This value is optional and can be provided automatically
       /// when invoked from compilers that support CallerMemberName.</param>
       /// <returns>True if the value was changed, false if the existing value matched the desired value.</returns>
-      protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null) {
+      public bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null) {
+         if (Disposed) {
+            if (value != null) {
+               System.Diagnostics.Debug.WriteLine("Illegall call property " + _owner.GetType().FullName + "." + propertyName + ": object already disposed!");
+               return false;
+            }
+         }
+
          if (object.Equals(storage, value)) return false;
 
          var tmp = storage;
@@ -66,22 +74,22 @@ namespace fmg.common.notyfier {
 
          if (!_deferredNotifications) {
             PropertyChanged?.Invoke(_owner, ev);
-            //LoggerSimple.Put($"< OnPropertyChanged: {GetType().Name}: PropertyName={ev.PropertyName}");
+            //LoggerSimple.Put($"< OnPropertyChanged: {_owner.GetType().Name}: PropertyName={ev.PropertyName}");
          } else {
-            bool shedule = _deferrNotifications.ContainsKey(ev.PropertyName);
+            bool shedule = !_deferrNotifications.ContainsKey(ev.PropertyName);
             _deferrNotifications[ev.PropertyName] = ev;
             if (shedule)
                DEFERR_INVOKER(() => {
                   if (Disposed)
                      return;
                   PropertyChangedEventArgs ev2 = _deferrNotifications[ev.PropertyName];
-                  if (_deferrNotifications.Remove(ev.PropertyName))
+                  if ((ev2 == null) || !_deferrNotifications.Remove(ev.PropertyName))
                      //System.Diagnostics.Trace.TraceError("hmmm... invalid usage ;(");
                      System.Diagnostics.Debug.Assert(false, "hmmm... invalid usage ;(");
                   else
                      PropertyChanged?.Invoke(_owner, ev2);
                });
-         }
+            }
       }
 
       /// <summary> rethrow member event, notify parent class/container </summary>
@@ -95,6 +103,7 @@ namespace fmg.common.notyfier {
       protected virtual void Dispose(bool disposing) {
          if (Disposed)
             return;
+         Disposed = true;
 
          if (disposing) {
             // Dispose managed resources
@@ -102,8 +111,6 @@ namespace fmg.common.notyfier {
          }
 
          // Dispose unmanaged resources
-
-         Disposed = true;
       }
 
       public void Dispose() {
@@ -114,6 +121,7 @@ namespace fmg.common.notyfier {
       ~NotifyPropertyChanged() {
          Dispose(false);
       }
+
    }
 
 }
