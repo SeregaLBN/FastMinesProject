@@ -13,6 +13,7 @@ import fmg.common.Pair;
 /** Notifies clients that a property value has changed */
 public final class NotifyPropertyChanged implements AutoCloseable, INotifyPropertyChanged {
 
+   /** Delayed execution in the current thread of the user interface. */
    public static Consumer<Runnable> DEFERR_INVOKER = run -> {
       System.out.println("need redefine!");
       run.run();
@@ -21,19 +22,20 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
    private final PropertyChangeSupport _propertyChanges;
    private boolean _disposed = false;
    private final INotifyPropertyChanged _owner;
-   private boolean _deferredNotifications = false;
+   private final boolean _deferredNotifications;
    private final Map<String /* propertyName */, Pair<Object /* old value */, Object /* new value */>> _deferrNotifications = new HashMap<>();
 
-   public NotifyPropertyChanged(INotifyPropertyChanged owner) { _owner = owner; _propertyChanges = new PropertyChangeSupport(_owner); }
-   public NotifyPropertyChanged(INotifyPropertyChanged owner, boolean deferredNotifications) { this(owner); _deferredNotifications = deferredNotifications; }
+   public NotifyPropertyChanged(INotifyPropertyChanged owner) { this(owner, false); }
+   public NotifyPropertyChanged(INotifyPropertyChanged owner, boolean deferredNotifications) {
+       _owner = owner;
+       _propertyChanges = new PropertyChangeSupport(_owner);
+       _deferredNotifications = deferredNotifications;
+   }
 
    @Override
    public void addListener(PropertyChangeListener listener) { _propertyChanges.addPropertyChangeListener(listener); }
    @Override
    public void removeListener(PropertyChangeListener listener) { _propertyChanges.removePropertyChangeListener(listener); }
-
-   public boolean isDeferredNotifications() { return _deferredNotifications; }
-   public void setDeferredNotifications(boolean value) { _deferredNotifications = value; }
 
    /** Set the value to the specified property  and throw event to listeners */
    public <T> boolean setProperty(T oldValue, T newValue, String propertyName) {
@@ -96,7 +98,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
             Pair<Object /* old value */, Object /* new value */> event = _deferrNotifications.get(propertyName);
             shedule = (event == null);
             event = new Pair<>((event == null) ? oldValue : event.first, newValue);
-            _deferrNotifications.put(propertyName, event);
+            _deferrNotifications.put(propertyName, event); // Re-save only the last event (with initial old value)
          }
          if (shedule)
             DEFERR_INVOKER.accept(() -> {

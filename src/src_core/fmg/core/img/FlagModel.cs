@@ -15,8 +15,7 @@ namespace fmg.core.img {
 
       public FlagModel() {
          _size = new SizeDouble(40, 40);
-         _notifier = new NotifyPropertyChanged(this);
-         _notifier.PropertyChanged += OnPropertyChanged;
+         _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
       }
 
       /// <summary> width and height in pixel </summary>
@@ -26,15 +25,9 @@ namespace fmg.core.img {
       }
       public void SetSize(double widhtAndHeight) { Size = new SizeDouble(widhtAndHeight, widhtAndHeight); }
 
-      private void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, this));
-         PropertyChanged?.Invoke(this, ev);
-      }
-
       protected virtual void Dispose(bool disposing) {
          if (disposing) {
             // Dispose managed resources
-            _notifier.PropertyChanged -= OnPropertyChanged;
             _notifier.Dispose();
          }
 

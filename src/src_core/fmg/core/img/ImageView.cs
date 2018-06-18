@@ -31,8 +31,7 @@ namespace fmg.core.img {
       protected NotifyPropertyChanged _notifier;
 
       protected ImageView(TImageModel imageModel) {
-         _notifier = new NotifyPropertyChanged(this);
-         _notifier.PropertyChanged += OnPropertyChanged;
+         _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
          Model = imageModel;
          Model.PropertyChanged += OnPropertyModelChanged;
       }
@@ -46,7 +45,7 @@ namespace fmg.core.img {
 
       protected abstract TImage CreateImage();
       public TImage Image {
-         get { 
+         get {
             if (_image == null) {
                Image = CreateImage();
                _invalidate = EInvalidate.needRedraw;
@@ -102,15 +101,9 @@ namespace fmg.core.img {
          }
       }
 
-      private void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, this));
-         PropertyChanged?.Invoke(this, ev);
-      }
-
       protected virtual void Dispose(bool disposing) {
          if (disposing) {
             // Dispose managed resources
-            _notifier.PropertyChanged -= OnPropertyChanged;
             _notifier.Dispose();
             Model.PropertyChanged -= OnPropertyModelChanged;
             Image = null;

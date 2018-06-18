@@ -11,6 +11,7 @@ namespace fmg.common.notyfier {
 #endif
    public class NotifyPropertyChanged : INotifyPropertyChanged, IDisposable {
 
+      /// <summary> Delayed execution in the current thread of the user interface. </summary>
       public static Action<Action> DEFERR_INVOKER = doRun => {
          System.Diagnostics.Debug.WriteLine("need redefine!");
          doRun();
@@ -19,15 +20,30 @@ namespace fmg.common.notyfier {
       protected bool Disposed { get; private set; }
 
       private readonly INotifyPropertyChanged _owner;
+      private readonly Action<PropertyChangedEventArgs> _fireOwnerEvent;
       /// <summary> Multicast event for property change notifications. </summary>
       public event PropertyChangedEventHandler PropertyChanged;
-      private bool _deferredNotifications = false;
+      private readonly bool _deferredNotifications;
       private readonly IDictionary<string /* propertyName */, PropertyChangedEventArgs> _deferrNotifications = new Dictionary<string, PropertyChangedEventArgs>();
 
       [Obsolete]
       public NotifyPropertyChanged() { _owner = this; }
-      public NotifyPropertyChanged(INotifyPropertyChanged owner) { _owner = owner; }
-      public NotifyPropertyChanged(INotifyPropertyChanged owner, bool deferredNotifications) : this(owner) { _deferredNotifications = deferredNotifications; }
+      public NotifyPropertyChanged(INotifyPropertyChanged owner, Action<PropertyChangedEventArgs> fireOwnerEvent)
+         : this(owner, fireOwnerEvent, false)
+      { }
+      public NotifyPropertyChanged(INotifyPropertyChanged owner, Action<PropertyChangedEventArgs> fireOwnerEvent, bool deferredNotifications)
+      {
+         _owner = owner;
+         _fireOwnerEvent = fireOwnerEvent;
+         if (_fireOwnerEvent != null)
+            this.PropertyChanged += OnOwnerPropertyChanged;
+         _deferredNotifications = deferredNotifications;
+      }
+
+      private void OnOwnerPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _owner));
+         _fireOwnerEvent(ev);
+      }
 
       /// <summary> Checks if a property already matches a desired value.  Sets the property and notifies listeners only when necessary. </summary>
       /// <typeparam name="T">Type of the property.</typeparam>
@@ -77,7 +93,7 @@ namespace fmg.common.notyfier {
             //LoggerSimple.Put($"< OnPropertyChanged: {_owner.GetType().Name}: PropertyName={ev.PropertyName}");
          } else {
             bool shedule = !_deferrNotifications.ContainsKey(ev.PropertyName);
-            _deferrNotifications[ev.PropertyName] = ev;
+            _deferrNotifications[ev.PropertyName] = ev; // Re-save only the last event.
             if (shedule)
                DEFERR_INVOKER(() => {
                   if (Disposed)
@@ -108,6 +124,8 @@ namespace fmg.common.notyfier {
          if (disposing) {
             // Dispose managed resources
             _deferrNotifications.Clear();
+            if (_fireOwnerEvent != null)
+               this.PropertyChanged -= OnOwnerPropertyChanged;
          }
 
          // Dispose unmanaged resources

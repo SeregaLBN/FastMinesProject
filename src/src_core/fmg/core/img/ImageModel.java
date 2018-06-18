@@ -14,12 +14,12 @@ public class ImageModel implements IImageModel {
    public static final Color DefaultBkColor         = Color.DarkOrange;
    public static final Color DefaultForegroundColor = Color.Orchid;
    public static final int   DefaultImageSize = 100;
-   public static final int   DefaultPaddingInt = (int)(DefaultImageSize * 0.05); // 5%
+   public static final int   DefaultPadding = (int)(DefaultImageSize * 0.05); // 5%
 
    /** width and height in pixel */
-   private SizeDouble _size;
+   private SizeDouble _size = new SizeDouble(DefaultImageSize, DefaultImageSize);
    /** inside padding. Автоматически пропорционально регулирую при измениях размеров */
-   private BoundDouble _padding;
+   private BoundDouble _padding = new BoundDouble(DefaultPadding);
    /** background fill color */
    private Color _backgroundColor = DefaultBkColor;
    private Color _borderColor = Color.Maroon.clone().darker(0.5);
@@ -30,11 +30,6 @@ public class ImageModel implements IImageModel {
 
    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
-   public ImageModel() {
-      _size = new SizeDouble(DefaultImageSize, DefaultImageSize);
-      _padding = new BoundDouble(DefaultPaddingInt, DefaultPaddingInt, DefaultPaddingInt, DefaultPaddingInt);
-   }
-
 
    public static final String PROPERTY_PADDING          = "Padding";
    public static final String PROPERTY_BACKGROUND_COLOR = "BackgroundColor";
@@ -42,6 +37,7 @@ public class ImageModel implements IImageModel {
    public static final String PROPERTY_BORDER_WIDTH     = "BorderWidth";
    public static final String PROPERTY_FOREGROUND_COLOR = "ForegroundColor";
    public static final String PROPERTY_ROTATE_ANGLE     = "RotateAngle";
+
 
    /** width and height in pixel */
    @Override
