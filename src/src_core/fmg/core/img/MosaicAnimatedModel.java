@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import fmg.common.Color;
@@ -50,13 +51,11 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
    /** 0° .. +360° */
    public double getRotateAngle() { return _rotateAngle; }
    public void setRotateAngle(double value) {
-      value = ImageModel.fixAngle(value);
-      _notifier.setProperty(_rotateAngle, value, PROPERTY_ROTATE_ANGLE);
+      _notifier.setProperty(_rotateAngle, ImageModel.fixAngle(value), PROPERTY_ROTATE_ANGLE);
    }
 
    @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      //LoggerSimple.Put("onPropertyChanged: {0}: PropertyName={1}", Entity, ev.PropertyName);
       if (_disableListener)
          return;
       super.onPropertyChanged(oldValue, newValue, propertyName);
@@ -87,7 +86,7 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
 
    /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
 
-   private boolean rotateCellAlterantive;
+   private boolean _rotateCellAlterantive;
 
    public static final class RotatedCellContext {
       public RotatedCellContext(int index, double angleOffset, double area) {
@@ -135,7 +134,7 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
          cell.init();
          PointDouble centerNew = cell.getCenter();
          PointDouble delta = new PointDouble(center.x - centerNew.x, center.y - centerNew.y);
-         FigureHelper.moveCollection(FigureHelper.rotateCollection(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, rotateCellAlterantive ? center : centerNew), delta);
+         FigureHelper.moveCollection(FigureHelper.rotateCollection(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, _rotateCellAlterantive ? center : centerNew), delta);
 
          // restore
          attr.setArea(area);
@@ -162,7 +161,7 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
       return notRotated;
    }
 
-   public void getRotatedCells(java.util.function.Consumer<List<BaseCell>> rotatedCellsFunctor) {
+   public void getRotatedCells(Consumer<List<BaseCell>> rotatedCellsFunctor) {
       if (_rotatedElements.isEmpty())
          return;
 
@@ -271,7 +270,7 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
                            matrix.get(cntxt.index).init(); // restore original region coords
                            _rotatedElements.remove(cntxt);
                            if (_rotatedElements.isEmpty())
-                              rotateCellAlterantive = !rotateCellAlterantive;
+                              _rotateCellAlterantive = !_rotateCellAlterantive;
                            addRandomToPrepareList(false);
                         });
          _notifier.onPropertyChanged(PROPERTY_ROTATED_ELEMENTS);

@@ -17,11 +17,12 @@ import fmg.core.types.ESkillLevel;
 /** MVC model of {@link ESkillLevel} representable as image */
 public class MosaicSkillModel extends AnimatedImageModel {
 
-   public static final String PROPERTY_MOSAIC_SKILL = "MosaicSkill";
+   private ESkillLevel _mosaicSkill;
 
    public MosaicSkillModel(ESkillLevel mosaicSkill) { _mosaicSkill = mosaicSkill; }
 
-   private ESkillLevel _mosaicSkill;
+   public static final String PROPERTY_MOSAIC_SKILL = "MosaicSkill";
+
    public ESkillLevel getMosaicSkill() { return _mosaicSkill; }
    public void setMosaicSkill(ESkillLevel value) { _notifier.setProperty(_mosaicSkill, value, PROPERTY_MOSAIC_SKILL); }
 

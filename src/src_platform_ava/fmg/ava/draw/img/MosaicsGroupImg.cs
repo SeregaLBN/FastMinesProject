@@ -21,7 +21,7 @@ namespace fmg.ava.draw.img {
          where TImage : class
       {
          static CommonImpl() {
-            StaticRotateImgConsts.Init();
+            StaticInitilizer.Init();
          }
 
          /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
@@ -85,12 +85,12 @@ namespace fmg.ava.draw.img {
          {
             _vbr = new ImmediateRenderer(ctrl);
          }
-   
+
          protected override RenderTargetBitmap CreateImage() {
             //var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
             return new RenderTargetBitmap(Size.Width, Size.Height);
          }
-   
+
          protected override void DrawBody() {
             using (var dc = Image.CreateDrawingContext(_vbr)) {
                using (var dc1 = new DrawingContext(dc)) {

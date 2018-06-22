@@ -11,6 +11,14 @@ import fmg.swing.utils.Timer;
 
 public class Animator implements IAnimator, AutoCloseable {
 
+   private static class SubscribeInfo {
+      public boolean active = true;    // enabled?
+      public long    startTime = new Date().getTime(); // start time of subscribe
+      public Consumer<Long /* time from the beginning of the subscription */> callback;
+   }
+   private final ITimer _timer;
+   private final Map<Object /* subscriber */, SubscribeInfo> _subscribers;
+
    private static Animator _singleton;
    public static Animator getSingleton() { // not synchronized. since should work only in the thread of the UI.
       if (_singleton == null)
@@ -30,14 +38,6 @@ public class Animator implements IAnimator, AutoCloseable {
          });
       });
    }
-
-   private static class SubscribeInfo {
-      public boolean active = true;    // enabled?
-      public long    startTime = new Date().getTime(); // start time of subscribe
-      public Consumer<Long /* time from the beginning of the subscription */> callback;
-   }
-   private final ITimer _timer;
-   private final Map<Object /* subscriber */, SubscribeInfo> _subscribers;
 
    @Override
    public void subscribe(Object subscriber, Consumer<Long /* time from start subscribe */> subscriberCallbackMethod) {

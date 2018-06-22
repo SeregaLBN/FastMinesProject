@@ -11,179 +11,74 @@ using fmg.core.mosaic.cells;
 
 namespace fmg.core.img {
 
-   /// <summary> Abstract representable <see cref="EMosaic"/> as image </summary>
-   /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class AMosaicsImg<TImage> : RotatedImg<TImage>
+   /// <summary> Representable <see cref="EMosaic"/> as animated image </summary>
+   public class MosaicAnimatedModel<TImage> : MosaicDrawModel<TImage>
       where TImage : class
    {
-
       public enum ERotateMode {
-         FullMatrix,
-         SomeCells
+         /// <summary> rotate full matrix (all cells) </summary>
+         fullMatrix,
+         /// <summary> rotate some cells (independently of each other) </summary>
+         someCells
       }
 
-      /// <summary> MVC: model </summary>
-      private Mosaic _mosaic;
+      private ERotateMode _rotateMode = ERotateMode.fullMatrix;
+      /// <summary> 0° .. +360° </summary>
+      private double _rotateAngle;
+      /// <summary> list of offsets rotation angles prepared for cells </summary>
+      private readonly IList<double /* angle offset */ > _prepareList = new List<double>();
+      private readonly IList<RotatedCellContext> _rotatedElements = new List<RotatedCellContext>();
+      private boolean _disableCellAttributeListener = false;
+      private boolean _disableListener = false;
 
-      /// <summary> MVC: model </summary>
-      public Mosaic Mosaic {
-         get {
-            if (_mosaic == null)
-               Mosaic = new Mosaic(); // call this setter
-            return _mosaic;
-         }
-         protected set {
-            if (_mosaic != null) {
-               _mosaic.PropertyChanged -= OnMosaicPropertyChanged;
-               _mosaic.Dispose();
-            }
-            _mosaic = value;
-            if (_mosaic != null) {
-               _mosaic.PropertyChanged += OnMosaicPropertyChanged;
-            }
-         }
-      }
-
-      /// <summary>из каких фигур состоит мозаика поля</summary>
-      public EMosaic MosaicType {
-         get { return Mosaic.MosaicType; }
-         set { Mosaic.MosaicType = value; }
-      }
-
-      public Matrisize SizeField {
-         get { return Mosaic.SizeField; }
-         set { Mosaic.SizeField = value; }
-      }
-
-      public BaseCell getCell(Coord coord) { return Matrix[coord.x * SizeField.n + coord.y]; }
-
-      /// <summary>матрица ячеек, представленная(развёрнута) в виде вектора</summary>
-      public IList<BaseCell> Matrix => Mosaic.Matrix;
-
-      private void RecalcArea() {
-         var w = Size.Width;
-         var h = Size.Height;
-         var pad = Padding;
-         var sizeImageIn = new Size(w - pad.LeftAndRight, h - pad.TopAndBottom);
-         var sizeImageOut = new SizeDouble(sizeImageIn.Width, sizeImageIn.Height);
-         var area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref sizeImageOut);
-         Area = area; // call setter
-         System.Diagnostics.Debug.Assert(w >= (sizeImageOut.Width + pad.LeftAndRight));
-         System.Diagnostics.Debug.Assert(h >= (sizeImageOut.Height + pad.TopAndBottom));
-         var paddingOut = new BoundDouble(
-            (w - sizeImageOut.Width) / 2,
-            (h - sizeImageOut.Height) / 2,
-            (w - sizeImageOut.Width) / 2,
-            (h - sizeImageOut.Height) / 2);
-         System.Diagnostics.Debug.Assert((sizeImageOut.Width + paddingOut.LeftAndRight).HasMinDiff(w));
-         System.Diagnostics.Debug.Assert((sizeImageOut.Height + paddingOut.TopAndBottom).HasMinDiff(h));
-
-         PaddingFull = paddingOut;
-      }
-
-      public double Area {
-         get { return Mosaic.Area; }
-         set { Mosaic.Area = value; }
-      }
-
-      private BoundDouble _paddingFull;
-      public BoundDouble PaddingFull {
-         get { return _paddingFull; }
-         protected set {
-            if (SetProperty(ref _paddingFull, value)) {
-               Invalidate();
-            }
-         }
-      }
-
-      private ERotateMode _rotateMode = ERotateMode.FullMatrix;
       public ERotateMode RotateMode {
          get { return _rotateMode; }
-         set { SetProperty(ref _rotateMode, value); }
+         set { _notifier.SetProperty(ref _rotateMode, value); }
       }
 
-      private void OnMosaicPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         switch (ev.PropertyName) {
-         case nameof(Mosaic.SizeField):
-            RecalcArea();
-            OnPropertyChanged<Matrisize>(ev, nameof(this.SizeField));
-            Invalidate();
-            break;
-         case nameof(Mosaic.MosaicType):
-            RecalcArea();
-            OnPropertyChanged<EMosaic>(ev, nameof(this.MosaicType));
-            Invalidate();
-            break;
-         case nameof(Mosaic.Area):
-            OnPropertyChanged<double>(ev, nameof(this.Area));
-            Invalidate();
-            break;
-         case nameof(Mosaic.CellAttr):
-            Invalidate();
-            break;
-         case nameof(Mosaic.Matrix):
-            OnPropertyChanged(nameof(this.Matrix));
-            Invalidate();
-            break;
-         default:
-            break;
+      /// <summary> 0° .. +360° </summary>
+      public double RotateAngle {
+         get { return _rotateAngle; }
+         set {
+            value = ImageModel.FixAngle(value);
+            _notifier.SetProperty(ref _rotateAngle, value);
          }
       }
 
       protected override void OnPropertyChanged(PropertyChangedEventArgs ev) {
-         //LoggerSimple.Put($"OnPropertyChanged: {Entity}: PropertyName={ev.PropertyName}");
+         if (_disableListener)
+            return;
          base.OnPropertyChanged(ev);
          switch (ev.PropertyName) {
-         case nameof(this.Size):
-         case nameof(this.Padding):
-            RecalcArea();
-            break;
-         case nameof(this.Rotate):
          case nameof(this.RotateMode):
          case nameof(this.SizeField):
-            if (RotateMode == ERotateMode.SomeCells)
+            if (RotateMode == ERotateMode.someCells)
                RandomRotateElemenIndex();
             break;
          }
       }
 
+      /** ///////////// ================= PART {@link ERotateMode#fullMatrix} ======================= ///////////// */
 
-      protected override void OnTimer() {
-         var rotateMode = RotateMode;
-
-         double? anglePrevis = null;
-         if (rotateMode == ERotateMode.SomeCells)
-            anglePrevis = RotateAngle;
-         base.OnTimer();
-
-         switch (rotateMode) {
-         case ERotateMode.FullMatrix:
-            RotateMatrix();
-            break;
-         case ERotateMode.SomeCells:
-            UpdateAnglesOffsets(anglePrevis.Value);
-            RotateCells();
-            break;
-         }
-      }
-
-      #region PART ERotateMode.FullMatrix
-
-      private void RotateMatrix() {
-         var center = new PointDouble(Size.Width / 2.0 - _paddingFull.Left, Size.Height / 2.0 - _paddingFull.Top);
-         foreach (var cell in Matrix) {
+      public void RotateMatrix() { RotateMatrix(true); }
+      private void RotateMatrix(bool reinit) {
+         var size = CellAttr.getSize(SizeField);
+         var center = new PointDouble(size.Width  / 2,
+                                      size.Height / 2);
+         double rotateAngle = RotateAngle;
+         for (var cell : Matrix) {
             cell.Init(); // restore base coords
-            cell.getRegion().Points.RotateList(RotateAngle, center);
+
+            FigureHelper.RotateCollection(cell.Region.Points, rotateAngle, center);
          }
+         _notifier.OnPropertyChanged(nameof(MosaicGameModel.Matrix));
       }
 
-      #endregion
+      /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
 
-      #region PART ERotateMode.SomeCells
+      private boolean _rotateCellAlterantive;
 
-      private bool rotateCellAlterantive;
-
-      protected class RotatedCellContext {
+      public sealed class RotatedCellContext {
          public RotatedCellContext(int index, double angleOffset, double area) {
             this.index = index;
             this.angleOffset = angleOffset;
@@ -194,15 +89,16 @@ namespace fmg.core.img {
          public double area;
       }
 
-      private void RotateCells() {
-         var attr = Mosaic.CellAttr;
-         var matrix = Matrix;
-         var angle = RotateAngle;
-         var area = Area;
+      /// <summary> rotate BaseCell from original Matrix with modified Region </summary>
+      protected void rotateCells() {
+         BaseAttribute attr = CellAttr;
+         List<BaseCell> matrix = Matrix;
+         double area = getArea();
+         double angle = getRotateAngle();
 
-         foreach (var cntxt in RotatedElements) {
+         _rotatedElements.forEach(cntxt => {
             System.Diagnostics.Debug.Assert(cntxt.angleOffset >= 0);
-            var angle2 = angle - cntxt.angleOffset;
+            double angle2 = angle - cntxt.angleOffset;
             if (angle2 < 0)
                angle2 += 360;
             System.Diagnostics.Debug.Assert(angle2 < 360);
@@ -211,82 +107,121 @@ namespace fmg.core.img {
             angle2 = Math.Sin((angle2 / 4).ToRadian()) * angle2; // accelerate / ускоряшка..
 
             // (un)comment next line to look result changes...
-            cntxt.area = area * (1 + Math.Sin((angle2 / 2).ToRadian())); // zoom'ирую
+            cntxt.area = area * (1 + Math.Sin((angle2 / 2).ToRadian()); // zoom'ирую
 
 
-            var cell = matrix[cntxt.index];
+            BaseCell cell = matrix[cntxt.index];
 
             cell.Init();
-            var center = cell.getCenter();
-            var coord = cell.getCoord();
+            PointDouble center = cell.getCenter();
+            Coord coord = cell.getCoord();
 
-            var m = Mosaic;
             // modify
-            m.EnableCellAttributePropertyListener(false); // disable handling Mosaic.OnCellAttributePropertyChanged(where event.PropertyName == BaseCell.BaseAttribute.Area)
+            _disableCellAttributeListener = true; // disable handling MosaicGameModel.onCellAttributePropertyChanged(where event.propertyName == BaseCell.BaseAttribute.PROPERTY_AREA)
             attr.Area = cntxt.area;
 
             // rotate
             cell.Init();
-            var centerNew = cell.getCenter();
-            var delta = new PointDouble(center.X - centerNew.X, center.Y - centerNew.Y);
+            PointDouble centerNew = cell.getCenter();
+            PointDouble delta = new PointDouble(center.x - centerNew.x, center.y - centerNew.y);
             cell.getRegion().Points
-               .RotateList((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, rotateCellAlterantive ? center : centerNew)
+               .RotateList((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, _rotateCellAlterantive ? center : centerNew)
                .MoveList(delta);
 
             // restore
             attr.Area = area;
-            m.EnableCellAttributePropertyListener(true);
-         }
+            _disableCellAttributeListener = false;
+         });
 
          // Z-ordering
-         RotatedElements.Sort((x, y) => x.area.CompareTo(y.area));
+         _rotatedElements.Sort((x, y) => x.area.CompareTo(y.area));
       }
 
-      /// <summary> list of offsets rotation angles prepared for cells </summary>
-      private readonly IList<double /* angle offset */ > _prepareList = new List<double>();
-      protected List<RotatedCellContext> RotatedElements { get; } = new List<RotatedCellContext>();
+      public IList<BaseCell> GetNotRotatedCells() {
+         if (_rotatedElements.Empty)
+            return Matrix;
+
+         var matrix = Matrix;
+         var indexes = _rotatedElements.Select(cntxt => cntxt.index);
+         var notRotated = new List<>(matrix.Count - indexes.Count);
+         int i = 0;
+         for (var cell in matrix) {
+            if (!indexes.Contains(i))
+               notRotated.Add(cell);
+            ++i;
+         }
+         return notRotated;
+      }
+
+      public void GetRotatedCells(Action<IList<BaseCell>> rotatedCellsFunctor) {
+         if (_rotatedElements.Empty)
+            return;
+
+         PenBorder pb = PenBorder;
+         // save
+         var borderWidth = pb.Width;
+         var colorLight  = pb.ColorLight;
+         var colorShadow = pb.ColorShadow;
+         // modify
+         _disableListener = true;
+         pb.Width = 2 * borderWidth;
+         pb.ColorLight = colorLight.Darker(0.5);
+         pb.ColorShadow = colorShadow.Darker(0.5);
+
+         var matrix = Matrix;
+         var rotatedCells = new List<>(_rotatedElements.Count);
+         for (var cntxt in _rotatedElements)
+            rotatedCells.Add(matrix[cntxt.index]);
+         rotatedCellsFunctor(rotatedCells);
+
+         // restore
+         pb.Width = borderWidth;
+         pb.ColorLight = colorLight;
+         pb.ColorShadow = colorShadow;
+         _disableListener = false;
+      }
 
       private void RandomRotateElemenIndex() {
          _prepareList.Clear();
-         if (RotatedElements.Any()) {
-            RotatedElements.Clear();
-            OnPropertyChanged(nameof(this.RotatedElements));
+         if (!_rotatedElements.Empty) {
+            _rotatedElements.Clear();
+            _notifier.OnPropertyChanged(nameof(this.RotatedElements));
          }
 
-         if (!Rotate)
-            return;
+   //      if (!Animated)
+   //         return;
 
          // create random cells indexes  and  base rotate offset (negative)
-         var len = Matrix.Count;
-         var rand = ThreadLocalRandom.Current;
-         for (var i = 0; i < len / 4.5; ++i) {
-            AddRandomToPrepareList(i == 0, rand);
+         int len = Matrix.Size;
+         for (int i = 0; i < len/4.5; ++i) {
+            AddRandomToPrepareList(i==0);
          }
       }
 
-      private void AddRandomToPrepareList(bool zero, Random rand) {
-         var offset = (zero ? 0 : rand.Next(360)) + RotateAngle;
+      private void AddRandomToPrepareList(bool zero) {
+         double offset = (zero ? 0 : ThreadLocalRandom.Current.nextInt(360)) + RotateAngle;
          if (offset > 360)
             offset -= 360;
          _prepareList.Add(offset);
       }
 
-      private int NextRandomIndex(Random rand) {
-         var len = Matrix.Count;
-         System.Diagnostics.Debug.Assert(RotatedElements.Count < len);
+      private int NextRandomIndex() {
+         int len = getMatrix().Count;
+         System.Diagnostics.Debug.Assert(_rotatedElements.Count < len);
+         Random rand = ThreadLocalRandom.Current;
          do {
-            var index = rand.Next(len);
-            if (RotatedElements.Any(ctxt => ctxt.index == index))
+            int index = rand.NextInt(len);
+            if (_rotatedElements.AnyMatch(ctxt => ctxt.index == index))
                continue;
             return index;
-         } while (true);
+         } while(true);
       }
 
-      protected void UpdateAnglesOffsets(double angleOld) {
-         var angleNew = RotateAngle;
-         var rotateDelta = RotateAngleDelta;
-         var area = Area;
-         Random rand = ThreadLocalRandom.Current;
+      public void UpdateAnglesOffsets(double rotateAngleDelta) {
+         double angleNew = RotateAngle;
+         double angleOld = angleNew - rotateAngleDelta;
+         double rotateDelta = rotateAngleDelta;
+         double area = Area;
 
          if (_prepareList.Any()) {
             var copyList = new List<double>(_prepareList);
@@ -301,50 +236,58 @@ namespace fmg.core.img {
                      (angleOld >= angleOffset && angleOffset <= angleNew && angleOld < angleNew)))  // example: old=5    offset=0    new=355
                {
                   _prepareList.RemoveAt(i);
-                  RotatedElements.Add(new RotatedCellContext(NextRandomIndex(rand), angleOffset, area));
-                  OnPropertyChanged(nameof(this.RotatedElements));
+                  _rotatedElements.Add(new RotatedCellContext(NextRandomIndex(rand), angleOffset, area));
+                  _notifier.OnPropertyChanged(nameof(this.RotatedElements));
                }
             }
          }
 
          List<RotatedCellContext> toRemove = null;
          foreach (var cntxt in RotatedElements) {
-            var angle2 = angleNew - cntxt.angleOffset;
+            double angle2 = angleNew - cntxt.angleOffset;
             if (angle2 < 0)
                angle2 += 360;
             System.Diagnostics.Debug.Assert(angle2 < 360);
             System.Diagnostics.Debug.Assert(angle2 >= 0);
 
             // prepare to next step - exclude current cell from rotate and add next random cell
-            var angle3 = angle2 + rotateDelta;
+            double angle3 = angle2 + rotateDelta;
             if ((angle3 >= 360) || (angle3 < 0)) {
                if (toRemove == null)
                   toRemove = new List<RotatedCellContext>();
-               toRemove.Add(cntxt);
+               toRemove.add(cntxt);
             }
          }
          if (toRemove != null) {
+            var matrix = Matrix;
             foreach (var cntxt in toRemove) {
-               Matrix[cntxt.index].Init(); // restore original region coords
-               RotatedElements.Remove(cntxt);
-               if (!RotatedElements.Any())
-                  rotateCellAlterantive = !rotateCellAlterantive;
+               matrix[cntxt.index].Init(); // restore original region coords
+               _rotatedElements.Remove(cntxt);
+               if (!_rotatedElements.Any())
+                  _rotateCellAlterantive = !_rotateCellAlterantive;
                AddRandomToPrepareList(false, rand);
             }
-            OnPropertyChanged(nameof(this.RotatedElements));
+            _notifier.OnPropertyChanged(nameof(this.RotatedElements));
          }
       }
 
-      #endregion
-
-      protected override void Dispose(bool disposing) {
-         if (Disposed)
+      protected override void OnCellAttributePropertyChanged(PropertyChangedEventArgs ev) {
+         if (_disableCellAttributeListener)
             return;
+         base.OnCellAttributePropertyChanged(ev);
 
-         base.Dispose(disposing);
-
-         if (disposing)
-            Mosaic = null;
+         string propName = ev.getPropertyName();
+         if (nameof(BaseCell.BaseAttribute.Area) == propName)
+            switch (RotateMode) {
+            case fullMatrix:
+               if (!_rotateAngle.HasMinDiff(0))
+                  RotateMatrix(false);
+               break;
+            case someCells:
+               //UpdateAnglesOffsets(rotateAngleDelta);
+               //RotateCells();
+               break;
+            }
       }
 
    }

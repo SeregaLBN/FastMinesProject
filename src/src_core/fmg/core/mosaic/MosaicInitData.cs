@@ -1,3 +1,5 @@
+using System;
+using System.ComponentModel;
 using fmg.common.geom;
 using fmg.common.notyfier;
 using fmg.core.types;
@@ -5,7 +7,7 @@ using fmg.core.types;
 namespace fmg.core.mosaic {
 
    /// <summary> Mosaic data </summary>
-   public class MosaicInitData : NotifyPropertyChanged {
+   public class MosaicInitData : INotifyPropertyChanged {
 
       public const double AREA_MINIMUM = 230;
 
@@ -16,16 +18,25 @@ namespace fmg.core.mosaic {
 
       private bool _lockFireSkill = false;
 
+      protected bool Disposed { get; private set; }
+      public event PropertyChangedEventHandler PropertyChanged;
+      protected readonly NotifyPropertyChanged _notifier;
+
+
+      public MosaicInitData() {
+         _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+      }
+
 
       public EMosaic MosaicType {
          get { return _mosaicType; }
          set {
             var skillOld = SkillLevel;
-            if (SetProperty(ref _mosaicType, value)) {
+            if (_notifier.SetProperty(ref _mosaicType, value)) {
                if (skillOld == ESkillLevel.eCustom) {
                   var skillNew = SkillLevel;
                   if (skillNew != skillOld)
-                     OnPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
+                     _notifier.OnPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
                }  else {
                   SkillLevel = skillOld;
                }
@@ -37,10 +48,10 @@ namespace fmg.core.mosaic {
          get { return _sizeField; }
          set {
             var skillOld = SkillLevel;
-            if (SetProperty(ref _sizeField, value)) {
+            if (_notifier.SetProperty(ref _sizeField, value)) {
                var skillNew = SkillLevel;
                if (!_lockFireSkill && (skillNew != skillOld))
-                  OnPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
+                  _notifier.OnPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
             }
          }
       }
@@ -49,17 +60,17 @@ namespace fmg.core.mosaic {
          get { return _minesCount; }
          set {
             var skillOld = SkillLevel;
-            if (SetProperty(ref _minesCount, value)) {
+            if (_notifier.SetProperty(ref _minesCount, value)) {
                var skillNew = SkillLevel;
                if (!_lockFireSkill && (skillNew != skillOld))
-                  OnPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
+                  _notifier.OnPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
             }
          }
       }
 
       public double Area {
          get { return _area; }
-         set { SetProperty(ref _area, value); }
+         set { _notifier.SetProperty(ref _area, value); }
       }
 
       public ESkillLevel SkillLevel {
@@ -91,7 +102,7 @@ namespace fmg.core.mosaic {
             var skillNew = SkillLevel;
             System.Diagnostics.Debug.Assert(value == skillNew);
             System.Diagnostics.Debug.Assert(value != skillOld);
-            OnPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
+            _notifier.OnPropertyChanged(skillOld, skillNew, nameof(SkillLevel));
          }
       }
 

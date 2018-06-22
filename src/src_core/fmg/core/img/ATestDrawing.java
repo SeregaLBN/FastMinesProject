@@ -15,16 +15,16 @@ import fmg.core.mosaic.MosaicGameModel;
 
 public abstract class ATestDrawing {
 
+   public Random getRandom() { return ThreadLocalRandom.current(); }
+   public int r(int max) { return getRandom().nextInt(max); }
+   public boolean bl() { return getRandom().nextBoolean(); } // random bool
+   public int np() { return (bl() ? -1 : +1); } // negative or positive
+
    private final String titlePrefix;
 
    protected ATestDrawing(String titlePrefix) {
       this.titlePrefix = titlePrefix;
    }
-
-   public Random getRandom() { return ThreadLocalRandom.current(); }
-   public int r(int max) { return getRandom().nextInt(max); }
-   public boolean bl() { return getRandom().nextBoolean(); } // random bool
-   public int np() { return (bl() ? -1 : +1); } // negative or positive
 
    public void applyRandom(IImageController<?,?,?> ctrller, boolean testTransparent) {
       testTransparent = testTransparent || bl();
@@ -52,25 +52,25 @@ public abstract class ATestDrawing {
 
       if (model instanceof ImageModel) {
          @SuppressWarnings("resource")
-         ImageModel ip = (ImageModel)model;
+         ImageModel im = (ImageModel)model;
 
-         ip.setBorderWidth(r(3));
+         im.setBorderWidth(r(3));
 
-         double pad = Math.min(ip.getSize().height/3, ip.getSize().width/3);
-         ip.setPadding(-pad/4 + r((int)pad));
+         double pad = Math.min(im.getSize().height/3, im.getSize().width/3);
+         im.setPadding(-pad/4 + r((int)pad));
 
-         ip.setBackgroundColor(bkClr);
+         im.setBackgroundColor(bkClr);
 
-         ip.setForegroundColor(Color.RandomColor()/*.brighter()*/);
+         im.setForegroundColor(Color.RandomColor()/*.brighter()*/);
          if (testTransparent) {
             // test transparent
-            Color clr = ip.getForegroundColor();
-            if ((ip.getBorderWidth() > 0) && (r(4) == 0)) {
+            Color clr = im.getForegroundColor();
+            if ((im.getBorderWidth() > 0) && (r(4) == 0)) {
                clr.setA(Color.Transparent.getA());
             } else {
                clr.setA(150 + r(255-150));
             }
-            ip.setForegroundColor(clr);
+            im.setForegroundColor(clr);
          }
 
          if (model instanceof AnimatedImageModel) {

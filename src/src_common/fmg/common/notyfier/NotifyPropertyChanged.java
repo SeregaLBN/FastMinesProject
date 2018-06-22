@@ -5,25 +5,19 @@ import java.beans.PropertyChangeSupport;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import fmg.common.Pair;
+import fmg.common.ui.Factory;
 
-/** Notifies clients that a property value has changed */
-public final class NotifyPropertyChanged implements AutoCloseable, INotifyPropertyChanged {
+/** Notifies owner clients that a owner property value has changed */
+public final class NotifyPropertyChanged implements AutoCloseable /*, INotifyPropertyChanged */ {
 
-   /** Delayed execution in the current thread of the user interface. */
-   public static Consumer<Runnable> DEFERR_INVOKER = run -> {
-      System.out.println("need redefine!");
-      run.run();
-   };
-
-   private final PropertyChangeSupport _propertyChanges;
-   private boolean _disposed = false;
    private final INotifyPropertyChanged _owner;
+   private final PropertyChangeSupport _propertyChanges;
    private final boolean _deferredNotifications;
    private final Map<String /* propertyName */, Pair<Object /* old value */, Object /* new value */>> _deferrNotifications = new HashMap<>();
+   private boolean _disposed = false;
 
    public NotifyPropertyChanged(INotifyPropertyChanged owner) { this(owner, false); }
    public NotifyPropertyChanged(INotifyPropertyChanged owner, boolean deferredNotifications) {
@@ -32,9 +26,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
        _deferredNotifications = deferredNotifications;
    }
 
-   @Override
    public void addListener(PropertyChangeListener listener) { _propertyChanges.addPropertyChangeListener(listener); }
-   @Override
    public void removeListener(PropertyChangeListener listener) { _propertyChanges.removePropertyChangeListener(listener); }
 
    /** Set the value to the specified property  and throw event to listeners */
@@ -101,7 +93,7 @@ public final class NotifyPropertyChanged implements AutoCloseable, INotifyProper
             _deferrNotifications.put(propertyName, event); // Re-save only the last event (with initial old value)
          }
          if (shedule)
-            DEFERR_INVOKER.accept(() -> {
+            Factory.DEFERR_INVOKER.accept(() -> {
                if (_disposed)
                   return;
 

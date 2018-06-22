@@ -2,8 +2,8 @@ using fmg.common;
 
 namespace fmg.core.img {
 
-   /// <summary> Transforming of foreground color (rotation of foreground color) </summary>
-   public class PolarLightFgTransformer : IModelTransformer {
+   /// <summary> Transforming of background color (rotation of background color) </summary>
+   public class PolarLightBkTransformer : IModelTransformer {
 
       public void Execute(int currentFrame, int totalFrames, IImageModel model) {
          AnimatedImageModel am = model as AnimatedImageModel;
@@ -17,9 +17,9 @@ namespace fmg.core.img {
          if (!am.AnimeDirection)
             rotateAngleDelta = -rotateAngleDelta;
 
-         HSV hsv = new HSV(am.ForegroundColor;
+         HSV hsv = new HSV(am.BackgroundColor);
          hsv.h += rotateAngleDelta;
-         am.ForegroundColor = hsv.toColor();
+         am.BackgroundColor = hsv.toColor();
       }
 
    }

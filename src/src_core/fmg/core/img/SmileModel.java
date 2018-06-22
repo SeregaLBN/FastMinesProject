@@ -68,7 +68,7 @@ public class SmileModel implements IImageModel {
       return _faceType;
    }
    public void setFaceType(EFaceType faceType) {
-      _notifier.setProperty(_faceType, faceType, PROPERTY_SIZE);
+      _notifier.setProperty(_faceType, faceType, PROPERTY_FACE_TYPE);
    }
 
    @Override

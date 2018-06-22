@@ -20,11 +20,11 @@ public class ImageModel implements IImageModel {
    private SizeDouble _size = new SizeDouble(DefaultImageSize, DefaultImageSize);
    /** inside padding. Автоматически пропорционально регулирую при измениях размеров */
    private BoundDouble _padding = new BoundDouble(DefaultPadding);
+   private Color _foregroundColor = DefaultForegroundColor;
    /** background fill color */
    private Color _backgroundColor = DefaultBkColor;
    private Color _borderColor = Color.Maroon.clone().darker(0.5);
    private double _borderWidth = 3;
-   private Color _foregroundColor = DefaultForegroundColor;
    /** 0° .. +360° */
    private double _rotateAngle;
 
@@ -42,7 +42,7 @@ public class ImageModel implements IImageModel {
    /** width and height in pixel */
    @Override
    public SizeDouble getSize() { return _size; }
-   public void setSize(double widhtAndHeight) { setSize(new SizeDouble(widhtAndHeight, widhtAndHeight)) ; }
+   public void setSize(double widhtAndHeight) { setSize(new SizeDouble(widhtAndHeight, widhtAndHeight)); }
    @Override
    public void setSize(SizeDouble value) {
       SizeDouble old = _size;
@@ -72,6 +72,11 @@ public class ImageModel implements IImageModel {
       _notifier.setProperty(_padding, paddingNew, PROPERTY_PADDING);
    }
 
+   public Color getForegroundColor() { return _foregroundColor; }
+   public void setForegroundColor(Color value) {
+      _notifier.setProperty(_foregroundColor, value, PROPERTY_FOREGROUND_COLOR);
+   }
+
    /** background fill color */
    public Color getBackgroundColor() { return _backgroundColor; }
    public void setBackgroundColor(Color value) {
@@ -92,16 +97,10 @@ public class ImageModel implements IImageModel {
       }
    }
 
-   public Color getForegroundColor() { return _foregroundColor; }
-   public void setForegroundColor(Color value) {
-      _notifier.setProperty(_foregroundColor, value, PROPERTY_FOREGROUND_COLOR);
-   }
-
    /** 0° .. +360° */
    public double getRotateAngle() { return _rotateAngle; }
    public void setRotateAngle(double value) {
-      value = fixAngle(value);
-      _notifier.setProperty(_rotateAngle, value, PROPERTY_ROTATE_ANGLE);
+      _notifier.setProperty(_rotateAngle, fixAngle(value), PROPERTY_ROTATE_ANGLE);
    }
 
    /** to diapason (0° .. +360°] */

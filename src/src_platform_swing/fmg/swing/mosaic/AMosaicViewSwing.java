@@ -54,7 +54,7 @@ public abstract class AMosaicViewSwing<TImage,
       UIDefaults uiDef = UIManager.getDefaults();
       java.awt.Color clr = uiDef.getColor("Panel.background");
       if (clr != null)
-         MosaicDrawModel.setDefaultBackgroundColor(Cast.toColor(clr));
+         MosaicDrawModel.DefaultBkColor = Cast.toColor(clr);
    }
 
 

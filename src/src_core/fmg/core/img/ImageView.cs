@@ -28,7 +28,7 @@ namespace fmg.core.img {
       private EInvalidate _invalidate = EInvalidate.needRedraw;
       protected bool Disposed { get; private set; }
       public event PropertyChangedEventHandler PropertyChanged;
-      protected NotifyPropertyChanged _notifier;
+      protected readonly NotifyPropertyChanged _notifier;
 
       protected ImageView(TImageModel imageModel) {
          _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
@@ -88,7 +88,7 @@ namespace fmg.core.img {
       protected abstract void DrawBody();
       protected void DrawEnd() { _invalidate = EInvalidate.redrawed; }
 
-      protected void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
+      protected virtual void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Model));
          _notifier.OnPropertyChanged(default(TImageModel), Model, nameof(this.Model));
          if (nameof(IImageModel.Size) == ev.PropertyName) {
@@ -101,30 +101,19 @@ namespace fmg.core.img {
          }
       }
 
-      protected virtual void Dispose(bool disposing) {
-         if (disposing) {
-            // Dispose managed resources
-            _notifier.Dispose();
-            Model.PropertyChanged -= OnPropertyModelChanged;
-            Image = null;
-         }
-
-         // Dispose unmanaged resources
+      // <summary>  Dispose managed resources </summary>/
+      protected virtual void Disposing() {
+         _notifier.Dispose();
+         Model.PropertyChanged -= OnPropertyModelChanged;
+         Image = null;
       }
 
       public void Dispose() {
-         if (!Disposed) {
-            Disposed = true;
-            Dispose(true);
-         }
+         if (Disposed)
+            return;
+         Disposed = true;
+         Disposing();
          GC.SuppressFinalize(this);
-      }
-
-      ~ImageView() {
-         if (!Disposed) {
-            Disposed = true;
-            Dispose(false);
-         }
       }
 
    }

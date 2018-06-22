@@ -23,7 +23,7 @@ namespace fmg.core.img {
       private readonly TImageView _imageView;
       protected bool Disposed { get; private set; }
       public event PropertyChangedEventHandler PropertyChanged;
-      protected NotifyPropertyChanged _notifier;
+      protected readonly NotifyPropertyChanged _notifier;
 
       protected ImageController(TImageView imageView) {
          _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev), true);
@@ -50,30 +50,19 @@ namespace fmg.core.img {
          }
       }
 
-      protected virtual void Dispose(bool disposing) {
-         if (disposing) {
-            // Dispose managed resources
-            _imageView.PropertyChanged -= OnPropertyViewChanged;
-            _imageView.Dispose();
-            _notifier.Dispose();
-         }
-
-         // Dispose unmanaged resources
+      // <summary>  Dispose managed resources </summary>/
+      protected virtual void Disposing() {
+         _imageView.PropertyChanged -= OnPropertyViewChanged;
+         _imageView.Dispose();
+         _notifier.Dispose();
       }
 
       public void Dispose() {
-         if (!Disposed) {
-            Disposed = true;
-            Dispose(true);
-         }
+         if (Disposed)
+            return;
+         Disposed = true;
+         Disposing();
          GC.SuppressFinalize(this);
-      }
-
-      ~ImageController() {
-         if (!Disposed) {
-            Disposed = true;
-            Dispose(false);
-         }
       }
 
    }

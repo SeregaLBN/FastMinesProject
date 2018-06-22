@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -11,95 +11,90 @@ using fmg.core.types.click;
 
 namespace fmg.core.mosaic {
 
-   /// <summary> MVC: controller. Base implementation </summary>
-   public abstract class AMosaicController<TMosaicView> : NotifyPropertyChanged
-      where TMosaicView : class, IMosaicView
+   /// <summary> MVC: mosaic controller. Base implementation </summary>
+   /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
+   /// <typeparam name="TImage2">image type of flag/mine into mosaic field</typeparam>
+   /// <typeparam name="TMosaicView">mosaic view</typeparam>
+   /// <typeparam name="TMosaicModel">mosaic model</typeparam>
+   public abstract class AMosaicController<TImage, TImage2, TMosaicView, TMosaicModel>
+                   : AnimatedImgController<TImage, TMosaicView, TMosaicModel>
+      where TImage : class
+      where TImage2 : class
+      where TMosaicView : IMosaicView<TImage, TImage2, TMosaicModel>
+      where TMosaicModel : MosaicDrawModel<TImage2>
    {
-      /// <summary> MVC: model </summary>
-      protected Mosaic _mosaic;
-      /// <summary> MVC: view </summary>
-      protected TMosaicView _view;
 
-      /// <summary> MVC: model </summary>
-      public virtual Mosaic Mosaic {
-         get {
-            if (_mosaic == null)
-               Mosaic = new Mosaic(); // call setter
-            return _mosaic;
-         }
-         protected set {
-            if (_mosaic != null) {
-               _mosaic.PropertyChanged -= OnMosaicPropertyChanged;
-               _mosaic.Dispose();
-            }
-            _mosaic = value;
-            if (_mosaic != null) {
-               _mosaic.PropertyChanged += OnMosaicPropertyChanged;
-            }
-         }
-      }
-
-      /// <summary> MVC: view </summary>
-      public virtual TMosaicView View { get; protected set; }
-
-      /// <summary>кол-во мин на поле</summary>
+      /// <summary> кол-во мин на поле </summary>
       protected int _minesCount = 10;
-      /// <summary>кол-во мин на поле до создания игры. Используется когда игра была создана, но ни одной мины не проставлено.</summary>
+      /// <summary> кол-во мин на поле до создания игры. Используется когда игра была создана, но ни одной мины не проставлено </summary>
       protected int _oldMinesCount = 1;
 
-      private EGameStatus _gameStatus = EGameStatus.eGSEnd;
+      private EGameStatus _gameStatus = EGameStatus.eGSReady;
       private EPlayInfo _playInfo = EPlayInfo.ePlayerUnknown;
       private int _countClick;
 
-      /// <summary>для load'a - координаты ячеек с минами</summary>
+      /// <summary> ячейка на которой было нажато (но не обязательно что отпущено) </summary>
+      public BaseCell CellDown { get; set; }
+
+      /// <summary> для load'a - координаты ячеек с минами </summary>
       private IList<Coord> _repositoryMines;
 
-      /// <summary>использовать ли флажок на поле</summary>
+      /// <summary> использовать ли флажок на поле </summary>
       private bool _useUnknown = true;
 
 
-      public IList<BaseCell> Matrix => Mosaic.Matrix;
+      protected AMosaicController(TMosaicView mosaicView)
+         : base(mosaicView)
+      {
+         mosaicView.Model.PropertyChanged += OnMosaicModelPropertyChanged;
+      }
 
-      /** площадь ячеек */
+
+      public IList<BaseCell> Matrix => Model.Matrix;
+
+      /// <summary> площадь ячеек </summary>
       public double Area {
-         get { return Mosaic.Area; }
-         set { Mosaic.Area = value; }
+         get { return Model.Area; }
+         set { Model.Area = value; }
       }
 
-      /** размер поля в ячейках */
+      /// <summary> размер поля в ячейках </summary>
       public Matrisize SizeField {
-         get { return Mosaic.SizeField; }
-         set { Mosaic.SizeField = value; }
+         get { return Model.SizeField; }
+         set { Model.SizeField = value; }
       }
 
-      /** узнать тип мозаики (из каких фигур состоит мозаика поля) */
+      /// <summary> узнать тип мозаики (из каких фигур состоит мозаика поля) </summary>
       public EMosaic MosaicType {
-         get { return Mosaic.MosaicType; }
-         set { Mosaic.MosaicType = value; }
+         get { return Model().MosaicType; }
+         set { Model.MosaicType = value; }
       }
 
-      /// <summary> кол-во мин </summary>
+      /// <summary> количество мин </summary>
       public int MinesCount {
          get { return _minesCount; }
          set {
-            if (!SetProperty(ref _minesCount, value))
+            int newMinesCount;
+            int old = MinesCount;
+            if (old == value)
                return;
 
             if (value == 0) // TODO  ?? to create field mode - EGameStatus.eGSCreateGame
-               _oldMinesCount = _minesCount; // save
+               this._oldMinesCount = this._minesCount; // save
 
-            _minesCount = Math.Max(1, Math.Min(value, GetMaxMines(SizeField)));
-            OnPropertyChanged(-1, _minesCount, nameof(this.CountMinesLeft));
+            _minesCount = Math.Max(1, Math.Min(value, getMaxMines(getSizeField())));
+            _notifier.OnPropertyChanged(old, _minesCount, nameof(this.MinesCount));
+            _notifier.OnPropertyChanged( -1, _minesCount, nameof(this.CountMinesLeft));
 
             GameNew();
          }
       }
 
-      /// <summary>arrange Mines</summary>
-      public void setMines_LoadRepository(IList<Coord> repository) {
-         var mosaic = Mosaic;
+      /// <summary> arrange Mines </summary>
+      public void SetMines_LoadRepository(IList<Coord> repository) {
+         var mosaic = getModel();
          foreach (var c in repository) {
-            var suc = mosaic.getCell(c).State.SetMine();
+            bool suc = mosaic.getCell(c).State.SetMine();
             System.Diagnostics.Debug.Assert(suc, "Проблемы с установкой мин... :(");
          }
          // set other CellOpen and set all Caption
@@ -107,12 +102,12 @@ namespace fmg.core.mosaic {
             cell.State.CalcOpenState(mosaic);
       }
 
-      /// <summary>arrange Mines - set random mines</summary>
-      public void setMines_random(BaseCell firstClickCell) {
+      /// <summary> arrange Mines - set random mines </summary>
+      public void SetMines_Random(BaseCell firstClickCell) {
          if (_minesCount == 0)
             _minesCount = _oldMinesCount;
 
-         var mosaic = Mosaic;
+         var mosaic = Model;
          var matrixClone = new List<BaseCell>(Matrix);
          matrixClone.Remove(firstClickCell); // исключаю на которой кликал юзер
          foreach (var x in firstClickCell.GetNeighbors(mosaic))
@@ -151,31 +146,28 @@ namespace fmg.core.mosaic {
          private set { SetProperty(ref _countClick, value); }
       }
 
-      /// <summary> ячейка на которой было нажато (но не обязательно что отпущено) </summary>
-      public BaseCell CellDown { get; set; }
-
-      /**
-         *<br> Этапы игры:
-         *<br>           GameNew()      GameBegin()     GameEnd()      GameNew()
-         *<br>    time      |               |               |             |
-         *<br>  -------->   | eGSCreateGame |               |             |
-         *<br>              |  or eGSReady  |    eGSPlay    |   eGSEnd    |
-         *<br>              \------ 1 -----/ \----- 2 -----/ \---- 3 ----/
-         *<br>
-         *<br> @see fmg.core.types.EGameStatus
-         *<br>
-         *<br> PS: При этапе gsReady поле чисто - мин нет! Мины расставляются только после первого клика
-         *<br>     Так сделал только лишь потому, чтобы первый клик выполнялся не на мине. Естественно
-         *<br>     это не относится к случаю, когда игра была создана пользователем или считана из файла.
-         */
+      /// <summary>
+      // <br> Этапы игры:
+      // <br>           GameNew()      GameBegin()     GameEnd()      GameNew()
+      // <br>    time      |               |               |             |
+      // <br>  -------->   | eGSCreateGame |               |             |
+      // <br>              |  or eGSReady  |    eGSPlay    |   eGSEnd    |
+      // <br>              \------ 1 -----/ \----- 2 -----/ \---- 3 ----/
+      // <br>
+      // <br> @see fmg.core.types.EGameStatus
+      // <br>
+      // <br> PS: При этапе gsReady поле чисто - мин нет! Мины расставляются только после первого клика
+      // <br>     Так сделал только лишь потому, чтобы первый клик выполнялся не на мине. Естественно
+      // <br>     это не относится к случаю, когда игра была создана пользователем или считана из файла.
+      /// </summary>
       public EGameStatus GameStatus {
          get { return _gameStatus; }
-         set { SetProperty(ref _gameStatus, value); }
+         set { _notifier.SetProperty(ref _gameStatus, value); }
       }
 
       public EPlayInfo PlayInfo {
          get { return _playInfo; }
-         set { SetProperty(ref _playInfo, EPlayInfoEx.setPlayInfo(_playInfo, value)); }
+         set { _notifier.SetProperty(ref _playInfo, EPlayInfoEx.setPlayInfo(_playInfo, value)); }
       }
 
       public IList<Coord> RepositoryMines {
@@ -188,26 +180,27 @@ namespace fmg.core.mosaic {
                if ((value != null) && value.Any())
                   (current as List<Coord>).AddRange(value);
             }
-            OnPropertyChanged();
-            //setGameStatus(EGameStatus.eGSEnd);
+            _notifier.OnPropertyChanged();
+            //GameStatus = EGameStatus.eGSEnd;
             GameNew();
          }
       }
 
-      /// <summary>Начать игру, т.к. произошёл первый клик на поле</summary>
+      /// <summary> Начать игру, т.к. произошёл первый клик на поле </summary>
       public virtual void GameBegin(BaseCell firstClickCell) {
+         Model.BackgroundFill.setMode(0);
          GameStatus = EGameStatus.eGSPlay;
 
          // set mines
          if (RepositoryMines.Any()) {
             PlayInfo = EPlayInfo.ePlayIgnor;
-            setMines_LoadRepository(RepositoryMines);
+            SetMines_LoadRepository(RepositoryMines);
          } else {
-            setMines_random(firstClickCell);
+            SetMines_random(firstClickCell);
          }
       }
 
-      /// <summary>Завершить игру</summary>
+      /// <summary> Завершить игру </summary>
       private IEnumerable<BaseCell> GameEnd(bool victory) {
          if (GameStatus == EGameStatus.eGSEnd)
             return Enumerable.Empty<BaseCell>();
@@ -235,9 +228,9 @@ namespace fmg.core.mosaic {
             }
 
          GameStatus = EGameStatus.eGSEnd;
-         OnPropertyChanged(nameof(this.CountMinesLeft));
-         OnPropertyChanged(nameof(this.CountFlag));
-         OnPropertyChanged(nameof(this.CountOpen));
+         _notifier.OnPropertyChanged(nameof(this.CountMinesLeft));
+         _notifier.OnPropertyChanged(nameof(this.CountFlag));
+         _notifier.OnPropertyChanged(nameof(this.CountOpen));
 
          return toRepaint;
       }
@@ -245,14 +238,14 @@ namespace fmg.core.mosaic {
       private IEnumerable<BaseCell> VerifyFlag() {
          if (GameStatus == EGameStatus.eGSEnd) return Enumerable.Empty<BaseCell>();
          if (MinesCount == CountFlag) {
-            foreach (BaseCell cell in Matrix)
+            foreach (var cell in Matrix)
                if ((cell.State.Close == EClose._Flag) &&
-                  (cell.State.Open != EOpen._Mine))
+                   (cell.State.Open != EOpen._Mine))
                   return Enumerable.Empty<BaseCell>(); // неверно проставленный флажок - на выход
             return GameEnd(true);
          } else {
             if (MinesCount == (CountFlag + CountUnknown)) {
-               foreach (BaseCell cell in Matrix)
+               foreach (var cell in Matrix)
                   if (((cell.State.Close == EClose._Unknown) ||
                      (cell.State.Close == EClose._Flag)) &&
                      (cell.State.Open != EOpen._Mine))
@@ -264,7 +257,8 @@ namespace fmg.core.mosaic {
       }
 
       protected ClickResult OnLeftButtonDown(BaseCell cellLeftDown) {
-         using (new fmg.common.Tracer("Mosaic::OnLeftButtonDown")) {
+         using (new fmg.common.Tracer("Mosaic.OnLeftButtonDown"))
+         {
             var result = new ClickResult(cellLeftDown, true, true);
             CellDown = null;
             if (GameStatus == EGameStatus.eGSEnd)
@@ -277,7 +271,7 @@ namespace fmg.core.mosaic {
                if (cellLeftDown.State.Open != EOpen._Mine) {
                   cellLeftDown.State.Status = EState._Open;
                   cellLeftDown.State.SetMine();
-                  MinesCount = MinesCount + 1;
+                  MinesCount++;
                   RepositoryMines.Add(cellLeftDown.getCoord());
                } else {
                   cellLeftDown.Reset();
@@ -286,16 +280,16 @@ namespace fmg.core.mosaic {
                }
                result.Modified.Add(cellLeftDown);
             } else {
-               var resultCell = cellLeftDown.LButtonDown(Mosaic);
+               var resultCell = cellLeftDown.LButtonDown(Model);
                result.Modified = resultCell.Modified; // copy reference; TODO result.Modified.AddRange(resultCell.Modified);
             }
-            OnSelfModifiedCellsPropertyChanged(result.Modified);
+            InvalidateView(result.modified);
             return result;
          }
       }
 
       protected ClickResult OnLeftButtonUp(BaseCell cellLeftUp) {
-         using (var tracer = new fmg.common.Tracer("Mosaic::OnLeftButtonUp", "coordLUp=" + cellLeftUp?.getCoord()))
+         using (var tracer = new fmg.common.Tracer("Mosaic.OnLeftButtonUp", "coordLUp=" + cellLeftUp?.getCoord()))
             try {
                var cellDown = CellDown;
                var result = new ClickResult(cellDown, true, false);
@@ -323,11 +317,11 @@ namespace fmg.core.mosaic {
                   CountClick++;
                   PlayInfo = EPlayInfo.ePlayerUser;  // юзер играл
                   if (countOpen > 0)
-                     OnPropertyChanged(nameof(this.CountOpen));
+                     _notifier.OnPropertyChanged(nameof(this.CountOpen));
                   if ((countFlag > 0) || (countUnknown > 0)) {
-                     OnPropertyChanged(nameof(this.CountFlag));
-                     OnPropertyChanged(nameof(this.CountMinesLeft));
-                     OnPropertyChanged(nameof(this.CountUnknown));
+                     _notifier.OnPropertyChanged(nameof(this.CountFlag));
+                     _notifier.OnPropertyChanged(nameof(this.CountMinesLeft));
+                     _notifier.OnPropertyChanged(nameof(this.CountUnknown));
                   }
                }
 
@@ -345,7 +339,7 @@ namespace fmg.core.mosaic {
 
                if (!gameBegin)
                   result.Modified.UnionWith(modified);
-               OnSelfModifiedCellsPropertyChanged(result.Modified);
+               InvalidateView(result.Modified);
 
                return result;
             } finally {
@@ -354,7 +348,7 @@ namespace fmg.core.mosaic {
       }
 
       protected ClickResult OnRightButtonDown(BaseCell cellRightDown) {
-         using (var tracer = new fmg.common.Tracer("Mosaic::OnRightButtonDown")) {
+         using (var tracer = new fmg.common.Tracer("Mosaic.OnRightButtonDown")) {
             CellDown = null;
             var result = new ClickResult(cellRightDown, false, true);
             if (GameStatus == EGameStatus.eGSEnd) {
@@ -378,9 +372,9 @@ namespace fmg.core.mosaic {
             if (any) {
                CountClick++;
                PlayInfo = EPlayInfo.ePlayerUser; // то считаю что юзер играл
-               OnPropertyChanged(nameof(this.CountFlag));
-               OnPropertyChanged(nameof(this.CountMinesLeft));
-               OnPropertyChanged(nameof(this.CountUnknown));
+               _notifier.OnPropertyChanged(nameof(this.CountFlag));
+               _notifier.OnPropertyChanged(nameof(this.CountMinesLeft));
+               _notifier.OnPropertyChanged(nameof(this.CountUnknown));
             }
 
             result.Modified.UnionWith(VerifyFlag());
@@ -389,13 +383,13 @@ namespace fmg.core.mosaic {
             }
             tracer.Put("any=" + any);
 
-            OnSelfModifiedCellsPropertyChanged(result.Modified);
+            InvalidateView(result.Modified);
             return result;
          }
       }
 
       protected ClickResult OnRightButtonUp(BaseCell cellRightUp) {
-         using (var tracer = new fmg.common.Tracer("Mosaic::OnRightButtonUp"))
+         using (var tracer = new fmg.common.Tracer("Mosaic.OnRightButtonUp"))
             try {
                var cellDown = CellDown;
                //tracer.Put("return");
@@ -408,9 +402,15 @@ namespace fmg.core.mosaic {
       /// <summary> Request to user </summary>
       protected virtual bool CheckNeedRestoreLastGame() { return false; }
 
-      /// <summary>Подготовиться к началу игры - сбросить все ячейки</summary>
+      /// <summary> Подготовиться к началу игры - сбросить все ячейки </summary>
       public virtual bool GameNew() {
-         //System.out.println("Mosaic::GameNew()");
+         //using (var tracer = new fmg.common.Tracer("Mosaic.GameNew"))
+
+         var m = Model;
+         m.BackgroundFill.setMode(
+               1 + ThreadLocalRandom.Current.next(
+                        m.CellAttr // MosaicHelper.CreateAttributeInstance(m.MosaicType
+                        .GetMaxBackgroundFillModeValue()));
 
          if (GameStatus == EGameStatus.eGSReady)
             return false;
@@ -430,12 +430,12 @@ namespace fmg.core.mosaic {
          GameStatus = EGameStatus.eGSReady;
          PlayInfo = EPlayInfo.ePlayerUnknown; // пока не знаю кто будет играть
 
-         OnSelfModifiedCellsPropertyChanged(this.Matrix);
+         InvalidateView(this.Matrix);
 
          return true;
       }
 
-      /// <summary>создать игру игроком - он сам расставит мины</summary>
+      /// <summary> создать игру игроком - он сам расставит мины </summary>
       public void GameCreate() {
          GameNew();
          if (!RepositoryMines.Any()) {
@@ -445,35 +445,29 @@ namespace fmg.core.mosaic {
       }
 
       public bool UseUnknown {
-         set { _useUnknown = value; }
          get { return _useUnknown; }
+         set { _useUnknown = value; }
       }
 
+      /// <summary> Максимальное кол-во мин при  текущем  размере поля </summary>
+      public int MaxMines => GetMaxMines(SizeField);
       /// <summary> Максимальное кол-во мин при указанном размере поля </summary>
       public int GetMaxMines(Matrisize sizeFld) {
          var iMustFreeCell = MaxNeighborNumber + 1;
          var iMaxMines = sizeFld.m * sizeFld.n - iMustFreeCell;
          return Math.Max(1, iMaxMines);
       }
-      /// <summary> Максимальное кол-во мин при  текущем  размере поля </summary>
-      public int GetMaxMines() { return GetMaxMines(SizeField); }
+
       /// <summary> размер в пикселях для указанных параметров </summary>
-      public SizeDouble GetWindowSize(Matrisize sizeField, double area) {
+      public SizeDouble GetInnerSize(Matrisize sizeField, double area) {
          return area.HasMinDiff(Area)
-            ? Mosaic.CellAttr.GetOwnerSize(sizeField)
+            ? Model.CellAttr.GetOwnerSize(sizeField)
             : MosaicHelper.GetOwnerSize(MosaicType, area, sizeField);
       }
       /// <summary> размер в пикселях </summary>
-      public SizeDouble WindowSize {
-         get {
-            if (!_cachedWindowSize.HasValue)
-               _cachedWindowSize = GetWindowSize(SizeField, Area);
-            return _cachedWindowSize.Value;
-         }
-      }
-      private SizeDouble? _cachedWindowSize = null;
+      public SizeDouble InnerSize => Model.InnerSize;
 
-      /// <summary> узнать количество соседей для текущей мозаики </summary>
+      /// <summary> узнать max количество соседей для текущей мозаики </summary>
       public int MaxNeighborNumber {
          get {
             var attr = Mosaic.CellAttr;
@@ -483,41 +477,28 @@ namespace fmg.core.mosaic {
          }
       }
 
-      /// <summary>действительно лишь когда gameStatus == gsEnd</summary>
-      public bool IsVictory {
-         get {
-            return (GameStatus == EGameStatus.eGSEnd) && (0 == CountMinesLeft);
-         }
-      }
+      /// <summary> действительно лишь когда gameStatus == gsEnd </summary>
+      public bool IsVictory => (GameStatus == EGameStatus.eGSEnd) && (0 == CountMinesLeft);
 
 
-      private void OnMosaicPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         var mosaic = sender as Mosaic;
+      protected void OnMosaicModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          switch (ev.PropertyName) {
-         case nameof(Mosaic.SizeField):
-            _cachedWindowSize = null;
+         case nameof(MosaicGameModel.SizeField):
             CellDown = null; // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
-            OnPropertyChanged<Matrisize>(ev, nameof(this.SizeField));
-            OnPropertyChanged(nameof(WindowSize));
             GameNew();
             break;
-         case nameof(Mosaic.MosaicType):
-            _cachedWindowSize = null;
-            OnPropertyChanged<EMosaic>(ev, nameof(this.MosaicType));
+         case nameof(MosaicGameModel.MosaicType):
             GameNew();
             break;
-         case nameof(Mosaic.Area):
-            _cachedWindowSize = null;
-            OnPropertyChanged<double>(ev, nameof(Area));
-            OnPropertyChanged(nameof(this.WindowSize));
-            OnSelfModifiedCellsPropertyChanged(mosaic.Matrix);
+         case nameof(MosaicGameModel.Area):
+            InvalidateView(Model.Matrix);
             break;
          default:
             break;
          }
       }
 
-      protected void OnSelfModifiedCellsPropertyChanged(ICollection<BaseCell> cells) {
+      protected void InvalidateView(ICollection<BaseCell> cells) {
          if (!cells.Any())
             return;
 
@@ -530,9 +511,10 @@ namespace fmg.core.mosaic {
          View.Invalidate(cells);
       }
 
-
       /// <summary> преобразовать экранные координаты в ячейку поля мозаики </summary>
       private BaseCell CursorPointToCell(PointDouble point) {
+         if (point == null)
+               return null;
          return Mosaic.Matrix.FirstOrDefault(cell =>
             //cell.getRcOuter().Contains(point) && // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
             cell.PointInRegion(point));
@@ -540,41 +522,58 @@ namespace fmg.core.mosaic {
 
       public ClickResult MousePressed(PointDouble clickPoint, bool isLeftMouseButton) {
          using (new Tracer(GetCallerName(), "clickPoint" + clickPoint + "; isLeftMouseButton=" + isLeftMouseButton)) {
-            return isLeftMouseButton
+            var res = isLeftMouseButton
                ? OnLeftButtonDown(CursorPointToCell(clickPoint))
                : OnRightButtonDown(CursorPointToCell(clickPoint));
+            AcceptClickEvent(res);
+            return res;
          }
       }
 
+      public ClickResult mouseReleased(PointDouble clickPoint, bool isLeftMouseButton) {
+         ClickResult res = isLeftMouseButton
+            ? this.onLeftButtonUp(cursorPointToCell(clickPoint))
+            : this.onRightButtonUp(cursorPointToCell(clickPoint));
+         acceptClickEvent(res);
+         return res;
+      }
       public ClickResult MouseReleased(PointDouble clickPoint, bool isLeftMouseButton) {
          using (new Tracer(GetCallerName(), "isLeftMouseButton=" + isLeftMouseButton)) {
-            return isLeftMouseButton
+            var res = isLeftMouseButton
                ? OnLeftButtonUp(CursorPointToCell(clickPoint))
                : OnRightButtonUp(CursorPointToCell(clickPoint));
+            AcceptClickEvent(res);
+            return res;
          }
       }
 
       public ClickResult MouseFocusLost() {
-         if (CellDown == null)
+         var cellDown = this.getCellDown();
+         if (cellDown == null)
             return null;
-         bool isLeft = CellDown.State.Down; // hint: State.Down used only for the left click
+         bool isLeft = cellDown.State.Down; // hint: State.Down used only for the left click
          using (new Tracer(GetCallerName(), string.Format("CellDown.Coord={0}; isLeft={1}", CellDown.getCoord(), isLeft))) {
-            return isLeft
+            var res = isLeft
                ? OnLeftButtonUp(null)
                : OnRightButtonUp(null);
+            AcceptClickEvent(res);
+            return res;
          }
       }
 
-      protected override void Dispose(bool disposing) {
-         if (Disposed)
-            return;
+      /// <summary> уведомление о том, что на мозаике был произведён клик </summary>
+      private Action<ClickResult> clickEvent;
+      public void setOnClickEvent(Action<ClickResult> handler) {
+         clickEvent = handler;
+      }
+      private void acceptClickEvent(ClickResult clickResult) {
+         if (clickEvent != null)
+            clickEvent(clickResult);
+      }
 
-         base.Dispose(disposing);
-
-         if (disposing) {
-            Mosaic = null; // call setter - unsubscribe & dispose
-            View = null; // call setter - unsubscribe & dispose
-         }
+      protected override void Disposing() {
+         mosaicView.Model.PropertyChanged -= OnMosaicModelPropertyChanged;
+         base.close();
       }
 
       static string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) { return "MosaicContrllr::" + callerName; }

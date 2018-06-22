@@ -10,123 +10,109 @@ namespace fmg.core.img {
 
    public static class ImageModelConsts {
 
-      public static Action<Action> DeferrInvoker;
-      public static readonly Color DefaultBkColor = new Color(0xFF, 0xFF, 0x8C, 0x00);
-      public static readonly Color DefaultForegroundColor = Color.LightSeaGreen;
+      public static readonly Color DefaultBkColor         = Color.DarkOrange;
+      public static readonly Color DefaultForegroundColor = Color.Orchid; // Color.LightSeaGreen;
+      public const int             DefaultImageSize = 100;
+      public const int             DefaultPadding = (int)(DefaultImageSize * 0.05); // 5%
 
    }
 
    /// <summary> Abstract, platform independent, image characteristics </summary>
    /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class ImageModel<TImage> : NotifyPropertyChanged//, IImageModel
+   public abstract class ImageModel<TImage> : IImageModel
       where TImage : class
    {
-      public const int DefaultImageSize = 100;
-      public const int DefaultPaddingInt = (int)(DefaultImageSize * 0.05); // 5%
+      /// <summary> width and height in pixel </summary>
+      private SizeDouble _size = new SizeDouble(ImageModelConsts.DefaultImageSize, ImageModelConsts.DefaultImageSize);
+      /// <summary> inside padding. Автоматически пропорционально регулирую при измениях размеров </summary>
+      private BoundDouble _padding = new BoundDouble(ImageModelConsts.DefaultPadding);
+      private Color _foregroundColor = ImageModelConsts.DefaultForegroundColor;
+      /// <summary> background fill color </summary>
+      private Color _backgroundColor = ImageModelConsts.DefaultBkColor;
+      private Color _borderColor = Color.Maroon.clone().darker(0.5);
+      private double _borderWidth = 3;
+      /// <summary> 0° .. +360° </summary>
+      private double _rotateAngle;
 
-      protected ImageModel() {
-         _size = new Size(DefaultImageSize, DefaultImageSize);
-         _padding = new Bound(DefaultPaddingInt);
+      protected bool Disposed { get; private set; }
+      public event PropertyChangedEventHandler PropertyChanged;
+      protected readonly NotifyPropertyChanged _notifier;
+
+      public ImageModel() {
+         _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
       }
 
-      private Size _size;
       /// <summary> width and height in pixel </summary>
-      public Size Size {
+      public SizeDouble Size {
          get { return _size; }
          set {
-            if (SetProperty(ref _size, value)) {
-               Image = null;
-               //Invalidate();
-            }
+            SizeDouble old = _size;
+            if (_notifier.SetProperty(ref _size, value))
+               RecalcPadding(old);
          }
       }
+      public void SetSize(double widhtAndHeight) { Size = new SizeDouble(widhtAndHeight, widhtAndHeight); }
 
-      private Bound _padding;
       /// <summary> inside padding </summary>
-      public Bound Padding {
+      public BoundDouble Padding {
          get { return _padding; }
          set {
             if (value.LeftAndRight >= Size.Width)
                throw new ArgumentException("Padding size is very large. Should be less than Width.");
             if (value.TopAndBottom >= Size.Height)
                throw new ArgumentException("Padding size is very large. Should be less than Height.");
-            if (SetProperty(ref _padding, value)) {
-               Invalidate();
-            }
+            _notifier.SetProperty(ref _padding, value);
          }
       }
-      public int PaddingInt {
-         set { Padding = new Bound(value); }
+      public void SetPadding(double bound) { setPadding(new BoundDouble(bound)); }
+
+      static BoundDouble RecalcPadding(BoundDouble padding, SizeDouble current, SizeDouble old) {
+         return new BoundDouble(padding.left   * current.width  / old.width,
+                                padding.top    * current.height / old.height,
+                                padding.right  * current.width  / old.width,
+                                padding.bottom * current.height / old.height);
+      }
+      private void RecalcPadding(SizeDouble old) {
+         BoundDouble paddingNew = recalcPadding(_padding, _size, old);
+         _notifier.SetProperty(ref _padding, paddingNew, nameof(this.Padding));
       }
 
-      private enum EInvalidate {
-         NeedRedraw,
-         Redrawing,
-         Redrawed
-      }
-      private EInvalidate _invalidate = EInvalidate.NeedRedraw;
-      protected abstract TImage CreateImage();
-      private TImage _image;
-      public TImage Image {
-         get {
-            //LoggerSimple.Put("getImage: {0}", Entity);
-            if (_image == null) {
-               Image = CreateImage();
-               _invalidate = EInvalidate.NeedRedraw;
-            }
-            if (_invalidate == EInvalidate.NeedRedraw)
-               Draw();
-            return _image;
-         }
-         protected set {
-            var old = _image;
-            if (SetProperty(ref _image, value)) {
-               (old as IDisposable)?.Dispose();
-            }
-         }
+      public Color ForegroundColor {
+         get { return _foregroundColor; }
+         set { _notifier.SetProperty(ref _foregroundColor, value); }
       }
 
-      private Color _backgroundColor = ImageModelConsts.DefaultBkColor;
       /// <summary> background fill color </summary>
       public Color BackgroundColor {
          get { return _backgroundColor; }
-         set {
-            if (SetProperty(ref _backgroundColor, value))
-               Invalidate();
-         }
+         set { _notifier.SetProperty(ref _backgroundColor, value); }
       }
 
-      private Color _borderColor = Color.Maroon.Darker(0.5);
       public Color BorderColor {
          get { return _borderColor; }
-         set {
-            if (SetProperty(ref _borderColor, value))
-               Invalidate();
-         }
+         set { _notifier.SetProperty(ref _borderColor, value); }
       }
 
-      private int _borderWidth = 3;
-      public int BorderWidth {
+      public double BorderWidth {
          get { return _borderWidth; }
          set {
-            if (SetProperty(ref _borderWidth, value))
-               Invalidate();
+            // _notifier.SetProperty(ref _borderWidth, value);
+            if (!_borderWidth.hasMinDiff(value)) {
+               double old = _borderWidth;
+               _borderWidth = value;
+               _notifier.OnPropertyChanged<double>(old, value, nameof(this.BorderWidth));
+            }
          }
       }
 
-      private double _rotateAngle;
       /// <summary> 0° .. +360° </summary>
       public double RotateAngle {
          get { return _rotateAngle; }
-         set {
-            value = FixAngle(value);
-            if (SetProperty(ref _rotateAngle, value))
-               Invalidate();
-         }
+         set { _notifier.SetProperty(ref _rotateAngle, FixAngle(value)); }
       }
 
       /// <summary> to diapason (0° .. +360°] </summary>
-      protected static double FixAngle(double value) {
+      static double FixAngle(double value) {
          return (value >= 360)
               ?               (value % 360)
               : (value < 0)
@@ -134,71 +120,17 @@ namespace fmg.core.img {
                  :             value;
       }
 
-
-      private Color _foregroundColor = ImageModelConsts.DefaultForegroundColor;
-      public Color ForegroundColor {
-         get { return _foregroundColor; }
-         set {
-            if (SetProperty(ref _foregroundColor, value))
-               Invalidate();
-         }
+      // <summary>  Dispose managed resources </summary>/
+      protected virtual void Disposing() {
+         _notifier.Dispose();
       }
 
-      public bool DeferredNotifications { get; set; } = true;
-      private readonly Dictionary<string, PropertyChangedEventArgs> DeferredNotificationsMap = new Dictionary<string, PropertyChangedEventArgs>();
-
-      protected void Invalidate() {
-         if (_invalidate == EInvalidate.Redrawing)
-            return;
-         //if (_invalidate == EInvalidate.NeedRedraw)
-         //   return;
-         _invalidate = EInvalidate.NeedRedraw;
-         OnPropertyChanged(nameof(this.Image));
-      }
-
-      private void Draw() {
-         //LoggerSimple.Put("> DrawBegin: {0}", Entity);
-         DrawBegin();
-         DrawBody();
-         DrawEnd();
-         //LoggerSimple.Put("< DrawEnd: {0}", Entity);
-      }
-
-      protected virtual void DrawBegin() { _invalidate = EInvalidate.Redrawing; }
-      protected abstract void DrawBody();
-      protected virtual void DrawEnd() { _invalidate = EInvalidate.Redrawed; }
-
-      protected override void OnPropertyChanged(PropertyChangedEventArgs ev) {
-         if (!DeferredNotifications) {
-            base.OnPropertyChanged(ev);
-            //OnPropertyChangingAfter(true, ev);
-         } else {
-            bool first = DeferredNotificationsMap.Any();
-            if (!DeferredNotificationsMap.ContainsKey(ev.PropertyName))
-               DeferredNotificationsMap.Add(ev.PropertyName, ev);
-            else
-               DeferredNotificationsMap[ev.PropertyName] = ev;
-            if (first)
-               ImageModelConsts.DeferrInvoker(() => {
-                  foreach (PropertyChangedEventArgs item in DeferredNotificationsMap.Values.ToList()) {
-                     base.OnPropertyChanged(item);
-                     //OnPropertyChangedAfter(false, item);
-                  }
-                  DeferredNotificationsMap.Clear();
-               });
-         }
-      }
-
-      //protected abstract void OnPropertyChangedAfter(bool sync, object sender, PropertyChangedEventArgs ev);
-
-      protected override void Dispose(bool disposing) {
+      public void Dispose() {
          if (Disposed)
             return;
-
-         base.Dispose(disposing);
-
-         if (disposing)
-            Image = null;
+         Disposed = true;
+         Disposing();
+         GC.SuppressFinalize(this);
       }
 
    }

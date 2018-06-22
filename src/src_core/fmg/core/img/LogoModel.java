@@ -22,19 +22,28 @@ public class LogoModel extends AnimatedImageModel {
       combi
    }
 
-   public LogoModel() {
-      setBackgroundColor(Color.Transparent);
-      _notifier.addListener(_selfListener);
-   }
+   private final HSV[] _palette = { new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100),
+                                    new HSV(180, 100, 100), new HSV(225, 100, 100), new HSV(270, 100, 100), new HSV(315, 100, 100) };
+   private boolean _useGradient;
+   private ERotateMode _rotateMode = ERotateMode.combi;
+   /** owner rays points */
+   private final List<PointDouble> _rays = new ArrayList<>();
+   /** inner octahedron */
+   private final List<PointDouble> _inn = new ArrayList<>();
+   /** central octahedron */
+   private final List<PointDouble> _oct = new ArrayList<>();
 
    private final PropertyChangeListener _selfListener = ev -> onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
 
    public static final String PROPERTY_USE_GRADIENT = "UseGradient";
    public static final String PROPERTY_ROTATE_MODE  = "RotateMode";
 
-   private final HSV[] _palette = {
-         new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100),
-         new HSV(180, 100, 100), new HSV(225, 100, 100), new HSV(270, 100, 100), new HSV(315, 100, 100) };
+
+   public LogoModel() {
+      setBackgroundColor(Color.Transparent);
+      _notifier.addListener(_selfListener);
+   }
+
 
    public HSV[] getPalette() {
       return _palette;
@@ -47,24 +56,18 @@ public class LogoModel extends AnimatedImageModel {
          item.grayscale();
    }
 
-   private boolean _useGradient;
    public boolean isUseGradient() { return _useGradient; }
    public void setUseGradient(boolean value) {
       _notifier.setProperty(_useGradient, value, PROPERTY_USE_GRADIENT);
    }
 
-   private ERotateMode _rotateMode = ERotateMode.combi;
    public ERotateMode getRotateMode() { return _rotateMode; }
    public void setRotateMode(ERotateMode value) {
       _notifier.setProperty(_rotateMode, value, PROPERTY_ROTATE_MODE);
    }
 
-   /** owner rays points */
-   private final List<PointDouble> _rays = new ArrayList<>();
-   /** inner octahedron */
-   private final List<PointDouble> _inn = new ArrayList<>();
-   /** central octahedron */
-   private final List<PointDouble> _oct = new ArrayList<>();
+   public double getZoomX() { return (getSize().width  - getPadding().getLeftAndRight()) / 200.0; }
+   public double getZoomY() { return (getSize().height - getPadding().getTopAndBottom()) / 200.0; }
 
    public List<PointDouble> getRays() {
       if (_rays.isEmpty()) {
@@ -122,9 +125,6 @@ public class LogoModel extends AnimatedImageModel {
       }
       return _oct;
    }
-
-   public double getZoomX() { return (getSize().width  - getPadding().getLeftAndRight()) / 200.0; }
-   public double getZoomY() { return (getSize().height - getPadding().getTopAndBottom()) / 200.0; }
 
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       switch (propertyName) {

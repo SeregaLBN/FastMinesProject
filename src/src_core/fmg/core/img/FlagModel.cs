@@ -9,9 +9,8 @@ namespace fmg.core.img {
    public class FlagModel : IImageModel {
 
       private SizeDouble _size;
-      protected bool Disposed { get; private set; }
-      protected NotifyPropertyChanged _notifier;
       public event PropertyChangedEventHandler PropertyChanged;
+      protected readonly NotifyPropertyChanged _notifier;
 
       public FlagModel() {
          _size = new SizeDouble(40, 40);
@@ -25,28 +24,9 @@ namespace fmg.core.img {
       }
       public void SetSize(double widhtAndHeight) { Size = new SizeDouble(widhtAndHeight, widhtAndHeight); }
 
-      protected virtual void Dispose(bool disposing) {
-         if (disposing) {
-            // Dispose managed resources
-            _notifier.Dispose();
-         }
-
-         // Dispose unmanaged resources
-      }
-
       public void Dispose() {
-         if (!Disposed) {
-            Disposed = true;
-            Dispose(true);
-         }
+         _notifier.Dispose();
          GC.SuppressFinalize(this);
-      }
-
-      ~FlagModel() {
-         if (!Disposed) {
-            Disposed = true;
-            Dispose(false);
-         }
       }
 
    }

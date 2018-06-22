@@ -9,11 +9,14 @@
     <Import_RootNamespace>FastMines.Ava.Draw</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\src_platform_ava\fmg\ava\draw\img\Animator.cs">
+      <Link>src_fmg.ava\draw\img\Animator.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_platform_ava\fmg\ava\draw\img\MosaicsGroupImg.cs">
       <Link>src_fmg.ava\draw\img\MosaicsGroupImg.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_ava\fmg\ava\draw\img\StaticRotateImgConsts.cs">
-      <Link>src_fmg.ava\draw\img\StaticRotateImgConsts.cs</Link>
+    <Compile Include="..\..\src\src_platform_ava\fmg\ava\StaticInitilizer.cs">
+      <Link>src_fmg.ava\StaticInitilizer.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_ava\fmg\ava\utils\Cast.cs">
       <Link>src_fmg.ava\utils\Cast.cs</Link>

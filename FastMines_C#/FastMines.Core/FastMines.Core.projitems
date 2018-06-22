@@ -9,6 +9,9 @@
     <Import_RootNamespace>FastMines.Core</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\src_common\fmg\common\ui\Factory.cs">
+      <Link>src_fmg.common\ui\Factory.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_common\fmg\common\ui\ITimer.cs">
       <Link>src_fmg.common\ui\ITimer.cs</Link>
     </Compile>
@@ -99,35 +102,77 @@
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\IMosaic.cs">
       <Link>src_fmg.core\mosaic\IMosaic.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\mosaic\Mosaic.cs">
-      <Link>src_fmg.core\mosaic\Mosaic.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicGameModel.cs">
+      <Link>src_fmg.core\mosaic\MosaicGameModel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicDrawModel.cs">
+      <Link>src_fmg.core\mosaic\MosaicDrawModel.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicInitData.cs">
       <Link>src_fmg.core\mosaic\MosaicInitData.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\img\ALogo.cs">
-      <Link>src_fmg.core\img\ALogo.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\img\IAnimator.cs">
+      <Link>src_fmg.core\img\IAnimator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\AnimatedImageModel.cs">
+      <Link>src_fmg.core\img\AnimatedImageModel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\AnimatedImgController.cs">
+      <Link>src_fmg.core\img\AnimatedImgController.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\LogoModel.cs">
+      <Link>src_fmg.core\img\LogoModel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\LogoController.cs">
+      <Link>src_fmg.core\img\LogoController.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\FlagModel.cs">
       <Link>src_fmg.core\img\FlagModel.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\img\AMosaicsSkillImg.cs">
-      <Link>src_fmg.core\img\AMosaicsSkillImg.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\img\MosaicSkillModel.cs">
+      <Link>src_fmg.core\img\MosaicSkillModel.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\img\BurgerMenuImg.cs">
-      <Link>src_fmg.core\img\BurgerMenuImg.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\img\MosaicGroupTransformer.cs">
+      <Link>src_fmg.core\img\MosaicGroupTransformer.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\img\AMosaicsGroupImg.cs">
-      <Link>src_fmg.core\img\AMosaicsGroupImg.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\img\MosaicRotateTransformer.cs">
+      <Link>src_fmg.core\img\MosaicRotateTransformer.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\img\AMosaicsImg.cs">
-      <Link>src_fmg.core\img\AMosaicsImg.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\img\MosaicGroupController.cs">
+      <Link>src_fmg.core\img\MosaicGroupController.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\img\PolarLightsImg.cs">
-      <Link>src_fmg.core\img\PolarLightsImg.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\img\MosaicSkillController.cs">
+      <Link>src_fmg.core\img\MosaicSkillController.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\img\RotatedImg.cs">
-      <Link>src_fmg.core\img\RotatedImg.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\img\IModelTransformer.cs">
+      <Link>src_fmg.core\img\IModelTransformer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\BurgerMenuModel.cs">
+      <Link>src_fmg.core\img\BurgerMenuModel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\MosaicGroupModel.cs">
+      <Link>src_fmg.core\img\MosaicGroupModel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\MosaicAnimatedModel.cs">
+      <Link>src_fmg.core\img\MosaicAnimatedModel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\PolarLightBkTransformer.cs">
+      <Link>src_fmg.core\img\PolarLightBkTransformer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\PolarLightFgTransformer.cs">
+      <Link>src_fmg.core\img\PolarLightFgTransformer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\RotateTransformer.cs">
+      <Link>src_fmg.core\img\RotateTransformer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\RotateLogoTransformer.cs">
+      <Link>src_fmg.core\img\RotateLogoTransformer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\PolarLightLogoTransformer.cs">
+      <Link>src_fmg.core\img\PolarLightLogoTransformer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\SmileModel.cs">
+      <Link>src_fmg.core\img\SmileModel.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\IImageModel.cs">
       <Link>src_fmg.core\img\IImageModel.cs</Link>
@@ -138,11 +183,14 @@
     <Compile Include="..\..\src\src_core\fmg\core\img\ImageView.cs">
       <Link>src_fmg.core\img\ImageView.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\ImageView.cs">
+      <Link>src_fmg.core\img\ImageView.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\ImageController.cs">
       <Link>src_fmg.core\img\ImageController.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\img\IImageController.cs">
-      <Link>src_fmg.core\img\IImageController.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\img\WithBurgerMenuView.cs">
+      <Link>src_fmg.core\img\WithBurgerMenuView.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\ImageModel.cs">
       <Link>src_fmg.core\img\ImageModel.cs</Link>
@@ -285,8 +333,8 @@
     <Compile Include="..\..\src\src_data\fmg\data\view\draw\PenBorder.cs">
       <Link>src_fmg.data\view\draw\PenBorder.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicController.cs">
-      <Link>src_fmg.core\mosaic\MosaicController.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\AMosaicImageController.cs">
+      <Link>src_fmg.core\mosaic\AMosaicImageController.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\AMosaicController.cs">
       <Link>src_fmg.core\mosaic\AMosaicController.cs</Link>

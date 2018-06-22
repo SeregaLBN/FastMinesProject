@@ -22,6 +22,9 @@ import fmg.data.view.draw.PenBorder;
  **/
 public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageModel {
 
+   /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется одним из MVC-наследником. */
+   public static Color DefaultBkColor = Color.Gray.brighter();
+
    private TImage         _imgMine, _imgFlag;
    private ColorText      _colorText;
    private PenBorder      _penBorder;
@@ -33,19 +36,14 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    private Color          _backgroundColor;
    private TImage         _imgBckgrnd;
 
-   private final PropertyChangeListener           _selfListener = ev -> onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+   private final PropertyChangeListener           _selfListener = ev ->               onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
    private final PropertyChangeListener       _fontInfoListener = ev ->       onFontInfoPropertyChanged(ev);
    private final PropertyChangeListener _backgroundFillListener = ev -> onBackgroundFillPropertyChanged(ev);
    private final PropertyChangeListener      _colorTextListener = ev ->      onColorTextPropertyChanged(ev);
    private final PropertyChangeListener      _penBorderListener = ev ->      onPenBorderPropertyChanged(ev);
 
-   protected static Color _defaultBkColor = Color.Gray.brighter();
-   /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется одним из MVC-наследником. */
-   public static Color getDefaultBackgroundColor() {
-      return _defaultBkColor;
-   }
-   public static void setDefaultBackgroundColor(Color defaultBkColor) {
-      _defaultBkColor = defaultBkColor;
+   public MosaicDrawModel() {
+      _notifier.addListener(_selfListener);
    }
 
    public static final String PROPERTY_SIZE             = "Size";
@@ -60,17 +58,13 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    public static final String PROPERTY_BACKGROUND_COLOR = "BackgroundColor";
    public static final String PROPERTY_IMG_BCKGRND      = "ImgBckgrnd";
 
-   public MosaicDrawModel() {
-      _notifier.addListener(_selfListener);
-   }
-
    /** размер в пикселях поля мозаики. Inner, т.к. снаружи есть ещё padding и margin */
    public SizeDouble getInnerSize() {
       return getCellAttr().getSize(getSizeField());
    }
    /** общий размер в пискелях */
    @Override
-public SizeDouble getSize() {
+   public SizeDouble getSize() {
       SizeDouble size = getInnerSize();
       BoundDouble m = getMargin();
       BoundDouble p = getPadding();
@@ -79,7 +73,7 @@ public SizeDouble getSize() {
       return size;
    }
    @Override
-public void setSize(SizeDouble size) {
+   public void setSize(SizeDouble size) {
       if (size.width < 1)
          throw new IllegalArgumentException("Size value widht must be > 1");
       if (size.height < 1)
@@ -159,49 +153,49 @@ public void setSize(SizeDouble size) {
    /** всё что относиться к заливке фоном ячееек */
    public static class BackgroundFill implements AutoCloseable, INotifyPropertyChanged {
       /** режим заливки фона ячеек */
-      private int mode = 0;
-      /** кэшированные цвета фона ячеек */
-      private Map<Integer, Color> colors;
+      private int _mode = 0;
+      /** кэшированные цвета фона ячеек
+       * <br/> Нет цвета? - создасться с нужной интенсивностью! */
+      private final Map<Integer, Color> _colors = new HashMap<Integer, Color>() {
+          private static final long serialVersionUID = 1L;
+          @Override
+          public Color get(Object key) {
+             assert key instanceof Integer;
+             Color res = super.get(key);
+             if (res == null) {
+                res = Color.RandomColor().brighter(0.45);
+                super.put((Integer)key, res);
+             }
+             return res;
+          }
+       };
 
       public static final String PROPERTY_MODE = "Mode";
       protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
       /** режим заливки фона ячеек */
-      public int getMode() { return mode; }
+      public int getMode() { return _mode; }
 
-      /**
-      /* режим заливки фона ячеек
+      /** режим заливки фона ячеек
        * @param mode
        *  <li> 0 - цвет заливки фона по-умолчанию
        *  <li> not 0 - радуга %)
        */
       public void setMode(int newFillMode) {
-         _notifier.setProperty(this.mode, newFillMode, PROPERTY_MODE);
+         if (_notifier.setProperty(_mode, newFillMode, PROPERTY_MODE))
+             _colors.clear();
       }
 
       /** кэшированные цвета фона ячеек
-      /** <br/> Нет цвета? - создасться с нужной интенсивностью! */
+       * <br/> Нет цвета? - создасться с нужной интенсивностью! */
       public Map<Integer, Color> getColors() {
-         if (colors == null)
-            colors = new HashMap<Integer, Color>() {
-               private static final long serialVersionUID = 1L;
-               @Override
-               public Color get(Object key) {
-                  assert key instanceof Integer;
-                  Color res = super.get(key);
-                  if (res == null) {
-                     res = Color.RandomColor().brighter(0.45);
-                     super.put((Integer)key, res);
-                  }
-                  return res;
-               }
-            };
-         return colors;
+         return _colors;
       }
 
       @Override
       public void close() {
          _notifier.close();
+         _colors.clear();
       }
 
       @Override
@@ -308,7 +302,7 @@ public void setSize(SizeDouble size) {
 
    public Color getBackgroundColor() {
       if (_backgroundColor == null)
-         setBackgroundColor(getDefaultBackgroundColor());
+         setBackgroundColor(DefaultBkColor);
       return _backgroundColor;
    }
 

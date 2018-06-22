@@ -6,87 +6,86 @@ using fmg.common.geom;
 
 namespace fmg.core.img {
 
-   /// <summary>
-   /// Abstract representable menu as horizontal or vertical lines
-   /// </summary>
-   /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class BurgerMenuImg<TImage> : PolarLightsImg<TImage>
-      where TImage : class
-   {
-      protected BurgerMenuImg() {
-         _showBurgerMenu = true;
-         _layersInBurgerMenu = 3;
-         _horizontalBurgerMenu = true;
-         _rotateBurgerMenu = true;
+   /// <summary> MVC: model of representable menu as horizontal or vertical lines </summary>
+   public class BurgerMenuModel : IImageModel {
+
+      private ImageModel _generalModel;
+      private bool _show = true;
+      private bool _horizontal = true;
+      private int   _layers = 3;
+      private bool _rotate;
+      private BoundDouble _padding;
+
+      private bool _disposed;
+      public event PropertyChangedEventHandler PropertyChanged;
+      protected readonly NotifyPropertyChanged _notifier;
+
+      /// <summary> ctor </summary>
+      /// <param name="generalModel">another basic model</param>
+      protected BurgerMenuModel(ImageModel generalModel) {
+         _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+         _generalModel = generalModel;
+         _generalModel.PropertyChanged += OnPropertyGeneralModelChanged;
       }
 
-      private bool _showBurgerMenu;
-      public bool ShowBurgerMenu {
-         get { return _showBurgerMenu; }
-         set {
-            if (SetProperty(ref _showBurgerMenu, value)) {
-               Invalidate();
-            }
+      private void OnPropertyGeneralModelChanged(object sender, PropertyChangedEventArgs ev) {
+         System.Diagnostics.Debug.Assert(Reference.Equals(sender, _generalModel));
+         if (nameof(ImageModel.Size) == ev.PropertyName) {
+            if (ev is PropertyChangedExEventArgs<SizeDouble> evEx)
+               RecalcPadding(evEx.OldValue);
+            else
+               RecalcPadding(null);
          }
       }
 
-      private bool _horizontalBurgerMenu;
-      public bool HorizontalBurgerMenu {
-         get { return _horizontalBurgerMenu; }
-         set {
-            if (SetProperty(ref _horizontalBurgerMenu, value)) {
-               Invalidate();
-            }
-         }
+      /// <summary> image width and height in pixel </summary>
+      public SizeDouble Size => _generalModel.Size;
+
+      public bool Show {
+         get { return _show; }
+         set { _notifier.SetProperty(ref _show, value); }
       }
 
-      private int _layersInBurgerMenu;
-      public int LayersInBurgerMenu {
-         get { return _layersInBurgerMenu; }
-         set {
-            if (SetProperty(ref _layersInBurgerMenu, value)) {
-               Invalidate();
-            }
-         }
+      public bool Horizontal {
+         get { return _horizontal; }
+         set { _notifier.SetProperty(ref _horizontal, value); }
       }
 
-      private bool _rotateBurgerMenu;
-      public bool RotateBurgerMenu {
-         get { return _rotateBurgerMenu; }
-         set {
-            if (SetProperty(ref _rotateBurgerMenu, value)) {
-               Invalidate();
-            }
-         }
+      public int Layers {
+         get { return _layers; }
+         set { _notifier.SetProperty(ref _layers, value); }
       }
 
-      private Bound? _paddingBurgerMenu;
-      public Bound PaddingBurgerMenu {
+      public bool Rotate {
+         get { return _rotate; }
+         set { _notifier.SetProperty(ref _rotate, value); }
+      }
+
+      /// <summary> inside padding </summary>
+      public BoundDouble Padding{
          get {
-            if (_paddingBurgerMenu == null)
-               // call this setter
-               PaddingBurgerMenu = new Bound(Size.Width / 2,
-                                             Size.Height / 2,
-                                             Padding.Right,
-                                             Padding.Bottom);
-            return _paddingBurgerMenu.Value;
+            if (_padding == null)
+               RecalcPadding(null);
+            return _padding;
          }
          set {
             if (value.LeftAndRight >= Size.Width)
-               throw new ArgumentException("Padding size is very large. Should be less than Width.");
-            if (value.TopAndBottom >= Size.Height)
-               throw new ArgumentException("Padding size is very large. Should be less than Height.");
-            if (SetProperty(ref _paddingBurgerMenu, value)) {
-               Invalidate();
-            }
+               throw new BadArgumentException("Padding size is very large. Should be less than Width.");
+            if (value.getTopAndBottom() >= getSize().height)
+               throw new BadArgumentException("Padding size is very large. Should be less than Height.");
+            var paddingNew = new BoundDouble(value.Left, value.Top, value.Right, value.Bottom);
+            _notifier.SetProperty(_padding, paddingNew);
          }
       }
-      public void ResetPaddingBurgerMenu() {
-         if (_paddingBurgerMenu == null)
-            return;
-         _paddingBurgerMenu = null;
-         OnPropertyChanged(nameof(this.PaddingBurgerMenu));
-         Invalidate();
+      private void RecalcPadding(SizeDouble old) {
+         SizeDouble size = Size;
+         var paddingNew = (_padding == null)
+               ? new BoundDouble(size.Width / 2,
+                                 size.Height / 2,
+                                 _generalModel.Padding().Right,
+                                 _generalModel.Padding().Bottom)
+               : ImageModel.RecalcPadding(_padding, size, old);
+         _notifier.SetProperty(_padding, paddingNew, nameof(this.Padding));
       }
 
       protected struct LineInfo {
@@ -96,19 +95,20 @@ namespace fmg.core.img {
          public PointDouble to;   // end   coord
       }
 
-      protected IEnumerable<LineInfo> GetCoordsBurgerMenu() {
-         if (!ShowBurgerMenu)
+      /// <summary> get paint information of drawing burger menu model image </summary>
+      protected IEnumerable<LineInfo> GetCoords() {
+         if (!Show)
             return Enumerable.Empty<LineInfo>();
 
-         bool horizontal = HorizontalBurgerMenu;
-         int layers = LayersInBurgerMenu;
-         var pad = PaddingBurgerMenu;
+         bool horizontal = Horizontal;
+         int layers = LayersIn;
+         var pad = Padding;
          Rect rc = new Rect(pad.Left,
                             pad.Top,
                             Size.Width  - pad.LeftAndRight,
                             Size.Height - pad.TopAndBottom);;
          double penWidth = Math.Max(1, (horizontal ? rc.Height : rc.Width) / (2.0 * layers));
-         double rotateAngle = RotateBurgerMenu ? RotateAngle : 0;
+         double rotateAngle = Rotate ? RotateAngle : 0;
          double stepAngle = 360.0 / layers;
 
          return Enumerable.Range(0, layers)
@@ -133,5 +133,18 @@ namespace fmg.core.img {
             });
       }
 
+      public void Dispose() {
+         if (_disposed)
+            return;
+         _disposed = true;
+
+         _generalModel.PropertyChanged -= OnPropertyGeneralModelChanged;
+         _notifier.Dispose();
+         _generalModel = null;
+
+         GC.SuppressFinalize(this);
+      }
+
    }
+
 }

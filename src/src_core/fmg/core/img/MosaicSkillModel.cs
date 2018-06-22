@@ -8,33 +8,26 @@ using fmg.core.types;
 
 namespace fmg.core.img {
 
-   /// <summary> Abstract representable <see cref="ESkillLevel"/> as image </summary>
-   /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class AMosaicsSkillImg<TImage> : BurgerMenuImg<TImage>
-      where TImage : class
-   {
-      /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
-      protected AMosaicsSkillImg(ESkillLevel? skill) {
-         _mosaicSkill = skill;
-         ShowBurgerMenu = (skill == null);
-         LayersInBurgerMenu = 3;
-         HorizontalBurgerMenu = true;
-         RotateBurgerMenu = true;
-      }
+   /// <summary> MVC model of <see cref="ESkillLevel"/> representable as image </summary>
+   public class MosaicSkillModel : AnimatedImageModel {
 
-      private ESkillLevel? _mosaicSkill;
-      public ESkillLevel? MosaicSkill {
+      private ESkillLevel _mosaicSkill;
+
+      public MosaicSkillModel(ESkillLevel mosaicSkill) { _mosaicSkill = mosaicSkill; }
+
+      public ESkillLevel MosaicSkill {
          get { return _mosaicSkill; }
-         set { SetProperty(ref _mosaicSkill, value); }
+         set { _notifier.setProperty(ref _mosaicSkill, value); }
       }
 
-      protected IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> GetCoords() {
+
+      public IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords => {
          return !_mosaicSkill.HasValue
-            ? GetCoords_SkillLevelAsType()
-            : GetCoords_SkillLevelAsValue();
+            ? Coords_SkillLevelAsType
+            : Coords_SkillLevelAsValue;
       }
 
-      private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> GetCoords_SkillLevelAsType() {
+      private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords_SkillLevelAsType => {
          const bool bigMaxStar = !true; // true - большая звезда - вне картинки; false - большая звезда - внутри картинки.
          const bool accelerateRevert = !true; // ускорение под конец анимации, иначе - в начале...
 
@@ -42,21 +35,22 @@ namespace fmg.core.img {
          var stars = bigMaxStar ? 6 : 8;
          var angle = RotateAngle;
 
+         var pad = Padding;
          var sqMax = Math.Min( // размер квадрата куда будет вписана звезда при 0°
-               Size.Width - Padding.LeftAndRight,
-               Size.Height - Padding.TopAndBottom);
+               Size.Width - pad.LeftAndRight,
+               Size.Height - pad.TopAndBottom);
          var sqMin = sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
          var sqExt = sqMax * 3;
 
-         var centerMax = new PointDouble(Padding.Left + (Size.Width  - Padding.LeftAndRight) / 2.0,
-                                         Padding.Top  + (Size.Height - Padding.TopAndBottom) / 2.0);
-         var centerMin = new PointDouble(Padding.Left + sqMin / 2, Padding.Top + sqMin / 2);
+         var centerMax = new PointDouble(pad.Left + (Size.Width  - pad.LeftAndRight) / 2.0,
+                                         pad.Top  + (Size.Height - pad.TopAndBottom) / 2.0);
+         var centerMin = new PointDouble(pad.Left + sqMin / 2, pad.Top + sqMin / 2);
          var centerExt = new PointDouble(Size.Width * 1.5, Size.Height * 1.5);
 
          return GetCoords_SkillLevelAsType_2(true, bigMaxStar, accelerateRevert, rays, stars / 2, angle, sqMin, sqMax, centerMin, centerMax)
             .Concat(
                 GetCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars / 2, angle, sqMax, sqExt, centerMax, centerExt));
-         //return GetCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax); // old
+       //return GetCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax); // old
       }
 
       private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> GetCoords_SkillLevelAsType_2(
@@ -75,6 +69,8 @@ namespace fmg.core.img {
          var anglePart = 360.0 / stars;
          var sqDiff = sqMax - sqMin;
          var centerDiff = new PointDouble(centerMax.X - centerMin.X, centerMax.Y - centerMin.Y);
+         var fgClr = ForegroundColor;
+         bool pl = PolarLights;
 
          return Enumerable.Range(0, stars)
             .Select(starNum => {
@@ -82,7 +78,7 @@ namespace fmg.core.img {
                if (accumulative)
                   angleAccumulative = Math.Sin((angle / 4).ToRadian()) * angleAccumulative; // accelerate / ускоряшка..
 
-                  var sq = angleStar * sqDiff / 360;
+               var sq = angleStar * sqDiff / 360;
                // (un)comment next line to view result changes...
                sq = Math.Sin((angleStar / 4).ToRadian()) * sq; // accelerate / ускоряшка..
                sq = accelerateRevert
@@ -104,9 +100,9 @@ namespace fmg.core.img {
                      ? centerMin.Y + centerStar.Y
                      : centerMax.Y - centerStar.Y;
 
-               var clr = ForegroundColor;
-               if (PolarLights)
-                  clr = new HSV(clr).AddHue(+angleStar).ToColor(); // try: -angleStar
+               var clr = !pl
+                  ? fgClr
+                  : new HSV(clr).AddHue(+angleStar).ToColor(); // try: -angleStar
 
                return new Tuple<double, Tuple<Color, IEnumerable<PointDouble>>>(sq, new Tuple<Color, IEnumerable<PointDouble>>(
                      clr,
@@ -120,14 +116,16 @@ namespace fmg.core.img {
             .Select(x => x.Item2);
       }
 
-      private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> GetCoords_SkillLevelAsValue() {
+      private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords_SkillLevelAsValue => {
+         var pad = Padding;
          var sq = Math.Min( // size inner square
-            Size.Width - Padding.LeftAndRight,
-            Size.Height - Padding.TopAndBottom);
+            Size.Width - pad.LeftAndRight,
+            Size.Height - pad.TopAndBottom);
          var r1 = sq/7; // external radius
          var r2 = sq/12; // internal radius
 
-         var ordinal = MosaicSkill.Value.Ordinal();
+         var skill = MosaicSkill;
+         var ordinal = skill.Value.Ordinal();
          var rays = 5 + ordinal; // rays count
          var stars = 4 + ordinal; // number of stars on the perimeter of the circle
 
@@ -137,6 +135,8 @@ namespace fmg.core.img {
 
          var center = new PointDouble(Size.Width / 2.0, Size.Height / 2.0);
          var zero = new PointDouble(0, 0);
+         var fgClr = ForegroundColor;
+         bool pl = PolarLights;
          return Enumerable.Range(0, stars)
             .Select(starNum => {
                // (un)comment next line to view result changes...
@@ -146,11 +146,11 @@ namespace fmg.core.img {
                var offset = FigureHelper.GetPointOnCircle(sq/3, angleAccumulative + starNum * anglePart, zero);
                var centerStar = new PointDouble(center.X + offset.X, center.Y + offset.Y);
 
-               var clr = ForegroundColor;
-               if (PolarLights)
-                  clr = new HSV(clr).AddHue(starNum * anglePart).ToColor();
+               var clr = !pl
+                  ? fgClr
+                  : new HSV(clr).AddHue(starNum * anglePart).ToColor();
 
-               return new Tuple<Color, IEnumerable<PointDouble>>(clr, (MosaicSkill == ESkillLevel.eCustom)
+               return new Tuple<Color, IEnumerable<PointDouble>>(clr, (skill == ESkillLevel.eCustom)
                   ? FigureHelper.GetRegularPolygonCoords(3 + starNum % 4, r1, centerStar, -angleAccumulative)
                   : FigureHelper.GetRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative));
             })

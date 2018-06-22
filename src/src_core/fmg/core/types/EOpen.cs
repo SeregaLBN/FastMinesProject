@@ -21,7 +21,7 @@ namespace fmg.core.types {
             return Ordinal(self).ToString(); // System.Enum.GetName(typeof(EOpen), self).TrimStart('_');
          case EOpen._Mine:
             return "M";
-            //return "\u2699"; // Шестерня: Gear
+            //return "\u2699"; // РЁРµСЃС‚РµСЂРЅСЏ: Gear
          }
       }
    }

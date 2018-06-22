@@ -24,7 +24,7 @@ namespace fmg.core.img {
       ///</summary> plaform specific view/image/picture or other display context/canvas/window/panel </summary>
       TImage Image { get; }
 
-      ///</summary> Mark the need to redraw the picture
+      ///</summary> Mark the need to redraw the picture.
       /// Performs a call to the inner draw method (synchronously or asynchronously or implicitly, depending on the implementation) </summary>
       void Invalidate();
 

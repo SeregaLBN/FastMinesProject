@@ -12,17 +12,19 @@ import fmg.common.notyfier.NotifyPropertyChanged;
 /** MVC: model of representable menu as horizontal or vertical lines */
 public class BurgerMenuModel implements IImageModel {
 
+   private ImageModel _generalModel;
+   private boolean _show = true;
+   private boolean _horizontal = true;
+   private int   _layers = 3;
+   private boolean _rotate;
+   private BoundDouble _padding;
+   private PropertyChangeListener _generalModelListener;
    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
    /**
     * @param generalModel another basic model
     */
    protected BurgerMenuModel(ImageModel generalModel) {
-      _show = true;
-      _layers = 3;
-      _horizontal = true;
-      _rotate = true;
-
       _generalModel = generalModel;
       _generalModelListener = event -> {
          assert event.getSource() == _generalModel; // by reference
@@ -31,10 +33,6 @@ public class BurgerMenuModel implements IImageModel {
       };
       _generalModel.addListener(_generalModelListener);
    }
-
-   private ImageModel _generalModel;
-   private PropertyChangeListener _generalModelListener;
-
 
    public static final String PROPERTY_SHOW       = "Show";
    public static final String PROPERTY_HORIZONTAL = "Horizontal";
@@ -48,23 +46,18 @@ public class BurgerMenuModel implements IImageModel {
    @Override
    public void setSize(SizeDouble size) { _generalModel.setSize(size); }
 
-   private boolean _show;
    public boolean isShow() { return _show; }
    public void   setShow(boolean value) { _notifier.setProperty(_show, value, PROPERTY_SHOW); }
 
-   private boolean _horizontal = true;
    public boolean isHorizontal() { return _horizontal; }
    public void   setHorizontal(boolean value) { _notifier.setProperty(_horizontal, value, PROPERTY_HORIZONTAL); }
 
-   private int   _layers = 3;
    public int  getLayers() { return _layers; }
    public void setLayers(int value) { _notifier.setProperty(_layers, value, PROPERTY_LAYERS); }
 
-   private boolean _rotate;
    public boolean isRotate() { return _rotate; }
    public void   setRotate(boolean value) { _notifier.setProperty(_rotate, value, PROPERTY_ROTATE); }
 
-   private BoundDouble _padding;
    /** inside padding */
    public BoundDouble getPadding() {
       if (_padding == null)
@@ -106,9 +99,9 @@ public class BurgerMenuModel implements IImageModel {
       int layers = getLayers();
       BoundDouble pad = getPadding();
       RectDouble rc = new RectDouble(pad.left,
-                         pad.top,
-                         getSize().width  - pad.getLeftAndRight(),
-                         getSize().height - pad.getTopAndBottom());
+                                     pad.top,
+                                     getSize().width  - pad.getLeftAndRight(),
+                                     getSize().height - pad.getTopAndBottom());
       double penWidth = Math.max(1, (horizontal ? rc.height : rc.width) / (2.0 * layers));
       double rotateAngle = isRotate() ? _generalModel.getRotateAngle() : 0;
       double stepAngle = 360.0 / layers;

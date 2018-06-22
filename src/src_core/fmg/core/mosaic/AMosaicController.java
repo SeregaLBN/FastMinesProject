@@ -31,6 +31,8 @@ public abstract class AMosaicController<TImage, TImage2,
    private EGameStatus _gameStatus = EGameStatus.eGSReady;
    private EPlayInfo _playInfo = EPlayInfo.ePlayerUnknown;
    private int _countClick;
+   /** ячейка на которой было нажато (но не обязательно что отпущено) */
+   private BaseCell _cellDown;
 
    /** для load'a - координаты ячеек с минами */
    private List<Coord> _repositoryMines;
@@ -114,7 +116,7 @@ public abstract class AMosaicController<TImage, TImage2,
          _minesCount = _oldMinesCount;
 
       MosaicGameModel mosaic = getModel();
-      List<BaseCell> matrixClone = new ArrayList<BaseCell>(getMatrix());
+      List<BaseCell> matrixClone = new ArrayList<>(getMatrix());
       matrixClone.remove(firstClickCell); // исключаю на которой кликал юзер
       matrixClone.removeAll(firstClickCell.getNeighbors(mosaic)); // и их соседей
       int count = 0;
@@ -161,15 +163,10 @@ public abstract class AMosaicController<TImage, TImage2,
    /** сколько ещё осталось открыть мин */
    public int getCountMinesLeft() { return getMinesCount() - getCountFlag(); }
    public int getCountClick()  { return _countClick; }
-   public void setCountClick(int clickCount)  {
-      int old = _countClick;
-      if (old != clickCount) {
-         _countClick = clickCount;
-         _notifier.onPropertyChanged(old, clickCount, PROPERTY_COUNT_CLICK);
-      }
+   public void setCountClick(int clickCount) {
+      _notifier.setProperty(_countClick, clickCount, PROPERTY_COUNT_CLICK);
    }
 
-   private BaseCell _cellDown;
    /** ячейка на которой было нажато (но не обязательно что отпущено) */
    public BaseCell getCellDown() { return _cellDown; }
    /** ячейка на которой было нажато (но не обязательно что отпущено) */
@@ -195,11 +192,7 @@ public abstract class AMosaicController<TImage, TImage2,
       return _gameStatus;
    }
    public void setGameStatus(EGameStatus newStatus) {
-      EGameStatus old = _gameStatus;
-      if (old != newStatus) {
-         _gameStatus = newStatus;
-         _notifier.onPropertyChanged(old, newStatus, PROPERTY_GAME_STATUS);
-      }
+      _notifier.setProperty(_gameStatus, newStatus, PROPERTY_GAME_STATUS);
    }
 
    public EPlayInfo getPlayInfo() {
@@ -208,17 +201,12 @@ public abstract class AMosaicController<TImage, TImage2,
       return _playInfo;
    }
    public void setPlayInfo(EPlayInfo newVal) {
-      EPlayInfo old = _playInfo;
-      newVal = EPlayInfo.setPlayInfo(_playInfo, newVal);
-      if (old == newVal)
-         return;
-      _playInfo = newVal;
-      _notifier.onPropertyChanged(old, newVal, PROPERTY_PLAY_INFO);
+      _notifier.setProperty(_playInfo, EPlayInfo.setPlayInfo(_playInfo, newVal), PROPERTY_PLAY_INFO);
    }
 
    public List<Coord> getRepositoryMines() {
       if (_repositoryMines == null)
-         _repositoryMines = new ArrayList<Coord>(0);
+         _repositoryMines = new ArrayList<>(0);
       return _repositoryMines;
    }
    public void setRepositoryMines(List<Coord> newMines) {
@@ -488,14 +476,14 @@ public abstract class AMosaicController<TImage, TImage2,
    public void setUseUnknown(boolean val) { _useUnknown = val; }
    public boolean getUseUnknown() { return _useUnknown; }
 
+   /** Максимальное кол-во мин при  текущем  размере поля */
+   public int getMaxMines() { return getMaxMines(getSizeField()); }
    /** Максимальное кол-во мин при указанном размере поля */
    public int getMaxMines(Matrisize sizeFld) {
       int iMustFreeCell = getMaxNeighborNumber()+1;
       int iMaxMines = sizeFld.m*sizeFld.n-iMustFreeCell;
       return Math.max(1, iMaxMines);
    }
-   /** Максимальное кол-во мин при  текущем  размере поля */
-   public int getMaxMines() { return getMaxMines(getSizeField()); }
    /** размер в пикселях для указанных параметров */
    public SizeDouble getInnerSize(Matrisize sizeField, double area) {
       return DoubleExt.hasMinDiff(area, getArea())
@@ -553,7 +541,7 @@ public abstract class AMosaicController<TImage, TImage2,
    /** преобразовать экранные координаты в ячейку поля мозаики */
    private BaseCell cursorPointToCell(PointDouble point) {
       if (point == null)
-            return null;
+         return null;
       for (BaseCell cell: getModel(). getMatrix())
          //if (cell.getRcOuter().contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
             if (cell.pointInRegion(point))

@@ -5,44 +5,25 @@ using System.Runtime.CompilerServices;
 
 namespace fmg.common.notyfier {
 
-   /// <summary> Implementation of <see cref="INotifyPropertyChanged"/> to simplify models. </summary>
+   /// <summary> Notifies owner clients that a owner property value has changed </summary>
 #if WINDOWS_UWP
    [Windows.Foundation.Metadata.WebHostHidden]
 #endif
-   public class NotifyPropertyChanged : INotifyPropertyChanged, IDisposable {
-
-      /// <summary> Delayed execution in the current thread of the user interface. </summary>
-      public static Action<Action> DEFERR_INVOKER = doRun => {
-         System.Diagnostics.Debug.WriteLine("need redefine!");
-         doRun();
-      };
-
-      protected bool Disposed { get; private set; }
+   public class NotifyPropertyChanged : /* INotifyPropertyChanged */ IDisposable {
 
       private readonly INotifyPropertyChanged _owner;
       private readonly Action<PropertyChangedEventArgs> _fireOwnerEvent;
-      /// <summary> Multicast event for property change notifications. </summary>
-      public event PropertyChangedEventHandler PropertyChanged;
       private readonly bool _deferredNotifications;
       private readonly IDictionary<string /* propertyName */, PropertyChangedEventArgs> _deferrNotifications = new Dictionary<string, PropertyChangedEventArgs>();
+      private bool _disposed;
 
-      [Obsolete]
-      public NotifyPropertyChanged() { _owner = this; }
       public NotifyPropertyChanged(INotifyPropertyChanged owner, Action<PropertyChangedEventArgs> fireOwnerEvent)
          : this(owner, fireOwnerEvent, false)
       { }
-      public NotifyPropertyChanged(INotifyPropertyChanged owner, Action<PropertyChangedEventArgs> fireOwnerEvent, bool deferredNotifications)
-      {
+      public NotifyPropertyChanged(INotifyPropertyChanged owner, Action<PropertyChangedEventArgs> fireOwnerEvent, bool deferredNotifications) {
          _owner = owner;
          _fireOwnerEvent = fireOwnerEvent;
-         if (_fireOwnerEvent != null)
-            this.PropertyChanged += OnOwnerPropertyChanged;
          _deferredNotifications = deferredNotifications;
-      }
-
-      private void OnOwnerPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _owner));
-         _fireOwnerEvent(ev);
       }
 
       /// <summary> Checks if a property already matches a desired value.  Sets the property and notifies listeners only when necessary. </summary>
@@ -53,7 +34,7 @@ namespace fmg.common.notyfier {
       /// when invoked from compilers that support CallerMemberName.</param>
       /// <returns>True if the value was changed, false if the existing value matched the desired value.</returns>
       public bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null) {
-         if (Disposed) {
+         if (_disposed) {
             if (value != null) {
                System.Diagnostics.Debug.WriteLine("Illegall call property " + _owner.GetType().FullName + "." + propertyName + ": object already disposed!");
                return false;
@@ -85,59 +66,43 @@ namespace fmg.common.notyfier {
       }
 
       protected virtual void OnPropertyChanged(PropertyChangedEventArgs ev) {
-         if (Disposed)
+         if (_disposed)
             return;
 
          if (!_deferredNotifications) {
-            PropertyChanged?.Invoke(_owner, ev);
+            _fireOwnerEvent(ev);
             //LoggerSimple.Put($"< OnPropertyChanged: {_owner.GetType().Name}: PropertyName={ev.PropertyName}");
          } else {
             bool shedule = !_deferrNotifications.ContainsKey(ev.PropertyName);
             _deferrNotifications[ev.PropertyName] = ev; // Re-save only the last event.
             if (shedule)
-               DEFERR_INVOKER(() => {
-                  if (Disposed)
+               Factory.DEFERR_INVOKER(() => {
+                  if (_disposed)
                      return;
                   PropertyChangedEventArgs ev2 = _deferrNotifications[ev.PropertyName];
                   if ((ev2 == null) || !_deferrNotifications.Remove(ev.PropertyName))
                      //System.Diagnostics.Trace.TraceError("hmmm... invalid usage ;(");
                      System.Diagnostics.Debug.Assert(false, "hmmm... invalid usage ;(");
                   else
-                     PropertyChanged?.Invoke(_owner, ev2);
+                     _fireOwnerEvent(ev);
                });
             }
       }
 
       /// <summary> rethrow member event, notify parent class/container </summary>
       public void OnPropertyChanged<T>(PropertyChangedEventArgs from, [CallerMemberName] string propertyName = null) {
-         if (!(from is PropertyChangedExEventArgs<T> evEx))
-            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-         else
+         if (from is PropertyChangedExEventArgs<T> evEx)
             OnPropertyChanged(new PropertyChangedExEventArgs<T>(evEx.OldValue, evEx.NewValue, propertyName));
-      }
-
-      protected virtual void Dispose(bool disposing) {
-         if (Disposed)
-            return;
-         Disposed = true;
-
-         if (disposing) {
-            // Dispose managed resources
-            _deferrNotifications.Clear();
-            if (_fireOwnerEvent != null)
-               this.PropertyChanged -= OnOwnerPropertyChanged;
-         }
-
-         // Dispose unmanaged resources
+         else
+            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
       }
 
       public void Dispose() {
-         Dispose(true);
+         if (_disposed)
+            return;
+         _disposed = true;
+         _deferrNotifications.Clear();
          GC.SuppressFinalize(this);
-      }
-
-      ~NotifyPropertyChanged() {
-         Dispose(false);
       }
 
    }

@@ -29,56 +29,59 @@ using fmg.common.notyfier;
 using fmg.core.types;
 using fmg.core.mosaic.cells;
 
-namespace fmg.core.mosaic
-{
+namespace fmg.core.mosaic {
 
-   /// <summary> MVC: model (mosaic field). Default implementation. </summary>
-   public class Mosaic : NotifyPropertyChanged, IMosaic {
+   /// <summary> MVC: game model of mosaic field. Default implementation </summary>
+   public class MosaicGameModel : IMosaic, INotifyPropertyChanged, IDisposable {
 
    #region Members
 
       private BaseCell.BaseAttribute _cellAttr;
-      /// <summary>Matrix of cells, is represented as a vector <see cref="List{BaseCell}"/>.
-      /// Матрица ячеек , представленная(развёрнута) в виде вектора</summary>
-      private readonly List<BaseCell> _matrix = new List<BaseCell>(0);
-      /// <summary>Field size in cells</summary>
-      protected Matrisize _size = new Matrisize(10, 10);
-      /// <summary>из каких фигур состоит мозаика поля</summary>
-      protected EMosaic _mosaicType = EMosaic.eMosaicSquare1;
+      /// <summary> Matrix of cells, is represented as a vector {@link List<BaseCell>}.
+      /// Матрица ячеек, представленная(развёрнута) в виде вектора </summary>
+      private final List<BaseCell> _matrix = new ArrayList<BaseCell>();
+      /// <summary> Field size in cells </summary>
+      private Matrisize _sizeField = new Matrisize(10, 10);
+      /// <summary> из каких фигур состоит мозаика поля </summary>
+      private EMosaic _mosaicType = EMosaic.eMosaicSquare1;
 
+      protected bool Disposed { get; private set; }
+      public event PropertyChangedEventHandler PropertyChanged;
+      protected readonly NotifyPropertyChanged _notifier;
 
    #endregion
+
+      public MosaicGameModel() {
+         _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+      }
 
       public BaseCell.BaseAttribute CellAttr {
          get {
             if (_cellAttr == null) {
                _cellAttr = MosaicHelper.CreateAttributeInstance(MosaicType);
-               _cellAttr.Area = 500;
                _cellAttr.PropertyChanged += OnCellAttributePropertyChanged;
             }
             return _cellAttr;
          }
-         private set {
+         set {
             if (_cellAttr == null)
                return;
             if (value != null)
-               throw new ArgumentException("Bad argument - support only null value!");
+               throw new IllegalArgumentException("Bad argument - support only null value!");
             _cellAttr.PropertyChanged -= OnCellAttributePropertyChanged;
             _cellAttr = null;
-            _matrix.Clear();
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(this.Matrix));
+            _matrix.clear();
+            _notifier.onPropertyChanged();
+            _notifier.onPropertyChanged(nameof(this.Matrix));
          }
       }
 
-      /// <summary>площадь ячеек</summary>
+      /// <summary> площадь ячеек </summary>
       public double Area {
-         get {
-            return CellAttr.Area;
-         }
+         get { return getCellAttr().getArea(); }
          set {
-            System.Diagnostics.Debug.Assert(value >= 1);
-            CellAttr.Area = value;
+            System.Diagnostics.Debug.Assert(newArea >= 1);
+            CellAttr.Area = newArea;
          }
       }
 
@@ -88,11 +91,11 @@ namespace fmg.core.mosaic
                var attr = CellAttr;
                var size = SizeField;
                var mosaicType = MosaicType;
-               //_matrix = new ArrayList<BaseCell>(size.width * size.height);
-               for (var i = 0; i < size.m; i++)
-                  for (var j = 0; j < size.n; j++) {
+               //_matrix = new List<BaseCell>(size.width * size.height);
+               for (var i=0; i < size.m; i++)
+                  for (var j=0; j < size.n; j++) {
                      var cell = MosaicHelper.CreateCellInstance(attr, mosaicType, new Coord(i, j));
-                     _matrix.Add( /*i*size.height + j, */cell);
+                     _matrix.add(/* i*_size.n + j, */ cell);
                   }
             }
             return _matrix;
@@ -103,32 +106,34 @@ namespace fmg.core.mosaic
       public Matrisize SizeField {
          get { return _size; }
          set {
-            if (_size == value)
+            var old = this._sizeField;
+            if (old == newSizeField)
                return;
-            _matrix.Clear();
-            var tmp = SetProperty(ref _size, value);
-            System.Diagnostics.Debug.Assert(tmp);
-            OnPropertyChanged(nameof(this.Matrix));
+
+            _matrix.clear();
+            this._sizeField = value;
+
+            _notifier.onPropertyChanged(old, value);
+            _notifier.onPropertyChanged(nameof(this.Matrix));
          }
       }
 
-      /// <summary> тип мозаики
-      /// (из каких фигур состоит мозаика поля) </summary>
+      /// <summary> тип мозаики (из каких фигур состоит мозаика поля) </summary>
       public EMosaic MosaicType {
          get { return _mosaicType; }
          set {
-            if (_mosaicType == value)
+            EMosaic old = this._mosaicType;
+            if (old == value)
                return;
 
-            var saveArea = Area; // save
+            double saveArea = Area; // save
 
-            var old = _mosaicType;
-            _mosaicType = value;
+            this._mosaicType = value;
             CellAttr = null;
 
             Area = saveArea; // restore
 
-            OnPropertyChanged(old, value, nameof(this.MosaicType));
+            _notifier.onPropertyChanged(old, value);
          }
       }
 
@@ -137,33 +142,29 @@ namespace fmg.core.mosaic
       /// <summary> доступ к заданной ячейке </summary>
       public BaseCell getCell(Coord coord) { return getCell(coord.x, coord.y); }
 
-      protected virtual void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         var pn = ev.PropertyName;
-         if (pn == nameof(_cellAttr.Area)) {
+      protected void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, CellAttr));
+
+         if (ev.PropertyName == nameof(BaseCell.BaseAttribute.Area))) {
             foreach (var cell in Matrix)
                cell.Init();
-
-            OnPropertyChanged<double>(ev, nameof(this.Area));
+            _notifier.onPropertyChanged(ev, nameof(this.Area)); // ! rethrow event - notify parent class
          }
-         OnPropertyChanged(nameof(this.CellAttr));
-         OnPropertyChanged(nameof(this.CellAttr) + "." + pn);
+         _notifier.onPropertyChanged(nameof(this.CellAttr));
       }
 
-      public void EnableCellAttributePropertyListener(bool enable) {
-         if (enable)
-            CellAttr.PropertyChanged += OnCellAttributePropertyChanged;
-         else
-            CellAttr.PropertyChanged -= OnCellAttributePropertyChanged;
+      // <summary>  Dispose managed resources </summary>/
+      protected virtual void Disposing() {
+         _notifier.Dispose();
+         CellAttr = null; // call setter - unsubscribe & dispose
       }
 
-      protected override void Dispose(bool disposing) {
+      public void Dispose() {
          if (Disposed)
             return;
-
-         base.Dispose(disposing);
-
-         if (disposing)
-            CellAttr = null; // call setter - unsubscribe & dispose
+         Disposed = true;
+         Disposing();
+         GC.SuppressFinalize(this);
       }
 
    }

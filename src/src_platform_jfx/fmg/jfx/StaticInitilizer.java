@@ -1,16 +1,15 @@
 package fmg.jfx;
 
-import javafx.application.Platform;
-
-import fmg.common.notyfier.NotifyPropertyChanged;
-import fmg.core.img.AnimatedImgController;
+import fmg.common.ui.Factory;
 import fmg.jfx.draw.img.Animator;
+import fmg.jfx.utils.Timer;
 
 public final class StaticInitilizer {
 
    static {
-      NotifyPropertyChanged.DEFERR_INVOKER = doRun -> Platform.runLater(doRun);
-      AnimatedImgController.GET_ANIMATOR = () -> Animator.getSingleton();
+      Factory.DEFERR_INVOKER = doRun -> javafx.application.Platform.runLater(doRun);
+      Factory.GET_ANIMATOR = () -> Animator.getSingleton();
+      Factory.TIMER_CREATOR = () -> new Timer();
    }
 
    public static void init() {

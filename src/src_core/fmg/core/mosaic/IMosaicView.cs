@@ -6,20 +6,24 @@ using fmg.core.mosaic.cells;
 namespace fmg.core.mosaic {
 
    /// <summary> MVC view interface of mosaic </summary>
-   public interface IMosaicView : IDisposable {
-
-      /// <summary> Size of the View in pixels </summary>
-      SizeDouble Size { get; }
+   /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
+   /// <typeparam name="TImage2">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
+   /// <typeparam name="TMosaicModel">mosaic data model</typeparam>
+   public interface IMosaicView<TImage, TImage2, TMosaicModel>
+                   : IImageView<TImage, TMosaicModel>
+      where TImage : class
+      where TImage2 : class
+      where TMosaicModel : MosaicDrawModel<TImage2>
+   {
 
       /// <summary> Mark the cells needed for the repainting.
-      /// Performs a call to the Repaint method (synchronously or asynchronously or implicitly, depending on the implementation) </summary>
+      /// Performs a call to the {@link #draw} method (synchronously or asynchronously or implicitly, depending on the implementation) </summary>
       /// <param name="modifiedCells"> cells to invalidate. null value - make to redraw all mosaic field cells </param>
-      void Invalidate(IEnumerable<BaseCell> modifiedCells = null);
+      void Invalidate(IEnumerable<BaseCell> modifiedCells);
 
       /// <summary> Redraw the required cells </summary>
       /// <param name="modifiedCells">Cells to be redrawn. NULL - redraw the full mosaic, or only those that are included in the clipRegion.</param>
-      /// <param name="clipRegion">Region for redrawing. NULL - Redraw everything that is specified in modifiedCells</param>
-      void Repaint(IEnumerable<BaseCell> modifiedCells = null, RectDouble? clipRegion = null);
+      void Draw(IEnumerable<BaseCell> modifiedCells);
 
    }
 

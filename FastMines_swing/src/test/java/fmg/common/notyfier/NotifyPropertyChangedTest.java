@@ -9,6 +9,8 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
 
+import fmg.common.ui.Factory;
+
 public class NotifyPropertyChangedTest {
 
     private INotifyPropertyChanged _dummy = new INotifyPropertyChanged() {
@@ -41,7 +43,7 @@ public class NotifyPropertyChangedTest {
     @Test
     public void NotifyPropertyChangedAsyncTest() throws InterruptedException {
         ExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        NotifyPropertyChanged.DEFERR_INVOKER = r -> scheduler.execute(r);
+        Factory.DEFERR_INVOKER = r -> scheduler.execute(r);
         try (NotifyPropertyChanged notifyPropertyChanged = new NotifyPropertyChanged(_dummy, true)) {
 
             int countFiredEvents = 3 + ThreadLocalRandom.current().nextInt(10);

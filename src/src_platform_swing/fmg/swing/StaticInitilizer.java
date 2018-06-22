@@ -1,16 +1,15 @@
 package fmg.swing;
 
-import javax.swing.SwingUtilities;
-
-import fmg.common.notyfier.NotifyPropertyChanged;
-import fmg.core.img.AnimatedImgController;
+import fmg.common.ui.Factory;
 import fmg.swing.draw.img.Animator;
+import fmg.swing.utils.Timer;
 
 public final class StaticInitilizer {
 
    static {
-      NotifyPropertyChanged.DEFERR_INVOKER = doRun -> SwingUtilities.invokeLater(doRun);
-      AnimatedImgController.GET_ANIMATOR = () -> Animator.getSingleton();
+      Factory.DEFERR_INVOKER = doRun -> javax.swing.SwingUtilities.invokeLater(doRun);
+      Factory.GET_ANIMATOR = () -> Animator.getSingleton();
+      Factory.TIMER_CREATOR = () -> new Timer();
    }
 
    public static void init() {

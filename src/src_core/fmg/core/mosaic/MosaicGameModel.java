@@ -40,13 +40,13 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
    private BaseCell.BaseAttribute _cellAttr;
    /** Matrix of cells, is represented as a vector {@link List<BaseCell>}.
      * Матрица ячеек, представленная(развёрнута) в виде вектора */
-   private final List<BaseCell> _matrix = new ArrayList<BaseCell>();
+   private final List<BaseCell> _matrix = new ArrayList<>();
    /** Field size in cells */
    private Matrisize _sizeField = new Matrisize(10, 10);
    /** из каких фигур состоит мозаика поля */
    private EMosaic _mosaicType = EMosaic.eMosaicSquare1;
 
-   protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
+   protected final NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
    private final PropertyChangeListener _cellAttrListener = ev -> onCellAttributePropertyChanged(ev);
 
    public static final String PROPERTY_AREA        = BaseCell.BaseAttribute.PROPERTY_AREA;
@@ -82,7 +82,7 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
    }
    /** установить новую площадь ячеек */
    @Override
-   public void setArea(double newArea)  {
+   public void setArea(double newArea) {
       assert (newArea >= 1);
       getCellAttr().setArea(newArea);
    }
@@ -155,7 +155,6 @@ public class MosaicGameModel implements IMosaic, INotifyPropertyChanged, AutoClo
          _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), PROPERTY_AREA); // ! rethrow event - notify parent class
       }
       _notifier.onPropertyChanged(PROPERTY_CELL_ATTR);
-      _notifier.onPropertyChanged(PROPERTY_CELL_ATTR + "." + propName);
    }
 
    @Override

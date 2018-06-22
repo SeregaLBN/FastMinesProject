@@ -8,7 +8,7 @@ import fmg.data.view.draw.PenBorder;
 
 /** MVC: mosaic image controller. Base implementation */
 public abstract class AMosaicImageController<TImage, TMosaicView extends AMosaicView<TImage, Void, MosaicAnimatedModel<Void>>>
-              extends AMosaicController<TImage, Void, TMosaicView, MosaicAnimatedModel<Void>>
+                   extends AMosaicController<TImage, Void, TMosaicView, MosaicAnimatedModel<Void>>
 {
 
    public AMosaicImageController(TMosaicView view) {

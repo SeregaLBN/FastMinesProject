@@ -2,7 +2,8 @@ package fmg.core.img;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
+
+import fmg.common.ui.Factory;
 
 /**
  * MVC controller. Base animation controller.
@@ -16,9 +17,6 @@ public abstract class AnimatedImgController<TImage,
                     extends ImageController<TImage, TImageView, TImageModel>
 {
 
-   /** Platform-dependent factory of {@link IAnimator}. Set from outside... */
-   public static Supplier<IAnimator> GET_ANIMATOR;
-
    /** Image is animated? */
    private Boolean _animated = null;
    /** Overall animation period (in milliseconds) */
@@ -26,6 +24,7 @@ public abstract class AnimatedImgController<TImage,
    /** Total frames of the animated period */
    private int _totalFrames = 30;
    private int _currentFrame = 0;
+   private Map<Class<? extends IModelTransformer>, IModelTransformer> _transformers = new HashMap<>();
 
    protected AnimatedImgController(TImageView imageView) {
       super(imageView);
@@ -40,14 +39,14 @@ public abstract class AnimatedImgController<TImage,
    public void setAnimated(boolean value) {
       if (_notifier.setProperty(_animated, value, PROPERTY_ANIMATED)) {
          if (value)
-            GET_ANIMATOR.get().subscribe(this, timeFromStartSubscribe -> {
+            Factory.GET_ANIMATOR.get().subscribe(this, timeFromStartSubscribe -> {
                long mod = timeFromStartSubscribe % _animatePeriod;
                long frame = mod * getTotalFrames() / _animatePeriod;
                //System.out.println("ANIMATOR : " + getClass().getSimpleName() + ": "+ timeFromStartSubscribe);
                setCurrentFrame((int)frame);
             });
          else
-            GET_ANIMATOR.get().pause(this);
+            Factory.GET_ANIMATOR.get().pause(this);
       }
    }
 
@@ -72,8 +71,6 @@ public abstract class AnimatedImgController<TImage,
          getView().invalidate();
       }
    }
-
-   private Map<Class<? extends IModelTransformer>, IModelTransformer> _transformers = new HashMap<>();
 
    public void removeModelTransformer(Class<? extends IModelTransformer> transformerClass) {
       if (_transformers.keySet().contains(transformerClass))
@@ -102,7 +99,7 @@ public abstract class AnimatedImgController<TImage,
    @Override
    public void close() {
       if (_animated != null)
-         GET_ANIMATOR.get().unsubscribe(this);
+         Factory.GET_ANIMATOR.get().unsubscribe(this);
       _transformers.clear();
       super.close();
    }

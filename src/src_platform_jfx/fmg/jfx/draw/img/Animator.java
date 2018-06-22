@@ -5,10 +5,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import fmg.core.img.IAnimator;
 import javafx.animation.AnimationTimer;
 
+import fmg.core.img.IAnimator;
+
 public class Animator implements IAnimator, AutoCloseable {
+
+   private static class SubscribeInfo {
+      public boolean active = true;    // enabled?
+      public long    startTime = new Date().getTime(); // start time of subscribe
+      public Consumer<Long /* time from the beginning of the subscription */> callback;
+   }
+   private final AnimationTimer _timer;
+   private final Map<Object /* subscriber */, SubscribeInfo> _subscribers;
 
    private static Animator _singleton;
    public static Animator getSingleton() { // not synchronized. since should work only in the thread of the UI.
@@ -33,14 +42,6 @@ public class Animator implements IAnimator, AutoCloseable {
       };
       _timer.start();
    }
-
-   private static class SubscribeInfo {
-      public boolean active = true;    // enabled?
-      public long    startTime = new Date().getTime(); // start time of subscribe
-      public Consumer<Long /* time from the beginning of the subscription */> callback;
-   }
-   private final AnimationTimer _timer;
-   private final Map<Object /* subscriber */, SubscribeInfo> _subscribers;
 
    @Override
    public void subscribe(Object subscriber, Consumer<Long /* time from start subscribe */> subscriberCallbackMethod) {
