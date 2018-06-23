@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using fmg.common.ui;
 
 namespace fmg.core.img {
 
@@ -8,6 +10,7 @@ namespace fmg.core.img {
    /// <typeparam name="TImageModel">MVC model</typeparam>
    public abstract class AnimatedImgController<TImage, TImageView, TImageModel>
                              : ImageController<TImage, TImageView, TImageModel>
+      where TImage      : class
       where TImageView  : IImageView<TImage, TImageModel>
       where TImageModel : IImageModel
    {
@@ -33,7 +36,7 @@ namespace fmg.core.img {
                if (value)
                   Factory.GET_ANIMATOR().Subscribe(this, timeFromStartSubscribe => {
                      long mod = timeFromStartSubscribe % _animatePeriod;
-                     long frame = mod * getTotalFrames() / _animatePeriod;
+                     long frame = mod * TotalFrames / _animatePeriod;
                      //System.out.println("ANIMATOR : " + getClass().getSimpleName() + ": "+ timeFromStartSubscribe);
                      CurrentFrame = (int)frame;
                   });
@@ -60,10 +63,11 @@ namespace fmg.core.img {
 
       protected int CurrentFrame {
          get { return _currentFrame; }
-         get {
+         set {
             if (_notifier.SetProperty(ref _currentFrame, value)) {
-               _transformers.forEach((k,v) -> v.execute(_currentFrame, _totalFrames, getModel()));
-               getView().invalidate();
+               foreach (var item in _transformers)
+                  item.Value.Execute(_currentFrame, _totalFrames, Model);
+               View.Invalidate();
             }
          }
       }
@@ -77,24 +81,24 @@ namespace fmg.core.img {
             _transformers.Add(transformer.GetType(), transformer);
       }
 
-      public void UseRotateTransforming(bool enable) {
+      public virtual void UseRotateTransforming(bool enable) {
          if (enable)
-            addModelTransformer(new RotateTransformer());
+            AddModelTransformer(new RotateTransformer());
          else
-            removeModelTransformer(typeof(RotateTransformer));
+            RemoveModelTransformer(typeof(RotateTransformer));
       }
 
-      public void usePolarLightFgTransforming(bool enable) {
+      public virtual void UsePolarLightFgTransforming(bool enable) {
          if (enable)
-            addModelTransformer(new PolarLightFgTransformer());
+            AddModelTransformer(new PolarLightFgTransformer());
          else
-            removeModelTransformer(typeof(PolarLightFgTransformer));
+            RemoveModelTransformer(typeof(PolarLightFgTransformer));
       }
 
       protected override void Disposing() {
          if (_animated != null)
-            GET_ANIMATOR().Unsubscribe(this);
-         _transformers.clear();
+            Factory.GET_ANIMATOR().Unsubscribe(this);
+         _transformers.Clear();
          base.Disposing();
       }
 

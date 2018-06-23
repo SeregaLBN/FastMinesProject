@@ -1,4 +1,4 @@
-package fmg.core.img;
+using fmg.core.img;
 
 /// <summary> Transforming image model data. Usage for image animations </summary>
 public interface IModelTransformer {

@@ -1,26 +1,42 @@
+using System;
+using System.ComponentModel;
+using fmg.common.geom;
 using fmg.common.notyfier;
 
 namespace fmg.data.view.draw {
 
-   public class FontInfo : NotifyPropertyChanged {
+   public class FontInfo : INotifyPropertyChanged, IDisposable {
 
       private string _name = "Arial"; // Times New Roman // Verdana // Courier New // SansSerif;
       private bool _bold = false;
-      private int _size = 10;
+      private double _size = 10;
+      public event PropertyChangedEventHandler PropertyChanged;
+      protected readonly NotifyPropertyChanged _notifier;
+
+      public FontInfo() {
+         _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+      }
 
       public string Name {
          get { return _name; }
-         set { SetProperty(ref _name, value); }
+         set { _notifier.SetProperty(ref _name, value); }
       }
 
       public bool Bold {
          get { return _bold; }
-         set { SetProperty(ref _bold, value); }
+         set { _notifier.SetProperty(ref _bold, value); }
       }
 
-      public int Size {
+      public double Size {
          get { return _size; }
-         set { SetProperty(ref _size, value); }
+         set {
+            // _notifier.SetProperty(ref _size, value);
+            double old = _size;
+            if (_size.HasMinDiff(value))
+               return;
+            _size = value;
+            _notifier.OnPropertyChanged(old, value);
+         }
       }
 
       protected bool Equals(FontInfo other) {
@@ -34,16 +50,22 @@ namespace fmg.data.view.draw {
       }
 
       public override int GetHashCode() {
-         unchecked { 
+         unchecked {
             var hashCode = _name?.GetHashCode() ?? 0;
             hashCode = (hashCode*397) ^ _bold.GetHashCode();
-            return (hashCode *397) ^ _size;
+            return (hashCode *397) ^ _size.GetHashCode();
          }
       }
 
       public override string ToString() {
          return string.Format("FontInfo={{name={0}, bold={1}, size={2}}}", _name, _bold, _size);
       }
+
+      public void Dispose() {
+         _notifier.Dispose();
+         GC.SuppressFinalize(this);
+      }
+
    }
 
 }

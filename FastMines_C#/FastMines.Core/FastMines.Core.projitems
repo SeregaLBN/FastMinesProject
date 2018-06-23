@@ -75,11 +75,11 @@
     <Compile Include="..\..\src\src_common\fmg\common\ISerializable.cs">
       <Link>src_fmg.common\ISerializable.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_common\fmg\common\Nothing.cs">
+      <Link>src_fmg.common\Nothing.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_common\fmg\common\crypt\DES.cs">
       <Link>src_fmg.common\crypt\DES.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_common\fmg\common\Disposable.cs">
-      <Link>src_fmg.common\Disposable.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_common\fmg\common\LoggerSimple.cs">
       <Link>src_fmg.common\LoggerSimple.cs</Link>
@@ -89,15 +89,6 @@
     </Compile>
     <Compile Include="..\..\src\src_common\fmg\common\notyfier\PropertyChangedExEventArgs.cs">
       <Link>src_fmg.common\notyfier\PropertyChangedExEventArgs.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\mosaic\draw\PaintContext.cs">
-      <Link>src_fmg.core\mosaic\draw\PaintContext.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\mosaic\draw\ICellPaint.cs">
-      <Link>src_fmg.core\mosaic\draw\ICellPaint.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\mosaic\draw\IPaintable.cs">
-      <Link>src_fmg.core\mosaic\draw\IPaintable.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\IMosaic.cs">
       <Link>src_fmg.core\mosaic\IMosaic.cs</Link>
@@ -180,8 +171,8 @@
     <Compile Include="..\..\src\src_core\fmg\core\img\IImageView.cs">
       <Link>src_fmg.core\img\IImageView.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\img\ImageView.cs">
-      <Link>src_fmg.core\img\ImageView.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\img\IImageController.cs">
+      <Link>src_fmg.core\img\IImageController.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\ImageView.cs">
       <Link>src_fmg.core\img\ImageView.cs</Link>

@@ -11,7 +11,7 @@ using fmg.core.types;
 
 namespace fmg.data.controller.serializable {
 
-   /// <summary>хранилище пользователей и их игровой статистики</summary>
+   /// <summary>С…СЂР°РЅРёР»РёС‰Рµ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ Рё РёС… РёРіСЂРѕРІРѕР№ СЃС‚Р°С‚РёСЃС‚РёРєРё</summary>
    public abstract class PlayersModel : IExternalizable {
       //private static final long version = Main.serialVersionUID;
       private readonly long version;
@@ -96,14 +96,14 @@ namespace fmg.data.controller.serializable {
          return players.IndexOf(recFind);
       }
 
-      /// <summary>Установить статистику для игрока</summary>
-      /// <param name="userId">идентификатор игрока</param>
-      /// <param name="mosaic">на какой мозаике</param>
-      /// <param name="skill">на каком уровне сложности</param>
-      /// <param name="victory">выиграл ли?</param>
-      /// <param name="countOpenField">кол-во открытых ячеек</param>
-      /// <param name="playTime">время игры</param>
-      /// <param name="clickCount">кол-во кликов</param>
+      /// <summary>РЈСЃС‚Р°РЅРѕРІРёС‚СЊ СЃС‚Р°С‚РёСЃС‚РёРєСѓ РґР»СЏ РёРіСЂРѕРєР°</summary>
+      /// <param name="userId">РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РёРіСЂРѕРєР°</param>
+      /// <param name="mosaic">РЅР° РєР°РєРѕР№ РјРѕР·Р°РёРєРµ</param>
+      /// <param name="skill">РЅР° РєР°РєРѕРј СѓСЂРѕРІРЅРµ СЃР»РѕР¶РЅРѕСЃС‚Рё</param>
+      /// <param name="victory">РІС‹РёРіСЂР°Р» Р»Рё?</param>
+      /// <param name="countOpenField">РєРѕР»-РІРѕ РѕС‚РєСЂС‹С‚С‹С… СЏС‡РµРµРє</param>
+      /// <param name="playTime">РІСЂРµРјСЏ РёРіСЂС‹</param>
+      /// <param name="clickCount">РєРѕР»-РІРѕ РєР»РёРєРѕРІ</param>
       public void setStatistic(Guid userId, EMosaic mosaic, ESkillLevel skill, bool victory, long countOpenField, long playTime, long clickCount) {
          if (skill == ESkillLevel.eCustom)
             return;
@@ -211,7 +211,7 @@ namespace fmg.data.controller.serializable {
                      read += curr;
                   } while (read < data.Length);
                   if (read != data.Length)
-                     throw new IOException("Invalid data length. Ожидалось " + data.Length + " байт, а прочитано " + read + " байт.");
+                     throw new IOException("Invalid data length. РћР¶РёРґР°Р»РѕСЃСЊ " + data.Length + " Р±Р°Р№С‚, Р° РїСЂРѕС‡РёС‚Р°РЅРѕ " + read + " Р±Р°Р№С‚.");
                }
             }
 
@@ -289,7 +289,7 @@ namespace fmg.data.controller.serializable {
                      read += curr;
                   } while (read < data.Length);
                   if (read != data.Length)
-                     throw new IOException("Invalid data length. Ожидалось " + data.Length + " байт, а прочитано " + read + " байт.");
+                     throw new IOException("Invalid data length. РћР¶РёРґР°Р»РѕСЃСЊ " + data.Length + " Р±Р°Р№С‚, Р° РїСЂРѕС‡РёС‚Р°РЅРѕ " + read + " Р±Р°Р№С‚.");
                }
             }
 

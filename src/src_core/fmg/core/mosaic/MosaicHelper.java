@@ -260,10 +260,10 @@ public final class MosaicHelper {
    }
 
    /** The size in pixels where to place the matrix */
-    public static SizeDouble getSize(EMosaic mosaicType, double area, Matrisize mosaicSizeField) {
-       BaseCell.BaseAttribute attr = createAttributeInstance(mosaicType);
-       attr.setArea(area);
-       return attr.getSize(mosaicSizeField);
-    }
+   public static SizeDouble getSize(EMosaic mosaicType, double area, Matrisize mosaicSizeField) {
+      BaseCell.BaseAttribute attr = createAttributeInstance(mosaicType);
+      attr.setArea(area);
+      return attr.getSize(mosaicSizeField);
+   }
 
 }

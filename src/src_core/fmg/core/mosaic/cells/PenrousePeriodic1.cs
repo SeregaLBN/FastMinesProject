@@ -33,7 +33,7 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrPenrousePeriodic1 : BaseAttribute {
 
-         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         public override SizeDouble GetSize(Matrisize sizeField) {
             var a = A;
             var b = B;
             var c = C;
@@ -126,7 +126,7 @@ namespace fmg.core.mosaic.cells {
             return result;
          }
 
-         public override int getNeighborNumber(int direction) {
+         public override int GetNeighborNumber(int direction) {
             switch (direction) {
             case 100: case 108: case 114: case 115: return  7;
 
@@ -139,18 +139,18 @@ namespace fmg.core.mosaic.cells {
             case  66: case  67: case  68: case  70: case  71: case  74:
             case  77: case  85: case 101: case 105: case 125: return  9;
 
-            case   2: case   5: case  11: case  12: case  13: case  14: 
-            case  18: case  20: case  23: case  25: case  26: case  28: 
-            case  29: case  30: case  31: case  32: case  33: case  35: 
-            case  36: case  38: case  39: case  40: case  41: case  43: 
-            case  44: case  47: case  48: case  50: case  51: case  57: 
-            case  58: case  62: case  63: case  64: case  69: case  73: 
-            case  76: case  78: case  79: case  80: case  82: case  84: 
-            case  88: case  90: case  91: case  92: case  96: case  99: 
-            case 102: case 103: case 104: case 106: case 107: case 109: case  22: 
+            case   2: case   5: case  11: case  12: case  13: case  14:
+            case  18: case  20: case  23: case  25: case  26: case  28:
+            case  29: case  30: case  31: case  32: case  33: case  35:
+            case  36: case  38: case  39: case  40: case  41: case  43:
+            case  44: case  47: case  48: case  50: case  51: case  57:
+            case  58: case  62: case  63: case  64: case  69: case  73:
+            case  76: case  78: case  79: case  80: case  82: case  84:
+            case  88: case  90: case  91: case  92: case  96: case  99:
+            case 102: case 103: case 104: case 106: case 107: case 109: case  22:
             case 116: case 118: case 119: case 120: case 121: case 122: case 123: return 10;
 
-            case   1: case   6: case   8: case  16: case  19: case  45: 
+            case   1: case   6: case   8: case  16: case  19: case  45:
             case  53: case  55: case  56: case  59: case  60: case  75: case 110: case 113: return 11;
 
             case   3: case   4: case  27: case  34: return 12;
@@ -160,18 +160,18 @@ namespace fmg.core.mosaic.cells {
                //throw new Exception("Забыл case #" + direction);
             }
          }
-         public override int getVertexNumber(int direction) { return 4; }
+         public override int GetVertexNumber(int direction) { return 4; }
 
          static double vertexIntersection = 0.0;
-         public override double getVertexIntersection() {
+         public override double GetVertexIntersection() {
             if (vertexIntersection < 1) {
                var cntDirection = GetDirectionCount(); // 0..125
                var sum = 0;
                for (var dir=0; dir<cntDirection; dir++)
-                  sum += getNeighborNumber(dir) +
-                     4 + // соседние фигуры, которые граничат с гранями this, участвуют в подсчёте два раза... 
+                  sum += GetNeighborNumber(dir) +
+                     4 + // соседние фигуры, которые граничат с гранями this, участвуют в подсчёте два раза...
                      4; // ...сама this участвует подсчёте все 4 раза
-               vertexIntersection = ((double)sum) / getVertexNumber(-1) / cntDirection;
+               vertexIntersection = ((double)sum) / GetVertexNumber(-1) / cntDirection;
    //          System.out.println("PenrousePeriodic1::getVertexgetVertexNeighbor == " + vertexIntersection);
             }
             return vertexIntersection;
@@ -187,13 +187,13 @@ namespace fmg.core.mosaic.cells {
          public double G => A * SIN72;
          public double Z => A * SIN36;
          public double K => Z + G;
-         public override double GetSq(int borderWidth) {
+         public override double GetSq(double borderWidth) {
             //var w = borderWidth/2.0;
             return A/SIN99 * SIN36 / SQRT2;
          }
 
-         public override int getMaxBackgroundFillModeValue() {
-            return base.getMaxBackgroundFillModeValue() + 2;
+         public override int GetMaxBackgroundFillModeValue() {
+            return base.GetMaxBackgroundFillModeValue() + 2;
          }
       }
 
@@ -206,7 +206,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrPenrousePeriodic1 Attr => (AttrPenrousePeriodic1) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
+         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
 
          // определяю координаты соседей
          switch (direction) {
@@ -1678,7 +1678,7 @@ namespace fmg.core.mosaic.cells {
             for (; i<neighborCoord.Length; i++)
                if (neighborCoord[i] == null)
                   break;
-            if (i != Attr.getNeighborNumber(direction))
+            if (i != Attr.GetNeighborNumber(direction))
                throw new Exception("Исправь AttrPenrousePeriodic1.getNeighborNumber("+direction+")...");
          }
    #endif
@@ -1809,7 +1809,7 @@ namespace fmg.core.mosaic.cells {
          case  72: case  82: case  85: case  88: case  89:
             top += c;
             goto case 74;
-         case  74: case  84: case  76: case  77: case  80: 
+         case  74: case  84: case  76: case  77: case  80:
             top += c;
             goto case 75;
          case  75:
@@ -1935,7 +1935,7 @@ namespace fmg.core.mosaic.cells {
             region.SetPoint(2, left    , top + a);
             region.SetPoint(3, left    , top    );
             break;
-         case 19: case 23: case 41: case 45: case 56: case 70: case 82: case 94: case 108: case 113: 
+         case 19: case 23: case 41: case 45: case 56: case 70: case 82: case 94: case 108: case 113:
             region.SetPoint(0, left + z, top + h);
             region.SetPoint(1, left + z, top+h+a);
             region.SetPoint(2, left    , top + a);
@@ -1968,7 +1968,7 @@ namespace fmg.core.mosaic.cells {
          case 80: case 83: case 87: case 103: case 118: case 123:
          case 17: case 21: case 25: case  40: case  47: case  52: case  54: case  67:
          case 69: case 86: case 89: case  92: case 109: case 111: case 116:
-         case 19: case 23: case 41: case  45: case  56: case  70: case  82: case  94: case 108: case 113: 
+         case 19: case 23: case 41: case  45: case  56: case  70: case  82: case  94: case 108: case 113:
             center.Y = (region.GetPoint(3).Y+region.GetPoint(1).Y) / 2.0;
             break;
 
@@ -1994,7 +1994,7 @@ namespace fmg.core.mosaic.cells {
       public override Color getBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
          //return base.getBackgroundFillColor(fillMode, defaultColor, repositoryColor);
 
-         if (fillMode == Attr.getMaxBackgroundFillModeValue())
+         if (fillMode == Attr.GetMaxBackgroundFillModeValue())
          {
             switch (getDirection()) {
             case   0: case   1: case   6: case   7: case  84: case  85:
@@ -2009,7 +2009,7 @@ namespace fmg.core.mosaic.cells {
             case  42: case  43: case  44: case  51: case  52:
             case  49: case  57: case  58: case  66: case  67:
                return repositoryColor(3);
-            case  13: case  23: case  20: case  29: case  32: case  33: case  38: case  48: case  50: case  41: 
+            case  13: case  23: case  20: case  29: case  32: case  33: case  38: case  48: case  50: case  41:
                return repositoryColor(4);
             case  22: case  30: case  31: case  39: case  40:
             case  72: case  81: case  89: case  97: case  98:
@@ -2032,7 +2032,7 @@ namespace fmg.core.mosaic.cells {
                throw new Exception("Забыл case #" + getDirection());
             }
          } else
-         if (fillMode == (Attr.getMaxBackgroundFillModeValue()-1))
+         if (fillMode == (Attr.GetMaxBackgroundFillModeValue()-1))
          {
             switch (getDirection()) {
             case   1: case   3: case  13: case  19: case  20:

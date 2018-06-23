@@ -43,9 +43,9 @@ namespace fmg.core.types {
 
             // variant 3 - сложность в зависимости от кол-ва соседних ячеек и кол-ва точек пересечения
             var neighbors = Enumerable.Range(0, attr.GetDirectionCount())
-                      .Select(i => attr.getNeighborNumber(i))
+                      .Select(i => attr.GetNeighborNumber(i))
                       .Average();
-            mosaicCoefficient.Add(mosaicType, attr.getVertexIntersection() / neighbors);
+            mosaicCoefficient.Add(mosaicType, attr.GetVertexIntersection() / neighbors);
 
             //System.out.println(attr.getClass().getSimpleName() + ": " + mosaicCoefficient.get(mosaicType));
          }

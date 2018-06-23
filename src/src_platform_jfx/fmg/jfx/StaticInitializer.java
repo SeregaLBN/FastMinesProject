@@ -1,13 +1,13 @@
-package fmg.swing;
+package fmg.jfx;
 
 import fmg.common.ui.Factory;
-import fmg.swing.draw.img.Animator;
-import fmg.swing.utils.Timer;
+import fmg.jfx.draw.img.Animator;
+import fmg.jfx.utils.Timer;
 
-public final class StaticInitilizer {
+public final class StaticInitializer {
 
    static {
-      Factory.DEFERR_INVOKER = doRun -> javax.swing.SwingUtilities.invokeLater(doRun);
+      Factory.DEFERR_INVOKER = doRun -> javafx.application.Platform.runLater(doRun);
       Factory.GET_ANIMATOR = () -> Animator.getSingleton();
       Factory.TIMER_CREATOR = () -> new Timer();
    }

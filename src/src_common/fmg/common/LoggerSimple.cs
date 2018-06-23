@@ -15,12 +15,12 @@ namespace fmg.common {
             : Environment.CurrentManagedThreadId.ToString();
          System.Diagnostics.Debug.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fff")}]  Th={thr}  {format}");
       }
-#else 
+#else
       public static void Put(string format, params object[] args) {}
 #endif
    }
 
-   public class Tracer : Disposable {
+   public class Tracer : IDisposable {
       private readonly string _hint;
       private readonly Func<string> _disposeMessage;
 
@@ -39,18 +39,14 @@ namespace fmg.common {
 #endif
       }
 
-      protected override void Dispose(bool disposing) {
-         if (disposing) {
-            // free managed resources
+      public void Dispose() {
 #if DEBUG
-            if (_disposeMessage == null)
-               LoggerSimple.Put($"< {_hint}");
-            else
-               LoggerSimple.Put($"< {_hint}: {_disposeMessage()}");
+         if (_disposeMessage == null)
+            LoggerSimple.Put($"< {_hint}");
+         else
+            LoggerSimple.Put($"< {_hint}: {_disposeMessage()}");
 #else
 #endif
-         }
-         // free native resources if there are any.
       }
 
 #if DEBUG

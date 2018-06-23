@@ -22,8 +22,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using fmg.common;
 using fmg.common.geom;
+using fmg.common.notyfier;
 using fmg.core.types;
 using fmg.core.types.click;
 
@@ -53,10 +55,17 @@ namespace fmg.core.mosaic.cells {
       /// Контекст/метаданные, описывающий общие хар-ки для каждого из экземпляров BaseCell.
       /// (Полные данные о конкретной мозаике)
       /// Доопределаяется наследниками BaseCell</summary>
-      public abstract class BaseAttribute : fmg.common.notyfier.NotifyPropertyChanged {
+      public abstract class BaseAttribute : INotifyPropertyChanged {
 
          /// <summary>площадь ячейки/фигуры</summary>
          private double _area;
+         protected bool Disposed { get; private set; }
+         public event PropertyChangedEventHandler PropertyChanged;
+         protected readonly NotifyPropertyChanged _notifier;
+
+         protected BaseAttribute() {
+            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+         }
 
          /// <summary>площадь ячейки/фигуры</summary>
          public double Area {
@@ -64,19 +73,19 @@ namespace fmg.core.mosaic.cells {
             set {
                if (_area.HasMinDiff(value))
                   return;
-               this.SetProperty(ref this._area, value);
+               _notifier.SetProperty(ref this._area, value);
             }
          }
 
          /// <summary>размер квадрата, вписанного в фигуру - область куда выводиться изображение/текст
          /// на основе заданных параметров</summary>
-         public abstract double GetSq(int borderWidth);
+         public abstract double GetSq(double borderWidth);
 
          /// <summary>значение A (базовая величина фигуры - обычно это размер одной из сторон фигуры) по заданной площади фигуры</summary>
          public abstract double A { get; }
 
          /// <summary>get parent container (owner window) size in pixels</summary>
-         public abstract SizeDouble GetOwnerSize(Matrisize sizeField);
+         public abstract SizeDouble GetSize(Matrisize sizeField);
 
          /// <summary>размер поля из группы ячеек состоящих из разных direction</summary>
          public abstract Size GetDirectionSizeField();
@@ -84,16 +93,16 @@ namespace fmg.core.mosaic.cells {
          public int GetDirectionCount() { Size s = GetDirectionSizeField(); return s.Width*s.Height; }
 
          /// <summary>кол-во соседей у ячейки конкретной направленности</summary>
-         public abstract int getNeighborNumber(int direction);
+         public abstract int GetNeighborNumber(int direction);
          /// <summary>из скольки точек/вершин состоит фигура конкретной направленности</summary>
-         public abstract int getVertexNumber(int direction);
+         public abstract int GetVertexNumber(int direction);
          /// <summary>сколько фигур пересекается в одной вершине (в среднем)</summary>
-         public abstract double getVertexIntersection(); 
+         public abstract double GetVertexIntersection();
 
          /// <summary>макс кол-во режимов заливки фона, которые знает данный тип мозаики
          /// (знает ф-ция BaseCell::getBackgroundFillColor() или её наследующая)
          /// (Не считая режима заливки цветом фона по-умолчанию...)</summary>
-         public virtual int getMaxBackgroundFillModeValue() {
+         public virtual int GetMaxBackgroundFillModeValue() {
             return 19;
          }
 
@@ -180,7 +189,7 @@ namespace fmg.core.mosaic.cells {
          this.attr = attr;
          this.coord = coord;
          this.direction = iDirection;
-         this.region = new RegionDouble(attr.getVertexNumber(iDirection));
+         this.region = new RegionDouble(attr.GetVertexNumber(iDirection));
 
          this.state = new StateCell(this);
          Reset();

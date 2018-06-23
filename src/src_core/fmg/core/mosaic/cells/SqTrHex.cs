@@ -32,7 +32,7 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrSqTrHex : BaseAttribute {
 
-         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         public override SizeDouble GetSize(Matrisize sizeField) {
             var a = A;
             var h = H;
             var result = new SizeDouble(
@@ -68,7 +68,7 @@ namespace fmg.core.mosaic.cells {
             return result;
          }
 
-         public override int getNeighborNumber(int direction) {
+         public override int GetNeighborNumber(int direction) {
             switch (direction) {
             case  0: case  2: case  6: case  7: return 6;
             case  1: case  3: case  5: case  8: case  9: case 10: return 8;
@@ -77,7 +77,7 @@ namespace fmg.core.mosaic.cells {
                throw new ArgumentException("Invalid value direction="+direction);
              }
          }
-         public override int getVertexNumber(int direction) {
+         public override int GetVertexNumber(int direction) {
             switch (direction) {
             case  0: case  2: case  6: case  7: return 3;
             case  1: case  3: case  5: case  8: case  9: case 10: return 4;
@@ -86,13 +86,13 @@ namespace fmg.core.mosaic.cells {
                throw new ArgumentException("Invalid value direction="+direction);
              }
          }
-         public override double getVertexIntersection() { return 4.0; }
+         public override double GetVertexIntersection() { return 4.0; }
          public override Size GetDirectionSizeField() { return new Size(3, 4); }
          public override double A => Math.Sqrt(Area/(0.5+1/SQRT3));
          public double H => A * SQRT3/2;
-         public override double GetSq(int borderWidth) {
+         public override double GetSq(double borderWidth) {
             var w = borderWidth/2.0;
-            return (A*SQRT3 - w*6) / (2+SQRT3); 
+            return (A*SQRT3 - w*6) / (2+SQRT3);
          }
       }
 
@@ -105,7 +105,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrSqTrHex Attr => (AttrSqTrHex) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
+         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
 
          // определяю координаты соседей
          switch (direction) {
@@ -243,7 +243,7 @@ namespace fmg.core.mosaic.cells {
                (h*2+a  )*(coord.x/3) + a+h,
                (h*2+a*3)*(coord.y/4) + a*2+h);
       }
-   
+
       protected override void CalcRegion() {
          var attr = Attr;
          var a = attr.A;

@@ -32,22 +32,22 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrTriangle1 : BaseAttribute {
 
-         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         public override SizeDouble GetSize(Matrisize sizeField) {
             return new SizeDouble(
                   B * (sizeField.m+1),
                   H * (sizeField.n+0));
          }
 
-         public override int getNeighborNumber(int direction) { return 12; }
-         public override int getVertexNumber(int direction) { return 3; }
-         public override double getVertexIntersection() { return 6; }
+         public override int GetNeighborNumber(int direction) { return 12; }
+         public override int GetVertexNumber(int direction) { return 3; }
+         public override double GetVertexIntersection() { return 6; }
          public override Size GetDirectionSizeField() { return new Size(2, 2); }
          public override double A => B * 2.0f; // размер стороны треугольника
          /// <summary> </summary> пол стороны треугольника */
          public double B => Math.Sqrt(Area/SQRT3);
          /// <summary> </summary> высота треугольника */
          public double H => B * SQRT3;
-         public override double GetSq(int borderWidth) {
+         public override double GetSq(double borderWidth) {
             var w = borderWidth/2.0;
             return (H*2 - 6*w)/(SQRT3+2);
          }
@@ -62,7 +62,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrTriangle1 Attr => (AttrTriangle1) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
+         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
 
          // определяю координаты соседей
          switch (direction) {

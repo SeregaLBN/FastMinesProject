@@ -42,7 +42,7 @@ namespace fmg.core.mosaic.cells {
 
          public static readonly ComplexityMode Mode = ComplexityMode.eOptimalMode; // TODO: check others to view...
 
-         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         public override SizeDouble GetSize(Matrisize sizeField) {
             var b = B;
             var r = RIn;
             var R = ROut;
@@ -86,7 +86,7 @@ namespace fmg.core.mosaic.cells {
             return result;
          }
 
-         public override int getNeighborNumber(int direction) {
+         public override int GetNeighborNumber(int direction) {
             switch (Mode) {
             case ComplexityMode.eUnrealMode : return 21;
             case ComplexityMode.eMeanMode:
@@ -108,7 +108,7 @@ namespace fmg.core.mosaic.cells {
             }
          }
 
-         public override int getVertexNumber(int direction) {
+         public override int GetVertexNumber(int direction) {
             switch (Mode) {
             case ComplexityMode.eUnrealMode: return 3;
             case ComplexityMode.eMeanMode:
@@ -124,7 +124,7 @@ namespace fmg.core.mosaic.cells {
             }
          }
 
-         public override double getVertexIntersection() {
+         public override double GetVertexIntersection() {
             switch (Mode) {
             case ComplexityMode.eUnrealMode : return 9.0; // (12+12+3)/3.
             case ComplexityMode.eSimpeMode  : return 2.2; // (2+2+2+2+3)/5.
@@ -153,7 +153,7 @@ namespace fmg.core.mosaic.cells {
          public double RIn => ROut / 2;
          //private double __snip  = 2.3456789 + ThreadLocalRandom.Current.Next(15);
          public double CalcSnip() { return A / (/*12*/6.789012345 /*__snip*/); }
-         public override double GetSq(int borderWidth) {
+         public override double GetSq(double borderWidth) {
             var w = borderWidth/2.0;
             return (A-w*2/TAN15)/(SQRT3+3);
          }
@@ -168,7 +168,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrTriangle4 Attr => (AttrTriangle4) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
+         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
 
          // определяю координаты соседей
          switch (AttrTriangle4.Mode) {

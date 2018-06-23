@@ -1,23 +1,30 @@
+using System;
+using System.ComponentModel;
 using fmg.common;
+using fmg.common.geom;
 using fmg.common.notyfier;
 
 namespace fmg.data.view.draw {
 
    /// <summary> Характеристики кисти у рамки ячейки</summary>
-   public class PenBorder : NotifyPropertyChanged {
+   public class PenBorder : INotifyPropertyChanged, IDisposable {
 
       private Color _colorShadow, _colorLight;
-      private int _width;
+      private double _width;
+      public event PropertyChangedEventHandler PropertyChanged;
+      protected readonly NotifyPropertyChanged _notifier;
 
       public PenBorder() :
          this(Color.Black, Color.White, 3)
        //this(Color.GREEN, Color.RED, 1)
-      { }
+      {
+         _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+      }
 
       public PenBorder(
             Color colorShadow,
             Color colorLight,
-            int iWidth)
+            double iWidth)
       {
          _colorShadow = colorShadow;
          _colorLight = colorLight;
@@ -26,24 +33,31 @@ namespace fmg.data.view.draw {
 
       public Color ColorShadow {
          get { return _colorShadow; }
-         set { SetProperty(ref _colorShadow, value); }
+         set { _notifier.SetProperty(ref _colorShadow, value); }
       }
 
       public Color ColorLight {
          get { return _colorLight; }
-         set { SetProperty(ref _colorLight, value); }
+         set { _notifier.SetProperty(ref _colorLight, value); }
       }
 
-      public int Width {
+      public double Width {
          get { return _width; }
-         set { SetProperty(ref _width, value); }
+         set {
+            // _notifier.SetProperty(ref _width, value);
+            double old = _width;
+            if (_width.HasMinDiff(value))
+               return;
+            _width = value;
+            _notifier.OnPropertyChanged(old, value);
+         }
       }
 
       public override int GetHashCode() {
          unchecked {
             var hashCode = _colorShadow.GetHashCode();
             hashCode = (hashCode * 397) ^ _colorLight.GetHashCode();
-            hashCode = (hashCode * 397) ^ _width;
+            hashCode = (hashCode * 397) ^ _width.GetHashCode();
             return hashCode;
          }
       }
@@ -58,5 +72,12 @@ namespace fmg.data.view.draw {
          var penObj = other as PenBorder;
          return (penObj != null) && Equals(penObj);
       }
+
+      public void Dispose() {
+         _notifier.Dispose();
+         GC.SuppressFinalize(this);
+      }
+
    }
+
 }

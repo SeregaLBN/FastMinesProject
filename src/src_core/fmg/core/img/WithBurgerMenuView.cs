@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace fmg.core.img {
 
    /// <summary> MVC: view of images with burger menu (where burger menu its secondary model) </summary>
@@ -27,8 +29,8 @@ namespace fmg.core.img {
 
       protected override void Disposing() {
          _burgerMenuModel.PropertyChanged -= OnPropertyBurgerMenuModelChanged;
-         _burgerMenuModel.close();
-         super.close();
+         _burgerMenuModel.Dispose();
+         base.Disposing();
       }
 
    }

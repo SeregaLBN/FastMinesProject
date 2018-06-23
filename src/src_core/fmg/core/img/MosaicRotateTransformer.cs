@@ -3,7 +3,7 @@ using System;
 namespace fmg.core.img {
 
    /// <summary> Representable {@link fmg.core.types.EMosaic} as animated image </summary>
-   public class MosaicRotateTransformer<TImage> implements IModelTransformer
+   public class MosaicRotateTransformer<TImage> : IModelTransformer
       where TImage : class
    {
 
@@ -20,10 +20,10 @@ namespace fmg.core.img {
          mam.RotateAngle = rotateAngle;
 
          switch (mam.RotateMode) {
-         case fullMatrix:
+         case MosaicAnimatedModel<TImage>.ERotateMode.fullMatrix:
             mam.RotateMatrix();
             break;
-         case someCells:
+         case MosaicAnimatedModel<TImage>.ERotateMode.someCells:
             mam.UpdateAnglesOffsets(rotateAngleDelta);
             mam.RotateCells();
             break;

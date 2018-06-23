@@ -11,8 +11,8 @@ import fmg.common.notyfier.NotifyPropertyChanged;
 /** MVC: model. Common image characteristics. */
 public class ImageModel implements IImageModel {
 
-   public static final Color DefaultBkColor         = Color.DarkOrange;
-   public static final Color DefaultForegroundColor = Color.Orchid;
+   public static final Color DefaultBkColor         = Color.DarkOrange.clone();
+   public static final Color DefaultForegroundColor = Color.Orchid.clone();
    public static final int   DefaultImageSize = 100;
    public static final int   DefaultPadding = (int)(DefaultImageSize * 0.05); // 5%
 
@@ -23,7 +23,7 @@ public class ImageModel implements IImageModel {
    private Color _foregroundColor = DefaultForegroundColor;
    /** background fill color */
    private Color _backgroundColor = DefaultBkColor;
-   private Color _borderColor = Color.Maroon.clone().darker(0.5);
+   private Color _borderColor = Color.Maroon.darker(0.5);
    private double _borderWidth = 3;
    /** 0° .. +360° */
    private double _rotateAngle;

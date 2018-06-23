@@ -26,7 +26,7 @@ import fmg.core.types.EState;
 import fmg.data.view.draw.FontInfo;
 import fmg.data.view.draw.PenBorder;
 import fmg.jfx.Cast;
-import fmg.jfx.StaticInitilizer;
+import fmg.jfx.StaticInitializer;
 
 /** MVC: view. Abstract JFX implementation */
 public abstract class AMosaicViewJfx<TImage,
@@ -46,7 +46,7 @@ public abstract class AMosaicViewJfx<TImage,
 
 
    static {
-      StaticInitilizer.init();
+      StaticInitializer.init();
 
 //      try {
 //         javafx.scene.layout.Region region = new Pane();

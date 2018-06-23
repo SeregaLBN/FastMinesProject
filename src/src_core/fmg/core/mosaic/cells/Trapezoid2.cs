@@ -32,7 +32,7 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrTrapezoid2 : BaseAttribute {
 
-         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         public override SizeDouble GetSize(Matrisize sizeField) {
             var a = A;
             var c = C;
             var r = RIn;
@@ -51,16 +51,16 @@ namespace fmg.core.mosaic.cells {
             return result;
          }
 
-         public override int getNeighborNumber(int direction) { return 9; }
-         public override int getVertexNumber(int direction) { return 4; }
-         public override double getVertexIntersection() { return 4.25; } // (6+4+4+3)/4.
+         public override int GetNeighborNumber(int direction) { return 9; }
+         public override int GetVertexNumber(int direction) { return 4; }
+         public override double GetVertexIntersection() { return 4.25; } // (6+4+4+3)/4.
          public override Size GetDirectionSizeField() { return new Size(3, 4); }
          public override double A => Math.Sqrt(Area/SQRT27)*2;
          public double B => A * 2;
          public double C => A / 2;
          public double ROut => A * SQRT3;
          public double RIn => ROut / 2;
-         public override double GetSq(int borderWidth) {
+         public override double GetSq(double borderWidth) {
             var w = borderWidth/2.0;
             return (A*SQRT3 - w*4)/(SQRT3+1);
          }
@@ -75,7 +75,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrTrapezoid2 Attr => (AttrTrapezoid2) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
+         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
 
          // определяю координаты соседей
           switch (direction) {
@@ -89,8 +89,8 @@ namespace fmg.core.mosaic.cells {
              neighborCoord[ 6] = new Coord(coord.x  , coord.y+1);
              neighborCoord[ 7] = new Coord(coord.x+1, coord.y+1);
              neighborCoord[ 8] = new Coord(coord.x+2, coord.y+1);
-             break;                                          
-          case 1:                                            
+             break;
+          case 1:
              neighborCoord[ 0] = new Coord(coord.x-2, coord.y-1);
              neighborCoord[ 1] = new Coord(coord.x-1, coord.y-1);
              neighborCoord[ 2] = new Coord(coord.x  , coord.y-1);
@@ -100,8 +100,8 @@ namespace fmg.core.mosaic.cells {
              neighborCoord[ 6] = new Coord(coord.x+1, coord.y  );
              neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
              neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
-             break;                                          
-          case 2:                                            
+             break;
+          case 2:
              neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
              neighborCoord[ 1] = new Coord(coord.x  , coord.y-1);
              neighborCoord[ 2] = new Coord(coord.x+1, coord.y-1);
@@ -111,8 +111,8 @@ namespace fmg.core.mosaic.cells {
              neighborCoord[ 6] = new Coord(coord.x+2, coord.y  );
              neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
              neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
-             break;                                          
-          case 3:                                            
+             break;
+          case 3:
              neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
              neighborCoord[ 1] = new Coord(coord.x  , coord.y-1);
              neighborCoord[ 2] = new Coord(coord.x-2, coord.y  );
@@ -122,8 +122,8 @@ namespace fmg.core.mosaic.cells {
              neighborCoord[ 6] = new Coord(coord.x-1, coord.y+1);
              neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
              neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
-             break;                                          
-          case 4:                                            
+             break;
+          case 4:
              neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
              neighborCoord[ 1] = new Coord(coord.x  , coord.y-1);
              neighborCoord[ 2] = new Coord(coord.x-1, coord.y  );
@@ -133,8 +133,8 @@ namespace fmg.core.mosaic.cells {
              neighborCoord[ 6] = new Coord(coord.x  , coord.y+1);
              neighborCoord[ 7] = new Coord(coord.x+1, coord.y+1);
              neighborCoord[ 8] = new Coord(coord.x+2, coord.y+1);
-             break;                                          
-          case 5:                                            
+             break;
+          case 5:
              neighborCoord[ 0] = new Coord(coord.x-2, coord.y-1);
              neighborCoord[ 1] = new Coord(coord.x-1, coord.y-1);
              neighborCoord[ 2] = new Coord(coord.x  , coord.y-1);
@@ -144,8 +144,8 @@ namespace fmg.core.mosaic.cells {
              neighborCoord[ 6] = new Coord(coord.x-1, coord.y+1);
              neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
              neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
-             break;                                          
-          case 6:                                            
+             break;
+          case 6:
              neighborCoord[ 0] = new Coord(coord.x-2, coord.y-1);
              neighborCoord[ 1] = new Coord(coord.x-1, coord.y-1);
              neighborCoord[ 2] = new Coord(coord.x  , coord.y-1);
@@ -155,8 +155,8 @@ namespace fmg.core.mosaic.cells {
              neighborCoord[ 6] = new Coord(coord.x+1, coord.y  );
              neighborCoord[ 7] = new Coord(coord.x-1, coord.y+1);
              neighborCoord[ 8] = new Coord(coord.x  , coord.y+1);
-             break;                                          
-          case 7:                                            
+             break;
+          case 7:
              neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
              neighborCoord[ 1] = new Coord(coord.x  , coord.y-1);
              neighborCoord[ 2] = new Coord(coord.x+1, coord.y-1);
@@ -166,8 +166,8 @@ namespace fmg.core.mosaic.cells {
              neighborCoord[ 6] = new Coord(coord.x+2, coord.y  );
              neighborCoord[ 7] = new Coord(coord.x-1, coord.y+1);
              neighborCoord[ 8] = new Coord(coord.x  , coord.y+1);
-             break;                                          
-          case 8:                                            
+             break;
+          case 8:
              neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
              neighborCoord[ 1] = new Coord(coord.x  , coord.y-1);
              neighborCoord[ 2] = new Coord(coord.x+1, coord.y-1);
@@ -177,8 +177,8 @@ namespace fmg.core.mosaic.cells {
              neighborCoord[ 6] = new Coord(coord.x-1, coord.y+1);
              neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
              neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
-             break;                                          
-          case 9:                                            
+             break;
+          case 9:
              neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
              neighborCoord[ 1] = new Coord(coord.x  , coord.y-1);
              neighborCoord[ 2] = new Coord(coord.x+1, coord.y-1);
@@ -188,8 +188,8 @@ namespace fmg.core.mosaic.cells {
              neighborCoord[ 6] = new Coord(coord.x-1, coord.y+1);
              neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
              neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
-             break;                                          
-          case 10:                                           
+             break;
+          case 10:
              neighborCoord[ 0] = new Coord(coord.x  , coord.y-1);
              neighborCoord[ 1] = new Coord(coord.x+1, coord.y-1);
              neighborCoord[ 2] = new Coord(coord.x-2, coord.y  );
@@ -199,8 +199,8 @@ namespace fmg.core.mosaic.cells {
              neighborCoord[ 6] = new Coord(coord.x-1, coord.y+1);
              neighborCoord[ 7] = new Coord(coord.x  , coord.y+1);
              neighborCoord[ 8] = new Coord(coord.x+1, coord.y+1);
-             break;                                          
-          case 11:                                           
+             break;
+          case 11:
              neighborCoord[ 0] = new Coord(coord.x  , coord.y-1);
              neighborCoord[ 1] = new Coord(coord.x+1, coord.y-1);
              neighborCoord[ 2] = new Coord(coord.x-1, coord.y  );

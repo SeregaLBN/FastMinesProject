@@ -1,3 +1,4 @@
+using System;
 using fmg.common;
 
 namespace fmg.core.img {
@@ -19,7 +20,7 @@ namespace fmg.core.img {
 
          HSV hsv = new HSV(am.BackgroundColor);
          hsv.h += rotateAngleDelta;
-         am.BackgroundColor = hsv.toColor();
+         am.BackgroundColor = hsv.ToColor();
       }
 
    }

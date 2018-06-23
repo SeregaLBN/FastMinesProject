@@ -32,7 +32,7 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrTrapezoid1 : BaseAttribute {
 
-         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         public override SizeDouble GetSize(Matrisize sizeField) {
             var a = A;
             var c = C;
             var r = RIn;
@@ -49,16 +49,16 @@ namespace fmg.core.mosaic.cells {
             return result;
          }
 
-         public override int getNeighborNumber(int direction) { return 8; }
-         public override int getVertexNumber(int direction) { return 4; }
-         public override double getVertexIntersection() { return 3.6; } // (3+3+3+3+6)/5.
+         public override int GetNeighborNumber(int direction) { return 8; }
+         public override int GetVertexNumber(int direction) { return 4; }
+         public override double GetVertexIntersection() { return 3.6; } // (3+3+3+3+6)/5.
          public override Size GetDirectionSizeField() { return new Size(3, 4); }
          public override double A => Math.Sqrt(Area/SQRT27)*2;
          public double B => A * 2;
          public double C => A / 2;
          public double ROut => A * SQRT3;
          public double RIn => ROut / 2;
-         public override double GetSq(int borderWidth) {
+         public override double GetSq(double borderWidth) {
             var w = borderWidth/2.0;
             return (A*SQRT3 - w*4)/(SQRT3+1);
          }
@@ -73,7 +73,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrTrapezoid1 Attr => (AttrTrapezoid1) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
+         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
 
          // определяю координаты соседей
           switch (direction) {

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using fmg.common;
@@ -31,7 +32,7 @@ namespace fmg.core.img {
       private readonly IList<PointDouble> _oct = new List<PointDouble>();
 
 
-      protected ALogo() {
+      protected LogoModel() {
          BackgroundColor = Color.Transparent;
          PropertyChanged += OnPropertyChanged;
       }
@@ -40,7 +41,7 @@ namespace fmg.core.img {
 
       public static void toMineModel(LogoModel m) {
          m.UseGradient = false;
-         for (HSV item : m.Palette)
+         foreach (HSV item in m.Palette)
             //item.v = 75;
             item.Grayscale();
       }
@@ -59,7 +60,7 @@ namespace fmg.core.img {
       public double ZoomY => (Size.Height - Padding.TopAndBottom) / 200.0;
 
       public IList<PointDouble> Rays { get {
-         if (_rays.Empty) {
+         if (!_rays.Any()) {
             var pl = Padding.Left;
             var pt = Padding.Top;
             var zx = ZoomX;
@@ -78,7 +79,7 @@ namespace fmg.core.img {
       }}
 
       public IList<PointDouble> Inn { get {
-         if (_inn.Empty) {
+         if (!_inn.Any()) {
             var pl = Padding.Left;
             var pt = Padding.Top;
             var zx = ZoomX;
@@ -97,7 +98,7 @@ namespace fmg.core.img {
       }}
 
       public IList<PointDouble> Oct { get {
-         if (_oct.Empty) {
+         if (!_oct.Any()) {
             var pl = Padding.Left;
             var pt = Padding.Top;
             var zx = ZoomX;
@@ -117,39 +118,18 @@ namespace fmg.core.img {
 
       protected void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          switch (ev.PropertyName) {
-         case nameof(IImageMode.Size):
-         case nameof(ImageMode.Padding):
-            _rays.clear();
-            _inn.clear();
-            _oct.clear();
+         case nameof(IImageModel.Size):
+         case nameof(ImageModel.Padding):
+            _rays.Clear();
+            _inn.Clear();
+            _oct.Clear();
             break;
          }
       }
 
-      protected override void Dispose(bool disposing) {
-         if (disposing) {
-            PropertyChanged -= OnPropertyChanged;
-         }
+      protected override void Disposing() {
+         PropertyChanged -= OnPropertyChanged;
       }
-
-      /*
-      {
-         if (RotateMode != ERotateMode.Color) {
-            var ra = RotateAngle;
-            rays.RotateList(ra, center);
-            inn.RotateList(ra, center);
-            oct.RotateList(ra, center);
-         }
-      }
-      {
-         if ((RotateMode != ERotateMode.Classic) && (nameof(this.RotateAngle) == ev.PropertyName)) {
-            var delta = RotateAngleDelta;
-            for (var i = 0; i < Palette.Length; ++i) {
-               Palette[i].h += delta;
-            }
-         }
-      }
-      */
 
    }
 

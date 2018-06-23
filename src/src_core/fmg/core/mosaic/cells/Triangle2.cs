@@ -32,22 +32,22 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrTriangle2 : BaseAttribute {
 
-         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         public override SizeDouble GetSize(Matrisize sizeField) {
             return new SizeDouble(
                   B * (sizeField.m+1),
                   H * (sizeField.n+0));
          }
 
-         public override int getNeighborNumber(int direction) { return 8; }
-         public override int getVertexNumber(int direction) { return 3; }
-         public override double getVertexIntersection() { return 3.75; } // (4+4+4+3)/4.
+         public override int GetNeighborNumber(int direction) { return 8; }
+         public override int GetVertexNumber(int direction) { return 3; }
+         public override double GetVertexIntersection() { return 3.75; } // (4+4+4+3)/4.
          public override Size GetDirectionSizeField() { return new Size(2, 1); }
          public override double A => B * 2.0f; // размер стороны треугольника
          /// <summary> </summary> пол стороны треугольника */
          public double B => Math.Sqrt(Area/SQRT3);
          /// <summary> </summary> высота треугольника */
          public double H => B * SQRT3;
-         public override double GetSq(int borderWidth) {
+         public override double GetSq(double borderWidth) {
             var w = borderWidth/2.0;
             return (H*2 - 6*w)/(SQRT3+2);
          }
@@ -62,7 +62,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrTriangle2 Attr => (AttrTriangle2) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
+         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
 
          // определяю координаты соседей
          switch (direction) {
@@ -75,8 +75,8 @@ namespace fmg.core.mosaic.cells {
             neighborCoord[ 5] = new Coord(coord.x-1, coord.y+1);
             neighborCoord[ 6] = new Coord(coord.x  , coord.y+1);
             neighborCoord[ 7] = new Coord(coord.x+1, coord.y+1);
-            break;                                          
-         case 1: case 2:                                    
+            break;
+         case 1: case 2:
             neighborCoord[ 0] = new Coord(coord.x-1, coord.y-1);
             neighborCoord[ 1] = new Coord(coord.x  , coord.y-1);
             neighborCoord[ 2] = new Coord(coord.x+1, coord.y-1);

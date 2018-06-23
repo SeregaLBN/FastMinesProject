@@ -11,7 +11,7 @@ import fmg.core.img.ImageView;
 import fmg.core.img.LogoController;
 import fmg.core.img.LogoModel;
 import fmg.swing.Cast;
-import fmg.swing.StaticInitilizer;
+import fmg.swing.StaticInitializer;
 
 /** Main logos image - base Logo image view implementation */
 public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
@@ -21,7 +21,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
    }
 
    static {
-      StaticInitilizer.init();
+      StaticInitializer.init();
    }
 
    protected void draw(Graphics2D g) {

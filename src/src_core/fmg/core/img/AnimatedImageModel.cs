@@ -4,19 +4,19 @@ namespace fmg.core.img {
    public class AnimatedImageModel : ImageModel {
 
       /** animation of polar lights */
-      private boolean _polarLights = true;
+      private bool _polarLights = true;
 
       /** animation direction (example: clockwise or counterclockwise for simple rotation) */
-      private boolean _animeDirection = true;
+      private bool _animeDirection = true;
 
-      public boolean PolarLights {
+      public bool PolarLights {
          get { return _polarLights; }
-         set { _notifier.SetProperty(_polarLights, value); }
+         set { _notifier.SetProperty(ref _polarLights, value); }
       }
 
-      public boolean AnimeDirection {
+      public bool AnimeDirection {
          get { return _animeDirection; }
-         set { _notifier.SetProperty(_animeDirection, value); }
+         set { _notifier.SetProperty(ref _animeDirection, value); }
       }
 
    }

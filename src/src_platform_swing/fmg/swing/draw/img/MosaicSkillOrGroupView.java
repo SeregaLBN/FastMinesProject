@@ -15,7 +15,7 @@ import fmg.core.img.MosaicGroupModel;
 import fmg.core.img.MosaicSkillModel;
 import fmg.core.img.WithBurgerMenuView;
 import fmg.swing.Cast;
-import fmg.swing.StaticInitilizer;
+import fmg.swing.StaticInitializer;
 
 /**
  * MVC: view. Abstract SWING representable {@link fmg.core.types.ESkillLevel} or {@link fmg.core.types.EMosaicGroup} as image
@@ -25,7 +25,7 @@ import fmg.swing.StaticInitilizer;
 abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageModel> extends WithBurgerMenuView<TImage, TImageModel> {
 
    static {
-      StaticInitilizer.init();
+      StaticInitializer.init();
    }
 
    protected MosaicSkillOrGroupView(TImageModel imageModel) {
@@ -50,8 +50,8 @@ abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageM
       boolean needDrawPerimeterBorder = (!m.getBorderColor().isTransparent() && (bw > 0));
       java.awt.Color borderColor = !needDrawPerimeterBorder ? null : Cast.toColor(m.getBorderColor());
       BasicStroke bs = !needDrawPerimeterBorder ? null : new BasicStroke((float)bw);
-      Stream<Pair<Color, Stream<PointDouble>>> stars = getCoords();
-      stars.forEach(pair -> {
+      Stream<Pair<Color, Stream<PointDouble>>> shapes = getCoords();
+      shapes.forEach(pair -> {
          Polygon poly = Cast.toPolygon(pair.second.collect(Collectors.toList()));
          if (!pair.first.isTransparent()) {
             g.setColor(Cast.toColor(pair.first));

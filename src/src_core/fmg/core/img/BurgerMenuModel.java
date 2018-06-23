@@ -15,7 +15,7 @@ public class BurgerMenuModel implements IImageModel {
    private ImageModel _generalModel;
    private boolean _show = true;
    private boolean _horizontal = true;
-   private int   _layers = 3;
+   private int     _layers = 3;
    private boolean _rotate;
    private BoundDouble _padding;
    private PropertyChangeListener _generalModelListener;

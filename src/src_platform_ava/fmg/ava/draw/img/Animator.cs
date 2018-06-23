@@ -1,10 +1,10 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using Avalonia.Data;
 using Avalonia.Threading;
-
 using Avalonia.Animation;
 using fmg.core.img;
 
@@ -12,7 +12,7 @@ namespace fmg.jfx.draw.img {
 
    public class Animator : IAnimator, IDisposable {
 
-      private static class SubscribeInfo {
+      private class SubscribeInfo {
          public bool active = true;    // enabled?
          public long startTime = Stopwatch.Elapsed.Ticks; // start time of subscribe
          public Action<long /* time from the beginning of the subscription */> callback;
@@ -37,17 +37,18 @@ namespace fmg.jfx.draw.img {
          _unsubscribe = timer.Subscribe(
                value => {
                   long currentTime = DateTime.Now.Ticks;
-                  _subscribers.ForEach((k,v) -> {
-                     if (v.active)
-                        v.callback(currentTime - v.startTime);
-                  });
+                  foreach (var item in _subscribers) {
+                     var subscribeInfo = item.Value;
+                     if (subscribeInfo.active)
+                        subscribeInfo.callback(currentTime - subscribeInfo.startTime);
+                  }
                },
-               exc => { Console.WriteLine(exc); },
-               () => { Console.WriteLine("Closed"); }
+               ex => { System.Diagnostics.Debug.Assert(false, ex.ToString()); },
+               () => { System.Diagnostics.Debug.WriteLine("Closed"); }
             );
       }
 
-      public override void Subscribe(object subscriber, Action<long /* time from start subscribe */> subscriberCallbackMethod) {
+      public void Subscribe(object subscriber, Action<long /* time from start subscribe */> subscriberCallbackMethod) {
          SubscribeInfo info = _subscribers[subscriber];
          if (info == null) {
             info = new SubscribeInfo();
@@ -59,7 +60,7 @@ namespace fmg.jfx.draw.img {
          }
       }
 
-      public override void Pause(object subscriber) {
+      public void Pause(object subscriber) {
          SubscribeInfo info = _subscribers[subscriber];
          if (info == null)
             return;
@@ -67,7 +68,7 @@ namespace fmg.jfx.draw.img {
          info.startTime = DateTime.Now.Ticks - info.startTime; // set of pause delta time
       }
 
-      public void override Unsubscribe(object subscriber) {
+      public void Unsubscribe(object subscriber) {
          _subscribers.Remove(subscriber);
       }
 

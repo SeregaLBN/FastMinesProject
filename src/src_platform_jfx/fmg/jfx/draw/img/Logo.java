@@ -9,7 +9,7 @@ import fmg.core.img.ImageView;
 import fmg.core.img.LogoController;
 import fmg.core.img.LogoModel;
 import fmg.jfx.Cast;
-import fmg.jfx.StaticInitilizer;
+import fmg.jfx.StaticInitializer;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
@@ -26,7 +26,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
    }
 
    static {
-      StaticInitilizer.init();
+      StaticInitializer.init();
    }
 
    protected void draw(GraphicsContext g) {

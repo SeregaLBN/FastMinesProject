@@ -32,7 +32,7 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrTrapezoid3 : BaseAttribute {
 
-         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         public override SizeDouble GetSize(Matrisize sizeField) {
             var a = A;
             var b = B;
             var R = ROut;
@@ -53,7 +53,7 @@ namespace fmg.core.mosaic.cells {
             return result;
          }
 
-         public override int getNeighborNumber(int direction) {
+         public override int GetNeighborNumber(int direction) {
              switch (direction) {
              case  2: case  5: case 11: case 12: return 6;
              case  0: case  7: case  9: case 14: return 10;
@@ -63,10 +63,10 @@ namespace fmg.core.mosaic.cells {
                 throw new ArgumentException("Invalid value direction=" + direction);
              }
          }
-         public override int getVertexNumber(int direction) { return 4; }
+         public override int GetVertexNumber(int direction) { return 4; }
 
          static double _vertexIntersection = 0.0;
-         public override double getVertexIntersection() {
+         public override double GetVertexIntersection() {
             if (_vertexIntersection < 1) {
                var cntDirection = GetDirectionCount(); // 0..11
                double sum = 0;
@@ -97,7 +97,7 @@ namespace fmg.core.mosaic.cells {
          public double C => A / 2;
          public double ROut => A * SQRT3;
          public double RIn => ROut / 2;
-         public override double GetSq(int borderWidth) {
+         public override double GetSq(double borderWidth) {
             var w = borderWidth/2.0;
             return (A*SQRT3 - w*4)/(SQRT3+1);
          }
@@ -112,7 +112,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrTrapezoid3 Attr => (AttrTrapezoid3) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
+         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
 
          // определяю координаты соседей
           switch (direction) {

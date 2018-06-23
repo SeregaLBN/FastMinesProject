@@ -13,7 +13,7 @@ import fmg.core.img.ImageView;
 import fmg.core.img.SmileModel;
 import fmg.core.img.SmileModel.EFaceType;
 import fmg.swing.Cast;
-import fmg.swing.StaticInitilizer;
+import fmg.swing.StaticInitializer;
 
 public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
@@ -22,7 +22,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
    }
 
    static {
-      StaticInitilizer.init();
+      StaticInitializer.init();
    }
 
    protected void draw(Graphics2D g) {

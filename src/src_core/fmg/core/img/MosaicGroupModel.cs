@@ -9,41 +9,41 @@ using fmg.core.types;
 namespace fmg.core.img {
 
    /// <summary> MVC model of <see cref="EMosaicGroup"/> representable as image </summary>
-   public class MosaicGroupModel extends AnimatedImageModel {
+   public class MosaicGroupModel : AnimatedImageModel {
 
-      private EMosaicGroup _mosaicGroup;
+      private EMosaicGroup? _mosaicGroup;
       public static bool varMosaicGroupAsValueOthers1 = !true;
       /// <summary> triangle -> quadrangle -> hexagon -> anew triangle -> ... </summary>
-      private final int[] _nmArray = { 3, 4, 6 };
+      private readonly int[] _nmArray = { 3, 4, 6 };
       private int _nmIndex1 = 0, _nmIndex2 = 1;
       private double _incrementSpeedAngle;
 
-      public MosaicGroupModel(EMosaicGroup mosaicGroup) { _mosaicGroup = mosaicGroup; }
+      public MosaicGroupModel(EMosaicGroup? mosaicGroup) { _mosaicGroup = mosaicGroup; }
 
-      public EMosaicGroup MosaicGroup {
+      public EMosaicGroup? MosaicGroup {
          get { return _mosaicGroup; }
-         set { _notifier.SetProperty(ref _mosaicGroup); }
+         set { _notifier.SetProperty(ref _mosaicGroup, value); }
       }
 
-      protected int[] NmArray => _nmArray;
+      internal int[] NmArray => _nmArray;
 
-      protected double IncrementSpeedAngle {
+      internal double IncrementSpeedAngle {
          get { return _incrementSpeedAngle; }
          set { _incrementSpeedAngle = value; }
       }
 
-      protected int NmIndex1 {
+      internal int NmIndex1 {
          get { return _nmIndex1; }
          set { _nmIndex1 = value; }
       }
 
-      protected int NmIndex2 {
+      internal int NmIndex2 {
          get { return _nmIndex2; }
          set { _nmIndex2 = value; }
       }
 
-      public IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords => {
-         var mosaicGroup = getMosaicGroup();
+      public IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords { get {
+         var mosaicGroup = MosaicGroup;
          return (mosaicGroup == null)
                ? Coords_MosaicGroupAsType
                : (mosaicGroup != EMosaicGroup.eOthers)
@@ -51,9 +51,9 @@ namespace fmg.core.img {
                   : varMosaicGroupAsValueOthers1
                      ? Coords_MosaicGroupAsValueOthers1
                      : Coords_MosaicGroupAsValueOthers2;
-      }
+      } }
 
-      private IEnumerable<PointDouble> Coords_MosaicGroupAsValue => {
+      private IEnumerable<PointDouble> Coords_MosaicGroupAsValue { get {
          var pad = Padding;
          double sq = Math.Min( // size inner square
             Size.Width  - pad.LeftAndRight,
@@ -76,9 +76,9 @@ namespace fmg.core.img {
 
          //var nm = GetNM(_nmIndex1);
          //return FigureHelper.GetFlowingToTheRightPolygonCoordsByRadius(nm.Item1, nm.Item2, sq / 2, center, _incrementSpeedAngle, 0).RotateBySide(2, center, ra);
-      }
+      } }
 
-      private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords_MosaicGroupAsValueOthers1 => {
+      private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords_MosaicGroupAsValueOthers1 { get {
          var pad = Padding;
          double sq = Math.Min( // size inner square
             Size.Width - pad.LeftAndRight,
@@ -126,7 +126,7 @@ namespace fmg.core.img {
                                                           new HSV(fgClr).AddHue(180).ToColor()
                                                           :       fgClr                       , res2.Move(offsetToCenter2)),
             };
-      }
+      } }
 
       private Tuple<int, int> GetNM(int index) {
          int[] nmArray = NmArray;
@@ -138,16 +138,16 @@ namespace fmg.core.img {
          // Т.е. при значении 180 значение N уже достигло M.
          // Фиксирую для того, чтобы при следующем инкременте параметра index, значение N не менялось. Т.о. обеспечиваю плавность анимации.
          if (IncrementSpeedAngle >= 180) {
-            if (RotateAngleDelta > 0)
+            if (AnimeDirection)
                n = m;
          } else {
-            if (RotateAngleDelta < 0)
+            if (!AnimeDirection)
                n = m;
          }
          return new Tuple<int, int>(n, m);
       }
 
-      private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> GetCoords_MosaicGroupAsType() {
+      private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords_MosaicGroupAsType { get {
          const bool accelerateRevert = true; // ускорение под конец анимации, иначе - в начале...
 
          var shapes = 4; // 3х-, 4х-, 5ти- и 6ти-угольники
@@ -184,8 +184,8 @@ namespace fmg.core.img {
                var radius = sq / 1.8;
 
                var clr = !pl
-                  ? fgClr;
-                  : new HSV(clr).AddHue(+angleShape).ToColor(); // try: -angleShape
+                  ? fgClr
+                  : new HSV(fgClr).AddHue(+angleShape).ToColor(); // try: -angleShape
 
                return new Tuple<double, Tuple<Color, IEnumerable<PointDouble>>>(sq, new Tuple<Color, IEnumerable<PointDouble>>(
                      clr,
@@ -197,9 +197,9 @@ namespace fmg.core.img {
             })
             .OrderBy(x => -x.Item1)
             .Select(x => x.Item2);
-      }
+      } }
 
-      private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> GetCoords_MosaicGroupAsValueOthers2() {
+      private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords_MosaicGroupAsValueOthers2 { get {
          var pad = Padding;
          var sq = Math.Min( // size inner square
                Size.Width  - pad.LeftAndRight,
@@ -225,7 +225,7 @@ namespace fmg.core.img {
 
                var clr = !pl
                   ? fgClr
-                  : new HSV(clr).AddHue(shapeNum * anglePart).ToColor();
+                  : new HSV(fgClr).AddHue(shapeNum * anglePart).ToColor();
 
                int vertices;
                switch (shapeNum) { // мозаики из группы EMosaicGroup.eOthers состоят из 3 типов фигур:
@@ -244,6 +244,6 @@ namespace fmg.core.img {
             .Select(x => x.Item2);
       }
 
-   }
+   } }
 
 }

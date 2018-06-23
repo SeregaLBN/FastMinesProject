@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using fmg.common.ui;
 
 namespace fmg.common.notyfier {
 
@@ -9,7 +10,7 @@ namespace fmg.common.notyfier {
 #if WINDOWS_UWP
    [Windows.Foundation.Metadata.WebHostHidden]
 #endif
-   public class NotifyPropertyChanged : /* INotifyPropertyChanged */ IDisposable {
+   public sealed class NotifyPropertyChanged : /* INotifyPropertyChanged */ IDisposable {
 
       private readonly INotifyPropertyChanged _owner;
       private readonly Action<PropertyChangedEventArgs> _fireOwnerEvent;
@@ -65,7 +66,7 @@ namespace fmg.common.notyfier {
          OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
       }
 
-      protected virtual void OnPropertyChanged(PropertyChangedEventArgs ev) {
+      public void OnPropertyChanged(PropertyChangedEventArgs ev) {
          if (_disposed)
             return;
 

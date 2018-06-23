@@ -33,7 +33,7 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrPentagonT10 : BaseAttribute {
 
-         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         public override SizeDouble GetSize(Matrisize sizeField) {
             var  a = A;
             var result = new SizeDouble(
                   2*a +
@@ -63,7 +63,7 @@ namespace fmg.core.mosaic.cells {
             return result;
          }
 
-         public override int getNeighborNumber(int direction) {
+         public override int GetNeighborNumber(int direction) {
             switch (direction) {
             case 0: case 1: case 6: case 7: return 7;
             case 2: case 3: case 4: case 5: case 8: case 9: case 10: case 11: return 6;
@@ -71,10 +71,10 @@ namespace fmg.core.mosaic.cells {
                throw new ArgumentException("Invalid value direction=" + direction);
             }
          }
-         public override int getVertexNumber(int direction) { return 5; }
+         public override int GetVertexNumber(int direction) { return 5; }
 
          static double _vertexIntersection = 0.0;
-         public override double getVertexIntersection() {
+         public override double GetVertexIntersection() {
             if (_vertexIntersection < 1) {
                var cntDirection = GetDirectionCount(); // 0..11
                double sum = 0;
@@ -97,13 +97,13 @@ namespace fmg.core.mosaic.cells {
 
          public override Size GetDirectionSizeField() { return new Size(2, 6); }
          public override double A => Math.Sqrt(Area/7);
-         public override double GetSq(int borderWidth) {
+         public override double GetSq(double borderWidth) {
             var w = borderWidth/2.0;
             return 2*(A-w);
          }
 
-         public override int getMaxBackgroundFillModeValue() {
-            return base.getMaxBackgroundFillModeValue() + 1;
+         public override int GetMaxBackgroundFillModeValue() {
+            return base.GetMaxBackgroundFillModeValue() + 1;
             //return 1;
          }
       }
@@ -117,7 +117,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrPentagonT10 Attr => (AttrPentagonT10) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
+         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
 
          // определяю координаты соседей
          switch (direction) {
@@ -139,7 +139,7 @@ namespace fmg.core.mosaic.cells {
             neighborCoord[5] = new Coord(coord.x+1, coord.y  );
             neighborCoord[6] = new Coord(coord.x  , coord.y+1);
             break;
-         case 2: 
+         case 2:
             neighborCoord[0] = new Coord(coord.x  , coord.y-1);
             neighborCoord[1] = new Coord(coord.x+1, coord.y  );
             neighborCoord[2] = new Coord(coord.x-1, coord.y+1);
@@ -147,7 +147,7 @@ namespace fmg.core.mosaic.cells {
             neighborCoord[4] = new Coord(coord.x+1, coord.y+1);
             neighborCoord[5] = new Coord(coord.x  , coord.y+2);
             break;
-         case 3: 
+         case 3:
             neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
             neighborCoord[1] = new Coord(coord.x  , coord.y-1);
             neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
@@ -155,7 +155,7 @@ namespace fmg.core.mosaic.cells {
             neighborCoord[4] = new Coord(coord.x-1, coord.y+1);
             neighborCoord[5] = new Coord(coord.x  , coord.y+1);
             break;
-         case 4: 
+         case 4:
             neighborCoord[0] = new Coord(coord.x  , coord.y-1);
             neighborCoord[1] = new Coord(coord.x+1, coord.y-1);
             neighborCoord[2] = new Coord(coord.x+1, coord.y  );
@@ -293,9 +293,9 @@ namespace fmg.core.mosaic.cells {
          var center = new PointDouble(); // координата центра квадрата
          switch (direction) {
          case 0: case  3: case 7: case  8: center.X = region.GetPoint(2).X; center.Y = region.GetPoint(1).Y; break;
-         case 1: case  4: case 6: case 10: 
+         case 1: case  4: case 6: case 10:
          case 2: case 11:                  center.X = region.GetPoint(0).X; center.Y = region.GetPoint(1).Y; break;
-         case 5: case  9:                  center.X = region.GetPoint(0).X; center.Y = region.GetPoint(4).Y; break; 
+         case 5: case  9:                  center.X = region.GetPoint(0).X; center.Y = region.GetPoint(4).Y; break;
          }
 
          return new RectDouble(
@@ -313,7 +313,7 @@ namespace fmg.core.mosaic.cells {
       }
 
       public override Color getBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
-         if (fillMode == Attr.getMaxBackgroundFillModeValue())
+         if (fillMode == Attr.GetMaxBackgroundFillModeValue())
          {
             switch (getDirection()) {
             case  2: case  3: case  4: case  5: return repositoryColor(0);

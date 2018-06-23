@@ -6,16 +6,16 @@ namespace fmg.core.img {
    /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
    /// <typeparam name="TImageView">MVC view</typeparam>
    public class LogoController<TImage, TImageView>
-      : AnimatedImgController<TImage, TImageView, LogoModel>
+       : AnimatedImgController<TImage, TImageView, LogoModel>
       where TImage : class
       where TImageView : IImageView<TImage, LogoModel>
    {
 
       protected LogoController(TImageView imageView)
-         : base(imageView);
+         : base(imageView)
       { }
 
-      public override void UseRotateTransforming(boolean enable) {
+      public override void UseRotateTransforming(bool enable) {
          base.UseRotateTransforming(enable);
          if (enable)
             AddModelTransformer(new RotateLogoTransformer());
@@ -23,7 +23,7 @@ namespace fmg.core.img {
             RemoveModelTransformer(typeof(RotateLogoTransformer));
       }
 
-      public override void UsePolarLightFgTransforming(boolean enable) {
+      public override void UsePolarLightFgTransforming(bool enable) {
          //base.UsePolarLightFgTransforming(enable); // hide super implementation!
          if (enable)
             AddModelTransformer(new PolarLightLogoTransformer());

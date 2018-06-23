@@ -1,5 +1,7 @@
-using System.Collections.Generic;
+using System;
 using System.Linq;
+using System.Collections.Generic;
+using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -10,17 +12,18 @@ using Avalonia.VisualTree;
 using fmg.common.notyfier;
 using fmg.ava.draw.img;
 
-namespace Test.FastMines.Ava.Images
-{
+namespace Test.FastMines.Ava.Images {
 
-   public class DemoWindow : Window
-   {
-      private class Modelka : NotifyPropertyChanged
-      {
-         public Modelka(IControl img)
-         {
-            var mosaicImg = new MosaicsGroupImg.RenderTargetBmp(null, img)
-            {
+   public class DemoWindow : Window {
+
+      private class Modelka : INotifyPropertyChanged {
+
+         public event PropertyChangedEventHandler PropertyChanged;
+         protected readonly NotifyPropertyChanged _notifier;
+
+         public Modelka(IControl img) {
+            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+            var mosaicImg = new MosaicGroupImg.ControllerRenderTargetBmp(null, img) {
                RotateAngleDelta = 5,
                Rotate = true,
                PolarLights = true
@@ -29,29 +32,27 @@ namespace Test.FastMines.Ava.Images
 
             mosaicImg.PropertyChanged += (sender, ev) => {
                if (ev.PropertyName == nameof(MosaicImg.Image)) {
-                  this.OnPropertyChanged(nameof(Modelka.Bitmap));
+                  _notifier.OnPropertyChanged(nameof(Modelka.Bitmap));
                   Dispatcher.UIThread.InvokeAsync(() => img.InvalidateVisual());//.Wait()
                }
             };
          }
 
-         public MosaicsGroupImg.RenderTargetBmp MosaicImg { get; }
+         public MosaicGroupImg.ControllerRenderTargetBmp MosaicImg { get; }
          public IBitmap Bitmap { get => MosaicImg.Image; }
       }
 
       private Modelka _viewModel;
       // private IControl _img;
 
-      public DemoWindow()
-      {
+      public DemoWindow() {
          InitializeComponent();
          this.AttachDevTools();
 
          DataContext = _viewModel;
       }
 
-      private void InitializeComponent()
-      {
+      private void InitializeComponent() {
          AvaloniaXamlLoaderPortableXaml.Load(this);
 
          IControl img = ((StackPanel)Content).Children.First();
@@ -60,4 +61,5 @@ namespace Test.FastMines.Ava.Images
       }
 
    }
+
 }

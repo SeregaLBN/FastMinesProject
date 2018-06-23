@@ -6,7 +6,7 @@ using fmg.common.notyfier;
 namespace fmg.core.img {
 
    /// <summary> Model of the smile/face image </summary>
-   public class SmileModel implements IImageModel {
+   public class SmileModel : IImageModel {
 
       /** @see http://unicode-table.com/blocks/emoticons/
       * <br>  http://unicode-table.com/blocks/miscellaneous-symbols-and-pictographs/
@@ -60,11 +60,11 @@ namespace fmg.core.img {
          get { return _size; }
          set { _notifier.SetProperty(ref _size, value); }
       }
-      public void SetSize(double widht, double height) { SetSize(new SizeDouble(widht, height)) ; }
+      public void SetSize(double widht, double height) { Size = new SizeDouble(widht, height) ; }
 
       public EFaceType FaceType {
          get { return _faceType; }
-         set { _notifier.SetProperty(ref _faceType, faceType); }
+         set { _notifier.SetProperty(ref _faceType, value); }
       }
 
       public void Dispose() {

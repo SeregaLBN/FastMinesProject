@@ -1,16 +1,20 @@
 using System;
+using System.ComponentModel;
 using fmg.common;
 using fmg.core.types;
 using fmg.common.notyfier;
 
 namespace fmg.data.view.draw {
 
-   public class ColorText : NotifyPropertyChanged {
+   public class ColorText : INotifyPropertyChanged, IDisposable {
 
       private readonly Color[] _colorOpen;
       private readonly Color[] _colorClose;
+      public event PropertyChangedEventHandler PropertyChanged;
+      protected readonly NotifyPropertyChanged _notifier;
 
       public ColorText() {
+         _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
          _colorOpen = new Color[EOpenEx.GetValues().Length];
          _colorClose = new Color[ECloseEx.GetValues().Length];
 
@@ -55,7 +59,7 @@ namespace fmg.data.view.draw {
       }
 
       public void SetColorOpen(int i, Color colorOpen) {
-         SetProperty(ref _colorOpen[i], colorOpen, "ColorOpen..#" + i);
+         _notifier.SetProperty(ref _colorOpen[i], colorOpen, "ColorOpen..#" + i);
       }
 
       public Color GetColorClose(int i) {
@@ -63,7 +67,14 @@ namespace fmg.data.view.draw {
       }
 
       public void SetColorClose(int i, Color colorClose) {
-         SetProperty(ref _colorClose[i], colorClose, "ColorClose.#" + i);
+         _notifier.SetProperty(ref _colorClose[i], colorClose, "ColorClose.#" + i);
       }
+
+      public void Dispose() {
+         _notifier.Dispose();
+         GC.SuppressFinalize(this);
+      }
+
    }
+
 }

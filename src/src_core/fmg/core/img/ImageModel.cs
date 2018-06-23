@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using System.ComponentModel;
-using System.Collections.Generic;
 using fmg.common;
 using fmg.common.geom;
 using fmg.common.notyfier;
@@ -17,11 +15,9 @@ namespace fmg.core.img {
 
    }
 
-   /// <summary> Abstract, platform independent, image characteristics </summary>
-   /// <typeparam name="TImage">plaform specific image</typeparam>
-   public abstract class ImageModel<TImage> : IImageModel
-      where TImage : class
-   {
+   /// <summary> MVC: model. Common image characteristics. </summary>
+   public abstract class ImageModel : IImageModel {
+
       /// <summary> width and height in pixel </summary>
       private SizeDouble _size = new SizeDouble(ImageModelConsts.DefaultImageSize, ImageModelConsts.DefaultImageSize);
       /// <summary> inside padding. Автоматически пропорционально регулирую при измениях размеров </summary>
@@ -29,7 +25,7 @@ namespace fmg.core.img {
       private Color _foregroundColor = ImageModelConsts.DefaultForegroundColor;
       /// <summary> background fill color </summary>
       private Color _backgroundColor = ImageModelConsts.DefaultBkColor;
-      private Color _borderColor = Color.Maroon.clone().darker(0.5);
+      private Color _borderColor = Color.Maroon.Darker(0.5);
       private double _borderWidth = 3;
       /// <summary> 0° .. +360° </summary>
       private double _rotateAngle;
@@ -64,16 +60,16 @@ namespace fmg.core.img {
             _notifier.SetProperty(ref _padding, value);
          }
       }
-      public void SetPadding(double bound) { setPadding(new BoundDouble(bound)); }
+      public void SetPadding(double bound) { Padding = new BoundDouble(bound); }
 
-      static BoundDouble RecalcPadding(BoundDouble padding, SizeDouble current, SizeDouble old) {
-         return new BoundDouble(padding.left   * current.width  / old.width,
-                                padding.top    * current.height / old.height,
-                                padding.right  * current.width  / old.width,
-                                padding.bottom * current.height / old.height);
+      internal static BoundDouble RecalcPadding(BoundDouble padding, SizeDouble current, SizeDouble old) {
+         return new BoundDouble(padding.Left   * current.Width  / old.Width,
+                                padding.Top    * current.Height / old.Height,
+                                padding.Right  * current.Width  / old.Width,
+                                padding.Bottom * current.Height / old.Height);
       }
       private void RecalcPadding(SizeDouble old) {
-         BoundDouble paddingNew = recalcPadding(_padding, _size, old);
+         BoundDouble paddingNew = RecalcPadding(_padding, _size, old);
          _notifier.SetProperty(ref _padding, paddingNew, nameof(this.Padding));
       }
 
@@ -97,7 +93,7 @@ namespace fmg.core.img {
          get { return _borderWidth; }
          set {
             // _notifier.SetProperty(ref _borderWidth, value);
-            if (!_borderWidth.hasMinDiff(value)) {
+            if (!_borderWidth.HasMinDiff(value)) {
                double old = _borderWidth;
                _borderWidth = value;
                _notifier.OnPropertyChanged<double>(old, value, nameof(this.BorderWidth));
@@ -112,7 +108,7 @@ namespace fmg.core.img {
       }
 
       /// <summary> to diapason (0° .. +360°] </summary>
-      static double FixAngle(double value) {
+      internal static double FixAngle(double value) {
          return (value >= 360)
               ?               (value % 360)
               : (value < 0)

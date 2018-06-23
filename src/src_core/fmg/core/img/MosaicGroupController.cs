@@ -9,11 +9,11 @@ namespace fmg.core.img {
    public abstract class MosaicGroupController<TImage, TImageView>
                        : AnimatedImgController<TImage, TImageView, MosaicGroupModel>
       where TImage : class
-      where TImageView : WithBurgerMenuView<TImage, MosaicGroupModel>>
+      where TImageView : WithBurgerMenuView<TImage, MosaicGroupModel>
    {
 
       protected MosaicGroupController(bool showBurgerMenu, TImageView imageView)
-         : base(imageView);
+         : base(imageView)
       {
          View.BurgerMenuModel.Show = showBurgerMenu;
 

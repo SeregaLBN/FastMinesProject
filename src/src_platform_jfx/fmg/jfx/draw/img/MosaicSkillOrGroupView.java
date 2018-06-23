@@ -12,7 +12,7 @@ import fmg.common.geom.PointDouble;
 import fmg.core.img.AnimatedImageModel;
 import fmg.core.img.WithBurgerMenuView;
 import fmg.jfx.Cast;
-import fmg.jfx.StaticInitilizer;
+import fmg.jfx.StaticInitializer;
 
 /**
  * MVC: view. Abstract JFX representable {@link fmg.core.types.ESkillLevel} or {@link fmg.core.types.EMosaicGroup} as image
@@ -22,7 +22,7 @@ import fmg.jfx.StaticInitilizer;
 abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageModel> extends WithBurgerMenuView<TImage, TImageModel> {
 
    static {
-      StaticInitilizer.init();
+      StaticInitializer.init();
    }
 
    protected MosaicSkillOrGroupView(TImageModel imageModel) {
@@ -51,8 +51,8 @@ abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageM
       javafx.scene.paint.Color borderColor = !needDrawPerimeterBorder ? null : Cast.toColor(m.getBorderColor());
       if (needDrawPerimeterBorder)
          g.setLineWidth(bw);
-      Stream<Pair<Color, Stream<PointDouble>>> stars = getCoords();
-      stars.forEach(pair -> {
+      Stream<Pair<Color, Stream<PointDouble>>> shapes = getCoords();
+      shapes.forEach(pair -> {
          List<PointDouble> poly = pair.second.collect(Collectors.toList());
          double[] polyX = Cast.toPolygon(poly, true);
          double[] polyY = Cast.toPolygon(poly, false);

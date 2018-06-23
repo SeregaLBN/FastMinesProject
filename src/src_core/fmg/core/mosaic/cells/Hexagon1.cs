@@ -32,7 +32,7 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrHexagon1 : BaseAttribute {
 
-         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         public override SizeDouble GetSize(Matrisize sizeField) {
             var a = A;
             var result = new SizeDouble(
                   a * (sizeField.m    +0.5) * SQRT3,
@@ -43,15 +43,15 @@ namespace fmg.core.mosaic.cells {
 
             return result;
          }
-   
-         public override int getNeighborNumber(int direction) { return 6; }
-         public override int getVertexNumber(int direction) { return 6; }
-         public override double getVertexIntersection() { return 3; }
+
+         public override int GetNeighborNumber(int direction) { return 6; }
+         public override int GetVertexNumber(int direction) { return 6; }
+         public override double GetVertexIntersection() { return 3; }
          public override Size GetDirectionSizeField() { return new Size(1, 2); }
          public override double A => Math.Sqrt(2*Area/SQRT27);
          /// <summary> пол стороны треугольника </summary>
          public double B => A*SQRT3;
-         public override double GetSq(int borderWidth) {
+         public override double GetSq(double borderWidth) {
             var w = borderWidth/2.0;
             return 2*(B - 2*w)/(SQRT3+1);
          }
@@ -66,7 +66,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrHexagon1 Attr => (AttrHexagon1) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
+         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
 
          // определяю координаты соседей
          neighborCoord[0] = new Coord(coord.x-(direction^1), coord.y-1);

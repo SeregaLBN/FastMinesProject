@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Rendering;
+using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
 using fmg.ava.utils;
@@ -14,55 +16,20 @@ namespace fmg.ava.draw.img {
    /// <br/>
    /// Avalonia impl
    /// </summary>
-   public static class MosaicsGroupImg {
+   public static class MosaicGroupImg {
 
       /// <summary> Representable <see cref="EMosaicGroup"/> as image: common implementation part </summary>
-      public abstract class CommonImpl<TImage> : AMosaicsGroupImg<TImage>
+      public abstract class View<TImage> : MosaicSkillOrGroupView<TImage, MosaicGroupModel>
          where TImage : class
       {
-         static CommonImpl() {
-            StaticInitilizer.Init();
-         }
 
          /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
-         protected CommonImpl(EMosaicGroup? group)
-            : base(group)
+         protected View(EMosaicGroup? group)
+            : base(new MosaicGroupModel(group))
          { }
 
-         protected void DrawBody(DrawingContext dc, bool fillBk) {
-            if (fillBk)
-               dc.FillRectangle(new SolidColorBrush(BackgroundColor.ToAvaColor()), new Avalonia.Rect(Size.ToAvaSize()));
-
-            var bw = BorderWidth;
-            var needDrawPerimeterBorder = (!BorderColor.IsTransparent && (bw > 0));
-            var borderColor = BorderColor.ToAvaColor();
-
-            var shapes = GetCoords();
-            foreach (var data in shapes) {
-               IBrush brush = null;
-               if (!data.Item1.IsTransparent)
-                  brush = new SolidColorBrush(data.Item1.ToAvaColor());
-               Pen pen = null;
-               if (needDrawPerimeterBorder)
-                  pen = new Pen(borderColor.ToUint32(), bw);
-
-               var points = data.Item2.ToArray();
-               var figure = new PathFigure {
-                  StartPoint = points[0].ToAvaPoint(),
-                  IsClosed = true,
-                  IsFilled = false // TODO ??
-               };
-               for (int i = 1; i < points.Length; ++i)
-                  figure.Segments.Add(new LineSegment {
-                     Point = points[i].ToAvaPoint()
-                  });
-
-               PathGeometry geom = new PathGeometry();
-               geom.Figures.Add(figure);
-
-               dc.DrawGeometry(brush, pen, geom);
-            }
-         }
+         /// <summary> get paint information of drawing basic image model </summary>
+         protected override IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords => Model.Coords;
 
       }
 
@@ -71,11 +38,8 @@ namespace fmg.ava.draw.img {
       //    custom implementations
       /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      /// <summary> Representable <see cref="EMosaicGroup"/> as image.
-      /// <br/>
-      /// RenderTargetBitmap impl
-      /// </summary>
-      public class RenderTargetBmp : CommonImpl<RenderTargetBitmap> {
+      /// <summary> MosaicsGroup image view implementation over <see cref="RenderTargetBitmap"/> </summary>
+      public class RenderTargetBmp : View<RenderTargetBitmap> {
 
          private IVisualBrushRenderer _vbr;
 
@@ -88,27 +52,20 @@ namespace fmg.ava.draw.img {
 
          protected override RenderTargetBitmap CreateImage() {
             //var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            return new RenderTargetBitmap(Size.Width, Size.Height);
+            return new RenderTargetBitmap((int)Size.Width, (int)Size.Height);
          }
 
          protected override void DrawBody() {
             using (var dc = Image.CreateDrawingContext(_vbr)) {
                using (var dc1 = new DrawingContext(dc)) {
-                  DrawBody(dc1, true);
+                  DrawBody(dc1);
                }
             }
          }
 
-         protected override void Dispose(bool disposing) {
-            if (Disposed)
-               return;
-
-            base.Dispose(disposing);
-
-            if (disposing) {
-               (_vbr as IDisposable)?.Dispose();
-               _vbr = null;
-            }
+         protected override void Disposing() {
+            (_vbr as IDisposable)?.Dispose();
+            _vbr = null;
          }
       }
 
@@ -134,6 +91,13 @@ namespace fmg.ava.draw.img {
    //         DrawBody(Image, true);
    //      }
    //   }
+
+      /** MosaicsGroup image controller implementation for {@link Canvas} */
+      public class ControllerRenderTargetBmp : MosaicGroupController<RenderTargetBitmap, MosaicGroupImg.RenderTargetBmp> {
+         public ControllerRenderTargetBmp(EMosaicGroup? group)
+            : base(group==null, new MosaicGroupImg.RenderTargetBmp(group))
+         { }
+      }
 
    }
 

@@ -27,9 +27,9 @@ namespace fmg.core.img {
       private double _rotateAngle;
       /// <summary> list of offsets rotation angles prepared for cells </summary>
       private readonly IList<double /* angle offset */ > _prepareList = new List<double>();
-      private readonly IList<RotatedCellContext> _rotatedElements = new List<RotatedCellContext>();
-      private boolean _disableCellAttributeListener = false;
-      private boolean _disableListener = false;
+      private readonly List<RotatedCellContext> _rotatedElements = new List<RotatedCellContext>();
+      private bool _disableCellAttributeListener = false;
+      private bool _disableListener = false;
 
       public ERotateMode RotateMode {
          get { return _rotateMode; }
@@ -45,10 +45,14 @@ namespace fmg.core.img {
          }
       }
 
-      protected override void OnPropertyChanged(PropertyChangedEventArgs ev) {
+      public IList<RotatedCellContext> RotatedElements {
+         get { return _rotatedElements; }
+      }
+
+      protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          if (_disableListener)
             return;
-         base.OnPropertyChanged(ev);
+         base.OnPropertyChanged(sender, ev);
          switch (ev.PropertyName) {
          case nameof(this.RotateMode):
          case nameof(this.SizeField):
@@ -62,21 +66,21 @@ namespace fmg.core.img {
 
       public void RotateMatrix() { RotateMatrix(true); }
       private void RotateMatrix(bool reinit) {
-         var size = CellAttr.getSize(SizeField);
+         var size = CellAttr.GetSize(SizeField);
          var center = new PointDouble(size.Width  / 2,
                                       size.Height / 2);
          double rotateAngle = RotateAngle;
-         for (var cell : Matrix) {
+         foreach (var cell in Matrix) {
             cell.Init(); // restore base coords
 
-            FigureHelper.RotateCollection(cell.Region.Points, rotateAngle, center);
+            FigureHelper.RotateList(cell.getRegion().Points, rotateAngle, center);
          }
          _notifier.OnPropertyChanged(nameof(MosaicGameModel.Matrix));
       }
 
       /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
 
-      private boolean _rotateCellAlterantive;
+      private bool _rotateCellAlterantive;
 
       public sealed class RotatedCellContext {
          public RotatedCellContext(int index, double angleOffset, double area) {
@@ -90,13 +94,13 @@ namespace fmg.core.img {
       }
 
       /// <summary> rotate BaseCell from original Matrix with modified Region </summary>
-      protected void rotateCells() {
-         BaseAttribute attr = CellAttr;
-         List<BaseCell> matrix = Matrix;
-         double area = getArea();
-         double angle = getRotateAngle();
+      internal void RotateCells() {
+         var attr = CellAttr;
+         var matrix = Matrix;
+         double area = Area;
+         double angle = RotateAngle;
 
-         _rotatedElements.forEach(cntxt => {
+         foreach (var cntxt in _rotatedElements) {
             System.Diagnostics.Debug.Assert(cntxt.angleOffset >= 0);
             double angle2 = angle - cntxt.angleOffset;
             if (angle2 < 0)
@@ -107,7 +111,7 @@ namespace fmg.core.img {
             angle2 = Math.Sin((angle2 / 4).ToRadian()) * angle2; // accelerate / ускоряшка..
 
             // (un)comment next line to look result changes...
-            cntxt.area = area * (1 + Math.Sin((angle2 / 2).ToRadian()); // zoom'ирую
+            cntxt.area = area * (1 + Math.Sin((angle2 / 2).ToRadian())); // zoom'ирую
 
 
             BaseCell cell = matrix[cntxt.index];
@@ -123,7 +127,7 @@ namespace fmg.core.img {
             // rotate
             cell.Init();
             PointDouble centerNew = cell.getCenter();
-            PointDouble delta = new PointDouble(center.x - centerNew.x, center.y - centerNew.y);
+            PointDouble delta = new PointDouble(center.X - centerNew.X, center.Y - centerNew.Y);
             cell.getRegion().Points
                .RotateList((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, _rotateCellAlterantive ? center : centerNew)
                .MoveList(delta);
@@ -131,21 +135,21 @@ namespace fmg.core.img {
             // restore
             attr.Area = area;
             _disableCellAttributeListener = false;
-         });
+         }
 
          // Z-ordering
          _rotatedElements.Sort((x, y) => x.area.CompareTo(y.area));
       }
 
       public IList<BaseCell> GetNotRotatedCells() {
-         if (_rotatedElements.Empty)
+         if (!_rotatedElements.Any())
             return Matrix;
 
          var matrix = Matrix;
-         var indexes = _rotatedElements.Select(cntxt => cntxt.index);
-         var notRotated = new List<>(matrix.Count - indexes.Count);
+         var indexes = _rotatedElements.Select(cntxt => cntxt.index).ToList();
+         var notRotated = new List<BaseCell>(matrix.Count - indexes.Count);
          int i = 0;
-         for (var cell in matrix) {
+         foreach (var cell in matrix) {
             if (!indexes.Contains(i))
                notRotated.Add(cell);
             ++i;
@@ -154,10 +158,10 @@ namespace fmg.core.img {
       }
 
       public void GetRotatedCells(Action<IList<BaseCell>> rotatedCellsFunctor) {
-         if (_rotatedElements.Empty)
+         if (!_rotatedElements.Any())
             return;
 
-         PenBorder pb = PenBorder;
+         var pb = PenBorder;
          // save
          var borderWidth = pb.Width;
          var colorLight  = pb.ColorLight;
@@ -169,8 +173,8 @@ namespace fmg.core.img {
          pb.ColorShadow = colorShadow.Darker(0.5);
 
          var matrix = Matrix;
-         var rotatedCells = new List<>(_rotatedElements.Count);
-         for (var cntxt in _rotatedElements)
+         var rotatedCells = new List<BaseCell>(_rotatedElements.Count);
+         foreach (var cntxt in _rotatedElements)
             rotatedCells.Add(matrix[cntxt.index]);
          rotatedCellsFunctor(rotatedCells);
 
@@ -183,7 +187,7 @@ namespace fmg.core.img {
 
       private void RandomRotateElemenIndex() {
          _prepareList.Clear();
-         if (!_rotatedElements.Empty) {
+         if (_rotatedElements.Any()) {
             _rotatedElements.Clear();
             _notifier.OnPropertyChanged(nameof(this.RotatedElements));
          }
@@ -192,26 +196,26 @@ namespace fmg.core.img {
    //         return;
 
          // create random cells indexes  and  base rotate offset (negative)
-         int len = Matrix.Size;
+         int len = Matrix.Count;
          for (int i = 0; i < len/4.5; ++i) {
             AddRandomToPrepareList(i==0);
          }
       }
 
       private void AddRandomToPrepareList(bool zero) {
-         double offset = (zero ? 0 : ThreadLocalRandom.Current.nextInt(360)) + RotateAngle;
+         double offset = (zero ? 0 : ThreadLocalRandom.Current.Next(360)) + RotateAngle;
          if (offset > 360)
             offset -= 360;
          _prepareList.Add(offset);
       }
 
       private int NextRandomIndex() {
-         int len = getMatrix().Count;
+         int len = Matrix.Count;
          System.Diagnostics.Debug.Assert(_rotatedElements.Count < len);
          Random rand = ThreadLocalRandom.Current;
          do {
-            int index = rand.NextInt(len);
-            if (_rotatedElements.AnyMatch(ctxt => ctxt.index == index))
+            int index = rand.Next(len);
+            if (_rotatedElements.Any(ctxt => ctxt.index == index))
                continue;
             return index;
          } while(true);
@@ -236,7 +240,7 @@ namespace fmg.core.img {
                      (angleOld >= angleOffset && angleOffset <= angleNew && angleOld < angleNew)))  // example: old=5    offset=0    new=355
                {
                   _prepareList.RemoveAt(i);
-                  _rotatedElements.Add(new RotatedCellContext(NextRandomIndex(rand), angleOffset, area));
+                  _rotatedElements.Add(new RotatedCellContext(NextRandomIndex(), angleOffset, area));
                   _notifier.OnPropertyChanged(nameof(this.RotatedElements));
                }
             }
@@ -255,7 +259,7 @@ namespace fmg.core.img {
             if ((angle3 >= 360) || (angle3 < 0)) {
                if (toRemove == null)
                   toRemove = new List<RotatedCellContext>();
-               toRemove.add(cntxt);
+               toRemove.Add(cntxt);
             }
          }
          if (toRemove != null) {
@@ -265,25 +269,25 @@ namespace fmg.core.img {
                _rotatedElements.Remove(cntxt);
                if (!_rotatedElements.Any())
                   _rotateCellAlterantive = !_rotateCellAlterantive;
-               AddRandomToPrepareList(false, rand);
+               AddRandomToPrepareList(false);
             }
             _notifier.OnPropertyChanged(nameof(this.RotatedElements));
          }
       }
 
-      protected override void OnCellAttributePropertyChanged(PropertyChangedEventArgs ev) {
+      protected override void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
          if (_disableCellAttributeListener)
             return;
-         base.OnCellAttributePropertyChanged(ev);
+         base.OnCellAttributePropertyChanged(sender, ev);
 
-         string propName = ev.getPropertyName();
+         string propName = ev.PropertyName;
          if (nameof(BaseCell.BaseAttribute.Area) == propName)
             switch (RotateMode) {
-            case fullMatrix:
+            case MosaicAnimatedModel<TImage>.ERotateMode.fullMatrix:
                if (!_rotateAngle.HasMinDiff(0))
                   RotateMatrix(false);
                break;
-            case someCells:
+            case MosaicAnimatedModel<TImage>.ERotateMode.someCells:
                //UpdateAnglesOffsets(rotateAngleDelta);
                //RotateCells();
                break;

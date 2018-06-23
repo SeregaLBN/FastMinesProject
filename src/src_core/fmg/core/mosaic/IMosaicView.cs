@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using fmg.common.geom;
+using fmg.core.img;
 using fmg.core.mosaic.cells;
 
 namespace fmg.core.mosaic {

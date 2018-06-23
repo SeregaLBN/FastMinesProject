@@ -10,7 +10,7 @@ import java.util.Arrays;
 import fmg.core.img.FlagModel;
 import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
-import fmg.swing.StaticInitilizer;
+import fmg.swing.StaticInitializer;
 
 /**
  * Flag image
@@ -23,7 +23,7 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
    }
 
    static {
-      StaticInitilizer.init();
+      StaticInitializer.init();
    }
 
    protected void draw(Graphics2D g) {

@@ -33,7 +33,7 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrRhombus1 : BaseAttribute {
 
-         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         public override SizeDouble GetSize(Matrisize sizeField) {
             var a = A;
             var r = R;
             var c = C;
@@ -54,21 +54,21 @@ namespace fmg.core.mosaic.cells {
             return result;
          }
 
-         public override int getNeighborNumber(int direction) { return 10; }
-         public override int getVertexNumber(int direction) { return 4; }
-         public override double getVertexIntersection() { return 4.5; } // (3+3+6+6)/4.
+         public override int GetNeighborNumber(int direction) { return 10; }
+         public override int GetVertexNumber(int direction) { return 4; }
+         public override double GetVertexIntersection() { return 4.5; } // (3+3+6+6)/4.
          public override Size GetDirectionSizeField() { return new Size(3, 2); }
          public override double A => Math.Sqrt(Area*2/SQRT3);
          public double C => A / 2;
          public double H => A * SQRT3;
          public double R => H / 2;
-         public override double GetSq(int borderWidth) {
+         public override double GetSq(double borderWidth) {
             var w = borderWidth/2.0;
             return (A*SQRT3 - w*4)/(SQRT3+1);
          }
 
-         public override int getMaxBackgroundFillModeValue() {
-            return base.getMaxBackgroundFillModeValue()+1;
+         public override int GetMaxBackgroundFillModeValue() {
+            return base.GetMaxBackgroundFillModeValue()+1;
          }
       }
 
@@ -81,7 +81,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrRhombus1 Attr => (AttrRhombus1) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
+         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
 
          // определяю координаты соседей
           switch (direction) {
@@ -245,7 +245,7 @@ namespace fmg.core.mosaic.cells {
       public override int getShiftPointBorderIndex() { return 2; }
 
       public override Color getBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
-         if (fillMode == Attr.getMaxBackgroundFillModeValue()) {
+         if (fillMode == Attr.GetMaxBackgroundFillModeValue()) {
             switch ((getCoord().y%4)*3+(getCoord().x%3)) { // почти как вычисление direction...
             // подсвечиваю 4 группы, составляющие каждая шестигранник из 3х ромбов
             case 0: case  1: case  3: return repositoryColor(0);

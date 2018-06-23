@@ -1,3 +1,4 @@
+using System;
 using fmg.common;
 
 namespace fmg.core.img {
@@ -6,7 +7,7 @@ namespace fmg.core.img {
    public class PolarLightFgTransformer : IModelTransformer {
 
       public void Execute(int currentFrame, int totalFrames, IImageModel model) {
-         AnimatedImageModel am = model as AnimatedImageModel;
+         var am = model as AnimatedImageModel;
          if (am == null)
             throw new Exception("Illegal usage transformer");
 
@@ -17,9 +18,9 @@ namespace fmg.core.img {
          if (!am.AnimeDirection)
             rotateAngleDelta = -rotateAngleDelta;
 
-         HSV hsv = new HSV(am.ForegroundColor;
+         HSV hsv = new HSV(am.ForegroundColor);
          hsv.h += rotateAngleDelta;
-         am.ForegroundColor = hsv.toColor();
+         am.ForegroundColor = hsv.ToColor();
       }
 
    }

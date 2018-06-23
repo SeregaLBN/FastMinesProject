@@ -19,9 +19,9 @@ namespace fmg.core.img {
          SizeDouble size = lm.Size;
          PointDouble center = new PointDouble(size.Width/2.0, size.Height/2.0);
          double ra = lm.RotateAngle;
-         FigureHelper.RotateCollection(lm.Rays, ra, center);
-         FigureHelper.RotateCollection(lm.Inn , ra, center);
-         FigureHelper.RotateCollection(lm.Oct , ra, center);
+         FigureHelper.RotateList(lm.Rays, ra, center);
+         FigureHelper.RotateList(lm.Inn , ra, center);
+         FigureHelper.RotateList(lm.Oct , ra, center);
       }
 
    }

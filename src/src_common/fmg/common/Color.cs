@@ -185,17 +185,19 @@ namespace fmg.common {
       public override string ToString() {
          return $"argb={A:X2}{R:X2}{G:X2}{B:X2}";
       }
-   }
 
-   public static class ColorExt {
-      public static Color RandomColor(Random rnd) {
-         var next = rnd.Next();
+      public static Color RandomColor() {
+         var next = ThreadLocalRandom.Current.Next();
          return new Color {
             R = (byte) ((next & 0xFF) >> 0),
             G = (byte) ((next & 0xFF00) >> 8),
             B = (byte) ((next & 0xFF0000) >> 16),
             A = 255};
       }
+
+   }
+
+   public static class ColorExt {
 
       /// <summary> Creates grayscale version of this Color </summary>
       public static Color Grayscale(this Color clr) { return new Color(clr.A, (byte)(clr.R * 0.2126), (byte)(clr.G * 0.7152), (byte)(clr.B * 0.0722)); }

@@ -33,7 +33,7 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrPentagonT5 : BaseAttribute {
 
-         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         public override SizeDouble GetSize(Matrisize sizeField) {
             var a = A;
             var h = H;
             var result = new SizeDouble(
@@ -107,19 +107,19 @@ namespace fmg.core.mosaic.cells {
             return result;
          }
 
-         public override int getNeighborNumber(int direction) { return 8; }
-         public override int getVertexNumber(int direction) { return 5; }
-         public override double getVertexIntersection() { return 3.6; } // (3+3+3+3+6)/5.
+         public override int GetNeighborNumber(int direction) { return 8; }
+         public override int GetVertexNumber(int direction) { return 5; }
+         public override double GetVertexIntersection() { return 3.6; } // (3+3+3+3+6)/5.
          public override Size GetDirectionSizeField() { return new Size(14, 6); }
          public override double A => 2 * Math.Sqrt(Area/SQRT147);
          public double H => A * SQRT3/2;
-         public override double GetSq(int borderWidth) {
+         public override double GetSq(double borderWidth) {
             var w = borderWidth/2.0;
             return (A*2*SQRT3-4*w)/(SQRT3+1);
          }
 
-         public override int getMaxBackgroundFillModeValue() {
-            return base.getMaxBackgroundFillModeValue()+2;
+         public override int GetMaxBackgroundFillModeValue() {
+            return base.GetMaxBackgroundFillModeValue()+2;
             //return 1;
          }
       }
@@ -133,7 +133,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrPentagonT5 Attr => (AttrPentagonT5) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
+         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
 
          // определяю координаты соседей
          switch (direction) {
@@ -153,7 +153,7 @@ namespace fmg.core.mosaic.cells {
             neighborCoord[2] = new Coord(coord.x+1, coord.y  );
             neighborCoord[3] = new Coord(coord.x+2, coord.y  );
             neighborCoord[4] = new Coord(coord.x-1, coord.y+1);
-            neighborCoord[5] = new Coord(coord.x  , coord.y+1);  
+            neighborCoord[5] = new Coord(coord.x  , coord.y+1);
             neighborCoord[6] = new Coord(coord.x+1, coord.y+1);
             neighborCoord[7] = new Coord(coord.x+2, coord.y+1);
             break;
@@ -642,7 +642,7 @@ namespace fmg.core.mosaic.cells {
       }
 
       public override Color getBackgroundFillColor(int fillMode, Color defaultColor, Func<int, Color> repositoryColor) {
-         if (fillMode == Attr.getMaxBackgroundFillModeValue())
+         if (fillMode == Attr.GetMaxBackgroundFillModeValue())
          {
             // подсвечиваю 'ромашку'
             switch (getDirection()) {
@@ -664,7 +664,7 @@ namespace fmg.core.mosaic.cells {
             //   return repositoryColor(-1);
             }
          } else
-         if (fillMode == (Attr.getMaxBackgroundFillModeValue()-1))
+         if (fillMode == (Attr.GetMaxBackgroundFillModeValue()-1))
          {
             // подсвечиваю обратную 'диагональку'
             switch (getDirection()) {

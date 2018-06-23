@@ -32,7 +32,7 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrTrSq1 : BaseAttribute {
 
-         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         public override SizeDouble GetSize(Matrisize sizeField) {
             var b = B;
             var k = K;
             var n = N;
@@ -53,8 +53,8 @@ namespace fmg.core.mosaic.cells {
 
             return result;
          }
-   
-         public override int getNeighborNumber(int direction) {
+
+         public override int GetNeighborNumber(int direction) {
              switch (direction) {
              case 1: case 2: case 3: case 5: return 9;
              case 0: case 4: return 12;
@@ -62,7 +62,7 @@ namespace fmg.core.mosaic.cells {
                 throw new ArgumentException("Invalid value direction=" + direction);
              }
          }
-         public override int getVertexNumber(int direction) {
+         public override int GetVertexNumber(int direction) {
             switch (direction) {
             case 1: case 2: case 3: case 5: return 3;
             case 0: case 4: return 4;
@@ -70,16 +70,16 @@ namespace fmg.core.mosaic.cells {
                throw new ArgumentException("Invalid value direction="+direction);
              }
          }
-         public override double getVertexIntersection() { return 5.0; }
+         public override double GetVertexIntersection() { return 5.0; }
          public override Size GetDirectionSizeField() { return new Size(3, 2); }
          public override double A => Math.Sqrt(3*Area/(1+SQRT3/2));
          public double B => N + M;
          public double K => N - M;
          public double N => A * SIN75;
          public double M => A * SIN15;
-         public override double GetSq(int borderWidth) {
+         public override double GetSq(double borderWidth) {
             var w = borderWidth/2.0;
-            return (A*SQRT3 - w*6) / (4*SIN75); 
+            return (A*SQRT3 - w*6) / (4*SIN75);
          }
       }
 
@@ -92,7 +92,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrTrSq1 Attr => (AttrTrSq1) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
+         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
 
          // определяю координаты соседей
          switch (direction) {

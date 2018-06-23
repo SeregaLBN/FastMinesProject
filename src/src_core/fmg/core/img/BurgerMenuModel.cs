@@ -1,8 +1,10 @@
 using System;
 using System.Linq;
+using System.ComponentModel;
 using System.Collections.Generic;
 using fmg.common;
 using fmg.common.geom;
+using fmg.common.notyfier;
 
 namespace fmg.core.img {
 
@@ -12,7 +14,7 @@ namespace fmg.core.img {
       private ImageModel _generalModel;
       private bool _show = true;
       private bool _horizontal = true;
-      private int   _layers = 3;
+      private int  _layers = 3;
       private bool _rotate;
       private BoundDouble _padding;
 
@@ -22,24 +24,27 @@ namespace fmg.core.img {
 
       /// <summary> ctor </summary>
       /// <param name="generalModel">another basic model</param>
-      protected BurgerMenuModel(ImageModel generalModel) {
+      internal BurgerMenuModel(ImageModel generalModel) {
          _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
          _generalModel = generalModel;
          _generalModel.PropertyChanged += OnPropertyGeneralModelChanged;
       }
 
       private void OnPropertyGeneralModelChanged(object sender, PropertyChangedEventArgs ev) {
-         System.Diagnostics.Debug.Assert(Reference.Equals(sender, _generalModel));
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _generalModel));
          if (nameof(ImageModel.Size) == ev.PropertyName) {
             if (ev is PropertyChangedExEventArgs<SizeDouble> evEx)
                RecalcPadding(evEx.OldValue);
             else
-               RecalcPadding(null);
+               throw new Exception();
          }
       }
 
       /// <summary> image width and height in pixel </summary>
-      public SizeDouble Size => _generalModel.Size;
+      public SizeDouble Size {
+         get { return _generalModel.Size; }
+         set { _generalModel.Size = value; }
+      }
 
       public bool Show {
          get { return _show; }
@@ -65,16 +70,16 @@ namespace fmg.core.img {
       public BoundDouble Padding{
          get {
             if (_padding == null)
-               RecalcPadding(null);
+               RecalcPadding(default(SizeDouble));
             return _padding;
          }
          set {
             if (value.LeftAndRight >= Size.Width)
-               throw new BadArgumentException("Padding size is very large. Should be less than Width.");
-            if (value.getTopAndBottom() >= getSize().height)
-               throw new BadArgumentException("Padding size is very large. Should be less than Height.");
+               throw new ArgumentException("Padding size is very large. Should be less than Width.");
+            if (value.TopAndBottom >= Size.Height)
+               throw new ArgumentException("Padding size is very large. Should be less than Height.");
             var paddingNew = new BoundDouble(value.Left, value.Top, value.Right, value.Bottom);
-            _notifier.SetProperty(_padding, paddingNew);
+            _notifier.SetProperty(ref _padding, paddingNew);
          }
       }
       private void RecalcPadding(SizeDouble old) {
@@ -82,10 +87,10 @@ namespace fmg.core.img {
          var paddingNew = (_padding == null)
                ? new BoundDouble(size.Width / 2,
                                  size.Height / 2,
-                                 _generalModel.Padding().Right,
-                                 _generalModel.Padding().Bottom)
+                                 _generalModel.Padding.Right,
+                                 _generalModel.Padding.Bottom)
                : ImageModel.RecalcPadding(_padding, size, old);
-         _notifier.SetProperty(_padding, paddingNew, nameof(this.Padding));
+         _notifier.SetProperty(ref _padding, paddingNew, nameof(this.Padding));
       }
 
       protected struct LineInfo {
@@ -96,30 +101,30 @@ namespace fmg.core.img {
       }
 
       /// <summary> get paint information of drawing burger menu model image </summary>
-      protected IEnumerable<LineInfo> GetCoords() {
+      protected IEnumerable<LineInfo> Coords { get {
          if (!Show)
             return Enumerable.Empty<LineInfo>();
 
          bool horizontal = Horizontal;
-         int layers = LayersIn;
+         int layers = Layers;
          var pad = Padding;
-         Rect rc = new Rect(pad.Left,
-                            pad.Top,
-                            Size.Width  - pad.LeftAndRight,
-                            Size.Height - pad.TopAndBottom);;
+         var rc = new RectDouble(pad.Left,
+                                 pad.Top,
+                                 Size.Width - pad.LeftAndRight,
+                                 Size.Height - pad.TopAndBottom); ;
          double penWidth = Math.Max(1, (horizontal ? rc.Height : rc.Width) / (2.0 * layers));
-         double rotateAngle = Rotate ? RotateAngle : 0;
+         double rotateAngle = Rotate ? _generalModel.RotateAngle : 0;
          double stepAngle = 360.0 / layers;
 
          return Enumerable.Range(0, layers)
             .Select(layerNum => {
-               double layerAlignmentAngle = FixAngle(layerNum * stepAngle + rotateAngle);
+               double layerAlignmentAngle = ImageModel.FixAngle(layerNum * stepAngle + rotateAngle);
                double offsetTop = !horizontal ? 0 : layerAlignmentAngle * rc.Height / 360;
                double offsetLeft = horizontal ? 0 : layerAlignmentAngle * rc.Width / 360;
                PointDouble start = new PointDouble(rc.Left() + offsetLeft,
                                                    rc.Top() + offsetTop);
-               PointDouble end = new PointDouble((horizontal ? rc.Right() : rc.Left()  ) + offsetLeft,
-                                                 (horizontal ? rc.Top()   : rc.Bottom()) + offsetTop);
+               PointDouble end = new PointDouble((horizontal ? rc.Right() : rc.Left()) + offsetLeft,
+                                                   (horizontal ? rc.Top() : rc.Bottom()) + offsetTop);
 
                HSV hsv = new HSV(Color.Gray);
                hsv.v *= Math.Sin(layerNum * stepAngle / layers);
@@ -131,7 +136,7 @@ namespace fmg.core.img {
                li.to = end;
                return li;
             });
-      }
+      } }
 
       public void Dispose() {
          if (_disposed)

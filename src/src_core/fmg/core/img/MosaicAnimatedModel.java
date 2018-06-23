@@ -54,6 +54,8 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
       _notifier.setProperty(_rotateAngle, ImageModel.fixAngle(value), PROPERTY_ROTATE_ANGLE);
    }
 
+   public List<RotatedCellContext> getRotatedElements() { return _rotatedElements; }
+
    @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       if (_disableListener)

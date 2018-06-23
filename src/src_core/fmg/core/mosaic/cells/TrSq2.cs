@@ -32,7 +32,7 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrTrSq2 : BaseAttribute {
 
-         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         public override SizeDouble GetSize(Matrisize sizeField) {
             var a = A;
             var b = B;
             var h = H;
@@ -70,7 +70,7 @@ namespace fmg.core.mosaic.cells {
             return result;
          }
 
-         public override int getNeighborNumber(int direction) {
+         public override int GetNeighborNumber(int direction) {
             switch (direction) {
             case  1: case  2: case  4: case  5:
             case  6: case  8: case  9: case 11:
@@ -85,7 +85,7 @@ namespace fmg.core.mosaic.cells {
                throw new ArgumentException("Invalid value direction="+direction);
             }
          }
-         public override int getVertexNumber(int direction) {
+         public override int GetVertexNumber(int direction) {
             switch (direction) {
             case  0: case  3: case  7: case 10:
             case 14: case 17: case 18: case 21:
@@ -100,15 +100,15 @@ namespace fmg.core.mosaic.cells {
                throw new ArgumentException("Invalid value direction="+direction);
             }
          }
-         public override double getVertexIntersection() { return 5.0; }
+         public override double GetVertexIntersection() { return 5.0; }
          public override Size GetDirectionSizeField() { return new Size(6, 6); }
          /// <summary> </summary> размер стороны треугольника и квадрата */
          public override double A => Math.Sqrt(6*Area/(2+SQRT3));
          public double B => A / 2;
          public double H => B * SQRT3;
-         public override double GetSq(int borderWidth) {
+         public override double GetSq(double borderWidth) {
             var w = borderWidth/2.0;
-            return (A*SQRT3 - w*6) / (2+SQRT3) - 1; 
+            return (A*SQRT3 - w*6) / (2+SQRT3) - 1;
          }
       }
 
@@ -121,7 +121,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrTrSq2 Attr => (AttrTrSq2) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
+         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
 
          // определяю координаты соседей
          switch (direction) {
@@ -385,7 +385,7 @@ namespace fmg.core.mosaic.cells {
          }
          return new PointDouble(oX, oY);
       }
-   
+
       protected override void CalcRegion() {
          var attr = Attr;
          var a = attr.A;
@@ -523,7 +523,7 @@ namespace fmg.core.mosaic.cells {
          case 13: case 34: center.X = o.X - wsq2;   center.Y = o.Y + a+b;     break;
          case 14: case 35: center.X = o.X + b;      center.Y = o.Y + a+b;     break;
          case 15: case 30: center.X = o.X - h+wsq2; center.Y = o.Y + a;       break;
-         case 16: case 31: center.X = o.X - wsq2;   center.Y = o.Y + b;       break; 
+         case 16: case 31: center.X = o.X - wsq2;   center.Y = o.Y + b;       break;
          case 17: case 32: center.X = o.X + a+b;    center.Y = o.Y + b;       break;
          }
 

@@ -2,24 +2,27 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
+using fmg.common;
 using fmg.common.geom;
 using fmg.common.notyfier;
 using fmg.core.types;
 using fmg.core.mosaic.cells;
+using fmg.core.img;
+using fmg.data.view.draw;
 
 namespace fmg.core.mosaic {
 
    public sealed class MosaicDrawModelConst {
 
       /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется одним из MVC-наследником </summary>
-      public static Color DefaultBkColor = Color.Gray.brighter();
+      public static Color DefaultBkColor = Color.Gray.Brighter();
 
    }
 
    /// <summary> MVC: draw model of mosaic field. </summary>
    /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
    public class MosaicDrawModel<TImage> : MosaicGameModel, IImageModel
-      where ITmage : class
+      where TImage : class
    {
 
       private TImage         _imgMine, _imgFlag;
@@ -38,7 +41,7 @@ namespace fmg.core.mosaic {
       }
 
       /// <summary> размер в пикселях поля мозаики. Inner, т.к. снаружи есть ещё padding и margin </summary>
-      public SizeDouble InnerSize => CellAttr.getSize(SizeField);
+      public SizeDouble InnerSize => CellAttr.GetSize(SizeField);
 
       /// <summary> общий размер в пискелях </summary>
       public SizeDouble Size {
@@ -46,28 +49,28 @@ namespace fmg.core.mosaic {
             var size = InnerSize;
             var m = Margin;
             var p = Padding;
-            size.width  += m.LeftAndRight + p.LeftAndRight;
-            size.height += m.TopAndBottom + p.TopAndBottom;
+            size.Width  += m.LeftAndRight + p.LeftAndRight;
+            size.Height += m.TopAndBottom + p.TopAndBottom;
             return size;
          }
          set {
-            if (size.Width < 1)
+            if (value.Width < 1)
                throw new ArgumentException("Size value widht must be > 1");
-            if (size.Height < 1)
+            if (value.Height < 1)
                throw new ArgumentException("Size value height must be > 1");
 
             var oldSize = Size;
             var oldPadding = Padding;
-            var newPadding = new BoundDouble(oldPadding.Left   * size.Width  / oldSize.Width,
-                                             oldPadding.Top    * size.Height / oldSize.Height,
-                                             oldPadding.Right  * size.Width  / oldSize.Width,
-                                             oldPadding.Bottom * size.Height / oldSize.Height);
-            var toCalc = new SizeDouble(size.Width  - newPadding.LeftAndRight,
-                                        size.Height - newPadding.TopAndBottom);
+            var newPadding = new BoundDouble(oldPadding.Left   * value.Width  / oldSize.Width,
+                                             oldPadding.Top    * value.Height / oldSize.Height,
+                                             oldPadding.Right  * value.Width  / oldSize.Width,
+                                             oldPadding.Bottom * value.Height / oldSize.Height);
+            var toCalc = new SizeDouble(value.Width  - newPadding.LeftAndRight,
+                                        value.Height - newPadding.TopAndBottom);
             var area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref toCalc);
             BoundDouble margin = new BoundDouble(0);
-            margin.Left = margin.Right  = (size.Width  - newPadding.LeftAndRight - toCalc.Width ) / 2;
-            margin.Top  = margin.Bottom = (size.Height - newPadding.TopAndBottom - toCalc.Height) / 2;
+            margin.Left = margin.Right  = (value.Width  - newPadding.LeftAndRight - toCalc.Width ) / 2;
+            margin.Top  = margin.Bottom = (value.Height - newPadding.TopAndBottom - toCalc.Height) / 2;
 
             Area = area;
             Margin = margin;
@@ -90,7 +93,7 @@ namespace fmg.core.mosaic {
          get { return _imgFlag; }
          set {
             Object old = this._imgFlag;
-            if (old != img) { // references compare
+            if (!ReferenceEquals(old, value)) { // references compare
                this._imgFlag = value;
                _notifier.OnPropertyChanged(old, value);
             }
@@ -165,7 +168,7 @@ namespace fmg.core.mosaic {
             if (_colors.ContainsKey(index))
                return _colors[index];
 
-            var res = ColorExt.RandomColor().Brighter(0.45);
+            var res = Color.RandomColor().Brighter(0.45);
             _colors.Add(index, res);
             return res;
          }
@@ -177,10 +180,10 @@ namespace fmg.core.mosaic {
 
       }
 
-      public BackgroundFill BackgroundFill {
+      public BackgroundFill BkFill {
          get {
             if (_backgroundFill == null)
-               BackgroundFill = new BackgroundFill();
+               BkFill = new BackgroundFill();
             return _backgroundFill;
          }
          set {
@@ -198,13 +201,13 @@ namespace fmg.core.mosaic {
          get { return _margin; }
          /// <summary> is only set when resizing. </summary>
          private set {
-            if (margin.Left < 0)
+            if (value.Left < 0)
                throw new ArgumentException("Margin left value must be > 0");
-            if (margin.Top < 0)
+            if (value.Top < 0)
                throw new ArgumentException("Margin top value must be > 0");
-            if (margin.Right < 0)
+            if (value.Right < 0)
                throw new ArgumentException("Margin right value must be > 0");
-            if (margin.Bottom < 0)
+            if (value.Bottom < 0)
                throw new ArgumentException("Margin bottom value must be > 0");
 
             _notifier.SetProperty(ref _margin, value);
@@ -214,35 +217,35 @@ namespace fmg.core.mosaic {
       public BoundDouble Padding {
          get { return _padding; }
          set {
-            if (padding.Left < 0)
+            if (value.Left < 0)
                throw new ArgumentException("Padding left value must be > 0");
-            if (padding.Top < 0)
+            if (value.Top < 0)
                throw new ArgumentException("Padding top value must be > 0");
-            if (padding.Right < 0)
+            if (value.Right < 0)
                throw new ArgumentException("Padding right value must be > 0");
-            if (padding.Bottom < 0)
+            if (value.Bottom < 0)
                throw new ArgumentException("Padding bottom value must be > 0");
 
             var size = Size;
-            if ((size.Width - padding.LeftAndRight) < 1)
+            if ((size.Width - value.LeftAndRight) < 1)
                throw new ArgumentException("The left and right padding are very large");
-            if ((size.Height - padding.TopAndBottom) < 1)
+            if ((size.Height - value.TopAndBottom) < 1)
                throw new ArgumentException("The top and bottom padding are very large");
 
-            var toCalc = new SizeDouble(size.Width  - padding.LeftAndRight,
-                                        size.Height - padding.TopAndBottom);
+            var toCalc = new SizeDouble(size.Width  - value.LeftAndRight,
+                                        size.Height - value.TopAndBottom);
             var area = MosaicHelper.FindAreaBySize(MosaicType, SizeField, ref toCalc);
             BoundDouble margin = new BoundDouble(0);
-            margin.Left = margin.Right  = (size.Width  - padding.LeftAndRight - toCalc.Width ) / 2;
-            margin.Top  = margin.Bottom = (size.Height - padding.TopAndBottom - toCalc.Height) / 2;
+            margin.Left = margin.Right  = (size.Width  - value.LeftAndRight - toCalc.Width ) / 2;
+            margin.Top  = margin.Bottom = (size.Height - value.TopAndBottom - toCalc.Height) / 2;
 
             Area = area;
             Margin = margin;
-            PaddingInternal = padding;
+            PaddingInternal = value;
          }
       }
       public void setPadding(double bound) { Padding = new BoundDouble(bound); }
-      private void PaddingInternal {
+      private BoundDouble PaddingInternal {
          set {
             _notifier.SetProperty(ref _padding, value, nameof(this.Padding));
          }
@@ -256,7 +259,7 @@ namespace fmg.core.mosaic {
          }
          set {
             FontInfo old = this._fontInfo;
-            if (_notifier.SetProperty(_fontInfo, value)) {
+            if (_notifier.SetProperty(ref _fontInfo, value)) {
                if (old != null)
                   old.PropertyChanged -= OnFontInfoPropertyChanged;
                if (value != null)
@@ -291,7 +294,7 @@ namespace fmg.core.mosaic {
          _notifier.OnPropertyChanged(nameof(this.FontInfo));
       }
       private void OnBackgroundFillPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         _notifier.OnPropertyChanged(nameof(this.BackgroundFill));
+         _notifier.OnPropertyChanged(nameof(this.BkFill));
       }
       private void OnColorTextPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          _notifier.OnPropertyChanged(nameof(this.ColorText));
@@ -300,8 +303,8 @@ namespace fmg.core.mosaic {
          _notifier.OnPropertyChanged(nameof(this.PenBorder));
       }
 
-      protected void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         switch (propertyName) {
+      protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         switch (ev.PropertyName) {
          case nameof(this.Area):
          case nameof(this.SizeField):
          case nameof(this.MosaicType):
@@ -314,11 +317,11 @@ namespace fmg.core.mosaic {
 
       protected override void Disposing() {
          this.PropertyChanged -= OnPropertyChanged;
-         BackgroundFill.Dispose();
-         base.close();
+         BkFill.Dispose();
+         base.Disposing();
          // unsubscribe from local notifications
          FontInfo = null;
-         BackgroundFill = null;
+         BkFill = null;
          ColorText = null;
          PenBorder = null;
 

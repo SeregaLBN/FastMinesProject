@@ -32,7 +32,7 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrParquet2 : BaseAttribute {
 
-         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         public override SizeDouble GetSize(Matrisize sizeField) {
             var a = A;
             var result = new SizeDouble(
                   (sizeField.m*2+2) * a,
@@ -44,12 +44,12 @@ namespace fmg.core.mosaic.cells {
             return result;
          }
 
-         public override int getNeighborNumber(int direction) { return 7; }
-         public override int getVertexNumber(int direction) { return 4; }
-         public override double getVertexIntersection() { return 3.5; } // (4+4+3+3) / 4
+         public override int GetNeighborNumber(int direction) { return 7; }
+         public override int GetVertexNumber(int direction) { return 4; }
+         public override double GetVertexIntersection() { return 3.5; } // (4+4+3+3) / 4
          public override Size GetDirectionSizeField() { return new Size(2, 2); }
          public override double A => Math.Sqrt(Area)/2;
-         public override double GetSq(int borderWidth) {
+         public override double GetSq(double borderWidth) {
             var w = borderWidth/2.0;
             return A-w*SQRT2;
          }
@@ -64,7 +64,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrParquet2 Attr => (AttrParquet2) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
+         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
 
          // определяю координаты соседей
          switch (direction) {

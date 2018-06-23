@@ -147,7 +147,7 @@ namespace fmg.core.mosaic {
          var res = Finder(2000,
             area => {
                cellAttr.Area = area;
-               sizeIter = cellAttr.GetOwnerSize(mosaicSizeField);
+               sizeIter = cellAttr.GetSize(mosaicSizeField);
                if ((sizeIter.Width  <= sizeClientCopy.Width ) && sizeIter.Width .HasMinDiff(sizeClientCopy.Width) && // меньше с минимальными различиями
                    (sizeIter.Height <= sizeClientCopy.Height) && sizeIter.Height.HasMinDiff(sizeClientCopy.Height))  // less with minimal differences
                   return 0;
@@ -173,7 +173,7 @@ namespace fmg.core.mosaic {
          var result = new Matrisize();
          Finder(2000, newWidth => {
             result.m = newWidth;
-            var sizeWnd = cellAttr.GetOwnerSize(result);
+            var sizeWnd = cellAttr.GetSize(result);
             if (sizeWnd.Width.HasMinDiff(sizeClient.Width))
                return 0;
             if (sizeWnd.Width < sizeClient.Width)
@@ -182,7 +182,7 @@ namespace fmg.core.mosaic {
          });
          Finder(2000, newHeight => {
             result.n = newHeight;
-            var sizeWnd = cellAttr.GetOwnerSize(result);
+            var sizeWnd = cellAttr.GetSize(result);
             if (sizeWnd.Height.HasMinDiff(sizeClient.Height))
                return 0;
             if (sizeWnd.Height < sizeClient.Height)
@@ -203,11 +203,11 @@ namespace fmg.core.mosaic {
          return FindAreaBySize(CreateAttributeInstance(mosaicType), mosaicSizeField, ref sizeClient);
       }
 
-      /// <summary>get parent container (owner window) size in pixels</summary>
-      public static SizeDouble GetOwnerSize(EMosaic mosaicType, double area, Matrisize mosaicSizeField) {
+      /// <summary>The size in pixels where to place the matrix</summary>
+      public static SizeDouble GetSize(EMosaic mosaicType, double area, Matrisize mosaicSizeField) {
          var attr = CreateAttributeInstance(mosaicType);
          attr.Area = area;
-         return attr.GetOwnerSize(mosaicSizeField);
+         return attr.GetSize(mosaicSizeField);
       }
 
       #endregion

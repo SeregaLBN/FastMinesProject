@@ -6,11 +6,11 @@ namespace fmg.data.controller.types {
 
    public class User : IExternalizable {
 
-      /** неизменный id пользователя */
+      /** РЅРµРёР·РјРµРЅРЅС‹Р№ id РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ */
       private Guid guid;
-      /** юзер может менять и имя ... */
+      /** СЋР·РµСЂ РјРѕР¶РµС‚ РјРµРЅСЏС‚СЊ Рё РёРјСЏ ... */
       private string name;
-      /** ... и пароль */
+      /** ... Рё РїР°СЂРѕР»СЊ */
       private string password;
       public string imgAvatar;
 

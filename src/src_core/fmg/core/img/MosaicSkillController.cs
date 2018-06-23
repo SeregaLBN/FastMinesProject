@@ -9,11 +9,11 @@ namespace fmg.core.img {
    public abstract class MosaicSkillController<TImage, TImageView>
                        : AnimatedImgController<TImage, TImageView, MosaicSkillModel>
       where TImage : class
-      where TImageView : WithBurgerMenuView<TImage, MosaicSkillModel>>
+      where TImageView : WithBurgerMenuView<TImage, MosaicSkillModel>
    {
 
       protected MosaicSkillController(bool showBurgerMenu, TImageView imageView)
-         : super(imageView)
+         : base(imageView)
       {
          View.BurgerMenuModel.Show = showBurgerMenu;
 

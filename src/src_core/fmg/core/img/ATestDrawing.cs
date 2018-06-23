@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using fmg.common;
 using fmg.common.geom;
-using fmg.core.mosaic.draw;
+using fmg.core.mosaic;
 
 namespace fmg.core.img {
 
@@ -25,20 +25,20 @@ namespace fmg.core.img {
          where TImageView : IImageView<TImage, TImageModel>
          where TImageModel : IImageModel
       {
-         testTransparent = testTransparent || Bl();
+         testTransparent = testTransparent || Bl;
 
          TImageModel model = ctrller.Model;
 
          if (ctrller is AnimatedImgController<TImage, TImageView, TImageModel>) {
             var aCtrller = (AnimatedImgController<TImage, TImageView, TImageModel>)ctrller;
-            aCtrller.Animated = bl() || bl();
+            aCtrller.Animated = Bl || Bl;
             if (aCtrller.Animated) {
                aCtrller.AnimatePeriod = 1000 + R(2000);
                aCtrller.TotalFrames = 40 + R(20);
 
                if (model is AnimatedImageModel) {
-                  aCtrller.UseRotateTransforming(Bl());
-                  aCtrller.UsePolarLightFgTransforming(Bl());
+                  aCtrller.UseRotateTransforming(Bl);
+                  aCtrller.UsePolarLightFgTransforming(Bl);
                   aCtrller.AddModelTransformer(new PolarLightBkTransformer());
                }
             }
@@ -47,7 +47,7 @@ namespace fmg.core.img {
 
          Color bkClr = Color.RandomColor();
          if (testTransparent)
-            bkClr.A = 50 + R(10);
+            bkClr.A = (byte)(50 + R(10));
 
          if (model is ImageModel) {
             ImageModel ip = model as ImageModel;
@@ -55,7 +55,7 @@ namespace fmg.core.img {
             ip.BorderWidth = R(3);
 
             double pad = Math.Min(ip.Size.Height/3, ip.Size.Width/3);
-            ip.Padding = -pad/4 + R((int)pad);
+            ip.SetPadding(-pad/4 + R((int)pad));
 
             ip.BackgroundColor = bkClr;
 
@@ -64,21 +64,21 @@ namespace fmg.core.img {
                // test transparent
                Color clr = ip.ForegroundColor;
                if ((ip.BorderWidth > 0) && (R(4) == 0)) {
-                  clr.A = Color.Transparent.getA();
+                  clr.A = Color.Transparent.A;
                } else {
-                  clr.A = 150 + r(255-150);
+                  clr.A = (byte)(150 + R(255-150));
                }
                ip.ForegroundColor = clr;
             }
 
             if (model is AnimatedImageModel) {
                AnimatedImageModel aim = model as AnimatedImageModel;
-               aim.PolarLights = bl();
-               aim.AnimeDirection = Bl();
+               aim.PolarLights = Bl;
+               aim.AnimeDirection = Bl;
 
                if (model is LogoModel) {
                   LogoModel lm = model as LogoModel;
-                  lm.UseGradient = Bl();
+                  lm.UseGradient = Bl;
                }
             }
          }
@@ -90,10 +90,10 @@ namespace fmg.core.img {
                var mdm = model as MosaicDrawModel<TImage>;
                mdm.BackgroundColor = bkClr;
 
-               mdm.BackgroundFill.Mode = 1 + R(mdm.CellAttr.MaxBackgroundFillModeValue);
+               mdm.BkFill.Mode = 1 + R(mdm.CellAttr.GetMaxBackgroundFillModeValue());
 
-               mdm.PenBorder().Width = R(3);
-               SizeDouble size = mdm.Size();
+               mdm.PenBorder.Width = R(3);
+               SizeDouble size = mdm.Size;
                double padLeftRight = R((int)(size.Width /3));
                double padTopBottom = R((int)(size.Height/3));
                mdm.Padding = new BoundDouble(padLeftRight, padTopBottom, padLeftRight, padTopBottom);
@@ -104,7 +104,7 @@ namespace fmg.core.img {
                   MosaicAnimatedModel<TImage>.ERotateMode[] vals =
                      (MosaicAnimatedModel<TImage>.ERotateMode[])
                      Enum.GetValues(typeof(MosaicAnimatedModel<TImage>.ERotateMode));
-                  mam.RotateMode = eRotateModes[vals[R(vals.Length)];
+                  mam.RotateMode = vals[R(vals.Length)];
                }
             }
          }
@@ -121,12 +121,12 @@ namespace fmg.core.img {
          where TImageView : IImageView<TImage, TImageModel>
          where TImageModel : IImageModel
       {
-         public Size imageSize;
+         public SizeDouble imageSize;
          public Size tableSize;
          public Func<IImageController<TImage, TImageView, TImageModel> /* image */, CellTilingInfo> itemCallback;
       }
 
-      public CellTiling<TImage, TImageView, TImageModel>(RectDouble rc, IList<IImageController<TImage, TImageView, TImageModel>> images, bool testTransparent)
+      public CellTilingResult<TImage, TImageView, TImageModel> CellTiling<TImage, TImageView, TImageModel>(RectDouble rc, IList<IImageController<TImage, TImageView, TImageModel>> images, bool testTransparent)
          where TImage : class
          where TImageView : IImageView<TImage, TImageModel>
          where TImageModel : IImageModel
@@ -164,14 +164,14 @@ namespace fmg.core.img {
             };
          };
 
-         return new CellTilingResult<TImageEx> {
+         return new CellTilingResult<TImage, TImageView, TImageModel> {
             imageSize = imgSize,
             tableSize = new Size(cols, rows),
             itemCallback = itemCallback
          };
       }
 
-      public string GetTitle<TImage>(List<IImageController<TImage, TImageView, TImageModel>> images)
+      public string GetTitle<TImage, TImageView, TImageModel>(List<IImageController<TImage, TImageView, TImageModel>> images)
          where TImage : class
          where TImageView : IImageView<TImage, TImageModel>
          where TImageModel : IImageModel

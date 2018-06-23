@@ -33,19 +33,19 @@ namespace fmg.core.mosaic.cells {
 
       public class AttrSquare1 : BaseAttribute {
 
-         public override SizeDouble GetOwnerSize(Matrisize sizeField) {
+         public override SizeDouble GetSize(Matrisize sizeField) {
             var a = A; // размер стороны квадрата
             return new SizeDouble(
                   sizeField.m * a,
                   sizeField.n * a);
          }
 
-         public override int getNeighborNumber(int direction) { return 8; }
-         public override int getVertexNumber(int direction) { return 4; }
-         public override double getVertexIntersection() { return 4; }
+         public override int GetNeighborNumber(int direction) { return 8; }
+         public override int GetVertexNumber(int direction) { return 4; }
+         public override double GetVertexIntersection() { return 4; }
          public override Size GetDirectionSizeField() { return new Size(1,1); }
          public override double A => Math.Sqrt(Area);
-         public override double GetSq(int borderWidth) {
+         public override double GetSq(double borderWidth) {
             var w = borderWidth/2.0;
             return A-2*w;
          }
@@ -58,7 +58,7 @@ namespace fmg.core.mosaic.cells {
       private new AttrSquare1 Attr => (AttrSquare1) base.Attr;
 
       protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.getNeighborNumber(getDirection())];
+         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
 
          // определяю координаты соседей
          neighborCoord[0] = new Coord(coord.x-1, coord.y-1);

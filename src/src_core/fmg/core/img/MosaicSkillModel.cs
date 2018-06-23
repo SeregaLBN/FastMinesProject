@@ -11,23 +11,23 @@ namespace fmg.core.img {
    /// <summary> MVC model of <see cref="ESkillLevel"/> representable as image </summary>
    public class MosaicSkillModel : AnimatedImageModel {
 
-      private ESkillLevel _mosaicSkill;
+      private ESkillLevel? _mosaicSkill;
 
-      public MosaicSkillModel(ESkillLevel mosaicSkill) { _mosaicSkill = mosaicSkill; }
+      public MosaicSkillModel(ESkillLevel? mosaicSkill) { _mosaicSkill = mosaicSkill; }
 
-      public ESkillLevel MosaicSkill {
+      public ESkillLevel? MosaicSkill {
          get { return _mosaicSkill; }
-         set { _notifier.setProperty(ref _mosaicSkill, value); }
+         set { _notifier.SetProperty(ref _mosaicSkill, value); }
       }
 
 
-      public IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords => {
+      public IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords { get {
          return !_mosaicSkill.HasValue
             ? Coords_SkillLevelAsType
             : Coords_SkillLevelAsValue;
-      }
+      } }
 
-      private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords_SkillLevelAsType => {
+      private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords_SkillLevelAsType { get {
          const bool bigMaxStar = !true; // true - большая звезда - вне картинки; false - большая звезда - внутри картинки.
          const bool accelerateRevert = !true; // ускорение под конец анимации, иначе - в начале...
 
@@ -51,7 +51,7 @@ namespace fmg.core.img {
             .Concat(
                 GetCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars / 2, angle, sqMax, sqExt, centerMax, centerExt));
        //return GetCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax); // old
-      }
+      } }
 
       private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> GetCoords_SkillLevelAsType_2(
           bool accumulative,
@@ -102,7 +102,7 @@ namespace fmg.core.img {
 
                var clr = !pl
                   ? fgClr
-                  : new HSV(clr).AddHue(+angleStar).ToColor(); // try: -angleStar
+                  : new HSV(fgClr).AddHue(+angleStar).ToColor(); // try: -angleStar
 
                return new Tuple<double, Tuple<Color, IEnumerable<PointDouble>>>(sq, new Tuple<Color, IEnumerable<PointDouble>>(
                      clr,
@@ -116,7 +116,7 @@ namespace fmg.core.img {
             .Select(x => x.Item2);
       }
 
-      private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords_SkillLevelAsValue => {
+      private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords_SkillLevelAsValue { get {
          var pad = Padding;
          var sq = Math.Min( // size inner square
             Size.Width - pad.LeftAndRight,
@@ -148,7 +148,7 @@ namespace fmg.core.img {
 
                var clr = !pl
                   ? fgClr
-                  : new HSV(clr).AddHue(starNum * anglePart).ToColor();
+                  : new HSV(fgClr).AddHue(starNum * anglePart).ToColor();
 
                return new Tuple<Color, IEnumerable<PointDouble>>(clr, (skill == ESkillLevel.eCustom)
                   ? FigureHelper.GetRegularPolygonCoords(3 + starNum % 4, r1, centerStar, -angleAccumulative)
@@ -157,6 +157,6 @@ namespace fmg.core.img {
             .Reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
       }
 
-   }
+   } }
 
 }
