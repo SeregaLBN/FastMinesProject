@@ -93,7 +93,7 @@ namespace fmg.core.img {
          _notifier.SetProperty(ref _padding, paddingNew, nameof(this.Padding));
       }
 
-      protected struct LineInfo {
+      internal struct LineInfo {
          public Color clr;
          public double penWidht;
          public PointDouble from; // start coord
@@ -101,7 +101,7 @@ namespace fmg.core.img {
       }
 
       /// <summary> get paint information of drawing burger menu model image </summary>
-      protected IEnumerable<LineInfo> Coords { get {
+      internal IEnumerable<LineInfo> Coords { get {
          if (!Show)
             return Enumerable.Empty<LineInfo>();
 

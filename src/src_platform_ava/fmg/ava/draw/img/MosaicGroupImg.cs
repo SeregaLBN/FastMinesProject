@@ -29,7 +29,7 @@ namespace fmg.ava.draw.img {
          { }
 
          /// <summary> get paint information of drawing basic image model </summary>
-         protected override IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords => Model.Coords;
+         protected override IEnumerable<Tuple<fmg.common.Color, IEnumerable<PointDouble>>> Coords { get => Model.Coords; }
 
       }
 
@@ -94,8 +94,8 @@ namespace fmg.ava.draw.img {
 
       /** MosaicsGroup image controller implementation for {@link Canvas} */
       public class ControllerRenderTargetBmp : MosaicGroupController<RenderTargetBitmap, MosaicGroupImg.RenderTargetBmp> {
-         public ControllerRenderTargetBmp(EMosaicGroup? group)
-            : base(group==null, new MosaicGroupImg.RenderTargetBmp(group))
+         public ControllerRenderTargetBmp(EMosaicGroup? group, IControl ctrl)
+            : base(!group.HasValue, new MosaicGroupImg.RenderTargetBmp(group, ctrl))
          { }
       }
 

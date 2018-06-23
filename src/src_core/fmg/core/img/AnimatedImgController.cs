@@ -35,7 +35,7 @@ namespace fmg.core.img {
             if (_notifier.SetProperty(ref _animated, value)) {
                if (value)
                   Factory.GET_ANIMATOR().Subscribe(this, timeFromStartSubscribe => {
-                     long mod = timeFromStartSubscribe % _animatePeriod;
+                     long mod = timeFromStartSubscribe.Milliseconds % _animatePeriod;
                      long frame = mod * TotalFrames / _animatePeriod;
                      //System.out.println("ANIMATOR : " + getClass().getSimpleName() + ": "+ timeFromStartSubscribe);
                      CurrentFrame = (int)frame;

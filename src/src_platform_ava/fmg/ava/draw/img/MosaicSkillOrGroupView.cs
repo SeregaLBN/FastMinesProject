@@ -30,14 +30,15 @@ namespace fmg.ava.draw.img {
       { }
 
       /// <summary> get paint information of drawing basic image model </summary>
-      protected abstract IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords { get; }
+      protected abstract IEnumerable<Tuple<fmg.common.Color, IEnumerable<PointDouble>>> Coords { get; }
 
       protected void DrawBody(DrawingContext dc) {
-         dc.FillRectangle(new SolidColorBrush(BackgroundColor.ToAvaColor()), new Avalonia.Rect(Size.ToAvaSize()));
+         var model = Model;
+         dc.FillRectangle(new SolidColorBrush(model.BackgroundColor.ToAvaColor()), new Avalonia.Rect(Size.ToAvaSize()));
 
-         var bw = BorderWidth;
-         var needDrawPerimeterBorder = (!BorderColor.IsTransparent && (bw > 0));
-         var borderColor = BorderColor.ToAvaColor();
+         var bw = model.BorderWidth;
+         var needDrawPerimeterBorder = (!model.BorderColor.IsTransparent && (bw > 0));
+         var borderColor = model.BorderColor.ToAvaColor();
 
          var shapes = Coords;
          foreach (var data in shapes) {
@@ -65,7 +66,7 @@ namespace fmg.ava.draw.img {
             dc.DrawGeometry(brush, pen, geom);
          }
 
-         foreach (var lu in BurgerMenuModel.tCoords) {
+         foreach (var lu in BurgerMenuModel.Coords) {
             // g.setLineWidth(li.penWidht);
             // g.setStroke(Cast.toColor(li.clr));
             // g.strokeLine(li.from.x, li.from.y, li.to.x, li.to.y);

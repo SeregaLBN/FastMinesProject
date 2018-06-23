@@ -23,11 +23,10 @@ namespace Test.FastMines.Ava.Images {
 
          public Modelka(IControl img) {
             _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
-            var mosaicImg = new MosaicGroupImg.ControllerRenderTargetBmp(null, img) {
-               RotateAngleDelta = 5,
-               Rotate = true,
-               PolarLights = true
-            };
+            var mosaicImg = new MosaicGroupImg.ControllerRenderTargetBmp(null, img);
+            mosaicImg.UseRotateTransforming(true);
+            mosaicImg.UsePolarLightFgTransforming(true);
+            var mosaicModel = mosaicImg.Model;
             MosaicImg = mosaicImg;
 
             mosaicImg.PropertyChanged += (sender, ev) => {
