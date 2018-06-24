@@ -1,8 +1,7 @@
-package fmg.swing;
+package fmg.swing.utils;
 
 import fmg.common.ui.Factory;
 import fmg.swing.draw.img.Animator;
-import fmg.swing.utils.Timer;
 
 public final class StaticInitializer {
 

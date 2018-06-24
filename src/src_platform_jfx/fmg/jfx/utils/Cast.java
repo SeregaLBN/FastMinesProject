@@ -1,4 +1,4 @@
-package fmg.jfx;
+package fmg.jfx.utils;
 
 import java.util.List;
 import java.util.stream.Stream;

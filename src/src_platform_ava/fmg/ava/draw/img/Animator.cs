@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 using Avalonia.Animation;
 using fmg.core.img;
 
-namespace fmg.jfx.draw.img {
+namespace fmg.ava.draw.img {
 
    public class Animator : IAnimator, IDisposable {
 

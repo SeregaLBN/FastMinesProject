@@ -12,8 +12,8 @@ import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
 import fmg.core.img.SmileModel;
 import fmg.core.img.SmileModel.EFaceType;
-import fmg.swing.Cast;
-import fmg.swing.StaticInitializer;
+import fmg.swing.utils.Cast;
+import fmg.swing.utils.StaticInitializer;
 
 public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 

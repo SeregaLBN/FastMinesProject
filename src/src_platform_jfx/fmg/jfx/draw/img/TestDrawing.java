@@ -25,7 +25,7 @@ import fmg.core.img.ATestDrawing;
 import fmg.core.img.ATestDrawing.CellTilingInfo;
 import fmg.core.img.ATestDrawing.CellTilingResult;
 import fmg.core.img.IImageController;
-import fmg.jfx.Cast;
+import fmg.jfx.utils.Cast;
 
 /** @see {@link MosaicSkillImg#main}, {@link MosaicGroupImg#main}, {@link MosaicsImg#main} */
 public final class TestDrawing extends Application {

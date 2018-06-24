@@ -30,8 +30,8 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\MosaicsSkillCharImg.cs">
       <Link>src_fmg.uwp\draw\img\MosaicsSkillCharImg.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\StaticInitilizer.cs">
-      <Link>src_fmg.uwp\StaticInitilizer.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\StaticInitilizer.cs">
+      <Link>src_fmg.uwp\utils\StaticInitilizer.cs</Link>
     </Compile>
   </ItemGroup>
 </Project>

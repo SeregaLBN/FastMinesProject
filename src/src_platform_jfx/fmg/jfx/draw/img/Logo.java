@@ -8,8 +8,8 @@ import fmg.common.geom.PointDouble;
 import fmg.core.img.ImageView;
 import fmg.core.img.LogoController;
 import fmg.core.img.LogoModel;
-import fmg.jfx.Cast;
-import fmg.jfx.StaticInitializer;
+import fmg.jfx.utils.Cast;
+import fmg.jfx.utils.StaticInitializer;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;

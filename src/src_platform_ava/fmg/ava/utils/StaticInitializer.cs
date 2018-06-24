@@ -1,14 +1,13 @@
-﻿using fmg.ava.utils;
+﻿using Avalonia.Threading;
 using fmg.common.ui;
-using fmg.jfx.draw.img;
+using fmg.ava.draw.img;
 
-namespace fmg.ava {
+namespace fmg.ava.utils {
 
    static class StaticInitializer {
 
       static StaticInitializer() {
-         Factory.DEFERR_INVOKER = doRun => Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() => doRun(),
-                                                                                              Avalonia.Threading.DispatcherPriority.Normal);
+         Factory.DEFERR_INVOKER = doRun => Dispatcher.UIThread.InvokeAsync(() => doRun(), DispatcherPriority.Normal);
          Factory.GET_ANIMATOR = Animator.getSingleton;
          Factory.TIMER_CREATOR = () => new Timer();
       }

@@ -1,14 +1,16 @@
 using Windows.UI.Core;
+using fmg.common.ui;
 using fmg.core.img;
-using fmg.uwp.utils;
+using fmg.uwp.draw.img;
 
-namespace fmg.uwp {
+namespace fmg.uwp.utils {
 
    public static class StaticInitilizer {
 
       static StaticInitilizer() {
-         ImageModelConsts.DeferrInvoker = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
-         RotatedImgConst.TimerCreator = () => new Timer();
+         Factory.DEFERR_INVOKER = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
+         Factory.GET_ANIMATOR = Animator.getSingleton;
+         Factory.TIMER_CREATOR = () => new Timer();
       }
 
       public static void Init() {

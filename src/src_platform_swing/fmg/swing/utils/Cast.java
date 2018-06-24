@@ -1,4 +1,4 @@
-package fmg.swing;
+package fmg.swing.utils;
 
 import java.util.List;
 

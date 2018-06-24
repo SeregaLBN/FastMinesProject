@@ -25,8 +25,8 @@ import fmg.core.types.EOpen;
 import fmg.core.types.EState;
 import fmg.data.view.draw.FontInfo;
 import fmg.data.view.draw.PenBorder;
-import fmg.jfx.Cast;
-import fmg.jfx.StaticInitializer;
+import fmg.jfx.utils.Cast;
+import fmg.jfx.utils.StaticInitializer;
 
 /** MVC: view. Abstract JFX implementation */
 public abstract class AMosaicViewJfx<TImage,

@@ -14,8 +14,8 @@ import fmg.core.img.AnimatedImageModel;
 import fmg.core.img.MosaicGroupModel;
 import fmg.core.img.MosaicSkillModel;
 import fmg.core.img.WithBurgerMenuView;
-import fmg.swing.Cast;
-import fmg.swing.StaticInitializer;
+import fmg.swing.utils.Cast;
+import fmg.swing.utils.StaticInitializer;
 
 /**
  * MVC: view. Abstract SWING representable {@link fmg.core.types.ESkillLevel} or {@link fmg.core.types.EMosaicGroup} as image

@@ -10,7 +10,7 @@ import java.util.Arrays;
 import fmg.core.img.FlagModel;
 import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
-import fmg.swing.StaticInitializer;
+import fmg.swing.utils.StaticInitializer;
 
 /**
  * Flag image
