@@ -25,16 +25,16 @@ public class NotifyPropertyChangedTest {
 
     @Test
     public void NotifyPropertyChangedSyncTest() {
-        try (NotifyPropertyChanged notifyPropertyChanged = new NotifyPropertyChanged(_dummy, false)) {
+        try (NotifyPropertyChanged notifier = new NotifyPropertyChanged(_dummy, false)) {
 
             int countFiredEvents = 3 + ThreadLocalRandom.current().nextInt(10);
             int[] countReceivedEvents = { 0 };
 
             PropertyChangeListener listener = ev -> { ++countReceivedEvents[0]; };
-            notifyPropertyChanged.addListener(listener);
+            notifier.addListener(listener);
             for (int i=0; i<countFiredEvents; ++i)
-                notifyPropertyChanged.onPropertyChanged("propertyName");
-            notifyPropertyChanged.removeListener(listener);
+                notifier.onPropertyChanged("propertyName");
+            notifier.removeListener(listener);
 
             Assert.assertEquals(countFiredEvents, countReceivedEvents[0]);
         }
@@ -44,7 +44,7 @@ public class NotifyPropertyChangedTest {
     public void NotifyPropertyChangedAsyncTest() throws InterruptedException {
         ExecutorService scheduler = Executors.newScheduledThreadPool(1);
         Factory.DEFERR_INVOKER = r -> scheduler.execute(r);
-        try (NotifyPropertyChanged notifyPropertyChanged = new NotifyPropertyChanged(_dummy, true)) {
+        try (NotifyPropertyChanged notifier = new NotifyPropertyChanged(_dummy, true)) {
 
             int countFiredEvents = 3 + ThreadLocalRandom.current().nextInt(10);
             int[] countReceivedEvents = { 0 };
@@ -54,13 +54,13 @@ public class NotifyPropertyChangedTest {
                 ++countReceivedEvents[0];
                 firedValue[0] = ev.getNewValue();
             };
-            notifyPropertyChanged.addListener(listener);
+            notifier.addListener(listener);
             final String prefix = " Value ";
             for (int i=0; i<countFiredEvents; ++i)
-                notifyPropertyChanged.onPropertyChanged(null, prefix + i, "propertyName");
+                notifier.onPropertyChanged(null, prefix + i, "propertyName");
 
             scheduler.awaitTermination(1000, TimeUnit.MILLISECONDS);
-            notifyPropertyChanged.removeListener(listener);
+            notifier.removeListener(listener);
 
             Assert.assertEquals(1, countReceivedEvents[0]);
             Assert.assertEquals(prefix + (countFiredEvents-1), firedValue[0]);

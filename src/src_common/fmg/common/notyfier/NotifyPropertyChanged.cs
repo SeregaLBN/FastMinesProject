@@ -85,7 +85,7 @@ namespace fmg.common.notyfier {
                      //System.Diagnostics.Trace.TraceError("hmmm... invalid usage ;(");
                      System.Diagnostics.Debug.Assert(false, "hmmm... invalid usage ;(");
                   else
-                     _fireOwnerEvent(ev);
+                     _fireOwnerEvent(ev2);
                });
             }
       }

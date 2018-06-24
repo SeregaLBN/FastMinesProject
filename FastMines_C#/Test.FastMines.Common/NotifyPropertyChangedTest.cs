@@ -8,7 +8,7 @@ using fmg.common.ui;
 
 namespace fmg.common.notyfier {
 
-   public class Tests {
+   public class NotifyPropertyChangedTest {
 
       [SetUp]
       public void Setup() { }
@@ -20,23 +20,21 @@ namespace fmg.common.notyfier {
          int countReceivedEvents = 0;
 
          void listener(PropertyChangedEventArgs ev) { ++countReceivedEvents; }
-         using (var notifyPropertyChanged = new NotifyPropertyChanged(null, listener, false)) {
+         using (var notifier = new NotifyPropertyChanged(null, listener, false)) {
             for (int i = 0; i < countFiredEvents; ++i)
-               notifyPropertyChanged.OnPropertyChanged("propertyName ");
-
-            Assert.AreEqual(countFiredEvents, countReceivedEvents);
+               notifier.OnPropertyChanged("propertyName ");
          }
+         Assert.AreEqual(countFiredEvents, countReceivedEvents);
       }
 
       [Test]
       public void NotifyPropertyChangedAsyncTest() {
          var allTask = new List<Task>();
          Factory.DEFERR_INVOKER = doRun => {
-            Task task = Task.Run(doRun); // Task.Delay(1).ContinueWith(t => doRun() );
+            Task task = Task.Run(doRun); // Task.Delay(1000).ContinueWith(t => doRun() ); //
             allTask.Add(task);
          };
-         var rand = new Random(Environment.TickCount);
-         int countFiredEvents = 3 + rand.Next(10);
+         int countFiredEvents = 3 + new Random(Environment.TickCount).Next(10);
          int countReceivedEvents = 0;
          object firedValue = null;
 
@@ -44,16 +42,16 @@ namespace fmg.common.notyfier {
             ++countReceivedEvents;
             firedValue = (ev as PropertyChangedExEventArgs<string>).NewValue;
          }
-         using (NotifyPropertyChanged notifyPropertyChanged = new NotifyPropertyChanged(null, listener, true)) {
-            const string prefix = " Value ";
+         const string prefix = " Value ";
+         using (var notifier = new NotifyPropertyChanged(null, listener, true)) {
             for (int i=0; i<countFiredEvents; ++i)
-               notifyPropertyChanged.OnPropertyChanged(null, prefix + i, "propertyName");
+               notifier.OnPropertyChanged(null, prefix + i, "propertyName");
 
             Task.WaitAll(allTask.ToArray());
-
-            Assert.AreEqual(1, countReceivedEvents);
-            Assert.AreEqual(prefix + (countFiredEvents-1), firedValue);
          }
+
+         Assert.AreEqual(1, countReceivedEvents);
+         Assert.AreEqual(prefix + (countFiredEvents-1), firedValue);
       }
    }
 
