@@ -41,12 +41,12 @@ namespace fmg.jfx.draw.img {
       }
 
       public void Subscribe(object subscriber, Action<TimeSpan /* time from start subscribe */> subscriberCallbackMethod) {
-         SubscribeInfo info = _subscribers[subscriber];
-         if (info == null) {
-            info = new SubscribeInfo();
+         if (!_subscribers.ContainsKey(subscriber)) {
+            var info = new SubscribeInfo();
             info.callback = subscriberCallbackMethod;
             _subscribers.Add(subscriber, info);
          } else {
+            var info = _subscribers[subscriber];
             info.active = true;
             info.startTime = DateTime.MinValue + (DateTime.Now - info.startTime); // apply of pause delta time
          }

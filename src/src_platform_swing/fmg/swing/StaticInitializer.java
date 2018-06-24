@@ -7,9 +7,9 @@ import fmg.swing.utils.Timer;
 public final class StaticInitializer {
 
    static {
-      Factory.DEFERR_INVOKER = doRun -> javax.swing.SwingUtilities.invokeLater(doRun);
-      Factory.GET_ANIMATOR = () -> Animator.getSingleton();
-      Factory.TIMER_CREATOR = () -> new Timer();
+      Factory.DEFERR_INVOKER = javax.swing.SwingUtilities::invokeLater;
+      Factory.GET_ANIMATOR = Animator::getSingleton;
+      Factory.TIMER_CREATOR = Timer::new;
    }
 
    public static void init() {

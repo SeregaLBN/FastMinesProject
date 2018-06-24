@@ -7,9 +7,9 @@ import fmg.jfx.utils.Timer;
 public final class StaticInitializer {
 
    static {
-      Factory.DEFERR_INVOKER = doRun -> javafx.application.Platform.runLater(doRun);
-      Factory.GET_ANIMATOR = () -> Animator.getSingleton();
-      Factory.TIMER_CREATOR = () -> new Timer();
+      Factory.DEFERR_INVOKER = javafx.application.Platform::runLater;
+      Factory.GET_ANIMATOR = Animator::getSingleton;
+      Factory.TIMER_CREATOR = Timer::new;
    }
 
    public static void init() {

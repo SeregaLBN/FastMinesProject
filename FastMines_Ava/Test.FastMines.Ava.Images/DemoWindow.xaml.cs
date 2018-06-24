@@ -26,6 +26,7 @@ namespace Test.FastMines.Ava.Images {
             var mosaicImg = new MosaicGroupImg.ControllerRenderTargetBmp(null, img);
             mosaicImg.UseRotateTransforming(true);
             mosaicImg.UsePolarLightFgTransforming(true);
+            mosaicImg.Animated = true;
             var mosaicModel = mosaicImg.Model;
             MosaicImg = mosaicImg;
 
