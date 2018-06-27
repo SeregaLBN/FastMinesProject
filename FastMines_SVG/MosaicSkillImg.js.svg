@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
-     style='border: solid 1px red;'
-     preserveAspectRatio="none"
-     onload="init(evt)">
-<script type="text/ecmascript"><![CDATA[
+//<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+//     style='border: solid 1px red;'
+//     preserveAspectRatio="none"
+//     onload="init(evt)">
+//<script type="text/ecmascript"><![CDATA[
 /** common settings this SVG */
 var Settings = {
    width: 100,  // view width
@@ -38,6 +38,9 @@ Promise.resolve()
 
 var random = function(upDiapazon) {
    return Math.floor(Math.random() * upDiapazon);
+}
+function isNumeric(n) {
+   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
 /** RGBA color */
@@ -366,6 +369,733 @@ const /* enum */ ESkillLevel = {
 
 };
 
+class Point {
+
+   //public double x, y;
+   constructorXY(x, y) {
+      this.x = x;
+      this.y = y;
+   }
+   constructorPoint(pointFrom) {
+      this.x = pointFrom.x;
+      this.y = pointFrom.y;
+   }
+   constructor(args/*, ...*/) {
+      switch (arguments.length) {
+      case 0: return this.constructorXY(0, 0);
+      case 1: return this.constructorPoint(arguments[0]);
+      case 2: return this.constructorXY(arguments[0], arguments[1]);
+      }
+      throw new Error();
+   }
+
+   toString() {
+      return "{x: " + round(this.x, 2)
+          + ", y: " + round(this.y, 2)
+          + "}";
+   }
+
+}
+
+class Size {
+
+   //public double width, height;
+
+   constructorWH(w, h) {
+      this.width  = w;
+      this.height = h;
+   }
+   constructorSize(sizeFrom) {
+      this.width  = sizeFrom.width;
+      this.height = sizeFrom.height;
+   }
+   constructor(args/*, ...*/) {
+      switch (arguments.length) {
+      case 0: return this.constructorWH(0, 0);
+      case 1: return this.constructorSize(arguments[0]);
+      case 2: return this.constructorWH(arguments[0], arguments[1]);
+      }
+      throw new Error();
+   }
+
+   toString() {
+      return "{w: " + round(this.width , 2)
+          + ", h: " + round(this.height, 2)
+          + "}";
+   }
+
+}
+
+class Bound {
+
+   //public double left, right, top, bottom;
+
+   constructor1(/* bound or double */ arg) {
+      if (isNumeric(arg)) {
+         var bound = arg;
+         this.left = this.top = this.right = this.bottom = bound;
+      } else {
+         var copy = arg;
+         this.left = copy.left; this.top = copy.top; this.right = copy.right; this.bottom = copy.bottom;
+      }
+   }
+   constructor4(/*double*/ left, /*double*/ top, /*double*/ right, /*double*/ bottom) {
+      this.left = left;
+      this.top = top;
+      this.right = right;
+      this.bottom = bottom;
+   }
+   constructor(args/*, ...*/) {
+      switch (arguments.length) {
+      case 1: return this.constructor1(arguments[0]);
+      case 4: return this.constructor4(arguments[0], arguments[1], arguments[2], arguments[3]);
+      }
+      throw new Error();
+   }
+
+   get leftAndRight() { return this.left + this.right; }
+   get topAndBottom() { return this.top + this.bottom; }
+
+   toString() {
+       return "{left: "    + round(this.left  , 2)
+            + ", right: "  + round(this.right , 2)
+            + ", top: "    + round(this.top   , 2)
+            + ", bottom: " + round(this.bottom, 2)
+            + "}";
+   }
+
+}
+
+/** MVC: model. Common image characteristics. */
+class ImageModel {
+
+   constructor() {
+      var defaultImageSize = 100;
+      /** width and height in pixel */
+      this._size = new Size(defaultImageSize, defaultImageSize);
+
+      var defaultPadding = defaultImageSize * 0.05; // 5%
+      /** inside padding. Автоматически пропорционально регулирую при измениях размеров */
+      this._padding = new Bound(defaultPadding);
+      this._foregroundColor = new Color(0xFFDA70D6); // Color.Orchid
+      /** background fill color */
+      this._backgroundColor = new Color(0xFFFF8C00); // Color.DarkOrange
+      this._borderColor = new Color(0xFF800000).darker(0.5); // Color.Maroon.darker(0.5);
+      this._borderWidth = 3;
+      /** 0° .. +360° */
+      this._rotateAngle = 0;
+   }
+
+   get size() { return this._size; }
+   set size(value) {
+      var old = this._size;
+      if (isNumeric(value))
+         this._size = new Size(value, value);
+      else
+         this._size = new Size(value);
+      this.recalcPadding(old);
+   }
+
+   /** inside padding */
+   get padding() { return this._padding; }
+   set padding(/*double or Bound*/ value) {
+      if (isNumeric(value))
+         value = new Bound(value);
+      if (value.leftAndRight >= this.size.width)
+         throw new Error("IllegalArgumentException: Padding size is very large. Should be less than Width.");
+      if (value.topAndBottom >= this.size.height)
+         throw new Error("IllegalArgumentException: Padding size is very large. Should be less than Height.");
+      var paddingNew = new Bound(value.left, value.top, value.right, value.bottom);
+      this._padding = paddingNew;
+   }
+   static recalcPadding(/*Bound*/ padding, /*Size*/ current, /*Size*/ old) {
+      return new Bound(padding.left   * current.width  / old.width,
+                       padding.top    * current.height / old.height,
+                       padding.right  * current.width  / old.width,
+                       padding.bottom * current.height / old.height);
+   }
+   recalcPadding(/*Size*/ old) {
+      var paddingNew = ImageModel.recalcPadding(_padding, _size, old);
+      this._padding = paddingNew;
+   }
+
+   get foregroundColor() { return this._foregroundColor; }
+   set foregroundColor(/*Color*/ value) {
+      this._foregroundColor = value;
+   }
+
+   /** background fill color */
+   get backgroundColor() { return this._backgroundColor; }
+   set backgroundColor(/*Color*/ value) {
+      this._backgroundColor = value;
+   }
+
+   get borderColor() { return this._borderColor; }
+   set borderColor(/*Color*/ value) {
+      this._borderColor = value;
+   }
+
+   get borderWidth() { return this._borderWidth; }
+   set borderWidth(/*double*/ value) {
+      this._borderWidth = value;
+   }
+
+   /** 0° .. +360° */
+   get rotateAngle() { return this._rotateAngle; }
+   set rotateAngle(/*double*/ value) {
+      this._rotateAngle = ImageModel.fixAngle(value);
+   }
+
+   /** to diapason (0° .. +360°] */
+   static /* double */ fixAngle(/* double */ value) {
+      return (value >= 360)
+         ?              (value % 360)
+         :   (value < 0)
+            ?           (value % 360) + 360
+            :            value;
+   }
+}
+
+/** MVC: model. Animated image characteristics. */
+class AnimatedImageModel extends ImageModel {
+
+   constructor() {
+      super();
+
+      /** animation of polar lights */
+      this._polarLights = true;
+
+      /** animation direction (example: clockwise or counterclockwise for simple rotation) */
+      this._animeDirection = true;
+   }
+
+   get polarLights() { return this._polarLights; }
+   set polarLights(/*boolean*/ value) {
+      this._polarLights = value;
+   }
+
+   get animeDirection() { return this._animeDirection; }
+   set animeDirection(/*boolean*/ value) {
+      this._animeDirection = value;
+   }
+
+}
+
+/** MVC model of {@link ESkillLevel} representable as image */
+class MosaicSkillModel extends AnimatedImageModel {
+
+   //private ESkillLevel _mosaicSkill;
+
+   constructor(/*ESkillLevel*/ mosaicSkill) { super(); this._mosaicSkill = mosaicSkill; }
+
+   get mosaicSkill() { return this._mosaicSkill; }
+   set mosaicSkill(/*ESkillLevel*/ value) { this._mosaicSkill = value; }
+
+
+   getCoords() {
+      return (this.mosaicSkill == null)
+            ? this.getCoords_SkillLevelAsType()
+            : this.getCoords_SkillLevelAsValue();
+   }
+
+   getCoords_SkillLevelAsType() {
+      const bigMaxStar = !true; // true - большая звезда - вне картинки; false - большая звезда - внутри картинки.
+      const accelerateRevert = !true; // ускорение под конец анимации, иначе - в начале...
+
+      var rays = 5;
+      var stars = bigMaxStar ? 6 : 8;
+      var angle = this.rotateAngle;
+
+      var size = this.size;
+      var pad = this.padding;
+      var sqMax = Math.min( // размер квадрата куда будет вписана звезда при 0°
+                           size.width  - pad.leftAndRight,
+                           size.height - pad.topAndBottom);
+      var sqMin = 1;//sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
+      var sqExt = sqMax * 3;
+
+      var centerMax = new Point(pad.left + (size.width  - pad.leftAndRight) / 2.0,
+                                pad.top  + (size.height - pad.topAndBottom) / 2.0);
+      var centerMin = new Point(pad.left + sqMin/2, pad.top + sqMin/2);
+      var centerExt = new Point(size.width * 1.5, size.height * 1.5);
+
+      return this.getCoords_SkillLevelAsType_2(true , bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax)
+          .concat(
+             this.getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMax, sqExt, centerMax, centerExt));
+      // return this.getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax); // old
+   }
+   getCoords_SkillLevelAsType_2(
+      /* bool */ accumulative,
+      /* bool */ bigMaxStar,
+      /* bool */ accelerateRevert,
+      /* int */ rays,
+      /* int */ stars,
+      /* double */ angle,
+      /* double */ sqMin,
+      /* double */ sqMax,
+      /* Point */ centerMin,
+      /* Point */ centerMax
+   ) {
+      var angleAccumulative = angle;
+      var anglePart = 360.0 / stars;
+      var sqDiff = sqMax - sqMin;
+      var centerDiff = new Point(centerMax.x - centerMin.x, centerMax.y - centerMin.y);
+      var fgClr = this.foregroundColor;
+      var pl = this.polarLights;
+
+      var res = []; // array of Pair<Color bkColor, Point[] polygonCoords >
+      for (var starNum=0; starNum < stars; ++starNum) {
+         var angleStar = ImageModel.fixAngle(angle + starNum * anglePart);
+         if (accumulative)
+            angleAccumulative = Math.sin(FigureHelper.toRadian(angle/4)) * angleAccumulative; // accelerate / ускоряшка..
+
+         var sq = angleStar * sqDiff / 360;
+         // (un)comment next line to view result changes...
+         sq = Math.sin(FigureHelper.toRadian(angleStar/4))*sq; // accelerate / ускоряшка..
+         sq = accelerateRevert
+               ? sqMin + sq
+               : sqMax - sq;
+
+         var r1 = bigMaxStar ? sq*2.2 : sq/2; // external radius
+         var r2 = r1/2.6; // internal radius
+
+         var centerStar = new Point(angleStar * centerDiff.x / 360,
+                                    angleStar * centerDiff.y / 360);
+         // (un)comment next 2 lines to view result changes...
+         centerStar.x = Math.sin(FigureHelper.toRadian(angleStar/4))*centerStar.x; // accelerate / ускоряшка..
+         centerStar.y = Math.sin(FigureHelper.toRadian(angleStar/4))*centerStar.y; // accelerate / ускоряшка..
+         centerStar.x = accelerateRevert
+               ? centerMin.x + centerStar.x
+               : centerMax.x - centerStar.x;
+         centerStar.y = accelerateRevert
+               ? centerMin.y + centerStar.y
+               : centerMax.y - centerStar.y;
+
+         var clr = !pl
+               ? fgClr
+               : new HSV(fgClr).addHue(+angleStar).toColor();// try: -angleStar
+
+         res.push( { priority: sq,
+                     clrAndPoly: {
+                       color: clr,
+                       polygon: FigureHelper.getRegularStarCoords(rays,
+                                                                  r1, r2,
+                                                                  bigMaxStar ? centerMax : centerStar,
+                                                                  accumulative ? angleAccumulative : 0
+                                                                )} } );
+      }
+      var saveColorSequence = res.map(function(x) { return x.clrAndPoly.color; });
+      res.sort(function(o1, o2) {
+         if (o1.priority < o2.priority) return bigMaxStar ?  1 : -1;
+         if (o1.priority > o2.priority) return bigMaxStar ? -1 :  1;
+         return 0;
+      });
+      for (var i=0; i<res.length; ++i)
+         res[i].clrAndPoly.color = saveColorSequence[i]; // restore color sequence; only for SVG
+      return res.map(function(x) { return x.clrAndPoly; });
+   }
+
+   getCoords_SkillLevelAsValue() {
+      var size = this.size;
+      var pad = getPadding();
+      var sq = Math.min( // size inner square
+                        size.width  - pad.leftAndRight,
+                        size.height - pad.topAndBottom);
+      var r1 = sq/7; // external radius
+      var r2 = sq/12; // internal radius
+
+      var skill = this.mosaicSkill;
+      var ordinal = skill.ordinal;
+      var rays = 5 + ordinal; // rays count
+      var stars = 4 + ordinal; // number of stars on the perimeter of the circle
+
+      var angle = getRotateAngle();
+      var angleAccumulative = angle;
+      var anglePart = 360.0/stars;
+
+      var center = new Point(size.width / 2.0, size.height / 2.0);
+      var zero = new Point(0, 0);
+      var fgClr = this.foregroundColor;
+      var pl = this.PolarLights;
+      var res = []; // array of Pair<Color bkColor, PointDouble[] polygonCoords >
+      for (var starNum=0; starNum < stars; ++starNum) {
+         // (un)comment next line to view result changes...
+         angleAccumulative = Math.sin(FigureHelper.toRadian(angleAccumulative/4))*angleAccumulative; // accelerate / ускоряшка..
+
+         // adding offset
+         var offset = FigureHelper.getPointOnCircle(sq / 3, angleAccumulative + starNum * anglePart, zero);
+         var centerStar = new PointDouble(center.x + offset.x, center.y + offset.y);
+
+         var clr = !pl
+               ? fgClr
+               : new HSV(fgClr).addHue(starNum * anglePart).toColor();
+
+         res.push({ color: clr,
+            polygon: (skill == ESkillLevel.eCustom)
+                        ? FigureHelper.getRegularPolygonCoords(3 + starNum % 4, r1, centerStar, -angleAccumulative)
+                        : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative) });
+      }
+      res.reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
+      return resL.stream();
+   }
+
+}
+
+/**
+ * MVC: view.
+ * Base implementation of image view.
+ *
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImageModel> model data for display
+ **/
+class ImageView {
+
+   static get EInvalidate() {
+      return {
+         needRedraw: { ordinal: 0 },
+         redrawing : { ordinal: 1 },
+         redrawed  : { ordinal: 2 }
+      };
+   }
+
+   /** @param imageModel base of #ImageModel */
+   constructor(/*TImageModel*/ imageModel) {
+      this._imageModel = imageModel;
+      this._image = null;
+      this._invalidate = ImageView.EInvalidate.needRedraw;
+   }
+
+   get Model() { return this._imageModel; }
+
+   /** width and height in pixel */
+   get size() { return this.Model.size; }
+   set size(/*double or Size*/ value) { this.Model.size = value; }
+
+   createImage() { throw new Error("Abstract method"); return null; }
+
+   get image() {
+      if (this._image == null) {
+         this.image = this.createImage();
+         this._invalidate = ImageView.EInvalidate.needRedraw;
+      }
+      if (this._invalidate.ordinal == ImageView.EInvalidate.needRedraw.ordinal)
+         this.draw();
+      return this._image;
+   }
+   set image(/*TImage*/ value) {
+      this._image = value;
+   }
+
+   invalidate() {
+      if (this._invalidate.ordinal == ImageView.EInvalidate.redrawing.ordinal)
+         return;
+      //if (this._invalidate.ordinal == ImageView.EInvalidate.needRedraw.ordinal)
+      //   return;
+      this._invalidate = ImageView.EInvalidate.needRedraw;
+   }
+
+   draw() {
+      this.drawBegin();
+      this.drawBody();
+      this.drawEnd();
+   }
+
+   drawBegin() { this._invalidate = ImageView.EInvalidate.redrawing; }
+   drawBody()  { throw new Error("Abstract method"); }
+   drawEnd()   { this._invalidate = ImageView.EInvalidate.redrawed; }
+
+}
+
+/**
+ * MVC: view of images with burger menu (where burger menu its secondary model)
+ * @param <TImage> - platform specific image
+ * @param <TImageModel> - general model of image (not burger menu model)
+ */
+class WithBurgerMenuView extends ImageView {
+   // TODO...
+   constructor(/*TImageModel*/ imageModel) {
+      super(imageModel);
+   }
+
+}
+
+/**
+ * MVC: view. Abstract SVG representable {@link fmg.core.types.ESkillLevel} or {@link fmg.core.types.EMosaicGroup} as image
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImageModel> {@link MosaicsSkillModel} or {@link MosaicsGroupModel}
+ */
+class MosaicSkillOrGroupView extends WithBurgerMenuView {
+
+   // static {
+   //    StaticInitializer.init();
+   // }
+
+   constructor(/*TImageModel*/ imageModel) {
+      super(imageModel);
+   }
+
+   /** get paint information of drawing basic image model */
+   getCoords() { throw new Error("Abstract method"); }
+
+   draw(/*SvgContext*/ g) {
+      var m = this.Model;
+
+      // { // fill background
+      //    fmg.common.Color bkClr = m.getBackgroundColor();
+      //    if (!bkClr.isOpaque())
+      //       g.clearRect(0, 0, getSize().width, getSize().height);
+      //    if (!bkClr.isTransparent()) {
+      //       g.setFill(Cast.toColor(bkClr));
+      //       g.fillRect(0, 0, getSize().width, getSize().height);
+      //    }
+      // }
+
+      // double bw = m.getBorderWidth();
+      // boolean needDrawPerimeterBorder = (!m.getBorderColor().isTransparent() && (bw > 0));
+      // javafx.scene.paint.Color borderColor = !needDrawPerimeterBorder ? null : Cast.toColor(m.getBorderColor());
+      // if (needDrawPerimeterBorder)
+      //    g.setLineWidth(bw);
+      // Stream<Pair<Color, Stream<PointDouble>>> shapes = getCoords();
+      // shapes.forEach(pair -> {
+      //    List<PointDouble> poly = pair.second.collect(Collectors.toList());
+      //    double[] polyX = Cast.toPolygon(poly, true);
+      //    double[] polyY = Cast.toPolygon(poly, false);
+      //    if (!pair.first.isTransparent()) {
+      //       g.setFill(Cast.toColor(pair.first));
+      //       g.fillPolygon(polyX, polyY, polyX.length);
+      //    }
+
+      //    // draw perimeter border
+      //    if (needDrawPerimeterBorder) {
+      //       g.setStroke(borderColor);
+      //       g.strokePolygon(polyX, polyY, polyX.length);
+      //    }
+      // });
+
+      // getBurgerMenuModel().getCoords()
+      //    .forEach(li -> {
+      //       g.setLineWidth(li.penWidht);
+      //       g.setStroke(Cast.toColor(li.clr));
+      //       g.strokeLine(li.from.x, li.from.y, li.to.x, li.to.y);
+      //    });
+   }
+
+}
+
+/**
+ * Representable {@link fmg.core.types.ESkillLevel} as image
+ * <br>
+ * SVG impl
+ *
+ * @param <TImage> SVG specific image context
+ **/
+class MosaicSkillImg extends MosaicSkillOrGroupView {
+
+   /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
+   constructor(/*ESkillLevel*/ skill) { super(new MosaicSkillModel(skill)); }
+
+   getCoords() { return this.Model.getCoords(); }
+
+}
+
+/** MosaicsSkill image view implementation over SVG */
+class MosaicSkillImgSvg extends MosaicSkillImg {
+
+   /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
+   constructor(/*ESkillLevel*/ skill) {
+      super(skill);
+      this._svgContext = null;
+   }
+
+   createImage() { return this._svgContext = {}; }
+
+   drawBody() { this.draw(this._svgContext); }
+
+}
+
+/**
+ * Image MVC: controller
+ * Base implementation of image controller (manipulations with the image).
+ *
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImageView> image view
+ * @param <TImageModel> image model
+ */
+class ImageController {
+
+   constructor(/*TImageView*/ imageView) {
+      /** MVC: view */
+      this._imageView = imageView;
+   }
+
+   get View()  { return this._imageView; }
+   get Model() { return this.View.Model; }
+   get image() { return this.View.image; }
+   get size()  { return this.View.size; }
+
+}
+
+/** Transforming image model data. Usage for image animations. */
+class IModelTransformer {
+
+   static get className() { throw new Error("Abstract method"); }
+
+   /** The handler for the frame change event */
+   execute(/*int*/ currentFrame, /*int*/ totalFrames, /*IImageModel*/ model) { throw new Error("Abstract method"); }
+
+}
+
+/** Transforming of rotate angle */
+class RotateTransformer extends IModelTransformer {
+
+   static get className() { return "RotateTransformer"; }
+
+   execute(/*int*/ currentFrame, /*int*/ totalFrames, /*IImageModel*/ model) {
+      var am = model;
+
+      var rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
+      if (!am.animeDirection)
+         rotateAngleDelta = -rotateAngleDelta;
+      var rotateAngle = currentFrame * rotateAngleDelta;
+      am.rotateAngle = rotateAngle;
+   }
+
+}
+
+/** Transforming of foreground color (rotation of foreground color) */
+class PolarLightFgTransformer extends IModelTransformer {
+
+   static get className() { return "PolarLightFgTransformer"; }
+
+   execute(/*int*/ currentFrame, /*int*/ totalFrames, /*IImageModel*/ model) {
+      var am = model;
+      if (!am.polarLights)
+         return;
+
+      var rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
+      if (!am.animeDirection)
+         rotateAngleDelta = -rotateAngleDelta;
+
+      var hsv = new HSV(am.foregroundColor);
+      hsv.h += rotateAngleDelta;
+      am.foregroundColor = hsv.toColor();
+   }
+
+}
+
+/**
+ * MVC controller. Base animation controller.
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImageView> MVC view
+ * @param <TImageModel> MVC model
+ */
+class AnimatedImgController extends ImageController {
+
+   constructor(/*TImageView*/ imageView) {
+      super(imageView);
+      /** Image is animated? */
+      this._animated = null;
+      /** Overall animation period (in milliseconds) */
+      this._animatePeriod = 3000;
+      /** Total frames of the animated period */
+      this._totalFrames = 30;
+      this._currentFrame = 0;
+      this._transformers = new Map();
+   }
+
+   /** Image is animated? */
+   get animated() { return (this._animated === true); }
+   set animated(/*bool*/ value) {
+      this._animated = value;
+      // if (value)
+      //    Factory.GET_ANIMATOR.get().subscribe(this, timeFromStartSubscribe -> {
+      //       long mod = timeFromStartSubscribe % _animatePeriod;
+      //       long frame = mod * getTotalFrames() / _animatePeriod;
+      //       //System.out.println("ANIMATOR : " + getClass().getSimpleName() + ": "+ timeFromStartSubscribe);
+      //       setCurrentFrame((int)frame);
+      //    });
+      // else
+      //    Factory.GET_ANIMATOR.get().pause(this);
+   }
+
+   /** Overall animation period (in milliseconds) */
+   get animatePeriod() { return this._animatePeriod; }
+   set animatePeriod(/*long*/ value) { this._animatePeriod = value; }
+
+   /** Total frames of the animated period */
+   get totalFrames() { return this._totalFrames; }
+   set totalFrames(/*int*/ value) {
+      this._totalFrames = value;
+      this.currentFrame = 0;
+   }
+
+   get currentFrame() { return this._currentFrame; }
+   set currentFrame(/*int*/ value) {
+      if (this._currentFrame === value)
+         return;
+      this._currentFrame = value;
+      this._transformers.forEach(function(v,k) { v.execute(this._currentFrame, this._totalFrames, this.Model); });
+      this.View.invalidate();
+   }
+
+   removeModelTransformer(/*string*/ transformerClassName) {
+      if (this._transformers.has(transformerClassName))
+         this._transformers.delete(transformerClassName);
+   }
+   addModelTransformer(/*IModelTransformer*/ transformer) {
+      if (!this._transformers.has(transformer.className))
+         this._transformers.set(transformer.className, transformer);
+   }
+
+   useRotateTransforming(/*bool*/ enable) {
+      if (enable)
+         this.addModelTransformer(new RotateTransformer());
+      else
+         this.removeModelTransformer(RotateTransformer.className);
+   }
+
+   usePolarLightFgTransforming(/*bool*/ enable) {
+      if (enable)
+         this.addModelTransformer(new PolarLightFgTransformer());
+      else
+         this.removeModelTransformer(PolarLightFgTransformer.className);
+   }
+
+   close() {
+      // if (this._animated != null)
+      //    Factory.GET_ANIMATOR.get().unsubscribe(this);
+      this._transformers.clear();
+   }
+
+}
+
+/**
+ * MVC controller of {@link ESkillLevel} image
+ *
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImageView> MVC view
+ */
+class MosaicSkillController extends AnimatedImgController {
+
+   constructor(/*bool*/ showBurgerMenu, /*TImageView*/ imageView) {
+      super(imageView);
+
+      //View.burgerMenuModel.show = showBurgerMenu;
+
+      this.usePolarLightFgTransforming(true);
+      this.useRotateTransforming(true);
+   }
+
+}
+
+/** MosaicsSkill image controller implementation for {@link MosaicSkillImgSvg} */
+class MosaicSkillImgControllerSvg extends MosaicSkillController {
+   constructor(/*ESkillLevel*/ skill) {
+      super(skill == null, new MosaicSkillImgSvg(skill));
+   }
+}
+
+
 class AMosaicSkillImg {
    constructor() {
       this.mosaicSkill = ESkillLevel.eBeginner,
@@ -567,6 +1297,7 @@ function init(evt) {
    Promise.resolve().then(function() { initA(evt); } )
 }
 function initA(evt) {
+   new MosaicSkillImgControllerSvg(null).image;
    if (!window.svgDoc)
       svgDoc = evt.target.ownerDocument;
    var svg = evt.target;
@@ -689,6 +1420,6 @@ function format(node, value) {
    textNode = childNode = null;
    return node;
 }
-]]></script>
-
-</svg>
+//]]></script>
+//
+//</svg>

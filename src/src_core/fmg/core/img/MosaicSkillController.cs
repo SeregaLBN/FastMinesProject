@@ -17,7 +17,6 @@ namespace fmg.core.img {
       {
          View.BurgerMenuModel.Show = showBurgerMenu;
 
-       //AddModelTransformer(new MosaicsSkillTransformer());
          UsePolarLightFgTransforming(true);
          UseRotateTransforming(true);
       }

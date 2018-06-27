@@ -11,6 +11,7 @@ import fmg.common.HSV;
 import fmg.common.Pair;
 import fmg.common.geom.BoundDouble;
 import fmg.common.geom.PointDouble;
+import fmg.common.geom.SizeDouble;
 import fmg.common.geom.util.FigureHelper;
 import fmg.core.types.ESkillLevel;
 
@@ -41,17 +42,18 @@ public class MosaicSkillModel extends AnimatedImageModel {
       int stars = bigMaxStar ? 6 : 8;
       double angle = getRotateAngle();
 
+      SizeDouble size = getSize();
       BoundDouble pad = getPadding();
       double sqMax = Math.min( // размер квадрата куда будет вписана звезда при 0°
-            getSize().width  - pad.getLeftAndRight(),
-            getSize().height - pad.getTopAndBottom());
+                               size.width  - pad.getLeftAndRight(),
+                               size.height - pad.getTopAndBottom());
       double sqMin = 1;//sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
       double sqExt = sqMax * 3;
 
-      PointDouble centerMax = new PointDouble(pad.left + (getSize().width  - pad.getLeftAndRight()) / 2.0,
-                                              pad.top  + (getSize().height - pad.getTopAndBottom()) / 2.0);
+      PointDouble centerMax = new PointDouble(pad.left + (size.width  - pad.getLeftAndRight()) / 2.0,
+                                              pad.top  + (size.height - pad.getTopAndBottom()) / 2.0);
       PointDouble centerMin = new PointDouble(pad.left + sqMin/2, pad.top + sqMin/2);
-      PointDouble centerExt = new PointDouble(getSize().width * 1.5, getSize().height * 1.5);
+      PointDouble centerExt = new PointDouble(size.width * 1.5, size.height * 1.5);
 
       return Stream.concat(
          getCoords_SkillLevelAsType_2(true , bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax),
@@ -128,10 +130,11 @@ public class MosaicSkillModel extends AnimatedImageModel {
    }
 
    private Stream<Pair<Color, Stream<PointDouble>>> getCoords_SkillLevelAsValue() {
+      SizeDouble size = getSize();
       BoundDouble pad = getPadding();
       double sq = Math.min( // size inner square
-            getSize().width  - pad.getLeftAndRight(),
-            getSize().height - pad.getTopAndBottom());
+                            size.width  - pad.getLeftAndRight(),
+                            size.height - pad.getTopAndBottom());
       double r1 = sq/7; // external radius
       double r2 = sq/12; // internal radius
 
@@ -144,7 +147,7 @@ public class MosaicSkillModel extends AnimatedImageModel {
       double[] angleAccumulative = { angle };
       double anglePart = 360.0/stars;
 
-      final PointDouble center = new PointDouble(getSize().width / 2.0, getSize().height / 2.0);
+      final PointDouble center = new PointDouble(size.width / 2.0, size.height / 2.0);
       final PointDouble zero = new PointDouble(0, 0);
       Color fgClr = getForegroundColor();
       boolean pl = isPolarLights();

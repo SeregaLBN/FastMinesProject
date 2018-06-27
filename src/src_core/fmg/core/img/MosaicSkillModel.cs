@@ -35,17 +35,18 @@ namespace fmg.core.img {
          var stars = bigMaxStar ? 6 : 8;
          var angle = RotateAngle;
 
+         var size = Size;
          var pad = Padding;
          var sqMax = Math.Min( // размер квадрата куда будет вписана звезда при 0°
-               Size.Width - pad.LeftAndRight,
-               Size.Height - pad.TopAndBottom);
+               size.Width - pad.LeftAndRight,
+               size.Height - pad.TopAndBottom);
          var sqMin = sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
          var sqExt = sqMax * 3;
 
-         var centerMax = new PointDouble(pad.Left + (Size.Width  - pad.LeftAndRight) / 2.0,
-                                         pad.Top  + (Size.Height - pad.TopAndBottom) / 2.0);
+         var centerMax = new PointDouble(pad.Left + (size.Width  - pad.LeftAndRight) / 2.0,
+                                         pad.Top  + (size.Height - pad.TopAndBottom) / 2.0);
          var centerMin = new PointDouble(pad.Left + sqMin / 2, pad.Top + sqMin / 2);
-         var centerExt = new PointDouble(Size.Width * 1.5, Size.Height * 1.5);
+         var centerExt = new PointDouble(size.Width * 1.5, size.Height * 1.5);
 
          return GetCoords_SkillLevelAsType_2(true, bigMaxStar, accelerateRevert, rays, stars / 2, angle, sqMin, sqMax, centerMin, centerMax)
             .Concat(
@@ -117,10 +118,11 @@ namespace fmg.core.img {
       }
 
       private IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords_SkillLevelAsValue { get {
+         var size = Size;
          var pad = Padding;
          var sq = Math.Min( // size inner square
-            Size.Width - pad.LeftAndRight,
-            Size.Height - pad.TopAndBottom);
+            size.Width - pad.LeftAndRight,
+            size.Height - pad.TopAndBottom);
          var r1 = sq/7; // external radius
          var r2 = sq/12; // internal radius
 
@@ -133,7 +135,7 @@ namespace fmg.core.img {
          var angleAccumulative = angle;
          var anglePart = 360.0/stars;
 
-         var center = new PointDouble(Size.Width / 2.0, Size.Height / 2.0);
+         var center = new PointDouble(size.Width / 2.0, size.Height / 2.0);
          var zero = new PointDouble(0, 0);
          var fgClr = ForegroundColor;
          bool pl = PolarLights;

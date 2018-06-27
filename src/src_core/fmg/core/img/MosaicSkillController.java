@@ -18,7 +18,6 @@ public abstract class MosaicSkillController<TImage,
 
       getView().getBurgerMenuModel().setShow(showBurgerMenu);
 
-    //addModelTransformer(new MosaicsSkillTransformer());
       usePolarLightFgTransforming(true);
       useRotateTransforming(true);
    }
