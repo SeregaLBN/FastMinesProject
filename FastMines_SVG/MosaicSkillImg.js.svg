@@ -1,43 +1,43 @@
-..<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
-..     style='border: solid 1px red;'
-..     preserveAspectRatio="none"
-..     onload="init(evt)">
-..<script type="text/ecmascript"><![CDATA[
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     style='border: solid 1px red;'
+     preserveAspectRatio="none"
+     onload="init(evt)">
+<script type="text/ecmascript"><![CDATA[
 /** common settings this SVG */
 var Settings = {
-  width: 100,  // view width
-  height: 100, // view height
-  pad: 5, // padding
-  mosaicSkill: null, // ESkillLevel
+   width: 100,  // view width
+   height: 100, // view height
+   pad: 5, // padding
+   mosaicSkill: null, // ESkillLevel
 
-  clockwise: (Math.random() < 0.5), // ↻ or ↺
-  rotatePeriod: 2000, // in msec
-  iterations: 30, // the number of parts of which the one turn
+   clockwise: (Math.random() < 0.5), // ↻ or ↺
+   rotatePeriod: 2000, // in msec
+   iterations: 30, // the number of parts of which the one turn
 
-  borderWidth: 0.7,
-  backroundColor : null,
-  foregroundAlpha: 200  // 0..255 - foreground alpha-chanel color
+   borderWidth: 0.7,
+   backroundColor : null,
+   foregroundAlpha: 200  // 0..255 - foreground alpha-chanel color
 };
 Promise.resolve()
-  .then(function() {
-    Settings.backroundColor = Color.RandomColor().brighter(0.4);
-    Settings.foregroundAlpha = 150 + random(255-150);
-    switch (random(6)) {
-    case 0: Settings.mosaicSkill = ESkillLevel.eBeginner; break;
-    case 1: Settings.mosaicSkill = ESkillLevel.eAmateur ; break;
-    case 2: Settings.mosaicSkill = ESkillLevel.eProfi   ; break;
-    case 3: Settings.mosaicSkill = ESkillLevel.eCrazy   ; break;
-    case 4: Settings.mosaicSkill = ESkillLevel.eCustom  ; break;
-    case 5: Settings.mosaicSkill = null;                  break;
-    default: throw new Error('Bad value');
-    }
-    if (Settings.mosaicSkill==null)
-      // что бы при calcMode="discrete" не 'дёргалось'
-      Settings.iterations = Math.max(Settings.iterations, 120);
-  });
+   .then(function() {
+      Settings.backroundColor = Color.RandomColor().brighter(0.4);
+      Settings.foregroundAlpha = 150 + random(255-150);
+      switch (random(6)) {
+      case 0: Settings.mosaicSkill = ESkillLevel.eBeginner; break;
+      case 1: Settings.mosaicSkill = ESkillLevel.eAmateur ; break;
+      case 2: Settings.mosaicSkill = ESkillLevel.eProfi   ; break;
+      case 3: Settings.mosaicSkill = ESkillLevel.eCrazy   ; break;
+      case 4: Settings.mosaicSkill = ESkillLevel.eCustom  ; break;
+      case 5: Settings.mosaicSkill = null;                  break;
+      default: throw new Error('Bad value');
+      }
+      if (Settings.mosaicSkill==null)
+         // что бы при calcMode="discrete" не 'дёргалось'
+         Settings.iterations = Math.max(Settings.iterations, 120);
+   });
 
 var random = function(upDiapazon) {
-  return Math.floor(Math.random() * upDiapazon);
+   return Math.floor(Math.random() * upDiapazon);
 }
 
 /** RGBA color */
@@ -67,12 +67,12 @@ class Color {
                         (OxAARRGGBB >>  0) & 0xFF);
    }
    constructor(args/*, ...*/) {
-     switch (arguments.length) {
-     case 1: return this.constructor1(arguments[0]);
-     case 3: return this.constructor3(arguments[0], arguments[1], arguments[2]);
-     case 4: return this.constructor4(arguments[0], arguments[1], arguments[2], arguments[3]);
-     }
-     throw new Error();
+      switch (arguments.length) {
+      case 1: return this.constructor1(arguments[0]);
+      case 3: return this.constructor3(arguments[0], arguments[1], arguments[2]);
+      case 4: return this.constructor4(arguments[0], arguments[1], arguments[2], arguments[3]);
+      }
+      throw new Error();
    }
 
    equals(obj) {
@@ -91,12 +91,12 @@ class Color {
           |  (this.g <<  8) & 0x0000FF00
           |  (this.b <<  0) & 0x000000FF;
    }
-    
+
    get asHexString() {
-     var h = function(v) {
-       var s = (+v).toString(16);
-       if (s.length < 2) s = '0' + s;
-       return s.toUpperCase();
+      var h = function(v) {
+         var s = (+v).toString(16);
+         if (s.length < 2) s = '0' + s;
+         return s.toUpperCase();
       };
       return h(this.a) + h(this.r) + h(this.g) + h(this.b);
    }
@@ -228,7 +228,7 @@ class HSV {
       var b = rgb[2];
       return new Color(this.a, toInt(r*255/100), toInt(g*255/100), toInt(b*255/100));
    }
-  
+
    toColorDouble() {
       this.fix();
 
@@ -312,383 +312,383 @@ class HSV {
 }
 
 const FigureHelper = {
-  toRadian: function(/*double*/ degreesAngle) {
-    return (degreesAngle * Math.PI) / 180; // to radians
-  },
-  toDegrees: function(/*double*/ radianAngle) {
-    return radianAngle * 180 / Math.PI;
-  },
-  getPointOnCircleRadian: function(/*double*/ radius, /*double*/ radAngle, /*PointDouble{x,y}*/ center) {
-    return { x: radius * Math.sin(radAngle) + center.x, y: -radius * Math.cos(radAngle) + center.y };
-  },
-  getPointOnCircle(/*double*/ radius, /*double*/ degreesAngle, /*PointDouble*/ center) {
-    return FigureHelper.getPointOnCircleRadian(radius, FigureHelper.toRadian(degreesAngle), center);
-  },
-  getRegularPolygonCoords: function(/*int*/ n, /*double*/ radius, /*PointDouble{x,y}*/ center, /*double*/ offsetAngle) {
-    var angle = (2 * Math.PI)/n; // 360° / n
-    var offsetAngle2 = FigureHelper.toRadian(offsetAngle);
-    var polygon = [];
-    for (var i=0; i<n; ++i) {
-      var a = (i * angle) + offsetAngle2;
-      polygon[i] = FigureHelper.getPointOnCircleRadian(radius, a, center);
-    }
-    return polygon;
-  },
-  getRegularStarCoords: function(/*int*/ rays, /*double*/ radiusOut, /*double*/ radiusIn, /*PointDouble*/ center, /*double*/ offsetAngle) {
-    var pointsExternal = FigureHelper.getRegularPolygonCoords(rays, radiusOut, center, offsetAngle);
-    var pointsInternal = FigureHelper.getRegularPolygonCoords(rays, radiusIn, center, offsetAngle + (180.0/rays));
-    var polygon = [];
-    for (var i=0; i<rays; ++i) {
-      polygon[i*2+0] = pointsExternal[i];
-      polygon[i*2+1] = pointsInternal[i];
-    }
-    return polygon;
-  }
+   toRadian: function(/*double*/ degreesAngle) {
+      return (degreesAngle * Math.PI) / 180; // to radians
+   },
+   toDegrees: function(/*double*/ radianAngle) {
+      return radianAngle * 180 / Math.PI;
+   },
+   getPointOnCircleRadian: function(/*double*/ radius, /*double*/ radAngle, /*PointDouble{x,y}*/ center) {
+      return { x: radius * Math.sin(radAngle) + center.x, y: -radius * Math.cos(radAngle) + center.y };
+   },
+   getPointOnCircle(/*double*/ radius, /*double*/ degreesAngle, /*PointDouble*/ center) {
+      return FigureHelper.getPointOnCircleRadian(radius, FigureHelper.toRadian(degreesAngle), center);
+   },
+   getRegularPolygonCoords: function(/*int*/ n, /*double*/ radius, /*PointDouble{x,y}*/ center, /*double*/ offsetAngle) {
+      var angle = (2 * Math.PI)/n; // 360° / n
+      var offsetAngle2 = FigureHelper.toRadian(offsetAngle);
+      var polygon = [];
+      for (var i=0; i<n; ++i) {
+         var a = (i * angle) + offsetAngle2;
+         polygon[i] = FigureHelper.getPointOnCircleRadian(radius, a, center);
+      }
+      return polygon;
+   },
+   getRegularStarCoords: function(/*int*/ rays, /*double*/ radiusOut, /*double*/ radiusIn, /*PointDouble*/ center, /*double*/ offsetAngle) {
+      var pointsExternal = FigureHelper.getRegularPolygonCoords(rays, radiusOut, center, offsetAngle);
+      var pointsInternal = FigureHelper.getRegularPolygonCoords(rays, radiusIn, center, offsetAngle + (180.0/rays));
+      var polygon = [];
+      for (var i=0; i<rays; ++i) {
+         polygon[i*2+0] = pointsExternal[i];
+         polygon[i*2+1] = pointsInternal[i];
+      }
+      return polygon;
+   }
 };
 
 const /* enum */ ESkillLevel = {
-  eBeginner: { ordinal: 0 },
-  eAmateur : { ordinal: 1 },
-  eProfi   : { ordinal: 2 },
-  eCrazy   : { ordinal: 3 },
-  eCustom  : { ordinal: 4 },
+   eBeginner: { ordinal: 0 },
+   eAmateur : { ordinal: 1 },
+   eProfi   : { ordinal: 2 },
+   eCrazy   : { ordinal: 3 },
+   eCustom  : { ordinal: 4 },
 
-  getName: function(/* ESkillLevel */ skill) {
-    if (skill == null)
-      return 'typeESkillLevel';
-    for (var e in ESkillLevel) {
-      var val = ESkillLevel[e];
-      if (val === skill)
-        return e;
-    }
-    throw new Error('Bad argument skill: value is ' + skill);
-  }
+   getName: function(/* ESkillLevel */ skill) {
+      if (skill == null)
+         return 'typeESkillLevel';
+      for (var e in ESkillLevel) {
+         var val = ESkillLevel[e];
+         if (val === skill)
+            return e;
+      }
+      throw new Error('Bad argument skill: value is ' + skill);
+   }
 
 };
 
 class AMosaicSkillImg {
-  constructor() {
-    this.mosaicSkill = ESkillLevel.eBeginner,
-    this.rotateAngle = 0; // 27.0;
-    this.rotateAngleDelta = 1.4;
-    this.rotate = true;
-    this.redrawInterval = 100; // in ms
-    this.borderColor = new Color(0xFF800000).darker(0.5); // Color.Maroon.clone().darker(0.5);
-    this.borderWidth = 3;
-    this.isPolarLights = true;
-    this.foregroundColor = new Color(0xFFDA70D6); // color Orchid
-    this.foregroundColor.a = Settings.foregroundAlpha;
-  }
+   constructor() {
+      this.mosaicSkill = ESkillLevel.eBeginner,
+      this.rotateAngle = 0; // 27.0;
+      this.rotateAngleDelta = 1.4;
+      this.rotate = true;
+      this.redrawInterval = 100; // in ms
+      this.borderColor = new Color(0xFF800000).darker(0.5); // Color.Maroon.clone().darker(0.5);
+      this.borderWidth = 3;
+      this.isPolarLights = true;
+      this.foregroundColor = new Color(0xFFDA70D6); // color Orchid
+      this.foregroundColor.a = Settings.foregroundAlpha;
+   }
 
-  nextForegroundColor() {
+   nextForegroundColor() {
       var hsv = new HSV(this.foregroundColor);
       hsv.h += this.rotateAngleDelta;
       this.foregroundColor = hsv.toColor();
-  }
+   }
 
-  onTimer() {
-    if (this.isPolarLights)
-      this.nextForegroundColor();
-    if (this.rotate)
-      this.rotateAngle = AMosaicSkillImg.fixAngle(this.rotateAngle + this.rotateAngleDelta);
-  }
+   onTimer() {
+      if (this.isPolarLights)
+         this.nextForegroundColor();
+      if (this.rotate)
+         this.rotateAngle = AMosaicSkillImg.fixAngle(this.rotateAngle + this.rotateAngleDelta);
+   }
 
-  /** to diapason (0° .. +360°] */
-  static /* double */ fixAngle(/* double */ value) {
+   /** to diapason (0° .. +360°] */
+   static /* double */ fixAngle(/* double */ value) {
       return (value >= 360)
-           ?              (value % 360)
-           : (value < 0)
-              ?           (value % 360) + 360
-              :            value;
-  }
+         ?              (value % 360)
+         :   (value < 0)
+            ?           (value % 360) + 360
+            :            value;
+   }
 
-  getCoords() {
-    return (this.mosaicSkill == null)
-          ? this.getCoords_SkillLevelAsType()
-          : this.getCoords_SkillLevelAsValue();
-  }
+   getCoords() {
+      return (this.mosaicSkill == null)
+         ? this.getCoords_SkillLevelAsType()
+         : this.getCoords_SkillLevelAsValue();
+   }
 
-  getCoords_SkillLevelAsType() {
-    const bigMaxStar = !true; // true - большая звезда - вне картинки; false - большая звезда - внутри картинки.
-    const accelerateRevert = !true; // ускорение под конец анимации, иначе - в начале...
+   getCoords_SkillLevelAsType() {
+      const bigMaxStar = !true; // true - большая звезда - вне картинки; false - большая звезда - внутри картинки.
+      const accelerateRevert = !true; // ускорение под конец анимации, иначе - в начале...
 
-    var rays = 5;
-    var stars = bigMaxStar ? 6 : 8;
-    var angle = this.rotateAngle;
+      var rays = 5;
+      var stars = bigMaxStar ? 6 : 8;
+      var angle = this.rotateAngle;
 
-    var sqMax = Math.min( // размер квадрата куда будет вписана звезда при 0°
-          Settings.width  - Settings.pad*2,
-          Settings.height - Settings.pad*2);
-    var sqMin = 1;//sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
-    var sqExt = sqMax * 3;
+      var sqMax = Math.min( // размер квадрата куда будет вписана звезда при 0°
+                           Settings.width  - Settings.pad*2,
+                           Settings.height - Settings.pad*2);
+      var sqMin = 1;//sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
+      var sqExt = sqMax * 3;
 
-    var centerMax = { x: Settings.pad + (Settings.width  - Settings.pad*2) / 2.0,
-                      y: Settings.pad + (Settings.height - Settings.pad*2) / 2.0 };
-    var centerMin = { x: Settings.pad + sqMin / 2, y: Settings.pad + sqMin / 2 };
-    var centerExt = { x: Settings.width * 1.5, y: Settings.height * 1.5 };
+      var centerMax = { x: Settings.pad + (Settings.width  - Settings.pad*2) / 2.0,
+                        y: Settings.pad + (Settings.height - Settings.pad*2) / 2.0 };
+      var centerMin = { x: Settings.pad + sqMin / 2, y: Settings.pad + sqMin / 2 };
+      var centerExt = { x: Settings.width * 1.5, y: Settings.height * 1.5 };
 
-    return this.getCoords_SkillLevelAsType_2(true , bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax)
-        .concat(
-           this.getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMax, sqExt, centerMax, centerExt));
-    // return this.getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax); // old
-  }
+      return this.getCoords_SkillLevelAsType_2(true , bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax)
+          .concat(
+             this.getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMax, sqExt, centerMax, centerExt));
+      // return this.getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax); // old
+   }
 
-  getCoords_SkillLevelAsType_2(
-    /* bool */ accumulative,
-    /* bool */ bigMaxStar,
-    /* bool */ accelerateRevert,
-    /* int */ rays,
-    /* int */ stars,
-    /* double */ angle,
-    /* double */ sqMin,
-    /* double */ sqMax,
-    /* PointDouble */ centerMin,
-    /* PointDouble */ centerMax
-  ) {
-    var angleAccumulative = angle;
-    var anglePart = 360.0 / stars;
-    var sqDiff = sqMax - sqMin;
-    var centerDiff = { x: centerMax.x - centerMin.x, y: centerMax.y - centerMin.y };
+   getCoords_SkillLevelAsType_2(
+      /* bool */ accumulative,
+      /* bool */ bigMaxStar,
+      /* bool */ accelerateRevert,
+      /* int */ rays,
+      /* int */ stars,
+      /* double */ angle,
+      /* double */ sqMin,
+      /* double */ sqMax,
+      /* PointDouble */ centerMin,
+      /* PointDouble */ centerMax
+   ) {
+      var angleAccumulative = angle;
+      var anglePart = 360.0 / stars;
+      var sqDiff = sqMax - sqMin;
+      var centerDiff = { x: centerMax.x - centerMin.x, y: centerMax.y - centerMin.y };
 
-    var res = []; // array of Pair<Color bkColor, PointDouble[] polygonCoords >
-    for (var starNum=0; starNum < stars; ++starNum) {
-      var angleStar = AMosaicSkillImg.fixAngle(angle + starNum * anglePart);
-      if (accumulative)
-        angleAccumulative = Math.sin(FigureHelper.toRadian(angle / 4)) * angleAccumulative; // accelerate / ускоряшка..
+      var res = []; // array of Pair<Color bkColor, PointDouble[] polygonCoords >
+      for (var starNum=0; starNum < stars; ++starNum) {
+         var angleStar = AMosaicSkillImg.fixAngle(angle + starNum * anglePart);
+         if (accumulative)
+            angleAccumulative = Math.sin(FigureHelper.toRadian(angle / 4)) * angleAccumulative; // accelerate / ускоряшка..
 
-      var sq = angleStar * sqDiff / 360;
-      // (un)comment next line to view result changes...
-      sq = Math.sin(FigureHelper.toRadian(angleStar / 4)) * sq; // accelerate / ускоряшка..
-      sq = accelerateRevert
-            ? sqMin + sq
-            : sqMax - sq;
+         var sq = angleStar * sqDiff / 360;
+         // (un)comment next line to view result changes...
+         sq = Math.sin(FigureHelper.toRadian(angleStar / 4)) * sq; // accelerate / ускоряшка..
+         sq = accelerateRevert
+               ? sqMin + sq
+               : sqMax - sq;
 
-      var r1 = bigMaxStar ? sq * 2.2 : sq / 2; // external radius
-      var r2 = r1 / 2.6; // internal radius
+         var r1 = bigMaxStar ? sq * 2.2 : sq / 2; // external radius
+         var r2 = r1 / 2.6; // internal radius
 
-      var centerStar = { x: angleStar * centerDiff.x / 360,
-                         y: angleStar * centerDiff.y / 360 };
-      // (un)comment next 2 lines to view result changes...
-      centerStar.x = Math.sin(FigureHelper.toRadian(angleStar / 4)) * centerStar.y; // accelerate / ускоряшка..
-      centerStar.y = Math.sin(FigureHelper.toRadian(angleStar / 4)) * centerStar.y; // accelerate / ускоряшка..
-      centerStar.x = accelerateRevert
-            ? centerMin.x + centerStar.x
-            : centerMax.x - centerStar.x;
-      centerStar.y = accelerateRevert
-            ? centerMin.y + centerStar.y
-            : centerMax.y - centerStar.y;
+         var centerStar = { x: angleStar * centerDiff.x / 360,
+                            y: angleStar * centerDiff.y / 360 };
+         // (un)comment next 2 lines to view result changes...
+         centerStar.x = Math.sin(FigureHelper.toRadian(angleStar / 4)) * centerStar.y; // accelerate / ускоряшка..
+         centerStar.y = Math.sin(FigureHelper.toRadian(angleStar / 4)) * centerStar.y; // accelerate / ускоряшка..
+         centerStar.x = accelerateRevert
+               ? centerMin.x + centerStar.x
+               : centerMax.x - centerStar.x;
+         centerStar.y = accelerateRevert
+               ? centerMin.y + centerStar.y
+               : centerMax.y - centerStar.y;
 
-      var clr = this.foregroundColor;
-      if (this.isPolarLights)
-          clr = new HSV(clr).addHue(+angleStar).toColor(); // try: -angleStar
+         var clr = this.foregroundColor;
+         if (this.isPolarLights)
+            clr = new HSV(clr).addHue(+angleStar).toColor(); // try: -angleStar
 
-      res.push( { priority: sq,
-                  clrAndPoly: {
-                    color: clr,
-                    polygon: FigureHelper.getRegularStarCoords(rays,
-                                                               r1, r2,
-                                                               bigMaxStar ? centerMax : centerStar,
-                                                               accumulative ? angleAccumulative : 0
-                                                             )} } );
-    }
-    var saveColorSequence = res.map(function(x) { return x.clrAndPoly.color; });
-    res.sort(function(o1, o2) {
-      if (o1.priority < o2.priority) return bigMaxStar ?  1 : -1;
-      if (o1.priority > o2.priority) return bigMaxStar ? -1 :  1;
-      return 0;
-    });
-    for (var i=0; i<res.length; ++i)
-      res[i].clrAndPoly.color = saveColorSequence[i]; // restore color sequence; only for SVG
-    return res.map(function(x) { return x.clrAndPoly; });
-  }
+         res.push( { priority: sq,
+                     clrAndPoly: {
+                       color: clr,
+                       polygon: FigureHelper.getRegularStarCoords(rays,
+                                                                  r1, r2,
+                                                                  bigMaxStar ? centerMax : centerStar,
+                                                                  accumulative ? angleAccumulative : 0
+                                                                )} } );
+      }
+      var saveColorSequence = res.map(function(x) { return x.clrAndPoly.color; });
+      res.sort(function(o1, o2) {
+         if (o1.priority < o2.priority) return bigMaxStar ?  1 : -1;
+         if (o1.priority > o2.priority) return bigMaxStar ? -1 :  1;
+         return 0;
+      });
+      for (var i=0; i<res.length; ++i)
+         res[i].clrAndPoly.color = saveColorSequence[i]; // restore color sequence; only for SVG
+      return res.map(function(x) { return x.clrAndPoly; });
+   }
 
-  getCoords_SkillLevelAsValue() {
-    var sq = Math.min( // size inner square
-      Settings.width  - Settings.pad*2,
-      Settings.height - Settings.pad*2);
-    var r1 = sq/7; // external radius
-    var r2 = sq/12; // internal radius
+   getCoords_SkillLevelAsValue() {
+      var sq = Math.min( // size inner square
+                        Settings.width  - Settings.pad*2,
+                        Settings.height - Settings.pad*2);
+      var r1 = sq/7; // external radius
+      var r2 = sq/12; // internal radius
 
-    var ordinal = this.mosaicSkill.ordinal;
-    var rays = 5 + ordinal; // rays count
-    var stars = 4 + ordinal; // number of stars on the perimeter of the circle
+      var ordinal = this.mosaicSkill.ordinal;
+      var rays = 5 + ordinal; // rays count
+      var stars = 4 + ordinal; // number of stars on the perimeter of the circle
 
-    var angle = this.rotateAngle;
-    var angleAccumulative = angle;
-    var anglePart = 360.0/stars;
+      var angle = this.rotateAngle;
+      var angleAccumulative = angle;
+      var anglePart = 360.0/stars;
 
-    var center = { x: Settings.width / 2.0, y: Settings.height / 2.0 };
-    var zero = { x: 0, y: 0 };
-    var res = []; // array of Pair<Color bkColor, PointDouble[] polygonCoords >
-    for (var starNum=0; starNum < stars; ++starNum) {
-      // (un)comment next line to view result changes...
-      angleAccumulative = Math.sin(FigureHelper.toRadian(angleAccumulative/4))*angleAccumulative; // accelerate / ускоряшка..
+      var center = { x: Settings.width / 2.0, y: Settings.height / 2.0 };
+      var zero = { x: 0, y: 0 };
+      var res = []; // array of Pair<Color bkColor, PointDouble[] polygonCoords >
+      for (var starNum=0; starNum < stars; ++starNum) {
+         // (un)comment next line to view result changes...
+         angleAccumulative = Math.sin(FigureHelper.toRadian(angleAccumulative/4))*angleAccumulative; // accelerate / ускоряшка..
 
-      // adding offset
-      var offset = FigureHelper.getPointOnCircle(sq/3, angleAccumulative + starNum * anglePart, zero);
-      var centerStar = { x: center.x + offset.x, y: center.y + offset.y };
+         // adding offset
+         var offset = FigureHelper.getPointOnCircle(sq/3, angleAccumulative + starNum * anglePart, zero);
+         var centerStar = { x: center.x + offset.x, y: center.y + offset.y };
 
-      var clr = this.foregroundColor;
-      if (this.isPolarLights)
-        clr = new HSV(clr).addHue(starNum * anglePart).toColor();
+         var clr = this.foregroundColor;
+         if (this.isPolarLights)
+            clr = new HSV(clr).addHue(starNum * anglePart).toColor();
 
-      res.push({ color: clr,
-                 polygon: (this.mosaicSkill == ESkillLevel.eCustom)
-                                    ? FigureHelper.getRegularPolygonCoords(3 + starNum % 4, r1, centerStar, -angleAccumulative)
-                                    : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative) });
-    }
-    res.reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
-    return res;
-  }
+         res.push({ color: clr,
+                    polygon: (this.mosaicSkill == ESkillLevel.eCustom)
+                                       ? FigureHelper.getRegularPolygonCoords(3 + starNum % 4, r1, centerStar, -angleAccumulative)
+                                       : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative) });
+      }
+      res.reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
+      return res;
+   }
 };
 
 function round(n, digits) {
-  if (arguments.length < 2)
-    digits = 2;
-  var multiplicator = Math.pow(10, digits);
-  n = parseFloat((n * multiplicator).toFixed(11));
-  var test = Math.round(n) / multiplicator;
-  return +(test.toFixed(digits));
+   if (arguments.length < 2)
+      digits = 2;
+   var multiplicator = Math.pow(10, digits);
+   n = parseFloat((n * multiplicator).toFixed(11));
+   var test = Math.round(n) / multiplicator;
+   return +(test.toFixed(digits));
 }
 
 var hasMinDiff = function(double1, double2) {
-    return Math.abs(double1 - double2) < 0.0001;        
+   return Math.abs(double1 - double2) < 0.0001;
 };
 
 function toInt (value) {
-  return value | 0;
-// var intvalue = Math.floor( floatvalue );
-// var intvalue = Math.ceil( floatvalue ); 
-// var intvalue = Math.round( floatvalue );
-// var intvalue = Math.trunc( floatvalue ); // `Math.trunc` was added in ECMAScript 6
+   return value | 0;
+//   var intvalue = Math.floor( floatvalue );
+//   var intvalue = Math.ceil( floatvalue );
+//   var intvalue = Math.round( floatvalue );
+//   var intvalue = Math.trunc( floatvalue ); // `Math.trunc` was added in ECMAScript 6
 }
 
 function init(evt) {
-  Promise.resolve().then(function() { initA(evt); } )
+   Promise.resolve().then(function() { initA(evt); } )
 }
 function initA(evt) {
-  if (!window.svgDoc)
-    svgDoc = evt.target.ownerDocument;
-  var svg = evt.target;
-  svg.setAttributeNS(null, "viewBox", "0 0 " + Settings.width + " " + Settings.height);
-  svg.setAttributeNS(null, "width"  , Settings.width);
-  svg.setAttributeNS(null, "height" , Settings.height);
+   if (!window.svgDoc)
+      svgDoc = evt.target.ownerDocument;
+   var svg = evt.target;
+   svg.setAttributeNS(null, "viewBox", "0 0 " + Settings.width + " " + Settings.height);
+   svg.setAttributeNS(null, "width"  , Settings.width);
+   svg.setAttributeNS(null, "height" , Settings.height);
 
-  // console.log("clr = " + Color.RandomColor()); // test
+   //console.log("clr = " + Color.RandomColor()); // test
 
-  var img = new AMosaicSkillImg();
-  img.mosaicSkill      = Settings.mosaicSkill;
-  img.rotateAngleDelta = 360.0 / Settings.iterations * (Settings.clockwise ? 1 : -1);
-  img.redrawInterval   = Settings.rotatePeriod / Settings.iterations;
-  img.borderWidth      = Settings.borderWidth;
-  
-  var polygonsTimeScale = [];
-  for (var i=0; i < Settings.iterations+1; ++i) {
-    polygonsTimeScale.push({
-      timeStamp : i * img.redrawInterval,
-      clrAndPoly: img.getCoords() // [{color, polygon}, ...]
-    });
-    img.onTimer();
-  }
+   var img = new AMosaicSkillImg();
+   img.mosaicSkill      = Settings.mosaicSkill;
+   img.rotateAngleDelta = 360.0 / Settings.iterations * (Settings.clockwise ? 1 : -1);
+   img.redrawInterval   = Settings.rotatePeriod / Settings.iterations;
+   img.borderWidth      = Settings.borderWidth;
 
-  var polygonsCount = polygonsTimeScale[0].clrAndPoly.length;
-  var paths = [];
-  for (var i=0; i < polygonsCount; ++i) {
-    var animate_d = {
-      attributeName: 'd', 
-      dur: Settings.rotatePeriod + 'ms',
-      repeatCount: 'indefinite',
-      keyTimes: polygonsTimeScale.map(function(item) { return round(item.timeStamp/Settings.rotatePeriod, 4); }).join(';'),// + ';1',
-      values: polygonsTimeScale.map(function(item) {
-                var polygon = item.clrAndPoly[i].polygon;
-                return 'M' + polygon.map(function(p) { return round(p.x, 2) + ' ' + round(p.y, 2); }).join(' L')  + ' Z';
-              }).join(';')
-    };
-    var animate_fill = {
-      attributeName: 'fill', 
-      dur: animate_d.dur,
-      repeatCount: 'indefinite',
-      keyTimes: animate_d.keyTimes,
-      values: polygonsTimeScale.map(function(item) { return '#' + item.clrAndPoly[i].color.asHexString.substr(2); }).join(';')
-    };
+   var polygonsTimeScale = [];
+   for (var i=0; i < Settings.iterations+1; ++i) {
+      polygonsTimeScale.push({
+         timeStamp : i * img.redrawInterval,
+         clrAndPoly: img.getCoords() // [{color, polygon}, ...]
+      });
+      img.onTimer();
+   }
 
-    paths.push({ animate_d: animate_d, animate_fill: animate_fill });
-  }
+   var polygonsCount = polygonsTimeScale[0].clrAndPoly.length;
+   var paths = [];
+   for (var i=0; i < polygonsCount; ++i) {
+      var animate_d = {
+         attributeName: 'd',
+         dur: Settings.rotatePeriod + 'ms',
+         repeatCount: 'indefinite',
+         keyTimes: polygonsTimeScale.map(function(item) { return round(item.timeStamp/Settings.rotatePeriod, 4); }).join(';'),// + ';1',
+         values: polygonsTimeScale.map(function(item) {
+                   var polygon = item.clrAndPoly[i].polygon;
+                   return 'M' + polygon.map(function(p) { return round(p.x, 2) + ' ' + round(p.y, 2); }).join(' L')  + ' Z';
+                 }).join(';')
+      };
+      var animate_fill = {
+         attributeName: 'fill',
+         dur: animate_d.dur,
+         repeatCount: 'indefinite',
+         keyTimes: animate_d.keyTimes,
+         values: polygonsTimeScale.map(function(item) { return '#' + item.clrAndPoly[i].color.asHexString.substr(2); }).join(';')
+      };
 
-  const svgNS = "http://www.w3.org/2000/svg";
-  var createPath = function(path) {
-    var pathNode = svgDoc.createElementNS(svgNS, "path");
-    pathNode.appendChild(createAnimate(path.animate_d))
-    pathNode.appendChild(createAnimate(path.animate_fill));
-    pathNode.setAttributeNS(null, "stroke"        , '#' + img.borderColor.asHexString.substr(2));
-    pathNode.setAttributeNS(null, "stroke-width"  , img.borderWidth);
-  //pathNode.setAttributeNS(null, "stroke-opacity", round(img.borderColor.a/255.0, 2));
-    pathNode.setAttributeNS(null, "fill-opacity"  , round(Settings.foregroundAlpha/255.0, 2));
-    return pathNode;
-  };
-  var createAnimate = function(animate) {
-    var animateNode = svgDoc.createElementNS(svgNS, "animate");
-    animateNode.setAttributeNS(null, "attributeName", animate.attributeName);
-    animateNode.setAttributeNS(null, "dur"          , animate.dur);
-    animateNode.setAttributeNS(null, "repeatCount"  , animate.repeatCount);
-    // if (true)
-    //   animateNode.setAttributeNS(null, "keyTimes"   , animate.keyTimes);
-    // else
-      animateNode.setAttributeNS(null, "calcMode"   , (Settings.mosaicSkill==null) ? "discrete" : "linear"); // discrete linear paced spline
-    animateNode.setAttributeNS(null, "values"       , animate.values);
-    return animateNode;
-  };
-  if (Settings.backroundColor && !Settings.backroundColor.isTransparent) {
-    var rcNode = svgDoc.createElementNS(svgNS, "rect");
-    rcNode.setAttributeNS(null, "x"     , 0);
-    rcNode.setAttributeNS(null, "y"     , 0);
-    rcNode.setAttributeNS(null, "width" , Settings.width);
-    rcNode.setAttributeNS(null, "height", Settings.height);
-    var bc = new HSV(Settings.backroundColor);
-    rcNode.setAttributeNS(null, "fill"  , 'hsla(' + round(bc.h, 2) + ', ' + round(bc.s, 2) + '%, ' + round(bc.v, 2) + '%, ' + round(bc.a/255.0, 2) + ')');
-    svg.appendChild(rcNode);
-  }
-  for (var i in paths) {
-    var path = paths[i];
-    var pathNode = createPath(path);
-    svg.appendChild(pathNode);
-  }
+      paths.push({ animate_d: animate_d, animate_fill: animate_fill });
+   }
 
-  var getFileName = function() {
-    return "MosaicSkillImg."
-      + ESkillLevel.getName(Settings.mosaicSkill)
-    //+ '.' + Settings.width + 'x' + Settings.height
-    //+ '.iters' + Settings.iterations
-      + '.' + (Settings.clockwise ? 'clockwise' : 'counterclockwise') // '↻' : '↺') // 
-      + '.svg';
-  };
-  console.log(getFileName() + '\n' + format(clean(svg), 1).outerHTML);
+   const svgNS = "http://www.w3.org/2000/svg";
+   var createPath = function(path) {
+      var pathNode = svgDoc.createElementNS(svgNS, "path");
+      pathNode.appendChild(createAnimate(path.animate_d))
+      pathNode.appendChild(createAnimate(path.animate_fill));
+      pathNode.setAttributeNS(null, "stroke"        , '#' + img.borderColor.asHexString.substr(2));
+      pathNode.setAttributeNS(null, "stroke-width"  , img.borderWidth);
+    //pathNode.setAttributeNS(null, "stroke-opacity", round(img.borderColor.a/255.0, 2));
+      pathNode.setAttributeNS(null, "fill-opacity"  , round(Settings.foregroundAlpha/255.0, 2));
+      return pathNode;
+   };
+   var createAnimate = function(animate) {
+      var animateNode = svgDoc.createElementNS(svgNS, "animate");
+      animateNode.setAttributeNS(null, "attributeName", animate.attributeName);
+      animateNode.setAttributeNS(null, "dur"          , animate.dur);
+      animateNode.setAttributeNS(null, "repeatCount"  , animate.repeatCount);
+      // if (true)
+      //   animateNode.setAttributeNS(null, "keyTimes"   , animate.keyTimes);
+      // else
+         animateNode.setAttributeNS(null, "calcMode"   , (Settings.mosaicSkill==null) ? "discrete" : "linear"); // discrete linear paced spline
+      animateNode.setAttributeNS(null, "values"       , animate.values);
+      return animateNode;
+   };
+   if (Settings.backroundColor && !Settings.backroundColor.isTransparent) {
+      var rcNode = svgDoc.createElementNS(svgNS, "rect");
+      rcNode.setAttributeNS(null, "x"     , 0);
+      rcNode.setAttributeNS(null, "y"     , 0);
+      rcNode.setAttributeNS(null, "width" , Settings.width);
+      rcNode.setAttributeNS(null, "height", Settings.height);
+      var bc = new HSV(Settings.backroundColor);
+      rcNode.setAttributeNS(null, "fill"  , 'hsla(' + round(bc.h, 2) + ', ' + round(bc.s, 2) + '%, ' + round(bc.v, 2) + '%, ' + round(bc.a/255.0, 2) + ')');
+      svg.appendChild(rcNode);
+   }
+   for (var i in paths) {
+      var path = paths[i];
+      var pathNode = createPath(path);
+      svg.appendChild(pathNode);
+   }
+
+   var getFileName = function() {
+      return "MosaicSkillImg."
+         + ESkillLevel.getName(Settings.mosaicSkill)
+       //+ '.' + Settings.width + 'x' + Settings.height
+       //+ '.iters' + Settings.iterations
+         + '.' + (Settings.clockwise ? 'clockwise' : 'counterclockwise') // '↻' : '↺') //
+         + '.svg';
+   };
+   console.log(getFileName() + '\n' + format(clean(svg), 1).outerHTML);
 }
 
 function clean(svg) {
-  svg.removeAttribute('onload');
-  svg.removeAttribute('style');
-  var script = svg.querySelector('script');
-  script.remove();
-  return svg;
+   svg.removeAttribute('onload');
+   svg.removeAttribute('style');
+   var script = svg.querySelector('script');
+   script.remove();
+   return svg;
 }
 function format(node, value) {
-  var indentBefore = new Array(value++ + 1).join('  '),
-      indentAfter  = new Array(value - 1).join('  '),
-      textNode, childNode;
-  for (var i = 0; i < node.children.length; i++) {
-    textNode = document.createTextNode('\n' + indentBefore);
-    childNode = node.children[i]; 
-    node.insertBefore(textNode, childNode);
-    format(childNode, value);
-    if (node.lastElementChild == childNode) {
-      textNode = document.createTextNode('\n' + indentAfter);
-      node.appendChild(textNode);
-    }
-  }
-  textNode = childNode = null;
-  return node;
+   var indentBefore = new Array(value++ + 1).join('  '),
+       indentAfter  = new Array(value - 1).join('  '),
+       textNode, childNode;
+   for (var i = 0; i < node.children.length; i++) {
+      textNode = document.createTextNode('\n' + indentBefore);
+      childNode = node.children[i];
+      node.insertBefore(textNode, childNode);
+      format(childNode, value);
+      if (node.lastElementChild == childNode) {
+         textNode = document.createTextNode('\n' + indentAfter);
+         node.appendChild(textNode);
+      }
+   }
+   textNode = childNode = null;
+   return node;
 }
 ]]></script>
 
-</svg> 
+</svg>
