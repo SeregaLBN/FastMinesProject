@@ -1,8 +1,8 @@
-//<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
-//     style='border: solid 1px red;'
-//     preserveAspectRatio="none"
-//     onload="init(evt)">
-//<script type="text/ecmascript"><![CDATA[
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     style='border: solid 1px red;'
+     preserveAspectRatio="none"
+     onload="init(evt)">
+<script type="text/ecmascript"><![CDATA[
 /** common settings this SVG */
 var Settings = {
    width: 100,  // view width
@@ -15,12 +15,12 @@ var Settings = {
    iterations: 30, // the number of parts of which the one turn
 
    borderWidth: 0.7,
-   backroundColor : null,
+   backgroundColor : null,
    foregroundAlpha: 200  // 0..255 - foreground alpha-chanel color
 };
 Promise.resolve()
    .then(function() {
-      Settings.backroundColor = Color.RandomColor().brighter(0.4);
+      Settings.backgroundColor = Color.RandomColor.brighter(0.4);
       Settings.foregroundAlpha = 150 + random(255-150);
       switch (random(6)) {
       case 0: Settings.mosaicSkill = ESkillLevel.eBeginner; break;
@@ -42,6 +42,25 @@ var random = function(upDiapazon) {
 function isNumeric(n) {
    return !isNaN(parseFloat(n)) && isFinite(n);
 }
+function round(n, digits) {
+   if (arguments.length < 2)
+      digits = 2;
+   var multiplicator = Math.pow(10, digits);
+   n = parseFloat((n * multiplicator).toFixed(11));
+   var test = Math.round(n) / multiplicator;
+   return +(test.toFixed(digits));
+}
+var hasMinDiff = function(double1, double2) {
+   return Math.abs(double1 - double2) < 0.0001;
+};
+function toInt (value) {
+   return value | 0;
+//   var intvalue = Math.floor( floatvalue );
+//   var intvalue = Math.ceil( floatvalue );
+//   var intvalue = Math.round( floatvalue );
+//   var intvalue = Math.trunc( floatvalue ); // `Math.trunc` was added in ECMAScript 6
+}
+
 
 /** RGBA color */
 class Color {
@@ -109,7 +128,7 @@ class Color {
    get isOpaque()      { return this.a == 255; }
    get isTransparent() { return this.a == 0; }
 
-   static RandomColor() {
+   static get RandomColor() {
       return new Color(random(256), random(256), random(256));
    }
 
@@ -321,13 +340,13 @@ const FigureHelper = {
    toDegrees: function(/*double*/ radianAngle) {
       return radianAngle * 180 / Math.PI;
    },
-   getPointOnCircleRadian: function(/*double*/ radius, /*double*/ radAngle, /*PointDouble{x,y}*/ center) {
+   getPointOnCircleRadian: function(/*double*/ radius, /*double*/ radAngle, /*Point{x,y}*/ center) {
       return { x: radius * Math.sin(radAngle) + center.x, y: -radius * Math.cos(radAngle) + center.y };
    },
-   getPointOnCircle(/*double*/ radius, /*double*/ degreesAngle, /*PointDouble*/ center) {
+   getPointOnCircle(/*double*/ radius, /*double*/ degreesAngle, /*Point*/ center) {
       return FigureHelper.getPointOnCircleRadian(radius, FigureHelper.toRadian(degreesAngle), center);
    },
-   getRegularPolygonCoords: function(/*int*/ n, /*double*/ radius, /*PointDouble{x,y}*/ center, /*double*/ offsetAngle) {
+   getRegularPolygonCoords: function(/*int*/ n, /*double*/ radius, /*Point{x,y}*/ center, /*double*/ offsetAngle) {
       var angle = (2 * Math.PI)/n; // 360° / n
       var offsetAngle2 = FigureHelper.toRadian(offsetAngle);
       var polygon = [];
@@ -337,7 +356,7 @@ const FigureHelper = {
       }
       return polygon;
    },
-   getRegularStarCoords: function(/*int*/ rays, /*double*/ radiusOut, /*double*/ radiusIn, /*PointDouble*/ center, /*double*/ offsetAngle) {
+   getRegularStarCoords: function(/*int*/ rays, /*double*/ radiusOut, /*double*/ radiusIn, /*Point*/ center, /*double*/ offsetAngle) {
       var pointsExternal = FigureHelper.getRegularPolygonCoords(rays, radiusOut, center, offsetAngle);
       var pointsInternal = FigureHelper.getRegularPolygonCoords(rays, radiusIn, center, offsetAngle + (180.0/rays));
       var polygon = [];
@@ -697,7 +716,7 @@ class MosaicSkillModel extends AnimatedImageModel {
 
    getCoords_SkillLevelAsValue() {
       var size = this.size;
-      var pad = getPadding();
+      var pad = this.padding;
       var sq = Math.min( // size inner square
                         size.width  - pad.leftAndRight,
                         size.height - pad.topAndBottom);
@@ -709,34 +728,34 @@ class MosaicSkillModel extends AnimatedImageModel {
       var rays = 5 + ordinal; // rays count
       var stars = 4 + ordinal; // number of stars on the perimeter of the circle
 
-      var angle = getRotateAngle();
+      var angle = this.rotateAngle;
       var angleAccumulative = angle;
       var anglePart = 360.0/stars;
 
       var center = new Point(size.width / 2.0, size.height / 2.0);
       var zero = new Point(0, 0);
       var fgClr = this.foregroundColor;
-      var pl = this.PolarLights;
-      var res = []; // array of Pair<Color bkColor, PointDouble[] polygonCoords >
+      var pl = this.polarLights;
+      var res = []; // array of Pair<Color bkColor, Point[] polygonCoords >
       for (var starNum=0; starNum < stars; ++starNum) {
          // (un)comment next line to view result changes...
          angleAccumulative = Math.sin(FigureHelper.toRadian(angleAccumulative/4))*angleAccumulative; // accelerate / ускоряшка..
 
          // adding offset
          var offset = FigureHelper.getPointOnCircle(sq / 3, angleAccumulative + starNum * anglePart, zero);
-         var centerStar = new PointDouble(center.x + offset.x, center.y + offset.y);
+         var centerStar = new Point(center.x + offset.x, center.y + offset.y);
 
          var clr = !pl
                ? fgClr
                : new HSV(fgClr).addHue(starNum * anglePart).toColor();
 
          res.push({ color: clr,
-            polygon: (skill == ESkillLevel.eCustom)
-                        ? FigureHelper.getRegularPolygonCoords(3 + starNum % 4, r1, centerStar, -angleAccumulative)
-                        : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative) });
+                    polygon: (skill == ESkillLevel.eCustom)
+                                 ? FigureHelper.getRegularPolygonCoords(3 + starNum % 4, r1, centerStar, -angleAccumulative)
+                                 : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative) });
       }
       res.reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
-      return resL.stream();
+      return res;
    }
 
 }
@@ -837,27 +856,121 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
    /** get paint information of drawing basic image model */
    getCoords() { throw new Error("Abstract method"); }
 
-   draw(/*SvgContext*/ g) {
+   drawIntoContext(/* DrawContext */ cnxt, /* SVG document */ svgDoc) {
+      //console.log("  drawIntoContext");
+      var duration  = cnxt.duration;
+      var keyTime = cnxt.keyTime;
       var m = this.Model;
+      var borderWidth = m.borderWidth;
+      var borderColor = m.borderColor;
+      var backgroundColor = m.backgroundColor;
+      var foregroundColor = m.foregroundColor;
+      var skill = m.mosaicSkill;
 
-      // { // fill background
-      //    fmg.common.Color bkClr = m.getBackgroundColor();
-      //    if (!bkClr.isOpaque())
-      //       g.clearRect(0, 0, getSize().width, getSize().height);
-      //    if (!bkClr.isTransparent()) {
-      //       g.setFill(Cast.toColor(bkClr));
-      //       g.fillRect(0, 0, getSize().width, getSize().height);
-      //    }
-      // }
+      const svgNS = 'http://www.w3.org/2000/svg';
 
-      // double bw = m.getBorderWidth();
-      // boolean needDrawPerimeterBorder = (!m.getBorderColor().isTransparent() && (bw > 0));
-      // javafx.scene.paint.Color borderColor = !needDrawPerimeterBorder ? null : Cast.toColor(m.getBorderColor());
-      // if (needDrawPerimeterBorder)
-      //    g.setLineWidth(bw);
-      // Stream<Pair<Color, Stream<PointDouble>>> shapes = getCoords();
+      if (!cnxt.background && !backgroundColor.isTransparent) { // fill background
+         // example: <rect x="0" y="0" width="100" height="100" fill="hsla(112.71, 50.95%, 82.35%, 1)" />
+         // один раз (самий перший за всі малювання) створюю ноду для фонової заливки
+         var rcNode = cnxt.background = svgDoc.createElementNS(svgNS, "rect");
+         rcNode.setAttributeNS(null, 'x'     , 0);
+         rcNode.setAttributeNS(null, 'y'     , 0);
+         rcNode.setAttributeNS(null, 'width' , m.size.width);
+         rcNode.setAttributeNS(null, 'height', m.size.height);
+         var bc = new HSV(backgroundColor);
+         rcNode.setAttributeNS(null, 'fill'  , 'hsla(' + round(bc.h, 2) + ', ' + round(bc.s, 2) + '%, ' + round(bc.v, 2) + '%, ' + round(bc.a/255.0, 2) + ')');
+         //svg.appendChild(rcNode);
+      }
+
+      var shapes = this.getCoords();
+
+      const useKeyTimes = false;
+
+      if (!cnxt.shapes) {
+         // один раз (самий перший за всі малювання) створюю ноди для фігур з піднодами анімацій
+         cnxt.shapes = []; // examples: <path stroke="#400000" stroke-width="0.7" fill-opacity="0.92"> .... </path>
+         shapes.forEach(function(_) {
+            var pathNode = svgDoc.createElementNS(svgNS, 'path');
+            pathNode.setAttributeNS(null, 'stroke'        , '#' + borderColor.asHexString.substr(2));
+            pathNode.setAttributeNS(null, 'stroke-width'  , borderWidth);
+          //pathNode.setAttributeNS(null, 'stroke-opacity', round(borderColor.a/255.0, 2));
+            pathNode.setAttributeNS(null, 'fill-opacity'  , round(foregroundColor.a/255.0, 2));
+
+            { // examples: <animate attributeName="d" dur="2000ms" repeatCount="indefinite" calcMode="linear" ... />
+               var animateNodeD = svgDoc.createElementNS(svgNS, 'animate');
+               animateNodeD.setAttributeNS(null, 'attributeName', 'd');
+               animateNodeD.setAttributeNS(null, 'dur'          , duration + 'ms');
+               animateNodeD.setAttributeNS(null, 'repeatCount'  , 'indefinite');
+               if (!useKeyTimes)
+                  animateNodeD.setAttributeNS(null, "calcMode"  , (skill==null) ? "discrete" : "linear"); // discrete linear paced spline
+               pathNode.appendChild(animateNodeD);
+            }
+            { // examples: <animate attributeName="fill" dur="2000ms" repeatCount="indefinite" calcMode="linear" ...>
+               var animateNodeFill = svgDoc.createElementNS(svgNS, 'animate');
+               animateNodeFill.setAttributeNS(null, 'attributeName', 'fill');
+               animateNodeFill.setAttributeNS(null, 'dur'          , duration + 'ms');
+               animateNodeFill.setAttributeNS(null, 'repeatCount'  , 'indefinite');
+               if (!useKeyTimes)
+                  animateNodeFill.setAttributeNS(null, "calcMode"  , (skill==null) ? "discrete" : "linear"); // discrete linear paced spline
+               pathNode.appendChild(animateNodeFill);
+            }
+
+            //svg.appendChild(pathNode);
+            cnxt.shapes.push(pathNode);
+         });
+      }
+
+      // set values of shapes - coordinates and colors
+      for (var i=0; i<shapes.length; ++i) {
+         var pathNode = cnxt.shapes[i];
+         var animateNodeD = pathNode.childNodes[0];
+         var animateNodeFill = pathNode.childNodes[1];
+
+         { // shape coordinates
+            var polygon = shapes[i].polygon;
+            var addToValue = 'M' + polygon.map(function(p) { return round(p.x, 2) + ' ' + round(p.y, 2); }).join(' L')  + ' Z';
+            var values = animateNodeD.getAttribute('values');
+            if (!values)
+               values = addToValue;
+            else
+               values += ';' + addToValue;
+            animateNodeD.setAttributeNS(null, "values", values);
+         }
+         { // shape colors
+            var color = shapes[i].color;
+            var addToValue = '#' + color.asHexString.substr(2);
+            var values = animateNodeFill.getAttribute('values');
+            if (!values)
+               values = addToValue;
+            else
+               values += ';' + addToValue;
+            animateNodeFill.setAttributeNS(null, "values", values);
+         }
+
+         // time stamps
+         if (useKeyTimes) {
+            var keyTimesAddon = round(keyTime, 4);
+            {
+               var keyTimes = animateNodeD.getAttribute('keyTimes');
+               if (!keyTimes)
+                  keyTimes = keyTimesAddon;
+               else
+                  keyTimes += ';' + keyTimesAddon;
+               animateNodeD.setAttributeNS(null, "keyTimes", keyTimes);
+            }
+            {
+               var keyTimes = animateNodeFill.getAttribute('keyTimes');
+               if (!keyTimes)
+                  keyTimes = keyTimesAddon;
+               else
+                  keyTimes += ';' + keyTimesAddon;
+               animateNodeFill.setAttributeNS(null, "keyTimes", keyTimes);
+            }
+         }
+      }
+
       // shapes.forEach(pair -> {
-      //    List<PointDouble> poly = pair.second.collect(Collectors.toList());
+      //    List<Point> poly = pair.second.collect(Collectors.toList());
       //    double[] polyX = Cast.toPolygon(poly, true);
       //    double[] polyY = Cast.toPolygon(poly, false);
       //    if (!pair.first.isTransparent()) {
@@ -902,14 +1015,30 @@ class MosaicSkillImg extends MosaicSkillOrGroupView {
 class MosaicSkillImgSvg extends MosaicSkillImg {
 
    /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
-   constructor(/*ESkillLevel*/ skill) {
+   constructor(/*ESkillLevel*/ skill, /* SVG document */ svgDoc, mvController) {
       super(skill);
-      this._svgContext = null;
+      this._drawContext = null;
+      this._svgDoc = svgDoc;
+      this._mvController = mvController;
    }
 
-   createImage() { return this._svgContext = {}; }
+   createImage() {
+      return this._drawContext = {
+         duration : this._mvController.animatePeriod,
+         keyTime: null,
 
-   drawBody() { this.draw(this._svgContext); }
+         // nodes
+         background: null, // node example: <rect x="0" y="0" width="100" height="100" fill="hsla(112.71, 50.95%, 82.35%, 1)" />
+         shapes    : null, // nodes examples: <path stroke="#400000" stroke-width="0.7" fill-opacity="0.92"> .... </path>
+         menus     : null  // TODO...
+      };
+   }
+
+   drawBody() {
+      var c = this._mvController;
+      this._drawContext.keyTime = c.currentFrame / c.totalFrames; // 0..1
+      this.drawIntoContext(this._drawContext, this._svgDoc);
+   }
 
 }
 
@@ -938,7 +1067,7 @@ class ImageController {
 /** Transforming image model data. Usage for image animations. */
 class IModelTransformer {
 
-   static get className() { throw new Error("Abstract method"); }
+   get className() { throw new Error("Abstract method"); }
 
    /** The handler for the frame change event */
    execute(/*int*/ currentFrame, /*int*/ totalFrames, /*IImageModel*/ model) { throw new Error("Abstract method"); }
@@ -948,7 +1077,7 @@ class IModelTransformer {
 /** Transforming of rotate angle */
 class RotateTransformer extends IModelTransformer {
 
-   static get className() { return "RotateTransformer"; }
+   get className() { return "RotateTransformer"; }
 
    execute(/*int*/ currentFrame, /*int*/ totalFrames, /*IImageModel*/ model) {
       var am = model;
@@ -965,7 +1094,7 @@ class RotateTransformer extends IModelTransformer {
 /** Transforming of foreground color (rotation of foreground color) */
 class PolarLightFgTransformer extends IModelTransformer {
 
-   static get className() { return "PolarLightFgTransformer"; }
+   get className() { return "PolarLightFgTransformer"; }
 
    execute(/*int*/ currentFrame, /*int*/ totalFrames, /*IImageModel*/ model) {
       var am = model;
@@ -1034,7 +1163,11 @@ class AnimatedImgController extends ImageController {
       if (this._currentFrame === value)
          return;
       this._currentFrame = value;
-      this._transformers.forEach(function(v,k) { v.execute(this._currentFrame, this._totalFrames, this.Model); });
+      var self = this;
+      this._transformers.forEach(function(v,k) {
+         //console.log("   " + k + ": " + self._currentFrame + '/' + self._totalFrames);
+         v.execute(self._currentFrame, self._totalFrames, self.Model);
+      });
       this.View.invalidate();
    }
 
@@ -1051,14 +1184,14 @@ class AnimatedImgController extends ImageController {
       if (enable)
          this.addModelTransformer(new RotateTransformer());
       else
-         this.removeModelTransformer(RotateTransformer.className);
+         this.removeModelTransformer(new RotateTransformer().className);
    }
 
    usePolarLightFgTransforming(/*bool*/ enable) {
       if (enable)
          this.addModelTransformer(new PolarLightFgTransformer());
       else
-         this.removeModelTransformer(PolarLightFgTransformer.className);
+         this.removeModelTransformer(new PolarLightFgTransformer().className);
    }
 
    close() {
@@ -1090,300 +1223,51 @@ class MosaicSkillController extends AnimatedImgController {
 
 /** MosaicsSkill image controller implementation for {@link MosaicSkillImgSvg} */
 class MosaicSkillImgControllerSvg extends MosaicSkillController {
-   constructor(/*ESkillLevel*/ skill) {
-      super(skill == null, new MosaicSkillImgSvg(skill));
+   constructor(/*ESkillLevel*/ skill, /* SVG document */ svgDoc) {
+      super(skill == null, new MosaicSkillImgSvg(skill, svgDoc, null));
+      this.View._mvController = this;
    }
-}
-
-
-class AMosaicSkillImg {
-   constructor() {
-      this.mosaicSkill = ESkillLevel.eBeginner,
-      this.rotateAngle = 0; // 27.0;
-      this.rotateAngleDelta = 1.4;
-      this.rotate = true;
-      this.redrawInterval = 100; // in ms
-      this.borderColor = new Color(0xFF800000).darker(0.5); // Color.Maroon.clone().darker(0.5);
-      this.borderWidth = 3;
-      this.isPolarLights = true;
-      this.foregroundColor = new Color(0xFFDA70D6); // color Orchid
-      this.foregroundColor.a = Settings.foregroundAlpha;
-   }
-
-   nextForegroundColor() {
-      var hsv = new HSV(this.foregroundColor);
-      hsv.h += this.rotateAngleDelta;
-      this.foregroundColor = hsv.toColor();
-   }
-
-   onTimer() {
-      if (this.isPolarLights)
-         this.nextForegroundColor();
-      if (this.rotate)
-         this.rotateAngle = AMosaicSkillImg.fixAngle(this.rotateAngle + this.rotateAngleDelta);
-   }
-
-   /** to diapason (0° .. +360°] */
-   static /* double */ fixAngle(/* double */ value) {
-      return (value >= 360)
-         ?              (value % 360)
-         :   (value < 0)
-            ?           (value % 360) + 360
-            :            value;
-   }
-
-   getCoords() {
-      return (this.mosaicSkill == null)
-         ? this.getCoords_SkillLevelAsType()
-         : this.getCoords_SkillLevelAsValue();
-   }
-
-   getCoords_SkillLevelAsType() {
-      const bigMaxStar = !true; // true - большая звезда - вне картинки; false - большая звезда - внутри картинки.
-      const accelerateRevert = !true; // ускорение под конец анимации, иначе - в начале...
-
-      var rays = 5;
-      var stars = bigMaxStar ? 6 : 8;
-      var angle = this.rotateAngle;
-
-      var sqMax = Math.min( // размер квадрата куда будет вписана звезда при 0°
-                           Settings.width  - Settings.pad*2,
-                           Settings.height - Settings.pad*2);
-      var sqMin = 1;//sqMax / (bigMaxStar ? 17 : 7); // размер квадрата куда будет вписана звезда при 360°
-      var sqExt = sqMax * 3;
-
-      var centerMax = { x: Settings.pad + (Settings.width  - Settings.pad*2) / 2.0,
-                        y: Settings.pad + (Settings.height - Settings.pad*2) / 2.0 };
-      var centerMin = { x: Settings.pad + sqMin / 2, y: Settings.pad + sqMin / 2 };
-      var centerExt = { x: Settings.width * 1.5, y: Settings.height * 1.5 };
-
-      return this.getCoords_SkillLevelAsType_2(true , bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax)
-          .concat(
-             this.getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMax, sqExt, centerMax, centerExt));
-      // return this.getCoords_SkillLevelAsType_2(false, bigMaxStar, accelerateRevert, rays, stars/2, angle, sqMin, sqMax, centerMin, centerMax); // old
-   }
-
-   getCoords_SkillLevelAsType_2(
-      /* bool */ accumulative,
-      /* bool */ bigMaxStar,
-      /* bool */ accelerateRevert,
-      /* int */ rays,
-      /* int */ stars,
-      /* double */ angle,
-      /* double */ sqMin,
-      /* double */ sqMax,
-      /* PointDouble */ centerMin,
-      /* PointDouble */ centerMax
-   ) {
-      var angleAccumulative = angle;
-      var anglePart = 360.0 / stars;
-      var sqDiff = sqMax - sqMin;
-      var centerDiff = { x: centerMax.x - centerMin.x, y: centerMax.y - centerMin.y };
-
-      var res = []; // array of Pair<Color bkColor, PointDouble[] polygonCoords >
-      for (var starNum=0; starNum < stars; ++starNum) {
-         var angleStar = AMosaicSkillImg.fixAngle(angle + starNum * anglePart);
-         if (accumulative)
-            angleAccumulative = Math.sin(FigureHelper.toRadian(angle / 4)) * angleAccumulative; // accelerate / ускоряшка..
-
-         var sq = angleStar * sqDiff / 360;
-         // (un)comment next line to view result changes...
-         sq = Math.sin(FigureHelper.toRadian(angleStar / 4)) * sq; // accelerate / ускоряшка..
-         sq = accelerateRevert
-               ? sqMin + sq
-               : sqMax - sq;
-
-         var r1 = bigMaxStar ? sq * 2.2 : sq / 2; // external radius
-         var r2 = r1 / 2.6; // internal radius
-
-         var centerStar = { x: angleStar * centerDiff.x / 360,
-                            y: angleStar * centerDiff.y / 360 };
-         // (un)comment next 2 lines to view result changes...
-         centerStar.x = Math.sin(FigureHelper.toRadian(angleStar / 4)) * centerStar.y; // accelerate / ускоряшка..
-         centerStar.y = Math.sin(FigureHelper.toRadian(angleStar / 4)) * centerStar.y; // accelerate / ускоряшка..
-         centerStar.x = accelerateRevert
-               ? centerMin.x + centerStar.x
-               : centerMax.x - centerStar.x;
-         centerStar.y = accelerateRevert
-               ? centerMin.y + centerStar.y
-               : centerMax.y - centerStar.y;
-
-         var clr = this.foregroundColor;
-         if (this.isPolarLights)
-            clr = new HSV(clr).addHue(+angleStar).toColor(); // try: -angleStar
-
-         res.push( { priority: sq,
-                     clrAndPoly: {
-                       color: clr,
-                       polygon: FigureHelper.getRegularStarCoords(rays,
-                                                                  r1, r2,
-                                                                  bigMaxStar ? centerMax : centerStar,
-                                                                  accumulative ? angleAccumulative : 0
-                                                                )} } );
-      }
-      var saveColorSequence = res.map(function(x) { return x.clrAndPoly.color; });
-      res.sort(function(o1, o2) {
-         if (o1.priority < o2.priority) return bigMaxStar ?  1 : -1;
-         if (o1.priority > o2.priority) return bigMaxStar ? -1 :  1;
-         return 0;
-      });
-      for (var i=0; i<res.length; ++i)
-         res[i].clrAndPoly.color = saveColorSequence[i]; // restore color sequence; only for SVG
-      return res.map(function(x) { return x.clrAndPoly; });
-   }
-
-   getCoords_SkillLevelAsValue() {
-      var sq = Math.min( // size inner square
-                        Settings.width  - Settings.pad*2,
-                        Settings.height - Settings.pad*2);
-      var r1 = sq/7; // external radius
-      var r2 = sq/12; // internal radius
-
-      var ordinal = this.mosaicSkill.ordinal;
-      var rays = 5 + ordinal; // rays count
-      var stars = 4 + ordinal; // number of stars on the perimeter of the circle
-
-      var angle = this.rotateAngle;
-      var angleAccumulative = angle;
-      var anglePart = 360.0/stars;
-
-      var center = { x: Settings.width / 2.0, y: Settings.height / 2.0 };
-      var zero = { x: 0, y: 0 };
-      var res = []; // array of Pair<Color bkColor, PointDouble[] polygonCoords >
-      for (var starNum=0; starNum < stars; ++starNum) {
-         // (un)comment next line to view result changes...
-         angleAccumulative = Math.sin(FigureHelper.toRadian(angleAccumulative/4))*angleAccumulative; // accelerate / ускоряшка..
-
-         // adding offset
-         var offset = FigureHelper.getPointOnCircle(sq/3, angleAccumulative + starNum * anglePart, zero);
-         var centerStar = { x: center.x + offset.x, y: center.y + offset.y };
-
-         var clr = this.foregroundColor;
-         if (this.isPolarLights)
-            clr = new HSV(clr).addHue(starNum * anglePart).toColor();
-
-         res.push({ color: clr,
-                    polygon: (this.mosaicSkill == ESkillLevel.eCustom)
-                                       ? FigureHelper.getRegularPolygonCoords(3 + starNum % 4, r1, centerStar, -angleAccumulative)
-                                       : FigureHelper.getRegularStarCoords(rays, r1, r2, centerStar, -angleAccumulative) });
-      }
-      res.reverse(); // reverse stars, to draw the first star of the latter. (pseudo Z-order). (un)comment line to view result changes...
-      return res;
-   }
-};
-
-function round(n, digits) {
-   if (arguments.length < 2)
-      digits = 2;
-   var multiplicator = Math.pow(10, digits);
-   n = parseFloat((n * multiplicator).toFixed(11));
-   var test = Math.round(n) / multiplicator;
-   return +(test.toFixed(digits));
-}
-
-var hasMinDiff = function(double1, double2) {
-   return Math.abs(double1 - double2) < 0.0001;
-};
-
-function toInt (value) {
-   return value | 0;
-//   var intvalue = Math.floor( floatvalue );
-//   var intvalue = Math.ceil( floatvalue );
-//   var intvalue = Math.round( floatvalue );
-//   var intvalue = Math.trunc( floatvalue ); // `Math.trunc` was added in ECMAScript 6
 }
 
 function init(evt) {
-   Promise.resolve().then(function() { initA(evt); } )
-}
-function initA(evt) {
-   new MosaicSkillImgControllerSvg(null).image;
    if (!window.svgDoc)
-      svgDoc = evt.target.ownerDocument;
+      window.svgDoc = evt.target.ownerDocument;
    var svg = evt.target;
+   Promise.resolve().then(function() { work(svg, window.svgDoc); } )
+}
+function work(svg, svgDoc) {
    svg.setAttributeNS(null, "viewBox", "0 0 " + Settings.width + " " + Settings.height);
    svg.setAttributeNS(null, "width"  , Settings.width);
    svg.setAttributeNS(null, "height" , Settings.height);
 
-   //console.log("clr = " + Color.RandomColor()); // test
+   //console.log("clr = " + Color.RandomColor; // test
 
-   var img = new AMosaicSkillImg();
-   img.mosaicSkill      = Settings.mosaicSkill;
-   img.rotateAngleDelta = 360.0 / Settings.iterations * (Settings.clockwise ? 1 : -1);
-   img.redrawInterval   = Settings.rotatePeriod / Settings.iterations;
-   img.borderWidth      = Settings.borderWidth;
+   // 1. configure image from settings
+   var skillImgCtrllr = new MosaicSkillImgControllerSvg(Settings.mosaicSkill, svgDoc);
+   skillImgCtrllr.Model.mosaicSkill       = Settings.mosaicSkill;
+   skillImgCtrllr.Model.borderWidth       = Settings.borderWidth;
+   skillImgCtrllr.Model.backgroundColor   = Settings.backgroundColor;
+   skillImgCtrllr.Model.foregroundColor.a = Settings.foregroundAlpha;
+   skillImgCtrllr.Model.animeDirection    = Settings.clockwise;
 
-   var polygonsTimeScale = [];
-   for (var i=0; i < Settings.iterations+1; ++i) {
-      polygonsTimeScale.push({
-         timeStamp : i * img.redrawInterval,
-         clrAndPoly: img.getCoords() // [{color, polygon}, ...]
-      });
-      img.onTimer();
+   skillImgCtrllr.animated = true;
+   skillImgCtrllr.animatePeriod = Settings.rotatePeriod;
+   skillImgCtrllr.totalFrames   = Settings.iterations;
+   // skillImgCtrllr.currentFrame() { return this._currentFrame; }
+
+   // 2. run image animation
+   for (var i=0; i<skillImgCtrllr.totalFrames+1; ++i) {
+      skillImgCtrllr.currentFrame = i; // call transformers
+      skillImgCtrllr.image; // call draw
+      // skillImgCtrllr.image; // test not call draw
+      // skillImgCtrllr.image; // test not call draw
    }
 
-   var polygonsCount = polygonsTimeScale[0].clrAndPoly.length;
-   var paths = [];
-   for (var i=0; i < polygonsCount; ++i) {
-      var animate_d = {
-         attributeName: 'd',
-         dur: Settings.rotatePeriod + 'ms',
-         repeatCount: 'indefinite',
-         keyTimes: polygonsTimeScale.map(function(item) { return round(item.timeStamp/Settings.rotatePeriod, 4); }).join(';'),// + ';1',
-         values: polygonsTimeScale.map(function(item) {
-                   var polygon = item.clrAndPoly[i].polygon;
-                   return 'M' + polygon.map(function(p) { return round(p.x, 2) + ' ' + round(p.y, 2); }).join(' L')  + ' Z';
-                 }).join(';')
-      };
-      var animate_fill = {
-         attributeName: 'fill',
-         dur: animate_d.dur,
-         repeatCount: 'indefinite',
-         keyTimes: animate_d.keyTimes,
-         values: polygonsTimeScale.map(function(item) { return '#' + item.clrAndPoly[i].color.asHexString.substr(2); }).join(';')
-      };
-
-      paths.push({ animate_d: animate_d, animate_fill: animate_fill });
-   }
-
-   const svgNS = "http://www.w3.org/2000/svg";
-   var createPath = function(path) {
-      var pathNode = svgDoc.createElementNS(svgNS, "path");
-      pathNode.appendChild(createAnimate(path.animate_d))
-      pathNode.appendChild(createAnimate(path.animate_fill));
-      pathNode.setAttributeNS(null, "stroke"        , '#' + img.borderColor.asHexString.substr(2));
-      pathNode.setAttributeNS(null, "stroke-width"  , img.borderWidth);
-    //pathNode.setAttributeNS(null, "stroke-opacity", round(img.borderColor.a/255.0, 2));
-      pathNode.setAttributeNS(null, "fill-opacity"  , round(Settings.foregroundAlpha/255.0, 2));
-      return pathNode;
-   };
-   var createAnimate = function(animate) {
-      var animateNode = svgDoc.createElementNS(svgNS, "animate");
-      animateNode.setAttributeNS(null, "attributeName", animate.attributeName);
-      animateNode.setAttributeNS(null, "dur"          , animate.dur);
-      animateNode.setAttributeNS(null, "repeatCount"  , animate.repeatCount);
-      // if (true)
-      //   animateNode.setAttributeNS(null, "keyTimes"   , animate.keyTimes);
-      // else
-         animateNode.setAttributeNS(null, "calcMode"   , (Settings.mosaicSkill==null) ? "discrete" : "linear"); // discrete linear paced spline
-      animateNode.setAttributeNS(null, "values"       , animate.values);
-      return animateNode;
-   };
-   if (Settings.backroundColor && !Settings.backroundColor.isTransparent) {
-      var rcNode = svgDoc.createElementNS(svgNS, "rect");
-      rcNode.setAttributeNS(null, "x"     , 0);
-      rcNode.setAttributeNS(null, "y"     , 0);
-      rcNode.setAttributeNS(null, "width" , Settings.width);
-      rcNode.setAttributeNS(null, "height", Settings.height);
-      var bc = new HSV(Settings.backroundColor);
-      rcNode.setAttributeNS(null, "fill"  , 'hsla(' + round(bc.h, 2) + ', ' + round(bc.s, 2) + '%, ' + round(bc.v, 2) + '%, ' + round(bc.a/255.0, 2) + ')');
-      svg.appendChild(rcNode);
-   }
-   for (var i in paths) {
-      var path = paths[i];
-      var pathNode = createPath(path);
-      svg.appendChild(pathNode);
-   }
+   // 3. apply svg nodes
+   var drawContext = skillImgCtrllr.image;
+   svg.appendChild(drawContext.background);
+   drawContext.shapes.forEach(function(pathNode) { svg.appendChild(pathNode); });
+ //drawContext.menus.forEach(function(node) { svg.appendChild(node); });
 
    var getFileName = function() {
       return "MosaicSkillImg."
@@ -1420,6 +1304,6 @@ function format(node, value) {
    textNode = childNode = null;
    return node;
 }
-//]]></script>
-//
-//</svg>
+]]></script>
+
+</svg>
