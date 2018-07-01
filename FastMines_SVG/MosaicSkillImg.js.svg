@@ -3,38 +3,49 @@
      preserveAspectRatio="none"
      onload="init(evt)">
 <script type="text/ecmascript"><![CDATA[
+
+   //////////////////////////////////////
+   //
+   // execute in latest Firefox or Chrome
+   // see console output
+   //
+   //////////////////////////////////////
+
 /** common settings this SVG */
-var Settings = {
-   width: 100,  // view width
-   height: 100, // view height
-   pad: 5, // padding
-   mosaicSkill: null, // ESkillLevel
+var Settings;
+Promise.resolve().then(function() {
+   var randomSkill = (function() {
+         switch (random(6)) {
+         case 0: return ESkillLevel.eBeginner;
+         case 1: return ESkillLevel.eAmateur ;
+         case 2: return ESkillLevel.eProfi   ;
+         case 3: return ESkillLevel.eCrazy   ;
+         case 4: return ESkillLevel.eCustom  ;
+         case 5: return null;
+         default: throw new Error('Bad value');
+         }
+      })();
+   Settings = {
+      width: 100,  // view width
+      height: 100, // view height
+      pad: 5, // padding
 
-   clockwise: (Math.random() < 0.5), // ↻ or ↺
-   rotatePeriod: 2000, // in msec
-   iterations: 30, // the number of parts of which the one turn
+      /** ESkillLevel */
+      mosaicSkill: randomSkill,
 
-   borderWidth: 0.7,
-   backgroundColor : null,
-   foregroundAlpha: 200  // 0..255 - foreground alpha-chanel color
-};
-Promise.resolve()
-   .then(function() {
-      Settings.backgroundColor = Color.RandomColor.brighter(0.4);
-      Settings.foregroundAlpha = 150 + random(255-150);
-      switch (random(6)) {
-      case 0: Settings.mosaicSkill = ESkillLevel.eBeginner; break;
-      case 1: Settings.mosaicSkill = ESkillLevel.eAmateur ; break;
-      case 2: Settings.mosaicSkill = ESkillLevel.eProfi   ; break;
-      case 3: Settings.mosaicSkill = ESkillLevel.eCrazy   ; break;
-      case 4: Settings.mosaicSkill = ESkillLevel.eCustom  ; break;
-      case 5: Settings.mosaicSkill = null;                  break;
-      default: throw new Error('Bad value');
-      }
-      if (Settings.mosaicSkill==null)
-         // что бы при calcMode="discrete" не 'дёргалось'
-         Settings.iterations = Math.max(Settings.iterations, 120);
-   });
+      clockwise: (Math.random() < 0.5), // ↻ or ↺
+      rotatePeriod: 2000, // in msec
+
+      /** the number of parts of which the one turn */
+      iterations: (randomSkill==null)
+            ? 120 // что бы при calcMode="discrete" не 'дёргалось'
+            : 30,
+
+      borderWidth: 0.7,
+      backgroundColor : Color.RandomColor.brighter(0.4),
+      foregroundAlpha: 150 + random(255-150) // 200  // 0..255 - foreground alpha-chanel color
+   };
+});
 
 var random = function(upDiapazon) {
    return Math.floor(Math.random() * upDiapazon);
@@ -390,7 +401,6 @@ const /* enum */ ESkillLevel = {
 
 class Point {
 
-   //public double x, y;
    constructorXY(x, y) {
       this.x = x;
       this.y = y;
@@ -418,8 +428,6 @@ class Point {
 
 class Size {
 
-   //public double width, height;
-
    constructorWH(w, h) {
       this.width  = w;
       this.height = h;
@@ -445,9 +453,32 @@ class Size {
 
 }
 
-class Bound {
+class Rect {
 
-   //public double left, right, top, bottom;
+   constructor(/* double */ x, /* double */ y, /* double */ w, /* double */ h) {
+      this._x = x;
+      this._y = y;
+      this._width = w;
+      this._height = h;
+   }
+
+   get left  () { return this._x; }
+   get right () { return this._x + this._width; }
+   get top   () { return this._y; }
+   get bottom() { return this._y + this._height; }
+   set left  (/* double */ v) { this._x      = v; }
+   set right (/* double */ v) { this._width  = v - this._x; }
+   set top   (/* double */ v) { this._y      = v; }
+   set bottom(/* double */ v) { this._height = v - this._y; }
+
+   get width () { return this._width; }
+   set width (/* double */ w) { this._width  = w; }
+   get height() { return this._height; }
+   set height(/* double */ h) { this._height = h; }
+
+}
+
+class Bound {
 
    constructor1(/* bound or double */ arg) {
       if (isNumeric(arg)) {
@@ -485,8 +516,42 @@ class Bound {
 
 }
 
-/** MVC: model. Common image characteristics. */
-class ImageModel {
+/** MVC: inner model. Animated image characteristics. */
+class AnimatedInnerModel {
+
+   constructor() {
+      /** Image is animated? */
+      this._animated = null;
+      /** Overall animation period (in milliseconds) */
+      this._animatePeriod = 3000;
+      /** Total frames of the animated period */
+      this._totalFrames = 30;
+      this._currentFrame = 0;
+   }
+
+   /** Image is animated? */
+   get animated() { return this._animated; }
+   set animated(/*boolean*/ value) { this._animated = value; }
+
+   /** Overall animation period (in milliseconds) */
+   get animatePeriod() { return this._animatePeriod; }
+   /** Overall animation period (in milliseconds) */
+   set animatePeriod(/* long */ value) { this._animatePeriod = value; }
+
+   /** Total frames of the animated period */
+   get totalFrames() { return this._totalFrames; }
+   set totalFrames(/*int*/ value) {
+      this._totalFrames = value;
+      this.currentFrame = 0;
+   }
+
+   get currentFrame() { return this._currentFrame; }
+   set currentFrame(/*int*/ value) { this._currentFrame = value; }
+
+}
+
+/** MVC: model. Common animated image characteristics. */
+class AnimatedImageModel {
 
    constructor() {
       var defaultImageSize = 100;
@@ -503,6 +568,11 @@ class ImageModel {
       this._borderWidth = 3;
       /** 0° .. +360° */
       this._rotateAngle = 0;
+      /** animation of polar lights */
+      this._polarLights = true;
+      /** animation direction (example: clockwise or counterclockwise for simple rotation) */
+      this._animeDirection = true;
+      this._innerModel = new AnimatedInnerModel();
    }
 
    get size() { return this._size; }
@@ -562,7 +632,7 @@ class ImageModel {
    /** 0° .. +360° */
    get rotateAngle() { return this._rotateAngle; }
    set rotateAngle(/*double*/ value) {
-      this._rotateAngle = ImageModel.fixAngle(value);
+      this._rotateAngle = AnimatedImageModel.fixAngle(value);
    }
 
    /** to diapason (0° .. +360°] */
@@ -573,29 +643,132 @@ class ImageModel {
             ?           (value % 360) + 360
             :            value;
    }
-}
 
-/** MVC: model. Animated image characteristics. */
-class AnimatedImageModel extends ImageModel {
+   /** Image is animated? */
+   get animated() { return this._innerModel.animated; }
+   set animated(/*boolean*/ value) { this._innerModel.animated = value; }
 
-   constructor() {
-      super();
+   /** Overall animation period (in milliseconds) */
+   get animatePeriod() { return this._innerModel.animatePeriod; }
+   set animatePeriod(/*long*/ value) { this._innerModel.animatePeriod = value; }
 
-      /** animation of polar lights */
-      this._polarLights = true;
+   /** Total frames of the animated period */
+   get totalFrames() { return this._innerModel.totalFrames; }
+   set totalFrames(/*int*/ value) { this._innerModel.totalFrames = value; }
 
-      /** animation direction (example: clockwise or counterclockwise for simple rotation) */
-      this._animeDirection = true;
-   }
+   get currentFrame() { return this._innerModel.currentFrame; }
+   set currentFrame(/*int*/ value) { this._innerModel.currentFrame = value; }
 
    get polarLights() { return this._polarLights; }
-   set polarLights(/*boolean*/ value) {
-      this._polarLights = value;
-   }
+   set polarLights(/*boolean*/ polarLights) { this._polarLights = polarLights; }
 
    get animeDirection() { return this._animeDirection; }
-   set animeDirection(/*boolean*/ value) {
-      this._animeDirection = value;
+   set animeDirection(/*boolean*/ animeDirection) { this._animeDirection = animeDirection; }
+
+}
+
+/** MVC: model of representable menu as horizontal or vertical lines */
+class BurgerMenuModel {
+
+   /**
+    * @param generalModel another basic model
+    */
+   constructor(/*AnimatedImageModel*/ generalModel) {
+      this._generalModel = generalModel;
+      this._show = true;
+      this._horizontal = true;
+      this._layers = 3;
+      this._padding;
+      // _generalModelListener = event -> {
+      //    assert event.getSource() == _generalModel; // by reference
+      //    if (IImageModel.PROPERTY_SIZE.equals(event.getPropertyName()))
+      //       recalcPadding((SizeDouble)event.getOldValue());
+      // };
+   }
+
+   /** image width and height in pixel */
+   get size() { return this._generalModel.size; }
+   set size(value) { this._generalModel.size = value; }
+
+   get show() { return this._show; }
+   set show(/*boolean*/ value) { this._show = value; }
+
+   get horizontal() { return this._horizontal; }
+   set horizontal(/*boolean*/ value) { this._horizontal = value; }
+
+   get layers() { return this._layers; }
+   set layers(/*int*/ value) { this._layers = value; }
+
+   /** inside padding */
+   get padding() {
+      if (this._padding == null)
+         this.recalcPadding(null);
+      return this._padding;
+   }
+   set padding(/*Bound*/ value) {
+      if (value.leftAndRight >= this.size.width)
+         throw new Error("IllegalArgumentException: Padding size is very large. Should be less than Width.");
+      if (value.topAndBottom >= this.size.height)
+         throw new Error("IllegalArgumentException: Padding size is very large. Should be less than Height.");
+      var paddingNew = new Bound(value.left, value.top, value.right, value.bottom);
+      this._padding = paddingNew;
+   }
+   recalcPadding(/*Size*/ old) {
+      var size = this.size;
+      var paddingNew = (this._padding == null)
+            ? new Bound(size.width / 2,
+                        size.height / 2,
+                        this._generalModel.padding.right,
+                        this._generalModel.padding.bottom)
+            : AnimatedImageModel.recalcPadding(this._padding, size, old);
+      this._padding = paddingNew;
+   }
+
+   // public static class LineInfo {
+   //    public Color clr;
+   //    public double penWidht;
+   //    public PointDouble from; // start coord
+   //    public PointDouble to;   // end   coord
+   // }
+
+   /** get paint information of drawing burger menu model image */
+   getCoords() {
+      if (!this.show)
+         return [];
+
+      var horizontal = this.horizontal;
+      var layers = this.layers;
+      var pad = this.padding;
+      var rc = new Rect(pad.left,
+                        pad.top,
+                        this.size.width  - pad.leftAndRight,
+                        this.size.height - pad.topAndBottom);
+      var penWidth = Math.max(1, (horizontal ? rc.height : rc.width) / (2.0 * layers));
+      var rotateAngle = this._generalModel.rotateAngle;
+      var stepAngle = 360.0 / layers;
+
+      var res = [];
+      for (var layerNum=0; layerNum<layers; ++layerNum) {
+         var layerAlignmentAngle = AnimatedImageModel.fixAngle(layerNum*stepAngle + rotateAngle);
+         var offsetTop  = !horizontal ? 0 : layerAlignmentAngle*rc.height/360;
+         var offsetLeft =  horizontal ? 0 : layerAlignmentAngle*rc.width /360;
+         var start = new Point(rc.left + offsetLeft,
+                               rc.top  + offsetTop);
+         var end   = new Point((horizontal ? rc.right : rc.left) + offsetLeft,
+                               (horizontal ? rc.top : rc.bottom) + offsetTop);
+
+         var hsv = new HSV(new Color(0xFF808080)); // Color.Gray
+         hsv.v *= Math.sin(layerNum*stepAngle / layers);
+
+         var li = { // new LineInfo();
+            clr: hsv.toColor(),
+            penWidht: penWidth,
+            from: start,
+            to: end
+         };
+         res.push(li);
+      }
+      return res;
    }
 
 }
@@ -664,7 +837,7 @@ class MosaicSkillModel extends AnimatedImageModel {
 
       var res = []; // array of Pair<Color bkColor, Point[] polygonCoords >
       for (var starNum=0; starNum < stars; ++starNum) {
-         var angleStar = ImageModel.fixAngle(angle + starNum * anglePart);
+         var angleStar = AnimatedImageModel.fixAngle(angle + starNum * anglePart);
          if (accumulative)
             angleAccumulative = Math.sin(FigureHelper.toRadian(angle/4)) * angleAccumulative; // accelerate / ускоряшка..
 
@@ -831,10 +1004,13 @@ class ImageView {
  * @param <TImageModel> - general model of image (not burger menu model)
  */
 class WithBurgerMenuView extends ImageView {
-   // TODO...
+
    constructor(/*TImageModel*/ imageModel) {
       super(imageModel);
+      this._burgerMenuModel = new BurgerMenuModel(imageModel);
    }
+
+   get burgerMenuModel() { return this._burgerMenuModel; }
 
 }
 
@@ -845,10 +1021,6 @@ class WithBurgerMenuView extends ImageView {
  */
 class MosaicSkillOrGroupView extends WithBurgerMenuView {
 
-   // static {
-   //    StaticInitializer.init();
-   // }
-
    constructor(/*TImageModel*/ imageModel) {
       super(imageModel);
    }
@@ -856,11 +1028,11 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
    /** get paint information of drawing basic image model */
    getCoords() { throw new Error("Abstract method"); }
 
-   drawIntoContext(/* DrawContext */ cnxt, /* SVG document */ svgDoc) {
+   drawIntoContext(/* DrawContext */ cnxt, /* own SVG */ svg, /* SVG document */ svgDoc) {
       //console.log("  drawIntoContext");
-      var duration  = cnxt.duration;
-      var keyTime = cnxt.keyTime;
       var m = this.Model;
+      var keyTime = m.currentFrame / m.totalFrames; // 0..1;
+      var duration  = m.animatePeriod;
       var borderWidth = m.borderWidth;
       var borderColor = m.borderColor;
       var backgroundColor = m.backgroundColor;
@@ -879,12 +1051,12 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
          rcNode.setAttributeNS(null, 'height', m.size.height);
          var bc = new HSV(backgroundColor);
          rcNode.setAttributeNS(null, 'fill'  , 'hsla(' + round(bc.h, 2) + ', ' + round(bc.s, 2) + '%, ' + round(bc.v, 2) + '%, ' + round(bc.a/255.0, 2) + ')');
-         //svg.appendChild(rcNode);
+         svg.appendChild(rcNode);
       }
 
       var shapes = this.getCoords();
 
-      const useKeyTimes = false;
+      const useKeyTimes = !false;
 
       if (!cnxt.shapes) {
          // один раз (самий перший за всі малювання) створюю ноди для фігур з піднодами анімацій
@@ -915,7 +1087,7 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
                pathNode.appendChild(animateNodeFill);
             }
 
-            //svg.appendChild(pathNode);
+            svg.appendChild(pathNode);
             cnxt.shapes.push(pathNode);
          });
       }
@@ -969,28 +1141,62 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
          }
       }
 
-      // shapes.forEach(pair -> {
-      //    List<Point> poly = pair.second.collect(Collectors.toList());
-      //    double[] polyX = Cast.toPolygon(poly, true);
-      //    double[] polyY = Cast.toPolygon(poly, false);
-      //    if (!pair.first.isTransparent()) {
-      //       g.setFill(Cast.toColor(pair.first));
-      //       g.fillPolygon(polyX, polyY, polyX.length);
-      //    }
+      var menuShapes = this.burgerMenuModel.getCoords()
+      if (menuShapes.length && !cnxt.menus) { // fill background
+         cnxt.menus = [];
+         menuShapes.forEach(function(li) {
+            var pathNode = svgDoc.createElementNS(svgNS, 'path');
+            pathNode.setAttributeNS(null, 'stroke'        , '#' + li.clr.asHexString.substr(2));
+            pathNode.setAttributeNS(null, 'stroke-width'  , li.penWidht);
+          //pathNode.setAttributeNS(null, 'stroke-opacity', round(li.clr.a/255.0, 2));
+          //pathNode.setAttributeNS(null, 'fill-opacity'  , round(li.clr.a/255.0, 2));
 
-      //    // draw perimeter border
-      //    if (needDrawPerimeterBorder) {
-      //       g.setStroke(borderColor);
-      //       g.strokePolygon(polyX, polyY, polyX.length);
-      //    }
-      // });
+            { // examples: <animate attributeName="d" dur="2000ms" repeatCount="indefinite" calcMode="linear" ... />
+               var animateNodeD = svgDoc.createElementNS(svgNS, 'animate');
+               animateNodeD.setAttributeNS(null, 'attributeName', 'd');
+               animateNodeD.setAttributeNS(null, 'dur'          , duration + 'ms');
+               animateNodeD.setAttributeNS(null, 'repeatCount'  , 'indefinite');
+               if (!useKeyTimes)
+                  animateNodeD.setAttributeNS(null, "calcMode"  , "discrete"); // discrete linear paced spline
+               pathNode.appendChild(animateNodeD);
+            }
 
-      // getBurgerMenuModel().getCoords()
-      //    .forEach(li -> {
-      //       g.setLineWidth(li.penWidht);
-      //       g.setStroke(Cast.toColor(li.clr));
-      //       g.strokeLine(li.from.x, li.from.y, li.to.x, li.to.y);
-      //    });
+            svg.appendChild(pathNode);
+            cnxt.menus.push(pathNode);
+         });
+      }
+      // set values of shapes - coordinates and colors
+      for (var i=0; i<menuShapes.length; ++i) {
+         var pathNode = cnxt.menus[i];
+         var animateNodeD = pathNode.childNodes[0];
+         var animateNodeStroke = pathNode.childNodes[1];
+
+         { // shape coordinates
+            var from = menuShapes[i].from;
+            var to   = menuShapes[i].to;
+            var addToValue = 'M ' + round(from.x, 2) + ' ' + round(from.y, 2) + ' L ' + round(to.x, 2) + ' ' + round(to.y, 2);
+            var values = animateNodeD.getAttribute('values');
+            if (!values)
+               values = addToValue;
+            else
+               values += ';' + addToValue;
+            animateNodeD.setAttributeNS(null, "values", values);
+         }
+
+         // time stamps
+         if (useKeyTimes) {
+            var keyTimesAddon = round(keyTime, 4);
+            {
+               var keyTimes = animateNodeD.getAttribute('keyTimes');
+               if (!keyTimes)
+                  keyTimes = keyTimesAddon;
+               else
+                  keyTimes += ';' + keyTimesAddon;
+               animateNodeD.setAttributeNS(null, "keyTimes", keyTimes);
+            }
+         }
+      }
+
    }
 
 }
@@ -1015,18 +1221,15 @@ class MosaicSkillImg extends MosaicSkillOrGroupView {
 class MosaicSkillImgSvg extends MosaicSkillImg {
 
    /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
-   constructor(/*ESkillLevel*/ skill, /* SVG document */ svgDoc, mvController) {
+   constructor(/*ESkillLevel*/ skill, /* own SVG */ svg, /* SVG document */ svgDoc) {
       super(skill);
       this._drawContext = null;
+      this._svg    = svg;
       this._svgDoc = svgDoc;
-      this._mvController = mvController;
    }
 
    createImage() {
       return this._drawContext = {
-         duration : this._mvController.animatePeriod,
-         keyTime: null,
-
          // nodes
          background: null, // node example: <rect x="0" y="0" width="100" height="100" fill="hsla(112.71, 50.95%, 82.35%, 1)" />
          shapes    : null, // nodes examples: <path stroke="#400000" stroke-width="0.7" fill-opacity="0.92"> .... </path>
@@ -1035,11 +1238,38 @@ class MosaicSkillImgSvg extends MosaicSkillImg {
    }
 
    drawBody() {
-      var c = this._mvController;
-      this._drawContext.keyTime = c.currentFrame / c.totalFrames; // 0..1
-      this.drawIntoContext(this._drawContext, this._svgDoc);
+      this.drawIntoContext(this._drawContext, this._svg, this._svgDoc);
    }
 
+   getSvgContent() {
+      var clean = function(svg) { //
+         svg.removeAttribute('onload');
+         svg.removeAttribute('style');
+         var script = svg.querySelector('script');
+         script.remove();
+         return svg;
+      }
+
+      var format = function(node, value) {
+         var indentBefore = new Array(value++ + 1).join('  '),
+            indentAfter  = new Array(value - 1).join('  '),
+            textNode, childNode;
+         for (var i = 0; i < node.children.length; i++) {
+            textNode = document.createTextNode('\n' + indentBefore);
+            childNode = node.children[i];
+            node.insertBefore(textNode, childNode);
+            format(childNode, value);
+            if (node.lastElementChild == childNode) {
+               textNode = document.createTextNode('\n' + indentAfter);
+               node.appendChild(textNode);
+            }
+         }
+         textNode = childNode = null;
+         return node;
+      }
+
+      return format(clean(this._svg), 1).outerHTML;
+   }
 }
 
 /**
@@ -1070,7 +1300,7 @@ class IModelTransformer {
    get className() { throw new Error("Abstract method"); }
 
    /** The handler for the frame change event */
-   execute(/*int*/ currentFrame, /*int*/ totalFrames, /*IImageModel*/ model) { throw new Error("Abstract method"); }
+   execute(/*IImageModel*/ model) { throw new Error("Abstract method"); }
 
 }
 
@@ -1079,13 +1309,13 @@ class RotateTransformer extends IModelTransformer {
 
    get className() { return "RotateTransformer"; }
 
-   execute(/*int*/ currentFrame, /*int*/ totalFrames, /*IImageModel*/ model) {
+   execute(/*IImageModel*/ model) {
       var am = model;
 
-      var rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
+      var rotateAngleDelta = 360.0 / am.totalFrames; // 360° / TotalFrames
       if (!am.animeDirection)
          rotateAngleDelta = -rotateAngleDelta;
-      var rotateAngle = currentFrame * rotateAngleDelta;
+      var rotateAngle = am.currentFrame * rotateAngleDelta;
       am.rotateAngle = rotateAngle;
    }
 
@@ -1096,12 +1326,12 @@ class PolarLightFgTransformer extends IModelTransformer {
 
    get className() { return "PolarLightFgTransformer"; }
 
-   execute(/*int*/ currentFrame, /*int*/ totalFrames, /*IImageModel*/ model) {
+   execute(/*IImageModel*/ model) {
       var am = model;
       if (!am.polarLights)
          return;
 
-      var rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
+      var rotateAngleDelta = 360.0 / am.totalFrames; // 360° / TotalFrames
       if (!am.animeDirection)
          rotateAngleDelta = -rotateAngleDelta;
 
@@ -1118,66 +1348,52 @@ class PolarLightFgTransformer extends IModelTransformer {
  * @param <TImageView> MVC view
  * @param <TImageModel> MVC model
  */
-class AnimatedImgController extends ImageController {
+ class AnimatedInnerController {
 
-   constructor(/*TImageView*/ imageView) {
-      super(imageView);
-      /** Image is animated? */
-      this._animated = null;
-      /** Overall animation period (in milliseconds) */
-      this._animatePeriod = 3000;
-      /** Total frames of the animated period */
-      this._totalFrames = 30;
-      this._currentFrame = 0;
+   constructor(/*TImageModel*/ model) {
+      this._model = model;
       this._transformers = new Map();
    }
 
-   /** Image is animated? */
-   get animated() { return (this._animated === true); }
-   set animated(/*bool*/ value) {
-      this._animated = value;
-      // if (value)
-      //    Factory.GET_ANIMATOR.get().subscribe(this, timeFromStartSubscribe -> {
-      //       long mod = timeFromStartSubscribe % _animatePeriod;
-      //       long frame = mod * getTotalFrames() / _animatePeriod;
-      //       //System.out.println("ANIMATOR : " + getClass().getSimpleName() + ": "+ timeFromStartSubscribe);
-      //       setCurrentFrame((int)frame);
-      //    });
-      // else
-      //    Factory.GET_ANIMATOR.get().pause(this);
+   addModelTransformer(/*IModelTransformer*/ transformer) {
+      if (!this._transformers.has(transformer.className))
+         this._transformers.set(transformer.className, transformer);
    }
-
-   /** Overall animation period (in milliseconds) */
-   get animatePeriod() { return this._animatePeriod; }
-   set animatePeriod(/*long*/ value) { this._animatePeriod = value; }
-
-   /** Total frames of the animated period */
-   get totalFrames() { return this._totalFrames; }
-   set totalFrames(/*int*/ value) {
-      this._totalFrames = value;
-      this.currentFrame = 0;
-   }
-
-   get currentFrame() { return this._currentFrame; }
-   set currentFrame(/*int*/ value) {
-      if (this._currentFrame === value)
-         return;
-      this._currentFrame = value;
-      var self = this;
-      this._transformers.forEach(function(v,k) {
-         //console.log("   " + k + ": " + self._currentFrame + '/' + self._totalFrames);
-         v.execute(self._currentFrame, self._totalFrames, self.Model);
-      });
-      this.View.invalidate();
-   }
-
    removeModelTransformer(/*string*/ transformerClassName) {
       if (this._transformers.has(transformerClassName))
          this._transformers.delete(transformerClassName);
    }
+
+   executeTransformers() {
+      var self = this;
+      this._transformers.forEach(function(v,k) {
+         v.execute(self._model);
+      });
+   }
+
+}
+
+/**
+ * MVC controller. Base animation controller.
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImageView> MVC view
+ * @param <TImageModel> MVC model
+ */
+class AnimatedImgController extends ImageController {
+
+   constructor(/*TImageView*/ imageView) {
+      super(imageView);
+      this._innerController = new AnimatedInnerController(this.Model);
+   }
+
    addModelTransformer(/*IModelTransformer*/ transformer) {
-      if (!this._transformers.has(transformer.className))
-         this._transformers.set(transformer.className, transformer);
+      this._innerController.addModelTransformer(transformer);
+   }
+   removeModelTransformer(/*string*/ transformerClassName) {
+      this._innerController.removeModelTransformer(transformerClass);
+   }
+   executeTransformers() {
+      this._innerController.executeTransformers();
    }
 
    useRotateTransforming(/*bool*/ enable) {
@@ -1194,12 +1410,6 @@ class AnimatedImgController extends ImageController {
          this.removeModelTransformer(new PolarLightFgTransformer().className);
    }
 
-   close() {
-      // if (this._animated != null)
-      //    Factory.GET_ANIMATOR.get().unsubscribe(this);
-      this._transformers.clear();
-   }
-
 }
 
 /**
@@ -1213,7 +1423,7 @@ class MosaicSkillController extends AnimatedImgController {
    constructor(/*bool*/ showBurgerMenu, /*TImageView*/ imageView) {
       super(imageView);
 
-      //View.burgerMenuModel.show = showBurgerMenu;
+      this.View.burgerMenuModel.show = showBurgerMenu;
 
       this.usePolarLightFgTransforming(true);
       this.useRotateTransforming(true);
@@ -1223,10 +1433,19 @@ class MosaicSkillController extends AnimatedImgController {
 
 /** MosaicsSkill image controller implementation for {@link MosaicSkillImgSvg} */
 class MosaicSkillImgControllerSvg extends MosaicSkillController {
-   constructor(/*ESkillLevel*/ skill, /* SVG document */ svgDoc) {
-      super(skill == null, new MosaicSkillImgSvg(skill, svgDoc, null));
-      this.View._mvController = this;
+   constructor(/*ESkillLevel*/ skill, /* own SVG */ svg, /* SVG document */ svgDoc) {
+      super(skill == null, new MosaicSkillImgSvg(skill, svg, svgDoc));
    }
+
+   getFileName() {
+      return "MosaicSkillImg."
+         + ESkillLevel.getName(this.Model.mosaicSkill)
+       //+ '.' + this.Model.width + 'x' + this.Model.height
+       //+ '.iters' + this.Model.totalFrames
+         + '.' + (this.Model.animeDirection ? 'clockwise' : 'counterclockwise') // '↻' : '↺') //
+         + '.svg';
+   }
+
 }
 
 function init(evt) {
@@ -1243,67 +1462,26 @@ function work(svg, svgDoc) {
    //console.log("clr = " + Color.RandomColor; // test
 
    // 1. configure image from settings
-   var skillImgCtrllr = new MosaicSkillImgControllerSvg(Settings.mosaicSkill, svgDoc);
-   skillImgCtrllr.Model.mosaicSkill       = Settings.mosaicSkill;
-   skillImgCtrllr.Model.borderWidth       = Settings.borderWidth;
-   skillImgCtrllr.Model.backgroundColor   = Settings.backgroundColor;
-   skillImgCtrllr.Model.foregroundColor.a = Settings.foregroundAlpha;
-   skillImgCtrllr.Model.animeDirection    = Settings.clockwise;
-
-   skillImgCtrllr.animated = true;
-   skillImgCtrllr.animatePeriod = Settings.rotatePeriod;
-   skillImgCtrllr.totalFrames   = Settings.iterations;
-   // skillImgCtrllr.currentFrame() { return this._currentFrame; }
+   var skillImgCtrllr = new MosaicSkillImgControllerSvg(Settings.mosaicSkill, svg, svgDoc);
+   var model = skillImgCtrllr.Model;
+   model.mosaicSkill       = Settings.mosaicSkill;
+   model.borderWidth       = Settings.borderWidth;
+   model.backgroundColor   = Settings.backgroundColor;
+   model.foregroundColor.a = Settings.foregroundAlpha;
+   model.animeDirection    = Settings.clockwise;
+   model.animated          = true;
+   model.animatePeriod     = Settings.rotatePeriod;
+   model.totalFrames       = Settings.iterations;
 
    // 2. run image animation
-   for (var i=0; i<skillImgCtrllr.totalFrames+1; ++i) {
-      skillImgCtrllr.currentFrame = i; // call transformers
+   for (var i=0; i<model.totalFrames+1; ++i) {
+      model.currentFrame = i; // call transformers
+      skillImgCtrllr.executeTransformers();
+      skillImgCtrllr.View.invalidate();
       skillImgCtrllr.image; // call draw
-      // skillImgCtrllr.image; // test not call draw
-      // skillImgCtrllr.image; // test not call draw
    }
 
-   // 3. apply svg nodes
-   var drawContext = skillImgCtrllr.image;
-   svg.appendChild(drawContext.background);
-   drawContext.shapes.forEach(function(pathNode) { svg.appendChild(pathNode); });
- //drawContext.menus.forEach(function(node) { svg.appendChild(node); });
-
-   var getFileName = function() {
-      return "MosaicSkillImg."
-         + ESkillLevel.getName(Settings.mosaicSkill)
-       //+ '.' + Settings.width + 'x' + Settings.height
-       //+ '.iters' + Settings.iterations
-         + '.' + (Settings.clockwise ? 'clockwise' : 'counterclockwise') // '↻' : '↺') //
-         + '.svg';
-   };
-   console.log(getFileName() + '\n' + format(clean(svg), 1).outerHTML);
-}
-
-function clean(svg) {
-   svg.removeAttribute('onload');
-   svg.removeAttribute('style');
-   var script = svg.querySelector('script');
-   script.remove();
-   return svg;
-}
-function format(node, value) {
-   var indentBefore = new Array(value++ + 1).join('  '),
-       indentAfter  = new Array(value - 1).join('  '),
-       textNode, childNode;
-   for (var i = 0; i < node.children.length; i++) {
-      textNode = document.createTextNode('\n' + indentBefore);
-      childNode = node.children[i];
-      node.insertBefore(textNode, childNode);
-      format(childNode, value);
-      if (node.lastElementChild == childNode) {
-         textNode = document.createTextNode('\n' + indentAfter);
-         node.appendChild(textNode);
-      }
-   }
-   textNode = childNode = null;
-   return node;
+   console.log(skillImgCtrllr.getFileName() + '\n' + skillImgCtrllr.View.getSvgContent());
 }
 ]]></script>
-
 </svg>
