@@ -68,6 +68,7 @@ abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageM
          }
       });
 
+      // draw burger menu
       getBurgerMenuModel().getCoords()
          .forEach(li -> {
             g.setLineWidth(li.penWidht);

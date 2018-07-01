@@ -180,9 +180,9 @@ public class Main extends JFrame {
                   imgModel.setBorderColor(Color.RandomColor().darker(0.4));
                   imgModel.setForegroundColor(Color.RandomColor().brighter(0.4));
                   imgModel.setBackgroundColor(Color.Transparent);
-                  img.setAnimated(true);
-                  img.setAnimatePeriod(6400);
-                  img.setTotalFrames(130);
+                  imgModel.setAnimated(true);
+                  imgModel.setAnimatePeriod(6400);
+                  imgModel.setTotalFrames(130);
                   setMenuItemIcon(menuItem, img.getImage());
                   img.addListener(ev -> {
                      Container parent = menuItem.getParent();
@@ -280,9 +280,9 @@ public class Main extends JFrame {
                   imgModel.setForegroundColor(Color.RandomColor().brighter(0.7));
                   imgModel.setBackgroundColor(Color.Transparent);
                   imgModel.setAnimeDirection(false);
-                  img.setAnimated(true);
-                  img.setAnimatePeriod(13000);
-                  img.setTotalFrames(250);
+                  imgModel.setAnimated(true);
+                  imgModel.setAnimatePeriod(13000);
+                  imgModel.setTotalFrames(250);
                   setMenuItemIcon(menuItem,  img.getImage());
                   img.addListener(ev -> {
                      Container parent = menuItem.getParent();
@@ -332,8 +332,8 @@ public class Main extends JFrame {
                   imgModel.getPenBorder().setColorLight(borderColor);
                   imgModel.getPenBorder().setColorShadow(borderColor);
                   imgModel.setBackgroundColor(Color.Transparent);
-                  img.setAnimatePeriod(5400);
-                  img.setTotalFrames(110);
+                  imgModel.setAnimatePeriod(5400);
+                  imgModel.setTotalFrames(110);
                   setMenuItemIcon(menuItem, img.getImage());
                   img.addListener(ev -> {
                      if (!menuItem.getParent().isVisible())
@@ -359,7 +359,7 @@ public class Main extends JFrame {
             EMosaic currentMosaicType = getMosaicController().getMosaicType();
             getMenuItemMosaic(currentMosaicType).setSelected(true);
 
-            mosaicsImages.forEach((eMosaic, img) -> img.setAnimated(eMosaic == currentMosaicType));
+            mosaicsImages.forEach((eMosaic, img) -> img.getModel().setAnimated(eMosaic == currentMosaicType));
             mosaicsGroupImages.forEach((mosaicGroup, img) -> {
                boolean isCurrentGroup = (mosaicGroup == currentMosaicType.getGroup());
                img.useRotateTransforming(isCurrentGroup);
@@ -879,8 +879,8 @@ public class Main extends JFrame {
             model.setUseGradient(!true);
             model.setPadding(3);
             model.setRotateMode(LogoModel.ERotateMode.color);
-            _logo.setAnimatePeriod(12500);
-            _logo.setTotalFrames(250);
+            model.setAnimatePeriod(12500);
+            model.setTotalFrames(250);
             _logo.usePolarLightFgTransforming(true);
             _logo.addListener(ev -> {
                if (!PausePanel.this.isVisible())
@@ -905,7 +905,7 @@ public class Main extends JFrame {
       }
 
       public void animateLogo(boolean start) {
-         getLogo().setAnimated(start);
+         getLogo().getModel().setAnimated(start);
       }
 
       @Override
@@ -1136,8 +1136,8 @@ public class Main extends JFrame {
       logoModel.setPadding(1);
       logoModel.setBackgroundColor(Color.Transparent);//ImageProperties.DefaultBkColor);
       logoModel.setRotateMode(LogoModel.ERotateMode.combi);
-      this._logo.setAnimatePeriod(25000);
-      this._logo.setTotalFrames(260);
+      logoModel.setAnimatePeriod(25000);
+      logoModel.setTotalFrames(260);
       this._logo.useRotateTransforming(true);
       this._logo.usePolarLightFgTransforming(true);
       /** /
@@ -1151,7 +1151,7 @@ public class Main extends JFrame {
          logoModel.setPadding((int)padding);
       });
       /**/
-      this._logo.setAnimated(true);
+      logoModel.setAnimated(true);
       this.setIconImage(_logo.getImage());
       this._logo.addListener(ev -> {
          if (Logo.PROPERTY_IMAGE.equals(ev.getPropertyName()))

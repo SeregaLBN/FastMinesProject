@@ -16,7 +16,7 @@ import fmg.common.notyfier.NotifyPropertyChanged;
 public abstract class ImageController<TImage,
                                       TImageView  extends IImageView<TImage, TImageModel>,
                                       TImageModel extends IImageModel>
-                implements IImageController<TImage, TImageView, TImageModel>
+          implements IImageController<TImage, TImageView, TImageModel>
 {
 
    /** MVC: view */
@@ -37,7 +37,7 @@ public abstract class ImageController<TImage,
    @Override
    public    SizeDouble  getSize()  { return getView().getSize(); }
 
-   protected void onPropertyViewChanged(Object oldValue, Object newValue, String propertyName) {
+   protected void onPropertyViewChanged( Object oldValue, Object newValue, String propertyName) {
       switch (propertyName) {
       case IImageView.PROPERTY_MODEL:
          _notifier.onPropertyChanged(oldValue, newValue, PROPERTY_MODEL);

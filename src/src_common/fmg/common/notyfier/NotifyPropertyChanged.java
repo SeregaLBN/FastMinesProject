@@ -33,7 +33,7 @@ public final class NotifyPropertyChanged implements AutoCloseable /*, INotifyPro
    public <T> boolean setProperty(T oldValue, T newValue, String propertyName) {
       if (_disposed) {
          if (newValue != null) {
-            System.err.println("Illegall call property " + _owner.getClass().getCanonicalName() + "."+ propertyName + ": object already disposed!");
+            System.err.println("Illegal call property " + _owner.getClass().getCanonicalName() + "."+ propertyName + ": object already disposed!");
             return false;
          }
       }

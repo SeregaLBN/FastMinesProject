@@ -4,6 +4,6 @@ package fmg.core.img;
 public interface IModelTransformer {
 
    /** The handler for the frame change event */
-   void execute(int currentFrame, int totalFrames, IImageModel model);
+   void execute(IAnimatedModel model);
 
 }

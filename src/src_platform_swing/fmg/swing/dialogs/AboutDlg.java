@@ -120,9 +120,9 @@ public class AboutDlg extends JDialog implements AutoCloseable {
       lm.setPadding(1);
       lm.setRotateMode(LogoModel.ERotateMode.color);
       _logo.usePolarLightFgTransforming(true);
-      _logo.setAnimated(true);
-      _logo.setAnimatePeriod(12000);
-      _logo.setTotalFrames(250);
+      lm.setAnimated(true);
+      lm.setAnimatePeriod(12000);
+      lm.setTotalFrames(250);
       JButton btnLogo = new JButton(ImgUtils.zoom(_logo.getImage(), constSize, constSize));
       _logo.addListener(ev -> {
          if (Logo.PROPERTY_IMAGE.equals(ev.getPropertyName())) {

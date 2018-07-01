@@ -31,18 +31,20 @@ public abstract class ATestDrawing {
 
       IImageModel model = ctrller.getModel();
 
+      if (model instanceof IAnimatedModel) {
+         IAnimatedModel am = (IAnimatedModel)model;
+         am.setAnimated(bl() || bl());
+         if (am.isAnimated()) {
+            am.setAnimatePeriod(1000 + r(2000));
+            am.setTotalFrames(40 + r(20));
+         }
+      }
       if (ctrller instanceof AnimatedImgController) {
          AnimatedImgController<?,?,?> aCtrller = (AnimatedImgController<?,?,?>)ctrller;
-         aCtrller.setAnimated(bl() || bl());
-         if (aCtrller.isAnimated()) {
-            aCtrller.setAnimatePeriod(1000 + r(2000));
-            aCtrller.setTotalFrames(40 + r(20));
-
-            if (model instanceof AnimatedImageModel) {
-               aCtrller.useRotateTransforming(bl());
-               aCtrller.usePolarLightFgTransforming(bl());
-               aCtrller.addModelTransformer(new PolarLightBkTransformer());
-            }
+         if (aCtrller.getModel().isAnimated()) {
+            aCtrller.useRotateTransforming(bl());
+            aCtrller.usePolarLightFgTransforming(bl());
+            aCtrller.addModelTransformer(new PolarLightBkTransformer());
          }
       }
 
@@ -50,40 +52,36 @@ public abstract class ATestDrawing {
       if (testTransparent)
          bkClr.setA(50 + r(10));
 
-      if (model instanceof ImageModel) {
+      if (model instanceof AnimatedImageModel) {
          @SuppressWarnings("resource")
-         ImageModel im = (ImageModel)model;
+         AnimatedImageModel aim = (AnimatedImageModel)model;
 
-         im.setBorderWidth(r(3));
+         aim.setBorderWidth(r(3));
 
-         double pad = Math.min(im.getSize().height/3, im.getSize().width/3);
-         im.setPadding(-pad/4 + r((int)pad));
+         double pad = Math.min(aim.getSize().height/3, aim.getSize().width/3);
+         aim.setPadding(-pad/4 + r((int)pad));
 
-         im.setBackgroundColor(bkClr);
+         aim.setBackgroundColor(bkClr);
 
-         im.setForegroundColor(Color.RandomColor()/*.brighter()*/);
+         aim.setForegroundColor(Color.RandomColor()/*.brighter()*/);
          if (testTransparent) {
             // test transparent
-            Color clr = im.getForegroundColor();
-            if ((im.getBorderWidth() > 0) && (r(4) == 0)) {
+            Color clr = aim.getForegroundColor();
+            if ((aim.getBorderWidth() > 0) && (r(4) == 0)) {
                clr.setA(Color.Transparent.getA());
             } else {
                clr.setA(150 + r(255-150));
             }
-            im.setForegroundColor(clr);
+            aim.setForegroundColor(clr);
          }
 
-         if (model instanceof AnimatedImageModel) {
-            @SuppressWarnings("resource")
-            AnimatedImageModel aim = (AnimatedImageModel)model;
-            aim.setPolarLights(bl());
-            aim.setAnimeDirection(bl());
+         aim.setPolarLights(bl());
+         aim.setAnimeDirection(bl());
 
-            if (model instanceof LogoModel) {
-               @SuppressWarnings("resource")
-               LogoModel lm = (LogoModel)model;
-               lm.setUseGradient(bl());
-            }
+         if (model instanceof LogoModel) {
+            @SuppressWarnings("resource")
+            LogoModel lm = (LogoModel)model;
+            lm.setUseGradient(bl());
          }
       }
       if (model instanceof MosaicGameModel) {

@@ -6,7 +6,7 @@ import fmg.common.HSV;
 public class PolarLightBkTransformer implements IModelTransformer {
 
    @Override
-   public void execute(int currentFrame, int totalFrames, IImageModel model) {
+   public void execute(IAnimatedModel model) {
       if (!(model instanceof AnimatedImageModel))
          throw new RuntimeException("Illegal usage transformer");
 
@@ -14,7 +14,7 @@ public class PolarLightBkTransformer implements IModelTransformer {
       if (!am.isPolarLights())
          return;
 
-      double rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
+      double rotateAngleDelta = 360.0 / am.getTotalFrames(); // 360° / TotalFrames
       if (!am.getAnimeDirection())
          rotateAngleDelta = -rotateAngleDelta;
 

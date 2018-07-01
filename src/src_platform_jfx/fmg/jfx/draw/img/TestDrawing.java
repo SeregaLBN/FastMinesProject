@@ -158,6 +158,7 @@ public final class TestDrawing extends Application {
 
 
       primaryStage.setOnCloseRequest(event -> {
+         timer.stop();
          images.forEach(img -> {
             img.removeListener(propertyChangeListener);
             img.close();

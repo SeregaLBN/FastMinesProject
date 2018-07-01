@@ -4,16 +4,16 @@ package fmg.core.img;
 public class MosaicRotateTransformer implements IModelTransformer {
 
    @Override
-   public void execute(int currentFrame, int totalFrames, IImageModel model) {
+   public void execute(IAnimatedModel model) {
       if (!(model instanceof MosaicAnimatedModel<?>))
          throw new RuntimeException("Illegal usage transformer");
 
       MosaicAnimatedModel<?> mam = (MosaicAnimatedModel<?>)model;
 
-      double rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
+      double rotateAngleDelta = 360.0 / model.getTotalFrames(); // 360° / TotalFrames
 //    //if (!mam.getAnimeDirection())
 //    //   rotateAngleDelta = -rotateAngleDelta;
-      double rotateAngle = currentFrame * rotateAngleDelta;
+      double rotateAngle = mam.getCurrentFrame() * rotateAngleDelta;
       mam.setRotateAngle(rotateAngle);
 
       switch (mam.getRotateMode()) {

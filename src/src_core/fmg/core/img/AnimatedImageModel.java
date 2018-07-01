@@ -1,5 +1,6 @@
 package fmg.core.img;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import fmg.common.Color;
@@ -8,13 +9,14 @@ import fmg.common.geom.DoubleExt;
 import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
-/** MVC: model. Common image characteristics. */
-public class ImageModel implements IImageModel {
+/** MVC: model. Common animated image characteristics. */
+public class AnimatedImageModel implements IAnimatedModel {
 
    public static final Color DefaultBkColor         = Color.DarkOrange.clone();
    public static final Color DefaultForegroundColor = Color.Orchid.clone();
    public static final int   DefaultImageSize = 100;
    public static final int   DefaultPadding = (int)(DefaultImageSize * 0.05); // 5%
+
 
    /** width and height in pixel */
    private SizeDouble _size = new SizeDouble(DefaultImageSize, DefaultImageSize);
@@ -27,9 +29,17 @@ public class ImageModel implements IImageModel {
    private double _borderWidth = 3;
    /** 0° .. +360° */
    private double _rotateAngle;
-
+   /** animation of polar lights */
+   private boolean _polarLights = true;
+   /** animation direction (example: clockwise or counterclockwise for simple rotation) */
+   private boolean _animeDirection = true;
+   private final AnimatedInnerModel _innerModel = new AnimatedInnerModel();
+   private PropertyChangeListener innerModelListener = ev -> onInnerModelPropertyChanged(ev);
    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
+   public AnimatedImageModel() {
+      _innerModel.addListener(innerModelListener);
+   }
 
    public static final String PROPERTY_PADDING          = "Padding";
    public static final String PROPERTY_BACKGROUND_COLOR = "BackgroundColor";
@@ -37,7 +47,8 @@ public class ImageModel implements IImageModel {
    public static final String PROPERTY_BORDER_WIDTH     = "BorderWidth";
    public static final String PROPERTY_FOREGROUND_COLOR = "ForegroundColor";
    public static final String PROPERTY_ROTATE_ANGLE     = "RotateAngle";
-
+   public static final String PROPERTY_POLAR_LIGHTS     = "PolarLights";
+   public static final String PROPERTY_ANIME_DIRECTION  = "AnimeDirection";
 
    /** width and height in pixel */
    @Override
@@ -112,8 +123,48 @@ public class ImageModel implements IImageModel {
               :            value;
    }
 
+   /** Image is animated? */
+   @Override
+   public boolean isAnimated() { return _innerModel.isAnimated(); }
+   @Override
+   public void setAnimated(boolean value) { _innerModel.setAnimated(value); }
+
+   /** Overall animation period (in milliseconds) */
+   @Override
+   public long getAnimatePeriod() { return _innerModel.getAnimatePeriod(); }
+   /** Overall animation period (in milliseconds) */
+   @Override
+   public void setAnimatePeriod(long value) { _innerModel.setAnimatePeriod(value); }
+
+   /** Total frames of the animated period */
+   @Override
+   public int getTotalFrames() { return _innerModel.getTotalFrames(); }
+   @Override
+   public void setTotalFrames(int value) { _innerModel.setTotalFrames(value); }
+
+   @Override
+   public int getCurrentFrame() { return _innerModel.getCurrentFrame(); }
+   @Override
+   public void setCurrentFrame(int value) { _innerModel.setCurrentFrame(value); }
+
+   public boolean isPolarLights() { return _polarLights; }
+   public void setPolarLights(boolean polarLights) {
+      _notifier.setProperty(_polarLights, polarLights, PROPERTY_POLAR_LIGHTS);
+   }
+
+   public boolean getAnimeDirection() { return _animeDirection; }
+   public void setAnimeDirection(boolean animeDirection) {
+      _notifier.setProperty(_animeDirection, animeDirection, PROPERTY_ANIME_DIRECTION);
+   }
+
+   protected void onInnerModelPropertyChanged(PropertyChangeEvent ev) {
+      // refire
+      _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+   }
+
    @Override
    public void close() {
+      _innerModel.removeListener(innerModelListener);
       _notifier.close();
    }
 

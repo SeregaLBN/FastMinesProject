@@ -172,7 +172,7 @@ public class MosaicGroupModel extends AnimatedImageModel {
       Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, shapes)
             .mapToObj(shapeNum -> {
                int vertices = 3+shapeNum;
-               double angleShape = ImageModel.fixAngle(angle + shapeNum * anglePart);
+               double angleShape = AnimatedImageModel.fixAngle(angle + shapeNum * anglePart);
              //angleAccumulative[0] = Math.sin(FigureHelper.toRadian(angle/4))*angleAccumulative[0]; // accelerate / ускоряшка..
 
                double sq = angleShape * sqDiff / 360;

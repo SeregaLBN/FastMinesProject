@@ -1,7 +1,6 @@
 package fmg.swing.draw.img;
 
 import java.util.Collection;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -114,21 +113,20 @@ public abstract class MosaicImg<TImage>
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      Random rnd = ThreadLocalRandom.current();
       TestDrawing.testApp(() ->
-//      // test single
-//      Arrays.asList(new MosaicsImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
+//         // test single
+//         Arrays.asList(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
 
          // test all
          Stream.of(EMosaic.values())
 
 //               // variant 1
-//               .map(e -> Stream.of(new MosaicsImg.ControllerIcon () { { setMosaicType(e); }},
-//                                   new MosaicsImg.ControllerImage() { { setMosaicType(e); }}))
+//               .map(e -> Stream.of(new MosaicImg.ControllerIcon () { { setMosaicType(e); }},
+//                                   new MosaicImg.ControllerImage() { { setMosaicType(e); }}))
 //               .flatMap(x -> x)
 
                // variant 2
-               .map(e ->  rnd.nextBoolean()
+               .map(e -> ThreadLocalRandom.current().nextBoolean()
                            ? new MosaicImg.ControllerIcon () { { setMosaicType(e); }}
                            : new MosaicImg.ControllerImage() { { setMosaicType(e); }}
                    )

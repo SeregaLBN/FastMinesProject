@@ -266,9 +266,9 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
          int redrawInterval = 50;
          double rotateAngleDelta = 3.5;
          double totalFrames = 360 / rotateAngleDelta;
-         mosaicsImg.setAnimatePeriod((int)(totalFrames * redrawInterval));
-         mosaicsImg.setTotalFrames((int)totalFrames);
-         mosaicsImg.setAnimated(true);
+         imgModel.setAnimatePeriod((int)(totalFrames * redrawInterval));
+         imgModel.setTotalFrames((int)totalFrames);
+         imgModel.setAnimated(true);
          mosaicsImg.addListener(ev -> onMosaicsImgPropertyChanged(ev));
       } else {
          mosaicsImg.setMosaicType(mosaicType);
@@ -332,7 +332,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
 
    @Override
    public void setVisible(boolean b) {
-      mosaicsImg.setAnimated(b);
+      mosaicsImg.getModel().setAnimated(b);
       super.setVisible(b);
    }
 

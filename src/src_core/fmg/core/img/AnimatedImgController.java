@@ -1,10 +1,5 @@
 package fmg.core.img;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import fmg.common.ui.Factory;
-
 /**
  * MVC controller. Base animation controller.
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
@@ -13,72 +8,24 @@ import fmg.common.ui.Factory;
  */
 public abstract class AnimatedImgController<TImage,
                                             TImageView  extends IImageView<TImage, TImageModel>,
-                                            TImageModel extends IImageModel>
-                    extends ImageController<TImage, TImageView, TImageModel>
+                                            TImageModel extends IAnimatedModel>
+             extends        ImageController<TImage, TImageView, TImageModel>
+             implements IAnimatedController<TImage, TImageView, TImageModel>
 {
-
-   /** Image is animated? */
-   private Boolean _animated = null;
-   /** Overall animation period (in milliseconds) */
-   private long _animatePeriod = 3000;
-   /** Total frames of the animated period */
-   private int _totalFrames = 30;
-   private int _currentFrame = 0;
-   private Map<Class<? extends IModelTransformer>, IModelTransformer> _transformers = new HashMap<>();
+   private final AnimatedInnerController<TImage, TImageView, TImageModel> _innerController;
 
    protected AnimatedImgController(TImageView imageView) {
       super(imageView);
+      _innerController = new AnimatedInnerController<>(getModel());
    }
 
-   public static final String PROPERTY_ANIMATED       = "Animated";
-   public static final String PROPERTY_ANIMATE_PERIOD = "AnimatePeriod";
-   public static final String PROPERTY_TOTAL_FRAMES   = "TotalFrames";
-   public static final String PROPERTY_CURRENT_FRAME  = "CurrentFrame";
-
-   public boolean isAnimated() { return (_animated == Boolean.TRUE); }
-   public void setAnimated(boolean value) {
-      if (_notifier.setProperty(_animated, value, PROPERTY_ANIMATED)) {
-         if (value)
-            Factory.GET_ANIMATOR.get().subscribe(this, timeFromStartSubscribe -> {
-               long mod = timeFromStartSubscribe % _animatePeriod;
-               long frame = mod * getTotalFrames() / _animatePeriod;
-               //System.out.println("ANIMATOR : " + getClass().getSimpleName() + ": "+ timeFromStartSubscribe);
-               setCurrentFrame((int)frame);
-            });
-         else
-            Factory.GET_ANIMATOR.get().pause(this);
-      }
-   }
-
-   /** Overall animation period (in milliseconds) */
-   public long getAnimatePeriod() { return _animatePeriod; }
-   /** Overall animation period (in milliseconds) */
-   public void setAnimatePeriod(long value) {
-      _notifier.setProperty(_animatePeriod, value, PROPERTY_ANIMATE_PERIOD);
-   }
-
-   /** Total frames of the animated period */
-   public int getTotalFrames() { return _totalFrames; }
-   public void setTotalFrames(int value) {
-      if (_notifier.setProperty(_totalFrames, value, PROPERTY_TOTAL_FRAMES))
-         setCurrentFrame(0);
-   }
-
-   protected int getCurrentFrame() { return _currentFrame; }
-   protected void setCurrentFrame(int value) {
-      if (_notifier.setProperty(_currentFrame, value, PROPERTY_CURRENT_FRAME)) {
-         _transformers.forEach((k,v) -> v.execute(_currentFrame, _totalFrames, getModel()));
-         getView().invalidate();
-      }
-   }
-
-   public void removeModelTransformer(Class<? extends IModelTransformer> transformerClass) {
-      if (_transformers.keySet().contains(transformerClass))
-         _transformers.remove(transformerClass);
-   }
+   @Override
    public void addModelTransformer(IModelTransformer transformer) {
-      if (!_transformers.keySet().contains(transformer.getClass()))
-         _transformers.put(transformer.getClass(), transformer);
+      _innerController.addModelTransformer(transformer);
+   }
+   @Override
+   public void removeModelTransformer(Class<? extends IModelTransformer> transformerClass) {
+      _innerController.removeModelTransformer(transformerClass);
    }
 
    public void useRotateTransforming(boolean enable) {
@@ -93,15 +40,6 @@ public abstract class AnimatedImgController<TImage,
          addModelTransformer(new PolarLightFgTransformer());
       else
          removeModelTransformer(PolarLightFgTransformer.class);
-   }
-
-
-   @Override
-   public void close() {
-      if (_animated != null)
-         Factory.GET_ANIMATOR.get().unsubscribe(this);
-      _transformers.clear();
-      super.close();
    }
 
 }

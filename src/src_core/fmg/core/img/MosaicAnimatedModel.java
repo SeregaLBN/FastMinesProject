@@ -1,6 +1,7 @@
 package fmg.core.img;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +22,7 @@ import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
 import fmg.data.view.draw.PenBorder;
 
 /** Representable {@link fmg.core.types.EMosaic} as animated image */
-public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
+public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> implements IAnimatedModel {
 
    public enum ERotateMode {
       /** rotate full matrix (all cells) */
@@ -38,12 +39,39 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
    private final List<RotatedCellContext> _rotatedElements = new ArrayList<>();
    private boolean _disableCellAttributeListener = false;
    private boolean _disableListener = false;
+   private final AnimatedInnerModel _innerModel = new AnimatedInnerModel();
+   private PropertyChangeListener innerModelListener = ev -> onInnerModelPropertyChanged(ev);
 
+   public MosaicAnimatedModel() {
+      _innerModel.addListener(innerModelListener);
+   }
 
    public static final String PROPERTY_ROTATE_ANGLE     = "RotateAngle";
    public static final String PROPERTY_ROTATE_MODE      = "RotateMode";
    public static final String PROPERTY_ROTATED_ELEMENTS = "RotatedElements";
 
+   @Override
+   public boolean isAnimated() { return _innerModel.isAnimated(); }
+   @Override
+   public void setAnimated(boolean value) { _innerModel.setAnimated(value); }
+
+   /** Overall animation period (in milliseconds) */
+   @Override
+   public long getAnimatePeriod() { return _innerModel.getAnimatePeriod(); }
+   /** Overall animation period (in milliseconds) */
+   @Override
+   public void setAnimatePeriod(long value) { _innerModel.setAnimatePeriod(value); }
+
+   /** Total frames of the animated period */
+   @Override
+   public int getTotalFrames() { return _innerModel.getTotalFrames(); }
+   @Override
+   public void setTotalFrames(int value) { _innerModel.setTotalFrames(value); }
+
+   @Override
+   public int getCurrentFrame() { return _innerModel.getCurrentFrame(); }
+   @Override
+   public void setCurrentFrame(int value) { _innerModel.setCurrentFrame(value); }
 
    public ERotateMode getRotateMode() { return _rotateMode; }
    public void setRotateMode(ERotateMode value) { _notifier.setProperty(_rotateMode, value, PROPERTY_ROTATE_MODE); }
@@ -51,7 +79,7 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
    /** 0° .. +360° */
    public double getRotateAngle() { return _rotateAngle; }
    public void setRotateAngle(double value) {
-      _notifier.setProperty(_rotateAngle, ImageModel.fixAngle(value), PROPERTY_ROTATE_ANGLE);
+      _notifier.setProperty(_rotateAngle, AnimatedImageModel.fixAngle(value), PROPERTY_ROTATE_ANGLE);
    }
 
    public List<RotatedCellContext> getRotatedElements() { return _rotatedElements; }
@@ -297,6 +325,17 @@ public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> {
             //rotateCells();
             break;
          }
+   }
+
+   protected void onInnerModelPropertyChanged(PropertyChangeEvent ev) {
+      // refire
+      _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+   }
+
+   @Override
+   public void close() {
+      _innerModel.removeListener(innerModelListener);
+      super.close();
    }
 
 }

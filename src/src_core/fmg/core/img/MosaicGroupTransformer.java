@@ -6,7 +6,7 @@ import fmg.core.types.EMosaicGroup;
 public class MosaicGroupTransformer implements IModelTransformer {
 
    @Override
-   public void execute(int currentFrame, int totalFrames, IImageModel model) {
+   public void execute(IAnimatedModel model) {
       if (!(model instanceof MosaicGroupModel))
          throw new RuntimeException("Illegal usage transformer");
 
@@ -14,7 +14,7 @@ public class MosaicGroupTransformer implements IModelTransformer {
 
       if (MosaicGroupModel.varMosaicGroupAsValueOthers1 && (m.getMosaicGroup() == EMosaicGroup.eOthers)) {
          boolean castling = false;
-         double rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
+         double rotateAngleDelta = 360.0 / m.getTotalFrames(); // 360° / TotalFrames
          if (!m.getAnimeDirection())
             rotateAngleDelta = -rotateAngleDelta;
          double incrementSpeedAngle = m.getIncrementSpeedAngle() + 3*rotateAngleDelta;

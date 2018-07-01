@@ -1,25 +1,75 @@
 package fmg.core.img;
 
-/** MVC: model. Animated image characteristics. */
-public class AnimatedImageModel extends ImageModel {
+import java.beans.PropertyChangeListener;
 
-   public static final String PROPERTY_POLAR_LIGHTS    = "PolarLights";
-   public static final String PROPERTY_ANIME_DIRECTION = "AnimeDirection";
+import fmg.common.geom.SizeDouble;
+import fmg.common.notyfier.NotifyPropertyChanged;
 
-   /** animation of polar lights */
-   private boolean _polarLights = true;
+/** MVC: inner model. Animated image characteristics. */
+final class AnimatedInnerModel implements IAnimatedModel {
 
-   /** animation direction (example: clockwise or counterclockwise for simple rotation) */
-   private boolean _animeDirection = true;
+   /** Image is animated? */
+   private Boolean _animated = null;
+   /** Overall animation period (in milliseconds) */
+   private long _animatePeriod = 3000;
+   /** Total frames of the animated period */
+   private int _totalFrames = 30;
+   private int _currentFrame = 0;
 
-   public boolean isPolarLights() { return _polarLights; }
-   public void setPolarLights(boolean polarLights) {
-      _notifier.setProperty(_polarLights, polarLights, PROPERTY_POLAR_LIGHTS);
+   protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
+
+   // #region: begin inner block
+   @Override
+   public SizeDouble getSize()           { throw new UnsupportedOperationException(); }
+   @Override
+   public void setSize(SizeDouble value) { throw new UnsupportedOperationException(); }
+   // #region: end inner block
+
+   /** Image is animated? */
+   @Override
+   public boolean isAnimated() { return (_animated == Boolean.TRUE); }
+   @Override
+   public void setAnimated(boolean value) {
+      _notifier.setProperty(_animated, value, PROPERTY_ANIMATED);
    }
 
-   public boolean getAnimeDirection() { return _animeDirection; }
-   public void setAnimeDirection(boolean animeDirection) {
-      _notifier.setProperty(_animeDirection, animeDirection, PROPERTY_ANIME_DIRECTION);
+   /** Overall animation period (in milliseconds) */
+   @Override
+   public long getAnimatePeriod() { return _animatePeriod; }
+   /** Overall animation period (in milliseconds) */
+   @Override
+   public void setAnimatePeriod(long value) {
+      _notifier.setProperty(_animatePeriod, value, PROPERTY_ANIMATE_PERIOD);
+   }
+
+   /** Total frames of the animated period */
+   @Override
+   public int getTotalFrames() { return _totalFrames; }
+   @Override
+   public void setTotalFrames(int value) {
+      if (_notifier.setProperty(_totalFrames, value, PROPERTY_TOTAL_FRAMES))
+         setCurrentFrame(0);
+   }
+
+   @Override
+   public int getCurrentFrame() { return _currentFrame; }
+   @Override
+   public void setCurrentFrame(int value) {
+      _notifier.setProperty(_currentFrame, value, PROPERTY_CURRENT_FRAME);
+   }
+
+   @Override
+   public void close() {
+      _notifier.close();
+   }
+
+   @Override
+   public void addListener(PropertyChangeListener listener) {
+      _notifier.addListener(listener);
+   }
+   @Override
+   public void removeListener(PropertyChangeListener listener) {
+      _notifier.removeListener(listener);
    }
 
 }

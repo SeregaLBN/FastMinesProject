@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 import fmg.common.geom.*;
-import fmg.core.img.AnimatedImgController;
+import fmg.core.img.ImageController;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.*;
 
@@ -20,7 +20,7 @@ import fmg.core.types.*;
 public abstract class AMosaicController<TImage, TImage2,
                                         TMosaicView extends IMosaicView<TImage, TImage2, TMosaicModel>,
                                         TMosaicModel extends MosaicDrawModel<TImage2>>
-                extends AnimatedImgController<TImage, TMosaicView, TMosaicModel>
+                extends ImageController<TImage, TMosaicView, TMosaicModel>
 {
 
    /** кол-во мин на поле */

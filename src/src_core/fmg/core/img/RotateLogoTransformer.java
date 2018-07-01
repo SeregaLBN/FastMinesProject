@@ -8,7 +8,7 @@ import fmg.common.geom.util.FigureHelper;
 public class RotateLogoTransformer implements IModelTransformer {
 
    @Override
-   public void execute(int currentFrame, int totalFrames, IImageModel model) {
+   public void execute(IAnimatedModel model) {
       if (!(model instanceof LogoModel))
          throw new RuntimeException("Illegal usage transformer");
 

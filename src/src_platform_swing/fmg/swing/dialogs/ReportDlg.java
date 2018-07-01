@@ -104,8 +104,8 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
             int redrawInterval = 50;
             double rotateAngleDelta = 3.5;
             double totalFrames = 360 / rotateAngleDelta;
-            imgCntrllr.setAnimatePeriod((int)(totalFrames * redrawInterval));
-            imgCntrllr.setTotalFrames((int)totalFrames);
+            imgModel.setAnimatePeriod((int)(totalFrames * redrawInterval));
+            imgModel.setTotalFrames((int)totalFrames);
             imgCntrllr.addListener(ev -> onImagePropertyChanged(eMosaic, ev));
             images.put(eMosaic, imgCntrllr);
 
@@ -153,7 +153,7 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
 
       images.forEach((mosaicType, imgCtrllr) -> {
          boolean selected = (mosaicType == eMosaic);
-         imgCtrllr.setAnimated(selected);
+         imgCtrllr.getModel().setAnimated(selected);
          imgCtrllr.getModel().setBackgroundColor(selected ? bkTabBkColorSelected : bkTabBkColor);
       });
    }
@@ -273,7 +273,7 @@ abstract class ReportDlg extends JDialog implements AutoCloseable {
    public void setVisible(boolean b) {
       EMosaic mosaicType = getSelectedMosaicType();
       MosaicImg.ControllerIcon imgCtrllr = images.get(mosaicType);
-      imgCtrllr.setAnimated(b);
+      imgCtrllr.getModel().setAnimated(b);
       if (!b)
          imgCtrllr.getModel().setBackgroundColor(bkTabBkColor);
 

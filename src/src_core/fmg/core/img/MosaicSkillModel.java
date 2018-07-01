@@ -81,7 +81,7 @@ public class MosaicSkillModel extends AnimatedImageModel {
       boolean pl = isPolarLights();
       Stream<Pair<Double, Pair<Color, Stream<PointDouble>>>> res = IntStream.range(0, stars)
             .mapToObj(starNum -> {
-               double angleStar = ImageModel.fixAngle(angle + starNum * anglePart);
+               double angleStar = AnimatedImageModel.fixAngle(angle + starNum * anglePart);
                if (accumulative)
                   angleAccumulative[0] = Math.sin(FigureHelper.toRadian(angle/4))*angleAccumulative[0]; // accelerate / ускоряшка..
 

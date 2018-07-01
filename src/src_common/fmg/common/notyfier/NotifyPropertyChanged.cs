@@ -37,7 +37,7 @@ namespace fmg.common.notyfier {
       public bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null) {
          if (_disposed) {
             if (value != null) {
-               System.Diagnostics.Debug.WriteLine("Illegall call property " + _owner.GetType().FullName + "." + propertyName + ": object already disposed!");
+               System.Diagnostics.Debug.WriteLine("Illegal call property " + _owner.GetType().FullName + "." + propertyName + ": object already disposed!");
                return false;
             }
          }

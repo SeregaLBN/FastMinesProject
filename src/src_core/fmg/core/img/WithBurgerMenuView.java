@@ -7,7 +7,7 @@ import java.beans.PropertyChangeListener;
  * @param <TImage> - platform specific image
  * @param <TImageModel> - general model of image (not burger menu model)
  */
-public abstract class WithBurgerMenuView<TImage, TImageModel extends ImageModel> extends ImageView<TImage, TImageModel> {
+public abstract class WithBurgerMenuView<TImage, TImageModel extends AnimatedImageModel> extends ImageView<TImage, TImageModel> {
 
    /** the second model of image */
    private final BurgerMenuModel _burgerMenuModel;

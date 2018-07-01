@@ -6,7 +6,7 @@ import fmg.common.HSV;
 public class PolarLightLogoTransformer implements IModelTransformer {
 
    @Override
-   public void execute(int currentFrame, int totalFrames, IImageModel model) {
+   public void execute(IAnimatedModel model) {
       if (!(model instanceof LogoModel))
          throw new RuntimeException("Illegal usage transformer");
 
@@ -15,7 +15,7 @@ public class PolarLightLogoTransformer implements IModelTransformer {
       if (!lm.isPolarLights())
          return;
 
-      double rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
+      double rotateAngleDelta = 360.0 / lm.getTotalFrames(); // 360° / TotalFrames
       if (!lm.getAnimeDirection())
          rotateAngleDelta = -rotateAngleDelta;
       HSV[] palette = lm.getPalette();
