@@ -12,12 +12,6 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\Timer.cs">
       <Link>src_fmg.uwp\utils\Timer.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\CellPaint.cs">
-      <Link>src_fmg.uwp\draw\mosaic\CellPaint.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\PaintUwpContext.cs">
-      <Link>src_fmg.uwp\draw\mosaic\PaintUwpContext.cs</Link>
-    </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\Cast.cs">
       <Link>src_fmg.uwp\utils\Cast.cs</Link>
     </Compile>

@@ -9,9 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
-
 import fmg.common.Color;
 import fmg.common.geom.*;
 import fmg.core.mosaic.AMosaicView;
@@ -50,11 +47,6 @@ public abstract class AMosaicViewSwing<TImage,
 
    static {
       StaticInitializer.init();
-
-      UIDefaults uiDef = UIManager.getDefaults();
-      java.awt.Color clr = uiDef.getColor("Panel.background");
-      if (clr != null)
-         MosaicDrawModel.DefaultBkColor = Cast.toColor(clr);
    }
 
 

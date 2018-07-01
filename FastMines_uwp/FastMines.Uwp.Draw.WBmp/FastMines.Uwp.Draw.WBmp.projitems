@@ -9,11 +9,8 @@
     <Import_RootNamespace>FastMines.Uwp.Draw.WBmp</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\wbmp\CellPaintWBmp.cs">
-      <Link>src_fmg.uwp\draw\mosaic\wbmp\CellPaintWBmp.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\wbmp\PaintableWBmp.cs">
-      <Link>src_fmg.uwp\draw\mosaic\wbmp\PaintableWBmp.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\wbmp\AMosaicViewWBmp.cs">
+      <Link>src_fmg.uwp\draw\mosaic\wbmp\AMosaicViewWBmp.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\MosaicsSkillImg.cs">
       <Link>src_fmg.uwp\draw\img\wbmp\MosaicsSkillImg.cs</Link>

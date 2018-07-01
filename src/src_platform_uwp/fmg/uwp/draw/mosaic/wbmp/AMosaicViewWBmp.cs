@@ -9,8 +9,25 @@ using fmg.uwp.utils;
 
 namespace fmg.uwp.draw.mosaic.wbmp {
 
-   /// <summary> Class for drawing cell into (ower <see cref="WriteableBitmap"/>) </summary>
-   public class CellPaintWBmp : CellPaint<PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>> {
+   /// <summary> MVC: view. Abstract UWP over WriteableBitmap implementation </summary>
+   /// <typeparam name="TMosaicModel">mosaic data model</typeparam>
+   public abstract class AMosaicViewWBmp<TMosaicModel>
+                       : AMosaicView<WriteableBitmap, WriteableBitmap, TMosaicModel>
+      where TMosaicModel : MosaicDrawModel<WriteableBitmap>
+   {
+
+      protected boolean _alreadyPainted = false;
+
+      protected AMosaicViewSwing(TMosaicModel mosaicModel) {
+         super(mosaicModel);
+      }
+
+
+      static AMosaicViewWBmp() {
+         fmg.uwp.utils.StaticInitializer.Init();
+      }
+
+
 
       public override void Paint(BaseCell cell, PaintableWBmp paint, PaintUwpContext<WriteableBitmap> paintContext)
       {
