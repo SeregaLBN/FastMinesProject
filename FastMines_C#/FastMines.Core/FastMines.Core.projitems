@@ -183,8 +183,17 @@
     <Compile Include="..\..\src\src_core\fmg\core\img\WithBurgerMenuView.cs">
       <Link>src_fmg.core\img\WithBurgerMenuView.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\img\ImageModel.cs">
-      <Link>src_fmg.core\img\ImageModel.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\img\AnimatedInnerModel.cs">
+      <Link>src_fmg.core\img\AnimatedInnerModel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\AnimatedInnerController.cs">
+      <Link>src_fmg.core\img\AnimatedInnerController.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\IAnimatedController.cs">
+      <Link>src_fmg.core\img\IAnimatedController.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_core\fmg\core\img\IAnimatedModel.cs">
+      <Link>src_fmg.core\img\IAnimatedModel.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\img\ATestDrawing.cs">
       <Link>src_fmg.core\img\ATestDrawing.cs</Link>

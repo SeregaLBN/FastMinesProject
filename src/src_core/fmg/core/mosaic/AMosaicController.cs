@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using fmg.common;
 using fmg.common.geom;
-using fmg.common.notyfier;
 using fmg.core.types;
 using fmg.core.img;
 using fmg.core.mosaic.cells;
@@ -18,7 +17,7 @@ namespace fmg.core.mosaic {
    /// <typeparam name="TMosaicView">mosaic view</typeparam>
    /// <typeparam name="TMosaicModel">mosaic model</typeparam>
    public abstract class AMosaicController<TImage, TImage2, TMosaicView, TMosaicModel>
-                   : AnimatedImgController<TImage, TMosaicView, TMosaicModel>
+                         : ImageController<TImage,          TMosaicView, TMosaicModel>
       where TImage : class
       where TImage2 : class
       where TMosaicView : IMosaicView<TImage, TImage2, TMosaicModel>

@@ -14,9 +14,9 @@ import fmg.common.ui.Factory;
  * @param <TImageModel> MVC model
  */
 public final class AnimatedInnerController<TImage,
-                                    TImageView  extends IImageView<TImage, TImageModel>,
-                                    TImageModel extends IAnimatedModel>
-     implements IAnimatedController<TImage, TImageView, TImageModel>
+                                           TImageView  extends IImageView<TImage, TImageModel>,
+                                           TImageModel extends IAnimatedModel>
+            implements IAnimatedController<TImage, TImageView, TImageModel>
 {
 
    private final TImageModel _model;
@@ -29,7 +29,7 @@ public final class AnimatedInnerController<TImage,
    }
 
 
-   // #region: begin inner block
+   // #region: begin unusable code
    @Override
    public TImageModel getModel()                               { throw new UnsupportedOperationException(); }
    @Override
@@ -40,7 +40,7 @@ public final class AnimatedInnerController<TImage,
    public void addListener(PropertyChangeListener listener)    { throw new UnsupportedOperationException(); }
    @Override
    public void removeListener(PropertyChangeListener listener) { throw new UnsupportedOperationException(); }
-   // #region: end inner block
+   // #region: end unusable code
 
 
    @Override
@@ -54,7 +54,7 @@ public final class AnimatedInnerController<TImage,
          _transformers.remove(transformerClass);
    }
 
-   protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
+   private void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
       switch (propertyName) {
       case IAnimatedModel.PROPERTY_ANIMATED:
          if ((Boolean)newValue) {

@@ -9,25 +9,25 @@ import fmg.common.notyfier.NotifyPropertyChanged;
 final class AnimatedInnerModel implements IAnimatedModel {
 
    /** Image is animated? */
-   private Boolean _animated = null;
+   private boolean _animated;
    /** Overall animation period (in milliseconds) */
    private long _animatePeriod = 3000;
    /** Total frames of the animated period */
    private int _totalFrames = 30;
    private int _currentFrame = 0;
 
-   protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
+   private NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
-   // #region: begin inner block
+   // #region: begin unusable code
    @Override
    public SizeDouble getSize()           { throw new UnsupportedOperationException(); }
    @Override
    public void setSize(SizeDouble value) { throw new UnsupportedOperationException(); }
-   // #region: end inner block
+   // #region: end unusable code
 
    /** Image is animated? */
    @Override
-   public boolean isAnimated() { return (_animated == Boolean.TRUE); }
+   public boolean isAnimated() { return _animated; }
    @Override
    public void setAnimated(boolean value) {
       _notifier.setProperty(_animated, value, PROPERTY_ANIMATED);

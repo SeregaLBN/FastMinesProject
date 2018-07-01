@@ -6,15 +6,15 @@ namespace fmg.core.img {
    /// <summary> Transforming of rotate angle </summary>
    public class RotateTransformer : IModelTransformer {
 
-      public void Execute(int currentFrame, int totalFrames, IImageModel model) {
+      public void Execute(IAnimatedModel model) {
          AnimatedImageModel am = model as AnimatedImageModel;
          if (am == null)
             throw new Exception("Illegal usage transformer");
 
-         double rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
+         double rotateAngleDelta = 360.0 / am.TotalFrames; // 360° / TotalFrames
          if (!am.AnimeDirection)
             rotateAngleDelta = -rotateAngleDelta;
-         double rotateAngle = currentFrame * rotateAngleDelta;
+         double rotateAngle = am.CurrentFrame * rotateAngleDelta;
          am.RotateAngle = rotateAngle;
       }
 

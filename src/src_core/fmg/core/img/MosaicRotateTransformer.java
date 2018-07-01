@@ -10,7 +10,7 @@ public class MosaicRotateTransformer implements IModelTransformer {
 
       MosaicAnimatedModel<?> mam = (MosaicAnimatedModel<?>)model;
 
-      double rotateAngleDelta = 360.0 / model.getTotalFrames(); // 360° / TotalFrames
+      double rotateAngleDelta = 360.0 / mam.getTotalFrames(); // 360° / TotalFrames
 //    //if (!mam.getAnimeDirection())
 //    //   rotateAngleDelta = -rotateAngleDelta;
       double rotateAngle = mam.getCurrentFrame() * rotateAngleDelta;

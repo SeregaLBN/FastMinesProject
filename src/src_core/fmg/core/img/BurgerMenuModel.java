@@ -13,7 +13,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.NotifyPropertyChanged;
 
 /** MVC: model of representable menu as horizontal or vertical lines */
-public class BurgerMenuModel implements IImageModel {
+public final class BurgerMenuModel implements IImageModel {
 
    private AnimatedImageModel _generalModel;
    private boolean _show = true;
@@ -21,7 +21,7 @@ public class BurgerMenuModel implements IImageModel {
    private int     _layers = 3;
    private BoundDouble _padding;
    private PropertyChangeListener _generalModelListener;
-   protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
+   private NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
    /**
     * @param generalModel another basic model

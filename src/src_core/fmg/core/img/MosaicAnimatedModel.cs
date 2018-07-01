@@ -12,7 +12,7 @@ using fmg.core.mosaic.cells;
 namespace fmg.core.img {
 
    /// <summary> Representable <see cref="EMosaic"/> as animated image </summary>
-   public class MosaicAnimatedModel<TImage> : MosaicDrawModel<TImage>
+   public class MosaicAnimatedModel<TImage> : MosaicDrawModel<TImage>, IAnimatedModel
       where TImage : class
    {
       public enum ERotateMode {
@@ -30,6 +30,33 @@ namespace fmg.core.img {
       private readonly List<RotatedCellContext> _rotatedElements = new List<RotatedCellContext>();
       private bool _disableCellAttributeListener = false;
       private bool _disableListener = false;
+      private readonly AnimatedInnerModel _innerModel = new AnimatedInnerModel();
+
+      public MosaicAnimatedModel() {
+         _innerModel.PropertyChanged += OnInnerModelPropertyChanged;
+      }
+
+      public bool Animated {
+         get { return _innerModel.Animated; }
+         set { _innerModel.Animated = value; }
+      }
+
+      /// <summary> Overall animation period (in milliseconds) </summary>
+      public long AnimatePeriod {
+         get { return _innerModel.AnimatePeriod; }
+         set { _innerModel.AnimatePeriod = value; }
+      }
+
+      /// <summary> Total frames of the animated period </summary>
+      public int TotalFrames {
+         get { return _innerModel.TotalFrames; }
+         set { _innerModel.TotalFrames = value; }
+      }
+
+      public int CurrentFrame {
+         get { return _innerModel.CurrentFrame; }
+         set { _innerModel.CurrentFrame = value; }
+      }
 
       public ERotateMode RotateMode {
          get { return _rotateMode; }
@@ -40,7 +67,7 @@ namespace fmg.core.img {
       public double RotateAngle {
          get { return _rotateAngle; }
          set {
-            value = ImageModel.FixAngle(value);
+            value = AnimatedImageModel.FixAngle(value);
             _notifier.SetProperty(ref _rotateAngle, value);
          }
       }
@@ -292,6 +319,16 @@ namespace fmg.core.img {
                //RotateCells();
                break;
             }
+      }
+
+      protected void OnInnerModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         // refire
+         _notifier.OnPropertyChanged(ev);
+      }
+
+      protected override void Disposing() {
+         _innerModel.PropertyChanged -= OnInnerModelPropertyChanged;
+         base.Disposing();
       }
 
    }

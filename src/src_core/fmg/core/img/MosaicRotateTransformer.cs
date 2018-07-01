@@ -7,16 +7,16 @@ namespace fmg.core.img {
       where TImage : class
    {
 
-      public void Execute(int currentFrame, int totalFrames, IImageModel model) {
+      public void Execute(IAnimatedModel model) {
          MosaicAnimatedModel<TImage> mam = model as MosaicAnimatedModel<TImage>;
 
          if (mam == null)
             throw new Exception("Illegal usage transformer");
 
-         double rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
+         double rotateAngleDelta = 360.0 / mam.TotalFrames; // 360° / TotalFrames
    //    //if (!mam.AnimeDirection)
    //    //   rotateAngleDelta = -rotateAngleDelta;
-         double rotateAngle = currentFrame * rotateAngleDelta;
+         double rotateAngle = mam.CurrentFrame * rotateAngleDelta;
          mam.RotateAngle = rotateAngle;
 
          switch (mam.RotateMode) {

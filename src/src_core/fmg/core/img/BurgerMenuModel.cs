@@ -9,22 +9,21 @@ using fmg.common.notyfier;
 namespace fmg.core.img {
 
    /// <summary> MVC: model of representable menu as horizontal or vertical lines </summary>
-   public class BurgerMenuModel : IImageModel {
+   public sealed class BurgerMenuModel : IImageModel {
 
-      private ImageModel _generalModel;
+      private AnimatedImageModel _generalModel;
       private bool _show = true;
       private bool _horizontal = true;
       private int  _layers = 3;
-      private bool _rotate;
       private BoundDouble _padding;
 
       private bool _disposed;
       public event PropertyChangedEventHandler PropertyChanged;
-      protected readonly NotifyPropertyChanged _notifier;
+      private readonly NotifyPropertyChanged _notifier;
 
       /// <summary> ctor </summary>
       /// <param name="generalModel">another basic model</param>
-      internal BurgerMenuModel(ImageModel generalModel) {
+      internal BurgerMenuModel(AnimatedImageModel generalModel) {
          _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
          _generalModel = generalModel;
          _generalModel.PropertyChanged += OnPropertyGeneralModelChanged;
@@ -32,7 +31,7 @@ namespace fmg.core.img {
 
       private void OnPropertyGeneralModelChanged(object sender, PropertyChangedEventArgs ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, _generalModel));
-         if (nameof(ImageModel.Size) == ev.PropertyName) {
+         if (nameof(IImageModel.Size) == ev.PropertyName) {
             if (ev is PropertyChangedExEventArgs<SizeDouble> evEx)
                RecalcPadding(evEx.OldValue);
             else
@@ -61,11 +60,6 @@ namespace fmg.core.img {
          set { _notifier.SetProperty(ref _layers, value); }
       }
 
-      public bool Rotate {
-         get { return _rotate; }
-         set { _notifier.SetProperty(ref _rotate, value); }
-      }
-
       /// <summary> inside padding </summary>
       public BoundDouble Padding{
          get {
@@ -89,7 +83,7 @@ namespace fmg.core.img {
                                  size.Height / 2,
                                  _generalModel.Padding.Right,
                                  _generalModel.Padding.Bottom)
-               : ImageModel.RecalcPadding(_padding, size, old);
+               : AnimatedImageModel.RecalcPadding(_padding, size, old);
          _notifier.SetProperty(ref _padding, paddingNew, nameof(this.Padding));
       }
 
@@ -113,12 +107,12 @@ namespace fmg.core.img {
                                  Size.Width - pad.LeftAndRight,
                                  Size.Height - pad.TopAndBottom); ;
          double penWidth = Math.Max(1, (horizontal ? rc.Height : rc.Width) / (2.0 * layers));
-         double rotateAngle = Rotate ? _generalModel.RotateAngle : 0;
+         double rotateAngle = _generalModel.RotateAngle;
          double stepAngle = 360.0 / layers;
 
          return Enumerable.Range(0, layers)
             .Select(layerNum => {
-               double layerAlignmentAngle = ImageModel.FixAngle(layerNum * stepAngle + rotateAngle);
+               double layerAlignmentAngle = AnimatedImageModel.FixAngle(layerNum * stepAngle + rotateAngle);
                double offsetTop = !horizontal ? 0 : layerAlignmentAngle * rc.Height / 360;
                double offsetLeft = horizontal ? 0 : layerAlignmentAngle * rc.Width / 360;
                PointDouble start = new PointDouble(rc.Left() + offsetLeft,

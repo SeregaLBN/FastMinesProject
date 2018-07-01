@@ -6,7 +6,7 @@ using fmg.common.notyfier;
 
 namespace fmg.core.img {
 
-   public static class ImageModelConsts {
+   public static class AnimatedImageModelConsts {
 
       public static readonly Color DefaultBkColor         = Color.DarkOrange;
       public static readonly Color DefaultForegroundColor = Color.Orchid; // Color.LightSeaGreen;
@@ -15,27 +15,34 @@ namespace fmg.core.img {
 
    }
 
-   /// <summary> MVC: model. Common image characteristics. </summary>
-   public abstract class ImageModel : IImageModel {
+   /// <summary> MVC: model. Common animated image characteristics. </summary>
+   public abstract class AnimatedImageModel : IAnimatedModel {
 
       /// <summary> width and height in pixel </summary>
-      private SizeDouble _size = new SizeDouble(ImageModelConsts.DefaultImageSize, ImageModelConsts.DefaultImageSize);
+      private SizeDouble _size = new SizeDouble(AnimatedImageModelConsts.DefaultImageSize, AnimatedImageModelConsts.DefaultImageSize);
       /// <summary> inside padding. Автоматически пропорционально регулирую при измениях размеров </summary>
-      private BoundDouble _padding = new BoundDouble(ImageModelConsts.DefaultPadding);
-      private Color _foregroundColor = ImageModelConsts.DefaultForegroundColor;
+      private BoundDouble _padding = new BoundDouble(AnimatedImageModelConsts.DefaultPadding);
+      private Color _foregroundColor = AnimatedImageModelConsts.DefaultForegroundColor;
       /// <summary> background fill color </summary>
-      private Color _backgroundColor = ImageModelConsts.DefaultBkColor;
+      private Color _backgroundColor = AnimatedImageModelConsts.DefaultBkColor;
       private Color _borderColor = Color.Maroon.Darker(0.5);
       private double _borderWidth = 3;
       /// <summary> 0° .. +360° </summary>
       private double _rotateAngle;
 
+      /** animation of polar lights */
+      private bool _polarLights = true;
+      /** animation direction (example: clockwise or counterclockwise for simple rotation) */
+      private bool _animeDirection = true;
+      private readonly AnimatedInnerModel _innerModel = new AnimatedInnerModel();
+
       protected bool Disposed { get; private set; }
       public event PropertyChangedEventHandler PropertyChanged;
       protected readonly NotifyPropertyChanged _notifier;
 
-      public ImageModel() {
+      public AnimatedImageModel() {
          _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+         _innerModel.PropertyChanged += OnInnerModelPropertyChanged;
       }
 
       /// <summary> width and height in pixel </summary>
@@ -116,8 +123,46 @@ namespace fmg.core.img {
                  :             value;
       }
 
+      public bool Animated {
+         get { return _innerModel.Animated; }
+         set { _innerModel.Animated = value; }
+      }
+
+      /// <summary> Overall animation period (in milliseconds) </summary>
+      public long AnimatePeriod {
+         get { return _innerModel.AnimatePeriod; }
+         set { _innerModel.AnimatePeriod = value; }
+      }
+
+      /// <summary> Total frames of the animated period </summary>
+      public int TotalFrames {
+         get { return _innerModel.TotalFrames; }
+         set { _innerModel.TotalFrames = value; }
+      }
+
+      public int CurrentFrame {
+         get { return _innerModel.CurrentFrame; }
+         set { _innerModel.CurrentFrame = value; }
+      }
+
+      public bool PolarLights {
+         get { return _polarLights; }
+         set { _notifier.SetProperty(ref _polarLights, value); }
+      }
+
+      public bool AnimeDirection {
+         get { return _animeDirection; }
+         set { _notifier.SetProperty(ref _animeDirection, value); }
+      }
+
+      protected void OnInnerModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         // refire
+         _notifier.OnPropertyChanged(ev);
+      }
+
       // <summary>  Dispose managed resources </summary>/
       protected virtual void Disposing() {
+         _innerModel.PropertyChanged -= OnInnerModelPropertyChanged;
          _notifier.Dispose();
       }
 

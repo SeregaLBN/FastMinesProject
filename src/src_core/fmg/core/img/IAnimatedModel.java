@@ -2,7 +2,7 @@ package fmg.core.img;
 
 /**
  * Image MVC: model
- * Model of image data/properties/characteristics
+ * Model of animated image data/properties/characteristics
  */
 public interface IAnimatedModel extends IImageModel {
 

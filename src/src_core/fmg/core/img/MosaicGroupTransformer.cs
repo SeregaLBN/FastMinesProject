@@ -6,14 +6,14 @@ namespace fmg.core.img {
    /// <summary> Transforming of {@link MosaicGroupModel} </summary>
    public class MosaicGroupTransformer : IModelTransformer {
 
-      public void Execute(int currentFrame, int totalFrames, IImageModel model) {
+      public void Execute(IAnimatedModel model) {
          MosaicGroupModel m = model as MosaicGroupModel;
          if (m == null)
             throw new Exception("Illegal usage transformer");
 
          if (MosaicGroupModel.varMosaicGroupAsValueOthers1 && (m.MosaicGroup == EMosaicGroup.eOthers)) {
             bool castling = false;
-            double rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
+            double rotateAngleDelta = 360.0 / m.TotalFrames; // 360° / TotalFrames
             if (!m.AnimeDirection)
                rotateAngleDelta = -rotateAngleDelta;
             double incrementSpeedAngle = m.IncrementSpeedAngle + 3*rotateAngleDelta;

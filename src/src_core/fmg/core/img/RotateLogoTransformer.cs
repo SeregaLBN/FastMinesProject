@@ -7,7 +7,7 @@ namespace fmg.core.img {
    /// <summary> Transforming of logo rays </summary>
    public class RotateLogoTransformer : IModelTransformer {
 
-      public void Execute(int currentFrame, int totalFrames, IImageModel model) {
+      public void Execute(IAnimatedModel model) {
          LogoModel lm = model as LogoModel;
          if (lm == null)
             throw new Exception("Illegal usage transformer");

@@ -118,8 +118,8 @@ namespace fmg.core.img {
 
       protected void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          switch (ev.PropertyName) {
-         case nameof(IImageModel.Size):
-         case nameof(ImageModel.Padding):
+         case nameof(this.Size):
+         case nameof(this.Padding):
             _rays.Clear();
             _inn.Clear();
             _oct.Clear();

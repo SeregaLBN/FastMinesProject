@@ -20,27 +20,29 @@ namespace fmg.core.img {
          this.titlePrefix = titlePrefix;
       }
 
-      public void ApplyRandom<TImage, TImageView, TImageModel>(IImageController<TImage, TImageView, TImageModel> ctrller, bool testTransparent)
+      public void ApplyRandom<TImage, TImageView, TAImageView, TImageModel, TAnimatedModel>(IImageController<TImage, TImageView, TImageModel> ctrller, bool testTransparent)
          where TImage : class
          where TImageView : IImageView<TImage, TImageModel>
+         where TAImageView : IImageView<TImage, TAnimatedModel>
          where TImageModel : IImageModel
+         where TAnimatedModel : IAnimatedModel
       {
          testTransparent = testTransparent || Bl;
 
          TImageModel model = ctrller.Model;
 
-         if (ctrller is AnimatedImgController<TImage, TImageView, TImageModel>) {
-            var aCtrller = (AnimatedImgController<TImage, TImageView, TImageModel>)ctrller;
-            aCtrller.Animated = Bl || Bl;
-            if (aCtrller.Animated) {
-               aCtrller.AnimatePeriod = 1000 + R(2000);
-               aCtrller.TotalFrames = 40 + R(20);
-
-               if (model is AnimatedImageModel) {
-                  aCtrller.UseRotateTransforming(Bl);
-                  aCtrller.UsePolarLightFgTransforming(Bl);
-                  aCtrller.AddModelTransformer(new PolarLightBkTransformer());
-               }
+         if (model is IAnimatedModel am) {
+            am.Animated = Bl || Bl;
+            if (am.Animated) {
+               am.AnimatePeriod = 1000 + R(2000);
+               am.TotalFrames = 40 + R(20);
+            }
+         }
+         if (ctrller is AnimatedImgController<TImage, TAImageView, TAnimatedModel> aCtrller) {
+            if (aCtrller.Model.Animated) {
+               aCtrller.UseRotateTransforming(Bl);
+               aCtrller.UsePolarLightFgTransforming(Bl);
+               aCtrller.AddModelTransformer(new PolarLightBkTransformer());
             }
          }
 
@@ -49,37 +51,34 @@ namespace fmg.core.img {
          if (testTransparent)
             bkClr.A = (byte)(50 + R(10));
 
-         if (model is ImageModel) {
-            ImageModel ip = model as ImageModel;
+         if (model is AnimatedImageModel) {
+            AnimatedImageModel aim = model as AnimatedImageModel;
 
-            ip.BorderWidth = R(3);
+            aim.BorderWidth = R(3);
 
-            double pad = Math.Min(ip.Size.Height/3, ip.Size.Width/3);
-            ip.SetPadding(-pad/4 + R((int)pad));
+            double pad = Math.Min(aim.Size.Height/3, aim.Size.Width/3);
+            aim.SetPadding(-pad/4 + R((int)pad));
 
-            ip.BackgroundColor = bkClr;
+            aim.BackgroundColor = bkClr;
 
-            ip.ForegroundColor = Color.RandomColor();//.brighter()
+            aim.ForegroundColor = Color.RandomColor();//.brighter()
             if (testTransparent) {
                // test transparent
-               Color clr = ip.ForegroundColor;
-               if ((ip.BorderWidth > 0) && (R(4) == 0)) {
+               Color clr = aim.ForegroundColor;
+               if ((aim.BorderWidth > 0) && (R(4) == 0)) {
                   clr.A = Color.Transparent.A;
                } else {
                   clr.A = (byte)(150 + R(255-150));
                }
-               ip.ForegroundColor = clr;
+               aim.ForegroundColor = clr;
             }
 
-            if (model is AnimatedImageModel) {
-               AnimatedImageModel aim = model as AnimatedImageModel;
-               aim.PolarLights = Bl;
-               aim.AnimeDirection = Bl;
+            aim.PolarLights = Bl;
+            aim.AnimeDirection = Bl;
 
-               if (model is LogoModel) {
-                  LogoModel lm = model as LogoModel;
-                  lm.UseGradient = Bl;
-               }
+            if (model is LogoModel) {
+               LogoModel lm = model as LogoModel;
+               lm.UseGradient = Bl;
             }
          }
          if (model is MosaicGameModel) {

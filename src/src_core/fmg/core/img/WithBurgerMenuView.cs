@@ -7,7 +7,7 @@ namespace fmg.core.img {
    /// <typeparam name="TImageModel">general model of image (not burger menu model)</typeparam>
    public abstract class WithBurgerMenuView<TImage, TImageModel> : ImageView<TImage, TImageModel>
       where TImage : class
-      where TImageModel : ImageModel
+      where TImageModel : AnimatedImageModel
    {
 
       /// <summary> the second model of image </summary>

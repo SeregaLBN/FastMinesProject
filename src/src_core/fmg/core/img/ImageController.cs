@@ -13,7 +13,7 @@ namespace fmg.core.img {
    /// <typeparam name="TImageView">image view</typeparam>
    /// <typeparam name="TImageModel">image model</typeparam>
    public abstract class ImageController<TImage, TImageView, TImageModel>
-                  : IImageController<TImage, TImageView, TImageModel>
+                      : IImageController<TImage, TImageView, TImageModel>
       where TImage : class
       where TImageView : IImageView<TImage, TImageModel>
       where TImageModel : IImageModel

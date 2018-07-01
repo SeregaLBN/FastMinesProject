@@ -6,7 +6,7 @@ namespace fmg.core.img {
    /// <summary> Transforming of foreground color (rotation of foreground color) </summary>
    public class PolarLightFgTransformer : IModelTransformer {
 
-      public void Execute(int currentFrame, int totalFrames, IImageModel model) {
+      public void Execute(IAnimatedModel model) {
          var am = model as AnimatedImageModel;
          if (am == null)
             throw new Exception("Illegal usage transformer");
@@ -14,7 +14,7 @@ namespace fmg.core.img {
          if (!am.PolarLights)
             return;
 
-         double rotateAngleDelta = 360.0 / totalFrames; // 360° / TotalFrames
+         double rotateAngleDelta = 360.0 / am.TotalFrames; // 360° / TotalFrames
          if (!am.AnimeDirection)
             rotateAngleDelta = -rotateAngleDelta;
 
