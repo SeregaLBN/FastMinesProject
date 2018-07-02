@@ -1,20 +1,20 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Reactive.Linq;
+using fmg.common.ui;
 using fmg.core.img;
 
 namespace fmg.uwp.draw.img {
 
    public class Animator : IAnimator, IDisposable {
 
-      private static class SubscribeInfo {
+      private class SubscribeInfo {
          public bool active = true;    // enabled?
-         public long startTime = new Date().getTime(); // start time of subscribe
-         public Consumer<Long /* time from the beginning of the subscription */> callback;
+         public DateTime startTime = DateTime.Now; // start time of subscribe
+         public Action<TimeSpan /* time from the beginning of the subscription */> callback;
       }
-      private final ITimer _timer;
-      private final Map<Object /* subscriber */, SubscribeInfo> _subscribers;
+      private readonly ITimer _timer;
+      private readonly IDictionary<object /* subscriber */, SubscribeInfo> _subscribers;
 
       private static Animator _singleton;
       public static Animator getSingleton() { // not synchronized. since should work only in the thread of the UI.
@@ -24,20 +24,19 @@ namespace fmg.uwp.draw.img {
       }
 
       private Animator() {
-         _subscribers = new HashMap<>();
+         _subscribers = new Dictionary<object, SubscribeInfo>();
          _timer = new Timer();
          _timer.setInterval(1000 / 60); // The number of frames per second
-         _timer.setCallback(()-> {
+         _timer.setCallback(() => {
             long currentTime = new Date().getTime();
-            _subscribers.forEach((k, v)-> {
+            _subscribers.forEach((k, v) => {
                if (v.active)
                   v.callback.accept(currentTime - v.startTime);
             });
          });
       }
 
-      @Override
-      public void subscribe(Object subscriber, Consumer<Long /* time from start subscribe */> subscriberCallbackMethod) {
+      public void Subscribe(object subscriber, Action<TimeSpan /* time from start subscribe */> subscriberCallbackMethod) {
          SubscribeInfo info = _subscribers.get(subscriber);
          if (info == null) {
             info = new SubscribeInfo();
@@ -49,8 +48,7 @@ namespace fmg.uwp.draw.img {
          }
       }
 
-      @Override
-      public void pause(Object subscriber) {
+      public void Pause(object subscriber) {
          SubscribeInfo info = _subscribers.get(subscriber);
          if (info == null)
             return;
@@ -58,16 +56,14 @@ namespace fmg.uwp.draw.img {
          info.startTime = new Date().getTime() - info.startTime; // set of pause delta time
       }
 
-      @Override
-      public void unsubscribe(Object subscriber) {
+      public void Unsubscribe(object subscriber) {
          _subscribers.remove(subscriber);
       }
 
-      @Override
-      public void close() {
+      public void Dispose() {
          _timer.setCallback(null);
          _timer.close();
-         _subscribers.clear();
+         _subscribers.Clear();
       }
 
    }

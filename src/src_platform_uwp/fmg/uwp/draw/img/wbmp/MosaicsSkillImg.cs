@@ -7,7 +7,7 @@ using fmg.core.types;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.draw.img.wbmp {
-
+#if false
    /// <summary> Representable <see cref="ESkillLevel"/> as image.
    /// <br/>
    /// WriteableBitmap impl
@@ -15,7 +15,7 @@ namespace fmg.uwp.draw.img.wbmp {
    public class MosaicsSkillImg : AMosaicsSkillImg<WriteableBitmap> {
 
       static MosaicsSkillImg() {
-         StaticInitilizer.Init();
+         StaticInitializer.Init();
       }
 
       /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
@@ -62,5 +62,5 @@ namespace fmg.uwp.draw.img.wbmp {
       }
 
    }
-
+#endif
 }

@@ -8,7 +8,6 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.mosaic;
-using fmg.core.mosaic.draw;
 using fmg.core.mosaic.cells;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.mosaic.wbmp;
@@ -16,14 +15,15 @@ using fmg.uwp.utils;
 
 namespace fmg.uwp.draw.img.wbmp {
 
+#if false
    /// <summary> Representable <see cref="EMosaic"/> as image.
    /// <br/>
    /// WriteableBitmap impl
    /// </summary>
-   public class MosaicsImg : AMosaicsImg<WriteableBitmap> {
+   public class MosaicsImg : AMosaicsViewWBmp Img<WriteableBitmap> {
 
       static MosaicsImg() {
-         StaticInitilizer.Init();
+         StaticInitializer.Init();
       }
 
       private const bool RandomCellBkColor = true;
@@ -200,7 +200,7 @@ namespace fmg.uwp.draw.img.wbmp {
       }
 
       protected override WriteableBitmap CreateImage() {
-         return BitmapFactory.New(Size.Width, Size.Height); // new WriteableBitmap(w, h); // 
+         return BitmapFactory.New(Size.Width, Size.Height); // new WriteableBitmap(w, h); //
       }
 
       protected override void DrawBody() {
@@ -216,9 +216,9 @@ namespace fmg.uwp.draw.img.wbmp {
          View.Paintable = null;
       }
 
-      #region PART ERotateMode.FullMatrix
+#region PART ERotateMode.FullMatrix
 
-      /// <summary> Return painted mosaic bitmap 
+      /// <summary> Return painted mosaic bitmap
       /// if (!OnlySyncDraw) {
       ///   Сама картинка возвращается сразу.
       ///   Но вот её отрисовка - в фоне.
@@ -231,9 +231,9 @@ namespace fmg.uwp.draw.img.wbmp {
          View.Invalidate(Matrix);
       }
 
-      #endregion
+#endregion
 
-      #region PART ERotateMode.SomeCells
+#region PART ERotateMode.SomeCells
 
       private const bool UseCache = true;
 
@@ -330,7 +330,7 @@ namespace fmg.uwp.draw.img.wbmp {
          }
       }
 
-      #endregion
+#endregion
 
       protected override void Dispose(bool disposing) {
          if (Disposed)
@@ -344,4 +344,5 @@ namespace fmg.uwp.draw.img.wbmp {
 
    }
 
+#endif
 }

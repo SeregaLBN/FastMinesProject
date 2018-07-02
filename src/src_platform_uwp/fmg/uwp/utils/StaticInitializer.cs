@@ -7,11 +7,11 @@ using fmg.core.mosaic;
 
 namespace fmg.uwp.utils {
 
-   public static class StaticInitilizer {
+   public static class StaticInitializer {
 
-      static StaticInitilizer() {
+      static StaticInitializer() {
          Factory.DEFERR_INVOKER = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
-         Factory.GET_ANIMATOR = Animator.getSingleton;
+         Factory.GET_ANIMATOR = fmg.uwp.draw.img.Animator.getSingleton();
          Factory.TIMER_CREATOR = () => new Timer();
          try {
             var uiSettings = new UISettings();

@@ -2,6 +2,7 @@ using System;
 
 namespace fmg.common.ui {
 
+   /// <summary> Timer interface. Pulsates in the UI thread </summary>
    public interface ITimer : IDisposable {
 
       /// <summary> in miliseconds </summary>

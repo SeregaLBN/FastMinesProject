@@ -1,5 +1,6 @@
 package fmg.common.ui;
 
+/** Timer interface. Pulsates in the UI thread. */
 public interface ITimer extends AutoCloseable {
 
    /** milliseconds */

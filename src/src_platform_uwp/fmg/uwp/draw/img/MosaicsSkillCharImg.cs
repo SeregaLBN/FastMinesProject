@@ -2,6 +2,7 @@ using fmg.core.types;
 
 namespace fmg.uwp.draw.img {
 
+#if false
    /// <summary> representable <see cref="ESkillLevel"/> as CHAR </summary>
    public class MosaicsSkillCharImg : core.img.ImageModel<string> {
 
@@ -22,4 +23,5 @@ namespace fmg.uwp.draw.img {
       }
 
    }
+#endif
 }

@@ -6,12 +6,12 @@ using fmg.core.img;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.draw.img.wbmp {
-
+#if false
    /// <summary> main logos image </summary>
    public class Logo : ALogo<WriteableBitmap> {
 
       static Logo() {
-         StaticInitilizer.Init();
+         StaticInitializer.Init();
       }
 
       protected override WriteableBitmap CreateImage() {
@@ -63,4 +63,5 @@ namespace fmg.uwp.draw.img.wbmp {
       }
 
    }
+#endif
 }

@@ -16,7 +16,7 @@ namespace fmg.uwp.draw.img.win2d {
    public static class Flag {
 
       static Flag() {
-         StaticInitilizer.Init();
+         StaticInitializer.Init();
       }
 
       /**

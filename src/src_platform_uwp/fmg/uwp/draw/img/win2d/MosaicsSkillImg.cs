@@ -23,7 +23,7 @@ namespace fmg.uwp.draw.img.win2d {
          where TImage : DependencyObject, ICanvasResourceCreator
       {
          static CommonImpl() {
-            StaticInitilizer.Init();
+            StaticInitializer.Init();
          }
 
          protected readonly ICanvasResourceCreator _rc;

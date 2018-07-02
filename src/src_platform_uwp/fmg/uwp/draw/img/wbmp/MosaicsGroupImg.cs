@@ -7,7 +7,7 @@ using fmg.core.img;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.draw.img.wbmp {
-
+#if false
    /// <summary> Representable <see cref="EMosaicGroup"/> as image.
    /// <br/>
    /// WriteableBitmap impl
@@ -15,7 +15,7 @@ namespace fmg.uwp.draw.img.wbmp {
    public class MosaicsGroupImg : AMosaicsGroupImg<WriteableBitmap> {
 
       static MosaicsGroupImg() {
-         StaticInitilizer.Init();
+         StaticInitializer.Init();
       }
 
       /// <param name="skill">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
@@ -64,5 +64,5 @@ namespace fmg.uwp.draw.img.wbmp {
          }
 
    }
-
+#endif
 }

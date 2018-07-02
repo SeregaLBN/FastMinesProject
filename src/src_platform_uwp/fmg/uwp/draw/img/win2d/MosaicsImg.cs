@@ -32,7 +32,7 @@ namespace fmg.uwp.draw.img.win2d {
          private MosaicImgView _view;
 
          static AMosaicImgWin2D() {
-            StaticInitilizer.Init();
+            StaticInitializer.Init();
          }
 
          protected AMosaicImgWin2D(ICanvasResourceCreator resourceCreator) {

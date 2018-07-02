@@ -24,8 +24,11 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\MosaicsSkillCharImg.cs">
       <Link>src_fmg.uwp\draw\img\MosaicsSkillCharImg.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\StaticInitilizer.cs">
-      <Link>src_fmg.uwp\utils\StaticInitilizer.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\Animator.cs">
+      <Link>src_fmg.uwp\draw\img\Animator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\StaticInitializer.cs">
+      <Link>src_fmg.uwp\utils\StaticInitializer.cs</Link>
     </Compile>
   </ItemGroup>
 </Project>

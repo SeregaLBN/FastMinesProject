@@ -163,7 +163,7 @@ public abstract class AMosaicViewJfx<TImage,
             { // 2.1. paint component
 
                // 2.1.1. paint background
-               //if (isIconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
+               //if (!isIconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
                {
                   Color bkClrCell = cell.getBackgroundFillColor(bkFill.getMode(),
                                                                 bkClr,

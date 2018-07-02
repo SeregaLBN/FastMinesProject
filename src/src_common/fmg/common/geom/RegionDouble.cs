@@ -92,12 +92,12 @@ namespace fmg.common.geom {
 
    public static class RegionDoubleExt {
 
-      public static IEnumerable<int> RegionDoubleAsXyxyxySequence(this RegionDouble region, BoundDouble padding, bool firstToLast) {
-         var res = region.Points.Select(p => new[] { p.X + padding.Left, p.Y + padding.Top }).SelectMany(x => x);
+      public static IEnumerable<int> RegionDoubleAsXyxyxySequence(this RegionDouble region, SizeDouble offset, bool firstToLast) {
+         var res = region.Points.Select(p => new[] { p.X + offset.Width, p.Y + offset.Height }).SelectMany(x => x);
          if (firstToLast) {
             // Add the first point also at the end of the array if the line should be closed.
             var p0 = region.GetPoint(0);
-            res = res.Concat(new[] { p0.X + padding.Left, p0.Y + padding.Top });
+            res = res.Concat(new[] { p0.X + offset.Width, p0.Y + offset.Height });
          }
          return res.Select(x => (int)x);
       }

@@ -116,7 +116,7 @@ namespace fmg.core.mosaic.cells {
       protected int direction;
 
       /// <summary>вписанный в фигуру квадрат - область в которую выводится изображение/текст</summary>
-      public abstract RectDouble getRcInner(int borderWidth);
+      public abstract RectDouble getRcInner(double borderWidth);
       /// <summary>вернёт прямоугольник в который вписана фигура ячейки</summary>
       public RectDouble getRcOuter() {
          var rcOuter = region.GetBounds();
