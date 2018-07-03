@@ -4,50 +4,90 @@
      onload="init(evt)">
 <script type="text/ecmascript"><![CDATA[
 
-   //////////////////////////////////////
-   //
-   // execute in latest Firefox or Chrome
-   // see console output
-   //
-   //////////////////////////////////////
+//////////////////////////////////////
+//
+// execute in latest Firefox or Chrome
+// see console output
+//
+//////////////////////////////////////
 
 /** common settings this SVG */
-var Settings;
+var Settings = { };
 Promise.resolve().then(function() {
-   var randomSkill = (function() {
-         switch (random(6)) {
-         case 0: return ESkillLevel.eBeginner;
-         case 1: return ESkillLevel.eAmateur ;
-         case 2: return ESkillLevel.eProfi   ;
-         case 3: return ESkillLevel.eCrazy   ;
-         case 4: return ESkillLevel.eCustom  ;
-         case 5: return null;
-         default: throw new Error('Bad value');
-         }
-      })();
    Settings = {
       width: 100,  // view width
       height: 100, // view height
       pad: 5, // padding
 
-      /** ESkillLevel */
-      mosaicSkill: randomSkill,
-
-      clockwise: (Math.random() < 0.5), // ↻ or ↺
+      animated: true,
+      clockwise: true, // ↻ or ↺
       rotatePeriod: 2000, // in msec
-
       /** the number of parts of which the one turn */
-      iterations: (randomSkill==null)
-            ? 120 // что бы при calcMode="discrete" не 'дёргалось'
-            : 30,
+      iterations: 100,
 
       borderWidth: 0.7,
-      backgroundColor : Color.RandomColor.brighter(0.4),
-      foregroundAlpha: 150 + random(255-150) // 200  // 0..255 - foreground alpha-chanel color
+      backgroundColor : Color.Transparent,
+      foregroundAlpha: 200,  // 0..255 - foreground alpha-chanel color
+
+      /** ESkillLevel */
+      mosaicSkill: null, // ESkillLevel.eCustom
+
+      showBurgerMenu: true,
+
+      useGradientFill: false, // for Logo
+
+      useRotateTransforming: true,
+      usePolarLightFgTransforming: true,
+
+
+      none: undefined // last
    };
+
+   Settings.useRandom = true;
+   if (Settings.useRandom) {
+
+      var b = function() { return (Math.random() < 0.5); }; // random boolean
+
+      Settings.width = Settings.height = 100 + random(100);
+      Settings.pad = 5 + random(10);
+      Settings.borderWidth = !random(3) ? 0: (0.3 + 2 * Math.random()),
+      Settings.backgroundColor = !random(5) ? Color.Transparent : Color.RandomColor.brighter(0.4),
+      Settings.foregroundAlpha = 150 + random(255-150), // 200  // 0..255 - foreground alpha-chanel color
+      Settings.mosaicSkill = (function() {
+            switch (random(6)) {
+            case 0: return ESkillLevel.eBeginner;
+            case 1: return ESkillLevel.eAmateur ;
+            case 2: return ESkillLevel.eProfi   ;
+            case 3: return ESkillLevel.eCrazy   ;
+            case 4: return ESkillLevel.eCustom  ;
+            case 5: return null;
+            default: throw new Error('Bad value');
+            }
+         })();
+      Settings.showBurgerMenu = b();
+      // Settings.useGradientFill = b();
+
+      //Settings.animated = b();
+      if (Settings.animated) {
+         Settings.clockwise = b();
+         Settings.rotatePeriod = 1500 + random(2500);
+         Settings.iterations = (Settings.mosaicSkill==null)
+            ? 120 // что бы при calcMode="discrete" не 'дёргалось'
+            : 30;
+
+         Settings.useRotateTransforming = b();
+         if (!Settings.useRotateTransforming)
+            Settings.usePolarLightFgTransforming = true; // при анимації мусить бути хоча б один трансформер, інакше не буде анімації
+         else
+            Settings.usePolarLightFgTransforming = b();
+      }
+   }
+
 });
 
-var random = function(upDiapazon) {
+const svgNS = 'http://www.w3.org/2000/svg';
+
+function random(upDiapazon) {
    return Math.floor(Math.random() * upDiapazon);
 }
 function isNumeric(n) {
@@ -72,9 +112,26 @@ function toInt (value) {
 //   var intvalue = Math.trunc( floatvalue ); // `Math.trunc` was added in ECMAScript 6
 }
 
+// setTimeout as Promise
+var onTimer = function(milliseconds) {
+   return new Promise(function(resolve, reject) {
+      var timerId = setTimeout( function() { resolve(timerId); }, milliseconds);
+   })
+   .then(function(timerId) {
+      clearTimeout(timerId);
+   });
+};
+
 
 /** RGBA color */
 class Color {
+
+   static get Transparent() { return new Color(0, 255,255,255); }
+   static get Orchid     () { return new Color(0xFFDA70D6); }
+   static get DarkOrange () { return new Color(0xFFFF8C00); }
+   static get Maroon     () { return new Color(0xFF800000); }
+   static get Gray       () { return new Color(0xFF808080); }
+
    static /*int*/ check(/*int*/ v, /*String*/ name) {
       if (v<0 || v>255) throw new Error("Bad "+name+" argument");
       return v;
@@ -220,10 +277,40 @@ class HSV {
 //    /** Alpha chanel: 0..255 */
 //    a: 0xFF,
 
-   constructor(/*Color*/ clr) {
+   constructor0() {
+      this.h = 0;
+      this.s = 100;
+      this.v = 100;
+      this.a = 0xFF;
+   }
+   constructor3(/*int*/ h, /*int*/ s, /*int*/ v) {
+      this.h = h;
+      this.s = s;
+      this.v = v;
+      this.a = 0xFF;
+
+      this.fix();
+   }
+   constructor4(/*int*/ h, /*int*/ s, /*int*/ v, /*int*/ a) {
+      this.h = h;
+      this.s = s;
+      this.v = v;
+      this.a = Color.checkA(a);
+
+      this.fix();
+   }
+   constructor1(/*Color*/ clr) {
       this.a = clr.a;
       this.fromColorDouble(clr.r, clr.g, clr.b);
-      return this;
+   }
+   constructor(args/*, ...*/) {
+      switch (arguments.length) {
+      case 0: return this.constructor0();
+      case 1: return this.constructor1(arguments[0]);
+      case 3: return this.constructor3(arguments[0], arguments[1], arguments[2]);
+      case 4: return this.constructor4(arguments[0], arguments[1], arguments[2], arguments[3]);
+      }
+      throw new Error();
    }
 
    addHue(/*double*/ addonH) {
@@ -296,14 +383,14 @@ class HSV {
       return [ r, g, b ];
    }
 
-   // /** Update HSV to grayscale */
-   // grayscale: function () {
-   //    double[] rgb = this.toColorDouble();
-   //    double r = rgb[0] * 0.2126;
-   //    double g = rgb[1] * 0.7152;
-   //    double b = rgb[2] * 0.0722;
-   //    fromColorDouble(r, g, b);
-   // },
+   /** Update HSV to grayscale */
+   grayscale() {
+      var rgb = this.toColorDouble();
+      var r = rgb[0] * 0.2126;
+      var g = rgb[1] * 0.7152;
+      var b = rgb[2] * 0.0722;
+      this.fromColorDouble(r, g, b);
+   }
 
    fix() {
       if (this.h < 0) {
@@ -376,7 +463,28 @@ const FigureHelper = {
          polygon[i*2+1] = pointsInternal[i];
       }
       return polygon;
+   },
+
+   /** rotate around the center coordinates. !!Modify existed collection!!
+    * @param coords coordinates for transformation
+    * @param angle angle of rotation: -360° .. 0° .. +360°
+    * @param center центр фигуры
+    */
+    rotateCollection(/*TCollection*/ coords, /*double*/ angle, /*Point*/ center) {
+      FigureHelper.angle = toRadian(angle);
+      var cos = Math.cos(angle);
+      var sin = Math.sin(angle);
+      coords.forEach(function(p) {
+         p.x -= center.x;
+         p.y -= center.y;
+         var x = (p.x * cos) - (p.y * sin);
+         var y = (p.x * sin) + (p.y * cos);
+         p.x = x + center.x;
+         p.y = y + center.y;
+      });
+      return coords;
    }
+
 };
 
 const /* enum */ ESkillLevel = {
@@ -561,10 +669,10 @@ class AnimatedImageModel {
       var defaultPadding = defaultImageSize * 0.05; // 5%
       /** inside padding. Автоматически пропорционально регулирую при измениях размеров */
       this._padding = new Bound(defaultPadding);
-      this._foregroundColor = new Color(0xFFDA70D6); // Color.Orchid
+      this._foregroundColor = Color.Orchid;
       /** background fill color */
-      this._backgroundColor = new Color(0xFFFF8C00); // Color.DarkOrange
-      this._borderColor = new Color(0xFF800000).darker(0.5); // Color.Maroon.darker(0.5);
+      this._backgroundColor = Color.DarkOrange;
+      this._borderColor = Color.Maroon.darker(0.5);
       this._borderWidth = 3;
       /** 0° .. +360° */
       this._rotateAngle = 0;
@@ -667,6 +775,116 @@ class AnimatedImageModel {
 
 }
 
+/** MVC: model for FastMines logo image */
+class LogoModel extends AnimatedImageModel {
+
+   static get /* enum */ ERotateMode() {
+      return {
+         /** rotate image */
+         classic: { ordinal: 0 },
+         /** rotate color Palette */
+         color  : { ordinal: 1 },
+         /** {@link #color} + {@link #classic} */
+         combi  : { ordinal: 2 }
+      };
+   }
+
+
+   constructor() {
+      super();
+      this._palette = [ new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100),
+                        new HSV(180, 100, 100), new HSV(225, 100, 100), new HSV(270, 100, 100), new HSV(315, 100, 100) ];
+      this._useGradient = false;
+      this._rotateMode = LogoModel.ERotateMode.combi;
+      /** owner rays points */
+      this._rays = [];
+      /** inner octahedron */
+      this._inn = [];
+      /** central octahedron */
+      this._oct = [];
+
+      this._backgroundColor = Color.Transparent;
+   }
+
+
+   get palette() { return this._palette; }
+
+   static toMineModel(/*LogoModel*/ m) {
+      m.useGradient = false;
+      m.palette.forEach(function(item) {
+         item.grayscale();
+      });
+
+   }
+
+   get useGradient() { return this._useGradient; }
+   set useGradient(/*bool*/ value) { this._useGradient = value; }
+
+   get rotateMode() { return this._rotateMode; }
+   set rotateMode(/*ERotateMode*/ value) { this._rotateMode = value; }
+
+   get zoomX() { return (this.size.width  - this.padding.leftAndRight) / 200.0; }
+   get zoomY() { return (this.size.height - this.padding.topAndBottom) / 200.0; }
+
+   get rays() {
+      if (this._rays.length == 0) {
+         var pl = this.padding.left;
+         var pt = this.padding.top;
+         var zx = this.zoomX;
+         var zy = this.zoomY;
+
+         this._rays.push(new Point(pl + 100.0000*zx, pt + 200.0000*zy));
+         this._rays.push(new Point(pl + 170.7107*zx, pt +  29.2893*zy));
+         this._rays.push(new Point(pl +   0.0000*zx, pt + 100.0000*zy));
+         this._rays.push(new Point(pl + 170.7107*zx, pt + 170.7107*zy));
+         this._rays.push(new Point(pl + 100.0000*zx, pt +   0.0000*zy));
+         this._rays.push(new Point(pl +  29.2893*zx, pt + 170.7107*zy));
+         this._rays.push(new Point(pl + 200.0000*zx, pt + 100.0000*zy));
+         this._rays.push(new Point(pl +  29.2893*zx, pt +  29.2893*zy));
+      }
+      return this._rays;
+   }
+
+   get inn() {
+      if (this._inn.length == 0) {
+         var pl = this.padding.left;
+         var pt = this.padding.top;
+         var zx = this.zoomX;
+         var zy = this.zoomY;
+
+         this._inn.push(new Point(pl + 100.0346*zx, pt + 141.4070*zy));
+         this._inn.push(new Point(pl + 129.3408*zx, pt +  70.7320*zy));
+         this._inn.push(new Point(pl +  58.5800*zx, pt + 100.0000*zy));
+         this._inn.push(new Point(pl + 129.2500*zx, pt + 129.2500*zy));
+         this._inn.push(new Point(pl +  99.9011*zx, pt +  58.5377*zy));
+         this._inn.push(new Point(pl +  70.7233*zx, pt + 129.3198*zy));
+         this._inn.push(new Point(pl + 141.4167*zx, pt + 100.0000*zy));
+         this._inn.push(new Point(pl +  70.7500*zx, pt +  70.7500*zy));
+      }
+      return this._inn;
+   }
+
+   get oct() {
+      if (this._oct.length == 0) {
+         var pl = this.padding.left;
+         var pt = this.padding.top;
+         var zx = this.zoomX;
+         var zy = this.zoomY;
+
+         this._oct.push(new Point(pl + 120.7053*zx, pt + 149.9897*zy));
+         this._oct.push(new Point(pl + 120.7269*zx, pt +  50.0007*zy));
+         this._oct.push(new Point(pl +  50.0034*zx, pt + 120.7137*zy));
+         this._oct.push(new Point(pl + 150.0000*zx, pt + 120.6950*zy));
+         this._oct.push(new Point(pl +  79.3120*zx, pt +  50.0007*zy));
+         this._oct.push(new Point(pl +  79.2624*zx, pt + 149.9727*zy));
+         this._oct.push(new Point(pl + 150.0000*zx, pt +  79.2737*zy));
+         this._oct.push(new Point(pl +  50.0034*zx, pt +  79.3093*zy));
+      }
+      return this._oct;
+   }
+
+}
+
 /** MVC: model of representable menu as horizontal or vertical lines */
 class BurgerMenuModel {
 
@@ -757,7 +975,7 @@ class BurgerMenuModel {
          var end   = new Point((horizontal ? rc.right : rc.left) + offsetLeft,
                                (horizontal ? rc.top : rc.bottom) + offsetTop);
 
-         var hsv = new HSV(new Color(0xFF808080)); // Color.Gray
+         var hsv = new HSV(Color.Gray);
          hsv.v *= Math.sin(layerNum*stepAngle / layers);
 
          var li = { // new LineInfo();
@@ -942,7 +1160,7 @@ class MosaicSkillModel extends AnimatedImageModel {
  **/
 class ImageView {
 
-   static get EInvalidate() {
+   static get /* enum */ EInvalidate() {
       return {
          needRedraw: { ordinal: 0 },
          redrawing : { ordinal: 1 },
@@ -998,6 +1216,214 @@ class ImageView {
 
 }
 
+/** Main logos image - base Logo image view implementation */
+class Logo extends ImageView {
+
+   constructor() {
+      super(new LogoModel());
+   }
+
+   drawIntoContext(/* DrawContext */ cnxt, /* own SVG */ svg, /* SVG document */ svgDoc) {
+      var lm = this.Model;
+      var m = lm;
+      var keyTime = m.currentFrame / m.totalFrames; // 0..1;
+      var duration  = lm.animatePeriod;
+      var backgroundColor = lm.backgroundColor;
+      var size = m.size;
+
+      if (!cnxt.background && !backgroundColor.isTransparent) { // fill background
+         // example: <rect x="0" y="0" width="100" height="100" fill="hsla(112.71, 50.95%, 82.35%, 1)" />
+         // один раз (самий перший за всі малювання) створюю ноду для фонової заливки
+         var rcNode = cnxt.background = svgDoc.createElementNS(svgNS, "rect");
+         rcNode.setAttributeNS(null, 'x'     , 0);
+         rcNode.setAttributeNS(null, 'y'     , 0);
+         rcNode.setAttributeNS(null, 'width' , size.width);
+         rcNode.setAttributeNS(null, 'height', size.height);
+         var bc = new HSV(backgroundColor);
+         rcNode.setAttributeNS(null, 'fill'  , 'hsla(' + round(bc.h, 2) + ', ' + round(bc.s, 2) + '%, ' + round(bc.v, 2) + '%, ' + round(bc.a/255.0, 2) + ')');
+         svg.appendChild(rcNode);
+      }
+
+      var rays = lm.rays;
+      var inn  = lm.inn;
+      var oct  = lm.oct;
+      var center = new Point(size.width/2.0, size.height/2.0);
+
+      var hsvPalette = lm.palette;
+      var palette = hsvPalette.map(function(hsv) { return hsv.toColor(); });
+
+      const useKeyTimes = false;
+
+      if (!cnxt.ownRays) {
+         cnxt.ownRays = [];
+         for (var i=0; i<8; ++i) {
+            var pathNode = svgDoc.createElementNS(svgNS, 'path');
+          //pathNode.setAttributeNS(null, 'fill-opacity'  , round(foregroundColor.a/255.0, 2));
+
+            if (m.animated) {
+               { // examples: <animate attributeName="d" dur="2000ms" repeatCount="indefinite" calcMode="linear" ... />
+                  var animateNodeD = svgDoc.createElementNS(svgNS, 'animate');
+                  animateNodeD.setAttributeNS(null, 'attributeName', 'd');
+                  animateNodeD.setAttributeNS(null, 'dur'          , duration + 'ms');
+                  animateNodeD.setAttributeNS(null, 'repeatCount'  , 'indefinite');
+                  if (!useKeyTimes)
+                     animateNodeD.setAttributeNS(null, 'calcMode'  , 'linear'); // discrete linear paced spline
+                  pathNode.appendChild(animateNodeD);
+               }
+
+               if (!m.useGradient) { // examples: <animate attributeName="fill" dur="2000ms" repeatCount="indefinite" calcMode="linear" ...>
+                  var animateNodeFill = svgDoc.createElementNS(svgNS, 'animate');
+                  animateNodeFill.setAttributeNS(null, 'attributeName', 'fill');
+                  animateNodeFill.setAttributeNS(null, 'dur'          , duration + 'ms');
+                  animateNodeFill.setAttributeNS(null, 'repeatCount'  , 'indefinite');
+                  if (!useKeyTimes)
+                     animateNodeFill.setAttributeNS(null, 'calcMode'  , 'linear'); // discrete linear paced spline
+                  pathNode.appendChild(animateNodeFill);
+               }
+            }
+
+            svg.appendChild(pathNode);
+            cnxt.ownRays.push(pathNode);
+         }
+      }
+
+      var addAttributeValue = MosaicSkillOrGroupView.addAttributeValue;
+
+      var setFill = function(/*Node*/ pathNode, /*Color*/ fillColor) {
+         var pathFillColor = '#' + fillColor.asHexString.substr(2);
+         if (!m.animated) {
+            pathNode.setAttributeNS(null, 'fill', pathFillColor);
+         } else {
+            var animateNodeFill = [...pathNode.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'fill'; });
+            addAttributeValue(animateNodeFill, 'values', pathFillColor);
+         }
+      };
+      var setGradientFill = function(/*Node*/ pathNode, /*Point*/ start, /*Color*/ startClr, /*Point*/ end, /*Color*/ endClr) {
+         // g.setFill(new LinearGradient(start.getX(), start.getY(),
+         //                            end  .getX(), end  .getY(),
+         //                            false,
+         //                            CycleMethod.NO_CYCLE,
+         //                            new Stop[] {
+         //                               new Stop(0, startClr),
+         //                               new Stop(1, endClr)
+         //                            }));
+      };
+
+      var fillPolygon = function(/*string*/ name, /*int*/ i, /*Point[]*/ ...polygon) {
+         // polygon = Array.prototype.slice.call(arguments, 2);
+
+         var pathNode = cnxt[name][i];
+
+         var pathD = 'M' + polygon.map(function(p) { return round(p.x, 2) + ' ' + round(p.y, 2); }).join(' L')  + ' Z';
+         if (!m.animated) {
+            pathNode.setAttributeNS(null, 'd', pathD);
+         } else {
+            var animateNodeD = [...pathNode.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'd'; });
+            { // shape coordinates
+               var addToValue = pathD;
+               var values = animateNodeD.getAttribute('values');
+               if (!values)
+                  values = addToValue;
+               else
+                  values += ';' + addToValue;
+               animateNodeD.setAttributeNS(null, 'values', values);
+            }
+
+            // time stamps
+            if (useKeyTimes) {
+               var keyTimesAddon = round(keyTime, 4);
+               {
+                  var keyTimes = animateNodeD.getAttribute('keyTimes');
+                  if (!keyTimes)
+                     keyTimes = keyTimesAddon;
+                  else
+                     keyTimes += ';' + keyTimesAddon;
+                  animateNodeD.setAttributeNS(null, 'keyTimes', keyTimes);
+               }
+            }
+         }
+
+         return pathNode;
+      };
+
+      // paint owner gradient rays
+      for (var i=0; i<8; i++) {
+         if (lm.useGradient) {
+            // rectangle gragient
+            setGradientFill(oct[(i+5)%8], palette[(i+0)%8], oct[i], palette[(i+3)%8]);
+            fillPolygon(rays[i], oct[i], inn[i], oct[(i+5)%8]);
+
+            // emulate triangle gradient (see BmpLogo.cpp C++ source code)
+            var clr = palette[(i+6)%8];
+            clr = new Color(clr.r, clr.g, clr.b, 0);
+            setGradientFill(center, clr, inn[(i+6)%8], palette[(i+3)%8]);
+            fillPolygon(rays[i], oct[i], inn[i]);
+            setGradientFill(center, clr, inn[(i+2)%8], palette[(i+0)%8]);
+            fillPolygon(rays[i], oct[(i+5)%8], inn[i]);
+         } else {
+            //g.
+            var shape = fillPolygon("ownRays", i, rays[i], oct[i], inn[i], oct[(i+5)%8]);
+            setFill(shape, hsvPalette[i].toColor().darker());
+         }
+      }
+
+      /*
+      // paint star perimeter
+      double zoomAverage = (lm.getZoomX() + lm.getZoomY())/2;
+      final double penWidth = Math.max(1, 2 * zoomAverage);
+      g.setLineWidth(penWidth);
+      for (int i=0; i<8; i++) {
+         Point2D p1 = rays[(i + 7)%8];
+         Point2D p2 = rays[i];
+         g.setStroke(palette[i].darker());
+         g.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+      }
+
+      // paint inner gradient triangles
+      for (int i=0; i<8; i++) {
+         if (lm.isUseGradient())
+            setGradientFill(g,
+                  inn[i], palette[(i+6)%8],
+                  center, ((i&1)==0) ? Color.BLACK : Color.WHITE);
+         else
+            g.setFill(((i & 1) == 0)
+                  ? Cast.toColor(hsvPalette[(i + 6)%8].toColor().brighter())
+                  : Cast.toColor(hsvPalette[(i + 6)%8].toColor().darker()));
+         fillPolygon(g, inn[(i + 0)%8], inn[(i + 3)%8], center);
+      }
+      /**/
+   }
+
+}
+
+/** Logo image view implementation over SVG */
+class LogoSvg extends Logo {
+
+   /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
+   constructor(/* own SVG */ svg, /* SVG document */ svgDoc) {
+      super();
+      this._drawContext = null;
+      this._svg    = svg;
+      this._svgDoc = svgDoc;
+   }
+
+   createImage() {
+      return this._drawContext = {
+         // nodes
+         background: null, // node example: <rect ...
+         ownRays   : null  // nodes examples: <path ...
+      };
+   }
+
+   drawBody() {
+      this.drawIntoContext(this._drawContext, this._svg, this._svgDoc);
+   }
+
+
+   getSvgContent() { return getSvgContent(this._svg); }
+
+}
+
 /**
  * MVC: view of images with burger menu (where burger menu its secondary model)
  * @param <TImage> - platform specific image
@@ -1029,7 +1455,6 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
    getCoords() { throw new Error("Abstract method"); }
 
    drawIntoContext(/* DrawContext */ cnxt, /* own SVG */ svg, /* SVG document */ svgDoc) {
-      //console.log("  drawIntoContext");
       var m = this.Model;
       var keyTime = m.currentFrame / m.totalFrames; // 0..1;
       var duration  = m.animatePeriod;
@@ -1038,8 +1463,7 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
       var backgroundColor = m.backgroundColor;
       var foregroundColor = m.foregroundColor;
       var skill = m.mosaicSkill;
-
-      const svgNS = 'http://www.w3.org/2000/svg';
+      var size = m.size;
 
       if (!cnxt.background && !backgroundColor.isTransparent) { // fill background
          // example: <rect x="0" y="0" width="100" height="100" fill="hsla(112.71, 50.95%, 82.35%, 1)" />
@@ -1047,8 +1471,8 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
          var rcNode = cnxt.background = svgDoc.createElementNS(svgNS, "rect");
          rcNode.setAttributeNS(null, 'x'     , 0);
          rcNode.setAttributeNS(null, 'y'     , 0);
-         rcNode.setAttributeNS(null, 'width' , m.size.width);
-         rcNode.setAttributeNS(null, 'height', m.size.height);
+         rcNode.setAttributeNS(null, 'width' , size.width);
+         rcNode.setAttributeNS(null, 'height', size.height);
          var bc = new HSV(backgroundColor);
          rcNode.setAttributeNS(null, 'fill'  , 'hsla(' + round(bc.h, 2) + ', ' + round(bc.s, 2) + '%, ' + round(bc.v, 2) + '%, ' + round(bc.a/255.0, 2) + ')');
          svg.appendChild(rcNode);
@@ -1056,7 +1480,7 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
 
       var shapes = this.getCoords();
 
-      const useKeyTimes = !false;
+      const useKeyTimes = false;
 
       if (!cnxt.shapes) {
          // один раз (самий перший за всі малювання) створюю ноди для фігур з піднодами анімацій
@@ -1068,23 +1492,25 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
           //pathNode.setAttributeNS(null, 'stroke-opacity', round(borderColor.a/255.0, 2));
             pathNode.setAttributeNS(null, 'fill-opacity'  , round(foregroundColor.a/255.0, 2));
 
-            { // examples: <animate attributeName="d" dur="2000ms" repeatCount="indefinite" calcMode="linear" ... />
-               var animateNodeD = svgDoc.createElementNS(svgNS, 'animate');
-               animateNodeD.setAttributeNS(null, 'attributeName', 'd');
-               animateNodeD.setAttributeNS(null, 'dur'          , duration + 'ms');
-               animateNodeD.setAttributeNS(null, 'repeatCount'  , 'indefinite');
-               if (!useKeyTimes)
-                  animateNodeD.setAttributeNS(null, "calcMode"  , (skill==null) ? "discrete" : "linear"); // discrete linear paced spline
-               pathNode.appendChild(animateNodeD);
-            }
-            { // examples: <animate attributeName="fill" dur="2000ms" repeatCount="indefinite" calcMode="linear" ...>
-               var animateNodeFill = svgDoc.createElementNS(svgNS, 'animate');
-               animateNodeFill.setAttributeNS(null, 'attributeName', 'fill');
-               animateNodeFill.setAttributeNS(null, 'dur'          , duration + 'ms');
-               animateNodeFill.setAttributeNS(null, 'repeatCount'  , 'indefinite');
-               if (!useKeyTimes)
-                  animateNodeFill.setAttributeNS(null, "calcMode"  , (skill==null) ? "discrete" : "linear"); // discrete linear paced spline
-               pathNode.appendChild(animateNodeFill);
+            if (m.animated) {
+               { // examples: <animate attributeName="d" dur="2000ms" repeatCount="indefinite" calcMode="linear" ... />
+                  var animateNodeD = svgDoc.createElementNS(svgNS, 'animate');
+                  animateNodeD.setAttributeNS(null, 'attributeName', 'd');
+                  animateNodeD.setAttributeNS(null, 'dur'          , duration + 'ms');
+                  animateNodeD.setAttributeNS(null, 'repeatCount'  , 'indefinite');
+                  if (!useKeyTimes)
+                     animateNodeD.setAttributeNS(null, 'calcMode'  , (skill==null) ? 'discrete' : 'linear'); // discrete linear paced spline
+                  pathNode.appendChild(animateNodeD);
+               }
+               { // examples: <animate attributeName="fill" dur="2000ms" repeatCount="indefinite" calcMode="linear" ...>
+                  var animateNodeFill = svgDoc.createElementNS(svgNS, 'animate');
+                  animateNodeFill.setAttributeNS(null, 'attributeName', 'fill');
+                  animateNodeFill.setAttributeNS(null, 'dur'          , duration + 'ms');
+                  animateNodeFill.setAttributeNS(null, 'repeatCount'  , 'indefinite');
+                  if (!useKeyTimes)
+                     animateNodeFill.setAttributeNS(null, 'calcMode'  , (skill==null) ? 'discrete' : 'linear'); // discrete linear paced spline
+                  pathNode.appendChild(animateNodeFill);
+               }
             }
 
             svg.appendChild(pathNode);
@@ -1092,51 +1518,30 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
          });
       }
 
+      var addAttributeValue = MosaicSkillOrGroupView.addAttributeValue;
+
       // set values of shapes - coordinates and colors
       for (var i=0; i<shapes.length; ++i) {
          var pathNode = cnxt.shapes[i];
-         var animateNodeD = pathNode.childNodes[0];
-         var animateNodeFill = pathNode.childNodes[1];
+         var polygon = shapes[i].polygon;
+         var color = shapes[i].color;
+         var pathD = 'M' + polygon.map(function(p) { return round(p.x, 2) + ' ' + round(p.y, 2); }).join(' L')  + ' Z';
+         var pathFillColor = '#' + color.asHexString.substr(2);
+         if (!m.animated) {
+            pathNode.setAttributeNS(null, 'd', pathD);
+            pathNode.setAttributeNS(null, 'fill', pathFillColor);
+         } else {
+            var animateNodeD = pathNode.childNodes[0];
+            var animateNodeFill = pathNode.childNodes[1];
 
-         { // shape coordinates
-            var polygon = shapes[i].polygon;
-            var addToValue = 'M' + polygon.map(function(p) { return round(p.x, 2) + ' ' + round(p.y, 2); }).join(' L')  + ' Z';
-            var values = animateNodeD.getAttribute('values');
-            if (!values)
-               values = addToValue;
-            else
-               values += ';' + addToValue;
-            animateNodeD.setAttributeNS(null, "values", values);
-         }
-         { // shape colors
-            var color = shapes[i].color;
-            var addToValue = '#' + color.asHexString.substr(2);
-            var values = animateNodeFill.getAttribute('values');
-            if (!values)
-               values = addToValue;
-            else
-               values += ';' + addToValue;
-            animateNodeFill.setAttributeNS(null, "values", values);
-         }
+            addAttributeValue(animateNodeD   , 'values', pathD); // shape coordinates
+            addAttributeValue(animateNodeFill, 'values', pathFillColor); // shape colors
 
-         // time stamps
-         if (useKeyTimes) {
-            var keyTimesAddon = round(keyTime, 4);
-            {
-               var keyTimes = animateNodeD.getAttribute('keyTimes');
-               if (!keyTimes)
-                  keyTimes = keyTimesAddon;
-               else
-                  keyTimes += ';' + keyTimesAddon;
-               animateNodeD.setAttributeNS(null, "keyTimes", keyTimes);
-            }
-            {
-               var keyTimes = animateNodeFill.getAttribute('keyTimes');
-               if (!keyTimes)
-                  keyTimes = keyTimesAddon;
-               else
-                  keyTimes += ';' + keyTimesAddon;
-               animateNodeFill.setAttributeNS(null, "keyTimes", keyTimes);
+            // time stamps
+            if (useKeyTimes) {
+               var keyTimesAddon = round(keyTime, 4);
+               addAttributeValue(animateNodeD   , 'keyTimes', keyTimesAddon);
+               addAttributeValue(animateNodeFill, 'keyTimes', keyTimesAddon);
             }
          }
       }
@@ -1151,13 +1556,14 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
           //pathNode.setAttributeNS(null, 'stroke-opacity', round(li.clr.a/255.0, 2));
           //pathNode.setAttributeNS(null, 'fill-opacity'  , round(li.clr.a/255.0, 2));
 
-            { // examples: <animate attributeName="d" dur="2000ms" repeatCount="indefinite" calcMode="linear" ... />
+            if (m.animated) {
+               // examples: <animate attributeName="d" dur="2000ms" repeatCount="indefinite" calcMode="linear" ... />
                var animateNodeD = svgDoc.createElementNS(svgNS, 'animate');
                animateNodeD.setAttributeNS(null, 'attributeName', 'd');
                animateNodeD.setAttributeNS(null, 'dur'          , duration + 'ms');
                animateNodeD.setAttributeNS(null, 'repeatCount'  , 'indefinite');
                if (!useKeyTimes)
-                  animateNodeD.setAttributeNS(null, "calcMode"  , "discrete"); // discrete linear paced spline
+                  animateNodeD.setAttributeNS(null, 'calcMode'  , 'discrete'); // discrete linear paced spline
                pathNode.appendChild(animateNodeD);
             }
 
@@ -1168,35 +1574,28 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
       // set values of shapes - coordinates and colors
       for (var i=0; i<menuShapes.length; ++i) {
          var pathNode = cnxt.menus[i];
-         var animateNodeD = pathNode.childNodes[0];
-         var animateNodeStroke = pathNode.childNodes[1];
-
-         { // shape coordinates
-            var from = menuShapes[i].from;
-            var to   = menuShapes[i].to;
-            var addToValue = 'M ' + round(from.x, 2) + ' ' + round(from.y, 2) + ' L ' + round(to.x, 2) + ' ' + round(to.y, 2);
-            var values = animateNodeD.getAttribute('values');
-            if (!values)
-               values = addToValue;
-            else
-               values += ';' + addToValue;
-            animateNodeD.setAttributeNS(null, "values", values);
-         }
-
-         // time stamps
-         if (useKeyTimes) {
+         var from = menuShapes[i].from;
+         var to   = menuShapes[i].to;
+         var pathD = 'M ' + round(from.x, 2) + ' ' + round(from.y, 2) + ' L ' + round(to.x, 2) + ' ' + round(to.y, 2);
+         if (!m.animated) {
+            pathNode.setAttributeNS(null, 'd', pathD);
+         } else {
+            var animateNodeD = pathNode.childNodes[0];
+            addAttributeValue(animateNodeD, 'values', pathD); // shape coordinates
             var keyTimesAddon = round(keyTime, 4);
-            {
-               var keyTimes = animateNodeD.getAttribute('keyTimes');
-               if (!keyTimes)
-                  keyTimes = keyTimesAddon;
-               else
-                  keyTimes += ';' + keyTimesAddon;
-               animateNodeD.setAttributeNS(null, "keyTimes", keyTimes);
-            }
+            addAttributeValue(animateNodeD, 'keyTimes', keyTimesAddon); // time stamps
          }
       }
 
+   }
+
+   static addAttributeValue(node, attributeName, addonValue) {
+      var addAttributeValue = node.getAttribute(attributeName);
+      if (!addAttributeValue)
+         addAttributeValue = addonValue;
+      else
+         addAttributeValue += ';' + addonValue;
+      node.setAttributeNS(null, attributeName, addAttributeValue);
    }
 
 }
@@ -1241,35 +1640,8 @@ class MosaicSkillImgSvg extends MosaicSkillImg {
       this.drawIntoContext(this._drawContext, this._svg, this._svgDoc);
    }
 
-   getSvgContent() {
-      var clean = function(svg) { //
-         svg.removeAttribute('onload');
-         svg.removeAttribute('style');
-         var script = svg.querySelector('script');
-         script.remove();
-         return svg;
-      }
+   getSvgContent() { return getSvgContent(this._svg); }
 
-      var format = function(node, value) {
-         var indentBefore = new Array(value++ + 1).join('  '),
-            indentAfter  = new Array(value - 1).join('  '),
-            textNode, childNode;
-         for (var i = 0; i < node.children.length; i++) {
-            textNode = document.createTextNode('\n' + indentBefore);
-            childNode = node.children[i];
-            node.insertBefore(textNode, childNode);
-            format(childNode, value);
-            if (node.lastElementChild == childNode) {
-               textNode = document.createTextNode('\n' + indentAfter);
-               node.appendChild(textNode);
-            }
-         }
-         textNode = childNode = null;
-         return node;
-      }
-
-      return format(clean(this._svg), 1).outerHTML;
-   }
 }
 
 /**
@@ -1307,7 +1679,8 @@ class IModelTransformer {
 /** Transforming of rotate angle */
 class RotateTransformer extends IModelTransformer {
 
-   get className() { return "RotateTransformer"; }
+   static get className() { return "RotateTransformer"; }
+   get className() { return RotateTransformer.className; }
 
    execute(/*IImageModel*/ model) {
       var am = model;
@@ -1324,7 +1697,8 @@ class RotateTransformer extends IModelTransformer {
 /** Transforming of foreground color (rotation of foreground color) */
 class PolarLightFgTransformer extends IModelTransformer {
 
-   get className() { return "PolarLightFgTransformer"; }
+   static get className() { return "PolarLightFgTransformer"; }
+   get className() { return PolarLightFgTransformer.className; }
 
    execute(/*IImageModel*/ model) {
       var am = model;
@@ -1341,6 +1715,52 @@ class PolarLightFgTransformer extends IModelTransformer {
    }
 
 }
+
+/** Transforming of logo rays */
+class RotateLogoTransformer extends IModelTransformer {
+
+   static get className() { return "RotateLogoTransformer"; }
+   get className() { return RotateLogoTransformer.className; }
+
+   execute(/*IImageModel*/ model) {
+      var lm = model;
+
+      lm.rays = [];
+      lm.inn  = [];
+      lm.oct  = [];
+
+      var size = lm.size;
+      var center = new Point(size.width/2.0, size.height/2.0);
+      var ra = lm.rotateAngle;
+      FigureHelper.rotateCollection(lm.rays, ra, center);
+      FigureHelper.rotateCollection(lm.inn , ra, center);
+      FigureHelper.rotateCollection(lm.oct , ra, center);
+   }
+
+}
+
+/** Transforming of logo palette */
+class PolarLightLogoTransformer extends IModelTransformer {
+
+   static get className() { return "PolarLightLogoTransformer"; }
+   get className() { return PolarLightLogoTransformer.className; }
+
+   execute(/*IImageModel*/ model) {
+      var lm = model;
+
+      if (!lm.polarLights)
+         return;
+
+      var rotateAngleDelta = 360.0 / lm.totalFrames; // 360° / TotalFrames
+      if (!lm.animeDirection)
+         rotateAngleDelta = -rotateAngleDelta;
+      var palette = lm.palette;
+      for (var i = 0; i < palette.length; ++i)
+         palette[i].h += rotateAngleDelta;
+   }
+
+}
+
 
 /**
  * MVC controller. Base animation controller.
@@ -1390,7 +1810,7 @@ class AnimatedImgController extends ImageController {
       this._innerController.addModelTransformer(transformer);
    }
    removeModelTransformer(/*string*/ transformerClassName) {
-      this._innerController.removeModelTransformer(transformerClass);
+      this._innerController.removeModelTransformer(transformerClassName);
    }
    executeTransformers() {
       this._innerController.executeTransformers();
@@ -1400,17 +1820,64 @@ class AnimatedImgController extends ImageController {
       if (enable)
          this.addModelTransformer(new RotateTransformer());
       else
-         this.removeModelTransformer(new RotateTransformer().className);
+         this.removeModelTransformer(RotateTransformer.className);
    }
 
    usePolarLightFgTransforming(/*bool*/ enable) {
       if (enable)
          this.addModelTransformer(new PolarLightFgTransformer());
       else
-         this.removeModelTransformer(new PolarLightFgTransformer().className);
+         this.removeModelTransformer(PolarLightFgTransformer.className);
    }
 
 }
+
+/**
+ * MVC controlle of logo image
+ *
+ * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImageView> MVC view
+ */
+class LogoController extends AnimatedImgController {
+
+   constructor(/*TImageView*/ imageView) {
+      super(imageView);
+   }
+
+   useRotateTransforming(/*bool*/ enable) {
+      super.useRotateTransforming(enable);
+      if (enable)
+         this.addModelTransformer(new RotateLogoTransformer());
+      else
+         this.removeModelTransformer(RotateLogoTransformer.className);
+   }
+
+   usePolarLightFgTransforming(/*bool*/ enable) {
+      //super.usePolarLightFgTransforming(enable); // hide super implementation!
+      if (enable)
+         this.addModelTransformer(new PolarLightLogoTransformer());
+      else
+         this.removeModelTransformer(PolarLightLogoTransformer.className);
+   }
+
+}
+
+/** Logo image controller implementation for {@link LogoSvg} */
+class LogoControllerSvg extends LogoController {
+
+   constructor(/* own SVG */ svg, /* SVG document */ svgDoc) { super(new LogoSvg(svg, svgDoc)); }
+
+   getFileName() {
+      return "Logo."
+         + ESkillLevel.getName(this.Model.mosaicSkill)
+       //+ '.' + this.Model.width + 'x' + this.Model.height
+       //+ '.iters' + this.Model.totalFrames
+         + '.' + (this.Model.animeDirection ? 'clockwise' : 'counterclockwise')
+         + '.svg';
+   }
+
+}
+
 
 /**
  * MVC controller of {@link ESkillLevel} image
@@ -1433,6 +1900,7 @@ class MosaicSkillController extends AnimatedImgController {
 
 /** MosaicsSkill image controller implementation for {@link MosaicSkillImgSvg} */
 class MosaicSkillImgControllerSvg extends MosaicSkillController {
+
    constructor(/*ESkillLevel*/ skill, /* own SVG */ svg, /* SVG document */ svgDoc) {
       super(skill == null, new MosaicSkillImgSvg(skill, svg, svgDoc));
    }
@@ -1442,7 +1910,7 @@ class MosaicSkillImgControllerSvg extends MosaicSkillController {
          + ESkillLevel.getName(this.Model.mosaicSkill)
        //+ '.' + this.Model.width + 'x' + this.Model.height
        //+ '.iters' + this.Model.totalFrames
-         + '.' + (this.Model.animeDirection ? 'clockwise' : 'counterclockwise') // '↻' : '↺') //
+         + '.' + (this.Model.animeDirection ? 'clockwise' : 'counterclockwise')
          + '.svg';
    }
 
@@ -1459,29 +1927,87 @@ function work(svg, svgDoc) {
    svg.setAttributeNS(null, "width"  , Settings.width);
    svg.setAttributeNS(null, "height" , Settings.height);
 
-   //console.log("clr = " + Color.RandomColor; // test
 
-   // 1. configure image from settings
-   var skillImgCtrllr = new MosaicSkillImgControllerSvg(Settings.mosaicSkill, svg, svgDoc);
-   var model = skillImgCtrllr.Model;
-   model.mosaicSkill       = Settings.mosaicSkill;
-   model.borderWidth       = Settings.borderWidth;
-   model.backgroundColor   = Settings.backgroundColor;
-   model.foregroundColor.a = Settings.foregroundAlpha;
-   model.animeDirection    = Settings.clockwise;
-   model.animated          = true;
-   model.animatePeriod     = Settings.rotatePeriod;
-   model.totalFrames       = Settings.iterations;
+   var cntrllr;
 
-   // 2. run image animation
-   for (var i=0; i<model.totalFrames+1; ++i) {
-      model.currentFrame = i; // call transformers
-      skillImgCtrllr.executeTransformers();
-      skillImgCtrllr.View.invalidate();
-      skillImgCtrllr.image; // call draw
+   switch (0) {
+   case 0:
+      cntrllr = new LogoControllerSvg(svg, svgDoc);
+      break;
+   case 1:
+      cntrllr = new MosaicSkillImgControllerSvg(Settings.mosaicSkill, svg, svgDoc);
+      break;
    }
 
-   console.log(skillImgCtrllr.getFileName() + '\n' + skillImgCtrllr.View.getSvgContent());
+   cntrllr.useRotateTransforming(Settings.useRotateTransforming);
+   cntrllr.usePolarLightFgTransforming(Settings.usePolarLightFgTransforming);
+
+   // 1. configure image from settings
+   var model = cntrllr.Model;
+   model.size.width  = Settings.width;
+   model.size.height = Settings.height;
+   model.padding = Settings.pad;
+   if (model instanceof AnimatedImageModel) {
+      model.mosaicSkill       = Settings.mosaicSkill;
+      model.borderWidth       = Settings.borderWidth;
+      model.backgroundColor   = Settings.backgroundColor;
+      model.foregroundColor.a = Settings.foregroundAlpha;
+      model.animated          = Settings.animated;
+      model.animeDirection    = Settings.clockwise;
+      model.animatePeriod     = Settings.rotatePeriod;
+      model.totalFrames       = Settings.iterations;
+      // if (cntrllr.View instanceof WithBurgerMenuView) {
+      //    cntrllr.View.burgerMenuModel.show = Settings.showBurgerMenu;
+      // }
+      if (model instanceof LogoModel) {
+         model.useGradient = Settings.useGradientFill;
+      }
+   } else {
+      throw new Error('implement me...');
+   }
+
+   if (model.animated)
+      // 2. run image animation
+      for (var i=0; i<model.totalFrames+1; ++i) {
+         model.currentFrame = i;
+         cntrllr.executeTransformers();
+         cntrllr.View.invalidate();
+         cntrllr.image; // call draw
+      }
+   else
+      cntrllr.image; // call draw
+
+   console.log(cntrllr.getFileName() + '\n' + cntrllr.View.getSvgContent());
+}
+
+function getSvgContent(svg) {
+   var clean = function() { //
+      svg.removeAttribute('onload');
+      svg.removeAttribute('style');
+      var script = svg.querySelector('script');
+      script.remove();
+      return svg;
+   }
+
+   var format = function(node, value) {
+      var indentBefore = new Array(value++ + 1).join('  '),
+         indentAfter  = new Array(value - 1).join('  '),
+         textNode, childNode;
+      for (var i = 0; i < node.children.length; i++) {
+         textNode = document.createTextNode('\n' + indentBefore);
+         childNode = node.children[i];
+         node.insertBefore(textNode, childNode);
+         format(childNode, value);
+         if (node.lastElementChild == childNode) {
+            textNode = document.createTextNode('\n' + indentAfter);
+            node.appendChild(textNode);
+         }
+      }
+      textNode = childNode = null;
+      return node;
+   }
+
+   return format(clean(), 1).outerHTML;
 }
 ]]></script>
 </svg>
