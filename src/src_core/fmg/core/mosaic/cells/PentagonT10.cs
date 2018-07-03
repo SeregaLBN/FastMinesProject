@@ -285,7 +285,7 @@ namespace fmg.core.mosaic.cells {
          }
       }
 
-      public override RectDouble getRcInner(int borderWidth) {
+      public override RectDouble getRcInner(double borderWidth) {
          var attr = Attr;
          var sq = attr.GetSq(borderWidth);
          var sq2 = sq/2;
