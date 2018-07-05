@@ -47,7 +47,7 @@ namespace fmg.uwp.draw.img.win2d {
             for (var i = 0; i < 8; i++) {
                using (var geom = rc.BuildLines(rays[i], oct[i], inn[i], oct[(i + 5) % 8])) {
                   if (UseGradient) {
-                     // rectangle gragient
+                     // linear gragient
                      using (var br = rc.CreateGradientPaintBrush(oct[(i + 5) % 8], Palette[(i + 0) % 8].ToColor(), oct[i], Palette[(i + 3) % 8].ToColor())) {
                         ds.FillGeometry(geom, br);
                      }
@@ -73,7 +73,7 @@ namespace fmg.uwp.draw.img.win2d {
 
             // paint star perimeter
             var zoomAverage = (ZoomX + ZoomY) / 2;
-            var penWidth = (float)(2*zoomAverage);
+            var penWidth = Model.BorderWidth*zoomAverage;
             for (var i = 0; i < 8; i++) {
                var p1 = rays[(i + 7) % 8];
                var p2 = rays[i];

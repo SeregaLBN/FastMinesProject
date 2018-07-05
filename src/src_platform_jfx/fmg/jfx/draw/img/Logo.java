@@ -3,6 +3,13 @@ package fmg.jfx.draw.img;
 import java.util.Arrays;
 import java.util.List;
 
+import javafx.geometry.Point2D;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+
 import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
 import fmg.core.img.ImageView;
@@ -10,13 +17,6 @@ import fmg.core.img.LogoController;
 import fmg.core.img.LogoModel;
 import fmg.jfx.utils.Cast;
 import fmg.jfx.utils.StaticInitializer;
-
-import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
 
 /** Main logos image - base Logo image view implementation */
 public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
@@ -58,11 +58,14 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
       // paint owner gradient rays
       for (int i=0; i<8; i++) {
-         if (lm.isUseGradient()) {
-            // rectangle gragient
+         if (lm.isUseGradient())
+            // linear gragient
             setGradientFill(g, oct[(i+5)%8], palette[(i+0)%8], oct[i], palette[(i+3)%8]);
-            fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
+         else
+            g.setFill(Cast.toColor(hsvPalette[i].toColor().darker()));
+         fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
 
+         if (lm.isUseGradient()) {
             // emulate triangle gradient (see BmpLogo.cpp C++ source code)
 //            BlendMode bm = g.getGlobalBlendMode();
 //            g.setGlobalBlendMode(BlendMode.SRC_OVER);
@@ -73,15 +76,12 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
             setGradientFill(g, center, clr, inn[(i+2)%8], palette[(i+0)%8]);
             fillPolygon(g, rays[i], oct[(i+5)%8], inn[i]);
 //            g.setGlobalBlendMode(bm);
-         } else {
-            g.setFill(Cast.toColor(hsvPalette[i].toColor().darker()));
-            fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
          }
       }
 
       // paint star perimeter
       double zoomAverage = (lm.getZoomX() + lm.getZoomY())/2;
-      final double penWidth = Math.max(1, 2 * zoomAverage);
+      final double penWidth = lm.getBorderWidth() * zoomAverage;
       g.setLineWidth(penWidth);
       for (int i=0; i<8; i++) {
          Point2D p1 = rays[(i + 7)%8];

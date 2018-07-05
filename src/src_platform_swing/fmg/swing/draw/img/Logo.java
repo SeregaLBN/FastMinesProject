@@ -50,11 +50,14 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
       // paint owner gradient rays
       for (int i=0; i<8; i++) {
-         if (lm.isUseGradient()) {
-            // rectangle gragient
+         if (lm.isUseGradient())
+            // linear gragient
             g.setPaint(new GradientPaint(oct[(i+5)%8], palette[(i+0)%8], oct[i], palette[(i+3)%8]));
-            fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
+        else
+            g.setColor(Cast.toColor(hsvPalette[i].toColor().darker()));
+        fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
 
+         if (lm.isUseGradient()) {
             // emulate triangle gradient (see BmpLogo.cpp C++ source code)
             Color clr = palette[(i+6)%8];
             clr = new Color(clr.getRed(), clr.getGreen(), clr.getBlue(), 0);
@@ -62,15 +65,12 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
             fillPolygon(g, rays[i], oct[i], inn[i]);
             g.setPaint(new GradientPaint(center, clr, inn[(i+2)%8], palette[(i+0)%8]));
             fillPolygon(g, rays[i], oct[(i+5)%8], inn[i]);
-         } else {
-            g.setColor(Cast.toColor(hsvPalette[i].toColor().darker()));
-            fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
          }
       }
 
       // paint star perimeter
       double zoomAverage = (lm.getZoomX() + lm.getZoomY())/2;
-      final double penWidth = Math.max(1, 2 * zoomAverage);
+      final double penWidth = lm.getBorderWidth() * zoomAverage;
       g.setStroke(new BasicStroke((float)penWidth));
       for (int i=0; i<8; i++) {
          Point2D.Double p1 = rays[(i + 7)%8];

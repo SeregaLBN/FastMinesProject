@@ -19,31 +19,31 @@ Promise.resolve().then(function() {
       height: 100, // view height
       pad: 5, // padding
 
-      animated: true,
+      testedImageType: 0, // 0 - Logo image ; 1-MosaicSkill image
+
+      animated: !true,
       clockwise: true, // ↻ or ↺
       rotatePeriod: 2000, // in msec
       /** the number of parts of which the one turn */
-      iterations: 100,
+      iterations: 30,
 
-      borderWidth: 0.7,
-      backgroundColor : Color.Transparent,
+      borderWidth: 0,
+      backgroundColor: Color.Transparent,
       foregroundAlpha: 200,  // 0..255 - foreground alpha-chanel color
 
       /** ESkillLevel */
-      mosaicSkill: null, // ESkillLevel.eCustom
+      mosaicSkill: null, // ESkillLevel.eBeginner eAmateur eProfi eCrazy eCustom
 
       showBurgerMenu: true,
 
-      useGradientFill: false, // for Logo
+      useGradientFill: !false, // for Logo
 
       useRotateTransforming: true,
       usePolarLightFgTransforming: true,
 
-
-      none: undefined // last
+      useRandom: !true
    };
 
-   Settings.useRandom = true;
    if (Settings.useRandom) {
 
       var b = function() { return (Math.random() < 0.5); }; // random boolean
@@ -71,9 +71,11 @@ Promise.resolve().then(function() {
       if (Settings.animated) {
          Settings.clockwise = b();
          Settings.rotatePeriod = 1500 + random(2500);
-         Settings.iterations = (Settings.mosaicSkill==null)
-            ? 120 // что бы при calcMode="discrete" не 'дёргалось'
-            : 30;
+         if (Settings.testedImageType == 1) {
+            Settings.iterations = (Settings.mosaicSkill==null)
+               ? 120 // что бы при calcMode="discrete" не 'дёргалось'
+               : 30;
+         }
 
          Settings.useRotateTransforming = b();
          if (!Settings.useRotateTransforming)
@@ -126,7 +128,9 @@ var onTimer = function(milliseconds) {
 /** RGBA color */
 class Color {
 
-   static get Transparent() { return new Color(0, 255,255,255); }
+   static get Black      () { return new Color(0xFF000000); }
+   static get White      () { return new Color(0xFFFFFFFF); }
+   static get Transparent() { return new Color(0x00FFFFFF); }
    static get Orchid     () { return new Color(0xFFDA70D6); }
    static get DarkOrange () { return new Color(0xFFFF8C00); }
    static get Maroon     () { return new Color(0xFF800000); }
@@ -470,8 +474,8 @@ const FigureHelper = {
     * @param angle angle of rotation: -360° .. 0° .. +360°
     * @param center центр фигуры
     */
-    rotateCollection(/*TCollection*/ coords, /*double*/ angle, /*Point*/ center) {
-      FigureHelper.angle = toRadian(angle);
+   rotateCollection(/*TCollection*/ coords, /*double*/ angle, /*Point*/ center) {
+      angle = FigureHelper.toRadian(angle);
       var cos = Math.cos(angle);
       var sin = Math.sin(angle);
       coords.forEach(function(p) {
@@ -1224,12 +1228,23 @@ class Logo extends ImageView {
    }
 
    drawIntoContext(/* DrawContext */ cnxt, /* own SVG */ svg, /* SVG document */ svgDoc) {
-      var lm = this.Model;
-      var m = lm;
+      var m = this.Model;
       var keyTime = m.currentFrame / m.totalFrames; // 0..1;
-      var duration  = lm.animatePeriod;
-      var backgroundColor = lm.backgroundColor;
+      var duration  = m.animatePeriod;
+      var borderWidth = m.borderWidth;
+      var backgroundColor = m.backgroundColor;
       var size = m.size;
+      var zoomAverage = (m.zoomX + m.zoomY)/2;
+      var animated = m.animated;
+      var useGradient = m.useGradient;
+
+      var rays = m.rays;
+      var inn  = m.inn;
+      var oct  = m.oct;
+      var center = new Point(size.width/2.0, size.height/2.0);
+
+      var hsvPalette = m.palette;
+      var palette = hsvPalette.map(function(hsv) { return hsv.toColor(); });
 
       if (!cnxt.background && !backgroundColor.isTransparent) { // fill background
          // example: <rect x="0" y="0" width="100" height="100" fill="hsla(112.71, 50.95%, 82.35%, 1)" />
@@ -1244,61 +1259,123 @@ class Logo extends ImageView {
          svg.appendChild(rcNode);
       }
 
-      var rays = lm.rays;
-      var inn  = lm.inn;
-      var oct  = lm.oct;
-      var center = new Point(size.width/2.0, size.height/2.0);
-
-      var hsvPalette = lm.palette;
-      var palette = hsvPalette.map(function(hsv) { return hsv.toColor(); });
-
       const useKeyTimes = false;
 
-      if (!cnxt.ownRays) {
-         cnxt.ownRays = [];
-         for (var i=0; i<8; ++i) {
-            var pathNode = svgDoc.createElementNS(svgNS, 'path');
-          //pathNode.setAttributeNS(null, 'fill-opacity'  , round(foregroundColor.a/255.0, 2));
+      var addAttributeValue = MosaicSkillOrGroupView.addAttributeValue;
+      var createAnimeteNode = MosaicSkillOrGroupView.createAnimeteNode;
 
-            if (m.animated) {
-               { // examples: <animate attributeName="d" dur="2000ms" repeatCount="indefinite" calcMode="linear" ... />
-                  var animateNodeD = svgDoc.createElementNS(svgNS, 'animate');
-                  animateNodeD.setAttributeNS(null, 'attributeName', 'd');
-                  animateNodeD.setAttributeNS(null, 'dur'          , duration + 'ms');
-                  animateNodeD.setAttributeNS(null, 'repeatCount'  , 'indefinite');
-                  if (!useKeyTimes)
-                     animateNodeD.setAttributeNS(null, 'calcMode'  , 'linear'); // discrete linear paced spline
-                  pathNode.appendChild(animateNodeD);
+      // один раз створюю необхідні ноди
+      if (!cnxt.ownRays) {
+         var names = ['ownRays', 'innerTr'];
+         if (useGradient)
+            names = [...names, 'ownRays1', 'ownRays2'];
+         for (var name of names) {
+            cnxt[name] = [];
+            for (var i=0; i<8; ++i) {
+               var pathNode = svgDoc.createElementNS(svgNS, 'path');
+            //pathNode.setAttributeNS(null, 'fill-opacity'  , round(foregroundColor.a/255.0, 2));
+               if (useGradient)
+                  pathNode.setAttributeNS(null, 'fill', 'url(#' + name + i + ')');
+
+               if (animated) {
+                  // examples: <animate attributeName="d" dur="2000ms" repeatCount="indefinite" calcMode="linear" ... />
+                  pathNode.appendChild(createAnimeteNode(svgDoc, 'd', duration, useKeyTimes ? null : 'linear'));
+
+                  if (!useGradient)
+                     // examples: <animate attributeName="fill" dur="2000ms" repeatCount="indefinite" calcMode="linear" ...>
+                     pathNode.appendChild(createAnimeteNode(svgDoc, 'fill', duration, useKeyTimes ? null : 'linear'));
                }
 
-               if (!m.useGradient) { // examples: <animate attributeName="fill" dur="2000ms" repeatCount="indefinite" calcMode="linear" ...>
-                  var animateNodeFill = svgDoc.createElementNS(svgNS, 'animate');
-                  animateNodeFill.setAttributeNS(null, 'attributeName', 'fill');
-                  animateNodeFill.setAttributeNS(null, 'dur'          , duration + 'ms');
-                  animateNodeFill.setAttributeNS(null, 'repeatCount'  , 'indefinite');
-                  if (!useKeyTimes)
-                     animateNodeFill.setAttributeNS(null, 'calcMode'  , 'linear'); // discrete linear paced spline
-                  pathNode.appendChild(animateNodeFill);
+               svg.appendChild(pathNode);
+               cnxt[name].push(pathNode);
+            }
+         }
+
+         if (borderWidth > 0) {
+            cnxt.perim = []
+            for (var i=0; i<8; ++i) {
+               var lineNode = svgDoc.createElementNS(svgNS, 'line');
+               lineNode.setAttributeNS(null, 'stroke-width', zoomAverage*borderWidth);
+               lineNode.setAttributeNS(null, 'stroke-linecap', 'round');
+               if (animated) {
+                  lineNode.appendChild(createAnimeteNode(svgDoc, 'stroke', duration, useKeyTimes ? null : 'linear'));
+                  lineNode.appendChild(createAnimeteNode(svgDoc, 'x1'    , duration, useKeyTimes ? null : 'linear'));
+                  lineNode.appendChild(createAnimeteNode(svgDoc, 'y1'    , duration, useKeyTimes ? null : 'linear'));
+                  lineNode.appendChild(createAnimeteNode(svgDoc, 'x2'    , duration, useKeyTimes ? null : 'linear'));
+                  lineNode.appendChild(createAnimeteNode(svgDoc, 'y2'    , duration, useKeyTimes ? null : 'linear'));
+               }
+
+               svg.appendChild(lineNode);
+               cnxt.perim.push(lineNode);
+            }
+         }
+
+         if (useGradient) {
+            var defsNode = svgDoc.createElementNS(svgNS, 'defs');
+            svg.appendChild(defsNode);
+
+            var names = ['ownRays', 'innerTr'];
+            if (useGradient)
+               names = [...names, 'ownRays1', 'ownRays2'];
+            for (var name of names) {
+               cnxt.gradient[name] = [];
+               for (var i=0; i<8; ++i) {
+                  var lgNode = svgDoc.createElementNS(svgNS, 'linearGradient');
+                  lgNode.setAttributeNS(null, 'id', name + i);
+
+                  var stopNodeRun = svgDoc.createElementNS(svgNS, 'stop');
+                  var stopNodeEnd = svgDoc.createElementNS(svgNS, 'stop');
+                  stopNodeRun.setAttributeNS(null, 'offset', '0%');
+                  stopNodeEnd.setAttributeNS(null, 'offset', '100%');
+                  lgNode.appendChild(stopNodeRun);
+                  lgNode.appendChild(stopNodeEnd);
+                  lgNode.setAttributeNS(null, 'gradientUnits', 'userSpaceOnUse');
+
+                  if (animated) {
+                     lgNode     .appendChild(createAnimeteNode(svgDoc, 'x1'        , duration, useKeyTimes ? null : 'linear'));
+                     lgNode     .appendChild(createAnimeteNode(svgDoc, 'y1'        , duration, useKeyTimes ? null : 'linear'));
+                     lgNode     .appendChild(createAnimeteNode(svgDoc, 'x2'        , duration, useKeyTimes ? null : 'linear'));
+                     lgNode     .appendChild(createAnimeteNode(svgDoc, 'y2'        , duration, useKeyTimes ? null : 'linear'));
+                     stopNodeRun.appendChild(createAnimeteNode(svgDoc, 'stop-color', duration, useKeyTimes ? null : 'linear'));
+                     stopNodeEnd.appendChild(createAnimeteNode(svgDoc, 'stop-color', duration, useKeyTimes ? null : 'linear'));
+                  }
+
+                  defsNode.appendChild(lgNode);
+                  cnxt.gradient[name].push(lgNode);
                }
             }
-
-            svg.appendChild(pathNode);
-            cnxt.ownRays.push(pathNode);
          }
       }
 
-      var addAttributeValue = MosaicSkillOrGroupView.addAttributeValue;
-
       var setFill = function(/*Node*/ pathNode, /*Color*/ fillColor) {
          var pathFillColor = '#' + fillColor.asHexString.substr(2);
-         if (!m.animated) {
+         if (!animated) {
             pathNode.setAttributeNS(null, 'fill', pathFillColor);
          } else {
             var animateNodeFill = [...pathNode.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'fill'; });
             addAttributeValue(animateNodeFill, 'values', pathFillColor);
          }
       };
-      var setGradientFill = function(/*Node*/ pathNode, /*Point*/ start, /*Color*/ startClr, /*Point*/ end, /*Color*/ endClr) {
+      var setGradientFill = function(/*linearGradient id*/ idName, /* int */ i, /*Point*/ start, /*Color*/ startClr, /*Point*/ end, /*Color*/ endClr) {
+         var linearGradientNode = cnxt.gradient[idName][i];
+         var childNodes = [...linearGradientNode.childNodes];
+         var stopNodeRun = childNodes.find(function(x) { return x.getAttribute('offset') === '0%'; });
+         var stopNodeEnd = childNodes.find(function(x) { return x.getAttribute('offset') === '100%'; });
+         if (!startClr.isOpaque)
+            stopNodeRun.setAttributeNS(null, 'stop-opacity', round(startClr.a/255.0, 2));
+         if (!endClr.isOpaque)
+            stopNodeEnd.setAttributeNS(null, 'stop-opacity', round(endClr.a/255.0, 2));
+         if (!animated) {
+            linearGradientNode.setAttributeNS(null, 'x1', round(start.x, 2) /*+ 'px'*/);
+            linearGradientNode.setAttributeNS(null, 'y1', round(start.y, 2) /*+ 'px'*/);
+            linearGradientNode.setAttributeNS(null, 'x2', round(end.x  , 2) /*+ 'px'*/);
+            linearGradientNode.setAttributeNS(null, 'y2', round(end.y  , 2) /*+ 'px'*/);
+
+            stopNodeRun.setAttributeNS(null, 'stop-color', '#' + startClr.asHexString.substr(2));
+            stopNodeEnd.setAttributeNS(null, 'stop-color', '#' +   endClr.asHexString.substr(2));
+         } else {
+            // TODO
+         }
          // g.setFill(new LinearGradient(start.getX(), start.getY(),
          //                            end  .getX(), end  .getY(),
          //                            false,
@@ -1310,37 +1387,17 @@ class Logo extends ImageView {
       };
 
       var fillPolygon = function(/*string*/ name, /*int*/ i, /*Point[]*/ ...polygon) {
-         // polygon = Array.prototype.slice.call(arguments, 2);
-
          var pathNode = cnxt[name][i];
 
          var pathD = 'M' + polygon.map(function(p) { return round(p.x, 2) + ' ' + round(p.y, 2); }).join(' L')  + ' Z';
-         if (!m.animated) {
+         if (!animated) {
             pathNode.setAttributeNS(null, 'd', pathD);
          } else {
             var animateNodeD = [...pathNode.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'd'; });
-            { // shape coordinates
-               var addToValue = pathD;
-               var values = animateNodeD.getAttribute('values');
-               if (!values)
-                  values = addToValue;
-               else
-                  values += ';' + addToValue;
-               animateNodeD.setAttributeNS(null, 'values', values);
-            }
+            addAttributeValue(animateNodeD, 'values', pathD); // shape coordinates
 
-            // time stamps
-            if (useKeyTimes) {
-               var keyTimesAddon = round(keyTime, 4);
-               {
-                  var keyTimes = animateNodeD.getAttribute('keyTimes');
-                  if (!keyTimes)
-                     keyTimes = keyTimesAddon;
-                  else
-                     keyTimes += ';' + keyTimesAddon;
-                  animateNodeD.setAttributeNS(null, 'keyTimes', keyTimes);
-               }
-            }
+            if (useKeyTimes)
+               addAttributeValue(animateNodeD, 'keyTimes', round(keyTime, 4)); // time stamps
          }
 
          return pathNode;
@@ -1348,50 +1405,117 @@ class Logo extends ImageView {
 
       // paint owner gradient rays
       for (var i=0; i<8; i++) {
-         if (lm.useGradient) {
-            // rectangle gragient
-            setGradientFill(oct[(i+5)%8], palette[(i+0)%8], oct[i], palette[(i+3)%8]);
-            fillPolygon(rays[i], oct[i], inn[i], oct[(i+5)%8]);
-
-            // emulate triangle gradient (see BmpLogo.cpp C++ source code)
-            var clr = palette[(i+6)%8];
-            clr = new Color(clr.r, clr.g, clr.b, 0);
-            setGradientFill(center, clr, inn[(i+6)%8], palette[(i+3)%8]);
-            fillPolygon(rays[i], oct[i], inn[i]);
-            setGradientFill(center, clr, inn[(i+2)%8], palette[(i+0)%8]);
-            fillPolygon(rays[i], oct[(i+5)%8], inn[i]);
-         } else {
-            //g.
-            var shape = fillPolygon("ownRays", i, rays[i], oct[i], inn[i], oct[(i+5)%8]);
+         var shape = fillPolygon("ownRays", i, rays[i], oct[i], inn[i], oct[(i+5)%8]);
+         if (!useGradient) {
             setFill(shape, hsvPalette[i].toColor().darker());
+         } else {
+            // emulate triangle gradient (see BmpLogo.cpp C++ source code)
+            // over linear gragients
+
+            setGradientFill("ownRays", i, rays[i], palette[(i+1)%8], inn[i], palette[(i+6)%8]);
+
+            var p1 = oct[i];
+            var p2 = oct[(i+5)%8];
+            var p = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2); // пересечение линий rays[i]-inn[i] и oct[i]-oct[(i+5)%8]
+
+            var clr = Color.Transparent; // new Color(0); //
+            if (true) {
+               var c1 = hsvPalette[(i+1)%8];
+               var c2 = hsvPalette[(i+6)%8];
+               var diff = c1.h - c2.h; // as 100% for line inn[i]-rays[i]
+
+               var xDeltaInnRays = (inn[i].x + rays[i].x)/2;
+               var yDeltaInnRaysY = (inn[i].y + rays[i].y)/2;
+               var lenInnRays = Math.sqrt(xDeltaInnRays*xDeltaInnRays + yDeltaInnRaysY*yDeltaInnRaysY);
+
+               var xDeltaInnP = (inn[i].x + p.x)/2;
+               var yDeltaInnP = (inn[i].y + p.y)/2;
+               var lenInnP = Math.sqrt(xDeltaInnP*xDeltaInnP + yDeltaInnP*yDeltaInnP);
+
+               //   lenInnRays/100%  ==  lenInnP/???%
+               var z = lenInnP/lenInnRays; // 0..1
+               var clr2 = new HSV(hsvPalette[(i+6)%8].toColor());
+               clr2.h += diff*z;
+
+               clr = clr2.toColor();
+               clr.a = 0;
+            }
+
+            fillPolygon("ownRays1", i, rays[i], oct[i], inn[i]);
+            setGradientFill("ownRays1", i, oct[i], palette[(i+3)%8], p, clr);
+
+            fillPolygon("ownRays2", i, rays[i], oct[(i+5)%8], inn[i]);
+            setGradientFill("ownRays2", i, oct[(i+5)%8], palette[(i+0)%8], p, clr);
+
+
+            // setGradientFill("ownRays", i, oct[(i+5)%8], palette[(i+0)%8], oct[i], palette[(i+3)%8]);
+
+            // var clr = palette[(i+6)%8];
+            // clr = new Color(clr.r, clr.g, clr.b, 0);
+
+            // fillPolygon("ownRays1", i, rays[i], oct[i], inn[i]);
+            // setGradientFill("ownRays1", i, center, clr, inn[(i+6)%8], palette[(i+3)%8]);
+
+            // fillPolygon("ownRays2", i, rays[i], oct[(i+5)%8], inn[i]);
+            // setGradientFill("ownRays2", i, center, clr, inn[(i+2)%8], palette[(i+0)%8]);
          }
       }
 
-      /*
       // paint star perimeter
-      double zoomAverage = (lm.getZoomX() + lm.getZoomY())/2;
-      final double penWidth = Math.max(1, 2 * zoomAverage);
-      g.setLineWidth(penWidth);
-      for (int i=0; i<8; i++) {
-         Point2D p1 = rays[(i + 7)%8];
-         Point2D p2 = rays[i];
-         g.setStroke(palette[i].darker());
-         g.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+      if (borderWidth > 0) {
+         for (var i=0; i<8; i++) {
+            var p1 = rays[(i + 7)%8];
+            var p2 = rays[i];
+            var lineNode = cnxt.perim[i];
+            // g.setStroke(palette[i].darker());
+            // g.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+            var strokeColor = '#' + palette[i].darker().asHexString.substr(2);
+            if (!animated) {
+               lineNode.setAttributeNS(null, 'stroke', strokeColor);
+               lineNode.setAttributeNS(null, 'x1', p1.x);
+               lineNode.setAttributeNS(null, 'y1', p1.y);
+               lineNode.setAttributeNS(null, 'x2', p2.x);
+               lineNode.setAttributeNS(null, 'y2', p2.y);
+            } else {
+               var childNodes = [...lineNode.childNodes];
+               var animateNodeStroke = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'stroke'; });
+               var animateNodeX1     = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'x1'; });
+               var animateNodeY1     = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'y1'; });
+               var animateNodeX2     = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'x2'; });
+               var animateNodeY2     = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'y2'; });
+               addAttributeValue(animateNodeStroke, 'values', strokeColor);
+               addAttributeValue(animateNodeX1    , 'values', p1.x);
+               addAttributeValue(animateNodeY1    , 'values', p1.y);
+               addAttributeValue(animateNodeX2    , 'values', p2.x);
+               addAttributeValue(animateNodeY2    , 'values', p2.y);
+               if (useKeyTimes) {
+                  // time stamps
+                  addAttributeValue(animateNodeStroke, 'keyTimes', round(keyTime, 4));
+                  addAttributeValue(animateNodeX1    , 'keyTimes', round(keyTime, 4));
+                  addAttributeValue(animateNodeY1    , 'keyTimes', round(keyTime, 4));
+                  addAttributeValue(animateNodeX2    , 'keyTimes', round(keyTime, 4));
+                  addAttributeValue(animateNodeY2    , 'keyTimes', round(keyTime, 4));
+               }
+            }
+         }
       }
 
       // paint inner gradient triangles
-      for (int i=0; i<8; i++) {
-         if (lm.isUseGradient())
-            setGradientFill(g,
-                  inn[i], palette[(i+6)%8],
-                  center, ((i&1)==0) ? Color.BLACK : Color.WHITE);
-         else
-            g.setFill(((i & 1) == 0)
-                  ? Cast.toColor(hsvPalette[(i + 6)%8].toColor().brighter())
-                  : Cast.toColor(hsvPalette[(i + 6)%8].toColor().darker()));
-         fillPolygon(g, inn[(i + 0)%8], inn[(i + 3)%8], center);
+      for (var i=0; i<8; i++) {
+         var shape = fillPolygon('innerTr', i, inn[(i + 0)%8], inn[(i + 3)%8], center);
+         if (useGradient) {
+            var p1 = inn[(i+0)%8];
+            var p2 = inn[(i+3)%8];
+            var p = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2); // center line of p1-p2
+            setGradientFill('innerTr', i,
+                  p, palette[(i+6)%8],
+                  center, ((i&1)==0) ? Color.Black : Color.White);
+         } else {
+            setFill(shape, ((i & 1) == 0)
+                  ? hsvPalette[(i + 6)%8].toColor().brighter()
+                  : hsvPalette[(i + 6)%8].toColor().darker());
+         }
       }
-      /**/
    }
 
 }
@@ -1411,7 +1535,17 @@ class LogoSvg extends Logo {
       return this._drawContext = {
          // nodes
          background: null, // node example: <rect ...
-         ownRays   : null  // nodes examples: <path ...
+         ownRays   : null, // nodes examples: <path ...
+         ownRays1  : null,
+         ownRays2  : null,
+         perim     : null, // star lines perimeter
+         innerTr   : null, // inner triangles
+         gradient: {
+            ownRays : null,
+            ownRays1: null,
+            ownRays2: null,
+            innerTr : null
+         }
       };
    }
 
@@ -1464,6 +1598,7 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
       var foregroundColor = m.foregroundColor;
       var skill = m.mosaicSkill;
       var size = m.size;
+      var animated = m.animated;
 
       if (!cnxt.background && !backgroundColor.isTransparent) { // fill background
          // example: <rect x="0" y="0" width="100" height="100" fill="hsla(112.71, 50.95%, 82.35%, 1)" />
@@ -1482,6 +1617,9 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
 
       const useKeyTimes = false;
 
+      var addAttributeValue = MosaicSkillOrGroupView.addAttributeValue;
+      var createAnimeteNode = MosaicSkillOrGroupView.createAnimeteNode;
+
       if (!cnxt.shapes) {
          // один раз (самий перший за всі малювання) створюю ноди для фігур з піднодами анімацій
          cnxt.shapes = []; // examples: <path stroke="#400000" stroke-width="0.7" fill-opacity="0.92"> .... </path>
@@ -1492,33 +1630,18 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
           //pathNode.setAttributeNS(null, 'stroke-opacity', round(borderColor.a/255.0, 2));
             pathNode.setAttributeNS(null, 'fill-opacity'  , round(foregroundColor.a/255.0, 2));
 
-            if (m.animated) {
-               { // examples: <animate attributeName="d" dur="2000ms" repeatCount="indefinite" calcMode="linear" ... />
-                  var animateNodeD = svgDoc.createElementNS(svgNS, 'animate');
-                  animateNodeD.setAttributeNS(null, 'attributeName', 'd');
-                  animateNodeD.setAttributeNS(null, 'dur'          , duration + 'ms');
-                  animateNodeD.setAttributeNS(null, 'repeatCount'  , 'indefinite');
-                  if (!useKeyTimes)
-                     animateNodeD.setAttributeNS(null, 'calcMode'  , (skill==null) ? 'discrete' : 'linear'); // discrete linear paced spline
-                  pathNode.appendChild(animateNodeD);
-               }
-               { // examples: <animate attributeName="fill" dur="2000ms" repeatCount="indefinite" calcMode="linear" ...>
-                  var animateNodeFill = svgDoc.createElementNS(svgNS, 'animate');
-                  animateNodeFill.setAttributeNS(null, 'attributeName', 'fill');
-                  animateNodeFill.setAttributeNS(null, 'dur'          , duration + 'ms');
-                  animateNodeFill.setAttributeNS(null, 'repeatCount'  , 'indefinite');
-                  if (!useKeyTimes)
-                     animateNodeFill.setAttributeNS(null, 'calcMode'  , (skill==null) ? 'discrete' : 'linear'); // discrete linear paced spline
-                  pathNode.appendChild(animateNodeFill);
-               }
+            if (animated) {
+               // examples: <animate attributeName="d" dur="2000ms" repeatCount="indefinite" calcMode="linear" ... />
+               pathNode.appendChild(createAnimeteNode(svgDoc, 'd', duration, useKeyTimes ? null : (skill==null) ? 'discrete' : 'linear'));
+
+               // examples: <animate attributeName="fill" dur="2000ms" repeatCount="indefinite" calcMode="linear" ...>
+               pathNode.appendChild(createAnimeteNode(svgDoc, 'fill', duration, useKeyTimes ? null : (skill==null) ? 'discrete' : 'linear'));
             }
 
             svg.appendChild(pathNode);
             cnxt.shapes.push(pathNode);
          });
       }
-
-      var addAttributeValue = MosaicSkillOrGroupView.addAttributeValue;
 
       // set values of shapes - coordinates and colors
       for (var i=0; i<shapes.length; ++i) {
@@ -1527,7 +1650,7 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
          var color = shapes[i].color;
          var pathD = 'M' + polygon.map(function(p) { return round(p.x, 2) + ' ' + round(p.y, 2); }).join(' L')  + ' Z';
          var pathFillColor = '#' + color.asHexString.substr(2);
-         if (!m.animated) {
+         if (!animated) {
             pathNode.setAttributeNS(null, 'd', pathD);
             pathNode.setAttributeNS(null, 'fill', pathFillColor);
          } else {
@@ -1539,9 +1662,8 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
 
             // time stamps
             if (useKeyTimes) {
-               var keyTimesAddon = round(keyTime, 4);
-               addAttributeValue(animateNodeD   , 'keyTimes', keyTimesAddon);
-               addAttributeValue(animateNodeFill, 'keyTimes', keyTimesAddon);
+               addAttributeValue(animateNodeD   , 'keyTimes', round(keyTime, 4));
+               addAttributeValue(animateNodeFill, 'keyTimes', round(keyTime, 4));
             }
          }
       }
@@ -1556,15 +1678,9 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
           //pathNode.setAttributeNS(null, 'stroke-opacity', round(li.clr.a/255.0, 2));
           //pathNode.setAttributeNS(null, 'fill-opacity'  , round(li.clr.a/255.0, 2));
 
-            if (m.animated) {
-               // examples: <animate attributeName="d" dur="2000ms" repeatCount="indefinite" calcMode="linear" ... />
-               var animateNodeD = svgDoc.createElementNS(svgNS, 'animate');
-               animateNodeD.setAttributeNS(null, 'attributeName', 'd');
-               animateNodeD.setAttributeNS(null, 'dur'          , duration + 'ms');
-               animateNodeD.setAttributeNS(null, 'repeatCount'  , 'indefinite');
-               if (!useKeyTimes)
-                  animateNodeD.setAttributeNS(null, 'calcMode'  , 'discrete'); // discrete linear paced spline
-               pathNode.appendChild(animateNodeD);
+            if (animated) {
+               // examples: <animate attributeName="d" dur="2000ms" repeatCount="indefinite" calcMode="discrete" ... />
+               pathNode.appendChild(createAnimeteNode(svgDoc, 'd', duration, useKeyTimes ? null : 'discrete'));
             }
 
             svg.appendChild(pathNode);
@@ -1577,16 +1693,26 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
          var from = menuShapes[i].from;
          var to   = menuShapes[i].to;
          var pathD = 'M ' + round(from.x, 2) + ' ' + round(from.y, 2) + ' L ' + round(to.x, 2) + ' ' + round(to.y, 2);
-         if (!m.animated) {
+         if (!animated) {
             pathNode.setAttributeNS(null, 'd', pathD);
          } else {
             var animateNodeD = pathNode.childNodes[0];
             addAttributeValue(animateNodeD, 'values', pathD); // shape coordinates
-            var keyTimesAddon = round(keyTime, 4);
-            addAttributeValue(animateNodeD, 'keyTimes', keyTimesAddon); // time stamps
+            if (useKeyTimes)
+               addAttributeValue(animateNodeD, 'keyTimes', round(keyTime, 4)); // time stamps
          }
       }
 
+   }
+
+   static createAnimeteNode(svgDoc, attributeName, duration, calcMode) {
+      var animateNodeD = svgDoc.createElementNS(svgNS, 'animate');
+      animateNodeD.setAttributeNS(null, 'attributeName', attributeName);
+      animateNodeD.setAttributeNS(null, 'dur'          , duration + 'ms');
+      animateNodeD.setAttributeNS(null, 'repeatCount'  , 'indefinite');
+      if (calcMode)
+         animateNodeD.setAttributeNS(null, 'calcMode'  , calcMode); // discrete linear paced spline
+      return animateNodeD;
    }
 
    static addAttributeValue(node, attributeName, addonValue) {
@@ -1725,9 +1851,9 @@ class RotateLogoTransformer extends IModelTransformer {
    execute(/*IImageModel*/ model) {
       var lm = model;
 
-      lm.rays = [];
-      lm.inn  = [];
-      lm.oct  = [];
+      lm.rays.length = 0;
+      lm.inn .length = 0;
+      lm.oct .length = 0;
 
       var size = lm.size;
       var center = new Point(size.width/2.0, size.height/2.0);
@@ -1930,7 +2056,7 @@ function work(svg, svgDoc) {
 
    var cntrllr;
 
-   switch (0) {
+   switch (Settings.testedImageType) {
    case 0:
       cntrllr = new LogoControllerSvg(svg, svgDoc);
       break;
