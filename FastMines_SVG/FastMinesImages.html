@@ -39,7 +39,7 @@ Promise.resolve().then(function() {
 
       testedImageType: 0, // 0 - Logo image ; 1-MosaicSkill image
 
-      animated: !true,
+      animated: true,
       clockwise: true, // ↻ or ↺
       rotatePeriod: 2000, // in msec
       /** the number of parts of which the one turn */
@@ -54,12 +54,12 @@ Promise.resolve().then(function() {
 
       showBurgerMenu: true,
 
-      useGradientFill: !false, // for Logo
+      useGradientFill: true, // for Logo
 
       useRotateTransforming: true,
       usePolarLightFgTransforming: true,
 
-      useRandom: !true
+      useRandom: true
    };
 
    if (Settings.useRandom) {
@@ -71,6 +71,7 @@ Promise.resolve().then(function() {
       Settings.borderWidth = !random(3) ? 0: (0.3 + 2 * Math.random()),
       Settings.backgroundColor = !random(5) ? Color.Transparent : Color.RandomColor.brighter(0.4),
       Settings.foregroundAlpha = 150 + random(255-150), // 200  // 0..255 - foreground alpha-chanel color
+      Settings.testedImageType = random(2);
       Settings.mosaicSkill = (function() {
             switch (random(6)) {
             case 0: return ESkillLevel.eBeginner;
@@ -83,9 +84,9 @@ Promise.resolve().then(function() {
             }
          })();
       Settings.showBurgerMenu = b();
-      // Settings.useGradientFill = b();
+      Settings.useGradientFill = b();
 
-      //Settings.animated = b();
+      Settings.animated = b();
       if (Settings.animated) {
          Settings.clockwise = b();
          Settings.rotatePeriod = 1500 + random(2500);
@@ -1338,28 +1339,28 @@ class Logo extends ImageView {
             for (var name of names) {
                cnxt.gradient[name] = [];
                for (var i=0; i<8; ++i) {
-                  var lgNode = svgDoc.createElementNS(svgNS, 'linearGradient');
-                  lgNode.setAttributeNS(null, 'id', name + i);
+                  var linearGradientNode = svgDoc.createElementNS(svgNS, 'linearGradient');
+                  linearGradientNode.setAttributeNS(null, 'id', name + i);
 
                   var stopNodeRun = svgDoc.createElementNS(svgNS, 'stop');
                   var stopNodeEnd = svgDoc.createElementNS(svgNS, 'stop');
                   stopNodeRun.setAttributeNS(null, 'offset', '0%');
                   stopNodeEnd.setAttributeNS(null, 'offset', '100%');
-                  lgNode.appendChild(stopNodeRun);
-                  lgNode.appendChild(stopNodeEnd);
-                  lgNode.setAttributeNS(null, 'gradientUnits', 'userSpaceOnUse');
+                  linearGradientNode.appendChild(stopNodeRun);
+                  linearGradientNode.appendChild(stopNodeEnd);
+                  linearGradientNode.setAttributeNS(null, 'gradientUnits', 'userSpaceOnUse');
 
                   if (animated) {
-                     lgNode     .appendChild(createAnimeteNode(svgDoc, 'x1'        , duration, useKeyTimes ? null : 'linear'));
-                     lgNode     .appendChild(createAnimeteNode(svgDoc, 'y1'        , duration, useKeyTimes ? null : 'linear'));
-                     lgNode     .appendChild(createAnimeteNode(svgDoc, 'x2'        , duration, useKeyTimes ? null : 'linear'));
-                     lgNode     .appendChild(createAnimeteNode(svgDoc, 'y2'        , duration, useKeyTimes ? null : 'linear'));
-                     stopNodeRun.appendChild(createAnimeteNode(svgDoc, 'stop-color', duration, useKeyTimes ? null : 'linear'));
-                     stopNodeEnd.appendChild(createAnimeteNode(svgDoc, 'stop-color', duration, useKeyTimes ? null : 'linear'));
+                     linearGradientNode.appendChild(createAnimeteNode(svgDoc, 'x1'        , duration, useKeyTimes ? null : 'linear'));
+                     linearGradientNode.appendChild(createAnimeteNode(svgDoc, 'y1'        , duration, useKeyTimes ? null : 'linear'));
+                     linearGradientNode.appendChild(createAnimeteNode(svgDoc, 'x2'        , duration, useKeyTimes ? null : 'linear'));
+                     linearGradientNode.appendChild(createAnimeteNode(svgDoc, 'y2'        , duration, useKeyTimes ? null : 'linear'));
+                     stopNodeRun       .appendChild(createAnimeteNode(svgDoc, 'stop-color', duration, useKeyTimes ? null : 'linear'));
+                     stopNodeEnd       .appendChild(createAnimeteNode(svgDoc, 'stop-color', duration, useKeyTimes ? null : 'linear'));
                   }
 
-                  defsNode.appendChild(lgNode);
-                  cnxt.gradient[name].push(lgNode);
+                  defsNode.appendChild(linearGradientNode);
+                  cnxt.gradient[name].push(linearGradientNode);
                }
             }
          }
@@ -1384,15 +1385,37 @@ class Logo extends ImageView {
          if (!endClr.isOpaque)
             stopNodeEnd.setAttributeNS(null, 'stop-opacity', round(endClr.a/255.0, 2));
          if (!animated) {
-            linearGradientNode.setAttributeNS(null, 'x1', round(start.x, 2) /*+ 'px'*/);
-            linearGradientNode.setAttributeNS(null, 'y1', round(start.y, 2) /*+ 'px'*/);
-            linearGradientNode.setAttributeNS(null, 'x2', round(end.x  , 2) /*+ 'px'*/);
-            linearGradientNode.setAttributeNS(null, 'y2', round(end.y  , 2) /*+ 'px'*/);
+            linearGradientNode.setAttributeNS(null, 'x1', round(start.x, 2));
+            linearGradientNode.setAttributeNS(null, 'y1', round(start.y, 2));
+            linearGradientNode.setAttributeNS(null, 'x2', round(end.x  , 2));
+            linearGradientNode.setAttributeNS(null, 'y2', round(end.y  , 2));
 
             stopNodeRun.setAttributeNS(null, 'stop-color', '#' + startClr.asHexString.substr(2));
             stopNodeEnd.setAttributeNS(null, 'stop-color', '#' +   endClr.asHexString.substr(2));
          } else {
-            // TODO
+            var animateNodeX1       =                 childNodes .find(function(x) { return x.getAttribute('attributeName') === 'x1'; });
+            var animateNodeY1       =                 childNodes .find(function(x) { return x.getAttribute('attributeName') === 'y1'; });
+            var animateNodeX2       =                 childNodes .find(function(x) { return x.getAttribute('attributeName') === 'x2'; });
+            var animateNodeY2       =                 childNodes .find(function(x) { return x.getAttribute('attributeName') === 'y2'; });
+            var animateNodeRunColor = [...stopNodeRun.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'stop-color'; });
+            var animateNodeEndColor = [...stopNodeEnd.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'stop-color'; });
+
+            // shape coordinates
+            addAttributeValue(animateNodeX1      , 'values', round(start.x, 2));
+            addAttributeValue(animateNodeY1      , 'values', round(start.y, 2));
+            addAttributeValue(animateNodeX2      , 'values', round(end.x  , 2));
+            addAttributeValue(animateNodeY2      , 'values', round(end.y  , 2));
+            addAttributeValue(animateNodeRunColor, 'values', '#' + startClr.asHexString.substr(2));
+            addAttributeValue(animateNodeEndColor, 'values', '#' +   endClr.asHexString.substr(2));
+
+            if (useKeyTimes) { // time stamps
+               addAttributeValue(animateNodeX1      , 'keyTimes', round(keyTime, 4));
+               addAttributeValue(animateNodeY1      , 'keyTimes', round(keyTime, 4));
+               addAttributeValue(animateNodeX2      , 'keyTimes', round(keyTime, 4));
+               addAttributeValue(animateNodeY2      , 'keyTimes', round(keyTime, 4));
+               addAttributeValue(animateNodeRunColor, 'keyTimes', round(keyTime, 4));
+               addAttributeValue(animateNodeEndColor, 'keyTimes', round(keyTime, 4));
+            }
          }
          // g.setFill(new LinearGradient(start.getX(), start.getY(),
          //                            end  .getX(), end  .getY(),
@@ -1692,8 +1715,9 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
             pathNode.setAttributeNS(null, 'd', pathD);
             pathNode.setAttributeNS(null, 'fill', pathFillColor);
          } else {
-            var animateNodeD = pathNode.childNodes[0];
-            var animateNodeFill = pathNode.childNodes[1];
+            var childNodes = [...pathNode.childNodes];
+            var animateNodeD    = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'd'; });
+            var animateNodeFill = childNodes.find(function(x) { return x.getAttribute('attributeName') === 'fill'; });
 
             addAttributeValue(animateNodeD   , 'values', pathD); // shape coordinates
             addAttributeValue(animateNodeFill, 'values', pathFillColor); // shape colors
@@ -1734,7 +1758,7 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
          if (!animated) {
             pathNode.setAttributeNS(null, 'd', pathD);
          } else {
-            var animateNodeD = pathNode.childNodes[0];
+            var animateNodeD = [...pathNode.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'd'; });
             addAttributeValue(animateNodeD, 'values', pathD); // shape coordinates
             if (useKeyTimes)
                addAttributeValue(animateNodeD, 'keyTimes', round(keyTime, 4)); // time stamps
