@@ -25,4 +25,8 @@ public interface IAnimatedModel extends IImageModel {
    int getCurrentFrame();
    void setCurrentFrame(int value);
 
+//   /** frames per second (hint: max is 60) */
+//   default int  getFPS() { return (int)(getTotalFrames() * 1000 / getAnimatePeriod()); }
+//   default void setFPS(int value) { setTotalFrames((int)(value * getAnimatePeriod() / 1000)); }
+
 }

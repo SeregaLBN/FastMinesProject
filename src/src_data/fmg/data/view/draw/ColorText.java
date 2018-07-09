@@ -21,37 +21,37 @@ public class ColorText implements INotifyPropertyChanged {
 
       for (EOpen eOpen: EOpen.values())
          switch (eOpen) {
-         case _Nil : colorOpen[eOpen.ordinal()] = Color.Black ; break;
-         case _1   : colorOpen[eOpen.ordinal()] = Color.Navy  ; break;
-         case _2   : colorOpen[eOpen.ordinal()] = Color.Green ; break;
-         case _3   : colorOpen[eOpen.ordinal()] = Color.Red   ; break;
-         case _4   : colorOpen[eOpen.ordinal()] = Color.Maroon; break;
-         case _5   : colorOpen[eOpen.ordinal()] = Color.Blue  ; break;
-         case _6   : colorOpen[eOpen.ordinal()] = Color.Black ; break;
-         case _7   : colorOpen[eOpen.ordinal()] = Color.Olive ; break;
-         case _8   : colorOpen[eOpen.ordinal()] = Color.Aqua  ; break;
-         case _9   : colorOpen[eOpen.ordinal()] = Color.Navy  ; break;
-         case _10  : colorOpen[eOpen.ordinal()] = Color.Green ; break;
-         case _11  : colorOpen[eOpen.ordinal()] = Color.Red   ; break;
-         case _12  : colorOpen[eOpen.ordinal()] = Color.Maroon; break;
-         case _13  : colorOpen[eOpen.ordinal()] = Color.Navy  ; break;
-         case _14  : colorOpen[eOpen.ordinal()] = Color.Green ; break;
-         case _15  : colorOpen[eOpen.ordinal()] = Color.Red   ; break;
-         case _16  : colorOpen[eOpen.ordinal()] = Color.Maroon; break;
-         case _17  : colorOpen[eOpen.ordinal()] = Color.Blue  ; break;
-         case _18  : colorOpen[eOpen.ordinal()] = Color.Black ; break;
-         case _19  : colorOpen[eOpen.ordinal()] = Color.Olive ; break;
-         case _20  : colorOpen[eOpen.ordinal()] = Color.Aqua  ; break;
-         case _21  : colorOpen[eOpen.ordinal()] = Color.Navy  ; break;
-         case _Mine: colorOpen[eOpen.ordinal()] = Color.Black ; break;
+         case _Nil : colorOpen[eOpen.ordinal()] = Color.Black (); break;
+         case _1   : colorOpen[eOpen.ordinal()] = Color.Navy  (); break;
+         case _2   : colorOpen[eOpen.ordinal()] = Color.Green (); break;
+         case _3   : colorOpen[eOpen.ordinal()] = Color.Red   (); break;
+         case _4   : colorOpen[eOpen.ordinal()] = Color.Maroon(); break;
+         case _5   : colorOpen[eOpen.ordinal()] = Color.Blue  (); break;
+         case _6   : colorOpen[eOpen.ordinal()] = Color.Black (); break;
+         case _7   : colorOpen[eOpen.ordinal()] = Color.Olive (); break;
+         case _8   : colorOpen[eOpen.ordinal()] = Color.Aqua  (); break;
+         case _9   : colorOpen[eOpen.ordinal()] = Color.Navy  (); break;
+         case _10  : colorOpen[eOpen.ordinal()] = Color.Green (); break;
+         case _11  : colorOpen[eOpen.ordinal()] = Color.Red   (); break;
+         case _12  : colorOpen[eOpen.ordinal()] = Color.Maroon(); break;
+         case _13  : colorOpen[eOpen.ordinal()] = Color.Navy  (); break;
+         case _14  : colorOpen[eOpen.ordinal()] = Color.Green (); break;
+         case _15  : colorOpen[eOpen.ordinal()] = Color.Red   (); break;
+         case _16  : colorOpen[eOpen.ordinal()] = Color.Maroon(); break;
+         case _17  : colorOpen[eOpen.ordinal()] = Color.Blue  (); break;
+         case _18  : colorOpen[eOpen.ordinal()] = Color.Black (); break;
+         case _19  : colorOpen[eOpen.ordinal()] = Color.Olive (); break;
+         case _20  : colorOpen[eOpen.ordinal()] = Color.Aqua  (); break;
+         case _21  : colorOpen[eOpen.ordinal()] = Color.Navy  (); break;
+         case _Mine: colorOpen[eOpen.ordinal()] = Color.Black (); break;
          default: throw new RuntimeException("add EOpen value");
          }
 
       for (EClose eClose: EClose.values())
          switch (eClose) {
-         case _Unknown: colorClose[eClose.ordinal()] = Color.Teal ; break;
-         case _Clear  : colorClose[eClose.ordinal()] = Color.Black; break;
-         case _Flag   : colorClose[eClose.ordinal()] = Color.Red  ; break;
+         case _Unknown: colorClose[eClose.ordinal()] = Color.Teal (); break;
+         case _Clear  : colorClose[eClose.ordinal()] = Color.Black(); break;
+         case _Flag   : colorClose[eClose.ordinal()] = Color.Red  (); break;
          default: throw new RuntimeException("add EClose value");
          }
    }

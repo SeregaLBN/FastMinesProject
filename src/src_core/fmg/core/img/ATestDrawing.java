@@ -26,10 +26,63 @@ public abstract class ATestDrawing {
       this.titlePrefix = titlePrefix;
    }
 
-   public void applyRandom(IImageController<?,?,?> ctrller, boolean testTransparent) {
-      testTransparent = testTransparent || bl();
+   public void applySettings(IImageController<?,?,?> ctrller, boolean testTransparent) {
+
+
+      ///////////////////////
+      //                   //
+      //  manual settings  //
+      //                   //
+      ///////////////////////
 
       IImageModel model = ctrller.getModel();
+      model.setSize(new SizeDouble(600, 600));
+
+      if (model instanceof IAnimatedModel) {
+         IAnimatedModel am = (IAnimatedModel)model;
+         am.setAnimated(!true);
+         if (am.isAnimated()) {
+            am.setAnimatePeriod(2000); // rotate period
+            am.setTotalFrames(100); // animate iterations
+         }
+      }
+      if (model instanceof AnimatedImageModel) {
+         @SuppressWarnings("resource")
+         AnimatedImageModel aim = (AnimatedImageModel)model;
+         aim.setPadding(10);
+         aim.setBorderWidth(0);
+         aim.setBackgroundColor(testTransparent ? new Color(0xC8FFFFFF) : Color.White());
+         aim.getForegroundColor().setA(200); // 0..255 - foreground alpha-chanel color
+      }
+      if (model instanceof BurgerMenuModel) {
+         @SuppressWarnings("resource")
+         BurgerMenuModel bmm = (BurgerMenuModel)model;
+         bmm.setShow(true);
+      }
+      if (model instanceof LogoModel) {
+         @SuppressWarnings("resource")
+         LogoModel lm = (LogoModel)model;
+         lm.setUseGradient(true);
+      }
+
+      if (ctrller instanceof AnimatedImgController<?, ?, ?>) {
+         @SuppressWarnings("resource")
+         AnimatedImgController<?, ?, ?> aic = (AnimatedImgController<?, ?, ?>)ctrller;
+         aic.useRotateTransforming(!true);
+         aic.usePolarLightFgTransforming(true);
+      }
+
+
+      boolean useRandom = !true;
+      ///////////////////////
+      //                   //
+      //  random settings  //
+      //                   //
+      ///////////////////////
+      if (!useRandom)
+         return;
+
+      testTransparent = testTransparent || bl();
 
       if (model instanceof IAnimatedModel) {
          IAnimatedModel am = (IAnimatedModel)model;
@@ -68,7 +121,7 @@ public abstract class ATestDrawing {
             // test transparent
             Color clr = aim.getForegroundColor();
             if ((aim.getBorderWidth() > 0) && (r(4) == 0)) {
-               clr.setA(Color.Transparent.getA());
+               clr.setA(Color.Transparent().getA());
             } else {
                clr.setA(150 + r(255-150));
             }

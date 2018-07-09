@@ -45,6 +45,9 @@ namespace fmg.uwp.draw.img.wbmp {
          for (var i = 0; i < 8; i++) {
             var p1 = rays[(i + 7) % 8];
             var p2 = rays[i];
+            // TODO need usage:
+            //var zoomAverage = (ZoomX + ZoomY) / 2;
+            //var penWidth = Model.BorderWidth*zoomAverage;
             img.DrawLineAa((int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y, Palette[i].ToColor().ToWinColor());
          }
 

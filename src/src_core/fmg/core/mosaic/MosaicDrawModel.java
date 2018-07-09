@@ -23,7 +23,7 @@ import fmg.data.view.draw.PenBorder;
 public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageModel {
 
    /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется одним из MVC-наследником. */
-   public static Color DefaultBkColor = Color.Gray.brighter();
+   public static Color DefaultBkColor = Color.Gray().brighter();
 
    private TImage         _imgMine, _imgFlag;
    private ColorText      _colorText;

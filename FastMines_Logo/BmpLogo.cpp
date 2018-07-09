@@ -6,6 +6,8 @@
 #include <windows.h>
 #include <windowsX.h>
 #pragma comment(lib, "msimg32")
+#include <gdiplus.h>
+#pragma comment(lib, "gdiplus.lib")
 
 COLOR16 toClr16(COLORREF clr, byte channel) {
    BYTE z = (BYTE)((clr >> (channel << 3)) & 0xFF); // select R or G or B
@@ -15,6 +17,7 @@ COLOR16 toClr16(COLORREF clr, byte channel) {
 
 HBITMAP CreateBitmap(UINT iWidth, UINT iHeight, COLORREF clrFill);
 BOOL SaveBitmap(HBITMAP hBmp, LPCTSTR szBmpFile, BOOL bReplaceFile = TRUE);
+BOOL SavePng(LPCTSTR szBmpFile, LPCTSTR szPngFile);
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -31,8 +34,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
    { // draw star
       const int iPenWidth = 17;
+      #define RGBh(rgb) RGB(((rgb)>>16) & 0xFF, ((rgb)>>8) & 0xFF, (rgb) & 0xFF)
+    //const COLORREF palette[] = {0xFF0000, 0xFFD800, 0x4CFF00, 0x00FF90, 0x0094FF, 0x4800FF, 0xB200FF, 0xFF006E}; // old colors
+      const COLORREF palette[] = { RGBh(0xFF0000), RGBh(0xFFBF00), RGBh(0x7FFF00), RGBh(0x00FF3F), RGBh(0x00FFFF), RGBh(0x003FFF), RGBh(0x7F00FF), RGBh(0xFF00BF)}; // new colors: js code: [ new HSV(  0, 100, 100), new HSV( 45, 100, 100), new HSV( 90, 100, 100), new HSV(135, 100, 100), new HSV(180, 100, 100), new HSV(225, 100, 100), new HSV(270, 100, 100), new HSV(315, 100, 100) ].forEach(function(x) { console.log(x.toColor().asHexString); })
 
-      const COLORREF palette[] = {0xFF0000, 0xFFD800, 0x4CFF00, 0x00FF90, 0x0094FF, 0x4800FF, 0xB200FF, 0xFF006E};
       const POINT rays[] = { // owner rays points
          { LONG(margin+100.0000*zoom), LONG(margin+200.0000*zoom) },
          { LONG(margin+170.7107*zoom), LONG(margin+ 29.2893*zoom) },
@@ -73,21 +78,21 @@ int _tmain(int argc, _TCHAR* argv[])
                0x0000                     // COLOR16 Alpha;
             }, {
                oct[i].x,                  // LONG    x;
-               oct[i].y,                  // LONG    y;   
+               oct[i].y,                  // LONG    y;
                toClr16(palette[(i+3)%8], 0), // COLOR16 Red;   0x0000..0xff00
                toClr16(palette[(i+3)%8], 1), // COLOR16 Green;
                toClr16(palette[(i+3)%8], 2), // COLOR16 Blue;
                0x0000                     // COLOR16 Alpha;
             }, {
                inn[i].x,                  // LONG    x;
-               inn[i].y,                  // LONG    y;   
+               inn[i].y,                  // LONG    y;
                toClr16(palette[(i+6)%8], 0), // COLOR16 Red;   0x0000..0xff00
                toClr16(palette[(i+6)%8], 1), // COLOR16 Green;
                toClr16(palette[(i+6)%8], 2), // COLOR16 Blue;
                0x0000                     // COLOR16 Alpha;
             }, {
                oct[(i+5)%8].x,            // LONG    x;
-               oct[(i+5)%8].y,            // LONG    y;   
+               oct[(i+5)%8].y,            // LONG    y;
                toClr16(palette[(i+0)%8], 0), // COLOR16 Red;   0x0000..0xff00
                toClr16(palette[(i+0)%8], 1), // COLOR16 Green;
                toClr16(palette[(i+0)%8], 2), // COLOR16 Blue;
@@ -119,14 +124,14 @@ int _tmain(int argc, _TCHAR* argv[])
                0x0000                     // COLOR16 Alpha;
             }, {
                inn[(i+3)%8].x,            // LONG    x;
-               inn[(i+3)%8].y,            // LONG    y;   
+               inn[(i+3)%8].y,            // LONG    y;
                toClr16(palette[(i+6)%8], 0), // COLOR16 Red;   0x0000..0xff00
                toClr16(palette[(i+6)%8], 1), // COLOR16 Green;
                toClr16(palette[(i+6)%8], 2), // COLOR16 Blue;
                0x0000                     // COLOR16 Alpha;
             }, {
                size.cx/2,  // LONG    x;
-               size.cx/2,  // LONG    y;   
+               size.cx/2,  // LONG    y;
                COLOR16((i&1) ? 0 : 0xFF00),     // COLOR16 Red;   0x0000..0xff00
                COLOR16((i&1) ? 0 : 0xFF00),     // COLOR16 Green;
                COLOR16((i&1) ? 0 : 0xFF00),     // COLOR16 Blue;
@@ -143,6 +148,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
    bRes = ::SaveBitmap(hBmp, _T("fmLogoDemo.bmp"));   _ASSERT_EXPR(bRes, L"SaveBitmap");
+   bRes = ::SavePng(_T("fmLogoDemo.bmp"), _T("fmLogoDemo.png"));   _ASSERT_EXPR(bRes, L"SavePng");
 
    bRes = ::DeleteBitmap(hBmp);   _ASSERT_EXPR(bRes, L"DeleteBitmap");
 
@@ -173,7 +179,7 @@ HBITMAP CreateBitmap(UINT iWidth, UINT iHeight, COLORREF clrFill) {
    return hBmp;
 }
 
-#define WINDOWS_BITMAP_SIGNATURE 0x4D42 // Идентификатор типа файла BMP: 0x42 = "B" 0x4d = "M"
+#define WINDOWS_BITMAP_SIGNATURE 0x4D42 // РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ С‚РёРїР° С„Р°Р№Р»Р° BMP: 0x42 = "B" 0x4d = "M"
 
 __forceinline WORD DIBNumColors(const BITMAPINFOHEADER &bih) { // Calculates the number of entries in the color table.
    if (bih.biClrUsed) {
@@ -200,9 +206,9 @@ __forceinline DWORD BytesPerLine(const BITMAPINFOHEADER &bih) { // Calculates th
 }
 __forceinline DWORD DibSectionSize(const BITMAPINFOHEADER &bih) {
    if ((bih.biCompression == BI_RGB) && (bih.biSizeImage==0)) // biSizeImage may be set to zero for BI_RGB bitmaps.
-      return BytesPerLine(bih) * bih.biHeight; // сам подсчитываю
+      return BytesPerLine(bih) * bih.biHeight; // СЃР°Рј РїРѕРґСЃС‡РёС‚С‹РІР°СЋ
    else
-      return bih.biSizeImage;                  // беру то, что явно прописано
+      return bih.biSizeImage;                  // Р±РµСЂСѓ С‚Рѕ, С‡С‚Рѕ СЏРІРЅРѕ РїСЂРѕРїРёСЃР°РЅРѕ
 }
 __forceinline DWORD BitmapSizeInBytes(const BITMAPINFOHEADER &bih) {
    return sizeof(BITMAPINFOHEADER) + PaletteSize(bih) + DibSectionSize(bih);
@@ -224,7 +230,7 @@ BOOL SaveBitmap(HDC hDC, HBITMAP hBmp, LPCTSTR szBmpFile, BOOL bReplaceFile) {
       return FALSE;
    }
    if (GetBitsPixel(hBmp) <= 8) {
-      ::SetLastError(E_FAIL); // TODO не поддерживается %(
+      ::SetLastError(E_FAIL); // TODO РЅРµ РїРѕРґРґРµСЂР¶РёРІР°РµС‚СЃСЏ %(
       return FALSE;
    }
    BOOL bRes = FALSE;
@@ -310,7 +316,7 @@ BOOL SaveBitmap(HBITMAP hBmp, LPCTSTR szBmpFile, BOOL bReplaceFile) {
       dwErrCode = ::GetLastError();
    } else {
       HBITMAP hBmpOld = (HBITMAP)::SelectObject(hDC, hBmp);
-      _ASSERT_EXPR(!!hBmpOld, L"Для этой ф-ции хэндл битмапы должен быть свободным (не выбранным на контекст - SelectObject(hDC))");
+      _ASSERT_EXPR(!!hBmpOld, L"Р”Р»СЏ СЌС‚РѕР№ С„-С†РёРё С…СЌРЅРґР» Р±РёС‚РјР°РїС‹ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЃРІРѕР±РѕРґРЅС‹Рј (РЅРµ РІС‹Р±СЂР°РЅРЅС‹Рј РЅР° РєРѕРЅС‚РµРєСЃС‚ - SelectObject(hDC))");
       bRes = !!hBmpOld;
       if (!bRes) {
          dwErrCode = ERROR_INVALID_PARAMETER;
@@ -325,4 +331,65 @@ BOOL SaveBitmap(HBITMAP hBmp, LPCTSTR szBmpFile, BOOL bReplaceFile) {
 
    ::SetLastError(dwErrCode);
    return bRes;
+}
+
+BOOL GetEncoderClsid(LPCWSTR format, OUT CLSID& clsid) {
+   UINT  num = 0;          // number of image encoders
+   UINT  size = 0;         // size of the image encoder array in bytes
+
+   Gdiplus::GetImageEncodersSize(&num, &size);
+   if (size == 0) {
+      ::SetLastError(E_FAIL);
+      return FALSE;
+   }
+
+   Gdiplus::ImageCodecInfo* pImageCodecInfo = (Gdiplus::ImageCodecInfo*)::malloc(size);
+   if (pImageCodecInfo == NULL) {
+      ::SetLastError(ERROR_OUTOFMEMORY);
+      return FALSE;
+   }
+
+   Gdiplus::Status res = Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
+   if (res != Gdiplus::/*Status.*/Ok) {
+      ::SetLastError(E_FAIL);
+      return FALSE;
+   }
+
+   for (UINT j = 0; j < num; ++j) {
+      if (::wcscmp(pImageCodecInfo[j].MimeType, format) == 0) {
+         clsid = pImageCodecInfo[j].Clsid;
+         ::free(pImageCodecInfo);
+         return TRUE;  // Success
+      }
+   }
+
+   ::free(pImageCodecInfo);
+   ::SetLastError(ERROR_NOT_FOUND);
+   return FALSE;
+}
+
+BOOL SavePng(LPCTSTR szBmpFile, LPCTSTR szPngFile) {
+   Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+   ULONG_PTR gdiplusToken;
+   Gdiplus::Status res = Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+   if (res != Gdiplus::/*Status.*/Ok) {
+      ::SetLastError(E_FAIL);
+      return FALSE;
+   }
+
+   {
+      Gdiplus::Bitmap bmp(szBmpFile, TRUE);
+      CLSID pngClsid;
+      if (!::GetEncoderClsid(L"image/png", pngClsid))
+         return FALSE;
+      res = bmp.Save(szPngFile, &pngClsid, NULL);
+      if (res != Gdiplus::/*Status.*/Ok) {
+         ::SetLastError(E_FAIL);
+         return FALSE;
+      }
+   }
+
+   Gdiplus::GdiplusShutdown(gdiplusToken);
+
+   return TRUE;
 }

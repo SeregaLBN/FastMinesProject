@@ -179,7 +179,7 @@ public class Main extends JFrame {
                   imgModel.setBorderWidth(1); // *ZoomQualityFactor);
                   imgModel.setBorderColor(Color.RandomColor().darker(0.4));
                   imgModel.setForegroundColor(Color.RandomColor().brighter(0.4));
-                  imgModel.setBackgroundColor(Color.Transparent);
+                  imgModel.setBackgroundColor(Color.Transparent());
                   imgModel.setAnimated(true);
                   imgModel.setAnimatePeriod(6400);
                   imgModel.setTotalFrames(130);
@@ -278,7 +278,7 @@ public class Main extends JFrame {
                   imgModel.setBorderWidth(1*ZoomQualityFactor);
                   imgModel.setBorderColor(Color.RandomColor().darker(0.4));
                   imgModel.setForegroundColor(Color.RandomColor().brighter(0.7));
-                  imgModel.setBackgroundColor(Color.Transparent);
+                  imgModel.setBackgroundColor(Color.Transparent());
                   imgModel.setAnimeDirection(false);
                   imgModel.setAnimated(true);
                   imgModel.setAnimatePeriod(13000);
@@ -331,7 +331,7 @@ public class Main extends JFrame {
                   Color borderColor = Color.RandomColor().darker(0.4);
                   imgModel.getPenBorder().setColorLight(borderColor);
                   imgModel.getPenBorder().setColorShadow(borderColor);
-                  imgModel.setBackgroundColor(Color.Transparent);
+                  imgModel.setBackgroundColor(Color.Transparent());
                   imgModel.setAnimatePeriod(5400);
                   imgModel.setTotalFrames(110);
                   setMenuItemIcon(menuItem, img.getImage());
@@ -1134,7 +1134,7 @@ public class Main extends JFrame {
       logoModel.setUseGradient(true);
       logoModel.setSize(128);
       logoModel.setPadding(1);
-      logoModel.setBackgroundColor(Color.Transparent);//ImageProperties.DefaultBkColor);
+      logoModel.setBackgroundColor(Color.Transparent());//ImageProperties.DefaultBkColor);
       logoModel.setRotateMode(LogoModel.ERotateMode.combi);
       logoModel.setAnimatePeriod(25000);
       logoModel.setTotalFrames(260);

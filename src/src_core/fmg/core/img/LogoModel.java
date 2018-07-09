@@ -40,7 +40,7 @@ public class LogoModel extends AnimatedImageModel {
 
 
    public LogoModel() {
-      setBackgroundColor(Color.Transparent);
+      setBackgroundColor(Color.Transparent());
       _notifier.addListener(_selfListener);
    }
 

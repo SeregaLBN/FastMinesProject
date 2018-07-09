@@ -15,8 +15,8 @@ public class PenBorder implements INotifyPropertyChanged {
    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
 
    public PenBorder() {
-      this(Color.Black, Color.White, 3);
-//      this(Color.Green, Color.Red, 1);
+      this(Color.Black(), Color.White(), 3);
+//      this(Color.Green(), Color.Red(), 1);
    }
 
    public PenBorder(
