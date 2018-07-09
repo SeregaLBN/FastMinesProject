@@ -63,7 +63,7 @@ public final class TestDrawing extends Application {
 
             GraphicsContext gc = canvas.getGraphicsContext2D();
           //gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
-            gc.setFill(Cast.toColor(Color.Gray.brighter()));
+            gc.setFill(Cast.toColor(Color.Gray().brighter()));
             gc.fillRect(0,0, canvas.getWidth(), canvas.getHeight());
 
           //gc.setStroke(Cast.toColor(Color.Black));
@@ -132,7 +132,7 @@ public final class TestDrawing extends Application {
       EventHandler<MouseEvent> mouseHandler = ev -> {
          testTransparent[0] = td.bl();
          images.forEach(img -> {
-            td.applyRandom(img, testTransparent[0]);
+            td.applySettings(img, testTransparent[0]);
             onCellTilingHandler.run();
          });
       };
@@ -153,7 +153,7 @@ public final class TestDrawing extends Application {
 
       images.forEach(img -> {
          img.addListener(propertyChangeListener);
-         td.applyRandom(img, testTransparent[0]);
+         td.applySettings(img, testTransparent[0]);
       });
 
 
@@ -172,6 +172,8 @@ public final class TestDrawing extends Application {
       primaryStage.setScene(scene);
       primaryStage.setMinHeight(125);
       primaryStage.setMinWidth(100);
+      primaryStage.setHeight(300);
+      primaryStage.setWidth(300);
       primaryStage.show();
    }
 

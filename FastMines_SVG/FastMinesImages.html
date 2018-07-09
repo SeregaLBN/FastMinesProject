@@ -40,10 +40,10 @@ Promise.resolve().then(function() {
       testedImageType: 0, // 0 - Logo image ; 1-MosaicSkill image
 
       animated: true,
-      clockwise: true, // ↻ or ↺
-      rotatePeriod: 2000, // in msec
+      animeDirection: true, // clockwise: ↻ or ↺
+      animatePeriod: 2000, // rotate period in msec
       /** the number of parts of which the one turn */
-      iterations: 30,
+      totalFrames: 30, // animate iterations
 
       borderWidth: 0,
       backgroundColor: Color.Transparent,
@@ -88,10 +88,10 @@ Promise.resolve().then(function() {
 
       Settings.animated = b();
       if (Settings.animated) {
-         Settings.clockwise = b();
-         Settings.rotatePeriod = 1500 + random(2500);
+         Settings.animeDirection = b();
+         Settings.animatePeriod = 1500 + random(2500);
          if (Settings.testedImageType == 1) {
-            Settings.iterations = (Settings.mosaicSkill==null)
+            Settings.totalFrames = (Settings.mosaicSkill==null)
                ? 120 // что бы при calcMode='discrete' не 'дёргалось'
                : 30;
          }
@@ -1427,7 +1427,7 @@ class Logo extends ImageView {
          //                            }));
       };
 
-      var fillPolygon = function(/*string*/ name, /*int*/ i, /*Point[]*/ ...polygon) {
+      var drawPolygon = function(/*string*/ name, /*int*/ i, /*Point[]*/ ...polygon) {
          var pathNode = cnxt[name][i];
 
          var pathD = 'M' + polygon.map(function(p) { return round(p.x, 2) + ' ' + round(p.y, 2); }).join(' L')  + ' Z';
@@ -1446,7 +1446,7 @@ class Logo extends ImageView {
 
       // paint owner gradient rays
       for (var i=0; i<8; i++) {
-         var shape = fillPolygon('ownRays', i, rays[i], oct[i], inn[i], oct[(i+5)%8]);
+         var shape = drawPolygon('ownRays', i, rays[i], oct[i], inn[i], oct[(i+5)%8]);
          if (!useGradient) {
             setFill(shape, hsvPalette[i].toColor().darker());
          } else {
@@ -1459,8 +1459,7 @@ class Logo extends ImageView {
             var p2 = oct[(i+5)%8];
             var p = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2); // середина линии oct[i]-oct[(i+5)%8]. По факту - пересечение линий rays[i]-inn[i] и oct[i]-oct[(i+5)%8]
 
-            var clr1 = Color.Transparent; // new Color(0); //
-            var clr2 = Color.Transparent; // new Color(0); //
+            var clr = Color.Transparent; // new Color(0); //
             if (true) {
                // var hsv_h = 1 * window.document.getElementById('hsv_h').value;
                // var hsv_s = 1 * window.document.getElementById('hsv_s').value;
@@ -1473,11 +1472,11 @@ class Logo extends ImageView {
                      var diff = c1.h - c2.h;
                      var cP = new HSV(c1.toColor());
                      cP.h += diff/2; // цвет в точке p (пересечений линий...)
+                     cP.a = 0;
                      // cP.h += hsv_h;
                      // cP.s = (hsv_s + cP.s) % 255;
                      // cP.v = (hsv_v + cP.v) % 255;
-                     clr1 = cP.toColor();
-                     clr1.a = 0;
+                     clr = cP.toColor();
                   }
                   break;
                case 1:
@@ -1487,8 +1486,8 @@ class Logo extends ImageView {
                      var diff = c1.h - c2.h;
 
                      var xDeltaInnRays = (inn[i].x + rays[i].x)/2;
-                     var yDeltaInnRaysY = (inn[i].y + rays[i].y)/2;
-                     var lenInnRays = Math.sqrt(xDeltaInnRays*xDeltaInnRays + yDeltaInnRaysY*yDeltaInnRaysY);
+                     var yDeltaInnRays = (inn[i].y + rays[i].y)/2;
+                     var lenInnRays = Math.sqrt(xDeltaInnRays*xDeltaInnRays + yDeltaInnRays*yDeltaInnRays);
 
                      var xDeltaInnP = (inn[i].x + p.x)/2;
                      var yDeltaInnP = (inn[i].y + p.y)/2;
@@ -1498,12 +1497,12 @@ class Logo extends ImageView {
                      var z = lenInnP/lenInnRays; // 0..1
                      var cZ = new HSV(hsvPalette[(i+6)%8].toColor());
                      cZ.h += diff*z;
+                     cZ.a = 0;
                      // cZ.h += hsv_h;
                      // cZ.s = (hsv_s + cZ.s) % 255;
                      // cZ.v = (hsv_v + cZ.v) % 255;
 
-                     clr2 = cZ.toColor();
-                     clr2.a = 0;
+                     clr = cZ.toColor();
                   }
                   break;
                case 2: {
@@ -1514,11 +1513,11 @@ class Logo extends ImageView {
                }
             }
 
-            fillPolygon('ownRays1', i, rays[i], oct[i], inn[i]);
-            setGradientFill('ownRays1', i, oct[i], palette[(i+3)%8], p, clr1);
+            drawPolygon('ownRays1', i, rays[i], oct[i], inn[i]);
+            setGradientFill('ownRays1', i, oct[i], palette[(i+3)%8], p, clr);
 
-            fillPolygon('ownRays2', i, rays[i], oct[(i+5)%8], inn[i]);
-            setGradientFill('ownRays2', i, oct[(i+5)%8], palette[(i+0)%8], p, clr2);
+            drawPolygon('ownRays2', i, rays[i], oct[(i+5)%8], inn[i]);
+            setGradientFill('ownRays2', i, oct[(i+5)%8], palette[(i+0)%8], p, clr);
          }
       }
 
@@ -1563,16 +1562,16 @@ class Logo extends ImageView {
 
       // paint inner gradient triangles
       for (var i=0; i<8; i++) {
-         var shape = fillPolygon('innerTr', i, inn[(i + 0)%8], inn[(i + 3)%8], center);
+         var shape = drawPolygon('innerTr', i, inn[(i + 0)%8], inn[(i + 3)%8], center);
          if (useGradient) {
             var p1 = inn[(i+0)%8];
             var p2 = inn[(i+3)%8];
             var p = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2); // center line of p1-p2
             setGradientFill('innerTr', i,
                   p, palette[(i+6)%8],
-                  center, ((i&1)==1) ? Color.Black : Color.White);
+                  center, ((i & 1) == 1) ? Color.Black : Color.White);
          } else {
-            setFill(shape, ((i & 1) == 0)
+            setFill(shape, ((i & 1) == 1)
                   ? hsvPalette[(i + 6)%8].toColor().brighter()
                   : hsvPalette[(i + 6)%8].toColor().darker());
          }
@@ -2140,9 +2139,9 @@ function work(svg, svgDoc) {
       model.backgroundColor   = Settings.backgroundColor;
       model.foregroundColor.a = Settings.foregroundAlpha;
       model.animated          = Settings.animated;
-      model.animeDirection    = Settings.clockwise;
-      model.animatePeriod     = Settings.rotatePeriod;
-      model.totalFrames       = Settings.iterations;
+      model.animeDirection    = Settings.animeDirection;
+      model.animatePeriod     = Settings.animatePeriod;
+      model.totalFrames       = Settings.totalFrames;
       // if (cntrllr.View instanceof WithBurgerMenuView) {
       //    cntrllr.View.burgerMenuModel.show = Settings.showBurgerMenu;
       // }

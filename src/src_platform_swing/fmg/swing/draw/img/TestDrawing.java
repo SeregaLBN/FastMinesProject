@@ -119,7 +119,7 @@ final class TestDrawing extends ATestDrawing {
                public void mousePressed(MouseEvent e) {
                   testTransparent[0] = td.bl();
                   images.forEach(img -> {
-                     td.applyRandom(img, testTransparent[0]);
+                     td.applySettings(img, testTransparent[0]);
                      onCellTilingHandler.run();
                   });
                }
@@ -133,7 +133,7 @@ final class TestDrawing extends ATestDrawing {
 
             images.forEach(img -> {
                img.addListener(propertyChangeListener);
-               td.applyRandom(img, testTransparent[0]);
+               td.applySettings(img, testTransparent[0]);
             });
 
             //setDefaultCloseOperation(EXIT_ON_CLOSE);
