@@ -5,156 +5,159 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /** RGBA color */
 public class Color {
+
+   /** {@link #White()} with zero Alpha chanel */
+   public static Color Transparent         () { return new Color(0, 255,255,255); }
+
    // region Colors sorted by HEX Value: http://www.w3schools.com/colors/colors_hex.asp
-   public static final Color Transparent          = new Color(0, 255,255,255);
-   public static final Color Black                = new Color(0xFF000000);
-   public static final Color Navy                 = new Color(0xFF000080);
-   public static final Color DarkBlue             = new Color(0xFF00008B);
-   public static final Color MediumBlue           = new Color(0xFF0000CD);
-   public static final Color Blue                 = new Color(0xFF0000FF);
-   public static final Color DarkGreen            = new Color(0xFF006400);
-   public static final Color Green                = new Color(0xFF008000);
-   public static final Color Teal                 = new Color(0xFF008080);
-   public static final Color DarkCyan             = new Color(0xFF008B8B);
-   public static final Color DeepSkyBlue          = new Color(0xFF00BFFF);
-   public static final Color DarkTurquoise        = new Color(0xFF00CED1);
-   public static final Color MediumSpringGreen    = new Color(0xFF00FA9A);
-   public static final Color Lime                 = new Color(0xFF00FF00);
-   public static final Color SpringGreen          = new Color(0xFF00FF7F);
-   public static final Color Aqua                 = new Color(0xFF00FFFF);
-   public static final Color Cyan                 = Aqua;
-   public static final Color MidnightBlue         = new Color(0xFF191970);
-   public static final Color DodgerBlue           = new Color(0xFF1E90FF);
-   public static final Color LightSeaGreen        = new Color(0xFF20B2AA);
-   public static final Color ForestGreen          = new Color(0xFF228B22);
-   public static final Color SeaGreen             = new Color(0xFF2E8B57);
-   public static final Color DarkSlateGray        = new Color(0xFF2F4F4F);
-   public static final Color DarkSlateGrey        = DarkSlateGray;
-   public static final Color LimeGreen            = new Color(0xFF32CD32);
-   public static final Color MediumSeaGreen       = new Color(0xFF3CB371);
-   public static final Color Turquoise            = new Color(0xFF40E0D0);
-   public static final Color RoyalBlue            = new Color(0xFF4169E1);
-   public static final Color SteelBlue            = new Color(0xFF4682B4);
-   public static final Color DarkSlateBlue        = new Color(0xFF483D8B);
-   public static final Color MediumTurquoise      = new Color(0xFF48D1CC);
-   public static final Color Indigo               = new Color(0xFF4B0082);
-   public static final Color DarkOliveGreen       = new Color(0xFF556B2F);
-   public static final Color CadetBlue            = new Color(0xFF5F9EA0);
-   public static final Color CornflowerBlue       = new Color(0xFF6495ED);
-   public static final Color RebeccaPurple        = new Color(0xFF663399);
-   public static final Color MediumAquaMarine     = new Color(0xFF66CDAA);
-   public static final Color DimGray              = new Color(0xFF696969);
-   public static final Color DimGrey              = DimGray;
-   public static final Color SlateBlue            = new Color(0xFF6A5ACD);
-   public static final Color OliveDrab            = new Color(0xFF6B8E23);
-   public static final Color SlateGray            = new Color(0xFF708090);
-   public static final Color SlateGrey            = SlateGray;
-   public static final Color LightSlateGray       = new Color(0xFF778899);
-   public static final Color LightSlateGrey       = LightSlateGray;
-   public static final Color MediumSlateBlue      = new Color(0xFF7B68EE);
-   public static final Color LawnGreen            = new Color(0xFF7CFC00);
-   public static final Color Chartreuse           = new Color(0xFF7FFF00);
-   public static final Color Aquamarine           = new Color(0xFF7FFFD4);
-   public static final Color Maroon               = new Color(0xFF800000);
-   public static final Color Purple               = new Color(0xFF800080);
-   public static final Color Olive                = new Color(0xFF808000);
-   public static final Color Gray                 = new Color(0xFF808080);
-   public static final Color Grey                 = Gray;
-   public static final Color SkyBlue              = new Color(0xFF87CEEB);
-   public static final Color LightSkyBlue         = new Color(0xFF87CEFA);
-   public static final Color BlueViolet           = new Color(0xFF8A2BE2);
-   public static final Color DarkRed              = new Color(0xFF8B0000);
-   public static final Color DarkMagenta          = new Color(0xFF8B008B);
-   public static final Color SaddleBrown          = new Color(0xFF8B4513);
-   public static final Color DarkSeaGreen         = new Color(0xFF8FBC8F);
-   public static final Color LightGreen           = new Color(0xFF90EE90);
-   public static final Color MediumPurple         = new Color(0xFF9370DB);
-   public static final Color DarkViolet           = new Color(0xFF9400D3);
-   public static final Color PaleGreen            = new Color(0xFF98FB98);
-   public static final Color DarkOrchid           = new Color(0xFF9932CC);
-   public static final Color YellowGreen          = new Color(0xFF9ACD32);
-   public static final Color Sienna               = new Color(0xFFA0522D);
-   public static final Color Brown                = new Color(0xFFA52A2A);
-   public static final Color DarkGray             = new Color(0xFFA9A9A9);
-   public static final Color DarkGrey             = DarkGray;
-   public static final Color LightBlue            = new Color(0xFFADD8E6);
-   public static final Color GreenYellow          = new Color(0xFFADFF2F);
-   public static final Color PaleTurquoise        = new Color(0xFFAFEEEE);
-   public static final Color LightSteelBlue       = new Color(0xFFB0C4DE);
-   public static final Color PowderBlue           = new Color(0xFFB0E0E6);
-   public static final Color FireBrick            = new Color(0xFFB22222);
-   public static final Color DarkGoldenRod        = new Color(0xFFB8860B);
-   public static final Color MediumOrchid         = new Color(0xFFBA55D3);
-   public static final Color RosyBrown            = new Color(0xFFBC8F8F);
-   public static final Color DarkKhaki            = new Color(0xFFBDB76B);
-   public static final Color Silver               = new Color(0xFFC0C0C0);
-   public static final Color MediumVioletRed      = new Color(0xFFC71585);
-   public static final Color IndianRed            = new Color(0xFFCD5C5C);
-   public static final Color Peru                 = new Color(0xFFCD853F);
-   public static final Color Chocolate            = new Color(0xFFD2691E);
-   public static final Color Tan                  = new Color(0xFFD2B48C);
-   public static final Color LightGray            = new Color(0xFFD3D3D3);
-   public static final Color LightGrey            = LightGray;
-   public static final Color Thistle              = new Color(0xFFD8BFD8);
-   public static final Color Orchid               = new Color(0xFFDA70D6);
-   public static final Color GoldenRod            = new Color(0xFFDAA520);
-   public static final Color PaleVioletRed        = new Color(0xFFDB7093);
-   public static final Color Crimson              = new Color(0xFFDC143C);
-   public static final Color Gainsboro            = new Color(0xFFDCDCDC);
-   public static final Color Plum                 = new Color(0xFFDDA0DD);
-   public static final Color BurlyWood            = new Color(0xFFDEB887);
-   public static final Color LightCyan            = new Color(0xFFE0FFFF);
-   public static final Color Lavender             = new Color(0xFFE6E6FA);
-   public static final Color DarkSalmon           = new Color(0xFFE9967A);
-   public static final Color Violet               = new Color(0xFFEE82EE);
-   public static final Color PaleGoldenRod        = new Color(0xFFEEE8AA);
-   public static final Color LightCoral           = new Color(0xFFF08080);
-   public static final Color Khaki                = new Color(0xFFF0E68C);
-   public static final Color AliceBlue            = new Color(0xFFF0F8FF);
-   public static final Color HoneyDew             = new Color(0xFFF0FFF0);
-   public static final Color Azure                = new Color(0xFFF0FFFF);
-   public static final Color SandyBrown           = new Color(0xFFF4A460);
-   public static final Color Wheat                = new Color(0xFFF5DEB3);
-   public static final Color Beige                = new Color(0xFFF5F5DC);
-   public static final Color WhiteSmoke           = new Color(0xFFF5F5F5);
-   public static final Color MintCream            = new Color(0xFFF5FFFA);
-   public static final Color GhostWhite           = new Color(0xFFF8F8FF);
-   public static final Color Salmon               = new Color(0xFFFA8072);
-   public static final Color AntiqueWhite         = new Color(0xFFFAEBD7);
-   public static final Color Linen                = new Color(0xFFFAF0E6);
-   public static final Color LightGoldenRodYellow = new Color(0xFFFAFAD2);
-   public static final Color OldLace              = new Color(0xFFFDF5E6);
-   public static final Color Red                  = new Color(0xFFFF0000);
-   public static final Color Fuchsia              = new Color(0xFFFF00FF);
-   public static final Color Magenta              = Fuchsia;
-   public static final Color DeepPink             = new Color(0xFFFF1493);
-   public static final Color OrangeRed            = new Color(0xFFFF4500);
-   public static final Color Tomato               = new Color(0xFFFF6347);
-   public static final Color HotPink              = new Color(0xFFFF69B4);
-   public static final Color Coral                = new Color(0xFFFF7F50);
-   public static final Color DarkOrange           = new Color(0xFFFF8C00);
-   public static final Color LightSalmon          = new Color(0xFFFFA07A);
-   public static final Color Orange               = new Color(0xFFFFA500);
-   public static final Color LightPink            = new Color(0xFFFFB6C1);
-   public static final Color Pink                 = new Color(0xFFFFC0CB);
-   public static final Color Gold                 = new Color(0xFFFFD700);
-   public static final Color PeachPuff            = new Color(0xFFFFDAB9);
-   public static final Color NavajoWhite          = new Color(0xFFFFDEAD);
-   public static final Color Moccasin             = new Color(0xFFFFE4B5);
-   public static final Color Bisque               = new Color(0xFFFFE4C4);
-   public static final Color MistyRose            = new Color(0xFFFFE4E1);
-   public static final Color BlanchedAlmond       = new Color(0xFFFFEBCD);
-   public static final Color PapayaWhip           = new Color(0xFFFFEFD5);
-   public static final Color LavenderBlush        = new Color(0xFFFFF0F5);
-   public static final Color SeaShell             = new Color(0xFFFFF5EE);
-   public static final Color Cornsilk             = new Color(0xFFFFF8DC);
-   public static final Color LemonChiffon         = new Color(0xFFFFFACD);
-   public static final Color FloralWhite          = new Color(0xFFFFFAF0);
-   public static final Color Snow                 = new Color(0xFFFFFAFA);
-   public static final Color Yellow               = new Color(0xFFFFFF00);
-   public static final Color LightYellow          = new Color(0xFFFFFFE0);
-   public static final Color Ivory                = new Color(0xFFFFFFF0);
-   public static final Color White                = new Color(0xFFFFFFFF);
+   public static Color Black               () { return new Color(0xFF000000); }
+   public static Color Navy                () { return new Color(0xFF000080); }
+   public static Color DarkBlue            () { return new Color(0xFF00008B); }
+   public static Color MediumBlue          () { return new Color(0xFF0000CD); }
+   public static Color Blue                () { return new Color(0xFF0000FF); }
+   public static Color DarkGreen           () { return new Color(0xFF006400); }
+   public static Color Green               () { return new Color(0xFF008000); }
+   public static Color Teal                () { return new Color(0xFF008080); }
+   public static Color DarkCyan            () { return new Color(0xFF008B8B); }
+   public static Color DeepSkyBlue         () { return new Color(0xFF00BFFF); }
+   public static Color DarkTurquoise       () { return new Color(0xFF00CED1); }
+   public static Color MediumSpringGreen   () { return new Color(0xFF00FA9A); }
+   public static Color Lime                () { return new Color(0xFF00FF00); }
+   public static Color SpringGreen         () { return new Color(0xFF00FF7F); }
+   public static Color Aqua                () { return new Color(0xFF00FFFF); }
+   public static Color Cyan                () { return Aqua();                     }
+   public static Color MidnightBlue        () { return new Color(0xFF191970); }
+   public static Color DodgerBlue          () { return new Color(0xFF1E90FF); }
+   public static Color LightSeaGreen       () { return new Color(0xFF20B2AA); }
+   public static Color ForestGreen         () { return new Color(0xFF228B22); }
+   public static Color SeaGreen            () { return new Color(0xFF2E8B57); }
+   public static Color DarkSlateGray       () { return new Color(0xFF2F4F4F); }
+   public static Color DarkSlateGrey       () { return DarkSlateGray();            }
+   public static Color LimeGreen           () { return new Color(0xFF32CD32); }
+   public static Color MediumSeaGreen      () { return new Color(0xFF3CB371); }
+   public static Color Turquoise           () { return new Color(0xFF40E0D0); }
+   public static Color RoyalBlue           () { return new Color(0xFF4169E1); }
+   public static Color SteelBlue           () { return new Color(0xFF4682B4); }
+   public static Color DarkSlateBlue       () { return new Color(0xFF483D8B); }
+   public static Color MediumTurquoise     () { return new Color(0xFF48D1CC); }
+   public static Color Indigo              () { return new Color(0xFF4B0082); }
+   public static Color DarkOliveGreen      () { return new Color(0xFF556B2F); }
+   public static Color CadetBlue           () { return new Color(0xFF5F9EA0); }
+   public static Color CornflowerBlue      () { return new Color(0xFF6495ED); }
+   public static Color RebeccaPurple       () { return new Color(0xFF663399); }
+   public static Color MediumAquaMarine    () { return new Color(0xFF66CDAA); }
+   public static Color DimGray             () { return new Color(0xFF696969); }
+   public static Color DimGrey             () { return DimGray();                  }
+   public static Color SlateBlue           () { return new Color(0xFF6A5ACD); }
+   public static Color OliveDrab           () { return new Color(0xFF6B8E23); }
+   public static Color SlateGray           () { return new Color(0xFF708090); }
+   public static Color SlateGrey           () { return SlateGray();                }
+   public static Color LightSlateGray      () { return new Color(0xFF778899); }
+   public static Color LightSlateGrey      () { return LightSlateGray();           }
+   public static Color MediumSlateBlue     () { return new Color(0xFF7B68EE); }
+   public static Color LawnGreen           () { return new Color(0xFF7CFC00); }
+   public static Color Chartreuse          () { return new Color(0xFF7FFF00); }
+   public static Color Aquamarine          () { return new Color(0xFF7FFFD4); }
+   public static Color Maroon              () { return new Color(0xFF800000); }
+   public static Color Purple              () { return new Color(0xFF800080); }
+   public static Color Olive               () { return new Color(0xFF808000); }
+   public static Color Gray                () { return new Color(0xFF808080); }
+   public static Color Grey                () { return Gray();                     }
+   public static Color SkyBlue             () { return new Color(0xFF87CEEB); }
+   public static Color LightSkyBlue        () { return new Color(0xFF87CEFA); }
+   public static Color BlueViolet          () { return new Color(0xFF8A2BE2); }
+   public static Color DarkRed             () { return new Color(0xFF8B0000); }
+   public static Color DarkMagenta         () { return new Color(0xFF8B008B); }
+   public static Color SaddleBrown         () { return new Color(0xFF8B4513); }
+   public static Color DarkSeaGreen        () { return new Color(0xFF8FBC8F); }
+   public static Color LightGreen          () { return new Color(0xFF90EE90); }
+   public static Color MediumPurple        () { return new Color(0xFF9370DB); }
+   public static Color DarkViolet          () { return new Color(0xFF9400D3); }
+   public static Color PaleGreen           () { return new Color(0xFF98FB98); }
+   public static Color DarkOrchid          () { return new Color(0xFF9932CC); }
+   public static Color YellowGreen         () { return new Color(0xFF9ACD32); }
+   public static Color Sienna              () { return new Color(0xFFA0522D); }
+   public static Color Brown               () { return new Color(0xFFA52A2A); }
+   public static Color DarkGray            () { return new Color(0xFFA9A9A9); }
+   public static Color DarkGrey            () { return DarkGray();                 }
+   public static Color LightBlue           () { return new Color(0xFFADD8E6); }
+   public static Color GreenYellow         () { return new Color(0xFFADFF2F); }
+   public static Color PaleTurquoise       () { return new Color(0xFFAFEEEE); }
+   public static Color LightSteelBlue      () { return new Color(0xFFB0C4DE); }
+   public static Color PowderBlue          () { return new Color(0xFFB0E0E6); }
+   public static Color FireBrick           () { return new Color(0xFFB22222); }
+   public static Color DarkGoldenRod       () { return new Color(0xFFB8860B); }
+   public static Color MediumOrchid        () { return new Color(0xFFBA55D3); }
+   public static Color RosyBrown           () { return new Color(0xFFBC8F8F); }
+   public static Color DarkKhaki           () { return new Color(0xFFBDB76B); }
+   public static Color Silver              () { return new Color(0xFFC0C0C0); }
+   public static Color MediumVioletRed     () { return new Color(0xFFC71585); }
+   public static Color IndianRed           () { return new Color(0xFFCD5C5C); }
+   public static Color Peru                () { return new Color(0xFFCD853F); }
+   public static Color Chocolate           () { return new Color(0xFFD2691E); }
+   public static Color Tan                 () { return new Color(0xFFD2B48C); }
+   public static Color LightGray           () { return new Color(0xFFD3D3D3); }
+   public static Color LightGrey           () { return LightGray();                }
+   public static Color Thistle             () { return new Color(0xFFD8BFD8); }
+   public static Color Orchid              () { return new Color(0xFFDA70D6); }
+   public static Color GoldenRod           () { return new Color(0xFFDAA520); }
+   public static Color PaleVioletRed       () { return new Color(0xFFDB7093); }
+   public static Color Crimson             () { return new Color(0xFFDC143C); }
+   public static Color Gainsboro           () { return new Color(0xFFDCDCDC); }
+   public static Color Plum                () { return new Color(0xFFDDA0DD); }
+   public static Color BurlyWood           () { return new Color(0xFFDEB887); }
+   public static Color LightCyan           () { return new Color(0xFFE0FFFF); }
+   public static Color Lavender            () { return new Color(0xFFE6E6FA); }
+   public static Color DarkSalmon          () { return new Color(0xFFE9967A); }
+   public static Color Violet              () { return new Color(0xFFEE82EE); }
+   public static Color PaleGoldenRod       () { return new Color(0xFFEEE8AA); }
+   public static Color LightCoral          () { return new Color(0xFFF08080); }
+   public static Color Khaki               () { return new Color(0xFFF0E68C); }
+   public static Color AliceBlue           () { return new Color(0xFFF0F8FF); }
+   public static Color HoneyDew            () { return new Color(0xFFF0FFF0); }
+   public static Color Azure               () { return new Color(0xFFF0FFFF); }
+   public static Color SandyBrown          () { return new Color(0xFFF4A460); }
+   public static Color Wheat               () { return new Color(0xFFF5DEB3); }
+   public static Color Beige               () { return new Color(0xFFF5F5DC); }
+   public static Color WhiteSmoke          () { return new Color(0xFFF5F5F5); }
+   public static Color MintCream           () { return new Color(0xFFF5FFFA); }
+   public static Color GhostWhite          () { return new Color(0xFFF8F8FF); }
+   public static Color Salmon              () { return new Color(0xFFFA8072); }
+   public static Color AntiqueWhite        () { return new Color(0xFFFAEBD7); }
+   public static Color Linen               () { return new Color(0xFFFAF0E6); }
+   public static Color LightGoldenRodYellow() { return new Color(0xFFFAFAD2); }
+   public static Color OldLace             () { return new Color(0xFFFDF5E6); }
+   public static Color Red                 () { return new Color(0xFFFF0000); }
+   public static Color Fuchsia             () { return new Color(0xFFFF00FF); }
+   public static Color Magenta             () { return Fuchsia();                  }
+   public static Color DeepPink            () { return new Color(0xFFFF1493); }
+   public static Color OrangeRed           () { return new Color(0xFFFF4500); }
+   public static Color Tomato              () { return new Color(0xFFFF6347); }
+   public static Color HotPink             () { return new Color(0xFFFF69B4); }
+   public static Color Coral               () { return new Color(0xFFFF7F50); }
+   public static Color DarkOrange          () { return new Color(0xFFFF8C00); }
+   public static Color LightSalmon         () { return new Color(0xFFFFA07A); }
+   public static Color Orange              () { return new Color(0xFFFFA500); }
+   public static Color LightPink           () { return new Color(0xFFFFB6C1); }
+   public static Color Pink                () { return new Color(0xFFFFC0CB); }
+   public static Color Gold                () { return new Color(0xFFFFD700); }
+   public static Color PeachPuff           () { return new Color(0xFFFFDAB9); }
+   public static Color NavajoWhite         () { return new Color(0xFFFFDEAD); }
+   public static Color Moccasin            () { return new Color(0xFFFFE4B5); }
+   public static Color Bisque              () { return new Color(0xFFFFE4C4); }
+   public static Color MistyRose           () { return new Color(0xFFFFE4E1); }
+   public static Color BlanchedAlmond      () { return new Color(0xFFFFEBCD); }
+   public static Color PapayaWhip          () { return new Color(0xFFFFEFD5); }
+   public static Color LavenderBlush       () { return new Color(0xFFFFF0F5); }
+   public static Color SeaShell            () { return new Color(0xFFFFF5EE); }
+   public static Color Cornsilk            () { return new Color(0xFFFFF8DC); }
+   public static Color LemonChiffon        () { return new Color(0xFFFFFACD); }
+   public static Color FloralWhite         () { return new Color(0xFFFFFAF0); }
+   public static Color Snow                () { return new Color(0xFFFFFAFA); }
+   public static Color Yellow              () { return new Color(0xFFFFFF00); }
+   public static Color LightYellow         () { return new Color(0xFFFFFFE0); }
+   public static Color Ivory               () { return new Color(0xFFFFFFF0); }
+   public static Color White               () { return new Color(0xFFFFFFFF); }
    // endregion
 
    protected int r,g,b,a;

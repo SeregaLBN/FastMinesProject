@@ -34,7 +34,7 @@ public class SelectMosaicDlg extends JDialog implements AutoCloseable {
    private MosaicImg.ControllerImage mosaicsImg, mosaicsImgRollover;
    private static final int ImgSize = 40;
    private static final int ImgZoomQuality = 3;
-   private static final Color bkTabBkColor = Cast.toColor(fmg.common.Color.Transparent); // UIManager.getColor("Button.light"); // "Button.light" "Button.foreground"
+   private static final Color bkTabBkColor = Cast.toColor(fmg.common.Color.Transparent()); // UIManager.getColor("Button.light"); // "Button.light" "Button.foreground"
    private static final Color bkTabBkColorSelected = UIManager.getColor("Button.shadow"); // "Button.select" "Button.darkShadow"
 
    public SelectMosaicDlg(JFrame parent, boolean modal) {

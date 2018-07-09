@@ -114,7 +114,7 @@ public final class BurgerMenuModel implements IImageModel {
             PointDouble end   = new PointDouble((horizontal ? rc.right() : rc.left()) + offsetLeft,
                                                 (horizontal ? rc.top() : rc.bottom()) + offsetTop);
 
-            HSV hsv = new HSV(Color.Gray);
+            HSV hsv = new HSV(Color.Gray());
             hsv.v *= Math.sin(layerNum*stepAngle / layers);
 
             LineInfo li = new LineInfo();

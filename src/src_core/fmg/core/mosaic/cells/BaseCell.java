@@ -394,9 +394,9 @@ public abstract class BaseCell {
          // !!! no break
       case 0:
          if ((getState().getStatus() == EState._Open) && (getState().getOpen() == EOpen._Mine) && getState().isDown())
-            return Color.Red.brighter(0.05); // game ower: игра завершена - клик на мине
+            return Color.Red().brighter(0.05); // game ower: игра завершена - клик на мине
          if ((getState().getStatus() == EState._Open) && (getState().getOpen() != EOpen._Mine) && (getState().getClose() == EClose._Flag))
-            return Color.Magenta.brighter(0.3); // game ower: игра завершена - не верно проставлен флаг (на ячейке с цифрой)
+            return Color.Magenta().brighter(0.3); // game ower: игра завершена - не верно проставлен флаг (на ячейке с цифрой)
 
          // для Down и Нажатого состояний делаю фон чуть и чуть-чуть темнее...
          if (getState().isDown())
