@@ -103,12 +103,28 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
 
    /** Flag image controller implementation for {@link Canvas} */
    public static class ControllerCanvas extends ImageController<javafx.scene.canvas.Canvas, Flag.Canvas, FlagModel> {
+
       public ControllerCanvas() { super(new Flag.Canvas()); }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    /** Flag image controller implementation for {@link Image} */
    public static class ControllerImage extends ImageController<javafx.scene.image.Image, Flag.Image, FlagModel> {
+
       public ControllerImage() { super(new Flag.Image()); }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    ////////////// TEST //////////////
