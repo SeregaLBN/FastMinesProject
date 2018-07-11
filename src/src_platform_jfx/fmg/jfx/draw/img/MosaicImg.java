@@ -90,16 +90,32 @@ public abstract class MosaicImg<TImage>
 
    /** Mosaic image controller implementation for {@link Canvas} */
    public static class ControllerCanvas extends AMosaicImageController<javafx.scene.canvas.Canvas, MosaicImg.Canvas> {
+
       public ControllerCanvas() {
          super(new MosaicImg.Canvas());
       }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    /** Mosaic image controller implementation for {@link Image} */
    public static class ControllerImage extends AMosaicImageController<javafx.scene.image.Image, MosaicImg.Image> {
+
       public ControllerImage() {
          super(new MosaicImg.Image());
       }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    ////////////// TEST //////////////
