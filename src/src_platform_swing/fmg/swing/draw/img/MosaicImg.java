@@ -99,16 +99,32 @@ public abstract class MosaicImg<TImage>
 
    /** Mosaic image controller implementation for {@link Icon} */
    public static class ControllerIcon extends AMosaicImageController<javax.swing.Icon, MosaicImg.Icon> {
+
       public ControllerIcon() {
          super(new MosaicImg.Icon());
       }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    /** Mosaic image controller implementation for {@link Image} */
    public static class ControllerImage extends AMosaicImageController<java.awt.Image, MosaicImg.Image> {
+
       public ControllerImage() {
          super(new MosaicImg.Image());
       }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    ////////////// TEST //////////////

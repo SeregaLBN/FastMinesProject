@@ -68,16 +68,32 @@ public abstract class MosaicSkillImg<TImage> extends MosaicSkillOrGroupView<TIma
 
    /** MosaicsSkill image controller implementation for {@link Icon} */
    public static class ControllerIcon extends MosaicSkillController<javax.swing.Icon, MosaicSkillImg.Icon> {
+
       public ControllerIcon(ESkillLevel skill) {
          super(skill == null, new MosaicSkillImg.Icon(skill));
       }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    /** MosaicsSkill image controller implementation for {@link Image} */
    public static class ControllerImage extends MosaicSkillController<java.awt.Image, MosaicSkillImg.Image> {
+
       public ControllerImage(ESkillLevel skill) {
          super(skill == null, new MosaicSkillImg.Image(skill));
       }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    ////////////// TEST //////////////

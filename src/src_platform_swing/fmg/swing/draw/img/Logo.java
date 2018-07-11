@@ -163,12 +163,32 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
    /** Logo image controller implementation for {@link Icon} */
    public static class ControllerIcon extends LogoController<javax.swing.Icon, Logo.Icon> {
-      public ControllerIcon() { super(new Logo.Icon()); }
+
+      public ControllerIcon() {
+         super(new Logo.Icon());
+      }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    /** Logo image controller implementation for {@link Image} */
    public static class ControllerImage extends LogoController<java.awt.Image, Logo.Image> {
-      public ControllerImage() { super(new Logo.Image()); }
+
+      public ControllerImage() {
+         super(new Logo.Image());
+      }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    ////////////// TEST //////////////

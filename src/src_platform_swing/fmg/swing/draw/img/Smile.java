@@ -431,12 +431,32 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
    /** Smile image controller implementation for {@link Icon} */
    public static class ControllerIcon extends ImageController<javax.swing.Icon, Smile.Icon, SmileModel> {
-      public ControllerIcon(EFaceType faceType) { super(new Smile.Icon(faceType)); }
+
+      public ControllerIcon(EFaceType faceType) {
+         super(new Smile.Icon(faceType));
+      }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    /** Smile image controller implementation for {@link Image} */
    public static class ControllerImage extends ImageController<java.awt.Image, Smile.Image, SmileModel> {
-      public ControllerImage(EFaceType faceType) { super(new Smile.Image(faceType)); }
+
+      public ControllerImage(EFaceType faceType) {
+         super(new Smile.Image(faceType));
+      }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    ////////////// TEST //////////////
