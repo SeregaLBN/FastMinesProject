@@ -73,7 +73,7 @@ public abstract class ATestDrawing {
       }
 
 
-      boolean useRandom = !true;
+      boolean useRandom = true;
       ///////////////////////
       //                   //
       //  random settings  //
