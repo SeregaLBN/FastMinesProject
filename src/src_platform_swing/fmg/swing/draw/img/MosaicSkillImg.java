@@ -20,10 +20,18 @@ import fmg.core.types.ESkillLevel;
 public abstract class MosaicSkillImg<TImage> extends MosaicSkillOrGroupView<TImage, MosaicSkillModel> {
 
    /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
-   protected MosaicSkillImg(ESkillLevel skill) { super(new MosaicSkillModel(skill)); }
+   protected MosaicSkillImg(ESkillLevel skill) {
+      super(new MosaicSkillModel(skill));
+   }
 
    @Override
    protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
+
+   @Override
+   public void close() {
+      getModel().close();
+      super.close();
+   }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    //    custom implementations

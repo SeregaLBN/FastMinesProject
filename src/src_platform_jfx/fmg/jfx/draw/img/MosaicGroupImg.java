@@ -20,10 +20,18 @@ import fmg.core.types.EMosaicGroup;
 public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TImage, MosaicGroupModel> {
 
    /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
-   protected MosaicGroupImg(EMosaicGroup group) { super(new MosaicGroupModel(group)); }
+   protected MosaicGroupImg(EMosaicGroup group) {
+      super(new MosaicGroupModel(group));
+   }
 
    @Override
    protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
+
+   @Override
+   public void close() {
+      getModel().close();
+      super.close();
+   }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    //    custom implementations
