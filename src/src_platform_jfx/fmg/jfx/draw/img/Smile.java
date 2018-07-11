@@ -461,6 +461,12 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
        return new Arc(x+w/2, y+h/2, w/2, h/2, start, extent);
    }
 
+   @Override
+   public void close() {
+      getModel().close();
+      super.close();
+   }
+
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    //    custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////
