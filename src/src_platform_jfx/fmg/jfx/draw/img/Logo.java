@@ -66,8 +66,8 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
             // emulate triangle gradient (see BmpLogo.cpp C++ source code)
             // over linear gragients
 
-//            setGradientFill(g, rays[i], palette[(i+1)%8], inn[i], palette[(i+6)%8]);
-//            fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
+            setGradientFill(g, rays[i], palette[(i+1)%8], inn[i], palette[(i+6)%8]);
+            fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
 
             Point2D p1 = oct[i];
             Point2D p2 = oct[(i+5)%8];
