@@ -503,12 +503,32 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
    /** Smile image controller implementation for {@link Canvas} */
    public static class ControllerCanvas extends ImageController<javafx.scene.canvas.Canvas, Smile.Canvas, SmileModel> {
-      public ControllerCanvas(EFaceType faceType) { super(new Smile.Canvas(faceType)); }
+
+      public ControllerCanvas(EFaceType faceType) {
+         super(new Smile.Canvas(faceType));
+      }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    /** Smile image controller implementation for {@link Image} */
    public static class ControllerImage extends ImageController<javafx.scene.image.Image, Smile.Image, SmileModel> {
-      public ControllerImage(EFaceType faceType) { super(new Smile.Image(faceType)); }
+
+      public ControllerImage(EFaceType faceType) {
+         super(new Smile.Image(faceType));
+      }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    ////////////// TEST //////////////

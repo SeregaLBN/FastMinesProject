@@ -177,12 +177,32 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
    /** Logo image controller implementation for {@link Canvas} */
    public static class ControllerCanvas extends LogoController<javafx.scene.canvas.Canvas, Logo.Canvas> {
-      public ControllerCanvas() { super(new Logo.Canvas()); }
+
+      public ControllerCanvas() {
+         super(new Logo.Canvas());
+      }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    /** Logo image controller implementation for {@link Image} */
    public static class ControllerImage extends LogoController<javafx.scene.image.Image, Logo.Image> {
-      public ControllerImage() { super(new Logo.Image()); }
+
+      public ControllerImage() {
+         super(new Logo.Image());
+      }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    ////////////// TEST //////////////

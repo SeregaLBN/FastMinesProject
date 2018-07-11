@@ -69,16 +69,32 @@ public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TIma
 
    /** MosaicsGroup image controller implementation for {@link Canvas} */
    public static class ControllerCanvas extends MosaicGroupController<javafx.scene.canvas.Canvas, MosaicGroupImg.Canvas> {
+
       public ControllerCanvas(EMosaicGroup group) {
          super(group==null, new MosaicGroupImg.Canvas(group));
       }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    /** MosaicsGroup image controller implementation for {@link Image} */
    public static class ControllerImage extends MosaicGroupController<javafx.scene.image.Image, MosaicGroupImg.Image> {
+
       public ControllerImage(EMosaicGroup group) {
          super(group==null, new MosaicGroupImg.Image(group));
       }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    ////////////// TEST //////////////
