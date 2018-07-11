@@ -165,14 +165,14 @@ public class AboutDlg extends JDialog implements AutoCloseable {
 
       panel.add(Box.createVerticalStrut(2));
 
-      JLabel lblVersion = new JLabel("Version 2018.05.31 (Java SWING)");
+      JLabel lblVersion = new JLabel("Version 2018.07.11 (Java SWING)");
       lblVersion.setAlignmentX(Component.CENTER_ALIGNMENT);
 //      lblVersion.setBorder(BorderFactory.createEtchedBorder());
       panel.add(lblVersion);
 
       panel.add(Box.createVerticalStrut(2));
 
-      JLabel lblAuthor = new JLabel("Author Sergey Krivulya (KSerg)");
+      JLabel lblAuthor = new JLabel("Author Serhii Kryvulia aka SeregaLBN");
       lblAuthor.setAlignmentX(Component.CENTER_ALIGNMENT);
 //      lblAuthor.setBorder(BorderFactory.createEtchedBorder());
       panel.add(lblAuthor);

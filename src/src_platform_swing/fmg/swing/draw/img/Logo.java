@@ -57,8 +57,8 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
             // emulate triangle gradient (see BmpLogo.cpp C++ source code)
             // over linear gragients
 
-//            g.setPaint(new GradientPaint(rays[i], palette[(i+1)%8], inn[i], palette[(i+6)%8]));
-//            fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
+            g.setPaint(new GradientPaint(rays[i], palette[(i+1)%8], inn[i], palette[(i+6)%8]));
+            fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
 
             Point2D.Double p1 = oct[i];
             Point2D.Double p2 = oct[(i+5)%8];
@@ -163,12 +163,32 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
    /** Logo image controller implementation for {@link Icon} */
    public static class ControllerIcon extends LogoController<javax.swing.Icon, Logo.Icon> {
-      public ControllerIcon() { super(new Logo.Icon()); }
+
+      public ControllerIcon() {
+         super(new Logo.Icon());
+      }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    /** Logo image controller implementation for {@link Image} */
    public static class ControllerImage extends LogoController<java.awt.Image, Logo.Image> {
-      public ControllerImage() { super(new Logo.Image()); }
+
+      public ControllerImage() {
+         super(new Logo.Image());
+      }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    ////////////// TEST //////////////

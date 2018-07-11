@@ -124,12 +124,32 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
 
    /** Flag image controller implementation for {@link Icon} */
    public static class ControllerIcon extends ImageController<javax.swing.Icon, Flag.Icon, FlagModel> {
-      public ControllerIcon() { super(new Flag.Icon()); }
+
+      public ControllerIcon() {
+         super(new Flag.Icon());
+      }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    /** Flag image controller implementation for {@link Image} */
    public static class ControllerImage extends ImageController<java.awt.Image, Flag.Image, FlagModel> {
-      public ControllerImage() { super(new Flag.Image()); }
+
+      public ControllerImage() {
+         super(new Flag.Image());
+      }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
    }
 
    ////////////// TEST //////////////

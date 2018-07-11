@@ -114,8 +114,9 @@ public class MosaicJPanelController extends AMosaicController<JPanel, Icon, Mosa
 
    @Override
    public void close() {
-      super.close();
       unsubscribeToViewControl();
+      getView().close();
+      super.close();
    }
 
    ////////////// TEST //////////////

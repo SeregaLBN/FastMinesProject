@@ -876,7 +876,7 @@ public class Main extends JFrame {
          if (_logo == null) {
             _logo = new Logo.ControllerIcon();
             LogoModel model = _logo.getModel();
-            model.setUseGradient(!true);
+            model.setUseGradient(true);
             model.setPadding(3);
             model.setRotateMode(LogoModel.ERotateMode.color);
             model.setAnimatePeriod(12500);
