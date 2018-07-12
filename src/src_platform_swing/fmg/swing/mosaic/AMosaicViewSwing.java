@@ -25,13 +25,13 @@ import fmg.swing.utils.StaticInitializer;
 
 /** MVC: view. Abstract SWING implementation
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
- * @param <TImage2> image type of flag/mine into mosaic field
+ * @param <TImageInner> image type of flag/mine into mosaic field
  * @param <TMosaicModel> mosaic data model
  */
 public abstract class AMosaicViewSwing<TImage,
-                                       TImage2,
-                                       TMosaicModel extends MosaicDrawModel<TImage2>>
-                extends AMosaicView<TImage, TImage2, TMosaicModel>
+                                       TImageInner,
+                                       TMosaicModel extends MosaicDrawModel<TImageInner>>
+                extends AMosaicView<TImage, TImageInner, TMosaicModel>
 {
 
    private Font _font;
@@ -134,7 +134,7 @@ public abstract class AMosaicViewSwing<TImage,
              //g.setColor(java.awt.Color.MAGENTA);
              //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
 
-               Consumer<TImage2> paintImage = img -> {
+               Consumer<TImageInner> paintImage = img -> {
                   int x = (int)(rcInner.x + offset.width);
                   int y = (int)(rcInner.y + offset.height);
                   if (img instanceof javax.swing.Icon) {

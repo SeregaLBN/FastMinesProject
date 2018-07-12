@@ -1,8 +1,8 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using fmg.common.ui;
 using fmg.core.img;
+using fmg.uwp.utils;
 
 namespace fmg.uwp.draw.img {
 
@@ -17,52 +17,53 @@ namespace fmg.uwp.draw.img {
       private readonly IDictionary<object /* subscriber */, SubscribeInfo> _subscribers;
 
       private static Animator _singleton;
-      public static Animator getSingleton() { // not synchronized. since should work only in the thread of the UI.
+      public static Animator Singleton { get { // not synchronized. since should work only in the thread of the UI.
          if (_singleton == null)
             _singleton = new Animator();
          return _singleton;
-      }
+      } }
 
       private Animator() {
          _subscribers = new Dictionary<object, SubscribeInfo>();
-         _timer = new Timer();
-         _timer.setInterval(1000 / 60); // The number of frames per second
-         _timer.setCallback(() => {
-            long currentTime = new Date().getTime();
-            _subscribers.forEach((k, v) => {
-               if (v.active)
-                  v.callback.accept(currentTime - v.startTime);
-            });
-         });
+         _timer = new Timer {
+            Interval = (1000 / 60), // The number of frames per second
+            Callback = () => {
+               var currentTime = DateTime.Now;
+               foreach (var kv in _subscribers) {
+                  if (kv.Value.active)
+                     kv.Value.callback(currentTime - kv.Value.startTime);
+               }
+            }
+         };
       }
 
       public void Subscribe(object subscriber, Action<TimeSpan /* time from start subscribe */> subscriberCallbackMethod) {
-         SubscribeInfo info = _subscribers.get(subscriber);
-         if (info == null) {
-            info = new SubscribeInfo();
+         if (!_subscribers.ContainsKey(subscriber)) {
+            var info = new SubscribeInfo();
             info.callback = subscriberCallbackMethod;
-            _subscribers.put(subscriber, info);
+            _subscribers.Add(subscriber, info);
          } else {
+            var info = _subscribers[subscriber];
             info.active = true;
-            info.startTime = new Date().getTime() - info.startTime; // apply of pause delta time
+            info.startTime = DateTime.MinValue + (DateTime.Now - info.startTime); // apply of pause delta time
          }
       }
 
       public void Pause(object subscriber) {
-         SubscribeInfo info = _subscribers.get(subscriber);
+         SubscribeInfo info = _subscribers[subscriber];
          if (info == null)
             return;
          info.active = false;
-         info.startTime = new Date().getTime() - info.startTime; // set of pause delta time
+         info.startTime = DateTime.MinValue + (DateTime.Now - info.startTime); // set of pause delta time
       }
 
       public void Unsubscribe(object subscriber) {
-         _subscribers.remove(subscriber);
+         _subscribers.Remove(subscriber);
       }
 
       public void Dispose() {
-         _timer.setCallback(null);
-         _timer.close();
+         _timer.Callback = null;
+         _timer.Dispose();
          _subscribers.Clear();
       }
 

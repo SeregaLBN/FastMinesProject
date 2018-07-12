@@ -131,11 +131,16 @@ namespace fmg.uwp.draw.img.wbmp {
 
       /** Flag image controller implementation for {@link Icon} */
       public class Controller : ImageController<WriteableBitmap, Flag, FlagModel> {
-         public Controller() : base(new Flag()) { }
+
+         public Controller()
+            : base(new Flag())
+         { }
+
          protected override void Disposing() {
             View.Disposing();
             base.Disposing();
          }
+
       }
 
    }

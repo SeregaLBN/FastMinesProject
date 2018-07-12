@@ -8,13 +8,13 @@ namespace fmg.core.mosaic {
 
    /// <summary> MVC view interface of mosaic </summary>
    /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
-   /// <typeparam name="TImage2">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
+   /// <typeparam name="TImageInner">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
    /// <typeparam name="TMosaicModel">mosaic data model</typeparam>
-   public interface IMosaicView<TImage, TImage2, TMosaicModel>
+   public interface IMosaicView<TImage, TImageInner, TMosaicModel>
                    : IImageView<TImage, TMosaicModel>
       where TImage : class
-      where TImage2 : class
-      where TMosaicModel : MosaicDrawModel<TImage2>
+      where TImageInner : class
+      where TMosaicModel : MosaicDrawModel<TImageInner>
    {
 
       /// <summary> Mark the cells needed for the repainting.

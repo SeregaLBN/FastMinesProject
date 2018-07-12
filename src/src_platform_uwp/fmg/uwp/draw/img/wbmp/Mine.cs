@@ -5,6 +5,7 @@ namespace fmg.uwp.draw.img.wbmp {
    /// <summary> mine image </summary>
    public class Mine {
 
+#if false
       private WriteableBitmap _bmp;
 
       public WriteableBitmap Image {
@@ -23,6 +24,7 @@ namespace fmg.uwp.draw.img.wbmp {
             return _bmp;
          }
       }
+#endif
 
    }
 

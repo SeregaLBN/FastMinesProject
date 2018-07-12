@@ -30,9 +30,9 @@ import fmg.jfx.utils.StaticInitializer;
 
 /** MVC: view. Abstract JFX implementation */
 public abstract class AMosaicViewJfx<TImage,
-                                     TImage2,
-                                     TMosaicModel extends MosaicDrawModel<TImage2>>
-                 extends AMosaicView<TImage, TImage2, TMosaicModel>
+                                     TImageInner,
+                                     TMosaicModel extends MosaicDrawModel<TImageInner>>
+                 extends AMosaicView<TImage, TImageInner, TMosaicModel>
 {
 
    private Font _font;
@@ -179,7 +179,7 @@ public abstract class AMosaicViewJfx<TImage,
 //             g.setStroke(Cast.toColor(Color.Magenta));
 //             g.strokeRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
 
-               Consumer<TImage2> paintImage = img -> {
+               Consumer<TImageInner> paintImage = img -> {
                   double x = rcInner.x + offset.width;
                   double y = rcInner.y + offset.height;
                   if (img instanceof Image) {

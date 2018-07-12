@@ -34,49 +34,49 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       int _nextCreateImagesIndex;
 
       #region images Fabrica
-      public void TestLogos() {
-         TestAppW(() => new Logo[] {
-            new Logo(),
-            new Logo(),
-            new Logo(),
-            new Logo()
-         });
-      }
-      public void TestMosaicsSkillImg() {
-         TestAppW(() => (new MosaicsSkillImg[] { new MosaicsSkillImg(null), new MosaicsSkillImg(null) })
-               .Concat(ESkillLevelEx.GetValues()
-                                    .Select(e => new MosaicsSkillImg[] { new MosaicsSkillImg(e), new MosaicsSkillImg(e) })
-                                    .SelectMany(m => m)));
-      }
-      public void TestMosaicsGroupImg() {
-         TestAppW(() => (new MosaicsGroupImg[] { new MosaicsGroupImg(null), new MosaicsGroupImg(null) })
-               .Concat(EMosaicGroupEx.GetValues()
-                                     .Select(e => new MosaicsGroupImg[] { new MosaicsGroupImg(e), new MosaicsGroupImg(e) })
-                                     .SelectMany(m => m)));
-      }
-      public void TestMosaicsImg() {
-         var rnd = ThreadLocalRandom.Current;
-         TestAppW(() =>
-            EMosaicEx.GetValues().Select(e => new MosaicsImg() {
-               MosaicType = e,
-               SizeField = new Matrisize(2 + rnd.Next(2), 2 + rnd.Next(2))
-            })
-            //new List<MosaicsImg>() { new MosaicsImg() {
-            //   MosaicType = EMosaic.eMosaicSquare1,
-            //   SizeField = new Matrisize(3 + rnd.Next(4), 4 + rnd.Next(3))
-            //} }
-         );
-      }
-      public void TestFlag()  { TestAppW(() => new Flag[]  { new Flag() }); }
-      public void TestMine()  { TestAppW(() => new Mine[]  { new Mine() }); }
-      public void TestSmile() { TestAppW(() => new Smile[] { new Smile() }); }
+      //public void TestLogos() {
+      //   TestAppW(() => new Logo[] {
+      //      new Logo(),
+      //      new Logo(),
+      //      new Logo(),
+      //      new Logo()
+      //   });
+      //}
+      //public void TestMosaicsSkillImg() {
+      //   TestAppW(() => (new MosaicsSkillImg[] { new MosaicsSkillImg(null), new MosaicsSkillImg(null) })
+      //         .Concat(ESkillLevelEx.GetValues()
+      //                              .Select(e => new MosaicsSkillImg[] { new MosaicsSkillImg(e), new MosaicsSkillImg(e) })
+      //                              .SelectMany(m => m)));
+      //}
+      //public void TestMosaicsGroupImg() {
+      //   TestAppW(() => (new MosaicsGroupImg[] { new MosaicsGroupImg(null), new MosaicsGroupImg(null) })
+      //         .Concat(EMosaicGroupEx.GetValues()
+      //                               .Select(e => new MosaicsGroupImg[] { new MosaicsGroupImg(e), new MosaicsGroupImg(e) })
+      //                               .SelectMany(m => m)));
+      //}
+      //public void TestMosaicsImg() {
+      //   var rnd = ThreadLocalRandom.Current;
+      //   TestAppW(() =>
+      //      EMosaicEx.GetValues().Select(e => new MosaicsImg() {
+      //         MosaicType = e,
+      //         SizeField = new Matrisize(2 + rnd.Next(2), 2 + rnd.Next(2))
+      //      })
+      //      //new List<MosaicsImg>() { new MosaicsImg() {
+      //      //   MosaicType = EMosaic.eMosaicSquare1,
+      //      //   SizeField = new Matrisize(3 + rnd.Next(4), 4 + rnd.Next(3))
+      //      //} }
+      //   );
+      //}
+      public void TestFlag()  { TestAppW<Flag.Controller, Flag, FlagModel>(() => new Flag.Controller[]  { new Flag.Controller() }); }
+      //public void TestMine()  { TestAppW(() => new Mine[]  { new Mine() }); }
+      //public void TestSmile() { TestAppW(() => new Smile[] { new Smile() }); }
       #endregion
 
 
       public DemoPage() {
          _td = new TestDrawing();
 
-         _onCreateImages = new Action[] { TestLogos, TestMosaicsSkillImg, TestMosaicsGroupImg, TestMosaicsImg, TestFlag, TestMine, TestSmile };
+         _onCreateImages = new Action[] { /*TestLogos, TestMosaicsSkillImg, TestMosaicsGroupImg, TestMosaicsImg,*/ TestFlag/*, TestMine, TestSmile*/ };
 
          InitializeComponent();
 
@@ -92,24 +92,25 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       }
 
       #region main part
-      void TestAppW<TImageEx>(Func<IEnumerable<TImageEx>> funcGetImages)
-         where TImageEx : class {
-         TestApp<TImageEx, PaintableWBmp, WriteableBitmap, PaintUwpContext<WriteableBitmap>, WriteableBitmap>(funcGetImages);
+      void TestAppW<TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
+         where TImageController : ImageController<WriteableBitmap, TImageView, TImageModel>
+         where TImageView : IImageView<WriteableBitmap, TImageModel>
+         where TImageModel : IImageModel 
+      {
+         TestApp<TImageController, TImageView, TImageModel>(funcGetImages);
       }
 
-      void TestApp<TImageEx, TPaintable, TImage, TPaintContext, TImageInner>(Func<IEnumerable<TImageEx>> funcGetImages)
-         where TImageEx : class
-         where TPaintable : IPaintable
-         where TImage : class
-         where TImageInner : class
-         where TPaintContext : PaintContext<TImageInner>
+      void TestApp<TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
+         where TImageController : ImageController<WriteableBitmap, TImageView, TImageModel>
+         where TImageView : IImageView<WriteableBitmap, TImageModel>
+         where TImageModel : IImageModel 
       {
          _panel.Children.Clear();
-         List<TImageEx> images = funcGetImages().ToList();
+         List<TImageController> images = funcGetImages().ToList();
          ApplicationView.GetForCurrentView().Title = _td.GetTitle(images);
 
          bool testTransparent = _td.Bl;
-         images.Select(x => x as ImageModel<TImage>)
+         images.Select(x => x as IImageModel<WriteableBitmap>)
             .Where(x => x != null)
             .ToList()
             .ForEach(img => _td.ApplyRandom<TPaintable, TImage, TPaintContext, TImageInner>(img, testTransparent));

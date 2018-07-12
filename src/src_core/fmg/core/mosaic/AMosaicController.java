@@ -13,13 +13,13 @@ import fmg.core.types.*;
 
 /** MVC: mosaic controller. Base implementation
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
- * @param <TImage2> image type of flag/mine into mosaic field
+ * @param <TImageInner> image type of flag/mine into mosaic field
  * @param <TMosaicView> mosaic view
  * @param <TMosaicModel> mosaic model
  */
-public abstract class AMosaicController<TImage, TImage2,
-                                        TMosaicView extends IMosaicView<TImage, TImage2, TMosaicModel>,
-                                        TMosaicModel extends MosaicDrawModel<TImage2>>
+public abstract class AMosaicController<TImage, TImageInner,
+                                        TMosaicView extends IMosaicView<TImage, TImageInner, TMosaicModel>,
+                                        TMosaicModel extends MosaicDrawModel<TImageInner>>
                 extends ImageController<TImage, TMosaicView, TMosaicModel>
 {
 

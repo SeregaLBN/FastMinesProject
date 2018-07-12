@@ -12,14 +12,14 @@ namespace fmg.core.mosaic {
 
    /// <summary> MVC: view. Base mosaic view implementation </summary>
    /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
-   /// <typeparam name="TImage2">image type of flag/mine into mosaic field</typeparam>
+   /// <typeparam name="TImageInner">image type of flag/mine into mosaic field</typeparam>
    /// <typeparam name="TMosaicModel">mosaic data model</typeparam>
-   public abstract class AMosaicView<TImage, TImage2, TMosaicModel>
+   public abstract class AMosaicView<TImage, TImageInner, TMosaicModel>
                          : ImageView<TImage, TMosaicModel>,
-                         IMosaicView<TImage, TImage2, TMosaicModel>
+                         IMosaicView<TImage, TImageInner, TMosaicModel>
       where TImage : class
-      where TImage2 : class
-      where TMosaicModel : MosaicDrawModel<TImage2>
+      where TImageInner : class
+      where TMosaicModel : MosaicDrawModel<TImageInner>
    {
 
       protected AMosaicView(TMosaicModel mosaicModel)
@@ -58,7 +58,7 @@ namespace fmg.core.mosaic {
          case nameof(MosaicGameModel.Area):
             ChangeFontSize();
             break;
-         case nameof(MosaicDrawModel<TImage2>.PenBorder):
+         case nameof(MosaicDrawModel<TImageInner>.PenBorder):
             ChangeFontSize();
             break;
          }

@@ -19,8 +19,7 @@ import fmg.jfx.mosaic.AMosaicViewJfx;
  * @param <TImage> SWING specific image: {@link javafx.scene.image.Image} or {@link javafx.scene.canvas.Canvas}
  */
 public abstract class MosaicImg<TImage>
-                extends AMosaicViewJfx<TImage, Void, MosaicAnimatedModel<Void>>
-{
+      extends AMosaicViewJfx<TImage, Void, MosaicAnimatedModel<Void>> {
 
    protected boolean _useBackgroundColor = true;
 
@@ -30,7 +29,7 @@ public abstract class MosaicImg<TImage>
 
    @Override
    protected void drawBody() {
-      //super.drawBody(); // !hide super implementtation
+      // super.drawBody(); // !hide super implementtation
 
       MosaicAnimatedModel<Void> model = getModel();
 
@@ -57,7 +56,7 @@ public abstract class MosaicImg<TImage>
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
-   //    custom implementations
+   // custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
    /** Moisac image view implementation over {@link javafx.scene.canvas.javafx.scene.canvas.Canvas} */
@@ -66,7 +65,9 @@ public abstract class MosaicImg<TImage>
       private CanvasJfx canvas = new CanvasJfx(this);
 
       @Override
-      protected javafx.scene.canvas.Canvas createImage() { return canvas.create(); }
+      protected javafx.scene.canvas.Canvas createImage() {
+         return canvas.create();
+      }
 
       @Override
       public void draw(Collection<BaseCell> modifiedCells) {
@@ -127,24 +128,30 @@ public abstract class MosaicImg<TImage>
    ////////////// TEST //////////////
    public static void main(String[] args) {
       TestDrawing.testApp(() ->
-//      // test single
-//      Arrays.asList(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
+// // test single
+// Arrays.asList(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
 
-         // test all
-         Stream.of(EMosaic.values())
+      // test all
+      Stream.of(EMosaic.values())
 
-//               // variant 1
-//               .map(e -> Stream.of(new MosaicImg.ControllerCanvas() { { setMosaicType(e); }},
-//                                   new MosaicImg.ControllerImage () { { setMosaicType(e); }}))
-//               .flatMap(x -> x)
+// // variant 1
+// .map(e -> Stream.of(new MosaicImg.ControllerCanvas() { { setMosaicType(e); }},
+// new MosaicImg.ControllerImage () { { setMosaicType(e); }}))
+// .flatMap(x -> x)
 
-               // variant 2
-               .map(e -> ThreadLocalRandom.current().nextBoolean()
-                           ? new MosaicImg.ControllerCanvas() { { setMosaicType(e); }}
-                           : new MosaicImg.ControllerImage () { { setMosaicType(e); }}
-                   )
-               .collect(Collectors.toList())
-      );
+            // variant 2
+            .map(e -> ThreadLocalRandom.current().nextBoolean()
+                  ? new MosaicImg.ControllerCanvas() {
+                     {
+                        setMosaicType(e);
+                     }
+                  }
+                  : new MosaicImg.ControllerImage() {
+                     {
+                        setMosaicType(e);
+                     }
+                  })
+            .collect(Collectors.toList()));
    }
    //////////////////////////////////
 

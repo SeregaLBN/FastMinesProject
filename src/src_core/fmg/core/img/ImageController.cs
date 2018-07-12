@@ -53,7 +53,6 @@ namespace fmg.core.img {
       // <summary>  Dispose managed resources </summary>/
       protected virtual void Disposing() {
          _imageView.PropertyChanged -= OnPropertyViewChanged;
-         _imageView.Dispose();
          _notifier.Dispose();
       }
 

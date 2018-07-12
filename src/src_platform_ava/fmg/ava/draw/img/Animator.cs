@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using Avalonia.Animation;
@@ -18,11 +17,11 @@ namespace fmg.ava.draw.img {
       private readonly IDictionary<object /* subscriber */, SubscribeInfo> _subscribers;
 
       private static Animator _singleton;
-      public static Animator getSingleton() { // not synchronized. since should work only in the thread of the UI.
+      public static Animator Singleton { get { // not synchronized. since should work only in the thread of the UI.
          if (_singleton == null)
             _singleton = new Animator();
          return _singleton;
-      }
+      } }
 
       private Animator() {
          _subscribers = new Dictionary<object, SubscribeInfo>();

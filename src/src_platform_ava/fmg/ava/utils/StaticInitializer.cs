@@ -8,7 +8,7 @@ namespace fmg.ava.utils {
 
       static StaticInitializer() {
          Factory.DEFERR_INVOKER = doRun => Dispatcher.UIThread.InvokeAsync(() => doRun(), DispatcherPriority.Normal);
-         Factory.GET_ANIMATOR = Animator.getSingleton;
+         Factory.GET_ANIMATOR = () => Animator.Singleton;
          Factory.TIMER_CREATOR = () => new Timer();
       }
 

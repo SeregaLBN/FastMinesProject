@@ -13,15 +13,15 @@ namespace fmg.core.mosaic {
 
    /// <summary> MVC: mosaic controller. Base implementation </summary>
    /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
-   /// <typeparam name="TImage2">image type of flag/mine into mosaic field</typeparam>
+   /// <typeparam name="TImageInner">image type of flag/mine into mosaic field</typeparam>
    /// <typeparam name="TMosaicView">mosaic view</typeparam>
    /// <typeparam name="TMosaicModel">mosaic model</typeparam>
-   public abstract class AMosaicController<TImage, TImage2, TMosaicView, TMosaicModel>
-                         : ImageController<TImage,          TMosaicView, TMosaicModel>
+   public abstract class AMosaicController<TImage, TImageInner, TMosaicView, TMosaicModel>
+                         : ImageController<TImage,              TMosaicView, TMosaicModel>
       where TImage : class
-      where TImage2 : class
-      where TMosaicView : IMosaicView<TImage, TImage2, TMosaicModel>
-      where TMosaicModel : MosaicDrawModel<TImage2>
+      where TImageInner : class
+      where TMosaicView : IMosaicView<TImage, TImageInner, TMosaicModel>
+      where TMosaicModel : MosaicDrawModel<TImageInner>
    {
 
       /// <summary> кол-во мин на поле </summary>

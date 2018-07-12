@@ -4,6 +4,7 @@ using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using fmg.common.ui;
 using fmg.core.mosaic;
+using fmg.uwp.draw.img;
 
 namespace fmg.uwp.utils {
 
@@ -11,7 +12,7 @@ namespace fmg.uwp.utils {
 
       static StaticInitializer() {
          Factory.DEFERR_INVOKER = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
-         Factory.GET_ANIMATOR = fmg.uwp.draw.img.Animator.getSingleton();
+         Factory.GET_ANIMATOR = () => Animator.Singleton;
          Factory.TIMER_CREATOR = () => new Timer();
          try {
             var uiSettings = new UISettings();
