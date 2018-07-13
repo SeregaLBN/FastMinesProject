@@ -20,12 +20,12 @@ namespace fmg.core.img {
          this.titlePrefix = titlePrefix;
       }
 
-      public void ApplyRandom<TImage, TImageView, TAImageView, TImageModel, TAnimatedModel>(IImageController<TImage, TImageView, TImageModel> ctrller, bool testTransparent)
+      public void ApplyRandom<TImage, TImageView, /*TAImageView, */TImageModel/*, TAnimatedModel*/>(IImageController<TImage, TImageView, TImageModel> ctrller, bool testTransparent)
          where TImage : class
          where TImageView : IImageView<TImage, TImageModel>
-         where TAImageView : IImageView<TImage, TAnimatedModel>
+         //where TAImageView : IImageView<TImage, TAnimatedModel>
          where TImageModel : IImageModel
-         where TAnimatedModel : IAnimatedModel
+         //where TAnimatedModel : IAnimatedModel
       {
          testTransparent = testTransparent || Bl;
 
@@ -125,8 +125,9 @@ namespace fmg.core.img {
          public Func<IImageController<TImage, TImageView, TImageModel> /* image */, CellTilingInfo> itemCallback;
       }
 
-      public CellTilingResult<TImage, TImageView, TImageModel> CellTiling<TImage, TImageView, TImageModel>(RectDouble rc, IList<IImageController<TImage, TImageView, TImageModel>> images, bool testTransparent)
+      public CellTilingResult<TImage, TImageView, TImageModel> CellTiling<TImage, TImageController, TImageView, TImageModel>(RectDouble rc, IList<TImageController> images, bool testTransparent)
          where TImage : class
+         where TImageController : ImageController<TImage, TImageView, TImageModel>
          where TImageView : IImageView<TImage, TImageModel>
          where TImageModel : IImageModel
       {
@@ -170,16 +171,17 @@ namespace fmg.core.img {
          };
       }
 
-      public string GetTitle<TImage, TImageView, TImageModel>(List<IImageController<TImage, TImageView, TImageModel>> images)
+      public string GetTitle<TImage, TImageController, TImageView, TImageModel>(List<TImageController> images)
          where TImage : class
+         where TImageController : ImageController<TImage, TImageView, TImageModel>
          where TImageView : IImageView<TImage, TImageModel>
          where TImageModel : IImageModel
       {
-         Func<Type, string> friendlyName = type => {
+         string friendlyName(Type type) {
             var all = type.FullName.Split('.');
             return string.Join(".", all.Skip(all.Length - 2)
                .Select(s => s.Replace('+', '.')));
-         };
+         }
 
          return titlePrefix + " test paints: " + string.Join(" & ", images
             .Select(i => friendlyName(i.GetType()))

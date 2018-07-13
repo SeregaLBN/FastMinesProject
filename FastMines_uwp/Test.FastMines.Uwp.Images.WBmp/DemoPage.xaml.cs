@@ -107,13 +107,10 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       {
          _panel.Children.Clear();
          List<TImageController> images = funcGetImages().ToList();
-         ApplicationView.GetForCurrentView().Title = _td.GetTitle(images);
+         ApplicationView.GetForCurrentView().Title = _td.GetTitle<WriteableBitmap, TImageController, TImageView, TImageModel>(images);
 
          bool testTransparent = _td.Bl;
-         images.Select(x => x as IImageModel<WriteableBitmap>)
-            .Where(x => x != null)
-            .ToList()
-            .ForEach(img => _td.ApplyRandom<TPaintable, TImage, TPaintContext, TImageInner>(img, testTransparent));
+         images.ForEach(img => _td.ApplyRandom<WriteableBitmap, TImageView, TImageModel>(img, testTransparent));
 
          Image[,] imgControls;
 
@@ -122,8 +119,8 @@ namespace Test.FastMines.Uwp.Images.WBmp {
             double sizeH = _panel.ActualHeight; if (sizeH <= 0) sizeH = 100;
             RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
-            ATestDrawing.CellTilingResult<TImageEx> ctr = _td.CellTiling<TImageEx, TImage>(rc, images, testTransparent);
-            Size imgSize = ctr.imageSize;
+            ATestDrawing.CellTilingResult<WriteableBitmap, TImageView, TImageModel> ctr = _td.CellTiling<WriteableBitmap, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
+            var imgSize = ctr.imageSize;
             imgControls = new Image[ctr.tableSize.Width, ctr.tableSize.Height];
 
             var callback = ctr.itemCallback;
@@ -139,39 +136,13 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                   Stretch = Stretch.None
                };
 
-               if (imgObj is ImageModel<TImage>) {
-                  ImageModel<TImage> simg = imgObj as ImageModel<TImage>;
-                  simg.Size = imgSize;
+               imgObj.Model.Size = imgSize;
 
-                  imgCntrl.SetBinding(Image.SourceProperty, new Binding {
-                     Source = simg,
-                     Path = new PropertyPath(nameof(ImageModel<TImage>.Image)),
-                     Mode = BindingMode.OneWay
-                  });
-               } else
-               if (imgObj is Flag) {
-                  imgCntrl.SetBinding(Image.SourceProperty, new Binding {
-                     Source = imgObj,
-                     Path = new PropertyPath(nameof(Flag.Image)),
-                     Mode = BindingMode.OneWay
-                  });
-               } else
-               if (imgObj is Mine) {
-                  imgCntrl.SetBinding(Image.SourceProperty, new Binding {
-                     Source = imgObj,
-                     Path = new PropertyPath(nameof(Mine.Image)),
-                     Mode = BindingMode.OneWay
-                  });
-               } else
-               if (imgObj is Smile) {
-                  imgCntrl.SetBinding(Image.SourceProperty, new Binding {
-                     Source = imgObj,
-                     Path = new PropertyPath(nameof(Smile.Image)),
-                     Mode = BindingMode.OneWay
-                  });
-               } else {
-                  throw new Exception("Unsupported image type");
-               }
+               imgCntrl.SetBinding(Image.SourceProperty, new Binding {
+                  Source = imgObj,
+                  Path = new PropertyPath(nameof(imgObj.Image)),
+                  Mode = BindingMode.OneWay
+               });
 
                _panel.Children.Add(imgCntrl);
                imgControls[cti.i, cti.j] = imgCntrl;
@@ -183,29 +154,15 @@ namespace Test.FastMines.Uwp.Images.WBmp {
             double sizeH = ev.NewSize.Height;
             RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
-            ATestDrawing.CellTilingResult<TImageEx> ctr = _td.CellTiling<TImageEx, TImage>(rc, images, testTransparent);
-            Size imgSize = ctr.imageSize;
+            ATestDrawing.CellTilingResult<WriteableBitmap, TImageView, TImageModel> ctr = _td.CellTiling<WriteableBitmap, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
+            var imgSize = ctr.imageSize;
 
             var callback = ctr.itemCallback;
             foreach (var imgObj in images) {
                ATestDrawing.CellTilingInfo cti = callback(imgObj);
                PointDouble offset = cti.imageOffset;
 
-               if (imgObj is ImageModel<TImage>) {
-                  ImageModel<TImage> simg = imgObj as ImageModel<TImage>;
-                  simg.Size = imgSize;
-               } else
-               if (imgObj is Flag) {
-                  // none
-               } else
-               if (imgObj is Mine) {
-                  // none
-               } else
-               if (imgObj is Smile) {
-                  // none
-               } else {
-                  throw new Exception("Unsupported image type");
-               }
+               imgObj.Model.Size = imgSize;
 
                imgControls[cti.i, cti.j].Margin = new Thickness {
                   Left = offset.X,
