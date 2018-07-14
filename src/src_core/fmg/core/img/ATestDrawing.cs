@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.mosaic;
+using System.Reflection;
 
 namespace fmg.core.img {
 
@@ -20,12 +21,12 @@ namespace fmg.core.img {
          this.titlePrefix = titlePrefix;
       }
 
-      public void ApplyRandom<TImage, TImageView, /*TAImageView, */TImageModel/*, TAnimatedModel*/>(IImageController<TImage, TImageView, TImageModel> ctrller, bool testTransparent)
+      public void ApplyRandom<TImage, TImageView, TAImageView, TImageModel, TAnimatedModel>(IImageController<TImage, TImageView, TImageModel> ctrller, bool testTransparent)
          where TImage : class
          where TImageView : IImageView<TImage, TImageModel>
-         //where TAImageView : IImageView<TImage, TAnimatedModel>
+         where TAImageView : IImageView<TImage, TAnimatedModel>
          where TImageModel : IImageModel
-         //where TAnimatedModel : IAnimatedModel
+         where TAnimatedModel : IAnimatedModel
       {
          testTransparent = testTransparent || Bl;
 
@@ -39,6 +40,7 @@ namespace fmg.core.img {
             }
          }
          if (ctrller is AnimatedImgController<TImage, TAImageView, TAnimatedModel> aCtrller) {
+         //if (IsSubClassOfGeneric(typeof(AnimatedImgController<>), ctrller.GetType())) {
             if (aCtrller.Model.Animated) {
                aCtrller.UseRotateTransforming(Bl);
                aCtrller.UsePolarLightFgTransforming(Bl);
@@ -115,17 +117,18 @@ namespace fmg.core.img {
          public PointDouble imageOffset;
       }
 
-      public class CellTilingResult<TImage, TImageView, TImageModel>
+      public class CellTilingResult<TImage, TImageController, TImageView, TImageModel>
          where TImage : class
+         where TImageController : ImageController<TImage, TImageView, TImageModel>
          where TImageView : IImageView<TImage, TImageModel>
          where TImageModel : IImageModel
       {
          public SizeDouble imageSize;
          public Size tableSize;
-         public Func<IImageController<TImage, TImageView, TImageModel> /* image */, CellTilingInfo> itemCallback;
+         public Func<TImageController /* image */, CellTilingInfo> itemCallback;
       }
 
-      public CellTilingResult<TImage, TImageView, TImageModel> CellTiling<TImage, TImageController, TImageView, TImageModel>(RectDouble rc, IList<TImageController> images, bool testTransparent)
+      public CellTilingResult<TImage, TImageController, TImageView, TImageModel> CellTiling<TImage, TImageController, TImageView, TImageModel>(RectDouble rc, IList<TImageController> images, bool testTransparent)
          where TImage : class
          where TImageController : ImageController<TImage, TImageView, TImageModel>
          where TImageView : IImageView<TImage, TImageModel>
@@ -143,7 +146,7 @@ namespace fmg.core.img {
          var imgSize = new SizeDouble(dx - 2 * pad + addonX,  // dx - 2*pad;
                                       dy - 2 * pad + addonY); // dy - 2*pad;
 
-         Func<IImageController<TImage, TImageView, TImageModel>, CellTilingInfo> itemCallback = item => {
+         CellTilingInfo itemCallback(TImageController item) {
             int pos = images.IndexOf(item);
             if (pos == -1)
                throw new Exception("Illegal usage...");
@@ -162,9 +165,9 @@ namespace fmg.core.img {
                j = j,
                imageOffset = offset
             };
-         };
+         }
 
-         return new CellTilingResult<TImage, TImageView, TImageModel> {
+         return new CellTilingResult<TImage, TImageController, TImageView, TImageModel> {
             imageSize = imgSize,
             tableSize = new Size(cols, rows),
             itemCallback = itemCallback
@@ -190,4 +193,5 @@ namespace fmg.core.img {
       }
 
    }
+
 }

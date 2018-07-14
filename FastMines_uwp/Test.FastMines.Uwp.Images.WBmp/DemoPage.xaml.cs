@@ -17,6 +17,7 @@ using fmg.core.types;
 using fmg.uwp.draw.img.wbmp;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.mosaic.wbmp;
+using System.ComponentModel;
 
 namespace Test.FastMines.Uwp.Images.WBmp {
 
@@ -34,6 +35,27 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       int _nextCreateImagesIndex;
 
       #region images Fabrica
+      class DummyModel : IAnimatedModel {
+         public bool Animated { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+         public long AnimatePeriod { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+         public int TotalFrames { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+         public int CurrentFrame { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+         public SizeDouble Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+#pragma warning disable CS0067 // warning CS0067: The event is never used
+         public event PropertyChangedEventHandler PropertyChanged; // TODO unusable
+#pragma warning restore CS0067
+         public void Dispose() { throw new NotImplementedException(); }
+      }
+      class DummyView : IImageView<WriteableBitmap, DummyModel> {
+         public DummyModel Model => throw new NotImplementedException();
+         public SizeDouble Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+         public WriteableBitmap Image => throw new NotImplementedException();
+#pragma warning disable CS0067 // warning CS0067: The event is never used
+         public event PropertyChangedEventHandler PropertyChanged; // TODO unusable
+#pragma warning restore CS0067
+         public void Dispose() { throw new NotImplementedException(); }
+         public void Invalidate() { throw new NotImplementedException(); }
+      }
       //public void TestLogos() {
       //   TestAppW(() => new Logo[] {
       //      new Logo(),
@@ -67,7 +89,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       //      //} }
       //   );
       //}
-      public void TestFlag()  { TestAppW<Flag.Controller, Flag, FlagModel>(() => new Flag.Controller[]  { new Flag.Controller() }); }
+      public void TestFlag()  { TestAppW<Flag.Controller, Flag, DummyView, FlagModel, DummyModel>(() => new Flag.Controller[]  { new Flag.Controller() }); }
       //public void TestMine()  { TestAppW(() => new Mine[]  { new Mine() }); }
       //public void TestSmile() { TestAppW(() => new Smile[] { new Smile() }); }
       #endregion
@@ -92,25 +114,28 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       }
 
       #region main part
-      void TestAppW<TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
+      void TestAppW<TImageController, TImageView, TAImageView, TImageModel, TAnimatedModel>(Func<IEnumerable<TImageController>> funcGetImages)
          where TImageController : ImageController<WriteableBitmap, TImageView, TImageModel>
          where TImageView : IImageView<WriteableBitmap, TImageModel>
-         where TImageModel : IImageModel 
+         where TAImageView : IImageView<WriteableBitmap, TAnimatedModel>
+         where TImageModel : IImageModel
+         where TAnimatedModel : IAnimatedModel
       {
-         TestApp<TImageController, TImageView, TImageModel>(funcGetImages);
+         TestApp<TImageController, TImageView, TAImageView, TImageModel, TAnimatedModel>(funcGetImages);
       }
 
-      void TestApp<TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
+      void TestApp<TImageController, TImageView, TAImageView, TImageModel, TAnimatedModel>(Func<IEnumerable<TImageController>> funcGetImages)
          where TImageController : ImageController<WriteableBitmap, TImageView, TImageModel>
          where TImageView : IImageView<WriteableBitmap, TImageModel>
-         where TImageModel : IImageModel 
-      {
+         where TAImageView : IImageView<WriteableBitmap, TAnimatedModel>
+         where TImageModel : IImageModel
+         where TAnimatedModel : IAnimatedModel {
          _panel.Children.Clear();
          List<TImageController> images = funcGetImages().ToList();
          ApplicationView.GetForCurrentView().Title = _td.GetTitle<WriteableBitmap, TImageController, TImageView, TImageModel>(images);
 
          bool testTransparent = _td.Bl;
-         images.ForEach(img => _td.ApplyRandom<WriteableBitmap, TImageView, TImageModel>(img, testTransparent));
+         images.ForEach(img => _td.ApplyRandom<WriteableBitmap, TImageView, TAImageView, TImageModel, TAnimatedModel>(img, testTransparent));
 
          Image[,] imgControls;
 
@@ -119,7 +144,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
             double sizeH = _panel.ActualHeight; if (sizeH <= 0) sizeH = 100;
             RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
-            ATestDrawing.CellTilingResult<WriteableBitmap, TImageView, TImageModel> ctr = _td.CellTiling<WriteableBitmap, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
+            ATestDrawing.CellTilingResult<WriteableBitmap, TImageController, TImageView, TImageModel> ctr = _td.CellTiling<WriteableBitmap, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
             var imgSize = ctr.imageSize;
             imgControls = new Image[ctr.tableSize.Width, ctr.tableSize.Height];
 
@@ -154,7 +179,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
             double sizeH = ev.NewSize.Height;
             RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
-            ATestDrawing.CellTilingResult<WriteableBitmap, TImageView, TImageModel> ctr = _td.CellTiling<WriteableBitmap, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
+            ATestDrawing.CellTilingResult<WriteableBitmap, TImageController, TImageView, TImageModel> ctr = _td.CellTiling<WriteableBitmap, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
             var imgSize = ctr.imageSize;
 
             var callback = ctr.itemCallback;
