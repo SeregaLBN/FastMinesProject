@@ -29,6 +29,7 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
    protected void draw(Graphics2D g) {
       double w = getSize().width  / 100.0;
       double h = getSize().height / 100.0;
+
       // perimeter figure points
       Point2D.Double[] p = new Point2D.Double[] {
             new Point2D.Double(13.5 *w, 90*h),
@@ -41,7 +42,6 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
       BasicStroke penLine = new BasicStroke((float)penWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
       g.setStroke(penLine);
       g.setColor(Color.BLACK);
-    //g.drawLine((int)p[0].x, (int)p[0].y, (int)p[2].x, (int)p[2].y);
       g.drawLine((int)p[0].x, (int)p[0].y, (int)p[1].x, (int)p[1].y);
 
       BasicStroke penCurve = new BasicStroke((float)penWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
@@ -49,32 +49,25 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
       g.setColor(Color.RED);
       CubicCurve2D curve = new CubicCurve2D.Double(
             p[2].x, p[2].y,
-            95*w, 0*h,
+            95.0*w,  0*h,
             19.3*w, 32*h,
             p[3].x, p[3].y);
        g.draw(curve);
-//       if (false) {
-//         curve = new CubicCurve2D.Double(
-//               p[1].x, p[1].y,
-//               55.5*zoomX, 15*zoomY,
-//               45*zoomX, 62.5*zoomY,
-//               p[3].x, p[3].y);
-//          g.draw(curve);
-//       } else
-       {
-          curve = new CubicCurve2D.Double(
-               p[3].x, p[3].y,
-               77.8*w, 32.89*h,
-               88.05*w, 22.73*h,
-               p[4].x, p[4].y);
-          g.draw(curve);
-          curve = new CubicCurve2D.Double(
-               p[4].x, p[4].y,
-               15.83*w, 67*h,
-               91.45*w, 35*h,
-               p[1].x, p[1].y);
-          g.draw(curve);
-       }
+
+       curve = new CubicCurve2D.Double(
+            p[3].x, p[3].y,
+            77.80*w, 32.89*h,
+            88.05*w, 22.73*h,
+            p[4].x, p[4].y);
+       g.draw(curve);
+
+       curve = new CubicCurve2D.Double(
+            p[4].x, p[4].y,
+            15.83*w, 67*h,
+            91.45*w, 35*h,
+            p[1].x, p[1].y);
+       g.draw(curve);
+
        g.setStroke(penLine);
        g.drawLine((int)p[1].x, (int)p[1].y, (int)p[2].x, (int)p[2].y);
    }
