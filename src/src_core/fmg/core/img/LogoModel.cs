@@ -8,7 +8,7 @@ using fmg.common.geom.util;
 namespace fmg.core.img {
 
    /// <summary> MVC: model for FastMines logo image </summary>
-   public abstract class LogoModel : AnimatedImageModel {
+   public class LogoModel : AnimatedImageModel {
 
       public enum ERotateMode {
          /// <summary> rotate image </summary>
@@ -32,7 +32,7 @@ namespace fmg.core.img {
       private readonly IList<PointDouble> _oct = new List<PointDouble>();
 
 
-      protected LogoModel() {
+      public LogoModel() {
          BackgroundColor = Color.Transparent;
          PropertyChanged += OnPropertyChanged;
       }

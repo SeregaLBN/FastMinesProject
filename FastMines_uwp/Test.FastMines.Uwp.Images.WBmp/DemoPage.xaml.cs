@@ -56,14 +56,14 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          public void Dispose() { throw new NotImplementedException(); }
          public void Invalidate() { throw new NotImplementedException(); }
       }
-      //public void TestLogos() {
-      //   TestAppW(() => new Logo[] {
-      //      new Logo(),
-      //      new Logo(),
-      //      new Logo(),
-      //      new Logo()
-      //   });
-      //}
+      public void TestLogos() {
+         TestAppW<Logo.Controller, Logo, Logo, LogoModel, LogoModel>(() => new Logo.Controller[] {
+            new Logo.Controller(),
+            new Logo.Controller(),
+            new Logo.Controller(),
+            new Logo.Controller()
+         });
+      }
       //public void TestMosaicsSkillImg() {
       //   TestAppW(() => (new MosaicsSkillImg[] { new MosaicsSkillImg(null), new MosaicsSkillImg(null) })
       //         .Concat(ESkillLevelEx.GetValues()
@@ -98,7 +98,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       public DemoPage() {
          _td = new TestDrawing();
 
-         _onCreateImages = new Action[] { /*TestLogos, TestMosaicsSkillImg, TestMosaicsGroupImg, TestMosaicsImg,*/ TestFlag/*, TestMine, TestSmile*/ };
+         _onCreateImages = new Action[] { TestLogos, /*TestMosaicsSkillImg, TestMosaicsGroupImg, TestMosaicsImg,*/ TestFlag/*, TestMine, TestSmile*/ };
 
          InitializeComponent();
 

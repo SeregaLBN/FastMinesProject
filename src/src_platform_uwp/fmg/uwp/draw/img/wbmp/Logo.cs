@@ -6,29 +6,39 @@ using fmg.core.img;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.draw.img.wbmp {
-#if false
-   /// <summary> main logos image </summary>
-   public class Logo : ALogo<WriteableBitmap> {
+
+   /// <summary> main logo image. View implementation over UWP <see cref="WriteableBitmap"/> </summary>
+   public class Logo : ImageView<WriteableBitmap, LogoModel> {
+
+      WriteableBitmap _bmp;
+
+      protected Logo() 
+         : base(new LogoModel())
+      { }
 
       static Logo() {
          StaticInitializer.Init();
       }
 
       protected override WriteableBitmap CreateImage() {
-         return new WriteableBitmap(Size.Width, Size.Height);
+         var s = Model.Size;
+         _bmp = new WriteableBitmap((int)s.Width, (int)s.Height);
+         return _bmp;
       }
 
       protected override void DrawBody() {
          var img = Image;
+         LogoModel lm = Model;
 
          {
-            var bkClr = BackgroundColor;
+            var bkClr = lm.BackgroundColor;
             if (!bkClr.IsTransparent)
                img.Clear(bkClr.ToWinColor());
          }
 
-         IList<PointDouble> rays = new List<PointDouble>(), inn = new List<PointDouble>(), oct = new List<PointDouble>();
-         GetCoords(rays, inn, oct);
+         IList<PointDouble> rays = lm.Rays;
+         IList<PointDouble> inn  = lm.Inn;
+         IList<PointDouble> oct  = lm.Oct;
 
          // paint owner rays
          for (var i = 0; i < 8; i++) {
@@ -37,7 +47,7 @@ namespace fmg.uwp.draw.img.wbmp {
                (int)oct[i].X, (int)oct[i].Y,
                (int)inn[i].X, (int)inn[i].Y,
                (int)oct[(i + 5) % 8].X, (int)oct[(i + 5) % 8].Y,
-               Palette[i].ToColor().Darker().ToWinColor()
+               lm.Palette[i].ToColor().Darker().ToWinColor()
             );
          }
 
@@ -48,7 +58,7 @@ namespace fmg.uwp.draw.img.wbmp {
             // TODO need usage:
             //var zoomAverage = (ZoomX + ZoomY) / 2;
             //var penWidth = Model.BorderWidth*zoomAverage;
-            img.DrawLineAa((int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y, Palette[i].ToColor().ToWinColor());
+            img.DrawLineAa((int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y, lm.Palette[i].ToColor().ToWinColor());
          }
 
          double w = img.PixelWidth;
@@ -60,11 +70,35 @@ namespace fmg.uwp.draw.img.wbmp {
                (int)inn[(i + 3) % 8].X, (int)inn[(i + 3) % 8].Y,
                (int)(w / 2), (int)(h / 2),
                ((i & 1) == 0)
-                  ? Palette[(i + 6) % 8].ToColor().Brighter().ToWinColor()
-                  : Palette[(i + 6) % 8].ToColor().Darker().ToWinColor());
+                  ? lm.Palette[(i + 6) % 8].ToColor().Brighter().ToWinColor()
+                  : lm.Palette[(i + 6) % 8].ToColor().Darker().ToWinColor());
          }
       }
 
+
+      protected override void Disposing() {
+         Model.Dispose();
+         base.Disposing();
+      }
+
+      /////////////////////////////////////////////////////////////////////////////////////////////////////
+      //    custom implementations
+      /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+      /// <summary>
+      /// Logo image controller implementation for <see cref="Logo"/>
+      /// </summary>
+      public class Controller : ImageController<WriteableBitmap, Logo, LogoModel> {
+
+         public Controller()
+            : base(new Logo()) { }
+
+         protected override void Disposing() {
+            View.Disposing();
+            base.Disposing();
+         }
+
+      }
    }
-#endif
+
 }

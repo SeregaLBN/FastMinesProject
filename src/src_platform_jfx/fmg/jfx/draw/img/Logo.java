@@ -18,7 +18,7 @@ import fmg.core.img.LogoModel;
 import fmg.jfx.utils.Cast;
 import fmg.jfx.utils.StaticInitializer;
 
-/** Main logos image - base Logo image view implementation */
+/** Main logo image - base Logo image view implementation */
 public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
    protected Logo() {

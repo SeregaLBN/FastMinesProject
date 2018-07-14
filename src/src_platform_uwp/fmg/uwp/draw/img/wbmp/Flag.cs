@@ -7,7 +7,7 @@ using fmg.core.img;
 
 namespace fmg.uwp.draw.img.wbmp {
 
-   /// <summary> Flag image over UWP WriteableBitmap </summary>
+   /// <summary> Flag image over UWP <see cref="WriteableBitmap"/> </summary>
    public class Flag : ImageView<WriteableBitmap, FlagModel> {
 
       WriteableBitmap _bmp;
@@ -76,7 +76,9 @@ namespace fmg.uwp.draw.img.wbmp {
       //    custom implementations
       /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      /** Flag image controller implementation for {@link Icon} */
+      /// <summary>
+      /// Flag image controller implementation for <see cref="Flag"/>
+      /// </summary>
       public class Controller : ImageController<WriteableBitmap, Flag, FlagModel> {
 
          public Controller()
