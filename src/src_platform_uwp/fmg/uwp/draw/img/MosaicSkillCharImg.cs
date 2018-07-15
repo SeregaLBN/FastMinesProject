@@ -4,9 +4,9 @@ namespace fmg.uwp.draw.img {
 
 #if false
    /// <summary> representable <see cref="ESkillLevel"/> as CHAR </summary>
-   public class MosaicsSkillCharImg : core.img.ImageModel<string> {
+   public class MosaicSkillCharImg : core.img.ImageModel<string> {
 
-      protected MosaicsSkillCharImg(ESkillLevel skill) {
+      protected MosaicSkillCharImg(ESkillLevel skill) {
          _mosaicSkill = skill;
       }
 

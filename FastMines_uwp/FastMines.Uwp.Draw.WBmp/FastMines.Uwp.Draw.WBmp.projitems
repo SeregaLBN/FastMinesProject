@@ -12,8 +12,8 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\wbmp\AMosaicViewWBmp.cs">
       <Link>src_fmg.uwp\draw\mosaic\wbmp\AMosaicViewWBmp.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\MosaicsSkillImg.cs">
-      <Link>src_fmg.uwp\draw\img\wbmp\MosaicsSkillImg.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\MosaicSkillImg.cs">
+      <Link>src_fmg.uwp\draw\img\wbmp\MosaicSkillImg.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\wbmp\BitmapFont.cs">
       <Link>src_fmg.uwp\draw\mosaic\wbmp\BitmapFont.cs</Link>
@@ -30,11 +30,14 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\Mine.cs">
       <Link>src_fmg.uwp\draw\img\wbmp\Mine.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\MosaicsGroupImg.cs">
-      <Link>src_fmg.uwp\draw\img\wbmp\MosaicsGroupImg.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\MosaicGroupImg.cs">
+      <Link>src_fmg.uwp\draw\img\wbmp\MosaicGroupImg.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\MosaicsImg.cs">
-      <Link>src_fmg.uwp\draw\img\wbmp\MosaicsImg.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\MosaicSkillOrGroupView.cs">
+      <Link>src_fmg.uwp\draw\img\wbmp\MosaicSkillOrGroupView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\MosaicImg.cs">
+      <Link>src_fmg.uwp\draw\img\wbmp\MosaicImg.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\wbmp\Resources.cs">
       <Link>src_fmg.uwp\utils\wbmp\Resources.cs</Link>

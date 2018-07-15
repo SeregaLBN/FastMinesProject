@@ -20,9 +20,9 @@ namespace fmg.uwp.draw.img.wbmp {
    /// <br/>
    /// WriteableBitmap impl
    /// </summary>
-   public class MosaicsImg : AMosaicsViewWBmp Img<WriteableBitmap> {
+   public class MosaicImg : AMosaicViewWBmp Img<WriteableBitmap> {
 
-      static MosaicsImg() {
+      static MosaicImg() {
          StaticInitializer.Init();
       }
 
@@ -40,8 +40,8 @@ namespace fmg.uwp.draw.img.wbmp {
          public WriteableBitmap Paintable { get; set; }
          public bool SyncDraw { get; set; }
 
-         private MosaicsImg _owner;
-         public MosaicImgView(MosaicsImg owner) {
+         private MosaicImg _owner;
+         public MosaicImgView(MosaicImg owner) {
             _owner = owner;
          }
 

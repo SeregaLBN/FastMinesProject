@@ -20,12 +20,12 @@ namespace fmg.uwp.draw.img.win2d {
    /// <br/>
    /// Win2D impl
    /// </summary>
-   public static class MosaicsImg {
+   public static class MosaicImg {
 
       private const bool RandomCellBkColor = true;
 
       /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image: common Win2D implementation part </summary>
-      public abstract class AMosaicImgWin2D<TImage> : AMosaicsImg<TImage>
+      public abstract class AMosaicImgWin2D<TImage> : AMosaicImg<TImage>
          where TImage : DependencyObject, ICanvasResourceCreator
       {
          protected readonly ICanvasResourceCreator _rc;
