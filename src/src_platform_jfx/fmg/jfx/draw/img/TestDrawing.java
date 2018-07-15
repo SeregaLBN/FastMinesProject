@@ -133,8 +133,8 @@ public final class TestDrawing extends Application {
          testTransparent[0] = td.bl();
          images.forEach(img -> {
             td.applySettings(img, testTransparent[0]);
-            onCellTilingHandler.run();
          });
+         onCellTilingHandler.run();
       };
       primaryStage.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
 

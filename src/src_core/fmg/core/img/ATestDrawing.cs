@@ -68,7 +68,7 @@ namespace fmg.core.img {
          }
       #endregion
 
-         bool useRandom = !true;
+         bool useRandom = true;
          ///////////////////////
          //                   //
          //  random settings  //
@@ -92,7 +92,8 @@ namespace fmg.core.img {
                if (aCtrller.Model.Animated) {
                   aCtrller.UseRotateTransforming(Bl);
                   aCtrller.UsePolarLightFgTransforming(Bl);
-                  aCtrller.AddModelTransformer(new PolarLightBkTransformer());
+                  if (Bl)
+                     aCtrller.AddModelTransformer(new PolarLightBkTransformer());
                }
             }
 
@@ -101,9 +102,7 @@ namespace fmg.core.img {
             if (testTransparent)
                bkClr.A = (byte)(50 + R(10));
 
-            if (model is AnimatedImageModel) {
-               AnimatedImageModel aim = model as AnimatedImageModel;
-
+            if (model is AnimatedImageModel aim) {
                aim.BorderWidth = R(3);
 
                double pad = Math.Min(aim.Size.Height / 3, aim.Size.Width / 3);
@@ -126,13 +125,11 @@ namespace fmg.core.img {
                aim.PolarLights = Bl;
                aim.AnimeDirection = Bl;
 
-               if (model is LogoModel) {
-                  LogoModel lm = model as LogoModel;
+               if (model is LogoModel lm) {
                   lm.UseGradient = Bl;
                }
             }
-            if (model is MosaicGameModel) {
-               MosaicGameModel mgm = model as MosaicGameModel;
+            if (model is MosaicGameModel mgm) {
                mgm.SizeField = new Matrisize(3 + R(2), 3 + R(2));
 
                if (model is MosaicDrawModel<TImage>) {

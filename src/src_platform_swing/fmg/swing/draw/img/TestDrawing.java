@@ -120,8 +120,8 @@ final class TestDrawing extends ATestDrawing {
                   testTransparent[0] = td.bl();
                   images.forEach(img -> {
                      td.applySettings(img, testTransparent[0]);
-                     onCellTilingHandler.run();
                   });
+                  onCellTilingHandler.run();
                }
             };
             jPanel.addMouseListener(mouseListener);

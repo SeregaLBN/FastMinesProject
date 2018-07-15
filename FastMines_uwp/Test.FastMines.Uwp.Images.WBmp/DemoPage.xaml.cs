@@ -1,10 +1,12 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.ViewManagement;
@@ -17,7 +19,6 @@ using fmg.core.types;
 using fmg.uwp.draw.img.wbmp;
 using fmg.uwp.draw.mosaic;
 using fmg.uwp.draw.mosaic.wbmp;
-using System.ComponentModel;
 
 namespace Test.FastMines.Uwp.Images.WBmp {
 
@@ -57,7 +58,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          public void Invalidate() { throw new NotImplementedException(); }
       }
       public void TestLogos() {
-         TestAppW<Logo.Controller, Logo, Logo, LogoModel, LogoModel>(() => new Logo.Controller[] {
+         TestApp<Logo.Controller, Logo, Logo, LogoModel, LogoModel>(() => new Logo.Controller[] {
             new Logo.Controller(),
             new Logo.Controller(),
             new Logo.Controller(),
@@ -65,20 +66,20 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          });
       }
       //public void TestMosaicsSkillImg() {
-      //   TestAppW(() => (new MosaicsSkillImg[] { new MosaicsSkillImg(null), new MosaicsSkillImg(null) })
+      //   TestApp(() => (new MosaicsSkillImg[] { new MosaicsSkillImg(null), new MosaicsSkillImg(null) })
       //         .Concat(ESkillLevelEx.GetValues()
       //                              .Select(e => new MosaicsSkillImg[] { new MosaicsSkillImg(e), new MosaicsSkillImg(e) })
       //                              .SelectMany(m => m)));
       //}
       //public void TestMosaicsGroupImg() {
-      //   TestAppW(() => (new MosaicsGroupImg[] { new MosaicsGroupImg(null), new MosaicsGroupImg(null) })
+      //   TestApp(() => (new MosaicsGroupImg[] { new MosaicsGroupImg(null), new MosaicsGroupImg(null) })
       //         .Concat(EMosaicGroupEx.GetValues()
       //                               .Select(e => new MosaicsGroupImg[] { new MosaicsGroupImg(e), new MosaicsGroupImg(e) })
       //                               .SelectMany(m => m)));
       //}
       //public void TestMosaicsImg() {
       //   var rnd = ThreadLocalRandom.Current;
-      //   TestAppW(() =>
+      //   TestApp(() =>
       //      EMosaicEx.GetValues().Select(e => new MosaicsImg() {
       //         MosaicType = e,
       //         SizeField = new Matrisize(2 + rnd.Next(2), 2 + rnd.Next(2))
@@ -89,9 +90,9 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       //      //} }
       //   );
       //}
-      public void TestFlag()  { TestAppW<Flag.Controller, Flag, DummyView, FlagModel, DummyModel>(() => new Flag.Controller[]  { new Flag.Controller() }); }
-      public void TestMine()  { TestAppW<Mine.Controller, Logo, Logo, LogoModel, LogoModel>(() => new Mine.Controller[]  { new Mine.Controller() }); }
-      public void TestSmile() { TestAppW<Smile.Controller, Smile, DummyView, SmileModel, DummyModel>(() => new Smile.Controller[] { new Smile.Controller(SmileModel.EFaceType.Face_WhiteSmiling) }); }
+      public void TestFlag()  { TestApp<Flag.Controller, Flag, DummyView, FlagModel, DummyModel>(() => new Flag.Controller[]  { new Flag.Controller() }); }
+      public void TestMine()  { TestApp<Mine.Controller, Logo, Logo, LogoModel, LogoModel>(() => new Mine.Controller[]  { new Mine.Controller() }); }
+      public void TestSmile() { TestApp<Smile.Controller, Smile, DummyView, SmileModel, DummyModel>(() => new Smile.Controller[] { new Smile.Controller(SmileModel.EFaceType.Face_WhiteSmiling) }); }
       #endregion
 
 
@@ -114,16 +115,6 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       }
 
       #region main part
-      void TestAppW<TImageController, TImageView, TAImageView, TImageModel, TAnimatedModel>(Func<IEnumerable<TImageController>> funcGetImages)
-         where TImageController : ImageController<WriteableBitmap, TImageView, TImageModel>
-         where TImageView : IImageView<WriteableBitmap, TImageModel>
-         where TAImageView : IImageView<WriteableBitmap, TAnimatedModel>
-         where TImageModel : IImageModel
-         where TAnimatedModel : IAnimatedModel
-      {
-         TestApp<TImageController, TImageView, TAImageView, TImageModel, TAnimatedModel>(funcGetImages);
-      }
-
       void TestApp<TImageController, TImageView, TAImageView, TImageModel, TAnimatedModel>(Func<IEnumerable<TImageController>> funcGetImages)
          where TImageController : ImageController<WriteableBitmap, TImageView, TImageModel>
          where TImageView : IImageView<WriteableBitmap, TImageModel>
@@ -175,9 +166,9 @@ namespace Test.FastMines.Uwp.Images.WBmp {
             }
          }
 
-         void onSizeChanged(object s, SizeChangedEventArgs ev) {
-            double sizeW = ev.NewSize.Width;
-            double sizeH = ev.NewSize.Height;
+         void onCellTilingHandler() {
+            double sizeW = _panel.ActualWidth;
+            double sizeH = _panel.ActualHeight;
             RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
             ATestDrawing.CellTilingResult<WriteableBitmap, TImageController, TImageView, TImageModel> ctr = _td.CellTiling<WriteableBitmap, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
@@ -185,21 +176,37 @@ namespace Test.FastMines.Uwp.Images.WBmp {
 
             var callback = ctr.itemCallback;
             foreach (var imgObj in images) {
-               ATestDrawing.CellTilingInfo cti = callback(imgObj);
-               PointDouble offset = cti.imageOffset;
-
                imgObj.Model.Size = imgSize;
 
+               ATestDrawing.CellTilingInfo cti = callback(imgObj);
+               PointDouble offset = cti.imageOffset;
                imgControls[cti.i, cti.j].Margin = new Thickness {
                   Left = offset.X,
                   Top = offset.Y
                };
             }
          }
+
+         void onMousePressed() {
+            testTransparent = _td.Bl;
+            images.ForEach(img => {
+               _td.ApplySettings<WriteableBitmap, TImageView, TAImageView, TImageModel, TAnimatedModel>(img, testTransparent);
+            });
+            onCellTilingHandler();
+         }
+
+         void onSizeChanged(object s, SizeChangedEventArgs ev) {
+            onCellTilingHandler();
+         };
+         void onTapped(object sender, TappedRoutedEventArgs ev) {
+            onMousePressed();
+         };
          _panel.SizeChanged += onSizeChanged;
+         _panel.Tapped      += onTapped;
 
          _onCloseImages = () => {
             _panel.SizeChanged -= onSizeChanged;
+            _panel.Tapped      -= onTapped;
             images.ForEach(img => img.Dispose());
             images.Clear();
             images = null;

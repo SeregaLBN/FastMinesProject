@@ -96,7 +96,8 @@ public abstract class ATestDrawing {
          if (aCtrller.getModel().isAnimated()) {
             aCtrller.useRotateTransforming(bl());
             aCtrller.usePolarLightFgTransforming(bl());
-            aCtrller.addModelTransformer(new PolarLightBkTransformer());
+            if (bl())
+               aCtrller.addModelTransformer(new PolarLightBkTransformer());
          }
       }
 
