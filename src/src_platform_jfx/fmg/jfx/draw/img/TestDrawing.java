@@ -33,7 +33,7 @@ public final class TestDrawing extends Application {
    static final int margin = 10;
 
    static Supplier<List<IImageController<?,?,?>>> funcGetImages;
-   Canvas canvas;
+   private Canvas canvas;
 
    @Override
    public void start(Stage primaryStage) {
@@ -177,7 +177,7 @@ public final class TestDrawing extends Application {
       primaryStage.show();
    }
 
-   static void testApp(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
+   public static void testApp(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
       TestDrawing.funcGetImages = funcGetImages;
       launch();
    }

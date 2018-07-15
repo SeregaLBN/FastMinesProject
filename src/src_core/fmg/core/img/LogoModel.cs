@@ -39,11 +39,11 @@ namespace fmg.core.img {
 
       public HSV[] Palette => _palette;
 
-      public static void toMineModel(LogoModel m) {
+      public static void ToMineModel(LogoModel m) {
          m.UseGradient = false;
-         foreach (HSV item in m.Palette)
-            //item.v = 75;
-            item.Grayscale();
+         for (var i = 0; i < m.Palette.Length; ++i)
+          //m.Palette[i].v = 75;
+            m.Palette[i].Grayscale();
       }
 
       public bool UseGradient {

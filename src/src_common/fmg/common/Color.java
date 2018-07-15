@@ -25,14 +25,14 @@ public class Color {
    public static Color Lime                () { return new Color(0xFF00FF00); }
    public static Color SpringGreen         () { return new Color(0xFF00FF7F); }
    public static Color Aqua                () { return new Color(0xFF00FFFF); }
-   public static Color Cyan                () { return Aqua();                     }
+   public static Color Cyan                () { return Aqua();                }
    public static Color MidnightBlue        () { return new Color(0xFF191970); }
    public static Color DodgerBlue          () { return new Color(0xFF1E90FF); }
    public static Color LightSeaGreen       () { return new Color(0xFF20B2AA); }
    public static Color ForestGreen         () { return new Color(0xFF228B22); }
    public static Color SeaGreen            () { return new Color(0xFF2E8B57); }
    public static Color DarkSlateGray       () { return new Color(0xFF2F4F4F); }
-   public static Color DarkSlateGrey       () { return DarkSlateGray();            }
+   public static Color DarkSlateGrey       () { return DarkSlateGray();       }
    public static Color LimeGreen           () { return new Color(0xFF32CD32); }
    public static Color MediumSeaGreen      () { return new Color(0xFF3CB371); }
    public static Color Turquoise           () { return new Color(0xFF40E0D0); }
@@ -47,13 +47,13 @@ public class Color {
    public static Color RebeccaPurple       () { return new Color(0xFF663399); }
    public static Color MediumAquaMarine    () { return new Color(0xFF66CDAA); }
    public static Color DimGray             () { return new Color(0xFF696969); }
-   public static Color DimGrey             () { return DimGray();                  }
+   public static Color DimGrey             () { return DimGray();             }
    public static Color SlateBlue           () { return new Color(0xFF6A5ACD); }
    public static Color OliveDrab           () { return new Color(0xFF6B8E23); }
    public static Color SlateGray           () { return new Color(0xFF708090); }
-   public static Color SlateGrey           () { return SlateGray();                }
+   public static Color SlateGrey           () { return SlateGray();           }
    public static Color LightSlateGray      () { return new Color(0xFF778899); }
-   public static Color LightSlateGrey      () { return LightSlateGray();           }
+   public static Color LightSlateGrey      () { return LightSlateGray();      }
    public static Color MediumSlateBlue     () { return new Color(0xFF7B68EE); }
    public static Color LawnGreen           () { return new Color(0xFF7CFC00); }
    public static Color Chartreuse          () { return new Color(0xFF7FFF00); }
@@ -62,7 +62,7 @@ public class Color {
    public static Color Purple              () { return new Color(0xFF800080); }
    public static Color Olive               () { return new Color(0xFF808000); }
    public static Color Gray                () { return new Color(0xFF808080); }
-   public static Color Grey                () { return Gray();                     }
+   public static Color Grey                () { return Gray();                }
    public static Color SkyBlue             () { return new Color(0xFF87CEEB); }
    public static Color LightSkyBlue        () { return new Color(0xFF87CEFA); }
    public static Color BlueViolet          () { return new Color(0xFF8A2BE2); }
@@ -79,7 +79,7 @@ public class Color {
    public static Color Sienna              () { return new Color(0xFFA0522D); }
    public static Color Brown               () { return new Color(0xFFA52A2A); }
    public static Color DarkGray            () { return new Color(0xFFA9A9A9); }
-   public static Color DarkGrey            () { return DarkGray();                 }
+   public static Color DarkGrey            () { return DarkGray();            }
    public static Color LightBlue           () { return new Color(0xFFADD8E6); }
    public static Color GreenYellow         () { return new Color(0xFFADFF2F); }
    public static Color PaleTurquoise       () { return new Color(0xFFAFEEEE); }
@@ -97,7 +97,7 @@ public class Color {
    public static Color Chocolate           () { return new Color(0xFFD2691E); }
    public static Color Tan                 () { return new Color(0xFFD2B48C); }
    public static Color LightGray           () { return new Color(0xFFD3D3D3); }
-   public static Color LightGrey           () { return LightGray();                }
+   public static Color LightGrey           () { return LightGray();           }
    public static Color Thistle             () { return new Color(0xFFD8BFD8); }
    public static Color Orchid              () { return new Color(0xFFDA70D6); }
    public static Color GoldenRod           () { return new Color(0xFFDAA520); }
@@ -129,7 +129,7 @@ public class Color {
    public static Color OldLace             () { return new Color(0xFFFDF5E6); }
    public static Color Red                 () { return new Color(0xFFFF0000); }
    public static Color Fuchsia             () { return new Color(0xFFFF00FF); }
-   public static Color Magenta             () { return Fuchsia();                  }
+   public static Color Magenta             () { return Fuchsia();             }
    public static Color DeepPink            () { return new Color(0xFFFF1493); }
    public static Color OrangeRed           () { return new Color(0xFFFF4500); }
    public static Color Tomato              () { return new Color(0xFFFF6347); }
@@ -171,6 +171,9 @@ public class Color {
    static int checkG(int g) { return check(g, "GREEN"); }
    static int checkB(int b) { return check(b, "BLUE"); }
 
+   public Color(Color copy) {
+      this(copy.a, copy.r, copy.g, copy.b);
+   }
    public Color(int a, int r, int g, int b) {
       this.a = checkA(a);
       this.r = checkR(r);

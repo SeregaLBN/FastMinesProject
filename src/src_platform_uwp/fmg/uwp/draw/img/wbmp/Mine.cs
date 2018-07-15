@@ -1,30 +1,14 @@
-using Windows.UI.Xaml.Media.Imaging;
+using fmg.core.img;
 
 namespace fmg.uwp.draw.img.wbmp {
 
-   /// <summary> mine image </summary>
-   public class Mine {
+   /// <summary> Mine image on the playing field </summary>
+   public sealed  class Mine {
 
-#if false
-      private WriteableBitmap _bmp;
-
-      public WriteableBitmap Image {
-         get {
-            if (_bmp == null) {
-               var img = new Logo {
-                  UseGradient = false,
-                  Size = new common.geom.Size(150, 150),
-                  PaddingInt = 10
-               };
-               for (var i = 0; i < img.Palette.Length; ++i)
-                  //img.Palette[i].v = 75;
-                  img.Palette[i].Grayscale();
-               _bmp = img.Image;
-            }
-            return _bmp;
-         }
+      /// <summary> Mine image controller implementation for {@link Logo.Canvas} </summary>
+      public class Controller : Logo.Controller {
+         public Controller() { LogoModel.ToMineModel(Model); }
       }
-#endif
 
    }
 

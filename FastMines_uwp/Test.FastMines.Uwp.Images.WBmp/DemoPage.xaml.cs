@@ -90,7 +90,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       //   );
       //}
       public void TestFlag()  { TestAppW<Flag.Controller, Flag, DummyView, FlagModel, DummyModel>(() => new Flag.Controller[]  { new Flag.Controller() }); }
-      //public void TestMine()  { TestAppW(() => new Mine[]  { new Mine() }); }
+      public void TestMine()  { TestAppW<Mine.Controller, Logo, Logo, LogoModel, LogoModel>(() => new Mine.Controller[]  { new Mine.Controller() }); }
       //public void TestSmile() { TestAppW(() => new Smile[] { new Smile() }); }
       #endregion
 
@@ -98,7 +98,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       public DemoPage() {
          _td = new TestDrawing();
 
-         _onCreateImages = new Action[] { TestLogos, /*TestMosaicsSkillImg, TestMosaicsGroupImg, TestMosaicsImg,*/ TestFlag/*, TestMine, TestSmile*/ };
+         _onCreateImages = new Action[] { TestLogos, TestMine, /*TestMosaicsSkillImg, TestMosaicsGroupImg, TestMosaicsImg,*/ TestFlag/*, TestSmile*/ };
 
          InitializeComponent();
 
@@ -129,13 +129,14 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          where TImageView : IImageView<WriteableBitmap, TImageModel>
          where TAImageView : IImageView<WriteableBitmap, TAnimatedModel>
          where TImageModel : IImageModel
-         where TAnimatedModel : IAnimatedModel {
+         where TAnimatedModel : IAnimatedModel
+      {
          _panel.Children.Clear();
          List<TImageController> images = funcGetImages().ToList();
          ApplicationView.GetForCurrentView().Title = _td.GetTitle<WriteableBitmap, TImageController, TImageView, TImageModel>(images);
 
          bool testTransparent = _td.Bl;
-         images.ForEach(img => _td.ApplyRandom<WriteableBitmap, TImageView, TAImageView, TImageModel, TAnimatedModel>(img, testTransparent));
+         images.ForEach(img => _td.ApplySettings<WriteableBitmap, TImageView, TAImageView, TImageModel, TAnimatedModel>(img, testTransparent));
 
          Image[,] imgControls;
 
@@ -149,11 +150,11 @@ namespace Test.FastMines.Uwp.Images.WBmp {
             imgControls = new Image[ctr.tableSize.Width, ctr.tableSize.Height];
 
             var callback = ctr.itemCallback;
-            foreach (var imgObj in images) {
-               ATestDrawing.CellTilingInfo cti = callback(imgObj);
+            foreach (var img in images) {
+               ATestDrawing.CellTilingInfo cti = callback(img);
                PointDouble offset = cti.imageOffset;
 
-               Image imgCntrl = new Image {
+               var imgControl = new Image {
                   Margin = new Thickness {
                      Left = offset.X,
                      Top = offset.Y
@@ -161,20 +162,20 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                   Stretch = Stretch.None
                };
 
-               imgObj.Model.Size = imgSize;
+               img.Model.Size = imgSize;
 
-               imgCntrl.SetBinding(Image.SourceProperty, new Binding {
-                  Source = imgObj,
-                  Path = new PropertyPath(nameof(imgObj.Image)),
+               imgControl.SetBinding(Image.SourceProperty, new Binding {
+                  Source = img,
+                  Path = new PropertyPath(nameof(img.Image)),
                   Mode = BindingMode.OneWay
                });
 
-               _panel.Children.Add(imgCntrl);
-               imgControls[cti.i, cti.j] = imgCntrl;
+               _panel.Children.Add(imgControl);
+               imgControls[cti.i, cti.j] = imgControl;
             }
          }
 
-         SizeChangedEventHandler sceh = (s, ev) => {
+         void onSizeChanged(object s, SizeChangedEventArgs ev) {
             double sizeW = ev.NewSize.Width;
             double sizeH = ev.NewSize.Height;
             RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
@@ -194,22 +195,19 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                   Top = offset.Y
                };
             }
-         };
-         _panel.SizeChanged += sceh;
+         }
+         _panel.SizeChanged += onSizeChanged;
 
          _onCloseImages = () => {
-            _panel.SizeChanged -= sceh;
-            images.Select(x => x as IDisposable)
-               .Where(x => x != null)
-               .ToList()
-               .ForEach(img => img.Dispose());
+            _panel.SizeChanged -= onSizeChanged;
+            images.ForEach(img => img.Dispose());
             images.Clear();
             images = null;
             imgControls = null;
          };
+
       }
       #endregion
-
 
       void OnNewImages() {
          _onCloseImages?.Invoke();

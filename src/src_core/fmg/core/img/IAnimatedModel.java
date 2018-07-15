@@ -18,7 +18,7 @@ public interface IAnimatedModel extends IImageModel {
    long getAnimatePeriod();
    void setAnimatePeriod(long value);
 
-   /** Total frames of the animated period */
+   /** Total frames of the animated period (animate iterations) */
    int getTotalFrames();
    void setTotalFrames(int value);
 

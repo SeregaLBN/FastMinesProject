@@ -21,94 +21,144 @@ namespace fmg.core.img {
          this.titlePrefix = titlePrefix;
       }
 
-      public void ApplyRandom<TImage, TImageView, TAImageView, TImageModel, TAnimatedModel>(IImageController<TImage, TImageView, TImageModel> ctrller, bool testTransparent)
+      public void ApplySettings<TImage, TImageView, TAImageView, TImageModel, TAnimatedModel>(IImageController<TImage, TImageView, TImageModel> ctrller, bool testTransparent)
          where TImage : class
          where TImageView : IImageView<TImage, TImageModel>
          where TAImageView : IImageView<TImage, TAnimatedModel>
          where TImageModel : IImageModel
          where TAnimatedModel : IAnimatedModel
       {
-         testTransparent = testTransparent || Bl;
 
-         TImageModel model = ctrller.Model;
+         ///////////////////////
+         //                   //
+         //  manual settings  //
+         //                   //
+         ///////////////////////
+         IImageModel model = ctrller.Model;
+      #region manual settings
+         {
+            model.Size = new SizeDouble(600, 600);
 
-         if (model is IAnimatedModel am) {
-            am.Animated = Bl || Bl;
-            if (am.Animated) {
-               am.AnimatePeriod = 1000 + R(2000);
-               am.TotalFrames = 40 + R(20);
-            }
-         }
-         if (ctrller is AnimatedImgController<TImage, TAImageView, TAnimatedModel> aCtrller) {
-         //if (IsSubClassOfGeneric(typeof(AnimatedImgController<>), ctrller.GetType())) {
-            if (aCtrller.Model.Animated) {
-               aCtrller.UseRotateTransforming(Bl);
-               aCtrller.UsePolarLightFgTransforming(Bl);
-               aCtrller.AddModelTransformer(new PolarLightBkTransformer());
-            }
-         }
-
-
-         Color bkClr = Color.RandomColor();
-         if (testTransparent)
-            bkClr.A = (byte)(50 + R(10));
-
-         if (model is AnimatedImageModel) {
-            AnimatedImageModel aim = model as AnimatedImageModel;
-
-            aim.BorderWidth = R(3);
-
-            double pad = Math.Min(aim.Size.Height/3, aim.Size.Width/3);
-            aim.SetPadding(-pad/4 + R((int)pad));
-
-            aim.BackgroundColor = bkClr;
-
-            aim.ForegroundColor = Color.RandomColor();//.brighter()
-            if (testTransparent) {
-               // test transparent
-               Color clr = aim.ForegroundColor;
-               if ((aim.BorderWidth > 0) && (R(4) == 0)) {
-                  clr.A = Color.Transparent.A;
-               } else {
-                  clr.A = (byte)(150 + R(255-150));
-               }
-               aim.ForegroundColor = clr;
-            }
-
-            aim.PolarLights = Bl;
-            aim.AnimeDirection = Bl;
-
-            if (model is LogoModel) {
-               LogoModel lm = model as LogoModel;
-               lm.UseGradient = Bl;
-            }
-         }
-         if (model is MosaicGameModel) {
-            MosaicGameModel mgm = model as MosaicGameModel;
-            mgm.SizeField = new Matrisize(3+R(2), 3 + R(2));
-
-            if (model is MosaicDrawModel<TImage>) {
-               var mdm = model as MosaicDrawModel<TImage>;
-               mdm.BackgroundColor = bkClr;
-
-               mdm.BkFill.Mode = 1 + R(mdm.CellAttr.GetMaxBackgroundFillModeValue());
-
-               mdm.PenBorder.Width = R(3);
-               SizeDouble size = mdm.Size;
-               double padLeftRight = R((int)(size.Width /3));
-               double padTopBottom = R((int)(size.Height/3));
-               mdm.Padding = new BoundDouble(padLeftRight, padTopBottom, padLeftRight, padTopBottom);
-
-               if (model is MosaicAnimatedModel<TImage>) {
-                  MosaicAnimatedModel<TImage> mam = model as MosaicAnimatedModel<TImage>;
-
-                  MosaicAnimatedModel<TImage>.ERotateMode[] vals =
-                     (MosaicAnimatedModel<TImage>.ERotateMode[])
-                     Enum.GetValues(typeof(MosaicAnimatedModel<TImage>.ERotateMode));
-                  mam.RotateMode = vals[R(vals.Length)];
+            if (model is IAnimatedModel am) {
+               am.Animated = true;
+               if (am.Animated) {
+                  am.AnimatePeriod = 2000; // rotate period
+                  am.TotalFrames = 100; // animate iterations
                }
             }
+            if (model is AnimatedImageModel aim) {
+               aim.SetPadding(10);
+               aim.BorderWidth = 0;
+               aim.BackgroundColor = testTransparent ? new Color(0xC8FFFFFF) : Color.White;
+               aim.ForegroundColor = new Color(aim.ForegroundColor) {
+                  A = 200 // 0..255 - foreground alpha-chanel color
+               };
+            }
+            if (model is BurgerMenuModel bmm) {
+               bmm.Show = true;
+            }
+            if (model is LogoModel lm) {
+               lm.UseGradient = true;
+            }
+
+            if (ctrller is AnimatedImgController<TImage, TAImageView, TAnimatedModel> aic) {
+               aic.UseRotateTransforming(true);
+               aic.UsePolarLightFgTransforming(true);
+            }
          }
+      #endregion
+
+         bool useRandom = !true;
+         ///////////////////////
+         //                   //
+         //  random settings  //
+         //                   //
+         ///////////////////////
+         if (!useRandom)
+            return;
+      #region random settings
+         {
+            testTransparent = testTransparent || Bl;
+
+            if (model is IAnimatedModel am) {
+               am.Animated = Bl || Bl;
+               if (am.Animated) {
+                  am.AnimatePeriod = 1000 + R(2000);
+                  am.TotalFrames = 40 + R(20);
+               }
+            }
+            if (ctrller is AnimatedImgController<TImage, TAImageView, TAnimatedModel> aCtrller) {
+               //if (IsSubClassOfGeneric(typeof(AnimatedImgController<>), ctrller.GetType())) {
+               if (aCtrller.Model.Animated) {
+                  aCtrller.UseRotateTransforming(Bl);
+                  aCtrller.UsePolarLightFgTransforming(Bl);
+                  aCtrller.AddModelTransformer(new PolarLightBkTransformer());
+               }
+            }
+
+
+            Color bkClr = Color.RandomColor();
+            if (testTransparent)
+               bkClr.A = (byte)(50 + R(10));
+
+            if (model is AnimatedImageModel) {
+               AnimatedImageModel aim = model as AnimatedImageModel;
+
+               aim.BorderWidth = R(3);
+
+               double pad = Math.Min(aim.Size.Height / 3, aim.Size.Width / 3);
+               aim.SetPadding(-pad / 4 + R((int)pad));
+
+               aim.BackgroundColor = bkClr;
+
+               aim.ForegroundColor = Color.RandomColor();//.brighter()
+               if (testTransparent) {
+                  // test transparent
+                  Color clr = aim.ForegroundColor;
+                  if ((aim.BorderWidth > 0) && (R(4) == 0)) {
+                     clr.A = Color.Transparent.A;
+                  } else {
+                     clr.A = (byte)(150 + R(255 - 150));
+                  }
+                  aim.ForegroundColor = clr;
+               }
+
+               aim.PolarLights = Bl;
+               aim.AnimeDirection = Bl;
+
+               if (model is LogoModel) {
+                  LogoModel lm = model as LogoModel;
+                  lm.UseGradient = Bl;
+               }
+            }
+            if (model is MosaicGameModel) {
+               MosaicGameModel mgm = model as MosaicGameModel;
+               mgm.SizeField = new Matrisize(3 + R(2), 3 + R(2));
+
+               if (model is MosaicDrawModel<TImage>) {
+                  var mdm = model as MosaicDrawModel<TImage>;
+                  mdm.BackgroundColor = bkClr;
+
+                  mdm.BkFill.Mode = 1 + R(mdm.CellAttr.GetMaxBackgroundFillModeValue());
+
+                  mdm.PenBorder.Width = R(3);
+                  SizeDouble size = mdm.Size;
+                  double padLeftRight = R((int)(size.Width / 3));
+                  double padTopBottom = R((int)(size.Height / 3));
+                  mdm.Padding = new BoundDouble(padLeftRight, padTopBottom, padLeftRight, padTopBottom);
+
+                  if (model is MosaicAnimatedModel<TImage>) {
+                     MosaicAnimatedModel<TImage> mam = model as MosaicAnimatedModel<TImage>;
+
+                     MosaicAnimatedModel<TImage>.ERotateMode[] vals =
+                        (MosaicAnimatedModel<TImage>.ERotateMode[])
+                        Enum.GetValues(typeof(MosaicAnimatedModel<TImage>.ERotateMode));
+                     mam.RotateMode = vals[R(vals.Length)];
+                  }
+               }
+            }
+         }
+      #endregion
       }
 
       public class CellTilingInfo {

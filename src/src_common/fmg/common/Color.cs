@@ -157,6 +157,9 @@ namespace fmg.common {
 
       public byte R,G,B,A;
 
+      public Color(Color copy)
+         : this(copy.A, copy.R, copy.G, copy.B)
+      { }
       public Color(byte a, byte r, byte g, byte b) { R = r; G = g; B = b; A = a; }
       public Color(byte r, byte g, byte b) { R = r; G = g; B = b; A = 0xFF; }
       public Color(ulong aarrggbb) {

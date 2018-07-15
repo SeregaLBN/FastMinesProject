@@ -11,7 +11,7 @@ namespace fmg.core.img {
       /** Overall animation period (in milliseconds) */
       long AnimatePeriod { get; set; }
 
-      /** Total frames of the animated period */
+      /** Total frames of the animated period (animate iterations) */
       int TotalFrames { get; set; }
 
       int CurrentFrame { get; set; }

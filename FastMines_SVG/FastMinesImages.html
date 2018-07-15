@@ -173,7 +173,13 @@ class Color {
    constructor3(r, g, b) {
       this.constructor4(255, r, g, b);
    }
-   constructor1(OxAARRGGBB) {
+   constructor1(OxAARRGGBB__or__colorCopy) {
+      if (OxAARRGGBB__or__colorCopy instanceof Color) {
+         var copy = OxAARRGGBB__or__colorCopy;
+         this.constructor4(copy.a, copy.r, copy.g, copy.b);
+         return;
+      }
+      var OxAARRGGBB = OxAARRGGBB__or__colorCopy;
       this.constructor4((OxAARRGGBB >> 24) & 0xFF,
                         (OxAARRGGBB >> 16) & 0xFF,
                         (OxAARRGGBB >>  8) & 0xFF,

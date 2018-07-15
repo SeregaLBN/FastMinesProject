@@ -14,6 +14,7 @@ namespace fmg.uwp.utils {
          Factory.DEFERR_INVOKER = doRun => AsyncRunner.InvokeFromUiLater(() => doRun(), CoreDispatcherPriority.Normal);
          Factory.GET_ANIMATOR = () => Animator.Singleton;
          Factory.TIMER_CREATOR = () => new Timer();
+
          try {
             var uiSettings = new UISettings();
 

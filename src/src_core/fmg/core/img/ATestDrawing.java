@@ -28,7 +28,6 @@ public abstract class ATestDrawing {
 
    public void applySettings(IImageController<?,?,?> ctrller, boolean testTransparent) {
 
-
       ///////////////////////
       //                   //
       //  manual settings  //
@@ -40,7 +39,7 @@ public abstract class ATestDrawing {
 
       if (model instanceof IAnimatedModel) {
          IAnimatedModel am = (IAnimatedModel)model;
-         am.setAnimated(!true);
+         am.setAnimated(true);
          if (am.isAnimated()) {
             am.setAnimatePeriod(2000); // rotate period
             am.setTotalFrames(100); // animate iterations
@@ -68,7 +67,7 @@ public abstract class ATestDrawing {
       if (ctrller instanceof AnimatedImgController<?, ?, ?>) {
          @SuppressWarnings("resource")
          AnimatedImgController<?, ?, ?> aic = (AnimatedImgController<?, ?, ?>)ctrller;
-         aic.useRotateTransforming(!true);
+         aic.useRotateTransforming(true);
          aic.usePolarLightFgTransforming(true);
       }
 

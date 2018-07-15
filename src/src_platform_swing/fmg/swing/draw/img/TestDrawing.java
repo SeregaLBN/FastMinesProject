@@ -27,12 +27,12 @@ final class TestDrawing extends ATestDrawing {
       super("Swing");
    }
 
-   static void testApp(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
+   public static void testApp(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
       SwingUtilities.invokeLater(() ->
          testApp2(funcGetImages)
       );
    }
-   static void testApp2(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
+   private static void testApp2(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
       new JFrame() {
          private static final long serialVersionUID = 1L;
 

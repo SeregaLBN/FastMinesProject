@@ -88,7 +88,7 @@ namespace fmg.uwp.draw.img.wbmp {
       /// <summary>
       /// Logo image controller implementation for <see cref="Logo"/>
       /// </summary>
-      public class Controller : ImageController<WriteableBitmap, Logo, LogoModel> {
+      public class Controller : LogoController<WriteableBitmap, Logo> {
 
          public Controller()
             : base(new Logo()) { }
