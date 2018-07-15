@@ -10,7 +10,7 @@ namespace fmg.uwp.draw.img.wbmp {
    /// <summary> main logo image. View implementation over UWP <see cref="WriteableBitmap"/> </summary>
    public class Logo : ImageView<WriteableBitmap, LogoModel> {
 
-      WriteableBitmap _bmp;
+      private WriteableBitmap _bmp;
 
       protected Logo() 
          : base(new LogoModel())

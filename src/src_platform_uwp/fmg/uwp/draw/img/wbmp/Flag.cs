@@ -10,7 +10,7 @@ namespace fmg.uwp.draw.img.wbmp {
    /// <summary> Flag image over UWP <see cref="WriteableBitmap"/> </summary>
    public class Flag : ImageView<WriteableBitmap, FlagModel> {
 
-      WriteableBitmap _bmp;
+      private WriteableBitmap _bmp;
 
       public Flag()
          : base(new FlagModel())

@@ -91,14 +91,14 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       //}
       public void TestFlag()  { TestAppW<Flag.Controller, Flag, DummyView, FlagModel, DummyModel>(() => new Flag.Controller[]  { new Flag.Controller() }); }
       public void TestMine()  { TestAppW<Mine.Controller, Logo, Logo, LogoModel, LogoModel>(() => new Mine.Controller[]  { new Mine.Controller() }); }
-      //public void TestSmile() { TestAppW(() => new Smile[] { new Smile() }); }
+      public void TestSmile() { TestAppW<Smile.Controller, Smile, DummyView, SmileModel, DummyModel>(() => new Smile.Controller[] { new Smile.Controller(SmileModel.EFaceType.Face_WhiteSmiling) }); }
       #endregion
 
 
       public DemoPage() {
          _td = new TestDrawing();
 
-         _onCreateImages = new Action[] { TestLogos, TestMine, /*TestMosaicsSkillImg, TestMosaicsGroupImg, TestMosaicsImg,*/ TestFlag/*, TestSmile*/ };
+         _onCreateImages = new Action[] { TestLogos, TestMine, /*TestMosaicsSkillImg, TestMosaicsGroupImg, TestMosaicsImg,*/ TestFlag, TestSmile };
 
          InitializeComponent();
 

@@ -1,42 +1,73 @@
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
+using fmg.core.img;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.draw.img.wbmp {
 
-   /// <summary> Smile image </summary>
-   public class Smile {
-      private readonly WriteableBitmap _bmp;
+   /// <summary> Smile image over UWP <see cref="WriteableBitmap"/> </summary>
+   public class Smile : ImageView<WriteableBitmap, SmileModel> {
 
-      public Smile() {
-         const int iconWidth = 1000, iconHeight = 1000;
-         _bmp = new WriteableBitmap(iconWidth, iconHeight);
+      private WriteableBitmap _bmp;
 
-         // fill background (only transparent color)
-         //_bmp.FillRectangle(5, 5, IconWidth - 10, IconHeight - 10, (Windows.UI.Color)new Color(0x00123456);
 
-         // тело смайла
-         _bmp.FillEllipse(5, 5, iconWidth - 10, iconHeight - 10, new Color(0xFFFFE600).ToWinColor());
+      public Smile(SmileModel.EFaceType faceType)
+         : base(new SmileModel(faceType)) { }
+
+      static Smile() {
+         StaticInitializer.Init();
+      }
+
+      protected override WriteableBitmap CreateImage() {
+         var s = Model.Size;
+         _bmp = BitmapFactory.New((int)s.Width, (int)s.Height);
+         return _bmp;
+      }
+
+      protected override void DrawBody() {
+         double w = Size.Width;
+         double h = Size.Height;
+
+         void fillEllipse(double x, double y, double w1, double h1, Color fillColor) {
+            _bmp.FillEllipse((int)(x*w), (int)(y*h), (int)((x + w1)*w), (int)((y + h1)*h), fillColor.ToWinColor());
+         }
+
+         // рисую затемненный круг
+         Color yellowBorder = new Color(0xFF, 0x6C, 0x0A);
+         fillEllipse(0, 0, 1, 1, yellowBorder);
 
          // глаза
          var clr = Color.Black;
-         _bmp.FillEllipse(330, 150, 330+98, 150+296, clr.ToWinColor());
-         _bmp.FillEllipse(570, 150, 570+98, 150+296, clr.ToWinColor());
+         fillEllipse(0.270, 0.170, 0.150, 0.300, clr);
+         fillEllipse(0.580, 0.170, 0.150, 0.300, clr);
 
          // @TODO:  not implemented...
-
-         // smile
-         //g2d.setStroke(new BasicStroke(14, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
-         //_bmp.DrawArc(new int[] { 103, -133, 795, 1003, 207, 126 }, clr.ToWinColor());
-
-         // ямочки на щеках
-         //g.drawArc(90, 580, 180, 180, 90, 45);
-         //g.drawArc(730, 580, 180, 180, 45, 45);
       }
 
-      public WriteableBitmap Image {
-         get { return _bmp; }
+      protected override void Disposing() {
+         Model.Dispose();
+         base.Disposing();
       }
+
+      /////////////////////////////////////////////////////////////////////////////////////////////////////
+      //    custom implementations
+      /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+      /// <summary>
+      /// Smile image controller implementation for <see cref="Smile"/>
+      /// </summary>
+      public class Controller : ImageController<WriteableBitmap, Smile, SmileModel> {
+
+         public Controller(SmileModel.EFaceType faceType)
+            : base(new Smile(faceType)) { }
+
+         protected override void Disposing() {
+            View.Disposing();
+            base.Disposing();
+         }
+
+      }
+
    }
 
 }
