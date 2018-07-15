@@ -52,10 +52,10 @@ namespace fmg.core.img {
             if ((ev as PropertyChangedExEventArgs<bool>).NewValue) {
                TImageModel model = _model;
                Factory.GET_ANIMATOR().Subscribe(this, timeFromStartSubscribe => {
-                  long mod = timeFromStartSubscribe.Milliseconds % model.AnimatePeriod;
-                  long frame = mod * model.TotalFrames / model.AnimatePeriod;
-                  //System.out.println("ANIMATOR : " + getClass().getSimpleName() + ": "+ timeFromStartSubscribe);
+                  var mod = timeFromStartSubscribe.TotalMilliseconds % model.AnimatePeriod;
+                  var frame = mod * model.TotalFrames / model.AnimatePeriod;
                   model.CurrentFrame = (int)frame;
+                  //System.Diagnostics.Debug.WriteLine("ANIMATOR : CurrentFrame" + frame + "/" + model.TotalFrames);
                });
             } else {
                Factory.GET_ANIMATOR().Pause(this);
