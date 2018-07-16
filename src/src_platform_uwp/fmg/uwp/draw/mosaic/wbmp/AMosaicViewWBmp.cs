@@ -13,11 +13,13 @@ namespace fmg.uwp.draw.mosaic.wbmp {
 
    /// <summary> MVC: view. Abstract UWP over WriteableBitmap implementation </summary>
    /// <typeparam name="TMosaicModel">mosaic data model</typeparam>
-   public abstract class AMosaicViewWBmp<TMosaicModel>
-                       : AMosaicView<WriteableBitmap, WriteableBitmap, TMosaicModel>
-      where TMosaicModel : MosaicDrawModel<WriteableBitmap>
+   public abstract class AMosaicViewWBmp<TImageInner, TMosaicModel>
+                       : AMosaicView<WriteableBitmap, TImageInner, TMosaicModel>
+      where TImageInner  : class
+      where TMosaicModel : MosaicDrawModel<TImageInner>
    {
 
+      private WriteableBitmap _bmp;
       protected bool _alreadyPainted = false;
 
       protected AMosaicViewWBmp(TMosaicModel mosaicModel)
@@ -29,10 +31,17 @@ namespace fmg.uwp.draw.mosaic.wbmp {
          StaticInitializer.Init();
       }
 
+      protected override WriteableBitmap CreateImage() {
+         var s = Model.Size;
+         _bmp = new WriteableBitmap((int)s.Width, (int)s.Height);
+         return _bmp;
+      }
 
-      protected void draw(WriteableBitmap wbmp, IEnumerable<BaseCell> modifiedCells, RectDouble? clipRegion, bool drawBk) {
+      protected void Draw(IEnumerable<BaseCell> modifiedCells, RectDouble? clipRegion, bool drawBk) {
          // TODO ограничиваю рисование только границами своей фигуры
          //...
+
+         var wbmp = Image;
 
          var model = Model;
          var size = model.Size;
@@ -101,10 +110,11 @@ namespace fmg.uwp.draw.mosaic.wbmp {
                         wbmp.FillPolygon(poly, bkClrCell.ToWinColor());
                   }
 
-                  Action<WriteableBitmap> paintImage = img => {
+                  Action<TImageInner> paintImage = img => {
+                     WriteableBitmap wImg = img as WriteableBitmap;
                      var destRc = rcInner.MoveXY(offset.Width, offset.Height).ToWinRect();
-                     var srcRc = new Windows.Foundation.Rect(0, 0, img.PixelWidth, img.PixelHeight);
-                     wbmp.Blit(destRc, img, srcRc);
+                     var srcRc = new Windows.Foundation.Rect(0, 0, wImg.PixelWidth, wImg.PixelHeight);
+                     wbmp.Blit(destRc, wImg, srcRc);
                   };
 
                   // 2.1.2. output pictures

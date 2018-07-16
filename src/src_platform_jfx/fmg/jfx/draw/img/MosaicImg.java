@@ -29,12 +29,12 @@ public abstract class MosaicImg<TImage>
 
    @Override
    protected void drawBody() {
-      // super.drawBody(); // !hide super implementtation
+      // super.drawBody(); // !hide super implementation
 
       MosaicAnimatedModel<Void> model = getModel();
 
       _useBackgroundColor = true;
-      switch (getModel().getRotateMode()) {
+      switch (model.getRotateMode()) {
       case fullMatrix:
          draw(model.getMatrix());
          break;

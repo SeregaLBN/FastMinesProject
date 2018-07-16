@@ -17,8 +17,6 @@ using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
 using fmg.uwp.draw.img.wbmp;
-using fmg.uwp.draw.mosaic;
-using fmg.uwp.draw.mosaic.wbmp;
 
 namespace Test.FastMines.Uwp.Images.WBmp {
 
@@ -77,19 +75,12 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                                      .Select(e => new MosaicGroupImg.Controller[] { new MosaicGroupImg.Controller(e) })
                                      .SelectMany(m => m)));
       }
-      //public void TestMosaicsImg() {
-      //   var rnd = ThreadLocalRandom.Current;
-      //   TestApp(() =>
-      //      EMosaicEx.GetValues().Select(e => new MosaicsImg() {
-      //         MosaicType = e,
-      //         SizeField = new Matrisize(2 + rnd.Next(2), 2 + rnd.Next(2))
-      //      })
-      //      //new List<MosaicsImg>() { new MosaicsImg() {
-      //      //   MosaicType = EMosaic.eMosaicSquare1,
-      //      //   SizeField = new Matrisize(3 + rnd.Next(4), 4 + rnd.Next(3))
-      //      //} }
-      //   );
-      //}
+      public void TestMosaicsImg() {
+         TestApp<MosaicImg.Controller, MosaicImg, MosaicImg, MosaicAnimatedModel<Nothing>, MosaicAnimatedModel<Nothing>>(() =>
+            EMosaicEx.GetValues().Select(e =>  new MosaicImg.Controller() { MosaicType = e })
+          //new List<MosaicImg.Controller>() { new MosaicImg.Controller() { MosaicType = EMosaic.eMosaicSquare1 } }
+         );
+      }
       public void TestFlag()  { TestApp<Flag.Controller, Flag, DummyView, FlagModel, DummyModel>(() => new Flag.Controller[]  { new Flag.Controller() }); }
       public void TestMine()  { TestApp<Mine.Controller, Logo, Logo, LogoModel, LogoModel>(() => new Mine.Controller[]  { new Mine.Controller() }); }
       public void TestSmile() { TestApp<Smile.Controller, Smile, DummyView, SmileModel, DummyModel>(() => new Smile.Controller[] { new Smile.Controller(SmileModel.EFaceType.Face_WhiteSmiling) }); }
@@ -99,7 +90,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       public DemoPage() {
          _td = new TestDrawing();
 
-         _onCreateImages = new Action[] { TestLogos, TestMine, TestMosaicSkillImg, TestMosaicGroupImg, /*TestMosaicsImg,*/ TestFlag, TestSmile };
+         _onCreateImages = new Action[] { TestLogos, TestMine, TestMosaicSkillImg, TestMosaicGroupImg, TestMosaicsImg, TestFlag, TestSmile };
 
          InitializeComponent();
 
