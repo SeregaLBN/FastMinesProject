@@ -1,68 +1,52 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.core.types;
+using fmg.common;
 using fmg.common.geom;
+using fmg.core.types;
 using fmg.core.img;
-using fmg.uwp.utils;
 
 namespace fmg.uwp.draw.img.wbmp {
-#if false
+
    /// <summary> Representable <see cref="EMosaicGroup"/> as image.
    /// <br/>
    /// WriteableBitmap impl
    /// </summary>
-   public class MosaicGroupImg : AMosaicGroupImg<WriteableBitmap> {
+   public class MosaicGroupImg : MosaicSkillOrGroupView<MosaicGroupModel> {
 
-      static MosaicGroupImg() {
-         StaticInitializer.Init();
-      }
-
-      /// <param name="skill">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
-      public MosaicGroupImg(EMosaicGroup? group)
-         : base(group)
+      /// <summary>ctor</summary>
+      /// <param name="group">may be null. if Null - representable image of EMosaicGroup.class</param>
+      protected MosaicGroupImg(EMosaicGroup? group)
+         : base(new MosaicGroupModel(group))
       { }
 
-      protected override WriteableBitmap CreateImage() {
-         //LoggerSimple.Put("CreateImage: Width={0}; Height={1}: {2}", Size.Width, Size.Height, Entity);
-         return new WriteableBitmap(Size.Width, Size.Height);
+      protected override IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords {
+         get { return Model.Coords; }
       }
 
-      protected override void DrawBody() {
-         var bmp = Image;
+      protected override void Disposing() {
+         Model.Dispose();
+         base.Disposing();
+      }
 
-         bmp.Clear(BackgroundColor.ToWinColor());
+      /////////////////////////////////////////////////////////////////////////////////////////////////////
+      //    custom implementations
+      /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-         var bw = BorderWidth;
-         var needDrawPerimeterBorder = (!BorderColor.IsTransparent && (bw > 0));
-         var borderColor = BorderColor.ToWinColor();
-         var shapes = GetCoords();
-         foreach (var data in shapes) {
-            var points = data.Item2.PointsAsXyxyxySequence(true).ToArray();
-            if (!data.Item1.IsTransparent)
-               bmp.FillPolygon(points, data.Item1.ToWinColor());
+      /// <summary> MosaicsGroup image controller implementation for <see cref="MosaicGroupImg"/> </summary>
+      public class Controller : MosaicGroupController<WriteableBitmap, MosaicGroupImg> {
 
-            // draw perimeter border
-            if (needDrawPerimeterBorder) {
-               for (var i = 0; i < points.Length - 2; i += 2)
-                  try {
-                     bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], borderColor, bw);
-                  } catch (IndexOutOfRangeException ex) {
-                     System.Diagnostics.Debug.WriteLine("WTF! " + ex);
-                     bmp.DrawLine(points[i], points[i + 1], points[i + 2], points[i + 3], borderColor);
-                  }
-            }
+         public Controller(EMosaicGroup? group)
+            : base(!group.HasValue, new MosaicGroupImg(group))
+         { }
+
+         protected override void Disposing() {
+            View.Dispose();
+            base.Disposing();
          }
 
-         foreach (var li in GetCoordsBurgerMenu())
-            try {
-               bmp.DrawLineAa((int)li.from.X, (int)li.from.Y, (int)li.to.X, (int)li.to.Y, li.clr.ToWinColor(), (int)li.penWidht);
-            } catch (IndexOutOfRangeException ex) {
-               System.Diagnostics.Debug.WriteLine("WTF! " + ex);
-               bmp.DrawLine((int)li.from.X, (int)li.from.Y, (int)li.to.X, (int)li.to.Y, li.clr.ToWinColor());
-            }
-         }
+      }
 
    }
-#endif
+
 }

@@ -65,18 +65,18 @@ namespace Test.FastMines.Uwp.Images.WBmp {
             new Logo.Controller()
          });
       }
-      //public void TestMosaicsSkillImg() {
-      //   TestApp(() => (new MosaicsSkillImg[] { new MosaicsSkillImg(null), new MosaicsSkillImg(null) })
-      //         .Concat(ESkillLevelEx.GetValues()
-      //                              .Select(e => new MosaicsSkillImg[] { new MosaicsSkillImg(e), new MosaicsSkillImg(e) })
-      //                              .SelectMany(m => m)));
-      //}
-      //public void TestMosaicsGroupImg() {
-      //   TestApp(() => (new MosaicsGroupImg[] { new MosaicsGroupImg(null), new MosaicsGroupImg(null) })
-      //         .Concat(EMosaicGroupEx.GetValues()
-      //                               .Select(e => new MosaicsGroupImg[] { new MosaicsGroupImg(e), new MosaicsGroupImg(e) })
-      //                               .SelectMany(m => m)));
-      //}
+      public void TestMosaicSkillImg() {
+         TestApp<MosaicSkillImg.Controller, MosaicSkillImg, MosaicSkillImg, MosaicSkillModel, MosaicSkillModel>(() => (new MosaicSkillImg.Controller[] { new MosaicSkillImg.Controller(null) })
+               .Concat(ESkillLevelEx.GetValues()
+                                    .Select(e => new MosaicSkillImg.Controller[] { new MosaicSkillImg.Controller(e) })
+                                    .SelectMany(m => m)));
+      }
+      public void TestMosaicGroupImg() {
+         TestApp<MosaicGroupImg.Controller, MosaicGroupImg, MosaicGroupImg, MosaicGroupModel, MosaicGroupModel>(() => (new MosaicGroupImg.Controller[] { new MosaicGroupImg.Controller(null) })
+               .Concat(EMosaicGroupEx.GetValues()
+                                     .Select(e => new MosaicGroupImg.Controller[] { new MosaicGroupImg.Controller(e) })
+                                     .SelectMany(m => m)));
+      }
       //public void TestMosaicsImg() {
       //   var rnd = ThreadLocalRandom.Current;
       //   TestApp(() =>
@@ -99,7 +99,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       public DemoPage() {
          _td = new TestDrawing();
 
-         _onCreateImages = new Action[] { TestLogos, TestMine, /*TestMosaicsSkillImg, TestMosaicsGroupImg, TestMosaicsImg,*/ TestFlag, TestSmile };
+         _onCreateImages = new Action[] { TestLogos, TestMine, TestMosaicSkillImg, TestMosaicGroupImg, /*TestMosaicsImg,*/ TestFlag, TestSmile };
 
          InitializeComponent();
 

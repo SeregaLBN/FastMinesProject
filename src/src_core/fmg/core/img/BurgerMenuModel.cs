@@ -15,7 +15,7 @@ namespace fmg.core.img {
       private bool _show = true;
       private bool _horizontal = true;
       private int  _layers = 3;
-      private BoundDouble _padding;
+      private BoundDouble? _padding;
 
       private bool _disposed;
       public event PropertyChangedEventHandler PropertyChanged;
@@ -64,8 +64,8 @@ namespace fmg.core.img {
       public BoundDouble Padding{
          get {
             if (_padding == null)
-               RecalcPadding(default(SizeDouble));
-            return _padding;
+               RecalcPadding(null);
+            return _padding.Value;
          }
          set {
             if (value.LeftAndRight >= Size.Width)
@@ -76,14 +76,14 @@ namespace fmg.core.img {
             _notifier.SetProperty(ref _padding, paddingNew);
          }
       }
-      private void RecalcPadding(SizeDouble old) {
+      private void RecalcPadding(SizeDouble? old) {
          SizeDouble size = Size;
          var paddingNew = (_padding == null)
                ? new BoundDouble(size.Width / 2,
                                  size.Height / 2,
                                  _generalModel.Padding.Right,
                                  _generalModel.Padding.Bottom)
-               : AnimatedImageModel.RecalcPadding(_padding, size, old);
+               : AnimatedImageModel.RecalcPadding(_padding.Value, size, old.Value);
          _notifier.SetProperty(ref _padding, paddingNew, nameof(this.Padding));
       }
 

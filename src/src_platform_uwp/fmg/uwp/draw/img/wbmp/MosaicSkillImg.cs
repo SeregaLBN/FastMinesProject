@@ -1,66 +1,52 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using Windows.UI.Xaml.Media.Imaging;
+using fmg.common;
 using fmg.common.geom;
-using fmg.core.img;
 using fmg.core.types;
-using fmg.uwp.utils;
+using fmg.core.img;
 
 namespace fmg.uwp.draw.img.wbmp {
-#if false
-   /// <summary> Representable <see cref="ESkillLevel"/> as image.
+
+   /// <summary> Representable <see cref="EMosaicSkill"/> as image.
    /// <br/>
    /// WriteableBitmap impl
    /// </summary>
-   public class MosaicSkillImg : AMosaicSkillImg<WriteableBitmap> {
+   public class MosaicSkillImg : MosaicSkillOrGroupView<MosaicSkillModel> {
 
-      static MosaicSkillImg() {
-         StaticInitializer.Init();
-      }
-
-      /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
-      public MosaicSkillImg(ESkillLevel? group)
-         : base(group)
+      /// <summary>ctor</summary>
+      /// <param name="skill">may be null. if Null - representable image of ESkillLevel.class </param>
+      protected MosaicSkillImg(ESkillLevel? skill)
+         : base(new MosaicSkillModel(skill))
       { }
 
-      protected override WriteableBitmap CreateImage() {
-         return new WriteableBitmap(Size.Width, Size.Height);
+      protected override IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords {
+         get { return Model.Coords; }
       }
 
-      protected override void DrawBody() {
-         var bmp = Image;
-         bmp.Clear(BackgroundColor.ToWinColor());
+      protected override void Disposing() {
+         Model.Dispose();
+         base.Disposing();
+      }
 
-         var bw = BorderWidth;
-         var needDrawPerimeterBorder = (!BorderColor.IsTransparent && (bw > 0));
-         var borderColor = BorderColor.ToWinColor();
-         var stars = GetCoords();
-         foreach (var data in stars) {
-            var points = data.Item2.PointsAsXyxyxySequence(true).ToArray();
-            if (!data.Item1.IsTransparent)
-               bmp.FillPolygon(points, data.Item1.ToWinColor());
+      /////////////////////////////////////////////////////////////////////////////////////////////////////
+      //    custom implementations
+      /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            // draw perimeter border
-            if (needDrawPerimeterBorder) {
-               for (var i = 0; i < points.Length - 2; i += 2)
-                  try {
-                     bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], borderColor, bw);
-                  } catch (IndexOutOfRangeException ex) {
-                     System.Diagnostics.Debug.WriteLine("WTF! " + ex);
-                     bmp.DrawLine(points[i], points[i + 1], points[i + 2], points[i + 3], borderColor);
-                  }
-            }
+      /// <summary> MosaicsSkill image controller implementation for <see cref="MosaicSkillImg"/> </summary>
+      public class Controller : MosaicSkillController<WriteableBitmap, MosaicSkillImg> {
+
+         public Controller(ESkillLevel? skill)
+            : base(!skill.HasValue, new MosaicSkillImg(skill))
+         { }
+
+         protected override void Disposing() {
+            View.Dispose();
+            base.Disposing();
          }
 
-         foreach (var li in GetCoordsBurgerMenu())
-            try {
-               bmp.DrawLineAa((int)li.from.X, (int)li.from.Y, (int)li.to.X, (int)li.to.Y, li.clr.ToWinColor(), (int)li.penWidht);
-            } catch (IndexOutOfRangeException ex) {
-               System.Diagnostics.Debug.WriteLine("WTF! " + ex);
-               bmp.DrawLine((int)li.from.X, (int)li.from.Y, (int)li.to.X, (int)li.to.Y, li.clr.ToWinColor());
-            }
       }
 
    }
-#endif
+
 }

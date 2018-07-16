@@ -1,6 +1,3 @@
-using System;
-using fmg.core.types;
-
 namespace fmg.core.img {
 
    /// <summary> MVC controller of {@link EMosaicGroup} image </summary>

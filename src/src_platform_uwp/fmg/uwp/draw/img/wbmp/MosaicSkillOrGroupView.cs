@@ -14,9 +14,11 @@ namespace fmg.uwp.draw.img.wbmp {
    /// WriteableBitmap impl
    /// </summary>
    /// <typeparam name="TImageModel"><see cref="MosaicsSkillModel"/> or <see cref="MosaicsGroupModel"/></typeparam>
-   abstract class MosaicSkillOrGroupView<TImageModel> : WithBurgerMenuView<WriteableBitmap, TImageModel>
+   public abstract class MosaicSkillOrGroupView<TImageModel> : WithBurgerMenuView<WriteableBitmap, TImageModel>
       where TImageModel : AnimatedImageModel
    {
+
+      private WriteableBitmap _bmp;
 
       static MosaicSkillOrGroupView() {
          StaticInitializer.Init();
@@ -26,8 +28,14 @@ namespace fmg.uwp.draw.img.wbmp {
          : base(imageModel)
       { }
 
+      protected override WriteableBitmap CreateImage() {
+         var s = Model.Size;
+         _bmp = new WriteableBitmap((int)s.Width, (int)s.Height);
+         return _bmp;
+      }
+
       /** get paint information of drawing basic image model */
-      protected abstract IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> GetCoords();
+      protected abstract IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords { get; }
 
       protected override void DrawBody() {
          TImageModel m = Model;
@@ -38,7 +46,7 @@ namespace fmg.uwp.draw.img.wbmp {
          var bw = m.BorderWidth;
          var needDrawPerimeterBorder = (!m.BorderColor.IsTransparent && (bw > 0));
          var borderColor = m.BorderColor.ToWinColor();
-         var shapes = GetCoords();
+         var shapes = Coords;
          foreach (var data in shapes) {
             var points = data.Item2.PointsAsXyxyxySequence(true).ToArray();
             if (!data.Item1.IsTransparent)
@@ -48,7 +56,7 @@ namespace fmg.uwp.draw.img.wbmp {
             if (needDrawPerimeterBorder) {
                for (var i = 0; i < points.Length - 2; i += 2)
                   try {
-                     bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], borderColor, bw);
+                     bmp.DrawLineAa(points[i], points[i + 1], points[i + 2], points[i + 3], borderColor, (int)bw);
                   } catch (IndexOutOfRangeException ex) {
                      System.Diagnostics.Debug.WriteLine("WTF! " + ex);
                      bmp.DrawLine(points[i], points[i + 1], points[i + 2], points[i + 3], borderColor);
@@ -56,7 +64,7 @@ namespace fmg.uwp.draw.img.wbmp {
             }
          }
 
-         foreach (var li in BurgerMenuModel.GetCoords())
+         foreach (var li in BurgerMenuModel.Coords)
             try {
                bmp.DrawLineAa((int)li.from.X, (int)li.from.Y, (int)li.to.X, (int)li.to.Y, li.clr.ToWinColor(), (int)li.penWidht);
             } catch (IndexOutOfRangeException ex) {

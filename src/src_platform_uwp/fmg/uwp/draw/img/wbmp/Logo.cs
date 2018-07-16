@@ -85,13 +85,12 @@ namespace fmg.uwp.draw.img.wbmp {
       //    custom implementations
       /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      /// <summary>
-      /// Logo image controller implementation for <see cref="Logo"/>
-      /// </summary>
+      /// <summary> Logo image controller implementation for <see cref="Logo"/> </summary>
       public class Controller : LogoController<WriteableBitmap, Logo> {
 
          public Controller()
-            : base(new Logo()) { }
+            : base(new Logo())
+         { }
 
          protected override void Disposing() {
             View.Disposing();
