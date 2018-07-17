@@ -8,9 +8,7 @@ namespace fmg.core.img {
    {
 
       public void Execute(IAnimatedModel model) {
-         MosaicAnimatedModel<TImage> mam = model as MosaicAnimatedModel<TImage>;
-
-         if (mam == null)
+         if (!(model is MosaicAnimatedModel<TImage> mam))
             throw new Exception("Illegal usage transformer");
 
          double rotateAngleDelta = 360.0 / mam.TotalFrames; // 360° / TotalFrames

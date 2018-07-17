@@ -7,8 +7,7 @@ namespace fmg.core.img {
    public class PolarLightFgTransformer : IModelTransformer {
 
       public void Execute(IAnimatedModel model) {
-         var am = model as AnimatedImageModel;
-         if (am == null)
+         if (!(model is AnimatedImageModel am))
             throw new Exception("Illegal usage transformer");
 
          if (!am.PolarLights)

@@ -8,8 +8,7 @@ namespace fmg.core.img {
    public class RotateLogoTransformer : IModelTransformer {
 
       public void Execute(IAnimatedModel model) {
-         LogoModel lm = model as LogoModel;
-         if (lm == null)
+         if (!(model is LogoModel lm))
             throw new Exception("Illegal usage transformer");
 
          lm.Rays.Clear();

@@ -58,7 +58,7 @@ namespace fmg.core.mosaic.cells {
       public abstract class BaseAttribute : INotifyPropertyChanged {
 
          /// <summary>площадь ячейки/фигуры</summary>
-         private double _area;
+         private double _area = 500;
          protected bool Disposed { get; private set; }
          public event PropertyChangedEventHandler PropertyChanged;
          protected readonly NotifyPropertyChanged _notifier;

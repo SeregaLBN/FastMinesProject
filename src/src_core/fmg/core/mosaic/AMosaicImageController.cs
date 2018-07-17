@@ -19,7 +19,7 @@ namespace fmg.core.mosaic {
       {
          var model = Model;
          _innerController = new AnimatedInnerController<TImage, TMosaicView, MosaicAnimatedModel<Nothing>>(model);
-         AddModelTransformer(new MosaicRotateTransformer<TImage>());
+         AddModelTransformer(new MosaicRotateTransformer<Nothing>());
 
          var pen = model.PenBorder;
          pen.ColorLight = pen.ColorShadow;
