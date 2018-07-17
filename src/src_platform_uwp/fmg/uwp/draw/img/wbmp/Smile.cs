@@ -53,9 +53,7 @@ namespace fmg.uwp.draw.img.wbmp {
       //    custom implementations
       /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      /// <summary>
-      /// Smile image controller implementation for <see cref="Smile"/>
-      /// </summary>
+      /// <summary> Smile image controller implementation for <see cref="Smile"/> </summary>
       public class Controller : ImageController<WriteableBitmap, Smile, SmileModel> {
 
          public Controller(SmileModel.EFaceType faceType)

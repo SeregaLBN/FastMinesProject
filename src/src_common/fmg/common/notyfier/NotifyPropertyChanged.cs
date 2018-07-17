@@ -14,7 +14,7 @@ namespace fmg.common.notyfier {
 
       private readonly INotifyPropertyChanged _owner;
       private readonly Action<PropertyChangedEventArgs> _fireOwnerEvent;
-      private readonly bool _deferredNotifications;
+      public bool DeferredNotifications { get; set; }
       private readonly IDictionary<string /* propertyName */, PropertyChangedEventArgs> _deferrNotifications = new Dictionary<string, PropertyChangedEventArgs>();
       private bool _disposed;
 
@@ -24,7 +24,7 @@ namespace fmg.common.notyfier {
       public NotifyPropertyChanged(INotifyPropertyChanged owner, Action<PropertyChangedEventArgs> fireOwnerEvent, bool deferredNotifications) {
          _owner = owner;
          _fireOwnerEvent = fireOwnerEvent;
-         _deferredNotifications = deferredNotifications;
+         DeferredNotifications = deferredNotifications;
       }
 
       /// <summary> Checks if a property already matches a desired value.  Sets the property and notifies listeners only when necessary. </summary>
@@ -70,7 +70,7 @@ namespace fmg.common.notyfier {
          if (_disposed)
             return;
 
-         if (!_deferredNotifications) {
+         if (!DeferredNotifications) {
             _fireOwnerEvent(ev);
             //LoggerSimple.Put($"< OnPropertyChanged: {_owner.GetType().Name}: PropertyName={ev.PropertyName}");
          } else {

@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
+using System.ComponentModel;
 using System.Collections.Generic;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.mosaic;
-using System.Reflection;
 
 namespace fmg.core.img {
 
@@ -21,8 +21,9 @@ namespace fmg.core.img {
          this.titlePrefix = titlePrefix;
       }
 
-      public void ApplySettings<TImage, TImageView, TAImageView, TImageModel, TAnimatedModel>(IImageController<TImage, TImageView, TImageModel> ctrller, bool testTransparent)
+      public void ApplySettings<TImage, TMosaicImageInner, TImageView, TAImageView, TImageModel, TAnimatedModel>(IImageController<TImage, TImageView, TImageModel> ctrller, bool testTransparent)
          where TImage : class
+         where TMosaicImageInner : class
          where TImageView : IImageView<TImage, TImageModel>
          where TAImageView : IImageView<TImage, TAnimatedModel>
          where TImageModel : IImageModel
@@ -132,8 +133,7 @@ namespace fmg.core.img {
             if (model is MosaicGameModel mgm) {
                mgm.SizeField = new Matrisize(3 + R(2), 3 + R(2));
 
-               if (model is MosaicDrawModel<TImage>) {
-                  var mdm = model as MosaicDrawModel<TImage>;
+               if (model is MosaicDrawModel<TMosaicImageInner> mdm) {
                   mdm.BackgroundColor = bkClr;
 
                   mdm.BkFill.Mode = 1 + R(mdm.CellAttr.GetMaxBackgroundFillModeValue());
@@ -144,12 +144,10 @@ namespace fmg.core.img {
                   double padTopBottom = R((int)(size.Height / 3));
                   mdm.Padding = new BoundDouble(padLeftRight, padTopBottom, padLeftRight, padTopBottom);
 
-                  if (model is MosaicAnimatedModel<TImage>) {
-                     MosaicAnimatedModel<TImage> mam = model as MosaicAnimatedModel<TImage>;
-
-                     MosaicAnimatedModel<TImage>.ERotateMode[] vals =
-                        (MosaicAnimatedModel<TImage>.ERotateMode[])
-                        Enum.GetValues(typeof(MosaicAnimatedModel<TImage>.ERotateMode));
+                  if (model is MosaicAnimatedModel<TMosaicImageInner> mam) {
+                     MosaicAnimatedModel<TMosaicImageInner>.ERotateMode[] vals =
+                        (MosaicAnimatedModel<TMosaicImageInner>.ERotateMode[])
+                        Enum.GetValues(typeof(MosaicAnimatedModel<TMosaicImageInner>.ERotateMode));
                      mam.RotateMode = vals[R(vals.Length)];
                   }
                }
