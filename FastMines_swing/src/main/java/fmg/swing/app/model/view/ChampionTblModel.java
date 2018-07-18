@@ -1,4 +1,4 @@
-package fmg.swing.model.view;
+package fmg.swing.app.model.view;
 
 import javax.swing.event.TableModelEvent;
 

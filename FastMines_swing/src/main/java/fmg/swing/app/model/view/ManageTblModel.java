@@ -1,4 +1,4 @@
-package fmg.swing.model.view;
+package fmg.swing.app.model.view;
 
 import java.util.ArrayList;
 import java.util.List;

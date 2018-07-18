@@ -1,4 +1,4 @@
-package fmg.swing.dialogs;
+package fmg.swing.app.dialog;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -18,7 +18,7 @@ import fmg.core.mosaic.MosaicHelper;
 import fmg.core.mosaic.MosaicInitData;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.ESkillLevel;
-import fmg.swing.Main;
+import fmg.swing.app.Main;
 import fmg.swing.utils.GuiTools;
 
 public class CustomSkillDlg extends JDialog {

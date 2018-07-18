@@ -1,4 +1,4 @@
-package fmg.swing.model;
+package fmg.swing.app.model.control;
 
 import java.util.Arrays;
 import java.util.Collections;

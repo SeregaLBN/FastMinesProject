@@ -1,4 +1,4 @@
-package fmg.swing.serializable;
+package fmg.swing.app.serializable;
 
 import java.io.Externalizable;
 import java.io.IOException;

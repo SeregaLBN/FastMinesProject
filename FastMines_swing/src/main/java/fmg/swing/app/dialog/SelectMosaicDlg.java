@@ -1,4 +1,4 @@
-package fmg.swing.dialogs;
+package fmg.swing.app.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -14,11 +14,11 @@ import fmg.common.geom.SizeDouble;
 import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.EMosaicGroup;
-import fmg.swing.Main;
+import fmg.swing.app.Main;
+import fmg.swing.app.model.control.SpinNumberDocListener;
+import fmg.swing.app.model.control.SpinnerDiapasonModel;
 import fmg.swing.draw.img.Animator;
 import fmg.swing.draw.img.MosaicImg;
-import fmg.swing.model.SpinNumberDocListener;
-import fmg.swing.model.SpinnerDiapasonModel;
 import fmg.swing.utils.Cast;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;

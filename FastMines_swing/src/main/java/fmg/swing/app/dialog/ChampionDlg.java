@@ -1,4 +1,4 @@
-package fmg.swing.dialogs;
+package fmg.swing.app.dialog;
 
 import java.awt.Dimension;
 
@@ -7,10 +7,10 @@ import javax.swing.SwingConstants;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 import fmg.data.controller.serializable.ChampionsModel;
-import fmg.swing.Main;
+import fmg.swing.app.Main;
+import fmg.swing.app.model.view.ChampionTblModel;
+import fmg.swing.app.model.view.ReportTableModel;
 import fmg.swing.draw.img.Animator;
-import fmg.swing.model.view.ChampionTblModel;
-import fmg.swing.model.view.ReportTableModel;
 
 /** Диалог отображения чемпионов */
 public class ChampionDlg extends ReportDlg {

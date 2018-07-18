@@ -1,4 +1,4 @@
-package fmg.swing.dialogs;
+package fmg.swing.app.dialog;
 
 import java.awt.*;
 import java.awt.event.*;

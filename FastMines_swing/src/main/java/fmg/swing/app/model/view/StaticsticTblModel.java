@@ -1,4 +1,4 @@
-package fmg.swing.model.view;
+package fmg.swing.app.model.view;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

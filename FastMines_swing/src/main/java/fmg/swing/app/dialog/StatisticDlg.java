@@ -1,4 +1,4 @@
-package fmg.swing.dialogs;
+package fmg.swing.app.dialog;
 
 import java.awt.Dimension;
 
@@ -9,10 +9,10 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 import fmg.data.controller.serializable.PlayersModel;
 import fmg.data.controller.types.User;
-import fmg.swing.Main;
+import fmg.swing.app.Main;
+import fmg.swing.app.model.view.ReportTableModel;
+import fmg.swing.app.model.view.StaticsticTblModel;
 import fmg.swing.draw.img.Animator;
-import fmg.swing.model.view.ReportTableModel;
-import fmg.swing.model.view.StaticsticTblModel;
 
 /** Диалог отображения статистики пользователя */
 public class StatisticDlg extends ReportDlg {

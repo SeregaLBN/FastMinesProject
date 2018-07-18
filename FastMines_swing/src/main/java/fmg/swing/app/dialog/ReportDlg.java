@@ -1,4 +1,4 @@
-package fmg.swing.dialogs;
+package fmg.swing.app.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -21,10 +21,10 @@ import fmg.common.geom.SizeDouble;
 import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
-import fmg.swing.Main;
+import fmg.swing.app.Main;
+import fmg.swing.app.model.view.ReportTableModel;
 import fmg.swing.draw.img.Animator;
 import fmg.swing.draw.img.MosaicImg;
-import fmg.swing.model.view.ReportTableModel;
 import fmg.swing.utils.ImgUtils;
 
 abstract class ReportDlg extends JDialog implements AutoCloseable {

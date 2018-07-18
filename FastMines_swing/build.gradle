@@ -10,9 +10,11 @@ sourceSets {
          srcDir '../src/src_core'
          srcDir '../src/src_data'
          srcDir '../src/src_platform_swing'
+         srcDir 'src/main/java'
          include '**/*.java'
       }
-//      resources {
+      resources {
+         srcDir 'src/test/resources'
 //         srcDir '../res'
 //         exclude '**/*~*'
 //         include '**/*.gif'
@@ -20,7 +22,7 @@ sourceSets {
 //         include '**/*.jpg'
 //       //include '**/*.ico'
 //         include '**/*.png'
-//      }
+      }
    }
     test {
         java {

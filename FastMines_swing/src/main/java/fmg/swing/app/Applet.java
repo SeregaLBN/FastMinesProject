@@ -1,4 +1,4 @@
-package fmg.swing;
+package fmg.swing.app;
 
 import fmg.swing.mosaic.MosaicJPanelController;
 

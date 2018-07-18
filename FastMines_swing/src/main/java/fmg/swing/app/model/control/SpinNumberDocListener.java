@@ -1,4 +1,4 @@
-package fmg.swing.model;
+package fmg.swing.app.model.control;
 
 import javax.swing.JSpinner;
 import javax.swing.JTextField;

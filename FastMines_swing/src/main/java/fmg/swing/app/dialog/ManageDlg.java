@@ -1,4 +1,4 @@
-package fmg.swing.dialogs;
+package fmg.swing.app.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -12,8 +12,8 @@ import javax.swing.table.TableCellRenderer;
 
 import fmg.data.controller.serializable.PlayersModel;
 import fmg.data.controller.types.User;
-import fmg.swing.Main;
-import fmg.swing.model.view.ManageTblModel;
+import fmg.swing.app.Main;
+import fmg.swing.app.model.view.ManageTblModel;
 import fmg.swing.utils.GuiTools;
 
 /** Диалог управления пользователями */
