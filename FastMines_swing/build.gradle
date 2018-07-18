@@ -1,5 +1,5 @@
 apply plugin:'application'
-mainClassName = "fmg.swing.Main"
+mainClassName = "fmg.swing.app.Main"
 
 //version = '2.0.2'
 
@@ -52,7 +52,7 @@ dependencies {
 
 jar {
    manifest {
-      attributes 'Main-Class': 'fmg.swing.Main',
+      attributes 'Main-Class': 'fmg.swing.app.Main',
                  'Title': 'FastMines game - Java SWING desktop application',
                  'Version': '2.0.2'
    }
