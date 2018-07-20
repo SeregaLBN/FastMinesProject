@@ -9,14 +9,14 @@
     <Import_RootNamespace>FastMines.Ava.Draw</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\src_platform_ava\fmg\ava\draw\img\Animator.cs">
-      <Link>src_fmg.ava\draw\img\Animator.cs</Link>
+    <Compile Include="..\..\src\src_platform_ava\fmg\ava\img\Animator.cs">
+      <Link>src_fmg.ava\img\Animator.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_ava\fmg\ava\draw\img\MosaicSkillOrGroupView.cs">
-      <Link>src_fmg.ava\draw\img\MosaicSkillOrGroupView.cs</Link>
+    <Compile Include="..\..\src\src_platform_ava\fmg\ava\img\MosaicSkillOrGroupView.cs">
+      <Link>src_fmg.ava\img\MosaicSkillOrGroupView.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_ava\fmg\ava\draw\img\MosaicGroupImg.cs">
-      <Link>src_fmg.ava\draw\img\MosaicGroupImg.cs</Link>
+    <Compile Include="..\..\src\src_platform_ava\fmg\ava\img\MosaicGroupImg.cs">
+      <Link>src_fmg.ava\img\MosaicGroupImg.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_ava\fmg\ava\utils\StaticInitializer.cs">
       <Link>src_fmg.ava\utils\StaticInitializer.cs</Link>

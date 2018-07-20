@@ -5,7 +5,7 @@ using fmg.common.geom;
 using fmg.uwp.utils;
 using fmg.core.img;
 
-namespace fmg.uwp.draw.img.wbmp {
+namespace fmg.uwp.img.wbmp {
 
    /// <summary> Flag image over UWP <see cref="WriteableBitmap"/> </summary>
    public class Flag : ImageView<WriteableBitmap, FlagModel> {

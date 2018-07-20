@@ -1,4 +1,4 @@
-package fmg.jfx.draw.img;
+package fmg.jfx.img;
 
 import java.beans.PropertyChangeListener;
 import java.util.List;

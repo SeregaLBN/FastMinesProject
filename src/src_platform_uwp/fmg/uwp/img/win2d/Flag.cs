@@ -10,7 +10,7 @@ using fmg.core.img;
 using fmg.uwp;
 using fmg.uwp.utils;
 
-namespace fmg.uwp.draw.img.win2d {
+namespace fmg.uwp.img.win2d {
 
    /// <summary> Flag image </summary>
    public static class Flag {

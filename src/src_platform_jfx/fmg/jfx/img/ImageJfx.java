@@ -1,4 +1,4 @@
-package fmg.jfx.draw.img;
+package fmg.jfx.img;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;

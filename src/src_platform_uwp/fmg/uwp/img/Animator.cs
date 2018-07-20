@@ -4,7 +4,7 @@ using fmg.common.ui;
 using fmg.core.img;
 using fmg.uwp.utils;
 
-namespace fmg.uwp.draw.img {
+namespace fmg.uwp.img {
 
    public class Animator : IAnimator, IDisposable {
 

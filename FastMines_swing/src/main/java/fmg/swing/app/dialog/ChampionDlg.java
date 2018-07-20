@@ -10,7 +10,7 @@ import fmg.data.controller.serializable.ChampionsModel;
 import fmg.swing.app.Main;
 import fmg.swing.app.model.view.ChampionTblModel;
 import fmg.swing.app.model.view.ReportTableModel;
-import fmg.swing.draw.img.Animator;
+import fmg.swing.img.Animator;
 
 /** Диалог отображения чемпионов */
 public class ChampionDlg extends ReportDlg {

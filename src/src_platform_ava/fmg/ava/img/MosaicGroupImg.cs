@@ -10,7 +10,7 @@ using fmg.core.img;
 using fmg.core.types;
 using fmg.ava.utils;
 
-namespace fmg.ava.draw.img {
+namespace fmg.ava.img {
 
    /// <summary> Representable <see cref="EMosaicGroup"/> as image.
    /// <br/>

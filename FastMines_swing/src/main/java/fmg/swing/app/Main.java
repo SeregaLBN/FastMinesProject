@@ -34,7 +34,7 @@ import fmg.data.view.draw.EShowElement;
 import fmg.data.view.draw.EZoomInterface;
 import fmg.swing.app.dialog.*;
 import fmg.swing.app.serializable.SerializeProjData;
-import fmg.swing.draw.img.*;
+import fmg.swing.img.*;
 import fmg.swing.mosaic.MosaicJPanelController;
 import fmg.swing.utils.Cast;
 import fmg.swing.utils.GuiTools;

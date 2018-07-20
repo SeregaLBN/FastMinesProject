@@ -11,9 +11,9 @@ import javax.swing.border.EtchedBorder;
 
 import fmg.core.img.LogoModel;
 import fmg.core.img.SmileModel;
-import fmg.swing.draw.img.Animator;
-import fmg.swing.draw.img.Logo;
-import fmg.swing.draw.img.Smile;
+import fmg.swing.img.Animator;
+import fmg.swing.img.Logo;
+import fmg.swing.img.Smile;
 import fmg.swing.utils.GuiTools;
 import fmg.swing.utils.ImgUtils;
 

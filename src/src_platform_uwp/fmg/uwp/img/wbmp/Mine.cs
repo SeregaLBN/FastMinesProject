@@ -1,6 +1,6 @@
 using fmg.core.img;
 
-namespace fmg.uwp.draw.img.wbmp {
+namespace fmg.uwp.img.wbmp {
 
    /// <summary> Mine image on the playing field </summary>
    public sealed  class Mine {

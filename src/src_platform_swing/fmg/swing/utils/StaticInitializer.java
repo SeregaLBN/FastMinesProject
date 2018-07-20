@@ -5,7 +5,7 @@ import javax.swing.UIManager;
 
 import fmg.common.ui.Factory;
 import fmg.core.mosaic.MosaicDrawModel;
-import fmg.swing.draw.img.Animator;
+import fmg.swing.img.Animator;
 
 public final class StaticInitializer {
 

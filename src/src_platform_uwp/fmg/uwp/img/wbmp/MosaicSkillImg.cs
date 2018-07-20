@@ -6,7 +6,7 @@ using fmg.common.geom;
 using fmg.core.types;
 using fmg.core.img;
 
-namespace fmg.uwp.draw.img.wbmp {
+namespace fmg.uwp.img.wbmp {
 
    /// <summary> Representable <see cref="EMosaicSkill"/> as image.
    /// <br/>

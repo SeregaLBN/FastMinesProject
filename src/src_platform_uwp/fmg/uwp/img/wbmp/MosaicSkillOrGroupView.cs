@@ -8,7 +8,7 @@ using fmg.core.types;
 using fmg.core.img;
 using fmg.uwp.utils;
 
-namespace fmg.uwp.draw.img.wbmp {
+namespace fmg.uwp.img.wbmp {
 
    /// <summary> MVC: view. Abstract UWP representable <see cref="fmg.core.types.ESkillLevel"/> or <see cref="fmg.core.types.EMosaicGroup"/> as image.
    /// WriteableBitmap impl

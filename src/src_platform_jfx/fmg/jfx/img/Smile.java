@@ -1,4 +1,4 @@
-package fmg.jfx.draw.img;
+package fmg.jfx.img;
 
 import java.util.Arrays;
 import java.util.function.Consumer;

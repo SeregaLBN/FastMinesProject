@@ -1,6 +1,6 @@
 ﻿using Avalonia.Threading;
 using fmg.common.ui;
-using fmg.ava.draw.img;
+using fmg.ava.img;
 
 namespace fmg.ava.utils {
 

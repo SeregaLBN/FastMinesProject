@@ -1,4 +1,4 @@
-package fmg.swing.draw.img;
+package fmg.swing.img;
 
 import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;

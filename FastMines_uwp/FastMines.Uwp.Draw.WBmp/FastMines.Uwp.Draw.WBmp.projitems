@@ -9,35 +9,35 @@
     <Import_RootNamespace>FastMines.Uwp.Draw.WBmp</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\wbmp\AMosaicViewWBmp.cs">
-      <Link>src_fmg.uwp\draw\mosaic\wbmp\AMosaicViewWBmp.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\wbmp\AMosaicViewWBmp.cs">
+      <Link>src_fmg.uwp\mosaic\wbmp\AMosaicViewWBmp.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\MosaicSkillImg.cs">
-      <Link>src_fmg.uwp\draw\img\wbmp\MosaicSkillImg.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\wbmp\MosaicSkillImg.cs">
+      <Link>src_fmg.uwp\img\wbmp\MosaicSkillImg.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\wbmp\BitmapFont.cs">
-      <Link>src_fmg.uwp\draw\mosaic\wbmp\BitmapFont.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\wbmp\BitmapFont.cs">
+      <Link>src_fmg.uwp\mosaic\wbmp\BitmapFont.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\Smile.cs">
-      <Link>src_fmg.uwp\draw\img\wbmp\Smile.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\wbmp\Smile.cs">
+      <Link>src_fmg.uwp\img\wbmp\Smile.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\Logo.cs">
-      <Link>src_fmg.uwp\draw\img\wbmp\Logo.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\wbmp\Logo.cs">
+      <Link>src_fmg.uwp\img\wbmp\Logo.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\Flag.cs">
-      <Link>src_fmg.uwp\draw\img\wbmp\Flag.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\wbmp\Flag.cs">
+      <Link>src_fmg.uwp\img\wbmp\Flag.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\Mine.cs">
-      <Link>src_fmg.uwp\draw\img\wbmp\Mine.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\wbmp\Mine.cs">
+      <Link>src_fmg.uwp\img\wbmp\Mine.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\MosaicGroupImg.cs">
-      <Link>src_fmg.uwp\draw\img\wbmp\MosaicGroupImg.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\wbmp\MosaicGroupImg.cs">
+      <Link>src_fmg.uwp\img\wbmp\MosaicGroupImg.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\MosaicSkillOrGroupView.cs">
-      <Link>src_fmg.uwp\draw\img\wbmp\MosaicSkillOrGroupView.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\wbmp\MosaicSkillOrGroupView.cs">
+      <Link>src_fmg.uwp\img\wbmp\MosaicSkillOrGroupView.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\wbmp\MosaicImg.cs">
-      <Link>src_fmg.uwp\draw\img\wbmp\MosaicImg.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\wbmp\MosaicImg.cs">
+      <Link>src_fmg.uwp\img\wbmp\MosaicImg.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\wbmp\Resources.cs">
       <Link>src_fmg.uwp\utils\wbmp\Resources.cs</Link>

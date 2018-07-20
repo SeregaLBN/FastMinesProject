@@ -9,11 +9,11 @@
     <Import_RootNamespace>FastMines.Uwp.Draw.XamlElem</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\xaml\CellPaintShapes.cs">
-      <Link>src_fmg.uwp\draw\mosaic\xaml\CellPaintShapes.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\xaml\CellPaintShapes.cs">
+      <Link>src_fmg.uwp\mosaic\xaml\CellPaintShapes.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\mosaic\xaml\PaintableShapes.cs">
-      <Link>src_fmg.uwp\draw\mosaic\xaml\PaintableShapes.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\xaml\PaintableShapes.cs">
+      <Link>src_fmg.uwp\mosaic\xaml\PaintableShapes.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\xaml\MosaicViewXaml.cs">
       <Link>src_fmg.uwp\mosaic\xaml\MosaicViewXaml.cs</Link>

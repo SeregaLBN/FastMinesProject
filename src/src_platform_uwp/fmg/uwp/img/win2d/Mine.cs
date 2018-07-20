@@ -1,10 +1,10 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Windows.UI.Xaml;
-using LogoBmp = fmg.uwp.draw.img.win2d.Logo.CanvasBmp;
-using LogoImg = fmg.uwp.draw.img.win2d.Logo.CanvasImgSrc;
+using LogoBmp = fmg.uwp.img.win2d.Logo.CanvasBmp;
+using LogoImg = fmg.uwp.img.win2d.Logo.CanvasImgSrc;
 
-namespace fmg.uwp.draw.img.win2d {
+namespace fmg.uwp.img.win2d {
 
    /// <summary> mine image </summary>
    public static class Mine {

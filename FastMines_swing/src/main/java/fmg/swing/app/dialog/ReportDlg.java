@@ -23,8 +23,8 @@ import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.app.Main;
 import fmg.swing.app.model.view.ReportTableModel;
-import fmg.swing.draw.img.Animator;
-import fmg.swing.draw.img.MosaicImg;
+import fmg.swing.img.Animator;
+import fmg.swing.img.MosaicImg;
 import fmg.swing.utils.ImgUtils;
 
 abstract class ReportDlg extends JDialog implements AutoCloseable {

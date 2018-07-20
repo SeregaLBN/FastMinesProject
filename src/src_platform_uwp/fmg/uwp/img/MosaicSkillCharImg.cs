@@ -1,6 +1,6 @@
 using fmg.core.types;
 
-namespace fmg.uwp.draw.img {
+namespace fmg.uwp.img {
 
 #if false
    /// <summary> representable <see cref="ESkillLevel"/> as CHAR </summary>

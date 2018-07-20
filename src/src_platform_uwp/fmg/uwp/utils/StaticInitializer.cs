@@ -4,7 +4,7 @@ using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using fmg.common.ui;
 using fmg.core.mosaic;
-using fmg.uwp.draw.img;
+using fmg.uwp.img;
 
 namespace fmg.uwp.utils {
 

@@ -4,9 +4,9 @@ using fmg.common;
 using fmg.core.img;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
-using fmg.uwp.draw.mosaic.wbmp;
+using fmg.uwp.mosaic.wbmp;
 
-namespace fmg.uwp.draw.img.wbmp {
+namespace fmg.uwp.img.wbmp {
 
    /// <summary>
    /// Representable {@link fmg.core.types.EMosaic} as image.

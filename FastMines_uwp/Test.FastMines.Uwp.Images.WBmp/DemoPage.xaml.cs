@@ -16,7 +16,7 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
-using fmg.uwp.draw.img.wbmp;
+using fmg.uwp.img.wbmp;
 using DummyMosaicImageType = System.Object;
 
 namespace Test.FastMines.Uwp.Images.WBmp {

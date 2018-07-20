@@ -12,8 +12,8 @@ import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.swing.draw.img.Flag;
-import fmg.swing.draw.img.Mine;
+import fmg.swing.img.Flag;
+import fmg.swing.img.Mine;
 import fmg.swing.utils.Cast;
 import fmg.swing.utils.ImgUtils;
 

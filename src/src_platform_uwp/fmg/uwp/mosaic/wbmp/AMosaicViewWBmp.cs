@@ -9,7 +9,7 @@ using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
 
-namespace fmg.uwp.draw.mosaic.wbmp {
+namespace fmg.uwp.mosaic.wbmp {
 
    /// <summary> MVC: view. Abstract UWP over WriteableBitmap implementation </summary>
    /// <typeparam name="TMosaicModel">mosaic data model</typeparam>

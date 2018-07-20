@@ -21,11 +21,11 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\ScreenResolutionHelper.cs">
       <Link>src_fmg.uwp\utils\ScreenResolutionHelper.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\MosaicSkillCharImg.cs">
-      <Link>src_fmg.uwp\draw\img\MosaicSkillCharImg.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\MosaicSkillCharImg.cs">
+      <Link>src_fmg.uwp\img\MosaicSkillCharImg.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\draw\img\Animator.cs">
-      <Link>src_fmg.uwp\draw\img\Animator.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\Animator.cs">
+      <Link>src_fmg.uwp\img\Animator.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\StaticInitializer.cs">
       <Link>src_fmg.uwp\utils\StaticInitializer.cs</Link>

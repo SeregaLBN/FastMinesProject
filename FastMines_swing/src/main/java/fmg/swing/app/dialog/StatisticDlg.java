@@ -12,7 +12,7 @@ import fmg.data.controller.types.User;
 import fmg.swing.app.Main;
 import fmg.swing.app.model.view.ReportTableModel;
 import fmg.swing.app.model.view.StaticsticTblModel;
-import fmg.swing.draw.img.Animator;
+import fmg.swing.img.Animator;
 
 /** Диалог отображения статистики пользователя */
 public class StatisticDlg extends ReportDlg {

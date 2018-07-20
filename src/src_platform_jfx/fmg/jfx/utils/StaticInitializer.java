@@ -1,7 +1,7 @@
 package fmg.jfx.utils;
 
 import fmg.common.ui.Factory;
-import fmg.jfx.draw.img.Animator;
+import fmg.jfx.img.Animator;
 
 public final class StaticInitializer {
 

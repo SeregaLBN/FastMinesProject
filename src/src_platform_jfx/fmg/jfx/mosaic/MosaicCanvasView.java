@@ -9,9 +9,9 @@ import fmg.common.geom.RectDouble;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.jfx.draw.img.CanvasJfx;
-import fmg.jfx.draw.img.Flag;
-import fmg.jfx.draw.img.Mine;
+import fmg.jfx.img.CanvasJfx;
+import fmg.jfx.img.Flag;
+import fmg.jfx.img.Mine;
 import fmg.jfx.utils.ImgUtils;
 
 /** MVC: view. JavaFX implementation over node-control {@link Canvas} */

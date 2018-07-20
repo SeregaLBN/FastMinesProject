@@ -10,7 +10,7 @@ using fmg.core.img;
 using fmg.core.types;
 using fmg.ava.utils;
 
-namespace fmg.ava.draw.img {
+namespace fmg.ava.img {
 
    /// <summary> MVC: view. Abstract Avalonia representable {@link fmg.core.types.ESkillLevel} or {@link fmg.core.types.EMosaicGroup} as image </summary>
    /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>

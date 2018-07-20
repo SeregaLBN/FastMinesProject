@@ -1,4 +1,4 @@
-package fmg.swing.draw.img;
+package fmg.swing.img;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

@@ -8,9 +8,9 @@ using fmg.common.geom;
 using fmg.core.img;
 using fmg.uwp.utils;
 using fmg.uwp.utils.win2d;
-using fmg.uwp.draw.mosaic.win2d;
+using fmg.uwp.mosaic.win2d;
 
-namespace fmg.uwp.draw.img.win2d {
+namespace fmg.uwp.img.win2d {
 
    /// <summary> Main logos image
    /// <br/>

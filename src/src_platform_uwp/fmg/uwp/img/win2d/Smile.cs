@@ -9,9 +9,9 @@ using Microsoft.Graphics.Canvas.Geometry;
 using fmg.common;
 using fmg.common.geom;
 using fmg.uwp.utils;
-using fmg.uwp.draw.mosaic.win2d;
+using fmg.uwp.mosaic.win2d;
 
-namespace fmg.uwp.draw.img.win2d {
+namespace fmg.uwp.img.win2d {
 
    /// <summary> Smile image </summary>
    public static class Smile {

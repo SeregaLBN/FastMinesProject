@@ -8,9 +8,9 @@ using fmg.core.img;
 using fmg.core.types;
 using fmg.uwp.utils;
 using fmg.uwp.utils.win2d;
-using fmg.uwp.draw.mosaic.win2d;
+using fmg.uwp.mosaic.win2d;
 
-namespace fmg.uwp.draw.img.win2d {
+namespace fmg.uwp.img.win2d {
 
    /// <summary> Representable <see cref="ESkillLevel"/> as image.
    /// <br/>
