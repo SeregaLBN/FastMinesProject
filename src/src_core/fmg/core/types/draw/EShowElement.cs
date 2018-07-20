@@ -1,6 +1,6 @@
 using System;
 
-namespace fmg.data.view.draw {
+namespace fmg.core.types.draw {
 
    public enum EShowElement {
       eCaption,

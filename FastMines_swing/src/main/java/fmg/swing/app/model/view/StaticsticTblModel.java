@@ -6,11 +6,10 @@ import java.text.NumberFormat;
 import javax.swing.event.TableModelEvent;
 
 import fmg.core.types.EMosaic;
-import fmg.data.controller.event.PlayerModelEvent;
-import fmg.data.controller.event.PlayerModelListener;
-import fmg.data.controller.serializable.PlayersModel;
-import fmg.data.controller.serializable.StatisticCounts;
-import fmg.data.controller.types.User;
+import fmg.core.types.viewmodel.User;
+import fmg.core.types.viewmodel.event.PlayerModelEvent;
+import fmg.core.types.viewmodel.serializable.PlayersModel;
+import fmg.core.types.viewmodel.serializable.StatisticCounts;
 
 public class StaticsticTblModel extends ReportTableModel {
 
@@ -20,26 +19,23 @@ public class StaticsticTblModel extends ReportTableModel {
       super(eMosaic);
       this.players = players;
 
-      players.addPlayerListener(new PlayerModelListener() {
-         @Override
-         public void playerChanged(PlayerModelEvent e) {
-               int pos = e.getPos();
-               switch (e.getType()) {
-               case PlayerModelEvent.CHANGE_STATISTICS:
-                  if ((e.getMosaic() == StaticsticTblModel.this.eMosaic) &&
-                     (e.getSkill() == StaticsticTblModel.this.eSkill))
-                  {
-                     StaticsticTblModel.this.fireTableChanged(
-                        new TableModelEvent(
-                           StaticsticTblModel.this, pos, pos, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE));
-                  }
-                  break;
-               default:
+      players.addPlayerListener(e -> {
+            int pos = e.getPos();
+            switch (e.getType()) {
+            case PlayerModelEvent.CHANGE_STATISTICS:
+               if ((e.getMosaic() == StaticsticTblModel.this.eMosaic) &&
+                  (e.getSkill() == StaticsticTblModel.this.eSkill))
+               {
                   StaticsticTblModel.this.fireTableChanged(
-                     new TableModelEvent(StaticsticTblModel.this));
-                  break;
+                     new TableModelEvent(
+                        StaticsticTblModel.this, pos, pos, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE));
                }
-         }
+               break;
+            default:
+               StaticsticTblModel.this.fireTableChanged(
+                  new TableModelEvent(StaticsticTblModel.this));
+               break;
+            }
       });
    }
 

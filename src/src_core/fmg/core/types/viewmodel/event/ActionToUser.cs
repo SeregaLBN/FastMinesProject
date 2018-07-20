@@ -1,8 +1,9 @@
 using System;
 
-namespace fmg.data.controller.Event {
+namespace fmg.core.types.viewmodel.Event {
 
    public interface ActionToUser {
       void applyToUser(Guid userId);
    }
+
 }

@@ -7,9 +7,7 @@ apply plugin: 'java'
 sourceSets {
    main {
       java {
-         srcDir '../src/src_common'
          srcDir '../src/src_core'
-         srcDir '../src/src_data'
          srcDir '../src/src_platform_jfx'
          include '**/*.java'
       }

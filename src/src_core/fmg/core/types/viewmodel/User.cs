@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using fmg.common;
 
-namespace fmg.data.controller.types {
+namespace fmg.core.types.viewmodel {
 
    public class User : IExternalizable {
 

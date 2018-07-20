@@ -10,8 +10,8 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
 
-import fmg.data.controller.serializable.PlayersModel;
-import fmg.data.controller.types.User;
+import fmg.core.types.viewmodel.User;
+import fmg.core.types.viewmodel.serializable.PlayersModel;
 import fmg.swing.app.Main;
 import fmg.swing.app.model.view.ManageTblModel;
 import fmg.swing.utils.GuiTools;

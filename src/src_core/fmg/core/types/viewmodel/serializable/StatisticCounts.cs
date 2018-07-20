@@ -1,7 +1,7 @@
 using System.IO;
 using fmg.common;
 
-namespace fmg.data.controller.serializable {
+namespace fmg.core.types.viewmodel.serializable {
 
    public class StatisticCounts : IExternalizable {
 

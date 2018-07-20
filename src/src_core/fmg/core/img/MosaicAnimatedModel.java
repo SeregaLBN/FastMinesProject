@@ -19,7 +19,7 @@ import fmg.common.geom.util.FigureHelper;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
-import fmg.data.view.draw.PenBorder;
+import fmg.core.types.draw.PenBorder;
 
 /** Representable {@link fmg.core.types.EMosaic} as animated image */
 public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> implements IAnimatedModel {

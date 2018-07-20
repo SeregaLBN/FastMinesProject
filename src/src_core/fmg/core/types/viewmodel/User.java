@@ -1,4 +1,4 @@
-package fmg.data.controller.types;
+package fmg.core.types.viewmodel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -51,7 +51,7 @@ public class User implements Externalizable {
 
       this.name = name;
    }
-   
+
    @Override
    public String toString() {
 //      return super.toString();

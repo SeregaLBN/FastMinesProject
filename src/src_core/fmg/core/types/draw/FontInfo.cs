@@ -3,7 +3,7 @@ using System.ComponentModel;
 using fmg.common.geom;
 using fmg.common.notyfier;
 
-namespace fmg.data.view.draw {
+namespace fmg.core.types.draw {
 
    public class FontInfo : INotifyPropertyChanged, IDisposable {
 

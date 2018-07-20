@@ -1,4 +1,4 @@
-package fmg.data.controller.serializable;
+package fmg.core.types.viewmodel.serializable;
 
 import java.io.*;
 import java.math.BigInteger;
@@ -12,10 +12,10 @@ import java.util.UUID;
 import fmg.common.crypt.Simple3DES;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
-import fmg.data.controller.event.ChampionModelEvent;
-import fmg.data.controller.event.ChampionModelListener;
-import fmg.data.controller.event.PlayerModelEvent;
-import fmg.data.controller.types.User;
+import fmg.core.types.viewmodel.User;
+import fmg.core.types.viewmodel.event.ChampionModelEvent;
+import fmg.core.types.viewmodel.event.ChampionModelListener;
+import fmg.core.types.viewmodel.event.PlayerModelEvent;
 
 /** хранилище чемпионов */
 public class ChampionsModel implements Externalizable {

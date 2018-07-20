@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import fmg.core.img.ImageView;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.data.view.draw.PenBorder;
+import fmg.core.types.draw.PenBorder;
 
 /**
  * MVC: view. Base mosaic view implementation

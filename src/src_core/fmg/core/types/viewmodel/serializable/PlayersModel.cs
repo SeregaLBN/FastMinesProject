@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using fmg.common;
-using fmg.data.controller.Event;
-using fmg.data.controller.types;
-using fmg.core.types;
+using fmg.core.types.viewmodel.Event;
 
-
-namespace fmg.data.controller.serializable {
+namespace fmg.core.types.viewmodel.serializable {
 
    /// <summary>хранилище пользователей и их игровой статистики</summary>
    public abstract class PlayersModel : IExternalizable {

@@ -6,7 +6,7 @@ import java.util.UUID;
 import fmg.common.geom.Matrisize;
 import fmg.common.geom.Point;
 import fmg.core.types.EMosaic;
-import fmg.data.view.draw.EShowElement;
+import fmg.core.types.draw.EShowElement;
 
 /** Данные проекта, записываемые/считываемые в/из файл(а) */
 public class SerializeProjData implements Externalizable {

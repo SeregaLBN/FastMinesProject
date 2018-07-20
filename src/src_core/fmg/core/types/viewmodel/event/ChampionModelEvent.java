@@ -1,10 +1,10 @@
-package fmg.data.controller.event;
+package fmg.core.types.viewmodel.event;
 
 import java.util.EventObject;
 
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
-import fmg.data.controller.serializable.ChampionsModel;
+import fmg.core.types.viewmodel.serializable.ChampionsModel;
 
 public class ChampionModelEvent extends EventObject {
    private static final long serialVersionUID = 1L;
@@ -16,7 +16,7 @@ public class ChampionModelEvent extends EventObject {
    private final ESkillLevel skill;
    private final int pos;
    private final int type;
-   
+
    public ChampionModelEvent(ChampionsModel source, EMosaic mosaic, ESkillLevel skill, int pos, int type) {
       super(source);
       this.mosaic = mosaic;

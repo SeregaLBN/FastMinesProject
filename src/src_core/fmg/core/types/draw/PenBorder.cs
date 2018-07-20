@@ -4,7 +4,7 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.common.notyfier;
 
-namespace fmg.data.view.draw {
+namespace fmg.core.types.draw {
 
    /// <summary> Характеристики кисти у рамки ячейки</summary>
    public class PenBorder : INotifyPropertyChanged, IDisposable {

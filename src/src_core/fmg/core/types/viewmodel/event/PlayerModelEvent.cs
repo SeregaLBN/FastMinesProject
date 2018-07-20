@@ -1,7 +1,4 @@
-using fmg.data.controller.types;
-using fmg.core.types;
-
-namespace fmg.data.controller.Event {
+namespace fmg.core.types.viewmodel.Event {
 
    public delegate void PlayerModelChangedHandler(object sender, PlayerModelEventArgs e);
 

@@ -4,7 +4,7 @@ using fmg.common;
 using fmg.core.types;
 using fmg.common.notyfier;
 
-namespace fmg.data.view.draw {
+namespace fmg.core.types.draw {
 
    public class ColorText : INotifyPropertyChanged, IDisposable {
 

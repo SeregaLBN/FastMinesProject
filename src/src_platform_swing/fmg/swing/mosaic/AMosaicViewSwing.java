@@ -18,8 +18,8 @@ import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EClose;
 import fmg.core.types.EOpen;
 import fmg.core.types.EState;
-import fmg.data.view.draw.FontInfo;
-import fmg.data.view.draw.PenBorder;
+import fmg.core.types.draw.FontInfo;
+import fmg.core.types.draw.PenBorder;
 import fmg.swing.utils.Cast;
 import fmg.swing.utils.StaticInitializer;
 

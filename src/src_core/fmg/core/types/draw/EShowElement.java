@@ -1,4 +1,4 @@
-package fmg.data.view.draw;
+package fmg.core.types.draw;
 
 public enum EShowElement {
    eCaption,

@@ -2,11 +2,8 @@
 using System.ComponentModel;
 using System.Linq;
 using fmg.common;
-using fmg.common.notyfier;
-using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.mosaic.cells;
-using fmg.data.view.draw;
 
 namespace fmg.core.mosaic {
 

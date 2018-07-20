@@ -3,9 +3,9 @@ package fmg.swing.app.model.view;
 import javax.swing.event.TableModelEvent;
 
 import fmg.core.types.EMosaic;
-import fmg.data.controller.event.ChampionModelEvent;
-import fmg.data.controller.event.ChampionModelListener;
-import fmg.data.controller.serializable.ChampionsModel;
+import fmg.core.types.viewmodel.event.ChampionModelEvent;
+import fmg.core.types.viewmodel.event.ChampionModelListener;
+import fmg.core.types.viewmodel.serializable.ChampionsModel;
 
 public class ChampionTblModel extends ReportTableModel {
 
@@ -47,7 +47,7 @@ public class ChampionTblModel extends ReportTableModel {
          }
       });
    }
-   
+
    @Override
    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
    @Override

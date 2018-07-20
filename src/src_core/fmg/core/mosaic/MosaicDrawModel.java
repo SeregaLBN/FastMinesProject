@@ -11,9 +11,9 @@ import fmg.common.geom.SizeDouble;
 import fmg.common.notyfier.INotifyPropertyChanged;
 import fmg.common.notyfier.NotifyPropertyChanged;
 import fmg.core.img.IImageModel;
-import fmg.data.view.draw.ColorText;
-import fmg.data.view.draw.FontInfo;
-import fmg.data.view.draw.PenBorder;
+import fmg.core.types.draw.ColorText;
+import fmg.core.types.draw.FontInfo;
+import fmg.core.types.draw.PenBorder;
 
 /**
  * MVC: draw model of mosaic field.

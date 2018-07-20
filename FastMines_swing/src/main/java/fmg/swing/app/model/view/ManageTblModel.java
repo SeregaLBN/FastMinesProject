@@ -7,12 +7,12 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
-import fmg.data.controller.event.PlayerModelEvent;
-import fmg.data.controller.event.PlayerModelListener;
-import fmg.data.controller.serializable.PlayersModel;
+import fmg.core.types.viewmodel.event.PlayerModelEvent;
+import fmg.core.types.viewmodel.event.PlayerModelListener;
+import fmg.core.types.viewmodel.serializable.PlayersModel;
 
 public class ManageTblModel implements TableModel {
-   
+
    private final PlayersModel players;
    private List<TableModelListener> arrTableModelListener = new ArrayList<TableModelListener>();
 
@@ -65,7 +65,7 @@ public class ManageTblModel implements TableModel {
          throw new IllegalArgumentException("Bad value - is not null");
       if (!(aValue instanceof String))
          throw new IllegalArgumentException("Bad value type. Need 'String', not " + aValue.getClass());
-      
+
       String name = (String)aValue;
 
       // имя должно быть уникальным

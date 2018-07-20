@@ -3,7 +3,7 @@ package fmg.core.mosaic;
 import java.util.concurrent.ThreadLocalRandom;
 
 import fmg.core.img.*;
-import fmg.data.view.draw.PenBorder;
+import fmg.core.types.draw.PenBorder;
 
 /** MVC: mosaic image controller. Base implementation */
 public abstract class AMosaicImageController<TImage,        TMosaicView extends AMosaicView<TImage, Void, MosaicAnimatedModel<Void>>>

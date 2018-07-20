@@ -1,4 +1,4 @@
-package fmg.data.controller.serializable;
+package fmg.core.types.viewmodel.serializable;
 
 import java.io.Externalizable;
 import java.io.IOException;

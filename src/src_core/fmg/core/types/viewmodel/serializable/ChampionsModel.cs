@@ -5,11 +5,9 @@ using System.Collections.Generic;
 using System.IO;
 using fmg.common;
 using fmg.common.crypt;
-using fmg.core.types;
-using fmg.data.controller.Event;
-using fmg.data.controller.types;
+using fmg.core.types.viewmodel.Event;
 
-namespace fmg.data.controller.serializable {
+namespace fmg.core.types.viewmodel.serializable {
 
    /// <summary>хранилище чемпионов</summary>
    public abstract class ChampionsModel : IExternalizable {

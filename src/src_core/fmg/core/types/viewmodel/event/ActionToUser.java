@@ -1,4 +1,4 @@
-package fmg.data.controller.event;
+package fmg.core.types.viewmodel.event;
 
 import java.util.EventListener;
 import java.util.UUID;
