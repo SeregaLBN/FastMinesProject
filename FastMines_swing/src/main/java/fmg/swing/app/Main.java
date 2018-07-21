@@ -2507,11 +2507,11 @@ public class Main extends JFrame {
 //    System.out.println("Main::propertyChange: eventName=" + ev.getSource().getClass().getSimpleName() + "." + ev.getPropertyName());
 //      MosaicControllerSwing source = (MosaicControllerSwing)ev.getSource();
       switch (ev.getPropertyName()) {
-      case AMosaicController.PROPERTY_MINES_COUNT:
+      case MosaicController.PROPERTY_MINES_COUNT:
          getMenu().getMosaics().recheckSelectedMosaicType();
          getMenu().getGame().recheckSelectedSkillLevel();
          break;
-      case AMosaicController.PROPERTY_GAME_STATUS:
+      case MosaicController.PROPERTY_GAME_STATUS:
          {
             getToolbar().getBtnPause().setEnabled(getMosaicController().getGameStatus() == EGameStatus.eGSPlay);
           //System.out.println("OnChangeGameStatus: " + e.getSource().getGameStatus());
@@ -2549,14 +2549,14 @@ public class Main extends JFrame {
             }
          }
          break;
-      //case AMosaicController.PROPERTY_COUNT_FLAG:
+      //case MosaicController.PROPERTY_COUNT_FLAG:
       //   break;
-      //case AMosaicController.PROPERTY_COUNT_OPEN:
+      //case MosaicController.PROPERTY_COUNT_OPEN:
       //   break;
-      case AMosaicController.PROPERTY_COUNT_MINES_LEFT:
+      case MosaicController.PROPERTY_COUNT_MINES_LEFT:
          getToolbar().getEdtMinesLeft().setText(Integer.toString(getMosaicController().getCountMinesLeft()));
          break;
-      case AMosaicController.PROPERTY_COUNT_CLICK:
+      case MosaicController.PROPERTY_COUNT_CLICK:
          getStatusBar().setClickCount(getMosaicController().getCountClick());
          break;
       }

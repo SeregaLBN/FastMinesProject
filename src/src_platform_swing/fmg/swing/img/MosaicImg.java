@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fmg.core.img.MosaicAnimatedModel;
-import fmg.core.mosaic.AMosaicImageController;
+import fmg.core.mosaic.MosaicImageController;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
-import fmg.swing.mosaic.AMosaicViewSwing;
+import fmg.swing.mosaic.MosaicViewSwing;
 
 /**
  * Representable {@link fmg.core.types.EMosaic} as image
@@ -19,7 +19,7 @@ import fmg.swing.mosaic.AMosaicViewSwing;
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
  */
 public abstract class MosaicImg<TImage>
-                extends AMosaicViewSwing<TImage, Void, MosaicAnimatedModel<Void>>
+                extends MosaicViewSwing<TImage, Void, MosaicAnimatedModel<Void>>
 {
 
    protected boolean _useBackgroundColor = true;
@@ -98,7 +98,7 @@ public abstract class MosaicImg<TImage>
    }
 
    /** Mosaic image controller implementation for {@link Icon} */
-   public static class ControllerIcon extends AMosaicImageController<javax.swing.Icon, MosaicImg.Icon> {
+   public static class ControllerIcon extends MosaicImageController<javax.swing.Icon, MosaicImg.Icon> {
 
       public ControllerIcon() {
          super(new MosaicImg.Icon());
@@ -113,7 +113,7 @@ public abstract class MosaicImg<TImage>
    }
 
    /** Mosaic image controller implementation for {@link Image} */
-   public static class ControllerImage extends AMosaicImageController<java.awt.Image, MosaicImg.Image> {
+   public static class ControllerImage extends MosaicImageController<java.awt.Image, MosaicImg.Image> {
 
       public ControllerImage() {
          super(new MosaicImg.Image());

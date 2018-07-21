@@ -13,8 +13,8 @@ namespace fmg.uwp.mosaic.wbmp {
 
    /// <summary> MVC: view. Abstract UWP over WriteableBitmap implementation </summary>
    /// <typeparam name="TMosaicModel">mosaic data model</typeparam>
-   public abstract class AMosaicViewWBmp<TImageInner, TMosaicModel>
-                       : AMosaicView<WriteableBitmap, TImageInner, TMosaicModel>
+   public abstract class MosaicViewWBmp<TImageInner, TMosaicModel>
+                       : MosaicView<WriteableBitmap, TImageInner, TMosaicModel>
       where TImageInner  : class
       where TMosaicModel : MosaicDrawModel<TImageInner>
    {
@@ -22,12 +22,12 @@ namespace fmg.uwp.mosaic.wbmp {
       private WriteableBitmap _bmp;
       protected bool _alreadyPainted = false;
 
-      protected AMosaicViewWBmp(TMosaicModel mosaicModel)
+      protected MosaicViewWBmp(TMosaicModel mosaicModel)
          : base(mosaicModel)
       { }
 
 
-      static AMosaicViewWBmp() {
+      static MosaicViewWBmp() {
          StaticInitializer.Init();
       }
 
@@ -73,12 +73,12 @@ namespace fmg.uwp.mosaic.wbmp {
 #if DEBUG
          String sufix = "; clipReg=" + clipRegion + "; drawBk=" + drawBk;
          if (modifiedCells == null)
-            LoggerSimple.Put("> AMosaicViewWBmp.Draw: all=" + toCheck.Count() + sufix);
+            LoggerSimple.Put("> MosaicViewWBmp.Draw: all=" + toCheck.Count() + sufix);
          else
          if (ReferenceEquals(modifiedCells, model.Matrix) || (modifiedCells.Count() == model.Matrix.Count))
-            LoggerSimple.Put("> AMosaicViewWBmp.Draw: all=" + modifiedCells.Count() + sufix);
+            LoggerSimple.Put("> MosaicViewWBmp.Draw: all=" + modifiedCells.Count() + sufix);
          else
-            LoggerSimple.Put("> AMosaicViewWBmp.Draw: cnt=" + modifiedCells.Count() + sufix);
+            LoggerSimple.Put("> MosaicViewWBmp.Draw: cnt=" + modifiedCells.Count() + sufix);
          int tmp = 0;
 #endif
 
@@ -199,7 +199,7 @@ namespace fmg.uwp.mosaic.wbmp {
          }
 
 #if DEBUG
-         LoggerSimple.Put("< AMosaicViewSwing.draw: cnt=" + tmp);
+         LoggerSimple.Put("< MosaicViewSwing.draw: cnt=" + tmp);
          LoggerSimple.Put("-------------------------------");
 #endif
 

@@ -11,7 +11,7 @@ namespace fmg.core.mosaic {
    /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
    /// <typeparam name="TImageInner">image type of flag/mine into mosaic field</typeparam>
    /// <typeparam name="TMosaicModel">mosaic data model</typeparam>
-   public abstract class AMosaicView<TImage, TImageInner, TMosaicModel>
+   public abstract class MosaicView<TImage, TImageInner, TMosaicModel>
                          : ImageView<TImage, TMosaicModel>,
                          IMosaicView<TImage, TImageInner, TMosaicModel>
       where TImage : class
@@ -19,7 +19,7 @@ namespace fmg.core.mosaic {
       where TMosaicModel : MosaicDrawModel<TImageInner>
    {
 
-      protected AMosaicView(TMosaicModel mosaicModel)
+      protected MosaicView(TMosaicModel mosaicModel)
          : base(mosaicModel)
       { }
 
@@ -32,7 +32,7 @@ namespace fmg.core.mosaic {
          else
             _modifiedCells.UnionWith(modifiedCells);
          if (_DEBUG_DRAW_FLOW)
-            LoggerSimple.Put("AMosaicView.Invalidate: " + ((modifiedCells==null) ? "all" : ("cnt=" + modifiedCells.Count()) + ": " + modifiedCells.Take(5).ToList()));
+            LoggerSimple.Put("MosaicView.Invalidate: " + ((modifiedCells==null) ? "all" : ("cnt=" + modifiedCells.Count()) + ": " + modifiedCells.Take(5).ToList()));
          Invalidate();
       }
 
@@ -41,7 +41,7 @@ namespace fmg.core.mosaic {
       /// <summary> repaint all </summary>
       protected override void DrawBody() {
          if (_DEBUG_DRAW_FLOW)
-            LoggerSimple.Put("AMosaicView.DrawBody: " + (!_modifiedCells.Any() ? "all" : ("cnt=" + _modifiedCells.Count()) + ": " + _modifiedCells.Take(5).ToList()));
+            LoggerSimple.Put("MosaicView.DrawBody: " + (!_modifiedCells.Any() ? "all" : ("cnt=" + _modifiedCells.Count()) + ": " + _modifiedCells.Take(5).ToList()));
          Draw(!_modifiedCells.Any() ? null : _modifiedCells);
          _modifiedCells.Clear();
       }

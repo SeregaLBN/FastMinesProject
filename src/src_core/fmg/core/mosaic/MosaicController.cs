@@ -16,7 +16,7 @@ namespace fmg.core.mosaic {
    /// <typeparam name="TImageInner">image type of flag/mine into mosaic field</typeparam>
    /// <typeparam name="TMosaicView">mosaic view</typeparam>
    /// <typeparam name="TMosaicModel">mosaic model</typeparam>
-   public abstract class AMosaicController<TImage, TImageInner, TMosaicView, TMosaicModel>
+   public abstract class MosaicController<TImage, TImageInner, TMosaicView, TMosaicModel>
                          : ImageController<TImage,              TMosaicView, TMosaicModel>
       where TImage : class
       where TImageInner : class
@@ -43,7 +43,7 @@ namespace fmg.core.mosaic {
       private bool _useUnknown = true;
 
 
-      protected AMosaicController(TMosaicView mosaicView)
+      protected MosaicController(TMosaicView mosaicView)
          : base(mosaicView)
       {
          mosaicView.Model.PropertyChanged += OnMosaicModelPropertyChanged;

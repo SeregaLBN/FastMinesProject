@@ -19,14 +19,14 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import fmg.common.geom.PointDouble;
-import fmg.core.mosaic.AMosaicController;
-import fmg.core.mosaic.AMosaicView;
+import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicDrawModel;
+import fmg.core.mosaic.MosaicView;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 
 /** MVC: controller. JavaFX implementation */
-public class MosaicCanvasController extends AMosaicController<Canvas, Image, MosaicCanvasView, MosaicDrawModel<Image>> {
+public class MosaicCanvasController extends MosaicController<Canvas, Image, MosaicCanvasView, MosaicDrawModel<Image>> {
 
    public MosaicCanvasController() {
       super(new MosaicCanvasView());
@@ -102,7 +102,7 @@ public class MosaicCanvasController extends AMosaicController<Canvas, Image, Mos
 
       @Override
       public void start(Stage stage) {
-         AMosaicView._DEBUG_DRAW_FLOW = true;
+         MosaicView._DEBUG_DRAW_FLOW = true;
          MosaicCanvasController ctrllr = new MosaicCanvasController();
 
          if (ThreadLocalRandom.current().nextBoolean()) {

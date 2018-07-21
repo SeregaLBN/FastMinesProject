@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 import fmg.common.Color;
 import fmg.common.geom.*;
-import fmg.core.mosaic.AMosaicView;
+import fmg.core.mosaic.MosaicView;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicDrawModel.BackgroundFill;
 import fmg.core.mosaic.cells.BaseCell;
@@ -28,10 +28,10 @@ import fmg.swing.utils.StaticInitializer;
  * @param <TImageInner> image type of flag/mine into mosaic field
  * @param <TMosaicModel> mosaic data model
  */
-public abstract class AMosaicViewSwing<TImage,
+public abstract class MosaicViewSwing<TImage,
                                        TImageInner,
                                        TMosaicModel extends MosaicDrawModel<TImageInner>>
-                extends AMosaicView<TImage, TImageInner, TMosaicModel>
+                extends MosaicView<TImage, TImageInner, TMosaicModel>
 {
 
    private Font _font;
@@ -40,7 +40,7 @@ public abstract class AMosaicViewSwing<TImage,
    private final Map<String /* text */, TextLayout> _mapTextLayout = new HashMap<>();
    protected boolean _alreadyPainted = false;
 
-   protected AMosaicViewSwing(TMosaicModel mosaicModel) {
+   protected MosaicViewSwing(TMosaicModel mosaicModel) {
       super(mosaicModel);
    }
 
@@ -95,12 +95,12 @@ public abstract class AMosaicViewSwing<TImage,
       if (_DEBUG_DRAW_FLOW) {
          String sufix = "; clipReg=" + clipRegion + "; drawBk=" + drawBk;
          if (modifiedCells == null)
-            System.out.println("> AMosaicViewSwing.draw: all=" + toCheck.size() + sufix);
+            System.out.println("> MosaicViewSwing.draw: all=" + toCheck.size() + sufix);
          else
          if ((modifiedCells == model.getMatrix()) || (modifiedCells.size() == model.getMatrix().size()))
-            System.out.println("> AMosaicViewSwing.draw: all=" + modifiedCells.size() + sufix);
+            System.out.println("> MosaicViewSwing.draw: all=" + modifiedCells.size() + sufix);
          else
-            System.out.println("> AMosaicViewSwing.draw: cnt=" + modifiedCells.size() + sufix);
+            System.out.println("> MosaicViewSwing.draw: cnt=" + modifiedCells.size() + sufix);
       }
       int tmp = 0;
 
@@ -250,7 +250,7 @@ public abstract class AMosaicViewSwing<TImage,
       /**/
 
       if (_DEBUG_DRAW_FLOW) {
-         System.out.println("< AMosaicViewSwing.draw: cnt=" + tmp);
+         System.out.println("< MosaicViewSwing.draw: cnt=" + tmp);
          System.out.println("-------------------------------");
       }
 

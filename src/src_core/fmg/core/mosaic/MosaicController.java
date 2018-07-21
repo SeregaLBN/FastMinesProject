@@ -17,7 +17,7 @@ import fmg.core.types.*;
  * @param <TMosaicView> mosaic view
  * @param <TMosaicModel> mosaic model
  */
-public abstract class AMosaicController<TImage, TImageInner,
+public abstract class MosaicController<TImage, TImageInner,
                                         TMosaicView extends IMosaicView<TImage, TImageInner, TMosaicModel>,
                                         TMosaicModel extends MosaicDrawModel<TImageInner>>
                 extends ImageController<TImage, TMosaicView, TMosaicModel>
@@ -43,7 +43,7 @@ public abstract class AMosaicController<TImage, TImageInner,
    private final PropertyChangeListener _mosaicModelListener = ev -> onMosaicModelPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
 
 
-   protected AMosaicController(TMosaicView mosaicView) {
+   protected MosaicController(TMosaicView mosaicView) {
       super(mosaicView);
       mosaicView.getModel().addListener(_mosaicModelListener);
    }

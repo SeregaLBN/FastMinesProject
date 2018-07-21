@@ -5,16 +5,16 @@ using fmg.core.img;
 namespace fmg.core.mosaic {
 
    /// <summary> MVC: mosaic image controller. Base implementation </summary>
-   public abstract class AMosaicImageController<TImage,          TMosaicView>
-                            : AMosaicController<TImage, Nothing, TMosaicView, MosaicAnimatedModel<Nothing>>,
+   public abstract class MosaicImageController<TImage,          TMosaicView>
+                            : MosaicController<TImage, Nothing, TMosaicView, MosaicAnimatedModel<Nothing>>,
                             IAnimatedController<TImage,          TMosaicView, MosaicAnimatedModel<Nothing>>
       where TImage : class
-      where TMosaicView : AMosaicView<TImage, Nothing, MosaicAnimatedModel<Nothing>>
+      where TMosaicView : MosaicView<TImage, Nothing, MosaicAnimatedModel<Nothing>>
    {
 
       private readonly AnimatedInnerController<TImage, TMosaicView, MosaicAnimatedModel<Nothing>> _innerController;
 
-      public AMosaicImageController(TMosaicView view)
+      public MosaicImageController(TMosaicView view)
          : base(view)
       {
          var model = Model;

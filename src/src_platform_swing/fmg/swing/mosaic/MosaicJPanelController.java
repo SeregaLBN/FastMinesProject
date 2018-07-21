@@ -8,15 +8,15 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 
-import fmg.core.mosaic.AMosaicController;
-import fmg.core.mosaic.AMosaicView;
+import fmg.core.mosaic.MosaicController;
+import fmg.core.mosaic.MosaicView;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
 import fmg.swing.utils.Cast;
 
 /** MVC: controller. SWING implementation */
-public class MosaicJPanelController extends AMosaicController<JPanel, Icon, MosaicJPanelView, MosaicDrawModel<Icon>> {
+public class MosaicJPanelController extends MosaicController<JPanel, Icon, MosaicJPanelView, MosaicDrawModel<Icon>> {
 
    private MosaicMouseListener _mosaicMouseListener;
 
@@ -121,7 +121,7 @@ public class MosaicJPanelController extends AMosaicController<JPanel, Icon, Mosa
 
    ////////////// TEST //////////////
    public static void main(String[] args) {
-      AMosaicView._DEBUG_DRAW_FLOW = true;
+      MosaicView._DEBUG_DRAW_FLOW = true;
       MosaicJPanelController ctrllr = new MosaicJPanelController();
 
       if (ThreadLocalRandom.current().nextBoolean()) {

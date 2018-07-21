@@ -12,7 +12,7 @@ namespace fmg.uwp.img.wbmp {
    /// Representable {@link fmg.core.types.EMosaic} as image.
    /// UWP impl over WriteableBitmap.
    /// </summary>
-   public class MosaicImg : AMosaicViewWBmp<Nothing, MosaicAnimatedModel<Nothing>> {
+   public class MosaicImg : MosaicViewWBmp<Nothing, MosaicAnimatedModel<Nothing>> {
 
       protected bool _useBackgroundColor = true;
 
@@ -55,7 +55,7 @@ namespace fmg.uwp.img.wbmp {
       /////////////////////////////////////////////////////////////////////////////////////////////////////
 
       /// <summary> Smile image controller implementation for <see cref="MosaicImg"/> </summary>
-      public class Controller : AMosaicImageController<WriteableBitmap, MosaicImg> {
+      public class Controller : MosaicImageController<WriteableBitmap, MosaicImg> {
 
          public Controller()
             : base(new MosaicImg())

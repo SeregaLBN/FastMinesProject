@@ -333,14 +333,14 @@
     <Compile Include="..\..\src\src_core\fmg\core\types\draw\PenBorder.cs">
       <Link>src_fmg.core\types\draw\PenBorder.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\mosaic\AMosaicImageController.cs">
-      <Link>src_fmg.core\mosaic\AMosaicImageController.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicImageController.cs">
+      <Link>src_fmg.core\mosaic\MosaicImageController.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\mosaic\AMosaicController.cs">
-      <Link>src_fmg.core\mosaic\AMosaicController.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicController.cs">
+      <Link>src_fmg.core\mosaic\MosaicController.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_core\fmg\core\mosaic\AMosaicView.cs">
-      <Link>src_fmg.core\mosaic\AMosaicView.cs</Link>
+    <Compile Include="..\..\src\src_core\fmg\core\mosaic\MosaicView.cs">
+      <Link>src_fmg.core\mosaic\MosaicView.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_core\fmg\core\mosaic\IMosaicView.cs">
       <Link>src_fmg.core\mosaic\IMosaicView.cs</Link>
