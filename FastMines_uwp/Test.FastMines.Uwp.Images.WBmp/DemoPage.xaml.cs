@@ -18,6 +18,8 @@ using fmg.core.img;
 using fmg.core.types;
 using fmg.uwp.img.wbmp;
 using DummyMosaicImageType = System.Object;
+using fmg.uwp.mosaic.wbmp;
+using fmg.core.mosaic;
 
 namespace Test.FastMines.Uwp.Images.WBmp {
 
@@ -46,10 +48,12 @@ namespace Test.FastMines.Uwp.Images.WBmp {
 #pragma warning restore CS0067
          public void Dispose() { throw new NotImplementedException(); }
       }
-      class DummyView : IImageView<WriteableBitmap, DummyModel> {
+      class DummyView<TImage> : IImageView<TImage, DummyModel>
+         where TImage : class
+      {
          public DummyModel Model => throw new NotImplementedException();
          public SizeDouble Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-         public WriteableBitmap Image => throw new NotImplementedException();
+         public TImage Image => throw new NotImplementedException();
 #pragma warning disable CS0067 // warning CS0067: The event is never used
          public event PropertyChangedEventHandler PropertyChanged; // TODO unusable
 #pragma warning restore CS0067
@@ -77,10 +81,15 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                                      .SelectMany(m => m)));
       }
       public void TestMosaicsImg() {
-         TestAppMosaic<Nothing, MosaicImg.Controller, MosaicImg, MosaicAnimatedModel<Nothing>>(() =>
+         TestAppMosaicImage(() =>
             EMosaicEx.GetValues().Select(e =>  new MosaicImg.Controller() { MosaicType = e })
           //new List<MosaicImg.Controller>() { new MosaicImg.Controller() { MosaicType = EMosaic.eMosaicSquare1 } }
          );
+      }
+      public void TestMosaicCanvasController() {
+         TestAppMosaicControl(() => {
+            return Enumerable.Repeat(MosaicCanvasController.Test(), 1).ToList();
+         });
       }
       public void TestFlag()  { TestAppSimple<Flag.Controller, Flag, FlagModel>(() => new Flag.Controller[]  { new Flag.Controller() }); }
       public void TestMine()  { TestAppAnimated<Mine.Controller, Logo, LogoModel>(() => new Mine.Controller[]  { new Mine.Controller() }); }
@@ -91,7 +100,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       public DemoPage() {
          _td = new TestDrawing();
 
-         _onCreateImages = new Action[] { TestLogos, TestMine, TestMosaicSkillImg, TestMosaicGroupImg, TestMosaicsImg, TestFlag, TestSmile };
+         _onCreateImages = new Action[] { TestLogos, TestMine, TestMosaicSkillImg, TestMosaicGroupImg, TestMosaicsImg, TestMosaicCanvasController, TestFlag, TestSmile };
 
          InitializeComponent();
 
@@ -112,7 +121,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          where TImageView : IImageView<WriteableBitmap, TImageModel>
          where TImageModel : IImageModel
       {
-         TestApp<DummyMosaicImageType, TImageController, TImageView, DummyView, TImageModel, DummyModel>(funcGetImages);
+         TestApp<WriteableBitmap, DummyMosaicImageType, TImageController, TImageView, DummyView<WriteableBitmap>, TImageModel, DummyModel>(funcGetImages);
       }
 
       void TestAppAnimated<TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
@@ -120,32 +129,32 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          where TImageView : IImageView<WriteableBitmap, TImageModel>
          where TImageModel : IAnimatedModel
       {
-         TestApp<DummyMosaicImageType, TImageController, TImageView, TImageView, TImageModel, TImageModel>(funcGetImages);
+         TestApp<WriteableBitmap, DummyMosaicImageType, TImageController, TImageView, TImageView, TImageModel, TImageModel>(funcGetImages);
       }
 
-      void TestAppMosaic<TMosaicImageInner, TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
-         where TMosaicImageInner : class
-         where TImageController : ImageController<WriteableBitmap, TImageView, TImageModel>
-         where TImageView : IImageView<WriteableBitmap, TImageModel>
-         where TImageModel : IAnimatedModel
-      {
-         TestApp<TMosaicImageInner, TImageController, TImageView, TImageView, TImageModel, TImageModel>(funcGetImages);
+      void TestAppMosaicImage(Func<IEnumerable<MosaicImg.Controller>> funcGetImages) {
+         TestApp<WriteableBitmap, Nothing, MosaicImg.Controller, MosaicImg, MosaicImg, MosaicAnimatedModel<Nothing>, MosaicAnimatedModel<Nothing>>(funcGetImages);
       }
 
-      void TestApp<TMosaicImageInner, TImageController, TImageView, TAImageView, TImageModel, TAnimatedModel>(Func<IEnumerable<TImageController>> funcGetImages)
+      void TestAppMosaicControl(Func<IEnumerable<MosaicCanvasController>> funcGetImages) {
+         TestApp<Canvas, WriteableBitmap, MosaicCanvasController, MosaicCanvasView, DummyView<Canvas>, MosaicDrawModel<WriteableBitmap>, DummyModel>(funcGetImages);
+      }
+
+      void TestApp<TImage, TMosaicImageInner, TImageController, TImageView, TAImageView, TImageModel, TAnimatedModel>(Func<IEnumerable<TImageController>> funcGetImages)
+         where TImage : class
          where TMosaicImageInner : class
-         where TImageController : ImageController<WriteableBitmap, TImageView, TImageModel>
-         where TImageView : IImageView<WriteableBitmap, TImageModel>
-         where TAImageView : IImageView<WriteableBitmap, TAnimatedModel>
+         where TImageController : ImageController<TImage, TImageView, TImageModel>
+         where TImageView : IImageView<TImage, TImageModel>
+         where TAImageView : IImageView<TImage, TAnimatedModel>
          where TImageModel : IImageModel
          where TAnimatedModel : IAnimatedModel
       {
          _panel.Children.Clear();
          List<TImageController> images = funcGetImages().ToList();
-         ApplicationView.GetForCurrentView().Title = _td.GetTitle<WriteableBitmap, TImageController, TImageView, TImageModel>(images);
+         ApplicationView.GetForCurrentView().Title = _td.GetTitle<TImage, TImageController, TImageView, TImageModel>(images);
 
          bool testTransparent = _td.Bl;
-         images.ForEach(img => _td.ApplySettings<WriteableBitmap, TMosaicImageInner, TImageView, TAImageView, TImageModel, TAnimatedModel>(img, testTransparent));
+         images.ForEach(img => _td.ApplySettings<TImage, TMosaicImageInner, TImageView, TAImageView, TImageModel, TAnimatedModel>(img, testTransparent));
 
          Image[,] imgControls;
 
@@ -154,7 +163,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
             double sizeH = _panel.ActualHeight; if (sizeH <= 0) sizeH = 100;
             RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
-            ATestDrawing.CellTilingResult<WriteableBitmap, TImageController, TImageView, TImageModel> ctr = _td.CellTiling<WriteableBitmap, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
+            ATestDrawing.CellTilingResult<TImage, TImageController, TImageView, TImageModel> ctr = _td.CellTiling<TImage, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
             var imgSize = ctr.imageSize;
             imgControls = new Image[ctr.tableSize.Width, ctr.tableSize.Height];
 
@@ -189,7 +198,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
             double sizeH = _panel.ActualHeight;
             RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
-            ATestDrawing.CellTilingResult<WriteableBitmap, TImageController, TImageView, TImageModel> ctr = _td.CellTiling<WriteableBitmap, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
+            ATestDrawing.CellTilingResult<TImage, TImageController, TImageView, TImageModel> ctr = _td.CellTiling<TImage, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
             var imgSize = ctr.imageSize;
 
             var callback = ctr.itemCallback;
@@ -208,7 +217,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          void onMousePressed() {
             testTransparent = _td.Bl;
             images.ForEach(img => {
-               _td.ApplySettings<WriteableBitmap, TImageController, TImageView, TAImageView, TImageModel, TAnimatedModel>(img, testTransparent);
+               _td.ApplySettings<TImage, TImageController, TImageView, TAImageView, TImageModel, TAnimatedModel>(img, testTransparent);
             });
             onCellTilingHandler();
          }

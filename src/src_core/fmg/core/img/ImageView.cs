@@ -65,7 +65,7 @@ namespace fmg.core.img {
          }
       }
 
-      public void Invalidate() {
+      public virtual void Invalidate() {
          if (_invalidate == EInvalidate.redrawing)
             return;
          //if (_invalidate == EInvalidate.needRedraw)

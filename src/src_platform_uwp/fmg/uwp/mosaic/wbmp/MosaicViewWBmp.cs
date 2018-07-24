@@ -40,6 +40,8 @@ namespace fmg.uwp.mosaic.wbmp {
       protected void Draw(IEnumerable<BaseCell> modifiedCells, RectDouble? clipRegion, bool drawBk) {
          // TODO ограничиваю рисование только границами своей фигуры
          //...
+         System.Diagnostics.Debug.Assert(!_alreadyPainted);
+         _alreadyPainted = true;
 
          var wbmp = Image;
 
