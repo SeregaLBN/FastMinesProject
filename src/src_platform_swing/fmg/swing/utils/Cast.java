@@ -2,9 +2,7 @@ package fmg.swing.utils;
 
 import java.util.List;
 
-/**
- * Приведение типов от платформо-независимых чистых Java классов fmg.common.geom.* к библиотечным SWING/AWT классам java.awt.*\java.swing.*
- */
+/** Приведение типов от платформо-независимых чистых Java классов fmg.common.geom.* к библиотечным SWING/AWT классам java.awt.*\java.swing.* */
 public final class Cast {
 
    public static        java.awt.Point       toPoint      (fmg.common.geom.Point p) { return new        java.awt.Point      (p.x, p.y); }

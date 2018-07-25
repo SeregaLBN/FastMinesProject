@@ -110,11 +110,13 @@ public final class NotifyPropertyChanged implements AutoCloseable /*, INotifyPro
    private Field findField(String propertyName) {
       Field field = _cachedFields.get(propertyName);
       if (field == null) {
-         field = getPlainFields(_owner)
-            .filter(fld -> fld.getName().equalsIgnoreCase(propertyName) ||
-                           fld.getName().equalsIgnoreCase("_" + propertyName))
-            .findAny()
-            .orElseThrow(()-> new RuntimeException("Property '" + propertyName + "' not found"));
+         Optional<Field> opt = getPlainFields(_owner)
+               .filter(fld -> fld.getName().equalsIgnoreCase(propertyName) ||
+                       fld.getName().equalsIgnoreCase("_" + propertyName))
+               .findAny();
+         if (!opt.isPresent())
+            throw new RuntimeException("Property '" + propertyName + "' not found");
+         field = opt.get();
          _cachedFields.put(propertyName, field);
       }
       return field;

@@ -1,0 +1,250 @@
+package fmg.android.draw.img;
+
+import java.util.Arrays;
+import java.util.List;
+
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PointF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+
+import fmg.common.Color;
+import fmg.common.HSV;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.SizeDouble;
+import fmg.core.img.ImageView;
+import fmg.core.img.LogoController;
+import fmg.core.img.LogoModel;
+import fmg.android.utils.Cast;
+import fmg.android.utils.StaticInitializer;
+
+/** Main logos image - base Logo image view implementation */
+public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
+
+   protected Logo() {
+      super(new LogoModel());
+   }
+
+   static {
+      StaticInitializer.init();
+   }
+
+   protected void draw(android.graphics.Canvas g) {
+      LogoModel lm = this.getModel();
+
+      // fill background
+      g.drawColor(Cast.toColor(lm.getBackgroundColor()));
+
+      List<PointDouble> rays0 = lm.getRays();
+      List<PointDouble> inn0  = lm.getInn();
+      List<PointDouble> oct0  = lm.getOct();
+
+      PointF[] rays = rays0.stream().map(p -> Cast.toPoint(p)).toArray(size -> new PointF[size]);
+      PointF[] inn  = inn0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new PointF[size]);
+      PointF[] oct  = oct0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new PointF[size]);
+      PointF center = new PointF((float)(getSize().width/2.0), (float)(getSize().height/2.0));
+
+      HSV[] hsvPalette = lm.getPalette();
+      Color[] palette = Arrays.stream(hsvPalette)
+         .map(hsv -> hsv.toColor())
+         .toArray(size -> new Color[size]);
+
+      // paint owner gradient rays
+      Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+//      paint.setStrokeWidth(2);
+//      paint.setColor(android.graphics.Color.RED);
+      paint.setStyle(Paint.Style.FILL);
+      paint.setAntiAlias(true);
+      for (int i=0; i<8; i++) {
+//         if (!lm.isUseGradient()) {
+            paint.setColor(Cast.toColor(hsvPalette[i].toColor().darker()));
+            fillPolygon(g, paint, rays[i], oct[i], inn[i], oct[(i+5)%8]);
+         /**
+         } else {
+            // emulate triangle gradient (see BmpLogo.cpp C++ source code)
+            // over linear gragients
+
+            g.setPaint(new GradientPaint(rays[i], palette[(i+1)%8], inn[i], palette[(i+6)%8]));
+            fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
+
+            PointF p1 = oct[i];
+            PointF p2 = oct[(i+5)%8];
+            PointF p = new PointF((p1.getX()+p2.getX())/2, (p1.getY()+p2.getY())/2); // середина линии oct[i]-oct[(i+5)%8]. По факту - пересечение линий rays[i]-inn[i] и oct[i]-oct[(i+5)%8]
+
+            Color clr;// = new Color(255,255,255,0); //  Cast.toColor(fmg.common.Color.Transparent);
+            if (true) {
+               HSV c1 = hsvPalette[(i+1)%8];
+               HSV c2 = hsvPalette[(i+6)%8];
+               double diff = c1.h - c2.h;
+               HSV cP = new HSV(c1.toColor());
+               cP.h += diff/2; // цвет в точке p (пересечений линий...)
+               cP.a = 0;
+               clr = Cast.toColor(cP.toColor());
+            }
+
+            g.setPaint(new GradientPaint(oct[i], palette[(i+3)%8], p, clr));
+            fillPolygon(g, rays[i], oct[i], inn[i]);
+
+            g.setPaint(new GradientPaint(oct[(i+5)%8], palette[(i+0)%8], p, clr));
+            fillPolygon(g, rays[i], oct[(i+5)%8], inn[i]);
+         }
+         /**/
+      }
+
+      // paint star perimeter
+      double zoomAverage = (lm.getZoomX() + lm.getZoomY())/2;
+      final double penWidth = lm.getBorderWidth() * zoomAverage;
+      paint.setStyle(Paint.Style.STROKE);
+//      g.setStroke(new BasicStroke((float)penWidth));
+      for (int i=0; i<8; i++) {
+         PointF p1 = rays[(i + 7)%8];
+         PointF p2 = rays[i];
+         paint.setColor(Cast.toColor(palette[i].darker()));
+         g.drawLine(p1.x, p1.y, p2.x, p2.y, paint);
+      }
+
+      // paint inner gradient triangles
+      paint.setStyle(Paint.Style.FILL);
+      for (int i=0; i<8; i++) {
+         /*
+         if (lm.isUseGradient()) {
+            PointF p1 = inn[(i+0)%8];
+            PointF p2 = inn[(i+3)%8];
+            PointF p = new PointF((p1.getX()+p2.getX())/2, (p1.getY()+p2.getY())/2); // center line of p1-p2
+            g.setPaint(new GradientPaint(
+                  p, palette[(i+6)%8],
+                  center, ((i & 1) == 1) ? Color.BLACK : Color.WHITE));
+         } else
+         */
+         {
+            paint.setColor(((i & 1) == 1)
+                    ? Cast.toColor(hsvPalette[(i + 6) % 8].toColor().brighter())
+                    : Cast.toColor(hsvPalette[(i + 6) % 8].toColor().darker()));
+         }
+         fillPolygon(g, paint, inn[(i + 0)%8], inn[(i + 3)%8], center);
+      }
+   }
+
+   private static void fillPolygon(android.graphics.Canvas g, Paint paint, PointF... p) {
+      Path path = new Path();
+      path.setFillType(Path.FillType.EVEN_ODD);
+      path.moveTo(p[0].x, p[0].y);
+      for (int i=1; i<p.length; ++i)
+         path.lineTo(p[i].x, p[i].y);
+      path.close();
+      g.drawPath(path, paint);
+   }
+
+   @Override
+   public void close() {
+      getModel().close();
+      super.close();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////
+   //    custom implementations
+   /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   /** Logo image view implementation over {@link android.graphics.Canvas} */
+   static class Canvas extends Logo<android.graphics.Canvas> {
+
+      private android.graphics.Bitmap _bmp;
+      private android.graphics.Canvas _canvas;
+
+      @Override
+      protected android.graphics.Canvas createImage() {
+         SizeDouble s = getModel().getSize();
+         if (_bmp == null)
+            _bmp = android.graphics.Bitmap.createBitmap((int)s.width, (int)s.height, android.graphics.Bitmap.Config.ARGB_8888);
+         else
+            _bmp.reconfigure((int)s.width, (int)s.height, android.graphics.Bitmap.Config.ARGB_8888);
+         _canvas = new android.graphics.Canvas(_bmp);
+         return _canvas;
+      }
+
+      @Override
+      protected void drawBody() { draw(_canvas); }
+
+      @Override
+      public void close() {
+         _bmp.recycle();
+         super.close();
+         _bmp = null;
+         _canvas = null;
+      }
+
+   }
+
+   /** Logo image view implementation over {@link android.graphics.Bitmap} */
+   static class Bitmap extends Logo<android.graphics.Bitmap> {
+
+      private android.graphics.Bitmap _bmp;
+      private android.graphics.Canvas _canvas;
+
+      @Override
+      protected android.graphics.Bitmap createImage() {
+         SizeDouble s = getModel().getSize();
+         if (_bmp == null)
+            _bmp = android.graphics.Bitmap.createBitmap((int)s.width, (int)s.height, android.graphics.Bitmap.Config.ARGB_8888);
+         else
+            _bmp.reconfigure((int)s.width, (int)s.height, android.graphics.Bitmap.Config.ARGB_8888);
+         _canvas = new android.graphics.Canvas(_bmp);
+         Drawable d = new BitmapDrawable(_bmp); // новый конструктор
+         return _bmp;
+      }
+
+      @Override
+      protected void drawBody() { draw(_canvas); }
+
+      @Override
+      public void close() {
+         _bmp.recycle();
+         super.close();
+         _bmp = null;
+         _canvas = null;
+      }
+
+   }
+
+   /** Logo image controller implementation for {@link Canvas} */
+   public static class ControllerCanvas extends LogoController<android.graphics.Canvas, Canvas> {
+
+      public ControllerCanvas() {
+         super(new Logo.Canvas());
+      }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
+   }
+
+   /** Logo image controller implementation for {@link Bitmap} */
+   public static class ControllerBitmap extends LogoController<android.graphics.Bitmap, Bitmap> {
+
+      public ControllerBitmap() {
+         super(new Logo.Bitmap());
+      }
+
+      @Override
+      public void close() {
+         getView().close();
+         super.close();
+      }
+
+   }
+
+   ////////////// TEST //////////////
+   public static List<LogoController<?,?>> testData() {
+      return Arrays.asList(new Logo.ControllerCanvas()
+                         , new Logo.ControllerBitmap()
+                         , new Logo.ControllerCanvas()
+                         , new Logo.ControllerBitmap()
+                         );
+   }
+   //////////////////////////////////
+
+}

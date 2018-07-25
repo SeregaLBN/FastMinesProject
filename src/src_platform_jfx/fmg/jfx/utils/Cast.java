@@ -3,9 +3,7 @@ package fmg.jfx.utils;
 import java.util.List;
 import java.util.stream.Stream;
 
-/**
- * Приведение типов от платформо-независимых чистых Java классов fmg.common.geom.* к библиотечным javafx классам
- */
+/** Приведение типов от платформо-независимых чистых Java классов fmg.common.geom.* к библиотечным javafx классам */
 public final class Cast {
 
    public static javafx.geometry.Point2D     toPoint      (fmg.common.geom.Point       p) { return new javafx.geometry.Point2D    (     p.x     ,      p.y); }

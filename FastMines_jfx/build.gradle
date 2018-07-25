@@ -1,6 +1,23 @@
 apply plugin: 'java'
-//apply plugin: 'application'
-//mainClassName = "fmg.jfx.Main"
+apply plugin: 'application'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+compileJava.options.encoding = 'UTF-8'
+
+group = 'FastMinesGame' // fmg
+
+defaultTasks 'clean', 'build'
+
+jar {
+    manifest {
+        attributes 'Vendor': 'SeregaLBN',
+                   'Build-Date': new Date().format("yyyy-MM-dd'T 'HH:mm:ss.SSSZZ")
+    }
+}
+
+mainClassName = "fmg.jfx.Demo"
 
 //version = '0.0.1'
 
@@ -14,10 +31,10 @@ sourceSets {
    }
 }
 
-//jar {
-//   manifest {
-//      attributes 'Main-Class': 'fmg.jfx.Main',
-//                 'Title': 'FastMines game - Java FX desktop application',
-//                 'Version': '0.0.1',
-//   }
-//}
+jar {
+   manifest {
+      attributes 'Main-Class': 'fmg.jfx.Demo',
+                 'Title': 'FastMines game - demo Java FX desktop application',
+                 'Version': '0.0.1'
+   }
+}
