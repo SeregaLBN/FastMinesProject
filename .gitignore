@@ -26,3 +26,5 @@ Mines*.stc
 *project.lock.json
 **/*FastMines.*.nuget.targets
 **/*FastMines.*.nuget.props
+local.properties
+*.iml

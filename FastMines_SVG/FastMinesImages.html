@@ -4,13 +4,36 @@
     <title>FastMines project: images demo</title>
 </head>
 <body>
-<div>
+<table border="0" style='width: 100%; height: 98%;'>
+<tbody>
+   <tr style='height: 15%;'>
+      <td rowspan="3" style='vertical-align: top; width: 1%; visibility: hidden;'>
 <svg xmlns='http://www.w3.org/2000/svg' version='1.1'
      style='border: solid 1px red;'
      preserveAspectRatio='none'
      onload='initSvg(evt)' />
 </svg>
-</div>
+      </td>
+      <td>
+         <strong>SVG source</strong>
+         <textarea id="svgSource" style='width: 100%; height: 97%; font-size: 7px'></textarea>
+      </td>
+   </tr>
+   <tr style='height: 75%;'>
+      <td>
+         <strong>XSLT to vector</strong>
+         <textarea id="xsltSource" style="width: 100%; height: 97%; font-size: 10px" ></textarea>
+         <button onclick='tryTransform()' style='float: right;'>Transform</button>
+      </td>
+   </tr>
+   <tr>
+      <td>
+         <strong>Vector source</strong>
+         <textarea id="vectorSource" style="width: 100%; height: 97%; font-size: 8px" ></textarea>
+      </td>
+   </tr>
+</tbody>
+</table>
 <!--
 delta HSV.h=<input id='hsv_h' type='number' name='quantity' min='0' max='359' onchange='onDeltaHsvChanged()'>
       HSV.s=<input id='hsv_s' type='number' name='quantity' min='0' max='255' onchange='onDeltaHsvChanged()'>
@@ -20,6 +43,7 @@ delta HSV.h=<input id='hsv_h' type='number' name='quantity' min='0' max='359' on
 <button onclick='makeSnapshot()'>snapshot</button>
 <br/>
 <a id='savePng' hidden='true'>save PNG</a>
+
 <script type='text/ecmascript'>
 
 //////////////////////////////////////
@@ -33,13 +57,13 @@ delta HSV.h=<input id='hsv_h' type='number' name='quantity' min='0' max='359' on
 var Settings = { };
 Promise.resolve().then(function() {
    Settings = {
-      width: 600,  // view width
-      height: 600, // view height
-      pad: 600*10/2020, // padding
+      width: 108,  // view width
+      height: 108, // view height
+      pad: 108*10/2020, // padding
 
       testedImageType: 0, // 0 - Logo image ; 1-MosaicSkill image
 
-      animated: true,
+      animated: !true,
       animeDirection: true, // clockwise: ↻ or ↺
       animatePeriod: 2000, // rotate period in msec
       /** the number of parts of which the one turn */
@@ -59,7 +83,7 @@ Promise.resolve().then(function() {
       useRotateTransforming: true,
       usePolarLightFgTransforming: true,
 
-      useRandom: true
+      useRandom: !true
    };
 
    if (Settings.useRandom) {
@@ -114,13 +138,17 @@ function random(upDiapazon) {
 function isNumeric(n) {
    return !isNaN(parseFloat(n)) && isFinite(n);
 }
-function round(n, digits) {
+
+const dpPnt = 4; // round decimal points for point
+const dpClr = 4; // round decimal points for color
+const dpTm  = 4; // round decimal points for time
+function round(n, decimalPoints) {
    if (arguments.length < 2)
-      digits = 2;
-   var multiplicator = Math.pow(10, digits);
+   decimalPoints = 2;
+   var multiplicator = Math.pow(10, decimalPoints);
    n = parseFloat((n * multiplicator).toFixed(11));
    var test = Math.round(n) / multiplicator;
-   return +(test.toFixed(digits));
+   return +(test.toFixed(decimalPoints));
 }
 var hasMinDiff = function(double1, double2) {
    return Math.abs(double1 - double2) < 0.0001;
@@ -455,8 +483,8 @@ class HSV {
    toString() {
       //return 'HSV[h=' + h + ', s=' + s + '%, v=' + v + '%, a=' + a + ']';
       return (this.a == 255)
-            ? 'HSV[h=' + round(this.h, 3) + ', s=' + round(this.s, 3) + '%, v=' + round(this.v, 3) + '%]'
-            : 'HSV[h=' + round(this.h, 3) + ', s=' + round(this.s, 3) + '%, v=' + round(this.v, 3) + '%, a=' + this.a + ']';
+            ? 'HSV[h=' + round(this.h, dpClr) + ', s=' + round(this.s, dpClr) + '%, v=' + round(this.v, dpClr) + '%]'
+            : 'HSV[h=' + round(this.h, dpClr) + ', s=' + round(this.s, dpClr) + '%, v=' + round(this.v, dpClr) + '%, a=' + this.a + ']';
    }
 }
 
@@ -556,8 +584,8 @@ class Point {
    }
 
    toString() {
-      return '{x: ' + round(this.x, 2)
-          + ', y: ' + round(this.y, 2)
+      return '{x: ' + round(this.x, dpPnt)
+          + ', y: ' + round(this.y, dpPnt)
           + '}';
    }
 
@@ -583,8 +611,8 @@ class Size {
    }
 
    toString() {
-      return '{w: ' + round(this.width , 2)
-          + ', h: ' + round(this.height, 2)
+      return '{w: ' + round(this.width , dpPnt)
+          + ', h: ' + round(this.height, dpPnt)
           + '}';
    }
 
@@ -644,10 +672,10 @@ class Bound {
    get topAndBottom() { return this.top + this.bottom; }
 
    toString() {
-       return '{left: '    + round(this.left  , 2)
-            + ', right: '  + round(this.right , 2)
-            + ', top: '    + round(this.top   , 2)
-            + ', bottom: ' + round(this.bottom, 2)
+       return '{left: '    + round(this.left  , dpPnt)
+            + ', right: '  + round(this.right , dpPnt)
+            + ', top: '    + round(this.top   , dpPnt)
+            + ', bottom: ' + round(this.bottom, dpPnt)
             + '}';
    }
 
@@ -1280,7 +1308,7 @@ class Logo extends ImageView {
          rcNode.setAttributeNS(null, 'width' , size.width);
          rcNode.setAttributeNS(null, 'height', size.height);
          var bc = new HSV(backgroundColor);
-         rcNode.setAttributeNS(null, 'fill'  , 'hsla(' + round(bc.h, 2) + ', ' + round(bc.s, 2) + '%, ' + round(bc.v, 2) + '%, ' + round(bc.a/255.0, 2) + ')');
+         rcNode.setAttributeNS(null, 'fill'  , 'hsla(' + round(bc.h, dpClr) + ', ' + round(bc.s, dpClr) + '%, ' + round(bc.v, dpClr) + '%, ' + round(bc.a/255.0, dpClr) + ')');
          svg.appendChild(rcNode);
       }
 
@@ -1298,7 +1326,7 @@ class Logo extends ImageView {
             cnxt[name] = [];
             for (var i=0; i<8; ++i) {
                var pathNode = svgDoc.createElementNS(svgNS, 'path');
-            //pathNode.setAttributeNS(null, 'fill-opacity'  , round(foregroundColor.a/255.0, 2));
+            //pathNode.setAttributeNS(null, 'fill-opacity'  , round(foregroundColor.a/255.0, dpClr));
                if (useGradient)
                   pathNode.setAttributeNS(null, 'fill', 'url(#' + name + i + ')');
 
@@ -1387,14 +1415,14 @@ class Logo extends ImageView {
          var stopNodeRun = childNodes.find(function(x) { return x.getAttribute('offset') === '0%'; });
          var stopNodeEnd = childNodes.find(function(x) { return x.getAttribute('offset') === '100%'; });
          if (!startClr.isOpaque)
-            stopNodeRun.setAttributeNS(null, 'stop-opacity', round(startClr.a/255.0, 2));
+            stopNodeRun.setAttributeNS(null, 'stop-opacity', round(startClr.a/255.0, dpClr));
          if (!endClr.isOpaque)
-            stopNodeEnd.setAttributeNS(null, 'stop-opacity', round(endClr.a/255.0, 2));
+            stopNodeEnd.setAttributeNS(null, 'stop-opacity', round(endClr.a/255.0, dpClr));
          if (!animated) {
-            linearGradientNode.setAttributeNS(null, 'x1', round(start.x, 2));
-            linearGradientNode.setAttributeNS(null, 'y1', round(start.y, 2));
-            linearGradientNode.setAttributeNS(null, 'x2', round(end.x  , 2));
-            linearGradientNode.setAttributeNS(null, 'y2', round(end.y  , 2));
+            linearGradientNode.setAttributeNS(null, 'x1', round(start.x, dpPnt));
+            linearGradientNode.setAttributeNS(null, 'y1', round(start.y, dpPnt));
+            linearGradientNode.setAttributeNS(null, 'x2', round(end.x  , dpPnt));
+            linearGradientNode.setAttributeNS(null, 'y2', round(end.y  , dpPnt));
 
             stopNodeRun.setAttributeNS(null, 'stop-color', '#' + startClr.asHexString.substr(2));
             stopNodeEnd.setAttributeNS(null, 'stop-color', '#' +   endClr.asHexString.substr(2));
@@ -1407,20 +1435,20 @@ class Logo extends ImageView {
             var animateNodeEndColor = [...stopNodeEnd.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'stop-color'; });
 
             // shape coordinates
-            addAttributeValue(animateNodeX1      , 'values', round(start.x, 2));
-            addAttributeValue(animateNodeY1      , 'values', round(start.y, 2));
-            addAttributeValue(animateNodeX2      , 'values', round(end.x  , 2));
-            addAttributeValue(animateNodeY2      , 'values', round(end.y  , 2));
+            addAttributeValue(animateNodeX1      , 'values', round(start.x, dpPnt));
+            addAttributeValue(animateNodeY1      , 'values', round(start.y, dpPnt));
+            addAttributeValue(animateNodeX2      , 'values', round(end.x  , dpPnt));
+            addAttributeValue(animateNodeY2      , 'values', round(end.y  , dpPnt));
             addAttributeValue(animateNodeRunColor, 'values', '#' + startClr.asHexString.substr(2));
             addAttributeValue(animateNodeEndColor, 'values', '#' +   endClr.asHexString.substr(2));
 
             if (useKeyTimes) { // time stamps
-               addAttributeValue(animateNodeX1      , 'keyTimes', round(keyTime, 4));
-               addAttributeValue(animateNodeY1      , 'keyTimes', round(keyTime, 4));
-               addAttributeValue(animateNodeX2      , 'keyTimes', round(keyTime, 4));
-               addAttributeValue(animateNodeY2      , 'keyTimes', round(keyTime, 4));
-               addAttributeValue(animateNodeRunColor, 'keyTimes', round(keyTime, 4));
-               addAttributeValue(animateNodeEndColor, 'keyTimes', round(keyTime, 4));
+               addAttributeValue(animateNodeX1      , 'keyTimes', round(keyTime, dpTm));
+               addAttributeValue(animateNodeY1      , 'keyTimes', round(keyTime, dpTm));
+               addAttributeValue(animateNodeX2      , 'keyTimes', round(keyTime, dpTm));
+               addAttributeValue(animateNodeY2      , 'keyTimes', round(keyTime, dpTm));
+               addAttributeValue(animateNodeRunColor, 'keyTimes', round(keyTime, dpTm));
+               addAttributeValue(animateNodeEndColor, 'keyTimes', round(keyTime, dpTm));
             }
          }
          // g.setFill(new LinearGradient(start.getX(), start.getY(),
@@ -1436,7 +1464,7 @@ class Logo extends ImageView {
       var drawPolygon = function(/*string*/ name, /*int*/ i, /*Point[]*/ ...polygon) {
          var pathNode = cnxt[name][i];
 
-         var pathD = 'M' + polygon.map(function(p) { return round(p.x, 2) + ' ' + round(p.y, 2); }).join(' L')  + ' Z';
+         var pathD = 'M' + polygon.map(function(p) { return round(p.x, dpPnt) + ' ' + round(p.y, dpPnt); }).join(' L')  + ' Z';
          if (!animated) {
             pathNode.setAttributeNS(null, 'd', pathD);
          } else {
@@ -1444,7 +1472,7 @@ class Logo extends ImageView {
             addAttributeValue(animateNodeD, 'values', pathD); // shape coordinates
 
             if (useKeyTimes)
-               addAttributeValue(animateNodeD, 'keyTimes', round(keyTime, 4)); // time stamps
+               addAttributeValue(animateNodeD, 'keyTimes', round(keyTime, dpTm)); // time stamps
          }
 
          return pathNode;
@@ -1556,11 +1584,11 @@ class Logo extends ImageView {
                addAttributeValue(animateNodeY2    , 'values', p2.y);
                if (useKeyTimes) {
                   // time stamps
-                  addAttributeValue(animateNodeStroke, 'keyTimes', round(keyTime, 4));
-                  addAttributeValue(animateNodeX1    , 'keyTimes', round(keyTime, 4));
-                  addAttributeValue(animateNodeY1    , 'keyTimes', round(keyTime, 4));
-                  addAttributeValue(animateNodeX2    , 'keyTimes', round(keyTime, 4));
-                  addAttributeValue(animateNodeY2    , 'keyTimes', round(keyTime, 4));
+                  addAttributeValue(animateNodeStroke, 'keyTimes', round(keyTime, dpTm));
+                  addAttributeValue(animateNodeX1    , 'keyTimes', round(keyTime, dpTm));
+                  addAttributeValue(animateNodeY1    , 'keyTimes', round(keyTime, dpTm));
+                  addAttributeValue(animateNodeX2    , 'keyTimes', round(keyTime, dpTm));
+                  addAttributeValue(animateNodeY2    , 'keyTimes', round(keyTime, dpTm));
                }
             }
          }
@@ -1675,7 +1703,7 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
          rcNode.setAttributeNS(null, 'width' , size.width);
          rcNode.setAttributeNS(null, 'height', size.height);
          var bc = new HSV(backgroundColor);
-         rcNode.setAttributeNS(null, 'fill'  , 'hsla(' + round(bc.h, 2) + ', ' + round(bc.s, 2) + '%, ' + round(bc.v, 2) + '%, ' + round(bc.a/255.0, 2) + ')');
+         rcNode.setAttributeNS(null, 'fill'  , 'hsla(' + round(bc.h, dpClr) + ', ' + round(bc.s, dpClr) + '%, ' + round(bc.v, dpClr) + '%, ' + round(bc.a/255.0, dpClr) + ')');
          svg.appendChild(rcNode);
       }
 
@@ -1693,8 +1721,8 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
             var pathNode = svgDoc.createElementNS(svgNS, 'path');
             pathNode.setAttributeNS(null, 'stroke'        , '#' + borderColor.asHexString.substr(2));
             pathNode.setAttributeNS(null, 'stroke-width'  , borderWidth);
-          //pathNode.setAttributeNS(null, 'stroke-opacity', round(borderColor.a/255.0, 2));
-            pathNode.setAttributeNS(null, 'fill-opacity'  , round(foregroundColor.a/255.0, 2));
+          //pathNode.setAttributeNS(null, 'stroke-opacity', round(borderColor.a/255.0, dpClr));
+            pathNode.setAttributeNS(null, 'fill-opacity'  , round(foregroundColor.a/255.0, dpClr));
 
             if (animated) {
                // examples: <animate attributeName='d' dur='2000ms' repeatCount='indefinite' calcMode='linear' ... />
@@ -1714,7 +1742,7 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
          var pathNode = cnxt.shapes[i];
          var polygon = shapes[i].polygon;
          var color = shapes[i].color;
-         var pathD = 'M' + polygon.map(function(p) { return round(p.x, 2) + ' ' + round(p.y, 2); }).join(' L')  + ' Z';
+         var pathD = 'M' + polygon.map(function(p) { return round(p.x, dpPnt) + ' ' + round(p.y, dpPnt); }).join(' L')  + ' Z';
          var pathFillColor = '#' + color.asHexString.substr(2);
          if (!animated) {
             pathNode.setAttributeNS(null, 'd', pathD);
@@ -1729,8 +1757,8 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
 
             // time stamps
             if (useKeyTimes) {
-               addAttributeValue(animateNodeD   , 'keyTimes', round(keyTime, 4));
-               addAttributeValue(animateNodeFill, 'keyTimes', round(keyTime, 4));
+               addAttributeValue(animateNodeD   , 'keyTimes', round(keyTime, dpTm));
+               addAttributeValue(animateNodeFill, 'keyTimes', round(keyTime, dpTm));
             }
          }
       }
@@ -1742,8 +1770,8 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
             var pathNode = svgDoc.createElementNS(svgNS, 'path');
             pathNode.setAttributeNS(null, 'stroke'        , '#' + li.clr.asHexString.substr(2));
             pathNode.setAttributeNS(null, 'stroke-width'  , li.penWidht);
-          //pathNode.setAttributeNS(null, 'stroke-opacity', round(li.clr.a/255.0, 2));
-          //pathNode.setAttributeNS(null, 'fill-opacity'  , round(li.clr.a/255.0, 2));
+          //pathNode.setAttributeNS(null, 'stroke-opacity', round(li.clr.a/255.0, dpClr));
+          //pathNode.setAttributeNS(null, 'fill-opacity'  , round(li.clr.a/255.0, dpClr));
 
             if (animated) {
                // examples: <animate attributeName='d' dur='2000ms' repeatCount='indefinite' calcMode='discrete' ... />
@@ -1759,14 +1787,14 @@ class MosaicSkillOrGroupView extends WithBurgerMenuView {
          var pathNode = cnxt.menus[i];
          var from = menuShapes[i].from;
          var to   = menuShapes[i].to;
-         var pathD = 'M ' + round(from.x, 2) + ' ' + round(from.y, 2) + ' L ' + round(to.x, 2) + ' ' + round(to.y, 2);
+         var pathD = 'M ' + round(from.x, dpPnt) + ' ' + round(from.y, dpPnt) + ' L ' + round(to.x, dpPnt) + ' ' + round(to.y, dpPnt);
          if (!animated) {
             pathNode.setAttributeNS(null, 'd', pathD);
          } else {
             var animateNodeD = [...pathNode.childNodes].find(function(x) { return x.getAttribute('attributeName') === 'd'; });
             addAttributeValue(animateNodeD, 'values', pathD); // shape coordinates
             if (useKeyTimes)
-               addAttributeValue(animateNodeD, 'keyTimes', round(keyTime, 4)); // time stamps
+               addAttributeValue(animateNodeD, 'keyTimes', round(keyTime, dpTm)); // time stamps
          }
       }
 
@@ -2061,11 +2089,15 @@ class LogoControllerSvg extends LogoController {
    constructor(/* own SVG */ svg, /* SVG document */ svgDoc) { super(new LogoSvg(svg, svgDoc)); }
 
    getFileName() {
-      return 'Logo.'
-         + ESkillLevel.getName(this.Model.mosaicSkill)
-       //+ '.' + this.Model.width + 'x' + this.Model.height
-       //+ '.iters' + this.Model.totalFrames
-         + '.' + (this.Model.animeDirection ? 'clockwise' : 'counterclockwise');
+      var m = this.Model;
+      var res = 'Logo';
+      res += '.' + m.size.width + 'x' + m.size.height;
+      if (m.animated) {
+         res += '.' + m.totalFrames + 'frames';
+         res += '.' + round(m.animatePeriod/1000, 2) + 'sec';
+         res += '.' + (m.animeDirection ? 'clockwise' : 'counterclockwise');
+      }
+      return res;
    }
 
 }
@@ -2098,11 +2130,15 @@ class MosaicSkillImgControllerSvg extends MosaicSkillController {
    }
 
    getFileName() {
-      return 'MosaicSkillImg.'
-         + ESkillLevel.getName(this.Model.mosaicSkill)
-       //+ '.' + this.Model.width + 'x' + this.Model.height
-       //+ '.iters' + this.Model.totalFrames
-         + '.' + (this.Model.animeDirection ? 'clockwise' : 'counterclockwise');
+      var m = this.Model;
+      var res = 'MosaicSkillImg.' + ESkillLevel.getName(m.mosaicSkill);
+      res += '.' + m.size.width + 'x' + m.size.height;
+      if (m.animated) {
+         res += '.' + m.totalFrames + 'frames';
+         res += '.' + round(m.animatePeriod/1000, 2) + 'sec';
+         res += '.' + (m.animeDirection ? 'clockwise' : 'counterclockwise');
+      }
+      return res;
    }
 
 }
@@ -2115,6 +2151,18 @@ function initSvg(evt) {
 }
 
 function work(svg, svgDoc) {
+   /** /
+   {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>');
+      var hsv = new HSV();
+      for (var i=0; i<=360; ++i) {
+         hsv.h = i;
+         console.log('<item android:color="#' + hsv.toColor().asHexString + '" android:offset="' + round(i/360, 4) + '" />');
+      }
+      console.log('<<<<<<<<<<<<<<<<<<<<<<<');
+   }
+   /**/
+
    svg.setAttributeNS(null, 'viewBox', '0 0 ' + Settings.width + ' ' + Settings.height);
    svg.setAttributeNS(null, 'width'  , Settings.width);
    svg.setAttributeNS(null, 'height' , Settings.height);
@@ -2130,6 +2178,7 @@ function work(svg, svgDoc) {
       cntrllr = new MosaicSkillImgControllerSvg(Settings.mosaicSkill, svg, svgDoc);
       break;
    }
+   Settings.currentImageController = cntrllr;
 
    cntrllr.useRotateTransforming(Settings.useRotateTransforming);
    cntrllr.usePolarLightFgTransforming(Settings.usePolarLightFgTransforming);
@@ -2169,7 +2218,40 @@ function work(svg, svgDoc) {
    else
       cntrllr.image; // call draw
 
-   console.log(cntrllr.getFileName() + '.svg' + '\n' + cntrllr.View.getSvgContent());
+   var svgContent = cntrllr.View.getSvgContent();
+   console.log(cntrllr.getFileName() + '.svg' + '\n' + svgContent);
+   document.getElementById('svgSource').value = svgContent;
+
+   onLoadXmlDoc('logo_svg_to_vector_android.xsl')
+      .then(
+         function(resp) {
+            document.getElementById('xsltSource').value = resp.xml;
+
+            var xsl = resp.xmlDoc;
+            var xml = parseXml(svgContent);
+            var xmlOut = xslTransform(xml, xsl);
+
+            document.getElementById('vectorSource').value = new XMLSerializer().serializeToString(xmlOut);
+         },
+         function(err) {
+            document.getElementById('xsltSource').value = JSON.stringify(err, null, 3);
+         }
+      ).catch(function(err) {
+         document.getElementById('vectorSource').value = err.toString();
+         console.error(err);
+      });
+}
+
+function tryTransform() {
+   try {
+      var xsl = parseXml(document.getElementById('xsltSource').value);
+      var xml = parseXml(document.getElementById('svgSource').value);
+      var xmlOut = xslTransform(xml, xsl);
+
+      document.getElementById('vectorSource').value = new XMLSerializer().serializeToString(xmlOut);
+   } catch(ex) {
+      document.getElementById('vectorSource').value = ex.toString();
+   }
 }
 
 function makeSnapshot() {
@@ -2186,14 +2268,16 @@ function makeSnapshot() {
     var image = new Image();
     image.src = imgsrc;
     image.onload = function() {
-        context.drawImage(image, 0, 0);
-        var canvasdata = canvas.toDataURL('image/png');
+      context.drawImage(image, 0, 0);
+      var canvasdata = canvas.toDataURL('image/png');
 
-        var a = document.getElementById('savePng');
-        a.href = canvasdata;
-        a.download = 'export_' + Date.now() + '.png';
-        a.hidden = false;
-        //canvas.parentNode.removeChild(canvas);
+      var a = document.getElementById('savePng');
+      a.href = canvasdata;
+      a.download = !Settings.currentImageController
+                        ? 'export_' + Date.now()                        + '.png'
+                        : Settings.currentImageController.getFileName() + '.png';
+      a.hidden = false;
+      //canvas.parentNode.removeChild(canvas);
     };
 }
 
@@ -2233,6 +2317,52 @@ function getSvgContent(svg) {
 
    return format(clean(), 1).outerHTML;
 }
+
+function parseXml(xmlStr) {
+   return new window.DOMParser().parseFromString(xmlStr, "text/xml");
+}
+
+function onLoadXmlDoc(filename) {
+   return new Promise(function(resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', filename);
+      //try {xhr.responseType = "msxml-document"} catch(err) {} // Helping IE11
+      xhr.addEventListener("error", function(ev) {
+         reject(
+               {
+                  failed           : true,
+                  requestReadyState: xhr.readyState,
+                  httpStatus       : xhr.status,
+                  httpStatusText   : xhr.statusText,
+                  responseHeaders  : xhr.getAllResponseHeaders(),
+                  response         : xhr.response
+               });
+      });
+      xhr.addEventListener("load", function(ev) {
+         var contentType = xhr.getResponseHeader("Content-Type");
+         resolve(
+               {
+                  failed             : false,
+                  requestReadyState  : xhr.readyState,
+                  httpStatus         : xhr.status,
+                  httpStatusText     : xhr.statusText,
+                  responseHeaders    : xhr.getAllResponseHeaders(),
+                  responseContentType: contentType,
+                  response           : xhr.response,
+                  xml                : (contentType === 'text/xml') ? xhr.responseText : null,
+                  xmlDoc             : (contentType === 'text/xml') ? xhr.responseXML  : null
+               });
+      });
+      xhr.send();
+   });
+}
+
+function xslTransform(xml, xsl) {
+   var xsltProcessor = new XSLTProcessor();
+   xsltProcessor.importStylesheet(xsl);
+   return xsltProcessor.transformToFragment(xml, document);
+}
+
 </script>
 </body>
 </html>

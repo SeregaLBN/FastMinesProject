@@ -21,9 +21,9 @@ namespace Test.FastMines.Ava.Images {
          public event PropertyChangedEventHandler PropertyChanged;
          protected readonly NotifyPropertyChanged _notifier;
 
-         public Modelka(IControl img) {
+         public Modelka(IControl imgCtrl) {
             _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
-            var mosaicImg = new MosaicGroupImg.ControllerRenderTargetBmp(null, img);
+            var mosaicImg = new MosaicGroupImg.ControllerRenderTargetBmp(null /*EMosaicGroup.eOthers*/, imgCtrl);
             mosaicImg.UseRotateTransforming(true);
             mosaicImg.UsePolarLightFgTransforming(true);
             var mosaicModel = mosaicImg.Model;
@@ -33,7 +33,7 @@ namespace Test.FastMines.Ava.Images {
             mosaicImg.PropertyChanged += (sender, ev) => {
                if (ev.PropertyName == nameof(MosaicImg.Image)) {
                   _notifier.OnPropertyChanged(nameof(Modelka.Bitmap));
-                  Dispatcher.UIThread.InvokeAsync(() => img.InvalidateVisual());//.Wait()
+                  imgCtrl.InvalidateVisual(); // Dispatcher.UIThread.InvokeAsync(() => img.InvalidateVisual());//.Wait()
                }
             };
          }
@@ -55,9 +55,9 @@ namespace Test.FastMines.Ava.Images {
       private void InitializeComponent() {
          AvaloniaXamlLoaderPortableXaml.Load(this);
 
-         IControl img = ((StackPanel)Content).Children.First();
+         IControl imgCtrl = ((StackPanel)Content).Children.First();
 
-         _viewModel = new Modelka(img);
+         _viewModel = new Modelka(imgCtrl);
       }
 
    }

@@ -10,7 +10,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageModel;
 import fmg.core.img.IImageView;
 
-/** Internal wrapper-image imlementation over javax.swing.Icon */
+/** Internal wrapper-image implementation over javax.swing.Icon */
 class IconSwing implements AutoCloseable {
 
    private IImageView<javax.swing.Icon, ? extends IImageModel> _imageView;
