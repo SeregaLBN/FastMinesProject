@@ -9,7 +9,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageModel;
 import fmg.core.img.IImageView;
 
-/** Internal wrapper-image imlementation over java.awt.Image */
+/** Internal wrapper-image implementation over java.awt.Image */
 class ImageAwt {
 
    private IImageView<java.awt.Image, ? extends IImageModel> _imageView;

@@ -3,16 +3,15 @@ package fmg.android.draw.img;
 import java.util.Arrays;
 import java.util.List;
 
+import android.graphics.DrawFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff;
 
 import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.SizeDouble;
 import fmg.core.img.ImageView;
 import fmg.core.img.LogoController;
 import fmg.core.img.LogoModel;
@@ -34,7 +33,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
       LogoModel lm = this.getModel();
 
       // fill background
-      g.drawColor(Cast.toColor(lm.getBackgroundColor()));
+      g.drawColor(Cast.toColor(lm.getBackgroundColor()), PorterDuff.Mode.CLEAR);
 
       List<PointDouble> rays0 = lm.getRays();
       List<PointDouble> inn0  = lm.getInn();
@@ -149,29 +148,20 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
    /** Logo image view implementation over {@link android.graphics.Canvas} */
    static class Canvas extends Logo<android.graphics.Canvas> {
 
-      private android.graphics.Bitmap _bmp;
-      private android.graphics.Canvas _canvas;
+      private CanvasBmp wrapper = new CanvasBmp();
 
       @Override
       protected android.graphics.Canvas createImage() {
-         SizeDouble s = getModel().getSize();
-         if (_bmp == null)
-            _bmp = android.graphics.Bitmap.createBitmap((int)s.width, (int)s.height, android.graphics.Bitmap.Config.ARGB_8888);
-         else
-            _bmp.reconfigure((int)s.width, (int)s.height, android.graphics.Bitmap.Config.ARGB_8888);
-         _canvas = new android.graphics.Canvas(_bmp);
-         return _canvas;
+         wrapper.create(getModel().getSize());
+         return wrapper.getCanvas();
       }
 
       @Override
-      protected void drawBody() { draw(_canvas); }
+      protected void drawBody() { draw(wrapper.getCanvas()); }
 
       @Override
       public void close() {
-         _bmp.recycle();
-         super.close();
-         _bmp = null;
-         _canvas = null;
+         wrapper.close();
       }
 
    }
@@ -179,30 +169,20 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
    /** Logo image view implementation over {@link android.graphics.Bitmap} */
    static class Bitmap extends Logo<android.graphics.Bitmap> {
 
-      private android.graphics.Bitmap _bmp;
-      private android.graphics.Canvas _canvas;
+      private CanvasBmp wrapper = new CanvasBmp();
 
       @Override
       protected android.graphics.Bitmap createImage() {
-         SizeDouble s = getModel().getSize();
-         if (_bmp == null)
-            _bmp = android.graphics.Bitmap.createBitmap((int)s.width, (int)s.height, android.graphics.Bitmap.Config.ARGB_8888);
-         else
-            _bmp.reconfigure((int)s.width, (int)s.height, android.graphics.Bitmap.Config.ARGB_8888);
-         _canvas = new android.graphics.Canvas(_bmp);
-         Drawable d = new BitmapDrawable(_bmp); // новый конструктор
-         return _bmp;
+         wrapper.create(getModel().getSize());
+         return wrapper.getBmp();
       }
 
       @Override
-      protected void drawBody() { draw(_canvas); }
+      protected void drawBody() { draw(wrapper.getCanvas()); }
 
       @Override
       public void close() {
-         _bmp.recycle();
-         super.close();
-         _bmp = null;
-         _canvas = null;
+         wrapper.close();
       }
 
    }

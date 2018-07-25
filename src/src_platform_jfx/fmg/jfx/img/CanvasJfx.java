@@ -7,7 +7,7 @@ import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageModel;
 import fmg.core.img.IImageView;
 
-/** Internal wrapper-image imlementation over javafx.scene.canvas.Canvas */
+/** Internal wrapper-image implementation over javafx.scene.canvas.Canvas */
 public class CanvasJfx {
 
    private IImageView<?, ? extends IImageModel> _imageView;

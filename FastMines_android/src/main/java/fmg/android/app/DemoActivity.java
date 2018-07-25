@@ -5,16 +5,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class CustomViewActivity extends Activity implements View.OnClickListener {
+public class DemoActivity extends Activity implements View.OnClickListener {
 
-   private CustomView customView;
+   private DemoView demoView;
    private Button changeColorBtn;
 
    public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
-      setContentView(R.layout.custom_view);
+      setContentView(R.layout.demo_view);
 
-      customView = (CustomView)findViewById(R.id.custom_view);
+      demoView = (DemoView)findViewById(R.id.demo_view);
       changeColorBtn = (Button)findViewById(R.id.change_color);
       changeColorBtn.setOnClickListener(this);
 
@@ -22,7 +22,7 @@ public class CustomViewActivity extends Activity implements View.OnClickListener
 
    @Override
    public void onClick(View view) {
-      customView.changeColor();
+      demoView.onNextImages();
    }
 
 }

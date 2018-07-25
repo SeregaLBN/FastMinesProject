@@ -98,11 +98,11 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          _page.Content = _panel = new Canvas();
 
          SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-         SystemNavigationManager.GetForCurrentView().BackRequested += (s, ev) => { OnNewImages(); ev.Handled = true; };
+         SystemNavigationManager.GetForCurrentView().BackRequested += (s, ev) => { OnNextImages(); ev.Handled = true; };
          if (ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons")) {
-            HardwareButtons.BackPressed += (s, ev) => { OnNewImages(); ev.Handled = true; };
+            HardwareButtons.BackPressed += (s, ev) => { OnNextImages(); ev.Handled = true; };
          }
-         _page.Loaded   += (s, ev) => OnNewImages();
+         _page.Loaded   += (s, ev) => OnNextImages();
          _page.Unloaded += (s, ev) => _onCloseImages();
       }
 
@@ -234,7 +234,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       }
       #endregion
 
-      void OnNewImages() {
+      void OnNextImages() {
          _onCloseImages?.Invoke();
 
          Action onCreate = _onCreateImages[_nextCreateImagesIndex];

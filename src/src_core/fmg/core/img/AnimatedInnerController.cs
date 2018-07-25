@@ -62,6 +62,8 @@ namespace fmg.core.img {
             }
             break;
          case nameof(IAnimatedModel.CurrentFrame):
+            if (_transformers.Count == 0)
+               System.Diagnostics.Debug.WriteLine("No any transformer! " + GetType().Name); // зачем работать анимации если нет трансформеров модели
             foreach (var item in _transformers)
                item.Value.Execute(_model);
             break;

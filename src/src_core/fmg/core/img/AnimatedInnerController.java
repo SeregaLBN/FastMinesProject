@@ -70,6 +70,8 @@ public final class AnimatedInnerController<TImage,
          }
          break;
       case IAnimatedModel.PROPERTY_CURRENT_FRAME:
+         if (_transformers.size() == 0)
+            System.err.println("No any transformer! " + getClass().getSimpleName()); // зачем работать анимации если нет трансформеров модели
          _transformers.forEach((k,v) -> v.execute(_model));
          break;
       }

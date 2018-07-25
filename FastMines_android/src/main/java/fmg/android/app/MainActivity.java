@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import fmg.core.types.ClickCellResult;
-
 public class MainActivity extends AppCompatActivity {
 
    @Override
@@ -13,7 +11,7 @@ public class MainActivity extends AppCompatActivity {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_main);
 
-      Intent intent = new Intent(this, CustomViewActivity.class);
+      Intent intent = new Intent(this, DemoActivity.class);
       startActivity(intent);
    }
 

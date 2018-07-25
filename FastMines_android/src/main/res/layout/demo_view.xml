@@ -10,8 +10,8 @@
         android:layout_height="wrap_content"
         android:text="Change Color" />
 
-    <fmg.android.app.CustomView
-        android:id="@+id/custom_view"
+    <fmg.android.app.DemoView
+        android:id="@+id/demo_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
