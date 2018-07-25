@@ -1,4 +1,4 @@
-using System;
+using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
 using Windows.UI.Xaml;
@@ -22,17 +22,16 @@ namespace fmg.uwp.mosaic.wbmp {
          private readonly MosaicCanvasView _owner;
 
          public InnerView(MosaicCanvasView self)
-            : base(self.Model) {
+            : base(self.Model)
+         {
             _owner = self;
          }
 
          public override void Draw(IEnumerable<BaseCell> modifiedCells) {
-            //Draw(modifiedCells, null, true);
-            throw new InvalidOperationException();
-         }
-
-         public void Draw(IEnumerable<BaseCell> modifiedCells, RectDouble clipRegion, bool drawBk) {
-            base.Draw(modifiedCells, clipRegion, drawBk);
+            RectDouble? rc = new RectDouble(0, 0, _owner._control.Width, _owner._control.Height);
+            if (double.IsNaN(rc.Value.Width) || double.IsNaN(rc.Value.Height))
+               rc = null;
+            Draw(modifiedCells, rc, (modifiedCells==null) || !modifiedCells.Any());
          }
 
       }
@@ -73,9 +72,7 @@ namespace fmg.uwp.mosaic.wbmp {
       }
 
       public override void Draw(IEnumerable<BaseCell> modifiedCells) {
-         Canvas control = GetControl();
-         RectDouble rc = new RectDouble(0,0, control.Width, control.Height);
-         _innerView.Draw(modifiedCells, rc, true);
+         var callImplicitDrawIfNeeded = _innerView.Image;
       }
 
       public override void Invalidate() {
