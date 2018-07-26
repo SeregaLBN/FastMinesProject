@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -100,7 +101,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       public DemoPage() {
          _td = new TestDrawing();
 
-         _onCreateImages = new Action[] { TestLogos, TestMine, TestMosaicSkillImg, TestMosaicGroupImg, TestMosaicsImg, TestMosaicCanvasController, TestFlag, TestSmile };
+         _onCreateImages = new Action[] { TestLogos, TestMosaicCanvasController, TestMine, TestMosaicSkillImg, TestMosaicGroupImg, TestMosaicsImg, TestFlag, TestSmile };
 
          InitializeComponent();
 
@@ -153,80 +154,69 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          List<TImageController> images = funcGetImages().ToList();
          ApplicationView.GetForCurrentView().Title = _td.GetTitle<TImage, TImageController, TImageView, TImageModel>(images);
 
-         bool testTransparent = _td.Bl;
-         images.ForEach(img => _td.ApplySettings<TImage, TMosaicImageInner, TImageView, TAImageView, TImageModel, TAnimatedModel>(img, testTransparent));
+         FrameworkElement[,] imgControls = null;
+         bool testTransparent = false;
 
-         Image[,] imgControls;
+         void onCellTilingHandler(bool applySettings, bool createImgControls, bool resized) {
+            resized = resized || createImgControls || applySettings;
 
-         {
-            double sizeW = _panel.ActualWidth;  if (sizeW <= 0) sizeW = 100;
-            double sizeH = _panel.ActualHeight; if (sizeH <= 0) sizeH = 100;
-            RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
-
-            ATestDrawing.CellTilingResult<TImage, TImageController, TImageView, TImageModel> ctr = _td.CellTiling<TImage, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
-            var imgSize = ctr.imageSize;
-            imgControls = new Image[ctr.tableSize.Width, ctr.tableSize.Height];
-
-            var callback = ctr.itemCallback;
-            foreach (var img in images) {
-               ATestDrawing.CellTilingInfo cti = callback(img);
-               PointDouble offset = cti.imageOffset;
-
-               var imgControl = new Image {
-                  Margin = new Thickness {
-                     Left = offset.X,
-                     Top = offset.Y
-                  },
-                  Stretch = Stretch.None
-               };
-
-               img.Model.Size = imgSize;
-
-               imgControl.SetBinding(Image.SourceProperty, new Binding {
-                  Source = img,
-                  Path = new PropertyPath(nameof(img.Image)),
-                  Mode = BindingMode.OneWay
-               });
-
-               _panel.Children.Add(imgControl);
-               imgControls[cti.i, cti.j] = imgControl;
+            if (applySettings) {
+               testTransparent = _td.Bl;
+               images.ForEach(img => _td.ApplySettings<TImage, TMosaicImageInner, TImageView, TAImageView, TImageModel, TAnimatedModel>(img, testTransparent));
             }
-         }
 
-         void onCellTilingHandler() {
             double sizeW = _panel.ActualWidth;
             double sizeH = _panel.ActualHeight;
             RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
             ATestDrawing.CellTilingResult<TImage, TImageController, TImageView, TImageModel> ctr = _td.CellTiling<TImage, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
             var imgSize = ctr.imageSize;
+            if (createImgControls)
+               imgControls = new FrameworkElement[ctr.tableSize.Width, ctr.tableSize.Height];
 
             var callback = ctr.itemCallback;
             foreach (var imgObj in images) {
-               imgObj.Model.Size = imgSize;
-
                ATestDrawing.CellTilingInfo cti = callback(imgObj);
                PointDouble offset = cti.imageOffset;
-               imgControls[cti.i, cti.j].Margin = new Thickness {
-                  Left = offset.X,
-                  Top = offset.Y
-               };
+
+               if (createImgControls) {
+                  if (typeof(FrameworkElement).GetTypeInfo().IsAssignableFrom(typeof(TImage).GetTypeInfo())) {
+                     var imgControl = imgObj.Image as FrameworkElement;
+                     _panel.Children.Add(imgControl);
+                     imgControls[cti.i, cti.j] = imgControl;
+                  } else {
+                     var imgControl = new Image {
+                        Stretch = Stretch.None
+                     };
+
+                     imgControl.SetBinding(Image.SourceProperty, new Binding {
+                        Source = imgObj,
+                        Path = new PropertyPath(nameof(imgObj.Image)),
+                        Mode = BindingMode.OneWay
+                     });
+
+                     _panel.Children.Add(imgControl);
+                     imgControls[cti.i, cti.j] = imgControl;
+                  }
+               }
+
+               if (resized) {
+                  imgObj.Model.Size = imgSize;
+                  imgControls[cti.i, cti.j].Margin = new Thickness {
+                     Left = offset.X,
+                     Top = offset.Y
+                  };
+               }
             }
          }
 
-         void onMousePressed() {
-            testTransparent = _td.Bl;
-            images.ForEach(img => {
-               _td.ApplySettings<TImage, TImageController, TImageView, TAImageView, TImageModel, TAnimatedModel>(img, testTransparent);
-            });
-            onCellTilingHandler();
-         }
+         onCellTilingHandler(true, true, true);
 
          void onSizeChanged(object s, SizeChangedEventArgs ev) {
-            onCellTilingHandler();
+            onCellTilingHandler(false, false, true);
          };
          void onTapped(object sender, TappedRoutedEventArgs ev) {
-            onMousePressed();
+            onCellTilingHandler(true, false, false);
          };
          _panel.SizeChanged += onSizeChanged;
          _panel.Tapped      += onTapped;
