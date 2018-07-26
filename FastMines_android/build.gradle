@@ -18,9 +18,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     sourceSets {
-        main.java.srcDirs += '../src/src_common'
         main.java.srcDirs += '../src/src_core'
-        main.java.srcDirs += '../src/src_data'
         main.java.srcDirs += '../src/src_platform_android'
 
         //include '**/*.java'

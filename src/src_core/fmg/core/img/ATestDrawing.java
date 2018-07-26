@@ -177,7 +177,7 @@ public abstract class ATestDrawing {
    public static class CellTilingResult {
       public SizeDouble imageSize;
       public Size tableSize;
-      public Function<IImageController<?,?,?> /* image */, CellTilingInfo> itemCallback;
+      public Function<IImageController<?,?,?> /* imageControllers */, CellTilingInfo> itemCallback;
    }
 
    public CellTilingResult cellTiling(RectDouble rc, List<IImageController<?,?,?>> images, boolean testIntersection) {

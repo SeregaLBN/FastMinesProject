@@ -1,4 +1,4 @@
-package fmg.android.draw.img;
+package fmg.android.img;
 
 import java.util.Date;
 import java.util.HashMap;
