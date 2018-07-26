@@ -42,4 +42,10 @@ public abstract class AnimatedImgController<TImage,
          removeModelTransformer(PolarLightFgTransformer.class);
    }
 
+   @Override
+   public void close() {
+      _innerController.close();
+      super.close();
+   }
+
 }

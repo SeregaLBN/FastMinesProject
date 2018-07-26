@@ -43,6 +43,11 @@ namespace fmg.core.img {
             RemoveModelTransformer(typeof(PolarLightFgTransformer));
       }
 
+      protected override void Disposing() {
+         _innerController.Dispose();
+         base.Disposing();
+      }
+
    }
 
 }

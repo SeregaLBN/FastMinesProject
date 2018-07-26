@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using fmg.common.geom;
@@ -62,7 +63,7 @@ namespace fmg.core.img {
             }
             break;
          case nameof(IAnimatedModel.CurrentFrame):
-            if (_transformers.Count == 0)
+            if (!_transformers.Any())
                System.Diagnostics.Debug.WriteLine("No any transformer! " + GetType().Name); // зачем работать анимации если нет трансформеров модели
             foreach (var item in _transformers)
                item.Value.Execute(_model);
