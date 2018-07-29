@@ -1,7 +1,9 @@
+using System.Linq;
 using System.Collections.Generic;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.core.img;
+using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 using fmg.uwp.mosaic.wbmp;
@@ -69,6 +71,14 @@ namespace fmg.uwp.img.wbmp {
          }
 
       }
+
+      ////////////// TEST //////////////
+      public static IEnumerable<Controller> GetTestData() {
+         return
+            //new List<Controller>() { new Controller() { MosaicType = EMosaic.eMosaicSquare1 } };
+            EMosaicEx.GetValues().Select(e => new Controller() { MosaicType = e });
+      }
+      //////////////////////////////////
 
    }
 

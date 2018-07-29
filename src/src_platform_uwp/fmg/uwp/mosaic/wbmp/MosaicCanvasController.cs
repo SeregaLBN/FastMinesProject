@@ -213,7 +213,7 @@ namespace fmg.uwp.mosaic.wbmp {
       }
 
       ////////////// TEST //////////////
-      public static MosaicCanvasController Test() {
+      public static MosaicCanvasController GetTestData() {
          MosaicView<Canvas, WriteableBitmap, MosaicDrawModel<WriteableBitmap>>._DEBUG_DRAW_FLOW = true;
          MosaicCanvasController ctrllr = new MosaicCanvasController();
 

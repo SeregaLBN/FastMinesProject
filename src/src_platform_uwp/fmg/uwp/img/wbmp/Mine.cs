@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using fmg.core.img;
 
 namespace fmg.uwp.img.wbmp {
@@ -9,6 +10,12 @@ namespace fmg.uwp.img.wbmp {
       public class Controller : Logo.Controller {
          public Controller() { LogoModel.ToMineModel(Model); }
       }
+
+      ////////////// TEST //////////////
+      public static IEnumerable<Controller> GetTestData() {
+         return new Controller[] { new Controller() };
+      }
+      //////////////////////////////////
 
    }
 

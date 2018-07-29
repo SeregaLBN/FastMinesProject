@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.core.img;
@@ -65,6 +66,12 @@ namespace fmg.uwp.img.wbmp {
          }
 
       }
+
+      ////////////// TEST //////////////
+      public static IEnumerable<Controller> GetTestData() {
+         return new Controller[] { new Controller(SmileModel.EFaceType.Face_WhiteSmiling) };
+      }
+      //////////////////////////////////
 
    }
 
