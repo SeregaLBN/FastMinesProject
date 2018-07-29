@@ -12,8 +12,8 @@ using fmg.core.mosaic.cells;
 namespace fmg.core.img {
 
    /// <summary> Representable <see cref="EMosaic"/> as animated image </summary>
-   public class MosaicAnimatedModel<TImage> : MosaicDrawModel<TImage>, IAnimatedModel
-      where TImage : class
+   public class MosaicAnimatedModel<TImageInner> : MosaicDrawModel<TImageInner>, IAnimatedModel
+      where TImageInner : class
    {
       public enum ERotateMode {
          /// <summary> rotate full matrix (all cells) </summary>
@@ -310,11 +310,11 @@ namespace fmg.core.img {
          string propName = ev.PropertyName;
          if (nameof(BaseCell.BaseAttribute.Area) == propName)
             switch (RotateMode) {
-            case MosaicAnimatedModel<TImage>.ERotateMode.fullMatrix:
+            case MosaicAnimatedModel<TImageInner>.ERotateMode.fullMatrix:
                if (!_rotateAngle.HasMinDiff(0))
                   RotateMatrix(false);
                break;
-            case MosaicAnimatedModel<TImage>.ERotateMode.someCells:
+            case MosaicAnimatedModel<TImageInner>.ERotateMode.someCells:
                //UpdateAnglesOffsets(rotateAngleDelta);
                //RotateCells();
                break;

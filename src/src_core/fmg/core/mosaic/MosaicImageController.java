@@ -7,8 +7,8 @@ import fmg.core.types.draw.PenBorder;
 
 /** MVC: mosaic image controller. Base implementation */
 public abstract class MosaicImageController<TImage,        TMosaicView extends MosaicView<TImage, Void, MosaicAnimatedModel<Void>>>
-                   extends MosaicController<TImage, Void,  TMosaicView,                                  MosaicAnimatedModel<Void>>
-              implements IAnimatedController<TImage,        TMosaicView,                                  MosaicAnimatedModel<Void>>
+                   extends MosaicController<TImage, Void,  TMosaicView,                                 MosaicAnimatedModel<Void>>
+             implements IAnimatedController<TImage,        TMosaicView,                                 MosaicAnimatedModel<Void>>
 {
    private final AnimatedInnerController<TImage, TMosaicView, MosaicAnimatedModel<Void>> _innerController;
 

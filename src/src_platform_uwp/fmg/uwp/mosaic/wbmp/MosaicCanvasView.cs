@@ -11,6 +11,8 @@ using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 using fmg.uwp.img.wbmp;
 using fmg.uwp.utils.wbmp;
+using fmg.common.Converters;
+using fmg.common.notyfier;
 
 namespace fmg.uwp.mosaic.wbmp {
 
@@ -44,9 +46,13 @@ namespace fmg.uwp.mosaic.wbmp {
       public MosaicCanvasView()
          : base(new MosaicDrawModel<WriteableBitmap>())
       {
+         _notifier.DeferredNotifications = true;
          _innerView = new InnerView(this);
+         _innerView.PropertyChanged += OnInnerViewPropertyChanged;
          ChangeSizeImagesMineFlag();
       }
+
+      public WriteableBitmap InnerImage => _innerView.Image;
 
       protected override Canvas CreateImage() {
          // will return once created window
@@ -56,15 +62,39 @@ namespace fmg.uwp.mosaic.wbmp {
       public Canvas GetControl() {
          if (_control == null) {
             _control = new Canvas();
+            _control.SetBinding(FrameworkElement.WidthProperty, new Binding {
+               Source = this,
+               Path = new PropertyPath(nameof(Size)),
+               Mode = BindingMode.OneWay,
+               Converter = new SizeToWidthConverter()
+            });
+            _control.SetBinding(FrameworkElement.HeightProperty, new Binding {
+               Source = this,
+               Path = new PropertyPath(nameof(Size)),
+               Mode = BindingMode.OneWay,
+               Converter = new SizeToHeightConverter()
+            });
 
             var imgControl = new Image {
                Stretch = Stretch.None
             };
             imgControl.SetBinding(Windows.UI.Xaml.Controls.Image.SourceProperty, new Binding {
-               Source = Image,
-               Path = new PropertyPath(nameof(Image)),
+               Source = this,
+               Path = new PropertyPath(nameof(InnerImage)),
                Mode = BindingMode.OneWay
             });
+            //imgControl.SetBinding(Windows.UI.Xaml.Controls.Image.WidthProperty, new Binding {
+            //   Source = this,
+            //   Path = new PropertyPath(nameof(Size)),
+            //   Mode = BindingMode.OneWay,
+            //   Converter = new SizeToWidthConverter()
+            //});
+            //imgControl.SetBinding(FrameworkElement.HeightProperty, new Binding {
+            //   Source = this,
+            //   Path = new PropertyPath(nameof(Size)),
+            //   Mode = BindingMode.OneWay,
+            //   Converter = new SizeToHeightConverter()
+            //});
 
             _control.Children.Add(imgControl);
          }
@@ -75,19 +105,24 @@ namespace fmg.uwp.mosaic.wbmp {
          var callImplicitDrawIfNeeded = _innerView.Image;
       }
 
-      public override void Invalidate() {
-         base.Invalidate();
-         //AsyncRunner.InvokeFromUiLater(() => {
-         //      var img = Image; // implicit call Draw() -> DrawBegin() -> this.Draw(...)
-         //}, CoreDispatcherPriority.High);
-      }
-
       protected override void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
          base.OnPropertyModelChanged(sender, ev);
          switch (ev.PropertyName) {
          case nameof(MosaicGameModel.MosaicType):
          case nameof(MosaicGameModel.Area):
             ChangeSizeImagesMineFlag();
+            break;
+         }
+      }
+
+      private void OnInnerViewPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         switch (ev.PropertyName) {
+         case nameof(InnerView.Image):
+            // refire
+            if (ev is PropertyChangedExEventArgs<WriteableBitmap> ev2)
+               _notifier.OnPropertyChanged(ev2.OldValue, ev2.NewValue, nameof(InnerImage));
+            else
+               _notifier.OnPropertyChanged(nameof(InnerImage));
             break;
          }
       }
@@ -116,6 +151,7 @@ namespace fmg.uwp.mosaic.wbmp {
       }
 
       protected override void Disposing() {
+         _innerView.PropertyChanged -= OnInnerViewPropertyChanged;
          _innerView.Dispose();
          Model.Dispose();
          base.Disposing();

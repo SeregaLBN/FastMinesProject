@@ -18,9 +18,9 @@ import fmg.core.types.*;
  * @param <TMosaicModel> mosaic model
  */
 public abstract class MosaicController<TImage, TImageInner,
-                                        TMosaicView extends IMosaicView<TImage, TImageInner, TMosaicModel>,
-                                        TMosaicModel extends MosaicDrawModel<TImageInner>>
-                extends ImageController<TImage, TMosaicView, TMosaicModel>
+                                       TMosaicView extends IMosaicView<TImage, TImageInner, TMosaicModel>,
+                                       TMosaicModel extends MosaicDrawModel<TImageInner>>
+               extends ImageController<TImage, TMosaicView, TMosaicModel>
 {
 
    /** кол-во мин на поле */

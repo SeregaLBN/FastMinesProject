@@ -112,12 +112,10 @@
     <Compile Include="MosaicPage2.xaml.cs">
       <DependentUpon>MosaicPage2.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Presentation\Converters\ImageSizeWidthWithMarginConverter.cs" />
-    <Compile Include="Presentation\Converters\SizeToHeightConverter.cs" />
-    <Compile Include="Presentation\Converters\SizeToWidthConverter.cs" />
-    <Compile Include="Presentation\Converters\IntToDoubleConverter.cs" />
-    <Compile Include="Presentation\Converters\ValueToStringConverter.cs" />
+    <Compile Include="Presentation\Converters\ImageSizeWidthOpenPaneConverter.cs" />
     <Compile Include="Presentation\Converters\ObjectToMosaicDataItemConverter.cs" />
+    <Compile Include="Presentation\Converters\ObjectToMosaicGroupDataItemConverter.cs" />
+    <Compile Include="Presentation\Converters\ObjectToMosaicSkillDataItemConverter.cs" />
     <Compile Include="Presentation\MosaicGroupViewModel.cs" />
     <Compile Include="SelectMosaicPage.xaml.cs">
       <DependentUpon>SelectMosaicPage.xaml</DependentUpon>
@@ -125,20 +123,10 @@
     <Compile Include="CustomSkillPage.xaml.cs">
       <DependentUpon>CustomSkillPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Presentation\Converters\FmColorToWinColorConverter.cs" />
-    <Compile Include="Presentation\Converters\FmColorToBrushConverter.cs" />
-    <Compile Include="Presentation\Converters\ImageSizeFontSizeConverter.cs" />
-    <Compile Include="Presentation\Converters\ObjectToMosaicSkillDataItemConverter.cs" />
     <Compile Include="Common\TileHelper.cs" />
     <Compile Include="Presentation\Command.cs" />
-    <Compile Include="Presentation\Converters\ImageSizeWidthOpenPaneConverter.cs" />
-    <Compile Include="Presentation\Converters\ImageSizeHeightWithMarginConverter.cs" />
-    <Compile Include="Presentation\Converters\ObjectToMosaicGroupDataItemConverter.cs" />
     <Compile Include="Presentation\MainMenuViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Presentation\Converters\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Presentation\Converters\BooleanNullableConverter.cs" />
-    <Compile Include="Presentation\Converters\SelectedItemToBoolConverter.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

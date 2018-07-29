@@ -18,14 +18,14 @@ import fmg.core.types.draw.PenBorder;
 /**
  * MVC: draw model of mosaic field.
  *
- * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImageInner> plaform specific view/image/picture or other display context/canvas/window/panel
  **/
-public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageModel {
+public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IImageModel {
 
    /** Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется одним из MVC-наследником. */
    public static Color DefaultBkColor = Color.Gray().brighter();
 
-   private TImage         _imgMine, _imgFlag;
+   private TImageInner    _imgMine, _imgFlag;
    private ColorText      _colorText;
    private PenBorder      _penBorder;
    private FontInfo       _fontInfo;
@@ -34,7 +34,7 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
    private BoundDouble    _padding = new BoundDouble(0, 0, 0, 0);
    private BackgroundFill _backgroundFill;
    private Color          _backgroundColor;
-   private TImage         _imgBckgrnd;
+   private TImageInner    _imgBckgrnd;
 
    private final PropertyChangeListener           _selfListener = ev ->               onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
    private final PropertyChangeListener       _fontInfoListener = ev ->       onFontInfoPropertyChanged(ev);
@@ -98,10 +98,10 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       setPaddingInternal(newPadding);
    }
 
-   public TImage getImgMine() {
+   public TImageInner getImgMine() {
       return _imgMine;
    }
-   public void setImgMine(TImage img) {
+   public void setImgMine(TImageInner img) {
       Object old = this._imgMine;
       if (old != img) { // references compare
          this._imgMine = img;
@@ -109,10 +109,10 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       }
    }
 
-   public TImage getImgFlag() {
+   public TImageInner getImgFlag() {
       return _imgFlag;
    }
-   public void setImgFlag(TImage img) {
+   public void setImgFlag(TImageInner img) {
       Object old = this._imgFlag;
       if (old != img) { // references compare
          this._imgFlag = img;
@@ -310,11 +310,11 @@ public class MosaicDrawModel<TImage> extends MosaicGameModel implements IImageMo
       _notifier.setProperty(_backgroundColor, color, PROPERTY_BACKGROUND_COLOR);
    }
 
-   public TImage getImgBckgrnd() {
+   public TImageInner getImgBckgrnd() {
       return _imgBckgrnd;
    }
 
-   public void setImgBckgrnd(TImage imgBckgrnd) {
+   public void setImgBckgrnd(TImageInner imgBckgrnd) {
       Object old = this._imgBckgrnd;
       if (old == imgBckgrnd) // references compare
          return;

@@ -17,12 +17,12 @@ namespace fmg.core.mosaic {
    }
 
    /// <summary> MVC: draw model of mosaic field. </summary>
-   /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
-   public class MosaicDrawModel<TImage> : MosaicGameModel, IImageModel
-      where TImage : class
+   /// <typeparam name="TImageInner">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
+   public class MosaicDrawModel<TImageInner> : MosaicGameModel, IImageModel
+      where TImageInner : class
    {
 
-      private TImage         _imgMine, _imgFlag;
+      private TImageInner    _imgMine, _imgFlag;
       private ColorText      _colorText;
       private PenBorder      _penBorder;
       private FontInfo       _fontInfo;
@@ -31,7 +31,7 @@ namespace fmg.core.mosaic {
       private BoundDouble    _padding = new BoundDouble(0, 0, 0, 0);
       private BackgroundFill _backgroundFill;
       private Color          _backgroundColor;
-      private TImage         _imgBckgrnd;
+      private TImageInner    _imgBckgrnd;
 
       public MosaicDrawModel() {
          this.PropertyChanged += OnPropertyChanged;
@@ -75,7 +75,7 @@ namespace fmg.core.mosaic {
          }
       }
 
-      public TImage ImgMine {
+      public TImageInner ImgMine {
          get { return _imgMine; }
          set {
             Object old = this._imgMine;
@@ -86,7 +86,7 @@ namespace fmg.core.mosaic {
          }
       }
 
-      public TImage ImgFlag {
+      public TImageInner ImgFlag {
          get { return _imgFlag; }
          set {
             Object old = this._imgFlag;
@@ -276,7 +276,7 @@ namespace fmg.core.mosaic {
          }
       }
 
-      public TImage ImgBckgrnd {
+      public TImageInner ImgBckgrnd {
          get { return _imgBckgrnd; }
          set {
             Object old = this._imgBckgrnd;

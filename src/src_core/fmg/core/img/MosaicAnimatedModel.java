@@ -22,7 +22,7 @@ import fmg.core.mosaic.cells.BaseCell.BaseAttribute;
 import fmg.core.types.draw.PenBorder;
 
 /** Representable {@link fmg.core.types.EMosaic} as animated image */
-public class MosaicAnimatedModel<TImage> extends MosaicDrawModel<TImage> implements IAnimatedModel {
+public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInner> implements IAnimatedModel {
 
    public enum ERotateMode {
       /** rotate full matrix (all cells) */

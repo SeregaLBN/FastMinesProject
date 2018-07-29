@@ -32,7 +32,7 @@ namespace fmg.uwp.mosaic.wbmp {
          SubscribeToViewControl();
       }
 
-      public Canvas getViewPanel() {
+      public Canvas GetViewPanel() {
          return View.GetControl();
       }
 
