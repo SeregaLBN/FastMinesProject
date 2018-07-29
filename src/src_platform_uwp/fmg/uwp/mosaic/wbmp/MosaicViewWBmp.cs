@@ -201,7 +201,7 @@ namespace fmg.uwp.mosaic.wbmp {
          }
 
 #if DEBUG
-         LoggerSimple.Put("< MosaicViewSwing.draw: cnt=" + tmp);
+         LoggerSimple.Put("< MosaicViewWBmp.Draw: cnt=" + tmp);
          LoggerSimple.Put("-------------------------------");
 #endif
 

@@ -74,19 +74,25 @@ namespace fmg.core.mosaic {
       public int MinesCount {
          get { return _minesCount; }
          set {
-            int old = MinesCount;
-            if (old == value)
+            var max = GetMaxMines(SizeField);
+            int oldVal = MinesCount;
+            var newVal = Math.Max((GameStatus == EGameStatus.eGSCreateGame) ? 0 : 1, Math.Min(value, max));
+            if (oldVal == newVal)
                return;
 
-            if (value == 0) // TODO  ?? to create field mode - EGameStatus.eGSCreateGame
+            if (newVal == 0) // TODO  ?? to create field mode - EGameStatus.eGSCreateGame
                this._oldMinesCount = this._minesCount; // save
 
-            _minesCount = Math.Max(1, Math.Min(value, GetMaxMines(SizeField)));
-            _notifier.OnPropertyChanged(old, _minesCount, nameof(this.MinesCount));
-            _notifier.OnPropertyChanged( -1, _minesCount, nameof(this.CountMinesLeft));
+            _minesCount = newVal;
+            _notifier.OnPropertyChanged(oldVal, _minesCount, nameof(this.MinesCount));
+            _notifier.OnPropertyChanged( -1   , _minesCount, nameof(this.CountMinesLeft));
 
             GameNew();
          }
+      }
+
+      private void RecheckMinesCount() {
+         MinesCount = MinesCount; //  implicitly call this setter
       }
 
       /// <summary> arrange Mines </summary>
@@ -483,9 +489,11 @@ namespace fmg.core.mosaic {
          switch (ev.PropertyName) {
          case nameof(MosaicGameModel.SizeField):
             CellDown = null; // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
+            RecheckMinesCount();
             GameNew();
             break;
          case nameof(MosaicGameModel.MosaicType):
+            RecheckMinesCount();
             GameNew();
             break;
          case nameof(MosaicGameModel.Area):
@@ -513,7 +521,9 @@ namespace fmg.core.mosaic {
       private BaseCell CursorPointToCell(PointDouble point) {
          if (point == null)
                return null;
-         return Matrix.FirstOrDefault(cell =>
+         var m = Model;
+         point = new PointDouble(point.X - m.Padding.Left - m.Margin.Left, point.Y - m.Padding.Top - m.Margin.Top);
+         return m.Matrix.FirstOrDefault(cell =>
             //cell.getRcOuter().Contains(point) && // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
             cell.PointInRegion(point));
       }

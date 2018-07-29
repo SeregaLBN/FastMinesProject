@@ -83,18 +83,23 @@ public abstract class MosaicController<TImage, TImageInner,
    public int getMinesCount() { return _minesCount; }
    /** количество мин */
    public void setMinesCount(int newMinesCount) {
-      int old = getMinesCount();
-      if (old == newMinesCount)
+      int oldVal = getMinesCount();
+      int newVal = Math.max((getGameStatus() == EGameStatus.eGSCreateGame) ? 0 : 1, Math.min(newMinesCount, getMaxMines(getSizeField())));
+      if (oldVal == newVal)
          return;
 
-      if (newMinesCount == 0) // TODO  ?? to create field mode - EGameStatus.eGSCreateGame
+      if (newVal == 0) // TODO  ?? to create field mode - EGameStatus.eGSCreateGame
          this._oldMinesCount = this._minesCount; // save
 
-      _minesCount = Math.max(1, Math.min(newMinesCount, getMaxMines(getSizeField())));
-      _notifier.onPropertyChanged(old, _minesCount, PROPERTY_MINES_COUNT);
+      _minesCount = newVal;
+      _notifier.onPropertyChanged(oldVal, _minesCount, PROPERTY_MINES_COUNT);
       _notifier.onPropertyChanged(null, _minesCount, PROPERTY_COUNT_MINES_LEFT);
 
       gameNew();
+   }
+
+   private void recheckMinesCount() {
+      setMinesCount(getMinesCount());
    }
 
    /** arrange Mines */
@@ -511,9 +516,11 @@ public abstract class MosaicController<TImage, TImageInner,
       switch (propertyName) {
       case MosaicGameModel.PROPERTY_SIZE_FIELD:
          setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
+         recheckMinesCount();
          gameNew();
          break;
       case MosaicGameModel.PROPERTY_MOSAIC_TYPE:
+         recheckMinesCount();
          gameNew();
          break;
       case MosaicGameModel.PROPERTY_AREA:
@@ -542,7 +549,9 @@ public abstract class MosaicController<TImage, TImageInner,
    private BaseCell cursorPointToCell(PointDouble point) {
       if (point == null)
          return null;
-      for (BaseCell cell: getModel(). getMatrix())
+      var m = getModel();
+      point = new PointDouble(point.x - m.getPadding().left - m.getMargin().left, point.y - m.getPadding().top - m.getMargin().top);
+      for (BaseCell cell: m.getMatrix())
          //if (cell.getRcOuter().contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
             if (cell.pointInRegion(point))
                return cell;
