@@ -16,11 +16,10 @@ using Windows.Phone.UI.Input;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
-using fmg.core.types;
-using fmg.uwp.img.wbmp;
-using DummyMosaicImageType = System.Object;
-using fmg.uwp.mosaic.wbmp;
 using fmg.core.mosaic;
+using fmg.uwp.img.wbmp;
+using fmg.uwp.mosaic.wbmp;
+using DummyMosaicImageType = System.Object;
 
 namespace Test.FastMines.Uwp.Images.WBmp {
 
@@ -132,6 +131,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
 
          FrameworkElement[,] imgControls = null;
          bool testTransparent = false;
+         bool imgIsControl = typeof(FrameworkElement).GetTypeInfo().IsAssignableFrom(typeof(TImage).GetTypeInfo());
 
          void onCellTilingHandler(bool applySettings, bool createImgControls, bool resized) {
             resized = resized || createImgControls || applySettings;
@@ -156,7 +156,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                PointDouble offset = cti.imageOffset;
 
                if (createImgControls) {
-                  if (typeof(FrameworkElement).GetTypeInfo().IsAssignableFrom(typeof(TImage).GetTypeInfo())) {
+                  if (imgIsControl) {
                      var imgControl = imgObj.Image as FrameworkElement;
                      _panel.Children.Add(imgControl);
                      imgControls[cti.i, cti.j] = imgControl;
@@ -191,15 +191,24 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          void onSizeChanged(object s, SizeChangedEventArgs ev) {
             onCellTilingHandler(false, false, true);
          };
+         void onPointerPressed(object sender, PointerRoutedEventArgs ev) {
+            onCellTilingHandler(true, false, false);
+         };
          void onTapped(object sender, TappedRoutedEventArgs ev) {
             onCellTilingHandler(true, false, false);
          };
          _panel.SizeChanged += onSizeChanged;
-         _panel.Tapped      += onTapped;
+         if (imgIsControl)
+            _panel.PointerPressed += onPointerPressed;
+         else
+            _panel.Tapped         += onTapped;
 
          _onCloseImages = () => {
             _panel.SizeChanged -= onSizeChanged;
-            _panel.Tapped      -= onTapped;
+            if (imgIsControl)
+               _panel.PointerPressed -= onPointerPressed;
+            else
+               _panel.Tapped         -= onTapped;
             images.ForEach(img => img.Dispose());
             images.Clear();
             images = null;
