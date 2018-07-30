@@ -116,6 +116,12 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="..\..\res\Font\NirmalaUI_30.xml">
+      <Link>res\Font\NirmalaUI_30.xml</Link>
+    </Content>
+    <Content Include="..\..\res\Font\NirmalaUI_30.png">
+      <Link>res\Font\NirmalaUI_30.png</Link>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

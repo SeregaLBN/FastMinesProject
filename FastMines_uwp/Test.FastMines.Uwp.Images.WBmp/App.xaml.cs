@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -14,6 +15,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using fmg.uwp.mosaic.wbmp;
 
 namespace Test.FastMines.Uwp.Images.WBmp
 {
@@ -32,12 +34,16 @@ namespace Test.FastMines.Uwp.Images.WBmp
             this.Suspending += OnSuspending;
         }
 
+         private async Task RegisterResource() {
+             await BitmapFont.RegisterFonts();
+         }
+
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -45,6 +51,9 @@ namespace Test.FastMines.Uwp.Images.WBmp
                 this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
+
+            await RegisterResource();
+
             Frame rootFrame = Window.Current.Content as Frame;
             Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(100, 100));
 
