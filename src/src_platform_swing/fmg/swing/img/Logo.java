@@ -86,12 +86,14 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
       // paint star perimeter
       double zoomAverage = (lm.getZoomX() + lm.getZoomY())/2;
       final double penWidth = lm.getBorderWidth() * zoomAverage;
-      g.setStroke(new BasicStroke((float)penWidth));
-      for (int i=0; i<8; i++) {
-         Point2D.Double p1 = rays[(i + 7)%8];
-         Point2D.Double p2 = rays[i];
-         g.setColor(palette[i].darker());
-         g.drawLine((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y);
+      if (penWidth > 0.1) {
+         g.setStroke(new BasicStroke((float)penWidth));
+         for (int i=0; i<8; i++) {
+            Point2D.Double p1 = rays[(i + 7)%8];
+            Point2D.Double p2 = rays[i];
+            g.setColor(palette[i].darker());
+            g.drawLine((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y);
+         }
       }
 
       // paint inner gradient triangles

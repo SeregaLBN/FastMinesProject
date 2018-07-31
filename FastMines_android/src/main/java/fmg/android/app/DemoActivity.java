@@ -54,8 +54,8 @@ public class DemoActivity extends Activity {
 
       _demoView = (DemoView)findViewById(R.id.demo_view);
       _demoView._onDraw = this::onDraw;
-      Button changeColorBtn = (Button)findViewById(R.id.change_color);
-      changeColorBtn.setOnClickListener(view -> onNextImages());
+      Button nextImagesBtn = (Button)findViewById(R.id.next_images);
+      nextImagesBtn.setOnClickListener(view -> onNextImages());
 
       _td = new TestDrawing();
 

@@ -2,12 +2,15 @@ package fmg.android.img;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import android.graphics.Canvas;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
+import android.graphics.Shader;
 
 import fmg.common.Color;
 import fmg.common.HSV;
@@ -31,7 +34,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
       StaticInitializer.init();
    }
 
-   protected void draw(android.graphics.Canvas g) {
+   protected void draw(Canvas g) {
       LogoModel lm = this.getModel();
 
       // fill background
@@ -53,25 +56,21 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
       // paint owner gradient rays
       Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-//      paint.setStrokeWidth(2);
-//      paint.setColor(android.graphics.Color.RED);
-      paint.setStyle(Paint.Style.FILL);
-      paint.setAntiAlias(true);
       for (int i=0; i<8; i++) {
-//         if (!lm.isUseGradient()) {
+         if (!lm.isUseGradient()) {
+            paint.setStyle(Paint.Style.FILL);
             paint.setColor(Cast.toColor(hsvPalette[i].toColor().darker()));
             fillPolygon(g, paint, rays[i], oct[i], inn[i], oct[(i+5)%8]);
-         /**
          } else {
             // emulate triangle gradient (see BmpLogo.cpp C++ source code)
             // over linear gragients
 
-            g.setPaint(new GradientPaint(rays[i], palette[(i+1)%8], inn[i], palette[(i+6)%8]));
-            fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
+            paint.setShader(makeLinearGradient(rays[i], palette[(i+1)%8], inn[i], palette[(i+6)%8]));
+            fillPolygon(g, paint, rays[i], oct[i], inn[i], oct[(i+5)%8]);
 
             PointF p1 = oct[i];
             PointF p2 = oct[(i+5)%8];
-            PointF p = new PointF((p1.getX()+p2.getX())/2, (p1.getY()+p2.getY())/2); // середина линии oct[i]-oct[(i+5)%8]. По факту - пересечение линий rays[i]-inn[i] и oct[i]-oct[(i+5)%8]
+            PointF p = new PointF((p1.x+p2.x)/2, (p1.y+p2.y)/2); // середина линии oct[i]-oct[(i+5)%8]. По факту - пересечение линий rays[i]-inn[i] и oct[i]-oct[(i+5)%8]
 
             Color clr;// = new Color(255,255,255,0); //  Cast.toColor(fmg.common.Color.Transparent);
             if (true) {
@@ -81,44 +80,43 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
                HSV cP = new HSV(c1.toColor());
                cP.h += diff/2; // цвет в точке p (пересечений линий...)
                cP.a = 0;
-               clr = Cast.toColor(cP.toColor());
+               clr = cP.toColor();
             }
 
-            g.setPaint(new GradientPaint(oct[i], palette[(i+3)%8], p, clr));
-            fillPolygon(g, rays[i], oct[i], inn[i]);
+            paint.setShader(makeLinearGradient(oct[i], palette[(i+3)%8], p, clr));
+            fillPolygon(g, paint, rays[i], oct[i], inn[i]);
 
-            g.setPaint(new GradientPaint(oct[(i+5)%8], palette[(i+0)%8], p, clr));
-            fillPolygon(g, rays[i], oct[(i+5)%8], inn[i]);
+            paint.setShader(makeLinearGradient(oct[(i+5)%8], palette[(i+0)%8], p, clr));
+            fillPolygon(g, paint, rays[i], oct[(i+5)%8], inn[i]);
          }
-         /**/
       }
 
       // paint star perimeter
       double zoomAverage = (lm.getZoomX() + lm.getZoomY())/2;
       final double penWidth = lm.getBorderWidth() * zoomAverage;
-      paint.setStyle(Paint.Style.STROKE);
-//      g.setStroke(new BasicStroke((float)penWidth));
-      for (int i=0; i<8; i++) {
-         PointF p1 = rays[(i + 7)%8];
-         PointF p2 = rays[i];
-         paint.setColor(Cast.toColor(palette[i].darker()));
-         g.drawLine(p1.x, p1.y, p2.x, p2.y, paint);
+      if (penWidth > 0.1) {
+         paint.setShader(null); // reset gradient shader
+         paint.setStyle(Paint.Style.STROKE);
+         paint.setStrokeWidth((float) penWidth);
+         for (int i = 0; i < 8; i++) {
+            PointF p1 = rays[(i + 7) % 8];
+            PointF p2 = rays[i];
+            paint.setColor(Cast.toColor(palette[i].darker()));
+            g.drawLine(p1.x, p1.y, p2.x, p2.y, paint);
+         }
       }
 
       // paint inner gradient triangles
       paint.setStyle(Paint.Style.FILL);
       for (int i=0; i<8; i++) {
-         /*
          if (lm.isUseGradient()) {
             PointF p1 = inn[(i+0)%8];
             PointF p2 = inn[(i+3)%8];
-            PointF p = new PointF((p1.getX()+p2.getX())/2, (p1.getY()+p2.getY())/2); // center line of p1-p2
-            g.setPaint(new GradientPaint(
+            PointF p = new PointF((p1.x+p2.x)/2, (p1.y+p2.y)/2); // center line of p1-p2
+            paint.setShader(makeLinearGradient(
                   p, palette[(i+6)%8],
-                  center, ((i & 1) == 1) ? Color.BLACK : Color.WHITE));
-         } else
-         */
-         {
+                  center, ((i & 1) == 1) ? Color.Black() : Color.White()));
+         } else {
             paint.setColor(((i & 1) == 1)
                     ? Cast.toColor(hsvPalette[(i + 6) % 8].toColor().brighter())
                     : Cast.toColor(hsvPalette[(i + 6) % 8].toColor().darker()));
@@ -127,7 +125,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
       }
    }
 
-   private static void fillPolygon(android.graphics.Canvas g, Paint paint, PointF... p) {
+   private static void fillPolygon(Canvas g, Paint paint, PointF... p) {
       Path path = new Path();
       path.setFillType(Path.FillType.EVEN_ODD);
       path.moveTo(p[0].x, p[0].y);
@@ -135,6 +133,10 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
          path.lineTo(p[i].x, p[i].y);
       path.close();
       g.drawPath(path, paint);
+   }
+
+   private static Shader makeLinearGradient(PointF start, Color startClr, PointF end, Color endClr) {
+      return new LinearGradient(start.x, start.y, end.x, end.y, Cast.toColor(startClr), Cast.toColor(endClr), Shader.TileMode.CLAMP);
    }
 
    @Override

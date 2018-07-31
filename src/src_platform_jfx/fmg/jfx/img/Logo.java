@@ -59,7 +59,6 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
       // paint owner gradient rays
       for (int i=0; i<8; i++) {
          if (!lm.isUseGradient()) {
-            // linear gragient
             g.setFill(Cast.toColor(hsvPalette[i].toColor().darker()));
             fillPolygon(g, rays[i], oct[i], inn[i], oct[(i+5)%8]);
          } else {
@@ -95,12 +94,14 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
       // paint star perimeter
       double zoomAverage = (lm.getZoomX() + lm.getZoomY())/2;
       final double penWidth = lm.getBorderWidth() * zoomAverage;
-      g.setLineWidth(penWidth);
-      for (int i=0; i<8; i++) {
-         Point2D p1 = rays[(i + 7)%8];
-         Point2D p2 = rays[i];
-         g.setStroke(palette[i].darker());
-         g.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+      if (penWidth > 0.1) {
+         g.setLineWidth(penWidth);
+         for (int i=0; i<8; i++) {
+            Point2D p1 = rays[(i + 7)%8];
+            Point2D p2 = rays[i];
+            g.setStroke(palette[i].darker());
+            g.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+         }
       }
 
       // paint inner gradient triangles

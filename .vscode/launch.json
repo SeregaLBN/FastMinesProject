@@ -75,7 +75,7 @@
          "cwd": "${workspaceFolder}/FastMines_swing",
          "console": "internalConsole",
          "stopOnEntry": false,
-         "mainClass": "fmg.swing.draw.img.MosaicImg",
+         "mainClass": "fmg.swing.img.MosaicImg",
          "args": ""
       },
       {
@@ -85,7 +85,7 @@
          "cwd": "${workspaceFolder}/FastMines_swing",
          "console": "internalConsole",
          "stopOnEntry": false,
-         "mainClass": "fmg.swing.draw.img.MosaicSkillImg",
+         "mainClass": "fmg.swing.img.MosaicSkillImg",
          "args": ""
       },
       {
@@ -95,7 +95,7 @@
          "cwd": "${workspaceFolder}/FastMines_swing",
          "console": "internalConsole",
          "stopOnEntry": false,
-         "mainClass": "fmg.swing.draw.img.MosaicGroupImg",
+         "mainClass": "fmg.swing.img.MosaicGroupImg",
          "args": ""
       },
       {
@@ -105,7 +105,7 @@
          "cwd": "${workspaceFolder}/FastMines_swing",
          "console": "internalConsole",
          "stopOnEntry": false,
-         "mainClass": "fmg.swing.draw.img.Logo",
+         "mainClass": "fmg.swing.img.Logo",
          "args": ""
       },
       {
@@ -115,7 +115,7 @@
          "cwd": "${workspaceFolder}/FastMines_swing",
          "console": "internalConsole",
          "stopOnEntry": false,
-         "mainClass": "fmg.swing.draw.img.Mine",
+         "mainClass": "fmg.swing.img.Mine",
          "args": ""
       },
       {
@@ -125,7 +125,7 @@
          "cwd": "${workspaceFolder}/FastMines_swing",
          "console": "internalConsole",
          "stopOnEntry": false,
-         "mainClass": "fmg.swing.draw.img.Smile",
+         "mainClass": "fmg.swing.img.Smile",
          "args": ""
       },
       {
@@ -135,7 +135,7 @@
          "cwd": "${workspaceFolder}/FastMines_swing",
          "console": "internalConsole",
          "stopOnEntry": false,
-         "mainClass": "fmg.swing.draw.img.Flag",
+         "mainClass": "fmg.swing.img.Flag",
          "args": ""
       },
       {
@@ -236,7 +236,7 @@
          "cwd": "${workspaceFolder}/FastMines_jfx",
          "console": "internalConsole",
          "stopOnEntry": false,
-         "mainClass": "fmg.jfx.draw.img.MosaicImg",
+         "mainClass": "fmg.jfx.img.MosaicImg",
          "args": ""
       },
       {
@@ -246,7 +246,7 @@
          "cwd": "${workspaceFolder}/FastMines_jfx",
          "console": "internalConsole",
          "stopOnEntry": false,
-         "mainClass": "fmg.jfx.draw.img.MosaicSkillImg",
+         "mainClass": "fmg.jfx.img.MosaicSkillImg",
          "args": ""
       },
       {
@@ -256,7 +256,7 @@
          "cwd": "${workspaceFolder}/FastMines_jfx",
          "console": "internalConsole",
          "stopOnEntry": false,
-         "mainClass": "fmg.jfx.draw.img.MosaicGroupImg",
+         "mainClass": "fmg.jfx.img.MosaicGroupImg",
          "args": ""
       },
       {
@@ -266,7 +266,7 @@
          "cwd": "${workspaceFolder}/FastMines_jfx",
          "console": "internalConsole",
          "stopOnEntry": false,
-         "mainClass": "fmg.jfx.draw.img.Logo",
+         "mainClass": "fmg.jfx.img.Logo",
          "args": ""
       },
       {
@@ -276,7 +276,7 @@
          "cwd": "${workspaceFolder}/FastMines_jfx",
          "console": "internalConsole",
          "stopOnEntry": false,
-         "mainClass": "fmg.jfx.draw.img.Mine",
+         "mainClass": "fmg.jfx.img.Mine",
          "args": ""
       },
       {
@@ -286,7 +286,7 @@
          "cwd": "${workspaceFolder}/FastMines_jfx",
          "console": "internalConsole",
          "stopOnEntry": false,
-         "mainClass": "fmg.jfx.draw.img.Smile",
+         "mainClass": "fmg.jfx.img.Smile",
          "args": ""
       },
       {
@@ -296,7 +296,7 @@
          "cwd": "${workspaceFolder}/FastMines_jfx",
          "console": "internalConsole",
          "stopOnEntry": false,
-         "mainClass": "fmg.jfx.draw.img.Flag",
+         "mainClass": "fmg.jfx.img.Flag",
          "args": ""
       }
    ]
