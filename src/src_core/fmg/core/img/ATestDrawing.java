@@ -182,8 +182,39 @@ public abstract class ATestDrawing {
 
    public CellTilingResult cellTiling(RectDouble rc, List<IImageController<?,?,?>> images, boolean testIntersection) {
       int len = images.size();
-      int cols = (int)Math.round( Math.sqrt(len)  + 0.4999999999); // columns
-      int rows = (int)Math.round(len/(double)cols + 0.4999999999);
+
+      // max tiles in one row
+      Function<Integer, Integer> mtor = rowsTotal -> {
+         return (int)Math.ceil(len / (double)rowsTotal);
+      };
+
+      // для предполагаемого кол-ва колонок нахожу макс кол-во плиток в строке
+      // и возвращаю отношение меньшей стороны к большей
+      Function<Integer, Double> f = rowsTotal -> {
+         int mcnt = mtor.apply(rowsTotal);
+         double tailW = rc.width / mcnt;
+         double tailH = rc.height / rowsTotal;
+         return (tailW < tailH)
+               ? tailW/tailH
+               : tailH/tailW;
+      };
+
+      int rowsOpt = 0;
+      {
+         double xToY = 0; // отношение меньшей стороны к большей
+         // ищу оптимальное кол-во колонок для расположения плиток. Оптимальным считаю такое расположение,
+         // при котором плитки будут наибольше похожими на квадрат (т.е. отношение меньшей стороны к большей будет максимальней)
+         for (int i=1; i<=len; ++i) {
+            double xy = f.apply(i);
+            if (xy < xToY)
+               break;
+            rowsOpt = i;
+            xToY = xy;
+         }
+      }
+
+      int rows = rowsOpt;
+      int cols = (int)Math.ceil(len/(double)rows);
       double dx = rc.width  / cols; // cell tile width
       double dy = rc.height / rows; // cell tile height
 
