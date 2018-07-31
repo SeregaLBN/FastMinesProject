@@ -156,10 +156,11 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
       @Override
       protected android.graphics.Bitmap createImage() {
          SizeDouble size = getModel().getSize();
-         if (_bmp == null)
+//         if (_bmp == null)
             _bmp = android.graphics.Bitmap.createBitmap((int)size.width, (int)size.height, android.graphics.Bitmap.Config.ARGB_8888);
-         else
-            _bmp.reconfigure((int)size.width, (int)size.height, android.graphics.Bitmap.Config.ARGB_8888);
+//         else
+//            _bmp.reconfigure((int)size.width, (int)size.height, android.graphics.Bitmap.Config.ARGB_8888);
+         _canvas = null;
          return _bmp;
       }
 

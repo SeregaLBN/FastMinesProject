@@ -1,5 +1,7 @@
 package fmg.common;
 
+import java.util.Locale;
+
 import fmg.common.geom.DoubleExt;
 
 /**
@@ -205,8 +207,8 @@ public class HSV {
    public String toString() {
       //return "HSV[h=" + h + ", s=" + s + "%, v=" + v + "%, a=" + a + "]";
       return (a == 255)
-            ? String.format("HSV[h=%.3f, s=%.3f%%, v=%.3f%%]", h, s, v)
-            : String.format("HSV[h=%.3f, s=%.3f%%, v=%.3f%%, a=%d]", h, s, v, a);
+            ? String.format(Locale.US, "HSV[h=%.3f, s=%.3f%%, v=%.3f%%]", h, s, v)
+            : String.format(Locale.US, "HSV[h=%.3f, s=%.3f%%, v=%.3f%%, a=%d]", h, s, v, a);
    }
 
 /*
