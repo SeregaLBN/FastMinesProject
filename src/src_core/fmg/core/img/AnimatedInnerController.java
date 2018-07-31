@@ -22,6 +22,7 @@ public final class AnimatedInnerController<TImage,
    private final TImageModel _model;
    private Map<Class<? extends IModelTransformer>, IModelTransformer> _transformers = new HashMap<>();
    private final PropertyChangeListener _imageModelListener = ev -> onPropertyModelChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+   private boolean _animationWasUsed = false;
 
    public AnimatedInnerController(TImageModel model) {
       _model = model;
@@ -57,6 +58,7 @@ public final class AnimatedInnerController<TImage,
    private void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
       switch (propertyName) {
       case IAnimatedModel.PROPERTY_ANIMATED:
+         _animationWasUsed = true;
          if ((Boolean)newValue) {
             TImageModel model = _model;
             Factory.GET_ANIMATOR.get().subscribe(this, timeFromStartSubscribe -> {
@@ -79,8 +81,9 @@ public final class AnimatedInnerController<TImage,
 
    @Override
    public void close() {
-      getModel().removeListener(_imageModelListener);
-      Factory.GET_ANIMATOR.get().unsubscribe(this);
+      _model.removeListener(_imageModelListener);
+      if (_animationWasUsed) // do not call Factory.GET_ANIMATOR if it is not already used
+         Factory.GET_ANIMATOR.get().unsubscribe(this);
       _transformers.clear();
    }
 

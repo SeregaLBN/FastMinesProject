@@ -24,6 +24,7 @@ namespace fmg.core.img {
 #pragma warning disable CS0067 // warning CS0067: The event is never used
       public event PropertyChangedEventHandler PropertyChanged; // TODO unusable
 #pragma warning restore CS0067
+      private bool _animationWasUsed = false;
 
       public AnimatedInnerController(TImageModel model) {
          _model = model;
@@ -50,6 +51,7 @@ namespace fmg.core.img {
       private void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
          switch (ev.PropertyName) {
          case nameof(IAnimatedModel.Animated):
+            _animationWasUsed = true;
             if ((ev as PropertyChangedExEventArgs<bool>).NewValue) {
                TImageModel model = _model;
                Factory.GET_ANIMATOR().Subscribe(this, timeFromStartSubscribe => {
@@ -73,7 +75,8 @@ namespace fmg.core.img {
 
       public void Dispose() {
          _model.PropertyChanged -= OnPropertyModelChanged;
-         Factory.GET_ANIMATOR().Unsubscribe(this);
+         if (_animationWasUsed) // do not call Factory.GET_ANIMATOR if it is not already used
+            Factory.GET_ANIMATOR().Unsubscribe(this);
          _transformers.Clear();
          GC.SuppressFinalize(this);
       }

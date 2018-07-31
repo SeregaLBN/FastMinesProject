@@ -549,7 +549,7 @@ public abstract class MosaicController<TImage, TImageInner,
    private BaseCell cursorPointToCell(PointDouble point) {
       if (point == null)
          return null;
-      var m = getModel();
+      TMosaicModel m = getModel();
       point = new PointDouble(point.x - m.getPadding().left - m.getMargin().left, point.y - m.getPadding().top - m.getMargin().top);
       for (BaseCell cell: m.getMatrix())
          //if (cell.getRcOuter().contains(point)) // пох.. - тормозов нет..  (измерить время на макс размерах поля...) в принципе, проверка не нужная...
