@@ -2,7 +2,6 @@ package fmg.android.img;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 import android.graphics.Canvas;
 import android.graphics.LinearGradient;
@@ -15,7 +14,6 @@ import android.graphics.Shader;
 import fmg.common.Color;
 import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
-import fmg.common.geom.SizeDouble;
 import fmg.core.img.IImageController;
 import fmg.core.img.ImageView;
 import fmg.core.img.LogoController;
@@ -152,40 +150,27 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
    /** Logo image view implementation over {@link android.graphics.Bitmap} */
    static class Bitmap extends Logo<android.graphics.Bitmap> {
 
-      private android.graphics.Bitmap _bmp;
-      private Canvas _canvas;
+      private BmpCanvas wrap = new BmpCanvas();
 
       @Override
       protected android.graphics.Bitmap createImage() {
-         SizeDouble size = getModel().getSize();
-//         if (_bmp == null)
-            _bmp = android.graphics.Bitmap.createBitmap((int)size.width, (int)size.height, android.graphics.Bitmap.Config.ARGB_8888);
-//         else
-//            _bmp.reconfigure((int)size.width, (int)size.height, android.graphics.Bitmap.Config.ARGB_8888);
-         _canvas = null;
-         return _bmp;
+         return wrap.createImage(getModel().getSize());
       }
 
       @Override
       protected void drawBody() {
-         if ((_canvas == null) && (_bmp != null))
-            _canvas = new Canvas(_bmp);
-         draw(_canvas);
+         draw(wrap.getCanvas());
       }
 
       @Override
       public void close() {
-         if (_bmp == null)
-           return;
-         _bmp.recycle();
-         _bmp = null;
-         _canvas = null;
+         wrap.close();
       }
 
    }
 
-   /** Logo image controller implementation for {@link Bitmap} */
-   public static class ControllerBitmap extends LogoController<android.graphics.Bitmap, Bitmap> {
+   /** Logo image controller implementation for {@link Logo.Bitmap} */
+   public static class ControllerBitmap extends LogoController<android.graphics.Bitmap, Logo.Bitmap> {
 
       public ControllerBitmap() {
          super(new Logo.Bitmap());

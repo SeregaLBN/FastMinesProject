@@ -17,7 +17,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 
+import fmg.android.img.Flag;
 import fmg.android.img.Logo;
+import fmg.android.img.Mine;
+import fmg.android.img.Smile;
 import fmg.android.utils.Cast;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
@@ -42,9 +45,10 @@ public class DemoActivity extends Activity {
    boolean _testTransparent;
 
    // #region images Fabrica
-   public void testLogos() {
-      testApp(Logo::testData);
-   }
+   public void testLogos () { testApp(Logo ::testData); }
+   public void testMines () { testApp(Mine ::testData); }
+   public void testFlags () { testApp(Flag ::testData); }
+   public void testSmiles() { testApp(Smile::testData); }
    // #endregion
 
    @Override
@@ -59,7 +63,7 @@ public class DemoActivity extends Activity {
 
       _td = new TestDrawing();
 
-      _onCreateImages = new Runnable[] { this::testLogos/*, TestMine, TestMosaicSkillImg, TestMosaicGroupImg, TestMosaicsImg, TestFlag, TestSmile*/ };
+      _onCreateImages = new Runnable[] { this::testSmiles, this::testLogos, this::testMines, this::testFlags/*, TestMosaicSkillImg, TestMosaicGroupImg, TestMosaicsImg, TestSmile*/ };
 
       _demoView.setOnTouchListener(this::onTouch);
 

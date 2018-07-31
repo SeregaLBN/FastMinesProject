@@ -429,7 +429,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
    }
 
-   /** Smile image controller implementation for {@link Icon} */
+   /** Smile image controller implementation for {@link Smile.Icon} */
    public static class ControllerIcon extends ImageController<javax.swing.Icon, Smile.Icon, SmileModel> {
 
       public ControllerIcon(EFaceType faceType) {
@@ -444,7 +444,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
    }
 
-   /** Smile image controller implementation for {@link Image} */
+   /** Smile image controller implementation for {@link Smile.Image} */
    public static class ControllerImage extends ImageController<java.awt.Image, Smile.Image, SmileModel> {
 
       public ControllerImage(EFaceType faceType) {

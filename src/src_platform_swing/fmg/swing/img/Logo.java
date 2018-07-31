@@ -163,7 +163,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
    }
 
-   /** Logo image controller implementation for {@link Icon} */
+   /** Logo image controller implementation for {@link Logo.Icon} */
    public static class ControllerIcon extends LogoController<javax.swing.Icon, Logo.Icon> {
 
       public ControllerIcon() {
@@ -178,7 +178,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
    }
 
-   /** Logo image controller implementation for {@link Image} */
+   /** Logo image controller implementation for {@link Logo.Image} */
    public static class ControllerImage extends LogoController<java.awt.Image, Logo.Image> {
 
       public ControllerImage() {

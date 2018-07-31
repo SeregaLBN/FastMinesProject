@@ -38,11 +38,11 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
 
       // perimeter figure points
       Point2D[] p = new Point2D[] {
-            new Point2D(13.50f * w, 90 * h),
-            new Point2D(17.44f * w, 51 * h),
-            new Point2D(21.00f * w, 16 * h),
-            new Point2D(85.00f * w, 15 * h),
-            new Point2D(81.45f * w, 50 * h)};
+            new Point2D(13.50 * w, 90 * h),
+            new Point2D(17.44 * w, 51 * h),
+            new Point2D(21.00 * w, 16 * h),
+            new Point2D(85.00 * w, 15 * h),
+            new Point2D(81.45 * w, 50 * h)};
 
       g.setLineWidth(Math.max(1, 7*(w+h)/2));
       g.setStroke(Color.BLACK);
@@ -89,6 +89,7 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
 
    }
 
+   /** Flag image view implementation over {@link javafx.scene.image.Image} */
    public static class Image extends Flag<javafx.scene.image.Image> {
 
       private ImageJfx img = new ImageJfx(this);
@@ -107,7 +108,7 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
 
    }
 
-   /** Flag image controller implementation for {@link Canvas} */
+   /** Flag image controller implementation for {@link Flag.Canvas} */
    public static class ControllerCanvas extends ImageController<javafx.scene.canvas.Canvas, Flag.Canvas, FlagModel> {
 
       public ControllerCanvas() {
@@ -122,7 +123,7 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
 
    }
 
-   /** Flag image controller implementation for {@link Image} */
+   /** Flag image controller implementation for {@link Flag.Image} */
    public static class ControllerImage extends ImageController<javafx.scene.image.Image, Flag.Image, FlagModel> {
 
       public ControllerImage() {

@@ -182,7 +182,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
    }
 
-   /** Logo image controller implementation for {@link Canvas} */
+   /** Logo image controller implementation for {@link Logo.Canvas} */
    public static class ControllerCanvas extends LogoController<javafx.scene.canvas.Canvas, Logo.Canvas> {
 
       public ControllerCanvas() {
@@ -197,7 +197,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
    }
 
-   /** Logo image controller implementation for {@link Image} */
+   /** Logo image controller implementation for {@link Logo.Image} */
    public static class ControllerImage extends LogoController<javafx.scene.image.Image, Logo.Image> {
 
       public ControllerImage() {

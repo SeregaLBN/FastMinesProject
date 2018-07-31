@@ -115,7 +115,7 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
 
    }
 
-   /** Flag image controller implementation for {@link Icon} */
+   /** Flag image controller implementation for {@link Flag.Icon} */
    public static class ControllerIcon extends ImageController<javax.swing.Icon, Flag.Icon, FlagModel> {
 
       public ControllerIcon() {
@@ -130,7 +130,7 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
 
    }
 
-   /** Flag image controller implementation for {@link Image} */
+   /** Flag image controller implementation for {@link Flag.Image} */
    public static class ControllerImage extends ImageController<java.awt.Image, Flag.Image, FlagModel> {
 
       public ControllerImage() {

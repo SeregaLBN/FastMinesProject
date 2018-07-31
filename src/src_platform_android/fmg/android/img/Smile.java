@@ -1,23 +1,24 @@
-package fmg.jfx.img;
+package fmg.android.img;
+
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
 
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.SizeDouble;
+import fmg.core.img.SmileModel;
+import fmg.core.img.IImageController;
 import fmg.core.img.ImageController;
 import fmg.core.img.ImageView;
 import fmg.core.img.SmileModel;
 import fmg.core.img.SmileModel.EFaceType;
-import fmg.jfx.utils.Cast;
-import fmg.jfx.utils.ShapeConverter;
-import fmg.jfx.utils.StaticInitializer;
+import fmg.android.utils.Cast;
+import fmg.android.utils.StaticInitializer;
 
 public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
@@ -29,41 +30,40 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       StaticInitializer.init();
    }
 
-   protected void draw(GraphicsContext g) {
-      // save
-      Paint oldFill = g.getFill();
-      Paint oldStroke = g.getStroke();
+   protected void draw(Canvas g) {
+      g.save();
 
       drawBody(g);
-      drawEyes(g);
-      drawMouth(g);
+//      drawEyes(g);
+//      drawMouth(g);
 
-      // restore
-      g.setFill(oldFill);
-      g.setStroke(oldStroke);
+      g.restore();
    }
 
-   private void drawBody(GraphicsContext g) {
+   private void drawBody(Canvas g) {
       SizeDouble size = getSize();
-      g.clearRect(0,0, size.width, size.height);
 
       SmileModel sm = this.getModel();
       SmileModel.EFaceType type = sm.getFaceType();
-      double width  = size.width;
-      double height = size.height;
+      float width  = (float)size.width;
+      float height = (float)size.height;
 
       if (type == EFaceType.Eyes_OpenDisabled || type == EFaceType.Eyes_ClosedDisabled)
          return;
 
-      Color yellowBody   = Color.rgb(0xFF, 0xCC, 0x00);
-      Color yellowGlint  = Color.rgb(0xFF, 0xFF, 0x33);
-      Color yellowBorder = Color.rgb(0xFF, 0x6C, 0x0A);
+      int yellowBody   = Color.rgb(0xFF, 0xCC, 0x00);
+      int yellowGlint  = Color.rgb(0xFF, 0xFF, 0x33);
+      int yellowBorder = Color.rgb(0xFF, 0x6C, 0x0A);
+
+      Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
       { // рисую затемненный круг
-         g.setFill(yellowBorder);
-         g.fillOval(0, 0, width, height);
+         paint.setStyle(Paint.Style.FILL);
+         paint.setColor(yellowBorder);
+         g.drawOval(0, 0, width, height, paint);
       }
 
+      /** /
       double padX = 0.033 * width;
       double padY = 0.033 * height;
       double wInt = width - 2 * padX;
@@ -101,9 +101,11 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
          //g.draw(ellipseInternal);
          //g.draw(ellipseExternal);
       }
+      /**/
    }
 
-   private void drawEyes(GraphicsContext g) {
+/** /
+   private void drawEyes(Canvas g) {
       SmileModel sm = this.getModel();
       SmileModel.EFaceType type = sm.getFaceType();
       double width  = sm.getSize().width;
@@ -252,7 +254,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       g.setFill(fillOld);
    }
 
-   private void drawMouth(GraphicsContext g) {
+   private void drawMouth(Canvas g) {
       SmileModel sm = this.getModel();
       SmileModel.EFaceType type = sm.getFaceType();
       double width  = sm.getSize().width;
@@ -368,7 +370,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       g.setFill(fillOld);
    }
 
-   private void eyeOpened(GraphicsContext g, boolean right, boolean disabled) {
+   private void eyeOpened(Canvas g, boolean right, boolean disabled) {
       SmileModel sm = this.getModel();
       double width  = sm.getSize().width;
       double height = sm.getSize().height;
@@ -420,7 +422,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       }
    }
 
-   private void eyeClosed(GraphicsContext g, boolean right, boolean disabled) {
+   private void eyeClosed(Canvas g, boolean right, boolean disabled) {
       SmileModel sm = this.getModel();
       double width  = sm.getSize().width;
       double height = sm.getSize().height;
@@ -460,6 +462,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
    private static Arc newArc(double x, double y, double w, double h, double start, double extent) {
        return new Arc(x+w/2, y+h/2, w/2, h/2, start, extent);
    }
+ /**/
 
    @Override
    public void close() {
@@ -471,62 +474,35 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
    //    custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   /** Smile image view implementation over {@link javafx.scene.canvas.Canvas} */
-   static class Canvas extends Smile<javafx.scene.canvas.Canvas> {
+   /** Smile image view implementation over {@link android.graphics.Bitmap} */
+   static class Bitmap extends Smile<android.graphics.Bitmap> {
 
-       private CanvasJfx canvas = new CanvasJfx(this);
+      private BmpCanvas wrap = new BmpCanvas();
 
-       public Canvas(EFaceType faceType) { super(faceType); }
+      public Bitmap(EFaceType faceType) { super(faceType); }
 
-       @Override
-       protected javafx.scene.canvas.Canvas createImage() { return canvas.create(); }
+      @Override
+      protected android.graphics.Bitmap createImage() {
+         return wrap.createImage(getModel().getSize());
+      }
 
-       @Override
-       protected void drawBody() { draw(canvas.getGraphics()); }
-
-   }
-
-   /** Smile image view implementation over {@link javafx.scene.image.Image} */
-   static class Image extends Smile<javafx.scene.image.Image> {
-
-       private ImageJfx img = new ImageJfx(this);
-
-       public Image(EFaceType faceType) { super(faceType); }
-
-       @Override
-       protected javafx.scene.image.Image createImage() {
-          img.createCanvas();
-          return null; // img.createImage(); // fake empty image
-       }
-
-       @Override
-       protected void drawBody() {
-          draw(img.getGraphics());
-          setImage(img.createImage()); // real image
-       }
-
-   }
-
-   /** Smile image controller implementation for {@link Smile.Canvas} */
-   public static class ControllerCanvas extends ImageController<javafx.scene.canvas.Canvas, Smile.Canvas, SmileModel> {
-
-      public ControllerCanvas(EFaceType faceType) {
-         super(new Smile.Canvas(faceType));
+      @Override
+      protected void drawBody() {
+         draw(wrap.getCanvas());
       }
 
       @Override
       public void close() {
-         getView().close();
-         super.close();
+         wrap.close();
       }
 
    }
 
-   /** Smile image controller implementation for {@link Smile.Image} */
-   public static class ControllerImage extends ImageController<javafx.scene.image.Image, Smile.Image, SmileModel> {
+   /** Smile image controller implementation for {@link Smile.Bitmap} */
+   public static class ControllerBitmap extends ImageController<android.graphics.Bitmap, Smile.Bitmap, SmileModel> {
 
-      public ControllerImage(EFaceType faceType) {
-         super(new Smile.Image(faceType));
+      public ControllerBitmap(EFaceType faceType) {
+         super(new Smile.Bitmap(faceType));
       }
 
       @Override
@@ -538,15 +514,10 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
    }
 
    ////////////// TEST //////////////
-   public static void main(String[] args) {
-      TestDrawing.testApp(() -> {
-            return Arrays.asList(EFaceType.values()).stream()
-                  .map(e -> Stream.of(new Smile.ControllerCanvas(e),
-                                      new Smile.ControllerImage(e)))
-                  .flatMap(x -> x)
-                  .collect(Collectors.toList());
-         }
-      );
+   public static List<IImageController<?,?,?>> testData() {
+      return Arrays.asList(EFaceType.values()).stream()
+            .map(e -> new Smile.ControllerBitmap(e))
+            .collect(Collectors.toList());
    }
    //////////////////////////////////
 
