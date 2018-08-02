@@ -15,7 +15,7 @@ import fmg.jfx.img.Mine;
 import fmg.jfx.utils.ImgUtils;
 
 /** MVC: view. JavaFX implementation over node-control {@link Canvas} */
-public class MosaicCanvasView extends MosaicViewJfx<Canvas, Image, MosaicDrawModel<Image>> {
+public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawModel<Image>> {
 
    private CanvasJfx _canvas = new CanvasJfx(this);
    private Flag.ControllerImage _imgFlag = new Flag.ControllerImage();

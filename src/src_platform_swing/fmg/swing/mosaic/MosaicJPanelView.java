@@ -18,7 +18,7 @@ import fmg.swing.utils.Cast;
 import fmg.swing.utils.ImgUtils;
 
 /** MVC: view. SWING implementation over control {@link JPanel} */
-public class MosaicJPanelView extends MosaicViewSwing<JPanel, Icon, MosaicDrawModel<Icon>> {
+public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawModel<Icon>> {
 
    private JPanel _control;
    private Flag.ControllerIcon _imgFlag = new Flag.ControllerIcon();

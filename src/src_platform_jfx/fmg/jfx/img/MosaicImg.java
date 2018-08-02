@@ -9,7 +9,7 @@ import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.mosaic.MosaicImageController;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
-import fmg.jfx.mosaic.MosaicViewJfx;
+import fmg.jfx.mosaic.MosaicJfxView;
 
 /**
  * Representable {@link fmg.core.types.EMosaic} as image
@@ -19,7 +19,7 @@ import fmg.jfx.mosaic.MosaicViewJfx;
  * @param <TImage> SWING specific image: {@link javafx.scene.image.Image} or {@link javafx.scene.canvas.Canvas}
  */
 public abstract class MosaicImg<TImage>
-      extends MosaicViewJfx<TImage, Void, MosaicAnimatedModel<Void>> {
+      extends MosaicJfxView<TImage, Void, MosaicAnimatedModel<Void>> {
 
    protected boolean _useBackgroundColor = true;
 

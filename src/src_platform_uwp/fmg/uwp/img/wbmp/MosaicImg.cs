@@ -11,10 +11,10 @@ using fmg.uwp.mosaic.wbmp;
 namespace fmg.uwp.img.wbmp {
 
    /// <summary>
-   /// Representable {@link fmg.core.types.EMosaic} as image.
-   /// UWP impl over WriteableBitmap.
+   /// Representable <see cref="fmg.core.types.EMosaic"/> as image.
+   /// UWP impl over <see cref="WriteableBitmap"/>.
    /// </summary>
-   public class MosaicImg : MosaicViewWBmp<Nothing, MosaicAnimatedModel<Nothing>> {
+   public class MosaicImg : MosaicWBmpView<Nothing, MosaicAnimatedModel<Nothing>> {
 
       protected bool _useBackgroundColor = true;
 

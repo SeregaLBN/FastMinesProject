@@ -13,7 +13,7 @@ namespace fmg.uwp.mosaic.wbmp {
 
    /// <summary> MVC: view. Abstract UWP over WriteableBitmap implementation </summary>
    /// <typeparam name="TMosaicModel">mosaic data model</typeparam>
-   public abstract class MosaicViewWBmp<TImageInner, TMosaicModel>
+   public abstract class MosaicWBmpView<TImageInner, TMosaicModel>
                        : MosaicView<WriteableBitmap, TImageInner, TMosaicModel>
       where TImageInner  : class
       where TMosaicModel : MosaicDrawModel<TImageInner>
@@ -22,12 +22,12 @@ namespace fmg.uwp.mosaic.wbmp {
       private WriteableBitmap _bmp;
       protected bool _alreadyPainted = false;
 
-      protected MosaicViewWBmp(TMosaicModel mosaicModel)
+      protected MosaicWBmpView(TMosaicModel mosaicModel)
          : base(mosaicModel)
       { }
 
 
-      static MosaicViewWBmp() {
+      static MosaicWBmpView() {
          StaticInitializer.Init();
       }
 
@@ -75,12 +75,12 @@ namespace fmg.uwp.mosaic.wbmp {
 #if DEBUG
          String sufix = "; clipReg=" + clipRegion + "; drawBk=" + drawBk;
          if (modifiedCells == null)
-            LoggerSimple.Put("> MosaicViewWBmp.Draw: all=" + toCheck.Count() + sufix);
+            LoggerSimple.Put("> MosaicWBmpView.Draw: all=" + toCheck.Count() + sufix);
          else
          if (ReferenceEquals(modifiedCells, model.Matrix) || (modifiedCells.Count() == model.Matrix.Count))
-            LoggerSimple.Put("> MosaicViewWBmp.Draw: all=" + modifiedCells.Count() + sufix);
+            LoggerSimple.Put("> MosaicWBmpView.Draw: all=" + modifiedCells.Count() + sufix);
          else
-            LoggerSimple.Put("> MosaicViewWBmp.Draw: cnt=" + modifiedCells.Count() + sufix);
+            LoggerSimple.Put("> MosaicWBmpView.Draw: cnt=" + modifiedCells.Count() + sufix);
          int tmp = 0;
 #endif
 
@@ -201,7 +201,7 @@ namespace fmg.uwp.mosaic.wbmp {
          }
 
 #if DEBUG
-         LoggerSimple.Put("< MosaicViewWBmp.Draw: cnt=" + tmp);
+         LoggerSimple.Put("< MosaicWBmpView.Draw: cnt=" + tmp);
          LoggerSimple.Put("-------------------------------");
 #endif
 

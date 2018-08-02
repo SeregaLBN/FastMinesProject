@@ -9,14 +9,14 @@
     <Import_RootNamespace>FastMines.Uwp.Draw.WBmp</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\wbmp\MosaicViewWBmp.cs">
-      <Link>src_fmg.uwp\mosaic\wbmp\MosaicViewWBmp.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\wbmp\MosaicWBmpView.cs">
+      <Link>src_fmg.uwp\mosaic\wbmp\MosaicWBmpView.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\wbmp\MosaicCanvasController.cs">
-      <Link>src_fmg.uwp\mosaic\wbmp\MosaicCanvasController.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\wbmp\MosaicImageController.cs">
+      <Link>src_fmg.uwp\mosaic\wbmp\MosaicImageController.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\wbmp\MosaicCanvasView.cs">
-      <Link>src_fmg.uwp\mosaic\wbmp\MosaicCanvasView.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\wbmp\MosaicImageView.cs">
+      <Link>src_fmg.uwp\mosaic\wbmp\MosaicImageView.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\wbmp\MosaicSkillImg.cs">
       <Link>src_fmg.uwp\img\wbmp\MosaicSkillImg.cs</Link>

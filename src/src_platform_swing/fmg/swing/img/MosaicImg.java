@@ -9,7 +9,7 @@ import fmg.core.img.MosaicAnimatedModel;
 import fmg.core.mosaic.MosaicImageController;
 import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.EMosaic;
-import fmg.swing.mosaic.MosaicViewSwing;
+import fmg.swing.mosaic.MosaicSwingView;
 
 /**
  * Representable {@link fmg.core.types.EMosaic} as image
@@ -19,7 +19,7 @@ import fmg.swing.mosaic.MosaicViewSwing;
  * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
  */
 public abstract class MosaicImg<TImage>
-                extends MosaicViewSwing<TImage, Void, MosaicAnimatedModel<Void>>
+                extends MosaicSwingView<TImage, Void, MosaicAnimatedModel<Void>>
 {
 
    protected boolean _useBackgroundColor = true;

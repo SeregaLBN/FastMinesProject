@@ -60,7 +60,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          public void Dispose() { throw new NotImplementedException(); }
          public void Invalidate() { throw new NotImplementedException(); }
       }
-      public void TestMosaicControl()  { TestAppMosaicControl(() => new MosaicCanvasController[] {            MosaicCanvasController.GetTestData() }); }
+      public void TestMosaicControl()  { TestAppMosaicControl(()         => new      MosaicImageController[] { MosaicImageController.GetTestData() }); }
       public void TestMosaicsImg()     { TestAppMosaicImage                                                          (MosaicImg     .GetTestData); }
       public void TestLogos()          { TestAppAnimated<Logo.Controller, Logo, LogoModel>                           (Logo          .GetTestData); }
       public void TestMosaicSkillImg() { TestAppAnimated<MosaicSkillImg.Controller, MosaicSkillImg, MosaicSkillModel>(MosaicSkillImg.GetTestData); }
@@ -111,8 +111,8 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          TestApp<WriteableBitmap, Nothing, MosaicImg.Controller, MosaicImg, MosaicImg, MosaicAnimatedModel<Nothing>, MosaicAnimatedModel<Nothing>>(funcGetImages);
       }
 
-      void TestAppMosaicControl(Func<IEnumerable<MosaicCanvasController>> funcGetImages) {
-         TestApp<Canvas, WriteableBitmap, MosaicCanvasController, MosaicCanvasView, DummyView<Canvas>, MosaicDrawModel<WriteableBitmap>, DummyModel>(funcGetImages);
+      void TestAppMosaicControl(Func<IEnumerable<MosaicImageController>> funcGetImages) {
+         TestApp<Image, WriteableBitmap, MosaicImageController, MosaicImageView, DummyView<Image>, MosaicDrawModel<WriteableBitmap>, DummyModel>(funcGetImages);
       }
       #endregion wrappers
 

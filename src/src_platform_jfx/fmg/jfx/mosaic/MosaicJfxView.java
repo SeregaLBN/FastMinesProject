@@ -29,7 +29,7 @@ import fmg.jfx.utils.Cast;
 import fmg.jfx.utils.StaticInitializer;
 
 /** MVC: view. Abstract JFX implementation */
-public abstract class MosaicViewJfx<TImage,
+public abstract class MosaicJfxView<TImage,
                                      TImageInner,
                                      TMosaicModel extends MosaicDrawModel<TImageInner>>
                  extends MosaicView<TImage, TImageInner, TMosaicModel>
@@ -40,7 +40,7 @@ public abstract class MosaicViewJfx<TImage,
    private final Map<String /* text */, Text> _mapText = new HashMap<>();
    protected boolean _alreadyPainted = false;
 
-   protected MosaicViewJfx(TMosaicModel mosaicModel) {
+   protected MosaicJfxView(TMosaicModel mosaicModel) {
       super(mosaicModel);
    }
 

@@ -28,7 +28,7 @@ import fmg.swing.utils.StaticInitializer;
  * @param <TImageInner> image type of flag/mine into mosaic field
  * @param <TMosaicModel> mosaic data model
  */
-public abstract class MosaicViewSwing<TImage,
+public abstract class MosaicSwingView<TImage,
                                        TImageInner,
                                        TMosaicModel extends MosaicDrawModel<TImageInner>>
                 extends MosaicView<TImage, TImageInner, TMosaicModel>
@@ -40,7 +40,7 @@ public abstract class MosaicViewSwing<TImage,
    private final Map<String /* text */, TextLayout> _mapTextLayout = new HashMap<>();
    protected boolean _alreadyPainted = false;
 
-   protected MosaicViewSwing(TMosaicModel mosaicModel) {
+   protected MosaicSwingView(TMosaicModel mosaicModel) {
       super(mosaicModel);
    }
 

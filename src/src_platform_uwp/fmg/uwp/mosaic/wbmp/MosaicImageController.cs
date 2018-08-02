@@ -21,18 +21,18 @@ using fmg.uwp.utils;
 
 namespace fmg.uwp.mosaic.wbmp {
 
-   /** MVC: controller. UWP WriteableBitmap implementation */
-   public class MosaicCanvasController : MosaicController<Canvas, WriteableBitmap, MosaicCanvasView, MosaicDrawModel<WriteableBitmap>> {
+   /// <summary> MVC: controller. UWP <see cref="WriteableBitmap"/> implementation over control <see cref="Image"/> </summary>
+   public class MosaicImageController : MosaicController<Image, WriteableBitmap, MosaicImageView, MosaicDrawModel<WriteableBitmap>> {
 
       private readonly ClickInfo _clickInfo = new ClickInfo();
 
-      public MosaicCanvasController()
-         : base(new MosaicCanvasView())
+      public MosaicImageController()
+         : base(new MosaicImageView())
       {
          SubscribeToViewControl();
       }
 
-      public Canvas GetViewPanel() {
+      public Image GetViewPanel() {
          return View.GetControl();
       }
 
@@ -55,7 +55,7 @@ namespace fmg.uwp.mosaic.wbmp {
       }
 
       bool OnClick(Windows.Foundation.Point pos, bool leftClick, bool down) {
-         var point = ToCanvasPoint(pos);
+         var point = ToImagePoint(pos);
          return ClickHandler(down
                ? MousePressed(point, leftClick)
                : MouseReleased(point, leftClick));
@@ -68,9 +68,9 @@ namespace fmg.uwp.mosaic.wbmp {
       }
 
       protected void OnDoubleTapped(object sender, DoubleTappedRoutedEventArgs ev) {
-         var canvas = View.GetControl();
-         var rcCanvas = new Windows.Foundation.Rect(0, 0, canvas.Width, canvas.Height);
-         if (rcCanvas.Contains(ev.GetPosition(canvas))) {
+         var imgControl = View.GetControl();
+         var rcImage = new Windows.Foundation.Rect(0, 0, imgControl.Width, imgControl.Height);
+         if (rcImage.Contains(ev.GetPosition(imgControl))) {
             if (this.GameStatus == EGameStatus.eGSEnd) {
                this.GameNew();
                ev.Handled = true;
@@ -91,8 +91,8 @@ namespace fmg.uwp.mosaic.wbmp {
             OnClick(new Windows.Foundation.Point(-1, -1), true, false);
 
             // 2. make right click - up & down
-            var canvas = View.GetControl();
-            var pos = ev.GetPosition(canvas);
+            var imgControl = View.GetControl();
+            var pos = ev.GetPosition(imgControl);
             var handled1 = OnClick(pos, false, true);
             var handled2 = OnClick(pos, false, false);
             ev.Handled = handled1 || handled2;
@@ -100,8 +100,8 @@ namespace fmg.uwp.mosaic.wbmp {
       }
 
       protected void OnPointerPressed(object sender, PointerRoutedEventArgs ev) {
-         var canvas = View.GetControl();
-         var currPoint = ev.GetCurrentPoint(canvas);
+         var imgControl = View.GetControl();
+         var currPoint = ev.GetCurrentPoint(imgControl);
 
          //_clickInfo.PointerDevice = pointerPoint.PointerDevice.PointerDeviceType;
          var props = currPoint.Properties;
@@ -128,8 +128,8 @@ namespace fmg.uwp.mosaic.wbmp {
       }
 
       protected void OnPointerReleased(object sender, PointerRoutedEventArgs ev) {
-         var canvas = View.GetControl();
-         var currPoint = ev.GetCurrentPoint(canvas);
+         var imgControl = View.GetControl();
+         var currPoint = ev.GetCurrentPoint(imgControl);
          //if (_manipulationStarted)
          if (ev.Pointer.PointerDeviceType == PointerDeviceType.Mouse) {
             var isLeftClick = (currPoint.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased);
@@ -149,8 +149,8 @@ namespace fmg.uwp.mosaic.wbmp {
       }
 
       protected void OnPointerCaptureLost(object sender, PointerRoutedEventArgs ev) {
-         var canvas = View.GetControl();
-         var currPoint = ev.GetCurrentPoint(canvas);
+         var imgControl = View.GetControl();
+         var currPoint = ev.GetCurrentPoint(imgControl);
          if (!_clickInfo.Released) {
             LoggerSimple.Put("ã OnPointerCaptureLost: forced left release click...");
             OnClick(currPoint.Position, true, false);
@@ -167,25 +167,25 @@ namespace fmg.uwp.mosaic.wbmp {
       }
 
       private void SubscribeToViewControl() {
-         Canvas control = this.View.GetControl();
-         control.Tapped += OnTapped;
-         control.DoubleTapped += OnDoubleTapped;
-         control.RightTapped += OnRightTapped;
-         control.PointerPressed += OnPointerPressed;
-         control.PointerReleased += OnPointerReleased;
-         control.PointerCaptureLost += OnPointerCaptureLost;
-         control.LostFocus += OnFocusLost;
+         var imgControl = this.View.GetControl();
+         imgControl.Tapped += OnTapped;
+         imgControl.DoubleTapped += OnDoubleTapped;
+         imgControl.RightTapped += OnRightTapped;
+         imgControl.PointerPressed += OnPointerPressed;
+         imgControl.PointerReleased += OnPointerReleased;
+         imgControl.PointerCaptureLost += OnPointerCaptureLost;
+         imgControl.LostFocus += OnFocusLost;
       }
 
       private void UnsubscribeToViewControl() {
-         Canvas control = this.View.GetControl();
-         control.Tapped += OnTapped;
-         control.DoubleTapped -= OnDoubleTapped;
-         control.RightTapped -= OnRightTapped;
-         control.PointerPressed -= OnPointerPressed;
-         control.PointerReleased -= OnPointerReleased;
-         control.PointerCaptureLost -= OnPointerCaptureLost;
-         control.LostFocus -= OnFocusLost;
+         var imgControl = this.View.GetControl();
+         imgControl.Tapped += OnTapped;
+         imgControl.DoubleTapped -= OnDoubleTapped;
+         imgControl.RightTapped -= OnRightTapped;
+         imgControl.PointerPressed -= OnPointerPressed;
+         imgControl.PointerReleased -= OnPointerReleased;
+         imgControl.PointerCaptureLost -= OnPointerCaptureLost;
+         imgControl.LostFocus -= OnFocusLost;
       }
 
       protected override void Disposing() {
@@ -194,9 +194,9 @@ namespace fmg.uwp.mosaic.wbmp {
          base.Disposing();
       }
 
-      private PointDouble ToCanvasPoint(Windows.Foundation.Point pagePoint) {
-         Canvas control = this.View.GetControl();
-         var point = pagePoint.ToFmPointDouble(); // control.TransformToVisual(control).TransformPoint(pagePoint).ToFmPointDouble();
+      private PointDouble ToImagePoint(Windows.Foundation.Point pagePoint) {
+         var imgControl = this.View.GetControl();
+         var point = pagePoint.ToFmPointDouble(); // imgControl.TransformToVisual(imgControl).TransformPoint(pagePoint).ToFmPointDouble();
          //var o = GetOffset();
          //var point2 = new PointDouble(pagePoint.X - o.Left, pagePoint.Y - o.Top);
          //System.Diagnostics.Debug.Assert(point == point2);
@@ -213,9 +213,9 @@ namespace fmg.uwp.mosaic.wbmp {
       }
 
       ////////////// TEST //////////////
-      public static MosaicCanvasController GetTestData() {
-         MosaicView<Canvas, WriteableBitmap, MosaicDrawModel<WriteableBitmap>>._DEBUG_DRAW_FLOW = true;
-         MosaicCanvasController ctrllr = new MosaicCanvasController();
+      public static MosaicImageController GetTestData() {
+         MosaicView<Image, WriteableBitmap, MosaicDrawModel<WriteableBitmap>>._DEBUG_DRAW_FLOW = true;
+         MosaicImageController ctrllr = new MosaicImageController();
 
          if (ThreadLocalRandom.Current.Next(2) == 1) {
             // unmodified controller test

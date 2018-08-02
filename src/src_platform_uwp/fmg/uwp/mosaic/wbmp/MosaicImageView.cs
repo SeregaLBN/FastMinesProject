@@ -7,23 +7,24 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common.geom;
+using fmg.common.notyfier;
+using fmg.common.Converters;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 using fmg.uwp.img.wbmp;
 using fmg.uwp.utils.wbmp;
-using fmg.common.Converters;
-using fmg.common.notyfier;
 
 namespace fmg.uwp.mosaic.wbmp {
 
-   /// <summary> MVC: view. UWP WriteableBitmap implementation over control <see cref="Canvas"/> </summary>
-   public class MosaicCanvasView : MosaicView<Canvas, WriteableBitmap, MosaicDrawModel<WriteableBitmap>> {
+   /// <summary> MVC: view. UWP <see cref="WriteableBitmap"/> implementation over control <see cref="Image"/> </summary>
+   public class MosaicImageView : MosaicView<Image, WriteableBitmap, MosaicDrawModel<WriteableBitmap>> {
 
-      class InnerView : MosaicViewWBmp<WriteableBitmap, MosaicDrawModel<WriteableBitmap>> {
+      /// <summary> MVC: view. Encapsulating a view through a <see cref="WriteableBitmap"/> </summary>
+      class InnerView : MosaicWBmpView<WriteableBitmap, MosaicDrawModel<WriteableBitmap>> {
 
-         private readonly MosaicCanvasView _owner;
+         private readonly MosaicImageView _owner;
 
-         public InnerView(MosaicCanvasView self)
+         public InnerView(MosaicImageView self)
             : base(self.Model)
          {
             _owner = self;
@@ -39,11 +40,11 @@ namespace fmg.uwp.mosaic.wbmp {
       }
 
       private InnerView _innerView;
-      private Canvas _control;
+      private Image _control;
       private Flag.Controller _imgFlag = new Flag.Controller();
       private Mine.Controller _imgMine = new Mine.Controller();
 
-      public MosaicCanvasView()
+      public MosaicImageView()
          : base(new MosaicDrawModel<WriteableBitmap>())
       {
          _notifier.DeferredNotifications = true;
@@ -54,15 +55,22 @@ namespace fmg.uwp.mosaic.wbmp {
 
       public WriteableBitmap InnerImage => _innerView.Image;
 
-      protected override Canvas CreateImage() {
+      protected override Image CreateImage() {
          // will return once created window
          return GetControl();
       }
 
-      public Canvas GetControl() {
+      public Image GetControl() {
          if (_control == null) {
-            _control = new Canvas();
-            _control.SetBinding(FrameworkElement.WidthProperty, new Binding {
+            _control = new Image {
+               Stretch = Stretch.None
+            };
+            _control.SetBinding(Windows.UI.Xaml.Controls.Image.SourceProperty, new Binding {
+               Source = this,
+               Path = new PropertyPath(nameof(InnerImage)),
+               Mode = BindingMode.OneWay
+            });
+            _control.SetBinding(Windows.UI.Xaml.Controls.Image.WidthProperty, new Binding {
                Source = this,
                Path = new PropertyPath(nameof(Size)),
                Mode = BindingMode.OneWay,
@@ -74,29 +82,6 @@ namespace fmg.uwp.mosaic.wbmp {
                Mode = BindingMode.OneWay,
                Converter = new SizeToHeightConverter()
             });
-
-            var imgControl = new Image {
-               Stretch = Stretch.None
-            };
-            imgControl.SetBinding(Windows.UI.Xaml.Controls.Image.SourceProperty, new Binding {
-               Source = this,
-               Path = new PropertyPath(nameof(InnerImage)),
-               Mode = BindingMode.OneWay
-            });
-            //imgControl.SetBinding(Windows.UI.Xaml.Controls.Image.WidthProperty, new Binding {
-            //   Source = this,
-            //   Path = new PropertyPath(nameof(Size)),
-            //   Mode = BindingMode.OneWay,
-            //   Converter = new SizeToWidthConverter()
-            //});
-            //imgControl.SetBinding(FrameworkElement.HeightProperty, new Binding {
-            //   Source = this,
-            //   Path = new PropertyPath(nameof(Size)),
-            //   Mode = BindingMode.OneWay,
-            //   Converter = new SizeToHeightConverter()
-            //});
-
-            _control.Children.Add(imgControl);
          }
          return _control;
       }
