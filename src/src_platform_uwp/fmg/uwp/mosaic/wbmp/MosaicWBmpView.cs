@@ -148,7 +148,7 @@ namespace fmg.uwp.mosaic.wbmp {
                      if (!string.IsNullOrWhiteSpace(szCaption)) {
                         if (cell.State.Down)
                            rcInner.MoveXY(1, 1);
-                        wbmp.DrawString(szCaption, rcInner.ToWinRect(), model.FontInfo.Name, (int)model.FontInfo.Size, txtColor.ToWinColor());
+                        wbmp.DrawString(szCaption, rcInner.MoveXY(offset).ToWinRect(), model.FontInfo.Name, (int)model.FontInfo.Size, txtColor.ToWinColor());
                       //wmp.DrawRectangle(rcInner.Left, rcInner.Top, rcInner.Right, rcInner.Bottom, Color.Red.ToWinColor()); // debug
                      }
                   }

@@ -40,12 +40,12 @@ public abstract class MosaicController<TImage, TImageInner,
    /** использовать ли флажок на поле */
    private boolean _useUnknown = true;
 
-   private final PropertyChangeListener _mosaicModelListener = ev -> onMosaicModelPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+   private final PropertyChangeListener _modelListener = ev -> onModelPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
 
 
    protected MosaicController(TMosaicView mosaicView) {
       super(mosaicView);
-      mosaicView.getModel().addListener(_mosaicModelListener);
+      getModel().addListener(_modelListener);
    }
 
 
@@ -123,7 +123,10 @@ public abstract class MosaicController<TImage, TImageInner,
       MosaicGameModel mosaic = getModel();
       List<BaseCell> matrixClone = new ArrayList<>(getMatrix());
       matrixClone.remove(firstClickCell); // исключаю на которой кликал юзер
-      matrixClone.removeAll(firstClickCell.getNeighbors(mosaic)); // и их соседей
+      List<BaseCell> neighbors = firstClickCell.getNeighbors(mosaic);
+      matrixClone.removeAll(neighbors); // и их соседей
+      if (matrixClone.isEmpty())
+         matrixClone.add(neighbors.get(ThreadLocalRandom.current().nextInt(neighbors.size())));
       int count = 0;
       Random rand = ThreadLocalRandom.current();
       do {
@@ -512,7 +515,7 @@ public abstract class MosaicController<TImage, TImageInner,
       return (getGameStatus() == EGameStatus.eGSEnd) && (0 == getCountMinesLeft());
    }
 
-   protected void onMosaicModelPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+   protected void onModelPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       switch (propertyName) {
       case MosaicGameModel.PROPERTY_SIZE_FIELD:
          setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
@@ -598,7 +601,7 @@ public abstract class MosaicController<TImage, TImageInner,
 
    @Override
    public void close() {
-      getView().getModel().removeListener(_mosaicModelListener);
+      getModel().removeListener(_modelListener);
       super.close();
    }
 

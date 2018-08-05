@@ -38,11 +38,11 @@ namespace Test.FastMines.Uwp.Images.WBmp {
 
       #region images Fabrica
       class DummyModel : IAnimatedModel {
-         public bool Animated { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+         public bool Animated      { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
          public long AnimatePeriod { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-         public int TotalFrames { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-         public int CurrentFrame { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-         public SizeDouble Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+         public int TotalFrames    { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+         public int CurrentFrame   { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+         public SizeDouble Size    { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 #pragma warning disable CS0067 // warning CS0067: The event is never used
          public event PropertyChangedEventHandler PropertyChanged; // TODO unusable
 #pragma warning restore CS0067
@@ -51,23 +51,23 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       class DummyView<TImage> : IImageView<TImage, DummyModel>
          where TImage : class
       {
-         public DummyModel Model => throw new NotImplementedException();
+         public DummyModel Model      => throw new NotImplementedException();
          public SizeDouble Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-         public TImage Image => throw new NotImplementedException();
+         public TImage Image          => throw new NotImplementedException();
 #pragma warning disable CS0067 // warning CS0067: The event is never used
          public event PropertyChangedEventHandler PropertyChanged; // TODO unusable
 #pragma warning restore CS0067
-         public void Dispose() { throw new NotImplementedException(); }
+         public void Dispose()    { throw new NotImplementedException(); }
          public void Invalidate() { throw new NotImplementedException(); }
       }
       public void TestMosaicControl()  { TestAppMosaicControl(()         => new      MosaicImageController[] { MosaicImageController.GetTestData() }); }
       public void TestMosaicsImg()     { TestAppMosaicImage                                                          (MosaicImg     .GetTestData); }
-      public void TestLogos()          { TestAppAnimated<Logo.Controller, Logo, LogoModel>                           (Logo          .GetTestData); }
+      public void TestLogos()          { TestAppAnimated<          Logo.Controller,           Logo,        LogoModel>(Logo          .GetTestData); }
       public void TestMosaicSkillImg() { TestAppAnimated<MosaicSkillImg.Controller, MosaicSkillImg, MosaicSkillModel>(MosaicSkillImg.GetTestData); }
       public void TestMosaicGroupImg() { TestAppAnimated<MosaicGroupImg.Controller, MosaicGroupImg, MosaicGroupModel>(MosaicGroupImg.GetTestData); }
-      public void TestMine()           { TestAppAnimated<Mine.Controller, Logo, LogoModel>                           (Mine          .GetTestData); }
-      public void TestFlag()           { TestAppSimple<Flag.Controller, Flag, FlagModel>                             (Flag          .GetTestData); }
-      public void TestSmile()          { TestAppSimple<Smile.Controller, Smile, SmileModel>                          (Smile         .GetTestData); }
+      public void TestMine()           { TestAppAnimated<          Mine.Controller,           Logo,        LogoModel>(Mine          .GetTestData); }
+      public void TestFlag()           { TestAppSimple<            Flag.Controller,           Flag,        FlagModel>(Flag          .GetTestData); }
+      public void TestSmile()          { TestAppSimple<           Smile.Controller,          Smile,       SmileModel>(Smile         .GetTestData); }
       #endregion
 
 
@@ -93,16 +93,16 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       #region wrappers
       void TestAppSimple<TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
          where TImageController : ImageController<WriteableBitmap, TImageView, TImageModel>
-         where TImageView : IImageView<WriteableBitmap, TImageModel>
-         where TImageModel : IImageModel
+         where TImageView       : IImageView<WriteableBitmap, TImageModel>
+         where TImageModel      : IImageModel
       {
          TestApp<WriteableBitmap, DummyMosaicImageType, TImageController, TImageView, DummyView<WriteableBitmap>, TImageModel, DummyModel>(funcGetImages);
       }
 
       void TestAppAnimated<TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
          where TImageController : ImageController<WriteableBitmap, TImageView, TImageModel>
-         where TImageView : IImageView<WriteableBitmap, TImageModel>
-         where TImageModel : IAnimatedModel
+         where TImageView       : IImageView<WriteableBitmap, TImageModel>
+         where TImageModel      : IAnimatedModel
       {
          TestApp<WriteableBitmap, DummyMosaicImageType, TImageController, TImageView, TImageView, TImageModel, TImageModel>(funcGetImages);
       }
@@ -164,7 +164,6 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                      var imgControl = new Image {
                         Stretch = Stretch.None
                      };
-
                      imgControl.SetBinding(Image.SourceProperty, new Binding {
                         Source = imgObj,
                         Path = new PropertyPath(nameof(imgObj.Image)),
@@ -192,7 +191,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
             onCellTilingHandler(false, false, true);
          };
          void onPointerPressed(object sender, PointerRoutedEventArgs ev) {
-            onCellTilingHandler(true, false, false);
+            //onCellTilingHandler(true, false, false);
          };
          void onTapped(object sender, TappedRoutedEventArgs ev) {
             onCellTilingHandler(true, false, false);

@@ -46,7 +46,7 @@ namespace fmg.core.mosaic {
       protected MosaicController(TMosaicView mosaicView)
          : base(mosaicView)
       {
-         mosaicView.Model.PropertyChanged += OnMosaicModelPropertyChanged;
+         Model.PropertyChanged += OnModelPropertyChanged;
       }
 
 
@@ -115,8 +115,12 @@ namespace fmg.core.mosaic {
          var mosaic = Model;
          var matrixClone = new List<BaseCell>(Matrix);
          matrixClone.Remove(firstClickCell); // исключаю на которой кликал юзер
-         foreach (var x in firstClickCell.GetNeighbors(mosaic))
+         var neighbors = firstClickCell.GetNeighbors(mosaic);
+         foreach (var x in neighbors)
             matrixClone.Remove(x); // и их соседей
+         if (!matrixClone.Any())
+            matrixClone.Add(neighbors[ThreadLocalRandom.Current.Next(neighbors.Count)]);
+         matrixClone.Add(neighbors.First());
          var count = 0;
          var rand = ThreadLocalRandom.Current;
          do {
@@ -485,18 +489,18 @@ namespace fmg.core.mosaic {
       public bool IsVictory => (GameStatus == EGameStatus.eGSEnd) && (0 == CountMinesLeft);
 
 
-      protected void OnMosaicModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+      protected void OnModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          switch (ev.PropertyName) {
-         case nameof(MosaicGameModel.SizeField):
+         case nameof(Model.SizeField):
             CellDown = null; // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...
             RecheckMinesCount();
             GameNew();
             break;
-         case nameof(MosaicGameModel.MosaicType):
+         case nameof(Model.MosaicType):
             RecheckMinesCount();
             GameNew();
             break;
-         case nameof(MosaicGameModel.Area):
+         case nameof(Model.Area):
             InvalidateView(Model.Matrix);
             break;
          default:
@@ -568,12 +572,11 @@ namespace fmg.core.mosaic {
          _clickEvent = handler;
       }
       private void AcceptClickEvent(ClickResult clickResult) {
-         if (_clickEvent != null)
-            _clickEvent(clickResult);
+         _clickEvent?.Invoke(clickResult);
       }
 
       protected override void Disposing() {
-         View.Model.PropertyChanged -= OnMosaicModelPropertyChanged;
+         View.Model.PropertyChanged -= OnModelPropertyChanged;
          base.Disposing();
       }
 

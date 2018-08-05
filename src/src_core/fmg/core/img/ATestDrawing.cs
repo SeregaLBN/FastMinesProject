@@ -37,7 +37,7 @@ namespace fmg.core.img {
          IImageModel model = ctrller.Model;
       #region manual settings
          {
-            model.Size = new SizeDouble(600, 600);
+            //model.Size = new SizeDouble(600, 600);
 
             if (model is IAnimatedModel am) {
                am.Animated = true;

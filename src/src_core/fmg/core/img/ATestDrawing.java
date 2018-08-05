@@ -35,7 +35,7 @@ public abstract class ATestDrawing {
       ///////////////////////
 
       IImageModel model = ctrller.getModel();
-      model.setSize(new SizeDouble(600, 600));
+      //model.setSize(new SizeDouble(600, 600));
 
       if (model instanceof IAnimatedModel) {
          IAnimatedModel am = (IAnimatedModel)model;
