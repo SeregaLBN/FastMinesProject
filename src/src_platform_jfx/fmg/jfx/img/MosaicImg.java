@@ -71,7 +71,7 @@ public abstract class MosaicImg<TImage>
 
       @Override
       public void draw(Collection<BaseCell> modifiedCells) {
-         draw(canvas.getGraphics(), modifiedCells, null, _useBackgroundColor);
+         drawJfx(canvas.getGraphics(), modifiedCells, null, _useBackgroundColor);
       }
 
    }
@@ -89,7 +89,7 @@ public abstract class MosaicImg<TImage>
 
       @Override
       public void draw(Collection<BaseCell> modifiedCells) {
-         draw(img.getGraphics(), modifiedCells, null, _useBackgroundColor);
+         drawJfx(img.getGraphics(), modifiedCells, null, _useBackgroundColor);
          setImage(img.createImage()); // real image
       }
 

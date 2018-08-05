@@ -137,7 +137,7 @@ namespace fmg.core.img {
 
                   mdm.BkFill.Mode = 1 + R(mdm.CellAttr.GetMaxBackgroundFillModeValue());
 
-                  mdm.PenBorder.Width = R(3);
+                  mdm.PenBorder.Width = 1+R(2);
                   SizeDouble size = mdm.Size;
                   double padLeftRight = R((int)(size.Width / 3));
                   double padTopBottom = R((int)(size.Height / 3));

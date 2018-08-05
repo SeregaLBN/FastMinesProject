@@ -23,7 +23,7 @@ namespace fmg.uwp.img.wbmp {
       { }
 
       public override void Draw(IEnumerable<BaseCell> modifiedCells) {
-         Draw(modifiedCells, null, _useBackgroundColor);
+         DrawWBmp(modifiedCells, null, _useBackgroundColor);
       }
 
       protected override void DrawBody() {

@@ -32,7 +32,7 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
    @Override
    public void draw(Collection<BaseCell> modifiedCells) {
       if (modifiedCells == null) {
-         draw(_canvas.getGraphics(), getModel().getMatrix(), null, true);
+         drawJfx(_canvas.getGraphics(), getModel().getMatrix(), null, true);
          return;
       }
       double minX=0, minY=0, maxX=0, maxY=0;
@@ -55,7 +55,7 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
       RectDouble rcClip = new RectDouble(minX, minY, maxX-minX, maxY-minY);
 //      if (_DEBUG_DRAW_FLOW)
 //         System.out.println("MosaicViewJfx.draw: repaint=" + rcClip);
-      draw(_canvas.getGraphics(), modifiedCells, rcClip, true);
+      drawJfx(_canvas.getGraphics(), modifiedCells, rcClip, true);
    }
 
    @Override

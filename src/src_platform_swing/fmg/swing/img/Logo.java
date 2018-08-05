@@ -159,7 +159,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
       protected java.awt.Image createImage() { return img.create(); }
 
       @Override
-      protected void drawBody() { img.draw(g -> draw(g)); }
+      protected void drawBody() { img.drawWrapper(g -> draw(g)); }
 
    }
 

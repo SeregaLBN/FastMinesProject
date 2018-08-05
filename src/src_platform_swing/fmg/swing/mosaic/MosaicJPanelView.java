@@ -48,7 +48,7 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
                Rectangle clipBounds = g.getClipBounds();
-               MosaicJPanelView.this.draw(g2d,
+               MosaicJPanelView.this.drawSwing(g2d,
                                          _modifiedCells.isEmpty()
                                             ? null
                                             : _modifiedCells,

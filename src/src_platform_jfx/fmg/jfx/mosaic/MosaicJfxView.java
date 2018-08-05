@@ -61,7 +61,7 @@ public abstract class MosaicJfxView<TImage,
    }
 
 
-   protected void draw(GraphicsContext g, Collection<BaseCell> modifiedCells, RectDouble clipRegion, boolean drawBk) {
+   protected void drawJfx(GraphicsContext g, Collection<BaseCell> modifiedCells, RectDouble clipRegion, boolean drawBk) {
       assert !_alreadyPainted;
       _alreadyPainted = true;
 
@@ -98,21 +98,14 @@ public abstract class MosaicJfxView<TImage,
       boolean isIconicMode = pen.getColorLight().equals(pen.getColorShadow());
       BackgroundFill bkFill = model.getBackgroundFill();
 
-      Collection<BaseCell> toCheck;
-      if ((clipRegion != null) || (modifiedCells == null))
-         toCheck = model.getMatrix(); // check to redraw all mosaic cells
-      else
-         toCheck = modifiedCells;
+      boolean redrawAll = (modifiedCells == null) || modifiedCells.isEmpty() || (modifiedCells.size() >= model.getMatrix().size());
+      boolean recheckAll = (clipRegion != null); // check to redraw all mosaic cells
+      Collection<BaseCell> toCheck = (redrawAll || recheckAll) ? model.getMatrix() : modifiedCells;
 
       if (_DEBUG_DRAW_FLOW) {
-         String sufix = "; clipReg=" + clipRegion + "; drawBk=" + drawBk;
-         if (modifiedCells == null)
-            System.out.println("> MosaicViewSwing.draw: all=" + toCheck.size() + sufix);
-         else
-         if ((modifiedCells == model.getMatrix()) || (modifiedCells.size() == model.getMatrix().size()))
-            System.out.println("> MosaicViewSwing.draw: all=" + modifiedCells.size() + sufix);
-         else
-            System.out.println("> MosaicViewSwing.draw: cnt=" + modifiedCells.size() + sufix);
+         System.out.println("> MosaicSwingView.draw: " + (redrawAll ? "all" : ("cnt=" + modifiedCells.size()))
+                                                       + "; clipReg=" + clipRegion
+                                                       + "; drawBk=" + drawBk);
       }
       int tmp = 0;
 
@@ -122,8 +115,8 @@ public abstract class MosaicJfxView<TImage,
 
       for (BaseCell cell: toCheck) {
          // redraw only when needed...
-         if ((toCheck == modifiedCells) || // check reference equals
-             ((modifiedCells != null) && (modifiedCells.contains(cell))) || // ..when the cell is explicitly specified
+         if (redrawAll ||
+             ((modifiedCells != null) && modifiedCells.contains(cell)) || // ..when the cell is explicitly specified
              ((clipRegion != null) && cell.getRcOuter().moveXY(offset.width, offset.height).intersection(clipRegion))) // ...when the cells and update region intersect
          {
              ++tmp;
@@ -299,7 +292,7 @@ public abstract class MosaicJfxView<TImage,
       /**/
 
       if (_DEBUG_DRAW_FLOW) {
-         System.out.println("< MosaicViewSwing.draw: cnt=" + tmp);
+         System.out.println("< MosaicJfxView.draw: cnt=" + tmp);
          System.out.println("-------------------------------");
       }
 

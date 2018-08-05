@@ -26,7 +26,7 @@ namespace fmg.core.mosaic {
       public static bool _DEBUG_DRAW_FLOW = false;
       private readonly HashSet<BaseCell> _modifiedCells = new HashSet<BaseCell>();
 
-      public void Invalidate(IEnumerable<BaseCell> modifiedCells) {
+      public virtual void Invalidate(IEnumerable<BaseCell> modifiedCells) {
          if (modifiedCells == null) // mark NULL if all mosaic is changed
             _modifiedCells.Clear();
          else

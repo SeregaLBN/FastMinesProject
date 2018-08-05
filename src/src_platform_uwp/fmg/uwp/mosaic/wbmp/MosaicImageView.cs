@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -6,7 +7,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using fmg.common.geom;
 using fmg.common.notyfier;
 using fmg.common.Converters;
 using fmg.core.mosaic;
@@ -31,10 +31,8 @@ namespace fmg.uwp.mosaic.wbmp {
          }
 
          public override void Draw(IEnumerable<BaseCell> modifiedCells) {
-            RectDouble? rc = new RectDouble(0, 0, _owner._control.Width, _owner._control.Height);
-            if (double.IsNaN(rc.Value.Width) || double.IsNaN(rc.Value.Height))
-               rc = null;
-            Draw(modifiedCells, rc, (modifiedCells==null) || !modifiedCells.Any());
+            bool drawBk = (modifiedCells == null) || !modifiedCells.Any();
+            DrawWBmp(modifiedCells, null, drawBk);
          }
 
       }
@@ -60,17 +58,33 @@ namespace fmg.uwp.mosaic.wbmp {
          return GetControl();
       }
 
+      internal class InnerImageConverter : IValueConverter {
+         private MosaicImageView _owner;
+
+         public InnerImageConverter(MosaicImageView owner) { _owner = owner; }
+
+         public object Convert(object value, Type targetType, object parameter, string language) {
+            //LoggerSimple.Put("  InnerImageConverter: return InnerImage");
+            return _owner.InnerImage;
+         }
+
+         public object ConvertBack(object value, Type targetType, object parameter, string language) {
+            throw new NotImplementedException();
+         }
+      }
+
       public Image GetControl() {
          if (_control == null) {
             _control = new Image {
                Stretch = Stretch.None
             };
-            _control.SetBinding(Windows.UI.Xaml.Controls.Image.SourceProperty, new Binding {
+            _control.SetBinding(Image.SourceProperty, new Binding {
                Source = this,
-               Path = new PropertyPath(nameof(InnerImage)),
-               Mode = BindingMode.OneWay
+               Path = new PropertyPath(nameof(Image)),
+               Mode = BindingMode.OneWay,
+               Converter = new InnerImageConverter(this)
             });
-            _control.SetBinding(Windows.UI.Xaml.Controls.Image.WidthProperty, new Binding {
+            _control.SetBinding(FrameworkElement.WidthProperty, new Binding {
                Source = this,
                Path = new PropertyPath(nameof(Size)),
                Mode = BindingMode.OneWay,
@@ -86,8 +100,14 @@ namespace fmg.uwp.mosaic.wbmp {
          return _control;
       }
 
+      public override void Invalidate(IEnumerable<BaseCell> modifiedCells) {
+         base.Invalidate(modifiedCells);
+         _innerView.Invalidate(modifiedCells);
+      }
+
       public override void Draw(IEnumerable<BaseCell> modifiedCells) {
-         var callImplicitDrawIfNeeded = _innerView.Image;
+         //var callImplicitDrawIfNeeded = _innerView.Image;
+         // none... only the internal Draw method is called
       }
 
       protected override void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {

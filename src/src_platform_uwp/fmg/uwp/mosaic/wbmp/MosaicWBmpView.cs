@@ -37,7 +37,7 @@ namespace fmg.uwp.mosaic.wbmp {
          return _bmp;
       }
 
-      protected void Draw(IEnumerable<BaseCell> modifiedCells, RectDouble? clipRegion, bool drawBk) {
+      protected void DrawWBmp(IEnumerable<BaseCell> modifiedCells, RectDouble? clipRegion, bool drawBk) {
          // TODO ограничиваю рисование только границами своей фигуры
          //...
          System.Diagnostics.Debug.Assert(!_alreadyPainted);
@@ -66,28 +66,21 @@ namespace fmg.uwp.mosaic.wbmp {
          var isIconicMode = (pen.ColorLight == pen.ColorShadow);
          var bkFill = model.BkFill;
 
-         IEnumerable<BaseCell> toCheck;
-         if ((clipRegion != null) || (modifiedCells == null))
-            toCheck = model.Matrix; // check to redraw all mosaic cells
-         else
-            toCheck = modifiedCells;
+         var redrawAll = (modifiedCells == null) || !modifiedCells.Any() || (modifiedCells.Count() >= model.Matrix.Count);
+         var recheckAll = (clipRegion != null); // check to redraw all mosaic cells
+         IEnumerable<BaseCell> toCheck = (redrawAll || recheckAll) ? model.Matrix : modifiedCells;
 
 #if DEBUG
-         String sufix = "; clipReg=" + clipRegion + "; drawBk=" + drawBk;
-         if (modifiedCells == null)
-            LoggerSimple.Put("> MosaicWBmpView.Draw: all=" + toCheck.Count() + sufix);
-         else
-         if (ReferenceEquals(modifiedCells, model.Matrix) || (modifiedCells.Count() == model.Matrix.Count))
-            LoggerSimple.Put("> MosaicWBmpView.Draw: all=" + modifiedCells.Count() + sufix);
-         else
-            LoggerSimple.Put("> MosaicWBmpView.Draw: cnt=" + modifiedCells.Count() + sufix);
+         LoggerSimple.Put($"> MosaicWBmpView.Draw: {(redrawAll ? "all" : "cnt="+ modifiedCells.Count())}"
+                                                  + $"; clipReg={((clipRegion == null) ? "null" : clipRegion.ToString())}"
+                                                  + $"; drawBk={drawBk}");
          int tmp = 0;
 #endif
 
          foreach (var cell in toCheck) {
             // redraw only when needed...
-            if (ReferenceEquals(toCheck, modifiedCells) ||
-                ((modifiedCells != null) && (modifiedCells.Contains(cell))) || // ..when the cell is explicitly specified
+           if (redrawAll ||
+                ((modifiedCells != null) && modifiedCells.Contains(cell)) || // ..when the cell is explicitly specified
                 ((clipRegion != null) && cell.getRcOuter().MoveXY(offset.Width, offset.Height).Intersection(clipRegion.Value))) // ...when the cells and update region intersect
             {
 #if DEBUG

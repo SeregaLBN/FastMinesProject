@@ -120,7 +120,6 @@ namespace fmg.core.mosaic {
             matrixClone.Remove(x); // и их соседей
          if (!matrixClone.Any())
             matrixClone.Add(neighbors[ThreadLocalRandom.Current.Next(neighbors.Count)]);
-         matrixClone.Add(neighbors.First());
          var count = 0;
          var rand = ThreadLocalRandom.Current;
          do {
@@ -266,7 +265,7 @@ namespace fmg.core.mosaic {
       }
 
       protected ClickResult OnLeftButtonDown(BaseCell cellLeftDown) {
-         using (new fmg.common.Tracer("Mosaic.OnLeftButtonDown"))
+         //using (new fmg.common.Tracer("Mosaic.OnLeftButtonDown"))
          {
             var result = new ClickResult(cellLeftDown, true, true);
             CellDown = null;
@@ -298,7 +297,8 @@ namespace fmg.core.mosaic {
       }
 
       protected ClickResult OnLeftButtonUp(BaseCell cellLeftUp) {
-         using (var tracer = new fmg.common.Tracer("Mosaic.OnLeftButtonUp", "coordLUp=" + cellLeftUp?.getCoord()))
+         //using (var tracer = new fmg.common.Tracer("Mosaic.OnLeftButtonUp", "coordLUp=" + cellLeftUp?.getCoord()))
+         {
             try {
                var cellDown = CellDown;
                var result = new ClickResult(cellDown, true, false);
@@ -317,7 +317,7 @@ namespace fmg.core.mosaic {
                var resultCell = cellDown.LButtonUp(ReferenceEquals(cellDown, cellLeftUp), Model);
                if (!gameBegin)
                   result.Modified.UnionWith(resultCell.Modified);
-               tracer.Put(" result.Modified=" + result.Modified.Count);
+               //tracer.Put(" result.Modified=" + result.Modified.Count);
                var countOpen = result.CountOpen;
                var countFlag = result.CountFlag;
                var countUnknown = result.CountUnknown;
@@ -354,10 +354,12 @@ namespace fmg.core.mosaic {
             } finally {
                CellDown = null;
             }
+         }
       }
 
       protected ClickResult OnRightButtonDown(BaseCell cellRightDown) {
-         using (var tracer = new fmg.common.Tracer("Mosaic.OnRightButtonDown")) {
+         //using (var tracer = new fmg.common.Tracer("Mosaic.OnRightButtonDown"))
+         {
             CellDown = null;
             var result = new ClickResult(cellRightDown, false, true);
             if (GameStatus == EGameStatus.eGSEnd) {
@@ -390,7 +392,7 @@ namespace fmg.core.mosaic {
             if (GameStatus != EGameStatus.eGSEnd) {
                //...
             }
-            tracer.Put("any=" + any);
+            //tracer.Put("any=" + any);
 
             InvalidateView(result.Modified);
             return result;
@@ -398,7 +400,8 @@ namespace fmg.core.mosaic {
       }
 
       protected ClickResult OnRightButtonUp(BaseCell cellRightUp) {
-         using (var tracer = new fmg.common.Tracer("Mosaic.OnRightButtonUp"))
+         //using (var tracer = new fmg.common.Tracer("Mosaic.OnRightButtonUp"))
+         {
             try {
                var cellDown = CellDown;
                //tracer.Put("return");
@@ -406,6 +409,7 @@ namespace fmg.core.mosaic {
             } finally {
                CellDown = null;
             }
+         }
       }
 
       /// <summary> Request to user </summary>
@@ -533,7 +537,8 @@ namespace fmg.core.mosaic {
       }
 
       public ClickResult MousePressed(PointDouble clickPoint, bool isLeftMouseButton) {
-         using (new Tracer(GetCallerName(), "clickPoint" + clickPoint + "; isLeftMouseButton=" + isLeftMouseButton)) {
+         //using (new fmg.common.Tracer(GetCallerName(), "clickPoint" + clickPoint + "; isLeftMouseButton=" + isLeftMouseButton))
+         {
             var res = isLeftMouseButton
                ? OnLeftButtonDown(CursorPointToCell(clickPoint))
                : OnRightButtonDown(CursorPointToCell(clickPoint));
@@ -543,7 +548,8 @@ namespace fmg.core.mosaic {
       }
 
       public ClickResult MouseReleased(PointDouble clickPoint, bool isLeftMouseButton) {
-         using (new Tracer(GetCallerName(), "isLeftMouseButton=" + isLeftMouseButton)) {
+         //using (new fmg.common.Tracer(GetCallerName(), "isLeftMouseButton=" + isLeftMouseButton))
+         {
             var res = isLeftMouseButton
                ? OnLeftButtonUp(CursorPointToCell(clickPoint))
                : OnRightButtonUp(CursorPointToCell(clickPoint));
@@ -557,7 +563,8 @@ namespace fmg.core.mosaic {
          if (cellDown == null)
             return null;
          bool isLeft = cellDown.State.Down; // hint: State.Down used only for the left click
-         using (new Tracer(GetCallerName(), string.Format("CellDown.Coord={0}; isLeft={1}", CellDown.getCoord(), isLeft))) {
+         //using (new fmg.common.Tracer(GetCallerName(), string.Format("CellDown.Coord={0}; isLeft={1}", CellDown.getCoord(), isLeft)))
+         {
             var res = isLeft
                ? OnLeftButtonUp(null)
                : OnRightButtonUp(null);

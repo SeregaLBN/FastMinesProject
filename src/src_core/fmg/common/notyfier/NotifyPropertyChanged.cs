@@ -70,8 +70,13 @@ namespace fmg.common.notyfier {
          if (_disposed)
             return;
 
+         void fireOwnerEvent(PropertyChangedEventArgs ev3) {
+            //if (ev3.PropertyName == "Image")
+            //   LoggerSimple.Put("  Fire event '" + ev3.PropertyName + "'! class " + _owner.GetType().FullName);
+            _fireOwnerEvent(ev3);
+         }
          if (!DeferredNotifications) {
-            _fireOwnerEvent(ev);
+            fireOwnerEvent(ev);
             //LoggerSimple.Put($"< OnPropertyChanged: {_owner.GetType().Name}: PropertyName={ev.PropertyName}");
          } else {
             bool shedule = !_deferrNotifications.ContainsKey(ev.PropertyName);
@@ -85,7 +90,7 @@ namespace fmg.common.notyfier {
                      //System.Diagnostics.Trace.TraceError("hmmm... invalid usage ;(");
                      System.Diagnostics.Debug.Assert(false, "hmmm... invalid usage ;(");
                   else
-                     _fireOwnerEvent(ev2);
+                     fireOwnerEvent(ev2);
                });
             }
       }

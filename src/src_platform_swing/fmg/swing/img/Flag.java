@@ -111,7 +111,7 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
       protected java.awt.Image createImage() { return img.create(); }
 
       @Override
-      protected void drawBody() { img.draw(g -> draw(g)); }
+      protected void drawBody() { img.drawWrapper(g -> draw(g)); }
 
    }
 

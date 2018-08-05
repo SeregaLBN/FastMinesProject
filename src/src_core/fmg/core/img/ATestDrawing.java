@@ -149,7 +149,7 @@ public abstract class ATestDrawing {
 
             mdm.getBackgroundFill().setMode(1 + r(mdm.getCellAttr().getMaxBackgroundFillModeValue()));
 
-            mdm.getPenBorder().setWidth(r(3));
+            mdm.getPenBorder().setWidth(1 + r(2));
             SizeDouble size = mdm.getSize();
             double padLeftRight = r((int)(size.width /3));
             double padTopBottom = r((int)(size.height/3));

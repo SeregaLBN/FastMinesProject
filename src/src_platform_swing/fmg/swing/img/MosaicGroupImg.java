@@ -70,7 +70,7 @@ public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TIma
       protected java.awt.Image createImage() { return img.create(); }
 
       @Override
-      protected void drawBody() { img.draw(g -> draw(g)); }
+      protected void drawBody() { img.drawWrapper(g -> draw(g)); }
 
    }
 

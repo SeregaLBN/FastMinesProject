@@ -23,7 +23,7 @@ class ImageAwt {
       return new BufferedImage((int)s.width, (int)s.height, BufferedImage.TYPE_INT_ARGB);
    }
 
-   public void draw(Consumer<Graphics2D> drawBody) {
+   public void drawWrapper(Consumer<Graphics2D> drawBody) {
       BufferedImage img = (BufferedImage)_imageView.getImage();
       Graphics2D g = img.createGraphics();
       g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
