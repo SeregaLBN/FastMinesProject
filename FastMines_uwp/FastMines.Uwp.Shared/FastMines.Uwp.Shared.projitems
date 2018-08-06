@@ -33,6 +33,9 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\utils\ScreenResolutionHelper.cs">
       <Link>src_fmg.uwp\utils\ScreenResolutionHelper.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\MosaicFrameworkElementController.cs">
+      <Link>src_fmg.uwp\mosaic\MosaicFrameworkElementController.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\img\MosaicSkillCharImg.cs">
       <Link>src_fmg.uwp\img\MosaicSkillCharImg.cs</Link>
     </Compile>

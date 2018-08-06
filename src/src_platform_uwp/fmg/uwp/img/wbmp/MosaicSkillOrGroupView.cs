@@ -4,7 +4,6 @@ using System.Linq;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
-using fmg.core.types;
 using fmg.core.img;
 using fmg.uwp.utils;
 
