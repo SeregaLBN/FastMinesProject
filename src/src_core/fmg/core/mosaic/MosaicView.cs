@@ -36,13 +36,15 @@ namespace fmg.core.mosaic {
          Invalidate();
       }
 
-      public abstract void Draw(IEnumerable<BaseCell> modifiedCells);
+      /// <summary>Draw modified mosaic cells</summary>
+      /// <param name="requiredCells">Cells to be redrawn. NULL - redraw the full mosaic.</param>
+      protected abstract void DrawModified(IEnumerable<BaseCell> requiredCells);
 
       /// <summary> repaint all </summary>
       protected override void DrawBody() {
          if (_DEBUG_DRAW_FLOW)
             LoggerSimple.Put("MosaicView.DrawBody: " + (!_modifiedCells.Any() ? "all" : ("cnt=" + _modifiedCells.Count()) + ": " + _modifiedCells.Take(5).ToList()));
-         Draw(!_modifiedCells.Any() ? null : _modifiedCells);
+         DrawModified(!_modifiedCells.Any() ? null : _modifiedCells);
          _modifiedCells.Clear();
       }
 

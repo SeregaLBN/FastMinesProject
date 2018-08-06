@@ -30,7 +30,7 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
    protected Canvas createImage() { return _canvas.create(); }
 
    @Override
-   public void draw(Collection<BaseCell> modifiedCells) {
+   protected void drawModified(Collection<BaseCell> modifiedCells) {
       if (modifiedCells == null) {
          drawJfx(_canvas.getGraphics(), getModel().getMatrix(), null, true);
          return;

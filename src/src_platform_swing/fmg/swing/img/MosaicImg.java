@@ -37,15 +37,15 @@ public abstract class MosaicImg<TImage>
       _useBackgroundColor = true;
       switch (model.getRotateMode()) {
       case fullMatrix:
-         draw(model.getMatrix());
+         drawModified(model.getMatrix());
          break;
       case someCells:
          // draw static part
-         draw(model.getNotRotatedCells());
+         drawModified(model.getNotRotatedCells());
 
          // draw rotated part
          _useBackgroundColor = false;
-         model.getRotatedCells(rotatedCells -> draw(rotatedCells));
+         model.getRotatedCells(rotatedCells -> drawModified(rotatedCells));
          break;
       }
    }
@@ -69,7 +69,7 @@ public abstract class MosaicImg<TImage>
       protected javax.swing.Icon createImage() { return ico.create(); }
 
       @Override
-      public void draw(Collection<BaseCell> modifiedCells) {
+      protected void drawModified(Collection<BaseCell> modifiedCells) {
          drawSwing(ico.getGraphics(), modifiedCells, null, _useBackgroundColor);
       }
 
@@ -91,7 +91,7 @@ public abstract class MosaicImg<TImage>
       protected java.awt.Image createImage() { return img.create(); }
 
       @Override
-      public void draw(Collection<BaseCell> modifiedCells) {
+      protected void drawModified(Collection<BaseCell> modifiedCells) {
          img.drawWrapper(g -> drawSwing(g, modifiedCells, null, _useBackgroundColor));
       }
 

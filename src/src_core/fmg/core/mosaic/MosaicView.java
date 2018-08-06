@@ -39,12 +39,17 @@ public abstract class MosaicView<TImage,
       invalidate();
    }
 
+   /** Draw modified mosaic cells
+    * @param requiredCells Cells to be redrawn. NULL - redraw the full mosaic.
+    */
+   protected abstract void drawModified(Collection<BaseCell> requiredCells);
+
    /** repaint all */
    @Override
    protected void drawBody() {
       if (_DEBUG_DRAW_FLOW)
          System.out.println("MosaicView.drawBody: " + (_modifiedCells.isEmpty() ? "all" : ("cnt=" + _modifiedCells.size()) + ": " + _modifiedCells.stream().limit(5).collect(Collectors.toList())));
-      draw(_modifiedCells.isEmpty() ? null : _modifiedCells);
+      drawModified(_modifiedCells);
       _modifiedCells.clear();
    }
 

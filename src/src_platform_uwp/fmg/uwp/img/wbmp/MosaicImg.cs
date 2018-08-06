@@ -22,7 +22,7 @@ namespace fmg.uwp.img.wbmp {
          : base(new MosaicAnimatedModel<Nothing>())
       { }
 
-      public override void Draw(IEnumerable<BaseCell> modifiedCells) {
+      protected override void DrawModified(IEnumerable<BaseCell> modifiedCells) {
          DrawWBmp(modifiedCells, null, _useBackgroundColor);
       }
 
@@ -34,15 +34,15 @@ namespace fmg.uwp.img.wbmp {
          _useBackgroundColor = true;
          switch (model.RotateMode) {
          case MosaicAnimatedModel<Nothing>.ERotateMode.fullMatrix:
-            Draw(model.Matrix);
+            DrawModified(model.Matrix);
             break;
          case MosaicAnimatedModel<Nothing>.ERotateMode.someCells:
             // draw static part
-            Draw(model.GetNotRotatedCells());
+            DrawModified(model.GetNotRotatedCells());
 
             // draw rotated part
             _useBackgroundColor = false;
-            model.GetRotatedCells(rotatedCells => Draw(rotatedCells));
+            model.GetRotatedCells(rotatedCells => DrawModified(rotatedCells));
             break;
          }
       }

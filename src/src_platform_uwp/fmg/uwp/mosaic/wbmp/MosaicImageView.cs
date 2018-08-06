@@ -30,7 +30,7 @@ namespace fmg.uwp.mosaic.wbmp {
             _owner = self;
          }
 
-         public override void Draw(IEnumerable<BaseCell> modifiedCells) {
+         protected override void DrawModified(IEnumerable<BaseCell> modifiedCells) {
             bool drawBk = (modifiedCells == null) || !modifiedCells.Any();
             DrawWBmp(modifiedCells, null, drawBk);
          }
@@ -105,7 +105,7 @@ namespace fmg.uwp.mosaic.wbmp {
          _innerView.Invalidate(modifiedCells);
       }
 
-      public override void Draw(IEnumerable<BaseCell> modifiedCells) {
+      protected override void DrawModified(IEnumerable<BaseCell> modifiedCells) {
          //var callImplicitDrawIfNeeded = _innerView.Image;
          // none... only the internal Draw method is called
       }

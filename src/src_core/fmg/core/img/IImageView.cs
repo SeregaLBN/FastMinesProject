@@ -15,16 +15,16 @@ namespace fmg.core.img {
       where TImageModel : IImageModel
    {
 
-      ///</summary> model data for display </summary>
+      ///<summary> model data for display </summary>
       TImageModel Model { get; }
 
-      ///</summary> image size in pixels </summary>
+      ///<summary> image size in pixels </summary>
       SizeDouble Size { get; set; }
 
-      ///</summary> plaform specific view/image/picture or other display context/canvas/window/panel </summary>
+      ///<summary> plaform specific view/image/picture or other display context/canvas/window/panel </summary>
       TImage Image { get; }
 
-      ///</summary> Mark the need to redraw the picture.
+      ///<summary> Mark the need to redraw the picture.
       /// Performs a call to the inner draw method (synchronously or asynchronously or implicitly, depending on the implementation) </summary>
       void Invalidate();
 

@@ -79,7 +79,7 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
    }
 
    @Override
-   public void draw(Collection<BaseCell> modifiedCells) {
+   protected void drawModified(Collection<BaseCell> modifiedCells) {
       JPanel control = getControl();
 
       assert !_alreadyPainted;

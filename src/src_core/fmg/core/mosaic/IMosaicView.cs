@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using fmg.common.geom;
+﻿using System.Collections.Generic;
 using fmg.core.img;
 using fmg.core.mosaic.cells;
 
@@ -18,13 +16,9 @@ namespace fmg.core.mosaic {
    {
 
       /// <summary> Mark the cells needed for the repainting.
-      /// Performs a call to the {@link #draw} method (synchronously or asynchronously or implicitly, depending on the implementation) </summary>
+      /// Performs a call to the draw method (synchronously or asynchronously or implicitly, depending on the implementation) </summary>
       /// <param name="modifiedCells"> cells to invalidate. null value - make to redraw all mosaic field cells </param>
       void Invalidate(IEnumerable<BaseCell> modifiedCells);
-
-      /// <summary> Redraw the required cells </summary>
-      /// <param name="modifiedCells">Cells to be redrawn. NULL - redraw the full mosaic, or only those that are included in the clipRegion.</param>
-      void Draw(IEnumerable<BaseCell> modifiedCells);
 
    }
 

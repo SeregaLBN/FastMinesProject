@@ -15,13 +15,8 @@ public interface IMosaicView<TImage, TImageInner, TMosaicModel extends MosaicDra
 {
 
    /** Mark the cells needed for the repainting.
-    * Performs a call to the {@link #draw} method (synchronously or asynchronously or implicitly, depending on the implementation)
+    * Performs a call to the draw method (synchronously or asynchronously or implicitly, depending on the implementation)
     * @param modifiedCells - cells to invalidate. null value - make to redraw all mosaic field cells */
    void invalidate(Collection<BaseCell> modifiedCells);
-
-   /** Redraw the required cells
-    * @param modifiedCells - Cells to be redrawn. NULL - redraw the full mosaic, or only those that are included in the clipRegion.
-    */
-   void draw(Collection<BaseCell> modifiedCells);
 
 }
