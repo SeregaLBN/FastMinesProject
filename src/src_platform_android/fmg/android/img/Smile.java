@@ -2,7 +2,13 @@ package fmg.android.img;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PointF;
+import android.graphics.RectF;
+import android.graphics.Shader;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +40,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       g.save();
 
       drawBody(g);
-//      drawEyes(g);
+      drawEyes(g);
 //      drawMouth(g);
 
       g.restore();
@@ -56,204 +62,166 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       int yellowBorder = Color.rgb(0xFF, 0x6C, 0x0A);
 
       Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+      paint.setStyle(Paint.Style.FILL);
 
       { // рисую затемненный круг
-         paint.setStyle(Paint.Style.FILL);
          paint.setColor(yellowBorder);
          g.drawOval(0, 0, width, height, paint);
       }
-
-      /** /
-      double padX = 0.033 * width;
-      double padY = 0.033 * height;
-      double wInt = width - 2 * padX;
-      double hInt = height - 2 * padY;
-      double wExt = 1.133 * width;
-      double hExt = 1.133 * height;
-      Ellipse ellipseInternal = newEllipse(padX, padY, width-padX*2, height-padY*2);
+      float padX = 0.033f * width;
+      float padY = 0.033f * height;
+      float wInt = width - 2 * padX;
+      float hInt = height - 2 * padY;
+      float wExt = 1.133f * width;
+      float hExt = 1.133f * height;
+      Path ellipseInternal = newEllipse(padX, padY, width-padX*2, height-padY*2);
       { // поверх него, внутри - градиентный круг
-         g.setFill(new LinearGradient(0, 0, width, height, false, CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, yellowBody), new Stop(1, yellowBorder)}));
-         g.fillOval(padX, padY, width-padX*2, height-padY*2);
+         paint.setShader(makeLinearGradient(0, 0, yellowBody, width, height, yellowBorder));
+         g.drawPath(ellipseInternal, paint);
+         paint.setShader(null);
       }
       { // верхний левый блик
-         Ellipse ellipseExternal = newEllipse(padX, padY, wExt, hExt);
-         g.beginPath();
-         g.appendSVGPath(ShapeConverter.toSvg(intersectExclude(ellipseInternal, ellipseExternal)));
-         g.closePath();
-         g.setFill(yellowGlint); // Color.DARK_GRAY
-         g.fill();
+         Path ellipseExternal = newEllipse(padX, padY, wExt, hExt);
+         paint.setColor(yellowGlint); // Color.DARK_GRAY
+         g.drawPath(intersectExclude(ellipseInternal, ellipseExternal), paint);
 
          // test
-         //g.setColor(Color.BLACK);
-         //g.draw(ellipseInternal);
-         //g.draw(ellipseExternal);
+         //paint.setColor(Color.BLACK);
+         //paint.setStyle(Paint.Style.STROKE);
+         //g.drawPath(ellipseInternal, paint);
+         //g.drawPath(ellipseExternal, paint);
+         //paint.setStyle(Paint.Style.FILL);
       }
       { // нижний правый блик
-         Ellipse ellipseExternal = newEllipse(padX + wInt - wExt, padY + hInt - hExt, wExt, hExt);
-         g.beginPath();
-         g.appendSVGPath(ShapeConverter.toSvg(intersectExclude(ellipseInternal, ellipseExternal)));
-         g.closePath();
-         g.setFill(Cast.toColor(Cast.toColor(yellowBorder).darker(0.4)));
-         g.fill();
+         Path ellipseExternal = newEllipse(padX + wInt - wExt, padY + hInt - hExt, wExt, hExt);
+         paint.setColor(Cast.toColor(Cast.toColor(yellowBorder).darker(0.4)));
+         g.drawPath(intersectExclude(ellipseInternal, ellipseExternal), paint);
 
          // test
-         //g.setColor(Color.BLACK);
-         //g.draw(ellipseInternal);
-         //g.draw(ellipseExternal);
+         //paint.setColor(Color.BLACK);
+         //paint.setStyle(Paint.Style.STROKE);
+         //g.drawPath(ellipseInternal, paint);
+         //g.drawPath(ellipseExternal, paint);
+         //paint.setStyle(Paint.Style.FILL);
       }
-      /**/
    }
 
-/** /
    private void drawEyes(Canvas g) {
       SmileModel sm = this.getModel();
       SmileModel.EFaceType type = sm.getFaceType();
-      double width  = sm.getSize().width;
-      double height = sm.getSize().height;
+      float width  = (float)sm.getSize().width;
+      float height = (float)sm.getSize().height;
 
-      Paint fillOld = g.getFill();
-      Paint strokeOld = g.getStroke();
-      double lwOld = g.getLineWidth();
-      StrokeLineCap slcOld = g.getLineCap();
-      StrokeLineJoin sljOld = g.getLineJoin();
-
+      Paint paintStroke = new Paint(Paint.ANTI_ALIAS_FLAG); paintStroke.setStyle(Paint.Style.STROKE);
+      Paint paintFill   = new Paint(Paint.ANTI_ALIAS_FLAG); paintFill  .setStyle(Paint.Style.FILL);
       switch (type) {
       case Face_Assistant:
       case Face_SmilingWithSunglasses: {
             // glasses
-            g.setLineWidth(Math.max(1, 0.03*((width+height)/2.0)));
-            g.setLineCap(StrokeLineCap.ROUND);
-            g.setLineJoin(StrokeLineJoin.BEVEL);
-            g.setStroke(Color.BLACK);
-            g.strokeOval(0.200*width, 0.100*height, 0.290*width, 0.440*height);
-            g.strokeOval(0.510*width, 0.100*height, 0.290*width, 0.440*height);
+            paintStroke.setStrokeWidth((float)Math.max(1, 0.03*((width+height)/2.0)));
+            paintStroke.setStrokeCap(Paint.Cap.ROUND);
+            paintStroke.setStrokeJoin(Paint.Join.BEVEL);
+            paintStroke.setColor(Color.BLACK);
+            g.drawPath(newEllipse(0.200f*width, 0.100f*height, 0.290f*width, 0.440f*height), paintStroke);
+            g.drawPath(newEllipse(0.510f*width, 0.100f*height, 0.290f*width, 0.440f*height), paintStroke);
             // дужки
-            g.strokeLine(   0.746 *width, 0.148*height,   0.885 *width, 0.055*height);
-            g.strokeLine((1-0.746)*width, 0.148*height, (1-0.885)*width, 0.055*height);
-            g.strokeArc(   0.864       *width, 0.047*height, 0.100*width, 0.100*height,  0, 125, ArcType.OPEN);
-            g.strokeArc((1-0.864-0.100)*width, 0.047*height, 0.100*width, 0.100*height, 55, 125, ArcType.OPEN);
+            g.drawLine(   0.746f *width, 0.148f*height,    0.885f *width, 0.055f*height, paintStroke);
+            g.drawLine((1-0.746f)*width, 0.148f*height, (1-0.885f)*width, 0.055f*height, paintStroke);
+            g.drawPath(newArc(   0.864f        *width, 0.047f*height, 0.100f*width, 0.100f*height,  0, 125), paintStroke);
+            g.drawPath(newArc((1-0.864f-0.100f)*width, 0.047f*height, 0.100f*width, 0.100f*height, 55, -125), paintStroke);
          }
          //break; // ! no break
       case Face_SavouringDeliciousFood:
       case Face_WhiteSmiling:
       case Face_Grinning: {
-            g.setFill(Color.BLACK);
-            g.fillOval(0.270*width, 0.170*height, 0.150*width, 0.300*height);
-            g.fillOval(0.580*width, 0.170*height, 0.150*width, 0.300*height);
+            paintFill.setColor(Color.BLACK);
+            g.drawPath(newEllipse(0.270f*width, 0.170f*height, 0.150f*width, 0.300f*height), paintFill);
+            g.drawPath(newEllipse(0.580f*width, 0.170f*height, 0.150f*width, 0.300f*height), paintFill);
          }
          break;
       case Face_Disappointed: {
-            g.setLineWidth(Math.max(1, 0.02*((width+height)/2.0)));
-            g.setLineCap(StrokeLineCap.ROUND);
-            g.setLineJoin(StrokeLineJoin.BEVEL);
+            paintStroke.setStrokeWidth((float)Math.max(1, 0.02*((width+height)/2.0)));
+            paintStroke.setStrokeCap(Paint.Cap.ROUND);
+            paintStroke.setStrokeJoin(Paint.Join.BEVEL);
 
-            Rectangle rcHalfLeft = new Rectangle(0, 0, width/2.0, height);
-            Rectangle rcHalfRght = new Rectangle(width/2.0, 0, width, height);
+            Path rcHalfLeft = newRectangle(0, 0, width/2.0f, height);
+            Path rcHalfRght = newRectangle(width/2.0f, 0, width, height);
 
             // глаз/eye
-            Shape areaLeft1 = intersectExclude(newEllipse(0.417*width, 0.050*height, 0.384*width, 0.400*height), rcHalfLeft);
-            Shape areaRght1 = intersectExclude(newEllipse(0.205*width, 0.050*height, 0.384*width, 0.400*height), rcHalfRght);
-            g.setFill(Color.RED);
-            g.setStroke(Color.BLACK);
+            Path areaLeft1 = intersectExclude(newEllipse(0.417f*width, 0.050f*height, 0.384f*width, 0.400f*height), rcHalfLeft);
+            Path areaRght1 = intersectExclude(newEllipse(0.205f*width, 0.050f*height, 0.384f*width, 0.400f*height), rcHalfRght);
+            paintFill  .setColor(Color.RED);
+            paintStroke.setColor(Color.BLACK);
 
-            g.beginPath();
-            g.appendSVGPath(ShapeConverter.toSvg(areaLeft1));
-            g.closePath();
-            g.fill();
-            g.stroke();
-
-            g.beginPath();
-            g.appendSVGPath(ShapeConverter.toSvg(areaRght1));
-            g.closePath();
-            g.fill();
-            g.stroke();
+            g.drawPath(areaLeft1, paintFill);
+            g.drawPath(areaRght1, paintFill);
+            g.drawPath(areaLeft1, paintStroke);
+            g.drawPath(areaRght1, paintStroke);
 
             // зрачок/pupil
-            Shape areaLeft2 = intersectExclude(newEllipse(0.550*width, 0.200*height, 0.172*width, 0.180*height), rcHalfLeft);
-            Shape areaRght2 = intersectExclude(newEllipse(0.282*width, 0.200*height, 0.172*width, 0.180*height), rcHalfRght);
-            g.setFill(Color.BLUE);
-            g.setStroke(Color.BLACK);
+            Path areaLeft2 = intersectExclude(newEllipse(0.550f*width, 0.200f*height, 0.172f*width, 0.180f*height), rcHalfLeft);
+            Path areaRght2 = intersectExclude(newEllipse(0.282f*width, 0.200f*height, 0.172f*width, 0.180f*height), rcHalfRght);
+            paintFill  .setColor(Color.BLUE);
+            paintStroke.setColor(Color.BLACK);
 
-            g.beginPath();
-            g.appendSVGPath(ShapeConverter.toSvg(areaLeft2));
-            g.closePath();
-            g.fill();
-            g.stroke();
-
-            g.beginPath();
-            g.appendSVGPath(ShapeConverter.toSvg(areaRght2));
-            g.closePath();
-            g.fill();
-            g.stroke();
+            g.drawPath(areaLeft2, paintFill);
+            g.drawPath(areaRght2, paintFill);
+            g.drawPath(areaLeft2, paintStroke);
+            g.drawPath(areaRght2, paintStroke);
 
             // веко/eyelid
-            Shape areaLeft3 = intersectExclude(rotate(newEllipse     (0.441*width, -0.236*height, 0.436*width, 0.560*height),
-                                                      new PointDouble(0.441*width, -0.236*height), 30), rcHalfLeft);
-            Shape areaRght3 = intersectExclude(rotate(newEllipse     (0.128*width, -0.236*height, 0.436*width, 0.560*height),
-                                                      new PointDouble(0.564*width, -0.236*height), -30), rcHalfRght);
+            Path areaLeft3 = intersectExclude(rotate(newEllipse(0.441f*width, -0.236f*height, 0.436f*width, 0.560f*height),
+                                                     new PointF(0.441f*width, -0.236f*height), 30), rcHalfLeft);
+            Path areaRght3 = intersectExclude(rotate(newEllipse(0.128f*width, -0.236f*height, 0.436f*width, 0.560f*height),
+                                                     new PointF(0.564f*width, -0.236f*height), -30), rcHalfRght);
             areaLeft3 = intersect(areaLeft1, areaLeft3);
             areaRght3 = intersect(areaRght1, areaRght3);
-            g.setFill(Color.LIME);
-            g.setStroke(Color.BLACK);
+            paintFill  .setColor(Color.GREEN);
+            paintStroke.setColor(Color.BLACK);
 
-            g.beginPath();
-            g.appendSVGPath(ShapeConverter.toSvg(areaLeft3));
-            g.closePath();
-            g.fill();
-            g.stroke();
-
-            g.beginPath();
-            g.appendSVGPath(ShapeConverter.toSvg(areaRght3));
-            g.closePath();
-            g.fill();
-            g.stroke();
+            g.drawPath(areaLeft3, paintFill);
+            g.drawPath(areaRght3, paintFill);
+            g.drawPath(areaLeft3, paintStroke);
+            g.drawPath(areaRght3, paintStroke);
 
             // nose
-            Ellipse nose = newEllipse(0.415*width, 0.400*height, 0.170*width, 0.170*height);
-            g.setFill(Color.LIME);
-            g.setStroke(Color.BLACK);
-            g.beginPath();
-            g.appendSVGPath(ShapeConverter.toSvg(nose));
-            g.closePath();
-            g.fill();
-            g.stroke();
+            Path nose = newEllipse(0.415f*width, 0.400f*height, 0.170f*width, 0.170f*height);
+            paintFill  .setColor(Color.GREEN);
+            paintStroke.setColor(Color.BLACK);
+            g.drawPath(nose, paintFill);
+            g.drawPath(nose, paintStroke);
          }
          break;
       case Eyes_OpenDisabled:
-         eyeOpened(g, true, true);
-         eyeOpened(g, false, true);
+         eyeOpened(g,  true, true, paintFill);
+         eyeOpened(g, false, true, paintFill);
          break;
       case Eyes_ClosedDisabled:
-         eyeClosed(g, true, true);
-         eyeClosed(g, false, true);
+         eyeClosed(g,  true, true, paintFill);
+         eyeClosed(g, false, true, paintFill);
          break;
       case Face_EyesOpen:
-         eyeOpened(g, true, false);
-         eyeOpened(g, false, false);
+         eyeOpened(g,  true, false, paintFill);
+         eyeOpened(g, false, false, paintFill);
          break;
       case Face_WinkingEyeLeft:
-         eyeClosed(g, true, false);
-         eyeOpened(g, false, false);
+         eyeClosed(g,  true, false, paintFill);
+         eyeOpened(g, false, false, paintFill);
          break;
       case Face_WinkingEyeRight:
-         eyeOpened(g, true, false);
-         eyeClosed(g, false, false);
+         eyeOpened(g,  true, false, paintFill);
+         eyeClosed(g, false, false, paintFill);
          break;
       case Face_EyesClosed:
-         eyeClosed(g, true, false);
-         eyeClosed(g, false, false);
+         eyeClosed(g,  true, false, paintFill);
+         eyeClosed(g, false, false, paintFill);
          break;
       default:
          throw new UnsupportedOperationException("Not implemented");
       }
-
-      g.setLineWidth(lwOld);
-      g.setLineCap(slcOld);
-      g.setLineJoin(sljOld);
-      g.setStroke(strokeOld);
-      g.setFill(fillOld);
    }
 
+   /** /
    private void drawMouth(Canvas g) {
       SmileModel sm = this.getModel();
       SmileModel.EFaceType type = sm.getFaceType();
@@ -370,99 +338,111 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       g.setFill(fillOld);
    }
 
-   private void eyeOpened(Canvas g, boolean right, boolean disabled) {
+   /**/
+   private void eyeOpened(Canvas g, boolean right, boolean disabled, Paint paintFill) {
       SmileModel sm = this.getModel();
-      double width  = sm.getSize().width;
-      double height = sm.getSize().height;
+      float width  = (float)sm.getSize().width;
+      float height = (float)sm.getSize().height;
 
-      Consumer<PointDouble> draw = offset -> {
-         Shape pupil = right
+      Consumer<PointF> draw = offset -> {
+         Path pupil = right
                ? intersectInclude(intersectInclude(
-                          newEllipse     ((offset.x+0.273)*width, (offset.y+0.166)*height, 0.180*width, 0.324*height),
-                   rotate(newEllipse     ((offset.x+0.320)*width, (offset.y+0.124)*height, 0.180*width, 0.273*height),
-                          new PointDouble((offset.x+0.320)*width, (offset.y+0.124)*height), 35)),
-                   rotate(newEllipse     ((offset.x+0.163)*width, (offset.y+0.313)*height, 0.180*width, 0.266*height),
-                          new PointDouble((offset.x+0.163)*width, (offset.y+0.313)*height), -36))
+                          newEllipse((offset.x+0.273f)*width, (offset.y+0.166f)*height, 0.180f*width, 0.324f*height),
+                   rotate(newEllipse((offset.x+0.320f)*width, (offset.y+0.124f)*height, 0.180f*width, 0.273f*height),
+                          new PointF((offset.x+0.320f)*width, (offset.y+0.124f)*height), 35)),
+                   rotate(newEllipse((offset.x+0.163f)*width, (offset.y+0.313f)*height, 0.180f*width, 0.266f*height),
+                          new PointF((offset.x+0.163f)*width, (offset.y+0.313f)*height), -36))
                : intersectInclude(intersectInclude(
-                          newEllipse     ((offset.x+0.500)*width, (offset.y+0.166)*height, 0.180*width, 0.324*height),
-                   rotate(newEllipse     ((offset.x+0.486)*width, (offset.y+0.227)*height, 0.180*width, 0.273*height),
-                          new PointDouble((offset.x+0.486)*width, (offset.y+0.227)*height), -35)),
-                   rotate(newEllipse     ((offset.x+0.646)*width, (offset.y+0.211)*height, 0.180*width, 0.266*height),
-                          new PointDouble((offset.x+0.646)*width, (offset.y+0.211)*height), 36));
+                          newEllipse((offset.x+0.500f)*width, (offset.y+0.166f)*height, 0.180f*width, 0.324f*height),
+                   rotate(newEllipse((offset.x+0.486f)*width, (offset.y+0.227f)*height, 0.180f*width, 0.273f*height),
+                          new PointF((offset.x+0.486f)*width, (offset.y+0.227f)*height), -35)),
+                   rotate(newEllipse((offset.x+0.646f)*width, (offset.y+0.211f)*height, 0.180f*width, 0.266f*height),
+                          new PointF((offset.x+0.646f)*width, (offset.y+0.211f)*height), 36));
          if (!disabled) {
-            g.setFill(Color.BLACK);
-            g.beginPath();
-            g.appendSVGPath(ShapeConverter.toSvg(pupil));
-            g.closePath();
-            g.fill();
+            paintFill.setColor(Color.BLACK);
+            g.drawPath(pupil, paintFill);
          }
-         Shape hole = rotate(     newEllipse((offset.x+(right?0.303:0.610))*width, (offset.y+0.209)*height, 0.120*width, 0.160*height),
-                             new PointDouble((offset.x+(right?0.303:0.610))*width, (offset.y+0.209)*height), 25);
+         Path hole = rotate(newEllipse((offset.x+(right?0.303f:0.610f))*width, (offset.y+0.209f)*height, 0.120f*width, 0.160f*height),
+                            new PointF((offset.x+(right?0.303f:0.610f))*width, (offset.y+0.209f)*height), 25);
          if (!disabled) {
-            g.setFill(Color.WHITE);
-            g.beginPath();
-          //g.appendSVGPath(ShapeConverter.toSvg(hole)); // hm.... not forked
-            g.appendSVGPath(ShapeConverter.toSvg(intersectExclude(hole, new Rectangle(0,0,0,0)))); // ..must usage over dummy rect
-            g.closePath();
-            g.fill();
+            paintFill.setColor(Color.WHITE);
+            g.drawPath(hole, paintFill);
          } else {
-            g.beginPath();
-            g.appendSVGPath(ShapeConverter.toSvg(intersectExclude(pupil, hole)));
-            g.closePath();
-            g.fill();
+            g.drawPath(intersectExclude(pupil, hole), paintFill);
          }
       };
       if (disabled) {
-         g.setFill(Color.WHITE);
-         draw.accept(new PointDouble(0.034, 0.027));
-         g.setFill(Color.GRAY);
-         draw.accept(new PointDouble());
+         paintFill.setColor(Color.WHITE);
+         draw.accept(new PointF(0.034f, 0.027f));
+         paintFill.setColor(Color.GRAY);
+         draw.accept(new PointF());
       } else {
-         draw.accept(new PointDouble());
+         draw.accept(new PointF());
       }
    }
 
-   private void eyeClosed(Canvas g, boolean right, boolean disabled) {
+   private void eyeClosed(Canvas g, boolean right, boolean disabled, Paint paintFill) {
       SmileModel sm = this.getModel();
-      double width  = sm.getSize().width;
-      double height = sm.getSize().height;
+      float width  = (float)sm.getSize().width;
+      float height = (float)sm.getSize().height;
 
       Consumer<Boolean> eye = isFat -> {
-         g.fillOval(((right ? 0.107 : 0.517)+(isFat?0.015:0))*width, 0.248*height, 0.313*width, 0.034*(isFat?2:1)*height);
-         g.fillOval(((right ? 0.230 : 0.640)+(isFat?0.015:0))*width, 0.246*height, 0.205*width, 0.065*(isFat?2:1)*height);
+         g.drawPath(newEllipse(((right ? 0.107f : 0.517f)+(isFat?0.015f:0))*width, 0.248f*height, 0.313f*width, 0.034f*(isFat?2:1)*height), paintFill);
+         g.drawPath(newEllipse(((right ? 0.230f : 0.640f)+(isFat?0.015f:0))*width, 0.246f*height, 0.205f*width, 0.065f*(isFat?2:1)*height), paintFill);
       };
       if (disabled) {
-         g.setFill(Color.WHITE);
+         paintFill.setColor(Color.WHITE);
          eye.accept(true);
       }
-      g.setFill(disabled ? Color.GRAY : Color.BLACK);
+      paintFill.setColor(disabled ? Color.GRAY : Color.BLACK);
       eye.accept(false);
    }
 
-   private static Shape rotate(Shape shape, PointDouble rotatePoint, double angle) {
-      shape.getTransforms().add(new javafx.scene.transform.Rotate(angle, rotatePoint.x, rotatePoint.y));
-      return shape;
+   /**/
+   private static Path rotate(Path shape, PointF rotatePoint, float angle) {
+      Matrix m = new Matrix();
+      Path res = new Path(shape);
+      m.postRotate(angle, rotatePoint.x, rotatePoint.y);
+      res.transform(m);
+      return res;
    }
 
-   private static Shape intersect(Shape s1, Shape s2) {
-      return Shape.intersect(s1, s2);
+   private static Path intersect(Path s1, Path s2) {
+      Path res = new Path(s1);
+      res.op(s2, Path.Op.INTERSECT);
+      return res;
    }
 
-   private static Shape intersectExclude(Shape s1, Shape s2) {
-      return Shape.subtract(s1, s2);
+   private static Path intersectExclude(Path s1, Path s2) {
+      Path res = new Path(s1);
+      res.op(s2, Path.Op.DIFFERENCE);
+      return res;
    }
 
-   private static Shape intersectInclude(Shape s1, Shape s2) {
-      return Shape.union(s1, s2);
+   private static Path intersectInclude(Path s1, Path s2) {
+      Path res = new Path(s1);
+      res.op(s2, Path.Op.UNION);
+      return res;
    }
 
-   private static Ellipse newEllipse(double x, double y, double w, double h) {
-      return new Ellipse(x+w/2, y+h/2, w/2, h/2);
+   private static Path newEllipse(float x, float y, float w, float h) {
+      Path p = new Path();
+      p.addOval(x, y, x+w, y+h, Path.Direction.CW);
+      return p;
    }
-   private static Arc newArc(double x, double y, double w, double h, double start, double extent) {
-       return new Arc(x+w/2, y+h/2, w/2, h/2, start, extent);
+   private static Path newRectangle(float x, float y, float w, float h) {
+      Path p = new Path();
+      p.addRect(x, y, x+w, y+h, Path.Direction.CW);
+      return p;
    }
- /**/
+   private static Path newArc(float x, float y, float w, float h, float start, float extent) {
+      Path p = new Path();
+      p.addArc(x, y, x+w, y+h, start-90, extent);
+      return p;
+   }
+   private static Shader makeLinearGradient(float startX, float startY, int startClr, float endX, float endY, int endClr) {
+      return new LinearGradient(startX, startY, endX, endY, startClr, endClr, Shader.TileMode.CLAMP);
+   }
 
    @Override
    public void close() {

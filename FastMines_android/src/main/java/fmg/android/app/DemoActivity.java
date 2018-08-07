@@ -27,6 +27,7 @@ import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.ATestDrawing;
 import fmg.core.img.IImageController;
+import fmg.core.mosaic.MosaicDrawModel;
 
 public class DemoActivity extends Activity {
 
@@ -127,7 +128,7 @@ public class DemoActivity extends Activity {
 
    void onDraw(Canvas canvas) {
       //canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-      canvas.drawColor(Color.WHITE);
+      canvas.drawColor(Cast.toColor(MosaicDrawModel.DefaultBkColor));
 
       double sizeW = _demoView.getWidth();  if (sizeW <= 0) sizeW = 100;
       double sizeH = _demoView.getHeight(); if (sizeH <= 0) sizeH = 100;

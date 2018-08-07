@@ -126,7 +126,7 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
             g.strokeOval(0.200*width, 0.100*height, 0.290*width, 0.440*height);
             g.strokeOval(0.510*width, 0.100*height, 0.290*width, 0.440*height);
             // дужки
-            g.strokeLine(   0.746 *width, 0.148*height,   0.885 *width, 0.055*height);
+            g.strokeLine(   0.746 *width, 0.148*height,    0.885 *width, 0.055*height);
             g.strokeLine((1-0.746)*width, 0.148*height, (1-0.885)*width, 0.055*height);
             g.strokeArc(   0.864       *width, 0.047*height, 0.100*width, 0.100*height,  0, 125, ArcType.OPEN);
             g.strokeArc((1-0.864-0.100)*width, 0.047*height, 0.100*width, 0.100*height, 55, 125, ArcType.OPEN);

@@ -4,7 +4,9 @@ import android.os.Handler;
 import android.os.Looper;
 
 import fmg.android.img.Animator;
+import fmg.common.Color;
 import fmg.common.ui.Factory;
+import fmg.core.mosaic.MosaicDrawModel;
 
 public final class StaticInitializer {
 
@@ -12,6 +14,8 @@ public final class StaticInitializer {
       Factory.DEFERR_INVOKER = new Handler(Looper.getMainLooper())::post;
       Factory.GET_ANIMATOR = Animator::getSingleton;
       Factory.TIMER_CREATOR = Timer::new;
+
+      MosaicDrawModel.DefaultBkColor = new Color(0xFFEEEEEE); // #EEEEEE or #FAFAFA
    }
 
    public static void init() {
