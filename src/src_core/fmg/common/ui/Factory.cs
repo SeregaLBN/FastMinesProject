@@ -13,12 +13,12 @@ namespace fmg.common.ui {
        //doRun();
       };
 
-      /// <summary> Platform-dependent factory of {@link IAnimator}. Set from outside... </summary>
+      /// <summary> Platform-dependent factory of <see cref="IAnimator"/>. Set from outside... </summary>
       public static Func<IAnimator> GET_ANIMATOR = () => {
          throw new NotImplementedException();
       };
 
-      /// <summary> Platform-dependent factory of {@link ITimer}. Set from outside... </summary>
+      /// <summary> Platform-dependent factory of <see cref="ITimer"/>. Set from outside... </summary>
       public static Func<ITimer> TIMER_CREATOR = () => {
          throw new NotImplementedException();
       };

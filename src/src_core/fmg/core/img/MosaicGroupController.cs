@@ -1,6 +1,6 @@
 namespace fmg.core.img {
 
-   /// <summary> MVC controller of {@link EMosaicGroup} image </summary>
+   /// <summary> MVC controller of <see cref="EMosaicGroup"/> image </summary>
    /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
    /// <typeparam name="MosaicGroupModel">MVC view</typeparam>
    public abstract class MosaicGroupController<TImage, TImageView>

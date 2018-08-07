@@ -89,7 +89,7 @@ namespace fmg.core.img {
          }
       }
 
-      /** ///////////// ================= PART {@link ERotateMode#fullMatrix} ======================= ///////////// */
+      /** ///////////// ================= PART <see cref="ERotateMode.fullMatrix"/> ======================= ///////////// */
 
       public void RotateMatrix() { RotateMatrix(true); }
       private void RotateMatrix(bool reinit) {
@@ -105,7 +105,7 @@ namespace fmg.core.img {
          _notifier.OnPropertyChanged(nameof(MosaicGameModel.Matrix));
       }
 
-      /** ///////////// ================= PART {@link ERotateMode#someCells} ======================= ///////////// */
+      /** ///////////// ================= PART <see cref="ERotateMode.someCells"/> ======================= ///////////// */
 
       private bool _rotateCellAlterantive;
 

@@ -12,9 +12,9 @@ using fmg.ava.utils;
 
 namespace fmg.ava.img {
 
-   /// <summary> MVC: view. Abstract Avalonia representable {@link fmg.core.types.ESkillLevel} or {@link fmg.core.types.EMosaicGroup} as image </summary>
+   /// <summary> MVC: view. Abstract Avalonia representable <see cref="fmg.core.types.ESkillLevel"/> or <see cref="fmg.core.types.EMosaicGroup"/> as image </summary>
    /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
-   /// <typeparam name="AnimatedImageModel">{@link MosaicsSkillModel} or {@link MosaicsGroupModel}</typeparam>
+   /// <typeparam name="AnimatedImageModel"><see cref="MosaicsSkillModel"/> or <see cref="MosaicsGroupModel"/></typeparam>
    public abstract class MosaicSkillOrGroupView<TImage, TImageModel>
                            : WithBurgerMenuView<TImage, TImageModel>
       where TImage : class

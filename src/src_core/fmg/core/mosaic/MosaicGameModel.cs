@@ -37,7 +37,7 @@ namespace fmg.core.mosaic {
    #region Members
 
       private BaseCell.BaseAttribute _cellAttr;
-      /// <summary> Matrix of cells, is represented as a vector {@link List<BaseCell>}.
+      /// <summary> Matrix of cells, is represented as a vector <see cref="IList<BaseCell>"/>.
       /// Матрица ячеек, представленная(развёрнута) в виде вектора </summary>
       private readonly IList<BaseCell> _matrix = new List<BaseCell>();
       /// <summary> Field size in cells </summary>

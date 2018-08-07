@@ -3,7 +3,7 @@ using fmg.core.types;
 
 namespace fmg.core.img {
 
-   /// <summary> Transforming of {@link MosaicGroupModel} </summary>
+   /// <summary> Transforming of <see cref="MosaicGroupModel"/> </summary>
    public class MosaicGroupTransformer : IModelTransformer {
 
       public void Execute(IAnimatedModel model) {

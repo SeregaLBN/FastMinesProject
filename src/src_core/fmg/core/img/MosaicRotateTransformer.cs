@@ -2,7 +2,7 @@ using System;
 
 namespace fmg.core.img {
 
-   /// <summary> Representable {@link fmg.core.types.EMosaic} as animated image </summary>
+   /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as animated image </summary>
    public class MosaicRotateTransformer<TImage> : IModelTransformer
       where TImage : class
    {

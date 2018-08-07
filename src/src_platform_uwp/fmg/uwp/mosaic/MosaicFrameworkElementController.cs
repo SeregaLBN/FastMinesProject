@@ -21,7 +21,7 @@ using fmg.uwp.utils;
 namespace fmg.uwp.mosaic {
 
    /// <summary> MVC: controller. UWP implementation over control <see cref="FrameworkElement"/> </summary>
-   /// <typeparam name="TImageAsFrameworkElement">image-control based of FrameworkElement</typeparam>
+   /// <typeparam name="TImageAsFrameworkElement">image-control based of <see cref="FrameworkElement"/></typeparam>
    /// <typeparam name="TImageInner">image type of flag/mine into mosaic field</typeparam>
    /// <typeparam name="TMosaicView">mosaic view</typeparam>
    public abstract class MosaicFrameworkElementController<TImageAsFrameworkElement, TImageInner, TMosaicView> : MosaicController<TImageAsFrameworkElement, TImageInner, TMosaicView, MosaicDrawModel<TImageInner>>

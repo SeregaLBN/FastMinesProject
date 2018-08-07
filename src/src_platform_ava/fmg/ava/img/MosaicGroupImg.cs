@@ -74,30 +74,30 @@ namespace fmg.ava.img {
          }
       }
 
-   //   /// <summary> Representable <see cref="EMosaicGroup"/> as image.
-   //   /// <br/>
-   //   /// Canvas impl
-   //   /// </summary>
-   //   public class CanvasImgSrc : CommonImpl<Canvas> {
-   //
-   //      /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
-   //      public CanvasImgSrc(EMosaicGroup? group)
-   //         : base(group)
-   //      { }
-   //
-   //      protected override Canvas CreateImage() {
-   //         return new Canvas {
-   //            Width = Size.Width,
-   //            Height = Size.Height
-   //         };
-   //      }
-   //
-   //      protected override void DrawBody() {
-   //         DrawBody(Image, true);
-   //      }
-   //   }
+      //   /// <summary> Representable <see cref="EMosaicGroup"/> as image.
+      //   /// <br/>
+      //   /// Canvas impl
+      //   /// </summary>
+      //   public class CanvasImgSrc : CommonImpl<Canvas> {
+      //
+      //      /// <param name="group">may be null. if Null - representable image of typeof(EMosaicGroup)</param>
+      //      public CanvasImgSrc(EMosaicGroup? group)
+      //         : base(group)
+      //      { }
+      //
+      //      protected override Canvas CreateImage() {
+      //         return new Canvas {
+      //            Width = Size.Width,
+      //            Height = Size.Height
+      //         };
+      //      }
+      //
+      //      protected override void DrawBody() {
+      //         DrawBody(Image, true);
+      //      }
+      //   }
 
-      /** MosaicsGroup image controller implementation for {@link Canvas} */
+      /** MosaicsGroup image controller implementation for <see cref="Canvas"/> */
       public class ControllerRenderTargetBmp : MosaicGroupController<RenderTargetBitmap, MosaicGroupImg.RenderTargetBmp> {
 
          public ControllerRenderTargetBmp(EMosaicGroup? group, IControl ctrl)
