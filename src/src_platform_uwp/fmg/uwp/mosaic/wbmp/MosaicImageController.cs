@@ -14,8 +14,8 @@ namespace fmg.uwp.mosaic.wbmp {
       { }
 
       protected override void Disposing() {
-         View.Dispose();
          base.Disposing();
+         View.Dispose();
       }
 
       ////////////// TEST //////////////
