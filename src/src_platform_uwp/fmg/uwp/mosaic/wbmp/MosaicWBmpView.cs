@@ -26,7 +26,6 @@ namespace fmg.uwp.mosaic.wbmp {
          : base(mosaicModel)
       { }
 
-
       static MosaicWBmpView() {
          StaticInitializer.Init();
       }
