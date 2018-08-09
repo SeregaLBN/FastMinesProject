@@ -155,7 +155,7 @@ public abstract class MosaicJfxView<TImage,
             double[] polyY = null;
             { // 2.1. paint component
 
-               // 2.1.1. paint background
+               // 2.1.1. paint cell background
                //if (!isIconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
                {
                   Color bkClrCell = cell.getBackgroundFillColor(bkFill.getMode(),

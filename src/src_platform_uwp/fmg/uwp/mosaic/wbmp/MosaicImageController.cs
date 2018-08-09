@@ -20,7 +20,7 @@ namespace fmg.uwp.mosaic.wbmp {
 
       ////////////// TEST //////////////
       public static MosaicImageController GetTestData() {
-         MosaicView<Image, WriteableBitmap, MosaicDrawModel<WriteableBitmap>>._DEBUG_DRAW_FLOW = true;
+         MosaicImageView._DEBUG_DRAW_FLOW = true;
          MosaicImageController ctrllr = new MosaicImageController();
 
          if (ThreadLocalRandom.Current.Next(2) == 1) {
