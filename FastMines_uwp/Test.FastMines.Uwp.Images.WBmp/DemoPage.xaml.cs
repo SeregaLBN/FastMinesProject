@@ -19,6 +19,7 @@ using fmg.core.img;
 using fmg.core.mosaic;
 using fmg.uwp.img.wbmp;
 using fmg.uwp.mosaic.wbmp;
+using fmg.uwp.mosaic.xaml;
 using DummyMosaicImageType = System.Object;
 
 namespace Test.FastMines.Uwp.Images.WBmp {
@@ -60,6 +61,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          public void Dispose()    { throw new NotImplementedException(); }
          public void Invalidate() { throw new NotImplementedException(); }
       }
+      public void TestMosaicXamlCtl()  { TestAppMosaicXamlCtr(()         => new       MosaicXamlController[] { MosaicXamlController .GetTestData() }); }
       public void TestMosaicControl()  { TestAppMosaicControl(()         => new      MosaicImageController[] { MosaicImageController.GetTestData() }); }
       public void TestMosaicsImg()     { TestAppMosaicImage                                                          (MosaicImg     .GetTestData); }
       public void TestLogos()          { TestAppAnimated<          Logo.Controller,           Logo,        LogoModel>(Logo          .GetTestData); }
@@ -74,7 +76,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       public DemoPage() {
          _td = new TestDrawing();
 
-         _onCreateImages = new Action[] { TestMosaicControl, TestLogos, TestMine, TestMosaicSkillImg, TestMosaicGroupImg, TestMosaicsImg, TestFlag, TestSmile };
+         _onCreateImages = new Action[] { TestMosaicXamlCtl, TestMosaicControl, TestLogos, TestMine, TestMosaicSkillImg, TestMosaicGroupImg, TestMosaicsImg, TestFlag, TestSmile };
 
          InitializeComponent();
 
@@ -113,6 +115,10 @@ namespace Test.FastMines.Uwp.Images.WBmp {
 
       void TestAppMosaicControl(Func<IEnumerable<MosaicImageController>> funcGetImages) {
          TestApp<Image, WriteableBitmap, MosaicImageController, MosaicImageView, DummyView<Image>, MosaicDrawModel<WriteableBitmap>, DummyModel>(funcGetImages);
+      }
+
+      void TestAppMosaicXamlCtr(Func<IEnumerable<MosaicXamlController>> funcGetImages) {
+         TestApp<Panel, ImageSource, MosaicXamlController, MosaicXamlView, DummyView<Panel>, MosaicDrawModel<ImageSource>, DummyModel>(funcGetImages);
       }
       #endregion wrappers
 

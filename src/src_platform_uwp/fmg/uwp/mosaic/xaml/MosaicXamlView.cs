@@ -40,27 +40,25 @@ namespace fmg.uwp.mosaic.xaml {
       }
 
       protected override Panel CreateImage() {
-         return Control;
+         // will return once created window
+         return GetControl();
       }
 
-      public Panel Control {
-         get { return _control; }
-         set {
-            if (_control != null)
-               UnbindXaml();
-            _control = value;
-            if (_control != null)
-               BindXamlToMosaic();
+      public Panel GetControl() {
+         if (_control == null) {
+            _control = new Canvas();
+            BindXamlToMosaic();
          }
+         return _control;
       }
 
       private void UnbindXaml() {
-         Control?.Children.Clear();
+         GetControl().Children.Clear();
          XamlBinder.Clear();
       }
 
       private void BindXamlToMosaic() {
-         var container = Control;
+         var container = GetControl();
 
          //System.Diagnostics.Debug.Assert(container != null);
          if (container == null)
@@ -87,7 +85,7 @@ namespace fmg.uwp.mosaic.xaml {
       }
 
       protected override void DrawModified(IEnumerable<BaseCell> requiredCells) {
-         var container = Control;
+         var container = GetControl();
 
          //System.Diagnostics.Debug.Assert(container != null);
          if (container == null)
@@ -98,7 +96,7 @@ namespace fmg.uwp.mosaic.xaml {
 
       private void DrawOverXaml(IEnumerable<BaseCell> modifiedCells, bool drawBk) {
          var m = Model;
-         var container = Control;
+         var container = GetControl();
 
          // 1. background color
          if (drawBk) { // paint background
