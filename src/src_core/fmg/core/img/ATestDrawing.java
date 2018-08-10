@@ -46,7 +46,6 @@ public abstract class ATestDrawing {
          }
       }
       if (model instanceof AnimatedImageModel) {
-         @SuppressWarnings("resource")
          AnimatedImageModel aim = (AnimatedImageModel)model;
          aim.setPadding(10);
          aim.setBorderWidth(0);
@@ -54,18 +53,15 @@ public abstract class ATestDrawing {
          aim.getForegroundColor().setA(200); // 0..255 - foreground alpha-chanel color
       }
       if (model instanceof BurgerMenuModel) {
-         @SuppressWarnings("resource")
          BurgerMenuModel bmm = (BurgerMenuModel)model;
          bmm.setShow(true);
       }
       if (model instanceof LogoModel) {
-         @SuppressWarnings("resource")
          LogoModel lm = (LogoModel)model;
          lm.setUseGradient(true);
       }
 
       if (ctrller instanceof AnimatedImgController<?, ?, ?>) {
-         @SuppressWarnings("resource")
          AnimatedImgController<?, ?, ?> aic = (AnimatedImgController<?, ?, ?>)ctrller;
          aic.useRotateTransforming(true);
          aic.usePolarLightFgTransforming(true);
@@ -106,7 +102,6 @@ public abstract class ATestDrawing {
          bkClr.setA(50 + r(10));
 
       if (model instanceof AnimatedImageModel) {
-         @SuppressWarnings("resource")
          AnimatedImageModel aim = (AnimatedImageModel)model;
 
          aim.setBorderWidth(r(3));
@@ -132,18 +127,15 @@ public abstract class ATestDrawing {
          aim.setAnimeDirection(bl());
 
          if (model instanceof LogoModel) {
-            @SuppressWarnings("resource")
             LogoModel lm = (LogoModel)model;
             lm.setUseGradient(bl());
          }
       }
       if (model instanceof MosaicGameModel) {
-         @SuppressWarnings("resource")
          MosaicGameModel mgm = (MosaicGameModel)model;
          mgm.setSizeField(new Matrisize(3+r(2), 3 + r(2)));
 
          if (model instanceof MosaicDrawModel<?>) {
-            @SuppressWarnings("resource")
             MosaicDrawModel<?> mdm = (MosaicDrawModel<?>)model;
             mdm.setBackgroundColor(bkClr);
 
@@ -156,7 +148,6 @@ public abstract class ATestDrawing {
             mdm.setPadding(new BoundDouble(padLeftRight, padTopBottom, padLeftRight, padTopBottom));
 
             if (model instanceof MosaicAnimatedModel) {
-               @SuppressWarnings("resource")
                MosaicAnimatedModel<?> mam = (MosaicAnimatedModel<?>)model;
 
                ERotateMode[] eRotateModes = ERotateMode.values();

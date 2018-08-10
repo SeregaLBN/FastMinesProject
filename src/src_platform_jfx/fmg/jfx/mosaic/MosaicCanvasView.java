@@ -61,7 +61,7 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
    @Override
    public void invalidate() {
       super.invalidate();
-      getImage(); // implicit call draw() -> drawBegin() -> this.draw(...)
+      getImage(); // implicit call draw() -> drawBegin() -> drawModified() -> drawJfx()
    }
 
    @Override
