@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.shape.StrokeLineCap;
 
 import fmg.common.HSV;
 import fmg.common.geom.PointDouble;
@@ -95,6 +96,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
       double zoomAverage = (lm.getZoomX() + lm.getZoomY())/2;
       final double penWidth = lm.getBorderWidth() * zoomAverage;
       if (penWidth > 0.1) {
+         g.setLineCap(StrokeLineCap.ROUND);
          g.setLineWidth(penWidth);
          for (int i=0; i<8; i++) {
             Point2D p1 = rays[(i + 7)%8];

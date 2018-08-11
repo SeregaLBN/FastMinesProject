@@ -87,7 +87,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
       double zoomAverage = (lm.getZoomX() + lm.getZoomY())/2;
       final double penWidth = lm.getBorderWidth() * zoomAverage;
       if (penWidth > 0.1) {
-         g.setStroke(new BasicStroke((float)penWidth));
+         g.setStroke(new BasicStroke((float)penWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
          for (int i=0; i<8; i++) {
             Point2D.Double p1 = rays[(i + 7)%8];
             Point2D.Double p2 = rays[i];
