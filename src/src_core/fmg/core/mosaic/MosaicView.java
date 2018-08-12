@@ -49,7 +49,7 @@ public abstract class MosaicView<TImage,
    protected void drawBody() {
       if (_DEBUG_DRAW_FLOW)
          System.out.println("MosaicView.drawBody: " + (_modifiedCells.isEmpty() ? "all" : ("cnt=" + _modifiedCells.size()) + ": " + _modifiedCells.stream().limit(5).collect(Collectors.toList())));
-      drawModified(_modifiedCells);
+      drawModified(_modifiedCells.isEmpty() ? null : _modifiedCells);
       _modifiedCells.clear();
    }
 
