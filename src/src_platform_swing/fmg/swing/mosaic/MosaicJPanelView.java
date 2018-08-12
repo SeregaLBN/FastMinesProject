@@ -115,9 +115,10 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
    }
 
    @Override
-   public void invalidate() {
-      super.invalidate();
-      getImage(); // implicit call draw() -> drawBegin() -> drawModified() -> control.repaint() -> JPanel.paintComponent -> drawSwing()
+   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+      super.onPropertyChanged(oldValue, newValue, propertyName);
+      if (propertyName.equals(PROPERTY_IMAGE))
+         getImage(); // implicit call draw() -> drawBegin() -> drawModified() -> control.repaint() -> JPanel.paintComponent -> drawSwing()
    }
 
    @Override

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using fmg.common;
 using fmg.common.geom;
 using fmg.common.notyfier;
 
@@ -33,6 +34,7 @@ namespace fmg.core.img {
       protected ImageView(TImageModel imageModel) {
          _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
          Model = imageModel;
+         this.PropertyChanged  += OnPropertyChanged;
          Model.PropertyChanged += OnPropertyModelChanged;
       }
 
@@ -79,6 +81,7 @@ namespace fmg.core.img {
       }
 
       private void Draw() {
+         System.Diagnostics.Debug.Assert(!Disposed);
          DrawBegin();
          DrawBody();
          DrawEnd();
@@ -88,6 +91,10 @@ namespace fmg.core.img {
       protected abstract void DrawBody();
       protected void DrawEnd() { _invalidate = EInvalidate.redrawed; }
 
+      protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         System.Diagnostics.Debug.Assert(ReferenceEquals(sender, this));
+         //LoggerSimple.Put(GetType().Name + ".OnPropertyChanged: PropertyName=" + ev.PropertyName);
+      }
       protected virtual void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
          System.Diagnostics.Debug.Assert(ReferenceEquals(sender, Model));
          _notifier.OnPropertyChanged(default(TImageModel), Model, nameof(this.Model));
@@ -104,6 +111,7 @@ namespace fmg.core.img {
       // <summary>  Dispose managed resources </summary>/
       protected virtual void Disposing() {
          _notifier.Dispose();
+         this.PropertyChanged  -= OnPropertyChanged;
          Model.PropertyChanged -= OnPropertyModelChanged;
          Image = null;
       }

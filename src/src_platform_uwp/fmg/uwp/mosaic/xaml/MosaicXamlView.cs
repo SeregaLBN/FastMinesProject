@@ -60,10 +60,6 @@ namespace fmg.uwp.mosaic.xaml {
       private void BindXamlToMosaic() {
          var container = GetControl();
 
-         //System.Diagnostics.Debug.Assert(container != null);
-         if (container == null)
-            return;
-
          //UnbindXaml();
          var xamlBinder = XamlBinder;
          foreach (var cell in Model.Matrix) {
@@ -240,6 +236,13 @@ namespace fmg.uwp.mosaic.xaml {
                //var rcInner = cell.getRcInner(paintContext.PenBorder.Width);
                //bmp.DrawRectangle(rcInner.x, rcInner.y, rcInner.right(), rcInner.bottom(), (Windows.UI.Color)Color.MAGENTA);
             }
+         }
+      }
+
+      protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         base.OnPropertyChanged(sender, ev);
+         if (ev.PropertyName == nameof(this.Image)) {
+            var img = Image; // implicit call Draw() -> DrawBegin() -> DrawModified() -> DrawOverXaml()
          }
       }
 

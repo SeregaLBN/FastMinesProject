@@ -22,20 +22,23 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
    }
 
    /** MVC: model */
-   private final TImageModel _imageModel;
+   private final TImageModel _model;
    private TImage _image;
    private EInvalidate _invalidate = EInvalidate.needRedraw;
-   private final PropertyChangeListener _imageModelListener = ev -> onPropertyModelChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+   private final PropertyChangeListener _selfListener  = ev -> onPropertyChanged(     ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+   private final PropertyChangeListener _modelListener = ev -> onPropertyModelChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
    protected NotifyPropertyChanged _notifier = new NotifyPropertyChanged(this);
+   protected boolean _isDisposed;
 
    protected ImageView(TImageModel imageModel) {
-      _imageModel = imageModel;
-      _imageModel.addListener(_imageModelListener);
+      _model = imageModel;
+      this.addListener(_selfListener);
+      _model.addListener(_modelListener);
    }
 
    @Override
    public TImageModel getModel() {
-      return _imageModel;
+      return _model;
    }
 
    /** width and height in pixel */
@@ -84,6 +87,9 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
    }
 
    private void draw() {
+      if (_isDisposed)
+         System.err.println(" Already disposed! " + this.getClass().getSimpleName());
+      assert !_isDisposed;
       drawBegin();
       drawBody();
       drawEnd();
@@ -92,6 +98,8 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
    protected final void drawBegin() { _invalidate = EInvalidate.redrawing; }
    protected abstract void drawBody();
    protected final void drawEnd() { _invalidate = EInvalidate.redrawed; }
+
+   protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) { }
 
    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
       _notifier.onPropertyChanged(null, getModel(), PROPERTY_MODEL);
@@ -107,7 +115,9 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
 
    @Override
    public void close() {
-      _imageModel.removeListener(_imageModelListener);
+      _isDisposed = true;
+      this.removeListener(_selfListener);
+      _model.removeListener(_modelListener);
       _notifier.close();
       setImage(null);
    }

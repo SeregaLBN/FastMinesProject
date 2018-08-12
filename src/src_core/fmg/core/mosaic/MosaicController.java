@@ -40,7 +40,7 @@ public abstract class MosaicController<TImage, TImageInner,
    /** использовать ли флажок на поле */
    private boolean _useUnknown = true;
 
-   private final PropertyChangeListener _modelListener = ev -> onModelPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+   private final PropertyChangeListener _modelListener = ev -> onPropertyModelChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
 
 
    protected MosaicController(TMosaicView mosaicView) {
@@ -515,7 +515,7 @@ public abstract class MosaicController<TImage, TImageInner,
       return (getGameStatus() == EGameStatus.eGSEnd) && (0 == getCountMinesLeft());
    }
 
-   protected void onModelPropertyChanged(Object oldValue, Object newValue, String propertyName) {
+   protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
       switch (propertyName) {
       case MosaicGameModel.PROPERTY_SIZE_FIELD:
          setCellDown(null); // чтобы не было IndexOutOfBoundsException при уменьшении размера поля когда удерживается клик на поле...

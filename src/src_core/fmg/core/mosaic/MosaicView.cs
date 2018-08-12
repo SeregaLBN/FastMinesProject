@@ -12,8 +12,8 @@ namespace fmg.core.mosaic {
    /// <typeparam name="TImageInner">image type of flag/mine into mosaic field</typeparam>
    /// <typeparam name="TMosaicModel">mosaic data model</typeparam>
    public abstract class MosaicView<TImage, TImageInner, TMosaicModel>
-                         : ImageView<TImage, TMosaicModel>,
-                         IMosaicView<TImage, TImageInner, TMosaicModel>
+                        : ImageView<TImage, TMosaicModel>,
+                        IMosaicView<TImage, TImageInner, TMosaicModel>
       where TImage : class
       where TImageInner : class
       where TMosaicModel : MosaicDrawModel<TImageInner>

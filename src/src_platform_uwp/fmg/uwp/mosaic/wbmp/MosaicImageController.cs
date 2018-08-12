@@ -1,7 +1,6 @@
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
-using fmg.core.mosaic;
 using fmg.core.types;
 
 namespace fmg.uwp.mosaic.wbmp {
