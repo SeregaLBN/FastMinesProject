@@ -95,6 +95,7 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
       if (penWidth > 0.1) {
          paint.setShader(null); // reset gradient shader
          paint.setStyle(Paint.Style.STROKE);
+         paint.setStrokeCap(Paint.Cap.ROUND);
          paint.setStrokeWidth((float) penWidth);
          for (int i = 0; i < 8; i++) {
             PointF p1 = rays[(i + 7) % 8];
