@@ -22,6 +22,18 @@ public final class Cast {
    public static fmg.common.geom.Size         toSize      (   android.util.Size       size) { return new fmg.common.geom.Size      (       size.getWidth(),        size.getHeight()); }
    public static fmg.common.geom.SizeDouble   toSizeDouble(   android.util.SizeF      size) { return new fmg.common.geom.SizeDouble(       size.getWidth(),        size.getHeight()); }
 
+   public static android.graphics.Path toPolygon(fmg.common.geom.RegionDouble region) {
+      android.graphics.Path p = new android.graphics.Path();
+      fmg.common.geom.PointDouble dot = region.getPoint(0);
+      p.moveTo((float)dot.x, (float)dot.y);
+      for (int i=1; i<region.getCountPoints(); ++i) {
+         dot = region.getPoint(i);
+         p.lineTo((float)dot.x, (float)dot.y);
+      }
+      p.close();
+      return p;
+   }
+
    public static android.graphics.Path toPolygon(List<fmg.common.geom.PointDouble> region) {
       android.graphics.Path p = new android.graphics.Path();
       fmg.common.geom.PointDouble dot = region.get(0);
