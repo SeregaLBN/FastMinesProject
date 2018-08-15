@@ -107,17 +107,7 @@ public abstract class MosaicImg<TImage>
 
          // test all
          Stream.of(EMosaic.values())
-
-//               // variant 1
-//               .map(e -> Stream.of(new MosaicImg.ControllerBitmap() { { setMosaicType(e); }},
-//                                   new MosaicImg.ControllerBitmap() { { setMosaicType(e); }}))
-//               .flatMap(x -> x)
-
-               // variant 2
-               .map(e -> ThreadLocalRandom.current().nextBoolean()
-                           ? new MosaicImg.ControllerBitmap() { { setMosaicType(e); }}
-                           : new MosaicImg.ControllerBitmap() { { setMosaicType(e); }}
-                   )
+               .map(e -> new MosaicImg.ControllerBitmap() { { setMosaicType(e); }})
                .collect(Collectors.toList());
    }
    //////////////////////////////////

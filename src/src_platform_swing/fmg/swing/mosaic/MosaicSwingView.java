@@ -107,8 +107,11 @@ public abstract class MosaicSwingView<TImage,
             RectDouble rcInner = cell.getRcInner(pen.getWidth());
             Polygon poly = Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset));
 
-            // ограничиваю рисование только границами своей фигуры
-            g.setClip(poly);
+            //if (!isIconicMode)
+            {
+               // ограничиваю рисование только границами своей фигуры
+               g.setClip(poly);
+            }
 
             { // 2.1. paint component
 

@@ -111,8 +111,12 @@ public abstract class MosaicAndroidView<TImage,
             RectDouble rcInner = cell.getRcInner(pen.getWidth());
             Path poly = Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset));
 
-            // ограничиваю рисование только границами своей фигуры
-            g.clipPath(poly);
+            //if (!isIconicMode)
+            {
+               g.save();
+               // ограничиваю рисование только границами своей фигуры
+               g.clipPath(poly);
+            }
 
             { // 2.1. paint component
 
@@ -211,6 +215,11 @@ public abstract class MosaicAndroidView<TImage,
                // debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
              //g.setColor(java.awt.Color.MAGENTA);
              //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
+            }
+
+            //if (!isIconicMode)
+            {
+               g.restore();
             }
          }
       }
