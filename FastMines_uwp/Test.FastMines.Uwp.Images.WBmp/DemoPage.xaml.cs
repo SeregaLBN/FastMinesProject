@@ -135,7 +135,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          List<TImageController> images = funcGetImages().ToList();
          ApplicationView.GetForCurrentView().Title = _td.GetTitle<TImage, TImageController, TImageView, TImageModel>(images);
 
-         FrameworkElement[,] imgControls = null;
+         FrameworkElement[] imgControls = null;
          bool testTransparent = false;
          bool imgIsControl = typeof(FrameworkElement).GetTypeInfo().IsAssignableFrom(typeof(TImage).GetTypeInfo());
 
@@ -154,7 +154,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
             ATestDrawing.CellTilingResult<TImage, TImageController, TImageView, TImageModel> ctr = _td.CellTiling<TImage, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
             var imgSize = ctr.imageSize;
             if (createImgControls)
-               imgControls = new FrameworkElement[ctr.tableSize.Width, ctr.tableSize.Height];
+               imgControls = new FrameworkElement[images.Count];
 
             var callback = ctr.itemCallback;
             foreach (var imgObj in images) {
@@ -165,7 +165,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                   if (imgIsControl) {
                      var imgControl = imgObj.Image as FrameworkElement;
                      _panel.Children.Add(imgControl);
-                     imgControls[cti.i, cti.j] = imgControl;
+                     imgControls[ctr.tableSize.Width * cti.j + cti.i] = imgControl;
                   } else {
                      var imgControl = new Image {
                         Stretch = Stretch.None
@@ -177,13 +177,13 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                      });
 
                      _panel.Children.Add(imgControl);
-                     imgControls[cti.i, cti.j] = imgControl;
+                     imgControls[ctr.tableSize.Width * cti.j + cti.i] = imgControl;
                   }
                }
 
                if (resized) {
                   imgObj.Model.Size = imgSize;
-                  imgControls[cti.i, cti.j].Margin = new Thickness {
+                  imgControls[ctr.tableSize.Width * cti.j + cti.i].Margin = new Thickness {
                      Left = offset.X,
                      Top = offset.Y
                   };

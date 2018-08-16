@@ -179,8 +179,39 @@ namespace fmg.core.img {
          where TImageModel : IImageModel
       {
          int len = images.Count;
-         int cols = (int)Math.Round(Math.Sqrt(len) + 0.4999999999); // columns
-         int rows = (int)Math.Round(len / (double)cols + 0.4999999999);
+
+         // max tiles in one column
+         int mtoc(int colsTotal) {
+            return (int)Math.Ceiling(len / (double)colsTotal);
+         }
+
+         // для предполагаемого кол-ва рядков нахожу макс кол-во плиток в строке
+         // и возвращаю отношение меньшей стороны к большей
+         double f(int colsTotal) {
+            int mCnt = mtoc(colsTotal);
+            double tailW = rc.Width / colsTotal;
+            double tailH = rc.Height / mCnt;
+            return (tailW < tailH)
+                  ? tailW / tailH
+                  : tailH / tailW;
+         }
+
+         int colsOpt = 0;
+         {
+            double xToY = 0; // отношение меньшей стороны к большей
+                             // ищу оптимальное кол-во рядков для расположения плиток. Оптимальным считаю такое расположение,
+                             // при котором плитки будут наибольше похожими на квадрат (т.е. отношение меньшей стороны к большей будет максимальней)
+            for (int i = 1; i <= len; ++i) {
+               double xy = f(i);
+               if (xy < xToY)
+                  break;
+               colsOpt = i;
+               xToY = xy;
+            }
+         }
+
+         int cols = colsOpt;
+         int rows = (int)Math.Ceiling(len / (double)cols);
          double dx = rc.Width / cols; // cell tile width
          double dy = rc.Height / rows; // cell tile height
 
