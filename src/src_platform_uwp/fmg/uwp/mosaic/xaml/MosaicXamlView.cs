@@ -106,6 +106,10 @@ namespace fmg.uwp.mosaic.xaml {
             modifiedCells = m.Matrix;
 
          var pen = m.PenBorder;
+         var padding = m.Padding;
+         var margin = m.Margin;
+         var offset = new SizeDouble(margin.Left + padding.Left,
+                                     margin.Top + padding.Top);
          var isIconicMode = pen.ColorLight == pen.ColorShadow;
 
          // 2. paint all cells
@@ -115,7 +119,7 @@ namespace fmg.uwp.mosaic.xaml {
             var txt = binder.Txt;
             var image = binder.Img;
             var poly = binder.Poly;
-            var rcInner = cell.getRcInner(pen.Width).MoveXY(m.Padding.Left, m.Padding.Top);
+            var rcInner = cell.getRcInner(pen.Width).MoveXY(offset.Width, offset.Height);
 
             { // 2.1. paint component
                { // 2.1.1. paint cell background
@@ -206,7 +210,7 @@ namespace fmg.uwp.mosaic.xaml {
                      poly.Points.Clear();
                   for (var p = 0; p < cnt; p++) {
                      var point = cell.getRegion().GetPoint(p);
-                     point.Move(m.Padding.Left, m.Padding.Top);
+                     point.Move(offset.Width, offset.Height);
                      if (d)
                         poly.Points.Add(point.ToWinPoint());
                      else
