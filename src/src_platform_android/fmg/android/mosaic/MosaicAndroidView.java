@@ -1,16 +1,24 @@
-package fmg.swing.mosaic;
+package fmg.android.mosaic;
 
-import java.awt.*;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
-import java.awt.geom.Rectangle2D;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Typeface;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
 import fmg.common.Color;
-import fmg.common.geom.*;
+import fmg.common.geom.BoundDouble;
+import fmg.common.geom.PointDouble;
+import fmg.common.geom.RectDouble;
+import fmg.common.geom.RegionDouble;
+import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicDrawModel.BackgroundFill;
 import fmg.core.mosaic.MosaicView;
@@ -20,28 +28,27 @@ import fmg.core.types.EOpen;
 import fmg.core.types.EState;
 import fmg.core.types.draw.FontInfo;
 import fmg.core.types.draw.PenBorder;
-import fmg.swing.utils.Cast;
-import fmg.swing.utils.StaticInitializer;
+import fmg.android.utils.Cast;
+import fmg.android.utils.StaticInitializer;
 
-/** MVC: view. Abstract SWING implementation
+/** MVC: view. Abstract android implementation
  * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageInner> image type of flag/mine into mosaic field
  * @param <TMosaicModel> mosaic data model
  */
-public abstract class MosaicSwingView<TImage,
+public abstract class MosaicAndroidView<TImage,
                                        TImageInner,
                                        TMosaicModel extends MosaicDrawModel<TImageInner>>
                 extends MosaicView<TImage, TImageInner, TMosaicModel>
 {
 
-   private Font _font;
-   private static final FontRenderContext _frc = new FontRenderContext(null, true, true);
-   /** cached TextLayout for quick drawing */
-   private final Map<String /* text */, TextLayout> _mapTextLayout = new HashMap<>();
+   private final Paint _textPaint;
    protected boolean _alreadyPainted = false;
 
-   protected MosaicSwingView(TMosaicModel mosaicModel) {
+   protected MosaicAndroidView(TMosaicModel mosaicModel) {
       super(mosaicModel);
+      _textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+      _textPaint.setStyle(Paint.Style.FILL);
    }
 
 
@@ -50,7 +57,7 @@ public abstract class MosaicSwingView<TImage,
    }
 
 
-   protected void drawSwing(Graphics2D g, Collection<BaseCell> modifiedCells, RectDouble clipRegion, boolean drawBk) {
+   protected void drawAndroid(Canvas g, Collection<BaseCell> modifiedCells, RectDouble clipRegion, boolean drawBk) {
       assert !_alreadyPainted;
       _alreadyPainted = true;
 
@@ -58,27 +65,24 @@ public abstract class MosaicSwingView<TImage,
       SizeDouble size = model.getSize();
 
       // save
-      Shape oldShape = g.getClip();
-      java.awt.Color oldColor = g.getColor();
-      Stroke oldStroke = g.getStroke();
-      Font oldFont = g.getFont();
+      g.save();
+
+      Paint paintStroke = new Paint(Paint.ANTI_ALIAS_FLAG); paintStroke.setStyle(Paint.Style.STROKE);
+      Paint paintFill   = new Paint(Paint.ANTI_ALIAS_FLAG); paintFill  .setStyle(Paint.Style.FILL);
 
       // 1. background color
       Color bkClr = model.getBackgroundColor();
       if (drawBk) {
-         g.setComposite(AlphaComposite.Src);
-         g.setColor(Cast.toColor(bkClr));
+         paintFill.setColor(Cast.toColor(bkClr));
          if (clipRegion == null)
-            g.fillRect(0, 0, (int)size.width, (int)size.height);
+            g.drawColor(Cast.toColor(bkClr), PorterDuff.Mode.CLEAR);
          else
-            g.fillRect((int)clipRegion.x, (int)clipRegion.y, (int)clipRegion.width, (int)clipRegion.height);
+            g.drawRect((float)clipRegion.x, (float)clipRegion.y, (float)clipRegion.width, (float)clipRegion.height, paintFill);
       }
 
       // 2. paint cells
-      g.setComposite(AlphaComposite.SrcOver);
-      g.setFont(getFont());
       PenBorder pen = model.getPenBorder();
-      g.setStroke(new BasicStroke((float)pen.getWidth()));
+      paintStroke.setStrokeWidth((float)pen.getWidth());
       BoundDouble padding = model.getPadding();
       BoundDouble margin  = model.getMargin();
       SizeDouble offset = new SizeDouble(margin.left + padding.left,
@@ -91,7 +95,7 @@ public abstract class MosaicSwingView<TImage,
       Collection<BaseCell> toCheck = (redrawAll || recheckAll) ? model.getMatrix() : modifiedCells;
 
       if (_DEBUG_DRAW_FLOW) {
-         System.out.println("> MosaicSwingView.draw: " + (redrawAll ? "all" : ("cnt=" + modifiedCells.size()))
+         System.out.println("> MosaicAndroidView.draw: " + (redrawAll ? "all" : ("cnt=" + modifiedCells.size()))
                                                        + "; clipReg=" + clipRegion
                                                        + "; drawBk=" + drawBk);
       }
@@ -105,12 +109,13 @@ public abstract class MosaicSwingView<TImage,
          {
             ++tmp;
             RectDouble rcInner = cell.getRcInner(pen.getWidth());
-            Polygon poly = Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset));
+            Path poly = Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset));
 
             //if (!isIconicMode)
             {
+               g.save();
                // ограничиваю рисование только границами своей фигуры
-               g.setClip(poly);
+               g.clipPath(poly);
             }
 
             { // 2.1. paint component
@@ -122,8 +127,8 @@ public abstract class MosaicSwingView<TImage,
                                                                 bkClr,
                                                                 bkFill.getColors());
                   if (!drawBk || !bkClrCell.equals(bkClr)) {
-                     g.setColor(Cast.toColor(bkClrCell));
-                     g.fillPolygon(poly);
+                     paintFill.setColor(Cast.toColor(bkClrCell));
+                     g.drawPath(poly, paintFill);
                   }
                }
 
@@ -133,11 +138,8 @@ public abstract class MosaicSwingView<TImage,
                Consumer<TImageInner> paintImage = img -> {
                   int x = (int)(rcInner.x + offset.width);
                   int y = (int)(rcInner.y + offset.height);
-                  if (img instanceof javax.swing.Icon) {
-                     ((javax.swing.Icon)img).paintIcon(null/*p.getOwner()*/, g, x, y);
-                  } else
-                  if (img instanceof java.awt.Image) {
-                     g.drawImage((java.awt.Image)img, x, y, null);
+                  if (img instanceof android.graphics.Bitmap) {
+                     g.drawBitmap((android.graphics.Bitmap)img, x, y, null);
                   } else {
                      throw new RuntimeException("Unsupported image type " + img.getClass().getSimpleName());
                   }
@@ -160,12 +162,12 @@ public abstract class MosaicSwingView<TImage,
                {
                   String szCaption;
                   if (cell.getState().getStatus() == EState._Close) {
-                     g.setColor(Cast.toColor(model.getColorText().getColorClose(cell.getState().getClose().ordinal())));
+                     _textPaint.setColor(Cast.toColor(model.getColorText().getColorClose(cell.getState().getClose().ordinal())));
                      szCaption = cell.getState().getClose().toCaption();
                    //szCaption = cell.getCoord().x + ";" + cell.getCoord().y; // debug
                    //szCaption = ""+cell.getDirection(); // debug
                   } else {
-                     g.setColor(Cast.toColor(model.getColorText().getColorOpen(cell.getState().getOpen().ordinal())));
+                     _textPaint.setColor(Cast.toColor(model.getColorText().getColorOpen(cell.getState().getOpen().ordinal())));
                      szCaption = cell.getState().getOpen().toCaption();
                   }
                   if ((szCaption != null) && (szCaption.length() > 0))
@@ -189,11 +191,11 @@ public abstract class MosaicSwingView<TImage,
             {
                // draw border lines
                boolean down = cell.getState().isDown() || (cell.getState().getStatus() == EState._Open);
-               g.setColor(Cast.toColor(down
+               paintStroke.setColor(Cast.toColor(down
                                           ? pen.getColorLight()
                                           : pen.getColorShadow()));
                if (isIconicMode) {
-                  g.drawPolygon(poly);
+                  g.drawPath(poly, paintStroke);
                } else {
                   int s = cell.getShiftPointBorderIndex();
                   int v = cell.getAttr().getVertexNumber(cell.getDirection());
@@ -203,16 +205,21 @@ public abstract class MosaicSwingView<TImage,
                                           ? cell.getRegion().getPoint(i+1)
                                           : cell.getRegion().getPoint(0);
                      if (i==s)
-                        g.setColor(Cast.toColor(down
+                        paintStroke.setColor(Cast.toColor(down
                                                    ? pen.getColorShadow()
                                                    : pen.getColorLight()));
-                     g.drawLine((int)(p1.x+offset.width), (int)(p1.y+offset.height), (int)(p2.x+offset.width), (int)(p2.y+offset.height));
+                     g.drawLine((int)(p1.x+offset.width), (int)(p1.y+offset.height), (int)(p2.x+offset.width), (int)(p2.y+offset.height), paintStroke);
                   }
                }
 
                // debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
              //g.setColor(java.awt.Color.MAGENTA);
              //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
+            }
+
+            //if (!isIconicMode)
+            {
+               g.restore();
             }
          }
       }
@@ -246,65 +253,58 @@ public abstract class MosaicSwingView<TImage,
       /**/
 
       if (_DEBUG_DRAW_FLOW) {
-         System.out.println("< MosaicSwingView.draw: cnt=" + tmp);
+         System.out.println("< MosaicAndroidView.draw: cnt=" + tmp);
          System.out.println("-------------------------------");
       }
 
       // restore
-      g.setFont(oldFont);
-      g.setStroke(oldStroke);
-      g.setColor(oldColor);
-      g.setClip(oldShape);
+      g.restore();
 
       _alreadyPainted = false;
    }
 
-   private Rectangle2D getStringBounds(String text) {
-      TextLayout tl = _mapTextLayout.get(text);
-      if (tl == null) {
-         tl = new TextLayout(text, getFont(), _frc);
-         _mapTextLayout.put(text, tl);
+   private RectDouble getStringBounds(String text) {
+      RectDouble r;
+      if (true) {
+         Rect r2 = new Rect();
+         _textPaint.getTextBounds(text, 0, text.length(), r2);
+         r = new RectDouble(r2.left, r2.top, r2.width(), r2.height());
+      } else {
+         float textWidth = _textPaint.measureText(text);
+         r = new RectDouble(textWidth, getModel().getFontInfo().getSize());
       }
-      return tl.getBounds();
-//      return font.getStringBounds(text, new FontRenderContext(null, true, true));
+      return r;
    }
 
-   private void drawText(Graphics g, String text, RectDouble rc) {
+   private void drawText(Canvas g, String text, RectDouble rc) {
       if ((text == null) || text.trim().isEmpty())
          return;
-      Rectangle2D bnd = getStringBounds(text);
+      RectDouble bnd = getStringBounds(text);
 //      { // test
 //         java.awt.Color clrOld = g.getColor();
 //         g.setColor(java.awt.Color.BLUE);
 //         g.fillRect((int)rc.x, (int)rc.y, (int)rc.width, (int)rc.height);
 //         g.setColor(clrOld);
 //      }
-      g.drawString(text,
-            (int)(rc.x       +(rc.width -bnd.getWidth ())/2.),
-            (int)(rc.bottom()-(rc.height-bnd.getHeight())/2.));
-   }
-
-   protected Font getFont() {
-      if (_font == null) {
-         FontInfo fi = getModel().getFontInfo();
-         _font = new Font(fi.getName(), fi.isBold() ? Font.BOLD : Font.PLAIN, (int)fi.getSize());
-      }
-      return _font;
+      g.drawText(text, (float)(rc.x       +(rc.width -bnd.width )/2.),
+                       (float)(rc.bottom()-(rc.height-bnd.height)/2.), _textPaint);
    }
 
    @Override
    protected void onPropertyModelChanged(Object oldValue, Object newValue, String propertyName) {
       super.onPropertyModelChanged(oldValue, newValue, propertyName);
       if (MosaicDrawModel.PROPERTY_FONT_INFO.equals(propertyName)) {
-         _font = null;
-         _mapTextLayout.clear();
+         FontInfo fi = getModel().getFontInfo();
+         Typeface tf;
+         try {
+            tf = Typeface.create(fi.getName(), fi.isBold() ? Typeface.BOLD : Typeface.NORMAL);
+         } catch(Throwable ex) {
+            ex.printStackTrace(System.err);
+            tf = Typeface.create(Typeface.DEFAULT, fi.isBold() ? Typeface.BOLD : Typeface.NORMAL);
+         }
+         _textPaint.setTypeface(tf);
+         _textPaint.setTextSize((float)fi.getSize());
       }
-   }
-
-   @Override
-   public void close() {
-      _mapTextLayout.clear();
-      super.close();
    }
 
 }

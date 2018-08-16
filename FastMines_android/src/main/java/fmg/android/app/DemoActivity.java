@@ -20,6 +20,9 @@ import java.util.function.Supplier;
 import fmg.android.img.Flag;
 import fmg.android.img.Logo;
 import fmg.android.img.Mine;
+import fmg.android.img.MosaicGroupImg;
+import fmg.android.img.MosaicImg;
+import fmg.android.img.MosaicSkillImg;
 import fmg.android.img.Smile;
 import fmg.android.utils.Cast;
 import fmg.common.geom.PointDouble;
@@ -46,10 +49,13 @@ public class DemoActivity extends Activity {
    boolean _testTransparent;
 
    // #region images Fabrica
-   public void testLogos () { testApp(Logo ::testData); }
-   public void testMines () { testApp(Mine ::testData); }
-   public void testFlags () { testApp(Flag ::testData); }
-   public void testSmiles() { testApp(Smile::testData); }
+   public void testMosaicsImg    () { testApp(MosaicImg     ::testData); }
+   public void testMosaicGroupImg() { testApp(MosaicGroupImg::testData); }
+   public void testMosaicSkillImg() { testApp(MosaicSkillImg::testData); }
+   public void testLogos         () { testApp(Logo          ::testData); }
+   public void testMines         () { testApp(Mine          ::testData); }
+   public void testFlags         () { testApp(Flag          ::testData); }
+   public void testSmiles        () { testApp(Smile         ::testData); }
    // #endregion
 
    @Override
@@ -64,7 +70,7 @@ public class DemoActivity extends Activity {
 
       _td = new TestDrawing();
 
-      _onCreateImages = new Runnable[] { this::testSmiles, this::testLogos, this::testMines, this::testFlags/*, TestMosaicSkillImg, TestMosaicGroupImg, TestMosaicsImg, TestSmile*/ };
+      _onCreateImages = new Runnable[] { this::testMosaicsImg, this::testMosaicSkillImg, this::testMosaicGroupImg, this::testSmiles, this::testLogos, this::testMines, this::testFlags };
 
       _demoView.setOnTouchListener(this::onTouch);
 

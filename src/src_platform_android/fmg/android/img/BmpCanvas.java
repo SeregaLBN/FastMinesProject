@@ -2,26 +2,8 @@ package fmg.android.img;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.LinearGradient;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PointF;
-import android.graphics.PorterDuff;
-import android.graphics.Shader;
 
-import java.util.Arrays;
-import java.util.List;
-
-import fmg.android.utils.Cast;
-import fmg.android.utils.StaticInitializer;
-import fmg.common.Color;
-import fmg.common.HSV;
-import fmg.common.geom.PointDouble;
 import fmg.common.geom.SizeDouble;
-import fmg.core.img.IImageController;
-import fmg.core.img.ImageView;
-import fmg.core.img.LogoController;
-import fmg.core.img.LogoModel;
 
 /** Internal class-wrapper for pair {@link Bitmap} and {@link Canvas} */
 class BmpCanvas implements AutoCloseable {

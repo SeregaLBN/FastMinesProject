@@ -1,7 +1,6 @@
 package fmg.android.utils;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Приведение типов от платформо-независимых чистых Java классов fmg.common.geom.* к библиотечным android классам
@@ -23,22 +22,28 @@ public final class Cast {
    public static fmg.common.geom.Size         toSize      (   android.util.Size       size) { return new fmg.common.geom.Size      (       size.getWidth(),        size.getHeight()); }
    public static fmg.common.geom.SizeDouble   toSizeDouble(   android.util.SizeF      size) { return new fmg.common.geom.SizeDouble(       size.getWidth(),        size.getHeight()); }
 
-   public static double[] toPolygon(fmg.common.geom.Region region, boolean xCoord) {
-      return region.getPoints().stream().mapToDouble(p -> xCoord ? p.x : p.y).toArray();
+   public static android.graphics.Path toPolygon(fmg.common.geom.RegionDouble region) {
+      android.graphics.Path p = new android.graphics.Path();
+      fmg.common.geom.PointDouble dot = region.getPoint(0);
+      p.moveTo((float)dot.x, (float)dot.y);
+      for (int i=1; i<region.getCountPoints(); ++i) {
+         dot = region.getPoint(i);
+         p.lineTo((float)dot.x, (float)dot.y);
+      }
+      p.close();
+      return p;
    }
 
-   public static double[] toPolygon(fmg.common.geom.RegionDouble region) {
-      return region.getPoints().stream().map(p -> Stream.of(p.x, p.y))
-            .flatMap(z -> z)
-            .mapToDouble(x -> x)
-            .toArray();
-   }
-   public static double[] toPolygon(fmg.common.geom.RegionDouble region, boolean xCoord) {
-      return region.getPoints().stream().mapToDouble(p -> xCoord ? p.x : p.y).toArray();
-   }
-
-   public static double[] toPolygon(List<fmg.common.geom.PointDouble> region, boolean xCoord) {
-      return region.stream().mapToDouble(p -> xCoord ? p.x : p.y).toArray();
+   public static android.graphics.Path toPolygon(List<fmg.common.geom.PointDouble> region) {
+      android.graphics.Path p = new android.graphics.Path();
+      fmg.common.geom.PointDouble dot = region.get(0);
+      p.moveTo((float)dot.x, (float)dot.y);
+      for (int i=1; i<region.size(); ++i) {
+         dot = region.get(i);
+         p.lineTo((float)dot.x, (float)dot.y);
+      }
+      p.close();
+      return p;
    }
 
    public static              int toColor(fmg.common.Color clr) { return (clr.getA() & 0xFF) << 24 | (clr.getR() & 0xFF) << 16 | (clr.getG() & 0xFF) << 8 | (clr.getB() & 0xFF); }
