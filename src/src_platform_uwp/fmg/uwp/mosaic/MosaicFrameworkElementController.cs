@@ -88,9 +88,9 @@ namespace fmg.uwp.mosaic {
       }
 
       protected void OnRightTapped(object sender, RightTappedRoutedEventArgs ev) {
-       //if (ev.PointerDeviceType == PointerDeviceType.Mouse)
+         if (ev.PointerDeviceType == PointerDeviceType.Mouse) {
        //   ev.Handled = _clickInfo.DownHandled || _clickInfo.UpHandled; // TODO: для избежания появления appBar'ов при установке '?'
-       //else if (!_manipulationStarted)
+         } else //if (!_manipulationStarted)
          {
 
             // 1. release left click in invalid coord
