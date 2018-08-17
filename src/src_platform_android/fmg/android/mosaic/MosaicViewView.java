@@ -1,77 +1,66 @@
-package fmg.swing.mosaic;
+package fmg.android.mosaic;
 
-import java.awt.*;
 import java.util.Collection;
 import java.util.HashSet;
 
-import javax.swing.Icon;
-import javax.swing.JPanel;
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.view.View;
+import android.view.ViewGroup;
 
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.cells.BaseCell;
-import fmg.swing.img.Flag;
-import fmg.swing.img.Mine;
-import fmg.swing.utils.Cast;
-import fmg.swing.utils.ImgUtils;
+import fmg.android.img.Flag;
+import fmg.android.img.Mine;
+import fmg.android.utils.Cast;
+import fmg.android.utils.ImgUtils;
 
-/** MVC: view. SWING implementation over control {@link JPanel} */
-public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawModel<Icon>> {
+/** MVC: view. Android implementation over control {@link View} */
+public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawModel<Bitmap>> {
 
-   private JPanel _control;
-   private Flag.ControllerIcon _imgFlag = new Flag.ControllerIcon();
-   private Mine.ControllerIcon _imgMine = new Mine.ControllerIcon();
+   private final Activity _owner;
+   private View _control;
+   private Flag.ControllerBitmap _imgFlag = new Flag.ControllerBitmap();
+   private Mine.ControllerBitmap _imgMine = new Mine.ControllerBitmap();
    private final Collection<BaseCell> _modifiedCells = new HashSet<>();
 
-   public MosaicJPanelView() {
-      super(new MosaicDrawModel<Icon>());
+   public MosaicViewView(Activity owner) {
+      super(new MosaicDrawModel<Bitmap>());
+      _owner = owner;
       changeSizeImagesMineFlag();
    }
 
    @Override
-   protected JPanel createImage() {
+   protected View createImage() {
       // will return once created window
       return getControl();
    }
 
-   public JPanel getControl() {
+   public View getControl() {
       if (_control == null) {
-         _control = new JPanel() {
-            private static final long serialVersionUID = 1L;
+         _control = new View(_owner.getApplicationContext()) {
 
             @Override
-            protected void paintComponent(Graphics g) {
-               //super.paintComponent(g);
-               Graphics2D g2d = (Graphics2D) g;
-               g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            protected void onDraw(Canvas canvas) {
+               super.onDraw(canvas);
 
-               Rectangle clipBounds = g.getClipBounds();
-               MosaicJPanelView.this.drawSwing(g2d,
+               Rect clipBounds = canvas.getClipBounds();
+
+               MosaicViewView.this.drawAndroid(canvas,
                                          _modifiedCells.isEmpty()
                                             ? null
                                             : _modifiedCells,
                                          (clipBounds==null)
-                                            ? null
-                                            : Cast.toRectDouble(clipBounds),
+                                             ? null
+                                             : Cast.toRectDouble(clipBounds),
                                          true/*_modifiedCells.isEmpty() || (_modifiedCells.size() == getModel().getMatrix().size())*/);
                _modifiedCells.clear();
             }
-
-             @Override
-             public Dimension getPreferredSize() {
-                SizeDouble size = getModel().getSize();
-                size.height++;
-                size.width++;
-//                System.out.println("Mosaic::getPreferredSize: size="+size);
-                return Cast.toSize(size);
-             }
-
-             @Override
-             public Dimension getMinimumSize() {
-                return getPreferredSize();
-             }
 
          };
       }
@@ -80,13 +69,15 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
 
    @Override
    protected void drawModified(Collection<BaseCell> modifiedCells) {
-      JPanel control = getControl();
+      View control = getControl();
 
       assert !_alreadyPainted;
 
-      if (modifiedCells == null) { // mark NULL if all mosaic is changed
+      if ((modifiedCells == null) || // mark NULL if all mosaic is changed
+         (android.os.Build.VERSION.SDK_INT >= 21))
+      {
          _modifiedCells.clear();
-         control.repaint();
+         control.invalidate();
       } else {
          _modifiedCells.addAll(modifiedCells);
 
@@ -108,17 +99,25 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
             }
          }
          if (_DEBUG_DRAW_FLOW)
-            System.out.println("MosaicViewSwing.draw: repaint={" + (int)minX +","+ (int)minY +","+ (int)(maxX-minX) +","+ (int)(maxY-minY) + "}");
-         control.repaint((int)minX, (int)minY, (int)(maxX-minX), (int)(maxY-minY));
+            System.out.println("MosaicViewAndroid.draw: repaint={" + (int)minX +","+ (int)minY +","+ (int)(maxX-minX) +","+ (int)(maxY-minY) + "}");
+         control.invalidate((int)minX, (int)minY, (int)(maxX-minX), (int)(maxY-minY));
       }
-    //control.invalidate();
    }
 
    @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
       super.onPropertyChanged(oldValue, newValue, propertyName);
-      if (propertyName.equals(PROPERTY_IMAGE))
-         getImage(); // implicit call draw() -> drawBegin() -> drawModified() -> control.repaint() -> JPanel.paintComponent -> drawSwing()
+      switch (propertyName) {
+      case PROPERTY_IMAGE:
+         getImage(); // implicit call draw() -> drawBegin() -> drawModified() -> control.repaint() -> View.paintComponent -> drawAndroid()
+         break;
+      case PROPERTY_SIZE:
+         SizeDouble s = (SizeDouble)newValue;
+         ViewGroup.LayoutParams lp = _control.getLayoutParams();
+         lp.width  = (int)s.width;
+         lp.height = (int)s.height;
+         break;
+      }
    }
 
    @Override
@@ -134,7 +133,7 @@ public class MosaicJPanelView extends MosaicSwingView<JPanel, Icon, MosaicDrawMo
 
    /** переустанавливаю заного размер мины/флага для мозаики */
    protected void changeSizeImagesMineFlag() {
-      MosaicDrawModel<Icon> model = getModel();
+      MosaicDrawModel<Bitmap> model = getModel();
       int sq = (int)model.getCellAttr().getSq(model.getPenBorder().getWidth());
       if (sq <= 0) {
          System.err.println("Error: too thick pen! There is no area for displaying the flag/mine image...");

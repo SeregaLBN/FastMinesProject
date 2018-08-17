@@ -15,6 +15,7 @@ public final class Cast {
    public static android.graphics.Rect        toRect      (fmg.common.geom.Rect         rc) { return new android.graphics.Rect      (       rc.x   ,        rc.y  ,        rc.right(),        rc.bottom()); }
    public static android.graphics.RectF       toRect      (fmg.common.geom.RectDouble   rc) { return new android.graphics.RectF     ((float)rc.x   , (float)rc.y  , (float)rc.right(), (float)rc.bottom()); }
    public static  fmg.common.geom.Rect        toRect      (android.graphics.Rect        rc) { return new  fmg.common.geom.Rect      (       rc.left,        rc.top,        rc.width(),        rc.height()); }
+   public static  fmg.common.geom.RectDouble  toRectDouble(android.graphics.Rect        rc) { return new  fmg.common.geom.RectDouble(       rc.left,        rc.top,        rc.width(),        rc.height()); }
    public static  fmg.common.geom.RectDouble  toRectDouble(android.graphics.RectF       rc) { return new  fmg.common.geom.RectDouble(       rc.left,        rc.top,        rc.width(),        rc.height()); }
 
    public static    android.util.Size         toSize      (fmg.common.geom.Size       size) { return new    android.util.Size      (       size.width     ,        size.height); }

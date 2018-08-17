@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 
 import java.beans.PropertyChangeEvent;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -24,6 +25,7 @@ import fmg.android.img.MosaicGroupImg;
 import fmg.android.img.MosaicImg;
 import fmg.android.img.MosaicSkillImg;
 import fmg.android.img.Smile;
+import fmg.android.mosaic.MosaicViewController;
 import fmg.android.utils.Cast;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
@@ -49,7 +51,8 @@ public class DemoActivity extends Activity {
    boolean _testTransparent;
 
    // #region images Fabrica
-   public void testMosaicsImg    () { testApp(MosaicImg     ::testData); }
+   public void testMosaicControl () { testApp(() -> Arrays.asList(MosaicViewController.testData(this))); }
+   public void testMosaicImg     () { testApp(MosaicImg     ::testData); }
    public void testMosaicGroupImg() { testApp(MosaicGroupImg::testData); }
    public void testMosaicSkillImg() { testApp(MosaicSkillImg::testData); }
    public void testLogos         () { testApp(Logo          ::testData); }
@@ -70,7 +73,7 @@ public class DemoActivity extends Activity {
 
       _td = new TestDrawing();
 
-      _onCreateImages = new Runnable[] { this::testMosaicsImg, this::testMosaicSkillImg, this::testMosaicGroupImg, this::testSmiles, this::testLogos, this::testMines, this::testFlags };
+      _onCreateImages = new Runnable[] { /*this::testMosaicControl, */this::testMosaicImg, this::testMosaicSkillImg, this::testMosaicGroupImg, this::testSmiles, this::testLogos, this::testMines, this::testFlags };
 
       _demoView.setOnTouchListener(this::onTouch);
 
