@@ -1,13 +1,17 @@
+using System;
 using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
+using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Shapes;
 using fmg.common;
 using fmg.common.geom;
+using fmg.common.Converters;
 using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
@@ -16,8 +20,10 @@ using fmg.uwp.utils;
 namespace fmg.uwp.mosaic.xaml {
 
    /// <summary> MVC: view. UWP Xaml shapes implementation </summary>
-   public class MosaicXamlView : MosaicView<Panel, ImageSource, MosaicDrawModel<ImageSource>> {
+   public class MosaicXamlView : MosaicView<FrameworkElement, ImageSource, MosaicDrawModel<ImageSource>> {
 
+      [Obsolete("TODO: try to remove - CreateImage() must return _control")]
+      private Border _border;
       private Panel _control;
       class CellShapes {
          public Polygon   Poly { get; set; }
@@ -39,26 +45,48 @@ namespace fmg.uwp.mosaic.xaml {
          StaticInitializer.Init();
       }
 
-      protected override Panel CreateImage() {
+      protected override FrameworkElement CreateImage() {
          // will return once created window
-         return GetControl();
+         return GetBorder();
       }
 
-      public Panel GetControl() {
+      public Border GetBorder() {
+         if (_border == null) {
+            _border = new Border {
+               Child = GetPanel()
+            };
+         }
+         return _border;
+      }
+      public Panel GetPanel() {
          if (_control == null) {
             _control = new Canvas();
+            _control.IsHitTestVisible = true;
+            //LoggerSimple.Put("MosaicXamlView.GetControl: new Control");
+            _control.SetBinding(FrameworkElement.WidthProperty, new Binding {
+               Source = this,
+               Path = new PropertyPath(nameof(this.Size)),
+               Mode = BindingMode.OneWay,
+               Converter = new SizeToWidthConverter()
+            });
+            _control.SetBinding(FrameworkElement.HeightProperty, new Binding {
+               Source = this,
+               Path = new PropertyPath(nameof(this.Size)),
+               Mode = BindingMode.OneWay,
+               Converter = new SizeToHeightConverter()
+            });
             BindXamlToMosaic();
          }
          return _control;
       }
 
       private void UnbindXaml() {
-         GetControl().Children.Clear();
+         GetPanel().Children.Clear();
          XamlBinder.Clear();
       }
 
       private void BindXamlToMosaic() {
-         var container = GetControl();
+         var container = GetPanel();
 
          //UnbindXaml();
          var xamlBinder = XamlBinder;
@@ -81,7 +109,7 @@ namespace fmg.uwp.mosaic.xaml {
       }
 
       protected override void DrawModified(IEnumerable<BaseCell> requiredCells) {
-         var container = GetControl();
+         var container = GetPanel();
 
          //System.Diagnostics.Debug.Assert(container != null);
          if (container == null)
@@ -92,10 +120,11 @@ namespace fmg.uwp.mosaic.xaml {
 
       private void DrawOverXaml(IEnumerable<BaseCell> modifiedCells, bool drawBk) {
          var m = Model;
-         var container = GetControl();
+         var container = GetPanel();
 
          // 1. background color
          if (drawBk) { // paint background
+            //LoggerSimple.Put("MosaicXamlView.DrawOverXaml: drawBk=true");
             var bkb = container.Background as SolidColorBrush;
             var bkc = m.BackgroundColor.ToWinColor();
             if ((bkb == null) || (bkb.Color != bkc))
@@ -244,9 +273,18 @@ namespace fmg.uwp.mosaic.xaml {
       }
 
       protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
+         //LoggerSimple.Put("MosaicXamlView.OnPropertyChanged: ev.PropertyName=" + ev.PropertyName);
          base.OnPropertyChanged(sender, ev);
-         if (ev.PropertyName == nameof(this.Image)) {
+         switch (ev.PropertyName) {
+         case nameof(this.Image):
             var img = Image; // implicit call Draw() -> DrawBegin() -> DrawModified() -> DrawOverXaml()
+            break;
+         //case nameof(this.Size):
+         //   var s = Model.Size;
+         //   var control = GetControl();
+         //   control.Width  = s.Width;
+         //   control.Height = s.Height;
+         //   break;
          }
       }
 

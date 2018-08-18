@@ -17,6 +17,7 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.mosaic;
+using fmg.uwp.utils;
 using fmg.uwp.img.wbmp;
 using fmg.uwp.mosaic.wbmp;
 using fmg.uwp.mosaic.xaml;
@@ -118,7 +119,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       }
 
       void TestAppMosaicXamlCtr(Func<IEnumerable<MosaicXamlController>> funcGetImages) {
-         TestApp<Panel, ImageSource, MosaicXamlController, MosaicXamlView, DummyView<Panel>, MosaicDrawModel<ImageSource>, DummyModel>(funcGetImages);
+         TestApp<FrameworkElement, ImageSource, MosaicXamlController, MosaicXamlView, DummyView<FrameworkElement>, MosaicDrawModel<ImageSource>, DummyModel>(funcGetImages);
       }
       #endregion wrappers
 

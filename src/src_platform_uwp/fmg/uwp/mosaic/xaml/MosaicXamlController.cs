@@ -1,4 +1,4 @@
-using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using fmg.common;
 using fmg.core.types;
@@ -6,7 +6,7 @@ using fmg.core.types;
 namespace fmg.uwp.mosaic.xaml {
 
    /// <summary> MVC: controller. Xaml shapes implementation </summary>
-   public class MosaicXamlController : MosaicFrameworkElementController<Panel, ImageSource, MosaicXamlView> {
+   public class MosaicXamlController : MosaicFrameworkElementController<FrameworkElement, ImageSource, MosaicXamlView> {
 
       public MosaicXamlController()
          : base(new MosaicXamlView())
@@ -20,7 +20,7 @@ namespace fmg.uwp.mosaic.xaml {
       ////////////// TEST //////////////
       public static MosaicXamlController GetTestData() {
          MosaicXamlView._DEBUG_DRAW_FLOW = true;
-         MosaicXamlController ctrllr = new MosaicXamlController();
+         var ctrllr = new MosaicXamlController();
 
          if (ThreadLocalRandom.Current.Next(2) == 1) {
             // unmodified controller test

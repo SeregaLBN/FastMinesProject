@@ -68,103 +68,121 @@ namespace fmg.uwp.mosaic {
       }
 
       void OnTapped(object sender, TappedRoutedEventArgs ev) {
-         if (ev.PointerDeviceType != PointerDeviceType.Mouse) {
-            ev.Handled = OnClick(ev.GetPosition(GetViewControl()), true, false);
+         //using (new fmg.common.Tracer("MosaicFEC.OnTapped", () => "handled=" + ev.Handled))
+         {
+            if (ev.PointerDeviceType != PointerDeviceType.Mouse) {
+               ev.Handled = OnClick(ev.GetPosition(GetViewControl()), true, false);
+            }
          }
       }
 
       protected void OnDoubleTapped(object sender, DoubleTappedRoutedEventArgs ev) {
-         var imgControl = GetViewControl();
-         var rcImage = new Windows.Foundation.Rect(0, 0, imgControl.Width, imgControl.Height);
-         if (rcImage.Contains(ev.GetPosition(imgControl))) {
-            if (this.GameStatus == EGameStatus.eGSEnd) {
-               this.GameNew();
+         //using (new fmg.common.Tracer("MosaicFEC.OnDoubleTapped", () => "handled=" + ev.Handled))
+         {
+            var imgControl = GetViewControl();
+            var rcImage = new Windows.Foundation.Rect(0, 0, imgControl.Width, imgControl.Height);
+            if (rcImage.Contains(ev.GetPosition(imgControl))) {
+               if (this.GameStatus == EGameStatus.eGSEnd) {
+                  this.GameNew();
+                  ev.Handled = true;
+               }
+            } else {
+               //RecheckLocation();
                ev.Handled = true;
             }
-         } else {
-            //RecheckLocation();
-            ev.Handled = true;
-         }
+            }
       }
 
       protected void OnRightTapped(object sender, RightTappedRoutedEventArgs ev) {
-         if (ev.PointerDeviceType == PointerDeviceType.Mouse) {
-       //   ev.Handled = _clickInfo.DownHandled || _clickInfo.UpHandled; // TODO: для избежания появления appBar'ов при установке '?'
-         } else //if (!_manipulationStarted)
+         //using (new fmg.common.Tracer("MosaicFEC.OnRightTapped", () => "handled=" + ev.Handled))
          {
+            if (ev.PointerDeviceType == PointerDeviceType.Mouse) {
+          //   ev.Handled = _clickInfo.DownHandled || _clickInfo.UpHandled; // TODO: для избежания появления appBar'ов при установке '?'
+            } else //if (!_manipulationStarted)
+            {
 
-            // 1. release left click in invalid coord
-            OnClick(new Windows.Foundation.Point(-1, -1), true, false);
+               // 1. release left click in invalid coord
+               OnClick(new Windows.Foundation.Point(-1, -1), true, false);
 
-            // 2. make right click - up & down
-            var imgControl = GetViewControl();
-            var pos = ev.GetPosition(imgControl);
-            var handled1 = OnClick(pos, false, true);
-            var handled2 = OnClick(pos, false, false);
-            ev.Handled = handled1 || handled2;
-         }
+               // 2. make right click - up & down
+               var imgControl = GetViewControl();
+               var pos = ev.GetPosition(imgControl);
+               var handled1 = OnClick(pos, false, true);
+               var handled2 = OnClick(pos, false, false);
+               ev.Handled = handled1 || handled2;
+            }
+            }
       }
 
       protected void OnPointerPressed(object sender, PointerRoutedEventArgs ev) {
-         var imgControl = GetViewControl();
-         var currPoint = ev.GetCurrentPoint(imgControl);
+         //using (new fmg.common.Tracer("MosaicFEC.OnPointerPressed", () => "handled=" + ev.Handled))
+         {
+            var imgControl = GetViewControl();
+            var currPoint = ev.GetCurrentPoint(imgControl);
 
-         //_clickInfo.PointerDevice = pointerPoint.PointerDevice.PointerDeviceType;
-         var props = currPoint.Properties;
-         // Ignore button chords with the left, right, and middle buttons
-       //if (!props.IsLeftButtonPressed && !props.IsRightButtonPressed && !props.IsMiddleButtonPressed) {
-       //   // If back or foward are pressed (but not both) navigate appropriately
-       //   var backPressed = props.IsXButton1Pressed;
-       //   if (backPressed) {
-       //      ev.Handled = true;
-       //      GoBack();
-       //   }
-       //}
+            //_clickInfo.PointerDevice = pointerPoint.PointerDevice.PointerDeviceType;
+            var props = currPoint.Properties;
+            // Ignore button chords with the left, right, and middle buttons
+          //if (!props.IsLeftButtonPressed && !props.IsRightButtonPressed && !props.IsMiddleButtonPressed) {
+          //   // If back or foward are pressed (but not both) navigate appropriately
+          //   var backPressed = props.IsXButton1Pressed;
+          //   if (backPressed) {
+          //      ev.Handled = true;
+          //      GoBack();
+          //   }
+          //}
 
-         ev.Handled = OnClickLost(); // Protection from the two-finger click.
-         //if (_manipulationStarted) {
-         //   // touch two-finger
-         //   OnClickLost(); // Protection from the two-finger click.
-         //}
+            ev.Handled = OnClickLost(); // Protection from the two-finger click.
+            //if (_manipulationStarted) {
+            //   // touch two-finger
+            //   OnClickLost(); // Protection from the two-finger click.
+            //}
 
-         if (!ev.Handled)
-            ev.Handled = OnClick(currPoint.Position, props.IsLeftButtonPressed, true);
+            if (!ev.Handled)
+               ev.Handled = OnClick(currPoint.Position, props.IsLeftButtonPressed, true);
 
-         _clickInfo.DownHandled = ev.Handled;
+            _clickInfo.DownHandled = ev.Handled;
+            }
       }
 
       protected void OnPointerReleased(object sender, PointerRoutedEventArgs ev) {
-         var imgControl = GetViewControl();
-         var currPoint = ev.GetCurrentPoint(imgControl);
-         //if (_manipulationStarted)
-         if (ev.Pointer.PointerDeviceType == PointerDeviceType.Mouse) {
-            var isLeftClick = (currPoint.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased);
-            var isRightClick = (currPoint.Properties.PointerUpdateKind == PointerUpdateKind.RightButtonReleased);
-            System.Diagnostics.Debug.Assert(isLeftClick != isRightClick);
-            ev.Handled = OnClick(currPoint.Position, isLeftClick, false);
-         } else {
-            AsyncRunner.InvokeFromUiLater(() => {
-               if (!_clickInfo.Released) {
-                  LoggerSimple.Put("ã OnPointerReleased: forced left release click...");
-                  OnClick(currPoint.Position, true, false);
-               }
-            }, CoreDispatcherPriority.High);
-         }
+         //using (new fmg.common.Tracer("MosaicFEC.OnPointerReleased", () => "handled="+ ev.Handled))
+         {
+            var imgControl = GetViewControl();
+            var currPoint = ev.GetCurrentPoint(imgControl);
+            //if (_manipulationStarted)
+            if (ev.Pointer.PointerDeviceType == PointerDeviceType.Mouse) {
+               var isLeftClick = (currPoint.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased);
+               var isRightClick = (currPoint.Properties.PointerUpdateKind == PointerUpdateKind.RightButtonReleased);
+               System.Diagnostics.Debug.Assert(isLeftClick != isRightClick);
+               ev.Handled = OnClick(currPoint.Position, isLeftClick, false);
+            } else {
+               AsyncRunner.InvokeFromUiLater(() => {
+                  if (!_clickInfo.Released) {
+                     LoggerSimple.Put("ã OnPointerReleased: forced left release click...");
+                     OnClick(currPoint.Position, true, false);
+                  }
+               }, CoreDispatcherPriority.High);
+            }
 
-         _clickInfo.UpHandled = ev.Handled;
+            _clickInfo.UpHandled = ev.Handled;
+         }
       }
 
       protected void OnPointerCaptureLost(object sender, PointerRoutedEventArgs ev) {
-         var imgControl = GetViewControl();
-         var currPoint = ev.GetCurrentPoint(imgControl);
-         if (!_clickInfo.Released) {
-            LoggerSimple.Put("ã OnPointerCaptureLost: forced left release click...");
-            OnClick(currPoint.Position, true, false);
+         //using (new fmg.common.Tracer("MosaicFEC.OnPointerCaptureLost", () => "handled=" + ev.Handled))
+         {
+            var imgControl = GetViewControl();
+            var currPoint = ev.GetCurrentPoint(imgControl);
+            if (!_clickInfo.Released) {
+               LoggerSimple.Put("ã OnPointerCaptureLost: forced left release click...");
+               OnClick(currPoint.Position, true, false);
+            }
          }
       }
 
       void OnFocusLost(object sender, RoutedEventArgs ev) {
-         //System.out.println("Mosaic::MosaicMouseListeners::focusLost: " + e);
+         //LoggerSimple.Put("<> MosaicFEC.OnFocusLost");
          this.MouseFocusLost();
       }
 

@@ -20,7 +20,7 @@ namespace fmg.uwp.mosaic.wbmp {
       ////////////// TEST //////////////
       public static MosaicImageController GetTestData() {
          MosaicImageView._DEBUG_DRAW_FLOW = true;
-         MosaicImageController ctrllr = new MosaicImageController();
+         var ctrllr = new MosaicImageController();
 
          if (ThreadLocalRandom.Current.Next(2) == 1) {
             // unmodified controller test
