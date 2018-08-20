@@ -12,14 +12,8 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\CanvasExt.cs">
       <Link>src_fmg.uwp\mosaic\win2d\CanvasExt.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\CellPaintWin2D.cs">
-      <Link>src_fmg.uwp\mosaic\win2d\CellPaintWin2D.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\PaintWin2DContext.cs">
-      <Link>src_fmg.uwp\mosaic\win2d\PaintWin2DContext.cs</Link>
-    </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\PaintableWin2d.cs">
-      <Link>src_fmg.uwp\mosaic\win2d\PaintableWin2d.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicWin2DView.cs">
+      <Link>src_fmg.uwp\mosaic\win2d\MosaicWin2DView.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\AMosaicViewWin2D.cs">
       <Link>src_fmg.uwp\mosaic\win2d\AMosaicViewWin2D.cs</Link>
