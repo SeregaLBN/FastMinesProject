@@ -19,7 +19,9 @@ import fmg.core.img.LogoModel;
 import fmg.jfx.utils.Cast;
 import fmg.jfx.utils.StaticInitializer;
 
-/** Main logo image - base Logo image view implementation */
+/** Main logo image. Base view JFX implementation
+ * @param <TImage> JFX specific image: {@link javafx.scene.image.Image} or {@link javafx.scene.canvas.Canvas}
+ **/
 public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
    protected Logo() {

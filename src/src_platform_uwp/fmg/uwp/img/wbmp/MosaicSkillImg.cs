@@ -9,10 +9,7 @@ using fmg.core.img;
 
 namespace fmg.uwp.img.wbmp {
 
-   /// <summary> Representable <see cref="EMosaicSkill"/> as image.
-   /// <br/>
-   /// WriteableBitmap impl
-   /// </summary>
+   /// <summary> Representable <see cref="EMosaicSkill"/> as image (<see cref="WriteableBitmap"/> implementation)</summary>
    public class MosaicSkillImg : MosaicSkillOrGroupView<MosaicSkillModel> {
 
       /// <summary>ctor</summary>

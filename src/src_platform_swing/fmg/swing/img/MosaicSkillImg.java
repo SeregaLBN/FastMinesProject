@@ -15,7 +15,7 @@ import fmg.core.types.ESkillLevel;
  * <br>
  * SWING impl
  *
- * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon})
+ * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
  **/
 public abstract class MosaicSkillImg<TImage> extends MosaicSkillOrGroupView<TImage, MosaicSkillModel> {
 

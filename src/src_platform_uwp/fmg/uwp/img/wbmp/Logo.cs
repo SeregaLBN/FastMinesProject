@@ -7,7 +7,7 @@ using fmg.uwp.utils;
 
 namespace fmg.uwp.img.wbmp {
 
-   /// <summary> main logo image. View implementation over UWP <see cref="WriteableBitmap"/> </summary>
+   /// <summary> Main logo image. View UWP implementation over <see cref="WriteableBitmap"/> </summary>
    public class Logo : ImageView<WriteableBitmap, LogoModel> {
 
       private WriteableBitmap _bmp;
@@ -74,7 +74,6 @@ namespace fmg.uwp.img.wbmp {
                   : lm.Palette[(i + 6) % 8].ToColor().Darker().ToWinColor());
          }
       }
-
 
       protected override void Disposing() {
          Model.Dispose();

@@ -15,7 +15,7 @@ import fmg.core.types.ESkillLevel;
  * <br>
  * JFX impl
  *
- * @param <TImage> JFX specific image: {@link javafx.scene.image.Image} or {@link javafx.scene.canvas.Canvas})
+ * @param <TImage> JFX specific image: {@link javafx.scene.image.Image} or {@link javafx.scene.canvas.Canvas}
  **/
 public abstract class MosaicSkillImg<TImage> extends MosaicSkillOrGroupView<TImage, MosaicSkillModel> {
 

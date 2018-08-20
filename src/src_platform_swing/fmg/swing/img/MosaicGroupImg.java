@@ -15,7 +15,7 @@ import fmg.core.types.EMosaicGroup;
  * <br>
  * SWING impl
  *
- * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon})
+ * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon}
  **/
 public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TImage, MosaicGroupModel> {
 

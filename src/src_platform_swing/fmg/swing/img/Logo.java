@@ -13,7 +13,9 @@ import fmg.core.img.LogoModel;
 import fmg.swing.utils.Cast;
 import fmg.swing.utils.StaticInitializer;
 
-/** Main logos image - base Logo image view implementation */
+/** Main logo image. Base view SWING implementation
+ * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon})
+ **/
 public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
    protected Logo() {
