@@ -1,15 +1,8 @@
-using System;
-using System.ComponentModel;
-using System.Collections.Generic;
 using Windows.Devices.Input;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.mosaic;
@@ -90,7 +83,7 @@ namespace fmg.uwp.mosaic {
                //RecheckLocation();
                ev.Handled = true;
             }
-            }
+         }
       }
 
       protected void OnRightTapped(object sender, RightTappedRoutedEventArgs ev) {
@@ -111,7 +104,7 @@ namespace fmg.uwp.mosaic {
                var handled2 = OnClick(pos, false, false);
                ev.Handled = handled1 || handled2;
             }
-            }
+         }
       }
 
       protected void OnPointerPressed(object sender, PointerRoutedEventArgs ev) {
@@ -142,7 +135,7 @@ namespace fmg.uwp.mosaic {
                ev.Handled = OnClick(currPoint.Position, props.IsLeftButtonPressed, true);
 
             _clickInfo.DownHandled = ev.Handled;
-            }
+         }
       }
 
       protected void OnPointerReleased(object sender, PointerRoutedEventArgs ev) {

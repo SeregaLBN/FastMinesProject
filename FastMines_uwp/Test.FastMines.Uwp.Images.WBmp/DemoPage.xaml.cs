@@ -119,7 +119,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       }
 
       void TestAppMosaicXamlCtr(Func<IEnumerable<MosaicXamlController>> funcGetImages) {
-         TestApp<FrameworkElement, ImageSource, MosaicXamlController, MosaicXamlView, DummyView<FrameworkElement>, MosaicDrawModel<ImageSource>, DummyModel>(funcGetImages);
+         TestApp<Panel, ImageSource, MosaicXamlController, MosaicXamlView, DummyView<Panel>, MosaicDrawModel<ImageSource>, DummyModel>(funcGetImages);
       }
       #endregion wrappers
 
@@ -133,7 +133,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
          where TAnimatedModel : IAnimatedModel
       {
          _panel.Children.Clear();
-         List<TImageController> images = funcGetImages().ToList();
+         var images = funcGetImages().ToList();
          ApplicationView.GetForCurrentView().Title = _td.GetTitle<TImage, TImageController, TImageView, TImageModel>(images);
 
          FrameworkElement[] imgControls = null;
@@ -150,7 +150,7 @@ namespace Test.FastMines.Uwp.Images.WBmp {
 
             double sizeW = _panel.ActualWidth;
             double sizeH = _panel.ActualHeight;
-            RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
+            var rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
 
             ATestDrawing.CellTilingResult<TImage, TImageController, TImageView, TImageModel> ctr = _td.CellTiling<TImage, TImageController, TImageView, TImageModel>(rc, images, testTransparent);
             var imgSize = ctr.imageSize;
@@ -165,6 +165,10 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                if (createImgControls) {
                   if (imgIsControl) {
                      var imgControl = imgObj.Image as FrameworkElement;
+                     #region lifehack
+                     imgControl.Visibility = Visibility.Collapsed;
+                     AsyncRunner.InvokeFromUiLater(() => { imgControl.Visibility = Visibility.Visible; });
+                     #endregion
                      _panel.Children.Add(imgControl);
                      imgControls[ctr.tableSize.Width * cti.j + cti.i] = imgControl;
                   } else {

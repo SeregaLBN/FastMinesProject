@@ -1,8 +1,6 @@
-using System;
 using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
-using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -20,10 +18,8 @@ using fmg.uwp.utils;
 namespace fmg.uwp.mosaic.xaml {
 
    /// <summary> MVC: view. UWP Xaml shapes implementation </summary>
-   public class MosaicXamlView : MosaicView<FrameworkElement, ImageSource, MosaicDrawModel<ImageSource>> {
+   public class MosaicXamlView : MosaicView<Panel, ImageSource, MosaicDrawModel<ImageSource>> {
 
-      [Obsolete("TODO: try to remove - CreateImage() must return _control")]
-      private Border _border;
       private Panel _control;
       class CellShapes {
          public Polygon   Poly { get; set; }
@@ -45,23 +41,14 @@ namespace fmg.uwp.mosaic.xaml {
          StaticInitializer.Init();
       }
 
-      protected override FrameworkElement CreateImage() {
+      protected override Panel CreateImage() {
          // will return once created window
-         return GetBorder();
+         return GetControl();
       }
 
-      public Border GetBorder() {
-         if (_border == null) {
-            _border = new Border {
-               Child = GetPanel()
-            };
-         }
-         return _border;
-      }
-      public Panel GetPanel() {
+      public Panel GetControl() {
          if (_control == null) {
             _control = new Canvas();
-            _control.IsHitTestVisible = true;
             //LoggerSimple.Put("MosaicXamlView.GetControl: new Control");
             _control.SetBinding(FrameworkElement.WidthProperty, new Binding {
                Source = this,
@@ -81,12 +68,12 @@ namespace fmg.uwp.mosaic.xaml {
       }
 
       private void UnbindXaml() {
-         GetPanel().Children.Clear();
+         GetControl().Children.Clear();
          XamlBinder.Clear();
       }
 
       private void BindXamlToMosaic() {
-         var container = GetPanel();
+         var container = GetControl();
 
          //UnbindXaml();
          var xamlBinder = XamlBinder;
@@ -109,7 +96,7 @@ namespace fmg.uwp.mosaic.xaml {
       }
 
       protected override void DrawModified(IEnumerable<BaseCell> requiredCells) {
-         var container = GetPanel();
+         var container = GetControl();
 
          //System.Diagnostics.Debug.Assert(container != null);
          if (container == null)
@@ -120,7 +107,7 @@ namespace fmg.uwp.mosaic.xaml {
 
       private void DrawOverXaml(IEnumerable<BaseCell> modifiedCells, bool drawBk) {
          var m = Model;
-         var container = GetPanel();
+         var container = GetControl();
 
          // 1. background color
          if (drawBk) { // paint background
