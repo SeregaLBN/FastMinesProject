@@ -1,4 +1,5 @@
 namespace fmg.uwp.mosaic.win2d {
+#if false
 
    /// <summary> MVC: controller. Win2D implementation </summary>
    public class MosaicControllerWin2D<TMosaicViewWin2D> : fmg.core.mosaic.MosaicController<TMosaicViewWin2D,
@@ -8,4 +9,5 @@ namespace fmg.uwp.mosaic.win2d {
       where TMosaicViewWin2D : AMosaicViewWin2D, new()
    { }
 
+#endif
 }

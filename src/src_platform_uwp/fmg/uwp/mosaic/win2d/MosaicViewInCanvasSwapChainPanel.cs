@@ -11,6 +11,7 @@ using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.mosaic.win2d {
+#if false
 
    /// summary> MVC: view. UWP Win2D implementation. View located into control <see cref="CanvasSwapChainPanel"/> */
    public class MosaicViewInCanvasSwapChainPanel : AMosaicViewInControl<CanvasSwapChainPanel> {
@@ -203,4 +204,5 @@ namespace fmg.uwp.mosaic.win2d {
 
    }
 
+#endif
 }

@@ -16,10 +16,11 @@ using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.types;
-using fmg.core.mosaic.draw;
+using fmg.core.mosaic;
 using fmg.uwp.draw.mosaic;
-using fmg.uwp.draw.img.win2d;
+using fmg.uwp.img.win2d;
 using fmg.uwp.draw.mosaic.win2d;
+#if false
 using StaticCanvasBmp = fmg.core.img.ImageModel<Microsoft.Graphics.Canvas.CanvasBitmap>;
 using StaticCanvasImg = fmg.core.img.ImageModel<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>;
 using LogoCanvasBmp = fmg.uwp.draw.img.win2d.Logo.CanvasBmp;
@@ -36,6 +37,7 @@ using FlagCanvasBmp = fmg.uwp.draw.img.win2d.Flag.CanvasBmp;
 using FlagCanvasImg = fmg.uwp.draw.img.win2d.Flag.CanvasImgSrc;
 using MineCanvasBmp = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
 using MineCanvasImg = fmg.uwp.draw.img.win2d.Mine.CanvasImgSrc;
+#endif
 
 namespace Test.FastMines.Uwp.Images.Win2D {
 
@@ -53,7 +55,8 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       int _nextCreateImagesIndex;
       Action<bool> _onActivated;
 
-      #region images Fabrica
+#region images Fabrica
+#if false
       public void TestLogos1(ICanvasResourceCreator resourceCreator) {
          TestAppCanvasBmp(() => new LogoCanvasBmp[] {
             new LogoCanvasBmp(resourceCreator),
@@ -142,7 +145,8 @@ namespace Test.FastMines.Uwp.Images.Win2D {
             vals.Select(e => new SmileCanvasImg(e, resourceCreator))
          );
       }
-      #endregion
+#endif
+#endregion
 
 
       public DemoPage() {
@@ -150,6 +154,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
 
          var device = CanvasDevice.GetSharedDevice();
          _onCreateImages = new Action[] {
+#if false
             () => TestLogos1          (device),
             () => TestLogos2          (device),
             () => TestMosaicsSkillImg1(device),
@@ -164,6 +169,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
             () => TestMine2           (device),
             () => TestSmile1          (device),
             () => TestSmile2          (device)
+#endif
          };
 
          InitializeComponent();
@@ -180,6 +186,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       }
 
       #region main part
+#if false
       void TestAppCanvasBmp<TImageEx>(Func<IEnumerable<TImageEx>> funcGetImages)
          where TImageEx : class
       {
@@ -190,7 +197,9 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       {
          TestApp<TImageEx, PaintableWin2D, CanvasImageSource, PaintUwpContext<CanvasBitmap>, CanvasBitmap>(funcGetImages);
       }
+#endif
 
+#if false
       void TestApp<TImageEx, TPaintable, TImage, TPaintContext, TImageInner>(Func<IEnumerable<TImageEx>> funcGetImages)
          where TImageEx : class
          where TPaintable : IPaintable
@@ -225,7 +234,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                var offset = cti.imageOffset;
 
                FrameworkElement imgCntrl = null;
-               #region CanvasImageSource
+#region CanvasImageSource
                if (typeof(TImage) == typeof(CanvasImageSource)) {
                   imgCntrl = new Image {
                      Margin = new Thickness {
@@ -263,8 +272,8 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                   }
 
                } else
-               #endregion
-               #region CanvasBitmap
+#endregion
+#region CanvasBitmap
                if (typeof(TImage) == typeof(CanvasBitmap)) {
                   var cnvsCtrl= new CanvasControl {
                      Margin = new Thickness {
@@ -346,7 +355,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                      ev.DrawingSession.DrawImage(cnvsBmp, new Rect(0, 0, cnvsCtrl.Width, cnvsCtrl.Height));
                   };
                } else
-               #endregion
+#endregion
                {
                   throw new Exception("Unsupported image type");
                }
@@ -417,7 +426,8 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                });
          };
       }
-      #endregion
+#endif
+#endregion
 
 
       void OnNewImages() {

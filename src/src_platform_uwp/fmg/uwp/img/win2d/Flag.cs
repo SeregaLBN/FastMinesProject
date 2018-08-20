@@ -11,6 +11,7 @@ using fmg.uwp;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.img.win2d {
+#if false
 
    /// <summary> Flag image </summary>
    public static class Flag {
@@ -195,4 +196,5 @@ namespace fmg.uwp.img.win2d {
 
    }
 
+#endif
 }

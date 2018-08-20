@@ -11,7 +11,7 @@ using fmg.uwp.utils.win2d;
 using fmg.uwp.mosaic.win2d;
 
 namespace fmg.uwp.img.win2d {
-
+#if false
    /// <summary> Main logos image
    /// <br/>
    /// Win2D impl
@@ -150,4 +150,5 @@ namespace fmg.uwp.img.win2d {
 
    }
 
+#endif
 }

@@ -8,6 +8,7 @@ using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.mosaic.win2d {
+#if false
 
    /// summary> MVC: view. UWP Win2D implementation. View located into control <see cref="CanvasVirtualControl"/> */
    public class MosaicViewInCanvasVirtualControl : AMosaicViewInControl<CanvasVirtualControl> {
@@ -74,4 +75,5 @@ namespace fmg.uwp.mosaic.win2d {
 
    }
 
+#endif
 }

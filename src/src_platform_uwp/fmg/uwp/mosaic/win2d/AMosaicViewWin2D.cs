@@ -3,11 +3,11 @@ using Microsoft.Graphics.Canvas;
 using fmg.common.geom;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
-using fmg.core.mosaic.draw;
 using fmg.uwp.utils;
 using fmg.uwp.draw.mosaic.win2d;
 
 namespace fmg.uwp.mosaic.win2d {
+#if false
 
    /// <summary> MVC view. Abstract UWP Win2D implementation </summary>
    public abstract class AMosaicViewWin2D : AMosaicView<PaintableWin2D, CanvasBitmap, PaintWin2DContext> {
@@ -69,4 +69,5 @@ namespace fmg.uwp.mosaic.win2d {
 
    }
 
+#endif
 }

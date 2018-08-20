@@ -12,6 +12,7 @@ using fmg.uwp.utils;
 using fmg.uwp.mosaic.win2d;
 
 namespace fmg.uwp.img.win2d {
+#if false
 
    /// <summary> Smile image </summary>
    public static class Smile {
@@ -468,4 +469,5 @@ namespace fmg.uwp.img.win2d {
 
    }
 
+#endif
 }

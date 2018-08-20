@@ -7,6 +7,7 @@ using fmg.uwp.utils;
 using fmg.uwp.utils.win2d;
 
 namespace fmg.uwp.draw.mosaic.win2d {
+#if false
 
    /// <summary> Class for drawing cell into (ower <see cref="CanvasBitmap"/>) </summary>
    public class CellPaintWin2D : CellPaint<PaintableWin2D, CanvasBitmap, PaintWin2DContext> {
@@ -151,4 +152,5 @@ namespace fmg.uwp.draw.mosaic.win2d {
 
    }
 
+#endif
 }

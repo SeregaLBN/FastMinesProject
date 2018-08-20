@@ -11,6 +11,7 @@ using fmg.uwp.utils.win2d;
 using fmg.uwp.mosaic.win2d;
 
 namespace fmg.uwp.img.win2d {
+#if false
 
    /// <summary> Representable <see cref="ESkillLevel"/> as image.
    /// <br/>
@@ -123,4 +124,5 @@ namespace fmg.uwp.img.win2d {
 
    }
 
+#endif
 }

@@ -14,6 +14,7 @@ using fmg.uwp.mosaic;
 using fmg.uwp.mosaic.win2d;
 
 namespace fmg.uwp.img.win2d {
+#if false
 
    /// <summary> Representable <see cref="fmg.core.types.EMosaic"/> as image.
    /// <br/>
@@ -143,7 +144,7 @@ namespace fmg.uwp.img.win2d {
             }
          }
 
-         #region PART ERotateMode.FullMatrix
+#region PART ERotateMode.FullMatrix
 
          /// <summary> Return painted mosaic bitmap
          /// if (!OnlySyncDraw) {
@@ -156,9 +157,9 @@ namespace fmg.uwp.img.win2d {
             View.Invalidate(Matrix);
          }
 
-         #endregion
+#endregion
 
-         #region PART ERotateMode.SomeCells
+#region PART ERotateMode.SomeCells
 
          private const bool UseCache = true;
 
@@ -257,7 +258,7 @@ namespace fmg.uwp.img.win2d {
             DrawRotatedPart();
          }
 
-         #endregion
+#endregion
 
          protected override void Dispose(bool disposing) {
             if (Disposed)
@@ -331,4 +332,5 @@ namespace fmg.uwp.img.win2d {
 
    }
 
+#endif
 }

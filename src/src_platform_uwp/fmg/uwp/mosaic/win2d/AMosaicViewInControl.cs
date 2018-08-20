@@ -3,10 +3,9 @@ using Microsoft.Graphics.Canvas;
 using fmg.common.geom;
 using fmg.core.mosaic;
 using fmg.uwp.draw.mosaic;
-using FlagCanvasBmp = fmg.uwp.draw.img.win2d.Flag.CanvasBmp;
-using MineCanvasBmp = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
 
 namespace fmg.uwp.mosaic.win2d {
+#if false
 
    /// summary> MVC: view. UWP Win2D implementation. Base implementation View located into control <see cref="Windows.UI.Xaml.FrameworkElement"/> */
    public abstract class AMosaicViewInControl<TControl> : AMosaicViewWin2D
@@ -85,4 +84,5 @@ namespace fmg.uwp.mosaic.win2d {
 
    }
 
+#endif
 }

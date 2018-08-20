@@ -11,6 +11,7 @@ using fmg.uwp.utils.win2d;
 using fmg.uwp.mosaic.win2d;
 
 namespace fmg.uwp.img.win2d {
+#if false
 
    /// <summary> Representable <see cref="EMosaicGroup"/> as image.
    /// <br/>
@@ -69,12 +70,12 @@ namespace fmg.uwp.img.win2d {
                   ds.DrawLine(li.from.ToVector2(), li.to.ToVector2(), li.clr.ToWinColor(), (float)li.penWidht, css);
             }
 
-   #if DEBUG
+#if DEBUG
             //// test
             //using (var ctf = new Microsoft.Graphics.Canvas.Text.CanvasTextFormat { FontSize = 25 }) {
             //   ds.DrawText(string.Format($"{RotateAngle:0.##}"), 0f, 0f, Color.Black.ToWinColor(), ctf);
             //}
-   #endif
+#endif
          }
 
       }
@@ -131,4 +132,5 @@ namespace fmg.uwp.img.win2d {
 
    }
 
+#endif
 }

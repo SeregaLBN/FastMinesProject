@@ -1,10 +1,13 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Windows.UI.Xaml;
+#if false
 using LogoBmp = fmg.uwp.img.win2d.Logo.CanvasBmp;
 using LogoImg = fmg.uwp.img.win2d.Logo.CanvasImgSrc;
+#endif
 
 namespace fmg.uwp.img.win2d {
+#if false
 
    /// <summary> mine image </summary>
    public static class Mine {
@@ -43,4 +46,5 @@ namespace fmg.uwp.img.win2d {
 
    }
 
+#endif
 }
