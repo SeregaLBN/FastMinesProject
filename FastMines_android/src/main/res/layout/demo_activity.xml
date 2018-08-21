@@ -10,9 +10,16 @@
         android:layout_height="wrap_content"
         android:text="Next Images" />
 
-    <fmg.android.app.DemoView
-        android:id="@+id/demo_view"
+    <RelativeLayout
+        android:id="@+id/layout_root"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent">
+
+        <fmg.android.app.DemoView
+            android:id="@+id/demo_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
 
 </LinearLayout>
