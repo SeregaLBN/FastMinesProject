@@ -39,13 +39,13 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
 
    static String eventActionToString(int eventAction) {
       switch (eventAction) {
-      case MotionEvent.ACTION_CANCEL: return "Cancel";
-      case MotionEvent.ACTION_DOWN: return "Down";
-      case MotionEvent.ACTION_MOVE: return "Move";
-      case MotionEvent.ACTION_OUTSIDE: return "Outside";
-      case MotionEvent.ACTION_UP: return "Up";
+      case MotionEvent.ACTION_CANCEL      : return "Cancel";
+      case MotionEvent.ACTION_DOWN        : return "Down";
+      case MotionEvent.ACTION_MOVE        : return "Move";
+      case MotionEvent.ACTION_OUTSIDE     : return "Outside";
+      case MotionEvent.ACTION_UP          : return "Up";
       case MotionEvent.ACTION_POINTER_DOWN: return "Pointer Down";
-      case MotionEvent.ACTION_POINTER_UP: return "Pointer Up";
+      case MotionEvent.ACTION_POINTER_UP  : return "Pointer Up";
       }
       return "???";
    }
@@ -94,19 +94,19 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
    /*
    public void mousePressed(MouseEvent e) {
       if (SwingUtilities.isLeftMouseButton(e)) {
-         MosaicViewController.this.mousePressed(Cast.toPointDouble(e.getPoint()), true);
+         mousePressed(Cast.toPointDouble(e.getPoint()), true);
       } else
       if (SwingUtilities.isRightMouseButton(e)) {
-         MosaicViewController.this.mousePressed(Cast.toPointDouble(e.getPoint()), false);
+         mousePressed(Cast.toPointDouble(e.getPoint()), false);
       }
    }
 
    public void mouseReleased(MouseEvent e) {
       if (SwingUtilities.isLeftMouseButton(e)) {
-         MosaicViewController.this.mouseReleased(Cast.toPointDouble(e.getPoint()), true);
+         mouseReleased(Cast.toPointDouble(e.getPoint()), true);
       } else
       if (SwingUtilities.isRightMouseButton(e)) {
-         MosaicViewController.this.mouseReleased(Cast.toPointDouble(e.getPoint()), false);
+         mouseReleased(Cast.toPointDouble(e.getPoint()), false);
       }
     }
    */
@@ -114,7 +114,7 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
    public void onFocusChange(boolean hasFocus) {
       System.out.println("Mosaic.onFocusChange: hasFocus=" + hasFocus);
       if (!hasFocus)
-         MosaicViewController.this.mouseFocusLost();
+         mouseFocusLost();
    }
 
    @Override
@@ -181,7 +181,7 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
    }
 
    ////////////// TEST //////////////
-   public static MosaicViewController testData(Activity owner) {
+   public static MosaicViewController getTestData(Activity owner) {
       MosaicView._DEBUG_DRAW_FLOW = true;
       MosaicViewController ctrllr = new MosaicViewController(owner);
 

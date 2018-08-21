@@ -11,11 +11,13 @@ import android.view.View;
 import android.widget.Button;
 
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 
 import fmg.android.img.Flag;
@@ -49,22 +51,25 @@ public class DemoActivity extends Activity {
    int _nextCreateImagesIndex;
    List<IImageController<?,?,?>> _images; // current image controllers
    boolean _testTransparent;
+   boolean _imgIsControl;
 
    // #region images Fabrica
-   public void testMosaicControl () { testApp(() -> Arrays.asList(MosaicViewController.testData(this))); }
-   public void testMosaicImg     () { testApp(MosaicImg     ::testData); }
-   public void testMosaicGroupImg() { testApp(MosaicGroupImg::testData); }
-   public void testMosaicSkillImg() { testApp(MosaicSkillImg::testData); }
-   public void testLogos         () { testApp(Logo          ::testData); }
-   public void testMines         () { testApp(Mine          ::testData); }
-   public void testFlags         () { testApp(Flag          ::testData); }
-   public void testSmiles        () { testApp(Smile         ::testData); }
+   public void testMosaicControl () { testApp(() -> Arrays.asList(MosaicViewController.getTestData(this))); }
+   public void testMosaicImg     () { testApp(                    MosaicImg          ::getTestData); }
+   public void testMosaicGroupImg() { testApp(                    MosaicGroupImg     ::getTestData); }
+   public void testMosaicSkillImg() { testApp(                    MosaicSkillImg     ::getTestData); }
+   public void testLogos         () { testApp(                    Logo               ::getTestData); }
+   public void testMines         () { testApp(                    Mine               ::getTestData); }
+   public void testFlags         () { testApp(                    Flag               ::getTestData); }
+   public void testSmiles        () { testApp(                    Smile              ::getTestData); }
    // #endregion
 
    @Override
    public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
-      setContentView(R.layout.demo_view);
+
+      setContentView(R.layout.demo_activity);
+      int iii = R.layout.demo_activity;
 
       _demoView = (DemoView)findViewById(R.id.demo_view);
       _demoView._onDraw = this::onDraw;
@@ -73,9 +78,9 @@ public class DemoActivity extends Activity {
 
       _td = new TestDrawing();
 
-      _onCreateImages = new Runnable[] { /*this::testMosaicControl, */this::testMosaicImg, this::testMosaicSkillImg, this::testMosaicGroupImg, this::testSmiles, this::testLogos, this::testMines, this::testFlags };
+      _onCreateImages = new Runnable[] { this::testMosaicControl, this::testMosaicImg, this::testMosaicSkillImg, this::testMosaicGroupImg, this::testSmiles, this::testLogos, this::testMines, this::testFlags };
 
-      _demoView.setOnTouchListener(this::onTouch);
+      _demoView.setOnTouchListener((v, ev) -> onTouch(ev));
 
       _demoView.post(this::onNextImages);
    }
@@ -86,15 +91,16 @@ public class DemoActivity extends Activity {
       super.onDestroy();
    }
 
-   public boolean onTouch(View view, MotionEvent ev) {
+   private boolean onTouch(MotionEvent ev) {
       onCellTilingHandler(true, false);
       return true;
    }
 
    void testApp(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
-    //_demoView.children.clear();
       _images = funcGetImages.get();
       setTitle(_td.getTitle(_images));
+
+      _imgIsControl = _images.get(0).getImage() instanceof View;
 
       onCellTilingHandler(true, true);
 
@@ -103,13 +109,21 @@ public class DemoActivity extends Activity {
             _demoView.invalidate();
          }
       };
-      _images.forEach(img -> {
-         img.addListener(onChangeImage::accept);
-      });
-      _onCloseImages = () -> {
+      if (_imgIsControl) {
+         _demoView.addChildrenForAccessibility(new ArrayList<>(_images.stream().map(x -> (View) x.getImage()).collect(Collectors.toList())));
+         _demoView.invalidate(); // clean previous drawed images
+      } else {
          _images.forEach(img -> {
-            img.removeListener(onChangeImage::accept);
+            img.addListener(onChangeImage::accept);
          });
+      }
+      _onCloseImages = () -> {
+         if (_imgIsControl)
+            _demoView.addChildrenForAccessibility(null);
+         else
+            _images.forEach(img -> {
+               img.removeListener(onChangeImage::accept);
+            });
          _images.forEach(IImageController::close);
        //_images.clear(); // unmodifiable list
          _images = null;
@@ -138,6 +152,9 @@ public class DemoActivity extends Activity {
    void onDraw(Canvas canvas) {
       //canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
       canvas.drawColor(Cast.toColor(MosaicDrawModel.DefaultBkColor));
+
+      if (_imgIsControl)
+         return;
 
       double sizeW = _demoView.getWidth();  if (sizeW <= 0) sizeW = 100;
       double sizeH = _demoView.getHeight(); if (sizeH <= 0) sizeH = 100;

@@ -80,7 +80,7 @@ public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TIma
 
 
    ////////////// TEST //////////////
-   public static List<IImageController<?,?,?>> testData() {
+   public static List<IImageController<?,?,?>> getTestData() {
       return Stream.concat(Stream.of((EMosaicGroup)null),
                        Stream.of(EMosaicGroup.values()))
                .map(e -> new Pair<>(new MosaicGroupImg.ControllerBitmap (e),

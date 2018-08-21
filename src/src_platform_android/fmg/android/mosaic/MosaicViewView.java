@@ -112,8 +112,12 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
          getImage(); // implicit call draw() -> drawBegin() -> drawModified() -> control.repaint() -> View.paintComponent -> drawAndroid()
          break;
       case PROPERTY_SIZE:
-         SizeDouble s = (SizeDouble)newValue;
          ViewGroup.LayoutParams lp = _control.getLayoutParams();
+         if (lp == null)
+            break;
+         SizeDouble s = (SizeDouble)newValue;
+         if (s == null)
+            s = getModel().getSize();
          lp.width  = (int)s.width;
          lp.height = (int)s.height;
          break;

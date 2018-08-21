@@ -15,7 +15,7 @@ public final class Mine {
    }
 
    ////////////// TEST //////////////
-   public static List<IImageController<?,?,?>> testData() {
+   public static List<IImageController<?,?,?>> getTestData() {
       return Arrays.asList(new Mine.ControllerBitmap()
                          , new Mine.ControllerBitmap()
       );

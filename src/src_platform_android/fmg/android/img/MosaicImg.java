@@ -100,7 +100,7 @@ public abstract class MosaicImg<TImage>
    }
 
    ////////////// TEST //////////////
-   public static List<IImageController<?,?,?>> testData() {
+   public static List<IImageController<?,?,?>> getTestData() {
       return
 //         // test single
 //         Arrays.asList(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})

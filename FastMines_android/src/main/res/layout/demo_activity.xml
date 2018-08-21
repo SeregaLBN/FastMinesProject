@@ -11,7 +11,7 @@
         android:text="Next Images" />
 
     <RelativeLayout
-        android:id="@+id/layout_root"
+        android:id="@+id/inner_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
