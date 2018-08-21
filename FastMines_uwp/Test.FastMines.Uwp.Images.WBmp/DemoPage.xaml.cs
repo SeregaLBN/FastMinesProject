@@ -163,16 +163,15 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                PointDouble offset = cti.imageOffset;
 
                if (createImgControls) {
+                  FrameworkElement imgControl;
                   if (imgIsControl) {
-                     var imgControl = imgObj.Image as FrameworkElement;
+                     imgControl = imgObj.Image as FrameworkElement;
                      #region lifehack
                      imgControl.Visibility = Visibility.Collapsed;
                      AsyncRunner.InvokeFromUiLater(() => { imgControl.Visibility = Visibility.Visible; });
                      #endregion
-                     _panel.Children.Add(imgControl);
-                     imgControls[ctr.tableSize.Width * cti.j + cti.i] = imgControl;
                   } else {
-                     var imgControl = new Image {
+                     imgControl = new Image {
                         Stretch = Stretch.None
                      };
                      imgControl.SetBinding(Image.SourceProperty, new Binding {
@@ -180,10 +179,9 @@ namespace Test.FastMines.Uwp.Images.WBmp {
                         Path = new PropertyPath(nameof(imgObj.Image)),
                         Mode = BindingMode.OneWay
                      });
-
-                     _panel.Children.Add(imgControl);
-                     imgControls[ctr.tableSize.Width * cti.j + cti.i] = imgControl;
                   }
+                  _panel.Children.Add(imgControl);
+                  imgControls[ctr.tableSize.Width * cti.j + cti.i] = imgControl;
                }
 
                if (resized) {
