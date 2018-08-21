@@ -23,8 +23,10 @@ using fmg.uwp.draw.mosaic.win2d;
 #if false
 using StaticCanvasBmp = fmg.core.img.ImageModel<Microsoft.Graphics.Canvas.CanvasBitmap>;
 using StaticCanvasImg = fmg.core.img.ImageModel<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>;
-using LogoCanvasBmp = fmg.uwp.draw.img.win2d.Logo.CanvasBmp;
-using LogoCanvasImg = fmg.uwp.draw.img.win2d.Logo.CanvasImgSrc;
+#endif
+using LogoCtrlCanvasBmp = fmg.uwp.img.win2d.Logo.ControllerBitmap;
+using LogoCtrlCanvasImg = fmg.uwp.img.win2d.Logo.ControllerImgSrc;
+#if false
 using MosaicsSkillCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsSkillImg.CanvasBmp;
 using MosaicsSkillCanvasImg = fmg.uwp.draw.img.win2d.MosaicsSkillImg.CanvasImgSrc;
 using MosaicsGroupCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsGroupImg.CanvasBmp;
@@ -38,6 +40,7 @@ using FlagCanvasImg = fmg.uwp.draw.img.win2d.Flag.CanvasImgSrc;
 using MineCanvasBmp = fmg.uwp.draw.img.win2d.Mine.CanvasBmp;
 using MineCanvasImg = fmg.uwp.draw.img.win2d.Mine.CanvasImgSrc;
 #endif
+using DummyMosaicImageType = System.Object;
 
 namespace Test.FastMines.Uwp.Images.Win2D {
 
@@ -56,23 +59,9 @@ namespace Test.FastMines.Uwp.Images.Win2D {
       Action<bool> _onActivated;
 
 #region images Fabrica
+      public void TestLogos1(ICanvasResourceCreator resourceCreator) { TestAppAnimatedCanvasBmp<LogoCtrlCanvasBmp, Logo.CanvasBmp   , LogoModel>(() => Logo.GetTestData1(resourceCreator)); }
+      public void TestLogos2(ICanvasResourceCreator resourceCreator) { TestAppAnimatedCanvasImg<LogoCtrlCanvasImg, Logo.CanvasImgSrc, LogoModel>(() => Logo.GetTestData2(resourceCreator)); }
 #if false
-      public void TestLogos1(ICanvasResourceCreator resourceCreator) {
-         TestAppCanvasBmp(() => new LogoCanvasBmp[] {
-            new LogoCanvasBmp(resourceCreator),
-            new LogoCanvasBmp(resourceCreator),
-            new LogoCanvasBmp(resourceCreator),
-            new LogoCanvasBmp(resourceCreator)
-         });
-      }
-      public void TestLogos2(ICanvasResourceCreator resourceCreator) {
-         TestAppCanvasImg(() => new LogoCanvasImg[] {
-            new LogoCanvasImg(resourceCreator),
-            new LogoCanvasImg(resourceCreator),
-            new LogoCanvasImg(resourceCreator),
-            new LogoCanvasImg(resourceCreator)
-         });
-      }
       public void TestMosaicsSkillImg1(ICanvasResourceCreator resourceCreator) {
          TestAppCanvasBmp(() => (new MosaicsSkillCanvasBmp[] { new MosaicsSkillCanvasBmp(null, resourceCreator), new MosaicsSkillCanvasBmp(null, resourceCreator) })
                .Concat(ESkillLevelEx.GetValues()
@@ -146,7 +135,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          );
       }
 #endif
-#endregion
+      #endregion
 
 
       public DemoPage() {
@@ -154,9 +143,9 @@ namespace Test.FastMines.Uwp.Images.Win2D {
 
          var device = CanvasDevice.GetSharedDevice();
          _onCreateImages = new Action[] {
-#if false
             () => TestLogos1          (device),
             () => TestLogos2          (device),
+#if false
             () => TestMosaicsSkillImg1(device),
             () => TestMosaicsSkillImg2(device),
             () => TestMosaicsGroupImg1(device),
@@ -185,28 +174,32 @@ namespace Test.FastMines.Uwp.Images.Win2D {
          _page.Unloaded += (s, ev) => _onCloseImages();
       }
 
-      #region main part
-#if false
-      void TestAppCanvasBmp<TImageEx>(Func<IEnumerable<TImageEx>> funcGetImages)
-         where TImageEx : class
+#region main part
+      void TestAppAnimatedCanvasBmp<TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
+         where TImageController : ImageController<CanvasBitmap, TImageView, TImageModel>
+         where TImageView       : IImageView<CanvasBitmap, TImageModel>
+         where TImageModel      : IAnimatedModel
       {
-         TestApp<TImageEx, PaintableWin2D, CanvasBitmap, PaintUwpContext<CanvasBitmap>, CanvasBitmap>(funcGetImages);
+         TestApp<CanvasBitmap, DummyMosaicImageType, TImageController, TImageView, TImageView, TImageModel, TImageModel>(funcGetImages);
       }
-      void TestAppCanvasImg<TImageEx>(Func<IEnumerable<TImageEx>> funcGetImages)
-         where TImageEx : class
+      void TestAppAnimatedCanvasImg<TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
+         where TImageController : ImageController<CanvasImageSource, TImageView, TImageModel>
+         where TImageView       : IImageView<CanvasImageSource, TImageModel>
+         where TImageModel      : IAnimatedModel
       {
-         TestApp<TImageEx, PaintableWin2D, CanvasImageSource, PaintUwpContext<CanvasBitmap>, CanvasBitmap>(funcGetImages);
+         TestApp<CanvasImageSource, DummyMosaicImageType, TImageController, TImageView, TImageView, TImageModel, TImageModel>(funcGetImages);
       }
-#endif
 
-#if false
-      void TestApp<TImageEx, TPaintable, TImage, TPaintContext, TImageInner>(Func<IEnumerable<TImageEx>> funcGetImages)
-         where TImageEx : class
-         where TPaintable : IPaintable
-         where TImage : DependencyObject, ICanvasResourceCreator
-         where TImageInner : class
-         where TPaintContext : PaintContext<TImageInner>
+      void TestApp<TImage, TMosaicImageInner, TImageController, TImageView, TAImageView, TImageModel, TAnimatedModel>(Func<IEnumerable<TImageController>> funcGetImages)
+         where TImage            : DependencyObject, ICanvasResourceCreator
+         where TMosaicImageInner : class
+         where TImageController  : ImageController<TImage, TImageView, TImageModel>
+         where TImageView        : IImageView<TImage, TImageModel>
+         where TAImageView       : IImageView<TImage, TAnimatedModel>
+         where TImageModel       : IImageModel
+         where TAnimatedModel    : IAnimatedModel
       {
+#if false
          _panel.Children.Clear();
          var images = funcGetImages().ToList();
          ApplicationView.GetForCurrentView().Title = _td.GetTitle(images);
@@ -234,7 +227,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                var offset = cti.imageOffset;
 
                FrameworkElement imgCntrl = null;
-#region CanvasImageSource
+         #region CanvasImageSource
                if (typeof(TImage) == typeof(CanvasImageSource)) {
                   imgCntrl = new Image {
                      Margin = new Thickness {
@@ -272,8 +265,8 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                   }
 
                } else
-#endregion
-#region CanvasBitmap
+         #endregion
+         #region CanvasBitmap
                if (typeof(TImage) == typeof(CanvasBitmap)) {
                   var cnvsCtrl= new CanvasControl {
                      Margin = new Thickness {
@@ -355,7 +348,7 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                      ev.DrawingSession.DrawImage(cnvsBmp, new Rect(0, 0, cnvsCtrl.Width, cnvsCtrl.Height));
                   };
                } else
-#endregion
+         #endregion
                {
                   throw new Exception("Unsupported image type");
                }
@@ -425,9 +418,9 @@ namespace Test.FastMines.Uwp.Images.Win2D {
                      (img as PolarLightsImg<TImage>).PolarLights = enable;
                });
          };
-      }
 #endif
-#endregion
+      }
+      #endregion
 
 
       void OnNewImages() {

@@ -124,13 +124,13 @@ namespace Test.FastMines.Uwp.Images.WBmp {
       #endregion wrappers
 
       void TestApp<TImage, TMosaicImageInner, TImageController, TImageView, TAImageView, TImageModel, TAnimatedModel>(Func<IEnumerable<TImageController>> funcGetImages)
-         where TImage : class
+         where TImage            : class
          where TMosaicImageInner : class
-         where TImageController : ImageController<TImage, TImageView, TImageModel>
-         where TImageView : IImageView<TImage, TImageModel>
-         where TAImageView : IImageView<TImage, TAnimatedModel>
-         where TImageModel : IImageModel
-         where TAnimatedModel : IAnimatedModel
+         where TImageController  : ImageController<TImage, TImageView, TImageModel>
+         where TImageView        : IImageView<TImage, TImageModel>
+         where TAImageView       : IImageView<TImage, TAnimatedModel>
+         where TImageModel       : IImageModel
+         where TAnimatedModel    : IAnimatedModel
       {
          _panel.Children.Clear();
          var images = funcGetImages().ToList();

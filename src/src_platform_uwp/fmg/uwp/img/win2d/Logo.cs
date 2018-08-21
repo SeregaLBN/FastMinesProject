@@ -155,7 +155,7 @@ namespace fmg.uwp.img.win2d {
 
       }
 
-      /** Logo image controller implementation for {@link Logo.Icon} */
+      /** Logo image controller implementation for <see cref="Logo.CanvasBmp"/> */
       public class ControllerBitmap : LogoController<CanvasBitmap, Logo.CanvasBmp> {
 
          public ControllerBitmap(ICanvasResourceCreator resourceCreator)
@@ -169,7 +169,7 @@ namespace fmg.uwp.img.win2d {
 
       }
 
-      /** Logo image controller implementation for {@link Logo.Image} */
+      /** Logo image controller implementation for <see cref="Logo.CanvasImgSrc"/> */
       public class ControllerImgSrc : LogoController<CanvasImageSource, Logo.CanvasImgSrc> {
 
          public ControllerImgSrc(ICanvasResourceCreator resourceCreator)
