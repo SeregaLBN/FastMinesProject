@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{10F79DED-68DD-484D-93D0-162C71ECC56C}</ProjectGuid>
+    <ProjectGuid>{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Test.FastMines.Uwp.Images.Win2D</RootNamespace>
-    <AssemblyName>Test.FastMines.Uwp.Images.Win2D</AssemblyName>
+    <RootNamespace>Test.FastMines.Uwp.Images</RootNamespace>
+    <AssemblyName>Test.FastMines.Uwp.Images</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.16299.0</TargetPlatformVersion>
@@ -17,8 +17,8 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
-    <PackageCertificateKeyFile>Test.FastMines.Uwp.Images.Win2D_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>2B48A0452AEE9D559EED1BD846B78BA4AEBBCF1D</PackageCertificateThumbprint>
+    <PackageCertificateKeyFile>Test.FastMines.Uwp.Images_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>3E62273F0C7CB78EC223448C85F8B0A2F36BD234</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -105,31 +105,23 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="Test.FastMines.Uwp.Images.Win2D_TemporaryKey.pfx" />
+    <None Include="Test.FastMines.Uwp.Images_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\Test.FastMines.Uwp.Images.WBmp\Assets\LockScreenLogo.scale-200.png">
-      <Link>Assets\LockScreenLogo.scale-200.png</Link>
-    </Content>
-    <Content Include="..\Test.FastMines.Uwp.Images.WBmp\Assets\SplashScreen.scale-200.png">
-      <Link>Assets\SplashScreen.scale-200.png</Link>
-    </Content>
-    <Content Include="..\Test.FastMines.Uwp.Images.WBmp\Assets\Square150x150Logo.scale-200.png">
-      <Link>Assets\Square150x150Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="..\Test.FastMines.Uwp.Images.WBmp\Assets\Square44x44Logo.scale-200.png">
-      <Link>Assets\Square44x44Logo.scale-200.png</Link>
-    </Content>
-    <Content Include="..\Test.FastMines.Uwp.Images.WBmp\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
-      <Link>Assets\Square44x44Logo.targetsize-24_altform-unplated.png</Link>
-    </Content>
-    <Content Include="..\Test.FastMines.Uwp.Images.WBmp\Assets\StoreLogo.png">
-      <Link>Assets\StoreLogo.png</Link>
-    </Content>
-    <Content Include="..\Test.FastMines.Uwp.Images.WBmp\Assets\Wide310x150Logo.scale-200.png">
-      <Link>Assets\Wide310x150Logo.scale-200.png</Link>
-    </Content>
     <Content Include="Properties\Default.rd.xml" />
+    <Content Include="Assets\LockScreenLogo.scale-200.png" />
+    <Content Include="Assets\SplashScreen.scale-200.png" />
+    <Content Include="Assets\Square150x150Logo.scale-200.png" />
+    <Content Include="Assets\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="Assets\StoreLogo.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="..\..\res\Font\NirmalaUI_30.xml">
+      <Link>res\Font\NirmalaUI_30.xml</Link>
+    </Content>
+    <Content Include="..\..\res\Font\NirmalaUI_30.png">
+      <Link>res\Font\NirmalaUI_30.png</Link>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -148,6 +140,9 @@
     <PackageReference Include="Win2D.uwp">
       <Version>1.21.0</Version>
     </PackageReference>
+    <PackageReference Include="WriteableBitmapEx">
+      <Version>1.5.1</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="WindowsDesktop, Version=10.0.16299.0">
@@ -159,7 +154,9 @@
   </ItemGroup>
   <Import Project="..\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems" Label="Shared" />
   <Import Project="..\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems" Label="Shared" />
+  <Import Project="..\FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems" Label="Shared" />
   <Import Project="..\..\FastMines_C#\FastMines.Core\FastMines.Core.projitems" Label="Shared" />
+  <Import Project="..\FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
@@ -171,4 +168,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="RemoveObjAndBin" AfterTargets="Clean">
+    <RemoveDir Directories="$(BaseIntermediateOutputPath)" />
+    <RemoveDir Directories="$(TargetDir)" />
+  </Target>
 </Project>

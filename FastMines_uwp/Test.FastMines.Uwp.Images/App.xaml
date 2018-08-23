@@ -1,8 +1,8 @@
 <Application
-    x:Class="Test.FastMines.Uwp.Images.Win2D.App"
+    x:Class="Test.FastMines.Uwp.Images.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Test.FastMines.Uwp.Images.Win2D"
+    xmlns:local="using:Test.FastMines.Uwp.Images"
     RequestedTheme="Light">
 
 </Application>

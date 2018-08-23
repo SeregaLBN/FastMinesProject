@@ -14,11 +14,9 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Shared", "Fas
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{6C78E2F6-4321-4C89-9312-AA367B07205C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Uwp.Images.WBmp", "FastMines_uwp\Test.FastMines.Uwp.Images.WBmp\Test.FastMines.Uwp.Images.WBmp.csproj", "{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Uwp.Images", "FastMines_uwp\Test.FastMines.Uwp.Images\Test.FastMines.Uwp.Images.csproj", "{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Uwp", "Uwp", "{D47E7AF7-77FF-43A6-949A-6B98EB51499D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.FastMines.Uwp.Images.Win2D", "FastMines_uwp\Test.FastMines.Uwp.Images.Win2D\Test.FastMines.Uwp.Images.Win2D.csproj", "{10F79DED-68DD-484D-93D0-162C71ECC56C}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Draw.WBmp", "FastMines_uwp\FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.shproj", "{3DE6E1BD-606B-41C8-99AC-6FC22AFEC0B4}"
 EndProject
@@ -38,9 +36,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.FastMines.Common", "Fa
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		FastMines_C#\FastMines.Core\FastMines.Core.projitems*{10f79ded-68dd-484d-93d0-162c71ecc56c}*SharedItemsImports = 4
-		FastMines_uwp\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{10f79ded-68dd-484d-93d0-162c71ecc56c}*SharedItemsImports = 4
-		FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{10f79ded-68dd-484d-93d0-162c71ecc56c}*SharedItemsImports = 4
 		FastMines_Ava\FastMines.Ava.Draw\FastMines.Ava.Draw.projitems*{196fa595-153b-4435-8e9b-46c36bac1a2e}*SharedItemsImports = 13
 		FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{3ab77d5f-33da-4867-b97b-9e0da4901dde}*SharedItemsImports = 13
 		FastMines_uwp\FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems*{3de6e1bd-606b-41c8-99ac-6fc22afec0b4}*SharedItemsImports = 13
@@ -52,6 +47,7 @@ Global
 		FastMines_C#\FastMines.Core\FastMines.Core.projitems*{9dfd73db-d187-4471-98ba-713996c8a257}*SharedItemsImports = 13
 		FastMines_C#\FastMines.Core\FastMines.Core.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
+		FastMines_uwp\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{c8694177-a4fb-44dd-afaf-db029e94f037}*SharedItemsImports = 13
@@ -173,38 +169,6 @@ Global
 		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|x86.ActiveCfg = Release|x86
 		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|x86.Build.0 = Release|x86
 		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF}.Release|x86.Deploy.0 = Release|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Debug|ARM.ActiveCfg = Debug|ARM
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Debug|ARM.Build.0 = Debug|ARM
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Debug|ARM.Deploy.0 = Debug|ARM
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Debug|Mixed Platforms.Deploy.0 = Debug|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Debug|Win32.ActiveCfg = Debug|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Debug|Win32.Build.0 = Debug|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Debug|Win32.Deploy.0 = Debug|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Debug|x64.ActiveCfg = Debug|x64
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Debug|x64.Build.0 = Debug|x64
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Debug|x64.Deploy.0 = Debug|x64
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Debug|x86.ActiveCfg = Debug|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Debug|x86.Build.0 = Debug|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Debug|x86.Deploy.0 = Debug|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Release|Any CPU.ActiveCfg = Release|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Release|ARM.ActiveCfg = Release|ARM
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Release|ARM.Build.0 = Release|ARM
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Release|ARM.Deploy.0 = Release|ARM
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Release|Mixed Platforms.Build.0 = Release|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Release|Mixed Platforms.Deploy.0 = Release|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Release|Win32.ActiveCfg = Release|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Release|Win32.Build.0 = Release|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Release|Win32.Deploy.0 = Release|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Release|x64.ActiveCfg = Release|x64
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Release|x64.Build.0 = Release|x64
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Release|x64.Deploy.0 = Release|x64
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Release|x86.ActiveCfg = Release|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Release|x86.Build.0 = Release|x86
-		{10F79DED-68DD-484D-93D0-162C71ECC56C}.Release|x86.Deploy.0 = Release|x86
 		{A897306A-DB7F-41B4-8D53-B64F928E258C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A897306A-DB7F-41B4-8D53-B64F928E258C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A897306A-DB7F-41B4-8D53-B64F928E258C}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -286,7 +250,6 @@ Global
 		{4F75C36E-7157-449F-9686-DEA20F83BBDB} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
 		{3AB77D5F-33DA-4867-B97B-9E0DA4901DDE} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
 		{BABB709F-6E07-49EE-85F4-9DFA1E5126EF} = {6C78E2F6-4321-4C89-9312-AA367B07205C}
-		{10F79DED-68DD-484D-93D0-162C71ECC56C} = {6C78E2F6-4321-4C89-9312-AA367B07205C}
 		{3DE6E1BD-606B-41C8-99AC-6FC22AFEC0B4} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
 		{C8694177-A4FB-44DD-AFAF-DB029E94F037} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}
 		{9DB7237D-BFAE-4767-8202-8E54977978A0} = {D47E7AF7-77FF-43A6-949A-6B98EB51499D}

@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
+using Windows.Foundation.Metadata;
 using Windows.Foundation.Collections;
+using Windows.UI;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -15,9 +18,11 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using fmg.common;
+using fmg.uwp.utils;
 using fmg.uwp.mosaic.wbmp;
 
-namespace Test.FastMines.Uwp.Images.WBmp
+namespace Test.FastMines.Uwp.Images
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
@@ -43,8 +48,45 @@ namespace Test.FastMines.Uwp.Images.WBmp
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override async void OnLaunched(LaunchActivatedEventArgs e)
-        {
+        protected override async void OnLaunched(LaunchActivatedEventArgs e) {
+         /**/
+         Action<Windows.UI.Color> applyColor = null;
+
+         //PC customization
+         if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView")) {
+            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            if (titleBar != null) {
+               //titleBar.ButtonBackgroundColor = Colors.DarkBlue;
+               //titleBar.ButtonForegroundColor = Colors.White;
+               //titleBar.BackgroundColor = Colors.Blue;
+               //titleBar.ForegroundColor = Colors.White;
+               applyColor = clr => titleBar.ButtonBackgroundColor = clr;
+            }
+         }
+         //Mobile customization
+         if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar")) {
+            var statusBar = StatusBar.GetForCurrentView();
+            if (statusBar != null) {
+               //statusBar.BackgroundOpacity = 1;
+               //statusBar.BackgroundColor = Colors.DarkBlue;
+               //statusBar.ForegroundColor = Colors.White;
+               applyColor = clr => statusBar.BackgroundColor = clr;
+            }
+         }
+         // you need to add a reference to the correspondent Extension:
+         //  * Windows Mobile Extensions for the UWP
+         //  * Windows Desktop Extensions for the UWP
+
+         if (applyColor != null) {
+            HSV hsv = Colors.DarkBlue.ToHsvColor();
+            Action run = () => {
+               hsv.h += 10;
+               applyColor(hsv.ToWinColor());
+            };
+            run.RepeatNoWait(TimeSpan.FromMilliseconds(100), () => false);
+         }
+         /**/
+
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
             {
@@ -75,10 +117,8 @@ namespace Test.FastMines.Uwp.Images.WBmp
                 Window.Current.Content = rootFrame;
             }
 
-            if (e.PrelaunchActivated == false)
-            {
-                if (rootFrame.Content == null)
-                {
+            if (e.PrelaunchActivated == false) {
+                if (rootFrame.Content == null) {
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
@@ -87,6 +127,12 @@ namespace Test.FastMines.Uwp.Images.WBmp
                 // Ensure the current window is active
                 Window.Current.Activate();
             }
+
+         Window.Current.VisibilityChanged += (sender, ev) => {
+            var currFrame = Window.Current.Content as Frame;
+            var demoPage = currFrame?.Content as DemoPage;
+            demoPage?.Animation(ev.Visible);
+         };
         }
 
         /// <summary>
@@ -94,8 +140,7 @@ namespace Test.FastMines.Uwp.Images.WBmp
         /// </summary>
         /// <param name="sender">The Frame which failed navigation</param>
         /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
-        {
+        void OnNavigationFailed(object sender, NavigationFailedEventArgs e) {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
 
@@ -106,8 +151,7 @@ namespace Test.FastMines.Uwp.Images.WBmp
         /// </summary>
         /// <param name="sender">The source of the suspend request.</param>
         /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
-        {
+        private void OnSuspending(object sender, SuspendingEventArgs e) {
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
