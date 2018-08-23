@@ -2,7 +2,6 @@ package fmg.android.img;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -100,7 +99,7 @@ public abstract class MosaicImg<TImage>
    }
 
    ////////////// TEST //////////////
-   public static List<IImageController<?,?,?>> testData() {
+   public static List<IImageController<?,?,?>> getTestData() {
       return
 //         // test single
 //         Arrays.asList(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})

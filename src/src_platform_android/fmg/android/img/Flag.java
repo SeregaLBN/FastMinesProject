@@ -112,7 +112,7 @@ public abstract class Flag<TImage> extends ImageView<TImage, FlagModel> {
    }
 
    ////////////// TEST //////////////
-   public static List<IImageController<?,?,?>> testData() {
+   public static List<IImageController<?,?,?>> getTestData() {
       return Arrays.asList(new Flag.ControllerBitmap()
                          , new Flag.ControllerBitmap()
       );
