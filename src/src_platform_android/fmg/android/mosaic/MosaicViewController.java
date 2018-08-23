@@ -16,7 +16,6 @@ import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicView;
 import fmg.core.types.EMosaic;
 import fmg.core.types.ESkillLevel;
-import fmg.android.utils.Cast;
 
 /** MVC: controller. Android implementation */
 public class MosaicViewController extends MosaicController<View, Bitmap, MosaicViewView, MosaicDrawModel<Bitmap>> {

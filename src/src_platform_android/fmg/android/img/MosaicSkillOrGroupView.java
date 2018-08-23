@@ -40,8 +40,13 @@ abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageM
    protected void draw(Canvas g) {
       TImageModel m = getModel();
 
-      // fill background
-      g.drawColor(Cast.toColor(m.getBackgroundColor()), PorterDuff.Mode.CLEAR);
+      { // fill background
+         Color bkClr = m.getBackgroundColor();
+         if (!bkClr.isOpaque())
+            g.drawColor(android.graphics.Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+         if (!bkClr.isTransparent())
+            g.drawColor(Cast.toColor(bkClr));
+      }
 
       float bw = (float)m.getBorderWidth();
       boolean needDrawPerimeterBorder = (!m.getBorderColor().isTransparent() && (bw > 0));

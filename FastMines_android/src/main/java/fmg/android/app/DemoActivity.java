@@ -3,22 +3,19 @@ package fmg.android.app;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 
-import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
 
 import fmg.android.img.Flag;
 import fmg.android.img.Logo;
@@ -28,30 +25,24 @@ import fmg.android.img.MosaicImg;
 import fmg.android.img.MosaicSkillImg;
 import fmg.android.img.Smile;
 import fmg.android.mosaic.MosaicViewController;
-import fmg.android.utils.Cast;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.ATestDrawing;
 import fmg.core.img.IImageController;
-import fmg.core.mosaic.MosaicDrawModel;
 
 public class DemoActivity extends Activity {
 
    class TestDrawing extends ATestDrawing {
-      public TestDrawing() { super("Android"); }
+      TestDrawing() { super("Android"); }
    }
 
-   TestDrawing _td;
-   ATestDrawing.CellTilingResult _ctr;
-   private DemoView _demoView;
-   static final int margin = 10; // panel margin - padding to inner images
-   Runnable _onCloseImages;
-   Runnable[] _onCreateImages; // images factory
-   int _nextCreateImagesIndex;
-   List<IImageController<?,?,?>> _images; // current image controllers
-   boolean _testTransparent;
-   boolean _imgIsControl;
+   private TestDrawing _td;
+   private FrameLayout _innerLayout;
+   private static final int margin = 10; // panel margin - padding to inner images
+   private Runnable _onCloseImages;
+   private Runnable[] _onCreateImages; // images factory
+   private int _nextCreateImagesIndex;
 
    // #region images Fabrica
    public void testMosaicControl () { testApp(() -> Arrays.asList(MosaicViewController.getTestData(this))); }
@@ -67,22 +58,19 @@ public class DemoActivity extends Activity {
    @Override
    public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
-
       setContentView(R.layout.demo_activity);
-      int iii = R.layout.demo_activity;
 
-      _demoView = (DemoView)findViewById(R.id.demo_view);
-      _demoView._onDraw = this::onDraw;
-      Button nextImagesBtn = (Button)findViewById(R.id.next_images);
+      _innerLayout = findViewById(R.id.inner_layout);
+
+      Button nextImagesBtn = findViewById(R.id.next_images);
       nextImagesBtn.setOnClickListener(view -> onNextImages());
 
       _td = new TestDrawing();
 
-      _onCreateImages = new Runnable[] { this::testMosaicControl, this::testMosaicImg, this::testMosaicSkillImg, this::testMosaicGroupImg, this::testSmiles, this::testLogos, this::testMines, this::testFlags };
+      _onCreateImages = new Runnable[] { this::testMosaicControl,
+              this::testMosaicImg, this::testMosaicSkillImg, this::testMosaicGroupImg, this::testSmiles, this::testLogos, this::testMines, this::testFlags };
 
-      _demoView.setOnTouchListener((v, ev) -> onTouch(ev));
-
-      _demoView.post(this::onNextImages);
+      _innerLayout.post(this::onNextImages);
    }
 
    @Override
@@ -91,96 +79,125 @@ public class DemoActivity extends Activity {
       super.onDestroy();
    }
 
-   private boolean onTouch(MotionEvent ev) {
-      onCellTilingHandler(true, false);
-      return true;
+   @FunctionalInterface
+   public interface Proc3Bool{
+      void apply(boolean t1, boolean t2, boolean t3);
    }
 
    void testApp(Supplier<List<IImageController<?,?,?>>> funcGetImages) {
-      _images = funcGetImages.get();
-      setTitle(_td.getTitle(_images));
+      _innerLayout.removeAllViews();
+      List<IImageController<?,?,?>> images = funcGetImages.get();
+      setTitle(_td.getTitle(images));
 
-      _imgIsControl = _images.get(0).getImage() instanceof View;
+      List<View> imgControls = new ArrayList<>(images.size());
+      boolean[] testTransparent = { false };
+      boolean imgIsControl = images.get(0).getImage() instanceof View;
+      Map<IImageController<?,?,?>, PropertyChangeListener> binding = imgIsControl ? null : new HashMap<>(images.size());
 
-      onCellTilingHandler(true, true);
+      Proc3Bool onCellTilingHandler = (applySettings, createImgControls, resized) -> {
+         resized = resized || applySettings;
 
-      Consumer<PropertyChangeEvent> onChangeImage = ev -> {
-         if (ev.getPropertyName().equals(IImageController.PROPERTY_IMAGE)) {
-            _demoView.invalidate();
+         if (applySettings) {
+            testTransparent[0] = _td.bl();
+            images.forEach(img -> _td.applySettings(img, testTransparent[0]));
+         }
+
+         double sizeW = _innerLayout.getWidth();  // _innerLayout.getMeasuredWidth();
+         double sizeH = _innerLayout.getHeight(); // _innerLayout.getMeasuredHeight();
+         RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
+
+         ATestDrawing.CellTilingResult ctr = _td.cellTiling(rc, images, testTransparent[0]);
+         SizeDouble imgSize = ctr.imageSize;
+         if (createImgControls)
+            imgControls.clear();
+
+         Function<IImageController<?,?,?>, ATestDrawing.CellTilingInfo> callback = ctr.itemCallback;
+         for (IImageController imgObj : images) {
+            ATestDrawing.CellTilingInfo cti = callback.apply(imgObj);
+            PointDouble offset = cti.imageOffset;
+
+            if (createImgControls) {
+               View imgControl = null;
+               if (imgIsControl) {
+                  imgControl = (View)imgObj.getImage();
+               } else {
+                  View imgControl2 = imgControl = new View(this) {
+                     @Override
+                     public void draw(Canvas canvas) {
+                        super.draw(canvas);
+                        Object image = imgObj.getImage();
+                        if (image instanceof Bitmap) {
+                           Bitmap bmp = (Bitmap)image;
+                           canvas.drawBitmap(bmp, 0,0, null);
+                        } else {
+                           throw new RuntimeException("Unsupported image type: " + image.getClass().getSimpleName());
+                        }
+                     }
+                  };
+                //imgControl.setBackgroundColor(Cast.toColor(Color.RandomColor().brighter()));
+
+                  PropertyChangeListener onChangeImage = ev -> {
+                     if (ev.getPropertyName().equals(IImageController.PROPERTY_IMAGE)) {
+                        imgControl2.invalidate();
+                     }
+                  };
+                  imgObj.addListener(onChangeImage);
+                  binding.put(imgObj, onChangeImage);
+               }
+
+               FrameLayout.LayoutParams lpView = new FrameLayout.LayoutParams(0,0);
+               _innerLayout.addView(imgControl, lpView);
+               imgControls.add(ctr.tableSize.width * cti.j + cti.i, imgControl);
+               resized = true; // to set real values to lpView
+            }
+
+            if (resized) {
+               imgObj.getModel().setSize(imgSize);
+               View imgControl = imgControls.get(ctr.tableSize.width * cti.j + cti.i);
+               FrameLayout.LayoutParams lpView = (FrameLayout.LayoutParams)imgControl.getLayoutParams();
+               lpView.leftMargin = (int)offset.x;
+               lpView.topMargin  = (int)offset.y;
+               lpView.width  = (int)imgSize.width;
+               lpView.height = (int)imgSize.height;
+               imgControl.setLayoutParams(lpView);
+            }
          }
       };
-      if (_imgIsControl) {
-         _demoView.addChildrenForAccessibility(new ArrayList<>(_images.stream().map(x -> (View) x.getImage()).collect(Collectors.toList())));
-         _demoView.invalidate(); // clean previous drawed images
-      } else {
-         _images.forEach(img -> {
-            img.addListener(onChangeImage::accept);
-         });
-      }
+
+      onCellTilingHandler.apply(true, true, true);
+
+
+//      ViewTreeObserver.OnGlobalLayoutListener onSizeChanged = () -> {
+//         onCellTilingHandler.apply(false, false, true);
+//      };
+      View.OnClickListener onClick = view -> {
+         //onCellTilingHandler.apply(true, false, false);
+      };
+      View.OnTouchListener onTouch = (view, motionEvent) -> {
+         onCellTilingHandler.apply(true, false, false);
+         return true;
+      };
+//      _innerLayout.getViewTreeObserver().addOnGlobalLayoutListener(onSizeChanged);
+      if (imgIsControl)
+         _innerLayout.setOnClickListener(onClick);
+      else
+         _innerLayout.setOnTouchListener(onTouch);
+
       _onCloseImages = () -> {
-         if (_imgIsControl)
-            _demoView.addChildrenForAccessibility(null);
+//         _innerLayout.getViewTreeObserver().removeOnGlobalLayoutListener(onSizeChanged);
+         if (imgIsControl)
+            _innerLayout.setOnClickListener(null);
          else
-            _images.forEach(img -> {
-               img.removeListener(onChangeImage::accept);
-            });
-         _images.forEach(IImageController::close);
-       //_images.clear(); // unmodifiable list
-         _images = null;
+            _innerLayout.setOnTouchListener(null);
+         images.forEach(imgObj -> {
+            if (!imgIsControl)
+               imgObj.removeListener(binding.get(imgObj));
+            imgObj.close();
+         });
+         //images.clear(); // unmodifiable list
+         //images = null; // not final
       };
 
-   }
-
-   void onCellTilingHandler(boolean applySettings, boolean resized) {
-      resized = resized || applySettings;
-
-      if (applySettings) {
-         _testTransparent = _td.bl();
-         _images.forEach(img -> _td.applySettings(img, _testTransparent));
-      }
-
-      double sizeW = _demoView.getWidth();
-      double sizeH = _demoView.getHeight();
-      RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
-
-      _ctr = _td.cellTiling(rc, _images, _testTransparent);
-      SizeDouble imgSize = _ctr.imageSize;
-      if (resized)
-         _images.forEach(imgObj ->  imgObj.getModel().setSize(imgSize));
-   }
-
-   void onDraw(Canvas canvas) {
-      //canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-      canvas.drawColor(Cast.toColor(MosaicDrawModel.DefaultBkColor));
-
-      if (_imgIsControl)
-         return;
-
-      double sizeW = _demoView.getWidth();  if (sizeW <= 0) sizeW = 100;
-      double sizeH = _demoView.getHeight(); if (sizeH <= 0) sizeH = 100;
-      RectDouble rc = new RectDouble(margin, margin, sizeW - margin * 2, sizeH - margin * 2); // inner rect where drawing images as tiles
-
-      Paint paint = new Paint();
-      paint.setColor(Color.BLACK);
-      paint.setStrokeWidth(1);
-      paint.setStyle(Paint.Style.STROKE);
-      canvas.drawRect(Cast.toRect(rc), paint);
-
-      if (_ctr == null)
-         return;
-      Function<IImageController<?,?,?> /* imageControllers */, ATestDrawing.CellTilingInfo> callback = _ctr.itemCallback;
-      for (IImageController<?,?,?> img : _images) {
-         ATestDrawing.CellTilingInfo cti = callback.apply(img);
-         PointDouble offset = cti.imageOffset;
-
-         Object image = img.getImage();
-         if (image instanceof Bitmap) {
-            Bitmap bmp = (Bitmap)image;
-            canvas.drawBitmap(bmp, (float)offset.x, (float)offset.y, null);
-         } else {
-            throw new RuntimeException("Unsupported image type: " + image.getClass().getSimpleName());
-         }
-      }
    }
 
    void onNextImages() {

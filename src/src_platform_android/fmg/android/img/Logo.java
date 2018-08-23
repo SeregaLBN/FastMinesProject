@@ -35,8 +35,13 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
    protected void draw(Canvas g) {
       LogoModel lm = this.getModel();
 
-      // fill background
-      g.drawColor(Cast.toColor(lm.getBackgroundColor()), PorterDuff.Mode.CLEAR);
+      { // fill background
+         Color bkClr = lm.getBackgroundColor();
+         if (!bkClr.isOpaque())
+            g.drawColor(android.graphics.Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+         if (!bkClr.isTransparent())
+            g.drawColor(Cast.toColor(bkClr));
+      }
 
       List<PointDouble> rays0 = lm.getRays();
       List<PointDouble> inn0  = lm.getInn();

@@ -5,12 +5,9 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.Typeface;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import fmg.common.Color;
@@ -73,11 +70,15 @@ public abstract class MosaicAndroidView<TImage,
       // 1. background color
       Color bkClr = model.getBackgroundColor();
       if (drawBk) {
-         paintFill.setColor(Cast.toColor(bkClr));
-         if (clipRegion == null)
-            g.drawColor(Cast.toColor(bkClr), PorterDuff.Mode.CLEAR);
-         else
-            g.drawRect((float)clipRegion.x, (float)clipRegion.y, (float)clipRegion.width, (float)clipRegion.height, paintFill);
+         if (!bkClr.isOpaque())
+            g.drawColor(android.graphics.Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+         if (!bkClr.isTransparent()) {
+            paintFill.setColor(Cast.toColor(bkClr));
+            if (clipRegion == null)
+               g.drawColor(Cast.toColor(bkClr));//, PorterDuff.Mode.CLEAR);
+            else
+               g.drawRect((float)clipRegion.x, (float)clipRegion.y, (float)clipRegion.width, (float)clipRegion.height, paintFill);
+         }
       }
 
       // 2. paint cells
