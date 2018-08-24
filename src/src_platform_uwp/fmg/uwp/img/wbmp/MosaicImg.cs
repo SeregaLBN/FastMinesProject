@@ -72,14 +72,6 @@ namespace fmg.uwp.img.wbmp {
 
       }
 
-      ////////////// TEST //////////////
-      public static IEnumerable<Controller> GetTestData() {
-         return
-            //new List<Controller>() { new Controller() { MosaicType = EMosaic.eMosaicSquare1 } };
-            EMosaicEx.GetValues().Select(e => new Controller() { MosaicType = e });
-      }
-      //////////////////////////////////
-
    }
 
 }

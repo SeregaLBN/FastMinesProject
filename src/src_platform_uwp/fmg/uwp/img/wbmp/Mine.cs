@@ -11,12 +11,6 @@ namespace fmg.uwp.img.wbmp {
          public Controller() { LogoModel.ToMineModel(Model); }
       }
 
-      ////////////// TEST //////////////
-      public static IEnumerable<Controller> GetTestData() {
-         return new Controller[] { new Controller() };
-      }
-      //////////////////////////////////
-
    }
 
 }

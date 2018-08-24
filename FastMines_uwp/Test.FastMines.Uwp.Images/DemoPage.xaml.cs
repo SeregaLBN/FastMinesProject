@@ -17,6 +17,7 @@ using Windows.Foundation.Metadata;
 using Windows.Phone.UI.Input;
 using fmg.common;
 using fmg.common.geom;
+using fmg.common.Converters;
 using fmg.core.img;
 using fmg.core.types;
 using fmg.core.mosaic;
@@ -30,11 +31,9 @@ using fmg.uwp.mosaic.xaml;
 using StaticCanvasBmp = fmg.core.img.ImageModel<Microsoft.Graphics.Canvas.CanvasBitmap>;
 using StaticCanvasImg = fmg.core.img.ImageModel<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>;
 #endif
-using LogoWBmp = fmg.uwp.img.wbmp.Logo;
-using LogoW2D  = fmg.uwp.img.win2d.Logo;
-using LogoCtrlCanvasBmp = fmg.uwp.img.win2d.Logo.ControllerBitmap;
-using LogoCtrlCanvasImg = fmg.uwp.img.win2d.Logo.ControllerImgSrc;
-using fmg.common.Converters;
+using Win2dLogo  = fmg.uwp.img.win2d.Logo;
+using Win2dLogoCtrlBmp = fmg.uwp.img.win2d.Logo.ControllerBitmap;
+using Win2dLogoCtrlImg = fmg.uwp.img.win2d.Logo.ControllerImgSrc;
 #if false
 using MosaicsSkillCanvasBmp = fmg.uwp.img.win2d.MosaicsSkillImg.CanvasBmp;
 using MosaicsSkillCanvasImg = fmg.uwp.img.win2d.MosaicsSkillImg.CanvasImgSrc;
@@ -49,6 +48,15 @@ using FlagCanvasImg = fmg.uwp.img.win2d.Flag.CanvasImgSrc;
 using MineCanvasBmp = fmg.uwp.img.win2d.Mine.CanvasBmp;
 using MineCanvasImg = fmg.uwp.img.win2d.Mine.CanvasImgSrc;
 #endif
+using WBmpMosaicImageController = fmg.uwp.mosaic.wbmp.MosaicImageController;
+using WBmpMosaicImageView = fmg.uwp.mosaic.wbmp.MosaicImageView;
+using WBmpMosaicImg = fmg.uwp.img.wbmp.MosaicImg;
+using WBmpMosaicSkillImg = fmg.uwp.img.wbmp.MosaicSkillImg;
+using WBmpMosaicGroupImg = fmg.uwp.img.wbmp.MosaicGroupImg;
+using WBmpLogo = fmg.uwp.img.wbmp.Logo;
+using WBmpMine = fmg.uwp.img.wbmp.Mine;
+using WBmpFlag = fmg.uwp.img.wbmp.Flag;
+using WBmpSmile = fmg.uwp.img.wbmp.Smile;
 using DummyMosaicImageType = System.Object;
 
 namespace Test.FastMines.Uwp.Images {
@@ -59,16 +67,16 @@ namespace Test.FastMines.Uwp.Images {
          public TestDrawing() : base("UWP") { }
       }
 
-      TestDrawing _td;
-      Panel _panel;
-      static readonly int margin = 10; // panel margin - padding to inner images
-      Action _onCloseImages;
-      Action[] _onCreateImages; // images factory
-      int _nextCreateImagesIndex;
-      Action<bool> _onActivated;
+      private TestDrawing _td;
+      private Panel _panel;
+      private static readonly int margin = 10; // panel margin - padding to inner images
+      private Action _onCloseImages;
+      private Action[] _onCreateImages; // images factory
+      private int _nextCreateImagesIndex;
+      private Action<bool> _onActivated;
 
       #region images Fabrica
-      class DummyModel : IAnimatedModel {
+      private class DummyModel : IAnimatedModel {
          public bool Animated      { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
          public long AnimatePeriod { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
          public int TotalFrames    { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -79,7 +87,7 @@ namespace Test.FastMines.Uwp.Images {
 #pragma warning restore CS0067
          public void Dispose() { throw new NotImplementedException(); }
       }
-      class DummyView<TImage> : IImageView<TImage, DummyModel>
+      private class DummyView<TImage> : IImageView<TImage, DummyModel>
          where TImage : class
       {
          public DummyModel Model      => throw new NotImplementedException();
@@ -91,8 +99,22 @@ namespace Test.FastMines.Uwp.Images {
          public void Dispose()    { throw new NotImplementedException(); }
          public void Invalidate() { throw new NotImplementedException(); }
       }
-      public void TestLogos1(ICanvasResourceCreator resourceCreator) { TestAppAnimatedCanvasBmp<LogoCtrlCanvasBmp, LogoW2D.CanvasBmp, LogoModel>(() => LogoW2D.GetTestData1(resourceCreator)); }
-      public void TestLogos2(ICanvasResourceCreator resourceCreator) { TestAppAnimatedCanvasImg<LogoCtrlCanvasImg, LogoW2D.CanvasImgSrc, LogoModel>(() => LogoW2D.GetTestData2(resourceCreator)); }
+      private void TestWin2dLogos1(ICanvasResourceCreator resourceCreator) {
+         TestAppAnimated<CanvasBitmap, Win2dLogoCtrlBmp, Win2dLogo.CanvasBmp, LogoModel>(() =>
+            new Win2dLogoCtrlBmp[] { new Win2dLogoCtrlBmp(resourceCreator)
+                                   , new Win2dLogoCtrlBmp(resourceCreator)
+                                   , new Win2dLogoCtrlBmp(resourceCreator)
+                                   , new Win2dLogoCtrlBmp(resourceCreator)}
+         );
+      }
+      private void TestWin2dLogos2(ICanvasResourceCreator resourceCreator) {
+         TestAppAnimated<CanvasImageSource, Win2dLogoCtrlImg, Win2dLogo.CanvasImgSrc, LogoModel>(() =>
+            new Win2dLogoCtrlImg[] { new Win2dLogoCtrlImg(resourceCreator)
+                                   , new Win2dLogoCtrlImg(resourceCreator)
+                                   , new Win2dLogoCtrlImg(resourceCreator)
+                                   , new Win2dLogoCtrlImg(resourceCreator)}
+         );
+      }
 #if false
       public void TestMosaicsSkillImg1(ICanvasResourceCreator resourceCreator) {
          TestAppCanvasBmp(() => (new MosaicsSkillCanvasBmp[] { new MosaicsSkillCanvasBmp(null, resourceCreator), new MosaicsSkillCanvasBmp(null, resourceCreator) })
@@ -167,15 +189,86 @@ namespace Test.FastMines.Uwp.Images {
          );
       }
 #endif
-      public void TestMosaicXamlCtl()  { TestAppMosaicXamlCtr(()         => new       MosaicXamlController[] { MosaicXamlController .GetTestData() }); }
-      public void TestMosaicControl()  { TestAppMosaicControl(()         => new      MosaicImageController[] { MosaicImageController.GetTestData() }); }
-      public void TestMosaicsImg()     { TestAppMosaicImage                                                          (MosaicImg     .GetTestData); }
-      public void TestLogos()          { TestAppAnimated<      LogoWBmp.Controller,       LogoWBmp,        LogoModel>(LogoWBmp      .GetTestData); }
-      public void TestMosaicSkillImg() { TestAppAnimated<MosaicSkillImg.Controller, MosaicSkillImg, MosaicSkillModel>(MosaicSkillImg.GetTestData); }
-      public void TestMosaicGroupImg() { TestAppAnimated<MosaicGroupImg.Controller, MosaicGroupImg, MosaicGroupModel>(MosaicGroupImg.GetTestData); }
-      public void TestMine()           { TestAppAnimated<          Mine.Controller,       LogoWBmp,        LogoModel>(Mine          .GetTestData); }
-      public void TestFlag()           { TestAppSimple<            Flag.Controller,           Flag,        FlagModel>(Flag          .GetTestData); }
-      public void TestSmile()          { TestAppSimple<           Smile.Controller,          Smile,       SmileModel>(Smile         .GetTestData); }
+
+      private static TMosaicController TuneMosaicGameController<TImage, TImageInner, TMosaicController, TMosaicView, TMosaicModel>(TMosaicController mosaicController)
+         where TImage      : class
+         where TImageInner : class
+         where TMosaicController : MosaicController<TImage, TImageInner, TMosaicView, TMosaicModel>
+         where TMosaicView       : IMosaicView<TImage, TImageInner, TMosaicModel>
+         where TMosaicModel      : MosaicDrawModel<TImageInner> 
+      {
+         if (ThreadLocalRandom.Current.Next(2) == 1) {
+            // unmodified controller test
+         } else {
+            EMosaic mosaicType = EMosaic.eMosaicTrSq1;
+            ESkillLevel skill = ESkillLevel.eBeginner;
+
+            mosaicController.Area = 500;
+            mosaicController.MosaicType = mosaicType;
+            mosaicController.SizeField = skill.GetDefaultSize();
+            mosaicController.MinesCount = skill.GetNumberMines(mosaicType);
+            mosaicController.GameNew();
+         }
+         return mosaicController;
+      }
+
+      private void TestXamlMosaicControl()  {
+         MosaicXamlView._DEBUG_DRAW_FLOW = true;
+         TestAppMosaicXamlCtr(() => new MosaicXamlController[] {
+            TuneMosaicGameController<Panel, ImageSource, MosaicXamlController, MosaicXamlView, MosaicDrawModel<ImageSource>>(new MosaicXamlController())
+         });
+      }
+      private void TestWBmpMosaicControl() {
+         WBmpMosaicImageView._DEBUG_DRAW_FLOW = true;
+         TestAppMosaicWBmpControl(() => new WBmpMosaicImageController[] {
+            TuneMosaicGameController<Image, WriteableBitmap, WBmpMosaicImageController, WBmpMosaicImageView, MosaicDrawModel<WriteableBitmap>>(new WBmpMosaicImageController())
+         });
+      }
+      private void TestWBmpMosaicsImg() {
+         TestAppMosaicWBmpImage(() =>
+               //new List<MosaicWBmpImg.Controller>() { new MosaicWBmpImg.Controller() { MosaicType = EMosaic.eMosaicSquare1 } }
+               EMosaicEx.GetValues().Select(e => new WBmpMosaicImg.Controller() { MosaicType = e })
+         );
+      }
+      private void TestWBmpLogos() {
+         TestAppAnimated<WriteableBitmap, WBmpLogo.Controller, WBmpLogo, LogoModel>(() =>
+            new WBmpLogo.Controller[] {
+               new WBmpLogo.Controller(),
+               new WBmpLogo.Controller(),
+               new WBmpLogo.Controller(),
+               new WBmpLogo.Controller()}
+         );
+      }
+      private void TestWBmpMosaicSkillImg() {
+         TestAppAnimated<WriteableBitmap, WBmpMosaicSkillImg.Controller, WBmpMosaicSkillImg, MosaicSkillModel>(() =>
+            (new WBmpMosaicSkillImg.Controller[] { new WBmpMosaicSkillImg.Controller(null) })
+               .Concat(ESkillLevelEx.GetValues()
+                                    .Select(e => new WBmpMosaicSkillImg.Controller[] { new WBmpMosaicSkillImg.Controller(e) })
+                                    .SelectMany(m => m)));
+      }
+      private void TestWBmpMosaicGroupImg() {
+         TestAppAnimated<WriteableBitmap, WBmpMosaicGroupImg.Controller, WBmpMosaicGroupImg, MosaicGroupModel>(() =>
+            (new WBmpMosaicGroupImg.Controller[] { new WBmpMosaicGroupImg.Controller(null) })
+               .Concat(EMosaicGroupEx.GetValues()
+                                     .Select(e => new WBmpMosaicGroupImg.Controller[] { new WBmpMosaicGroupImg.Controller(e) })
+                                     .SelectMany(m => m))
+         );
+      }
+      private void TestWBmpMine() {
+         TestAppAnimated<WriteableBitmap, WBmpMine.Controller, WBmpLogo, LogoModel>(() =>
+            new WBmpMine.Controller[] { new WBmpMine.Controller() }
+         );
+      }
+      private void TestWBmpFlag() {
+         TestAppSimple<WriteableBitmap, WBmpFlag.Controller, WBmpFlag, FlagModel>(() =>
+            new WBmpFlag.Controller[] { new WBmpFlag.Controller() }
+         );
+      }
+      private void TestWBmpSmile() {
+         TestAppSimple<WriteableBitmap, WBmpSmile.Controller, WBmpSmile, SmileModel>(() =>
+            new WBmpSmile.Controller[] { new WBmpSmile.Controller(SmileModel.EFaceType.Face_WhiteSmiling) }
+         );
+      }
       #endregion
 
 
@@ -184,8 +277,8 @@ namespace Test.FastMines.Uwp.Images {
 
          var device = CanvasDevice.GetSharedDevice();
          _onCreateImages = new Action[] {
-            () => TestLogos1          (device),
-            () => TestLogos2          (device),
+            () => TestWin2dLogos1          (device),
+            () => TestWin2dLogos2          (device),
 #if false
             () => TestMosaicsSkillImg1(device),
             () => TestMosaicsSkillImg2(device),
@@ -200,8 +293,15 @@ namespace Test.FastMines.Uwp.Images {
             () => TestSmile1          (device),
             () => TestSmile2          (device)
 #endif
-            TestMosaicXamlCtl,
-            TestMosaicControl, TestLogos, TestMine, TestMosaicSkillImg, TestMosaicGroupImg, TestMosaicsImg, TestFlag, TestSmile };
+            TestXamlMosaicControl,
+            TestWBmpMosaicControl,
+            TestWBmpLogos,
+            TestWBmpMine,
+            TestWBmpMosaicSkillImg,
+            TestWBmpMosaicGroupImg,
+            TestWBmpMosaicsImg,
+            TestWBmpFlag,
+            TestWBmpSmile };
 
          InitializeComponent();
 
@@ -218,41 +318,30 @@ namespace Test.FastMines.Uwp.Images {
 
       #region main part
       #region wrappers
-      void TestAppAnimatedCanvasBmp<TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
-         where TImageController : ImageController<CanvasBitmap, TImageView, TImageModel>
-         where TImageView       : IImageView<CanvasBitmap, TImageModel>
-         where TImageModel      : IAnimatedModel {
-         TestApp<CanvasBitmap, DummyMosaicImageType, TImageController, TImageView, TImageView, TImageModel, TImageModel>(funcGetImages);
-      }
-      void TestAppAnimatedCanvasImg<TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
-         where TImageController : ImageController<CanvasImageSource, TImageView, TImageModel>
-         where TImageView       : IImageView<CanvasImageSource, TImageModel>
-         where TImageModel      : IAnimatedModel {
-         TestApp<CanvasImageSource, DummyMosaicImageType, TImageController, TImageView, TImageView, TImageModel, TImageModel>(funcGetImages);
-      }
-
-      void TestAppSimple<TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
-         where TImageController : ImageController<WriteableBitmap, TImageView, TImageModel>
-         where TImageView       : IImageView<WriteableBitmap, TImageModel>
+      void TestAppSimple<TImage, TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
+         where TImage           : class
+         where TImageController : ImageController<TImage, TImageView, TImageModel>
+         where TImageView       : IImageView<TImage, TImageModel>
          where TImageModel      : IImageModel
       {
-         TestApp<WriteableBitmap, DummyMosaicImageType, TImageController, TImageView, DummyView<WriteableBitmap>, TImageModel, DummyModel>(funcGetImages);
+         TestApp<TImage, DummyMosaicImageType, TImageController, TImageView, DummyView<TImage>, TImageModel, DummyModel>(funcGetImages);
       }
 
-      void TestAppAnimated<TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
-         where TImageController : ImageController<WriteableBitmap, TImageView, TImageModel>
-         where TImageView       : IImageView<WriteableBitmap, TImageModel>
+      void TestAppAnimated<TImage, TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
+         where TImage           : class
+         where TImageController : ImageController<TImage, TImageView, TImageModel>
+         where TImageView       : IImageView<TImage, TImageModel>
          where TImageModel      : IAnimatedModel
       {
-         TestApp<WriteableBitmap, DummyMosaicImageType, TImageController, TImageView, TImageView, TImageModel, TImageModel>(funcGetImages);
+         TestApp<TImage, DummyMosaicImageType, TImageController, TImageView, TImageView, TImageModel, TImageModel>(funcGetImages);
       }
 
-      void TestAppMosaicImage(Func<IEnumerable<MosaicImg.Controller>> funcGetImages) {
-         TestApp<WriteableBitmap, Nothing, MosaicImg.Controller, MosaicImg, MosaicImg, MosaicAnimatedModel<Nothing>, MosaicAnimatedModel<Nothing>>(funcGetImages);
+      void TestAppMosaicWBmpImage(Func<IEnumerable<WBmpMosaicImg.Controller>> funcGetImages) {
+         TestApp<WriteableBitmap, Nothing, WBmpMosaicImg.Controller, WBmpMosaicImg, WBmpMosaicImg, MosaicAnimatedModel<Nothing>, MosaicAnimatedModel<Nothing>>(funcGetImages);
       }
 
-      void TestAppMosaicControl(Func<IEnumerable<MosaicImageController>> funcGetImages) {
-         TestApp<Image, WriteableBitmap, MosaicImageController, MosaicImageView, DummyView<Image>, MosaicDrawModel<WriteableBitmap>, DummyModel>(funcGetImages);
+      void TestAppMosaicWBmpControl(Func<IEnumerable<WBmpMosaicImageController>> funcGetImages) {
+         TestApp<Image, WriteableBitmap, WBmpMosaicImageController, WBmpMosaicImageView, DummyView<Image>, MosaicDrawModel<WriteableBitmap>, DummyModel>(funcGetImages);
       }
 
       void TestAppMosaicXamlCtr(Func<IEnumerable<MosaicXamlController>> funcGetImages) {
@@ -400,20 +489,15 @@ namespace Test.FastMines.Uwp.Images {
             imgControls = null;
          };
 
-
-#if false
+   #if false
          _onActivated = enable => {
-            images.Select(x => x as RotatedImg<TImage>)
-               .Where(x => x != null)
-               .Where(x => typeof(TImage) == typeof(CanvasImageSource))
-               .ToList()
-               .ForEach(img => {
-                  img.Rotate = enable;
-                  if (img is PolarLightsImg<TImage>)
-                     (img as PolarLightsImg<TImage>).PolarLights = enable;
-               });
+            images.ForEach(img => {
+               var am = (img.Model as IAnimatedModel);
+               if (am != null)
+                  am.Animated = enable;
+            });
          };
-#endif
+   #endif
       }
       #endregion
 

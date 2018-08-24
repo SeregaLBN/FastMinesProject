@@ -98,17 +98,6 @@ namespace fmg.uwp.img.wbmp {
 
       }
 
-      ////////////// TEST //////////////
-      public static IEnumerable<Controller> GetTestData() {
-         return new Controller[] {
-            new Controller(),
-            new Controller(),
-            new Controller(),
-            new Controller()
-         };
-      }
-      //////////////////////////////////
-
    }
 
 }

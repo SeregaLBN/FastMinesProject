@@ -155,7 +155,7 @@ namespace fmg.uwp.img.win2d {
 
       }
 
-      /** Logo image controller implementation for <see cref="Logo.CanvasBmp"/> */
+      /// <summary> Logo image controller implementation for <see cref="Logo.CanvasBmp"/> </summary>
       public class ControllerBitmap : LogoController<CanvasBitmap, Logo.CanvasBmp> {
 
          public ControllerBitmap(ICanvasResourceCreator resourceCreator)
@@ -169,7 +169,7 @@ namespace fmg.uwp.img.win2d {
 
       }
 
-      /** Logo image controller implementation for <see cref="Logo.CanvasImgSrc"/> */
+      /// <summary> Logo image controller implementation for <see cref="Logo.CanvasImgSrc"/> </summary>
       public class ControllerImgSrc : LogoController<CanvasImageSource, Logo.CanvasImgSrc> {
 
          public ControllerImgSrc(ICanvasResourceCreator resourceCreator)
@@ -182,23 +182,6 @@ namespace fmg.uwp.img.win2d {
          }
 
       }
-
-      ////////////// TEST //////////////
-      public static IEnumerable<ControllerBitmap> GetTestData1(ICanvasResourceCreator resourceCreator) {
-         return new ControllerBitmap[] { new Logo.ControllerBitmap(resourceCreator)
-                                       , new Logo.ControllerBitmap(resourceCreator)
-                                       , new Logo.ControllerBitmap(resourceCreator)
-                                       , new Logo.ControllerBitmap(resourceCreator)
-         };
-      }
-      public static IEnumerable<ControllerImgSrc> GetTestData2(ICanvasResourceCreator resourceCreator) {
-         return new ControllerImgSrc[] { new Logo.ControllerImgSrc(resourceCreator)
-                                       , new Logo.ControllerImgSrc(resourceCreator)
-                                       , new Logo.ControllerImgSrc(resourceCreator)
-                                       , new Logo.ControllerImgSrc(resourceCreator)
-         };
-      }
-      //////////////////////////////////
 
    }
 

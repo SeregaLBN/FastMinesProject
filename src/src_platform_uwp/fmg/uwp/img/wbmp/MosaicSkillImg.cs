@@ -45,15 +45,6 @@ namespace fmg.uwp.img.wbmp {
 
       }
 
-      ////////////// TEST //////////////
-      public static IEnumerable<Controller> GetTestData() {
-         return (new Controller[] { new Controller(null) })
-               .Concat(ESkillLevelEx.GetValues()
-                                    .Select(e => new Controller[] { new Controller(e) })
-                                    .SelectMany(m => m));
-      }
-      //////////////////////////////////
-
    }
 
 }
