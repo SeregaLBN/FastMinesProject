@@ -1,14 +1,17 @@
+using System.Linq;
 using System.Collections.Generic;
 using Windows.UI.Xaml;
 using Windows.Graphics.Display;
-using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.Graphics.Canvas.Geometry;
 using fmg.common;
 using fmg.common.geom;
 using fmg.core.img;
 using fmg.uwp.utils;
 using fmg.uwp.utils.win2d;
 using fmg.uwp.draw.mosaic.win2d;
+using Windows.UI;
 
 namespace fmg.uwp.img.win2d {
 
@@ -46,30 +49,49 @@ namespace fmg.uwp.img.win2d {
 
             var center = new PointDouble(Size.Width / 2.0, Size.Height / 2.0);
 
+            HSV[] hsvPalette = lm. Palette;
+            Windows.UI.Color[] palette = hsvPalette
+               .Select(hsv => hsv.ToWinColor())
+               .ToArray();
+
             // paint owner rays
             for (var i = 0; i < 8; i++) {
                using (var geom = rc.BuildLines(rays[i], oct[i], inn[i], oct[(i + 5) % 8])) {
-                  if (lm.UseGradient) {
-                     // linear gragient
-                     using (var br = rc.CreateGradientPaintBrush(oct[(i + 5) % 8], lm.Palette[(i + 0) % 8].ToColor(), oct[i], lm.Palette[(i + 3) % 8].ToColor())) {
+                  if (!lm.UseGradient) {
+                     ds.FillGeometry(geom, hsvPalette[i].ToColor().Darker().ToWinColor());
+                  } else {
+                     // emulate triangle gradient (see BmpLogo.cpp C++ source code)
+                     // over linear gragients
+
+                     using (var br = rc.CreateGradientPaintBrush(rays[i], palette[(i+1)%8], inn[i], palette[(i+6)%8])) {
                         ds.FillGeometry(geom, br);
                      }
 
-                     // emulate triangle gradient (see BmpLogo.cpp C++ source code)
-                     var clr = lm.Palette[(i + 6) % 8].ToColor();
-                     clr.A = 0;
-                     using (var br = rc.CreateGradientPaintBrush(center, clr, inn[(i + 6) % 8], lm.Palette[(i + 3) % 8].ToColor())) {
+                     var p1 = oct[i];
+                     var p2 = oct[(i + 5) % 8];
+                     var p = new PointDouble((p1.X + p2.X) / 2, (p1.Y + p2.Y) / 2); // середина линии oct[i]-oct[(i+5)%8]. ѕо факту - пересечение линий rays[i]-inn[i] и oct[i]-oct[(i+5)%8]
+
+                     Windows.UI.Color clr;// = new Color(255,255,255,0); //  fmg.common.Color.Transparent.ToWinColor();
+                     if (true) {
+                        HSV c1 = hsvPalette[(i + 1) % 8];
+                        HSV c2 = hsvPalette[(i + 6) % 8];
+                        double diff = c1.h - c2.h;
+                        HSV cP = new HSV(c1.ToColor());
+                        cP.h += diff / 2; // цвет в точке p (пересечений линий...)
+                        cP.a = 0;
+                        clr = cP.ToColor().ToWinColor();
+                     }
+
+                     using (var br = rc.CreateGradientPaintBrush(oct[i], palette[(i + 3) % 8], p, clr)) {
                         using (var geom2 = rc.BuildLines(rays[i], oct[i], inn[i])) {
                            ds.FillGeometry(geom2, br);
                         }
                      }
-                     using (var br = rc.CreateGradientPaintBrush(center, clr, inn[(i + 2) % 8], lm.Palette[(i + 0) % 8].ToColor())) {
+                     using (var br = rc.CreateGradientPaintBrush(oct[(i + 5) % 8], palette[(i + 0) % 8], p, clr)) {
                         using (var geom2 = rc.BuildLines(rays[i], oct[(i + 5) % 8], inn[i])) {
                            ds.FillGeometry(geom2, br);
                         }
                      }
-                  } else {
-                     ds.FillGeometry(geom, lm.Palette[i].ToColor().Darker().ToWinColor());
                   }
                }
             }
@@ -77,26 +99,32 @@ namespace fmg.uwp.img.win2d {
             // paint star perimeter
             var zoomAverage = (lm.ZoomX + lm.ZoomY) / 2;
             var penWidth = Model.BorderWidth*zoomAverage;
-            if (penWidth > 0.1) {
-               // TODO  g.setStroke(new BasicStroke((float)penWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
-               for (var i = 0; i < 8; i++) {
-                  var p1 = rays[(i + 7) % 8];
-                  var p2 = rays[i];
-                  ds.DrawLine(p1.ToVector2(), p2.ToVector2(), lm.Palette[i].ToColor().ToWinColor(), (float)penWidth);
+            if (penWidth > 0.1)
+               using (var css = new CanvasStrokeStyle {
+                  StartCap = CanvasCapStyle.Round,
+                  EndCap = CanvasCapStyle.Round
+               }) {
+                  for (var i = 0; i < 8; i++) {
+                     var p1 = rays[(i + 7) % 8];
+                     var p2 = rays[i];
+                     ds.DrawLine(p1.ToVector2(), p2.ToVector2(), palette[i], (float)penWidth, css);
+                  }
                }
-            }
 
             // paint inner gradient triangles
             for (var i = 0; i < 8; i++) {
                using (var geom = rc.BuildLines(inn[(i + 0) % 8], inn[(i + 3) % 8], center)) {
                   if (lm.UseGradient) {
-                     using (var br = rc.CreateGradientPaintBrush(inn[i], lm.Palette[(i + 6) % 8].ToColor(), center, ((i & 1) == 0) ? Color.Black : Color.White)) {
+                     var p1 = inn[(i + 0) % 8];
+                     var p2 = inn[(i + 3) % 8];
+                     var p = new PointDouble((p1.X + p2.X) / 2, (p1.Y + p2.Y) / 2); // center line of p1-p2
+                     using (var br = rc.CreateGradientPaintBrush(p, palette[(i + 6) % 8], center, ((i & 1) == 1) ? Colors.Black : Colors.White)) {
                         ds.FillGeometry(geom, br);
                      }
                   } else {
-                     ds.FillGeometry(geom, ((i & 1) == 0)
-                           ? lm.Palette[(i + 6) % 8].ToColor().Brighter().ToWinColor()
-                           : lm.Palette[(i + 6) % 8].ToColor().Darker().ToWinColor());
+                     ds.FillGeometry(geom, ((i & 1) == 1)
+                           ? hsvPalette[(i + 6) % 8].ToColor().Brighter().ToWinColor()
+                           : hsvPalette[(i + 6) % 8].ToColor().Darker().ToWinColor());
                   }
                }
             }

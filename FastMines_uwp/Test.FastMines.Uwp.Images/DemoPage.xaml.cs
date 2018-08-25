@@ -32,8 +32,6 @@ using StaticCanvasBmp = fmg.core.img.ImageModel<Microsoft.Graphics.Canvas.Canvas
 using StaticCanvasImg = fmg.core.img.ImageModel<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>;
 #endif
 using Win2dLogo  = fmg.uwp.img.win2d.Logo;
-using Win2dLogoCtrlBmp = fmg.uwp.img.win2d.Logo.ControllerBitmap;
-using Win2dLogoCtrlImg = fmg.uwp.img.win2d.Logo.ControllerImgSrc;
 #if false
 using MosaicsSkillCanvasBmp = fmg.uwp.img.win2d.MosaicsSkillImg.CanvasBmp;
 using MosaicsSkillCanvasImg = fmg.uwp.img.win2d.MosaicsSkillImg.CanvasImgSrc;
@@ -100,19 +98,19 @@ namespace Test.FastMines.Uwp.Images {
          public void Invalidate() { throw new NotImplementedException(); }
       }
       private void TestWin2dLogos1(ICanvasResourceCreator resourceCreator) {
-         TestAppAnimated<CanvasBitmap, Win2dLogoCtrlBmp, Win2dLogo.CanvasBmp, LogoModel>(() =>
-            new Win2dLogoCtrlBmp[] { new Win2dLogoCtrlBmp(resourceCreator)
-                                   , new Win2dLogoCtrlBmp(resourceCreator)
-                                   , new Win2dLogoCtrlBmp(resourceCreator)
-                                   , new Win2dLogoCtrlBmp(resourceCreator)}
+         TestAppAnimated<CanvasBitmap, Win2dLogo.ControllerBitmap, Win2dLogo.CanvasBmp, LogoModel>(() =>
+            new Win2dLogo.ControllerBitmap[] { new Win2dLogo.ControllerBitmap(resourceCreator)
+                                             , new Win2dLogo.ControllerBitmap(resourceCreator)
+                                             , new Win2dLogo.ControllerBitmap(resourceCreator)
+                                             , new Win2dLogo.ControllerBitmap(resourceCreator)}
          );
       }
       private void TestWin2dLogos2(ICanvasResourceCreator resourceCreator) {
-         TestAppAnimated<CanvasImageSource, Win2dLogoCtrlImg, Win2dLogo.CanvasImgSrc, LogoModel>(() =>
-            new Win2dLogoCtrlImg[] { new Win2dLogoCtrlImg(resourceCreator)
-                                   , new Win2dLogoCtrlImg(resourceCreator)
-                                   , new Win2dLogoCtrlImg(resourceCreator)
-                                   , new Win2dLogoCtrlImg(resourceCreator)}
+         TestAppAnimated<CanvasImageSource, Win2dLogo.ControllerImgSrc, Win2dLogo.CanvasImgSrc, LogoModel>(() =>
+            new Win2dLogo.ControllerImgSrc[] { new Win2dLogo.ControllerImgSrc(resourceCreator)
+                                             , new Win2dLogo.ControllerImgSrc(resourceCreator)
+                                             , new Win2dLogo.ControllerImgSrc(resourceCreator)
+                                             , new Win2dLogo.ControllerImgSrc(resourceCreator)}
          );
       }
 #if false

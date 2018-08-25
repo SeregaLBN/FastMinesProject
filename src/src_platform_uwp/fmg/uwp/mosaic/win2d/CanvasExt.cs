@@ -35,7 +35,11 @@ namespace fmg.uwp.draw.mosaic.win2d {
       }
 
       public static CanvasLinearGradientBrush CreateGradientPaintBrush(this ICanvasResourceCreator resourceCreator, PointDouble pt1, Color color1, PointDouble pt2, Color color2) {
-         return new CanvasLinearGradientBrush(resourceCreator, color1.ToWinColor(), color2.ToWinColor()) {
+         return CreateGradientPaintBrush(resourceCreator, pt1, color1.ToWinColor(), pt2, color2.ToWinColor());
+      }
+
+      public static CanvasLinearGradientBrush CreateGradientPaintBrush(this ICanvasResourceCreator resourceCreator, PointDouble pt1, Windows.UI.Color color1, PointDouble pt2, Windows.UI.Color color2) {
+         return new CanvasLinearGradientBrush(resourceCreator, color1, color2) {
             StartPoint = pt1.ToWinPoint().ToVector2(),
             EndPoint = pt2.ToWinPoint().ToVector2()
          };
