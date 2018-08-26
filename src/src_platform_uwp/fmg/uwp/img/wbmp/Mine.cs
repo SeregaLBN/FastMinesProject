@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using fmg.core.img;
 
 namespace fmg.uwp.img.wbmp {

@@ -27,11 +27,8 @@ using fmg.uwp.img.wbmp;
 using fmg.uwp.mosaic.win2d;
 using fmg.uwp.mosaic.wbmp;
 using fmg.uwp.mosaic.xaml;
-#if false
-using StaticCanvasBmp = fmg.core.img.ImageModel<Microsoft.Graphics.Canvas.CanvasBitmap>;
-using StaticCanvasImg = fmg.core.img.ImageModel<Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource>;
-#endif
-using Win2dLogo  = fmg.uwp.img.win2d.Logo;
+using Win2dLogo = fmg.uwp.img.win2d.Logo;
+using Win2dMine = fmg.uwp.img.win2d.Mine;
 #if false
 using MosaicsSkillCanvasBmp = fmg.uwp.img.win2d.MosaicsSkillImg.CanvasBmp;
 using MosaicsSkillCanvasImg = fmg.uwp.img.win2d.MosaicsSkillImg.CanvasImgSrc;
@@ -43,8 +40,6 @@ using SmileCanvasBmp = fmg.uwp.img.win2d.Smile.CanvasBmp;
 using SmileCanvasImg = fmg.uwp.img.win2d.Smile.CanvasImgSrc;
 using FlagCanvasBmp = fmg.uwp.img.win2d.Flag.CanvasBmp;
 using FlagCanvasImg = fmg.uwp.img.win2d.Flag.CanvasImgSrc;
-using MineCanvasBmp = fmg.uwp.img.win2d.Mine.CanvasBmp;
-using MineCanvasImg = fmg.uwp.img.win2d.Mine.CanvasImgSrc;
 #endif
 using WBmpMosaicImageController = fmg.uwp.mosaic.wbmp.MosaicImageController;
 using WBmpMosaicImageView = fmg.uwp.mosaic.wbmp.MosaicImageView;
@@ -97,7 +92,7 @@ namespace Test.FastMines.Uwp.Images {
          public void Dispose()    { throw new NotImplementedException(); }
          public void Invalidate() { throw new NotImplementedException(); }
       }
-      private void TestWin2dLogos1(ICanvasResourceCreator resourceCreator) {
+      private void TestWin2dLogo1(ICanvasResourceCreator resourceCreator) {
          TestAppAnimated<CanvasBitmap, Win2dLogo.ControllerBitmap, Win2dLogo.CanvasBmp, LogoModel>(() =>
             new Win2dLogo.ControllerBitmap[] { new Win2dLogo.ControllerBitmap(resourceCreator)
                                              , new Win2dLogo.ControllerBitmap(resourceCreator)
@@ -105,12 +100,28 @@ namespace Test.FastMines.Uwp.Images {
                                              , new Win2dLogo.ControllerBitmap(resourceCreator)}
          );
       }
-      private void TestWin2dLogos2(ICanvasResourceCreator resourceCreator) {
+      private void TestWin2dLogo2(ICanvasResourceCreator resourceCreator) {
          TestAppAnimated<CanvasImageSource, Win2dLogo.ControllerImgSrc, Win2dLogo.CanvasImgSrc, LogoModel>(() =>
             new Win2dLogo.ControllerImgSrc[] { new Win2dLogo.ControllerImgSrc(resourceCreator)
                                              , new Win2dLogo.ControllerImgSrc(resourceCreator)
                                              , new Win2dLogo.ControllerImgSrc(resourceCreator)
                                              , new Win2dLogo.ControllerImgSrc(resourceCreator)}
+         );
+      }
+      private void TestWin2dMine1(ICanvasResourceCreator resourceCreator) {
+         TestAppAnimated<CanvasBitmap, Win2dMine.ControllerBitmap, Win2dLogo.CanvasBmp, LogoModel>(() =>
+            new Win2dMine.ControllerBitmap[] { new Win2dMine.ControllerBitmap(resourceCreator)
+                                             , new Win2dMine.ControllerBitmap(resourceCreator)
+                                           //, new Win2dMine.ControllerBitmap(resourceCreator)
+                                             , new Win2dMine.ControllerBitmap(resourceCreator)}
+         );
+      }
+      private void TestWin2dMine2(ICanvasResourceCreator resourceCreator) {
+         TestAppAnimated<CanvasImageSource, Win2dMine.ControllerImgSrc, Win2dLogo.CanvasImgSrc, LogoModel>(() =>
+            new Win2dMine.ControllerImgSrc[] { new Win2dMine.ControllerImgSrc(resourceCreator)
+                                             , new Win2dMine.ControllerImgSrc(resourceCreator)
+                                           //, new Win2dMine.ControllerImgSrc(resourceCreator)
+                                             , new Win2dMine.ControllerImgSrc(resourceCreator)}
          );
       }
 #if false
@@ -172,8 +183,6 @@ namespace Test.FastMines.Uwp.Images {
       }
       public void TestFlag1 (ICanvasResourceCreator resourceCreator) { TestAppCanvasBmp(() => new FlagCanvasBmp [] { new FlagCanvasBmp(resourceCreator) }); }
       public void TestFlag2 (ICanvasResourceCreator resourceCreator) { TestAppCanvasImg(() => new FlagCanvasImg [] { new FlagCanvasImg(resourceCreator) }); }
-      public void TestMine1 (ICanvasResourceCreator resourceCreator) { TestAppCanvasBmp(() => new MineCanvasBmp [] { new MineCanvasBmp(resourceCreator) }); }
-      public void TestMine2 (ICanvasResourceCreator resourceCreator) { TestAppCanvasImg(() => new MineCanvasImg [] { new MineCanvasImg(resourceCreator) }); }
       public void TestSmile1(ICanvasResourceCreator resourceCreator) {
          var vals = (Smile.EType[])Enum.GetValues(typeof(Smile.EType));
          TestAppCanvasBmp(() =>
@@ -228,7 +237,7 @@ namespace Test.FastMines.Uwp.Images {
                EMosaicEx.GetValues().Select(e => new WBmpMosaicImg.Controller() { MosaicType = e })
          );
       }
-      private void TestWBmpLogos() {
+      private void TestWBmpLogo() {
          TestAppAnimated<WriteableBitmap, WBmpLogo.Controller, WBmpLogo, LogoModel>(() =>
             new WBmpLogo.Controller[] {
                new WBmpLogo.Controller(),
@@ -275,8 +284,10 @@ namespace Test.FastMines.Uwp.Images {
 
          var device = CanvasDevice.GetSharedDevice();
          _onCreateImages = new Action[] {
-            () => TestWin2dLogos1          (device),
-            () => TestWin2dLogos2          (device),
+            () => TestWin2dLogo1          (device),
+            () => TestWin2dLogo2          (device),
+            () => TestWin2dMine1           (device),
+            () => TestWin2dMine2           (device),
 #if false
             () => TestMosaicsSkillImg1(device),
             () => TestMosaicsSkillImg2(device),
@@ -286,14 +297,12 @@ namespace Test.FastMines.Uwp.Images {
             () => TestMosaicsImg2     (device),
             () => TestFlag1           (device),
             () => TestFlag2           (device),
-            () => TestMine1           (device),
-            () => TestMine2           (device),
             () => TestSmile1          (device),
             () => TestSmile2          (device)
 #endif
             TestXamlMosaicControl,
             TestWBmpMosaicControl,
-            TestWBmpLogos,
+            TestWBmpLogo,
             TestWBmpMine,
             TestWBmpMosaicSkillImg,
             TestWBmpMosaicGroupImg,
