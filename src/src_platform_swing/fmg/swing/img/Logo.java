@@ -40,9 +40,9 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
       List<PointDouble> inn0  = lm.getInn();
       List<PointDouble> oct0  = lm.getOct();
 
-      Point2D.Double [] rays = rays0.stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
-      Point2D.Double [] inn  = inn0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
-      Point2D.Double [] oct  = oct0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
+      Point2D.Double[] rays = rays0.stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
+      Point2D.Double[] inn  = inn0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
+      Point2D.Double[] oct  = oct0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new Point2D.Double[size]);
       Point2D.Double center = new Point2D.Double(getSize().width/2.0, getSize().height/2.0);
 
       HSV[] hsvPalette = lm.getPalette();

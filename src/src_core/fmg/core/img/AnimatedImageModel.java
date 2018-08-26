@@ -79,8 +79,7 @@ public class AnimatedImageModel implements IAnimatedModel {
                              padding.bottom * current.height / old.height);
    }
    private void recalcPadding(SizeDouble old) {
-      BoundDouble paddingNew = recalcPadding(_padding, _size, old);
-      _notifier.setProperty(_padding, paddingNew, PROPERTY_PADDING);
+      setPadding(recalcPadding(_padding, _size, old));
    }
 
    public Color getForegroundColor() { return _foregroundColor; }

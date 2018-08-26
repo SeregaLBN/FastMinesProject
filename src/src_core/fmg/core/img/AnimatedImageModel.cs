@@ -57,7 +57,7 @@ namespace fmg.core.img {
       public void SetSize(double widhtAndHeight) { Size = new SizeDouble(widhtAndHeight, widhtAndHeight); }
 
       /// <summary> inside padding </summary>
-      public BoundDouble Padding {
+      public virtual BoundDouble Padding {
          get { return _padding; }
          set {
             if (value.LeftAndRight >= Size.Width)
@@ -76,8 +76,7 @@ namespace fmg.core.img {
                                 padding.Bottom * current.Height / old.Height);
       }
       private void RecalcPadding(SizeDouble old) {
-         BoundDouble paddingNew = RecalcPadding(_padding, _size, old);
-         _notifier.SetProperty(ref _padding, paddingNew, nameof(this.Padding));
+         Padding = RecalcPadding(_padding, _size, old);
       }
 
       public Color ForegroundColor {

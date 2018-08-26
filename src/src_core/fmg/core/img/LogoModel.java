@@ -6,7 +6,9 @@ import java.util.List;
 
 import fmg.common.Color;
 import fmg.common.HSV;
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.PointDouble;
+import fmg.common.geom.SizeDouble;
 
 /** MVC: model for FastMines logo image */
 public class LogoModel extends AnimatedImageModel {
@@ -44,6 +46,27 @@ public class LogoModel extends AnimatedImageModel {
       _notifier.addListener(_selfListener);
    }
 
+   @Override
+   public BoundDouble getPadding() {
+      BoundDouble from = super.getPadding();
+      BoundDouble pad = new BoundDouble(from.left, from.top, from.right, from.bottom);
+      SizeDouble s = getSize();
+      double innerX = s.width  - pad.getLeftAndRight();
+      double innerY = s.height - pad.getTopAndBottom();
+      if (innerX == innerY) {
+         // none
+      } else {
+         double add = (innerX - innerY) / 2;
+         if (innerX > innerY) {
+            pad.left   += add;
+            pad.right  += add;
+         } else {
+            pad.top    -= add;
+            pad.bottom -= add;
+         }
+      }
+      return pad;
+   }
 
    public HSV[] getPalette() {
       return _palette;
@@ -71,8 +94,9 @@ public class LogoModel extends AnimatedImageModel {
 
    public List<PointDouble> getRays() {
       if (_rays.isEmpty()) {
-         double pl = getPadding().left;
-         double pt = getPadding().top;
+         BoundDouble pad = getPadding();
+         double pl = pad.left;
+         double pt = pad.top;
          double zx = getZoomX();
          double zy = getZoomY();
 
@@ -90,8 +114,9 @@ public class LogoModel extends AnimatedImageModel {
 
    public List<PointDouble> getInn() {
       if (_inn.isEmpty()) {
-         double pl = getPadding().left;
-         double pt = getPadding().top;
+         BoundDouble pad = getPadding();
+         double pl = pad.left;
+         double pt = pad.top;
          double zx = getZoomX();
          double zy = getZoomY();
 
@@ -109,8 +134,9 @@ public class LogoModel extends AnimatedImageModel {
 
    public List<PointDouble> getOct() {
       if (_oct.isEmpty()) {
-         double pl = getPadding().left;
-         double pt = getPadding().top;
+         BoundDouble pad = getPadding();
+         double pl = pad.left;
+         double pt = pad.top;
          double zx = getZoomX();
          double zy = getZoomY();
 

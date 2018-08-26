@@ -37,6 +37,28 @@ namespace fmg.core.img {
          PropertyChanged += OnPropertyChanged;
       }
 
+      public override BoundDouble Padding {
+         get {
+            var pad = base.Padding;
+            var s = Size;
+            double innerX = s.Width  - pad.LeftAndRight;
+            double innerY = s.Height - pad.TopAndBottom;
+            if (innerX == innerY) {
+               // none
+            } else {
+               double add = (innerX - innerY) / 2;
+               if (innerX > innerY) {
+                  pad.Left  += add;
+                  pad.Right += add;
+               } else {
+                  pad.Top    -= add;
+                  pad.Bottom -= add;
+               }
+            }
+            return pad;
+         }
+      }
+
       public HSV[] Palette => _palette;
 
       public static void ToMineModel(LogoModel m) {
