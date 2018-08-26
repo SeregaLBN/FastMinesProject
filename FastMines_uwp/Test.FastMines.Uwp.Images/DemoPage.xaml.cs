@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
@@ -313,6 +314,7 @@ namespace Test.FastMines.Uwp.Images {
          InitializeComponent();
 
          _page.Content = _panel = new Canvas();
+         _panel.Background = new SolidColorBrush(Colors.Transparent); // lifehack: otherwise the click does not handled on the empty place
 
          SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
          SystemNavigationManager.GetForCurrentView().BackRequested += (s, ev) => { OnNextImages(); ev.Handled = true; };
