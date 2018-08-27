@@ -43,7 +43,7 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
 
    public View getControl() {
       if (_control == null) {
-         _control = new View(_owner.getApplicationContext()) {
+         _control = new View(_owner/*.getApplicationContext()*/) {
 
             @Override
             protected void onDraw(Canvas canvas) {

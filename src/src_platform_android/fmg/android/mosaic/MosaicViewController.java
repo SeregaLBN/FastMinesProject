@@ -5,29 +5,53 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.view.DragEvent;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.util.concurrent.ThreadLocalRandom;
-
+import fmg.common.LoggerSimple;
 import fmg.common.geom.PointDouble;
 import fmg.core.mosaic.MosaicController;
 import fmg.core.mosaic.MosaicDrawModel;
-import fmg.core.mosaic.MosaicView;
-import fmg.core.types.EMosaic;
-import fmg.core.types.ESkillLevel;
+import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.types.ClickResult;
 
 /** MVC: controller. Android implementation */
 public class MosaicViewController extends MosaicController<View, Bitmap, MosaicViewView, MosaicDrawModel<Bitmap>> {
 
    private final Activity _owner;
-   private long _lastDown;
-   private long _lastDuration;
+   private final ClickInfo _clickInfo = new ClickInfo();
+   private final GestureDetector _gd;
+   private final GestureDetector.SimpleOnGestureListener _gestureListener = new GestureDetector.SimpleOnGestureListener(){
+
+      @Override
+      public boolean onDoubleTap(MotionEvent ev) {
+         return MosaicViewController.this.onGestureDoubleTap(ev);
+      }
+
+      @Override
+      public void onLongPress(MotionEvent ev) {
+         super.onLongPress(ev);
+         MosaicViewController.this.onGestureLongPress(ev);
+      }
+
+      @Override
+      public boolean onDoubleTapEvent(MotionEvent ev) {
+         return MosaicViewController.this.onGestureDoubleTapEvent(ev);
+      }
+
+      @Override
+      public boolean onDown(MotionEvent ev) {
+         return MosaicViewController.this.onGestureDown(ev);
+      }
+
+   };
 
 
    public MosaicViewController(Activity owner) {
       super(new MosaicViewView(owner));
       _owner = owner;
+      _gd = new GestureDetector(owner/*.getApplicationContext()*/, _gestureListener);
       subscribeToViewControl();
    }
 
@@ -49,45 +73,119 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
       return "???";
    }
 
+   boolean clickHandler(ClickResult clickResult) {
+      if (clickResult == null)
+         return false;
+      _clickInfo.cellDown = clickResult.getCellDown();
+      _clickInfo.isLeft = clickResult.isLeft();
+      boolean handled = clickResult.isAnyChanges();
+      if (clickResult.isDown())
+         _clickInfo.downHandled = handled;
+      else
+         _clickInfo.upHandled = handled;
+      _clickInfo.released = !clickResult.isDown();
+      return handled;
+   }
+
+   boolean onClickLost() {
+      return clickHandler(this.mouseFocusLost());
+   }
+
+   boolean onClickCommon(MotionEvent ev, boolean leftClick, boolean down) {
+      PointDouble point = toImagePoint(ev);
+      return clickHandler(down
+              ? mousePressed(point, leftClick)
+              : mouseReleased(point, leftClick));
+   }
+
+
    protected boolean onGenericMotion(MotionEvent ev) {
-      System.out.println("> Mosaic.onGenericMotion: action=" + eventActionToString(ev.getAction()));
-      return !true;
+      boolean[] handled = { false };
+      try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onGenericMotion", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+      {
+         return handled[0];
+      }
    }
    protected boolean onTouch(MotionEvent ev) {
-      System.out.println("> Mosaic.onTouch: action=" + eventActionToString(ev.getAction()));
-      switch (ev.getAction()) {
-      case MotionEvent.ACTION_DOWN:
-         _lastDown = System.currentTimeMillis();
-         mousePressed(new PointDouble(ev.getX(), ev.getY()), true);
-         break;
-      case MotionEvent.ACTION_UP:
-         _lastDuration = System.currentTimeMillis() - _lastDown;
-         mouseReleased(new PointDouble(ev.getX(), ev.getY()), true);
-         break;
+      boolean[] handled = { false };
+      try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onTouch", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+      {
+         _gd.onTouchEvent(ev);
+         switch (ev.getAction()) {
+         case MotionEvent.ACTION_DOWN:
+            handled[0] = onClickCommon(ev, true, true);
+            break;
+         case MotionEvent.ACTION_UP:
+            handled[0] = onClickCommon(ev, true, false);
+            break;
+         }
+         return handled[0];
       }
-      return !true;
+   }
+   protected boolean onGestureDoubleTap(MotionEvent ev) {
+      boolean[] handled = { !false };
+      try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onGestureDoubleTap", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+      {
+         return handled[0];
+      }
+   }
+   protected boolean onGestureDoubleTapEvent(MotionEvent ev) {
+      boolean[] handled = { !false };
+      try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onGestureDoubleTapEvent", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+      {
+         return handled[0];
+      }
+   }
+   protected boolean onGestureDown(MotionEvent ev) {
+      boolean[] handled = { false };
+      try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onGestureDown", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+      {
+         return handled[0];
+      }
    }
    protected void onClick() {
-      System.out.println("> Mosaic.onClick");
+      try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onClick"))
+      {
+      }
+   }
+   protected void onGestureLongPress(MotionEvent ev) {
+      try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onGestureLongPress", "action=" + eventActionToString(ev.getAction())))
+      {
+         return;
+      }
    }
    protected boolean onLongClick() {
-      System.out.println("> Mosaic.onLongClick");
-      return !true;
+      boolean[] handled = { false };
+      try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onLongClick", () -> "handled="+handled[0]))
+      {
+         return handled[0];
+      }
    }
    protected boolean onDrag(DragEvent ev) {
-      System.out.println("> Mosaic.onDrag: action=" + eventActionToString(ev.getAction()));
-      return !true;
+      boolean[] handled = { false };
+      try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onDrag", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+      {
+         return handled[0];
+      }
    }
    protected boolean onHover(MotionEvent ev) {
-      System.out.println("> Mosaic.onHover: action=" + eventActionToString(ev.getAction()));
-      return !true;
+      boolean[] handled = { false };
+      try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onHover", "action=" + eventActionToString(ev.getAction()), () -> "handled="+handled[0]))
+      {
+         return handled[0];
+      }
    }
    protected boolean onContextClick() {
-      System.out.println("> Mosaic.onContextClick");
-      return !true;
+      boolean[] handled = { false };
+      try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onContextClick", () -> "handled="+handled[0]))
+      {
+         return handled[0];
+      }
    }
    protected void onScrollChange(int var1, int var2, int var3, int var4) {
-      System.out.println("> Mosaic.onScrollChange");
+      try (LoggerSimple.Tracer tracer = new LoggerSimple.Tracer("Mosaic.onScrollChange"))
+      {
+      }
    }
 
    /*
@@ -134,7 +232,7 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
          }
       };
 
-      AlertDialog.Builder builder = new AlertDialog.Builder(_owner.getApplicationContext());
+      AlertDialog.Builder builder = new AlertDialog.Builder(_owner/*.getApplicationContext()*/);
       builder.setMessage("Restore last game?") // Question
              .setPositiveButton("Yes", dialogClickListener)
              .setNegativeButton("No", dialogClickListener)
@@ -177,6 +275,25 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
       unsubscribeToViewControl();
       getView().close();
       super.close();
+   }
+
+
+   private PointDouble toImagePoint(MotionEvent ev) {
+//      View imgControl = this.getViewPanel();
+      PointDouble point = new PointDouble(ev.getX(), ev.getY()); // imgControl.TransformToVisual(imgControl).TransformPoint(pagePoint).ToFmPointDouble();
+      //var o = GetOffset();
+      //var point2 = new PointDouble(pagePoint.X - o.Left, pagePoint.Y - o.Top);
+      //System.Diagnostics.Debug.Assert(point == point2);
+      return point;
+   }
+
+   class ClickInfo {
+      public BaseCell cellDown;
+      public boolean isLeft;
+      /** pressed or released */
+      public boolean released;
+      public boolean downHandled;
+      public boolean upHandled;
    }
 
 }
