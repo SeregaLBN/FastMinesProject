@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Collections.Generic;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.Graphics.Display;
 using Microsoft.Graphics.Canvas;
@@ -11,7 +12,6 @@ using fmg.core.img;
 using fmg.uwp.utils;
 using fmg.uwp.utils.win2d;
 using fmg.uwp.draw.mosaic.win2d;
-using Windows.UI;
 
 namespace fmg.uwp.img.win2d {
 
@@ -20,23 +20,23 @@ namespace fmg.uwp.img.win2d {
 
       /// <summary> Main logo image. Base view Win2D implementation </summary>
       /// <typeparam name="TImage">Win2D specific image: <see cref="CanvasBitmap"/> or <see cref="CanvasImageSource"/></typeparam>
-      public abstract class CommonImpl<TImage> : ImageView<TImage, LogoModel>
+      public abstract class LogoImageView<TImage> : ImageView<TImage, LogoModel>
          where TImage : DependencyObject, ICanvasResourceCreator
       {
 
          protected readonly ICanvasResourceCreator _rc;
 
-         protected CommonImpl(ICanvasResourceCreator resourceCreator)
+         protected LogoImageView(ICanvasResourceCreator resourceCreator)
             : base(new LogoModel())
          {
             _rc = resourceCreator;
          }
 
-         static CommonImpl() {
+         static LogoImageView() {
             StaticInitializer.Init();
          }
 
-         protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
+         protected void Draw(CanvasDrawingSession ds, bool fillBk) {
             ICanvasResourceCreator rc = Image;
             LogoModel lm = Model;
 
@@ -142,7 +142,7 @@ namespace fmg.uwp.img.win2d {
       /////////////////////////////////////////////////////////////////////////////////////////////////////
 
       /// <summary> Logo image view implementation over <see cref="CanvasBitmap"/> </summary>
-      public class CanvasBmp : CommonImpl<CanvasBitmap> {
+      public class CanvasBmp : LogoImageView<CanvasBitmap> {
 
          public CanvasBmp(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
             : base(resourceCreator)
@@ -156,14 +156,14 @@ namespace fmg.uwp.img.win2d {
 
          protected override void DrawBody() {
             using (var ds = ((CanvasRenderTarget)Image).CreateDrawingSession()) {
-               DrawBody(ds, true);
+               Draw(ds, true);
             }
          }
 
       }
 
       /// <summary> Logo image view implementation over <see cref="CanvasImageSource"/> (XAML <see cref="Windows.UI.Xaml.Media.ImageSource"/> compatible) </summary>
-      public class CanvasImgSrc : CommonImpl<CanvasImageSource> {
+      public class CanvasImgSrc : LogoImageView<CanvasImageSource> {
 
          public CanvasImgSrc(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
             : base(resourceCreator)
@@ -177,7 +177,7 @@ namespace fmg.uwp.img.win2d {
 
          protected override void DrawBody() {
             using (var ds = Image.CreateDrawingSession(Model.BackgroundColor.ToWinColor())) {
-               DrawBody(ds, false);
+               Draw(ds, false);
             }
          }
 

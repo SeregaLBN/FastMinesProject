@@ -19,6 +19,9 @@ import fmg.jfx.utils.Cast;
 import fmg.jfx.utils.ShapeConverter;
 import fmg.jfx.utils.StaticInitializer;
 
+/** Smile images. Base view JFX implementation
+ * @param <TImage> JFX specific image: {@link javafx.scene.image.Image} or {@link javafx.scene.canvas.Canvas}
+ **/
 public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
    protected Smile(EFaceType faceType) {
@@ -34,6 +37,9 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
       Paint oldFill = g.getFill();
       Paint oldStroke = g.getStroke();
 
+      SizeDouble size = getSize();
+      g.clearRect(0,0, size.width, size.height);
+
       drawBody(g);
       drawEyes(g);
       drawMouth(g);
@@ -44,16 +50,14 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
    }
 
    private void drawBody(GraphicsContext g) {
-      SizeDouble size = getSize();
-      g.clearRect(0,0, size.width, size.height);
-
       SmileModel sm = this.getModel();
       SmileModel.EFaceType type = sm.getFaceType();
-      double width  = size.width;
-      double height = size.height;
-
       if (type == EFaceType.Eyes_OpenDisabled || type == EFaceType.Eyes_ClosedDisabled)
          return;
+
+      SizeDouble size = getSize();
+      double width  = size.width;
+      double height = size.height;
 
       Color yellowBody   = Color.rgb(0xFF, 0xCC, 0x00);
       Color yellowGlint  = Color.rgb(0xFF, 0xFF, 0x33);

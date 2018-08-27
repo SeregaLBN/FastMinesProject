@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.Graphics.Display;
 using Microsoft.Graphics.Canvas;
@@ -8,106 +9,40 @@ using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Geometry;
 using fmg.common;
 using fmg.common.geom;
+using fmg.core.img;
 using fmg.uwp.utils;
-using fmg.uwp.mosaic.win2d;
+using fmg.uwp.draw.mosaic.win2d;
+using static fmg.core.img.SmileModel;
+using Color = fmg.common.Color;
 
 namespace fmg.uwp.img.win2d {
-#if false
 
-   /// <summary> Smile image </summary>
+   /// <summary> Smile images </summary>
    public static class Smile {
 
-      /// <summary> http://unicode-table.com/blocks/emoticons/
-      ///           http://unicode-table.com/blocks/miscellaneous-symbols-and-pictographs/
-      /// </summary>
-      public enum EType {
-         /// <summary> :) ☺ -  White Smiling Face (Незакрашенное улыбающееся лицо) U+263A </summary>
-         Face_WhiteSmiling,
-
-         /// <summary> :( 😞 - Disappointed Face (Разочарованное лицо) U+1F61E </summary>
-         Face_Disappointed,
-
-         /// <summary> 😀 - Grinning Face (Ухмыляющееся лицо) U+1F600 </summary>
-         Face_Grinning,
-
-         /// <summary> 😎 - Smiling Face with Sunglasses (Улыбающееся лицо в солнечных очках) U+1F60E </summary>
-         Face_SmilingWithSunglasses,
-
-         /// <summary> 😋 - Face Savouring Delicious Food (Лицо, смакующее деликатес) U+1F60B </summary>
-         Face_SavouringDeliciousFood,
-
-
-         /// <summary> like as Professor: 🎓 - Graduation Cap (Выпускная шапочка) U+1F393 </summary>
-         Face_Assistant,
-
-         /// <summary> 👀 - Eyes (Глаза) U+1F440 </summary>
-         Eyes_OpenDisabled,
-
-         Eyes_ClosedDisabled,
-
-         Face_EyesOpen,
-
-         Face_WinkingEyeLeft,
-         Face_WinkingEyeRight,
-
-         Face_EyesClosed
-      }
-
-      /// <summary> Smile image: common Win2D implementation part </summary>
-      public abstract class ASmileImageWin2D<TImage> : Disposable
+      /// <summary> Smile images. Base view Win2D implementation </summary>
+      public abstract class SmileImageView<TImage> : ImageView<TImage, SmileModel>
          where TImage : DependencyObject, ICanvasResourceCreator
       {
 
          protected readonly ICanvasResourceCreator _rc;
-         private TImage _img;
-         private EType _type;
-         private int _width = 100;
-         private int _height = 100;
 
-         protected ASmileImageWin2D(EType type, ICanvasResourceCreator resourceCreator) {
-            _type = type;
+         protected SmileImageView(EFaceType faceType, ICanvasResourceCreator resourceCreator)
+            : base(new SmileModel(faceType))
+         {
             _rc = resourceCreator;
          }
 
-         public TImage Image {
-            get {
-               if (_img == null) {
-                  _img = CreateImage();
-                  Draw();
-               }
-               return _img;
-            }
+         static SmileImageView() {
+            StaticInitializer.Init();
          }
-
-         protected void ResetImage() {
-            (_img as IDisposable)?.Dispose();
-            _img = null;
-         }
-
-         public int Width {
-            get { return _width; }
-            set { _width = value; ResetImage(); }
-         }
-         public int Height {
-            get { return _height; }
-            set { _height = value; ResetImage(); }
-         }
-         public EType Type {
-            get { return _type; }
-            set { _type = value; ResetImage(); }
-         }
-
-         protected abstract TImage CreateImage();
-
-         protected abstract void Draw();
 
          protected void Draw(CanvasDrawingSession ds, bool fillBk) {
-            ds.DrawRectangle(0, 0, Width, Height, Windows.UI.Colors.Red, 1); // test
-
             // fill background (only transparent color)
-            if (fillBk) {
-               //ds.FillRectangle(5, 5, Width - 10, Height - 10, Color.Transparent.ToWinColor());
-            }
+            if (fillBk)
+               ds.Clear(Colors.Transparent);
+
+            //ds.DrawRectangle(0, 0, (float)Model.Size.Width, (float)Model.Size.Height, Windows.UI.Colors.Red, 1); // test
 
             DrawBody(ds);
             DrawEyes(ds);
@@ -115,27 +50,33 @@ namespace fmg.uwp.img.win2d {
          }
 
          protected void DrawBody(CanvasDrawingSession ds) {
-            if (_type == EType.Eyes_OpenDisabled || _type == EType.Eyes_ClosedDisabled)
+            var sm = Model;
+            var type = sm.FaceType;
+            if (type == EFaceType.Eyes_OpenDisabled || type == EFaceType.Eyes_ClosedDisabled)
                return;
+
+            var size = Size;
+            double width = size.Width;
+            double height = size.Height;
 
             Color yellowBody   = new Color(0xFF, 0xCC, 0x00);
             Color yellowGlint  = new Color(0xFF, 0xFF, 0x33);
             Color yellowBorder = new Color(0xFF, 0x6C, 0x0A);
 
             { // рисую затемненный круг
-               ds.FillEllipseInRect(0, 0, _width, _height, yellowBorder);
+               ds.FillEllipseInRect(0, 0, width, height, yellowBorder);
             }
-            var padX = 0.033 * _width;
-            var padY = 0.033 * _height;
-            var wInt = _width - 2 * padX;
-            var hInt = _height - 2 * padY;
-            var wExt = 1.133 * _width;
-            var hExt = 1.133 * _height;
+            var padX = 0.033 * width;
+            var padY = 0.033 * height;
+            var wInt = width - 2 * padX;
+            var hInt = height - 2 * padY;
+            var wExt = 1.133 * width;
+            var hExt = 1.133 * height;
             using (var ellipseInternal = _rc.CreateEllipseInRect(padX, padY, wInt, hInt)) {
                { // поверх него, внутри - градиентный круг
                   using (var brush = new CanvasLinearGradientBrush(_rc, yellowBody.ToWinColor(), yellowBorder.ToWinColor()) {
                      StartPoint = new Vector2(0, 0),
-                     EndPoint = new Vector2(_width, _height),
+                     EndPoint = new Vector2((float)width, (float)height),
                   }) {
                      //ds.FillOval(padX, padY, wInt, hInt, brush); // не совпадает с аналогичным _rc.CreateEllipse...
                      ds.FillGeometry(ellipseInternal, brush);
@@ -167,43 +108,49 @@ namespace fmg.uwp.img.win2d {
          }
 
          protected void DrawEyes(CanvasDrawingSession ds) {
+            var sm = Model;
+            var type = sm.FaceType;
+            var size = Size;
+            double width = size.Width;
+            double height = size.Height;
+
             using (var css = new CanvasStrokeStyle {
                StartCap = CanvasCapStyle.Round,
                EndCap = CanvasCapStyle.Round
             }) {
-               switch (_type) {
-               case EType.Face_Assistant:
-               case EType.Face_SmilingWithSunglasses: {
+               switch (type) {
+               case EFaceType.Face_Assistant:
+               case EFaceType.Face_SmilingWithSunglasses: {
                      // glasses
-                     var strokeWidth = Math.Max(1, 0.03 * ((_width + _height) / 2.0));
+                     var strokeWidth = Math.Max(1, 0.03 * ((width + height) / 2.0));
                      var clr = Color.Black;
-                     ds.DrawEllipseInRect(0.200 * _width, 0.100 * _height, 0.290 * _width, 0.440 * _height, clr, strokeWidth, css);
-                     ds.DrawEllipseInRect(0.510 * _width, 0.100 * _height, 0.290 * _width, 0.440 * _height, clr, strokeWidth, css);
+                     ds.DrawEllipseInRect(0.200 * width, 0.100 * height, 0.290 * width, 0.440 * height, clr, strokeWidth, css);
+                     ds.DrawEllipseInRect(0.510 * width, 0.100 * height, 0.290 * width, 0.440 * height, clr, strokeWidth, css);
                      // дужки
-                     ds.DrawLine(     0.746  * _width, 0.148 * _height,      0.885  * _width, 0.055 * _height, clr, strokeWidth, css);
-                     ds.DrawLine((1 - 0.746) * _width, 0.148 * _height, (1 - 0.885) * _width, 0.055 * _height, clr, strokeWidth, css);
-                     ds.DrawArc(_rc,      0.864          * _width, 0.047 * _height, 0.100 * _width, 0.100 * _height,  0, 125, false, false, clr, strokeWidth, css);
-                     ds.DrawArc(_rc, (1 - 0.864 - 0.100) * _width, 0.047 * _height, 0.100 * _width, 0.100 * _height, 55, 125, false, false, clr, strokeWidth, css);
+                     ds.DrawLine(     0.746  * width, 0.148 * height,      0.885  * width, 0.055 * height, clr, strokeWidth, css);
+                     ds.DrawLine((1 - 0.746) * width, 0.148 * height, (1 - 0.885) * width, 0.055 * height, clr, strokeWidth, css);
+                     ds.DrawArc(_rc,      0.864          * width, 0.047 * height, 0.100 * width, 0.100 * height,  0, 125, false, false, clr, strokeWidth, css);
+                     ds.DrawArc(_rc, (1 - 0.864 - 0.100) * width, 0.047 * height, 0.100 * width, 0.100 * height, 55, 125, false, false, clr, strokeWidth, css);
                   }
                   //break; // ! no break
-                  goto case EType.Face_SavouringDeliciousFood;
-               case EType.Face_SavouringDeliciousFood:
-               case EType.Face_WhiteSmiling:
-               case EType.Face_Grinning: {
+                  goto case EFaceType.Face_SavouringDeliciousFood;
+               case EFaceType.Face_SavouringDeliciousFood:
+               case EFaceType.Face_WhiteSmiling:
+               case EFaceType.Face_Grinning: {
                      var clr = Color.Black;
-                     ds.FillEllipseInRect(0.270 * _width, 0.170 * _height, 0.150 * _width, 0.300 * _height, clr);
-                     ds.FillEllipseInRect(0.580 * _width, 0.170 * _height, 0.150 * _width, 0.300 * _height, clr);
+                     ds.FillEllipseInRect(0.270 * width, 0.170 * height, 0.150 * width, 0.300 * height, clr);
+                     ds.FillEllipseInRect(0.580 * width, 0.170 * height, 0.150 * width, 0.300 * height, clr);
                   }
                   break;
-               case EType.Face_Disappointed: {
-                     var strokeWidth = Math.Max(1, 0.02 * ((_width + _height) / 2.0));
+               case EFaceType.Face_Disappointed: {
+                     var strokeWidth = Math.Max(1, 0.02 * ((width + height) / 2.0));
 
-                     using (var rcHalfLeft = _rc.CreateRectangle(0, 0, _width / 2.0, _height)) {
-                     using (var rcHalfRght = _rc.CreateRectangle(_width / 2.0, 0, _width, _height)) {
+                     using (var rcHalfLeft = _rc.CreateRectangle(0, 0, width / 2.0, height)) {
+                     using (var rcHalfRght = _rc.CreateRectangle(width / 2.0, 0, width, height)) {
 
                      // глаз/eye
-                     using (var ellipseLeft1 = _rc.CreateEllipseInRect(0.417 * _width, 0.050 * _height, 0.384 * _width, 0.400 * _height)) {
-                     using (var ellipseRght1 = _rc.CreateEllipseInRect(0.205 * _width, 0.050 * _height, 0.384 * _width, 0.400 * _height)) {
+                     using (var ellipseLeft1 = _rc.CreateEllipseInRect(0.417 * width, 0.050 * height, 0.384 * width, 0.400 * height)) {
+                     using (var ellipseRght1 = _rc.CreateEllipseInRect(0.205 * width, 0.050 * height, 0.384 * width, 0.400 * height)) {
                      using (var areaLeft1 = ellipseLeft1.IntersectExclude(rcHalfLeft)) {
                      using (var areaRght1 = ellipseRght1.IntersectExclude(rcHalfRght)) {
                         ds.FillGeometry(areaLeft1, Color.Red);
@@ -212,8 +159,8 @@ namespace fmg.uwp.img.win2d {
                         ds.DrawGeometry(areaRght1, Color.Black, strokeWidth, css);
 
                         // зрачок/pupil
-                        using (var ellipseLeft2 = _rc.CreateEllipseInRect(0.550 * _width, 0.200 * _height, 0.172 * _width, 0.180 * _height)) {
-                        using (var ellipseRght2 = _rc.CreateEllipseInRect(0.282 * _width, 0.200 * _height, 0.172 * _width, 0.180 * _height)) {
+                        using (var ellipseLeft2 = _rc.CreateEllipseInRect(0.550 * width, 0.200 * height, 0.172 * width, 0.180 * height)) {
+                        using (var ellipseRght2 = _rc.CreateEllipseInRect(0.282 * width, 0.200 * height, 0.172 * width, 0.180 * height)) {
                         using (var areaLeft2 = ellipseLeft2.IntersectExclude(rcHalfLeft)) {
                         using (var areaRght2 = ellipseRght2.IntersectExclude(rcHalfRght)) {
                            ds.FillGeometry(areaLeft2, Color.Blue);
@@ -223,10 +170,10 @@ namespace fmg.uwp.img.win2d {
                         }}}}
 
                         // веко/eyelid
-                        using (var ellipseLeft3 = _rc.CreateEllipseInRect(0.441 * _width, -0.236 * _height, 0.436 * _width, 0.560 * _height)) {
-                        using (var ellipseRght3 = _rc.CreateEllipseInRect(0.128 * _width, -0.236 * _height, 0.436 * _width, 0.560 * _height)) {
-                        using (var rotatedLeft3 = ellipseLeft3.Rotate(new PointDouble(0.441 * _width, -0.236 * _height), 30)) {
-                        using (var rotatedRght3 = ellipseRght3.Rotate(new PointDouble(0.564 * _width, -0.236 * _height), -30)) {
+                        using (var ellipseLeft3 = _rc.CreateEllipseInRect(0.441 * width, -0.236 * height, 0.436 * width, 0.560 * height)) {
+                        using (var ellipseRght3 = _rc.CreateEllipseInRect(0.128 * width, -0.236 * height, 0.436 * width, 0.560 * height)) {
+                        using (var rotatedLeft3 = ellipseLeft3.Rotate(new PointDouble(0.441 * width, -0.236 * height), 30)) {
+                        using (var rotatedRght3 = ellipseRght3.Rotate(new PointDouble(0.564 * width, -0.236 * height), -30)) {
                         using (var areaLeft3 = rotatedLeft3.IntersectExclude(rcHalfLeft)) {
                         using (var areaRght3 = rotatedRght3.IntersectExclude(rcHalfRght)) {
                         using (var areaLeft31 = areaLeft1.Intersect(areaLeft3)) {
@@ -239,33 +186,33 @@ namespace fmg.uwp.img.win2d {
                      }}}}}}
 
                      // nose
-                     using (var nose = _rc.CreateEllipseInRect(0.415 * _width, 0.400 * _height, 0.170 * _width, 0.170 * _height)) {
+                     using (var nose = _rc.CreateEllipseInRect(0.415 * width, 0.400 * height, 0.170 * width, 0.170 * height)) {
                         ds.FillGeometry(nose, Color.Green);
                         ds.DrawGeometry(nose, Color.Black, strokeWidth, css);
                      }
                   }
                   break;
-               case EType.Eyes_OpenDisabled:
+               case EFaceType.Eyes_OpenDisabled:
                   EyeOpened(ds, true, true);
                   EyeOpened(ds, false, true);
                   break;
-               case EType.Eyes_ClosedDisabled:
+               case EFaceType.Eyes_ClosedDisabled:
                   EyeClosed(ds, true, true);
                   EyeClosed(ds, false, true);
                   break;
-               case EType.Face_EyesOpen:
+               case EFaceType.Face_EyesOpen:
                   EyeOpened(ds, true, false);
                   EyeOpened(ds, false, false);
                   break;
-               case EType.Face_WinkingEyeLeft:
+               case EFaceType.Face_WinkingEyeLeft:
                   EyeClosed(ds, true, false);
                   EyeOpened(ds, false, false);
                   break;
-               case EType.Face_WinkingEyeRight:
+               case EFaceType.Face_WinkingEyeRight:
                   EyeOpened(ds, true, false);
                   EyeClosed(ds, false, false);
                   break;
-               case EType.Face_EyesClosed:
+               case EFaceType.Face_EyesClosed:
                   EyeClosed(ds, true, false);
                   EyeClosed(ds, false, false);
                   break;
@@ -276,76 +223,82 @@ namespace fmg.uwp.img.win2d {
          }
 
          protected void DrawMouth(CanvasDrawingSession ds) {
-            switch (_type) {
-            case EType.Face_Assistant:
-            case EType.Eyes_OpenDisabled:
-            case EType.Eyes_ClosedDisabled:
-            case EType.Face_EyesOpen:
-            case EType.Face_WinkingEyeLeft:
-            case EType.Face_WinkingEyeRight:
-            case EType.Face_EyesClosed:
+            var sm = Model;
+            var type = sm.FaceType;
+            switch (type) {
+            case EFaceType.Face_Assistant:
+            case EFaceType.Eyes_OpenDisabled:
+            case EFaceType.Eyes_ClosedDisabled:
+            case EFaceType.Face_EyesOpen:
+            case EFaceType.Face_WinkingEyeLeft:
+            case EFaceType.Face_WinkingEyeRight:
+            case EFaceType.Face_EyesClosed:
                return;
             }
+
+            var size = Size;
+            double width = size.Width;
+            double height = size.Height;
 
             using (var css = new CanvasStrokeStyle {
                StartCap = CanvasCapStyle.Round,
                EndCap = CanvasCapStyle.Round
             }) {
-               var strokeWidth = Math.Max(1, 0.044 * ((_width + _height) / 2.0));
+               var strokeWidth = Math.Max(1, 0.044 * ((width + height) / 2.0));
 
-               switch (_type) {
-               case EType.Face_SavouringDeliciousFood:
-               case EType.Face_SmilingWithSunglasses:
-               case EType.Face_WhiteSmiling: {
+               switch (type) {
+               case EFaceType.Face_SavouringDeliciousFood:
+               case EFaceType.Face_SmilingWithSunglasses:
+               case EFaceType.Face_WhiteSmiling: {
                      // smile
-                     var arcSmile = _rc.BuildArc(0.103 * _width, -0.133 * _height, 0.795 * _width, 1.003 * _height, 207, 126, false, false);
+                     var arcSmile = _rc.BuildArc(0.103 * width, -0.133 * height, 0.795 * width, 1.003 * height, 207, 126, false, false);
                      ds.DrawGeometry(arcSmile, Color.Black, strokeWidth, css);
-                     var lip = _rc.CreateEllipseInRect(0.060 * _width, 0.475 * _height, 0.877 * _width, 0.330 * _height);
+                     var lip = _rc.CreateEllipseInRect(0.060 * width, 0.475 * height, 0.877 * width, 0.330 * height);
                      ds.FillGeometry(arcSmile.IntersectExclude(lip), Color.Black);
 
                      // test
                      //ds.DrawGeometry(lip, Color.Green.ToWinColor(), 1);
 
                      // dimples - ямочки на щеках
-                     ds.DrawArc(_rc, +0.020 * _width, 0.420 * _height, 0.180 * _width, 0.180 * _height, 85 + 180, 57, false, false, Color.Black, strokeWidth, css);
-                     ds.DrawArc(_rc, +0.800 * _width, 0.420 * _height, 0.180 * _width, 0.180 * _height, 38 + 180, 57, false, false, Color.Black, strokeWidth, css);
+                     ds.DrawArc(_rc, +0.020 * width, 0.420 * height, 0.180 * width, 0.180 * height, 85 + 180, 57, false, false, Color.Black, strokeWidth, css);
+                     ds.DrawArc(_rc, +0.800 * width, 0.420 * height, 0.180 * width, 0.180 * height, 38 + 180, 57, false, false, Color.Black, strokeWidth, css);
 
                      // tongue / язык
-                     if (_type == EType.Face_SavouringDeliciousFood) {
-                        var tongue = _rc.CreateEllipseInRect(0.470 * _width, 0.406 * _height, 0.281 * _width, 0.628 * _height).Rotate(
-                                             new PointDouble(0.470 * _width, 0.406 * _height), 40);
-                        var ellipseSmile = _rc.CreateEllipseInRect(0.103 * _width, -0.133 * _height, 0.795 * _width, 1.003 * _height);
+                     if (type == EFaceType.Face_SavouringDeliciousFood) {
+                        var tongue = _rc.CreateEllipseInRect(0.470 * width, 0.406 * height, 0.281 * width, 0.628 * height).Rotate(
+                                             new PointDouble(0.470 * width, 0.406 * height), 40);
+                        var ellipseSmile = _rc.CreateEllipseInRect(0.103 * width, -0.133 * height, 0.795 * width, 1.003 * height);
                         ds.FillGeometry(tongue.IntersectExclude(ellipseSmile), Color.Red);
                      }
                   }
                   break;
-               case EType.Face_Disappointed: {
+               case EFaceType.Face_Disappointed: {
                      // smile
-                     var arcSmile = _rc.BuildArc(0.025 * _width, 0.655 * _height, 0.950 * _width, 0.950 * _height, 50, 80, false, false);
+                     var arcSmile = _rc.BuildArc(0.025 * width, 0.655 * height, 0.950 * width, 0.950 * height, 50, 80, false, false);
                      ds.DrawGeometry(arcSmile, Color.Black, strokeWidth, css);
-                     arcSmile = _rc.CreateEllipseInRect(0.025 * _width, 0.655 * _height, 0.950 * _width, 0.950 * _height); // arc as circle
+                     arcSmile = _rc.CreateEllipseInRect(0.025 * width, 0.655 * height, 0.950 * width, 0.950 * height); // arc as circle
 
                      // tongue / язык
-                     var tongue = _rc.CreateEllipseInRect(0.338 * _width, 0.637 * _height, 0.325 * _width, 0.325 * _height).IntersectInclude( // кончик языка
-                                  _rc.CreateRectangle    (0.338 * _width, 0.594 * _height, 0.325 * _width, 0.206 * _height)); // тело языка
-                     var hole = _rc.CreateRectangle(0, 0, _width, _height).IntersectExclude(arcSmile);
+                     var tongue = _rc.CreateEllipseInRect(0.338 * width, 0.637 * height, 0.325 * width, 0.325 * height).IntersectInclude( // кончик языка
+                                  _rc.CreateRectangle    (0.338 * width, 0.594 * height, 0.325 * width, 0.206 * height)); // тело языка
+                     var hole = _rc.CreateRectangle(0, 0, width, height).IntersectExclude(arcSmile);
                      tongue = tongue.IntersectExclude(hole);
                      ds.FillGeometry(tongue, Color.Red);
                      ds.DrawGeometry(tongue, Color.Black, strokeWidth, css);
-                     ds.DrawGeometry(_rc.CreateRectangle(_width / 2.0, 0.637 * _height, 0.0001, 0.200 * _height).IntersectExclude(hole), Color.Black, strokeWidth, css);
+                     ds.DrawGeometry(_rc.CreateRectangle(width / 2.0, 0.637 * height, 0.0001, 0.200 * height).IntersectExclude(hole), Color.Black, strokeWidth, css);
 
                      // test
                      //ds.DrawGeometry(arcSmile, Color.Black, 1, css);
                      //ds.DrawGeometry(hole, Color.Black, 1, css);
                   }
                   break;
-               case EType.Face_Grinning: {
-                     var arcSmile = _rc.BuildArc(0.103 * _width, -0.133 * _height, 0.795 * _width, 1.003 * _height, 207, 126, false, true);
+               case EFaceType.Face_Grinning: {
+                     var arcSmile = _rc.BuildArc(0.103 * width, -0.133 * height, 0.795 * width, 1.003 * height, 207, 126, false, true);
                      using (var brush = new CanvasLinearGradientBrush(_rc, Color.Gray.ToWinColor(), Color.White.ToWinColor()) {
                         StartPoint = new Vector2(0, 0),
-                        EndPoint = new Vector2(_width / 2.0f, 0),
+                        EndPoint = new Vector2((float)(width / 2.0), 0),
                      }) {
-                      //ds.FillGeometry(_rc.CreateRectangle(0, 0, _width, _height), brush); // test
+                      //ds.FillGeometry(_rc.CreateRectangle(0, 0, width, height), brush); // test
                         ds.FillGeometry(arcSmile, brush);
                      }
                      ds.DrawGeometry(arcSmile, Color.Black, strokeWidth, css);
@@ -358,26 +311,32 @@ namespace fmg.uwp.img.win2d {
          }
 
          private void EyeOpened(CanvasDrawingSession ds, bool right, bool disabled) {
+            var sm = Model;
+            var type = sm.FaceType;
+            var size = Size;
+            double width = size.Width;
+            double height = size.Height;
+
             Action<PointDouble, Color> draw = (offset, holeColor) => {
                var pupil = right
-                     ? _rc.CreateEllipseInRect((offset.X + 0.273) * _width, (offset.Y + 0.166) * _height, 0.180 * _width, 0.324 * _height).IntersectInclude(
-                       _rc.CreateEllipseInRect((offset.X + 0.320) * _width, (offset.Y + 0.124) * _height, 0.180 * _width, 0.273 * _height).Rotate(
-                               new PointDouble((offset.X + 0.320) * _width, (offset.Y + 0.124) * _height),  35)                          ).IntersectInclude(
-                       _rc.CreateEllipseInRect((offset.X + 0.163) * _width, (offset.Y + 0.313) * _height, 0.180 * _width, 0.266 * _height).Rotate(
-                               new PointDouble((offset.X + 0.163) * _width, (offset.Y + 0.313) * _height), -36))
-                     : _rc.CreateEllipseInRect((offset.X + 0.500) * _width, (offset.Y + 0.166) * _height, 0.180 * _width, 0.324 * _height).IntersectInclude(
-                       _rc.CreateEllipseInRect((offset.X + 0.486) * _width, (offset.Y + 0.227) * _height, 0.180 * _width, 0.273 * _height).Rotate(
-                               new PointDouble((offset.X + 0.486) * _width, (offset.Y + 0.227) * _height), -35)                          ).IntersectInclude(
-                       _rc.CreateEllipseInRect((offset.X + 0.646) * _width, (offset.Y + 0.211) * _height, 0.180 * _width, 0.266 * _height).Rotate(
-                               new PointDouble((offset.X + 0.646) * _width, (offset.Y + 0.211) * _height),  36));
+                     ? _rc.CreateEllipseInRect((offset.X + 0.273) * width, (offset.Y + 0.166) * height, 0.180 * width, 0.324 * height).IntersectInclude(
+                       _rc.CreateEllipseInRect((offset.X + 0.320) * width, (offset.Y + 0.124) * height, 0.180 * width, 0.273 * height).Rotate(
+                               new PointDouble((offset.X + 0.320) * width, (offset.Y + 0.124) * height),  35)                          ).IntersectInclude(
+                       _rc.CreateEllipseInRect((offset.X + 0.163) * width, (offset.Y + 0.313) * height, 0.180 * width, 0.266 * height).Rotate(
+                               new PointDouble((offset.X + 0.163) * width, (offset.Y + 0.313) * height), -36))
+                     : _rc.CreateEllipseInRect((offset.X + 0.500) * width, (offset.Y + 0.166) * height, 0.180 * width, 0.324 * height).IntersectInclude(
+                       _rc.CreateEllipseInRect((offset.X + 0.486) * width, (offset.Y + 0.227) * height, 0.180 * width, 0.273 * height).Rotate(
+                               new PointDouble((offset.X + 0.486) * width, (offset.Y + 0.227) * height), -35)                          ).IntersectInclude(
+                       _rc.CreateEllipseInRect((offset.X + 0.646) * width, (offset.Y + 0.211) * height, 0.180 * width, 0.266 * height).Rotate(
+                               new PointDouble((offset.X + 0.646) * width, (offset.Y + 0.211) * height),  36));
                if (!disabled) {
                   ds.FillGeometry(pupil, Color.Black);
                }
                var hole = right
-                     ? _rc.CreateEllipseInRect((offset.X + 0.303 * _width), (offset.Y + 0.209) * _height, 0.120 * _width, 0.160 * _height).Rotate(
-                               new PointDouble((offset.X + 0.303 * _width), (offset.Y + 0.209) * _height), 25)
-                     : _rc.CreateEllipseInRect((offset.X + 0.610 * _width), (offset.Y + 0.209) * _height, 0.120 * _width, 0.160 * _height).Rotate(
-                               new PointDouble((offset.X + 0.610 * _width), (offset.Y + 0.209) * _height), 25);
+                     ? _rc.CreateEllipseInRect((offset.X + 0.303 * width), (offset.Y + 0.209) * height, 0.120 * width, 0.160 * height).Rotate(
+                               new PointDouble((offset.X + 0.303 * width), (offset.Y + 0.209) * height), 25)
+                     : _rc.CreateEllipseInRect((offset.X + 0.610 * width), (offset.Y + 0.209) * height, 0.120 * width, 0.160 * height).Rotate(
+                               new PointDouble((offset.X + 0.610 * width), (offset.Y + 0.209) * height), 25);
                if (!disabled) {
                   ds.FillGeometry(hole, holeColor);
                } else {
@@ -393,26 +352,25 @@ namespace fmg.uwp.img.win2d {
          }
 
          private void EyeClosed(CanvasDrawingSession ds, bool right, bool disabled) {
+            var size = Size;
+            double width = size.Width;
+            double height = size.Height;
+
             Action<PointDouble> eye = offset => {
                if (disabled) {
-                  ds.FillGeometry(_rc.CreateEllipseInRect((offset.X + 0.532) * _width, (offset.Y + 0.248) * _height, 0.313 * _width, 0.068 * _height).IntersectInclude(
-                                  _rc.CreateEllipseInRect((offset.X + 0.655) * _width, (offset.Y + 0.246) * _height, 0.205 * _width, 0.130 * _height)), Color.White);
+                  ds.FillGeometry(_rc.CreateEllipseInRect((offset.X + 0.532) * width, (offset.Y + 0.248) * height, 0.313 * width, 0.068 * height).IntersectInclude(
+                                  _rc.CreateEllipseInRect((offset.X + 0.655) * width, (offset.Y + 0.246) * height, 0.205 * width, 0.130 * height)), Color.White);
                }
-               ds.FillGeometry(_rc.CreateEllipseInRect((offset.X + 0.517) * _width, (offset.Y + 0.248) * _height, 0.313 * _width, 0.034 * _height).IntersectInclude(
-                               _rc.CreateEllipseInRect((offset.X + 0.640) * _width, (offset.Y + 0.246) * _height, 0.205 * _width, 0.075 * _height)), disabled ? Color.Gray : Color.Black);
+               ds.FillGeometry(_rc.CreateEllipseInRect((offset.X + 0.517) * width, (offset.Y + 0.248) * height, 0.313 * width, 0.034 * height).IntersectInclude(
+                               _rc.CreateEllipseInRect((offset.X + 0.640) * width, (offset.Y + 0.246) * height, 0.205 * width, 0.075 * height)), disabled ? Color.Gray : Color.Black);
             };
             eye(right ? new PointDouble(-0.410, 0)
                       : new PointDouble());
          }
 
-         protected override void Dispose(bool disposing) {
-            if (Disposed)
-               return;
-
-            base.Dispose(disposing);
-
-            if (disposing)
-               ResetImage();
+         protected override void Disposing() {
+            Model.Dispose();
+            base.Disposing();
          }
 
       }
@@ -421,22 +379,20 @@ namespace fmg.uwp.img.win2d {
       //    custom implementations
       /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      /// <summary> Smile image
-      /// <br/>
-      /// CanvasBitmap impl
-      /// </summary>
-      public class CanvasBmp : ASmileImageWin2D<CanvasBitmap> {
+      /// <summary> Smile image view implementation over <see cref="CanvasBitmap"/> </summary>
+      public class CanvasBmp : SmileImageView<CanvasBitmap> {
 
-         public CanvasBmp(EType type, ICanvasResourceCreator resourceCreator)
-            : base(type, resourceCreator)
+         public CanvasBmp(EFaceType faceType, ICanvasResourceCreator resourceCreator)
+            : base(faceType, resourceCreator)
          { }
 
          protected override CanvasBitmap CreateImage() {
             var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            return new CanvasRenderTarget(_rc, Width, Height, dpi);
+            var s = Model.Size;
+            return new CanvasRenderTarget(_rc, (float)s.Width, (float)s.Height, dpi);
          }
 
-         protected override void Draw() {
+         protected override void DrawBody() {
             using (var ds = ((CanvasRenderTarget)Image).CreateDrawingSession()) {
                Draw(ds, true);
             }
@@ -444,30 +400,53 @@ namespace fmg.uwp.img.win2d {
 
       }
 
-      /// <summary> Smile image
-      /// <br/>
-      /// CanvasImageSource impl (XAML ImageSource compatible)
-      /// </summary>
-      public class CanvasImgSrc : ASmileImageWin2D<CanvasImageSource> {
+      /// <summary> Smile image view implementation over <see cref="CanvasImageSource"/> (XAML <see cref="Windows.UI.Xaml.Media.ImageSource"/> compatible) </summary>
+      public class CanvasImgSrc : SmileImageView<CanvasImageSource> {
 
-         public CanvasImgSrc(EType type, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
-            : base(type, resourceCreator)
+         public CanvasImgSrc(EFaceType faceType, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+            : base(faceType, resourceCreator)
          { }
 
          protected override CanvasImageSource CreateImage() {
             var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            return new CanvasImageSource(_rc, Width, Height, dpi);
+            var s = Model.Size;
+            return new CanvasImageSource(_rc, (float)s.Width, (float)s.Height, dpi);
          }
 
-         protected override void Draw() {
-            using (var ds = Image.CreateDrawingSession(Color.Transparent.ToWinColor())) {
+         protected override void DrawBody() {
+            using (var ds = Image.CreateDrawingSession(Colors.Transparent)) {
                Draw(ds, false);
             }
          }
 
       }
 
+      /// <summary> Smile image controller implementation for <see cref="Smile.CanvasBmp"/> </summary>
+      public class ControllerBitmap : ImageController<CanvasBitmap, Smile.CanvasBmp, SmileModel> {
+
+         public ControllerBitmap(EFaceType faceType, ICanvasResourceCreator resourceCreator)
+            : base(new Smile.CanvasBmp(faceType, resourceCreator)) { }
+
+         protected override void Disposing() {
+            View.Dispose();
+            base.Disposing();
+         }
+
+      }
+
+      /// <summary> Smile image controller implementation for <see cref="Smile.CanvasImgSrc"/> </summary>
+      public class ControllerImgSrc : ImageController<CanvasImageSource, Smile.CanvasImgSrc, SmileModel> {
+
+         public ControllerImgSrc(EFaceType faceType, ICanvasResourceCreator resourceCreator)
+            : base(new Smile.CanvasImgSrc(faceType, resourceCreator)) { }
+
+         protected override void Disposing() {
+            View.Dispose();
+            base.Disposing();
+         }
+
+      }
+
    }
 
-#endif
 }

@@ -15,6 +15,9 @@ import fmg.core.img.SmileModel.EFaceType;
 import fmg.swing.utils.Cast;
 import fmg.swing.utils.StaticInitializer;
 
+/** Smile images. Base view SWING implementation
+ * @param <TImage> SWING specific image: {@link java.awt.Image} or {@link javax.swing.Icon})
+ **/
 public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
    protected Smile(EFaceType faceType) {
