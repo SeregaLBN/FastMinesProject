@@ -478,12 +478,4 @@ public abstract class Smile<TImage> extends ImageView<TImage, SmileModel> {
 
    }
 
-   ////////////// TEST //////////////
-   public static List<IImageController<?,?,?>> getTestData() {
-      return Arrays.asList(EFaceType.values()).stream()
-            .map(e -> new Smile.ControllerBitmap(e))
-            .collect(Collectors.toList());
-   }
-   //////////////////////////////////
-
 }

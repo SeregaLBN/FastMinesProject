@@ -14,12 +14,4 @@ public final class Mine {
       public ControllerBitmap() { LogoModel.toMineModel(getModel()); }
    }
 
-   ////////////// TEST //////////////
-   public static List<IImageController<?,?,?>> getTestData() {
-      return Arrays.asList(new Mine.ControllerBitmap()
-                         , new Mine.ControllerBitmap()
-      );
-   }
-   //////////////////////////////////
-
 }

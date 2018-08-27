@@ -98,17 +98,4 @@ public abstract class MosaicImg<TImage>
 
    }
 
-   ////////////// TEST //////////////
-   public static List<IImageController<?,?,?>> getTestData() {
-      return
-//         // test single
-//         Arrays.asList(new MosaicImg.ControllerImage() { { setMosaicType(EMosaic.eMosaicSquare1); }})
-
-         // test all
-         Stream.of(EMosaic.values())
-               .map(e -> new MosaicImg.ControllerBitmap() { { setMosaicType(e); }})
-               .collect(Collectors.toList());
-   }
-   //////////////////////////////////
-
 }

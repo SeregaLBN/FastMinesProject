@@ -179,25 +179,4 @@ public class MosaicViewController extends MosaicController<View, Bitmap, MosaicV
       super.close();
    }
 
-   ////////////// TEST //////////////
-   public static MosaicViewController getTestData(Activity owner) {
-      MosaicView._DEBUG_DRAW_FLOW = true;
-      MosaicViewController ctrllr = new MosaicViewController(owner);
-
-      if (ThreadLocalRandom.current().nextBoolean()) {
-         // unmodified controller test
-      } else {
-          EMosaic mosaicType = EMosaic.eMosaicTrSq1;
-          ESkillLevel skill  = ESkillLevel.eBeginner;
-
-          ctrllr.setArea(1500);
-          ctrllr.setMosaicType(mosaicType);
-          ctrllr.setSizeField(skill.getDefaultSize());
-          ctrllr.setMinesCount(skill.getNumberMines(mosaicType));
-          ctrllr.gameNew();
-      }
-      return ctrllr;
-   }
-   //////////////////////////////////
-
 }

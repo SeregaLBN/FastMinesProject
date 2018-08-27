@@ -78,16 +78,4 @@ public abstract class MosaicSkillImg<TImage> extends MosaicSkillOrGroupView<TIma
 
    }
 
-
-   ////////////// TEST //////////////
-   public static List<IImageController<?,?,?>> getTestData() {
-      return Stream.concat(Stream.of((ESkillLevel)null),
-                       Stream.of(ESkillLevel.values()))
-               .map(e -> new Pair<>(new MosaicSkillImg.ControllerBitmap(e),
-                                    new MosaicSkillImg.ControllerBitmap(e)))
-               .flatMap(x -> Stream.of(x.first, x.second))
-               .collect(Collectors.toList());
-   }
-   //////////////////////////////////
-
 }

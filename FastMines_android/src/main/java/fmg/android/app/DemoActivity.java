@@ -14,8 +14,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import fmg.android.img.Flag;
 import fmg.android.img.Logo;
@@ -25,11 +28,17 @@ import fmg.android.img.MosaicImg;
 import fmg.android.img.MosaicSkillImg;
 import fmg.android.img.Smile;
 import fmg.android.mosaic.MosaicViewController;
+import fmg.common.Pair;
 import fmg.common.geom.PointDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.img.ATestDrawing;
 import fmg.core.img.IImageController;
+import fmg.core.img.SmileModel;
+import fmg.core.mosaic.MosaicView;
+import fmg.core.types.EMosaic;
+import fmg.core.types.EMosaicGroup;
+import fmg.core.types.ESkillLevel;
 
 public class DemoActivity extends Activity {
 
@@ -45,14 +54,58 @@ public class DemoActivity extends Activity {
    private int _nextCreateImagesIndex;
 
    // #region images Fabrica
-   public void testMosaicControl () { testApp(() -> Arrays.asList(MosaicViewController.getTestData(this))); }
-   public void testMosaicImg     () { testApp(                    MosaicImg          ::getTestData); }
-   public void testMosaicGroupImg() { testApp(                    MosaicGroupImg     ::getTestData); }
-   public void testMosaicSkillImg() { testApp(                    MosaicSkillImg     ::getTestData); }
-   public void testLogos         () { testApp(                    Logo               ::getTestData); }
-   public void testMines         () { testApp(                    Mine               ::getTestData); }
-   public void testFlags         () { testApp(                    Flag               ::getTestData); }
-   public void testSmiles        () { testApp(                    Smile              ::getTestData); }
+   public void testMosaicControl () {
+      MosaicView._DEBUG_DRAW_FLOW = true;
+      testApp(() -> {
+         MosaicViewController mosaicController = new MosaicViewController(this);
+
+         if (ThreadLocalRandom.current().nextBoolean()) {
+            // unmodified controller test
+         } else {
+            EMosaic mosaicType = EMosaic.eMosaicTrSq1;
+            ESkillLevel skill  = ESkillLevel.eBeginner;
+
+            mosaicController.setArea(1500);
+            mosaicController.setMosaicType(mosaicType);
+            mosaicController.setSizeField(skill.getDefaultSize());
+            mosaicController.setMinesCount(skill.getNumberMines(mosaicType));
+            mosaicController.gameNew();
+         }
+         return Arrays.asList(mosaicController);
+
+      }
+   );}
+   public void testMosaicImg     () { testApp(() ->
+                                                  //// test single
+                                                  //Arrays.asList(new MosaicImg.ControllerBitmap() { { setMosaicType(EMosaic.eMosaicSquare1); }})
+
+                                                  // test all
+                                                  Stream.of(EMosaic.values())
+                                                        .map(e -> new MosaicImg.ControllerBitmap() { { setMosaicType(e); }})
+                                                        .collect(Collectors.toList())
+                                    ); }
+   public void testMosaicGroupImg() { testApp(() -> Stream.concat(Stream.of((EMosaicGroup)null), Stream.of(EMosaicGroup.values()))
+                                             .map(e -> new Pair<>(new MosaicGroupImg.ControllerBitmap(e),
+                                                                  new MosaicGroupImg.ControllerBitmap(e)))
+                                             .flatMap(x -> Stream.of(x.first, x.second))
+                                             .collect(Collectors.toList())); }
+   public void testMosaicSkillImg() { testApp(() -> Stream.concat(Stream.of((ESkillLevel)null), Stream.of(ESkillLevel.values()))
+                                             .map(e -> new Pair<>(new MosaicSkillImg.ControllerBitmap(e),
+                                                                  new MosaicSkillImg.ControllerBitmap(e)))
+                                             .flatMap(x -> Stream.of(x.first, x.second))
+                                             .collect(Collectors.toList())); }
+   public void testLogos         () { testApp(() -> Arrays.asList(new Logo.ControllerBitmap()
+                                                                , new Logo.ControllerBitmap()
+                                                                , new Logo.ControllerBitmap()
+                                                                , new Logo.ControllerBitmap())); }
+   public void testMines         () { testApp(() -> Arrays.asList(new Mine.ControllerBitmap()
+                                                                , new Mine.ControllerBitmap())); }
+   public void testFlags         () { testApp(() -> Arrays.asList(new Flag.ControllerBitmap()
+                                                                , new Flag.ControllerBitmap())); }
+   public void testSmiles        () { testApp(() -> Arrays.asList(SmileModel.EFaceType.values())
+                                                        .stream()
+                                                        .map(e -> new Smile.ControllerBitmap(e))
+                                                        .collect(Collectors.toList())); }
    // #endregion
 
    @Override

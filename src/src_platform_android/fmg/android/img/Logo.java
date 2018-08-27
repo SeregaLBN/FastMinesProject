@@ -190,14 +190,4 @@ public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
 
    }
 
-   ////////////// TEST //////////////
-   public static List<IImageController<?,?,?>> getTestData() {
-      return Arrays.asList(new Logo.ControllerBitmap()
-                         , new Logo.ControllerBitmap()
-                         , new Logo.ControllerBitmap()
-                         , new Logo.ControllerBitmap()
-                         );
-   }
-   //////////////////////////////////
-
 }
