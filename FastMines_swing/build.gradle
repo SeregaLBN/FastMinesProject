@@ -22,7 +22,6 @@ mainClassName = "fmg.swing.app.Main"
 sourceSets {
    main {
       java {
-         srcDir '../src/src_core'
          srcDir '../src/src_platform_swing'
          srcDir 'src/main/java'
          include '**/*.java'
@@ -45,7 +44,10 @@ sourceSets {
     }
 }
 
+
 dependencies {
+    implementation project(':FastMines_core')
+
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
 }
