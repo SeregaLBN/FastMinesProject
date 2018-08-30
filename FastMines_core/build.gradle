@@ -1,0 +1,39 @@
+apply plugin: 'java-library'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+compileJava.options.encoding = 'UTF-8'
+
+group = 'FastMinesGame' // fmg
+
+defaultTasks 'clean', 'build'
+
+jar {
+    manifest {
+        attributes 'Vendor': 'SeregaLBN',
+                   'Build-Date': new Date().format("yyyy-MM-dd'T 'HH:mm:ss.SSSZZ")
+    }
+}
+
+/*
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+*/
+
+sourceSets {
+    main {
+        java {
+            srcDir '../src/src_core'
+            include '**/*.java'
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Title': 'FastMines core library',
+                   'Version': '2.1.0'
+    }
+}

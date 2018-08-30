@@ -24,11 +24,14 @@ mainClassName = "fmg.jfx.Demo"
 sourceSets {
    main {
       java {
-         srcDir '../src/src_core'
          srcDir '../src/src_platform_jfx'
          include '**/*.java'
       }
    }
+}
+
+dependencies {
+    implementation project(':FastMines_core')
 }
 
 jar {

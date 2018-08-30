@@ -18,7 +18,6 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     sourceSets {
-        main.java.srcDirs += '../src/src_core'
         main.java.srcDirs += '../src/src_platform_android'
 
         //include '**/*.java'
@@ -31,7 +30,10 @@ android {
     }
 }
 
+
 dependencies {
+    implementation project(':FastMines_core')
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:28.0.0-alpha1' // alpha3 beta01
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
