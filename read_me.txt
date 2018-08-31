@@ -1,10 +1,10 @@
 ﻿IDE Workspaces / Solutions:
-   ./FastMines/build.gradle  - open (import) in IDE Eclipse or IDEA
+   ./build.gradle  - open (import) in IDE Eclipse or IDEA
          subprojects (Java):
             ./FastMines_swing   - open in Eclipse or IDEA(Android Studio) or VS Code
             ./FastMines_jfx     - open in Eclipse or IDEA(Android Studio) or VS Code
             ./FastMines_android - open in Android Studio(IDEA)
-   ./FastMines/FastMines.sln  - solutions for Visual Studio 2017
+   ./FastMines.sln  - solutions for Visual Studio 2017
          subprojects:
             ./FastMines_uwp   - C#
             ./FastMines_Logo  - C++

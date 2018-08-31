@@ -21,7 +21,7 @@ namespace fmg.core.img {
 
       /// <summary> MVC: view </summary>
       private readonly TImageView _imageView;
-      protected bool Disposed { get; private set; }
+      public bool Disposed { get; private set; }
       public event PropertyChangedEventHandler PropertyChanged;
       protected readonly NotifyPropertyChanged _notifier;
 

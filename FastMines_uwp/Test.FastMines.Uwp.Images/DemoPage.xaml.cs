@@ -446,6 +446,8 @@ namespace Test.FastMines.Uwp.Images {
                         });
 
                         cnvsCtrl.Draw += (s, ev) => {
+                           if (imgObj.Disposed)
+                              return;
                            ev.DrawingSession.DrawImage(imgObj.Image as CanvasBitmap, new Windows.Foundation.Rect(0, 0, cnvsCtrl.Width, cnvsCtrl.Height));
                         };
                      } else
