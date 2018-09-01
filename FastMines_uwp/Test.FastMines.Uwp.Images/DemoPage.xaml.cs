@@ -31,6 +31,7 @@ using fmg.uwp.mosaic.xaml;
 using Win2dLogo = fmg.uwp.img.win2d.Logo;
 using Win2dMine = fmg.uwp.img.win2d.Mine;
 using Win2dSmile = fmg.uwp.img.win2d.Smile;
+using Win2dFlag = fmg.uwp.img.win2d.Flag;
 #if false
 using MosaicsSkillCanvasBmp = fmg.uwp.img.win2d.MosaicsSkillImg.CanvasBmp;
 using MosaicsSkillCanvasImg = fmg.uwp.img.win2d.MosaicsSkillImg.CanvasImgSrc;
@@ -38,8 +39,6 @@ using MosaicsGroupCanvasBmp = fmg.uwp.img.win2d.MosaicsGroupImg.CanvasBmp;
 using MosaicsGroupCanvasImg = fmg.uwp.img.win2d.MosaicsGroupImg.CanvasImgSrc;
 using MosaicsCanvasBmp = fmg.uwp.img.win2d.MosaicsImg.CanvasBmp;
 using MosaicsCanvasImg = fmg.uwp.img.win2d.MosaicsImg.CanvasImgSrc;
-using FlagCanvasBmp = fmg.uwp.img.win2d.Flag.CanvasBmp;
-using FlagCanvasImg = fmg.uwp.img.win2d.Flag.CanvasImgSrc;
 #endif
 using WBmpMosaicImageController = fmg.uwp.mosaic.wbmp.MosaicImageController;
 using WBmpMosaicImageView = fmg.uwp.mosaic.wbmp.MosaicImageView;
@@ -181,9 +180,9 @@ namespace Test.FastMines.Uwp.Images {
             //} }
          );
       }
-      public void TestFlag1 (ICanvasResourceCreator resourceCreator) { TestAppCanvasBmp(() => new FlagCanvasBmp [] { new FlagCanvasBmp(resourceCreator) }); }
-      public void TestFlag2 (ICanvasResourceCreator resourceCreator) { TestAppCanvasImg(() => new FlagCanvasImg [] { new FlagCanvasImg(resourceCreator) }); }
 #endif
+      public void TestWin2dFlag1(ICanvasResourceCreator resourceCreator) { TestAppSimple<CanvasBitmap     , Win2dFlag.ControllerBitmap, Win2dFlag.CanvasBmp   , FlagModel>(() => new Win2dFlag.ControllerBitmap[] { new Win2dFlag.ControllerBitmap(resourceCreator) }); }
+      public void TestWin2dFlag2(ICanvasResourceCreator resourceCreator) { TestAppSimple<CanvasImageSource, Win2dFlag.ControllerImgSrc, Win2dFlag.CanvasImgSrc, FlagModel>(() => new Win2dFlag.ControllerImgSrc[] { new Win2dFlag.ControllerImgSrc(resourceCreator) }); }
       public void TestWin2dSmile1(ICanvasResourceCreator resourceCreator) {
          var vals = (SmileModel.EFaceType[])Enum.GetValues(typeof(SmileModel.EFaceType));
          TestAppSimple<CanvasBitmap, Win2dSmile.ControllerBitmap, Win2dSmile.CanvasBmp, SmileModel>(() =>
@@ -297,9 +296,9 @@ namespace Test.FastMines.Uwp.Images {
             () => TestMosaicsGroupImg2(device),
             () => TestMosaicsImg1     (device),
             () => TestMosaicsImg2     (device),
-            () => TestFlag1           (device),
-            () => TestFlag2           (device),
 #endif
+            () => TestWin2dFlag1      (device),
+            () => TestWin2dFlag2      (device),
             TestXamlMosaicControl,
             TestWBmpMosaicControl,
             TestWBmpLogo,
