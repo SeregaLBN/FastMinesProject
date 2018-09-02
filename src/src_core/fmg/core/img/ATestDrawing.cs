@@ -21,11 +21,11 @@ namespace fmg.core.img {
       }
 
       public void ApplySettings<TImage, TMosaicImageInner, TImageView, TAImageView, TImageModel, TAnimatedModel>(IImageController<TImage, TImageView, TImageModel> ctrller, bool testTransparent)
-         where TImage : class
+         where TImage            : class
          where TMosaicImageInner : class
-         where TImageView : IImageView<TImage, TImageModel>
-         where TAImageView : IImageView<TImage, TAnimatedModel>
-         where TImageModel : IImageModel
+         where TImageView     : IImageView<TImage, TImageModel>
+         where TAImageView    : IImageView<TImage, TAnimatedModel>
+         where TImageModel    : IImageModel
          where TAnimatedModel : IAnimatedModel
       {
 
@@ -163,9 +163,9 @@ namespace fmg.core.img {
 
       public class CellTilingResult<TImage, TImageController, TImageView, TImageModel>
          where TImage : class
-         where TImageController : ImageController<TImage, TImageView, TImageModel>
-         where TImageView : IImageView<TImage, TImageModel>
-         where TImageModel : IImageModel
+         where TImageController : IImageController<TImage, TImageView, TImageModel>
+         where TImageView       : IImageView<TImage, TImageModel>
+         where TImageModel      : IImageModel
       {
          public SizeDouble imageSize;
          public Size tableSize;
@@ -174,7 +174,7 @@ namespace fmg.core.img {
 
       public CellTilingResult<TImage, TImageController, TImageView, TImageModel> CellTiling<TImage, TImageController, TImageView, TImageModel>(RectDouble rc, IList<TImageController> images, bool testTransparent)
          where TImage : class
-         where TImageController : ImageController<TImage, TImageView, TImageModel>
+         where TImageController : IImageController<TImage, TImageView, TImageModel>
          where TImageView : IImageView<TImage, TImageModel>
          where TImageModel : IImageModel
       {
@@ -251,9 +251,9 @@ namespace fmg.core.img {
 
       public string GetTitle<TImage, TImageController, TImageView, TImageModel>(List<TImageController> images)
          where TImage : class
-         where TImageController : ImageController<TImage, TImageView, TImageModel>
-         where TImageView : IImageView<TImage, TImageModel>
-         where TImageModel : IImageModel
+         where TImageController : IImageController<TImage, TImageView, TImageModel>
+         where TImageView       : IImageView<TImage, TImageModel>
+         where TImageModel      : IImageModel
       {
          string friendlyName(Type type) {
             var all = type.FullName.Split('.');

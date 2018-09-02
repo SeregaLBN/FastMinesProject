@@ -10,7 +10,7 @@ namespace fmg.core.img {
                      : IImageController<TImage, TImageView, TImageModel>
       where TImage      : class
       where TImageView  : IImageView<TImage, TImageModel>
-      where TImageModel :IAnimatedModel
+      where TImageModel : IAnimatedModel
    {
 
       void RemoveModelTransformer(Type /** extends IModelTransformer */ transformerClass);

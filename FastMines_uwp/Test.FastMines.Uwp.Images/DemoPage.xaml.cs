@@ -325,7 +325,8 @@ namespace Test.FastMines.Uwp.Images {
             TestWBmpMosaicGroupImg,
             TestWBmpMosaicsImg,
             TestWBmpFlag,
-            TestWBmpSmile };
+            TestWBmpSmile
+         };
 
          InitializeComponent();
 
@@ -345,7 +346,7 @@ namespace Test.FastMines.Uwp.Images {
       #region wrappers
       void TestAppSimple<TImage, TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
          where TImage           : class
-         where TImageController : ImageController<TImage, TImageView, TImageModel>
+         where TImageController : IImageController<TImage, TImageView, TImageModel>
          where TImageView       : IImageView<TImage, TImageModel>
          where TImageModel      : IImageModel
       {
@@ -354,7 +355,7 @@ namespace Test.FastMines.Uwp.Images {
 
       void TestAppAnimated<TImage, TImageController, TImageView, TImageModel>(Func<IEnumerable<TImageController>> funcGetImages)
          where TImage           : class
-         where TImageController : ImageController<TImage, TImageView, TImageModel>
+         where TImageController : IImageController<TImage, TImageView, TImageModel>
          where TImageView       : IImageView<TImage, TImageModel>
          where TImageModel      : IAnimatedModel
       {
@@ -377,7 +378,7 @@ namespace Test.FastMines.Uwp.Images {
       void TestApp<TImage, TMosaicImageInner, TImageController, TImageView, TAImageView, TImageModel, TAnimatedModel>(Func<IEnumerable<TImageController>> funcGetImages)
          where TImage            : class
          where TMosaicImageInner : class
-         where TImageController  : ImageController<TImage, TImageView, TImageModel>
+         where TImageController  : IImageController<TImage, TImageView, TImageModel>
          where TImageView        : IImageView<TImage, TImageModel>
          where TAImageView       : IImageView<TImage, TAnimatedModel>
          where TImageModel       : IImageModel
@@ -462,10 +463,14 @@ namespace Test.FastMines.Uwp.Images {
                            Mode = BindingMode.OneWay
                         });
 
-                        cnvsCtrl.Draw += (s, ev) => {
-                           if (imgObj.Disposed)
-                              return;
+                        void onDraw(CanvasControl s, CanvasDrawEventArgs ev) {
+                           //if (imgObj.Disposed)
+                           //   return;
                            ev.DrawingSession.DrawImage(imgObj.Image as CanvasBitmap, new Windows.Foundation.Rect(0, 0, cnvsCtrl.Width, cnvsCtrl.Height));
+                        };
+                        cnvsCtrl.Draw += onDraw;
+                        cnvsCtrl.Unloaded += (s, ev) => {
+                           cnvsCtrl.Draw -= onDraw;
                         };
                      } else
                #endregion

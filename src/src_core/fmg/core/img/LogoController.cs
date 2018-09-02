@@ -1,5 +1,3 @@
-using System;
-
 namespace fmg.core.img {
 
    /// <summary> MVC controlle of logo image </summary>
