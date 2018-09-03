@@ -33,7 +33,7 @@ namespace fmg.uwp.img.wbmp {
          return _bmp;
       }
 
-      /** get paint information of drawing basic image model */
+      /// <summary> get paint information of drawing basic image model </summary>
       protected abstract IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords { get; }
 
       protected override void DrawBody() {

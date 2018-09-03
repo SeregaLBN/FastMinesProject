@@ -1,9 +1,7 @@
-using System.Linq;
 using System.Collections.Generic;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;
 using fmg.core.img;
-using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 using fmg.uwp.mosaic.wbmp;

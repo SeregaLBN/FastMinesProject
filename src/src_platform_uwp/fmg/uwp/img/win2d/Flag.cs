@@ -1,91 +1,43 @@
 using System;
 using System.Numerics;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.Graphics.Display;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.Graphics.Canvas.Geometry;
-using fmg.common;
 using fmg.core.img;
-using fmg.uwp;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.img.win2d {
-#if false
 
-   /// <summary> Flag image </summary>
+   /// <summary> Flag image. Win2D implementation </summary>
    public static class Flag {
 
-      static Flag() {
-         StaticInitializer.Init();
-      }
-
-      /**
-       * Flag image
-       * @param <TImage> SWING specific image: {@link javax.swing.Icon} or {@link java.awt.Image}
-       */
-      public abstract class FlagView<TImage> : ImageView<TImage, FlagModel>
-         where TImage : class
-      {
-
-         public FlagView() : base(new FlagModel()) { }
-
-         protected override void Dispose(bool disposing) {
-            if (disposing) {
-               Model.Dispose();
-            }
-            base.Dispose(disposing);
-         }
-
-      }
-
-      /// <summary> Flag image: common Win2D implementation part </summary>
-      public abstract class AFlagImageWin2D<TImage> : Disposable
+      /// <summary> Flag image. Base view Win2D implementation </summary>
+      /// <typeparam name="TImage">Win2D specific image: <see cref="CanvasBitmap"/> or <see cref="CanvasImageSource"/></typeparam>
+      public abstract class FlagImageView<TImage> : ImageView<TImage, FlagModel>
          where TImage : DependencyObject, ICanvasResourceCreator
       {
-         protected readonly ICanvasResourceCreator _rc;
-         private TImage _img;
-         private int _width = 100;
-         private int _height = 100;
 
-         protected AFlagImageWin2D(ICanvasResourceCreator resourceCreator) {
+         protected readonly ICanvasResourceCreator _rc;
+
+         protected FlagImageView(ICanvasResourceCreator resourceCreator)
+            : base(new FlagModel())
+         {
             _rc = resourceCreator;
          }
 
-         public TImage Image {
-            get {
-               if (_img == null) {
-                  _img = CreateImage();
-                  DrawBody();
-               }
-               return _img;
-            }
+         static FlagImageView() {
+            StaticInitializer.Init();
          }
 
-         protected void ResetImage() {
-            (_img as IDisposable)?.Dispose();
-            _img = null;
-         }
-
-         public int Width {
-            get { return _width; }
-            set { _width = value; ResetImage(); }
-         }
-         public int Height {
-            get { return _height; }
-            set { _height = value; ResetImage(); }
-         }
-
-         protected abstract TImage CreateImage();
-
-         protected abstract void DrawBody();
-
-         protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
+         protected void Draw(CanvasDrawingSession ds, bool fillBk) {
             if (fillBk)
                ds.Clear(Windows.UI.Colors.Transparent);
 
-            var w = _width / 100.0f;
-            var h = _height / 100.0f;
+            var w = (float)Size.Width  / 100.0f;
+            var h = (float)Size.Height / 100.0f;
 
             //ds.DrawRectangle(0, 0, Width, Height, Windows.UI.Colors.Red, 1); // test
 
@@ -101,9 +53,9 @@ namespace fmg.uwp.img.win2d {
                StartCap = CanvasCapStyle.Flat,
                EndCap = CanvasCapStyle.Flat
             }) {
-               ds.DrawLine(p[0], p[1], Color.Black.ToWinColor(), Math.Max(1, 7*(w+h)/2), cssLine);
+               ds.DrawLine(p[0], p[1], Colors.Black, Math.Max(1, 7*(w+h)/2), cssLine);
 
-               var clrRed = Color.Red.ToWinColor();
+               var clrRed = Colors.Red;
                using (var cssCurve = new CanvasStrokeStyle {
                   StartCap = CanvasCapStyle.Triangle,
                   EndCap = CanvasCapStyle.Triangle
@@ -132,14 +84,9 @@ namespace fmg.uwp.img.win2d {
             }
          }
 
-         protected override void Dispose(bool disposing) {
-            if (Disposed)
-               return;
-
-            base.Dispose(disposing);
-
-            if (disposing)
-               ResetImage();
+         protected override void Disposing() {
+            Model.Dispose();
+            base.Disposing();
          }
 
       }
@@ -148,34 +95,29 @@ namespace fmg.uwp.img.win2d {
       //    custom implementations
       /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      /// <summary> Flag image
-      /// <br/>
-      /// CanvasBitmap impl
-      /// </summary>
-      public class CanvasBmp : AFlagImageWin2D<CanvasBitmap> {
+      /// <summary> Flag image view implementation over <see cref="CanvasBitmap"/> </summary>
+      public class CanvasBmp : FlagImageView<CanvasBitmap> {
 
-         public CanvasBmp(ICanvasResourceCreator resourceCreator)
+         public CanvasBmp(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
             : base(resourceCreator)
          { }
 
          protected override CanvasBitmap CreateImage() {
             var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            return new CanvasRenderTarget(_rc, Width, Height, dpi);
+            var s = Model.Size;
+            return new CanvasRenderTarget(_rc, (float)s.Width, (float)s.Height, dpi);
          }
 
          protected override void DrawBody() {
             using (var ds = ((CanvasRenderTarget)Image).CreateDrawingSession()) {
-               DrawBody(ds, true);
+               Draw(ds, true);
             }
          }
 
       }
 
-      /// <summary> Flag image
-      /// <br/>
-      /// CanvasImageSource impl (XAML ImageSource compatible)
-      /// </summary>
-      public class CanvasImgSrc : AFlagImageWin2D<CanvasImageSource> {
+      /// <summary> Flag image view implementation over <see cref="CanvasImageSource"/> (XAML <see cref="Windows.UI.Xaml.Media.ImageSource"/> compatible) </summary>
+      public class CanvasImgSrc : FlagImageView<CanvasImageSource> {
 
          public CanvasImgSrc(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
             : base(resourceCreator)
@@ -183,18 +125,46 @@ namespace fmg.uwp.img.win2d {
 
          protected override CanvasImageSource CreateImage() {
             var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            return new CanvasImageSource(_rc, Width, Height, dpi);
+            var s = Model.Size;
+            return new CanvasImageSource(_rc, (float)s.Width, (float)s.Height, dpi);
          }
 
          protected override void DrawBody() {
-            using (var ds = Image.CreateDrawingSession(Color.Transparent.ToWinColor())) {
-               DrawBody(ds, false);
+            using (var ds = Image.CreateDrawingSession(Colors.Transparent)) {
+               Draw(ds, false);
             }
+         }
+
+      }
+
+      /// <summary> Flag image controller implementation for <see cref="Flag.CanvasBmp"/> </summary>
+      public class ControllerBitmap : ImageController<CanvasBitmap, Flag.CanvasBmp, FlagModel> {
+
+         public ControllerBitmap(ICanvasResourceCreator resourceCreator)
+            : base(new Flag.CanvasBmp(resourceCreator))
+         { }
+
+         protected override void Disposing() {
+            View.Dispose();
+            base.Disposing();
+         }
+
+      }
+
+      /// <summary> Flag image controller implementation for <see cref="Flag.CanvasImgSrc"/> </summary>
+      public class ControllerImgSrc : ImageController<CanvasImageSource, Flag.CanvasImgSrc, FlagModel> {
+
+         public ControllerImgSrc(ICanvasResourceCreator resourceCreator)
+            : base(new Flag.CanvasImgSrc(resourceCreator))
+         { }
+
+         protected override void Disposing() {
+            View.Dispose();
+            base.Disposing();
          }
 
       }
 
    }
 
-#endif
 }

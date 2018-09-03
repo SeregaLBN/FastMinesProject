@@ -1,4 +1,3 @@
-using System;
 using fmg.core.types;
 
 namespace fmg.core.img {

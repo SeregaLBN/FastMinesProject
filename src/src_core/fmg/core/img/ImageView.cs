@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using fmg.common;
 using fmg.common.geom;
 using fmg.common.notyfier;
 

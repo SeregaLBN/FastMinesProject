@@ -1,128 +1,109 @@
-using System.Linq;
+using System;
+using System.Collections.Generic;
 using Windows.Graphics.Display;
 using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using fmg.core.img;
+using fmg.common;
+using fmg.common.geom;
 using fmg.core.types;
+using fmg.core.img;
 using fmg.uwp.utils;
-using fmg.uwp.utils.win2d;
-using fmg.uwp.mosaic.win2d;
 
 namespace fmg.uwp.img.win2d {
-#if false
 
-   /// <summary> Representable <see cref="ESkillLevel"/> as image.
-   /// <br/>
-   /// Win2D impl
-   /// </summary>
+   /// <summary> Representable <see cref="ESkillLevel"/> as image. Win2D implementation </summary>
    public static class MosaicSkillImg {
 
       /// <summary> Representable <see cref="ESkillLevel"/> as image: common implementation part </summary>
-      public abstract class CommonImpl<TImage> : AMosaicSkillImg<TImage>
+      /// <typeparam name="TImage">Win2D specific image: <see cref="CanvasBitmap"/> or <see cref="CanvasImageSource"/></typeparam>
+      public abstract class MosaicSkillImgView<TImage> : MosaicSkillOrGroupView<TImage, MosaicSkillModel>
          where TImage : DependencyObject, ICanvasResourceCreator
       {
-         static CommonImpl() {
-            StaticInitializer.Init();
-         }
-
-         protected readonly ICanvasResourceCreator _rc;
-
          /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
-         protected CommonImpl(ESkillLevel? group, ICanvasResourceCreator resourceCreator)
-            : base(group)
+         protected MosaicSkillImgView(ESkillLevel? skill, ICanvasResourceCreator resourceCreator)
+            : base(new MosaicSkillModel(skill), resourceCreator)
          {
-            _rc = resourceCreator;
          }
 
-         protected void DrawBody(CanvasDrawingSession ds, bool fillBk) {
-            ICanvasResourceCreator rc = Image;
+         protected override IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords { get { return Model.Coords; } }
 
-            if (fillBk)
-               ds.Clear(BackgroundColor.ToWinColor());
-
-            var bw = BorderWidth;
-            var needDrawPerimeterBorder = (!BorderColor.IsTransparent && (bw > 0));
-            var borderColor = BorderColor.ToWinColor();
-            using (var css = new CanvasStrokeStyle {
-               StartCap = CanvasCapStyle.Triangle,
-               EndCap = CanvasCapStyle.Triangle
-            }) {
-               var stars = GetCoords();
-               foreach (var data in stars) {
-                  var points = data.Item2.ToArray();
-                  using (var geom = rc.BuildLines(points)) {
-                     if (!data.Item1.IsTransparent)
-                        ds.FillGeometry(geom, data.Item1.ToWinColor());
-
-                     // draw perimeter border
-                     if (needDrawPerimeterBorder)
-                        ds.DrawGeometry(geom, borderColor, bw, css);
-                  }
-               }
-            }
-            using (var css = new CanvasStrokeStyle {
-               StartCap = CanvasCapStyle.Flat,
-               EndCap = CanvasCapStyle.Flat
-            }) {
-               foreach (var li in GetCoordsBurgerMenu())
-                  ds.DrawLine(li.from.ToVector2(), li.to.ToVector2(), li.clr.ToWinColor(), (float)li.penWidht, css);
-            }
-         }
       }
 
       /////////////////////////////////////////////////////////////////////////////////////////////////////
       //    custom implementations
       /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      /// <summary> Representable <see cref="ESkillLevel"/> as image.
-      /// <br/>
-      /// CanvasBitmap impl
-      /// </summary>
-      public class CanvasBmp : CommonImpl<CanvasBitmap> {
+      /// <summary> Representable <see cref="ESkillLevel"/> as image over <see cref="CanvasBitmap"/> </summary>
+      public class CanvasBmp : MosaicSkillImgView<CanvasBitmap> {
 
-         /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
-         public CanvasBmp(ESkillLevel? group, ICanvasResourceCreator resourceCreator)
-            : base(group, resourceCreator)
+         public CanvasBmp(ESkillLevel? skill, ICanvasResourceCreator resourceCreator)
+            : base(skill, resourceCreator)
          { }
 
          protected override CanvasBitmap CreateImage() {
             var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            return new CanvasRenderTarget(_rc, Size.Width, Size.Height, dpi);
+            var s = Model.Size;
+            return new CanvasRenderTarget(_rc, (float)s.Width, (float)s.Height, dpi);
          }
 
          protected override void DrawBody() {
             using (var ds = ((CanvasRenderTarget)Image).CreateDrawingSession()) {
-               DrawBody(ds, true);
+               Draw(ds, true);
             }
          }
+
       }
 
-      /// <summary> Representable <see cref="ESkillLevel"/> as image.
-      /// <br/>
-      /// CanvasImageSource impl (XAML ImageSource compatible)
-      /// </summary>
-      public class CanvasImgSrc : CommonImpl<CanvasImageSource> {
+      /// <summary> Representable <see cref="ESkillLevel"/> as image over <see cref="CanvasImageSource"/> (XAML <see cref="Windows.UI.Xaml.Media.ImageSource"/> compatible) </summary>
+      public class CanvasImgSrc : MosaicSkillImgView<CanvasImageSource> {
 
-         /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
-         public CanvasImgSrc(ESkillLevel? group, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
-            : base(group, resourceCreator)
+         public CanvasImgSrc(ESkillLevel? skill, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+            : base(skill, resourceCreator)
          { }
 
          protected override CanvasImageSource CreateImage() {
             var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            return new CanvasImageSource(_rc, Size.Width, Size.Height, dpi);
+            var s = Model.Size;
+            return new CanvasImageSource(_rc, (float)s.Width, (float)s.Height, dpi);
          }
 
          protected override void DrawBody() {
-            using (var ds = Image.CreateDrawingSession(BackgroundColor.ToWinColor())) {
-               DrawBody(ds, false);
+            using (var ds = Image.CreateDrawingSession(Model.BackgroundColor.ToWinColor())) {
+               Draw(ds, false);
             }
          }
+
+      }
+
+      /// <summary> Representable <see cref="ESkillLevel"/> as image for <see cref="MosaicSkillImg.CanvasBmp"/> </summary>
+      public class ControllerBitmap : MosaicSkillController<CanvasBitmap, MosaicSkillImg.CanvasBmp> {
+
+         public ControllerBitmap(ESkillLevel? skill, ICanvasResourceCreator resourceCreator)
+            : base(skill == null, new MosaicSkillImg.CanvasBmp(skill, resourceCreator))
+         { }
+
+         protected override void Disposing() {
+            View.Dispose();
+            base.Disposing();
+         }
+
+      }
+
+      /// <summary> Representable <see cref="ESkillLevel"/> as image for <see cref="MosaicSkillImg.CanvasImgSrc"/> </summary>
+      public class ControllerImgSrc : MosaicSkillController<CanvasImageSource, MosaicSkillImg.CanvasImgSrc> {
+
+         public ControllerImgSrc(ESkillLevel? skill, ICanvasResourceCreator resourceCreator)
+            : base(skill == null, new MosaicSkillImg.CanvasImgSrc(skill, resourceCreator))
+         { }
+
+         protected override void Disposing() {
+            View.Dispose();
+            base.Disposing();
+         }
+
       }
 
    }
 
-#endif
 }

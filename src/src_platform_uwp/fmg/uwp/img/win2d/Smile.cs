@@ -178,8 +178,8 @@ namespace fmg.uwp.img.win2d {
                         using (var areaRght3 = rotatedRght3.IntersectExclude(rcHalfRght)) {
                         using (var areaLeft31 = areaLeft1.Intersect(areaLeft3)) {
                         using (var areaRght31 = areaRght1.Intersect(areaRght3)) {
-                           ds.FillGeometry(areaLeft31, Color.Green);
-                           ds.FillGeometry(areaRght31, Color.Green);
+                           ds.FillGeometry(areaLeft31, Color.Lime);
+                           ds.FillGeometry(areaRght31, Color.Lime);
                            ds.DrawGeometry(areaLeft31, Color.Black, strokeWidth, css);
                            ds.DrawGeometry(areaRght31, Color.Black, strokeWidth, css);
                         }}}}}}}}
@@ -187,7 +187,7 @@ namespace fmg.uwp.img.win2d {
 
                      // nose
                      using (var nose = _rc.CreateEllipseInRect(0.415 * width, 0.400 * height, 0.170 * width, 0.170 * height)) {
-                        ds.FillGeometry(nose, Color.Green);
+                        ds.FillGeometry(nose, Color.Lime);
                         ds.DrawGeometry(nose, Color.Black, strokeWidth, css);
                      }
                   }
@@ -257,7 +257,7 @@ namespace fmg.uwp.img.win2d {
                      ds.FillGeometry(arcSmile.IntersectExclude(lip), Color.Black);
 
                      // test
-                     //ds.DrawGeometry(lip, Color.Green.ToWinColor(), 1);
+                     //ds.DrawGeometry(lip, Color.Lime.ToWinColor(), 1);
 
                      // dimples - ямочки на щеках
                      ds.DrawArc(_rc, +0.020 * width, 0.420 * height, 0.180 * width, 0.180 * height, 85 + 180, 57, false, false, Color.Black, strokeWidth, css);

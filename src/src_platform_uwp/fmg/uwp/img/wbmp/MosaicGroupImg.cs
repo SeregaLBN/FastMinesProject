@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common;

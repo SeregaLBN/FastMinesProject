@@ -144,7 +144,7 @@ namespace fmg.uwp.img.win2d {
       /// <summary> Logo image view implementation over <see cref="CanvasBitmap"/> </summary>
       public class CanvasBmp : LogoImageView<CanvasBitmap> {
 
-         public CanvasBmp(ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+         public CanvasBmp(ICanvasResourceCreator resourceCreator)
             : base(resourceCreator)
          { }
 
