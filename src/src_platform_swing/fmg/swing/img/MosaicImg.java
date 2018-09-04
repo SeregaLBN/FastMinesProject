@@ -60,7 +60,7 @@ public abstract class MosaicImg<TImage>
    //    custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   /** Moisac image view implementation over {@link javax.swing.Icon} */
+   /** Mosaic image view implementation over {@link javax.swing.Icon} */
    static class Icon extends MosaicImg<javax.swing.Icon> {
 
       private IconSwing ico = new IconSwing(this);
