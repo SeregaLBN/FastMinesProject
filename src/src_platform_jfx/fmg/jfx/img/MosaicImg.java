@@ -16,7 +16,7 @@ import fmg.jfx.mosaic.MosaicJfxView;
  * <br>
  * base JavaFX impl
  *
- * @param <TImage> SWING specific image: {@link javafx.scene.image.Image} or {@link javafx.scene.canvas.Canvas}
+ * @param <TImage> JFX specific image: {@link javafx.scene.image.Image} or {@link javafx.scene.canvas.Canvas}
  */
 public abstract class MosaicImg<TImage>
       extends MosaicJfxView<TImage, Void, MosaicAnimatedModel<Void>> {

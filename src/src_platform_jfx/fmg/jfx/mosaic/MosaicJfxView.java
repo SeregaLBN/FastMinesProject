@@ -103,7 +103,7 @@ public abstract class MosaicJfxView<TImage,
       Collection<BaseCell> toCheck = (redrawAll || recheckAll) ? model.getMatrix() : modifiedCells;
 
       if (_DEBUG_DRAW_FLOW) {
-         System.out.println("> MosaicSwingView.draw: " + (redrawAll ? "all" : ("cnt=" + modifiedCells.size()))
+         System.out.println("> MosaicJfxView.draw: " + (redrawAll ? "all" : ("cnt=" + modifiedCells.size()))
                                                        + "; clipReg=" + clipRegion
                                                        + "; drawBk=" + drawBk);
       }
