@@ -59,7 +59,7 @@ public abstract class MosaicImg<TImage>
    // custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   /** Moisac image view implementation over {@link javafx.scene.canvas.javafx.scene.canvas.Canvas} */
+   /** Mosaic image view implementation over {@link javafx.scene.canvas.javafx.scene.canvas.Canvas} */
    static class Canvas extends MosaicImg<javafx.scene.canvas.Canvas> {
 
       private CanvasJfx canvas = new CanvasJfx(this);

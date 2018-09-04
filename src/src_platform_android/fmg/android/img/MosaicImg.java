@@ -61,7 +61,7 @@ public abstract class MosaicImg<TImage>
    //    custom implementations
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   /** Moisac image view implementation over {@link android.graphics.Bitmap} */
+   /** Mosaic image view implementation over {@link android.graphics.Bitmap} */
    static class Bitmap extends MosaicImg<android.graphics.Bitmap> {
 
       private BmpCanvas wrap = new BmpCanvas();
