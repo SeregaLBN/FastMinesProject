@@ -2,7 +2,7 @@ package fmg.core.img;
 
 /**
  * MVC controller. Base animation controller.
- * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageView> MVC view
  * @param <TImageModel> MVC model
  */

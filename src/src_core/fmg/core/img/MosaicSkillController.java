@@ -5,7 +5,7 @@ import fmg.core.types.ESkillLevel;
 /**
  * MVC controller of {@link ESkillLevel} image
  *
- * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageView> MVC view
  */
 public abstract class MosaicSkillController<TImage,

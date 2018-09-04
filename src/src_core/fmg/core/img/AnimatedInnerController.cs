@@ -9,7 +9,7 @@ using fmg.common.ui;
 namespace fmg.core.img {
 
    /// <summary> MVC controller. Base animation controller. </summary>
-   /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
+   /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
    /// <typeparam name="TImageView">MVC view</typeparam>
    /// <typeparam name="TImageModel">MVC model</typeparam>
    public sealed class AnimatedInnerController<TImage, TImageView, TImageModel>

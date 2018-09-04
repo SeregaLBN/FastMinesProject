@@ -17,7 +17,7 @@ namespace fmg.core.mosaic {
    }
 
    /// <summary> MVC: draw model of mosaic field. </summary>
-   /// <typeparam name="TImageInner">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
+   /// <typeparam name="TImageInner">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
    public class MosaicDrawModel<TImageInner> : MosaicGameModel, IImageModel
       where TImageInner : class
    {

@@ -5,7 +5,7 @@ using fmg.common.geom;
 namespace fmg.core.img {
 
    /// <summary> Image MVC: controller </summary>
-   /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
+   /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
    /// <typeparam name="TImageView">image view</typeparam>
    /// <typeparam name="TImageModel">image model</typeparam>
    public interface IImageController<TImage, TImageView, TImageModel>

@@ -9,7 +9,7 @@ namespace fmg.core.img {
    /// MVC: view.
    /// Base implementation of image view.
    /// </summary>
-   /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
+   /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
    /// <typeparam name="TImageModel">model data for display</typeparam>
    public abstract class ImageView<TImage, TImageModel>
                       : IImageView<TImage, TImageModel>, INotifyPropertyChanged

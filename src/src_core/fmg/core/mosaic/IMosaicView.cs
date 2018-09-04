@@ -5,8 +5,8 @@ using fmg.core.mosaic.cells;
 namespace fmg.core.mosaic {
 
    /// <summary> MVC view interface of mosaic </summary>
-   /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
-   /// <typeparam name="TImageInner">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
+   /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
+   /// <typeparam name="TImageInner">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
    /// <typeparam name="TMosaicModel">mosaic data model</typeparam>
    public interface IMosaicView<TImage, TImageInner, TMosaicModel>
                    : IImageView<TImage, TMosaicModel>
