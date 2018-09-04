@@ -9,7 +9,7 @@ import fmg.common.notyfier.NotifyPropertyChanged;
  * MVC: view.
  * Base implementation of image view.
  *
- * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageModel> model data for display
  **/
 public abstract class ImageView<TImage, TImageModel extends IImageModel>

@@ -1,7 +1,7 @@
 namespace fmg.core.img {
 
    /// <summary> MVC controlle of logo image </summary>
-   /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
+   /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
    /// <typeparam name="TImageView">MVC view</typeparam>
    public class LogoController<TImage, TImageView>
        : AnimatedImgController<TImage, TImageView, LogoModel>

@@ -6,7 +6,7 @@ import fmg.common.notyfier.INotifyPropertyChanged;
 /**
  * Image MVC: controller
  *
- * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageView> image view
  * @param <TImageModel> image model
  */

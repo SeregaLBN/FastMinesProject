@@ -6,7 +6,7 @@ import fmg.common.notyfier.INotifyPropertyChanged;
 /**
  * Image MVC: view (displayed view)
  *
- * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageModel> model data for display
  **/
 public interface IImageView<TImage, TImageModel extends IImageModel>
@@ -25,7 +25,7 @@ public interface IImageView<TImage, TImageModel extends IImageModel>
    /** image size in pixels */
    void setSize(SizeDouble size);
 
-   /** plaform specific view/image/picture or other display context/canvas/window/panel */
+   /** platform specific view/image/picture or other display context/canvas/window/panel */
    TImage getImage();
 
    /** Mark the need to redraw the picture

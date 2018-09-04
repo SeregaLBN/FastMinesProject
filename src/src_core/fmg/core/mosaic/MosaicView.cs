@@ -8,7 +8,7 @@ using fmg.core.mosaic.cells;
 namespace fmg.core.mosaic {
 
    /// <summary> MVC: view. Base mosaic view implementation </summary>
-   /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
+   /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
    /// <typeparam name="TImageInner">image type of flag/mine into mosaic field</typeparam>
    /// <typeparam name="TMosaicModel">mosaic data model</typeparam>
    public abstract class MosaicView<TImage, TImageInner, TMosaicModel>

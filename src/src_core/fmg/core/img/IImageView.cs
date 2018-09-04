@@ -7,7 +7,7 @@ namespace fmg.core.img {
    ///<summary>
    /// Image MVC: view (displayed view)
    ///
-   /// @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+   /// @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
    /// @param <TImageModel> model data for display
    /// </summary>
    public interface IImageView<TImage, TImageModel> : INotifyPropertyChanged, IDisposable
@@ -21,7 +21,7 @@ namespace fmg.core.img {
       ///<summary> image size in pixels </summary>
       SizeDouble Size { get; set; }
 
-      ///<summary> plaform specific view/image/picture or other display context/canvas/window/panel </summary>
+      ///<summary> platform specific view/image/picture or other display context/canvas/window/panel </summary>
       TImage Image { get; }
 
       ///<summary> Mark the need to redraw the picture.

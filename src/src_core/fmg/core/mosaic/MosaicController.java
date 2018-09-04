@@ -12,7 +12,7 @@ import fmg.core.mosaic.cells.BaseCell;
 import fmg.core.types.*;
 
 /** MVC: mosaic controller. Base implementation
- * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TImageInner> image type of flag/mine into mosaic field
  * @param <TMosaicView> mosaic view
  * @param <TMosaicModel> mosaic model

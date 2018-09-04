@@ -1,7 +1,7 @@
 namespace fmg.core.img {
 
    /// <summary> MVC controller of <see cref="EMosaicGroup"/> image </summary>
-   /// <typeparam name="TImage">plaform specific view/image/picture or other display context/canvas/window/panel</typeparam>
+   /// <typeparam name="TImage">platform specific view/image/picture or other display context/canvas/window/panel</typeparam>
    /// <typeparam name="MosaicGroupModel">MVC view</typeparam>
    public abstract class MosaicGroupController<TImage, TImageView>
                        : AnimatedImgController<TImage, TImageView, MosaicGroupModel>

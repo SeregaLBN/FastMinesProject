@@ -6,8 +6,8 @@ import fmg.core.img.IImageView;
 import fmg.core.mosaic.cells.BaseCell;
 
 /** MVC view interface of mosaic
- * @param <TImage> plaform specific view/image/picture or other display context/canvas/window/panel
- * @param <TImageInner> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImage> platform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImageInner> platform specific view/image/picture or other display context/canvas/window/panel
  * @param <TMosaicModel> mosaic data model
  */
 public interface IMosaicView<TImage, TImageInner, TMosaicModel extends MosaicDrawModel<TImageInner>>

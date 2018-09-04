@@ -18,7 +18,7 @@ import fmg.core.types.draw.PenBorder;
 /**
  * MVC: draw model of mosaic field.
  *
- * @param <TImageInner> plaform specific view/image/picture or other display context/canvas/window/panel
+ * @param <TImageInner> platform specific view/image/picture or other display context/canvas/window/panel
  **/
 public class MosaicDrawModel<TImageInner> extends MosaicGameModel implements IImageModel {
 
