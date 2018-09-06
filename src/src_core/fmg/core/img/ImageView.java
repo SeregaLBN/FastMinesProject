@@ -87,9 +87,11 @@ public abstract class ImageView<TImage, TImageModel extends IImageModel>
    }
 
    private void draw() {
-      if (_isDisposed)
-         System.err.println(" Already disposed! " + this.getClass().getSimpleName());
       assert !_isDisposed;
+      if (_isDisposed) {
+         System.err.println(" Already disposed! " + this.getClass().getSimpleName());
+         return;
+      }
       drawBegin();
       drawBody();
       drawEnd();

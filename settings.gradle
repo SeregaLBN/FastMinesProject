@@ -1,4 +1,3 @@
-include ':FastMines_core'
 rootProject.name = 'FastMinesProject'
 
-include 'FastMines_swing', 'FastMines_jfx', 'FastMines_android'
+include ':FastMines_core', ':FastMines_swing', ':FastMines_jfx', ':FastMines_android'

@@ -81,6 +81,8 @@ namespace fmg.core.img {
 
       private void Draw() {
          System.Diagnostics.Debug.Assert(!Disposed);
+         if (Disposed)
+            return;
          DrawBegin();
          DrawBody();
          DrawEnd();
