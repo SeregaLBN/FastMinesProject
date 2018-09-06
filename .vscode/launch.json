@@ -22,9 +22,9 @@
          "type": "coreclr",
          "request": "launch",
          "preLaunchTask": "test Test.FastMines.Common",
-         "program": "${workspaceFolder}/FastMines_C#/Test.FastMines.Common/bin/Debug/netcoreapp2.0/Test.FastMines.Common.dll",
+         "program": "${workspaceFolder}/FastMines_core/Test.FastMines.Common/bin/Debug/netcoreapp2.0/Test.FastMines.Common.dll",
          "args": [],
-         "cwd": "${workspaceFolder}/FastMines_C#/Test.FastMines.Common",
+         "cwd": "${workspaceFolder}/FastMines_core/Test.FastMines.Common",
          "console": "internalConsole",
          "stopAtEntry": false,
          "internalConsoleOptions": "openOnSessionStart"

@@ -155,7 +155,7 @@
   <Import Project="..\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems" Label="Shared" />
   <Import Project="..\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems" Label="Shared" />
   <Import Project="..\FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems" Label="Shared" />
-  <Import Project="..\..\FastMines_C#\FastMines.Core\FastMines.Core.projitems" Label="Shared" />
+  <Import Project="..\..\FastMines_core\FastMines.Core\FastMines.Core.projitems" Label="Shared" />
   <Import Project="..\FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

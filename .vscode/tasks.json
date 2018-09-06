@@ -7,7 +7,7 @@
          "type": "process",
          "args": [
             "test",
-            "${workspaceFolder}/FastMines_C#/Test.FastMines.Common/Test.FastMines.Common.csproj"
+            "${workspaceFolder}/FastMines_core/Test.FastMines.Common/Test.FastMines.Common.csproj"
          ],
          "problemMatcher": "$msCompile"
       },
