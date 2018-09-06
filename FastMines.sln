@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastMines.Uwp.BackgroundTas
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastMines.Logo", "FastMines_Logo\FastMines_Logo.vcxproj", "{709C5B80-F59C-4E4C-AED6-6CDEBA3D8E9C}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Core", "FastMines_C#\FastMines.Core\FastMines.Core.shproj", "{9DFD73DB-D187-4471-98BA-713996C8A257}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Core", "FastMines_core\FastMines.Core\FastMines.Core.shproj", "{9DFD73DB-D187-4471-98BA-713996C8A257}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Uwp.Shared", "FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.shproj", "{3AB77D5F-33DA-4867-B97B-9E0DA4901DDE}"
 EndProject
@@ -32,20 +32,20 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FastMines.Ava.Draw", "FastM
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaCoreSnow", "..\C#\let-it-snow\AvaloniaCoreSnow\AvaloniaCoreSnow.csproj", "{4FE0DDFD-EC7D-44F2-AA23-6F4C08E4DA15}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.FastMines.Common", "FastMines_C#\Test.FastMines.Common\Test.FastMines.Common.csproj", "{31716C7E-3D9D-45B7-A14B-4592DFA01B32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.FastMines.Common", "FastMines_core\Test.FastMines.Common\Test.FastMines.Common.csproj", "{31716C7E-3D9D-45B7-A14B-4592DFA01B32}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		FastMines_Ava\FastMines.Ava.Draw\FastMines.Ava.Draw.projitems*{196fa595-153b-4435-8e9b-46c36bac1a2e}*SharedItemsImports = 13
 		FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{3ab77d5f-33da-4867-b97b-9e0da4901dde}*SharedItemsImports = 13
 		FastMines_uwp\FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems*{3de6e1bd-606b-41c8-99ac-6fc22afec0b4}*SharedItemsImports = 13
-		FastMines_C#\FastMines.Core\FastMines.Core.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
+		FastMines_core\FastMines.Core\FastMines.Core.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Shared\FastMines.Uwp.Shared.projitems*{758fc9e6-177d-4231-8aff-2bda5b7dab54}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{9db7237d-bfae-4767-8202-8e54977978a0}*SharedItemsImports = 13
-		FastMines_C#\FastMines.Core\FastMines.Core.projitems*{9dfd73db-d187-4471-98ba-713996c8a257}*SharedItemsImports = 13
-		FastMines_C#\FastMines.Core\FastMines.Core.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
+		FastMines_core\FastMines.Core\FastMines.Core.projitems*{9dfd73db-d187-4471-98ba-713996c8a257}*SharedItemsImports = 13
+		FastMines_core\FastMines.Core\FastMines.Core.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Draw.WBmp\FastMines.Uwp.Draw.WBmp.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Draw.Win2D\FastMines.Uwp.Draw.Win2D.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
 		FastMines_uwp\FastMines.Uwp.Draw.XamlElem\FastMines.Uwp.Draw.XamlElem.projitems*{babb709f-6e07-49ee-85f4-9dfa1e5126ef}*SharedItemsImports = 4
