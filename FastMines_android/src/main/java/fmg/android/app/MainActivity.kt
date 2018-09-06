@@ -1,18 +1,17 @@
-package fmg.android.app;
+package fmg.android.app
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.content.Intent
+import android.support.v7.app.AppCompatActivity
+import android.os.Bundle
 
-public class MainActivity extends AppCompatActivity {
+class MainActivity : AppCompatActivity() {
 
-   @Override
-   protected void onCreate(Bundle savedInstanceState) {
-      super.onCreate(savedInstanceState);
-      setContentView(R.layout.main_activity);
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.main_activity)
 
-      Intent intent = new Intent(this, DemoActivity.class);
-      startActivity(intent);
-   }
+        val intent = Intent(this, DemoActivity::class.java)
+        startActivity(intent)
+    }
 
 }

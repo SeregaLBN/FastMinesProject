@@ -1,76 +1,75 @@
-package fmg.android.img;
+package fmg.android.img
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Consumer;
+import java.util.Date
+import java.util.HashMap
+import java.util.function.Consumer
 
-import fmg.common.ui.ITimer;
-import fmg.core.img.IAnimator;
-import fmg.android.utils.Timer;
+import fmg.common.ui.ITimer
+import fmg.core.img.IAnimator
+import fmg.android.utils.Timer
 
-public class Animator implements IAnimator, AutoCloseable {
+class Animator private constructor() : IAnimator, AutoCloseable {
 
-   private static class SubscribeInfo {
-      public boolean active = true;    // enabled?
-      public long    startTime = new Date().getTime(); // start time of subscribe
-      public Consumer<Long /* time from the beginning of the subscription */> callback;
-   }
-   private final ITimer _timer;
-   private final Map<Object /* subscriber */, SubscribeInfo> _subscribers;
+    private class SubscribeInfo {
+        var active = true    // enabled?
+        var startTime = Date().time // start time of subscribe
+        lateinit var callback: Consumer<Long/* time from the beginning of the subscription */>
+    }
 
-   private static Animator _singleton;
-   public static Animator getSingleton() { // not synchronized. since should work only in the thread of the UI.
-      if (_singleton == null)
-         _singleton = new Animator();
-      return _singleton;
-   }
+    private val _timer: ITimer
+    private val _subscribers: MutableMap<Any, SubscribeInfo/* subscriber */>
 
-   private Animator() {
-      _subscribers = new HashMap<>();
-      _timer = new Timer();
-      _timer.setInterval(1000/60); // The number of frames per second
-      _timer.setCallback(() -> {
-         long currentTime = new Date().getTime();
-         _subscribers.forEach((k,v) -> {
-            if (v.active)
-               v.callback.accept(currentTime - v.startTime);
-         });
-      });
-   }
+    init {
+        _subscribers = HashMap()
+        _timer = Timer()
+        _timer.interval = (1000 / 60).toLong() // The number of frames per second
+        _timer.setCallback {
+            val currentTime = Date().time
+            _subscribers.forEach { k, v ->
+                if (v.active)
+                    v.callback.accept(currentTime - v.startTime)
+            }
+        }
+    }
 
-   @Override
-   public void subscribe(Object subscriber, Consumer<Long /* time from start subscribe */> subscriberCallbackMethod) {
-      SubscribeInfo info = _subscribers.get(subscriber);
-      if (info == null) {
-         info = new SubscribeInfo();
-         info.callback = subscriberCallbackMethod;
-         _subscribers.put(subscriber, info);
-      } else {
-         info.active = true;
-         info.startTime = new Date().getTime() - info.startTime; // apply of pause delta time
-      }
-   }
+    override fun subscribe(subscriber: Any, subscriberCallbackMethod: Consumer<Long/* time from start subscribe */>) {
+        var info: SubscribeInfo? = _subscribers[subscriber]
+        if (info == null) {
+            info = SubscribeInfo()
+            info.callback = subscriberCallbackMethod
+            _subscribers[subscriber] = info
+        } else {
+            info.active = true
+            info.startTime = Date().time - info.startTime // apply of pause delta time
+        }
+    }
 
-   @Override
-   public void pause(Object subscriber) {
-      SubscribeInfo info = _subscribers.get(subscriber);
-      if (info == null)
-         return;
-      info.active = false;
-      info.startTime = new Date().getTime() - info.startTime; // set of pause delta time
-   }
+    override fun pause(subscriber: Any) {
+        val info = _subscribers[subscriber] ?: return
+        info.active = false
+        info.startTime = Date().time - info.startTime // set of pause delta time
+    }
 
-   @Override
-   public void unsubscribe(Object subscriber) {
-      _subscribers.remove(subscriber);
-   }
+    override fun unsubscribe(subscriber: Any) {
+        _subscribers.remove(subscriber)
+    }
 
-   @Override
-   public void close() {
-      _timer.setCallback(null);
-      _timer.close();
-      _subscribers.clear();
-   }
+    override fun close() {
+        _timer.setCallback(null)
+        _timer.close()
+        _subscribers.clear()
+    }
+
+    companion object {
+
+        private var _singleton: Animator? = null // not synchronized. since should work only in the thread of the UI.
+
+        val singleton: Animator
+            get() {
+                if (_singleton == null)
+                    _singleton = Animator()
+                return _singleton!!
+            }
+    }
 
 }

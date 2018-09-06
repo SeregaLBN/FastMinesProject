@@ -1,38 +1,38 @@
-package fmg.android.img;
+package fmg.android.img
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
+import android.graphics.Bitmap
+import android.graphics.Canvas
 
-import fmg.common.geom.SizeDouble;
+import fmg.common.geom.SizeDouble
 
-/** Internal class-wrapper for pair {@link Bitmap} and {@link Canvas} */
-class BmpCanvas implements AutoCloseable {
+/** Internal class-wrapper for pair [Bitmap] and [Canvas]  */
+internal class BmpCanvas : AutoCloseable {
 
-   private Bitmap _bmp;
-   private Canvas _canvas;
+    private var _bmp: Bitmap? = null
+    private var _canvas: Canvas? = null
 
-   public Bitmap createImage(SizeDouble size) {
-//      if (_bmp == null)
-         _bmp = android.graphics.Bitmap.createBitmap((int)size.width, (int)size.height, android.graphics.Bitmap.Config.ARGB_8888);
-//      else
-//         _bmp.reconfigure((int)size.width, (int)size.height, android.graphics.Bitmap.Config.ARGB_8888);
-      _canvas = null;
-      return _bmp;
-   }
+    val canvas: Canvas
+        get() {
+            if (_canvas == null && _bmp != null)
+                _canvas = Canvas(_bmp!!)
+            return _canvas!!
+        }
 
-   public Canvas getCanvas() {
-      if ((_canvas == null) && (_bmp != null))
-         _canvas = new Canvas(_bmp);
-      return _canvas;
-   }
+    fun createImage(size: SizeDouble): Bitmap {
+//        if (_bmp == null)
+            _bmp = android.graphics.Bitmap.createBitmap(size.width.toInt(), size.height.toInt(), android.graphics.Bitmap.Config.ARGB_8888)
+//        else
+//            _bmp!!.reconfigure(size.width.toInt(), size.height.toInt(), android.graphics.Bitmap.Config.ARGB_8888)
+        _canvas = null
+        return _bmp!!
+    }
 
-   @Override
-   public void close() {
-      if (_bmp == null)
-        return;
-      _bmp.recycle();
-      _bmp = null;
-      _canvas = null;
-   }
+    override fun close() {
+        if (_bmp == null)
+            return
+        _bmp!!.recycle()
+        _bmp = null
+        _canvas = null
+    }
 
 }

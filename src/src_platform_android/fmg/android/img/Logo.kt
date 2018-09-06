@@ -1,193 +1,182 @@
-package fmg.android.img;
+package fmg.android.img
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Arrays
 
-import android.graphics.Canvas;
-import android.graphics.LinearGradient;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PointF;
-import android.graphics.PorterDuff;
-import android.graphics.Shader;
+import android.graphics.Canvas
+import android.graphics.LinearGradient
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.PointF
+import android.graphics.PorterDuff
+import android.graphics.Shader
 
-import fmg.common.Color;
-import fmg.common.HSV;
-import fmg.common.geom.PointDouble;
-import fmg.core.img.IImageController;
-import fmg.core.img.ImageView;
-import fmg.core.img.LogoController;
-import fmg.core.img.LogoModel;
-import fmg.android.utils.Cast;
-import fmg.android.utils.StaticInitializer;
+import fmg.android.utils.*
+import fmg.common.Color
+import fmg.common.HSV
+import fmg.core.img.ImageView
+import fmg.core.img.LogoController
+import fmg.core.img.LogoModel
+import fmg.android.utils.StaticInitializer
 
-/** Main logos image - base Logo image view implementation */
-public abstract class Logo<TImage> extends ImageView<TImage, LogoModel> {
+/** Main logos image - base Logo image view implementation  */
+abstract class Logo<TImage> protected constructor() : ImageView<TImage, LogoModel>(LogoModel()) {
 
-   protected Logo() {
-      super(new LogoModel());
-   }
+    protected fun draw(g: Canvas) {
+        val lm = this.model
 
-   static {
-      StaticInitializer.init();
-   }
+        run {
+            // fill background
+            val bkClr = lm.backgroundColor
+            if (!bkClr.isOpaque)
+                g.drawColor(android.graphics.Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+            if (!bkClr.isTransparent)
+                g.drawColor(bkClr.toColor())
+        }
 
-   protected void draw(Canvas g) {
-      LogoModel lm = this.getModel();
+        val rays0 = lm.rays
+        val inn0 = lm.inn
+        val oct0 = lm.oct
 
-      { // fill background
-         Color bkClr = lm.getBackgroundColor();
-         if (!bkClr.isOpaque())
-            g.drawColor(android.graphics.Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-         if (!bkClr.isTransparent())
-            g.drawColor(Cast.toColor(bkClr));
-      }
+        val rays = rays0.stream().map { p -> p.toPoint() }.toArray<PointF> { size -> arrayOfNulls(size) }
+        val inn = inn0.stream().map { p -> p.toPoint() }.toArray<PointF> { size -> arrayOfNulls(size) }
+        val oct = oct0.stream().map { p -> p.toPoint() }.toArray<PointF> { size -> arrayOfNulls(size) }
+        val center = PointF((size.width / 2.0).toFloat(), (size.height / 2.0).toFloat())
 
-      List<PointDouble> rays0 = lm.getRays();
-      List<PointDouble> inn0  = lm.getInn();
-      List<PointDouble> oct0  = lm.getOct();
+        val hsvPalette = lm.palette
+        val palette = Arrays.stream(hsvPalette)
+                .map { hsv -> hsv.toColor() }
+                .toArray<Color> { size -> arrayOfNulls(size) }
 
-      PointF[] rays = rays0.stream().map(p -> Cast.toPoint(p)).toArray(size -> new PointF[size]);
-      PointF[] inn  = inn0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new PointF[size]);
-      PointF[] oct  = oct0 .stream().map(p -> Cast.toPoint(p)).toArray(size -> new PointF[size]);
-      PointF center = new PointF((float)(getSize().width/2.0), (float)(getSize().height/2.0));
+        // paint owner gradient rays
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        for (i in 0..7) {
+            if (!lm.isUseGradient) {
+                paint.style = Paint.Style.FILL
+                paint.color = hsvPalette[i].toColor().darker().toColor()
+                fillPolygon(g, paint, rays[i], oct[i], inn[i], oct[(i + 5) % 8])
+            } else {
+                // emulate triangle gradient (see BmpLogo.cpp C++ source code)
+                // over linear gragients
 
-      HSV[] hsvPalette = lm.getPalette();
-      Color[] palette = Arrays.stream(hsvPalette)
-         .map(hsv -> hsv.toColor())
-         .toArray(size -> new Color[size]);
+                paint.shader = makeLinearGradient(rays[i], palette[(i + 1) % 8], inn[i], palette[(i + 6) % 8])
+                fillPolygon(g, paint, rays[i], oct[i], inn[i], oct[(i + 5) % 8])
 
-      // paint owner gradient rays
-      Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-      for (int i=0; i<8; i++) {
-         if (!lm.isUseGradient()) {
-            paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Cast.toColor(hsvPalette[i].toColor().darker()));
-            fillPolygon(g, paint, rays[i], oct[i], inn[i], oct[(i+5)%8]);
-         } else {
-            // emulate triangle gradient (see BmpLogo.cpp C++ source code)
-            // over linear gragients
+                val p1 = oct[i]
+                val p2 = oct[(i + 5) % 8]
+                val p = PointF((p1.x + p2.x) / 2, (p1.y + p2.y) / 2) // середина линии oct[i]-oct[(i+5)%8]. По факту - пересечение линий rays[i]-inn[i] и oct[i]-oct[(i+5)%8]
 
-            paint.setShader(makeLinearGradient(rays[i], palette[(i+1)%8], inn[i], palette[(i+6)%8]));
-            fillPolygon(g, paint, rays[i], oct[i], inn[i], oct[(i+5)%8]);
+                lateinit var clr: Color // Color(255,255,255,0); //  Cast.toColor(fmg.common.Color.Transparent);
+                if (true) {
+                    val c1 = hsvPalette[(i + 1) % 8]
+                    val c2 = hsvPalette[(i + 6) % 8]
+                    val diff = c1.h - c2.h
+                    val cP = HSV(c1.toColor())
+                    cP.h += diff / 2 // цвет в точке p (пересечений линий...)
+                    cP.a = 0
+                    clr = cP.toColor()
+                }
 
-            PointF p1 = oct[i];
-            PointF p2 = oct[(i+5)%8];
-            PointF p = new PointF((p1.x+p2.x)/2, (p1.y+p2.y)/2); // середина линии oct[i]-oct[(i+5)%8]. По факту - пересечение линий rays[i]-inn[i] и oct[i]-oct[(i+5)%8]
+                paint.shader = makeLinearGradient(oct[i], palette[(i + 3) % 8], p, clr)
+                fillPolygon(g, paint, rays[i], oct[i], inn[i])
 
-            Color clr;// = new Color(255,255,255,0); //  Cast.toColor(fmg.common.Color.Transparent);
-            if (true) {
-               HSV c1 = hsvPalette[(i+1)%8];
-               HSV c2 = hsvPalette[(i+6)%8];
-               double diff = c1.h - c2.h;
-               HSV cP = new HSV(c1.toColor());
-               cP.h += diff/2; // цвет в точке p (пересечений линий...)
-               cP.a = 0;
-               clr = cP.toColor();
+                paint.shader = makeLinearGradient(oct[(i + 5) % 8], palette[(i + 0) % 8], p, clr)
+                fillPolygon(g, paint, rays[i], oct[(i + 5) % 8], inn[i])
             }
+        }
 
-            paint.setShader(makeLinearGradient(oct[i], palette[(i+3)%8], p, clr));
-            fillPolygon(g, paint, rays[i], oct[i], inn[i]);
+        // paint star perimeter
+        val zoomAverage = (lm.zoomX + lm.zoomY) / 2
+        val penWidth = lm.borderWidth * zoomAverage
+        if (penWidth > 0.1) {
+            paint.shader = null // reset gradient shader
+            paint.style = Paint.Style.STROKE
+            paint.strokeCap = Paint.Cap.ROUND
+            paint.strokeWidth = penWidth.toFloat()
+            for (i in 0..7) {
+                val p1 = rays[(i + 7) % 8]
+                val p2 = rays[i]
+                paint.color = palette[i].darker().toColor()
+                g.drawLine(p1.x, p1.y, p2.x, p2.y, paint)
+            }
+        }
 
-            paint.setShader(makeLinearGradient(oct[(i+5)%8], palette[(i+0)%8], p, clr));
-            fillPolygon(g, paint, rays[i], oct[(i+5)%8], inn[i]);
-         }
-      }
+        // paint inner gradient triangles
+        paint.style = Paint.Style.FILL
+        for (i in 0..7) {
+            if (lm.isUseGradient) {
+                val p1 = inn[(i + 0) % 8]
+                val p2 = inn[(i + 3) % 8]
+                val p = PointF((p1.x + p2.x) / 2, (p1.y + p2.y) / 2) // center line of p1-p2
+                paint.shader = makeLinearGradient(
+                        p, palette[(i + 6) % 8],
+                        center, if ((i and 1) == 1) Color.Black() else Color.White())
+            } else {
+                paint.color = if ((i and 1) == 1)
+                    hsvPalette[(i + 6) % 8].toColor().brighter().toColor()
+                else
+                    hsvPalette[(i + 6) % 8].toColor().darker().toColor()
+            }
+            fillPolygon(g, paint, inn[(i + 0) % 8], inn[(i + 3) % 8], center)
+        }
+    }
 
-      // paint star perimeter
-      double zoomAverage = (lm.getZoomX() + lm.getZoomY())/2;
-      final double penWidth = lm.getBorderWidth() * zoomAverage;
-      if (penWidth > 0.1) {
-         paint.setShader(null); // reset gradient shader
-         paint.setStyle(Paint.Style.STROKE);
-         paint.setStrokeCap(Paint.Cap.ROUND);
-         paint.setStrokeWidth((float) penWidth);
-         for (int i = 0; i < 8; i++) {
-            PointF p1 = rays[(i + 7) % 8];
-            PointF p2 = rays[i];
-            paint.setColor(Cast.toColor(palette[i].darker()));
-            g.drawLine(p1.x, p1.y, p2.x, p2.y, paint);
-         }
-      }
+    override fun close() {
+        model.close()
+        super.close()
+    }
 
-      // paint inner gradient triangles
-      paint.setStyle(Paint.Style.FILL);
-      for (int i=0; i<8; i++) {
-         if (lm.isUseGradient()) {
-            PointF p1 = inn[(i+0)%8];
-            PointF p2 = inn[(i+3)%8];
-            PointF p = new PointF((p1.x+p2.x)/2, (p1.y+p2.y)/2); // center line of p1-p2
-            paint.setShader(makeLinearGradient(
-                  p, palette[(i+6)%8],
-                  center, ((i & 1) == 1) ? Color.Black() : Color.White()));
-         } else {
-            paint.setColor(((i & 1) == 1)
-                    ? Cast.toColor(hsvPalette[(i + 6) % 8].toColor().brighter())
-                    : Cast.toColor(hsvPalette[(i + 6) % 8].toColor().darker()));
-         }
-         fillPolygon(g, paint, inn[(i + 0)%8], inn[(i + 3)%8], center);
-      }
-   }
+    companion object {
 
-   private static void fillPolygon(Canvas g, Paint paint, PointF... p) {
-      Path path = new Path();
-      path.setFillType(Path.FillType.EVEN_ODD);
-      path.moveTo(p[0].x, p[0].y);
-      for (int i=1; i<p.length; ++i)
-         path.lineTo(p[i].x, p[i].y);
-      path.close();
-      g.drawPath(path, paint);
-   }
+        init {
+            StaticInitializer.init()
+        }
 
-   private static Shader makeLinearGradient(PointF start, Color startClr, PointF end, Color endClr) {
-      return new LinearGradient(start.x, start.y, end.x, end.y, Cast.toColor(startClr), Cast.toColor(endClr), Shader.TileMode.CLAMP);
-   }
+        private fun fillPolygon(g: Canvas, paint: Paint, vararg p: PointF) {
+            val path = Path()
+            path.fillType = Path.FillType.EVEN_ODD
+            path.moveTo(p[0].x, p[0].y)
+            for (i in 1 until p.size)
+                path.lineTo(p[i].x, p[i].y)
+            path.close()
+            g.drawPath(path, paint)
+        }
 
-   @Override
-   public void close() {
-      getModel().close();
-      super.close();
-   }
+        private fun makeLinearGradient(start: PointF, startClr: Color, end: PointF, endClr: Color): Shader {
+            return LinearGradient(start.x, start.y, end.x, end.y, startClr.toColor(), endClr.toColor(), Shader.TileMode.CLAMP)
+        }
+    }
 
-   /////////////////////////////////////////////////////////////////////////////////////////////////////
-   //    custom implementations
-   /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    //    custom implementations
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   /** Logo image view implementation over {@link android.graphics.Bitmap} */
-   static class Bitmap extends Logo<android.graphics.Bitmap> {
+    /** Logo image view implementation over [android.graphics.Bitmap] */
+    class Bitmap : Logo<android.graphics.Bitmap>() {
 
-      private BmpCanvas wrap = new BmpCanvas();
+        private val wrap = BmpCanvas()
 
-      @Override
-      protected android.graphics.Bitmap createImage() {
-         return wrap.createImage(getModel().getSize());
-      }
+        override fun createImage(): android.graphics.Bitmap {
+            return wrap.createImage(model.size)
+        }
 
-      @Override
-      protected void drawBody() {
-         draw(wrap.getCanvas());
-      }
+        override fun drawBody() {
+            draw(wrap.canvas)
+        }
 
-      @Override
-      public void close() {
-         wrap.close();
-      }
+        override fun close() {
+            wrap.close()
+        }
 
-   }
+    }
 
-   /** Logo image controller implementation for {@link Logo.Bitmap} */
-   public static class ControllerBitmap extends LogoController<android.graphics.Bitmap, Logo.Bitmap> {
+    /** Logo image controller implementation for [Logo.Bitmap] */
+    open class ControllerBitmap : LogoController<android.graphics.Bitmap, Logo.Bitmap>(Logo.Bitmap()) {
 
-      public ControllerBitmap() {
-         super(new Logo.Bitmap());
-      }
+        override fun close() {
+            view.close()
+            super.close()
+        }
 
-      @Override
-      public void close() {
-         getView().close();
-         super.close();
-      }
-
-   }
+    }
 
 }

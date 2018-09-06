@@ -1,101 +1,77 @@
-package fmg.android.img;
+package fmg.android.img
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import fmg.core.img.IImageController;
-import fmg.core.img.MosaicAnimatedModel;
-import fmg.core.mosaic.MosaicImageController;
-import fmg.core.mosaic.cells.BaseCell;
-import fmg.core.types.EMosaic;
-import fmg.android.mosaic.MosaicAndroidView;
+import fmg.core.img.MosaicAnimatedModel
+import fmg.core.mosaic.MosaicImageController
+import fmg.core.mosaic.cells.BaseCell
+import fmg.core.types.EMosaic
+import fmg.android.mosaic.MosaicAndroidView
 
 /**
- * Representable {@link EMosaic} as image
+ * Representable [EMosaic] as image
  * <br>
  * base Android impl
  *
- * @param <TImage> Android specific image: {@link android.graphics.Bitmap}
+ * @param TImage Android specific image: [android.graphics.Bitmap]
  */
-public abstract class MosaicImg<TImage>
-                extends MosaicAndroidView<TImage, Void, MosaicAnimatedModel<Void>>
-{
+abstract class MosaicImg<TImage> protected constructor() : MosaicAndroidView<TImage, Void, MosaicAnimatedModel<Void>>(MosaicAnimatedModel()) {
 
-   protected boolean _useBackgroundColor = true;
+    protected var _useBackgroundColor = true
 
-   protected MosaicImg() {
-      super(new MosaicAnimatedModel<Void>());
-   }
+    override fun drawBody() {
+        //super.drawBody(); // !hide super implementation
 
-   @Override
-   protected void drawBody() {
-      //super.drawBody(); // !hide super implementation
+        val model = model
 
-      MosaicAnimatedModel<Void> model = getModel();
+        _useBackgroundColor = true
+        when (model.rotateMode) {
+            MosaicAnimatedModel.ERotateMode.fullMatrix -> drawModified(model.matrix)
+            MosaicAnimatedModel.ERotateMode.someCells -> {
+                // draw static part
+                drawModified(model.notRotatedCells)
 
-      _useBackgroundColor = true;
-      switch (model.getRotateMode()) {
-      case fullMatrix:
-         drawModified(model.getMatrix());
-         break;
-      case someCells:
-         // draw static part
-         drawModified(model.getNotRotatedCells());
+                // draw rotated part
+                _useBackgroundColor = false
+                model.getRotatedCells { rotatedCells -> drawModified(rotatedCells) }
+            }
+        }
+    }
 
-         // draw rotated part
-         _useBackgroundColor = false;
-         model.getRotatedCells(rotatedCells -> drawModified(rotatedCells));
-         break;
-      }
-   }
+    override fun close() {
+        model.close()
+        super.close()
+    }
 
-   @Override
-   public void close() {
-      getModel().close();
-      super.close();
-   }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    //    custom implementations
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   /////////////////////////////////////////////////////////////////////////////////////////////////////
-   //    custom implementations
-   /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /** Mosaic image view implementation over [android.graphics.Bitmap]  */
+    class Bitmap : MosaicImg<android.graphics.Bitmap>() {
 
-   /** Mosaic image view implementation over {@link android.graphics.Bitmap} */
-   static class Bitmap extends MosaicImg<android.graphics.Bitmap> {
+        private val wrap = BmpCanvas()
 
-      private BmpCanvas wrap = new BmpCanvas();
+        override fun createImage(): android.graphics.Bitmap {
+            return wrap.createImage(model.size)
+        }
 
-      @Override
-      protected android.graphics.Bitmap createImage() {
-         return wrap.createImage(getModel().getSize());
-      }
+        override fun drawModified(modifiedCells: Collection<BaseCell>) {
+            drawAndroid(wrap.canvas, modifiedCells, null, _useBackgroundColor)
+        }
 
-      @Override
-      protected void drawModified(Collection<BaseCell> modifiedCells) {
-         drawAndroid(wrap.getCanvas(), modifiedCells, null, _useBackgroundColor);
-      }
+        override fun close() {
+            wrap.close()
+        }
 
-      @Override
-      public void close() {
-         wrap.close();
-      }
+    }
 
-   }
+    /** Mosaic image controller implementation for [Bitmap]  */
+    open class ControllerBitmap : MosaicImageController<android.graphics.Bitmap, Bitmap>(MosaicImg.Bitmap()) {
 
-   /** Mosaic image controller implementation for {@link Bitmap} */
-   public static class ControllerBitmap extends MosaicImageController<android.graphics.Bitmap, Bitmap> {
+        override fun close() {
+            view.close()
+            super.close()
+        }
 
-      public ControllerBitmap() {
-         super(new MosaicImg.Bitmap());
-      }
-
-      @Override
-      public void close() {
-         getView().close();
-         super.close();
-      }
-
-   }
+    }
 
 }

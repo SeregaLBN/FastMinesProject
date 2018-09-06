@@ -1,81 +1,65 @@
-package fmg.android.img;
+package fmg.android.img
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.Stream
 
-import fmg.common.Color;
-import fmg.common.Pair;
-import fmg.common.geom.PointDouble;
-import fmg.core.img.IImageController;
-import fmg.core.img.MosaicGroupController;
-import fmg.core.img.MosaicGroupModel;
-import fmg.core.types.EMosaicGroup;
+import fmg.common.Color
+import fmg.common.Pair
+import fmg.common.geom.PointDouble
+import fmg.core.img.MosaicGroupController
+import fmg.core.img.MosaicGroupModel
+import fmg.core.types.EMosaicGroup
 
 /**
- * Representable {@link EMosaicGroup} as image
- * <br>
+ * Representable [EMosaicGroup] as image
+ * <br></br>
  * Android impl
  *
- * @param <TImage> Android specific image: {@link android.graphics.Bitmap})
- **/
-public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TImage, MosaicGroupModel> {
+ * @param TImage Android specific image: [android.graphics.Bitmap])
+ */
+internal abstract class MosaicGroupImg<TImage>
+    /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
+    protected constructor(group: EMosaicGroup?) : MosaicSkillOrGroupView<TImage, MosaicGroupModel>(MosaicGroupModel(group))
+{
 
-   /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
-   protected MosaicGroupImg(EMosaicGroup group) {
-      super(new MosaicGroupModel(group));
-   }
+    override val coords: Stream<Pair<Color, Stream<PointDouble>>>
+        get() = model.coords
 
-   @Override
-   protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
+    override fun close() {
+        model.close()
+        super.close()
+    }
 
-   @Override
-   public void close() {
-      getModel().close();
-      super.close();
-   }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    //    custom implementations
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   /////////////////////////////////////////////////////////////////////////////////////////////////////
-   //    custom implementations
-   /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /** MosaicsGroup image view implementation over [android.graphics.Bitmap]  */
+    internal class Bitmap(group: EMosaicGroup?) : MosaicGroupImg<android.graphics.Bitmap>(group) {
 
-   /** MosaicsGroup image view implementation over {@link android.graphics.Bitmap} */
-   static class Bitmap extends MosaicGroupImg<android.graphics.Bitmap> {
+        private val wrap = BmpCanvas()
 
-      private BmpCanvas wrap = new BmpCanvas();
+        override fun createImage(): android.graphics.Bitmap {
+            return wrap.createImage(model.size)
+        }
 
-      public Bitmap(EMosaicGroup group) { super(group); }
+        override fun drawBody() {
+            draw(wrap.canvas)
+        }
 
-      @Override
-      protected android.graphics.Bitmap createImage() {
-         return wrap.createImage(getModel().getSize());
-      }
+        override fun close() {
+            wrap.close()
+        }
 
-      @Override
-      protected void drawBody() {
-         draw(wrap.getCanvas());
-      }
+    }
 
-      @Override
-      public void close() {
-         wrap.close();
-      }
+    /** MosaicsGroup image controller implementation for [Bitmap]  */
+    class ControllerBitmap(group: EMosaicGroup?) : MosaicGroupController<android.graphics.Bitmap, Bitmap>(group == null, MosaicGroupImg.Bitmap(group)) {
 
-   }
+        override fun close() {
+            view.close()
+            super.close()
+        }
 
-   /** MosaicsGroup image controller implementation for {@link Bitmap} */
-   public static class ControllerBitmap extends MosaicGroupController<android.graphics.Bitmap, Bitmap> {
-
-      public ControllerBitmap(EMosaicGroup group) {
-         super(group==null, new MosaicGroupImg.Bitmap(group));
-      }
-
-      @Override
-      public void close() {
-         getView().close();
-         super.close();
-      }
-
-   }
+    }
 
 }

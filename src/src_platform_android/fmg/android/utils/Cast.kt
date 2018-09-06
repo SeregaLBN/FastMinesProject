@@ -1,53 +1,51 @@
 package fmg.android.utils;
 
-import java.util.List;
-
 /**
  * Приведение типов от платформо-независимых чистых Java классов fmg.common.geom.* к библиотечным android классам
  */
-public final class Cast {
+//object Cast {
 
-   public static android.graphics.Point       toPoint      ( fmg.common.geom.Point       p) { return new android.graphics.Point      (       p.x,        p.y); }
-   public static android.graphics.PointF      toPoint      ( fmg.common.geom.PointDouble p) { return new android.graphics.PointF     ((float)p.x, (float)p.y); }
-   public static  fmg.common.geom.Point       toPoint      (android.graphics.Point       p) { return new  fmg.common.geom.Point      (       p.x,        p.y); }
-   public static  fmg.common.geom.PointDouble toPointDouble(android.graphics.PointF      p) { return new  fmg.common.geom.PointDouble(       p.x,        p.y); }
+fun  fmg.common.geom.Point      .toPoint      () : android.graphics.Point       { return android.graphics.Point      (this.x,            this.y); }
+fun  fmg.common.geom.PointDouble.toPoint      () : android.graphics.PointF      { return android.graphics.PointF     (this.x.toFloat(),  this.y.toFloat()); }
+fun android.graphics.Point      .toPoint      () :  fmg.common.geom.Point       { return  fmg.common.geom.Point      (this.x,            this.y); }
+fun android.graphics.PointF     .toPointDouble() :  fmg.common.geom.PointDouble { return  fmg.common.geom.PointDouble(this.x.toDouble(), this.y.toDouble()); }
 
-   public static android.graphics.Rect        toRect      (fmg.common.geom.Rect         rc) { return new android.graphics.Rect      (       rc.x   ,        rc.y  ,        rc.right(),        rc.bottom()); }
-   public static android.graphics.RectF       toRect      (fmg.common.geom.RectDouble   rc) { return new android.graphics.RectF     ((float)rc.x   , (float)rc.y  , (float)rc.right(), (float)rc.bottom()); }
-   public static  fmg.common.geom.Rect        toRect      (android.graphics.Rect        rc) { return new  fmg.common.geom.Rect      (       rc.left,        rc.top,        rc.width(),        rc.height()); }
-   public static  fmg.common.geom.RectDouble  toRectDouble(android.graphics.Rect        rc) { return new  fmg.common.geom.RectDouble(       rc.left,        rc.top,        rc.width(),        rc.height()); }
-   public static  fmg.common.geom.RectDouble  toRectDouble(android.graphics.RectF       rc) { return new  fmg.common.geom.RectDouble(       rc.left,        rc.top,        rc.width(),        rc.height()); }
+fun fmg.common.geom.Rect        .toRect       () : android.graphics.Rect        { return android.graphics.Rect      (this.x              , this.y             , this.right()           , this.bottom()); }
+fun fmg.common.geom.RectDouble  .toRect       () : android.graphics.RectF       { return android.graphics.RectF     (this.x.toFloat()    , this.y.toFloat()   , this.right().toFloat() , this.bottom().toFloat()); }
+fun android.graphics.Rect       .toRect       () :  fmg.common.geom.Rect        { return  fmg.common.geom.Rect      (this.left           , this.top           , this.width()           , this.height()); }
+fun android.graphics.Rect       .toRectDouble () :  fmg.common.geom.RectDouble  { return  fmg.common.geom.RectDouble(this.left.toDouble(), this.top.toDouble(), this.width().toDouble(), this.height().toDouble()); }
+fun android.graphics.RectF      .toRectDouble () :  fmg.common.geom.RectDouble  { return  fmg.common.geom.RectDouble(this.left.toDouble(), this.top.toDouble(), this.width().toDouble(), this.height().toDouble()); }
 
-   public static    android.util.Size         toSize      (fmg.common.geom.Size       size) { return new    android.util.Size      (       size.width     ,        size.height); }
-   public static    android.util.SizeF        toSize      (fmg.common.geom.SizeDouble size) { return new    android.util.SizeF     ((float)size.width     , (float)size.height); }
-   public static fmg.common.geom.Size         toSize      (   android.util.Size       size) { return new fmg.common.geom.Size      (       size.getWidth(),        size.getHeight()); }
-   public static fmg.common.geom.SizeDouble   toSizeDouble(   android.util.SizeF      size) { return new fmg.common.geom.SizeDouble(       size.getWidth(),        size.getHeight()); }
+fun fmg.common.geom.Size        .toSize       () :    android.util.Size         { return    android.util.Size      (this.width                , this.height); }
+fun fmg.common.geom.SizeDouble  .toSize       () :    android.util.SizeF        { return    android.util.SizeF     (this.width.toFloat()      , this.height.toFloat()); }
+fun    android.util.Size        .toSize       () : fmg.common.geom.Size         { return fmg.common.geom.Size      (this.getWidth()           , this.getHeight()); }
+fun    android.util.SizeF       .toSizeDouble () : fmg.common.geom.SizeDouble   { return fmg.common.geom.SizeDouble(this.getWidth().toDouble(), this.getHeight().toDouble()); }
 
-   public static android.graphics.Path toPolygon(fmg.common.geom.RegionDouble region) {
-      android.graphics.Path p = new android.graphics.Path();
-      fmg.common.geom.PointDouble dot = region.getPoint(0);
-      p.moveTo((float)dot.x, (float)dot.y);
-      for (int i=1; i<region.getCountPoints(); ++i) {
-         dot = region.getPoint(i);
-         p.lineTo((float)dot.x, (float)dot.y);
-      }
-      p.close();
-      return p;
+fun fmg.common.geom.RegionDouble.toPolygon() : android.graphics.Path {
+   val p = android.graphics.Path();
+   var dot = this.getPoint(0);
+   p.moveTo(dot.x.toFloat(), dot.y.toFloat());
+   for (i in 1 until this.countPoints) {
+      dot = this.getPoint(i);
+      p.lineTo(dot.x.toFloat(), dot.y.toFloat());
    }
-
-   public static android.graphics.Path toPolygon(List<fmg.common.geom.PointDouble> region) {
-      android.graphics.Path p = new android.graphics.Path();
-      fmg.common.geom.PointDouble dot = region.get(0);
-      p.moveTo((float)dot.x, (float)dot.y);
-      for (int i=1; i<region.size(); ++i) {
-         dot = region.get(i);
-         p.lineTo((float)dot.x, (float)dot.y);
-      }
-      p.close();
-      return p;
-   }
-
-   public static              int toColor(fmg.common.Color clr) { return (clr.getA() & 0xFF) << 24 | (clr.getR() & 0xFF) << 16 | (clr.getG() & 0xFF) << 8 | (clr.getB() & 0xFF); }
-   public static fmg.common.Color toColor(             int clr) { return new fmg.common.Color(clr); }
-
+   p.close();
+   return p;
 }
+
+fun List<fmg.common.geom.PointDouble>.toPolygon() : android.graphics.Path {
+   val p = android.graphics.Path();
+   var dot = this.get(0);
+   p.moveTo(dot.x.toFloat(), dot.y.toFloat())
+   for (i in 1 until this.size) {
+      dot = this[i]
+      p.lineTo(dot.x.toFloat(), dot.y.toFloat())
+   }
+   p.close();
+   return p;
+}
+
+fun fmg.common.Color.toColor() :              Int { return (this.a and 0xFF shl 24) or (this.r and 0xFF shl 16) or (this.g and 0xFF shl 8) or (this.b and 0xFF); }
+fun              Int.toColor() : fmg.common.Color { return fmg.common.Color(this); }
+
+//}

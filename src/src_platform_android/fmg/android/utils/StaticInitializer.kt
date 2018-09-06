@@ -1,29 +1,34 @@
-package fmg.android.utils;
+package fmg.android.utils
 
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
+import java.util.function.Consumer
+import java.util.function.Supplier
 
-import fmg.android.img.Animator;
-import fmg.common.Color;
-import fmg.common.LoggerSimple;
-import fmg.common.ui.Factory;
-import fmg.core.mosaic.MosaicDrawModel;
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 
-public final class StaticInitializer {
+import fmg.common.Color
+import fmg.common.LoggerSimple
+import fmg.common.ui.ITimer
+import fmg.common.ui.Factory
+import fmg.core.img.IAnimator
+import fmg.core.mosaic.MosaicDrawModel
+import fmg.android.img.Animator
 
-   static {
-      Factory.DEFERR_INVOKER = new Handler(Looper.getMainLooper())::post;
-      Factory.GET_ANIMATOR = Animator::getSingleton;
-      Factory.TIMER_CREATOR = Timer::new;
+object StaticInitializer {
 
-      MosaicDrawModel.DefaultBkColor = new Color(0xFFEEEEEE); // #EEEEEE or #FAFAFA
+    init {
+        Factory.DEFERR_INVOKER = Consumer<Runnable> { Handler(Looper.getMainLooper()).post(it) }
+        Factory.GET_ANIMATOR = Supplier<IAnimator> { Animator.singleton }
+        Factory.TIMER_CREATOR = Supplier<ITimer> { Timer() }
 
-      LoggerSimple.DEFAULT_WRITER = message -> Log.d("fmg", message);
-   }
+        MosaicDrawModel.DefaultBkColor = Color(-0x111112) // #EEEEEE or #FAFAFA
 
-   public static void init() {
-      // implicit call static block
-   }
+        LoggerSimple.DEFAULT_WRITER = Consumer<String> { Log.d("fmg", it) }
+    }
+
+    fun init() {
+        // implicit call static block
+    }
 
 }

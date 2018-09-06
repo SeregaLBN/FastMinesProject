@@ -1,60 +1,58 @@
-package fmg.android.utils;
+package fmg.android.utils
 
-import android.os.Handler;
-import android.os.Looper;
+import android.os.Handler
+import android.os.Looper
 
-import fmg.common.ui.ITimer;
+import fmg.common.ui.ITimer
 
-public class Timer implements ITimer {
+class Timer : ITimer {
 
-   private Handler _timer;
-   private long _interval = 200;
-   private Runnable _callback;
-   private Runnable _repeat;
+    private var _timer: Handler? = null
+    private var _interval: Long = 200
+    private var _callback: Runnable? = null
+    private lateinit var _repeat: Runnable
 
-   public Timer() {
-      _repeat = () -> {
-         _callback.run();
-         if (_timer != null)
-            _timer.postDelayed(_repeat, _interval);
-      };
-   }
+    init {
+        _repeat = Runnable {
+            _callback!!.run()
+            if (_timer != null)
+                _timer!!.postDelayed(_repeat, _interval)
+        }
+    }
 
-   @Override
-   public long getInterval() { return _interval; }
+    override fun getInterval(): Long {
+        return _interval
+    }
 
-   @Override
-   public void setInterval(long delay) {
-      _interval = delay;
-      setCallback(_callback);
-   }
+    override fun setInterval(delay: Long) {
+        _interval = delay
+        setCallback(_callback)
+    }
 
-   @Override
-   public void setCallback(Runnable cb) {
-      if (cb == _callback)
-         return;
+    override fun setCallback(cb: Runnable?) {
+        if (cb === _callback)
+            return
 
-      clean();
-      if (cb == null)
-         return;
+        clean()
+        if (cb == null)
+            return
 
-      _callback = cb;
-      _timer = new Handler(Looper.getMainLooper());
-      _timer.postDelayed(_repeat, _interval);
-   }
+        _callback = cb
+        _timer = Handler(Looper.getMainLooper())
+        _timer!!.postDelayed(_repeat, _interval)
+    }
 
-   private void clean() {
-      if (_timer == null)
-         return;
+    private fun clean() {
+        if (_timer == null)
+            return
 
-      _timer.removeCallbacks(_repeat);
-      _timer = null;
-      _callback = null;
-   }
+        _timer!!.removeCallbacks(_repeat)
+        _timer = null
+        _callback = null
+    }
 
-   @Override
-   public void close() {
-      clean();
-   }
+    override fun close() {
+        clean()
+    }
 
 }
