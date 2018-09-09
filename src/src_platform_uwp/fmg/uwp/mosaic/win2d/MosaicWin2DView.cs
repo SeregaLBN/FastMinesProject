@@ -43,8 +43,6 @@ namespace fmg.uwp.mosaic.win2d {
             StaticInitializer.Init();
         }
 
-        private class DummyDisposable : IDisposable { public void Dispose() { } };
-
         protected void DrawWin2D(CanvasDrawingSession ds, ICollection<BaseCell> modifiedCells, RectDouble? clipRegion, bool drawBk) {
             System.Diagnostics.Debug.Assert(!_alreadyPainted);
             _alreadyPainted = true;
@@ -91,24 +89,19 @@ namespace fmg.uwp.mosaic.win2d {
 #endif
                     var rcInner = cell.getRcInner(pen.Width).MoveXY(offset);
                     var region = cell.getRegion();
-                    using (var polygon = ds.CreatePolygon(region, offset))
-                    using (var geom    = ds.BuildLines(region, offset))
+                    var bkClrCell = cell.getBackgroundFillColor(bkFill.Mode,
+                                                                bkClr,
+                                                                bkFill.GetColor);
+                    using (var polygon =  isIconicMode ? null : ds.CreatePolygon(region, offset))
+                    using (var geom    = (isIconicMode || drawBk || (bkClrCell != bkClr)) ? ds.BuildLines(region, offset) : null)
                     {
                         // ограничиваю рисование только границами своей фигуры
-                        IDisposable NewLayer() {
-                            return isIconicMode
-                                ? null//(IDisposable)new DummyDisposable()
-                                : ds.CreateLayer(1, polygon);
-                        }
-                        using (var layer = NewLayer()) {
+                        using (var layer = isIconicMode ? null : ds.CreateLayer(1, polygon)) {
 
                             { // 2.1. paint component
                                 // 2.1.1. paint cell background
                                 //if (!isIconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
                                 {
-                                    var bkClrCell = cell.getBackgroundFillColor(bkFill.Mode,
-                                                                                bkClr,
-                                                                                bkFill.GetColor);
                                     if (!drawBk || (bkClrCell != bkClr))
                                         ds.FillGeometry(geom, bkClrCell.ToWinColor());
                                 }
