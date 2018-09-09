@@ -1,10 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
 //                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
-// file name: "Mosaic.cs"
+// file name: "MosaicGameModel.cs"
 //
-// реализация алгоритма Мозаики состоящей из ячеек
-// Copyright (C) 2011 Sergey Krivulya
+// Copyright (C) 2011..2018 Sergey Krivulya
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License

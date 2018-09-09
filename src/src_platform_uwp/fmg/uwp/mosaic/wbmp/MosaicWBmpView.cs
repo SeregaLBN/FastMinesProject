@@ -36,7 +36,7 @@ namespace fmg.uwp.mosaic.wbmp {
          return _bmp;
       }
 
-      protected void DrawWBmp(IEnumerable<BaseCell> modifiedCells, RectDouble? clipRegion, bool drawBk) {
+      protected void DrawWBmp(ICollection<BaseCell> modifiedCells, RectDouble? clipRegion, bool drawBk) {
          // TODO ограничиваю рисование только границами своей фигуры
          //...
          System.Diagnostics.Debug.Assert(!_alreadyPainted);
@@ -67,12 +67,14 @@ namespace fmg.uwp.mosaic.wbmp {
 
          var redrawAll = (modifiedCells == null) || !modifiedCells.Any() || (modifiedCells.Count() >= model.Matrix.Count);
          var recheckAll = (clipRegion != null); // check to redraw all mosaic cells
-         IEnumerable<BaseCell> toCheck = (redrawAll || recheckAll) ? model.Matrix : modifiedCells;
+         ICollection<BaseCell> toCheck = (redrawAll || recheckAll) ? model.Matrix : modifiedCells;
 
 #if DEBUG
-         LoggerSimple.Put($"> MosaicWBmpView.Draw: {(redrawAll ? "all" : "cnt="+ modifiedCells.Count())}"
+         if (_DEBUG_DRAW_FLOW) {
+            LoggerSimple.Put($"> MosaicWBmpView.Draw: {(redrawAll ? "all" : "cnt="+ modifiedCells.Count())}"
                                                   + $"; clipReg={((clipRegion == null) ? "null" : clipRegion.ToString())}"
                                                   + $"; drawBk={drawBk}");
+         }
          int tmp = 0;
 #endif
 
@@ -193,8 +195,10 @@ namespace fmg.uwp.mosaic.wbmp {
          }
 
 #if DEBUG
-         LoggerSimple.Put("< MosaicWBmpView.Draw: cnt=" + tmp);
-         LoggerSimple.Put("-------------------------------");
+         if (_DEBUG_DRAW_FLOW) {
+            LoggerSimple.Put("< MosaicWBmpView.Draw: cnt=" + tmp);
+            LoggerSimple.Put("-------------------------------");
+         }
 #endif
 
          _alreadyPainted = false;

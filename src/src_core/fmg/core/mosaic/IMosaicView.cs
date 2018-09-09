@@ -18,7 +18,7 @@ namespace fmg.core.mosaic {
       /// <summary> Mark the cells needed for the repainting.
       /// Performs a call to the draw method (synchronously or asynchronously or implicitly, depending on the implementation) </summary>
       /// <param name="modifiedCells"> cells to invalidate. null value - make to redraw all mosaic field cells </param>
-      void Invalidate(IEnumerable<BaseCell> modifiedCells);
+      void Invalidate(ICollection<BaseCell> modifiedCells);
 
    }
 

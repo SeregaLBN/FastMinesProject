@@ -17,7 +17,7 @@ using Color = fmg.common.Color;
 
 namespace fmg.uwp.img.win2d {
 
-   /// <summary> Smile images </summary>
+   /// <summary> Smile images. Win2D implementation </summary>
    public static class Smile {
 
       /// <summary> Smile images. Base view Win2D implementation </summary>

@@ -10,7 +10,7 @@ namespace fmg.uwp.img.wbmp {
 
    /// <summary>
    /// Representable <see cref="fmg.core.types.EMosaic"/> as image.
-   /// UWP impl over <see cref="WriteableBitmap"/>.
+   /// UWP implementation over <see cref="WriteableBitmap"/>.
    /// </summary>
    public class MosaicImg : MosaicWBmpView<Nothing, MosaicAnimatedModel<Nothing>> {
 
@@ -20,7 +20,7 @@ namespace fmg.uwp.img.wbmp {
          : base(new MosaicAnimatedModel<Nothing>())
       { }
 
-      protected override void DrawModified(IEnumerable<BaseCell> modifiedCells) {
+      protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
          DrawWBmp(modifiedCells, null, _useBackgroundColor);
       }
 

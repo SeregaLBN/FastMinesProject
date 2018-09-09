@@ -15,7 +15,7 @@ import fmg.android.mosaic.MosaicAndroidView;
 /**
  * Representable {@link EMosaic} as image
  * <br>
- * base Android impl
+ * base Android implementation
  *
  * @param <TImage> Android specific image: {@link android.graphics.Bitmap}
  */
