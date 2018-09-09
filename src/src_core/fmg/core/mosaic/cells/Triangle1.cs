@@ -1,10 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
-// file name: "Triangle1.java"
+// file name: "Triangle1.cs"
 //
 // Реализация класса Triangle1 - равносторонний треугольник (вариант поля №1)
-// Copyright (C) 2002-2011 Sergey Krivulya
+// Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License

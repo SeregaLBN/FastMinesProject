@@ -1,10 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
-// file name: "TrSq2.java"
+// file name: "TrSq2.cs"
 //
 // Реализация класса TrSq2 - мозаика из 24х треугольников и 12х квадратов (на 1 квадрат приходится 2 треугольника)
-// Copyright (C) 2002-2011 Sergey Krivulya
+// Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License

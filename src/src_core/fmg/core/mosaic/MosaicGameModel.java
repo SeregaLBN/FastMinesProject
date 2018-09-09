@@ -1,10 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
-// file name: "Mosaic.java"
+// file name: "MosaicGameModel.java"
 //
-// реализация алгоритма Мозаики состоящей из ячеек
-// Copyright (C) 2011 Sergey Krivulya
+// Data class: game model of mosaic field
+// Author: 2011-2018  -  Serhii Kryvulia aka SeregaLBN
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
