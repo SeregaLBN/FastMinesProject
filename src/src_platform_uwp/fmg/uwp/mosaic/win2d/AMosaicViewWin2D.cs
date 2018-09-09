@@ -4,7 +4,7 @@ using fmg.common.geom;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
-using fmg.uwp.draw.mosaic.win2d;
+using fmg.uwp.mosaic.win2d;
 
 namespace fmg.uwp.mosaic.win2d {
 #if false

@@ -123,7 +123,7 @@ public abstract class MosaicJfxView<TImage,
             if (useClip)
                g.save();
 
-            RectDouble rcInner = cell.getRcInner(pen.getWidth());
+            RectDouble rcInner = cell.getRcInner(pen.getWidth()).moveXY(offset);
             RegionDouble poly = RegionDouble.moveXY(cell.getRegion(), offset);
 
             if (useClip) {
@@ -173,10 +173,8 @@ public abstract class MosaicJfxView<TImage,
 //             g.strokeRect(rcInner.x, rcInner.y, rcInner.width, rcInner.height);
 
                Consumer<TImageInner> paintImage = img -> {
-                  double x = rcInner.x + offset.width;
-                  double y = rcInner.y + offset.height;
                   if (img instanceof Image) {
-                     g.drawImage((Image)img, x, y);
+                     g.drawImage((Image)img, rcInner.x, rcInner.y);
                   } else {
                      throw new RuntimeException("Unsupported image type " + img.getClass().getSimpleName());
                   }
@@ -185,13 +183,13 @@ public abstract class MosaicJfxView<TImage,
                // 2.1.2. output pictures
                if ((model.getImgFlag() != null) &&
                   (cell.getState().getStatus() == EState._Close) &&
-                  (cell.getState().getClose() == EClose._Flag))
+                  (cell.getState().getClose()  == EClose._Flag))
                {
                   paintImage.accept(model.getImgFlag());
                } else
                if ((model.getImgMine() != null) &&
                   (cell.getState().getStatus() == EState._Open) &&
-                  (cell.getState().getOpen() == EOpen._Mine))
+                  (cell.getState().getOpen()   == EOpen._Mine))
                {
                   paintImage.accept(model.getImgMine());
                } else
@@ -207,9 +205,7 @@ public abstract class MosaicJfxView<TImage,
                      g.setFill(Cast.toColor(model.getColorText().getColorOpen(cell.getState().getOpen().ordinal())));
                      szCaption = cell.getState().getOpen().toCaption();
                   }
-                  if ((szCaption != null) && (szCaption.length() > 0))
-                  {
-                     rcInner.moveXY(offset.width, offset.height);
+                  if ((szCaption != null) && (szCaption.length() > 0)) {
                      if (cell.getState().isDown())
                         rcInner.moveXY(1, 1);
                      drawText(g, szCaption, rcInner);

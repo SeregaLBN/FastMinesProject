@@ -9,8 +9,9 @@ public class RectDouble {
    // Перемещение прямоугольника по X и/или Y (без изменений размеров прямоугольника)
    public RectDouble moveX(double dx)          { this.x += dx; return this; }
    public RectDouble moveY(double dy)          { this.y += dy; return this; }
-   public RectDouble moveXY(double dx, double dy) { moveX(dx); return moveY(dy); }
-   public RectDouble moveXY(Size s)        { return moveXY(s.width, s.height); }
+   public RectDouble moveXY(double dx, double dy)  { moveX(dx); return moveY(dy); }
+   public RectDouble moveXY(Size s)         { return moveXY(s.width, s.height); }
+   public RectDouble moveXY(SizeDouble s)   { return moveXY(s.width, s.height); }
 
    // Выравнивание прямоугольника (без изменений размеров прямоугольника)
    public RectDouble alignLeft  (double l)         { this.x = l;             return this; } // выровнять прямоугольник по левой   стороне к заданному значению

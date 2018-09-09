@@ -85,7 +85,7 @@ namespace fmg.uwp.mosaic.wbmp {
 #if DEBUG
                ++tmp;
 #endif
-               var rcInner = cell.getRcInner(pen.Width);
+               var rcInner = cell.getRcInner(pen.Width).MoveXY(offset);
                var region = cell.getRegion();
                var poly = region.RegionDoubleAsXyxyxySequence(offset, true).ToArray();
 
@@ -106,7 +106,7 @@ namespace fmg.uwp.mosaic.wbmp {
 
                   Action<TImageInner> paintImage = img => {
                      WriteableBitmap wImg = img as WriteableBitmap;
-                     var destRc = rcInner.MoveXY(offset.Width, offset.Height).ToWinRect();
+                     var destRc = rcInner.ToWinRect();
                      var srcRc = new Windows.Foundation.Rect(0, 0, wImg.PixelWidth, wImg.PixelHeight);
                      wbmp.Blit(destRc, wImg, srcRc);
                   };
@@ -114,13 +114,13 @@ namespace fmg.uwp.mosaic.wbmp {
                   // 2.1.2. output pictures
                   if ((model.ImgFlag != null) &&
                       (cell.State.Status == EState._Close) &&
-                      (cell.State.Close == EClose._Flag))
+                      (cell.State.Close  == EClose._Flag))
                   {
                      paintImage(model.ImgFlag);
                   } else
                   if ((model.ImgMine != null) &&
                       (cell.State.Status == EState._Open) &&
-                      (cell.State.Open == EOpen._Mine))
+                      (cell.State.Open   == EOpen._Mine))
                   {
                      paintImage(model.ImgMine);
                   } else
@@ -140,7 +140,7 @@ namespace fmg.uwp.mosaic.wbmp {
                      if (!string.IsNullOrWhiteSpace(szCaption)) {
                         if (cell.State.Down)
                            rcInner.MoveXY(1, 1);
-                        wbmp.DrawString(szCaption, rcInner.MoveXY(offset).ToWinRect(), model.FontInfo.Name, (int)model.FontInfo.Size, txtColor.ToWinColor());
+                        wbmp.DrawString(szCaption, rcInner.ToWinRect(), model.FontInfo.Name, (int)model.FontInfo.Size, txtColor.ToWinColor());
                       //wmp.DrawRectangle(rcInner.Left, rcInner.Top, rcInner.Right, rcInner.Bottom, Color.Red.ToWinColor()); // debug
                      }
                   }

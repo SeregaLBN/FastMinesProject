@@ -105,11 +105,11 @@ public abstract class MosaicAndroidView<TImage,
       for (BaseCell cell: toCheck) {
          // redraw only when needed...
          if (redrawAll ||
-             ((modifiedCells != null) && (modifiedCells.contains(cell))) || // ..when the cell is explicitly specified
+             ((modifiedCells != null) && modifiedCells.contains(cell)) || // ..when the cell is explicitly specified
              ((clipRegion != null) && cell.getRcOuter().moveXY(offset.width, offset.height).intersection(clipRegion))) // ...when the cells and update region intersect
          {
             ++tmp;
-            RectDouble rcInner = cell.getRcInner(pen.getWidth());
+            RectDouble rcInner = cell.getRcInner(pen.getWidth()).moveXY(offset);
             Path poly = Cast.toPolygon(RegionDouble.moveXY(cell.getRegion(), offset));
 
             //if (!isIconicMode)
@@ -137,25 +137,22 @@ public abstract class MosaicAndroidView<TImage,
              //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
 
                Consumer<TImageInner> paintImage = img -> {
-                  int x = (int)(rcInner.x + offset.width);
-                  int y = (int)(rcInner.y + offset.height);
-                  if (img instanceof android.graphics.Bitmap) {
-                     g.drawBitmap((android.graphics.Bitmap)img, x, y, null);
-                  } else {
+                  if (img instanceof android.graphics.Bitmap)
+                     g.drawBitmap((android.graphics.Bitmap)img, (int)rcInner.x, (int)rcInner.y, null);
+                  else
                      throw new RuntimeException("Unsupported image type " + img.getClass().getSimpleName());
-                  }
                };
 
                // 2.1.2. output pictures
                if ((model.getImgFlag() != null) &&
                   (cell.getState().getStatus() == EState._Close) &&
-                  (cell.getState().getClose() == EClose._Flag))
+                  (cell.getState().getClose()  == EClose._Flag))
                {
                   paintImage.accept(model.getImgFlag());
                } else
                if ((model.getImgMine() != null) &&
                   (cell.getState().getStatus() == EState._Open) &&
-                  (cell.getState().getOpen() == EOpen._Mine))
+                  (cell.getState().getOpen()   == EOpen._Mine))
                {
                   paintImage.accept(model.getImgMine());
                } else
@@ -171,9 +168,7 @@ public abstract class MosaicAndroidView<TImage,
                      _textPaint.setColor(Cast.toColor(model.getColorText().getColorOpen(cell.getState().getOpen().ordinal())));
                      szCaption = cell.getState().getOpen().toCaption();
                   }
-                  if ((szCaption != null) && (szCaption.length() > 0))
-                  {
-                     rcInner.moveXY(offset.width, offset.height);
+                  if ((szCaption != null) && (szCaption.length() > 0)) {
                      if (cell.getState().isDown())
                         rcInner.moveXY(1, 1);
                      drawText(g, szCaption, rcInner);

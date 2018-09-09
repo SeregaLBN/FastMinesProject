@@ -6,17 +6,28 @@
             ./FastMines_jfx     - open in Eclipse or IDEA(Android Studio) or VS Code
             ./FastMines_android - open in Android Studio(IDEA)
    ./FastMines.sln  - solutions for Visual Studio 2017
-         subprojects:
-            ./FastMines_core  - C#
-            ./FastMines_uwp   - C#
-            ./FastMines_Logo  - C++
-            ./FastMines_Ava   - C#     (can be opened and run in VS Code)
+         subprojects in subdirectories:
+            ./FastMines_core                    - C#
+                ./FastMines.Core
+                ./Test.FastMines.Common
+            ./FastMines_uwp                     - C#
+                ./FastMines.Uwp.Main
+                ./FastMines.Uwp.Shared
+                ./Test.FastMines.Uwp.Images
+                ./FastMines.Uwp.Draw.WBmp
+                ./FastMines.Uwp.Draw.Win2D
+                ./FastMines.Uwp.Draw.XamlElem
+                ./FastMines.Uwp.BackgroundTasks
+            ./FastMines_Logo                    - C++
+            ./FastMines_Ava                     - C#     (can be opened and run in VS Code)
+                ./FastMines.Ava.Draw
+                ./Test.FastMines.Ava.Images
 
-./src - common source files
+./src - common code base
 ./res - shared resources files
 
 
-FastMines_xxx - проекты конкретной языковой реализации, под конкретную UI платформу:
+FastMines_xxx - projects of a specific language implementation, for a specific UI platform:
    FastMines_core     - shared project libraries 
    FastMines_android  - (  demo  ) - Java Android tablet/mobile application                          (open from Android Studio)
    FastMines_swing    - ( stable ) - Java desktop SWING project (multiplatform)                      (open from the Eclipse workspace / IDEA / VSCode)

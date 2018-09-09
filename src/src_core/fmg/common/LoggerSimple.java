@@ -11,7 +11,7 @@ public final class LoggerSimple {
    /** may be override */
    public static Consumer<String> DEFAULT_WRITER = message -> System.out.println(message);
 
-   public static void Put(String format, Object... args) {
+   public static void put(String format, Object... args) {
       try {
          String prefix = '[' + new SimpleDateFormat("HH:mm:ss.SSS").format(new Date()) + "]  Th=" + Thread.currentThread().getId() + "  ";
          if (args.length > 0) {
@@ -42,23 +42,23 @@ public final class LoggerSimple {
          _hint = hint;
          _disposeMessage = disposeMessage;
          if (ctorMessage == null)
-            LoggerSimple.Put("> {0}", hint);
+            LoggerSimple.put("> {0}", hint);
          else
-            LoggerSimple.Put("> {0}: {1}", hint, ctorMessage);
+            LoggerSimple.put("> {0}: {1}", hint, ctorMessage);
       }
 
       @Override
       public void close() {
          if (_disposeMessage == null)
-            LoggerSimple.Put("< {0}", _hint);
+            LoggerSimple.put("< {0}", _hint);
          else
-            LoggerSimple.Put("< {0}: {1}", _hint, _disposeMessage.get());
+            LoggerSimple.put("< {0}: {1}", _hint, _disposeMessage.get());
       }
 
-      public void Put(String format, Object... args) {
+      public void put(String format, Object... args) {
          if (args.length > 0)
             format = new MessageFormat(format).format(args);
-         LoggerSimple.Put("  {0}: {1}", _hint, format);
+         LoggerSimple.put("  {0}: {1}", _hint, format);
       }
 
    }

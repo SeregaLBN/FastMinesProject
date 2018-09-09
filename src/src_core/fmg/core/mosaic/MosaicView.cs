@@ -23,7 +23,9 @@ namespace fmg.core.mosaic {
          : base(mosaicModel)
       { }
 
+#if DEBUG
       public static bool _DEBUG_DRAW_FLOW = false;
+#endif
       private readonly HashSet<BaseCell> _modifiedCells = new HashSet<BaseCell>();
 
       public virtual void Invalidate(IEnumerable<BaseCell> modifiedCells) {
@@ -31,8 +33,10 @@ namespace fmg.core.mosaic {
             _modifiedCells.Clear();
          else
             _modifiedCells.UnionWith(modifiedCells);
+#if DEBUG
          if (_DEBUG_DRAW_FLOW)
             LoggerSimple.Put("MosaicView.Invalidate: " + ((modifiedCells==null) ? "all" : ("cnt=" + modifiedCells.Count()) + ": " + modifiedCells.Take(5).ToList()));
+#endif
          Invalidate();
       }
 
@@ -42,8 +46,10 @@ namespace fmg.core.mosaic {
 
       /// <summary> repaint all </summary>
       protected override void DrawBody() {
+#if DEBUG
          if (_DEBUG_DRAW_FLOW)
             LoggerSimple.Put("MosaicView.DrawBody: " + (!_modifiedCells.Any() ? "all" : ("cnt=" + _modifiedCells.Count()) + ": " + _modifiedCells.Take(5).ToList()));
+#endif
          DrawModified(!_modifiedCells.Any() ? null : _modifiedCells);
          _modifiedCells.Clear();
       }

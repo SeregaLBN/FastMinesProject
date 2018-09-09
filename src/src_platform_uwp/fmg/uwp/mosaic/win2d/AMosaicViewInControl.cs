@@ -2,7 +2,7 @@ using Windows.UI.Xaml;
 using Microsoft.Graphics.Canvas;
 using fmg.common.geom;
 using fmg.core.mosaic;
-using fmg.uwp.draw.mosaic;
+using fmg.uwp.mosaic;
 
 namespace fmg.uwp.mosaic.win2d {
 #if false
