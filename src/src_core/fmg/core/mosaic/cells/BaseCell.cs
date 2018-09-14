@@ -105,6 +105,11 @@ namespace fmg.core.mosaic.cells {
             return 19;
          }
 
+         /// <summary> off notifer </summary>
+         public IDisposable Hold() {
+             return _notifier.Hold();
+         }
+
       }
 
       private readonly BaseAttribute attr;

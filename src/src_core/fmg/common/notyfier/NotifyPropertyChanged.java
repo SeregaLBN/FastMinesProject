@@ -11,13 +11,14 @@ import fmg.common.Pair;
 import fmg.common.ui.Factory;
 
 /** Notifies owner clients that a owner property value has changed */
-public final class NotifyPropertyChanged implements AutoCloseable /*, INotifyPropertyChanged */ {
-
+public final class NotifyPropertyChanged implements AutoCloseable //, INotifyPropertyChanged
+{
    private final INotifyPropertyChanged _owner;
    private final PropertyChangeSupport _propertyChanges;
    private final boolean _deferredNotifications;
    private final Map<String /* propertyName */, Pair<Object /* old value */, Object /* new value */>> _deferrNotifications = new HashMap<>();
    private boolean _disposed = false;
+   private int _holded;
 
    public NotifyPropertyChanged(INotifyPropertyChanged owner) { this(owner, false); }
    public NotifyPropertyChanged(INotifyPropertyChanged owner, boolean deferredNotifications) {
@@ -26,11 +27,23 @@ public final class NotifyPropertyChanged implements AutoCloseable /*, INotifyPro
        _deferredNotifications = deferredNotifications;
    }
 
-   public void addListener(PropertyChangeListener listener) { _propertyChanges.addPropertyChangeListener(listener); }
+   public void addListener   (PropertyChangeListener listener) { _propertyChanges.   addPropertyChangeListener(listener); }
    public void removeListener(PropertyChangeListener listener) { _propertyChanges.removePropertyChangeListener(listener); }
+
+   /** set notifer to pause */
+   public AutoCloseable hold() {
+      ++_holded; // lock
+      return () -> --_holded; // unlock
+   }
+   public boolean isHolded() {
+       return _holded != 0;
+   }
+
 
    /** Set the value to the specified property  and throw event to listeners */
    public <T> boolean setProperty(T oldValue, T newValue, String propertyName) {
+      if (isHolded())
+         return false;
       if (_disposed) {
          if (newValue != null) {
             System.err.println("Illegal call property " + _owner.getClass().getCanonicalName() + "."+ propertyName + ": object already disposed!");
@@ -78,7 +91,7 @@ public final class NotifyPropertyChanged implements AutoCloseable /*, INotifyPro
    }
 
    public void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      if (_disposed)
+      if (_disposed || isHolded())
          return;
 
       if (!_deferredNotifications) {
@@ -94,7 +107,7 @@ public final class NotifyPropertyChanged implements AutoCloseable /*, INotifyPro
          }
          if (shedule)
             Factory.DEFERR_INVOKER.accept(() -> {
-               if (_disposed)
+               if (_disposed || isHolded())
                   return;
 
                Pair<Object /* old value */, Object /* new value */> event = _deferrNotifications.remove(propertyName);

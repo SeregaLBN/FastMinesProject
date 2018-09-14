@@ -10,13 +10,15 @@ namespace fmg.common.notyfier {
 #if WINDOWS_UWP
    [Windows.Foundation.Metadata.WebHostHidden]
 #endif
-   public sealed class NotifyPropertyChanged : /* INotifyPropertyChanged */ IDisposable {
+   public sealed class NotifyPropertyChanged : IDisposable //, INotifyPropertyChanged
+   {
 
       private readonly INotifyPropertyChanged _owner;
       private readonly Action<PropertyChangedEventArgs> _fireOwnerEvent;
       public bool DeferredNotifications { get; set; }
       private readonly IDictionary<string /* propertyName */, PropertyChangedEventArgs> _deferrNotifications = new Dictionary<string, PropertyChangedEventArgs>();
       private bool _disposed;
+      private int _holded;
 
       public NotifyPropertyChanged(INotifyPropertyChanged owner, Action<PropertyChangedEventArgs> fireOwnerEvent)
          : this(owner, fireOwnerEvent, false)
@@ -27,6 +29,17 @@ namespace fmg.common.notyfier {
          DeferredNotifications = deferredNotifications;
       }
 
+
+      /// <summary> set notifer to pause </summary>
+      public IDisposable Hold() {
+          ++_holded; // lock
+          return new PlainFree { _onDispose = () => --_holded }; // unlock
+      }
+      public bool Holded() {
+          return _holded != 0;
+      }
+
+
       /// <summary> Checks if a property already matches a desired value.  Sets the property and notifies listeners only when necessary. </summary>
       /// <typeparam name="T">Type of the property.</typeparam>
       /// <param name="storage">Reference to a property with both getter and setter.</param>
@@ -35,6 +48,8 @@ namespace fmg.common.notyfier {
       /// when invoked from compilers that support CallerMemberName.</param>
       /// <returns>True if the value was changed, false if the existing value matched the desired value.</returns>
       public bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null) {
+         if (Holded())
+            return false;
          if (_disposed) {
             if (value != null) {
                System.Diagnostics.Debug.WriteLine("Illegal call property " + _owner.GetType().FullName + "." + propertyName + ": object already disposed!");
@@ -67,7 +82,7 @@ namespace fmg.common.notyfier {
       }
 
       public void OnPropertyChanged(PropertyChangedEventArgs ev) {
-         if (_disposed)
+         if (_disposed || Holded())
             return;
 
          void fireOwnerEvent(PropertyChangedEventArgs ev3) {
@@ -83,7 +98,7 @@ namespace fmg.common.notyfier {
             _deferrNotifications[ev.PropertyName] = ev; // Re-save only the last event.
             if (shedule)
                Factory.DEFERR_INVOKER(() => {
-                  if (_disposed)
+                  if (_disposed || Holded())
                      return;
                   PropertyChangedEventArgs ev2 = _deferrNotifications[ev.PropertyName];
                   if ((ev2 == null) || !_deferrNotifications.Remove(ev.PropertyName))

@@ -37,8 +37,6 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
    /** list of offsets rotation angles prepared for cells */
    private final List<Double /* angle offset */ > _prepareList = new ArrayList<>();
    private final List<RotatedCellContext> _rotatedElements = new ArrayList<>();
-   private boolean _disableCellAttributeListener = false;
-   private boolean _disableListener = false;
    private final AnimatedInnerModel _innerModel = new AnimatedInnerModel();
    private PropertyChangeListener innerModelListener = ev -> onInnerModelPropertyChanged(ev);
 
@@ -86,8 +84,6 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
 
    @Override
    protected void onPropertyChanged(Object oldValue, Object newValue, String propertyName) {
-      if (_disableListener)
-         return;
       super.onPropertyChanged(oldValue, newValue, propertyName);
       switch (propertyName) {
       case PROPERTY_ROTATE_MODE:
@@ -156,19 +152,21 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
          PointDouble center = cell.getCenter();
          Coord coord = cell.getCoord();
 
-         // modify
-         _disableCellAttributeListener = true; // disable handling MosaicGameModel.onCellAttributePropertyChanged(where event.propertyName == BaseCell.BaseAttribute.PROPERTY_AREA)
-         attr.setArea(cntxt.area);
+         try (AutoCloseable pause = hold()) {
+            // modify
+            attr.setArea(cntxt.area);
 
-         // rotate
-         cell.init();
-         PointDouble centerNew = cell.getCenter();
-         PointDouble delta = new PointDouble(center.x - centerNew.x, center.y - centerNew.y);
-         FigureHelper.moveCollection(FigureHelper.rotateCollection(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, _rotateCellAlterantive ? center : centerNew), delta);
+            // rotate
+            cell.init();
+            PointDouble centerNew = cell.getCenter();
+            PointDouble delta = new PointDouble(center.x - centerNew.x, center.y - centerNew.y);
+            FigureHelper.moveCollection(FigureHelper.rotateCollection(cell.getRegion().getPoints(), (((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, _rotateCellAlterantive ? center : centerNew), delta);
 
-         // restore
-         attr.setArea(area);
-         _disableCellAttributeListener = false;
+            // restore
+            attr.setArea(area);
+         } catch (Exception ex) {
+            ex.printStackTrace();
+         }
       });
 
       // Z-ordering
@@ -200,23 +198,25 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
       double borderWidth = pb.getWidth();
       Color colorLight  = pb.getColorLight();
       Color colorShadow = pb.getColorShadow();
-      // modify
-      _disableListener = true;
-      pb.setWidth(2 * borderWidth);
-      pb.setColorLight(colorLight.darker(0.5));
-      pb.setColorShadow(colorShadow.darker(0.5));
+      try (AutoCloseable pause = hold()) {
+         // modify
+         pb.setWidth(2 * borderWidth);
+         pb.setColorLight(colorLight.darker(0.5));
+         pb.setColorShadow(colorShadow.darker(0.5));
 
-      List<BaseCell> matrix = getMatrix();
-      List<BaseCell> rotatedCells = new ArrayList<>(_rotatedElements.size());
-      for (RotatedCellContext cntxt : _rotatedElements)
-         rotatedCells.add(matrix.get(cntxt.index));
-      rotatedCellsFunctor.accept(rotatedCells);
+         List<BaseCell> matrix = getMatrix();
+         List<BaseCell> rotatedCells = new ArrayList<>(_rotatedElements.size());
+         for (RotatedCellContext cntxt : _rotatedElements)
+            rotatedCells.add(matrix.get(cntxt.index));
+         rotatedCellsFunctor.accept(rotatedCells);
 
-      // restore
-      pb.setWidth(borderWidth);
-      pb.setColorLight(colorLight);
-      pb.setColorShadow(colorShadow);
-      _disableListener = false;
+         // restore
+         pb.setWidth(borderWidth);
+         pb.setColorLight(colorLight);
+         pb.setColorShadow(colorShadow);
+      } catch (Exception ex) {
+         ex.printStackTrace();
+      }
    }
 
    private void randomRotateElemenIndex() {
@@ -309,8 +309,6 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
 
    @Override
    protected void onCellAttributePropertyChanged(PropertyChangeEvent ev) {
-      if (_disableCellAttributeListener)
-         return;
       super.onCellAttributePropertyChanged(ev);
 
       String propName = ev.getPropertyName();
@@ -330,6 +328,17 @@ public class MosaicAnimatedModel<TImageInner> extends MosaicDrawModel<TImageInne
    protected void onInnerModelPropertyChanged(PropertyChangeEvent ev) {
       // refire
       _notifier.onPropertyChanged(ev.getOldValue(), ev.getNewValue(), ev.getPropertyName());
+   }
+
+   /** off notifier */
+   @Override
+   protected AutoCloseable hold() {
+      AutoCloseable a0 = super.hold();
+      AutoCloseable a1 = _innerModel.hold();
+      return () -> {
+         a0.close();
+         a1.close();
+      };
    }
 
    @Override

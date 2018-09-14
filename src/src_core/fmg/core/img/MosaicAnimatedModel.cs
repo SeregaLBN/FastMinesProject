@@ -28,8 +28,6 @@ namespace fmg.core.img {
       /// <summary> list of offsets rotation angles prepared for cells </summary>
       private readonly IList<double /* angle offset */ > _prepareList = new List<double>();
       private readonly List<RotatedCellContext> _rotatedElements = new List<RotatedCellContext>();
-      private bool _disableCellAttributeListener = false;
-      private bool _disableListener = false;
       private readonly AnimatedInnerModel _innerModel = new AnimatedInnerModel();
 
       public MosaicAnimatedModel() {
@@ -77,8 +75,6 @@ namespace fmg.core.img {
       }
 
       protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         if (_disableListener)
-            return;
          base.OnPropertyChanged(sender, ev);
          switch (ev.PropertyName) {
          case nameof(this.RotateMode):
@@ -147,21 +143,21 @@ namespace fmg.core.img {
             PointDouble center = cell.getCenter();
             Coord coord = cell.getCoord();
 
-            // modify
-            _disableCellAttributeListener = true; // disable handling MosaicGameModel.onCellAttributePropertyChanged(where event.propertyName == BaseCell.BaseAttribute.PROPERTY_AREA)
-            attr.Area = cntxt.area;
+            using (var pause = Hold()) {
+               // modify
+               attr.Area = cntxt.area;
 
-            // rotate
-            cell.Init();
-            PointDouble centerNew = cell.getCenter();
-            PointDouble delta = new PointDouble(center.X - centerNew.X, center.Y - centerNew.Y);
-            cell.getRegion().Points
-               .RotateList((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, _rotateCellAlterantive ? center : centerNew)
-               .MoveList(delta);
+               // rotate
+               cell.Init();
+               PointDouble centerNew = cell.getCenter();
+               PointDouble delta = new PointDouble(center.X - centerNew.X, center.Y - centerNew.Y);
+               cell.getRegion().Points
+                  .RotateList((((coord.x + coord.y) & 1) == 0) ? +angle2 : -angle2, _rotateCellAlterantive ? center : centerNew)
+                  .MoveList(delta);
 
-            // restore
-            attr.Area = area;
-            _disableCellAttributeListener = false;
+               // restore
+               attr.Area = area;
+            }
          }
 
          // Z-ordering
@@ -193,23 +189,24 @@ namespace fmg.core.img {
          var borderWidth = pb.Width;
          var colorLight  = pb.ColorLight;
          var colorShadow = pb.ColorShadow;
-         // modify
-         _disableListener = true;
-         pb.Width = 2 * borderWidth;
-         pb.ColorLight = colorLight.Darker(0.5);
-         pb.ColorShadow = colorShadow.Darker(0.5);
 
-         var matrix = Matrix;
-         var rotatedCells = new List<BaseCell>(_rotatedElements.Count);
-         foreach (var cntxt in _rotatedElements)
-            rotatedCells.Add(matrix[cntxt.index]);
-         rotatedCellsFunctor(rotatedCells);
+         using (var pause = Hold()) {
+            // modify
+            pb.Width = 2 * borderWidth;
+            pb.ColorLight = colorLight.Darker(0.5);
+            pb.ColorShadow = colorShadow.Darker(0.5);
 
-         // restore
-         pb.Width = borderWidth;
-         pb.ColorLight = colorLight;
-         pb.ColorShadow = colorShadow;
-         _disableListener = false;
+            var matrix = Matrix;
+            var rotatedCells = new List<BaseCell>(_rotatedElements.Count);
+            foreach (var cntxt in _rotatedElements)
+               rotatedCells.Add(matrix[cntxt.index]);
+            rotatedCellsFunctor(rotatedCells);
+
+            // restore
+            pb.Width = borderWidth;
+            pb.ColorLight = colorLight;
+            pb.ColorShadow = colorShadow;
+         }
       }
 
       private void RandomRotateElemenIndex() {
@@ -303,8 +300,6 @@ namespace fmg.core.img {
       }
 
       protected override void OnCellAttributePropertyChanged(object sender, PropertyChangedEventArgs ev) {
-         if (_disableCellAttributeListener)
-            return;
          base.OnCellAttributePropertyChanged(sender, ev);
 
          string propName = ev.PropertyName;
@@ -324,6 +319,19 @@ namespace fmg.core.img {
       protected void OnInnerModelPropertyChanged(object sender, PropertyChangedEventArgs ev) {
          // refire
          _notifier.OnPropertyChanged(ev);
+      }
+
+
+      /** off notifier */
+      protected override IDisposable Hold() {
+         var a0 = base.Hold();
+         var a1 = _innerModel.Hold();
+         return new PlainFree() {
+             _onDispose = () => {
+                a0.Dispose();
+                a1.Dispose();
+             }
+         };
       }
 
       protected override void Disposing() {

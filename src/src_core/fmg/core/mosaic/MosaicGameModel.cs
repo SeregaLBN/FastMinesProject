@@ -22,6 +22,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
+using fmg.common;
 using fmg.common.geom;
 using fmg.common.notyfier;
 using fmg.core.types;
@@ -149,6 +150,18 @@ namespace fmg.core.mosaic {
             _notifier.OnPropertyChanged<double>(ev, nameof(this.Area)); // ! rethrow event - notify parent class
          }
          _notifier.OnPropertyChanged(nameof(this.CellAttr));
+      }
+
+      /** off notifier */
+      protected virtual IDisposable Hold() {
+         var a1 = _notifier.Hold();
+         var a2 = CellAttr.Hold();
+         return new PlainFree() {
+             _onDispose = () => {
+                a1.Dispose();
+                a2.Dispose();
+             }
+         };
       }
 
       // <summary>  Dispose managed resources </summary>/

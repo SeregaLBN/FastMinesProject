@@ -69,8 +69,12 @@ namespace fmg.core.types.draw {
       }
 
       public override bool Equals(object other) {
-         var penObj = other as PenBorder;
-         return (penObj != null) && Equals(penObj);
+         return (other is PenBorder penObj) && Equals(penObj);
+      }
+
+      /// <summary> off notifer </summary>
+      public IDisposable Hold() {
+          return _notifier.Hold();
       }
 
       public void Dispose() {

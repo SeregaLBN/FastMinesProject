@@ -55,6 +55,11 @@ namespace fmg.core.img {
          set { _notifier.SetProperty(ref _currentFrame, value); }
       }
 
+      /// <summary> off notifer </summary>
+      public IDisposable Hold() {
+          return _notifier.Hold();
+      }
+
       public void Dispose() {
          _notifier.Dispose();
          GC.SuppressFinalize(this);
