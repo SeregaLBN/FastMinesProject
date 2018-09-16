@@ -144,10 +144,10 @@ namespace fmg.core.img {
                   mdm.Padding = new BoundDouble(padLeftRight, padTopBottom, padLeftRight, padTopBottom);
 
                   if (model is MosaicAnimatedModel<TMosaicImageInner> mam) {
-                     MosaicAnimatedModel<TMosaicImageInner>.ERotateMode[] vals =
-                        (MosaicAnimatedModel<TMosaicImageInner>.ERotateMode[])
-                        Enum.GetValues(typeof(MosaicAnimatedModel<TMosaicImageInner>.ERotateMode));
-                     mam.RotateMode = vals[R(vals.Length)];
+                     Type clazzERotateMode = typeof(MosaicAnimatedModel<TMosaicImageInner>.ERotateMode);
+                     var arr = Enum.GetValues(clazzERotateMode);
+                     var val = arr.GetValue(R(arr.Length));
+                     mam.RotateMode = (MosaicAnimatedModel<TMosaicImageInner>.ERotateMode)val;
                   }
                }
             }
