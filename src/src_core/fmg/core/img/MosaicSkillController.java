@@ -13,13 +13,13 @@ public abstract class MosaicSkillController<TImage,
               extends AnimatedImgController<TImage, TImageView, MosaicSkillModel>
 {
 
-   protected MosaicSkillController(boolean showBurgerMenu, TImageView imageView) {
-      super(imageView);
+    protected MosaicSkillController(boolean showBurgerMenu, TImageView imageView) {
+        super(imageView);
 
-      getView().getBurgerMenuModel().setShow(showBurgerMenu);
+        getView().getBurgerMenuModel().setShow(showBurgerMenu);
 
-      usePolarLightFgTransforming(true);
-      useRotateTransforming(true);
-   }
+        usePolarLightFgTransforming(true);
+        useRotateTransforming(true);
+    }
 
 }

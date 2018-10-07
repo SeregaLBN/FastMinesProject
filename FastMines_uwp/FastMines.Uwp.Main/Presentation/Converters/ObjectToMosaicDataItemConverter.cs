@@ -4,14 +4,16 @@ using Windows.UI.Xaml.Data;
 
 namespace fmg.common.Converters {
 
-   public class ObjectToMosaicDataItemConverter : IValueConverter {
-      public object Convert(object value, Type targetType, object parameter, string language) {
-         return value;
-      }
+    public class ObjectToMosaicDataItemConverter : IValueConverter {
 
-      public object ConvertBack(object value, Type targetType, object parameter, string language) {
-         return value as MosaicDataItem;
-      }
-   }
+        public object Convert(object value, Type targetType, object parameter, string language) {
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language) {
+            return value as MosaicDataItem;
+        }
+
+    }
 
 }

@@ -7,47 +7,47 @@ import fmg.core.types.ESkillLevel;
 /** Mosaic data */
 public class MosaicInitData {
 
-   public static final double AREA_MINIMUM = 230;
+    public static final double AREA_MINIMUM = 230;
 
-   private Matrisize sizeField;
-   private EMosaic mosaicType;
-   private int minesCount;
-   private double area;
+    private Matrisize sizeField;
+    private EMosaic mosaicType;
+    private int minesCount;
+    private double area;
 
-   public MosaicInitData() {
-      mosaicType = EMosaic.eMosaicSquare1;
-      sizeField = ESkillLevel.eBeginner.getDefaultSize();
-      minesCount = ESkillLevel.eBeginner.getNumberMines(mosaicType);
-      area = AREA_MINIMUM * 10;
-   }
+    public MosaicInitData() {
+        mosaicType = EMosaic.eMosaicSquare1;
+        sizeField = ESkillLevel.eBeginner.getDefaultSize();
+        minesCount = ESkillLevel.eBeginner.getNumberMines(mosaicType);
+        area = AREA_MINIMUM * 10;
+    }
 
-   public Matrisize getSizeField() { return sizeField; }
-   public void setSizeField(Matrisize sizeField) { this.sizeField = sizeField; }
+    public Matrisize getSizeField() { return sizeField; }
+    public void setSizeField(Matrisize sizeField) { this.sizeField = sizeField; }
 
-   public EMosaic getMosaicType() { return mosaicType; }
-   public void setMosaicType(EMosaic mosaicType) { this.mosaicType = mosaicType; }
+    public EMosaic getMosaicType() { return mosaicType; }
+    public void setMosaicType(EMosaic mosaicType) { this.mosaicType = mosaicType; }
 
-   public int getMinesCount() { return minesCount; }
-   public void setMinesCount(int minesCount) { this.minesCount = minesCount; }
+    public int getMinesCount() { return minesCount; }
+    public void setMinesCount(int minesCount) { this.minesCount = minesCount; }
 
-   public double getArea() { return area; }
-   public void setArea(double area) { this.area = area; }
+    public double getArea() { return area; }
+    public void setArea(double area) { this.area = area; }
 
-   public ESkillLevel getSkillLevel() {
-      if (sizeField.equals(ESkillLevel.eBeginner.getDefaultSize()) && (minesCount == ESkillLevel.eBeginner.getNumberMines(mosaicType)))
-         return ESkillLevel.eBeginner;
-      if (sizeField.equals(ESkillLevel.eAmateur.getDefaultSize()) && (minesCount == ESkillLevel.eAmateur.getNumberMines(mosaicType)))
-         return ESkillLevel.eAmateur;
-      if (sizeField.equals(ESkillLevel.eProfi.getDefaultSize()) && (minesCount == ESkillLevel.eProfi.getNumberMines(mosaicType)))
-         return ESkillLevel.eProfi;
-      if (sizeField.equals(ESkillLevel.eCrazy.getDefaultSize()) && (minesCount == ESkillLevel.eCrazy.getNumberMines(mosaicType)))
-         return ESkillLevel.eCrazy;
-      return ESkillLevel.eCustom;
-   }
+    public ESkillLevel getSkillLevel() {
+        if (sizeField.equals(ESkillLevel.eBeginner.getDefaultSize()) && (minesCount == ESkillLevel.eBeginner.getNumberMines(mosaicType)))
+            return ESkillLevel.eBeginner;
+        if (sizeField.equals(ESkillLevel.eAmateur.getDefaultSize()) && (minesCount == ESkillLevel.eAmateur.getNumberMines(mosaicType)))
+            return ESkillLevel.eAmateur;
+        if (sizeField.equals(ESkillLevel.eProfi.getDefaultSize()) && (minesCount == ESkillLevel.eProfi.getNumberMines(mosaicType)))
+            return ESkillLevel.eProfi;
+        if (sizeField.equals(ESkillLevel.eCrazy.getDefaultSize()) && (minesCount == ESkillLevel.eCrazy.getNumberMines(mosaicType)))
+            return ESkillLevel.eCrazy;
+        return ESkillLevel.eCustom;
+    }
 
-   public void setSkillLevel(ESkillLevel skill) {
-      minesCount = skill.getNumberMines(mosaicType);
-      sizeField  = skill.getDefaultSize();
-   }
+    public void setSkillLevel(ESkillLevel skill) {
+        minesCount = skill.getNumberMines(mosaicType);
+        sizeField  = skill.getDefaultSize();
+    }
 
 }

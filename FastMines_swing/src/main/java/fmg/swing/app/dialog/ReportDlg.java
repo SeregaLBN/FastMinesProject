@@ -28,291 +28,292 @@ import fmg.swing.img.MosaicImg;
 import fmg.swing.utils.ImgUtils;
 
 abstract class ReportDlg extends JDialog implements AutoCloseable {
-   private static final long serialVersionUID = 1L;
 
-   private static final int ImgSize = 40;
-   private static final int ImgZoomQuality = 3;
-   private static final Color bkTabBkColor = fmg.common.Color.Transparent(); // Cast.toColor(UIManager.getColor("TabbedPane.light")); // Cast.toColor(getContentPane().getBackground());
-   private static final Color bkTabBkColorSelected = fmg.common.Color.Aquamarine().brighter();//Cast.toColor(UIManager.getColor("TabbedPane.shadow")); // "TabbedPane.darkShadow"
+    private static final long serialVersionUID = 1L;
 
-   protected JTabbedPane tabPanel;
-   protected JToggleButton[] btns = new JToggleButton[ESkillLevel.values().length-1];
-   private Map<EMosaic, JScrollPane> scrollPanes = new HashMap<>(EMosaic.values().length);
-   private Map<EMosaic, MosaicImg.ControllerIcon> images = new HashMap<>(EMosaic.values().length);
-   protected ButtonGroup radioGroup;
-   protected Main parent;
+    private static final int ImgSize = 40;
+    private static final int ImgZoomQuality = 3;
+    private static final Color bkTabBkColor = fmg.common.Color.Transparent(); // Cast.toColor(UIManager.getColor("TabbedPane.light")); // Cast.toColor(getContentPane().getBackground());
+    private static final Color bkTabBkColorSelected = fmg.common.Color.Aquamarine().brighter();//Cast.toColor(UIManager.getColor("TabbedPane.shadow")); // "TabbedPane.darkShadow"
 
-   public ReportDlg(Main parent, boolean modal) {
-      super(parent, "report window...", modal);
-      this.parent = parent;
-      initialize(parent);
-   }
+    protected JTabbedPane tabPanel;
+    protected JToggleButton[] btns = new JToggleButton[ESkillLevel.values().length-1];
+    private Map<EMosaic, JScrollPane> scrollPanes = new HashMap<>(EMosaic.values().length);
+    private Map<EMosaic, MosaicImg.ControllerIcon> images = new HashMap<>(EMosaic.values().length);
+    protected ButtonGroup radioGroup;
+    protected Main parent;
 
-   private void initialize(JFrame parent) {
-      Object keyBind = "CloseDialog";
-      getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
-      getRootPane().getActionMap().put(keyBind, new AbstractAction() {
-         private static final long serialVersionUID = 1L;
-         @Override
-         public void actionPerformed(ActionEvent e) { onClose(); }
-      });
+    public ReportDlg(Main parent, boolean modal) {
+        super(parent, "report window...", modal);
+        this.parent = parent;
+        initialize(parent);
+    }
 
-      addWindowListener(new WindowAdapter() {
-         @Override
-         public void windowClosing(WindowEvent we) { onClose(); }
-      });
+    private void initialize(JFrame parent) {
+        Object keyBind = "CloseDialog";
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), keyBind);
+        getRootPane().getActionMap().put(keyBind, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public void actionPerformed(ActionEvent e) { onClose(); }
+        });
 
-      this.setResizable(!false);
-      createComponents();
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) { onClose(); }
+        });
 
-//      Dimension preferredSize = this.getPreferredSize();
-//      preferredSize.width = Toolkit.getDefaultToolkit().getScreenSize().width-100;
-//      this.setPreferredSize(preferredSize);
-//      this.setVisible(true);
-      // задаю предпочтительный размер
-      pack();
-      this.setLocationRelativeTo(parent);
-   }
+        this.setResizable(!false);
+        createComponents();
 
-   private void onClose() {
-      if (isModal())
-         dispose();
-      else
-         setVisible(false);
-   }
+//        Dimension preferredSize = this.getPreferredSize();
+//        preferredSize.width = Toolkit.getDefaultToolkit().getScreenSize().width-100;
+//        this.setPreferredSize(preferredSize);
+//        this.setVisible(true);
+        // задаю предпочтительный размер
+        pack();
+        this.setLocationRelativeTo(parent);
+    }
 
-   protected Dimension getPreferredScrollPaneSize() {
-      return new Dimension(450, 100);
-   }
+    private void onClose() {
+        if (isModal())
+            dispose();
+        else
+            setVisible(false);
+    }
 
-   /** создаю панели с нужным расположением */
-   private void createComponents() {
-      // 1. Создаю панель, которая будет содержать все остальные элементы и панели расположения
-      tabPanel = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-      {
-         tabPanel.setBorder(BorderFactory.createEmptyBorder(12,12,2,12));
+    protected Dimension getPreferredScrollPaneSize() {
+        return new Dimension(450, 100);
+    }
 
-         for (EMosaic eMosaic: EMosaic.values()) {
-            JScrollPane scroll = new JScrollPane();
-            MosaicImg.ControllerIcon imgCntrllr = new MosaicImg.ControllerIcon();
-            MosaicAnimatedModel<?> imgModel = imgCntrllr.getModel();
-            imgModel.setMosaicType(eMosaic);
-            imgModel.setSizeField(eMosaic.sizeIcoField(true));
-            imgModel.setSize(new SizeDouble(ImgSize*ImgZoomQuality, ImgSize*ImgZoomQuality));
-            imgModel.setPadding(5 * ImgZoomQuality);
-            imgModel.setBackgroundColor(bkTabBkColor);
-            int redrawInterval = 50;
-            double rotateAngleDelta = 3.5;
-            double totalFrames = 360 / rotateAngleDelta;
-            imgModel.setAnimatePeriod((int)(totalFrames * redrawInterval));
-            imgModel.setTotalFrames((int)totalFrames);
-            imgCntrllr.addListener(ev -> onImagePropertyChanged(eMosaic, ev));
-            images.put(eMosaic, imgCntrllr);
+    /** создаю панели с нужным расположением */
+    private void createComponents() {
+        // 1. Создаю панель, которая будет содержать все остальные элементы и панели расположения
+        tabPanel = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+        {
+            tabPanel.setBorder(BorderFactory.createEmptyBorder(12,12,2,12));
 
-            tabPanel.addTab(null, ImgUtils.zoom(imgCntrllr.getImage(), ImgSize, ImgSize), scroll, eMosaic.getDescription(false));
-            scroll.setPreferredSize(getPreferredScrollPaneSize());
-            scrollPanes.put(eMosaic, scroll);
-         }
+            for (EMosaic eMosaic: EMosaic.values()) {
+                JScrollPane scroll = new JScrollPane();
+                MosaicImg.ControllerIcon imgCntrllr = new MosaicImg.ControllerIcon();
+                MosaicAnimatedModel<?> imgModel = imgCntrllr.getModel();
+                imgModel.setMosaicType(eMosaic);
+                imgModel.setSizeField(eMosaic.sizeIcoField(true));
+                imgModel.setSize(new SizeDouble(ImgSize*ImgZoomQuality, ImgSize*ImgZoomQuality));
+                imgModel.setPadding(5 * ImgZoomQuality);
+                imgModel.setBackgroundColor(bkTabBkColor);
+                int redrawInterval = 50;
+                double rotateAngleDelta = 3.5;
+                double totalFrames = 360 / rotateAngleDelta;
+                imgModel.setAnimatePeriod((int)(totalFrames * redrawInterval));
+                imgModel.setTotalFrames((int)totalFrames);
+                imgCntrllr.addListener(ev -> onImagePropertyChanged(eMosaic, ev));
+                images.put(eMosaic, imgCntrllr);
 
-         // таблички создаю динамически - когда юзер выберет конкретную вкладку. См. getSelectedTable()
-
-         tabPanel.addChangeListener(ev -> onChangeTab(getSelectedMosaicType()));
-      }
-
-      // 2. Панель кнопок снизу
-      JPanel panelBottom = new JPanel(new GridLayout(0, isOneLineSkillLevelButtons() ? 4:2, 2, 2));
-      {
-         panelBottom.setBorder(BorderFactory.createEmptyBorder(2,12,12,12));
-         radioGroup = new ButtonGroup();
-         for (final ESkillLevel eSkill: ESkillLevel.values()) {
-            if (eSkill == ESkillLevel.eCustom)
-               continue;
-            JToggleButton btn = btns[eSkill.ordinal()] = new JToggleButton(eSkill.getDescription());
-            panelBottom.add(btn);
-            radioGroup.add(btn);
-            btn.addActionListener(e -> onClickBtnSkill(eSkill));
-         }
-      }
-
-      // добавляю расположение в центр окна
-      getContentPane().add(tabPanel, BorderLayout.CENTER);
-      // ряд кнопок внизу
-      getContentPane().add(panelBottom, BorderLayout.SOUTH);
-   }
-
-   protected boolean isOneLineSkillLevelButtons() { return false; }
-
-   protected void onClickBtnSkill(ESkillLevel eSkill) {
-//      System.out.println("OnClickBtnSkill: " + eSkill);
-      updateModel(eSkill);
-   }
-
-   protected void onChangeTab(EMosaic eMosaic) {
-//      System.out.println("OnChangeTab: " + mosaicType);
-      updateModel(getSelectedSkillLevel());
-
-      images.forEach((mosaicType, imgCtrllr) -> {
-         boolean selected = (mosaicType == eMosaic);
-         imgCtrllr.getModel().setAnimated(selected);
-         imgCtrllr.getModel().setBackgroundColor(selected ? bkTabBkColorSelected : bkTabBkColor);
-      });
-   }
-
-   /**
-    * Отобразить интресуемые данные
-    * @param eSkill
-    * @param eMosaic
-    * @param pos - позиция строки в табличке, которую выделить
-    */
-   public void showData(ESkillLevel eSkill, EMosaic eMosaic, int pos) {
-      if (eSkill == ESkillLevel.eCustom)
-         eSkill = ESkillLevel.eAmateur;
-
-      radioGroup.setSelected(btns[eSkill.ordinal()].getModel(), true);
-      tabPanel.setSelectedIndex(eMosaic.ordinal());
-      onChangeTab(eMosaic);
-
-      JTable table = getSelectedTable();
-      if (pos != -1)
-         table.getSelectionModel().setSelectionInterval(pos, pos);
-      else
-         table.getSelectionModel().clearSelection();
-
-      this.setVisible(true);
-   }
-
-   protected void updateModel(ESkillLevel eSkill) {
-      getSelectedTableModel().setSkill(eSkill);
-   }
-
-   protected ReportTableModel getSelectedTableModel() {
-      return (ReportTableModel)getSelectedTable().getModel();
-   }
-
-   /** Вернёт табличку из выбраной вкладки */
-   protected JTable getSelectedTable() {
-      int pos = tabPanel.getSelectedIndex();
-      EMosaic eMosaic = EMosaic.fromOrdinal(pos);
-      JScrollPane scroll = scrollPanes.get(eMosaic);
-
-      // Проверяю если ли таблица? Если нет - создаю...
-      Component cmpnt = scroll.getViewport().getView();
-      JTable table = (cmpnt != null) ? (JTable) cmpnt : createTable(eMosaic, scroll);
-      return table;
-   }
-
-   protected int getTableCellHorizontalAlignment(int row, int column) { return SwingConstants.CENTER; }
-   protected int getTableHeaderCellHorizontalAlignment(int column) { return SwingConstants.CENTER; }
-   protected int getTableRowHeigt() { return 32; }
-   protected int getTableHeaderHeigt() { return 25; }
-
-   protected EMosaic getSelectedMosaicType() {
-      int i = tabPanel.getSelectedIndex();
-      if (i == -1)
-         throw new RuntimeException("dialog Report::getSelectedMosaicType: tabPanel.getSelectedIndex() return -1 ???");
-      return EMosaic.fromOrdinal(i);
-   }
-   protected ESkillLevel getSelectedSkillLevel() {
-      ButtonModel model = radioGroup.getSelection();
-      for (int i=0; i < btns.length; i++)
-         if (model == btns[i].getModel())
-            return ESkillLevel.fromOrdinal(i);
-      throw new RuntimeException("dialog Report::getSelectedSkillLevel: radioGroup.getSelection() return unknown model ???");
-   }
-
-   private void onImagePropertyChanged(EMosaic mosaicType, PropertyChangeEvent ev) {
-      if (!isVisible())
-         return;
-      if (MosaicImg.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
-         int i = mosaicType.ordinal();
-         MosaicImg.ControllerIcon imgCtrllr = images.get(mosaicType);
-         tabPanel.setIconAt(i, ImgUtils.zoom(imgCtrllr.getImage(), ImgSize, ImgSize));
-      }
-   }
-
-   protected ReportTableModel createTableModel(EMosaic eMosaic) {
-      return new ReportTableModel(eMosaic) {};
-   }
-   /** создаю табличку сразу добавляя её к JScrollPane */
-   protected JTable createTable(EMosaic eMosaic, JScrollPane owner) {
-      JTable table = new JTable(createTableModel(eMosaic)) {
-         private static final long serialVersionUID = 1L;
-         @Override
-         public TableCellRenderer getCellRenderer(int row, int column) {
-            TableCellRenderer rend = super.getCellRenderer(row, column);
-            if (rend instanceof JLabel) {
-               // выравнивание текста в ячеке
-               ((JLabel)rend).setHorizontalAlignment(getTableCellHorizontalAlignment(row, column));
-//               ((JLabel)rend).setVerticalAlignment(SwingConstants.TOP);
+                tabPanel.addTab(null, ImgUtils.zoom(imgCntrllr.getImage(), ImgSize, ImgSize), scroll, eMosaic.getDescription(false));
+                scroll.setPreferredSize(getPreferredScrollPaneSize());
+                scrollPanes.put(eMosaic, scroll);
             }
-            return rend;
-         }
-      };
 
-      owner.getViewport().setView(table);
+            // таблички создаю динамически - когда юзер выберет конкретную вкладку. См. getSelectedTable()
 
-      table.setRowHeight(getTableRowHeigt());
-      table.getTableHeader().setPreferredSize(new Dimension(owner.getWidth(), getTableHeaderHeigt()));
-      table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-//      ((JTextArea)table.getEditorComponent()).setEditable(false);
-//      table.getCellEditor().stopCellEditing();// // TODO непашет ??
-//      System.out.println(table.getModel()); // javax.swing.table.DefaultTableModel
+            tabPanel.addChangeListener(ev -> onChangeTab(getSelectedMosaicType()));
+        }
 
-//      // выравниваю текст заголовков таблицы по центру
-//      // TODO Хоть текст и выравнивается, но сами ячейки заголовка таблицы уже выглядят хуже чем
-//      //      в оригинальном рендере (особо заметно под Маком).
-//      //      Т.е. DefaultTableCellRenderer выглядит паршиво, а как достать орининальный рендер заголовка - хз
-//      //System.out.println(table.getColumnModel().getColumn(0).getHeaderRenderer()); // print null... hmmm
-//      javax.swing.table.TableColumnModel tableColumnModel = table.getColumnModel();
-//      for (int i=0; i<tableColumnModel.getColumnCount(); i++)
-//         tableColumnModel.getColumn(i).setHeaderRenderer(defaultTableCellRenderer);
-      return table;
-   }
+        // 2. Панель кнопок снизу
+        JPanel panelBottom = new JPanel(new GridLayout(0, isOneLineSkillLevelButtons() ? 4:2, 2, 2));
+        {
+            panelBottom.setBorder(BorderFactory.createEmptyBorder(2,12,12,12));
+            radioGroup = new ButtonGroup();
+            for (final ESkillLevel eSkill: ESkillLevel.values()) {
+                if (eSkill == ESkillLevel.eCustom)
+                    continue;
+                JToggleButton btn = btns[eSkill.ordinal()] = new JToggleButton(eSkill.getDescription());
+                panelBottom.add(btn);
+                radioGroup.add(btn);
+                btn.addActionListener(e -> onClickBtnSkill(eSkill));
+            }
+        }
 
-   @Override
-   public void setVisible(boolean b) {
-      EMosaic mosaicType = getSelectedMosaicType();
-      MosaicImg.ControllerIcon imgCtrllr = images.get(mosaicType);
-      imgCtrllr.getModel().setAnimated(b);
-      if (!b)
-         imgCtrllr.getModel().setBackgroundColor(bkTabBkColor);
+        // добавляю расположение в центр окна
+        getContentPane().add(tabPanel, BorderLayout.CENTER);
+        // ряд кнопок внизу
+        getContentPane().add(panelBottom, BorderLayout.SOUTH);
+    }
 
-      super.setVisible(b);
-   }
+    protected boolean isOneLineSkillLevelButtons() { return false; }
 
-   @Override
-   public void close() {
-      images.forEach((k,v) -> v.close());
-      dispose();
-   }
+    protected void onClickBtnSkill(ESkillLevel eSkill) {
+//        System.out.println("OnClickBtnSkill: " + eSkill);
+        updateModel(eSkill);
+    }
 
-   DefaultTableCellRenderer defaultTableCellRenderer = new CustomHeaderTableCellRenderer();
-   /** для выравнивани текста заголовков таблицы по центру */
-   class CustomHeaderTableCellRenderer extends DefaultTableCellRenderer {
-      private static final long serialVersionUID = 1L;
-      @Override
-      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
-      {
-         Component cmpnt = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-         if (cmpnt instanceof JLabel) {
-            JLabel labl = (JLabel)cmpnt;
-            labl.setHorizontalAlignment(ReportDlg.this.getTableHeaderCellHorizontalAlignment(column));
-         }
-         setBorder(UIManager.getBorder("TableHeader.cellBorder"));
-         setForeground(table.getTableHeader().getForeground());
-         setBackground(table.getTableHeader().getBackground());
-         return cmpnt;
-      }
-   }
+    protected void onChangeTab(EMosaic eMosaic) {
+//        System.out.println("OnChangeTab: " + mosaicType);
+        updateModel(getSelectedSkillLevel());
 
-   //////////////////////////////////////////////////
-   // TEST
-   public static void main(String[] args) {
-      try (ReportDlg dlg = new ReportDlg(null, true) { private static final long serialVersionUID = 1L; })
-      {
-         dlg.showData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle1, -1);
-      }
-      Animator.getSingleton().close();
-   }
+        images.forEach((mosaicType, imgCtrllr) -> {
+            boolean selected = (mosaicType == eMosaic);
+            imgCtrllr.getModel().setAnimated(selected);
+            imgCtrllr.getModel().setBackgroundColor(selected ? bkTabBkColorSelected : bkTabBkColor);
+        });
+    }
+
+    /**
+     * Отобразить интресуемые данные
+     * @param eSkill
+     * @param eMosaic
+     * @param pos - позиция строки в табличке, которую выделить
+     */
+    public void showData(ESkillLevel eSkill, EMosaic eMosaic, int pos) {
+        if (eSkill == ESkillLevel.eCustom)
+            eSkill = ESkillLevel.eAmateur;
+
+        radioGroup.setSelected(btns[eSkill.ordinal()].getModel(), true);
+        tabPanel.setSelectedIndex(eMosaic.ordinal());
+        onChangeTab(eMosaic);
+
+        JTable table = getSelectedTable();
+        if (pos != -1)
+            table.getSelectionModel().setSelectionInterval(pos, pos);
+        else
+            table.getSelectionModel().clearSelection();
+
+        this.setVisible(true);
+    }
+
+    protected void updateModel(ESkillLevel eSkill) {
+        getSelectedTableModel().setSkill(eSkill);
+    }
+
+    protected ReportTableModel getSelectedTableModel() {
+        return (ReportTableModel)getSelectedTable().getModel();
+    }
+
+    /** Вернёт табличку из выбраной вкладки */
+    protected JTable getSelectedTable() {
+        int pos = tabPanel.getSelectedIndex();
+        EMosaic eMosaic = EMosaic.fromOrdinal(pos);
+        JScrollPane scroll = scrollPanes.get(eMosaic);
+
+        // Проверяю если ли таблица? Если нет - создаю...
+        Component cmpnt = scroll.getViewport().getView();
+        JTable table = (cmpnt != null) ? (JTable) cmpnt : createTable(eMosaic, scroll);
+        return table;
+    }
+
+    protected int getTableCellHorizontalAlignment(int row, int column) { return SwingConstants.CENTER; }
+    protected int getTableHeaderCellHorizontalAlignment(int column) { return SwingConstants.CENTER; }
+    protected int getTableRowHeigt() { return 32; }
+    protected int getTableHeaderHeigt() { return 25; }
+
+    protected EMosaic getSelectedMosaicType() {
+        int i = tabPanel.getSelectedIndex();
+        if (i == -1)
+            throw new RuntimeException("dialog Report::getSelectedMosaicType: tabPanel.getSelectedIndex() return -1 ???");
+        return EMosaic.fromOrdinal(i);
+    }
+    protected ESkillLevel getSelectedSkillLevel() {
+        ButtonModel model = radioGroup.getSelection();
+        for (int i=0; i < btns.length; i++)
+            if (model == btns[i].getModel())
+                return ESkillLevel.fromOrdinal(i);
+        throw new RuntimeException("dialog Report::getSelectedSkillLevel: radioGroup.getSelection() return unknown model ???");
+    }
+
+    private void onImagePropertyChanged(EMosaic mosaicType, PropertyChangeEvent ev) {
+        if (!isVisible())
+            return;
+        if (MosaicImg.PROPERTY_IMAGE.equals(ev.getPropertyName())) {
+            int i = mosaicType.ordinal();
+            MosaicImg.ControllerIcon imgCtrllr = images.get(mosaicType);
+            tabPanel.setIconAt(i, ImgUtils.zoom(imgCtrllr.getImage(), ImgSize, ImgSize));
+        }
+    }
+
+    protected ReportTableModel createTableModel(EMosaic eMosaic) {
+        return new ReportTableModel(eMosaic) {};
+    }
+    /** создаю табличку сразу добавляя её к JScrollPane */
+    protected JTable createTable(EMosaic eMosaic, JScrollPane owner) {
+        JTable table = new JTable(createTableModel(eMosaic)) {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public TableCellRenderer getCellRenderer(int row, int column) {
+                TableCellRenderer rend = super.getCellRenderer(row, column);
+                if (rend instanceof JLabel) {
+                    // выравнивание текста в ячеке
+                    ((JLabel)rend).setHorizontalAlignment(getTableCellHorizontalAlignment(row, column));
+//                    ((JLabel)rend).setVerticalAlignment(SwingConstants.TOP);
+                }
+                return rend;
+            }
+        };
+
+        owner.getViewport().setView(table);
+
+        table.setRowHeight(getTableRowHeigt());
+        table.getTableHeader().setPreferredSize(new Dimension(owner.getWidth(), getTableHeaderHeigt()));
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//        ((JTextArea)table.getEditorComponent()).setEditable(false);
+//        table.getCellEditor().stopCellEditing();// // TODO непашет ??
+//        System.out.println(table.getModel()); // javax.swing.table.DefaultTableModel
+
+//        // выравниваю текст заголовков таблицы по центру
+//        // TODO Хоть текст и выравнивается, но сами ячейки заголовка таблицы уже выглядят хуже чем
+//        //      в оригинальном рендере (особо заметно под Маком).
+//        //      Т.е. DefaultTableCellRenderer выглядит паршиво, а как достать орининальный рендер заголовка - хз
+//        //System.out.println(table.getColumnModel().getColumn(0).getHeaderRenderer()); // print null... hmmm
+//        javax.swing.table.TableColumnModel tableColumnModel = table.getColumnModel();
+//        for (int i=0; i<tableColumnModel.getColumnCount(); i++)
+//            tableColumnModel.getColumn(i).setHeaderRenderer(defaultTableCellRenderer);
+        return table;
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+        EMosaic mosaicType = getSelectedMosaicType();
+        MosaicImg.ControllerIcon imgCtrllr = images.get(mosaicType);
+        imgCtrllr.getModel().setAnimated(b);
+        if (!b)
+            imgCtrllr.getModel().setBackgroundColor(bkTabBkColor);
+
+        super.setVisible(b);
+    }
+
+    @Override
+    public void close() {
+        images.forEach((k,v) -> v.close());
+        dispose();
+    }
+
+    DefaultTableCellRenderer defaultTableCellRenderer = new CustomHeaderTableCellRenderer();
+    /** для выравнивани текста заголовков таблицы по центру */
+    class CustomHeaderTableCellRenderer extends DefaultTableCellRenderer {
+        private static final long serialVersionUID = 1L;
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+        {
+            Component cmpnt = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            if (cmpnt instanceof JLabel) {
+                JLabel labl = (JLabel)cmpnt;
+                labl.setHorizontalAlignment(ReportDlg.this.getTableHeaderCellHorizontalAlignment(column));
+            }
+            setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+            setForeground(table.getTableHeader().getForeground());
+            setBackground(table.getTableHeader().getBackground());
+            return cmpnt;
+        }
+    }
+
+    //////////////////////////////////////////////////
+    // TEST
+    public static void main(String[] args) {
+        try (ReportDlg dlg = new ReportDlg(null, true) { private static final long serialVersionUID = 1L; })
+        {
+            dlg.showData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle1, -1);
+        }
+        Animator.getSingleton().close();
+    }
 
 }

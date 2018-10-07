@@ -8,29 +8,29 @@ package fmg.core.img;
  */
 public class LogoController<TImage,
                             TImageView extends IImageView<TImage, LogoModel>>
-      extends AnimatedImgController<TImage, TImageView, LogoModel>
+    extends AnimatedImgController<TImage, TImageView, LogoModel>
 {
 
-   protected LogoController(TImageView imageView) {
-      super(imageView);
-   }
+    protected LogoController(TImageView imageView) {
+        super(imageView);
+    }
 
-   @Override
-   public void useRotateTransforming(boolean enable) {
-      super.useRotateTransforming(enable);
-      if (enable)
-         addModelTransformer(new RotateLogoTransformer());
-      else
-         removeModelTransformer(RotateLogoTransformer.class);
-   }
+    @Override
+    public void useRotateTransforming(boolean enable) {
+        super.useRotateTransforming(enable);
+        if (enable)
+            addModelTransformer(new RotateLogoTransformer());
+        else
+            removeModelTransformer(RotateLogoTransformer.class);
+    }
 
-   @Override
-   public void usePolarLightFgTransforming(boolean enable) {
-      //super.usePolarLightFgTransforming(enable); // hide super implementation!
-      if (enable)
-         addModelTransformer(new PolarLightLogoTransformer());
-      else
-         removeModelTransformer(PolarLightLogoTransformer.class);
-   }
+    @Override
+    public void usePolarLightFgTransforming(boolean enable) {
+        //super.usePolarLightFgTransforming(enable); // hide super implementation!
+        if (enable)
+            addModelTransformer(new PolarLightLogoTransformer());
+        else
+            removeModelTransformer(PolarLightLogoTransformer.class);
+    }
 
 }

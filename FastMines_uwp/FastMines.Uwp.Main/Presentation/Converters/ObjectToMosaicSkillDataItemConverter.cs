@@ -4,14 +4,16 @@ using fmg.DataModel.Items;
 
 namespace fmg.common.Converters {
 
-   public class ObjectToMosaicSkillDataItemConverter : IValueConverter {
-      public object Convert(object value, Type targetType, object parameter, string language) {
-         return value;
-      }
+    public class ObjectToMosaicSkillDataItemConverter : IValueConverter {
 
-      public object ConvertBack(object value, Type targetType, object parameter, string language) {
-         return value as MosaicSkillDataItem;
-      }
-   }
+        public object Convert(object value, Type targetType, object parameter, string language) {
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language) {
+            return value as MosaicSkillDataItem;
+        }
+
+    }
 
 }

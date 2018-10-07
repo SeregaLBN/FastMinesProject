@@ -16,15 +16,15 @@ public interface IImageController<TImage,
                  extends INotifyPropertyChanged, AutoCloseable
 {
 
-   public static final String PROPERTY_MODEL = IImageView.PROPERTY_MODEL;
-   public static final String PROPERTY_IMAGE = IImageView.PROPERTY_IMAGE;
-   public static final String PROPERTY_SIZE  = IImageView.PROPERTY_SIZE;
+    public static final String PROPERTY_MODEL = IImageView.PROPERTY_MODEL;
+    public static final String PROPERTY_IMAGE = IImageView.PROPERTY_IMAGE;
+    public static final String PROPERTY_SIZE  = IImageView.PROPERTY_SIZE;
 
-   TImageModel getModel();
-   TImage      getImage();
-   SizeDouble  getSize();
+    TImageModel getModel();
+    TImage      getImage();
+    SizeDouble  getSize();
 
-   @Override
-   void close(); // hide throws Exception
+    @Override
+    void close(); // hide throws Exception
 
 }

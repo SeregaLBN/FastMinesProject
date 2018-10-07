@@ -24,55 +24,55 @@ import fmg.swing.utils.StaticInitializer;
  */
 abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageModel> extends WithBurgerMenuView<TImage, TImageModel> {
 
-   static {
-      StaticInitializer.init();
-   }
+    static {
+        StaticInitializer.init();
+    }
 
-   protected MosaicSkillOrGroupView(TImageModel imageModel) {
-      super(imageModel);
-   }
+    protected MosaicSkillOrGroupView(TImageModel imageModel) {
+        super(imageModel);
+    }
 
-   /** get paint information of drawing basic image model */
-   protected abstract Stream<Pair<Color, Stream<PointDouble>>> getCoords();
+    /** get paint information of drawing basic image model */
+    protected abstract Stream<Pair<Color, Stream<PointDouble>>> getCoords();
 
 
-   protected void draw(Graphics2D g) {
-      TImageModel m = getModel();
+    protected void draw(Graphics2D g) {
+        TImageModel m = getModel();
 
-      { // fill background
-         g.setComposite(AlphaComposite.Src);
-         g.setColor(Cast.toColor(m.getBackgroundColor()));
-         g.fillRect(0, 0, (int)getSize().width, (int)getSize().height);
-      }
+        { // fill background
+            g.setComposite(AlphaComposite.Src);
+            g.setColor(Cast.toColor(m.getBackgroundColor()));
+            g.fillRect(0, 0, (int)getSize().width, (int)getSize().height);
+        }
 
-      g.setComposite(AlphaComposite.SrcOver);
-      double bw = m.getBorderWidth();
-      boolean needDrawPerimeterBorder = (!m.getBorderColor().isTransparent() && (bw > 0));
-      java.awt.Color borderColor = !needDrawPerimeterBorder ? null : Cast.toColor(m.getBorderColor());
-      BasicStroke bs = !needDrawPerimeterBorder ? null : new BasicStroke((float)bw);
-      Stream<Pair<Color, Stream<PointDouble>>> shapes = getCoords();
-      shapes.forEach(pair -> {
-         Polygon poly = Cast.toPolygon(pair.second.collect(Collectors.toList()));
-         if (!pair.first.isTransparent()) {
-            g.setColor(Cast.toColor(pair.first));
-            g.fillPolygon(poly);
-         }
+        g.setComposite(AlphaComposite.SrcOver);
+        double bw = m.getBorderWidth();
+        boolean needDrawPerimeterBorder = (!m.getBorderColor().isTransparent() && (bw > 0));
+        java.awt.Color borderColor = !needDrawPerimeterBorder ? null : Cast.toColor(m.getBorderColor());
+        BasicStroke bs = !needDrawPerimeterBorder ? null : new BasicStroke((float)bw);
+        Stream<Pair<Color, Stream<PointDouble>>> shapes = getCoords();
+        shapes.forEach(pair -> {
+            Polygon poly = Cast.toPolygon(pair.second.collect(Collectors.toList()));
+            if (!pair.first.isTransparent()) {
+                g.setColor(Cast.toColor(pair.first));
+                g.fillPolygon(poly);
+            }
 
-         // draw perimeter border
-         if (needDrawPerimeterBorder) {
-            g.setColor(borderColor);
-            g.setStroke(bs);
-            g.drawPolygon(poly);
-         }
-      });
+            // draw perimeter border
+            if (needDrawPerimeterBorder) {
+                g.setColor(borderColor);
+                g.setStroke(bs);
+                g.drawPolygon(poly);
+            }
+        });
 
-      // draw burger menu
-      getBurgerMenuModel().getCoords()
-         .forEach(li -> {
-            g.setStroke(new BasicStroke((float)li.penWidht));
-            g.setColor(Cast.toColor(li.clr));
-            g.drawLine((int)li.from.x, (int)li.from.y, (int)li.to.x, (int)li.to.y);
-         });
-   }
+        // draw burger menu
+        getBurgerMenuModel().getCoords()
+            .forEach(li -> {
+                g.setStroke(new BasicStroke((float)li.penWidht));
+                g.setColor(Cast.toColor(li.clr));
+                g.drawLine((int)li.from.x, (int)li.from.y, (int)li.to.x, (int)li.to.y);
+            });
+    }
 
 }

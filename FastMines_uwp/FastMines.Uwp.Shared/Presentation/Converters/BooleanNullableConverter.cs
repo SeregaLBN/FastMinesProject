@@ -3,15 +3,17 @@ using Windows.UI.Xaml.Data;
 
 namespace fmg.common.Converters {
 
-   /// <summary> Value converter that translates true to false and vice versa </summary>
-   public sealed class BooleanNullableConverter : IValueConverter {
-      public object Convert(object value, Type targetType, object parameter, string language) {
-         return !(value is bool && (bool) value);
-      }
+    /// <summary> Value converter that translates true to false and vice versa </summary>
+    public sealed class BooleanNullableConverter : IValueConverter {
 
-      public object ConvertBack(object value, Type targetType, object parameter, string language) {
-         return !(value is bool && (bool) value);
-      }
-   }
+        public object Convert(object value, Type targetType, object parameter, string language) {
+            return !(value is bool && (bool) value);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language) {
+            return !(value is bool && (bool) value);
+        }
+
+    }
 
 }

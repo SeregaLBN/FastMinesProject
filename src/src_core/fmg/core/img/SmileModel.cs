@@ -1,77 +1,77 @@
-using System;
-using System.ComponentModel;
 using fmg.common.geom;
 using fmg.common.notyfier;
+using System;
+using System.ComponentModel;
 
 namespace fmg.core.img {
 
-   /// <summary> Model of the smile/face image </summary>
-   public class SmileModel : IImageModel {
+    /// <summary> Model of the smile/face image </summary>
+    public class SmileModel : IImageModel {
 
-      /** @see http://unicode-table.com/blocks/emoticons/
-      * <br>  http://unicode-table.com/blocks/miscellaneous-symbols-and-pictographs/
-      */
-      public enum EFaceType {
-         /** :) ☺ -  White Smiling Face (Незакрашенное улыбающееся лицо) U+263A */
-         Face_WhiteSmiling,
+        /** @see http://unicode-table.com/blocks/emoticons/
+        * <br>  http://unicode-table.com/blocks/miscellaneous-symbols-and-pictographs/
+        */
+        public enum EFaceType {
+            /** :) ☺ -  White Smiling Face (Незакрашенное улыбающееся лицо) U+263A */
+            Face_WhiteSmiling,
 
-         /** :( 😞 - Disappointed Face (Разочарованное лицо) U+1F61E */
-         Face_Disappointed,
+            /** :( 😞 - Disappointed Face (Разочарованное лицо) U+1F61E */
+            Face_Disappointed,
 
-         /** 😀 - Grinning Face (Ухмыляющееся лицо) U+1F600 */
-         Face_Grinning,
+            /** 😀 - Grinning Face (Ухмыляющееся лицо) U+1F600 */
+            Face_Grinning,
 
-         /** 😎 - Smiling Face with Sunglasses (Улыбающееся лицо в солнечных очках) U+1F60E */
-         Face_SmilingWithSunglasses,
+            /** 😎 - Smiling Face with Sunglasses (Улыбающееся лицо в солнечных очках) U+1F60E */
+            Face_SmilingWithSunglasses,
 
-         /** 😋 - Face Savouring Delicious Food (Лицо, смакующее деликатес) U+1F60B */
-         Face_SavouringDeliciousFood,
+            /** 😋 - Face Savouring Delicious Food (Лицо, смакующее деликатес) U+1F60B */
+            Face_SavouringDeliciousFood,
 
 
-         /** like as Professor: 🎓 - Graduation Cap (Выпускная шапочка) U+1F393 */
-         Face_Assistant,
+            /** like as Professor: 🎓 - Graduation Cap (Выпускная шапочка) U+1F393 */
+            Face_Assistant,
 
-         /** 👀 - Eyes (Глаза) U+1F440 */
-         Eyes_OpenDisabled,
+            /** 👀 - Eyes (Глаза) U+1F440 */
+            Eyes_OpenDisabled,
 
-         Eyes_ClosedDisabled,
+            Eyes_ClosedDisabled,
 
-         Face_EyesOpen,
+            Face_EyesOpen,
 
-         Face_WinkingEyeLeft,
-         Face_WinkingEyeRight,
+            Face_WinkingEyeLeft,
+            Face_WinkingEyeRight,
 
-         Face_EyesClosed
-      }
+            Face_EyesClosed
+        }
 
-      private EFaceType _faceType;
-      private SizeDouble _size;
-      public event PropertyChangedEventHandler PropertyChanged;
-      protected readonly NotifyPropertyChanged _notifier;
+        private EFaceType _faceType;
+        private SizeDouble _size;
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected readonly NotifyPropertyChanged _notifier;
 
-      public SmileModel(EFaceType faceType) {
-         _faceType = faceType;
-         _size = new SizeDouble(40, 40);
-         _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
-      }
+        public SmileModel(EFaceType faceType) {
+            _faceType = faceType;
+            _size = new SizeDouble(40, 40);
+            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+        }
 
-      /// <summary> width and height in pixel </summary>
-      public SizeDouble Size {
-         get { return _size; }
-         set { _notifier.SetProperty(ref _size, value); }
-      }
-      public void SetSize(double widht, double height) { Size = new SizeDouble(widht, height) ; }
+        /// <summary> width and height in pixel </summary>
+        public SizeDouble Size {
+            get { return _size; }
+            set { _notifier.SetProperty(ref _size, value); }
+        }
+        public void SetSize(double widht, double height) { Size = new SizeDouble(widht, height); }
 
-      public EFaceType FaceType {
-         get { return _faceType; }
-         set { _notifier.SetProperty(ref _faceType, value); }
-      }
+        public EFaceType FaceType {
+            get { return _faceType; }
+            set { _notifier.SetProperty(ref _faceType, value); }
+        }
 
-      public void Dispose() {
-         _notifier.Dispose();
-         GC.SuppressFinalize(this);
-      }
+        public void Dispose() {
+            _notifier.Dispose();
+            GC.SuppressFinalize(this);
+        }
 
-   }
+    }
 
 }

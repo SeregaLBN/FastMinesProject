@@ -16,67 +16,68 @@ import fmg.swing.img.Animator;
 
 /** Диалог отображения статистики пользователя */
 public class StatisticDlg extends ReportDlg {
-   private static final long serialVersionUID = 1L;
 
-   private PlayersModel players;
+    private static final long serialVersionUID = 1L;
 
-   public StatisticDlg(Main parent, boolean modal, PlayersModel players) {
-      super(parent, modal);
-      this.players = players;
-   }
+    private PlayersModel players;
 
-   @Override
-   protected void updateModel(ESkillLevel eSkill) {
-      setTitle("Statistics - " + getSelectedMosaicType().getDescription(false));
-      super.updateModel(eSkill);
+    public StatisticDlg(Main parent, boolean modal, PlayersModel players) {
+        super(parent, modal);
+        this.players = players;
+    }
 
-      // выделяю рядок текущего пользователя
-      try {
-         User user = (parent == null) ? null : parent.getActiveUser();
-         int pos = (user == null) ? -1 : players.indexOf(user);
-         if (pos != -1) {
-            JTable table = getSelectedTable();
-            table.getSelectionModel().setSelectionInterval(pos, pos);
-         }
-      } catch (Exception ex) {
-         ex.printStackTrace();
-      }
-   }
+    @Override
+    protected void updateModel(ESkillLevel eSkill) {
+        setTitle("Statistics - " + getSelectedMosaicType().getDescription(false));
+        super.updateModel(eSkill);
 
-   @Override
-   protected ReportTableModel createTableModel(EMosaic mosaic) {
-      return new StaticsticTblModel(players, mosaic);
-   }
+        // выделяю рядок текущего пользователя
+        try {
+            User user = (parent == null) ? null : parent.getActiveUser();
+            int pos = (user == null) ? -1 : players.indexOf(user);
+            if (pos != -1) {
+                JTable table = getSelectedTable();
+                table.getSelectionModel().setSelectionInterval(pos, pos);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
-   @Override
-   protected int getTableCellHorizontalAlignment(int row, int column) {
-      if (column == 0)
-         return SwingConstants.LEFT;
-      return super.getTableCellHorizontalAlignment(row, column);
-   }
+    @Override
+    protected ReportTableModel createTableModel(EMosaic mosaic) {
+        return new StaticsticTblModel(players, mosaic);
+    }
 
-   @Override
-   protected Dimension getPreferredScrollPaneSize() {
-      return new Dimension(800, 200);
-   }
+    @Override
+    protected int getTableCellHorizontalAlignment(int row, int column) {
+        if (column == 0)
+            return SwingConstants.LEFT;
+        return super.getTableCellHorizontalAlignment(row, column);
+    }
 
-   @Override
-   protected boolean isOneLineSkillLevelButtons() { return true; }
+    @Override
+    protected Dimension getPreferredScrollPaneSize() {
+        return new Dimension(800, 200);
+    }
 
-   public void showData(ESkillLevel eSkill, EMosaic eMosaic) {
-      int pos = players.getPos((parent==null) ? null : parent.getActiveUserId());
-      super.showData(eSkill, eMosaic, pos);
-   }
+    @Override
+    protected boolean isOneLineSkillLevelButtons() { return true; }
 
-   //////////////////////////////////////////////////
-   // TEST
-   public static void main(String[] args) {
-      PlayersModel players = new PlayersModel();
-      players.Load();
-      try (StatisticDlg dlg = new StatisticDlg(null, true, players)) {
-         dlg.showData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle3);
-      }
-      Animator.getSingleton().close();
-   }
+    public void showData(ESkillLevel eSkill, EMosaic eMosaic) {
+        int pos = players.getPos((parent==null) ? null : parent.getActiveUserId());
+        super.showData(eSkill, eMosaic, pos);
+    }
+
+    //////////////////////////////////////////////////
+    // TEST
+    public static void main(String[] args) {
+        PlayersModel players = new PlayersModel();
+        players.Load();
+        try (StatisticDlg dlg = new StatisticDlg(null, true, players)) {
+            dlg.showData(ESkillLevel.eAmateur, EMosaic.eMosaicTriangle3);
+        }
+        Animator.getSingleton().close();
+    }
 
 }

@@ -32,335 +32,337 @@ import fmg.common.geom.*;
  * @see BaseCell
  **/
 public class Trapezoid2 extends BaseCell {
-   public static class AttrTrapezoid2 extends BaseAttribute {
 
-      @Override
-      public SizeDouble getSize(Matrisize sizeField) {
-         double a = getA();
-         double c = getC();
-         double r = getRIn();
-         double R = getROut();
-         SizeDouble result = new SizeDouble(
-               a+c+ c *((sizeField.m+2)/3)+
-                (a+ c)*((sizeField.m+1)/3)+
-                    a *((sizeField.m+0)/3),
-                    R *((sizeField.n+1)/2)+
-                    r *((sizeField.n+0)/2));
+    public static class AttrTrapezoid2 extends BaseAttribute {
 
-         if (sizeField.m == 1)
-            if ((sizeField.n % 4) == 3)
-               result.height -= r;
+        @Override
+        public SizeDouble getSize(Matrisize sizeField) {
+            double a = getA();
+            double c = getC();
+            double r = getRIn();
+            double R = getROut();
+            SizeDouble result = new SizeDouble(
+                a+c+ c *((sizeField.m+2)/3)+
+                 (a+ c)*((sizeField.m+1)/3)+
+                     a *((sizeField.m+0)/3),
+                     R *((sizeField.n+1)/2)+
+                     r *((sizeField.n+0)/2));
 
-         return result;
-      }
+            if (sizeField.m == 1)
+                if ((sizeField.n % 4) == 3)
+                    result.height -= r;
 
-      @Override
-      public int getNeighborNumber(int direction) { return 9; }
-      @Override
-      public int getVertexNumber(int direction) { return 4; }
-      @Override
-      public double getVertexIntersection() { return 4.25; } // (6+4+4+3)/4.
-      @Override
-      public Size getDirectionSizeField() { return new Size(3, 4); }
-      @Override
-      protected double getA   () { return Math.sqrt(getArea()/SQRT27)*2; }
-      protected double getB   () { return getA()*2; }
-      protected double getC   () { return getA()/2; }
-      protected double getROut() { return getA()*SQRT3; }
-      protected double getRIn () { return getROut()/2; }
-      @Override
-      public double getSq(double borderWidth) {
-         double w = borderWidth/2.;
-         return (getA()*SQRT3 - w*4)/(SQRT3+1);
-      }
-   }
+            return result;
+        }
 
-   public Trapezoid2(AttrTrapezoid2 attr, Coord coord) {
-      super(attr, coord,
-            (coord.y&3)*3+(coord.x%3) // 0..11
-         );
-   }
+        @Override
+        public int getNeighborNumber(int direction) { return 9; }
+        @Override
+        public int getVertexNumber(int direction) { return 4; }
+        @Override
+        public double getVertexIntersection() { return 4.25; } // (6+4+4+3)/4.
+        @Override
+        public Size getDirectionSizeField() { return new Size(3, 4); }
+        @Override
+        protected double getA   () { return Math.sqrt(getArea()/SQRT27)*2; }
+        protected double getB   () { return getA()*2; }
+        protected double getC   () { return getA()/2; }
+        protected double getROut() { return getA()*SQRT3; }
+        protected double getRIn () { return getROut()/2; }
+        @Override
+        public double getSq(double borderWidth) {
+            double w = borderWidth/2.;
+            return (getA()*SQRT3 - w*4)/(SQRT3+1);
+        }
+    }
 
-   @Override
-   public AttrTrapezoid2 getAttr() {
-      return (AttrTrapezoid2) super.getAttr();
-   }
+    public Trapezoid2(AttrTrapezoid2 attr, Coord coord) {
+        super(attr, coord,
+                   (coord.y&3)*3+(coord.x%3) // 0..11
+             );
+    }
 
-   @Override
-   protected List<Coord> getCoordsNeighbor() {
-      List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
+    @Override
+    public AttrTrapezoid2 getAttr() {
+        return (AttrTrapezoid2) super.getAttr();
+    }
 
-      // определяю координаты соседей
-       switch (direction) {
-       case 0:
-          neighborCoord.add(new Coord(coord.x-1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x  , coord.y-1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x-1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x+1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x-1, coord.y+1));
-          neighborCoord.add(new Coord(coord.x  , coord.y+1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y+1));
-          neighborCoord.add(new Coord(coord.x+2, coord.y+1));
-          break;
-       case 1:
-          neighborCoord.add(new Coord(coord.x-2, coord.y-1));
-          neighborCoord.add(new Coord(coord.x-1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x  , coord.y-1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x-2, coord.y  ));
-          neighborCoord.add(new Coord(coord.x-1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x+1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x  , coord.y+1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y+1));
-          break;
-       case 2:
-          neighborCoord.add(new Coord(coord.x-1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x  , coord.y-1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x+2, coord.y-1));
-          neighborCoord.add(new Coord(coord.x-1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x+1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x+2, coord.y  ));
-          neighborCoord.add(new Coord(coord.x  , coord.y+1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y+1));
-          break;
-       case 3:
-          neighborCoord.add(new Coord(coord.x-1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x  , coord.y-1));
-          neighborCoord.add(new Coord(coord.x-2, coord.y  ));
-          neighborCoord.add(new Coord(coord.x-1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x+1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x-2, coord.y+1));
-          neighborCoord.add(new Coord(coord.x-1, coord.y+1));
-          neighborCoord.add(new Coord(coord.x  , coord.y+1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y+1));
-          break;
-       case 4:
-          neighborCoord.add(new Coord(coord.x-1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x  , coord.y-1));
-          neighborCoord.add(new Coord(coord.x-1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x+1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x+2, coord.y  ));
-          neighborCoord.add(new Coord(coord.x-1, coord.y+1));
-          neighborCoord.add(new Coord(coord.x  , coord.y+1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y+1));
-          neighborCoord.add(new Coord(coord.x+2, coord.y+1));
-          break;
-       case 5:
-          neighborCoord.add(new Coord(coord.x-2, coord.y-1));
-          neighborCoord.add(new Coord(coord.x-1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x  , coord.y-1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x-1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x+1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x-1, coord.y+1));
-          neighborCoord.add(new Coord(coord.x  , coord.y+1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y+1));
-          break;
-       case 6:
-          neighborCoord.add(new Coord(coord.x-2, coord.y-1));
-          neighborCoord.add(new Coord(coord.x-1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x  , coord.y-1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x-2, coord.y  ));
-          neighborCoord.add(new Coord(coord.x-1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x+1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x-1, coord.y+1));
-          neighborCoord.add(new Coord(coord.x  , coord.y+1));
-          break;
-       case 7:
-          neighborCoord.add(new Coord(coord.x-1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x  , coord.y-1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x+2, coord.y-1));
-          neighborCoord.add(new Coord(coord.x-1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x+1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x+2, coord.y  ));
-          neighborCoord.add(new Coord(coord.x-1, coord.y+1));
-          neighborCoord.add(new Coord(coord.x  , coord.y+1));
-          break;
-       case 8:
-          neighborCoord.add(new Coord(coord.x-1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x  , coord.y-1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x-1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x+1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x-2, coord.y+1));
-          neighborCoord.add(new Coord(coord.x-1, coord.y+1));
-          neighborCoord.add(new Coord(coord.x  , coord.y+1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y+1));
-          break;
-       case 9:
-          neighborCoord.add(new Coord(coord.x-1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x  , coord.y-1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x+2, coord.y-1));
-          neighborCoord.add(new Coord(coord.x-1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x+1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x-1, coord.y+1));
-          neighborCoord.add(new Coord(coord.x  , coord.y+1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y+1));
-          break;
-       case 10:
-          neighborCoord.add(new Coord(coord.x  , coord.y-1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x-2, coord.y  ));
-          neighborCoord.add(new Coord(coord.x-1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x+1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x-2, coord.y+1));
-          neighborCoord.add(new Coord(coord.x-1, coord.y+1));
-          neighborCoord.add(new Coord(coord.x  , coord.y+1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y+1));
-          break;
-       case 11:
-          neighborCoord.add(new Coord(coord.x  , coord.y-1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y-1));
-          neighborCoord.add(new Coord(coord.x-1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x+1, coord.y  ));
-          neighborCoord.add(new Coord(coord.x+2, coord.y  ));
-          neighborCoord.add(new Coord(coord.x-1, coord.y+1));
-          neighborCoord.add(new Coord(coord.x  , coord.y+1));
-          neighborCoord.add(new Coord(coord.x+1, coord.y+1));
-          neighborCoord.add(new Coord(coord.x+2, coord.y+1));
-          break;
-       }
+    @Override
+    protected List<Coord> getCoordsNeighbor() {
+        List<Coord> neighborCoord = new ArrayList<>(getAttr().getNeighborNumber(getDirection()));
 
-      return neighborCoord;
-   }
+        // определяю координаты соседей
+        switch (direction) {
+        case 0:
+            neighborCoord.add(new Coord(coord.x-1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x  , coord.y-1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x-1, coord.y+1));
+            neighborCoord.add(new Coord(coord.x  , coord.y+1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y+1));
+            neighborCoord.add(new Coord(coord.x+2, coord.y+1));
+            break;
+        case 1:
+            neighborCoord.add(new Coord(coord.x-2, coord.y-1));
+            neighborCoord.add(new Coord(coord.x-1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x  , coord.y-1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x-2, coord.y  ));
+            neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x  , coord.y+1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y+1));
+            break;
+        case 2:
+            neighborCoord.add(new Coord(coord.x-1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x  , coord.y-1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x+2, coord.y-1));
+            neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x+2, coord.y  ));
+            neighborCoord.add(new Coord(coord.x  , coord.y+1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y+1));
+            break;
+        case 3:
+            neighborCoord.add(new Coord(coord.x-1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x  , coord.y-1));
+            neighborCoord.add(new Coord(coord.x-2, coord.y  ));
+            neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x-2, coord.y+1));
+            neighborCoord.add(new Coord(coord.x-1, coord.y+1));
+            neighborCoord.add(new Coord(coord.x  , coord.y+1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y+1));
+            break;
+        case 4:
+            neighborCoord.add(new Coord(coord.x-1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x  , coord.y-1));
+            neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x+2, coord.y  ));
+            neighborCoord.add(new Coord(coord.x-1, coord.y+1));
+            neighborCoord.add(new Coord(coord.x  , coord.y+1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y+1));
+            neighborCoord.add(new Coord(coord.x+2, coord.y+1));
+            break;
+        case 5:
+            neighborCoord.add(new Coord(coord.x-2, coord.y-1));
+            neighborCoord.add(new Coord(coord.x-1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x  , coord.y-1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x-1, coord.y+1));
+            neighborCoord.add(new Coord(coord.x  , coord.y+1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y+1));
+            break;
+        case 6:
+            neighborCoord.add(new Coord(coord.x-2, coord.y-1));
+            neighborCoord.add(new Coord(coord.x-1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x  , coord.y-1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x-2, coord.y  ));
+            neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x-1, coord.y+1));
+            neighborCoord.add(new Coord(coord.x  , coord.y+1));
+            break;
+        case 7:
+            neighborCoord.add(new Coord(coord.x-1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x  , coord.y-1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x+2, coord.y-1));
+            neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x+2, coord.y  ));
+            neighborCoord.add(new Coord(coord.x-1, coord.y+1));
+            neighborCoord.add(new Coord(coord.x  , coord.y+1));
+            break;
+        case 8:
+            neighborCoord.add(new Coord(coord.x-1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x  , coord.y-1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x-2, coord.y+1));
+            neighborCoord.add(new Coord(coord.x-1, coord.y+1));
+            neighborCoord.add(new Coord(coord.x  , coord.y+1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y+1));
+            break;
+        case 9:
+            neighborCoord.add(new Coord(coord.x-1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x  , coord.y-1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x+2, coord.y-1));
+            neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x-1, coord.y+1));
+            neighborCoord.add(new Coord(coord.x  , coord.y+1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y+1));
+            break;
+        case 10:
+            neighborCoord.add(new Coord(coord.x  , coord.y-1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x-2, coord.y  ));
+            neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x-2, coord.y+1));
+            neighborCoord.add(new Coord(coord.x-1, coord.y+1));
+            neighborCoord.add(new Coord(coord.x  , coord.y+1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y+1));
+            break;
+        case 11:
+            neighborCoord.add(new Coord(coord.x  , coord.y-1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y-1));
+            neighborCoord.add(new Coord(coord.x-1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x+1, coord.y  ));
+            neighborCoord.add(new Coord(coord.x+2, coord.y  ));
+            neighborCoord.add(new Coord(coord.x-1, coord.y+1));
+            neighborCoord.add(new Coord(coord.x  , coord.y+1));
+            neighborCoord.add(new Coord(coord.x+1, coord.y+1));
+            neighborCoord.add(new Coord(coord.x+2, coord.y+1));
+            break;
+        }
 
-   @Override
-   protected void calcRegion() {
-      AttrTrapezoid2 attr = getAttr();
-      double a = attr.getA();
-      double b = attr.getB();
-      double c = attr.getC();
-      double R = attr.getROut();
-      double r = attr.getRIn();
+        return neighborCoord;
+    }
 
-      // определение координат точек фигуры
-      double oX = (a+b)*(coord.x/3) + b; // offset X
-      double oY = (R+r)*(coord.y/4*2+1); // offset Y
+    @Override
+    protected void calcRegion() {
+        AttrTrapezoid2 attr = getAttr();
+        double a = attr.getA();
+        double b = attr.getB();
+        double c = attr.getC();
+        double R = attr.getROut();
+        double r = attr.getRIn();
 
-      switch (direction) {
-      case 0:
-         region.setPoint(0, oX - c  , oY - R-r);
-         region.setPoint(1, oX      , oY - R  );
-         region.setPoint(2, oX - c  , oY - r  );
-         region.setPoint(3, oX - c-a, oY - r  );
-         break;
-      case 1:
-         region.setPoint(0, oX + a+c, oY - R-r);
-         region.setPoint(1, oX + a  , oY - R  );
-         region.setPoint(2, oX      , oY - R  );
-         region.setPoint(3, oX - c  , oY - R-r);
-         break;
-      case 2:
-         region.setPoint(0, oX + b+c, oY - R-r);
-         region.setPoint(3, oX + a+c, oY - R-r);
-         region.setPoint(2, oX + a  , oY - R  );
-         region.setPoint(1, oX + a+c, oY - r  );
-         break;
-      case 3:
-         region.setPoint(0, oX - c  , oY - r  );
-         region.setPoint(1, oX      , oY      );
-         region.setPoint(2, oX - b  , oY      );
-         region.setPoint(3, oX - a-c, oY - r  );
-         break;
-      case 4:
-         region.setPoint(0, oX      , oY - R  );
-         region.setPoint(1, oX + a  , oY      );
-         region.setPoint(2, oX      , oY      );
-         region.setPoint(3, oX - c  , oY - r  );
-         break;
-      case 5:
-         region.setPoint(0, oX + a  , oY - R  );
-         region.setPoint(1, oX + a+c, oY - r  );
-         region.setPoint(2, oX + a  , oY      );
-         region.setPoint(3, oX      , oY - R  );
-         break;
-      case 6:
-         region.setPoint(0, oX      , oY      );
-         region.setPoint(1, oX - c  , oY + r  );
-         region.setPoint(2, oX - a-c, oY + r  );
-         region.setPoint(3, oX - b  , oY      );
-         break;
-      case 7:
-         region.setPoint(0, oX + a  , oY      );
-         region.setPoint(1, oX      , oY + R  );
-         region.setPoint(2, oX - c  , oY + r  );
-         region.setPoint(3, oX      , oY      );
-         break;
-      case 8:
-         region.setPoint(0, oX + a  , oY      );
-         region.setPoint(1, oX + a+c, oY + r  );
-         region.setPoint(2, oX + a  , oY + R  );
-         region.setPoint(3, oX      , oY + R  );
-         break;
-      case 9:
-         region.setPoint(0, oX - c  , oY + r  );
-         region.setPoint(1, oX      , oY + R  );
-         region.setPoint(2, oX - c  , oY + R+r);
-         region.setPoint(3, oX - a-c, oY + r  );
-         break;
-      case 10:
-         region.setPoint(0, oX + a  , oY + R  );
-         region.setPoint(1, oX + a+c, oY + R+r);
-         region.setPoint(2, oX - c  , oY + R+r);
-         region.setPoint(3, oX      , oY + R  );
-         break;
-      case 11:
-         region.setPoint(0, oX + a+c, oY + r  );
-         region.setPoint(1, oX + b+c, oY + R+r);
-         region.setPoint(2, oX + a+c, oY + R+r);
-         region.setPoint(3, oX + a  , oY + R  );
-         break;
-      }
-   }
+        // определение координат точек фигуры
+        double oX = (a+b)*(coord.x/3) + b; // offset X
+        double oY = (R+r)*(coord.y/4*2+1); // offset Y
 
-   @Override
-   public RectDouble getRcInner(double borderWidth) {
-      AttrTrapezoid2 attr = getAttr();
-      double a = attr.getA();
-      double b = attr.getB();
-      double c = attr.getC();
-      double R = attr.getROut();
-      double r = attr.getRIn();
+        switch (direction) {
+        case 0:
+            region.setPoint(0, oX - c  , oY - R-r);
+            region.setPoint(1, oX      , oY - R  );
+            region.setPoint(2, oX - c  , oY - r  );
+            region.setPoint(3, oX - c-a, oY - r  );
+            break;
+        case 1:
+            region.setPoint(0, oX + a+c, oY - R-r);
+            region.setPoint(1, oX + a  , oY - R  );
+            region.setPoint(2, oX      , oY - R  );
+            region.setPoint(3, oX - c  , oY - R-r);
+            break;
+        case 2:
+            region.setPoint(0, oX + b+c, oY - R-r);
+            region.setPoint(3, oX + a+c, oY - R-r);
+            region.setPoint(2, oX + a  , oY - R  );
+            region.setPoint(1, oX + a+c, oY - r  );
+            break;
+        case 3:
+            region.setPoint(0, oX - c  , oY - r  );
+            region.setPoint(1, oX      , oY      );
+            region.setPoint(2, oX - b  , oY      );
+            region.setPoint(3, oX - a-c, oY - r  );
+            break;
+        case 4:
+            region.setPoint(0, oX      , oY - R  );
+            region.setPoint(1, oX + a  , oY      );
+            region.setPoint(2, oX      , oY      );
+            region.setPoint(3, oX - c  , oY - r  );
+            break;
+        case 5:
+            region.setPoint(0, oX + a  , oY - R  );
+            region.setPoint(1, oX + a+c, oY - r  );
+            region.setPoint(2, oX + a  , oY      );
+            region.setPoint(3, oX      , oY - R  );
+            break;
+        case 6:
+            region.setPoint(0, oX      , oY      );
+            region.setPoint(1, oX - c  , oY + r  );
+            region.setPoint(2, oX - a-c, oY + r  );
+            region.setPoint(3, oX - b  , oY      );
+            break;
+        case 7:
+            region.setPoint(0, oX + a  , oY      );
+            region.setPoint(1, oX      , oY + R  );
+            region.setPoint(2, oX - c  , oY + r  );
+            region.setPoint(3, oX      , oY      );
+            break;
+        case 8:
+            region.setPoint(0, oX + a  , oY      );
+            region.setPoint(1, oX + a+c, oY + r  );
+            region.setPoint(2, oX + a  , oY + R  );
+            region.setPoint(3, oX      , oY + R  );
+            break;
+        case 9:
+            region.setPoint(0, oX - c  , oY + r  );
+            region.setPoint(1, oX      , oY + R  );
+            region.setPoint(2, oX - c  , oY + R+r);
+            region.setPoint(3, oX - a-c, oY + r  );
+            break;
+        case 10:
+            region.setPoint(0, oX + a  , oY + R  );
+            region.setPoint(1, oX + a+c, oY + R+r);
+            region.setPoint(2, oX - c  , oY + R+r);
+            region.setPoint(3, oX      , oY + R  );
+            break;
+        case 11:
+            region.setPoint(0, oX + a+c, oY + r  );
+            region.setPoint(1, oX + b+c, oY + R+r);
+            region.setPoint(2, oX + a+c, oY + R+r);
+            region.setPoint(3, oX + a  , oY + R  );
+            break;
+        }
+    }
+
+    @Override
+    public RectDouble getRcInner(double borderWidth) {
+        AttrTrapezoid2 attr = getAttr();
+        double a = attr.getA();
+        double b = attr.getB();
+        double c = attr.getC();
+        double R = attr.getROut();
+        double r = attr.getRIn();
 //      double w = borderWidth/2.;
-      double sq  = attr.getSq(borderWidth);
-      double sq2 = sq/2;
+        double sq  = attr.getSq(borderWidth);
+        double sq2 = sq/2;
 
-      double oX = (a+b)*(coord.x/3) + b; // offset X
-      double oY = (R+r)*(coord.y/4*2+1); // offset Y
+        double oX = (a+b)*(coord.x/3) + b; // offset X
+        double oY = (R+r)*(coord.y/4*2+1); // offset Y
 
-      PointDouble center = new PointDouble(); // координата центра квадрата
-      switch (direction) {
-      case 0:  center.x = oX - c*1.25; center.y = oY - r*1.75; break;
-      case 1:  center.x = oX + c;      center.y = oY - r*2.50; break;
-      case 2:  center.x = oX + c*3.25; center.y = oY - r*2.25; break;
-      case 3:  center.x = oX - a;      center.y = oY - r*0.50; break;
-      case 4:  center.x = oX + c*0.25; center.y = oY - r*0.75; break;
-      case 5:  center.x = oX + c*1.75; center.y = oY - r*1.25; break;
-      case 6:  center.x = oX - a;      center.y = oY + r*0.50; break;
-      case 7:  center.x = oX + c*0.25; center.y = oY + r*0.75; break;
-      case 8:  center.x = oX + c*1.75; center.y = oY + r*1.25; break;
-      case 9:  center.x = oX - c*1.25; center.y = oY + r*1.75; break;
-      case 10: center.x = oX + c;      center.y = oY + r*2.50; break;
-      case 11: center.x = oX + c*3.25; center.y = oY + r*2.25; break;
-      }
+        PointDouble center = new PointDouble(); // координата центра квадрата
+        switch (direction) {
+        case 0:  center.x = oX - c*1.25; center.y = oY - r*1.75; break;
+        case 1:  center.x = oX + c;      center.y = oY - r*2.50; break;
+        case 2:  center.x = oX + c*3.25; center.y = oY - r*2.25; break;
+        case 3:  center.x = oX - a;      center.y = oY - r*0.50; break;
+        case 4:  center.x = oX + c*0.25; center.y = oY - r*0.75; break;
+        case 5:  center.x = oX + c*1.75; center.y = oY - r*1.25; break;
+        case 6:  center.x = oX - a;      center.y = oY + r*0.50; break;
+        case 7:  center.x = oX + c*0.25; center.y = oY + r*0.75; break;
+        case 8:  center.x = oX + c*1.75; center.y = oY + r*1.25; break;
+        case 9:  center.x = oX - c*1.25; center.y = oY + r*1.75; break;
+        case 10: center.x = oX + c;      center.y = oY + r*2.50; break;
+        case 11: center.x = oX + c*3.25; center.y = oY + r*2.25; break;
+        }
 
-      return new RectDouble(
-         center.x - sq2,
-         center.y - sq2,
-         sq, sq);
-   }
+        return new RectDouble(
+            center.x - sq2,
+            center.y - sq2,
+            sq, sq);
+    }
 
-   @Override
-   public int getShiftPointBorderIndex() {
-      switch (direction) {
-      case 0: case 8: return 3;
-      case 2: case 7: return 1;
-      }
-      return 2;
-   }
+    @Override
+    public int getShiftPointBorderIndex() {
+        switch (direction) {
+        case 0: case 8: return 3;
+        case 2: case 7: return 1;
+        }
+        return 2;
+    }
+
 }

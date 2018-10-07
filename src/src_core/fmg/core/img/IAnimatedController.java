@@ -13,7 +13,7 @@ public interface IAnimatedController<TImage,
                  extends IImageController<TImage, TImageView, TImageModel>
 {
 
-   void removeModelTransformer(Class<? extends IModelTransformer> transformerClass);
-   void addModelTransformer(IModelTransformer transformer);
+    void removeModelTransformer(Class<? extends IModelTransformer> transformerClass);
+    void addModelTransformer(IModelTransformer transformer);
 
 }

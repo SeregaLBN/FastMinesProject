@@ -21,61 +21,61 @@ import fmg.core.types.ESkillLevel;
  **/
 public abstract class MosaicSkillImg<TImage> extends MosaicSkillOrGroupView<TImage, MosaicSkillModel> {
 
-   /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
-   protected MosaicSkillImg(ESkillLevel skill) {
-      super(new MosaicSkillModel(skill));
-   }
+    /** @param skill - may be null. if Null - representable image of ESkillLevel.class */
+    protected MosaicSkillImg(ESkillLevel skill) {
+        super(new MosaicSkillModel(skill));
+    }
 
-   @Override
-   protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
+    @Override
+    protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
 
-   @Override
-   public void close() {
-      getModel().close();
-      super.close();
-   }
+    @Override
+    public void close() {
+        getModel().close();
+        super.close();
+    }
 
-   /////////////////////////////////////////////////////////////////////////////////////////////////////
-   //    custom implementations
-   /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    //    custom implementations
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   /** MosaicsSkill image view implementation over {@link android.graphics.Bitmap} */
-   static class Bitmap extends MosaicSkillImg<android.graphics.Bitmap> {
+    /** MosaicsSkill image view implementation over {@link android.graphics.Bitmap} */
+    static class Bitmap extends MosaicSkillImg<android.graphics.Bitmap> {
 
-      private BmpCanvas wrap = new BmpCanvas();
+        private BmpCanvas wrap = new BmpCanvas();
 
-      public Bitmap(ESkillLevel skill) { super(skill); }
+        public Bitmap(ESkillLevel skill) { super(skill); }
 
-      @Override
-      protected android.graphics.Bitmap createImage() {
-         return wrap.createImage(getModel().getSize());
-      }
+        @Override
+        protected android.graphics.Bitmap createImage() {
+            return wrap.createImage(getModel().getSize());
+        }
 
-      @Override
-      protected void drawBody() {
-         draw(wrap.getCanvas());
-      }
+        @Override
+        protected void drawBody() {
+            draw(wrap.getCanvas());
+        }
 
-      @Override
-      public void close() {
-         wrap.close();
-      }
+        @Override
+        public void close() {
+            wrap.close();
+        }
 
-   }
+    }
 
-   /** MosaicsSkill image controller implementation for {@link Bitmap} */
-   public static class ControllerBitmap extends MosaicSkillController<android.graphics.Bitmap, Bitmap> {
+    /** MosaicsSkill image controller implementation for {@link Bitmap} */
+    public static class ControllerBitmap extends MosaicSkillController<android.graphics.Bitmap, Bitmap> {
 
-      public ControllerBitmap(ESkillLevel skill) {
-         super(skill == null, new MosaicSkillImg.Bitmap(skill));
-      }
+        public ControllerBitmap(ESkillLevel skill) {
+            super(skill == null, new MosaicSkillImg.Bitmap(skill));
+        }
 
-      @Override
-      public void close() {
-         getView().close();
-         super.close();
-      }
+        @Override
+        public void close() {
+            getView().close();
+            super.close();
+        }
 
-   }
+    }
 
 }

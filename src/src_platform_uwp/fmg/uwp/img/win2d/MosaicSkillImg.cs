@@ -12,98 +12,97 @@ using fmg.uwp.utils;
 
 namespace fmg.uwp.img.win2d {
 
-   /// <summary> Representable <see cref="ESkillLevel"/> as image. Win2D implementation </summary>
-   public static class MosaicSkillImg {
+    /// <summary> Representable <see cref="ESkillLevel"/> as image. Win2D implementation </summary>
+    public static class MosaicSkillImg {
 
-      /// <summary> Representable <see cref="ESkillLevel"/> as image: common implementation part </summary>
-      /// <typeparam name="TImage">Win2D specific image: <see cref="CanvasBitmap"/> or <see cref="CanvasImageSource"/></typeparam>
-      public abstract class MosaicSkillImgView<TImage> : MosaicSkillOrGroupView<TImage, MosaicSkillModel>
-         where TImage : DependencyObject, ICanvasResourceCreator
-      {
-         /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
-         protected MosaicSkillImgView(ESkillLevel? skill, ICanvasResourceCreator resourceCreator)
-            : base(new MosaicSkillModel(skill), resourceCreator)
-         {
-         }
+        /// <summary> Representable <see cref="ESkillLevel"/> as image: common implementation part </summary>
+        /// <typeparam name="TImage">Win2D specific image: <see cref="CanvasBitmap"/> or <see cref="CanvasImageSource"/></typeparam>
+        public abstract class MosaicSkillImgView<TImage> : MosaicSkillOrGroupView<TImage, MosaicSkillModel>
+            where TImage : DependencyObject, ICanvasResourceCreator
+        {
+            /// <param name="skill">may be null. if Null - representable image of typeof(ESkillLevel)</param>
+            protected MosaicSkillImgView(ESkillLevel? skill, ICanvasResourceCreator resourceCreator)
+                : base(new MosaicSkillModel(skill), resourceCreator)
+            { }
 
-         protected override IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords { get { return Model.Coords; } }
+            protected override IEnumerable<Tuple<Color, IEnumerable<PointDouble>>> Coords { get { return Model.Coords; } }
 
-      }
+        }
 
-      /////////////////////////////////////////////////////////////////////////////////////////////////////
-      //    custom implementations
-      /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        //    custom implementations
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      /// <summary> Representable <see cref="ESkillLevel"/> as image over <see cref="CanvasBitmap"/> </summary>
-      public class CanvasBmp : MosaicSkillImgView<CanvasBitmap> {
+        /// <summary> Representable <see cref="ESkillLevel"/> as image over <see cref="CanvasBitmap"/> </summary>
+        public class CanvasBmp : MosaicSkillImgView<CanvasBitmap> {
 
-         public CanvasBmp(ESkillLevel? skill, ICanvasResourceCreator resourceCreator)
-            : base(skill, resourceCreator)
-         { }
+            public CanvasBmp(ESkillLevel? skill, ICanvasResourceCreator resourceCreator)
+                : base(skill, resourceCreator)
+            { }
 
-         protected override CanvasBitmap CreateImage() {
-            var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            var s = Model.Size;
-            return new CanvasRenderTarget(_rc, (float)s.Width, (float)s.Height, dpi);
-         }
-
-         protected override void DrawBody() {
-            using (var ds = ((CanvasRenderTarget)Image).CreateDrawingSession()) {
-               Draw(ds, true);
+            protected override CanvasBitmap CreateImage() {
+                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+                var s = Model.Size;
+                return new CanvasRenderTarget(_rc, (float)s.Width, (float)s.Height, dpi);
             }
-         }
 
-      }
-
-      /// <summary> Representable <see cref="ESkillLevel"/> as image over <see cref="CanvasImageSource"/> (XAML <see cref="Windows.UI.Xaml.Media.ImageSource"/> compatible) </summary>
-      public class CanvasImgSrc : MosaicSkillImgView<CanvasImageSource> {
-
-         public CanvasImgSrc(ESkillLevel? skill, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
-            : base(skill, resourceCreator)
-         { }
-
-         protected override CanvasImageSource CreateImage() {
-            var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-            var s = Model.Size;
-            return new CanvasImageSource(_rc, (float)s.Width, (float)s.Height, dpi);
-         }
-
-         protected override void DrawBody() {
-            using (var ds = Image.CreateDrawingSession(Model.BackgroundColor.ToWinColor())) {
-               Draw(ds, false);
+            protected override void DrawBody() {
+                using (var ds = ((CanvasRenderTarget)Image).CreateDrawingSession()) {
+                    Draw(ds, true);
+                }
             }
-         }
 
-      }
+        }
 
-      /// <summary> Representable <see cref="ESkillLevel"/> as image for <see cref="MosaicSkillImg.CanvasBmp"/> </summary>
-      public class ControllerBitmap : MosaicSkillController<CanvasBitmap, MosaicSkillImg.CanvasBmp> {
+        /// <summary> Representable <see cref="ESkillLevel"/> as image over <see cref="CanvasImageSource"/> (XAML <see cref="Windows.UI.Xaml.Media.ImageSource"/> compatible) </summary>
+        public class CanvasImgSrc : MosaicSkillImgView<CanvasImageSource> {
 
-         public ControllerBitmap(ESkillLevel? skill, ICanvasResourceCreator resourceCreator)
-            : base(skill == null, new MosaicSkillImg.CanvasBmp(skill, resourceCreator))
-         { }
+            public CanvasImgSrc(ESkillLevel? skill, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+                : base(skill, resourceCreator)
+            { }
 
-         protected override void Disposing() {
-            View.Dispose();
-            base.Disposing();
-         }
+            protected override CanvasImageSource CreateImage() {
+                var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+                var s = Model.Size;
+                return new CanvasImageSource(_rc, (float)s.Width, (float)s.Height, dpi);
+            }
 
-      }
+            protected override void DrawBody() {
+                using (var ds = Image.CreateDrawingSession(Model.BackgroundColor.ToWinColor())) {
+                    Draw(ds, false);
+                }
+            }
 
-      /// <summary> Representable <see cref="ESkillLevel"/> as image for <see cref="MosaicSkillImg.CanvasImgSrc"/> </summary>
-      public class ControllerImgSrc : MosaicSkillController<CanvasImageSource, MosaicSkillImg.CanvasImgSrc> {
+        }
 
-         public ControllerImgSrc(ESkillLevel? skill, ICanvasResourceCreator resourceCreator)
-            : base(skill == null, new MosaicSkillImg.CanvasImgSrc(skill, resourceCreator))
-         { }
+        /// <summary> Representable <see cref="ESkillLevel"/> as image for <see cref="MosaicSkillImg.CanvasBmp"/> </summary>
+        public class ControllerBitmap : MosaicSkillController<CanvasBitmap, MosaicSkillImg.CanvasBmp> {
 
-         protected override void Disposing() {
-            View.Dispose();
-            base.Disposing();
-         }
+            public ControllerBitmap(ESkillLevel? skill, ICanvasResourceCreator resourceCreator)
+                : base(skill == null, new MosaicSkillImg.CanvasBmp(skill, resourceCreator))
+            { }
 
-      }
+            protected override void Disposing() {
+                View.Dispose();
+                base.Disposing();
+            }
 
-   }
+        }
+
+        /// <summary> Representable <see cref="ESkillLevel"/> as image for <see cref="MosaicSkillImg.CanvasImgSrc"/> </summary>
+        public class ControllerImgSrc : MosaicSkillController<CanvasImageSource, MosaicSkillImg.CanvasImgSrc> {
+
+            public ControllerImgSrc(ESkillLevel? skill, ICanvasResourceCreator resourceCreator)
+                : base(skill == null, new MosaicSkillImg.CanvasImgSrc(skill, resourceCreator))
+            { }
+
+            protected override void Disposing() {
+                View.Dispose();
+                base.Disposing();
+            }
+
+        }
+
+    }
 
 }

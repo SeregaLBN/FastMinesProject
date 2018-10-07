@@ -6,59 +6,60 @@ using fmg.uwp.draw.mosaic;
 using MosaicsSkillCanvasBmp = fmg.uwp.draw.img.win2d.MosaicsSkillImg.CanvasBmp;
 using fmg.DataModel.Items;
 
-namespace fmg.DataModel.DataSources
-{
-   /// <summary> DataSource menu items (mosaic skills) </summary>
-   public class MosaicSkillsDataSource : BaseDataSource<MosaicSkillDataItem, ESkillLevel?, MosaicsSkillCanvasBmp> {
+namespace fmg.DataModel.DataSources {
 
-      MosaicSkillDataItem _itemOfType;
+    /// <summary> DataSource menu items (mosaic skills) </summary>
+    public class MosaicSkillsDataSource : BaseDataSource<MosaicSkillDataItem, ESkillLevel?, MosaicsSkillCanvasBmp> {
 
-      protected override void FillDataSource() {
-         _itemOfType = new MosaicSkillDataItem(null) {
-            Image = {
-               PaddingInt = 3,
-               BackgroundColor = Color.Transparent,
-               RedrawInterval = 50,
-               PolarLights = true,
-               Rotate = true
-            }
-         };
+        MosaicSkillDataItem _itemOfType;
 
-         var dataSource = DataSourceInternal;
-         foreach (var s in ESkillLevelEx.GetValues()) {
-            var mi = new MosaicSkillDataItem(s) {
-               Image = {
-                  RedrawInterval = 50,
-                  RotateAngleDelta = 5
-               }
+        protected override void FillDataSource() {
+            _itemOfType = new MosaicSkillDataItem(null) {
+                Image = {
+                    PaddingInt = 3,
+                    BackgroundColor = Color.Transparent,
+                    RedrawInterval = 50,
+                    PolarLights = true,
+                    Rotate = true
+                }
             };
-            dataSource.Add(mi);
-         }
-         base.FillDataSource();
-      }
 
-      /// <summary> representative typeof(ESkillLevel) </summary>
-      public MosaicSkillDataItem TopElement => _itemOfType;
+            var dataSource = DataSourceInternal;
+            foreach (var s in ESkillLevelEx.GetValues()) {
+                var mi = new MosaicSkillDataItem(s) {
+                    Image = {
+                        RedrawInterval = 50,
+                        RotateAngleDelta = 5
+                    }
+                };
+                dataSource.Add(mi);
+            }
+            base.FillDataSource();
+        }
 
-      protected override void OnCurrentElementChanged() {
-         // for one selected- start animate; for all other - stop animate
-         foreach (var mi in DataSource) {
-            var selected = ReferenceEquals(mi, CurrentElement);
-            var img = mi.Image;
-            img.Rotate = selected;
-            img.PolarLights = selected;
-            img.BorderColor = selected ? Color.Red : Color.Green;
-            img.BackgroundColor = selected ? ImageModelConsts.DefaultBkColor : PaintUwpContextCommon.DefaultBackgroundColor;
-            img.Padding = new Bound(selected ? 5 : 15);
-            if (!selected)
-               img.ForegroundColor = ImageModelConsts.DefaultForegroundColor;
-            //else {
-            //   HSV hsv = new HSV(ImageModelConsts.DefaultForegroundColor);
-            //   hsv.s = hsv.v = 100;
-            //   img.ForegroundColor = hsv.ToColor();
-            //}
-         }
-      }
+        /// <summary> representative typeof(ESkillLevel) </summary>
+        public MosaicSkillDataItem TopElement => _itemOfType;
 
-   }
+        protected override void OnCurrentElementChanged() {
+            // for one selected- start animate; for all other - stop animate
+            foreach (var mi in DataSource) {
+                var selected = ReferenceEquals(mi, CurrentElement);
+                var img = mi.Image;
+                img.Rotate = selected;
+                img.PolarLights = selected;
+                img.BorderColor = selected ? Color.Red : Color.Green;
+                img.BackgroundColor = selected ? ImageModelConsts.DefaultBkColor : PaintUwpContextCommon.DefaultBackgroundColor;
+                img.Padding = new Bound(selected ? 5 : 15);
+                if (!selected)
+                    img.ForegroundColor = ImageModelConsts.DefaultForegroundColor;
+                //else {
+                //    HSV hsv = new HSV(ImageModelConsts.DefaultForegroundColor);
+                //    hsv.s = hsv.v = 100;
+                //    img.ForegroundColor = hsv.ToColor();
+                //}
+            }
+        }
+
+    }
+
 }

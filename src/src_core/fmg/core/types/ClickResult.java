@@ -3,21 +3,22 @@ package fmg.core.types;
 import fmg.core.mosaic.cells.BaseCell;
 
 public class ClickResult extends ClickCellResult {
-   private final BaseCell cellDown;
-   private final boolean left, down;
 
-   public ClickResult(BaseCell cellDown, boolean left, boolean down) {
-      this.cellDown = cellDown;
-      this.left = left;
-      this.down = down;
-   }
+    private final BaseCell cellDown;
+    private final boolean left, down;
 
-   public BaseCell getCellDown() { return cellDown; } 
+    public ClickResult(BaseCell cellDown, boolean left, boolean down) {
+        this.cellDown = cellDown;
+        this.left = left;
+        this.down = down;
+    }
 
-   /** its left click */
-   public boolean isLeft() { return left; }
+    public BaseCell getCellDown() { return cellDown; }
 
-   /** its down click */
-   public boolean isDown() { return down; }
+    /** its left click */
+    public boolean isLeft() { return left; }
+
+    /** its down click */
+    public boolean isDown() { return down; }
 
 }

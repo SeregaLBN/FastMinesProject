@@ -9,31 +9,31 @@ import java.beans.PropertyChangeListener;
  */
 public abstract class WithBurgerMenuView<TImage, TImageModel extends AnimatedImageModel> extends ImageView<TImage, TImageModel> {
 
-   /** the second model of image */
-   private final BurgerMenuModel _burgerMenuModel;
-   private final PropertyChangeListener _burgerMenuModelListener;
+    /** the second model of image */
+    private final BurgerMenuModel _burgerMenuModel;
+    private final PropertyChangeListener _burgerMenuModelListener;
 
-   protected WithBurgerMenuView(TImageModel imageModel) {
-      super(imageModel);
-      _burgerMenuModel = new BurgerMenuModel(imageModel);
-      _burgerMenuModelListener = event -> {
-         assert event.getSource() == _burgerMenuModel; // by reference
-         onPropertyBurgerMenuModelChanged(event.getOldValue(), event.getNewValue(), event.getPropertyName());
-      };
-      _burgerMenuModel.addListener(_burgerMenuModelListener);
-   }
+    protected WithBurgerMenuView(TImageModel imageModel) {
+        super(imageModel);
+        _burgerMenuModel = new BurgerMenuModel(imageModel);
+        _burgerMenuModelListener = event -> {
+            assert event.getSource() == _burgerMenuModel; // by reference
+            onPropertyBurgerMenuModelChanged(event.getOldValue(), event.getNewValue(), event.getPropertyName());
+        };
+        _burgerMenuModel.addListener(_burgerMenuModelListener);
+    }
 
-   public BurgerMenuModel getBurgerMenuModel() { return _burgerMenuModel; }
+    public BurgerMenuModel getBurgerMenuModel() { return _burgerMenuModel; }
 
-   protected void onPropertyBurgerMenuModelChanged(Object oldValue, Object newValue, String propertyName) {
-      invalidate();
-   }
+    protected void onPropertyBurgerMenuModelChanged(Object oldValue, Object newValue, String propertyName) {
+        invalidate();
+    }
 
-   @Override
-   public void close() {
-      _burgerMenuModel.removeListener(_burgerMenuModelListener);
-      _burgerMenuModel.close();
-      super.close();
-   }
+    @Override
+    public void close() {
+        _burgerMenuModel.removeListener(_burgerMenuModelListener);
+        _burgerMenuModel.close();
+        super.close();
+    }
 
 }

@@ -82,14 +82,14 @@ namespace fmg.uwp.mosaic.win2d {
                 // redraw only when needed...
                 if (redrawAll ||
                     ((modifiedCells != null) && modifiedCells.Contains(cell)) || // ..when the cell is explicitly specified
-                    ((clipRegion != null) && cell.getRcOuter().MoveXY(offset.Width, offset.Height).Intersection(clipRegion.Value))) // ...when the cells and update region intersect
+                    ((clipRegion != null) && cell.GetRcOuter().MoveXY(offset.Width, offset.Height).Intersection(clipRegion.Value))) // ...when the cells and update region intersect
                 {
 #if DEBUG
                     ++tmp;
 #endif
-                    var rcInner = cell.getRcInner(pen.Width).MoveXY(offset);
-                    var region = cell.getRegion();
-                    var bkClrCell = cell.getBackgroundFillColor(bkFill.Mode,
+                    var rcInner = cell.GetRcInner(pen.Width).MoveXY(offset);
+                    var region = cell.GetRegion();
+                    var bkClrCell = cell.GetBackgroundFillColor(bkFill.Mode,
                                                                 bkClr,
                                                                 bkFill.GetColor);
                     using (var polygon =  isIconicMode ? null : ds.CreatePolygon(region, offset))
@@ -156,8 +156,8 @@ namespace fmg.uwp.mosaic.win2d {
                                     if (isIconicMode) {
                                         ds.DrawGeometry(geom, color, (float)pen.Width);
                                     } else {
-                                        var s = cell.getShiftPointBorderIndex();
-                                        var v = cell.Attr.GetVertexNumber(cell.getDirection());
+                                        var s = cell.GetShiftPointBorderIndex();
+                                        var v = cell.Attr.GetVertexNumber(cell.GetDirection());
                                         for (var i = 0; i < v; i++) {
                                             var p1 = region.GetPoint(i);
                                             var p2 = (i != (v - 1)) ? region.GetPoint(i + 1) : region.GetPoint(0);

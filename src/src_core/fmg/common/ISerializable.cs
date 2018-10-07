@@ -1,9 +1,7 @@
-﻿using System;
+﻿namespace fmg.common {
 
-namespace fmg.common {
-
-   //[Obsolete]
-   public interface ISerializable {
-   }
+    //[Obsolete]
+    public interface ISerializable {
+    }
 
 }

@@ -21,60 +21,60 @@ import fmg.jfx.utils.StaticInitializer;
  */
 abstract class MosaicSkillOrGroupView<TImage, TImageModel extends AnimatedImageModel> extends WithBurgerMenuView<TImage, TImageModel> {
 
-   static {
-      StaticInitializer.init();
-   }
+    static {
+        StaticInitializer.init();
+    }
 
-   protected MosaicSkillOrGroupView(TImageModel imageModel) {
-      super(imageModel);
-   }
+    protected MosaicSkillOrGroupView(TImageModel imageModel) {
+        super(imageModel);
+    }
 
-   /** get paint information of drawing basic image model */
-   protected abstract Stream<Pair<Color, Stream<PointDouble>>> getCoords();
+    /** get paint information of drawing basic image model */
+    protected abstract Stream<Pair<Color, Stream<PointDouble>>> getCoords();
 
 
-   protected void draw(GraphicsContext g) {
-      TImageModel m = getModel();
+    protected void draw(GraphicsContext g) {
+        TImageModel m = getModel();
 
-      { // fill background
-         fmg.common.Color bkClr = m.getBackgroundColor();
-         if (!bkClr.isOpaque())
-            g.clearRect(0, 0, getSize().width, getSize().height);
-         if (!bkClr.isTransparent()) {
-            g.setFill(Cast.toColor(bkClr));
-            g.fillRect(0, 0, getSize().width, getSize().height);
-         }
-      }
+        { // fill background
+            fmg.common.Color bkClr = m.getBackgroundColor();
+            if (!bkClr.isOpaque())
+                g.clearRect(0, 0, getSize().width, getSize().height);
+            if (!bkClr.isTransparent()) {
+                g.setFill(Cast.toColor(bkClr));
+                g.fillRect(0, 0, getSize().width, getSize().height);
+            }
+        }
 
-      double bw = m.getBorderWidth();
-      boolean needDrawPerimeterBorder = (!m.getBorderColor().isTransparent() && (bw > 0));
-      javafx.scene.paint.Color borderColor = !needDrawPerimeterBorder ? null : Cast.toColor(m.getBorderColor());
-      if (needDrawPerimeterBorder)
-         g.setLineWidth(bw);
-      Stream<Pair<Color, Stream<PointDouble>>> shapes = getCoords();
-      shapes.forEach(pair -> {
-         List<PointDouble> poly = pair.second.collect(Collectors.toList());
-         double[] polyX = Cast.toPolygon(poly, true);
-         double[] polyY = Cast.toPolygon(poly, false);
-         if (!pair.first.isTransparent()) {
-            g.setFill(Cast.toColor(pair.first));
-            g.fillPolygon(polyX, polyY, polyX.length);
-         }
+        double bw = m.getBorderWidth();
+        boolean needDrawPerimeterBorder = (!m.getBorderColor().isTransparent() && (bw > 0));
+        javafx.scene.paint.Color borderColor = !needDrawPerimeterBorder ? null : Cast.toColor(m.getBorderColor());
+        if (needDrawPerimeterBorder)
+            g.setLineWidth(bw);
+        Stream<Pair<Color, Stream<PointDouble>>> shapes = getCoords();
+        shapes.forEach(pair -> {
+            List<PointDouble> poly = pair.second.collect(Collectors.toList());
+            double[] polyX = Cast.toPolygon(poly, true);
+            double[] polyY = Cast.toPolygon(poly, false);
+            if (!pair.first.isTransparent()) {
+                g.setFill(Cast.toColor(pair.first));
+                g.fillPolygon(polyX, polyY, polyX.length);
+            }
 
-         // draw perimeter border
-         if (needDrawPerimeterBorder) {
-            g.setStroke(borderColor);
-            g.strokePolygon(polyX, polyY, polyX.length);
-         }
-      });
+            // draw perimeter border
+            if (needDrawPerimeterBorder) {
+                g.setStroke(borderColor);
+                g.strokePolygon(polyX, polyY, polyX.length);
+            }
+        });
 
-      // draw burger menu
-      getBurgerMenuModel().getCoords()
-         .forEach(li -> {
-            g.setLineWidth(li.penWidht);
-            g.setStroke(Cast.toColor(li.clr));
-            g.strokeLine(li.from.x, li.from.y, li.to.x, li.to.y);
-         });
-   }
+        // draw burger menu
+        getBurgerMenuModel().getCoords()
+            .forEach(li -> {
+                g.setLineWidth(li.penWidht);
+                g.setStroke(Cast.toColor(li.clr));
+                g.strokeLine(li.from.x, li.from.y, li.to.x, li.to.y);
+            });
+    }
 
 }

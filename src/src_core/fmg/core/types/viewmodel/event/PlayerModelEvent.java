@@ -7,48 +7,50 @@ import fmg.core.types.ESkillLevel;
 import fmg.core.types.viewmodel.serializable.PlayersModel;
 
 public class PlayerModelEvent extends EventObject {
-   private static final long serialVersionUID = 1L;
 
-   public static final int
-      INSERT = 1, DELETE = 2, UPDATE = 3,
-      INSERT_ALL = 4, DELETE_ALL = 5, UPDATE_ALL = 6,
-      CHANGE_STATISTICS = 7;
+    private static final long serialVersionUID = 1L;
 
-   private final int pos;
-   private final EMosaic mosaic;
-   private final ESkillLevel skill;
-   private final int type;
+    public static final int
+        INSERT = 1, DELETE = 2, UPDATE = 3,
+        INSERT_ALL = 4, DELETE_ALL = 5, UPDATE_ALL = 6,
+        CHANGE_STATISTICS = 7;
 
-   public PlayerModelEvent(PlayersModel source, int pos, int type) {
-      super(source);
-      this.mosaic = null;
-      this.skill = null;
-      this.pos = pos;
-      this.type = type;
-   }
-   public PlayerModelEvent(PlayersModel source, int pos, int type, EMosaic mosaic, ESkillLevel skill) {
-      super(source);
-      this.mosaic = mosaic;
-      this.skill = skill;
-      this.pos = pos;
-      this.type = type;
-   }
+    private final int pos;
+    private final EMosaic mosaic;
+    private final ESkillLevel skill;
+    private final int type;
 
-   public int getPos() {
-      return pos;
-   }
-   public int getType() {
-      return type;
-   }
-   public EMosaic getMosaic() {
-      return mosaic;
-   }
-   public ESkillLevel getSkill() {
-      return skill;
-   }
+    public PlayerModelEvent(PlayersModel source, int pos, int type) {
+        super(source);
+        this.mosaic = null;
+        this.skill = null;
+        this.pos = pos;
+        this.type = type;
+    }
+    public PlayerModelEvent(PlayersModel source, int pos, int type, EMosaic mosaic, ESkillLevel skill) {
+        super(source);
+        this.mosaic = mosaic;
+        this.skill = skill;
+        this.pos = pos;
+        this.type = type;
+    }
 
-   @Override
-   public PlayersModel getSource() {
-      return (PlayersModel) super.getSource();
-   }
+    public int getPos() {
+        return pos;
+    }
+    public int getType() {
+        return type;
+    }
+    public EMosaic getMosaic() {
+        return mosaic;
+    }
+    public ESkillLevel getSkill() {
+        return skill;
+    }
+
+    @Override
+    public PlayersModel getSource() {
+        return (PlayersModel) super.getSource();
+    }
+
 }

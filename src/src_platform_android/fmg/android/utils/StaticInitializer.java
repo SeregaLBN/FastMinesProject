@@ -12,18 +12,18 @@ import fmg.core.mosaic.MosaicDrawModel;
 
 public final class StaticInitializer {
 
-   static {
-      Factory.DEFERR_INVOKER = new Handler(Looper.getMainLooper())::post;
-      Factory.GET_ANIMATOR = Animator::getSingleton;
-      Factory.TIMER_CREATOR = Timer::new;
+    static {
+        Factory.DEFERR_INVOKER = new Handler(Looper.getMainLooper())::post;
+        Factory.GET_ANIMATOR = Animator::getSingleton;
+        Factory.TIMER_CREATOR = Timer::new;
 
-      MosaicDrawModel.DefaultBkColor = new Color(0xFFEEEEEE); // #EEEEEE or #FAFAFA
+        MosaicDrawModel.DefaultBkColor = new Color(0xFFEEEEEE); // #EEEEEE or #FAFAFA
 
-      LoggerSimple.DEFAULT_WRITER = message -> Log.d("fmg", message);
-   }
+        LoggerSimple.DEFAULT_WRITER = message -> Log.d("fmg", message);
+    }
 
-   public static void init() {
-      // implicit call static block
-   }
+    public static void init() {
+        // implicit call static block
+    }
 
 }

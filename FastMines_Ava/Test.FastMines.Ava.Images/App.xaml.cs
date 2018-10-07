@@ -3,30 +3,27 @@ using Avalonia.Controls;
 using Avalonia.Diagnostics;
 using Avalonia.Markup.Xaml;
 
-namespace Test.FastMines.Ava.Images
-{
-    class App : Application
-    {
+namespace Test.FastMines.Ava.Images {
 
-        public override void Initialize()
-        {
+    class App : Application {
+
+        public override void Initialize() {
             AvaloniaXamlLoader.Load(this);
             base.Initialize();
         }
 
-        static void Main(string[] args)
-        {
+        static void Main(string[] args) {
             AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 .Start<DemoWindow>();
         }
 
-        public static void AttachDevTools(Window window)
-        {
+        public static void AttachDevTools(Window window) {
 #if DEBUG
             DevTools.Attach(window);
 #endif
         }
 
     }
+
 }

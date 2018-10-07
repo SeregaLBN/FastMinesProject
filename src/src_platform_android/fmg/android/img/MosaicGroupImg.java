@@ -21,61 +21,61 @@ import fmg.core.types.EMosaicGroup;
  **/
 public abstract class MosaicGroupImg<TImage> extends MosaicSkillOrGroupView<TImage, MosaicGroupModel> {
 
-   /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
-   protected MosaicGroupImg(EMosaicGroup group) {
-      super(new MosaicGroupModel(group));
-   }
+    /** @param group - may be null. if Null - representable image of EMosaicGroup.class */
+    protected MosaicGroupImg(EMosaicGroup group) {
+        super(new MosaicGroupModel(group));
+    }
 
-   @Override
-   protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
+    @Override
+    protected Stream<Pair<Color, Stream<PointDouble>>> getCoords() { return getModel().getCoords(); }
 
-   @Override
-   public void close() {
-      getModel().close();
-      super.close();
-   }
+    @Override
+    public void close() {
+        getModel().close();
+        super.close();
+    }
 
-   /////////////////////////////////////////////////////////////////////////////////////////////////////
-   //    custom implementations
-   /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    //    custom implementations
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   /** MosaicsGroup image view implementation over {@link android.graphics.Bitmap} */
-   static class Bitmap extends MosaicGroupImg<android.graphics.Bitmap> {
+    /** MosaicsGroup image view implementation over {@link android.graphics.Bitmap} */
+    static class Bitmap extends MosaicGroupImg<android.graphics.Bitmap> {
 
-      private BmpCanvas wrap = new BmpCanvas();
+        private BmpCanvas wrap = new BmpCanvas();
 
-      public Bitmap(EMosaicGroup group) { super(group); }
+        public Bitmap(EMosaicGroup group) { super(group); }
 
-      @Override
-      protected android.graphics.Bitmap createImage() {
-         return wrap.createImage(getModel().getSize());
-      }
+        @Override
+        protected android.graphics.Bitmap createImage() {
+            return wrap.createImage(getModel().getSize());
+        }
 
-      @Override
-      protected void drawBody() {
-         draw(wrap.getCanvas());
-      }
+        @Override
+        protected void drawBody() {
+            draw(wrap.getCanvas());
+        }
 
-      @Override
-      public void close() {
-         wrap.close();
-      }
+        @Override
+        public void close() {
+            wrap.close();
+        }
 
-   }
+    }
 
-   /** MosaicsGroup image controller implementation for {@link Bitmap} */
-   public static class ControllerBitmap extends MosaicGroupController<android.graphics.Bitmap, Bitmap> {
+    /** MosaicsGroup image controller implementation for {@link Bitmap} */
+    public static class ControllerBitmap extends MosaicGroupController<android.graphics.Bitmap, Bitmap> {
 
-      public ControllerBitmap(EMosaicGroup group) {
-         super(group==null, new MosaicGroupImg.Bitmap(group));
-      }
+        public ControllerBitmap(EMosaicGroup group) {
+            super(group==null, new MosaicGroupImg.Bitmap(group));
+        }
 
-      @Override
-      public void close() {
-         getView().close();
-         super.close();
-      }
+        @Override
+        public void close() {
+            getView().close();
+            super.close();
+        }
 
-   }
+    }
 
 }

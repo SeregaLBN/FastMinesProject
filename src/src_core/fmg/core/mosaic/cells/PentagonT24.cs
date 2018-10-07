@@ -19,177 +19,177 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ////////////////////////////////////////////////////////////////////////////////
-
 using System;
-using fmg.common.geom;
 using System.Collections.Generic;
+using fmg.common.geom;
 
 namespace fmg.core.mosaic.cells {
 
-   /// <summary> Пятиугольник. Тип №2 и №4 - равносторонний </summary>
-   public class PentagonT24 : BaseCell {
+    /// <summary> Пятиугольник. Тип №2 и №4 - равносторонний </summary>
+    public class PentagonT24 : BaseCell {
 
-      public class AttrPentagonT24 : BaseAttribute {
+        public class AttrPentagonT24 : BaseAttribute {
 
-         public override SizeDouble GetSize(Matrisize sizeField) {
-            var a = A;
-            var b = B;
-            var result = new SizeDouble(
-                  b + sizeField.m * a,
-                  b + sizeField.n * a);
+            public override SizeDouble GetSize(Matrisize sizeField) {
+                var a = A;
+                var b = B;
+                var result = new SizeDouble(
+                      b + sizeField.m * a,
+                      b + sizeField.n * a);
 
-            if (sizeField.n == 1)
-               result.Width -= C;
+                if (sizeField.n == 1)
+                    result.Width -= C;
 
-               return result;
-         }
+                return result;
+            }
 
-         public override int GetNeighborNumber(int direction) { return 7; }
-         public override int GetVertexNumber(int direction) { return 5; }
-         public override double GetVertexIntersection() { return 3.4; } // (3+3+3+4+4)/5.
-         public override Size GetDirectionSizeField() { return new Size(2, 2); }
-         public override double A => Math.Sqrt(Area);
-         public double B => A * 6/11;
-         public double C => B / 2;
-         public override double GetSq(double borderWidth) {
-            var w = borderWidth/2.0;
-            return A*8/11-(w+w/SIN135a) / SQRT2;
-         }
-      }
+            public override int GetNeighborNumber(int direction) { return 7; }
+            public override int GetVertexNumber(int direction) { return 5; }
+            public override double GetVertexIntersection() { return 3.4; } // (3+3+3+4+4)/5.
+            public override Size GetDirectionSizeField() { return new Size(2, 2); }
+            public override double A => Math.Sqrt(Area);
+            public double B => A * 6 / 11;
+            public double C => B / 2;
+            public override double GetSq(double borderWidth) {
+                var w = borderWidth / 2.0;
+                return A * 8 / 11 - (w + w / SIN135a) / SQRT2;
+            }
+        }
 
-      public PentagonT24(AttrPentagonT24 attr, Coord coord)
-         : base(attr, coord,
-                    ((coord.y&1)<<1) + (coord.x&1) // 0..3
-               )
-      {}
+        public PentagonT24(AttrPentagonT24 attr, Coord coord)
+            : base(attr, coord,
+                       ((coord.y & 1) << 1) + (coord.x & 1) // 0..3
+                  )
+        { }
 
-      private new AttrPentagonT24 Attr => (AttrPentagonT24) base.Attr;
+        private new AttrPentagonT24 Attr => (AttrPentagonT24)base.Attr;
 
-      protected override IList<Coord> GetCoordsNeighbor() {
-         var neighborCoord = new Coord[Attr.GetNeighborNumber(getDirection())];
+        protected override IList<Coord> GetCoordsNeighbor() {
+            var neighborCoord = new Coord[Attr.GetNeighborNumber(GetDirection())];
 
-         // определяю координаты соседей
-         switch (direction) {
-         case 0:
-            neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
-            neighborCoord[1] = new Coord(coord.x  , coord.y-1);
-            neighborCoord[2] = new Coord(coord.x-1, coord.y  );
-            neighborCoord[3] = new Coord(coord.x+1, coord.y  );
-            neighborCoord[4] = new Coord(coord.x-1, coord.y+1);
-            neighborCoord[5] = new Coord(coord.x  , coord.y+1);
-            neighborCoord[6] = new Coord(coord.x+1, coord.y+1);
-            break;
-         case 1:
-            neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
-            neighborCoord[1] = new Coord(coord.x  , coord.y-1);
-            neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
-            neighborCoord[3] = new Coord(coord.x-1, coord.y  );
-            neighborCoord[4] = new Coord(coord.x+1, coord.y  );
-            neighborCoord[5] = new Coord(coord.x-1, coord.y+1);
-            neighborCoord[6] = new Coord(coord.x  , coord.y+1);
-            break;
-         case 2:
-            neighborCoord[0] = new Coord(coord.x  , coord.y-1);
-            neighborCoord[1] = new Coord(coord.x+1, coord.y-1);
-            neighborCoord[2] = new Coord(coord.x-1, coord.y  );
-            neighborCoord[3] = new Coord(coord.x+1, coord.y  );
-            neighborCoord[4] = new Coord(coord.x-1, coord.y+1);
-            neighborCoord[5] = new Coord(coord.x  , coord.y+1);
-            neighborCoord[6] = new Coord(coord.x+1, coord.y+1);
-            break;
-         case 3:
-            neighborCoord[0] = new Coord(coord.x-1, coord.y-1);
-            neighborCoord[1] = new Coord(coord.x  , coord.y-1);
-            neighborCoord[2] = new Coord(coord.x+1, coord.y-1);
-            neighborCoord[3] = new Coord(coord.x-1, coord.y  );
-            neighborCoord[4] = new Coord(coord.x+1, coord.y  );
-            neighborCoord[5] = new Coord(coord.x  , coord.y+1);
-            neighborCoord[6] = new Coord(coord.x+1, coord.y+1);
-            break;
-         }
+            // определяю координаты соседей
+            switch (direction) {
+            case 0:
+                neighborCoord[0] = new Coord(coord.x - 1, coord.y - 1);
+                neighborCoord[1] = new Coord(coord.x    , coord.y - 1);
+                neighborCoord[2] = new Coord(coord.x - 1, coord.y    );
+                neighborCoord[3] = new Coord(coord.x + 1, coord.y    );
+                neighborCoord[4] = new Coord(coord.x - 1, coord.y + 1);
+                neighborCoord[5] = new Coord(coord.x    , coord.y + 1);
+                neighborCoord[6] = new Coord(coord.x + 1, coord.y + 1);
+                break;
+            case 1:
+                neighborCoord[0] = new Coord(coord.x - 1, coord.y - 1);
+                neighborCoord[1] = new Coord(coord.x    , coord.y - 1);
+                neighborCoord[2] = new Coord(coord.x + 1, coord.y - 1);
+                neighborCoord[3] = new Coord(coord.x - 1, coord.y    );
+                neighborCoord[4] = new Coord(coord.x + 1, coord.y    );
+                neighborCoord[5] = new Coord(coord.x - 1, coord.y + 1);
+                neighborCoord[6] = new Coord(coord.x    , coord.y + 1);
+                break;
+            case 2:
+                neighborCoord[0] = new Coord(coord.x    , coord.y - 1);
+                neighborCoord[1] = new Coord(coord.x + 1, coord.y - 1);
+                neighborCoord[2] = new Coord(coord.x - 1, coord.y    );
+                neighborCoord[3] = new Coord(coord.x + 1, coord.y    );
+                neighborCoord[4] = new Coord(coord.x - 1, coord.y + 1);
+                neighborCoord[5] = new Coord(coord.x    , coord.y + 1);
+                neighborCoord[6] = new Coord(coord.x + 1, coord.y + 1);
+                break;
+            case 3:
+                neighborCoord[0] = new Coord(coord.x - 1, coord.y - 1);
+                neighborCoord[1] = new Coord(coord.x    , coord.y - 1);
+                neighborCoord[2] = new Coord(coord.x + 1, coord.y - 1);
+                neighborCoord[3] = new Coord(coord.x - 1, coord.y    );
+                neighborCoord[4] = new Coord(coord.x + 1, coord.y    );
+                neighborCoord[5] = new Coord(coord.x    , coord.y + 1);
+                neighborCoord[6] = new Coord(coord.x + 1, coord.y + 1);
+                break;
+            }
 
-         return neighborCoord;
-      }
+            return neighborCoord;
+        }
 
-      protected override void CalcRegion() {
-         var attr = Attr;
-         var a = attr.A;
-         var b = attr.B;
-         var c = attr.C;
+        protected override void CalcRegion() {
+            var attr = Attr;
+            var a = attr.A;
+            var b = attr.B;
+            var c = attr.C;
 
-         // определение координат точек фигуры
-         var oX = a*((coord.x>>1)<<1); // offset X
-         var oY = a*((coord.y>>1)<<1); // offset Y
-         switch (direction) {
-         case 0:
-            region.SetPoint(0, oX +       a, oY + b      );
-            region.SetPoint(1, oX + c +   a, oY + c +   a);
-            region.SetPoint(2, oX + b      , oY + b +   a);
-            region.SetPoint(3, oX          , oY +       a);
-            region.SetPoint(4, oX + c      , oY + c      );
-            break;
-         case 1:
-            region.SetPoint(0, oX + c + 2*a, oY + c      );
-            region.SetPoint(1, oX +     2*a, oY +       a);
-            region.SetPoint(2, oX + c +   a, oY + c +   a);
-            region.SetPoint(3, oX +       a, oY + b      );
-            region.SetPoint(4, oX + b +   a, oY          );
-            break;
-         case 2:
-            region.SetPoint(0, oX + c +   a, oY + c +   a);
-            region.SetPoint(1, oX + b +   a, oY +     2*a);
-            region.SetPoint(2, oX +       a, oY + b + 2*a);
-            region.SetPoint(3, oX + c      , oY + c + 2*a);
-            region.SetPoint(4, oX + b      , oY + b +   a);
-            break;
-         case 3:
-            region.SetPoint(0, oX +     2*a, oY +       a);
-            region.SetPoint(1, oX + b + 2*a, oY + b +   a);
-            region.SetPoint(2, oX + c + 2*a, oY + c + 2*a);
-            region.SetPoint(3, oX + b +   a, oY +     2*a);
-            region.SetPoint(4, oX + c +   a, oY + c +   a);
-            break;
-         }
-      }
+            // определение координат точек фигуры
+            var oX = a * ((coord.x >> 1) << 1); // offset X
+            var oY = a * ((coord.y >> 1) << 1); // offset Y
+            switch (direction) {
+            case 0:
+                region.SetPoint(0, oX +         a, oY + b        );
+                region.SetPoint(1, oX + c +     a, oY + c +     a);
+                region.SetPoint(2, oX + b        , oY + b +     a);
+                region.SetPoint(3, oX            , oY +         a);
+                region.SetPoint(4, oX + c        , oY + c        );
+                break;
+            case 1:
+                region.SetPoint(0, oX + c + 2 * a, oY + c        );
+                region.SetPoint(1, oX +     2 * a, oY +         a);
+                region.SetPoint(2, oX + c +     a, oY + c +     a);
+                region.SetPoint(3, oX +         a, oY + b        );
+                region.SetPoint(4, oX + b +     a, oY            );
+                break;
+            case 2:
+                region.SetPoint(0, oX + c +     a, oY + c +     a);
+                region.SetPoint(1, oX + b +     a, oY +     2 * a);
+                region.SetPoint(2, oX +         a, oY + b + 2 * a);
+                region.SetPoint(3, oX + c        , oY + c + 2 * a);
+                region.SetPoint(4, oX + b        , oY + b +     a);
+                break;
+            case 3:
+                region.SetPoint(0, oX +     2 * a, oY +         a);
+                region.SetPoint(1, oX + b + 2 * a, oY + b +     a);
+                region.SetPoint(2, oX + c + 2 * a, oY + c + 2 * a);
+                region.SetPoint(3, oX + b +     a, oY +     2 * a);
+                region.SetPoint(4, oX + c +     a, oY + c +     a);
+                break;
+            }
+        }
 
-      public override RectDouble getRcInner(double borderWidth) {
-         var attr = Attr;
-         var sq = attr.GetSq(borderWidth);
-         var w = borderWidth/2.0;
-         var w2 = w/SQRT2;
+        public override RectDouble GetRcInner(double borderWidth) {
+            var attr = Attr;
+            var sq = attr.GetSq(borderWidth);
+            var w = borderWidth / 2.0;
+            var w2 = w / SQRT2;
 
-         var square = new RectDouble();
-         switch (direction) {
-         case 0:
-            square.X = region.GetPoint(4).X+w2;
-            square.Y = region.GetPoint(1).Y-w2 - sq;
-            break;
-         case 1:
-            square.X = region.GetPoint(2).X+w2;
-            square.Y = region.GetPoint(0).Y+w2;
-            break;
-         case 2:
-            square.X = region.GetPoint(0).X-w2 - sq;
-            square.Y = region.GetPoint(3).Y-w2 - sq;
-            break;
-         case 3:
-            square.X = region.GetPoint(2).X-w2 - sq;
-            square.Y = region.GetPoint(4).Y+w2;
-            break;
-         }
-         square.Width = sq;
-         square.Height = sq;
-         return square;
-      }
+            var square = new RectDouble();
+            switch (direction) {
+            case 0:
+                square.X = region.GetPoint(4).X + w2;
+                square.Y = region.GetPoint(1).Y - w2 - sq;
+                break;
+            case 1:
+                square.X = region.GetPoint(2).X + w2;
+                square.Y = region.GetPoint(0).Y + w2;
+                break;
+            case 2:
+                square.X = region.GetPoint(0).X - w2 - sq;
+                square.Y = region.GetPoint(3).Y - w2 - sq;
+                break;
+            case 3:
+                square.X = region.GetPoint(2).X - w2 - sq;
+                square.Y = region.GetPoint(4).Y + w2;
+                break;
+            }
+            square.Width = sq;
+            square.Height = sq;
+            return square;
+        }
 
-      public override int getShiftPointBorderIndex() {
-         switch (direction) {
-         case 0: case 1:
-            return 2;
-         }
-         return 3;
-      }
+        public override int GetShiftPointBorderIndex() {
+            switch (direction) {
+            case 0:
+            case 1:
+                return 2;
+            }
+            return 3;
+        }
 
-   }
+    }
 
 }
