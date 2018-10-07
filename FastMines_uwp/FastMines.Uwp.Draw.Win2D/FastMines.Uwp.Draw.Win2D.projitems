@@ -18,8 +18,8 @@
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\AMosaicViewWin2D.cs">
       <Link>src_fmg.uwp\mosaic\win2d\AMosaicViewWin2D.cs</Link>
     </Compile>
-    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\AMosaicViewInControl.cs">
-      <Link>src_fmg.uwp\mosaic\win2d\AMosaicViewInControl.cs</Link>
+    <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicFrameworkElementView.cs">
+      <Link>src_fmg.uwp\mosaic\win2d\MosaicFrameworkElementView.cs</Link>
     </Compile>
     <Compile Include="..\..\src\src_platform_uwp\fmg\uwp\mosaic\win2d\MosaicViewInCanvasVirtualControl.cs">
       <Link>src_fmg.uwp\mosaic\win2d\MosaicViewInCanvasVirtualControl.cs</Link>
