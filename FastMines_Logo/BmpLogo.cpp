@@ -276,10 +276,7 @@ BOOL SaveBitmap(HDC hDC, HBITMAP hBmp, LPCTSTR szBmpFile, BOOL bReplaceFile) {
             bmpInfo.bmiHeader.biCompression = BI_RGB; // no compression!
 
             DWORD dwData = DibSectionSize(bmpInfo.bmiHeader);
-            BYTE *pData = NULL;
-            try {
-                pData = new BYTE[dwData];
-            } catch (...) {}
+            BYTE *pData = new (std::nothrow) BYTE[dwData];
             bRes = !!pData;
             if (!bRes) {
                 dwErrCode = ERROR_OUTOFMEMORY;
