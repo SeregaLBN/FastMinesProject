@@ -1,14 +1,10 @@
-using System;
 using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using fmg.common.notyfier;
-using fmg.common.Converters;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 using fmg.uwp.img.wbmp;
@@ -55,49 +51,18 @@ namespace fmg.uwp.mosaic.wbmp {
 
         protected override Image CreateImage() {
             // will return once created window
-            return GetControl();
+            return Control;
         }
 
-        internal class InnerImageConverter : IValueConverter {
-            private MosaicImageView _owner;
-
-            public InnerImageConverter(MosaicImageView owner) { _owner = owner; }
-
-            public object Convert(object value, Type targetType, object parameter, string language) {
-                //LoggerSimple.Put("  InnerImageConverter: return InnerImage");
-                return _owner.InnerImage;
+        public Image Control {
+            get {
+                if (_control == null) {
+                    _control = new Image {
+                        Stretch = Stretch.None
+                    };
+                }
+                return _control;
             }
-
-            public object ConvertBack(object value, Type targetType, object parameter, string language) {
-                throw new NotImplementedException();
-            }
-        }
-
-        public Image GetControl() {
-            if (_control == null) {
-                _control = new Image {
-                    Stretch = Stretch.None
-                };
-                _control.SetBinding(Image.SourceProperty, new Binding {
-                    Source = this,
-                    Path = new PropertyPath(nameof(Image)),
-                    Mode = BindingMode.OneWay,
-                    Converter = new InnerImageConverter(this)
-                });
-                _control.SetBinding(FrameworkElement.WidthProperty, new Binding {
-                    Source = this,
-                    Path = new PropertyPath(nameof(Size)),
-                    Mode = BindingMode.OneWay,
-                    Converter = new SizeToWidthConverter()
-                });
-                _control.SetBinding(FrameworkElement.HeightProperty, new Binding {
-                    Source = this,
-                    Path = new PropertyPath(nameof(Size)),
-                    Mode = BindingMode.OneWay,
-                    Converter = new SizeToHeightConverter()
-                });
-            }
-            return _control;
         }
 
         public override void Invalidate(ICollection<BaseCell> modifiedCells) {
@@ -135,7 +100,7 @@ namespace fmg.uwp.mosaic.wbmp {
         /// <summary> переустанавливаю заного размер мины/флага для мозаики </summary>
         protected void ChangeSizeImagesMineFlag() {
             MosaicDrawModel<WriteableBitmap> model = Model;
-            int sq = (int)model.CellAttr.GetSq(model.PenBorder.Width);
+            var sq = model.CellAttr.GetSq(model.PenBorder.Width);
             if (sq <= 0) {
                 System.Diagnostics.Debug.WriteLine("Error: too thick pen! There is no area for displaying the flag/mine image...");
                 sq = 3; // ат балды...
@@ -158,11 +123,14 @@ namespace fmg.uwp.mosaic.wbmp {
         protected override void Disposing() {
             _innerView.PropertyChanged -= OnInnerViewPropertyChanged;
             _innerView.Dispose();
+            _innerView = null;
             Model.Dispose();
             base.Disposing();
             _control = null;
             _imgFlag.Dispose();
             _imgMine.Dispose();
+            _imgFlag = null;
+            _imgMine = null;
         }
 
     }

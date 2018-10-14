@@ -1,13 +1,27 @@
+using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.UI.Xaml;
+
 namespace fmg.uwp.mosaic.win2d {
-#if false
 
-    /// <summary> MVC: controller. Win2D implementation </summary>
-    public class MosaicControllerWin2D<TMosaicViewWin2D> : fmg.core.mosaic.MosaicController<TMosaicViewWin2D,
-                                                                                            fmg.uwp.draw.mosaic.win2d.PaintableWin2D,
-                                                                                            Microsoft.Graphics.Canvas.CanvasBitmap,
-                                                                                            fmg.uwp.draw.mosaic.win2d.PaintWin2DContext>
-        where TMosaicViewWin2D : AMosaicViewWin2D, new()
-    { }
+    /// <summary> MVC: controller. UWP Win2D implementation over control <see cref="CanvasVirtualControl"/> </summary>
+    public class MosaicCanvasVirtualControlController : MosaicFrameworkElementController<CanvasVirtualControl, CanvasBitmap, MosaicCanvasVirtualControlView> {
 
-#endif
+
+        public MosaicCanvasVirtualControlController(CanvasVirtualControl control, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+            : base(new MosaicCanvasVirtualControlView(control, resourceCreator))
+        { }
+
+        public override CanvasVirtualControl Control => View.Control;
+
+        public void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs ev) {
+            View.OnRegionsInvalidated(sender, ev);
+        }
+
+        protected override void Disposing() {
+            base.Disposing();
+            View.Dispose();
+        }
+
+    }
+
 }

@@ -5,11 +5,9 @@ using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Shapes;
 using fmg.common;
 using fmg.common.geom;
-using fmg.common.Converters;
 using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
@@ -26,8 +24,8 @@ namespace fmg.uwp.mosaic.xaml {
             public TextBlock Txt  { get; set; }
             public Image     Img  { get; set; }
         }
-        private IDictionary<BaseCell, CellShapes> _xamlBinder;
-        private IDictionary<BaseCell, CellShapes> XamlBinder => _xamlBinder ?? (_xamlBinder = new Dictionary<BaseCell, CellShapes>());
+        private IDictionary<BaseCell, CellShapes> _mapCellToShape;
+        private IDictionary<BaseCell, CellShapes> MapCellToShape => _mapCellToShape ?? (_mapCellToShape = new Dictionary<BaseCell, CellShapes>());
         private readonly IDictionary<Color, Brush> _brushCacheMap = new Dictionary<Color, Brush>();
 
         public MosaicXamlView()
@@ -43,40 +41,30 @@ namespace fmg.uwp.mosaic.xaml {
 
         protected override Panel CreateImage() {
             // will return once created window
-            return GetControl();
+            return Control;
         }
 
-        public Panel GetControl() {
-            if (_control == null) {
-                _control = new Canvas();
-                //LoggerSimple.Put("MosaicXamlView.GetControl: new Control");
-                _control.SetBinding(FrameworkElement.WidthProperty, new Binding {
-                    Source = this,
-                    Path = new PropertyPath(nameof(this.Size)),
-                    Mode = BindingMode.OneWay,
-                    Converter = new SizeToWidthConverter()
-                });
-                _control.SetBinding(FrameworkElement.HeightProperty, new Binding {
-                    Source = this,
-                    Path = new PropertyPath(nameof(this.Size)),
-                    Mode = BindingMode.OneWay,
-                    Converter = new SizeToHeightConverter()
-                });
-                BindXamlToMosaic();
+        public Panel Control {
+            get {
+                if (_control == null) {
+                    _control = new Canvas();
+                    //LoggerSimple.Put("MosaicXamlView.GetControl: new Control");
+                    FillShapes();
+                }
+                return _control;
             }
-            return _control;
         }
 
-        private void UnbindXaml() {
-            GetControl().Children.Clear();
-            XamlBinder.Clear();
+        private void ClearShapes() {
+            Control.Children.Clear();
+            MapCellToShape.Clear();
         }
 
-        private void BindXamlToMosaic() {
-            var container = GetControl();
+        private void FillShapes() {
+            var container = Control;
 
-            //UnbindXaml();
-            var xamlBinder = XamlBinder;
+            //ClearShapes();
+            var xamlBinder = MapCellToShape;
             foreach (var cell in Model.Matrix) {
                 var shape = new Polygon();
                 var txt = new TextBlock();
@@ -96,7 +84,7 @@ namespace fmg.uwp.mosaic.xaml {
         }
 
         protected override void DrawModified(ICollection<BaseCell> requiredCells) {
-            var container = GetControl();
+            var container = Control;
 
             //System.Diagnostics.Debug.Assert(container != null);
             if (container == null)
@@ -107,7 +95,7 @@ namespace fmg.uwp.mosaic.xaml {
 
         private void DrawOverXaml(IEnumerable<BaseCell> modifiedCells, bool drawBk) {
             var m = Model;
-            var container = GetControl();
+            var container = Control;
 
             // 1. background color
             if (drawBk) { // paint background
@@ -129,7 +117,7 @@ namespace fmg.uwp.mosaic.xaml {
             var isIconicMode = pen.ColorLight == pen.ColorShadow;
 
             // 2. paint all cells
-            var xamlBinder = XamlBinder;
+            var xamlBinder = MapCellToShape;
             foreach (var cell in modifiedCells) {
                var binder = xamlBinder[cell];
                var txt = binder.Txt;
@@ -280,8 +268,8 @@ namespace fmg.uwp.mosaic.xaml {
             switch (ev.PropertyName) {
             case nameof(Model.MosaicType):
             case nameof(Model.Matrix):
-                UnbindXaml();
-                BindXamlToMosaic();
+                ClearShapes();
+                FillShapes();
                 break;
             }
             base.OnPropertyModelChanged(sender, ev);
@@ -293,7 +281,7 @@ namespace fmg.uwp.mosaic.xaml {
         }
 
         protected override void Disposing() {
-            UnbindXaml();
+            ClearShapes();
             base.Dispose();
         }
 

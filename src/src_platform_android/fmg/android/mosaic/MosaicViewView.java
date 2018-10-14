@@ -138,7 +138,7 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
     /** переустанавливаю заного размер мины/флага для мозаики */
     protected void changeSizeImagesMineFlag() {
         MosaicDrawModel<Bitmap> model = getModel();
-        int sq = (int)model.getCellAttr().getSq(model.getPenBorder().getWidth());
+        double sq = model.getCellAttr().getSq(model.getPenBorder().getWidth());
         if (sq <= 0) {
             System.err.println("Error: too thick pen! There is no area for displaying the flag/mine image...");
             sq = 3; // ат балды...

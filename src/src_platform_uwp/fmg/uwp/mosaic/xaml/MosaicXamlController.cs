@@ -1,7 +1,5 @@
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using fmg.common;
-using fmg.core.types;
 
 namespace fmg.uwp.mosaic.xaml {
 
@@ -11,6 +9,8 @@ namespace fmg.uwp.mosaic.xaml {
         public MosaicXamlController()
             : base(new MosaicXamlView())
         { }
+
+        public override Panel Control => View.Control;
 
         protected override void Disposing() {
             base.Disposing();
