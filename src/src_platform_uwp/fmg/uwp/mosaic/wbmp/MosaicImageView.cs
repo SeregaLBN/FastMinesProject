@@ -28,7 +28,7 @@ namespace fmg.uwp.mosaic.wbmp {
 
             protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
                 bool drawBk = (modifiedCells == null) || !modifiedCells.Any();
-                DrawWBmp(modifiedCells, null, drawBk);
+                DrawWBmp(modifiedCells, drawBk);
             }
 
         }

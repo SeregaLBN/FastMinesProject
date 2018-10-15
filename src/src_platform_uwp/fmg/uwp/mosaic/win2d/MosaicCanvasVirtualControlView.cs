@@ -55,7 +55,7 @@ namespace fmg.uwp.mosaic.win2d {
                 System.Diagnostics.Debug.Assert(!_alreadyPainted);
 
                 if (modifiedCells == null) {
-                    canvasVirtualControl.Invalidate(); // redraw all of mosaic
+                    canvasVirtualControl.Invalidate(); // redraw all of mosaic. Implicit call this.OnRegionsInvalidated
                     return;
                 }
 
@@ -78,7 +78,7 @@ namespace fmg.uwp.mosaic.win2d {
                     if (!(intersect && containsLT && containsRT && containsLB && containsRB))
                         return;
 #endif
-                    canvasVirtualControl.Invalidate(rc.ToWinRect());
+                    canvasVirtualControl.Invalidate(rc.ToWinRect()); // Implicit call this.OnRegionsInvalidated
                 }
             }
         }
@@ -92,9 +92,8 @@ namespace fmg.uwp.mosaic.win2d {
                 _alreadyPainted2 = true;
                 foreach (var region in ev.InvalidatedRegions) {
                     using (var ds = sender.CreateDrawingSession(region)) {
-                        ICollection<BaseCell> modifiedCells = null;
                         bool drawBk = true;
-                        DrawWin2D(ds, modifiedCells, region.ToFmRectDouble(), drawBk);
+                        DrawWin2D(ds, ToDrawCells(region.ToFmRectDouble()), drawBk);
                     }
                 }
                 _alreadyPainted2 = false;

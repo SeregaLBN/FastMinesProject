@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Collections.Generic;
 using fmg.common;
+using fmg.common.geom;
 using fmg.core.img;
 using fmg.core.mosaic.cells;
 
@@ -26,6 +27,43 @@ namespace fmg.core.mosaic {
         public static bool _DEBUG_DRAW_FLOW = false;
 #endif
         private readonly HashSet<BaseCell> _modifiedCells = new HashSet<BaseCell>();
+
+        protected ICollection<BaseCell> ToDrawCells(RectDouble? invalidatedRect) {
+#if DEBUG
+            if (_DEBUG_DRAW_FLOW)
+                LoggerSimple.Put("<>MosaicView.ToDrawCells: invalidatedRect=" + (invalidatedRect==null ? "null" : invalidatedRect.ToString()));
+#endif
+
+            if (invalidatedRect == null)
+                return null; // equals Model.Matrix
+
+            // check to redraw all mosaic cells
+            TMosaicModel model = Model;
+            var rc = invalidatedRect.Value;
+            if (rc.X.HasMinDiff(0) && rc.Y.HasMinDiff(0)) {
+                var size = model.Size;
+                if (rc.Width.HasMinDiff(size.Width) && rc.Height.HasMinDiff(size.Height))
+                    return null; // equals Model.Matrix
+            }
+
+            var padding = model.Padding;
+            var margin = model.Margin;
+            var offset = new SizeDouble(margin.Left + padding.Left,
+                                        margin.Top  + padding.Top);
+
+            // redraw only when needed...
+            var toDrawCells = model.Matrix
+                .Where(cell => cell.GetRcOuter()
+                                   .MoveXY(offset.Width, offset.Height)
+                                   .Intersection(rc)) // ...when the cells and update region intersect
+                .ToList();
+
+#if DEBUG
+            if (_DEBUG_DRAW_FLOW)
+                LoggerSimple.Put("< MosaicView.ToDrawCells: cnt=" + toDrawCells.Count);
+#endif
+            return toDrawCells;
+        }
 
         public virtual void Invalidate(ICollection<BaseCell> modifiedCells) {
             if (modifiedCells == null) // mark NULL if all mosaic is changed

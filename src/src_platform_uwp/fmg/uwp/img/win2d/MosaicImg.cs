@@ -34,7 +34,7 @@ namespace fmg.uwp.img.win2d {
             }
 
             protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
-                DrawWin2D(_ds, modifiedCells, null, _useBackgroundColor);
+                DrawWin2D(_ds, modifiedCells, _useBackgroundColor);
             }
 
             protected override void DrawBody() {

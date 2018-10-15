@@ -9,6 +9,7 @@ import fmg.common.geom.RectDouble;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.cells.BaseCell;
+import fmg.core.mosaic.cells.Square1;
 import fmg.jfx.img.CanvasJfx;
 import fmg.jfx.img.Flag;
 import fmg.jfx.img.Mine;
@@ -32,7 +33,11 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
     @Override
     protected void drawModified(Collection<BaseCell> modifiedCells) {
         if (modifiedCells == null) {
-            drawJfx(_canvas.getGraphics(), getModel().getMatrix(), null, true);
+            drawJfx(_canvas.getGraphics(), getModel().getMatrix(), true);
+            return;
+        }
+        if (modifiedCells.iterator().next() instanceof Square1) { // optimize
+            drawJfx(_canvas.getGraphics(), modifiedCells, false);
             return;
         }
         double minX=0, minY=0, maxX=0, maxY=0;
@@ -55,7 +60,7 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
         RectDouble rcClip = new RectDouble(minX, minY, maxX-minX, maxY-minY);
 //        if (_DEBUG_DRAW_FLOW)
 //            System.out.println("MosaicViewJfx.draw: repaint=" + rcClip);
-        drawJfx(_canvas.getGraphics(), modifiedCells, rcClip, true);
+        drawJfx(_canvas.getGraphics(), toDrawCells(rcClip), false);
     }
 
     @Override

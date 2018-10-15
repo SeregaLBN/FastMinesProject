@@ -21,7 +21,7 @@ namespace fmg.uwp.img.wbmp {
         { }
 
         protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
-            DrawWBmp(modifiedCells, null, _useBackgroundColor);
+            DrawWBmp(modifiedCells, _useBackgroundColor);
         }
 
         protected override void DrawBody() {
