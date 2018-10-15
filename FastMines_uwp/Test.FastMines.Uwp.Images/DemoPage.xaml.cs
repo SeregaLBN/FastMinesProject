@@ -165,18 +165,20 @@ namespace Test.FastMines.Uwp.Images {
 #if DEBUG
             Win2dMosaicImg.CanvasBmp._DEBUG_DRAW_FLOW = !true; // true - strongly slows rendering
 #endif
-            TestAppMosaicWin2dImage1(() =>
-                //new List<Win2dMosaicImg.ControllerBitmap>() { new Win2dMosaicImg.ControllerBitmap(resourceCreator) { MosaicType = EMosaic.eMosaicSquare1 } }
-                EMosaicEx.GetValues().Select(e => new Win2dMosaicImg.ControllerBitmap(resourceCreator) { MosaicType = e })
+            TestApp<CanvasBitmap, Nothing, Win2dMosaicImg.ControllerBitmap, Win2dMosaicImg.CanvasBmp, Win2dMosaicImg.CanvasBmp, MosaicAnimatedModel<Nothing>, MosaicAnimatedModel<Nothing>>(
+                () =>
+                    //new List<Win2dMosaicImg.ControllerBitmap>() { new Win2dMosaicImg.ControllerBitmap(resourceCreator) { MosaicType = EMosaic.eMosaicSquare1 } }
+                    EMosaicEx.GetValues().Select(e => new Win2dMosaicImg.ControllerBitmap(resourceCreator) { MosaicType = e })
             );
         }
         private void TestWin2dMosaicsImg2(ICanvasResourceCreator resourceCreator) {
 #if DEBUG
             Win2dMosaicImg.CanvasImgSrc._DEBUG_DRAW_FLOW = !true; // true - strongly slows rendering
 #endif
-            TestAppMosaicWin2dImage2(() =>
-                //new List<Win2dMosaicImg.ControllerImgSrc>() { new Win2dMosaicImg.ControllerImgSrc(resourceCreator) { MosaicType = EMosaic.eMosaicSquare1 } }
-                EMosaicEx.GetValues().Select(e => new Win2dMosaicImg.ControllerImgSrc(resourceCreator) { MosaicType = e })
+            TestApp<CanvasImageSource, Nothing, Win2dMosaicImg.ControllerImgSrc, Win2dMosaicImg.CanvasImgSrc, Win2dMosaicImg.CanvasImgSrc, MosaicAnimatedModel<Nothing>, MosaicAnimatedModel<Nothing>>(
+                () =>
+                    //new List<Win2dMosaicImg.ControllerImgSrc>() { new Win2dMosaicImg.ControllerImgSrc(resourceCreator) { MosaicType = EMosaic.eMosaicSquare1 } }
+                    EMosaicEx.GetValues().Select(e => new Win2dMosaicImg.ControllerImgSrc(resourceCreator) { MosaicType = e })
             );
         }
         public void TestWin2dFlag1(ICanvasResourceCreator resourceCreator) { TestAppSimple<CanvasBitmap     , Win2dFlag.ControllerBitmap, Win2dFlag.CanvasBmp   , FlagModel>(() => new Win2dFlag.ControllerBitmap[] { new Win2dFlag.ControllerBitmap(resourceCreator) }); }
@@ -220,8 +222,9 @@ namespace Test.FastMines.Uwp.Images {
 #if DEBUG
             Win2dMosaicCanvasVirtView._DEBUG_DRAW_FLOW = true;
 #endif
-            TestAppMosaicWin2dCanvasVirtController(() => new Win2dMosaicCanvasVirtController[] {
-                TuneMosaicGameController<CanvasVirtualControl, CanvasBitmap, Win2dMosaicCanvasVirtController, Win2dMosaicCanvasVirtView, MosaicDrawModel<CanvasBitmap>>(new Win2dMosaicCanvasVirtController(resourceCreator))
+            TestApp<CanvasVirtualControl, CanvasBitmap, Win2dMosaicCanvasVirtController, Win2dMosaicCanvasVirtView, DummyView<CanvasVirtualControl>, MosaicDrawModel<CanvasBitmap>, DummyModel>(
+                () => new Win2dMosaicCanvasVirtController[] {
+                    TuneMosaicGameController<CanvasVirtualControl, CanvasBitmap, Win2dMosaicCanvasVirtController, Win2dMosaicCanvasVirtView, MosaicDrawModel<CanvasBitmap>>(new Win2dMosaicCanvasVirtController(resourceCreator))
             });
         }
 
@@ -229,25 +232,28 @@ namespace Test.FastMines.Uwp.Images {
 #if DEBUG
             MosaicXamlView._DEBUG_DRAW_FLOW = true;
 #endif
-            TestAppMosaicXamlCtr(() => new MosaicXamlController[] {
-                TuneMosaicGameController<Panel, ImageSource, MosaicXamlController, MosaicXamlView, MosaicDrawModel<ImageSource>>(new MosaicXamlController())
+            TestApp<Panel, ImageSource, MosaicXamlController, MosaicXamlView, DummyView<Panel>, MosaicDrawModel<ImageSource>, DummyModel>(
+                () => new MosaicXamlController[] {
+                    TuneMosaicGameController<Panel, ImageSource, MosaicXamlController, MosaicXamlView, MosaicDrawModel<ImageSource>>(new MosaicXamlController())
             });
         }
         private void TestWBmpMosaicControl() {
 #if DEBUG
             WBmpMosaicImageView._DEBUG_DRAW_FLOW = true;
 #endif
-            TestAppMosaicWBmpControl(() => new WBmpMosaicImageController[] {
-                TuneMosaicGameController<Image, WriteableBitmap, WBmpMosaicImageController, WBmpMosaicImageView, MosaicDrawModel<WriteableBitmap>>(new WBmpMosaicImageController())
+            TestApp<Image, WriteableBitmap, WBmpMosaicImageController, WBmpMosaicImageView, DummyView<Image>, MosaicDrawModel<WriteableBitmap>, DummyModel>(
+                () => new WBmpMosaicImageController[] {
+                    TuneMosaicGameController<Image, WriteableBitmap, WBmpMosaicImageController, WBmpMosaicImageView, MosaicDrawModel<WriteableBitmap>>(new WBmpMosaicImageController())
             });
         }
         private void TestWBmpMosaicsImg() {
 #if DEBUG
             WBmpMosaicImg._DEBUG_DRAW_FLOW = !true;
 #endif
-            TestAppMosaicWBmpImage(() =>
-              //new List<MosaicWBmpImg.Controller>() { new MosaicWBmpImg.Controller() { MosaicType = EMosaic.eMosaicSquare1 } }
-                EMosaicEx.GetValues().Select(e => new WBmpMosaicImg.Controller() { MosaicType = e })
+            TestApp<WriteableBitmap, Nothing, WBmpMosaicImg.Controller, WBmpMosaicImg, WBmpMosaicImg, MosaicAnimatedModel<Nothing>, MosaicAnimatedModel<Nothing>>(
+                () =>
+                    //new List<MosaicWBmpImg.Controller>() { new MosaicWBmpImg.Controller() { MosaicType = EMosaic.eMosaicSquare1 } }
+                    EMosaicEx.GetValues().Select(e => new WBmpMosaicImg.Controller() { MosaicType = e })
             );
         }
         private void TestWBmpLogo() {
@@ -355,30 +361,6 @@ namespace Test.FastMines.Uwp.Images {
             where TImageModel      : IAnimatedModel
         {
             TestApp<TImage, DummyMosaicImageType, TImageController, TImageView, TImageView, TImageModel, TImageModel>(funcGetImages);
-        }
-
-        void TestAppMosaicWin2dCanvasVirtController(Func<IEnumerable<Win2dMosaicCanvasVirtController>> funcGetImages) {
-            TestApp<CanvasVirtualControl, CanvasBitmap, Win2dMosaicCanvasVirtController, Win2dMosaicCanvasVirtView, DummyView<CanvasVirtualControl>, MosaicDrawModel<CanvasBitmap>, DummyModel>(funcGetImages);
-        }
-
-        void TestAppMosaicWin2dImage1(Func<IEnumerable<Win2dMosaicImg.ControllerBitmap>> funcGetImages) {
-            TestApp<CanvasBitmap, Nothing, Win2dMosaicImg.ControllerBitmap, Win2dMosaicImg.CanvasBmp, Win2dMosaicImg.CanvasBmp, MosaicAnimatedModel<Nothing>, MosaicAnimatedModel<Nothing>>(funcGetImages);
-        }
-
-        void TestAppMosaicWin2dImage2(Func<IEnumerable<Win2dMosaicImg.ControllerImgSrc>> funcGetImages) {
-            TestApp<CanvasImageSource, Nothing, Win2dMosaicImg.ControllerImgSrc, Win2dMosaicImg.CanvasImgSrc, Win2dMosaicImg.CanvasImgSrc, MosaicAnimatedModel<Nothing>, MosaicAnimatedModel<Nothing>>(funcGetImages);
-        }
-
-        void TestAppMosaicWBmpImage(Func<IEnumerable<WBmpMosaicImg.Controller>> funcGetImages) {
-            TestApp<WriteableBitmap, Nothing, WBmpMosaicImg.Controller, WBmpMosaicImg, WBmpMosaicImg, MosaicAnimatedModel<Nothing>, MosaicAnimatedModel<Nothing>>(funcGetImages);
-        }
-
-        void TestAppMosaicWBmpControl(Func<IEnumerable<WBmpMosaicImageController>> funcGetImages) {
-            TestApp<Image, WriteableBitmap, WBmpMosaicImageController, WBmpMosaicImageView, DummyView<Image>, MosaicDrawModel<WriteableBitmap>, DummyModel>(funcGetImages);
-        }
-
-        void TestAppMosaicXamlCtr(Func<IEnumerable<MosaicXamlController>> funcGetImages) {
-            TestApp<Panel, ImageSource, MosaicXamlController, MosaicXamlView, DummyView<Panel>, MosaicDrawModel<ImageSource>, DummyModel>(funcGetImages);
         }
         #endregion wrappers
 
