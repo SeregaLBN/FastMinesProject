@@ -12,9 +12,29 @@ namespace fmg.uwp.mosaic.win2d {
     /// summary> MVC: view. UWP Win2D implementation. View located into control <see cref="CanvasVirtualControl"/> */
     public class MosaicCanvasVirtualControlView : MosaicFrameworkElementView<CanvasVirtualControl> {
 
-        public MosaicCanvasVirtualControlView(CanvasVirtualControl control, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
-            : base(control, resourceCreator)
-        {
+        private bool _isInnerControl;
+
+        public MosaicCanvasVirtualControlView(ICanvasResourceCreator resourceCreator, CanvasVirtualControl control = null)
+            : base(resourceCreator, control)
+        { }
+
+        public override CanvasVirtualControl Control {
+            get {
+                var ctrl = base.Control;
+                if (ctrl == null) {
+                    ctrl = new CanvasVirtualControl();
+                    ctrl.RegionsInvalidated += OnRegionsInvalidated;
+                    base.Control = ctrl;
+                    _isInnerControl = true;
+                }
+                return ctrl;
+            }
+            protected set {
+                if (_isInnerControl)
+                    base.Control.RegionsInvalidated -= OnRegionsInvalidated;
+                base.Control = value;
+                _isInnerControl = false;
+            }
         }
 
         protected override void DrawModified(ICollection<BaseCell> requiredCells) {
@@ -73,7 +93,7 @@ namespace fmg.uwp.mosaic.win2d {
                 foreach (var region in ev.InvalidatedRegions) {
                     using (var ds = sender.CreateDrawingSession(region)) {
                         ICollection<BaseCell> modifiedCells = null;
-                        bool drawBk = false;
+                        bool drawBk = true;
                         DrawWin2D(ds, modifiedCells, region.ToFmRectDouble(), drawBk);
                     }
                 }

@@ -14,7 +14,7 @@ namespace fmg.uwp.mosaic.win2d {
         private Mine.ControllerBitmap _imgMine;
         private Flag.ControllerBitmap _imgFlag;
 
-        protected MosaicFrameworkElementView(TControl control, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
+        protected MosaicFrameworkElementView(ICanvasResourceCreator resourceCreator, TControl control = null)
             : base(new MosaicDrawModel<CanvasBitmap>())
         {
             _resourceCreator = resourceCreator;
@@ -26,9 +26,9 @@ namespace fmg.uwp.mosaic.win2d {
             return Control;
         }
 
-        public TControl Control {
+        public virtual TControl Control {
             get { return _control; }
-            private set {
+            protected set {
                 _control = value;
             }
         }
@@ -70,11 +70,12 @@ namespace fmg.uwp.mosaic.win2d {
         }
 
         protected override void Disposing() {
-            _control = null;
+            Control = null; // ! call virtual setter
             _imgFlag?.Dispose();
             _imgMine?.Dispose();
             _imgFlag = null;
             _imgMine = null;
+            base.Disposing();
         }
 
     }

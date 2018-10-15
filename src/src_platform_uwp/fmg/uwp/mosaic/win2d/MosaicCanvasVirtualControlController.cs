@@ -7,8 +7,8 @@ namespace fmg.uwp.mosaic.win2d {
     public class MosaicCanvasVirtualControlController : MosaicFrameworkElementController<CanvasVirtualControl, CanvasBitmap, MosaicCanvasVirtualControlView> {
 
 
-        public MosaicCanvasVirtualControlController(CanvasVirtualControl control, ICanvasResourceCreator resourceCreator /* = CanvasDevice.GetSharedDevice() */)
-            : base(new MosaicCanvasVirtualControlView(control, resourceCreator))
+        public MosaicCanvasVirtualControlController(ICanvasResourceCreator resourceCreator, CanvasVirtualControl control = null)
+            : base(new MosaicCanvasVirtualControlView(resourceCreator, control))
         { }
 
         public override CanvasVirtualControl Control => View.Control;

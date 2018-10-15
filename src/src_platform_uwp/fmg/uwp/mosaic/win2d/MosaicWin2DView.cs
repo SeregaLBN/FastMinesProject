@@ -102,7 +102,7 @@ namespace fmg.uwp.mosaic.win2d {
                                 // 2.1.1. paint cell background
                                 //if (!isIconicMode) // когда русуется иконка, а не игровое поле, - делаю попроще...
                                 {
-                                    if (!drawBk || (bkClrCell != bkClr))
+                                    if (drawBk || (bkClrCell != bkClr))
                                         ds.FillGeometry(geom, bkClrCell.ToWinColor());
                                 }
 
