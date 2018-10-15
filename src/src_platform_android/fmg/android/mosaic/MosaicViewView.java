@@ -9,7 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
-
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.RectDouble;
 import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
@@ -52,12 +52,9 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
                     Rect clipBounds = canvas.getClipBounds();
 
                     MosaicViewView.this.drawAndroid(canvas,
-                                                    _modifiedCells.isEmpty()
-                                                        ? null
-                                                        : _modifiedCells,
                                                     (clipBounds==null)
                                                         ? null
-                                                        : Cast.toRectDouble(clipBounds),
+                                                        : toDrawCells(Cast.toRectDouble(clipBounds)),
                                                     true/*_modifiedCells.isEmpty() || (_modifiedCells.size() == getModel().getMatrix().size())*/);
                     _modifiedCells.clear();
                 }
@@ -100,7 +97,13 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
             }
             if (_DEBUG_DRAW_FLOW)
                 System.out.println("MosaicViewAndroid.draw: repaint={" + (int)minX +","+ (int)minY +","+ (int)(maxX-minX) +","+ (int)(maxY-minY) + "}");
-            control.invalidate((int)minX, (int)minY, (int)(maxX-minX), (int)(maxY-minY));
+
+            MosaicDrawModel<?> model = getModel();
+            BoundDouble padding = model.getPadding();
+            BoundDouble margin = model.getMargin();
+            SizeDouble offset = new SizeDouble(margin.left + padding.left,
+                                               margin.top  + padding.top);
+            control.invalidate((int)(minX + offset.width), (int)(minY + offset.height), (int)(maxX-minX), (int)(maxY-minY));
         }
     }
 

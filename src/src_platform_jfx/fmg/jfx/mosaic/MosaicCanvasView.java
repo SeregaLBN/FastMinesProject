@@ -5,7 +5,9 @@ import java.util.Collection;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 
+import fmg.common.geom.BoundDouble;
 import fmg.common.geom.RectDouble;
+import fmg.common.geom.SizeDouble;
 import fmg.core.mosaic.MosaicDrawModel;
 import fmg.core.mosaic.MosaicGameModel;
 import fmg.core.mosaic.cells.BaseCell;
@@ -57,7 +59,12 @@ public class MosaicCanvasView extends MosaicJfxView<Canvas, Image, MosaicDrawMod
                 maxY = Math.max(maxY, rc.bottom());
             }
         }
-        RectDouble rcClip = new RectDouble(minX, minY, maxX-minX, maxY-minY);
+        MosaicDrawModel<?> model = getModel();
+        BoundDouble padding = model.getPadding();
+        BoundDouble margin = model.getMargin();
+        SizeDouble offset = new SizeDouble(margin.left + padding.left,
+                                           margin.top  + padding.top);
+        RectDouble rcClip = new RectDouble(minX + offset.width, minY + offset.height, maxX-minX, maxY-minY);
 //        if (_DEBUG_DRAW_FLOW)
 //            System.out.println("MosaicViewJfx.draw: repaint=" + rcClip);
         drawJfx(_canvas.getGraphics(), toDrawCells(rcClip), false);
