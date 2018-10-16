@@ -73,7 +73,7 @@ public abstract class MosaicImg<TImage>
 
         @Override
         protected void drawModified(Collection<BaseCell> modifiedCells) {
-            drawAndroid(wrap.getCanvas(), modifiedCells, null, _useBackgroundColor);
+            drawAndroid(wrap.getCanvas(), modifiedCells, _useBackgroundColor);
         }
 
         @Override

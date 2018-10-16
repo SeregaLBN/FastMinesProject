@@ -155,9 +155,9 @@ public class MosaicViewView extends MosaicAndroidView<View, Bitmap, MosaicDrawMo
             model.setImgMine(_imgMine.getImage());
         } else {
             _imgFlag.getModel().setSize(max);
-            model.setImgFlag(ImgUtils.zoom(_imgFlag.getImage(), sq, sq));
+            model.setImgFlag(ImgUtils.zoom(_imgFlag.getImage(), (int)sq, (int)sq));
             _imgMine.getModel().setSize(max);
-            model.setImgMine(ImgUtils.zoom(_imgMine.getImage(), sq, sq));
+            model.setImgMine(ImgUtils.zoom(_imgMine.getImage(), (int)sq, (int)sq));
         }
     }
 
