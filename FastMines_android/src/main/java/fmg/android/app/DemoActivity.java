@@ -156,6 +156,8 @@ public class DemoActivity extends Activity {
         Map<IImageController<?,?,?>, PropertyChangeListener> binding = imgIsControl ? null : new HashMap<>(images.size());
 
         Proc3Bool onCellTilingHandler = (applySettings, createImgControls, resized) -> {
+            if (images.size() == 1)     // if one image...
+                applySettings = false;  // ... then test as is
             resized = resized || applySettings;
 
             if (applySettings) {

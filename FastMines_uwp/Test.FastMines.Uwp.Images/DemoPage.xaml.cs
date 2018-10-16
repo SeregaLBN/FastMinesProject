@@ -224,6 +224,7 @@ namespace Test.FastMines.Uwp.Images {
 #endif
             TestApp<CanvasVirtualControl, CanvasBitmap, Win2dMosaicCanvasVirtController, Win2dMosaicCanvasVirtView, DummyView<CanvasVirtualControl>, MosaicDrawModel<CanvasBitmap>, DummyModel>(
                 () => new Win2dMosaicCanvasVirtController[] {
+                  //TuneMosaicGameController<CanvasVirtualControl, CanvasBitmap, Win2dMosaicCanvasVirtController, Win2dMosaicCanvasVirtView, MosaicDrawModel<CanvasBitmap>>(new Win2dMosaicCanvasVirtController(resourceCreator)),
                     TuneMosaicGameController<CanvasVirtualControl, CanvasBitmap, Win2dMosaicCanvasVirtController, Win2dMosaicCanvasVirtView, MosaicDrawModel<CanvasBitmap>>(new Win2dMosaicCanvasVirtController(resourceCreator))
             });
         }
@@ -382,6 +383,8 @@ namespace Test.FastMines.Uwp.Images {
             bool imgIsControl = typeof(FrameworkElement).GetTypeInfo().IsAssignableFrom(typeof(TImage).GetTypeInfo());
 
             void onCellTilingHandler(bool applySettings, bool createImgControls, bool resized) {
+                if (images.Count == 1)      // if one image...
+                    applySettings = false;  // ... then test as is
                 resized = resized || createImgControls || applySettings;
 
                 if (applySettings) {
@@ -427,8 +430,8 @@ namespace Test.FastMines.Uwp.Images {
                                     Mode = BindingMode.OneWay
                                 });
                             } else
-                   #endregion
-                   #region CanvasBitmap
+                    #endregion
+                    #region CanvasBitmap
                             if (typeof(TImage) == typeof(CanvasBitmap)) {
                                 var cnvsCtrl = new CanvasControl {
                                     //ClearColor = ColorExt.RandomColor(_td.GetRandom).Brighter().ToWinColor(),
@@ -464,7 +467,7 @@ namespace Test.FastMines.Uwp.Images {
                                     cnvsCtrl.Draw -= onDraw;
                                 };
                             } else
-                   #endregion
+                    #endregion
                             {
                                 throw new Exception("Unsupported image type");
                             }
