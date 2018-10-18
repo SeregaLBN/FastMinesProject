@@ -9,7 +9,7 @@ using fmg.core.types.draw;
 
 namespace fmg.core.mosaic {
 
-    public sealed class MosaicDrawModelConst {
+    public static class MosaicDrawModelConst {
 
         /// <summary> Цвет заливки ячейки по-умолчанию. Зависит от текущего UI манагера. Переопределяется одним из MVC-наследником </summary>
         public static Color DefaultBkColor = Color.Gray.Brighter();
@@ -30,7 +30,7 @@ namespace fmg.core.mosaic {
         private BoundDouble    _margin  = new BoundDouble(0, 0, 0, 0);
         private BoundDouble    _padding = new BoundDouble(0, 0, 0, 0);
         private BackgroundFill _backgroundFill;
-        private Color          _backgroundColor;
+        private Color          _backgroundColor = MosaicDrawModelConst.DefaultBkColor;
         private TImageInner    _imgBckgrnd;
 
         public MosaicDrawModel() {
@@ -71,7 +71,7 @@ namespace fmg.core.mosaic {
 
                 Area = area;
                 Margin = margin;
-                PaddingInternal = newPadding;
+                SetPaddingInternal(newPadding);
             }
         }
 
@@ -243,14 +243,12 @@ namespace fmg.core.mosaic {
 
                 Area = area;
                 Margin = margin;
-                PaddingInternal = value;
+                SetPaddingInternal(value);
             }
         }
-        public void setPadding(double bound) { Padding = new BoundDouble(bound); }
-        private BoundDouble PaddingInternal {
-            set {
-                _notifier.SetProperty(ref _padding, value, nameof(this.Padding));
-            }
+        public void SetPadding(double bound) { Padding = new BoundDouble(bound); }
+        private void SetPaddingInternal(BoundDouble newBound) {
+            _notifier.SetProperty(ref _padding, newBound, nameof(this.Padding));
         }
 
         public FontInfo FontInfo {
@@ -272,8 +270,6 @@ namespace fmg.core.mosaic {
 
         public Color BackgroundColor {
             get {
-                if (_backgroundColor == null)
-                    BackgroundColor = MosaicDrawModelConst.DefaultBkColor;
                 return _backgroundColor;
             }
             set {
