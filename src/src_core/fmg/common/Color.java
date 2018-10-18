@@ -160,7 +160,10 @@ public class Color {
     public static Color White               () { return new Color(0xFFFFFFFF); }
     // endregion
 
-    protected int r,g,b,a;
+    private final int r;
+    private final int g;
+    private final int b;
+    private final int a;
 
     private static int check(int v, String name) {
         if (v<0 || v>255) throw new IllegalArgumentException("Bad "+name+" argument");
@@ -213,20 +216,20 @@ public class Color {
 
     /** get RED chanel */
     public int getR() { return r; }
-    /** set RED chanel */
-    public void setR(int r) { this.r = checkR(r); }
+    /** update RED chanel. Returned new Color */
+    public Color updateR(int r) { return new Color(this.a, r, this.g, this.b); }
     /** get GREEN chanel */
     public int getG() { return g; }
-    /** set GREEN chanel */
-    public void setG(int g) { this.g = checkG(g); }
+    /** update GREEN chanel. Returned new Color */
+    public Color updateG(int g) { return new Color(this.a, this.r, g, this.b); }
     /** get BLUE chanel */
     public int getB() { return b; }
-    /** set BLUE chanel */
-    public void setB(int b) { this.b = checkB(b); }
+    /** update BLUE chanel. Returned new Color */
+    public Color updateB(int b) { return new Color(this.a, this.r, this.g, b); }
     /** get ALPHA chanel */
     public int getA() { return a; }
-    /** set ALPHA chanel */
-    public void setA(int a) { this.a = checkA(a); }
+    /** update ALPHA chanel. Returned new Color */
+    public Color updateA(int a) { return new Color(a, this.r, this.g, this.b); }
 
     public boolean isOpaque()      { return this.a == 255; }
     public boolean isTransparent() { return this.a == 0; }

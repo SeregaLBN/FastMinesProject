@@ -56,12 +56,7 @@ namespace fmg.core.img {
                     aim.SetPadding(10);
                     aim.BorderWidth = 0;
                     aim.BackgroundColor = testTransparent ? new Color(0xC8FFFFFF) : Color.White;
-                    aim.ForegroundColor = new Color(aim.ForegroundColor) {
-                        A = 200 // 0..255 - foreground alpha-chanel color
-                    };
-                }
-                if (model is BurgerMenuModel bmm) {
-                    bmm.Show = true;
+                    aim.ForegroundColor = new Color(aim.ForegroundColor).UpdateA(200); // 0..255 - foreground alpha-chanel color
                 }
                 if (model is LogoModel lm) {
                     lm.UseGradient = true;
@@ -106,7 +101,7 @@ namespace fmg.core.img {
 
                 Color bkClr = Color.RandomColor();
                 if (testTransparent)
-                    bkClr.A = (byte)(50 + R(10));
+                    bkClr = bkClr.UpdateA((byte)(50 + R(10)));
 
                 if (model is AnimatedImageModel aim) {
                     aim.BorderWidth = R(3);
@@ -121,9 +116,9 @@ namespace fmg.core.img {
                         // test transparent
                         Color clr = aim.ForegroundColor;
                         if ((aim.BorderWidth > 0) && (R(4) == 0)) {
-                            clr.A = Color.Transparent.A;
+                            clr = clr.UpdateA(Color.Transparent.A);
                         } else {
-                            clr.A = (byte)(150 + R(255 - 150));
+                            clr = clr.UpdateA((byte)(150 + R(255 - 150)));
                         }
                         aim.ForegroundColor = clr;
                     }

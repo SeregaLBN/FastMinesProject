@@ -155,7 +155,7 @@ namespace fmg.common {
         public static readonly Color White                = new Color(0xFFFFFFFF);
         #endregion
 
-        public byte R,G,B,A;
+        public readonly byte R,G,B,A;
 
         public Color(Color copy)
             : this(copy.A, copy.R, copy.G, copy.B)
@@ -174,6 +174,15 @@ namespace fmg.common {
         public bool IsOpaque      => A == 255;
         public bool IsTransparent => A == 0;
 
+        /// <summary> update RED chanel. Returned new Color </summary>
+        public Color UpdateR(byte r) { return new Color(this.A, r, this.G, this.B); }
+        /// <summary> update GREEN chanel. Returned new Color </summary>
+        public Color UpdateG(byte g) { return new Color(this.A, this.R, g, this.B); }
+        /// <summary> update BLUE chanel. Returned new Color </summary>
+        public Color UpdateB(byte b) { return new Color(this.A, this.R, this.G, b); }
+        /// <summary> update ALPHA chanel. Returned new Color </summary>
+        public Color UpdateA(byte a) { return new Color(a, this.R, this.G, this.B); }
+
         public static bool operator !=(Color c1, Color c2) { return (c1.A != c2.A) || (c1.R != c2.R) || (c1.G != c2.G) || (c1.B != c2.B); }
         public static bool operator ==(Color c1, Color c2) { return (c1.A == c2.A) && (c1.R == c2.R) && (c1.G == c2.G) && (c1.B == c2.B); }
 
@@ -191,11 +200,10 @@ namespace fmg.common {
 
         public static Color RandomColor() {
             var next = ThreadLocalRandom.Current.Next();
-            return new Color {
-                R = (byte) ((next & 0xFF) >> 0),
-                G = (byte) ((next & 0xFF00) >> 8),
-                B = (byte) ((next & 0xFF0000) >> 16),
-                A = 255};
+            return new Color(
+                (byte) ((next & 0xFF) >> 0),
+                (byte) ((next & 0xFF00) >> 8),
+                (byte) ((next & 0xFF0000) >> 16));
         }
 
     }
