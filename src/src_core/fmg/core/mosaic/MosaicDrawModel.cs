@@ -131,57 +131,6 @@ namespace fmg.core.mosaic {
             }
         }
 
-        /// <summary> всё что относиться к заливке фоном ячееек </summary>
-        public class BackgroundFill : INotifyPropertyChanged, IDisposable {
-            /// <summary> режим заливки фона ячеек </summary>
-            private int _mode = 0;
-            /// <summary> кэшированные цвета фона ячеек </summary>
-            private readonly IDictionary<int, Color> _colors = new Dictionary<int, Color>();
-
-            public event PropertyChangedEventHandler PropertyChanged;
-            protected readonly NotifyPropertyChanged _notifier;
-
-            public BackgroundFill() {
-                _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
-            }
-
-            /// <summary> режим заливки фона ячеек
-            ///  @param mode
-            ///   <li> 0 - цвет заливки фона по-умолчанию
-            ///   <li> not 0 - радуга %)
-            /// </summary>
-            public int Mode {
-                get { return _mode; }
-                set {
-                    if (_notifier.SetProperty(ref _mode, value))
-                        _colors.Clear();
-                }
-            }
-
-            /// <summary> кэшированные цвета фона ячеек
-            /// Нет цвета? - создасться с нужной интенсивностью! */
-            /// </summary>
-            public Color GetColor(int index) {
-                if (_colors.ContainsKey(index))
-                    return _colors[index];
-
-                var res = Color.RandomColor().Brighter(0.45);
-                _colors.Add(index, res);
-                return res;
-            }
-
-            /// <summary> off notifer </summary>
-            public IDisposable Hold() {
-                return _notifier.Hold();
-            }
-
-            public void Dispose() {
-                _notifier.Dispose();
-                _colors.Clear();
-            }
-
-        }
-
         public BackgroundFill BkFill {
             get {
                 if (_backgroundFill == null)
@@ -344,6 +293,57 @@ namespace fmg.core.mosaic {
             ImgBckgrnd= null;
             ImgFlag = null;
             ImgMine = null;
+        }
+
+    }
+
+    /// <summary> всё что относиться к заливке фоном ячееек </summary>
+    public class BackgroundFill : INotifyPropertyChanged, IDisposable {
+        /// <summary> режим заливки фона ячеек </summary>
+        private int _mode = 0;
+        /// <summary> кэшированные цвета фона ячеек </summary>
+        private readonly IDictionary<int, Color> _colors = new Dictionary<int, Color>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected readonly NotifyPropertyChanged _notifier;
+
+        public BackgroundFill() {
+            _notifier = new NotifyPropertyChanged(this, ev => PropertyChanged?.Invoke(this, ev));
+        }
+
+        /// <summary> режим заливки фона ячеек
+        ///  @param mode
+        ///   <li> 0 - цвет заливки фона по-умолчанию
+        ///   <li> not 0 - радуга %)
+        /// </summary>
+        public int Mode {
+            get { return _mode; }
+            set {
+                if (_notifier.SetProperty(ref _mode, value))
+                    _colors.Clear();
+            }
+        }
+
+        /// <summary> кэшированные цвета фона ячеек
+        /// Нет цвета? - создасться с нужной интенсивностью! */
+        /// </summary>
+        public Color GetColor(int index) {
+            if (_colors.ContainsKey(index))
+                return _colors[index];
+
+            var res = Color.RandomColor().Brighter(0.45);
+            _colors.Add(index, res);
+            return res;
+        }
+
+        /// <summary> off notifer </summary>
+        public IDisposable Hold() {
+            return _notifier.Hold();
+        }
+
+        public void Dispose() {
+            _notifier.Dispose();
+            _colors.Clear();
         }
 
     }
