@@ -77,9 +77,9 @@ public abstract class MosaicView<TImage,
     }
 
     /** Draw modified mosaic cells
-     * @param requiredCells Cells to be redrawn. NULL - redraw the full mosaic.
+     * @param modifiedCells Cells to be redrawn. NULL - redraw the full mosaic.
      */
-    protected abstract void drawModified(Collection<BaseCell> requiredCells);
+    protected abstract void drawModified(Collection<BaseCell> modifiedCells);
 
     /** repaint all */
     @Override

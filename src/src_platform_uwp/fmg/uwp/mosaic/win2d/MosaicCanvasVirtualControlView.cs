@@ -38,8 +38,8 @@ namespace fmg.uwp.mosaic.win2d {
             }
         }
 
-        protected override void DrawModified(ICollection<BaseCell> requiredCells) {
-            Invalidate(requiredCells);
+        protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
+            Invalidate(modifiedCells);
         }
 
         public override void Invalidate(ICollection<BaseCell> modifiedCells) {

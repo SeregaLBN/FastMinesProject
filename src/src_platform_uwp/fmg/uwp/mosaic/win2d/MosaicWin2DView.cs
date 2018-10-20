@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
 using Windows.UI.Text;
@@ -13,7 +12,6 @@ using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
-using fmg.uwp.utils.win2d;
 
 namespace fmg.uwp.mosaic.win2d {
 

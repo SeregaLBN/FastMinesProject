@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.ComponentModel;
 using System.Collections.Generic;
 using Windows.UI;
 using Windows.Graphics.Display;
@@ -7,43 +8,52 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using fmg.common;
 using fmg.common.geom;
+using fmg.core.mosaic;
 using fmg.core.mosaic.cells;
 using fmg.uwp.utils;
 
 namespace fmg.uwp.mosaic.win2d {
-#if false
 
     /// summary> MVC: view. UWP Win2D implementation. View located into control <see cref="CanvasSwapChainPanel"/> */
-    public class MosaicViewInCanvasSwapChainPanel : AMosaicViewInControl<CanvasSwapChainPanel> {
+    public class MosaicCanvasSwapChainPanelView : MosaicFrameworkElementView<CanvasSwapChainPanel> {
 
-        private CanvasDevice _device;
-        private CanvasRenderTarget[] _doubleBuffer = new CanvasRenderTarget[2];
-        private int _bufferIndex = 0;
         private CanvasSwapChain _swapChain;
-        public SizeDouble Offset { get; set; }
-
-        public Func<SizeDouble> GetterMosaicWindowSize { get; set; }
-        public void OnMosaicWindowSizeChanged() {
-            _needResizeFirstBuffer = _needResizeSecondBuffer = true;
-        }
+        private readonly CanvasRenderTarget[] _doubleBuffer = new CanvasRenderTarget[2];
+        private int _bufferIndex = 0;
         private bool _needResizeFirstBuffer = true, _needResizeSecondBuffer = true;
 
-        protected override CanvasDevice GetCanvasDevice() {
-            return Device;
+        public MosaicCanvasSwapChainPanelView(ICanvasResourceCreator resourceCreator, CanvasSwapChainPanel control = null)
+            : base(resourceCreator, control)
+        { }
+
+        public override CanvasSwapChainPanel Control {
+            get {
+                var ctrl = base.Control;
+                if (ctrl == null) {
+                    ctrl = new CanvasSwapChainPanel();
+                    base.Control = ctrl;
+                    ctrl.SwapChain = SwapChain;
+                }
+                return ctrl;
+            }
         }
 
-        private CanvasDevice Device {
-            get {
-                if (_device == null)
-                    Device = new CanvasDevice();
-                return _device;
-            }
-            set {
-                if (_device != null)
-                    _device.Dispose();
-                _device = value;
+        protected override void OnPropertyModelChanged(object sender, PropertyChangedEventArgs ev) {
+            base.OnPropertyModelChanged(sender, ev);
+            switch (ev.PropertyName) {
+            case nameof(MosaicGameModel.MosaicType):
+            case nameof(MosaicGameModel.Area):
+            case nameof(MosaicGameModel.SizeField):
+                _needResizeFirstBuffer = _needResizeSecondBuffer = true;
+                break;
             }
         }
+
+        public SizeDouble Offset { get; set; }
+        //public Func<SizeDouble> GetterMosaicWindowSize { get; set; }
+        //public void OnMosaicWindowSizeChanged() {
+        //    _needResizeFirstBuffer = _needResizeSecondBuffer = true;
+        //}
 
         private CanvasSwapChain SwapChain {
             get {
@@ -53,7 +63,7 @@ namespace fmg.uwp.mosaic.win2d {
                 var ch = Control.Height;
                 if (_swapChain == null) {
                     var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-                    SwapChain = new CanvasSwapChain(Device, (float)cw, (float)ch, dpi);
+                    SwapChain = new CanvasSwapChain(_resourceCreator, (float)cw, (float)ch, dpi);
                 } else {
                     var size = _swapChain.Size;
                     if (!size.Width.HasMinDiff(cw) || !size.Height.HasMinDiff(ch)) {
@@ -92,18 +102,18 @@ namespace fmg.uwp.mosaic.win2d {
 
                 if (_doubleBuffer[i] == null) {
                     var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
-                    var size = GetterMosaicWindowSize();
+                    var size = Model.Size; // GetterMosaicWindowSize();
                     try {
-                        _doubleBuffer[i] = new CanvasRenderTarget(Device, (float)size.Width, (float)size.Height, dpi);
+                        _doubleBuffer[i] = new CanvasRenderTarget(_resourceCreator, (float)size.Width, (float)size.Height, dpi);
                     } catch(ArgumentException) {
                         // :(((
                         try {
-                            _doubleBuffer[i] = new CanvasRenderTarget(Device, (float)size.Width, (float)size.Height, dpi/2);
+                            _doubleBuffer[i] = new CanvasRenderTarget(_resourceCreator, (float)size.Width, (float)size.Height, dpi/2);
                         } catch (ArgumentException) {
                             try {
-                                _doubleBuffer[i] = new CanvasRenderTarget(Device, (float)size.Width, (float)size.Height, dpi / 4);
+                                _doubleBuffer[i] = new CanvasRenderTarget(_resourceCreator, (float)size.Width, (float)size.Height, dpi / 4);
                             } catch (ArgumentException) {
-                                _doubleBuffer[i] = new CanvasRenderTarget(Device, (float)size.Width, (float)size.Height, dpi / 8);
+                                _doubleBuffer[i] = new CanvasRenderTarget(_resourceCreator, (float)size.Width, (float)size.Height, dpi / 8);
                             }
                         }
                     }
@@ -113,7 +123,7 @@ namespace fmg.uwp.mosaic.win2d {
             }
         }
 
-        public override void Invalidate(IEnumerable<BaseCell> modifiedCells = null) {
+        public override void Invalidate(ICollection<BaseCell> modifiedCells) {
             System.Diagnostics.Debug.Assert((modifiedCells == null) || modifiedCells.Any());
             using (var tr = new Tracer()) {
                 var canvasSwapChainPanel = Control;
@@ -125,12 +135,12 @@ namespace fmg.uwp.mosaic.win2d {
                 //   return;
 
                 AsyncRunner.InvokeFromUiLater(() => {
-                    Repaint(modifiedCells);
+                    DrawModified(modifiedCells);
                 }, Windows.UI.Core.CoreDispatcherPriority.High);
             }
         }
 
-        public void Repaint(IEnumerable<BaseCell> modifiedCells) {
+        protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
             using (var tr = new Tracer()) {
                 SwapDrawBuffer();
                 var ab = ActualBuffer;
@@ -147,10 +157,8 @@ namespace fmg.uwp.mosaic.win2d {
                         }
                     }
 
-                    Paintable = ds;
-                    PaintContext.IsUseBackgroundColor = needRedrawAll;
-                    Repaint(modifiedCells, null);
-                    Paintable = null;
+                    bool drawBk = false;
+                    DrawWin2D(ds, modifiedCells, drawBk);
                 }
                 RepaintOffsetInternal(ab);
             }
@@ -185,24 +193,13 @@ namespace fmg.uwp.mosaic.win2d {
             //}, Windows.UI.Core.CoreDispatcherPriority.High);
         }
 
-        protected override void Dispose(bool disposing) {
-            if (Disposed)
-                return;
-
-            if (disposing) {
-                SwapChain = null;
-            }
-
-            base.Dispose(disposing);
-
-            if (disposing) {
-                _doubleBuffer[0]?.Dispose();
-                _doubleBuffer[1]?.Dispose();
-                Device = null;
-            }
+        protected override void Disposing() {
+            base.Disposing();
+            SwapChain = null;
+            _doubleBuffer[0]?.Dispose();
+            _doubleBuffer[1]?.Dispose();
         }
 
     }
 
-#endif
 }

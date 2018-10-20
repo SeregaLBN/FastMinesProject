@@ -24,6 +24,8 @@ using fmg.core.types;
 using fmg.core.mosaic;
 using fmg.uwp.utils;
 using fmg.uwp.mosaic.xaml;
+using Win2dMosaicCanvasSwapController = fmg.uwp.mosaic.win2d.MosaicCanvasSwapChainPanelController;
+using Win2dMosaicCanvasSwapView       = fmg.uwp.mosaic.win2d.MosaicCanvasSwapChainPanelView;
 using Win2dMosaicCanvasVirtController = fmg.uwp.mosaic.win2d.MosaicCanvasVirtualControlController;
 using Win2dMosaicCanvasVirtView       = fmg.uwp.mosaic.win2d.MosaicCanvasVirtualControlView;
 using Win2dMosaicImg                  = fmg.uwp.img.win2d.MosaicImg;
@@ -218,6 +220,17 @@ namespace Test.FastMines.Uwp.Images {
             return mosaicController;
         }
 
+        private void TestWin2dMosaicsCanvasSwapControl(ICanvasResourceCreator resourceCreator) {
+#if DEBUG
+            Win2dMosaicCanvasSwapView._DEBUG_DRAW_FLOW = true;
+#endif
+            TestApp<CanvasSwapChainPanel, CanvasBitmap, Win2dMosaicCanvasSwapController, Win2dMosaicCanvasSwapView, DummyView<CanvasSwapChainPanel>, MosaicDrawModel<CanvasBitmap>, DummyModel>(
+                () => new Win2dMosaicCanvasSwapController[] {
+                  //TuneMosaicGameController<CanvasSwapChainPanel, CanvasBitmap, Win2dMosaicCanvasSwapController, Win2dMosaicCanvasSwapView, MosaicDrawModel<CanvasBitmap>>(new Win2dMosaicCanvasSwapController(resourceCreator)),
+                    TuneMosaicGameController<CanvasSwapChainPanel, CanvasBitmap, Win2dMosaicCanvasSwapController, Win2dMosaicCanvasSwapView, MosaicDrawModel<CanvasBitmap>>(new Win2dMosaicCanvasSwapController(resourceCreator))
+            });
+        }
+
         private void TestWin2dMosaicsCanvasVirtualControl(ICanvasResourceCreator resourceCreator) {
 #if DEBUG
             Win2dMosaicCanvasVirtView._DEBUG_DRAW_FLOW = true;
@@ -304,6 +317,7 @@ namespace Test.FastMines.Uwp.Images {
 
             var device = CanvasDevice.GetSharedDevice();
             _onCreateImages = new Action[] {
+                () => TestWin2dMosaicsCanvasSwapControl(device),
                 () => TestWin2dMosaicsCanvasVirtualControl(device),
                 TestXamlMosaicControl,
                 TestWBmpMosaicControl,

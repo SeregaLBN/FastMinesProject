@@ -83,14 +83,14 @@ namespace fmg.uwp.mosaic.xaml {
             return _brushCacheMap[clr];
         }
 
-        protected override void DrawModified(ICollection<BaseCell> requiredCells) {
+        protected override void DrawModified(ICollection<BaseCell> modifiedCells) {
             var container = Control;
 
             //System.Diagnostics.Debug.Assert(container != null);
             if (container == null)
                 return;
 
-            DrawOverXaml(requiredCells, true);
+            DrawOverXaml(modifiedCells, true);
         }
 
         private void DrawOverXaml(IEnumerable<BaseCell> modifiedCells, bool drawBk) {
