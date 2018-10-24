@@ -61,6 +61,11 @@ namespace fmg.uwp.mosaic.win2d {
                 System.Diagnostics.Debug.Assert(!Disposed);
                 var cw = Control.Width;
                 var ch = Control.Height;
+                if (double.IsNaN(cw) || double.IsNaN(ch)) {
+                    var s = Model.Size;
+                    cw = s.Width;
+                    ch = s.Height;
+                }
                 if (_swapChain == null) {
                     var dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
                     SwapChain = new CanvasSwapChain(_resourceCreator, (float)cw, (float)ch, dpi);
@@ -164,6 +169,7 @@ namespace fmg.uwp.mosaic.win2d {
             }
         }
 
+        /** /
         public void RepaintOffset() {
             var canvasSwapChainPanel = Control;
             //if (canvasSwapChainPanel == null)
@@ -181,6 +187,7 @@ namespace fmg.uwp.mosaic.win2d {
             }
             sc.Present();
         }
+        /**/
 
         private void RepaintOffsetInternal(CanvasRenderTarget actualBuffer) {
             var sc = SwapChain;
@@ -194,10 +201,10 @@ namespace fmg.uwp.mosaic.win2d {
         }
 
         protected override void Disposing() {
-            base.Disposing();
-            SwapChain = null;
+            SwapChain = null; // call setter
             _doubleBuffer[0]?.Dispose();
             _doubleBuffer[1]?.Dispose();
+            base.Disposing();
         }
 
     }
