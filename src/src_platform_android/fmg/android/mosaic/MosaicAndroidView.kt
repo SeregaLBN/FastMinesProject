@@ -104,11 +104,11 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
                 }
 
                 //g.setColor(java.awt.Color.MAGENTA);
-                //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
+                //g.drawRect(rcInner.x.toFloat(), rcInner.y.toFloat(), rcInner.width.toFloat(), rcInner.height.toFloat());
 
                 val paintImage = Consumer<TImageInner> { img ->
                     if (img is android.graphics.Bitmap)
-                        g.drawBitmap(img as android.graphics.Bitmap, (rcInner.x + offset.width ).toInt(), (rcInner.y + offset.height).toInt(), null)
+                        g.drawBitmap(img as android.graphics.Bitmap, (rcInner.x + offset.width ).toFloat(), (rcInner.y + offset.height).toFloat(), null)
                     else
                         throw RuntimeException("Unsupported image type " + img.javaClass.simpleName)
                 }
@@ -144,7 +144,7 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
                         //{ // test
                         //   java.awt.Color clrOld = g.getColor(); // test
                         //   g.setColor(java.awt.Color.red);
-                        //   g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
+                        //   g.drawRect(rcInner.x.toFloat(), rcInner.y.toFloat(), rcInner.width.toFloat(), rcInner.height.toFloat());
                         //   g.setColor(clrOld);
                         //}
                     }
@@ -185,7 +185,7 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
 
                 // debug - визуально проверяю верность вписанного квадрата (проверять при ширине пера около 21)
                 //g.setColor(java.awt.Color.MAGENTA);
-                //g.drawRect((int)rcInner.x, (int)rcInner.y, (int)rcInner.width, (int)rcInner.height);
+                //g.drawRect(rcInner.x.toFloat(), rcInner.y.toFloat(), rcInner.width.toFloat(), rcInner.height.toFloat());
             }
 
             //if (!isIconicMode)
@@ -195,32 +195,34 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
         }
 
         /** /
-         * // test
-         * {
-         * g.setClip(oldShape);
-         * //g.setComposite(AlphaComposite.SrcOver);
-         *
-         * // test padding
-         * g.setStroke(new BasicStroke(5));
-         * Color clr = Color.DarkRed.clone();
-         * clr.setA(120);
-         * g.setColor(Cast.toColor(clr));
-         * g.drawRect((int)padding.left,
-         * (int)padding.top,
-         * (int)(size.width  - padding.getLeftAndRight()),
-         * (int)(size.height - padding.getTopAndBottom()));
-         *
-         * // test margin
-         * g.setStroke(new BasicStroke(3));
-         * clr = Color.DarkGreen.clone();
-         * clr.setA(120);
-         * g.setColor(Cast.toColor(clr));
-         * g.drawRect((int)(padding.left + margin.left),
-         * (int)(padding.top  + margin.top),
-         * (int)(size.width  - padding.getLeftAndRight() - margin.getLeftAndRight()),
-         * (int)(size.height - padding.getTopAndBottom() - margin.getTopAndBottom()));
-         * }
-         * / */
+        // test
+        run {
+            g.setClip(oldShape);
+            //g.setComposite(AlphaComposite.SrcOver);
+            
+            // test padding
+            g.setStroke(new BasicStroke(5));
+            Color clr = Color.DarkRed.clone();
+            clr.setA(120);
+            g.setColor(Cast.toColor(clr));
+            g.drawRect(
+                padding.left.toFloat(),
+                padding.top.toFloat(),
+                (size.width  - padding.getLeftAndRight()).toFloat(),
+                (size.height - padding.getTopAndBottom()).toFloat());
+            
+            // test margin
+            g.setStroke(new BasicStroke(3));
+            clr = Color.DarkGreen.clone();
+            clr.setA(120);
+            g.setColor(Cast.toColor(clr));
+            g.drawRect(
+                (padding.left + margin.left).toFloat(),
+                (padding.top  + margin.top ).toFloat(),
+                (size.width  - padding.getLeftAndRight() - margin.getLeftAndRight()).toFloat(),
+                (size.height - padding.getTopAndBottom() - margin.getTopAndBottom()).toFloat());
+        }
+        /**/
 
         if (MosaicView._DEBUG_DRAW_FLOW)
             println("-------------------------------")
@@ -248,12 +250,12 @@ abstract class MosaicAndroidView<TImage, TImageInner: Any, TMosaicModel : Mosaic
         if (text == null || text.trim { it <= ' ' }.isEmpty())
             return
         val bnd = getStringBounds(text)
-        //      { // test
-        //         java.awt.Color clrOld = g.getColor();
-        //         g.setColor(java.awt.Color.BLUE);
-        //         g.fillRect((int)rc.x, (int)rc.y, (int)rc.width, (int)rc.height);
-        //         g.setColor(clrOld);
-        //      }
+        //run { // test
+        //    java.awt.Color clrOld = g.getColor();
+        //    g.setColor(java.awt.Color.BLUE);
+        //    g.fillRect(rc.x.toFloat(), rc.y.toFloat(), rc.width.toFloat(), rc.height.toFloat());
+        //    g.setColor(clrOld);
+        //}
         g.drawText(text, (rc.x + (rc.width - bnd.width) / 2.0).toFloat(),
                 (rc.bottom() - (rc.height - bnd.height) / 2.0).toFloat(), _textPaint)
     }
