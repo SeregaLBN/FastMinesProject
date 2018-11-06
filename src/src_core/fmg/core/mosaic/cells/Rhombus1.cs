@@ -1,10 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
-// file name: "Rhombus1.java"
+// file name: "Rhombus1.cs"
 //
 // Реализация класса Rhombus1 - 3 ромба, составляющие равносторонний шестиугольник
-// Copyright (C) 2002-2011 Sergey Krivulya
+// Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License

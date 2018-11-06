@@ -1,10 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FastMines project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "Trapezoid3.java"
 //
 // Реализация класса Trapezoid3 - 8 трапеций, складывающихся в шестигранник
-// Copyright (C) 2002-2011 Sergey Krivulya
+// Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License

@@ -1,10 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                               FMG project
-//                                      © Sergey Krivulya (KSerg, aka SeregaLBN)
 // file name: "BaseCell.java"
 //
 // Реализация базового класса BaseCell
-// Copyright (C) 2010-2011 Sergey Krivulya
+// Author: 2002-2018  -  Serhii Kryvulia aka SeregaLBN
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License

@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("FastMines BackgroundTasks")]
 [assembly: AssemblyDescription("Tiles setter")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Sergey Krivulya (SeregaLBN aka KSerg)")]
+[assembly: AssemblyCompany("Serhii Kryvulia aka SeregaLBN")]
 [assembly: AssemblyProduct("FastMines")]
 [assembly: AssemblyCopyright("Copyright ©  2013-2018")]
 [assembly: AssemblyTrademark("")]
